@@ -1,0 +1,1 @@
+This folder contains header files. Header files for libraries are placed within subdirectories named after the respective library. 

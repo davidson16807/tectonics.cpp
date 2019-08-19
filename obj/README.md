@@ -1,0 +1,1 @@
+This folder contains object files built from source code. Object files are removed upon calling `make clean`, and .obj files are explicitly ignored by source control, so this directory is normally empty on checkout. 
