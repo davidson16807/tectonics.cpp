@@ -7,7 +7,6 @@
 
 namespace composites
 {
-
 	// This template represents a statically-sized contiguous block of heap memory occupied by primitive data of the same arbitrary type
 	// The intention is to abstract away arrays of primitives that are used to address data locality issues
 	// the data type should be small enough to fit in a computer's register (e.g. ints, floats, and even vec3s)

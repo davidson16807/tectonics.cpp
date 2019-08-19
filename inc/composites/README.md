@@ -1,0 +1,26 @@
+The "composites" library provides data structures for statically-sized contiguous block of heap memory occupied by primitive data of the same arbitrary type. These data structures are implemented using a template known as "many<T>".
+The intention is to abstract away arrays of primitives that are used to address data locality issues.
+The data type used by many<T> should be small enough to fit in a computer's register (e.g. ints, floats, and even vec3s) and should have basic operators common to all primitives: == != 
+
+Q: Why don't we use std::valarray<T> instead? Doesn't it do the same thing?
+A: Yes, but std::valarray<T> forbids T from overloading operator|(), and this forbids us from using it with glm::vec3. 
+     We really want to be able to use glm::vec3 since it allows us to easily port code from GLSL to C++.
+     std::valarray<T> also has several severe limitations relating to its flawed design history that would forbid its use anyway,
+     For instance, it does not implement standard container methods like .begin() and .end()
+
+Q: Why don't we use the xtensor library? 
+A: I've tried exposing xtensor through wasm but it remains elusive. 
+     Rolling our own custom class allows us full control over how it can be exposed through wasm.
+     In any case, I'm also conflicted on using xtensor because it favors borrowing cues from numpy instead of glm,
+      and as mentioned above, we want to continue using glm because it allows us to port easily from GLSL to C++.
+     The same could be said for any other library that provides tensor/ndarray functionality, really.
+
+Q: Why do we use std::vector internally?
+A: The functions and operators that use many<T> could effectively be reimplemented using std::vector<T>, 
+      but this could cause confusion in new developers, since they would see basic arithmetic being performed on std::vectors
+      without having any idea where that behavior was being implemented. 
+     Therefore, we roll our own custom class, many<T>, which is a thin wrapper around std::vector<T>
+     We could implement many<T> as a derived class of std::vector, but we prefer to favor composition over inheritance. 
+     This is especially the case given that we don't own std::vector<T>.
+     The performance penalty of using std::vector<T> over traditional arrays is inconsequential, 
+      and given our previous implementation was in javascript, we're happy with the performance boost we get by moving to C++.
