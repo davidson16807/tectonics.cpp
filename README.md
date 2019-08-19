@@ -1,10 +1,13 @@
+# libtectonics
+## A C++ library for simulating worlds
+
 **libtectonics** is the core C++ library that's intended to supplant the backend to [tectonics.js](http://davidson16807.github.io/tectonics.js/). It contains only the best parts of tectonics.js - the parts that either have proven out over time or have emerged with confidence as replacements through good design. 
 
 This library is designed for use by other developers. Numerous space simulators can make use of the functionality here. The components here are lightweight and loosely coupled. Parts of the library can be easily taken out, mixed and matched, and modified. The library is also rigorously covered by unit tests. It's a shame really if this library only gets used once. 
 
 Permission to use the code is provided under the Creative Commons Attribution 4.0 license. You may modify and redistribute the code as you see fit. You need only attribute the work to me as the project developer, which I appreciate since it helps me develop professionally. Drop me a line if you do so since it's encouraging to hear my work is getting used! 
 
-#Dependencies
+# Dependencies
 Some functionality within the library makes use of dependencies. I make exclusive use of header-only libraries, and make sure to cordon off any code that uses the dependency from the rest of the library. You should never have to add a dependency to your project just because you want to use a feature in a library that makes no use of it.
 
 I try to limit the use of dependencies, but there are times where dependencies are essential. The problems that face libtectonics often deal with complex topics like linear algebra and vector calculus. As the developer, I want to limit project scope, so I don't want to go implement my own library, and as the user, you definitely don't want to familiarize yourself with some random guy's obscure linear algebra library. Everybody benefits from using a single common library. However, as with linear algebra libraries, there's often no standard implementation in C++, so we must choose from one of several existing dependencies, or create our own. I have chosen to use the following dependencies, for the stated reasons:
@@ -15,7 +18,7 @@ I try to limit the use of dependencies, but there are times where dependencies a
 
 * **composites** This is another library I have created to handle certain behaviors within rasters. Consider it a subset of that library. It creates a series of templated data structures that wrap std::vector objects to enable arithmetic operations to be performed on their contents as if they were simple floats or ints. I have learned this is essential to be able to efficiently reason about complex operations on scalar and vector fields in tectonics.js. Other solutions exist that also fulfill this role, however they all fail for one reason or another. [std::valarray](https://en.cppreference.com/w/cpp/numeric/valarray) is a C++ standard, but it does not allow for storing glm data types and it has several severe restrictions relating to its flawed design history (for instance, it fails to implement standard container methods like .begin() and .end()). [xtensor](https://github.com/QuantStack/xtensor) is indeed a very beautiful library, but I've found it difficult to expose its data types to other languages through wrappers, and it comes with its own linear algebra implementation that does not leverage glm. As of the time of writing, the source code for this library is tracked only as a subdirectory of this project. Time will tell if this library will migrate to its own dedicated repository.
 
-#Design Principles
+# Design Principles
 * **Side Effect Free Programming** The user should feel free to invoke methods without fear of unintentional state modification. All functions must be semantically pure - their output can be determined strictly using their input parameters. For practical reasons, we do allow the use of output reference parameters. This is done for performance reasons, to prevent the unnecessary allocation of memory for temp variables. This is why we say functions must be "semantically" pure. However, output reference parameters are clearly indicated by the lack of a "const" keyword. The intention is for users to be able to easily reason about their code. 
 * **Limited Encapsulation** The user of a class is free to modify member attributes without fear of creating unintended side effects or invalid state. Encapsulation is only used to abstract away design details that are of no concern to the user, like pointer management, is_dirty flags, or representation in memory. 
 * **Orthogonal, Extensive, State Variables** This goes along with "Limited Encapsulation." The user should feel free to modify member attributes without fear of generating invalid state. No two state variables should be bound to a relationship that requires one to change along with the other. It should at least be theoretically possible for any combination of state variable values to exist in the real world. It is intended that state variables to be chosen wisely, so there is never any need to encapsulate away mistakes at a later date. 
@@ -24,7 +27,7 @@ I try to limit the use of dependencies, but there are times where dependencies a
 * **Isolation of library dependencies** If a class requires the use of a library to perform some functionality, it should only contain functionality that requires that library. Other functionality that does not require that library must be placed within another, similarly named class. 
 * **Loosely Coupled Classes** A common problem with Object Oriented Programming occurs when class attributes reference objects belonging to other classes. This results in a situation where, in order to use any single part of the library, you need to implement objects for every other class. This makes testing components extremely difficult. This has been aleviated somewhat through the use of dependency injection, but that still requires a class to have knowledge of another, or at least knowledge of its interface. It still makes it very difficult to rip out classes from the library and port them to other code bases. Our solution is to only use class references or dependency injection when absolutely necessary. 
 
-#Standards
+# Standards
 * **GNU C++ Standard Project Layout**
 * **Semantic Versioning 2.0.0**
 * **"GLSL/GLM" Linear Algebra API**
