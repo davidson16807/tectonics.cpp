@@ -1,0 +1,3 @@
+The `academics` subcomponent stores pure, "side-effect-free" utility functions that express simple scientific relationships (e.g. geometric relations, black body equilibrium temperature, etc.). Because these functions are so simple, they can be easily ported to other C-like languages. To take advantage of this opportunity, the `academics` subcomponent is written using macros to allow it to be used in C, C++, and GLSL. Experimental macro definitions also exist to port code to Javascript, however no guarantees are made as to the quality of output. 
+
+No other libraries are required to use `academics`, however `glm` and `rasters` can be used in conjunction to provide enhanced functionality relating to linear algebra and vector calculus. 

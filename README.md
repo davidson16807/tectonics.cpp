@@ -27,21 +27,21 @@ libtectonics can be broken down into several subcomponents. Users can pick and c
 
 ** `rasters/glm` handles operations involving vector fields on the surface of unstructured 3d meshes. It makes use of `glm` to represent vectors. 
 
-* `academics` stores pure functions that express simple scientific relationships (e.g. geometric relations, black body equilibrium temperature, etc.). Because these functions are so simple, they can be easily ported to other C-like languages. To take advantage of this opportunity, the `academics` subcomponent is written using macros to allow it to be used in C, C++, and GLSL. Experimental macro definitions also exist to port code to Javascript, however no guarantees are made as to quality of output. 
+* `academics` stores pure, "side-effect-free" utility functions that express simple scientific relationships (e.g. geometric relations, black body equilibrium temperature, etc.). Because these functions are so simple, they can be easily ported to other C-like languages. To take advantage of this opportunity, the `academics` subcomponent is written using macros to allow it to be used in C, C++, and GLSL. Experimental macro definitions also exist to port code to Javascript, however no guarantees are made as to quality of output. 
 
-** `academics/glm` stores pure functions that express simple scientific relationships involving vectors (e.g. orbital mechanics, rayleigh scattering). As with `academics`, macros exist to allow for use in C++, and GLSL. The C++ implementation requires the `glm` library. No macros exist to port the code to Javascript. 
+** `academics/glm` stores pure utility functions that express simple scientific relationships involving vectors (e.g. orbital mechanics, rayleigh scattering). As with `academics`, macros exist to allow for use in C++, and GLSL. The C++ implementation requires the `glm` library. No macros exist to port the code to Javascript. 
 
-** `academics/rasters` stores semantically pure functions that express simple scientific relationships involving scalar fields on the surface of 3d meshes (e.g. insolation). We say "semantically" pure because we still make use of output reference parameters for performance reasons. 
+** `academics/rasters` stores semantically pure utility functions that express simple scientific relationships involving scalar fields on the surface of 3d meshes (e.g. insolation). We say "semantically" pure due to the use of output reference parameters for performance reasons. However, these output reference parameters are clearly indicated by their "non-const" nature.
 
-** `academics/rasters/glm` stores semantically pure functions involving vector fields on the surface of 3d meshes (e.g. advection). 
+** `academics/rasters/glm` stores semantically pure utility functions involving vector fields on the surface of 3d meshes (e.g. advection). 
 
-* `models/` stores simple data structures that express the properties of celestial bodies (oceans, atmospheres, etc.) from simple state variables like mass pools. Models exist in complete isolation of one another. This subcomponent requires `academics`.
+* `models/` stores loosely coupled, unopinionated data structures that express the properties of celestial bodies (oceans, atmospheres, etc.) from simple state variables like mass pools. Models exist in complete isolation of one another. This subcomponent requires `academics`.
 
-* `models/glm` stores simple data structures that require the use of vectors (e.g. stellar systems). 
+* `models/glm` stores data structures that require the use of vectors (e.g. stellar systems). 
 
-* `models/rasters` stores simple data structures that require the use of scalar rasters
+* `models/rasters` stores data structures that require the use of scalar rasters.
 
-* `models/rasters/glm` stores simple data structures that require the use of vector rasters (e.g. climate models, tectonic models)
+* `models/rasters/glm` stores data structures that require the use of vector rasters (e.g. climate models, tectonic models)
 
 # Design Principles
 * **Side Effect Free Programming** The user should feel free to invoke methods without fear of unintentional state modification. All functions must be semantically pure - their output can be determined strictly using their input parameters. For practical reasons, we do allow the use of output reference parameters. This is done for performance reasons, to prevent the unnecessary allocation of memory for temp variables. This is why we say functions must be "semantically" pure. However, output reference parameters are clearly indicated by the lack of a "const" keyword. The intention is for users to be able to easily reason about their code. 
