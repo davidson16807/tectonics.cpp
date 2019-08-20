@@ -1,3 +1,0 @@
-The `models` subcomponent stores loosely coupled, unopinionated data structures that express the properties of celestial bodies (oceans, atmospheres, etc.) from simple state variables like mass pools. Models exist in complete isolation of one another. 
-
-This subcomponent requires `academics`. Additionally, `glm` and `rasters` can be optionally used to provide enhanced functionality relating to linear algebra and vector calculus. 

@@ -14,5 +14,7 @@ clean:
 bin/driver.out: $(TEST)
 	$(CPP) -std=c++17 -o bin/driver.out test/driver.cpp -I inc/
 
+test-rasters: test/test_rasters.cpp
+	$(CPP) -std=c++17 -o bin/test.out test/test_rasters.cpp -I inc/ && chmod a+x bin/test.out && ./bin/test.out
 test-strata: spike/test_strata.cpp
 	$(CPP) -std=c++17 -o bin/spike.out spike/test_strata.cpp -I inc/ && chmod a+x bin/spike.out && ./bin/spike.out

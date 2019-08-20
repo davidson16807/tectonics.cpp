@@ -4,7 +4,7 @@ The following subcomponents are provided as part of the "libtectonics" suite:
 	* `composites` for manipulating arrays of arithmetic values
 	* `rasters` for storing maps of values on the surface of 3d meshes (requires `composites`)
 	* `academics` for side-effect-free utility functions expressing simple scientific relationships
-	* `models` for loosely coupled, unopinionated data structures for deriving properties of celestial bodies from simple state variables like mass pools (requires `academics`)
+	* `components` for loosely coupled, unopinionated data structures for deriving properties of celestial bodies from simple state variables like mass pools (requires `academics`)
 
 `glm` is an optional dependency that can be used to provide enhanced functionality relating to linear algebra.
 `cache` is a unit testing framework that is used only for the development of the library.

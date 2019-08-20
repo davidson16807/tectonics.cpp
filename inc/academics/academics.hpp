@@ -1,7 +1,7 @@
 #pragma once
 #define CPP
 
-#include "cross_platform_macros.c"
+#include "academics/cross_platform_macros.c"
 #include "academics/units.c"
 #include "academics/math/constants.c"
 #include "academics/math/geometry.c"
