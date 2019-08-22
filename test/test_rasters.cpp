@@ -80,13 +80,194 @@ SphereGridVoronoi3d voronoi_test(
     );
 
 
-TEST_CASE( "make sure rasters work", "[rasters]" ) {
+TEST_CASE( "Must be able to test equivalence of composites using the catch framework", "[composites]" ) {
+    floats ref       = floats({1,2,3,4,5});
+    floats ref_copy  = floats({1,2,3,4,5});
+    floats ref_tweak = floats({1,2,3,4,0});
+    floats ref_fewer = floats({1,2,3,4});
 
-    // stratum_mass_pool test = stratum_mass_pool();
-
-    // SECTION("stratum_mass_pool.max_pressure_received() must have the inverse property within the valid range"){
-    //     test.max_pressure_received(1e9);
-    //     REQUIRE(test.max_pressure_received() == Approx(1e9).epsilon(0.12));
-    // }
+    SECTION("Must be able to equate object with itself"){
+        CHECK(ref == ref);
+    }
+    SECTION("Must be able to equate composites of the same content and size"){
+        CHECK(ref == ref_copy);
+    }
+    SECTION("Must be able to distinguish composites of slightly different content"){
+        CHECK(ref != ref_tweak);
+    }
+    SECTION("Must be able to distinguish composites of slightly different size"){
+        CHECK(ref != ref_fewer);
+    }
 }
 
+
+TEST_CASE( "Equivalent operations must behave equivalently for composites", "[composites]" ) {
+    floats a1 = floats({1,2,3,4,5});
+    floats a2 = floats({1,2,3,4,5});
+    floats a3 = floats({1,2,3,4,5});
+    floats b = floats({-1,1,-2,2,3});
+
+    SECTION("a+=b, a=a+b, and add(a,b,a) must all work the same"){
+        a1 += b;
+        a2 = a2+b;
+        add(a3,b,a3);
+        
+        CHECK(a1==a2);
+        CHECK(a2==a3);
+    }
+
+    SECTION("a*=b, a=a*b, and add(a,b,a) must all work the same"){
+        a1 *= b;
+        a2 = a2*b;
+        mult(a3,b,a3);
+        
+        CHECK(a1==a2);
+        CHECK(a2==a3);
+    }
+
+    SECTION("a-=b, a=a-b, and add(a,b,a) must all work the same"){
+        a1 -= b;
+        a2 = a2-b;
+        sub(a3,b,a3);
+        
+        CHECK(a1==a2);
+        CHECK(a2==a3);
+    }
+
+    SECTION("a/=b, a=a/b, and add(a,b,a) must all work the same"){
+        a1 /= b;
+        a2 = a2/b;
+        div(a3,b,a3);
+        
+        CHECK(a1==a2);
+        CHECK(a2==a3);
+    }
+}
+
+
+TEST_CASE( "Arithmetic operators must have idempotence for composites: the operation can be called repeatedly without changing the value", "[composites]" ) {
+    floats a = floats({1,2,3,4,5});
+    floats b = floats({-1,1,-2,2,3});
+    floats c1 = floats({0,0,0,0,0});
+    floats c2 = floats({0,0,0,0,0});
+
+    SECTION("a+b must be called repeatedly without changing the output"){
+        c1 = a + b;
+        c2 = a + b;
+        CHECK(c1==c2);
+
+        add(a,b,c1);
+        add(a,b,c2);
+        CHECK(c1==c2);
+    }
+
+    SECTION("a*b must be called repeatedly without changing the output"){
+        c1 = a * b;
+        c2 = a * b;
+        CHECK(c1==c2);
+        
+        mult(a,b,c1);
+        mult(a,b,c2);
+        CHECK(c1==c2);
+    }
+
+    SECTION("a-b must be called repeatedly without changing the output"){
+        c1 = a - b;
+        c2 = a - b;
+        CHECK(c1==c2);
+        
+        sub(a,b,c1);
+        sub(a,b,c2);
+        CHECK(c1==c2);
+    }
+
+    SECTION("a/b must be called repeatedly without changing the output"){
+        c1 = a / b;
+        c2 = a / b;
+        CHECK(c1==c2);
+        
+        div(a,b,c1);
+        div(a,b,c2);
+        CHECK(c1==c2);
+    }
+}
+
+
+
+TEST_CASE( "Arithmetic operators must have identity for composites: a value exists that can be applied without effect", "[composites]" ) {
+    floats a = floats({1,2,3,4,5});
+    floats zeros = floats({0,0,0,0,0});
+    floats ones  = floats({1,1,1,1,1});
+
+    SECTION("a+I must equal a"){
+        CHECK(a+zeros==a);
+        CHECK(a-zeros==a);
+        CHECK(a*ones ==a);
+        CHECK(a/ones ==a);
+    }
+}
+
+
+TEST_CASE( "Arithmetic operators must have commutativity for composites: values can be swapped to the same effect", "[composites]" ) {
+    floats a = floats({1,2,3,4,5});
+    floats b = floats({-1,1,-2,2,3});
+
+    SECTION("a+b must equal b+a"){
+        CHECK(a+b==b+a);
+    }
+    SECTION("a*b must equal b*a"){
+        CHECK(a*b==b*a);
+    }
+}
+
+
+TEST_CASE( "Arithmetic operators must have associativity for composites: operations can be applied in a different order to the same effect", "[composites]" ) {
+    floats a = floats({1,2,3,4,5});
+    floats b = floats({-1,1,-2,2,3});
+    floats c = floats({1,1,2,3,5});
+
+    SECTION("(a+b)+c must equal (a+c)+b"){
+        CHECK((a+b)+c==(a+c)+b);
+    }
+    SECTION("(a-b)-c must equal (a-c)-b"){
+        CHECK((a-b)-c==(a-c)-b);
+    }
+    SECTION("(a*b)*c must equal (a*c)*b"){
+        CHECK((a*b)*c==(a*c)*b);
+    }
+    SECTION("(a/b)/c must equal (a/c)/b"){
+        CHECK((a/b)/c==(a/c)/b);
+    }
+}
+
+
+TEST_CASE( "Arithmetic operators must have distributivity for composites: an operation can be distributed as values of another", "[composites]" ) {
+    floats a = floats({1,2,3,4,5});
+    floats b = floats({-1,1,-2,2,3});
+    floats c = floats({1,1,2,3,5});
+
+    SECTION("a+b must equal b+a"){
+        CHECK((a+b)*c==(a*c+b*c));
+    }
+}
+
+
+TEST_CASE( "Must be able to test equivalence of rasters using the catch framework", "[rasters]" ) {
+    float_raster ref       = float_raster(diamond, {1,2,3,4,5});
+    float_raster ref_copy  = float_raster(diamond, {1,2,3,4,5});
+    float_raster ref_tweak = float_raster(diamond, {1,2,3,4,0});
+    float_raster ref_fewer = float_raster(tetrahedron, {1,2,3,4});
+
+    SECTION("Must be able to equate object with itself"){
+        CHECK(ref == ref);
+    }
+    SECTION("Must be able to equate rasters of the same content and size"){
+        CHECK(ref == ref_copy);
+    }
+    SECTION("Must be able to distinguish rasters of slightly different content"){
+        CHECK(ref != ref_tweak);
+    }
+    SECTION("Must be able to distinguish rasters of slightly different size"){
+        CHECK(ref != ref_fewer);
+    }
+}
