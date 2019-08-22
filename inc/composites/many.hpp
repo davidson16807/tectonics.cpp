@@ -288,6 +288,10 @@ namespace composites
 	template <class T>
 	bool equal(const many<T>& a, const many<T>& b)
 	{
+		if (a.size() != b.size())
+		{
+			return false;
+		}
 		bool out(true);
 		T diff(0);
 		T threshold(COMPOSITES_EPSILON);
@@ -301,6 +305,10 @@ namespace composites
 	template <class T>
 	bool notEqual(const many<T>& a, const many<T>& b)
 	{
+		if (a.size() != b.size())
+		{
+			return true;
+		}
 		bool out(false);
 		T diff(0);
 		T threshold(COMPOSITES_EPSILON);
