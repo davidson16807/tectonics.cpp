@@ -19,11 +19,14 @@ namespace composites
 	//      For instance, it does not implement standard container methods like .begin() and .end()
 	// 
 	// Q: Why don't we use the xtensor library? 
-	// A: I've tried exposing xtensor through wasm but it remains elusive. 
-	//      Rolling our own custom class allows us full control over how it can be exposed through wasm.
-	//      In any case, I'm also conflicted on using xtensor because it favors borrowing cues from numpy instead of glm,
-	//       and as mentioned above, we want to continue using glm because it allows us to port easily from GLSL to C++.
-	//      The same could be said for any other library that provides tensor/ndarray functionality, really.
+	// A: xtensor is not merely a library for arithmetic containers. It is an expression engine designed to support lazy broadcasting.
+	//      This can be a very good thing if all you want to do is work with the containers they provide.
+	//      However in our case, we want to create a custom "raster" class that behaves as an xtensor would while storing an additional
+	//       attribute that references the grid being used. 
+	//      Doing this with xtensor would require intimate interaction with xtensor's xtensor<T> and xexpression<T> classes. 
+	//      Furthermore, xtensor draws inspiration with numpy and so working with it would either require switching between glm and numpy mindsets
+	//       or developing a new library extension to allow for interaction between xtensor datastructures and glm functionality. 
+	//      We instead choose to work with a much more simple solution that is easier to reason with. 
 	//
 	// Q: Why do we use std::vector internally?
 	// A: The functions and operators that use many<T> could effectively be reimplemented using std::vector<T>, 
