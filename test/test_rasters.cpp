@@ -80,7 +80,7 @@ SphereGridVoronoi3d voronoi_test(
     );
 
 
-TEST_CASE( "Must be able to test equivalence of composites using the catch framework", "[composites]" ) {
+TEST_CASE( "Must be able to test composite equivalence using the catch framework", "[composites]" ) {
     floats ref       = floats({1,2,3,4,5});
     floats ref_copy  = floats({1,2,3,4,5});
     floats ref_tweak = floats({1,2,3,4,0});
@@ -101,7 +101,7 @@ TEST_CASE( "Must be able to test equivalence of composites using the catch frame
 }
 
 
-TEST_CASE( "Equivalent operations must behave equivalently for composites", "[composites]" ) {
+TEST_CASE( "Equivalent composite arithmetic must behave equivalently", "[composites]" ) {
     floats a1 = floats({1,2,3,4,5});
     floats a2 = floats({1,2,3,4,5});
     floats a3 = floats({1,2,3,4,5});
@@ -145,7 +145,7 @@ TEST_CASE( "Equivalent operations must behave equivalently for composites", "[co
 }
 
 
-TEST_CASE( "Arithmetic operators must have idempotence for composites: the operation can be called repeatedly without changing the value", "[composites]" ) {
+TEST_CASE( "composite arithmetic must have idempotence: the operation can be called repeatedly without changing the value", "[composites]" ) {
     floats a = floats({1,2,3,4,5});
     floats b = floats({-1,1,-2,2,3});
     floats c1 = floats({0,0,0,0,0});
@@ -194,7 +194,7 @@ TEST_CASE( "Arithmetic operators must have idempotence for composites: the opera
 
 
 
-TEST_CASE( "Arithmetic operators must have identity for composites: a value exists that can be applied without effect", "[composites]" ) {
+TEST_CASE( "composite arithmetic must have an identity: a value exists that can be applied without effect", "[composites]" ) {
     floats a = floats({1,2,3,4,5});
     floats zeros = floats({0,0,0,0,0});
     floats ones  = floats({1,1,1,1,1});
@@ -204,11 +204,13 @@ TEST_CASE( "Arithmetic operators must have identity for composites: a value exis
         CHECK(a-zeros==a);
         CHECK(a*ones ==a);
         CHECK(a/ones ==a);
+        CHECK(a-a==zeros);
+        CHECK(a/a==ones );
     }
 }
 
 
-TEST_CASE( "Arithmetic operators must have commutativity for composites: values can be swapped to the same effect", "[composites]" ) {
+TEST_CASE( "composite arithmetic must have commutativity: values can be swapped to the same effect", "[composites]" ) {
     floats a = floats({1,2,3,4,5});
     floats b = floats({-1,1,-2,2,3});
 
@@ -221,27 +223,21 @@ TEST_CASE( "Arithmetic operators must have commutativity for composites: values 
 }
 
 
-TEST_CASE( "Arithmetic operators must have associativity for composites: operations can be applied in a different order to the same effect", "[composites]" ) {
+TEST_CASE( "composite arithmetic must have associativity: operations can be applied in a different order to the same effect", "[composites]" ) {
     floats a = floats({1,2,3,4,5});
     floats b = floats({-1,1,-2,2,3});
     floats c = floats({1,1,2,3,5});
 
-    SECTION("(a+b)+c must equal (a+c)+b"){
-        CHECK((a+b)+c==(a+c)+b);
+    SECTION("(a+b)+c must equal a+(b+c)"){
+        CHECK((a+b)+c==a+(b+c));
     }
-    SECTION("(a-b)-c must equal (a-c)-b"){
-        CHECK((a-b)-c==(a-c)-b);
-    }
-    SECTION("(a*b)*c must equal (a*c)*b"){
-        CHECK((a*b)*c==(a*c)*b);
-    }
-    SECTION("(a/b)/c must equal (a/c)/b"){
-        CHECK((a/b)/c==(a/c)/b);
+    SECTION("(a*b)*c must equal a*(b*c)"){
+        CHECK((a*b)*c==a*(b*c));
     }
 }
 
 
-TEST_CASE( "Arithmetic operators must have distributivity for composites: an operation can be distributed as values of another", "[composites]" ) {
+TEST_CASE( "composite arithmetic must have distributivity: an operation can be distributed as values of another", "[composites]" ) {
     floats a = floats({1,2,3,4,5});
     floats b = floats({-1,1,-2,2,3});
     floats c = floats({1,1,2,3,5});
@@ -249,8 +245,40 @@ TEST_CASE( "Arithmetic operators must have distributivity for composites: an ope
     SECTION("a+b must equal b+a"){
         CHECK((a+b)*c==(a*c+b*c));
     }
+    SECTION("a+b must equal b+a"){
+        CHECK((a+b)/c==(a/c+b/c));
+    }
 }
 
+
+TEST_CASE( "composite min/max must have associativity: operations can be applied in a different order to the same effect", "[composites]" ) {
+    floats a = floats({1,2,3,4,5});
+    floats b = floats({-1,1,-2,2,3});
+    floats c = floats({1,1,2,3,5});
+    floats min1 = floats({0,0,0,0,0});
+    floats min2 = floats({0,0,0,0,0});
+    floats max1 = floats({0,0,0,0,0});
+    floats max2 = floats({0,0,0,0,0});
+
+    SECTION("min(min(a,b),c) must equal min(a, min(b,c))"){
+        min(a,b,min1);
+        min(min1,c,min1);
+
+        min(b,c,min2);
+        min(a,min2,min2);
+
+        CHECK(min1 == min2);
+    }
+    SECTION("max(max(a,b),c) must equal max(a, max(b,c))"){
+        max(a,b,max1);
+        max(max1,c,max1);
+
+        max(b,c,max2);
+        max(a,max2,max2);
+
+        CHECK(max1 == max2);
+    }
+}
 
 TEST_CASE( "Must be able to test equivalence of rasters using the catch framework", "[rasters]" ) {
     float_raster ref       = float_raster(diamond, {1,2,3,4,5});
