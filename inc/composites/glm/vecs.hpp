@@ -11,52 +11,37 @@ namespace composites
 	template <length_t L, class T, qualifier Q>
 	void get_x(const many<vec<L,T,Q>>& a, many<T>& out )
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = a[i].x;
-		}
+		transform(a, [](vec<L,T,Q> ai){ return ai.x; }, out);
 	}
 
 	template <length_t L, class T, qualifier Q>
 	void get_y(const many<vec<L,T,Q>>& a, many<T>& out )
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = a[i].y;
-		}
+		transform(a, [](vec<L,T,Q> ai){ return ai.y; }, out);
 	}
 
 	template <length_t L, class T, qualifier Q>
 	void get_z(const many<vec<L,T,Q>>& a, many<T>& out )
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = a[i].z;
-		}
+		transform(a, [](vec<L,T,Q> ai){ return ai.z; }, out);
 	}
 
 	template <length_t L, class T, qualifier Q>
 	many<T> get_x(const many<vec<L,T,Q>>& a)
 	{
-		many<T> out(a.size());
-		get_x(a, out);
-		return out;
+		return transform(a, [](vec<L,T,Q> ai){ return ai.x; });
 	}
 
 	template <length_t L, class T, qualifier Q>
 	many<T> get_y(const many<vec<L,T,Q>>& a)
 	{
-		many<T> out(a.size());
-		get_y(a, out);
-		return out;
+		return transform(a, [](vec<L,T,Q> ai){ return ai.y; });
 	}
 
 	template <length_t L, class T, qualifier Q>
 	many<T> get_z(const many<vec<L,T,Q>>& a)
 	{
-		many<T> out(a.size());
-		get_z(a, out);
-		return out;
+		return transform(a, [](vec<L,T,Q> ai){ return ai.z; });
 	}
 
 	template <length_t L, class T, qualifier Q>

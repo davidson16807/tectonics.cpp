@@ -7,37 +7,37 @@ namespace composites
 
 	void unite(const many<bool>& a, const bool b, many<bool>& out)
 	{
-		transform(a, b, [](T ai, T2 bi){ return ai || bi; }, out);
+		transform(a, b, [](bool ai, bool bi){ return ai || bi; }, out);
 	}
 
 	void unite(const many<bool>& a, const many<bool>& b, many<bool>& out)
 	{
-		transform(a, b, [](T ai, T2 bi){ return ai || bi; }, out);
+		transform(a, b, [](bool ai, bool bi){ return ai || bi; }, out);
 	}
 
 	void intersect(const many<bool>& a, const bool b, many<bool>& out)
 	{
-		transform(a, b, [](T ai, T2 bi){ return ai && bi; }, out);
+		transform(a, b, [](bool ai, bool bi){ return ai && bi; }, out);
 	}
 
 	void intersect(const many<bool>& a, const many<bool>& b, many<bool>& out)
 	{
-		transform(a, b, [](T ai, T2 bi){ return ai && bi; }, out);
+		transform(a, b, [](bool ai, bool bi){ return ai && bi; }, out);
 	}
 
 	void differ(const many<bool>& a, const bool b, many<bool>& out)
 	{
-		transform(a, b, [](T ai, T2 bi){ return ai && !bi; }, out);
+		transform(a, b, [](bool ai, bool bi){ return ai && !bi; }, out);
 	}
 
 	void differ(const many<bool>& a, const many<bool>& b, many<bool>& out)
 	{
-		transform(a, b, [](T ai, T2 bi){ return ai && !bi; }, out);
+		transform(a, b, [](bool ai, bool bi){ return ai && !bi; }, out);
 	}
 
 	void negate(const many<bool>& a, many<bool>& out)
 	{
-		transform(a, [](T ai){ return !ai; }, out);
+		transform(a, [](bool ai){ return !ai; }, out);
 	}
 
 	bool all(const many<bool>& a)
@@ -81,37 +81,41 @@ namespace composites
 
 	inline many<bool> operator|(const many<bool>& a, const bool b)
 	{
-		return transform(a, b, [](T ai, T2 bi){ return ai || bi; });
+		return transform(a, b, [](bool ai, bool bi){ return ai || bi; });
 	}
 	inline many<bool> operator&(const many<bool>& a, const bool b)
 	{
-		return transform(a, b, [](T ai, T2 bi){ return ai && bi; });
+		return transform(a, b, [](bool ai, bool bi){ return ai && bi; });
 	}
 
 	inline many<bool> operator|(const many<bool>& a, const many<bool>& b)
 	{
-		return transform(a, b, [](T ai, T2 bi){ return ai || bi; });
+		return transform(a, b, [](bool ai, bool bi){ return ai || bi; });
 	}
 	inline many<bool> operator&(const many<bool>& a, const many<bool>& b)
 	{
-		return transform(a, b, [](T ai, T2 bi){ return ai && bi; });
+		return transform(a, b, [](bool ai, bool bi){ return ai && bi; });
 	}
 
 
 
 
 	inline many<bool>& operator|=(many<bool>& a, const bool b){
-		return transform(a, b, [](T ai, T2 bi){ return ai || bi; }, a);
+		transform(a, b, [](bool ai, bool bi){ return ai || bi; }, a);
+		return a;
 	}
 	inline many<bool>& operator&=(many<bool>& a, const bool b){
-		return transform(a, b, [](T ai, T2 bi){ return ai &&  bi; }, a);
+		transform(a, b, [](bool ai, bool bi){ return ai &&  bi; }, a);
+		return a;
 	}
 
 	inline many<bool>& operator|=(many<bool>& a, const many<bool>& b){
-		return transform(a, b, [](T ai, T2 bi){ return ai || bi; }, a);
+		transform(a, b, [](bool ai, bool bi){ return ai || bi; }, a);
+		return a;
 	}
 	inline many<bool>& operator&=(many<bool>& a, const many<bool>& b){
-		return transform(a, b, [](T ai, T2 bi){ return ai &&  bi; }, a);
+		transform(a, b, [](bool ai, bool bi){ return ai &&  bi; }, a);
+		return a;
 	}
 
 }

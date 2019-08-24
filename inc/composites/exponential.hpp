@@ -9,22 +9,18 @@ namespace composites
 	/// @param base Floating point value. pow function is defined for input values of 'base' defined in the range (inf-, inf+) in the limit of the type qualifier.
 	/// @param exponent Floating point value representing the 'exponent'.
 	template <class T>
-	void pow(const many<T>& base, const many<T>& exponent, many<T>& out)
+	inline void pow(const many<T>& base, const many<T>& exponent, many<T>& out)
 	{
-		return transform(base, exponent, std::pow, out);
+		transform(base, exponent, std::pow, out);
 	}
 	// TODO: vector variant
 	/// Returns the natural exponentiation of x, i.e., e^x.
 	///
 	/// @param a exp function is defined for input values of a defined in the range (inf-, inf+) in the limit of the type qualifier.
 	template <class T>
-	void exp(const many<T>& a, many<T>& out)
+	inline void exp(const many<T>& a, many<T>& out)
 	{
-		return transform(a, std::exp, out);
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = std::exp(a[i]);
-		}
+		transform(a, std::exp, out);
 	}
 
 	// TODO: vector variant
@@ -34,13 +30,9 @@ namespace composites
 	///
 	/// @param a log function is defined for input values of a defined in the range (0, inf+) in the limit of the type qualifier.
 	template <class T>
-	void log(const many<T>& a, many<T>& out)
+	inline void log(const many<T>& a, many<T>& out)
 	{
-		return transform(a, std::log, out);
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = std::log(a[i]);
-		}
+		transform(a, std::log, out);
 	}
 
 	// TODO: vector variant
@@ -48,9 +40,9 @@ namespace composites
 	///
 	/// @param a exp2 function is defined for input values of a defined in the range (inf-, inf+) in the limit of the type qualifier.
 	template <class T>
-	void exp2(const many<T>& a, many<T>& out)
+	inline void exp2(const many<T>& a, many<T>& out)
 	{
-		return transform(a, std::exp2, out);
+		transform(a, std::exp2, out);
 	}
 
 	// TODO: vector variant
@@ -59,9 +51,9 @@ namespace composites
 	///
 	/// @param a log2 function is defined for input values of a defined in the range (0, inf+) in the limit of the type qualifier.
 	template <class T>
-	void log2(const many<T>& a, many<T>& out)
+	inline void log2(const many<T>& a, many<T>& out)
 	{
-		return transform(a, std::log2, out);
+		transform(a, std::log2, out);
 	}
 
 	// TODO: vector variant
@@ -69,9 +61,9 @@ namespace composites
 	///
 	/// @param a sqrt function is defined for input values of a defined in the range [0, inf+) in the limit of the type qualifier.
 	template <class T>
-	void sqrt(const many<T>& a, many<T>& out)
+	inline void sqrt(const many<T>& a, many<T>& out)
 	{
-		return transform(a, std::sqrt, out);
+		transform(a, std::sqrt, out);
 	}
 
 	// TODO: vector variant
@@ -79,9 +71,9 @@ namespace composites
 	///
 	/// @param a inversesqrt function is defined for input values of a defined in the range [0, inf+) in the limit of the type qualifier.
 	template <class T>
-	void inversesqrt(const many<T>& a, many<T>& out)
+	inline void inversesqrt(const many<T>& a, many<T>& out)
 	{
-		return transform(a, [](T ai){ return 1./std::sqrt(a[i]); }, out);
+		transform(a, [](T ai){ return 1./std::sqrt(ai); }, out);
 	}
 }//namespace composites
 

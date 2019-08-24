@@ -1,11 +1,10 @@
 
 
 #define GLM_FORCE_PURE      // disable SIMD support for glm so we can work with webassembly
-#include <glm/vec3.hpp>               // *vec3
+#include <glm/glm.hpp>               // *vec3
 
-#include <composites/many.hpp>        //  floats, etc.
-#include <composites/common.hpp>      //  floats, etc.
-#include <composites/glm/vecs.hpp>    // *vec*s
+#include <composites/composites.hpp>  //  floats, etc.
+#include <composites/glm/glm.hpp>    // *vec*s
 
 #include "rasters/raster.hpp"         
 #include "rasters/glm/vec_raster.hpp"
@@ -100,27 +99,27 @@ int main(int argc, char const *argv[])
     // academics::tectonics::guess_plate_velocity(plate_mask, buoyancy, mantle_viscosity, result);
     std::cout << result << std::endl;
 
-    std::cout << diamond->voronoi->nearest_id(vec3(-1, 0, 0))        << std::endl;
+    // std::cout << diamond->voronoi->nearest_id(vec3(-1, 0, 0))        << std::endl;
 
-    std::cout << "voronoi test:" << std::endl;
+    // std::cout << "voronoi test:" << std::endl;
 
-    std::cout << voronoi_test.nearest_id(vec3(1))        << std::endl;
-    std::cout << voronoi_test.nearest_id(vec3(-1))       << std::endl;
-    std::cout << voronoi_test.nearest_id(vec3( 1, 0, 0)) << std::endl;
-    std::cout << voronoi_test.nearest_id(vec3( 0, 1, 0)) << std::endl;
-    std::cout << voronoi_test.nearest_id(vec3( 0, 0, 1)) << std::endl;
-    std::cout << voronoi_test.nearest_id(vec3(-1, 0, 0)) << std::endl;
-    std::cout << voronoi_test.nearest_id(vec3( 0,-1, 0)) << std::endl;
-    std::cout << voronoi_test.nearest_id(vec3( 0, 0,-1)) << std::endl;
-    std::cout << voronoi_test.nearest_id(vec3(-1,-1,-1)) << std::endl;
-    std::cout << voronoi_test.nearest_id(vec3( 1,-1,-1)) << std::endl;
-    std::cout << voronoi_test.nearest_id(vec3(-1, 1,-1)) << std::endl;
-    std::cout << voronoi_test.nearest_id(vec3( 1, 1,-1)) << std::endl;
-    std::cout << voronoi_test.nearest_id(vec3(-1,-1, 1)) << std::endl;
-    std::cout << voronoi_test.nearest_id(vec3( 1,-1, 1)) << std::endl;
-    std::cout << voronoi_test.nearest_id(vec3(-1, 1, 1)) << std::endl;
-    std::cout << voronoi_test.nearest_id(vec3( 1, 1, 1)) << std::endl;
-    std::cout << voronoi_test.nearest_id(vec3( 1, 1, 1)) << std::endl;
+    // std::cout << voronoi_test.nearest_id(vec3(1))        << std::endl;
+    // std::cout << voronoi_test.nearest_id(vec3(-1))       << std::endl;
+    // std::cout << voronoi_test.nearest_id(vec3( 1, 0, 0)) << std::endl;
+    // std::cout << voronoi_test.nearest_id(vec3( 0, 1, 0)) << std::endl;
+    // std::cout << voronoi_test.nearest_id(vec3( 0, 0, 1)) << std::endl;
+    // std::cout << voronoi_test.nearest_id(vec3(-1, 0, 0)) << std::endl;
+    // std::cout << voronoi_test.nearest_id(vec3( 0,-1, 0)) << std::endl;
+    // std::cout << voronoi_test.nearest_id(vec3( 0, 0,-1)) << std::endl;
+    // std::cout << voronoi_test.nearest_id(vec3(-1,-1,-1)) << std::endl;
+    // std::cout << voronoi_test.nearest_id(vec3( 1,-1,-1)) << std::endl;
+    // std::cout << voronoi_test.nearest_id(vec3(-1, 1,-1)) << std::endl;
+    // std::cout << voronoi_test.nearest_id(vec3( 1, 1,-1)) << std::endl;
+    // std::cout << voronoi_test.nearest_id(vec3(-1,-1, 1)) << std::endl;
+    // std::cout << voronoi_test.nearest_id(vec3( 1,-1, 1)) << std::endl;
+    // std::cout << voronoi_test.nearest_id(vec3(-1, 1, 1)) << std::endl;
+    // std::cout << voronoi_test.nearest_id(vec3( 1, 1, 1)) << std::endl;
+    // std::cout << voronoi_test.nearest_id(vec3( 1, 1, 1)) << std::endl;
 
 
     return 0;

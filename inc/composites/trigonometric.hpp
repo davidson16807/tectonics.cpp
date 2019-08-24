@@ -15,16 +15,16 @@ namespace composites
 	template <class T>
 	void radians(const many<T>& degrees, many<T>& out)
 	{
-		T conversion_factor = M_PI/180.;
-		return transform(a, [](T ai){ return conversion_factor * ai; }, out);
+		T conversion_factor(M_PI/180.);
+		return transform(degrees, [conversion_factor](T degreesi){ return conversion_factor * degreesi; }, out);
 	}
 
 	/// Converts degrees to radians and returns the result.
 	template <class T>
 	void degrees(const many<T>& radians, many<T>& out)
 	{
-		T conversion_factor = 180./M_PI;
-		return transform(a, [](T ai){ return conversion_factor * ai; }, out);
+		T conversion_factor(180./M_PI);
+		return transform(radians, [conversion_factor](T radiansi){ return conversion_factor * radiansi; }, out);
 	}
 
 	/// The standard trigonometric sine function.

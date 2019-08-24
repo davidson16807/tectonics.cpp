@@ -12,30 +12,21 @@ namespace composites
 	template <length_t L, typename T, qualifier Q>
 	void abs(const many<vec<L,T,Q>>& a, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = glm::abs(a[i]);
-		}
+		transform(a, glm::abs, out);
 	}
 
 	/// Returns 1.0 if x > 0, 0.0 if x == 0, or -1.0 if x < 0.
 	template <length_t L, typename T, qualifier Q, class Tout>
 	void sign(const many<vec<L,T,Q>>& a, many<Tout>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = glm::abs(a[i]);
-		}
+		transform(a, glm::sign, out);
 	}
 
 	/// Returns a value equal to the nearest integer that is less then or equal to x.
 	template <length_t L, typename T, qualifier Q>
 	void floor(const many<vec<L,T,Q>>& a, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = glm::floor(a[i]);
-		}
+		transform(a, glm::floor, out);
 	}
 
 	/// Returns a value equal to the nearest integer to x
@@ -43,10 +34,7 @@ namespace composites
 	template <length_t L, typename T, qualifier Q>
 	void trunc(const many<vec<L,T,Q>>& a, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = glm::trunc(a[i]);
-		}
+		transform(a, glm::trunc, out);
 	}
 
 	/// Returns a value equal to the nearest integer to x.
@@ -57,10 +45,7 @@ namespace composites
 	template <length_t L, typename T, qualifier Q>
 	void round(const many<vec<L,T,Q>>& a, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = glm::round(a[i]);
-		}
+		transform(a, glm::round, out);
 	}
 
 	/// Returns a value equal to the nearest integer
@@ -68,20 +53,14 @@ namespace composites
 	template <length_t L, typename T, qualifier Q>
 	void ceil(const many<vec<L,T,Q>>& a, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = glm::ceil(a[i]);
-		}
+		transform(a, glm::ceil, out);
 	}
 
 	/// Return x - floor(x).
 	template <length_t L, typename T, qualifier Q>
 	void fract(const many<vec<L,T,Q>>& a, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = a[i] - glm::floor(a[i]);
-		}
+		transform(a, glm::floor, out);
 	}
 
 	/// Modulus. Returns x - y * floor(x / y)
@@ -89,10 +68,7 @@ namespace composites
 	template <length_t L, typename T, qualifier Q>
 	void mod(const many<vec<L,T,Q>>& a, const many<vec<L,T,Q>>& b, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = glm::mod(a, b);
-		}
+		transform(a, b, glm::mod, out);
 	}
 
 	/// Returns the fractional part of x and sets i to the integer
@@ -105,7 +81,7 @@ namespace composites
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			fractout[i] = a[i] % 1.;
-			// intout[i] = vec<L,int,Q>(a[i]-fractout[i]);
+			intout[i] = vec<L,int,Q>(a[i]-fractout[i]);
 		}
 	}
 
@@ -113,18 +89,12 @@ namespace composites
 	template <length_t L, typename T, qualifier Q>
 	void min(const many<vec<L,T,Q>>& a, const many<vec<L,T,Q>>& b, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = glm::min(a[i], b[i]);
-		}
+		transform(a, b, glm::min, out);
 	}
 	template <length_t L, typename T, qualifier Q>
 	void min(const many<vec<L,T,Q>>& a, const vec<L,T,Q> b, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = glm::min(a[i], b[i]);
-		}
+		transform(a, b, glm::min, out);
 	}
 	template <length_t L, typename T, qualifier Q>
 	vec<L,T,Q> min(const many<vec<L,T,Q>>& a)
@@ -140,19 +110,13 @@ namespace composites
 	template <length_t L, typename T, qualifier Q>
 	void max(const many<vec<L,T,Q>>& a, const many<vec<L,T,Q>>& b, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = glm::max(a[i], b[i]);
-		}
+		transform(a, b, glm::max, out);
 	}
 	/// Returns y if y < x; otherwise, it returns x.
 	template <length_t L, typename T, qualifier Q>
 	void max(const many<vec<L,T,Q>>& a, const vec<L,T,Q> b, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = glm::max(a[i], b[i]);
-		}
+		transform(a, b, glm::max, out);
 	}
 	template <length_t L, typename T, qualifier Q>
 	vec<L,T,Q> max(const many<vec<L,T,Q>>& a)
@@ -170,34 +134,22 @@ namespace composites
 	template <length_t L, typename T, qualifier Q>
 	void clamp(const many<vec<L,T,Q>>& a, const vec<L,T,Q> lo, const vec<L,T,Q> hi, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = glm::clamp(a[i], lo, hi);
-		}
+		transform(a, lo, hi, glm::clamp, out);
 	}
 	template <length_t L, typename T, qualifier Q>
 	void clamp(const many<vec<L,T,Q>>& a, const vec<L,T,Q> lo, const many<vec<L,T,Q>>& hi, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = glm::clamp(a[i], lo, hi[i]);
-		}
+		transform(a, lo, hi, glm::clamp, out);
 	}
 	template <length_t L, typename T, qualifier Q>
 	void clamp(const many<vec<L,T,Q>>& a, const many<vec<L,T,Q>>& lo, const vec<L,T,Q> hi, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = glm::clamp(a[i], lo[i], hi);
-		}
+		transform(a, lo, hi, glm::clamp, out);
 	}
 	template <length_t L, typename T, qualifier Q>
 	void clamp(const many<vec<L,T,Q>>& a, const many<vec<L,T,Q>>& lo, const many<vec<L,T,Q>>& hi, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = glm::clamp(a[i], lo[i], hi[i]);
-		}
+		transform(a, lo, hi, glm::clamp, out);
 	}
 
 
@@ -225,58 +177,37 @@ namespace composites
 	template <length_t L, typename T, qualifier Q>
 	void mix(const many<vec<L,T,Q>>& x, const many<vec<L,T,Q>>& y, const many<T>& a, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] = glm::mix(x[i], y[i], a[i]);
-		}
+		transform(x, y, a, glm::mix, out);
 	}
 	template <length_t L, typename T, qualifier Q>
 	void mix(const many<vec<L,T,Q>>& x, const many<vec<L,T,Q>>& y, const T a, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] = glm::mix(x[i], y[i], a);
-		}
+		transform(x, y, a, glm::mix, out);
 	}
 	template <length_t L, typename T, qualifier Q>
 	void mix(const many<vec<L,T,Q>>& x, const vec<L,T,Q> y, const many<T>& a, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] = glm::mix(x[i], y, a[i]);
-		}
+		transform(x, y, a, glm::mix, out);
 	}
 	template <length_t L, typename T, qualifier Q>
 	void mix(const many<vec<L,T,Q>>& x, const vec<L,T,Q> y, const T a, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] = glm::mix(x[i], y, a);
-		}
+		transform(x, y, a, glm::mix, out);
 	}
 	template <length_t L, typename T, qualifier Q>
 	void mix(const vec<L,T,Q> x, const many<vec<L,T,Q>>& y, const many<T>& a, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < y.size(); ++i)
-		{
-			out[i] = glm::mix(x, y[i], a[i]);
-		}
+		transform(x, y, a, glm::mix, out);
 	}
 	template <length_t L, typename T, qualifier Q>
 	void mix(const vec<L,T,Q> x, const many<vec<L,T,Q>>& y, const T a, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < y.size(); ++i)
-		{
-			out[i] = glm::mix(x, y[i], a);
-		}
+		transform(x, y, a, glm::mix, out);
 	}
 	template <length_t L, typename T, qualifier Q>
 	void mix(const vec<L,T,Q> x, const vec<L,T,Q> y, const many<T>& a, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = glm::mix(x, y, a[i]);
-		}
+		transform(x, y, a, glm::mix, out);
 	}
 
 
@@ -285,58 +216,37 @@ namespace composites
 	template <length_t L, typename T, qualifier Q>
 	void mix(const many<vec<L,T,Q>>& x, const many<vec<L,T,Q>>& y, const many<vec<L,T,Q>>& a, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] = glm::mix(x[i], y[i], a[i]);
-		}
+		transform(x, y, a, glm::mix, out);
 	}
 	template <length_t L, typename T, qualifier Q>
 	void mix(const many<vec<L,T,Q>>& x, const many<vec<L,T,Q>>& y, const vec<L,T,Q> a, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] = glm::mix(x[i], y[i], a);
-		}
+		transform(x, y, a, glm::mix, out);
 	}
 	template <length_t L, typename T, qualifier Q>
 	void mix(const many<vec<L,T,Q>>& x, const vec<L,T,Q> y, const many<vec<L,T,Q>>& a, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] = glm::mix(x[i], y, a[i]);
-		}
+		transform(x, y, a, glm::mix, out);
 	}
 	template <length_t L, typename T, qualifier Q>
 	void mix(const many<vec<L,T,Q>>& x, const vec<L,T,Q> y, const vec<L,T,Q> a, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] = glm::mix(x[i], y, a);
-		}
+		transform(x, y, a, glm::mix, out);
 	}
 	template <length_t L, typename T, qualifier Q>
 	void mix(const vec<L,T,Q> x, const many<vec<L,T,Q>>& y, const many<vec<L,T,Q>>& a, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < y.size(); ++i)
-		{
-			out[i] = glm::mix(x, y[i], a[i]);
-		}
+		transform(x, y, a, glm::mix, out);
 	}
 	template <length_t L, typename T, qualifier Q>
 	void mix(const vec<L,T,Q> x, const many<vec<L,T,Q>>& y, const vec<L,T,Q> a, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < y.size(); ++i)
-		{
-			out[i] = glm::mix(x, y[i], a);
-		}
+		transform(x, y, a, glm::mix, out);
 	}
 	template <length_t L, typename T, qualifier Q>
 	void mix(const vec<L,T,Q> x, const vec<L,T,Q> y, const many<vec<L,T,Q>>& a, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = glm::mix(x, y, a[i]);
-		}
+		transform(x, y, a, glm::mix, out);
 	}
 
 
@@ -346,26 +256,17 @@ namespace composites
 	template<length_t L, typename T, qualifier Q>
 	void step(const many<vec<L,T,Q>>& edge, const many<vec<L,T,Q>>&  x, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < edge.size(); ++i)
-		{
-			out[i] = glm::step(edge[i], x[i]);
-		}
+		transform(edge, x, glm::step, out);
 	}
 	template<length_t L, typename T, qualifier Q>
 	void step(const many<vec<L,T,Q>>&  edge, const vec<L,T,Q> x, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < edge.size(); ++i)
-		{
-			out[i] = glm::step(edge[i], x);
-		}
+		transform(edge, x, glm::step, out);
 	}
 	template<length_t L, typename T, qualifier Q>
 	void step(const vec<L,T,Q> edge, const many<vec<L,T,Q>>&  x, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] = glm::step(edge, x[i]);
-		}
+		transform(edge, x, glm::step, out);
 	}
 
 	/// Returns 0.0 if x <= lo and 1.0 if x >= hi and
@@ -380,59 +281,37 @@ namespace composites
 	template<length_t L, typename T, qualifier Q>
 	void smoothstep(const many<vec<L,T,Q>>& lo, const many<vec<L,T,Q>>& hi, const many<vec<L,T,Q>>& x, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] = glm::smoothstep(lo[i], hi[i], x[i]);
-		}
+		transform(lo, hi, x, glm::smoothstep, out);
 	}
 	template<length_t L, typename T, qualifier Q>
 	void smoothstep(const vec<L,T,Q> lo, const many<vec<L,T,Q>>& hi, const many<vec<L,T,Q>>& x, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] = glm::smoothstep(lo, hi[i], x[i]);
-		}
+		transform(lo, hi, x, glm::smoothstep, out);
 	}
 	template<length_t L, typename T, qualifier Q>
 	void smoothstep(const many<vec<L,T,Q>>& lo, vec<L,T,Q> hi, const many<vec<L,T,Q>>& x, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] = glm::smoothstep(lo[i], hi, x[i]);
-		}
+		transform(lo, hi, x, glm::smoothstep, out);
 	}
 	template<length_t L, typename T, qualifier Q>
 	void smoothstep(const vec<L,T,Q> lo, const vec<L,T,Q> hi, const many<vec<L,T,Q>>& x, many<vec<L,T,Q>>& out)
 	{
-		vec<L,T,Q> range = hi-lo;
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] = glm::smoothstep(lo, hi, x[i]);
-		}
+		transform(lo, hi, x, glm::smoothstep, out);
 	}
 	template<length_t L, typename T, qualifier Q>
 	void smoothstep(const many<vec<L,T,Q>>& lo, const many<vec<L,T,Q>>& hi, const vec<L,T,Q> x, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < hi.size(); ++i)
-		{
-			out[i] = glm::smoothstep(lo[i], hi[i], x);
-		}
+		transform(lo, hi, x, glm::smoothstep, out);
 	}
 	template<length_t L, typename T, qualifier Q>
 	void smoothstep(const vec<L,T,Q> lo, const many<vec<L,T,Q>>& hi, const vec<L,T,Q> x, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < hi.size(); ++i)
-		{
-			out[i] = glm::smoothstep(lo, hi[i], x);
-		}
+		transform(lo, hi, x, glm::smoothstep, out);
 	}
 	template<length_t L, typename T, qualifier Q>
 	void smoothstep(const many<vec<L,T,Q>>& lo, const vec<L,T,Q> hi, const vec<L,T,Q> x, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < lo.size(); ++i)
-		{
-			out[i] = glm::smoothstep(lo[i], hi, x);
-		}
+		transform(lo, hi, x, glm::smoothstep, out);
 	}
 
 	/// Returns true if x holds a NaN (not a number)
@@ -443,10 +322,7 @@ namespace composites
 	template<length_t L, typename T, qualifier Q>
 	void isnan(const many<vec<L,T,Q>>&  x, many<bool>& out)
 	{
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] = glm::isnan(x[i]);
-		}
+		transform(x, glm::isnan, out);
 	}
 
 	/// Returns true if x holds a positive infinity or negative
@@ -457,69 +333,44 @@ namespace composites
 	template<length_t L, typename T, qualifier Q>
 	void isinf(const many<vec<L,T,Q>>&  x, many<bool>& out)
 	{
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] = glm::isinf(x[i]);
-		}
+		transform(x, glm::isinf, out);
 	}
 
 	/// Computes and returns a * b + c.
 	template<length_t L, typename T, qualifier Q>
 	void fma(const many<vec<L,T,Q>>& a, const many<vec<L,T,Q>>& b, const many<vec<L,T,Q>>& c, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < c.size(); ++i)
-		{
-			out[i] = glm::fma(a[i], b[i], c[i]);
-		}
+		transform(a, b, c, glm::fma, out);
 	}
 	template<length_t L, typename T, qualifier Q>
 	void fma(const vec<L,T,Q> a, const many<vec<L,T,Q>>& b, const many<vec<L,T,Q>>& c, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < c.size(); ++i)
-		{
-			out[i] = glm::fma(a, b[i], c[i]);
-		}
+		transform(a, b, c, glm::fma, out);
 	}
 	template<length_t L, typename T, qualifier Q>
 	void fma(const many<vec<L,T,Q>>& a, vec<L,T,Q> b, const many<vec<L,T,Q>>& c, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < c.size(); ++i)
-		{
-			out[i] = glm::fma(a[i], b, c[i]);
-		}
+		transform(a, b, c, glm::fma, out);
 	}
 	template<length_t L, typename T, qualifier Q>
 	void fma(const vec<L,T,Q> a, const vec<L,T,Q> b, const many<vec<L,T,Q>>& c, many<vec<L,T,Q>>& out)
 	{
-		vec<L,T,Q> ab = a*b;
-		for (unsigned int i = 0; i < c.size(); ++i)
-		{
-			out[i] = glm::fma(a, b, c[i]);
-		}
+		transform(a, b, c, glm::fma, out);
 	}
 	template<length_t L, typename T, qualifier Q>
 	void fma(const many<vec<L,T,Q>>& a, const many<vec<L,T,Q>>& b, const vec<L,T,Q> c, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < b.size(); ++i)
-		{
-			out[i] = glm::fma(a[i], b[i], c);
-		}
+		transform(a, b, c, glm::fma, out);
 	}
 	template<length_t L, typename T, qualifier Q>
 	void fma(const vec<L,T,Q> a, const many<vec<L,T,Q>>& b, const vec<L,T,Q> c, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < b.size(); ++i)
-		{
-			out[i] = glm::fma(a, b[i], c);
-		}
+		transform(a, b, c, glm::fma, out);
 	}
 	template<length_t L, typename T, qualifier Q>
 	void fma(const many<vec<L,T,Q>>& a, const vec<L,T,Q> b, const vec<L,T,Q> c, many<vec<L,T,Q>>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = glm::fma(a[i], b, c);
-		}
+		transform(a, b, c, glm::fma, out);
 	}
 
 //	/// Returns a signed integer value representing

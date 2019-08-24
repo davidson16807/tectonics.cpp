@@ -10,21 +10,21 @@ namespace composites
 	template <class T>
 	void abs(const many<T>& a, many<T>& out)
 	{
-		return transform(a, [](T ai){ return ai >= 0? ai : -ai; }, out);
+		transform(a, [](T ai){ return ai >= 0? ai : -ai; }, out);
 	}
 
 	/// Returns 1.0 if x > 0, 0.0 if x == 0, or -1.0 if x < 0.
 	template <class T, class Tout>
 	void sign(const many<T>& a, many<Tout>& out)
 	{
-		return transform(a, [](T ai){ return (T(0) < ai) - (ai < T(0)); }, out);
+		transform(a, [](T ai){ return (T(0) < ai) - (ai < T(0)); }, out);
 	}
 
 	/// Returns a value equal to the nearest integer that is less then or equal to x.
 	template <class T>
 	void floor(const many<T>& a, many<T>& out)
 	{
-		return transform(a, std::floor, out);
+		transform(a, std::floor, out);
 	}
 
 	/// Returns a value equal to the nearest integer to x
@@ -32,7 +32,7 @@ namespace composites
 	template <class T>
 	void trunc(const many<T>& a, many<T>& out)
 	{
-		return transform(a, std::trunc, out);
+		transform(a, std::trunc, out);
 	}
 
 	/// Returns a value equal to the nearest integer to x.
@@ -43,7 +43,7 @@ namespace composites
 	template <class T>
 	void round(const many<T>& a, many<T>& out)
 	{
-		return transform(a, std::round, out);
+		transform(a, std::round, out);
 	}
 
 	/// Returns a value equal to the nearest integer
@@ -51,14 +51,14 @@ namespace composites
 	template <class T>
 	void ceil(const many<T>& a, many<T>& out)
 	{
-		return transform(a, std::ceil, out);
+		transform(a, std::ceil, out);
 	}
 
 	/// Return x - floor(x).
 	template <class T>
 	void fract(const many<T>& a, many<T>& out)
 	{
-		return transform(a, [](T ai){ return ai - std::floor(ai); }, out);
+		transform(a, [](T ai){ return ai - std::floor(ai); }, out);
 	}
 
 	/// Modulus. Returns x - y * floor(x / y)
@@ -66,7 +66,7 @@ namespace composites
 	template <class T>
 	void mod(const many<T>& a, const many<T>& b, many<T>& out)
 	{
-		return transform(a, b, [](T ai, T bi){ return ai - bi * std::floor(ai / bi); }, out);
+		transform(a, b, [](T ai, T bi){ return ai - bi * std::floor(ai / bi); }, out);
 	}
 
 	/// Returns the fractional part of x and sets i to the integer
@@ -87,12 +87,12 @@ namespace composites
 	template <class T>
 	void min(const many<T>& a, const many<T>& b, many<T>& out)
 	{
-		return transform(a, b, [](T ai, T bi){ return ai < bi? ai : bi; }, out);
+		transform(a, b, [](T ai, T bi){ return ai < bi? ai : bi; }, out);
 	}
 	template <class T>
 	void min(const many<T>& a, const T b, many<T>& out)
 	{
-		return transform(a, b, [](T ai, T bi){ return ai < bi? ai : bi; }, out);
+		transform(a, b, [](T ai, T bi){ return ai < bi? ai : bi; }, out);
 	}
 
 	// component-wise min
@@ -115,12 +115,12 @@ namespace composites
 	template <class T>
 	void max(const many<T>& a, const many<T>& b, many<T>& out)
 	{
-		return transform(a, b, [](T ai, T bi){ return ai > bi? ai : bi; }, out);
+		transform(a, b, [](T ai, T bi){ return ai > bi? ai : bi; }, out);
 	}
 	template <class T>
 	void max(const many<T>& a, const T b, many<T>& out)
 	{
-		return transform(a, b, [](T ai, T bi){ return ai > bi? ai : bi; }, out);
+		transform(a, b, [](T ai, T bi){ return ai > bi? ai : bi; }, out);
 	}
 	// component-wise max
 	template <class T>
@@ -143,23 +143,23 @@ namespace composites
 	template <class T>
 	void clamp(const many<T>& a, const T lo, const T hi, many<T>& out)
 	{
-		return transform(a, lo, hi, [](T ai, T loi, T hii){ return ai > hii? hii : ai < loi? loi : ai; }, out);
+		transform(a, lo, hi, [](T ai, T loi, T hii){ return ai > hii? hii : ai < loi? loi : ai; }, out);
 	}
 	template <class T>
 	void clamp(const many<T>& a, const T lo, const many<T>& hi, many<T>& out)
 	{
-		return transform(a, lo, hi, [](T ai, T loi, T hii){ return ai > hii? hii : ai < loi? loi : ai; }, out);
+		transform(a, lo, hi, [](T ai, T loi, T hii){ return ai > hii? hii : ai < loi? loi : ai; }, out);
 	}
 	template <class T>
 	void clamp(const many<T>& a, const many<T>& lo, const T hi, many<T>& out)
 	{
-		return transform(a, lo, hi, [](T ai, T loi, T hii){ return ai > hii? hii : ai < loi? loi : ai; }, out);
+		transform(a, lo, hi, [](T ai, T loi, T hii){ return ai > hii? hii : ai < loi? loi : ai; }, out);
 	}
 	template <class T>
 	void clamp(const many<T>& a, const many<T>& lo, const many<T>& hi, many<T>& out)
 	{
-		return transform(a,   hi, [](T ai, T hii){ return ai > hii? hii : ai; }, out);
-		return transform(out, lo, [](T ai, T loi){ return ai < loi? loi : ai; }, out);
+		transform(a,   hi, [](T ai, T hii){ return ai > hii? hii : ai; }, out);
+		transform(out, lo, [](T ai, T loi){ return ai < loi? loi : ai; }, out);
 	}
 
 
@@ -273,26 +273,17 @@ namespace composites
 	template<typename T>
 	void step(const many<T>& edge, const many<T>&  x, many<T>& out)
 	{
-		for (unsigned int i = 0; i < edge.size(); ++i)
-		{
-			out[i] = x[i] < edge[i]? 0.0 : 1.0;
-		}
+		transform(edge, x, [](T edgei, T xi){ return xi < edgei? T(0) : T(1); }, out); 
 	}
 	template<typename T>
 	void step(const many<T>&  edge, const T x, many<T>& out)
 	{
-		for (unsigned int i = 0; i < edge.size(); ++i)
-		{
-			out[i] = x < edge[i]? 0.0 : 1.0;
-		}
+		transform(edge, x, [](T edgei, T xi){ return xi < edgei? T(0) : T(1); }, out); 
 	}
 	template<typename T>
 	void step(const T edge, const many<T>&  x, many<T>& out)
 	{
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] = x[i] < edge? 0.0 : 1.0;
-		}
+		transform(edge, x, [](T edgei, T xi){ return xi < edgei? T(0) : T(1); }, out); 
 	}
 
 	/// Returns 0.0 if x <= lo and 1.0 if x >= hi and
@@ -307,59 +298,38 @@ namespace composites
 	template<typename T>
 	void smoothstep(const many<T>& lo, const many<T>& hi, const many<T>& x, many<T>& out)
 	{
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] = x[i] <= lo[i]? T(0) : x[i] >= hi[i]? T(1) : ((x[i]-lo[i]) / (hi[i]-lo[i]));
-		}
+		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
 	}
 	template<typename T>
 	void smoothstep(const T lo, const many<T>& hi, const many<T>& x, many<T>& out)
 	{
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] = x[i] <= lo? T(0) : x[i] >= hi[i]? T(1) : ((x[i]-lo) / (hi[i]-lo));
-		}
+		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
 	}
 	template<typename T>
 	void smoothstep(const many<T>& lo, T hi, const many<T>& x, many<T>& out)
 	{
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] = x[i] <= lo[i]? T(0) : x[i] >= hi? T(1) : ((x[i]-lo[i]) / (hi-lo[i]));
-		}
+		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
 	}
 	template<typename T>
 	void smoothstep(const T lo, const T hi, const many<T>& x, many<T>& out)
 	{
 		T range = hi-lo;
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] = x[i] <= lo? T(0) : x[i] >= hi? T(1) : ((x[i]-lo) / range);
-		}
+		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
 	}
 	template<typename T>
 	void smoothstep(const many<T>& lo, const many<T>& hi, const T x, many<T>& out)
 	{
-		for (unsigned int i = 0; i < hi.size(); ++i)
-		{
-			out[i] = x <= lo[i]? T(0) : x >= hi[i]? T(1) : ((x-lo[i]) / (hi[i]-lo[i]));
-		}
+		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
 	}
 	template<typename T>
 	void smoothstep(const T lo, const many<T>& hi, const T x, many<T>& out)
 	{
-		for (unsigned int i = 0; i < hi.size(); ++i)
-		{
-			out[i] = x <= lo? T(0) : x >= hi[i]? T(1) : ((x-lo) / (hi[i]-lo));
-		}
+		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
 	}
 	template<typename T>
 	void smoothstep(const many<T>& lo, const T hi, const T x, many<T>& out)
 	{
-		for (unsigned int i = 0; i < lo.size(); ++i)
-		{
-			out[i] = x <= lo[i]? T(0) : x >= hi? T(1) : ((x-lo[i]) / (hi-lo[i]));
-		}
+		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
 	}
 
 	/// Returns true if x holds a NaN (not a number)
@@ -370,11 +340,7 @@ namespace composites
 	template<typename T>
 	void isnan(const many<T>&  x, many<bool>& out)
 	{
-		return transform(x, std::isinf, out);
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] = std::isnan(x[i]);
-		}
+		transform(x, std::isnan, out);
 	}
 
 	/// Returns true if x holds a positive infinity or negative
@@ -385,66 +351,44 @@ namespace composites
 	template<typename T>
 	void isinf(const many<T>&  x, many<bool>& out)
 	{
-		return transform(x, std::isinf, out);
+		transform(x, std::isinf, out);
 	}
 
 	/// Computes and returns a * b + c.
 	template<typename T>
 	void fma(const many<T>& a, const many<T>& b, const many<T>& c, many<T>& out)
 	{
-		for (unsigned int i = 0; i < c.size(); ++i)
-		{
-			out[i] = a[i] * b[i] + c[i];
-		}
+		transform(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
 	}
 	template<typename T>
 	void fma(const T a, const many<T>& b, const many<T>& c, many<T>& out)
 	{
-		for (unsigned int i = 0; i < c.size(); ++i)
-		{
-			out[i] = a * b[i] + c[i];
-		}
+		transform(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
 	}
 	template<typename T>
 	void fma(const many<T>& a, T b, const many<T>& c, many<T>& out)
 	{
-		for (unsigned int i = 0; i < c.size(); ++i)
-		{
-			out[i] = a[i] * b + c[i];
-		}
+		transform(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
 	}
 	template<typename T>
 	void fma(const T a, const T b, const many<T>& c, many<T>& out)
 	{
-		T ab = a*b;
-		for (unsigned int i = 0; i < c.size(); ++i)
-		{
-			out[i] = b + c[i];
-		}
+		transform(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
 	}
 	template<typename T>
 	void fma(const many<T>& a, const many<T>& b, const T c, many<T>& out)
 	{
-		for (unsigned int i = 0; i < b.size(); ++i)
-		{
-			out[i] = a[i] * b[i] + c;
-		}
+		transform(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
 	}
 	template<typename T>
 	void fma(const T a, const many<T>& b, const T c, many<T>& out)
 	{
-		for (unsigned int i = 0; i < b.size(); ++i)
-		{
-			out[i] = a * b[i] + c;
-		}
+		transform(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
 	}
 	template<typename T>
 	void fma(const many<T>& a, const T b, const T c, many<T>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = a[i] * b + c;
-		}
+		transform(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
 	}
 
 //	/// Returns a signed integer value representing

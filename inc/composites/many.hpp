@@ -23,10 +23,10 @@ namespace composites
 	//      This can be a very good thing if all you want to do is work with the containers they provide.
 	//      However in our case, we want to create a custom "raster" class that behaves as an xtensor would while storing an additional
 	//       attribute that references the grid being used. 
-	//      Doing this with xtensor would require intimate interaction with xtensor's xtensor<T> and xexpression<T> classes. 
+	//      Doing so xtensor would require intimate interaction with xtensor's xtensor<T> and xexpression<T> classes, a painful proposition. 
 	//      Furthermore, xtensor draws inspiration with numpy and so working with it would either require switching between glm and numpy mindsets
 	//       or developing a new library extension to allow for interaction between xtensor datastructures and glm functionality. 
-	//      We instead choose to work with a much more simple solution that is easier to reason with. 
+	//      We instead choose to work with a much more simple solution that is easier to reason with and work with other systems. 
 	//
 	// Q: Why do we use std::vector internally?
 	// A: The functions and operators that use many<T> could effectively be reimplemented using std::vector<T>, 

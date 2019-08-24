@@ -8,110 +8,28 @@ namespace composites
 {
 	using namespace glm;
 
-	// template<length_t L, typename T, qualifier Q>
-	// void greaterThan(const many<vec<L,T,Q>>& a, const T b, many<vec<L,bool,defaultp>>& out)
-	// {
-	// 	for (unsigned int i = 0; i < a.size(); ++i)
-	// 	{
-	// 		out[i] = glm::greaterThan(a[i], b);
-	// 	}
-	// }
-	// template<length_t L, typename T, qualifier Q>
-	// void greaterThanEqual(const many<vec<L,T,Q>>& a, const T b, many<vec<L,bool,defaultp>>& out)
-	// {
-	// 	for (unsigned int i = 0; i < a.size(); ++i)
-	// 	{
-	// 		out[i] = glm::greaterThanEqual(a[i], b);
-	// 	}
-	// }
-	// template<length_t L, typename T, qualifier Q>
-	// void lessThan(const many<vec<L,T,Q>>& a, const T b, many<vec<L,bool,defaultp>>& out)
-	// {
-	// 	for (unsigned int i = 0; i < a.size(); ++i)
-	// 	{
-	// 		out[i] = glm::lessThan(a[i], b);
-	// 	}
-	// }
-	// template<length_t L, typename T, qualifier Q>
-	// void lessThanEqual(const many<vec<L,T,Q>>& a, const T b, many<vec<L,bool,defaultp>>& out)
-	// {
-	// 	for (unsigned int i = 0; i < a.size(); ++i)
-	// 	{
-	// 		out[i] = glm::lessThanEqual(a[i], b);
-	// 	}
-	// }
-
-
-
-
-
-	// template<length_t L, typename T, qualifier Q>
-	// void greaterThan(const many<vec<L,T,Q>>& a, const many<T> b, many<vec<L,bool,defaultp>>& out)
-	// {
-	// 	for (unsigned int i = 0; i < a.size(); ++i)
-	// 	{
-	// 		out[i] = glm::greaterThan(a[i], b[i]);
-	// 	}
-	// }
-	// template<length_t L, typename T, qualifier Q>
-	// void greaterThanEqual(const many<vec<L,T,Q>>& a, const many<T> b, many<vec<L,bool,defaultp>>& out)
-	// {
-	// 	for (unsigned int i = 0; i < a.size(); ++i)
-	// 	{
-	// 		out[i] = glm::greaterThanEqual(a[i], b[i]);
-	// 	}
-	// }
-	// template<length_t L, typename T, qualifier Q>
-	// void lessThan(const many<vec<L,T,Q>>& a, const many<T> b, many<vec<L,bool,defaultp>>& out)
-	// {
-	// 	for (unsigned int i = 0; i < a.size(); ++i)
-	// 	{
-	// 		out[i] = glm::lessThan(a[i], b[i]);
-	// 	}
-	// }
-	// template<length_t L, typename T, qualifier Q>
-	// void lessThanEqual(const many<vec<L,T,Q>>& a, const many<T> b, many<vec<L,bool,defaultp>>& out)
-	// {
-	// 	for (unsigned int i = 0; i < a.size(); ++i)
-	// 	{
-	// 		out[i] = glm::lessThanEqual(a[i], b[i]);
-	// 	}
-	// }
-
 
 
 
 	template<length_t L, typename T, qualifier Q>
 	void greaterThan(const many<vec<L,T,Q>>& a, const vec<L,T,Q> b, many<vec<L,bool,defaultp>>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = glm::greaterThan(a[i], b);
-		}
+		transform(a, b, glm::greaterThan, out); 
 	}
 	template<length_t L, typename T, qualifier Q>
 	void greaterThanEqual(const many<vec<L,T,Q>>& a, const vec<L,T,Q> b, many<vec<L,bool,defaultp>>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = glm::greaterThanEqual(a[i], b);
-		}
+		transform(a, b, glm::greaterThanEqual, out); 
 	}
 	template<length_t L, typename T, qualifier Q>
 	void lessThan(const many<vec<L,T,Q>>& a, const vec<L,T,Q> b, many<vec<L,bool,defaultp>>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = glm::lessThan(a[i], b);
-		}
+		transform(a, b, glm::lessThan, out); 
 	}
 	template<length_t L, typename T, qualifier Q>
 	void lessThanEqual(const many<vec<L,T,Q>>& a, const vec<L,T,Q> b, many<vec<L,bool,defaultp>>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = glm::lessThanEqual(a[i], b);
-		}
+		transform(a, b, glm::lessThanEqual, out); 
 	}
 
 
@@ -123,34 +41,22 @@ namespace composites
 	template<length_t L, typename T, qualifier Q>
 	void greaterThan(const many<vec<L,T,Q>>& a, const many<vec<L,T,Q>>& b, many<vec<L,bool,defaultp>>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = glm::greaterThan(a[i], b[i]);
-		}
+		transform(a, b, glm::greaterThan, out); 
 	}
 	template<length_t L, typename T, qualifier Q>
 	void greaterThanEqual(const many<vec<L,T,Q>>& a, const many<vec<L,T,Q>>& b, many<vec<L,bool,defaultp>>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = glm::greaterThanEqual(a[i], b[i]);
-		}
+		transform(a, b, glm::greaterThanEqual, out); 
 	}
 	template<length_t L, typename T, qualifier Q>
 	void lessThan(const many<vec<L,T,Q>>& a, const many<vec<L,T,Q>>& b, many<vec<L,bool,defaultp>>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = glm::lessThan(a[i], b[i]);
-		}
+		transform(a, b, glm::lessThan, out); 
 	}
 	template<length_t L, typename T, qualifier Q>
 	void lessThanEqual(const many<vec<L,T,Q>>& a, const many<vec<L,T,Q>>& b, many<vec<L,bool,defaultp>>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = glm::lessThanEqual(a[i], b[i]);
-		}
+		transform(a, b, glm::lessThanEqual, out); 
 	}
 
 
