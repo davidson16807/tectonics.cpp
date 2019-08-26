@@ -27,24 +27,6 @@ namespace composites
 	}
 
 	template <length_t L, class T, qualifier Q>
-	many<T> get_x(const many<vec<L,T,Q>>& a)
-	{
-		return transform(a, [](vec<L,T,Q> ai){ return ai.x; });
-	}
-
-	template <length_t L, class T, qualifier Q>
-	many<T> get_y(const many<vec<L,T,Q>>& a)
-	{
-		return transform(a, [](vec<L,T,Q> ai){ return ai.y; });
-	}
-
-	template <length_t L, class T, qualifier Q>
-	many<T> get_z(const many<vec<L,T,Q>>& a)
-	{
-		return transform(a, [](vec<L,T,Q> ai){ return ai.z; });
-	}
-
-	template <length_t L, class T, qualifier Q>
 	void set_x(const many<vec<L,T,Q>>& out, many<T>& a )
 	{
 		for (unsigned int i = 0; i < out.size(); ++i)

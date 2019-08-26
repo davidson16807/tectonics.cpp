@@ -137,13 +137,6 @@ namespace composites
 			}
 		}
 	}
-	template <class T>
-	many<T> get(const many<T>& a, const many<unsigned int>& ids)
-	{
-		many<T> out(ids.size());
-		get(a, ids, out);
-		return out;
-	}
 
 	template <class T>
 	void fill(many<T>& out, const T a )
@@ -188,11 +181,6 @@ namespace composites
 		{
 			out[i] = a[i];
 		}
-	}
-	template <class T>
-	many<T> copy(const many<T>& a )
-	{
-		return many<T>(a);
 	}
 	template <class T>
 	inline void copy(many<T>& out, const unsigned int id, const many<T>& a )
@@ -400,13 +388,6 @@ namespace composites
 	}
 
 
-	template <class T1, typename F>
-	inline many<T1> transform(const many<T1>& a, F f)
-	{
-		many<T1> out = many<T1>(a.size());
-		transform(a, f, out); 
-		return out;
-	}
 
 
 	// BINARY TRANSFORM
@@ -436,27 +417,6 @@ namespace composites
 	}
 
 
-	template <class T1, class T2, typename F>
-	inline many<T1> transform(const many<T1>& a, const many<T2>& b, F f)
-	{
-		many<T1> out = many<T1>(a.size());
-		transform(a, b, f, out); 
-		return out;
-	}
-	template <class T1, class T2, typename F>
-	inline many<T1> transform(const many<T1>& a, const T2 b, F f)
-	{
-		many<T1> out = many<T1>(a.size());
-		transform(a, b, f, out); 
-		return out;
-	}
-	template <class T1, class T2, typename F>
-	inline many<T1> transform(const T1 a, const many<T2>& b, F f)
-	{
-		many<T1> out = many<T1>(b.size());
-		transform(a, b, f, out); 
-		return out;
-	}
 
 
 
@@ -522,57 +482,6 @@ namespace composites
 		{
 			out[i] = f(a, b, c[i]);
 		}
-	}
-
-
-	template <class T1, class T2, class T3, typename F>
-	inline many<T1> transform(const many<T1>& a, const many<T2>& b, const many<T3>& c, F f)
-	{
-		many<T1> out = many<T1>(a.size());
-		transform(a, b, c, f, out); 
-		return out;
-	}
-	template <class T1, class T2, class T3, typename F>
-	inline many<T1> transform(const many<T1>& a, const many<T2>& b, const T3 c, F f)
-	{
-		many<T1> out = many<T1>(a.size());
-		transform(a, b, c, f, out); 
-		return out;
-	}
-	template <class T1, class T2, class T3, typename F>
-	inline many<T1> transform(const many<T1>& a, const T2 b, const many<T3>& c, F f)
-	{
-		many<T1> out = many<T1>(a.size());
-		transform(a, b, c, f, out); 
-		return out;
-	}
-	template <class T1, class T2, class T3, typename F>
-	inline many<T1> transform(const many<T1>& a, const T2 b, const T3 c, F f)
-	{
-		many<T1> out = many<T1>(a.size());
-		transform(a, b, c, f, out); 
-		return out;
-	}
-	template <class T1, class T2, class T3, typename F>
-	inline many<T1> transform(const T1 a, const many<T2>& b, const many<T3>& c, F f)
-	{
-		many<T1> out = many<T1>(b.size());
-		transform(a, b, c, f, out); 
-		return out;
-	}
-	template <class T1, class T2, class T3, typename F>
-	inline many<T1> transform(const T1 a, const many<T2>& b, const T3 c, F f)
-	{
-		many<T1> out = many<T1>(b.size());
-		transform(a, b, c, f, out); 
-		return out;
-	}
-	template <class T1, class T2, class T3, typename F>
-	inline many<T1> transform(const T1 a, const T2 b, const many<T3>& c, F f)
-	{
-		many<T1> out = many<T1>(c.size());
-		transform(a, b, c, f, out); 
-		return out;
 	}
 
 
@@ -691,257 +600,6 @@ namespace composites
 
 
 	// NOTE: all wrappers are suggested to be inline because they are thin wrappers of functions
-
-	template <class T>
-	std::ostream &operator<<(std::ostream &os, const many<T>& a) { 
-		os << "[";
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-		    os << a[i] << " ";
-		}
-		os << "]";
-		return os;
-	}
-
-	template <class T, class T2, class T3>
-	inline many<T3> operator>(const many<T>& a, const T2 b)
-	{
-		return transform(a, b, [](T ai, T2 bi){ return ai > bi; });
-	}
-	template <class T, class T2, class T3>
-	inline many<T3> operator>=(const many<T>& a, const T2 b)
-	{
-		return transform(a, b, [](T ai, T2 bi){ return ai >= bi; });
-	}
-	template <class T, class T2, class T3>
-	inline many<T3> operator<(const many<T>& a, const T2 b)
-	{
-		return transform(a, b, [](T ai, T2 bi){ return ai < bi; });
-	}
-	template <class T, class T2, class T3>
-	inline many<T3> operator<=(const many<T>& a, const T2 b)
-	{
-		return transform(a, b, [](T ai, T2 bi){ return ai <= bi; });
-	}
-	
-	// NOTE: all wrappers are suggested to be inline because they are thin wrappers of functions
-
-	template <class T, class T2, class T3>
-	inline many<T3> operator>(const T2 a, const many<T>& b)
-	{
-		return transform(a, b, [](T ai, T2 bi){ return ai > bi; });
-	}
-	template <class T, class T2, class T3>
-	inline many<T3> operator>=(const T2 a, const many<T>& b)
-	{
-		return transform(a, b, [](T ai, T2 bi){ return ai >= bi; });
-	}
-	template <class T, class T2, class T3>
-	inline many<T3> operator<(const T2 a, const many<T>& b)
-	{
-		return transform(a, b, [](T ai, T2 bi){ return ai < bi; });
-	}
-	template <class T, class T2, class T3>
-	inline many<T3> operator<=(const T2 a, const many<T>& b)
-	{
-		return transform(a, b, [](T ai, T2 bi){ return ai <= bi; });
-	}
-
-
-
-
-	template <class T>
-	inline many<T>& operator+=(many<T>& a, const T b) 
-	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			a[i] += b;
-		}
-		return a;
-	}
-	template <class T>
-	inline many<T>& operator-=(many<T>& a, const T b) 
-	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			a[i] -= b;
-		}
-		return a;
-	}
-	template <class T>
-	inline many<T>& operator*=(many<T>& a, const T b) 
-	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			a[i] *= b;
-		}
-		return a;
-	}
-	template <class T>
-	inline many<T>& operator/=(many<T>& a, const T b) 
-	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			a[i] /= b;
-		}
-		return a;
-	}
-
-
-	template <class T, class T2>
-	inline many<T>& operator+=(many<T>& a, const many<T2>& b) 
-	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			a[i] += b[i];
-		}
-		return a;
-	}
-	template <class T, class T2>
-	inline many<T>& operator-=(many<T>& a, const many<T2>& b) 
-	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			a[i] -= b[i];
-		}
-		return a;
-	}
-	template <class T, class T2>
-	inline many<T>& operator*=(many<T>& a, const many<T2>& b) 
-	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			a[i] *= b[i];
-		}
-		return a;
-	}
-	template <class T, class T2>
-	inline many<T>& operator/=(many<T>& a, const many<T2>& b) 
-	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			a[i] /= b[i];
-		}
-		return a;
-	}
-
-	// NOTE: prefix increment/decrement
-	template <class T>
-	inline many<T>& operator++(many<T>& a)  
-	{  
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			a[i]++;
-		}
-		return a;
-	}  
-	template <class T>
-	inline many<T>& operator--(many<T>& a)  
-	{  
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			a[i]--;
-		}
-		return a;
-	}  
-
-	// NOTE: postfix increment/decrement
-	template <class T>
-	inline many<T> operator++(many<T>& a, int)  
-	{  
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			a[i]++;
-		}
-		return a;
-	}  
-	template <class T>
-	inline many<T> operator--(many<T>& a, int)  
-	{  
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			a[i]--;
-		}
-		return a;
-	}  
-	
-
-
-
-
-	// NOTE: we define operators for multiple classes T and T2 in order to support 
-	//  vector/scalar multiplication, matrix/vect multiplication, etc.
-	template <class T, class T2>
-	inline many<T> operator+(const many<T>& a, const T2 b)
-	{
-		return transform(a, b, [](T ai, T2 bi){ return ai + bi; });
-	}
-	template <class T, class T2>
-	inline many<T> operator-(const many<T>& a, const T2 b)
-	{
-		return transform(a, b, [](T ai, T2 bi){ return ai - bi; });
-	}
-	template <class T, class T2>
-	inline many<T> operator*(const many<T>& a, const T2 b)
-	{
-		return transform(a, b, [](T ai, T2 bi){ return ai * bi; });
-	}
-	template <class T, class T2>
-	inline many<T> operator/(const many<T>& a, const T2 b)
-	{
-		return transform(a, b, [](T ai, T2 bi){ return ai / bi; });
-	}
-	
-
-
-
-
-	// NOTE: we define operators for multiple classes T and T2 in order to support 
-	//  vector/scalar multiplication, matrix/vect multiplication, etc.
-	template <class T, class T2>
-	inline many<T> operator+(const T2 a, const many<T>& b)
-	{
-		return transform(a, b, [](T ai, T2 bi){ return ai + bi; });
-	}
-	template <class T, class T2>
-	inline many<T> operator-(const T2 a, const many<T>& b)
-	{
-		return transform(a, b, [](T ai, T2 bi){ return ai - bi; });
-	}
-	template <class T, class T2>
-	inline many<T> operator*(const T2 a, const many<T>& b)
-	{
-		return transform(a, b, [](T ai, T2 bi){ return ai * bi; });
-	}
-	template <class T, class T2>
-	inline many<T> operator/(const T2 a, const many<T>& b)
-	{
-		return transform(a, b, [](T ai, T2 bi){ return ai / bi; });
-	}
-
-
-	// NOTE: we define operators for multiple classes T and T2 in order to support 
-	//  vector/scalar multiplication, matrix/vect multiplication, etc.
-	template <class T, class T2>
-	inline many<T> operator+(const many<T>& a, const many<T2>& b)
-	{
-		return transform(a, b, [](T ai, T2 bi){ return ai + bi; });
-	}
-	template <class T, class T2>
-	inline many<T> operator-(const many<T>& a, const many<T2>& b)
-	{
-		return transform(a, b, [](T ai, T2 bi){ return ai - bi; });
-	}
-	template <class T, class T2>
-	inline many<T> operator*(const many<T>& a, const many<T2>& b)
-	{
-		return transform(a, b, [](T ai, T2 bi){ return ai * bi; });
-	}
-	template <class T, class T2>
-	inline many<T> operator/(const many<T>& a, const many<T2>& b)
-	{
-		return transform(a, b, [](T ai, T2 bi){ return ai / bi; });
-	}
 
 
 

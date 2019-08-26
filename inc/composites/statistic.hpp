@@ -27,17 +27,6 @@ namespace composites
 			group_out[group_ids[i]] = aggregator(group_out[group_ids[i]], a[i]);
 		}
 	}
-	template<class T, typename Taggregator>
-	many<T> aggregate(const many<T>& a, const many<unsigned int>& group_ids, Taggregator aggregator)
-	{
-		many<T> group_out = many<T>(max(group_ids));
-		for (unsigned int i = 0; i < group_ids.size(); ++i)
-		{
-			group_out[group_ids[i]] = aggregator(group_out[group_ids[i]], a[i]);
-		}
-		return group_out;
-	}
-
 
 	template<class T, typename Taggregator>
 	void aggregate_into(const many<unsigned int>& group_ids, Taggregator aggregator, many<T>& group_out)
@@ -56,17 +45,6 @@ namespace composites
 			group_out[group_ids[i]] = aggregator(group_out[group_ids[i]]);
 		}
 	}
-	template<class T, typename Taggregator>
-	many<T> aggregate(const many<unsigned int>& group_ids, Taggregator aggregator)
-	{
-		many<T> group_out = many<T>(max(group_ids));
-		for (unsigned int i = 0; i < group_ids.size(); ++i)
-		{
-			group_out[group_ids[i]] = aggregator(group_out[group_ids[i]]);
-		}
-		return group_out;
-	}
-
 
 
 	// component-wise min

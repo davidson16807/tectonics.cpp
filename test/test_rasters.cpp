@@ -6,9 +6,11 @@
 #define GLM_FORCE_PURE      // disable SIMD support for glm so we can work with webassembly
 #include <glm/vec3.hpp>               // *vec3
 
-#include <composites/many.hpp>        //  floats, etc.
-#include <composites/common.hpp>      //  floats, etc.
-#include <composites/glm/vecs.hpp>    // *vec*s
+#include <composites/many.hpp>            //  floats, etc.
+#include <composites/common.hpp>          //  floats, etc.
+#include <composites/convenience.hpp>     //  operators, etc.
+#include <composites/glm/vecs.hpp>        // *vec*s
+#include <composites/glm/convenience.hpp> //  operators, etc.
 
 #include "rasters/raster.hpp"         
 #include "rasters/glm/vec_raster.hpp"

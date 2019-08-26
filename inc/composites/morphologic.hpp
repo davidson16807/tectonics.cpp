@@ -69,53 +69,7 @@ namespace composites
 	}
 
 
-	inline many<bool> operator~(const many<bool>& a)
-	{
-		many<bool> out = many<bool>(a.size());
-		negate(a, out);
-		return out;
-	}
 
 
-
-
-	inline many<bool> operator|(const many<bool>& a, const bool b)
-	{
-		return transform(a, b, [](bool ai, bool bi){ return ai || bi; });
-	}
-	inline many<bool> operator&(const many<bool>& a, const bool b)
-	{
-		return transform(a, b, [](bool ai, bool bi){ return ai && bi; });
-	}
-
-	inline many<bool> operator|(const many<bool>& a, const many<bool>& b)
-	{
-		return transform(a, b, [](bool ai, bool bi){ return ai || bi; });
-	}
-	inline many<bool> operator&(const many<bool>& a, const many<bool>& b)
-	{
-		return transform(a, b, [](bool ai, bool bi){ return ai && bi; });
-	}
-
-
-
-
-	inline many<bool>& operator|=(many<bool>& a, const bool b){
-		transform(a, b, [](bool ai, bool bi){ return ai || bi; }, a);
-		return a;
-	}
-	inline many<bool>& operator&=(many<bool>& a, const bool b){
-		transform(a, b, [](bool ai, bool bi){ return ai &&  bi; }, a);
-		return a;
-	}
-
-	inline many<bool>& operator|=(many<bool>& a, const many<bool>& b){
-		transform(a, b, [](bool ai, bool bi){ return ai || bi; }, a);
-		return a;
-	}
-	inline many<bool>& operator&=(many<bool>& a, const many<bool>& b){
-		transform(a, b, [](bool ai, bool bi){ return ai &&  bi; }, a);
-		return a;
-	}
 
 }
