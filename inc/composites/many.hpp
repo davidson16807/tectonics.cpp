@@ -8,35 +8,7 @@
 namespace composites
 {
 	// This template represents a statically-sized contiguous block of heap memory occupied by primitive data of the same arbitrary type
-	// The intention is to abstract away arrays of primitives that are used to address data locality issues
-	// the data type should be small enough to fit in a computer's register (e.g. ints, floats, and even vec3s)
-	// the data type must have basic operators common to all primitives: == != 
-	// 
-	// Q: Why don't we use std::valarray<T> instead? Doesn't it do the same thing?
-	// A: Yes, but std::valarray<T> forbids T from overloading operator|(), and this forbids us from using it with glm::vec3. 
-	//      We really want to be able to use glm::vec3 since it allows us to easily port code from GLSL to C++.
-	//      std::valarray<T> also has several severe limitations relating to its flawed design history that would forbid its use anyway,
-	//      For instance, it does not implement standard container methods like .begin() and .end()
-	// 
-	// Q: Why don't we use the xtensor library? 
-	// A: xtensor is not merely a library for arithmetic containers. It is an expression engine designed to support lazy broadcasting.
-	//      This can be a very good thing if all you want to do is work with the containers they provide.
-	//      However in our case, we want to create a custom "raster" class that behaves as an xtensor would while storing an additional
-	//       attribute that references the grid being used. 
-	//      Doing so xtensor would require intimate interaction with xtensor's xtensor<T> and xexpression<T> classes, a painful proposition. 
-	//      Furthermore, xtensor draws inspiration with numpy and so working with it would either require switching between glm and numpy mindsets
-	//       or developing a new library extension to allow for interaction between xtensor datastructures and glm functionality. 
-	//      We instead choose to work with a much more simple solution that is easier to reason with and work with other systems. 
-	//
-	// Q: Why do we use std::vector internally?
-	// A: The functions and operators that use many<T> could effectively be reimplemented using std::vector<T>, 
-	//       but this could cause confusion in new developers, since they would see basic arithmetic being performed on std::vectors
-	//       without having any idea where that behavior was being implemented. 
-	//      Therefore, we roll our own custom class, many<T>, which is a thin wrapper around std::vector<T>
-	//      We could implement many<T> as a derived class of std::vector, but we prefer to favor composition over inheritance. 
-	//      This is especially the case given that we don't own std::vector<T>.
-	//      The performance penalty of using std::vector<T> over traditional arrays is inconsequential, 
-	//       and given our previous implementation was in javascript, we're happy with the performance boost we get by moving to C++.
+	// See README.md for more details
 	template <class T>
 	class many
 	{

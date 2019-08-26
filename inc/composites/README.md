@@ -1,12 +1,24 @@
-The `composites` subcomponent provides data structures for statically-sized contiguous block of heap memory occupied by primitive data of the same arbitrary type. These data structures are implemented using a template known as `many<T>`.
-The intention is to abstract away arrays of primitives that are used to address data locality issues.
-The data type used by `many<T>` should be small enough to fit in a computer's register (e.g. `ints`, `floats`, and even `vec3s`) and should have basic operators common to all primitives, namely `==` and `!=` 
+The `composites` subcomponent provides data structures and functions to easily handle large containers of primitive or simple data types, including `int`, `float`, or `glm::vec3`
+We ideally want performing operations on containers to be as easy as performing operations on the individual data types themselves. 
+The intention is to abstract away the arrays of primitives that are used to address data locality issues.
 
-**Q:** **Why don't we use `std::valarray<T>` instead? Doesn't it do the same thing?**
-**A:** Yes, but `std::valarray<T>` forbids `T` from overloading `operator|()`, and this forbids us from using it with `glm::vec3`.  We really want to be able to use glm::vec3 since it allows us to easily port code from GLSL to C++. `std::valarray<T>` also has several severe limitations relating to its flawed design history that would forbid its use anyway. For instance, it does not implement standard container methods like `.begin()` and `.end()`
+Some of the objectives we want to accomplish:
+ 1.) performant
+       since this is all done to address data locality issues, which are chiefly performance concerns
+ 2.) easy to use
+       since we want to perform operations easily, as stated previously
+ 3.) easy to understand, extend, and control 
+       since we intend to reuse this functionality to represent rasters
+ 4.) easy to wrap
+       since we must target webassembly as a deployment platform, and may also provide other wrappers
+ 5.) works well with glm 
+       since we already depend on glsl for shader code, and glm allows us to reuse the knowledge base surrounding glsl
 
-**Q:** **Why don't we use the `xtensor` library?**
-**A:** `xtensor` is not merely a library for arithmetic containers. It is an expression engine designed to support lazy broadcasting. This can be a very good thing if all you want to do is work with the containers they provide. However in our case, we want to create a custom "raster" class that behaves as an xtensor would while storing an additional attribute that references the grid being used. Doing so, `xtensor` would require intimate interaction with `xtensor`'s `xtensor<T>` and `xexpression<T>` classes, a painful proposition. Furthermore, `xtensor` draws inspiration with numpy and so working with it would either require switching between glm and numpy mindsets or developing a new library extension to allow for interaction between `xtensor` datastructures and `glm` functionality. We instead chose to work with a much simpler solution that is easier to reason with and work with other systems. 
+We could reuse existing libraries to accomplish some of these objectives (`xtensor`, `std::valarray`, etc.) but none of them can easily achieve objectives #3, #4, and #5.
+So we write our own solution. 
 
-**Q:** **Why do we use `std::vector<T>` internally?**
-**A:** The functions and operators that use `many<T>` could effectively be reimplemented using `std::vector<T>`, but this could cause confusion in new developers, since they would see basic arithmetic being performed on std::vectors without having any idea where that behavior was coming from.  Therefore, we roll our own custom class, `many<T>`, which is a thin wrapper around `std::vector<T>` We could implement `many<T>` as a derived class of std::vector, but we prefer to favor composition over inheritance. This is especially the case given that we don't own `std::vector<T>`. The performance penalty of using `std::vector<T>` over traditional arrays is inconsequential,  and given our previous implementation was in javascript, we're happy with the performance boost we get by moving to C++.
+Our solution works in two ways:
+ * It provides a set of functions for handling containers as if they were primitives or glm vectors. 
+     To achieve #1 and #3, these functions work by passing output to reference parameters. 
+ * It provides a data structure, `many<T>`, that makes use of operator overloads to provide convenience wrappers for
+     the aforementioned functions.
