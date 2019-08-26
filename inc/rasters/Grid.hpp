@@ -7,11 +7,11 @@
 
 #include <glm/vec2.hpp>               // *vec2
 #include <glm/vec3.hpp>               // *vec3
-#include <composites/many.hpp>        // floats, etc.
-#include <composites/common.hpp>      // max
-#include <composites/statistic.hpp>   // mean
-#include <composites/glm/vecs.hpp>    // *vec*s
-#include <composites/glm/geometric.hpp>// cross, dot, etc.
+#include <many/composite.hpp>        // floats, etc.
+#include <many/common.hpp>      // max
+#include <many/statistic.hpp>   // mean
+#include <many/glm/vecs.hpp>    // *vec*s
+#include <many/glm/geometric.hpp>// cross, dot, etc.
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>           // unordered_set<vec*>
@@ -21,7 +21,7 @@
 namespace rasters {
 
 	using namespace glm;
-	using namespace composites;
+	using namespace many;
 
 	// The Grid class is the one stop shop for high performance grid cell operations
 	// You can find grid cells by neighbor, by position, and by the index of a WebGL buffer array

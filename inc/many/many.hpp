@@ -1,6 +1,6 @@
 #pragma once
 
-#include "many.hpp"
+#include "composite.hpp"
 #include "common.hpp"
 #include "exponential.hpp"
 #include "morphologic.hpp"

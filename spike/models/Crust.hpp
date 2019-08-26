@@ -3,7 +3,7 @@
 #include <initializer_list> // initializer_list
 #include <memory>           // std::shared_ptr
 
-#include <composites/many.hpp> // floats, etc.
+#include <many/composite.hpp> // floats, etc.
 
 #include <rasters/Grid.hpp>    // Grid
 

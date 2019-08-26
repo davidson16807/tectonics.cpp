@@ -6,9 +6,9 @@
 // #include <iostream>	// cout
 
 #include <glm/vec3.hpp>               // *vec3
-#include <composites/glm/vecs.hpp>    // *vec*s
+#include <many/glm/vecs.hpp>    // *vec*s
 
-using namespace composites;
+using namespace many;
 
 namespace rasters {
 	

@@ -5,24 +5,24 @@
 #include <iterator>			// std::distance
 #include <vector>			// std::distance
 
-namespace composites
+namespace many
 {
 	// This template represents a statically-sized contiguous block of heap memory occupied by primitive data of the same arbitrary type
 	// See README.md for more details
 	template <class T>
-	class many
+	class composite
 	{
 	protected:
 		std::vector<T> values;
 
 	public:
 
-		virtual ~many()
+		virtual ~composite()
 		{
 		};
 
 		// initializer list constructor
-		many(std::initializer_list<T> list) : values(list.size())
+		composite(std::initializer_list<T> list) : values(list.size())
 		{
 			unsigned int id = 0;
 			for (auto i = list.begin(); i != list.end(); ++i)
@@ -32,7 +32,7 @@ namespace composites
 			}
 		};
 		template<class TIterator>
-		many(TIterator first, TIterator last) : values(std::distance(first, last))
+		composite(TIterator first, TIterator last) : values(std::distance(first, last))
 		{
 			unsigned int id = 0;
 			while (first!=last) 
@@ -44,14 +44,14 @@ namespace composites
 		}
 
 		// copy constructor
-		many(const many<T>& a)  : values(a.values) {};
+		composite(const composite<T>& a)  : values(a.values) {};
 
-		explicit many(const unsigned int N) : values(N) {};
+		explicit composite(const unsigned int N) : values(N) {};
 
-		explicit many(const unsigned int N, const T a)  : values(N, a) {};
+		explicit composite(const unsigned int N, const T a)  : values(N, a) {};
 
 		template <class T2>
-		explicit many(const many<T2>& a)  : values(a.N)
+		explicit composite(const composite<T2>& a)  : values(a.N)
 		{
 			for (unsigned int i = 0; i < a.size(); ++i)
 			{
@@ -85,25 +85,25 @@ namespace composites
 		   return values[id]; // reference return 
 		}
 	
-		inline many<T> operator[](const many<bool>& mask )
+		inline composite<T> operator[](const composite<bool>& mask )
 		{
-			many<T> out = many<T>(mask.size());
+			composite<T> out = composite<T>(mask.size());
 			get(*this, mask, out);
 			return out;
 		}
-		inline many<T> operator[](const many<unsigned int>& ids )
+		inline composite<T> operator[](const composite<unsigned int>& ids )
 		{
-			many<T> out = many<T>(ids.size());
+			composite<T> out = composite<T>(ids.size());
 			get(*this, ids, out);
 			return out;
 		}
 
-		inline many<T>& operator=(const many<T>& other )
+		inline composite<T>& operator=(const composite<T>& other )
 		{
 			copy(*this, other);
 			return *this;
 		}
-		inline many<T>& operator=(const T& other )
+		inline composite<T>& operator=(const T& other )
 		{
 			fill(*this, other);
 			return *this;
@@ -112,12 +112,12 @@ namespace composites
 
 
 	template <class T>
-	inline T get(const many<T>& a, const unsigned int id )
+	inline T get(const composite<T>& a, const unsigned int id )
 	{
 		return a[id];
 	}
 	template <class T>
-	void get(const many<T>& a, const many<unsigned int>& ids, many<T>& out )
+	void get(const composite<T>& a, const composite<unsigned int>& ids, composite<T>& out )
 	{
 		for (unsigned int i = 0; i < ids.size(); ++i)
 		{
@@ -125,7 +125,7 @@ namespace composites
 		}
 	}
 	template <class T>
-	void get(const many<T>& a, const many<bool>& mask, many<T>& out )
+	void get(const composite<T>& a, const composite<bool>& mask, composite<T>& out )
 	{
 		int out_i = 0;
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -139,7 +139,7 @@ namespace composites
 	}
 
 	template <class T>
-	void fill(many<T>& out, const T a )
+	void fill(composite<T>& out, const T a )
 	{
 		for (unsigned int i = 0; i < out.size(); ++i)
 		{
@@ -147,7 +147,7 @@ namespace composites
 		}
 	}
 	template <class T>
-	void fill(many<T>& out, const many<unsigned int>& ids, const T a )
+	void fill(composite<T>& out, const composite<unsigned int>& ids, const T a )
 	{
 		for (unsigned int i = 0; i < ids.size(); ++i)
 		{
@@ -155,7 +155,7 @@ namespace composites
 		}
 	}
 	template <class T>
-	void fill(many<T>& out, const many<bool>& mask, const T a )
+	void fill(composite<T>& out, const composite<bool>& mask, const T a )
 	{
 		for (unsigned int i = 0; i < out.size(); ++i)
 		{
@@ -164,7 +164,7 @@ namespace composites
 	}
 
 	template<class T, class TIterator>
-	void copy_iterators(many<T>& out, TIterator first, TIterator last)
+	void copy_iterators(composite<T>& out, TIterator first, TIterator last)
 	{
 		unsigned int id = 0;
 		while (first!=last) 
@@ -175,7 +175,7 @@ namespace composites
 		}
 	}
 	template <class T>
-	void copy(many<T>& out, const many<T>& a )
+	void copy(composite<T>& out, const composite<T>& a )
 	{
 		for (unsigned int i = 0; i < out.size(); ++i)
 		{
@@ -183,12 +183,12 @@ namespace composites
 		}
 	}
 	template <class T>
-	inline void copy(many<T>& out, const unsigned int id, const many<T>& a )
+	inline void copy(composite<T>& out, const unsigned int id, const composite<T>& a )
 	{
 		out[id] = a[id];
 	}
 	template <class T>
-	void copy(many<T>& out, const many<unsigned int>& ids, const many<T>& a )
+	void copy(composite<T>& out, const composite<unsigned int>& ids, const composite<T>& a )
 	{
 		for (unsigned int i = 0; i < ids.size(); ++i)
 		{
@@ -196,7 +196,7 @@ namespace composites
 		}
 	}
 	template <class T>
-	void copy(many<T>& out, const many<bool>& mask, const many<T>& a )
+	void copy(composite<T>& out, const composite<bool>& mask, const composite<T>& a )
 	{
 		for (unsigned int i = 0; i < out.size(); ++i)
 		{
@@ -206,12 +206,12 @@ namespace composites
 
 
 	template <class T>
-	inline void set(many<T>& out, const unsigned int id, const T a )
+	inline void set(composite<T>& out, const unsigned int id, const T a )
 	{
 		out[id] = a;
 	}
 	template <class T>
-	void set(many<T>& out, const many<unsigned int>& ids, const many<T>& a )
+	void set(composite<T>& out, const composite<unsigned int>& ids, const composite<T>& a )
 	{
 		for (unsigned int i = 0; i < ids.size(); ++i)
 		{
@@ -220,14 +220,14 @@ namespace composites
 	}
 
 
-	float COMPOSITES_EPSILON = 1e-4;
+	float many_EPSILON = 1e-4;
 
 	template <class T>
-	bool equal(const many<T>& a, const T b)
+	bool equal(const composite<T>& a, const T b)
 	{
 		bool out(true);
 		T diff(0);
-		T threshold(COMPOSITES_EPSILON);
+		T threshold(many_EPSILON);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			diff = a[i] - b;
@@ -236,11 +236,11 @@ namespace composites
 		return out;
 	}
 	template <class T>
-	bool notEqual(const many<T>& a, const T b)
+	bool notEqual(const composite<T>& a, const T b)
 	{
 		bool out(false);
 		T diff(0);
-		T threshold(COMPOSITES_EPSILON);
+		T threshold(many_EPSILON);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			diff = a[i] - b;
@@ -249,7 +249,7 @@ namespace composites
 		return out;
 	}
 	template <class T>
-	bool equal(const many<T>& a, const many<T>& b)
+	bool equal(const composite<T>& a, const composite<T>& b)
 	{
 		if (a.size() != b.size())
 		{
@@ -257,7 +257,7 @@ namespace composites
 		}
 		bool out(true);
 		T diff(0);
-		T threshold(COMPOSITES_EPSILON);
+		T threshold(many_EPSILON);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			diff = a[i] - b[i];
@@ -266,7 +266,7 @@ namespace composites
 		return out;
 	}
 	template <class T>
-	bool notEqual(const many<T>& a, const many<T>& b)
+	bool notEqual(const composite<T>& a, const composite<T>& b)
 	{
 		if (a.size() != b.size())
 		{
@@ -274,7 +274,7 @@ namespace composites
 		}
 		bool out(false);
 		T diff(0);
-		T threshold(COMPOSITES_EPSILON);
+		T threshold(many_EPSILON);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			diff = a[i] - b[i];
@@ -286,10 +286,10 @@ namespace composites
 
 
 	template <class T>
-	void equal(const many<T>& a, const T b, many<bool>& out)
+	void equal(const composite<T>& a, const T b, composite<bool>& out)
 	{
 		T diff(0);
-		T threshold(COMPOSITES_EPSILON);
+		T threshold(many_EPSILON);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			diff = a[i] - b;
@@ -297,10 +297,10 @@ namespace composites
 		}
 	}
 	template <class T>
-	void notEqual(const many<T>& a, const T b, many<bool>& out)
+	void notEqual(const composite<T>& a, const T b, composite<bool>& out)
 	{
 		T diff(0);
-		T threshold(COMPOSITES_EPSILON);
+		T threshold(many_EPSILON);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			diff = a[i] - b;
@@ -308,10 +308,10 @@ namespace composites
 		}
 	}
 	template <class T>
-	void equal(const many<T>& a, const many<T>& b, many<bool>& out)
+	void equal(const composite<T>& a, const composite<T>& b, composite<bool>& out)
 	{
 		T diff(0);
-		T threshold(COMPOSITES_EPSILON);
+		T threshold(many_EPSILON);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			diff = a[i] - b[i];
@@ -319,10 +319,10 @@ namespace composites
 		}
 	}
 	template <class T>
-	void notEqual(const many<T>& a, const many<T>& b, many<bool>& out)
+	void notEqual(const composite<T>& a, const composite<T>& b, composite<bool>& out)
 	{
 		T diff(0);
-		T threshold(COMPOSITES_EPSILON);
+		T threshold(many_EPSILON);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			diff = a[i] - b[i];
@@ -334,32 +334,32 @@ namespace composites
 
 	// NOTE: all operators are suggested to be inline because they are thin wrappers of functions
 	template <class T>
-	inline bool operator==(const many<T>& a, const T b)
+	inline bool operator==(const composite<T>& a, const T b)
 	{
 		return equal(a, b);
 	}
 	template <class T>
-	inline bool operator!=(const many<T>& a, const T b)
+	inline bool operator!=(const composite<T>& a, const T b)
 	{
 		return notEqual(a, b);
 	}
 	template <class T>
-	inline bool operator==(const T a, const many<T>& b)
+	inline bool operator==(const T a, const composite<T>& b)
 	{
 		return equal(a, b);
 	}
 	template <class T>
-	inline bool operator!=(const T a, const many<T>& b)
+	inline bool operator!=(const T a, const composite<T>& b)
 	{
 		return notEqual(a, b);
 	}
 	template <class T>
-	inline bool operator==(const many<T>& a, const many<T>& b)
+	inline bool operator==(const composite<T>& a, const composite<T>& b)
 	{
 		return equal(a, b);
 	}
 	template <class T>
-	inline bool operator!=(const many<T>& a, const many<T>& b)
+	inline bool operator!=(const composite<T>& a, const composite<T>& b)
 	{
 		return notEqual(a, b);
 	}
@@ -371,7 +371,7 @@ namespace composites
 	
 	// UNARY TRANSFORM
 	template <class T1, class Tout, typename F>
-	inline void transform(const many<T1>& a, F f, many<Tout>& out)
+	inline void transform(const composite<T1>& a, F f, composite<Tout>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -379,7 +379,7 @@ namespace composites
 		}
 	}
 	template <class T1, class Tout, typename F>
-	inline void transform(const T1 a, F f, many<Tout>& out)
+	inline void transform(const T1 a, F f, composite<Tout>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -392,7 +392,7 @@ namespace composites
 
 	// BINARY TRANSFORM
 	template <class T1, class T2, class Tout, typename F>
-	inline void transform(const many<T1>& a, const many<T2>& b, F f, many<Tout>& out)
+	inline void transform(const composite<T1>& a, const composite<T2>& b, F f, composite<Tout>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -400,7 +400,7 @@ namespace composites
 		}
 	}
 	template <class T1, class T2, class Tout, typename F>
-	inline void transform(const many<T1>& a, const T2 b, F f, many<Tout>& out)
+	inline void transform(const composite<T1>& a, const T2 b, F f, composite<Tout>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -408,7 +408,7 @@ namespace composites
 		}
 	}
 	template <class T1, class T2, class Tout, typename F>
-	inline void transform(const T1 a, const many<T2>& b, F f, many<Tout>& out)
+	inline void transform(const T1 a, const composite<T2>& b, F f, composite<Tout>& out)
 	{
 		for (unsigned int i = 0; i < b.size(); ++i)
 		{
@@ -428,7 +428,7 @@ namespace composites
 
 	// TRINARY TRANSFORM
 	template <class T1, class T2, class T3, class Tout, typename F>
-	inline void transform(const many<T1>& a, const many<T2>& b, const many<T3>& c, F f, many<Tout>& out)
+	inline void transform(const composite<T1>& a, const composite<T2>& b, const composite<T3>& c, F f, composite<Tout>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -436,7 +436,7 @@ namespace composites
 		}
 	}
 	template <class T1, class T2, class T3, class Tout, typename F>
-	inline void transform(const many<T1>& a, const many<T2>& b, const T3 c, F f, many<Tout>& out)
+	inline void transform(const composite<T1>& a, const composite<T2>& b, const T3 c, F f, composite<Tout>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -444,7 +444,7 @@ namespace composites
 		}
 	}
 	template <class T1, class T2, class T3, class Tout, typename F>
-	inline void transform(const many<T1>& a, const T2 b, const many<T3>& c, F f, many<Tout>& out)
+	inline void transform(const composite<T1>& a, const T2 b, const composite<T3>& c, F f, composite<Tout>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -452,7 +452,7 @@ namespace composites
 		}
 	}
 	template <class T1, class T2, class T3, class Tout, typename F>
-	inline void transform(const many<T1>& a, const T2 b, const T3 c, F f, many<Tout>& out)
+	inline void transform(const composite<T1>& a, const T2 b, const T3 c, F f, composite<Tout>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -460,7 +460,7 @@ namespace composites
 		}
 	}
 	template <class T1, class T2, class T3, class Tout, typename F>
-	inline void transform(const T1 a, const many<T2>& b, const many<T3>& c, F f, many<Tout>& out)
+	inline void transform(const T1 a, const composite<T2>& b, const composite<T3>& c, F f, composite<Tout>& out)
 	{
 		for (unsigned int i = 0; i < b.size(); ++i)
 		{
@@ -468,7 +468,7 @@ namespace composites
 		}
 	}
 	template <class T1, class T2, class T3, class Tout, typename F>
-	inline void transform(const T1 a, const many<T2>& b, const T3 c, F f, many<Tout>& out)
+	inline void transform(const T1 a, const composite<T2>& b, const T3 c, F f, composite<Tout>& out)
 	{
 		for (unsigned int i = 0; i < b.size(); ++i)
 		{
@@ -476,7 +476,7 @@ namespace composites
 		}
 	}
 	template <class T1, class T2, class T3, class Tout, typename F>
-	inline void transform(const T1 a, const T2 b, const many<T3>& c, F f, many<Tout>& out)
+	inline void transform(const T1 a, const T2 b, const composite<T3>& c, F f, composite<Tout>& out)
 	{
 		for (unsigned int i = 0; i < c.size(); ++i)
 		{
@@ -491,22 +491,22 @@ namespace composites
 
 
 	template <class T, class T2>
-	void greaterThan(const many<T>& a, const T2 b, many<bool>& out)
+	void greaterThan(const composite<T>& a, const T2 b, composite<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai > bi; }, out); 
 	}
 	template <class T, class T2>
-	void greaterThanEqual(const many<T>& a, const T2 b, many<bool>& out)
+	void greaterThanEqual(const composite<T>& a, const T2 b, composite<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai >= bi; }, out); 
 	}
 	template <class T, class T2>
-	void lessThan(const many<T>& a, const T2 b, many<bool>& out)
+	void lessThan(const composite<T>& a, const T2 b, composite<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai < bi; }, out); 
 	}
 	template <class T, class T2>
-	void lessThanEqual(const many<T>& a, const T2 b, many<bool>& out)
+	void lessThanEqual(const composite<T>& a, const T2 b, composite<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai <= bi; }, out); 
 	}
@@ -514,22 +514,22 @@ namespace composites
 
 
 	template <class T, class T2>
-	void greaterThan(const many<T>& a, const many<T2>& b, many<bool>& out)
+	void greaterThan(const composite<T>& a, const composite<T2>& b, composite<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai > bi; }, out); 
 	}
 	template <class T, class T2>
-	void greaterThanEqual(const many<T>& a, const many<T2>& b, many<bool>& out)
+	void greaterThanEqual(const composite<T>& a, const composite<T2>& b, composite<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai >= bi; }, out); 
 	}
 	template <class T, class T2>
-	void lessThan(const many<T>& a, const many<T2>& b, many<bool>& out)
+	void lessThan(const composite<T>& a, const composite<T2>& b, composite<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai <= bi; }, out); 
 	}
 	template <class T, class T2>
-	void lessThanEqual(const many<T>& a, const many<T2>& b, many<bool>& out)
+	void lessThanEqual(const composite<T>& a, const composite<T2>& b, composite<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai < bi; }, out); 
 	}
@@ -537,22 +537,22 @@ namespace composites
 
 
 	template <class T, class T2, class T3>
-	void add(const many<T>& a, const T2 b, many<T3>& out)
+	void add(const composite<T>& a, const T2 b, composite<T3>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai + bi; }, out); 
 	}
 	template <class T, class T2, class T3>
-	void sub(const many<T>& a, const T2 b, many<T3>& out)
+	void sub(const composite<T>& a, const T2 b, composite<T3>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai - bi; }, out); 
 	}
 	template <class T, class T2, class T3>
-	void mult(const many<T>& a, const T2 b, many<T3>& out)
+	void mult(const composite<T>& a, const T2 b, composite<T3>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai * bi; }, out); 
 	}
 	template <class T, class T2, class T3>
-	void div(const many<T>& a, const T2 b, many<T3>& out)
+	void div(const composite<T>& a, const T2 b, composite<T3>& out)
 	{
 		const T2 binv = T2(1.)/b;
 		transform(a, b, [](T ai, T2 bi){ return ai * bi; }, out); 
@@ -563,27 +563,27 @@ namespace composites
 	// NOTE: we define operators for multiple classes T and T2 in order to support 
 	//  vector/scalar multiplication, matrix/vect multiplication, etc.
 	template <class T, class T2, class T3>
-	void add(const many<T>& a, const many<T2>& b, many<T3>& out)
+	void add(const composite<T>& a, const composite<T2>& b, composite<T3>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai + bi; }, out); 
 	}
 	template <class T, class T2, class T3>
-	void sub(const many<T>& a, const many<T2>& b, many<T3>& out)
+	void sub(const composite<T>& a, const composite<T2>& b, composite<T3>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai - bi; }, out); 
 	}
 	template <class T, class T2, class T3>
-	void mult(const many<T>& a, const many<T2>& b, many<T3>& out)
+	void mult(const composite<T>& a, const composite<T2>& b, composite<T3>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai * bi; }, out); 
 	}
 	template <class T, class T2, class T3>
-	void div(const many<T>& a, const many<T2>& b, many<T3>& out)
+	void div(const composite<T>& a, const composite<T2>& b, composite<T3>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai / bi; }, out); 
 	}
 	template <class T, class T2, class T3>
-	void div(const T a, const many<T2>& b, many<T3>& out)
+	void div(const T a, const composite<T2>& b, composite<T3>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai / bi; }, out); 
 	}
@@ -603,9 +603,9 @@ namespace composites
 
 
 
-	typedef many<bool>	       bools;
-	typedef many<int>	       ints;
-	typedef many<unsigned int> uints;
-	typedef many<float>	       floats;
-	typedef many<double>       doubles;
+	typedef composite<bool>	       bools;
+	typedef composite<int>	       ints;
+	typedef composite<unsigned int> uints;
+	typedef composite<float>	       floats;
+	typedef composite<double>       doubles;
 }

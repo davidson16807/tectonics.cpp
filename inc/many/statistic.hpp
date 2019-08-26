@@ -4,14 +4,14 @@
 #include <algorithm>	// std::sort
 #include <functional>	// std::function
 
-#include "many.hpp"
+#include "composite.hpp"
 
-namespace composites
+namespace many
 {
 
 
 	template<class T, typename Taggregator>
-	void aggregate_into(const many<T>& a, const many<unsigned int>& group_ids, Taggregator aggregator, many<T>& group_out)
+	void aggregate_into(const composite<T>& a, const composite<unsigned int>& group_ids, Taggregator aggregator, composite<T>& group_out)
 	{
 		for (unsigned int i = 0; i < group_ids.size(); ++i)
 		{
@@ -19,7 +19,7 @@ namespace composites
 		}
 	}
 	template<class T, typename Taggregator>
-	void aggregate(const many<T>& a, const many<unsigned int>& group_ids, Taggregator aggregator, many<T>& group_out)
+	void aggregate(const composite<T>& a, const composite<unsigned int>& group_ids, Taggregator aggregator, composite<T>& group_out)
 	{
 		fill(group_out, T(0));
 		for (unsigned int i = 0; i < group_ids.size(); ++i)
@@ -29,7 +29,7 @@ namespace composites
 	}
 
 	template<class T, typename Taggregator>
-	void aggregate_into(const many<unsigned int>& group_ids, Taggregator aggregator, many<T>& group_out)
+	void aggregate_into(const composite<unsigned int>& group_ids, Taggregator aggregator, composite<T>& group_out)
 	{
 		for (unsigned int i = 0; i < group_ids.size(); ++i)
 		{
@@ -37,7 +37,7 @@ namespace composites
 		}
 	}
 	template<class T, typename Taggregator>
-	void aggregate(const many<unsigned int>& group_ids, Taggregator aggregator, many<T>& group_out)
+	void aggregate(const composite<unsigned int>& group_ids, Taggregator aggregator, composite<T>& group_out)
 	{
 		fill(group_out, T(0));
 		for (unsigned int i = 0; i < group_ids.size(); ++i)
@@ -49,7 +49,7 @@ namespace composites
 
 	// component-wise min
 	template <class T>
-	unsigned int min_id(const many<T>& a)
+	unsigned int min_id(const composite<T>& a)
 	{
 		T min_value = a[0];
 		unsigned int min_id = 0;
@@ -67,7 +67,7 @@ namespace composites
 
 
 	template <class T>
-	unsigned int max_id(const many<T>& a)
+	unsigned int max_id(const composite<T>& a)
 	{
 		T min_value = a[0];
 		unsigned int max_id = 0;
@@ -85,7 +85,7 @@ namespace composites
 
 	// component-wise min
 	template <class T>
-	T sum(const many<T>& a)
+	T sum(const composite<T>& a)
 	{
 		T out = T(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -96,7 +96,7 @@ namespace composites
 	}
 
 	template <class T>
-	T mean(const many<T>& a)
+	T mean(const composite<T>& a)
 	{
 		T out = T(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -109,17 +109,17 @@ namespace composites
 
 	// // component-wise min
 	// template <class T>
-	// T median(const many<T>& a)
+	// T median(const composite<T>& a)
 	// {
-	// 	const many<T> temp = many<T>(a);
+	// 	const composite<T> temp = composite<T>(a);
 	// 	std::sort(std::begin(temp), std::end(temp));
 	// 	return a[a.size()/2];
 	// }
 // 
 	// template <class T>
-	// T mode(const many<T>& a)
+	// T mode(const composite<T>& a)
 	// {
-	// 	const many<T> temp = many<T>(a);
+	// 	const composite<T> temp = composite<T>(a);
 	// 	std::sort(std::begin(temp), std::end(temp));
 	//     int value = a[0];
 	//     int max = a[0];
@@ -142,7 +142,7 @@ namespace composites
 	// }
 
 	template <class T>
-	T standard_deviation(const many<T>& a)
+	T standard_deviation(const composite<T>& a)
 	{
 		T mean_a = mean(a);
 
@@ -156,7 +156,7 @@ namespace composites
 	};
 
 	template <class T>
-	T weighted_average(const many<T>& a, const many<T>& weights)
+	T weighted_average(const composite<T>& a, const composite<T>& weights)
 	{
 		T out = T(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -169,7 +169,7 @@ namespace composites
 
 	// TODO: vector version
 	template <class T>
-	void rescale(const many<T>& a, many<T>& out, T max_new = 1., T min_new = 0.)
+	void rescale(const composite<T>& a, composite<T>& out, T max_new = 1., T min_new = 0.)
 	{
 	    T max_old = max(a);
 	    T min_old = min(a);
@@ -182,4 +182,4 @@ namespace composites
 			out[i] = scaling_factor * (a[i] - min_old) + min_new;
 		}
 	};
-} //namespace composites
+} //namespace many

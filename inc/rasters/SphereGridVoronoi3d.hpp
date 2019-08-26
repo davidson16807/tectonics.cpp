@@ -6,16 +6,16 @@
 #include <array>		// arrays
 // #include <iostream>		// cout
 
-#include <composites/many.hpp>
-#include <composites/glm/vecs.hpp>
-#include <composites/glm/geometric.hpp>
+#include <many/composite.hpp>
+#include <many/glm/vecs.hpp>
+#include <many/glm/geometric.hpp>
 
 #include "CartesianGridCellList3d.hpp"
 
 namespace rasters
 {
 	using namespace glm;
-	using namespace composites;
+	using namespace many;
 
 	// describes a 3d unit cube sphere where every cell houses an id representing the nearest point
 	// uses CartesianGridCellList3d behind the scenes to optimize initialization

@@ -3,8 +3,8 @@
 #define GLM_FORCE_PURE      // disable SIMD support for glm so we can work with webassembly
 #include <glm/glm.hpp>               // *vec3
 
-#include <composites/composites.hpp>  //  floats, etc.
-#include <composites/glm/glm.hpp>    // *vec*s
+#include <many/many.hpp>  //  floats, etc.
+#include <many/glm/glm.hpp>    // *vec*s
 
 #include "rasters/raster.hpp"         
 #include "rasters/glm/vec_raster.hpp"
@@ -12,7 +12,7 @@
 
 // #include "academics/tectonics.hpp"
 
-using namespace composites;
+using namespace many;
 using namespace rasters;
 
 std::shared_ptr<Grid> tetrahedron = 

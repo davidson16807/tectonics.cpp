@@ -6,11 +6,10 @@
 #define GLM_FORCE_PURE      // disable SIMD support for glm so we can work with webassembly
 #include <glm/vec3.hpp>               // *vec3
 
-#include <composites/many.hpp>            //  floats, etc.
-#include <composites/common.hpp>          //  floats, etc.
-#include <composites/convenience.hpp>     //  operators, etc.
-#include <composites/glm/vecs.hpp>        // *vec*s
-#include <composites/glm/convenience.hpp> //  operators, etc.
+#include <many/many.hpp>  
+#include <many/convenience.hpp>     //  operators, etc.
+#include <many/glm/glm.hpp>         // *vec*s
+#include <many/glm/convenience.hpp> //  operators, etc.
 
 #include "rasters/raster.hpp"         
 #include "rasters/glm/vec_raster.hpp"
@@ -18,22 +17,22 @@
 
 // #include "academics/tectonics.hpp"
 
-using namespace composites;
+using namespace many;
 using namespace rasters;
 
 std::shared_ptr<Grid> tetrahedron = 
     std::make_shared<Grid>(
         vec3s({
-                vec3(0,0,0),
-                vec3(1,0,0),
-                vec3(0,1,0),
-                vec3(0,0,1)
+                glm::vec3(0,0,0),
+                glm::vec3(1,0,0),
+                glm::vec3(0,1,0),
+                glm::vec3(0,0,1)
             }),
         uvec3s({
-                uvec3(0,1,2),
-                uvec3(0,1,3),
-                uvec3(0,2,3),
-                uvec3(1,2,3)
+                glm::uvec3(0,1,2),
+                glm::uvec3(0,1,3),
+                glm::uvec3(0,2,3),
+                glm::uvec3(1,2,3)
             })
     );
 /* "diamond" is a 2d grid, it looks like this:
@@ -46,43 +45,43 @@ std::shared_ptr<Grid> tetrahedron =
 std::shared_ptr<Grid> diamond = 
     std::make_shared<Grid>(
         vec3s({
-                vec3( 0, 0, 0),
-                vec3( 1, 0, 0),
-                vec3( 0, 1, 0),
-                vec3(-1, 0, 0),
-                vec3( 0,-1, 0)
+                glm::vec3( 0, 0, 0),
+                glm::vec3( 1, 0, 0),
+                glm::vec3( 0, 1, 0),
+                glm::vec3(-1, 0, 0),
+                glm::vec3( 0,-1, 0)
             }),
         uvec3s({
-                uvec3(0,1,2),
-                uvec3(0,1,4),
-                uvec3(0,3,2),
-                uvec3(0,3,4)
+                glm::uvec3(0,1,2),
+                glm::uvec3(0,1,4),
+                glm::uvec3(0,3,2),
+                glm::uvec3(0,3,4)
             })
     );
 
 SphereGridVoronoi3d voronoi_test(
         vec3s({
-                normalize(vec3( 1, 0, 0)),
-                normalize(vec3( 0, 1, 0)),
-                normalize(vec3( 0, 0, 1)),
-                normalize(vec3(-1, 0, 0)),
-                normalize(vec3( 0,-1, 0)),
-                normalize(vec3( 0, 0,-1)),
-                normalize(vec3(-1,-1,-1)),
-                normalize(vec3( 1,-1,-1)),
-                normalize(vec3(-1, 1,-1)),
-                normalize(vec3( 1, 1,-1)),
-                normalize(vec3(-1,-1, 1)),
-                normalize(vec3( 1,-1, 1)),
-                normalize(vec3(-1, 1, 1)),
-                normalize(vec3( 1, 1, 1)),
-                normalize(vec3( 1, 1, 1))
+                normalize(glm::vec3( 1, 0, 0)),
+                normalize(glm::vec3( 0, 1, 0)),
+                normalize(glm::vec3( 0, 0, 1)),
+                normalize(glm::vec3(-1, 0, 0)),
+                normalize(glm::vec3( 0,-1, 0)),
+                normalize(glm::vec3( 0, 0,-1)),
+                normalize(glm::vec3(-1,-1,-1)),
+                normalize(glm::vec3( 1,-1,-1)),
+                normalize(glm::vec3(-1, 1,-1)),
+                normalize(glm::vec3( 1, 1,-1)),
+                normalize(glm::vec3(-1,-1, 1)),
+                normalize(glm::vec3( 1,-1, 1)),
+                normalize(glm::vec3(-1, 1, 1)),
+                normalize(glm::vec3( 1, 1, 1)),
+                normalize(glm::vec3( 1, 1, 1))
             }),
         1./100.
     );
 
 
-TEST_CASE( "Must be able to test composite equivalence using the catch framework", "[composites]" ) {
+TEST_CASE( "Must be able to test composite equivalence using the catch framework", "[many]" ) {
     floats ref       = floats({1,2,3,4,5});
     floats ref_copy  = floats({1,2,3,4,5});
     floats ref_tweak = floats({1,2,3,4,0});
@@ -91,19 +90,19 @@ TEST_CASE( "Must be able to test composite equivalence using the catch framework
     SECTION("Must be able to equate object with itself"){
         CHECK(ref == ref);
     }
-    SECTION("Must be able to equate composites of the same content and size"){
+    SECTION("Must be able to equate many of the same content and size"){
         CHECK(ref == ref_copy);
     }
-    SECTION("Must be able to distinguish composites of slightly different content"){
+    SECTION("Must be able to distinguish many of slightly different content"){
         CHECK(ref != ref_tweak);
     }
-    SECTION("Must be able to distinguish composites of slightly different size"){
+    SECTION("Must be able to distinguish many of slightly different size"){
         CHECK(ref != ref_fewer);
     }
 }
 
 
-TEST_CASE( "Equivalent composite arithmetic must behave equivalently", "[composites]" ) {
+TEST_CASE( "Equivalent composite arithmetic must behave equivalently", "[many]" ) {
     floats a1 = floats({1,2,3,4,5});
     floats a2 = floats({1,2,3,4,5});
     floats a3 = floats({1,2,3,4,5});
@@ -147,7 +146,7 @@ TEST_CASE( "Equivalent composite arithmetic must behave equivalently", "[composi
 }
 
 
-TEST_CASE( "composite arithmetic must have idempotence: the operation can be called repeatedly without changing the value", "[composites]" ) {
+TEST_CASE( "composite arithmetic must have idempotence: the operation can be called repeatedly without changing the value", "[many]" ) {
     floats a = floats({1,2,3,4,5});
     floats b = floats({-1,1,-2,2,3});
     floats c1 = floats({0,0,0,0,0});
@@ -196,7 +195,7 @@ TEST_CASE( "composite arithmetic must have idempotence: the operation can be cal
 
 
 
-TEST_CASE( "composite arithmetic must have an identity: a value exists that can be applied without effect", "[composites]" ) {
+TEST_CASE( "composite arithmetic must have an identity: a value exists that can be applied without effect", "[many]" ) {
     floats a = floats({1,2,3,4,5});
     floats zeros = floats({0,0,0,0,0});
     floats ones  = floats({1,1,1,1,1});
@@ -212,7 +211,7 @@ TEST_CASE( "composite arithmetic must have an identity: a value exists that can 
 }
 
 
-TEST_CASE( "composite arithmetic must have commutativity: values can be swapped to the same effect", "[composites]" ) {
+TEST_CASE( "composite arithmetic must have commutativity: values can be swapped to the same effect", "[many]" ) {
     floats a = floats({1,2,3,4,5});
     floats b = floats({-1,1,-2,2,3});
 
@@ -225,7 +224,7 @@ TEST_CASE( "composite arithmetic must have commutativity: values can be swapped 
 }
 
 
-TEST_CASE( "composite arithmetic must have associativity: operations can be applied in a different order to the same effect", "[composites]" ) {
+TEST_CASE( "composite arithmetic must have associativity: operations can be applied in a different order to the same effect", "[many]" ) {
     floats a = floats({1,2,3,4,5});
     floats b = floats({-1,1,-2,2,3});
     floats c = floats({1,1,2,3,5});
@@ -239,7 +238,7 @@ TEST_CASE( "composite arithmetic must have associativity: operations can be appl
 }
 
 
-TEST_CASE( "composite arithmetic must have distributivity: an operation can be distributed as values of another", "[composites]" ) {
+TEST_CASE( "composite arithmetic must have distributivity: an operation can be distributed as values of another", "[many]" ) {
     floats a = floats({1,2,3,4,5});
     floats b = floats({-1,1,-2,2,3});
     floats c = floats({1,1,2,3,5});
@@ -253,7 +252,7 @@ TEST_CASE( "composite arithmetic must have distributivity: an operation can be d
 }
 
 
-TEST_CASE( "composite min/max must have associativity: operations can be applied in a different order to the same effect", "[composites]" ) {
+TEST_CASE( "composite min/max must have associativity: operations can be applied in a different order to the same effect", "[many]" ) {
     floats a = floats({1,2,3,4,5});
     floats b = floats({-1,1,-2,2,3});
     floats c = floats({1,1,2,3,5});
