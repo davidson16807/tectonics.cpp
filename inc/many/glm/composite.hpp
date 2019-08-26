@@ -194,7 +194,7 @@ namespace many
 	}
 
 
-
+	
 	
 
 
@@ -222,5 +222,5 @@ namespace many
 	typedef composite<glm::vec<2, float, glm::defaultp>> vec2s;
 	typedef composite<glm::vec<3, float, glm::defaultp>> vec3s;
 	typedef composite<glm::vec<4, float, glm::defaultp>> vec4s;
-
+	
 }

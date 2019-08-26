@@ -6,7 +6,7 @@
 // #include <iostream>	// cout
 
 #include <glm/vec3.hpp>               // *vec3
-#include <many/glm/vecs.hpp>    // *vec*s
+#include <many/glm/composite.hpp>    // *vec*s
 
 using namespace many;
 

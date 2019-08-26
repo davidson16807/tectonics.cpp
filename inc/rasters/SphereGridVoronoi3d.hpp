@@ -7,7 +7,7 @@
 // #include <iostream>		// cout
 
 #include <many/composite.hpp>
-#include <many/glm/vecs.hpp>
+#include <many/glm/composite.hpp>
 #include <many/glm/geometric.hpp>
 
 #include "CartesianGridCellList3d.hpp"
