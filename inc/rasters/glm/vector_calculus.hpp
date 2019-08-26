@@ -9,8 +9,6 @@ namespace rasters
 	template<typename T1, typename T2, qualifier Q>
 	void gradient(const raster<T1>& scalar_field, raster<glm::vec<3,T2,Q>>& result)
 	{
-		auto grid = scalar_field.grid;
-
 		// NOTE: 
 		// The naive implementation is to estimate the gradient based on each individual neighbor,
 		//  then take the average between the estimates.
@@ -34,20 +32,20 @@ namespace rasters
 		vec3  dx    (0);
 		const float PI = 3.141592653589793238462643383279502884197169399;
 		fill(result, glm::vec<3,T2,Q>(0));
-		for (unsigned int i = 0; i < grid->arrow_vertex_ids.size(); ++i)
+		for (unsigned int i = 0; i < scalar_field.grid->arrow_vertex_ids.size(); ++i)
 		{
-			arrow = grid->arrow_vertex_ids[i]; 
+			arrow = scalar_field.grid->arrow_vertex_ids[i]; 
 			from  = arrow.x; 
 			to    = arrow.y; 
 			df    = scalar_field[to] - scalar_field[from]; 
 			// we multiply df by the circumference of a circle around the vertex that reaches halfway to its neighbor,
 			//   this gives us the flux out of this representative circle 
 			// we then add the flux to result in prep to find the average flux around the vertex
-			result[from] += df * grid->arrow_offsets[i]; // (PI cancels out)
+			result[from] += df * scalar_field.grid->arrow_offsets[i]; // (PI cancels out)
 		}
 		// we divide by the number of neighbors to get the average flux around the vertex
-		result /= grid->vertex_neighbor_counts; 
+		result /= scalar_field.grid->vertex_neighbor_counts; 
 		// we then divide by the area of the circle to get the gradient
-		result *= 1.f / ((grid->arrow_average_distance/2) * (grid->arrow_average_distance/2)); // (PI cancels out)
+		result *= 1.f / ((scalar_field.grid->arrow_average_distance/2) * (scalar_field.grid->arrow_average_distance/2)); // (PI cancels out)
 	}
 }
