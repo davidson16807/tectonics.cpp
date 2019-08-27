@@ -13,7 +13,7 @@ It is important to keep these functions separate from the rest of the library fo
  2.) It provides a nice itemization of functions that will have to be created if you subclass raster<T> (as we do within the rasters library)
 */
 
-namespace rasters
+namespace many
 {
 	template <class T>
 	raster<T> get(const raster<T>& a, const raster<unsigned int>& ids)
@@ -152,6 +152,40 @@ namespace rasters
 		os << "]";
 		return os;
 	}
+
+
+	// NOTE: all operators are suggested to be inline because they are thin wrappers of functions
+	template <class T>
+	inline bool operator==(const raster<T>& a, const T b)
+	{
+		return equal(a, b);
+	}
+	template <class T>
+	inline bool operator!=(const raster<T>& a, const T b)
+	{
+		return notEqual(a, b);
+	}
+	template <class T>
+	inline bool operator==(const T a, const raster<T>& b)
+	{
+		return equal(a, b);
+	}
+	template <class T>
+	inline bool operator!=(const T a, const raster<T>& b)
+	{
+		return notEqual(a, b);
+	}
+	template <class T>
+	inline bool operator==(const raster<T>& a, const raster<T>& b)
+	{
+		return equal(a, b);
+	}
+	template <class T>
+	inline bool operator!=(const raster<T>& a, const raster<T>& b)
+	{
+		return notEqual(a, b);
+	}
+	
 
 	template <class T, class T2, class T3>
 	inline raster<T3> operator>(const raster<T>& a, const T2 b)

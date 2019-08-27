@@ -1,4 +1,4 @@
 #pragma once
 
-#include "vec_raster.hpp"
+#include "raster.hpp"
 #include "vector_calculus.hpp"

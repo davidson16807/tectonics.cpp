@@ -10,41 +10,6 @@ namespace many
 {
 
 
-	template<class T, typename Taggregator>
-	void aggregate_into(const composite<T>& a, const composite<unsigned int>& group_ids, Taggregator aggregator, composite<T>& group_out)
-	{
-		for (unsigned int i = 0; i < group_ids.size(); ++i)
-		{
-			group_out[group_ids[i]] = aggregator(group_out[group_ids[i]], a[i]);
-		}
-	}
-	template<class T, typename Taggregator>
-	void aggregate(const composite<T>& a, const composite<unsigned int>& group_ids, Taggregator aggregator, composite<T>& group_out)
-	{
-		fill(group_out, T(0));
-		for (unsigned int i = 0; i < group_ids.size(); ++i)
-		{
-			group_out[group_ids[i]] = aggregator(group_out[group_ids[i]], a[i]);
-		}
-	}
-
-	template<class T, typename Taggregator>
-	void aggregate_into(const composite<unsigned int>& group_ids, Taggregator aggregator, composite<T>& group_out)
-	{
-		for (unsigned int i = 0; i < group_ids.size(); ++i)
-		{
-			group_out[group_ids[i]] = aggregator(group_out[group_ids[i]]);
-		}
-	}
-	template<class T, typename Taggregator>
-	void aggregate(const composite<unsigned int>& group_ids, Taggregator aggregator, composite<T>& group_out)
-	{
-		fill(group_out, T(0));
-		for (unsigned int i = 0; i < group_ids.size(); ++i)
-		{
-			group_out[group_ids[i]] = aggregator(group_out[group_ids[i]]);
-		}
-	}
 
 
 	// component-wise min

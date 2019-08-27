@@ -14,13 +14,6 @@ Some of the objectives we want to accomplish:
  5.) works well with glm 
        since we already depend on glsl for shader code, and glm allows us to reuse the knowledge base surrounding glsl
 
-In our ideal state, the code we write should have the following properties:
-* performant
-* easy to use
-* easy to understand, as new library users 
-* easy to reason with, as library developers
-* avoid invalid state
-
 We could reuse existing libraries to accomplish some of these objectives (`xtensor`, `std::composite`, etc.) but none of them can easily achieve objectives #3, #4, and #5.
 So we write our own solution. 
 

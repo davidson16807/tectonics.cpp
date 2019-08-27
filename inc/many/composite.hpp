@@ -341,65 +341,48 @@ namespace many
 	}
 
 
-
-
-
-
-
-
-
-	template <class T, class T2, class T3>
-	void add(const composite<T>& a, const T2 b, composite<T3>& out)
+	template<class T, typename Taggregator>
+	void aggregate_into(const composite<T>& a, const composite<unsigned int>& group_ids, Taggregator aggregator, composite<T>& group_out)
 	{
-		transform(a, b, [](T ai, T2 bi){ return ai + bi; }, out); 
+		for (unsigned int i = 0; i < group_ids.size(); ++i)
+		{
+			group_out[group_ids[i]] = aggregator(group_out[group_ids[i]], a[i]);
+		}
 	}
-	template <class T, class T2, class T3>
-	void sub(const composite<T>& a, const T2 b, composite<T3>& out)
+	template<class T, typename Taggregator>
+	void aggregate(const composite<T>& a, const composite<unsigned int>& group_ids, Taggregator aggregator, composite<T>& group_out)
 	{
-		transform(a, b, [](T ai, T2 bi){ return ai - bi; }, out); 
-	}
-	template <class T, class T2, class T3>
-	void mult(const composite<T>& a, const T2 b, composite<T3>& out)
-	{
-		transform(a, b, [](T ai, T2 bi){ return ai * bi; }, out); 
-	}
-	template <class T, class T2, class T3>
-	void div(const composite<T>& a, const T2 b, composite<T3>& out)
-	{
-		const T2 binv = T2(1.)/b;
-		transform(a, b, [](T ai, T2 bi){ return ai * bi; }, out); 
+		fill(group_out, T(0));
+		for (unsigned int i = 0; i < group_ids.size(); ++i)
+		{
+			group_out[group_ids[i]] = aggregator(group_out[group_ids[i]], a[i]);
+		}
 	}
 
+	template<class T, typename Taggregator>
+	void aggregate_into(const composite<unsigned int>& group_ids, Taggregator aggregator, composite<T>& group_out)
+	{
+		for (unsigned int i = 0; i < group_ids.size(); ++i)
+		{
+			group_out[group_ids[i]] = aggregator(group_out[group_ids[i]]);
+		}
+	}
+	template<class T, typename Taggregator>
+	void aggregate(const composite<unsigned int>& group_ids, Taggregator aggregator, composite<T>& group_out)
+	{
+		fill(group_out, T(0));
+		for (unsigned int i = 0; i < group_ids.size(); ++i)
+		{
+			group_out[group_ids[i]] = aggregator(group_out[group_ids[i]]);
+		}
+	}
 
 
-	// NOTE: we define operators for multiple classes T and T2 in order to support 
-	//  vector/scalar multiplication, matrix/vect multiplication, etc.
-	template <class T, class T2, class T3>
-	void add(const composite<T>& a, const composite<T2>& b, composite<T3>& out)
-	{
-		transform(a, b, [](T ai, T2 bi){ return ai + bi; }, out); 
-	}
-	template <class T, class T2, class T3>
-	void sub(const composite<T>& a, const composite<T2>& b, composite<T3>& out)
-	{
-		transform(a, b, [](T ai, T2 bi){ return ai - bi; }, out); 
-	}
-	template <class T, class T2, class T3>
-	void mult(const composite<T>& a, const composite<T2>& b, composite<T3>& out)
-	{
-		transform(a, b, [](T ai, T2 bi){ return ai * bi; }, out); 
-	}
-	template <class T, class T2, class T3>
-	void div(const composite<T>& a, const composite<T2>& b, composite<T3>& out)
-	{
-		transform(a, b, [](T ai, T2 bi){ return ai / bi; }, out); 
-	}
-	template <class T, class T2, class T3>
-	void div(const T a, const composite<T2>& b, composite<T3>& out)
-	{
-		transform(a, b, [](T ai, T2 bi){ return ai / bi; }, out); 
-	}
-	
+
+
+
+
+
 
 
 

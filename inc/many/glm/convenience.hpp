@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include "../composite.hpp"
+#include "../convenience.hpp"
 
 /*
 "convenience.hpp" contains functions that pass output as return values rather than using output parameters
