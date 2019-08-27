@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-#include "../raster.hpp"
+#include "../types.hpp"
 #include "../convenience.hpp"
 
 /*

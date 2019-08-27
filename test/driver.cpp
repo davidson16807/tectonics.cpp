@@ -6,8 +6,8 @@
 #include <many/many.hpp>  //  floats, etc.
 #include <many/glm/glm.hpp>    // *vec*s
 
-#include "rasters/raster.hpp"         
-#include "rasters/glm/vec_raster.hpp"
+#include "rasters/types.hpp"         
+#include "rasters/glm/vec_types.hpp"
 #include "rasters/glm/vector_calculus.hpp"
 
 // #include "academics/tectonics.hpp"

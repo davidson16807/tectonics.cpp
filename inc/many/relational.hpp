@@ -1,6 +1,6 @@
 #pragma once
 
-#include "composite.hpp"
+#include "types.hpp"
 
 namespace many
 {

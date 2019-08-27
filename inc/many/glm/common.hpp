@@ -4,7 +4,7 @@
 
 #include <glm/common.hpp>	// all the GLSL common functions: abs, floor, etc.
 
-#include "../composite.hpp"
+#include "../types.hpp"
 
 namespace many
 {

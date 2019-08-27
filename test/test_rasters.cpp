@@ -7,11 +7,10 @@
 #include <glm/vec3.hpp>               // *vec3
 
 #include <many/many.hpp>  
-#include <many/convenience.hpp>     //  operators, etc.
 #include <many/glm/glm.hpp>         // *vec*s
 #include <many/glm/convenience.hpp> //  operators, etc.
 
-#include "rasters/raster.hpp"         
+#include "rasters/types.hpp"         
 #include "rasters/glm/glm.hpp"
 #include "rasters/glm/vector_calculus.hpp"
 

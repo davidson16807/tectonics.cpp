@@ -4,7 +4,7 @@
 #include <algorithm>	// std::sort
 #include <functional>	// std::function
 
-#include "composite.hpp"
+#include "types.hpp"
 
 namespace many
 {

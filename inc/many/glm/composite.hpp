@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "../composite.hpp"
+#include "../types.hpp"
 
 namespace many
 {

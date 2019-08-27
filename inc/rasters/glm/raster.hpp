@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../raster.hpp"
+#include "../types.hpp"
 
 namespace rasters
 {

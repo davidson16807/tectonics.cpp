@@ -3,8 +3,8 @@
 #include <cmath>
 
 #include <glm/vec3.hpp>               // *vec3
-#include <rasters/raster.hpp>          // float_raster, etc.
-#include <rasters/glm/vec_raster.hpp>  // *vec*_raster
+#include <rasters/types.hpp>          // float_raster, etc.
+#include <rasters/glm/vec_types.hpp>  // *vec*_raster
 #include <rasters/glm/vector_calculus.hpp>  // *vec*_raster
 
 namespace academics {

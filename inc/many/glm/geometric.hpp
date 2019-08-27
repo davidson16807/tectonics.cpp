@@ -4,7 +4,7 @@
 
 #include <glm/geometric.hpp>// all the GLSL geometry functions: dot, cross, reflect, etc.
 
-#include "../composite.hpp"
+#include "../types.hpp"
 
 namespace many
 {

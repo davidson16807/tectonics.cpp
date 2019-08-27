@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-#include "composite.hpp"
+#include "types.hpp"
 
 /*
 "convenience.hpp" contains functions that pass output as return values rather than using using output parameters

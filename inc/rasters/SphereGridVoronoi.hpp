@@ -6,8 +6,8 @@
 #include <array>		// arrays
 // #include <iostream>		// cout
 
-#include <many/composite.hpp>
-#include <many/glm/composite.hpp>
+#include <many/types.hpp>
+#include <many/glm/types.hpp>
 #include <many/glm/geometric.hpp>
 
 #include "CartesianGridCellList.hpp"

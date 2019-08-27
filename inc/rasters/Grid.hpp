@@ -7,10 +7,10 @@
 
 #include <glm/vec2.hpp>          // *vec2
 #include <glm/vec3.hpp>          // *vec3
-#include <many/composite.hpp>    // floats, etc.
+#include <many/types.hpp>    // floats, etc.
 #include <many/common.hpp>       // max
 #include <many/statistic.hpp>    // mean
-#include <many/glm/composite.hpp>// *vec*s
+#include <many/glm/types.hpp>// *vec*s
 #include <many/glm/geometric.hpp>// cross, dot, etc.
 
 #define GLM_ENABLE_EXPERIMENTAL

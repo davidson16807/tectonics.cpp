@@ -2,7 +2,7 @@
 
 #include <glm/vector_relational.hpp>
 
-#include "../composite.hpp"
+#include "../types.hpp"
 #include "../relational.hpp"
 
 namespace many
