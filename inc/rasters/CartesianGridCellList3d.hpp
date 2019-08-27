@@ -8,10 +8,12 @@
 #include <glm/vec3.hpp>               // *vec3
 #include <many/glm/composite.hpp>    // *vec*s
 
-using namespace many;
 
 namespace rasters {
-	
+	namespace {
+		using namespace many;
+	}
+
 	// describes a 3d cartesian grid where every cell houses a list of ids representing nearby points
 	class CartesianGridCellList3d
 	{

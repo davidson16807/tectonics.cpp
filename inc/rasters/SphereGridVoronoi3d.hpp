@@ -14,8 +14,10 @@
 
 namespace rasters
 {
-	using namespace glm;
-	using namespace many;
+	namespace{
+		using namespace glm;
+		using namespace many;
+	}
 
 	// describes a 3d unit cube sphere where every cell houses an id representing the nearest point
 	// uses CartesianGridCellList3d behind the scenes to optimize initialization

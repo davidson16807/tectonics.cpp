@@ -19,9 +19,10 @@
 #include "SphereGridVoronoi3d.hpp"
 
 namespace rasters {
-
-	using namespace glm;
-	using namespace many;
+	namespace {
+		using namespace glm;
+		using namespace many;
+	}
 
 	// The Grid class is the one stop shop for high performance grid cell operations
 	// You can find grid cells by neighbor, by position, and by the index of a WebGL buffer array
