@@ -13,7 +13,7 @@ namespace many
 	bool equal(const composite<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> b)
 	{
 		bool out(true);
-		T threshold(many_EPSILON);
+		T threshold(MANY_EPSILON);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out &= distance(a[i], b) <= threshold;
@@ -24,7 +24,7 @@ namespace many
 	bool notEqual(const composite<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> b)
 	{
 		bool out(false);
-		T threshold(many_EPSILON);
+		T threshold(MANY_EPSILON);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out |= distance(a[i], b) > threshold;
@@ -35,7 +35,7 @@ namespace many
 	bool equal(const composite<glm::vec<L,T,Q>>& a, const composite<glm::vec<L,T,Q>>& b)
 	{
 		bool out(true);
-		T threshold(many_EPSILON);
+		T threshold(MANY_EPSILON);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out &= distance(a[i], b[i]) <= threshold;
@@ -46,7 +46,7 @@ namespace many
 	bool notEqual(const composite<glm::vec<L,T,Q>>& a, const composite<glm::vec<L,T,Q>>& b)
 	{
 		bool out(false);
-		T threshold(many_EPSILON);
+		T threshold(MANY_EPSILON);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out |= distance(a[i], b[i]) > threshold;
@@ -61,7 +61,7 @@ namespace many
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void equal(const composite<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> b, composite<bool>& out)
 	{
-		T threshold(many_EPSILON);
+		T threshold(MANY_EPSILON);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out[i] = distance(a[i], b) <= threshold;
@@ -70,7 +70,7 @@ namespace many
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void notEqual(const composite<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> b, composite<bool>& out)
 	{
-		T threshold(many_EPSILON);
+		T threshold(MANY_EPSILON);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out[i] = distance(a[i], b) > threshold;
@@ -79,7 +79,7 @@ namespace many
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void equal(const composite<glm::vec<L,T,Q>>& a, const composite<glm::vec<L,T,Q>>& b, composite<bool>& out)
 	{
-		T threshold(many_EPSILON);
+		T threshold(MANY_EPSILON);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out[i] = distance(a[i], b[i]) <= threshold;
@@ -88,7 +88,7 @@ namespace many
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void notEqual(const composite<glm::vec<L,T,Q>>& a, const composite<glm::vec<L,T,Q>>& b, composite<bool>& out)
 	{
-		T threshold(many_EPSILON);
+		T threshold(MANY_EPSILON);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out[i] = distance(a[i], b[i]) > threshold;

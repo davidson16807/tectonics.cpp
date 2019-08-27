@@ -5,14 +5,14 @@
 namespace many
 {
 
-	float many_EPSILON = 1e-4;
+	const float MANY_EPSILON = 1e-4;
 
 	template <class T>
 	bool equal(const composite<T>& a, const T b)
 	{
 		bool out(true);
 		T diff(0);
-		T threshold(many_EPSILON);
+		T threshold(MANY_EPSILON);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			diff = a[i] - b;
@@ -25,7 +25,7 @@ namespace many
 	{
 		bool out(false);
 		T diff(0);
-		T threshold(many_EPSILON);
+		T threshold(MANY_EPSILON);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			diff = a[i] - b;
@@ -42,7 +42,7 @@ namespace many
 		}
 		bool out(true);
 		T diff(0);
-		T threshold(many_EPSILON);
+		T threshold(MANY_EPSILON);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			diff = a[i] - b[i];
@@ -59,7 +59,7 @@ namespace many
 		}
 		bool out(false);
 		T diff(0);
-		T threshold(many_EPSILON);
+		T threshold(MANY_EPSILON);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			diff = a[i] - b[i];
@@ -74,7 +74,7 @@ namespace many
 	void equal(const composite<T>& a, const T b, composite<bool>& out)
 	{
 		T diff(0);
-		T threshold(many_EPSILON);
+		T threshold(MANY_EPSILON);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			diff = a[i] - b;
@@ -85,7 +85,7 @@ namespace many
 	void notEqual(const composite<T>& a, const T b, composite<bool>& out)
 	{
 		T diff(0);
-		T threshold(many_EPSILON);
+		T threshold(MANY_EPSILON);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			diff = a[i] - b;
@@ -96,7 +96,7 @@ namespace many
 	void equal(const composite<T>& a, const composite<T>& b, composite<bool>& out)
 	{
 		T diff(0);
-		T threshold(many_EPSILON);
+		T threshold(MANY_EPSILON);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			diff = a[i] - b[i];
@@ -107,7 +107,7 @@ namespace many
 	void notEqual(const composite<T>& a, const composite<T>& b, composite<bool>& out)
 	{
 		T diff(0);
-		T threshold(many_EPSILON);
+		T threshold(MANY_EPSILON);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			diff = a[i] - b[i];
