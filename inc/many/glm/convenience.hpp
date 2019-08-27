@@ -105,4 +105,54 @@ namespace many
 		length(u, out);
 		return out;
 	}
+
+
+
+	template<glm::length_t L, typename T, glm::qualifier Q>
+	std::ostream &operator<< (std::ostream &out, const glm::vec<L,T,Q> &vec) {
+	    out << "[" 
+	        << vec.x << "," << vec.y << ","<< vec.z 
+	        << "]";
+
+	    return out;
+	}
+	template<glm::length_t L, typename T, glm::qualifier Q>
+	std::ostream &operator<<(std::ostream &os, const composite<glm::vec<L,T,Q>>& a) { 
+		os << "[";
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+		    os << a[i] << " ";
+		}
+		os << "]";
+		return os;
+	}
+
+
+
+
+
+	template<glm::length_t L, typename T, glm::qualifier Q>
+	inline composite<glm::vec<L,T,Q>>& operator+=(composite<glm::vec<L,T,Q>>& a, const T b) 
+	{
+		add(a, b, a);
+		return a;
+	}
+	template<glm::length_t L, typename T, glm::qualifier Q>
+	inline composite<glm::vec<L,T,Q>>& operator-=(composite<glm::vec<L,T,Q>>& a, const T b) 
+	{
+		sub(a, b, a);
+		return a;
+	}
+	template<glm::length_t L, typename T, glm::qualifier Q>
+	inline composite<glm::vec<L,T,Q>>& operator*=(composite<glm::vec<L,T,Q>>& a, const T b) 
+	{
+		mult(a, b, a);
+		return a;
+	}
+	template<glm::length_t L, typename T, glm::qualifier Q>
+	inline composite<glm::vec<L,T,Q>>& operator/=(composite<glm::vec<L,T,Q>>& a, const T b) 
+	{
+		div(a, b, a);
+		return a;
+	}
 } // end namespace

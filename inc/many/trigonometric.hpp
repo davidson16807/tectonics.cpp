@@ -8,6 +8,8 @@
 
 #include <cmath>
 
+#include "composite.hpp"
+
 namespace many
 {
 

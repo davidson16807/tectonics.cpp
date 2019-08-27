@@ -107,39 +107,6 @@ namespace many
 		return out;
 	}
 
-	// // component-wise min
-	// template <class T>
-	// T median(const composite<T>& a)
-	// {
-	// 	const composite<T> temp = composite<T>(a);
-	// 	std::sort(std::begin(temp), std::end(temp));
-	// 	return a[a.size()/2];
-	// }
-// 
-	// template <class T>
-	// T mode(const composite<T>& a)
-	// {
-	// 	const composite<T> temp = composite<T>(a);
-	// 	std::sort(std::begin(temp), std::end(temp));
-	//     int value = a[0];
-	//     int max = a[0];
-	//     int min = a[0];
-	//     int mode;
-	//     for (int i = 1, mode_count = 1, count = 1; i < a.size(); ++i) {
-	//         if (a[i] == value)
-	//             ++mode_count;
-	//         if (mode_count > count) {
-	//             count = mode_count;
-	//             mode = value;
-	//         }
-	//         if (a[i] > max)
-	//             max = a[i];
-	//         if (a[i] < min)
-	//             min = a[i];
-	//         value = a[i];
-	//     }
-	//     return mode;
-	// }
 
 	template <class T>
 	T standard_deviation(const composite<T>& a)
@@ -182,4 +149,37 @@ namespace many
 			out[i] = scaling_factor * (a[i] - min_old) + min_new;
 		}
 	};
+	// // component-wise min
+	// template <class T>
+	// T median(const composite<T>& a)
+	// {
+	// 	const composite<T> temp = composite<T>(a);
+	// 	std::sort(std::begin(temp), std::end(temp));
+	// 	return a[a.size()/2];
+	// }
+// 
+	// template <class T>
+	// T mode(const composite<T>& a)
+	// {
+	// 	const composite<T> temp = composite<T>(a);
+	// 	std::sort(std::begin(temp), std::end(temp));
+	//     int value = a[0];
+	//     int max = a[0];
+	//     int min = a[0];
+	//     int mode;
+	//     for (int i = 1, mode_count = 1, count = 1; i < a.size(); ++i) {
+	//         if (a[i] == value)
+	//             ++mode_count;
+	//         if (mode_count > count) {
+	//             count = mode_count;
+	//             mode = value;
+	//         }
+	//         if (a[i] > max)
+	//             max = a[i];
+	//         if (a[i] < min)
+	//             min = a[i];
+	//         value = a[i];
+	//     }
+	//     return mode;
+	// }
 } //namespace many

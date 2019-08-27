@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+#include "composite.hpp"
+
 namespace many
 {
 	/// Returns 'base' raised to the power 'exponent'.
@@ -11,7 +13,16 @@ namespace many
 	template <class T>
 	inline void pow(const composite<T>& base, const composite<T>& exponent, composite<T>& out)
 	{
-		transform(base, exponent, std::pow, out);
+		transform(base, exponent, [](T basei, T exponenti){ return std::pow(basei, exponenti); }, out);
+	}
+	/// Returns 'base' raised to the power 'exponent'.
+	///
+	/// @param base Floating point value. pow function is defined for input values of 'base' defined in the range (inf-, inf+) in the limit of the type qualifier.
+	/// @param exponent Floating point value representing the 'exponent'.
+	template <class T>
+	inline void pow(const composite<T>& base, const T exponent, composite<T>& out)
+	{
+		transform(base, exponent, [](T basei, T exponenti){ return std::pow(basei, exponenti); }, out);
 	}
 	// TODO: vector variant
 	/// Returns the natural exponentiation of x, i.e., e^x.
@@ -20,7 +31,7 @@ namespace many
 	template <class T>
 	inline void exp(const composite<T>& a, composite<T>& out)
 	{
-		transform(a, std::exp, out);
+		transform(a, [](T ai){ return std::exp(ai); }, out);
 	}
 
 	// TODO: vector variant
@@ -32,7 +43,7 @@ namespace many
 	template <class T>
 	inline void log(const composite<T>& a, composite<T>& out)
 	{
-		transform(a, std::log, out);
+		transform(a, [](T ai){ return std::log(ai); }, out);
 	}
 
 	// TODO: vector variant
@@ -42,7 +53,7 @@ namespace many
 	template <class T>
 	inline void exp2(const composite<T>& a, composite<T>& out)
 	{
-		transform(a, std::exp2, out);
+		transform(a, [](T ai){ return std::exp2(ai); }, out);
 	}
 
 	// TODO: vector variant
@@ -53,7 +64,7 @@ namespace many
 	template <class T>
 	inline void log2(const composite<T>& a, composite<T>& out)
 	{
-		transform(a, std::log2, out);
+		transform(a, [](T ai){ return std::log2(ai); }, out);
 	}
 
 	// TODO: vector variant
@@ -63,7 +74,7 @@ namespace many
 	template <class T>
 	inline void sqrt(const composite<T>& a, composite<T>& out)
 	{
-		transform(a, std::sqrt, out);
+		transform(a, [](T ai){ return std::sqrt(ai); }, out);
 	}
 
 	// TODO: vector variant

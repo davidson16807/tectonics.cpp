@@ -153,6 +153,40 @@ namespace many
 		return os;
 	}
 
+
+	// NOTE: all operators are suggested to be inline because they are thin wrappers of functions
+	template <class T>
+	inline bool operator==(const composite<T>& a, const T b)
+	{
+		return equal(a, b);
+	}
+	template <class T>
+	inline bool operator!=(const composite<T>& a, const T b)
+	{
+		return notEqual(a, b);
+	}
+	template <class T>
+	inline bool operator==(const T a, const composite<T>& b)
+	{
+		return equal(a, b);
+	}
+	template <class T>
+	inline bool operator!=(const T a, const composite<T>& b)
+	{
+		return notEqual(a, b);
+	}
+	template <class T>
+	inline bool operator==(const composite<T>& a, const composite<T>& b)
+	{
+		return equal(a, b);
+	}
+	template <class T>
+	inline bool operator!=(const composite<T>& a, const composite<T>& b)
+	{
+		return notEqual(a, b);
+	}
+	
+
 	template <class T, class T2, class T3>
 	inline composite<T3> operator>(const composite<T>& a, const T2 b)
 	{
