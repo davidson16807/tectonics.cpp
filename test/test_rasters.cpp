@@ -60,7 +60,7 @@ std::shared_ptr<Grid> diamond =
             })
     );
 
-SphereGridVoronoi3d voronoi_test(
+SphereGridVoronoi voronoi_test(
         vec3s({
                 normalize(vec3( 1, 0, 0)),
                 normalize(vec3( 0, 1, 0)),

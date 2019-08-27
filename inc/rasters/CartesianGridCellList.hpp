@@ -15,7 +15,7 @@ namespace rasters {
 	}
 
 	// describes a 3d cartesian grid where every cell houses a list of ids representing nearby points
-	class CartesianGridCellList3d
+	class CartesianGridCellList
 	{
 		glm::vec3  min_bounds;
 		glm::vec3  max_bounds;
@@ -52,14 +52,14 @@ namespace rasters {
 
 		}
 		// NOTE: copy constructor set to private so we don't have to think about managing pointer resources
-		CartesianGridCellList3d(const CartesianGridCellList3d& grid){};
+		CartesianGridCellList(const CartesianGridCellList& grid){};
 
 	public:
-		~CartesianGridCellList3d()
+		~CartesianGridCellList()
 		{
 		}
 		
-		CartesianGridCellList3d(const vec3s& points, const float cell_width)
+		CartesianGridCellList(const vec3s& points, const float cell_width)
 			: min_bounds(
 			    (*std::min_element(points.begin(), points.end(), []( const glm::vec3 a, const glm::vec3 b ) { return a.x < b.x; })).x,
 			    (*std::min_element(points.begin(), points.end(), []( const glm::vec3 a, const glm::vec3 b ) { return a.y < b.y; })).y,

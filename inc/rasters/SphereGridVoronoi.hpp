@@ -10,7 +10,7 @@
 #include <many/glm/composite.hpp>
 #include <many/glm/geometric.hpp>
 
-#include "CartesianGridCellList3d.hpp"
+#include "CartesianGridCellList.hpp"
 
 namespace rasters
 {
@@ -20,8 +20,8 @@ namespace rasters
 	}
 
 	// describes a 3d unit cube sphere where every cell houses an id representing the nearest point
-	// uses CartesianGridCellList3d behind the scenes to optimize initialization
-	class SphereGridVoronoi3d
+	// uses CartesianGridCellList behind the scenes to optimize initialization
+	class SphereGridVoronoi
 	{
 		static const vec3s OCTAHEDRON_SIDE_Z;
 		static const vec3s OCTAHEDRON_SIDE_X;
@@ -41,20 +41,20 @@ namespace rasters
 				  + yi;
 		}
 		// NOTE: copy constructor set to private so we don't have to think about managing pointer resources
-		SphereGridVoronoi3d(const SphereGridVoronoi3d& grid){};
+		SphereGridVoronoi(const SphereGridVoronoi& grid){};
 	public:
-		~SphereGridVoronoi3d()
+		~SphereGridVoronoi()
 		{
 		}
 		
-		SphereGridVoronoi3d(const vec3s points, const float cell_width)
+		SphereGridVoronoi(const vec3s points, const float cell_width)
 			: dimensions((int)ceil(2./cell_width)+1),
 			  cell_width(cell_width),
 			  cells(cell_count(), 0)
 		{
-			CartesianGridCellList3d grid = CartesianGridCellList3d(points, 2.*cell_width);
+			CartesianGridCellList grid = CartesianGridCellList(points, 2.*cell_width);
 
-			// populate cells using the slower CartesianGridCellList3d implementation
+			// populate cells using the slower CartesianGridCellList implementation
 			for (int side_id = 0; side_id < OCTAHEDRON_SIDE_COUNT; ++side_id)
 			{
 				for (int xi2d = 0; xi2d < dimensions.x; ++xi2d)
@@ -115,7 +115,7 @@ namespace rasters
 			}
 		}
 	};
-	const vec3s SphereGridVoronoi3d::OCTAHEDRON_SIDE_Z = normalize(
+	const vec3s SphereGridVoronoi::OCTAHEDRON_SIDE_Z = normalize(
 		vec3s {
 			vec3(-1,-1,-1),
 			vec3( 1,-1,-1),
@@ -127,10 +127,10 @@ namespace rasters
 			vec3( 1, 1, 1)
 		} 
 	);
-	const vec3s SphereGridVoronoi3d::OCTAHEDRON_SIDE_X = normalize(
-		cross(SphereGridVoronoi3d::OCTAHEDRON_SIDE_Z, vec3(0,0,1))
+	const vec3s SphereGridVoronoi::OCTAHEDRON_SIDE_X = normalize(
+		cross(SphereGridVoronoi::OCTAHEDRON_SIDE_Z, vec3(0,0,1))
 	);
-	const vec3s SphereGridVoronoi3d::OCTAHEDRON_SIDE_Y = normalize(
+	const vec3s SphereGridVoronoi::OCTAHEDRON_SIDE_Y = normalize(
 		cross(OCTAHEDRON_SIDE_Z, OCTAHEDRON_SIDE_X)
 	);
 }
