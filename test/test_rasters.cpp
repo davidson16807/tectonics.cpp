@@ -281,6 +281,28 @@ TEST_CASE( "composite min/max must have associativity: operations can be applied
     }
 }
 
+TEST_CASE( "composite comparators must be consistant", "[many]" ) {
+    floats a = floats({1,2,3,4,5});
+    floats b = floats({1,1,2,3,5});
+    bools gt = bools({0,0,0,0,0});
+    bools eq = bools({0,0,0,0,0});
+    bools ne1 = bools({0,0,0,0,0});
+    bools ne2 = bools({0,0,0,0,0});
+    bools gte1 = bools({0,0,0,0,0});
+    bools gte2 = bools({0,0,0,0,0});
+
+    SECTION("a>=b must equal a>b || a==b"){
+        greaterThanEqual(a,b, gte1);
+        greaterThan(a,b, gt);
+        equal(a,b, eq);
+        unite(gt,eq, gte2);
+        CHECK(gte1 == gte2);
+        
+        negate(eq, ne1);
+        notEqual(a,b, ne2);
+        CHECK(ne1 == ne2);
+    }
+}
 TEST_CASE( "Must be able to test equivalence of rasters using the catch framework", "[rasters]" ) {
     float_raster ref       = float_raster(diamond, {1,2,3,4,5});
     float_raster ref_copy  = float_raster(diamond, {1,2,3,4,5});
