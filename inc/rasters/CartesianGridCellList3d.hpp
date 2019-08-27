@@ -35,9 +35,10 @@ namespace rasters {
 		}
 		void add(const int id, const glm::vec3 point)
 		{
-			const int xi = std::clamp((int)round((point.x - min_bounds.x) / cell_width), 0, dimensions.x-2);
-			const int yi = std::clamp((int)round((point.y - min_bounds.y) / cell_width), 0, dimensions.y-2);
-			const int zi = std::clamp((int)round((point.z - min_bounds.z) / cell_width), 0, dimensions.z-2);
+
+			const int xi = std::clamp((int)round((point.x - min_bounds.x) / cell_width), 0, dimensions.x);
+			const int yi = std::clamp((int)round((point.y - min_bounds.y) / cell_width), 0, dimensions.y);
+			const int zi = std::clamp((int)round((point.z - min_bounds.z) / cell_width), 0, dimensions.z);
 
 			cells[cell_id( xi   , yi   , zi   )].push_back({id, point});
 			cells[cell_id( xi+1 , yi   , zi   )].push_back({id, point});
@@ -46,6 +47,7 @@ namespace rasters {
 			cells[cell_id( xi+1 , yi+1 , zi   )].push_back({id, point});
 			cells[cell_id( xi   , yi+1 , zi+1 )].push_back({id, point});
 			cells[cell_id( xi+1 , yi+1 , zi+1 )].push_back({id, point});
+
 		}
 		// NOTE: copy constructor set to private so we don't have to think about managing pointer resources
 		CartesianGridCellList3d(const CartesianGridCellList3d& grid){};
@@ -66,7 +68,9 @@ namespace rasters {
 			    (*std::max_element(points.begin(), points.end(), []( const glm::vec3 a, const glm::vec3 b ) { return a.y < b.y; })).y,
 			    (*std::max_element(points.begin(), points.end(), []( const glm::vec3 a, const glm::vec3 b ) { return a.z < b.z; })).z
     		  ),
-			  dimensions((max_bounds - min_bounds) / cell_width + 1.f), // NOTE: always offset by 1 because add() writes to neighboring cells, as well
+			  // NOTE: we offset dimensions by 2 because even a grid of zero volume still needs two cells 
+			  //  (2 cells are needed because we always look up adjacent neighbors)
+			  dimensions((max_bounds - min_bounds) / cell_width + 2.f), 
 			  cell_width(cell_width),
 			  cells(cell_count(), std::vector<std::pair<int, glm::vec3>>(0))
 		{
