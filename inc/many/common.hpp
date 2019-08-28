@@ -331,6 +331,12 @@ namespace many
 	{
 		transform(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
 	}
+	template<typename T>
+	T smoothstep(const T lo, const T hi, const T x)
+	{
+		T t = x<=lo? T(0) : x >= hi? T(1) : ((x-lo)/(hi-lo)); 
+		return t*t*(T(3)-T(2)*t); 
+	}
 
 
 	/// Returns 0.0 if x <= lo and 1.0 if x >= hi and
@@ -377,6 +383,11 @@ namespace many
 	void linearstep(const composite<T>& lo, const T hi, const T x, composite<T>& out)
 	{
 		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+	}
+	template<typename T>
+	T linearstep(const T lo, const T hi, const T x)
+	{
+		return x<=lo? T(0) : x >= hi? T(1) : ((x-lo)/(hi-lo)); 
 	}
 
 	/// Returns true if x holds a NaN (not a number)
