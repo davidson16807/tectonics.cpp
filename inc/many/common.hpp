@@ -298,36 +298,83 @@ namespace many
 	template<typename T>
 	void smoothstep(const composite<T>& lo, const composite<T>& hi, const composite<T>& x, composite<T>& out)
 	{
-		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+		transform(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
 	}
 	template<typename T>
 	void smoothstep(const T lo, const composite<T>& hi, const composite<T>& x, composite<T>& out)
 	{
-		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+		transform(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
 	}
 	template<typename T>
 	void smoothstep(const composite<T>& lo, T hi, const composite<T>& x, composite<T>& out)
 	{
-		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+		transform(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
 	}
 	template<typename T>
 	void smoothstep(const T lo, const T hi, const composite<T>& x, composite<T>& out)
 	{
 		T range = hi-lo;
-		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+		transform(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
 	}
 	template<typename T>
 	void smoothstep(const composite<T>& lo, const composite<T>& hi, const T x, composite<T>& out)
 	{
-		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+		transform(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
 	}
 	template<typename T>
 	void smoothstep(const T lo, const composite<T>& hi, const T x, composite<T>& out)
 	{
-		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+		transform(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
 	}
 	template<typename T>
 	void smoothstep(const composite<T>& lo, const T hi, const T x, composite<T>& out)
+	{
+		transform(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
+	}
+
+
+	/// Returns 0.0 if x <= lo and 1.0 if x >= hi and
+	/// performs smooth Hermite interpolation between 0 and 1
+	/// when lo < x < hi. This is useful in cases where
+	/// you would want a threshold function with a smooth
+	/// transition. This is equivalent to:
+	/// genType t;
+	/// t = clamp ((x - lo) / (hi - lo), 0, 1);
+	/// return t * t * (3 - 2 * t);
+	/// Results are undefined if lo >= hi.
+	template<typename T>
+	void linearstep(const composite<T>& lo, const composite<T>& hi, const composite<T>& x, composite<T>& out)
+	{
+		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+	}
+	template<typename T>
+	void linearstep(const T lo, const composite<T>& hi, const composite<T>& x, composite<T>& out)
+	{
+		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+	}
+	template<typename T>
+	void linearstep(const composite<T>& lo, T hi, const composite<T>& x, composite<T>& out)
+	{
+		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+	}
+	template<typename T>
+	void linearstep(const T lo, const T hi, const composite<T>& x, composite<T>& out)
+	{
+		T range = hi-lo;
+		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+	}
+	template<typename T>
+	void linearstep(const composite<T>& lo, const composite<T>& hi, const T x, composite<T>& out)
+	{
+		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+	}
+	template<typename T>
+	void linearstep(const T lo, const composite<T>& hi, const T x, composite<T>& out)
+	{
+		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+	}
+	template<typename T>
+	void linearstep(const composite<T>& lo, const T hi, const T x, composite<T>& out)
 	{
 		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
 	}
