@@ -116,7 +116,7 @@ namespace many
 		for (unsigned int i = 0; i < u.size(); ++i)
 		{
 			u_length = length(u[i]);
-			out[i] = u[i] / (u_length < 1e-5? 1.f : u_length);
+			out[i] = u[i] / (u_length < T(1e-5)? T(1) : u_length);
 		}
 	}
 

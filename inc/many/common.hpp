@@ -97,7 +97,7 @@ namespace many
 
 	// component-wise min
 	template <class T>
-	T min(const composite<T>& a)
+	T min(const composite<T>& a, const bool no_nan = true, const bool no_inf = true)
 	{
 		if (a.size() < 1)
 		{
@@ -106,6 +106,14 @@ namespace many
 		T out = a[0];
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
+			if (no_nan && std::isnan(a[i]))
+			{
+				continue;
+			}
+			if (no_inf && std::isinf(a[i]))
+			{
+				continue;
+			}
 			out = a[i] < out? a[i] : out;
 		}
 		return out;
@@ -124,7 +132,7 @@ namespace many
 	}
 	// component-wise max
 	template <class T>
-	T max(const composite<T>& a)
+	T max(const composite<T>& a, const bool no_nan = true, const bool no_inf = true)
 	{
 		if (a.size() < 1)
 		{
@@ -133,6 +141,14 @@ namespace many
 		T out = a[0];
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
+			if (no_nan && std::isnan(a[i]))
+			{
+				continue;
+			}
+			if (no_inf && std::isinf(a[i]))
+			{
+				continue;
+			}
 			out = a[i] > out? a[i] : out;
 		}
 		return out;
@@ -140,6 +156,11 @@ namespace many
 
 	/// Returns min(max(x, minVal), maxVal) for each component in x
 	/// using the floating-point values minVal and maxVal.
+	template <class T>
+	T clamp(const T a, const T lo, const T hi, composite<T>& out)
+	{
+		return a > hi? hi : a < lo? lo : a;
+	}
 	template <class T>
 	void clamp(const composite<T>& a, const T lo, const T hi, composite<T>& out)
 	{
@@ -267,6 +288,11 @@ namespace many
 		{
 			out[i] += y * a[i];
 		}
+	}
+	template <class T>
+	T mix(const T x, const T y, const T a)
+	{
+		return x*(1.0-a) + y*a;
 	}
 
 	/// Returns 0.0 if x < edge, otherwise it returns 1.0 for each component of a genType.
