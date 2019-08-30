@@ -11,7 +11,7 @@ namespace many
 	/// @param base Floating point value. pow function is defined for input values of 'base' defined in the range (inf-, inf+) in the limit of the type qualifier.
 	/// @param exponent Floating point value representing the 'exponent'.
 	template <class T>
-	inline void pow(const composite<T>& base, const composite<T>& exponent, composite<T>& out)
+	inline void pow(const tmany<T>& base, const tmany<T>& exponent, tmany<T>& out)
 	{
 		transform(base, exponent, [](T basei, T exponenti){ return std::pow(basei, exponenti); }, out);
 	}
@@ -20,7 +20,7 @@ namespace many
 	/// @param base Floating point value. pow function is defined for input values of 'base' defined in the range (inf-, inf+) in the limit of the type qualifier.
 	/// @param exponent Floating point value representing the 'exponent'.
 	template <class T>
-	inline void pow(const composite<T>& base, const T exponent, composite<T>& out)
+	inline void pow(const tmany<T>& base, const T exponent, tmany<T>& out)
 	{
 		transform(base, exponent, [](T basei, T exponenti){ return std::pow(basei, exponenti); }, out);
 	}
@@ -29,7 +29,7 @@ namespace many
 	///
 	/// @param a exp function is defined for input values of a defined in the range (inf-, inf+) in the limit of the type qualifier.
 	template <class T>
-	inline void exp(const composite<T>& a, composite<T>& out)
+	inline void exp(const tmany<T>& a, tmany<T>& out)
 	{
 		transform(a, [](T ai){ return std::exp(ai); }, out);
 	}
@@ -41,7 +41,7 @@ namespace many
 	///
 	/// @param a log function is defined for input values of a defined in the range (0, inf+) in the limit of the type qualifier.
 	template <class T>
-	inline void log(const composite<T>& a, composite<T>& out)
+	inline void log(const tmany<T>& a, tmany<T>& out)
 	{
 		transform(a, [](T ai){ return std::log(ai); }, out);
 	}
@@ -51,7 +51,7 @@ namespace many
 	///
 	/// @param a exp2 function is defined for input values of a defined in the range (inf-, inf+) in the limit of the type qualifier.
 	template <class T>
-	inline void exp2(const composite<T>& a, composite<T>& out)
+	inline void exp2(const tmany<T>& a, tmany<T>& out)
 	{
 		transform(a, [](T ai){ return std::exp2(ai); }, out);
 	}
@@ -62,7 +62,7 @@ namespace many
 	///
 	/// @param a log2 function is defined for input values of a defined in the range (0, inf+) in the limit of the type qualifier.
 	template <class T>
-	inline void log2(const composite<T>& a, composite<T>& out)
+	inline void log2(const tmany<T>& a, tmany<T>& out)
 	{
 		transform(a, [](T ai){ return std::log2(ai); }, out);
 	}
@@ -72,7 +72,7 @@ namespace many
 	///
 	/// @param a sqrt function is defined for input values of a defined in the range [0, inf+) in the limit of the type qualifier.
 	template <class T>
-	inline void sqrt(const composite<T>& a, composite<T>& out)
+	inline void sqrt(const tmany<T>& a, tmany<T>& out)
 	{
 		transform(a, [](T ai){ return std::sqrt(ai); }, out);
 	}
@@ -82,7 +82,7 @@ namespace many
 	///
 	/// @param a inversesqrt function is defined for input values of a defined in the range [0, inf+) in the limit of the type qualifier.
 	template <class T>
-	inline void inversesqrt(const composite<T>& a, composite<T>& out)
+	inline void inversesqrt(const tmany<T>& a, tmany<T>& out)
 	{
 		transform(a, [](T ai){ return 1./std::sqrt(ai); }, out);
 	}

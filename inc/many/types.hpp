@@ -10,19 +10,19 @@ namespace many
 	// This template represents a statically-sized contiguous block of heap memory occupied by primitive data of the same arbitrary type
 	// See README.md for more details
 	template <class T>
-	class composite
+	class tmany
 	{
 	protected:
 		std::vector<T> values;
 
 	public:
 
-		virtual ~composite()
+		virtual ~tmany()
 		{
 		};
 
 		// initializer list constructor
-		composite(std::initializer_list<T> list) : values(list.size())
+		tmany(std::initializer_list<T> list) : values(list.size())
 		{
 			unsigned int id = 0;
 			for (auto i = list.begin(); i != list.end(); ++i)
@@ -32,7 +32,7 @@ namespace many
 			}
 		};
 		template<class TIterator>
-		composite(TIterator first, TIterator last) : values(std::distance(first, last))
+		tmany(TIterator first, TIterator last) : values(std::distance(first, last))
 		{
 			unsigned int id = 0;
 			while (first!=last) 
@@ -44,14 +44,14 @@ namespace many
 		}
 
 		// copy constructor
-		composite(const composite<T>& a)  : values(a.values) {};
+		tmany(const tmany<T>& a)  : values(a.values) {};
 
-		explicit composite(const unsigned int N) : values(N) {};
+		explicit tmany(const unsigned int N) : values(N) {};
 
-		explicit composite(const unsigned int N, const T a)  : values(N, a) {};
+		explicit tmany(const unsigned int N, const T a)  : values(N, a) {};
 
 		template <class T2>
-		explicit composite(const composite<T2>& a)  : values(a.N)
+		explicit tmany(const tmany<T2>& a)  : values(a.N)
 		{
 			for (unsigned int i = 0; i < a.size(); ++i)
 			{
@@ -85,25 +85,25 @@ namespace many
 		   return values[id]; // reference return 
 		}
 	
-		inline composite<T> operator[](const composite<bool>& mask )
+		inline tmany<T> operator[](const tmany<bool>& mask )
 		{
-			composite<T> out = composite<T>(mask.size());
+			tmany<T> out = tmany<T>(mask.size());
 			get(*this, mask, out);
 			return out;
 		}
-		inline composite<T> operator[](const composite<unsigned int>& ids )
+		inline tmany<T> operator[](const tmany<unsigned int>& ids )
 		{
-			composite<T> out = composite<T>(ids.size());
+			tmany<T> out = tmany<T>(ids.size());
 			get(*this, ids, out);
 			return out;
 		}
 
-		inline composite<T>& operator=(const composite<T>& other )
+		inline tmany<T>& operator=(const tmany<T>& other )
 		{
 			copy(*this, other);
 			return *this;
 		}
-		inline composite<T>& operator=(const T& other )
+		inline tmany<T>& operator=(const T& other )
 		{
 			fill(*this, other);
 			return *this;
@@ -112,12 +112,12 @@ namespace many
 
 
 	template <class T>
-	inline T get(const composite<T>& a, const unsigned int id )
+	inline T get(const tmany<T>& a, const unsigned int id )
 	{
 		return a[id];
 	}
 	template <class T>
-	void get(const composite<T>& a, const composite<unsigned int>& ids, composite<T>& out )
+	void get(const tmany<T>& a, const tmany<unsigned int>& ids, tmany<T>& out )
 	{
 		for (unsigned int i = 0; i < ids.size(); ++i)
 		{
@@ -125,7 +125,7 @@ namespace many
 		}
 	}
 	template <class T>
-	void get(const composite<T>& a, const composite<bool>& mask, composite<T>& out )
+	void get(const tmany<T>& a, const tmany<bool>& mask, tmany<T>& out )
 	{
 		int out_i = 0;
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -139,7 +139,7 @@ namespace many
 	}
 
 	template <class T>
-	void fill(composite<T>& out, const T a )
+	void fill(tmany<T>& out, const T a )
 	{
 		for (unsigned int i = 0; i < out.size(); ++i)
 		{
@@ -147,7 +147,7 @@ namespace many
 		}
 	}
 	template <class T>
-	void fill(composite<T>& out, const composite<unsigned int>& ids, const T a )
+	void fill(tmany<T>& out, const tmany<unsigned int>& ids, const T a )
 	{
 		for (unsigned int i = 0; i < ids.size(); ++i)
 		{
@@ -155,7 +155,7 @@ namespace many
 		}
 	}
 	template <class T>
-	void fill(composite<T>& out, const composite<bool>& mask, const T a )
+	void fill(tmany<T>& out, const tmany<bool>& mask, const T a )
 	{
 		for (unsigned int i = 0; i < out.size(); ++i)
 		{
@@ -164,7 +164,7 @@ namespace many
 	}
 
 	template<class T, class TIterator>
-	void copy_iterators(composite<T>& out, TIterator first, TIterator last)
+	void copy_iterators(tmany<T>& out, TIterator first, TIterator last)
 	{
 		unsigned int id = 0;
 		while (first!=last) 
@@ -175,7 +175,7 @@ namespace many
 		}
 	}
 	template <class T>
-	void copy(composite<T>& out, const composite<T>& a )
+	void copy(tmany<T>& out, const tmany<T>& a )
 	{
 		for (unsigned int i = 0; i < out.size(); ++i)
 		{
@@ -183,12 +183,12 @@ namespace many
 		}
 	}
 	template <class T>
-	inline void copy(composite<T>& out, const unsigned int id, const composite<T>& a )
+	inline void copy(tmany<T>& out, const unsigned int id, const tmany<T>& a )
 	{
 		out[id] = a[id];
 	}
 	template <class T>
-	void copy(composite<T>& out, const composite<unsigned int>& ids, const composite<T>& a )
+	void copy(tmany<T>& out, const tmany<unsigned int>& ids, const tmany<T>& a )
 	{
 		for (unsigned int i = 0; i < ids.size(); ++i)
 		{
@@ -196,7 +196,7 @@ namespace many
 		}
 	}
 	template <class T>
-	void copy(composite<T>& out, const composite<bool>& mask, const composite<T>& a )
+	void copy(tmany<T>& out, const tmany<bool>& mask, const tmany<T>& a )
 	{
 		for (unsigned int i = 0; i < out.size(); ++i)
 		{
@@ -206,12 +206,12 @@ namespace many
 
 
 	template <class T>
-	inline void set(composite<T>& out, const unsigned int id, const T a )
+	inline void set(tmany<T>& out, const unsigned int id, const T a )
 	{
 		out[id] = a;
 	}
 	template <class T>
-	void set(composite<T>& out, const composite<unsigned int>& ids, const composite<T>& a )
+	void set(tmany<T>& out, const tmany<unsigned int>& ids, const tmany<T>& a )
 	{
 		for (unsigned int i = 0; i < ids.size(); ++i)
 		{
@@ -227,7 +227,7 @@ namespace many
 	
 	// UNARY TRANSFORM
 	template <class T1, class Tout, typename F>
-	inline void transform(const composite<T1>& a, F f, composite<Tout>& out)
+	inline void transform(const tmany<T1>& a, F f, tmany<Tout>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -235,7 +235,7 @@ namespace many
 		}
 	}
 	template <class T1, class Tout, typename F>
-	inline void transform(const T1 a, F f, composite<Tout>& out)
+	inline void transform(const T1 a, F f, tmany<Tout>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -248,7 +248,7 @@ namespace many
 
 	// BINARY TRANSFORM
 	template <class T1, class T2, class Tout, typename F>
-	inline void transform(const composite<T1>& a, const composite<T2>& b, F f, composite<Tout>& out)
+	inline void transform(const tmany<T1>& a, const tmany<T2>& b, F f, tmany<Tout>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -256,7 +256,7 @@ namespace many
 		}
 	}
 	template <class T1, class T2, class Tout, typename F>
-	inline void transform(const composite<T1>& a, const T2 b, F f, composite<Tout>& out)
+	inline void transform(const tmany<T1>& a, const T2 b, F f, tmany<Tout>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -264,7 +264,7 @@ namespace many
 		}
 	}
 	template <class T1, class T2, class Tout, typename F>
-	inline void transform(const T1 a, const composite<T2>& b, F f, composite<Tout>& out)
+	inline void transform(const T1 a, const tmany<T2>& b, F f, tmany<Tout>& out)
 	{
 		for (unsigned int i = 0; i < b.size(); ++i)
 		{
@@ -284,7 +284,7 @@ namespace many
 
 	// TRINARY TRANSFORM
 	template <class T1, class T2, class T3, class Tout, typename F>
-	inline void transform(const composite<T1>& a, const composite<T2>& b, const composite<T3>& c, F f, composite<Tout>& out)
+	inline void transform(const tmany<T1>& a, const tmany<T2>& b, const tmany<T3>& c, F f, tmany<Tout>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -292,7 +292,7 @@ namespace many
 		}
 	}
 	template <class T1, class T2, class T3, class Tout, typename F>
-	inline void transform(const composite<T1>& a, const composite<T2>& b, const T3 c, F f, composite<Tout>& out)
+	inline void transform(const tmany<T1>& a, const tmany<T2>& b, const T3 c, F f, tmany<Tout>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -300,7 +300,7 @@ namespace many
 		}
 	}
 	template <class T1, class T2, class T3, class Tout, typename F>
-	inline void transform(const composite<T1>& a, const T2 b, const composite<T3>& c, F f, composite<Tout>& out)
+	inline void transform(const tmany<T1>& a, const T2 b, const tmany<T3>& c, F f, tmany<Tout>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -308,7 +308,7 @@ namespace many
 		}
 	}
 	template <class T1, class T2, class T3, class Tout, typename F>
-	inline void transform(const composite<T1>& a, const T2 b, const T3 c, F f, composite<Tout>& out)
+	inline void transform(const tmany<T1>& a, const T2 b, const T3 c, F f, tmany<Tout>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -316,7 +316,7 @@ namespace many
 		}
 	}
 	template <class T1, class T2, class T3, class Tout, typename F>
-	inline void transform(const T1 a, const composite<T2>& b, const composite<T3>& c, F f, composite<Tout>& out)
+	inline void transform(const T1 a, const tmany<T2>& b, const tmany<T3>& c, F f, tmany<Tout>& out)
 	{
 		for (unsigned int i = 0; i < b.size(); ++i)
 		{
@@ -324,7 +324,7 @@ namespace many
 		}
 	}
 	template <class T1, class T2, class T3, class Tout, typename F>
-	inline void transform(const T1 a, const composite<T2>& b, const T3 c, F f, composite<Tout>& out)
+	inline void transform(const T1 a, const tmany<T2>& b, const T3 c, F f, tmany<Tout>& out)
 	{
 		for (unsigned int i = 0; i < b.size(); ++i)
 		{
@@ -332,7 +332,7 @@ namespace many
 		}
 	}
 	template <class T1, class T2, class T3, class Tout, typename F>
-	inline void transform(const T1 a, const T2 b, const composite<T3>& c, F f, composite<Tout>& out)
+	inline void transform(const T1 a, const T2 b, const tmany<T3>& c, F f, tmany<Tout>& out)
 	{
 		for (unsigned int i = 0; i < c.size(); ++i)
 		{
@@ -342,7 +342,7 @@ namespace many
 
 
 	template<class T, typename Taggregator>
-	void aggregate_into(const composite<T>& a, const composite<unsigned int>& group_ids, Taggregator aggregator, composite<T>& group_out)
+	void aggregate_into(const tmany<T>& a, const tmany<unsigned int>& group_ids, Taggregator aggregator, tmany<T>& group_out)
 	{
 		for (unsigned int i = 0; i < group_ids.size(); ++i)
 		{
@@ -350,7 +350,7 @@ namespace many
 		}
 	}
 	template<class T, typename Taggregator>
-	void aggregate(const composite<T>& a, const composite<unsigned int>& group_ids, Taggregator aggregator, composite<T>& group_out)
+	void aggregate(const tmany<T>& a, const tmany<unsigned int>& group_ids, Taggregator aggregator, tmany<T>& group_out)
 	{
 		fill(group_out, T(0));
 		for (unsigned int i = 0; i < group_ids.size(); ++i)
@@ -360,7 +360,7 @@ namespace many
 	}
 
 	template<class T, typename Taggregator>
-	void aggregate_into(const composite<unsigned int>& group_ids, Taggregator aggregator, composite<T>& group_out)
+	void aggregate_into(const tmany<unsigned int>& group_ids, Taggregator aggregator, tmany<T>& group_out)
 	{
 		for (unsigned int i = 0; i < group_ids.size(); ++i)
 		{
@@ -368,7 +368,7 @@ namespace many
 		}
 	}
 	template<class T, typename Taggregator>
-	void aggregate(const composite<unsigned int>& group_ids, Taggregator aggregator, composite<T>& group_out)
+	void aggregate(const tmany<unsigned int>& group_ids, Taggregator aggregator, tmany<T>& group_out)
 	{
 		fill(group_out, T(0));
 		for (unsigned int i = 0; i < group_ids.size(); ++i)
@@ -398,9 +398,9 @@ namespace many
 
 
 
-	typedef composite<bool>	       bools;
-	typedef composite<int>	       ints;
-	typedef composite<unsigned int> uints;
-	typedef composite<float>	       floats;
-	typedef composite<double>       doubles;
+	typedef tmany<bool>	       bools;
+	typedef tmany<int>	       ints;
+	typedef tmany<unsigned int> uints;
+	typedef tmany<float>	       floats;
+	typedef tmany<double>       doubles;
 }

@@ -15,7 +15,7 @@ namespace many
 
 	/// Converts degrees to radians and returns the result.
 	template <class T>
-	void radians(const composite<T>& degrees, composite<T>& out)
+	void radians(const tmany<T>& degrees, tmany<T>& out)
 	{
 		T conversion_factor(M_PI/180.);
 		return transform(degrees, [conversion_factor](T degreesi){ return conversion_factor * degreesi; }, out);
@@ -23,7 +23,7 @@ namespace many
 
 	/// Converts degrees to radians and returns the result.
 	template <class T>
-	void degrees(const composite<T>& radians, composite<T>& out)
+	void degrees(const tmany<T>& radians, tmany<T>& out)
 	{
 		T conversion_factor(180./M_PI);
 		return transform(radians, [conversion_factor](T radiansi){ return conversion_factor * radiansi; }, out);
@@ -32,7 +32,7 @@ namespace many
 	/// The standard trigonometric sine function.
 	/// The values returned by this function will range from [-1, 1].
 	template <class T>
-	void sin(const composite<T>& radians, composite<T>& out)
+	void sin(const tmany<T>& radians, tmany<T>& out)
 	{
 		return transform(radians, std::sin, out);
 	}
@@ -40,14 +40,14 @@ namespace many
 	/// The standard trigonometric cosine function.
 	/// The values returned by this function will range from [-1, 1].
 	template <class T>
-	void cos(const composite<T>& radians, composite<T>& out)
+	void cos(const tmany<T>& radians, tmany<T>& out)
 	{
 		return transform(radians, std::cos, out);
 	}
 
 	/// The standard trigonometric tangent function.
 	template <class T>
-	void tan(const composite<T>& radians, composite<T>& out)
+	void tan(const tmany<T>& radians, tmany<T>& out)
 	{
 		return transform(radians, std::tan, out);
 	}
@@ -56,7 +56,7 @@ namespace many
 	/// The range of values returned by this function is [-PI/2, PI/2].
 	/// Results are undefined if |x| > 1.
 	template <class T>
-	void asin(const composite<T>& x, composite<T>& out)
+	void asin(const tmany<T>& x, tmany<T>& out)
 	{
 		return transform(x, std::asin, out);
 	}
@@ -65,7 +65,7 @@ namespace many
 	/// The range of values returned by this function is [0, PI].
 	/// Results are undefined if |x| > 1.
 	template <class T>
-	void acos(const composite<T>& x, composite<T>& out)
+	void acos(const tmany<T>& x, tmany<T>& out)
 	{
 		return transform(x, std::acos, out);
 	}
@@ -76,7 +76,7 @@ namespace many
 	/// by this function is [-PI, PI]. Results are undefined
 	/// if x and y are both 0.
 	template <class T>
-	void atan(const composite<T>& y_over_x, composite<T>& out)
+	void atan(const tmany<T>& y_over_x, tmany<T>& out)
 	{
 		return transform(y_over_x, std::atan, out);
 	}
@@ -88,7 +88,7 @@ namespace many
 	/// by this function is [-PI, PI]. Results are undefined
 	/// if x and y are both 0.
 	template <class T>
-	void atan(const composite<T>& x, const composite<T>& y, composite<T>& out)
+	void atan(const tmany<T>& x, const tmany<T>& y, tmany<T>& out)
 	{
 		return transform(x, y, std::atan2, out);
 	}
@@ -96,28 +96,28 @@ namespace many
 
 	/// Returns the hyperbolic sine function, (exp(x) - exp(-x)) / 2
 	template <class T>
-	void sinh(const composite<T>& radians, composite<T>& out)
+	void sinh(const tmany<T>& radians, tmany<T>& out)
 	{
 		return transform(radians, std::sinh, out);
 	}
 
 	/// Returns the hyperbolic cosine function, (exp(x) + exp(-x)) / 2
 	template <class T>
-	void cosh(const composite<T>& radians, composite<T>& out)
+	void cosh(const tmany<T>& radians, tmany<T>& out)
 	{
 		return transform(radians, std::cosh, out);
 	}
 
 	/// Returns the hyperbolic tangent function, sinh(angle) / cosh(angle)
 	template <class T>
-	void tanh(const composite<T>& radians, composite<T>& out)
+	void tanh(const tmany<T>& radians, tmany<T>& out)
 	{
 		return transform(radians, std::tanh, out);
 	}
 
 	/// Arc hyperbolic sine; returns the inverse of sinh.
 	template <class T>
-	void asinh(const composite<T>& x, composite<T>& out)
+	void asinh(const tmany<T>& x, tmany<T>& out)
 	{
 		return transform(x, std::asinh, out);
 	}
@@ -125,7 +125,7 @@ namespace many
 	/// Arc hyperbolic cosine; returns the non-negative inverse
 	/// of cosh. Results are undefined if x < 1.
 	template <class T>
-	void acosh(const composite<T>& x, composite<T>& out)
+	void acosh(const tmany<T>& x, tmany<T>& out)
 	{
 		return transform(x, std::acosh, out);
 	}
@@ -133,7 +133,7 @@ namespace many
 	/// Arc hyperbolic tangent; returns the inverse of tanh.
 	/// Results are undefined if abs(x) >= 1.
 	template <class T>
-	void atanh(const composite<T>& x, composite<T>& out)
+	void atanh(const tmany<T>& x, tmany<T>& out)
 	{
 		return transform(x, std::atanh, out);
 	}

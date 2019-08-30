@@ -20,6 +20,6 @@ So we write our own solution.
 Our solution works in two ways:
  * It provides a set of functions for handling containers as if they were primitives or glm vectors. 
      To achieve #1 and #3, these functions work by passing output to reference parameters. 
- * It provides a data structure, `composite<T>`, that makes use of operator overloads to provide convenience wrappers for
+ * It provides a data structure, `tmany<T>`, that makes use of operator overloads to provide convenience wrappers for
      the aforementioned functions.
 

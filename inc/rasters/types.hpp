@@ -15,12 +15,12 @@ namespace rasters
 	// the data type held in each vertex should be small enough to fit in a computer's register (e.g. ints, floats, and even vec3s)
 	// the data type must have basic operators common to all primitives: == != 
 	// 
-	// Q: Why not favor composition over inheritance? Why inherit from composite<T>?
-	// A: We've invested a lot of code to streamline mathematical expressions using composite<T>,
+	// Q: Why not favor composition over inheritance? Why inherit from tmany<T>?
+	// A: We've invested a lot of code to streamline mathematical expressions using tmany<T>,
 	//      we can guarantee this functionality will be needed for rasters,
 	//      and duplicating this code for use with rasters would be pretty insane.
 	template <class T>
-	class traster : public composite<T>
+	class traster : public tmany<T>
 	{
 	public:
 		std::shared_ptr<Grid> grid;
@@ -32,7 +32,7 @@ namespace rasters
 
 		// copy constructor
 		traster(const traster<T>& a)
-			: composite<T>(a),
+			: tmany<T>(a),
 			  grid(a.grid)
 		{
 
@@ -40,14 +40,14 @@ namespace rasters
 
 		// initializer list constructor
 		explicit traster(const std::shared_ptr<Grid>& grid, std::initializer_list<T> list) 
-			: composite<T>(list),
+			: tmany<T>(list),
 			  grid(grid)
 		{
 
 		};
 		template<class TIterator>
 		explicit traster(const std::shared_ptr<Grid>& grid, TIterator first, TIterator last)
-			: composite<T>(grid->vertex_positions.size()),
+			: tmany<T>(grid->vertex_positions.size()),
 			  grid(grid)
 		{
 
@@ -55,29 +55,29 @@ namespace rasters
 
 		template <class T2>
 		explicit traster(const traster<T2>& a)
-			: composite<T>(a),
+			: tmany<T>(a),
 			  grid(a.grid)
 		{
 
 		}
 
 		explicit traster(const std::shared_ptr<Grid>& grid)
-			: composite<T>(grid->vertex_positions.size()),
+			: tmany<T>(grid->vertex_positions.size()),
 			  grid(grid)
 		{
 
 		}
 
 		explicit traster(const std::shared_ptr<Grid>& grid, const T a)
-			: composite<T>(grid->vertex_positions.size(), a),
+			: tmany<T>(grid->vertex_positions.size(), a),
 			  grid(grid)
 		{
 
 		}
 
 		template <class T2>
-		explicit traster(const std::shared_ptr<Grid>& grid, const composite<T2>& a)
-			: composite<T2>(a),
+		explicit traster(const std::shared_ptr<Grid>& grid, const tmany<T2>& a)
+			: tmany<T2>(a),
 			  grid(grid)
 		{
 			
