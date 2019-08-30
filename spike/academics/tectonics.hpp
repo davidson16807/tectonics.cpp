@@ -3,7 +3,7 @@
 #include <cmath>
 
 #include <glm/vec3.hpp>               // *vec3
-#include <rasters/types.hpp>          // float_raster, etc.
+#include <rasters/types.hpp>          // raster, etc.
 #include <rasters/glm/vec_types.hpp>  // *vec*_raster
 #include <rasters/glm/vector_calculus.hpp>  // *vec*_raster
 
@@ -13,7 +13,7 @@ namespace academics {
 
 		using namespace rasters;
 
-		void guess_plate_velocity(const bool_raster& plate_mask, const float_raster& buoyancy, const float mantle_viscosity, vec3_raster& result) {
+		void guess_plate_velocity(const bool_raster& plate_mask, const raster& buoyancy, const float mantle_viscosity, vec3_raster& result) {
 
 		    // NOTE: 
 		    // Here, we calculate plate velocity as the terminal velocity of a subducting slab as it falls through the mantle.

@@ -84,14 +84,14 @@ namespace crust
         // "age" is the age of the subductable, mafic component of the crust
         // we don't track the age of unsubductable crust because it doesn't affect model behavior
 
-        float_raster sediment;
-        float_raster sedimentary;
-        float_raster metamorphic;
-        float_raster felsic_plutonic;
-        float_raster felsic_volcanic;
-        float_raster mafic_volcanic;
-        float_raster mafic_plutonic;
-        float_raster age;
+        raster sediment;
+        raster sedimentary;
+        raster metamorphic;
+        raster felsic_plutonic;
+        raster felsic_volcanic;
+        raster mafic_volcanic;
+        raster mafic_plutonic;
+        raster age;
 
         // destructor: delete pointer 
         ~Crust()
@@ -276,7 +276,7 @@ namespace crust
     void reset(Crust& crust) {
         transform_all(source, 0.f, fill, out);
     }
-    void mult(const Crust& crust, float_raster& field, Crust& result) {
+    void mult(const Crust& crust, raster& field, Crust& result) {
         transform_all(source, field, mult, out);
     }
     void add(const Crust& crust, const Crust& delta, Crust& result) {
@@ -320,7 +320,7 @@ namespace crust
         // conserved += sum(crust.age             );
         return conserved / crust.size();
     }
-    void get_conserved_mass(const Crust& crust, float_raster& conserved) {
+    void get_conserved_mass(const Crust& crust, raster& conserved) {
         fill(conserved, 0.f);
         conserved += crust.sediment;        
         conserved += crust.sedimentary;     
@@ -331,7 +331,7 @@ namespace crust
         // conserved += crust.mafic_plutonic;  
         // conserved += crust.age;             
     }
-    void get_total_mass(const Crust& crust, float_raster& total) {  
+    void get_total_mass(const Crust& crust, raster& total) {  
         fill(total, 0.f);
         total += crust.sediment;        
         total += crust.sedimentary;     
@@ -342,7 +342,7 @@ namespace crust
         total += crust.mafic_plutonic;  
         // total += crust.age;         
     }
-    void get_density(const float_raster& mass, const float_raster& thickness, float default_density, float_raster& density) {
+    void get_density(const raster& mass, const raster& thickness, float default_density, raster& density) {
         copy(density, mass);
         for (unsigned int i = 0; i < density.size(); i++) { 
             density[i] = thickness[i] > 0? density[i] / thickness[i] : default_density; 
@@ -378,7 +378,7 @@ namespace crust
         copy(crust1.age,             selection_raster, crust2.age             );
     }
 
-    void add_values_to_ids(const Crust& crust, const uint_raster& id_raster, const float_raster& value_crust, Crust& result) {
+    void add_values_to_ids(const Crust& crust, const uint_raster& id_raster, const raster& value_crust, Crust& result) {
         add_values_to_ids(crust.sediment,        id_raster, value_crust.sediment,        result.sediment        );
         add_values_to_ids(crust.sedimentary,     id_raster, value_crust.sedimentary,     result.sedimentary     );
         add_values_to_ids(crust.metamorphic,     id_raster, value_crust.metamorphic,     result.metamorphic     );
@@ -388,7 +388,7 @@ namespace crust
         add_values_to_ids(crust.mafic_plutonic,  id_raster, value_crust.mafic_plutonic,  result.mafic_plutonic  );
         add_values_to_ids(crust.age,             id_raster, value_crust.age,             result.age             );
     }
-    void fix_delta(Crust& delta, const Crust& crust, float_raster& scratch) {
+    void fix_delta(Crust& delta, const Crust& crust, raster& scratch) {
         fix_nonnegative_conserved_quantity_delta(delta.sediment,        crust.sediment,        scratch);
         fix_nonnegative_conserved_quantity_delta(delta.sedimentary,     crust.sedimentary,     scratch);
         fix_nonnegative_conserved_quantity_delta(delta.metamorphic,     crust.metamorphic,     scratch);
@@ -417,7 +417,7 @@ namespace crust
     }
     // a "reaction delta" represents the transfer of mass between pools, e.g. weathering
     // it does not represent the spatial transport of mass within a pool
-    bool is_conserved_reaction_delta(Crust& delta, float threshold, float_raster& scratch) {
+    bool is_conserved_reaction_delta(Crust& delta, float threshold, raster& scratch) {
         // "scratch" represents the sum of masses between pools
         fill(scratch, 0.f);
         scratch += delta.sediment;        

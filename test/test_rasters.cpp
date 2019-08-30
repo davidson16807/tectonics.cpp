@@ -346,10 +346,10 @@ TEST_CASE( "composite arithmetic must be consistant", "[many]" ) {
 }
 
 TEST_CASE( "Must be able to test equivalence of rasters using the catch framework", "[rasters]" ) {
-    float_raster ref       = float_raster(diamond, {1,2,3,4,5});
-    float_raster ref_copy  = float_raster(diamond, {1,2,3,4,5});
-    float_raster ref_tweak = float_raster(diamond, {1,2,3,4,0});
-    float_raster ref_fewer = float_raster(tetrahedron, {1,2,3,4});
+    raster ref       = raster(diamond, {1,2,3,4,5});
+    raster ref_copy  = raster(diamond, {1,2,3,4,5});
+    raster ref_tweak = raster(diamond, {1,2,3,4,0});
+    raster ref_fewer = raster(tetrahedron, {1,2,3,4});
 
     SECTION("Must be able to equate object with itself"){
         CHECK(ref == ref);

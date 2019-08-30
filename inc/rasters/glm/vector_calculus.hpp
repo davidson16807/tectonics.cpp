@@ -7,7 +7,7 @@
 namespace rasters
 {
 	template<typename T1, typename T2, qualifier Q>
-	void gradient(const raster<T1>& scalar_field, raster<glm::vec<3,T2,Q>>& result)
+	void gradient(const traster<T1>& scalar_field, traster<glm::vec<3,T2,Q>>& result)
 	{
 		// NOTE: 
 		// The naive implementation is to estimate the gradient based on each individual neighbor,

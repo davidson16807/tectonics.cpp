@@ -20,18 +20,18 @@ namespace rasters
 	//      we can guarantee this functionality will be needed for rasters,
 	//      and duplicating this code for use with rasters would be pretty insane.
 	template <class T>
-	class raster : public composite<T>
+	class traster : public composite<T>
 	{
 	public:
 		std::shared_ptr<Grid> grid;
 
 		// destructor: delete pointer 
-		~raster()
+		~traster()
 		{
 		};
 
 		// copy constructor
-		raster(const raster<T>& a)
+		traster(const traster<T>& a)
 			: composite<T>(a),
 			  grid(a.grid)
 		{
@@ -39,14 +39,14 @@ namespace rasters
 		}
 
 		// initializer list constructor
-		explicit raster(const std::shared_ptr<Grid>& grid, std::initializer_list<T> list) 
+		explicit traster(const std::shared_ptr<Grid>& grid, std::initializer_list<T> list) 
 			: composite<T>(list),
 			  grid(grid)
 		{
 
 		};
 		template<class TIterator>
-		explicit raster(const std::shared_ptr<Grid>& grid, TIterator first, TIterator last)
+		explicit traster(const std::shared_ptr<Grid>& grid, TIterator first, TIterator last)
 			: composite<T>(grid->vertex_positions.size()),
 			  grid(grid)
 		{
@@ -54,21 +54,21 @@ namespace rasters
 		}
 
 		template <class T2>
-		explicit raster(const raster<T2>& a)
+		explicit traster(const traster<T2>& a)
 			: composite<T>(a),
 			  grid(a.grid)
 		{
 
 		}
 
-		explicit raster(const std::shared_ptr<Grid>& grid)
+		explicit traster(const std::shared_ptr<Grid>& grid)
 			: composite<T>(grid->vertex_positions.size()),
 			  grid(grid)
 		{
 
 		}
 
-		explicit raster(const std::shared_ptr<Grid>& grid, const T a)
+		explicit traster(const std::shared_ptr<Grid>& grid, const T a)
 			: composite<T>(grid->vertex_positions.size(), a),
 			  grid(grid)
 		{
@@ -76,7 +76,7 @@ namespace rasters
 		}
 
 		template <class T2>
-		explicit raster(const std::shared_ptr<Grid>& grid, const composite<T2>& a)
+		explicit traster(const std::shared_ptr<Grid>& grid, const composite<T2>& a)
 			: composite<T2>(a),
 			  grid(grid)
 		{
@@ -84,9 +84,9 @@ namespace rasters
 		}
 	};
 
-	typedef raster<bool>	     bool_raster;
-	typedef raster<int>	         int_raster;
-	typedef raster<unsigned int> uint_raster;
-	typedef raster<float>	     float_raster;
-	typedef raster<double>       double_raster;
+	typedef traster<bool>	     braster;
+	typedef traster<int>	     iraster;
+	typedef traster<unsigned int>uraster;
+	typedef traster<float>	      raster;
+	typedef traster<double>      draster;
 }

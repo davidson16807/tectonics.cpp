@@ -87,7 +87,7 @@ int main(int argc, char const *argv[])
     // 0--1- 0
     //  \ | / 
     //    0   
-    float_raster buoyancy  = float_raster(diamond, {0,-1,0,0,0});
+    raster buoyancy  = raster(diamond, {0,-1,0,0,0});
     float        mantle_viscosity = 1.57e20;
     vec3_raster  result = vec3_raster(diamond);
     //    0   
