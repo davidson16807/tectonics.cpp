@@ -79,5 +79,42 @@ namespace many
 	typedef tmany<glm::vec<2, float, glm::defaultp>> vec2s;
 	typedef tmany<glm::vec<3, float, glm::defaultp>> vec3s;
 	typedef tmany<glm::vec<4, float, glm::defaultp>> vec4s;
+
+
+
+	
+	
+
+	typedef tmany<glm::mat<2,2, double, glm::defaultp>> dmat2s;
+	typedef tmany<glm::mat<2,2, double, glm::defaultp>> dmat2x2s;
+	typedef tmany<glm::mat<2,3, double, glm::defaultp>> dmat2x3s;
+	typedef tmany<glm::mat<2,4, double, glm::defaultp>> dmat2x4s;
+
+	typedef tmany<glm::mat<3,3, double, glm::defaultp>> dmat3s;
+	typedef tmany<glm::mat<3,2, double, glm::defaultp>> dmat3x2s;
+	typedef tmany<glm::mat<3,3, double, glm::defaultp>> dmat3x3s;
+	typedef tmany<glm::mat<3,4, double, glm::defaultp>> dmat3x4s;
+
+	typedef tmany<glm::mat<4,4, double, glm::defaultp>> dmat4s;
+	typedef tmany<glm::mat<4,2, double, glm::defaultp>> dmat4x2s;
+	typedef tmany<glm::mat<4,3, double, glm::defaultp>> dmat4x3s;
+	typedef tmany<glm::mat<4,4, double, glm::defaultp>> dmat4x4s;
+	
+	
+
+	typedef tmany<glm::mat<2,2, float, glm::defaultp>> mat2s;
+	typedef tmany<glm::mat<2,2, float, glm::defaultp>> mat2x2s;
+	typedef tmany<glm::mat<2,3, float, glm::defaultp>> mat2x3s;
+	typedef tmany<glm::mat<2,4, float, glm::defaultp>> mat2x4s;
+
+	typedef tmany<glm::mat<3,3, float, glm::defaultp>> mat3s;
+	typedef tmany<glm::mat<3,2, float, glm::defaultp>> mat3x2s;
+	typedef tmany<glm::mat<3,3, float, glm::defaultp>> mat3x3s;
+	typedef tmany<glm::mat<3,4, float, glm::defaultp>> mat3x4s;
+
+	typedef tmany<glm::mat<4,4, float, glm::defaultp>> mat4s;
+	typedef tmany<glm::mat<4,2, float, glm::defaultp>> mat4x2s;
+	typedef tmany<glm::mat<4,3, float, glm::defaultp>> mat4x3s;
+	typedef tmany<glm::mat<4,4, float, glm::defaultp>> mat4x4s;
 	
 }
