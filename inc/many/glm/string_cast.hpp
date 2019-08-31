@@ -74,7 +74,9 @@ namespace many
 	template <typename T, glm::qualifier Q>
 	std::string to_string(const tmany<glm::vec<3,T,Q>>& a, const glm::mat<3,2,T,Q>& basis, const int line_char_width = 80)
 	{
-		return to_string(mult(basis, a), line_char_width = 80);
+		tmany<glm::vec<2,T,Q>> a2d = tmany<glm::vec<2,T,Q>>(a.size());
+		mult(basis, a, a2d);
+		return to_string(a2d, line_char_width);
 	}
 
 }//namespace many

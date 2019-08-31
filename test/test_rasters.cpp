@@ -362,11 +362,11 @@ TEST_CASE( "floats string cast must render correct representation", "[many]" ) {
     std::string strb = to_string(b);
     std::string strc = to_string(c);
     std::cout << strc << std::endl;
-    SECTION("to_string(b) must render correct representation"){
+    SECTION("to_string() must render correct representation"){
         REQUIRE_THAT(stra, Catch::Contains(" ░▒▓█"));
         REQUIRE_THAT(strb, Catch::Contains("  ░▒█"));
-        REQUIRE_THAT(strc, Catch::Contains("███████████"));
-        REQUIRE_THAT(strc, Catch::Contains("∞"));
+        REQUIRE_THAT(to_string(floats({INFINITY})), Catch::Contains("∞"));
+        // REQUIRE_THAT(to_string(floats({std::sqrt(-1)})), Catch::Contains("N"));
     }
 }
 
@@ -410,18 +410,22 @@ TEST_CASE( "vec2s string cast must render correct representation", "[many]" ) {
         vec3( 1, 1, 1),
     });
     std::string str_v2d = to_string(v2d);
+    std::string str_v3d = to_string(v3d, glm::mat3x2(1,1,0, 
+                                                     0,1,1));
     std::cout << str_v2d << std::endl;
-    SECTION("to_string(b) must render correct representation"){
-        // WARNING: white box testing, we need to test extra carefully for left arrows, since it's an edge case for atan2()
+    std::cout << str_v3d << std::endl;
+    SECTION("to_string() must produce obvious results for straight forward 2d vectors"){
+        REQUIRE_THAT(to_string(vec2s({vec2( 0,   2),vec2( 0,   5)})), Catch::Contains("↑") && Catch::Contains("⬆"));
+        REQUIRE_THAT(to_string(vec2s({vec2( 0,  -2),vec2( 0,  -5)})), Catch::Contains("↓") && Catch::Contains("⬇"));
+        REQUIRE_THAT(to_string(vec2s({vec2( 2,   0),vec2( 5,   0)})), Catch::Contains("→") && Catch::Contains("➡"));
+    }
+    SECTION("to_string() must behave correctly around edge case for atan2()"){
+        // WARNING: white box testing, we need to test left arrows extra carefully since they cause a discontinuity in atan2()
         REQUIRE_THAT(to_string(vec2s({vec2(-2,   2),vec2(-5,   5)})), Catch::Contains("↖") && Catch::Contains("⬉"));
         REQUIRE_THAT(to_string(vec2s({vec2(-2,-0.1),vec2(-5,-0.1)})), Catch::Contains("←") && Catch::Contains("⬅"));
         REQUIRE_THAT(to_string(vec2s({vec2(-2,   0),vec2(-5,   0)})), Catch::Contains("←") && Catch::Contains("⬅"));
         REQUIRE_THAT(to_string(vec2s({vec2(-2, 0.1),vec2(-5,-0.1)})), Catch::Contains("←") && Catch::Contains("⬅"));
         REQUIRE_THAT(to_string(vec2s({vec2(-2,  -2),vec2(-5,  -5)})), Catch::Contains("↙") && Catch::Contains("⬋"));
-
-        REQUIRE_THAT(to_string(vec2s({vec2( 0,   2),vec2( 0,   5)})), Catch::Contains("↑") && Catch::Contains("⬆"));
-        REQUIRE_THAT(to_string(vec2s({vec2( 0,  -2),vec2( 0,  -5)})), Catch::Contains("↓") && Catch::Contains("⬇"));
-        REQUIRE_THAT(to_string(vec2s({vec2( 2,   0),vec2( 5,   0)})), Catch::Contains("→") && Catch::Contains("➡"));
     }
 }
 
