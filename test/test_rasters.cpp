@@ -9,6 +9,7 @@
 #include <many/many.hpp>  
 #include <many/string_cast.hpp>  
 #include <many/glm/glm.hpp>         // *vec*s
+#include <many/glm/string_cast.hpp>  
 #include <many/glm/convenience.hpp> //  operators, etc.
 
 #include "rasters/types.hpp"         
@@ -82,7 +83,7 @@ SphereGridVoronoi voronoi_test(
     );
 
 
-TEST_CASE( "Must be able to test composite equivalence using the catch framework", "[many]" ) {
+TEST_CASE( "Must be able to test many<T> equivalence using the catch framework", "[many]" ) {
     floats ref       = floats({1,2,3,4,5});
     floats ref_copy  = floats({1,2,3,4,5});
     floats ref_tweak = floats({1,2,3,4,0});
@@ -103,7 +104,7 @@ TEST_CASE( "Must be able to test composite equivalence using the catch framework
 }
 
 
-TEST_CASE( "Equivalent composite arithmetic must behave equivalently", "[many]" ) {
+TEST_CASE( "Equivalent many<T> arithmetic must behave equivalently", "[many]" ) {
     floats a1 = floats({1,2,3,4,5});
     floats a2 = floats({1,2,3,4,5});
     floats a3 = floats({1,2,3,4,5});
@@ -147,7 +148,7 @@ TEST_CASE( "Equivalent composite arithmetic must behave equivalently", "[many]" 
 }
 
 
-TEST_CASE( "composite arithmetic must have idempotence: the operation can be called repeatedly without changing the value", "[many]" ) {
+TEST_CASE( "many<T> arithmetic must have idempotence: the operation can be called repeatedly without changing the value", "[many]" ) {
     floats a = floats({1,2,3,4,5});
     floats b = floats({-1,1,-2,2,3});
     floats c1 = floats({0,0,0,0,0});
@@ -196,7 +197,7 @@ TEST_CASE( "composite arithmetic must have idempotence: the operation can be cal
 
 
 
-TEST_CASE( "composite arithmetic must have an identity: a value exists that can be applied without effect", "[many]" ) {
+TEST_CASE( "many<T> arithmetic must have an identity: a value exists that can be applied without effect", "[many]" ) {
     floats a = floats({1,2,3,4,5});
     floats zeros = floats({0,0,0,0,0});
     floats ones  = floats({1,1,1,1,1});
@@ -212,7 +213,7 @@ TEST_CASE( "composite arithmetic must have an identity: a value exists that can 
 }
 
 
-TEST_CASE( "composite arithmetic must have commutativity: values can be swapped to the same effect", "[many]" ) {
+TEST_CASE( "many<T> arithmetic must have commutativity: values can be swapped to the same effect", "[many]" ) {
     floats a = floats({1,2,3,4,5});
     floats b = floats({-1,1,-2,2,3});
 
@@ -225,7 +226,7 @@ TEST_CASE( "composite arithmetic must have commutativity: values can be swapped 
 }
 
 
-TEST_CASE( "composite arithmetic must have associativity: operations can be applied in a different order to the same effect", "[many]" ) {
+TEST_CASE( "many<T> arithmetic must have associativity: operations can be applied in a different order to the same effect", "[many]" ) {
     floats a = floats({1,2,3,4,5});
     floats b = floats({-1,1,-2,2,3});
     floats c = floats({1,1,2,3,5});
@@ -239,7 +240,7 @@ TEST_CASE( "composite arithmetic must have associativity: operations can be appl
 }
 
 
-TEST_CASE( "composite arithmetic must have distributivity: an operation can be distributed as values of another", "[many]" ) {
+TEST_CASE( "many<T> arithmetic must have distributivity: an operation can be distributed as values of another", "[many]" ) {
     floats a = floats({1,2,3,4,5});
     floats b = floats({-1,1,-2,2,3});
     floats c = floats({1,1,2,3,5});
@@ -253,7 +254,7 @@ TEST_CASE( "composite arithmetic must have distributivity: an operation can be d
 }
 
 
-TEST_CASE( "composite min/max must have associativity: operations can be applied in a different order to the same effect", "[many]" ) {
+TEST_CASE( "many<T> min/max must have associativity: operations can be applied in a different order to the same effect", "[many]" ) {
     floats a = floats({1,2,3,4,5});
     floats b = floats({-1,1,-2,2,3});
     floats c = floats({1,1,2,3,5});
@@ -282,7 +283,7 @@ TEST_CASE( "composite min/max must have associativity: operations can be applied
     }
 }
 
-TEST_CASE( "composite comparators must be consistant", "[many]" ) {
+TEST_CASE( "many<T> comparators must be consistant", "[many]" ) {
     floats a    = floats({1,2,3,4,5});
     floats b    = floats({1,1,2,3,5});
     bools  gt   = bools({0,0,0,0,0});
@@ -319,7 +320,7 @@ TEST_CASE( "composite comparators must be consistant", "[many]" ) {
     }
 }
 
-TEST_CASE( "composite arithmetic must be consistant", "[many]" ) {
+TEST_CASE( "many<T> arithmetic must be consistant", "[many]" ) {
     floats a     = floats({1,2,3,4,5});
     floats b     = floats({1,1,2,3,5});
     floats sqrt1 = floats({0,0,0,0,0});
@@ -346,7 +347,7 @@ TEST_CASE( "composite arithmetic must be consistant", "[many]" ) {
     // }
 }
 
-TEST_CASE( "composite string cast must render correct representation", "[many]" ) {
+TEST_CASE( "floats string cast must render correct representation", "[many]" ) {
     floats a = floats({1,2,3,4,5});
     floats b = floats({1,1,2,3,5});
     floats c = floats({4,8,3,8,2,4,5,9,8,2,3,5,2,1,3,3,3,1,6,1,
@@ -366,6 +367,61 @@ TEST_CASE( "composite string cast must render correct representation", "[many]" 
         REQUIRE_THAT(strb, Catch::Contains("  ░▒█"));
         REQUIRE_THAT(strc, Catch::Contains("███████████"));
         REQUIRE_THAT(strc, Catch::Contains("∞"));
+    }
+}
+
+TEST_CASE( "vec2s string cast must render correct representation", "[many]" ) {
+    vec2s v2d = vec2s({
+        vec2(-1,-1),
+        vec2(-1, 1),
+        vec2(-1,-0.1),
+        vec2(-1, 0.1),
+        vec2(-1, 0.0),
+    });
+    vec3s v3d = vec3s({
+        vec3(-1,-1,-1),
+        vec3( 0,-1,-1),
+        vec3( 1,-1,-1),
+        vec3(-1, 0,-1),
+        vec3( 0, 0,-1),
+        vec3( 1, 0,-1),
+        vec3(-1, 1,-1),
+        vec3( 0, 1,-1),
+        vec3( 1, 1,-1),
+
+        vec3(-1,-1, 0),
+        vec3( 0,-1, 0),
+        vec3( 1,-1, 0),
+        vec3(-1, 0, 0),
+        vec3( 0, 0, 0),
+        vec3( 1, 0, 0),
+        vec3(-1, 1, 0),
+        vec3( 0, 1, 0),
+        vec3( 1, 1, 0),
+
+        vec3(-1,-1, 1),
+        vec3( 0,-1, 1),
+        vec3( 1,-1, 1),
+        vec3(-1, 0, 1),
+        vec3( 0, 0, 1),
+        vec3( 1, 0, 1),
+        vec3(-1, 1, 1),
+        vec3( 0, 1, 1),
+        vec3( 1, 1, 1),
+    });
+    std::string str_v2d = to_string(v2d);
+    std::cout << str_v2d << std::endl;
+    SECTION("to_string(b) must render correct representation"){
+        // WARNING: white box testing, we need to test extra carefully for left arrows, since it's an edge case for atan2()
+        REQUIRE_THAT(to_string(vec2s({vec2(-2,   2),vec2(-5,   5)})), Catch::Contains("↖") && Catch::Contains("⬉"));
+        REQUIRE_THAT(to_string(vec2s({vec2(-2,-0.1),vec2(-5,-0.1)})), Catch::Contains("←") && Catch::Contains("⬅"));
+        REQUIRE_THAT(to_string(vec2s({vec2(-2,   0),vec2(-5,   0)})), Catch::Contains("←") && Catch::Contains("⬅"));
+        REQUIRE_THAT(to_string(vec2s({vec2(-2, 0.1),vec2(-5,-0.1)})), Catch::Contains("←") && Catch::Contains("⬅"));
+        REQUIRE_THAT(to_string(vec2s({vec2(-2,  -2),vec2(-5,  -5)})), Catch::Contains("↙") && Catch::Contains("⬋"));
+
+        REQUIRE_THAT(to_string(vec2s({vec2( 0,   2),vec2( 0,   5)})), Catch::Contains("↑") && Catch::Contains("⬆"));
+        REQUIRE_THAT(to_string(vec2s({vec2( 0,  -2),vec2( 0,  -5)})), Catch::Contains("↓") && Catch::Contains("⬇"));
+        REQUIRE_THAT(to_string(vec2s({vec2( 2,   0),vec2( 5,   0)})), Catch::Contains("→") && Catch::Contains("➡"));
     }
 }
 
