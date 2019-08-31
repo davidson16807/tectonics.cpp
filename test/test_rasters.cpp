@@ -13,6 +13,7 @@
 #include <many/glm/convenience.hpp> //  operators, etc.
 
 #include "rasters/types.hpp"         
+#include <rasters/string_cast.hpp>  
 #include "rasters/glm/glm.hpp"
 #include "rasters/glm/vector_calculus.hpp"
 
@@ -434,6 +435,10 @@ TEST_CASE( "Must be able to test equivalence of rasters using the catch framewor
     raster ref_copy  = raster(diamond, {1,2,3,4,5});
     raster ref_tweak = raster(diamond, {1,2,3,4,0});
     raster ref_fewer = raster(tetrahedron, {1,2,3,4});
+
+    std::string str_ref_fewer = to_string(ref_fewer);
+    std::cout << str_ref_fewer << std::endl;
+    
 
     SECTION("Must be able to equate object with itself"){
         CHECK(ref == ref);

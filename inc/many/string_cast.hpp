@@ -9,7 +9,7 @@ namespace many
 {
 	namespace 
 	{
-		const std::array<const std::string, 5> shades {" ", "░", "▒", "▓", "█" };
+		const std::vector<const std::string> shades {" ", "░", "▒", "▓", "█" };
 	} 
 
 	template <typename T>
@@ -22,15 +22,19 @@ namespace many
 		    {
 		    	out += "\n";
 		    }
+		    
 			if (std::isnan(a[i]))
 			{
 				out += "N";
 			}
-			if (std::isinf(a[i]))
+			else if (std::isinf(a[i]))
 			{
 				out += "∞";
 			}
-		    out += shades[ int( float(shades.size()-1) * float(linearstep(lo, hi, a[i])) ) ];
+			else 
+			{
+			    out += shades[ int( float(shades.size()-1) * float(linearstep(lo, hi, a[i])) ) ];
+			}
 		}
 		out += "\n";
 		for (unsigned int i = 0; i < shades.size(); ++i)
