@@ -7,6 +7,7 @@
 #include <glm/vec3.hpp>               // *vec3
 
 #include <many/many.hpp>  
+#include <many/string_cast.hpp>  
 #include <many/glm/glm.hpp>         // *vec*s
 #include <many/glm/convenience.hpp> //  operators, etc.
 
@@ -343,6 +344,29 @@ TEST_CASE( "composite arithmetic must be consistant", "[many]" ) {
     //     div (log2_, std::log(2.f), log2_);
     //     CHECK(log1_ == log2_);
     // }
+}
+
+TEST_CASE( "composite string cast must render correct representation", "[many]" ) {
+    floats a = floats({1,2,3,4,5});
+    floats b = floats({1,1,2,3,5});
+    floats c = floats({4,8,3,8,2,4,5,9,8,2,3,5,2,1,3,3,3,1,6,1,
+                       4,2,5,INFINITY,9,4,6,2,8,1,5,3,7,5,8,5,6,6,7,6,
+                       1,2,4,1,4,9,9,8,1,3,7,2,5,5,1,8,9,4,7,6,
+                       4,4,4,5,3,1,3,5,8,3,4,1,3,7,5,6,2,9,7,5,
+                       4,8,3,8,2,4,5,9,8,2,3,5,2,1,3,3,3,1,6,1,
+                       4,2,5,9,9,9,9,9,9,9,9,9,9,9,8,5,6,6,7,6,
+                       1,2,4,1,4,9,9,8,1,3,7,2,5,5,1,8,9,4,7,6,
+                       4,4,4,5,3,1,3,5,8,3,4,1,3,7,5,6,2,9,7});
+    std::string stra = to_string(a);
+    std::string strb = to_string(b);
+    std::string strc = to_string(c);
+    std::cout << strc << std::endl;
+    SECTION("to_string(b) must render correct representation"){
+        REQUIRE_THAT(stra, Catch::Contains(" ░▒▓█"));
+        REQUIRE_THAT(strb, Catch::Contains("  ░▒█"));
+        REQUIRE_THAT(strc, Catch::Contains("███████████"));
+        REQUIRE_THAT(strc, Catch::Contains("∞"));
+    }
 }
 
 TEST_CASE( "Must be able to test equivalence of rasters using the catch framework", "[rasters]" ) {
