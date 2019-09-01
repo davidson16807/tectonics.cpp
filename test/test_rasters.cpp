@@ -23,22 +23,10 @@ using namespace glm;
 using namespace many;
 using namespace rasters;
 
-std::shared_ptr<Grid> tetrahedron = 
-    std::make_shared<Grid>(
-        vec3s({
-                vec3(0,0,0),
-                vec3(1,0,0),
-                vec3(0,1,0),
-                vec3(0,0,1)
-            }),
-        uvec3s({
-                uvec3(0,1,2),
-                uvec3(0,1,3),
-                uvec3(0,2,3),
-                uvec3(1,2,3)
-            })
-    );
-/* "diamond" is a 2d grid, it looks like this:
+/* 
+"diamond" is a simple 2d grid for testing raster operations 
+ that do not require spatial awareness (e.g. arithmetic on scalar fields)
+It looks like this:
      2  
     /|\ 
    3-0-1
@@ -59,6 +47,55 @@ std::shared_ptr<Grid> diamond =
                 uvec3(0,1,4),
                 uvec3(0,3,2),
                 uvec3(0,3,4)
+            })
+    );
+/*
+"tetrahedron" is a simple 3d grid for testing basic raster operations
+ that require spatial awareness without requiring a particular shape.
+ (e.g. gradient, divergence, laplacian)
+*/
+std::shared_ptr<Grid> tetrahedron = 
+    std::make_shared<Grid>(
+        vec3s({
+                vec3(0,0,0),
+                vec3(1,0,0),
+                vec3(0,1,0),
+                vec3(0,0,1)
+            }),
+        uvec3s({
+                uvec3(0,1,2),
+                uvec3(0,1,3),
+                uvec3(0,2,3),
+                uvec3(1,2,3)
+            })
+    );
+/*
+"octahedron" is a simple 3d grid for testing raster operations that require 
+something comparable to a unit sphere (e.g. nearest neighbor lookups using SphereGridVoronoi)
+*/
+std::shared_ptr<Grid> octahedron = 
+    std::make_shared<Grid>(
+        normalize(vec3s({
+                vec3( 1, 0, 0),
+                vec3(-1, 0, 0),
+                vec3( 0, 1,-1),
+                vec3( 0,-1,-1),
+                vec3( 0, 1, 1),
+                vec3( 0,-1, 1),
+            })),
+        uvec3s({
+                uvec3( 0, 2, 3),
+                uvec3( 0, 2, 4),
+                uvec3( 0, 2, 5),
+                uvec3( 0, 3, 4),
+                uvec3( 0, 3, 5),
+                uvec3( 0, 4, 5),
+                uvec3( 1, 2, 3),
+                uvec3( 1, 2, 4),
+                uvec3( 1, 2, 5),
+                uvec3( 1, 3, 4),
+                uvec3( 1, 3, 5),
+                uvec3( 1, 4, 5),
             })
     );
 
@@ -436,9 +473,10 @@ TEST_CASE( "Must be able to test equivalence of rasters using the catch framewor
     raster ref_tweak = raster(diamond, {1,2,3,4,0});
     raster ref_fewer = raster(tetrahedron, {1,2,3,4});
 
-    std::string str_ref_fewer = to_string(ref_fewer);
-    std::cout << str_ref_fewer << std::endl;
-    
+    raster a = raster(octahedron, {1,2,3,4,5,6});
+    std::string stra = to_string(a);
+    std::cout << stra << std::endl;
+
 
     SECTION("Must be able to equate object with itself"){
         CHECK(ref == ref);
