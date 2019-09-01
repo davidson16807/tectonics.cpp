@@ -25,7 +25,7 @@ namespace many
 
 
 	template <glm::length_t L, class T, glm::qualifier Q>
-	void set_x(const tmany<glm::vec<L,T,Q>>& out, tmany<T>& a )
+	void set_x(tmany<glm::vec<L,T,Q>>& out, const tmany<T>& a )
 	{
 		for (unsigned int i = 0; i < out.size(); ++i)
 		{
@@ -33,7 +33,7 @@ namespace many
 		}
 	}
 	template <glm::length_t L, class T, glm::qualifier Q>
-	void set_y(const tmany<glm::vec<L,T,Q>>& out, tmany<T>& a )
+	void set_y(tmany<glm::vec<L,T,Q>>& out, const tmany<T>& a )
 	{
 		for (unsigned int i = 0; i < out.size(); ++i)
 		{
@@ -41,7 +41,7 @@ namespace many
 		}
 	}
 	template <glm::length_t L, class T, glm::qualifier Q>
-	void set_z(const tmany<glm::vec<L,T,Q>>& out, tmany<T>& a )
+	void set_z(tmany<glm::vec<L,T,Q>>& out, const tmany<T>& a )
 	{
 		for (unsigned int i = 0; i < out.size(); ++i)
 		{

@@ -39,7 +39,6 @@ namespace rasters
 				if ( !(0 <= id && id < a.size()) )
 				{
 					out += "X";
-					continue;
 				}
 				else if (std::isnan(a[id]))
 				{

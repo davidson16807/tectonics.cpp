@@ -15,6 +15,7 @@
 #include "rasters/types.hpp"         
 #include <rasters/string_cast.hpp>  
 #include "rasters/glm/glm.hpp"
+#include <rasters/glm/string_cast.hpp>  
 #include "rasters/glm/vector_calculus.hpp"
 
 // #include "academics/tectonics.hpp"
@@ -477,6 +478,16 @@ TEST_CASE( "Must be able to test equivalence of rasters using the catch framewor
     std::string stra = to_string(a);
     std::cout << stra << std::endl;
 
+    vec3raster v = vec3raster(octahedron, {
+        vec3(-1,-1,-1),
+        vec3(-1,-1,-1),
+        vec3(-1,-1,-1),
+        vec3(-1,-1,-1),
+        vec3(-1,-1,-1),
+        vec3(-1,-1,-1)
+    });
+    std::string strv = to_string(v);
+    std::cout << strv << std::endl;
 
     SECTION("Must be able to equate object with itself"){
         CHECK(ref == ref);
