@@ -12,11 +12,11 @@
 #include <many/glm/string_cast.hpp>  
 #include <many/glm/convenience.hpp> //  operators, etc.
 
-#include "rasters/types.hpp"         
+#include <rasters/types.hpp>
 #include <rasters/string_cast.hpp>  
-#include "rasters/glm/glm.hpp"
+#include <rasters/glm/glm.hpp>
 #include <rasters/glm/string_cast.hpp>  
-#include "rasters/glm/vector_calculus.hpp"
+#include <rasters/glm/vector_calculus.hpp>
 
 // #include "academics/tectonics.hpp"
 
@@ -400,7 +400,6 @@ TEST_CASE( "floats string cast must render correct representation", "[many]" ) {
     std::string stra = to_string(a);
     std::string strb = to_string(b);
     std::string strc = to_string(c);
-    std::cout << strc << std::endl;
     SECTION("to_string() must render correct representation"){
         REQUIRE_THAT(stra, Catch::Contains(" ░▒▓█"));
         REQUIRE_THAT(strb, Catch::Contains("  ░▒█"));
@@ -448,11 +447,6 @@ TEST_CASE( "vec2s string cast must render correct representation", "[many]" ) {
         vec3( 0, 1, 1),
         vec3( 1, 1, 1),
     });
-    std::string str_v2d = to_string(v2d);
-    std::string str_v3d = to_string(v3d, glm::mat3x2(1,1,0, 
-                                                     0,1,1));
-    std::cout << str_v2d << std::endl;
-    std::cout << str_v3d << std::endl;
     SECTION("to_string() must produce obvious results for straight forward 2d vectors"){
         REQUIRE_THAT(to_string(vec2s({vec2( 0,   2),vec2( 0,   5)})), Catch::Contains("↑") && Catch::Contains("⬆"));
         REQUIRE_THAT(to_string(vec2s({vec2( 0,  -2),vec2( 0,  -5)})), Catch::Contains("↓") && Catch::Contains("⬇"));
@@ -475,8 +469,6 @@ TEST_CASE( "Must be able to test equivalence of rasters using the catch framewor
     raster ref_fewer = raster(tetrahedron, {1,2,3,4});
 
     raster a = raster(octahedron, {1,2,3,4,5,6});
-    std::string stra = to_string(a);
-    std::cout << stra << std::endl;
 
     vec3raster v = vec3raster(octahedron, {
         vec3(-1,-1,-1),
@@ -486,8 +478,6 @@ TEST_CASE( "Must be able to test equivalence of rasters using the catch framewor
         vec3(-1,-1,-1),
         vec3(-1,-1,-1)
     });
-    std::string strv = to_string(v);
-    std::cout << strv << std::endl;
 
     SECTION("Must be able to equate object with itself"){
         CHECK(ref == ref);
