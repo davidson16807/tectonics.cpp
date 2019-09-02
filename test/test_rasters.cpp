@@ -79,24 +79,20 @@ std::shared_ptr<Grid> octahedron =
         normalize(vec3s({
                 vec3( 1, 0, 0),
                 vec3(-1, 0, 0),
-                vec3( 0, 1,-1),
-                vec3( 0,-1,-1),
-                vec3( 0, 1, 1),
-                vec3( 0,-1, 1),
+                vec3( 0, 1, 0),
+                vec3( 0,-1, 0),
+                vec3( 0, 0, 1),
+                vec3( 0, 0,-1),
             })),
         uvec3s({
-                uvec3( 0, 2, 3),
                 uvec3( 0, 2, 4),
                 uvec3( 0, 2, 5),
                 uvec3( 0, 3, 4),
                 uvec3( 0, 3, 5),
-                uvec3( 0, 4, 5),
-                uvec3( 1, 2, 3),
                 uvec3( 1, 2, 4),
                 uvec3( 1, 2, 5),
                 uvec3( 1, 3, 4),
-                uvec3( 1, 3, 5),
-                uvec3( 1, 4, 5),
+                uvec3( 1, 3, 5)
             })
     );
 
