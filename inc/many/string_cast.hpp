@@ -9,7 +9,12 @@ namespace many
 {
 	namespace 
 	{
-		const std::vector<const std::string> shades {" ", "░", "▒", "▓", "█" };
+		#if defined(__clang__)
+			const std::vector<const std::string> 
+		#else
+			const std::array<const std::string, 6>
+		#endif
+		shades {" ", "░", "▒", "▓", "█" };
 	} 
 
 	template <typename T>

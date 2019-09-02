@@ -11,11 +11,21 @@ namespace rasters
 {
 	namespace 
 	{
-		const std::vector<const std::string> weak 
+		#if defined(__clang__)
+			const std::vector<const std::string> 
+		#else
+			const std::array<const std::string, 16> 
+		#endif
+		weak 
 		{
 			"←","↙","↙","↓","↓","↘","↘","→","→","↗","↗","↑","↑","↖","↖","←"
 		};
-		const std::vector<const std::string> strong 
+		#if defined(__clang__)
+			const std::vector<const std::string> 
+		#else
+			const std::array<const std::string, 16> 
+		#endif
+		strong 
 		{
 			"⬅","⬋","⬋","⬇","⬇","⬊","⬊","➡","➡","⬈","⬈","⬆","⬆","⬉","⬉","⬅"
 		};
