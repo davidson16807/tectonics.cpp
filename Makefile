@@ -21,3 +21,5 @@ spike-strata: spike/spike_strata.cpp
 	$(CPP) -std=c++17 -o bin/spike.out spike/spike_strata.cpp -I inc/ && chmod a+x bin/spike.out && ./bin/spike.out
 spike-rasters: spike/spike_rasters.cpp
 	$(CPP) -std=c++17 -o bin/spike.out spike/spike_rasters.cpp -I inc/ && chmod a+x bin/spike.out && ./bin/spike.out
+spike-meshes: spike/spike_meshes.cpp
+	$(CPP) -std=c++17 -o bin/spike.out spike/spike_meshes.cpp -I inc/ && chmod a+x bin/spike.out && ./bin/spike.out
