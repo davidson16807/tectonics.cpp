@@ -22,15 +22,10 @@ namespace many
 		};
 
 		// initializer list constructor
-		tmany(std::initializer_list<T> list) : values(list.size())
+		tmany(std::initializer_list<T> list) : values(list.begin(), list.end())
 		{
-			unsigned int id = 0;
-			for (auto i = list.begin(); i != list.end(); ++i)
-			{
-				this->values[id] = *i;
-				id++;
-			}
 		};
+		// std container style constructor
 		template<class TIterator>
 		tmany(TIterator first, TIterator last) : values(std::distance(first, last))
 		{
@@ -46,12 +41,17 @@ namespace many
 		// copy constructor
 		tmany(const tmany<T>& a)  : values(a.values) {};
 
+		// convenience constructor for vectors
+		explicit tmany(std::vector<T> vector) : values(vector.begin(), vector.end())
+		{
+		};
+
 		explicit tmany(const unsigned int N) : values(N) {};
 
 		explicit tmany(const unsigned int N, const T a)  : values(N, a) {};
 
 		template <class T2>
-		explicit tmany(const tmany<T2>& a)  : values(a.N)
+		explicit tmany(const tmany<T2>& a)  : values(a.size())
 		{
 			for (unsigned int i = 0; i < a.size(); ++i)
 			{
