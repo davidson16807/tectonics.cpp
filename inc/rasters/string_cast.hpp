@@ -30,17 +30,14 @@ namespace rasters
 
 		for (unsigned int i = 0; i < line_char_width/4; ++i)
 		{
-			lat = M_PI*i/float(line_char_width/4) - M_PI/2;
+			lat = M_PI*i/float((line_char_width)/4.f-1) - M_PI/2.f;
 			for (unsigned int j = 0; j < line_char_width; ++j)
 			{
-				lon = 2.*M_PI*j/float(line_char_width);
-				z = cos(lat);
-				r = sqrt(1-z*z);
+				lon = 2.f*M_PI*(j+1)/float(line_char_width+1);
+				z = sin(lat);
+				r = sqrt(1.f-z*z);
 				pos = vec3(r*sin(lon), r*cos(lon), z);
 				id = a.grid->voronoi->nearest_id(pos);
-				// vec3 surface_basis_z = a.grid->vertex_normals[id];
-				// vec3 surface_basis_x = glm::normalize(glm::cross(surface_basis_z, vec3(0,0,1)));
-				// vec3 surface_basis_y = glm::normalize(glm::cross(surface_basis_x, surface_basis_z));
 				if ( !(0 <= id && id < a.size()) )
 				{
 					out += "X";
@@ -52,7 +49,8 @@ namespace rasters
 				else if (std::isinf(a[id]))
 				{
 					out += "∞";
-				} else 
+				} 
+				else 
 				{
 				    out += shades[ int( float(shades.size()-1) * float(linearstep(lo, hi, a[id])) ) ];
 				}
