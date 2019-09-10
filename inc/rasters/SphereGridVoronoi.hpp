@@ -47,12 +47,12 @@ namespace rasters
 		{
 		}
 		
-		SphereGridVoronoi(const vec3s points, const float cell_width)
-			: dimensions((int)ceil(2./cell_width)+1),
-			  cell_width(cell_width),
+		SphereGridVoronoi(const vec3s points, const float min_cell_width, const float max_cell_width)
+			: dimensions((int)ceil(2./min_cell_width)+1),
+			  cell_width(min_cell_width),
 			  cells(cell_count(), 0)
 		{
-			CartesianGridCellList grid = CartesianGridCellList(points, 2.*cell_width);
+			CartesianGridCellList grid = CartesianGridCellList(points, max_cell_width);
 
 			// populate cells using the slower CartesianGridCellList implementation
 			for (int side_id = 0; side_id < OCTAHEDRON_SIDE_COUNT; ++side_id)

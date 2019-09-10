@@ -113,7 +113,8 @@ int main(int argc, char const *argv[])
                     normalize(vec3( 1, 1, 1)),
                     normalize(vec3( 1, 1, 1))
                 }),
-            1./100.
+            1./100.,
+            3./100.
         );
 
     floats a = floats({1,2,3,4,5});

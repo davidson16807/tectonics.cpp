@@ -285,7 +285,7 @@ namespace rasters {
 			aggregate_into(arrow_vertex_id_from, [](float a){ return a+1.f; }, vertex_neighbor_counts);
 
 			const float cells_per_vertex = 8.f;
-			voronoi = std::make_unique<SphereGridVoronoi>(vertex_positions, min(arrow_distances)*cells_per_vertex);
+			voronoi = std::make_unique<SphereGridVoronoi>(vertex_positions, min(arrow_distances)*cells_per_vertex, max(arrow_distances));
 		}
 	};
 }
