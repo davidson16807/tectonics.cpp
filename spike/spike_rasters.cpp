@@ -9,6 +9,7 @@
 #include <many/glm/string_cast.hpp>  
 #include <many/glm/convenience.hpp> //  operators, etc.
 
+#include <rasters/mesh.hpp>
 #include <rasters/types.hpp>
 #include <rasters/string_cast.hpp>  
 #include <rasters/glm/glm.hpp>
@@ -181,15 +182,26 @@ int main(int argc, char const *argv[])
     std::string str_raster_a = to_string(raster_a);
     std::cout << str_raster_a << std::endl;
 
-    vec3raster raster_v = vec3raster(octahedron, {
-        vec3(-1,-1,-1),
-        vec3(-1,-1,-1),
-        vec3(-1,-1,-1),
-        vec3(-1,-1,-1),
-        vec3(-1,-1,-1),
-        vec3(-1,-1,-1)
+    vec2raster raster_v2 = vec2raster(octahedron, {
+        vec2( 0,-1),
+        vec2( 0, 1),
+        vec2(-1, 0),
+        vec2( 1, 0),
+        vec2(-1,-1),
+        vec2( 1, 1),
     });
-    std::string str_raster_v = rasters::to_string(raster_v);
-    std::cout << str_raster_v << std::endl;
+    vec3raster raster_v3 = vec3raster(octahedron, {
+        vec3( 0, 1, 0),
+        vec3( 0, 1, 0),
+        vec3( 0, 1, 0),
+        vec3( 0, 1, 0),
+        vec3( 0, 1, 0),
+        vec3( 0, 1, 0),
+    });
 
+    std::string str_raster_v2 = rasters::to_string(raster_v2);
+    std::cout << str_raster_v2 << std::endl;
+
+    std::string str_raster_v3 = rasters::to_string(raster_v3);
+    std::cout << str_raster_v3 << std::endl;
 }

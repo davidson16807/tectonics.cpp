@@ -58,7 +58,7 @@ namespace rasters
 		};
 
 		const mesh icosahedron(
-				normalize(many::vec3s({
+				meshes::normalize(many::vec3s({
 						glm::vec3(-1, t, 0),
 						glm::vec3( 1, t, 0),
 						glm::vec3(-1,-t, 0),
@@ -106,7 +106,7 @@ namespace rasters
 			);
 
 		const mesh octahedron(
-		        normalize(many::vec3s({
+		        meshes::normalize(many::vec3s({
 		                glm::vec3( 1, 0, 0),
 		                glm::vec3(-1, 0, 0),
 		                glm::vec3( 0, 1, 0),

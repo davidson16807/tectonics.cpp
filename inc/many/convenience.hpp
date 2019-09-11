@@ -140,6 +140,54 @@ namespace many
 	}
 
 
+	/// Returns x if x >= 0; otherwise, it returns -x.
+	template <class T>
+	tmany<T> abs(const tmany<T>& a)
+	{
+		return transform(a, [](T ai){ return ai >= 0? ai : -ai; });
+	}
+
+	/// Returns 1.0 if x > 0, 0.0 if x == 0, or -1.0 if x < 0.
+	template <class T>
+	tmany<T> sign(const tmany<T>& a)
+	{
+		return transform(a, [](T ai){ return (T(0) < ai) - (ai < T(0)); });
+	}
+
+	/// Returns a value equal to the nearest integer that is less then or equal to x.
+	template <class T>
+	tmany<T> floor(const tmany<T>& a)
+	{
+		return transform(a, std::floor);
+	}
+
+	/// Returns a value equal to the nearest integer to x
+	/// whose absolute value is not larger than the absolute value of x.
+	template <class T>
+	tmany<T> trunc(const tmany<T>& a)
+	{
+		return transform(a, std::trunc);
+	}
+
+	/// Returns a value equal to the nearest integer to x.
+	/// The fraction 0.5 will round in a direction chosen by the
+	/// implementation, presumably the direction that is fastest.
+	/// This includes the possibility that round(x) returns the
+	/// same value as roundEven(x) for all values of x.
+	template <class T>
+	tmany<T> round(const tmany<T>& a)
+	{
+		return transform(a, std::round);
+	}
+
+	/// Returns a value equal to the nearest integer
+	/// that is greater than or equal to x.
+	template <class T>
+	tmany<T> ceil(const tmany<T>& a)
+	{
+		transform(a, std::ceil);
+	}
+
 
 
 	template <class T>

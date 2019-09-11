@@ -9,8 +9,10 @@
 #include <glm/vec3.hpp>          // *vec3
 #include <many/types.hpp>    // floats, etc.
 #include <many/common.hpp>       // max
+#include <many/convenience.hpp>       // sign
 #include <many/statistic.hpp>    // mean
 #include <many/glm/types.hpp>// *vec*s
+#include <many/glm/convenience.hpp>       // dot
 #include <many/glm/geometric.hpp>// cross, dot, etc.
 
 #define GLM_ENABLE_EXPERIMENTAL
@@ -174,10 +176,16 @@ namespace rasters {
 			get 	(vertex_positions, face_vertex_id_b, 	face_endpoint_b);
 			get 	(vertex_positions, face_vertex_id_c, 	face_endpoint_c);
 			face_midpoints = (face_endpoint_a + face_endpoint_b + face_endpoint_c) / 3.f;
-			face_normals   = normalize(cross(face_endpoint_c - face_endpoint_b, face_endpoint_a - face_endpoint_b)); 
+
 			face_areas     = length   (cross(face_endpoint_c - face_endpoint_b, face_endpoint_a - face_endpoint_b)) / 2.f; 
 			// ^^^ NOTE: the magnitude of cross product is the area of a parallelogram, so half that is the area of a triangle
 			face_average_area = mean(face_areas);
+
+			face_normals   = normalize(cross(face_endpoint_c - face_endpoint_b, face_endpoint_a - face_endpoint_b)); 
+			face_normals  *= sign(dot(face_normals, normalize(face_midpoints)));
+			// ^^^ NOTE: we correct by the sign of the cosine similarity of normals and midpoints.
+			// This way, the face normals will be somewhat standardized to face outward.
+			// This will hold for most well centered convex shapes. 
 
 			floats face_vertex_areas_a = length(cross((face_endpoint_c - face_endpoint_a)/2.f, (face_endpoint_b - face_endpoint_a)/2.f)) / 2.f; 
 			floats face_vertex_areas_b = length(cross((face_endpoint_a - face_endpoint_b)/2.f, (face_endpoint_c - face_endpoint_b)/2.f)) / 2.f; 

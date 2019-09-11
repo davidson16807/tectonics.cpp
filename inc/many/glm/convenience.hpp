@@ -46,7 +46,7 @@ namespace many
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	inline tmany<T> dot (const tmany<glm::vec<L,T,Q>>& u, const glm::vec<L,T,Q> v ) 
 	{
-		glm::vec<L,T,Q> out = glm::vec<L,T,Q>(u.size());
+		tmany<T> out = tmany<T>(u.size());
 		dot(u, v, out);
 		return out;
 	}
@@ -74,7 +74,7 @@ namespace many
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	inline tmany<T> dot (const tmany<glm::vec<L,T,Q>>& u, const tmany<glm::vec<L,T,Q>>& v ) 
 	{
-		glm::vec<L,T,Q> out = glm::vec<L,T,Q>(u.size());
+		tmany<T> out = tmany<T>(u.size());
 		dot(u, v, out);
 		return out;
 	}
