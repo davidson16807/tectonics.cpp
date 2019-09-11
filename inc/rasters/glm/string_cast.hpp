@@ -84,23 +84,23 @@ namespace rasters
 				else if (glm::length(a[id]) < a_length_max * T(2./3.))
 				{
 					T turn = (std::atan2(a[id].y, a[id].x)+M_PI)/(2.*M_PI);
-					int i  = std::clamp(int(weak.size()*turn), 0, int(weak.size()-1));
-					out   += weak[i];
+					int arrow_id  = std::clamp(int(weak.size()*turn), 0, int(weak.size()-1));
+					out   += weak[arrow_id];
 				}
 				else
 				{
 					T turn = (std::atan2(a[id].y, a[id].x)+M_PI)/(2.*M_PI);
-					int i  = std::clamp(int(strong.size()*turn), 0, int(strong.size()-1));
-					out   += strong[i];
+					int arrow_id  = std::clamp(int(strong.size()*turn), 0, int(strong.size()-1));
+					out   += strong[arrow_id];
 				}
 			}
 	    	out += "\n";
 		}
 		out += "\n";
-		out += "→ > ";
+		out += "|→| ≥ ";
 		out += std::to_string(a_length_max * T(1./3.));
 		out += "\n";
-		out += "➡ > ";
+		out += "|➡| ≥ ";
 		out += std::to_string(a_length_max * T(2./3.));
 		out += "\n";
 		return out;

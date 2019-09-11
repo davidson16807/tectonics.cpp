@@ -72,10 +72,10 @@ namespace many
 			}
 		}
 		out += "\n";
-		out += "→ > ";
+		out += "|→| ≥ ";
 		out += std::to_string(max_length_a * T(1./3.));
 		out += "\n";
-		out += "➡ > ";
+		out += "|➡| ≥ ";
 		out += std::to_string(max_length_a * T(2./3.));
 		out += "\n";
 		return out;

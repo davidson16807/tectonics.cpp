@@ -38,14 +38,16 @@ namespace many
 			}
 			else 
 			{
-			    out += shades[ int( float(shades.size()-1) * float(linearstep(lo, hi, a[i])) ) ];
+				float shade_fraction = linearstep(lo, hi, a[i]);
+				int shade_id = int(std::min(float(shades.size()-1), (shades.size() * shade_fraction) ));
+			    out += shades[shade_id];
 			}
 		}
 		out += "\n";
 		for (unsigned int i = 0; i < shades.size(); ++i)
 		{
 			out += shades[i];
-			out += " > ";
+			out += " ≥ ";
 			out += std::to_string(mix(float(lo), float(hi), float(i)/float(shades.size())));
 			out += "\n";
 			// out += ", ";

@@ -71,7 +71,6 @@ namespace rasters
 							OCTAHEDRON_SIDE_X[side_id] * x2d +
 							OCTAHEDRON_SIDE_Y[side_id] * y2d +
 							OCTAHEDRON_SIDE_Z[side_id] * z2d ;
-
 						cells[cell_id(side_id, xi2d, yi2d)] = grid.nearest_id(cell_pos);
 					}
 				}
@@ -80,7 +79,7 @@ namespace rasters
 
 		int nearest_id(const vec3 point) const
 		{
-			const int side_id = 
+			const unsigned int side_id = 
 			  (( point.x > 0) << 0) +
 			  (( point.y > 0) << 1) +
 			  (( point.z > 0) << 2) ; 

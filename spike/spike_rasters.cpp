@@ -177,7 +177,7 @@ int main(int argc, char const *argv[])
     std::cout << str_v2d << std::endl;
     std::cout << str_v3d << std::endl;
 
-    raster raster_a = raster(octahedron, {1,2,3,4,5,6});
+    raster raster_a = raster(octahedron, {0,1,2,3,4,5});
     std::string str_raster_a = to_string(raster_a);
     std::cout << str_raster_a << std::endl;
 

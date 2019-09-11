@@ -1,6 +1,7 @@
 #pragma once
 
-#include <string>
+#include <algorithm> //std::min
+#include <string>    //std::string
 
 #include <many/types.hpp>
 #include <many/common.hpp>
@@ -12,7 +13,7 @@ namespace rasters
 		#if defined(__clang__)
 			const std::vector<const std::string> 
 		#else
-			const std::array<const std::string, 6>
+			const std::array<const std::string, 5>
 		#endif
 		shades {" ", "░", "▒", "▓", "█" };
 	} 
@@ -52,7 +53,9 @@ namespace rasters
 				} 
 				else 
 				{
-				    out += shades[ int( float(shades.size()-1) * float(linearstep(lo, hi, a[id])) ) ];
+					float shade_fraction = linearstep(lo, hi, a[id]);
+					int shade_id = int(std::min(float(shades.size()-1), (shades.size() * shade_fraction) ));
+				    out += shades[shade_id];
 				}
 			}
 	    	out += "\n";
@@ -61,7 +64,7 @@ namespace rasters
 		for (unsigned int i = 0; i < shades.size(); ++i)
 		{
 			out += shades[i];
-			out += " > ";
+			out += " ≥ ";
 			out += std::to_string(mix(float(lo), float(hi), float(i)/float(shades.size())));
 			out += "\n";
 			// out += ", ";
