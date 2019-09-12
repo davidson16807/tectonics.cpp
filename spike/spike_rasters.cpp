@@ -56,45 +56,19 @@ int main(int argc, char const *argv[])
      (e.g. gradient, divergence, laplacian)
     */
     std::shared_ptr<Grid> tetrahedron = 
-        std::make_shared<Grid>(
-            vec3s({
-                    vec3(0,0,0),
-                    vec3(1,0,0),
-                    vec3(0,1,0),
-                    vec3(0,0,1)
-                }),
-            uvec3s({
-                    uvec3(0,1,2),
-                    uvec3(0,1,3),
-                    uvec3(0,2,3),
-                    uvec3(1,2,3)
-                })
-        );
+        std::make_shared<Grid>(meshes::tetrahedron.vertices, meshes::tetrahedron.faces);
     /*
     "octahedron" is a simple 3d grid for testing raster operations that require 
     something comparable to a unit sphere (e.g. nearest neighbor lookups using SphereGridVoronoi)
     */
     std::shared_ptr<Grid> octahedron = 
-        std::make_shared<Grid>(
-            normalize(vec3s({
-                    vec3( 1, 0, 0),
-                    vec3(-1, 0, 0),
-                    vec3( 0, 1, 0),
-                    vec3( 0,-1, 0),
-                    vec3( 0, 0, 1),
-                    vec3( 0, 0,-1),
-                })),
-            uvec3s({
-                    uvec3( 0, 2, 4),
-                    uvec3( 0, 2, 5),
-                    uvec3( 0, 3, 4),
-                    uvec3( 0, 3, 5),
-                    uvec3( 1, 2, 4),
-                    uvec3( 1, 2, 5),
-                    uvec3( 1, 3, 4),
-                    uvec3( 1, 3, 5)
-                })
-        );
+        std::make_shared<Grid>(meshes::octahedron.vertices, meshes::octahedron.faces);
+
+    /*
+    "icosahedron" is a simple 3d grid for testing rasters with a large number of vertices
+    */
+    std::shared_ptr<Grid> icosahedron = 
+        std::make_shared<Grid>(meshes::icosahedron.vertices, meshes::icosahedron.faces);
 
     SphereGridVoronoi voronoi_test(
             vec3s({

@@ -8,11 +8,13 @@
 
 #include <many/many.hpp>  
 #include <many/string_cast.hpp>  
+#include <many/convenience.hpp>  
 #include <many/glm/glm.hpp>         // *vec*s
 #include <many/glm/string_cast.hpp>  
 #include <many/glm/convenience.hpp> //  operators, etc.
 
 #include <rasters/types.hpp>
+#include <rasters/mesh.hpp>
 #include <rasters/string_cast.hpp>  
 #include <rasters/glm/glm.hpp>
 #include <rasters/glm/string_cast.hpp>  
@@ -56,65 +58,40 @@ std::shared_ptr<Grid> diamond =
  (e.g. gradient, divergence, laplacian)
 */
 std::shared_ptr<Grid> tetrahedron = 
-    std::make_shared<Grid>(
-        vec3s({
-                vec3(0,0,0),
-                vec3(1,0,0),
-                vec3(0,1,0),
-                vec3(0,0,1)
-            }),
-        uvec3s({
-                uvec3(0,1,2),
-                uvec3(0,1,3),
-                uvec3(0,2,3),
-                uvec3(1,2,3)
-            })
-    );
+    std::make_shared<Grid>(meshes::tetrahedron.vertices, meshes::tetrahedron.faces);
 /*
 "octahedron" is a simple 3d grid for testing raster operations that require 
 something comparable to a unit sphere (e.g. nearest neighbor lookups using SphereGridVoronoi)
 */
 std::shared_ptr<Grid> octahedron = 
-    std::make_shared<Grid>(
-        normalize(vec3s({
-                vec3( 1, 0, 0),
-                vec3(-1, 0, 0),
-                vec3( 0, 1, 0),
-                vec3( 0,-1, 0),
-                vec3( 0, 0, 1),
-                vec3( 0, 0,-1),
-            })),
-        uvec3s({
-                uvec3( 0, 2, 4),
-                uvec3( 0, 2, 5),
-                uvec3( 0, 3, 4),
-                uvec3( 0, 3, 5),
-                uvec3( 1, 2, 4),
-                uvec3( 1, 2, 5),
-                uvec3( 1, 3, 4),
-                uvec3( 1, 3, 5)
-            })
-    );
+    std::make_shared<Grid>(meshes::octahedron.vertices, meshes::octahedron.faces);
+
+/*
+"icosahedron" is a simple 3d grid for testing rasters with a large number of vertices
+*/
+std::shared_ptr<Grid> icosahedron = 
+    std::make_shared<Grid>(meshes::icosahedron.vertices, meshes::icosahedron.faces);
 
 SphereGridVoronoi voronoi_test(
-        vec3s({
-                normalize(vec3( 1, 0, 0)),
-                normalize(vec3( 0, 1, 0)),
-                normalize(vec3( 0, 0, 1)),
-                normalize(vec3(-1, 0, 0)),
-                normalize(vec3( 0,-1, 0)),
-                normalize(vec3( 0, 0,-1)),
-                normalize(vec3(-1,-1,-1)),
-                normalize(vec3( 1,-1,-1)),
-                normalize(vec3(-1, 1,-1)),
-                normalize(vec3( 1, 1,-1)),
-                normalize(vec3(-1,-1, 1)),
-                normalize(vec3( 1,-1, 1)),
-                normalize(vec3(-1, 1, 1)),
-                normalize(vec3( 1, 1, 1)),
-                normalize(vec3( 1, 1, 1))
-            }),
-        1./100.
+        normalize(vec3s({
+                        vec3( 1, 0, 0),
+                        vec3( 0, 1, 0),
+                        vec3( 0, 0, 1),
+                        vec3(-1, 0, 0),
+                        vec3( 0,-1, 0),
+                        vec3( 0, 0,-1),
+                        vec3(-1,-1,-1),
+                        vec3( 1,-1,-1),
+                        vec3(-1, 1,-1),
+                        vec3( 1, 1,-1),
+                        vec3(-1,-1, 1),
+                        vec3( 1,-1, 1),
+                        vec3(-1, 1, 1),
+                        vec3( 1, 1, 1),
+                        vec3( 1, 1, 1)
+                    })),
+        1./100.,
+        10./100.
     );
 
 
@@ -383,8 +360,8 @@ TEST_CASE( "many<T> arithmetic must be consistant", "[many]" ) {
 }
 
 TEST_CASE( "floats string cast must render correct representation", "[many]" ) {
-    floats a = floats({1,2,3,4,5});
-    floats b = floats({1,1,2,3,5});
+    floats a = floats({1,2,3,4,5,6});
+    floats b = floats({1,1,2,3,5,8});
     floats c = floats({4,8,3,8,2,4,5,9,8,2,3,5,2,1,3,3,3,1,6,1,
                        4,2,5,INFINITY,9,4,6,2,8,1,5,3,7,5,8,5,6,6,7,6,
                        1,2,4,1,4,9,9,8,1,3,7,2,5,5,1,8,9,4,7,6,
@@ -398,55 +375,18 @@ TEST_CASE( "floats string cast must render correct representation", "[many]" ) {
     std::string strc = to_string(c);
     SECTION("to_string() must render correct representation"){
         REQUIRE_THAT(stra, Catch::Contains(" ░▒▓█"));
-        REQUIRE_THAT(strb, Catch::Contains("  ░▒█"));
+        REQUIRE_THAT(strb, Catch::Contains("   ░▓"));
         REQUIRE_THAT(to_string(floats({INFINITY})), Catch::Contains("∞"));
         // REQUIRE_THAT(to_string(floats({std::sqrt(-1)})), Catch::Contains("N"));
     }
 }
 
 TEST_CASE( "vec2s string cast must render correct representation", "[many]" ) {
-    vec2s v2d = vec2s({
-        vec2(-1,-1),
-        vec2(-1, 1),
-        vec2(-1,-0.1),
-        vec2(-1, 0.1),
-        vec2(-1, 0.0),
-    });
-    vec3s v3d = vec3s({
-        vec3(-1,-1,-1),
-        vec3( 0,-1,-1),
-        vec3( 1,-1,-1),
-        vec3(-1, 0,-1),
-        vec3( 0, 0,-1),
-        vec3( 1, 0,-1),
-        vec3(-1, 1,-1),
-        vec3( 0, 1,-1),
-        vec3( 1, 1,-1),
-
-        vec3(-1,-1, 0),
-        vec3( 0,-1, 0),
-        vec3( 1,-1, 0),
-        vec3(-1, 0, 0),
-        vec3( 0, 0, 0),
-        vec3( 1, 0, 0),
-        vec3(-1, 1, 0),
-        vec3( 0, 1, 0),
-        vec3( 1, 1, 0),
-
-        vec3(-1,-1, 1),
-        vec3( 0,-1, 1),
-        vec3( 1,-1, 1),
-        vec3(-1, 0, 1),
-        vec3( 0, 0, 1),
-        vec3( 1, 0, 1),
-        vec3(-1, 1, 1),
-        vec3( 0, 1, 1),
-        vec3( 1, 1, 1),
-    });
     SECTION("to_string() must produce obvious results for straight forward 2d vectors"){
         REQUIRE_THAT(to_string(vec2s({vec2( 0,   2),vec2( 0,   5)})), Catch::Contains("↑") && Catch::Contains("⬆"));
         REQUIRE_THAT(to_string(vec2s({vec2( 0,  -2),vec2( 0,  -5)})), Catch::Contains("↓") && Catch::Contains("⬇"));
         REQUIRE_THAT(to_string(vec2s({vec2( 2,   0),vec2( 5,   0)})), Catch::Contains("→") && Catch::Contains("➡"));
+        REQUIRE_THAT(to_string(vec2s({vec2(-2,   0),vec2(-5,   0)})), Catch::Contains("←") && Catch::Contains("⬅"));
     }
     SECTION("to_string() must behave correctly around edge case for atan2()"){
         // WARNING: white box testing, we need to test left arrows extra carefully since they cause a discontinuity in atan2()
@@ -455,6 +395,59 @@ TEST_CASE( "vec2s string cast must render correct representation", "[many]" ) {
         REQUIRE_THAT(to_string(vec2s({vec2(-2,   0),vec2(-5,   0)})), Catch::Contains("←") && Catch::Contains("⬅"));
         REQUIRE_THAT(to_string(vec2s({vec2(-2, 0.1),vec2(-5,-0.1)})), Catch::Contains("←") && Catch::Contains("⬅"));
         REQUIRE_THAT(to_string(vec2s({vec2(-2,  -2),vec2(-5,  -5)})), Catch::Contains("↙") && Catch::Contains("⬋"));
+    }
+}
+
+TEST_CASE( "raster string cast must render correct representation", "[many]" ) {
+
+    SECTION("to_string() must use all shades for equally distributed raster values"){
+        REQUIRE_THAT(to_string(raster(octahedron, {1,2,3,4,5,6})), 
+                    Catch::Contains(" ") && 
+                    Catch::Contains("░") && 
+                    Catch::Contains("▒") && 
+                    Catch::Contains("▓") && 
+                    Catch::Contains("█")
+                );
+    }
+    SECTION("to_string() must depict 2d vector raster using only arrows that are appropriate"){
+        REQUIRE_THAT(to_string(vec2raster(octahedron, {
+                            vec2( 0,-1),
+                            vec2( 0, 1),
+                            vec2(-1, 0),
+                            vec2( 1, 0),
+                            vec2( 0, 0),
+                            vec2( 0, 0),
+                        })), 
+                    (Catch::Contains(" ")                        ) && 
+                    (Catch::Contains("←") || Catch::Contains("⬅")) && 
+                    (Catch::Contains("↑") || Catch::Contains("⬆")) && 
+                    (Catch::Contains("→") || Catch::Contains("➡")) && 
+                    (Catch::Contains("↓") || Catch::Contains("⬇")) &&
+                   !(Catch::Contains("↖") || Catch::Contains("⬉")) &&
+                   !(Catch::Contains("↙") || Catch::Contains("⬋")) &&
+                   !(Catch::Contains("↘") || Catch::Contains("⬊")) &&
+                   !(Catch::Contains("↗") || Catch::Contains("⬈"))
+                );
+    }
+    SECTION("to_string() must depict uniform 3d vector raster using only arrows that are appropriate"){
+        REQUIRE_THAT(to_string(vec3raster(octahedron, {
+                            vec3( 1, 0, 0),
+                            vec3( 1, 0, 0),
+                            vec3( 1, 0, 0),
+                            vec3( 1, 0, 0),
+                            vec3( 1, 0, 0),
+                            vec3( 1, 0, 0)
+                        })), 
+                    (Catch::Contains(" ")                        ) && 
+                    (Catch::Contains("←") || Catch::Contains("⬅")) && 
+                    (Catch::Contains("→") || Catch::Contains("➡")) && 
+                   !(Catch::Contains("↑") || Catch::Contains("⬆")) && 
+                   !(Catch::Contains("↓") || Catch::Contains("⬇")) &&
+                   !(Catch::Contains("↖") || Catch::Contains("⬉")) &&
+                   !(Catch::Contains("↙") || Catch::Contains("⬋")) &&
+                   !(Catch::Contains("↘") || Catch::Contains("⬊")) &&
+                   !(Catch::Contains("↗") || Catch::Contains("⬈"))
+                );
     }
 }
 

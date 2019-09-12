@@ -116,9 +116,8 @@ namespace rasters
 	  * "up" is indicated by the z axis of a 3d vector
 	*/
 	template <typename T, glm::qualifier Q>
-	std::string to_string(const traster<glm::vec<3,T,Q>>& a, const int line_char_width = 80)
+	std::string to_string(const traster<glm::vec<3,T,Q>>& a, const int line_char_width = 80, const glm::vec3 up = vec3(0,0,1))
 	{
-		glm::vec3		up(0,0,1);
 		many::vec3s		surface_basis_x(a.size());
 		many::vec3s		surface_basis_y(a.size());
 		many::vec3s		surface_basis_z(a.grid->vertex_normals);
