@@ -73,9 +73,9 @@ namespace rasters {
 		vec3s 		edge_endpoint_b;
 		vec3s 		edge_midpoints;
 		floats 		edge_distances;
-		float		edge_average_distance;
 		vec3s 		edge_normals;
 		//floats 	edge_areas;
+		float		edge_average_distance;
 		
 		uint        arrow_count;
 		uvec2s 		arrow_vertex_ids;
@@ -88,9 +88,9 @@ namespace rasters {
 		vec3s 		arrow_midpoints;
 		vec3s 		arrow_offsets;
 		floats 		arrow_distances;
-		float		arrow_average_distance;
 		vec3s 		arrow_normals;
 		//floats 	arrow_areas;
+		float		arrow_average_distance;
 
 		~Grid()
 		{

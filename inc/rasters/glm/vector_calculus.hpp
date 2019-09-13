@@ -29,8 +29,6 @@ namespace rasters
 		uint  from  (0);
 		uint  to    (0);
 		float df    (0);
-		vec3  dx    (0);
-		const float PI = 3.141592653589793238462643383279502884197169399;
 		fill(result, glm::vec<3,T2,Q>(0));
 		for (unsigned int i = 0; i < scalar_field.grid->arrow_vertex_ids.size(); ++i)
 		{

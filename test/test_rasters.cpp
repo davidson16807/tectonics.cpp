@@ -375,7 +375,7 @@ TEST_CASE( "floats string cast must render correct representation", "[many]" ) {
     std::string strc = to_string(c);
     SECTION("to_string() must render correct representation"){
         REQUIRE_THAT(stra, Catch::Contains(" ░▒▓█"));
-        REQUIRE_THAT(strb, Catch::Contains("   ░▓"));
+        REQUIRE_THAT(strb, Catch::Contains("  ░▒█"));
         REQUIRE_THAT(to_string(floats({INFINITY})), Catch::Contains("∞"));
         // REQUIRE_THAT(to_string(floats({std::sqrt(-1)})), Catch::Contains("N"));
     }

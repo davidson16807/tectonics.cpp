@@ -25,7 +25,7 @@ namespace many
 	void div(const tmany<T>& a, const T2 b, tmany<T3>& out)
 	{
 		const T2 binv = T2(1.)/b;
-		transform(a, b, [](T ai, T2 bi){ return ai * bi; }, out); 
+		transform(a, binv, [](T ai, T2 bi){ return ai * bi; }, out); 
 	}
 
 
