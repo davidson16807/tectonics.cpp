@@ -18,7 +18,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>           // unordered_set<vec*>
 
-#include "SphereGridVoronoi.hpp"
+#include "SpheroidGridVoronoi.hpp"
 
 namespace rasters {
 	namespace {
@@ -39,6 +39,7 @@ namespace rasters {
 		uints 		buffer_array_vertex_ids;
 
 		//ivecNs 	vertex_neighbor_ids;
+		uint        vertex_count;
 		floats 		vertex_neighbor_counts;
 		vec3s 		vertex_positions;
 		vec3s 		vertex_normals;
@@ -46,6 +47,7 @@ namespace rasters {
 		float		vertex_average_area;
 
 
+		uint        face_count;
 		uvec3s 		face_vertex_ids;
 		uints 		face_vertex_id_a;
 		uints 		face_vertex_id_b;
@@ -61,6 +63,7 @@ namespace rasters {
 		floats 		face_areas;
 		float 		face_average_area;
 
+		uint        edge_count;
 		uvec2s 		edge_vertex_ids;
 		uints 		edge_vertex_id_a;
 		uints 		edge_vertex_id_b;
@@ -74,6 +77,7 @@ namespace rasters {
 		vec3s 		edge_normals;
 		//floats 	edge_areas;
 		
+		uint        arrow_count;
 		uvec2s 		arrow_vertex_ids;
 		uints 		arrow_vertex_id_from;
 		uints 		arrow_vertex_id_to;
@@ -88,8 +92,6 @@ namespace rasters {
 		vec3s 		arrow_normals;
 		//floats 	arrow_areas;
 
-		std::unique_ptr<SphereGridVoronoi> voronoi;
-
 		~Grid()
 		{
 
@@ -99,12 +101,14 @@ namespace rasters {
 			  	buffer_array_vertex_ids(3*face_count),
 
 			//	vertex_neighbor_ids    (0),
+				vertex_count           (vertex_count),
 				vertex_neighbor_counts (vertex_count),
 				vertex_positions       (vertex_count),
 				vertex_normals         (vertex_count),
 				vertex_areas           (vertex_count),
 				vertex_average_area    (0),
 
+				face_count             (face_count),
 				face_vertex_ids        (face_count),
 				face_vertex_id_a       (face_count),
 				face_vertex_id_b       (face_count),
@@ -120,6 +124,7 @@ namespace rasters {
 				face_areas             (face_count),
 				face_average_area      (0),
 
+			  	edge_count             (edge_count),
 			  	edge_vertex_ids        (edge_count),
 			  	edge_vertex_id_a       (edge_count),
 			  	edge_vertex_id_b       (edge_count),
@@ -133,6 +138,7 @@ namespace rasters {
 			//	edge_areas             (edge_count),
 			  	edge_average_distance  (0),
 			  	
+			  	arrow_count            (2*edge_count),
 			  	arrow_vertex_ids       (2*edge_count),
 			  	arrow_vertex_id_from   (2*edge_count),
 			  	arrow_vertex_id_to     (2*edge_count),
@@ -145,14 +151,12 @@ namespace rasters {
 			  	arrow_distances        (2*edge_count), 
 			  	arrow_normals          (2*edge_count),
 			//	arrow_areas            (0),
-			  	arrow_average_distance (0),
-
-			  	voronoi(nullptr)
+			  	arrow_average_distance (0)
 		{
 
 		}
 
-		Grid(const vec3s& vertices, const uvec3s& faces)
+		explicit Grid(const vec3s& vertices, const uvec3s& faces)
 			: Grid(vertices.size(), faces.size(), 0)
 		{
 			if (faces.size() < 1)
@@ -291,14 +295,7 @@ namespace rasters {
 			arrow_average_distance = mean(arrow_distances);
 
 			aggregate_into(arrow_vertex_id_from, [](float a){ return a+1.f; }, vertex_neighbor_counts);
-
-			const float vertices_per_cartesian_grid_cell = 8.f;
-			const float vertices_per_sphere_grid_cell = 1/8.f;
-			voronoi = std::make_unique<SphereGridVoronoi>(
-				vertex_positions, 
-				min(arrow_distances)*vertices_per_sphere_grid_cell, 
-				max(arrow_distances)*vertices_per_cartesian_grid_cell
-			);
+			std::cout << min(arrow_distances) << std::endl;
 		}
 	};
 }

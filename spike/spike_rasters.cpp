@@ -1,4 +1,5 @@
 
+#include <random>           // rngs
 
 #define GLM_FORCE_PURE      // disable SIMD support for glm so we can work with webassembly
 #include <glm/vec3.hpp>               // *vec3
@@ -59,18 +60,18 @@ int main(int argc, char const *argv[])
         std::make_shared<Grid>(meshes::tetrahedron.vertices, meshes::tetrahedron.faces);
     /*
     "octahedron" is a simple 3d grid for testing raster operations that require 
-    something comparable to a unit sphere (e.g. nearest neighbor lookups using SphereGridVoronoi)
+    something comparable to a unit sphere (e.g. nearest neighbor lookups using SpheroidGridVoronoi)
     */
-    std::shared_ptr<Grid> octahedron = 
-        std::make_shared<Grid>(meshes::octahedron.vertices, meshes::octahedron.faces);
+    SpheroidGrid octahedron = 
+        SpheroidGrid(meshes::octahedron.vertices, meshes::octahedron.faces);
 
     /*
     "icosahedron" is a simple 3d grid for testing rasters with a large number of vertices
     */
-    std::shared_ptr<Grid> icosahedron = 
-        std::make_shared<Grid>(meshes::icosahedron.vertices, meshes::icosahedron.faces);
+    SpheroidGrid icosahedron = 
+        SpheroidGrid(meshes::icosahedron.vertices, meshes::icosahedron.faces);
 
-    SphereGridVoronoi voronoi_test(
+    SpheroidGridVoronoi voronoi_test(
             vec3s({
                     normalize(vec3( 1, 0, 0)),
                     normalize(vec3( 0, 1, 0)),
@@ -152,11 +153,11 @@ int main(int argc, char const *argv[])
     std::cout << str_v2d << std::endl;
     std::cout << str_v3d << std::endl;
 
-    raster raster_a = raster(octahedron, {0,1,2,3,4,5});
-    std::string str_raster_a = to_string(raster_a);
+    floats raster_a = floats({0,1,2,3,4,5});
+    std::string str_raster_a = to_string(octahedron, raster_a);
     std::cout << str_raster_a << std::endl;
 
-    vec2raster raster_v2 = vec2raster(octahedron, {
+    vec2s raster_v2 = vec2s({
         vec2( 0,-1),
         vec2( 0, 1),
         vec2(-1, 0),
@@ -164,7 +165,7 @@ int main(int argc, char const *argv[])
         vec2(-1,-1),
         vec2( 1, 1),
     });
-    vec3raster raster_v3 = vec3raster(octahedron, {
+    vec3s raster_v3 = vec3s({
         vec3( 0, 1, 0),
         vec3( 0, 1, 0),
         vec3( 0, 1, 0),
@@ -173,9 +174,14 @@ int main(int argc, char const *argv[])
         vec3( 0, 1, 0),
     });
 
-    std::string str_raster_v2 = rasters::to_string(raster_v2);
+    std::string str_raster_v2 = rasters::to_string(octahedron, raster_v2);
     std::cout << str_raster_v2 << std::endl;
 
-    std::string str_raster_v3 = rasters::to_string(raster_v3);
+    std::string str_raster_v3 = rasters::to_string(octahedron, raster_v3);
     std::cout << str_raster_v3 << std::endl;
+
+    // std::mt19937 randomizer;
+    // std::cout << randomizer() << " " << randomizer() << std::endl;
+    // std::cout << randomizer;
+
 }

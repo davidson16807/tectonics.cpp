@@ -21,7 +21,7 @@ namespace rasters
 
 	// describes a 3d unit cube sphere where every cell houses an id representing the nearest point
 	// uses CartesianGridCellList behind the scenes to optimize initialization
-	class SphereGridVoronoi
+	class SpheroidGridVoronoi
 	{
 		static const vec3s OCTAHEDRON_SIDE_Z;
 		static const vec3s OCTAHEDRON_SIDE_X;
@@ -41,13 +41,13 @@ namespace rasters
 				  + yi;
 		}
 		// NOTE: copy constructor set to private so we don't have to think about managing pointer resources
-		SphereGridVoronoi(const SphereGridVoronoi& grid){};
+		SpheroidGridVoronoi(const SpheroidGridVoronoi& grid){};
 	public:
-		~SphereGridVoronoi()
+		~SpheroidGridVoronoi()
 		{
 		}
 		
-		SphereGridVoronoi(const vec3s points, const float min_cell_width, const float max_cell_width)
+		explicit SpheroidGridVoronoi(const vec3s points, const float min_cell_width, const float max_cell_width)
 			: dimensions((int)ceil(2./min_cell_width)+1),
 			  cell_width(min_cell_width),
 			  cells(cell_count(), 0)
@@ -114,7 +114,7 @@ namespace rasters
 			}
 		}
 	};
-	const vec3s SphereGridVoronoi::OCTAHEDRON_SIDE_Z = normalize(
+	const vec3s SpheroidGridVoronoi::OCTAHEDRON_SIDE_Z = normalize(
 		vec3s {
 			vec3(-1,-1,-1),
 			vec3( 1,-1,-1),
@@ -126,10 +126,10 @@ namespace rasters
 			vec3( 1, 1, 1)
 		} 
 	);
-	const vec3s SphereGridVoronoi::OCTAHEDRON_SIDE_X = normalize(
-		cross(SphereGridVoronoi::OCTAHEDRON_SIDE_Z, vec3(0,0,1))
+	const vec3s SpheroidGridVoronoi::OCTAHEDRON_SIDE_X = normalize(
+		cross(SpheroidGridVoronoi::OCTAHEDRON_SIDE_Z, vec3(0,0,1))
 	);
-	const vec3s SphereGridVoronoi::OCTAHEDRON_SIDE_Y = normalize(
+	const vec3s SpheroidGridVoronoi::OCTAHEDRON_SIDE_Y = normalize(
 		cross(OCTAHEDRON_SIDE_Z, OCTAHEDRON_SIDE_X)
 	);
 }

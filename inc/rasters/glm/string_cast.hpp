@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cmath>
+#include <cmath>  // isnan, isinf
 #include <string>
 #include <iostream>
 
@@ -41,7 +41,7 @@ namespace rasters
 	  * "up" is indicated by the z axis of a 3d vector
 	*/
 	template <typename T, glm::qualifier Q>
-	std::string to_string(const traster<glm::vec<2,T,Q>>& a, const int line_char_width = 80)
+	std::string to_string(const SpheroidGrid& grid, const tmany<glm::vec<2,T,Q>>& a, const int line_char_width = 80)
 	{
 		tmany<T> a_length(a.size());
 		length(a, a_length);
@@ -64,7 +64,7 @@ namespace rasters
 				z = sin(lat);
 				r = sqrt(1.f-z*z);
 				pos = vec3(r*sin(lon), r*cos(lon), z);
-				id = a.grid->voronoi->nearest_id(pos);
+				id = grid.voronoi.nearest_id(pos);
 				if ( !(0 <= id && id < a.size()) )
 				{
 					out += "X";
@@ -116,14 +116,14 @@ namespace rasters
 	  * "up" is indicated by the z axis of a 3d vector
 	*/
 	template <typename T, glm::qualifier Q>
-	std::string to_string(const traster<glm::vec<3,T,Q>>& a, const int line_char_width = 80, const glm::vec3 up = vec3(0,0,1))
+	std::string to_string(const SpheroidGrid& grid, const tmany<glm::vec<3,T,Q>>& a, const int line_char_width = 80, const glm::vec3 up = vec3(0,0,1))
 	{
 		many::vec3s		surface_basis_x(a.size());
 		many::vec3s		surface_basis_y(a.size());
-		many::vec3s		surface_basis_z(a.grid->vertex_normals);
+		many::vec3s		surface_basis_z(grid.vertex_normals);
 		many::floats	a2dx(a.size());
 		many::floats	a2dy(a.size());
-		traster<glm::vec<2,T,Q>> a2d (a.grid);
+		tmany<glm::vec<2,T,Q>> a2d (grid.vertex_count);
 
 		cross		(surface_basis_z, up, 				surface_basis_x);
 		normalize	(surface_basis_x, 					surface_basis_x);
@@ -137,7 +137,7 @@ namespace rasters
 		set_x 		(a2d, a2dx);
 		set_y 		(a2d, a2dy);
 
-		return rasters::to_string(a2d, line_char_width);
+		return rasters::to_string(grid, a2d, line_char_width);
 	}
 }//namespace many
 

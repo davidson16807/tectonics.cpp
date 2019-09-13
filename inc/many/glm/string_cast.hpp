@@ -1,7 +1,7 @@
 #pragma once
 
+#include <cmath>  // isnan, isinf
 #include <string>
-#include <cmath>
 
 #include <glm/common.hpp>	// all the GLSL common functions: abs, floor, etc.
 

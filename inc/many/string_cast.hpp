@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>  // isnan, isinf
 #include <string>
 
 #include "types.hpp"

@@ -1,10 +1,12 @@
 #pragma once
 
+#include <cmath>  // isnan, isinf
 #include <algorithm> //std::min
 #include <string>    //std::string
 
 #include <many/types.hpp>
 #include <many/common.hpp>
+#include <rasters/SpheroidGrid.hpp>
 
 namespace rasters
 {
@@ -19,7 +21,7 @@ namespace rasters
 	} 
 
 	template <typename T>
-	std::string to_string(const traster<T>& a, const T lo, const T hi, const int line_char_width = 80)
+	std::string to_string(const SpheroidGrid& grid, const tmany<T>& a, const T lo, const T hi, const int line_char_width = 80)
 	{
 		float lat(0.);
 		float lon(0.);
@@ -38,7 +40,7 @@ namespace rasters
 				z = sin(lat);
 				r = sqrt(1.f-z*z);
 				pos = vec3(r*sin(lon), r*cos(lon), z);
-				id = a.grid->voronoi->nearest_id(pos);
+				id = grid.voronoi.nearest_id(pos);
 				if ( !(0 <= id && id < a.size()) )
 				{
 					out += "X";
@@ -73,9 +75,9 @@ namespace rasters
 	}
 
 	template <typename T>
-	std::string to_string(const traster<T>& a, const int line_char_width = 80)
+	std::string to_string(const SpheroidGrid& grid, const tmany<T>& a, const int line_char_width = 80)
 	{
-		return to_string(a, min(a), max(a), line_char_width);
+		return to_string(grid, a, min(a), max(a), line_char_width);
 	}
 }//namespace many
 
