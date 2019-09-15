@@ -25,9 +25,9 @@ LayeredSpheroidGrid
 	correct sizes
 rasters
 	to_string
-		purity
-		includes appropriate characters
-		excludes inappropriate characters (e.g. X,N,∞)
+x		purity
+x		includes appropriate characters
+x		excludes inappropriate characters (e.g. X,N,∞)
 	random
 		purity
 		determinism

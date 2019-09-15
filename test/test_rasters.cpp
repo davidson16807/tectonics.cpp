@@ -34,8 +34,8 @@ It looks like this:
     \|/ 
      4   
 */
-std::shared_ptr<Grid> diamond = 
-    std::make_shared<Grid>(
+Grid diamond = 
+    Grid(
         vec3s({
                 vec3( 0, 0, 0),
                 vec3( 1, 0, 0),
@@ -55,8 +55,8 @@ std::shared_ptr<Grid> diamond =
  that require spatial awareness without requiring a particular shape.
  (e.g. gradient, divergence, laplacian)
 */
-std::shared_ptr<Grid> tetrahedron = 
-    std::make_shared<Grid>(meshes::tetrahedron.vertices, meshes::tetrahedron.faces);
+Grid tetrahedron = 
+    Grid(meshes::tetrahedron.vertices, meshes::tetrahedron.faces);
 /*
 "octahedron" is a simple 3d grid for testing raster operations that require 
 something comparable to a unit sphere (e.g. nearest neighbor lookups using SpheroidGridVoronoi)
@@ -65,7 +65,7 @@ SpheroidGrid octahedron =
     SpheroidGrid(meshes::octahedron.vertices, meshes::octahedron.faces);
 
 /*
-"icosahedron" is a simple 3d grid for testing rasters with a large number of vertices
+"icosahedron" is a simple 3d grid for testing rasters with a relatively large number of vertices
 */
 SpheroidGrid icosahedron = 
     SpheroidGrid(meshes::icosahedron.vertices, meshes::icosahedron.faces);
@@ -93,10 +93,54 @@ SpheroidGridVoronoi voronoi_test(
     );
 
 
-TEST_CASE( "raster string cast must render correct representation", "[many]" ) {
-
-    SECTION("to_string() must use all shades for equally distributed raster values"){
-        REQUIRE_THAT(to_string(octahedron, floats({1,2,3,4,5,6})), 
+TEST_CASE( "raster string cast purity", "[many]" ) {
+    floats a = floats({1,2,3,4,5,6});
+    vec2s v2 = vec2s({
+                    vec2( 0,-1),
+                    vec2( 0, 1),
+                    vec2(-1, 0),
+                    vec2( 1, 0),
+                    vec2( 0, 0),
+                    vec2( 0, 0),
+                });
+    vec3s v3 = vec3s({
+                    vec3( 1, 0, 0),
+                    vec3( 1, 0, 0),
+                    vec3( 1, 0, 0),
+                    vec3( 1, 0, 0),
+                    vec3( 1, 0, 0),
+                    vec3( 1, 0, 0)
+                });
+    SECTION("to_string(grid, floats) must be called repeatedly without changing the output"){
+        CHECK(to_string(octahedron, a) == to_string(octahedron, a));
+    }
+    SECTION("to_string(grid, vec2s) must be called repeatedly without changing the output"){
+        CHECK(to_string(octahedron, v2) == to_string(octahedron, v2));
+    }
+    SECTION("to_string(grid, vec3s) must be called repeatedly without changing the output"){
+        CHECK(to_string(octahedron, v3) == to_string(octahedron, v3));
+    }
+}
+TEST_CASE( "raster string cast correctness", "[many]" ) {
+    floats a = floats({1,2,3,4,5,6});
+    vec2s v2 = vec2s({
+                    vec2( 0,-1),
+                    vec2( 0, 1),
+                    vec2(-1, 0),
+                    vec2( 1, 0),
+                    vec2( 0, 0),
+                    vec2( 0, 0),
+                });
+    vec3s v3 = vec3s({
+                    vec3( 1, 0, 0),
+                    vec3( 1, 0, 0),
+                    vec3( 1, 0, 0),
+                    vec3( 1, 0, 0),
+                    vec3( 1, 0, 0),
+                    vec3( 1, 0, 0)
+                });
+    SECTION("to_string(grid, floats) must contain appropriate characters"){
+        REQUIRE_THAT(to_string(octahedron, a), 
                     Catch::Contains(" ") && 
                     Catch::Contains("░") && 
                     Catch::Contains("▒") && 
@@ -104,15 +148,15 @@ TEST_CASE( "raster string cast must render correct representation", "[many]" ) {
                     Catch::Contains("█")
                 );
     }
-    SECTION("to_string() must depict 2d vector raster using only arrows that are appropriate"){
-        REQUIRE_THAT(to_string(octahedron, vec2s({
-                            vec2( 0,-1),
-                            vec2( 0, 1),
-                            vec2(-1, 0),
-                            vec2( 1, 0),
-                            vec2( 0, 0),
-                            vec2( 0, 0),
-                        })), 
+    SECTION("to_string(grid, floats) must not contain inappropriate characters"){
+        REQUIRE_THAT(to_string(octahedron, a), 
+                    !Catch::Contains("∞") && 
+                    !Catch::Contains("N") && 
+                    !Catch::Contains("X") 
+                );
+    }
+    SECTION("to_string(grid, vec2s) must depict 2d vector raster using only appropriate arrows"){
+        REQUIRE_THAT(to_string(octahedron, v2), 
                     (Catch::Contains(" ")                        ) && 
                     (Catch::Contains("←") || Catch::Contains("⬅")) && 
                     (Catch::Contains("↑") || Catch::Contains("⬆")) && 
@@ -124,15 +168,15 @@ TEST_CASE( "raster string cast must render correct representation", "[many]" ) {
                    !(Catch::Contains("↗") || Catch::Contains("⬈"))
                 );
     }
-    SECTION("to_string() must depict uniform 3d vector raster using only arrows that are appropriate"){
-        REQUIRE_THAT(to_string(octahedron, vec3s({
-                            vec3( 1, 0, 0),
-                            vec3( 1, 0, 0),
-                            vec3( 1, 0, 0),
-                            vec3( 1, 0, 0),
-                            vec3( 1, 0, 0),
-                            vec3( 1, 0, 0)
-                        })), 
+    SECTION("to_string(grid, vec2s) must not contain inappropriate characters"){
+        REQUIRE_THAT(to_string(octahedron, v2), 
+                    !Catch::Contains("∞") && 
+                    !Catch::Contains("N") && 
+                    !Catch::Contains("X") 
+                );
+    }
+    SECTION("to_string() must depict uniform 3d vector raster using only appropriate arrows"){
+        REQUIRE_THAT(to_string(octahedron, v3), 
                     (Catch::Contains(" ")                        ) && 
                     (Catch::Contains("←") || Catch::Contains("⬅")) && 
                     (Catch::Contains("→") || Catch::Contains("➡")) && 
@@ -144,26 +188,11 @@ TEST_CASE( "raster string cast must render correct representation", "[many]" ) {
                    !(Catch::Contains("↗") || Catch::Contains("⬈"))
                 );
     }
-}
-
-TEST_CASE( "Must be able to test equivalence of rasters using the catch framework", "[rasters]" ) {
-    raster ref       = raster(diamond, {1,2,3,4,5});
-    raster ref_copy  = raster(diamond, {1,2,3,4,5});
-    raster ref_tweak = raster(diamond, {1,2,3,4,0});
-    raster ref_fewer = raster(tetrahedron, {1,2,3,4});
-
-    floats a = floats({1,2,3,4,5,6});
-
-    SECTION("Must be able to equate object with itself"){
-        CHECK(ref == ref);
-    }
-    SECTION("Must be able to equate rasters of the same content and size"){
-        CHECK(ref == ref_copy);
-    }
-    SECTION("Must be able to distinguish rasters of slightly different content"){
-        CHECK(ref != ref_tweak);
-    }
-    SECTION("Must be able to distinguish rasters of slightly different size"){
-        CHECK(ref != ref_fewer);
+    SECTION("to_string(grid, vec2s) must not contain inappropriate characters"){
+        REQUIRE_THAT(to_string(octahedron, v3), 
+                    !Catch::Contains("∞") && 
+                    !Catch::Contains("N") && 
+                    !Catch::Contains("X") 
+                );
     }
 }
