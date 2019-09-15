@@ -1,0 +1,134 @@
+many
+	purity
+	closure
+	associativity
+	commutativity
+	distributivity
+	invertibility
+	identity
+CartesianGridCellList
+	purity
+	correct sizes
+	happy path
+SpheroidGridVoronoiGrid
+	purity
+	correct sizes
+	happy path
+Grid
+	purity
+	correct sizes
+SpheroidGrid
+	purity
+	correct sizes
+LayeredSpheroidGrid
+	purity
+	correct sizes
+rasters
+	to_string
+		purity
+		includes appropriate characters
+		excludes inappropriate characters (e.g. X,N,∞)
+	random
+		purity
+		determinism
+		nontriviality
+	vector calculus: https://en.wikipedia.org/wiki/Vector_calculus_identities#First_derivative_identities
+		gradient
+			purity
+			translation invariant
+			rotation invariant
+			resolution invariant
+			distributive over addition
+			∇(aB) = a∇B + B∇a
+		divergence
+			purity
+			translation invariant
+			rotation invariant
+			resolution invariant
+			distributive over addition
+			∇⋅(aB) = a∇⋅B + B⋅∇a
+		laplacian
+			purity
+			translation invariant
+			rotation invariant
+			resolution invariant
+			distributive over addition
+			∇²a=∇⋅∇a
+		curl
+			purity
+			translation invariant
+			rotation invariant
+			resolution invariant
+			distributive over addition
+			∇×∇a = 0
+			∇⋅∇×a = 0
+			∇×∇×∇a = ∇(∇⋅a)-∇²a
+	morphology: https://en.wikipedia.org/wiki/Mathematical_morphology#Properties_of_the_basic_operators
+		dilate
+			purity
+			translation invariant
+			associative
+			commutative
+			distributive over union
+		erode
+			purity
+			translation invariant
+			distributive over intersection
+		opening
+			purity
+			translation invariant
+			idempotent
+		closing
+			purity
+			translation invariant
+			idempotent
+		black_hat
+		white_hat
+		padding
+		margin
+	image segmentation
+		purity
+		translation invariant
+		rotation invariant
+	scalar transport
+academics
+	emission
+		red hot stove
+	reflectance
+	scattering
+	column density
+		plane, constant density
+		plane, exponential dropoff
+		sphere, constant density
+		sphere, exponential dropoff
+		ring, gaussian dropoff
+		centrifuge, exponential dropoff
+	orbital mechanics
+		copy from Tectonics.js
+
+mass pool models
+	star
+		copy from Tectonics.js
+	world
+		copy from Tectonics.js
+	ocean
+		copy from Tectonics.js
+	atmosphere
+		copy from Tectonics.js
+stratigraphy
+	stratum_mass_pool
+		invertibility within valid range
+		clamp when past valid range
+	stratum
+	strata
+	crust
+light propagation
+	spectrum
+
+orrery
+	CelestialSystem
+		copy from Tectonics.js
+	CelestialSpin
+		copy from Tectonics.js
+	CelestialOrbit
+		copy from Tectonics.js
