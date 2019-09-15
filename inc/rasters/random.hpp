@@ -1,23 +1,78 @@
 #pragma once
 
-#include <random>
+#include <cmath>        // M_PI
+#include <random>       // uniform distribution
 
-#include "types.hpp"
+#include <glm/vec3.hpp> // *vec3
 
 namespace rasters
 {
-	namespace random {
-		template <class T, class Tgenerator>
-		void elias(traster<T>& a, Tgenerator generator)
+	namespace {
+		/*
+		"get_random_point_on_unit_sphere" returns a random point that is evenly distributed on a unit sphere
+		see here for an explanation: http://corysimon.github.io/articles/uniformdistn-on-sphere/
+		*/
+		template <class Tgenerator>
+		glm::vec3 get_random_point_on_unit_sphere(const Tgenerator& generator)
 		{
-			std::generate_canonical<T>(generator);
+		;
+	        double theta = 2 * M_PI * std::generate_canonical<T>(generator);
+	        double phi = acos(1 - 2 * std::generate_canonical<T>(generator));
+	        return glm::vec3(
+		        sin(phi) * cos(theta),
+		        sin(phi) * sin(theta),
+		        cos(phi),
+        	);
 		}
-		template <class T, class Tgenerator>
-		traster<T> elias(Tgenerator generator)
+	}
+	/*
+	"random()" generates a random scalar raster on the surface of a unit spheroid 
+	The values within the raster fall within [0,1].
+	
+    "random()" uses an implementation of the terrain generation algorithm discussed by
+    Hugo Elias here: http://freespace.virgin.net/hugo.elias/models/m_landsp.htm
+    The algorithm was originally designed for terrain generation on a sphere,
+     but it works for any scalar field on the surface of a spheroid. 
+    It does this by iteratively incrementing values on grid cells that fall within a random region.
+    Regions are defined by whether consine similarity to a random point on a unit sphere falls within a random threshold.
+    Regions may have smooth boundaries, depending on a "region_transition_width" parameter that defines
+     the width of a region's transition zone. 
+    */
+	template <class T, class Tgenerator>
+	void random(
+		const SpheroidGrid& grid, 
+		const Tgenerator& generator, 
+		tmany<T>& out, 
+		// NOTE: "region_count" is the number of regions where we increment grid cell values
+		const unsigned int region_count = 1000,
+		// NOTE: "region_transition_width" is the width of the transition zone for a region
+		const T region_transition_width = T(0.03)
+	){
+		tmany<T> region_mod(a.size(), T(0));
+		T region_threshold(0);
+
+		many::fill(out, T(0));
+		for (int i = 0; i < region_count; ++i)
 		{
-			traster<T> out(ids.size());
-			elias(a, ids, out);
-			return out;
+			region_threshold = std::generate_canonical<T>(generator)
+			region_center = rasters::get_random_point_on_unit_sphere(generator);
+			many::dot(grid.vertex_positions, region_center, 	 region_mod);
+			many::smoothstep(
+				region_threshold - region_transition_width/T(2), 
+				region_threshold + region_transition_width/T(2),  
+				region_mod, 									 region_mod);
+			many::add(out, region_mod, 							 out);
 		}
+	}
+
+
+	template <class T, class Tgenerator>
+	tmany<T> random(
+		const SpheroidGrid& grid, 
+		const Tgenerator& generator
+	){
+		tmany<T> out(ids.size());
+		random(a, ids, out);
+		return out;
 	}
 }

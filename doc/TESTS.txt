@@ -1,11 +1,11 @@
 many
-	purity
-	closure
-	associativity
-	commutativity
-	distributivity
-	invertibility
-	identity
+x	purity
+x	closure
+x	associativity
+x	commutativity
+x	distributivity
+x	identity/invertibility
+x	consistency
 CartesianGridCellList
 	purity
 	correct sizes

@@ -38,7 +38,7 @@ TEST_CASE( "Must be able to test many<T> equivalence using the catch framework",
 }
 
 
-TEST_CASE( "Equivalent many<T> arithmetic must behave equivalently", "[many]" ) {
+TEST_CASE( "many<T> arithmetic consistency", "[many]" ) {
     floats a1 = floats({1,2,3,4,5});
     floats a2 = floats({1,2,3,4,5});
     floats a3 = floats({1,2,3,4,5});
@@ -82,7 +82,7 @@ TEST_CASE( "Equivalent many<T> arithmetic must behave equivalently", "[many]" ) 
 }
 
 
-TEST_CASE( "many<T> arithmetic must have idempotence: the operation can be called repeatedly without changing the value", "[many]" ) {
+TEST_CASE( "many<T> arithmetic purity", "[many]" ) {
     floats a = floats({1,2,3,4,5});
     floats b = floats({-1,1,-2,2,3});
     floats c1 = floats({0,0,0,0,0});
@@ -131,7 +131,7 @@ TEST_CASE( "many<T> arithmetic must have idempotence: the operation can be calle
 
 
 
-TEST_CASE( "many<T> arithmetic must have an identity: a value exists that can be applied without effect", "[many]" ) {
+TEST_CASE( "many<T> arithmetic identity", "[many]" ) {
     floats a = floats({1,2,3,4,5});
     floats zeros = floats({0,0,0,0,0});
     floats ones  = floats({1,1,1,1,1});
@@ -146,8 +146,7 @@ TEST_CASE( "many<T> arithmetic must have an identity: a value exists that can be
     }
 }
 
-
-TEST_CASE( "many<T> arithmetic must have commutativity: values can be swapped to the same effect", "[many]" ) {
+TEST_CASE( "many<T> arithmetic commutativity", "[many]" ) {
     floats a = floats({1,2,3,4,5});
     floats b = floats({-1,1,-2,2,3});
 
@@ -160,7 +159,7 @@ TEST_CASE( "many<T> arithmetic must have commutativity: values can be swapped to
 }
 
 
-TEST_CASE( "many<T> arithmetic must have associativity: operations can be applied in a different order to the same effect", "[many]" ) {
+TEST_CASE( "many<T> arithmetic associativity", "[many]" ) {
     floats a = floats({1,2,3,4,5});
     floats b = floats({-1,1,-2,2,3});
     floats c = floats({1,1,2,3,5});
@@ -174,7 +173,7 @@ TEST_CASE( "many<T> arithmetic must have associativity: operations can be applie
 }
 
 
-TEST_CASE( "many<T> arithmetic must have distributivity: an operation can be distributed as values of another", "[many]" ) {
+TEST_CASE( "many<T> arithmetic distributivity", "[many]" ) {
     floats a = floats({1,2,3,4,5});
     floats b = floats({-1,1,-2,2,3});
     floats c = floats({1,1,2,3,5});
@@ -188,7 +187,24 @@ TEST_CASE( "many<T> arithmetic must have distributivity: an operation can be dis
 }
 
 
-TEST_CASE( "many<T> min/max must have associativity: operations can be applied in a different order to the same effect", "[many]" ) {
+TEST_CASE( "many<T> min/max purity", "[many]" ) {
+    floats a = floats({1,2,3,4,5});
+    floats b = floats({1,1,2,3,5});
+    floats c1 = floats({0,0,0,0,0});
+    floats c2 = floats({0,0,0,0,0});
+
+    SECTION("min(a,b) must be called repeatedly without changing the output"){
+        min(a,b,c1);
+        min(a,b,c2);
+        CHECK(c1==c2);
+    }
+    SECTION("max(a,b) must be called repeatedly without changing the output"){
+        max(a,b,c1);
+        max(a,b,c2);
+        CHECK(c1==c2);
+    }
+}
+TEST_CASE( "many<T> min/max associativity", "[many]" ) {
     floats a = floats({1,2,3,4,5});
     floats b = floats({-1,1,-2,2,3});
     floats c = floats({1,1,2,3,5});
@@ -217,7 +233,39 @@ TEST_CASE( "many<T> min/max must have associativity: operations can be applied i
     }
 }
 
-TEST_CASE( "many<T> comparators must be consistant", "[many]" ) {
+
+TEST_CASE( "many<T> comparator purity", "[many]" ) {
+    floats a = floats({1,2,3,4,5});
+    floats b = floats({1,1,2,3,5});
+    bools c1 = bools({0,0,0,0,0});
+    bools c2 = bools({0,0,0,0,0});
+    SECTION("greaterThanEqual(a,b) must be called repeatedly without changing the output"){
+        greaterThanEqual(a,b,c1);
+        greaterThanEqual(a,b,c2);
+        CHECK(c1==c2);
+    }
+    SECTION("greaterThan(a,b) must be called repeatedly without changing the output"){
+        greaterThan(a,b,c1);
+        greaterThan(a,b,c2);
+        CHECK(c1==c2);
+    }
+    SECTION("lessThanEqual(a,b) must be called repeatedly without changing the output"){
+        lessThanEqual(a,b,c1);
+        lessThanEqual(a,b,c2);
+        CHECK(c1==c2);
+    }
+    SECTION("lessThan(a,b) must be called repeatedly without changing the output"){
+        lessThan(a,b,c1);
+        lessThan(a,b,c2);
+        CHECK(c1==c2);
+    }
+    SECTION("equal(a,b) must be called repeatedly without changing the output"){
+        equal(a,b,c1);
+        equal(a,b,c2);
+        CHECK(c1==c2);
+    }
+}
+TEST_CASE( "many<T> comparator consistency", "[many]" ) {
     floats a    = floats({1,2,3,4,5});
     floats b    = floats({1,1,2,3,5});
     bools  gt   = bools({0,0,0,0,0});
@@ -254,7 +302,17 @@ TEST_CASE( "many<T> comparators must be consistant", "[many]" ) {
     }
 }
 
-TEST_CASE( "many<T> arithmetic must be consistant", "[many]" ) {
+TEST_CASE( "many<T> sqrt purity", "[many]" ) {
+    floats a = floats({1,2,3,4,5});
+    floats c1 = floats({0,0,0,0,0});
+    floats c2 = floats({0,0,0,0,0});
+    SECTION("sqrt(a) must be called repeatedly without changing the output"){
+        sqrt(a,c1);
+        sqrt(a,c2);
+        CHECK(c1==c2);
+    }
+}
+TEST_CASE( "many<T> sqrt consistency", "[many]" ) {
     floats a     = floats({1,2,3,4,5});
     floats b     = floats({1,1,2,3,5});
     floats sqrt1 = floats({0,0,0,0,0});
@@ -272,6 +330,13 @@ TEST_CASE( "many<T> arithmetic must be consistant", "[many]" ) {
         CHECK(sqrt1 == sqrt2);
     }
 
+}
+TEST_CASE( "many<T> log consistency", "[many]" ) {
+    floats a     = floats({1,2,3,4,5});
+    floats b     = floats({1,1,2,3,5});
+    floats log1_ = floats({0,0,0,0,0});
+    floats log2_ = floats({0,0,0,0,0});
+
     // TODO: not sure why this doesn't pass, off by factor of 2
     // SECTION("log2(a) must equal log(a)/log(2)"){
     //     log2(a, log1_);
@@ -281,7 +346,13 @@ TEST_CASE( "many<T> arithmetic must be consistant", "[many]" ) {
     // }
 }
 
-TEST_CASE( "floats string cast must render correct representation", "[many]" ) {
+TEST_CASE( "many<T> string cast purity", "[many]" ) {
+    floats a = floats({1,2,3,4,5});
+    SECTION("to_string(a) must be called repeatedly without changing the output"){
+        CHECK(to_string(a) == to_string(a));
+    }
+}
+TEST_CASE( "many<T> string cast correctness", "[many]" ) {
     floats a = floats({1,2,3,4,5,6});
     floats b = floats({1,1,2,3,5,8});
     floats c = floats({4,8,3,8,2,4,5,9,8,2,3,5,2,1,3,3,3,1,6,1,
@@ -303,7 +374,7 @@ TEST_CASE( "floats string cast must render correct representation", "[many]" ) {
     }
 }
 
-TEST_CASE( "vec2s string cast must render correct representation", "[many]" ) {
+TEST_CASE( "many<vec2> string cast correctness", "[many]" ) {
     SECTION("to_string() must produce obvious results for straight forward 2d vectors"){
         REQUIRE_THAT(to_string(vec2s({vec2( 0,   2),vec2( 0,   5)})), Catch::Contains("↑") && Catch::Contains("⬆"));
         REQUIRE_THAT(to_string(vec2s({vec2( 0,  -2),vec2( 0,  -5)})), Catch::Contains("↓") && Catch::Contains("⬇"));
