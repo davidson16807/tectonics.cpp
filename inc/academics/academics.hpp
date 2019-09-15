@@ -9,6 +9,3 @@
 #include "academics/physics/emission.c"
 #include "academics/physics/scattering.c"
 #include "academics/physics/reflectance.c"
-#include "academics/graphics/raymarching.c"
-#include "academics/graphics/psychophysics.c"
-#include "academics/graphics/electronics.c"
