@@ -14,6 +14,8 @@ clean:
 bin/driver.out: $(TEST)
 	$(CPP) -std=c++17 -o bin/driver.out test/driver.cpp -I inc/
 
+test-many: test/test_many.cpp
+	$(CPP) -std=c++17 -o bin/test.out test/test_many.cpp -Wall -Werror -pedantic-errors -I inc/ && chmod a+x bin/test.out && ./bin/test.out
 test-rasters: test/test_rasters.cpp
 	$(CPP) -std=c++17 -o bin/test.out test/test_rasters.cpp -Wall -Werror -pedantic-errors -I inc/ && chmod a+x bin/test.out && ./bin/test.out
 
