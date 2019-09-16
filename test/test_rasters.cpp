@@ -50,27 +50,178 @@ Grid diamond =
                 uvec3(0,3,4)
             })
     );
+
+TEST_CASE( "Grid correctness", "[Grid]" ) {
+    SECTION("Grid must have the appropriate counts for vertex, edge, arrow, and face attributes"){
+        CHECK(diamond.buffer_array_vertex_ids.size() == 12);
+
+        CHECK(diamond.vertex_count == 5);
+        // CHECK(diamond.vertex_neighbor_ids.size() == 5);
+        CHECK(diamond.vertex_neighbor_counts.size() == 5);
+        CHECK(diamond.vertex_positions.size() == 5);
+        CHECK(diamond.vertex_normals.size() == 5);
+        CHECK(diamond.vertex_areas.size() == 5);
+        // CHECK(diamond.vertex_average_area.size() == );
+
+        CHECK(diamond.face_count == 4);
+        CHECK(diamond.face_vertex_ids.size() == 4);
+        CHECK(diamond.face_vertex_id_a.size() == 4);
+        CHECK(diamond.face_vertex_id_b.size() == 4);
+        CHECK(diamond.face_vertex_id_c.size() == 4);
+        // CHECK(diamond.face_edge_id_a.size() == 4);
+        // CHECK(diamond.face_edge_id_b.size() == 4);
+        // CHECK(diamond.face_edge_id_c.size() == 4);
+        CHECK(diamond.face_endpoint_a.size() == 4);
+        CHECK(diamond.face_endpoint_b.size() == 4);
+        CHECK(diamond.face_endpoint_c.size() == 4);
+        CHECK(diamond.face_midpoints.size() == 4);
+        CHECK(diamond.face_normals.size() == 4);
+        CHECK(diamond.face_areas.size() == 4);
+        // CHECK(0.49f < diamond.face_average_area && diamond.face_average_area < 0.51f);
+
+        CHECK(diamond.edge_count == 8);
+        CHECK(diamond.edge_vertex_ids.size() == 8);
+        CHECK(diamond.edge_vertex_id_a.size() == 8);
+        CHECK(diamond.edge_vertex_id_b.size() == 8);
+        // CHECK(diamond.edge_face_id_a.size() == 8);
+        // CHECK(diamond.edge_face_id_b.size() == 8);
+        CHECK(diamond.edge_endpoint_a.size() == 8);
+        CHECK(diamond.edge_endpoint_b.size() == 8);
+        CHECK(diamond.edge_midpoints.size() == 8);
+        CHECK(diamond.edge_distances.size() == 8);
+        CHECK(diamond.edge_normals.size() == 8);
+        // CHECK(diamond.edge_areas.size() == );
+        // CHECK(1.f < diamond.edge_average_distance && diamond.edge_average_distance < sqrt(2.f));
+        
+        CHECK(diamond.arrow_count == 16);
+        CHECK(diamond.arrow_vertex_ids.size() == 16);
+        CHECK(diamond.arrow_vertex_id_from.size() == 16);
+        CHECK(diamond.arrow_vertex_id_to.size() == 16);
+        // CHECK(diamond.arrow_face_id_a.size() == 16);
+        // CHECK(diamond.arrow_face_id_b.size() == 16);
+        CHECK(diamond.arrow_endpoint_from.size() == 16);
+        CHECK(diamond.arrow_endpoint_to.size() == 16);
+        CHECK(diamond.arrow_midpoints.size() == 16);
+        CHECK(diamond.arrow_offsets.size() == 16);
+        CHECK(diamond.arrow_distances.size() == 16);
+        CHECK(diamond.arrow_normals.size() == 16);
+        // CHECK(diamond.arrow_areas.size() == );
+        // CHECK(1.f < diamond.arrow_average_distance && diamond.arrow_average_distance < sqrt(2.f));
+    }
+}
 /*
 "tetrahedron" is a simple 3d grid for testing basic raster operations
  that require spatial awareness without requiring a particular shape.
  (e.g. gradient, divergence, laplacian)
 */
-Grid tetrahedron = 
-    Grid(meshes::tetrahedron.vertices, meshes::tetrahedron.faces);
+Grid tetrahedron = Grid(meshes::tetrahedron.vertices, meshes::tetrahedron.faces);
+
+TEST_CASE( "Grid nontriviality", "[Grid]" ) {
+    SECTION("Grid attributes must contain nonzero elements"){
+        CHECK(many::sum(many::abs(tetrahedron.buffer_array_vertex_ids)) > 0.01f);
+
+        // CHECK(many::sum(many::abs(tetrahedron.vertex_neighbor_ids)) > 0.01f);
+        CHECK(many::sum(many::abs(tetrahedron.vertex_neighbor_counts)) > 0.01f);
+        CHECK(many::sum(many::abs(many::get_x(tetrahedron.vertex_positions))) > 0.01f);
+        CHECK(many::sum(many::abs(many::get_x(tetrahedron.vertex_normals))) > 0.01f);
+        CHECK(many::sum(many::abs(tetrahedron.vertex_areas)) > 0.01f);
+
+        CHECK(many::sum(many::abs(many::get_x(tetrahedron.face_vertex_ids))) > 0.01f);
+        CHECK(many::sum(many::abs(tetrahedron.face_vertex_id_a)) > 0.01f);
+        CHECK(many::sum(many::abs(tetrahedron.face_vertex_id_b)) > 0.01f);
+        CHECK(many::sum(many::abs(tetrahedron.face_vertex_id_c)) > 0.01f);
+        // CHECK(many::sum(many::abs(tetrahedron.face_edge_id_a)) > 0.01f);
+        // CHECK(many::sum(many::abs(tetrahedron.face_edge_id_b)) > 0.01f);
+        // CHECK(many::sum(many::abs(tetrahedron.face_edge_id_c)) > 0.01f);
+        CHECK(many::sum(many::abs(many::get_x(tetrahedron.face_endpoint_a))) > 0.01f);
+        CHECK(many::sum(many::abs(many::get_x(tetrahedron.face_endpoint_b))) > 0.01f);
+        CHECK(many::sum(many::abs(many::get_y(tetrahedron.face_endpoint_c))) > 0.01f);
+        CHECK(many::sum(many::abs(many::get_x(tetrahedron.face_midpoints))) > 0.01f);
+        CHECK(many::sum(many::abs(many::get_x(tetrahedron.face_normals))) > 0.01f);
+        CHECK(many::sum(many::abs(tetrahedron.face_areas)) > 0.01f);
+
+        CHECK(many::sum(many::abs(many::get_x(tetrahedron.edge_vertex_ids))) > 0.01f);
+        CHECK(many::sum(many::abs(tetrahedron.edge_vertex_id_a)) > 0.01f);
+        CHECK(many::sum(many::abs(tetrahedron.edge_vertex_id_b)) > 0.01f);
+        // CHECK(many::sum(many::abs(tetrahedron.edge_face_id_a)) > 0.01f);
+        // CHECK(many::sum(many::abs(tetrahedron.edge_face_id_b)) > 0.01f);
+        CHECK(many::sum(many::abs(many::get_x(tetrahedron.edge_endpoint_a))) > 0.01f);
+        CHECK(many::sum(many::abs(many::get_x(tetrahedron.edge_endpoint_b))) > 0.01f);
+        CHECK(many::sum(many::abs(many::get_x(tetrahedron.edge_midpoints))) > 0.01f);
+        CHECK(many::sum(many::abs(tetrahedron.edge_distances)) > 0.01f);
+        CHECK(many::sum(many::abs(many::get_x(tetrahedron.edge_normals))) > 0.01f);
+        // CHECK(many::sum(many::abs(tetrahedron.edge_areas)) > 0.01f);
+        
+        CHECK(many::sum(many::abs(many::get_x(tetrahedron.arrow_vertex_ids))) > 0.01f);
+        CHECK(many::sum(many::abs(tetrahedron.arrow_vertex_id_from)) > 0.01f);
+        CHECK(many::sum(many::abs(tetrahedron.arrow_vertex_id_to)) > 0.01f);
+        // CHECK(many::sum(many::abs(tetrahedron.arrow_face_id_a)) > 0.01f);
+        // CHECK(many::sum(many::abs(tetrahedron.arrow_face_id_b)) > 0.01f);
+        CHECK(many::sum(many::abs(many::get_x(tetrahedron.arrow_endpoint_from))) > 0.01f);
+        CHECK(many::sum(many::abs(many::get_x(tetrahedron.arrow_endpoint_to))) > 0.01f);
+        CHECK(many::sum(many::abs(many::get_x(tetrahedron.arrow_midpoints))) > 0.01f);
+        CHECK(many::sum(many::abs(many::get_x(tetrahedron.arrow_offsets))) > 0.01f);
+        CHECK(many::sum(many::abs(tetrahedron.arrow_distances)) > 0.01f);
+        CHECK(many::sum(many::abs(many::get_x(tetrahedron.arrow_normals))) > 0.01f);
+        // CHECK(tetrahedron.arrow_areas[2] > 0.01f);
+
+    }
+}
 /*
 "octahedron" is a simple 3d grid for testing raster operations that require 
 something comparable to a unit sphere (e.g. nearest neighbor lookups using SpheroidGridVoronoi)
 */
-SpheroidGrid octahedron = 
-    SpheroidGrid(meshes::octahedron.vertices, meshes::octahedron.faces);
+SpheroidGrid octahedron = SpheroidGrid(meshes::octahedron.vertices, meshes::octahedron.faces);
 
 /*
 "icosahedron" is a simple 3d grid for testing rasters with a relatively large number of vertices
 */
-SpheroidGrid icosahedron = 
-    SpheroidGrid(meshes::icosahedron.vertices, meshes::icosahedron.faces);
+SpheroidGrid icosahedron = SpheroidGrid(meshes::icosahedron.vertices, meshes::icosahedron.faces);
 
-SpheroidGridVoronoi voronoi_test(
+CartesianGridCellList cell_list(
+        normalize(vec3s({
+                        vec3( 1, 0, 0),
+                        vec3( 0, 1, 0),
+                        vec3( 0, 0, 1),
+                        vec3(-1, 0, 0),
+                        vec3( 0,-1, 0),
+                        vec3( 0, 0,-1),
+                        vec3(-1,-1,-1),
+                        vec3( 1,-1,-1),
+                        vec3(-1, 1,-1),
+                        vec3( 1, 1,-1),
+                        vec3(-1,-1, 1),
+                        vec3( 1,-1, 1),
+                        vec3(-1, 1, 1),
+                        vec3( 1, 1, 1),
+                        vec3( 1, 1, 1)
+                    })),
+        10./100.
+    );
+TEST_CASE( "CartesianGridCellList.nearest_id() purity", "[many]" ) {
+    SECTION("CartesianGridCellList.nearest_id() must be called repeatedly without changing the output"){
+        CHECK(cell_list.nearest_id(vec3(1,0,0)) == cell_list.nearest_id(vec3(1,0,0)));
+    }
+}
+TEST_CASE( "CartesianGridCellList.nearest_id() happy path", "[many]" ) {
+    SECTION("CartesianGridCellList.nearest_id() must return the appropriate id when answer is obvious"){
+        CHECK( cell_list.nearest_id(normalize(vec3( 1, 0, 0))) == 0  );
+        CHECK( cell_list.nearest_id(normalize(vec3( 0, 1, 0))) == 1  );
+        CHECK( cell_list.nearest_id(normalize(vec3( 0, 0, 1))) == 2  );
+        CHECK( cell_list.nearest_id(normalize(vec3(-1, 0, 0))) == 3  );
+        CHECK( cell_list.nearest_id(normalize(vec3( 0,-1, 0))) == 4  );
+        CHECK( cell_list.nearest_id(normalize(vec3( 0, 0,-1))) == 5  );
+        CHECK( cell_list.nearest_id(normalize(vec3(-1,-1,-1))) == 6  );
+        CHECK( cell_list.nearest_id(normalize(vec3( 1,-1,-1))) == 7  );
+        CHECK( cell_list.nearest_id(normalize(vec3(-1, 1,-1))) == 8  );
+        CHECK( cell_list.nearest_id(normalize(vec3( 1, 1,-1))) == 9  );
+        CHECK( cell_list.nearest_id(normalize(vec3(-1,-1, 1))) == 10 );
+        CHECK( cell_list.nearest_id(normalize(vec3( 1,-1, 1))) == 11 );
+        CHECK( cell_list.nearest_id(normalize(vec3(-1, 1, 1))) == 12 );
+        CHECK( cell_list.nearest_id(normalize(vec3( 1, 1, 1))) == 13 );
+    }
+}
+SpheroidGridVoronoi voronoi(
         normalize(vec3s({
                         vec3( 1, 0, 0),
                         vec3( 0, 1, 0),
@@ -91,7 +242,37 @@ SpheroidGridVoronoi voronoi_test(
         1./100.,
         10./100.
     );
+TEST_CASE( "SpheroidGridVoronoi.nearest_id() purity", "[many]" ) {
+    SECTION("SpheroidGridVoronoi.nearest_id() must be called repeatedly without changing the output"){
+        CHECK(voronoi.nearest_id(vec3(1,0,0)) == voronoi.nearest_id(vec3(1,0,0)));
+    }
+}
+TEST_CASE( "SpheroidGridVoronoi.nearest_id() happy path", "[many]" ) {
+    SECTION("SpheroidGridVoronoi.nearest_id() must return the appropriate id when answer is obvious"){
+        CHECK(  voronoi.nearest_id(normalize(vec3( 1, 0, 0))) == 0  );
+        CHECK(  voronoi.nearest_id(normalize(vec3( 0, 1, 0))) == 1  );
+        CHECK(  voronoi.nearest_id(normalize(vec3( 0, 0, 1))) == 2  );
+        CHECK(  voronoi.nearest_id(normalize(vec3(-1, 0, 0))) == 3  );
+        CHECK(  voronoi.nearest_id(normalize(vec3( 0,-1, 0))) == 4  );
+        CHECK(  voronoi.nearest_id(normalize(vec3( 0, 0,-1))) == 5  );
+        CHECK(  voronoi.nearest_id(normalize(vec3(-1,-1,-1))) == 6  );
+        CHECK(  voronoi.nearest_id(normalize(vec3( 1,-1,-1))) == 7  );
+        CHECK(  voronoi.nearest_id(normalize(vec3(-1, 1,-1))) == 8  );
+        CHECK(  voronoi.nearest_id(normalize(vec3( 1, 1,-1))) == 9  );
+        CHECK(  voronoi.nearest_id(normalize(vec3(-1,-1, 1))) == 10 );
+        CHECK(  voronoi.nearest_id(normalize(vec3( 1,-1, 1))) == 11 );
+        CHECK(  voronoi.nearest_id(normalize(vec3(-1, 1, 1))) == 12 );
+        CHECK(  voronoi.nearest_id(normalize(vec3( 1, 1, 1))) == 13 );
+    }
+}
+TEST_CASE( "SpheroidGridVoronoi.nearest_ids() purity", "[many]" ) {
+    SECTION("SpheroidGridVoronoi.nearest_id() must be called repeatedly without changing the output"){
+        // CHECK(voronoi.nearest_ids(vec3(1,0,0)) == voronoi.nearest_ids(vec3(1,0,0)));
+    }
+}
+TEST_CASE( "SpheroidGridVoronoi.nearest_ids() happy path", "[many]" ) {
 
+}
 
 TEST_CASE( "raster string cast purity", "[many]" ) {
     floats a = floats({1,2,3,4,5,6});

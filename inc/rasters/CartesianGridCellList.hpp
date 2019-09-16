@@ -45,8 +45,9 @@ namespace rasters {
 			cells[cell_id( xi   , yi   , zi   )].push_back({id, point});
 			cells[cell_id( xi+1 , yi   , zi   )].push_back({id, point});
 			cells[cell_id( xi   , yi+1 , zi   )].push_back({id, point});
-			cells[cell_id( xi   , yi   , zi+1 )].push_back({id, point});
 			cells[cell_id( xi+1 , yi+1 , zi   )].push_back({id, point});
+			cells[cell_id( xi   , yi   , zi+1 )].push_back({id, point});
+			cells[cell_id( xi+1 , yi   , zi+1 )].push_back({id, point});
 			cells[cell_id( xi   , yi+1 , zi+1 )].push_back({id, point});
 			cells[cell_id( xi+1 , yi+1 , zi+1 )].push_back({id, point});
 
@@ -81,7 +82,7 @@ namespace rasters {
 				add(i, points[i]);
 			}
 		}
-		int nearest_id(const glm::vec3 point) const
+		int nearest_id(const glm::vec3 point, bool debug=false) const
 		{
 			const int xi = std::clamp((int)ceil((point.x - min_bounds.x) / cell_width), 0, dimensions.x-1);
 			const int yi = std::clamp((int)ceil((point.y - min_bounds.y) / cell_width), 0, dimensions.y-1);

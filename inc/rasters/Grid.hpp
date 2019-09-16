@@ -244,7 +244,7 @@ namespace rasters {
 				[](uvec2 a){return a.y > a.x;}
 			);
 
-			uint edge_count = edge_vertex_ids.size();
+			edge_count = edge_vertex_ids.size();
 
 		  	edge_vertex_id_a       .vector().resize(edge_count);
 		  	edge_vertex_id_b       .vector().resize(edge_count);
@@ -258,6 +258,8 @@ namespace rasters {
 		//	edge_areas             .vector().resize(edge_count);
 		//  edge_average_distance  = 0.0f;
 		  	
+			arrow_count = arrow_vertex_ids.size();
+
 		  	arrow_vertex_id_from   .vector().resize(2*edge_count);
 		  	arrow_vertex_id_to     .vector().resize(2*edge_count);
 		//	arrow_face_id_a        .vector().resize(2*edge_count);
@@ -295,7 +297,6 @@ namespace rasters {
 			arrow_average_distance = mean(arrow_distances);
 
 			aggregate_into(arrow_vertex_id_from, [](float a){ return a+1.f; }, vertex_neighbor_counts);
-			std::cout << min(arrow_distances) << std::endl;
 		}
 	};
 }

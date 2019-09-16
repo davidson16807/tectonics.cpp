@@ -4,7 +4,7 @@
 #include <algorithm> 	// max, min
 #include <vector>		// vectors
 #include <array>		// arrays
-// #include <iostream>		// cout
+#include <iostream>		// cout
 
 #include <many/types.hpp>
 #include <many/glm/types.hpp>
@@ -71,7 +71,8 @@ namespace rasters
 							OCTAHEDRON_SIDE_X[side_id] * x2d +
 							OCTAHEDRON_SIDE_Y[side_id] * y2d +
 							OCTAHEDRON_SIDE_Z[side_id] * z2d ;
-						cells[cell_id(side_id, xi2d, yi2d)] = grid.nearest_id(cell_pos);
+
+						cells[cell_id(side_id, xi2d, yi2d)] = grid.nearest_id(cell_pos, xi2d == 100 && yi2d == 100);
 					}
 				}
 			}

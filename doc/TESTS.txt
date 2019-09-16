@@ -7,16 +7,14 @@ x	distributivity
 x	identity/invertibility
 x	consistency
 CartesianGridCellList
-	purity
-	correct sizes
-	happy path
-SpheroidGridVoronoiGrid
-	purity
-	correct sizes
-	happy path
+x	purity
+x	happy path
+SpheroidGridVoronoi
+x	purity
+x	happy path
 Grid
-	purity
-	correct sizes
+x	correct sizes
+x	nontriviality
 SpheroidGrid
 	purity
 	correct sizes

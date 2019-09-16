@@ -27,19 +27,25 @@ namespace many
 	template <glm::length_t L, class T, glm::qualifier Q>
 	inline tmany<T> get_x(const tmany<glm::vec<L,T,Q>>& a)
 	{
-		return transform(a, [](glm::vec<L,T,Q> ai){ return ai.x; });
+		tmany<T> out = tmany<T>(a.size());
+		transform(a, [](glm::vec<L,T,Q> ai){ return ai.x; }, out);
+		return out;
 	}
 
 	template <glm::length_t L, class T, glm::qualifier Q>
 	inline tmany<T> get_y(const tmany<glm::vec<L,T,Q>>& a)
 	{
-		return transform(a, [](glm::vec<L,T,Q> ai){ return ai.y; });
+		tmany<T> out = tmany<T>(a.size());
+		transform(a, [](glm::vec<L,T,Q> ai){ return ai.y; }, out);
+		return out;
 	}
 
 	template <glm::length_t L, class T, glm::qualifier Q>
 	inline tmany<T> get_z(const tmany<glm::vec<L,T,Q>>& a)
 	{
-		return transform(a, [](glm::vec<L,T,Q> ai){ return ai.z; });
+		tmany<T> out = tmany<T>(a.size());
+		transform(a, [](glm::vec<L,T,Q> ai){ return ai.z; }, out);
+		return out;
 	}
 
 	

@@ -7,16 +7,16 @@
 #include <many/glm/glm.hpp>    // *vec*s
 
 #include "rasters/types.hpp"         
-#include "rasters/glm/vec_types.hpp"
-#include "rasters/glm/vector_calculus.hpp"
+#include "rasters/glm/types.hpp"
+// #include "rasters/glm/vector_calculus.hpp"
 
 // #include "academics/tectonics.hpp"
 
 using namespace many;
 using namespace rasters;
 
-std::shared_ptr<Grid> tetrahedron = 
-    std::make_shared<Grid>(
+Grid tetrahedron = 
+    Grid(
         vec3s({
                 vec3(0,0,0),
                 vec3(1,0,0),
@@ -36,8 +36,8 @@ std::shared_ptr<Grid> tetrahedron =
 // 3-0-1
 //  \|/ 
 //   4   
-std::shared_ptr<Grid> diamond = 
-    std::make_shared<Grid>(
+Grid diamond = 
+    Grid(
         vec3s({
                 vec3( 0, 0, 0),
                 vec3( 1, 0, 0),
@@ -68,58 +68,55 @@ SpheroidGridVoronoi voronoi_test(
                 normalize(vec3(-1,-1, 1)),
                 normalize(vec3( 1,-1, 1)),
                 normalize(vec3(-1, 1, 1)),
-                normalize(vec3( 1, 1, 1)),
                 normalize(vec3( 1, 1, 1))
             }),
-        1./100.
+        1./100.,
+        2.
     );
 
 int main(int argc, char const *argv[])
 {
     //    0   
     //  / | \ 
-    // 0- 1- 1
+    // 0- 1- 1     
     //  \ | / 
     //    0    
-    bool_raster  plate_mask = bool_raster (diamond, {1,1,0,0,0});
+    // bool_raster  plate_mask = bool_raster (diamond, {1,1,0,0,0});
     //    0  
     //  / | \ 
     // 0--1- 0
     //  \ | / 
     //    0   
-    raster buoyancy  = raster(diamond, {0,-1,0,0,0});
-    float        mantle_viscosity = 1.57e20;
-    vec3_raster  result = vec3_raster(diamond);
+    // raster buoyancy  = raster(diamond, {0,-1,0,0,0});
+    // float        mantle_viscosity = 1.57e20;
+    // vec3_raster  result = vec3_raster(diamond);
     //    0   
     //  / | \ 
-    // 0- < -0
+    // 0- < -0 
     //  \ | / 
     //    0    
     // gradient(plate_mask, tetrahedron, result);
     // academics::tectonics::guess_plate_velocity(plate_mask, buoyancy, mantle_viscosity, result);
-    std::cout << result << std::endl;
+    // std::cout << result << std::endl;
 
     // std::cout << diamond->voronoi->nearest_id(vec3(-1, 0, 0))        << std::endl;
 
     // std::cout << "voronoi test:" << std::endl;
-
-    // std::cout << voronoi_test.nearest_id(vec3(1))        << std::endl;
-    // std::cout << voronoi_test.nearest_id(vec3(-1))       << std::endl;
-    // std::cout << voronoi_test.nearest_id(vec3( 1, 0, 0)) << std::endl;
-    // std::cout << voronoi_test.nearest_id(vec3( 0, 1, 0)) << std::endl;
-    // std::cout << voronoi_test.nearest_id(vec3( 0, 0, 1)) << std::endl;
-    // std::cout << voronoi_test.nearest_id(vec3(-1, 0, 0)) << std::endl;
-    // std::cout << voronoi_test.nearest_id(vec3( 0,-1, 0)) << std::endl;
-    // std::cout << voronoi_test.nearest_id(vec3( 0, 0,-1)) << std::endl;
-    // std::cout << voronoi_test.nearest_id(vec3(-1,-1,-1)) << std::endl;
-    // std::cout << voronoi_test.nearest_id(vec3( 1,-1,-1)) << std::endl;
-    // std::cout << voronoi_test.nearest_id(vec3(-1, 1,-1)) << std::endl;
-    // std::cout << voronoi_test.nearest_id(vec3( 1, 1,-1)) << std::endl;
-    // std::cout << voronoi_test.nearest_id(vec3(-1,-1, 1)) << std::endl;
-    // std::cout << voronoi_test.nearest_id(vec3( 1,-1, 1)) << std::endl;
-    // std::cout << voronoi_test.nearest_id(vec3(-1, 1, 1)) << std::endl;
-    // std::cout << voronoi_test.nearest_id(vec3( 1, 1, 1)) << std::endl;
-    // std::cout << voronoi_test.nearest_id(vec3( 1, 1, 1)) << std::endl;
+ 
+    std::cout << voronoi_test.nearest_id(normalize(vec3( 1, 0, 0))) << std::endl;
+    std::cout << voronoi_test.nearest_id(normalize(vec3( 0, 1, 0))) << std::endl;
+    std::cout << voronoi_test.nearest_id(normalize(vec3( 0, 0, 1))) << std::endl;
+    std::cout << voronoi_test.nearest_id(normalize(vec3(-1, 0, 0))) << std::endl;
+    std::cout << voronoi_test.nearest_id(normalize(vec3( 0,-1, 0))) << std::endl;
+    std::cout << voronoi_test.nearest_id(normalize(vec3( 0, 0,-1))) << std::endl;
+    std::cout << voronoi_test.nearest_id(normalize(vec3(-1,-1,-1))) << std::endl;
+    std::cout << voronoi_test.nearest_id(normalize(vec3( 1,-1,-1))) << std::endl;
+    std::cout << voronoi_test.nearest_id(normalize(vec3(-1, 1,-1))) << std::endl;
+    std::cout << voronoi_test.nearest_id(normalize(vec3( 1, 1,-1))) << std::endl;
+    std::cout << voronoi_test.nearest_id(normalize(vec3(-1,-1, 1))) << std::endl;
+    std::cout << voronoi_test.nearest_id(normalize(vec3( 1,-1, 1))) << std::endl;
+    std::cout << voronoi_test.nearest_id(normalize(vec3(-1, 1, 1))) << std::endl;
+    std::cout << voronoi_test.nearest_id(normalize(vec3( 1, 1, 1))) << std::endl;  
 
 
     return 0;
