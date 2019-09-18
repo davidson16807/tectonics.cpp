@@ -1,4 +1,5 @@
 
+#include <sstream>  //std::stringstream
 
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include "catch/catch.hpp"
@@ -14,6 +15,7 @@
 #include <rasters/types.hpp>
 #include <rasters/mesh.hpp>
 #include <rasters/string_cast.hpp>  
+#include <rasters/random.hpp>  
 #include <rasters/glm/glm.hpp>
 #include <rasters/glm/string_cast.hpp>  
 #include <rasters/glm/vector_calculus.hpp>
@@ -375,5 +377,33 @@ TEST_CASE( "raster string cast correctness", "[many]" ) {
                     !Catch::Contains("N") && 
                     !Catch::Contains("X") 
                 );
+    }
+}
+TEST_CASE( "raster random generation determinism", "[many]" ) {
+    floats a = floats({1,2,3,4,5,6});
+    floats b = floats({1,1,2,3,5,8});
+    SECTION("random(grid, generator) must generate the same raster when given the same state of generator"){
+        std::stringstream ss;
+        std::mt19937 generator(time(0));
+        ss << generator;
+        random(octahedron, generator, a);
+        ss >> generator;
+        random(octahedron, generator, b);
+        CHECK(a==b);
+    }
+}
+TEST_CASE( "raster random generation nontriviality", "[many]" ) {
+    floats a = floats({1,2,3,4,5,6});
+    floats b = floats({1,2,3,4,5,6});
+    SECTION("random(grid, generator) must generate different output when given a different state of generator"){
+        std::mt19937 generator(time(0));
+        random(octahedron, generator, a);
+        random(octahedron, generator, b);
+        CHECK(a!=b);
+    }
+    SECTION("random(grid, generator) must generate nontrivial output"){
+        std::mt19937 generator(time(0));
+        random(octahedron, generator, a);
+        CHECK(sum(a) > 0.f);
     }
 }

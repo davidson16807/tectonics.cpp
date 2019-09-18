@@ -13,15 +13,15 @@ namespace rasters
 		see here for an explanation: http://corysimon.github.io/articles/uniformdistn-on-sphere/
 		*/
 		template <class Tgenerator>
-		glm::vec3 get_random_point_on_unit_sphere(const Tgenerator& generator)
+		glm::vec3 get_random_point_on_unit_sphere(Tgenerator& generator)
 		{
-		;
-	        double theta = 2 * M_PI * std::generate_canonical<T>(generator);
-	        double phi = acos(1 - 2 * std::generate_canonical<T>(generator));
+			std::uniform_real_distribution<float> distribution(0.0, 1.0);
+	        double theta = 2 * M_PI * distribution(generator);
+	        double phi = acos(1 - 2 * distribution(generator));
 	        return glm::vec3(
 		        sin(phi) * cos(theta),
 		        sin(phi) * sin(theta),
-		        cos(phi),
+		        cos(phi)
         	);
 		}
 	}
@@ -41,20 +41,22 @@ namespace rasters
 	template <class T, class Tgenerator>
 	void random(
 		const SpheroidGrid& grid, 
-		const Tgenerator& generator, 
+		Tgenerator& generator, 
 		tmany<T>& out, 
 		// NOTE: "region_count" is the number of regions where we increment grid cell values
-		const unsigned int region_count = 1000,
+		unsigned int region_count = 1000,
 		// NOTE: "region_transition_width" is the width of the transition zone for a region
-		const T region_transition_width = T(0.03)
+		T region_transition_width = T(0.03)
 	){
-		tmany<T> region_mod(a.size(), T(0));
+		tmany<T> region_mod(out.size(), T(0));
 		T region_threshold(0);
+		glm::vec3 region_center(0);
+		std::uniform_real_distribution<float> distribution(0.0, 1.0);
 
 		many::fill(out, T(0));
 		for (int i = 0; i < region_count; ++i)
 		{
-			region_threshold = std::generate_canonical<T>(generator)
+			region_threshold = distribution(generator);
 			region_center = rasters::get_random_point_on_unit_sphere(generator);
 			many::dot(grid.vertex_positions, region_center, 	 region_mod);
 			many::smoothstep(
@@ -69,10 +71,10 @@ namespace rasters
 	template <class T, class Tgenerator>
 	tmany<T> random(
 		const SpheroidGrid& grid, 
-		const Tgenerator& generator
+		Tgenerator& generator
 	){
-		tmany<T> out(ids.size());
-		random(a, ids, out);
+		tmany<T> out(grid.vertex_positions.size());
+		random(grid, generator, out);
 		return out;
 	}
 }

@@ -339,7 +339,6 @@ namespace many
 	template<typename T>
 	void smoothstep(const T lo, const T hi, const tmany<T>& x, tmany<T>& out)
 	{
-		T range = hi-lo;
 		transform(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
 	}
 	template<typename T>
@@ -392,7 +391,6 @@ namespace many
 	template<typename T>
 	void linearstep(const T lo, const T hi, const tmany<T>& x, tmany<T>& out)
 	{
-		T range = hi-lo;
 		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
 	}
 	template<typename T>

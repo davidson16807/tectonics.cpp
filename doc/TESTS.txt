@@ -16,20 +16,15 @@ Grid
 x	correct sizes
 x	nontriviality
 SpheroidGrid
-	purity
-	correct sizes
 LayeredSpheroidGrid
-	purity
-	correct sizes
 rasters
 	to_string
 x		purity
 x		includes appropriate characters
 x		excludes inappropriate characters (e.g. X,N,∞)
 	random
-		purity
-		determinism
-		nontriviality
+x		determinism
+x		nontriviality
 	vector calculus: https://en.wikipedia.org/wiki/Vector_calculus_identities#First_derivative_identities
 		gradient
 			purity

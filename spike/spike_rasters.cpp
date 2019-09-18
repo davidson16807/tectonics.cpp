@@ -1,4 +1,5 @@
 
+#include <time.h>       /* time_t, struct tm, difftime, time, mktime */
 #include <random>           // rngs
 
 #define GLM_FORCE_PURE      // disable SIMD support for glm so we can work with webassembly
@@ -13,6 +14,7 @@
 #include <rasters/mesh.hpp>
 #include <rasters/types.hpp>
 #include <rasters/string_cast.hpp>  
+#include <rasters/random.hpp>  
 #include <rasters/glm/glm.hpp>
 #include <rasters/glm/string_cast.hpp>  
 #include <rasters/glm/vector_calculus.hpp>
@@ -179,6 +181,23 @@ int main(int argc, char const *argv[])
 
     std::string str_raster_v3 = rasters::to_string(octahedron, raster_v3);
     std::cout << str_raster_v3 << std::endl;
+
+    std::mt19937 generator(time(0));
+    meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
+    icosphere_mesh = meshes::subdivide(icosphere_mesh);
+    icosphere_mesh = meshes::subdivide(icosphere_mesh);
+    icosphere_mesh = meshes::subdivide(icosphere_mesh);
+    icosphere_mesh = meshes::subdivide(icosphere_mesh);
+    std::cout << icosphere_mesh.vertices.size() << std::endl;
+    SpheroidGrid icosphere(icosphere_mesh.vertices, icosphere_mesh.faces);
+    floats raster_b = floats(icosphere_mesh.vertices.size());
+    random(icosphere, generator, raster_b);
+    std::string str_raster_b = to_string(icosphere, raster_b);
+    std::cout << str_raster_b << std::endl;
+    floats raster_c = floats(icosphere_mesh.vertices.size());
+    random(icosphere, generator, raster_c);
+    std::string str_raster_c = to_string(icosphere, raster_c);
+    std::cout << str_raster_c << std::endl;
 
     // std::mt19937 randomizer;
     // std::cout << randomizer() << " " << randomizer() << std::endl;
