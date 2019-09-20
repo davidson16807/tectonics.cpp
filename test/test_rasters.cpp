@@ -26,6 +26,21 @@ using namespace glm;
 using namespace many;
 using namespace rasters;
 
+TEST_CASE( "mesh subdivision purity", "[rasters]" ) {
+    SECTION("subdivide(mesh) must be called repeatedly without changing the output"){
+        meshes::mesh icosphere1 = meshes::subdivide(meshes::tetrahedron);
+        meshes::mesh icosphere2 = meshes::subdivide(meshes::tetrahedron);
+        CHECK(icosphere1.vertices==icosphere2.vertices);
+        CHECK(icosphere1.faces==icosphere2.faces);
+    }
+}
+TEST_CASE( "mesh subdivision correctness", "[rasters]" ) {
+    SECTION("subdivide(mesh) must generate a sensible number of vertices and faces"){
+        meshes::mesh icosphere = meshes::subdivide(meshes::tetrahedron);
+        CHECK(icosphere.vertices.size() == 10);
+        CHECK(icosphere.faces.size() == 4 * meshes::tetrahedron.faces.size());
+    }
+}
 /* 
 "diamond" is a simple 2d grid for testing raster operations 
  that do not require spatial awareness (e.g. arithmetic on scalar fields)
@@ -52,7 +67,6 @@ Grid diamond =
                 uvec3(0,3,4)
             })
     );
-
 TEST_CASE( "Grid correctness", "[Grid]" ) {
     SECTION("Grid must have the appropriate counts for vertex, edge, arrow, and face attributes"){
         CHECK(diamond.buffer_array_vertex_ids.size() == 12);
@@ -200,12 +214,12 @@ CartesianGridCellList cell_list(
                     })),
         10./100.
     );
-TEST_CASE( "CartesianGridCellList.nearest_id() purity", "[many]" ) {
+TEST_CASE( "CartesianGridCellList.nearest_id() purity", "[rasters]" ) {
     SECTION("CartesianGridCellList.nearest_id() must be called repeatedly without changing the output"){
         CHECK(cell_list.nearest_id(vec3(1,0,0)) == cell_list.nearest_id(vec3(1,0,0)));
     }
 }
-TEST_CASE( "CartesianGridCellList.nearest_id() happy path", "[many]" ) {
+TEST_CASE( "CartesianGridCellList.nearest_id() happy path", "[rasters]" ) {
     SECTION("CartesianGridCellList.nearest_id() must return the appropriate id when answer is obvious"){
         CHECK( cell_list.nearest_id(normalize(vec3( 1, 0, 0))) == 0  );
         CHECK( cell_list.nearest_id(normalize(vec3( 0, 1, 0))) == 1  );
@@ -244,12 +258,12 @@ SpheroidGridVoronoi voronoi(
         1./100.,
         10./100.
     );
-TEST_CASE( "SpheroidGridVoronoi.nearest_id() purity", "[many]" ) {
+TEST_CASE( "SpheroidGridVoronoi.nearest_id() purity", "[rasters]" ) {
     SECTION("SpheroidGridVoronoi.nearest_id() must be called repeatedly without changing the output"){
         CHECK(voronoi.nearest_id(vec3(1,0,0)) == voronoi.nearest_id(vec3(1,0,0)));
     }
 }
-TEST_CASE( "SpheroidGridVoronoi.nearest_id() happy path", "[many]" ) {
+TEST_CASE( "SpheroidGridVoronoi.nearest_id() happy path", "[rasters]" ) {
     SECTION("SpheroidGridVoronoi.nearest_id() must return the appropriate id when answer is obvious"){
         CHECK(  voronoi.nearest_id(normalize(vec3( 1, 0, 0))) == 0  );
         CHECK(  voronoi.nearest_id(normalize(vec3( 0, 1, 0))) == 1  );
@@ -267,16 +281,16 @@ TEST_CASE( "SpheroidGridVoronoi.nearest_id() happy path", "[many]" ) {
         CHECK(  voronoi.nearest_id(normalize(vec3( 1, 1, 1))) == 13 );
     }
 }
-TEST_CASE( "SpheroidGridVoronoi.nearest_ids() purity", "[many]" ) {
+TEST_CASE( "SpheroidGridVoronoi.nearest_ids() purity", "[rasters]" ) {
     SECTION("SpheroidGridVoronoi.nearest_id() must be called repeatedly without changing the output"){
         // CHECK(voronoi.nearest_ids(vec3(1,0,0)) == voronoi.nearest_ids(vec3(1,0,0)));
     }
 }
-TEST_CASE( "SpheroidGridVoronoi.nearest_ids() happy path", "[many]" ) {
+TEST_CASE( "SpheroidGridVoronoi.nearest_ids() happy path", "[rasters]" ) {
 
 }
 
-TEST_CASE( "raster string cast purity", "[many]" ) {
+TEST_CASE( "raster string cast purity", "[rasters]" ) {
     floats a = floats({1,2,3,4,5,6});
     vec2s v2 = vec2s({
                     vec2( 0,-1),
@@ -304,7 +318,7 @@ TEST_CASE( "raster string cast purity", "[many]" ) {
         CHECK(to_string(octahedron, v3) == to_string(octahedron, v3));
     }
 }
-TEST_CASE( "raster string cast correctness", "[many]" ) {
+TEST_CASE( "raster string cast correctness", "[rasters]" ) {
     floats a = floats({1,2,3,4,5,6});
     vec2s v2 = vec2s({
                     vec2( 0,-1),
@@ -379,7 +393,7 @@ TEST_CASE( "raster string cast correctness", "[many]" ) {
                 );
     }
 }
-TEST_CASE( "raster random generation determinism", "[many]" ) {
+TEST_CASE( "raster random generation determinism", "[rasters]" ) {
     floats a = floats({1,2,3,4,5,6});
     floats b = floats({1,1,2,3,5,8});
     SECTION("random(grid, generator) must generate the same raster when given the same state of generator"){
@@ -392,15 +406,18 @@ TEST_CASE( "raster random generation determinism", "[many]" ) {
         CHECK(a==b);
     }
 }
-TEST_CASE( "raster random generation nontriviality", "[many]" ) {
+TEST_CASE( "raster random generation nonpurity", "[rasters]" ) {
     floats a = floats({1,2,3,4,5,6});
     floats b = floats({1,2,3,4,5,6});
-    SECTION("random(grid, generator) must generate different output when given a different state of generator"){
+    SECTION("random(grid, generator) must generate different output when called repeatedly"){
         std::mt19937 generator(time(0));
         random(octahedron, generator, a);
         random(octahedron, generator, b);
         CHECK(a!=b);
     }
+}
+TEST_CASE( "raster random generation nontriviality", "[rasters]" ) {
+    floats a = floats({1,2,3,4,5,6});
     SECTION("random(grid, generator) must generate nontrivial output"){
         std::mt19937 generator(time(0));
         random(octahedron, generator, a);

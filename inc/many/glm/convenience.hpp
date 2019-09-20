@@ -115,10 +115,18 @@ namespace many
 
 
 
-	template<glm::length_t L, typename T, glm::qualifier Q>
-	std::ostream &operator<< (std::ostream &out, const glm::vec<L,T,Q> &vec) {
+	template<typename T, glm::qualifier Q>
+	std::ostream &operator<< (std::ostream &out, const glm::vec<3,T,Q> &vec) {
 	    out << "[" 
 	        << vec.x << "," << vec.y << ","<< vec.z 
+	        << "]";
+
+	    return out;
+	}
+	template<typename T, glm::qualifier Q>
+	std::ostream &operator<< (std::ostream &out, const glm::vec<2,T,Q> &vec) {
+	    out << "[" 
+	        << vec.x << "," << vec.y 
 	        << "]";
 
 	    return out;
@@ -138,6 +146,7 @@ namespace many
 
 
 
+	// NOTE: all operators are suggested to be inline because they are thin wrappers of functions
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	inline tmany<glm::vec<L,T,Q>>& operator+=(tmany<glm::vec<L,T,Q>>& a, const T b) 
 	{

@@ -10,6 +10,89 @@ namespace many
 
 
 
+
+
+
+
+	template<glm::length_t L, glm::qualifier Q>
+	bool equal(const tmany<glm::vec<L,unsigned int,Q>>& a, const glm::vec<L,unsigned int,Q> b)
+	{
+		bool out(true);
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out &= a[i] - b == glm::vec<L,unsigned int, Q>(0);
+		}
+		return out;
+	}
+	template<glm::length_t L, glm::qualifier Q>
+	bool notEqual(const tmany<glm::vec<L,unsigned int,Q>>& a, const glm::vec<L,unsigned int,Q> b)
+	{
+		bool out(false);
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out |= a[i] - b != glm::vec<L,unsigned int, Q>(0);
+		}
+		return out;
+	}
+	template<glm::length_t L, glm::qualifier Q>
+	bool equal(const tmany<glm::vec<L,unsigned int,Q>>& a, const tmany<glm::vec<L,unsigned int,Q>>& b)
+	{
+		bool out(true);
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out &= a[i] - b[i] == glm::vec<L,unsigned int, Q>(0);
+		}
+		return out;
+	}
+	template<glm::length_t L, glm::qualifier Q>
+	bool notEqual(const tmany<glm::vec<L,unsigned int,Q>>& a, const tmany<glm::vec<L,unsigned int,Q>>& b)
+	{
+		bool out(false);
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out |= a[i] - b[i] != glm::vec<L,unsigned int, Q>(0);
+		}
+		return out;
+	}
+
+
+
+
+
+	template<glm::length_t L, glm::qualifier Q>
+	void equal(const tmany<glm::vec<L,unsigned int,Q>>& a, const glm::vec<L,unsigned int,Q> b, tmany<bool>& out)
+	{
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out[i] = a[i] - b == glm::vec<L, unsigned int, Q>(0);
+		}
+	}
+	template<glm::length_t L, glm::qualifier Q>
+	void notEqual(const tmany<glm::vec<L,unsigned int,Q>>& a, const glm::vec<L,unsigned int,Q> b, tmany<bool>& out)
+	{
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out[i] = a[i] - b != glm::vec<L, unsigned int, Q>(0);
+		}
+	}
+	template<glm::length_t L, glm::qualifier Q>
+	void equal(const tmany<glm::vec<L,unsigned int,Q>>& a, const tmany<glm::vec<L,unsigned int,Q>>& b, tmany<bool>& out)
+	{
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out[i] = a[i] - b[i] == glm::vec<L, unsigned int, Q>(0);
+		}
+	}
+	template<glm::length_t L, glm::qualifier Q>
+	void notEqual(const tmany<glm::vec<L,unsigned int,Q>>& a, const tmany<glm::vec<L,unsigned int,Q>>& b, tmany<bool>& out)
+	{
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out[i] = a[i] - b[i] != glm::vec<L, unsigned int, Q>(0);
+		}
+	}
+
+
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	bool equal(const tmany<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> b, T threshold = T(MANY_EPSILON))
 	{
@@ -50,8 +133,6 @@ namespace many
 		}
 		return out;
 	}
-
-
 
 
 

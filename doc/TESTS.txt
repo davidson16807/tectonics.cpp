@@ -6,17 +6,20 @@ x	commutativity
 x	distributivity
 x	identity/invertibility
 x	consistency
-CartesianGridCellList
+meshes::subdivide
+x	purity
+	correct size bounds
+rasters::CartesianGridCellList
 x	purity
 x	happy path
-SpheroidGridVoronoi
+rasters::SpheroidGridVoronoi
 x	purity
 x	happy path
-Grid
+rasters::Grid
 x	correct sizes
 x	nontriviality
-SpheroidGrid
-LayeredSpheroidGrid
+rasters::SpheroidGrid
+rasters::LayeredSpheroidGrid
 rasters
 	to_string
 x		purity
