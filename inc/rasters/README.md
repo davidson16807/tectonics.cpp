@@ -1,3 +1,3 @@
-The `rasters` subcomponent provides a template data structure for representing scalar or vector fields on the surface of a 3d mesh. This template, known as `traster<T>`, extends the `tmany<T>` template within the `many` subcomponent to include references to a `Grid` class. The `Grid` class stores information about the vertices, edges, and faces of a 3d mesh. Values within the raster are stored within a `std::vector<T>` object where each index represents a cell within the grid. 
+The `rasters` subcomponent provides pure functions for representing scalar or vector fields. These functions accept `tmany<T>` objects as input, which represent values that map to vertices within a `Grid` object that is also passed as input.  This `Grid` object stores information about the vertices, edges, and faces of a 3d mesh. 
 
 This subcomponent requires the use of `many` and `glm`. 
