@@ -2,12 +2,10 @@
 
 #include <glm/vec3.hpp>               // *vec3
 
-#include "../types.hpp"
-
 namespace rasters
 {
 	template<typename T1, typename T2, qualifier Q>
-	void gradient(const SpheroidGrid& grid, const traster<T1>& scalar_field, traster<glm::vec<3,T2,Q>>& out)
+	void gradient(const SpheroidGrid& grid, const tmany<T1>& scalar_field, tmany<glm::vec<3,T2,Q>>& out)
 	{
 		// NOTE: 
 		// The naive implementation is to estimate the gradient based on each individual neighbor,

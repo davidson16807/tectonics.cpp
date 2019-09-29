@@ -2,7 +2,6 @@
 
 #include <cmath>
 
-#include "../types.hpp"
 #include "../convenience.hpp"
 
 /*

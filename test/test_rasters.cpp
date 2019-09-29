@@ -12,7 +12,6 @@
 #include <many/glm/glm.hpp>         // *vec*s
 #include <many/glm/convenience.hpp> //  operators, etc.
 
-#include <rasters/types.hpp>
 #include <rasters/mesh.hpp>
 #include <rasters/string_cast.hpp>  
 #include <rasters/random.hpp>  
