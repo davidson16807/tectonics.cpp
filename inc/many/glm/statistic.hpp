@@ -14,12 +14,12 @@ namespace many
 		}
 		out /= sum(weights);
 		return out;
-	};
+	}
 	// TODO: vector version
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	inline void rescale(const tmany<glm::vec<L,T,Q>>& a, tmany<glm::vec<L,T,Q>>& out, T max_new = 1.)
 	{
 		mult(a, max_new / max(length(a)), out);
-	};
+	}
 	
 } //namespace many

@@ -41,7 +41,7 @@ namespace rasters
 	  * "up" is indicated by the z axis of a 3d vector
 	*/
 	template <typename T, glm::qualifier Q>
-	std::string to_string(const SpheroidGrid& grid, const tmany<glm::vec<2,T,Q>>& a, const int line_char_width = 80)
+	std::string to_string(const SpheroidGrid& grid, const tmany<glm::vec<2,T,Q>>& a, const uint line_char_width = 80)
 	{
 		tmany<T> a_length(a.size());
 		length(a, a_length);
@@ -52,13 +52,13 @@ namespace rasters
 		float r  (0.);
 		float z  (0.);
 		vec3  pos(0.,0.,0.);
-		unsigned int id(0);
+		uint id(0);
 		std::string out("");
 
-		for (unsigned int i = 0; i < line_char_width/4; ++i)
+		for (uint i = 0; i < line_char_width/4; ++i)
 		{
 			lat = M_PI*i/float((line_char_width)/4.f-1) - M_PI/2.f;
-			for (unsigned int j = 0; j < line_char_width; ++j)
+			for (uint j = 0; j < line_char_width; ++j)
 			{
 				lon = 2.f*M_PI*(j+1)/float(line_char_width+1);
 				z = sin(lat);
@@ -116,7 +116,7 @@ namespace rasters
 	  * "up" is indicated by the z axis of a 3d vector
 	*/
 	template <typename T, glm::qualifier Q>
-	std::string to_string(const SpheroidGrid& grid, const tmany<glm::vec<3,T,Q>>& a, const int line_char_width = 80, const glm::vec3 up = vec3(0,0,1))
+	std::string to_string(const SpheroidGrid& grid, const tmany<glm::vec<3,T,Q>>& a, const uint line_char_width = 80, const glm::vec3 up = vec3(0,0,1))
 	{
 		many::vec3s		surface_basis_x(a.size());
 		many::vec3s		surface_basis_y(a.size());

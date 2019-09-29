@@ -85,7 +85,7 @@ namespace many
 			sum_of_squared_differences += difference * difference;
 		}
 		return std::sqrt(sum_of_squared_differences / (a.size()-1));
-	};
+	}
 
 	template <class T>
 	T weighted_average(const tmany<T>& a, const tmany<T>& weights)
@@ -97,7 +97,7 @@ namespace many
 		}
 		out /= sum(weights);
 		return out;
-	};
+	}
 
 	// TODO: vector version
 	template <class T>
@@ -113,7 +113,7 @@ namespace many
 		for (unsigned int i=0; i<a.size(); ++i) {
 			out[i] = scaling_factor * (a[i] - min_old) + min_new;
 		}
-	};
+	}
 	// // component-wise min
 	// template <class T>
 	// T median(const tmany<T>& a)

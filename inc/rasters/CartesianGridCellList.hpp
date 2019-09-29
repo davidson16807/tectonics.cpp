@@ -77,7 +77,7 @@ namespace rasters {
 			  cell_width(cell_width),
 			  cells(cell_count(), std::vector<std::pair<int, glm::vec3>>(0))
 		{
-			for (int i = 0; i < points.size(); ++i)
+			for (uint i = 0; i < points.size(); ++i)
 			{
 				add(i, points[i]);
 			}

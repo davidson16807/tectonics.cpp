@@ -44,7 +44,7 @@ namespace rasters
 		Tgenerator& generator, 
 		tmany<T>& out, 
 		// NOTE: "region_count" is the number of regions where we increment grid cell values
-		unsigned int region_count = 1000,
+		uint region_count = 1000,
 		// NOTE: "region_transition_width" is the width of the transition zone for a region
 		T region_transition_width = T(0.03)
 	){
@@ -54,7 +54,7 @@ namespace rasters
 		std::uniform_real_distribution<float> distribution(0.0, 1.0);
 
 		many::fill(out, T(0));
-		for (int i = 0; i < region_count; ++i)
+		for (uint i = 0; i < region_count; ++i)
 		{
 			region_threshold = distribution(generator);
 			region_center = rasters::get_random_point_on_unit_sphere(generator);
