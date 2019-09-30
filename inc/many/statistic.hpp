@@ -59,6 +59,19 @@ namespace many
 		}
 		return out;
 	}
+	// component-wise min
+	int sum(const tmany<bool>& a)
+	{
+		int out = 0;
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			if (a[i])
+			{
+				out++;
+			}
+		}
+		return out;
+	}
 
 	template <class T>
 	T mean(const tmany<T>& a)

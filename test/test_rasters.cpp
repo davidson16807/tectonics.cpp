@@ -13,8 +13,9 @@
 #include <many/glm/convenience.hpp> //  operators, etc.
 
 #include <rasters/mesh.hpp>
-#include <rasters/string_cast.hpp>  
+#include <rasters/morphologic.hpp>  
 #include <rasters/random.hpp>  
+#include <rasters/string_cast.hpp>  
 #include <rasters/glm/glm.hpp>
 #include <rasters/glm/string_cast.hpp>  
 #include <rasters/glm/vector_calculus.hpp>
@@ -421,5 +422,75 @@ TEST_CASE( "raster random generation nontriviality", "[rasters]" ) {
         std::mt19937 generator(time(0));
         random(octahedron, generator, a);
         CHECK(sum(a) > 0.f);
+    }
+}
+TEST_CASE( "raster dilation purity", "[rasters]" ) {
+    bools upper_half = bools({true,  true,  true,  true,  false });
+    bools top_only   = bools({false, false, true,  false, false });
+    bools out1       = bools({false, false, false, false, false });
+    bools out2       = bools({false, false, false, false, false });
+    bools scratch    = bools({false, false, false, false, false });
+    SECTION("dilate(grid, top_only) must generate the same output when called repeatedly"){
+        dilate(diamond, top_only, out1);
+        dilate(diamond, top_only, out2);
+        CHECK(out1==out2);
+    }
+    SECTION("dilate(grid, top_only, radius) must generate the same output when called repeatedly"){
+        dilate(diamond, top_only, out1, 2);
+        dilate(diamond, top_only, out2, 2);
+        CHECK(out1==out2);
+    }
+    SECTION("dilate(grid, top_only, radius, scratch) must generate the same output when called repeatedly"){
+        dilate(diamond, top_only, out1, 2, scratch);
+        dilate(diamond, top_only, out2, 2, scratch);
+        CHECK(out1==out2);
+    }
+}
+TEST_CASE( "raster dilation increasing", "[rasters]" ) {
+    bools upper_half = bools({true,  true,  true,  true,  false });
+    bools top_only   = bools({false, false, true,  false, false });
+    bools out1       = bools({false, false, false, false, false });
+    bools out2       = bools({false, false, false, false, false });
+    SECTION("dilate(grid, top_only) must increase the number of flagged vertices"){
+        dilate(diamond, top_only, out1);
+        dilate(diamond, out1,     out2);
+        CHECK(sum(out1) >= sum(top_only));
+        CHECK(sum(out2) >= sum(out1));
+    }
+}
+
+
+TEST_CASE( "raster erosion purity", "[rasters]" ) {
+    bools lower_half = bools({true,  true,  false,  true,  true });
+    bools bottom_only= bools({true,  true,  false,  true,  true  });
+    bools out1       = bools({false, false, false, false, false });
+    bools out2       = bools({false, false, false, false, false });
+    bools scratch    = bools({false, false, false, false, false });
+    SECTION("erode(grid, bottom_only) must generate the same output when called repeatedly"){
+        erode(diamond, bottom_only, out1);
+        erode(diamond, bottom_only, out2);
+        CHECK(out1==out2);
+    }
+    SECTION("erode(grid, bottom_only, radius) must generate the same output when called repeatedly"){
+        erode(diamond, bottom_only, out1, 2);
+        erode(diamond, bottom_only, out2, 2);
+        CHECK(out1==out2);
+    }
+    SECTION("erode(grid, bottom_only, radius, scratch) must generate the same output when called repeatedly"){
+        erode(diamond, bottom_only, out1, 2, scratch);
+        erode(diamond, bottom_only, out2, 2, scratch);
+        CHECK(out1==out2);
+    }
+}
+TEST_CASE( "raster erosion decreasing", "[rasters]" ) {
+    bools lower_half = bools({true,  true,  false,  true,  true });
+    bools bottom_only= bools({true,  true,  false,  true,  true  });
+    bools out1       = bools({false, false, false, false, false });
+    bools out2       = bools({false, false, false, false, false });
+    SECTION("erode(grid, bottom_only) must increase the number of flagged vertices"){
+        erode(diamond, bottom_only, out1);
+        erode(diamond, out1,        out2);
+        CHECK(sum(out1) <= sum(bottom_only));
+        CHECK(sum(out2) <= sum(out1));
     }
 }

@@ -5,6 +5,10 @@
 
 #include <glm/vec3.hpp> // *vec3
 
+#include <many/types.hpp>     	 // floats, etc.
+
+#include "SpheroidGrid.hpp" 
+
 namespace rasters
 {
 	namespace {

@@ -8,7 +8,7 @@ x	identity/invertibility
 x	consistency
 meshes::subdivide
 x	purity
-	correct size bounds
+x	correct size bounds
 rasters::CartesianGridCellList
 x	purity
 x	happy path
@@ -27,7 +27,36 @@ x		includes appropriate characters
 x		excludes inappropriate characters (e.g. X,N,∞)
 	random
 x		determinism
-x		nontriviality
+x		nonpurity
+	morphology: https://en.wikipedia.org/wiki/Mathematical_morphology#Properties_of_the_basic_operators
+		dilate
+x			purity
+x			increasing
+			associative
+			commutative
+			distributive over union
+		erode
+x			purity
+x			decreasing
+			translation invariant
+			distributive over intersection
+		opening
+			purity
+			translation invariant
+			idempotent
+		closing
+			purity
+			translation invariant
+			idempotent
+		black_hat
+		white_hat
+		padding
+		margin
+	image segmentation
+		purity
+		translation invariant
+		rotation invariant
+	scalar transport
 	vector calculus: https://en.wikipedia.org/wiki/Vector_calculus_identities#First_derivative_identities
 		gradient
 			purity
@@ -59,34 +88,6 @@ x		nontriviality
 			∇×∇a = 0
 			∇⋅∇×a = 0
 			∇×∇×∇a = ∇(∇⋅a)-∇²a
-	morphology: https://en.wikipedia.org/wiki/Mathematical_morphology#Properties_of_the_basic_operators
-		dilate
-			purity
-			translation invariant
-			associative
-			commutative
-			distributive over union
-		erode
-			purity
-			translation invariant
-			distributive over intersection
-		opening
-			purity
-			translation invariant
-			idempotent
-		closing
-			purity
-			translation invariant
-			idempotent
-		black_hat
-		white_hat
-		padding
-		margin
-	image segmentation
-		purity
-		translation invariant
-		rotation invariant
-	scalar transport
 academics
 	emission
 		red hot stove
