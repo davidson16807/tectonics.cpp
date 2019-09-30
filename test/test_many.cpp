@@ -17,11 +17,31 @@
 using namespace glm;
 using namespace many;
 
-TEST_CASE( "Must be able to test many<T> equivalence using the catch framework", "[many]" ) {
+TEST_CASE( "Must be able to test many<float> equivalence using the catch framework", "[many]" ) {
     floats ref       = floats({1,2,3,4,5});
     floats ref_copy  = floats({1,2,3,4,5});
     floats ref_tweak = floats({1,2,3,4,0});
     floats ref_fewer = floats({1,2,3,4});
+
+    SECTION("Must be able to equate object with itself"){
+        CHECK(ref == ref);
+    }
+    SECTION("Must be able to equate many of the same content and size"){
+        CHECK(ref == ref_copy);
+    }
+    SECTION("Must be able to distinguish many of slightly different content"){
+        CHECK(ref != ref_tweak);
+    }
+    SECTION("Must be able to distinguish many of slightly different size"){
+        CHECK(ref != ref_fewer);
+    }
+}
+
+TEST_CASE( "Must be able to test many<bool> equivalence using the catch framework", "[many]" ) {
+    bools ref       = bools({true,false,true,false,true});
+    bools ref_copy  = bools({true,false,true,false,true});
+    bools ref_tweak = bools({true,false,true,false,false});
+    bools ref_fewer = bools({true,false,true,false});
 
     SECTION("Must be able to equate object with itself"){
         CHECK(ref == ref);
@@ -367,8 +387,8 @@ TEST_CASE( "many<T> string cast correctness", "[many]" ) {
     std::string strb = to_string(b);
     std::string strc = to_string(c);
     SECTION("to_string() must render correct representation"){
-        REQUIRE_THAT(stra, Catch::Contains(" ░▒▓█"));
-        REQUIRE_THAT(strb, Catch::Contains("  ░▒█"));
+        REQUIRE_THAT(stra, Catch::Contains("█"));
+        REQUIRE_THAT(strb, Catch::Contains("█"));
         REQUIRE_THAT(to_string(floats({INFINITY})), Catch::Contains("∞"));
         // REQUIRE_THAT(to_string(floats({std::sqrt(-1)})), Catch::Contains("N"));
     }

@@ -107,6 +107,253 @@ namespace many
 		}
 	}
 
+
+
+
+
+
+	bool equal(const tmany<bool>& a, const bool b)
+	{
+		bool out(true);
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out &= a[i] == b;
+		}
+		return out;
+	}
+	bool notEqual(const tmany<bool>& a, const bool b)
+	{
+		bool out(false);
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out |= a[i] != b;
+		}
+		return out;
+	}
+	bool equal(const tmany<bool>& a, const tmany<bool>& b)
+	{
+		if (a.size() != b.size())
+		{
+			return false;
+		}
+		bool out(true);
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out &= a[i] == b[i];
+		}
+		return out;
+	}
+	bool notEqual(const tmany<bool>& a, const tmany<bool>& b)
+	{
+		if (a.size() != b.size())
+		{
+			return true;
+		}
+		bool out(false);
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out |= a[i] != b[i];
+		}
+		return out;
+	}
+
+
+
+	void equal(const tmany<bool>& a, const bool b, tmany<bool>& out)
+	{
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out[i] = a[i] == b;
+		}
+	}
+	void notEqual(const tmany<bool>& a, const bool b, tmany<bool>& out)
+	{
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out[i] = a[i] != b;
+		}
+	}
+	void equal(const tmany<bool>& a, const tmany<bool>& b, tmany<bool>& out)
+	{
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out[i] = a[i] == b[i];
+		}
+	}
+	void notEqual(const tmany<bool>& a, const tmany<bool>& b, tmany<bool>& out)
+	{
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out[i] = a[i] != b[i];
+		}
+	}
+
+
+
+
+
+
+	bool equal(const tmany<int>& a, const int b)
+	{
+		bool out(true);
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out &= a[i] == b;
+		}
+		return out;
+	}
+	bool notEqual(const tmany<int>& a, const int b)
+	{
+		bool out(false);
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out |= a[i] != b;
+		}
+		return out;
+	}
+	bool equal(const tmany<int>& a, const tmany<int>& b)
+	{
+		if (a.size() != b.size())
+		{
+			return false;
+		}
+		bool out(true);
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out &= a[i] == b[i];
+		}
+		return out;
+	}
+	bool notEqual(const tmany<int>& a, const tmany<int>& b)
+	{
+		if (a.size() != b.size())
+		{
+			return true;
+		}
+		bool out(false);
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out |= a[i] != b[i];
+		}
+		return out;
+	}
+
+
+
+	void equal(const tmany<int>& a, const int b, tmany<bool>& out)
+	{
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out[i] = a[i] == b;
+		}
+	}
+	void notEqual(const tmany<int>& a, const int b, tmany<bool>& out)
+	{
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out[i] = a[i] != b;
+		}
+	}
+	void equal(const tmany<int>& a, const tmany<int>& b, tmany<bool>& out)
+	{
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out[i] = a[i] == b[i];
+		}
+	}
+	void notEqual(const tmany<int>& a, const tmany<int>& b, tmany<bool>& out)
+	{
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out[i] = a[i] != b[i];
+		}
+	}
+
+
+
+
+
+
+	bool equal(const tmany<unsigned int>& a, const unsigned int b)
+	{
+		bool out(true);
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out &= a[i] == b;
+		}
+		return out;
+	}
+	bool notEqual(const tmany<unsigned int>& a, const unsigned int b)
+	{
+		bool out(false);
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out |= a[i] != b;
+		}
+		return out;
+	}
+	bool equal(const tmany<unsigned int>& a, const tmany<unsigned int>& b)
+	{
+		if (a.size() != b.size())
+		{
+			return false;
+		}
+		bool out(true);
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out &= a[i] == b[i];
+		}
+		return out;
+	}
+	bool notEqual(const tmany<unsigned int>& a, const tmany<unsigned int>& b)
+	{
+		if (a.size() != b.size())
+		{
+			return true;
+		}
+		bool out(false);
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out |= a[i] != b[i];
+		}
+		return out;
+	}
+
+
+
+	void equal(const tmany<unsigned int>& a, const unsigned int b, tmany<bool>& out)
+	{
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out[i] = a[i] == b;
+		}
+	}
+	void notEqual(const tmany<unsigned int>& a, const unsigned int b, tmany<bool>& out)
+	{
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out[i] = a[i] != b;
+		}
+	}
+	void equal(const tmany<unsigned int>& a, const tmany<unsigned int>& b, tmany<bool>& out)
+	{
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out[i] = a[i] == b[i];
+		}
+	}
+	void notEqual(const tmany<unsigned int>& a, const tmany<unsigned int>& b, tmany<bool>& out)
+	{
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out[i] = a[i] != b[i];
+		}
+	}
+
+
+
+
+
 	template <class T, class T2>
 	void greaterThan(const tmany<T>& a, const T2 b, tmany<bool>& out)
 	{
