@@ -88,9 +88,20 @@ x			decreasing
 			∇×∇a = 0
 			∇⋅∇×a = 0
 			∇×∇×∇a = ∇(∇⋅a)-∇²a
+
 academics
+	convection
+		earth latitudinal heat flow
+		earth latitudinal heat flow
+		earth latitudinal heat flow
+		earth equilibrium temperature
+		earth equatorial temperature
+		earth polar temperature
 	emission
-		red hot stove
+		hot stoves are red
+		sunlight is visible
+		global solar constant
+		photosynthetically activate radiation
 	reflectance
 	scattering
 	column density
@@ -101,17 +112,69 @@ academics
 		ring, gaussian dropoff
 		centrifuge, exponential dropoff
 	orbital mechanics
-		copy from Tectonics.js
+		earth surface gravity
+		earth year length
+		earth aphelion
+		earth perihelion
+		earth average orbital velocity
+		earth direction of orbit
+		earth direction of spin
 
 mass pool models
 	star
-		copy from Tectonics.js
+		invertibility
+		sun mass
+		sun radius
+		sun luminosity
+		sun temperature
+		vega mass
+		vega radius
+		vega luminosity
+		vega temperature
+		sunlight is visible
 	world
-		copy from Tectonics.js
-	ocean
-		copy from Tectonics.js
+		invertibility
+		earth mass
+		earth radius
+		earth surface gravity
+		jupiter mass
+		jupiter radius
 	atmosphere
-		copy from Tectonics.js
+		invertibility
+		earth mass
+		earth atmosphere molecule count
+		earth atmosphere mean molecular mass
+		earth atmosphere specific heat capacity
+		earth atmosphere scale height
+		earth atmosphere surface pressure
+		earth atmosphere lapse rate
+		earth atmosphere red   rayleigh scattering cross section
+		earth atmosphere green rayleigh scattering cross section
+		earth atmosphere blue  rayleigh scattering cross section
+		earth atmosphere red   mie scattering cross section
+		earth atmosphere green mie scattering cross section
+		earth atmosphere blue  mie scattering cross section
+		earth atmosphere blocks NIR
+		earth atmosphere transmits red
+		earth atmosphere transmits green
+		earth atmosphere transmits blue
+		earth atmosphere transmits UV-A
+		earth atmosphere blocks UV-B
+		sky is blue
+		sunsets are red
+		neptune is blue
+		greenhouse gas effect exists
+		global warming exists
+	ocean
+		invertibility
+		earth ocean mass
+		earth ocean density
+		earth ocean specific heat capacity
+		earth red   rayleigh scattering cross section
+		earth green rayleigh scattering cross section
+		earth blue  rayleigh scattering cross section
+		number of molecules in a drop of water
+		water is blue
 stratigraphy
 	stratum_mass_pool
 		invertibility within valid range
@@ -123,9 +186,59 @@ light propagation
 	spectrum
 
 orrery
-	CelestialSystem
-		copy from Tectonics.js
-	CelestialSpin
-		copy from Tectonics.js
-	CelestialOrbit
-		copy from Tectonics.js
+	spin
+
+barnes hut field
+
+integration tests
+	global solar constant: 	star, orrery
+		solar luminosity (solar mass pools)
+		sample solar positions (orbital elements and configuration)
+	temperature of earth:	star, orrery, atmosphere, light propagation, climate
+
+		solar luminosity(solar mass pools)
+		sample solar positions (orbital elements and configuration)
+		world radius	(world mass pools)
+		surface gravity	(world mass pools)
+		surface area 	(world mass pools)
+
+		air surface density (air mass pools, surface gravity, surface area, temperature)
+		air scale height	(air mass pools, surface gravity, temperature)
+		air scattering/absorption cross sections(air mass pools, wavelength)
+		air column density ratio  (start position, stop position, world radius/scale height)
+		air specific heat capacity()
+
+		ocean density 				(ocean mass pools)
+		ocean column density ratio 	(start position, stop position, world radius?)
+		ocean scattering/absorption cross sections(air mass pools, wavelength)
+		ocean depth 				(displacement, ocean mass pools, ocean density)
+		ocean specific heat capacity(ocean mass pools)
+
+		surface reflectivity		(strata,  ...?)
+		surface elevation			(?)
+
+		combined density  			(position)
+		combined column density  	(start position, stop position)
+		combined absorption			(position)
+		combined 
+		light propogation (air properties, ocean depth)
+
+		incoming light propagation given:
+			sample solar positions and luminosities
+			scale height
+			surface density
+			scattering coefficients
+			absorption coefficients
+
+		emitted light propagation given:
+			temperature
+			scale height
+			surface density
+			scattering coefficients
+			absorption coefficients
+
+NOTE: emission should be scaled by fraction of microfacet surface normals facing viewer
+
+IDEA: We want to minimize out-of-order memory access and maximize in-order memory access. This means if we have a process that requires combinations of both spatial transport (out-of-order memory access) and chemical reaction (in-order memory access) we should work at different grid resolutions, so that spatial transport is conducted using coarse resolution to minimize runtime, and chemical reaction is conducted using fine resolution to maximize quality of output. However conversion between grid resolutions is itself an out-of-order memory access issue. 
+
+IDEA: surface reflection is greatest where surface normal (N) is the halfway vector (H) between view (V) and light (L). We could in principle take this surface normal as a position on a unit sphere and use the position to lookup surface reflectivity at that point. However, many surface normals will exist that fulfill this criteria, so to lookup all these positions for each position on the globe may be too expensive. If N⋅V<1, we are effectively asking for the average surface reflectivity across a small circle of the globe. We can assume the appropriate value for surface reflection will approximate some average of surface reflectivity across the entire globe, perhaps weighted by average insolation.  However, if N⋅V=1, we are only interested in the reflectivity of the surface that's immediately below, which is trivial to lookup. I propose interpolating between these two values to derive the correct surface reflectivity at each point on the globe.
