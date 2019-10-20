@@ -1,3 +1,4 @@
+#First Pass
 
 We need some way to represent how light of different wavelengths propogates through the atmosphere. 
 We need to do this in order to model the greenhouse gas effect, among other things. 
@@ -178,3 +179,27 @@ At 10k cells per raster, that's ~2MB, so our implementation should not be constr
 I suspect it should not be constrained by runtime, either, 
 since these rasters are strictly computed using in-order memory access
 (see "performance-considerations.md" for an explanation of this concept). 
+
+
+
+
+#Second Pass
+
+We need to convey the amount of energy absorbed from:
+
+  incoming light
+  outgoing light reflected by the surface
+  outgoing light emitted by the surface
+
+We will discount the amount that is absorbed due to scattered light, since scattering is assumed to be a secondary effect. This goes for both incoming scattered light and outgoing scattered light. 
+
+Each of the three energy sources above can be represented as a straight path taken by light from a source to a sink, in which the sink is our parcel of air. We can reuse our column density calculations from our ray marching shader to determine the fraction of light that reaches the sink. A certain fraction of that is then absorbed as heat, as determined by the number density of the parcel and its absorption cross section. 
+
+So then we just have to determine our sources. For incoming light, this is fairly straight forward: the source is the sun. For outgoing light emitted by the surface, we assume that emission always occurs in a direction that is normal to a surface microfacet. Therefore, emission is best approximated by diffuse/lambertian surface lighting, and is of greatest intensity in the direction of the macroscopic surface normal. We therefore approximate by saying that the source of light emitted by the surface occurs directly below the parcel of air being considered. That just leaves the source of light reflected by the surface...
+
+Reflected light can in principle emerge from any point along the surface, just as with emitted light, however it would be too computationally expensive to calculate the amount of light absorbed from every point along the surface. And unlike emitted light, we cannot simply state that the majority of reflected light will be received from directly underneath the parcel of air. Surface reflection is greatest where the surface normal (N) is the halfway vector (H) between view (V) and light (L). We could in principle use this to find the surface normal, then treat this surface normal as a position on a unit sphere at which reflection occurs. We could then lookup surface reflectivity at that point, and the column density from it. This would be all we need to find the amount of reflected light received. However, many surface normals will exist that fulfill this criteria, so to lookup column density and surface reflectivity for all these surface normals will still be too expensive. 
+
+If we assume the opacity of air is constant (i.e. no clouds or dust storms) then we need only sample from one of these points to find an approximation for column density. As for surface reflectivity, we note that if N⋅V<1, we are effectively asking for the average surface reflectivity across a small circle of the globe. Since this is probably a wide enough coverage of the globe, we can assume the appropriate value for surface reflection is close enough to some global average of surface reflectivity, perhaps weighted by average insolation. However, if N⋅V=1, we are only interested in the reflectivity of the surface that's immediately below, which is trivial to lookup. Therefore, I propose we should assume that surface reflectivity is an interpolation between these two values. 
+
+We now have gathered a list of all the paths that energy can take and have identified their sources. But we must also consider outgoing light emitted by the air, and this cannot be represented as a path. Contrary to some misleading diagrams that visualize greenhouse gas as an invisible barrier reflecting infrared light, greenhouse gas actually *absorbs* infrared light, and then reemits light equally in all directions. Since it reemits light equally in all directions, approximately half the light goes up, and half the light goes back down. The actual fraction will be less than half, but this is only significant if the planet is small or the gas is very high up. Since the scale height of most planets   If a planet does have an atmosphere that is worth considering, then the boltzmann distribution tells us it will either be very large, or very cold, and in either case it will concentrate exponentially towards the surface, so we find this to be a very suitable approximation, in general. So we simply calculate the amount of energy given off by a black body when it is the same temperature as the parcel of air, then figure that half that amount is actually lost to space. 
+

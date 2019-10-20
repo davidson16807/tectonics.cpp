@@ -216,12 +216,16 @@ integration tests
 
 		surface reflectivity		(strata,  ...?)
 		surface elevation			(?)
+		surface normals             (?)
+		surface temperature 		(surface elevation, temperatures)
 
 		combined density  			(position)
 		combined column density  	(start position, stop position)
-		combined absorption			(position)
-		combined 
-		light propogation (air properties, ocean depth)
+		combined absorption			(start position, stop position)
+		
+		absorbed insolation			(lights, position(s))
+		absorbed surface reflection	(lights, position(s), surface reflectivity)
+		absorbed surface emission	(lights, position(s), temperature)
 
 		incoming light propagation given:
 			sample solar positions and luminosities
@@ -237,8 +241,4 @@ integration tests
 			scattering coefficients
 			absorption coefficients
 
-NOTE: emission should be scaled by fraction of microfacet surface normals facing viewer
-
 IDEA: We want to minimize out-of-order memory access and maximize in-order memory access. This means if we have a process that requires combinations of both spatial transport (out-of-order memory access) and chemical reaction (in-order memory access) we should work at different grid resolutions, so that spatial transport is conducted using coarse resolution to minimize runtime, and chemical reaction is conducted using fine resolution to maximize quality of output. However conversion between grid resolutions is itself an out-of-order memory access issue. 
-
-IDEA: surface reflection is greatest where surface normal (N) is the halfway vector (H) between view (V) and light (L). We could in principle take this surface normal as a position on a unit sphere and use the position to lookup surface reflectivity at that point. However, many surface normals will exist that fulfill this criteria, so to lookup all these positions for each position on the globe may be too expensive. If N⋅V<1, we are effectively asking for the average surface reflectivity across a small circle of the globe. We can assume the appropriate value for surface reflection will approximate some average of surface reflectivity across the entire globe, perhaps weighted by average insolation.  However, if N⋅V=1, we are only interested in the reflectivity of the surface that's immediately below, which is trivial to lookup. I propose interpolating between these two values to derive the correct surface reflectivity at each point on the globe.
