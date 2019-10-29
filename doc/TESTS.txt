@@ -32,26 +32,34 @@ x		nonpurity
 		dilate
 x			purity
 x			increasing
-			associative
-			commutative
-			distributive over union
+x			associative
+x			distributes over union
+x			happy path
 		erode
 x			purity
 x			decreasing
-			translation invariant
-			distributive over intersection
+x			distributes over intersection
+x			happy path
 		opening
-			purity
-			translation invariant
-			idempotent
+x			purity
+x			idempotent
+x			happy path
 		closing
-			purity
-			translation invariant
-			idempotent
+x			purity
+x			idempotent
+x			happy path
 		black_hat
+x			purity
+x			happy path
 		white_hat
+x			purity
+x			happy path
 		padding
+x			purity
+x			happy path
 		margin
+x			purity
+x			happy path
 	image segmentation
 		purity
 		translation invariant
@@ -195,7 +203,6 @@ integration tests
 		solar luminosity (solar mass pools)
 		sample solar positions (orbital elements and configuration)
 	temperature of earth:	star, orrery, atmosphere, light propagation, climate
-
 		solar luminosity(solar mass pools)
 		sample solar positions (orbital elements and configuration)
 		world radius	(world mass pools)
@@ -214,11 +221,12 @@ integration tests
 		ocean depth 				(displacement, ocean mass pools, ocean density)
 		ocean specific heat capacity(ocean mass pools)
 
-		surface reflectivity		(strata,  ...?)
+		surface reflectivity		(surface elevation, reflectivities)
 		surface elevation			(?)
 		surface normals             (?)
 		surface temperature 		(surface elevation, temperatures)
 
+		combined reflectivity		(position)
 		combined density  			(position)
 		combined column density  	(start position, stop position)
 		combined absorption			(start position, stop position)
