@@ -141,11 +141,12 @@ namespace rasters
 		            })
 			);
 
-		mesh subdivide(mesh input)
+		mesh subdivide(const mesh& input)
 		{
-			std::vector<glm::vec3>  vertices = input.vertices.vector();
+			std::vector<glm::vec3>  vertices;
 			std::vector<glm::uvec3> faces;
 			std::unordered_map<glm::uvec2, unsigned int> midpoints {};
+			copy(input.vertices.begin(), input.vertices.end(), back_inserter(vertices));
 			
 			glm::uvec3 face(0,0,0);
 			for (unsigned int i(0); i < input.faces.size(); ++i)
@@ -154,20 +155,20 @@ namespace rasters
 
 				if (midpoints.find(glm::uvec2(face.x, face.y)) == midpoints.end())
 				{
-					midpoints[glm::uvec2(face.x, face.y)] = input.vertices.size();
-					midpoints[glm::uvec2(face.y, face.x)] = input.vertices.size();
+					midpoints[glm::uvec2(face.x, face.y)] = vertices.size();
+					midpoints[glm::uvec2(face.y, face.x)] = vertices.size();
 					vertices.push_back((vertices[face.x]+vertices[face.y])/2.f);
 				}
 				if (midpoints.find(glm::uvec2(face.y, face.z)) == midpoints.end())
 				{
-					midpoints[glm::uvec2(face.y, face.z)] = input.vertices.size();
-					midpoints[glm::uvec2(face.z, face.y)] = input.vertices.size();
+					midpoints[glm::uvec2(face.y, face.z)] = vertices.size();
+					midpoints[glm::uvec2(face.z, face.y)] = vertices.size();
 					vertices.push_back((vertices[face.y]+vertices[face.z])/2.f);
 				}
 				if (midpoints.find(glm::uvec2(face.z, face.x)) == midpoints.end())
 				{
-					midpoints[glm::uvec2(face.z, face.x)] = input.vertices.size();
-					midpoints[glm::uvec2(face.x, face.z)] = input.vertices.size();
+					midpoints[glm::uvec2(face.z, face.x)] = vertices.size();
+					midpoints[glm::uvec2(face.x, face.z)] = vertices.size();
 					vertices.push_back((vertices[face.z]+vertices[face.x])/2.f);
 				}
 
@@ -180,7 +181,5 @@ namespace rasters
 		}
 	}
 }
-
-
 
 
