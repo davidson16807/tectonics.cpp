@@ -40,12 +40,11 @@ namespace rasters {
 
 		//ivecNs 	vertex_neighbor_ids;
 		uint        vertex_count;
-		floats 		vertex_neighbor_counts;
+		uints 		vertex_neighbor_counts;
 		vec3s 		vertex_positions;
 		vec3s 		vertex_normals;
 		floats 		vertex_areas;
 		float		vertex_average_area;
-
 
 		uint        face_count;
 		uvec3s 		face_vertex_ids;
@@ -296,7 +295,8 @@ namespace rasters {
 				     										  arrow_normals 	 ); arrow_normals /= 2.f;
 			arrow_average_distance = mean(arrow_distances);
 
-			aggregate_into(arrow_vertex_id_from, [](float a){ return a+1.f; }, vertex_neighbor_counts);
+			fill    (vertex_neighbor_counts, 0u);
+			aggregate_into(arrow_vertex_id_from, [](uint a){ return a+1; }, vertex_neighbor_counts);
 		}
 	};
 }
