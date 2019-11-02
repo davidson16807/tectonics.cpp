@@ -100,11 +100,13 @@ namespace many
 
 		inline tmany<T>& operator=(const tmany<T>& other )
 		{
+			values.resize(other.size());
 			copy(*this, other);
 			return *this;
 		}
 		inline tmany<T>& operator=(const T& other )
 		{
+			values.resize(other.size());
 			fill(*this, other);
 			return *this;
 		}
