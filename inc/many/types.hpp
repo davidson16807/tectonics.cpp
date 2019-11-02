@@ -386,20 +386,17 @@ namespace many
 	}
 
 
+
 	template<class T, typename Taggregator>
 	void aggregate_into(const tmany<T>& a, const tmany<unsigned int>& group_ids, Taggregator aggregator, tmany<T>& group_out)
 	{
+		assert(a.size() == group_ids.size());
 		for (unsigned int i = 0; i < group_ids.size(); ++i)
 		{
-			group_out[group_ids[i]] = aggregator(group_out[group_ids[i]], a[i]);
-		}
-	}
-	template<class T, typename Taggregator>
-	void aggregate(const tmany<T>& a, const tmany<unsigned int>& group_ids, Taggregator aggregator, tmany<T>& group_out)
-	{
-		fill(group_out, T(0));
-		for (unsigned int i = 0; i < group_ids.size(); ++i)
-		{
+			assert(0 <= group_ids[i]);
+			assert(group_ids[i] < group_out.size());
+			assert(!std::isinf(group_ids[i]));
+			assert(!std::isnan(group_ids[i]));
 			group_out[group_ids[i]] = aggregator(group_out[group_ids[i]], a[i]);
 		}
 	}
@@ -409,15 +406,7 @@ namespace many
 	{
 		for (unsigned int i = 0; i < group_ids.size(); ++i)
 		{
-			group_out[group_ids[i]] = aggregator(group_out[group_ids[i]]);
-		}
-	}
-	template<class T, typename Taggregator>
-	void aggregate(const tmany<unsigned int>& group_ids, Taggregator aggregator, tmany<T>& group_out)
-	{
-		fill(group_out, T(0));
-		for (unsigned int i = 0; i < group_ids.size(); ++i)
-		{
+			assert(0 <= group_ids[i] && group_ids[i] < group_out.size() && !std::isinf(group_ids[i]) && !std::isnan(group_ids[i]));
 			group_out[group_ids[i]] = aggregator(group_out[group_ids[i]]);
 		}
 	}
@@ -443,9 +432,9 @@ namespace many
 
 
 
-	typedef tmany<bool>	       bools;
-	typedef tmany<int>	       ints;
+	typedef tmany<bool>	        bools;
+	typedef tmany<int>	        ints;
 	typedef tmany<unsigned int> uints;
-	typedef tmany<float>	       floats;
+	typedef tmany<float>	    floats;
 	typedef tmany<double>       doubles;
 }

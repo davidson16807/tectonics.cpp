@@ -219,8 +219,15 @@ int main(int argc, char const *argv[])
     std::string str_raster_c = to_string(icosphere, raster_c);
     std::cout << str_raster_c << std::endl;
 
+    floats gradient_in = raster_c;
+    vec3s gradient_out = vec3s(icosphere_mesh.vertices.size());
+    std::cout << "calculating gradient" << std::endl;
+    rasters::gradient(icosphere, gradient_in, gradient_out);
+    std::cout << rasters::to_string(icosphere, gradient_out) << std::endl;
+
     // std::mt19937 randomizer;
     // std::cout << randomizer() << " " << randomizer() << std::endl;
     // std::cout << randomizer;
+
 
 }

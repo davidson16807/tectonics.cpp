@@ -104,7 +104,7 @@ TEST_CASE( "Grid correctness", "[Grid]" ) {
         CHECK(diamond.edge_endpoint_a.size() == 8);
         CHECK(diamond.edge_endpoint_b.size() == 8);
         CHECK(diamond.edge_midpoints.size() == 8);
-        CHECK(diamond.edge_distances.size() == 8);
+        CHECK(diamond.edge_lengths.size() == 8);
         CHECK(diamond.edge_normals.size() == 8);
         // CHECK(diamond.edge_areas.size() == );
         // CHECK(1.f < diamond.edge_average_distance && diamond.edge_average_distance < sqrt(2.f));
@@ -119,7 +119,7 @@ TEST_CASE( "Grid correctness", "[Grid]" ) {
         CHECK(diamond.arrow_endpoint_to.size() == 16);
         CHECK(diamond.arrow_midpoints.size() == 16);
         CHECK(diamond.arrow_offsets.size() == 16);
-        CHECK(diamond.arrow_distances.size() == 16);
+        CHECK(diamond.arrow_lengths.size() == 16);
         CHECK(diamond.arrow_normals.size() == 16);
         // CHECK(diamond.arrow_areas.size() == );
         // CHECK(1.f < diamond.arrow_average_distance && diamond.arrow_average_distance < sqrt(2.f));
@@ -164,7 +164,7 @@ TEST_CASE( "Grid nontriviality", "[Grid]" ) {
         CHECK(many::sum(many::abs(many::get_x(tetrahedron.edge_endpoint_a))) > 0.01f);
         CHECK(many::sum(many::abs(many::get_x(tetrahedron.edge_endpoint_b))) > 0.01f);
         CHECK(many::sum(many::abs(many::get_x(tetrahedron.edge_midpoints))) > 0.01f);
-        CHECK(many::sum(many::abs(tetrahedron.edge_distances)) > 0.01f);
+        CHECK(many::sum(many::abs(tetrahedron.edge_lengths)) > 0.01f);
         CHECK(many::sum(many::abs(many::get_x(tetrahedron.edge_normals))) > 0.01f);
         // CHECK(many::sum(many::abs(tetrahedron.edge_areas)) > 0.01f);
         
@@ -177,7 +177,7 @@ TEST_CASE( "Grid nontriviality", "[Grid]" ) {
         CHECK(many::sum(many::abs(many::get_x(tetrahedron.arrow_endpoint_to))) > 0.01f);
         CHECK(many::sum(many::abs(many::get_x(tetrahedron.arrow_midpoints))) > 0.01f);
         CHECK(many::sum(many::abs(many::get_x(tetrahedron.arrow_offsets))) > 0.01f);
-        CHECK(many::sum(many::abs(tetrahedron.arrow_distances)) > 0.01f);
+        CHECK(many::sum(many::abs(tetrahedron.arrow_lengths)) > 0.01f);
         CHECK(many::sum(many::abs(many::get_x(tetrahedron.arrow_normals))) > 0.01f);
         // CHECK(tetrahedron.arrow_areas[2] > 0.01f);
 
