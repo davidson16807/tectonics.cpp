@@ -1,20 +1,24 @@
 
 #include <time.h>       /* time_t, struct tm, difftime, time, mktime */
-#include <random>           // rngs
+#include <signal.h>     // signal
+#include <execinfo.h>   // backtrace
+#include <unistd.h>     // STDERR_FILENO
+#include <random>       // rngs
 
 #define GLM_FORCE_PURE      // disable SIMD support for glm so we can work with webassembly
 #include <glm/vec3.hpp>               // *vec3
 
 #include <many/many.hpp>  
 #include <many/string_cast.hpp>  
+#include <many/morphologic.hpp>  
 #include <many/glm/glm.hpp>         // *vec*s
 #include <many/glm/string_cast.hpp>  
 #include <many/glm/convenience.hpp> //  operators, etc.
 
 #include <rasters/mesh.hpp>
-#include <rasters/types.hpp>
 #include <rasters/string_cast.hpp>  
 #include <rasters/random.hpp>  
+#include <rasters/morphologic.hpp>
 #include <rasters/glm/glm.hpp>
 #include <rasters/glm/string_cast.hpp>  
 #include <rasters/glm/vector_calculus.hpp>
@@ -25,8 +29,24 @@ using namespace glm;
 using namespace many;
 using namespace rasters;
 
+void handler(int sig) {
+      void *array[10];
+      size_t size;
+
+      // get void*'s for all entries on the stack
+      size = backtrace(array, 10);
+
+      // print out all the frames to stderr
+      fprintf(stderr, "Error: signal %d:\n", sig);
+      backtrace_symbols_fd(array, size, STDERR_FILENO);
+      exit(1);
+}
+
 int main(int argc, char const *argv[])
 {
+    signal(SIGSEGV, handler);   // install our error handler
+    signal(SIGABRT, handler);   // install our error handler
+
     /* 
     "diamond" is a simple 2d grid for testing raster operations 
      that do not require spatial awareness (e.g. arithmetic on scalar fields)
@@ -37,8 +57,8 @@ int main(int argc, char const *argv[])
         \|/ 
          4   
     */
-    std::shared_ptr<Grid> diamond = 
-        std::make_shared<Grid>(
+    Grid diamond = 
+        Grid(
             vec3s({
                     vec3( 0, 0, 0),
                     vec3( 1, 0, 0),
