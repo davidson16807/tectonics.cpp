@@ -42,7 +42,7 @@ namespace many
 		tmany(const tmany<T>& a)  : values(a.values) {}
 
 		// convenience constructor for vectors
-		explicit tmany(std::vector<T> vector) : values(vector.begin(), vector.end())
+		explicit tmany(std::vector<T> vector) : values(vector)
 		{
 		}
 
