@@ -121,14 +121,20 @@ namespace many
 	template <class T>
 	void get(const tmany<T>& a, const tmany<unsigned int>& ids, tmany<T>& out )
 	{
+		assert(ids.size() == out.size());
 		for (unsigned int i = 0; i < ids.size(); ++i)
 		{
+			assert(0 <= ids[i]);
+			assert(ids[i] < a.size());
+			assert(!std::isinf(ids[i]));
+			assert(!std::isnan(ids[i]));
 			out[i] = a[ids[i]];
 		}
 	}
 	template <class T>
 	void get(const tmany<T>& a, const tmany<bool>& mask, tmany<T>& out )
 	{
+		assert(a.size()  == mask.size());
 		int out_i = 0;
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -153,12 +159,18 @@ namespace many
 	{
 		for (unsigned int i = 0; i < ids.size(); ++i)
 		{
+			
+			assert(0 <= ids[i]);
+			assert(ids[i] < a.size());
+			assert(!std::isinf(ids[i]));
+			assert(!std::isnan(ids[i]));
 			out[ids[i]] = a;
 		}
 	}
 	template <class T>
 	void fill(tmany<T>& out, const tmany<bool>& mask, const T a )
 	{
+		assert(out.size() == mask.size());
 		for (unsigned int i = 0; i < out.size(); ++i)
 		{
 			out[i] = mask[i]? a : out[i];
@@ -192,14 +204,22 @@ namespace many
 	template <class T>
 	void copy(tmany<T>& out, const tmany<unsigned int>& ids, const tmany<T>& a )
 	{
+		assert(ids.size() == a.size());
 		for (unsigned int i = 0; i < ids.size(); ++i)
 		{
+			
+			assert(0 <= ids[i]);
+			assert(ids[i] < a.size());
+			assert(!std::isinf(ids[i]));
+			assert(!std::isnan(ids[i]));
 			out[ids[i]] = a[ids[i]];
 		}
 	}
 	template <class T>
 	void copy(tmany<T>& out, const tmany<bool>& mask, const tmany<T>& a )
 	{
+		assert(out.size() == mask.size());
+		assert(out.size() == a.size());
 		for (unsigned int i = 0; i < out.size(); ++i)
 		{
 			out[i] = mask[i]? a[i] : out[i];
@@ -215,8 +235,14 @@ namespace many
 	template <class T>
 	void set(tmany<T>& out, const tmany<unsigned int>& ids, const tmany<T>& a )
 	{
+		assert(ids.size() == a.size());
 		for (unsigned int i = 0; i < ids.size(); ++i)
 		{
+			
+			assert(0 <= ids[i]);
+			assert(ids[i] < a.size());
+			assert(!std::isinf(ids[i]));
+			assert(!std::isnan(ids[i]));
 			out[ids[i]] = a[i];
 		}
 	}
@@ -231,6 +257,7 @@ namespace many
 	template <class T1, class Tout, typename F>
 	inline void transform(const tmany<T1>& a, F f, tmany<Tout>& out)
 	{
+		assert(a.size() == out.size());
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out[i] = f(a[i]);
@@ -252,6 +279,8 @@ namespace many
 	template <class T1, class T2, class Tout, typename F>
 	inline void transform(const tmany<T1>& a, const tmany<T2>& b, F f, tmany<Tout>& out)
 	{
+		assert(a.size() == out.size());
+		assert(b.size() == out.size());
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out[i] = f(a[i], b[i]);
@@ -260,6 +289,7 @@ namespace many
 	template <class T1, class T2, class Tout, typename F>
 	inline void transform(const tmany<T1>& a, const T2 b, F f, tmany<Tout>& out)
 	{
+		assert(a.size() == out.size());
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out[i] = f(a[i], b);
@@ -268,6 +298,7 @@ namespace many
 	template <class T1, class T2, class Tout, typename F>
 	inline void transform(const T1 a, const tmany<T2>& b, F f, tmany<Tout>& out)
 	{
+		assert(b.size() == out.size());
 		for (unsigned int i = 0; i < b.size(); ++i)
 		{
 			out[i] = f(a, b[i]);
@@ -288,6 +319,9 @@ namespace many
 	template <class T1, class T2, class T3, class Tout, typename F>
 	inline void transform(const tmany<T1>& a, const tmany<T2>& b, const tmany<T3>& c, F f, tmany<Tout>& out)
 	{
+		assert(a.size() == out.size());
+		assert(b.size() == out.size());
+		assert(c.size() == out.size());
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out[i] = f(a[i], b[i], c[i]);
@@ -296,6 +330,8 @@ namespace many
 	template <class T1, class T2, class T3, class Tout, typename F>
 	inline void transform(const tmany<T1>& a, const tmany<T2>& b, const T3 c, F f, tmany<Tout>& out)
 	{
+		assert(a.size() == out.size());
+		assert(b.size() == out.size());
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out[i] = f(a[i], b[i], c);
@@ -304,6 +340,8 @@ namespace many
 	template <class T1, class T2, class T3, class Tout, typename F>
 	inline void transform(const tmany<T1>& a, const T2 b, const tmany<T3>& c, F f, tmany<Tout>& out)
 	{
+		assert(a.size() == out.size());
+		assert(c.size() == out.size());
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out[i] = f(a[i], b, c[i]);
@@ -312,6 +350,7 @@ namespace many
 	template <class T1, class T2, class T3, class Tout, typename F>
 	inline void transform(const tmany<T1>& a, const T2 b, const T3 c, F f, tmany<Tout>& out)
 	{
+		assert(a.size() == out.size());
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out[i] = f(a[i], b, c);
@@ -320,6 +359,8 @@ namespace many
 	template <class T1, class T2, class T3, class Tout, typename F>
 	inline void transform(const T1 a, const tmany<T2>& b, const tmany<T3>& c, F f, tmany<Tout>& out)
 	{
+		assert(b.size() == out.size());
+		assert(c.size() == out.size());
 		for (unsigned int i = 0; i < b.size(); ++i)
 		{
 			out[i] = f(a, b[i], c[i]);
@@ -328,6 +369,7 @@ namespace many
 	template <class T1, class T2, class T3, class Tout, typename F>
 	inline void transform(const T1 a, const tmany<T2>& b, const T3 c, F f, tmany<Tout>& out)
 	{
+		assert(b.size() == out.size());
 		for (unsigned int i = 0; i < b.size(); ++i)
 		{
 			out[i] = f(a, b[i], c);
@@ -336,6 +378,7 @@ namespace many
 	template <class T1, class T2, class T3, class Tout, typename F>
 	inline void transform(const T1 a, const T2 b, const tmany<T3>& c, F f, tmany<Tout>& out)
 	{
+		assert(c.size() == out.size());
 		for (unsigned int i = 0; i < c.size(); ++i)
 		{
 			out[i] = f(a, b, c[i]);
