@@ -43,10 +43,11 @@ namespace rasters {
 		explicit SpheroidGrid(const many::vec3s& vertices, const many::uvec3s& faces)
 			: Grid(vertices, faces),
 			  voronoi(vertices, 
-					min(arrow_lengths)*vertices_per_cartesian_grid_cell, 
-					max(arrow_lengths)*vertices_per_sphere_grid_cell
+					min(arrow_lengths / 8.f), 
+					max(arrow_lengths * 8.f)
 				)
 		{
+
 		}
 	};
 }

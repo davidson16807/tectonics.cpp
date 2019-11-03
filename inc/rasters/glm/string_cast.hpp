@@ -64,7 +64,7 @@ namespace rasters
 				z = sin(lat);
 				r = sqrt(1.f-z*z);
 				pos = vec3(r*sin(lon), r*cos(lon), z);
-				id = grid.voronoi.nearest_id(pos);
+				id = grid.voronoi.get_value(pos);
 				if ( !(0 <= id && id < a.size()) )
 				{
 					out += "X";

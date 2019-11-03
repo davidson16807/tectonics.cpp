@@ -194,49 +194,6 @@ SpheroidGrid octahedron = SpheroidGrid(meshes::octahedron.vertices, meshes::octa
 */
 SpheroidGrid icosahedron = SpheroidGrid(meshes::icosahedron.vertices, meshes::icosahedron.faces);
 
-CartesianGridCellList cell_list(
-        normalize(vec3s({
-                        vec3( 1, 0, 0),
-                        vec3( 0, 1, 0),
-                        vec3( 0, 0, 1),
-                        vec3(-1, 0, 0),
-                        vec3( 0,-1, 0),
-                        vec3( 0, 0,-1),
-                        vec3(-1,-1,-1),
-                        vec3( 1,-1,-1),
-                        vec3(-1, 1,-1),
-                        vec3( 1, 1,-1),
-                        vec3(-1,-1, 1),
-                        vec3( 1,-1, 1),
-                        vec3(-1, 1, 1),
-                        vec3( 1, 1, 1),
-                        vec3( 1, 1, 1)
-                    })),
-        10./100.
-    );
-TEST_CASE( "CartesianGridCellList.nearest_id() purity", "[rasters]" ) {
-    SECTION("CartesianGridCellList.nearest_id() must be called repeatedly without changing the output"){
-        CHECK(cell_list.nearest_id(vec3(1,0,0)) == cell_list.nearest_id(vec3(1,0,0)));
-    }
-}
-TEST_CASE( "CartesianGridCellList.nearest_id() happy path", "[rasters]" ) {
-    SECTION("CartesianGridCellList.nearest_id() must return the appropriate id when answer is obvious"){
-        CHECK( cell_list.nearest_id(normalize(vec3( 1, 0, 0))) == 0  );
-        CHECK( cell_list.nearest_id(normalize(vec3( 0, 1, 0))) == 1  );
-        CHECK( cell_list.nearest_id(normalize(vec3( 0, 0, 1))) == 2  );
-        CHECK( cell_list.nearest_id(normalize(vec3(-1, 0, 0))) == 3  );
-        CHECK( cell_list.nearest_id(normalize(vec3( 0,-1, 0))) == 4  );
-        CHECK( cell_list.nearest_id(normalize(vec3( 0, 0,-1))) == 5  );
-        CHECK( cell_list.nearest_id(normalize(vec3(-1,-1,-1))) == 6  );
-        CHECK( cell_list.nearest_id(normalize(vec3( 1,-1,-1))) == 7  );
-        CHECK( cell_list.nearest_id(normalize(vec3(-1, 1,-1))) == 8  );
-        CHECK( cell_list.nearest_id(normalize(vec3( 1, 1,-1))) == 9  );
-        CHECK( cell_list.nearest_id(normalize(vec3(-1,-1, 1))) == 10 );
-        CHECK( cell_list.nearest_id(normalize(vec3( 1,-1, 1))) == 11 );
-        CHECK( cell_list.nearest_id(normalize(vec3(-1, 1, 1))) == 12 );
-        CHECK( cell_list.nearest_id(normalize(vec3( 1, 1, 1))) == 13 );
-    }
-}
 SpheroidGridVoronoi voronoi(
         normalize(vec3s({
                         vec3( 1, 0, 0),
@@ -258,35 +215,35 @@ SpheroidGridVoronoi voronoi(
         1./100.,
         10./100.
     );
-TEST_CASE( "SpheroidGridVoronoi.nearest_id() purity", "[rasters]" ) {
-    SECTION("SpheroidGridVoronoi.nearest_id() must be called repeatedly without changing the output"){
-        CHECK(voronoi.nearest_id(vec3(1,0,0)) == voronoi.nearest_id(vec3(1,0,0)));
+TEST_CASE( "SpheroidGridVoronoi.get_value() purity", "[rasters]" ) {
+    SECTION("SpheroidGridVoronoi.get_value() must be called repeatedly without changing the output"){
+        CHECK(voronoi.get_value(vec3(1,0,0)) == voronoi.get_value(vec3(1,0,0)));
     }
 }
-TEST_CASE( "SpheroidGridVoronoi.nearest_id() happy path", "[rasters]" ) {
-    SECTION("SpheroidGridVoronoi.nearest_id() must return the appropriate id when answer is obvious"){
-        CHECK(  voronoi.nearest_id(normalize(vec3( 1, 0, 0))) == 0  );
-        CHECK(  voronoi.nearest_id(normalize(vec3( 0, 1, 0))) == 1  );
-        CHECK(  voronoi.nearest_id(normalize(vec3( 0, 0, 1))) == 2  );
-        CHECK(  voronoi.nearest_id(normalize(vec3(-1, 0, 0))) == 3  );
-        CHECK(  voronoi.nearest_id(normalize(vec3( 0,-1, 0))) == 4  );
-        CHECK(  voronoi.nearest_id(normalize(vec3( 0, 0,-1))) == 5  );
-        CHECK(  voronoi.nearest_id(normalize(vec3(-1,-1,-1))) == 6  );
-        CHECK(  voronoi.nearest_id(normalize(vec3( 1,-1,-1))) == 7  );
-        CHECK(  voronoi.nearest_id(normalize(vec3(-1, 1,-1))) == 8  );
-        CHECK(  voronoi.nearest_id(normalize(vec3( 1, 1,-1))) == 9  );
-        CHECK(  voronoi.nearest_id(normalize(vec3(-1,-1, 1))) == 10 );
-        CHECK(  voronoi.nearest_id(normalize(vec3( 1,-1, 1))) == 11 );
-        CHECK(  voronoi.nearest_id(normalize(vec3(-1, 1, 1))) == 12 );
-        CHECK(  voronoi.nearest_id(normalize(vec3( 1, 1, 1))) == 13 );
+TEST_CASE( "SpheroidGridVoronoi.get_value() happy path", "[rasters]" ) {
+    SECTION("SpheroidGridVoronoi.get_value() must return the appropriate id when answer is obvious"){
+        CHECK(  voronoi.get_value(normalize(vec3( 1, 0, 0))) == 0  );
+        CHECK(  voronoi.get_value(normalize(vec3( 0, 1, 0))) == 1  );
+        CHECK(  voronoi.get_value(normalize(vec3( 0, 0, 1))) == 2  );
+        CHECK(  voronoi.get_value(normalize(vec3(-1, 0, 0))) == 3  );
+        CHECK(  voronoi.get_value(normalize(vec3( 0,-1, 0))) == 4  );
+        CHECK(  voronoi.get_value(normalize(vec3( 0, 0,-1))) == 5  );
+        CHECK(  voronoi.get_value(normalize(vec3(-1,-1,-1))) == 6  );
+        CHECK(  voronoi.get_value(normalize(vec3( 1,-1,-1))) == 7  );
+        CHECK(  voronoi.get_value(normalize(vec3(-1, 1,-1))) == 8  );
+        CHECK(  voronoi.get_value(normalize(vec3( 1, 1,-1))) == 9  );
+        CHECK(  voronoi.get_value(normalize(vec3(-1,-1, 1))) == 10 );
+        CHECK(  voronoi.get_value(normalize(vec3( 1,-1, 1))) == 11 );
+        CHECK(  voronoi.get_value(normalize(vec3(-1, 1, 1))) == 12 );
+        CHECK(  voronoi.get_value(normalize(vec3( 1, 1, 1))) == 13 );
     }
 }
-TEST_CASE( "SpheroidGridVoronoi.nearest_ids() purity", "[rasters]" ) {
-    SECTION("SpheroidGridVoronoi.nearest_id() must be called repeatedly without changing the output"){
-        // CHECK(voronoi.nearest_ids(vec3(1,0,0)) == voronoi.nearest_ids(vec3(1,0,0)));
+TEST_CASE( "SpheroidGridVoronoi.get_values() purity", "[rasters]" ) {
+    SECTION("SpheroidGridVoronoi.get_value() must be called repeatedly without changing the output"){
+        // CHECK(voronoi.get_values(vec3(1,0,0)) == voronoi.get_values(vec3(1,0,0)));
     }
 }
-TEST_CASE( "SpheroidGridVoronoi.nearest_ids() happy path", "[rasters]" ) {
+TEST_CASE( "SpheroidGridVoronoi.get_values() happy path", "[rasters]" ) {
 
 }
 
