@@ -23,8 +23,8 @@ test-rasters: test/test_rasters.cpp
 	$(CPP) -std=c++17 -o bin/test.out test/test_rasters.cpp $(DEVFLAGS) -I inc/ && chmod a+x bin/test.out && ./bin/test.out
 
 spike-strata: spike/spike_strata.cpp
-	$(CPP) -std=c++17 -o bin/spike.out spike/spike_strata.cpp  $(DEVFLAGS) -I inc/ && chmod a+x bin/spike.out && ./bin/spike.out
+	$(CPP) -std=c++17 -o bin/spike.out spike/spike_strata.cpp  $(DEVFLAGS) -I inc/ && chmod a+x bin/spike.out && time ./bin/spike.out
 spike-rasters: spike/spike_rasters.cpp
-	$(CPP) -std=c++17 -o bin/spike.out spike/spike_rasters.cpp $(DEVFLAGS) -I inc/ && chmod a+x bin/spike.out && ./bin/spike.out
+	$(CPP) -std=c++17 -o bin/spike.out spike/spike_rasters.cpp $(DEVFLAGS) -I inc/ && chmod a+x bin/spike.out && time ./bin/spike.out
 spike-meshes: spike/spike_meshes.cpp
-	$(CPP) -std=c++17 -o bin/spike.out spike/spike_meshes.cpp  $(DEVFLAGS) -I inc/ && chmod a+x bin/spike.out && ./bin/spike.out
+	$(CPP) -std=c++17 -o bin/spike.out spike/spike_meshes.cpp  $(DEVFLAGS) -I inc/ && chmod a+x bin/spike.out && time ./bin/spike.out

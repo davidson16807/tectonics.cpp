@@ -171,6 +171,7 @@ namespace rasters
 			{
 				for (unsigned int side_id = 0; side_id < OCTAHEDRON_SIDE_COUNT; ++side_id)
 				{
+					if (dot(OCTAHEDRON_SIDE_Z[side_id], points[point_id]) < (1/sqrt(3)) - max_cell_width) { continue; }
 					conceptual_id = temp.get_conceptual_id(points[point_id], side_id);
 					temp.get_ref(conceptual_id + ivec3(-1,-1, 0)).emplace_back(point_id, points[point_id]);
 					temp.get_ref(conceptual_id + ivec3(-1, 0, 0)).emplace_back(point_id, points[point_id]);
@@ -195,17 +196,15 @@ namespace rasters
 					{
 						midpoint   = get_midpoint(xi2d, yi2d, side_id);
 						std::vector<std::pair<int, glm::vec3>>& candidates = temp.get_ref(midpoint);
-						if (candidates.size() > 0)
-						{
-							nearest = *std::min_element(
-								candidates.begin(), 
-								candidates.end(), 
-								[midpoint](std::pair<int, glm::vec3> a, std::pair<int, glm::vec3> b){
-									return glm::distance(a.second, midpoint) < glm::distance(b.second, midpoint);
-								}
-							);
-							get_ref(get_conceptual_id(xi2d, yi2d, side_id)) = nearest.first;
-						}
+						if (candidates.size() < 1) { continue; }
+						nearest = *std::min_element(
+							candidates.begin(), 
+							candidates.end(), 
+							[midpoint](std::pair<int, glm::vec3> a, std::pair<int, glm::vec3> b){
+								return glm::distance(a.second, midpoint) < glm::distance(b.second, midpoint);
+							}
+						);
+						get_ref(get_conceptual_id(xi2d, yi2d, side_id)) = nearest.first;
 					}
 				}
 			}

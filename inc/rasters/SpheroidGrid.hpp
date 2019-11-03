@@ -44,7 +44,7 @@ namespace rasters {
 			: Grid(vertices, faces),
 			  voronoi(vertices, 
 					min(arrow_lengths / 8.f), 
-					max(arrow_lengths * 8.f)
+					max(arrow_lengths * 1.f)
 				)
 		{
 
