@@ -195,6 +195,7 @@ namespace rasters
 					for (int yi2d = 0; yi2d < dimensions.y; ++yi2d)
 					{
 						midpoint   = get_midpoint(xi2d, yi2d, side_id);
+						if (dot(OCTAHEDRON_SIDE_Z[side_id], midpoint) < (1/sqrt(3)) - max_cell_width) { continue; }
 						std::vector<std::pair<int, glm::vec3>>& candidates = temp.get_ref(midpoint);
 						conceptual_id = get_conceptual_id(xi2d, yi2d, side_id);
 						get_ref(conceptual_id) = -1;
@@ -210,6 +211,7 @@ namespace rasters
 					}
 				}
 			}
+			std::cout << "populated" << std::endl;
 		}
 	};
 }
