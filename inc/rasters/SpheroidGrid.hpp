@@ -30,9 +30,6 @@ namespace rasters {
 	//  but it must be trivial to map lat long coordinates to vertices and determine surface normals from vertices.
 	class SpheroidGrid : public Grid
 	{
-	private:
-		const float vertices_per_sphere_grid_cell = 8.f;
-		const float vertices_per_cartesian_grid_cell = 1/8.f;
 	public:
 		SpheroidGridVoronoi voronoi;
 
