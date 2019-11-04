@@ -196,15 +196,17 @@ namespace rasters
 					{
 						midpoint   = get_midpoint(xi2d, yi2d, side_id);
 						std::vector<std::pair<int, glm::vec3>>& candidates = temp.get_ref(midpoint);
+						conceptual_id = get_conceptual_id(xi2d, yi2d, side_id);
+						get_ref(conceptual_id) = -1;
 						if (candidates.size() < 1) { continue; }
 						nearest = *std::min_element(
 							candidates.begin(), 
 							candidates.end(), 
-							[midpoint](std::pair<int, glm::vec3> a, std::pair<int, glm::vec3> b){
+							[midpoint](std::pair<int, glm::vec3> a, std::pair<int, glm::vec3> b) -> bool {
 								return glm::distance(a.second, midpoint) < glm::distance(b.second, midpoint);
 							}
 						);
-						get_ref(get_conceptual_id(xi2d, yi2d, side_id)) = nearest.first;
+						get_ref(conceptual_id) = nearest.first;
 					}
 				}
 			}
