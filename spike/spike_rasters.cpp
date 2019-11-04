@@ -202,7 +202,7 @@ int main(int argc, char const *argv[])
     std::string str_raster_v3 = rasters::to_string(octahedron, raster_v3);
     std::cout << str_raster_v3 << std::endl;
 
-    std::mt19937 generator(time(0));
+    std::mt19937 generator(2);
     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
