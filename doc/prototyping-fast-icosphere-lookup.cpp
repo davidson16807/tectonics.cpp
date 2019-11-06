@@ -1,6 +1,9 @@
-	uint get_vertex_tree_id(const uint N, const vec3s& face_midpoints, const uints& face_vertex_ids, const std::vector<uint> vertex_id_map)
-	{
-		vec3 x = points[point];
+	uint get_vertex_tree_id(
+		const vec3 x, 
+		const uint N, 
+		const vec3s& face_midpoints, 
+		const uints& face_vertex_ids
+	) {
 		uint id = std::min_element(
 			face_midpoints.begin(), 
 			face_midpoints.end(), 
@@ -38,11 +41,13 @@
 				id += 2;
 			}
 		}
-		return vertex_id_map[id];
+		return id;
 	}
 
-	std::vector<uint> get_vertex_id_map(const uint N, const std::unordered_map<glm::uvec2, uint>& midpoints)
-	{
+	std::vector<uint> get_vertex_id_map(
+		const uint N, 
+		const std::unordered_map<glm::uvec2, uint>& midpoints
+	) {
 		std::vector<uint> vertex_id_map(12*pow(3,N+1), -1);
 		for (int i = 12*pow(3,N); i < 12*pow(3,N+1); ++i)
 		{
@@ -51,8 +56,11 @@
 		return vertex_id_map;
 	}
 
-	uint get_vertex_id(const uint vertex_tree_id, const uint N, const std::unordered_map<glm::uvec2, uint>& midpoints) 
-	{
+	uint get_vertex_id(
+		const uint vertex_tree_id, 
+		const uint N, 
+		const std::unordered_map<glm::uvec2, uint>& midpoints
+	) {
 		float i = vertex_tree_id / pow(3.f,N);
 		uint i_n = trunc(i);
 		uvec3 face = face_vertex_ids[i_n];

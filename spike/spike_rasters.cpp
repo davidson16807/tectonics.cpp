@@ -42,6 +42,54 @@ void handler(int sig) {
       exit(1);
 }
 
+uint get_vertex_tree_id(
+    const vec3 x, 
+    const uint N, 
+    const vec3s&  face_midpoints, 
+    const uvec3s& face_vertex_ids,
+    const vec3s&  vertex_positions
+) {
+    uint id = std::min_element(
+        face_midpoints.begin(), 
+        face_midpoints.end(), 
+        [x](glm::vec3 a, glm::vec3 b) -> bool {
+            return glm::distance(a, x) < glm::distance(b, x);
+        }
+    ) - face_midpoints.begin();
+    uvec3 face = face_vertex_ids[id];
+    vec3 a = vertex_positions[face.x];
+    vec3 b = vertex_positions[face.y];
+    vec3 c = vertex_positions[face.z];
+    float a_dx, b_dx, c_dx, min_dx;
+    for (uint n = 0; n < N; ++n)
+    {
+        id *= 3;
+        a_dx = glm::distance(a,x);
+        b_dx = glm::distance(b,x);
+        c_dx = glm::distance(c,x);
+        min_dx = min(a_dx, min(b_dx, c_dx));
+        if (a_dx == min_dx)
+        {
+            b = glm::normalize((a+b)/2.f);
+            c = glm::normalize((a+c)/2.f);
+            id += 0;
+        } 
+        else if (b_dx == min_dx)
+        {
+            a = glm::normalize((b+a)/2.f);
+            c = glm::normalize((b+c)/2.f);
+            id += 1;
+        }
+        else if (c_dx == min_dx)
+        {
+            a = glm::normalize((c+a)/2.f);
+            b = glm::normalize((c+b)/2.f);
+            id += 2;
+        }
+    }
+    return id;
+}
+
 int main(int argc, char const *argv[])
 {
     signal(SIGSEGV, handler);   // install our error handler
@@ -204,29 +252,39 @@ int main(int argc, char const *argv[])
 
     std::mt19937 generator(2);
     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
-    icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-    icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-    icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-    icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-    icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-    icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-    std::cout << icosphere_mesh.vertices.size() << std::endl;
+    std::unordered_map<glm::uvec2, unsigned int> midpoints {};
+    icosphere_mesh = meshes::subdivide(icosphere_mesh, midpoints); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
     SpheroidGrid icosphere(icosphere_mesh.vertices, icosphere_mesh.faces);
+
+    std::cout << "starting" << std::endl;
+    for (int i = 0; i < 40000; ++i)
+    {
+        get_vertex_tree_id(
+            normalize(vec3(1,1,1)),     // x
+            100,                          // N
+            icosphere.face_midpoints,   // 
+            icosphere.face_vertex_ids,  // 
+            icosphere.vertex_positions  //
+        );
+    }
+    std::cout << "ending" << std::endl;
+
+    std::cout << icosphere_mesh.vertices.size() << std::endl;
     floats raster_b = floats(icosphere_mesh.vertices.size());
     random(icosphere, generator, raster_b, 10, 0.0001f);
     std::string str_raster_b = to_string(icosphere, raster_b);
     std::cout << str_raster_b << std::endl;
 
-    floats raster_c = floats(icosphere_mesh.vertices.size());
-    random(icosphere, generator, raster_c);
-    std::string str_raster_c = to_string(icosphere, raster_c);
-    std::cout << str_raster_c << std::endl;
+    // floats raster_c = floats(icosphere_mesh.vertices.size());
+    // random(icosphere, generator, raster_c);
+    // std::string str_raster_c = to_string(icosphere, raster_c);
+    // std::cout << str_raster_c << std::endl;
 
-    floats gradient_in = raster_c;
-    vec3s gradient_out = vec3s(icosphere_mesh.vertices.size());
-    std::cout << "calculating gradient" << std::endl;
-    rasters::gradient(icosphere, gradient_in, gradient_out);
-    std::cout << rasters::to_string(icosphere, gradient_out) << std::endl;
+    // floats gradient_in = raster_c;
+    // vec3s gradient_out = vec3s(icosphere_mesh.vertices.size());
+    // std::cout << "calculating gradient" << std::endl;
+    // rasters::gradient(icosphere, gradient_in, gradient_out);
+    // std::cout << rasters::to_string(icosphere, gradient_out) << std::endl;
 
     // std::mt19937 randomizer;
     // std::cout << randomizer() << " " << randomizer() << std::endl;

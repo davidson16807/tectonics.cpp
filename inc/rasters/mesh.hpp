@@ -141,11 +141,10 @@ namespace rasters
 		            })
 			);
 
-		mesh subdivide(const mesh& input)
+		mesh subdivide(const mesh& input, std::unordered_map<glm::uvec2, unsigned int> midpoints)
 		{
 			std::vector<glm::vec3>  vertices;
 			std::vector<glm::uvec3> faces;
-			std::unordered_map<glm::uvec2, unsigned int> midpoints {};
 			copy(input.vertices.begin(), input.vertices.end(), back_inserter(vertices));
 			
 			glm::uvec3 face(0,0,0);
@@ -179,6 +178,12 @@ namespace rasters
 			}
 			return mesh(many::vec3s(vertices), many::uvec3s(faces));
 		}
+		inline mesh subdivide(const mesh& input)
+		{
+			std::unordered_map<glm::uvec2, unsigned int> midpoints {};
+			return subdivide(input, midpoints);
+		}
+
 	}
 }
 
