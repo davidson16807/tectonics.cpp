@@ -49,13 +49,14 @@ uint get_vertex_tree_id(
     const uvec3s& face_vertex_ids,
     const vec3s&  vertex_positions
 ) {
-    uint id = std::min_element(
+    uint id = std::max_element(
         face_midpoints.begin(), 
         face_midpoints.end(), 
         [x](glm::vec3 a, glm::vec3 b) -> bool {
             return glm::dot(glm::normalize(a), glm::normalize(x)) < glm::dot(glm::normalize(b), glm::normalize(x));
         }
     ) - face_midpoints.begin();
+    // std::cout << "face: " << id << std::endl;
     uvec3 face = face_vertex_ids[id];
     vec3 a = vertex_positions[face.x];
     vec3 b = vertex_positions[face.y];
@@ -64,10 +65,10 @@ uint get_vertex_tree_id(
     for (uint n = 0; n < N; ++n)
     {
         id *= 3;
-        vec3 o = (a+b+c)/3.f;
-        a_dx = glm::dot(glm::normalize(a-o),glm::normalize(x-o));
-        b_dx = glm::dot(glm::normalize(b-o),glm::normalize(x-o));
-        c_dx = glm::dot(glm::normalize(c-o),glm::normalize(x-o));
+        a_dx = glm::distance((a),(x));
+        b_dx = glm::distance((b),(x));
+        c_dx = glm::distance((c),(x));
+        // std::cout << n << " " << a_dx << " " << b_dx << " " << c_dx << std::endl;
         min_dx = min(a_dx, min(b_dx, c_dx));
         if (a_dx == min_dx)
         {
@@ -294,41 +295,44 @@ int main(int argc, char const *argv[])
     icosphere_mesh = meshes::subdivide(icosphere_mesh, midpoints); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
     SpheroidGrid icosphere(icosphere_mesh.vertices, icosphere_mesh.faces);
 
-    std::cout << "starting" << std::endl;
-    for (int i = 0; i < 40000; ++i)
+    // std::cout << "starting" << std::endl;
+    // for (int i = 0; i < 40000; ++i)
+    // {
+    //     get_vertex_tree_id(
+    //         normalize(vec3(1,1,1)),     // x
+    //         100,                        // N
+    //         icosphere.face_midpoints,   // 
+    //         icosphere.face_vertex_ids,  // 
+    //         icosphere.vertex_positions  // 
+    //     );
+    // }
+    // std::cout << "ending: " << std::endl;
+
+    for (int vertex_id = 0; vertex_id < icosphere.vertex_count; ++vertex_id)
     {
-        get_vertex_tree_id(
-            normalize(vec3(1,1,1)),     // x
-            100,                        // N
-            icosphere.face_midpoints,   // 
-            icosphere.face_vertex_ids,  // 
-            icosphere.vertex_positions  // 
-        );
+        std::cout << "vertex_id: " << vertex_id << std::endl;
+        uint vertex_tree_id = get_vertex_tree_id(
+                icosphere.vertex_positions[vertex_id], // x
+                1,                                     // N
+                icosphere.face_midpoints,              // 
+                icosphere.face_vertex_ids,             // 
+                icosphere.vertex_positions             // 
+            );
+        // std::cout << "get_vertex_tree_id: " << vertex_tree_id << std::endl;
+
+        std::cout << "get_vertex_id: " << get_vertex_id(
+                vertex_tree_id,
+                1,
+                icosphere.face_vertex_ids,  // 
+                midpoints
+            ) << std::endl;
+
     }
-    std::cout << "ending: " << std::endl;
-
-    std::cout << "vertex_id: " << std::endl;
-    uint vertex_tree_id = get_vertex_tree_id(
-            icosphere.vertex_positions[19], // x
-            1,                              // N
-            icosphere.face_midpoints,       // 
-            icosphere.face_vertex_ids,      // 
-            icosphere.vertex_positions      // 
-        );
-    std::cout << "get_vertex_tree_id: " << vertex_tree_id << std::endl;
-
-    std::cout << "get_vertex_id: " << get_vertex_id(
-            vertex_tree_id,
-            1,
-            icosphere.face_vertex_ids,  // 
-            midpoints
-        ) << std::endl;
-
-    std::cout << icosphere_mesh.vertices.size() << std::endl;
-    floats raster_b = floats(icosphere_mesh.vertices.size());
-    random(icosphere, generator, raster_b, 10, 0.0001f);
-    std::string str_raster_b = to_string(icosphere, raster_b);
-    std::cout << str_raster_b << std::endl;
+    // std::cout << icosphere_mesh.vertices.size() << std::endl;
+    // floats raster_b = floats(icosphere_mesh.vertices.size());
+    // random(icosphere, generator, raster_b, 10, 0.0001f);
+    // std::string str_raster_b = to_string(icosphere, raster_b);
+    // std::cout << str_raster_b << std::endl;
 
     // floats raster_c = floats(icosphere_mesh.vertices.size());
     // random(icosphere, generator, raster_c);
