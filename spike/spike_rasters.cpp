@@ -53,7 +53,7 @@ uint get_vertex_tree_id(
         face_midpoints.begin(), 
         face_midpoints.end(), 
         [x](glm::vec3 a, glm::vec3 b) -> bool {
-            return glm::distance(a, x) < glm::distance(b, x);
+            return glm::dot(glm::normalize(a), glm::normalize(x)) < glm::dot(glm::normalize(b), glm::normalize(x));
         }
     ) - face_midpoints.begin();
     uvec3 face = face_vertex_ids[id];
@@ -64,16 +64,17 @@ uint get_vertex_tree_id(
     for (uint n = 0; n < N; ++n)
     {
         id *= 3;
-        a_dx = glm::distance(a,x);
-        b_dx = glm::distance(b,x);
-        c_dx = glm::distance(c,x);
+        vec3 o = (a+b+c)/3.f;
+        a_dx = glm::dot(glm::normalize(a-o),glm::normalize(x-o));
+        b_dx = glm::dot(glm::normalize(b-o),glm::normalize(x-o));
+        c_dx = glm::dot(glm::normalize(c-o),glm::normalize(x-o));
         min_dx = min(a_dx, min(b_dx, c_dx));
         if (a_dx == min_dx)
         {
             b = glm::normalize((a+b)/2.f);
             c = glm::normalize((a+c)/2.f);
             id += 0;
-        } 
+        }
         else if (b_dx == min_dx)
         {
             a = glm::normalize((b+a)/2.f);
@@ -90,6 +91,43 @@ uint get_vertex_tree_id(
     return id;
 }
 
+uint get_vertex_id(
+    const uint vertex_tree_id, 
+    const uint N, 
+    const uvec3s& face_vertex_ids,
+    std::unordered_map<glm::uvec2, uint>& midpoints
+) {
+    float i = vertex_tree_id / pow(3.f,N);
+    uint i_n = trunc(i);
+    uvec3 face = face_vertex_ids[i_n];
+    uint a = face.x;
+    uint b = face.y;
+    uint c = face.z;
+    for (int n = 0; n < N; ++n)
+    {
+        i -= i_n;
+        i *= 3;
+        i_n = trunc(i);
+        if (i_n == 0)
+        {
+            b = midpoints[glm::uvec2(a, b)];
+            c = midpoints[glm::uvec2(a, c)];
+        } 
+        else if (i_n == 1)
+        {
+            a = midpoints[glm::uvec2(b, a)];
+            c = midpoints[glm::uvec2(b, c)];
+        }
+        else if (i_n == 2)
+        {
+            a = midpoints[glm::uvec2(c, a)];
+            b = midpoints[glm::uvec2(c, b)];
+        }
+    }
+    if      (i_n == 0)   { return a; } 
+    else if (i_n == 1)   { return b; } 
+    else  /*(i_n == 2)*/ { return c; } 
+}
 int main(int argc, char const *argv[])
 {
     signal(SIGSEGV, handler);   // install our error handler
@@ -261,13 +299,30 @@ int main(int argc, char const *argv[])
     {
         get_vertex_tree_id(
             normalize(vec3(1,1,1)),     // x
-            100,                          // N
+            100,                        // N
             icosphere.face_midpoints,   // 
             icosphere.face_vertex_ids,  // 
-            icosphere.vertex_positions  //
+            icosphere.vertex_positions  // 
         );
     }
-    std::cout << "ending" << std::endl;
+    std::cout << "ending: " << std::endl;
+
+    std::cout << "vertex_id: " << std::endl;
+    uint vertex_tree_id = get_vertex_tree_id(
+            icosphere.vertex_positions[19], // x
+            1,                              // N
+            icosphere.face_midpoints,       // 
+            icosphere.face_vertex_ids,      // 
+            icosphere.vertex_positions      // 
+        );
+    std::cout << "get_vertex_tree_id: " << vertex_tree_id << std::endl;
+
+    std::cout << "get_vertex_id: " << get_vertex_id(
+            vertex_tree_id,
+            1,
+            icosphere.face_vertex_ids,  // 
+            midpoints
+        ) << std::endl;
 
     std::cout << icosphere_mesh.vertices.size() << std::endl;
     floats raster_b = floats(icosphere_mesh.vertices.size());
@@ -289,6 +344,5 @@ int main(int argc, char const *argv[])
     // std::mt19937 randomizer;
     // std::cout << randomizer() << " " << randomizer() << std::endl;
     // std::cout << randomizer;
-
 
 }
