@@ -310,7 +310,7 @@ namespace rasters {
 	    		face_ids_set = arrow_face_ids_map[edge_vertex_ids[i]];
 	    		if (face_ids_set.size() == 2)
 	    		{
-	    			edge_face_ids[i] = uvec2(*(face_ids_set.begin()), *(face_ids_set.begin()++));
+	    			edge_face_ids[i] = uvec2(*(face_ids_set.begin()), *std::next(face_ids_set.begin()));
 	    		}
 	    	}
 			for (uint i=0; i<arrow_vertex_ids.size(); i++)
@@ -318,7 +318,7 @@ namespace rasters {
 	    		face_ids_set = arrow_face_ids_map[arrow_vertex_ids[i]];
 	    		if (face_ids_set.size() == 2)
 	    		{
-	    			arrow_face_ids[i] = uvec2(*(face_ids_set.begin()), *(face_ids_set.begin()++));
+	    			arrow_face_ids[i] = uvec2(*(face_ids_set.begin()), *std::next(face_ids_set.begin()));
 	    		}
 	    	}
 
@@ -354,6 +354,7 @@ namespace rasters {
 			vec3s  arrow_dual_offset_cross(2*edge_count);
 			floats arrow_dual_areas       (2*edge_count);
 
+			normalize(arrow_offsets,                                arrow_dual_normals      );
 			get     (face_midpoints,         arrow_face_id_a,       arrow_dual_endpoint_a   );
 			get     (face_midpoints,         arrow_face_id_b,       arrow_dual_endpoint_b   );
 			distance(arrow_dual_endpoint_a,  arrow_dual_endpoint_b, arrow_dual_lengths      );
