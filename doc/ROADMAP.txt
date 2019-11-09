@@ -1,68 +1,67 @@
-many
-	reference output functions
-	return output functions
-	operators
-	to_string
-CartesianGridCellList
-SpheroidGridVoronoiGrid
-Grid
-SpheroidGrid
-LayeredSpheroidGrid
-rasters
-	to_string
-	random
-	vector calculus
-		gradient
-		divergence
-		laplacian
-		curl
-	morphology
-		dilate
-		erode
-		opening
-		closing
-		black_hat
-		white_hat
-		padding
-		margin
-	image segmentation
-	scalar transport
-academics
-	constants
-	units
-	sphere geometry
-	emission
-	reflectance
-	scattering
-	density
-		plane, constant density
-		plane, exponential dropoff
-		sphere, constant density
-		sphere, exponential dropoff
-		ring, gaussian dropoff
-		centrifuge, exponential dropoff
-	column density
-		plane, constant density
-		plane, exponential dropoff
-		sphere, constant density
-		sphere, exponential dropoff
-		ring, gaussian dropoff
-		centrifuge, exponential dropoff
-	orbital mechanics
+	many
+x		reference output functions
+x		return output functions
+x		operators
+x		to_string
+x	SpheroidGridVoronoiGrid
+x	Grid
+x	SpheroidGrid
+	LayeredSpheroidGrid
+	rasters
+x		to_string
+x		random
+		vector calculus
+x			gradient
+x			divergence
+			laplacian
+x			curl
+		morphology
+x			dilate
+x			erode
+x			opening
+x			closing
+x			black_hat
+x			white_hat
+x			padding
+x			margin
+		image segmentation
+		scalar transport
+	academics
+x		constants
+x		units
+x		sphere geometry
+x		emission
+x		reflectance
+x		scattering
+		density
+x			plane, constant density
+			plane, exponential dropoff
+			sphere, constant density
+x			sphere, exponential dropoff
+			ring, gaussian dropoff
+			centrifuge, exponential dropoff
+		column density
+x			plane, constant density
+			plane, exponential dropoff
+			sphere, constant density
+x			sphere, exponential dropoff
+			ring, gaussian dropoff
+			centrifuge, exponential dropoff
+		orbital mechanics
 
-mass pool models
-	star
-	world
-	ocean
-	atmosphere
-stratigraphy
-	stratum_mass_pool
-	stratum
-	strata
-	crust
-light propagation
-	spectrum
+	mass pool models
+		star
+		world
+		ocean
+		atmosphere
+	stratigraphy
+		stratum_mass_pool
+		stratum
+		strata
+		crust
+	light propagation
+		spectrum
 
 
-orrery
-	CelestialSystem
+	orrery
+		CelestialSystem

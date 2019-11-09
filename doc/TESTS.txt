@@ -9,9 +9,6 @@ x	consistency
 meshes::subdivide
 x	purity
 x	correct size bounds
-rasters::CartesianGridCellList
-x	purity
-x	happy path
 rasters::SpheroidGridVoronoi
 x	purity
 x	happy path
@@ -68,10 +65,10 @@ x			happy path
 	vector calculus: https://en.wikipedia.org/wiki/Vector_calculus_identities#First_derivative_identities
 		gradient
 			purity
-			translation invariant
-			rotation invariant
-			resolution invariant
-			distributive over addition
+			translation invariant, ∇F = unshift(∇(shift(F)))
+			rotation invariant,    ∇F = unrotate(∇(rotate(F)))
+			resolution invariant   blur(∇F) = ∇(blur(F))
+			distributive over addition, ∇(a+b) = ∇a + ∇b
 			∇(aB) = a∇B + B∇a
 		divergence
 			purity
