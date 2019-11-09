@@ -240,6 +240,12 @@ int main(int argc, char const *argv[])
     rasters::curl(icosphere, curl_in, curl_out);
     std::cout << rasters::to_string(icosphere, curl_out) << std::endl;
 
+    floats laplacian_in = raster_c;
+    floats laplacian_out = floats(icosphere_mesh.vertices.size());
+    std::cout << "calculating laplacian" << std::endl;
+    rasters::laplacian(icosphere, laplacian_in, laplacian_out);
+    std::cout << rasters::to_string(icosphere, laplacian_out) << std::endl;
+
     // std::mt19937 randomizer;
     // std::cout << randomizer() << " " << randomizer() << std::endl;
     // std::cout << randomizer;

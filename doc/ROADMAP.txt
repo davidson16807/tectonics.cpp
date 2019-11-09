@@ -13,7 +13,7 @@ x		random
 		vector calculus
 x			gradient
 x			divergence
-			laplacian
+x			laplacian
 x			curl
 		morphology
 x			dilate

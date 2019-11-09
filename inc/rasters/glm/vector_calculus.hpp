@@ -175,4 +175,54 @@ namespace rasters
 		tmany<glm::vec<3,T,Q>> arrow_rejection    (grid.arrow_count);
 		curl(grid, vector_field, out, arrow_differential, arrow_rejection);
 	}
+	/*
+	This function computes the laplacian of a surface. 
+	The laplacian can be thought of as the average difference across space, per unit area. 
+
+	So for a 2d cartesian grid: 
+	∇⋅∇f = ∇⋅[ (f(x+dx) - f(x-dx)) / 2dx,  
+	           (f(x+dy) - f(x-dy)) / 2dy  ]
+	∇⋅∇f = d/dx (f(x+dx) - f(x-dx)) / 2dx  
+	     + d/dy (f(x+dy) - f(x-dy)) / 2dy
+	∇⋅∇f =  1/4 (f(x+2dx) - f(x)) / dxdx  
+	     +  1/4 (f(x-2dx) - f(x)) / dxdx  
+	     +  1/4 (f(x+2dy) - f(x)) / dydy
+	     +  1/4 (f(x-2dy) - f(x)) / dydy
+	 
+	I haven't demonstrated it formally, but by analogy to the divergence theorem
+	you can probably see the laplacian on an unstructured mesh 
+	as the average difference between neighbors, 
+	weighted by the sections of the boundary owned by those neighbors, 
+	then divided by the area that's enclosed by that boundary
+	*/
+	template<typename T>
+	void laplacian(
+		const SpheroidGrid& grid, 
+		const tmany<T>& scalar_field, 
+		tmany<T>& out, 
+		tmany<T>& arrow_differential, 
+		tmany<T>& weighted_arrow_differential 
+	) {
+		assert(scalar_field.size()                == grid.vertex_count);
+		assert(out.size()                         == grid.vertex_count);
+		assert(arrow_differential.size()          == grid.arrow_count );
+		assert(weighted_arrow_differential.size() == grid.arrow_count );
+		uvec2 arrow;
+		for (unsigned int i = 0; i < grid.arrow_vertex_ids.size(); ++i)
+		{
+			arrow                 = grid.arrow_vertex_ids[i]; 
+			arrow_differential[i] = scalar_field[arrow.y] - scalar_field[arrow.x]; // differential across dual of the arrow
+		}
+		mult     (arrow_differential, grid.arrow_dual_lengths, weighted_arrow_differential); // differential weighted by dual length
+		fill     (out,                0.f);
+		aggregate_into(weighted_arrow_differential, grid.arrow_vertex_id_from, [](T a, T b){ return a+b; }, out);  // weight average difference across neighbors
+		div      (out,                grid.vertex_dual_areas,    out);             // laplacian
+	}
+	template<typename T>
+	void laplacian(const SpheroidGrid& grid, const tmany<T>& scalar_field, tmany<T>& out)
+	{
+		tmany<T> arrow_differential          (grid.arrow_count);
+		tmany<T> weighted_arrow_differential (grid.arrow_count);
+		laplacian(grid, scalar_field, out, arrow_differential, weighted_arrow_differential);
+	}
 }
