@@ -324,11 +324,11 @@ namespace rasters {
 
 			get_x	(edge_vertex_ids,                      edge_vertex_id_a);
 			get_y	(edge_vertex_ids,                      edge_vertex_id_b);
-			get_x	(edge_face_ids,                        edge_face_id_a);
-			get_y	(edge_face_ids,                        edge_face_id_b);
+			get_x	(edge_face_ids,                        edge_face_id_a  );
+			get_y	(edge_face_ids,                        edge_face_id_b  );
 			get 	(vertex_positions,   edge_vertex_id_a, edge_endpoint_a );
 			get 	(vertex_positions,   edge_vertex_id_b, edge_endpoint_b );
-			distance(edge_endpoint_a,    edge_endpoint_b,  edge_lengths  );
+			distance(edge_endpoint_a,    edge_endpoint_b,  edge_lengths    );
 			add 	(edge_endpoint_a,    edge_endpoint_b,  edge_midpoints  ); edge_midpoints /= 2.f;
 			add 	(get(vertex_normals, edge_vertex_id_b), 
 				     get(vertex_normals, edge_vertex_id_a), 
@@ -341,7 +341,7 @@ namespace rasters {
 			get_y	(arrow_face_ids,                          arrow_face_id_b    );
 			get 	(vertex_positions,   arrow_vertex_id_from,arrow_endpoint_from);
 			get 	(vertex_positions,   arrow_vertex_id_to,  arrow_endpoint_to  );
-			distance(arrow_endpoint_from,arrow_endpoint_to,   arrow_lengths    );
+			distance(arrow_endpoint_from,arrow_endpoint_to,   arrow_lengths      );
 			sub 	(arrow_endpoint_to,  arrow_endpoint_from, arrow_offsets      );
 			add 	(arrow_endpoint_to,  arrow_endpoint_from, arrow_midpoints    ); arrow_midpoints /= 2.f;
 			add 	(get(vertex_normals, arrow_vertex_id_from), 

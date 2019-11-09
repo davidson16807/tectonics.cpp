@@ -228,6 +228,18 @@ int main(int argc, char const *argv[])
     rasters::gradient(icosphere, gradient_in, gradient_out);
     std::cout << rasters::to_string(icosphere, gradient_out) << std::endl;
 
+    vec3s divergence_in = gradient_out;
+    floats divergence_out = floats(icosphere_mesh.vertices.size());
+    std::cout << "calculating divergence" << std::endl;
+    rasters::divergence(icosphere, divergence_in, divergence_out);
+    std::cout << rasters::to_string(icosphere, divergence_out) << std::endl;
+
+    vec3s curl_in = gradient_out;
+    vec3s curl_out = vec3s(icosphere_mesh.vertices.size());
+    std::cout << "calculating curl" << std::endl;
+    rasters::curl(icosphere, curl_in, curl_out);
+    std::cout << rasters::to_string(icosphere, curl_out) << std::endl;
+
     // std::mt19937 randomizer;
     // std::cout << randomizer() << " " << randomizer() << std::endl;
     // std::cout << randomizer;
