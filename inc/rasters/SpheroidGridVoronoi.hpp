@@ -67,19 +67,19 @@ namespace rasters
 		{
 		}
 		explicit SpheroidGridLookup(
-			const float min_cell_width
+			const float cell_width
 		) : 
-			dimensions((int)ceil(2./min_cell_width)+1),
-			cell_width(min_cell_width),
+			dimensions((int)ceil(2./cell_width)+1),
+			cell_width(cell_width),
 			cells(cell_count(), T(0))
 		{
 		}
 		explicit SpheroidGridLookup(
-			const float min_cell_width,
+			const float cell_width,
 			const T default_value
 		) : 
-			dimensions((int)ceil(2./min_cell_width)+1),
-			cell_width(min_cell_width),
+			dimensions((int)ceil(2./cell_width)+1),
+			cell_width(cell_width),
 			cells(cell_count(), default_value)
 		{
 		}
@@ -167,21 +167,23 @@ namespace rasters
 	public:
 		explicit SpheroidGridVoronoi(
 			const vec3s& points, 
-			const float min_cell_width,
-			const float max_cell_width
+			const float cell_width,
+			const float max_vertex_distance
 		  )	: 
-			SpheroidGridLookup<uint>(min_cell_width, 0)
+			SpheroidGridLookup<uint>(cell_width, 0)
 		{
 			std::cout << "populating" << std::endl;
 			// populate a slower lookup based on a list of vectors and their ids in `points`
 			std::vector<std::pair<int, float>> temp(cells.size(), std::pair<int, float>(-1, std::numeric_limits<float>::infinity()));
-			int vicinity_radius = (max_cell_width/min_cell_width)/2 + 1;
+			int vicinity_radius = (max_vertex_distance/cell_width)/2 + 1;
 			for (uint point_id = 0; point_id < points.size(); ++point_id)
 			{
 				for (uint side_id = 0; side_id < OCTAHEDRON_SIDE_COUNT; ++side_id)
 				{
-					if (dot(OCTAHEDRON_SIDE_Z[side_id], points[point_id]) < (1/sqrt(3)) - max_cell_width) { continue; }
-					ivec3 center_id = get_conceptual_id(points[point_id], side_id);
+					if (dot(OCTAHEDRON_SIDE_Z[side_id], points[point_id]) < (1/sqrt(3)) - max_vertex_distance) { continue; }
+					glm::ivec3 center_id = get_conceptual_id(points[point_id], side_id);
+					float center_distance = glm::distance(points[point_id], get_midpoint(center_id));
+					if (center_distance > max_vertex_distance) { continue; }
 					for (int xi2d = -vicinity_radius; xi2d < vicinity_radius; ++xi2d)
 					{
 						for (int yi2d = -vicinity_radius; yi2d < vicinity_radius; ++yi2d)
@@ -189,7 +191,7 @@ namespace rasters
 							glm::ivec3 offset_id = center_id + glm::ivec3(xi2d, yi2d, 0);
 							glm::vec3 midpoint = get_midpoint(offset_id);
 							float point_distance = glm::distance(points[point_id], midpoint);
-							if (point_distance > max_cell_width) { continue; }
+							if (point_distance > max_vertex_distance) { continue; }
 							float min_distance = temp[get_memory_id(offset_id)].second;
 							if (point_distance >= min_distance) { continue; }
 							temp[get_memory_id(offset_id)].first  = point_id;
