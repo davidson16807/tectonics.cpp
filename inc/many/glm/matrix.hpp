@@ -21,12 +21,21 @@ namespace many{
 
 
 	template<typename T, glm::qualifier Q>
+	void mult(const glm::mat<4,4,T,Q>& A, const tmany<glm::vec<3,T,Q>>& b, tmany<glm::vec<3,T,Q>>& out)
+	{
+		constexpr T one = T(1.);
+		for (unsigned int i = 0; i < b.size(); ++i)
+		{
+			out[i] = A * glm::vec<4,T,Q>(b[i], one);
+		}
+	}
+	template<typename T, glm::qualifier Q>
 	void mult(const glm::mat<4,3,T,Q>& A, const tmany<glm::vec<3,T,Q>>& b, tmany<glm::vec<3,T,Q>>& out)
 	{
 		constexpr T one = T(1.);
 		for (unsigned int i = 0; i < b.size(); ++i)
 		{
-			out[i] = A * vec4(b[i], one);
+			out[i] = A * glm::vec<4,T,Q>(b[i], one);
 		}
 	}
 }
