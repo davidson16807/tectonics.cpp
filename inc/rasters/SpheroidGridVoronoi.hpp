@@ -25,10 +25,10 @@ namespace rasters
 	class SpheroidGridLookup
 	{
 	protected:
-		static const vec3s OCTAHEDRON_SIDE_Z;
-		static const vec3s OCTAHEDRON_SIDE_X;
-		static const vec3s OCTAHEDRON_SIDE_Y;
 		static constexpr int OCTAHEDRON_SIDE_COUNT = 8;	// number of sides on the data cube
+		static const std::array<vec3, OCTAHEDRON_SIDE_COUNT> OCTAHEDRON_SIDE_Z;
+		static const std::array<vec3, OCTAHEDRON_SIDE_COUNT> OCTAHEDRON_SIDE_X;
+		static const std::array<vec3, OCTAHEDRON_SIDE_COUNT> OCTAHEDRON_SIDE_Y;
 
 		ivec2 dimensions; // dimensions of the grid on each side of the data cube 
 		float cell_width;
@@ -139,26 +139,41 @@ namespace rasters
 
 
 	template <class T>
-	const vec3s SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z = normalize(
-		vec3s {
-			vec3(-1,-1,-1),
-			vec3( 1,-1,-1),
-			vec3(-1, 1,-1),
-			vec3( 1, 1,-1),
-			vec3(-1,-1, 1),
-			vec3( 1,-1, 1),
-			vec3(-1, 1, 1),
-			vec3( 1, 1, 1)
-		} 
-	);
+	const std::array<vec3, SpheroidGridLookup<T>::OCTAHEDRON_SIDE_COUNT> SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z =
+		{
+			glm::normalize(glm::vec3(-1,-1,-1)),
+			glm::normalize(glm::vec3( 1,-1,-1)),
+			glm::normalize(glm::vec3(-1, 1,-1)),
+			glm::normalize(glm::vec3( 1, 1,-1)),
+			glm::normalize(glm::vec3(-1,-1, 1)),
+			glm::normalize(glm::vec3( 1,-1, 1)),
+			glm::normalize(glm::vec3(-1, 1, 1)),
+			glm::normalize(glm::vec3( 1, 1, 1))
+		};
 	template <class T>
-	const vec3s SpheroidGridLookup<T>::OCTAHEDRON_SIDE_X = normalize(
-		cross(SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z, vec3(0,0,1))
-	);
+	const std::array<vec3, SpheroidGridLookup<T>::OCTAHEDRON_SIDE_COUNT> SpheroidGridLookup<T>::OCTAHEDRON_SIDE_X =
+		{
+			glm::normalize(glm::cross(SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z[0], vec3(0,0,1))),
+			glm::normalize(glm::cross(SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z[1], vec3(0,0,1))),
+			glm::normalize(glm::cross(SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z[2], vec3(0,0,1))),
+			glm::normalize(glm::cross(SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z[3], vec3(0,0,1))),
+			glm::normalize(glm::cross(SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z[4], vec3(0,0,1))),
+			glm::normalize(glm::cross(SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z[5], vec3(0,0,1))),
+			glm::normalize(glm::cross(SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z[6], vec3(0,0,1))),
+			glm::normalize(glm::cross(SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z[7], vec3(0,0,1)))
+		};
 	template <class T>
-	const vec3s SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Y = normalize(
-		cross(SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z, SpheroidGridLookup<T>::OCTAHEDRON_SIDE_X)
-	);
+	const std::array<vec3, SpheroidGridLookup<T>::OCTAHEDRON_SIDE_COUNT> SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Y =
+		{
+			glm::normalize(glm::cross(SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z[0], SpheroidGridLookup<T>::OCTAHEDRON_SIDE_X[0])),
+			glm::normalize(glm::cross(SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z[1], SpheroidGridLookup<T>::OCTAHEDRON_SIDE_X[1])),
+			glm::normalize(glm::cross(SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z[2], SpheroidGridLookup<T>::OCTAHEDRON_SIDE_X[2])),
+			glm::normalize(glm::cross(SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z[3], SpheroidGridLookup<T>::OCTAHEDRON_SIDE_X[3])),
+			glm::normalize(glm::cross(SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z[4], SpheroidGridLookup<T>::OCTAHEDRON_SIDE_X[4])),
+			glm::normalize(glm::cross(SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z[5], SpheroidGridLookup<T>::OCTAHEDRON_SIDE_X[5])),
+			glm::normalize(glm::cross(SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z[6], SpheroidGridLookup<T>::OCTAHEDRON_SIDE_X[6])),
+			glm::normalize(glm::cross(SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z[7], SpheroidGridLookup<T>::OCTAHEDRON_SIDE_X[7]))
+		};
 
 	// performs cached O(1) nearest neighbor lookups on the surface of a unit sphere
 	// using a SpheroidGridLookup of vectors to optimize initialization
@@ -173,9 +188,16 @@ namespace rasters
 			SpheroidGridLookup<uint>(cell_width, 0)
 		{
 			std::cout << "populating" << std::endl;
-			// populate a slower lookup based on a list of vectors and their ids in `points`
+			// Populate a map of nearest neighbor ids and their distances
+			// Since the nearest neighbor is guaranteed not to exceed max_vertex_distance,
+			//  we traverse over the list of neighbors and populate all cells within that distance.
+			// This is way faster than traversing over all cells to find the nearest neighbor
 			std::vector<std::pair<int, float>> temp(cells.size(), std::pair<int, float>(-1, std::numeric_limits<float>::infinity()));
 			int vicinity_radius = (max_vertex_distance/cell_width)/2 + 1;
+			glm::ivec3 offset_id;
+			glm::vec3 midpoint;
+			float point_distance;
+			float min_distance;
 			for (uint point_id = 0; point_id < points.size(); ++point_id)
 			{
 				for (uint side_id = 0; side_id < OCTAHEDRON_SIDE_COUNT; ++side_id)
@@ -188,11 +210,11 @@ namespace rasters
 					{
 						for (int yi2d = -vicinity_radius; yi2d < vicinity_radius; ++yi2d)
 						{
-							glm::ivec3 offset_id = center_id + glm::ivec3(xi2d, yi2d, 0);
-							glm::vec3 midpoint = get_midpoint(offset_id);
-							float point_distance = glm::distance(points[point_id], midpoint);
+							offset_id = center_id + glm::ivec3(xi2d, yi2d, 0);
+							midpoint = get_midpoint(offset_id);
+							point_distance = glm::distance(points[point_id], midpoint);
 							if (point_distance > max_vertex_distance) { continue; }
-							float min_distance = temp[get_memory_id(offset_id)].second;
+							min_distance = temp[get_memory_id(offset_id)].second;
 							if (point_distance >= min_distance) { continue; }
 							temp[get_memory_id(offset_id)].first  = point_id;
 							temp[get_memory_id(offset_id)].second = point_distance;
@@ -200,6 +222,9 @@ namespace rasters
 					}
 				}
 			}
+			// We won't need to use nearest neighbor distances any more, 
+			//  and we want to reduce the footprint of memory that is accessed out-of-order,
+			//  so we populate a final map containing only nearest neighbor ids
 			for (uint i = 0; i < cells.size(); ++i)
 			{
 				cells[i] = temp[i].first;

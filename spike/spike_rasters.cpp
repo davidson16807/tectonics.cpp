@@ -210,6 +210,7 @@ int main(int argc, char const *argv[])
     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+    icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
     std::cout << icosphere_mesh.vertices.size() << std::endl;
     SpheroidGrid icosphere(icosphere_mesh.vertices, icosphere_mesh.faces);
     floats raster_b = floats(icosphere_mesh.vertices.size());
