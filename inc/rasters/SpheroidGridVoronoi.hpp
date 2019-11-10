@@ -32,9 +32,7 @@ namespace rasters
 
 		ivec2 dimensions; // dimensions of the grid on each side of the data cube 
 		float cell_width;
-	public:
 		std::vector<T> cells;
-	protected:
 
 		int cell_count() const {
 			return OCTAHEDRON_SIDE_COUNT * dimensions.x * dimensions.y;
@@ -174,34 +172,35 @@ namespace rasters
 		  )	: 
 			SpheroidGridLookup<uint>(min_cell_width, 0)
 		{
+			std::cout << "populating" << std::endl;
 			// populate a slower lookup based on a list of vectors and their ids in `points`
-			SpheroidGridLookup<std::pair<int, float>> temp(min_cell_width, std::pair<int, float>(-1, std::numeric_limits<float>::infinity()));
-			int vicinity_width = max_cell_width/min_cell_width;
+			std::vector<std::pair<int, float>> temp(cells.size(), std::pair<int, float>(-1, std::numeric_limits<float>::infinity()));
+			int vicinity_radius = (max_cell_width/min_cell_width)/2 + 1;
 			for (uint point_id = 0; point_id < points.size(); ++point_id)
 			{
 				for (uint side_id = 0; side_id < OCTAHEDRON_SIDE_COUNT; ++side_id)
 				{
 					if (dot(OCTAHEDRON_SIDE_Z[side_id], points[point_id]) < (1/sqrt(3)) - max_cell_width) { continue; }
 					ivec3 center_id = get_conceptual_id(points[point_id], side_id);
-					for (int xi2d = -vicinity_width; xi2d < vicinity_width; ++xi2d)
+					for (int xi2d = -vicinity_radius; xi2d < vicinity_radius; ++xi2d)
 					{
-						for (int yi2d = -vicinity_width; yi2d < vicinity_width; ++yi2d)
+						for (int yi2d = -vicinity_radius; yi2d < vicinity_radius; ++yi2d)
 						{
 							glm::ivec3 offset_id = center_id + glm::ivec3(xi2d, yi2d, 0);
 							glm::vec3 midpoint = get_midpoint(offset_id);
 							float point_distance = glm::distance(points[point_id], midpoint);
 							if (point_distance > max_cell_width) { continue; }
-							float min_distance = temp.get_ref(offset_id).second;
+							float min_distance = temp[get_memory_id(offset_id)].second;
 							if (point_distance >= min_distance) { continue; }
-							temp.get_ref(offset_id).first  = point_id;
-							temp.get_ref(offset_id).second = point_distance;
+							temp[get_memory_id(offset_id)].first  = point_id;
+							temp[get_memory_id(offset_id)].second = point_distance;
 						}
 					}
 				}
 			}
 			for (uint i = 0; i < cells.size(); ++i)
 			{
-				cells[i] = temp.cells[i].first;
+				cells[i] = temp[i].first;
 			}
 			std::cout << "populated" << std::endl;
 		}
