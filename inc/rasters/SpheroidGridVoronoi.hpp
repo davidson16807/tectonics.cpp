@@ -172,7 +172,6 @@ namespace rasters
 		  )	: 
 			SpheroidGridLookup<uint>(cell_width, 0)
 		{
-			std::cout << "populating" << std::endl;
 			// populate a slower lookup based on a list of vectors and their ids in `points`
 			std::vector<std::pair<int, float>> temp(cells.size(), std::pair<int, float>(-1, std::numeric_limits<float>::infinity()));
 			int vicinity_radius = (max_vertex_distance/cell_width)/2 + 1;
@@ -204,7 +203,6 @@ namespace rasters
 			{
 				cells[i] = temp[i].first;
 			}
-			std::cout << "populated" << std::endl;
 		}
 	};
 }

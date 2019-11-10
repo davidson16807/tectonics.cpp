@@ -46,6 +46,10 @@ namespace rasters {
 		{
 
 		}
+		void get_values(const vec3s& points, tmany<uint>& out) const
+		{
+			voronoi.get_values(points, out);
+		}
 	};
 }
 
