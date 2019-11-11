@@ -15,7 +15,6 @@ namespace rasters
 {
 	namespace
 	{
-		using namespace glm;
 		using namespace many;
 	}
 
@@ -30,7 +29,7 @@ namespace rasters
 		static const vec3s OCTAHEDRON_SIDE_Y;
 		static constexpr int OCTAHEDRON_SIDE_COUNT = 8;	// number of sides on the data cube
 
-		ivec2 dimensions; // dimensions of the grid on each side of the data cube 
+		glm::ivec2 dimensions; // dimensions of the grid on each side of the data cube 
 		float cell_width;
 		std::vector<T> cells;
 
@@ -42,11 +41,11 @@ namespace rasters
 				  + std::clamp(xi2d,    0, dimensions.x-1)          * dimensions.y 
 				  + std::clamp(yi2d,    0, dimensions.y-1);
 		}
-		int get_memory_id(const ivec3 conceptual_id) const {
+		int get_memory_id(const glm::ivec3 conceptual_id) const {
 			return get_memory_id(conceptual_id.x, conceptual_id.y, conceptual_id.z);
 		}
 
-		vec3 get_midpoint(const int xi2d, const int yi2d, const int side_id) const 
+		glm::vec3 get_midpoint(const int xi2d, const int yi2d, const int side_id) const 
 		{
 			// get position of the cell that's projected onto the 2d grid
 			float x2d = (float)xi2d * cell_width - 1.;
@@ -58,7 +57,7 @@ namespace rasters
 				   OCTAHEDRON_SIDE_Y[side_id] * y2d +
 				   OCTAHEDRON_SIDE_Z[side_id] * z2d ;
 		}
-		vec3 get_midpoint(const ivec3 conceptual_id) const 
+		glm::vec3 get_midpoint(const glm::ivec3 conceptual_id) const 
 		{
 			return get_midpoint(conceptual_id.x, conceptual_id.y, conceptual_id.z);
 		}
@@ -84,11 +83,11 @@ namespace rasters
 		{
 		}
 
-		ivec3 get_conceptual_id(const int xi2d, const int yi2d, const int side_id) const
+		glm::ivec3 get_conceptual_id(const int xi2d, const int yi2d, const int side_id) const
 		{
-			return ivec3(xi2d, yi2d, side_id);
+			return glm::ivec3(xi2d, yi2d, side_id);
 		}
-		ivec3 get_conceptual_id(const vec3 point, const int side_id) const
+		glm::ivec3 get_conceptual_id(const glm::vec3 point, const int side_id) const
 		{
 			const double x2d = dot( OCTAHEDRON_SIDE_X[side_id], point );
 			const double y2d = dot( OCTAHEDRON_SIDE_Y[side_id], point );
@@ -96,9 +95,9 @@ namespace rasters
 			const int xi2d = (x2d + 1.) / cell_width;
 			const int yi2d = (y2d + 1.) / cell_width;
 			
-			return ivec3(xi2d, yi2d, side_id);
+			return glm::ivec3(xi2d, yi2d, side_id);
 		}
-		ivec3 get_conceptual_id(const vec3 point) const
+		glm::ivec3 get_conceptual_id(const glm::vec3 point) const
 		{
 			const unsigned int side_id = 
 			  (( point.x > 0) << 0) +
@@ -108,21 +107,21 @@ namespace rasters
 			return get_conceptual_id(point, side_id);
 		}
 
-		T& get_ref(const ivec3 conceptual_id)
+		T& get_ref(const glm::ivec3 conceptual_id)
 		{
 			return cells[get_memory_id(conceptual_id)];
 		}
 
-		T get_value(const ivec3 conceptual_id) const
+		T get_value(const glm::ivec3 conceptual_id) const
 		{
 			return cells[get_memory_id(conceptual_id)];
 		}
-		T& get_ref(const vec3 point)
+		T& get_ref(const glm::vec3 point)
 		{
 			return get_ref(get_conceptual_id(point));
 		}
 
-		T get_value(const vec3 point) const
+		T get_value(const glm::vec3 point) const
 		{
 			return get_value(get_conceptual_id(point));
 		}
@@ -141,19 +140,19 @@ namespace rasters
 	template <class T>
 	const vec3s SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z = normalize(
 		vec3s {
-			vec3(-1,-1,-1),
-			vec3( 1,-1,-1),
-			vec3(-1, 1,-1),
-			vec3( 1, 1,-1),
-			vec3(-1,-1, 1),
-			vec3( 1,-1, 1),
-			vec3(-1, 1, 1),
-			vec3( 1, 1, 1)
+			glm::vec3(-1,-1,-1),
+			glm::vec3( 1,-1,-1),
+			glm::vec3(-1, 1,-1),
+			glm::vec3( 1, 1,-1),
+			glm::vec3(-1,-1, 1),
+			glm::vec3( 1,-1, 1),
+			glm::vec3(-1, 1, 1),
+			glm::vec3( 1, 1, 1)
 		} 
 	);
 	template <class T>
 	const vec3s SpheroidGridLookup<T>::OCTAHEDRON_SIDE_X = normalize(
-		cross(SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z, vec3(0,0,1))
+		cross(SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z, glm::vec3(0,0,1))
 	);
 	template <class T>
 	const vec3s SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Y = normalize(
@@ -179,7 +178,7 @@ namespace rasters
 			{
 				for (uint side_id = 0; side_id < OCTAHEDRON_SIDE_COUNT; ++side_id)
 				{
-					if (dot(OCTAHEDRON_SIDE_Z[side_id], points[point_id]) < (1/sqrt(3)) - max_vertex_distance) { continue; }
+					if (glm::dot(OCTAHEDRON_SIDE_Z[side_id], points[point_id]) < (1/sqrt(3)) - max_vertex_distance) { continue; }
 					glm::ivec3 center_id = get_conceptual_id(points[point_id], side_id);
 					float center_distance = glm::distance(points[point_id], get_midpoint(center_id));
 					if (center_distance > max_vertex_distance) { continue; }
