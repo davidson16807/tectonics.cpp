@@ -27,10 +27,6 @@ namespace rasters
 				many::normalize(u, out);
 				return out;
 			}
-			inline glm::uvec2 edge_id(uint a, uint b)
-			{
-				return glm::uvec2(std::min(a,b), std::max(a,b));
-			}
 		}
 		/*
 		"mesh" is a simple data structure that stores the minimum data needed to represent a well formed 3d mesh
@@ -146,38 +142,150 @@ namespace rasters
 		            })
 			);
 
-		mesh subdivide(const mesh& input)
+		namespace
+		{	
+			inline glm::uvec3 eid(uint a, uint b, uint i)
+			{
+				return glm::uvec3(std::min(a,b), std::max(a,b), i);
+			}
+			inline glm::uvec3 vid(
+				std::unordered_map<glm::uvec2, uint>& vmap,
+				std::unordered_map<glm::uvec3, uint>& emap,
+				std::unordered_map<uint,       uint>& fmap,
+				glm::uvec3 face, 
+				uint i, 
+				uint j
+				uint n
+			){
+				if (i==0 && j==0)
+				{
+					return fmap[face.x];
+				} 
+				if (i==n && j==0)
+				{
+					return fmap[face.y];
+				} 
+				if (i==n && j==n)
+				{
+					return fmap[face.z];
+				} 
+				if (j==0)
+				{
+					return emap[ glm::uvec3(std::min(face.x,face.y), std::max(face.x,face.y), i) ];
+				}
+				if (i==n)
+				{
+					return emap[ glm::uvec3(std::min(face.y,face.z), std::max(face.y,face.z), j) ];
+				}
+				if (i==j)
+				{
+					return emap[ glm::uvec3(std::min(face.x,face.z), std::max(face.x,face.z), i) ];
+				}
+				else 
+				{
+					return vmap[glm::uvec2(i,j)]
+				}
+			}
+		}
+
+		mesh subdivide(const mesh& input, const uint subdivisions_per_edge = 1)
 		{
+			const uint vertices_per_edge(subdivisions_per_edge + 2);
+			const float n(vertices_per_edge-1);
+
 			std::vector<glm::vec3>  vertices;
 			std::vector<glm::uvec3> faces;
-			std::unordered_map<glm::uvec2, unsigned int> midpoints {};
-			copy(input.vertices.begin(), input.vertices.end(), back_inserter(vertices));
+
+			// "vmap" is a map for vertices that are not placed on edges or corners
+			std::unordered_map<glm::uvec2, uint> vmap {};
+			//"emap" is a map for vertices that are placed against the edges of faces
+			// edge vertices must be shared between faces so a special lookup is needed
+			std::unordered_map<glm::uvec3, uint> emap {};
+			//"fmap" is a map for vertices that are placed at corners of faces
+			// face vertices must be shared between several edges so a special lookup is needed
+			std::unordered_map<uint,       uint> fmap {};
 			
 			glm::uvec3 face(0,0,0);
-			for (unsigned int i(0); i < input.faces.size(); ++i)
+			for (uint face_id(0); face_id < input.faces.size(); ++face_id)
 			{
-				face = input.faces[i];
 
-				if (midpoints.find(edge_id(face.x, face.y)) == midpoints.end())
+				face = input.faces[face_id];
+
+				uint ai = face.x;
+				uint bi = face.y;
+				uint ci = face.z;
+
+				uint a = input.vertices[ai];
+				uint b = input.vertices[bi];
+				uint c = input.vertices[ci];
+
+				vmap.clear();
+
+				// POPULATE VERTICES
+				if (fmap.find(ai) == fmap.end())
 				{
-					midpoints[edge_id(face.x, face.y)] = vertices.size();
-					vertices.push_back((vertices[face.x]+vertices[face.y])/2.f);
+					// corner vertex
+					fmap.find(ai) = vertices.size();
+					vertices.push_back(a);
 				}
-				if (midpoints.find(edge_id(face.y, face.z)) == midpoints.end())
+				for (uint i = 1; i < n; ++i)
 				{
-					midpoints[edge_id(face.y, face.z)] = vertices.size();
-					vertices.push_back((vertices[face.y]+vertices[face.z])/2.f);
+					if (emap.find(eid(ai,bi,i)) == emap.end())
+					{
+						// edge vertices, j=0
+						emap[eid(ai,bi,i)] = vertices.size();
+						vertices.push_back(a + (b-a)*i/n + (c-b)*0/n);
+					}
+
+					for (uint j = 1; j < i; ++j)
+					{
+						// center vertices
+						vmap[uvec2(i,j)] = vertices.size();
+						vertices.push_back(a + (b-a)*i/n + (c-b)*j/n);
+					}
+
+					if (emap.find(eid(ai,ci,i)) == emap.end())
+					{
+						// edge vertices, i=j
+						emap[eid(ai,ci,i)] = vertices.size();
+						vertices.push_back(a + (b-a)*i/n + (c-b)*i/n);
+					}
 				}
-				if (midpoints.find(edge_id(face.z, face.x)) == midpoints.end())
+				if (fmap.find(bi) == fmap.end())
 				{
-					midpoints[edge_id(face.z, face.x)] = vertices.size();
-					vertices.push_back((vertices[face.z]+vertices[face.x])/2.f);
+					// corner vertex
+					fmap.find(bi) = vertices.size();
+					vertices.push_back(b);
+				}
+				for (uint j = 1, ; j < n; ++j)
+				{
+					if (emap.find(eid(bi,ci,j)) == emap.end())
+					{
+						// edge vertices, i=vertices_per_edge-1
+						emap[eid(bi,ci,j)] = vertices.size();
+						vertices.push_back(a + (b-a)*n/n + (c-b)*j/n);
+					}
+				}
+				if (fmap.find(ci) == fmap.end())
+				{
+					// corner vertex
+					fmap.find(ci) = vertices.size();
+					vertices.push_back(c);
 				}
 
-				faces.emplace_back(face.x,                             midpoints[edge_id(face.x, face.y)], midpoints[edge_id(face.x, face.z)]);
-				faces.emplace_back(face.y,                             midpoints[edge_id(face.y, face.x)], midpoints[edge_id(face.y, face.z)]);
-				faces.emplace_back(face.z,                             midpoints[edge_id(face.z, face.x)], midpoints[edge_id(face.z, face.y)]);
-				faces.emplace_back(midpoints[edge_id(face.x, face.y)], midpoints[edge_id(face.y, face.z)], midpoints[edge_id(face.z, face.x)]);
+
+				// POPULATE FACES
+				for (uint i = 0; i < vertices_per_edge-1; ++i)
+				{
+					for (uint j = 0; j < i; ++j)
+					{
+						// TODO: fix this
+						face = input.faces[face_id];
+						faces.emplace_back(vid(emap, vmap, face, i,  j),   vid(emap, vmap, face, i+1,j), vid(emap, vmap, face, i,j+1));
+						faces.emplace_back(vid(emap, vmap, face, i+1,j+1), vid(emap, vmap, face, i+1,j), vid(emap, vmap, face, i,j+1));
+					}
+						faces.emplace_back(vid(emap, vmap, face, i,  i),   vid(emap, vmap, face, i+1,i), vid(emap, vmap, face, i,i+1));
+				}
 			}
 			return mesh(many::vec3s(vertices), many::uvec3s(faces));
 		}
