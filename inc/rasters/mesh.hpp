@@ -2,6 +2,7 @@
 
 #include <vector>         	  	 // std::vector
 #include <unordered_map>         // std::unordered_map
+#include <algorithm>             // std::min
 
 #include <glm/vec3.hpp>       	 // *vec3
 #include <many/types.hpp>     	 // floats, etc.
@@ -25,6 +26,10 @@ namespace rasters
 				many::tmany<glm::vec<L,T,Q>> out = many::tmany<glm::vec<L,T,Q>>(u.size());
 				many::normalize(u, out);
 				return out;
+			}
+			inline glm::uvec2 edge_id(uint a, uint b)
+			{
+				return glm::uvec2(std::min(a,b), std::max(a,b));
 			}
 		}
 		/*
@@ -153,29 +158,26 @@ namespace rasters
 			{
 				face = input.faces[i];
 
-				if (midpoints.find(glm::uvec2(face.x, face.y)) == midpoints.end())
+				if (midpoints.find(edge_id(face.x, face.y)) == midpoints.end())
 				{
-					midpoints[glm::uvec2(face.x, face.y)] = vertices.size();
-					midpoints[glm::uvec2(face.y, face.x)] = vertices.size();
+					midpoints[edge_id(face.x, face.y)] = vertices.size();
 					vertices.push_back((vertices[face.x]+vertices[face.y])/2.f);
 				}
-				if (midpoints.find(glm::uvec2(face.y, face.z)) == midpoints.end())
+				if (midpoints.find(edge_id(face.y, face.z)) == midpoints.end())
 				{
-					midpoints[glm::uvec2(face.y, face.z)] = vertices.size();
-					midpoints[glm::uvec2(face.z, face.y)] = vertices.size();
+					midpoints[edge_id(face.y, face.z)] = vertices.size();
 					vertices.push_back((vertices[face.y]+vertices[face.z])/2.f);
 				}
-				if (midpoints.find(glm::uvec2(face.z, face.x)) == midpoints.end())
+				if (midpoints.find(edge_id(face.z, face.x)) == midpoints.end())
 				{
-					midpoints[glm::uvec2(face.z, face.x)] = vertices.size();
-					midpoints[glm::uvec2(face.x, face.z)] = vertices.size();
+					midpoints[edge_id(face.z, face.x)] = vertices.size();
 					vertices.push_back((vertices[face.z]+vertices[face.x])/2.f);
 				}
 
-				faces.emplace_back(face.x,                                midpoints[glm::uvec2(face.x, face.y)], midpoints[glm::uvec2(face.x, face.z)]);
-				faces.emplace_back(face.y,                                midpoints[glm::uvec2(face.y, face.x)], midpoints[glm::uvec2(face.y, face.z)]);
-				faces.emplace_back(face.z,                                midpoints[glm::uvec2(face.z, face.x)], midpoints[glm::uvec2(face.z, face.y)]);
-				faces.emplace_back(midpoints[glm::uvec2(face.x, face.y)], midpoints[glm::uvec2(face.y, face.z)], midpoints[glm::uvec2(face.z, face.x)]);
+				faces.emplace_back(face.x,                             midpoints[edge_id(face.x, face.y)], midpoints[edge_id(face.x, face.z)]);
+				faces.emplace_back(face.y,                             midpoints[edge_id(face.y, face.x)], midpoints[edge_id(face.y, face.z)]);
+				faces.emplace_back(face.z,                             midpoints[edge_id(face.z, face.x)], midpoints[edge_id(face.z, face.y)]);
+				faces.emplace_back(midpoints[edge_id(face.x, face.y)], midpoints[edge_id(face.y, face.z)], midpoints[edge_id(face.z, face.x)]);
 			}
 			return mesh(many::vec3s(vertices), many::uvec3s(faces));
 		}
