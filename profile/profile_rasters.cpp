@@ -148,12 +148,12 @@ int main(int argc, char const *argv[])
     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
     t2 = std::chrono::high_resolution_clock::now();
-    std::cout << "mesh subdivision:    " << std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count() << std::endl;
+    std::cout << "mesh subdivision:    " << std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count() << std::endl;
 
     t1 = std::chrono::high_resolution_clock::now();
     SpheroidGrid icosphere(icosphere_mesh.vertices, icosphere_mesh.faces);
     t2 = std::chrono::high_resolution_clock::now();
-    std::cout << "grid initialization: " << std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count() << std::endl;
+    std::cout << "grid initialization: " << std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count() << std::endl;
     
     vec3s v = vec3s(icosphere.vertex_count);
     mult(glm::rotate(glm::mat4(1.f), glm::radians(30.f), glm::vec3(1.f)), icosphere_mesh.vertices, v);
@@ -162,31 +162,51 @@ int main(int argc, char const *argv[])
     t1 = std::chrono::high_resolution_clock::now();
     icosphere.get_values(v, ids);
     t2 = std::chrono::high_resolution_clock::now();
-    std::cout << "grid lookup:         " << std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count() << std::endl;
+    std::cout << "grid lookup:         " << std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count() << std::endl;
     
     std::mt19937 generator(2);
     floats a = floats(icosphere.vertex_count);
 
     t1 = std::chrono::high_resolution_clock::now();
-    random(icosphere, generator, a, 10, 0.0001f);
+    random(icosphere, generator, a);
     t2 = std::chrono::high_resolution_clock::now();
-    std::cout << "raster generation:   " << std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count() << std::endl;
+    std::cout << "raster generation:   " << std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count() << std::endl;
 
+    vec3s gradient_out = vec3s(icosphere.vertex_count);
+
+    t1 = std::chrono::high_resolution_clock::now();
+    rasters::gradient(icosphere, a, gradient_out);
+    t2 = std::chrono::high_resolution_clock::now();
+    std::cout << "gradient:            " << std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count() << std::endl;
+
+    floats divergence_out = floats(icosphere.vertex_count);
+
+    t1 = std::chrono::high_resolution_clock::now();
+    rasters::divergence(icosphere, v, divergence_out);
+    t2 = std::chrono::high_resolution_clock::now();
+    std::cout << "divergence:          " << std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count() << std::endl;
+
+    vec3s curl_out = vec3s(icosphere.vertex_count);
+
+    t1 = std::chrono::high_resolution_clock::now();
+    rasters::curl(icosphere, v, curl_out);
+    t2 = std::chrono::high_resolution_clock::now();
+    std::cout << "curl:                " << std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count() << std::endl;
+
+    floats laplacian_out = floats(icosphere.vertex_count);
+
+    t1 = std::chrono::high_resolution_clock::now();
+    rasters::laplacian(icosphere, a, laplacian_out);
+    t2 = std::chrono::high_resolution_clock::now();
+    std::cout << "laplacian:           " << std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count() << std::endl;
+
+    std::cout << std::endl;
     std::cout << to_string(icosphere, a) << std::endl;
-
+    std::cout << rasters::to_string(icosphere, gradient_out) << std::endl;
+    std::cout << rasters::to_string(icosphere, divergence_out) << std::endl;
     std::cout << "vertex count: " << icosphere.vertex_count << std::endl;
 
-    // floats gradient_in = raster_c;
-    // vec3s gradient_out = vec3s(icosphere.vertex_count);
-    // std::cout << "calculating gradient" << std::endl;
-    // rasters::gradient(icosphere, gradient_in, gradient_out);
-    // std::cout << rasters::to_string(icosphere, gradient_out) << std::endl;
 
-    // vec3s divergence_in = gradient_out;
-    // floats divergence_out = floats(icosphere.vertex_count);
-    // std::cout << "calculating divergence" << std::endl;
-    // rasters::divergence(icosphere, divergence_in, divergence_out);
-    // std::cout << rasters::to_string(icosphere, divergence_out) << std::endl;
 
     // vec3s curl_in = gradient_out;
     // vec3s curl_out = vec3s(icosphere.vertex_count);
