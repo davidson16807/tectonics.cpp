@@ -587,9 +587,9 @@ FUNC(bool) try_3d_relation_between_line_and_plane(
     /**/
     vec3  A  = point_position;
     vec3  B  = plane_reference;
-    vec3  n  = plane_normal;
-    closest_approach = A - dot(A-B, n) * n;
-    return dot(A-B, n) < EPSILON;
+    vec3  N  = plane_normal;
+    closest_approach = A - dot(A-B, N) * N;
+    return dot(A-B, N) < EPSILON;
 }
 FUNC(bool) try_3d_relation_between_lines(
     IN (vec3)  line1_reference,
@@ -774,6 +774,135 @@ FUNC(bool) try_3d_relation_between_line_and_circle(
     intersection = A0 + A * dot(B0-A0, N) / dot(A,N);
     return dot(A,N) > EPSILON && length(intersection - B0) < r;
 }
+// TODO: try_3d_relation_between_line_and_triangle
+FUNC(bool) try_3d_relation_between_ray_and_plane(
+    IN (vec3)  ray_origin,
+    IN (vec3)  ray_direction,
+    IN (vec3)  plane_reference, 
+    IN (vec3)  plane_normal, 
+    OUT(vec3)  intersection
+){
+    /**/
+    vec3  A0 =           ray_origin;
+    vec3  A  = normalize(ray_direction);
+    vec3  B0 =           plane_reference;
+    vec3  N  = normalize(plane_normal);
+    // find the shortest distance from ray_origin to plane, 
+    // then get the hypoteneuse of that for the angle between A and N
+    float t = dot(B0-A0, N) / dot(A,N);
+    intersection = A0 + A * max(t, 0.f);
+    return dot(A,N) > EPSILON && 0.f < t;
+}
+FUNC(bool) try_3d_relation_between_ray_and_circle(
+    IN (vec3)  ray_origin,
+    IN (vec3)  ray_direction,
+    IN (vec3)  circle_reference, 
+    IN (vec3)  circle_normal, 
+    IN (float) circle_radius, 
+    OUT(vec3)  intersection
+){
+    /**/
+    vec3  A0 =           ray_origin;
+    vec3  A  = normalize(ray_direction);
+    vec3  B0 =           circle_reference;
+    vec3  r  =           circle_radius;
+    vec3  N  = normalize(circle_normal);
+    // find the shortest distance from ray_origin to plane, 
+    // then get the hypoteneuse of that for the angle between A and N
+    float t = dot(B0-A0, N) / dot(A,N);
+    intersection = A0 + A * max(t, 0.f);
+    return dot(A,N) > EPSILON && length(intersection - B0) < r && 0.f < t;
+}
+// TODO: try_3d_relation_between_ray_and_triangle
+FUNC(bool) try_3d_relation_between_line_segment_and_plane(
+    IN (vec3)  line_segment_start,
+    IN (vec3)  line_segment_stop,
+    IN (vec3)  plane_reference, 
+    IN (vec3)  plane_normal, 
+    OUT(vec3)  intersection
+){
+    /**/
+    vec3  A0 =           line_segment_start;
+    vec3  A1 =           line_segment_stop;
+    vec3  A  = normalize(A1-A0);
+    vec3  B0 =           plane_reference;
+    vec3  N  = normalize(plane_normal);
+    float A_length = length(A1-A0);
+    // find the shortest distance from line_segment_start to plane, 
+    // then get the hypoteneuse of that for the angle between A and N
+    float t = dot(B0-A0, N) / dot(A,N);
+    intersection = A0 + A * clamp(t, 0.f, A_length);
+    return dot(A,N) > EPSILON && 0.f < t && t < A_length;
+}
+FUNC(bool) try_3d_relation_between_line_segment_and_circle(
+    IN (vec3)  line_segment_start,
+    IN (vec3)  line_segment_stop,
+    IN (vec3)  circle_reference, 
+    IN (vec3)  circle_normal, 
+    IN (float) circle_radius, 
+    OUT(vec3)  intersection
+){
+    /**/
+    vec3  A0 =           line_segment_start;
+    vec3  A1 =           line_segment_stop;
+    vec3  A  = normalize(A1-A0);
+    vec3  B0 =           circle_reference;
+    vec3  r  =           circle_radius;
+    vec3  N  = normalize(circle_normal);
+    float A_length = length(A1-A0);
+    // find the shortest distance from line_segment_start to plane, 
+    // then get the hypoteneuse of that for the angle between A and N
+    float t = dot(B0-A0, N) / dot(A,N);
+    intersection = A0 + A * clamp(t, 0.f, A_length);
+    return dot(A,N) > EPSILON && length(intersection - B0) < r && 0.f < t && t < A_length;
+}
+// TODO: try_3d_relation_between_line_segment_and_triangle
+// TODO: try_3d_relation_between_line_and_sphere
+FUNC(bool) try_3d_relation_between_line_and_cylinder(
+    IN (vec3)  line_reference,
+    IN (vec3)  line_direction,
+    IN (vec3)  cylinder_start, 
+    IN (vec3)  cylinder_stop, 
+    IN (float) cylinder_radius, 
+    OUT(vec3)  entrance,
+    OUT(vec3)  exit
+){
+    vec3  A0 =           line_reference;
+    vec3  A  = normalize(line_direction);
+    vec3  B0 =           cylinder_start;
+    vec3  B1 =           cylinder_stop;
+    vec3  B  = normalize(B1-B0);
+    float r  =           cylinder_radius;
+
+    // simplify the problem by using a coordinate system based around the lines
+    // see closest-approach-between-line-and-cylinder-visualized.scad
+    vec3 I = B;
+    vec3 J = normalize(cross(A,B));
+    vec3 K = normalize(cross(J,B));
+    float A0I = dot(A0-B0, I);
+    float A0J = dot(A0-B0, J);
+    float A0K = dot(A0-B0, K);
+    float AK  = dot(A,K);
+    float distance_to_exit = sqrt(max(r*r-A0J*A0J, 0.f));
+    float r_in    = ( distance_to_exit - A0K) / AK;
+    float r_out   = (-distance_to_exit - A0K) / AK;
+    float B0_hit  = dot(B0-A0,-B) / dot(A,-B); 
+    float B1_hit  = dot(B1-A0,-B) / dot(A,-B); 
+    bool  B0_hits = length(A0+A*B0_hit - B0) < r;
+    bool  B1_hits = length(A0+A*B1_hit - B1) < r;
+    B0_hit = B0_hits? B0_hit : r_in; 
+    B1_hit = B1_hits? B1_hit : r_out; 
+    entrance = min(r_in,  B0_hit, B1_hit);
+    exit     = max(r_out, B0_hit, B1_hit);
+    return B0_hits || B1_hits || distance_to_exit > 0;
+}
+// TODO: try_3d_relation_between_line_and_tetrahedron
+
+// TODO: try_3d_relation_between_line_and_sphere
+// TODO: try_3d_relation_between_ray_and_sphere
+// TODO: try_3d_relation_between_line_segment_and_sphere
+
+// TODO: try_3d_relation_between_ray_and_triangle
 FUNC(bool) try_3d_relation_between_ray_and_sphere(
     IN (vec3)  ray_origin,
     IN (vec3)  ray_direction,

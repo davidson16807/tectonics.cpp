@@ -8,27 +8,32 @@ function vec2(x,y)     = [x,y];
 function vec3(x,y,z)   = [x,y,z];
 function vec4(x,y,z,w) = [x,y,z,w];
 
-A0=[1,1,1];
-A1=[5,3,2];
+A0=[3,2,0];
+A1=[4,4,5];
 A=normalize(A1-A0);
-B0=[3,2,0];
-B1=[4,4,5];
+B0=[1,1,1];
+B1=[5,3,2];
 B=normalize(B1-B0);
 r=0.5;
 
-%line(A0, A1, r, $fn=30);
-%line(B0, B1);
+%line(A0, A1);
+%line(B0, B1, r, $fn=30);
 
-cn = normalize(cross(B,A));
-projection_ =         dot(B0-A0, A) * A;
-rejection   = B0-A0 - dot(B0-A0, A) * A - dot(B0-A0, cn) * cn;
-sec_B_rejection  = dot(B,normalize(rejection));
-closest_approach = B0-B*length(rejection)  / sec_B_rejection;
-entrance         = B0-B*(length(rejection) - sqrt(max(r*r-pow(dot(B0-A0, cn), 2), 0)))/ sec_B_rejection;
-exit             = B0-B*(length(rejection) + sqrt(max(r*r-pow(dot(B0-A0, cn), 2), 0)))/ sec_B_rejection;
+// simplify the problem by using a coordinate system based around the lines
 
-color("red")   line(A0, A0+projection_);
-color("green") line(B0, B0-rejection);
-color("blue")  line(A0+projection_, A0+projection_+cn);
-//color("yellow")line(B0, closest_approach);
-color("green")line(entrance, exit);
+I = B;
+J = normalize(cross(A,B));
+K = normalize(cross(J,B));
+A0I = dot(A0-B0, I);
+A0J = dot(A0-B0, J);
+A0K = dot(A0-B0, K);
+AK  = dot(A,K);
+distance_to_exit = sqrt(max(r*r-A0J*A0J, 0));
+r_in    = ( distance_to_exit - A0K) / AK;
+r_out   = (-distance_to_exit - A0K) / AK;
+
+color("red")   line(B0, B0 + A0I*I);
+color("green") line(A0, A0 - A0K*K);
+color("blue")  line(B0 + A0I*I, B0 + A0I*I+J);
+//color("yellow")line(A0, A0+A0K*A);
+color("yellow")line(A0+A*r_in, A0+A*r_out);
