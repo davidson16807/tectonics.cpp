@@ -30,34 +30,6 @@ FUNC(bool) try_relation_between_ray_and_sphere(
     return (distance_to_exit > 0. && z2 < sphere_radius*sphere_radius);
 }
 
-/*
-DESIGN PRINCIPLES:
-* Functionally pure: 
-  Output is determined solely from the input, global variables are never used
-  "underscored_lower_case" is used to indicate functional purity
-* Performant:
-  Suitable for use in shader code
-* Language agnostic: 
-  Transpiles to any C-family language that supports pass-by-reference and glm style functionality (C, C++, GLSL)
-  Javascript cannot be used because it does not allow glm style operator overloads.
-  R cannot be used because it does not allow passing parameters by reference
-  Avoids language specific features like function overloading
-  Avoids language specific patterns or concepts (e.g. function chaining, OOP, unless that conflicts with the above)
-* Versatile:
-  Allows use with external data structures without requiring use of a "bridge" between data structures.
-  Avoids use of custom data structures, only glm vectors and primitives may be used.
-* Obvious: 
-  Behavior can be deduced from the function signature alone,
-  Function names err on the side of verbosity, 
-  Function names explain their exact intent,
-  They do not abbreviate and do not avoid using prepositions or conjunctions
-  Function names can be reconstructed after seeing only a few examples (unless that conflicts with the above)
-  Behavior is consistant across all functions expressing geometric relations
-  Spatial input makes no assumptions about the reference frame, 
-  VecNs are used whereever possible to reference a position or direction in space
-  No concepts or standards need to be introduced to the user before usage (e.g. function chaining, sentinel values, other standards)
-  No data structures need to be introduced to the user before usage, with the exception of vecNs
-*/
 FUNC(float) get_perimeter_of_circle(
     IN(float) radius
 ) {
@@ -116,802 +88,226 @@ FUNC(float) get_volume_of_tetrahedron(
     // 1/6 the volume of a parallelipiped, which is the scalar triple product of its edges
     return dot(cross(vertex1-vertex2, vertex1-vertex3), vertex1-vertex4) / 6.f;
 }
-FUNC(bool) try_2d_relation_between_point_and_line(
-    IN (vec2)  point_position, 
-    IN (vec2)  line_reference,
-    IN (vec2)  line_direction,
-    OUT(vec2)  closest_approach
-){
-    /*
-    set line_reference as the origin, 
-    project the point_position vector onto line_direction,
-    then convert back to original reference frame
-    */
-    closest_approach = 
-        line_reference + 
-        dot(point_position - line_reference, normalize(line_direction)) * normalize(line_direction);
-    return length(closest_approach - point_position) < EPSILON;
+
+
+/*
+DESIGN PRINCIPLES:
+* Functionally pure: 
+  Output is determined solely from the input, global variables are never used
+  "underscored_lower_case" is used to indicate functional purity
+* Performant:
+  Suitable for use in shader code
+* Compositional:
+  Given several functions that return intersections for a simpler geometry,
+   it should be easy and performant to construct similar functions for more complex geometry.
+  It is much easier to achieve this objective if functions return 
+   the distance along lines at which intersection occurs. 
+  If a complex geometry is created from the union of two simpler geometries,
+   intersections with the complex geometry can then be easily and performantly found
+   by taking the min() and max() of the distances that intersect the simpler geometries. 
+  If no intersection is found with a simpler geometry, the function should return NAN,
+   since GLSL defines that min(NAN,x) = x and max(NAN,x) = x
+  If a complex geometry is created from the intersection of two simpler geometries,
+   intersections can be easily and performantly found by testing 
+   whether the intersection with one geometry is also a part of the other geometry.
+  This requires that there be a separate set of functions testing whether 
+   a point is bounded by a certain region. 
+* Limited Scope:
+  Only two kinds of functions should be implemented.
+  The first kind finds the intersection or closest approach between a line and another shape (point, line, plane, volume)
+  The second kind determines whether a point exists within another shape (namely areas in 2d and volumes in 3d).
+  This is the minimum needed to find line intersections with geometries defined by intersections and unions, as mentioned above.
+  Implementing other kinds of functions (e.g. finding the intersection between two volumes) is not likely to be useful within a shader
+* Language agnostic: 
+  Transpiles to any C-family language that supports pass-by-reference and glm style functionality (C, C++, GLSL)
+  Javascript cannot be used because it does not allow glm style operator overloads.
+  R cannot be used because it does not allow passing parameters by reference
+  Avoids language specific features like function overloading
+  Avoids language specific patterns or concepts (e.g. function chaining, OOP, unless that conflicts with the above)
+* Versatile:
+  Allows use with external data structures without requiring conversion between data structures.
+  Avoids use of custom data structures, only glm vectors and primitives may be used.
+* Obvious: 
+  Behavior can be deduced from the function signature alone,
+  Function names err on the side of verbosity, 
+  Function names explain their exact intent,
+  They do not abbreviate and do not avoid using prepositions or conjunctions
+  Function names can be reconstructed after seeing only a few examples (unless that conflicts with the above)
+  Behavior is consistant across all functions expressing geometric relations
+  Spatial input makes no assumptions about the reference frame, 
+  No concepts or standards need to be introduced to the user before usage (e.g. function chaining, sentinel values, other standards)
+  No data structures need to be introduced to the user before usage, with the exception of vecNs
+*/
+
+// 2D FUNCTIONS CHECKING IF POINT IS IN REGION
+FUNC(bool) is_2d_point_inside_circle(IN(vec2) A0, IN(vec2) B0, IN(float) r){
+	return length(B0-A0) < r;
 }
-FUNC(bool) try_2d_relation_between_point_and_line_segment(
-    IN (vec2)  point_position, 
-    IN (vec2)  line_segment_start,
-    IN (vec2)  line_segment_stop,
-    OUT(vec2)  closest_approach
-){
-    /*
-    set line_segment_start as the origin, 
-    project the point_position vector onto line_segment_stop-line_segment_start,
-    then convert back to original reference frame
-    */
-	vec2 line_segment_offset = line_segment_stop - line_segment_start;
-	float line_segment_length = length(line_segment_offset);
-	vec2 line_segment_direction = normalize(line_segment_offset);
-	vec2 distance_to_closest_approach = clamp(dot(point_position - line_segment_start, line_segment_direction), 0.f, line_segment_length);
-    closest_approach = line_segment_start + distance_to_closest_approach * line_segment_direction;
-    return length(closest_approach - point_position) < EPSILON;
+// NOTE: in this case, N only needs to indicate the direction facing outside, 
+//  it need not be perfectly normal to B
+FUNC(bool) is_2d_point_inside_region_bounded_by_line(IN(vec2) A0, IN(vec2) B0, IN(vec2) N){
+	return dot(A0-B0, N) < 0.;
 }
-FUNC(bool) try_2d_relation_between_point_and_ray(
-    IN (vec2)  point_position, 
-    IN (vec2)  ray_origin,
-    IN (vec2)  ray_direction,
-    OUT(vec2)  closest_approach
-){
-    /*
-    set ray_origin as the origin, 
-    project the point_position vector onto ray_direction,
-    then convert back to original reference frame
-    */
-	vec2 distance_to_closest_approach = max(dot(point_position - ray_origin, ray_direction), 0.f);
-    closest_approach = ray_origin + distance_to_closest_approach * ray_direction;
-    return length(closest_approach - point_position) < EPSILON;
+
+// 2D FUNCTIONS RETURNING SINGLE INTERSECTIONS / CLOSEST APPROACHES
+FUNC(float) get_distance_along_2d_line_nearest_to_point(IN(vec2) A0, IN(vec2) A, IN(vec2) B0){
+	return dot(B0-A0, A);
 }
-FUNC(bool) try_2d_relation_between_point_and_circle(
-    IN (vec2)  point_position, 
-    IN (vec2)  circle_origin,
-    IN (float) circle_radius,
-    OUT(vec2)  closest_approach
-){
-	// scale normalized offset to a distance that's not to exceed circle radius
-	closest_approach = normalize(point_position - circle_origin) * min(circle_radius, length(point_position - circle_origin));
-    return length(closest_approach - point_position) < circle_radius;
+FUNC(float) get_distance_along_2d_line_intersecting_line(IN(vec2) A0, IN(vec2) A, IN(vec2) B0, IN(vec2) B){
+    vec2 D = B0-A0;             // offset
+	vec2 R = D - dot(D, A) * A; // rejection
+	return abs(abs(dot(A, B))-1) > 0? length(R) / dot(B, normalize(-R))  :  NAN;
 }
-FUNC(bool) try_2d_relation_between_point_and_triangle(
-    IN (vec2)  point_position, 
-    IN (vec2)  triangle_vertex1,
-    IN (vec2)  triangle_vertex2,
-    IN (vec2)  triangle_vertex3,
-    OUT(vec2)  closest_approach
-){
-	/*
-	Find the dot product between surface normal of each edge 
-	and the position of the point relative to one of the edge vertices.
-	An intersection occurs if they're either all positive or negative. 
-	Then compare the point to each edge as a line segment to find the closest approach. 
-	*/
-	vec2 A  = triangle_vertex1;
-	vec2 B  = triangle_vertex2;
-	vec2 C  = triangle_vertex3;
-	vec2 D  = point_position;
-	vec2 AB = A-B;
-	vec2 BC = B-C;
-	vec2 CA = C-A;
-	vec2 AB_normal = vec2(-AB.y, AB.x); 
-	vec2 BC_normal = vec2(-BC.y, BC.x); 
-	vec2 CA_normal = vec2(-CA.y, CA.x); 
-	bool is_D_within_AB = dot(D-B, AB_normal) > 0.f;
-	bool is_D_within_BC = dot(D-C, BC_normal) > 0.f;
-	bool is_D_within_CA = dot(D-A, CA_normal) > 0.f;
-	if (is_D_within_AB == is_D_within_BC && is_D_within_BC == is_D_within_CA)
-	{
-		closest_approach = point_position;
-		return true;
-	}
-	vec2 closest_approach_to_AB;
-	vec2 closest_approach_to_BC;
-	vec2 closest_approach_to_CA;
-	try_2d_relation_between_point_and_line_segment( A, B, x, closest_approach_to_AB );
-	try_2d_relation_between_point_and_line_segment( B, C, x, closest_approach_to_BC );
-	try_2d_relation_between_point_and_line_segment( C, A, x, closest_approach_to_CA );
-	float distance_to_AB = length(closest_approach_to_AB - x);
-	float distance_to_BC = length(closest_approach_to_BC - x);
-	float distance_to_CA = length(closest_approach_to_CA - x);
-	float min_distance = min(distance_to_AB, min(distance_to_BC, distance_to_CA));
-	closest_approach = 
-		distance_to_AB == min_distance? closest_approach_to_AB : 
-		distance_to_BC == min_distance? closest_approach_to_BC : 
-		                                closest_approach_to_CA;
-	return false;
+FUNC(float) get_distance_along_2d_line_intersecting_ray(IN(vec2) A0, IN(vec2) A, IN(vec2) B0, IN(vec2) B){
+    vec2  D  = B0-A0;                             // offset
+	vec2  R  = D - dot(D,A) * A;                  // rejection
+	float xB = length(R) / dot(B, normalize(-R)); // distance along B
+	float xA = xB / dot(B,A);                     // distance along A
+	return abs(abs(dot(A, B))-1) > 0 && xA > 0.? xB :  NAN;
 }
-FUNC(bool) try_2d_relation_between_lines(
-    IN (vec2)  line1_reference,
-    IN (vec2)  line1_direction,
-    IN (vec2)  line2_reference,
-    IN (vec2)  line2_direction,
-    OUT(vec2)  intersection
-){
-	vec2 A0 =           line1_reference;
-	vec2 A  = normalize(line1_direction);
-	vec2 B0 =           line2_reference;
-	vec2 B  = normalize(line2_direction);
-
-	/*
-	scale B by the closest distance from B0 to a (AKA, the length of the rejection)
-	*/
-	vec2 rejection = B0-A0 - dot(B0-A0, A) * A;
-	float t = -length(rejection) / dot(B, normalize(rejection))
-	intersection = B0 + B*t;
-
-	float similarity = dot(A, B);
-	return abs(abs(similarity)-1) < EPSILON;
+FUNC(float) get_distance_along_2d_line_intersecting_line_segment(IN(vec2) A0, IN(vec2) A, IN(vec2) B0, IN(vec2) B1){
+	vec2  B  = normalize(B1-B0);
+    vec2  D  = B0-A0;                             // offset
+	vec2  R  = D - dot(D,A) * A;                  // rejection
+	float xB = length(R) / dot(B, normalize(-R)); // distance along B
+	float xA = xB / dot(B,A);                     // distance along A
+	return abs(abs(dot(A, B))-1) > 0. && 
+	       0. < xA && xA < length(B1-B0)? xB : NAN;
 }
-FUNC(bool) try_2d_relation_between_line_and_ray(
-    IN (vec2)  line_reference,
-    IN (vec2)  line_direction,
-    IN (vec2)  ray_origin,
-    IN (vec2)  ray_direction,
-    OUT(vec2)  line_closest_approach,
-    OUT(vec2)  ray_closest_approach
-){
-    vec2 A0 =           line_reference;
-    vec2 A  = normalize(line_direction);
-    vec2 B0 =           ray_origin;
-    vec2 B  = normalize(ray_direction);
 
-    vec2 A0B0_rejecting_A = B0-A0 - dot(B0-A0, A) * A;
-    float t = -length(A0B0_rejecting_A) / dot(B, normalize(A0B0_rejecting_A));
-    ray_closest_approach = B0 + B*max(t, 0.f);
-
-    return try_2d_relation_between_point_and_line(
-        ray_closest_approach,
-        line_reference,
-        line_direction,
-        line_closest_approach
-    );
+// 2D FUNCTIONS RETURNING MULTIPLE INTERSECTIONS / CLOSEST APPROACHES
+FUNC(void) get_distances_along_2d_line_intersecting_circle(IN(vec2) A0, IN(vec2) A, IN(vec2) B0, IN(float) r, OUT(float) entrance, OUT(float) exit){
+    vec2  O  = B0-A0;
+    float xz = dot(O, A);
+    float z2 = dot(O, O) - xz * xz;
+    float y2 = r*r - z2;
+    float dxr = sqrt(max(y2, 1e-10));
+    entrance = xz - dxr;
+    exit     = xz + dxr;
+	return y2 > 0.;
 }
-FUNC(bool) try_2d_relation_between_line_and_line_segment(
-    IN (vec2)  line_reference,
-    IN (vec2)  line_direction,
-    IN (vec2)  line_segment_start,
-    IN (vec2)  line_segment_stop,
-    OUT(vec2)  line_closest_approach,
-    OUT(vec2)  line_segment_closest_approach
-){
-	vec2 A0 =          line1_reference;
-	vec2 A  = normalize(line1_direction);
-	vec2 B0 =          line_segment_start;
-	vec2 B1 =          line_segment_stop;
-	vec2 B  = normalize(B1-B0);
-	float B_length = length(B1-B0);
-
-	/*
-	scale B by the closest distance from B0 to a (AKA, the length of the rejection)
-	*/
-	vec2 A0B0_rejecting_A = B0-A0 - dot(B0-A0, A) * A;
-	float t = -length(A0B0_rejecting_A) / dot(B, normalize(A0B0_rejecting_A));
-	line_segment_closest_approach = B0 + B*clamp(t, 0.f, B_length);
-
-	return try_2d_relation_between_point_and_line(
-		line_segment_closest_approach,
-		line_reference,
-		line_direction,
-		line_closest_approach
-	);
+FUNC(void) get_distances_along_2d_line_intersecting_triangle(IN(vec2) A0, IN(vec2) A, IN(vec2) B1, IN(vec2) B2, IN(vec2) B3, OUT(float) entrance, OUT(float) exit){
+	float x1 = get_distance_along_2d_line_intersecting_line_segment(A0, A, B1, B2);
+	float x2 = get_distance_along_2d_line_intersecting_line_segment(A0, A, B2, B3);
+	float x3 = get_distance_along_2d_line_intersecting_line_segment(A0, A, B3, B1);
+	entrance = min(x1, min(x2, x3));
+	exit     = max(x1, max(x2, x3));
 }
-FUNC(bool) try_2d_relation_between_line_segments(
-    IN (vec2)  line_segment1_start,
-    IN (vec2)  line_segment1_stop,
-    IN (vec2)  line_segment2_start,
-    IN (vec2)  line_segment2_stop,
-    OUT(vec2)  line_segment1_closest_approach,
-    OUT(vec2)  line_segment2_closest_approach
-){
-    vec2 A0 =           line_segment1_start;
-    vec2 A1 =           line_segment1_stop;
-    vec2 A  = normalize(A1-A0);
-    vec2 B0 =           line_segment_start;
-    vec2 B1 =           line_segment_stop;
-    vec2 B  = normalize(B1-B0);
 
-    /* make two estimates, each one treating a segment as a line */
-    vec2 A_guess1, B_guess1;
-    vec2 try_2d_relation_between_line_and_line_segment(A0,A, B0,B1, A_guess1, B_guess1);
-    vec2 A_guess2, B_guess2;
-    vec2 try_2d_relation_between_line_and_line_segment(B0,B, A0,A1, B_guess2, A_guess2);
-
-    bool is_guess1_correct = length(A_guess1 - B_guess1) < length(A_guess2 - B_guess2);
-    line_segment1_closest_approach = is_guess1_correct? A_guess1 : A_guess2;
-    line_segment2_closest_approach = is_guess1_correct? B_guess1 : B_guess2;
-
-    return length(line_segment1_closest_approach - line_segment2_closest_approach) < EPSILON;
+// 3D FUNCTIONS CHECKING IF POINT IS IN REGION
+FUNC(bool) is_3d_point_inside_sphere(IN(vec3) A0, IN(vec3) B0, IN(float) r){
+	return length(B0-A0) < r;
 }
-FUNC(bool) try_2d_relation_between_ray_and_line_segment(
-    IN (vec2)  line_segment_start,
-    IN (vec2)  line_segment_stop,
-    IN (vec2)  ray_origin,
-    IN (vec2)  ray_direction,
-    OUT(vec2)  line_segment_closest_approach,
-    OUT(vec2)  ray_closest_approach
-){
-    vec2 A0 =           line_segment_start;
-    vec2 A1 =           line_segment_stop;
-    vec2 A  = normalize(A1-A0);
-    vec2 B0 =           ray_origin;
-    vec2 B  = normalize(ray_direction);
-
-    /* make two estimates, each one treating a segment/ray as a line */
-    vec2 A_guess1, B_guess1;
-    vec2 try_2d_relation_between_line_and_ray         (A0,A, B0,B,  A_guess1, B_guess1);
-    vec2 A_guess2, B_guess2;
-    vec2 try_2d_relation_between_line_and_line_segment(B0,B, A0,A1, B_guess2, A_guess2);
-
-    bool is_guess1_correct = length(A_guess1 - B_guess1) < length(A_guess2 - B_guess2);
-    line_segment_closest_approach = is_guess1_correct? A_guess1 : A_guess2;
-    ray_closest_approach =          is_guess1_correct? B_guess1 : B_guess2;
-
-    return length(line_segment_closest_approach - ray_closest_approach) < EPSILON;
+FUNC(bool) is_3d_point_inside_region_bounded_by_plane(IN(vec3) A0, IN(vec3) B0, IN(vec3) N){
+	return dot(A0-B0, N) < 0.;
 }
-FUNC(bool) try_2d_relation_between_rays(
-    IN (vec2)  ray1_origin,
-    IN (vec2)  ray1_direction,
-    IN (vec2)  ray2_origin,
-    IN (vec2)  ray2_direction,
-    OUT(vec2)  ray1_closest_approach,
-    OUT(vec2)  ray2_closest_approach
-){
-    vec2 A0 =           ray1_origin;
-    vec2 A  = normalize(ray1_direction);
-    vec2 B0 =           ray2_origin;
-    vec2 B  = normalize(ray2_direction);
 
-    /* make two estimates, each one treating a ray as a line */
-    vec2 A_guess1, B_guess1;
-    vec2 try_2d_relation_between_line_and_ray(A0,A, B0,B, A_guess1, B_guess1);
-    vec2 A_guess2, B_guess2;
-    vec2 try_2d_relation_between_line_and_ray(B0,B, A0,A, B_guess2, A_guess2);
-
-    bool is_guess1_correct = length(A_guess1 - B_guess1) < length(A_guess2 - B_guess2);
-    ray1_closest_approach = is_guess1_correct? A_guess1 : A_guess2;
-    ray2_closest_approach = is_guess1_correct? B_guess1 : B_guess2;
-
-    return length(ray2_closest_approach - ray1_closest_approach) < EPSILON;
+// 3D FUNCTIONS RETURNING SINGLE INTERSECTIONS / CLOSEST APPROACHES
+FUNC(float) get_distance_along_3d_line_nearest_to_point(IN(vec3) A0, IN(vec3) A, IN(vec3) B0){
+	return dot(B0-A0, A);
 }
-FUNC(bool) try_2d_relation_between_line_and_circle(
-    IN (vec2)  line_reference,
-    IN (vec2)  line_direction,
-    IN (vec2)  circle_origin, 
-    IN (float) circle_radius,
-    OUT(vec2)  line_closest_approach,
-    OUT(vec2)  circle_closest_approach,
-    OUT(vec2)  entrance,
-    OUT(vec2)  exit
-){
-    /**/
-    vec2  A0 =           line_reference;
-    vec2  A  = normalize(line_direction);
-    vec2  B  =           circle_origin;
-    vec2  r  =           circle_radius;
-    float xz = dot(B-A0, A);
-    float z2 = dot(B, B) - x*x;
-    float xr = sqrt(max(r*r - z2, 1e-10));
-    line_closest_approach   = A0 + A*xz;
-    circle_closest_approach = B  + r*normalize(line_closest_approach - B);
-    entrance = A0 + A*(xz-xr);
-    exit     = A0 + A*(xz+xr);
-    return z2 < r*r;
+FUNC(float) get_distance_along_3d_line_nearest_to_line(IN(vec3) A0, IN(vec3) A, IN(vec3) B0, IN(vec3) B){
+    vec3 D  = B0-A0;                            // offset
+    vec3 R = D - dot(D, A) * A - dot(D, C) * C; // rejection
+	return abs(abs(dot(A, B))-1) > 0.? length(R) / -dot(B, normalize(R))  :  NAN;
 }
-FUNC(bool) try_2d_relation_between_ray_and_circle(
-    IN (vec2)  ray_origin,
-    IN (vec2)  ray_direction,
-    IN (vec2)  circle_origin, 
-    IN (float) circle_radius,
-    OUT(vec2)  ray_closest_approach,
-    OUT(vec2)  circle_closest_approach,
-    OUT(vec2)  entrance,
-    OUT(vec2)  exit
-){
-    /**/
-    vec2  A0 =           ray_origin;
-    vec2  A  = normalize(ray_direction);
-    vec2  B  =           circle_origin;
-    vec2  r  =           circle_radius;
-    float xz = dot(B-A0, A);
-    float z2 = dot(B, B) - x*x;
-    float xr = sqrt(max(r*r - z2, 1e-10));
-    ray_closest_approach    = A0 + max(A*xz, 0.f);
-    circle_closest_approach = B  + r*normalize(ray_closest_approach - B);
-    entrance = A0 + max(A*(xz-xr), 0.f);
-    exit     = A0 + max(A*(xz+xr), 0.f);
-    return z2 < r*r;
+FUNC(float) get_distance_along_3d_line_nearest_to_ray(IN(vec3) A0, IN(vec3) A, IN(vec3) B0, IN(vec3) B){
+    vec3  D  = B0-A0;                             // offset
+	vec3  R  = D - dot(D,A) * A;                  // rejection
+	float xB = length(R) / dot(B, normalize(-R)); // distance along B
+	float xA = xB / dot(B,A);                     // distance along A
+	return abs(abs(dot(A, B))-1) > 0. && xA > 0.?  xB :  NAN;
 }
-FUNC(bool) try_2d_relation_between_line_segment_and_circle(
-    IN (vec2)  line_segment_start,
-    IN (vec2)  line_segment_stop,
-    IN (vec2)  circle_origin, 
-    IN (float) circle_radius,
-    OUT(vec2)  line_segment_closest_approach,
-    OUT(vec2)  circle_closest_approach,
-    OUT(vec2)  entrance,
-    OUT(vec2)  exit
-){
-    /**/
-    vec2  A0 =           line_segment_start;
-    vec2  A1 =           line_segment_stop;
-    vec2  A  = normalize(line_segment_stop-line_segment_start);
-    float A_length = length(line_segment_stop-line_segment_start);
-    vec2  B  =           circle_origin;
-    vec2  r  =           circle_radius;
-    float xz = dot(B-A0, A);
-    float z2 = dot(B, B) - x*x;
-    float xr = sqrt(max(r*r - z2, 1e-10));
-    line_segment_closest_approach    = A0 + clamp(A*xz, 0.f, A_length);
-    circle_closest_approach = B  + r*normalize(line_segment_closest_approach - B);
-    entrance = A0 + clamp(A*(xz-xr), 0.f, A_length);
-    exit     = A0 + clamp(A*(xz+xr), 0.f, A_length);
-    return z2 < r*r;
+FUNC(float) get_distance_along_3d_line_nearest_to_line_segment(IN(vec3) A0, IN(vec3) A, IN(vec3) B0, IN(vec3) B1){
+	vec3  B  = normalize(B1-B0);
+    vec3  D  = B0-A0;                             // offset
+	vec3  R  = D - dot(D,A) * A;                  // rejection
+	float xB = length(R) / dot(B, normalize(-R)); // distance along B
+	float xA = xB / dot(B,A);                     // distance along A
+	return abs(abs(dot(A, B))-1) > 0. && 
+		0. < xA && xA < length(B1-B0)?  xB  :  NAN;
 }
-FUNC(bool) try_2d_relation_between_line_and_triangle(
-    IN (vec2)  line1_reference,
-    IN (vec2)  line1_direction,
-    IN (vec2)  triangle_vertex1, 
-    IN (vec2)  triangle_vertex2, 
-    IN (vec2)  triangle_vertex3, 
-    OUT(vec2)  line_closest_approach,
-    OUT(vec2)  triangle_closest_approach,
-    OUT(vec2)  entrance,
-    OUT(vec2)  exit
-){
-	vec2 A  = triangle_vertex1;
-	vec2 B  = triangle_vertex2;
-	vec2 C  = triangle_vertex3;
-    vec2 D0 = line_reference;
-    vec2 D  = normalize(line_direction);
-
-    vec2 D_AB, AB_D; bool is_AB_touching = try_2d_relation_between_line_and_line_segment(D0,D,A,B, D_AB, AB_D);
-    vec2 D_BC, BC_D; bool is_BC_touching = try_2d_relation_between_line_and_line_segment(D0,D,B,C, D_BC, BC_D);
-    vec2 D_CA, CA_D; bool is_CA_touching = try_2d_relation_between_line_and_line_segment(D0,D,C,A, D_CA, CA_D);
-
-    float min_distance, max_distance;
-
-	if (!is_AB_touching && !is_BC_touching && !is_CA_touching) 
-    {
-        // if there is no intersection, the closest point is always a vertex
-        min_distance =  1e10; // BIG
-        if (length(D_AB-AB_D) < min_distance)
-        {
-            line_closest_approach = D_AB;
-            triangle_closest_approach = AB_D;
-        }
-        if (length(D_BC-BC_D) < min_distance)
-        {
-            line_closest_approach = D_BC;
-            triangle_closest_approach = BC_D;
-        }
-        if (length(D_CA-CA_D) < min_distance)
-        {
-            line_closest_approach = D_CA;
-            triangle_closest_approach = CA_D;
-        }
-        return false; 
-    }
-    else 
-    {
-        min_distance =  1e10; // BIG
-    	max_distance = -1e10; //-BIG
-        float AB_min_distance = length(D_AB-D0);
-        if (is_AB_touching && AB_min_distance < min_distance) {
-            min_distance = AB_min_distance;
-            entrance = AB_D;
-        } 
-        if (is_AB_touching && AB_min_distance > max_distance) {
-            max_distance = AB_min_distance;
-            exit = AB_D;
-        } 
-
-        float BC_min_distance = length(D_BC-D0);
-        if (is_BC_touching && BC_min_distance < min_distance) {
-            min_distance = BC_min_distance;
-            entrance = BC_D;
-        } 
-        if (is_BC_touching && BC_min_distance > max_distance) {
-            max_distance = BC_min_distance;
-            exit = BC_D;
-        } 
-
-        float CA_min_distance = length(D_CA-D0);
-        if (is_CA_touching && CA_min_distance < min_distance) {
-            min_distance = CA_min_distance;
-            entrance = CA_D;
-        } 
-        if (is_CA_touching && CA_min_distance > max_distance) {
-            max_distance = CA_min_distance;
-            exit = CA_D;
-        } 
-        return true;
-    }
+FUNC(float) get_distance_along_3d_line_intersecting_plane(IN(vec3) A0, IN(vec3) A, IN(vec3) B0, IN(vec3) N){
+    return abs(dot(A, N)) > 0.? dot(B0-A0, N) / dot(A,N)  :  NAN;
 }
-FUNC(bool) try_3d_relation_between_point_and_line(
-    IN (vec3)  point_position, 
-    IN (vec3)  line_reference,
-    IN (vec3)  line_direction,
-    OUT(vec3)  closest_approach
-){
-    /*
-    set line_reference as the origin, 
-    project the point_position vector onto line_direction,
-    then convert back to original reference frame
-    */
-    closest_approach = 
-        line_reference + 
-        dot(point_position - line_reference, normalize(line_direction)) * normalize(line_direction);
-    return length(closest_approach - point_position) < EPSILON;
+FUNC(float) get_distance_along_3d_line_intersecting_circle(IN(vec3) A0, IN(vec3) A, IN(vec3) B0, IN(vec3) N, IN(float) r){
+	// intersection(plane, sphere)
+	float x;
+    x = get_distance_along_3d_line_intersecting_plane(A0, A, B0, N);
+    x = is_3d_point_inside_sphere(A0+A*x, B0, r)? x : NAN;
+    return x;
 }
-FUNC(bool) try_3d_relation_between_point_and_line_segment(
-    IN (vec3)  point_position, 
-    IN (vec3)  line_segment_start,
-    IN (vec3)  line_segment_stop,
-    OUT(vec3)  closest_approach
-){
-    /*
-    set line_segment_start as the origin, 
-    project the point_position vector onto line_segment_stop-line_segment_start,
-    then convert back to original reference frame
-    */
-    vec3 line_segment_offset = line_segment_stop - line_segment_start;
-    float line_segment_length = length(line_segment_offset);
-    vec3 line_segment_direction = normalize(line_segment_offset);
-    vec3 distance_to_closest_approach = clamp(dot(point_position - line_segment_start, line_segment_direction), 0.f, line_segment_length);
-    closest_approach = line_segment_start + distance_to_closest_approach * line_segment_direction;
-    return length(closest_approach - point_position) < EPSILON;
+FUNC(float) get_distance_along_3d_line_intersecting_triangle(IN(vec3) A0, IN(vec3) A, IN(vec3) B1, IN(vec3) B2, IN(vec3) B3){
+	// intersection(face plane, edge plane, edge plane, edge plane)
+	vec3  B0 = (B1 + B2 + B3) / 3.;
+	vec3  N  = normalize(cross(B1-B2, B2-B3));
+    float x  = get_distance_along_3d_line_intersecting_plane(A0, A, B0, N);
+    vec3  Ax = A0+A*x;
+    x = is_3d_point_inside_region_bounded_by_plane(Ax, B1, cross(B1-B2,N)) == 
+	    is_3d_point_inside_region_bounded_by_plane(Ax, B2, cross(B2-B3,N)) == 
+	    is_3d_point_inside_region_bounded_by_plane(Ax, B3, cross(B3-B1,N)) ? x : NAN;
+    return x;
 }
-FUNC(bool) try_3d_relation_between_point_and_ray(
-    IN (vec3)  point_position, 
-    IN (vec3)  ray_origin,
-    IN (vec3)  ray_direction,
-    OUT(vec3)  closest_approach
-){
-    /*
-    set ray_origin as the origin, 
-    project the point_position vector onto ray_direction,
-    then convert back to original reference frame
-    */
-    vec3 distance_to_closest_approach = max(dot(point_position - ray_origin, ray_direction), 0.f);
-    closest_approach = ray_origin + distance_to_closest_approach * ray_direction;
-    return length(closest_approach - point_position) < EPSILON;
+
+// 3D FUNCTIONS RETURNING MULTIPLE INTERSECTIONS / CLOSEST APPROACHES
+FUNC(void) get_distances_along_3d_line_intersecting_sphere(IN(vec3) A0, IN(vec3) A, IN(vec3) B0, IN(float) r, OUT(float) entrance, OUT(float) exit){
+    float xz = dot(B0-A0, A);
+    float z  = length(A0+A*xz - B0);
+    float y2  = r*r-z*z;
+    float dxr = sqrt(max(y2, 1e-10));
+    entrance = y2 > 0.?  xz - dxr  :  NAN;
+    exit     = y2 > 0.?  xz + dxr  :  NAN;
 }
-FUNC(bool) try_3d_relation_between_line_and_plane(
-    IN (vec3)  point_position, 
-    IN (vec3)  plane_reference, 
-    IN (vec3)  plane_normal, 
-    OUT(vec3)  closest_approach
-){
-    /**/
-    vec3  A  = point_position;
-    vec3  B  = plane_reference;
-    vec3  N  = plane_normal;
-    closest_approach = A - dot(A-B, N) * N;
-    return dot(A-B, N) < EPSILON;
+FUNC(void) get_distances_along_3d_line_intersecting_tetrahedron(IN(vec3) A0, IN(vec3) A, IN(vec3) B1, IN(vec3) B2, IN(vec3) B3, IN(vec3) B4, OUT(float) entrance, OUT(float) exit){
+	float x1 = get_distance_along_3d_line_intersecting_triangle(A0,A,B1,B2,B3);
+	float x2 = get_distance_along_3d_line_intersecting_triangle(A0,A,B2,B3,B4);
+	float x3 = get_distance_along_3d_line_intersecting_triangle(A0,A,B3,B4,B1);
+	float x4 = get_distance_along_3d_line_intersecting_triangle(A0,A,B4,B1,B2);
+    entrance = min(x1, min(x2, min(x3, x4)));
+    exit     = max(x1, max(x2, max(x3, x4)));
 }
-FUNC(bool) try_3d_relation_between_lines(
-    IN (vec3)  line1_reference,
-    IN (vec3)  line1_direction,
-    IN (vec3)  line2_reference,
-    IN (vec3)  line2_direction,
-    OUT(vec3)  line1_closest_approach,
-    OUT(vec3)  line2_closest_approach,
-){
-    vec3 A0  =           line1_reference;
-    vec3 A   = normalize(line1_direction);
-    vec3 B0  =           line2_reference;
-    vec3 B   = normalize(line2_direction);
-    vec3 C   = normalize(cross(A,B));
-
-    // scale line by the ratio of the rejection 
-    // to the projection of the unit vector in the same direction
-    // solution from: https://math.stackexchange.com/a/3436386/142030
-    // also see closest-approach-between-lines-visualized.scad 
-    vec3 B_reject = B0-A0 - dot(B0-A0, A) * A - dot(B0-A0, C) * C;
-    line2_closest_approach = B0 - B*length(B_reject) / dot(B,normalize(B_reject));
-
-    vec3 A_reject = A0-B0 - dot(A0-B0, B) * B - dot(A0-B0, C) * C;
-    line2_closest_approach = A0 - A*length(A_reject) / dot(A,normalize(A_reject));
-}
-FUNC(bool) try_3d_relation_between_line_and_ray(
-    IN (vec3)  line_reference,
-    IN (vec3)  line_direction,
-    IN (vec3)  ray_origin,
-    IN (vec3)  ray_direction,
-    OUT(vec3)  line_closest_approach,
-    OUT(vec3)  ray_closest_approach
-){
-    vec3 A0 =           line_reference;
-    vec3 A  = normalize(line_direction);
-    vec3 B0 =           ray_origin;
-    vec3 B  = normalize(ray_direction);
-    vec3 C  = normalize(cross(A,B));
-
-    // scale line by the ratio of the rejection 
-    // to the projection of the unit vector in the same direction
-    // solution from: https://math.stackexchange.com/a/3436386/142030
-    // also see closest-approach-between-lines-visualized.scad 
-    vec3 B_reject = B0-A0 - dot(B0-A0, A) * A - dot(B0-A0, C) * C;
-    ray_closest_approach = B0 - B*max(length(B_reject) / dot(B,normalize(B_reject)), 0.f);
-
-    return try_3d_relation_between_point_and_line(ray_closest_approach, A0, A, line_closest_approach);
-}
-FUNC(bool) try_3d_relation_between_line_and_line_segment(
-    IN (vec3)  line_reference,
-    IN (vec3)  line_direction,
-    IN (vec3)  line_segment_start,
-    IN (vec3)  line_segment_stop,
-    OUT(vec3)  line_closest_approach,
-    OUT(vec3)  line_segment_closest_approach
-){
-    vec3  A0 =           line_reference;
-    vec3  A  = normalize(line_direction);
-    vec3  B0 =           line_segment_start;
-    vec3  B1 =           line_segment_stop;
-    vec3  B  = normalize(B1-B0);
-    vec3  C  = normalize(cross(A,B));
-    float B_length = length(B1-B0);
-
-    // scale line by the ratio of the rejection 
-    // to the projection of the unit vector in the same direction
-    // solution from: https://math.stackexchange.com/a/3436386/142030
-    // also see closest-approach-between-lines-visualized.scad 
-    vec3 B_reject = B0-A0 - dot(B0-A0, A) * A - dot(B0-A0, C) * C;
-    line_segment_closest_approach = B0 - B*clamp(length(B_reject) / dot(B,normalize(B_reject)), 0.f, B_length);
-
-    return try_3d_relation_between_point_and_line(line_segment_closest_approach, A0, A, line_closest_approach);
-}
-FUNC(bool) try_3d_relation_between_rays(
-    IN (vec3)  ray1_start,
-    IN (vec3)  ray1_stop,
-    IN (vec3)  ray2_start,
-    IN (vec3)  ray2_stop,
-    OUT(vec3)  ray1_closest_approach,
-    OUT(vec3)  ray2_closest_approach
-){
-    vec3 A0 = ray1_origin;
-    vec3 A  = ray1_direction;
-    vec3 B0 = ray2_origin;
-    vec3 B  = ray2_direction;
-
-    /* make two estimates, each one treating a segment as a line */
-    vec3 A_guess1, B_guess1;
-    vec3 try_3d_relation_between_line_and_ray(A0,A, B0,B, A_guess1, B_guess1);
-    vec3 A_guess2, B_guess2;
-    vec3 try_3d_relation_between_line_and_ray(B0,B, A0,A, B_guess2, A_guess2);
-
-    bool is_guess1_correct = length(A_guess1 - B_guess1) < length(A_guess2 - B_guess2);
-    ray1_closest_approach = is_guess1_correct? A_guess1 : A_guess2;
-    ray2_closest_approach = is_guess1_correct? B_guess1 : B_guess2;
-
-    return length(ray1_closest_approach - ray2_closest_approach) < EPSILON;
-}
-FUNC(bool) try_3d_relation_between_ray_and_line_segment(
-    IN (vec3)  ray_start,
-    IN (vec3)  ray_stop,
-    IN (vec3)  line_segment_start,
-    IN (vec3)  line_segment_stop,
-    OUT(vec3)  ray_closest_approach,
-    OUT(vec3)  line_segment_closest_approach
-){
-    vec3 A0 = ray_origin;
-    vec3 A  = ray_direction;
-    vec3 B0 = line_segment_origin;
-    vec3 B  = line_segment_direction;
-
-    /* make two estimates, each one treating a segment as a line */
-    vec3 A_guess1, B_guess1;
-    vec3 try_3d_relation_between_line_and_line_segment(A0,A, B0,B, A_guess1, B_guess1);
-    vec3 A_guess2, B_guess2;
-    vec3 try_3d_relation_between_line_and_ray         (B0,B, A0,A, B_guess2, A_guess2);
-
-    bool is_guess1_correct = length(A_guess1 - B_guess1) < length(A_guess2 - B_guess2);
-    ray_closest_approach          = is_guess1_correct? A_guess1 : A_guess2;
-    line_segment_closest_approach = is_guess1_correct? B_guess1 : B_guess2;
-
-    return length(ray_closest_approach - line_segment_closest_approach) < EPSILON;
-}
-FUNC(bool) try_3d_relation_between_line_segments(
-    IN (vec3)  line_segment1_start,
-    IN (vec3)  line_segment1_stop,
-    IN (vec3)  line_segment2_start,
-    IN (vec3)  line_segment2_stop,
-    OUT(vec3)  line_segment1_closest_approach,
-    OUT(vec3)  line_segment2_closest_approach
-){
-    vec3 A0 = line_segment1_origin;
-    vec3 A  = line_segment1_direction;
-    vec3 B0 = line_segment2_origin;
-    vec3 B  = line_segment2_direction;
-
-    /* make two estimates, each one treating a segment as a line */
-    vec3 A_guess1, B_guess1;
-    vec3 try_3d_relation_between_line_and_line_segment(A0,A, B0,B, A_guess1, B_guess1);
-    vec3 A_guess2, B_guess2;
-    vec3 try_3d_relation_between_line_and_line_segment(B0,B, A0,A, B_guess2, A_guess2);
-
-    bool is_guess1_correct = length(A_guess1 - B_guess1) < length(A_guess2 - B_guess2);
-    line_segment1_closest_approach = is_guess1_correct? A_guess1 : A_guess2;
-    line_segment2_closest_approach = is_guess1_correct? B_guess1 : B_guess2;
-
-    return length(line_segment1_closest_approach - line_segment2_closest_approach) < EPSILON;
-}
-FUNC(bool) try_3d_relation_between_line_and_plane(
-    IN (vec3)  line_reference,
-    IN (vec3)  line_direction,
-    IN (vec3)  plane_reference, 
-    IN (vec3)  plane_normal, 
-    OUT(vec3)  intersection
-){
-    /**/
-    vec3  A0 =           line_reference;
-    vec3  A  = normalize(line_direction);
-    vec3  B0 =           plane_reference;
-    vec3  N  = normalize(plane_normal);
-    // find the shortest distance from line_reference to plane, 
-    // then get the hypoteneuse of that for the angle between A and N
-    intersection = A0 + A * dot(B0-A0, N) / dot(A,N);
-    return dot(A,N) > EPSILON;
-}
-FUNC(bool) try_3d_relation_between_line_and_circle(
-    IN (vec3)  line_reference,
-    IN (vec3)  line_direction,
-    IN (vec3)  circle_reference, 
-    IN (vec3)  circle_normal, 
-    IN (float) circle_radius, 
-    OUT(vec3)  intersection
-){
-    /**/
-    vec3  A0 =           line_reference;
-    vec3  A  = normalize(line_direction);
-    vec3  B0 =           circle_reference;
-    vec3  r  =           circle_radius;
-    vec3  N  = normalize(circle_normal);
-    // find the shortest distance from line_reference to plane, 
-    // then get the hypoteneuse of that for the angle between A and N
-    intersection = A0 + A * dot(B0-A0, N) / dot(A,N);
-    return dot(A,N) > EPSILON && length(intersection - B0) < r;
-}
-// TODO: try_3d_relation_between_line_and_triangle
-FUNC(bool) try_3d_relation_between_ray_and_plane(
-    IN (vec3)  ray_origin,
-    IN (vec3)  ray_direction,
-    IN (vec3)  plane_reference, 
-    IN (vec3)  plane_normal, 
-    OUT(vec3)  intersection
-){
-    /**/
-    vec3  A0 =           ray_origin;
-    vec3  A  = normalize(ray_direction);
-    vec3  B0 =           plane_reference;
-    vec3  N  = normalize(plane_normal);
-    // find the shortest distance from ray_origin to plane, 
-    // then get the hypoteneuse of that for the angle between A and N
-    float t = dot(B0-A0, N) / dot(A,N);
-    intersection = A0 + A * max(t, 0.f);
-    return dot(A,N) > EPSILON && 0.f < t;
-}
-FUNC(bool) try_3d_relation_between_ray_and_circle(
-    IN (vec3)  ray_origin,
-    IN (vec3)  ray_direction,
-    IN (vec3)  circle_reference, 
-    IN (vec3)  circle_normal, 
-    IN (float) circle_radius, 
-    OUT(vec3)  intersection
-){
-    /**/
-    vec3  A0 =           ray_origin;
-    vec3  A  = normalize(ray_direction);
-    vec3  B0 =           circle_reference;
-    vec3  r  =           circle_radius;
-    vec3  N  = normalize(circle_normal);
-    // find the shortest distance from ray_origin to plane, 
-    // then get the hypoteneuse of that for the angle between A and N
-    float t = dot(B0-A0, N) / dot(A,N);
-    intersection = A0 + A * max(t, 0.f);
-    return dot(A,N) > EPSILON && length(intersection - B0) < r && 0.f < t;
-}
-// TODO: try_3d_relation_between_ray_and_triangle
-FUNC(bool) try_3d_relation_between_line_segment_and_plane(
-    IN (vec3)  line_segment_start,
-    IN (vec3)  line_segment_stop,
-    IN (vec3)  plane_reference, 
-    IN (vec3)  plane_normal, 
-    OUT(vec3)  intersection
-){
-    /**/
-    vec3  A0 =           line_segment_start;
-    vec3  A1 =           line_segment_stop;
-    vec3  A  = normalize(A1-A0);
-    vec3  B0 =           plane_reference;
-    vec3  N  = normalize(plane_normal);
-    float A_length = length(A1-A0);
-    // find the shortest distance from line_segment_start to plane, 
-    // then get the hypoteneuse of that for the angle between A and N
-    float t = dot(B0-A0, N) / dot(A,N);
-    intersection = A0 + A * clamp(t, 0.f, A_length);
-    return dot(A,N) > EPSILON && 0.f < t && t < A_length;
-}
-FUNC(bool) try_3d_relation_between_line_segment_and_circle(
-    IN (vec3)  line_segment_start,
-    IN (vec3)  line_segment_stop,
-    IN (vec3)  circle_reference, 
-    IN (vec3)  circle_normal, 
-    IN (float) circle_radius, 
-    OUT(vec3)  intersection
-){
-    /**/
-    vec3  A0 =           line_segment_start;
-    vec3  A1 =           line_segment_stop;
-    vec3  A  = normalize(A1-A0);
-    vec3  B0 =           circle_reference;
-    vec3  r  =           circle_radius;
-    vec3  N  = normalize(circle_normal);
-    float A_length = length(A1-A0);
-    // find the shortest distance from line_segment_start to plane, 
-    // then get the hypoteneuse of that for the angle between A and N
-    float t = dot(B0-A0, N) / dot(A,N);
-    intersection = A0 + A * clamp(t, 0.f, A_length);
-    return dot(A,N) > EPSILON && length(intersection - B0) < r && 0.f < t && t < A_length;
-}
-// TODO: try_3d_relation_between_line_segment_and_triangle
-// TODO: try_3d_relation_between_line_and_sphere
-FUNC(bool) try_3d_relation_between_line_and_cylinder(
-    IN (vec3)  line_reference,
-    IN (vec3)  line_direction,
-    IN (vec3)  cylinder_start, 
-    IN (vec3)  cylinder_stop, 
-    IN (float) cylinder_radius, 
-    OUT(vec3)  entrance,
-    OUT(vec3)  exit
-){
-    vec3  A0 =           line_reference;
-    vec3  A  = normalize(line_direction);
-    vec3  B0 =           cylinder_start;
-    vec3  B1 =           cylinder_stop;
-    vec3  B  = normalize(B1-B0);
-    float r  =           cylinder_radius;
-
-    // simplify the problem by using a coordinate system based around the lines
+FUNC(void) get_distances_along_3d_line_intersecting_infinite_cylinder(IN(vec3) A0, IN(vec3) A, IN(vec3) B0, IN(vec3) B, IN(float) r, OUT(float) entrance, OUT(float) exit){
+    // simplify the problem by using a coordinate system based around the line and the tube center
     // see closest-approach-between-line-and-cylinder-visualized.scad
-    vec3 I = B;
-    vec3 J = normalize(cross(A,B));
-    vec3 K = normalize(cross(J,B));
-    float A0I = dot(A0-B0, I);
-    float A0J = dot(A0-B0, J);
-    float A0K = dot(A0-B0, K);
-    float AK  = dot(A,K);
-    float distance_to_exit = sqrt(max(r*r-A0J*A0J, 0.f));
-    float r_in    = ( distance_to_exit - A0K) / AK;
-    float r_out   = (-distance_to_exit - A0K) / AK;
-    float B0_hit  = dot(B0-A0,-B) / dot(A,-B); 
-    float B1_hit  = dot(B1-A0,-B) / dot(A,-B); 
-    bool  B0_hits = length(A0+A*B0_hit - B0) < r;
-    bool  B1_hits = length(A0+A*B1_hit - B1) < r;
-    B0_hit = B0_hits? B0_hit : r_in; 
-    B1_hit = B1_hits? B1_hit : r_out; 
-    entrance = min(r_in,  B0_hit, B1_hit);
-    exit     = max(r_out, B0_hit, B1_hit);
-    return B0_hits || B1_hits || distance_to_exit > 0;
+    vec3  J   = B;
+    vec3  K   = normalize(cross(A,B));
+    vec3  I   =-normalize(cross(K,B));
+    vec3  O   = A0-B0;
+    float z   = dot(O,K);
+    float xz  = dot(O,I);
+    float AK  = dot(A,I);
+    float y2  = r*r-z*z;
+    float dxr = sqrt(max(y2, 1e-10));
+    entrance  = y2 > 0.?  (xz-dxr) / AK  :  NAN;
+    exit      = y2 > 0.?  (xz+dxr) / AK  :  NAN;
 }
-// TODO: try_3d_relation_between_line_and_tetrahedron
-
-// TODO: try_3d_relation_between_line_and_sphere
-// TODO: try_3d_relation_between_ray_and_sphere
-// TODO: try_3d_relation_between_line_segment_and_sphere
-
-// TODO: try_3d_relation_between_ray_and_triangle
-FUNC(bool) try_3d_relation_between_ray_and_sphere(
-    IN (vec3)  ray_origin,
-    IN (vec3)  ray_direction,
-    IN (vec3)  sphere_origin, 
-    IN (float) sphere_radius, 
-    OUT(vec3)  ray_closest_approach,
-    OUT(vec3)  sphere_closest_approach,
-    OUT(vec3)  entrance,
-    OUT(vec3)  exit
-){
-
+FUNC(void) get_distances_along_3d_line_intersecting_tube(IN(vec3) A0, IN(vec3) A, IN(vec3) B0, IN(vec3) B1, IN(float) r, OUT(float) entrance, OUT(float) exit){
+	vec3  B   = normalize(B1-B0);
+	float xr0, xr1, xB0, xB1; 
+	// intersection(cylinder, plane, plane)
+	get_distances_along_3d_line_intersecting_infinite_cylinder (A0, A, B0, B, r, xr0, xr1); 
+	xr0 = is_3d_point_inside_region_bounded_by_plane           (A0+A*xr0, B0, B)? xr0 : NAN;
+	xr1 = is_3d_point_inside_region_bounded_by_plane           (A0+A*xr1, B1,-B)? xr1 : NAN;
+	entrance  = min(xr0, xr1);
+	exit      = max(xr0, xr1);
+}
+FUNC(void) get_distances_along_3d_line_intersecting_cylinder(IN(vec3) A0, IN(vec3) A, IN(vec3) B0, IN(vec3) B1, IN(float) r, OUT(float) entrance, OUT(float) exit){
+	vec3  B   = normalize(B1-B0);
+	float xr0, xr1, xB0, xB1; 
+	// union(tube, circle, circle)
+	get_distances_along_3d_line_intersecting_tube        (A0, A, B0, B, r, xr0, xr1); 
+	xB0 = get_distance_along_3d_line_intersecting_circle (A0, A, B0,-B, r);
+	xB1 = get_distance_along_3d_line_intersecting_circle (A0, A, B1, B, r);
+	entrance  = min(xr0, min(xr1, min(xB0, xB1)));
+	exit      = max(xr0, max(xr1, max(xB0, xB1)));
+}
+FUNC(void) get_distances_along_3d_line_intersecting_capsule(IN(vec3) A0, IN(vec3) A, IN(vec3) B0, IN(vec3) B1, IN(float) r, OUT(float) entrance, OUT(float) exit){
+	vec3 B = normalize(B1-B0);
+	float xr0, xr1, xB0, xB1; 
+	// union(tube, sphere, sphere)
+	get_distances_along_3d_line_intersecting_tube        (A0, A, B0, B, r, xr0, xr1); 
+	xB0 = get_distance_along_3d_line_intersecting_sphere (A0, A, B0, r); 
+	xB1 = get_distance_along_3d_line_intersecting_sphere (A0, A, B1, r);
+	entrance = min(xr0, min(xr1, min(xB0, xB1)));
+	exit     = max(xr0, max(xr1, max(xB0, xB1)));
 }

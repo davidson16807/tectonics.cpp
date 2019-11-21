@@ -7,6 +7,8 @@
 #define CONST(T) const T
 #define VAR(T) T
 #define FUNC(T) T
+#define INFINITY (1.f/0.f)
+#define NAN (0.f/0.f)
 #endif
 
 #ifdef CPP
