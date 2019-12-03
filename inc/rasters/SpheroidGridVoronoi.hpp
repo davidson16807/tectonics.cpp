@@ -24,10 +24,10 @@ namespace rasters
 	class SpheroidGridLookup
 	{
 	protected:
-		static const vec3s OCTAHEDRON_SIDE_Z;
-		static const vec3s OCTAHEDRON_SIDE_X;
-		static const vec3s OCTAHEDRON_SIDE_Y;
 		static constexpr int OCTAHEDRON_SIDE_COUNT = 8;	// number of sides on the data cube
+		vec3s OCTAHEDRON_SIDE_Z;
+		vec3s OCTAHEDRON_SIDE_X;
+		vec3s OCTAHEDRON_SIDE_Y;
 
 		glm::ivec2 dimensions; // dimensions of the grid on each side of the data cube 
 		float cell_width;
@@ -66,20 +66,35 @@ namespace rasters
 		{
 		}
 		explicit SpheroidGridLookup(
-			const float cell_width
-		) : 
-			dimensions((int)ceil(2./cell_width)+1),
-			cell_width(cell_width),
-			cells(cell_count(), T(0))
-		{
-		}
-		explicit SpheroidGridLookup(
 			const float cell_width,
 			const T default_value
 		) : 
+			OCTAHEDRON_SIDE_Z(normalize(
+				vec3s {
+					glm::vec3(-1,-1,-1),
+					glm::vec3( 1,-1,-1),
+					glm::vec3(-1, 1,-1),
+					glm::vec3( 1, 1,-1),
+					glm::vec3(-1,-1, 1),
+					glm::vec3( 1,-1, 1),
+					glm::vec3(-1, 1, 1),
+					glm::vec3( 1, 1, 1)
+				}
+			)),
+			OCTAHEDRON_SIDE_X(normalize(
+				cross(SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z, glm::vec3(0,0,1))
+			)),
+			OCTAHEDRON_SIDE_Y(normalize(
+				cross(SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z, SpheroidGridLookup<T>::OCTAHEDRON_SIDE_X)
+			)),
 			dimensions((int)ceil(2./cell_width)+1),
 			cell_width(cell_width),
 			cells(cell_count(), default_value)
+		{
+		}
+		explicit SpheroidGridLookup(
+			const float cell_width
+		) : SpheroidGridLookup(cell_width, T(0))
 		{
 		}
 
@@ -137,27 +152,6 @@ namespace rasters
 	};
 
 
-	template <class T>
-	const vec3s SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z = normalize(
-		vec3s {
-			glm::vec3(-1,-1,-1),
-			glm::vec3( 1,-1,-1),
-			glm::vec3(-1, 1,-1),
-			glm::vec3( 1, 1,-1),
-			glm::vec3(-1,-1, 1),
-			glm::vec3( 1,-1, 1),
-			glm::vec3(-1, 1, 1),
-			glm::vec3( 1, 1, 1)
-		} 
-	);
-	template <class T>
-	const vec3s SpheroidGridLookup<T>::OCTAHEDRON_SIDE_X = normalize(
-		cross(SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z, glm::vec3(0,0,1))
-	);
-	template <class T>
-	const vec3s SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Y = normalize(
-		cross(SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z, SpheroidGridLookup<T>::OCTAHEDRON_SIDE_X)
-	);
 
 	// performs cached O(1) nearest neighbor lookups on the surface of a unit sphere
 	// using a SpheroidGridLookup of vectors to optimize initialization
