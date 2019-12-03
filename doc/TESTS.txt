@@ -64,28 +64,28 @@ x			happy path
 	scalar transport
 	vector calculus: https://en.wikipedia.org/wiki/Vector_calculus_identities#First_derivative_identities
 		gradient
-			purity
+x			purity
 			translation invariant, ∇F = unshift(∇(shift(F)))
 			rotation invariant,    ∇F = unrotate(∇(rotate(F)))
 			resolution invariant   blur(∇F) = ∇(blur(F))
 			distributive over addition, ∇(a+b) = ∇a + ∇b
 			∇(aB) = a∇B + B∇a
 		divergence
-			purity
+x			purity
 			translation invariant
 			rotation invariant
 			resolution invariant
 			distributive over addition
 			∇⋅(aB) = a∇⋅B + B⋅∇a
 		laplacian
-			purity
+x			purity
 			translation invariant
 			rotation invariant
 			resolution invariant
 			distributive over addition
 			∇²a=∇⋅∇a
 		curl
-			purity
+x			purity
 			translation invariant
 			rotation invariant
 			resolution invariant
@@ -245,5 +245,14 @@ integration tests
 			surface density
 			scattering coefficients
 			absorption coefficients
+
+		air outgassing
+		air deposition
+		air condensation
+		ocean freezing
+		ocean boiling
+		surface melting
+		surface sublimation
+
 
 IDEA: We want to minimize out-of-order memory access and maximize in-order memory access. This means if we have a process that requires combinations of both spatial transport (out-of-order memory access) and chemical reaction (in-order memory access) we should work at different grid resolutions, so that spatial transport is conducted using coarse resolution to minimize runtime, and chemical reaction is conducted using fine resolution to maximize quality of output. However conversion between grid resolutions is itself an out-of-order memory access issue. 

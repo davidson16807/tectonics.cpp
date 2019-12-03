@@ -61,6 +61,7 @@ x			sphere, exponential dropoff
 		crust
 	light propagation
 		spectrum
+	phase diagrams
 
 
 	orrery

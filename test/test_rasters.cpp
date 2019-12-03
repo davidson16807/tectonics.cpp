@@ -1,5 +1,6 @@
 
 #include <sstream>  //std::stringstream
+#include <iostream>  //std::cout
 
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include "catch/catch.hpp"
@@ -25,6 +26,7 @@
 using namespace glm;
 using namespace many;
 using namespace rasters;
+
 
 TEST_CASE( "mesh subdivision purity", "[rasters]" ) {
     SECTION("subdivide(mesh) must be called repeatedly without changing the output"){
@@ -562,7 +564,7 @@ TEST_CASE( "raster erosion happy path", "[rasters]" ) {
 }
 
 
-TEST_CASE( "raster opening purity", "[rasters]" ) {
+TEST_CASE( "opening purity", "[rasters]" ) {
     bools bottom_edge= bools({false,  true, false,  true,  true });
     bools out1       = bools({false, false, false, false, false });
     bools out2       = bools({false, false, false, false, false });
@@ -584,7 +586,7 @@ TEST_CASE( "raster opening purity", "[rasters]" ) {
         CHECK(out1==out2);
     }
 }
-TEST_CASE( "raster opening idempotence", "[rasters]" ) {
+TEST_CASE( "opening idempotence", "[rasters]" ) {
     bools bottom_edge= bools({false,  true, false,  true,  true });
     bools out1       = bools({false, false, false, false, false });
     bools out2       = bools({false, false, false, false, false });
@@ -613,7 +615,7 @@ TEST_CASE( "raster opening idempotence", "[rasters]" ) {
     \|/ 
      4   
 */
-TEST_CASE( "raster opening happy path", "[rasters]" ) {
+TEST_CASE( "opening happy path", "[rasters]" ) {
     bools upper_half = bools({true,  true,  true,  true,  false });
     bools top_only   = bools({false, false, true,  false, false });
     bools empty      = bools({false, false, false, false, false });
@@ -637,7 +639,7 @@ TEST_CASE( "raster opening happy path", "[rasters]" ) {
     }
 }
 
-TEST_CASE( "raster closing purity", "[rasters]" ) {
+TEST_CASE( "closing purity", "[rasters]" ) {
     bools bottom_edge= bools({false,  true, false,  true,  true });
     bools out1       = bools({false, false, false, false, false });
     bools out2       = bools({false, false, false, false, false });
@@ -659,7 +661,7 @@ TEST_CASE( "raster closing purity", "[rasters]" ) {
         CHECK(out1==out2);
     }
 }
-TEST_CASE( "raster closing idempotence", "[rasters]" ) {
+TEST_CASE( "closing idempotence", "[rasters]" ) {
     bools bottom_edge= bools({false,  true, false,  true,  true });
     bools out1       = bools({false, false, false, false, false });
     bools out2       = bools({false, false, false, false, false });
@@ -688,7 +690,7 @@ TEST_CASE( "raster closing idempotence", "[rasters]" ) {
     \|/ 
      4   
 */
-TEST_CASE( "raster closing happy path", "[rasters]" ) {
+TEST_CASE( "closing happy path", "[rasters]" ) {
     bools upper_half = bools({true,  true,  true,  true,  false });
     bools top_only   = bools({false, false, true,  false, false });
     bools empty      = bools({false, false, false, false, false });
@@ -713,7 +715,7 @@ TEST_CASE( "raster closing happy path", "[rasters]" ) {
 }
 
 
-TEST_CASE( "white top hat closing purity", "[rasters]" ) {
+TEST_CASE( "white top hat purity", "[rasters]" ) {
     bools bottom_edge= bools({false,  true, false,  true,  true });
     bools out1       = bools({false, false, false, false, false });
     bools out2       = bools({false, false, false, false, false });
@@ -767,7 +769,7 @@ TEST_CASE( "raster white_top_hat happy path", "[rasters]" ) {
     }
 }
 
-TEST_CASE( "black top hat closing purity", "[rasters]" ) {
+TEST_CASE( "black top hat purity", "[rasters]" ) {
     bools bottom_edge= bools({false,  true, false,  true,  true });
     bools out1       = bools({false, false, false, false, false });
     bools out2       = bools({false, false, false, false, false });
@@ -820,7 +822,7 @@ TEST_CASE( "raster black_top_hat happy path", "[rasters]" ) {
     }
 }
 
-TEST_CASE( "margin closing purity", "[rasters]" ) {
+TEST_CASE( "margin purity", "[rasters]" ) {
     bools bottom_edge= bools({false,  true, false,  true,  true });
     bools out1       = bools({false, false, false, false, false });
     bools out2       = bools({false, false, false, false, false });
@@ -875,7 +877,7 @@ TEST_CASE( "margin happy path", "[rasters]" ) {
     }
 }
 
-TEST_CASE( "padding closing purity", "[rasters]" ) {
+TEST_CASE( "padding purity", "[rasters]" ) {
     bools bottom_edge= bools({false,  true, false,  true,  true });
     bools out1       = bools({false, false, false, false, false });
     bools out2       = bools({false, false, false, false, false });
@@ -926,5 +928,78 @@ TEST_CASE( "padding happy path", "[rasters]" ) {
     SECTION("padding(grid, full) must return predictable results"){
         padding(diamond, full, out1);
         CHECK(out1 == empty);
+    }
+}
+
+
+TEST_CASE( "gradient determinism", "[rasters]" ) {
+    floats a   = floats({1,2,3,4,5,6,7,8,9,10,11,12});
+    // floats b = floats({1,1,2,3,5,8,13,21,34,55,89,144});
+    vec3s out1 = vec3s (icosahedron.vertex_count);
+    vec3s out2 = vec3s (icosahedron.vertex_count);
+    SECTION("gradient(grid, a) must generate the same output when called repeatedly"){
+        gradient(icosahedron, a, out1);
+        gradient(icosahedron, a, out2);
+        CHECK(out1==out2);
+    }
+}
+TEST_CASE( "divergence determinism", "[rasters]" ) {
+    vec3s a    = vec3s ({
+        vec3(1, 2, 3 ),
+        vec3(4, 5, 6 ),
+        vec3(7, 8, 9 ),
+        vec3(10,11,12),
+        vec3(13,14,15),
+        vec3(16,17,18),
+        vec3(19,20,21),
+        vec3(22,23,24),
+        vec3(25,26,27),
+        vec3(28,29,30),
+        vec3(31,32,33),
+        vec3(34,35,36)
+    });
+    floats out1 = floats(icosahedron.vertex_count);
+    floats out2 = floats(icosahedron.vertex_count);
+
+    SECTION("divergence(grid, a) must generate the same output when called repeatedly"){
+        divergence(icosahedron, a, out1);
+        divergence(icosahedron, a, out2);
+        CHECK(out1==out2);
+    }
+}
+TEST_CASE( "curl determinism", "[rasters]" ) {
+    vec3s a    = vec3s ({
+        vec3(1, 2, 3 ),
+        vec3(4, 5, 6 ),
+        vec3(7, 8, 9 ),
+        vec3(10,11,12),
+        vec3(13,14,15),
+        vec3(16,17,18),
+        vec3(19,20,21),
+        vec3(22,23,24),
+        vec3(25,26,27),
+        vec3(28,29,30),
+        vec3(31,32,33),
+        vec3(34,35,36)
+    });
+    // floats b = floats({1,1,2,3,5,8,13,21,34,55,89,144});
+    vec3s  out1 = vec3s (icosahedron.vertex_count);
+    vec3s  out2 = vec3s (icosahedron.vertex_count);
+
+    SECTION("curl(grid, a) must generate the same output when called repeatedly"){
+        curl(icosahedron, a, out1);
+        curl(icosahedron, a, out2);
+        CHECK(out1==out2);
+    }
+}
+TEST_CASE( "laplacian determinism", "[rasters]" ) {
+    floats a    = floats({1,2,3,4,5,6,7,8,9,10,11,12});
+    // floats b = floats({1,1,2,3,5,8,13,21,34,55,89,144});
+    floats out1 = floats (icosahedron.vertex_count);
+    floats out2 = floats (icosahedron.vertex_count);
+    SECTION("laplacian(grid, a) must generate the same output when called repeatedly"){
+        laplacian(icosahedron, a, out1);
+        laplacian(icosahedron, a, out2);
+        CHECK(out1==out2);
     }
 }
