@@ -65,29 +65,25 @@ x			happy path
 	vector calculus: https://en.wikipedia.org/wiki/Vector_calculus_identities#First_derivative_identities
 		gradient
 x			purity
-			translation invariant, ∇F = unshift(∇(shift(F)))
-			rotation invariant,    ∇F = unrotate(∇(rotate(F)))
+			translation/rotation invariant, ∇F = unshift(∇(shift(F)))
 			resolution invariant   blur(∇F) = ∇(blur(F))
 			distributive over addition, ∇(a+b) = ∇a + ∇b
 			∇(aB) = a∇B + B∇a
 		divergence
 x			purity
-			translation invariant
-			rotation invariant
+			translation/rotation invariant
 			resolution invariant
 			distributive over addition
 			∇⋅(aB) = a∇⋅B + B⋅∇a
 		laplacian
 x			purity
-			translation invariant
-			rotation invariant
+			translation/rotation invariant
 			resolution invariant
 			distributive over addition
 			∇²a=∇⋅∇a
 		curl
 x			purity
-			translation invariant
-			rotation invariant
+			translation/rotation invariant
 			resolution invariant
 			distributive over addition
 			∇×∇a = 0

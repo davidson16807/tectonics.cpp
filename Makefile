@@ -1,7 +1,7 @@
 CPP=g++
-BIN = $(shell find src/ -type f -name '*.out')
-OBJ = $(shell find src/ -type f -name '*.o')
-SRC = $(shell find src/ -type f -name '*.cpp')
+#BIN = $(shell find src/ -type f -name '*.out')
+#OBJ = $(shell find src/ -type f -name '*.o')
+#SRC = $(shell find src/ -type f -name '*.cpp')
 INC = $(shell find inc/ -type f -name '*.hpp')
 TEST = $(shell find test/ -type f -name '*.cpp')
 

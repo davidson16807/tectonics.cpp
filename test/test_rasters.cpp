@@ -943,6 +943,34 @@ TEST_CASE( "gradient determinism", "[rasters]" ) {
         CHECK(out1==out2);
     }
 }
+TEST_CASE( "gradient translation invariance", "[rasters]" ) {
+    floats a      = floats({1,2,3,4,5,6,7,8,9,10,11,12});
+
+    uints  A_ids       (icosahedron.vertex_count);
+    uints  Ai_ids      (icosahedron.vertex_count);
+    vec3s  A_pos       (icosahedron.vertex_count);
+    vec3s  Ai_pos      (icosahedron.vertex_count);
+    floats A_a         (icosahedron.vertex_count);
+    vec3s  grad_A_a    (icosahedron.vertex_count);
+    vec3s  Ai_grad_A_a (icosahedron.vertex_count);
+    vec3s  grad_a      (icosahedron.vertex_count);
+
+    mat4   A      = glm::rotate(mat4(1.f), 0.1f, glm::vec3(1,1,1));
+    mult(A,  icosahedron.vertex_positions, A_pos);
+    icosahedron.get_ids(A_pos,  A_ids);
+
+    mat4   Ai     = glm::inverse(A);
+    mult(Ai, icosahedron.vertex_positions, Ai_pos);
+    icosahedron.get_ids(Ai_pos, Ai_ids);
+
+    SECTION("gradient(a) must generate the same output as unshift(gradient(shift(a)))"){
+        gradient( icosahedron, a,   grad_a      );
+        get     ( a,        A_ids,  A_a         );
+        gradient( icosahedron, A_a, grad_A_a    );
+        get     ( grad_A_a, Ai_ids, Ai_grad_A_a );
+        CHECK(grad_a==Ai_grad_A_a);
+    }
+}
 TEST_CASE( "divergence determinism", "[rasters]" ) {
     vec3s a    = vec3s ({
         vec3(1, 2, 3 ),
