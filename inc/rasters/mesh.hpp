@@ -18,7 +18,7 @@ namespace rasters
 	{
 		namespace 
 		{
-			float t((1.0 + sqrt(5.0)) / 2.0);
+			const float PHI((1.0 + sqrt(5.0)) / 2.0);
 
 			template<glm::length_t L, typename T, glm::qualifier Q>
 			inline many::tmany<glm::vec<L,T,Q>> normalize(const many::tmany<glm::vec<L,T,Q>>& u) 
@@ -64,20 +64,20 @@ namespace rasters
 
 		const mesh icosahedron(
 				meshes::normalize(many::vec3s({
-						glm::vec3(-1, t, 0),
-						glm::vec3( 1, t, 0),
-						glm::vec3(-1,-t, 0),
-						glm::vec3( 1,-t, 0),
+						glm::vec3(-1, PHI, 0),
+						glm::vec3( 1, PHI, 0),
+						glm::vec3(-1,-PHI, 0),
+						glm::vec3( 1,-PHI, 0),
 
-						glm::vec3( 0,-1, t),
-						glm::vec3( 0, 1, t),
-						glm::vec3( 0,-1,-t),
-						glm::vec3( 0, 1,-t),
+						glm::vec3( 0,-1, PHI),
+						glm::vec3( 0, 1, PHI),
+						glm::vec3( 0,-1,-PHI),
+						glm::vec3( 0, 1,-PHI),
 
-						glm::vec3( t, 0,-1),
-						glm::vec3( t, 0, 1),
-						glm::vec3(-t, 0,-1),
-						glm::vec3(-t, 0, 1)
+						glm::vec3( PHI, 0,-1),
+						glm::vec3( PHI, 0, 1),
+						glm::vec3(-PHI, 0,-1),
+						glm::vec3(-PHI, 0, 1)
 					})),
 				many::uvec3s({
 						// 5 faces around point 0

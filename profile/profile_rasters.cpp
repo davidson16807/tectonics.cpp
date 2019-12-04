@@ -160,7 +160,7 @@ int main(int argc, char const *argv[])
     uints ids = uints(icosphere.vertex_count);
 
     t1 = std::chrono::high_resolution_clock::now();
-    icosphere.get_values(v, ids);
+    icosphere.get_ids(v, ids);
     t2 = std::chrono::high_resolution_clock::now();
     std::cout << "grid lookup:         " << std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count() << std::endl;
     
