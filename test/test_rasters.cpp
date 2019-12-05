@@ -1002,6 +1002,69 @@ TEST_CASE( "gradient determinism", "[rasters]" ) {
 //         CHECK(all(is_similar));
 //     }
 // }
+
+
+TEST_CASE( "gradient distributive over addition", "[rasters]" ) {
+    meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
+    icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+    // icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+    // icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+    // icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+    // icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+
+    SpheroidGrid icosphere(icosphere_mesh.vertices, icosphere_mesh.faces);
+
+    floats a           (icosphere.vertex_count);
+    floats b           (icosphere.vertex_count);
+    vec3s  grad_a      (icosphere.vertex_count);
+    vec3s  grad_b      (icosphere.vertex_count);
+    vec3s  grad_a_b    (icosphere.vertex_count);
+
+    std::mt19937 generator(2);
+    random(icosphere, generator, a);
+    random(icosphere, generator, b);
+
+    SECTION("gradient(a+b) must generate the same output as gradient(a)+gradient(b)"){
+        gradient ( icosphere, a,      grad_a         );
+        gradient ( icosphere, b,      grad_b         );
+        gradient ( icosphere, a+b,    grad_a_b       );
+        CHECK(grad_a + grad_b == grad_a_b);
+    }
+}
+
+TEST_CASE( "gradient multiplication relation", "[rasters]" ) {
+    meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
+    icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+    // icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+    // icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+    // icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+    // icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+
+    SpheroidGrid icosphere(icosphere_mesh.vertices, icosphere_mesh.faces);
+
+    floats a           (icosphere.vertex_count);
+    floats b           (icosphere.vertex_count);
+    vec3s  grad_a      (icosphere.vertex_count);
+    vec3s  grad_b      (icosphere.vertex_count);
+    vec3s  grad_a_b    (icosphere.vertex_count);
+    floats similarity  (icosphere.vertex_count);
+    bools  is_similar  (icosphere.vertex_count);
+
+    std::mt19937 generator(2);
+    random(icosphere, generator, a);
+    random(icosphere, generator, b);
+
+    SECTION("gradient(a+b) must generate the same output as a*gradient(b) + b*gradient(a)"){
+        gradient ( icosphere, a,      grad_a                  );
+        gradient ( icosphere, b,      grad_b                  );
+        gradient ( icosphere, a*b,    grad_a_b                );
+        dot      ( grad_a_b,  grad_b*a + grad_a*b, similarity );
+        greaterThan(similarity, 0.5f,  is_similar);
+
+        CHECK(all(is_similar));
+    }
+}
+
 TEST_CASE( "divergence determinism", "[rasters]" ) {
     vec3s a    = vec3s ({
         vec3(1, 2, 3 ),
