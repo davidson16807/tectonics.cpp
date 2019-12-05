@@ -1,5 +1,6 @@
 #pragma once
 
+#include <glm/geometric.hpp>
 #include <glm/vector_relational.hpp>
 
 #include "../types.hpp"
@@ -13,6 +14,26 @@ namespace many
 
 
 
+	template <glm::length_t L, class T, glm::qualifier Q>
+	bool equal(const tmany<glm::vec<L,T,Q>>& a, const tmany<glm::vec<L,T,Q>>& b, T cosine_threshold, T length_threshold)
+	{
+		bool out(true);
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out &= glm::dot(glm::normalize(a[i]),glm::normalize(b[i])) > cosine_threshold && !(glm::length(b[i])/glm::length(a[i]) < length_threshold || glm::length(a[i])/glm::length(b[i]) < length_threshold);
+		}
+		return out;
+	}
+	template <glm::length_t L, class T, glm::qualifier Q>
+	bool equal(const tmany<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> b, T cosine_threshold, T length_threshold)
+	{
+		bool out(true);
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out &= glm::dot(glm::normalize(a[i]),glm::normalize(b)) > cosine_threshold && !(glm::length(b)/glm::length(a[i]) < length_threshold || glm::length(a[i])/glm::length(b) < length_threshold);
+		}
+		return out;
+	}
 
 	template<glm::length_t L, glm::qualifier Q>
 	bool equal(const tmany<glm::vec<L,unsigned int,Q>>& a, const glm::vec<L,unsigned int,Q> b)

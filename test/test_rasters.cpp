@@ -943,6 +943,7 @@ TEST_CASE( "gradient determinism", "[rasters]" ) {
         CHECK(out1==out2);
     }
 }
+
 // TEST_CASE( "gradient translation invariance", "[rasters]" ) {
 //     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
 //     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
@@ -962,14 +963,6 @@ TEST_CASE( "gradient determinism", "[rasters]" ) {
 //     vec3s  grad_A_a    (icosphere.vertex_count);
 //     vec3s  Ai_grad_A_a (icosphere.vertex_count);
 //     vec3s  grad_a      (icosphere.vertex_count);
-//     floats similarity  (icosphere.vertex_count);
-//     bools  is_similar  (icosphere.vertex_count);
-//     floats mag_grad_a  (icosphere.vertex_count);
-//     floats mag_Ai_grad_A_a  (icosphere.vertex_count);
-//     floats relative_mag_diff(icosphere.vertex_count);
-//     bools  is_mag_too_big   (icosphere.vertex_count);
-//     bools  is_mag_too_small (icosphere.vertex_count);
-//     bools  is_mag_dissimilar(icosphere.vertex_count);
 
 //     std::mt19937 generator(2);
 //     random(icosphere, generator, a);
@@ -984,13 +977,12 @@ TEST_CASE( "gradient determinism", "[rasters]" ) {
 
 //     SECTION("gradient(a) must generate the same output as unshift(gradient(shift(a)))"){
 //         gradient ( icosphere, a,      grad_a         );
-//         normalize( grad_a,            grad_a         );
 //         get      ( a,         A_ids,  A_a            );
 //         gradient ( icosphere, A_a,    grad_A_a       );
 //         get      ( grad_A_a,  Ai_ids, Ai_grad_A_a    );
-//         normalize( Ai_grad_A_a,       Ai_grad_A_a    );
-//         dot      ( grad_a,Ai_grad_A_a,similarity     );
-//         length   ( grad_a,            mag_grad_a     );
+//         CHECK(equal(grad_a, Ai_grad_A_a, 0.7f, 0.1f));
+//     }
+// }
 //         length   ( Ai_grad_A_a,       mag_Ai_grad_A_a);
 //         greaterThan(similarity, -0.7f,is_similar     );
 //         // div      ( mag_grad_a, mag_Ai_grad_A_a, relative_mag_diff );
@@ -1035,10 +1027,6 @@ TEST_CASE( "gradient distributive over addition", "[rasters]" ) {
 TEST_CASE( "gradient multiplication relation", "[rasters]" ) {
     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-    // icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-    // icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-    // icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-    // icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
 
     SpheroidGrid icosphere(icosphere_mesh.vertices, icosphere_mesh.faces);
 
@@ -1047,8 +1035,6 @@ TEST_CASE( "gradient multiplication relation", "[rasters]" ) {
     vec3s  grad_a      (icosphere.vertex_count);
     vec3s  grad_b      (icosphere.vertex_count);
     vec3s  grad_a_b    (icosphere.vertex_count);
-    floats similarity  (icosphere.vertex_count);
-    bools  is_similar  (icosphere.vertex_count);
 
     std::mt19937 generator(2);
     random(icosphere, generator, a);
@@ -1058,10 +1044,7 @@ TEST_CASE( "gradient multiplication relation", "[rasters]" ) {
         gradient ( icosphere, a,      grad_a                  );
         gradient ( icosphere, b,      grad_b                  );
         gradient ( icosphere, a*b,    grad_a_b                );
-        dot      ( grad_a_b,  grad_b*a + grad_a*b, similarity );
-        greaterThan(similarity, 0.5f,  is_similar);
-
-        CHECK(all(is_similar));
+        CHECK(equal( grad_a_b,  grad_b*a + grad_a*b, 0.7f, 0.1f ));
     }
 }
 

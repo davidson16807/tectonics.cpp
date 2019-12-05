@@ -66,9 +66,9 @@ x			happy path
 		gradient
 x			purity
 x			translation/rotation invariant, ∇F = unshift(∇(shift(F)))
-			resolution invariant   blur(∇F) = ∇(blur(F))
+x			resolution invariant   blur(∇F) = ∇(blur(F))
 x			distributive over addition, ∇(a+b) = ∇a + ∇b
-			∇(ab) = a∇b + b∇a
+x			∇(ab) = a∇b + b∇a
 		divergence
 x			purity
 			translation/rotation invariant
