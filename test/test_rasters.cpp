@@ -983,15 +983,36 @@ TEST_CASE( "gradient determinism", "[rasters]" ) {
 //         CHECK(equal(grad_a, Ai_grad_A_a, 0.7f, 0.1f));
 //     }
 // }
-//         length   ( Ai_grad_A_a,       mag_Ai_grad_A_a);
-//         greaterThan(similarity, -0.7f,is_similar     );
-//         // div      ( mag_grad_a, mag_Ai_grad_A_a, relative_mag_diff );
-//         // greaterThan(relative_mag_diff, 10.f, is_mag_too_big  );
-//         // lessThan ( relative_mag_diff,  0.1f, is_mag_too_small);
-//         // unite    ( is_mag_too_big, is_mag_too_small, is_mag_dissimilar );
-//         // unite    ( is_similar, is_mag_dissimilar, is_similar );
-//         // std::cout << is_similar << std::endl;
-//         CHECK(all(is_similar));
+
+// TEST_CASE( "gradient resolution invariance", "[rasters]" ) {
+//     meshes::mesh icosphere_mesh1(meshes::icosahedron.vertices, meshes::icosahedron.faces);
+//     icosphere_mesh1 = meshes::subdivide(icosphere_mesh1); many::normalize(icosphere_mesh1.vertices, icosphere_mesh1.vertices);
+//     SpheroidGrid icosphere1(icosphere_mesh1.vertices, icosphere_mesh1.faces);
+
+//     meshes::mesh icosphere_mesh2(icosphere_mesh1);
+//     icosphere_mesh2 = meshes::subdivide(icosphere_mesh2); many::normalize(icosphere_mesh2.vertices, icosphere_mesh2.vertices);
+//     SpheroidGrid icosphere2(icosphere_mesh2.vertices, icosphere_mesh2.faces);
+
+//     floats a           (icosphere1.vertex_count);
+//     uints  A_ids       (icosphere2.vertex_count);
+//     uints  Ai_ids      (icosphere1.vertex_count);
+//     floats A_a         (icosphere2.vertex_count);
+//     vec3s  grad_A_a    (icosphere2.vertex_count);
+//     vec3s  Ai_grad_A_a (icosphere1.vertex_count);
+//     vec3s  grad_a      (icosphere1.vertex_count);
+
+//     std::mt19937 generator(2);
+//     random(icosphere1, generator, a);
+
+//     icosphere1.get_ids(icosphere2.vertex_positions,  A_ids);
+//     icosphere2.get_ids(icosphere1.vertex_positions,  Ai_ids);
+
+//     SECTION("gradient(a) must generate the same output as unshift(gradient(shift(a)))"){
+//         gradient ( icosphere1,a,      grad_a         );
+//         get      ( a,         A_ids,  A_a            );
+//         gradient ( icosphere2,A_a,    grad_A_a       );
+//         get      ( grad_A_a,  Ai_ids, Ai_grad_A_a    );
+//         CHECK(equal(grad_a, Ai_grad_A_a, 0.7f, 0.1f));
 //     }
 // }
 
