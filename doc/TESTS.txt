@@ -71,10 +71,10 @@ x			distributive over addition, ∇(a+b) = ∇a + ∇b
 x			∇(ab) = a∇b + b∇a
 		divergence
 x			purity
-			translation/rotation invariant
-			resolution invariant
-			distributive over addition
-			∇⋅(aB) = a∇⋅B + B⋅∇a
+x			translation/rotation invariant
+x			resolution invariant
+x			distributive over addition
+x			∇⋅(aB) = a∇⋅B + B⋅∇a
 		laplacian
 x			purity
 			translation/rotation invariant

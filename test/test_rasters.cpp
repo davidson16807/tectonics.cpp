@@ -1093,6 +1093,139 @@ TEST_CASE( "divergence determinism", "[rasters]" ) {
         CHECK(out1==out2);
     }
 }
+// TEST_CASE( "divergence translation invariance", "[rasters]" ) {
+//     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
+//     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+//     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+//     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+//     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+//     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+
+//     SpheroidGrid icosphere(icosphere_mesh.vertices, icosphere_mesh.faces);
+
+//     floats scalar      (icosphere.vertex_count);
+//     vec3s  a           (icosphere.vertex_count);
+//     uints  A_ids       (icosphere.vertex_count);
+//     uints  Ai_ids      (icosphere.vertex_count);
+//     vec3s  A_pos       (icosphere.vertex_count);
+//     vec3s  Ai_pos      (icosphere.vertex_count);
+//     vec3s  A_a         (icosphere.vertex_count);
+//     floats div_A_a     (icosphere.vertex_count);
+//     floats Ai_div_A_a  (icosphere.vertex_count);
+//     floats div_a       (icosphere.vertex_count);
+
+//     std::mt19937 generator(2);
+//     random  ( icosphere, generator, scalar   );
+//     gradient( icosphere, scalar,    a        );
+
+//     mat4   A      = glm::rotate(mat4(1.f), 3.14f/3.f, glm::vec3(1,1,1));
+//     mult(A,  icosphere.vertex_positions, A_pos);
+//     icosphere.get_ids(A_pos,  A_ids);
+
+//     mat4   Ai     = glm::inverse(A);
+//     mult(Ai, icosphere.vertex_positions, Ai_pos);
+//     icosphere.get_ids(Ai_pos, Ai_ids);
+
+//     SECTION("divergence(a) must generate the same output as unshift(divergence(shift(a)))"){
+//         divergence ( icosphere, a,      div_a      );
+//         get        ( a,         A_ids,  A_a        );
+//         divergence ( icosphere, A_a,    div_A_a    );
+//         get        ( div_A_a,   Ai_ids, Ai_div_A_a );
+//         CHECK(equal(div_a, Ai_div_A_a, 1e-0f));
+//     }
+// }
+
+// TEST_CASE( "divergence resolution invariance", "[rasters]" ) {
+//     meshes::mesh icosphere_mesh1(meshes::icosahedron.vertices, meshes::icosahedron.faces);
+//     icosphere_mesh1 = meshes::subdivide(icosphere_mesh1); many::normalize(icosphere_mesh1.vertices, icosphere_mesh1.vertices);
+//     SpheroidGrid icosphere1(icosphere_mesh1.vertices, icosphere_mesh1.faces);
+
+//     meshes::mesh icosphere_mesh2(icosphere_mesh1);
+//     icosphere_mesh2 = meshes::subdivide(icosphere_mesh2); many::normalize(icosphere_mesh2.vertices, icosphere_mesh2.vertices);
+//     SpheroidGrid icosphere2(icosphere_mesh2.vertices, icosphere_mesh2.faces);
+
+//     floats scalar     (icosphere1.vertex_count);
+//     vec3s  a          (icosphere1.vertex_count);
+//     uints  A_ids      (icosphere2.vertex_count);
+//     uints  Ai_ids     (icosphere1.vertex_count);
+//     vec3s  A_a        (icosphere2.vertex_count);
+//     floats div_A_a    (icosphere2.vertex_count);
+//     floats Ai_div_A_a (icosphere1.vertex_count);
+//     floats div_a      (icosphere1.vertex_count);
+
+//     std::mt19937 generator(2);
+//     random  ( icosphere1, generator, scalar );
+//     gradient( icosphere1, scalar,    a      );
+
+//     icosphere1.get_ids(icosphere2.vertex_positions,  A_ids);
+//     icosphere2.get_ids(icosphere1.vertex_positions,  Ai_ids);
+
+//     SECTION("divergence(a) must generate the same output as unshift(divergence(shift(a)))"){
+//         divergence ( icosphere1,a,     div_a       );
+//         get        ( a,         A_ids, A_a         );
+//         divergence ( icosphere2,A_a,   div_A_a     );
+//         get        ( div_A_a,   Ai_ids, Ai_div_A_a );
+//         CHECK(equal(div_a, Ai_div_A_a, 1e-0f));
+//     }
+// }
+
+
+TEST_CASE( "divergence distributive over addition", "[rasters]" ) {
+    meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
+    icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+    // icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+    // icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+    // icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+    // icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+
+    SpheroidGrid icosphere(icosphere_mesh.vertices, icosphere_mesh.faces);
+
+    floats scalar     (icosphere.vertex_count);
+    vec3s  a          (icosphere.vertex_count);
+    vec3s  b          (icosphere.vertex_count);
+    floats div_a      (icosphere.vertex_count);
+    floats div_b      (icosphere.vertex_count);
+    floats div_a_b    (icosphere.vertex_count);
+
+    std::mt19937 generator(2);
+    random(icosphere, generator, scalar);
+    gradient( icosphere, scalar,a     );
+    random(icosphere, generator, scalar);
+    gradient( icosphere, scalar,b     );
+
+    SECTION("divergence(a+b) must generate the same output as divergence(a)+divergence(b)"){
+        divergence ( icosphere, a,      div_a         );
+        divergence ( icosphere, b,      div_b         );
+        divergence ( icosphere, a+b,    div_a_b       );
+        CHECK(div_a + div_b == div_a_b);
+    }
+}
+
+// TEST_CASE( "divergence multiplication relation", "[rasters]" ) {
+//     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
+//     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+
+//     SpheroidGrid icosphere(icosphere_mesh.vertices, icosphere_mesh.faces);
+
+//     floats scalar     (icosphere.vertex_count);
+//     floats a          (icosphere.vertex_count);
+//     vec3s  b          (icosphere.vertex_count);
+//     vec3s  grad_a     (icosphere.vertex_count);
+//     floats div_b      (icosphere.vertex_count);
+//     floats div_a_b    (icosphere.vertex_count);
+
+//     std::mt19937 generator(2);
+//     random(icosphere, generator, a);
+//     random(icosphere, generator, scalar);
+//     gradient( icosphere, scalar, b     );
+
+//     SECTION("divergence(a+b) must generate the same output as a*divergence(b) + b*divergence(a)"){
+//         gradient   ( icosphere, a,      grad_a                 );
+//         divergence ( icosphere, b,      div_b                  );
+//         divergence ( icosphere, b*a,    div_a_b                );
+//         CHECK(equal( div_a_b,  div_b*a + dot(b, grad_a), 1e-0f));
+//     }
+// }
 TEST_CASE( "curl determinism", "[rasters]" ) {
     vec3s a    = vec3s ({
         vec3(1, 2, 3 ),
