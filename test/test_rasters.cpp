@@ -1251,6 +1251,38 @@ TEST_CASE( "curl determinism", "[rasters]" ) {
         CHECK(out1==out2);
     }
 }
+
+TEST_CASE( "curl distributive over addition", "[rasters]" ) {
+    meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
+    icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+    // icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+    // icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+    // icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+    // icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+
+    SpheroidGrid icosphere(icosphere_mesh.vertices, icosphere_mesh.faces);
+
+    floats scalar     (icosphere.vertex_count);
+    vec3s  a          (icosphere.vertex_count);
+    vec3s  b          (icosphere.vertex_count);
+    vec3s  curl_a      (icosphere.vertex_count);
+    vec3s  curl_b      (icosphere.vertex_count);
+    vec3s  curl_a_b    (icosphere.vertex_count);
+
+    std::mt19937 generator(2);
+    random(icosphere, generator, scalar);
+    gradient( icosphere, scalar,a     );
+    random(icosphere, generator, scalar);
+    gradient( icosphere, scalar,b     );
+
+    SECTION("curl(a+b) must generate the same output as curl(a)+curl(b)"){
+        curl ( icosphere, a,      curl_a         );
+        curl ( icosphere, b,      curl_b         );
+        curl ( icosphere, a+b,    curl_a_b       );
+        CHECK(curl_a + curl_b == curl_a_b);
+    }
+}
+
 TEST_CASE( "laplacian determinism", "[rasters]" ) {
     floats a    = floats({1,2,3,4,5,6,7,8,9,10,11,12});
     // floats b = floats({1,1,2,3,5,8,13,21,34,55,89,144});
@@ -1262,3 +1294,25 @@ TEST_CASE( "laplacian determinism", "[rasters]" ) {
         CHECK(out1==out2);
     }
 }
+
+
+// TEST_CASE( "laplacian is divergence of gradient", "[rasters]" ) {
+//     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
+//     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+//     SpheroidGrid icosphere(icosphere_mesh.vertices, icosphere_mesh.faces);
+
+//     floats a          (icosphere.vertex_count);
+//     vec3s  grad_a     (icosphere.vertex_count);
+//     floats div_grad_a (icosphere.vertex_count);
+//     floats laplacian_a(icosphere.vertex_count);
+
+//     std::mt19937 generator(2);
+//     random(icosphere, generator, a);
+
+//     laplacian (icosphere, a,      laplacian_a);
+//     gradient  (icosphere, a,      grad_a     );
+//     divergence(icosphere, grad_a, div_grad_a );
+//     SECTION("laplacian(a) must generate the same output as div(grad(a))"){
+//         CHECK(equal(laplacian_a, div_grad_a));
+//     }
+// }
