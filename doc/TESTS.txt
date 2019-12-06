@@ -79,15 +79,14 @@ x			∇⋅(aB) = a∇⋅B + B⋅∇a
 x			purity
 			translation/rotation invariant
 			resolution invariant
-			distributive over addition
-			∇²a=∇⋅∇a
+x			∇²a=∇⋅∇a
 		curl
 x			purity
 			translation/rotation invariant
 			resolution invariant
-			distributive over addition
-			∇×∇a = 0
-			∇⋅∇×a = 0
+x			distributive over addition
+x			∇×∇a = 0
+x			∇⋅∇×a = 0
 			∇×∇×∇a = ∇(∇⋅a)-∇²a
 
 academics

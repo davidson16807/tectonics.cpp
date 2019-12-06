@@ -1020,10 +1020,6 @@ TEST_CASE( "gradient determinism", "[rasters]" ) {
 TEST_CASE( "gradient distributive over addition", "[rasters]" ) {
     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-    // icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-    // icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-    // icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-    // icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
 
     SpheroidGrid icosphere(icosphere_mesh.vertices, icosphere_mesh.faces);
 
@@ -1283,6 +1279,50 @@ TEST_CASE( "curl distributive over addition", "[rasters]" ) {
     }
 }
 
+// TEST_CASE( "curl of gradient is zero", "[rasters]" ) {
+//     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
+//     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+//     SpheroidGrid icosphere(icosphere_mesh.vertices, icosphere_mesh.faces);
+
+//     floats a          (icosphere.vertex_count);
+//     vec3s  grad_a     (icosphere.vertex_count);
+//     vec3s  curl_grad_a(icosphere.vertex_count);
+//     vec3s  zeros      (icosphere.vertex_count);
+
+//     std::mt19937 generator(2);
+//     random(icosphere, generator, a);
+//     fill  (zeros, vec3(0));
+
+//     gradient  (icosphere, a,      grad_a      );
+//     curl      (icosphere, grad_a, curl_grad_a );
+//     SECTION("curl(gradient(a)) must generate the zero vector"){
+//         // CHECK(curl_grad_a == zeros);
+//         CHECK(equal(curl_grad_a, zeros));
+//     }
+// }
+// TEST_CASE( "divergence of curl is zero", "[rasters]" ) {
+//     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
+//     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+//     SpheroidGrid icosphere(icosphere_mesh.vertices, icosphere_mesh.faces);
+
+//     floats scalar     (icosphere.vertex_count);
+//     vec3s  a          (icosphere.vertex_count);
+//     vec3s  curl_a     (icosphere.vertex_count);
+//     floats div_curl_a (icosphere.vertex_count);
+//     floats zeros      (icosphere.vertex_count);
+
+//     std::mt19937 generator(2);
+//     random(icosphere, generator, scalar);
+//     gradient(icosphere, scalar,  a);
+//     fill  (zeros, 0.f);
+
+//     curl       (icosphere, a,      curl_a     );
+//     divergence (icosphere, curl_a, div_curl_a );
+//     SECTION("curl(gradient(a)) must generate the zero vector"){
+//         CHECK(div_curl_a == zeros);
+//         // CHECK(equal(div_curl_a, zeros));
+//     }
+// }
 TEST_CASE( "laplacian determinism", "[rasters]" ) {
     floats a    = floats({1,2,3,4,5,6,7,8,9,10,11,12});
     // floats b = floats({1,1,2,3,5,8,13,21,34,55,89,144});
