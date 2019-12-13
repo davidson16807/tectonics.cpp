@@ -59,8 +59,7 @@ x			purity
 x			happy path
 	image segmentation
 		purity
-		translation invariant
-		rotation invariant
+		translation/rotation invariant
 	scalar transport
 	vector calculus: https://en.wikipedia.org/wiki/Vector_calculus_identities#First_derivative_identities
 		gradient
