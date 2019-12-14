@@ -30,33 +30,33 @@ namespace many
 	
 
 	template <class T1, typename F>
-	inline std::vector<T1> transform(const std::vector<T1>& a, F f)
+	inline std::vector<T1> apply(const std::vector<T1>& a, F f)
 	{
 		std::vector<T1> out = std::vector<T1>(a.size());
-		transform(a, f, out); 
+		apply(a, f, out); 
 		return out;
 	}
 
 
 	template <class T1, class T2, typename F>
-	inline std::vector<T1> transform(const std::vector<T1>& a, const std::vector<T2>& b, F f)
+	inline std::vector<T1> apply(const std::vector<T1>& a, const std::vector<T2>& b, F f)
 	{
 		std::vector<T1> out = std::vector<T1>(a.size());
-		transform(a, b, f, out); 
+		apply(a, b, f, out); 
 		return out;
 	}
 	template <class T1, class T2, typename F>
-	inline std::vector<T1> transform(const std::vector<T1>& a, const T2 b, F f)
+	inline std::vector<T1> apply(const std::vector<T1>& a, const T2 b, F f)
 	{
 		std::vector<T1> out = std::vector<T1>(a.size());
-		transform(a, b, f, out); 
+		apply(a, b, f, out); 
 		return out;
 	}
 	template <class T1, class T2, typename F>
-	inline std::vector<T1> transform(const T1 a, const std::vector<T2>& b, F f)
+	inline std::vector<T1> apply(const T1 a, const std::vector<T2>& b, F f)
 	{
 		std::vector<T1> out = std::vector<T1>(b.size());
-		transform(a, b, f, out); 
+		apply(a, b, f, out); 
 		return out;
 	}
 
@@ -64,52 +64,52 @@ namespace many
 
 
 	template <class T1, class T2, class T3, typename F>
-	inline std::vector<T1> transform(const std::vector<T1>& a, const std::vector<T2>& b, const std::vector<T3>& c, F f)
+	inline std::vector<T1> apply(const std::vector<T1>& a, const std::vector<T2>& b, const std::vector<T3>& c, F f)
 	{
 		std::vector<T1> out = std::vector<T1>(a.size());
-		transform(a, b, c, f, out); 
+		apply(a, b, c, f, out); 
 		return out;
 	}
 	template <class T1, class T2, class T3, typename F>
-	inline std::vector<T1> transform(const std::vector<T1>& a, const std::vector<T2>& b, const T3 c, F f)
+	inline std::vector<T1> apply(const std::vector<T1>& a, const std::vector<T2>& b, const T3 c, F f)
 	{
 		std::vector<T1> out = std::vector<T1>(a.size());
-		transform(a, b, c, f, out); 
+		apply(a, b, c, f, out); 
 		return out;
 	}
 	template <class T1, class T2, class T3, typename F>
-	inline std::vector<T1> transform(const std::vector<T1>& a, const T2 b, const std::vector<T3>& c, F f)
+	inline std::vector<T1> apply(const std::vector<T1>& a, const T2 b, const std::vector<T3>& c, F f)
 	{
 		std::vector<T1> out = std::vector<T1>(a.size());
-		transform(a, b, c, f, out); 
+		apply(a, b, c, f, out); 
 		return out;
 	}
 	template <class T1, class T2, class T3, typename F>
-	inline std::vector<T1> transform(const std::vector<T1>& a, const T2 b, const T3 c, F f)
+	inline std::vector<T1> apply(const std::vector<T1>& a, const T2 b, const T3 c, F f)
 	{
 		std::vector<T1> out = std::vector<T1>(a.size());
-		transform(a, b, c, f, out); 
+		apply(a, b, c, f, out); 
 		return out;
 	}
 	template <class T1, class T2, class T3, typename F>
-	inline std::vector<T1> transform(const T1 a, const std::vector<T2>& b, const std::vector<T3>& c, F f)
+	inline std::vector<T1> apply(const T1 a, const std::vector<T2>& b, const std::vector<T3>& c, F f)
 	{
 		std::vector<T1> out = std::vector<T1>(b.size());
-		transform(a, b, c, f, out); 
+		apply(a, b, c, f, out); 
 		return out;
 	}
 	template <class T1, class T2, class T3, typename F>
-	inline std::vector<T1> transform(const T1 a, const std::vector<T2>& b, const T3 c, F f)
+	inline std::vector<T1> apply(const T1 a, const std::vector<T2>& b, const T3 c, F f)
 	{
 		std::vector<T1> out = std::vector<T1>(b.size());
-		transform(a, b, c, f, out); 
+		apply(a, b, c, f, out); 
 		return out;
 	}
 	template <class T1, class T2, class T3, typename F>
-	inline std::vector<T1> transform(const T1 a, const T2 b, const std::vector<T3>& c, F f)
+	inline std::vector<T1> apply(const T1 a, const T2 b, const std::vector<T3>& c, F f)
 	{
 		std::vector<T1> out = std::vector<T1>(c.size());
-		transform(a, b, c, f, out); 
+		apply(a, b, c, f, out); 
 		return out;
 	}
 
@@ -144,21 +144,21 @@ namespace many
 	template <class T>
 	std::vector<T> abs(const std::vector<T>& a)
 	{
-		return transform(a, [](T ai){ return ai >= 0? ai : -ai; });
+		return apply(a, [](T ai){ return ai >= 0? ai : -ai; });
 	}
 
 	/// Returns 1.0 if x > 0, 0.0 if x == 0, or -1.0 if x < 0.
 	template <class T>
 	std::vector<T> sign(const std::vector<T>& a)
 	{
-		return transform(a, [](T ai){ return (T(0) < ai) - (ai < T(0)); });
+		return apply(a, [](T ai){ return (T(0) < ai) - (ai < T(0)); });
 	}
 
 	/// Returns a value equal to the nearest integer that is less then or equal to x.
 	template <class T>
 	std::vector<T> floor(const std::vector<T>& a)
 	{
-		return transform(a, std::floor);
+		return apply(a, std::floor);
 	}
 
 	/// Returns a value equal to the nearest integer to x
@@ -166,7 +166,7 @@ namespace many
 	template <class T>
 	std::vector<T> trunc(const std::vector<T>& a)
 	{
-		return transform(a, std::trunc);
+		return apply(a, std::trunc);
 	}
 
 	/// Returns a value equal to the nearest integer to x.
@@ -177,7 +177,7 @@ namespace many
 	template <class T>
 	std::vector<T> round(const std::vector<T>& a)
 	{
-		return transform(a, std::round);
+		return apply(a, std::round);
 	}
 
 	/// Returns a value equal to the nearest integer
@@ -185,7 +185,7 @@ namespace many
 	template <class T>
 	std::vector<T> ceil(const std::vector<T>& a)
 	{
-		transform(a, std::ceil);
+		apply(a, std::ceil);
 	}
 
 
@@ -238,22 +238,22 @@ namespace many
 	template <class T, class T2, class T3>
 	inline std::vector<T3> operator>(const std::vector<T>& a, const T2 b)
 	{
-		return transform(a, b, [](T ai, T2 bi){ return ai > bi; });
+		return apply(a, b, [](T ai, T2 bi){ return ai > bi; });
 	}
 	template <class T, class T2, class T3>
 	inline std::vector<T3> operator>=(const std::vector<T>& a, const T2 b)
 	{
-		return transform(a, b, [](T ai, T2 bi){ return ai >= bi; });
+		return apply(a, b, [](T ai, T2 bi){ return ai >= bi; });
 	}
 	template <class T, class T2, class T3>
 	inline std::vector<T3> operator<(const std::vector<T>& a, const T2 b)
 	{
-		return transform(a, b, [](T ai, T2 bi){ return ai < bi; });
+		return apply(a, b, [](T ai, T2 bi){ return ai < bi; });
 	}
 	template <class T, class T2, class T3>
 	inline std::vector<T3> operator<=(const std::vector<T>& a, const T2 b)
 	{
-		return transform(a, b, [](T ai, T2 bi){ return ai <= bi; });
+		return apply(a, b, [](T ai, T2 bi){ return ai <= bi; });
 	}
 	
 	// NOTE: all wrappers are suggested to be inline because they are thin wrappers of functions
@@ -261,22 +261,22 @@ namespace many
 	template <class T, class T2, class T3>
 	inline std::vector<T3> operator>(const T2 a, const std::vector<T>& b)
 	{
-		return transform(a, b, [](T ai, T2 bi){ return ai > bi; });
+		return apply(a, b, [](T ai, T2 bi){ return ai > bi; });
 	}
 	template <class T, class T2, class T3>
 	inline std::vector<T3> operator>=(const T2 a, const std::vector<T>& b)
 	{
-		return transform(a, b, [](T ai, T2 bi){ return ai >= bi; });
+		return apply(a, b, [](T ai, T2 bi){ return ai >= bi; });
 	}
 	template <class T, class T2, class T3>
 	inline std::vector<T3> operator<(const T2 a, const std::vector<T>& b)
 	{
-		return transform(a, b, [](T ai, T2 bi){ return ai < bi; });
+		return apply(a, b, [](T ai, T2 bi){ return ai < bi; });
 	}
 	template <class T, class T2, class T3>
 	inline std::vector<T3> operator<=(const T2 a, const std::vector<T>& b)
 	{
-		return transform(a, b, [](T ai, T2 bi){ return ai <= bi; });
+		return apply(a, b, [](T ai, T2 bi){ return ai <= bi; });
 	}
 
 
@@ -407,22 +407,22 @@ namespace many
 	template <class T, class T2>
 	inline std::vector<T> operator+(const std::vector<T>& a, const T2 b)
 	{
-		return transform(a, b, [](T ai, T2 bi){ return ai + bi; });
+		return apply(a, b, [](T ai, T2 bi){ return ai + bi; });
 	}
 	template <class T, class T2>
 	inline std::vector<T> operator-(const std::vector<T>& a, const T2 b)
 	{
-		return transform(a, b, [](T ai, T2 bi){ return ai - bi; });
+		return apply(a, b, [](T ai, T2 bi){ return ai - bi; });
 	}
 	template <class T, class T2>
 	inline std::vector<T> operator*(const std::vector<T>& a, const T2 b)
 	{
-		return transform(a, b, [](T ai, T2 bi){ return ai * bi; });
+		return apply(a, b, [](T ai, T2 bi){ return ai * bi; });
 	}
 	template <class T, class T2>
 	inline std::vector<T> operator/(const std::vector<T>& a, const T2 b)
 	{
-		return transform(a, b, [](T ai, T2 bi){ return ai / bi; });
+		return apply(a, b, [](T ai, T2 bi){ return ai / bi; });
 	}
 	
 
@@ -434,22 +434,22 @@ namespace many
 	template <class T, class T2>
 	inline std::vector<T> operator+(const T2 a, const std::vector<T>& b)
 	{
-		return transform(a, b, [](T ai, T2 bi){ return ai + bi; });
+		return apply(a, b, [](T ai, T2 bi){ return ai + bi; });
 	}
 	template <class T, class T2>
 	inline std::vector<T> operator-(const T2 a, const std::vector<T>& b)
 	{
-		return transform(a, b, [](T ai, T2 bi){ return ai - bi; });
+		return apply(a, b, [](T ai, T2 bi){ return ai - bi; });
 	}
 	template <class T, class T2>
 	inline std::vector<T> operator*(const T2 a, const std::vector<T>& b)
 	{
-		return transform(a, b, [](T ai, T2 bi){ return ai * bi; });
+		return apply(a, b, [](T ai, T2 bi){ return ai * bi; });
 	}
 	template <class T, class T2>
 	inline std::vector<T> operator/(const T2 a, const std::vector<T>& b)
 	{
-		return transform(a, b, [](T ai, T2 bi){ return ai / bi; });
+		return apply(a, b, [](T ai, T2 bi){ return ai / bi; });
 	}
 
 
@@ -458,69 +458,69 @@ namespace many
 	template <class T, class T2>
 	inline std::vector<T> operator+(const std::vector<T>& a, const std::vector<T2>& b)
 	{
-		return transform(a, b, [](T ai, T2 bi){ return ai + bi; });
+		return apply(a, b, [](T ai, T2 bi){ return ai + bi; });
 	}
 	template <class T, class T2>
 	inline std::vector<T> operator-(const std::vector<T>& a, const std::vector<T2>& b)
 	{
-		return transform(a, b, [](T ai, T2 bi){ return ai - bi; });
+		return apply(a, b, [](T ai, T2 bi){ return ai - bi; });
 	}
 	template <class T, class T2>
 	inline std::vector<T> operator*(const std::vector<T>& a, const std::vector<T2>& b)
 	{
-		return transform(a, b, [](T ai, T2 bi){ return ai * bi; });
+		return apply(a, b, [](T ai, T2 bi){ return ai * bi; });
 	}
 	template <class T, class T2>
 	inline std::vector<T> operator/(const std::vector<T>& a, const std::vector<T2>& b)
 	{
-		return transform(a, b, [](T ai, T2 bi){ return ai / bi; });
+		return apply(a, b, [](T ai, T2 bi){ return ai / bi; });
 	}
 
 
 	inline std::vector<bool> operator~(const std::vector<bool>& a)
 	{
 		std::vector<bool> out = std::vector<bool>(a.size());
-		transform(a, [](bool ai){ return !ai; }, out);
+		apply(a, [](bool ai){ return !ai; }, out);
 		return out;
 	}
 
 
 	inline std::vector<bool> operator|(const std::vector<bool>& a, const bool b)
 	{
-		return transform(a, b, [](bool ai, bool bi){ return ai || bi; });
+		return apply(a, b, [](bool ai, bool bi){ return ai || bi; });
 	}
 	inline std::vector<bool> operator&(const std::vector<bool>& a, const bool b)
 	{
-		return transform(a, b, [](bool ai, bool bi){ return ai && bi; });
+		return apply(a, b, [](bool ai, bool bi){ return ai && bi; });
 	}
 
 	inline std::vector<bool> operator|(const std::vector<bool>& a, const std::vector<bool>& b)
 	{
-		return transform(a, b, [](bool ai, bool bi){ return ai || bi; });
+		return apply(a, b, [](bool ai, bool bi){ return ai || bi; });
 	}
 	inline std::vector<bool> operator&(const std::vector<bool>& a, const std::vector<bool>& b)
 	{
-		return transform(a, b, [](bool ai, bool bi){ return ai && bi; });
+		return apply(a, b, [](bool ai, bool bi){ return ai && bi; });
 	}
 
 
 
 
 	inline std::vector<bool>& operator|=(std::vector<bool>& a, const bool b){
-		transform(a, b, [](bool ai, bool bi){ return ai || bi; }, a);
+		apply(a, b, [](bool ai, bool bi){ return ai || bi; }, a);
 		return a;
 	}
 	inline std::vector<bool>& operator&=(std::vector<bool>& a, const bool b){
-		transform(a, b, [](bool ai, bool bi){ return ai &&  bi; }, a);
+		apply(a, b, [](bool ai, bool bi){ return ai &&  bi; }, a);
 		return a;
 	}
 
 	inline std::vector<bool>& operator|=(std::vector<bool>& a, const std::vector<bool>& b){
-		transform(a, b, [](bool ai, bool bi){ return ai || bi; }, a);
+		apply(a, b, [](bool ai, bool bi){ return ai || bi; }, a);
 		return a;
 	}
 	inline std::vector<bool>& operator&=(std::vector<bool>& a, const std::vector<bool>& b){
-		transform(a, b, [](bool ai, bool bi){ return ai &&  bi; }, a);
+		apply(a, b, [](bool ai, bool bi){ return ai &&  bi; }, a);
 		return a;
 	}
 }

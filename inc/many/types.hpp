@@ -147,9 +147,9 @@ namespace many
 
 
 	
-	// UNARY TRANSFORM
+	// UNARY APPLY
 	template <class T1, class Tout, typename F>
-	inline void transform(const std::vector<T1>& a, F f, std::vector<Tout>& out)
+	inline void apply(const std::vector<T1>& a, F f, std::vector<Tout>& out)
 	{
 		assert(a.size() == out.size());
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -158,7 +158,7 @@ namespace many
 		}
 	}
 	template <class T1, class Tout, typename F>
-	inline void transform(const T1 a, F f, std::vector<Tout>& out)
+	inline void apply(const T1 a, F f, std::vector<Tout>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -169,9 +169,9 @@ namespace many
 
 
 
-	// BINARY TRANSFORM
+	// BINARY APPLY
 	template <class T1, class T2, class Tout, typename F>
-	inline void transform(const std::vector<T1>& a, const std::vector<T2>& b, F f, std::vector<Tout>& out)
+	inline void apply(const std::vector<T1>& a, const std::vector<T2>& b, F f, std::vector<Tout>& out)
 	{
 		assert(a.size() == out.size());
 		assert(b.size() == out.size());
@@ -180,18 +180,20 @@ namespace many
 			out[i] = f(a[i], b[i]);
 		}
 	}
-	template <class T1, class Tout, typename F>
-	inline void transform(const std::vector<T1>& a, const T1 b, F f, std::vector<Tout>& out)
+	template <class T1, class T2, class Tout, typename F>
+	inline void apply(const std::vector<T1>& a, const T2 b, F f, std::vector<Tout>& out)
 	{
+	    static_assert(!std::is_same<std::vector<T1>, T2>::value, "The type of parameter must not be a std::vector");
 		assert(a.size() == out.size());
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out[i] = f(a[i], b);
 		}
 	}
-	template <class T2, class Tout, typename F>
-	inline void transform(const T2 a, const std::vector<T2>& b, F f, std::vector<Tout>& out)
+	template <class T1, class T2, class Tout, typename F>
+	inline void apply(const T1 a, const std::vector<T2>& b, F f, std::vector<Tout>& out)
 	{
+	    static_assert(!std::is_same<T1, std::vector<T2>>::value, "The type of parameter must not be a std::vector");
 		assert(b.size() == out.size());
 		for (unsigned int i = 0; i < b.size(); ++i)
 		{
@@ -209,9 +211,9 @@ namespace many
 
 
 
-	// TRINARY TRANSFORM
+	// TRINARY APPLY
 	template <class T, class Tout, typename F>
-	inline void transform(const std::vector<T>& a, const std::vector<T>& b, const std::vector<T>& c, F f, std::vector<Tout>& out)
+	inline void apply(const std::vector<T>& a, const std::vector<T>& b, const std::vector<T>& c, F f, std::vector<Tout>& out)
 	{
 		assert(a.size() == out.size());
 		assert(b.size() == out.size());
@@ -222,7 +224,7 @@ namespace many
 		}
 	}
 	template <class T, class Tout, typename F>
-	inline void transform(const std::vector<T>& a, const std::vector<T>& b, const T c, F f, std::vector<Tout>& out)
+	inline void apply(const std::vector<T>& a, const std::vector<T>& b, const T c, F f, std::vector<Tout>& out)
 	{
 		assert(a.size() == out.size());
 		assert(b.size() == out.size());
@@ -232,7 +234,7 @@ namespace many
 		}
 	}
 	template <class T, class Tout, typename F>
-	inline void transform(const std::vector<T>& a, const T b, const std::vector<T>& c, F f, std::vector<Tout>& out)
+	inline void apply(const std::vector<T>& a, const T b, const std::vector<T>& c, F f, std::vector<Tout>& out)
 	{
 		assert(a.size() == out.size());
 		assert(c.size() == out.size());
@@ -242,7 +244,7 @@ namespace many
 		}
 	}
 	template <class T, class Tout, typename F>
-	inline void transform(const std::vector<T>& a, const T b, const T c, F f, std::vector<Tout>& out)
+	inline void apply(const std::vector<T>& a, const T b, const T c, F f, std::vector<Tout>& out)
 	{
 		assert(a.size() == out.size());
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -251,7 +253,7 @@ namespace many
 		}
 	}
 	template <class T, class Tout, typename F>
-	inline void transform(const T a, const std::vector<T>& b, const std::vector<T>& c, F f, std::vector<Tout>& out)
+	inline void apply(const T a, const std::vector<T>& b, const std::vector<T>& c, F f, std::vector<Tout>& out)
 	{
 		assert(b.size() == out.size());
 		assert(c.size() == out.size());
@@ -261,7 +263,7 @@ namespace many
 		}
 	}
 	template <class T, class Tout, typename F>
-	inline void transform(const T a, const std::vector<T>& b, const T c, F f, std::vector<Tout>& out)
+	inline void apply(const T a, const std::vector<T>& b, const T c, F f, std::vector<Tout>& out)
 	{
 		assert(b.size() == out.size());
 		for (unsigned int i = 0; i < b.size(); ++i)
@@ -270,7 +272,7 @@ namespace many
 		}
 	}
 	template <class T, class Tout, typename F>
-	inline void transform(const T a, const T b, const std::vector<T>& c, F f, std::vector<Tout>& out)
+	inline void apply(const T a, const T b, const std::vector<T>& c, F f, std::vector<Tout>& out)
 	{
 		assert(c.size() == out.size());
 		for (unsigned int i = 0; i < c.size(); ++i)

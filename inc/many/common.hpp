@@ -10,21 +10,21 @@ namespace many
 	template <class T>
 	void abs(const std::vector<T>& a, std::vector<T>& out)
 	{
-		transform(a, [](T ai){ return ai >= 0? ai : -ai; }, out);
+		apply(a, [](T ai){ return ai >= 0? ai : -ai; }, out);
 	}
 
 	/// Returns 1.0 if x > 0, 0.0 if x == 0, or -1.0 if x < 0.
 	template <class T, class Tout>
 	void sign(const std::vector<T>& a, std::vector<Tout>& out)
 	{
-		transform(a, [](T ai){ return (T(0) < ai) - (ai < T(0)); }, out);
+		apply(a, [](T ai){ return (T(0) < ai) - (ai < T(0)); }, out);
 	}
 
 	/// Returns a value equal to the nearest integer that is less then or equal to x.
 	template <class T>
 	void floor(const std::vector<T>& a, std::vector<T>& out)
 	{
-		transform(a, std::floor, out);
+		apply(a, std::floor, out);
 	}
 
 	/// Returns a value equal to the nearest integer to x
@@ -32,7 +32,7 @@ namespace many
 	template <class T>
 	void trunc(const std::vector<T>& a, std::vector<T>& out)
 	{
-		transform(a, std::trunc, out);
+		apply(a, std::trunc, out);
 	}
 
 	/// Returns a value equal to the nearest integer to x.
@@ -43,7 +43,7 @@ namespace many
 	template <class T>
 	void round(const std::vector<T>& a, std::vector<T>& out)
 	{
-		transform(a, std::round, out);
+		apply(a, std::round, out);
 	}
 
 	/// Returns a value equal to the nearest integer
@@ -51,14 +51,14 @@ namespace many
 	template <class T>
 	void ceil(const std::vector<T>& a, std::vector<T>& out)
 	{
-		transform(a, std::ceil, out);
+		apply(a, std::ceil, out);
 	}
 
 	/// Return x - floor(x).
 	template <class T>
 	void fract(const std::vector<T>& a, std::vector<T>& out)
 	{
-		transform(a, [](T ai){ return ai - std::floor(ai); }, out);
+		apply(a, [](T ai){ return ai - std::floor(ai); }, out);
 	}
 
 	/// Modulus. Returns x - y * floor(x / y)
@@ -66,7 +66,7 @@ namespace many
 	template <class T>
 	void mod(const std::vector<T>& a, const std::vector<T>& b, std::vector<T>& out)
 	{
-		transform(a, b, [](T ai, T bi){ return ai - bi * std::floor(ai / bi); }, out);
+		apply(a, b, [](T ai, T bi){ return ai - bi * std::floor(ai / bi); }, out);
 	}
 
 	/// Returns the fractional part of x and sets i to the integer
@@ -87,12 +87,12 @@ namespace many
 	template <class T>
 	void min(const std::vector<T>& a, const std::vector<T>& b, std::vector<T>& out)
 	{
-		transform(a, b, [](T ai, T bi){ return ai < bi? ai : bi; }, out);
+		apply(a, b, [](T ai, T bi){ return ai < bi? ai : bi; }, out);
 	}
 	template <class T>
 	void min(const std::vector<T>& a, const T b, std::vector<T>& out)
 	{
-		transform(a, b, [](T ai, T bi){ return ai < bi? ai : bi; }, out);
+		apply(a, b, [](T ai, T bi){ return ai < bi? ai : bi; }, out);
 	}
 
 	// component-wise min
@@ -123,12 +123,12 @@ namespace many
 	template <class T>
 	void max(const std::vector<T>& a, const std::vector<T>& b, std::vector<T>& out)
 	{
-		transform(a, b, [](T ai, T bi){ return ai > bi? ai : bi; }, out);
+		apply(a, b, [](T ai, T bi){ return ai > bi? ai : bi; }, out);
 	}
 	template <class T>
 	void max(const std::vector<T>& a, const T b, std::vector<T>& out)
 	{
-		transform(a, b, [](T ai, T bi){ return ai > bi? ai : bi; }, out);
+		apply(a, b, [](T ai, T bi){ return ai > bi? ai : bi; }, out);
 	}
 	// component-wise max
 	template <class T>
@@ -164,23 +164,23 @@ namespace many
 	template <class T>
 	void clamp(const std::vector<T>& a, const T lo, const T hi, std::vector<T>& out)
 	{
-		transform(a, lo, hi, [](T ai, T loi, T hii){ return ai > hii? hii : ai < loi? loi : ai; }, out);
+		apply(a, lo, hi, [](T ai, T loi, T hii){ return ai > hii? hii : ai < loi? loi : ai; }, out);
 	}
 	template <class T>
 	void clamp(const std::vector<T>& a, const T lo, const std::vector<T>& hi, std::vector<T>& out)
 	{
-		transform(a, lo, hi, [](T ai, T loi, T hii){ return ai > hii? hii : ai < loi? loi : ai; }, out);
+		apply(a, lo, hi, [](T ai, T loi, T hii){ return ai > hii? hii : ai < loi? loi : ai; }, out);
 	}
 	template <class T>
 	void clamp(const std::vector<T>& a, const std::vector<T>& lo, const T hi, std::vector<T>& out)
 	{
-		transform(a, lo, hi, [](T ai, T loi, T hii){ return ai > hii? hii : ai < loi? loi : ai; }, out);
+		apply(a, lo, hi, [](T ai, T loi, T hii){ return ai > hii? hii : ai < loi? loi : ai; }, out);
 	}
 	template <class T>
 	void clamp(const std::vector<T>& a, const std::vector<T>& lo, const std::vector<T>& hi, std::vector<T>& out)
 	{
-		transform(a,   hi, [](T ai, T hii){ return ai > hii? hii : ai; }, out);
-		transform(out, lo, [](T ai, T loi){ return ai < loi? loi : ai; }, out);
+		apply(a,   hi, [](T ai, T hii){ return ai > hii? hii : ai; }, out);
+		apply(out, lo, [](T ai, T loi){ return ai < loi? loi : ai; }, out);
 	}
 
 
@@ -299,17 +299,17 @@ namespace many
 	template<typename T>
 	void step(const std::vector<T>& edge, const std::vector<T>&  x, std::vector<T>& out)
 	{
-		transform(edge, x, [](T edgei, T xi){ return xi < edgei? T(0) : T(1); }, out); 
+		apply(edge, x, [](T edgei, T xi){ return xi < edgei? T(0) : T(1); }, out); 
 	}
 	template<typename T>
 	void step(const std::vector<T>&  edge, const T x, std::vector<T>& out)
 	{
-		transform(edge, x, [](T edgei, T xi){ return xi < edgei? T(0) : T(1); }, out); 
+		apply(edge, x, [](T edgei, T xi){ return xi < edgei? T(0) : T(1); }, out); 
 	}
 	template<typename T>
 	void step(const T edge, const std::vector<T>&  x, std::vector<T>& out)
 	{
-		transform(edge, x, [](T edgei, T xi){ return xi < edgei? T(0) : T(1); }, out); 
+		apply(edge, x, [](T edgei, T xi){ return xi < edgei? T(0) : T(1); }, out); 
 	}
 
 	/// Returns 0.0 if x <= lo and 1.0 if x >= hi and
@@ -324,37 +324,37 @@ namespace many
 	template<typename T>
 	void smoothstep(const std::vector<T>& lo, const std::vector<T>& hi, const std::vector<T>& x, std::vector<T>& out)
 	{
-		transform(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
+		apply(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
 	}
 	template<typename T>
 	void smoothstep(const T lo, const std::vector<T>& hi, const std::vector<T>& x, std::vector<T>& out)
 	{
-		transform(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
+		apply(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
 	}
 	template<typename T>
 	void smoothstep(const std::vector<T>& lo, T hi, const std::vector<T>& x, std::vector<T>& out)
 	{
-		transform(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
+		apply(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
 	}
 	template<typename T>
 	void smoothstep(const T lo, const T hi, const std::vector<T>& x, std::vector<T>& out)
 	{
-		transform(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
+		apply(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
 	}
 	template<typename T>
 	void smoothstep(const std::vector<T>& lo, const std::vector<T>& hi, const T x, std::vector<T>& out)
 	{
-		transform(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
+		apply(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
 	}
 	template<typename T>
 	void smoothstep(const T lo, const std::vector<T>& hi, const T x, std::vector<T>& out)
 	{
-		transform(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
+		apply(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
 	}
 	template<typename T>
 	void smoothstep(const std::vector<T>& lo, const T hi, const T x, std::vector<T>& out)
 	{
-		transform(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
+		apply(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
 	}
 	template<typename T>
 	T smoothstep(const T lo, const T hi, const T x)
@@ -376,37 +376,37 @@ namespace many
 	template<typename T>
 	void linearstep(const std::vector<T>& lo, const std::vector<T>& hi, const std::vector<T>& x, std::vector<T>& out)
 	{
-		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+		apply(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
 	}
 	template<typename T>
 	void linearstep(const T lo, const std::vector<T>& hi, const std::vector<T>& x, std::vector<T>& out)
 	{
-		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+		apply(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
 	}
 	template<typename T>
 	void linearstep(const std::vector<T>& lo, T hi, const std::vector<T>& x, std::vector<T>& out)
 	{
-		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+		apply(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
 	}
 	template<typename T>
 	void linearstep(const T lo, const T hi, const std::vector<T>& x, std::vector<T>& out)
 	{
-		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+		apply(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
 	}
 	template<typename T>
 	void linearstep(const std::vector<T>& lo, const std::vector<T>& hi, const T x, std::vector<T>& out)
 	{
-		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+		apply(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
 	}
 	template<typename T>
 	void linearstep(const T lo, const std::vector<T>& hi, const T x, std::vector<T>& out)
 	{
-		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+		apply(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
 	}
 	template<typename T>
 	void linearstep(const std::vector<T>& lo, const T hi, const T x, std::vector<T>& out)
 	{
-		transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+		apply(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
 	}
 	template<typename T>
 	T linearstep(const T lo, const T hi, const T x)
@@ -422,7 +422,7 @@ namespace many
 	template<typename T>
 	void isnan(const std::vector<T>&  x, std::vector<bool>& out)
 	{
-		transform(x, std::isnan, out);
+		apply(x, std::isnan, out);
 	}
 
 	/// Returns true if x holds a positive infinity or negative
@@ -433,44 +433,44 @@ namespace many
 	template<typename T>
 	void isinf(const std::vector<T>&  x, std::vector<bool>& out)
 	{
-		transform(x, std::isinf, out);
+		apply(x, std::isinf, out);
 	}
 
 	/// Computes and returns a * b + c.
 	template<typename T>
 	void fma(const std::vector<T>& a, const std::vector<T>& b, const std::vector<T>& c, std::vector<T>& out)
 	{
-		transform(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
+		apply(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
 	}
 	template<typename T>
 	void fma(const T a, const std::vector<T>& b, const std::vector<T>& c, std::vector<T>& out)
 	{
-		transform(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
+		apply(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
 	}
 	template<typename T>
 	void fma(const std::vector<T>& a, T b, const std::vector<T>& c, std::vector<T>& out)
 	{
-		transform(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
+		apply(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
 	}
 	template<typename T>
 	void fma(const T a, const T b, const std::vector<T>& c, std::vector<T>& out)
 	{
-		transform(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
+		apply(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
 	}
 	template<typename T>
 	void fma(const std::vector<T>& a, const std::vector<T>& b, const T c, std::vector<T>& out)
 	{
-		transform(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
+		apply(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
 	}
 	template<typename T>
 	void fma(const T a, const std::vector<T>& b, const T c, std::vector<T>& out)
 	{
-		transform(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
+		apply(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
 	}
 	template<typename T>
 	void fma(const std::vector<T>& a, const T b, const T c, std::vector<T>& out)
 	{
-		transform(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
+		apply(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
 	}
 
 //	/// Returns a signed integer value representing

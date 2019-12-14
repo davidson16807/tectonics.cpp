@@ -246,7 +246,7 @@ namespace rasters {
 			std::copy(
 				arrow_vertex_ids_set.begin(), 
 				arrow_vertex_ids_set.end(), 
-				std::back_inserter(arrow_vertex_ids.vector())
+				std::back_inserter(arrow_vertex_ids)
 			);
 		    std::sort(
 		    	arrow_vertex_ids.begin(), 
@@ -263,45 +263,45 @@ namespace rasters {
 			std::copy_if (
 				arrow_vertex_ids.begin(), 
 				arrow_vertex_ids.end(), 
-				std::back_inserter(edge_vertex_ids.vector()), 
+				std::back_inserter(edge_vertex_ids), 
 				[](uvec2 a){return a.y > a.x;}
 			);
 
 			edge_count = edge_vertex_ids.size();
 
-		  	edge_vertex_id_a       .vector().resize(edge_count);
-		  	edge_vertex_id_b       .vector().resize(edge_count);
-			edge_face_ids          .vector().resize(edge_count);
-			edge_face_id_a         .vector().resize(edge_count);
-			edge_face_id_b         .vector().resize(edge_count);
-		  	edge_endpoint_a        .vector().resize(edge_count);
-		  	edge_endpoint_b        .vector().resize(edge_count);
-		  	edge_midpoints         .vector().resize(edge_count);
-		  	edge_lengths           .vector().resize(edge_count);
-		  	edge_normals           .vector().resize(edge_count);
-		//	edge_areas             .vector().resize(edge_count);
+		  	edge_vertex_id_a       .resize(edge_count);
+		  	edge_vertex_id_b       .resize(edge_count);
+			edge_face_ids          .resize(edge_count);
+			edge_face_id_a         .resize(edge_count);
+			edge_face_id_b         .resize(edge_count);
+		  	edge_endpoint_a        .resize(edge_count);
+		  	edge_endpoint_b        .resize(edge_count);
+		  	edge_midpoints         .resize(edge_count);
+		  	edge_lengths           .resize(edge_count);
+		  	edge_normals           .resize(edge_count);
+		//	edge_areas             .resize(edge_count);
 		//  edge_average_length  = 0.0f;
 		  	
 			arrow_count = arrow_vertex_ids.size();
 
-		  	arrow_vertex_id_from   .vector().resize(2*edge_count);
-		  	arrow_vertex_id_to     .vector().resize(2*edge_count);
-			arrow_face_ids         .vector().resize(2*edge_count);
-			arrow_face_id_a        .vector().resize(2*edge_count);
-			arrow_face_id_b        .vector().resize(2*edge_count);
-		  	arrow_endpoint_from    .vector().resize(2*edge_count);
-		  	arrow_endpoint_to      .vector().resize(2*edge_count);
-		  	arrow_midpoints        .vector().resize(2*edge_count);
-		  	arrow_offsets          .vector().resize(2*edge_count);
-		  	arrow_lengths          .vector().resize(2*edge_count); 
-		  	arrow_normals          .vector().resize(2*edge_count);
-		//	arrow_areas            .vector().resize(0);
+		  	arrow_vertex_id_from   .resize(2*edge_count);
+		  	arrow_vertex_id_to     .resize(2*edge_count);
+			arrow_face_ids         .resize(2*edge_count);
+			arrow_face_id_a        .resize(2*edge_count);
+			arrow_face_id_b        .resize(2*edge_count);
+		  	arrow_endpoint_from    .resize(2*edge_count);
+		  	arrow_endpoint_to      .resize(2*edge_count);
+		  	arrow_midpoints        .resize(2*edge_count);
+		  	arrow_offsets          .resize(2*edge_count);
+		  	arrow_lengths          .resize(2*edge_count); 
+		  	arrow_normals          .resize(2*edge_count);
+		//	arrow_areas            .resize(0);
 		//  arrow_average_length = 0.0f;
 
-		  	arrow_dual_endpoint_a  .vector().resize(2*edge_count);
-		  	arrow_dual_endpoint_b  .vector().resize(2*edge_count);
-		  	arrow_dual_lengths     .vector().resize(2*edge_count);
-		  	arrow_dual_normals     .vector().resize(2*edge_count);
+		  	arrow_dual_endpoint_a  .resize(2*edge_count);
+		  	arrow_dual_endpoint_b  .resize(2*edge_count);
+		  	arrow_dual_lengths     .resize(2*edge_count);
+		  	arrow_dual_normals     .resize(2*edge_count);
 
 	    	// generate arrow_face_ids and edge_face_ids
 		  	std::unordered_set<uint> face_ids_set;

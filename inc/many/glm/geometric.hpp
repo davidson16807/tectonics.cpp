@@ -20,14 +20,14 @@ namespace many
 
 
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void dot (const tmany<glm::vec<L,T,Q>>& u, const glm::vec<L,T,Q> v, tmany<T>& out) {
+	void dot (const std::vector<glm::vec<L,T,Q>>& u, const glm::vec<L,T,Q> v, std::vector<T>& out) {
 		for (unsigned int i = 0; i < u.size(); ++i)
 		{
 			out[i] = dot(u[i], v);
 		}
 	}
 	template<typename T, glm::qualifier Q>
-	void cross (const tmany<glm::vec<3,T,Q>>& u, const glm::vec<3,T,Q> v, tmany<glm::vec<3,T,Q>>& out) 
+	void cross (const std::vector<glm::vec<3,T,Q>>& u, const glm::vec<3,T,Q> v, std::vector<glm::vec<3,T,Q>>& out) 
 	{
 		for (unsigned int i = 0; i < u.size(); ++i)
 		{
@@ -35,7 +35,7 @@ namespace many
 		}
 	}
 	template<typename T, glm::qualifier Q>
-	void cross (const tmany<glm::vec<2,T,Q>>& u, const glm::vec<2,T,Q> v, tmany<float>& out) 
+	void cross (const std::vector<glm::vec<2,T,Q>>& u, const glm::vec<2,T,Q> v, std::vector<float>& out) 
 	{
 		for (unsigned int i = 0; i < u.size(); ++i)
 		{
@@ -43,14 +43,14 @@ namespace many
 		}
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void mult (const tmany<glm::vec<L,T,Q>>& u, const glm::vec<L,T,Q> v, tmany<glm::vec<L,T,Q>>& out) {
+	void mult (const std::vector<glm::vec<L,T,Q>>& u, const glm::vec<L,T,Q> v, std::vector<glm::vec<L,T,Q>>& out) {
 		for (unsigned int i = 0; i < u.size(); ++i)
 		{
 			out[i] = u[i] * v;
 		}
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void distance(const tmany<glm::vec<L,T,Q>>& u, const glm::vec<L,T,Q> v, tmany<T>& out) 
+	void distance(const std::vector<glm::vec<L,T,Q>>& u, const glm::vec<L,T,Q> v, std::vector<T>& out) 
 	{
 		for (unsigned int i = 0; i < u.size(); ++i)
 		{
@@ -60,7 +60,7 @@ namespace many
 
 
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void dot (const tmany<glm::vec<L,T,Q>>& u, const tmany<glm::vec<L,T,Q>>& v, tmany<T>& out) 
+	void dot (const std::vector<glm::vec<L,T,Q>>& u, const std::vector<glm::vec<L,T,Q>>& v, std::vector<T>& out) 
 	{
 		for (unsigned int i = 0; i < u.size(); ++i)
 		{
@@ -68,7 +68,7 @@ namespace many
 		}
 	}
 	template<typename T, glm::qualifier Q>
-	void cross (const tmany<glm::vec<3,T,Q>>& u, const tmany<glm::vec<3,T,Q>>& v, tmany<glm::vec<3,T,Q>>& out) 
+	void cross (const std::vector<glm::vec<3,T,Q>>& u, const std::vector<glm::vec<3,T,Q>>& v, std::vector<glm::vec<3,T,Q>>& out) 
 	{
 		for (unsigned int i = 0; i < u.size(); ++i)
 		{
@@ -76,7 +76,7 @@ namespace many
 		}
 	}
 	template<typename T, glm::qualifier Q>
-	void cross (const tmany<glm::vec<2,T,Q>>& u, const tmany<glm::vec<2,T,Q>>& v, tmany<float>& out) 
+	void cross (const std::vector<glm::vec<2,T,Q>>& u, const std::vector<glm::vec<2,T,Q>>& v, std::vector<float>& out) 
 	{
 		for (unsigned int i = 0; i < u.size(); ++i)
 		{
@@ -84,7 +84,7 @@ namespace many
 		}
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void mult (const tmany<glm::vec<L,T,Q>>& u, const tmany<glm::vec<L,T,Q>>& v, tmany<glm::vec<L,T,Q>>& out) 
+	void mult (const std::vector<glm::vec<L,T,Q>>& u, const std::vector<glm::vec<L,T,Q>>& v, std::vector<glm::vec<L,T,Q>>& out) 
 	{
 		for (unsigned int i = 0; i < u.size(); ++i)
 		{
@@ -92,7 +92,7 @@ namespace many
 		}
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void distance(const tmany<glm::vec<L,T,Q>>& u, const tmany<glm::vec<L,T,Q>>& v, tmany<T>& out) 
+	void distance(const std::vector<glm::vec<L,T,Q>>& u, const std::vector<glm::vec<L,T,Q>>& v, std::vector<T>& out) 
 	{
 		for (unsigned int i = 0; i < u.size(); ++i)
 		{
@@ -102,7 +102,7 @@ namespace many
 
 
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void length(const tmany<glm::vec<L,T,Q>>& u, tmany<T>& out) 
+	void length(const std::vector<glm::vec<L,T,Q>>& u, std::vector<T>& out) 
 	{
 		for (unsigned int i = 0; i < u.size(); ++i)
 		{
@@ -110,7 +110,7 @@ namespace many
 		}
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void normalize(const tmany<glm::vec<L,T,Q>>& u, tmany<glm::vec<L,T,Q>>& out) 
+	void normalize(const std::vector<glm::vec<L,T,Q>>& u, std::vector<glm::vec<L,T,Q>>& out) 
 	{
 		float u_length(0);
 		for (unsigned int i = 0; i < u.size(); ++i)

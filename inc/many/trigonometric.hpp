@@ -18,7 +18,7 @@ namespace many
 	void radians(const std::vector<T>& degrees, std::vector<T>& out)
 	{
 		T conversion_factor(M_PI/180.);
-		return transform(degrees, [conversion_factor](T degreesi){ return conversion_factor * degreesi; }, out);
+		return apply(degrees, [conversion_factor](T degreesi){ return conversion_factor * degreesi; }, out);
 	}
 
 	/// Converts degrees to radians and returns the result.
@@ -26,7 +26,7 @@ namespace many
 	void degrees(const std::vector<T>& radians, std::vector<T>& out)
 	{
 		T conversion_factor(180./M_PI);
-		return transform(radians, [conversion_factor](T radiansi){ return conversion_factor * radiansi; }, out);
+		return apply(radians, [conversion_factor](T radiansi){ return conversion_factor * radiansi; }, out);
 	}
 
 	/// The standard trigonometric sine function.
@@ -34,7 +34,7 @@ namespace many
 	template <class T>
 	void sin(const std::vector<T>& radians, std::vector<T>& out)
 	{
-		return transform(radians, std::sin, out);
+		return apply(radians, std::sin, out);
 	}
 
 	/// The standard trigonometric cosine function.
@@ -42,14 +42,14 @@ namespace many
 	template <class T>
 	void cos(const std::vector<T>& radians, std::vector<T>& out)
 	{
-		return transform(radians, std::cos, out);
+		return apply(radians, std::cos, out);
 	}
 
 	/// The standard trigonometric tangent function.
 	template <class T>
 	void tan(const std::vector<T>& radians, std::vector<T>& out)
 	{
-		return transform(radians, std::tan, out);
+		return apply(radians, std::tan, out);
 	}
 
 	/// Arc sine. Returns an angle whose sine is x.
@@ -58,7 +58,7 @@ namespace many
 	template <class T>
 	void asin(const std::vector<T>& x, std::vector<T>& out)
 	{
-		return transform(x, std::asin, out);
+		return apply(x, std::asin, out);
 	}
 
 	/// Arc cosine. Returns an angle whose sine is x.
@@ -67,7 +67,7 @@ namespace many
 	template <class T>
 	void acos(const std::vector<T>& x, std::vector<T>& out)
 	{
-		return transform(x, std::acos, out);
+		return apply(x, std::acos, out);
 	}
 
 	/// Arc tangent. Returns an angle whose tangent is y_over_x.
@@ -78,7 +78,7 @@ namespace many
 	template <class T>
 	void atan(const std::vector<T>& y_over_x, std::vector<T>& out)
 	{
-		return transform(y_over_x, std::atan, out);
+		return apply(y_over_x, std::atan, out);
 	}
 
 
@@ -90,7 +90,7 @@ namespace many
 	template <class T>
 	void atan(const std::vector<T>& x, const std::vector<T>& y, std::vector<T>& out)
 	{
-		return transform(x, y, std::atan2, out);
+		return apply(x, y, std::atan2, out);
 	}
 
 
@@ -98,28 +98,28 @@ namespace many
 	template <class T>
 	void sinh(const std::vector<T>& radians, std::vector<T>& out)
 	{
-		return transform(radians, std::sinh, out);
+		return apply(radians, std::sinh, out);
 	}
 
 	/// Returns the hyperbolic cosine function, (exp(x) + exp(-x)) / 2
 	template <class T>
 	void cosh(const std::vector<T>& radians, std::vector<T>& out)
 	{
-		return transform(radians, std::cosh, out);
+		return apply(radians, std::cosh, out);
 	}
 
 	/// Returns the hyperbolic tangent function, sinh(angle) / cosh(angle)
 	template <class T>
 	void tanh(const std::vector<T>& radians, std::vector<T>& out)
 	{
-		return transform(radians, std::tanh, out);
+		return apply(radians, std::tanh, out);
 	}
 
 	/// Arc hyperbolic sine; returns the inverse of sinh.
 	template <class T>
 	void asinh(const std::vector<T>& x, std::vector<T>& out)
 	{
-		return transform(x, std::asinh, out);
+		return apply(x, std::asinh, out);
 	}
 
 	/// Arc hyperbolic cosine; returns the non-negative inverse
@@ -127,7 +127,7 @@ namespace many
 	template <class T>
 	void acosh(const std::vector<T>& x, std::vector<T>& out)
 	{
-		return transform(x, std::acosh, out);
+		return apply(x, std::acosh, out);
 	}
 
 	/// Arc hyperbolic tangent; returns the inverse of tanh.
@@ -135,7 +135,7 @@ namespace many
 	template <class T>
 	void atanh(const std::vector<T>& x, std::vector<T>& out)
 	{
-		return transform(x, std::atanh, out);
+		return apply(x, std::atanh, out);
 	}
 
 }//namespace many

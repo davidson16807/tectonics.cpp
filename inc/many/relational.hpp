@@ -357,22 +357,22 @@ namespace many
 	template <class T, class T2>
 	void greaterThan(const std::vector<T>& a, const T2 b, std::vector<bool>& out)
 	{
-		transform(a, b, [](T ai, T2 bi){ return ai > bi; }, out); 
+		apply(a, b, [](T ai, T2 bi){ return ai > bi; }, out); 
 	}
 	template <class T, class T2>
 	void greaterThanEqual(const std::vector<T>& a, const T2 b, std::vector<bool>& out)
 	{
-		transform(a, b, [](T ai, T2 bi){ return ai >= bi; }, out); 
+		apply(a, b, [](T ai, T2 bi){ return ai >= bi; }, out); 
 	}
 	template <class T, class T2>
 	void lessThan(const std::vector<T>& a, const T2 b, std::vector<bool>& out)
 	{
-		transform(a, b, [](T ai, T2 bi){ return ai < bi; }, out); 
+		apply(a, b, [](T ai, T2 bi){ return ai < bi; }, out); 
 	}
 	template <class T, class T2>
 	void lessThanEqual(const std::vector<T>& a, const T2 b, std::vector<bool>& out)
 	{
-		transform(a, b, [](T ai, T2 bi){ return ai <= bi; }, out); 
+		apply(a, b, [](T ai, T2 bi){ return ai <= bi; }, out); 
 	}
 
 
@@ -380,22 +380,22 @@ namespace many
 	template <class T, class T2>
 	void greaterThan(const std::vector<T>& a, const std::vector<T2>& b, std::vector<bool>& out)
 	{
-		transform(a, b, [](T ai, T2 bi){ return ai > bi; }, out); 
+		apply(a, b, [](T ai, T2 bi){ return ai > bi; }, out); 
 	}
 	template <class T, class T2>
 	void greaterThanEqual(const std::vector<T>& a, const std::vector<T2>& b, std::vector<bool>& out)
 	{
-		transform(a, b, [](T ai, T2 bi){ return ai >= bi; }, out); 
+		apply(a, b, [](T ai, T2 bi){ return ai >= bi; }, out); 
 	}
 	template <class T, class T2>
 	void lessThan(const std::vector<T>& a, const std::vector<T2>& b, std::vector<bool>& out)
 	{
-		transform(a, b, [](T ai, T2 bi){ return ai <= bi; }, out); 
+		apply(a, b, [](T ai, T2 bi){ return ai <= bi; }, out); 
 	}
 	template <class T, class T2>
 	void lessThanEqual(const std::vector<T>& a, const std::vector<T2>& b, std::vector<bool>& out)
 	{
-		transform(a, b, [](T ai, T2 bi){ return ai < bi; }, out); 
+		apply(a, b, [](T ai, T2 bi){ return ai < bi; }, out); 
 	}
 
 	
