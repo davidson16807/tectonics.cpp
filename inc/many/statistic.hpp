@@ -14,7 +14,7 @@ namespace many
 
 	// component-wise min
 	template <class T>
-	unsigned int min_id(const tmany<T>& a)
+	unsigned int min_id(const std::vector<T>& a)
 	{
 		T min_value = a[0];
 		unsigned int min_id = 0;
@@ -32,7 +32,7 @@ namespace many
 
 
 	template <class T>
-	unsigned int max_id(const tmany<T>& a)
+	unsigned int max_id(const std::vector<T>& a)
 	{
 		T min_value = a[0];
 		unsigned int max_id = 0;
@@ -50,7 +50,7 @@ namespace many
 
 	// component-wise min
 	template <class T>
-	T sum(const tmany<T>& a)
+	T sum(const std::vector<T>& a)
 	{
 		T out = T(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -60,7 +60,7 @@ namespace many
 		return out;
 	}
 	// component-wise min
-	int sum(const tmany<bool>& a)
+	int sum(const std::vector<bool>& a)
 	{
 		int out = 0;
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -74,7 +74,7 @@ namespace many
 	}
 
 	template <class T>
-	T mean(const tmany<T>& a)
+	T mean(const std::vector<T>& a)
 	{
 		T out = T(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -87,7 +87,7 @@ namespace many
 
 
 	template <class T>
-	T standard_deviation(const tmany<T>& a)
+	T standard_deviation(const std::vector<T>& a)
 	{
 		T mean_a = mean(a);
 
@@ -101,7 +101,7 @@ namespace many
 	}
 
 	template <class T>
-	T weighted_average(const tmany<T>& a, const tmany<T>& weights)
+	T weighted_average(const std::vector<T>& a, const std::vector<T>& weights)
 	{
 		T out = T(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -114,7 +114,7 @@ namespace many
 
 	// TODO: vector version
 	template <class T>
-	void rescale(const tmany<T>& a, tmany<T>& out, T max_new = 1., T min_new = 0.)
+	void rescale(const std::vector<T>& a, std::vector<T>& out, T max_new = 1., T min_new = 0.)
 	{
 	    T max_old = max(a);
 	    T min_old = min(a);
@@ -129,17 +129,17 @@ namespace many
 	}
 	// // component-wise min
 	// template <class T>
-	// T median(const tmany<T>& a)
+	// T median(const std::vector<T>& a)
 	// {
-	// 	const tmany<T> temp = tmany<T>(a);
+	// 	const std::vector<T> temp = std::vector<T>(a);
 	// 	std::sort(std::begin(temp), std::end(temp));
 	// 	return a[a.size()/2];
 	// }
 // 
 	// template <class T>
-	// T mode(const tmany<T>& a)
+	// T mode(const std::vector<T>& a)
 	// {
-	// 	const tmany<T> temp = tmany<T>(a);
+	// 	const std::vector<T> temp = std::vector<T>(a);
 	// 	std::sort(std::begin(temp), std::end(temp));
 	//     int value = a[0];
 	//     int max = a[0];

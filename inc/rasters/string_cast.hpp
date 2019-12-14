@@ -21,7 +21,7 @@ namespace rasters
 	} 
 
 	template <typename T>
-	std::string to_string(const SpheroidGrid& grid, const tmany<T>& a, const T lo, const T hi, const uint line_char_width = 80)
+	std::string to_string(const SpheroidGrid& grid, const std::vector<T>& a, const T lo, const T hi, const uint line_char_width = 80)
 	{
 		float lat(0.);
 		float lon(0.);
@@ -75,7 +75,7 @@ namespace rasters
 	}
 
 	template <typename T>
-	std::string to_string(const SpheroidGrid& grid, const tmany<T>& a, const int line_char_width = 80)
+	std::string to_string(const SpheroidGrid& grid, const std::vector<T>& a, const int line_char_width = 80)
 	{
 		return to_string(grid, a, min(a), max(a), line_char_width);
 	}

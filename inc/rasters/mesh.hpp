@@ -21,9 +21,9 @@ namespace rasters
 			const float PHI((1.0 + sqrt(5.0)) / 2.0);
 
 			template<glm::length_t L, typename T, glm::qualifier Q>
-			inline many::tmany<glm::vec<L,T,Q>> normalize(const many::tmany<glm::vec<L,T,Q>>& u) 
+			inline std::vector<glm::vec<L,T,Q>> normalize(const std::vector<glm::vec<L,T,Q>>& u) 
 			{
-				many::tmany<glm::vec<L,T,Q>> out = many::tmany<glm::vec<L,T,Q>>(u.size());
+				std::vector<glm::vec<L,T,Q>> out = std::vector<glm::vec<L,T,Q>>(u.size());
 				many::normalize(u, out);
 				return out;
 			}

@@ -5,37 +5,37 @@
 namespace many
 {
 
-	void unite(const tmany<bool>& a, const bool b, tmany<bool>& out)
+	void unite(const std::vector<bool>& a, const bool b, std::vector<bool>& out)
 	{
 		transform(a, b, [](bool ai, bool bi){ return ai || bi; }, out);
 	}
 
-	void unite(const tmany<bool>& a, const tmany<bool>& b, tmany<bool>& out)
+	void unite(const std::vector<bool>& a, const std::vector<bool>& b, std::vector<bool>& out)
 	{
 		transform(a, b, [](bool ai, bool bi){ return ai || bi; }, out);
 	}
 
-	void intersect(const tmany<bool>& a, const bool b, tmany<bool>& out)
+	void intersect(const std::vector<bool>& a, const bool b, std::vector<bool>& out)
 	{
 		transform(a, b, [](bool ai, bool bi){ return ai && bi; }, out);
 	}
 
-	void intersect(const tmany<bool>& a, const tmany<bool>& b, tmany<bool>& out)
+	void intersect(const std::vector<bool>& a, const std::vector<bool>& b, std::vector<bool>& out)
 	{
 		transform(a, b, [](bool ai, bool bi){ return ai && bi; }, out);
 	}
 
-	void differ(const tmany<bool>& a, const bool b, tmany<bool>& out)
+	void differ(const std::vector<bool>& a, const bool b, std::vector<bool>& out)
 	{
 		transform(a, b, [](bool ai, bool bi){ return ai && !bi; }, out);
 	}
 
-	void differ(const tmany<bool>& a, const tmany<bool>& b, tmany<bool>& out)
+	void differ(const std::vector<bool>& a, const std::vector<bool>& b, std::vector<bool>& out)
 	{
 		transform(a, b, [](bool ai, bool bi){ return ai && !bi; }, out);
 	}
 
-	void negate(const tmany<bool>& a, tmany<bool>& out)
+	void negate(const std::vector<bool>& a, std::vector<bool>& out)
 	{
 		transform(a, [](bool ai){ return !ai; }, out);
 	}

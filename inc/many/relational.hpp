@@ -8,7 +8,7 @@ namespace many
 	const float MANY_EPSILON = 1e-4;
 
 	template <class T>
-	bool equal(const tmany<T>& a, const T b, T threshold = T(MANY_EPSILON))
+	bool equal(const std::vector<T>& a, const T b, T threshold = T(MANY_EPSILON))
 	{
 		bool out(true);
 		T diff(0);
@@ -20,7 +20,7 @@ namespace many
 		return out;
 	}
 	template <class T>
-	bool notEqual(const tmany<T>& a, const T b, T threshold = T(MANY_EPSILON))
+	bool notEqual(const std::vector<T>& a, const T b, T threshold = T(MANY_EPSILON))
 	{
 		bool out(false);
 		T diff(0);
@@ -32,7 +32,7 @@ namespace many
 		return out;
 	}
 	template <class T>
-	bool equal(const tmany<T>& a, const tmany<T>& b, T threshold = T(MANY_EPSILON))
+	bool equal(const std::vector<T>& a, const std::vector<T>& b, T threshold = T(MANY_EPSILON))
 	{
 		if (a.size() != b.size())
 		{
@@ -48,7 +48,7 @@ namespace many
 		return out;
 	}
 	template <class T>
-	bool notEqual(const tmany<T>& a, const tmany<T>& b, T threshold = T(MANY_EPSILON))
+	bool notEqual(const std::vector<T>& a, const std::vector<T>& b, T threshold = T(MANY_EPSILON))
 	{
 		if (a.size() != b.size())
 		{
@@ -67,7 +67,7 @@ namespace many
 
 
 	template <class T>
-	void equal(const tmany<T>& a, const T b, tmany<bool>& out, T threshold = T(MANY_EPSILON))
+	void equal(const std::vector<T>& a, const T b, std::vector<bool>& out, T threshold = T(MANY_EPSILON))
 	{
 		T diff(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -77,7 +77,7 @@ namespace many
 		}
 	}
 	template <class T>
-	void notEqual(const tmany<T>& a, const T b, tmany<bool>& out, T threshold = T(MANY_EPSILON))
+	void notEqual(const std::vector<T>& a, const T b, std::vector<bool>& out, T threshold = T(MANY_EPSILON))
 	{
 		T diff(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -87,7 +87,7 @@ namespace many
 		}
 	}
 	template <class T>
-	void equal(const tmany<T>& a, const tmany<T>& b, tmany<bool>& out, T threshold = T(MANY_EPSILON))
+	void equal(const std::vector<T>& a, const std::vector<T>& b, std::vector<bool>& out, T threshold = T(MANY_EPSILON))
 	{
 		T diff(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -97,7 +97,7 @@ namespace many
 		}
 	}
 	template <class T>
-	void notEqual(const tmany<T>& a, const tmany<T>& b, tmany<bool>& out, T threshold = T(MANY_EPSILON))
+	void notEqual(const std::vector<T>& a, const std::vector<T>& b, std::vector<bool>& out, T threshold = T(MANY_EPSILON))
 	{
 		T diff(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -112,7 +112,7 @@ namespace many
 
 
 
-	bool equal(const tmany<bool>& a, const bool b)
+	bool equal(const std::vector<bool>& a, const bool b)
 	{
 		bool out(true);
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -121,7 +121,7 @@ namespace many
 		}
 		return out;
 	}
-	bool notEqual(const tmany<bool>& a, const bool b)
+	bool notEqual(const std::vector<bool>& a, const bool b)
 	{
 		bool out(false);
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -130,7 +130,7 @@ namespace many
 		}
 		return out;
 	}
-	bool equal(const tmany<bool>& a, const tmany<bool>& b)
+	bool equal(const std::vector<bool>& a, const std::vector<bool>& b)
 	{
 		if (a.size() != b.size())
 		{
@@ -143,7 +143,7 @@ namespace many
 		}
 		return out;
 	}
-	bool notEqual(const tmany<bool>& a, const tmany<bool>& b)
+	bool notEqual(const std::vector<bool>& a, const std::vector<bool>& b)
 	{
 		if (a.size() != b.size())
 		{
@@ -159,28 +159,28 @@ namespace many
 
 
 
-	void equal(const tmany<bool>& a, const bool b, tmany<bool>& out)
+	void equal(const std::vector<bool>& a, const bool b, std::vector<bool>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out[i] = a[i] == b;
 		}
 	}
-	void notEqual(const tmany<bool>& a, const bool b, tmany<bool>& out)
+	void notEqual(const std::vector<bool>& a, const bool b, std::vector<bool>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out[i] = a[i] != b;
 		}
 	}
-	void equal(const tmany<bool>& a, const tmany<bool>& b, tmany<bool>& out)
+	void equal(const std::vector<bool>& a, const std::vector<bool>& b, std::vector<bool>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out[i] = a[i] == b[i];
 		}
 	}
-	void notEqual(const tmany<bool>& a, const tmany<bool>& b, tmany<bool>& out)
+	void notEqual(const std::vector<bool>& a, const std::vector<bool>& b, std::vector<bool>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -193,7 +193,7 @@ namespace many
 
 
 
-	bool equal(const tmany<int>& a, const int b)
+	bool equal(const std::vector<int>& a, const int b)
 	{
 		bool out(true);
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -202,7 +202,7 @@ namespace many
 		}
 		return out;
 	}
-	bool notEqual(const tmany<int>& a, const int b)
+	bool notEqual(const std::vector<int>& a, const int b)
 	{
 		bool out(false);
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -211,7 +211,7 @@ namespace many
 		}
 		return out;
 	}
-	bool equal(const tmany<int>& a, const tmany<int>& b)
+	bool equal(const std::vector<int>& a, const std::vector<int>& b)
 	{
 		if (a.size() != b.size())
 		{
@@ -224,7 +224,7 @@ namespace many
 		}
 		return out;
 	}
-	bool notEqual(const tmany<int>& a, const tmany<int>& b)
+	bool notEqual(const std::vector<int>& a, const std::vector<int>& b)
 	{
 		if (a.size() != b.size())
 		{
@@ -240,28 +240,28 @@ namespace many
 
 
 
-	void equal(const tmany<int>& a, const int b, tmany<bool>& out)
+	void equal(const std::vector<int>& a, const int b, std::vector<bool>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out[i] = a[i] == b;
 		}
 	}
-	void notEqual(const tmany<int>& a, const int b, tmany<bool>& out)
+	void notEqual(const std::vector<int>& a, const int b, std::vector<bool>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out[i] = a[i] != b;
 		}
 	}
-	void equal(const tmany<int>& a, const tmany<int>& b, tmany<bool>& out)
+	void equal(const std::vector<int>& a, const std::vector<int>& b, std::vector<bool>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out[i] = a[i] == b[i];
 		}
 	}
-	void notEqual(const tmany<int>& a, const tmany<int>& b, tmany<bool>& out)
+	void notEqual(const std::vector<int>& a, const std::vector<int>& b, std::vector<bool>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -274,7 +274,7 @@ namespace many
 
 
 
-	bool equal(const tmany<unsigned int>& a, const unsigned int b)
+	bool equal(const std::vector<unsigned int>& a, const unsigned int b)
 	{
 		bool out(true);
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -283,7 +283,7 @@ namespace many
 		}
 		return out;
 	}
-	bool notEqual(const tmany<unsigned int>& a, const unsigned int b)
+	bool notEqual(const std::vector<unsigned int>& a, const unsigned int b)
 	{
 		bool out(false);
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -292,7 +292,7 @@ namespace many
 		}
 		return out;
 	}
-	bool equal(const tmany<unsigned int>& a, const tmany<unsigned int>& b)
+	bool equal(const std::vector<unsigned int>& a, const std::vector<unsigned int>& b)
 	{
 		if (a.size() != b.size())
 		{
@@ -305,7 +305,7 @@ namespace many
 		}
 		return out;
 	}
-	bool notEqual(const tmany<unsigned int>& a, const tmany<unsigned int>& b)
+	bool notEqual(const std::vector<unsigned int>& a, const std::vector<unsigned int>& b)
 	{
 		if (a.size() != b.size())
 		{
@@ -321,28 +321,28 @@ namespace many
 
 
 
-	void equal(const tmany<unsigned int>& a, const unsigned int b, tmany<bool>& out)
+	void equal(const std::vector<unsigned int>& a, const unsigned int b, std::vector<bool>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out[i] = a[i] == b;
 		}
 	}
-	void notEqual(const tmany<unsigned int>& a, const unsigned int b, tmany<bool>& out)
+	void notEqual(const std::vector<unsigned int>& a, const unsigned int b, std::vector<bool>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out[i] = a[i] != b;
 		}
 	}
-	void equal(const tmany<unsigned int>& a, const tmany<unsigned int>& b, tmany<bool>& out)
+	void equal(const std::vector<unsigned int>& a, const std::vector<unsigned int>& b, std::vector<bool>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out[i] = a[i] == b[i];
 		}
 	}
-	void notEqual(const tmany<unsigned int>& a, const tmany<unsigned int>& b, tmany<bool>& out)
+	void notEqual(const std::vector<unsigned int>& a, const std::vector<unsigned int>& b, std::vector<bool>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -355,22 +355,22 @@ namespace many
 
 
 	template <class T, class T2>
-	void greaterThan(const tmany<T>& a, const T2 b, tmany<bool>& out)
+	void greaterThan(const std::vector<T>& a, const T2 b, std::vector<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai > bi; }, out); 
 	}
 	template <class T, class T2>
-	void greaterThanEqual(const tmany<T>& a, const T2 b, tmany<bool>& out)
+	void greaterThanEqual(const std::vector<T>& a, const T2 b, std::vector<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai >= bi; }, out); 
 	}
 	template <class T, class T2>
-	void lessThan(const tmany<T>& a, const T2 b, tmany<bool>& out)
+	void lessThan(const std::vector<T>& a, const T2 b, std::vector<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai < bi; }, out); 
 	}
 	template <class T, class T2>
-	void lessThanEqual(const tmany<T>& a, const T2 b, tmany<bool>& out)
+	void lessThanEqual(const std::vector<T>& a, const T2 b, std::vector<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai <= bi; }, out); 
 	}
@@ -378,28 +378,28 @@ namespace many
 
 
 	template <class T, class T2>
-	void greaterThan(const tmany<T>& a, const tmany<T2>& b, tmany<bool>& out)
+	void greaterThan(const std::vector<T>& a, const std::vector<T2>& b, std::vector<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai > bi; }, out); 
 	}
 	template <class T, class T2>
-	void greaterThanEqual(const tmany<T>& a, const tmany<T2>& b, tmany<bool>& out)
+	void greaterThanEqual(const std::vector<T>& a, const std::vector<T2>& b, std::vector<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai >= bi; }, out); 
 	}
 	template <class T, class T2>
-	void lessThan(const tmany<T>& a, const tmany<T2>& b, tmany<bool>& out)
+	void lessThan(const std::vector<T>& a, const std::vector<T2>& b, std::vector<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai <= bi; }, out); 
 	}
 	template <class T, class T2>
-	void lessThanEqual(const tmany<T>& a, const tmany<T2>& b, tmany<bool>& out)
+	void lessThanEqual(const std::vector<T>& a, const std::vector<T2>& b, std::vector<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai < bi; }, out); 
 	}
 
 	
-	bool all(const tmany<bool>& a)
+	bool all(const std::vector<bool>& a)
 	{
 		bool out = true;
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -408,7 +408,7 @@ namespace many
 		}
 		return out;
 	}
-	bool any(const tmany<bool>& a)
+	bool any(const std::vector<bool>& a)
 	{
 		bool out = false;
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -417,7 +417,7 @@ namespace many
 		}
 		return out;
 	}
-	bool none(const tmany<bool>& a)
+	bool none(const std::vector<bool>& a)
 	{
 		bool out = false;
 		for (unsigned int i = 0; i < a.size(); ++i)

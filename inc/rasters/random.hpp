@@ -46,13 +46,13 @@ namespace rasters
 	void random(
 		const SpheroidGrid& grid, 
 		Tgenerator& generator, 
-		tmany<T>& out, 
+		std::vector<T>& out, 
 		// NOTE: "region_count" is the number of regions where we increment grid cell values
 		uint region_count = 1000,
 		// NOTE: "region_transition_width" is the width of the transition zone for a region
 		T region_transition_width = T(0.03)
 	){
-		tmany<T> region_mod(out.size(), T(0));
+		std::vector<T> region_mod(out.size(), T(0));
 		T region_threshold(0);
 		glm::vec3 region_center(0);
 		std::uniform_real_distribution<float> distribution(0.0, 1.0);
@@ -73,11 +73,11 @@ namespace rasters
 
 
 	template <class T, class Tgenerator>
-	tmany<T> random(
+	std::vector<T> random(
 		const SpheroidGrid& grid, 
 		Tgenerator& generator
 	){
-		tmany<T> out(grid.vertex_positions.size());
+		std::vector<T> out(grid.vertex_positions.size());
 		random(grid, generator, out);
 		return out;
 	}

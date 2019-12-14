@@ -41,9 +41,9 @@ namespace rasters
 	  * "up" is indicated by the z axis of a 3d vector
 	*/
 	template <typename T, glm::qualifier Q>
-	std::string to_string(const SpheroidGrid& grid, const tmany<glm::vec<2,T,Q>>& a, const uint line_char_width = 80)
+	std::string to_string(const SpheroidGrid& grid, const std::vector<glm::vec<2,T,Q>>& a, const uint line_char_width = 80)
 	{
-		tmany<T> a_length(a.size());
+		std::vector<T> a_length(a.size());
 		length(a, a_length);
 		T a_length_max = max(a_length);
 
@@ -116,14 +116,14 @@ namespace rasters
 	  * "up" is indicated by the z axis of a 3d vector
 	*/
 	template <typename T, glm::qualifier Q>
-	std::string to_string(const SpheroidGrid& grid, const tmany<glm::vec<3,T,Q>>& a, const uint line_char_width = 80, const glm::vec3 up = vec3(0,0,1))
+	std::string to_string(const SpheroidGrid& grid, const std::vector<glm::vec<3,T,Q>>& a, const uint line_char_width = 80, const glm::vec3 up = vec3(0,0,1))
 	{
 		many::vec3s		surface_basis_x(a.size());
 		many::vec3s		surface_basis_y(a.size());
 		many::vec3s		surface_basis_z(grid.vertex_normals);
 		many::floats	a2dx(a.size());
 		many::floats	a2dy(a.size());
-		tmany<glm::vec<2,T,Q>> a2d (grid.vertex_count);
+		std::vector<glm::vec<2,T,Q>> a2d (grid.vertex_count);
 
 		cross		(surface_basis_z, up, 				surface_basis_x);
 		normalize	(surface_basis_x, 					surface_basis_x);
