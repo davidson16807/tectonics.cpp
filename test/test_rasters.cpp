@@ -1037,7 +1037,8 @@ TEST_CASE( "gradient distributive over addition", "[rasters]" ) {
         gradient ( icosphere, a,      grad_a         );
         gradient ( icosphere, b,      grad_b         );
         gradient ( icosphere, a+b,    grad_a_b       );
-        CHECK(grad_a + grad_b == grad_a_b);
+
+        CHECK(equal( grad_a_b,  grad_a + grad_b, 0.01f, 0.01f ));
     }
 }
 

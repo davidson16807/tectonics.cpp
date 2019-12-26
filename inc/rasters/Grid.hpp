@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>         // std::unique_ptr
 #include <unordered_set>  // std::unordered_set
 #include <vector>         // std::vector
 //#include <iostream>     // std::cout
@@ -329,10 +328,12 @@ namespace rasters {
 			get 	(vertex_positions,   edge_vertex_id_a, edge_endpoint_a );
 			get 	(vertex_positions,   edge_vertex_id_b, edge_endpoint_b );
 			distance(edge_endpoint_a,    edge_endpoint_b,  edge_lengths    );
-			add 	(edge_endpoint_a,    edge_endpoint_b,  edge_midpoints  ); edge_midpoints /= 2.f;
+			add 	(edge_endpoint_a,    edge_endpoint_b,  edge_midpoints  ); 
+			div     (edge_midpoints,     2.f,              edge_midpoints  );
 			add 	(get(vertex_normals, edge_vertex_id_b), 
 				     get(vertex_normals, edge_vertex_id_a), 
-				     									   edge_normals    ); edge_normals /= 2.f;
+				     									   edge_normals    ); 
+			normalize(edge_normals,                        edge_normals    );
 			edge_average_length = mean(edge_lengths);
 
 			get_x 	(arrow_vertex_ids,                        arrow_vertex_id_from); 
@@ -343,18 +344,20 @@ namespace rasters {
 			get 	(vertex_positions,   arrow_vertex_id_to,  arrow_endpoint_to  );
 			distance(arrow_endpoint_from,arrow_endpoint_to,   arrow_lengths      );
 			sub 	(arrow_endpoint_to,  arrow_endpoint_from, arrow_offsets      );
-			add 	(arrow_endpoint_to,  arrow_endpoint_from, arrow_midpoints    ); arrow_midpoints /= 2.f;
+			add 	(arrow_endpoint_to,  arrow_endpoint_from, arrow_midpoints    );
+			div     (arrow_midpoints,    2.f,                 arrow_midpoints    );
 			add 	(get(vertex_normals, arrow_vertex_id_from), 
 				     get(vertex_normals, arrow_vertex_id_to), 
-				     										  arrow_normals 	 ); arrow_normals /= 2.f;
+				     										  arrow_normals 	 ); 
+			normalize(arrow_normals,                          arrow_normals      );
 			arrow_average_length = mean(arrow_lengths);
 
 			vec3s  arrow_dual_offset_a    (2*edge_count);
 			vec3s  arrow_dual_offset_b    (2*edge_count);
 			vec3s  arrow_dual_offset_cross(2*edge_count);
+			vec3s  arrow_dual_offset_ab   (2*edge_count);
 			floats arrow_dual_areas       (2*edge_count);
 
-			normalize(arrow_offsets,                                arrow_dual_normals      );
 			get     (face_midpoints,         arrow_face_id_a,       arrow_dual_endpoint_a   );
 			get     (face_midpoints,         arrow_face_id_b,       arrow_dual_endpoint_b   );
 			distance(arrow_dual_endpoint_a,  arrow_dual_endpoint_b, arrow_dual_lengths      );
@@ -363,6 +366,12 @@ namespace rasters {
 			cross   (arrow_dual_offset_a,    arrow_dual_offset_b,   arrow_dual_offset_cross );
 			length  (arrow_dual_offset_cross,                       arrow_dual_areas        );
 			div     (arrow_dual_areas,       2.f,                   arrow_dual_areas        );
+			sub     (arrow_dual_endpoint_b,  arrow_dual_endpoint_a, arrow_dual_offset_ab    );
+
+			cross   (arrow_dual_offset_ab,   arrow_normals,         arrow_dual_normals      );
+			normalize(arrow_dual_normals,                           arrow_dual_normals      );
+			arrow_dual_normals *= sign(dot(arrow_dual_normals, arrow_offsets));
+			
 			fill    (vertex_dual_areas,      0.f);
 			aggregate_into(arrow_dual_areas, arrow_vertex_id_from, [](float a, float b) -> float { return a+b; }, vertex_dual_areas);
 
