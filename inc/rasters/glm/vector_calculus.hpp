@@ -19,14 +19,19 @@ namespace rasters
 	We want to know how much dust blows across the assembly, and in which direction.
 	This is known as the "flow", and it is represented as a vector. 
 	If we know the flow for each puzzle piece, we could sum them together to find the net flow across the assembly. 
-	Also, if we know the flow along each edge of each puzzle piece, we could similarly sum them together to find the net flow. 
+	Alternatively, if we know the flow along each edge of each puzzle piece, we could similarly sum them together to find the net flow. 
 	However, we also know that if two puzzle pieces are adjacent, the amount flowing out of one edge is cancelled out by the amount flowing into another. 
 	So all we really need to know is the flow along the edge of each puzzle piece forming the boundary of the assembly. 
-	This works no matter what the shape of the puzzle pieces are, and no matter what the shape of the assembly is. 
-	It also works for other dimensions, so instead of dust blowing across puzzle pieces, we could consider air blowing through arbitrary regions of space. 
+	We can see this is the case without even establishing what the puzzle looks like,
+	so this works no matter what the shape of the puzzle pieces are, and no matter what the shape of the assembly is. 
+	It also works for other use cases in other dimensions, so instead of dust blowing across puzzle pieces, we could consider air blowing through arbitrary regions of space. 
+
+	Now, what if our puzzle pieces are infinitesimally small?
+	We can see that the net flow across two small puzzle pieces is twice the flow across one small puzzle piece.
+	Because they're so small, scaling laws concerning surface area and volume don't matter here.
+	In other words, flow scales linearly with volume at small scales.
 
 	TODO: 
-	explain how flow scales linearly with volume
 	explain how to figure out the flow across an edge
 	explain how gradient times surface normal equals the difference between two points in space
 
@@ -46,6 +51,21 @@ namespace rasters
 
 	See Sozer (2014) for more information, 
 	See Book 2 Chapter 3 of the Feynman Lectures (http://www.feynmanlectures.caltech.edu/II_03.html) for intuition.
+
+	We've now discussed both the intuition and the mathematics, here's the implementation:
+
+	Instead of puzzle pieces, let picture vertices.
+	Each vertex has a vector mapped to it, analogous to the flow of dust across a puzzle piece.
+	Each vertex also has a region around it that's analogous to the puzzle piece, 
+	known as a "dual" in libtectonics, since it is analogous to the dual of a graph in graph theory. 
+	The vertices of the dual are set to the midpoints of the faces that connect the original vertices.
+	The duel of a vertex is a boundary, and as such it has its own surface normal.
+	We want to find the divergence, which is a single floating point value 
+	that's positive when the vectors are pointing away from a region.
+	To find this, we need to consider both the vertex itself and the vertices surrounding it. 
+	We take the difference in vectors across each neighboring pair of vertices
+	then 
+
 
 	Imagine a vertex with several neighors surrounding it. 
 	The vertex is known as a "centroid".
@@ -109,6 +129,32 @@ namespace rasters
 		tmany<glm::vec<3,T,Q>> arrow_flow         (grid.arrow_count);
 		gradient(grid, scalar_field, out, arrow_differential, arrow_flow);
 	}
+
+
+	// template<typename T, qualifier Q>
+	// void gradient(
+	// 	const LayeredSpheroidGrid& grid, 
+	// 	const tmany<T>& scalar_field, 
+	// 	tmany<glm::vec<3,T,Q>>& out, 
+	// 	tmany<T>& arrow_differential, 
+	// 	tmany<glm::vec<3,T,Q>>& arrow_flow
+	// ) {
+	// 	assert(scalar_field.size()       == grid.vertex_count);
+	// 	assert(out.size()                == grid.vertex_count);
+	// 	assert(arrow_differential.size() == grid.arrow_count );
+	// 	assert(arrow_flow.size()         == grid.arrow_count );
+	// 	uvec2 arrow;
+	// 	for (unsigned int i = 0; i < grid.arrow_vertex_ids.size(); ++i)
+	// 	{
+	// 		arrow                 = grid.arrow_vertex_ids[i]; 
+	// 		arrow_differential[i] = scalar_field[arrow.y] - scalar_field[arrow.x]; // differential across dual of the arrow
+	// 	}
+	// 	mult 	 (arrow_differential, grid.arrow_dual_normals,   arrow_flow);      // flux across dual of the arrow
+	// 	mult 	 (arrow_flow,         grid.arrow_dual_lengths,   arrow_flow);      // flow across dual of the arrow
+	// 	fill 	 (out,                vec3());
+	// 	aggregate_into(arrow_flow,    grid.arrow_vertex_id_from, [](glm::vec<3,T,Q> a, glm::vec<3,T,Q> b){ return a+b; }, out); // flow out from the vertex
+	// 	div      (out,                grid.vertex_dual_areas,    out);             // gradient
+	// }
 
 	template<typename T, qualifier Q>
 	void divergence(
