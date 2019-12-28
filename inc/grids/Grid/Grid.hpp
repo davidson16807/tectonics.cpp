@@ -23,9 +23,18 @@ namespace rasters {
 		using namespace many;
 	}
 
-	// The Grid class is the one stop shop for high performance grid cell operations
-	// You can find grid cells by neighbor, by position, and by the index of a WebGL buffer array
-	// All raster functionality depends on it.
+	/*
+	A "grid" is a collection of interconnected grid cells on the surface of 
+	an object that are intended to store values in a raster. 
+	It may be represented by an underlying mesh in which grid cells are 
+	represented by vertices, or there may be a more complex relationship, 
+	where a vertex in a mesh corresponds to several grid cells 
+	(see `LayeredGrid` for an example). 
+	A grid caches additional attributes that may be used when 
+	performing spatially aware operations on rasters. 
+	These additional attributes are derived from vertices and faces. 
+	In this way, a grid could be thought of as a "mesh cache"
+	*/
 	class Grid
 	{
 	public:
