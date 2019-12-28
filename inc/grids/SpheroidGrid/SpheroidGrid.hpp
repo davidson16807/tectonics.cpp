@@ -7,7 +7,7 @@
 #include <many/statistic.hpp>    // mean
 #include <many/glm/types.hpp>// *vec*s
 
-#include "Grid.hpp"
+#include "../Grid/Grid.hpp"
 #include "SpheroidGridVoronoi.hpp"
 
 namespace rasters {

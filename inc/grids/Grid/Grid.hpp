@@ -17,8 +17,6 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>           // unordered_set<vec*>
 
-#include "SpheroidGridVoronoi.hpp"
-
 namespace rasters {
 	namespace {
 		using namespace glm;

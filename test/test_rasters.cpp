@@ -13,13 +13,13 @@
 #include <many/glm/glm.hpp>         // *vec*s
 #include <many/glm/convenience.hpp> //  operators, etc.
 
-#include <rasters/mesh.hpp>
-#include <rasters/morphologic.hpp>  
-#include <rasters/random.hpp>  
-#include <rasters/string_cast.hpp>  
-#include <rasters/glm/glm.hpp>
-#include <rasters/glm/string_cast.hpp>  
-#include <rasters/glm/vector_calculus.hpp>
+#include <grids/mesh.hpp>
+#include <grids/Grid/morphologic.hpp>  
+#include <grids/SpheroidGrid/random.hpp>  
+#include <grids/SpheroidGrid/string_cast.hpp>  
+#include <grids/SpheroidGrid/glm/glm.hpp>
+#include <grids/SpheroidGrid/glm/string_cast.hpp>  
+#include <grids/SpheroidGrid/glm/vector_calculus.hpp>
 
 // #include "academics/tectonics.hpp"
 

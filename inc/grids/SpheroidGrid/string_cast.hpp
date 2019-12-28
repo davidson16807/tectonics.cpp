@@ -6,7 +6,8 @@
 
 #include <many/types.hpp>
 #include <many/common.hpp>
-#include <rasters/SpheroidGrid.hpp>
+
+#include "../SpheroidGrid/SpheroidGrid.hpp"
 
 namespace rasters
 {

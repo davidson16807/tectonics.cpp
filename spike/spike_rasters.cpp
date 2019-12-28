@@ -15,13 +15,13 @@
 #include <many/glm/string_cast.hpp>  
 #include <many/glm/convenience.hpp> //  operators, etc.
 
-#include <rasters/mesh.hpp>
-#include <rasters/string_cast.hpp>  
-#include <rasters/random.hpp>  
-#include <rasters/morphologic.hpp>
-#include <rasters/glm/glm.hpp>
-#include <rasters/glm/string_cast.hpp>  
-#include <rasters/glm/vector_calculus.hpp>
+#include <grids/mesh.hpp>
+#include <grids/Grid/morphologic.hpp>
+#include <grids/SpheroidGrid/string_cast.hpp>  
+#include <grids/SpheroidGrid/random.hpp>  
+#include <grids/SpheroidGrid/glm/glm.hpp>
+#include <grids/SpheroidGrid/glm/string_cast.hpp>  
+#include <grids/SpheroidGrid/glm/vector_calculus.hpp>
 
 // #include "academics/tectonics.hpp"
 
@@ -78,8 +78,8 @@ int main(int argc, char const *argv[])
      that require spatial awareness without requiring a particular shape.
      (e.g. gradient, divergence, laplacian)
     */
-    std::shared_ptr<Grid> tetrahedron = 
-        std::make_shared<Grid>(meshes::tetrahedron.vertices, meshes::tetrahedron.faces);
+    Grid tetrahedron = 
+        Grid(meshes::tetrahedron.vertices, meshes::tetrahedron.faces);
     /*
     "octahedron" is a simple 3d grid for testing raster operations that require 
     something comparable to a unit sphere (e.g. nearest neighbor lookups using SpheroidGridVoronoi)
