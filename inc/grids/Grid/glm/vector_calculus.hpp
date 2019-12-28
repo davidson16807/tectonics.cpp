@@ -99,7 +99,7 @@ namespace rasters
 	*/
 	template<typename T, qualifier Q>
 	void gradient(
-		const SpheroidGrid& grid, 
+		const Grid& grid, 
 		const tmany<T>& scalar_field, 
 		tmany<glm::vec<3,T,Q>>& out, 
 		tmany<T>& arrow_differential, 
@@ -123,7 +123,7 @@ namespace rasters
 	}
 
 	template<typename T, qualifier Q>
-	void gradient(const SpheroidGrid& grid, const tmany<T>& scalar_field, tmany<glm::vec<3,T,Q>>& out)
+	void gradient(const Grid& grid, const tmany<T>& scalar_field, tmany<glm::vec<3,T,Q>>& out)
 	{
 		tmany<T>               arrow_differential (grid.arrow_count);
 		tmany<glm::vec<3,T,Q>> arrow_flow         (grid.arrow_count);
@@ -133,7 +133,7 @@ namespace rasters
 
 	// template<typename T, qualifier Q>
 	// void gradient(
-	// 	const LayeredSpheroidGrid& grid, 
+	// 	const LayeredGrid& grid, 
 	// 	const tmany<T>& scalar_field, 
 	// 	tmany<glm::vec<3,T,Q>>& out, 
 	// 	tmany<T>& arrow_differential, 
@@ -158,7 +158,7 @@ namespace rasters
 
 	template<typename T, qualifier Q>
 	void divergence(
-		const SpheroidGrid& grid, 
+		const Grid& grid, 
 		const tmany<glm::vec<3,T,Q>>& vector_field, 
 		tmany<T>& out, 
 		tmany<glm::vec<3,T,Q>>& arrow_differential, 
@@ -182,7 +182,7 @@ namespace rasters
 	}
 
 	template<typename T, qualifier Q>
-	void divergence(const SpheroidGrid& grid, const tmany<glm::vec<3,T,Q>>& vector_field, tmany<T>& out)
+	void divergence(const Grid& grid, const tmany<glm::vec<3,T,Q>>& vector_field, tmany<T>& out)
 	{
 		tmany<glm::vec<3,T,Q>> arrow_differential (grid.arrow_count);
 		tmany<T>               arrow_projection   (grid.arrow_count);
@@ -191,7 +191,7 @@ namespace rasters
 
 	template<typename T, qualifier Q>
 	void curl(
-		const SpheroidGrid& grid, 
+		const Grid& grid, 
 		const tmany<glm::vec<3,T,Q>>& vector_field, 
 		tmany<glm::vec<3,T,Q>>& out, 
 		tmany<glm::vec<3,T,Q>>& arrow_differential, 
@@ -215,7 +215,7 @@ namespace rasters
 	}
 
 	template<typename T, qualifier Q>
-	void curl(const SpheroidGrid& grid, const tmany<glm::vec<3,T,Q>>& vector_field, tmany<glm::vec<3,T,Q>>& out)
+	void curl(const Grid& grid, const tmany<glm::vec<3,T,Q>>& vector_field, tmany<glm::vec<3,T,Q>>& out)
 	{
 		tmany<glm::vec<3,T,Q>> arrow_differential (grid.arrow_count);
 		tmany<glm::vec<3,T,Q>> arrow_rejection    (grid.arrow_count);
@@ -243,7 +243,7 @@ namespace rasters
 	*/
 	template<typename T>
 	void laplacian(
-		const SpheroidGrid& grid, 
+		const Grid& grid, 
 		const tmany<T>& scalar_field, 
 		tmany<T>& out, 
 		tmany<T>& arrow_differential, 
@@ -265,7 +265,7 @@ namespace rasters
 		div      (out,                grid.vertex_dual_areas,    out);             // laplacian
 	}
 	template<typename T>
-	void laplacian(const SpheroidGrid& grid, const tmany<T>& scalar_field, tmany<T>& out)
+	void laplacian(const Grid& grid, const tmany<T>& scalar_field, tmany<T>& out)
 	{
 		tmany<T> arrow_differential          (grid.arrow_count);
 		tmany<T> weighted_arrow_differential (grid.arrow_count);
