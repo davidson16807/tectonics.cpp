@@ -15,11 +15,10 @@
 
 #include <grids/mesh.hpp>
 #include <grids/Grid/morphologic.hpp>  
-#include <grids/Grid/glm/vector_calculus.hpp>
+#include <grids/Grid/vector_calculus.hpp>
 #include <grids/SpheroidGrid/random.hpp>  
 #include <grids/SpheroidGrid/string_cast.hpp>  
-#include <grids/SpheroidGrid/glm/glm.hpp>
-#include <grids/SpheroidGrid/glm/string_cast.hpp>  
+#include <grids/SpheroidGrid/string_cast.hpp>  
 
 // #include "academics/tectonics.hpp"
 
