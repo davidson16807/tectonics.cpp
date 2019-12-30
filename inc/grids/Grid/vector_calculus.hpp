@@ -1,7 +1,5 @@
 #pragma once
 
-#include <glm/vec3.hpp>     // *vec3
-
 #include "Grid.hpp"
 
 namespace rasters

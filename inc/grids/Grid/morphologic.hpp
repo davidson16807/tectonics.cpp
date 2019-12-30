@@ -1,7 +1,5 @@
 #pragma once
 
-#include <many/types.hpp>     	 // floats, etc.
-
 #include "Grid.hpp"
 
 namespace rasters
