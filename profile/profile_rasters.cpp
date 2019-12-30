@@ -14,12 +14,12 @@
 #include <many/morphologic.hpp>  
 #include <many/glm/glm.hpp>         // *vec*s
 #include <many/glm/string_cast.hpp>  
+#include <many/glm/random.hpp>  
 #include <many/glm/convenience.hpp> //  operators, etc.
 
 #include <grids/mesh.hpp>
 #include <grids/Grid/morphologic.hpp>
 #include <grids/Grid/vector_calculus.hpp>
-#include <grids/SpheroidGrid/random.hpp>  
 #include <grids/SpheroidGrid/string_cast.hpp>
 #include <grids/SpheroidGrid/string_cast.hpp>  
 
@@ -167,7 +167,7 @@ int main(int argc, char const *argv[])
     floats a = floats(icosphere.vertex_count);
 
     t1 = std::chrono::high_resolution_clock::now();
-    random(icosphere, generator, a);
+    get_elias_noise(icosphere.vertex_positions, generator, a);
     t2 = std::chrono::high_resolution_clock::now();
     std::cout << "raster generation:   " << std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count() << std::endl;
 

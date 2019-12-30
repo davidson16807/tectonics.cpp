@@ -13,13 +13,13 @@
 #include <many/morphologic.hpp>  
 #include <many/glm/glm.hpp>         // *vec*s
 #include <many/glm/string_cast.hpp>  
+#include <many/glm/random.hpp>  
 #include <many/glm/convenience.hpp> //  operators, etc.
 
 #include <grids/mesh.hpp>
 #include <grids/Grid/morphologic.hpp>
 #include <grids/Grid/vector_calculus.hpp>
 #include <grids/SpheroidGrid/string_cast.hpp>  
-#include <grids/SpheroidGrid/random.hpp>  
 #include <grids/SpheroidGrid/string_cast.hpp>  
 
 // #include "academics/tectonics.hpp"
@@ -212,12 +212,12 @@ int main(int argc, char const *argv[])
     std::cout << icosphere_mesh.vertices.size() << std::endl;
     SpheroidGrid icosphere(icosphere_mesh.vertices, icosphere_mesh.faces);
     floats raster_b = floats(icosphere_mesh.vertices.size());
-    random(icosphere, generator, raster_b, 10, 0.0001f);
+    get_elias_noise(icosphere.vertex_positions, generator, raster_b, 10, 0.0001f);
     std::string str_raster_b = to_string(icosphere, raster_b);
     std::cout << str_raster_b << std::endl;
 
     floats raster_c = floats(icosphere_mesh.vertices.size());
-    random(icosphere, generator, raster_c);
+    get_elias_noise(icosphere.vertex_positions, generator, raster_c);
     std::string str_raster_c = to_string(icosphere, raster_c);
     std::cout << str_raster_c << std::endl;
 
