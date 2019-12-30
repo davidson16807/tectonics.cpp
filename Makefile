@@ -22,6 +22,8 @@ spike-strata: spike/spike_strata.cpp
 	$(CPP) -std=c++17 -o bin/spike.out spike/spike_strata.cpp  $(DEVFLAGS) -I inc/ && chmod a+x bin/spike.out && time ./bin/spike.out
 spike-rasters: spike/spike_rasters.cpp
 	$(CPP) -std=c++17 -o bin/spike.out spike/spike_rasters.cpp $(DEVFLAGS) -I inc/ && chmod a+x bin/spike.out && time ./bin/spike.out
+spike-layered-rasters: spike/spike_layered_rasters.cpp
+	$(CPP) -std=c++17 -o bin/spike.out spike/spike_layered_rasters.cpp $(DEVFLAGS) -I inc/ && chmod a+x bin/spike.out && time ./bin/spike.out
 spike-meshes: spike/spike_meshes.cpp
 	$(CPP) -std=c++17 -o bin/spike.out spike/spike_meshes.cpp  $(DEVFLAGS) -I inc/ && chmod a+x bin/spike.out && time ./bin/spike.out
 
