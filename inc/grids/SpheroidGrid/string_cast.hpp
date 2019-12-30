@@ -43,7 +43,7 @@ namespace rasters
 
 
 	template <typename T>
-	std::string to_string(const SpheroidGrid& grid, const tmany<T>& a, const T lo, const T hi, const uint line_char_width = 80)
+	std::string to_string(const SpheroidGridVoronoi& voronoi, const tmany<T>& a, const T lo, const T hi, const uint line_char_width = 80)
 	{
 		float lat(0.);
 		float lon(0.);
@@ -62,7 +62,7 @@ namespace rasters
 				z = sin(lat);
 				r = sqrt(1.f-z*z);
 				pos = vec3(r*sin(lon), r*cos(lon), z);
-				id = grid.voronoi.get_value(pos);
+				id = voronoi.get_value(pos);
 				if ( !(0 <= id && id < a.size()) )
 				{
 					out += "X";
@@ -99,7 +99,7 @@ namespace rasters
 	template <typename T>
 	std::string to_string(const SpheroidGrid& grid, const tmany<T>& a, const int line_char_width = 80)
 	{
-		return to_string(grid, a, min(a), max(a), line_char_width);
+		return to_string(grid.voronoi, a, min(a), max(a), line_char_width);
 	}
 
 	
@@ -112,7 +112,7 @@ namespace rasters
 	  * "up" is indicated by the z axis of a 3d vector
 	*/
 	template <typename T, glm::qualifier Q>
-	std::string to_string(const SpheroidGrid& grid, const tmany<glm::vec<2,T,Q>>& a, const uint line_char_width = 80)
+	std::string to_string(const SpheroidGridVoronoi& voronoi, const tmany<glm::vec<2,T,Q>>& a, const uint line_char_width = 80)
 	{
 		tmany<T> a_length(a.size());
 		length(a, a_length);
@@ -135,7 +135,7 @@ namespace rasters
 				z = sin(lat);
 				r = sqrt(1.f-z*z);
 				pos = vec3(r*sin(lon), r*cos(lon), z);
-				id = grid.voronoi.get_value(pos);
+				id = voronoi.get_value(pos);
 				if ( !(0 <= id && id < a.size()) )
 				{
 					out += "X";
@@ -179,6 +179,20 @@ namespace rasters
 
 	/*
 	This "to_string()" extension returns a string representation for a vec2raster,
+	  drawing 2d vectors as if on the surface of a sphere using an equirectangular projection.
+	It assumes the following:
+	  * the mesh is at least a rough approximation of a unit sphere
+	  * 2d vectors are expressed using local x,y coordinates on the surface of a sphere.
+	  * "up" is indicated by the z axis of a 3d vector
+	*/
+	template <typename T, glm::qualifier Q>
+	std::string to_string(const SpheroidGrid& grid, const tmany<glm::vec<2,T,Q>>& a, const uint line_char_width = 80)
+	{
+		return to_string(grid.voronoi, a, line_char_width);
+	}
+
+	/*
+	This "to_string()" extension returns a string representation for a vec2raster,
 	  drawing vectors as if on the surface of a sphere using an equirectangular projection.
 	Since 3d vectors can't be easily represented in 2d ascii art, 
 	  the 3d vectors are portrayed as the 2d projections on the surface of a sphere. 
@@ -187,14 +201,19 @@ namespace rasters
 	  * "up" is indicated by the z axis of a 3d vector
 	*/
 	template <typename T, glm::qualifier Q>
-	std::string to_string(const SpheroidGrid& grid, const tmany<glm::vec<3,T,Q>>& a, const uint line_char_width = 80, const glm::vec3 up = vec3(0,0,1))
-	{
+	std::string to_string(
+		const SpheroidGridVoronoi& voronoi, 
+		const tmany<glm::vec<3,T,Q>>& vertex_normals, 
+		const tmany<glm::vec<3,T,Q>>& a, 
+		const uint line_char_width = 80, 
+		const glm::vec3 up = vec3(0,0,1)
+	) {
 		many::vec3s		surface_basis_x(a.size());
 		many::vec3s		surface_basis_y(a.size());
-		many::vec3s		surface_basis_z(grid.vertex_normals);
+		many::vec3s		surface_basis_z(vertex_normals);
 		many::floats	a2dx(a.size());
 		many::floats	a2dy(a.size());
-		tmany<glm::vec<2,T,Q>> a2d (grid.vertex_count);
+		tmany<glm::vec<2,T,Q>> a2d (vertex_normals.size());
 
 		cross		(surface_basis_z, up, 				surface_basis_x);
 		normalize	(surface_basis_x, 					surface_basis_x);
@@ -208,8 +227,19 @@ namespace rasters
 		set_x 		(a2d, a2dx);
 		set_y 		(a2d, a2dy);
 
-		return rasters::to_string(grid, a2d, line_char_width);
+		return rasters::to_string(voronoi, a2d, line_char_width);
 	}
+
+	template <typename T, glm::qualifier Q>
+	std::string to_string(
+		const SpheroidGrid& grid, 
+		const tmany<glm::vec<3,T,Q>>& a, 
+		const uint line_char_width = 80, 
+		const glm::vec3 up = vec3(0,0,1)
+	) {
+		return to_string(grid.voronoi, grid.vertex_normals, a, line_char_width, up);
+	}
+
 	
 }//namespace rasters
 

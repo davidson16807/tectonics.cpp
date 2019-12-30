@@ -12,7 +12,7 @@ namespace rasters {
 	This means the grid can still work with slightly lumpy, slightly concave, and slightly noncentered shapes, 
 	 but it must be trivial to map lat long coordinates to vertices and determine surface normals from vertices.
 	*/
-	class SpheroidGrid: public virtual Grid
+	class SpheroidGrid: public Grid
 	{
 	public:
 		SpheroidGridVoronoi voronoi;

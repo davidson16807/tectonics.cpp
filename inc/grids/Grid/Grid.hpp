@@ -4,21 +4,24 @@
 #include <vector>         // std::vector
 //#include <iostream>     // std::cout
 
-#include <glm/vec2.hpp>          // *vec2
-#include <glm/vec3.hpp>          // *vec3
-#include <many/types.hpp>    // floats, etc.
-#include <many/common.hpp>       // max
-#include <many/convenience.hpp>       // sign
-#include <many/statistic.hpp>    // mean
-#include <many/glm/types.hpp>// *vec*s
-#include <many/glm/convenience.hpp>       // dot
-#include <many/glm/geometric.hpp>// cross, dot, etc.
+#include <glm/vec2.hpp>             // *vec2
+#include <glm/vec3.hpp>             // *vec3
+#include <many/types.hpp>           // floats, etc.
+#include <many/arithmetic.hpp>      // add, sub, mult, div, etc.
+#include <many/common.hpp>          // max
+#include <many/convenience.hpp>     // sign
+#include <many/statistic.hpp>       // mean
+#include <many/glm/types.hpp>       // *vec*s
+#include <many/glm/convenience.hpp> // dot
+#include <many/glm/geometric.hpp>   // cross, dot, etc.
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>           // unordered_set<vec*>
 
-namespace rasters {
-	namespace {
+namespace rasters 
+{
+	namespace 
+	{
 		using namespace glm;
 		using namespace many;
 	}
