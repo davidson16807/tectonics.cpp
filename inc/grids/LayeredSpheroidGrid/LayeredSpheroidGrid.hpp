@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../LayeredGrid/LayeredGrid.hpp"
+// #include "../LayeredGrid/LayeredGrid.hpp"
 #include "../SpheroidGrid/SpheroidGrid.hpp"
 
 namespace rasters 
@@ -46,6 +46,30 @@ namespace rasters
 
 	template <typename T>
 	void get_layer(const many::tmany<T>& a, const uint layer_id, many::tmany<T>& out) 
+	{
+		assert(a.size() > out.size());
+		assert(a.size() % out.size() == 0);
+		uint L = a.size() / out.size();
+		for (uint i = 0; i < out.size(); ++i)
+		{
+			out[i] = a[i*L+layer_id];
+		}
+	}
+
+	template <typename T, glm::qualifier Q>
+	void get_layer(const many::tmany<glm::vec<2,T,Q>>& a, const uint layer_id, many::tmany<glm::vec<2,T,Q>>& out) 
+	{
+		assert(a.size() > out.size());
+		assert(a.size() % out.size() == 0);
+		uint L = a.size() / out.size();
+		for (uint i = 0; i < out.size(); ++i)
+		{
+			out[i] = a[i*L+layer_id];
+		}
+	}
+
+	template <typename T, glm::qualifier Q>
+	void get_layer(const many::tmany<glm::vec<3,T,Q>>& a, const uint layer_id, many::tmany<glm::vec<3,T,Q>>& out) 
 	{
 		assert(a.size() > out.size());
 		assert(a.size() % out.size() == 0);

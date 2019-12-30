@@ -50,42 +50,41 @@ int main(int argc, char const *argv[])
     floats a = floats({1,2,3,4,5,6,
                        1,1,2,3,5,8});
 
-    std::cout << (a.size() == octahedron.vertex_count * octahedron.layer_count) << std::endl; 
     std::cout << to_string(octahedron, a) << std::endl;
 
-    // vec2s v2d = vec2s({
-    //     vec2(-1,-1),
-    //     vec2(-1, 0),
-    //     vec2(-1, 1),
-    //     vec2( 1,-1),
-    //     vec2( 1, 0),
-    //     vec2( 1, 1),
+    vec2s v2d = vec2s({
+        vec2(-1,-1),
+        vec2(-1, 0),
+        vec2(-1, 1),
+        vec2( 1,-1),
+        vec2( 1, 0),
+        vec2( 1, 1),
 
-    //     vec2( 1,-1),
-    //     vec2( 1, 0),
-    //     vec2( 1, 1),
-    //     vec2(-1,-1),
-    //     vec2(-1, 0),
-    //     vec2(-1, 1),
-    // });
-    // std::string str_v2d = to_string(v2d);
+        vec2( 1,-1),
+        vec2( 1, 0),
+        vec2( 1, 1),
+        vec2(-1,-1),
+        vec2(-1, 0),
+        vec2(-1, 1),
+    });
+    std::cout << to_string(octahedron, v2d) << std::endl;
 
-    // vec3s v3d = vec3s({
-    //     vec3(-1,-1,-1),
-    //     vec3( 0,-1,-1),
-    //     vec3( 1,-1,-1),
-    //     vec3(-1, 0,-1),
-    //     vec3( 0, 0,-1),
-    //     vec3( 1, 0,-1),
+    vec3s v3d = vec3s({
+        vec3(-1,-1,-1),
+        vec3( 0,-1,-1),
+        vec3( 1,-1,-1),
+        vec3(-1, 0,-1),
+        vec3( 0, 0,-1),
+        vec3( 1, 0,-1),
 
-    //     vec3(-1,-1,-1),
-    //     vec3( 0,-1,-1),
-    //     vec3( 1,-1,-1),
-    //     vec3(-1,-1, 0),
-    //     vec3( 0,-1, 0),
-    //     vec3( 1,-1, 0),
-    // });
-    // std::cout << to_string(v2d) << std::endl;
+        vec3(-1,-1,-1),
+        vec3( 0,-1,-1),
+        vec3( 1,-1,-1),
+        vec3(-1,-1, 0),
+        vec3( 0,-1, 0),
+        vec3( 1,-1, 0),
+    });
+    std::cout << to_string(octahedron, v3d) << std::endl;
 
     // floats raster_c = floats(icosphere_mesh.vertices.size());
     // random(icosphere, generator, raster_c);
