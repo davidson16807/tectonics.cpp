@@ -6,6 +6,15 @@ x	commutativity
 x	distributivity
 x	identity/invertibility
 x	consistency
+	angular noise
+x		determinism
+x		nonpurity
+	perlin noise
+		determinism
+		nonpurity
+	worley noise
+		determinism
+		nonpurity
 meshes::subdivide
 x	purity
 x	correct size bounds
@@ -22,9 +31,6 @@ rasters
 x		purity
 x		includes appropriate characters
 x		excludes inappropriate characters (e.g. X,N,∞)
-	random
-x		determinism
-x		nonpurity
 	morphology: https://en.wikipedia.org/wiki/Mathematical_morphology#Properties_of_the_basic_operators
 		dilate
 x			purity
@@ -61,6 +67,8 @@ x			happy path
 		purity
 		translation/rotation invariant
 	scalar transport
+		purity
+		happy path
 	vector calculus: https://en.wikipedia.org/wiki/Vector_calculus_identities#First_derivative_identities
 		gradient
 x			purity
@@ -187,6 +195,7 @@ light propagation
 orrery
 	spin
 
+star field
 barnes hut field
 
 integration tests

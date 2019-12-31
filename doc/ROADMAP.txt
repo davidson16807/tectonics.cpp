@@ -3,13 +3,21 @@ x		reference output functions
 x		return output functions
 x		operators
 x		to_string
-x	SpheroidGridVoronoiGrid
-x	Grid
-x	SpheroidGrid
-	LayeredSpheroidGrid
-	rasters
+x		angular noise
+		perlin noise
+		worley noise
+		scalar transport
+			is nonnegative quantity
+			is conserved quantity delta
+			is nonnegative quantity delta
+			fix nonnegative quantity
+			fix conserved quantity delta
+			fix nonnegative quantity delta
+			fix nonnegative conserved quantity delta
+			advection
+x	SpheroidGridVoronoi
+x	Grid rasters
 x		to_string
-x		random
 		vector calculus
 x			gradient
 x			divergence
@@ -25,7 +33,24 @@ x			white_hat
 x			padding
 x			margin
 		image segmentation
-		scalar transport
+	LayeredSpheroidGridVoronoi
+	LayeredSpheroidGrid
+x		to_string
+		vector calculus
+x			gradient
+x			divergence
+x			laplacian
+x			curl
+		morphology
+			dilate
+			erode
+			opening
+			closing
+			black_hat
+			white_hat
+			padding
+			margin
+		image segmentation
 	academics
 x		constants
 x		units
