@@ -280,10 +280,15 @@ namespace many
 	inline void transform(const tmany<T1>& a, const tmany<T2>& b, F f, tmany<Tout>& out)
 	{
 		assert(a.size() == out.size());
-		assert(b.size() == out.size());
-		for (unsigned int i = 0; i < a.size(); ++i)
+		assert(a.size() >= b.size());
+		assert(a.size() % b.size() == 0);
+		uint N = a.size() / b.size();
+		for (unsigned int i = 0; i < b.size(); ++i)
 		{
-			out[i] = f(a[i], b[i]);
+			for (unsigned int j = 0; j < N; ++j)
+			{
+				out[N*i+j] = f(a[N*i+j], b[i]);
+			}
 		}
 	}
 	template <class T1, class T2, class Tout, typename F>

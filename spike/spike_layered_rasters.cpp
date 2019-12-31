@@ -12,9 +12,9 @@
 #include <many/glm/glm.hpp>         // *vec*s
 
 #include <grids/mesh.hpp>
-// #include <grids/LayeredGrid/vector_calculus.hpp>
 #include <grids/LayeredSpheroidGrid/LayeredSpheroidGrid.hpp>
 #include <grids/LayeredSpheroidGrid/string_cast.hpp> 
+#include <grids/LayeredSpheroidGrid/vector_calculus.hpp>
 
 // #include "academics/tectonics.hpp"
 
@@ -85,6 +85,10 @@ int main(int argc, char const *argv[])
         vec3( 1,-1, 0),
     });
     std::cout << to_string(octahedron, v3d) << std::endl;
+
+    floats b = floats({2,1,1,1,1,1,
+                       1,2,1,1,1,1});
+    std::cout << to_string(octahedron, gradient(octahedron, b)) << std::endl;
 
     // floats raster_c = floats(icosphere_mesh.vertices.size());
     // random(icosphere, generator, raster_c);
