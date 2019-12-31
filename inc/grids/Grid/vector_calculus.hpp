@@ -117,7 +117,7 @@ namespace rasters
 		}
 		mult 	 (arrow_differential, grid.arrow_dual_normals,   arrow_flow);      // flux across dual of the arrow
 		mult 	 (arrow_flow,         grid.arrow_dual_lengths,   arrow_flow);      // flow across dual of the arrow
-		fill 	 (out,                vec3());
+		fill 	 (out,                vec3(0.f));
 		aggregate_into(arrow_flow,    grid.arrow_vertex_id_from, [](glm::vec<3,T,Q> a, glm::vec<3,T,Q> b){ return a+b; }, out); // flow out from the vertex
 		div      (out,                grid.vertex_dual_areas,    out);             // gradient
 	}
@@ -213,7 +213,7 @@ namespace rasters
 		}
 		cross 	 (arrow_differential, grid.arrow_dual_normals,   arrow_rejection);      // flux across dual of the arrow
 		mult 	 (arrow_rejection,    grid.arrow_dual_lengths,   arrow_rejection);      // flow across dual of the arrow
-		fill 	 (out,                vec3());
+		fill 	 (out,                glm::vec<3,T,Q>(0.f));
 		aggregate_into(arrow_rejection, grid.arrow_vertex_id_from, [](glm::vec<3,T,Q> a, glm::vec<3,T,Q> b){ return a+b; }, out);  // flow out from the vertex
 		div      (out,                grid.vertex_dual_areas,    out);             // curl
 	}
@@ -266,7 +266,7 @@ namespace rasters
 			arrow_differential[i] = scalar_field[arrow.y] - scalar_field[arrow.x]; // differential across dual of the arrow
 		}
 		mult     (arrow_differential, grid.arrow_dual_lengths, weighted_arrow_differential); // differential weighted by dual length
-		fill     (out,                0.f);
+		fill     (out,                T(0.f));
 		aggregate_into(weighted_arrow_differential, grid.arrow_vertex_id_from, [](T a, T b){ return a+b; }, out);  // weight average difference across neighbors
 		div      (out,                grid.vertex_dual_areas,    out);             // laplacian
 	}
@@ -276,8 +276,41 @@ namespace rasters
 		tmany<T> arrow_differential          (grid.arrow_count);
 		tmany<T> weighted_arrow_differential (grid.arrow_count);
 		tmany<T> out                         (grid.vertex_count);
-
 		laplacian(grid, scalar_field, out, arrow_differential, weighted_arrow_differential);
+		return out;
+	}
+
+	template<unsigned int L, typename T, glm::qualifier Q>
+	void laplacian(
+		const Grid& grid, 
+		const tmany<glm::vec<L,T,Q>>& vector_field, 
+		tmany<glm::vec<L,T,Q>>& out, 
+		tmany<glm::vec<L,T,Q>>& arrow_differential, 
+		tmany<glm::vec<L,T,Q>>& weighted_arrow_differential 
+	) {
+		assert(vector_field.size()                == grid.vertex_count);
+		assert(out.size()                         == grid.vertex_count);
+		assert(arrow_differential.size()          == grid.arrow_count );
+		assert(weighted_arrow_differential.size() == grid.arrow_count );
+		uvec2 arrow;
+		for (unsigned int i = 0; i < grid.arrow_vertex_ids.size(); ++i)
+		{
+			arrow                 = grid.arrow_vertex_ids[i]; 
+			arrow_differential[i] = vector_field[arrow.y] - vector_field[arrow.x]; // differential across dual of the arrow
+		}
+		mult     (arrow_differential, grid.arrow_dual_lengths, weighted_arrow_differential); // differential weighted by dual length
+		fill     (out,                glm::vec<L,T,Q>(0.f));
+		aggregate_into(weighted_arrow_differential, grid.arrow_vertex_id_from, [](glm::vec<L,T,Q> a, glm::vec<L,T,Q> b){ return a+b; }, out);  // weight average difference across neighbors
+		div      (out,                grid.vertex_dual_areas,    out);             // laplacian
+	}
+
+	template<unsigned int L, typename T, glm::qualifier Q>
+	tmany<glm::vec<L,T,Q>> laplacian(const Grid& grid, const tmany<glm::vec<L,T,Q>>& vector_field)
+	{
+		tmany<glm::vec<L,T,Q>> arrow_differential          (grid.arrow_count);
+		tmany<glm::vec<L,T,Q>> weighted_arrow_differential (grid.arrow_count);
+		tmany<glm::vec<L,T,Q>> out                         (grid.vertex_count);
+		laplacian(grid, vector_field, out, arrow_differential, weighted_arrow_differential);
 		return out;
 	}
 }
