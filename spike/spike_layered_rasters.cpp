@@ -84,7 +84,7 @@ int main(int argc, char const *argv[])
         vec3( 0,-1, 0),
         vec3( 1,-1, 0),
     });
-    std::cout << to_string(octahedron, v3d) << std::endl;
+    std::cout << to_string(octahedron, divergence(octahedron, v3d)) << std::endl;
 
     floats b = floats({2,1,1,1,1,1,
                        1,2,1,1,1,1});

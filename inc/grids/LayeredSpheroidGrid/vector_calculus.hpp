@@ -76,7 +76,7 @@ namespace rasters
 	void divergence(
 		const LayeredSpheroidGrid& grid, 
 		const many::tmany<glm::vec<3,T,Q>>& vector_field, 
-		many::tmany<glm::vec<3,T,Q>>& out, 
+		many::tmany<T>& out, 
 		many::tmany<glm::vec<3,T,Q>>& arrow_differential, 
 		many::tmany<glm::vec<3,T,Q>>& layer_differential, 
 		many::tmany<T>& arrow_projection,
@@ -102,7 +102,7 @@ namespace rasters
 		mult 	(arrow_projection,   grid.arrow_dual_lengths,   arrow_projection);
 		mult 	(arrow_projection,   grid.layer_height,         arrow_projection);      // flow across dual of the arrow 
 
-		fill    (layer_differential, T(0));
+		fill    (layer_differential, glm::vec<3,T,Q>(0.f));
 		for (unsigned int i = 0; i < grid.vertex_count; ++i)
 		{
 			for (unsigned int j = 1; j < L; ++j)
@@ -170,7 +170,7 @@ namespace rasters
 		mult 	(arrow_rejection,   grid.arrow_dual_lengths,   arrow_rejection);
 		mult 	(arrow_rejection,   grid.layer_height,         arrow_rejection);      // flow across dual of the arrow 
 
-		fill    (layer_differential, T(0));
+		fill    (layer_differential, vec<3,T,Q>(0.f));
 		for (unsigned int i = 0; i < grid.vertex_count; ++i)
 		{
 			for (unsigned int j = 1; j < L; ++j)
