@@ -171,31 +171,23 @@ int main(int argc, char const *argv[])
     t2 = std::chrono::high_resolution_clock::now();
     std::cout << "raster generation:   " << std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count() << std::endl;
 
-    vec3s gradient_out = vec3s(icosphere.vertex_count);
-
     t1 = std::chrono::high_resolution_clock::now();
-    rasters::gradient(icosphere, a, gradient_out);
+    vec3s gradient_out = rasters::gradient(icosphere, a);
     t2 = std::chrono::high_resolution_clock::now();
     std::cout << "gradient:            " << std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count() << std::endl;
 
-    floats divergence_out = floats(icosphere.vertex_count);
-
     t1 = std::chrono::high_resolution_clock::now();
-    rasters::divergence(icosphere, v, divergence_out);
+    floats divergence_out = rasters::divergence(icosphere, v);
     t2 = std::chrono::high_resolution_clock::now();
     std::cout << "divergence:          " << std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count() << std::endl;
 
-    vec3s curl_out = vec3s(icosphere.vertex_count);
-
     t1 = std::chrono::high_resolution_clock::now();
-    rasters::curl(icosphere, v, curl_out);
+    vec3s curl_out = rasters::curl(icosphere, v);
     t2 = std::chrono::high_resolution_clock::now();
     std::cout << "curl:                " << std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count() << std::endl;
 
-    floats laplacian_out = floats(icosphere.vertex_count);
-
     t1 = std::chrono::high_resolution_clock::now();
-    rasters::laplacian(icosphere, a, laplacian_out);
+    floats laplacian_out = rasters::laplacian(icosphere, a);
     t2 = std::chrono::high_resolution_clock::now();
     std::cout << "laplacian:           " << std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count() << std::endl;
 

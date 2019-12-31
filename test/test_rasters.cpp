@@ -932,13 +932,8 @@ TEST_CASE( "padding happy path", "[rasters]" ) {
 
 TEST_CASE( "gradient determinism", "[rasters]" ) {
     floats a   = floats({1,2,3,4,5,6,7,8,9,10,11,12});
-    // floats b = floats({1,1,2,3,5,8,13,21,34,55,89,144});
-    vec3s out1 = vec3s (icosahedron.vertex_count);
-    vec3s out2 = vec3s (icosahedron.vertex_count);
     SECTION("gradient(grid, a) must generate the same output when called repeatedly"){
-        gradient(icosahedron, a, out1);
-        gradient(icosahedron, a, out2);
-        CHECK(out1==out2);
+        CHECK(gradient(icosahedron, a)==gradient(icosahedron, a));
     }
 }
 
@@ -1023,20 +1018,13 @@ TEST_CASE( "gradient distributive over addition", "[rasters]" ) {
 
     floats a           (icosphere.vertex_count);
     floats b           (icosphere.vertex_count);
-    vec3s  grad_a      (icosphere.vertex_count);
-    vec3s  grad_b      (icosphere.vertex_count);
-    vec3s  grad_a_b    (icosphere.vertex_count);
 
     std::mt19937 generator(2);
     get_elias_noise(icosphere.vertex_positions, generator, a);
     get_elias_noise(icosphere.vertex_positions, generator, b);
 
     SECTION("gradient(a+b) must generate the same output as gradient(a)+gradient(b)"){
-        gradient ( icosphere, a,      grad_a         );
-        gradient ( icosphere, b,      grad_b         );
-        gradient ( icosphere, a+b,    grad_a_b       );
-
-        CHECK(equal( grad_a_b,  grad_a + grad_b, 0.01f, 0.01f ));
+        CHECK(equal( gradient(icosphere, a+b),  gradient(icosphere, a) + gradient(icosphere, b), 0.01f, 0.01f ));
     }
 }
 
@@ -1048,19 +1036,13 @@ TEST_CASE( "gradient multiplication relation", "[rasters]" ) {
 
     floats a           (icosphere.vertex_count);
     floats b           (icosphere.vertex_count);
-    vec3s  grad_a      (icosphere.vertex_count);
-    vec3s  grad_b      (icosphere.vertex_count);
-    vec3s  grad_a_b    (icosphere.vertex_count);
 
     std::mt19937 generator(2);
     get_elias_noise(icosphere.vertex_positions, generator, a);
     get_elias_noise(icosphere.vertex_positions, generator, b);
 
-    SECTION("gradient(a+b) must generate the same output as a*gradient(b) + b*gradient(a)"){
-        gradient ( icosphere, a,      grad_a                  );
-        gradient ( icosphere, b,      grad_b                  );
-        gradient ( icosphere, a*b,    grad_a_b                );
-        CHECK(equal( grad_a_b,  grad_b*a + grad_a*b, 0.7f, 0.1f ));
+    SECTION("gradient(a*b) must generate the same output as a*gradient(b) + b*gradient(a)"){
+        CHECK(equal( gradient(icosphere, a*b),  gradient(icosphere, b)*a + gradient(icosphere, a)*b, 0.7f, 0.1f ));
     }
 }
 
@@ -1083,9 +1065,7 @@ TEST_CASE( "divergence determinism", "[rasters]" ) {
     floats out2 = floats(icosahedron.vertex_count);
 
     SECTION("divergence(grid, a) must generate the same output when called repeatedly"){
-        divergence(icosahedron, a, out1);
-        divergence(icosahedron, a, out2);
-        CHECK(out1==out2);
+        CHECK(divergence(icosahedron, a)==divergence(icosahedron, a));
     }
 }
 // TEST_CASE( "divergence translation invariance", "[rasters]" ) {
@@ -1111,7 +1091,7 @@ TEST_CASE( "divergence determinism", "[rasters]" ) {
 
 //     std::mt19937 generator(2);
 //     get_elias_noise  ( icosphere, generator, scalar   );
-//     gradient( icosphere, scalar,    a        );
+//     a = gradient( icosphere, scalar);
 
 //     mat4   A      = glm::rotate(mat4(1.f), 3.14f/3.f, glm::vec3(1,1,1));
 //     mult(A,  icosphere.vertex_positions, A_pos);
@@ -1150,7 +1130,7 @@ TEST_CASE( "divergence determinism", "[rasters]" ) {
 
 //     std::mt19937 generator(2);
 //     get_elias_noise  ( icosphere1, generator, scalar );
-//     gradient( icosphere1, scalar,    a      );
+//     a = gradient( icosphere1, scalar);
 
 //     icosphere1.get_ids(icosphere2.vertex_positions,  A_ids);
 //     icosphere2.get_ids(icosphere1.vertex_positions,  Ai_ids);
@@ -1184,15 +1164,12 @@ TEST_CASE( "divergence distributive over addition", "[rasters]" ) {
 
     std::mt19937 generator(2);
     get_elias_noise(icosphere.vertex_positions, generator, scalar);
-    gradient( icosphere, scalar,a     );
+    a = gradient( icosphere, scalar);
     get_elias_noise(icosphere.vertex_positions, generator, scalar);
-    gradient( icosphere, scalar,b     );
+    b = gradient( icosphere, scalar);
 
     SECTION("divergence(a+b) must generate the same output as divergence(a)+divergence(b)"){
-        divergence ( icosphere, a,      div_a         );
-        divergence ( icosphere, b,      div_b         );
-        divergence ( icosphere, a+b,    div_a_b       );
-        CHECK(div_a + div_b == div_a_b);
+        CHECK(divergence( icosphere, a) + divergence( icosphere, b) == divergence(icosphere, a+b));
     }
 }
 
@@ -1212,10 +1189,10 @@ TEST_CASE( "divergence distributive over addition", "[rasters]" ) {
 //     std::mt19937 generator(2);
 //     get_elias_noise(icosphere.vertex_positions, generator, a);
 //     get_elias_noise(icosphere.vertex_positions, generator, scalar);
-//     gradient( icosphere, scalar, b     );
+//     b = gradient( icosphere, scalar);
+//     grad_a = gradient( icosphere, a     );
 
 //     SECTION("divergence(a+b) must generate the same output as a*divergence(b) + b*divergence(a)"){
-//         gradient   ( icosphere, a,      grad_a                 );
 //         divergence ( icosphere, b,      div_b                  );
 //         divergence ( icosphere, b*a,    div_a_b                );
 //         CHECK(equal( div_a_b,  div_b*a + dot(b, grad_a), 1e-0f));
@@ -1241,9 +1218,7 @@ TEST_CASE( "curl determinism", "[rasters]" ) {
     vec3s  out2 = vec3s (icosahedron.vertex_count);
 
     SECTION("curl(grid, a) must generate the same output when called repeatedly"){
-        curl(icosahedron, a, out1);
-        curl(icosahedron, a, out2);
-        CHECK(out1==out2);
+        CHECK(curl(icosahedron, a)==curl(icosahedron, a));
     }
 }
 
@@ -1266,15 +1241,12 @@ TEST_CASE( "curl distributive over addition", "[rasters]" ) {
 
     std::mt19937 generator(2);
     get_elias_noise(icosphere.vertex_positions, generator, scalar);
-    gradient( icosphere, scalar,a     );
+    a = gradient( icosphere, scalar);
     get_elias_noise(icosphere.vertex_positions, generator, scalar);
-    gradient( icosphere, scalar,b     );
+    b = gradient( icosphere, scalar);
 
     SECTION("curl(a+b) must generate the same output as curl(a)+curl(b)"){
-        curl ( icosphere, a,      curl_a         );
-        curl ( icosphere, b,      curl_b         );
-        curl ( icosphere, a+b,    curl_a_b       );
-        CHECK(curl_a + curl_b == curl_a_b);
+        CHECK(curl(icosphere, a) + curl(icosphere, b) == curl(icosphere, a+b));
     }
 }
 
@@ -1292,7 +1264,7 @@ TEST_CASE( "curl distributive over addition", "[rasters]" ) {
 //     get_elias_noise(icosphere.vertex_positions, generator, a);
 //     fill  (zeros, vec3(0));
 
-//     gradient  (icosphere, a,      grad_a      );
+//     grad_a = gradient  (icosphere, a);
 //     curl      (icosphere, grad_a, curl_grad_a );
 //     SECTION("curl(gradient(a)) must generate the zero vector"){
 //         // CHECK(curl_grad_a == zeros);
@@ -1312,7 +1284,7 @@ TEST_CASE( "curl distributive over addition", "[rasters]" ) {
 
 //     std::mt19937 generator(2);
 //     get_elias_noise(icosphere.vertex_positions, generator, scalar);
-//     gradient(icosphere, scalar,  a);
+//     a = gradient(icosphere, scalar);
 //     fill  (zeros, 0.f);
 
 //     curl       (icosphere, a,      curl_a     );
@@ -1328,9 +1300,7 @@ TEST_CASE( "laplacian determinism", "[rasters]" ) {
     floats out1 = floats (icosahedron.vertex_count);
     floats out2 = floats (icosahedron.vertex_count);
     SECTION("laplacian(grid, a) must generate the same output when called repeatedly"){
-        laplacian(icosahedron, a, out1);
-        laplacian(icosahedron, a, out2);
-        CHECK(out1==out2);
+        CHECK(laplacian(icosahedron, a)==laplacian(icosahedron, a));
     }
 }
 
@@ -1349,7 +1319,7 @@ TEST_CASE( "laplacian determinism", "[rasters]" ) {
 //     get_elias_noise(icosphere, generator, a);
 
 //     laplacian (icosphere, a,      laplacian_a);
-//     gradient  (icosphere, a,      grad_a     );
+//     grad_a = gradient(icosphere, a);
 //     divergence(icosphere, grad_a, div_grad_a );
 //     SECTION("laplacian(a) must generate the same output as div(grad(a))"){
 //         CHECK(equal(laplacian_a, div_grad_a));

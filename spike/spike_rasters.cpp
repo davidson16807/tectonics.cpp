@@ -222,28 +222,21 @@ int main(int argc, char const *argv[])
     std::cout << str_raster_c << std::endl;
 
     floats gradient_in = raster_c;
-    vec3s gradient_out = vec3s(icosphere_mesh.vertices.size());
+    vec3s gradient_out = rasters::gradient(icosphere, gradient_in);
     std::cout << "calculating gradient" << std::endl;
-    rasters::gradient(icosphere, gradient_in, gradient_out);
     std::cout << rasters::to_string(icosphere, gradient_out) << std::endl;
 
     vec3s divergence_in = gradient_out;
-    floats divergence_out = floats(icosphere_mesh.vertices.size());
     std::cout << "calculating divergence" << std::endl;
-    rasters::divergence(icosphere, divergence_in, divergence_out);
-    std::cout << rasters::to_string(icosphere, divergence_out) << std::endl;
+    std::cout << rasters::to_string(icosphere, rasters::divergence(icosphere, divergence_in)) << std::endl;
 
     vec3s curl_in = gradient_out;
-    vec3s curl_out = vec3s(icosphere_mesh.vertices.size());
     std::cout << "calculating curl" << std::endl;
-    rasters::curl(icosphere, curl_in, curl_out);
-    std::cout << rasters::to_string(icosphere, curl_out) << std::endl;
+    std::cout << rasters::to_string(icosphere, rasters::curl(icosphere, curl_in)) << std::endl;
 
     floats laplacian_in = raster_c;
-    floats laplacian_out = floats(icosphere_mesh.vertices.size());
     std::cout << "calculating laplacian" << std::endl;
-    rasters::laplacian(icosphere, laplacian_in, laplacian_out);
-    std::cout << rasters::to_string(icosphere, laplacian_out) << std::endl;
+    std::cout << rasters::to_string(icosphere, rasters::laplacian(icosphere, laplacian_in)) << std::endl;
 
     // std::mt19937 randomizer;
     // std::cout << randomizer() << " " << randomizer() << std::endl;

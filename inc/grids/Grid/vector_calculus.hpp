@@ -122,12 +122,14 @@ namespace rasters
 		div      (out,                grid.vertex_dual_areas,    out);             // gradient
 	}
 
-	template<typename T, qualifier Q>
-	void gradient(const Grid& grid, const tmany<T>& scalar_field, tmany<glm::vec<3,T,Q>>& out)
+	template<typename T>
+	tmany<glm::vec3> gradient(const Grid& grid, const tmany<T>& scalar_field)
 	{
-		tmany<T>               arrow_differential (grid.arrow_count);
-		tmany<glm::vec<3,T,Q>> arrow_flow         (grid.arrow_count);
+		tmany<T>         arrow_differential (grid.arrow_count);
+		tmany<glm::vec3> arrow_flow         (grid.arrow_count);
+		tmany<glm::vec3> out                (grid.vertex_count);
 		gradient(grid, scalar_field, out, arrow_differential, arrow_flow);
+		return out;
 	}
 
 
@@ -182,11 +184,13 @@ namespace rasters
 	}
 
 	template<typename T, qualifier Q>
-	void divergence(const Grid& grid, const tmany<glm::vec<3,T,Q>>& vector_field, tmany<T>& out)
+	tmany<T> divergence(const Grid& grid, const tmany<glm::vec<3,T,Q>>& vector_field)
 	{
 		tmany<glm::vec<3,T,Q>> arrow_differential (grid.arrow_count);
 		tmany<T>               arrow_projection   (grid.arrow_count);
+		tmany<T>               out                (grid.vertex_count);
 		divergence(grid, vector_field, out, arrow_differential, arrow_projection);
+		return out;
 	}
 
 	template<typename T, qualifier Q>
@@ -215,11 +219,13 @@ namespace rasters
 	}
 
 	template<typename T, qualifier Q>
-	void curl(const Grid& grid, const tmany<glm::vec<3,T,Q>>& vector_field, tmany<glm::vec<3,T,Q>>& out)
+	tmany<glm::vec<3,T,Q>> curl(const Grid& grid, const tmany<glm::vec<3,T,Q>>& vector_field)
 	{
 		tmany<glm::vec<3,T,Q>> arrow_differential (grid.arrow_count);
 		tmany<glm::vec<3,T,Q>> arrow_rejection    (grid.arrow_count);
+		tmany<glm::vec<3,T,Q>> out                (grid.vertex_count);
 		curl(grid, vector_field, out, arrow_differential, arrow_rejection);
+		return out;
 	}
 	/*
 	This function computes the laplacian of a surface. 
@@ -265,10 +271,13 @@ namespace rasters
 		div      (out,                grid.vertex_dual_areas,    out);             // laplacian
 	}
 	template<typename T>
-	void laplacian(const Grid& grid, const tmany<T>& scalar_field, tmany<T>& out)
+	tmany<T> laplacian(const Grid& grid, const tmany<T>& scalar_field)
 	{
 		tmany<T> arrow_differential          (grid.arrow_count);
 		tmany<T> weighted_arrow_differential (grid.arrow_count);
+		tmany<T> out                         (grid.vertex_count);
+
 		laplacian(grid, scalar_field, out, arrow_differential, weighted_arrow_differential);
+		return out;
 	}
 }
