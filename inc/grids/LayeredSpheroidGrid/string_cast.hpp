@@ -13,7 +13,6 @@ namespace rasters
 		const many::tmany<T>& a, 
 		const uint line_char_width = 80
 	) {
-		std::cout << "foo: " << a.size() << " " << grid.vertex_count << " " << grid.layer_count << std::endl;
 		assert(a.size() == grid.vertex_count * grid.layer_count);
 		many::tmany<T> layer_raster(grid.vertex_count);
 		std::string out("");
@@ -33,7 +32,6 @@ namespace rasters
 		const uint line_char_width = 80, 
 		const glm::vec3 up = vec3(0,0,1)
 	) {
-		std::cout << "foo: " << a.size() << " " << grid.vertex_count << " " << grid.layer_count << std::endl;
 		assert(a.size() == grid.vertex_count * grid.layer_count);
 		many::tmany<glm::vec<2,T,Q>> layer_raster(grid.vertex_count);
 		std::string out("");
@@ -53,7 +51,6 @@ namespace rasters
 		const uint line_char_width = 80, 
 		const glm::vec3 up = vec3(0,0,1)
 	) {
-		std::cout << "foo: " << a.size() << " " << grid.vertex_count << " " << grid.layer_count << std::endl;
 		assert(a.size() == grid.vertex_count * grid.layer_count);
 		many::tmany<glm::vec<3,T,Q>> layer_raster(grid.vertex_count);
 		std::string out("");

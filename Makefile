@@ -32,6 +32,8 @@ test-many: test/test_many.cpp
 	$(CPP) -std=c++17 -o bin/test.out test/test_many.cpp $(DEVFLAGS) -I inc/ && chmod a+x bin/test.out && ./bin/test.out
 test-rasters: test/test_rasters.cpp
 	$(CPP) -std=c++17 -o bin/test.out test/test_rasters.cpp $(DEVFLAGS) -I inc/ && chmod a+x bin/test.out && ./bin/test.out
+test-layered-rasters: test/test_layered_rasters.cpp
+	$(CPP) -std=c++17 -o bin/test.out test/test_layered_rasters.cpp $(DEVFLAGS) -I inc/ && chmod a+x bin/test.out && ./bin/test.out
 
 # profile: get it working fast
 profile-rasters: profile/profile_rasters.cpp
