@@ -12,6 +12,7 @@
 #include <many/convenience.hpp>  
 #include <many/glm/glm.hpp>         // *vec*s
 #include <many/glm/string_cast.hpp>  
+#include <many/glm/random.hpp>      // get_elias_noise
 #include <many/glm/convenience.hpp> //  operators, etc.
 
 using namespace glm;
@@ -408,5 +409,61 @@ TEST_CASE( "many<vec2> string cast correctness", "[many]" ) {
         REQUIRE_THAT(to_string(vec2s({vec2(-2,   0),vec2(-5,   0)})), Catch::Contains("←") && Catch::Contains("⬅"));
         REQUIRE_THAT(to_string(vec2s({vec2(-2, 0.1),vec2(-5,-0.1)})), Catch::Contains("←") && Catch::Contains("⬅"));
         REQUIRE_THAT(to_string(vec2s({vec2(-2,  -2),vec2(-5,  -5)})), Catch::Contains("↙") && Catch::Contains("⬋"));
+    }
+}
+
+TEST_CASE( "many get_elias_noise generation determinism", "[many]" ) {
+    floats a = floats({1,2,3,4,5,6});
+    floats b = floats({1,1,2,3,5,8});
+    vec3s positions = many::vec3s({
+            glm::vec3( 1, 0, 0),
+            glm::vec3(-1, 0, 0),
+            glm::vec3( 0, 1, 0),
+            glm::vec3( 0,-1, 0),
+            glm::vec3( 0, 0, 1),
+            glm::vec3( 0, 0,-1),
+        });
+    SECTION("get_elias_noise(positions, generator) must generate the same many when given the same state of generator"){
+        std::stringstream ss;
+        std::mt19937 generator(2);
+        ss << generator;
+        get_elias_noise(positions, generator, a);
+        ss >> generator;
+        get_elias_noise(positions, generator, b);
+        CHECK(a==b);
+    }
+}
+TEST_CASE( "many get_elias_noise generation nonpurity", "[many]" ) {
+    floats a = floats({1,2,3,4,5,6});
+    floats b = floats({1,2,3,4,5,6});
+    vec3s positions = many::vec3s({
+            glm::vec3( 1, 0, 0),
+            glm::vec3(-1, 0, 0),
+            glm::vec3( 0, 1, 0),
+            glm::vec3( 0,-1, 0),
+            glm::vec3( 0, 0, 1),
+            glm::vec3( 0, 0,-1),
+        });
+    SECTION("get_elias_noise(positions, generator) must generate different output when called repeatedly"){
+        std::mt19937 generator(2);
+        get_elias_noise(positions, generator, a);
+        get_elias_noise(positions, generator, b);
+        CHECK(a!=b);
+    }
+}
+TEST_CASE( "many get_elias_noise generation nontriviality", "[many]" ) {
+    floats a = floats({1,2,3,4,5,6});
+    vec3s positions = many::vec3s({
+            glm::vec3( 1, 0, 0),
+            glm::vec3(-1, 0, 0),
+            glm::vec3( 0, 1, 0),
+            glm::vec3( 0,-1, 0),
+            glm::vec3( 0, 0, 1),
+            glm::vec3( 0, 0,-1),
+        });
+    SECTION("get_elias_noise(positions, generator) must generate nontrivial output"){
+        std::mt19937 generator(2);
+        get_elias_noise(positions, generator, a);
+        CHECK(sum(a) > 0.f);
     }
 }

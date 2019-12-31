@@ -7,26 +7,25 @@
 
 #include <many/types.hpp>     	 // floats, etc.
 
-namespace rasters
+namespace many
 {
-	namespace {
-		/*
-		"get_random_point_on_unit_sphere" returns a random point that is evenly distributed on a unit sphere
-		see here for an explanation: http://corysimon.github.io/articles/uniformdistn-on-sphere/
-		*/
-		template <class Tgenerator>
-		glm::vec3 get_random_point_on_unit_sphere(Tgenerator& generator)
-		{
-			std::uniform_real_distribution<float> distribution(0.0, 1.0);
-	        double theta = 2 * M_PI * distribution(generator);
-	        double phi = acos(1 - 2 * distribution(generator));
-	        return glm::vec3(
-		        sin(phi) * cos(theta),
-		        sin(phi) * sin(theta),
-		        cos(phi)
-        	);
-		}
+	/*
+	"get_random_point_on_unit_sphere" returns a random point that is evenly distributed on a unit sphere
+	see here for an explanation: http://corysimon.github.io/articles/uniformdistn-on-sphere/
+	*/
+	template <class Tgenerator>
+	glm::vec3 get_random_point_on_unit_sphere(Tgenerator& generator)
+	{
+		std::uniform_real_distribution<float> distribution(0.0, 1.0);
+        double theta = 2 * M_PI * distribution(generator);
+        double phi = std::acos(1 - 2 * distribution(generator));
+        return glm::vec3(
+	        std::sin(phi) * std::cos(theta),
+	        std::sin(phi) * std::sin(theta),
+	        std::cos(phi)
+    	);
 	}
+	// TODO: rename to "get_angular_noise"
 	/*
 	"get_elias_noise()" generates a scalar raster
 	whose values are randomly distributed when projected onto a unit sphere
@@ -61,7 +60,7 @@ namespace rasters
 		for (uint i = 0; i < region_count; ++i)
 		{
 			region_threshold = distribution(generator);
-			region_center = rasters::get_random_point_on_unit_sphere(generator);
+			region_center = many::get_random_point_on_unit_sphere(generator);
 			many::dot(positions, region_center, 	 region_mod);
 			many::smoothstep(
 				region_threshold - region_transition_width/T(2), 

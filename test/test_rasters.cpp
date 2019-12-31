@@ -350,37 +350,6 @@ TEST_CASE( "raster string cast correctness", "[rasters]" ) {
                 );
     }
 }
-TEST_CASE( "raster get_elias_noise generation determinism", "[rasters]" ) {
-    floats a = floats({1,2,3,4,5,6});
-    floats b = floats({1,1,2,3,5,8});
-    SECTION("get_elias_noise(positions, generator) must generate the same raster when given the same state of generator"){
-        std::stringstream ss;
-        std::mt19937 generator(2);
-        ss << generator;
-        get_elias_noise(octahedron.vertex_positions, generator, a);
-        ss >> generator;
-        get_elias_noise(octahedron.vertex_positions, generator, b);
-        CHECK(a==b);
-    }
-}
-TEST_CASE( "raster get_elias_noise generation nonpurity", "[rasters]" ) {
-    floats a = floats({1,2,3,4,5,6});
-    floats b = floats({1,2,3,4,5,6});
-    SECTION("get_elias_noise(positions, generator) must generate different output when called repeatedly"){
-        std::mt19937 generator(2);
-        get_elias_noise(octahedron.vertex_positions, generator, a);
-        get_elias_noise(octahedron.vertex_positions, generator, b);
-        CHECK(a!=b);
-    }
-}
-TEST_CASE( "raster get_elias_noise generation nontriviality", "[rasters]" ) {
-    floats a = floats({1,2,3,4,5,6});
-    SECTION("get_elias_noise(positions, generator) must generate nontrivial output"){
-        std::mt19937 generator(2);
-        get_elias_noise(octahedron.vertex_positions, generator, a);
-        CHECK(sum(a) > 0.f);
-    }
-}
 TEST_CASE( "raster dilation purity", "[rasters]" ) {
     bools upper_half = bools({true,  true,  true,  true,  false });
     bools top_only   = bools({false, false, true,  false, false });
@@ -958,7 +927,7 @@ TEST_CASE( "gradient determinism", "[rasters]" ) {
 //     vec3s  grad_a      (icosphere.vertex_count);
 
 //     std::mt19937 generator(2);
-//     get_elias_noise(icosphere.vertex_positions, generator, a);
+//     many::get_elias_noise(icosphere.vertex_positions, generator, a);
 
 //     mat4   A      = glm::rotate(mat4(1.f), 3.14f/3.f, glm::vec3(1,1,1));
 //     mult(A,  icosphere.vertex_positions, A_pos);
@@ -995,7 +964,7 @@ TEST_CASE( "gradient determinism", "[rasters]" ) {
 //     vec3s  grad_a      (icosphere1.vertex_count);
 
 //     std::mt19937 generator(2);
-//     get_elias_noise(icosphere1.vertex_positions, generator, a);
+//     many::get_elias_noise(icosphere1.vertex_positions, generator, a);
 
 //     icosphere1.get_ids(icosphere2.vertex_positions,  A_ids);
 //     icosphere2.get_ids(icosphere1.vertex_positions,  Ai_ids);
@@ -1020,8 +989,8 @@ TEST_CASE( "gradient distributive over addition", "[rasters]" ) {
     floats b           (icosphere.vertex_count);
 
     std::mt19937 generator(2);
-    get_elias_noise(icosphere.vertex_positions, generator, a);
-    get_elias_noise(icosphere.vertex_positions, generator, b);
+    many::get_elias_noise(icosphere.vertex_positions, generator, a);
+    many::get_elias_noise(icosphere.vertex_positions, generator, b);
 
     SECTION("gradient(a+b) must generate the same output as gradient(a)+gradient(b)"){
         CHECK(equal( gradient(icosphere, a+b),  gradient(icosphere, a) + gradient(icosphere, b), 0.01f, 0.01f ));
@@ -1038,8 +1007,8 @@ TEST_CASE( "gradient multiplication relation", "[rasters]" ) {
     floats b           (icosphere.vertex_count);
 
     std::mt19937 generator(2);
-    get_elias_noise(icosphere.vertex_positions, generator, a);
-    get_elias_noise(icosphere.vertex_positions, generator, b);
+    many::get_elias_noise(icosphere.vertex_positions, generator, a);
+    many::get_elias_noise(icosphere.vertex_positions, generator, b);
 
     SECTION("gradient(a*b) must generate the same output as a*gradient(b) + b*gradient(a)"){
         CHECK(equal( gradient(icosphere, a*b),  gradient(icosphere, b)*a + gradient(icosphere, a)*b, 0.7f, 0.1f ));
@@ -1090,7 +1059,7 @@ TEST_CASE( "divergence determinism", "[rasters]" ) {
 //     floats div_a       (icosphere.vertex_count);
 
 //     std::mt19937 generator(2);
-//     get_elias_noise  ( icosphere, generator, scalar   );
+//     many::get_elias_noise  ( icosphere, generator, scalar   );
 //     a = gradient( icosphere, scalar);
 
 //     mat4   A      = glm::rotate(mat4(1.f), 3.14f/3.f, glm::vec3(1,1,1));
@@ -1129,7 +1098,7 @@ TEST_CASE( "divergence determinism", "[rasters]" ) {
 //     floats div_a      (icosphere1.vertex_count);
 
 //     std::mt19937 generator(2);
-//     get_elias_noise  ( icosphere1, generator, scalar );
+//     many::get_elias_noise  ( icosphere1, generator, scalar );
 //     a = gradient( icosphere1, scalar);
 
 //     icosphere1.get_ids(icosphere2.vertex_positions,  A_ids);
@@ -1163,9 +1132,9 @@ TEST_CASE( "divergence distributive over addition", "[rasters]" ) {
     floats div_a_b    (icosphere.vertex_count);
 
     std::mt19937 generator(2);
-    get_elias_noise(icosphere.vertex_positions, generator, scalar);
+    many::get_elias_noise(icosphere.vertex_positions, generator, scalar);
     a = gradient( icosphere, scalar);
-    get_elias_noise(icosphere.vertex_positions, generator, scalar);
+    many::get_elias_noise(icosphere.vertex_positions, generator, scalar);
     b = gradient( icosphere, scalar);
 
     SECTION("divergence(a+b) must generate the same output as divergence(a)+divergence(b)"){
@@ -1187,8 +1156,8 @@ TEST_CASE( "divergence distributive over addition", "[rasters]" ) {
 //     floats div_a_b    (icosphere.vertex_count);
 
 //     std::mt19937 generator(2);
-//     get_elias_noise(icosphere.vertex_positions, generator, a);
-//     get_elias_noise(icosphere.vertex_positions, generator, scalar);
+//     many::get_elias_noise(icosphere.vertex_positions, generator, a);
+//     many::get_elias_noise(icosphere.vertex_positions, generator, scalar);
 //     b = gradient( icosphere, scalar);
 //     grad_a = gradient( icosphere, a     );
 
@@ -1240,9 +1209,9 @@ TEST_CASE( "curl distributive over addition", "[rasters]" ) {
     vec3s  curl_a_b    (icosphere.vertex_count);
 
     std::mt19937 generator(2);
-    get_elias_noise(icosphere.vertex_positions, generator, scalar);
+    many::get_elias_noise(icosphere.vertex_positions, generator, scalar);
     a = gradient( icosphere, scalar);
-    get_elias_noise(icosphere.vertex_positions, generator, scalar);
+    many::get_elias_noise(icosphere.vertex_positions, generator, scalar);
     b = gradient( icosphere, scalar);
 
     SECTION("curl(a+b) must generate the same output as curl(a)+curl(b)"){
@@ -1261,7 +1230,7 @@ TEST_CASE( "curl distributive over addition", "[rasters]" ) {
 //     vec3s  zeros      (icosphere.vertex_count);
 
 //     std::mt19937 generator(2);
-//     get_elias_noise(icosphere.vertex_positions, generator, a);
+//     many::get_elias_noise(icosphere.vertex_positions, generator, a);
 //     fill  (zeros, vec3(0));
 
 //     grad_a = gradient  (icosphere, a);
@@ -1283,7 +1252,7 @@ TEST_CASE( "curl distributive over addition", "[rasters]" ) {
 //     floats zeros      (icosphere.vertex_count);
 
 //     std::mt19937 generator(2);
-//     get_elias_noise(icosphere.vertex_positions, generator, scalar);
+//     many::get_elias_noise(icosphere.vertex_positions, generator, scalar);
 //     a = gradient(icosphere, scalar);
 //     fill  (zeros, 0.f);
 
@@ -1316,7 +1285,7 @@ TEST_CASE( "laplacian determinism", "[rasters]" ) {
 //     floats laplacian_a(icosphere.vertex_count);
 
 //     std::mt19937 generator(2);
-//     get_elias_noise(icosphere, generator, a);
+//     many::get_elias_noise(icosphere, generator, a);
 
 //     laplacian (icosphere, a,      laplacian_a);
 //     grad_a = gradient(icosphere, a);
