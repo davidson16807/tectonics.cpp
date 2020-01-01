@@ -99,10 +99,9 @@ namespace many
 		return out;
 	}
 
-	template <class T, class Tgenerator>
+	template <class T>
 	void get_perlin_noise(
 		const many::tmany<glm::vec3>& positions, 
-		Tgenerator& generator, 
 		many::tmany<T>& out,
 		glm::vec3 K = glm::vec3(1.6, 80., 7.0)
 	){
@@ -111,7 +110,6 @@ namespace many
 		glm::vec3  I(0);
 		glm::vec3  F(0);
 		glm::vec3  G(0);
-		float a,b,c,d;
 		for (uint i = 0; i < positions.size(); ++i)
 		{
 			V = positions[i];
@@ -133,7 +131,7 @@ namespace many
 		    out[i] = o    *      G.x  *      G.y  *      G.z  
 		           + x    * (1.f-G.x) *      G.y  *      G.z  
 		           + y    *      G.x  * (1.f-G.y) *      G.z 
-		           + xz   * (1.f-G.x) * (1.f-G.y) *      G.z 
+		           + xy   * (1.f-G.x) * (1.f-G.y) *      G.z 
 		           + z    *      G.x  *      G.y  * (1.f-G.z)
 		           + xz   * (1.f-G.x) *      G.y  * (1.f-G.z)
 		           + yz   *      G.x  * (1.f-G.y) * (1.f-G.z)
@@ -141,10 +139,9 @@ namespace many
 		}
 	}
 
-	template <class T, class Tgenerator>
+	template <class T>
 	void get_worley_noise(
 		const many::tmany<glm::vec3>& positions, 
-		Tgenerator& generator, 
 		many::tmany<T>& out
 	){
 		assert(out.size() == positions.size());

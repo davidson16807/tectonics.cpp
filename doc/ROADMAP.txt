@@ -4,8 +4,8 @@ x		return output functions
 x		operators
 x		to_string
 x		angular noise
-		perlin noise
-		worley noise
+x		perlin noise
+x		worley noise
 		scalar transport
 			is nonnegative quantity
 			is conserved quantity delta
