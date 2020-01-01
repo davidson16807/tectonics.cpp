@@ -4,6 +4,9 @@
 #include <random>       // uniform distribution
 
 #include <glm/vec3.hpp> // *vec3
+#include <glm/common.hpp> // floor
+#include <glm/geometric.hpp> // distance
+#include <glm/trigonometric.hpp> // sin
 
 #include <many/types.hpp>     	 // floats, etc.
 
@@ -24,6 +27,18 @@ namespace many
 	        std::sin(phi) * std::sin(theta),
 	        std::cos(phi)
     	);
+	}
+	/*
+	"noise()" is a pure function that generates a seemingly random number for a given seed. 
+	Given the same seed, noise() will always generate the same output. 
+	The output should be uniformly distribution to an approximation across all values of seed.
+	*/
+	float noise(const float seed, const float a = 10.f, const float b=10000.f) {
+		return glm::fract(std::sin(seed*a)*b);
+	}
+	template <int L, class T, glm::qualifier Q>
+	glm::vec<L,T,Q> noise(const glm::vec<L,T,Q> seed, const float a = 10.f, const float b=10000.f) {
+		return glm::fract(glm::sin(seed*a)*b);
 	}
 	// TODO: rename to "get_angular_noise"
 	/*
@@ -70,7 +85,6 @@ namespace many
 		}
 	}
 
-
 	template <class T, class Tgenerator>
 	many::tmany<T> get_elias_noise(
 		const many::tmany<glm::vec3>& positions, 
@@ -83,5 +97,98 @@ namespace many
 		many::tmany<T> out(positions.size());
 		get_elias_noise(positions, generator, out, region_count, region_transition_width);
 		return out;
+	}
+
+	template <class T, class Tgenerator>
+	void get_perlin_noise(
+		const many::tmany<glm::vec3>& positions, 
+		Tgenerator& generator, 
+		many::tmany<T>& out,
+		glm::vec3 K = glm::vec3(1.6, 80., 7.0)
+	){
+		assert(out.size() == positions.size());
+		glm::vec3  V(0);
+		glm::vec3  I(0);
+		glm::vec3  F(0);
+		glm::vec3  G(0);
+		float a,b,c,d;
+		for (uint i = 0; i < positions.size(); ++i)
+		{
+			V = positions[i];
+			I = glm::floor(V);
+			F = glm::fract(V);
+
+		    float o   = noise(dot(K, I));
+		    float x   = noise(dot(K, I + glm::vec3(1, 0, 0)));
+		    float y   = noise(dot(K, I + glm::vec3(0, 1, 0)));
+		    float xy  = noise(dot(K, I + glm::vec3(1, 1, 0)));
+
+		    float z   = noise(dot(K, I + glm::vec3(0, 0, 1)));
+		    float xz  = noise(dot(K, I + glm::vec3(1, 0, 1)));
+		    float yz  = noise(dot(K, I + glm::vec3(0, 1, 1)));
+		    float xyz = noise(dot(K, I + glm::vec3(1, 1, 1)));
+
+		    G = glm::smoothstep(0.f, 1.f, F);
+
+		    out[i] = o    *      G.x  *      G.y  *      G.z  
+		           + x    * (1.f-G.x) *      G.y  *      G.z  
+		           + y    *      G.x  * (1.f-G.y) *      G.z 
+		           + xz   * (1.f-G.x) * (1.f-G.y) *      G.z 
+		           + z    *      G.x  *      G.y  * (1.f-G.z)
+		           + xz   * (1.f-G.x) *      G.y  * (1.f-G.z)
+		           + yz   *      G.x  * (1.f-G.y) * (1.f-G.z)
+		           + xyz  * (1.f-G.x) * (1.f-G.y) * (1.f-G.z);
+		}
+	}
+
+	template <class T, class Tgenerator>
+	void get_worley_noise(
+		const many::tmany<glm::vec3>& positions, 
+		Tgenerator& generator, 
+		many::tmany<T>& out
+	){
+		assert(out.size() == positions.size());
+		glm::vec3  V(0.);
+		glm::vec3  I(0.);
+		glm::vec3  F(0.);
+
+		glm::vec3  neighbor_offset;
+		glm::vec3  neighbor_id;
+		glm::vec3  neighbor_position;
+		float neighbor_distance;
+
+		glm::vec3 nearest_id;
+		glm::vec3  nearest_position;
+		float nearest_distance;
+
+		for (uint id = 0; id < positions.size(); ++id)
+		{
+			V = positions[id];
+			I = glm::floor(V);
+			F = glm::fract(V);
+
+			nearest_id = I;
+			nearest_position = I + noise(I);
+			nearest_distance = glm::distance(nearest_id, V);
+			for (int i = -1; i <= 1; ++i)
+			{
+				for (int j = -1; j <= 1; ++j)
+				{
+					for (int k = -1; k <= 1; ++k)
+					{
+						neighbor_offset = glm::vec3(i,j,k);
+						neighbor_id = I + neighbor_offset;
+						neighbor_position = glm::vec3(neighbor_id) + noise(glm::vec3(neighbor_id));
+						neighbor_distance = glm::distance(neighbor_position, V);
+						if (neighbor_distance < nearest_distance)
+						{
+							nearest_id = neighbor_id;
+							nearest_position = neighbor_position;
+							nearest_distance = neighbor_distance;
+						}
+					}
+				}
+			}
+		}
 	}
 }
