@@ -24,6 +24,7 @@
 *.la
 *.a
 *.lib
+*.pyc
 
 # Executables
 *.exe
