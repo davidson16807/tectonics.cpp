@@ -54,6 +54,7 @@ class LogicalOrExpression: pass
 
 class AttributeDeclaration: pass
 class AssociativeListExpression: pass
+class OrderedListExpression: pass
 
 class TernaryExpression: pass
 class BracketedExpression: pass
@@ -80,7 +81,7 @@ primary_expression = [
 ]
 
 PostfixExpression.grammar = (
-    attr('content', ([token, AssociativeListExpression], maybe_some([BracketedExpression, InvocationExpression, ('.', token)])))
+    attr('content', ([OrderedListExpression, AssociativeListExpression, token], maybe_some([BracketedExpression, InvocationExpression, ('.', token)])))
 )
 postfix_expression_or_less = [
     PostfixExpression,
@@ -129,9 +130,15 @@ TernaryExpression.grammar = (
 
 AttributeDeclaration.grammar = (
     attr('name', [single_quote_string_literal, double_quote_string_literal, float_literal, int_literal, bool_literal, token]),
+    ':',
     attr('value', ternary_expression_or_less)
 )
-AssociativeListExpression.grammar  = '{', attr('content', pypeg2.indent(optional(AttributeDeclaration, maybe_some(',', endl, AttributeDeclaration)))), '}'
+AssociativeListExpression.grammar  = ('{', endl,
+    attr('content', pypeg2.indent(optional(AttributeDeclaration, maybe_some(',', endl, AttributeDeclaration)), endl)), 
+'}')
+OrderedListExpression.grammar= ('[', 
+    attr('content'), pypeg2.indent(pypeg2.csl(ternary_expression_or_less)),
+']')
 BracketedExpression.grammar  = '[', attr('content', ternary_expression_or_less), ']'
 ParensExpression.grammar     = '(', attr('content', ternary_expression_or_less), ')'
 InvocationExpression.grammar = '(', attr('content', optional(pypeg2.csl((blank, ternary_expression_or_less)))), ')'

@@ -1,3 +1,5 @@
+#!/bin/env python3
+
 import pypeg2
 import pypeg2glsl
 import pypeg2js
@@ -47,32 +49,18 @@ def get_js_postfix_expression(glsl):
     js = pypeg2js.PostfixExpression()
     js.content = []
 
-    expression = glsl.content[0]
-    if expression in js_glm_library_functions:
-        js.content.append('glm')
-        js.content.append(expression)
-    elif expression in js_math_library_functions:
-        js.content.append('Math')
-        js.content.append(expression)
-    else:
-        js.content.append(get_js(expression))
-    for expression in glsl.content[1:]:
-        js.content.append(get_js(expression))
+    is_first = True
+    for expression in glsl.content:
+	    if is_first and expression in js_glm_library_functions:
+	        js.content.append('glm')
+	        js.content.append(expression)
+	    elif is_first and expression in js_math_library_functions:
+	        js.content.append('Math')
+	        js.content.append(expression)
+	    else:
+	        js.content.append(get_js(expression))
+	    is_first = False
     return js
-
-    # is_first = True
-    # expression = glsl.content[0]
-    # for expression in glsl.content[1:]:
-       #  if is_first and expression in js_glm_library_functions:
-       #      js.content.append('glm')
-       #      js.content.append(expression)
-       #  elif is_first and expression in js_math_library_functions:
-       #      js.content.append('Math')
-       #      js.content.append(expression)
-       #  else:
-       #      js.content.append(get_js(expression))
-    #     is_first = False
-    # return js
 
 def get_js_variable_declaration(glsl):
     js = pypeg2js.VariableDeclaration()
@@ -87,14 +75,8 @@ def get_js_structure_declaration(glsl_structure):
     js_function.parameters = []
     js_function.content = []
 
-    js_empty_invocation = pypeg2js.InvocationExpression()
-    js_empty_invocation.content = []
-    js_result = pypeg2js.VariableDeclaration()
-    js_result.name = 'result'
-    js_result.qualifiers = ['let']
-    js_result.value = pypeg2js.PostfixExpression();
-    js_result.value.content = ['Object', js_empty_invocation]
-    js_function.content.append(js_result)
+    js_object = pypeg2js.AssociativeListExpression()
+    js_object.content = []
 
     for glsl_declaration in glsl_structure.content:
 
@@ -102,19 +84,15 @@ def get_js_structure_declaration(glsl_structure):
         js_parameter.name = glsl_declaration.name
         js_function.parameters.append(js_parameter)
 
-        js_assignment = pypeg2js.AssignmentExpression()
-        js_expression1 = pypeg2js.PostfixExpression()
-        js_expression1.content = ['result', glsl_declaration.name]
-        js_expression2 = pypeg2js.PostfixExpression()
-        js_expression2.content = [glsl_declaration.name]
-        js_assignment.operand1 = js_expression1
-        js_assignment.operator = '='
-        js_assignment.operand2 = js_expression2
-        js_function.content.append(js_assignment)
-
+        js_expression = pypeg2js.PostfixExpression()
+        js_expression.content = [glsl_declaration.name]
+        js_attribute = pypeg2js.AttributeDeclaration()
+        js_attribute.name = glsl_declaration.name
+        js_attribute.value = js_expression
+        js_object.content.append(js_attribute)
 
     js_return_value = pypeg2js.PostfixExpression()
-    js_return_value.content = ['result']
+    js_return_value.content = [js_object]
     js_return = pypeg2js.ReturnStatement()
     js_return.value = js_return_value
     js_function.content.append(js_return)
@@ -174,7 +152,6 @@ def get_js(glsl):
 
 
 
-#!/bin/env python3
 
 """
 The command line interface for this script is meant to resemble sed.
