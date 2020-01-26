@@ -69,18 +69,18 @@ def get_js_binary_operator_expression_getter(JsElement):
 
 
     get_js_default_operator_expression = get_js_default_element_getter(JsElement)
-    def get_js_vector_operator_expression(glsl_operand1, glsl_operand2, operator):
+    def get_js_vector_operator_expression(glsl_operand1, glsl_operand2, operator, scope):
         if isinstance(glsl_operand1, pypeg2glsl.PostfixExpression):
             return pypeg2js.PostfixExpression([
                     *glsl_operand1.content, 
                     pypeg2js.BracketedExpression(pypeg2js.PostfixExpression([f"'{operator}'"])), 
-                    pypeg2js.InvocationExpression(get_js(glsl_operand2))
+                    pypeg2js.InvocationExpression(get_js(glsl_operand2, scope))
                 ])
         if isinstance(glsl_operand1, pypeg2glsl.PostfixExpression):
             return pypeg2js.PostfixExpression([
                     pypeg2js.ParensExpression([glsl_operand1]), 
                     pypeg2js.BracketedExpression(pypeg2js.PostfixExpression([f"'{operator}'"])), 
-                    pypeg2js.InvocationExpression(get_js(glsl_operand2))
+                    pypeg2js.InvocationExpression(get_js(glsl_operand2, scope))
                 ])
     def get_js_binary_operator_expression(glsl_operator, scope):
         operand1 = glsl_operator.operand1
@@ -89,13 +89,13 @@ def get_js_binary_operator_expression_getter(JsElement):
         type1 = pypeg2glsl.get_expression_type(operand1, scope)
         type2 = pypeg2glsl.get_expression_type(operand2, scope)
         if type1 in pypeg2glsl.vector_types:
-            return get_js_vector_operator_expression(operand1, operand2, operator)
+            return get_js_vector_operator_expression(operand1, operand2, operator, scope)
         elif type1 in pypeg2glsl.matrix_types:
-            return get_js_vector_operator_expression(operand1, operand2, operator)
+            return get_js_vector_operator_expression(operand1, operand2, operator, scope)
         elif type2 in pypeg2glsl.vector_types:
-            return get_js_vector_operator_expression(operand2, operand1, operator)
+            return get_js_vector_operator_expression(operand2, operand1, operator, scope)
         elif type2 in pypeg2glsl.matrix_types:
-            return get_js_vector_operator_expression(operand2, operand1, operator)
+            return get_js_vector_operator_expression(operand2, operand1, operator, scope)
         else:
             return get_js_default_operator_expression(glsl_operator, scope)
 
@@ -104,7 +104,7 @@ def get_js_binary_operator_expression_getter(JsElement):
 def get_js_variable_declaration(glsl, scope):
     js = pypeg2js.VariableDeclaration()
     js.qualifiers = ['const' if 'const' in glsl.qualifiers else 'let']
-    js.name = glsl.name
+    js.names = glsl.names
     js.value = get_js(glsl.value, scope)
     return js
 
@@ -186,8 +186,7 @@ glsl_js_getter_map = [
     (tuple,       lambda glsl, scope: tuple(get_js(element, scope) for element in glsl)),
 ]
 
-def get_js(glsl, scope=None):
-    scope = scope or pypeg2glsl.LexicalScope(glsl if isinstance(glsl, list) else []) 
+def get_js(glsl, scope):
     for Glsl, _get_js in glsl_js_getter_map:
         if isinstance(glsl, Glsl):
             return _get_js(glsl, scope)
@@ -208,9 +207,9 @@ from argparse import ArgumentParser
 def convert_file(filename, in_place, verbose=False):
     with open(filename, 'r+') as file:
         text = file.read()
-        parsed = pypeg2.parse(text, pypeg2glsl.glsl)
+        glsl = pypeg2.parse(text, pypeg2glsl.glsl)
 
-        converted = get_js(parsed)
+        converted = get_js(glsl, pypeg2glsl.LexicalScope(glsl))
         replaced = pypeg2.compose(converted, pypeg2js.javascript)
         if in_place:
             file.seek(0)

@@ -5,7 +5,7 @@ from pypeg2 import attr, optional, maybe_some, blank, endl
 
 single_quote_string_literal = re.compile("'([^']|\\\\')*'", re.MULTILINE | re.DOTALL)
 double_quote_string_literal = re.compile('"([^"]|\\\\")*"', re.MULTILINE | re.DOTALL)
-inline_comment = re.compile('/\*((?!\*/).)*\*/', re.MULTILINE | re.DOTALL)
+inline_comment = re.compile('/\*((?!\*/).)*\*/\s*', re.MULTILINE | re.DOTALL)
 endline_comment = re.compile('//[^\n]*\s*', re.MULTILINE | re.DOTALL)
 int_literal = re.compile(
     '''
@@ -58,7 +58,7 @@ class LogicalXorExpression(BinaryExpression): pass
 class LogicalOrExpression(BinaryExpression): pass
 
 class AttributeDeclaration: 
-    def __init__(self, name='', value=PostfixExpression([''])):
+    def __init__(self, name=None, value=None):
         self.name = name
         self.value = value
 class AssociativeListExpression: 
@@ -77,10 +77,13 @@ class BracketedExpression:
         self.content = content or []
 class ParensExpression: pass
 class AssignmentExpression: pass
-class VariableDeclaration: pass
+class VariableDeclaration: 
+    def __init__(self, names=None, value=None):
+        self.names = names or []
+        self.value = value
 class ReturnStatement: 
     def __init__(self, value=None):
-        self.value = value or []
+        self.value = value
 class IfStatement: pass
 class WhileStatement: pass
 class DoWhileStatement: pass
@@ -175,7 +178,7 @@ AssignmentExpression.grammar = (
 
 VariableDeclaration.grammar = (
     attr('qualifiers', maybe_some((re.compile('const|var|let'), blank))),
-    attr('name', token),
+    attr('names', pypeg2.csl(token)),
     attr('value', optional(blank, '=', blank, [AssignmentExpression, *ternary_expression_or_less]))
 )
 

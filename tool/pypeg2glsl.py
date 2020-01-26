@@ -6,7 +6,7 @@ import copy
 import pypeg2
 from pypeg2 import attr, optional, maybe_some, blank, endl
 
-inline_comment = re.compile('/\*((?!\*/).)*\*/', re.MULTILINE | re.DOTALL)
+inline_comment = re.compile('/\*((?!\*/).)*\*/\s*', re.MULTILINE | re.DOTALL)
 endline_comment = re.compile('//[^\n]*\s*', re.MULTILINE | re.DOTALL)
 int_literal = re.compile(
     '''
@@ -140,7 +140,7 @@ AssignmentExpression.grammar = (
 VariableDeclaration.grammar = (
     attr('qualifiers', maybe_some(re.compile('const|highp|mediump|lowp|attribute|uniform|varying'))),
     attr('type', PostfixExpression), blank,
-    attr('name', token),
+    attr('names', pypeg2.csl(token)),
     attr('value', optional(blank, '=', blank, [AssignmentExpression, *ternary_expression_or_less]))
 )
 
@@ -224,7 +224,9 @@ class LexicalScope:
     """
 
     @staticmethod
-    def get_local_variable_type_lookups(glsl):
+    def get_local_variable_type_lookups(content):
+        if not isinstance(content, list):
+            return {}
         result = { }
         code_block_element_types = [
             IfStatement,
@@ -232,9 +234,13 @@ class LexicalScope:
             WhileStatement,
             ForStatement,
         ]
-        for element in glsl:
+        for element in content:
+            if isinstance(element, ForStatement):
+                for name in element.declaration.names:
+                    result[name] = element.declaration.type.content
             if isinstance(element, VariableDeclaration):
-                result[element.name] = element.type.content
+                for name in element.names:
+                    result[name] = element.type.content
             elif isinstance(element, ParameterDeclaration):
                 result[element.name] = element.type.content
             elif type(element) in code_block_element_types:
@@ -246,7 +252,8 @@ class LexicalScope:
         result = {}
         for element in glsl:
             if isinstance(element, VariableDeclaration):
-                result[element.name] = element.type.content
+                for name in element.names:
+                    result[name] = element.type.content
         return result
 
     @staticmethod
@@ -257,7 +264,8 @@ class LexicalScope:
                 attribute_types = {}
                 for declaration in element.content:
                     if isinstance(declaration, VariableDeclaration):
-                        attribute_types[declaration.name] = declaration.type.content
+                        for name in declaration.names:
+                            result[name] = declaration.type.content
                 result[element.name] = attribute_types
         return result
 
@@ -274,7 +282,7 @@ class LexicalScope:
         self.functions  = LexicalScope.get_function_type_lookups(glsl)
         self.attributes = LexicalScope.get_attribute_type_lookups(glsl)
         
-    def get_subscope(self, glsl_function):
+    def get_subscope(self, function):
         """
         returns a new LexicalScope object whose state reflects the type 
         information of variables defined within a local subscope
@@ -284,8 +292,8 @@ class LexicalScope:
         result.functions = copy.deepcopy(self.functions)
         result.variables = {
             **self.variables,
-            **LexicalScope.get_local_variable_type_lookups(glsl_function.parameters),
-            **LexicalScope.get_local_variable_type_lookups(glsl_function.content)
+            **LexicalScope.get_local_variable_type_lookups(function.parameters),
+            **LexicalScope.get_local_variable_type_lookups(function.content)
         }
         return result
         
@@ -365,7 +373,9 @@ def get_expression_type(expression, scope):
                 elif previous in scope.functions:
                     previous_type = scope.functions[previous]
                 else:
-                    print(f'could not invoke unknown function: {previous}(...)')
+                    expression_str = ''#pypeg2.compose(PostfixExpression(expression_content), PostfixExpression)
+                    print(f'WARNING: could not invoke unknown function: "{previous}" \n\t{expression_str}')
+                    previous_type = []
             if isinstance(current, BracketedExpression):
                 # matrix column access
                 if previous_type in matrix_types:
@@ -378,7 +388,9 @@ def get_expression_type(expression, scope):
                     isinstance(previous_type[1], BracketedExpression)):
                     previous_type = previous_type[:-1]
                 else:
-                    print(f'could not access index of non-array: {previous_type}')
+                    expression_str = ''#pypeg2.compose(PostfixExpression(expression_content), PostfixExpression)
+                    print(f'WARNING: could not access index of non-array: "{previous_type}" \n\t{expression_str}')
+                    previous_type = []
             if isinstance(current, str):
                 # vector component access
                 if previous_type in vector_types: # likely an attribute of a built-in structure, like a vector
@@ -389,7 +401,9 @@ def get_expression_type(expression, scope):
                     current in scope.attributes[previous_type[0]]):
                     previous_type = scope.attributes[previous_type[0]][current]
                 else:
-                    print(f'could not find attribute within unknown structure: {previous_type}')
+                    expression_str = ''#pypeg2.compose(PostfixExpression(expression_content), PostfixExpression)
+                    print(f'WARNING: could not find attribute within unknown data structure: "{previous_type}" \n\t{expression_str}')
+                    previous_type = []
             previous = current
         return previous_type 
 
@@ -414,16 +428,28 @@ def get_expression_type(expression, scope):
         elif matrix_type:
             return matrix_type
         else:
-            if type1 != type2:
-                expression_str = pypeg2.compose(expression, type(expression))
-                print(f'type mismatch: operation "{expression.operator}" was fed left operand of type "{type1}" and right hand operand of type "{type2}": \n\t{expression_str} ')
-                print(scope.variables)
+            expression_str = pypeg2.compose(expression, type(expression))
+            operand1_str = pypeg2.compose(expression.operand1, type(expression.operand1))
+            operand2_str = pypeg2.compose(expression.operand2, type(expression.operand2))
+            if type1 == []:
+                print(f'WARNING: could not deduce type for variable "{operand1_str}" \n\t{expression_str}')
+            elif type2 == []:
+                print(f'WARNING: could not deduce type for variable "{operand2_str}" \n\t{expression_str}')
+            elif type1 != type2:
+                print(f'WARNING: type mismatch, operation "{expression.operator}" was fed left operand of type "{type1}" and right hand operand of type "{type2}" \n\t{expression_str} ')
             return type1
     if isinstance(expression, TernaryExpression):
         type1 = get_expression_type(expression.operand2, scope)
         type2 = get_expression_type(expression.operand3, scope)
-        if type1 != type2:
+        expression_str = pypeg2.compose(expression, type(expression))
+        operand1_str = pypeg2.compose(expression.operand2, type(expression.operand2))
+        operand2_str = pypeg2.compose(expression.operand3, type(expression.operand3))
+        if type1 == []:
+            print(f'WARNING: could not deduce type for variable "{operand1_str}" \n\t{expression_str}')
+        elif type2 == []:
+            print(f'WARNING: could not deduce type for variable "{operand2_str}" \n\t{expression_str}')
+        elif type1 != type2:
             expression_str = pypeg2.compose(expression, TernaryExpression)
-            print(f'type mismatch: ternary operation takes a left hand operand of type "{type1}" and right hand operand of type "{type2}: \n\t{expression_str}"')
+            print(f'WARNING: type mismatch, ternary operation takes a left hand operand of type "{type1}" and right hand operand of type "{type2} \n\t{expression_str}"')
             print(scope.variables)
         return type1
