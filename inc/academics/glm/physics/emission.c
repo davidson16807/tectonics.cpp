@@ -1,6 +1,6 @@
 
-FUNC(vec3) solve_rgb_intensity_of_light_emitted_by_black_body(
-    IN(float) temperature
+vec3 solve_rgb_intensity_of_light_emitted_by_black_body(
+    in float temperature
 ){
     return get_intensity_of_light_emitted_by_black_body(temperature)
          * vec3(

@@ -1,20 +1,20 @@
-FUNC(float) get_surface_area_of_sphere(
-    IN(float) radius
+float get_surface_area_of_sphere(
+    in float radius
 ) {
     return 4.*PI*radius*radius;
 }
 
 // NOTE: GRANDFATHERED
-FUNC(bool) try_get_relation_between_ray_and_sphere(
-    IN(float)  sphere_radius,
-    IN(float)  z2,
-    IN(float)  xz, 
-    OUT(float) distance_to_entrance,
-    OUT(float) distance_to_exit
+bool try_get_relation_between_ray_and_sphere(
+    in float  sphere_radius,
+    in float  z2,
+    in float  xz, 
+    out float distance_to_entrance,
+    out float distance_to_exit
 ){
-    VAR(float) sphere_radius2 = sphere_radius * sphere_radius;
+    float sphere_radius2 = sphere_radius * sphere_radius;
 
-    VAR(float) distance_from_closest_approach_to_exit = sqrt(max(sphere_radius2 - z2, 1e-10));
+    float distance_from_closest_approach_to_exit = sqrt(max(sphere_radius2 - z2, 1e-10));
     distance_to_entrance = xz - distance_from_closest_approach_to_exit;
     distance_to_exit     = xz + distance_from_closest_approach_to_exit;
 
@@ -47,11 +47,11 @@ DESIGN PRINCIPLES FOR INTERSECTION FUNCTIONS:
   no data structures need to be introduced to the user before usage, with the exception of vecNs
 */
 
-FUNC(bool) try_get_3d_relation_between_line_and_point(
-    IN (vec3)  line_reference,
-    IN (vec3)  line_direction,
-    IN (vec3)  point_position, 
-    OUT(vec3)  closest_approach
+bool try_get_3d_relation_between_line_and_point(
+    in  vec3  line_reference,
+    in  vec3  line_direction,
+    in  vec3  point_position, 
+    out vec3  closest_approach
 ){
     /*
     set line_reference as the origin, 
@@ -63,11 +63,11 @@ FUNC(bool) try_get_3d_relation_between_line_and_point(
         dot(point_position - line_reference, normalize(line_direction)) * normalize(line_direction);
     return length(closest_approach - point_position) < EPSILON;
 }
-FUNC(bool) try_get_3d_relation_between_line_segment_and_point(
-    IN (vec3)  line_segment_start,
-    IN (vec3)  line_segment_stop,
-    IN (vec3)  point_position, 
-    OUT(vec3)  closest_approach
+bool try_get_3d_relation_between_line_segment_and_point(
+    in  vec3  line_segment_start,
+    in  vec3  line_segment_stop,
+    in  vec3  point_position, 
+    out vec3  closest_approach
 ){
     /*
     set line_segment_start as the origin, 
@@ -79,46 +79,46 @@ FUNC(bool) try_get_3d_relation_between_line_segment_and_point(
         dot(point_position - line_reference, normalize(line_direction)) * normalize(line_direction);
     return length(closest_approach - point_position) < EPSILON;
 }
-FUNC(bool) try_get_3d_relation_between_ray_and_point(
-    IN (vec3)  ray_origin,
-    IN (vec3)  ray_direction,
-    IN (vec3)  point_position, 
-    OUT(vec3)  closest_approach
+bool try_get_3d_relation_between_ray_and_point(
+    in  vec3  ray_origin,
+    in  vec3  ray_direction,
+    in  vec3  point_position, 
+    out vec3  closest_approach
 ){
 
 }
-FUNC(bool) try_get_3d_relation_between_lines(
-    IN (vec3)  line_reference,
-    IN (vec3)  line_direction,
-    IN (vec3)  point_position, 
-    OUT(vec3)  intersection
+bool try_get_3d_relation_between_lines(
+    in  vec3  line_reference,
+    in  vec3  line_direction,
+    in  vec3  point_position, 
+    out vec3  intersection
 ){
 
 }
-FUNC(bool) try_get_3d_relation_between_line_segment_and_line(
-    IN (vec3)  line_segment_start,
-    IN (vec3)  line_segment_stop,
-    IN (vec3)  point_position, 
-    OUT(vec3)  intersection
+bool try_get_3d_relation_between_line_segment_and_line(
+    in  vec3  line_segment_start,
+    in  vec3  line_segment_stop,
+    in  vec3  point_position, 
+    out vec3  intersection
 ){
 
 }
-FUNC(bool) try_get_3d_relation_between_ray_and_line(
-    IN (vec3)  ray_origin,
-    IN (vec3)  ray_direction,
-    IN (vec3)  point_position, 
-    OUT(vec3)  intersection
+bool try_get_3d_relation_between_ray_and_line(
+    in  vec3  ray_origin,
+    in  vec3  ray_direction,
+    in  vec3  point_position, 
+    out vec3  intersection
 ){
 
 }
-FUNC(bool) try_get_3d_relation_between_ray_and_sphere(
-    IN (vec3)  ray_origin,
-    IN (vec3)  ray_direction,
-    IN (vec3)  sphere_origin, 
-    IN (float) sphere_radius, 
-    OUT(vec3)  closest_approach,
-    OUT(vec3)  entrance,
-    OUT(vec3)  exit
+bool try_get_3d_relation_between_ray_and_sphere(
+    in  vec3  ray_origin,
+    in  vec3  ray_direction,
+    in  vec3  sphere_origin, 
+    in  float sphere_radius, 
+    out vec3  closest_approach,
+    out vec3  entrance,
+    out vec3  exit
 ){
 
 }
