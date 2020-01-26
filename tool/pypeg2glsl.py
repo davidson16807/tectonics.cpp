@@ -36,21 +36,24 @@ float_literal = re.compile(
 bool_literal = re.compile('true|false')
 token = re.compile('[a-zA-Z_]\w*')
 
-class PostfixExpression: pass
-class PostIncrementExpression: pass
-class PreIncrementExpression: pass
+class UnaryExpression: pass
+class BinaryExpression: pass
 
-class MultiplicativeExpression: pass
-class AdditiveExpression: pass
-class ShiftExpression: pass
-class RelationalExpression: pass
-class EqualityExpression: pass
-class BitwiseAndExpression: pass
-class BitwiseXorExpression: pass
-class BitwiseOrExpression: pass
-class LogicalAndExpression: pass
-class LogicalXorExpression: pass
-class LogicalOrExpression: pass
+class PostfixExpression: pass
+class PostIncrementExpression(UnaryExpression): pass
+class PreIncrementExpression(UnaryExpression): pass
+
+class MultiplicativeExpression(BinaryExpression): pass
+class AdditiveExpression(BinaryExpression): pass
+class ShiftExpression(BinaryExpression): pass
+class RelationalExpression(BinaryExpression): pass
+class EqualityExpression(BinaryExpression): pass
+class BitwiseAndExpression(BinaryExpression): pass
+class BitwiseXorExpression(BinaryExpression): pass
+class BitwiseOrExpression(BinaryExpression): pass
+class LogicalAndExpression(BinaryExpression): pass
+class LogicalXorExpression(BinaryExpression): pass
+class LogicalOrExpression(BinaryExpression): pass
 
 class TernaryExpression: pass
 class BracketedExpression: pass
@@ -76,7 +79,7 @@ primary_expression = [
 ]
 
 PostfixExpression.grammar = (
-    attr('content', (token, maybe_some([BracketedExpression, InvocationExpression, ('.', token)])))
+    attr('content', ([token, ParensExpression], maybe_some([BracketedExpression, InvocationExpression, ('.', token)])))
 )
 postfix_expression_or_less = [
     PostfixExpression,
@@ -108,9 +111,9 @@ order_of_operations = [
 ]
 
 binary_expression_or_less = [*unary_expression_or_less]
-for BinaryExpression, binary_regex in order_of_operations:
-    binary_expression_or_less = [BinaryExpression, *binary_expression_or_less]
-    BinaryExpression.grammar = (
+for BinaryExpressionTemp, binary_regex in order_of_operations:
+    binary_expression_or_less = [BinaryExpressionTemp, *binary_expression_or_less]
+    BinaryExpressionTemp.grammar = (
             attr('operand1', binary_expression_or_less[1:]), blank,
             attr('operator', binary_regex), blank,
             attr('operand2', binary_expression_or_less),
@@ -119,7 +122,7 @@ for BinaryExpression, binary_regex in order_of_operations:
 ternary_expression_or_less = [TernaryExpression, *binary_expression_or_less]
 TernaryExpression.grammar = (
     attr('operand1', binary_expression_or_less), '?', blank,
-    attr('operand2', ternary_expression_or_less), ':', blank,
+    attr('operand2', ternary_expression_or_less), blank, ':', blank,
     attr('operand3', ternary_expression_or_less)
 )
 
@@ -135,7 +138,7 @@ AssignmentExpression.grammar = (
 
 VariableDeclaration.grammar = (
     attr('qualifiers', maybe_some(re.compile('const|highp|mediump|lowp|attribute|uniform|varying'))),
-    attr('type', PostfixExpression),
+    attr('type', PostfixExpression), blank,
     attr('name', token),
     attr('value', optional(blank, '=', blank, [AssignmentExpression, *ternary_expression_or_less]))
 )
@@ -187,7 +190,7 @@ ParameterDeclaration.grammar = (
     attr('name', token)
 )
 FunctionDeclaration.grammar = (
-    attr('type', token), blank, attr('name', token), 
+    attr('type', PostfixExpression), blank, attr('name', token), 
     '(', 
     attr('parameters',  
     		optional(endl, pypeg2.indent(ParameterDeclaration, maybe_some(',', endl, ParameterDeclaration)), endl)  

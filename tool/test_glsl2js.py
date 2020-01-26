@@ -230,12 +230,15 @@ struct LineIntersectionTest
 '''
 
 
-
+glsl = pypeg2glsl.parse(test) 
 print('ORIGINAL-------------------')
-parsed = pypeg2glsl.parse(test) 
-print(pypeg2glsl.compose(parsed))
-print('MODIFIED-------------------')
-converted = glsl2js.get_js(parsed)
-print(pypeg2js.compose(converted))
+print(pypeg2glsl.compose(glsl))
 
+js = glsl2js.get_js(glsl)
+print('MODIFIED-------------------')
+print(pypeg2js.compose(js))
+
+'''
 parsed[-2].parameters[-1].type.content
+glsl2js.get_type_lookups(glsl)
+'''

@@ -36,40 +36,63 @@ float_literal = re.compile(
 bool_literal = re.compile('true|false')
 token = re.compile('[a-zA-Z_]\w*')
 
-class PostfixExpression: pass
-class PostIncrementExpression: pass
-class PreIncrementExpression: pass
+class UnaryExpression: pass
+class BinaryExpression: pass
 
-class MultiplicativeExpression: pass
-class AdditiveExpression: pass
-class ShiftExpression: pass
-class RelationalExpression: pass
-class EqualityExpression: pass
-class BitwiseAndExpression: pass
-class BitwiseXorExpression: pass
-class BitwiseOrExpression: pass
-class LogicalAndExpression: pass
-class LogicalXorExpression: pass
-class LogicalOrExpression: pass
+class PostfixExpression: 
+    def __init__(self, content=None):
+        self.content = content or []
+class PostIncrementExpression(UnaryExpression): pass
+class PreIncrementExpression(UnaryExpression): pass
 
-class AttributeDeclaration: pass
-class AssociativeListExpression: pass
-class OrderedListExpression: pass
+class MultiplicativeExpression(BinaryExpression): pass
+class AdditiveExpression(BinaryExpression): pass
+class ShiftExpression(BinaryExpression): pass
+class RelationalExpression(BinaryExpression): pass
+class EqualityExpression(BinaryExpression): pass
+class BitwiseAndExpression(BinaryExpression): pass
+class BitwiseXorExpression(BinaryExpression): pass
+class BitwiseOrExpression(BinaryExpression): pass
+class LogicalAndExpression(BinaryExpression): pass
+class LogicalXorExpression(BinaryExpression): pass
+class LogicalOrExpression(BinaryExpression): pass
 
+class AttributeDeclaration: 
+    def __init__(self, name='', value=PostfixExpression([''])):
+        self.name = name
+        self.value = value
+class AssociativeListExpression: 
+    def __init__(self, content=None):
+        self.content = content or []
+class OrderedListExpression: 
+    def __init__(self, content=None):
+        self.content = content or []
+
+class InvocationExpression: 
+    def __init__(self, content=None):
+        self.content = content or []
 class TernaryExpression: pass
-class BracketedExpression: pass
+class BracketedExpression: 
+    def __init__(self, content=None):
+        self.content = content or []
 class ParensExpression: pass
-class InvocationExpression: pass
 class AssignmentExpression: pass
 class VariableDeclaration: pass
-class ReturnStatement: pass
+class ReturnStatement: 
+    def __init__(self, value=None):
+        self.value = value or []
 class IfStatement: pass
-class IfStatementOption: pass
 class WhileStatement: pass
 class DoWhileStatement: pass
 class ForStatement: pass
-class ParameterDeclaration: pass
-class FunctionDeclaration: pass
+class ParameterDeclaration: 
+    def __init__(self, name=''):
+        self.name = name
+class FunctionDeclaration: 
+    def __init__(self, name='', parameters=None, content=None):
+        self.name = name
+        self.parameters = parameters or []
+        self.content = content or []
 
 primary_expression = [
     single_quote_string_literal,
@@ -81,7 +104,7 @@ primary_expression = [
 ]
 
 PostfixExpression.grammar = (
-    attr('content', ([OrderedListExpression, AssociativeListExpression, token], maybe_some([BracketedExpression, InvocationExpression, ('.', token)])))
+    attr('content', ([OrderedListExpression, AssociativeListExpression, primary_expression, token], maybe_some([BracketedExpression, InvocationExpression, ('.', token)])))
 )
 postfix_expression_or_less = [
     PostfixExpression,
@@ -113,9 +136,9 @@ order_of_operations = [
 ]
 
 binary_expression_or_less = [*unary_expression_or_less]
-for BinaryExpression, binary_regex in order_of_operations:
-    binary_expression_or_less = [BinaryExpression, *binary_expression_or_less]
-    BinaryExpression.grammar = (
+for BinaryExpressionTemp, binary_regex in order_of_operations:
+    binary_expression_or_less = [BinaryExpressionTemp, *binary_expression_or_less]
+    BinaryExpressionTemp.grammar = (
             attr('operand1', binary_expression_or_less[1:]), blank,
             attr('operator', binary_regex), blank,
             attr('operand2', binary_expression_or_less),
@@ -124,7 +147,7 @@ for BinaryExpression, binary_regex in order_of_operations:
 ternary_expression_or_less = [TernaryExpression, *binary_expression_or_less]
 TernaryExpression.grammar = (
     attr('operand1', binary_expression_or_less), '?', blank,
-    attr('operand2', ternary_expression_or_less), ':', blank,
+    attr('operand2', ternary_expression_or_less), blank, ':', blank,
     attr('operand3', ternary_expression_or_less)
 )
 
@@ -140,8 +163,8 @@ OrderedListExpression.grammar= ('[',
     attr('content'), pypeg2.indent(pypeg2.csl(ternary_expression_or_less)),
 ']')
 BracketedExpression.grammar  = '[', attr('content', ternary_expression_or_less), ']'
-ParensExpression.grammar     = '(', attr('content', ternary_expression_or_less), ')'
 InvocationExpression.grammar = '(', attr('content', optional(pypeg2.csl((blank, ternary_expression_or_less)))), ')'
+ParensExpression.grammar     = '(', attr('content', ternary_expression_or_less), ')'
 
 AssignmentExpression.grammar = (
     attr('operand1', PostfixExpression), blank,
@@ -169,7 +192,7 @@ code_block = maybe_some(
 		WhileStatement, 
 		DoWhileStatement, 
 		IfStatement, 
-		FunctionDeclaration,
+		FunctionDeclaration, 
 		simple_statement
 	]
 )
@@ -198,13 +221,16 @@ ForStatement.grammar = (
 )
 
 ParameterDeclaration.grammar = (
-    attr('name', token)
+    attr('name', token) 
 )
 FunctionDeclaration.grammar = (
     'function', blank, attr('name', token), 
-    '(', 
+    '(', endl,
     attr('parameters',  
-    		optional(pypeg2.indent(ParameterDeclaration, maybe_some(',', blank, ParameterDeclaration)), endl)  
+    		optional(pypeg2.indent(
+                optional(blank, inline_comment), blank, ParameterDeclaration, 
+                maybe_some(',', endl, optional(blank, inline_comment), blank, ParameterDeclaration) 
+            ), endl)
     	), 
     ')', 
     attr('content', compound_statement), endl
