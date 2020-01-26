@@ -8,19 +8,19 @@ double_quote_string_literal = re.compile('"([^"]|\\\\")*"', re.MULTILINE | re.DO
 inline_comment = re.compile('/\*((?!\*/).)*\*/', re.MULTILINE | re.DOTALL)
 endline_comment = re.compile('//[^\n]*\s*', re.MULTILINE | re.DOTALL)
 int_literal = re.compile(
-	'''
-	(
-		0 [0-7]+ | 
-		0x[0-9a-f]+ |
-		  [0-9]+
-	)
-	u?
-	''', 
-	re.MULTILINE | re.DOTALL | re.VERBOSE | re.IGNORECASE
+    '''
+    (
+        0 [0-7]+ | 
+        0x[0-9a-f]+ |
+          [0-9]+
+    )
+    u?
+    ''', 
+    re.MULTILINE | re.DOTALL | re.VERBOSE | re.IGNORECASE
 )
 float_literal = re.compile(
-	'''
-	(
+    '''
+    (
         0x         \.[0-9a-f]+ (e -? \d+)? |
         0x[0-9a-f]+\.[0-9a-f]* (e -? \d+)? |
                      [0-9a-f]+ e -? \d+ | 
@@ -182,31 +182,31 @@ VariableDeclaration.grammar = (
 ReturnStatement.grammar = ('return', blank, attr('value', optional(ternary_expression_or_less)))
 
 simple_statement = ([
-	re.compile('continue|break|discard'), ReturnStatement,
-	VariableDeclaration, AssignmentExpression, PostfixExpression
+    re.compile('continue|break|discard'), ReturnStatement,
+    VariableDeclaration, AssignmentExpression, PostfixExpression
 ], optional(';'), endl)
 code_block = maybe_some(
-	[
-		# inline_comment, 
-		# endline_comment,
-		ForStatement, 
-		WhileStatement, 
-		DoWhileStatement, 
-		IfStatement, 
-		FunctionDeclaration, 
-		simple_statement
-	]
+    [
+        inline_comment, 
+        endline_comment,
+        ForStatement, 
+        WhileStatement, 
+        DoWhileStatement, 
+        IfStatement, 
+        FunctionDeclaration, 
+        simple_statement
+    ]
 )
 compound_statement = ( '{', endl, pypeg2.indent(code_block), '}', endl )
 
 IfStatement.grammar = (
     'if', blank, '(', attr('condition', ternary_expression_or_less), ')',
-	attr('content', [compound_statement, simple_statement] ), 
+    attr('content', [compound_statement, simple_statement] ), 
     attr('else', optional('else', blank, [IfStatement, compound_statement, simple_statement])), endl
 )
 WhileStatement.grammar = (
-	'while', blank, '(', attr('condition', ternary_expression_or_less), ')', 
-	attr('content', [compound_statement, simple_statement] ), endl
+    'while', blank, '(', attr('condition', ternary_expression_or_less), ')', 
+    attr('content', [compound_statement, simple_statement] ), endl
 )
 DoWhileStatement.grammar = (
     'do', blank, attr('content', [compound_statement, simple_statement] ), 
@@ -214,9 +214,9 @@ DoWhileStatement.grammar = (
 )
 ForStatement.grammar = (
     'for', blank, '(', 
-    	attr('declaration', VariableDeclaration), ';', blank,
-    	attr('condition', ternary_expression_or_less), ';', blank,
-    	attr('operation', optional([AssignmentExpression, PreIncrementExpression, PostIncrementExpression, PostfixExpression])), 
+        attr('declaration', VariableDeclaration), ';', blank,
+        attr('condition', ternary_expression_or_less), ';', blank,
+        attr('operation', optional([AssignmentExpression, PreIncrementExpression, PostIncrementExpression, PostfixExpression])), 
     ')', blank,
     attr('content', [compound_statement, simple_statement] ), endl
 )
@@ -229,11 +229,11 @@ FunctionDeclaration.grammar = (
     'function', blank, attr('name', token), 
     '(', endl,
     attr('parameters',  
-    		optional(pypeg2.indent(
+            optional(pypeg2.indent(
                 optional(blank, inline_comment), blank, ParameterDeclaration, 
                 maybe_some(',', endl, optional(blank, inline_comment), blank, ParameterDeclaration) 
             ), endl)
-    	), 
+        ), 
     ')', 
     attr('content', compound_statement), endl
 )

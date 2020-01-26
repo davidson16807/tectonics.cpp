@@ -8,19 +8,19 @@ from pypeg2 import attr, optional, maybe_some, blank, endl
 inline_comment = re.compile('/\*((?!\*/).)*\*/', re.MULTILINE | re.DOTALL)
 endline_comment = re.compile('//[^\n]*\s*', re.MULTILINE | re.DOTALL)
 int_literal = re.compile(
-	'''
-	(
-		0 [0-7]+ | 
-		0x[0-9a-f]+ |
-		  [0-9]+
-	)
-	u?
-	''', 
-	re.MULTILINE | re.DOTALL | re.VERBOSE | re.IGNORECASE
+    '''
+    (
+        0 [0-7]+ | 
+        0x[0-9a-f]+ |
+          [0-9]+
+    )
+    u?
+    ''', 
+    re.MULTILINE | re.DOTALL | re.VERBOSE | re.IGNORECASE
 )
 float_literal = re.compile(
-	'''
-	(
+    '''
+    (
         0x         \.[0-9a-f]+ (e -? \d+)? |
         0x[0-9a-f]+\.[0-9a-f]* (e -? \d+)? |
                      [0-9a-f]+ e -? \d+ | 
@@ -146,30 +146,30 @@ VariableDeclaration.grammar = (
 ReturnStatement.grammar = ('return', blank, attr('value', optional(ternary_expression_or_less)))
 
 simple_statement = ([
-	re.compile('continue|break|discard'), ReturnStatement,
-	VariableDeclaration, AssignmentExpression, PostfixExpression
+    re.compile('continue|break|discard'), ReturnStatement,
+    VariableDeclaration, AssignmentExpression, PostfixExpression
 ], ';', endl)
 code_block = maybe_some(
-	[
-		# inline_comment, 
-		# endline_comment,
-		ForStatement, 
-		WhileStatement, 
-		DoWhileStatement, 
-		IfStatement, 
-		simple_statement
-	]
+    [
+        inline_comment, 
+        endline_comment,
+        ForStatement, 
+        WhileStatement, 
+        DoWhileStatement, 
+        IfStatement, 
+        simple_statement
+    ]
 )
 compound_statement = ( '{', endl, pypeg2.indent(code_block), '}', endl )
 
 IfStatement.grammar = (
     'if', blank, '(', attr('condition', ternary_expression_or_less), ')', endl,
-	attr('content', [compound_statement, simple_statement] ), 
+    attr('content', [compound_statement, simple_statement] ), 
     attr('else', optional('else', blank, [IfStatement, compound_statement, simple_statement])), endl
 )
 WhileStatement.grammar = (
-	'while', blank, '(', attr('condition', ternary_expression_or_less), ')', endl,
-	attr('content', [compound_statement, simple_statement] ), endl
+    'while', blank, '(', attr('condition', ternary_expression_or_less), ')', endl,
+    attr('content', [compound_statement, simple_statement] ), endl
 )
 DoWhileStatement.grammar = (
     'do', endl, attr('content', [compound_statement, simple_statement] ), 
@@ -177,9 +177,9 @@ DoWhileStatement.grammar = (
 )
 ForStatement.grammar = (
     'for', blank, '(', 
-    	attr('declaration', VariableDeclaration), ';', blank,
-    	attr('condition', ternary_expression_or_less), ';', blank,
-    	attr('operation', optional([AssignmentExpression, PreIncrementExpression, PostIncrementExpression, PostfixExpression])), 
+        attr('declaration', VariableDeclaration), ';', blank,
+        attr('condition', ternary_expression_or_less), ';', blank,
+        attr('operation', optional([AssignmentExpression, PreIncrementExpression, PostIncrementExpression, PostfixExpression])), 
     ')', endl,
     attr('content', [compound_statement, simple_statement] ), endl
 )
@@ -193,8 +193,8 @@ FunctionDeclaration.grammar = (
     attr('type', PostfixExpression), blank, attr('name', token), 
     '(', 
     attr('parameters',  
-    		optional(endl, pypeg2.indent(ParameterDeclaration, maybe_some(',', endl, ParameterDeclaration)), endl)  
-    	), 
+            optional(endl, pypeg2.indent(ParameterDeclaration, maybe_some(',', endl, ParameterDeclaration)), endl)  
+        ), 
     ')', endl,
     attr('content', compound_statement), endl
 )
@@ -207,14 +207,14 @@ StructureDeclaration.grammar = (
 )
 
 glsl = maybe_some(
-	[
-		# inline_comment, endline_comment,
-		StructureDeclaration, FunctionDeclaration, (VariableDeclaration, ';', endl)
-	]
+    [
+        inline_comment, endline_comment,
+        StructureDeclaration, FunctionDeclaration, (VariableDeclaration, ';', endl)
+    ]
 )
 def parse(glsl_text, grammar = glsl):
-    sanitized = inline_comment.sub('', glsl_text)
-    sanitized = endline_comment.sub('', sanitized)
-    return pypeg2.parse(sanitized, grammar)
+    # sanitized = inline_comment.sub('', glsl_text)
+    # sanitized = endline_comment.sub('', sanitized)
+    return pypeg2.parse(glsl_text, grammar)
 def compose(glsl_parse_tree, grammar = glsl):
     return pypeg2.compose(glsl_parse_tree, grammar)
