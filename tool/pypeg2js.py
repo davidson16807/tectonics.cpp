@@ -239,9 +239,3 @@ FunctionDeclaration.grammar = (
 )
 
 javascript = code_block
-def parse(javascript_text, grammar = javascript):
-    sanitized = inline_comment.sub('', javascript_text)
-    sanitized = endline_comment.sub('', sanitized)
-    return pypeg2.parse(sanitized, grammar)
-def compose(javascript_parse_tree, grammar = javascript):
-    return pypeg2.compose(javascript_parse_tree, grammar)

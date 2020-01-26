@@ -1,6 +1,7 @@
 # holy fucking shit that was a lot of work 😩
 
 import re
+import copy
 
 import pypeg2
 from pypeg2 import attr, optional, maybe_some, blank, endl
@@ -212,9 +213,217 @@ glsl = maybe_some(
         StructureDeclaration, FunctionDeclaration, (VariableDeclaration, ';', endl)
     ]
 )
-def parse(glsl_text, grammar = glsl):
-    # sanitized = inline_comment.sub('', glsl_text)
-    # sanitized = endline_comment.sub('', sanitized)
-    return pypeg2.parse(glsl_text, grammar)
-def compose(glsl_parse_tree, grammar = glsl):
-    return pypeg2.compose(glsl_parse_tree, grammar)
+
+
+class LexicalScope:
+    """ 
+    A "LexicalScope" is a conceptually immutable data structure containing 
+    dictionaries to access type information for
+    variables, functions return values, and data structure attributes
+    within a given lexical scope.
+    """
+
+    @staticmethod
+    def get_local_variable_type_lookups(glsl):
+        result = { }
+        code_block_element_types = [
+            IfStatement,
+            DoWhileStatement,
+            WhileStatement,
+            ForStatement,
+        ]
+        for element in glsl:
+            if isinstance(element, VariableDeclaration):
+                result[element.name] = element.type.content
+            elif isinstance(element, ParameterDeclaration):
+                result[element.name] = element.type.content
+            elif type(element) in code_block_element_types:
+                result.update(LexicalScope.get_local_variable_type_lookups(element.content))
+        return result
+
+    @staticmethod
+    def get_global_variable_type_lookups(glsl):
+        result = {}
+        for element in glsl:
+            if isinstance(element, VariableDeclaration):
+                result[element.name] = element.type.content
+        return result
+
+    @staticmethod
+    def get_attribute_type_lookups(glsl):
+        result = {}
+        for element in glsl:
+            if isinstance(element, StructureDeclaration):
+                attribute_types = {}
+                for declaration in element.content:
+                    if isinstance(declaration, VariableDeclaration):
+                        attribute_types[declaration.name] = declaration.type.content
+                result[element.name] = attribute_types
+        return result
+
+    @staticmethod
+    def get_function_type_lookups(glsl):
+        result = {}
+        for element in glsl:
+            if isinstance(element, FunctionDeclaration):
+                result[element.name] = element.type.content
+        return result
+
+    def __init__(self, glsl = []):
+        self.variables  = LexicalScope.get_global_variable_type_lookups(glsl)
+        self.functions  = LexicalScope.get_function_type_lookups(glsl)
+        self.attributes = LexicalScope.get_attribute_type_lookups(glsl)
+        
+    def get_subscope(self, glsl_function):
+        """
+        returns a new LexicalScope object whose state reflects the type 
+        information of variables defined within a local subscope
+        """
+        result = LexicalScope()
+        result.attributes = copy.deepcopy(self.attributes)
+        result.functions = copy.deepcopy(self.functions)
+        result.variables = {
+            **self.variables,
+            **LexicalScope.get_local_variable_type_lookups(glsl_function.parameters),
+            **LexicalScope.get_local_variable_type_lookups(glsl_function.content)
+        }
+        return result
+        
+
+vector_types = [
+    ['vec2'], ['vec3'], ['vec4'], 
+    ['ivec2'], ['ivec3'], ['ivec4'],
+    ['bvec2'], ['bvec3'], ['bvec4'],
+]
+matrix_types = [
+    ['mat2'],  ['mat3'],  ['mat4'],    ['mat2x3'],  ['mat2x4'],    ['mat3x2'],    ['mat3x4'],   ['mat4x2'],    ['mat4x3'], 
+    ['imat2'], ['imat3'], ['imat4'],   ['imat2x3'], ['imat2x4'],   ['imat3x2'],   ['imat3x4'],  ['imat4x2'],   ['imat4x3'],
+    ['bmat2'], ['bmat3'], ['bmat4'],   ['bmat2x3'], ['bmat2x4'],   ['bmat3x2'],   ['bmat3x4'],  ['bmat4x2'],   ['bmat4x3'],
+]
+built_in_types = [
+    *vector_types,
+    *matrix_types,
+    ['float'], ['int'], ['bool']
+]
+
+def get_expression_type(expression, scope):
+    def _get_postfix_expression_content_type(expression_content, scope):
+        if len(expression_content) < 1:
+            return []
+
+        glsl_built_in_overloaded_function_types = [
+            'radians', 'degrees',
+            'sin', 'cos', 'tan', 
+            'asin', 'acos', 'atan', 'atan2', 
+            'sqrt', 'cbrt', 'pow', 'exp', 'exp2' 'log', 'log2', 'inversesqrt',
+            'trunc', 'floor', 'ceil', 'round','mod'
+            'sqrt', 'fract', 
+            'min', 'max', 'clamp',  'step', 'smoothstep',
+            'abs', 'sign', 
+            'length', 'distance', 'normalize', 
+            'faceforward', 'reflect', 'refract',
+            'equal', 'notEqual', 'lessThan', 'lessThanEqual', 'greaterThan', 'greaterThanEqual', 
+            'any', 'all', 'not',
+            'frexp', 'ldexp',
+        ]
+        built_in_function_types = {
+            'cross': ['vec3'],
+            'dot': ['float'],
+            'length': ['float'],
+            'distance': ['float'],
+        }
+        elements = [*expression_content]
+        previous = elements.pop(0)
+        previous_type = []
+        # parentheses
+        if isinstance(previous, ParensExpression):
+            previous_type = get_expression_type(previous.content, scope)
+        # variable reference
+        if isinstance(previous, str):
+            if previous in scope.variables:
+                previous_type = scope.variables[previous]
+            elif previous in scope.variables:
+                previous_type = scope.variables[previous]
+        while len(elements) > 0:
+            current = elements.pop(0)
+            if isinstance(current, InvocationExpression):
+                # constructor (built-in)
+                if [previous] in built_in_types:
+                    previous_type = [previous]
+                # constructor (user-defined)
+                elif previous in scope.attributes:
+                    previous_type = [previous]
+                # function invocation (built-in)
+                elif previous in built_in_function_types:
+                    previous_type = built_in_function_types[previous]
+                # function invocation (built-in, overloaded)
+                elif previous in glsl_built_in_overloaded_function_types:
+                    param_types = [get_expression_type(param, scope) for param in current.content]
+                    vector_param_types = [param_type for param_type in param_types if param_type in vector_types]
+                    previous_type = vector_param_types[0] if len(vector_param_types) > 0 else param_types[0]
+                # function invocation (user-defined)
+                elif previous in scope.functions:
+                    previous_type = scope.functions[previous]
+                else:
+                    print(f'could not invoke unknown function: {previous}(...)')
+            if isinstance(current, BracketedExpression):
+                # matrix column access
+                if previous_type in matrix_types:
+                    previous_type = [re.sub('mat(\d)x?', 'vec\\1', previous_type[0])]
+                # vector component access
+                elif previous_type in vector_types:
+                    previous_type = ['float']
+                # array index access
+                elif (len(previous_type) > 1 and 
+                    isinstance(previous_type[1], BracketedExpression)):
+                    previous_type = previous_type[:-1]
+                else:
+                    print(f'could not access index of non-array: {previous_type}')
+            if isinstance(current, str):
+                # vector component access
+                if previous_type in vector_types: # likely an attribute of a built-in structure, like a vector
+                    previous_type = ['float']
+                # attribute access
+                elif (len(previous_type) == 1 and 
+                    previous_type[0] in scope.attributes and
+                    current in scope.attributes[previous_type[0]]):
+                    previous_type = scope.attributes[previous_type[0]][current]
+                else:
+                    print(f'could not find attribute within unknown structure: {previous_type}')
+            previous = current
+        return previous_type 
+
+    if isinstance(expression, str):
+        if float_literal.match(expression):
+            return ['float']
+        if int_literal.match(expression):
+            return ['int']
+        if bool_literal.match(expression):
+            return ['bool']
+    if isinstance(expression, PostfixExpression):
+        return _get_postfix_expression_content_type(expression.content, scope)
+    if isinstance(expression, UnaryExpression):
+        return get_expression_type(expression.operand1, scope)
+    if isinstance(expression, BinaryExpression):
+        type1 = get_expression_type(expression.operand1, scope)
+        type2 = get_expression_type(expression.operand2, scope)
+        vector_type = type1 if type1 in vector_types else type2 if type2 in vector_types else []
+        matrix_type = type1 if type1 in matrix_types else type2 if type2 in matrix_types else []
+        if vector_type:
+            return vector_type
+        elif matrix_type:
+            return matrix_type
+        else:
+            if type1 != type2:
+                expression_str = pypeg2.compose(expression, type(expression))
+                print(f'type mismatch: operation "{expression.operator}" was fed left operand of type "{type1}" and right hand operand of type "{type2}": \n\t{expression_str} ')
+                print(scope.variables)
+            return type1
+    if isinstance(expression, TernaryExpression):
+        type1 = get_expression_type(expression.operand2, scope)
+        type2 = get_expression_type(expression.operand3, scope)
+        if type1 != type2:
+            expression_str = pypeg2.compose(expression, TernaryExpression)
+            print(f'type mismatch: ternary operation takes a left hand operand of type "{type1}" and right hand operand of type "{type2}: \n\t{expression_str}"')
+            print(scope.variables)
+        return type1
