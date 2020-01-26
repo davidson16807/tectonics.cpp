@@ -340,7 +340,8 @@ def get_js_structure_declaration(glsl_structure, scope):
 
 
 def get_js_function_declaration(glsl_function, scope):
-    js_function = pypeg2js.FunctionDeclaration(glsl_function.name)
+    glsl_type_str = pypeg2.compose(glsl_function.type, pypeg2glsl.PostfixExpression)
+    js_function = pypeg2js.FunctionDeclaration(glsl_function.name, type_=f'/*{glsl_type_str}*/')
     local_scope = scope.get_subscope(glsl_function)
     for glsl_parameter in glsl_function.parameters:
         glsl_type_str = pypeg2.compose(glsl_parameter.type, pypeg2glsl.PostfixExpression)

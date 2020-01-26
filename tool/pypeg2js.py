@@ -89,8 +89,9 @@ class ParameterDeclaration:
     def __init__(self, name=''):
         self.name = name
 class FunctionDeclaration: 
-    def __init__(self, name='', parameters=None, content=None):
+    def __init__(self, name='', parameters=None, content=None, type_=None):
         self.name = name
+        self.type = type_ or []
         self.parameters = parameters or []
         self.content = content or []
 
@@ -224,6 +225,7 @@ ParameterDeclaration.grammar = (
     attr('name', token) 
 )
 FunctionDeclaration.grammar = (
+    attr('type', optional(inline_comment, endl)), 
     'function', blank, attr('name', token), 
     '(', endl,
     attr('parameters',  
