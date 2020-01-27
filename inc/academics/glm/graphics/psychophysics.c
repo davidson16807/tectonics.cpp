@@ -1,7 +1,9 @@
 
-// This function returns a rgb vector that best represents color at a given wavelength
-// It is from Alan Zucconi: https://www.alanzucconi.com/2017/07/15/improving-the-rainbow/
-// I've adapted the function so that coefficients are expressed in meters.
+/*
+This function returns a rgb vector that best represents color at a given wavelength
+It is from Alan Zucconi: https://www.alanzucconi.com/2017/07/15/improving-the-rainbow/
+I've adapted the function so that coefficients are expressed in meters.
+*/
 vec3 get_rgb_signal_of_wavelength (
     in float w
 ){

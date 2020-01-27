@@ -1,7 +1,8 @@
-
-// This function returns a rgb vector that quickly approximates a spectral "bump".
-// Adapted from GPU Gems and Alan Zucconi
-// from https://www.alanzucconi.com/2017/07/15/improving-the-rainbow/
+/*
+This function returns a rgb vector that quickly approximates a spectral "bump".
+Adapted from GPU Gems and Alan Zucconi
+from https://www.alanzucconi.com/2017/07/15/improving-the-rainbow/
+*/
 float bump (
     in float x, 
     in float edge0, 

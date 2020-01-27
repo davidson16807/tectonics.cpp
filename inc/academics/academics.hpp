@@ -1,5 +1,4 @@
 #pragma once
-#define CPP
 
 #include "academics/units.c"
 #include "academics/math/constants.c"

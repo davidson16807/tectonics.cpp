@@ -1,6 +1,8 @@
 
-// see Lawson 2004, "The Blackbody Fraction, Infinite Series and Spreadsheets"
-// we only do a single iteration with n=1, because it doesn't have a noticeable effect on output
+/*
+see Lawson 2004, "The Blackbody Fraction, Infinite Series and Spreadsheets"
+we only do a single iteration with n=1, because it doesn't have a noticeable effect on output
+*/
 float solve_fraction_of_light_emitted_by_black_body_below_wavelength(
     in float wavelength, 
     in float temperature
@@ -36,8 +38,10 @@ float solve_fraction_of_light_emitted_by_black_body_between_wavelengths(
     return  solve_fraction_of_light_emitted_by_black_body_below_wavelength(hi, temperature) - 
             solve_fraction_of_light_emitted_by_black_body_below_wavelength(lo, temperature);
 }
-// This calculates the radiation (in watts/m^2) that's emitted 
-// by a single object using the Stephan-Boltzmann equation
+/*
+This calculates the radiation (in watts/m^2) that's emitted 
+by a single object using the Stephan-Boltzmann equation
+*/
 float get_intensity_of_light_emitted_by_black_body(
     in float temperature
 ){

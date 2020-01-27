@@ -1,5 +1,4 @@
 #pragma once
-#define CPP
 
 #include "academics/glm/math/geometry.c"
 #include "academics/glm/physics/emission.c"

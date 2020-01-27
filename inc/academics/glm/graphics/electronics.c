@@ -1,6 +1,8 @@
 
-// "GAMMA" is the constant that's used to map between 
-//   rgb signals sent to a monitor and their actual intensity
+/*
+"GAMMA" is the constant that's used to map between 
+rgb signals sent to a monitor and their actual intensity
+*/
 const float GAMMA = 2.2;
 
 vec3 get_rgb_intensity_of_rgb_signal(
