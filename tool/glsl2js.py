@@ -252,17 +252,21 @@ If you want to replace all files in a directory, call like so:
 """
 from argparse import ArgumentParser
 
-def convert_file(filename, in_place, verbose=False):
-    with open(filename, 'r+') as file:
-        text = file.read()
+def convert_file(input_filename, in_place=False, verbose=False, output_filename=None):
+    with open(input_filename, 'r+') as input_file:
+        text = input_file.read()
         glsl = pypeg2.parse(text, pypeg2glsl.glsl)
 
         converted = get_js(glsl, pypeg2glsl.LexicalScope(glsl))
         replaced = pypeg2.compose(converted, pypeg2js.javascript, autoblank = False)
-        if in_place:
-            file.seek(0)
-            file.write(replaced)
-            file.truncate()
+
+        if output_filename:
+            with open(output_filename, 'w') as output_file:
+                output_file.write(replaced)
+        elif in_place:
+            input_file.seek(0)
+            input_file.write(replaced)
+            input_file.truncate()
         else:
             print(replaced)
 
@@ -270,9 +274,16 @@ if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('-f', '--filename', dest='filename', 
         help='read input from FILE', metavar='FILE')
+    parser.add_argument('-o', '--output', dest='output', 
+        help='save output to FILE', metavar='FILE')
     parser.add_argument('-i', '--in-place', dest='in_place', 
         help='edit the file in-place', action='store_true')
-    parser.add_argument('-v', '--verbose', dest='verbose', 
-        help='show debug information', action='store_true')
+    # parser.add_argument('-v', '--verbose', dest='verbose', 
+    #     help='show debug information', action='store_true')
     args = parser.parse_args()
-    convert_file(args.filename, args.in_place, args.verbose)
+    convert_file(
+        args.filename, 
+        in_place=args.in_place, 
+        verbose=False, 
+        output_filename=args.output
+    )
