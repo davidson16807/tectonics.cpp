@@ -1,6 +1,6 @@
 #!/bin/env python3
 
-import copy
+import sys
 
 import pypeg2
 import pypeg2glsl
@@ -46,6 +46,7 @@ def get_js_default_element_getter(JsElement):
             setattr(js, attribute, get_js(glsl.__dict__[attribute], scope))
         return js
     return get_js_default_element
+
 
 def get_js_postfix_expression(glsl, scope):
     js = pypeg2js.PostfixExpression()
@@ -148,12 +149,14 @@ def get_js_binary_operator_expression_getter(JsElement):
 
     return get_js_binary_operator_expression
 
+
 def get_js_variable_declaration(glsl, scope):
     js = pypeg2js.VariableDeclaration()
     js.qualifiers = ['const' if 'const' in glsl.qualifiers else 'let']
     js.names = glsl.names
     js.value = get_js(glsl.value, scope)
     return js
+
 
 def get_js_structure_declaration(glsl_structure, scope):
     js_function = pypeg2js.FunctionDeclaration(glsl_structure.name)
@@ -248,34 +251,37 @@ By default, the script will print out the results of a "dry run".
 You can modify the file in-place using the `-i` option. 
 If you want to replace all files in a directory, call like so:
  find . -name *.glsl.c \
-     -exec echo {} \; -exec python3 ./replace_goog_base.py -if {} \;
+     -exec echo {} \; -exec python3 ./glsl2js.py -if {} \;
 """
-from argparse import ArgumentParser
 
-def convert_file(input_filename, in_place=False, verbose=False, output_filename=None):
-    with open(input_filename, 'r+') as input_file:
-        text = input_file.read()
-        glsl = pypeg2.parse(text, pypeg2glsl.glsl)
+def convert_file(input_filename=False, in_place=False, verbose=False):
+    input_text = ''
+    if input_filename:
+        with open(input_filename, 'r+') as input_file:
+            input_text = input_file.read()
+    else:
+        for line in sys.stdin:
+            input_text += line
 
-        converted = get_js(glsl, pypeg2glsl.LexicalScope(glsl))
-        replaced = pypeg2.compose(converted, pypeg2js.javascript, autoblank = False)
+    glsl = pypeg2.parse(input_text, pypeg2glsl.glsl)
+    js = get_js(glsl, pypeg2glsl.LexicalScope(glsl))
+    output_text = pypeg2.compose(js, pypeg2js.javascript, autoblank = False)
 
-        if output_filename:
-            with open(output_filename, 'w') as output_file:
-                output_file.write(replaced)
-        elif in_place:
-            input_file.seek(0)
-            input_file.write(replaced)
-            input_file.truncate()
-        else:
-            print(replaced)
+    if in_place:
+        input_file.seek(0)
+        input_file.write(output_text)
+        input_file.truncate()
+    else:
+        print(output_text)
 
 if __name__ == '__main__':
-    parser = ArgumentParser()
+    import argparse
+
+    assert sys.version_info[0] >= 3, "Script must be run with Python 3 or higher"
+
+    parser = argparse.ArgumentParser()
     parser.add_argument('-f', '--filename', dest='filename', 
         help='read input from FILE', metavar='FILE')
-    parser.add_argument('-o', '--output', dest='output', 
-        help='save output to FILE', metavar='FILE')
     parser.add_argument('-i', '--in-place', dest='in_place', 
         help='edit the file in-place', action='store_true')
     # parser.add_argument('-v', '--verbose', dest='verbose', 
@@ -285,5 +291,4 @@ if __name__ == '__main__':
         args.filename, 
         in_place=args.in_place, 
         verbose=False, 
-        output_filename=args.output
     )
