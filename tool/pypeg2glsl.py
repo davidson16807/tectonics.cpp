@@ -118,8 +118,11 @@ for BinaryExpressionTemp, binary_regex in order_of_operations:
     binary_expression_or_less = [BinaryExpressionTemp, *binary_expression_or_less]
     BinaryExpressionTemp.grammar = (
             attr('operand1', binary_expression_or_less[1:]), blank,
+            pypeg2.ignore(maybe_some([inline_comment, endline_comment])),
             attr('operator', binary_regex), blank,
+            pypeg2.ignore(maybe_some([inline_comment, endline_comment])),
             attr('operand2', binary_expression_or_less),
+            pypeg2.ignore(maybe_some([inline_comment, endline_comment])),
         )
 
 ternary_expression_or_less = [TernaryExpression, *binary_expression_or_less]
@@ -193,6 +196,7 @@ ParameterDeclaration.grammar = (
     attr('name', token)
 )
 FunctionDeclaration.grammar = (
+    attr('documentation', maybe_some([(inline_comment, endl), endline_comment])),
     attr('type', PostfixExpression), blank, attr('name', token), 
     '(', 
     attr('parameters',  

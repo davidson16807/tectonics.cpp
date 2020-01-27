@@ -180,6 +180,7 @@ def get_js_structure_declaration(glsl_structure, scope):
 def get_js_function_declaration(glsl_function, scope):
     glsl_type_str = pypeg2.compose(glsl_function.type, pypeg2glsl.PostfixExpression)
     js_function = pypeg2js.FunctionDeclaration(glsl_function.name, type_=f'/*{glsl_type_str}*/')
+    js_function.documentation = glsl_function.documentation
     local_scope = scope.get_subscope(glsl_function)
     for glsl_parameter in glsl_function.parameters:
         glsl_type_str = pypeg2.compose(glsl_parameter.type, pypeg2glsl.PostfixExpression)
@@ -257,7 +258,7 @@ def convert_file(filename, in_place, verbose=False):
         glsl = pypeg2.parse(text, pypeg2glsl.glsl)
 
         converted = get_js(glsl, pypeg2glsl.LexicalScope(glsl))
-        replaced = pypeg2.compose(converted, pypeg2js.javascript)
+        replaced = pypeg2.compose(converted, pypeg2js.javascript, autoblank = False)
         if in_place:
             file.seek(0)
             file.write(replaced)
