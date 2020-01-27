@@ -37,12 +37,27 @@ float_literal = re.compile(
 bool_literal = re.compile('true|false')
 token = re.compile('[a-zA-Z_]\w*')
 
-class UnaryExpression: pass
-class BinaryExpression: pass
-
 class PostfixExpression: 
     def __init__(self, content=None):
         self.content = content or []
+
+class UnaryExpression: 
+    def __init__(self, operand1 = None, operator = ''):
+        self.operand1 = operand1
+        self.operator = operator
+        
+class BinaryExpression: 
+    def __init__(self, operand1 = None, operator = '', operand2 = None):
+        self.operand1 = operand1
+        self.operator = operator
+        self.operand2 = operand2
+
+class TernaryExpression: 
+    def __init__(self, operand1 = None, operand2 = None, operand3 = None):
+        self.operand1 = operand1
+        self.operand2 = operand2
+        self.operand3 = operand3
+
 class PostIncrementExpression(UnaryExpression): pass
 class PreIncrementExpression(UnaryExpression): pass
 
@@ -58,21 +73,49 @@ class LogicalAndExpression(BinaryExpression): pass
 class LogicalXorExpression(BinaryExpression): pass
 class LogicalOrExpression(BinaryExpression): pass
 
-class TernaryExpression: pass
-class BracketedExpression: pass
-class ParensExpression: pass
-class InvocationExpression: pass
-class AssignmentExpression: pass
-class VariableDeclaration: pass
-class ReturnStatement: pass
+class InvocationExpression: 
+    def __init__(self, content=None):
+        self.content = content or []
+class BracketedExpression: 
+    def __init__(self, content=None):
+        self.content = content or []
+class ParensExpression: 
+    def __init__(self, content=None):
+        self.content = content or []
+class AssignmentExpression: 
+    def __init__(self, operand1 = None, operator = '', operand2 = None):
+        self.operand1 = operand1
+        self.operator = operator
+        self.operand2 = operand2
+class VariableDeclaration: 
+    def __init__(self, type_=None, names=None, value=None, qualifiers=None):
+        self.qualifiers = qualifiers or []
+        self.type = type_
+        self.names = names or []
+        self.value = value
+class ReturnStatement: 
+    def __init__(self, value=None):
+        self.value = value
+
 class IfStatement: pass
-class IfStatementOption: pass
 class WhileStatement: pass
 class DoWhileStatement: pass
 class ForStatement: pass
-class ParameterDeclaration: pass
+
 class StructureDeclaration: pass
-class FunctionDeclaration: pass
+class ParameterDeclaration: 
+    def __init__(self, type_=None, name='', qualifiers=None):
+        self.qualifiers = qualifiers or []
+        self.type = type_
+        self.name = name
+class FunctionDeclaration: 
+    def __init__(self, name='', parameters=None, content=None, type_=None, documentation=None):
+        self.documentation = documentation or []
+        self.type = type_ or []
+        self.name = name
+        self.parameters = parameters or []
+        self.content = content or []
+
 
 primary_expression = [
     float_literal, 
