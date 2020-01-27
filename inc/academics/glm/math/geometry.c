@@ -140,32 +140,38 @@ DESIGN PRINCIPLES:
 */
 
 // 2D FUNCTIONS CHECKING IF POINT IS IN REGION
-bool is_2d_point_inside_circle(in vec2 A0, in vec2 B0, in float r){
+bool is_2d_point_inside_circle(in vec2 A0, in vec2 B0, in float r)
+{
 	return length(B0-A0) < r;
 }
 // NOTE: in this case, N only needs to indicate the direction facing outside, 
 //  it need not be perfectly normal to B
-bool is_2d_point_inside_region_bounded_by_line(in vec2 A0, in vec2 B0, in vec2 N){
+bool is_2d_point_inside_region_bounded_by_line(in vec2 A0, in vec2 B0, in vec2 N)
+{
 	return dot(A0-B0, N) < 0.;
 }
 
 // 2D FUNCTIONS RETURNING SINGLE INTERSECTIONS / CLOSEST APPROACHES
-float get_distance_along_2d_line_nearest_to_point(in vec2 A0, in vec2 A, in vec2 B0){
+float get_distance_along_2d_line_nearest_to_point(in vec2 A0, in vec2 A, in vec2 B0)
+{
 	return dot(B0-A0, A);
 }
-float get_distance_along_2d_line_intersecting_line(in vec2 A0, in vec2 A, in vec2 B0, in vec2 B){
+float get_distance_along_2d_line_intersecting_line(in vec2 A0, in vec2 A, in vec2 B0, in vec2 B)
+{
     vec2 D = B0-A0;             // offset
 	vec2 R = D - dot(D, A) * A; // rejection
 	return abs(abs(dot(A, B))-1) > 0? length(R) / dot(B, normalize(-R))  :  NAN;
 }
-float get_distance_along_2d_line_intersecting_ray(in vec2 A0, in vec2 A, in vec2 B0, in vec2 B){
+float get_distance_along_2d_line_intersecting_ray(in vec2 A0, in vec2 A, in vec2 B0, in vec2 B)
+{
     vec2  D  = B0-A0;                             // offset
 	vec2  R  = D - dot(D,A) * A;                  // rejection
 	float xB = length(R) / dot(B, normalize(-R)); // distance along B
 	float xA = xB / dot(B,A);                     // distance along A
 	return abs(abs(dot(A, B))-1) > 0 && xA > 0.? xB :  NAN;
 }
-float get_distance_along_2d_line_intersecting_line_segment(in vec2 A0, in vec2 A, in vec2 B0, in vec2 B1){
+float get_distance_along_2d_line_intersecting_line_segment(in vec2 A0, in vec2 A, in vec2 B0, in vec2 B1)
+{
 	vec2  B  = normalize(B1-B0);
     vec2  D  = B0-A0;                             // offset
 	vec2  R  = D - dot(D,A) * A;                  // rejection
@@ -176,7 +182,8 @@ float get_distance_along_2d_line_intersecting_line_segment(in vec2 A0, in vec2 A
 }
 
 // 2D FUNCTIONS RETURNING MULTIPLE INTERSECTIONS / CLOSEST APPROACHES
-void get_distances_along_2d_line_intersecting_circle(in vec2 A0, in vec2 A, in vec2 B0, in float r, out float entrance, out float exit){
+void get_distances_along_2d_line_intersecting_circle(in vec2 A0, in vec2 A, in vec2 B0, in float r, out float entrance, out float exit)
+{
     vec2  O  = B0-A0;
     float xz = dot(O, A);
     float z2 = dot(O, O) - xz * xz;
@@ -186,7 +193,8 @@ void get_distances_along_2d_line_intersecting_circle(in vec2 A0, in vec2 A, in v
     exit     = xz + dxr;
 	return y2 > 0.;
 }
-void get_distances_along_2d_line_intersecting_triangle(in vec2 A0, in vec2 A, in vec2 B1, in vec2 B2, in vec2 B3, out float entrance, out float exit){
+void get_distances_along_2d_line_intersecting_triangle(in vec2 A0, in vec2 A, in vec2 B1, in vec2 B2, in vec2 B3, out float entrance, out float exit)
+{
 	float x1 = get_distance_along_2d_line_intersecting_line_segment(A0, A, B1, B2);
 	float x2 = get_distance_along_2d_line_intersecting_line_segment(A0, A, B2, B3);
 	float x3 = get_distance_along_2d_line_intersecting_line_segment(A0, A, B3, B1);
@@ -195,30 +203,36 @@ void get_distances_along_2d_line_intersecting_triangle(in vec2 A0, in vec2 A, in
 }
 
 // 3D FUNCTIONS CHECKING IF POINT IS IN REGION
-bool is_3d_point_inside_sphere(in vec3 A0, in vec3 B0, in float r){
+bool is_3d_point_inside_sphere(in vec3 A0, in vec3 B0, in float r)
+{
 	return length(B0-A0) < r;
 }
-bool is_3d_point_inside_region_bounded_by_plane(in vec3 A0, in vec3 B0, in vec3 N){
+bool is_3d_point_inside_region_bounded_by_plane(in vec3 A0, in vec3 B0, in vec3 N)
+{
 	return dot(A0-B0, N) < 0.;
 }
 
 // 3D FUNCTIONS RETURNING SINGLE INTERSECTIONS / CLOSEST APPROACHES
-float get_distance_along_3d_line_nearest_to_point(in vec3 A0, in vec3 A, in vec3 B0){
+float get_distance_along_3d_line_nearest_to_point(in vec3 A0, in vec3 A, in vec3 B0)
+{
 	return dot(B0-A0, A);
 }
-float get_distance_along_3d_line_nearest_to_line(in vec3 A0, in vec3 A, in vec3 B0, in vec3 B){
+float get_distance_along_3d_line_nearest_to_line(in vec3 A0, in vec3 A, in vec3 B0, in vec3 B)
+{
     vec3 D  = B0-A0;                            // offset
     vec3 R = D - dot(D, A) * A - dot(D, C) * C; // rejection
 	return abs(abs(dot(A, B))-1) > 0.? length(R) / -dot(B, normalize(R))  :  NAN;
 }
-float get_distance_along_3d_line_nearest_to_ray(in vec3 A0, in vec3 A, in vec3 B0, in vec3 B){
+float get_distance_along_3d_line_nearest_to_ray(in vec3 A0, in vec3 A, in vec3 B0, in vec3 B)
+{
     vec3  D  = B0-A0;                             // offset
 	vec3  R  = D - dot(D,A) * A;                  // rejection
 	float xB = length(R) / dot(B, normalize(-R)); // distance along B
 	float xA = xB / dot(B,A);                     // distance along A
 	return abs(abs(dot(A, B))-1) > 0. && xA > 0.?  xB :  NAN;
 }
-float get_distance_along_3d_line_nearest_to_line_segment(in vec3 A0, in vec3 A, in vec3 B0, in vec3 B1){
+float get_distance_along_3d_line_nearest_to_line_segment(in vec3 A0, in vec3 A, in vec3 B0, in vec3 B1)
+{
 	vec3  B  = normalize(B1-B0);
     vec3  D  = B0-A0;                             // offset
 	vec3  R  = D - dot(D,A) * A;                  // rejection
@@ -227,17 +241,20 @@ float get_distance_along_3d_line_nearest_to_line_segment(in vec3 A0, in vec3 A, 
 	return abs(abs(dot(A, B))-1) > 0. && 
 		0. < xA && xA < length(B1-B0)?  xB  :  NAN;
 }
-float get_distance_along_3d_line_intersecting_plane(in vec3 A0, in vec3 A, in vec3 B0, in vec3 N){
+float get_distance_along_3d_line_intersecting_plane(in vec3 A0, in vec3 A, in vec3 B0, in vec3 N)
+{
     return abs(dot(A, N)) > 0.? dot(B0-A0, N) / dot(A,N)  :  NAN;
 }
-float get_distance_along_3d_line_intersecting_circle(in vec3 A0, in vec3 A, in vec3 B0, in vec3 N, in float r){
+float get_distance_along_3d_line_intersecting_circle(in vec3 A0, in vec3 A, in vec3 B0, in vec3 N, in float r)
+{
 	// intersection(plane, sphere)
 	float x;
     x = get_distance_along_3d_line_intersecting_plane(A0, A, B0, N);
     x = is_3d_point_inside_sphere(A0+A*x, B0, r)? x : NAN;
     return x;
 }
-float get_distance_along_3d_line_intersecting_triangle(in vec3 A0, in vec3 A, in vec3 B1, in vec3 B2, in vec3 B3){
+float get_distance_along_3d_line_intersecting_triangle(in vec3 A0, in vec3 A, in vec3 B1, in vec3 B2, in vec3 B3)
+{
 	// intersection(face plane, edge plane, edge plane, edge plane)
 	vec3  B0 = (B1 + B2 + B3) / 3.;
 	vec3  N  = normalize(cross(B1-B2, B2-B3));
@@ -250,7 +267,8 @@ float get_distance_along_3d_line_intersecting_triangle(in vec3 A0, in vec3 A, in
 }
 
 // 3D FUNCTIONS RETURNING MULTIPLE INTERSECTIONS / CLOSEST APPROACHES
-void get_distances_along_3d_line_intersecting_sphere(in vec3 A0, in vec3 A, in vec3 B0, in float r, out float entrance, out float exit){
+void get_distances_along_3d_line_intersecting_sphere(in vec3 A0, in vec3 A, in vec3 B0, in float r, out float entrance, out float exit)
+{
     float xz = dot(B0-A0, A);
     float z  = length(A0+A*xz - B0);
     float y2  = r*r-z*z;
@@ -258,7 +276,8 @@ void get_distances_along_3d_line_intersecting_sphere(in vec3 A0, in vec3 A, in v
     entrance = y2 > 0.?  xz - dxr  :  NAN;
     exit     = y2 > 0.?  xz + dxr  :  NAN;
 }
-void get_distances_along_3d_line_intersecting_tetrahedron(in vec3 A0, in vec3 A, in vec3 B1, in vec3 B2, in vec3 B3, in vec3 B4, out float entrance, out float exit){
+void get_distances_along_3d_line_intersecting_tetrahedron(in vec3 A0, in vec3 A, in vec3 B1, in vec3 B2, in vec3 B3, in vec3 B4, out float entrance, out float exit)
+{
 	float x1 = get_distance_along_3d_line_intersecting_triangle(A0,A,B1,B2,B3);
 	float x2 = get_distance_along_3d_line_intersecting_triangle(A0,A,B2,B3,B4);
 	float x3 = get_distance_along_3d_line_intersecting_triangle(A0,A,B3,B4,B1);
@@ -266,7 +285,8 @@ void get_distances_along_3d_line_intersecting_tetrahedron(in vec3 A0, in vec3 A,
     entrance = min(x1, min(x2, min(x3, x4)));
     exit     = max(x1, max(x2, max(x3, x4)));
 }
-void get_distances_along_3d_line_intersecting_infinite_cylinder(in vec3 A0, in vec3 A, in vec3 B0, in vec3 B, in float r, out float entrance, out float exit){
+void get_distances_along_3d_line_intersecting_infinite_cylinder(in vec3 A0, in vec3 A, in vec3 B0, in vec3 B, in float r, out float entrance, out float exit)
+{
     // simplify the problem by using a coordinate system based around the line and the tube center
     // see closest-approach-between-line-and-cylinder-visualized.scad
     vec3  J   = B;
@@ -281,7 +301,8 @@ void get_distances_along_3d_line_intersecting_infinite_cylinder(in vec3 A0, in v
     entrance  = y2 > 0.?  (xz-dxr) / AK  :  NAN;
     exit      = y2 > 0.?  (xz+dxr) / AK  :  NAN;
 }
-void get_distances_along_3d_line_intersecting_tube(in vec3 A0, in vec3 A, in vec3 B0, in vec3 B1, in float r, out float entrance, out float exit){
+void get_distances_along_3d_line_intersecting_tube(in vec3 A0, in vec3 A, in vec3 B0, in vec3 B1, in float r, out float entrance, out float exit)
+{
 	vec3  B   = normalize(B1-B0);
 	float xr0, xr1, xB0, xB1; 
 	// intersection(cylinder, plane, plane)
@@ -291,7 +312,8 @@ void get_distances_along_3d_line_intersecting_tube(in vec3 A0, in vec3 A, in vec
 	entrance  = min(xr0, xr1);
 	exit      = max(xr0, xr1);
 }
-void get_distances_along_3d_line_intersecting_cylinder(in vec3 A0, in vec3 A, in vec3 B0, in vec3 B1, in float r, out float entrance, out float exit){
+void get_distances_along_3d_line_intersecting_cylinder(in vec3 A0, in vec3 A, in vec3 B0, in vec3 B1, in float r, out float entrance, out float exit)
+{
 	vec3  B   = normalize(B1-B0);
 	float xr0, xr1, xB0, xB1; 
 	// union(tube, circle, circle)
@@ -301,7 +323,8 @@ void get_distances_along_3d_line_intersecting_cylinder(in vec3 A0, in vec3 A, in
 	entrance  = min(xr0, min(xr1, min(xB0, xB1)));
 	exit      = max(xr0, max(xr1, max(xB0, xB1)));
 }
-void get_distances_along_3d_line_intersecting_capsule(in vec3 A0, in vec3 A, in vec3 B0, in vec3 B1, in float r, out float entrance, out float exit){
+void get_distances_along_3d_line_intersecting_capsule(in vec3 A0, in vec3 A, in vec3 B0, in vec3 B1, in float r, out float entrance, out float exit)
+{
 	vec3 B = normalize(B1-B0);
 	float xr0, xr1, xB0, xB1; 
 	// union(tube, sphere, sphere)
