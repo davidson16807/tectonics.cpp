@@ -67,18 +67,17 @@ def get_js_postfix_expression(glsl, scope):
 
 def get_js_binary_operator_expression_getter(JsElement):
 
-
     get_js_default_operator_expression = get_js_default_element_getter(JsElement)
     def get_js_vector_operator_expression(glsl_operand1, glsl_operand2, operator, scope):
         if isinstance(glsl_operand1, pypeg2glsl.PostfixExpression):
             return pypeg2js.PostfixExpression([
-                    *glsl_operand1.content, 
+                    *get_js(glsl_operand1.content, scope), 
                     pypeg2js.BracketedExpression(pypeg2js.PostfixExpression([f"'{operator}'"])), 
                     pypeg2js.InvocationExpression(get_js(glsl_operand2, scope))
                 ])
-        if isinstance(glsl_operand1, pypeg2glsl.PostfixExpression):
+        else:
             return pypeg2js.PostfixExpression([
-                    pypeg2js.ParensExpression([glsl_operand1]), 
+                    pypeg2js.ParensExpression([get_js(glsl_operand1, scope)]), 
                     pypeg2js.BracketedExpression(pypeg2js.PostfixExpression([f"'{operator}'"])), 
                     pypeg2js.InvocationExpression(get_js(glsl_operand2, scope))
                 ])

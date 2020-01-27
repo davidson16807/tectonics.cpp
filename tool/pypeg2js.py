@@ -75,7 +75,9 @@ class TernaryExpression: pass
 class BracketedExpression: 
     def __init__(self, content=None):
         self.content = content or []
-class ParensExpression: pass
+class ParensExpression: 
+    def __init__(self, content=None):
+        self.content = content or []
 class AssignmentExpression: pass
 class VariableDeclaration: 
     def __init__(self, names=None, value=None):
