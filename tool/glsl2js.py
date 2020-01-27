@@ -65,10 +65,58 @@ def get_js_postfix_expression(glsl, scope):
     return js
 
 
+def get_js_unary_operator_expression_getter(JsElement):
+
+    get_js_default_operator_expression = get_js_default_element_getter(JsElement)
+    def get_js_unary_glm_operator_expression(glsl_operand1, operator, scope):
+        type1 = pypeg2glsl.get_expression_type(glsl_operand1, scope)
+        assert operator != '!', 'Unary negation for vectors/matrices is not supported by glm-js, cannot safely continue'
+        if operator == '++':
+            return pypeg2js.PostfixExpression([
+                    pypeg2js.ParensExpression([get_js(glsl_operand1, scope)]), 
+                    pypeg2.parse('["+="]', pypeg2js.BracketedExpression),
+                    pypeg2js.InvocationExpression(pypeg2js.PostfixExpression(['glm', *type1, pypeg2js.InvocationExpression(['1'])]))
+                ])
+        elif operator == '--':
+            return pypeg2js.PostfixExpression([
+                    pypeg2js.ParensExpression([get_js(glsl_operand1, scope)]), 
+                    pypeg2.parse('["-="]', pypeg2js.BracketedExpression),
+                    pypeg2js.InvocationExpression(pypeg2js.PostfixExpression(['glm', *type1, pypeg2js.InvocationExpression(['1'])]))
+                ])
+        elif operator == '-' and isinstance(glsl_operand1, pypeg2glsl.PostfixExpression):
+            return pypeg2js.PostfixExpression([
+                    *glsl_operand1.content, 
+                    pypeg2.parse('["*"]', pypeg2js.BracketedExpression),
+                    pypeg2.parse('(-1)', pypeg2js.InvocationExpression)
+                ])
+        elif operator == '-':
+            return pypeg2js.PostfixExpression([
+                    pypeg2js.ParensExpression([get_js(glsl_operand1, scope)]), 
+                    pypeg2.parse('["*"]', pypeg2js.BracketedExpression),
+                    pypeg2.parse('(-1)', pypeg2js.InvocationExpression)
+                ])
+        elif operator == '+':
+            return pypeg2js.ParensExpression([get_js(glsl_operand1, scope)])
+        else:
+            assert False, 'Unknown unary operator for vector/matrix, cannot safely continue'
+
+
+    def get_js_unary_operator_expression(glsl_operator, scope):
+        operand1 = glsl_operator.operand1
+        operator = glsl_operator.operator
+        type1 = pypeg2glsl.get_expression_type(operand1, scope)
+        if type1 in pypeg2glsl.vector_types or type1 in pypeg2glsl.matrix_types:
+            return get_js_unary_glm_operator_expression(operand1, operator, scope)
+        else:
+            return get_js_default_operator_expression(glsl_operator, scope)
+
+    return get_js_unary_operator_expression
+
+
 def get_js_binary_operator_expression_getter(JsElement):
 
     get_js_default_operator_expression = get_js_default_element_getter(JsElement)
-    def get_js_vector_operator_expression(glsl_operand1, glsl_operand2, operator, scope):
+    def get_js_binary_glm_operator_expression(glsl_operand1, glsl_operand2, operator, scope):
         if isinstance(glsl_operand1, pypeg2glsl.PostfixExpression):
             return pypeg2js.PostfixExpression([
                     *get_js(glsl_operand1.content, scope), 
@@ -88,13 +136,13 @@ def get_js_binary_operator_expression_getter(JsElement):
         type1 = pypeg2glsl.get_expression_type(operand1, scope)
         type2 = pypeg2glsl.get_expression_type(operand2, scope)
         if type1 in pypeg2glsl.vector_types:
-            return get_js_vector_operator_expression(operand1, operand2, operator, scope)
+            return get_js_binary_glm_operator_expression(operand1, operand2, operator, scope)
         elif type1 in pypeg2glsl.matrix_types:
-            return get_js_vector_operator_expression(operand1, operand2, operator, scope)
+            return get_js_binary_glm_operator_expression(operand1, operand2, operator, scope)
         elif type2 in pypeg2glsl.vector_types:
-            return get_js_vector_operator_expression(operand2, operand1, operator, scope)
+            return get_js_binary_glm_operator_expression(operand2, operand1, operator, scope)
         elif type2 in pypeg2glsl.matrix_types:
-            return get_js_vector_operator_expression(operand2, operand1, operator, scope)
+            return get_js_binary_glm_operator_expression(operand2, operand1, operator, scope)
         else:
             return get_js_default_operator_expression(glsl_operator, scope)
 
@@ -148,8 +196,8 @@ glsl_js_getter_map = [
     (type(None), lambda glsl, scope: glsl),
 
     (pypeg2glsl.PostfixExpression,         get_js_postfix_expression), 
-    (pypeg2glsl.PostIncrementExpression,   get_js_default_element_getter(pypeg2js.PostIncrementExpression)),
-    (pypeg2glsl.PreIncrementExpression,    get_js_default_element_getter(pypeg2js.PreIncrementExpression)),
+    (pypeg2glsl.PostIncrementExpression,   get_js_unary_operator_expression_getter(pypeg2js.PostIncrementExpression)),
+    (pypeg2glsl.PreIncrementExpression,    get_js_unary_operator_expression_getter(pypeg2js.PreIncrementExpression)),
 
     (pypeg2glsl.MultiplicativeExpression,  get_js_binary_operator_expression_getter(pypeg2js.MultiplicativeExpression)),
     (pypeg2glsl.AdditiveExpression,        get_js_binary_operator_expression_getter(pypeg2js.AdditiveExpression)),

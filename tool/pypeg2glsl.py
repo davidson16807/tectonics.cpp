@@ -40,7 +40,9 @@ token = re.compile('[a-zA-Z_]\w*')
 class UnaryExpression: pass
 class BinaryExpression: pass
 
-class PostfixExpression: pass
+class PostfixExpression: 
+    def __init__(self, content=None):
+        self.content = content or []
 class PostIncrementExpression(UnaryExpression): pass
 class PreIncrementExpression(UnaryExpression): pass
 
@@ -209,8 +211,8 @@ StructureDeclaration.grammar = (
 
 glsl = maybe_some(
     [
+        StructureDeclaration, FunctionDeclaration, (VariableDeclaration, ';', endl),
         inline_comment, endline_comment,
-        StructureDeclaration, FunctionDeclaration, (VariableDeclaration, ';', endl)
     ]
 )
 
@@ -316,10 +318,9 @@ built_in_types = [
 
 def get_expression_type(expression, scope):
     def _get_postfix_expression_content_type(expression_content, scope):
-        if len(expression_content) < 1:
-            return []
+        assert len(expression_content) > 0, 'Postfix expression is empty, cannot safely continue'
 
-        glsl_built_in_overloaded_function_types = [
+        built_in_overloaded_function_types = [
             'radians', 'degrees',
             'sin', 'cos', 'tan', 
             'asin', 'acos', 'atan', 'atan2', 
@@ -365,7 +366,7 @@ def get_expression_type(expression, scope):
                 elif previous in built_in_function_types:
                     previous_type = built_in_function_types[previous]
                 # function invocation (built-in, overloaded)
-                elif previous in glsl_built_in_overloaded_function_types:
+                elif previous in built_in_overloaded_function_types:
                     param_types = [get_expression_type(param, scope) for param in current.content]
                     vector_param_types = [param_type for param_type in param_types if param_type in vector_types]
                     previous_type = vector_param_types[0] if len(vector_param_types) > 0 else param_types[0]
@@ -373,7 +374,7 @@ def get_expression_type(expression, scope):
                 elif previous in scope.functions:
                     previous_type = scope.functions[previous]
                 else:
-                    expression_str = ''#pypeg2.compose(PostfixExpression(expression_content), PostfixExpression)
+                    expression_str = pypeg2.compose(PostfixExpression(expression_content), PostfixExpression)
                     print(f'WARNING: could not invoke unknown function: "{previous}" \n\t{expression_str}')
                     previous_type = []
             if isinstance(current, BracketedExpression):
@@ -388,7 +389,7 @@ def get_expression_type(expression, scope):
                     isinstance(previous_type[1], BracketedExpression)):
                     previous_type = previous_type[:-1]
                 else:
-                    expression_str = ''#pypeg2.compose(PostfixExpression(expression_content), PostfixExpression)
+                    expression_str = pypeg2.compose(PostfixExpression(expression_content), PostfixExpression)
                     print(f'WARNING: could not access index of non-array: "{previous_type}" \n\t{expression_str}')
                     previous_type = []
             if isinstance(current, str):
@@ -401,7 +402,7 @@ def get_expression_type(expression, scope):
                     current in scope.attributes[previous_type[0]]):
                     previous_type = scope.attributes[previous_type[0]][current]
                 else:
-                    expression_str = ''#pypeg2.compose(PostfixExpression(expression_content), PostfixExpression)
+                    expression_str = pypeg2.compose(PostfixExpression(expression_content), PostfixExpression)
                     print(f'WARNING: could not find attribute within unknown data structure: "{previous_type}" \n\t{expression_str}')
                     previous_type = []
             previous = current

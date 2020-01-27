@@ -192,14 +192,14 @@ simple_statement = ([
 ], optional(';'), endl)
 code_block = maybe_some(
     [
-        inline_comment, 
-        endline_comment,
         ForStatement, 
         WhileStatement, 
         DoWhileStatement, 
         IfStatement, 
         FunctionDeclaration, 
-        simple_statement
+        simple_statement,
+        inline_comment, 
+        endline_comment,
     ]
 )
 compound_statement = ( '{', endl, pypeg2.indent(code_block), '}', endl )
