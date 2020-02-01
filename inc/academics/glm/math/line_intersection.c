@@ -1,5 +1,4 @@
 
-
 struct maybe_float_pair
 {
     float first; 
@@ -262,13 +261,13 @@ B0 plane reference
 N  plane surface normal, normalized
 */
 
-float get_distance_along_3d_line_to_plane(
+maybe_float get_distance_along_3d_line_to_plane(
     in vec3 A0,
     in vec3 A,
     in vec3 B0,
     in vec3 N
 ){
-    return -dot(A0 - B0, N) / dot(A, N);
+    return maybe_float( -dot(A0 - B0, N) / dot(A, N), abs(dot(A, N)) < SMALL);
 }
 
 /*
@@ -287,8 +286,8 @@ maybe_float get_distance_along_3d_line_to_circle(
     in float r
 ){
     // intersection(plane, sphere)
-    float t = get_distance_along_3d_line_to_plane(A0, A, B0, N);
-    return maybe_float(t, is_3d_point_in_sphere(A0 + A * t, B0, r));
+    maybe_float t = get_distance_along_3d_line_to_plane(A0, A, B0, N);
+    return maybe_float(t.value, is_3d_point_in_sphere(A0 + A * t.value, B0, r));
 }
 
 /*
@@ -309,17 +308,24 @@ maybe_float get_distance_along_3d_line_to_triangle(
     // intersection(face plane, edge plane, edge plane, edge plane)
     vec3 B0 = (B1 + B2 + B3) / 3.;
     vec3 N = normalize(cross(B1 - B2, B2 - B3));
-    float t = get_distance_along_3d_line_to_plane(A0, A, B0, N);
-    vec3 At = A0 + A * t;
+    maybe_float t = get_distance_along_3d_line_to_plane(A0, A, B0, N);
+    vec3 At = A0 + A * t.value;
     vec3 B2B1hat = normalize(B2 - B1);
     vec3 B3B2hat = normalize(B3 - B2);
     vec3 B1B3hat = normalize(B1 - B3);
-    return maybe_float(t, 
+    return maybe_float(t.value, 
         dot(normalize(At - B1), B2B1hat) > dot(-B1B3hat, B2B1hat) && 
         dot(normalize(At - B2), B3B2hat) > dot(-B2B1hat, B3B2hat) && 
         dot(normalize(At - B3), B1B3hat) > dot(-B3B2hat, B1B3hat)
     );
 }
+
+/*
+A0 line reference
+A  line direction, normalized
+B0 sphere origin
+R  sphere radius along each coordinate axis
+*/
 
 maybe_float_pair get_distances_along_3d_line_to_sphere(
     in vec3 A0,
@@ -441,16 +447,16 @@ maybe_float_pair get_distances_along_3d_line_to_cylinder(
     in float r
 ){
     vec3 B = normalize(B2 - B1);
-    float a1 = get_distance_along_3d_line_to_plane(A0, A, B1, B);
-    float a2 = get_distance_along_3d_line_to_plane(A0, A, B2, B);
-    float a_in = min(a1, a2);
-    float a_out = max(a1, a2);
-    maybe_float_pair ends = maybe_float_pair(a_in, a_out, true);
+    maybe_float a1 = get_distance_along_3d_line_to_plane(A0, A, B1, B);
+    maybe_float a2 = get_distance_along_3d_line_to_plane(A0, A, B2, B);
+    float a_in = min(a1.value, a2.value);
+    float a_out = max(a1.value, a2.value);
+    maybe_float_pair ends = maybe_float_pair(a_in, a_out, a1.exists || a2.exists);
     maybe_float_pair tube = get_distances_along_3d_line_to_infinite_cylinder(A0, A, B1, B, r);
     maybe_float_pair cylinder = get_distances_along_line_to_intersection(tube, ends);
     // TODO: do we need this line?
-    float entrance = max(tube.last,  min(a1,a2));
-    float exit     = min(tube.first, max(a1, a2));
+    float entrance = max(tube.last,  a_in);
+    float exit     = min(tube.first, a_out);
     return maybe_float_pair( 
         entrance,
         exit, 
