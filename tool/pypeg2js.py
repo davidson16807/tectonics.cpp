@@ -36,22 +36,59 @@ float_literal = re.compile(
 bool_literal = re.compile('true|false')
 token = re.compile('[a-zA-Z_]\w*')
 
-class PostfixExpression: 
+'''
+"debug" returns a string representing a variable that is intended to be a JsElement.
+It attempts to provide a string representation of the element using pypeg2.compose()
+In the event it is unable to do so, it recurses through element attributes 
+to give a description of which subelements are causing problems.
+This makes it very useful for debugging errors where pypeg2.compose()
+returns an empty string without explaining why
+'''
+def debug(element, indent=''):
+    if isinstance(element, list):
+        if len(element) == 0:
+            return indent+'[]'
+        subelements = ', \n'.join([
+                debug(subelement, indent+"  ")
+                for subelement in element
+            ])
+        return f'{indent}[\n{subelements}\n{indent}]'
+    elif isinstance(element, JsElement):
+        try:
+            return (f'{indent}pypeg2glsl.{type(element).__name__}<"{pypeg2.compose(element, type(element))}">')
+        except ValueError as e:
+            header = f'{indent}pypeg2glsl.{type(element).__name__}<ERROR>'
+            invalid = '\n'.join([
+                    f'{indent}  {attribute}: \n{debug(getattr(element, attribute), indent+"    ")}' 
+                    for attribute in element_attributes 
+                    if hasattr(element, attribute)
+                ])
+            return f'{header}\n{invalid}'
+    else:
+        return indent + repr(element)
+
+class JsElement:
+    def __init__(self):
+        pass
+    def debug(self):
+        return f'pypeg2js.{type(self).__name__}<"{pypeg2.compose(self, type(self))}">'
+
+class PostfixExpression(JsElement): 
     def __init__(self, content=None):
         self.content = content or []
 
-class UnaryExpression: 
+class UnaryExpression(JsElement): 
     def __init__(self, operand1 = None, operator = ''):
         self.operand1 = operand1
         self.operator = operator
 
-class BinaryExpression: 
+class BinaryExpression(JsElement): 
     def __init__(self, operand1 = None, operator = '', operand2 = None):
         self.operand1 = operand1
         self.operator = operator
         self.operand2 = operand2
 
-class TernaryExpression: 
+class TernaryExpression(JsElement): 
     def __init__(self, operand1 = None, operand2 = None, operand3 = None):
         self.operand1 = operand1
         self.operand2 = operand2
@@ -72,44 +109,44 @@ class LogicalAndExpression(BinaryExpression): pass
 class LogicalXorExpression(BinaryExpression): pass
 class LogicalOrExpression(BinaryExpression): pass
 
-class AttributeDeclaration: 
+class AttributeDeclaration(JsElement): 
     def __init__(self, name=None, value=None):
         self.name = name
         self.value = value
-class AssociativeListExpression: 
+class AssociativeListExpression(JsElement): 
     def __init__(self, content=None):
         self.content = content or []
-class OrderedListExpression: 
+class OrderedListExpression(JsElement): 
     def __init__(self, content=None):
         self.content = content or []
 
-class InvocationExpression: 
+class InvocationExpression(JsElement): 
     def __init__(self, content=None):
         self.content = content or []
-class BracketedExpression: 
+class BracketedExpression(JsElement): 
     def __init__(self, content=None):
         self.content = content or []
-class ParensExpression: 
+class ParensExpression(JsElement): 
     def __init__(self, content=None):
         self.content = content or []
-class AssignmentExpression: pass
-class VariableDeclaration: 
+class AssignmentExpression(JsElement): pass
+class VariableDeclaration(JsElement): 
     def __init__(self, names=None, value=None):
         self.names = names or []
         self.value = value
-class ReturnStatement: 
+class ReturnStatement(JsElement): 
     def __init__(self, value=None):
         self.value = value
 
-class IfStatement: pass
-class WhileStatement: pass
-class DoWhileStatement: pass
-class ForStatement: pass
+class IfStatement(JsElement): pass
+class WhileStatement(JsElement): pass
+class DoWhileStatement(JsElement): pass
+class ForStatement(JsElement): pass
 
-class ParameterDeclaration: 
+class ParameterDeclaration(JsElement): 
     def __init__(self, name=''):
         self.name = name
-class FunctionDeclaration: 
+class FunctionDeclaration(JsElement): 
     def __init__(self, name='', parameters=None, content=None, type_=None, documentation=None):
         self.documentation = documentation or []
         self.type = type_ or []

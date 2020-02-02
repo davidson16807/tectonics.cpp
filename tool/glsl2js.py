@@ -6,6 +6,16 @@ import pypeg2
 import pypeg2glsl
 import pypeg2js
 
+# attempt to import colorama, for colored diff output
+try:
+    from colorama import Fore, Back, Style, init
+    init()
+except ImportError:  # fallback so that the imported classes always exist
+    class ColorFallback():
+        __getattr__ = lambda self, name: ''
+    Fore = Back = Style = ColorFallback()
+
+
 js_math_library_functions = [
     'PI',
     'trunc', 'floor', 'ceil', 'round',
@@ -99,7 +109,7 @@ def get_js_unary_operator_expression_getter(JsElement):
         elif operator == '+':
             return pypeg2js.ParensExpression([get_js(glsl_operand1, scope)])
         else:
-            assert False, 'Unknown unary operator for vector/matrix, cannot safely continue'
+            raise ValueError(f'Unknown unary operator for vector/matrix, cannot safely continue: \n\t{glsl_operand1.compose()}')
 
 
     def get_js_unary_operator_expression(glsl_operator, scope):
@@ -241,7 +251,7 @@ def get_js(glsl, scope):
     for Glsl, _get_js in glsl_js_getter_map:
         if isinstance(glsl, Glsl):
             return _get_js(glsl, scope)
-    raise Exception(f'{type(glsl)} not found')
+    raise ValueError(f'support for {type(glsl)} not implemented, cannot safely continue')
 
 
 """
@@ -255,6 +265,23 @@ If you want to replace all files in a directory, call like so:
 """
 
 def convert_file(input_filename=False, in_place=False, verbose=False):
+    def colorize_diff(diff):
+        '''
+        "colorize_diff" colorizes text output from the difflib library
+        for display in the command line
+        All credit goes to:
+        https://chezsoi.org/lucas/blog/colored-diff-output-with-python.html
+        '''
+        for line in diff:
+            if line.startswith('+'):
+                yield Fore.GREEN + line + Fore.RESET
+            elif line.startswith('-'):
+                yield Fore.RED + line + Fore.RESET
+            elif line.startswith('^'):
+                yield Fore.BLUE + line + Fore.RESET
+            else:
+                yield line
+
     input_text = ''
     if input_filename:
         with open(input_filename, 'r+') as input_file:
@@ -267,6 +294,14 @@ def convert_file(input_filename=False, in_place=False, verbose=False):
     js = get_js(glsl, pypeg2glsl.LexicalScope(glsl))
     output_text = pypeg2.compose(js, pypeg2js.javascript, autoblank = False)
 
+    if verbose:
+        diff = difflib.ndiff(
+            input_text.splitlines(keepends=True), 
+            output_text.splitlines(keepends=True)
+        )
+        for line in colorize_diff(diff):
+            print(line)
+            
     if in_place:
         input_file.seek(0)
         input_file.write(output_text)

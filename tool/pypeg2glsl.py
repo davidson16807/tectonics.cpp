@@ -80,6 +80,36 @@ element_attributes = [
     'comment3',
     'else',
 ]
+'''
+"debug" returns a string representing a variable that is intended to be a GlslElement.
+It attempts to provide a string representation of the element using pypeg2.compose()
+In the event it is unable to do so, it recurses through element attributes 
+to give a description of which subelements are causing problems.
+This makes it very useful for debugging errors where pypeg2.compose()
+returns an empty string without explaining why.
+'''
+def debug(element, indent=''):
+    if isinstance(element, list):
+        if len(element) == 0:
+            return indent+'[]'
+        subelements = ', \n'.join([
+                debug(subelement, indent+"  ")
+                for subelement in element
+            ])
+        return f'{indent}[\n{subelements}\n{indent}]'
+    elif isinstance(element, GlslElement):
+        try:
+            return (f'{indent}pypeg2glsl.{type(element).__name__}<"{pypeg2.compose(element, type(element))}">')
+        except ValueError as e:
+            header = f'{indent}pypeg2glsl.{type(element).__name__}<ERROR>'
+            invalid = '\n'.join([
+                    f'{indent}  {attribute}: \n{debug(getattr(element, attribute), indent+"    ")}' 
+                    for attribute in element_attributes 
+                    if hasattr(element, attribute)
+                ])
+            return f'{header}\n{invalid}'
+    else:
+        return indent + repr(element)
 
 '''
 "GlslElement" is the parent class of all grammar rule classes within pypeg2glsl
@@ -87,36 +117,19 @@ element_attributes = [
 class GlslElement:
     def __init__(self):
         pass
-    def debug(self, indent=''):
-        '''
-        NOTE: 
-        The ".debug()" method prints out a string representation of a grammar element.
-        We create a custom method rather than override the ".__str__()" or ".__repr__()"
-        methods because pypeg2 thought it would be clever to use those methods
-        within the pypeg2.compose() function.
-        '''
-        try:
-            return f'{indent}pypeg2glsl.{type(self).__name__}<"{pypeg2.compose(self, type(self))}">'
-        except ValueError as e:
-            elements = ', \n'.join([
-                element.debug(indent+"    ") 
-                if isinstance(element, GlslElement) 
-                else indent+'    '+repr(element)
-                for element in [ 
-                    getattr(self, attr) 
-                    for attr in element_attributes 
-                    if hasattr(self, attr)  
-                ]
-            ])
-            return '\n'.join([
-                            f'{indent}pypeg2glsl.{type(self).__name__}',
-                            f'{indent}  invalid state: ',
-                            f'{elements}', 
-                        ])
 
 class PostfixExpression(GlslElement): 
     def __init__(self, content=None):
-        self.content = content or []
+        if not content:
+            self.content = []
+        else:
+            first, rest = content[0], content[1:]
+            self.content = (
+                [*first.content, *rest] if isinstance(first, PostfixExpression) 
+                else [first, *rest] if isinstance(first, ParensExpression)
+                else [first, *rest] if isinstance(first, str)
+                else [ParensExpression(first), *rest]
+            )
 
 class UnaryExpression(GlslElement): 
     def __init__(self, operand1 = None, operator = ''):
@@ -205,15 +218,16 @@ primary_expression = [
 ]
 
 PostfixExpression.grammar = (
-    attr('content', [
-        ((token, optional(InvocationExpression)), maybe_some([BracketedExpression, ('.', token)])),
-        (ParensExpression, some([BracketedExpression, ('.', token)]))
-    ])
+    attr('content', 
+            (
+                ([token, ParensExpression], maybe_some([BracketedExpression, InvocationExpression, ('.', token)]))
+            )
+        )
     # attr('content', ([token, ParensExpression], maybe_some([BracketedExpression, InvocationExpression, ('.', token)])))
 )
 postfix_expression_or_less = [
     PostfixExpression,
-    *primary_expression
+    *primary_expression,
 ]
 
 PostIncrementExpression.grammar = (
@@ -513,7 +527,7 @@ def get_expression_type(expression, scope):
                     previous_type = scope.functions[previous]
                 else:
                     expression_str = pypeg2.compose(PostfixExpression(expression_content), PostfixExpression)
-                    print(f'WARNING: could not invoke unknown function: "{previous}" \n\t{expression_str}')
+                    print(f'WARNING: could not deduce type of unknown function: "{previous}" \n\t{expression_str}')
                     previous_type = []
             if isinstance(current, BracketedExpression):
                 # matrix column access
@@ -528,7 +542,7 @@ def get_expression_type(expression, scope):
                     previous_type = previous_type[:-1]
                 else:
                     expression_str = pypeg2.compose(PostfixExpression(expression_content), PostfixExpression)
-                    print(f'WARNING: could not access index of non-array: "{previous_type}" \n\t{expression_str}')
+                    print(f'WARNING: could not deduce type for indexed expression: "{previous_type}" \n\t{expression_str}')
                     previous_type = []
             if isinstance(current, str):
                 # vector component access
@@ -541,7 +555,7 @@ def get_expression_type(expression, scope):
                     previous_type = scope.attributes[previous_type[0]][current]
                 else:
                     expression_str = pypeg2.compose(PostfixExpression(expression_content), PostfixExpression)
-                    print(f'WARNING: could not find attribute within unknown data structure: "{previous_type}" \n\t{expression_str}')
+                    print(f'WARNING: could not deduce type of attribute of unknown data structure: "{previous_type}" \n\t{expression_str}')
                     previous_type = []
             previous = current
         return previous_type 
@@ -553,11 +567,13 @@ def get_expression_type(expression, scope):
             return ['int']
         if bool_literal.match(expression):
             return ['bool']
-    if isinstance(expression, PostfixExpression):
+    elif isinstance(expression, ParensExpression):
+        return get_expression_type(expression.content, scope)
+    elif isinstance(expression, PostfixExpression):
         return _get_postfix_expression_content_type(expression.content, scope)
-    if isinstance(expression, UnaryExpression):
+    elif isinstance(expression, UnaryExpression):
         return get_expression_type(expression.operand1, scope)
-    if isinstance(expression, BinaryExpression):
+    elif isinstance(expression, BinaryExpression):
         type1 = get_expression_type(expression.operand1, scope)
         type2 = get_expression_type(expression.operand2, scope)
         vector_type = type1 if type1 in vector_types else type2 if type2 in vector_types else []
@@ -577,7 +593,7 @@ def get_expression_type(expression, scope):
             elif type1 != type2:
                 print(f'WARNING: type mismatch, operation "{expression.operator}" was fed left operand of type "{type1}" and right hand operand of type "{type2}" \n\t{expression_str} ')
             return type1
-    if isinstance(expression, TernaryExpression):
+    elif isinstance(expression, TernaryExpression):
         type1 = get_expression_type(expression.operand2, scope)
         type2 = get_expression_type(expression.operand3, scope)
         expression_str = pypeg2.compose(expression, type(expression))
