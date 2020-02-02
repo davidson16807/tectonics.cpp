@@ -1,13 +1,27 @@
 # holy fucking shit that was a lot of work 😩
 
+'''
+"pypeg2glsl" is a library for parsing and lexing glsl using the pypeg2 library.
+
+It has the following features:
+* pypeg2 grammar rule classes for parsing glsl.
+* a "LexicalScope" class for storing type information within glsl lexical scopes
+* a "get_expression_type" function for lexing type information from glsl expressions
+* various variables storing information about built in glsl types
+  (vector_types, matrix_types, built_in_types)
+
+See pypeg2 documentation for more information on usage.
+'''
+
 import re
 import copy
 
 import pypeg2
-from pypeg2 import attr, optional, maybe_some, blank, endl
+from pypeg2 import attr, optional, maybe_some, some, blank, endl
 
 inline_comment = re.compile('/\*((?!\*/).)*\*/\s*', re.MULTILINE | re.DOTALL)
 endline_comment = re.compile('//[^\n]*\s*', re.MULTILINE | re.DOTALL)
+include_directive = re.compile('#[^\n]*\s*', re.MULTILINE | re.DOTALL)
 int_literal = re.compile(
     '''
     (
@@ -37,22 +51,88 @@ float_literal = re.compile(
 bool_literal = re.compile('true|false')
 token = re.compile('[a-zA-Z_]\w*')
 
-class PostfixExpression: 
+'''
+"element_attributes" is a list of all attributes 
+that can be found within instances of GlslElements
+'''
+element_attributes = [
+    'documentation',
+    'qualifiers',
+    'type',
+
+    'name',
+    'names',
+
+    'parameters',
+    'declaration',
+    'condition',
+    'operation',
+
+    'value',
+    'operand1',
+    'operator',
+    'operand2',
+    'operand3',
+    'content',
+
+    'comment1',
+    'comment2',
+    'comment3',
+    'else',
+]
+
+'''
+"GlslElement" is the parent class of all grammar rule classes within pypeg2glsl
+'''
+class GlslElement:
+    def __init__(self):
+        pass
+    def debug(self, indent=''):
+        '''
+        NOTE: 
+        The ".debug()" method prints out a string representation of a grammar element.
+        We create a custom method rather than override the ".__str__()" or ".__repr__()"
+        methods because pypeg2 thought it would be clever to use those methods
+        within the pypeg2.compose() function.
+        '''
+        try:
+            return f'{indent}pypeg2glsl.{type(self).__name__}<"{pypeg2.compose(self, type(self))}">'
+        except ValueError as e:
+            elements = ', \n'.join([
+                element.debug(indent+"    ") 
+                if isinstance(element, GlslElement) 
+                else indent+'    '+repr(element)
+                for element in [ 
+                    getattr(self, attr) 
+                    for attr in element_attributes 
+                    if hasattr(self, attr)  
+                ]
+            ])
+            return '\n'.join([
+                            f'{indent}pypeg2glsl.{type(self).__name__}',
+                            f'{indent}  invalid state: ',
+                            f'{elements}', 
+                        ])
+
+class PostfixExpression(GlslElement): 
     def __init__(self, content=None):
         self.content = content or []
 
-class UnaryExpression: 
+class UnaryExpression(GlslElement): 
     def __init__(self, operand1 = None, operator = ''):
         self.operand1 = operand1
         self.operator = operator
         
-class BinaryExpression: 
+class BinaryExpression(GlslElement): 
     def __init__(self, operand1 = None, operator = '', operand2 = None):
         self.operand1 = operand1
         self.operator = operator
         self.operand2 = operand2
+        self.comment1 = ''
+        self.comment2 = ''
+        self.comment3 = ''
 
-class TernaryExpression: 
+class TernaryExpression(GlslElement): 
     def __init__(self, operand1 = None, operand2 = None, operand3 = None):
         self.operand1 = operand1
         self.operand2 = operand2
@@ -73,43 +153,43 @@ class LogicalAndExpression(BinaryExpression): pass
 class LogicalXorExpression(BinaryExpression): pass
 class LogicalOrExpression(BinaryExpression): pass
 
-class InvocationExpression: 
+class InvocationExpression(GlslElement): 
     def __init__(self, content=None):
         self.content = content or []
-class BracketedExpression: 
+class BracketedExpression(GlslElement): 
     def __init__(self, content=None):
         self.content = content or []
-class ParensExpression: 
+class ParensExpression(GlslElement): 
     def __init__(self, content=None):
         self.content = content or []
-class AssignmentExpression: 
+class AssignmentExpression(GlslElement): 
     def __init__(self, operand1 = None, operator = '', operand2 = None):
         self.operand1 = operand1
         self.operator = operator
         self.operand2 = operand2
-class VariableDeclaration: 
+class VariableDeclaration(GlslElement): 
     def __init__(self, type_=None, names=None, value=None, qualifiers=None):
         self.qualifiers = qualifiers or []
         self.type = type_
         self.names = names or []
         self.value = value
-class ReturnStatement: 
+class ReturnStatement(GlslElement): 
     def __init__(self, value=None):
         self.value = value
 
-class IfStatement: pass
-class WhileStatement: pass
-class DoWhileStatement: pass
-class ForStatement: pass
+class IfStatement(GlslElement): pass
+class WhileStatement(GlslElement): pass
+class DoWhileStatement(GlslElement): pass
+class ForStatement(GlslElement): pass
 
-class StructureDeclaration: pass
-class ParameterDeclaration: 
+class StructureDeclaration(GlslElement): pass
+class ParameterDeclaration(GlslElement): 
     def __init__(self, type_=None, name='', qualifiers=None):
         self.qualifiers = qualifiers or []
         self.type = type_
         self.name = name
-class FunctionDeclaration: 
-    def __init__(self, name='', parameters=None, content=None, type_=None, documentation=None):
+class FunctionDeclaration(GlslElement): 
+    def __init__(self, type_=None, name='', parameters=None, content=None, documentation=None):
         self.documentation = documentation or []
         self.type = type_ or []
         self.name = name
@@ -125,7 +205,11 @@ primary_expression = [
 ]
 
 PostfixExpression.grammar = (
-    attr('content', ([token, ParensExpression], maybe_some([BracketedExpression, InvocationExpression, ('.', token)])))
+    attr('content', [
+        ((token, optional(InvocationExpression)), maybe_some([BracketedExpression, ('.', token)])),
+        (ParensExpression, some([BracketedExpression, ('.', token)]))
+    ])
+    # attr('content', ([token, ParensExpression], maybe_some([BracketedExpression, InvocationExpression, ('.', token)])))
 )
 postfix_expression_or_less = [
     PostfixExpression,
@@ -160,12 +244,14 @@ binary_expression_or_less = [*unary_expression_or_less]
 for BinaryExpressionTemp, binary_regex in order_of_operations:
     binary_expression_or_less = [BinaryExpressionTemp, *binary_expression_or_less]
     BinaryExpressionTemp.grammar = (
-            attr('operand1', binary_expression_or_less[1:]), blank,
-            pypeg2.ignore(maybe_some([inline_comment, endline_comment])),
-            attr('operator', binary_regex), blank,
-            pypeg2.ignore(maybe_some([inline_comment, endline_comment])),
+            attr('operand1', binary_expression_or_less[1:]), 
+            attr('comment1', maybe_some([inline_comment, endline_comment])),
+            blank,
+            attr('operator', binary_regex), 
+            blank,
+            attr('comment2', maybe_some([inline_comment, endline_comment])),
             attr('operand2', binary_expression_or_less),
-            pypeg2.ignore(maybe_some([inline_comment, endline_comment])),
+            attr('comment3', maybe_some([inline_comment, endline_comment])),
         )
 
 ternary_expression_or_less = [TernaryExpression, *binary_expression_or_less]
@@ -177,7 +263,7 @@ TernaryExpression.grammar = (
 
 BracketedExpression.grammar  = '[', attr('content', ternary_expression_or_less), ']'
 ParensExpression.grammar     = '(', attr('content', ternary_expression_or_less), ')'
-InvocationExpression.grammar = '(', attr('content', optional(pypeg2.csl((blank, ternary_expression_or_less)))), ')'
+InvocationExpression.grammar = '(', attr('content', optional(ternary_expression_or_less, maybe_some(',', blank, ternary_expression_or_less))), ')'
 
 AssignmentExpression.grammar = (
     attr('operand1', PostfixExpression), blank,
@@ -200,6 +286,7 @@ simple_statement = ([
 ], ';', endl)
 code_block = maybe_some(
     [
+        pypeg2.ignore(include_directive),
         inline_comment, 
         endline_comment,
         ForStatement, 
@@ -235,7 +322,7 @@ ForStatement.grammar = (
 
 ParameterDeclaration.grammar = (
     attr('qualifiers', maybe_some(re.compile('in|out|inout'), blank)),
-    attr('type', PostfixExpression),
+    attr('type', PostfixExpression), blank,
     attr('name', token)
 )
 FunctionDeclaration.grammar = (
@@ -245,7 +332,7 @@ FunctionDeclaration.grammar = (
     attr('parameters',  
             optional(endl, pypeg2.indent(ParameterDeclaration, maybe_some(',', endl, ParameterDeclaration)), endl)  
         ), 
-    ')', endl,
+    ')', 
     attr('content', compound_statement), endl
 )
 
@@ -260,6 +347,7 @@ glsl = maybe_some(
     [
         StructureDeclaration, FunctionDeclaration, (VariableDeclaration, ';', endl),
         inline_comment, endline_comment,
+        pypeg2.ignore(include_directive),
     ]
 )
 
@@ -346,7 +434,9 @@ class LexicalScope:
         }
         return result
         
-
+scalar_types = [
+    ['float'], ['int'], ['bool']
+]
 vector_types = [
     ['vec2'], ['vec3'], ['vec4'], 
     ['ivec2'], ['ivec3'], ['ivec4'],
@@ -358,12 +448,13 @@ matrix_types = [
     ['bmat2'], ['bmat3'], ['bmat4'],   ['bmat2x3'], ['bmat2x4'],   ['bmat3x2'],   ['bmat3x4'],  ['bmat4x2'],   ['bmat4x3'],
 ]
 built_in_types = [
+    *scalar_types,
     *vector_types,
     *matrix_types,
-    ['float'], ['int'], ['bool']
 ]
 
 def get_expression_type(expression, scope):
+    assert scope is not None, 'scope must be provided'
     def _get_postfix_expression_content_type(expression_content, scope):
         assert len(expression_content) > 0, 'Postfix expression is empty, cannot safely continue'
 
@@ -501,3 +592,5 @@ def get_expression_type(expression, scope):
             print(f'WARNING: type mismatch, ternary operation takes a left hand operand of type "{type1}" and right hand operand of type "{type2} \n\t{expression_str}"')
             print(scope.variables)
         return type1
+    if isinstance(expression, FunctionDeclaration):
+        return scope.functions[expression.name]

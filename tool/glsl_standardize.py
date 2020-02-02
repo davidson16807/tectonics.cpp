@@ -14,8 +14,9 @@ If you want to replace all files in a directory, call like so:
 """
 
 
-import sys
+import copy
 import difflib
+import sys
 
 import pypeg2
 import pypeg2glsl
@@ -30,30 +31,14 @@ except ImportError:  # fallback so that the imported classes always exist
     Fore = Back = Style = ColorFallback()
 
 
-def colorize_diff(diff):
-    '''
-    "colorize_diff" colorizes text output from the difflib library
-    for display in the command line
-    All credit goes to:
-    https://chezsoi.org/lucas/blog/colored-diff-output-with-python.html
-    '''
-    for line in diff:
-        if line.startswith('+'):
-            yield Fore.GREEN + line + Fore.RESET
-        elif line.startswith('-'):
-            yield Fore.RED + line + Fore.RESET
-        elif line.startswith('^'):
-            yield Fore.BLUE + line + Fore.RESET
-        else:
-            yield line
-
 def convert_glsl(input_glsl):
     ''' 
     "convert_glsl" is a pure function that performs 
     a transformation on a parse tree of glsl as represented by pypeg2glsl,
-    then returns transformed output. 
+    then returns a transformed parse tree as output. 
     '''
-    pass
+    output_glsl = copy.deepcopy(input_glsl)
+    return output_glsl
 
 def convert_text(input_text):
     ''' 
@@ -75,6 +60,24 @@ def convert_file(input_filename=False, in_place=False, verbose=False):
     It may either print out transformed contents or replace the file, 
     depending on the value of `in_place`
     '''
+    
+    def colorize_diff(diff):
+        '''
+        "colorize_diff" colorizes text output from the difflib library
+        for display in the command line
+        All credit goes to:
+        https://chezsoi.org/lucas/blog/colored-diff-output-with-python.html
+        '''
+        for line in diff:
+            if line.startswith('+'):
+                yield Fore.GREEN + line + Fore.RESET
+            elif line.startswith('-'):
+                yield Fore.RED + line + Fore.RESET
+            elif line.startswith('^'):
+                yield Fore.BLUE + line + Fore.RESET
+            else:
+                yield line
+
     input_text = ''
     if input_filename:
         with open(input_filename, 'r+') as input_file:
