@@ -185,7 +185,7 @@ def get_ddx_abs(f, x, scope):
 
 def get_ddx_sqrt(f, x, scope):
     f_params = f.content[1].content
-    return pypeg2glsl.MultiplicativeExpression(
+    output = pypeg2glsl.MultiplicativeExpression(
         get_wrapped_expression_if_ambigous(
             get_ddx_expression(f_params[0], x, scope)
         ),
@@ -194,6 +194,8 @@ def get_ddx_sqrt(f, x, scope):
             pypeg2glsl.MultiplicativeExpression('2.0f', '*', f)
         ),
     )
+    print(pypeg2glsl.debug(output))
+    return output
 
 
 def get_ddx_dot(f, x, scope):
@@ -290,7 +292,7 @@ def get_ddx_postfix_expression(f, x, scope):
     # here is where we have to start worrying about type
     # monitor the type of every differential
     f_type = pypeg2glsl.get_expression_type(f, scope)
-    x_type = pypeg2glsl.get_expression_type(x, scope)
+    x_type = pypeg2glsl.get_expression_type(pypeg2glsl.PostfixExpression([x]), scope)
 
     elements = copy.deepcopy(f.content)
     current = elements.pop(0)
@@ -333,9 +335,22 @@ def get_ddx_postfix_expression(f, x, scope):
                 current_type = ['float']
                 if (isinstance(current.content, str) and 
                     pypeg2glsl.int_literal.match(current.content)):
-                    current_ddx = pypeg2glsl.PostfixExpression([current_ddx, current])
+                    if x_type == ['float']:
+                        # V(u)[0] -> dVdu[0]
+                        current_ddx = pypeg2glsl.PostfixExpression([current_ddx, current])
+                    elif x_type in pypeg2glsl.float_vector_types:
+                        # V(U)[0] -> vec3(dVdU[0], 0.f, 0.f)
+                        vecN = previous_type[0]
+                        N = int(vecN[-1])
+                        i = int(current.content)
+                        vecN_params = ['0.0f' for i in range(N)]
+                        vecN_params[i] = pypeg2.compose(pypeg2glsl.PostfixExpression([current_ddx, current]), pypeg2glsl.PostfixExpression)
+                        vecN_params = ','.join(vecN_params)
+                        current_ddx = pypeg2.parse(f'{vecN}({vecN_params})', pypeg2glsl.PostfixExpression)
+                    else:
+                        throw_not_implemented_error(f, 'component access for non-float derivatives')
                 else:
-                    throw_not_implemented_error(f, 'vector component access')
+                    throw_not_implemented_error(f, 'variable vector component access')
             # array index access
             elif (len(previous_type) > 1 and 
                 isinstance(previous_type[1], pypeg2glsl.BracketedExpression)):
@@ -347,7 +362,24 @@ def get_ddx_postfix_expression(f, x, scope):
             # vector component access
             if previous_type in pypeg2glsl.vector_types: # likely an attribute of a built-in structure, like a vector
                 current_type = ['float']
-                current_ddx = pypeg2glsl.PostfixExpression([current_ddx, current])
+                if x_type == ['float']:
+                    # V(u).x -> dVdu.x
+                    current_ddx = pypeg2glsl.PostfixExpression([current_ddx, current])
+                elif x_type in pypeg2glsl.float_vector_types:
+                    # V(U).x -> vec3(dVdU[0], 0.f, 0.f)
+                    vecN = previous_type[0]
+                    N = int(vecN[-1])
+                    i = {
+                        'x':0,'y':1,'z':2,'w':3,
+                        'r':0,'g':1,'b':2,'a':3,
+                        's':0,'t':1,'u':2,'v':3,
+                      }[current]
+                    vecN_params = ['0.0f' for i in range(N)]
+                    vecN_params[i] = pypeg2.compose(pypeg2glsl.PostfixExpression([current_ddx, current]), pypeg2glsl.PostfixExpression)
+                    vecN_params = ','.join(vecN_params)
+                    current_ddx = pypeg2.parse(f'{vecN}({vecN_params})', pypeg2glsl.PostfixExpression)
+                else:
+                    throw_not_implemented_error(f, 'component access for non-float derivatives')
             # attribute access
             elif (len(previous_type) == 1 and 
                 previous_type[0] in scope.attributes and
@@ -533,13 +565,12 @@ def get_ddx_function(f, x, scope):
                 pypeg2glsl.ReturnStatement(get_ddx_expression(statement.value, x, local_scope))
             )
         elif isinstance(statement, pypeg2glsl.VariableDeclaration):
-            value = get_ddx_expression(statement.value, x, local_scope)
             dfdx.content.append( copy.deepcopy(statement) )
             dfdx.content.append(
                 pypeg2glsl.VariableDeclaration(
                     type_ = pypeg2glsl.PostfixExpression(get_ddx_type(statement.type.content, x_type, statement)),
                     names = [ f'dd{x}_{name}' for name in statement.names],
-                    value = value,
+                    value = get_ddx_expression(statement.value, x, local_scope),
                 )
             )
         else:

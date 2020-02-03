@@ -451,15 +451,33 @@ class LexicalScope:
 scalar_types = [
     ['float'], ['int'], ['bool']
 ]
-vector_types = [
+float_vector_types = [
     ['vec2'], ['vec3'], ['vec4'], 
-    ['ivec2'], ['ivec3'], ['ivec4'],
-    ['bvec2'], ['bvec3'], ['bvec4'],
+]
+int_vector_types = [
+    ['ivec2'], ['ivec3'], ['ivec4'], 
+]
+bool_vector_types = [
+    ['bvec2'], ['bvec3'], ['bvec4'], 
+]
+vector_types = [
+    *float_vector_types,
+    *int_vector_types,
+    *bool_vector_types,
+]
+float_matrix_types = [
+    ['mat2'],  ['mat3'],  ['mat4'],    ['mat2x3'],  ['mat2x4'],    ['mat3x2'],    ['mat3x4'],   ['mat4x2'],    ['mat4x3'], 
+]
+int_matrix_types = [
+    ['imat2'], ['imat3'], ['imat4'],   ['imat2x3'], ['imat2x4'],   ['imat3x2'],   ['imat3x4'],  ['imat4x2'],   ['imat4x3'],
+]
+bool_matrix_types = [
+    ['bmat2'], ['bmat3'], ['bmat4'],   ['bmat2x3'], ['bmat2x4'],   ['bmat3x2'],   ['bmat3x4'],  ['bmat4x2'],   ['bmat4x3'],
 ]
 matrix_types = [
-    ['mat2'],  ['mat3'],  ['mat4'],    ['mat2x3'],  ['mat2x4'],    ['mat3x2'],    ['mat3x4'],   ['mat4x2'],    ['mat4x3'], 
-    ['imat2'], ['imat3'], ['imat4'],   ['imat2x3'], ['imat2x4'],   ['imat3x2'],   ['imat3x4'],  ['imat4x2'],   ['imat4x3'],
-    ['bmat2'], ['bmat3'], ['bmat4'],   ['bmat2x3'], ['bmat2x4'],   ['bmat3x2'],   ['bmat3x4'],  ['bmat4x2'],   ['bmat4x3'],
+    *float_matrix_types,
+    *int_matrix_types,
+    *bool_matrix_types,
 ]
 built_in_types = [
     *scalar_types,
