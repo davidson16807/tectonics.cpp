@@ -194,7 +194,6 @@ def get_ddx_sqrt(f, x, scope):
             pypeg2glsl.MultiplicativeExpression('2.0f', '*', f)
         ),
     )
-    print(pypeg2glsl.debug(output))
     return output
 
 
@@ -289,8 +288,19 @@ def get_ddx_invocation(f, x, scope):
 def get_ddx_postfix_expression(f, x, scope):
             
     dfdx = pypeg2glsl.PostfixExpression()
-    # here is where we have to start worrying about type
-    # monitor the type of every differential
+    '''
+    Here is where we have to start worrying about type
+    monitor the type of every differential.
+    Remember: 
+    * if x_type is a vector, the return type must also be a vector, du/dXi
+    * if f_type is a vector, the return type must also be a vector, dUi/dx
+    * if x_type and f_type are both vectors, the return type must be a vector,
+      and represent the component-wise derivative, dUi/dXi
+    * at no point can you use a jacobian derivative dUi/dXj,
+      so functions must be either entirely composed of:
+       * derivatives of vectors with respect to scalars, or...
+       * derivatives of scalars with respect to vectors
+    '''
     f_type = pypeg2glsl.get_expression_type(f, scope)
     x_type = pypeg2glsl.get_expression_type(pypeg2glsl.PostfixExpression([x]), scope)
 
@@ -327,7 +337,7 @@ def get_ddx_postfix_expression(f, x, scope):
         current = elements.pop(0)
         if isinstance(current, pypeg2glsl.BracketedExpression):
             # matrix column access
-            if previous_type in matrix_types:
+            if previous_type in pypeg2glsl.matrix_types:
                 current_type = [re.sub('mat(\d)x?', 'vec\\1', previous_type[0])]
                 throw_not_implemented_error(f, 'matrix column access')
             # vector component access
