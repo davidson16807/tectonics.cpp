@@ -18,8 +18,8 @@ import copy
 import difflib
 import sys
 
-import pypeg2
-import pypeg2glsl
+import pypeg2 as peg
+import pypeg2glsl as glsl
 
 # attempt to import colorama, for colored diff output
 try:
@@ -49,9 +49,9 @@ def convert_text(input_text):
     and may also perform additional string based transformations,
     such as string substitutions or regex replacements
     '''
-    input_glsl = pypeg2.parse(input_text, pypeg2glsl.glsl)
+    input_glsl = peg.parse(input_text, glsl.code)
     # output_glsl = convert_glsl(input_glsl)
-    output_text = pypeg2.compose(input_glsl, pypeg2glsl.glsl, autoblank = False) 
+    output_text = peg.compose(input_glsl, glsl.code, autoblank = False) 
     return output_text
 
 def convert_file(input_filename=False, in_place=False, verbose=False):
@@ -60,7 +60,7 @@ def convert_file(input_filename=False, in_place=False, verbose=False):
     It may either print out transformed contents or replace the file, 
     depending on the value of `in_place`
     '''
-    
+
     def colorize_diff(diff):
         '''
         "colorize_diff" colorizes text output from the difflib library

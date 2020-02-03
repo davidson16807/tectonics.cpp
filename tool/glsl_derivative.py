@@ -18,8 +18,8 @@ import difflib
 import copy
 import sys
 
-import pypeg2
-import pypeg2glsl
+import pypeg2 as peg
+import pypeg2glsl as glsl
 
 # attempt to import colorama, for colored diff output
 try:
@@ -32,24 +32,24 @@ except ImportError:  # fallback so that the imported classes always exist
 
 
 def throw_not_implemented_error(f, feature='expressions'):
-    f_str = pypeg2.compose(f, type(f))
+    f_str = peg.compose(f, type(f))
     raise NotImplementedError(f'support for derivatives involving {feature} such as "{f_str}" is not implemented')
 
 def throw_value_error(f, feature='invalid expression'):
-    f_str = pypeg2.compose(f, type(f))
+    f_str = peg.compose(f, type(f))
     raise NotImplementedError(f'{feature}, cannot continue safely: \n\t{f_str}')
 
 def get_1_for_type(type_):
     identity_map ={
-        'vec2': pypeg2.parse('vec2(1.f)', pypeg2glsl.PostfixExpression),
-        'vec3': pypeg2.parse('vec3(1.f)', pypeg2glsl.PostfixExpression),
-        'vec4': pypeg2.parse('vec4(1.f)', pypeg2glsl.PostfixExpression),
+        'vec2': peg.parse('vec2(1.f)', glsl.PostfixExpression),
+        'vec3': peg.parse('vec3(1.f)', glsl.PostfixExpression),
+        'vec4': peg.parse('vec4(1.f)', glsl.PostfixExpression),
 
         'float': '1.0f',
         'int': '1'
     }
-    type_element = pypeg2glsl.PostfixExpression(type_)
-    type_str = pypeg2.compose(type_element, pypeg2glsl.PostfixExpression)
+    type_element = glsl.PostfixExpression(type_)
+    type_str = peg.compose(type_element, glsl.PostfixExpression)
     if type_str in identity_map:
         return identity_map[type_str]
     else:
@@ -57,15 +57,15 @@ def get_1_for_type(type_):
     
 def get_0_for_type(type_):
     identity_map ={
-        'vec2': pypeg2.parse('vec2(0.f)', pypeg2glsl.PostfixExpression),
-        'vec3': pypeg2.parse('vec3(0.f)', pypeg2glsl.PostfixExpression),
-        'vec4': pypeg2.parse('vec4(0.f)', pypeg2glsl.PostfixExpression),
+        'vec2': peg.parse('vec2(0.f)', glsl.PostfixExpression),
+        'vec3': peg.parse('vec3(0.f)', glsl.PostfixExpression),
+        'vec4': peg.parse('vec4(0.f)', glsl.PostfixExpression),
 
         'float': '0.0f',
         'int': '0'
     }
-    type_element = pypeg2glsl.PostfixExpression(type_)
-    type_str = pypeg2.compose(type_element, pypeg2glsl.PostfixExpression)
+    type_element = glsl.PostfixExpression(type_)
+    type_str = peg.compose(type_element, glsl.PostfixExpression)
     if type_str in identity_map:
         return identity_map[type_str]
     else:
@@ -73,20 +73,20 @@ def get_0_for_type(type_):
 
 def get_wrapped_expression_if_ambigous(
         expression, 
-        unambiguous_expression_types = pypeg2glsl.unary_expression_or_less
+        unambiguous_expression_types = glsl.unary_expression_or_less
     ):
     return ( 
         expression 
         if type(expression) in unambiguous_expression_types 
         or isinstance(expression, str)
-        else pypeg2glsl.ParensExpression(expression)
+        else glsl.ParensExpression(expression)
     )
 
 def get_ddx_max(f, x, scope):
     f_params = f.content[1].content
     additive_expression_or_less = [
-        pypeg2glsl.AdditiveExpression,
-        *pypeg2glsl.unary_expression_or_less
+        glsl.AdditiveExpression,
+        *glsl.unary_expression_or_less
     ]
     expressions = [
         get_wrapped_expression_if_ambigous(
@@ -95,7 +95,7 @@ def get_ddx_max(f, x, scope):
         ),
         get_wrapped_expression_if_ambigous(
             get_ddx_expression(f_params[0], x, scope),
-            pypeg2glsl.binary_expression_or_less,
+            glsl.binary_expression_or_less,
         ),
         get_wrapped_expression_if_ambigous(
             f_params[1], 
@@ -103,28 +103,28 @@ def get_ddx_max(f, x, scope):
         ),
         get_wrapped_expression_if_ambigous(
             get_ddx_expression(f_params[1], x, scope),
-            pypeg2glsl.binary_expression_or_less,
+            glsl.binary_expression_or_less,
         )
     ]
     expression_strings = [
-        pypeg2.compose(expression, type(expression))
+        peg.compose(expression, type(expression))
         for expression in expressions
     ]
     u, dudx, v, dvdx = expression_strings
-    u_type = pypeg2glsl.get_expression_type(f_params[0], scope)
-    v_type = pypeg2glsl.get_expression_type(f_params[1], scope)
+    u_type = glsl.get_expression_type(f_params[0], scope)
+    v_type = glsl.get_expression_type(f_params[1], scope)
     if (u_type == ['float'] and v_type == ['float']):
-        return pypeg2.parse(f''' 
+        return peg.parse(f''' 
             {u} > {v} ? {dudx} : {dvdx}
-        ''', pypeg2glsl.TernaryExpression)
+        ''', glsl.TernaryExpression)
     else:
         throw_not_implemented_error('component-wise max')
 
 def get_ddx_min(f, x, scope):
     f_params = f.content[1].content
     additive_expression_or_less = [
-        pypeg2glsl.AdditiveExpression,
-        *pypeg2glsl.unary_expression_or_less
+        glsl.AdditiveExpression,
+        *glsl.unary_expression_or_less
     ]
     expressions = [
         get_wrapped_expression_if_ambigous(
@@ -133,7 +133,7 @@ def get_ddx_min(f, x, scope):
         ),
         get_wrapped_expression_if_ambigous(
             get_ddx_expression(f_params[0], x, scope),
-            pypeg2glsl.binary_expression_or_less,
+            glsl.binary_expression_or_less,
         ),
         get_wrapped_expression_if_ambigous(
             f_params[1], 
@@ -141,28 +141,28 @@ def get_ddx_min(f, x, scope):
         ),
         get_wrapped_expression_if_ambigous(
             get_ddx_expression(f_params[1], x, scope),
-            pypeg2glsl.binary_expression_or_less,
+            glsl.binary_expression_or_less,
         )
     ]
     expression_strings = [
-        pypeg2.compose(expression, type(expression))
+        peg.compose(expression, type(expression))
         for expression in expressions
     ]
     u, dudx, v, dvdx = expression_strings
-    u_type = pypeg2glsl.get_expression_type(f_params[0], scope)
-    v_type = pypeg2glsl.get_expression_type(f_params[1], scope)
+    u_type = glsl.get_expression_type(f_params[0], scope)
+    v_type = glsl.get_expression_type(f_params[1], scope)
     if (u_type == ['float'] and v_type == ['float']):
-        return pypeg2.parse(f''' 
+        return peg.parse(f''' 
             {u} < {v} ? {dudx} : {dvdx}
-        ''', pypeg2glsl.TernaryExpression)
+        ''', glsl.TernaryExpression)
     else:
         throw_not_implemented_error('component-wise min')
     
 def get_ddx_abs(f, x, scope):
     f_params = f.content[1].content
     additive_expression_or_less = [
-        pypeg2glsl.AdditiveExpression,
-        *pypeg2glsl.unary_expression_or_less
+        glsl.AdditiveExpression,
+        *glsl.unary_expression_or_less
     ]
     expressions = [
         get_wrapped_expression_if_ambigous(
@@ -171,27 +171,27 @@ def get_ddx_abs(f, x, scope):
         ),
         get_wrapped_expression_if_ambigous(
             get_ddx_expression(f_params[0], x, scope),
-            pypeg2glsl.binary_expression_or_less,
+            glsl.binary_expression_or_less,
         )
     ]
     u, dudx = expression_strings
-    u_type = pypeg2glsl.get_expression_type(f_params[0], scope)
+    u_type = glsl.get_expression_type(f_params[0], scope)
     if (u_type == ['float']):
-        return pypeg2.parse(f''' 
+        return peg.parse(f''' 
             {u} > 0.0f ? {dudx} : -{dudx}
-        ''', pypeg2glsl.TernaryExpression)
+        ''', glsl.TernaryExpression)
     else:
         throw_not_implemented_error('component-wise abs')
 
 def get_ddx_sqrt(f, x, scope):
     f_params = f.content[1].content
-    output = pypeg2glsl.MultiplicativeExpression(
+    output = glsl.MultiplicativeExpression(
         get_wrapped_expression_if_ambigous(
             get_ddx_expression(f_params[0], x, scope)
         ),
         '/',
         get_wrapped_expression_if_ambigous(
-            pypeg2glsl.MultiplicativeExpression('2.0f', '*', f)
+            glsl.MultiplicativeExpression('2.0f', '*', f)
         ),
     )
     return output
@@ -202,46 +202,72 @@ def get_ddx_dot(f, x, scope):
         throw_value_error(f, 'dot product must have two parameters')
     u = f.content[1].content[0]
     v = f.content[1].content[1]
-    f_type = pypeg2glsl.get_expression_type(f, scope)
-    u_type = pypeg2glsl.get_expression_type(u, scope)
-    v_type = pypeg2glsl.get_expression_type(v, scope)
-    x_type = pypeg2glsl.get_expression_type(x, scope)
+    u_type = glsl.get_expression_type(u, scope)
+    v_type = glsl.get_expression_type(v, scope)
+
+    if (u_type not in glsl.vector_types or 
+        v_type not in glsl.vector_types):
+        throw_value_error(f, 'dot product must only accept vectors as parameters')
+    if (u_type not in glsl.float_vector_types or 
+        v_type not in glsl.float_vector_types):
+        throw_not_implemented_error(f, 'non-floating point dot products')
 
     expressions = [
         get_wrapped_expression_if_ambigous( u ),
         get_wrapped_expression_if_ambigous( get_ddx_expression(u, x, scope) ),
         get_wrapped_expression_if_ambigous( v ),
         get_wrapped_expression_if_ambigous( get_ddx_expression(v, x, scope) ),
-        # pypeg2glsl.PostfixExpression(f_type),
-        # pypeg2glsl.PostfixExpression(u_type),
-        # pypeg2glsl.PostfixExpression(v_type),
-        # pypeg2glsl.PostfixExpression(x_type),
     ]
     expression_strings = [
-        pypeg2.compose(expression, type(expression))
+        peg.compose(expression, type(expression))
         for expression in expressions
     ]
-    if f_type == ['float'] and x_type == ['float']:
-        # u, dudx, v, dvdx, f_type, u_type, v_type, x_type = expression_strings
-        u, dudx, v, dvdx = expression_strings
-        return pypeg2.parse(
-            f' dot({u}, {dvdx}) + dot({dudx}, {v}) ', 
-            pypeg2glsl.AdditiveExpression
-        )
-    # elif f_type == ['float'] and x_type in pypeg2glsl.vector_types:
-        # u, dudx, v, dvdx, f_type, u_type, v_type, x_type = expression_strings
-        # return pypeg2.parse(
-        #     f''' 
-        #     {x_type}(
-        #       dot({u}, {dvdx}) + dot({dudx}, {v}),
-        #       dot({u}, {dvdx}) + dot({dudx}, {v}),
-        #       dot({u}, {dvdx}) + dot({dudx}, {v})
-        #     )
-        #     ''', 
-        #     pypeg2glsl.AdditiveExpression
-        # )
-    else:
-        throw_not_implemented_error(f, 'jacobians')
+    '''
+    The derivative is defined below. 
+    As you can see, the derivative calls the dot product on u, v, dudx, and dvdx
+    This means both u, v, dudx, and dvdx must be vectors.
+    If both dudx and dvdx are vectors, and u and v are as well,
+    then either x is a float or dudx and dvdx are component-wise derivatives,
+    since we do not support jacobian derivatives.
+    If x is a float, then this is a well supported use case in mathematics.
+    If x is a vector though, then we require u and v to be component-wise expressions.
+    However is this sensible to the user?
+
+    We start by asking what the user expects in this case.
+    They would really want dfdx to be a vector where each component 
+    indicates the amount the output of the dot product changes in response to 
+    a change in the corresponding component of x. 
+    If u(x) and v(x) are defined in a way that mixes components,
+    then we would need the jacobian to properly express this.
+    However, if u(x) and v(x) are defined only to use component wise expressions, 
+    then we could do this using the usual equations, 
+    since this would be equivalent to dealing with the jacobian 
+    where non-diagonal components are 0.
+    So unless we support jacobians, we must mandate that u and v are component-wise only.
+    Until then, we can get by with adapting the equation for the dot product
+    between vector gradients where non-diagonal elements are 0
+    See here: https://math.stackexchange.com/questions/496060/gradient-of-a-dot-product
+    assuming Einstein notation:
+        d(ai*bj)/dxi = bj*daj/dxi + aj*dbj/dxi
+    However we assume daj/dxi = 0 and dbj/dxi = 0 where i!=j, 
+    this is equivalent to setting i==j, so it is equivalent to:
+        d(ai*bi)/dxi = bi*dai/dxi + ai*dbi/dxi
+
+    Obviously we must make very sure that all other operations are component-wise,
+    but how do we enforce this?
+    Virtually all glsl arithmetic operators are component-wise on vectors,
+    however vector constructors, swizzling, cross products, matrix multiplication,
+    and attriute assignment all allow for non-component-wise behavior.
+    Fortunately, without constructors or assignments,
+    there should be no way for us to take output from the dot product 
+    create non-component-wise behavior, 
+    since it would amount to turning a float back into a vector.
+    '''
+    u, dudx, v, dvdx = expression_strings
+    return peg.parse(
+        f' dot({u}, {dvdx}) + dot({dudx}, {v}) ', 
+        glsl.AdditiveExpression
+    )
 
 def get_ddx_invocation(f, x, scope):
     name = f.content[0]
@@ -258,7 +284,7 @@ def get_ddx_invocation(f, x, scope):
         'sin': 'cos',
     }
     # constructor (built-in)
-    if [name] in pypeg2glsl.built_in_types:
+    if [name] in glsl.built_in_types:
         throw_not_implemented_error(f, 'constructors')
     # constructor (user-defined)
     elif name in scope.attributes:
@@ -270,16 +296,16 @@ def get_ddx_invocation(f, x, scope):
     elif len(params) > 1:
         throw_not_implemented_error(f, 'multi-parameter functions')
     elif len(params) < 1:
-        return get_0_for_type(pypeg2glsl.get_expression_type(f, scope))
+        return get_0_for_type(glsl.get_expression_type(f, scope))
     else:
         dfdu = dfdu_name_map[name] if name in dfdu_name_map else f'dd{x}_{name}'
         dudx = get_wrapped_expression_if_ambigous(
             get_ddx_expression(params[0], x, scope)
         )
-        return pypeg2glsl.MultiplicativeExpression(
-            pypeg2glsl.PostfixExpression([
+        return glsl.MultiplicativeExpression(
+            glsl.PostfixExpression([
                 dfdu, 
-                pypeg2glsl.InvocationExpression(params)
+                glsl.InvocationExpression(params)
             ]), 
             '*', 
             dudx
@@ -287,7 +313,7 @@ def get_ddx_invocation(f, x, scope):
 
 def get_ddx_postfix_expression(f, x, scope):
             
-    dfdx = pypeg2glsl.PostfixExpression()
+    dfdx = glsl.PostfixExpression()
     '''
     Here is where we have to start worrying about type
     monitor the type of every differential.
@@ -301,32 +327,32 @@ def get_ddx_postfix_expression(f, x, scope):
        * derivatives of vectors with respect to scalars, or...
        * derivatives of scalars with respect to vectors
     '''
-    f_type = pypeg2glsl.get_expression_type(f, scope)
-    x_type = pypeg2glsl.get_expression_type(pypeg2glsl.PostfixExpression([x]), scope)
+    f_type = glsl.get_expression_type(f, scope)
+    x_type = glsl.get_expression_type(glsl.PostfixExpression([x]), scope)
 
     elements = copy.deepcopy(f.content)
     current = elements.pop(0)
     current_type = []
     current_ddx = None
     # parentheses
-    if isinstance(current, pypeg2glsl.ParensExpression):
-        current_type = pypeg2glsl.get_expression_type(current, scope)
+    if isinstance(current, glsl.ParensExpression):
+        current_type = glsl.get_expression_type(current, scope)
         current_ddx = get_ddx_parens_expression(current, x, scope)
     # function invocation
-    elif len(elements) > 0 and isinstance(elements[0], pypeg2glsl.InvocationExpression):
-        invocation = pypeg2glsl.PostfixExpression([current, elements.pop(0)])
-        current_type = pypeg2glsl.get_expression_type(invocation, scope)
+    elif len(elements) > 0 and isinstance(elements[0], glsl.InvocationExpression):
+        invocation = glsl.PostfixExpression([current, elements.pop(0)])
+        current_type = glsl.get_expression_type(invocation, scope)
         current_ddx  = get_ddx_invocation(invocation, x, scope)
     # variable reference
     elif isinstance(current, str):
-        current_type = pypeg2glsl.get_expression_type(
-            pypeg2glsl.PostfixExpression([current]), 
+        current_type = glsl.get_expression_type(
+            glsl.PostfixExpression([current]), 
             scope
         )
         if current == x:
-            current_ddx = get_1_for_type(pypeg2glsl.get_expression_type(f, scope))
+            current_ddx = get_1_for_type(glsl.get_expression_type(f, scope))
         else:
-            current_ddx = pypeg2glsl.PostfixExpression([f'dd{x}_{current}'])
+            current_ddx = glsl.PostfixExpression([f'dd{x}_{current}'])
     else:
         throw_not_implemented_error(f)
 
@@ -335,47 +361,47 @@ def get_ddx_postfix_expression(f, x, scope):
     previous_ddx = current_ddx
     while len(elements) > 0:
         current = elements.pop(0)
-        if isinstance(current, pypeg2glsl.BracketedExpression):
+        if isinstance(current, glsl.BracketedExpression):
             # matrix column access
-            if previous_type in pypeg2glsl.matrix_types:
+            if previous_type in glsl.matrix_types:
                 current_type = [re.sub('mat(\d)x?', 'vec\\1', previous_type[0])]
                 throw_not_implemented_error(f, 'matrix column access')
             # vector component access
-            elif previous_type in pypeg2glsl.vector_types:
+            elif previous_type in glsl.vector_types:
                 current_type = ['float']
                 if (isinstance(current.content, str) and 
-                    pypeg2glsl.int_literal.match(current.content)):
+                    glsl.int_literal.match(current.content)):
                     if x_type == ['float']:
                         # V(u)[0] -> dVdu[0]
-                        current_ddx = pypeg2glsl.PostfixExpression([current_ddx, current])
-                    elif x_type in pypeg2glsl.float_vector_types:
+                        current_ddx = glsl.PostfixExpression([current_ddx, current])
+                    elif x_type in glsl.float_vector_types:
                         # V(U)[0] -> vec3(dVdU[0], 0.f, 0.f)
                         vecN = previous_type[0]
                         N = int(vecN[-1])
                         i = int(current.content)
                         vecN_params = ['0.0f' for i in range(N)]
-                        vecN_params[i] = pypeg2.compose(pypeg2glsl.PostfixExpression([current_ddx, current]), pypeg2glsl.PostfixExpression)
+                        vecN_params[i] = peg.compose(glsl.PostfixExpression([current_ddx, current]), glsl.PostfixExpression)
                         vecN_params = ','.join(vecN_params)
-                        current_ddx = pypeg2.parse(f'{vecN}({vecN_params})', pypeg2glsl.PostfixExpression)
+                        current_ddx = peg.parse(f'{vecN}({vecN_params})', glsl.PostfixExpression)
                     else:
                         throw_not_implemented_error(f, 'component access for non-float derivatives')
                 else:
                     throw_not_implemented_error(f, 'variable vector component access')
             # array index access
             elif (len(previous_type) > 1 and 
-                isinstance(previous_type[1], pypeg2glsl.BracketedExpression)):
+                isinstance(previous_type[1], glsl.BracketedExpression)):
                 current_type = [previous_type[0]]
                 throw_not_implemented_error(f, 'array index access')
             else:
                 throw_not_implemented_error(f)
         elif isinstance(current, str):
             # vector component access
-            if previous_type in pypeg2glsl.vector_types: # likely an attribute of a built-in structure, like a vector
+            if previous_type in glsl.vector_types: # likely an attribute of a built-in structure, like a vector
                 current_type = ['float']
                 if x_type == ['float']:
                     # V(u).x -> dVdu.x
-                    current_ddx = pypeg2glsl.PostfixExpression([current_ddx, current])
-                elif x_type in pypeg2glsl.float_vector_types:
+                    current_ddx = glsl.PostfixExpression([current_ddx, current])
+                elif x_type in glsl.float_vector_types:
                     # V(U).x -> vec3(dVdU[0], 0.f, 0.f)
                     vecN = previous_type[0]
                     N = int(vecN[-1])
@@ -385,9 +411,9 @@ def get_ddx_postfix_expression(f, x, scope):
                         's':0,'t':1,'u':2,'v':3,
                       }[current]
                     vecN_params = ['0.0f' for i in range(N)]
-                    vecN_params[i] = pypeg2.compose(pypeg2glsl.PostfixExpression([current_ddx, current]), pypeg2glsl.PostfixExpression)
+                    vecN_params[i] = peg.compose(glsl.PostfixExpression([current_ddx, current]), glsl.PostfixExpression)
                     vecN_params = ','.join(vecN_params)
-                    current_ddx = pypeg2.parse(f'{vecN}({vecN_params})', pypeg2glsl.PostfixExpression)
+                    current_ddx = peg.parse(f'{vecN}({vecN_params})', glsl.PostfixExpression)
                 else:
                     throw_not_implemented_error(f, 'component access for non-float derivatives')
             # attribute access
@@ -426,16 +452,16 @@ def get_ddx_multiplicative_expression(f, x, scope):
     ]
 
     expression_strings = [ 
-        pypeg2.compose(expression, type(expression)) 
+        peg.compose(expression, type(expression)) 
         for expression in expressions_wrapped
     ]
 
     u, dudx, v, dvdx = expression_strings
 
     if f.operator == '*':
-        dfdx = pypeg2.parse(f'{v}*{dudx} + {u}*{dvdx}', pypeg2glsl.AdditiveExpression)
+        dfdx = peg.parse(f'{v}*{dudx} + {u}*{dvdx}', glsl.AdditiveExpression)
     elif f.operator == '/':
-        dfdx = pypeg2.parse(f'({v}*{dudx} - {u}*{dvdx})/({v}*{v})', pypeg2glsl.MultiplicativeExpression)
+        dfdx = peg.parse(f'({v}*{dudx} - {u}*{dvdx})/({v}*{v})', glsl.MultiplicativeExpression)
     else:
         throw_value_error(f, f'multiplicative expressions cannot have an operator of "{f.operator}"')
 
@@ -447,10 +473,10 @@ def get_ddx_additive_expression(f, x, scope):
     # so we don't have to worry about managing types
 
     multiplicative_expression_or_less = [
-        pypeg2glsl.MultiplicativeExpression, 
-        *pypeg2glsl.unary_expression_or_less
+        glsl.MultiplicativeExpression, 
+        *glsl.unary_expression_or_less
     ]
-    return pypeg2glsl.AdditiveExpression(
+    return glsl.AdditiveExpression(
         get_wrapped_expression_if_ambigous(
             get_ddx_expression(f.operand1, x, scope), 
             multiplicative_expression_or_less
@@ -463,42 +489,42 @@ def get_ddx_additive_expression(f, x, scope):
     )
 
 def get_ddx_parens_expression(f, x, scope):
-    return pypeg2glsl.ParensExpression(
+    return glsl.ParensExpression(
         get_ddx_expression(f.content, x, scope)
     )
 
 def get_ddx_literal(k, x, scope):
-    k_type = pypeg2glsl.get_expression_type(k, scope)
+    k_type = glsl.get_expression_type(k, scope)
     return get_0_for_type(k_type)
 
 def get_ddx_expression(f, x, scope):
     ''' 
     "get_ddx_function" is a pure function that 
-    transforms an pypeg2glsl grammar element matching pypeg2glsl.ternary_expression_or_less
-    into a pypeg2glsl parse tree representing the derivative with respect to a given variable. 
+    transforms an glsl grammar element matching pypeg2glsl.ternary_expression_or_less
+    into a glsl parse tree representing the derivative with respect to a given variable. 
     '''
     derivative_map = {
         (str, get_ddx_literal),
 
-        (pypeg2glsl.PostfixExpression,         get_ddx_postfix_expression), 
-        # (pypeg2glsl.PostIncrementExpression,   ),
-        # (pypeg2glsl.PreIncrementExpression,    ),
+        (glsl.PostfixExpression,         get_ddx_postfix_expression), 
+        # (glsl.PostIncrementExpression,   ),
+        # (glsl.PreIncrementExpression,    ),
 
-        (pypeg2glsl.MultiplicativeExpression,  get_ddx_multiplicative_expression),
-        (pypeg2glsl.AdditiveExpression,        get_ddx_additive_expression),
-        # (pypeg2glsl.ShiftExpression,           ),
-        # (pypeg2glsl.RelationalExpression,      ),
-        # (pypeg2glsl.EqualityExpression,        ),
-        # (pypeg2glsl.BitwiseAndExpression,      ),
-        # (pypeg2glsl.BitwiseXorExpression,      ),
-        # (pypeg2glsl.BitwiseOrExpression,       ),
-        # (pypeg2glsl.LogicalAndExpression,      ),
-        # (pypeg2glsl.LogicalXorExpression,      ),
-        # (pypeg2glsl.LogicalOrExpression,       ),
+        (glsl.MultiplicativeExpression,  get_ddx_multiplicative_expression),
+        (glsl.AdditiveExpression,        get_ddx_additive_expression),
+        # (glsl.ShiftExpression,           ),
+        # (glsl.RelationalExpression,      ),
+        # (glsl.EqualityExpression,        ),
+        # (glsl.BitwiseAndExpression,      ),
+        # (glsl.BitwiseXorExpression,      ),
+        # (glsl.BitwiseOrExpression,       ),
+        # (glsl.LogicalAndExpression,      ),
+        # (glsl.LogicalXorExpression,      ),
+        # (glsl.LogicalOrExpression,       ),
 
-        # (pypeg2glsl.TernaryExpression,         ),
+        # (glsl.TernaryExpression,         ),
 
-        (pypeg2glsl.ParensExpression,          get_ddx_parens_expression),
+        (glsl.ParensExpression,          get_ddx_parens_expression),
     }
     for Rule, get_ddx_rule in derivative_map:
         if isinstance(f, Rule):
@@ -511,37 +537,43 @@ def get_ddx_type(f_type, x_type, f=None):
     if x_type == ['float'] and f_type == ['float']:
         return ['float']
     # gradient
-    elif (f_type == ['float'] and x_type in pypeg2glsl.vector_types):
+    elif (f_type == ['float'] and x_type in glsl.vector_types):
         return x_type
     # component-wise scalar derivative
-    elif (f_type in pypeg2glsl.vector_types and x_type == ['float']):
+    elif (f_type in glsl.vector_types and x_type == ['float']):
         return f_type
     # either jacobian or component-wise vector derivative,
     # however jacobians have little use in shaders,
     # so we assume it is a component-wise derivative
-    elif (f_type in pypeg2glsl.vector_types and x_type == f_type):
+    elif (f_type in glsl.vector_types and x_type == f_type):
         return f_type
 
-    f_type_str = pypeg2.compose(pypeg2glsl.PostfixExpression(f_type), pypeg2glsl.PostfixExpression)
-    x_type_str = pypeg2.compose(pypeg2glsl.PostfixExpression(x_type), pypeg2glsl.PostfixExpression)
+    f_type_str = peg.compose(glsl.PostfixExpression(f_type), glsl.PostfixExpression)
+    x_type_str = peg.compose(glsl.PostfixExpression(x_type), glsl.PostfixExpression)
     raise throw_not_implemented_error(f, f'variables of type "{f_type_str}" and "{x_type_str}"')
 
 def get_ddx_function(f, x, scope):
     ''' 
     "get_ddx_function" is a pure function that finds analytic derivatives.
-    Given a pypeg2glsl parse tree representing a glsl function,
+    Given a glsl parse tree representing a glsl function,
     as well as the name of a parameter to that function, 
     and an instance of pypeg2glsl.LexicalScope,
-    it returns a pypeg2glsl parse tree representing the derivative 
+    it returns a glsl parse tree representing the derivative 
     of that function with respect to the parameter. 
     The function works for only a small subset of derivatives 
     but it is intended to fail-loudly. 
+    The most important restriction placed on functions is for all 
+    vector operations to be **COMPONENT-WISE ONLY**.
+    Jacobian derivatives are not currently supported, 
+    and support for the dot product currently rests on this assumption.
+    This means no vector constructors, swizzling, cross products, 
+    matrix multiplication, or attriute assignments.
     '''
     local_scope = scope.get_subscope(f)
     x_type = local_scope.variables[x]
 
-    dfdx = pypeg2glsl.FunctionDeclaration(
-        type_ = pypeg2glsl.PostfixExpression(
+    dfdx = glsl.FunctionDeclaration(
+        type_ = glsl.PostfixExpression(
             get_ddx_type(f.type.content, x_type, f)
         ), 
         name  = f'dd{x}_{f.name}',
@@ -551,7 +583,7 @@ def get_ddx_function(f, x, scope):
     x_param = [parameter for parameter in f.parameters if parameter.name == x]
     if len(x_param) < 1:
         dfdx.append(
-            pypeg2glsl.ReturnStatement(get_0_for_type(pypeg2glsl.get_expression_type(f, scope)))
+            glsl.ReturnStatement(get_0_for_type(glsl.get_expression_type(f, scope)))
         )
         return dfdx
 
@@ -561,7 +593,7 @@ def get_ddx_function(f, x, scope):
         dfdx.parameters.append(copy.deepcopy(param))
         if param.name != x:
             dfdx.content.append(
-                pypeg2glsl.VariableDeclaration(
+                glsl.VariableDeclaration(
                     type_ = copy.deepcopy(param.type),
                     names = [ f'dd{x}_{param.name}' ],
                     value = get_0_for_type(param.type.content),
@@ -570,21 +602,21 @@ def get_ddx_function(f, x, scope):
 
     # convert the content of the function
     for statement in f.content:
-        if isinstance(statement, pypeg2glsl.ReturnStatement):
+        if isinstance(statement, glsl.ReturnStatement):
             dfdx.content.append( 
-                pypeg2glsl.ReturnStatement(get_ddx_expression(statement.value, x, local_scope))
+                glsl.ReturnStatement(get_ddx_expression(statement.value, x, local_scope))
             )
-        elif isinstance(statement, pypeg2glsl.VariableDeclaration):
+        elif isinstance(statement, glsl.VariableDeclaration):
             dfdx.content.append( copy.deepcopy(statement) )
             dfdx.content.append(
-                pypeg2glsl.VariableDeclaration(
-                    type_ = pypeg2glsl.PostfixExpression(get_ddx_type(statement.type.content, x_type, statement)),
+                glsl.VariableDeclaration(
+                    type_ = glsl.PostfixExpression(get_ddx_type(statement.type.content, x_type, statement)),
                     names = [ f'dd{x}_{name}' for name in statement.names],
                     value = get_ddx_expression(statement.value, x, local_scope),
                 )
             )
         else:
-            statement_str = pypeg2.compose(statement, type(statement))
+            statement_str = peg.compose(statement, type(statement))
             throw_not_implemented_error(statement, f'{type(statement)}')
 
     return dfdx
@@ -592,12 +624,12 @@ def get_ddx_function(f, x, scope):
 def convert_glsl(input_glsl):
     ''' 
     "convert_glsl" is a pure function that performs 
-    a transformation on a parse tree of glsl as represented by pypeg2glsl,
+    a transformation on a parse tree of glsl as represented by glsl,
     then returns a transformed parse tree as output. 
     '''
     output_glsl = [
-        get_ddx_function(declaration, declaration.parameters[0].name, pypeg2glsl.LexicalScope(input_glsl)) 
-        if isinstance(declaration, pypeg2glsl.FunctionDeclaration)
+        get_ddx_function(declaration, declaration.parameters[0].name, glsl.LexicalScope(input_glsl)) 
+        if isinstance(declaration, glsl.FunctionDeclaration)
         else declaration
         for declaration in input_glsl
     ]
@@ -612,9 +644,9 @@ def convert_text(input_text):
     and may also perform additional string based transformations,
     such as string substitutions or regex replacements
     '''
-    input_glsl = pypeg2.parse(input_text, pypeg2glsl.glsl)
+    input_glsl = peg.parse(input_text, glsl.code)
     output_glsl = convert_glsl(input_glsl)
-    output_text = pypeg2.compose(output_glsl, pypeg2glsl.glsl, autoblank = False) 
+    output_text = peg.compose(output_glsl, glsl.code, autoblank = False) 
     return output_text
 
 def convert_file(input_filename=False, in_place=False, verbose=False):

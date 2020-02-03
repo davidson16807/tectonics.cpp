@@ -55,9 +55,9 @@ def debug(element, indent=''):
         return f'{indent}[\n{subelements}\n{indent}]'
     elif isinstance(element, JsElement):
         try:
-            return (f'{indent}pypeg2glsl.{type(element).__name__}<"{pypeg2.compose(element, type(element))}">')
+            return (f'{indent}pypeg2js.{type(element).__name__}<"{pypeg2.compose(element, type(element))}">')
         except ValueError as e:
-            header = f'{indent}pypeg2glsl.{type(element).__name__}<ERROR>'
+            header = f'{indent}pypeg2js.{type(element).__name__}<ERROR>'
             invalid = '\n'.join([
                     f'{indent}  {attribute}: \n{debug(getattr(element, attribute), indent+"    ")}' 
                     for attribute in element_attributes 
@@ -298,4 +298,4 @@ FunctionDeclaration.grammar = (
     attr('content', compound_statement), endl
 )
 
-javascript = code_block
+code = code_block

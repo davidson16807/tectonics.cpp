@@ -17,7 +17,7 @@ import re
 import copy
 
 import pypeg2
-from pypeg2 import attr, optional, maybe_some, some, blank, endl
+from pypeg2 import attr, optional, maybe_some, blank, endl
 
 inline_comment = re.compile('/\*((?!\*/).)*\*/\s*', re.MULTILINE | re.DOTALL)
 endline_comment = re.compile('//[^\n]*\s*', re.MULTILINE | re.DOTALL)
@@ -357,7 +357,7 @@ StructureDeclaration.grammar = (
     '}', ';', endl, endl
 )
 
-glsl = maybe_some(
+code = maybe_some(
     [
         StructureDeclaration, FunctionDeclaration, (VariableDeclaration, ';', endl),
         inline_comment, endline_comment,
