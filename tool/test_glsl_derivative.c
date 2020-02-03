@@ -7,7 +7,7 @@ float test_min(in float x)
 float test_abs(in float x)
 {
 	float u = 2.*x*x;
-	return sqrt(u);
+	return abs(u);
 }
 float test_min(in float x, in float y)
 {
@@ -15,37 +15,47 @@ float test_min(in float x, in float y)
 	float v = 2.*y*y;
 	return min(u, v);
 }
-float test_length(in vec2 U)
+float test_length(in vec2 X)
 {
-	vec2 G = 2.*U*U;
-    return length(G);
+	vec2 U = 2.*X*X;
+    return length(U);
+}
+float test_dot(in vec2 X)
+{
+	vec2 U = 2.*X*X;
+	vec2 V = 0.5*X*X*X;
+    return dot(U,V);
 }
 
-float test_vec_x_float(in vec2 U)
+float test_vec_x_float(in vec2 X)
 {
-    vec2 G = 2.*U*U;
-    return sqrt(G.x);
+    vec2 U = 2.*X*X;
+    return sqrt(U.x);
 }
-float test_vec_0_float(in vec2 U)
+float test_vec_0_float(in vec2 X)
 {
-    vec2 G = 2.*U*U;
-    return sqrt(G[0]);
+    vec2 U = 2.*X*X;
+    return sqrt(U[0]);
 }
 
-/*
+
 vec2 test_vec_x_vec(in float u)
 {
-    vec2 G = vec2(1.f)*u;
-    vec2 H = vec2(1.f)*G.x;
+    vec2 G = 2.f*u;
+    vec2 H = 2.f*G.x;
     return G;
 }
 vec2 test_vec_0_vec(in float u)
 {
-    vec2 G = vec2(1.f)*u;
-    vec2 H = vec2(1.f)*G[0];
+    vec2 G = 2.f*u;
+    vec2 H = 2.f*G[0];
     return G;
 }
-*/
+float test_constant(in vec2 X)
+{
+    vec2 U = vec2(1.f);
+    return sqrt(U.x);
+}
 float ellipsoid(in vec3 A0, in vec3 B0, in vec3 R)
 {
     vec3  V  = A0-B0;

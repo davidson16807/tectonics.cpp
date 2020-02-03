@@ -174,6 +174,10 @@ def get_ddx_abs(f, x, scope):
             glsl.binary_expression_or_less,
         )
     ]
+    expression_strings = [
+        peg.compose(expression, type(expression))
+        for expression in expressions
+    ]
     u, dudx = expression_strings
     u_type = glsl.get_expression_type(f_params[0], scope)
     if (u_type == ['float']):
@@ -283,10 +287,19 @@ def get_ddx_invocation(f, x, scope):
         'length': 'normalize',
         'sin': 'cos',
     }
-    # constructor (built-in)
-    if [name] in glsl.built_in_types:
+    # supported constructor (built-in, constant, floating point)
+    if ([name] in glsl.float_vector_types and 
+        all([isinstance(param, str) and 
+             (glsl.float_literal.match(param) or 
+              glsl.int_literal.match(param))
+             for param in params])):
+        return glsl.PostfixExpression([
+            name, glsl.InvocationExpression(['0.0f' for param in params])
+        ])
+    # non-supported constructor (built-in)
+    elif [name] in glsl.built_in_types:
         throw_not_implemented_error(f, 'constructors')
-    # constructor (user-defined)
+    # non-supported constructor (user-defined)
     elif name in scope.attributes:
         throw_not_implemented_error(f, 'custom data structures')
     # function invocation (built-in)
