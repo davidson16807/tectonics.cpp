@@ -35,46 +35,47 @@ def throw_not_implemented_error(f, feature='expressions'):
     f_str = peg.compose(f, type(f))
     raise NotImplementedError(f'support for derivatives involving {feature} such as "{f_str}" is not implemented')
 
-def throw_value_error(f, feature='invalid expression'):
+def throw_value_error(f, description='invalid expression'):
     f_str = peg.compose(f, type(f))
-    raise NotImplementedError(f'{feature}, cannot continue safely: \n\t{f_str}')
+    raise NotImplementedError(f'{description}, cannot continue safely: \n\t{f_str}')
 
 def get_1_for_type(type_):
     identity_map ={
-        'vec2': peg.parse('vec2(1.f)', glsl.PostfixExpression),
-        'vec3': peg.parse('vec3(1.f)', glsl.PostfixExpression),
-        'vec4': peg.parse('vec4(1.f)', glsl.PostfixExpression),
+        'vec2': peg.parse('vec2(1.f)', glsl.NewStyleInvocationExpression),
+        'vec3': peg.parse('vec3(1.f)', glsl.NewStyleInvocationExpression),
+        'vec4': peg.parse('vec4(1.f)', glsl.NewStyleInvocationExpression),
 
         'float': '1.0f',
         'int': '1'
     }
-    type_element = glsl.PostfixExpression(type_)
-    type_str = peg.compose(type_element, glsl.PostfixExpression)
-    if type_str in identity_map:
-        return identity_map[type_str]
+    if type_ in identity_map:
+        return identity_map[type_]
     else:
         throw_not_implemented_error(type_element, 'additives identities for types')
     
 def get_0_for_type(type_):
     identity_map ={
-        'vec2': peg.parse('vec2(0.f)', glsl.PostfixExpression),
-        'vec3': peg.parse('vec3(0.f)', glsl.PostfixExpression),
-        'vec4': peg.parse('vec4(0.f)', glsl.PostfixExpression),
+        'vec2': peg.parse('vec2(0.f)', glsl.NewStyleInvocationExpression),
+        'vec3': peg.parse('vec3(0.f)', glsl.NewStyleInvocationExpression),
+        'vec4': peg.parse('vec4(0.f)', glsl.NewStyleInvocationExpression),
 
         'float': '0.0f',
         'int': '0'
     }
-    type_element = glsl.PostfixExpression(type_)
-    type_str = peg.compose(type_element, glsl.PostfixExpression)
-    if type_str in identity_map:
-        return identity_map[type_str]
+    if type_ in identity_map:
+        return identity_map[type_]
     else:
         throw_not_implemented_error(type_element, 'multiplicative identities for types')
 
-def get_wrapped_expression_if_ambigous(
+def maybe_wrap(
         expression, 
         unambiguous_expression_types = glsl.unary_expression_or_less
     ):
+    '''
+    "maybe_wrap" wraps an expression in parentheses 
+    and returns the ParensExpression if there is risk of it causing ambiguity,
+    otherwise it returns the original unwrapped expression.
+    '''
     return ( 
         expression 
         if type(expression) in unambiguous_expression_types 
@@ -83,131 +84,97 @@ def get_wrapped_expression_if_ambigous(
     )
 
 def get_ddx_max(f, x, scope):
-    f_params = f.content[1].content
+    f_args = f.arguments
     additive_expression_or_less = [
         glsl.AdditiveExpression,
         *glsl.unary_expression_or_less
     ]
     expressions = [
-        get_wrapped_expression_if_ambigous(
-            f_params[0], 
-            additive_expression_or_less
-        ),
-        get_wrapped_expression_if_ambigous(
-            get_ddx_expression(f_params[0], x, scope),
-            glsl.binary_expression_or_less,
-        ),
-        get_wrapped_expression_if_ambigous(
-            f_params[1], 
-            additive_expression_or_less
-        ),
-        get_wrapped_expression_if_ambigous(
-            get_ddx_expression(f_params[1], x, scope),
-            glsl.binary_expression_or_less,
-        )
+        maybe_wrap(f_args[0], additive_expression_or_less),
+        maybe_wrap(get_ddx(f_args[0], x, scope), glsl.binary_expression_or_less),
+        maybe_wrap(f_args[1], additive_expression_or_less),
+        maybe_wrap(get_ddx(f_args[1], x, scope), glsl.binary_expression_or_less)
     ]
     expression_strings = [
         peg.compose(expression, type(expression))
         for expression in expressions
     ]
     u, dudx, v, dvdx = expression_strings
-    u_type = glsl.get_expression_type(f_params[0], scope)
-    v_type = glsl.get_expression_type(f_params[1], scope)
-    if (u_type == ['float'] and v_type == ['float']):
+    u_type = scope.get_expression_type(f_args[0])
+    v_type = scope.get_expression_type(f_args[1])
+    if (u_type == 'float' and v_type == 'float'):
         return peg.parse(f''' 
             {u} > {v} ? {dudx} : {dvdx}
         ''', glsl.TernaryExpression)
     else:
-        throw_not_implemented_error('component-wise max')
+        throw_not_implemented_error(f, 'calls to component-wise max()')
 
 def get_ddx_min(f, x, scope):
-    f_params = f.content[1].content
+    f_args = f.arguments
     additive_expression_or_less = [
         glsl.AdditiveExpression,
         *glsl.unary_expression_or_less
     ]
     expressions = [
-        get_wrapped_expression_if_ambigous(
-            f_params[0], 
-            additive_expression_or_less
-        ),
-        get_wrapped_expression_if_ambigous(
-            get_ddx_expression(f_params[0], x, scope),
-            glsl.binary_expression_or_less,
-        ),
-        get_wrapped_expression_if_ambigous(
-            f_params[1], 
-            additive_expression_or_less
-        ),
-        get_wrapped_expression_if_ambigous(
-            get_ddx_expression(f_params[1], x, scope),
-            glsl.binary_expression_or_less,
-        )
+        maybe_wrap(f_args[0], additive_expression_or_less),
+        maybe_wrap(get_ddx(f_args[0], x, scope), glsl.binary_expression_or_less),
+        maybe_wrap(f_args[1], additive_expression_or_less),
+        maybe_wrap(get_ddx(f_args[1], x, scope), glsl.binary_expression_or_less)
     ]
     expression_strings = [
         peg.compose(expression, type(expression))
         for expression in expressions
     ]
     u, dudx, v, dvdx = expression_strings
-    u_type = glsl.get_expression_type(f_params[0], scope)
-    v_type = glsl.get_expression_type(f_params[1], scope)
-    if (u_type == ['float'] and v_type == ['float']):
+    u_type = scope.get_expression_type(f_args[0])
+    v_type = scope.get_expression_type(f_args[1])
+    if (u_type == 'float' and v_type == 'float'):
         return peg.parse(f''' 
             {u} < {v} ? {dudx} : {dvdx}
         ''', glsl.TernaryExpression)
     else:
-        throw_not_implemented_error('component-wise min')
+        throw_not_implemented_error(f, 'calls to component-wise min()')
     
 def get_ddx_abs(f, x, scope):
-    f_params = f.content[1].content
+    f_args = f.arguments
     additive_expression_or_less = [
         glsl.AdditiveExpression,
         *glsl.unary_expression_or_less
     ]
     expressions = [
-        get_wrapped_expression_if_ambigous(
-            f_params[0], 
-            additive_expression_or_less
-        ),
-        get_wrapped_expression_if_ambigous(
-            get_ddx_expression(f_params[0], x, scope),
-            glsl.binary_expression_or_less,
-        )
+        maybe_wrap(f_args[0], additive_expression_or_less),
+        maybe_wrap(get_ddx(f_args[0], x, scope), glsl.binary_expression_or_less)
     ]
     expression_strings = [
         peg.compose(expression, type(expression))
         for expression in expressions
     ]
     u, dudx = expression_strings
-    u_type = glsl.get_expression_type(f_params[0], scope)
-    if (u_type == ['float']):
+    u_type = scope.get_expression_type(f_args[0])
+    if (u_type == 'float'):
         return peg.parse(f''' 
             {u} > 0.0f ? {dudx} : -{dudx}
         ''', glsl.TernaryExpression)
     else:
-        throw_not_implemented_error('component-wise abs')
+        throw_not_implemented_error(f, 'calls to component-wise abs()')
 
 def get_ddx_sqrt(f, x, scope):
-    f_params = f.content[1].content
+    f_args = f.arguments
     output = glsl.MultiplicativeExpression(
-        get_wrapped_expression_if_ambigous(
-            get_ddx_expression(f_params[0], x, scope)
-        ),
+        maybe_wrap(get_ddx(f_args[0], x, scope)),
         '/',
-        get_wrapped_expression_if_ambigous(
-            glsl.MultiplicativeExpression('2.0f', '*', f)
-        ),
+        maybe_wrap(glsl.MultiplicativeExpression('2.0f', '*', f)),
     )
     return output
 
 
 def get_ddx_dot(f, x, scope):
-    if len(f.content) != 2:
+    if len(f.arguments) != 2:
         throw_value_error(f, 'dot product must have two parameters')
-    u = f.content[1].content[0]
-    v = f.content[1].content[1]
-    u_type = glsl.get_expression_type(u, scope)
-    v_type = glsl.get_expression_type(v, scope)
+    u = f.arguments[0]
+    v = f.arguments[1]
+    u_type = scope.get_expression_type(u)
+    v_type = scope.get_expression_type(v)
 
     if (u_type not in glsl.vector_types or 
         v_type not in glsl.vector_types):
@@ -217,10 +184,10 @@ def get_ddx_dot(f, x, scope):
         throw_not_implemented_error(f, 'non-floating point dot products')
 
     expressions = [
-        get_wrapped_expression_if_ambigous( u ),
-        get_wrapped_expression_if_ambigous( get_ddx_expression(u, x, scope) ),
-        get_wrapped_expression_if_ambigous( v ),
-        get_wrapped_expression_if_ambigous( get_ddx_expression(v, x, scope) ),
+        maybe_wrap( u ),
+        maybe_wrap( get_ddx(u, x, scope) ),
+        maybe_wrap( v ),
+        maybe_wrap( get_ddx(v, x, scope) ),
     ]
     expression_strings = [
         peg.compose(expression, type(expression))
@@ -273,9 +240,7 @@ def get_ddx_dot(f, x, scope):
         glsl.AdditiveExpression
     )
 
-def get_ddx_invocation(f, x, scope):
-    name = f.content[0]
-    params = f.content[1].content
+def get_ddx_invocation_expression(f, x, scope):
     dfdu_getter_map = {
         'abs' : get_ddx_abs,
         'min' : get_ddx_min,
@@ -289,46 +254,39 @@ def get_ddx_invocation(f, x, scope):
         'length': 'normalize',
         'sin': 'cos',
     }
-    # supported constructor (built-in, constant, floating point)
-    if ([name] in glsl.float_vector_types and 
-        all([isinstance(param, str) and 
-             (glsl.float_literal.match(param) or 
-              glsl.int_literal.match(param))
-             for param in params])):
-        return glsl.PostfixExpression([
-            name, glsl.InvocationExpression(['0.0f' for param in params])
-        ])
+    # supported constructor (constant floating point vector)
+    if (f.reference in glsl.float_vector_types and 
+        all([isinstance(argument, str) and 
+             (glsl.float_literal.match(argument) or 
+              glsl.int_literal.match(argument))
+             for argument in f.arguments])):
+        return glsl.NewStyleInvocationExpression(
+            f.reference, ['0.0f' for argument in f.arguments]
+        )
     # non-supported constructor (built-in)
-    elif [name] in glsl.built_in_types:
+    elif f.reference in glsl.built_in_types:
         throw_not_implemented_error(f, 'constructors')
     # non-supported constructor (user-defined)
-    elif name in scope.attributes:
-        throw_not_implemented_error(f, 'custom data structures')
+    elif f.reference in scope.attributes:
+        throw_not_implemented_error(f, 'user-defined data structures')
     # function invocation (built-in)
-    elif name in dfdu_getter_map:
-        return dfdu_getter_map[name](f, x, scope)
+    elif f.reference in dfdu_getter_map:
+        return dfdu_getter_map[f.reference](f, x, scope)
     # function invocation (user-defined)
-    elif len(params) > 1:
-        throw_not_implemented_error(f, 'multi-parameter functions')
-    elif len(params) < 1:
-        return get_0_for_type(glsl.get_expression_type(f, scope))
+    elif len(f.arguments) > 1:
+        throw_not_implemented_error(f, 'user-defined multi-parameter functions')
+    elif len(f.arguments) < 1:
+        return get_0_for_type(scope.get_expression_type(f))
     else:
-        dfdu = dfdu_name_map[name] if name in dfdu_name_map else f'dd{x}_{name}'
-        dudx = get_wrapped_expression_if_ambigous(
-            get_ddx_expression(params[0], x, scope)
-        )
+        dfdu = dfdu_name_map[f.reference] if f.reference in dfdu_name_map else f'dd{x}_{f.reference}'
+        dudx = maybe_wrap(get_ddx(f.arguments[0], x, scope))
         return glsl.MultiplicativeExpression(
-            glsl.PostfixExpression([
-                dfdu, 
-                glsl.InvocationExpression(params)
-            ]), 
+            glsl.NewStyleInvocationExpression(dfdu, f.arguments), 
             '*', 
             dudx
         )
 
-def get_ddx_postfix_expression(f, x, scope):
-            
-    dfdx = glsl.PostfixExpression()
+def get_ddx_attribute_expression(f, x, scope):
     '''
     Here is where we have to start worrying about type
     monitor the type of every differential.
@@ -342,110 +300,87 @@ def get_ddx_postfix_expression(f, x, scope):
        * derivatives of vectors with respect to scalars, or...
        * derivatives of scalars with respect to vectors
     '''
-    f_type = glsl.get_expression_type(f, scope)
-    x_type = glsl.get_expression_type(glsl.PostfixExpression([x]), scope)
+    f_type = scope.get_expression_type(f)
+    x_type = scope.get_expression_type(x)
 
-    elements = copy.deepcopy(f.content)
-    current = elements.pop(0)
-    current_type = []
-    current_ddx = None
-    # parentheses
-    if isinstance(current, glsl.ParensExpression):
-        current_type = glsl.get_expression_type(current, scope)
-        current_ddx = get_ddx_parens_expression(current, x, scope)
-    # function invocation
-    elif len(elements) > 0 and isinstance(elements[0], glsl.InvocationExpression):
-        invocation = glsl.PostfixExpression([current, elements.pop(0)])
-        current_type = glsl.get_expression_type(invocation, scope)
-        current_ddx  = get_ddx_invocation(invocation, x, scope)
     # variable reference
-    elif isinstance(current, str):
-        current_type = glsl.get_expression_type(
-            glsl.PostfixExpression([current]), 
-            scope
-        )
-        if current == x:
-            current_ddx = get_1_for_type(glsl.get_expression_type(f, scope))
-        else:
-            current_ddx = glsl.PostfixExpression([f'dd{x}_{current}'])
+    type_ = scope.get_expression_type(f.reference)
+    if f.reference == x:
+        ddx = get_1_for_type(scope.get_expression_type(f))
+    elif isinstance(f.reference, str):
+        ddx = f'dd{x}_{f.reference}'
     else:
-        throw_not_implemented_error(f)
+        ddx  = get_ddx(f.reference, x, scope)
 
-    previous = current
-    previous_type = current_type
-    previous_ddx = current_ddx
-    while len(elements) > 0:
-        current = elements.pop(0)
-        if isinstance(current, glsl.BracketedExpression):
+    updated_ddx = None
+    for attribute in f.attributes:
+        if isinstance(attribute, glsl.BracketedExpression):
             # matrix column access
-            if previous_type in glsl.matrix_types:
-                current_type = [re.sub('mat(\d)x?', 'vec\\1', previous_type[0])]
+            if type_ in glsl.matrix_types:
+                updated_type = re.sub('mat(\d)x?', 'vec\\1', type_)
                 throw_not_implemented_error(f, 'matrix column access')
             # vector component access
-            elif previous_type in glsl.vector_types:
-                current_type = ['float']
-                if (isinstance(current.content, str) and 
-                    glsl.int_literal.match(current.content)):
-                    if x_type == ['float']:
+            elif type_ in glsl.vector_types:
+                updated_type = 'float'
+                if (isinstance(attribute.content, str) and 
+                    glsl.int_literal.match(attribute.content)):
+                    if x_type == 'float':
                         # V(u)[0] -> dVdu[0]
-                        current_ddx = glsl.PostfixExpression([current_ddx, current])
+                        updated_ddx = glsl.NewStyleAttributeExpression(ddx, attribute)
                     elif x_type in glsl.float_vector_types:
                         # V(U)[0] -> vec3(dVdU[0], 0.f, 0.f)
-                        vecN = previous_type[0]
+                        vecN = type_
                         N = int(vecN[-1])
-                        i = int(current.content)
+                        i = int(attribute.content)
                         vecN_params = ['0.0f' for i in range(N)]
-                        vecN_params[i] = peg.compose(glsl.PostfixExpression([current_ddx, current]), glsl.PostfixExpression)
+                        vecN_params[i] = peg.compose(glsl.NewStyleAttributeExpression(updated_ddx, attribute), glsl.NewStyleAttributeExpression)
                         vecN_params = ','.join(vecN_params)
-                        current_ddx = peg.parse(f'{vecN}({vecN_params})', glsl.PostfixExpression)
+                        updated_ddx = peg.parse(f'{vecN}({vecN_params})', glsl.NewStyleInvocationExpression)
                     else:
                         throw_not_implemented_error(f, 'component access for non-float derivatives')
                 else:
                     throw_not_implemented_error(f, 'variable vector component access')
             # array index access
-            elif (len(previous_type) > 1 and 
-                isinstance(previous_type[1], glsl.BracketedExpression)):
-                current_type = [previous_type[0]]
+            elif (isinstance(type_, glsl.NewStyleAttributeExpression)):
+                updated_type = [type_]
                 throw_not_implemented_error(f, 'array index access')
             else:
                 throw_not_implemented_error(f)
-        elif isinstance(current, str):
+        elif isinstance(attribute, str):
             # vector component access
-            if previous_type in glsl.vector_types: # likely an attribute of a built-in structure, like a vector
-                current_type = ['float']
-                if len(current) > 1:
+            if type_ in glsl.vector_types: # likely an attribute of a built-in structure, like a vector
+                updated_type = 'float'
+                if len(attribute) > 1:
                     throw_not_implemented_error(f, 'swizzling')
-                if x_type == ['float']:
+                if x_type == 'float':
                     # V(u).x -> dVdu.x
-                    current_ddx = glsl.PostfixExpression([current_ddx, current])
+                    updated_ddx = glsl.NewStyleAttributeExpression(ddx, attribute)
                 elif x_type in glsl.float_vector_types:
                     # V(U).x -> vec3(dVdU[0], 0.f, 0.f)
-                    vecN = previous_type[0]
+                    vecN = type_
                     N = int(vecN[-1])
                     i = {
                         'x':0,'y':1,'z':2,'w':3,
                         'r':0,'g':1,'b':2,'a':3,
                         's':0,'t':1,'u':2,'v':3,
-                      }[current]
+                      }[attribute]
                     vecN_params = ['0.0f' for i in range(N)]
-                    vecN_params[i] = peg.compose(glsl.PostfixExpression([current_ddx, current]), glsl.PostfixExpression)
+                    vecN_params[i] = peg.compose(glsl.NewStyleAttributeExpression(updated_ddx, attribute), glsl.NewStyleAttributeExpression)
                     vecN_params = ','.join(vecN_params)
-                    current_ddx = peg.parse(f'{vecN}({vecN_params})', glsl.PostfixExpression)
+                    updated_ddx = peg.parse(f'{vecN}({vecN_params})', glsl.NewStyleInvocationExpression)
                 else:
                     throw_not_implemented_error(f, 'component access for non-float derivatives')
             # attribute access
-            elif (len(previous_type) == 1 and 
-                previous_type[0] in scope.attributes and
-                current in scope.attributes[previous_type[0]]):
-                current_type = scope.attributes[previous_type[0]][current]
+            elif (type_ in scope.attributes and
+                attribute in scope.attributes[type_]):
+                updated_type = scope.attributes[type_][attribute]
                 throw_not_implemented_error(f, 'attribute access')
             else:
                 throw_not_implemented_error(f)
-        previous = current
-        previous_type = current_type
-        previous_ddx = current_ddx
+        type_ = updated_type
+        ddx = updated_ddx
 
-    return previous_ddx 
+    return ddx 
 
 def get_ddx_multiplicative_expression(f, x, scope):
     # programming at its finest, boys 😃
@@ -456,15 +391,15 @@ def get_ddx_multiplicative_expression(f, x, scope):
         #u
         f.operand1, 
         #dudx
-        get_ddx_expression(f.operand1, x, scope), 
+        get_ddx(f.operand1, x, scope), 
         #v
         f.operand2, 
         #dvdx
-        get_ddx_expression(f.operand2, x, scope), 
+        get_ddx(f.operand2, x, scope), 
     ]
 
     expressions_wrapped = [
-        get_wrapped_expression_if_ambigous(expression) 
+        maybe_wrap(expression) 
         for expression in expressions
     ]
 
@@ -494,27 +429,27 @@ def get_ddx_additive_expression(f, x, scope):
         *glsl.unary_expression_or_less
     ]
     return glsl.AdditiveExpression(
-        get_wrapped_expression_if_ambigous(
-            get_ddx_expression(f.operand1, x, scope), 
+        maybe_wrap(
+            get_ddx(f.operand1, x, scope), 
             multiplicative_expression_or_less
         ),
         f.operator,
-        get_wrapped_expression_if_ambigous(
-            get_ddx_expression(f.operand2, x, scope), 
+        maybe_wrap(
+            get_ddx(f.operand2, x, scope), 
             multiplicative_expression_or_less
         ),
     )
 
 def get_ddx_parens_expression(f, x, scope):
     return glsl.ParensExpression(
-        get_ddx_expression(f.content, x, scope)
+        get_ddx(f.content, x, scope)
     )
 
 def get_ddx_literal(k, x, scope):
-    k_type = glsl.get_expression_type(k, scope)
+    k_type = scope.get_expression_type(k)
     return get_0_for_type(k_type)
 
-def get_ddx_expression(f, x, scope):
+def get_ddx(f, x, scope):
     ''' 
     "get_ddx_function" is a pure function that 
     transforms an glsl grammar element matching pypeg2glsl.ternary_expression_or_less
@@ -523,7 +458,8 @@ def get_ddx_expression(f, x, scope):
     derivative_map = {
         (str, get_ddx_literal),
 
-        (glsl.PostfixExpression,         get_ddx_postfix_expression), 
+        (glsl.NewStyleInvocationExpression, get_ddx_invocation_expression),
+        (glsl.NewStyleAttributeExpression, get_ddx_attribute_expression),
         # (glsl.PostIncrementExpression,   ),
         # (glsl.PreIncrementExpression,    ),
 
@@ -551,13 +487,13 @@ def get_ddx_expression(f, x, scope):
     
 def get_ddx_type(f_type, x_type, f=None):
     # scalar derivative
-    if x_type == ['float'] and f_type == ['float']:
-        return ['float']
+    if x_type == 'float' and f_type == 'float':
+        return 'float'
     # gradient
-    elif (f_type == ['float'] and x_type in glsl.vector_types):
+    elif (f_type == 'float' and x_type in glsl.vector_types):
         return x_type
     # component-wise scalar derivative
-    elif (f_type in glsl.vector_types and x_type == ['float']):
+    elif (f_type in glsl.vector_types and x_type == 'float'):
         return f_type
     # either jacobian or component-wise vector derivative,
     # however jacobians have little use in shaders,
@@ -565,8 +501,8 @@ def get_ddx_type(f_type, x_type, f=None):
     elif (f_type in glsl.vector_types and x_type == f_type):
         return f_type
 
-    f_type_str = peg.compose(glsl.PostfixExpression(f_type), glsl.PostfixExpression)
-    x_type_str = peg.compose(glsl.PostfixExpression(x_type), glsl.PostfixExpression)
+    f_type_str = peg.compose(f_type, type(f_type))
+    x_type_str = peg.compose(x_type, type(x_type))
     raise throw_not_implemented_error(f, f'variables of type "{f_type_str}" and "{x_type_str}"')
 
 def get_ddx_function(f, x, scope):
@@ -590,9 +526,7 @@ def get_ddx_function(f, x, scope):
     x_type = local_scope.variables[x]
 
     dfdx = glsl.FunctionDeclaration(
-        type_ = glsl.PostfixExpression(
-            get_ddx_type(f.type.content, x_type, f)
-        ), 
+        type_ = get_ddx_type(f.type, x_type, f),
         name  = f'dd{x}_{f.name}',
     )
 
@@ -600,7 +534,7 @@ def get_ddx_function(f, x, scope):
     x_param = [parameter for parameter in f.parameters if parameter.name == x]
     if len(x_param) < 1:
         dfdx.append(
-            glsl.ReturnStatement(get_0_for_type(glsl.get_expression_type(f, scope)))
+            glsl.ReturnStatement(get_0_for_type(scope.get_expression_type(f)))
         )
         return dfdx
 
@@ -613,7 +547,7 @@ def get_ddx_function(f, x, scope):
                 glsl.VariableDeclaration(
                     type_ = copy.deepcopy(param.type),
                     names = [ f'dd{x}_{param.name}' ],
-                    value = get_0_for_type(param.type.content),
+                    value = get_0_for_type(param.type),
                 )
             )
 
@@ -621,15 +555,15 @@ def get_ddx_function(f, x, scope):
     for statement in f.content:
         if isinstance(statement, glsl.ReturnStatement):
             dfdx.content.append( 
-                glsl.ReturnStatement(get_ddx_expression(statement.value, x, local_scope))
+                glsl.ReturnStatement(get_ddx(statement.value, x, local_scope))
             )
         elif isinstance(statement, glsl.VariableDeclaration):
             dfdx.content.append( copy.deepcopy(statement) )
             dfdx.content.append(
                 glsl.VariableDeclaration(
-                    type_ = glsl.PostfixExpression(get_ddx_type(statement.type.content, x_type, statement)),
+                    type_ = get_ddx_type(statement.type, x_type, statement),
                     names = [ f'dd{x}_{name}' for name in statement.names],
-                    value = get_ddx_expression(statement.value, x, local_scope),
+                    value = get_ddx(statement.value, x, local_scope),
                 )
             )
         else:
