@@ -282,6 +282,8 @@ def get_ddx_invocation(f, x, scope):
         'max' : get_ddx_max,
         'sqrt': get_ddx_sqrt,
         'dot' : get_ddx_dot,
+        'normalize': lambda f,x,scope: throw_not_implemented_error(f, 'non-component-wise functions'),
+        'cross': lambda f,x,scope: throw_not_implemented_error(f, 'non-component-wise functions'),
     }
     dfdu_name_map = {
         'length': 'normalize',
@@ -411,6 +413,8 @@ def get_ddx_postfix_expression(f, x, scope):
             # vector component access
             if previous_type in glsl.vector_types: # likely an attribute of a built-in structure, like a vector
                 current_type = ['float']
+                if len(current) > 1:
+                    throw_not_implemented_error(f, 'swizzling')
                 if x_type == ['float']:
                     # V(u).x -> dVdu.x
                     current_ddx = glsl.PostfixExpression([current_ddx, current])
