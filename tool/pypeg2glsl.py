@@ -69,16 +69,21 @@ element_attributes = [
     'operation',
 
     'value',
+    'content',
+    'else',
+
+    'reference',
+    'arguments',
+    'attribute',
+    'index',
     'operand1',
     'operator',
     'operand2',
     'operand3',
-    'content',
 
     'comment1',
     'comment2',
     'comment3',
-    'else',
 ]
 '''
 "debug" returns a string representing a variable that is intended to be a GlslElement.
@@ -117,6 +122,21 @@ def debug(element, indent=''):
 class GlslElement:
     def __init__(self):
         pass
+
+class NewStyleInvocationExpression(GlslElement):
+    def __init__(self, reference=None, arguments=None):
+        self.reference = reference
+        self.arguments = arguments
+
+class NewStylePostfixExpression(GlslElement):
+    def __init__(self, reference=None, attribute=None):
+        self.reference = reference
+        self.attribute = attribute
+
+class NewStyleBracketedExpression(GlslElement):
+    def __init__(self, reference=None, index=None):
+        self.reference = reference
+        self.index = index
 
 class PostfixExpression(GlslElement): 
     def __init__(self, content=None):
@@ -214,6 +234,7 @@ primary_expression = [
     float_literal, 
     int_literal, 
     bool_literal, 
+    token,
     ParensExpression
 ]
 
@@ -278,6 +299,19 @@ TernaryExpression.grammar = (
 BracketedExpression.grammar  = '[', attr('content', ternary_expression_or_less), ']'
 ParensExpression.grammar     = '(', attr('content', ternary_expression_or_less), ')'
 InvocationExpression.grammar = '(', attr('content', optional(ternary_expression_or_less, maybe_some(',', blank, ternary_expression_or_less))), ')'
+
+NewStyleInvocationExpression.grammar = (
+    attr('reference', [token, ParensExpression, PostfixExpression, NewStyleBracketedExpression]),
+    '(', attr('arguments', maybe_some(ternary_expression_or_less)), ')'
+)
+NewStyleBracketedExpression.grammar = (
+    attr('reference', [token, ParensExpression, PostfixExpression, NewStyleBracketedExpression, NewStyleInvocationExpression]),
+    '[', attr('index', ternary_expression_or_less), ']'
+)
+NewStylePostfixExpression.grammar = (
+    attr('reference', [token, ParensExpression, PostfixExpression, NewStyleBracketedExpression, NewStyleInvocationExpression]),
+    '.', attr('attribute', token)
+)
 
 AssignmentExpression.grammar = (
     attr('operand1', PostfixExpression), blank,
