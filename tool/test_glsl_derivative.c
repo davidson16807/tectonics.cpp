@@ -1,29 +1,34 @@
 
 float test_min(in float x)
 {
-	float u = 2.*x*x;
-	return sqrt(u);
+    float u = 2.*x*x;
+    return sqrt(u);
 }
 float test_abs(in float x)
 {
-	float u = 2.*x*x;
-	return abs(u);
+    float u = 2.*x*x;
+    return abs(u);
 }
 float test_min(in float x, in float y)
 {
-	float u = 2.*x*x;
-	float v = 2.*y*y;
-	return min(u, v);
+    float u = 2.*x*x;
+    float v = 2.*y*y;
+    return min(u, v);
 }
 float test_length(in vec2 X)
 {
-	vec2 U = 2.*X*X;
+    vec2 U = 2.*X*X;
     return length(U);
+}
+float test_sin(in float x)
+{
+    float u = 2.*x*x;
+    return sin(u);
 }
 float test_dot(in vec2 X)
 {
-	vec2 U = 2.*X*X;
-	vec2 V = 0.5*X*X*X;
+    vec2 U = 2.*X*X;
+    vec2 V = 0.5*X*X*X;
     return dot(U,V);
 }
 

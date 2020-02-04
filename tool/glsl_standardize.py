@@ -1,6 +1,11 @@
 #!/bin/env python3
 
 """
+"glsl_standard.py" can be used to standardize whitespace within glsl code.
+It mostly exists to serve as a boilerplate when creating more complex scripts.
+If you do so, make sure to update this description to match the 
+description for your own script.
+
 The command line interface for this script is meant to resemble sed.
 You can select a file using the `-f` argument.
 By default, the script will print out the results of a "dry run". 
