@@ -128,7 +128,7 @@ class NewStyleInvocationExpression(GlslElement):
         self.reference = reference
         self.arguments = arguments
 
-class NewStylePostfixExpression(GlslElement):
+class NewStyleAttributeExpression(GlslElement):
     def __init__(self, reference=None, attribute=None):
         self.reference = reference
         self.attribute = attribute
@@ -247,7 +247,8 @@ PostfixExpression.grammar = (
     # attr('content', ([token, ParensExpression], maybe_some([BracketedExpression, InvocationExpression, ('.', token)])))
 )
 postfix_expression_or_less = [
-    PostfixExpression,
+    NewStyleAttributeExpression,
+    NewStyleInvocationExpression,
     *primary_expression,
 ]
 
@@ -301,27 +302,23 @@ ParensExpression.grammar     = '(', attr('content', ternary_expression_or_less),
 InvocationExpression.grammar = '(', attr('content', optional(ternary_expression_or_less, maybe_some(',', blank, ternary_expression_or_less))), ')'
 
 NewStyleInvocationExpression.grammar = (
-    attr('reference', [token, ParensExpression, PostfixExpression, NewStyleBracketedExpression]),
-    '(', attr('arguments', maybe_some(ternary_expression_or_less)), ')'
+    attr('reference', token),
+    '(', attr('arguments', pypeg2.csl(ternary_expression_or_less)), ')'
 )
-NewStyleBracketedExpression.grammar = (
-    attr('reference', [token, ParensExpression, PostfixExpression, NewStyleBracketedExpression, NewStyleInvocationExpression]),
-    '[', attr('index', ternary_expression_or_less), ']'
-)
-NewStylePostfixExpression.grammar = (
-    attr('reference', [token, ParensExpression, PostfixExpression, NewStyleBracketedExpression, NewStyleInvocationExpression]),
-    '.', attr('attribute', token)
+NewStyleAttributeExpression.grammar = (
+    attr('reference', [ NewStyleInvocationExpression, token, ParensExpression ]),
+    attr('attribute', pypeg2.some([ BracketedExpression, ('.', token) ]))
 )
 
 AssignmentExpression.grammar = (
-    attr('operand1', PostfixExpression), blank,
+    attr('operand1', [ NewStyleAttributeExpression, token ]), blank,
     attr('operator', re.compile('[*/+-]?=')), blank,
     attr('operand2', [AssignmentExpression, *ternary_expression_or_less])
 )
 
 VariableDeclaration.grammar = (
     attr('qualifiers', maybe_some(re.compile('const|highp|mediump|lowp|attribute|uniform|varying'))),
-    attr('type', PostfixExpression), blank,
+    attr('type', [ NewStyleAttributeExpression, token ]), blank,
     attr('names', pypeg2.csl(token)),
     attr('value', optional(blank, '=', blank, [AssignmentExpression, *ternary_expression_or_less]))
 )
@@ -330,7 +327,7 @@ ReturnStatement.grammar = ('return', blank, attr('value', optional(ternary_expre
 
 simple_statement = ([
     re.compile('continue|break|discard'), ReturnStatement,
-    VariableDeclaration, AssignmentExpression, PostfixExpression
+    VariableDeclaration, AssignmentExpression, NewStyleInvocationExpression
 ], ';', endl)
 code_block = maybe_some(
     [
@@ -363,19 +360,19 @@ ForStatement.grammar = (
     'for', blank, '(', 
         attr('declaration', VariableDeclaration), ';', blank,
         attr('condition', ternary_expression_or_less), ';', blank,
-        attr('operation', optional([AssignmentExpression, PreIncrementExpression, PostIncrementExpression, PostfixExpression])), 
+        attr('operation', optional([ AssignmentExpression, PreIncrementExpression, PostIncrementExpression ])), 
     ')', endl,
     attr('content', [compound_statement, simple_statement] ), endl
 )
 
 ParameterDeclaration.grammar = (
     attr('qualifiers', maybe_some(re.compile('in|out|inout'), blank)),
-    attr('type', PostfixExpression), blank,
+    attr('type', [ NewStyleAttributeExpression, token ]), blank,
     attr('name', token)
 )
 FunctionDeclaration.grammar = (
     attr('documentation', maybe_some([(inline_comment, endl), endline_comment])),
-    attr('type', PostfixExpression), blank, attr('name', token), 
+    attr('type', [ NewStyleAttributeExpression, token ]), blank, attr('name', token), 
     '(', 
     attr('parameters',  
             optional(endl, pypeg2.indent(ParameterDeclaration, maybe_some(',', endl, ParameterDeclaration)), endl)  
@@ -399,6 +396,42 @@ code = maybe_some(
     ]
 )
 
+scalar_types = [
+    ['float'], ['int'], ['bool']
+]
+float_vector_types = [
+    ['vec2'], ['vec3'], ['vec4'], 
+]
+int_vector_types = [
+    ['ivec2'], ['ivec3'], ['ivec4'], 
+]
+bool_vector_types = [
+    ['bvec2'], ['bvec3'], ['bvec4'], 
+]
+vector_types = [
+    *float_vector_types,
+    *int_vector_types,
+    *bool_vector_types,
+]
+float_matrix_types = [
+    ['mat2'],  ['mat3'],  ['mat4'],    ['mat2x3'],  ['mat2x4'],    ['mat3x2'],    ['mat3x4'],   ['mat4x2'],    ['mat4x3'], 
+]
+int_matrix_types = [
+    ['imat2'], ['imat3'], ['imat4'],   ['imat2x3'], ['imat2x4'],   ['imat3x2'],   ['imat3x4'],  ['imat4x2'],   ['imat4x3'],
+]
+bool_matrix_types = [
+    ['bmat2'], ['bmat3'], ['bmat4'],   ['bmat2x3'], ['bmat2x4'],   ['bmat3x2'],   ['bmat3x4'],  ['bmat4x2'],   ['bmat4x3'],
+]
+matrix_types = [
+    *float_matrix_types,
+    *int_matrix_types,
+    *bool_matrix_types,
+]
+built_in_types = [
+    *scalar_types,
+    *vector_types,
+    *matrix_types,
+]
 
 class LexicalScope:
     """ 
@@ -482,42 +515,6 @@ class LexicalScope:
         }
         return result
         
-scalar_types = [
-    ['float'], ['int'], ['bool']
-]
-float_vector_types = [
-    ['vec2'], ['vec3'], ['vec4'], 
-]
-int_vector_types = [
-    ['ivec2'], ['ivec3'], ['ivec4'], 
-]
-bool_vector_types = [
-    ['bvec2'], ['bvec3'], ['bvec4'], 
-]
-vector_types = [
-    *float_vector_types,
-    *int_vector_types,
-    *bool_vector_types,
-]
-float_matrix_types = [
-    ['mat2'],  ['mat3'],  ['mat4'],    ['mat2x3'],  ['mat2x4'],    ['mat3x2'],    ['mat3x4'],   ['mat4x2'],    ['mat4x3'], 
-]
-int_matrix_types = [
-    ['imat2'], ['imat3'], ['imat4'],   ['imat2x3'], ['imat2x4'],   ['imat3x2'],   ['imat3x4'],  ['imat4x2'],   ['imat4x3'],
-]
-bool_matrix_types = [
-    ['bmat2'], ['bmat3'], ['bmat4'],   ['bmat2x3'], ['bmat2x4'],   ['bmat3x2'],   ['bmat3x4'],  ['bmat4x2'],   ['bmat4x3'],
-]
-matrix_types = [
-    *float_matrix_types,
-    *int_matrix_types,
-    *bool_matrix_types,
-]
-built_in_types = [
-    *scalar_types,
-    *vector_types,
-    *matrix_types,
-]
 
 def get_expression_type(expression, scope):
     assert scope is not None, 'scope must be provided'
