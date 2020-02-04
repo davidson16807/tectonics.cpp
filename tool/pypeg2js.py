@@ -5,6 +5,7 @@ from pypeg2 import attr, optional, maybe_some, blank, endl
 
 single_quote_string_literal = re.compile("'([^']|\\\\')*'", re.MULTILINE | re.DOTALL)
 double_quote_string_literal = re.compile('"([^"]|\\\\")*"', re.MULTILINE | re.DOTALL)
+back_tick_string_literal = re.compile('`([^`]|\\\\`)*`', re.MULTILINE | re.DOTALL)
 inline_comment = re.compile('/\*((?!\*/).)*\*/\s*', re.MULTILINE | re.DOTALL)
 endline_comment = re.compile('//[^\n]*\s*', re.MULTILINE | re.DOTALL)
 int_literal = re.compile(
@@ -35,6 +36,41 @@ float_literal = re.compile(
 )
 bool_literal = re.compile('true|false')
 token = re.compile('[a-zA-Z_]\w*')
+
+'''
+"element_attributes" is a list of all attributes 
+that can be found within instances of JsElements
+'''
+element_attributes = [
+    'documentation',
+    'qualifiers',
+    'type',
+
+    'name',
+    'names',
+
+    'parameters',
+    'declaration',
+    'condition',
+    'operation',
+
+    'value',
+    'content',
+    'else',
+
+    'reference',
+    'arguments',
+    'attribute',
+    'index',
+    'operand1',
+    'operator',
+    'operand2',
+    'operand3',
+
+    'comment1',
+    'comment2',
+    'comment3',
+]
 
 '''
 "debug" returns a string representing a variable that is intended to be a JsElement.
@@ -93,6 +129,9 @@ class TernaryExpression(JsElement):
         self.operand1 = operand1
         self.operand2 = operand2
         self.operand3 = operand3
+        self.comment1 = ''
+        self.comment2 = ''
+        self.comment3 = ''
 
 class PostIncrementExpression(UnaryExpression): pass
 class PreIncrementExpression(UnaryExpression): pass
@@ -157,9 +196,11 @@ class FunctionDeclaration(JsElement):
 primary_expression = [
     single_quote_string_literal,
     double_quote_string_literal,
+    back_tick_string_literal,
     float_literal, 
     int_literal, 
     bool_literal, 
+    token,
     ParensExpression
 ]
 
@@ -199,9 +240,14 @@ binary_expression_or_less = [*unary_expression_or_less]
 for BinaryExpressionTemp, binary_regex in order_of_operations:
     binary_expression_or_less = [BinaryExpressionTemp, *binary_expression_or_less]
     BinaryExpressionTemp.grammar = (
-            attr('operand1', binary_expression_or_less[1:]), blank,
-            attr('operator', binary_regex), blank,
+            attr('operand1', binary_expression_or_less[1:]), 
+            attr('comment1', maybe_some([inline_comment, endline_comment])),
+            blank,
+            attr('operator', binary_regex), 
+            blank,
+            attr('comment2', maybe_some([inline_comment, endline_comment])),
             attr('operand2', binary_expression_or_less),
+            attr('comment3', maybe_some([inline_comment, endline_comment])),
         )
 
 ternary_expression_or_less = [TernaryExpression, *binary_expression_or_less]

@@ -1,5 +1,6 @@
 #!/bin/env python3
 
+import difflib
 import sys
 
 import pypeg2 as peg
@@ -57,30 +58,36 @@ def get_js_default_element_getter(JsElement):
         return js_element
     return get_js_default_element
 
-
-def get_js_postfix_expression(glsl_expression, scope):
+def get_js_invocation_expression(glsl_expression, scope):
     js_expression = js.PostfixExpression()
-    js_expression.content = []
+    js_invocation = js.InvocationExpression(
+        [get_js(argument, scope) for argument in glsl_expression.arguments]
+    )
 
-    is_first = True
-    for expression in glsl_expression.content:
-        if is_first and expression in js_glm_library_functions:
-            js_expression.content.append('glm')
-            js_expression.content.append(expression)
-        elif is_first and expression in js_math_library_functions:
-            js_expression.content.append('Math')
-            js_expression.content.append(expression)
-        else:
-            js_expression.content.append(get_js(expression, scope))
-        is_first = False
+    glsl_reference = glsl_expression.reference
+    if glsl_reference in js_glm_library_functions:
+        return js.PostfixExpression(['glm', glsl_reference, js_invocation])
+    elif glsl_reference in js_math_library_functions:
+        return js.PostfixExpression(['Math', glsl_reference, js_invocation])
+    else: 
+        return js.PostfixExpression([get_js(glsl_reference, scope), js_invocation])
+
+def get_js_attribute_expression(glsl_expression, scope):
+    if isinstance(glsl_expression.reference, glsl.NewStyleInvocationExpression):
+        js_expression = get_js(glsl_expression.reference, scope)
+    else:
+        js_expression = js.PostfixExpression([get_js(glsl_expression.reference, scope)])
+
+    for attribute in glsl_expression.attributes:
+        js_expression.content.append(get_js(attribute, scope))
+
     return js_expression
-
 
 def get_js_unary_operator_expression_getter(JsElement):
 
     get_js_default_operator_expression = get_js_default_element_getter(JsElement)
     def get_js_unary_glm_operator_expression(glsl_operand1, operator, scope):
-        type1 = glsl.get_expression_type(glsl_operand1, scope)
+        type1 = scope.get_expression_type(glsl_operand1)
         assert operator != '!', 'Unary negation for vectors/matrices is not supported by glm-js, cannot safely continue'
         if operator == '++':
             return js.PostfixExpression([
@@ -115,7 +122,7 @@ def get_js_unary_operator_expression_getter(JsElement):
     def get_js_unary_operator_expression(glsl_operator, scope):
         operand1 = glsl_operator.operand1
         operator = glsl_operator.operator
-        type1 = glsl.get_expression_type(operand1, scope)
+        type1 = scope.get_expression_type(operand1)
         if type1 in glsl.vector_types or type1 in glsl.matrix_types:
             return get_js_unary_glm_operator_expression(operand1, operator, scope)
         else:
@@ -128,9 +135,16 @@ def get_js_binary_operator_expression_getter(JsElement):
 
     get_js_default_operator_expression = get_js_default_element_getter(JsElement)
     def get_js_binary_glm_operator_expression(glsl_operand1, glsl_operand2, operator, scope):
-        if isinstance(glsl_operand1, glsl.PostfixExpression):
+        if (isinstance(glsl_operand1, glsl.NewStyleAttributeExpression) or
+            isinstance(glsl_operand1, glsl.NewStyleInvocationExpression)):
             return js.PostfixExpression([
-                    *get_js(glsl_operand1.content, scope), 
+                    *get_js(glsl_operand1, scope).content,
+                    js.BracketedExpression(js.PostfixExpression([f"'{operator}'"])), 
+                    js.InvocationExpression(get_js(glsl_operand2, scope))
+                ])
+        elif isinstance(glsl_operand1, str):
+            return js.PostfixExpression([
+                    glsl_operand1,
                     js.BracketedExpression(js.PostfixExpression([f"'{operator}'"])), 
                     js.InvocationExpression(get_js(glsl_operand2, scope))
                 ])
@@ -144,8 +158,8 @@ def get_js_binary_operator_expression_getter(JsElement):
         operand1 = glsl_operator.operand1
         operand2 = glsl_operator.operand2
         operator = glsl_operator.operator
-        type1 = glsl.get_expression_type(operand1, scope)
-        type2 = glsl.get_expression_type(operand2, scope)
+        type1 = scope.get_expression_type(operand1)
+        type2 = scope.get_expression_type(operand2)
         if type1 in glsl.vector_types:
             return get_js_binary_glm_operator_expression(operand1, operand2, operator, scope)
         elif type1 in glsl.matrix_types:
@@ -191,12 +205,12 @@ def get_js_structure_declaration(glsl_structure, scope):
 
 
 def get_js_function_declaration(glsl_function, scope):
-    glsl_type_str = peg.compose(glsl_function.type, glsl.PostfixExpression)
+    glsl_type_str = peg.compose(glsl_function.type, type(glsl_function.type))
     js_function = js.FunctionDeclaration(glsl_function.name, type_=f'/*{glsl_type_str}*/')
     js_function.documentation = glsl_function.documentation
     local_scope = scope.get_subscope(glsl_function)
     for glsl_parameter in glsl_function.parameters:
-        glsl_type_str = peg.compose(glsl_parameter.type, glsl.PostfixExpression)
+        glsl_type_str = peg.compose(glsl_parameter.type, type(glsl_function.type))
         js_function.parameters.append(f'/*{glsl_type_str}*/')
         js_function.parameters.append(js.ParameterDeclaration(glsl_parameter.name))
     for glsl_element in glsl_function.content:
@@ -209,7 +223,8 @@ glsl_js_getter_map = [
     (int,        lambda glsl_element, scope: glsl_element),
     (type(None), lambda glsl_element, scope: glsl_element),
 
-    (glsl.PostfixExpression,         get_js_postfix_expression), 
+    (glsl.NewStyleInvocationExpression, get_js_invocation_expression), 
+    (glsl.NewStyleAttributeExpression,  get_js_attribute_expression), 
     (glsl.PostIncrementExpression,   get_js_unary_operator_expression_getter(js.PostIncrementExpression)),
     (glsl.PreIncrementExpression,    get_js_unary_operator_expression_getter(js.PreIncrementExpression)),
 
@@ -319,11 +334,11 @@ if __name__ == '__main__':
         help='read input from FILE', metavar='FILE')
     parser.add_argument('-i', '--in-place', dest='in_place', 
         help='edit the file in-place', action='store_true')
-    # parser.add_argument('-v', '--verbose', dest='verbose', 
-    #     help='show debug information', action='store_true')
+    parser.add_argument('-v', '--verbose', dest='verbose', 
+        help='show debug information', action='store_true')
     args = parser.parse_args()
     convert_file(
         args.filename, 
         in_place=args.in_place, 
-        verbose=False, 
+        verbose=args.verbose, 
     )
