@@ -73,7 +73,7 @@ def get_js_invocation_expression(glsl_expression, scope):
         return js.PostfixExpression([get_js(glsl_reference, scope), js_invocation])
 
 def get_js_attribute_expression(glsl_expression, scope):
-    if isinstance(glsl_expression.reference, glsl.NewStyleInvocationExpression):
+    if isinstance(glsl_expression.reference, glsl.InvocationExpression):
         js_expression = get_js(glsl_expression.reference, scope)
     else:
         js_expression = js.PostfixExpression([get_js(glsl_expression.reference, scope)])
@@ -135,8 +135,8 @@ def get_js_binary_operator_expression_getter(JsElement):
 
     get_js_default_operator_expression = get_js_default_element_getter(JsElement)
     def get_js_binary_glm_operator_expression(glsl_operand1, glsl_operand2, operator, scope):
-        if (isinstance(glsl_operand1, glsl.NewStyleAttributeExpression) or
-            isinstance(glsl_operand1, glsl.NewStyleInvocationExpression)):
+        if (isinstance(glsl_operand1, glsl.AttributeExpression) or
+            isinstance(glsl_operand1, glsl.InvocationExpression)):
             return js.PostfixExpression([
                     *get_js(glsl_operand1, scope).content,
                     js.BracketedExpression(js.PostfixExpression([f"'{operator}'"])), 
@@ -223,8 +223,8 @@ glsl_js_getter_map = [
     (int,        lambda glsl_element, scope: glsl_element),
     (type(None), lambda glsl_element, scope: glsl_element),
 
-    (glsl.NewStyleInvocationExpression, get_js_invocation_expression), 
-    (glsl.NewStyleAttributeExpression,  get_js_attribute_expression), 
+    (glsl.InvocationExpression, get_js_invocation_expression), 
+    (glsl.AttributeExpression,  get_js_attribute_expression), 
     (glsl.PostIncrementExpression,   get_js_unary_operator_expression_getter(js.PostIncrementExpression)),
     (glsl.PreIncrementExpression,    get_js_unary_operator_expression_getter(js.PreIncrementExpression)),
 
@@ -244,7 +244,6 @@ glsl_js_getter_map = [
 
     (glsl.BracketedExpression,       get_js_default_element_getter(js.BracketedExpression)),
     (glsl.ParensExpression,          get_js_default_element_getter(js.ParensExpression)),
-    (glsl.InvocationExpression,      get_js_default_element_getter(js.InvocationExpression)),
     (glsl.AssignmentExpression,      get_js_default_element_getter(js.AssignmentExpression)),
 
     (glsl.VariableDeclaration,       get_js_variable_declaration),

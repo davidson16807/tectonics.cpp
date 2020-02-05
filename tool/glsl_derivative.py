@@ -41,9 +41,9 @@ def throw_value_error(f, description='invalid expression'):
 
 def get_1_for_type(type_):
     identity_map ={
-        'vec2': peg.parse('vec2(1.f)', glsl.NewStyleInvocationExpression),
-        'vec3': peg.parse('vec3(1.f)', glsl.NewStyleInvocationExpression),
-        'vec4': peg.parse('vec4(1.f)', glsl.NewStyleInvocationExpression),
+        'vec2': peg.parse('vec2(1.f)', glsl.InvocationExpression),
+        'vec3': peg.parse('vec3(1.f)', glsl.InvocationExpression),
+        'vec4': peg.parse('vec4(1.f)', glsl.InvocationExpression),
 
         'float': '1.0f',
         'int': '1'
@@ -55,9 +55,9 @@ def get_1_for_type(type_):
     
 def get_0_for_type(type_):
     identity_map ={
-        'vec2': peg.parse('vec2(0.f)', glsl.NewStyleInvocationExpression),
-        'vec3': peg.parse('vec3(0.f)', glsl.NewStyleInvocationExpression),
-        'vec4': peg.parse('vec4(0.f)', glsl.NewStyleInvocationExpression),
+        'vec2': peg.parse('vec2(0.f)', glsl.InvocationExpression),
+        'vec3': peg.parse('vec3(0.f)', glsl.InvocationExpression),
+        'vec4': peg.parse('vec4(0.f)', glsl.InvocationExpression),
 
         'float': '0.0f',
         'int': '0'
@@ -260,7 +260,7 @@ def get_ddx_invocation_expression(f, x, scope):
              (glsl.float_literal.match(argument) or 
               glsl.int_literal.match(argument))
              for argument in f.arguments])):
-        return glsl.NewStyleInvocationExpression(
+        return glsl.InvocationExpression(
             f.reference, ['0.0f' for argument in f.arguments]
         )
     # non-supported constructor (built-in)
@@ -281,7 +281,7 @@ def get_ddx_invocation_expression(f, x, scope):
         dfdu = dfdu_name_map[f.reference] if f.reference in dfdu_name_map else f'dd{x}_{f.reference}'
         dudx = maybe_wrap(get_ddx(f.arguments[0], x, scope))
         return glsl.MultiplicativeExpression(
-            glsl.NewStyleInvocationExpression(dfdu, f.arguments), 
+            glsl.InvocationExpression(dfdu, f.arguments), 
             '*', 
             dudx
         )
@@ -326,22 +326,22 @@ def get_ddx_attribute_expression(f, x, scope):
                     glsl.int_literal.match(attribute.content)):
                     if x_type == 'float':
                         # V(u)[0] -> dVdu[0]
-                        updated_ddx = glsl.NewStyleAttributeExpression(ddx, attribute)
+                        updated_ddx = glsl.AttributeExpression(ddx, attribute)
                     elif x_type in glsl.float_vector_types:
                         # V(U)[0] -> vec3(dVdU[0], 0.f, 0.f)
                         vecN = type_
                         N = int(vecN[-1])
                         i = int(attribute.content)
                         vecN_params = ['0.0f' for i in range(N)]
-                        vecN_params[i] = peg.compose(glsl.NewStyleAttributeExpression(updated_ddx, attribute), glsl.NewStyleAttributeExpression)
+                        vecN_params[i] = peg.compose(glsl.AttributeExpression(updated_ddx, attribute), glsl.AttributeExpression)
                         vecN_params = ','.join(vecN_params)
-                        updated_ddx = peg.parse(f'{vecN}({vecN_params})', glsl.NewStyleInvocationExpression)
+                        updated_ddx = peg.parse(f'{vecN}({vecN_params})', glsl.InvocationExpression)
                     else:
                         throw_not_implemented_error(f, 'component access for non-float derivatives')
                 else:
                     throw_not_implemented_error(f, 'variable vector component access')
             # array index access
-            elif (isinstance(type_, glsl.NewStyleAttributeExpression)):
+            elif (isinstance(type_, glsl.AttributeExpression)):
                 updated_type = [type_]
                 throw_not_implemented_error(f, 'array index access')
             else:
@@ -354,7 +354,7 @@ def get_ddx_attribute_expression(f, x, scope):
                     throw_not_implemented_error(f, 'swizzling')
                 if x_type == 'float':
                     # V(u).x -> dVdu.x
-                    updated_ddx = glsl.NewStyleAttributeExpression(ddx, attribute)
+                    updated_ddx = glsl.AttributeExpression(ddx, attribute)
                 elif x_type in glsl.float_vector_types:
                     # V(U).x -> vec3(dVdU[0], 0.f, 0.f)
                     vecN = type_
@@ -365,9 +365,9 @@ def get_ddx_attribute_expression(f, x, scope):
                         's':0,'t':1,'u':2,'v':3,
                       }[attribute]
                     vecN_params = ['0.0f' for i in range(N)]
-                    vecN_params[i] = peg.compose(glsl.NewStyleAttributeExpression(updated_ddx, attribute), glsl.NewStyleAttributeExpression)
+                    vecN_params[i] = peg.compose(glsl.AttributeExpression(updated_ddx, attribute), glsl.AttributeExpression)
                     vecN_params = ','.join(vecN_params)
-                    updated_ddx = peg.parse(f'{vecN}({vecN_params})', glsl.NewStyleInvocationExpression)
+                    updated_ddx = peg.parse(f'{vecN}({vecN_params})', glsl.InvocationExpression)
                 else:
                     throw_not_implemented_error(f, 'component access for non-float derivatives')
             # attribute access
@@ -468,8 +468,8 @@ def get_ddx(f, x, scope):
     derivative_map = {
         (str, get_ddx_literal),
 
-        (glsl.NewStyleInvocationExpression, get_ddx_invocation_expression),
-        (glsl.NewStyleAttributeExpression, get_ddx_attribute_expression),
+        (glsl.InvocationExpression, get_ddx_invocation_expression),
+        (glsl.AttributeExpression, get_ddx_attribute_expression),
         # (glsl.PostIncrementExpression,   ),
         # (glsl.PreIncrementExpression,    ),
 

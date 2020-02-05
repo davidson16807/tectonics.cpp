@@ -126,28 +126,15 @@ class GlslElement:
     def __init__(self):
         pass
 
-class NewStyleInvocationExpression(GlslElement):
+class InvocationExpression(GlslElement):
     def __init__(self, reference='', arguments=None):
         self.reference = reference
         self.arguments = arguments
 
-class NewStyleAttributeExpression(GlslElement):
+class AttributeExpression(GlslElement):
     def __init__(self, reference='', attributes=None):
         self.reference = reference
         self.attributes = attributes or []
-
-class PostfixExpression(GlslElement): 
-    def __init__(self, content=None):
-        if not content:
-            self.content = []
-        else:
-            first, rest = content[0], content[1:]
-            self.content = (
-                [*first.content, *rest] if isinstance(first, PostfixExpression) 
-                else [first, *rest] if isinstance(first, ParensExpression)
-                else [first, *rest] if isinstance(first, str)
-                else [ParensExpression(first), *rest]
-            )
 
 class UnaryExpression(GlslElement): 
     def __init__(self, operand1 = None, operator = ''):
@@ -184,9 +171,6 @@ class LogicalAndExpression(BinaryExpression): pass
 class LogicalXorExpression(BinaryExpression): pass
 class LogicalOrExpression(BinaryExpression): pass
 
-class InvocationExpression(GlslElement): 
-    def __init__(self, content=None):
-        self.content = content or []
 class BracketedExpression(GlslElement): 
     def __init__(self, content=None):
         self.content = content or []
@@ -236,17 +220,9 @@ primary_expression = [
     ParensExpression
 ]
 
-PostfixExpression.grammar = (
-    attr('content', 
-            (
-                ([token, ParensExpression], maybe_some([BracketedExpression, InvocationExpression, ('.', token)]))
-            )
-        )
-    # attr('content', ([token, ParensExpression], maybe_some([BracketedExpression, InvocationExpression, ('.', token)])))
-)
 postfix_expression_or_less = [
-    NewStyleAttributeExpression,
-    NewStyleInvocationExpression,
+    AttributeExpression,
+    InvocationExpression,
     *primary_expression,
 ]
 
@@ -297,26 +273,25 @@ TernaryExpression.grammar = (
 
 BracketedExpression.grammar  = '[', attr('content', ternary_expression_or_less), ']'
 ParensExpression.grammar     = '(', attr('content', ternary_expression_or_less), ')'
-InvocationExpression.grammar = '(', attr('content', optional(ternary_expression_or_less, maybe_some(',', blank, ternary_expression_or_less))), ')'
 
-NewStyleInvocationExpression.grammar = (
+InvocationExpression.grammar = (
     attr('reference', token),
     '(', attr('arguments', pypeg2.csl(ternary_expression_or_less)), ')'
 )
-NewStyleAttributeExpression.grammar = (
-    attr('reference', [ NewStyleInvocationExpression, token, ParensExpression ]),
+AttributeExpression.grammar = (
+    attr('reference', [ InvocationExpression, token, ParensExpression ]),
     attr('attributes', pypeg2.some([ BracketedExpression, ('.', token) ]))
 )
 
 AssignmentExpression.grammar = (
-    attr('operand1', [ NewStyleAttributeExpression, token ]), blank,
+    attr('operand1', [ AttributeExpression, token ]), blank,
     attr('operator', re.compile('[*/+-]?=')), blank,
     attr('operand2', [AssignmentExpression, *ternary_expression_or_less])
 )
 
 VariableDeclaration.grammar = (
     attr('qualifiers', maybe_some(re.compile('const|highp|mediump|lowp|attribute|uniform|varying'))),
-    attr('type', [ NewStyleAttributeExpression, token ]), blank,
+    attr('type', [ AttributeExpression, token ]), blank,
     attr('names', pypeg2.csl(token)),
     attr('value', optional(blank, '=', blank, [AssignmentExpression, *ternary_expression_or_less]))
 )
@@ -325,7 +300,7 @@ ReturnStatement.grammar = ('return', blank, attr('value', optional(ternary_expre
 
 simple_statement = ([
     re.compile('continue|break|discard'), ReturnStatement,
-    VariableDeclaration, AssignmentExpression, NewStyleInvocationExpression
+    VariableDeclaration, AssignmentExpression, InvocationExpression
 ], ';', endl)
 code_block = maybe_some(
     [
@@ -365,12 +340,12 @@ ForStatement.grammar = (
 
 ParameterDeclaration.grammar = (
     attr('qualifiers', maybe_some(re.compile('in|out|inout'), blank)),
-    attr('type', [ NewStyleAttributeExpression, token ]), blank,
+    attr('type', [ AttributeExpression, token ]), blank,
     attr('name', token)
 )
 FunctionDeclaration.grammar = (
     attr('documentation', maybe_some([(inline_comment, endl), endline_comment])),
-    attr('type', [ NewStyleAttributeExpression, token ]), blank, attr('name', token), 
+    attr('type', [ AttributeExpression, token ]), blank, attr('name', token), 
     '(', 
     attr('parameters',  
             optional(endl, pypeg2.indent(ParameterDeclaration, maybe_some(',', endl, ParameterDeclaration)), endl)  
@@ -549,7 +524,7 @@ class LexicalScope:
             # variable reference
             elif expression in self.variables:
                 return self.variables[expression]
-        elif isinstance(expression, NewStyleInvocationExpression):
+        elif isinstance(expression, InvocationExpression):
             # constructor
             if (expression.reference in built_in_types or 
                 expression.reference in self.attributes):
@@ -568,7 +543,7 @@ class LexicalScope:
             else:
                 warn_of_type_deduction_failure( expression, f'call to unknown function "{expression.reference}"' )
                 return None 
-        elif isinstance(expression, NewStyleAttributeExpression):
+        elif isinstance(expression, AttributeExpression):
             type_ = self.get_expression_type(expression.reference)
             for attribute in expression.attributes:
                 if isinstance(attribute, str):
@@ -595,7 +570,7 @@ class LexicalScope:
                     elif type_ in vector_types:
                         type_ = 'float'
                     # array index access
-                    elif (isinstance(type_, NewStyleAttributeExpression)):
+                    elif (isinstance(type_, AttributeExpression)):
                         type_ = type_.reference
                     else:
                         warn_of_type_deduction_failure( expression, f'''index of non array "{''.join(type_)}"''')
