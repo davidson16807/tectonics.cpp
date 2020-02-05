@@ -16,6 +16,9 @@ except ImportError:  # fallback so that the imported classes always exist
         __getattr__ = lambda self, name: ''
     Fore = Back = Style = ColorFallback()
 
+def assert_type(variable, types):
+    if not any([isinstance(variable, type_) for type_ in types]):
+        raise AssertionError(f'expected {types} but got {variable}')
 
 js_math_library_functions = [
     'PI',
@@ -53,8 +56,9 @@ js_glm_library_functions = [
 def get_js_default_element_getter(JsElement):
     def get_js_default_element(glsl_element, scope):
         js_element = JsElement()
-        for attribute in glsl_element.__dict__:
-            setattr(js_element, attribute, get_js(glsl_element.__dict__[attribute], scope))
+        for attribute in glsl.element_attributes:
+            if hasattr(glsl_element, attribute):
+                setattr(js_element, attribute, get_js(glsl_element.__dict__[attribute], scope))
         return js_element
     return get_js_default_element
 
@@ -262,11 +266,13 @@ glsl_js_getter_map = [
 ]
 
 def get_js(glsl_element, scope):
+    assert_type(glsl_element, [str, list, glsl.GlslElement])
     for Glsl, _get_js in glsl_js_getter_map:
         if isinstance(glsl_element, Glsl):
-            return _get_js(glsl_element, scope)
+            js_element = _get_js(glsl_element, scope)
+            assert_type(js_element, [str, list, js.JsElement])
+            return js_element
     raise ValueError(f'support for {type(glsl_element)} not implemented, cannot safely continue')
-
 
 """
 The command line interface for this script is meant to resemble sed.

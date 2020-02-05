@@ -30,6 +30,9 @@ except ImportError:  # fallback so that the imported classes always exist
         __getattr__ = lambda self, name: ''
     Fore = Back = Style = ColorFallback()
 
+def assert_type(variable, types):
+    if not any([isinstance(variable, type_) for type_ in types]):
+        raise AssertionError(f'expected {types} but got {variable}')
 
 def throw_not_implemented_error(f, feature='expressions'):
     f_str = peg.compose(f, type(f))
@@ -460,6 +463,8 @@ def get_ddx_return_statement(f, x, scope):
     return glsl.ReturnStatement(get_ddx(f.value, x, scope))
 
 def get_ddx(f, x, scope):
+    assert_type(f, [str, glsl.GlslElement])
+
     ''' 
     "get_ddx_function" is a pure function that 
     transforms an glsl grammar element matching pypeg2glsl.ternary_expression_or_less
@@ -494,28 +499,36 @@ def get_ddx(f, x, scope):
     for Rule, get_ddx_rule in derivative_map:
         if isinstance(f, Rule):
             dfdx = get_ddx_rule(f, x, scope)
+            assert_type(dfdx, [str, glsl.GlslElement])
             return dfdx
     raise throw_not_implemented_error(f, type(f).__name__)
     
 def get_ddx_type(f_type, x_type, f=None):
+    assert_type(f_type, [str, glsl.AttributeExpression])
+    assert_type(x_type, [str, glsl.AttributeExpression])
+
+    ddx_type = None
     # scalar derivative
     if x_type == 'float' and f_type == 'float':
-        return 'float'
+        ddx_type = 'float'
     # gradient
     elif (f_type == 'float' and x_type in glsl.vector_types):
-        return x_type
+        ddx_type = x_type
     # component-wise scalar derivative
     elif (f_type in glsl.vector_types and x_type == 'float'):
-        return f_type
+        ddx_type = f_type
     # either jacobian or component-wise vector derivative,
     # however jacobians have little use in shaders,
     # so we assume it is a component-wise derivative
     elif (f_type in glsl.vector_types and x_type == f_type):
-        return f_type
+        ddx_type = f_type
+    else:
+        f_type_str = peg.compose(f_type, type(f_type))
+        x_type_str = peg.compose(x_type, type(x_type))
+        raise throw_not_implemented_error(f, f'variables of type "{f_type_str}" and "{x_type_str}"')
 
-    f_type_str = peg.compose(f_type, type(f_type))
-    x_type_str = peg.compose(x_type, type(x_type))
-    raise throw_not_implemented_error(f, f'variables of type "{f_type_str}" and "{x_type_str}"')
+    assert_type(ddx_type, [str, glsl.AttributeExpression])
+    return ddx_type
 
 def get_ddx_function(f, x, scope):
     ''' 
