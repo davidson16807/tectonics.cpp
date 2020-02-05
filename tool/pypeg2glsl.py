@@ -75,7 +75,7 @@ element_attributes = [
 
     'value',
     'content',
-    'else',
+    'else_',
 
     'reference',
     'arguments',
@@ -343,7 +343,7 @@ compound_statement = ( '{', endl, pypeg2.indent(code_block), '}', endl )
 IfStatement.grammar = (
     'if', blank, '(', attr('condition', ternary_expression_or_less), ')', endl,
     attr('content', [compound_statement, simple_statement] ), 
-    attr('else', optional('else', blank, [IfStatement, compound_statement, simple_statement])), endl
+    attr('else_', optional('else', blank, [IfStatement, compound_statement, simple_statement])), endl
 )
 WhileStatement.grammar = (
     'while', blank, '(', attr('condition', ternary_expression_or_less), ')', endl,
@@ -552,7 +552,7 @@ class LexicalScope:
             elif expression in self.variables:
                 type_ = self.variables[expression]
             else:
-                warn_of_type_deduction_failure( expression, f'reference to unknown variable "{expression.reference}"' )
+                warn_of_type_deduction_failure( expression, f'reference to unknown variable "{expression}"' )
         elif isinstance(expression, InvocationExpression):
             # constructor
             if (expression.reference in built_in_types or 

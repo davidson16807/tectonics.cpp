@@ -309,11 +309,11 @@ def get_ddx_attribute_expression(f, x, scope):
     # variable reference
     type_ = scope.get_expression_type(f.reference)
     if f.reference == x:
-        ddx = get_1_for_type(scope.get_expression_type(f))
+        dfdx = get_1_for_type(scope.get_expression_type(f))
     elif isinstance(f.reference, str):
-        ddx = f'dd{x}_{f.reference}'
+        dfdx = f'dd{x}_{f.reference}'
     else:
-        ddx  = get_ddx(f.reference, x, scope)
+        dfdx = get_ddx(f.reference, x, scope)
 
     updated_ddx = None
     for attribute in f.attributes:
@@ -329,7 +329,7 @@ def get_ddx_attribute_expression(f, x, scope):
                     glsl.int_literal.match(attribute.content)):
                     if x_type == 'float':
                         # V(u)[0] -> dVdu[0]
-                        updated_ddx = glsl.AttributeExpression(ddx, attribute)
+                        updated_ddx = glsl.AttributeExpression(dfdx, attribute)
                     elif x_type in glsl.float_vector_types:
                         # V(U)[0] -> vec3(dVdU[0], 0.f, 0.f)
                         vecN = type_
@@ -357,7 +357,7 @@ def get_ddx_attribute_expression(f, x, scope):
                     throw_not_implemented_error(f, 'swizzling')
                 if x_type == 'float':
                     # V(u).x -> dVdu.x
-                    updated_ddx = glsl.AttributeExpression(ddx, attribute)
+                    updated_ddx = glsl.AttributeExpression(dfdx, attribute)
                 elif x_type in glsl.float_vector_types:
                     # V(U).x -> vec3(dVdU[0], 0.f, 0.f)
                     vecN = type_
@@ -381,9 +381,9 @@ def get_ddx_attribute_expression(f, x, scope):
             else:
                 throw_not_implemented_error(f)
         type_ = updated_type
-        ddx = updated_ddx
+        dfdx = updated_ddx
 
-    return ddx 
+    return dfdx 
 
 def get_ddx_multiplicative_expression(f, x, scope):
     # programming at its finest, boys 😃
@@ -462,8 +462,35 @@ def get_ddx_ternary_expression(f, x, scope):
 def get_ddx_return_statement(f, x, scope):
     return glsl.ReturnStatement(get_ddx(f.value, x, scope))
 
+def get_ddx_if_statement(f, x, scope):
+    return glsl.IfStatement(
+        f.condition, 
+        get_ddx(f.content, x, scope), 
+        get_ddx(f.else_, x, scope) 
+    )
+
+def get_ddx_code_block(f, x, scope):
+    dfdx = []
+    x_type = scope.get_expression_type(x)
+
+    for statement in f:
+        if isinstance(statement, glsl.VariableDeclaration):
+            dfdx.append( copy.deepcopy(statement) )
+            dfdx.append(
+                glsl.VariableDeclaration(
+                    type_ = get_ddx_type(statement.type, x_type, statement),
+                    names = [ f'dd{x}_{name}' for name in statement.names],
+                    value = get_ddx(statement.value, x, scope),
+                )
+            )
+        else:
+            dfdx.append( get_ddx(statement, x, scope) )
+
+    return dfdx
+        
+
 def get_ddx(f, x, scope):
-    assert_type(f, [str, glsl.GlslElement])
+    assert_type(f, [str, list, glsl.GlslElement])
 
     ''' 
     "get_ddx_function" is a pure function that 
@@ -471,7 +498,8 @@ def get_ddx(f, x, scope):
     into a glsl parse tree representing the derivative with respect to a given variable. 
     '''
     derivative_map = {
-        (str, get_ddx_literal),
+        (str,  get_ddx_literal),
+        (list, get_ddx_code_block),
 
         (glsl.InvocationExpression, get_ddx_invocation_expression),
         (glsl.AttributeExpression, get_ddx_attribute_expression),
@@ -494,12 +522,13 @@ def get_ddx(f, x, scope):
 
         (glsl.ParensExpression,          get_ddx_parens_expression),
 
+        (glsl.IfStatement,               get_ddx_if_statement),
         (glsl.ReturnStatement,           get_ddx_return_statement)
     }
     for Rule, get_ddx_rule in derivative_map:
         if isinstance(f, Rule):
             dfdx = get_ddx_rule(f, x, scope)
-            assert_type(dfdx, [str, glsl.GlslElement])
+            assert_type(dfdx, [str, list, glsl.GlslElement])
             return dfdx
     raise throw_not_implemented_error(f, type(f).__name__)
     
@@ -507,28 +536,28 @@ def get_ddx_type(f_type, x_type, f=None):
     assert_type(f_type, [str, glsl.AttributeExpression])
     assert_type(x_type, [str, glsl.AttributeExpression])
 
-    ddx_type = None
+    dfdx_type = None
     # scalar derivative
     if x_type == 'float' and f_type == 'float':
-        ddx_type = 'float'
+        dfdx_type = 'float'
     # gradient
     elif (f_type == 'float' and x_type in glsl.vector_types):
-        ddx_type = x_type
+        dfdx_type = x_type
     # component-wise scalar derivative
     elif (f_type in glsl.vector_types and x_type == 'float'):
-        ddx_type = f_type
+        dfdx_type = f_type
     # either jacobian or component-wise vector derivative,
     # however jacobians have little use in shaders,
     # so we assume it is a component-wise derivative
     elif (f_type in glsl.vector_types and x_type == f_type):
-        ddx_type = f_type
+        dfdx_type = f_type
     else:
         f_type_str = peg.compose(f_type, type(f_type))
         x_type_str = peg.compose(x_type, type(x_type))
         raise throw_not_implemented_error(f, f'variables of type "{f_type_str}" and "{x_type_str}"')
 
-    assert_type(ddx_type, [str, glsl.AttributeExpression])
-    return ddx_type
+    assert_type(dfdx_type, [str, glsl.AttributeExpression])
+    return dfdx_type
 
 def get_ddx_function(f, x, scope):
     ''' 
@@ -577,19 +606,7 @@ def get_ddx_function(f, x, scope):
             )
 
     # convert the content of the function
-    for statement in f.content:
-        if isinstance(statement, glsl.VariableDeclaration):
-            dfdx.content.append( copy.deepcopy(statement) )
-            dfdx.content.append(
-                glsl.VariableDeclaration(
-                    type_ = get_ddx_type(statement.type, x_type, statement),
-                    names = [ f'dd{x}_{name}' for name in statement.names],
-                    value = get_ddx(statement.value, x, local_scope),
-                )
-            )
-        else:
-            dfdx.content.append( get_ddx(statement, x, local_scope) )
-
+    dfdx.content = get_ddx(f.content, x, local_scope)
 
     return dfdx
 

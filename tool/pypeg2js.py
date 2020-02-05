@@ -56,7 +56,7 @@ element_attributes = [
 
     'value',
     'content',
-    'else',
+    'else_',
 
     'reference',
     'arguments',
