@@ -449,6 +449,16 @@ def get_ddx_literal(k, x, scope):
     k_type = scope.get_expression_type(k)
     return get_0_for_type(k_type)
 
+def get_ddx_ternary_expression(f, x, scope):
+    return glsl.TernaryExpression(
+        f.operand1,
+        maybe_wrap(get_ddx(f.operand2), glsl.binary_expression_or_less),
+        maybe_wrap(get_ddx(f.operand3), glsl.binary_expression_or_less),
+    )
+
+def get_ddx_return_statement(f, x, scope):
+    return glsl.ReturnStatement(get_ddx(f.value, x, scope))
+
 def get_ddx(f, x, scope):
     ''' 
     "get_ddx_function" is a pure function that 
@@ -475,9 +485,11 @@ def get_ddx(f, x, scope):
         # (glsl.LogicalXorExpression,      ),
         # (glsl.LogicalOrExpression,       ),
 
-        # (glsl.TernaryExpression,         ),
+        (glsl.TernaryExpression,         get_ddx_ternary_expression),
 
         (glsl.ParensExpression,          get_ddx_parens_expression),
+
+        (glsl.ReturnStatement,           get_ddx_return_statement)
     }
     for Rule, get_ddx_rule in derivative_map:
         if isinstance(f, Rule):
@@ -553,11 +565,7 @@ def get_ddx_function(f, x, scope):
 
     # convert the content of the function
     for statement in f.content:
-        if isinstance(statement, glsl.ReturnStatement):
-            dfdx.content.append( 
-                glsl.ReturnStatement(get_ddx(statement.value, x, local_scope))
-            )
-        elif isinstance(statement, glsl.VariableDeclaration):
+        if isinstance(statement, glsl.VariableDeclaration):
             dfdx.content.append( copy.deepcopy(statement) )
             dfdx.content.append(
                 glsl.VariableDeclaration(
@@ -567,8 +575,8 @@ def get_ddx_function(f, x, scope):
                 )
             )
         else:
-            statement_str = peg.compose(statement, type(statement))
-            throw_not_implemented_error(statement, f'{type(statement)}')
+            dfdx.content.append( get_ddx(statement, x, local_scope) )
+
 
     return dfdx
 
