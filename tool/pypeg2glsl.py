@@ -216,7 +216,11 @@ class ReturnStatement(GlslElement):
     def __init__(self, value=None):
         self.value = value
 
-class IfStatement(GlslElement): pass
+class IfStatement(GlslElement): 
+    def __init__(self, condition=None, content=None, else_=None):
+        self.condition = condition or None
+        self.content = content or []
+        self.else_ = else_ or []
 class WhileStatement(GlslElement): pass
 class DoWhileStatement(GlslElement): pass
 class ForStatement(GlslElement): pass

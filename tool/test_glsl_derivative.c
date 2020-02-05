@@ -37,6 +37,17 @@ float test_ternary(in float x)
     float v = 0.5*x*x*x;
     return u < v ? u:v;
 }
+float test_if_statement(in vec2 x)
+{
+    float u = 2.*x*x;
+    float v = 0.5*x*x*x;
+    if (u < v)
+    {
+        return u;
+    } else {
+        return v;
+    }
+}
 
 float test_vec_x_float(in vec2 X)
 {
