@@ -91,6 +91,28 @@ element_attributes = [
     'comment3',
 ]
 '''
+"warn_of_invalid_grammar_elements" recursively calls pypeg2.compose() 
+on subelements of a glsl element and checks for errors.
+If an error occurs, it issues a warning 
+stating which subelements are causing problems. 
+This makes it very useful for debugging errors where pypeg2.compose()
+returns an empty string without explaining why.
+'''
+def warn_of_invalid_grammar_elements(element):
+    if isinstance(element, list):
+        for subelement in element:
+            warn_of_invalid_grammar_elements(subelement)
+    elif isinstance(element, GlslElement):
+        try:
+            pypeg2.compose(element, type(element))
+        except ValueError as error:
+            warnings.warn(f'element of type "{type(element)}" is invalid: \n{debug(element, "  ")}')
+        for attribute in element_attributes:
+            if hasattr(element, attribute):
+                subelement = getattr(element, attribute)
+                warn_of_invalid_grammar_elements(subelement)
+
+'''
 "debug" returns a string representing a variable that is intended to be a GlslElement.
 It attempts to provide a string representation of the element using pypeg2.compose()
 In the event it is unable to do so, it recurses through element attributes 

@@ -312,6 +312,7 @@ def convert_file(input_filename=False, in_place=False, verbose=False):
 
     glsl_code = peg.parse(input_text, glsl.code)
     js_code = get_js(glsl_code, glsl.LexicalScope(glsl_code))
+    js.warn_of_invalid_grammar_elements(js_code)
     output_text = peg.compose(js_code, js.code, autoblank = False)
 
     if verbose:

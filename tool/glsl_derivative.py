@@ -605,6 +605,7 @@ def convert_glsl(input_glsl):
         else declaration
         for declaration in input_glsl
     ]
+    glsl.warn_of_invalid_grammar_elements(output_glsl)
     return output_glsl
 
 def convert_text(input_text):
@@ -679,8 +680,18 @@ if __name__ == '__main__':
         help='read input from FILE', metavar='FILE')
     parser.add_argument('-i', '--in-place', dest='in_place', 
         help='edit the file in-place', action='store_true')
+    parser.add_argument('--embed', dest='embed', 
+        help='embed derivatives in the file with the original functions', 
+        action='store_true')
+    parser.add_argument('--append', dest='append', 
+        help='append derivatives to the end of the file', 
+        action='store_true')
+    parser.add_argument('--replace', dest='replace', 
+        help='include only the derivatives in output', 
+        action='store_true')
     parser.add_argument('-v', '--verbose', dest='verbose', 
         help='show debug information', action='store_true')
+
     args = parser.parse_args()
     convert_file(
         args.filename, 
