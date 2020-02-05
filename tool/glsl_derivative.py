@@ -455,8 +455,8 @@ def get_ddx_literal(k, x, scope):
 def get_ddx_ternary_expression(f, x, scope):
     return glsl.TernaryExpression(
         f.operand1,
-        maybe_wrap(get_ddx(f.operand2), glsl.binary_expression_or_less),
-        maybe_wrap(get_ddx(f.operand3), glsl.binary_expression_or_less),
+        maybe_wrap(get_ddx(f.operand2, x, scope), glsl.binary_expression_or_less),
+        maybe_wrap(get_ddx(f.operand3, x, scope), glsl.binary_expression_or_less),
     )
 
 def get_ddx_return_statement(f, x, scope):

@@ -31,6 +31,12 @@ float test_dot(in vec2 X)
     vec2 V = 0.5*X*X*X;
     return dot(U,V);
 }
+float test_ternary(in float x)
+{
+    float u = 2.*x*x;
+    float v = 0.5*x*x*x;
+    return u < v ? u:v;
+}
 
 float test_vec_x_float(in vec2 X)
 {
