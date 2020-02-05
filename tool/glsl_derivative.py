@@ -593,22 +593,34 @@ def get_ddx_function(f, x, scope):
 
     return dfdx
 
-def convert_glsl(input_glsl):
+def convert_glsl(input_glsl, input_handling='omit'):
     ''' 
     "convert_glsl" is a pure function that performs 
     a transformation on a parse tree of glsl as represented by glsl,
     then returns a transformed parse tree as output. 
     '''
-    output_glsl = [
-        get_ddx_function(declaration, declaration.parameters[0].name, glsl.LexicalScope(input_glsl)) 
-        if isinstance(declaration, glsl.FunctionDeclaration)
-        else declaration
-        for declaration in input_glsl
-    ]
+
+    output_glsl1 = []
+    output_glsl2 = []
+    for declaration in input_glsl:
+        if isinstance(declaration, glsl.FunctionDeclaration):
+            ddx_declaration = get_ddx_function(declaration, declaration.parameters[0].name, glsl.LexicalScope(input_glsl))
+            if input_handling == 'embed':
+                output_glsl1.append(copy.deepcopy(declaration))
+                output_glsl1.append(ddx_declaration)
+            elif input_handling == 'prepend':
+                output_glsl1.append(copy.deepcopy(declaration))
+                output_glsl2.append(ddx_declaration)
+            elif input_handling == 'omit':
+                output_glsl1.append(ddx_declaration)
+        else:
+            output_glsl1.append(copy.deepcopy(declaration))
+
+    output_glsl = [*output_glsl1, *output_glsl2]
     glsl.warn_of_invalid_grammar_elements(output_glsl)
     return output_glsl
 
-def convert_text(input_text):
+def convert_text(input_text, input_handling='omit'):
     ''' 
     "convert_text" is a pure function that performs 
     a transformation on a string containing glsl code,
@@ -618,11 +630,11 @@ def convert_text(input_text):
     such as string substitutions or regex replacements
     '''
     input_glsl = peg.parse(input_text, glsl.code)
-    output_glsl = convert_glsl(input_glsl)
+    output_glsl = convert_glsl(input_glsl, input_handling = input_handling)
     output_text = peg.compose(output_glsl, glsl.code, autoblank = False) 
     return output_text
 
-def convert_file(input_filename=False, in_place=False, verbose=False):
+def convert_file(input_filename=False, in_place=False, verbose=False, input_handling='omit'):
     ''' 
     "convert_file" performs a transformation on a file containing glsl code
     It may either print out transformed contents or replace the file, 
@@ -653,7 +665,7 @@ def convert_file(input_filename=False, in_place=False, verbose=False):
         for line in sys.stdin:
             input_text += line
 
-    output_text = convert_text(input_text)
+    output_text = convert_text(input_text, input_handling=input_handling)
 
     if verbose:
         diff = difflib.ndiff(
@@ -680,15 +692,9 @@ if __name__ == '__main__':
         help='read input from FILE', metavar='FILE')
     parser.add_argument('-i', '--in-place', dest='in_place', 
         help='edit the file in-place', action='store_true')
-    parser.add_argument('--embed', dest='embed', 
-        help='embed derivatives in the file with the original functions', 
-        action='store_true')
-    parser.add_argument('--append', dest='append', 
-        help='append derivatives to the end of the file', 
-        action='store_true')
-    parser.add_argument('--replace', dest='replace', 
-        help='include only the derivatives in output', 
-        action='store_true')
+    parser.add_argument('--input-handling', dest='input_handling', choices=['embed', 'prepend', 'omit'],
+        help='specify whether to embed, prepend, or omit input functions in output', 
+    )
     parser.add_argument('-v', '--verbose', dest='verbose', 
         help='show debug information', action='store_true')
 
@@ -697,4 +703,5 @@ if __name__ == '__main__':
         args.filename, 
         in_place=args.in_place, 
         verbose=args.verbose, 
+        input_handling=args.input_handling,
     )
