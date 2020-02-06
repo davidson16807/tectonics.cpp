@@ -21,8 +21,10 @@ import pypeg2
 from pypeg2 import attr, optional, maybe_some, blank, endl
 
 def assert_type(variable, types):
+    if len(types) == 1 and isinstance(variable, types_[0]):
+        raise AssertionError(f'expected {types[0]} but got {type(variable)} (value: {variable})')
     if not any([isinstance(variable, type_) for type_ in types]):
-        raise AssertionError(f'expected {types} but got {variable}')
+        raise AssertionError(f'expected any of {types} but got {type(variable)} (value: {variable})')
 
 inline_comment = re.compile('/\*((?!\*/).)*\*/\s*', re.MULTILINE | re.DOTALL)
 endline_comment = re.compile('//[^\n]*\n', re.MULTILINE | re.DOTALL)
@@ -458,10 +460,10 @@ built_in_overloaded_functions = [
     'frexp', 'ldexp',
 ]
 built_in_function_type_map = {
-    'cross': ['vec3'],
-    'dot': ['float'],
-    'length': ['float'],
-    'distance': ['float'],
+    'cross': 'vec3',
+    'dot': 'float',
+    'length': 'float',
+    'distance': 'float',
 }
 class LexicalScope:
     """ 
@@ -529,6 +531,8 @@ class LexicalScope:
         self.variables  = LexicalScope.get_global_variable_type_lookups(code)
         self.functions  = LexicalScope.get_function_type_lookups(code)
         self.attributes = LexicalScope.get_attribute_type_lookups(code)
+        self.callstack  = []
+        self.returntype = None
         
     def get_subscope(self, function):
         """
@@ -543,6 +547,8 @@ class LexicalScope:
             **LexicalScope.get_local_variable_type_lookups(function.parameters),
             **LexicalScope.get_local_variable_type_lookups(function.content)
         }
+        result.callstack = [*self.callstack, function.name]
+        result.returntype = function.type
         return result
         
     def get_expression_type(self, expression):
@@ -570,7 +576,7 @@ class LexicalScope:
             # constructor
             if (expression.reference in built_in_types or 
                 expression.reference in self.attributes):
-                type_ = [ expression.reference ]
+                type_ = expression.reference
             # function invocation (built-in)
             elif expression.reference in built_in_function_type_map:
                 type_ = built_in_function_type_map[expression.reference]
@@ -621,8 +627,8 @@ class LexicalScope:
         elif isinstance(expression, BinaryExpression):
             type1 = self.get_expression_type(expression.operand1)
             type2 = self.get_expression_type(expression.operand2)
-            vector_type = type1 if type1 in vector_types else type2 if type2 in vector_types else []
-            matrix_type = type1 if type1 in matrix_types else type2 if type2 in matrix_types else []
+            vector_type = type1 if type1 in vector_types else type2 if type2 in vector_types else None
+            matrix_type = type1 if type1 in matrix_types else type2 if type2 in matrix_types else None
             if vector_type:
                 type_ = vector_type
             elif matrix_type:
@@ -631,9 +637,9 @@ class LexicalScope:
                 expression_str = pypeg2.compose(expression, type(expression))
                 operand1_str = pypeg2.compose(expression.operand1, type(expression.operand1))
                 operand2_str = pypeg2.compose(expression.operand2, type(expression.operand2))
-                if type1 == []:
+                if type1 == None:
                     print(f'WARNING: could not deduce type for variable "{operand1_str}" \n\t{expression_str}')
-                elif type2 == []:
+                elif type2 == None:
                     print(f'WARNING: could not deduce type for variable "{operand2_str}" \n\t{expression_str}')
                 elif type1 != type2:
                     print(f'WARNING: type mismatch, operation "{expression.operator}" was fed left operand of type "{type1}" and right hand operand of type "{type2}" \n\t{expression_str} ')
@@ -644,9 +650,9 @@ class LexicalScope:
             expression_str = pypeg2.compose(expression, type(expression))
             operand1_str = pypeg2.compose(expression.operand2, type(expression.operand2))
             operand2_str = pypeg2.compose(expression.operand3, type(expression.operand3))
-            if type1 == []:
+            if type1 == None:
                 print(f'WARNING: could not deduce type for variable "{operand1_str}" \n\t{expression_str}')
-            elif type2 == []:
+            elif type2 == None:
                 print(f'WARNING: could not deduce type for variable "{operand2_str}" \n\t{expression_str}')
             elif type1 != type2:
                 expression_str = pypeg2.compose(expression, TernaryExpression)
@@ -658,6 +664,6 @@ class LexicalScope:
         else:
             raise ValueError(f'The grammar rule {type(expression)} has no concept of type and should not have been passed to get_expression_type()')
 
-        assert_type(type_, [str, AttributeExpression])
+        assert_type(type_, [str, AttributeExpression, type(None)])
 
         return type_

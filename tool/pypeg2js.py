@@ -326,15 +326,6 @@ code_block = maybe_some(
         # next try standalone comments since they're quick to parse
         (inline_comment, endl, endl), 
         (endline_comment, endl, endl),
-        
-        # ForStatement, 
-        # WhileStatement, 
-        # DoWhileStatement, 
-        # IfStatement, 
-        # FunctionDeclaration, 
-        # simple_statement,
-        # inline_comment, 
-        # endline_comment,
     ]
 )
 compound_statement = ( '{', endl, pypeg2.indent(code_block), '}', endl )

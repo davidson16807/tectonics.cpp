@@ -31,16 +31,18 @@ except ImportError:  # fallback so that the imported classes always exist
     Fore = Back = Style = ColorFallback()
 
 def assert_type(variable, types):
+    if len(types) == 1 and isinstance(variable, types_[0]):
+        raise AssertionError(f'expected {types[0]} but got {type(variable)} (value: {variable})')
     if not any([isinstance(variable, type_) for type_ in types]):
-        raise AssertionError(f'expected {types} but got {variable}')
+        raise AssertionError(f'expected any of {types} but got {type(variable)} (value: {variable})')
 
 def throw_not_implemented_error(f, feature='expressions'):
     f_str = peg.compose(f, type(f))
     raise NotImplementedError(f'support for derivatives involving {feature} such as "{f_str}" is not implemented')
 
-def throw_value_error(f, description='invalid expression'):
+def throw_compiler_error(f, description='invalid expression'):
     f_str = peg.compose(f, type(f))
-    raise NotImplementedError(f'{description}, cannot continue safely: \n\t{f_str}')
+    raise ValueError(f'{description}, code cannot compile, cannot continue safely: \n\t{f_str}')
 
 def get_1_for_type(type_):
     identity_map ={
@@ -173,7 +175,7 @@ def get_ddx_sqrt(f, x, scope):
 
 def get_ddx_dot(f, x, scope):
     if len(f.arguments) != 2:
-        throw_value_error(f, 'dot product must have two parameters')
+        throw_compiler_error(f, 'dot product must have two parameters')
     u = f.arguments[0]
     v = f.arguments[1]
     u_type = scope.get_expression_type(u)
@@ -181,7 +183,7 @@ def get_ddx_dot(f, x, scope):
 
     if (u_type not in glsl.vector_types or 
         v_type not in glsl.vector_types):
-        throw_value_error(f, 'dot product must only accept vectors as parameters')
+        throw_compiler_error(f, 'dot product must only accept vectors as parameters')
     if (u_type not in glsl.float_vector_types or 
         v_type not in glsl.float_vector_types):
         throw_not_implemented_error(f, 'non-floating point dot products')
@@ -416,7 +418,7 @@ def get_ddx_multiplicative_expression(f, x, scope):
     elif f.operator == '/':
         dfdx = peg.parse(f'({v}*{dudx} - {u}*{dvdx})/({v}*{v})', glsl.MultiplicativeExpression)
     else:
-        throw_value_error(f, f'multiplicative expressions cannot have an operator of "{f.operator}"')
+        throw_compiler_error(f, f'multiplicative expressions cannot have an operator of "{f.operator}"')
 
     return dfdx
 
@@ -473,6 +475,10 @@ def get_ddx_code_block(f, x, scope):
 
     for statement in f:
         if isinstance(statement, glsl.VariableDeclaration):
+            deduced_statement_type = scope.get_expression_type(statement.value)
+            if deduced_statement_type != statement.type:
+                throw_compiler_error(f'type mismatch between "{statement.type}" and "{deduced_statement_type}"')
+
             dfdx.append( copy.deepcopy(statement) )
             dfdx.append(
                 glsl.VariableDeclaration(
@@ -607,8 +613,10 @@ def get_ddx_function(f, x, scope):
         # convert the content of the function
         dfdx.content = get_ddx(f.content, x, local_scope)
 
-    except NotImplementedError as error:
+    except (NotImplementedError, ValueError) as error:
         return f'/* Derivative "{dfdx.name}" not available: \n{error} */'
+    except Exception as error:
+        return f'/* Derivative "{dfdx.name}" not available: \n{repr(error)} */'
 
     return dfdx
 

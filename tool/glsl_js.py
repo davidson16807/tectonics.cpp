@@ -219,9 +219,8 @@ def get_js_function_declaration(glsl_function, scope):
     local_scope = scope.get_subscope(glsl_function)
     try:
         for glsl_parameter in glsl_function.parameters:
-            if ('out' in glsl_parameter.qualifiers and 
-                glsl_parameter.type in glsl.scalar_types):
-                raise throw_not_implemented_error(glsl_parameter, 'primitive-type output parameters')
+            if ('out' in glsl_parameter.qualifiers):
+                raise throw_not_implemented_error(glsl_parameter, 'output reference parameters')
             glsl_type_str = peg.compose(glsl_parameter.type, type(glsl_function.type))
             js_function.parameters.append(f'/*{glsl_type_str}*/')
             js_function.parameters.append(js.ParameterDeclaration(glsl_parameter.name))
