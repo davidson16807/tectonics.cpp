@@ -5,8 +5,8 @@
 
 It has the following features:
 * pypeg2 grammar rule classes for parsing glsl.
-* a "LexicalScope" class for storing type information within glsl lexical scopes
-* a "get_expression_type" function for lexing type information from glsl expressions
+* a "LexicalScope" class for storing, querying, and deducing type information 
+  within glsl lexical scopes
 * various variables storing information about built in glsl types
   (vector_types, matrix_types, built_in_types)
 
@@ -551,7 +551,7 @@ class LexicalScope:
         result.returntype = function.type
         return result
         
-    def get_expression_type(self, expression):
+    def deduce_type(self, expression):
         def warn_of_type_deduction_failure(expression, description):
             expression_str = pypeg2.compose(expression, type(expression))
             warnings.warn(f'could not deduce type for {description} in "{expression_str}"')
@@ -582,7 +582,7 @@ class LexicalScope:
                 type_ = built_in_function_type_map[expression.reference]
             # function invocation (built-in, overloaded)
             elif expression.reference in built_in_overloaded_functions:
-                param_types = [self.get_expression_type(param) for param in expression.arguments]
+                param_types = [self.deduce_type(param) for param in expression.arguments]
                 vector_param_types = [param_type for param_type in param_types if param_type in vector_types]
                 type_ = vector_param_types[0] if len(vector_param_types) > 0 else param_types[0]
             # function invocation (user-defined)
@@ -591,7 +591,7 @@ class LexicalScope:
             else:
                 warn_of_type_deduction_failure( expression, f'call to unknown function "{expression.reference}"' )
         elif isinstance(expression, AttributeExpression):
-            type_ = self.get_expression_type(expression.reference)
+            type_ = self.deduce_type(expression.reference)
             for attribute in expression.attributes:
                 if isinstance(attribute, str):
                     # vector component access
@@ -621,12 +621,12 @@ class LexicalScope:
                     else:
                         warn_of_type_deduction_failure( expression, f'''index of non array "{''.join(type_)}"''')
         elif isinstance(expression, ParensExpression):
-            type_ = self.get_expression_type(expression.content)
+            type_ = self.deduce_type(expression.content)
         elif isinstance(expression, UnaryExpression):
-            type_ = self.get_expression_type(expression.operand1)
+            type_ = self.deduce_type(expression.operand1)
         elif isinstance(expression, BinaryExpression):
-            type1 = self.get_expression_type(expression.operand1)
-            type2 = self.get_expression_type(expression.operand2)
+            type1 = self.deduce_type(expression.operand1)
+            type2 = self.deduce_type(expression.operand2)
             vector_type = type1 if type1 in vector_types else type2 if type2 in vector_types else None
             matrix_type = type1 if type1 in matrix_types else type2 if type2 in matrix_types else None
             if vector_type:
@@ -645,8 +645,8 @@ class LexicalScope:
                     print(f'WARNING: type mismatch, operation "{expression.operator}" was fed left operand of type "{type1}" and right hand operand of type "{type2}" \n\t{expression_str} ')
                 type_ = type1
         elif isinstance(expression, TernaryExpression):
-            type1 = self.get_expression_type(expression.operand2)
-            type2 = self.get_expression_type(expression.operand3)
+            type1 = self.deduce_type(expression.operand2)
+            type2 = self.deduce_type(expression.operand3)
             expression_str = pypeg2.compose(expression, type(expression))
             operand1_str = pypeg2.compose(expression.operand2, type(expression.operand2))
             operand2_str = pypeg2.compose(expression.operand3, type(expression.operand3))
@@ -662,7 +662,7 @@ class LexicalScope:
         elif isinstance(expression, FunctionDeclaration):
             type_ = self.functions[expression.name]
         else:
-            raise ValueError(f'The grammar rule {type(expression)} has no concept of type and should not have been passed to get_expression_type()')
+            raise ValueError(f'The grammar rule {type(expression)} has no concept of type and should not have been passed to deduce_type()')
 
         assert_type(type_, [str, AttributeExpression, type(None)])
 

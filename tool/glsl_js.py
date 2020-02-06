@@ -95,7 +95,7 @@ def get_js_unary_operator_expression_getter(JsElement):
 
     get_js_default_operator_expression = get_js_default_element_getter(JsElement)
     def get_js_unary_glm_operator_expression(glsl_operand1, operator, scope):
-        type1 = scope.get_expression_type(glsl_operand1)
+        type1 = scope.deduce_type(glsl_operand1)
         assert operator != '!', 'Unary negation for vectors/matrices is not supported by glm-js, cannot safely continue'
         if operator == '++':
             return js.PostfixExpression([
@@ -130,7 +130,7 @@ def get_js_unary_operator_expression_getter(JsElement):
     def get_js_unary_operator_expression(glsl_operator, scope):
         operand1 = glsl_operator.operand1
         operator = glsl_operator.operator
-        type1 = scope.get_expression_type(operand1)
+        type1 = scope.deduce_type(operand1)
         if type1 in glsl.vector_types or type1 in glsl.matrix_types:
             return get_js_unary_glm_operator_expression(operand1, operator, scope)
         else:
@@ -166,8 +166,8 @@ def get_js_binary_operator_expression_getter(JsElement):
         operand1 = glsl_operator.operand1
         operand2 = glsl_operator.operand2
         operator = glsl_operator.operator
-        type1 = scope.get_expression_type(operand1)
-        type2 = scope.get_expression_type(operand2)
+        type1 = scope.deduce_type(operand1)
+        type2 = scope.deduce_type(operand2)
         if type1 in glsl.vector_types:
             return get_js_binary_glm_operator_expression(operand1, operand2, operator, scope)
         elif type1 in glsl.matrix_types:

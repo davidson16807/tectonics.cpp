@@ -105,8 +105,8 @@ def get_ddx_max(f, x, scope):
         for expression in expressions
     ]
     u, dudx, v, dvdx = expression_strings
-    u_type = scope.get_expression_type(f_args[0])
-    v_type = scope.get_expression_type(f_args[1])
+    u_type = scope.deduce_type(f_args[0])
+    v_type = scope.deduce_type(f_args[1])
     if (u_type == 'float' and v_type == 'float'):
         return peg.parse(f''' 
             {u} > {v} ? {dudx} : {dvdx}
@@ -131,8 +131,8 @@ def get_ddx_min(f, x, scope):
         for expression in expressions
     ]
     u, dudx, v, dvdx = expression_strings
-    u_type = scope.get_expression_type(f_args[0])
-    v_type = scope.get_expression_type(f_args[1])
+    u_type = scope.deduce_type(f_args[0])
+    v_type = scope.deduce_type(f_args[1])
     if (u_type == 'float' and v_type == 'float'):
         return peg.parse(f''' 
             {u} < {v} ? {dudx} : {dvdx}
@@ -155,7 +155,7 @@ def get_ddx_abs(f, x, scope):
         for expression in expressions
     ]
     u, dudx = expression_strings
-    u_type = scope.get_expression_type(f_args[0])
+    u_type = scope.deduce_type(f_args[0])
     if (u_type == 'float'):
         return peg.parse(f''' 
             {u} > 0.0f ? {dudx} : -{dudx}
@@ -178,8 +178,8 @@ def get_ddx_dot(f, x, scope):
         throw_compiler_error(f, 'dot product must have two parameters')
     u = f.arguments[0]
     v = f.arguments[1]
-    u_type = scope.get_expression_type(u)
-    v_type = scope.get_expression_type(v)
+    u_type = scope.deduce_type(u)
+    v_type = scope.deduce_type(v)
 
     if (u_type not in glsl.vector_types or 
         v_type not in glsl.vector_types):
@@ -281,7 +281,7 @@ def get_ddx_invocation_expression(f, x, scope):
     elif len(f.arguments) > 1:
         throw_not_implemented_error(f, 'user-defined multi-parameter functions')
     elif len(f.arguments) < 1:
-        return get_0_for_type(scope.get_expression_type(f))
+        return get_0_for_type(scope.deduce_type(f))
     else:
         dfdu = dfdu_name_map[f.reference] if f.reference in dfdu_name_map else f'dd{x}_{f.reference}'
         dudx = maybe_wrap(get_ddx(f.arguments[0], x, scope))
@@ -303,13 +303,13 @@ def get_ddx_attribute_expression(f, x, scope):
        * derivatives of vectors with respect to scalars, or...
        * derivatives of scalars with respect to vectors
     '''
-    f_type = scope.get_expression_type(f)
-    x_type = scope.get_expression_type(x)
+    f_type = scope.deduce_type(f)
+    x_type = scope.deduce_type(x)
 
     # variable reference
-    type_ = scope.get_expression_type(f.reference)
+    type_ = scope.deduce_type(f.reference)
     if f.reference == x:
-        dfdx = get_1_for_type(scope.get_expression_type(f))
+        dfdx = get_1_for_type(scope.deduce_type(f))
     elif isinstance(f.reference, str):
         dfdx = f'dd{x}_{f.reference}'
     else:
@@ -449,7 +449,7 @@ def get_ddx_parens_expression(f, x, scope):
     )
 
 def get_ddx_literal(k, x, scope):
-    k_type = scope.get_expression_type(k)
+    k_type = scope.deduce_type(k)
     return get_0_for_type(k_type)
 
 def get_ddx_ternary_expression(f, x, scope):
@@ -471,11 +471,11 @@ def get_ddx_if_statement(f, x, scope):
 
 def get_ddx_code_block(f, x, scope):
     dfdx = []
-    x_type = scope.get_expression_type(x)
+    x_type = scope.deduce_type(x)
 
     for statement in f:
         if isinstance(statement, glsl.VariableDeclaration):
-            deduced_statement_type = scope.get_expression_type(statement.value)
+            deduced_statement_type = scope.deduce_type(statement.value)
             if deduced_statement_type != statement.type:
                 throw_compiler_error(f'type mismatch between "{statement.type}" and "{deduced_statement_type}"')
 
@@ -593,7 +593,7 @@ def get_ddx_function(f, x, scope):
         x_param = [parameter for parameter in f.parameters if parameter.name == x]
         if len(x_param) < 1:
             dfdx.append(
-                glsl.ReturnStatement(get_0_for_type(scope.get_expression_type(f)))
+                glsl.ReturnStatement(get_0_for_type(scope.deduce_type(f)))
             )
             return dfdx
 
