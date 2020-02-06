@@ -471,6 +471,10 @@ def get_ddx_ternary_expression(f, x, scope):
     )
 
 def get_ddx_return_statement(f, x, scope):
+    deduced_statement_type = scope.deduce_type(f.value)
+    if deduced_statement_type != scope.returntype:
+        throw_compiler_error(f'tried to return a {deduced_statement_type} but needed a "{f.type}')
+
     return glsl.ReturnStatement(get_ddx(f.value, x, scope))
 
 def get_ddx_if_statement(f, x, scope):
@@ -488,7 +492,7 @@ def get_ddx_code_block(f, x, scope):
         if isinstance(statement, glsl.VariableDeclaration):
             deduced_statement_type = scope.deduce_type(statement.value)
             if deduced_statement_type != statement.type:
-                throw_compiler_error(f'type mismatch between "{statement.type}" and "{deduced_statement_type}"')
+                throw_compiler_error(f'tried to set to a {deduced_statement_type} but needed a {statement.type}')
 
             dfdx.append( copy.deepcopy(statement) )
             dfdx.append(
