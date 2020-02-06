@@ -1,4 +1,28 @@
 
+float test_add(in float x)
+{
+    float u = 2.*x*x;
+    float v = 3.*x*x*x;
+    return u+v;
+}
+float test_sub(in float x)
+{
+    float u = 2.*x*x;
+    float v = 3.*x*x*x;
+    return u-v;
+}
+float test_mult(in float x)
+{
+    float u = 2.*x*x;
+    float v = 3.*x*x*x;
+    return u*v;
+}
+float test_div(in float x)
+{
+    float u = 2.*x*x;
+    float v = 3.*x*x*x;
+    return u/v;
+}
 float test_min(in float x)
 {
     float u = 2.*x*x;
@@ -24,6 +48,11 @@ float test_sin(in float x)
 {
     float u = 2.*x*x;
     return sin(u);
+}
+float test_exp(in float x)
+{
+    float u = 2.*x*x;
+    return exp(u);
 }
 float test_dot(in vec2 X)
 {
@@ -98,4 +127,19 @@ float test_primitive_output_parameter(in float x, out float y)
 float test_swizzling(in vec3 X)
 {
     return X.xy;
+}
+float test_return_statement_type_check(in float x)
+{
+    return true;
+}
+float test_variable_declaration_type_check(in float x)
+{
+    bool u = x;
+    return x;
+}
+float test_assignment_expression_type_check(in float x)
+{
+    bool u;
+    u = x;
+    return x;
 }
