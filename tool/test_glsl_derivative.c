@@ -1,4 +1,15 @@
 
+float test_variable_declaration(in float x)
+{
+    float u = x;
+    return x;
+}
+float test_assignment_expression(in float x)
+{
+    float u;
+    u = x;
+    return x;
+}
 float test_add(in float x)
 {
     float u = 2.*x*x;
@@ -124,9 +135,13 @@ float test_primitive_output_parameter(in float x, out float y)
 {
     y = 2.f*x*x;
 }
-float test_swizzling(in vec3 X)
+vec3 test_unsupported_swizzling(in vec3 X)
 {
-    return X.xy;
+    return X.zyx;
+}
+vec2 test_unsupported_type(in vec3 X)
+{
+    return X.zyx;
 }
 float test_return_statement_type_check(in float x)
 {

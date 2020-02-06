@@ -597,7 +597,7 @@ class LexicalScope:
                     # vector component access
                     if type_ in vector_types: # likely an attribute of a built-in structure, like a vector
                         #swizzling
-                        if len(attribute) > 0:
+                        if len(attribute) > 1:
                             type_ = f'vec{len(attribute)}'
                         #single component
                         else: 

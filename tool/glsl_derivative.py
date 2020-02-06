@@ -39,7 +39,7 @@ def assert_type(variable, types):
 
 def throw_not_implemented_error(f, feature='expressions'):
     f_str = peg.compose(f, type(f))
-    raise NotImplementedError(f'support for derivatives involving {feature} such as "{f_str}" is not implemented')
+    raise NotImplementedError(f'support for derivatives involving {feature} such as for "{f_str}" is not implemented')
 
 def throw_compiler_error(f, description='invalid expression'):
     f_str = peg.compose(f, type(f))
@@ -474,7 +474,7 @@ def get_ddx_ternary_expression(f, x, scope):
 def get_ddx_return_statement(f, x, scope):
     deduced_statement_type = scope.deduce_type(f.value)
     if deduced_statement_type != scope.returntype and deduced_statement_type is not None:
-        throw_compiler_error(f, f'tried to return a {deduced_statement_type} but needed a "{scope.returntype}')
+        throw_compiler_error(f, f'tried to return a {deduced_statement_type} but needed a {scope.returntype}')
 
     return glsl.ReturnStatement(get_ddx(f.value, x, scope))
 
@@ -494,14 +494,44 @@ def get_ddx_code_block(f, x, scope):
             if statement.value:
                 deduced_statement_type = scope.deduce_type(statement.value)
                 if deduced_statement_type != statement.type and deduced_statement_type is not None:
-                    throw_compiler_error(f, f'tried to set to a {deduced_statement_type} but needed a {statement.type}')
+                    throw_compiler_error(f, f'tried to set value to a {deduced_statement_type} but needed a {statement.type}')
 
             dfdx.append( copy.deepcopy(statement) )
             dfdx.append(
                 glsl.VariableDeclaration(
                     type_ = get_ddx_type(statement.type, x_type, statement),
                     names = [ f'dd{x}_{name}' for name in statement.names],
-                    value = get_ddx(statement.value, x, scope),
+                    value = get_ddx(statement.value, x, scope) if statement.value is not None else get_0_for_type(statement.type),
+                ) 
+            )
+        elif isinstance(statement, glsl.AssignmentExpression):
+            '''
+            NOTE:
+            derivatives for assignments can be treated as if declaring new variables by reusing existing names
+            if the assignment is adding (+=) or subtracting (-=) in place,
+            we know that derivatives are distributed over addition, 
+            so we can support them fully without need to add to our logic
+            '''
+            if statement.operator not in ['=', '+=', '-=']:
+                throw_not_implemented_error(f'assignments using "{statement.operator}"')
+            # TODO: we add this check to be on the safe side, but it needs proper thought, so see if we really need it
+            #   is we are supporting attributes and indices, we also need to adjust logic below to handle that
+            if not isinstance(statement.operand1, str):
+                throw_not_implemented_error(f'assignments to attributes or indices')
+
+            deduced_lhs_type = scope.deduce_type(statement.operand1)
+            deduced_rhs_type = scope.deduce_type(statement.operand2)
+            if (deduced_lhs_type != deduced_rhs_type and 
+                deduced_lhs_type is not None 
+                and deduced_rhs_type is not None):
+                throw_compiler_error(f, f'tried to set value to a {deduced_rhs_type} but needed a {deduced_lhs_type}')
+
+            dfdx.append( copy.deepcopy(statement) )
+            dfdx.append(
+                glsl.AssignmentExpression(
+                    f'dd{x}_{statement.operand1}',
+                    statement.operator,
+                    get_ddx(statement.operand2, x, scope)
                 )
             )
         else:
@@ -602,9 +632,9 @@ def get_ddx_function(f, x, scope):
 
     try:
         dfdx = glsl.FunctionDeclaration(
-            type_ = get_ddx_type(f.type, x_type, f),
             name  = f'dd{x}_{f.name}',
         )
+        dfdx.type = get_ddx_type(f.type, x_type, f.name)
 
         # return identity if x not in f
         x_param = [parameter for parameter in f.parameters if parameter.name == x]
