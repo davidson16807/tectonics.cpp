@@ -20,6 +20,10 @@ def assert_type(variable, types):
     if not any([isinstance(variable, type_) for type_ in types]):
         raise AssertionError(f'expected {types} but got {variable}')
 
+def throw_not_implemented_error(f, feature='expressions'):
+    f_str = peg.compose(f, type(f))
+    raise NotImplementedError(f'support for functions involving {feature} such as "{f_str}" is not implemented')
+
 js_math_library_functions = [
     'PI',
     'trunc', 'floor', 'ceil', 'round',
@@ -213,12 +217,19 @@ def get_js_function_declaration(glsl_function, scope):
     js_function = js.FunctionDeclaration(glsl_function.name, type_=f'/*{glsl_type_str}*/')
     js_function.documentation = glsl_function.documentation
     local_scope = scope.get_subscope(glsl_function)
-    for glsl_parameter in glsl_function.parameters:
-        glsl_type_str = peg.compose(glsl_parameter.type, type(glsl_function.type))
-        js_function.parameters.append(f'/*{glsl_type_str}*/')
-        js_function.parameters.append(js.ParameterDeclaration(glsl_parameter.name))
-    for glsl_element in glsl_function.content:
-        js_function.content.append(get_js(glsl_element, local_scope))
+    try:
+        for glsl_parameter in glsl_function.parameters:
+            if ('out' in glsl_parameter.qualifiers and 
+                glsl_parameter.type in glsl.scalar_types):
+                raise throw_not_implemented_error(glsl_parameter, 'primitive-type output parameters')
+            glsl_type_str = peg.compose(glsl_parameter.type, type(glsl_function.type))
+            js_function.parameters.append(f'/*{glsl_type_str}*/')
+            js_function.parameters.append(js.ParameterDeclaration(glsl_parameter.name))
+        for glsl_element in glsl_function.content:
+            js_function.content.append(get_js(glsl_element, local_scope))
+    except NotImplementedError as error:
+        return f'/*Function "{glsl_function.name}" not available: {error}*/'
+        
     return js_function
 
 

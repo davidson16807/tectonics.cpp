@@ -314,14 +314,27 @@ simple_statement = ([
 ], optional(';'), endl)
 code_block = maybe_some(
     [
+        # first try functions: they're harder to parse, but we need 
+        # to parse them before comments since they have their own comment docs
+        FunctionDeclaration, 
+        # then the rest, in no particular order
         ForStatement, 
         WhileStatement, 
         DoWhileStatement, 
         IfStatement, 
-        FunctionDeclaration, 
         simple_statement,
-        inline_comment, 
-        endline_comment,
+        # next try standalone comments since they're quick to parse
+        (inline_comment, endl, endl), 
+        (endline_comment, endl, endl),
+        
+        # ForStatement, 
+        # WhileStatement, 
+        # DoWhileStatement, 
+        # IfStatement, 
+        # FunctionDeclaration, 
+        # simple_statement,
+        # inline_comment, 
+        # endline_comment,
     ]
 )
 compound_statement = ( '{', endl, pypeg2.indent(code_block), '}', endl )
@@ -329,7 +342,7 @@ compound_statement = ( '{', endl, pypeg2.indent(code_block), '}', endl )
 IfStatement.grammar = (
     'if', blank, '(', attr('condition', ternary_expression_or_less), ')',
     attr('content', [compound_statement, simple_statement] ), 
-    attr('else', optional('else', blank, [IfStatement, compound_statement, simple_statement])), endl
+    attr('else_', optional('else', blank, [IfStatement, compound_statement, simple_statement])), endl
 )
 WhileStatement.grammar = (
     'while', blank, '(', attr('condition', ternary_expression_or_less), ')', 

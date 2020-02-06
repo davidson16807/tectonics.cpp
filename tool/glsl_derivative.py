@@ -284,9 +284,7 @@ def get_ddx_invocation_expression(f, x, scope):
         dfdu = dfdu_name_map[f.reference] if f.reference in dfdu_name_map else f'dd{x}_{f.reference}'
         dudx = maybe_wrap(get_ddx(f.arguments[0], x, scope))
         return glsl.MultiplicativeExpression(
-            glsl.InvocationExpression(dfdu, f.arguments), 
-            '*', 
-            dudx
+            glsl.InvocationExpression(dfdu, f.arguments), '*', dudx
         )
 
 def get_ddx_attribute_expression(f, x, scope):
@@ -530,7 +528,7 @@ def get_ddx(f, x, scope):
             dfdx = get_ddx_rule(f, x, scope)
             assert_type(dfdx, [str, list, glsl.GlslElement])
             return dfdx
-    raise throw_not_implemented_error(f, type(f).__name__)
+    raise throw_not_implemented_error(f, f'{type(f).__name__} elements')
     
 def get_ddx_type(f_type, x_type, f=None):
     assert_type(f_type, [str, glsl.AttributeExpression])
@@ -579,34 +577,38 @@ def get_ddx_function(f, x, scope):
     local_scope = scope.get_subscope(f)
     x_type = local_scope.variables[x]
 
-    dfdx = glsl.FunctionDeclaration(
-        type_ = get_ddx_type(f.type, x_type, f),
-        name  = f'dd{x}_{f.name}',
-    )
-
-    # return identity if x not in f
-    x_param = [parameter for parameter in f.parameters if parameter.name == x]
-    if len(x_param) < 1:
-        dfdx.append(
-            glsl.ReturnStatement(get_0_for_type(scope.get_expression_type(f)))
+    try:
+        dfdx = glsl.FunctionDeclaration(
+            type_ = get_ddx_type(f.type, x_type, f),
+            name  = f'dd{x}_{f.name}',
         )
-        return dfdx
 
-    # create parameters expressing derivatives of other parameters besides x
-    dfdx.parameters = []
-    for param in f.parameters:
-        dfdx.parameters.append(copy.deepcopy(param))
-        if param.name != x:
-            dfdx.content.append(
-                glsl.VariableDeclaration(
-                    type_ = copy.deepcopy(param.type),
-                    names = [ f'dd{x}_{param.name}' ],
-                    value = get_0_for_type(param.type),
-                )
+        # return identity if x not in f
+        x_param = [parameter for parameter in f.parameters if parameter.name == x]
+        if len(x_param) < 1:
+            dfdx.append(
+                glsl.ReturnStatement(get_0_for_type(scope.get_expression_type(f)))
             )
+            return dfdx
 
-    # convert the content of the function
-    dfdx.content = get_ddx(f.content, x, local_scope)
+        # create parameters expressing derivatives of other parameters besides x
+        dfdx.parameters = []
+        for param in f.parameters:
+            dfdx.parameters.append(copy.deepcopy(param))
+            if param.name != x:
+                dfdx.content.append(
+                    glsl.VariableDeclaration(
+                        type_ = copy.deepcopy(param.type),
+                        names = [ f'dd{x}_{param.name}' ],
+                        value = get_0_for_type(param.type),
+                    )
+                )
+
+        # convert the content of the function
+        dfdx.content = get_ddx(f.content, x, local_scope)
+
+    except NotImplementedError as error:
+        return f'/* Derivative "{dfdx.name}" not available: \n{error} */'
 
     return dfdx
 

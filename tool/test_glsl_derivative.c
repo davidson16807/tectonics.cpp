@@ -85,3 +85,17 @@ float ellipsoid(in vec3 A0, in vec3 B0, in vec3 R)
     float v = length(V/(R*R));
     return u*(u-1.0)/v;
 }
+
+float test_constructor(in float X)
+{
+    vec2 U = vec2(x);
+    return sqrt(U.x);
+}
+float test_primitive_output_parameter(in float x, out float y)
+{
+    y = 2.f*x*x;
+}
+float test_swizzling(in vec3 X)
+{
+    return X.xy;
+}

@@ -25,8 +25,8 @@ def assert_type(variable, types):
         raise AssertionError(f'expected {types} but got {variable}')
 
 inline_comment = re.compile('/\*((?!\*/).)*\*/\s*', re.MULTILINE | re.DOTALL)
-endline_comment = re.compile('//[^\n]*\s*', re.MULTILINE | re.DOTALL)
-include_directive = re.compile('#[^\n]*\s*', re.MULTILINE | re.DOTALL)
+endline_comment = re.compile('//[^\n]*\n', re.MULTILINE | re.DOTALL)
+include_directive = re.compile('#[^\n]*\n', re.MULTILINE | re.DOTALL)
 int_literal = re.compile(
     '''
     (
@@ -372,7 +372,7 @@ ParameterDeclaration.grammar = (
     attr('name', token)
 )
 FunctionDeclaration.grammar = (
-    attr('documentation', maybe_some([(inline_comment, endl), endline_comment])),
+    attr('documentation', maybe_some([inline_comment, endline_comment])),
     attr('type', [ AttributeExpression, token ]), blank, attr('name', token), 
     '(', 
     attr('parameters',  
@@ -383,17 +383,26 @@ FunctionDeclaration.grammar = (
 )
 
 StructureDeclaration.grammar = (
+    attr('documentation', maybe_some([(inline_comment, endl), endline_comment])),
     'struct', blank, attr('name', token), 
     endl, '{', endl,
     attr('content', pypeg2.indent(maybe_some(VariableDeclaration, ';', endl)) ), 
     '}', ';', endl, endl
 )
 
-code = maybe_some(
+code = pypeg2.some(
     [
-        StructureDeclaration, FunctionDeclaration, (VariableDeclaration, ';', endl),
-        inline_comment, endline_comment,
+        # start with include directives, which can be determined quickly and ignored
         pypeg2.ignore(include_directive),
+        # next try declarations: they're harder to parse, but we need 
+        # to parse them before comments since they have their own comment docs
+        StructureDeclaration, 
+        FunctionDeclaration, 
+        # next try standalone comments since they're quick to parse
+        (inline_comment, endl, endl), 
+        (endline_comment, endl, endl),
+        # last try variable declaration
+        (VariableDeclaration, ';', endl),
     ]
 )
 
