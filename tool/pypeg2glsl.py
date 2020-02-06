@@ -659,6 +659,8 @@ class LexicalScope:
                 print(f'WARNING: type mismatch, ternary operation takes a left hand operand of type "{type1}" and right hand operand of type "{type2} \n\t{expression_str}"')
                 print(self.variables)
             type_ = type1
+        elif isinstance(expression, AssignmentExpression):
+            type_ = self.deduce_type(expression.operand2)
         elif isinstance(expression, FunctionDeclaration):
             type_ = self.functions[expression.name]
         else:

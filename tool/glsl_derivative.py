@@ -14,6 +14,7 @@ If you want to replace all files in a directory, call like so:
 """
 
 
+import traceback
 import difflib
 import copy
 import sys
@@ -472,8 +473,8 @@ def get_ddx_ternary_expression(f, x, scope):
 
 def get_ddx_return_statement(f, x, scope):
     deduced_statement_type = scope.deduce_type(f.value)
-    if deduced_statement_type != scope.returntype:
-        throw_compiler_error(f'tried to return a {deduced_statement_type} but needed a "{f.type}')
+    if deduced_statement_type != scope.returntype and deduced_statement_type is not None:
+        throw_compiler_error(f, f'tried to return a {deduced_statement_type} but needed a "{scope.returntype}')
 
     return glsl.ReturnStatement(get_ddx(f.value, x, scope))
 
@@ -490,9 +491,10 @@ def get_ddx_code_block(f, x, scope):
 
     for statement in f:
         if isinstance(statement, glsl.VariableDeclaration):
-            deduced_statement_type = scope.deduce_type(statement.value)
-            if deduced_statement_type != statement.type:
-                throw_compiler_error(f'tried to set to a {deduced_statement_type} but needed a {statement.type}')
+            if statement.value:
+                deduced_statement_type = scope.deduce_type(statement.value)
+                if deduced_statement_type != statement.type and deduced_statement_type is not None:
+                    throw_compiler_error(f, f'tried to set to a {deduced_statement_type} but needed a {statement.type}')
 
             dfdx.append( copy.deepcopy(statement) )
             dfdx.append(
@@ -629,9 +631,9 @@ def get_ddx_function(f, x, scope):
         dfdx.content = get_ddx(f.content, x, local_scope)
 
     except (NotImplementedError, ValueError) as error:
-        return f'/* Derivative "{dfdx.name}" not available: \n{error} */'
+        return f'/*\n Derivative "{dfdx.name}" not available: \n{error} \n*/'
     except Exception as error:
-        return f'/* Derivative "{dfdx.name}" not available: \n{repr(error)} */'
+        return f'/*\n Derivative "{dfdx.name}" not available: \n{traceback.format_exc()} \n*/'
 
     return dfdx
 
