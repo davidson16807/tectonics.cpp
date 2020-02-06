@@ -315,7 +315,7 @@ def get_ddx_attribute_expression(f, x, scope):
     else:
         dfdx = get_ddx(f.reference, x, scope)
 
-    updated_ddx = None
+    updated_dfdx = None
     for attribute in f.attributes:
         if isinstance(attribute, glsl.BracketedExpression):
             # matrix column access
@@ -329,16 +329,16 @@ def get_ddx_attribute_expression(f, x, scope):
                     glsl.int_literal.match(attribute.content)):
                     if x_type == 'float':
                         # V(u)[0] -> dVdu[0]
-                        updated_ddx = glsl.AttributeExpression(dfdx, attribute)
+                        updated_dfdx = glsl.AttributeExpression(dfdx, [attribute])
                     elif x_type in glsl.float_vector_types:
                         # V(U)[0] -> vec3(dVdU[0], 0.f, 0.f)
                         vecN = type_
                         N = int(vecN[-1])
                         i = int(attribute.content)
                         vecN_params = ['0.0f' for i in range(N)]
-                        vecN_params[i] = peg.compose(glsl.AttributeExpression(updated_ddx, attribute), glsl.AttributeExpression)
+                        vecN_params[i] = peg.compose(glsl.AttributeExpression(dfdx, [attribute]), glsl.AttributeExpression)
                         vecN_params = ','.join(vecN_params)
-                        updated_ddx = peg.parse(f'{vecN}({vecN_params})', glsl.InvocationExpression)
+                        updated_dfdx = peg.parse(f'{vecN}({vecN_params})', glsl.InvocationExpression)
                     else:
                         throw_not_implemented_error(f, 'component access for non-float derivatives')
                 else:
@@ -357,7 +357,7 @@ def get_ddx_attribute_expression(f, x, scope):
                     throw_not_implemented_error(f, 'swizzling')
                 if x_type == 'float':
                     # V(u).x -> dVdu.x
-                    updated_ddx = glsl.AttributeExpression(dfdx, attribute)
+                    updated_dfdx = glsl.AttributeExpression(dfdx, [attribute])
                 elif x_type in glsl.float_vector_types:
                     # V(U).x -> vec3(dVdU[0], 0.f, 0.f)
                     vecN = type_
@@ -368,9 +368,9 @@ def get_ddx_attribute_expression(f, x, scope):
                         's':0,'t':1,'u':2,'v':3,
                       }[attribute]
                     vecN_params = ['0.0f' for i in range(N)]
-                    vecN_params[i] = peg.compose(glsl.AttributeExpression(updated_ddx, attribute), glsl.AttributeExpression)
+                    vecN_params[i] = peg.compose(glsl.AttributeExpression(dfdx, [attribute]), glsl.AttributeExpression)
                     vecN_params = ','.join(vecN_params)
-                    updated_ddx = peg.parse(f'{vecN}({vecN_params})', glsl.InvocationExpression)
+                    updated_dfdx = peg.parse(f'{vecN}({vecN_params})', glsl.InvocationExpression)
                 else:
                     throw_not_implemented_error(f, 'component access for non-float derivatives')
             # attribute access
@@ -381,7 +381,7 @@ def get_ddx_attribute_expression(f, x, scope):
             else:
                 throw_not_implemented_error(f)
         type_ = updated_type
-        dfdx = updated_ddx
+        dfdx = updated_dfdx
 
     return dfdx 
 
