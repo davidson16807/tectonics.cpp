@@ -448,9 +448,20 @@ def get_ddx_parens_expression(f, x, scope):
         get_ddx(f.content, x, scope)
     )
 
-def get_ddx_literal(k, x, scope):
-    k_type = scope.deduce_type(k)
-    return get_0_for_type(k_type)
+def get_ddx_primary_expression(k, x, scope):
+    # comment
+    if (glsl.inline_comment.match(k) or 
+        glsl.endline_comment.match(k)):
+        return ''
+    # literal
+    elif (glsl.float_literal.match(k) or 
+          glsl.int_literal.match(k) or 
+          glsl.bool_literal.match(k)):
+        k_type = scope.deduce_type(k)
+        return get_0_for_type(k_type)
+    # variable
+    else:
+        return f'dd{x}_{k}'
 
 def get_ddx_ternary_expression(f, x, scope):
     return glsl.TernaryExpression(
@@ -497,12 +508,12 @@ def get_ddx(f, x, scope):
     assert_type(f, [str, list, glsl.GlslElement])
 
     ''' 
-    "get_ddx_function" is a pure function that 
+    "get_ddx" is a pure function that 
     transforms an glsl grammar element matching pypeg2glsl.ternary_expression_or_less
     into a glsl parse tree representing the derivative with respect to a given variable. 
     '''
     derivative_map = {
-        (str,  get_ddx_literal),
+        (str,  get_ddx_primary_expression),
         (list, get_ddx_code_block),
 
         (glsl.InvocationExpression, get_ddx_invocation_expression),
