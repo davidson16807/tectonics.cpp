@@ -183,10 +183,10 @@ def get_js_binary_operator_expression_getter(JsElement):
 
 
 def get_js_variable_declaration(glsl_declaration, scope):
-    js_declaration = js.VariableDeclaration()
-    js_declaration.qualifiers = ['const' if 'const' in glsl_declaration.qualifiers else 'let']
-    js_declaration.names = glsl_declaration.names
-    js_declaration.value = get_js(glsl_declaration.value, scope)
+    js_declaration = js.VariableDeclaration(
+        ['const' if 'const' in glsl_declaration.qualifiers else 'let'],
+        get_js(glsl_declaration.content, scope)
+    )
     return js_declaration
 
 
@@ -226,7 +226,7 @@ def get_js_function_declaration(glsl_function, scope):
             js_function.parameters.append(js.ParameterDeclaration(glsl_parameter.name))
         for glsl_element in glsl_function.content:
             js_function.content.append(get_js(glsl_element, local_scope))
-    except NotImplementedError as error:
+    except (NotImplementedError, ValueError) as error:
         return f'/*Function "{glsl_function.name}" not available: {error}*/'
         
     return js_function

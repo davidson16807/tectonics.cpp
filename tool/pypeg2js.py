@@ -47,7 +47,6 @@ element_attributes = [
     'type',
 
     'name',
-    'names',
 
     'parameters',
     'declaration',
@@ -192,9 +191,9 @@ class ParensExpression(JsElement):
         self.content = content or []
 class AssignmentExpression(JsElement): pass
 class VariableDeclaration(JsElement): 
-    def __init__(self, names=None, value=None):
-        self.names = names or []
-        self.value = value
+    def __init__(self, qualifiers=None, content=None):
+        self.qualifiers = qualifiers or []
+        self.content = content or []
 class ReturnStatement(JsElement): 
     def __init__(self, value=None):
         self.value = value
@@ -295,15 +294,14 @@ InvocationExpression.grammar = '(', attr('content', optional(pypeg2.csl((blank, 
 ParensExpression.grammar     = '(', attr('content', ternary_expression_or_less), ')'
 
 AssignmentExpression.grammar = (
-    attr('operand1', PostfixExpression), blank,
+    attr('operand1', [PostfixExpression, token]), blank,
     attr('operator', re.compile('[*/+-]?=')), blank,
     attr('operand2', [AssignmentExpression, *ternary_expression_or_less])
 )
 
 VariableDeclaration.grammar = (
     attr('qualifiers', maybe_some((re.compile('const|var|let'), blank))),
-    attr('names', pypeg2.csl(token)),
-    attr('value', optional(blank, '=', blank, [AssignmentExpression, *ternary_expression_or_less]))
+    attr('content', pypeg2.csl([AssignmentExpression, token]))
 )
 
 ReturnStatement.grammar = ('return', blank, attr('value', optional(ternary_expression_or_less)))

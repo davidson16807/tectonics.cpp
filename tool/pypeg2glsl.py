@@ -68,7 +68,6 @@ element_attributes = [
     'type',
 
     'name',
-    'names',
 
     'parameters',
     'declaration',
@@ -209,11 +208,16 @@ class AssignmentExpression(GlslElement):
         self.operator = operator
         self.operand2 = operand2
 class VariableDeclaration(GlslElement): 
-    def __init__(self, type_=None, names=None, value=None, qualifiers=None):
+    def __init__(self, type_=None, content=None, qualifiers=None):
         self.qualifiers = qualifiers or []
         self.type = type_
-        self.names = names or []
-        self.value = value
+        self.content = content or []
+    def get_names(self):
+        for element in self.content:
+            if isinstance(element, AssignmentExpression):
+                yield element.operand1
+            else:
+                yield element
 class ReturnStatement(GlslElement): 
     def __init__(self, value=None):
         self.value = value
@@ -322,8 +326,7 @@ AssignmentExpression.grammar = (
 VariableDeclaration.grammar = (
     attr('qualifiers', maybe_some(re.compile('const|highp|mediump|lowp|attribute|uniform|varying'))),
     attr('type', [ AttributeExpression, token ]), blank,
-    attr('names', pypeg2.csl(token)),
-    attr('value', optional(blank, '=', blank, [AssignmentExpression, *ternary_expression_or_less]))
+    attr('content', pypeg2.csl([AssignmentExpression, token])),
 )
 
 ReturnStatement.grammar = ('return', blank, attr('value', optional(ternary_expression_or_less)))
@@ -444,6 +447,12 @@ built_in_types = [
     *vector_types,
     *matrix_types,
 ]
+code_block_element_types = [
+    IfStatement,
+    DoWhileStatement,
+    WhileStatement,
+    ForStatement,
+]
 built_in_overloaded_functions = [
     'radians', 'degrees',
     'sin', 'cos', 'tan', 
@@ -478,18 +487,12 @@ class LexicalScope:
         if not isinstance(function_content, list):
             return {}
         result = { }
-        code_block_element_types = [
-            IfStatement,
-            DoWhileStatement,
-            WhileStatement,
-            ForStatement,
-        ]
         for element in function_content:
             if isinstance(element, ForStatement):
-                for name in element.declaration.names:
+                for name in element.declaration.get_names():
                     result[name] = element.declaration.type
-            if isinstance(element, VariableDeclaration):
-                for name in element.names:
+            elif isinstance(element, VariableDeclaration):
+                for name in element.get_names():
                     result[name] = element.type
             elif isinstance(element, ParameterDeclaration):
                 result[element.name] = element.type
@@ -502,7 +505,7 @@ class LexicalScope:
         result = {}
         for element in code:
             if isinstance(element, VariableDeclaration):
-                for name in element.names:
+                for name in element.get_names():
                     result[name] = element.type
         return result
 
@@ -514,7 +517,7 @@ class LexicalScope:
                 attribute_types = {}
                 for declaration in element.content:
                     if isinstance(declaration, VariableDeclaration):
-                        for name in declaration.names:
+                        for name in declaration.get_names():
                             result[name] = declaration.type
                 result[element.name] = attribute_types
         return result
