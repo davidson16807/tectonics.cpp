@@ -8,7 +8,7 @@ float test_assignment_expression(in float x)
 {
     float u;
     u = x;
-    return x;
+    return u;
 }
 float test_add(in float x)
 {
@@ -77,7 +77,7 @@ float test_ternary(in float x)
     float v = 0.5*x*x*x;
     return u < v ? u:v;
 }
-float test_if_statement(in vec2 x)
+float test_if_statement(in float x)
 {
     float u = 2.*x*x;
     float v = 0.5*x*x*x;
@@ -100,19 +100,6 @@ float test_vec_0_float(in vec2 X)
     return sqrt(U[0]);
 }
 
-
-vec2 test_vec_x_vec(in float u)
-{
-    vec2 G = 2.f*u;
-    vec2 H = 2.f*G.x;
-    return G;
-}
-vec2 test_vec_0_vec(in float u)
-{
-    vec2 G = 2.f*u;
-    vec2 H = 2.f*G[0];
-    return G;
-}
 float test_constant(in vec2 X)
 {
     vec2 U = vec2(1.f);
