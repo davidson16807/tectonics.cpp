@@ -696,14 +696,18 @@ def get_ddx_function(f, x, scope):
                 )
 
         # convert the content of the function
-        dfdx.content = get_ddx(f.content, x, local_scope)
+        dfdx.content = [
+            *dfdx.content,
+            *get_ddx(f.content, x, local_scope)
+        ]
+
+        return dfdx
 
     except (NotImplementedError, ValueError) as error:
         return f'/*\n Derivative "{dfdx.name}" not available: \n{error} \n*/'
     except Exception as error:
         return f'/*\n Derivative "{dfdx.name}" not available: \n{traceback.format_exc()} \n*/'
 
-    return dfdx
 
 def convert_glsl(input_glsl, input_handling='omit'):
     ''' 
@@ -716,15 +720,15 @@ def convert_glsl(input_glsl, input_handling='omit'):
     output_glsl2 = []
     for declaration in input_glsl:
         if isinstance(declaration, glsl.FunctionDeclaration):
-            ddx_declaration = get_ddx_function(declaration, declaration.parameters[0].name, glsl.LexicalScope(input_glsl))
-            if input_handling == 'embed':
+            if input_handling != 'omit':
                 output_glsl1.append(copy.deepcopy(declaration))
-                output_glsl1.append(ddx_declaration)
-            elif input_handling == 'prepend':
-                output_glsl1.append(copy.deepcopy(declaration))
-                output_glsl2.append(ddx_declaration)
-            elif input_handling == 'omit':
-                output_glsl1.append(ddx_declaration)
+            for parameter in declaration.parameters:
+                x = parameter.name
+                ddx_declaration = get_ddx_function(declaration, x, glsl.LexicalScope(input_glsl))
+                if input_handling == 'prepend':
+                    output_glsl2.append(ddx_declaration)
+                else:
+                    output_glsl1.append(ddx_declaration)
         else:
             output_glsl1.append(copy.deepcopy(declaration))
 
