@@ -457,7 +457,7 @@ built_in_overloaded_functions = [
     'radians', 'degrees',
     'sin', 'cos', 'tan', 
     'asin', 'acos', 'atan', 'atan2', 
-    'sqrt', 'cbrt', 'pow', 'exp', 'exp2' 'log', 'log2', 'inversesqrt',
+    'sqrt', 'cbrt', 'pow', 'exp', 'exp2', 'log', 'log2', 'inversesqrt',
     'trunc', 'floor', 'ceil', 'round','mod'
     'sqrt', 'fract', 
     'min', 'max', 'clamp',  'step', 'smoothstep',

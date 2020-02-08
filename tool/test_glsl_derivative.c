@@ -10,6 +10,18 @@ float test_assignment_expression(in float x)
     u = x;
     return u;
 }
+float test_constant(in float x, in float k)
+{
+    return k;
+}
+float test_x(in float x)
+{
+    return x;
+}
+float test_mult_by_constant(in float x, in float k)
+{
+    return k*x;
+}
 float test_add(in float x)
 {
     float u = 2.*x*x;
@@ -34,10 +46,71 @@ float test_div(in float x)
     float v = 3.*x*x*x;
     return u/v;
 }
-float test_min(in float x)
+float test_inverse(in float x)
+{
+    float u = 2.*x*x;
+    return 1.0f/u;
+}
+float test_sqrt(in float x)
 {
     float u = 2.*x*x;
     return sqrt(u);
+}
+float test_chain_rule(in float x)
+{
+    float u = 2.*x*x;
+    return f(u);
+}
+float test_log(in float x)
+{
+    float u = 2.*x*x;
+    return log(u);
+}
+float test_exp(in float x)
+{
+    float u = 2.*x*x;
+    return exp(u);
+}
+float test_pow_constant(in float x, in float k)
+{
+    float u = 2.*x*x;
+    return pow(k, u);
+}
+float test_pow_constant(in float x)
+{
+    float u = 2.*x*x;
+    float v = 3.*x*x*x;
+    return pow(u, v);
+}
+float test_sin(in float x)
+{
+    float u = 2.*x*x;
+    return sin(u);
+}
+float test_cos(in float x)
+{
+    float u = 2.*x*x;
+    return cos(u);
+}
+float test_tan(in float x)
+{
+    float u = 2.*x*x;
+    return tan(u);
+}
+float test_asin(in float x)
+{
+    float u = 2.*x*x;
+    return asin(u);
+}
+float test_acos(in float x)
+{
+    float u = 2.*x*x;
+    return acos(u);
+}
+float test_atan(in float x)
+{
+    float u = 2.*x*x;
+    return atan(u);
 }
 float test_abs(in float x)
 {
@@ -55,16 +128,7 @@ float test_length(in vec2 X)
     vec2 U = 2.*X*X;
     return length(U);
 }
-float test_sin(in float x)
-{
-    float u = 2.*x*x;
-    return sin(u);
-}
-float test_exp(in float x)
-{
-    float u = 2.*x*x;
-    return exp(u);
-}
+
 float test_dot(in vec2 X)
 {
     vec2 U = 2.*X*X;

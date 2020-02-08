@@ -31,6 +31,7 @@ except ImportError:  # fallback so that the imported classes always exist
         __getattr__ = lambda self, name: ''
     Fore = Back = Style = ColorFallback()
 
+# ERROR HANDLING FUNCTIONS
 def assert_type(variable, types):
     if len(types) == 1 and isinstance(variable, types_[0]):
         raise AssertionError(f'expected {types[0]} but got {type(variable)} (value: {variable})')
@@ -45,6 +46,7 @@ def throw_compiler_error(f, description='invalid expression'):
     f_str = peg.compose(f, type(f))
     raise ValueError(f'{description}, code cannot compile, cannot continue safely: \n\t{f_str}')
 
+# UTILITY FUNCTIONS
 def get_1_for_type(type_):
     identity_map ={
         'vec2': peg.parse('vec2(1.f)', glsl.InvocationExpression),
@@ -89,23 +91,23 @@ def maybe_wrap(
         else glsl.ParensExpression(expression)
     )
 
+def get_expression_strings(*expressions):
+    return [peg.compose(expression, type(expression)) 
+            for expression in expressions]
+
+# DERIVATIVES FOR BUILT IN FUNCTIONS
 def get_ddx_max(f, x, scope):
     f_args = f.arguments
     additive_expression_or_less = [
         glsl.AdditiveExpression,
         *glsl.unary_expression_or_less
     ]
-    expressions = [
+    u, dudx, v, dvdx = get_expression_strings(
         maybe_wrap(f_args[0], additive_expression_or_less),
         maybe_wrap(get_ddx(f_args[0], x, scope), glsl.binary_expression_or_less),
         maybe_wrap(f_args[1], additive_expression_or_less),
         maybe_wrap(get_ddx(f_args[1], x, scope), glsl.binary_expression_or_less)
-    ]
-    expression_strings = [
-        peg.compose(expression, type(expression))
-        for expression in expressions
-    ]
-    u, dudx, v, dvdx = expression_strings
+    )
     u_type = scope.deduce_type(f_args[0])
     v_type = scope.deduce_type(f_args[1])
     if (u_type == 'float' and v_type == 'float'):
@@ -121,17 +123,12 @@ def get_ddx_min(f, x, scope):
         glsl.AdditiveExpression,
         *glsl.unary_expression_or_less
     ]
-    expressions = [
+    u, dudx, v, dvdx = get_expression_strings(
         maybe_wrap(f_args[0], additive_expression_or_less),
         maybe_wrap(get_ddx(f_args[0], x, scope), glsl.binary_expression_or_less),
         maybe_wrap(f_args[1], additive_expression_or_less),
         maybe_wrap(get_ddx(f_args[1], x, scope), glsl.binary_expression_or_less)
-    ]
-    expression_strings = [
-        peg.compose(expression, type(expression))
-        for expression in expressions
-    ]
-    u, dudx, v, dvdx = expression_strings
+    )
     u_type = scope.deduce_type(f_args[0])
     v_type = scope.deduce_type(f_args[1])
     if (u_type == 'float' and v_type == 'float'):
@@ -142,21 +139,15 @@ def get_ddx_min(f, x, scope):
         throw_not_implemented_error(f, 'calls to component-wise min()')
     
 def get_ddx_abs(f, x, scope):
-    f_args = f.arguments
     additive_expression_or_less = [
         glsl.AdditiveExpression,
         *glsl.unary_expression_or_less
     ]
-    expressions = [
-        maybe_wrap(f_args[0], additive_expression_or_less),
-        maybe_wrap(get_ddx(f_args[0], x, scope), glsl.binary_expression_or_less)
-    ]
-    expression_strings = [
-        peg.compose(expression, type(expression))
-        for expression in expressions
-    ]
-    u, dudx = expression_strings
-    u_type = scope.deduce_type(f_args[0])
+    u, dudx = get_expression_strings(
+        maybe_wrap(f.arguments[0], additive_expression_or_less),
+        maybe_wrap(get_ddx(f.arguments[0], x, scope), glsl.binary_expression_or_less)
+    )
+    u_type = scope.deduce_type(f.arguments[0])
     if (u_type == 'float'):
         return peg.parse(f''' 
             {u} > 0.0f ? {dudx} : -{dudx}
@@ -165,22 +156,72 @@ def get_ddx_abs(f, x, scope):
         throw_not_implemented_error(f, 'calls to component-wise abs()')
 
 def get_ddx_sqrt(f, x, scope):
-    f_args = f.arguments
-    output = glsl.MultiplicativeExpression(
-        maybe_wrap(get_ddx(f_args[0], x, scope)),
-        '/',
-        maybe_wrap(glsl.MultiplicativeExpression('2.0f', '*', f)),
+    u, dudx = get_expression_strings(
+        maybe_wrap(f.arguments[0]),
+        maybe_wrap(get_ddx(f.arguments[0], x, scope)),
     )
-    return output
+    return peg.parse(f'{dudx} / (2.0f * {u})', glsl.MultiplicativeExpression)
+
+def get_ddx_log(f, x, scope):
+    u, dudx = get_expression_strings(
+        f.arguments[0],
+        maybe_wrap(get_ddx(f.arguments[0], x, scope))
+    )
+    return glsl.MultiplicativeExpression(
+        dudx, '/', copy.deepcopy(f.arguments[0])
+    )
+
+def get_ddx_pow(f, x, scope):
+    u, dudx, v, dvdx = get_expression_strings(
+        f.arguments[0],
+        maybe_wrap(get_ddx(f.arguments[0], x, scope)),
+        maybe_wrap(f.arguments[1]),
+        maybe_wrap(get_ddx(f.arguments[1], x, scope))
+    )
+    return peg.parse(f'{v}*pow({u},{v}-1.0f)*{dudx}  +  log({u})*pow({u},{v})*{dvdx}', glsl.AdditiveExpression)
+
+def get_ddx_cos(f, x, scope):
+    u, dudx = get_expression_strings(
+        f.arguments[0],
+        maybe_wrap(get_ddx(f.arguments[0], x, scope))
+    )
+    return peg.parse(f'-sin({u})*{dudx}', glsl.MultiplicativeExpression)
+
+def get_ddx_tan(f, x, scope):
+    u, dudx = get_expression_strings(
+        f.arguments[0],
+        maybe_wrap(get_ddx(f.arguments[0], x, scope))
+    )
+    return peg.parse(f'pow(sec({u}), 2.0f)*{dudx}', glsl.MultiplicativeExpression)
+
+def get_ddx_asin(f, x, scope):
+    u, dudx = get_expression_strings(
+        f.arguments[0],
+        maybe_wrap(get_ddx(f.arguments[0], x, scope))
+    )
+    return peg.parse(f'{dudx}/sqrt(1.0f-{u}*{u})', glsl.MultiplicativeExpression)
+
+def get_ddx_acos(f, x, scope):
+    u, dudx = get_expression_strings(
+        f.arguments[0],
+        maybe_wrap(get_ddx(f.arguments[0], x, scope))
+    )
+    return peg.parse(f'-{dudx}/sqrt(1.0f-{u}*{u})', glsl.MultiplicativeExpression)
+
+
+def get_ddx_atan(f, x, scope):
+    u, dudx = get_expression_strings(
+        f.arguments[0],
+        maybe_wrap(get_ddx(f.arguments[0], x, scope))
+    )
+    return peg.parse(f'{dudx}/(1.0f+{u}*{u})', glsl.MultiplicativeExpression)
 
 
 def get_ddx_dot(f, x, scope):
     if len(f.arguments) != 2:
         throw_compiler_error(f, 'dot product must have two parameters')
-    u = f.arguments[0]
-    v = f.arguments[1]
-    u_type = scope.deduce_type(u)
-    v_type = scope.deduce_type(v)
+    u_type = scope.deduce_type(f.arguments[0])
+    v_type = scope.deduce_type(f.arguments[1])
 
     if (u_type not in glsl.vector_types or 
         v_type not in glsl.vector_types):
@@ -188,17 +229,6 @@ def get_ddx_dot(f, x, scope):
     if (u_type not in glsl.float_vector_types or 
         v_type not in glsl.float_vector_types):
         throw_not_implemented_error(f, 'non-floating point dot products')
-
-    expressions = [
-        maybe_wrap( u ),
-        maybe_wrap( get_ddx(u, x, scope) ),
-        maybe_wrap( v ),
-        maybe_wrap( get_ddx(v, x, scope) ),
-    ]
-    expression_strings = [
-        peg.compose(expression, type(expression))
-        for expression in expressions
-    ]
     '''
     The derivative is defined below. 
     As you can see, the derivative calls the dot product on u, v, dudx, and dvdx
@@ -240,18 +270,30 @@ def get_ddx_dot(f, x, scope):
     create non-component-wise behavior, 
     since it would amount to turning a float back into a vector.
     '''
-    u, dudx, v, dvdx = expression_strings
+    u, dudx, v, dvdx = get_expression_strings(
+        maybe_wrap( f.arguments[0] ),
+        maybe_wrap( get_ddx(f.arguments[0], x, scope) ),
+        maybe_wrap( f.arguments[1] ),
+        maybe_wrap( get_ddx(f.arguments[1], x, scope) ),
+    )
     return peg.parse(
         f' dot({u}, {dvdx}) + dot({dudx}, {v}) ', 
         glsl.AdditiveExpression
     )
 
 def get_ddx_invocation_expression(f, x, scope):
-    dfdu_getter_map = {
+    dfdx_getter_map = {
+        'sqrt': get_ddx_sqrt,
+        'log': get_ddx_log,
+        'pow': get_ddx_pow,
+        'cos': get_ddx_cos,
+        'tan': get_ddx_tan,
+        'asin': get_ddx_asin,
+        'acos': get_ddx_acos,
+        'atan': get_ddx_atan,
         'abs' : get_ddx_abs,
         'min' : get_ddx_min,
         'max' : get_ddx_max,
-        'sqrt': get_ddx_sqrt,
         'dot' : get_ddx_dot,
         'normalize': lambda f,x,scope: throw_not_implemented_error(f, 'non-component-wise functions'),
         'cross': lambda f,x,scope: throw_not_implemented_error(f, 'non-component-wise functions'),
@@ -277,8 +319,8 @@ def get_ddx_invocation_expression(f, x, scope):
     elif f.reference in scope.attributes:
         throw_not_implemented_error(f, 'user-defined data structures')
     # function invocation (built-in)
-    elif f.reference in dfdu_getter_map:
-        return dfdu_getter_map[f.reference](f, x, scope)
+    elif f.reference in dfdx_getter_map:
+        return dfdx_getter_map[f.reference](f, x, scope)
     # function invocation (user-defined)
     elif len(f.arguments) > 1:
         throw_not_implemented_error(f, 'user-defined multi-parameter functions')
@@ -392,28 +434,12 @@ def get_ddx_multiplicative_expression(f, x, scope):
     # multiplication in glsl is always element wise, 
     # so we don't have to worry about managing types
 
-    expressions = [
-        #u
-        f.operand1, 
-        #dudx
-        get_ddx(f.operand1, x, scope), 
-        #v
-        f.operand2, 
-        #dvdx
-        get_ddx(f.operand2, x, scope), 
-    ]
-
-    expressions_wrapped = [
-        maybe_wrap(expression) 
-        for expression in expressions
-    ]
-
-    expression_strings = [ 
-        peg.compose(expression, type(expression)) 
-        for expression in expressions_wrapped
-    ]
-
-    u, dudx, v, dvdx = expression_strings
+    u, dudx, v, dvdx = get_expression_strings(
+        maybe_wrap(f.operand1), 
+        maybe_wrap(get_ddx(f.operand1, x, scope)), 
+        maybe_wrap(f.operand2), 
+        maybe_wrap(get_ddx(f.operand2, x, scope)), 
+    )
 
     if f.operator == '*':
         dfdx = peg.parse(f'{v}*{dudx} + {u}*{dvdx}', glsl.AdditiveExpression)
@@ -476,32 +502,6 @@ def get_ddx_ternary_expression(f, x, scope):
         maybe_wrap(get_ddx(f.operand3, x, scope), glsl.binary_expression_or_less),
     )
 
-def get_ddx_return_statement(f, x, scope):
-    deduced_statement_type = scope.deduce_type(f.value)
-    if deduced_statement_type != scope.returntype and deduced_statement_type is not None:
-        throw_compiler_error(f, f'tried to return a {deduced_statement_type} but needed a {scope.returntype}')
-
-    return glsl.ReturnStatement(get_ddx(f.value, x, scope))
-
-def get_ddx_if_statement(f, x, scope):
-    return glsl.IfStatement(
-        f.condition, 
-        get_ddx(f.content, x, scope), 
-        get_ddx(f.else_, x, scope) 
-    )
-
-def get_ddx_code_block(f, x, scope):
-    dfdx = []
-
-    for statement in f:
-        if (isinstance(statement, glsl.VariableDeclaration) or 
-            isinstance(statement, glsl.AssignmentExpression)):
-            dfdx.append( copy.deepcopy(statement) )
-            dfdx.append( get_ddx(statement, x, scope))
-        else:
-            dfdx.append( get_ddx(statement, x, scope) )
-
-    return dfdx
         
 def get_ddx_variable_declaration(f, x, scope):
     x_type = scope.deduce_type(x)
@@ -544,6 +544,32 @@ def get_ddx_assignment_expression(f, x, scope):
         get_ddx(f.operand2, x, scope),
     )
 
+def get_ddx_return_statement(f, x, scope):
+    deduced_statement_type = scope.deduce_type(f.value)
+    if deduced_statement_type != scope.returntype and deduced_statement_type is not None:
+        throw_compiler_error(f, f'tried to return a {deduced_statement_type} but needed a {scope.returntype}')
+
+    return glsl.ReturnStatement(get_ddx(f.value, x, scope))
+
+def get_ddx_if_statement(f, x, scope):
+    return glsl.IfStatement(
+        f.condition, 
+        get_ddx(f.content, x, scope), 
+        get_ddx(f.else_, x, scope) 
+    )
+
+def get_ddx_code_block(f, x, scope):
+    dfdx = []
+
+    for statement in f:
+        if (isinstance(statement, glsl.VariableDeclaration) or 
+            isinstance(statement, glsl.AssignmentExpression)):
+            dfdx.append( copy.deepcopy(statement) )
+            dfdx.append( get_ddx(statement, x, scope))
+        else:
+            dfdx.append( get_ddx(statement, x, scope) )
+
+    return dfdx
 def get_ddx(f, x, scope):
     assert_type(f, [str, list, glsl.GlslElement])
 
@@ -633,10 +659,11 @@ def get_ddx_function(f, x, scope):
     This means no vector constructors, swizzling, cross products, 
     matrix multiplication, or attriute assignments.
     '''
-    local_scope = scope.get_subscope(f)
-    x_type = local_scope.variables[x]
 
     try:
+        local_scope = scope.get_subscope(f)
+        x_type = local_scope.variables[x]
+
         dfdx = glsl.FunctionDeclaration(
             name  = f'dd{x}_{f.name}',
         )
@@ -653,6 +680,8 @@ def get_ddx_function(f, x, scope):
         # create parameters expressing derivatives of other parameters besides x
         dfdx.parameters = []
         for param in f.parameters:
+            if 'out' in param.qualifiers:
+                throw_not_implemented_error('output reference parameters')
             dfdx.parameters.append(copy.deepcopy(param))
             if param.name != x:
                 dfdx.content.append(
