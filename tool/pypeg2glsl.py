@@ -477,6 +477,35 @@ built_in_function_type_map = {
     'length': 'float',
     'distance': 'float',
 }
+
+def get_1_for_type(type_):
+    identity_map ={
+        'vec2': pypeg2.parse('vec2(1.f)', InvocationExpression),
+        'vec3': pypeg2.parse('vec3(1.f)', InvocationExpression),
+        'vec4': pypeg2.parse('vec4(1.f)', InvocationExpression),
+
+        'float': '1.0f',
+        'int': '1'
+    }
+    if type_ in identity_map:
+        return identity_map[type_]
+    else:
+        throw_not_implemented_error(type_element, 'additives identities for types')
+    
+def get_0_for_type(type_):
+    identity_map ={
+        'vec2': pypeg2.parse('vec2(0.f)', InvocationExpression),
+        'vec3': pypeg2.parse('vec3(0.f)', InvocationExpression),
+        'vec4': pypeg2.parse('vec4(0.f)', InvocationExpression),
+
+        'float': '0.0f',
+        'int': '0'
+    }
+    if type_ in identity_map:
+        return identity_map[type_]
+    else:
+        throw_not_implemented_error(type_element, 'multiplicative identities for types')
+
 class LexicalScope:
     """ 
     A "LexicalScope" is a conceptually immutable data structure containing 

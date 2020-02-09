@@ -46,35 +46,7 @@ def assert_type(variable, types):
     if not any([isinstance(variable, type_) for type_ in types]):
         raise AssertionError(f'expected any of {types} but got {type(variable)} (value: {variable})')
 
-def get_1_for_type(type_):
-    identity_map ={
-        'vec2': peg.parse('vec2(1.f)', glsl.InvocationExpression),
-        'vec3': peg.parse('vec3(1.f)', glsl.InvocationExpression),
-        'vec4': peg.parse('vec4(1.f)', glsl.InvocationExpression),
-
-        'float': '1.0f',
-        'int': '1'
-    }
-    if type_ in identity_map:
-        return identity_map[type_]
-    else:
-        throw_not_implemented_error(type_element, 'additives identities for types')
-    
-def get_0_for_type(type_):
-    identity_map ={
-        'vec2': peg.parse('vec2(0.f)', glsl.InvocationExpression),
-        'vec3': peg.parse('vec3(0.f)', glsl.InvocationExpression),
-        'vec4': peg.parse('vec4(0.f)', glsl.InvocationExpression),
-
-        'float': '0.0f',
-        'int': '0'
-    }
-    if type_ in identity_map:
-        return identity_map[type_]
-    else:
-        throw_not_implemented_error(type_element, 'multiplicative identities for types')
-
-def get_expression_strings(*expressions):
+def compose_many(*expressions):
     return [peg.compose(expression, type(expression)) 
             for expression in expressions]
 
@@ -95,11 +67,11 @@ def get_simplified_multiplicative_expression(element, scope):
         # a2 = b
         # b2 = a
         # a, b = a2, b2
-    a_str, b_str = get_expression_strings(a, b)
+    a_str, b_str = compose_many(a, b)
     zero = re.compile('(vec[234])? \(? 0+\.?0*f? \)? $', re.VERBOSE)
     one  = re.compile('(vec[234])? \(? 0*1\.?0*f? \)? $', re.VERBOSE)
     if zero.match(a_str) or zero.match(b_str):
-        return get_0_for_type(scope.deduce_type(element))
+        return glsl.get_0_for_type(scope.deduce_type(element))
     elif one.match(a_str):
         return b
     elif one.match(b_str):
@@ -124,7 +96,7 @@ def get_simplified_additive_expression(element, scope):
         (isinstance(a.content, glsl.MultiplicativeExpression) or 
          isinstance(a.content, glsl.AdditiveExpression))):
         b = b.content
-    a_str, b_str = get_expression_strings(a, b)
+    a_str, b_str = compose_many(a, b)
     zero = re.compile('(vec[234])? \(? 0+\.?0*f? \)? $', re.VERBOSE)
     if a_str == b_str:
         return glsl.MultiplicativeExpression('2.0f', '*', b_str)
