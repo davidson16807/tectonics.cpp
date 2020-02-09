@@ -18,9 +18,11 @@ import traceback
 import difflib
 import copy
 import sys
+import re
 
 import pypeg2 as peg
 import pypeg2glsl as glsl
+import glsl_simplify
 
 # attempt to import colorama, for colored diff output
 try:
@@ -33,7 +35,7 @@ except ImportError:  # fallback so that the imported classes always exist
 
 # ERROR HANDLING FUNCTIONS
 def assert_type(variable, types):
-    if len(types) == 1 and isinstance(variable, types_[0]):
+    if len(types) == 1 and not isinstance(variable, types[0]):
         raise AssertionError(f'expected {types[0]} but got {type(variable)} (value: {variable})')
     if not any([isinstance(variable, type_) for type_ in types]):
         raise AssertionError(f'expected any of {types} but got {type(variable)} (value: {variable})')
@@ -708,7 +710,6 @@ def get_ddx_function(f, x, scope):
     except Exception as error:
         return f'/*\n Derivative "{dfdx.name}" not available: \n{traceback.format_exc()} \n*/'
 
-
 def convert_glsl(input_glsl, input_handling='omit'):
     ''' 
     "convert_glsl" is a pure function that performs 
@@ -724,11 +725,14 @@ def convert_glsl(input_glsl, input_handling='omit'):
                 output_glsl1.append(copy.deepcopy(declaration))
             for parameter in declaration.parameters:
                 x = parameter.name
-                ddx_declaration = get_ddx_function(declaration, x, glsl.LexicalScope(input_glsl))
+                scope = glsl.LexicalScope(input_glsl)
+                ddx_declaration = get_ddx_function(declaration, x, scope)
                 if input_handling == 'prepend':
-                    output_glsl2.append(ddx_declaration)
+                    # output_glsl2.append(ddx_declaration)
+                    output_glsl2.append(glsl_simplify.get_simplified(ddx_declaration, scope))
                 else:
-                    output_glsl1.append(ddx_declaration)
+                    # output_glsl1.append(ddx_declaration)
+                    output_glsl1.append(glsl_simplify.get_simplified(ddx_declaration, scope))
         else:
             output_glsl1.append(copy.deepcopy(declaration))
 

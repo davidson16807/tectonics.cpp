@@ -21,7 +21,7 @@ import pypeg2
 from pypeg2 import attr, optional, maybe_some, blank, endl
 
 def assert_type(variable, types):
-    if len(types) == 1 and isinstance(variable, types_[0]):
+    if len(types) == 1 and not isinstance(variable, types[0]):
         raise AssertionError(f'expected {types[0]} but got {type(variable)} (value: {variable})')
     if not any([isinstance(variable, type_) for type_ in types]):
         raise AssertionError(f'expected any of {types} but got {type(variable)} (value: {variable})')
@@ -213,11 +213,14 @@ class VariableDeclaration(GlslElement):
         self.type = type_
         self.content = content or []
     def get_names(self):
-        for element in self.content:
-            if isinstance(element, AssignmentExpression):
-                yield element.operand1
-            else:
-                yield element
+        if isinstance(self.content, AssignmentExpression):
+            yield self.content.operand1
+        else:
+            for element in self.content:
+                if isinstance(element, AssignmentExpression):
+                    yield element.operand1
+                else:
+                    yield element
 class ReturnStatement(GlslElement): 
     def __init__(self, value=None):
         self.value = value
@@ -542,6 +545,7 @@ class LexicalScope:
         returns a new LexicalScope object whose state reflects the type 
         information of variables defined within a local subscope
         """
+        assert_type(function, [FunctionDeclaration])
         result = LexicalScope()
         result.attributes = copy.deepcopy(self.attributes)
         result.functions = copy.deepcopy(self.functions)

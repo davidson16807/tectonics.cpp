@@ -11,7 +11,9 @@ You can select a file using the `-f` argument.
 By default, the script will print out the results of a "dry run". 
 You can modify the file in-place using the `-i` flag. 
 You can print a diff between input and output using the `-v` flag.
+
 For basic usage on a single file, call like so:
+  python3 ./glsl_standardize.py -f file.glsl.c
 
 If you want to replace all files in a directory, call like so:
  find . -name *.glsl.c \
@@ -35,7 +37,6 @@ except ImportError:  # fallback so that the imported classes always exist
         __getattr__ = lambda self, name: ''
     Fore = Back = Style = ColorFallback()
 
-
 def convert_glsl(input_glsl):
     ''' 
     "convert_glsl" is a pure function that performs 
@@ -43,6 +44,7 @@ def convert_glsl(input_glsl):
     then returns a transformed parse tree as output. 
     '''
     output_glsl = copy.deepcopy(input_glsl)
+    glsl.warn_of_invalid_grammar_elements(output_glsl)
     return output_glsl
 
 def convert_text(input_text):
@@ -52,7 +54,8 @@ def convert_text(input_text):
     then returns transformed output. 
     It may run convert_glsl behind the scenes, 
     and may also perform additional string based transformations,
-    such as string substitutions or regex replacements
+    such as appending utility functions 
+    or performing simple string substitutions 
     '''
     input_glsl = peg.parse(input_text, glsl.code)
     # output_glsl = convert_glsl(input_glsl)
