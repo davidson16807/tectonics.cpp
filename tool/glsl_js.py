@@ -109,9 +109,17 @@ def get_js_unary_operator_expression_getter(JsElement):
                     peg.parse('["-="]', js.BracketedExpression),
                     js.InvocationExpression(js.PostfixExpression(['glm', *type1, js.InvocationExpression(['1'])]))
                 ])
-        elif operator == '-' and isinstance(glsl_operand1, glsl.PostfixExpression):
+        elif operator == '-' and isinstance(glsl_operand1, glsl.AttributeExpression):
             return js.PostfixExpression([
-                    *glsl_operand1.content, 
+                    glsl_operand1.reference, 
+                    *glsl_operand1.attributes, 
+                    peg.parse('["*"]', js.BracketedExpression),
+                    peg.parse('(-1)', js.InvocationExpression)
+                ])
+        elif operator == '-' and isinstance(glsl_operand1, glsl.InvocationExpression):
+            return js.PostfixExpression([
+                    glsl_operand1.reference, 
+                    glsl_operand1.arguments, 
                     peg.parse('["*"]', js.BracketedExpression),
                     peg.parse('(-1)', js.InvocationExpression)
                 ])
@@ -197,11 +205,10 @@ def get_js_structure_declaration(glsl_structure, scope):
     js_object.content = []
 
     for glsl_declaration in glsl_structure.content:
-        js_function.parameters.append(js.ParameterDeclaration(glsl_declaration.name))
-        js_object.content.append(js.AttributeDeclaration(
-            glsl_declaration.name, 
-            js.PostfixExpression([glsl_declaration.name])
-        ))
+        for element in glsl_declaration.content:
+            name = element if isinstance(element, str) else element.operand1
+            js_function.parameters.append(js.ParameterDeclaration(name))
+            js_object.content.append(js.AttributeDeclaration(name,js.PostfixExpression([name]) ))
 
     js_function.content.append(
         js.ReturnStatement(

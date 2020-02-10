@@ -638,6 +638,8 @@ class LexicalScope:
                         #single component
                         else: 
                             type_ = 'float'
+                    elif type_ in matrix_types:
+                        type_ = re.sub('mat(\d)x?', 'vec\\1', type_)
                     # attribute access
                     elif (type_ in self.attributes and
                           attribute in self.attributes[type_]):
