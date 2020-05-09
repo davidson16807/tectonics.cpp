@@ -1,4 +1,4 @@
-This folder contains unit tests. Every component that is incorporated into libtectonics goes through unit testing. Unit tests are made possible using the [catch](https://github.com/catchorg/Catch2) framework. 
+This folder contains unit tests. Every component that is incorporated into tectonics.cpp goes through unit testing. Unit tests are made possible using the [catch](https://github.com/catchorg/Catch2) framework. 
 
 Unit tests check for utility code check for algabraic properties such as idempotence, associativity, or invertability, in addition to happy path and edge case behavior. 
 

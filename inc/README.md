@@ -1,4 +1,4 @@
-This folder contains subcomponents of the "libtectonics" suite:
+This folder contains subcomponents of the "tectonics.cpp" suite:
 * `many` for manipulating arrays of arithmetic values (optionally leverages `glm`)
 * `rasters` for storing maps of values on the surface of 3d meshes (requires `many` and `glm`)
 * `academics` for side-effect-free utility functions expressing simple mathematic and scientific relationships ported from glsl (optionally leverages `glm` and `rasters`)
