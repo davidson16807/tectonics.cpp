@@ -1,4 +1,4 @@
-# libtectonics
+# tectonics.cpp
 ## A C++ library for simulating worlds
 
 **libtectonics** is a header-only C++ library that's intended to supplant the backend to [tectonics.js](http://davidson16807.github.io/tectonics.js/). It contains only the best parts of tectonics.js - the parts that either have proven out over time or have emerged with confidence as replacements through good design. 
