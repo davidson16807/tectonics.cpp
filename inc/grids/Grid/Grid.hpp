@@ -167,7 +167,7 @@ namespace rasters
 			  	arrow_endpoint_to      (2*edge_count),
 			  	arrow_midpoints        (2*edge_count),
 			  	arrow_offsets          (2*edge_count),
-			  	arrow_lengths        (2*edge_count), 
+			  	arrow_lengths          (2*edge_count), 
 			  	arrow_normals          (2*edge_count),
 			//	arrow_areas            (0),
 			  	arrow_average_length   (0),

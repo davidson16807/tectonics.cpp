@@ -18,13 +18,12 @@ namespace rasters
 	Imagine dust blowing across the assembly. 
 	We want to know how much dust blows across the assembly, and in which direction.
 	This is known as the "flow", and it is represented as a vector. 
-	If we know the flow for each puzzle piece, we could sum them together to find the net flow across the assembly. 
-	Alternatively, if we know the flow along each edge of each puzzle piece, we could similarly sum them together to find the net flow. 
-	However, we also know that if two puzzle pieces are adjacent, the amount flowing out of one edge is cancelled out by the amount flowing into another. 
-	So all we really need to know is the flow along the edge of each puzzle piece forming the boundary of the assembly. 
+	We know that if two puzzle pieces are adjacent, the amount flowing out of one edge is cancelled out by the amount flowing into another. 
+	So all we really need to consider is the flow along the boundaries of the entire assembly. 
 	We can see this is the case without even establishing what the puzzle looks like,
 	so this works no matter what the shape of the puzzle pieces are, and no matter what the shape of the assembly is. 
-	It also works for other use cases in other dimensions, so instead of dust blowing across puzzle pieces, we could consider air blowing through arbitrary regions of space. 
+	It also works for other use cases in other dimensions, 
+	so instead of dust blowing across puzzle pieces, we could consider air blowing through arbitrary regions of space. 
 
 	Now, what if our puzzle pieces are infinitesimally small?
 	We can see that the net flow across two small puzzle pieces is twice the flow across one small puzzle piece.
@@ -36,25 +35,25 @@ namespace rasters
 	explain how gradient times surface normal equals the difference between two points in space
 
 	The above explanation can be restated mathematically by the Gauss-Green theorem: 
-	  ∫∫∫ᵥ ∇ϕ dV = ∫∫ₐ ϕn̂ da
-	for small V, we can assume linearity, so:
-	  ∇ϕ = 1/V ∫∫ₐ ϕn̂ da
+	  ∫∫∫ᵥ ∇ϕ ∂V = ∫∫ₛ ϕn̂ ∂s
+	for infinitesimal volumes, we can assume that contents are uniform, so results scale with volume, and:
+	  ∇ϕ = 1/V ∫∫ₛ ϕn̂ ∂s
 	and this is how we are able to find the gradient for an unstructured mesh. 
 
 	The same logic applies equally well for divergence: 
-	  ∫∫∫ᵥ ∇⋅ϕ dV = ∫∫ₐ ϕ⋅n̂ da
-	  ∇⋅ϕ = 1/V ∫∫ₐ ϕ⋅n̂ da
+	  ∫∫∫ᵥ ∇⋅ϕ ∂V = ∫∫ₛ ϕ⋅n̂ ∂s
+	  ∇⋅ϕ = 1/V ∫∫ₛ ϕ⋅n̂ ∂s
 
 	And curl: 
-	  ∫∫∫ᵥ ∇×ϕ dV = ∫∫ₐ ϕ×n̂ da
-	  ∇×ϕ = 1/V ∫∫ₐ ϕ×n̂ da
+	  ∫∫∫ᵥ ∇×ϕ ∂V = ∫∫ₛ ϕ×n̂ ∂s
+	  ∇×ϕ = 1/V ∫∫ₛ ϕ×n̂ ∂s
 
 	See Sozer (2014) for more information, 
 	See Book 2 Chapter 3 of the Feynman Lectures (http://www.feynmanlectures.caltech.edu/II_03.html) for intuition.
 
 	We've now discussed both the intuition and the mathematics, here's the implementation:
 
-	Instead of puzzle pieces, let picture vertices.
+	Instead of puzzle pieces, let's picture vertices.
 	Each vertex has a vector mapped to it, analogous to the flow of dust across a puzzle piece.
 	Each vertex also has a region around it that's analogous to the puzzle piece, 
 	known as a "dual" in libtectonics, since it is analogous to the dual of a graph in graph theory. 
@@ -65,7 +64,6 @@ namespace rasters
 	To find this, we need to consider both the vertex itself and the vertices surrounding it. 
 	We take the difference in vectors across each neighboring pair of vertices
 	then 
-
 
 	Imagine a vertex with several neighors surrounding it. 
 	The vertex is known as a "centroid".
@@ -228,55 +226,52 @@ namespace rasters
 		return out;
 	}
 	/*
-	This function computes the laplacian of a surface. 
-	The laplacian can be thought of as the average difference across space, per unit area. 
-
-	So for a 2d cartesian grid: 
-	∇⋅∇f = ∇⋅[ (f(x+dx) - f(x-dx)) / 2dx,  
-	           (f(x+dy) - f(x-dy)) / 2dy  ]
-	∇⋅∇f = d/dx (f(x+dx) - f(x-dx)) / 2dx  
-	     + d/dy (f(x+dy) - f(x-dy)) / 2dy
-	∇⋅∇f =  1/4 (f(x+2dx) - f(x)) / dxdx  
-	     +  1/4 (f(x-2dx) - f(x)) / dxdx  
-	     +  1/4 (f(x+2dy) - f(x)) / dydy
-	     +  1/4 (f(x-2dy) - f(x)) / dydy
-	 
-	I haven't demonstrated it formally, but by analogy to the divergence theorem
-	you can probably see the laplacian on an unstructured mesh 
-	as the average difference between neighbors, 
-	weighted by the sections of the boundary owned by those neighbors, 
-	then divided by the area that's enclosed by that boundary
+	By the Gauss-Green theorem:
+	  ∫∫∫ᵥ ∇²ϕ ∂V = ∫∫∫ᵥ ∇⋅∇ϕ ∂V = ∫∫ₛ n̂⋅∇ϕ ∂s
+	for infinitesimal volumes, we can assume that contents are uniform, so results scale with volume, and:
+	  ∇²ϕ = 1/V ∫∫ₛ n̂⋅∇ϕ ∂s
+	Now consider a vertex surrounded by neighbors.
+	For each vertex pair, indicated by i, 
+	there is a change in ϕ from one vertex to another, Δϕᵢ.
+	This occurs over a set distance, |Δxᵢ|,
+	and across a boundary of given length, ΔSᵢ. 
+	We know n̂⋅∇ϕ indicates the slope of ϕ in the direction n̂, since n̂⋅∇ϕ = xₙ∂/∂x + yₙ∂/∂x + zₙ∂/∂z. 
+	So if we wanted to estimate n̂⋅∇ϕ for the region covered by a single vertex pair, we'd say it was Δϕᵢ/|Δxᵢ|. 
+	And if we want to estimate ∇²ϕ for the entire vertex neighborhood, then:
+	  ∇²ϕ = 1/V Σᵢ Δϕᵢ/|Δxᵢ| ΔSᵢ
+	And Bob's your uncle! 
+	So the laplacian on an unstructured mesh is a weighted average of slope between neighbors, 
+	weighted by the sections of the boundary shared between those neighbors, 
+	and divided by the area that's enclosed by the boundary. 
 	*/
 	template<typename T>
 	void laplacian(
 		const Grid& grid, 
 		const tmany<T>& scalar_field, 
 		tmany<T>& out, 
-		tmany<T>& arrow_differential, 
-		tmany<T>& weighted_arrow_differential 
+		tmany<T>& arrow_scratch
 	) {
-		assert(scalar_field.size()                == grid.vertex_count);
-		assert(out.size()                         == grid.vertex_count);
-		assert(arrow_differential.size()          == grid.arrow_count );
-		assert(weighted_arrow_differential.size() == grid.arrow_count );
+		assert(scalar_field.size()  == grid.vertex_count);
+		assert(out.size()           == grid.vertex_count);
+		assert(arrow_scratch.size() == grid.arrow_count );
 		uvec2 arrow;
 		for (unsigned int i = 0; i < grid.arrow_vertex_ids.size(); ++i)
 		{
-			arrow                 = grid.arrow_vertex_ids[i]; 
-			arrow_differential[i] = scalar_field[arrow.y] - scalar_field[arrow.x]; // differential across dual of the arrow
+			arrow            = grid.arrow_vertex_ids[i]; 
+			arrow_scratch[i] = scalar_field[arrow.y] - scalar_field[arrow.x]; // differential across dual of the arrow
 		}
-		mult     (arrow_differential, grid.arrow_dual_lengths, weighted_arrow_differential); // differential weighted by dual length
+		div      (arrow_scratch,      grid.arrow_lengths,      arrow_scratch);
+		mult     (arrow_scratch,      grid.arrow_dual_lengths, arrow_scratch); // differential weighted by dual length
 		fill     (out,                T(0.f));
-		aggregate_into(weighted_arrow_differential, grid.arrow_vertex_id_from, [](T a, T b){ return a+b; }, out);  // weight average difference across neighbors
+		aggregate_into(arrow_scratch, grid.arrow_vertex_id_from, [](T a, T b){ return a+b; }, out);  // weight average difference across neighbors
 		div      (out,                grid.vertex_dual_areas,    out);             // laplacian
 	}
 	template<typename T>
 	tmany<T> laplacian(const Grid& grid, const tmany<T>& scalar_field)
 	{
-		tmany<T> arrow_differential          (grid.arrow_count);
-		tmany<T> weighted_arrow_differential (grid.arrow_count);
-		tmany<T> out                         (grid.vertex_count);
-		laplacian(grid, scalar_field, out, arrow_differential, weighted_arrow_differential);
+		tmany<T> arrow_scratch (grid.arrow_count);
+		tmany<T> out           (grid.vertex_count);
+		laplacian(grid, scalar_field, out, arrow_scratch);
 		return out;
 	}
 
@@ -285,32 +280,30 @@ namespace rasters
 		const Grid& grid, 
 		const tmany<glm::vec<L,T,Q>>& vector_field, 
 		tmany<glm::vec<L,T,Q>>& out, 
-		tmany<glm::vec<L,T,Q>>& arrow_differential, 
-		tmany<glm::vec<L,T,Q>>& weighted_arrow_differential 
+		tmany<glm::vec<L,T,Q>>& arrow_scratch
 	) {
-		assert(vector_field.size()                == grid.vertex_count);
-		assert(out.size()                         == grid.vertex_count);
-		assert(arrow_differential.size()          == grid.arrow_count );
-		assert(weighted_arrow_differential.size() == grid.arrow_count );
+		assert(vector_field.size()  == grid.vertex_count);
+		assert(out.size()           == grid.vertex_count);
+		assert(arrow_scratch.size() == grid.arrow_count );
 		uvec2 arrow;
 		for (unsigned int i = 0; i < grid.arrow_vertex_ids.size(); ++i)
 		{
-			arrow                 = grid.arrow_vertex_ids[i]; 
-			arrow_differential[i] = vector_field[arrow.y] - vector_field[arrow.x]; // differential across dual of the arrow
+			arrow            = grid.arrow_vertex_ids[i]; 
+			arrow_scratch[i] = vector_field[arrow.y] - vector_field[arrow.x]; // differential across dual of the arrow
 		}
-		mult     (arrow_differential, grid.arrow_dual_lengths, weighted_arrow_differential); // differential weighted by dual length
+		div      (arrow_scratch,      grid.arrow_lengths,      arrow_scratch);
+		mult     (arrow_scratch,      grid.arrow_dual_lengths, arrow_scratch); // differential weighted by dual length
 		fill     (out,                glm::vec<L,T,Q>(0.f));
-		aggregate_into(weighted_arrow_differential, grid.arrow_vertex_id_from, [](glm::vec<L,T,Q> a, glm::vec<L,T,Q> b){ return a+b; }, out);  // weight average difference across neighbors
+		aggregate_into(arrow_scratch, grid.arrow_vertex_id_from, [](glm::vec<L,T,Q> a, glm::vec<L,T,Q> b){ return a+b; }, out);  // weight average difference across neighbors
 		div      (out,                grid.vertex_dual_areas,    out);             // laplacian
 	}
 
-	template<unsigned int L, typename T, glm::qualifier Q>
+ 	template<unsigned int L, typename T, glm::qualifier Q>
 	tmany<glm::vec<L,T,Q>> laplacian(const Grid& grid, const tmany<glm::vec<L,T,Q>>& vector_field)
 	{
-		tmany<glm::vec<L,T,Q>> arrow_differential          (grid.arrow_count);
-		tmany<glm::vec<L,T,Q>> weighted_arrow_differential (grid.arrow_count);
-		tmany<glm::vec<L,T,Q>> out                         (grid.vertex_count);
-		laplacian(grid, vector_field, out, arrow_differential, weighted_arrow_differential);
+		tmany<glm::vec<L,T,Q>> arrow_scratch (grid.arrow_count);
+		tmany<glm::vec<L,T,Q>> out           (grid.vertex_count);
+		laplacian(grid, vector_field, out, arrow_scratch);
 		return out;
 	}
 }
