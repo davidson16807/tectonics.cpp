@@ -1,0 +1,101 @@
+// line intersection
+maybe_float      get_distance_along_line_to_union
+maybe_float_pair get_distances_along_line_to_union
+maybe_float_pair get_distances_along_line_to_negation
+maybe_float_pair get_distances_along_line_to_intersection
+
+maybe_float      get_distance_along_2d_line_nearest_to_point
+maybe_float      get_distance_along_2d_line_to_line
+maybe_float      get_distance_along_2d_line_to_ray
+maybe_float      get_distance_along_2d_line_to_line_segment
+maybe_float_pair get_distances_along_2d_line_to_circle
+maybe_float_pair get_distances_along_2d_line_to_triangle
+
+maybe_float      get_distance_along_3d_line_nearest_to_point
+maybe_float      get_distance_along_3d_line_nearest_to_line
+maybe_float      get_distance_along_3d_line_nearest_to_ray
+maybe_float      get_distance_along_3d_line_nearest_to_line_segment
+maybe_float      get_distance_along_3d_line_to_plane
+maybe_float      get_distance_along_3d_line_to_circle
+maybe_float      get_distance_along_3d_line_to_triangle
+
+maybe_float_pair get_distances_along_3d_line_to_sphere
+maybe_float      get_distance_along_3d_line_to_ellipsoid
+maybe_float      get_distance_along_3d_line_to_tetrahedron
+maybe_float_pair get_distances_along_3d_line_to_infinite_cylinder
+maybe_float_pair get_distances_along_3d_line_to_cylinder
+maybe_float_pair get_distances_along_3d_line_to_capsule
+maybe_float_pair get_distances_along_3d_line_to_ring
+maybe_float      get_distance_along_3d_line_to_infinite_cone
+maybe_float      get_distance_along_3d_line_to_cone
+maybe_float      get_distance_along_3d_line_to_capped_cone
+
+
+
+// point intersection
+// float get_distance_of_2d_point_to_point   // use distance(A0,B0), instead
+float get_distance_of_2d_point_to_line
+float get_distance_of_2d_point_to_ray
+float get_distance_of_2d_point_to_line_segment
+float get_distance_of_2d_point_to_circle
+float get_distance_of_2d_point_to_triangle
+
+float get_distance_of_3d_point_to_union
+float get_distance_of_3d_point_to_negation
+float get_distance_of_3d_point_to_intersection
+
+// float get_distance_of_3d_point_to_point   // use distance(A0,B0), instead
+float get_distance_of_3d_point_to_line
+float get_distance_of_3d_point_to_ray
+float get_distance_of_3d_point_to_line_segment
+// float get_distance_of_3d_point_to_plane   // use dot(A0,N), instead
+float get_distance_of_3d_point_to_circle
+float get_distance_of_3d_point_to_triangle
+
+float get_distance_of_3d_point_to_sphere
+float get_distance_of_3d_point_to_ellipsoid
+float get_distance_of_3d_point_to_tetrahedron
+float get_distance_of_3d_point_to_infinite_cylinder
+float get_distance_of_3d_point_to_cylinder
+float get_distance_of_3d_point_to_capsule
+float get_distance_of_3d_point_to_ring
+float get_distance_of_3d_point_to_infinite_cone
+float get_distance_of_3d_point_to_cone
+float get_distance_of_3d_point_to_capped_cone
+
+
+
+// float get_surface_normal_of_2d_point_near_point   // use normalize(A0,B0), instead
+float get_surface_normal_of_2d_point_near_line
+float get_surface_normal_of_2d_point_near_ray
+float get_surface_normal_of_2d_point_near_line_segment
+float get_surface_normal_of_2d_point_near_circle
+float get_surface_normal_of_2d_point_near_triangle
+
+float get_surface_normal_of_2d_point_to_union
+float get_surface_normal_of_2d_point_to_negation
+float get_surface_normal_of_2d_point_to_intersection
+
+// float get_surface_normal_of_3d_point_near_point   // use normalize(A0,B0), instead
+float get_surface_normal_of_3d_point_near_line
+float get_surface_normal_of_3d_point_near_ray
+float get_surface_normal_of_3d_point_near_line_segment
+// float get_surface_normal_of_3d_point_near_plane   // use N, instead
+float get_surface_normal_of_3d_point_near_circle
+float get_surface_normal_of_3d_point_near_triangle
+
+float get_surface_normal_of_3d_point_to_union
+float get_surface_normal_of_3d_point_to_negation
+float get_surface_normal_of_3d_point_to_intersection
+
+float get_surface_normal_of_3d_point_near_sphere
+float get_surface_normal_of_3d_point_near_ellipsoid
+float get_surface_normal_of_3d_point_near_tetrahedron
+float get_surface_normal_of_3d_point_near_infinite_cylinder
+float get_surface_normal_of_3d_point_near_cylinder
+float get_surface_normal_of_3d_point_near_capsule
+float get_surface_normal_of_3d_point_near_ring
+float get_surface_normal_of_3d_point_near_infinite_cone
+float get_surface_normal_of_3d_point_near_cone
+float get_surface_normal_of_3d_point_near_capped_cone
+

@@ -2,6 +2,6 @@ This folder contains project documentation. In order to move at a fast pace, mos
 
 Some of the most important documents:
 
-**ROADMAP.md**	A partial check list of features that need to be added to the library to reach minimum viable produce
+**ROADMAP.md**	A partial check list of features that need to be added to the library to reach minimum viable product
 **TESTS.md**	A partial check list of unit tests that need to be written
 **GLOSSARY.md**	A glossary of formal terms used throughout the library and its documentation. Documentation elsewhere assumes familiarity with these terms. 

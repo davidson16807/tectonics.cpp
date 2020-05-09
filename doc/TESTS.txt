@@ -10,11 +10,11 @@ x	consistency
 x		determinism
 x		nonpurity
 	perlin noise
-		determinism
-		nonpurity
+x		determinism
+x		nonpurity
 	worley noise
-		determinism
-		nonpurity
+x		determinism
+x		nonpurity
 meshes::subdivide
 x	purity
 x	correct size bounds

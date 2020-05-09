@@ -91,3 +91,20 @@ x			sphere, exponential dropoff
 
 	orrery
 		CelestialSystem
+
+
+shader programs
+	star fields
+	suns
+	worlds
+	atmospheres
+	clouds
+	vector clouds
+	colorscale surfaces
+	surface normal surfaces
+
+view resources
+	projections
+		globe projection
+		map projection
+	

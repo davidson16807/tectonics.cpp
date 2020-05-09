@@ -24,7 +24,7 @@ Use an object oriented practice only when you can strongly justify its use in yo
 	Abstraction is generally a good thing, but it can be applied in many ways that do not involve objects. 
 	Inheritance forces you to split a common concern across two very distantly located regions of code.
 	Inheritance is very often a bad idea, and it can very often be replaced by composition.
-    Encapsulation can be used effectively when, for instance, creating dirty flags or managing memory,
+    Encapsulation can be used effectively when, for instance, creating managing memory,
       but when applied without thinking, it encourages the creation of side effects that are deliberately obscured.
     Encapsulation can also often be accomplished using namespaces or functions. 
     Encapsulation should only be used when the object is behaviorally equivalent to an implementation that is free from side effects. 
