@@ -11,34 +11,31 @@ test: bin/driver.out
 clean:
 	rm -f $(OBJ) $(BIN)
 
-bin/driver.out: $(TEST)
-	$(CPP) -std=c++17 -o bin/driver.out test/driver.cpp -I inc/
-
 DEVFLAGS= -Wall -Werror -pedantic-errors -rdynamic -g 
 PRODFLAGS= -Wall -Werror -pedantic-errors -O3
 
 # spike: get at least something working
 spike-strata: spike/spike_strata.cpp
-	$(CPP) -std=c++17 -o bin/spike.out spike/spike_strata.cpp  $(DEVFLAGS) -I inc/ && chmod a+x bin/spike.out && time ./bin/spike.out
+	$(CPP) -std=c++17 -o bin/spike.out spike/spike_strata.cpp  $(DEVFLAGS) -I lib/ -I inc/ && chmod a+x bin/spike.out && time ./bin/spike.out
 spike-rasters: spike/spike_rasters.cpp
-	$(CPP) -std=c++17 -o bin/spike.out spike/spike_rasters.cpp $(DEVFLAGS) -I inc/ && chmod a+x bin/spike.out && time ./bin/spike.out
+	$(CPP) -std=c++17 -o bin/spike.out spike/spike_rasters.cpp $(DEVFLAGS) -I lib/ -I inc/ && chmod a+x bin/spike.out && time ./bin/spike.out
 spike-layered-rasters: spike/spike_layered_rasters.cpp
-	$(CPP) -std=c++17 -o bin/spike.out spike/spike_layered_rasters.cpp $(DEVFLAGS) -I inc/ && chmod a+x bin/spike.out && time ./bin/spike.out
+	$(CPP) -std=c++17 -o bin/spike.out spike/spike_layered_rasters.cpp $(DEVFLAGS) -I lib/ -I inc/ && chmod a+x bin/spike.out && time ./bin/spike.out
 spike-meshes: spike/spike_meshes.cpp
-	$(CPP) -std=c++17 -o bin/spike.out spike/spike_meshes.cpp  $(DEVFLAGS) -I inc/ && chmod a+x bin/spike.out && time ./bin/spike.out
+	$(CPP) -std=c++17 -o bin/spike.out spike/spike_meshes.cpp  $(DEVFLAGS) -I lib/ -I inc/ && chmod a+x bin/spike.out && time ./bin/spike.out
 
 # test: get it working with confidence
 test-many: test/test_many.cpp
-	$(CPP) -std=c++17 -o bin/test.out test/test_many.cpp $(DEVFLAGS) -I inc/ && chmod a+x bin/test.out && ./bin/test.out
+	$(CPP) -std=c++17 -o bin/test.out test/test_many.cpp $(DEVFLAGS) -I lib/ -I inc/ && chmod a+x bin/test.out && ./bin/test.out
 test-rasters: test/test_rasters.cpp
-	$(CPP) -std=c++17 -o bin/test.out test/test_rasters.cpp $(DEVFLAGS) -I inc/ && chmod a+x bin/test.out && ./bin/test.out
+	$(CPP) -std=c++17 -o bin/test.out test/test_rasters.cpp $(DEVFLAGS) -I lib/ -I inc/ && chmod a+x bin/test.out && ./bin/test.out
 test-layered-rasters: test/test_layered_rasters.cpp
-	$(CPP) -std=c++17 -o bin/test.out test/test_layered_rasters.cpp $(DEVFLAGS) -I inc/ && chmod a+x bin/test.out && ./bin/test.out
+	$(CPP) -std=c++17 -o bin/test.out test/test_layered_rasters.cpp $(DEVFLAGS) -I lib/ -I inc/ && chmod a+x bin/test.out && ./bin/test.out
 
 # profile: get it working fast
 profile-rasters: profile/profile_rasters.cpp
-	$(CPP) -std=c++17 -o bin/profile.out profile/profile_rasters.cpp $(DEVFLAGS) -I inc/ && chmod a+x bin/profile.out && ./bin/profile.out
+	$(CPP) -std=c++17 -o bin/profile.out profile/profile_rasters.cpp $(DEVFLAGS) -I lib/ -I inc/ && chmod a+x bin/profile.out && ./bin/profile.out
 
 # demo: get it working in 3d
 demo-gl: demo/demo_gl.cpp
-	$(CPP) -std=c++17 -o bin/demo.out demo/demo_gl.cpp $(DEVFLAGS) -I inc/ -lglfw -lGL -lGLEW && chmod a+x bin/demo.out && ./bin/demo.out
+	$(CPP) -std=c++17 -o bin/demo.out demo/demo_gl.cpp $(DEVFLAGS) -I lib/ -I inc/ -lglfw -lGL -lGLEW && chmod a+x bin/demo.out && ./bin/demo.out
