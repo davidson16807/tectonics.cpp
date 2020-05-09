@@ -6,9 +6,9 @@ namespace rasters
 {
 	/*
 	NOTE: 
-	The naive implementation is to estimate the gradient based on each individual neighbor,
+	The naive implementation is to estimate gradient/divergence/etc. based on each individual neighbors,
 	 then take the average between the estimates.
-	This is wrong! If dx is very small, such as where dy is big
+	This is wrong! If dx is very small, such as where dy is big,
 	 then the gradient estimate along that dimension will be very big.
 	This will result in very strange behavior.
 	
@@ -56,7 +56,7 @@ namespace rasters
 	Instead of puzzle pieces, let's picture vertices.
 	Each vertex has a vector mapped to it, analogous to the flow of dust across a puzzle piece.
 	Each vertex also has a region around it that's analogous to the puzzle piece, 
-	known as a "dual" in libtectonics, since it is analogous to the dual of a graph in graph theory. 
+	known as a "dual" in tectonics.cpp, since it is analogous to the dual of a graph in graph theory. 
 	The vertices of the dual are set to the midpoints of the faces that connect the original vertices.
 	The duel of a vertex is a boundary, and as such it has its own surface normal.
 	We want to find the divergence, which is a single floating point value 
@@ -129,32 +129,6 @@ namespace rasters
 		gradient(grid, scalar_field, out, arrow_differential, arrow_flow);
 		return out;
 	}
-
-
-	// template<typename T, qualifier Q>
-	// void gradient(
-	// 	const LayeredGrid& grid, 
-	// 	const tmany<T>& scalar_field, 
-	// 	tmany<glm::vec<3,T,Q>>& out, 
-	// 	tmany<T>& arrow_differential, 
-	// 	tmany<glm::vec<3,T,Q>>& arrow_flow
-	// ) {
-	// 	assert(scalar_field.size()       == grid.vertex_count);
-	// 	assert(out.size()                == grid.vertex_count);
-	// 	assert(arrow_differential.size() == grid.arrow_count );
-	// 	assert(arrow_flow.size()         == grid.arrow_count );
-	// 	uvec2 arrow;
-	// 	for (unsigned int i = 0; i < grid.arrow_vertex_ids.size(); ++i)
-	// 	{
-	// 		arrow                 = grid.arrow_vertex_ids[i]; 
-	// 		arrow_differential[i] = scalar_field[arrow.y] - scalar_field[arrow.x]; // differential across dual of the arrow
-	// 	}
-	// 	mult 	 (arrow_differential, grid.arrow_dual_normals,   arrow_flow);      // flux across dual of the arrow
-	// 	mult 	 (arrow_flow,         grid.arrow_dual_lengths,   arrow_flow);      // flow across dual of the arrow
-	// 	fill 	 (out,                vec3());
-	// 	aggregate_into(arrow_flow,    grid.arrow_vertex_id_from, [](glm::vec<3,T,Q> a, glm::vec<3,T,Q> b){ return a+b; }, out); // flow out from the vertex
-	// 	div      (out,                grid.vertex_dual_areas,    out);             // gradient
-	// }
 
 	template<typename T, qualifier Q>
 	void divergence(
@@ -260,7 +234,7 @@ namespace rasters
 			arrow            = grid.arrow_vertex_ids[i]; 
 			arrow_scratch[i] = scalar_field[arrow.y] - scalar_field[arrow.x]; // differential across dual of the arrow
 		}
-		div      (arrow_scratch,      grid.arrow_lengths,      arrow_scratch);
+		div      (arrow_scratch,      grid.arrow_lengths,      arrow_scratch); // slope along the arrow
 		mult     (arrow_scratch,      grid.arrow_dual_lengths, arrow_scratch); // differential weighted by dual length
 		fill     (out,                T(0.f));
 		aggregate_into(arrow_scratch, grid.arrow_vertex_id_from, [](T a, T b){ return a+b; }, out);  // weight average difference across neighbors
