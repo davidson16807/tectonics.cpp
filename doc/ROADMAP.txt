@@ -107,4 +107,11 @@ view resources
 	projections
 		globe projection
 		map projection
-	
+	colorscale world
+	vector world
+	gl manager
+
+controls
+	controller state
+	controller state transformations
+	event manager
