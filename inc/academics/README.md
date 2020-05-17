@@ -1,3 +1,0 @@
-The `academics` subcomponent stores pure, "side-effect-free" utility functions that express simple mathematic and scientific relationships ported from glsl (e.g. geometric relations, thermodynamics, orbital mechanics, etc.). Because these functions are so simple, they can be easily ported to other C-like languages. To take advantage of this opportunity, the `academics` subcomponent is written using macros to allow it to be used in C, C++, and GLSL. Experimental macro definitions also exist to port code to Javascript, however no guarantees are made as to the quality of output. 
-
-Since all functionality is ported from glsl, `glm` is required for use. Additionally, `rasters` can be used in conjunction to provide enhanced functionality relating to vector calculus. 
