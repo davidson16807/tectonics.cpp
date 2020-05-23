@@ -1,12 +1,12 @@
 Stratigraphy only matters to us if a hypothetical person on a planet could access it. The Kola super deep borehole in Russia is the deepest place any human has accessed to date, at a depth of 12km. Other measures of accessible depth can be taken from ocean trenches or canyons, on Earth or elsewhere in the solar system, but we find these are less extreme and still on the same order of magnitude. 
 
-So let's say the max height relevant to stratigraphy is 12km, or dex 4.3
+So let's say the max height relevant to stratigraphy is 12km, or dex 4.1
 
 Lowest acceptable precision for a layer is probably Minecraft level, 1m blocks, dex 0
 
 Highest precision solution per layer is to store each mass pool as floats, and there are about 16 mass pools ranging from orthoclase to nitrogen ice.
 
-dex 1.2 + 0.6 = 1.8 per layer, and dex 1.8 + 4.3 - 0 = 6.1 per cell
+dex 1.2 + 0.6 = 1.8 per layer, and dex 1.8 + 4.1 - 0 = 5.9 per cell
 
 There are upwards of 40k cells per grid, dex 4.6
 
