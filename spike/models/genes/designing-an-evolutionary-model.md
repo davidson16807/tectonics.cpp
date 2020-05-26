@@ -27,7 +27,7 @@ The amount of memory consumed by the evolutionary model is a strict product of:
 
 For most models, the number of grid cells within a raster can be anywhere between dex 3 and dex 4 and provide satisfactory results. This provides us with anywhere between dex 4 and dex 5 bytes to allocate between the number of niches and the size of the genotype. 
 
-The number of niches is itself linear to the amount of effort we put in, since for each niche we need to derive a custom fitness function, and that could require extensive research and hairy debugging. Compare this to the amount of effort needed to expand the size of the genotype, which could amount to adding a new floating point number to a data structure. This means we have a good reason to prefer limiting the number of niches, rather than limiting the size of the genotype. A reasonable number of niches is anywhere between dex 1.0 and dex 1.5 considering the amount of effort involved. This means we should target anywhere between dex 2.5 bytes and dex 4.0 bytes to store a genotype. Even the lower bound sounds easy to work with, so we will choose to continue with our design process.
+The number of niches is itself linear to the amount of effort we put in, since for each niche we need to derive a custom fitness function, and that could require extensive research and hairy debugging. Compare this to the amount of effort needed to expand the size of the genotype, which could amount to adding a new floating point number to a data structure. This means we have a good reason to prefer limiting the number of niches, rather than limiting the size of the genotype. A reasonable number of niches is anywhere between dex 1.0 and dex 1.5 considering the amount of effort involved. This means we should target anywhere between dex 2.5 bytes and dex 4.0 bytes to store a genotype. Even the lower bound sounds easy to work with, so based on this, we choose to continue with our design process.
 
 We will next discuss what the model of a genotype might look like in memory. After that, we'll outline the ecological niches that we might consider and their fitness functions.
 
@@ -41,7 +41,7 @@ There are a few lines of inquiry that we can use to inform the design of our mod
 
 I've ordered these lines of inquiry based on what I think will give better results. Obviously, if our model perfectly reproduced genetic code and its expression, it would be able to express any body plan that we see in the real world with perfect fidelity. However, this approach is limited by our lack of knowledge, not to mention performance and memory considerations. Nevertheless, it's probably best to start with the most promising approach first and see how far it takes us. 
 
-There are several concepts within genetics that I think are important to the problem, however some of these concepts cannot be understood without introducing other concepts within biology, so this discussion will occassionally jump in and out of genetics. The very first concept is something called **segmentation**, from evolutionary biology, and **reaction/diffusion patterns**, from developmental biology.
+There are several concepts within genetics that I think are important to the problem, however some of these concepts cannot be understood without introducing other concepts within biology, so even though the genetics discussion is our goal we will start with other branches of biology. The very first concept we will discuss is something called **segmentation**, from evolutionary biology, and **reaction/diffusion patterns**, from developmental biology.
 
 ### Segmentation
 Most animals we're familiar with are [segmented](https://en.wikipedia.org/wiki/Segmentation_(biology\)). This concept is best demonstrated in an earth worm or a millipede: there are compartmentalized regions of the body that repeat again and again with minor variations to express for distinctions like whether to grow legs vs. antenna. For some animals, this is less obvious, but we still see the pattern. In vertebrates we see this sort of repetition internally, in the vertebral column and rib cage. In insects and spiders this is harder to see since they are degenerate cases in the mathematical sense: insects have only 3 major body segments, spiders have only 2. There are of course many minor body segments in insects and spiders, but they are fused together. For instance, insect heads are typically composed of several fused segments that each individually express for different appendages like mandibles vs. antenna. We see a similar thing going on in the heads of vertebrates, as well. Somewhat recursively, the appendages of segments may themselves be segmented. For instance, the tibia and fibula would be considered segments of appendages in vertebrates. 
@@ -49,7 +49,7 @@ Most animals we're familiar with are [segmented](https://en.wikipedia.org/wiki/S
 ### Reaction Diffusion Patterns
 Now that that we've discussed body segments, I'd next like to discuss a general mechanism through which segmentation could develop.
 
-Before we go on, I highly recommend you go out and read Turing (1952), who discusses the subject. It is a seminal paper written by a famous man, and if that weren't enough he makes it a point to provide gentle introductions to foundational concepts across a wide range of subjects including physics, chemistry, biology, and mathematics. There is even a brief cameo mention of computer science, hinting at things then to come for that discipline. Some parts may be inaccessible to you, but Turing anticipates this and you can safely ignore parts you're not interested in. Overall, it's a great paper for anyone who likes shoring up their cross discipline knowledge. 
+Before we go on, I highly recommend you go out and read Turing (1952), who discusses the subject. It is a seminal paper written by a well reknown scientist, and if that weren't enough he makes it a point to provide gentle introductions to foundational concepts across a wide range of subjects including physics, chemistry, biology, and mathematics. There is even a brief cameo mention of computer science, hinting at things then to come for that discipline. Some parts may be inaccessible to you, but Turing anticipates this and you can safely ignore parts you're not interested in. Overall, it's a great paper for anyone who likes shoring up their cross discipline knowledge. 
 
 One important insight I took from Turing is that an organism can only assume certain body plans, and the body plans that are available to the organism depend highly on scale. This applies very liberally to any life as we know it, and as we will see it very likely applies to many forms of life as we do *not* know it. 
 
@@ -194,15 +194,127 @@ It is important to note that uint4s are most conveniently implemented in C++ usi
 
 `canonical <=> dense <=> traversible -> organized`
 
-At this point the category digram describes an acceptable implementation. `organized` may be further refined depending on whether we find any coherent stages in transformation along the way, but this is a secondary issue. In the future, we may also consider taking advantage of the existing code and exposing an interface to the user to allow them to play around with organisms of their own making. This could be a game in-and-of-itself, as we see with spore, and the properties of the genotype model we described previously could provide for some unique and interesting challenges that have real world implications. Setting up this interface takes us well past minimum viable product, however if we wanted to do this we would only need one more morphism in the diagram, converting `organized` back to `traversible`:
+`organized` is also not as easy to use as it could be. This is because it shares two concerns: it strives for ease of use when writing a fitness function, yet it must also express parameters in such a way that there is no illegal state space (Stepanov calls this condition "properly partial": a proper subset of values within an abstract entity). This latter requirement introduces a lot of weird stipulations within the definitions of attributes. For instance, there are lots of "log_*" attributes where a real world value must not assume a negative value, and some body proportions are expressed in terms of other body measurements instead of directly stating the measurement in meters. To separate these concerns we introduce an additional `understandable` data structure, which expresses all attributes directly in linear units of measure by relaxing guarantees of proper partiality.
 
-`canonical <=> dense <=> traversible <=> organized`
+`canonical <=> dense <=> traversible -> organized -> understandable` 
+
+Since `understandable` has the potential to store invalid values, we wish to prevent its modification, and since we can't modify `understandable`, there is no reason to add logic that converts back to `organized`. 
+
+At this point the category digram describes an acceptable implementation. `understandable` may be further refined depending on whether we find any coherent stages in transformation along the way, but this is a secondary issue. In the future, we may also consider taking advantage of the existing code and exposing an interface to the user to allow them to play around with organisms of their own making. This could be a game in-and-of-itself, as we see with spore, and the properties of the genotype model we described previously could provide for some unique and interesting challenges that have real world implications. Setting up this interface takes us well past minimum viable product, however if we wanted to do this we would only need one more morphism in the diagram, converting `organized` back to `traversible`:
+
+`canonical <=> dense <=> traversible <=> organized -> understandable`
 
 Precision concerns need not apply when converting back to `traversible`. We could offer them a sliding scale for each attribute within `organized`, and precision issues would be indistinguishable from a user interface where sliders had a particular step size. 
 
+## Designing Genotype Attributes
+
+This section relates to how we will design attributes within the genotype model to allow for the most efficient representation within memory while still allowing evolution to occur at a realistic rate. 
+
+This section originated as a code comment that grew too large, so it may read a little differently than other sections. It will serve as a case study, where we attempt to address a concrete example of the issue. I expect there should be a lot of commonality between issues of this kind, so it is hoped the solution here may be adapted to other genotype attributes.
+
+Our case study addresses this issue: 
+
+*what is the most efficient way to represent an animal's body length within memory?*
+
+We start with some observations.
+
+[Pelagibacter ubique](https://en.wikipedia.org/wiki/Pelagibacter_ubique) 
+is among the smallest known free-living bacteria, on the order of dex -6.5 m at smallest.
+The blue whale is on the order of dex 1.5 m long.
+The tallest known tree is [Hyperion](https://en.wikipedia.org/wiki/Hyperion_(tree)),
+a redwood on the order of dex 2 m tall.
+If we want to represent realistic speculative creatures that could occur in alien circumstances,
+we could consider Wayne Douglas Barlowe's Emperor Sea Strider, which is dex 2.5 m tall. 
+We will discount larger organisms such as [Pando](https://en.wikipedia.org/wiki/Pando_(tree))
+since we're unable to represent their body shape in our model.
+This means there are around 9 orders of magnitude to account for. 
+
+Changes in body size would be very noticeable if we were to implement some visualization for it over time, 
+so we want to pay special attention to its precision.
+
+We should like to establish an utmost lowest precision needed to represent a change over a timestep.
+Not every speed setting in our simulation needs to represent evolution, this we already know,
+but there must be at least some valid timestep at which evolution occurs.
+Our maximum timestep is 1My, and the highest frame rate our model is allowed to cap to is 60fps, 
+so a timestep is at most 16,000 years. 
+
+We should like the minimum precision of body size to allow representing changes that occur over that time.
+Matilla (2008) shows in an analysis that body mass could evolve quickly 
+if selective pressure is provided by the environment:
+body mass may scale up as much as 26% per million years assuming only gradual evolution,
+but brief speciation events may account for all but 5% of that change. 
+We will note that body mass scales as the cube of body length,
+letting us approximate an 8%/My change in length, of which 1.6%/My is gradual. 
+Because so little change is accounted for by gradual evolution,
+and since we only seek a estimate for minimum precision needed,
+we will discount the precision requirements that are needed to represent gradual evolution,
+and assume all change comes from speciation.
+That means speciation events should account for an average 8%/My change in length.
+
+But how fast does change occur per timestep during a speciation event? 
+In order to continue we need to estimate speciation frequency and duration.
+Rosenblum (2012) estimates speciation varies from 0.01 to 10 events per lineage per million years
+with a "canonical" estimate of 0.3/lineage/My provided by Sepkoski (1998).
+Etienne (2014) estimates an average 0.6 My to complete a successful speciation event,
+and states that number is roughly invariant to speciation initiation rate and speciation failure rate. 
+This is a refinement on Curnoe's estimate (2006) for primates, around 1 My. 
+If we accept the canonical speciation event, 
+then every 3 million years there will be a speciation event lasting 0.6 million years
+that accounts for a factor of `1.08^3 = 1.26` change in body length. 
+That speciation event takes 40 frames at the fastest speed setting and frame rate.
+If we store body length on a log scale, 
+it needs to account for changes at a factor of `1.26 ^ (1/40) = 1.006`, at *minimum*.
+This means each order of magnitude in size needs `1/log10(1.006) = 384` unique values.
+For the 9 orders of magnitude we need to represent, we must store at minimum `9*384 = 3456` unique values.
+
+Side note: I admit I'm grasping at straws here: synthesizing results from so many papers like this
+is not something I'd have the bravery to do in academia,
+but I'm trying to put together a representative model here that works:
+I just need numbers to feed the model, and this is what it took to get them.
+
+3456 unique values is too much for a typical uint4, 
+but it can be accomplished by using the storage space of several uint4s.
+We must now pick a generic way to account for variables that span multiple uint4 slots
+within the array that's used by our optimization algorithm. 
+In other words, we must find a way to support variable precision. 
+The optimization algorithm works by incrementing or decrementing values within an array of integers.
+This is a design that works satisfatorily in the general case,
+and we do not wish to modify it in any way to acount for variable precision.
+
+One trivial way to allow variable precision is to have 
+multiple uint4s within the array represent a single phenotype. 
+If, say, the first uint4 represented fine grain control 
+and the second represented coarse control,
+it would only take ceil(log16(3456)) = 3 uint4 slots to represent body length.
+This effectively mimics a uint12 using 3 uint4s.
+However the coarse control would allow changes to body length very quickly,
+causing unrealistic jumps in evolution.
+
+We could alternatively have several uint4s that are added together, 
+This would have implications for the max rate of evolution, 
+though we could introduce ways to limit the rate generically using a generic mutation control system.
+It would also be an inefficient form of storage.
+We would need 3456/16 = 216 such uint4 slots to store body length,
+
+We mentioned previously the genetic algorithm operated on arrays of integers,
+however that array is not the same as the one that is stored across timesteps,
+so we can set the size of the integers in that array 
+to whatever is most appropriate to capture precision requirements across all attributes.
+However this means the function populating the array needs to be informed somehow 
+about the precision requirements of individual attributes.
+Up to the present point, the `dense` and `traversible` arrays 
+only ever needed to know the sizes of the genotype they were representing,
+The `organized` data structure was the only place where attributes had individuality,
+It can be considered the canonical store for the properties of individual attributes, in that way.
+This is an awfully desireable property, so to keep it,
+we must provide a way for `organized` to communicate the storage size of attributes 
+into a format that is interpretable to the function that converts `dense` into `traversible`.
+We shall implement this in the form of several static methods
+each called `getAttributeSizes()`, one for each class within `organized`.
+
 ## Designing the Optimization Algorithm
 
-We mentioned previously that a single organism could require up to 2000 attributes. This has implications for the performance of our optimization. 
+We mentioned previously that a single organism could require up to 2000 attributes. This has implications for performance optimization. 
 
 We could think of our optimization algorithm as a traversal through a parameter space whose dimensionality is equal to the number of attributes. A naïve implementation of gradient descent would attempt 2000 steps per iteration. We must next consider whether this approach is performant, whether it can reliably achieve sensible body shapes in an appropriate amount of time, and what steps can be taken if either of these is not the case. 
 
@@ -289,7 +401,7 @@ Considerations:
 * Food source is also a good way to distinguish niches because it is relatively easy to estimate mass uptake and map it to biomass. This simplies the problem of defining a fitness function. We must make sure the model does not allow species to strip a land of its resources though, since that would produce unstable behavior. We should rely on a steady state assumption, calculating the maximum amount of biomass that a species could sustainably consume within a timestep.
 * If food is the only consideration, we may also be able to dynamically generate niches, at least to within our resource allotment. 
 
-## Performance characteristics:
+## "Performance characteristics": characteristics for determining fitness
 * heat dissipation
 * heat production, metabolism
 * energy procurement
@@ -328,19 +440,4 @@ given the following components:
 	`float get_fitness_of_organism_in_niche(vecA body_plan_genes, realizator_genes ) { ... }`
 		A function that returns a metric expressing the fitness of an organism within a particular niche. 
 
-
-	pigmentation: photosynthetic, different wavelengths
-	pigmentation: blue (carotenoids)
-	pigmentation: green (carotenoids)
-	pigmentation: purple (carotenoids)
-	pigmentation: red (carotenoids, melanin)
-	pigmentation: yellow (melanin)
-	pigmentation: brown (melanin)
-	pigmentation: black (melanin)
-	pigmentation: uv
-	pigmentation: irridescence (iridophores, structural coloration)
-	pigmentation: reflector (leucophore)
-	pigmentation: uv
-	pigmentation: bioluminesence
-	pigmentation: color changing (chromatophores)
 
