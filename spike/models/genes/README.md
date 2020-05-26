@@ -4,6 +4,6 @@ The "genes" namespace serves to create an organized listing of attributes that c
 
 The evolutionary model decouples these concerns by creating morphisms between arrays and nested data structures. Several other morphisms are needed to address validation and ease-of-use concerns. The full category diagram looks something like this:
 
-`array<uint4>  <=>  array<int16>  ->  genes::Body  -> bodies::Body -> performance_metrics -> fitness`
+`array<uint4>  <=>  array<int16>  ->  genes::Body  -> life::Body -> performance_metrics -> fitness`
 
 For more information, see [designing-an-evolutionary-model.md](designing-an-evolutionary-model.md)
