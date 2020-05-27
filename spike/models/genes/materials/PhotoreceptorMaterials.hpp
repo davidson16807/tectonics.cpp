@@ -4,8 +4,8 @@
 
 #include <algorithm>
 
-#include <genes/coding.hpp>                  // encode_*(), decode_*()
-#include <genes/materials/Photopigment.hpp>    
+#include <models/genes/coding.hpp>                  // encode_*(), decode_*()
+#include <models/genes/constituents/Photopigment.hpp>    
 
 namespace genes
 {
@@ -19,6 +19,11 @@ namespace genes
         template<typename TIterator>
         TIterator encode(TIterator output) const
         {
+            for (auto photopigment = photopigments.begin(); 
+                 photopigment != photopigments.end(); ++photopigment)
+            {
+                output = photopigment.encode(output);
+            }
             for (auto wavelength = cover_extinction_coefficients.begin(); 
                  wavelength != cover_extinction_coefficients.end(); ++wavelength)
             {
@@ -34,6 +39,11 @@ namespace genes
         template<typename TIterator>
         TIterator decode(TIterator input)
         {
+            for (auto photopigment = photopigments.begin(); 
+                 photopigment != photopigments.end(); ++photopigment)
+            {
+                input = photopigment.encode(input);
+            }
             for (auto wavelength = cover_extinction_coefficients.begin(); 
                  wavelength != cover_extinction_coefficients.end(); ++wavelength)
             {
@@ -49,13 +59,24 @@ namespace genes
         template<typename TIterator>
         static TIterator getMutationRates(TIterator output)
         {
-            return std::fill_n(output, PHOTOPIGMENT_COUNT, 1);
+            for (auto photopigment = photopigments.begin(); 
+                 photopigment != photopigments.end(); ++photopigment)
+            {
+                output = photopigment.getMutationRates(output);
+            }
+            return std::fill_n(output, 2*WAVELENGTH_SAMPLE_COUNT, 1);
         }
         template<typename TIterator>
         static TIterator getAttributeSizes(TIterator output)
         {
-            return std::fill_n(output, PHOTOPIGMENT_COUNT, 4);
+            for (auto photopigment = photopigments.begin(); 
+                 photopigment != photopigments.end(); ++photopigment)
+            {
+                output = photopigment.getAttributeSizes(output);
+            }
+            return std::fill_n(output, 2*WAVELENGTH_SAMPLE_COUNT, 4);
         }
+        static constexpr unsigned int bit_count = Photopigment::bit_count + 2*4*WAVELENGTH_SAMPLE_COUNT;
 
     private:
         /*

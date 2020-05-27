@@ -4,7 +4,13 @@
 
 #include <algorithm>
 
-#include <genes/coding.hpp>    // encode_*(), decode_*()
+#include <models/genes/coding.hpp>    // encode_*(), decode_*()
+#include <models/genes/segments/GenericSegment.hpp>// encode_*(), decode_*()
+#include <models/genes/structures/SurfaceStructure.hpp>
+#include <models/genes/structures/CorneousStructure.hpp>
+#include <models/genes/structures/TubeStructure.hpp>
+#include <models/genes/materials/Pigmentation.hpp>
+#include <models/genes/materials/Mineralization.hpp>
 
 namespace genes
 {
@@ -132,6 +138,17 @@ namespace genes
             output = TubeStructure    ::getAttributeSizes(output);
             return std::fill_n(output, 3, 4);
         }
+        static constexpr unsigned int bit_count = 
+            Appendage         ::bit_count 
+            SurfaceStructure  ::bit_count 
+            Pigmentation      ::bit_count 
+            CorneousStructure ::bit_count 
+            Mineralization    ::bit_count 
+            TubeStructure     ::bit_count 
+            TubeStructure     ::bit_count 
+            TubeStructure     ::bit_count 
+            TubeStructure     ::bit_count
+            + 3*4; 
     };
 
 }

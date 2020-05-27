@@ -4,7 +4,7 @@
 
 #include <algorithm>
 
-#include <genes/coding.hpp>    // encode_*(), decode_*()
+#include <models/genes/coding.hpp>    // encode_*(), decode_*()
 
 namespace genes
 {
@@ -73,26 +73,7 @@ namespace genes
         {
             return std::fill_n(output, 3, 4);
         }
-    };
-
-    enum ClosedFluidSystemConstituents
-    {
-        // red, iron based, very efficient but succeptible to CO and acidity
-        hemoglobin_concentrations,
-        // green, iron based, 25% efficieny of hemoglobin
-        chlorocruorin_concentration,
-        // colorless, iron based, effective in CO
-        hemerythrin_concentration,
-        // colorless, maganese based, little known
-        pinnaglobin_concentration,
-        // blue/colorless, copper based, more efficient in low oxygen conditions
-        hemocyanin_concentration,
-        // multicolor, vanadium based, effective when acidic, insoluble in water, 
-        vanadium_chromagen_concentration,
-        // yellow/pink, cobolt based
-        coboglobin_concentration,
-
-        COUNT
+        static constexpr unsigned int bit_count = 3*4;
     };
 
 }

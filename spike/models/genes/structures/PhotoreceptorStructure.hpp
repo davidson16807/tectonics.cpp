@@ -4,7 +4,7 @@
 
 #include <algorithm>
 
-#include <genes/coding.hpp>    // encode_*(), decode_*()
+#include <models/genes/coding.hpp>    // encode_*(), decode_*()
 
 namespace genes
 {
@@ -61,6 +61,7 @@ namespace genes
         {
             return std::fill_n(output, 4, 4);
         }
+        static constexpr unsigned int bit_count = 4*4;
     };
 
 

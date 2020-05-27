@@ -4,11 +4,11 @@
 
 #include <algorithm>
 
-#include <genes/coding.hpp>    // encode_*(), decode_*()
-#include <genes/segments/BodySegment.hpp>
-#include <genes/materials/ClosedFluidSystemComposition.hpp>
-#include <genes/materials/PhotoreceptorMaterials.hpp>
-#include <genes/materials/Mineralization.hpp>
+#include <models/genes/coding.hpp>    // encode_*(), decode_*()
+#include <models/genes/segments/BodySegment.hpp>
+#include <models/genes/materials/ClosedFluidSystemComposition.hpp>
+#include <models/genes/materials/PhotoreceptorMaterials.hpp>
+#include <models/genes/materials/Mineralization.hpp>
 
 namespace genes
 {
@@ -155,5 +155,11 @@ namespace genes
             output = std::fill_n(output, 3, 16);
             return output;
         }
+        static constexpr unsigned int bit_count = 
+            BodySegment                 ::bit_count * BODY_SEGMENT_COUNT +
+            ClosedFluidSystemComposition::bit_count +
+            PhotoreceptorMaterials      ::bit_count +
+            Mineralization              ::bit_count +
+            3*16;
     };
 }

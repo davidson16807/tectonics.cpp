@@ -23,6 +23,8 @@ spike-layered-rasters: spike/spike_layered_rasters.cpp
 	$(CPP) -std=c++17 -o bin/spike.out spike/spike_layered_rasters.cpp $(DEVFLAGS) -I lib/ -I inc/ && chmod a+x bin/spike.out && time ./bin/spike.out
 spike-meshes: spike/spike_meshes.cpp
 	$(CPP) -std=c++17 -o bin/spike.out spike/spike_meshes.cpp  $(DEVFLAGS) -I lib/ -I inc/ && chmod a+x bin/spike.out && time ./bin/spike.out
+spike-genes: spike/models/genes/test/test_genes.cpp
+	$(CPP) -std=c++17 -o bin/spike.out spike/models/genes/test/test_genes.cpp  $(DEVFLAGS) -I lib/ -I inc/ -I spike && chmod a+x bin/spike.out && time ./bin/spike.out
 
 # test: get it working with confidence
 test-many: test/test_many.cpp

@@ -1,4 +1,4 @@
-#include <genes/GenericSegment.hpp>    // encode_*(), decode_*()
+#include <models/genes/segments/GenericSegment.hpp>// encode_*(), decode_*()
 
 namespace genes
 {
@@ -25,5 +25,6 @@ namespace genes
 	      this results in stumpy looking chubby animals that are cold tolerant, 
 	      which is both consistent with reality and hilarious, not to mention adorable.
 	    */
+        static constexpr unsigned int bit_count = 22*4;
     };
 }

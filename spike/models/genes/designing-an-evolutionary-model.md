@@ -316,7 +316,23 @@ each called `getAttributeSizes()`, one for each class within `organized`.
 
 We mentioned previously that a single organism could require up to 2000 attributes. This has implications for performance optimization. 
 
-We could think of our optimization algorithm as a traversal through a parameter space whose dimensionality is equal to the number of attributes. A naïve implementation of gradient descent would attempt 2000 steps per iteration. We must next consider whether this approach is performant, whether it can reliably achieve sensible body shapes in an appropriate amount of time, and what steps can be taken if either of these is not the case. 
+We could think of our optimization algorithm as a traversal through a parameter space whose dimensionality is equal to the number of attributes. A naïve implementation of gradient descent might attempt `2*2000=4000` samples per iteration, one for each direction along each axis. We must next consider whether this approach is performant, whether it can reliably achieve sensible body shapes in an appropriate amount of time, and what steps can be taken if either of these is not the case. 
+
+Computers nowadays typically allow 256KB of L1 cache. My own laptop has 384KiB, so I'm inclined to trust this number. A single animal stores about 1KB of data, so I don't think caching speeds are worth that much consideration, at least not during the calulation of fitness. Rather as we'll see, I think we're most tightly constrained by raw CPU performance.
+
+We start with the observation that our optimization algorithm must run at least a single iteration within a single frame. We require the application be able to run at 60fps at slowest - that is widely considered the highest framerate at which the user notices performance, and to aim any lower invites implementation details from slowing an approach past the point where it is useable. Since we only need order of magnitude estimates, we will round up to dex 2 fps. Each frame takes dex -2 seconds.
+
+Consider a naïve implementation where we simulate all 4000 samples. This is around dex 3.5 per niche, per grid cell, per iteration. As a reminder, there are dex 3-4 grid cells, and dex 1-1.5 ecological niches. The time required to estimate fitness for a single sample must then fall between dex -9.5 and -11.0 seconds per sample. 
+
+I don't have good estimates for how many flops a normal computer has, but I heard the PlayStation 4 had roughly 8 teraflops, dex -13 seconds per flop. I'll assume this is representative to an order of magnitude. If such a CPU were fully dedicated to the task, we could allow anywhere from dex 3.5 to dex 2 floating point operations per sample. 
+
+It's important to note that a fitness function may require looking up performances for multiple niches. This may be the case if there's a predator/prey relationship between species. For instance, if a cheetah regularly preys upon a gazelle, we'd need to know the top speed of both animals, and maybe some other performance characteristics like the degree of camoflage for either animal and the extent of peripherial vision for the gazelle. If we choose a worst case, generic model where each niche is defined by its ability to feed on another (allowing only one species of plant), and where each species tests once per iteration whether it is able to occupy a niche, we have anywhere from dex 2 to dex 3 interactions. Since we can't hope to generate one of these performance characteristics in only 3 floating point operations, we'll consider ourselves to have reached the edge of what's possible on reasonable hardware. We must now find ways to scale back while still giving acceptable results.
+
+An acceleration structure could be introduced to store performance characteristics for species based on the genotype that's currently stored in memory. Our approach to updating fitness mirrors the approach for other state variables in a physics simulation: calculate the change over one timestep for one attribute, given the current value for every other state within the timestep. 
+
+`canonical <=> dense <=> traversible <=> organized -> understandable -> cached -> fitness`
+
+This greatly reduces the number of computations for a single traversal, but still requires us to run a single fitness function from scratch, and still requires us to both do this and calculate the gradient in only 3 floating point operations. 
 
 ## Designing the Memory Layout
 

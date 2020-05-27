@@ -21,7 +21,7 @@ namespace genes
 
     inline float decode_fraction(const std::int8_t input, const int bit_count = 4)
     {
-        return input >> bit_count;
+        return input / float(1<<bit_count);
     }
     inline float decode_portion(const std::int8_t input)
     {
@@ -29,6 +29,6 @@ namespace genes
     }
     inline float decode_ranged(const std::int8_t input, float lo, float hi, const int bit_count = 4)
     {
-        return (hi-lo) * (input >> bit_count) + lo;
+        return (hi-lo) * (input / float(1<<bit_count)) + lo;
     }
 }

@@ -4,7 +4,14 @@
 
 #include <algorithm>
 
-#include <genes/coding.hpp>    // encode_*(), decode_*()
+#include <models/genes/coding.hpp>    // encode_*(), decode_*()
+#include <models/genes/segments/AppendageSegment.hpp>
+#include <models/genes/structures/SurfaceStructure.hpp>
+#include <models/genes/structures/CorneousStructure.hpp>
+#include <models/genes/structures/PhotoreceptorStructure.hpp>
+#include <models/genes/structures/PressureSensingStructure.hpp>
+#include <models/genes/materials/Pigmentation.hpp>
+#include <models/genes/materials/Mineralization.hpp>
 
 namespace genes
 {
@@ -14,10 +21,10 @@ namespace genes
     const int APPENDAGE_SEGMENT_COUNT = 8;
 
     // 120 bytes
-ruct Appendage
+    struct Appendage
     {
         /*
-        BODY SCALING SYSTEM:
+        BODY SurfaceStructure SYSTEM:
         total body length                       meters, log scale
         total body width                        max body segment width found within the body
         total body height                       max body segment height found within the body
@@ -40,8 +47,8 @@ ruct Appendage
         // appendage segments
         std::array<AppendageSegment, APPENDAGE_SEGMENT_COUNT> segments;
 
-        // scaling, such as hair
-        Scaling scaling;
+        // SurfaceStructure, such as hair
+        SurfaceStructure surface_structure;
 
         // pigmentation for intentional displays, such as startle or mating displays
         Pigmentation pigmentation;
@@ -83,12 +90,12 @@ ruct Appendage
             {
                 output = segment->encode(output);
             }
-            output = Scaling                 ::encode(output);  
-            output = Pigmentation            ::encode(output);
-            output = Mineralization          ::encode(output);
-            output = CorneousStructure       ::encode(output);
-            output = PhotoreceptorStructure  ::encode(output);
-            output = PressureSensingStructure::encode(output);
+            output = surface_structure         ::encode(output);  
+            output = pigmentation              ::encode(output);
+            output = mineralization            ::encode(output);
+            output = corneous_structure        ::encode(output);
+            output = photoreceptor_structure   ::encode(output);
+            output = pressure_sensing_structure::encode(output);
             *output++ = encode_fraction(length);
             *output++ = encode_fraction(width );
             *output++ = encode_fraction(height);
@@ -105,12 +112,12 @@ ruct Appendage
             {
                 decode = segment::decode(decode);
             }
-            input = Scaling                 ::decode(input);  
-            input = Pigmentation            ::decode(input);
-            input = Mineralization          ::decode(input);
-            input = CorneousStructure       ::decode(input);
-            input = PhotoreceptorStructure  ::decode(input);
-            input = PressureSensingStructure::decode(input);
+            input = surface_structure         ::decode(input);  
+            input = pigmentation              ::decode(input);
+            input = mineralization            ::decode(input);
+            input = corneous_structure        ::decode(input);
+            input = photoreceptor_structure   ::decode(input);
+            input = pressure_sensing_structure::decode(input);
             length = decode_fraction(*output++);
             width  = decode_fraction(*output++);
             height = decode_fraction(*output++);
@@ -127,7 +134,7 @@ ruct Appendage
             {
                 output = AppendageSegment::getMutationRates(output);
             }
-            output = Scaling                 ::getMutationRates(output);  
+            output = SurfaceStructure        ::getMutationRates(output);  
             output = Pigmentation            ::getMutationRates(output);
             output = Mineralization          ::getMutationRates(output);
             output = CorneousStructure       ::getMutationRates(output);
@@ -144,7 +151,7 @@ ruct Appendage
             {
                 output = AppendageSegment::getAttributeSizes(output);
             }
-            output = Scaling                 ::getAttributeSizes(output);  
+            output = SurfaceStructure        ::getAttributeSizes(output);  
             output = Pigmentation            ::getAttributeSizes(output);
             output = Mineralization          ::getAttributeSizes(output);
             output = CorneousStructure       ::getAttributeSizes(output);
@@ -153,5 +160,14 @@ ruct Appendage
             output = std::fill_n(output, 6, 4);
             return output;
         }
+        static constexpr unsigned int bit_count = 
+            AppendageSegment        ::bit_count * APPENDAGE_SEGMENT_COUNT +
+            SurfaceStructure        ::bit_count +
+            Pigmentation            ::bit_count +
+            Mineralization          ::bit_count +
+            CorneousStructure       ::bit_count +
+            PhotoreceptorStructure  ::bit_count +
+            PressureSensingStructure::bit_count +
+            6*4;
     };
 }
