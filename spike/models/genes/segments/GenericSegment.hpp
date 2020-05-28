@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cmath>
 #include <cstdint>
 #include <cstddef>
@@ -52,8 +54,9 @@ namespace genes
     * 
 
 
-    The `GenericSegment` data structure is designed to be memory efficient and safe to modify
-    Unfortunately, this makes it difficult to work with.
+    The `GenericSegment` data structure is designed to be safe to modify.
+    It doesn't try to be memory efficient, since that's 
+    It also doesn't try to make parameters easy to use when writing fitness functions.
     To make it easier to work with, we transform it to other data structures.
     */
 
@@ -134,10 +137,10 @@ namespace genes
             *output++ = encode_fraction(open_system_vessel_thickness                );
             *output++ = encode_fraction(nonhydraulic_closed_system_vessel_radius    );
             *output++ = encode_fraction(nonhydraulic_closed_system_vessel_thickness );
-            *output++ = encode_range   (joint_vertical_range_min,  -PI, PI          );
-            *output++ = encode_range   (joint_vertical_range_max,  -PI, PI          );
-            *output++ = encode_range   (joint_horizontal_range_min,-PI, PI          );
-            *output++ = encode_range   (joint_horizontal_range_max,-PI, PI          );
+            *output++ = encode_ranged  (joint_vertical_range_min,  -M_PI, M_PI      );
+            *output++ = encode_ranged  (joint_vertical_range_max,  -M_PI, M_PI      );
+            *output++ = encode_ranged  (joint_horizontal_range_min,-M_PI, M_PI      );
+            *output++ = encode_ranged  (joint_horizontal_range_max,-M_PI, M_PI      );
             *output++ = encode_fraction(membrane_origin                             );
             *output++ = encode_fraction(membrane_insertion                          );
             *output++ = encode_fraction(membrane_thickness                          );
@@ -162,10 +165,10 @@ namespace genes
             open_system_vessel_thickness                = decode_fraction(*input++ );
             nonhydraulic_closed_system_vessel_radius    = decode_fraction(*input++ );
             nonhydraulic_closed_system_vessel_thickness = decode_fraction(*input++ );
-            joint_vertical_range_min,                   = decode_range   (*input++, -PI, PI );
-            joint_vertical_range_max,                   = decode_range   (*input++, -PI, PI );
-            joint_horizontal_range_min,                 = decode_range   (*input++, -PI, PI );
-            joint_horizontal_range_max,                 = decode_range   (*input++, -PI, PI );
+            joint_vertical_range_min                    = decode_ranged  (*input++, -M_PI, M_PI );
+            joint_vertical_range_max                    = decode_ranged  (*input++, -M_PI, M_PI );
+            joint_horizontal_range_min                  = decode_ranged  (*input++, -M_PI, M_PI );
+            joint_horizontal_range_max                  = decode_ranged  (*input++, -M_PI, M_PI );
             membrane_origin                             = decode_fraction(*input++ );
             membrane_insertion                          = decode_fraction(*input++ );
             membrane_thickness                          = decode_fraction(*input++ );

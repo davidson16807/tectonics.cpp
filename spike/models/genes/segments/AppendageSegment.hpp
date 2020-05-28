@@ -1,3 +1,5 @@
+#pragma once
+
 #include <models/genes/segments/GenericSegment.hpp>// encode_*(), decode_*()
 
 namespace genes

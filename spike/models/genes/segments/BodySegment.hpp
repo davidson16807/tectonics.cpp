@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cmath>
 #include <cstdint>
 #include <cstddef>
@@ -139,16 +141,16 @@ namespace genes
             return std::fill_n(output, 3, 4);
         }
         static constexpr unsigned int bit_count = 
-            Appendage         ::bit_count 
-            SurfaceStructure  ::bit_count 
-            Pigmentation      ::bit_count 
-            CorneousStructure ::bit_count 
-            Mineralization    ::bit_count 
-            TubeStructure     ::bit_count 
-            TubeStructure     ::bit_count 
-            TubeStructure     ::bit_count 
-            TubeStructure     ::bit_count
-            + 3*4; 
+            Appendage         ::bit_count +
+            SurfaceStructure  ::bit_count +
+            Pigmentation      ::bit_count +
+            CorneousStructure ::bit_count +
+            Mineralization    ::bit_count +
+            TubeStructure     ::bit_count +
+            TubeStructure     ::bit_count +
+            TubeStructure     ::bit_count +
+            TubeStructure     ::bit_count +
+            3*4; 
     };
 
 }

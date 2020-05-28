@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cmath>
 #include <cstdint>
 #include <cstddef>
@@ -90,12 +92,12 @@ namespace genes
             {
                 output = segment->encode(output);
             }
-            output = surface_structure         ::encode(output);  
-            output = pigmentation              ::encode(output);
-            output = mineralization            ::encode(output);
-            output = corneous_structure        ::encode(output);
-            output = photoreceptor_structure   ::encode(output);
-            output = pressure_sensing_structure::encode(output);
+            output = surface_structure         .encode(output);  
+            output = pigmentation              .encode(output);
+            output = exterior_mineralization   .encode(output);
+            output = corneous_structure        .encode(output);
+            output = photoreceptor_structure   .encode(output);
+            output = pressure_sensing_structure.encode(output);
             *output++ = encode_fraction(length);
             *output++ = encode_fraction(width );
             *output++ = encode_fraction(height);
@@ -110,27 +112,26 @@ namespace genes
             for (auto segment = segments.begin(); 
                  segment != segments.end(); ++segment)
             {
-                decode = segment::decode(decode);
+                input = segment->decode(input);
             }
-            input = surface_structure         ::decode(input);  
-            input = pigmentation              ::decode(input);
-            input = mineralization            ::decode(input);
-            input = corneous_structure        ::decode(input);
-            input = photoreceptor_structure   ::decode(input);
-            input = pressure_sensing_structure::decode(input);
-            length = decode_fraction(*output++);
-            width  = decode_fraction(*output++);
-            height = decode_fraction(*output++);
-            kinaesthetic_motion_detector = decode_fraction(*output++);
-            chemical_receptor_coverage   = decode_fraction(*output++);
-            fused_segments_factor        = decode_fraction(*output++);
+            input = surface_structure         .decode(input);  
+            input = pigmentation              .decode(input);
+            input = exterior_mineralization   .decode(input);
+            input = corneous_structure        .decode(input);
+            input = photoreceptor_structure   .decode(input);
+            input = pressure_sensing_structure.decode(input);
+            length = decode_fraction(*input++);
+            width  = decode_fraction(*input++);
+            height = decode_fraction(*input++);
+            kinaesthetic_motion_detector = decode_fraction(*input++);
+            chemical_receptor_coverage   = decode_fraction(*input++);
+            fused_segments_factor        = decode_fraction(*input++);
             return input;
         }
         template<typename TIterator>
         static TIterator getMutationRates(TIterator output)
         {
-            for (auto segment = segments.begin(); 
-                 segment != segments.end(); ++segment)
+            for (int i=0; i<APPENDAGE_SEGMENT_COUNT; ++i)
             {
                 output = AppendageSegment::getMutationRates(output);
             }
@@ -146,8 +147,7 @@ namespace genes
         template<typename TIterator>
         static TIterator getAttributeSizes(TIterator output)
         {
-            for (auto segment = segments.begin(); 
-                 segment != segments.end(); ++segment)
+            for (int i=0; i<APPENDAGE_SEGMENT_COUNT; ++i)
             {
                 output = AppendageSegment::getAttributeSizes(output);
             }
