@@ -16,15 +16,15 @@ namespace genes
         // Simulates a growth factor triggered by same regulator for fine hairs, 
         // causing either a prominence (positive values) or depression (negative values) of given size.
         // This allows a directionality or amplification of the signal
-        float sensitive_scaling_displacement;   
+        float displacement;   
         // coverage of segment by a region of fine spikes/feathers/hairs
         // if displacement causes a spherical cavity, radius defines the radius of that cavity
-        float sensitive_scaling_radius;         
+        float radius;         
         // simulates a protective cover of cells over the fine scalings, which may evolve to a tympannic membrane
-        float sensitive_scaling_cover_thickness;
+        float cover_thickness;
         // simulates a protective cover of cells over the fine scalings, which may evolve to a tympannic membrane
-        float sensitive_scaling_cover_displacement;
-        float sensitive_scaling_cover_funnel_height;
+        float cover_displacement;
+        float cover_funnel_height;
 
         template<typename TIterator>
         TIterator encode(TIterator output) const

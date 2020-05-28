@@ -29,8 +29,8 @@ namespace genes
         template<typename TIterator>
         TIterator decode(TIterator input)
         {
-            *output++ = decode_fraction(radius        );
-            *output++ = decode_fraction(wall_thickness);
+            radius         = decode_fraction(*input++);
+            wall_thickness = decode_fraction(*input++);
             return input;
         }
         template<typename TIterator>

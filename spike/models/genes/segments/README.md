@@ -12,7 +12,7 @@ but the segment takes on the form of the segment that occurred before it, closer
 This model stores a constant number of segments in memory for an organism.
 This is done to allow organisms to be stored on the stack. 
 However animals may control the number of segments that are expressed along an axis,
-they may shrink a segment down to where its effectively nonexistant,
+they may shrink the physical length of a segment down to where its effectively nonexistant,
 and they may disable specialization for a particular segment.
 
 See [designing-an-evolutionary-model.md](designing-an-evolutionary-model.md) for more information.

@@ -4,6 +4,7 @@
 
 #include <algorithm>
 
+#include <academics/units.hpp>    // encode_*(), decode_*()
 #include <models/genes/coding.hpp>    // encode_*(), decode_*()
 
 namespace genes
@@ -62,11 +63,11 @@ namespace genes
     private:
         // Bonser (1995), for feather and hair
         // log GPa
-        static constexpr float MAX_ELASTIC_MODULUS = log2(3.0*GPa*Units:GIGAPASCALS);
+        static constexpr float MAX_ELASTIC_MODULUS = log2(3.0*units::GIGAPASCAL);
         // elastic modulus of hair scaled to approximate procupine quills,
         // given young's modulii for hair and quills from Fortier (2012)
         // log GPa
-        static constexpr float MIN_ELASTIC_MODULUS = log2(1.0*Units:GIGAPASCALS / 8.0);
+        static constexpr float MIN_ELASTIC_MODULUS = log2(1.0*units::GIGAPASCAL / 8.0);
 
     };
 
