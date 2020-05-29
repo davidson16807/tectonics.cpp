@@ -913,55 +913,55 @@ TEST_CASE( "BodySegment static method consistency", "[many]" ) {
 
 
 
-// TEST_CASE( "Body encode/decode regularity", "[many]" ) {
-//     std::array<std::int16_t, Body::attribute_count> original;
-//     std::array<std::int16_t, Body::attribute_count> reconstituted1;
-//     std::array<std::int16_t, Body::attribute_count> reconstituted2;
-//     std::array<std::int16_t, Body::attribute_count> reconstituted3;
-//     int count = 0;  
-//     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
-//     Body constituent1;
-//     Body constituent2;
+TEST_CASE( "Body encode/decode regularity", "[many]" ) {
+    std::array<std::int16_t, Body::attribute_count> original;
+    std::array<std::int16_t, Body::attribute_count> reconstituted1;
+    std::array<std::int16_t, Body::attribute_count> reconstituted2;
+    std::array<std::int16_t, Body::attribute_count> reconstituted3;
+    int count = 0;  
+    std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
+    Body constituent1;
+    Body constituent2;
 
-//     SECTION("decode and encode must be called repeatedly without changing the value of output references"){
-//         constituent1.decode(original.begin());
-//         constituent1.encode(reconstituted1.begin());
-//         constituent1.encode(reconstituted2.begin());
-//         CHECK(reconstituted1==reconstituted2);
-//         constituent2.decode(original.begin());
-//         constituent2.encode(reconstituted3.begin());
-//         CHECK(reconstituted1==reconstituted3);
-//     }
-// }
+    SECTION("decode and encode must be called repeatedly without changing the value of output references"){
+        constituent1.decode(original.begin());
+        constituent1.encode(reconstituted1.begin());
+        constituent1.encode(reconstituted2.begin());
+        CHECK(reconstituted1==reconstituted2);
+        constituent2.decode(original.begin());
+        constituent2.encode(reconstituted3.begin());
+        CHECK(reconstituted1==reconstituted3);
+    }
+}
 
-// TEST_CASE( "Body encode/decode invertibility", "[many]" ) {
-//     std::array<std::int16_t, Body::attribute_count> original;
-//     std::array<std::int16_t, Body::attribute_count> reconstituted;
-//     int count = 0;  
-//     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
-//     Body constituent;
+TEST_CASE( "Body encode/decode invertibility", "[many]" ) {
+    std::array<std::int16_t, Body::attribute_count> original;
+    std::array<std::int16_t, Body::attribute_count> reconstituted;
+    int count = 0;  
+    std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
+    Body constituent;
  
-//     SECTION("decoding an array then reencoding it must reproduce the original array"){
-//         constituent.decode(original.begin());
-//         constituent.encode(reconstituted.begin());
-//         CHECK(original==reconstituted);
-//     }
-// }
+    SECTION("decoding an array then reencoding it must reproduce the original array"){
+        constituent.decode(original.begin());
+        constituent.encode(reconstituted.begin());
+        CHECK(original==reconstituted);
+    }
+}
 
-// TEST_CASE( "Body static method consistency", "[many]" ) {
-//     std::array<std::int8_t, Body::attribute_count+1> mutation_rates;
-//     std::array<std::int8_t, Body::attribute_count+1> attribute_sizes;
-//     std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
-//     std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
-//     Body::getMutationRates(mutation_rates.begin());
-//     Body::getAttributeSizes(attribute_sizes.begin());
-//     SECTION("mutation rates and attribute sizes must have the same count"){
-//         CHECK(mutation_rates.end()[-2] > -1);
-//         CHECK(mutation_rates.end()[-1] == -1);
-//         CHECK(attribute_sizes.end()[-2] > -1);
-//         CHECK(attribute_sizes.end()[-1] == -1);
-//     }
-// }
+TEST_CASE( "Body static method consistency", "[many]" ) {
+    std::array<std::int8_t, Body::attribute_count+1> mutation_rates;
+    std::array<std::int8_t, Body::attribute_count+1> attribute_sizes;
+    std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
+    std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
+    Body::getMutationRates(mutation_rates.begin());
+    Body::getAttributeSizes(attribute_sizes.begin());
+    SECTION("mutation rates and attribute sizes must have the same count"){
+        CHECK(mutation_rates.end()[-2] > -1);
+        CHECK(mutation_rates.end()[-1] == -1);
+        CHECK(attribute_sizes.end()[-2] > -1);
+        CHECK(attribute_sizes.end()[-1] == -1);
+    }
+}
 
 
 

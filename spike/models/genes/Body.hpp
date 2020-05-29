@@ -103,9 +103,9 @@ namespace genes
             output = photoreceptor_materials.encode(output);
             output = interior_mineralization.encode(output);
 
-            *output++ = encode_range   (length, bit_count=16);
-            *output++ = encode_fraction(width,  bit_count=16);
-            *output++ = encode_fraction(height, bit_count=16);
+            *output++ = encode_ranged  (length, -6.5, 2.5, 16);
+            *output++ = encode_fraction(width,  16);
+            *output++ = encode_fraction(height, 16);
 
             return output;
         }
@@ -121,9 +121,9 @@ namespace genes
             input  = photoreceptor_materials.decode(input);
             input  = interior_mineralization.decode(input);
 
-            length = decode_range   (*input++, bit_count=16);
-            width  = decode_fraction(*input++, bit_count=16);
-            height = decode_fraction(*input++, bit_count=16);
+            length = decode_ranged  (*input++, -6.5, 2.5, 16);
+            width  = decode_fraction(*input++, 16);
+            height = decode_fraction(*input++, 16);
 
             return input;
         }
