@@ -151,6 +151,17 @@ namespace genes
             TubeStructure     ::bit_count +
             TubeStructure     ::bit_count +
             3*4; 
+        static constexpr unsigned int attribute_count = 
+            Appendage         ::attribute_count +
+            SurfaceStructure  ::attribute_count +
+            Pigmentation      ::attribute_count +
+            CorneousStructure ::attribute_count +
+            Mineralization    ::attribute_count +
+            TubeStructure     ::attribute_count +
+            TubeStructure     ::attribute_count +
+            TubeStructure     ::attribute_count +
+            TubeStructure     ::attribute_count +
+            3; 
     };
 
 }

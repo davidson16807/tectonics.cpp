@@ -61,6 +61,7 @@ namespace genes
         }
 
         static constexpr unsigned int bit_count = 6*4;
+        static constexpr unsigned int attribute_count = 6;
 
     private:
         // Bonser (1995), for feather and hair

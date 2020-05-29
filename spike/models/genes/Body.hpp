@@ -130,14 +130,13 @@ namespace genes
         template<typename TIterator>
         static TIterator getMutationRates(TIterator output)
         {
-            for (auto segment = segments.begin(); 
-                 segment != segments.end(); ++segment)
+            for (int i = 0; i < BODY_SEGMENT_COUNT; ++i)
             {
                 output = BodySegment::getMutationRates(output);
             }
-            output = closed_fluid_system_composition.getMutationRates(output);
-            output = photoreceptor_materials.getMutationRates(output);
-            output = interior_mineralization.getMutationRates(output);
+            output = ClosedFluidSystemComposition::getMutationRates(output);
+            output = PhotoreceptorMaterials::getMutationRates(output);
+            output = Mineralization::getMutationRates(output);
             output = std::fill_n(output, 3, 1);
 
             return output;
@@ -145,15 +144,13 @@ namespace genes
         template<typename TIterator>
         static TIterator getAttributeSizes(TIterator output)
         {
-            // segments
-            for (auto segment = segments.begin(); 
-                 segment != segments.end(); ++segment)
+            for (int i = 0; i < BODY_SEGMENT_COUNT; ++i)
             {
                 output = BodySegment::getAttributeSizes(output);
             }
-            output = closed_fluid_system_composition.getAttributeSizes(output);
-            output = photoreceptor_materials.getAttributeSizes(output);
-            output = interior_mineralization.getAttributeSizes(output);
+            output = ClosedFluidSystemComposition::getAttributeSizes(output);
+            output = PhotoreceptorMaterials::getAttributeSizes(output);
+            output = Mineralization::getAttributeSizes(output);
             output = std::fill_n(output, 3, 16);
             return output;
         }
@@ -163,5 +160,11 @@ namespace genes
             PhotoreceptorMaterials      ::bit_count +
             Mineralization              ::bit_count +
             3*16;
+        static constexpr unsigned int attribute_count = 
+            BodySegment                 ::attribute_count * BODY_SEGMENT_COUNT +
+            ClosedFluidSystemComposition::attribute_count +
+            PhotoreceptorMaterials      ::attribute_count +
+            Mineralization              ::attribute_count +
+            3;
     };
 }

@@ -109,5 +109,7 @@ namespace genes
         }
         static constexpr unsigned int bit_count = 
             ClosedFluidSystemConstituents::COUNT * ClosedFluidSystemConstituent::bit_count;
+        static constexpr unsigned int attribute_count = 
+            ClosedFluidSystemConstituents::COUNT * ClosedFluidSystemConstituent::attribute_count;
     };
 }

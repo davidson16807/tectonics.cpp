@@ -21,7 +21,7 @@
 #include <models/genes/segments/AppendageSegment.hpp>
 #include <models/genes/Appendage.hpp>
 #include <models/genes/segments/BodySegment.hpp>
-// #include <models/genes/Body.hpp>
+#include <models/genes/Body.hpp>
 
 using namespace genes;
 
@@ -83,10 +83,10 @@ TEST_CASE( "range encode/decode clamp behavior", "[many]" ) {
 
 
 TEST_CASE( "Photopigment encode/decode regularity", "[many]" ) {
-    std::array<std::int16_t, Photopigment::bit_count/4> original;
-    std::array<std::int16_t, Photopigment::bit_count/4> reconstituted1;
-    std::array<std::int16_t, Photopigment::bit_count/4> reconstituted2;
-    std::array<std::int16_t, Photopigment::bit_count/4> reconstituted3;
+    std::array<std::int16_t, Photopigment::attribute_count> original;
+    std::array<std::int16_t, Photopigment::attribute_count> reconstituted1;
+    std::array<std::int16_t, Photopigment::attribute_count> reconstituted2;
+    std::array<std::int16_t, Photopigment::attribute_count> reconstituted3;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     Photopigment photopigment1;
@@ -104,8 +104,8 @@ TEST_CASE( "Photopigment encode/decode regularity", "[many]" ) {
 }
 
 TEST_CASE( "Photopigment encode/decode invertibility", "[many]" ) {
-    std::array<std::int16_t, Photopigment::bit_count/4> original;
-    std::array<std::int16_t, Photopigment::bit_count/4> reconstituted;
+    std::array<std::int16_t, Photopigment::attribute_count> original;
+    std::array<std::int16_t, Photopigment::attribute_count> reconstituted;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     Photopigment photopigment;
@@ -118,8 +118,8 @@ TEST_CASE( "Photopigment encode/decode invertibility", "[many]" ) {
 }
 
 TEST_CASE( "Photopigment static method consistency", "[many]" ) {
-    std::array<std::int8_t, Photopigment::bit_count/4+1> mutation_rates;
-    std::array<std::int8_t, Photopigment::bit_count/4+1> attribute_sizes;
+    std::array<std::int8_t, Photopigment::attribute_count+1> mutation_rates;
+    std::array<std::int8_t, Photopigment::attribute_count+1> attribute_sizes;
     std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
     std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
     Photopigment::getMutationRates(mutation_rates.begin());
@@ -139,10 +139,10 @@ TEST_CASE( "Photopigment static method consistency", "[many]" ) {
 
 
 TEST_CASE( "ClosedFluidSystemConstituent encode/decode regularity", "[many]" ) {
-    std::array<std::int16_t, ClosedFluidSystemConstituent::bit_count/4> original;
-    std::array<std::int16_t, ClosedFluidSystemConstituent::bit_count/4> reconstituted1;
-    std::array<std::int16_t, ClosedFluidSystemConstituent::bit_count/4> reconstituted2;
-    std::array<std::int16_t, ClosedFluidSystemConstituent::bit_count/4> reconstituted3;
+    std::array<std::int16_t, ClosedFluidSystemConstituent::attribute_count> original;
+    std::array<std::int16_t, ClosedFluidSystemConstituent::attribute_count> reconstituted1;
+    std::array<std::int16_t, ClosedFluidSystemConstituent::attribute_count> reconstituted2;
+    std::array<std::int16_t, ClosedFluidSystemConstituent::attribute_count> reconstituted3;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     ClosedFluidSystemConstituent constituent1;
@@ -160,8 +160,8 @@ TEST_CASE( "ClosedFluidSystemConstituent encode/decode regularity", "[many]" ) {
 }
 
 TEST_CASE( "ClosedFluidSystemConstituent encode/decode invertibility", "[many]" ) {
-    std::array<std::int16_t, ClosedFluidSystemConstituent::bit_count/4> original;
-    std::array<std::int16_t, ClosedFluidSystemConstituent::bit_count/4> reconstituted;
+    std::array<std::int16_t, ClosedFluidSystemConstituent::attribute_count> original;
+    std::array<std::int16_t, ClosedFluidSystemConstituent::attribute_count> reconstituted;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     ClosedFluidSystemConstituent constituent;
@@ -174,8 +174,8 @@ TEST_CASE( "ClosedFluidSystemConstituent encode/decode invertibility", "[many]" 
 }
 
 TEST_CASE( "ClosedFluidSystemConstituent static method consistency", "[many]" ) {
-    std::array<std::int8_t, ClosedFluidSystemConstituent::bit_count/4+1> mutation_rates;
-    std::array<std::int8_t, ClosedFluidSystemConstituent::bit_count/4+1> attribute_sizes;
+    std::array<std::int8_t, ClosedFluidSystemConstituent::attribute_count+1> mutation_rates;
+    std::array<std::int8_t, ClosedFluidSystemConstituent::attribute_count+1> attribute_sizes;
     std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
     std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
     ClosedFluidSystemConstituent::getMutationRates(mutation_rates.begin());
@@ -194,10 +194,10 @@ TEST_CASE( "ClosedFluidSystemConstituent static method consistency", "[many]" ) 
 
 
 TEST_CASE( "TubeStructure encode/decode regularity", "[many]" ) {
-    std::array<std::int16_t, TubeStructure::bit_count/4> original;
-    std::array<std::int16_t, TubeStructure::bit_count/4> reconstituted1;
-    std::array<std::int16_t, TubeStructure::bit_count/4> reconstituted2;
-    std::array<std::int16_t, TubeStructure::bit_count/4> reconstituted3;
+    std::array<std::int16_t, TubeStructure::attribute_count> original;
+    std::array<std::int16_t, TubeStructure::attribute_count> reconstituted1;
+    std::array<std::int16_t, TubeStructure::attribute_count> reconstituted2;
+    std::array<std::int16_t, TubeStructure::attribute_count> reconstituted3;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     TubeStructure constituent1;
@@ -215,8 +215,8 @@ TEST_CASE( "TubeStructure encode/decode regularity", "[many]" ) {
 }
 
 TEST_CASE( "TubeStructure encode/decode invertibility", "[many]" ) {
-    std::array<std::int16_t, TubeStructure::bit_count/4> original;
-    std::array<std::int16_t, TubeStructure::bit_count/4> reconstituted;
+    std::array<std::int16_t, TubeStructure::attribute_count> original;
+    std::array<std::int16_t, TubeStructure::attribute_count> reconstituted;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     TubeStructure constituent;
@@ -229,8 +229,8 @@ TEST_CASE( "TubeStructure encode/decode invertibility", "[many]" ) {
 }
 
 TEST_CASE( "TubeStructure static method consistency", "[many]" ) {
-    std::array<std::int8_t, TubeStructure::bit_count/4+1> mutation_rates;
-    std::array<std::int8_t, TubeStructure::bit_count/4+1> attribute_sizes;
+    std::array<std::int8_t, TubeStructure::attribute_count+1> mutation_rates;
+    std::array<std::int8_t, TubeStructure::attribute_count+1> attribute_sizes;
     std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
     std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
     TubeStructure::getMutationRates(mutation_rates.begin());
@@ -249,10 +249,10 @@ TEST_CASE( "TubeStructure static method consistency", "[many]" ) {
 
 
 TEST_CASE( "CorneousStructure encode/decode regularity", "[many]" ) {
-    std::array<std::int16_t, CorneousStructure::bit_count/4> original;
-    std::array<std::int16_t, CorneousStructure::bit_count/4> reconstituted1;
-    std::array<std::int16_t, CorneousStructure::bit_count/4> reconstituted2;
-    std::array<std::int16_t, CorneousStructure::bit_count/4> reconstituted3;
+    std::array<std::int16_t, CorneousStructure::attribute_count> original;
+    std::array<std::int16_t, CorneousStructure::attribute_count> reconstituted1;
+    std::array<std::int16_t, CorneousStructure::attribute_count> reconstituted2;
+    std::array<std::int16_t, CorneousStructure::attribute_count> reconstituted3;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     CorneousStructure constituent1;
@@ -270,8 +270,8 @@ TEST_CASE( "CorneousStructure encode/decode regularity", "[many]" ) {
 }
 
 TEST_CASE( "CorneousStructure encode/decode invertibility", "[many]" ) {
-    std::array<std::int16_t, CorneousStructure::bit_count/4> original;
-    std::array<std::int16_t, CorneousStructure::bit_count/4> reconstituted;
+    std::array<std::int16_t, CorneousStructure::attribute_count> original;
+    std::array<std::int16_t, CorneousStructure::attribute_count> reconstituted;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     CorneousStructure constituent;
@@ -284,8 +284,8 @@ TEST_CASE( "CorneousStructure encode/decode invertibility", "[many]" ) {
 }
 
 TEST_CASE( "CorneousStructure static method consistency", "[many]" ) {
-    std::array<std::int8_t, CorneousStructure::bit_count/4+1> mutation_rates;
-    std::array<std::int8_t, CorneousStructure::bit_count/4+1> attribute_sizes;
+    std::array<std::int8_t, CorneousStructure::attribute_count+1> mutation_rates;
+    std::array<std::int8_t, CorneousStructure::attribute_count+1> attribute_sizes;
     std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
     std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
     CorneousStructure::getMutationRates(mutation_rates.begin());
@@ -304,10 +304,10 @@ TEST_CASE( "CorneousStructure static method consistency", "[many]" ) {
 
 
 TEST_CASE( "PhotoreceptorStructure encode/decode regularity", "[many]" ) {
-    std::array<std::int16_t, PhotoreceptorStructure::bit_count/4> original;
-    std::array<std::int16_t, PhotoreceptorStructure::bit_count/4> reconstituted1;
-    std::array<std::int16_t, PhotoreceptorStructure::bit_count/4> reconstituted2;
-    std::array<std::int16_t, PhotoreceptorStructure::bit_count/4> reconstituted3;
+    std::array<std::int16_t, PhotoreceptorStructure::attribute_count> original;
+    std::array<std::int16_t, PhotoreceptorStructure::attribute_count> reconstituted1;
+    std::array<std::int16_t, PhotoreceptorStructure::attribute_count> reconstituted2;
+    std::array<std::int16_t, PhotoreceptorStructure::attribute_count> reconstituted3;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     PhotoreceptorStructure constituent1;
@@ -325,8 +325,8 @@ TEST_CASE( "PhotoreceptorStructure encode/decode regularity", "[many]" ) {
 }
 
 TEST_CASE( "PhotoreceptorStructure encode/decode invertibility", "[many]" ) {
-    std::array<std::int16_t, PhotoreceptorStructure::bit_count/4> original;
-    std::array<std::int16_t, PhotoreceptorStructure::bit_count/4> reconstituted;
+    std::array<std::int16_t, PhotoreceptorStructure::attribute_count> original;
+    std::array<std::int16_t, PhotoreceptorStructure::attribute_count> reconstituted;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     PhotoreceptorStructure constituent;
@@ -339,8 +339,8 @@ TEST_CASE( "PhotoreceptorStructure encode/decode invertibility", "[many]" ) {
 }
 
 TEST_CASE( "PhotoreceptorStructure static method consistency", "[many]" ) {
-    std::array<std::int8_t, PhotoreceptorStructure::bit_count/4+1> mutation_rates;
-    std::array<std::int8_t, PhotoreceptorStructure::bit_count/4+1> attribute_sizes;
+    std::array<std::int8_t, PhotoreceptorStructure::attribute_count+1> mutation_rates;
+    std::array<std::int8_t, PhotoreceptorStructure::attribute_count+1> attribute_sizes;
     std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
     std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
     PhotoreceptorStructure::getMutationRates(mutation_rates.begin());
@@ -359,10 +359,10 @@ TEST_CASE( "PhotoreceptorStructure static method consistency", "[many]" ) {
 
 
 TEST_CASE( "PressureSensingStructure encode/decode regularity", "[many]" ) {
-    std::array<std::int16_t, PressureSensingStructure::bit_count/4> original;
-    std::array<std::int16_t, PressureSensingStructure::bit_count/4> reconstituted1;
-    std::array<std::int16_t, PressureSensingStructure::bit_count/4> reconstituted2;
-    std::array<std::int16_t, PressureSensingStructure::bit_count/4> reconstituted3;
+    std::array<std::int16_t, PressureSensingStructure::attribute_count> original;
+    std::array<std::int16_t, PressureSensingStructure::attribute_count> reconstituted1;
+    std::array<std::int16_t, PressureSensingStructure::attribute_count> reconstituted2;
+    std::array<std::int16_t, PressureSensingStructure::attribute_count> reconstituted3;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     PressureSensingStructure constituent1;
@@ -380,8 +380,8 @@ TEST_CASE( "PressureSensingStructure encode/decode regularity", "[many]" ) {
 }
 
 TEST_CASE( "PressureSensingStructure encode/decode invertibility", "[many]" ) {
-    std::array<std::int16_t, PressureSensingStructure::bit_count/4> original;
-    std::array<std::int16_t, PressureSensingStructure::bit_count/4> reconstituted;
+    std::array<std::int16_t, PressureSensingStructure::attribute_count> original;
+    std::array<std::int16_t, PressureSensingStructure::attribute_count> reconstituted;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     PressureSensingStructure constituent;
@@ -394,8 +394,8 @@ TEST_CASE( "PressureSensingStructure encode/decode invertibility", "[many]" ) {
 }
 
 TEST_CASE( "PressureSensingStructure static method consistency", "[many]" ) {
-    std::array<std::int8_t, PressureSensingStructure::bit_count/4+1> mutation_rates;
-    std::array<std::int8_t, PressureSensingStructure::bit_count/4+1> attribute_sizes;
+    std::array<std::int8_t, PressureSensingStructure::attribute_count+1> mutation_rates;
+    std::array<std::int8_t, PressureSensingStructure::attribute_count+1> attribute_sizes;
     std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
     std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
     PressureSensingStructure::getMutationRates(mutation_rates.begin());
@@ -414,10 +414,10 @@ TEST_CASE( "PressureSensingStructure static method consistency", "[many]" ) {
 
 
 TEST_CASE( "SurfaceStructure encode/decode regularity", "[many]" ) {
-    std::array<std::int16_t, SurfaceStructure::bit_count/4> original;
-    std::array<std::int16_t, SurfaceStructure::bit_count/4> reconstituted1;
-    std::array<std::int16_t, SurfaceStructure::bit_count/4> reconstituted2;
-    std::array<std::int16_t, SurfaceStructure::bit_count/4> reconstituted3;
+    std::array<std::int16_t, SurfaceStructure::attribute_count> original;
+    std::array<std::int16_t, SurfaceStructure::attribute_count> reconstituted1;
+    std::array<std::int16_t, SurfaceStructure::attribute_count> reconstituted2;
+    std::array<std::int16_t, SurfaceStructure::attribute_count> reconstituted3;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     SurfaceStructure constituent1;
@@ -435,8 +435,8 @@ TEST_CASE( "SurfaceStructure encode/decode regularity", "[many]" ) {
 }
 
 TEST_CASE( "SurfaceStructure encode/decode invertibility", "[many]" ) {
-    std::array<std::int16_t, SurfaceStructure::bit_count/4> original;
-    std::array<std::int16_t, SurfaceStructure::bit_count/4> reconstituted;
+    std::array<std::int16_t, SurfaceStructure::attribute_count> original;
+    std::array<std::int16_t, SurfaceStructure::attribute_count> reconstituted;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     SurfaceStructure constituent;
@@ -449,8 +449,8 @@ TEST_CASE( "SurfaceStructure encode/decode invertibility", "[many]" ) {
 }
 
 TEST_CASE( "SurfaceStructure static method consistency", "[many]" ) {
-    std::array<std::int8_t, SurfaceStructure::bit_count/4+1> mutation_rates;
-    std::array<std::int8_t, SurfaceStructure::bit_count/4+1> attribute_sizes;
+    std::array<std::int8_t, SurfaceStructure::attribute_count+1> mutation_rates;
+    std::array<std::int8_t, SurfaceStructure::attribute_count+1> attribute_sizes;
     std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
     std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
     SurfaceStructure::getMutationRates(mutation_rates.begin());
@@ -470,10 +470,10 @@ TEST_CASE( "SurfaceStructure static method consistency", "[many]" ) {
 
 
 TEST_CASE( "PhotoreceptorMaterials encode/decode regularity", "[many]" ) {
-    std::array<std::int16_t, PhotoreceptorMaterials::bit_count/4> original;
-    std::array<std::int16_t, PhotoreceptorMaterials::bit_count/4> reconstituted1;
-    std::array<std::int16_t, PhotoreceptorMaterials::bit_count/4> reconstituted2;
-    std::array<std::int16_t, PhotoreceptorMaterials::bit_count/4> reconstituted3;
+    std::array<std::int16_t, PhotoreceptorMaterials::attribute_count> original;
+    std::array<std::int16_t, PhotoreceptorMaterials::attribute_count> reconstituted1;
+    std::array<std::int16_t, PhotoreceptorMaterials::attribute_count> reconstituted2;
+    std::array<std::int16_t, PhotoreceptorMaterials::attribute_count> reconstituted3;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     PhotoreceptorMaterials constituent1;
@@ -491,8 +491,8 @@ TEST_CASE( "PhotoreceptorMaterials encode/decode regularity", "[many]" ) {
 }
 
 TEST_CASE( "PhotoreceptorMaterials encode/decode invertibility", "[many]" ) {
-    std::array<std::int16_t, PhotoreceptorMaterials::bit_count/4> original;
-    std::array<std::int16_t, PhotoreceptorMaterials::bit_count/4> reconstituted;
+    std::array<std::int16_t, PhotoreceptorMaterials::attribute_count> original;
+    std::array<std::int16_t, PhotoreceptorMaterials::attribute_count> reconstituted;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     PhotoreceptorMaterials constituent;
@@ -505,8 +505,8 @@ TEST_CASE( "PhotoreceptorMaterials encode/decode invertibility", "[many]" ) {
 }
 
 TEST_CASE( "PhotoreceptorMaterials static method consistency", "[many]" ) {
-    std::array<std::int8_t, PhotoreceptorMaterials::bit_count/4+1> mutation_rates;
-    std::array<std::int8_t, PhotoreceptorMaterials::bit_count/4+1> attribute_sizes;
+    std::array<std::int8_t, PhotoreceptorMaterials::attribute_count+1> mutation_rates;
+    std::array<std::int8_t, PhotoreceptorMaterials::attribute_count+1> attribute_sizes;
     std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
     std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
     PhotoreceptorMaterials::getMutationRates(mutation_rates.begin());
@@ -526,10 +526,10 @@ TEST_CASE( "PhotoreceptorMaterials static method consistency", "[many]" ) {
 
 
 TEST_CASE( "ClosedFluidSystemComposition encode/decode regularity", "[many]" ) {
-    std::array<std::int16_t, ClosedFluidSystemComposition::bit_count/4> original;
-    std::array<std::int16_t, ClosedFluidSystemComposition::bit_count/4> reconstituted1;
-    std::array<std::int16_t, ClosedFluidSystemComposition::bit_count/4> reconstituted2;
-    std::array<std::int16_t, ClosedFluidSystemComposition::bit_count/4> reconstituted3;
+    std::array<std::int16_t, ClosedFluidSystemComposition::attribute_count> original;
+    std::array<std::int16_t, ClosedFluidSystemComposition::attribute_count> reconstituted1;
+    std::array<std::int16_t, ClosedFluidSystemComposition::attribute_count> reconstituted2;
+    std::array<std::int16_t, ClosedFluidSystemComposition::attribute_count> reconstituted3;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     ClosedFluidSystemComposition constituent1;
@@ -547,8 +547,8 @@ TEST_CASE( "ClosedFluidSystemComposition encode/decode regularity", "[many]" ) {
 }
 
 TEST_CASE( "ClosedFluidSystemComposition encode/decode invertibility", "[many]" ) {
-    std::array<std::int16_t, ClosedFluidSystemComposition::bit_count/4> original;
-    std::array<std::int16_t, ClosedFluidSystemComposition::bit_count/4> reconstituted;
+    std::array<std::int16_t, ClosedFluidSystemComposition::attribute_count> original;
+    std::array<std::int16_t, ClosedFluidSystemComposition::attribute_count> reconstituted;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     ClosedFluidSystemComposition constituent;
@@ -561,8 +561,8 @@ TEST_CASE( "ClosedFluidSystemComposition encode/decode invertibility", "[many]" 
 }
 
 TEST_CASE( "ClosedFluidSystemComposition static method consistency", "[many]" ) {
-    std::array<std::int8_t, ClosedFluidSystemComposition::bit_count/4+1> mutation_rates;
-    std::array<std::int8_t, ClosedFluidSystemComposition::bit_count/4+1> attribute_sizes;
+    std::array<std::int8_t, ClosedFluidSystemComposition::attribute_count+1> mutation_rates;
+    std::array<std::int8_t, ClosedFluidSystemComposition::attribute_count+1> attribute_sizes;
     std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
     std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
     ClosedFluidSystemComposition::getMutationRates(mutation_rates.begin());
@@ -583,10 +583,10 @@ TEST_CASE( "ClosedFluidSystemComposition static method consistency", "[many]" ) 
 
 
 TEST_CASE( "Mineralization encode/decode regularity", "[many]" ) {
-    std::array<std::int16_t, Mineralization::bit_count/4> original;
-    std::array<std::int16_t, Mineralization::bit_count/4> reconstituted1;
-    std::array<std::int16_t, Mineralization::bit_count/4> reconstituted2;
-    std::array<std::int16_t, Mineralization::bit_count/4> reconstituted3;
+    std::array<std::int16_t, Mineralization::attribute_count> original;
+    std::array<std::int16_t, Mineralization::attribute_count> reconstituted1;
+    std::array<std::int16_t, Mineralization::attribute_count> reconstituted2;
+    std::array<std::int16_t, Mineralization::attribute_count> reconstituted3;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     Mineralization constituent1;
@@ -604,8 +604,8 @@ TEST_CASE( "Mineralization encode/decode regularity", "[many]" ) {
 }
 
 TEST_CASE( "Mineralization encode/decode invertibility", "[many]" ) {
-    std::array<std::int16_t, Mineralization::bit_count/4> original;
-    std::array<std::int16_t, Mineralization::bit_count/4> reconstituted;
+    std::array<std::int16_t, Mineralization::attribute_count> original;
+    std::array<std::int16_t, Mineralization::attribute_count> reconstituted;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     Mineralization constituent;
@@ -618,8 +618,8 @@ TEST_CASE( "Mineralization encode/decode invertibility", "[many]" ) {
 }
 
 TEST_CASE( "Mineralization static method consistency", "[many]" ) {
-    std::array<std::int8_t, Mineralization::bit_count/4+1> mutation_rates;
-    std::array<std::int8_t, Mineralization::bit_count/4+1> attribute_sizes;
+    std::array<std::int8_t, Mineralization::attribute_count+1> mutation_rates;
+    std::array<std::int8_t, Mineralization::attribute_count+1> attribute_sizes;
     std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
     std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
     Mineralization::getMutationRates(mutation_rates.begin());
@@ -639,10 +639,10 @@ TEST_CASE( "Mineralization static method consistency", "[many]" ) {
 
 
 TEST_CASE( "Pigmentation encode/decode regularity", "[many]" ) {
-    std::array<std::int16_t, Pigmentation::bit_count/4> original;
-    std::array<std::int16_t, Pigmentation::bit_count/4> reconstituted1;
-    std::array<std::int16_t, Pigmentation::bit_count/4> reconstituted2;
-    std::array<std::int16_t, Pigmentation::bit_count/4> reconstituted3;
+    std::array<std::int16_t, Pigmentation::attribute_count> original;
+    std::array<std::int16_t, Pigmentation::attribute_count> reconstituted1;
+    std::array<std::int16_t, Pigmentation::attribute_count> reconstituted2;
+    std::array<std::int16_t, Pigmentation::attribute_count> reconstituted3;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     Pigmentation constituent1;
@@ -660,8 +660,8 @@ TEST_CASE( "Pigmentation encode/decode regularity", "[many]" ) {
 }
 
 TEST_CASE( "Pigmentation encode/decode invertibility", "[many]" ) {
-    std::array<std::int16_t, Pigmentation::bit_count/4> original;
-    std::array<std::int16_t, Pigmentation::bit_count/4> reconstituted;
+    std::array<std::int16_t, Pigmentation::attribute_count> original;
+    std::array<std::int16_t, Pigmentation::attribute_count> reconstituted;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     Pigmentation constituent;
@@ -674,8 +674,8 @@ TEST_CASE( "Pigmentation encode/decode invertibility", "[many]" ) {
 }
 
 TEST_CASE( "Pigmentation static method consistency", "[many]" ) {
-    std::array<std::int8_t, Pigmentation::bit_count/4+1> mutation_rates;
-    std::array<std::int8_t, Pigmentation::bit_count/4+1> attribute_sizes;
+    std::array<std::int8_t, Pigmentation::attribute_count+1> mutation_rates;
+    std::array<std::int8_t, Pigmentation::attribute_count+1> attribute_sizes;
     std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
     std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
     Pigmentation::getMutationRates(mutation_rates.begin());
@@ -693,10 +693,10 @@ TEST_CASE( "Pigmentation static method consistency", "[many]" ) {
 
 
 TEST_CASE( "GenericSegment encode/decode regularity", "[many]" ) {
-    std::array<std::int16_t, GenericSegment::bit_count/4> original;
-    std::array<std::int16_t, GenericSegment::bit_count/4> reconstituted1;
-    std::array<std::int16_t, GenericSegment::bit_count/4> reconstituted2;
-    std::array<std::int16_t, GenericSegment::bit_count/4> reconstituted3;
+    std::array<std::int16_t, GenericSegment::attribute_count> original;
+    std::array<std::int16_t, GenericSegment::attribute_count> reconstituted1;
+    std::array<std::int16_t, GenericSegment::attribute_count> reconstituted2;
+    std::array<std::int16_t, GenericSegment::attribute_count> reconstituted3;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     GenericSegment constituent1;
@@ -714,8 +714,8 @@ TEST_CASE( "GenericSegment encode/decode regularity", "[many]" ) {
 }
 
 TEST_CASE( "GenericSegment encode/decode invertibility", "[many]" ) {
-    std::array<std::int16_t, GenericSegment::bit_count/4> original;
-    std::array<std::int16_t, GenericSegment::bit_count/4> reconstituted;
+    std::array<std::int16_t, GenericSegment::attribute_count> original;
+    std::array<std::int16_t, GenericSegment::attribute_count> reconstituted;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     GenericSegment constituent;
@@ -728,8 +728,8 @@ TEST_CASE( "GenericSegment encode/decode invertibility", "[many]" ) {
 }
 
 TEST_CASE( "GenericSegment static method consistency", "[many]" ) {
-    std::array<std::int8_t, GenericSegment::bit_count/4+1> mutation_rates;
-    std::array<std::int8_t, GenericSegment::bit_count/4+1> attribute_sizes;
+    std::array<std::int8_t, GenericSegment::attribute_count+1> mutation_rates;
+    std::array<std::int8_t, GenericSegment::attribute_count+1> attribute_sizes;
     std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
     std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
     GenericSegment::getMutationRates(mutation_rates.begin());
@@ -747,10 +747,10 @@ TEST_CASE( "GenericSegment static method consistency", "[many]" ) {
 
 
 TEST_CASE( "AppendageSegment encode/decode regularity", "[many]" ) {
-    std::array<std::int16_t, AppendageSegment::bit_count/4> original;
-    std::array<std::int16_t, AppendageSegment::bit_count/4> reconstituted1;
-    std::array<std::int16_t, AppendageSegment::bit_count/4> reconstituted2;
-    std::array<std::int16_t, AppendageSegment::bit_count/4> reconstituted3;
+    std::array<std::int16_t, AppendageSegment::attribute_count> original;
+    std::array<std::int16_t, AppendageSegment::attribute_count> reconstituted1;
+    std::array<std::int16_t, AppendageSegment::attribute_count> reconstituted2;
+    std::array<std::int16_t, AppendageSegment::attribute_count> reconstituted3;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     AppendageSegment constituent1;
@@ -768,8 +768,8 @@ TEST_CASE( "AppendageSegment encode/decode regularity", "[many]" ) {
 }
 
 TEST_CASE( "AppendageSegment encode/decode invertibility", "[many]" ) {
-    std::array<std::int16_t, AppendageSegment::bit_count/4> original;
-    std::array<std::int16_t, AppendageSegment::bit_count/4> reconstituted;
+    std::array<std::int16_t, AppendageSegment::attribute_count> original;
+    std::array<std::int16_t, AppendageSegment::attribute_count> reconstituted;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     AppendageSegment constituent;
@@ -782,8 +782,8 @@ TEST_CASE( "AppendageSegment encode/decode invertibility", "[many]" ) {
 }
 
 TEST_CASE( "AppendageSegment static method consistency", "[many]" ) {
-    std::array<std::int8_t, AppendageSegment::bit_count/4+1> mutation_rates;
-    std::array<std::int8_t, AppendageSegment::bit_count/4+1> attribute_sizes;
+    std::array<std::int8_t, AppendageSegment::attribute_count+1> mutation_rates;
+    std::array<std::int8_t, AppendageSegment::attribute_count+1> attribute_sizes;
     std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
     std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
     AppendageSegment::getMutationRates(mutation_rates.begin());
@@ -801,10 +801,10 @@ TEST_CASE( "AppendageSegment static method consistency", "[many]" ) {
 
 
 TEST_CASE( "Appendage encode/decode regularity", "[many]" ) {
-    std::array<std::int16_t, Appendage::bit_count/4> original;
-    std::array<std::int16_t, Appendage::bit_count/4> reconstituted1;
-    std::array<std::int16_t, Appendage::bit_count/4> reconstituted2;
-    std::array<std::int16_t, Appendage::bit_count/4> reconstituted3;
+    std::array<std::int16_t, Appendage::attribute_count> original;
+    std::array<std::int16_t, Appendage::attribute_count> reconstituted1;
+    std::array<std::int16_t, Appendage::attribute_count> reconstituted2;
+    std::array<std::int16_t, Appendage::attribute_count> reconstituted3;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     Appendage constituent1;
@@ -822,8 +822,8 @@ TEST_CASE( "Appendage encode/decode regularity", "[many]" ) {
 }
 
 TEST_CASE( "Appendage encode/decode invertibility", "[many]" ) {
-    std::array<std::int16_t, Appendage::bit_count/4> original;
-    std::array<std::int16_t, Appendage::bit_count/4> reconstituted;
+    std::array<std::int16_t, Appendage::attribute_count> original;
+    std::array<std::int16_t, Appendage::attribute_count> reconstituted;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     Appendage constituent;
@@ -836,8 +836,8 @@ TEST_CASE( "Appendage encode/decode invertibility", "[many]" ) {
 }
 
 TEST_CASE( "Appendage static method consistency", "[many]" ) {
-    std::array<std::int8_t, Appendage::bit_count/4+1> mutation_rates;
-    std::array<std::int8_t, Appendage::bit_count/4+1> attribute_sizes;
+    std::array<std::int8_t, Appendage::attribute_count+1> mutation_rates;
+    std::array<std::int8_t, Appendage::attribute_count+1> attribute_sizes;
     std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
     std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
     Appendage::getMutationRates(mutation_rates.begin());
@@ -855,10 +855,10 @@ TEST_CASE( "Appendage static method consistency", "[many]" ) {
 
 
 TEST_CASE( "BodySegment encode/decode regularity", "[many]" ) {
-    std::array<std::int16_t, BodySegment::bit_count/4> original;
-    std::array<std::int16_t, BodySegment::bit_count/4> reconstituted1;
-    std::array<std::int16_t, BodySegment::bit_count/4> reconstituted2;
-    std::array<std::int16_t, BodySegment::bit_count/4> reconstituted3;
+    std::array<std::int16_t, BodySegment::attribute_count> original;
+    std::array<std::int16_t, BodySegment::attribute_count> reconstituted1;
+    std::array<std::int16_t, BodySegment::attribute_count> reconstituted2;
+    std::array<std::int16_t, BodySegment::attribute_count> reconstituted3;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     BodySegment constituent1;
@@ -876,8 +876,8 @@ TEST_CASE( "BodySegment encode/decode regularity", "[many]" ) {
 }
 
 TEST_CASE( "BodySegment encode/decode invertibility", "[many]" ) {
-    std::array<std::int16_t, BodySegment::bit_count/4> original;
-    std::array<std::int16_t, BodySegment::bit_count/4> reconstituted;
+    std::array<std::int16_t, BodySegment::attribute_count> original;
+    std::array<std::int16_t, BodySegment::attribute_count> reconstituted;
     int count = 0;  
     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
     BodySegment constituent;
@@ -890,8 +890,8 @@ TEST_CASE( "BodySegment encode/decode invertibility", "[many]" ) {
 }
 
 TEST_CASE( "BodySegment static method consistency", "[many]" ) {
-    std::array<std::int8_t, BodySegment::bit_count/4+1> mutation_rates;
-    std::array<std::int8_t, BodySegment::bit_count/4+1> attribute_sizes;
+    std::array<std::int8_t, BodySegment::attribute_count+1> mutation_rates;
+    std::array<std::int8_t, BodySegment::attribute_count+1> attribute_sizes;
     std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
     std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
     BodySegment::getMutationRates(mutation_rates.begin());
@@ -914,10 +914,10 @@ TEST_CASE( "BodySegment static method consistency", "[many]" ) {
 
 
 // TEST_CASE( "Body encode/decode regularity", "[many]" ) {
-//     std::array<std::int16_t, Body::bit_count/4> original;
-//     std::array<std::int16_t, Body::bit_count/4> reconstituted1;
-//     std::array<std::int16_t, Body::bit_count/4> reconstituted2;
-//     std::array<std::int16_t, Body::bit_count/4> reconstituted3;
+//     std::array<std::int16_t, Body::attribute_count> original;
+//     std::array<std::int16_t, Body::attribute_count> reconstituted1;
+//     std::array<std::int16_t, Body::attribute_count> reconstituted2;
+//     std::array<std::int16_t, Body::attribute_count> reconstituted3;
 //     int count = 0;  
 //     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
 //     Body constituent1;
@@ -935,8 +935,8 @@ TEST_CASE( "BodySegment static method consistency", "[many]" ) {
 // }
 
 // TEST_CASE( "Body encode/decode invertibility", "[many]" ) {
-//     std::array<std::int16_t, Body::bit_count/4> original;
-//     std::array<std::int16_t, Body::bit_count/4> reconstituted;
+//     std::array<std::int16_t, Body::attribute_count> original;
+//     std::array<std::int16_t, Body::attribute_count> reconstituted;
 //     int count = 0;  
 //     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
 //     Body constituent;
@@ -949,8 +949,8 @@ TEST_CASE( "BodySegment static method consistency", "[many]" ) {
 // }
 
 // TEST_CASE( "Body static method consistency", "[many]" ) {
-//     std::array<std::int8_t, Body::bit_count/4+1> mutation_rates;
-//     std::array<std::int8_t, Body::bit_count/4+1> attribute_sizes;
+//     std::array<std::int8_t, Body::attribute_count+1> mutation_rates;
+//     std::array<std::int8_t, Body::attribute_count+1> attribute_sizes;
 //     std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
 //     std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
 //     Body::getMutationRates(mutation_rates.begin());

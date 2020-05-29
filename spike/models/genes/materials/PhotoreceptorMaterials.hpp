@@ -93,6 +93,9 @@ namespace genes
         static constexpr unsigned int bit_count = 
             PHOTOPIGMENT_COUNT * Photopigment::bit_count 
             + 2*4*WAVELENGTH_SAMPLE_COUNT;
+        static constexpr unsigned int attribute_count = 
+            PHOTOPIGMENT_COUNT * Photopigment::attribute_count 
+            + 2*WAVELENGTH_SAMPLE_COUNT;
 
     };
 

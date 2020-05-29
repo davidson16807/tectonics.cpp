@@ -187,6 +187,7 @@ namespace genes
             return std::fill_n(output, 22, 4);
         }
         static constexpr unsigned int bit_count = 22*4;
+        static constexpr unsigned int attribute_count = 22;
 
         /*
         BODY SCALING SYSTEM:

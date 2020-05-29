@@ -106,5 +106,6 @@ namespace genes
             return std::fill_n(output, 14, 4);
         }
         static constexpr unsigned int bit_count = 14*4;
+        static constexpr unsigned int attribute_count = 14;
     };
 }

@@ -169,5 +169,14 @@ namespace genes
             PhotoreceptorStructure  ::bit_count +
             PressureSensingStructure::bit_count +
             6*4;
+        static constexpr unsigned int attribute_count = 
+            AppendageSegment        ::attribute_count * APPENDAGE_SEGMENT_COUNT +
+            SurfaceStructure        ::attribute_count +
+            Pigmentation            ::attribute_count +
+            Mineralization          ::attribute_count +
+            CorneousStructure       ::attribute_count +
+            PhotoreceptorStructure  ::attribute_count +
+            PressureSensingStructure::attribute_count +
+            6;
     };
 }

@@ -28,5 +28,6 @@ namespace genes
 	      which is both consistent with reality and hilarious, not to mention adorable.
 	    */
         static constexpr unsigned int bit_count = 22*4;
+        static constexpr unsigned int attribute_count = 22;
     };
 }
