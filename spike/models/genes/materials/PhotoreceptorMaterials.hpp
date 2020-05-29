@@ -11,6 +11,20 @@
 
 namespace genes
 {
+    /*
+    Rainbow shrimp have 12-16 photoreceptor types, the largest number known, 
+    but most have no more than 4 (e.g. RGB and UV)
+    */
+    static constexpr int PHOTOPIGMENT_COUNT = 8;
+
+    /*
+    Photopigments are regularly sensitive to 280nm but are blocked by corneas
+    Some fish have photopigments with a max sensitivity at 620nm. 
+    Most photopigments seem to have a sensitivity range of 50nm, 
+    we see this in humans and mantis shrimp
+    */
+    static constexpr int WAVELENGTH_SAMPLE_COUNT = 8;
+
     struct PhotoreceptorMaterials
     {
         // rods, cones
@@ -24,7 +38,7 @@ namespace genes
             for (auto photopigment = photopigments.begin(); 
                  photopigment != photopigments.end(); ++photopigment)
             {
-                output = photopigment.encode(output);
+                output = photopigment->encode(output);
             }
             for (auto wavelength = cover_extinction_coefficients.begin(); 
                  wavelength != cover_extinction_coefficients.end(); ++wavelength)
@@ -44,7 +58,7 @@ namespace genes
             for (auto photopigment = photopigments.begin(); 
                  photopigment != photopigments.end(); ++photopigment)
             {
-                input = photopigment.encode(input);
+                input = photopigment->decode(input);
             }
             for (auto wavelength = cover_extinction_coefficients.begin(); 
                  wavelength != cover_extinction_coefficients.end(); ++wavelength)
@@ -61,39 +75,25 @@ namespace genes
         template<typename TIterator>
         static TIterator getMutationRates(TIterator output)
         {
-            for (auto photopigment = photopigments.begin(); 
-                 photopigment != photopigments.end(); ++photopigment)
+            for (int i = 0; i < PHOTOPIGMENT_COUNT; ++i)
             {
-                output = photopigment.getMutationRates(output);
+                output = Photopigment::getMutationRates(output);
             }
             return std::fill_n(output, 2*WAVELENGTH_SAMPLE_COUNT, 1);
         }
         template<typename TIterator>
         static TIterator getAttributeSizes(TIterator output)
         {
-            for (auto photopigment = photopigments.begin(); 
-                 photopigment != photopigments.end(); ++photopigment)
+            for (int i = 0; i < PHOTOPIGMENT_COUNT; ++i)
             {
-                output = photopigment.getAttributeSizes(output);
+                output = Photopigment::getAttributeSizes(output);
             }
             return std::fill_n(output, 2*WAVELENGTH_SAMPLE_COUNT, 4);
         }
-        static constexpr unsigned int bit_count = Photopigment::bit_count + 2*4*WAVELENGTH_SAMPLE_COUNT;
+        static constexpr unsigned int bit_count = 
+            PHOTOPIGMENT_COUNT * Photopigment::bit_count 
+            + 2*4*WAVELENGTH_SAMPLE_COUNT;
 
-    private:
-        /*
-        Rainbow shrimp have 12-16 photoreceptor types, the largest number known, 
-        but most have no more than 4 (e.g. RGB and UV)
-        */
-        static constexpr int PHOTOPIGMENT_COUNT = 8;
-
-        /*
-        Photopigments are regularly sensitive to 280nm but are blocked by corneas
-        Some fish have photopigments with a max sensitivity at 620nm. 
-        Most photopigments seem to have a sensitivity range of 50nm, 
-        we see this in humans and mantis shrimp
-        */
-        static constexpr int WAVELENGTH_SAMPLE_COUNT = 8;
     };
 
 

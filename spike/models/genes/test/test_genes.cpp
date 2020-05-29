@@ -13,6 +13,10 @@
 #include <models/genes/structures/PhotoreceptorStructure.hpp>
 #include <models/genes/structures/PressureSensingStructure.hpp>
 #include <models/genes/structures/SurfaceStructure.hpp>
+#include <models/genes/materials/ClosedFluidSystemComposition.hpp>
+#include <models/genes/materials/Mineralization.hpp>
+#include <models/genes/materials/PhotoreceptorMaterials.hpp>
+#include <models/genes/materials/Pigmentation.hpp>
 #include <models/genes/segments/GenericSegment.hpp>
 #include <models/genes/segments/AppendageSegment.hpp>
 #include <models/genes/Appendage.hpp>
@@ -463,6 +467,231 @@ TEST_CASE( "SurfaceStructure static method consistency", "[many]" ) {
 
 
 
+
+
+TEST_CASE( "PhotoreceptorMaterials encode/decode regularity", "[many]" ) {
+    std::array<std::int16_t, PhotoreceptorMaterials::bit_count/4> original;
+    std::array<std::int16_t, PhotoreceptorMaterials::bit_count/4> reconstituted1;
+    std::array<std::int16_t, PhotoreceptorMaterials::bit_count/4> reconstituted2;
+    std::array<std::int16_t, PhotoreceptorMaterials::bit_count/4> reconstituted3;
+    int count = 0;  
+    std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
+    PhotoreceptorMaterials constituent1;
+    PhotoreceptorMaterials constituent2;
+
+    SECTION("decode and encode must be called repeatedly without changing the value of output references"){
+        constituent1.decode(original.begin());
+        constituent1.encode(reconstituted1.begin());
+        constituent1.encode(reconstituted2.begin());
+        CHECK(reconstituted1==reconstituted2);
+        constituent2.decode(original.begin());
+        constituent2.encode(reconstituted3.begin());
+        CHECK(reconstituted1==reconstituted3);
+    }
+}
+
+TEST_CASE( "PhotoreceptorMaterials encode/decode invertibility", "[many]" ) {
+    std::array<std::int16_t, PhotoreceptorMaterials::bit_count/4> original;
+    std::array<std::int16_t, PhotoreceptorMaterials::bit_count/4> reconstituted;
+    int count = 0;  
+    std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
+    PhotoreceptorMaterials constituent;
+ 
+    SECTION("decoding an array then reencoding it must reproduce the original array"){
+        constituent.decode(original.begin());
+        constituent.encode(reconstituted.begin());
+        CHECK(original==reconstituted);
+    }
+}
+
+TEST_CASE( "PhotoreceptorMaterials static method consistency", "[many]" ) {
+    std::array<std::int8_t, PhotoreceptorMaterials::bit_count/4+1> mutation_rates;
+    std::array<std::int8_t, PhotoreceptorMaterials::bit_count/4+1> attribute_sizes;
+    std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
+    std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
+    PhotoreceptorMaterials::getMutationRates(mutation_rates.begin());
+    PhotoreceptorMaterials::getAttributeSizes(attribute_sizes.begin());
+    SECTION("mutation rates and attribute sizes must have the same count"){
+        CHECK(mutation_rates.end()[-2] > -1);
+        CHECK(mutation_rates.end()[-1] == -1);
+        CHECK(attribute_sizes.end()[-2] > -1);
+        CHECK(attribute_sizes.end()[-1] == -1);
+    }
+}
+
+
+
+
+
+
+
+TEST_CASE( "ClosedFluidSystemComposition encode/decode regularity", "[many]" ) {
+    std::array<std::int16_t, ClosedFluidSystemComposition::bit_count/4> original;
+    std::array<std::int16_t, ClosedFluidSystemComposition::bit_count/4> reconstituted1;
+    std::array<std::int16_t, ClosedFluidSystemComposition::bit_count/4> reconstituted2;
+    std::array<std::int16_t, ClosedFluidSystemComposition::bit_count/4> reconstituted3;
+    int count = 0;  
+    std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
+    ClosedFluidSystemComposition constituent1;
+    ClosedFluidSystemComposition constituent2;
+
+    SECTION("decode and encode must be called repeatedly without changing the value of output references"){
+        constituent1.decode(original.begin());
+        constituent1.encode(reconstituted1.begin());
+        constituent1.encode(reconstituted2.begin());
+        CHECK(reconstituted1==reconstituted2);
+        constituent2.decode(original.begin());
+        constituent2.encode(reconstituted3.begin());
+        CHECK(reconstituted1==reconstituted3);
+    }
+}
+
+TEST_CASE( "ClosedFluidSystemComposition encode/decode invertibility", "[many]" ) {
+    std::array<std::int16_t, ClosedFluidSystemComposition::bit_count/4> original;
+    std::array<std::int16_t, ClosedFluidSystemComposition::bit_count/4> reconstituted;
+    int count = 0;  
+    std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
+    ClosedFluidSystemComposition constituent;
+ 
+    SECTION("decoding an array then reencoding it must reproduce the original array"){
+        constituent.decode(original.begin());
+        constituent.encode(reconstituted.begin());
+        CHECK(original==reconstituted);
+    }
+}
+
+TEST_CASE( "ClosedFluidSystemComposition static method consistency", "[many]" ) {
+    std::array<std::int8_t, ClosedFluidSystemComposition::bit_count/4+1> mutation_rates;
+    std::array<std::int8_t, ClosedFluidSystemComposition::bit_count/4+1> attribute_sizes;
+    std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
+    std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
+    ClosedFluidSystemComposition::getMutationRates(mutation_rates.begin());
+    ClosedFluidSystemComposition::getAttributeSizes(attribute_sizes.begin());
+    SECTION("mutation rates and attribute sizes must have the same count"){
+        CHECK(mutation_rates.end()[-2] > -1);
+        CHECK(mutation_rates.end()[-1] == -1);
+        CHECK(attribute_sizes.end()[-2] > -1);
+        CHECK(attribute_sizes.end()[-1] == -1);
+    }
+}
+
+
+
+
+
+
+
+
+TEST_CASE( "Mineralization encode/decode regularity", "[many]" ) {
+    std::array<std::int16_t, Mineralization::bit_count/4> original;
+    std::array<std::int16_t, Mineralization::bit_count/4> reconstituted1;
+    std::array<std::int16_t, Mineralization::bit_count/4> reconstituted2;
+    std::array<std::int16_t, Mineralization::bit_count/4> reconstituted3;
+    int count = 0;  
+    std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
+    Mineralization constituent1;
+    Mineralization constituent2;
+
+    SECTION("decode and encode must be called repeatedly without changing the value of output references"){
+        constituent1.decode(original.begin());
+        constituent1.encode(reconstituted1.begin());
+        constituent1.encode(reconstituted2.begin());
+        CHECK(reconstituted1==reconstituted2);
+        constituent2.decode(original.begin());
+        constituent2.encode(reconstituted3.begin());
+        CHECK(reconstituted1==reconstituted3);
+    }
+}
+
+TEST_CASE( "Mineralization encode/decode invertibility", "[many]" ) {
+    std::array<std::int16_t, Mineralization::bit_count/4> original;
+    std::array<std::int16_t, Mineralization::bit_count/4> reconstituted;
+    int count = 0;  
+    std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
+    Mineralization constituent;
+ 
+    SECTION("decoding an array then reencoding it must reproduce the original array"){
+        constituent.decode(original.begin());
+        constituent.encode(reconstituted.begin());
+        CHECK(original==reconstituted);
+    }
+}
+
+TEST_CASE( "Mineralization static method consistency", "[many]" ) {
+    std::array<std::int8_t, Mineralization::bit_count/4+1> mutation_rates;
+    std::array<std::int8_t, Mineralization::bit_count/4+1> attribute_sizes;
+    std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
+    std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
+    Mineralization::getMutationRates(mutation_rates.begin());
+    Mineralization::getAttributeSizes(attribute_sizes.begin());
+    SECTION("mutation rates and attribute sizes must have the same count"){
+        CHECK(mutation_rates.end()[-2] > -1);
+        CHECK(mutation_rates.end()[-1] == -1);
+        CHECK(attribute_sizes.end()[-2] > -1);
+        CHECK(attribute_sizes.end()[-1] == -1);
+    }
+}
+
+
+
+
+
+
+
+TEST_CASE( "Pigmentation encode/decode regularity", "[many]" ) {
+    std::array<std::int16_t, Pigmentation::bit_count/4> original;
+    std::array<std::int16_t, Pigmentation::bit_count/4> reconstituted1;
+    std::array<std::int16_t, Pigmentation::bit_count/4> reconstituted2;
+    std::array<std::int16_t, Pigmentation::bit_count/4> reconstituted3;
+    int count = 0;  
+    std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
+    Pigmentation constituent1;
+    Pigmentation constituent2;
+
+    SECTION("decode and encode must be called repeatedly without changing the value of output references"){
+        constituent1.decode(original.begin());
+        constituent1.encode(reconstituted1.begin());
+        constituent1.encode(reconstituted2.begin());
+        CHECK(reconstituted1==reconstituted2);
+        constituent2.decode(original.begin());
+        constituent2.encode(reconstituted3.begin());
+        CHECK(reconstituted1==reconstituted3);
+    }
+}
+
+TEST_CASE( "Pigmentation encode/decode invertibility", "[many]" ) {
+    std::array<std::int16_t, Pigmentation::bit_count/4> original;
+    std::array<std::int16_t, Pigmentation::bit_count/4> reconstituted;
+    int count = 0;  
+    std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
+    Pigmentation constituent;
+ 
+    SECTION("decoding an array then reencoding it must reproduce the original array"){
+        constituent.decode(original.begin());
+        constituent.encode(reconstituted.begin());
+        CHECK(original==reconstituted);
+    }
+}
+
+TEST_CASE( "Pigmentation static method consistency", "[many]" ) {
+    std::array<std::int8_t, Pigmentation::bit_count/4+1> mutation_rates;
+    std::array<std::int8_t, Pigmentation::bit_count/4+1> attribute_sizes;
+    std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
+    std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
+    Pigmentation::getMutationRates(mutation_rates.begin());
+    Pigmentation::getAttributeSizes(attribute_sizes.begin());
+    SECTION("mutation rates and attribute sizes must have the same count"){
+        CHECK(mutation_rates.end()[-2] > -1);
+        CHECK(mutation_rates.end()[-1] == -1);
+        CHECK(attribute_sizes.end()[-2] > -1);
+        CHECK(attribute_sizes.end()[-1] == -1);
+    }
+}
+
+
+
+
+
 TEST_CASE( "GenericSegment encode/decode regularity", "[many]" ) {
     std::array<std::int16_t, GenericSegment::bit_count/4> original;
     std::array<std::int16_t, GenericSegment::bit_count/4> reconstituted1;
@@ -674,6 +903,65 @@ TEST_CASE( "BodySegment static method consistency", "[many]" ) {
         CHECK(attribute_sizes.end()[-1] == -1);
     }
 }
+
+
+
+
+
+
+
+
+
+
+// TEST_CASE( "Body encode/decode regularity", "[many]" ) {
+//     std::array<std::int16_t, Body::bit_count/4> original;
+//     std::array<std::int16_t, Body::bit_count/4> reconstituted1;
+//     std::array<std::int16_t, Body::bit_count/4> reconstituted2;
+//     std::array<std::int16_t, Body::bit_count/4> reconstituted3;
+//     int count = 0;  
+//     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
+//     Body constituent1;
+//     Body constituent2;
+
+//     SECTION("decode and encode must be called repeatedly without changing the value of output references"){
+//         constituent1.decode(original.begin());
+//         constituent1.encode(reconstituted1.begin());
+//         constituent1.encode(reconstituted2.begin());
+//         CHECK(reconstituted1==reconstituted2);
+//         constituent2.decode(original.begin());
+//         constituent2.encode(reconstituted3.begin());
+//         CHECK(reconstituted1==reconstituted3);
+//     }
+// }
+
+// TEST_CASE( "Body encode/decode invertibility", "[many]" ) {
+//     std::array<std::int16_t, Body::bit_count/4> original;
+//     std::array<std::int16_t, Body::bit_count/4> reconstituted;
+//     int count = 0;  
+//     std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
+//     Body constituent;
+ 
+//     SECTION("decoding an array then reencoding it must reproduce the original array"){
+//         constituent.decode(original.begin());
+//         constituent.encode(reconstituted.begin());
+//         CHECK(original==reconstituted);
+//     }
+// }
+
+// TEST_CASE( "Body static method consistency", "[many]" ) {
+//     std::array<std::int8_t, Body::bit_count/4+1> mutation_rates;
+//     std::array<std::int8_t, Body::bit_count/4+1> attribute_sizes;
+//     std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
+//     std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
+//     Body::getMutationRates(mutation_rates.begin());
+//     Body::getAttributeSizes(attribute_sizes.begin());
+//     SECTION("mutation rates and attribute sizes must have the same count"){
+//         CHECK(mutation_rates.end()[-2] > -1);
+//         CHECK(mutation_rates.end()[-1] == -1);
+//         CHECK(attribute_sizes.end()[-2] > -1);
+//         CHECK(attribute_sizes.end()[-1] == -1);
+//     }
+// }
 
 
 

@@ -239,6 +239,11 @@ Our maximum timestep is 1My, and the highest frame rate our model is allowed to 
 so a timestep is at most 16,000 years. 
 
 We should like the minimum precision of body size to allow representing changes that occur over that time.
+To start with a rough estimate, we know horses increased in size throughout their evolution.
+Hyracotherium was an ancestor to modern horses that lived 50 million years ago. 
+It was 0.4 meters tall, whereas a modern horse is 1.6 meters tall.
+To represent such a gradual change within the model would require a pecision needed to store changes of a factor of `(1.6/0.4)/(50e6/16e3) = 1.001`
+
 Matilla (2008) shows in an analysis that body mass could evolve quickly 
 if selective pressure is provided by the environment:
 body mass may scale up as much as 26% per million years assuming only gradual evolution,

@@ -75,7 +75,7 @@ namespace genes
             for (auto component = components.begin(); 
                  component != components.end(); ++component)
             {
-                *output++ = encode_fraction(*component);
+                output = component->encode(output);
             }
             return output;
         }
@@ -85,23 +85,29 @@ namespace genes
             for (auto component = components.begin(); 
                  component != components.end(); ++component)
             {
-                *component = decode_fraction(*input++);
+                input = component->decode(input);
             }
             return input;
         }
         template<typename TIterator>
         static TIterator getMutationRates(TIterator output)
         {
-            output = std::fill_n(output, ClosedFluidSystemConstituents::COUNT, 1); // wavelengths
+            for (int i = 0; i< ClosedFluidSystemConstituents::COUNT; ++i)
+            {
+                output = ClosedFluidSystemConstituent::getMutationRates(output);
+            }
             return output;
         }
         template<typename TIterator>
         static TIterator getAttributeSizes(TIterator output)
         {
-            output = std::fill_n(output, ClosedFluidSystemConstituents::COUNT, 4); // wavelengths
+            for (int i = 0; i< ClosedFluidSystemConstituents::COUNT; ++i)
+            {
+                output = ClosedFluidSystemConstituent::getAttributeSizes(output);
+            }
             return output;
         }
         static constexpr unsigned int bit_count = 
-            ClosedFluidSystemConstituents::COUNT * ClosedFluidSystemConstituents::bit_count;
+            ClosedFluidSystemConstituents::COUNT * ClosedFluidSystemConstituent::bit_count;
     };
 }
