@@ -1,6 +1,7 @@
 
 #include <cstddef>
 
+#include <iostream>
 #include <array>
 
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
@@ -965,4 +966,18 @@ TEST_CASE( "Body static method consistency", "[many]" ) {
 
 
 
+
+
+TEST_CASE( "gene namespace data structure size limits", "[many]" ) {
+    std::cout << "AppendageSegment: " << AppendageSegment::bit_count / 8 << std::endl;
+    std::cout << "Appendage: " << Appendage::bit_count / 8 << std::endl;
+    std::cout << "BodySegment: " << BodySegment::bit_count / 8 << std::endl;
+    std::cout << "Body: " << Body::bit_count / 8 << std::endl;
+    SECTION("mutation rates and attribute sizes must have the same count"){
+        CHECK(AppendageSegment::bit_count/8 <= 32);
+        CHECK(Appendage::bit_count/8 <= 256 );
+        CHECK(BodySegment::bit_count/8 <= 256 );
+        CHECK(Body::bit_count/8 <= 2048 );
+    }
+}
 
