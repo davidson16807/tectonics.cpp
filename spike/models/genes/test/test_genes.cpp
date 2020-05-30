@@ -935,7 +935,7 @@ TEST_CASE( "gene namespace data structure size limits", "[many]" ) {
         CHECK(BodySegment::bit_count/8 <= 256 );
         CHECK(Body::bit_count/8 <= 2048 );
         CHECK(sizeof(AppendageSegment) <= 64 ); // size of a cache line
-        CHECK(sizeof(Body) <= 32000 ); // conservative size of L1 data cache
+        CHECK(sizeof(Body) < 32000 ); // conservative size of L1 data cache
     }
 }
 

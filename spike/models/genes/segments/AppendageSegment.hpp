@@ -5,9 +5,9 @@
 namespace genes
 {
 
-    // 24 nybbles, 12 bytes, 3 words, same size as a vec3
     struct AppendageSegment: GenericSegment
     {
+        float padding; // padding for cache alignment
 	    /*
 	    Things we do not model on basic segments:
 	    * suckers and newt's feet, because we lack clear understanding of what components go into it,
@@ -46,6 +46,7 @@ namespace genes
             *output++ = encode_fraction(membrane_insertion                          );
             *output++ = encode_fraction(membrane_thickness                          );
             *output++ = encode_fraction(homeotic_gene_disabled                      );
+            *output++ = encode_fraction(padding                                     );
             return output;
         }
         template<typename TIterator>
@@ -66,20 +67,21 @@ namespace genes
             membrane_insertion             = decode_fraction(*input++ );
             membrane_thickness             = decode_fraction(*input++ );
             homeotic_gene_disabled         = decode_fraction(*input++ );
+            padding                        = decode_fraction(*input++ );
             return input;
         }
 
         template<typename TIterator>
         static TIterator getMutationRates(TIterator output)
         {
-            return std::fill_n(output, 15, 1);
+            return std::fill_n(output, 16, 1);
         }
         template<typename TIterator>
         static TIterator getAttributeSizes(TIterator output)
         {
-            return std::fill_n(output, 15, 4);
+            return std::fill_n(output, 16, 4);
         }
-        static constexpr unsigned int bit_count = 15*4;
-        static constexpr unsigned int attribute_count = 15;
+        static constexpr unsigned int bit_count = 16*4;
+        static constexpr unsigned int attribute_count = 16;
     };
 }
