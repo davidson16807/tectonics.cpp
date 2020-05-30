@@ -929,12 +929,13 @@ TEST_CASE( "gene namespace data structure size limits", "[many]" ) {
     std::cout << "BodySegment decompressed: " << sizeof(BodySegment) << std::endl;
     std::cout << "Body decompressed: " << sizeof(Body) << std::endl;
 
-    SECTION("mutation rates and attribute sizes must have the same count"){
+    SECTION("compressed memory footprint must not fall outside acceptable limits"){
         CHECK(AppendageSegment::bit_count/8 <= 32);
         CHECK(Appendage::bit_count/8 <= 256 );
         CHECK(BodySegment::bit_count/8 <= 256 );
         CHECK(Body::bit_count/8 <= 2048 );
-        CHECK(sizeof(Body) <= 64000 ); // minimum size of L1 cache
+        CHECK(sizeof(AppendageSegment) <= 64 ); // size of a cache line
+        CHECK(sizeof(Body) <= 32000 ); // conservative size of L1 data cache
     }
 }
 

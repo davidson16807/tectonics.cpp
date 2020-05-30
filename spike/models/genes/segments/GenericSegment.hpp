@@ -78,26 +78,7 @@ namespace genes
         muscle origin:      region along the segment's parent at which the muscle attaches to the bone or exoskeleton 
         */
         float extensor_muscle_relaxed_radius;
-        float extensor_muscle_insertion;
-        float extensor_muscle_origin;
-        float extensor_to_flexor_muscle_ratio;
-
-        /*
-        "vessels" are any tubular structure used for fluid transport or hydraulics
-        extensor/flexor vessels are lymphohydraulic
-        nonhydraulic vessels may serve as blood vessels or lymph vessels, depending on 
-        Its functions include nutrient transport, waste removal, temperature regulation, hydraulic motion, and pneumatic motion
-        */
-        float hydraulic_closed_system_vessel_radius;
-        float hydraulic_closed_system_vessel_thickness;
-        // float extensor_to_flexor_closed_system_vessel_ratio;
-
-        float open_system_vessel_radius;
-        float open_system_vessel_thickness;
-        // float extensor_to_flexor_open_system_vessel_ratio;
-
-        float nonhydraulic_closed_system_vessel_radius;
-        float nonhydraulic_closed_system_vessel_thickness;
+        float flexor_muscle_relaxed_radius;
 
         // All attributes here describe the motion of the joint that connects the segment to its *parent*
         float joint_vertical_range_min;

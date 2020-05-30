@@ -1,62 +1,62 @@
 
 namespace units {
 
-	constexpr float DEGREE = 3.141592653589793238462643383279502884197169399/180.;
-	constexpr float RADIAN = 1.;
+	constexpr float degree = 3.141592653589793238462643383279502884197169399/180.;
+	constexpr float radian = 1.;
 
-	constexpr float KELVIN = 1.;
+	constexpr float kelvin = 1.;
 
-	constexpr float MICROGRAM = 1e-9;                  // kilograms
-	constexpr float MILLIGRAM = 1e-6;                  // kilograms
-	constexpr float GRAM      = 1e-3;                  // kilograms
-	constexpr float KILOGRAM  = 1.;                    // kilograms
-	constexpr float TON       = 1000.;                 // kilograms
+	constexpr float microgram = 1e-9;                  // kilograms
+	constexpr float milligram = 1e-6;                  // kilograms
+	constexpr float gram      = 1e-3;                  // kilograms
+	constexpr float kilogram  = 1.;                    // kilograms
+	constexpr float ton       = 1000.;                 // kilograms
 
-	constexpr float FEMTOMETER = 1e-12;                 // meters
-	constexpr float NANOMETER  = 1e-9;                 // meters
-	constexpr float MICROMETER = 1e-6;                 // meters
-	constexpr float MILLIMETER = 1e-3;                 // meters
-	constexpr float METER      = 1.;                   // meters
-	constexpr float KILOMETER  = 1000.;                // meters
+	constexpr float femtometer = 1e-12;                 // meters
+	constexpr float nanometer  = 1e-9;                 // meters
+	constexpr float micrometer = 1e-6;                 // meters
+	constexpr float millimeter = 1e-3;                 // meters
+	constexpr float meter      = 1.;                   // meters
+	constexpr float kilometer  = 1000.;                // meters
 
-	constexpr float MOLE       = 6.02214076e23;
-	constexpr float MILLIMOLE  = MOLE / 1e3;
-	constexpr float MICROMOLE  = MOLE / 1e6;
-	constexpr float NANOMOLE   = MOLE / 1e9;
-	constexpr float FEMTOMOLE  = MOLE / 1e12;
+	constexpr float mole       = 6.02214076e23;
+	constexpr float millimole  = mole / 1e3;
+	constexpr float micromole  = mole / 1e6;
+	constexpr float nanomole   = mole / 1e9;
+	constexpr float femtomole  = mole / 1e12;
 
-	constexpr float SECOND     = 1.;                   // seconds
-	constexpr float MINUTE     = 60.;                  // seconds
-	constexpr float HOUR       = MINUTE*60.;           // seconds
-	constexpr float DAY        = HOUR*24.;             // seconds
-	constexpr float WEEK       = DAY*7.;               // seconds
-	constexpr float MONTH      = DAY*29.53059;         // seconds
-	constexpr float YEAR       = DAY*365.256363004;    // seconds
-	constexpr float MEGAYEAR   = YEAR*1e6;             // seconds
+	constexpr float second     = 1.;                   // seconds
+	constexpr float minute     = 60.;                  // seconds
+	constexpr float hour       = minute*60.;           // seconds
+	constexpr float day        = hour*24.;             // seconds
+	constexpr float week       = day*7.;               // seconds
+	constexpr float month      = day*29.53059;         // seconds
+	constexpr float year       = day*365.256363004;    // seconds
+	constexpr float megayear   = year*1e6;             // seconds
 
-	constexpr float NEWTON     = KILOGRAM * METER / (SECOND * SECOND);
-	constexpr float JOULE      = NEWTON * METER;
-	constexpr float WATT       = JOULE / SECOND;
+	constexpr float newton     = kilogram * meter / (second * second);
+	constexpr float joule      = newton * meter;
+	constexpr float watt       = joule / second;
 
-	constexpr float PASCAL     = NEWTON / (METER * METER);
-	constexpr float KILOPASCAL = 1e3 * PASCAL;
-	constexpr float MEGAPASCAL = 1e6 * PASCAL;
-	constexpr float GIGAPASCAL = 1e9 * PASCAL;
+	constexpr float pascal     = newton / (meter * meter);
+	constexpr float kilopascal = 1e3 * pascal;
+	constexpr float megapascal = 1e6 * pascal;
+	constexpr float gigapascal = 1e9 * pascal;
 
-	constexpr float EARTH_MASS            = 5.972e24;  // kilograms
-	constexpr float EARTH_RADIUS          = 6.367e6;   // meters
-	constexpr float STANDARD_GRAVITY      = 9.80665;   // meters/second^2
-	constexpr float STANDARD_TEMPERATURE  = 273.15;    // kelvin
-	constexpr float STANDARD_PRESSURE     = 101325.;   // pascals
-	constexpr float ASTRONOMICAL_UNIT     = 149597870700.;// meters
-	constexpr float GLOBAL_SOLAR_CONSTANT = 1361.;     // watts/meter^2
+	constexpr float earth_mass            = 5.972e24;  // kilograms
+	constexpr float earth_radius          = 6.367e6;   // meters
+	constexpr float standard_gravity      = 9.80665;   // meters/second^2
+	constexpr float standard_temperature  = 273.15;    // kelvin
+	constexpr float standard_pressure     = 101325.;   // pascals
+	constexpr float astronomical_unit     = 149597870700.;// meters
+	constexpr float global_solar_constant = 1361.;     // watts/meter^2
 
-	constexpr float JUPITER_MASS = 1.898e27;           // kilograms
-	constexpr float JUPITER_RADIUS = 71e6;             // meters
+	constexpr float jupiter_mass = 1.898e27;           // kilograms
+	constexpr float jupiter_radius = 71e6;             // meters
 
-	constexpr float SOLAR_MASS = 2e30;                 // kilograms
-	constexpr float SOLAR_RADIUS = 695.7e6;            // meters
-	constexpr float SOLAR_LUMINOSITY = 3.828e26;       // watts
-	constexpr float SOLAR_TEMPERATURE = 5772.;         // kelvin
+	constexpr float solar_mass = 2e30;                 // kilograms
+	constexpr float solar_radius = 695.7e6;            // meters
+	constexpr float solar_luminosity = 3.828e26;       // watts
+	constexpr float solar_temperature = 5772.;         // kelvin
 
 }

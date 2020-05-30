@@ -58,10 +58,12 @@ namespace genes
         */
 
         // : closed fluid systems
-        TubeStructure closed_system_hydraulic_pump;    
-        TubeStructure closed_system_nonhydraulic_pump;    
+        TubeStructure closed_system_hydraulic_pump;
+        // TubeStructure closed_system_hydraulic_extensor;
+        // TubeStructure closed_system_hydraulic_flexor;
+        TubeStructure closed_system_nonhydraulic_pump;
+        // TubeStructure closed_system_nonhydraulic_vessel;
 
-        // : open fluid system
         /*
         a open fluid system is an open system that transports air or fluid from the outside
         examples include the respiratory system of vertebrates and the water vascular system of star fish
@@ -70,8 +72,13 @@ namespace genes
         open fluid pores function as nostrils and spiracles
         open fluid circulatory exchanges function as lungs or gills, transporting nutrients to the circulatory system
         */
-        TubeStructure open_system_pump; 
-        TubeStructure open_system_pore; 
+        // : open fluid system
+        TubeStructure open_system_hydraulic_pump;
+        // TubeStructure open_system_hydraulic_extensor;
+        // TubeStructure open_system_hydraulic_flexor;
+        TubeStructure open_system_nonhydraulic_pump;
+        // TubeStructure open_system_nonhydraulic_vessel;
+        TubeStructure open_system_pore;
 
         // : miscellaneous
         float neuron_bundle_thickness; 
@@ -81,15 +88,22 @@ namespace genes
         template<typename TIterator>
         TIterator encode(TIterator output) const
         {
-            output = appendage                      .encode(output);
-            output = surface_structure              .encode(output);
-            output = pigmentation                   .encode(output);
-            output = corneous_structure             .encode(output);
-            output = exterior_mineralization        .encode(output);
-            output = closed_system_hydraulic_pump   .encode(output);
-            output = closed_system_nonhydraulic_pump.encode(output);
-            output = open_system_pump               .encode(output);
-            output = open_system_pore               .encode(output);
+            output = appendage                        .encode(output);
+            output = surface_structure                .encode(output);
+            output = pigmentation                     .encode(output);
+            output = corneous_structure               .encode(output);
+            output = exterior_mineralization          .encode(output);
+            output = closed_system_hydraulic_pump     .encode(output);
+            // output = closed_system_hydraulic_extensor .encode(output);
+            // output = closed_system_hydraulic_flexor   .encode(output);
+            output = closed_system_nonhydraulic_pump  .encode(output);
+            // output = closed_system_nonhydraulic_vessel.encode(output);
+            output = open_system_hydraulic_pump       .encode(output);
+            // output = open_system_hydraulic_extensor   .encode(output);
+            // output = open_system_hydraulic_flexor     .encode(output);
+            output = open_system_nonhydraulic_pump    .encode(output);
+            // output = open_system_nonhydraulic_vessel  .encode(output);
+            output = open_system_pore                 .encode(output);
             *output++ = encode_fraction(neuron_bundle_thickness);
             *output++ = encode_fraction(fat_thickness          );
             *output++ = encode_fraction(fused_to_parent_factor );
@@ -98,15 +112,22 @@ namespace genes
         template<typename TIterator>
         TIterator decode(TIterator input)
         {
-            input = appendage                      .decode(input);
-            input = surface_structure              .decode(input);
-            input = pigmentation                   .decode(input);
-            input = corneous_structure             .decode(input);
-            input = exterior_mineralization        .decode(input);
-            input = closed_system_hydraulic_pump   .decode(input);
-            input = closed_system_nonhydraulic_pump.decode(input);
-            input = open_system_pump               .decode(input);
-            input = open_system_pore               .decode(input);
+            input = appendage                        .decode(input);
+            input = surface_structure                .decode(input);
+            input = pigmentation                     .decode(input);
+            input = corneous_structure               .decode(input);
+            input = exterior_mineralization          .decode(input);
+            input = closed_system_hydraulic_pump     .decode(input);
+            // input = closed_system_hydraulic_extensor .decode(input);
+            // input = closed_system_hydraulic_flexor   .decode(input);
+            input = closed_system_nonhydraulic_pump  .decode(input);
+            // input = closed_system_nonhydraulic_vessel.decode(input);
+            input = open_system_hydraulic_pump       .decode(input);
+            // input = open_system_hydraulic_extensor   .decode(input);
+            // input = open_system_hydraulic_flexor     .decode(input);
+            input = open_system_nonhydraulic_pump    .decode(input);
+            // input = open_system_nonhydraulic_vessel  .decode(input);
+            input = open_system_pore                 .decode(input);
             neuron_bundle_thickness = decode_fraction(*input++);
             fat_thickness           = decode_fraction(*input++);
             fused_to_parent_factor  = decode_fraction(*input++);
@@ -121,8 +142,15 @@ namespace genes
             output = CorneousStructure::getMutationRates(output);
             output = Mineralization   ::getMutationRates(output);
             output = TubeStructure    ::getMutationRates(output);
+            // output = TubeStructure    ::getMutationRates(output);
+            // output = TubeStructure    ::getMutationRates(output);
             output = TubeStructure    ::getMutationRates(output);
+            // output = TubeStructure    ::getMutationRates(output);
             output = TubeStructure    ::getMutationRates(output);
+            // output = TubeStructure    ::getMutationRates(output);
+            // output = TubeStructure    ::getMutationRates(output);
+            output = TubeStructure    ::getMutationRates(output);
+            // output = TubeStructure    ::getMutationRates(output);
             output = TubeStructure    ::getMutationRates(output);
             return std::fill_n(output, 3, 1);
         }
@@ -135,8 +163,15 @@ namespace genes
             output = CorneousStructure::getAttributeSizes(output);
             output = Mineralization   ::getAttributeSizes(output);
             output = TubeStructure    ::getAttributeSizes(output);
+            // output = TubeStructure    ::getAttributeSizes(output);
+            // output = TubeStructure    ::getAttributeSizes(output);
             output = TubeStructure    ::getAttributeSizes(output);
+            // output = TubeStructure    ::getAttributeSizes(output);
             output = TubeStructure    ::getAttributeSizes(output);
+            // output = TubeStructure    ::getAttributeSizes(output);
+            // output = TubeStructure    ::getAttributeSizes(output);
+            output = TubeStructure    ::getAttributeSizes(output);
+            // output = TubeStructure    ::getAttributeSizes(output);
             output = TubeStructure    ::getAttributeSizes(output);
             return std::fill_n(output, 3, 4);
         }
@@ -146,10 +181,7 @@ namespace genes
             Pigmentation      ::bit_count +
             CorneousStructure ::bit_count +
             Mineralization    ::bit_count +
-            TubeStructure     ::bit_count +
-            TubeStructure     ::bit_count +
-            TubeStructure     ::bit_count +
-            TubeStructure     ::bit_count +
+            5*TubeStructure     ::bit_count +
             3*4; 
         static constexpr unsigned int attribute_count = 
             Appendage         ::attribute_count +
@@ -157,10 +189,7 @@ namespace genes
             Pigmentation      ::attribute_count +
             CorneousStructure ::attribute_count +
             Mineralization    ::attribute_count +
-            TubeStructure     ::attribute_count +
-            TubeStructure     ::attribute_count +
-            TubeStructure     ::attribute_count +
-            TubeStructure     ::attribute_count +
+            5*TubeStructure     ::attribute_count +
             3; 
     };
 

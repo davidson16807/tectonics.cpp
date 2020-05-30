@@ -67,6 +67,19 @@ namespace genes
         // ears, ranging from fine exposed hairs to multi component structures
         PressureSensingStructure pressure_sensing_structure;
 
+        /*
+        "vessels" are any tubular structure used for fluid transport or hydraulics
+        extensor/flexor vessels are lymphohydraulic
+        nonhydraulic vessels may serve as blood vessels or lymph vessels, depending on 
+        Its functions include nutrient transport, waste removal, temperature regulation, hydraulic motion, and pneumatic motion
+        */
+        TubeStructure closed_system_hydraulic_extensor;
+        TubeStructure closed_system_hydraulic_flexor;
+        TubeStructure closed_system_nonhydraulic_vessel;
+        TubeStructure open_system_hydraulic_extensor;
+        TubeStructure open_system_hydraulic_flexor;
+        TubeStructure open_system_nonhydraulic_vessel;
+        
         // basic dimensions
         float log2_length_as_multiple_of_body_length;
         float max_width_as_fraction_of_body_segment_length;
@@ -98,6 +111,12 @@ namespace genes
             output = corneous_structure        .encode(output);
             output = photoreceptor_structure   .encode(output);
             output = pressure_sensing_structure.encode(output);
+            output = closed_system_hydraulic_extensor .encode(output);
+            output = closed_system_hydraulic_flexor   .encode(output);
+            output = closed_system_nonhydraulic_vessel.encode(output);
+            output = open_system_hydraulic_extensor   .encode(output);
+            output = open_system_hydraulic_flexor     .encode(output);
+            output = open_system_nonhydraulic_vessel  .encode(output);
             *output++ = encode_ranged  (log2_length_as_multiple_of_body_length, -4, 4 );
             *output++ = encode_fraction(max_width_as_fraction_of_body_segment_length );
             *output++ = encode_fraction(max_height_as_fraction_of_body_segment_height);
@@ -120,6 +139,12 @@ namespace genes
             input = corneous_structure        .decode(input);
             input = photoreceptor_structure   .decode(input);
             input = pressure_sensing_structure.decode(input);
+            input = closed_system_hydraulic_extensor .decode(input);
+            input = closed_system_hydraulic_flexor   .decode(input);
+            input = closed_system_nonhydraulic_vessel.decode(input);
+            input = open_system_hydraulic_extensor   .decode(input);
+            input = open_system_hydraulic_flexor     .decode(input);
+            input = open_system_nonhydraulic_vessel  .decode(input);
             /*
             I did a google image search: the legs of harvest men are ~2^3 times as long as their body,
             and the legs of millipedes are ~2^4 as short as their body
@@ -145,6 +170,12 @@ namespace genes
             output = CorneousStructure       ::getMutationRates(output);
             output = PhotoreceptorStructure  ::getMutationRates(output);
             output = PressureSensingStructure::getMutationRates(output);
+            output = TubeStructure           ::getMutationRates(output);
+            output = TubeStructure           ::getMutationRates(output);
+            output = TubeStructure           ::getMutationRates(output);
+            output = TubeStructure           ::getMutationRates(output);
+            output = TubeStructure           ::getMutationRates(output);
+            output = TubeStructure           ::getMutationRates(output);
             output = std::fill_n(output, 6, 1);
             return output;
         }
@@ -161,6 +192,12 @@ namespace genes
             output = CorneousStructure       ::getAttributeSizes(output);
             output = PhotoreceptorStructure  ::getAttributeSizes(output);
             output = PressureSensingStructure::getAttributeSizes(output);
+            output = TubeStructure           ::getAttributeSizes(output);
+            output = TubeStructure           ::getAttributeSizes(output);
+            output = TubeStructure           ::getAttributeSizes(output);
+            output = TubeStructure           ::getAttributeSizes(output);
+            output = TubeStructure           ::getAttributeSizes(output);
+            output = TubeStructure           ::getAttributeSizes(output);
             output = std::fill_n(output, 6, 4);
             return output;
         }
@@ -172,6 +209,7 @@ namespace genes
             CorneousStructure       ::bit_count +
             PhotoreceptorStructure  ::bit_count +
             PressureSensingStructure::bit_count +
+            6*TubeStructure::bit_count +
             6*4;
         static constexpr unsigned int attribute_count = 
             AppendageSegment        ::attribute_count * APPENDAGE_SEGMENT_COUNT +
@@ -181,6 +219,7 @@ namespace genes
             CorneousStructure       ::attribute_count +
             PhotoreceptorStructure  ::attribute_count +
             PressureSensingStructure::attribute_count +
+            6*TubeStructure::attribute_count +
             6;
     };
 }
