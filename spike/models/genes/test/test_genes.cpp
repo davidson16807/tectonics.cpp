@@ -693,56 +693,6 @@ TEST_CASE( "Pigmentation static method consistency", "[many]" ) {
 
 
 
-TEST_CASE( "GenericSegment encode/decode regularity", "[many]" ) {
-    std::array<std::int16_t, GenericSegment::attribute_count> original;
-    std::array<std::int16_t, GenericSegment::attribute_count> reconstituted1;
-    std::array<std::int16_t, GenericSegment::attribute_count> reconstituted2;
-    std::array<std::int16_t, GenericSegment::attribute_count> reconstituted3;
-    int count = 0;  
-    std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
-    GenericSegment constituent1;
-    GenericSegment constituent2;
-
-    SECTION("decode and encode must be called repeatedly without changing the value of output references"){
-        constituent1.decode(original.begin());
-        constituent1.encode(reconstituted1.begin());
-        constituent1.encode(reconstituted2.begin());
-        CHECK(reconstituted1==reconstituted2);
-        constituent2.decode(original.begin());
-        constituent2.encode(reconstituted3.begin());
-        CHECK(reconstituted1==reconstituted3);
-    }
-}
-
-TEST_CASE( "GenericSegment encode/decode invertibility", "[many]" ) {
-    std::array<std::int16_t, GenericSegment::attribute_count> original;
-    std::array<std::int16_t, GenericSegment::attribute_count> reconstituted;
-    int count = 0;  
-    std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
-    GenericSegment constituent;
- 
-    SECTION("decoding an array then reencoding it must reproduce the original array"){
-        constituent.decode(original.begin());
-        constituent.encode(reconstituted.begin());
-        CHECK(original==reconstituted);
-    }
-}
-
-TEST_CASE( "GenericSegment static method consistency", "[many]" ) {
-    std::array<std::int8_t, GenericSegment::attribute_count+1> mutation_rates;
-    std::array<std::int8_t, GenericSegment::attribute_count+1> attribute_sizes;
-    std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
-    std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
-    GenericSegment::getMutationRates(mutation_rates.begin());
-    GenericSegment::getAttributeSizes(attribute_sizes.begin());
-    SECTION("mutation rates and attribute sizes must have the same count"){
-        CHECK(mutation_rates.end()[-2] > -1);
-        CHECK(mutation_rates.end()[-1] == -1);
-        CHECK(attribute_sizes.end()[-2] > -1);
-        CHECK(attribute_sizes.end()[-1] == -1);
-    }
-}
-
 
 
 
@@ -969,15 +919,22 @@ TEST_CASE( "Body static method consistency", "[many]" ) {
 
 
 TEST_CASE( "gene namespace data structure size limits", "[many]" ) {
-    std::cout << "AppendageSegment: " << AppendageSegment::bit_count / 8 << std::endl;
-    std::cout << "Appendage: " << Appendage::bit_count / 8 << std::endl;
-    std::cout << "BodySegment: " << BodySegment::bit_count / 8 << std::endl;
-    std::cout << "Body: " << Body::bit_count / 8 << std::endl;
+    std::cout << "AppendageSegment compressed: " << AppendageSegment::bit_count / 8 << std::endl;
+    std::cout << "Appendage compressed: " << Appendage::bit_count / 8 << std::endl;
+    std::cout << "BodySegment compressed: " << BodySegment::bit_count / 8 << std::endl;
+    std::cout << "Body compressed: " << Body::bit_count / 8 << std::endl;
+
+    std::cout << "AppendageSegment decompressed: " << sizeof(AppendageSegment) << std::endl;
+    std::cout << "Appendage decompressed: " << sizeof(Appendage) << std::endl;
+    std::cout << "BodySegment decompressed: " << sizeof(BodySegment) << std::endl;
+    std::cout << "Body decompressed: " << sizeof(Body) << std::endl;
+
     SECTION("mutation rates and attribute sizes must have the same count"){
         CHECK(AppendageSegment::bit_count/8 <= 32);
         CHECK(Appendage::bit_count/8 <= 256 );
         CHECK(BodySegment::bit_count/8 <= 256 );
         CHECK(Body::bit_count/8 <= 2048 );
+        CHECK(sizeof(Body) <= 64000 ); // minimum size of L1 cache
     }
 }
 

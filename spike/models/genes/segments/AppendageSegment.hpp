@@ -27,6 +27,74 @@ namespace genes
 	      this results in stumpy looking chubby animals that are cold tolerant, 
 	      which is both consistent with reality and hilarious, not to mention adorable.
 	    */
+	    
+        template<typename TIterator>
+        TIterator encode(TIterator output) const
+        {
+            *output++ = encode_portion (length_as_portion_of_total                  );
+            *output++ = encode_fraction(width_as_fraction_of_max                    );
+            *output++ = encode_fraction(height_as_fraction_of_max                   );
+            *output++ = encode_fraction(endoskeleton_radius                         );
+            *output++ = encode_fraction(exoskeleton_thickness                       );
+            *output++ = encode_fraction(extensor_muscle_relaxed_radius              );
+            *output++ = encode_fraction(extensor_muscle_insertion                   );
+            *output++ = encode_fraction(extensor_muscle_origin                      );
+            *output++ = encode_fraction(extensor_to_flexor_muscle_ratio             );
+            *output++ = encode_fraction(hydraulic_closed_system_vessel_radius       );
+            *output++ = encode_fraction(hydraulic_closed_system_vessel_thickness    );
+            *output++ = encode_fraction(open_system_vessel_radius                   );
+            *output++ = encode_fraction(open_system_vessel_thickness                );
+            *output++ = encode_fraction(nonhydraulic_closed_system_vessel_radius    );
+            *output++ = encode_fraction(nonhydraulic_closed_system_vessel_thickness );
+            *output++ = encode_ranged  (joint_vertical_range_min,  -M_PI, M_PI      );
+            *output++ = encode_ranged  (joint_vertical_range_max,  -M_PI, M_PI      );
+            *output++ = encode_ranged  (joint_horizontal_range_min,-M_PI, M_PI      );
+            *output++ = encode_ranged  (joint_horizontal_range_max,-M_PI, M_PI      );
+            *output++ = encode_fraction(membrane_origin                             );
+            *output++ = encode_fraction(membrane_insertion                          );
+            *output++ = encode_fraction(membrane_thickness                          );
+            *output++ = encode_fraction(homeotic_gene_disabled                      );
+            return output;
+        }
+        template<typename TIterator>
+        TIterator decode(TIterator input)
+        {
+            length_as_portion_of_total                  = decode_portion (*input++ );
+            width_as_fraction_of_max                    = decode_fraction(*input++ );
+            height_as_fraction_of_max                   = decode_fraction(*input++ );
+            endoskeleton_radius                         = decode_fraction(*input++ );
+            exoskeleton_thickness                       = decode_fraction(*input++ );
+            extensor_muscle_relaxed_radius              = decode_fraction(*input++ );
+            extensor_muscle_insertion                   = decode_fraction(*input++ );
+            extensor_muscle_origin                      = decode_fraction(*input++ );
+            extensor_to_flexor_muscle_ratio             = decode_fraction(*input++ );
+            hydraulic_closed_system_vessel_radius       = decode_fraction(*input++ );
+            hydraulic_closed_system_vessel_thickness    = decode_fraction(*input++ );
+            open_system_vessel_radius                   = decode_fraction(*input++ );
+            open_system_vessel_thickness                = decode_fraction(*input++ );
+            nonhydraulic_closed_system_vessel_radius    = decode_fraction(*input++ );
+            nonhydraulic_closed_system_vessel_thickness = decode_fraction(*input++ );
+            joint_vertical_range_min                    = decode_ranged  (*input++, -M_PI, M_PI );
+            joint_vertical_range_max                    = decode_ranged  (*input++, -M_PI, M_PI );
+            joint_horizontal_range_min                  = decode_ranged  (*input++, -M_PI, M_PI );
+            joint_horizontal_range_max                  = decode_ranged  (*input++, -M_PI, M_PI );
+            membrane_origin                             = decode_fraction(*input++ );
+            membrane_insertion                          = decode_fraction(*input++ );
+            membrane_thickness                          = decode_fraction(*input++ );
+            homeotic_gene_disabled                      = decode_fraction(*input++ );
+            return input;
+        }
+
+        template<typename TIterator>
+        static TIterator getMutationRates(TIterator output)
+        {
+            return std::fill_n(output, 22, 1);
+        }
+        template<typename TIterator>
+        static TIterator getAttributeSizes(TIterator output)
+        {
+            return std::fill_n(output, 22, 4);
+        }
         static constexpr unsigned int bit_count = 22*4;
         static constexpr unsigned int attribute_count = 22;
     };

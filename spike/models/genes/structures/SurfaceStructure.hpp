@@ -66,11 +66,11 @@ namespace genes
     private:
         // Bonser (1995), for feather and hair
         // log GPa
-        static constexpr float MAX_ELASTIC_MODULUS = log2(3.0*units::GIGAPASCAL);
+        static constexpr float MAX_ELASTIC_MODULUS = log2(3.0*units::gigapascal);
         // elastic modulus of hair scaled to approximate procupine quills,
         // given young's modulii for hair and quills from Fortier (2012)
         // log GPa
-        static constexpr float MIN_ELASTIC_MODULUS = log2(1.0*units::GIGAPASCAL / 8.0);
+        static constexpr float MIN_ELASTIC_MODULUS = log2(1.0*units::gigapascal / 8.0);
 
     };
 

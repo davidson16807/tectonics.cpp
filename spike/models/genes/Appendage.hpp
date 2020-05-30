@@ -68,9 +68,9 @@ namespace genes
         PressureSensingStructure pressure_sensing_structure;
 
         // basic dimensions
-        float length;
-        float width;
-        float height;
+        float log2_length_as_multiple_of_body_length;
+        float max_width_as_fraction_of_body_segment_length;
+        float max_height_as_fraction_of_body_segment_height;
 
         // miscellaneous
         // detects motion within appendages, notably including johnston's organ for detecting sound in insects
@@ -98,9 +98,9 @@ namespace genes
             output = corneous_structure        .encode(output);
             output = photoreceptor_structure   .encode(output);
             output = pressure_sensing_structure.encode(output);
-            *output++ = encode_fraction(length);
-            *output++ = encode_fraction(width );
-            *output++ = encode_fraction(height);
+            *output++ = encode_ranged  (log2_length_as_multiple_of_body_length, -4, 4 );
+            *output++ = encode_fraction(max_width_as_fraction_of_body_segment_length );
+            *output++ = encode_fraction(max_height_as_fraction_of_body_segment_height);
             *output++ = encode_fraction(kinaesthetic_motion_detector);
             *output++ = encode_fraction(chemical_receptor_coverage  );
             *output++ = encode_fraction(fused_segments_factor       );
@@ -120,9 +120,13 @@ namespace genes
             input = corneous_structure        .decode(input);
             input = photoreceptor_structure   .decode(input);
             input = pressure_sensing_structure.decode(input);
-            length = decode_fraction(*input++);
-            width  = decode_fraction(*input++);
-            height = decode_fraction(*input++);
+            /*
+            I did a google image search: the legs of harvest men are ~2^3 times as long as their body,
+            and the legs of millipedes are ~2^4 as short as their body
+            */
+            log2_length_as_multiple_of_body_length        = decode_ranged  (*input++, -4, 4);
+            max_width_as_fraction_of_body_segment_length  = decode_fraction(*input++);
+            max_height_as_fraction_of_body_segment_height = decode_fraction(*input++);
             kinaesthetic_motion_detector = decode_fraction(*input++);
             chemical_receptor_coverage   = decode_fraction(*input++);
             fused_segments_factor        = decode_fraction(*input++);

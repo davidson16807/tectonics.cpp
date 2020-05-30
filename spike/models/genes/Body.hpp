@@ -25,7 +25,7 @@ namespace genes
 
     // ~1.2 KB
     /*
-    a "Body" describes all attributes of an organism that contribute to fitness.
+    a "Body" describes all attributes of an organism within a single life cycle stage
 
     It attempts to be:
     * properly partial (represents a proper subset of all possible organisms, i.e. no illegal state space)
@@ -52,10 +52,18 @@ namespace genes
         // minerals within endoskeleton
         Mineralization interior_mineralization;
 
-        // basic dimensions, in meters
-        float length;
-        float width;
-        float height;
+        // basic dimensions, in meters, log2 scale
+        float log2_total_length;
+        float log2_max_width_as_multiple_of_length; 
+        float log2_max_height_as_multiple_of_length;
+
+        float morulation_factor;
+        float gastrulation_factor;
+        float mesoderm_formation_factor;
+        float axial_segment_count;
+        float radial_segment_count;
+        float angular_segment_count;
+        float angular_segment_axial_offset; // for segment whorling or alternation
 
         /*
         BODY SCALING SYSTEM:
@@ -103,10 +111,25 @@ namespace genes
             output = photoreceptor_materials.encode(output);
             output = interior_mineralization.encode(output);
 
-            *output++ = encode_ranged  (length, -6.5, 2.5, 16);
-            *output++ = encode_fraction(width,  16);
-            *output++ = encode_fraction(height, 16);
-
+            /* 
+            Pelagibacter ubique is among the smallest known free-living bacteria, 
+            on the order of dex -6.5 m at smallest.
+            The blue whale is on the order of dex 1.5 m long.
+            A redwood on the order of dex 2 m tall.
+            Wayne Douglas Barlowe's Emperor Sea Strider is a large yet realistic animal
+            that is possible under certain alien conditions, which is dex 2.5m tall.
+            The world's longest siphonophore is 40m long yet as thin "as a broomhandle", maybe 2.5cm.
+            An ediacarian cyclomedusa could measure 35mm in diameter and 0.5mm in relief (Ruidong 2010).
+            */
+            *output++ = encode_ranged  (log2_total_length, -6.5f*3.3f, 2.5f*3.3f, 16);
+            *output++ = encode_ranged  (log2_max_width_as_multiple_of_length,  -10, 6, 16);
+            *output++ = encode_ranged  (log2_max_height_as_multiple_of_length, -10, 6, 16);
+            *output++ = encode_fraction(gastrulation_factor   );
+            *output++ = encode_fraction(mesoderm_formation_factor   );
+            *output++ = encode_portion (axial_segment_count         );
+            *output++ = encode_portion (radial_segment_count        );
+            *output++ = encode_portion (angular_segment_count       );
+            *output++ = encode_fraction(angular_segment_axial_offset);
             return output;
         }
         template<typename TIterator>
@@ -121,10 +144,15 @@ namespace genes
             input  = photoreceptor_materials.decode(input);
             input  = interior_mineralization.decode(input);
 
-            length = decode_ranged  (*input++, -6.5, 2.5, 16);
-            width  = decode_fraction(*input++, 16);
-            height = decode_fraction(*input++, 16);
-
+            log2_total_length = decode_ranged  (*input++, -6.5f*3.3f, 2.5f*3.3f, 16);
+            log2_max_width_as_multiple_of_length  = decode_ranged  (*input++, -10, 6, 16);
+            log2_max_height_as_multiple_of_length = decode_ranged  (*input++, -10, 6, 16);
+            gastrulation_factor    = decode_fraction(*input++);
+            mesoderm_formation_factor    = decode_fraction(*input++);
+            axial_segment_count          = decode_portion (*input++);
+            radial_segment_count         = decode_portion (*input++);
+            angular_segment_count        = decode_portion (*input++);
+            angular_segment_axial_offset = decode_fraction(*input++);
             return input;
         }
         template<typename TIterator>
@@ -138,6 +166,7 @@ namespace genes
             output = PhotoreceptorMaterials::getMutationRates(output);
             output = Mineralization::getMutationRates(output);
             output = std::fill_n(output, 3, 1);
+            output = std::fill_n(output, 6, 1);
 
             return output;
         }
@@ -152,6 +181,7 @@ namespace genes
             output = PhotoreceptorMaterials::getAttributeSizes(output);
             output = Mineralization::getAttributeSizes(output);
             output = std::fill_n(output, 3, 16);
+            output = std::fill_n(output, 6, 4);
             return output;
         }
         static constexpr unsigned int bit_count = 
@@ -159,12 +189,12 @@ namespace genes
             ClosedFluidSystemComposition::bit_count +
             PhotoreceptorMaterials      ::bit_count +
             Mineralization              ::bit_count +
-            3*16;
+            3*16 + 6*4;
         static constexpr unsigned int attribute_count = 
             BodySegment                 ::attribute_count * BODY_SEGMENT_COUNT +
             ClosedFluidSystemComposition::attribute_count +
             PhotoreceptorMaterials      ::attribute_count +
             Mineralization              ::attribute_count +
-            3;
+            3+6;
     };
 }
