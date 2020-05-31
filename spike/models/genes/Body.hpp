@@ -51,6 +51,8 @@ namespace genes
         PhotoreceptorMaterials photoreceptor_materials;
         // minerals within endoskeleton
         Mineralization interior_mineralization;
+        // toxins that can be synthesized by the body
+        Toxins toxins;
 
         // basic dimensions, in meters, log2 scale
         float log2_total_length;
@@ -64,6 +66,9 @@ namespace genes
         float radial_segment_count;
         float angular_segment_count;
         float angular_segment_axial_offset; // for segment whorling or alternation
+        float metamorphic_dissolution_factor; // indicating breakdown of tissue from previous stage, such as in a chrysalis
+        // float gametogenesis_factor; // indicating formation of haploid cells during this stage
+        // float meiosis_factor; // indicating formation of diploid cells during this stage
 
         /*
         BODY SCALING SYSTEM:
@@ -126,9 +131,9 @@ namespace genes
             *output++ = encode_ranged  (log2_max_height_as_multiple_of_length, -10, 6, 16);
             *output++ = encode_fraction(gastrulation_factor   );
             *output++ = encode_fraction(mesoderm_formation_factor   );
-            *output++ = encode_portion (axial_segment_count         );
-            *output++ = encode_portion (radial_segment_count        );
-            *output++ = encode_portion (angular_segment_count       );
+            *output++ = encode_ranged  (axial_segment_count, 0, BODY_SEGMENT_COUNT);
+            *output++ = encode_ranged  (radial_segment_count, 0, APPENDAGE_SEGMENT_COUNT);
+            *output++ = encode_portion (angular_segment_count);
             *output++ = encode_fraction(angular_segment_axial_offset);
             return output;
         }
@@ -149,8 +154,8 @@ namespace genes
             log2_max_height_as_multiple_of_length = decode_ranged  (*input++, -10, 6, 16);
             gastrulation_factor    = decode_fraction(*input++);
             mesoderm_formation_factor    = decode_fraction(*input++);
-            axial_segment_count          = decode_portion (*input++);
-            radial_segment_count         = decode_portion (*input++);
+            axial_segment_count          = decode_ranged  (*input++, 0, BODY_SEGMENT_COUNT);
+            radial_segment_count         = decode_ranged  (*input++, 0, APPENDAGE_SEGMENT_COUNT);
             angular_segment_count        = decode_portion (*input++);
             angular_segment_axial_offset = decode_fraction(*input++);
             return input;
