@@ -115,6 +115,7 @@ namespace genes
             output = closed_fluid_system_composition.encode(output);
             output = photoreceptor_materials.encode(output);
             output = interior_mineralization.encode(output);
+            output = toxins.encode(output);
 
             /* 
             Pelagibacter ubique is among the smallest known free-living bacteria, 
@@ -148,6 +149,7 @@ namespace genes
             input  = closed_fluid_system_composition.decode(input);
             input  = photoreceptor_materials.decode(input);
             input  = interior_mineralization.decode(input);
+            input  = toxins.decode(input);
 
             log2_total_length = decode_ranged  (*input++, -6.5f*3.3f, 2.5f*3.3f, 16);
             log2_max_width_as_multiple_of_length  = decode_ranged  (*input++, -10, 6, 16);
@@ -170,6 +172,7 @@ namespace genes
             output = ClosedFluidSystemComposition::getMutationRates(output);
             output = PhotoreceptorMaterials::getMutationRates(output);
             output = Mineralization::getMutationRates(output);
+            output = Toxins::getMutationRates(output);
             output = std::fill_n(output, 3, 1);
             output = std::fill_n(output, 6, 1);
 
@@ -185,6 +188,7 @@ namespace genes
             output = ClosedFluidSystemComposition::getAttributeSizes(output);
             output = PhotoreceptorMaterials::getAttributeSizes(output);
             output = Mineralization::getAttributeSizes(output);
+            output = Toxins::getAttributeSizes(output);
             output = std::fill_n(output, 3, 16);
             output = std::fill_n(output, 6, 4);
             return output;
@@ -194,12 +198,14 @@ namespace genes
             ClosedFluidSystemComposition::bit_count +
             PhotoreceptorMaterials      ::bit_count +
             Mineralization              ::bit_count +
+            Toxins                      ::bit_count +
             3*16 + 6*4;
         static constexpr unsigned int attribute_count = 
             BodySegment                 ::attribute_count * BODY_SEGMENT_COUNT +
             ClosedFluidSystemComposition::attribute_count +
             PhotoreceptorMaterials      ::attribute_count +
             Mineralization              ::attribute_count +
+            Toxins                      ::attribute_count +
             3+6;
     };
 }
