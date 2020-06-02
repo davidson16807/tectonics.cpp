@@ -20,6 +20,15 @@ namespace genes
     {
         return std::clamp(int(round(((input-lo) / (hi-lo)) * float(1 << bit_count))), 0, (1<<bit_count)-1);
     }
+    template<typename TInputIterator, typename TOutputIterator>
+    inline TOutputIterator encode_container(TInputIterator iterator, TInputIterator end, TOutputIterator output)
+    {
+        for (; iterator != end; ++iterator)
+        {
+            output = iterator->encode(output);
+        }
+        return output;
+    }
 
     inline float decode_fraction(const unsigned int input, const int bit_count = 4)
     {
@@ -32,5 +41,14 @@ namespace genes
     inline float decode_ranged(const unsigned int input, float lo, float hi, const int bit_count = 4)
     {
         return (hi-lo) * (input / float(1<<bit_count)) + lo;
+    }
+    template<typename TInputIterator, typename TOutputIterator>
+    inline TInputIterator decode_container(TInputIterator input, TOutputIterator iterator, TOutputIterator end)
+    {
+        for (; iterator != end; ++iterator)
+        {
+            input = iterator->decode(input);
+        }
+        return input;
     }
 }

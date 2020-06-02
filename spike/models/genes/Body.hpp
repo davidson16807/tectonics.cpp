@@ -45,14 +45,6 @@ namespace genes
     {
         // arms, legs, flippers, wings, antenna, eye stalks, facial structures
         std::array<BodySegment, BODY_SEGMENT_COUNT> segments;
-        // blood, lymph, hydraulic systems, etc.
-        ClosedFluidSystemComposition closed_fluid_system_composition;
-        // materials of the lens, retina, cornea, vitreous humor, etc.
-        PhotoreceptorMaterials photoreceptor_materials;
-        // minerals within endoskeleton
-        Mineralization interior_mineralization;
-        // toxins that can be synthesized by the body
-        Toxins toxins;
 
         // basic dimensions, in meters, log2 scale
         float log2_total_length;
@@ -107,16 +99,6 @@ namespace genes
         template<typename TIterator>
         TIterator encode(TIterator output) const
         {
-            for (auto segment = segments.begin(); 
-                 segment != segments.end(); ++segment)
-            {
-                output = segment->encode(output);
-            }
-            output = closed_fluid_system_composition.encode(output);
-            output = photoreceptor_materials.encode(output);
-            output = interior_mineralization.encode(output);
-            output = toxins.encode(output);
-
             /* 
             Pelagibacter ubique is among the smallest known free-living bacteria, 
             on the order of dex -6.5 m at smallest.
@@ -127,39 +109,35 @@ namespace genes
             The world's longest siphonophore is 40m long yet as thin "as a broomhandle", maybe 2.5cm.
             An ediacarian cyclomedusa could measure 35mm in diameter and 0.5mm in relief (Ruidong 2010).
             */
+            output = encode_container(segments.begin(), segments.end(), output);
             *output++ = encode_ranged  (log2_total_length, -6.5f*3.3f, 2.5f*3.3f, 16);
             *output++ = encode_ranged  (log2_max_width_as_multiple_of_length,  -10, 6, 16);
             *output++ = encode_ranged  (log2_max_height_as_multiple_of_length, -10, 6, 16);
-            *output++ = encode_fraction(gastrulation_factor   );
-            *output++ = encode_fraction(mesoderm_formation_factor   );
-            *output++ = encode_ranged  (axial_segment_count, 0, BODY_SEGMENT_COUNT);
-            *output++ = encode_ranged  (radial_segment_count, 0, APPENDAGE_SEGMENT_COUNT);
-            *output++ = encode_portion (angular_segment_count);
-            *output++ = encode_fraction(angular_segment_axial_offset);
+            *output++ = encode_fraction(morulation_factor             );
+            *output++ = encode_fraction(gastrulation_factor           );
+            *output++ = encode_fraction(mesoderm_formation_factor     );
+            *output++ = encode_fraction(axial_segment_count           );
+            *output++ = encode_fraction(radial_segment_count          );
+            *output++ = encode_fraction(angular_segment_count         );
+            *output++ = encode_fraction(angular_segment_axial_offset  );
+            *output++ = encode_fraction(metamorphic_dissolution_factor);
             return output;
         }
         template<typename TIterator>
         TIterator decode(TIterator input)
         {
-            for (auto segment = segments.begin(); 
-                 segment != segments.end(); ++segment)
-            {
-                input = segment->decode(input);
-            }
-            input  = closed_fluid_system_composition.decode(input);
-            input  = photoreceptor_materials.decode(input);
-            input  = interior_mineralization.decode(input);
-            input  = toxins.decode(input);
-
-            log2_total_length = decode_ranged  (*input++, -6.5f*3.3f, 2.5f*3.3f, 16);
-            log2_max_width_as_multiple_of_length  = decode_ranged  (*input++, -10, 6, 16);
-            log2_max_height_as_multiple_of_length = decode_ranged  (*input++, -10, 6, 16);
-            gastrulation_factor    = decode_fraction(*input++);
-            mesoderm_formation_factor    = decode_fraction(*input++);
-            axial_segment_count          = decode_ranged  (*input++, 0, BODY_SEGMENT_COUNT);
-            radial_segment_count         = decode_ranged  (*input++, 0, APPENDAGE_SEGMENT_COUNT);
-            angular_segment_count        = decode_portion (*input++);
-            angular_segment_axial_offset = decode_fraction(*input++);
+            input = decode_container(input, segments.begin(), segments.end());
+            log2_total_length                     = decode_ranged(*input++, -6.5f*3.3f, 2.5f*3.3f, 16);
+            log2_max_width_as_multiple_of_length  = decode_ranged(*input++, -10, 6, 16);
+            log2_max_height_as_multiple_of_length = decode_ranged(*input++, -10, 6, 16);
+            morulation_factor              = decode_fraction(*input++);
+            gastrulation_factor            = decode_fraction(*input++);
+            mesoderm_formation_factor      = decode_fraction(*input++);
+            axial_segment_count            = decode_fraction(*input++);
+            radial_segment_count           = decode_fraction(*input++);
+            angular_segment_count          = decode_fraction(*input++);
+            angular_segment_axial_offset   = decode_fraction(*input++);
+            metamorphic_dissolution_factor = decode_fraction(*input++);
             return input;
         }
         template<typename TIterator>
@@ -169,13 +147,8 @@ namespace genes
             {
                 output = BodySegment::getMutationRates(output);
             }
-            output = ClosedFluidSystemComposition::getMutationRates(output);
-            output = PhotoreceptorMaterials::getMutationRates(output);
-            output = Mineralization::getMutationRates(output);
-            output = Toxins::getMutationRates(output);
             output = std::fill_n(output, 3, 1);
-            output = std::fill_n(output, 6, 1);
-
+            output = std::fill_n(output, 8, 1);
             return output;
         }
         template<typename TIterator>
@@ -185,27 +158,15 @@ namespace genes
             {
                 output = BodySegment::getAttributeSizes(output);
             }
-            output = ClosedFluidSystemComposition::getAttributeSizes(output);
-            output = PhotoreceptorMaterials::getAttributeSizes(output);
-            output = Mineralization::getAttributeSizes(output);
-            output = Toxins::getAttributeSizes(output);
             output = std::fill_n(output, 3, 16);
-            output = std::fill_n(output, 6, 4);
+            output = std::fill_n(output, 8, 4);
             return output;
         }
         static constexpr unsigned int bit_count = 
             BodySegment                 ::bit_count * BODY_SEGMENT_COUNT +
-            ClosedFluidSystemComposition::bit_count +
-            PhotoreceptorMaterials      ::bit_count +
-            Mineralization              ::bit_count +
-            Toxins                      ::bit_count +
-            3*16 + 6*4;
+            3*16 + 8*4;
         static constexpr unsigned int attribute_count = 
             BodySegment                 ::attribute_count * BODY_SEGMENT_COUNT +
-            ClosedFluidSystemComposition::attribute_count +
-            PhotoreceptorMaterials      ::attribute_count +
-            Mineralization              ::attribute_count +
-            Toxins                      ::attribute_count +
-            3+6;
+            3 + 8;
     };
 }

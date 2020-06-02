@@ -9,6 +9,7 @@
 
 #include <models/genes/constituents/Photopigment.hpp>
 #include <models/genes/constituents/ClosedFluidSystemConstituent.hpp>
+#include <models/genes/constituents/Endosymbiont.hpp>
 #include <models/genes/structures/TubeStructure.hpp>
 #include <models/genes/structures/CorneousStructure.hpp>
 #include <models/genes/structures/PhotoreceptorStructure.hpp>
@@ -18,6 +19,8 @@
 #include <models/genes/materials/Mineralization.hpp>
 #include <models/genes/materials/PhotoreceptorMaterials.hpp>
 #include <models/genes/materials/Pigmentation.hpp>
+#include <models/genes/materials/Toxins.hpp>
+#include <models/genes/materials/CellSignals.hpp>
 #include <models/genes/segments/GenericSegment.hpp>
 #include <models/genes/segments/AppendageSegment.hpp>
 #include <models/genes/Appendage.hpp>
@@ -181,6 +184,61 @@ TEST_CASE( "ClosedFluidSystemConstituent static method consistency", "[many]" ) 
     std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
     ClosedFluidSystemConstituent::getMutationRates(mutation_rates.begin());
     ClosedFluidSystemConstituent::getAttributeSizes(attribute_sizes.begin());
+    SECTION("mutation rates and attribute sizes must have the same count"){
+        CHECK(mutation_rates.end()[-2] > -1);
+        CHECK(mutation_rates.end()[-1] == -1);
+        CHECK(attribute_sizes.end()[-2] > -1);
+        CHECK(attribute_sizes.end()[-1] == -1);
+    }
+}
+
+
+
+
+
+
+TEST_CASE( "Endosymbiont encode/decode regularity", "[many]" ) {
+    std::array<std::int16_t, Endosymbiont::attribute_count> original;
+    std::array<std::int16_t, Endosymbiont::attribute_count> reconstituted1;
+    std::array<std::int16_t, Endosymbiont::attribute_count> reconstituted2;
+    std::array<std::int16_t, Endosymbiont::attribute_count> reconstituted3;
+    int count = 0;  
+    std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
+    Endosymbiont constituent1;
+    Endosymbiont constituent2;
+
+    SECTION("decode and encode must be called repeatedly without changing the value of output references"){
+        constituent1.decode(original.begin());
+        constituent1.encode(reconstituted1.begin());
+        constituent1.encode(reconstituted2.begin());
+        CHECK(reconstituted1==reconstituted2);
+        constituent2.decode(original.begin());
+        constituent2.encode(reconstituted3.begin());
+        CHECK(reconstituted1==reconstituted3);
+    }
+}
+
+TEST_CASE( "Endosymbiont encode/decode invertibility", "[many]" ) {
+    std::array<std::int16_t, Endosymbiont::attribute_count> original;
+    std::array<std::int16_t, Endosymbiont::attribute_count> reconstituted;
+    int count = 0;  
+    std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
+    Endosymbiont constituent;
+ 
+    SECTION("decoding an array then reencoding it must reproduce the original array"){
+        constituent.decode(original.begin());
+        constituent.encode(reconstituted.begin());
+        CHECK(original==reconstituted);
+    }
+}
+
+TEST_CASE( "Endosymbiont static method consistency", "[many]" ) {
+    std::array<std::int8_t, Endosymbiont::attribute_count+1> mutation_rates;
+    std::array<std::int8_t, Endosymbiont::attribute_count+1> attribute_sizes;
+    std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
+    std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
+    Endosymbiont::getMutationRates(mutation_rates.begin());
+    Endosymbiont::getAttributeSizes(attribute_sizes.begin());
     SECTION("mutation rates and attribute sizes must have the same count"){
         CHECK(mutation_rates.end()[-2] > -1);
         CHECK(mutation_rates.end()[-1] == -1);
@@ -681,6 +739,118 @@ TEST_CASE( "Pigmentation static method consistency", "[many]" ) {
     std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
     Pigmentation::getMutationRates(mutation_rates.begin());
     Pigmentation::getAttributeSizes(attribute_sizes.begin());
+    SECTION("mutation rates and attribute sizes must have the same count"){
+        CHECK(mutation_rates.end()[-2] > -1);
+        CHECK(mutation_rates.end()[-1] == -1);
+        CHECK(attribute_sizes.end()[-2] > -1);
+        CHECK(attribute_sizes.end()[-1] == -1);
+    }
+}
+
+
+
+
+
+
+
+TEST_CASE( "Toxins encode/decode regularity", "[many]" ) {
+    std::array<std::int16_t, Toxins::attribute_count> original;
+    std::array<std::int16_t, Toxins::attribute_count> reconstituted1;
+    std::array<std::int16_t, Toxins::attribute_count> reconstituted2;
+    std::array<std::int16_t, Toxins::attribute_count> reconstituted3;
+    int count = 0;  
+    std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
+    Toxins constituent1;
+    Toxins constituent2;
+
+    SECTION("decode and encode must be called repeatedly without changing the value of output references"){
+        constituent1.decode(original.begin());
+        constituent1.encode(reconstituted1.begin());
+        constituent1.encode(reconstituted2.begin());
+        CHECK(reconstituted1==reconstituted2);
+        constituent2.decode(original.begin());
+        constituent2.encode(reconstituted3.begin());
+        CHECK(reconstituted1==reconstituted3);
+    }
+}
+
+TEST_CASE( "Toxins encode/decode invertibility", "[many]" ) {
+    std::array<std::int16_t, Toxins::attribute_count> original;
+    std::array<std::int16_t, Toxins::attribute_count> reconstituted;
+    int count = 0;  
+    std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
+    Toxins constituent;
+ 
+    SECTION("decoding an array then reencoding it must reproduce the original array"){
+        constituent.decode(original.begin());
+        constituent.encode(reconstituted.begin());
+        CHECK(original==reconstituted);
+    }
+}
+
+TEST_CASE( "Toxins static method consistency", "[many]" ) {
+    std::array<std::int8_t, Toxins::attribute_count+1> mutation_rates;
+    std::array<std::int8_t, Toxins::attribute_count+1> attribute_sizes;
+    std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
+    std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
+    Toxins::getMutationRates(mutation_rates.begin());
+    Toxins::getAttributeSizes(attribute_sizes.begin());
+    SECTION("mutation rates and attribute sizes must have the same count"){
+        CHECK(mutation_rates.end()[-2] > -1);
+        CHECK(mutation_rates.end()[-1] == -1);
+        CHECK(attribute_sizes.end()[-2] > -1);
+        CHECK(attribute_sizes.end()[-1] == -1);
+    }
+}
+
+
+
+
+
+
+
+TEST_CASE( "CellSignals encode/decode regularity", "[many]" ) {
+    std::array<std::int16_t, CellSignals::attribute_count> original;
+    std::array<std::int16_t, CellSignals::attribute_count> reconstituted1;
+    std::array<std::int16_t, CellSignals::attribute_count> reconstituted2;
+    std::array<std::int16_t, CellSignals::attribute_count> reconstituted3;
+    int count = 0;  
+    std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
+    CellSignals constituent1;
+    CellSignals constituent2;
+
+    SECTION("decode and encode must be called repeatedly without changing the value of output references"){
+        constituent1.decode(original.begin());
+        constituent1.encode(reconstituted1.begin());
+        constituent1.encode(reconstituted2.begin());
+        CHECK(reconstituted1==reconstituted2);
+        constituent2.decode(original.begin());
+        constituent2.encode(reconstituted3.begin());
+        CHECK(reconstituted1==reconstituted3);
+    }
+}
+
+TEST_CASE( "CellSignals encode/decode invertibility", "[many]" ) {
+    std::array<std::int16_t, CellSignals::attribute_count> original;
+    std::array<std::int16_t, CellSignals::attribute_count> reconstituted;
+    int count = 0;  
+    std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
+    CellSignals constituent;
+ 
+    SECTION("decoding an array then reencoding it must reproduce the original array"){
+        constituent.decode(original.begin());
+        constituent.encode(reconstituted.begin());
+        CHECK(original==reconstituted);
+    }
+}
+
+TEST_CASE( "CellSignals static method consistency", "[many]" ) {
+    std::array<std::int8_t, CellSignals::attribute_count+1> mutation_rates;
+    std::array<std::int8_t, CellSignals::attribute_count+1> attribute_sizes;
+    std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
+    std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
+    CellSignals::getMutationRates(mutation_rates.begin());
+    CellSignals::getAttributeSizes(attribute_sizes.begin());
     SECTION("mutation rates and attribute sizes must have the same count"){
         CHECK(mutation_rates.end()[-2] > -1);
         CHECK(mutation_rates.end()[-1] == -1);

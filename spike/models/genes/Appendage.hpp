@@ -100,11 +100,7 @@ namespace genes
         template<typename TIterator>
         TIterator encode(TIterator output) const
         {
-            for (auto segment = segments.begin(); 
-                 segment != segments.end(); ++segment)
-            {
-                output = segment->encode(output);
-            }
+            output = encode_container(segments.begin(), segments.end(), output);
             output = surface_structure         .encode(output);  
             output = pigmentation              .encode(output);
             output = exterior_mineralization   .encode(output);
@@ -128,11 +124,7 @@ namespace genes
         template<typename TIterator>
         TIterator decode(TIterator input)
         {
-            for (auto segment = segments.begin(); 
-                 segment != segments.end(); ++segment)
-            {
-                input = segment->decode(input);
-            }
+            input = decode_container(input, segments.begin(), segments.end());
             input = surface_structure         .decode(input);  
             input = pigmentation              .decode(input);
             input = exterior_mineralization   .decode(input);
