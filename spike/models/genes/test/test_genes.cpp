@@ -26,6 +26,7 @@
 #include <models/genes/Appendage.hpp>
 #include <models/genes/segments/BodySegment.hpp>
 #include <models/genes/Body.hpp>
+#include <models/genes/Genome.hpp>
 
 using namespace genes;
 
@@ -1088,16 +1089,77 @@ TEST_CASE( "Body static method consistency", "[many]" ) {
 
 
 
+
+
+
+
+
+TEST_CASE( "Genome encode/decode regularity", "[many]" ) {
+    std::array<std::int16_t, Genome::attribute_count> original;
+    std::array<std::int16_t, Genome::attribute_count> result;
+    std::array<std::int16_t, Genome::attribute_count> duplicate_encode_result;
+    std::array<std::int16_t, Genome::attribute_count> duplicate_decode_result;
+    int count = 0;  
+    std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
+    Genome temp1;
+    Genome temp2;
+
+    SECTION("decode and encode must be called repeatedly without changing the value of output references"){
+        temp1.decode(original.begin());
+        temp1.encode(result.begin());
+        temp2.decode(original.begin());
+        temp2.encode(duplicate_decode_result.begin());
+        CHECK(result==duplicate_decode_result);
+        temp1.encode(duplicate_encode_result.begin());
+        CHECK(result==duplicate_encode_result);
+    }
+}
+
+TEST_CASE( "Genome encode/decode invertibility", "[many]" ) {
+    std::array<std::int16_t, Genome::attribute_count> original;
+    std::array<std::int16_t, Genome::attribute_count> reconstituted;
+    int count = 0;  
+    std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
+    Genome constituent;
+ 
+    SECTION("decoding an array then reencoding it must reproduce the original array"){
+        constituent.decode(original.begin());
+        constituent.encode(reconstituted.begin());
+        CHECK(original==reconstituted);
+    }
+}
+
+TEST_CASE( "Genome static method consistency", "[many]" ) {
+    std::array<std::int8_t, Genome::attribute_count+1> mutation_rates;
+    std::array<std::int8_t, Genome::attribute_count+1> attribute_sizes;
+    std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
+    std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
+    Genome::getMutationRates(mutation_rates.begin());
+    Genome::getAttributeSizes(attribute_sizes.begin());
+    SECTION("mutation rates and attribute sizes must have the same count"){
+        CHECK(mutation_rates.end()[-2] > -1);
+        CHECK(mutation_rates.end()[-1] == -1);
+        CHECK(attribute_sizes.end()[-2] > -1);
+        CHECK(attribute_sizes.end()[-1] == -1);
+    }
+}
+
+
+
+
+
 TEST_CASE( "gene namespace data structure size limits", "[many]" ) {
     std::cout << "AppendageSegment compressed: " << AppendageSegment::bit_count / 8 << std::endl;
     std::cout << "Appendage compressed: " << Appendage::bit_count / 8 << std::endl;
     std::cout << "BodySegment compressed: " << BodySegment::bit_count / 8 << std::endl;
     std::cout << "Body compressed: " << Body::bit_count / 8 << std::endl;
+    std::cout << "Genome compressed: " << Genome::bit_count / 8 << std::endl;
 
     std::cout << "AppendageSegment decompressed: " << sizeof(AppendageSegment) << std::endl;
     std::cout << "Appendage decompressed: " << sizeof(Appendage) << std::endl;
     std::cout << "BodySegment decompressed: " << sizeof(BodySegment) << std::endl;
     std::cout << "Body decompressed: " << sizeof(Body) << std::endl;
+    std::cout << "Genome decompressed: " << sizeof(Genome) << std::endl;
 
     SECTION("compressed memory footprint must not fall outside acceptable limits"){
         CHECK(AppendageSegment::bit_count/8 <= 32);
@@ -1105,7 +1167,8 @@ TEST_CASE( "gene namespace data structure size limits", "[many]" ) {
         CHECK(BodySegment::bit_count/8 <= 256 );
         CHECK(Body::bit_count/8 <= 2048 );
         CHECK(sizeof(AppendageSegment) <= 64 ); // size of a cache line
-        CHECK(sizeof(Body) < 32000 ); // conservative size of L1 data cache
+        CHECK(sizeof(Body) < 64000 ); // conservative size of L1 data cache
+        CHECK(sizeof(Genome) < 64000 ); // conservative size of L1 data cache
     }
 }
 
