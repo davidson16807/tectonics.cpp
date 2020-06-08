@@ -11,8 +11,8 @@
 #include <models/genes/structures/SurfaceStructure.hpp>
 #include <models/genes/structures/CorneousStructure.hpp>
 #include <models/genes/structures/TubeStructure.hpp>
-#include <models/genes/materials/Pigmentation.hpp>
-#include <models/genes/materials/Mineralization.hpp>
+#include <models/genes/biochemistry/Pigmentation.hpp>
+#include <models/genes/biochemistry/Mineralization.hpp>
 
 namespace genes
 {

@@ -8,9 +8,9 @@
 
 #include <models/genes/coding.hpp>    // encode_*(), decode_*()
 #include <models/genes/segments/BodySegment.hpp>
-#include <models/genes/materials/ClosedFluidSystemComposition.hpp>
-#include <models/genes/materials/PhotoreceptorMaterials.hpp>
-#include <models/genes/materials/Mineralization.hpp>
+#include <models/genes/biochemistry/ClosedFluidSystemComposition.hpp>
+#include <models/genes/biochemistry/PhotoreceptorMaterials.hpp>
+#include <models/genes/biochemistry/Mineralization.hpp>
 
 namespace genes
 {
@@ -50,6 +50,7 @@ namespace genes
         Toxins toxins;
         Pigmentation pigmentation_synthesis;
         CellSignals cell_signals;
+        Metabolism metabolism;
 
         /*
         Segmentation plans are caused by chemical reaction-diffusion systems,
@@ -76,6 +77,7 @@ namespace genes
             output = toxins                         .encode(output);
             output = pigmentation_synthesis         .encode(output);
             output = cell_signals                   .encode(output);
+            output = metabolism                     .encode(output);
             *output++ = encode_ranged  (axial_segment_count, 0, BODY_SEGMENT_COUNT);
             *output++ = encode_ranged  (radial_segment_count, 0, APPENDAGE_SEGMENT_COUNT);
             *output++ = encode_portion (angular_segment_count);
@@ -94,6 +96,7 @@ namespace genes
             input = toxins                         .decode(input);
             input = pigmentation_synthesis         .decode(input);
             input = cell_signals                   .decode(input);
+            input = metabolism                     .decode(input);
             axial_segment_count          = decode_ranged  (*input++, 0, BODY_SEGMENT_COUNT);
             radial_segment_count         = decode_ranged  (*input++, 0, APPENDAGE_SEGMENT_COUNT);
             angular_segment_count        = decode_portion (*input++);
@@ -121,6 +124,7 @@ namespace genes
             output = Toxins::getMutationRates(output);
             output = Pigmentation::getMutationRates(output);
             output = CellSignals::getMutationRates(output);
+            output = Metabolism::getMutationRates(output);
             output = std::fill_n(output, 4, 1);
 
             return output;
@@ -146,6 +150,7 @@ namespace genes
             output = Toxins::getAttributeSizes(output);
             output = Pigmentation::getAttributeSizes(output);
             output = CellSignals::getAttributeSizes(output);
+            output = Metabolism::getAttributeSizes(output);
             output = std::fill_n(output, 4, 4);
             return output;
         }
@@ -159,6 +164,7 @@ namespace genes
             Toxins                      ::bit_count +
             Pigmentation                ::bit_count +
             CellSignals                 ::bit_count +
+            Metabolism                  ::bit_count +
             4*4;
         static constexpr unsigned int attribute_count = 
             Body                        ::attribute_count * DIPLOID_LIFE_STAGE_COUNT +
@@ -170,6 +176,7 @@ namespace genes
             Toxins                      ::attribute_count +
             Pigmentation                ::attribute_count +
             CellSignals                 ::attribute_count +
+            Metabolism                  ::attribute_count +
             4;
     };
 }

@@ -15,12 +15,13 @@
 #include <models/genes/structures/PhotoreceptorStructure.hpp>
 #include <models/genes/structures/PressureSensingStructure.hpp>
 #include <models/genes/structures/SurfaceStructure.hpp>
-#include <models/genes/materials/ClosedFluidSystemComposition.hpp>
-#include <models/genes/materials/Mineralization.hpp>
-#include <models/genes/materials/PhotoreceptorMaterials.hpp>
-#include <models/genes/materials/Pigmentation.hpp>
-#include <models/genes/materials/Toxins.hpp>
-#include <models/genes/materials/CellSignals.hpp>
+#include <models/genes/biochemistry/ClosedFluidSystemComposition.hpp>
+#include <models/genes/biochemistry/Mineralization.hpp>
+#include <models/genes/biochemistry/PhotoreceptorMaterials.hpp>
+#include <models/genes/biochemistry/Pigmentation.hpp>
+#include <models/genes/biochemistry/Toxins.hpp>
+#include <models/genes/biochemistry/CellSignals.hpp>
+#include <models/genes/biochemistry/Metabolism.hpp>
 #include <models/genes/segments/GenericSegment.hpp>
 #include <models/genes/segments/AppendageSegment.hpp>
 #include <models/genes/Appendage.hpp>
@@ -852,6 +853,62 @@ TEST_CASE( "CellSignals static method consistency", "[many]" ) {
     std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
     CellSignals::getMutationRates(mutation_rates.begin());
     CellSignals::getAttributeSizes(attribute_sizes.begin());
+    SECTION("mutation rates and attribute sizes must have the same count"){
+        CHECK(mutation_rates.end()[-2] > -1);
+        CHECK(mutation_rates.end()[-1] == -1);
+        CHECK(attribute_sizes.end()[-2] > -1);
+        CHECK(attribute_sizes.end()[-1] == -1);
+    }
+}
+
+
+
+
+
+
+
+TEST_CASE( "Metabolism encode/decode regularity", "[many]" ) {
+    std::array<std::int16_t, Metabolism::attribute_count> original;
+    std::array<std::int16_t, Metabolism::attribute_count> reconstituted1;
+    std::array<std::int16_t, Metabolism::attribute_count> reconstituted2;
+    std::array<std::int16_t, Metabolism::attribute_count> reconstituted3;
+    int count = 0;  
+    std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
+    Metabolism constituent1;
+    Metabolism constituent2;
+
+    SECTION("decode and encode must be called repeatedly without changing the value of output references"){
+        constituent1.decode(original.begin());
+        constituent1.encode(reconstituted1.begin());
+        constituent1.encode(reconstituted2.begin());
+        CHECK(reconstituted1==reconstituted2);
+        constituent2.decode(original.begin());
+        constituent2.encode(reconstituted3.begin());
+        CHECK(reconstituted1==reconstituted3);
+    }
+}
+
+TEST_CASE( "Metabolism encode/decode invertibility", "[many]" ) {
+    std::array<std::int16_t, Metabolism::attribute_count> original;
+    std::array<std::int16_t, Metabolism::attribute_count> reconstituted;
+    int count = 0;  
+    std::generate(original.begin(), original.end(), [&](){ return count=(count+1)%0xF; });
+    Metabolism constituent;
+ 
+    SECTION("decoding an array then reencoding it must reproduce the original array"){
+        constituent.decode(original.begin());
+        constituent.encode(reconstituted.begin());
+        CHECK(original==reconstituted);
+    }
+}
+
+TEST_CASE( "Metabolism static method consistency", "[many]" ) {
+    std::array<std::int8_t, Metabolism::attribute_count+1> mutation_rates;
+    std::array<std::int8_t, Metabolism::attribute_count+1> attribute_sizes;
+    std::fill(mutation_rates.begin(), mutation_rates.end(), -1);
+    std::fill(attribute_sizes.begin(), attribute_sizes.end(), -1);
+    Metabolism::getMutationRates(mutation_rates.begin());
+    Metabolism::getAttributeSizes(attribute_sizes.begin());
     SECTION("mutation rates and attribute sizes must have the same count"){
         CHECK(mutation_rates.end()[-2] > -1);
         CHECK(mutation_rates.end()[-1] == -1);

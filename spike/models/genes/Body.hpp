@@ -8,9 +8,9 @@
 
 #include <models/genes/coding.hpp>    // encode_*(), decode_*()
 #include <models/genes/segments/BodySegment.hpp>
-#include <models/genes/materials/ClosedFluidSystemComposition.hpp>
-#include <models/genes/materials/PhotoreceptorMaterials.hpp>
-#include <models/genes/materials/Mineralization.hpp>
+#include <models/genes/biochemistry/ClosedFluidSystemComposition.hpp>
+#include <models/genes/biochemistry/PhotoreceptorMaterials.hpp>
+#include <models/genes/biochemistry/Mineralization.hpp>
 
 namespace genes
 {
