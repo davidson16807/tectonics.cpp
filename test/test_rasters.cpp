@@ -69,7 +69,7 @@ Grid diamond =
     );
 TEST_CASE( "Grid correctness", "[Grid]" ) {
     SECTION("Grid must have the appropriate counts for vertex, edge, arrow, and face attributes"){
-        CHECK(diamond.buffer_array_vertex_ids.size() == 12);
+        CHECK(diamond.flattened_face_vertex_ids.size() == 12);
 
         CHECK(diamond.vertex_count == 5);
         // CHECK(diamond.vertex_neighbor_ids.size() == 5);
@@ -134,7 +134,7 @@ Grid tetrahedron = Grid(meshes::tetrahedron.vertices, meshes::tetrahedron.faces)
 
 TEST_CASE( "Grid nontriviality", "[Grid]" ) {
     SECTION("Grid attributes must contain nonzero elements"){
-        CHECK(many::sum(many::abs(tetrahedron.buffer_array_vertex_ids)) > 0.01f);
+        CHECK(many::sum(many::abs(tetrahedron.flattened_face_vertex_ids)) > 0.01f);
 
         // CHECK(many::sum(many::abs(tetrahedron.vertex_neighbor_ids)) > 0.01f);
         CHECK(many::sum(many::abs(tetrahedron.vertex_neighbor_counts)) > 0.01f);

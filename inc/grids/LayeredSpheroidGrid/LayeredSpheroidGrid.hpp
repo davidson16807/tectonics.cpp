@@ -7,16 +7,14 @@ namespace rasters
 {
 
 	/*
-	The LayeredSpheroidGrid class is an extension of the Grid class
-	That combines features of both a SpheroidGrid and a LayeredGrid
-	It assumes the grid is comprised of a series of layered grid cells 
-	over the surface of a roughtly spherical object
-	Consult SpheroidGrid and LayeredGrid for more information 
-	on assumptions and operating behavior
+	The LayeredSpheroidGrid struct is an extension of the SpheroidGrid struct
+	It assumes the grid is comprised of a series of grid cells 
+	over the surface of a roughly spherical object. 
+	Each grid may be subdivided into several "layers" that occur at regular
+	intervals along a dimension that's perpendicular to the surface. 
 	*/
-	class LayeredSpheroidGrid: public SpheroidGrid//, public LayeredGrid
+	struct LayeredSpheroidGrid: public SpheroidGrid//, public LayeredGrid
 	{
-	public:
 		float profile_height;
 		float layer_count;
 		float layer_height;

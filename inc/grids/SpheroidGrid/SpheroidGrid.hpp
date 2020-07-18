@@ -30,7 +30,7 @@ namespace rasters {
 		{
 
 		}
-		void get_ids(const vec3s& points, tmany<uint>& out) const
+		void get_ids(const many::vec3s& points, tmany<uint>& out) const
 		{
 			voronoi.get_values(points, out);
 		}

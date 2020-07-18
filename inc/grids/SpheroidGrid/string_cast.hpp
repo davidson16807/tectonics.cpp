@@ -49,7 +49,7 @@ namespace rasters
 		float lon(0.);
 		float r  (0.);
 		float z  (0.);
-		vec3  pos(0.,0.,0.);
+		glm::vec3  pos(0.,0.,0.);
 		uint id(0);
 		std::string out("");
 
@@ -61,7 +61,7 @@ namespace rasters
 				lon = 2.f*M_PI*(j+1)/float(line_char_width+1);
 				z = sin(lat);
 				r = sqrt(1.f-z*z);
-				pos = vec3(r*sin(lon), r*cos(lon), z);
+				pos = glm::vec3(r*sin(lon), r*cos(lon), z);
 				id = voronoi.get_value(pos);
 				if ( !(0 <= id && id < a.size()) )
 				{
@@ -122,7 +122,7 @@ namespace rasters
 		float lon(0.);
 		float r  (0.);
 		float z  (0.);
-		vec3  pos(0.,0.,0.);
+		glm::vec3  pos(0.,0.,0.);
 		uint id(0);
 		std::string out("");
 
@@ -134,7 +134,7 @@ namespace rasters
 				lon = 2.f*M_PI*(j+1)/float(line_char_width+1);
 				z = sin(lat);
 				r = sqrt(1.f-z*z);
-				pos = vec3(r*sin(lon), r*cos(lon), z);
+				pos = glm::vec3(r*sin(lon), r*cos(lon), z);
 				id = voronoi.get_value(pos);
 				if ( !(0 <= id && id < a.size()) )
 				{
@@ -206,7 +206,7 @@ namespace rasters
 		const tmany<glm::vec<3,T,Q>>& vertex_normals, 
 		const tmany<glm::vec<3,T,Q>>& a, 
 		const uint line_char_width = 80, 
-		const glm::vec3 up = vec3(0,0,1)
+		const glm::vec3 up = glm::vec3(0,0,1)
 	) {
 		many::vec3s		surface_basis_x(a.size());
 		many::vec3s		surface_basis_y(a.size());
@@ -235,7 +235,7 @@ namespace rasters
 		const SpheroidGrid& grid, 
 		const tmany<glm::vec<3,T,Q>>& a, 
 		const uint line_char_width = 80, 
-		const glm::vec3 up = vec3(0,0,1)
+		const glm::vec3 up = glm::vec3(0,0,1)
 	) {
 		return to_string(grid.voronoi, grid.vertex_normals, a, line_char_width, up);
 	}

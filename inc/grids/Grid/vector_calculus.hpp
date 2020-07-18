@@ -95,7 +95,7 @@ namespace rasters
 	This polygon is part of the "dual" of the graph that's formed from the centroid and its neighbors.
 	
 	*/
-	template<typename T, qualifier Q>
+	template<typename T, glm::qualifier Q>
 	void gradient(
 		const Grid& grid, 
 		const tmany<T>& scalar_field, 
@@ -107,7 +107,7 @@ namespace rasters
 		assert(out.size()                == grid.vertex_count);
 		assert(arrow_differential.size() == grid.arrow_count );
 		assert(arrow_flow.size()         == grid.arrow_count );
-		uvec2 arrow;
+		glm::uvec2 arrow;
 		for (unsigned int i = 0; i < grid.arrow_vertex_ids.size(); ++i)
 		{
 			arrow                 = grid.arrow_vertex_ids[i]; 
@@ -115,7 +115,7 @@ namespace rasters
 		}
 		mult 	 (arrow_differential, grid.arrow_dual_normals,   arrow_flow);      // flux across dual of the arrow
 		mult 	 (arrow_flow,         grid.arrow_dual_lengths,   arrow_flow);      // flow across dual of the arrow
-		fill 	 (out,                vec3(0.f));
+		fill 	 (out,                glm::vec<3,T,Q>(0.f));
 		aggregate_into(arrow_flow,    grid.arrow_vertex_id_from, [](glm::vec<3,T,Q> a, glm::vec<3,T,Q> b){ return a+b; }, out); // flow out from the vertex
 		div      (out,                grid.vertex_dual_areas,    out);             // gradient
 	}
@@ -130,7 +130,7 @@ namespace rasters
 		return out;
 	}
 
-	template<typename T, qualifier Q>
+	template<typename T, glm::qualifier Q>
 	void divergence(
 		const Grid& grid, 
 		const tmany<glm::vec<3,T,Q>>& vector_field, 
@@ -142,7 +142,7 @@ namespace rasters
 		assert(out.size()                == grid.vertex_count);
 		assert(arrow_differential.size() == grid.arrow_count );
 		assert(arrow_projection.size()   == grid.arrow_count );
-		uvec2 arrow;
+		glm::uvec2 arrow;
 		for (unsigned int i = 0; i < grid.arrow_vertex_ids.size(); ++i)
 		{
 			arrow                 = grid.arrow_vertex_ids[i]; 
@@ -155,7 +155,7 @@ namespace rasters
 		div      (out,                grid.vertex_dual_areas,    out);             // divergence
 	}
 
-	template<typename T, qualifier Q>
+	template<typename T, glm::qualifier Q>
 	tmany<T> divergence(const Grid& grid, const tmany<glm::vec<3,T,Q>>& vector_field)
 	{
 		tmany<glm::vec<3,T,Q>> arrow_differential (grid.arrow_count);
@@ -165,7 +165,7 @@ namespace rasters
 		return out;
 	}
 
-	template<typename T, qualifier Q>
+	template<typename T, glm::qualifier Q>
 	void curl(
 		const Grid& grid, 
 		const tmany<glm::vec<3,T,Q>>& vector_field, 
@@ -177,7 +177,7 @@ namespace rasters
 		assert(out.size()                == grid.vertex_count);
 		assert(arrow_differential.size() == grid.arrow_count );
 		assert(arrow_rejection.size()    == grid.arrow_count );
-		uvec2 arrow;
+		glm::uvec2 arrow;
 		for (unsigned int i = 0; i < grid.arrow_vertex_ids.size(); ++i)
 		{
 			arrow                 = grid.arrow_vertex_ids[i]; 
@@ -190,7 +190,7 @@ namespace rasters
 		div      (out,                grid.vertex_dual_areas,    out);             // curl
 	}
 
-	template<typename T, qualifier Q>
+	template<typename T, glm::qualifier Q>
 	tmany<glm::vec<3,T,Q>> curl(const Grid& grid, const tmany<glm::vec<3,T,Q>>& vector_field)
 	{
 		tmany<glm::vec<3,T,Q>> arrow_differential (grid.arrow_count);
@@ -228,7 +228,7 @@ namespace rasters
 		assert(scalar_field.size()  == grid.vertex_count);
 		assert(out.size()           == grid.vertex_count);
 		assert(arrow_scratch.size() == grid.arrow_count );
-		uvec2 arrow;
+		glm::uvec2 arrow;
 		for (unsigned int i = 0; i < grid.arrow_vertex_ids.size(); ++i)
 		{
 			arrow            = grid.arrow_vertex_ids[i]; 
@@ -259,7 +259,7 @@ namespace rasters
 		assert(vector_field.size()  == grid.vertex_count);
 		assert(out.size()           == grid.vertex_count);
 		assert(arrow_scratch.size() == grid.arrow_count );
-		uvec2 arrow;
+		glm::uvec2 arrow;
 		for (unsigned int i = 0; i < grid.arrow_vertex_ids.size(); ++i)
 		{
 			arrow            = grid.arrow_vertex_ids[i]; 

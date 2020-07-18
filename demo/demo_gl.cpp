@@ -5,8 +5,6 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#define MULTI_LINE_STRING(a) #a
-
 int main() {
   // initialize GLFW
   if (!glfwInit()) {

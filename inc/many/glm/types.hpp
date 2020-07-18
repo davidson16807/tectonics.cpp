@@ -1,7 +1,5 @@
 #pragma once
 
-#include <iostream>
-
 #include "../types.hpp"
 
 namespace many
@@ -50,6 +48,29 @@ namespace many
 	}
 
 
+
+	// Converts from vec3s to flattened floats
+	template <glm::length_t L, class T, glm::qualifier Q>
+	void flatten (tmany<glm::vec<L,T,Q>>& a, tmany<T>& out) {
+		assert(a.size()*L == out.size());
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out[3*i+0] = a[i].x;
+			out[3*i+1] = a[i].y;
+			out[3*i+2] = a[i].z;
+		}
+	}
+	// Converts from flattened floats to vec3s
+	template <glm::length_t L, class T, glm::qualifier Q>
+	void unflatten (tmany<T>& a, tmany<glm::vec<L,T,Q>>& out) {
+		assert(out.size()*L == a.size());
+	    for (unsigned int i = 0; i < out.size(); ++i)
+		{
+			out[i].x = a[3*i+0];
+			out[i].y = a[3*i+1];
+			out[i].z = a[3*i+2];
+		}
+	}
 
 	
 	
