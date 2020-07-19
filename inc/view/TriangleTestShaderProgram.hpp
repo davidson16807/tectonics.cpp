@@ -234,7 +234,6 @@ const char* vertex_shader =
 			// set current buffer in OpenGL's state machine to positionBufferId (if not already)
 			glBindBuffer(GL_ARRAY_BUFFER, positionBufferId);
 			positionLocation = glGetAttribLocation(shaderProgramId, "point");
-			// attr #, 3 dimensions, floats
 			glVertexAttribPointer(positionLocation, 3, GL_FLOAT, normalize, stride, offset);
 		    glEnableVertexAttribArray(positionLocation);
 			glBindAttribLocation(shaderProgramId, positionLocation, "point");
@@ -245,7 +244,6 @@ const char* vertex_shader =
 			// set current buffer in OpenGL's state machine to colorValueBufferId (if not already)
 			glBindBuffer(GL_ARRAY_BUFFER, colorValueBufferId);
 			colorValueLocation = glGetAttribLocation(shaderProgramId, "color");
-			// attr #, 3 dimensions, floats
 			glVertexAttribPointer(colorValueLocation, 3, GL_FLOAT, normalize, stride, offset);
 		    glEnableVertexAttribArray(colorValueLocation);
 			glBindAttribLocation(shaderProgramId, colorValueLocation, "color");
@@ -281,7 +279,8 @@ const char* vertex_shader =
 	    resources like shaders or programs, we simply wipe the slate clean
 	    on the first sign that anything falls out of sync.
 	    */
-		bool canDepict(){
+		template <typename T>
+		bool canDepict(const std::vector<T>& points, const std::vector<T>& colors){
 			return !isDisposed;
 		}
 
@@ -291,8 +290,9 @@ const char* vertex_shader =
 	    Does nothing if unable to depict the given view state, as determined by canDepict().
 		The only state that is allowed to be modified is that of the framebuffer
 		*/
-		void draw(){
-			if (!canDepict())
+		template <typename T>
+		void draw(const std::vector<T>& points, const std::vector<T>& colors){
+			if (!canDepict(points, colors))
 			{
 				return;
 			}
@@ -304,30 +304,17 @@ const char* vertex_shader =
 			// set current buffer in OpenGL's state machine to positionBufferId (if not already)
 			glBindBuffer(GL_ARRAY_BUFFER, positionBufferId);
 		    glEnableVertexAttribArray(positionLocation);
-            // attr #, 3 dimensions, floats
-            glVertexAttribPointer(positionLocation, 3, GL_FLOAT, normalize, 0, NULL);
+            glVertexAttribPointer(positionLocation, 3, GL_FLOAT, normalize, stride, offset);
 
 			// set current buffer in OpenGL's state machine to colorValueBufferId (if not already)
 			glBindBuffer(GL_ARRAY_BUFFER, colorValueBufferId);
 		    glEnableVertexAttribArray(colorValueLocation);
-            glVertexAttribPointer(colorValueLocation, 3, GL_FLOAT, normalize, 0, NULL);
-
-			float points[] = {
-			 0.0f,  0.5f,  0.0f,
-			 0.5f, -0.5f,  0.0f,
-			-0.5f, -0.5f,  0.0f
-			};
-
-			float colors[] = {
-			 1.0f,  0.0f,  0.0f,
-			 0.0f,  1.0f,  0.0f,
-			 0.0f,  0.0f,  1.0f
-			};
+            glVertexAttribPointer(colorValueLocation, 3, GL_FLOAT, normalize, stride, offset);
 
 			glBindBuffer(GL_ARRAY_BUFFER, positionBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, 3*3*sizeof(float), points, GL_DYNAMIC_DRAW);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*points.size(), &points.front(), GL_DYNAMIC_DRAW);
 	        glBindBuffer(GL_ARRAY_BUFFER, colorValueBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, 3*3*sizeof(float), colors, GL_DYNAMIC_DRAW);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*colors.size(), &colors.front(), GL_DYNAMIC_DRAW);
 			
 			glDrawArrays(GL_TRIANGLES, /*array offset*/ 0, /*triangle count*/ 3);
 		}

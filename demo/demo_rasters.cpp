@@ -83,10 +83,22 @@ int main() {
   view::ColorscaleSurfacesViewState<float> colorscale_state;
   view::ViewState view_state;
 
+  many::floats points = {
+   0.0f,  0.5f,  0.0f,
+   0.5f, -0.5f,  0.0f,
+  -0.5f, -0.5f,  0.0f
+  };
+
+  many::floats colors = {
+   1.0f,  0.0f,  0.0f,
+   0.0f,  1.0f,  0.0f,
+   0.0f,  0.0f,  1.0f
+  };
+
   while(!glfwWindowShouldClose(window)) {
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      program.draw();
+      program.draw(points.vector(), colors.vector());
       // update other events like input handling
       glfwPollEvents();
       // put stuff we've been drawing onto the display
