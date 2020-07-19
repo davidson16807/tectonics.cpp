@@ -18,7 +18,6 @@
 #include <meshes/mesh.hpp>
 #include <grids/SpheroidGrid/string_cast.hpp>  
 #include <view/ColorscaleSurfacesShaderProgram.hpp>
-#include <view/TriangleTestShaderProgram.hpp>
 
 int main() {
   // initialize GLFW
@@ -79,9 +78,15 @@ int main() {
   many::floats flattened_face_vertex_displacements(icosphere_grid.flattened_face_vertex_ids.size());
   many::get(vertex_color_values,  icosphere_grid.flattened_face_vertex_ids, flattened_face_vertex_color_values);
   many::get(vertex_displacements, icosphere_grid.flattened_face_vertex_ids, flattened_face_vertex_displacements);
-  view::TriangleTestShaderProgram program;  
+  view::ColorscaleSurfacesShaderProgram program;  
   view::ColorscaleSurfacesViewState<float> colorscale_state;
   view::ViewState view_state;
+  view_state.projection_matrix = glm::perspective(
+    3.14159f*45.0f/180.0f, 
+    640.0f/480.0f, 
+    1e-3f, 1e16f
+  );
+  view_state.projection_type = view::ProjectionType::heads_up_display;
 
   many::floats points = {
    0.0f,  0.5f,  0.0f,
@@ -90,15 +95,24 @@ int main() {
   };
 
   many::floats colors = {
-   1.0f,  0.0f,  0.0f,
-   0.0f,  1.0f,  0.0f,
-   0.0f,  0.0f,  1.0f
+   1.0f,  
+   0.0f,  
+   0.0f
   };
 
   while(!glfwWindowShouldClose(window)) {
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      program.draw(points.vector(), colors.vector());
+      program.draw(
+        // icosphere_grid.flattened_face_vertex_coordinates.vector(), 
+        // flattened_face_vertex_color_values.vector(), 
+        // flattened_face_vertex_displacements.vector(),
+        points.vector(),
+        colors.vector(),
+        colors.vector(),
+        colorscale_state,
+        view_state
+      );
       // update other events like input handling
       glfwPollEvents();
       // put stuff we've been drawing onto the display

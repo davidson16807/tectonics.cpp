@@ -8,44 +8,14 @@
 
 // glm libraries
 #include <glm/vec4.hpp>   // *vec4
-#include <glm/mat4x4.hpp> // *mat4
 #include <glm/gtc/type_ptr.hpp>// *vec4
 
 // in house libraries
-#include <many/types.hpp> // floats, etc.
+#include <many/types.hpp>     // floats
+#include <view/ViewState.hpp> // ViewState
 
 namespace view 
 {
-
-	enum RenderPassType
-	{
-		solids,
-		volumetrics,
-		lens_effects,
-	};
-	enum ProjectionType
-	{
-		heads_up_display,
-		perspective,
-		equirectangular,
-		equirectangular_texture
-	};
-	struct ViewState
-	{
-		glm::mat4 view_matrix;
-		glm::mat4 model_matrix;
-		glm::mat4 projection_matrix;
-		ProjectionType projection_type;
-		RenderPassType render_pass;
-
-		ViewState():
-			view_matrix(),
-			model_matrix(),
-			projection_matrix(),
-			projection_type(ProjectionType::perspective),
-			render_pass(RenderPassType::solids)
-		{}
-	};
 
 	enum ColorscaleType
 	{
@@ -73,51 +43,8 @@ namespace view
 		{}
 	};
 
-    // TODO: move this to a dedicated namespace for projections
-	std::string get_default_clipspace_position_glsl = R"(
-	    vec4 get_default_clipspace_position (
-	        in  vec4  local_position,
-	        in  mat4  model_matrix,
-	        in  mat4  view_matrix,
-	        in  mat4  projection_matrix,
-	        in  int   projection_type,
-	        in  float map_projection_offset
-	    ) {
-	        const float PI = 3.14159265358979;
-	        if (projection_type == 0)
-	        {
-	            return local_position;
-	        } 
-	        else if (projection_type == 1)
-	        {
-	            return projection_matrix * view_matrix * model_matrix * local_position;
-	        }
-	        else if (projection_type >= 2)
-	        {
-	            vec4 model_position = model_matrix * local_position;
-	            vec4 view_position = view_matrix[3];
-	            float focus = atan(-view_position.z, view_position.x) + PI + map_projection_offset;
-	            float lon_focused = mod(atan(-model_position.z, model_position.x) + PI - focus, 2.*PI) - PI;
-	            float lat_focused = asin(model_position.y / length(model_position)); //+ (map_projection_offset*PI);
-	            bool is_on_edge = lon_focused >  PI*0.9 || lon_focused < -PI*0.9;
-	            vec4 projected_position = vec4(
-	                lon_focused, lat_focused, is_on_edge? 0.0 : length(model_position), 1
-	            );
-	            if (projection_type == 2) 
-	            {
-	                mat4 scale_matrix = mat4(1);
-	                scale_matrix[3] = view_matrix[3];
-	                return projection_matrix * scale_matrix * projected_position;
-	            }
-	            else if(projection_type == 3)
-	            {
-	                return projected_position;
-	            }
-	        }
-	    }
-    )";
 	/*
-	A "ColorscaleSurfacesProgram" seals off access to resources relating to an 
+	A "ColorscaleSurfacesShaderProgram" seals off access to resources relating to an 
 	OpenGL shader program within an OpenGL Context, 
 	allowing view state to be managed statelessly elsewhere. 
 
@@ -157,23 +84,24 @@ namespace view
 		GLuint displacementBufferId;
 
 		// attributes
-	    int positionLocation;
-	    int colorValueLocation;
-	    int displacementLocation;
+	    GLuint positionLocation;
+	    GLuint colorValueLocation;
+	    GLuint displacementLocation;
 
 		// uniforms
-	    int viewMatrixLocation;
-		int modelMatrixLocation;
-		int projectionMatrixLocation;
-		int projectionTypeLocation;
-		int colorscaleTypeLocation;
-		int minColorLocation;
-		int maxColorLocation;
-		int minValueLocation;
-		int maxValueLocation;
-		int sealevelLocation;
+	    GLint viewMatrixLocation;
+		GLint modelMatrixLocation;
+		GLint projectionMatrixLocation;
+		GLint projectionTypeLocation;
+		GLint colorscaleTypeLocation;
+		GLint minColorLocation;
+		GLint maxColorLocation;
+		GLint minValueLocation;
+		GLint maxValueLocation;
+		GLint sealevelLocation;
 
 		bool isDisposed;
+
 	public:
 		~ColorscaleSurfacesShaderProgram()
 		{
@@ -264,10 +192,12 @@ namespace view
 			            fragment_color = color_with_ocean;
 			        }
 					)"
-			)
+			),
+			isDisposed(false)
 		{
     		int success;
 		    char infoLog[512];
+
 			/*
 			NOTE: OpenGL copies shader source code strings 
 			when glShaderSource is called, so an application may free
@@ -333,39 +263,20 @@ namespace view
 		    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
 		    glBindVertexArray(attributeId);
 
-
 			// create a new vertex array buffer, VBO
 			glGenBuffers(1, &positionBufferId);
-			// set current buffer in OpenGL's state machine to positionBufferId (if not already)
-			glBindBuffer(GL_ARRAY_BUFFER, positionBufferId);
-			// attr #, 3 dimensions, floats
-			glVertexAttribPointer(positionLocation, 3, GL_FLOAT, normalize, stride, offset);
-			glBindAttribLocation(shaderProgramId, positionLocation, "vertex_position");
-
+			positionLocation = glGetAttribLocation(shaderProgramId, "vertex_position");
+		    glEnableVertexAttribArray(positionLocation);
 
 			// create a new vertex array buffer, VBO
 			glGenBuffers(1, &colorValueBufferId);
-			// set current buffer in OpenGL's state machine to colorValueBufferId (if not already)
-			glBindBuffer(GL_ARRAY_BUFFER, colorValueBufferId);
-			// attr #, 3 dimensions, floats
-			glVertexAttribPointer(colorValueLocation, 3, GL_FLOAT, normalize, stride, offset);
-			glBindAttribLocation(shaderProgramId, colorValueLocation, "vertex_color_value");
-
+			colorValueLocation = glGetAttribLocation(shaderProgramId, "vertex_color_value");
+		    glEnableVertexAttribArray(colorValueLocation);
 
 			// create a new vertex array buffer, VBO
 			glGenBuffers(1, &displacementBufferId);
-			// set current buffer in OpenGL's state machine to displacementBufferId (if not already)
-			glBindBuffer(GL_ARRAY_BUFFER, displacementBufferId);
-			// define layout of the first (current?) buffer
-			// attr #, 3 dimensions, floats
-			glVertexAttribPointer(displacementBufferId, 3, GL_FLOAT, normalize, stride, offset);
-			glBindAttribLocation(shaderProgramId, displacementBufferId, "vertex_displacement");
-
-
-		    glEnableVertexAttribArray(positionLocation);
-		    glEnableVertexAttribArray(colorValueLocation);
-		    glEnableVertexAttribArray(displacementBufferId);
-
+			displacementLocation = glGetAttribLocation(shaderProgramId, "vertex_displacement");
+		    glEnableVertexAttribArray(displacementLocation);
 		}
 
 		void dispose()
@@ -397,8 +308,8 @@ namespace view
 	    */
 		template <typename T>
 		bool canDepict(
-			ColorscaleSurfacesViewState<T>& colorscale_state, 
-			ViewState& view_state
+			const ColorscaleSurfacesViewState<T>& colorscale_state, 
+			const ViewState& view_state
 		){
 			return !isDisposed;
 		}
@@ -411,13 +322,13 @@ namespace view
 		*/
 		template <typename T>
 		void draw(
-			std::vector<float>& flattened_face_vertex_coordinates, 
-			std::vector<T>& flattened_face_vertex_color_values, 
-			std::vector<float>& flattened_face_vertex_displacements, 
-			ColorscaleSurfacesViewState<T>& colorscale_state, 
-			ViewState& view_state
+			const std::vector<float>& flattened_face_vertex_coordinates, 
+			const std::vector<T>& flattened_face_vertex_color_values, 
+			const std::vector<float>& flattened_face_vertex_displacements, 
+			const ColorscaleSurfacesViewState<T>& colorscale_state, 
+			const ViewState& view_state
 		){
-			if (canDepict(colorscale_state, view_state))
+			if (!canDepict(colorscale_state, view_state))
 			{
 				return;
 			}
@@ -426,30 +337,27 @@ namespace view
 				return; 
 			}
 
+			assert(flattened_face_vertex_coordinates.size()/3 == flattened_face_vertex_color_values.size());
 			assert(flattened_face_vertex_color_values.size() == flattened_face_vertex_displacements.size());
-			assert(flattened_face_vertex_color_values.size() == flattened_face_vertex_coordinates.size() * 3);
 
 			glUseProgram(shaderProgramId);
 			glBindVertexArray(attributeId);
 
-
 			//ATTRIBUTES
-			// set current buffer in OpenGL's state machine to positionBufferId (if not already)
 			glBindBuffer(GL_ARRAY_BUFFER, positionBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*flattened_face_vertex_coordinates.size(), &flattened_face_vertex_coordinates.front(), GL_DYNAMIC_DRAW);
 		    glEnableVertexAttribArray(positionLocation);
-            // attr #, 3 dimensions, floats
-            glVertexAttribPointer(positionLocation, 3, GL_FLOAT, normalize, 0, NULL);
+            glVertexAttribPointer(positionLocation, 3, GL_FLOAT, normalize, stride, offset);
 
-			// set current buffer in OpenGL's state machine to colorValueBufferId (if not already)
 			glBindBuffer(GL_ARRAY_BUFFER, colorValueBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*flattened_face_vertex_color_values.size(), &flattened_face_vertex_color_values.front(), GL_DYNAMIC_DRAW);
 		    glEnableVertexAttribArray(colorValueLocation);
-            glVertexAttribPointer(colorValueLocation, 1, GL_FLOAT, normalize, 0, NULL);
+            glVertexAttribPointer(colorValueLocation, 1, GL_FLOAT, normalize, stride, offset);
 
-			// set current buffer in OpenGL's state machine to displacementBufferId (if not already)
 			glBindBuffer(GL_ARRAY_BUFFER, displacementBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*flattened_face_vertex_displacements.size(), &flattened_face_vertex_displacements.front(), GL_DYNAMIC_DRAW);
 		    glEnableVertexAttribArray(displacementLocation);
-            glVertexAttribPointer(displacementLocation, 1, GL_FLOAT, normalize, 0, NULL);
-
+            glVertexAttribPointer(displacementLocation, 1, GL_FLOAT, normalize, stride, offset);
 
     		// UNIFORMS
 	        glUniformMatrix4fv(viewMatrixLocation,       1, GL_FALSE, glm::value_ptr(view_state.view_matrix));
@@ -464,14 +372,7 @@ namespace view
 	        glUniform1f (sealevelLocation, colorscale_state.sealevel);
 	        glUniform1i (colorscaleTypeLocation, colorscale_state.colorscale_type);
 
-			glBindBuffer(GL_ARRAY_BUFFER, positionBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(flattened_face_vertex_coordinates), &flattened_face_vertex_coordinates.front(), GL_DYNAMIC_DRAW);
-	        glBindBuffer(GL_ARRAY_BUFFER, colorValueBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(flattened_face_vertex_color_values), &flattened_face_vertex_color_values.front(), GL_DYNAMIC_DRAW);
-	        glBindBuffer(GL_ARRAY_BUFFER, displacementBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(flattened_face_vertex_displacements), &flattened_face_vertex_displacements.front(), GL_DYNAMIC_DRAW);
-			
-			glDrawArrays(GL_TRIANGLES, /*array offset*/ 0, /*triangle count*/ flattened_face_vertex_color_values.size());
+			glDrawArrays(GL_TRIANGLES, /*array offset*/ 0, /*vertex count*/ flattened_face_vertex_color_values.size());
 		}
 	};
 }

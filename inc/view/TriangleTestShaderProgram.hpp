@@ -10,10 +10,6 @@
 #include <glm/vec4.hpp>   // *vec4
 #include <glm/gtc/type_ptr.hpp>// *vec4
 
-// in house libraries
-#include <many/types.hpp>     // floats
-#include <view/ViewState.hpp> // ViewState
-
 namespace view 
 {
 
@@ -148,19 +144,13 @@ namespace view
 
 			// create a new vertex array buffer, VBO
 			glGenBuffers(1, &positionBufferId);
-			// set current buffer in OpenGL's state machine to positionBufferId (if not already)
-			glBindBuffer(GL_ARRAY_BUFFER, positionBufferId);
 			positionLocation = glGetAttribLocation(shaderProgramId, "point");
 		    glEnableVertexAttribArray(positionLocation);
-			glBindAttribLocation(shaderProgramId, positionLocation, "point");
 
 			// create a new vertex array buffer, VBO
 			glGenBuffers(1, &colorValueBufferId);
-			// set current buffer in OpenGL's state machine to colorValueBufferId (if not already)
-			glBindBuffer(GL_ARRAY_BUFFER, colorValueBufferId);
 			colorValueLocation = glGetAttribLocation(shaderProgramId, "color");
 		    glEnableVertexAttribArray(colorValueLocation);
-			glBindAttribLocation(shaderProgramId, colorValueLocation, "color");
 		}
 
 		void dispose()
@@ -210,16 +200,12 @@ namespace view
 			glBindVertexArray(attributeId);
 
 			//ATTRIBUTES
-			// set current buffer in OpenGL's state machine to positionBufferId (if not already)
 			glBindBuffer(GL_ARRAY_BUFFER, positionBufferId);
 	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*points.size(), &points.front(), GL_DYNAMIC_DRAW);
-		    glEnableVertexAttribArray(positionLocation);
             glVertexAttribPointer(positionLocation, 3, GL_FLOAT, normalize, stride, offset);
 
-			// set current buffer in OpenGL's state machine to colorValueBufferId (if not already)
 			glBindBuffer(GL_ARRAY_BUFFER, colorValueBufferId);
 	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*colors.size(), &colors.front(), GL_DYNAMIC_DRAW);
-		    glEnableVertexAttribArray(colorValueLocation);
             glVertexAttribPointer(colorValueLocation, 3, GL_FLOAT, normalize, stride, offset);
 
 			glDrawArrays(GL_TRIANGLES, /*array offset*/ 0, /*vertex count*/ points.size()/3);
