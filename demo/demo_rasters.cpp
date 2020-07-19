@@ -15,7 +15,7 @@
 // in house libraries
 #include <many/types.hpp>  
 #include <many/glm/random.hpp>  
-#include <grids/mesh.hpp>
+#include <meshes/mesh.hpp>
 #include <grids/SpheroidGrid/string_cast.hpp>  
 #include <view/ColorscaleSurfacesShaderProgram.hpp>
 

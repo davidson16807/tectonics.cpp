@@ -17,7 +17,7 @@
 #include <many/glm/random.hpp>  
 #include <many/glm/convenience.hpp> //  operators, etc.
 
-#include <grids/mesh.hpp>
+#include <meshes/mesh.hpp>
 #include <grids/Grid/morphologic.hpp>
 #include <grids/Grid/vector_calculus.hpp>
 #include <grids/SpheroidGrid/string_cast.hpp>
