@@ -18,7 +18,7 @@ namespace view
 {
 
 	/*
-	A "ColorscaleSurfacesProgram" seals off access to resources relating to an 
+	A "TriangleTestShaderProgram" seals off access to resources relating to an 
 	OpenGL shader program within an OpenGL Context, 
 	allowing view state to be managed statelessly elsewhere. 
 
@@ -55,12 +55,10 @@ namespace view
 		GLuint attributeId;
 		GLuint positionBufferId;
 		GLuint colorValueBufferId;
-		GLuint displacementBufferId;
 
 		// attributes
 	    GLuint positionLocation;
 	    GLuint colorValueLocation;
-	    GLuint displacementLocation;
 
 		bool isDisposed;
 	public:
@@ -71,118 +69,38 @@ namespace view
 			vertexShaderGlsl(
 				std::regex_replace(
 					R"(#version 330
-				        uniform   mat4  model_matrix;
-				        uniform   mat4  view_matrix;
-				        uniform   mat4  projection_matrix;
-				        uniform   int   projection_type;
-				        uniform   float map_projection_offset;
-				        in        vec4  vertex_position;
-				        in        float vertex_color_value;
-				        in        float vertex_displacement;
-				        out       float fragment_color_value;
-				        out       float fragment_displacement;
-				        {}
-				        void main(){
-				            fragment_color_value = vertex_color_value;
-				            fragment_displacement = vertex_displacement;
-				            gl_Position = get_default_clipspace_position(
-				                vertex_position, model_matrix, view_matrix, 
-				                projection_matrix, projection_type, map_projection_offset
-				            );
-				        };
-					)",
+						in vec3 point;
+						in vec3 color;
+						out vec3 v_color;
+						void main() {
+						  v_color = color;
+						  gl_Position = vec4(point, 1.0);
+						})",
 					std::regex("\\{\\}"), 
 					get_default_clipspace_position_glsl
 				)
 			),
 			fragmentShaderGlsl(
 				  R"(#version 330
-			        precision mediump float;
-			        uniform int   colorscale_type;
-			        uniform vec3  min_color;
-			        uniform vec3  max_color;
-			        uniform float min_value;
-			        uniform float max_value;
-			        uniform float sealevel;
-			        in      float fragment_color_value;
-			        in      float fragment_displacement;
-			        out     vec4  fragment_color;
-
-			        /*
-			        converts float from 0-1 to a heat map visualization
-			        credit goes to Gaëtan Renaudeau: http://greweb.me/glsl.js/examples/heatmap/
-			        */
-			        vec4 get_rgb_signal_of_fraction_for_heatmap (float v) {
-			            float value = 1.0-v;
-			            return vec4((0.5+0.5*smoothstep(0.0, 0.1, value))*vec3(
-			                smoothstep(0.5, 0.3, value),
-			                value < 0.3 ? smoothstep(0.0, 0.3, value) : smoothstep(1.0, 0.6, value),
-			                smoothstep(0.4, 0.6, value)
-			            ), 1);
-			        }
-
-			        //converts a float ranging from [-1,1] to a topographic map visualization
-			        vec4 get_rgb_signal_of_fraction_for_topomap(float value) {
-			            //deep ocean
-			            vec3 color = vec3(0,0,0.8);
-			            //shallow ocean
-			            color = mix(color, vec3(0.5,0.5,1), smoothstep(-1., -0.01, value));
-			            //lowland
-			            color = mix(color, vec3(0,0.55,0), smoothstep(-0.01, 0.01, value));
-			            //highland
-			            color = mix(color, vec3(0.95,0.95,0), smoothstep(0., 0.45, value));
-			            //mountain
-			            color = mix(color, vec3(0.5,0.5,0), smoothstep(0.2, 0.7, value));
-			            //mountain
-			            color = mix(color, vec3(0.5,0.5,0.5), smoothstep(0.4, 0.8, value));
-			            //snow cap
-			            color = mix(color, vec3(0.95), smoothstep(0.75, 1., value));
-			            return vec4(color, 1.);
-			        }
-
-			        void main() {
-			            vec4 color_without_ocean = 
-			              colorscale_type == 0? get_rgb_signal_of_fraction_for_heatmap(fragment_color_value) 
-			            : colorscale_type == 1? get_rgb_signal_of_fraction_for_topomap(fragment_color_value)
-			            :                       vec4( mix( min_color, max_color, fragment_color_value ), 1.0);
-			            vec4 color_with_ocean = mix(
-			                vec4(0.), 
-			                color_without_ocean, 
-			                fragment_displacement < sealevel? 0.5 : 1.0
-			            );
-			            fragment_color = vec4(1);// color_with_ocean;
-			        }
-					)"
+					in vec3 v_color;
+					out vec4 frag_color;
+					void main() {
+					  frag_color = vec4(v_color, 1.);
+					})"
 			),
 			isDisposed(false)
 		{
     		int success;
 		    char infoLog[512];
-const char* vertex_shader =
-"#version 330\n"
-"in vec3 point;"
-"in vec3 color;"
-"out vec3 v_color;"
-"void main() {"
-"  v_color = color;"
-"  gl_Position = vec4(point, 1.0);"
-"}";
 
-  const char* fragment_shader =
-"#version 330\n"
-"in vec3 v_color;"
-"out vec4 frag_color;"
-"void main() {"
-"  frag_color = vec4(v_color, 1.);"
-"}";
 			/*
 			NOTE: OpenGL copies shader source code strings 
 			when glShaderSource is called, so an application may free
 			its copy of the source code strings immediately after the function returns
 			*/
 			GLuint vertexShaderId = glCreateShader(GL_VERTEX_SHADER);
-			// const char* vertex_shader_glsl = vertexShaderGlsl.c_str();
-			glShaderSource(vertexShaderId, 1, &vertex_shader, NULL);
+			const char *vertex_shader_c_str = vertexShaderGlsl.c_str();
+			glShaderSource(vertexShaderId, 1, &vertex_shader_c_str, NULL);
 			glCompileShader(vertexShaderId);
 		    // check for shader compile errors
 		    glGetShaderiv(vertexShaderId, GL_COMPILE_STATUS, &success);
@@ -193,8 +111,8 @@ const char* vertex_shader =
 		    }
 
 			GLuint fragmentShaderId = glCreateShader(GL_FRAGMENT_SHADER);
-			// const char* fragment_shader_glsl = fragmentShaderGlsl.c_str();
-			glShaderSource(fragmentShaderId, 1, &fragment_shader, NULL);
+			const char *fragment_shader_c_str = fragmentShaderGlsl.c_str();
+			glShaderSource(fragmentShaderId, 1, &fragment_shader_c_str, NULL);
 			glCompileShader(fragmentShaderId);
 		    // check for shader compile errors
 		    glGetShaderiv(vertexShaderId, GL_COMPILE_STATUS, &success);
@@ -228,28 +146,21 @@ const char* vertex_shader =
 		    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
 		    glBindVertexArray(attributeId);
 
-
 			// create a new vertex array buffer, VBO
 			glGenBuffers(1, &positionBufferId);
 			// set current buffer in OpenGL's state machine to positionBufferId (if not already)
 			glBindBuffer(GL_ARRAY_BUFFER, positionBufferId);
 			positionLocation = glGetAttribLocation(shaderProgramId, "point");
-			glVertexAttribPointer(positionLocation, 3, GL_FLOAT, normalize, stride, offset);
 		    glEnableVertexAttribArray(positionLocation);
 			glBindAttribLocation(shaderProgramId, positionLocation, "point");
-
 
 			// create a new vertex array buffer, VBO
 			glGenBuffers(1, &colorValueBufferId);
 			// set current buffer in OpenGL's state machine to colorValueBufferId (if not already)
 			glBindBuffer(GL_ARRAY_BUFFER, colorValueBufferId);
 			colorValueLocation = glGetAttribLocation(shaderProgramId, "color");
-			glVertexAttribPointer(colorValueLocation, 3, GL_FLOAT, normalize, stride, offset);
 		    glEnableVertexAttribArray(colorValueLocation);
 			glBindAttribLocation(shaderProgramId, colorValueLocation, "color");
-
-
-
 		}
 
 		void dispose()
@@ -259,7 +170,6 @@ const char* vertex_shader =
 		        isDisposed = true;
 		        glDeleteBuffers(1, &colorValueBufferId);
 		        glDeleteBuffers(1, &positionBufferId);
-		        glDeleteBuffers(1, &displacementBufferId);
 		        glDeleteProgram(shaderProgramId);
         	}
 		}
@@ -299,24 +209,20 @@ const char* vertex_shader =
 			glUseProgram(shaderProgramId);
 			glBindVertexArray(attributeId);
 
-
 			//ATTRIBUTES
 			// set current buffer in OpenGL's state machine to positionBufferId (if not already)
 			glBindBuffer(GL_ARRAY_BUFFER, positionBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*points.size(), &points.front(), GL_DYNAMIC_DRAW);
 		    glEnableVertexAttribArray(positionLocation);
             glVertexAttribPointer(positionLocation, 3, GL_FLOAT, normalize, stride, offset);
 
 			// set current buffer in OpenGL's state machine to colorValueBufferId (if not already)
 			glBindBuffer(GL_ARRAY_BUFFER, colorValueBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*colors.size(), &colors.front(), GL_DYNAMIC_DRAW);
 		    glEnableVertexAttribArray(colorValueLocation);
             glVertexAttribPointer(colorValueLocation, 3, GL_FLOAT, normalize, stride, offset);
 
-			glBindBuffer(GL_ARRAY_BUFFER, positionBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*points.size(), &points.front(), GL_DYNAMIC_DRAW);
-	        glBindBuffer(GL_ARRAY_BUFFER, colorValueBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*colors.size(), &colors.front(), GL_DYNAMIC_DRAW);
-			
-			glDrawArrays(GL_TRIANGLES, /*array offset*/ 0, /*triangle count*/ 3);
+			glDrawArrays(GL_TRIANGLES, /*array offset*/ 0, /*vertex count*/ points.size()/3);
 		}
 	};
 }
