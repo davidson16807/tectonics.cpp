@@ -197,15 +197,11 @@ namespace rasters
 
 			copy(vertex_positions, vertices);
 			copy(face_vertex_ids,  faces);
-			for (unsigned int i=0, i3=0; i<faces.size(); i++, i3+=3) 
-			{
-				flattened_face_vertex_ids[i3+0] = faces[i].x;
-				flattened_face_vertex_ids[i3+1] = faces[i].y;
-				flattened_face_vertex_ids[i3+2] = faces[i].z;
-			};
+			
 			vec3s flattened_face_vertex_positions(3*face_count);
-			get     (vertex_positions, flattened_face_vertex_ids, flattened_face_vertex_positions);
-			flatten (flattened_face_vertex_positions,             flattened_face_vertex_coordinates);
+			flatten (face_vertex_ids,                             flattened_face_vertex_ids         );
+			get     (vertex_positions, flattened_face_vertex_ids, flattened_face_vertex_positions   );
+			flatten (flattened_face_vertex_positions,             flattened_face_vertex_coordinates );
 
 			get_x 	(faces, 								face_vertex_id_a);
 			get_y 	(faces, 								face_vertex_id_b);

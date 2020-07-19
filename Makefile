@@ -41,3 +41,5 @@ profile-rasters: profile/profile_rasters.cpp
 # demo: get it working in 3d
 demo-gl: demo/demo_gl.cpp
 	$(CPP) -std=c++17 -o bin/demo.out demo/demo_gl.cpp $(DEVFLAGS) -I lib/ -I inc/ -lglfw -lGL -lGLEW && chmod a+x bin/demo.out && ./bin/demo.out
+demo-rasters: demo/demo_rasters.cpp
+	$(CPP) -std=c++17 -o bin/demo.out demo/demo_rasters.cpp $(DEVFLAGS) -I lib/ -I inc/ -lglfw -lGL -lGLEW && chmod a+x bin/demo.out && ./bin/demo.out

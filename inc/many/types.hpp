@@ -1,5 +1,10 @@
 #pragma once
 
+// C libraries
+#include <cmath>     /* assert */
+#include <assert.h>     /* assert */
+
+// std libraries
 #include <iostream>
 #include <initializer_list>	// initializer_list
 #include <iterator>			// std::distance

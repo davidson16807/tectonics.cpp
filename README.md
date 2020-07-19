@@ -7,6 +7,16 @@ This library is not just designed for use by tectonics.js. Numerous space simula
 
 Permission to use the code is provided under the Creative Commons Attribution 4.0 license. You may modify and redistribute the code as you see fit. You need only attribute the work to me as the project developer, which I appreciate since it helps me develop professionally. Drop me a line if you do so since it's encouraging to hear my work is getting used! 
 
+# Getting Started
+Several make file commands exist for building and testing the library. See `Makefile` for details. 
+
+Running the graphics demo requires two other libraries to be installed on your machine: [GLEW](http://glew.sourceforge.net/) and [GLFW](https://www.glfw.org/). On Ubuntu you can install both with the following commands:
+
+`
+sudo apt-get install libglew-dev
+sudo apt-get install libglfw3-dev
+`
+
 # Subcomponents
 tectonics.cpp can be broken down into several subcomponents. Users can pick and choose which subcomponents they'd like to include in their project at their discretion. Some optional dependencies exist between subcomponents, which are indicated clearly by the #include path of the dependent code (e.g. `many/glm` stores behavior that requires `glm`). Using optional dependencies allow the use of functionality that wouldn't otherwise be possible. 
 

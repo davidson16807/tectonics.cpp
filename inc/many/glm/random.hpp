@@ -3,12 +3,16 @@
 #include <cmath>        // M_PI
 #include <random>       // uniform distribution
 
-#include <glm/vec3.hpp> // *vec3
-#include <glm/common.hpp> // floor
-#include <glm/geometric.hpp> // distance
+#include <glm/vec3.hpp>          // *vec3
+#include <glm/common.hpp>        // floor
+#include <glm/geometric.hpp>     // distance
 #include <glm/trigonometric.hpp> // sin
 
-#include <many/types.hpp>     	 // floats, etc.
+#include <many/types.hpp>     	 // floats
+#include <many/common.hpp>       // smoothstep
+#include <many/arithmetic.hpp>   // smoothstep
+#include <many/glm/types.hpp>    // *vec3s
+#include <many/glm/geometric.hpp>// dot
 
 namespace many
 {

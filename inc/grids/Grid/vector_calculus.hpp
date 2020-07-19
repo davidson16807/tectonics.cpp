@@ -1,4 +1,5 @@
 #pragma once
+#include <assert.h>     /* assert */
 
 #include "Grid.hpp"
 

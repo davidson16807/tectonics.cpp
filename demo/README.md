@@ -1,5 +1,15 @@
+#Introduction
 This folder contains test code for functionality that can only be demonstrated using 3d graphics. You can think of it as the "demoscene" folder. We would eventually like to present this functionality in a manner similar to tectonics.js using WebAssembly and WebGL. However, since the turnaround time needed to achieve that is untenable, we instead build small 3d demoscenes for each unit of work. 
 
+#Getting Started
+Only two external libraries are needed to run demos: GLEW and GLFW. On Ubuntu, you should only need to run these two commands:
+
+`
+sudo apt-get install libglew-dev
+sudo apt-get install libglfw3-dev
+`
+
+#Design
 We must pick a graphics library to render these demos. In order to do so, we make the following observations:
 
 1.) Since the library is meant to be cross platform, we should limit ourselves to libraries that support cross platform development. 

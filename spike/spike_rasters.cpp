@@ -1,10 +1,11 @@
 
+// C libraries
 #include <time.h>       /* time_t, struct tm, difftime, time, mktime */
 #include <signal.h>     // signal
 #include <execinfo.h>   // backtrace
 #include <unistd.h>     // STDERR_FILENO
-#include <random>       // rngs
 
+// glm libraries
 #define GLM_FORCE_PURE      // disable SIMD support for glm so we can work with webassembly
 #include <glm/vec3.hpp>               // *vec3
 
@@ -19,7 +20,6 @@
 #include <grids/mesh.hpp>
 #include <grids/Grid/morphologic.hpp>
 #include <grids/Grid/vector_calculus.hpp>
-#include <grids/SpheroidGrid/string_cast.hpp>  
 #include <grids/SpheroidGrid/string_cast.hpp>  
 
 // #include "academics/tectonics.hpp"
