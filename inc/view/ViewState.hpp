@@ -7,6 +7,7 @@ namespace view
 {
 	enum RenderPassType
 	{
+		background,
 		solids,
 		volumetrics,
 		lens_effects,
@@ -27,9 +28,9 @@ namespace view
 		RenderPassType render_pass;
 
 		ViewState():
-			view_matrix(),
-			model_matrix(),
-			projection_matrix(),
+			view_matrix(1),
+			model_matrix(1),
+			projection_matrix(1),
 			projection_type(ProjectionType::perspective),
 			render_pass(RenderPassType::solids)
 		{}

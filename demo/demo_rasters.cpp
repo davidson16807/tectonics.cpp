@@ -17,6 +17,7 @@
 #include <many/glm/random.hpp>  
 #include <meshes/mesh.hpp>
 #include <grids/SpheroidGrid/string_cast.hpp>  
+#include <update/OrbitalControlState.hpp>
 #include <view/ColorscaleSurfacesShaderProgram.hpp>
 
 int main() {
@@ -60,25 +61,39 @@ int main() {
   glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
   /* OTHER STUFF GOES HERE NEXT */
-  std::mt19937 generator(2);
+  // generate mesh
   meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
   icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
   icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
   icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
   icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
   icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+
+  // initialize grid from mesh
   rasters::SpheroidGrid icosphere_grid(icosphere_mesh.vertices, icosphere_mesh.faces);
+
+  // generate random raster over grid
+  std::mt19937 generator(2);
   many::floats vertex_color_values = many::floats(icosphere_mesh.vertices.size());
   many::floats vertex_displacements = many::floats(icosphere_mesh.vertices.size());
   many::get_elias_noise(icosphere_grid.vertex_positions, generator, vertex_color_values, 10, 0.0001f);
   many::get_elias_noise(icosphere_grid.vertex_positions, generator, vertex_displacements, 10, 0.0001f);
   std::string str_raster = to_string(icosphere_grid, vertex_color_values);
   std::cout << str_raster << std::endl;
+
+  // flatten raster for WebGL
   many::floats flattened_face_vertex_color_values(icosphere_grid.flattened_face_vertex_ids.size());
   many::floats flattened_face_vertex_displacements(icosphere_grid.flattened_face_vertex_ids.size());
   many::get(vertex_color_values,  icosphere_grid.flattened_face_vertex_ids, flattened_face_vertex_color_values);
   many::get(vertex_displacements, icosphere_grid.flattened_face_vertex_ids, flattened_face_vertex_displacements);
-  view::ColorscaleSurfacesShaderProgram program;  
+
+  // initialize control scheme
+  update::OrbitalControlState control_state;
+  control_state.min_zoom_distance = 1.0f;
+  control_state.log2_height = 2.0f;
+  control_state.angular_position = glm::vec2(0, 3.14159f * 30.0f/180.0f);
+  
+  // initialize control scheme
   view::ColorscaleSurfacesViewState<float> colorscale_state;
   view::ViewState view_state;
   view_state.projection_matrix = glm::perspective(
@@ -86,8 +101,15 @@ int main() {
     640.0f/480.0f, 
     1e-3f, 1e16f
   );
-  view_state.projection_type = view::ProjectionType::heads_up_display;
+  view_state.view_matrix = control_state.get_view_matrix();
+  // view_state.projection_type = view::ProjectionType::heads_up_display;
+  // view_state.projection_matrix = glm::mat4(1);
+  // view_state.view_matrix = glm::mat4(1);
 
+  // initialize shader program
+  view::ColorscaleSurfacesShaderProgram colorscale_program;  
+
+  // initialize data for shader program
   many::floats points = {
    0.0f,  0.5f,  0.0f,
    0.5f, -0.5f,  0.0f,
@@ -103,7 +125,7 @@ int main() {
   while(!glfwWindowShouldClose(window)) {
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      program.draw(
+      colorscale_program.draw(
         // icosphere_grid.flattened_face_vertex_coordinates.vector(), 
         // flattened_face_vertex_color_values.vector(), 
         // flattened_face_vertex_displacements.vector(),

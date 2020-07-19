@@ -57,7 +57,7 @@ namespace view
 	* the output that draw() sends to the currently bound framebuffer is 
 	  a pure function of its input
 
-	Its state transitions can be described with the following diagram:
+	Its internal state transitions can be described with the following diagram:
 
 	initialized
         ↓        dispose()
