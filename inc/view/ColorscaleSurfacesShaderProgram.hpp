@@ -37,7 +37,7 @@ namespace view
 			min_color(0),
 			max_color(1),
 			min_value(0),
-			max_value(270),
+			max_value(1),
 			sealevel(0),
 			colorscale_type(ColorscaleType::heatscale)
 		{}
@@ -180,10 +180,11 @@ namespace view
 			        }
 
 			        void main() {
+			        	float color_value_fraction = smoothstep(min_value, max_value, fragment_color_value);
 			            vec4 color_without_ocean = 
-			              colorscale_type == 0? get_rgb_signal_of_fraction_for_heatmap(fragment_color_value) 
-			            : colorscale_type == 1? get_rgb_signal_of_fraction_for_topomap(fragment_color_value)
-			            :                       vec4( mix( min_color, max_color, fragment_color_value ), 1.0);
+			              colorscale_type == 0? get_rgb_signal_of_fraction_for_heatmap(color_value_fraction) 
+			            : colorscale_type == 1? get_rgb_signal_of_fraction_for_topomap(color_value_fraction)
+			            :                       vec4( mix( min_color, max_color, color_value_fraction ), 1.0);
 			            vec4 color_with_ocean = mix(
 			                vec4(0.), 
 			                color_without_ocean, 

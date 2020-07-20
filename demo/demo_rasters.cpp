@@ -13,12 +13,14 @@
 #define GLM_FORCE_PURE      // disable SIMD support for glm so we can work with webassembly
 
 // in house libraries
-#include <many/types.hpp>  
-#include <many/glm/random.hpp>  
-#include <meshes/mesh.hpp>
-#include <grids/SpheroidGrid/string_cast.hpp>  
-#include <update/OrbitalControlState.hpp>
-#include <view/ColorscaleSurfacesShaderProgram.hpp>
+#include <many/types.hpp>                            // floats
+#include <many/common.hpp>                           // max
+#include <many/statistic.hpp>                        // mean
+#include <many/glm/random.hpp>                       // get_elias_noise
+#include <meshes/mesh.hpp>                           // subdivide
+#include <grids/SpheroidGrid/string_cast.hpp>        // to_string
+#include <update/OrbitalControlState.hpp>            // OrbitalControlState
+#include <view/ColorscaleSurfacesShaderProgram.hpp>  // ColorscaleSurfacesShaderProgram
 
 int main() {
   // initialize GLFW
@@ -63,21 +65,20 @@ int main() {
   /* OTHER STUFF GOES HERE NEXT */
   // generate mesh
   meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
-  icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-  icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-  icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-  icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-  icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+  for (int i = 0; i < 5; ++i)
+  {
+    icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+  }
 
   // initialize grid from mesh
   rasters::SpheroidGrid icosphere_grid(icosphere_mesh.vertices, icosphere_mesh.faces);
 
   // generate random raster over grid
   std::mt19937 generator(2);
-  many::floats vertex_color_values = many::floats(icosphere_mesh.vertices.size());
-  many::floats vertex_displacements = many::floats(icosphere_mesh.vertices.size());
-  many::get_elias_noise(icosphere_grid.vertex_positions, generator, vertex_color_values, 10, 0.0001f);
-  many::get_elias_noise(icosphere_grid.vertex_positions, generator, vertex_displacements, 10, 0.0001f);
+  many::floats vertex_color_values = many::floats(icosphere_grid.vertex_count);
+  many::floats vertex_displacements = many::floats(icosphere_grid.vertex_count);
+  many::get_elias_noise(icosphere_grid.vertex_positions, generator, vertex_color_values, 100, 0.0001f);
+  many::get_elias_noise(icosphere_grid.vertex_positions, generator, vertex_displacements, 100, 0.0001f);
   std::string str_raster = to_string(icosphere_grid, vertex_color_values);
   std::cout << str_raster << std::endl;
 
@@ -87,14 +88,13 @@ int main() {
   many::get(vertex_color_values,  icosphere_grid.flattened_face_vertex_ids, flattened_face_vertex_color_values);
   many::get(vertex_displacements, icosphere_grid.flattened_face_vertex_ids, flattened_face_vertex_displacements);
 
-  // initialize control scheme
+  // initialize control state
   update::OrbitalControlState control_state;
   control_state.min_zoom_distance = 1.0f;
   control_state.log2_height = 2.0f;
-  control_state.angular_position = glm::vec2(0, 3.14159f * 30.0f/180.0f);
+  control_state.angular_position = glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f;
   
-  // initialize control scheme
-  view::ColorscaleSurfacesViewState<float> colorscale_state;
+  // initialize view state
   view::ViewState view_state;
   view_state.projection_matrix = glm::perspective(
     3.14159f*45.0f/180.0f, 
@@ -105,6 +105,9 @@ int main() {
   // view_state.projection_type = view::ProjectionType::heads_up_display;
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);
+  view::ColorscaleSurfacesViewState<float> colorscale_state;
+  colorscale_state.max_value = many::max(flattened_face_vertex_color_values);
+  colorscale_state.sealevel = many::mean(flattened_face_vertex_displacements);
 
   // initialize shader program
   view::ColorscaleSurfacesShaderProgram colorscale_program;  
@@ -126,12 +129,12 @@ int main() {
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       colorscale_program.draw(
-        // icosphere_grid.flattened_face_vertex_coordinates.vector(), 
-        // flattened_face_vertex_color_values.vector(), 
-        // flattened_face_vertex_displacements.vector(),
-        points.vector(),
-        colors.vector(),
-        colors.vector(),
+        icosphere_grid.flattened_face_vertex_coordinates.vector(), 
+        flattened_face_vertex_color_values.vector(), 
+        flattened_face_vertex_displacements.vector(),
+        // points.vector(),
+        // colors.vector(),
+        // colors.vector(),
         colorscale_state,
         view_state
       );
@@ -139,6 +142,9 @@ int main() {
       glfwPollEvents();
       // put stuff we've been drawing onto the display
       glfwSwapBuffers(window);
+
+      control_state.angular_position.x += 1.0f * 3.1415926f/180.0f;
+      view_state.view_matrix = control_state.get_view_matrix();
   }
 
   // close GL context and any other GLFW resources
