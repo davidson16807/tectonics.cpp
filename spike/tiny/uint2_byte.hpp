@@ -1,5 +1,4 @@
 #include <cassert>         // assert
-#include <iostream>        // std::cout
 #include <iterator>        // std::ostream_iterator
 #include <array>           // std::array
 #include <algorithm>       // std::algorithm

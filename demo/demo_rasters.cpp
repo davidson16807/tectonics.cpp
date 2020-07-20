@@ -1,7 +1,6 @@
-// C libraries
-#include <stdio.h>
 
 // std libraries
+#include <iostream>
 #include <string>
 #include <random>       // rngs
 
@@ -22,10 +21,16 @@
 #include <update/OrbitalControlState.hpp>            // OrbitalControlState
 #include <view/ColorscaleSurfacesShaderProgram.hpp>  // ColorscaleSurfacesShaderProgram
 
+// static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+// {
+//     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+//         glfwSetWindowShouldClose(window, GLFW_TRUE);
+// }
+
 int main() {
   // initialize GLFW
   if (!glfwInit()) {
-    fprintf(stderr, "ERROR: could not start GLFW3\n");
+    std::cout << stderr << " ERROR: could not start GLFW3" << std::endl;
     return 1;
   }
 
@@ -37,7 +42,7 @@ int main() {
   // open a window
   GLFWwindow* window = glfwCreateWindow(640, 480, "Hello Triangle", NULL, NULL);
   if (!window) {
-    fprintf(stderr, "ERROR: could not open window with GLFW3\n");
+    std::cout << stderr << " ERROR: could not open window with GLFW3" << std::endl;
     glfwTerminate();
     return 1;
   }
@@ -48,7 +53,7 @@ int main() {
   // initialize GLEW 
   glewExperimental = GL_TRUE;
   if (glewInit() != GLEW_OK) {
-    fprintf(stderr, "Failed to initialize GLEW");
+    std::cout << stderr << " ERROR: Failed to initialize GL" << std::endl;
     return -1;
   }
 

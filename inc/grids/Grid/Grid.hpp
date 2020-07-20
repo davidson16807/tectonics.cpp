@@ -2,7 +2,6 @@
 
 #include <unordered_set>  // std::unordered_set
 #include <vector>         // std::vector
-//#include <iostream>     // std::cout
 
 #include <glm/vec2.hpp>             // *vec2
 #include <glm/vec3.hpp>             // *vec3

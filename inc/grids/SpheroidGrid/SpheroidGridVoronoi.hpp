@@ -4,7 +4,6 @@
 #include <algorithm> 	// max, min, clamp
 #include <vector>		// vectors
 #include <array>		// arrays
-#include <iostream>		// cout
 #include <limits>       // infinity
 
 #include <many/types.hpp>
