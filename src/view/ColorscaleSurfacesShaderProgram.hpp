@@ -43,7 +43,8 @@ namespace view
 	};
 
 	/*
-	A "ColorscaleSurfacesShaderProgram" seals off access to resources relating to an 
+	"ColorscaleSurfacesShaderProgram" is a proper object oriented class 
+	that seals off access to resources relating to an 
 	OpenGL shader program within an OpenGL Context, 
 	allowing view state to be managed statelessly elsewhere. 
 

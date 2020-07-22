@@ -9,6 +9,13 @@
 
 namespace update 
 {
+	enum OrbitalControlDragState
+	{
+		released,
+		zoom,
+		pan,
+		rotate
+	};
 	struct OrbitalControlState
 	{
 		// latitude/longitude of geographic coordinates indicating position over world
@@ -19,6 +26,8 @@ namespace update
 		float min_zoom_distance;
 		// log2 of height above the min_zoom_distance
 		float log2_height;
+		// the last mouse button event recorded
+		OrbitalControlDragState drag_state;
 
 		OrbitalControlState(
 			glm::vec2 angular_position = glm::vec2(0),
@@ -45,24 +54,15 @@ namespace update
 			return out;
 		}
 
-		// ENDOMORPHISMS, functions of the form: OrbitalControlState -> OrbitalControlState
-		static void copy(const OrbitalControlState& state_in, OrbitalControlState& state_out)
-		{
-			state_out.angular_position = state_in.angular_position;
-			state_out.angular_direction = state_in.angular_direction;
-			state_out.min_zoom_distance = state_in.min_zoom_distance;
-			state_out.log2_height = state_in.log2_height;
-		}
-
 		static void zoom(const OrbitalControlState& state_in, float log_outward_motion, OrbitalControlState& state_out)
 		{
-			if (&state_in != &state_out) { OrbitalControlState::copy(state_in, state_out); }
+			if (&state_in != &state_out) { state_out = state_in; }
 			state_out.log2_height += log_outward_motion;
 		}
 
 		static void pan(const OrbitalControlState& state_in, glm::vec2 motion, OrbitalControlState& state_out)
 		{
-			if (&state_in != &state_out) { OrbitalControlState::copy(state_in, state_out); }
+			if (&state_in != &state_out) { state_out = state_in; }
 			motion = 0.2f * motion * std::exp2(state_in.log2_height)/state_in.min_zoom_distance;
 			state_out.angular_position = state_in.angular_position + motion;
 			state_out.angular_position.y = std::clamp(state_out.angular_position.y, -float(M_PI)/2.0f, float(M_PI)/2.0f);

@@ -1,25 +1,11 @@
-The `many` subcomponent provides pure functions and simple data structures to easily handle large containers of primitive or simple data types, including `int`, `float`, or `glm::vec3`
-We ideally want performing operations on containers to be as easy as performing operations on the individual data types themselves. 
-The intention is to abstract away the arrays of primitives that are used to address data locality issues.
+This folder contains a library that introduces an unopinionated templated data structure, `many::tmany<T>` (analogous to `glm::tvec<L,T,Q>`), that wraps `std::vector<T>` objects to enable arithmetic operations and `glm` inspired functions to be performed on their contents as if they were primitive data types like a `float` or an `int`. It is meant to foster performant code through data oriented design. 
 
-Some of the objectives we want to accomplish:
- 1.) performant
-       since this is all done to address performance concerns, chiefly data locality issues
- 2.) easy to use
-       since we want to perform operations easily
- 3.) easy to reason with, extend, and control
-       since we intend to extend this library to represent rasters, and avoid vendor lock-in
- 4.) easy to wrap
-       since we must target webassembly as a deployment platform, and may provide wrappers to other languages in the future
- 5.) works well with glm 
-       since we already depend on glsl for shader code, and glm allows us to reuse the knowledge base surrounding glsl
+`glm` can be optionally used to enhance functionality. Functionality that leverages `glm` can be found within `inc/many/glm`. 
 
-We could reuse existing libraries to accomplish some of these objectives (`xtensor`, `std::composite`, etc.) but none of them can easily achieve objectives #3, #4, and #5.
-So we write our own solution. 
+#Frequently Asked Questions
+##Why not use existing libraries?
+Other standards and libraries exist that fulfill the same role (e.g. [std::valarray](https://en.cppreference.com/w/cpp/numeric/composite) and [xtensor](https://github.com/QuantStack/xtensor)), however there are reasons we avoid these libraries. `std::valarray` is nonconformant to basic std container behavior and has problems being bound to web assembly wrappers. `xtensor` shares similar issues, and does not use the common `glm` frame of mind that we leverage elsewhere in the code (instead opting for an API inspired by `numpy`). 
 
-Our solution works in two ways:
- * It provides a set of functions for handling containers as if they were primitives or glm vectors. 
-     To achieve #1 and #3, these functions work by passing output to reference parameters. 
- * It provides a data structure, `tmany<T>`, that makes use of operator overloads to provide convenience wrappers for
-     the aforementioned functions. I'm not completely sold on this solution and I may revert to using `std::vector<T>` in the future. 
+##Why not add operator overloads to `std::vector<T>`? 
+Operator overloads have the potential to introduce obscure and undesireable behavior. Problems are only made worse if operator overloads are defined on classes within `std`, so we go through great effort in creating our own library to do this. Even then, we forbid operator overloads from being used within the library's code, and we explicitly require the user to include the `convenience.hpp` header file in order to use them. Users can still retrieve the underlying `std::vector<T>` behind instances of `tmany<T>` by calling the `.vector()` method. 
 

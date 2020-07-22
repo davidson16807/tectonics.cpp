@@ -19,13 +19,9 @@
 #include <meshes/mesh.hpp>                           // subdivide
 #include <grids/SpheroidGrid/string_cast.hpp>        // to_string
 #include <update/OrbitalControlState.hpp>            // OrbitalControlState
+#include <update/OrbitalControlUpdater.hpp>          // OrbitalControlUpdater
 #include <view/ColorscaleSurfacesShaderProgram.hpp>  // ColorscaleSurfacesShaderProgram
 
-// static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-// {
-//     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-//         glfwSetWindowShouldClose(window, GLFW_TRUE);
-// }
 
 int main() {
   // initialize GLFW
@@ -130,6 +126,10 @@ int main() {
    0.0f
   };
 
+  // initialize MessageQueue for MVU architecture
+  messages::MessageQueue message_queue;
+  message_queue.activate(window);
+
   while(!glfwWindowShouldClose(window)) {
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -143,17 +143,21 @@ int main() {
         colorscale_state,
         view_state
       );
-      // update other events like input handling
-      glfwPollEvents();
       // put stuff we've been drawing onto the display
       glfwSwapBuffers(window);
 
-      control_state.angular_position.x += 1.0f * 3.1415926f/180.0f;
+      std::queue<messages::Message> message_poll = message_queue.poll();
+      while (!message_poll.empty())
+      {
+        update::OrbitalControlUpdater::update(control_state, message_poll.front(), control_state);
+        message_poll.pop();
+      }
+      // control_state.angular_position.x += 1.0f * 3.1415926f/180.0f;
       view_state.view_matrix = control_state.get_view_matrix();
   }
 
   // close GL context and any other GLFW resources
+  message_queue.deactivate(window);
   glfwTerminate();
   return 0;
 }
-

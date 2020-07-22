@@ -1,3 +1,3 @@
-The `components` subcomponent stores loosely coupled, unopinionated data structures that express the properties of celestial bodies (oceans, atmospheres, etc.) from simple state variables like mass pools. Components exist in complete isolation of one another. Components are written in the spirit of the "Entity Component System" design pattern.
+The `components` subcomponent stores loosely coupled, unopinionated data structures that express the properties of celestial bodies (oceans, atmospheres, etc.) from simple state variables like mass pools. Components exist in complete isolation of one another. Components are written in the spirit of the "Entity/Component/System" design pattern.
 
 This subcomponent requires `academics`. Additionally, `glm` and `rasters` can be optionally used to provide enhanced functionality relating to linear algebra and vector calculus. 
