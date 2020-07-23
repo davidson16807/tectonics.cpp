@@ -6,15 +6,15 @@
 
 #include <algorithm>
 
-#include <models/genes/coding.hpp>    // encode_*(), decode_*()
-#include <models/genes/segments/GenericSegment.hpp>// encode_*(), decode_*()
-#include <models/genes/structures/SurfaceStructure.hpp>
-#include <models/genes/structures/CorneousStructure.hpp>
-#include <models/genes/structures/TubeStructure.hpp>
-#include <models/genes/biochemistry/Pigmentation.hpp>
-#include <models/genes/biochemistry/Mineralization.hpp>
+#include <models/gene/coding.hpp>    // encode_*(), decode_*()
+#include <models/gene/segments/GenericSegment.hpp>// encode_*(), decode_*()
+#include <models/gene/structures/SurfaceStructure.hpp>
+#include <models/gene/structures/CorneousStructure.hpp>
+#include <models/gene/structures/TubeStructure.hpp>
+#include <models/gene/biochemistry/Pigmentation.hpp>
+#include <models/gene/biochemistry/Mineralization.hpp>
 
-namespace genes
+namespace gene
 {
 
     // 37 words

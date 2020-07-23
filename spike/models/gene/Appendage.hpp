@@ -6,16 +6,16 @@
 
 #include <algorithm>
 
-#include <models/genes/coding.hpp>    // encode_*(), decode_*()
-#include <models/genes/segments/AppendageSegment.hpp>
-#include <models/genes/structures/SurfaceStructure.hpp>
-#include <models/genes/structures/CorneousStructure.hpp>
-#include <models/genes/structures/PhotoreceptorStructure.hpp>
-#include <models/genes/structures/PressureSensingStructure.hpp>
-#include <models/genes/biochemistry/Pigmentation.hpp>
-#include <models/genes/biochemistry/Mineralization.hpp>
+#include <models/gene/coding.hpp>    // encode_*(), decode_*()
+#include <models/gene/segments/AppendageSegment.hpp>
+#include <models/gene/structures/SurfaceStructure.hpp>
+#include <models/gene/structures/CorneousStructure.hpp>
+#include <models/gene/structures/PhotoreceptorStructure.hpp>
+#include <models/gene/structures/PressureSensingStructure.hpp>
+#include <models/gene/biochemistry/Pigmentation.hpp>
+#include <models/gene/biochemistry/Mineralization.hpp>
 
-namespace genes
+namespace gene
 {
     // Most arthropods seem to have ~7 segments, but their common ancestor may have had up to 11 (Kukalova-Peck, 1992).
     // In the absence of a firm answer, we should probably set this number to something that helps us conserve memory and line up with cache sizes.

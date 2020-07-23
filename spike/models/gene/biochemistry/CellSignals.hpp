@@ -8,7 +8,7 @@
 
 #include <models/genes/coding.hpp>    // encode_*(), decode_*()
 
-namespace genes
+namespace gene
 {
     struct CellSignals
     {

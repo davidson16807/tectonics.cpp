@@ -6,10 +6,10 @@
 
 #include <algorithm>
 
-#include <models/genes/coding.hpp>                  // encode_*(), decode_*()
-#include <models/genes/constituents/Photopigment.hpp>    
+#include <models/gene/coding.hpp>                  // encode_*(), decode_*()
+#include <models/gene/constituents/Photopigment.hpp>    
 
-namespace genes
+namespace gene
 {
     /*
     Rainbow shrimp have 12-16 photoreceptor types, the largest number known, 

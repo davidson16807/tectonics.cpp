@@ -6,11 +6,11 @@
 
 #include <algorithm>
 
-#include <models/genes/biochemistry/Pigmentation.hpp>    // encode_*(), decode_*()
-#include <models/genes/biochemistry/Metabolism.hpp>    // encode_*(), decode_*()
-#include <models/genes/coding.hpp>    // encode_*(), decode_*()
+#include <models/gene/biochemistry/Pigmentation.hpp>    // encode_*(), decode_*()
+#include <models/gene/biochemistry/Metabolism.hpp>    // encode_*(), decode_*()
+#include <models/gene/coding.hpp>    // encode_*(), decode_*()
 
-namespace genes
+namespace gene
 {
     struct Endosymbiont
     {

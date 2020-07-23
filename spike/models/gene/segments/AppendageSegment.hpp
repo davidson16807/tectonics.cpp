@@ -1,8 +1,8 @@
 #pragma once
 
-#include <models/genes/segments/GenericSegment.hpp>// encode_*(), decode_*()
+#include <models/gene/segments/GenericSegment.hpp>// encode_*(), decode_*()
 
-namespace genes
+namespace gene
 {
 
     struct AppendageSegment: GenericSegment

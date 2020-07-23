@@ -7,29 +7,29 @@
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include <catch/catch.hpp>
 
-#include <models/genes/constituents/Photopigment.hpp>
-#include <models/genes/constituents/ClosedFluidSystemConstituent.hpp>
-#include <models/genes/constituents/Endosymbiont.hpp>
-#include <models/genes/structures/TubeStructure.hpp>
-#include <models/genes/structures/CorneousStructure.hpp>
-#include <models/genes/structures/PhotoreceptorStructure.hpp>
-#include <models/genes/structures/PressureSensingStructure.hpp>
-#include <models/genes/structures/SurfaceStructure.hpp>
-#include <models/genes/biochemistry/ClosedFluidSystemComposition.hpp>
-#include <models/genes/biochemistry/Mineralization.hpp>
-#include <models/genes/biochemistry/PhotoreceptorMaterials.hpp>
-#include <models/genes/biochemistry/Pigmentation.hpp>
-#include <models/genes/biochemistry/Toxins.hpp>
-#include <models/genes/biochemistry/CellSignals.hpp>
-#include <models/genes/biochemistry/Metabolism.hpp>
-#include <models/genes/segments/GenericSegment.hpp>
-#include <models/genes/segments/AppendageSegment.hpp>
-#include <models/genes/Appendage.hpp>
-#include <models/genes/segments/BodySegment.hpp>
-#include <models/genes/Body.hpp>
-#include <models/genes/Genome.hpp>
+#include <models/gene/constituents/Photopigment.hpp>
+#include <models/gene/constituents/ClosedFluidSystemConstituent.hpp>
+#include <models/gene/constituents/Endosymbiont.hpp>
+#include <models/gene/structures/TubeStructure.hpp>
+#include <models/gene/structures/CorneousStructure.hpp>
+#include <models/gene/structures/PhotoreceptorStructure.hpp>
+#include <models/gene/structures/PressureSensingStructure.hpp>
+#include <models/gene/structures/SurfaceStructure.hpp>
+#include <models/gene/biochemistry/ClosedFluidSystemComposition.hpp>
+#include <models/gene/biochemistry/Mineralization.hpp>
+#include <models/gene/biochemistry/PhotoreceptorMaterials.hpp>
+#include <models/gene/biochemistry/Pigmentation.hpp>
+#include <models/gene/biochemistry/Toxins.hpp>
+#include <models/gene/biochemistry/CellSignals.hpp>
+#include <models/gene/biochemistry/Metabolism.hpp>
+#include <models/gene/segments/GenericSegment.hpp>
+#include <models/gene/segments/AppendageSegment.hpp>
+#include <models/gene/Appendage.hpp>
+#include <models/gene/segments/BodySegment.hpp>
+#include <models/gene/Body.hpp>
+#include <models/gene/Genome.hpp>
 
-using namespace genes;
+using namespace gene;
 
 TEST_CASE( "fraction encode/decode invertibility", "[many]" ) {
     SECTION("decoding an array then reencoding it must reproduce the original array"){

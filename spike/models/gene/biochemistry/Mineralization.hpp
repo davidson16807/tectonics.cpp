@@ -6,9 +6,9 @@
 
 #include <algorithm>
 
-#include <models/genes/coding.hpp>    // encode_*(), decode_*()
+#include <models/gene/coding.hpp>    // encode_*(), decode_*()
 
-namespace genes
+namespace gene
 {
     /*
     "Mineralization" describes when the biochemistry of an organism 

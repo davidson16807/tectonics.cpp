@@ -6,13 +6,13 @@
 
 #include <algorithm>
 
-#include <models/genes/coding.hpp>    // encode_*(), decode_*()
-#include <models/genes/segments/BodySegment.hpp>
-#include <models/genes/biochemistry/ClosedFluidSystemComposition.hpp>
-#include <models/genes/biochemistry/PhotoreceptorMaterials.hpp>
-#include <models/genes/biochemistry/Mineralization.hpp>
+#include <models/gene/coding.hpp>    // encode_*(), decode_*()
+#include <models/gene/segments/BodySegment.hpp>
+#include <models/gene/biochemistry/ClosedFluidSystemComposition.hpp>
+#include <models/gene/biochemistry/PhotoreceptorMaterials.hpp>
+#include <models/gene/biochemistry/Mineralization.hpp>
 
-namespace genes
+namespace gene
 {
     /*
     Most arthropods seem to have ~7 segments, 

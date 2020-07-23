@@ -9,7 +9,7 @@
 #include <models/genes/coding.hpp>    // encode_*(), decode_*()
 #include <models/genes/constituents/ClosedFluidSystemConstituent.hpp>
 
-namespace genes
+namespace gene
 {
     enum ClosedFluidSystemConstituents
     {

@@ -6,7 +6,7 @@
 
 #include <algorithm>
 
-namespace genes
+namespace gene
 {
     inline unsigned int encode_fraction(const float input, const int bit_count = 4)
     {

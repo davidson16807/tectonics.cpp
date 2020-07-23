@@ -6,9 +6,9 @@
 
 #include <algorithm>
 
-#include <models/genes/coding.hpp>    // encode_*(), decode_*()
+#include <models/gene/coding.hpp>    // encode_*(), decode_*()
 
-namespace genes
+namespace gene
 {
     /*
     "Pigmentation" is a color assigned to any visible surface on an organism.
