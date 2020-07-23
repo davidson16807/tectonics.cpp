@@ -4,7 +4,27 @@ So let's say the max height relevant to stratigraphy is 12km, or dex 4.1
 
 Lowest acceptable precision for a layer is probably Minecraft level, 1m blocks, dex 0
 
-Highest precision solution per layer is to store each mass pool as floats, and there are about 16 mass pools ranging from orthoclase to nitrogen ice.
+The highest precision solution per layer is to store each mass pool as floats. We can estimate the number of mass pools by starting with common earth minerals and adding pools for solid forms of compounds found within the oceans and atmospheres, and some common minerals on other planets, to allow describing more exotic planets:
+* pyrite
+* magnetite
+* orthoclase
+* quartz
+* plagioclase
+* pyroxene
+* olivine
+* ice
+* co2 ice
+* oxygen ice
+* nitrogen ice
+* methane ice
+* ethane ice
+* carbon tetraflouride ice
+* hydrogen ice
+* helium ice
+
+This amounts to 16 mass pools. We expect some will not be used frequently,
+so they could be substituted or removed, but we will likely try to retain 16 mass pools
+since this will allows to better reason with cache lines.
 
 dex 1.2 + 0.6 = 1.8 per layer, and dex 1.8 + 4.1 - 0 = 5.9 per cell
 
@@ -30,11 +50,13 @@ This is abyssmal, but there is plenty of room for improvement. We would like a w
 
 We can either ease our definition of "appreciable" or modify our representation, or both. 
 
-First: we do not need to represent the world in Minecraft blocks. We could represent layers as a series of intermixed mass pools whose thickness is dependant on their mass pool content. With 16 mass pools, each with a 4 byte floating point, this amounts to 64 bytes per layer. This fits snugly within a cache line, and provides for around 10 such layers per column. Since the user only cares about fidelity towards the surface, we can add mass pools within the top layer to our heart's content, incrementing the top layer every timestep, or at a predetermined time interval, and every time that happens we can merge bottom layers together to fit within the 10 layer allowance. If we increment at every timestep, then at our largest timestep each rock layer will represent 10,000 years of history. This seems like far too fine a resolution for our model. We are mostly only interested in recreating stratigraphic profiles like those seen at visitor centers of major national monuments, like Red Rocks, Sedona, or the Grand Canyon. A stratification interval of 50 million years is more appropriate. Layer thickness of anywhere on the order of 10 to 1000 meters are to be expected. This could correspond to a layer mass of 10^4 to 10^6 kilograms per square meter. A full column could represent anything from 100 to 10000 meters. Our current model represents lithification as occurring at a depth of 160 meters, at metamorphosis as occurring at a depth of 11 kilometers, so even with a modest number of layers, we could and should represent these processes. 
+First: we do not need to represent the world in Minecraft blocks. We could represent layers as a series of intermixed mass pools whose thickness is dependant on their mass pool content. With 16 mass pools, each with a 4 byte floating point, this amounts to 64 bytes per layer. This fits snugly within a cache line, and provides for around 10 such layers per column. Since the user only cares about fidelity towards the surface, we can add mass pools within the top layer to our heart's content, incrementing the top layer every timestep, or at a predetermined time interval, and every time that happens we can merge bottom layers together to fit within the 10 layer allowance. If we increment at every timestep, then at our largest timestep each rock layer will represent 10,000 years of history. This seems like far too fine a resolution for our model. We are mostly only interested in recreating stratigraphic profiles like those seen at visitor centers of major national monuments, like Red Rocks, Sedona, or the Grand Canyon. A stratification interval of 50 million years is more appropriate. Layer thickness of anywhere on the order of 10 to 1000 meters are to be expected. This could correspond to a layer mass of 10^4 to 10^6 kilograms per square meter. Our current model represents lithification as occurring at a depth of 160 meters, and metamorphosis as occurring at a depth of 11 kilometers, so even with a modest number of layers, we could and should represent these processes. 
+
+We also see that if the rock below 11 kilometers is more or less homogeneously metamorphic, then everything below this point could be represented by a single layer, and the remaining layers would only describe rocks above it. This limits the bulk of our strata model to 11 km depth, reassuring us of our initial 12km estimate, while simultaneously allowing us a way to describe rock well below 12km, at least in broad strokes. 
 
 Another thing: in addition to mass pools, each layer should have some way to indicate phase: sediment, sedimentary, metamorphic, or igneous. For instance, sandstone turns to quartzite under extreme temperature and pressure. Changes such as this could just as well be represented on a phase diagram, much as how we could use a phase diagram to determine the mass of the oceans and atmosphere. However, there is a significant difference here: when water is heated to become a vapor, it can easily return to water when the temperature lowers. However, once a rock undergoes lithification or metamorphosis, it will seldom return to its earlier state. 
 
-Because these processes are irreversible, we cannot naively derive rock type as a pure function of depth. We need to introduce state to solve the problem. 
+Because these processes are irreversible, we cannot naively derive rock type as a pure function of depth. What happens for instance when metamorphic rock becomes exposed to the surface due to erosion? It can't just magnically turn back to sedimentary. We need to introduce state to solve the problem. 
 
 But consider what happens when we add some trivial flag to indicate metamorphosis. It works well enough if an entire layer is composed of a single material like silica. However, what happens if it's a complex mixture, say, of silica and ice? Ice has a phase diagram that's completely different from silica. Depending on your pressure or temperature, you could have silica embedded in ice IV, or quartzite in ice IV, or silica in regular ice. There's too much complexity here. We can't describe the results with just a simple flag, and even if we did, we wouldn't want to handle the logic that attempts to do so. 
 
@@ -81,3 +103,59 @@ If particle diameter were represented as `2<<(-d/25)`, we could represent sizes 
 One final thing: we do need to concern ourselves with what the representative depth would be for a given layer. Each layer has a variable thickness, so depth could vary considerably across the layer. This in turn means that pressure and temperature could vary considerably. This is especially the case for the bottom-most layer, which is sort of a garbage bin of whatever mass pools were leftover. 
 
 There are things working in our favor though. We again reason that users don't care so much what happens at the bottom. We further reiterate that our model does have the potential to generate depths that are sufficient for metamorphosis, so it is likely with adequate parameterization that the bottommost layer will always be at a depth where metamorphosis could occur consistently throughout the layer. 
+
+We can now update our estimates for the memory budget:
+
+8   total memory budget in bytes
+1   rasters per world
+3.5	cells per raster
+1.4	layers per cell
+1.2	mass pools per layer
+0.9	mass pool bytes
+
+# Designing a Category diagram
+
+We now have a data structure that can be stored across timesteps. The data structure tries both to reduce memory footprint while keeping conservation error within a tolerable threshold. 
+
+Some processes can be easily modeled using this data structure, but not all. We may have to convert to other data structures to perform remaining functionality. We will next try to outline a list of all data structures and the morphisms between them. This will first require us outlining a list of all processes we would like to model.
+
+We can think of the following processes:
+	spatial transport
+	chemical transformation
+	radiation transfer
+	plate motion
+	aesthenosphere velocity
+	thermodynamics modeling
+	phase diagram modeling
+
+
+descriptor | object                     | concern
+--------------------------------------------------------------------------------
+storage    | plates<strata>             | reduces conservation error, reduces memory footprint
+layered    | layered_icosphere<stratum> | simplifies thermodynamics model and phase diagram modeling
+surface    | icosphere<surface>         | simplifies radiation transfer
+icosphere  | icosphere<strata>          | simplifies spatial transport and aesthenosphere velocity
+
+
+process                 | object                       
+--------------------------------------------------------------------------------
+chemical transformation | plates<strata>
+spatial transport       | icosphere<strata>
+radiation transfer      | icosphere<surface>
+plate motion            | icosphere<strata>
+aesthenosphere velocity | icosphere<strata>
+thermodynamics modeling | layered_icosphere<stratum>
+phase diagram modeling  | layered_icosphere<stratum>
+
+
+morphism                       | example usage
+--------------------------------------------------------------------------------
+plates<strata>
+ → layered_icosphere<stratum>  | to feed conductivity to thermodynamics model
+ ← layered_icosphere<stratum>  | to import max temperature from thermodynamics model
+ → icosphere<strata>           | to calculate density for aesthenosphere velocities
+ ← icosphere<strata>           | to initialize the model using segmentation, not strictly an inverse of the above
+ 	→ icosphere<surface>       | to calculate albedo for radiation transfer, and maybe surface transport
+ 	→ icosphere<float>         | to calculate age, thickness, density, etc. for aesthenosphere velocity
+ 
+

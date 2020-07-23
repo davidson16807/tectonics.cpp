@@ -3,22 +3,22 @@
 #include <array>           // std::array
 #include <algorithm>       // std::algorithm
 
-class uint2_byte {
+class uint2byte {
     std::uint8_t v0 : 2;
     std::uint8_t v1 : 2;
     std::uint8_t v2 : 2;
     std::uint8_t v3 : 2;
 
 public:
-    ~uint2_byte()
+    ~uint2byte()
     {
     }
-    uint2_byte(): 
+    uint2byte(): 
         v0(0), v1(0), v2(0), v3(0)
     {
     }
     /*
-    uint2_byte(unsigned int v0, unsigned int v1, unsigned int v2, unsigned int v3): 
+    uint2byte(unsigned int v0, unsigned int v1, unsigned int v2, unsigned int v3): 
         v0(std::clamp(v0, 0u, max_value())), 
         v1(std::clamp(v1, 0u, max_value())),
         v2(std::clamp(v2, 0u, max_value())),
@@ -98,7 +98,7 @@ public:
 //     std::array<float,4> original = {14,16,1,2};
 //     std::array<float,4> reconstituted;
 
-//     uint2_byte a = uint2_byte();
+//     uint2byte a = uint2byte();
 //     std::cout << sizeof a << std::endl;
 
 //     a.compress(original.begin());

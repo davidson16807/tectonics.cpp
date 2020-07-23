@@ -1,37 +1,21 @@
 #include <cassert>         // assert
+#include <iostream>        // std::cout
 #include <iterator>        // std::ostream_iterator
 #include <array>           // std::array
 #include <algorithm>       // std::algorithm
 
-class uint4byte {
-    std::uint8_t v0 : 4;
-    std::uint8_t v1 : 4;
+template <float lo, float hi, bool islog>
+class float8 {
+    std::uint8_t v1;
 
 public:
-    ~uint4byte()
+    ~float8()
     {
     }
-    uint4byte(): 
-        v0(0), v1(0)
+    float8()
     {
     }
-    /*
-    uint4byte(unsigned int v0, unsigned int v1): 
-        v0(std::clamp(v0, 0u, max_value())), 
-        v1(std::clamp(v1, 0u, max_value()))
-    {
-    }
-    */
 
-    inline size_type max_value() const { return 0xF; }
-    inline size_type bit_count() const { return 4; }
-    /*
-    stl-like container methods
-    NOTE: we do not include .begin(), .end(), or operator[] assignment,
-    since the individual uint4s are too small to uniquely address by pointers
-    */
-    typedef int size_type;
-    inline size_type max_size() const { return 2; }
     inline size_type size()     const { return max_size(); }
     inline size_type capacity() const { return max_size(); }
     const unsigned int operator[](size_type index) const
@@ -103,10 +87,10 @@ TOutputIterator unflatten (TInputIterator first, TInputIterator last, TOutputIte
 //     std::array<float,2> representation1 = {14,16};
 //     std::array<float,2> representation2;
 //     std::array<float,4> representation3;
-//     std::array<uint4byte,2> model1 = {uint4byte(14,16), uint4byte(1,2)};
-//     std::array<uint4byte,2> model2 = {uint4byte(), uint4byte()};
+//     std::array<float8,2> model1 = {float8(14,16), float8(1,2)};
+//     std::array<float8,2> model2 = {float8(), float8()};
 
-//     uint4byte a = uint4byte();
+//     float8 a = float8();
 //     std::cout << sizeof a << std::endl;
 
 //     a.compress(representation1.begin());

@@ -39,7 +39,7 @@ Memory Footprint
 	`tmany<tprofile<T,N>>`and`tmany<T>` can both be implemented in a contiguous block of memory.
 	`tmany<tmany<T>>` is forbidden because it requires pointers everywhere to noncontiguous memory
 Code Reuse
-	`tmany<tmany<T>>` a `tmany<tprofile<T,N>>`may allow us to reuse existing code, if possible (see comments below).
+	`tmany<tmany<T>>` and `tmany<tprofile<T,N>>`may allow us to reuse existing code, if possible (see comments below).
 	`tmany<T>` is forbidden because it would require existing code to have intimate knowledge of this data structure.
 Run Time Flexibility
 	`tmany<tmany<T>>` and `tmany<T>` can both be implemented in a way that allows resizing the block of memory. 

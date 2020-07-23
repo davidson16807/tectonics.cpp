@@ -28,10 +28,10 @@ queue shift			TUNA
 queue push 			TUNA
 orbit state vectors TUNA
 orbit elements 		TUNA
-cooking 			TUA
+cooking 			TUA  (you can't uncook your dinner)
 integer max() 		TA 
-32 bit float addition UNAC (operations involving NA do not behave according to rules)
-morphology 			TUA
+32 bit float addition UNAC (operations involving NA do not behave according to rules of ℝ)
+image morphology	TUA
 
 Grothendieck group: 
 a way to trick a TUAC structure into thinking its TUNAC
