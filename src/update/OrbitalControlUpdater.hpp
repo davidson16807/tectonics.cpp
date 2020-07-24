@@ -20,16 +20,17 @@ namespace update
       const messages::MouseMotionMessage message,
       OrbitalControlState& state_out
     ) { 
+      std::cout << message.offset.x << " " << message.offset.x << std::endl;
       if(&state_in != &state_out) {
         state_out = state_in;
       }
       switch(state_out.drag_state)
       {
         case OrbitalControlDragState::pan: 
-          OrbitalControlState::pan(state_in, message.offset, state_out);
+          OrbitalControlState::pan(state_in, 0.1f*message.offset, state_out);
           break;
         case OrbitalControlDragState::zoom: 
-          OrbitalControlState::zoom(state_in, message.offset.y, state_out);
+          OrbitalControlState::zoom(state_in, 0.1f*message.offset.y, state_out);
           break;
         default: break;
       }

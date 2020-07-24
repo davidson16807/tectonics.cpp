@@ -29,8 +29,8 @@ namespace messages
 	enum MouseButton
 	{
 		left,
-		middle,
-		right
+		right,
+		middle
 	};
 
 	enum KeyboardModifier
