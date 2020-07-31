@@ -27,7 +27,7 @@ namespace update
       switch(state_out.drag_state)
       {
         case OrbitalControlDragState::pan: 
-          OrbitalControlState::pan(state_in, 0.1f*message.offset, state_out);
+          OrbitalControlState::pan(state_in, 0.01f*message.offset, state_out);
           break;
         case OrbitalControlDragState::zoom: 
           OrbitalControlState::zoom(state_in, 0.1f*message.offset.y, state_out);
