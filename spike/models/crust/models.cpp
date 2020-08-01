@@ -6,7 +6,7 @@
 
 #include <models/rock/Strata.hpp> // Strata
 
-namespace rock
+namespace crust
 {
     void phase_transition(
         const tmany<StrataValues<float>>& pressure, const tmany<StrataValues<float>>& temperature, 
