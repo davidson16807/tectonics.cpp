@@ -1,10 +1,18 @@
+#pragma once
+
+// C libraries
 #include <cmath>
 #include <cstdint>
 #include <cstddef>
 
+// std libraries
 #include <algorithm>
+#include <array>
 
-namespace rock
+// in-house libraries
+#include "StratumMassPool.hpp"
+
+namespace strata
 {
     enum CarbonPlanetStratumMassPoolTypes
     {
@@ -123,26 +131,43 @@ namespace rock
         //      , //helium      
         //      , //hydrogen    
     }
-    enum ParticleSizeBins
-    {
-        boulder,  // Krumbein phi: -10 to -8
-        cobble,   // Krumbein phi: -7 to -5
-        pebble,   // Krumbein phi: -4 to -2
-        granule,  // Krumbein phi: -1 to 1
-        sand,     // Krumbein phi:  2 to 4
-        silt,     // Krumbein phi:  5 to 7
-        clay,     // Krumbein phi:  8 to 10
-        colloid,  // Krumbein phi: 11 to 13
-        COUNT
-    };
-
+    /*
+    Use of "oxygen_planet_mass_pool_chemical_susceptibility" is limited to determining 
+    the particle size of chemically weathered sediment so only a crude approximation is needed
+    */
+    constexpr std::array<float, Stratum::mass_pool_count> oxygen_planet_mass_pool_chemical_susceptibility {
+        // 0.0f, //magnetite   
+        // 0     //chalcophile 
+           0.0f, //hematite    
+           0.0f, //pyrite      
+        // 0.0f  //goethite    
+           0.0f, //olivine     
+           0.0f, //pyroxene    
+           0.0f, //plagioclase 
+           0.0f, //quartz      
+           0.0f, //orthoclase  
+           1.0f, //calcite     
+           1.0f, //organics    // density of coal
+        // 0.0f, //graphite    
+        // 0.0f, //apatite     
+        // 0.0f, //corundum    
+           0.0f, //co2         
+           0.0f, //oxygen      
+           0.9f, //ice         
+           0.0f, //co          
+           0.0f, //nitrogen    
+           0.0f, //methane     
+        // 0.0f, //ethane      
+        // 1.0f  //tholins     Horst (2013)
+        // 0.0f, //helium      
+        // 0.0f, //hydrogen    
+    }
     /*
     "Stratum" describes the composition and texuture of a single rock layer
     */
     struct Stratum
     {
         static constexpr int mass_pool_count = 15;
-        static constexpr int particle_size_bin_count = 8;
 
         /*
         "particle_size_bin_relative_volume" describes a set of bins.
@@ -154,12 +179,13 @@ namespace rock
         Particle size is primarily used to indicate distinctions between things like boulders vs. pebbles vs sand vs. clay
         */
         std::array<StratumMassPool, mass_pool_count>  mass_pools;
-        std::array<float, particle_size_bin_count> particle_size_bin_relative_volume;
+        float max_temperature_received;
+        float max_pressure_received;
+        float age_of_world_when_deposited;
 
         Stratum()
         {
             mass_pools.fill(StratumMassPool());
-            particle_size_bin_relative_volume.fill(0.0f);
         }
 
         // DERIVED ATTRIBUTES, regular functions of the form: Stratum -> T
@@ -197,96 +223,6 @@ namespace rock
             }
             return exp(logK);
         }
-        float particle_size_bin_relative_volume_sum()
-        {
-            float sum = 0.0f;
-            for (std::size_t i=0; i<Stratum::particle_size_bin_count; i++)
-            {
-                sum = += particle_size_bin_relative_volume[i];
-            }
-            return sum;
-        }
-        
-        // OPERATORS, regular functions of the form: Stratum x Stratum -> Stratum
-        static void scale(const Stratum& a, float scalar, Stratum& out)
-        {
-            for (std::size_t i=0; i<mass_pool_count; i++)
-            {
-                out.mass_pools[i] = a.mass_pools[i] * scalar;
-            }
-        }
-        static void add(const Stratum& a, const Stratum& b, Stratum& out)
-        {
-            for (std::size_t i=0; i<mass_pool_count; i++)
-            {
-                out.mass_pools[i] = a.mass_pools[i] + b.mass_pools[i];
-            }
-        }
-
-        static void combine(const Stratum& a, const Stratum& b, const std::array<float, mass_pool_count>& mass_pool_densities, Stratum& out)
-        {
-            for (std::size_t i=0; i<mass_pool_count; i++)
-            {
-                StratumMassPool::combine(a.mass_pools[i], b.mass_pools[i], out.mass_pools[i]);
-            }
-            
-            float a_volume = a.volume(mass_pool_densities);
-            float b_volume = b.volume(mass_pool_densities);
-            float a_sum = a.particle_size_bin_relative_volume_sum();
-            float b_sum = b.particle_size_bin_relative_volume_sum();
-            for (std::size_t i=0; i<particle_size_bin_count; i++)
-            {
-                out.particle_size_bin_relative_volume[i] = 
-                    (a_volume * a.particle_size_bin_relative_volume[i] / a_sum + 
-                     b_volume * b.particle_size_bin_relative_volume[i] / b_sum) / (a_volume + b_volume);
-            }
-        }
-
-        static float get_max_particle_size_of_bin_id(int id)
-        {
-            return log2( -3.0f *id);
-        }
-        static int get_bin_id_of_particle_size(float size)
-        {
-            return -exp2(size) / 3.0f;
-        }
     };
-
-    class StratumStore
-    {
-        std::array<StratumMassPoolStore, Stratum::mass_pool_count>  mass_pools;
-        std::array<std::uint8_t, Stratum::particle_size_bin_count> particle_size_bin_relative_volume;
-
-        void decompress(Stratum& out) const
-        {
-            for (std::size_t i=0; i<Stratum::mass_pool_count; i++)
-            {
-                mass_pools[i].decompress(out.mass_pools[i]);
-            }
-            for (std::size_t i=0; i<Stratum::particle_size_bin_count; i++)
-            {
-                out.particle_size_bin_relative_volume[i] = particle_size_bin_relative_volume[i];
-            }
-        }
-        void compress(const Stratum& stratum)
-        {
-            for (std::size_t i=0; i<Stratum::mass_pool_count; i++)
-            {
-                mass_pools[i].compress(stratum.mass_pools[i]);
-            }
-            // rescale bin counts by the new max to fit inside a uint8_t
-            float particle_size_relative_bin_count_max = 0;
-            for (std::size_t i=0; i<Stratum::particle_size_bin_count; i++)
-            {
-                particle_size_relative_bin_count_max = max(particle_size_relative_bin_count_max, out.particle_size_bin_relative_volume[i]);
-            }
-            for (std::size_t i=0; i<Stratum::particle_size_bin_count; i++)
-            {
-                particle_size_bin_relative_volume[i] = 
-                    std::clamp(stratum.particle_size_bin_relative_volume[i] * 255.0f / particle_size_relative_bin_count_max, 0.0f, 255.0f);
-            }
-        }
-    };
-
 
 }
