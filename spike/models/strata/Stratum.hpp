@@ -14,7 +14,12 @@
 
 namespace strata
 {
-    enum CarbonPlanetStratumMassPoolTypes
+    // NOTE: stratum_mass_pool_count = 24 requires three cache lines of storage, 
+    // but we need to store a few small variables within Stratum like particle_size, 
+    // so we have to set stratum_mass_pool_count just shy of that to avoid wasting a cache line.
+    const int stratum_mass_pool_count = 15;
+
+    enum struct CarbonPlanetStratumMassPoolTypes
     {
         // NOTE: see https://www.ptable.com/#Compound/C for ideas
      // chalcophile, //                    
@@ -37,13 +42,9 @@ namespace strata
      // tholins,     // CNOHS              
      // helium,      // He                 
      // hydrogen,    // H2, metallic       
-        COUNT = Stratum::mass_pool_count
-        // NOTE: COUNT = 24 requires three cache lines of storage, 
-        // but we need to store a few small variables within Stratum like particle_size, 
-        // so we have to set COUNT just shy of that to avoid wasting a cache line.
     };
 
-    enum OxygenPlanetStratumMassPoolTypes
+    enum struct OxygenPlanetStratumMassPoolTypes
     {
      // magnetite,   //           Fe     O for the surfaces of mars and maybe venus, representative of siderophile ores
      // chalcophile, //                    for the surfaces of maybe venus and mercury, representative of chalcophile ores
@@ -71,12 +72,8 @@ namespace strata
      // tholins,     // CNOHS              for the surfaces of pluto and kuiper belt objects, and representative of prebiotic chemistry
      // helium,      // He                 for completeness, and padding to fit on cache lines
      // hydrogen,    // H2, metallic       for completeness, and padding to fit on cache lines
-        COUNT = Stratum::mass_pool_count
-        // NOTE: COUNT = 15 requires two cache lines of storage, 
-        // but we need to store a few small variables within Stratum like particle_size, 
-        // so we have to set COUNT just shy of that to avoid wasting a cache line.
     };
-    constexpr std::array<float, Stratum::mass_pool_count> oxygen_planet_mass_pool_densities {
+    constexpr std::array<float, stratum_mass_pool_count> oxygen_planet_mass_pool_densities {
         // 5000.0f, //magnetite   
         //          //chalcophile 
            5300.0f, //hematite    
@@ -102,8 +99,8 @@ namespace strata
         // 1130.0f  //tholins     Horst (2013)
         // 0187.0f, //helium      
         // 0086.0f, //hydrogen    
-    }
-    constexpr std::array<float, Stratum::mass_pool_count> oxygen_planet_mass_pool_thermal_conductivities {
+    };
+    constexpr std::array<float, stratum_mass_pool_count> oxygen_planet_mass_pool_thermal_conductivities {
         // NOTE: values from Cermak (1988) unless stated otherwise
         //      , //magnetite   
         //        //chalcophile 
@@ -130,12 +127,12 @@ namespace strata
         //      , //tholins     
         //      , //helium      
         //      , //hydrogen    
-    }
+    };
     /*
     Use of "oxygen_planet_mass_pool_chemical_susceptibility" is limited to determining 
     the particle size of chemically weathered sediment so only a crude approximation is needed
     */
-    constexpr std::array<float, Stratum::mass_pool_count> oxygen_planet_mass_pool_chemical_susceptibility {
+    constexpr std::array<float, stratum_mass_pool_count> oxygen_planet_mass_pool_chemical_susceptibility {
         // 0.0f, //magnetite   
         // 0     //chalcophile 
            0.0f, //hematite    
@@ -161,14 +158,12 @@ namespace strata
         // 1.0f  //tholins     Horst (2013)
         // 0.0f, //helium      
         // 0.0f, //hydrogen    
-    }
+    };
     /*
     "Stratum" describes the composition and texuture of a single rock layer
     */
     struct Stratum
     {
-        static constexpr int mass_pool_count = 15;
-
         /*
         "particle_size_bin_relative_volume" describes a set of bins.
         Each bin tracks the relative volume occupied by particles that fall within a certain range of diameters.
@@ -178,7 +173,7 @@ namespace strata
         Grain size is primarily used to indicate distinctions between extrusive and intrusive rocks, like basalt and gabbro.
         Particle size is primarily used to indicate distinctions between things like boulders vs. pebbles vs sand vs. clay
         */
-        std::array<StratumMassPool, mass_pool_count>  mass_pools;
+        std::array<StratumMassPool, stratum_mass_pool_count>  mass_pools;
         float max_temperature_received;
         float max_pressure_received;
         float age_of_world_when_deposited;
@@ -191,32 +186,32 @@ namespace strata
         // DERIVED ATTRIBUTES, regular functions of the form: Stratum -> T
         float mass(){
             float total_mass(0.0);
-            for (std::size_t i=0; i<mass_pool_count; i++)
+            for (std::size_t i=0; i<stratum_mass_pool_count; i++)
             {
                 total_mass += mass_pools[i].mass;
             }
             return total_mass;
         }
-        float volume(const std::array<float, mass_pool_count>& mass_pool_densities){
+        float volume(const std::array<float, stratum_mass_pool_count>& mass_pool_densities){
             float total_volume(0.0);
-            for (std::size_t i=0; i<mass_pool_count; i++)
+            for (std::size_t i=0; i<stratum_mass_pool_count; i++)
             {
                 total_volume += mass_pools[i].mass / mass_pool_densities[i];
             }
             return total_volume;
         }
-        float density(const std::array<float, mass_pool_count>& mass_pool_densities, float age){
+        float density(const std::array<float, stratum_mass_pool_count>& mass_pool_densities, float age){
             return mass() / volume(mass_pool_densities);
         }
         float thermal_conductivity(
-            const std::array<float, mass_pool_count>& mass_pool_densities,
-            const std::array<float, mass_pool_count>& mass_pool_thermal_conductivities
+            const std::array<float, stratum_mass_pool_count>& mass_pool_densities,
+            const std::array<float, stratum_mass_pool_count>& mass_pool_thermal_conductivities
         ){
             // geometric mean weighted by fractional volume, see work by Fuchs (2013)
             float logK(0.0);
             float total_volume(volume(mass_pool_densities));
             float fractional_volume(0);
-            for (std::size_t i=0; i<mass_pool_count; i++)
+            for (std::size_t i=0; i<stratum_mass_pool_count; i++)
             {
                 fractional_volume = mass_pools[i].mass / (mass_pool_densities[i] * total_volume);
                 logK += fractional_volume * mass_pool_thermal_conductivities[i];

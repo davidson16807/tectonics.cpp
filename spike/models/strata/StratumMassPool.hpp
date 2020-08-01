@@ -12,7 +12,7 @@
 namespace strata
 {
     /*
-    "StratumMassPool.grain_type_bin_fractional_volume" describes a set of bins.
+    "StratumMassPool.grain_type_fractional_volume" describes a set of bins.
     Each bin tracks the relative volume occupied by particles or grains that meet certain criteria.
 	We lack an accurate model to express how particle size changes in response to weathering, 
 	and we do not trust ourselves to invent our own (nor do we have the time to do so),
@@ -35,7 +35,7 @@ namespace strata
 	We allow for up to 8 grain types but only allocate to 6.
 	This is mostly to simplify cache alignment, though it also allows for future expansion.
     */
-	enum GrainType
+	enum struct GrainType
 	{
 		unweathered_extrusive,
 		unweathered_intrusive,
@@ -43,13 +43,13 @@ namespace strata
 		mechanically_weathered_intrusive,
 		chemically_weathered_extrusive,
 		chemically_weathered_intrusive,
-		count = 6
 	};
+	const int grain_type_count = 6;
 
 	struct StratumMassPool
 	{
 		float mass; 
-		std::array<float, GrainType::count> grain_type_bin_fractional_volume;
+		std::array<float, grain_type_count> grain_type_fractional_volume;
 		/*
 		Constructs an empty mass pool with minimum possible pressure and temperature,
 		min and max grain sizes are undefined.
@@ -57,7 +57,7 @@ namespace strata
 		StratumMassPool():
 			mass(0)
 		{
-			grain_type_bin_fractional_volume.fill(0.0f);
+			grain_type_fractional_volume.fill(0.0f);
 		}
 	};
 }

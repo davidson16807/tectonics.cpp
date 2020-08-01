@@ -6,23 +6,23 @@
 
 using namespace strata;
 
-TEST_CASE( "StratumStore compress/decompress invertibility", "[strata]" ) {
+TEST_CASE( "StratumMassPoolStore compress/decompress invertibility", "[strata]" ) {
   	std::mt19937 generator(2);
 
 	StratumMassPool original;
 	original.mass = generator();
-	for (int j = 0; j < GrainType::count; ++j)
+	for (int j = 0; j < grain_type_count; ++j)
 	{
-		original.grain_type_bin_fractional_volume[j] = generator();
+		original.grain_type_fractional_volume[j] = generator();
 	}
 	float total_fractional_volume(0);
-	for (int j = 0; j < GrainType::count; ++j)
+	for (int j = 0; j < grain_type_count; ++j)
 	{
-		total_fractional_volume += original.grain_type_bin_fractional_volume[j];
+		total_fractional_volume += original.grain_type_fractional_volume[j];
 	}
-	for (int j = 0; j < GrainType::count; ++j)
+	for (int j = 0; j < grain_type_count; ++j)
 	{
-		original.grain_type_bin_fractional_volume[j] /= total_fractional_volume;
+		original.grain_type_fractional_volume[j] /= total_fractional_volume;
 	}
 
 	StratumMassPoolStore stratum_mass_pool_store;
@@ -36,9 +36,9 @@ TEST_CASE( "StratumStore compress/decompress invertibility", "[strata]" ) {
 	}
 
     SECTION("compressing a StratumMassPool object then decompressing it must reproduce the original object's fractional grain sizes to within 1%"){
-		for (int j = 0; j < GrainType::count; ++j)
+		for (int j = 0; j < grain_type_count; ++j)
 		{
-    		CHECK(reconstructed.grain_type_bin_fractional_volume[j] == Approx(original.grain_type_bin_fractional_volume[j]).margin(0.01));
+    		CHECK(reconstructed.grain_type_fractional_volume[j] == Approx(original.grain_type_fractional_volume[j]).margin(0.01));
     	}
     }
 }

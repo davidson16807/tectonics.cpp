@@ -9,6 +9,8 @@
 #include <array>
 
 // in-house libraries
+#include <academics/units.hpp>
+
 #include "StratumMassPoolStore.hpp"
 #include "Stratum.hpp"
 
@@ -35,7 +37,7 @@ namespace strata
     */
     class StratumStore
     {
-        std::array<StratumMassPoolStore, Stratum::mass_pool_count> mass_pools;
+        std::array<StratumMassPoolStore, stratum_mass_pool_count> mass_pools;
         // Represent pressures from 1 to 6e12 Pascals with a precision of 0.02%.
         // This value was chosen to reflect the pressure of Jupiter's core. 
         std::uint16_t stored_max_temperature_received;
@@ -52,34 +54,53 @@ namespace strata
         constexpr static float log2_ref_temperature = 42.;
         constexpr static float log2_ref_pressure    = 15.;
 
-        constexpr static float temperature_max = exp2(std::numeric_limits<std::uint16_t>::max()/log2_ref_temperature);
-        constexpr static float pressure_max    = exp2(std::numeric_limits<std::uint16_t>::max()/log2_ref_pressure);
+        /*
+        NOTE: I would prefer these methods to be static variables instead, 
+        but exp2 is not constexpr and I can't set a variable as static unless it's constexpr,
+        so I settle for using static methods instead.
+        */
+        static float temperature_max ()
+        {
+            return exp2(std::numeric_limits<std::uint16_t>::max()/log2_ref_temperature);
+        } 
+        static float pressure_max    ()
+        {
+            return exp2(std::numeric_limits<std::uint16_t>::max()/log2_ref_pressure);
+        } 
 
-        constexpr static float temperature_min = exp2(0./log2_ref_temperature);
-        constexpr static float pressure_min    = exp2(0./log2_ref_pressure);
+        static float temperature_min ()
+        {
+            return exp2(0./log2_ref_temperature);
+        } 
+        static float pressure_min    ()
+        {
+            return exp2(0./log2_ref_pressure);
+        } 
+
 
     public:
 
         void decompress(Stratum& output) const
         {
-            for (std::size_t i=0; i<Stratum::mass_pool_count; i++)
+            for (std::size_t i=0; i<stratum_mass_pool_count; i++)
             {
                 mass_pools[i].decompress(output.mass_pools[i]);
             }
             output.max_pressure_received    = exp2( log2_ref_pressure    * float(stored_max_pressure_received)    / std::numeric_limits<std::uint16_t>::max());
             output.max_temperature_received = exp2( log2_ref_temperature * float(stored_max_temperature_received) / std::numeric_limits<std::uint16_t>::max());
-            output.age_of_world_when_deposited = age_of_world_when_deposited_in_megayears * units::megayear
+            output.age_of_world_when_deposited = age_of_world_when_deposited_in_megayears * units::megayear;
         }
+
         void compress(const Stratum& input)
         {
-            for (std::size_t i=0; i<Stratum::mass_pool_count; i++)
+            for (std::size_t i=0; i<stratum_mass_pool_count; i++)
             {
                 mass_pools[i].compress(input.mass_pools[i]);
             }
 
             stored_max_pressure_received    = std::uint8_t(std::numeric_limits<std::uint16_t>::max()*std::clamp( log2(input.max_pressure_received)    / log2_ref_pressure,   0., 1.0));
             stored_max_temperature_received = std::uint8_t(std::numeric_limits<std::uint16_t>::max()*std::clamp( log2(input.max_temperature_received) / log2_ref_temperature,0., 1.0));
-            age_of_world_when_deposited_in_megayears = age_of_world_when_deposited / units::megayear;
+            age_of_world_when_deposited_in_megayears = input.age_of_world_when_deposited / units::megayear;
         }
     };
 }
