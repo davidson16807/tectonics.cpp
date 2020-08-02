@@ -1,6 +1,6 @@
 # NOTE: We include Makefiles in subdirectories to allow locality of unit tests,
 # Please use make files within subdirectories only for unit tests, and do not use recursively
-# Recursive Makefiles considered harmful! But subdirectory makefiles are not bad by themself.
+# Recursive Makefiles are considered harmful! But subdirectory makefiles are not bad by themself.
 
 CPP=g++
 ROOT = ../../..

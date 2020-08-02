@@ -6,7 +6,8 @@ The only exception to the rule is where the homset maps to a primitive data type
 
 I've found the approach offers numerous advantages, which I will enumerate.
 
-* Dependencies can be easily reasoned with. 
+* Dependencies can be easily reasoned with. A file for a type only depends on other types to define its structure. A file for a homset only depends upon the the types that it maps to or from. The only exception I've found is with standard libraries or libraries that should probably count as such (e.g. vector math libraries). 
+* Build times are generally quicker since dependencies for a file can be more cleanly defined.
 * Functionality can be quickly navigated to. 
 * Namespaces boundaries are well defined mathematically. 
 * File boundaries are well defined mathematically. 
