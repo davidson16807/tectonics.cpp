@@ -5,6 +5,7 @@
 
 // in house libraries
 #include "StratumMassPool.hpp"
+#include "StratumMassPool_operators.hpp"
 #include "StratumMassPool_test_utils.hpp"
 
 using namespace strata;
@@ -20,7 +21,7 @@ TEST_CASE( "StratumMassPool combine() commutativity", "[strata]" ) {
 	combine(b, a, bc);
 
     SECTION("switching arguments for combine() must produce the same StratumMassPool object to within acceptable tolerances"){
-    	APPROXIMATES(ab, bc)
+    	STRATUM_MASS_POOL_EQUAL(ab, bc)
     }
 }
 
@@ -40,7 +41,7 @@ TEST_CASE( "StratumMassPool combine() associativity", "[strata]" ) {
 	combine(a, bc, a_bc);
 
     SECTION("switching order of invocation for combine() must produce the same StratumMassPool object to within acceptable tolerances"){
-    	APPROXIMATES(ab_c, a_bc)
+    	STRATUM_MASS_POOL_EQUAL(ab_c, a_bc)
     }
 }
 
@@ -53,7 +54,7 @@ TEST_CASE( "StratumMassPool combine() closure", "[strata]" ) {
 	combine(a, b, ab);
 
     SECTION("the result of passing two valid StratumMassPool objects to combine() must itself produce a valid StratumMassPool"){
-    	VALID(ab)
+    	STRATUM_MASS_POOL_VALID(ab)
     }
 }
 

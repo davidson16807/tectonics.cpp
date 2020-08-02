@@ -19,7 +19,7 @@ namespace strata
 
     void get_particle_size_bin_fractional_volume(
         const Stratum& stratum, 
-        const std::array<float, Stratum::mass_pool_count>& mass_pool_chemical_susceptibility, 
+        const std::array<float, stratum_mass_pool_count>& mass_pool_chemical_susceptibility, 
         std::array<float, ParticleSizeBins::COUNT>& output
     ){
         std::array<float, ParticleSizeBins::COUNT> output;
@@ -28,7 +28,7 @@ namespace strata
         output[ParticleSizeBins::boulder] += stratum.grain_type_bin_fractional_volume[GrainType::unweathered_intrusive];
         output[ParticleSizeBins::gravel]  += stratum.grain_type_bin_fractional_volume[GrainType::mechanically_weathered_extrusive];
         output[ParticleSizeBins::sand]    += stratum.grain_type_bin_fractional_volume[GrainType::mechanically_weathered_intrusive];
-        for (int i = 0; i < Stratum::mass_pool_count; ++i)
+        for (int i = 0; i < stratum_mass_pool_count; ++i)
         {
             output[ParticleSizeBins::silt] += mass_pool_chemical_susceptibility[i] * stratum.grain_type_bin_fractional_volume[GrainType::chemically_weathered_extrusive];
             output[ParticleSizeBins::sand] += mass_pool_chemical_susceptibility[i] * stratum.grain_type_bin_fractional_volume[GrainType::chemically_weathered_intrusive];

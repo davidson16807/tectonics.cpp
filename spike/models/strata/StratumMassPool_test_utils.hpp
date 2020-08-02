@@ -3,7 +3,6 @@
 #include <catch/catch.hpp>
 
 #include "StratumMassPool.hpp"
-#include "StratumMassPool_operators.hpp"
 
 namespace strata
 {
@@ -24,35 +23,26 @@ namespace strata
 		output.mass = generator();
 		for (int j = 0; j < grain_type_count; ++j)
 		{
-			output.grain_type_fractional_volume[j] = generator();
-		}
-		float total_fractional_volume(0);
-		for (int j = 0; j < grain_type_count; ++j)
-		{
-			total_fractional_volume += output.grain_type_fractional_volume[j];
-		}
-		for (int j = 0; j < grain_type_count; ++j)
-		{
-			output.grain_type_fractional_volume[j] /= total_fractional_volume;
+			output.grain_type_relative_volume[j] = generator();
 		}
 		return output;
 	}
 	
-	#define APPROXIMATES(a, b) \
-    	CHECK(a.mass == Approx(b.mass).epsilon(1e-4)); \
-		for (int j = 0; j < grain_type_count; ++j) \
-		{ \
-    		CHECK(a.grain_type_fractional_volume[j] == Approx(b.grain_type_fractional_volume[j]).margin(0.01)); \
-    	} 
-	
-	#define VALID(a) \
-    	CHECK(a.mass > 0); \
-    	float total_fractional_volume(0); \
-		for (int j = 0; j < grain_type_count; ++j) \
-		{ \
-    		CHECK(a.grain_type_fractional_volume[j] > 0); \
-    		total_fractional_volume += a.grain_type_fractional_volume[j]; \
-    	} \
-    	CHECK(total_fractional_volume == Approx(1).epsilon(1e-4));
+	#define STRATUM_MASS_POOL_EQUAL(a, b)                                                              \
+    	CHECK(a.mass == Approx(b.mass).epsilon(1e-4));                                                 \
+		float a_total_relative_volume(a.grain_type_total_relative_volume());                           \
+		float b_total_relative_volume(b.grain_type_total_relative_volume());                           \
+		for (int grain_i = 0; grain_i < grain_type_count; ++grain_i)                                   \
+		{                                                                                              \
+    		CHECK(b.grain_type_relative_volume[grain_i] / b_total_relative_volume ==                   \
+    			Approx(a.grain_type_relative_volume[grain_i] / a_total_relative_volume).margin(0.01)); \
+    	}    
+
+    #define STRATUM_MASS_POOL_VALID(a)                                          \
+    	CHECK(a.mass > -1e-4);                                                  \
+		for (int grain_i = 0; grain_i < grain_type_count; ++grain_i)            \
+		{                                                                       \
+    		CHECK(a.grain_type_relative_volume[grain_i] > -1e-4);               \
+    	}                                                                       
 }
 

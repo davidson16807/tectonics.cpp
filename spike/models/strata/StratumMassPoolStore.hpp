@@ -53,7 +53,7 @@ namespace strata
             }
             for (std::size_t i=0; i<grain_type_count; i++)
             {
-                output.grain_type_fractional_volume[i] = grain_type_relative_volume[i] / total_relative_volume;
+                output.grain_type_relative_volume[i] = grain_type_relative_volume[i] / total_relative_volume;
             }
 		}
 		void compress(const StratumMassPool& input)
@@ -63,12 +63,12 @@ namespace strata
             float grain_type_relative_bin_count_max = 0;
             for (std::size_t i=0; i<grain_type_count; i++)
             {
-                grain_type_relative_bin_count_max = std::max(grain_type_relative_bin_count_max, input.grain_type_fractional_volume[i]);
+                grain_type_relative_bin_count_max = std::max(grain_type_relative_bin_count_max, input.grain_type_relative_volume[i]);
             }
             for (std::size_t i=0; i<grain_type_count; i++)
             {
                 grain_type_relative_volume[i] = 
-                    std::clamp(input.grain_type_fractional_volume[i] * 255.0f / grain_type_relative_bin_count_max, 0.0f, 255.0f);
+                    std::clamp(input.grain_type_relative_volume[i] * 255.0f / grain_type_relative_bin_count_max, 0.0f, 255.0f);
             }
   		}
 	};

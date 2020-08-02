@@ -19,6 +19,6 @@ TEST_CASE( "StratumMassPoolStore compress/decompress invertibility", "[strata]" 
 	stratum_mass_pool_store.decompress(reconstructed);
 
     SECTION("compressing a StratumMassPool object then decompressing it must reproduce the original object to within acceptable tolerances"){
-    	APPROXIMATES(reconstructed, original);
+    	STRATUM_MASS_POOL_EQUAL(reconstructed, original);
 	}
 }

@@ -276,9 +276,9 @@ namespace crust
         {
             from = grid.arrow_vertex_ids[i].x;
             to   = grid.arrow_vertex_ids[i].y;
-            Stratum::scale(sediment[from], arrow_outgoing_volume[i] / sediment[i].volume(), transported);
-            Stratum::add  (outgoing[from], transported, outgoing[from]);
-            Stratum::add  (incoming[to],   transported, incoming[to]  );
+            Stratum::scale  (sediment[from], arrow_outgoing_volume[i] / sediment[i].volume(), transported);
+            Stratum::combine(outgoing[from], transported, outgoing[from]);
+            Stratum::combine(incoming[to],   transported, incoming[to]  );
         }
     }
 

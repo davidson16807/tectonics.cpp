@@ -12,7 +12,7 @@
 namespace strata
 {
     /*
-    "StratumMassPool.grain_type_fractional_volume" describes a set of bins.
+    "StratumMassPool.grain_type_relative_volume" describes a set of bins.
     Each bin tracks the relative volume occupied by particles or grains that meet certain criteria.
 	We lack an accurate model to express how particle size changes in response to weathering, 
 	and we do not trust ourselves to invent our own (nor do we have the time to do so),
@@ -49,7 +49,8 @@ namespace strata
 	struct StratumMassPool
 	{
 		float mass; 
-		std::array<float, grain_type_count> grain_type_fractional_volume;
+		std::array<float, grain_type_count> grain_type_relative_volume;
+
 		/*
 		Constructs an empty mass pool with minimum possible pressure and temperature,
 		min and max grain sizes are undefined.
@@ -57,7 +58,18 @@ namespace strata
 		StratumMassPool():
 			mass(0)
 		{
-			grain_type_fractional_volume.fill(0.0f);
+			grain_type_relative_volume.fill(0.0f);
+		}
+
+        // DERIVED ATTRIBUTES, regular functions of the form: Stratum -> T
+		float grain_type_total_relative_volume()
+		{
+		    float total_relative_volume(0);
+            for (std::size_t i=0; i<grain_type_count; i++)
+            {
+                total_relative_volume += grain_type_relative_volume[i];
+            }
+            return total_relative_volume;
 		}
 	};
 }
