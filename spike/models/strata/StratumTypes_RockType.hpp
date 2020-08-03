@@ -19,13 +19,7 @@ namespace strata
     then the output will only describe the silicate fraction of the rock,
     and the user interface will describe the rock as being a mixture of that rock type plus water ice.
     */
-    RockType get_rock_type(
-        IgneousCompositionTypes composition_type,
-        IgneousFormationTypes formation_type,
-        MetamorphicGrades metamorphic_grade,
-        ParticleSizeBins particle_size_bin,
-        RockCompositionTypes rock_composition_types,
-    ) {
+    RockType get_rock_type(const StratumType& stratum_type) {
 
         // TODO: metamorphic (overrides igneous and sedimentary)
 
@@ -39,17 +33,17 @@ namespace strata
 
             // special compositions and grades
             // silica,   medium grade or highern f                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
-            if (rock_composition_types == RockCompositionTypes::silicaceous && metamorphic_grade == MetamorphicGrades::medium)
+            if (rock_composition_types.silicaceous && metamorphic_grade == MetamorphicGrades::medium)
             {
                 return RockType::quartzite; 
             }
             // calcite,  low grade or higher
-            else if (rock_composition_types == RockCompositionTypes::partly_calcarous && metamorphic_grade == MetamorphicGrades::low)
+            else if (rock_composition_types.partly_calcarous && metamorphic_grade == MetamorphicGrades::low)
             {
                 return RockType::marble;    
             }
             // organics, low grade or higher
-            else if (rock_composition_types == RockCompositionTypes::organic && metamorphic_grade == MetamorphicGrades::low)
+            else if (rock_composition_types.organic && metamorphic_grade == MetamorphicGrades::low)
             {
                 return RockType::anthracite;
             }
@@ -149,12 +143,12 @@ namespace strata
             if (particle_size_bin <= ParticleSizeBins::silt)
             {
                 // quartz,   silt or smaller
-                if (rock_composition_types == RockCompositionTypes::silicaceous && particle_size_bin <= ParticleSizeBins::silt)
+                if (rock_composition_types.silicaceous)
                 {
                     return RockType::chert;
                 }
                 // organics, silt or smaller
-                else if (rock_composition_types == RockCompositionTypes::organic && particle_size_bin <= ParticleSizeBins::silt)
+                else if (rock_composition_types.organic)
                 {
                     return RockType::asphalt;
                 }
@@ -162,7 +156,7 @@ namespace strata
             else if (particle_size_bin <= ParticleSizeBins::sand)
             {
                 // feldspar, sand or smaller
-                if (rock_composition_types == RockCompositionTypes::volcanic && particle_size_bin <= ParticleSizeBins::sand)
+                if (rock_composition_types.volcanic && !rock_composition_types.silicaceous)
                 {
                     return RockType::tuff;
                 }
@@ -170,20 +164,20 @@ namespace strata
             else if (particle_size_bin >= ParticleSizeBins::granule)
             {
                 // calcite,  granule or larger
-                if (rock_composition_types == RockCompositionTypes::calcareous && particle_size_bin >= ParticleSizeBins::granule)
+                if (rock_composition_types.calcareous)
                 {
                     return RockType::coquina;
                 }
                 // partly calcite, granule or larger
-                else if (rock_composition_types == RockCompositionTypes::partly_calcarous && particle_size_bin >= ParticleSizeBins::granule)
+                else if (rock_composition_types.partly_calcarous)
                 {
                     return RockType::caliche;
                 }
             }
-            else if (ParticleSizeBins::sand <= particle_size_bin && particle_size_bin <= ParticleSizeBins::granule )
+            else if (ParticleSizeBins::sand <= particle_size_bin)
             {
                 // organics, sand or granule
-                if (rock_composition_types == RockCompositionTypes::organic && ParticleSizeBins::sand <= particle_size_bin && particle_size_bin <= ParticleSizeBins::granule)
+                if (rock_composition_types.organic && ParticleSizeBins::sand <= particle_size_bin && particle_size_bin <= ParticleSizeBins::granule)
                 {
                     return RockType::peat;
                 }
@@ -191,13 +185,13 @@ namespace strata
             else if (particle_size_bin >= ParticleSizeBins::pebble)
             {
                 // organics, pebble or larger
-                if (rock_composition_types == RockCompositionTypes::organic && particle_size_bin >= ParticleSizeBins::pebble)
+                if (rock_composition_types.organic)
                 {
                     return RockType::jet;
                 }
             }
             //  sedimentary rocks defined by composition
-            else if (rock_composition_types == RockCompositionTypes::calcareous)
+            else if (rock_composition_types.calcareous)
             {
                 return RockType::limestone; // any carbonate
             }
@@ -205,19 +199,19 @@ namespace strata
             // {
             //     return RockType::chalk;     // calcite
             // }
-            else if (rock_composition_types == RockCompositionTypes::partly_calcarous)
+            else if (rock_composition_types.partly_calcarous)
             {
                 return RockType::marl;      // partly calcite
             }
-            else if (rock_composition_types == RockCompositionTypes::organic)
+            else if (rock_composition_types.organic)
             {
                 return RockType::coal;      // organics
             }
-            else if (rock_composition_types == RockCompositionTypes::feldspathic)
+            else if (rock_composition_types.feldspathic)
             {
                 return RockType::arkose;    // feldspar
             }
-            else if (rock_composition_types == RockCompositionTypes::ferrous)
+            else if (rock_composition_types.ferrous)
             {
                 return RockType::ironstone; // iron
             }

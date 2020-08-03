@@ -43,13 +43,13 @@ namespace strata
 		mechanically_weathered_intrusive,
 		chemically_weathered_extrusive,
 		chemically_weathered_intrusive,
+		count
 	};
-	const int grain_type_count = 6;
 
 	struct StratumMassPool
 	{
 		float mass; 
-		std::array<float, grain_type_count> grain_type_relative_volume;
+		std::array<float, int(GrainType::count)> grain_type_relative_volume;
 
 		/*
 		Constructs an empty mass pool with minimum possible pressure and temperature,
@@ -62,10 +62,10 @@ namespace strata
 		}
 
         // DERIVED ATTRIBUTES, regular functions of the form: Stratum -> T
-		float grain_type_total_relative_volume()
+		float grain_type_total_relative_volume() const 
 		{
 		    float total_relative_volume(0);
-            for (std::size_t i=0; i<grain_type_count; i++)
+            for (std::size_t i=0; i<int(GrainType::count); i++)
             {
                 total_relative_volume += grain_type_relative_volume[i];
             }

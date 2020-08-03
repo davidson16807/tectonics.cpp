@@ -1,7 +1,8 @@
+#pragma once
 
 namespace phase
 {
-    enum WaterPhases
+    enum struct WaterPhases
     {
         //fascies            //   origin T    origin P    radius T
         gas,

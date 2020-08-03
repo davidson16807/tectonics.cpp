@@ -1,7 +1,8 @@
+#pragma once
 
 namespace phase
 {
-    enum CarbonPhases
+    enum struct CarbonPhases
     {
         supercritical,
         vapor,

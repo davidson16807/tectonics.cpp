@@ -1,7 +1,13 @@
+#pragma once
+
+// 3rd party libraries
+#include <glm/vec2.hpp>
+#include <glm/geometric.hpp>
 
 namespace phase
 {
-    enum MetamorphicFacies
+
+    enum struct MetamorphicFacies
     {
         igneous_or_sediment,  
         sedimentary,          
@@ -13,10 +19,10 @@ namespace phase
         prehnite_pumpellyte,  
         greenschist,          
         epidote_amphibiolite, 
-        amphibiolite,         
+        amphibolite,         
         granulite,            
-        COUNT
-    }
+        count
+    };
     /*
     `get_metamorphic_facies` returns the facies of a rock that has been submitted to a given temperature and pressure.
 
@@ -85,4 +91,3 @@ namespace phase
         }
     }
 }
-    

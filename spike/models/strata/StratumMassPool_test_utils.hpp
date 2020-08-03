@@ -21,7 +21,7 @@ namespace strata
 	{
 		StratumMassPool output;
 		output.mass = generator();
-		for (int j = 0; j < grain_type_count; ++j)
+		for (int j = 0; j < int(GrainType::count); ++j)
 		{
 			output.grain_type_relative_volume[j] = generator();
 		}
@@ -32,7 +32,7 @@ namespace strata
     	CHECK(a.mass == Approx(b.mass).epsilon(1e-4));                                                 \
 		float a_total_relative_volume(a.grain_type_total_relative_volume());                           \
 		float b_total_relative_volume(b.grain_type_total_relative_volume());                           \
-		for (int grain_i = 0; grain_i < grain_type_count; ++grain_i)                                   \
+		for (int grain_i = 0; grain_i < int(GrainType::count); ++grain_i)                                   \
 		{                                                                                              \
     		CHECK(b.grain_type_relative_volume[grain_i] / b_total_relative_volume ==                   \
     			Approx(a.grain_type_relative_volume[grain_i] / a_total_relative_volume).margin(0.01)); \
@@ -40,7 +40,7 @@ namespace strata
 
     #define STRATUM_MASS_POOL_VALID(a)                                          \
     	CHECK(a.mass > -1e-4);                                                  \
-		for (int grain_i = 0; grain_i < grain_type_count; ++grain_i)            \
+		for (int grain_i = 0; grain_i < int(GrainType::count); ++grain_i)            \
 		{                                                                       \
     		CHECK(a.grain_type_relative_volume[grain_i] > -1e-4);               \
     	}                                                                       

@@ -178,13 +178,28 @@ namespace strata
         float max_pressure_received;
         float age_of_world_when_deposited;
 
-        Stratum()
+        Stratum():
+            max_temperature_received(0),
+            max_pressure_received(0),
+            age_of_world_when_deposited(0)
+        {
+            mass_pools.fill(StratumMassPool());
+        }
+
+        Stratum(
+            const float max_temperature_received,
+            const float max_pressure_received,
+            const float age_of_world_when_deposited
+        ):
+            max_temperature_received(max_temperature_received),
+            max_pressure_received(max_pressure_received),
+            age_of_world_when_deposited(age_of_world_when_deposited)
         {
             mass_pools.fill(StratumMassPool());
         }
 
         // DERIVED ATTRIBUTES, regular functions of the form: Stratum -> T
-        float mass(){
+        float mass() const {
             float total_mass(0.0);
             for (std::size_t i=0; i<stratum_mass_pool_count; i++)
             {
@@ -192,7 +207,7 @@ namespace strata
             }
             return total_mass;
         }
-        float volume(const std::array<float, stratum_mass_pool_count>& mass_pool_densities){
+        float volume(const std::array<float, stratum_mass_pool_count>& mass_pool_densities) const {
             float total_volume(0.0);
             for (std::size_t i=0; i<stratum_mass_pool_count; i++)
             {
@@ -200,13 +215,13 @@ namespace strata
             }
             return total_volume;
         }
-        float density(const std::array<float, stratum_mass_pool_count>& mass_pool_densities, float age){
+        float density(const std::array<float, stratum_mass_pool_count>& mass_pool_densities, float age) const {
             return mass() / volume(mass_pool_densities);
         }
         float thermal_conductivity(
             const std::array<float, stratum_mass_pool_count>& mass_pool_densities,
             const std::array<float, stratum_mass_pool_count>& mass_pool_thermal_conductivities
-        ){
+        ) const {
             // geometric mean weighted by fractional volume, see work by Fuchs (2013)
             float logK(0.0);
             float total_volume(volume(mass_pool_densities));

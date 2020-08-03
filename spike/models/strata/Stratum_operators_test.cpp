@@ -18,7 +18,7 @@ TEST_CASE( "Stratum scale() associativity", "[strata]" ) {
 	float b = 2.0f;
 	float c = 3.0f;
 
-	Stratum ab;
+	Stratum ab(0,0,0);
 	Stratum ab_c;
 	Stratum a_bc;
 	scale(a, b, ab);

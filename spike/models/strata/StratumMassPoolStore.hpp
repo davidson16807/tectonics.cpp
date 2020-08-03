@@ -36,7 +36,7 @@ namespace strata
 	class StratumMassPoolStore
 	{
 		float mass; 
-		std::array<std::uint8_t, grain_type_count> grain_type_relative_volume;
+		std::array<std::uint8_t, int(GrainType::count)> grain_type_relative_volume;
 
 	public:
 		~StratumMassPoolStore()
@@ -47,11 +47,11 @@ namespace strata
 		    output.mass = mass;
 
 		    float total_relative_volume(0);
-            for (std::size_t i=0; i<grain_type_count; i++)
+            for (std::size_t i=0; i<int(GrainType::count); i++)
             {
                 total_relative_volume += grain_type_relative_volume[i];
             }
-            for (std::size_t i=0; i<grain_type_count; i++)
+            for (std::size_t i=0; i<int(GrainType::count); i++)
             {
                 output.grain_type_relative_volume[i] = grain_type_relative_volume[i] / total_relative_volume;
             }
@@ -61,11 +61,11 @@ namespace strata
 			mass = input.mass;
             // rescale bin counts by the new max to fit inside a uint8_t
             float grain_type_relative_bin_count_max = 0;
-            for (std::size_t i=0; i<grain_type_count; i++)
+            for (std::size_t i=0; i<int(GrainType::count); i++)
             {
                 grain_type_relative_bin_count_max = std::max(grain_type_relative_bin_count_max, input.grain_type_relative_volume[i]);
             }
-            for (std::size_t i=0; i<grain_type_count; i++)
+            for (std::size_t i=0; i<int(GrainType::count); i++)
             {
                 grain_type_relative_volume[i] = 
                     std::clamp(input.grain_type_relative_volume[i] * 255.0f / grain_type_relative_bin_count_max, 0.0f, 255.0f);

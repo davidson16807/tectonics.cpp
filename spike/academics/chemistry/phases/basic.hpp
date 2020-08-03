@@ -1,7 +1,8 @@
+#pragma once
 
 namespace phase
 {
-    enum BasicPhases
+    enum struct BasicPhases
     {
         vapor,
         liquid,

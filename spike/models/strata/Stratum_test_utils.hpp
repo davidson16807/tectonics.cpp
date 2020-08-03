@@ -20,7 +20,7 @@ namespace strata
     template<typename Tgenerator>
     Stratum get_random_stratum(Tgenerator generator)
     {
-        Stratum output;
+        Stratum output(generator(), generator(), generator());
         for (int i = 0; i < stratum_mass_pool_count; ++i)
         {
             output.mass_pools[i] = get_random_stratum_mass_pool(generator);

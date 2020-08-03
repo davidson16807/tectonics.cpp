@@ -21,7 +21,7 @@ namespace strata
 
 
         // DERIVED ATTRIBUTES, regular functions of the form: Strata -> T
-        float mass_pool(const OxygenPlanetStratumMassPoolTypes type){
+        float mass_pool(const OxygenPlanetStratumMassPoolTypes type) const {
             float total_mass(0.0);
             for (std::size_t i=0; i<max_stratum_count; i++)
             {
@@ -29,7 +29,7 @@ namespace strata
             }
             return total_mass;
         }
-        float mass(){
+        float mass() const {
             float total_mass(0.0);
             for (std::size_t i=0; i<max_stratum_count; i++)
             {
@@ -37,7 +37,7 @@ namespace strata
             }
             return total_mass;
         }
-        float volume(const std::array<float, Strata::mass_pool_count>& mass_pool_densities){
+        float volume(const std::array<float, Strata::mass_pool_count>& mass_pool_densities) const {
             float total_volume(0.0);
             for (std::size_t i=0; i<max_stratum_count; i++)
             {
@@ -45,7 +45,7 @@ namespace strata
             }
             return total_volume;
         }
-        float density(const std::array<float, Strata::mass_pool_count>& mass_pool_densities){
+        float density(const std::array<float, Strata::mass_pool_count>& mass_pool_densities) const {
             return mass() / volume(mass_pool_densities);
         }
 
