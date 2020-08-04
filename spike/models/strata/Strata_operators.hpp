@@ -5,7 +5,7 @@
 
 // in-house libraries
 #include "Strata.hpp"
-#include "Stratum_enums.hpp"
+#include "Stratum_StratumTypes.hpp"
 #include "Stratum_operators.hpp"
 
 namespace strata
@@ -36,7 +36,7 @@ namespace strata
         and it sometimes ignores distinctions that become useful later on. 
         For instance, ultramafic sedimentary rock is indistinguishable from other sedimentary rocks,
         but if metamorphosed it becomes very distinctive, so we must always distinguish based on composition type.
-        To conserve effort, we construct `get_rock_type_hash()`, 
+        To conserve effort, we construct `get_stratum_types().hash()`, 
         which represents a superset of the abstract values that may be returned by `get_rock_type()`,
         and is a cartesian product of the data types that are used within that function.
         */
@@ -44,19 +44,22 @@ namespace strata
         int j = 0;
         for (; i < input.count-1; ++j)
         {
-            if (get_rock_type_hash(input.strata[i]) == get_rock_type_hash(input.strata[i+1]))
+            if (get_stratum_types(input.content[i]).hash() == get_stratum_types(input.content[i+1]).hash())
             {
-                Stratum::combine(input.strata[i], input.strata[i+1], output.strata[j]);
+                combine(input.content[i], input.content[i+1], output.content[j]);
                 i += 2;
+                j += 1;
             }
             else
             {
-                output.strata[j] = input.strata[i];
+                output.content[j] = input.content[i];
                 i += 1;
+                j += 1;
             }
         }
         output.count = j;
     }
+
     /*
     Deposits a new layer to the top of the strata.
     Merges the deposited layer with the second layer down if there is a resembance between them.
@@ -66,44 +69,52 @@ namespace strata
     just as long as the mass in each pool is conserved.
     Functionally equivalent to `overlap()` if `bottom` were a Strata object with 0 or 1 layers,
     */
-    static void deposit(const Strata& input, const Stratum top, const Strata& output)
+    static void deposit(const Strata& bottom, const Stratum& top, Strata& output)
     {
         int i;
         int offset = 0;
-        if (get_rock_type_hash(input.strata[0]) != get_rock_type_hash(top))
+        if (get_stratum_types(bottom.content[0]).hash() != get_stratum_types(top).hash() &&
+            top.mass() > 1e-4f)
         {
-            output.strata[0] = top;
+            output.content[0] = top;
             offset = 1;
+            i = 0;
         }
-        for (i = 0; i < bottom.count && offset+i < max_stratum_count; ++i)
+        else 
         {
-            output.strata[offset+i] = bottom.strata[i];
+            combine(top, bottom.content[0], output.content[0]);
+            offset = 0;
+            i = 1;
         }
-        for (; i < bottom.count && offset+i >= max_stratum_count; ++i)
+        for (; offset+i < strata_max_stratum_count; ++i)
         {
-            Stratum::combine(output.strata[max_stratum_count-1], bottom.strata[i], output.strata[max_stratum_count-1]);
+            output.content[offset+i] = bottom.content[i];
         }
-        output.count = min(input.count+offset, max_stratum_count);
+        for (; i < bottom.count && offset+i >= strata_max_stratum_count; ++i)
+        {
+            combine(output.content[strata_max_stratum_count-1], bottom.content[i], output.content[strata_max_stratum_count-1]);
+        }
+        output.count = std::min(offset + bottom.count, strata_max_stratum_count);
     }
 
     /*
     Returns a new strata that represents the top strata subducting the bottom strata
     */
-    static void overlap(const Strata& top, const Strata& bottom, const Strata& output)
+    static void overlap(const Strata& top, const Strata& bottom, Strata& output)
     {
         int i;
         for (i = 0; i < top.count; ++i)
         {
-            output.strata[i] = top.strata[i];
+            output.content[i] = top.content[i];
         }
-        for (i = 0; i < bottom.count && top.count+i < max_stratum_count; ++i)
+        for (i = 0; i < bottom.count && top.count+i < strata_max_stratum_count; ++i)
         {
-            output.strata[top.count+i] = bottom.strata[i];
+            output.content[top.count+i] = bottom.content[i];
         }
-        for (; i < bottom.count && top.count+i >= max_stratum_count; ++i)
+        for (; i < bottom.count && top.count+i >= strata_max_stratum_count; ++i)
         {
-            Stratum::combine(output.strata[max_stratum_count-1], bottom.strata[i], output.strata[max_stratum_count-1]);
+            combine(output.content[strata_max_stratum_count-1], bottom.content[i], output.content[strata_max_stratum_count-1]);
         }
-        output.count = min(top.count+bottom.count, max_stratum_count);
+        output.count = std::min(top.count+bottom.count, strata_max_stratum_count);
     }
 }

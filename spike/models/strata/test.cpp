@@ -3,3 +3,4 @@
 #include "./Stratum_operators_test.cpp"
 #include "./StratumMassPool_operators_test.cpp"
 #include "./StratumStore_test.cpp"
+#include "./Strata_operators_test.cpp"

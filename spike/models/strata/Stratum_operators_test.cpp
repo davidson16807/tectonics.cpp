@@ -42,6 +42,18 @@ TEST_CASE( "Stratum scale() closure", "[strata]" ) {
     	STRATUM_VALID(ab)
     }
 }
+TEST_CASE( "Stratum scale() identity", "[strata]" ) {
+  	std::mt19937 generator(2);
+	Stratum a = get_random_stratum(generator);
+	float b = 1.0f;
+
+	Stratum ab;
+	scale(a, b, ab);
+
+    SECTION("there is a value that can be passed to scale() that produces the original Stratum"){
+    	STRATUM_EQUAL(ab, a)
+    }
+}
 
 
 
@@ -53,8 +65,8 @@ TEST_CASE( "Stratum combine() commutativity", "[strata]" ) {
 
 	Stratum ab;
 	Stratum bc;
-	combine(a, b, oxygen_planet_mass_pool_densities, ab);
-	combine(b, a, oxygen_planet_mass_pool_densities, bc);
+	combine(a, b, ab);
+	combine(b, a, bc);
 
     SECTION("switching arguments for combine() must produce the same Stratum object to within acceptable tolerances"){
     	STRATUM_EQUAL(ab, bc)
@@ -71,10 +83,10 @@ TEST_CASE( "Stratum combine() associativity", "[strata]" ) {
 	Stratum ab_c;
 	Stratum bc;
 	Stratum a_bc;
-	combine(a, b, oxygen_planet_mass_pool_densities, ab);
-	combine(ab, c, oxygen_planet_mass_pool_densities, ab_c);
-	combine(b, c, oxygen_planet_mass_pool_densities, bc);
-	combine(a, bc, oxygen_planet_mass_pool_densities, a_bc);
+	combine(a, b, ab);
+	combine(ab, c, ab_c);
+	combine(b, c, bc);
+	combine(a, bc, a_bc);
 
     SECTION("switching order of invocation for combine() must produce the same Stratum object to within acceptable tolerances"){
     	STRATUM_EQUAL(ab_c, a_bc)
@@ -87,10 +99,26 @@ TEST_CASE( "Stratum combine() closure", "[strata]" ) {
 	Stratum b = get_random_stratum(generator);
 
 	Stratum ab;
-	combine(a, b, oxygen_planet_mass_pool_densities, ab);
+	combine(a, b, ab);
 
     SECTION("the result of passing two valid Stratum objects to combine() must itself produce a valid Stratum"){
     	STRATUM_VALID(ab)
+    }
+}
+TEST_CASE( "Stratum combine() identity", "[strata]" ) {
+  	std::mt19937 generator(2);
+	Stratum a = get_random_stratum(generator);
+	// default constructor is required to be identity
+	Stratum b;
+	// test to make sure that any stratum with zero mass is an identity, 
+	// regardless of grain type distribution within mass pools 
+	b.mass_pools[0].grain_type_relative_volume[0] = 1000.0f;
+
+	Stratum ab;
+	combine(a, b, ab);
+
+    SECTION("there is a value that can be passed to combine() that produces the original Stratum"){
+    	STRATUM_EQUAL(ab, a)
     }
 }
 

@@ -26,7 +26,6 @@ namespace strata
     static void combine(
         const Stratum& a, 
         const Stratum& b, 
-        const std::array<float, stratum_mass_pool_count>& mass_pool_densities, 
         Stratum& output
     ) {
         for (std::size_t i=0; i<stratum_mass_pool_count; i++)
