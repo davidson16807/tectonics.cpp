@@ -31,21 +31,22 @@ namespace strata
     */
     class StrataStore
     {
-        std::array<StratumStore, Strata::max_stratum_count> strata;
+        std::array<StratumStore, strata_max_stratum_count> strata;
         int count;
+    public:
         void decompress(Strata& output) const
         {
-            for (std::size_t i=0; i<Strata::max_stratum_count; i++)
+            for (std::size_t i=0; i<strata_max_stratum_count; i++)
             {
-                strata[i].decompress(output.strata[i]);
+                strata[i].decompress(output.content[i]);
             }
             output.count = count;
         }
         void compress(const Strata& input)
         {
-            for (std::size_t i=0; i<Strata::max_stratum_count; i++)
+            for (std::size_t i=0; i<strata_max_stratum_count; i++)
             {
-                strata[i].compress(input.strata[i]);
+                strata[i].compress(input.content[i]);
             }
             count = input.count;
         }
