@@ -13,6 +13,7 @@
 
 #include "Stratum.hpp"
 #include "StratumTypes.hpp"
+#include "StratumMassPoolTypes.hpp"
 
 /*
 Contains a large set of enums and functions for classifying individual rock layers

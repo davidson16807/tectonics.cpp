@@ -17,11 +17,11 @@ namespace strata
         Strata(): content(), count(0){}
 
         // DERIVED ATTRIBUTES, regular functions of the form: Strata -> T
-        float mass_pool(const OxygenPlanetStratumMassPoolTypes type) const {
+        float mass_pool(const int id) const {
             float total_mass(0.0);
             for (std::size_t i=0; i<L; i++)
             {
-                total_mass += content[i].mass_pools[int(type)].mass;
+                total_mass += content[i].mass_pools[id].mass;
             }
             return total_mass;
         }
