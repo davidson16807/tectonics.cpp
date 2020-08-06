@@ -5,7 +5,7 @@
 
 // in-house libraries
 #include "Strata.hpp"
-#include "Stratum_StratumTypes.hpp"
+#include "Stratum_to_StratumTypes.hpp"
 #include "Stratum_operators.hpp"
 
 namespace strata

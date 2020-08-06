@@ -1,7 +1,7 @@
 #include "./StrataStore_test.cpp"
-#include "./Stratum_StratumTypes_test.cpp"
 #include "./StratumMassPoolStore_test.cpp"
 #include "./Stratum_operators_test.cpp"
 #include "./StratumMassPool_operators_test.cpp"
 #include "./StratumStore_test.cpp"
+#include "./Stratum_to_StratumTypes_test.cpp"
 #include "./Strata_operators_test.cpp"
