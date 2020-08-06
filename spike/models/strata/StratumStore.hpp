@@ -35,9 +35,10 @@ namespace strata
     since the object at high level can be treated strictly by its mappings to other states, 
     as in the spirit of category theory, and in this case they are isomorphic and invertible.
     */
+    template <int M>
     class StratumStore
     {
-        std::array<StratumMassPoolStore, stratum_mass_pool_count> mass_pools;
+        std::array<StratumMassPoolStore, M> mass_pools;
         // Represent pressures from 1 to 6e12 Pascals with a precision of 0.02%.
         // This value was chosen to reflect the pressure of Jupiter's core. 
         std::uint16_t stored_max_temperature_received;
@@ -82,7 +83,7 @@ namespace strata
 
         void decompress(Stratum& output) const
         {
-            for (std::size_t i=0; i<stratum_mass_pool_count; i++)
+            for (std::size_t i=0; i<M; i++)
             {
                 mass_pools[i].decompress(output.mass_pools[i]);
             }
@@ -93,7 +94,7 @@ namespace strata
 
         void compress(const Stratum& input)
         {
-            for (std::size_t i=0; i<stratum_mass_pool_count; i++)
+            for (std::size_t i=0; i<M; i++)
             {
                 mass_pools[i].compress(input.mass_pools[i]);
             }

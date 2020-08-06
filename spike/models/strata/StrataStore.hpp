@@ -29,14 +29,15 @@ namespace strata
     treated strictly by its mappings to other states, 
     which in this case are isomorphic and invertible.
     */
+    template <int L, int M>
     class StrataStore
     {
-        std::array<StratumStore, strata_max_stratum_count> strata;
+        std::array<StratumStore<M>, L> strata;
         int count;
     public:
         void decompress(Strata& output) const
         {
-            for (std::size_t i=0; i<strata_max_stratum_count; i++)
+            for (std::size_t i=0; i<L; i++)
             {
                 strata[i].decompress(output.content[i]);
             }
@@ -44,7 +45,7 @@ namespace strata
         }
         void compress(const Strata& input)
         {
-            for (std::size_t i=0; i<strata_max_stratum_count; i++)
+            for (std::size_t i=0; i<L; i++)
             {
                 strata[i].compress(input.content[i]);
             }

@@ -9,10 +9,12 @@ using namespace strata;
 
 TEST_CASE( "StrataStore compress/decompress invertibility", "[strata]" ) {
   	std::mt19937 generator(2);
+  	const int L = 16;
+  	const int M = 15;
 
 	Strata original = get_random_strata(generator);
 
-	StrataStore strata_store;
+	StrataStore<L,M> strata_store;
 	strata_store.compress(original);
 
 	Strata reconstructed;

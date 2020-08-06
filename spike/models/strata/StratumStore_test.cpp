@@ -8,9 +8,10 @@ using namespace strata;
 
 TEST_CASE( "StratumStore compress/decompress invertibility", "[strata]" ) {
   	std::mt19937 generator(2);
+  	const int M = 15;
 
 	Stratum original(generator(), generator(), generator());
-	for (int i = 0; i < stratum_mass_pool_count; ++i)
+	for (int i = 0; i < M; ++i)
 	{
 		original.mass_pools[i].mass = generator();
 		for (int j = 0; j < int(GrainType::count); ++j)
@@ -19,21 +20,21 @@ TEST_CASE( "StratumStore compress/decompress invertibility", "[strata]" ) {
 		}
 	}
 
-	StratumStore stratum_mass_pool_store;
+	StratumStore<M> stratum_mass_pool_store;
 	stratum_mass_pool_store.compress(original);
 
 	Stratum reconstructed(generator(), generator(), generator());
 	stratum_mass_pool_store.decompress(reconstructed);
 
     SECTION("compressing a Stratum object then decompressing it must reproduce the original object's mass to within 4 decimal places"){
-		for (int i = 0; i < stratum_mass_pool_count; ++i)
+		for (int i = 0; i < M; ++i)
 		{
     		CHECK(reconstructed.mass_pools[i].mass == Approx(original.mass_pools[i].mass).epsilon(1e-4));
 		}
 	}
 
     SECTION("compressing a Stratum object then decompressing it must reproduce the original object's fractional grain sizes to within 1%"){
-		for (int i = 0; i < stratum_mass_pool_count; ++i)
+		for (int i = 0; i < M; ++i)
 		{
 			float original_total_relative_volume(original.mass_pools[i].grain_type_total_relative_volume());
 			float reconstructed_total_relative_volume(reconstructed.mass_pools[i].grain_type_total_relative_volume());
