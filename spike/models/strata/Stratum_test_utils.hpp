@@ -17,11 +17,11 @@ namespace strata
     Our chief concern here is to simplify writing unit tests and interpreting their output.
     */
 
-    template<typename Tgenerator>
-    Stratum get_random_stratum(Tgenerator generator)
+    template<int M, typename Tgenerator>
+    Stratum<M> get_random_stratum(Tgenerator generator)
     {
-        Stratum output(generator(), generator(), generator());
-        for (int i = 0; i < stratum_mass_pool_count; ++i)
+        Stratum<M> output(generator(), generator(), generator());
+        for (int i = 0; i < M; ++i)
         {
             output.mass_pools[i] = get_random_stratum_mass_pool(generator);
         }
@@ -29,13 +29,13 @@ namespace strata
     }
     
     #define STRATUM_EQUAL(stratum1, stratum2)                                                  \
-        for (int pool_i = 0; pool_i < stratum_mass_pool_count; ++pool_i)         \
+        for (int pool_i = 0; pool_i < M; ++pool_i)         \
         {                                                                        \
             STRATUM_MASS_POOL_EQUAL(stratum1.mass_pools[pool_i], stratum2.mass_pools[pool_i])  \
         } 
     
     #define STRATUM_VALID(stratum1)                                              \
-        for (int pool_i = 0; pool_i < stratum_mass_pool_count; ++pool_i)  \
+        for (int pool_i = 0; pool_i < M; ++pool_i)  \
         {                                                                 \
             STRATUM_MASS_POOL_VALID(stratum1.mass_pools[pool_i])                 \
         }                                                                     

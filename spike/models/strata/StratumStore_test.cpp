@@ -10,7 +10,7 @@ TEST_CASE( "StratumStore compress/decompress invertibility", "[strata]" ) {
   	std::mt19937 generator(2);
   	const int M = 15;
 
-	Stratum original(generator(), generator(), generator());
+	Stratum<M> original(generator(), generator(), generator());
 	for (int i = 0; i < M; ++i)
 	{
 		original.mass_pools[i].mass = generator();
@@ -23,7 +23,7 @@ TEST_CASE( "StratumStore compress/decompress invertibility", "[strata]" ) {
 	StratumStore<M> stratum_mass_pool_store;
 	stratum_mass_pool_store.compress(original);
 
-	Stratum reconstructed(generator(), generator(), generator());
+	Stratum<M> reconstructed(generator(), generator(), generator());
 	stratum_mass_pool_store.decompress(reconstructed);
 
     SECTION("compressing a Stratum object then decompressing it must reproduce the original object's mass to within 4 decimal places"){

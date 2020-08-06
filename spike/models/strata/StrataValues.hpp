@@ -4,10 +4,10 @@
 
 namespace strata
 {
-    template <typename T>
+    template <typename T, int L>
     struct StrataValues
     {
-        std::array<T, Strata::max_stratum_count> values;
+        std::array<T, L> values;
         int count;
         ~StrataValues(){}
         StrataValues(): values(), count(0){}

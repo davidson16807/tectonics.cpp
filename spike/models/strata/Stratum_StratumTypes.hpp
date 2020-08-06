@@ -21,8 +21,9 @@ We place them outside the Strata class to avoid polluting that class namespace.
 namespace strata
 {
 
+    template<int M>
     void get_particle_size_bin_fractional_volume(
-        const Stratum& stratum, 
+        const Stratum<M>& stratum, 
         std::array<float, int(ParticleSizeBins::count)>& output
     ){
         float chemically_susceptible_mass_fraction = 
@@ -31,7 +32,7 @@ namespace strata
 
         output.fill(0);
 
-        for (std::size_t i=0; i<stratum_mass_pool_count; i++)
+        for (std::size_t i=0; i<M; i++)
         {
             const std::array<float, int(GrainType::count)>& grains = stratum.mass_pools[i].grain_type_relative_volume;
             output[int(ParticleSizeBins::boulder)] += grains[int(GrainType::unweathered_extrusive)];
@@ -122,7 +123,8 @@ namespace strata
 
 
     // NOTE: based off https://upload.wikimedia.org/wikipedia/commons/f/f4/Mineralogy_igneous_rocks_EN.svg
-    IgneousCompositionTypes get_igneous_composition_types(const Stratum& stratum)
+    template<int M>
+    IgneousCompositionTypes get_igneous_composition_types(const Stratum<M>& stratum)
     {
         float total_mass = stratum.mass();
         if (stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::olivine)].mass / total_mass > 0.3)
@@ -147,12 +149,13 @@ namespace strata
             return IgneousCompositionTypes::other;
         }
     }
+    template<int M>
     void get_igneous_formation_type_fractional_volume(
-        const Stratum& stratum, 
+        const Stratum<M>& stratum, 
         std::array<float, int(IgneousFormationTypes::count)>& output
     ){
         output.fill(0);
-        for (std::size_t i=0; i<stratum_mass_pool_count; i++)
+        for (std::size_t i=0; i<M; i++)
         {
             const std::array<float, int(GrainType::count)>& grains = stratum.mass_pools[i].grain_type_relative_volume;
             output[int(IgneousFormationTypes::extrusive)] += grains[int(GrainType::unweathered_extrusive)];
@@ -201,7 +204,8 @@ namespace strata
     when submitted to a given pressure and temperature.
     This will apply to any rock that is composed of minerals commonly found on earth.
     */
-    phase::MetamorphicFacies get_metamorphic_facies(const Stratum& stratum)
+    template<int M>
+    phase::MetamorphicFacies get_metamorphic_facies(const Stratum<M>& stratum)
     {
         float p = 0.0; // the lowest max pressure shared by all mass pools
         float t = 0.0; // the lowest max temperature shared by all mass pools
@@ -210,7 +214,8 @@ namespace strata
         return phase::get_metamorphic_facies(p,t);
     }
     
-    MetamorphicGrades get_metamorphic_grades(const Stratum& stratum)
+    template<int M>
+    MetamorphicGrades get_metamorphic_grades(const Stratum<M>& stratum)
     {
         float p = 0.0; // the lowest max pressure shared by all mass pools
         float t = 0.0; // the lowest max temperature shared by all mass pools
@@ -257,7 +262,8 @@ namespace strata
     indicating composition criteria used by `get_rock_type()`.
     We use `get_rock_composition_types()` to simplify code and improve performance.
     */
-    RockCompositionTypes get_rock_composition_types(const Stratum& stratum)
+    template<int M>
+    RockCompositionTypes get_rock_composition_types(const Stratum<M>& stratum)
     {
         RockCompositionTypes out;
         float total_mass = stratum.mass();
@@ -277,7 +283,8 @@ namespace strata
         return out;
     }
 
-    StratumTypes get_stratum_types(const Stratum& stratum)
+    template<int M>
+    StratumTypes get_stratum_types(const Stratum<M>& stratum)
     {
         std::array<float, int(ParticleSizeBins::count)> particle_size_bin_fractional_volume;
         get_particle_size_bin_fractional_volume(stratum, particle_size_bin_fractional_volume);

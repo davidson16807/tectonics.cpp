@@ -35,7 +35,7 @@ namespace strata
         std::array<StratumStore<M>, L> strata;
         int count;
     public:
-        void decompress(Strata& output) const
+        void decompress(Strata<L,M>& output) const
         {
             for (std::size_t i=0; i<L; i++)
             {
@@ -43,7 +43,7 @@ namespace strata
             }
             output.count = count;
         }
-        void compress(const Strata& input)
+        void compress(const Strata<L,M>& input)
         {
             for (std::size_t i=0; i<L; i++)
             {

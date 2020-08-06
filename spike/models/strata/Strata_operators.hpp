@@ -14,7 +14,8 @@ namespace strata
     "simplify" is a regular function that iterates through layers, 
     combines similar layers together, and stores results in output.
     */
-    static void simplify(const Strata& input, Strata& output)
+    template <int L, int M>
+    static void simplify(const Strata<L,M>& input, Strata<L,M>& output)
     {
         /*
         NOTE: we only want to combine layers when they "resemble" each other.
@@ -69,7 +70,8 @@ namespace strata
     just as long as the mass in each pool is conserved.
     Functionally equivalent to `overlap()` if `bottom` were a Strata object with 0 or 1 layers,
     */
-    static void deposit(const Strata& bottom, const Stratum& top, Strata& output)
+    template <int L, int M>
+    static void deposit(const Strata<L,M>& bottom, const Stratum<M>& top, Strata<L,M>& output)
     {
         int i;
         int offset = 0;
@@ -86,35 +88,36 @@ namespace strata
             offset = 0;
             i = 1;
         }
-        for (; offset+i < strata_max_stratum_count; ++i)
+        for (; offset+i < L; ++i)
         {
             output.content[offset+i] = bottom.content[i];
         }
-        for (; i < bottom.count && offset+i >= strata_max_stratum_count; ++i)
+        for (; i < bottom.count && offset+i >= L; ++i)
         {
-            combine(output.content[strata_max_stratum_count-1], bottom.content[i], output.content[strata_max_stratum_count-1]);
+            combine(output.content[L-1], bottom.content[i], output.content[L-1]);
         }
-        output.count = std::min(offset + bottom.count, strata_max_stratum_count);
+        output.count = std::min(offset + bottom.count, L);
     }
 
     /*
     Returns a new strata that represents the top strata subducting the bottom strata
     */
-    static void overlap(const Strata& top, const Strata& bottom, Strata& output)
+    template <int L, int M>
+    static void overlap(const Strata<L,M>& top, const Strata<L,M>& bottom, Strata<L,M>& output)
     {
         int i;
         for (i = 0; i < top.count; ++i)
         {
             output.content[i] = top.content[i];
         }
-        for (i = 0; i < bottom.count && top.count+i < strata_max_stratum_count; ++i)
+        for (i = 0; i < bottom.count && top.count+i < L; ++i)
         {
             output.content[top.count+i] = bottom.content[i];
         }
-        for (; i < bottom.count && top.count+i >= strata_max_stratum_count; ++i)
+        for (; i < bottom.count && top.count+i >= L; ++i)
         {
-            combine(output.content[strata_max_stratum_count-1], bottom.content[i], output.content[strata_max_stratum_count-1]);
+            combine(output.content[L-1], bottom.content[i], output.content[L-1]);
         }
-        output.count = std::min(top.count+bottom.count, strata_max_stratum_count);
+        output.count = std::min(top.count+bottom.count, L);
     }
 }

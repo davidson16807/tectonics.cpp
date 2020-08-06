@@ -12,12 +12,12 @@ TEST_CASE( "StrataStore compress/decompress invertibility", "[strata]" ) {
   	const int L = 16;
   	const int M = 15;
 
-	Strata original = get_random_strata(generator);
+	Strata<L,M> original = get_random_strata<L,M>(generator);
 
 	StrataStore<L,M> strata_store;
 	strata_store.compress(original);
 
-	Strata reconstructed;
+	Strata<L,M> reconstructed;
 	strata_store.decompress(reconstructed);
 
     SECTION("compressing a Strata object then decompressing it must reproduce the original object to within acceptable tolerances"){

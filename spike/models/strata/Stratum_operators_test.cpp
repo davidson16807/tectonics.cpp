@@ -14,13 +14,14 @@ using namespace strata;
 
 TEST_CASE( "Stratum scale() associativity", "[strata]" ) {
   	std::mt19937 generator(2);
-	Stratum a = get_random_stratum(generator);
+  	const int M = 15;
+	Stratum<M> a = get_random_stratum<M>(generator);
 	float b = 2.0f;
 	float c = 3.0f;
 
-	Stratum ab(0,0,0);
-	Stratum ab_c;
-	Stratum a_bc;
+	Stratum<M> ab(0,0,0);
+	Stratum<M> ab_c;
+	Stratum<M> a_bc;
 	scale(a, b, ab);
 	scale(ab, c, ab_c);
 	scale(a, b*c, a_bc);
@@ -32,10 +33,11 @@ TEST_CASE( "Stratum scale() associativity", "[strata]" ) {
 
 TEST_CASE( "Stratum scale() closure", "[strata]" ) {
   	std::mt19937 generator(2);
-	Stratum a = get_random_stratum(generator);
+  	const int M = 15;
+	Stratum<M> a = get_random_stratum<M>(generator);
 	float b = 2.0f;
 
-	Stratum ab;
+	Stratum<M> ab;
 	scale(a, b, ab);
 
     SECTION("the result of passing a valid Stratum object to scale() must itself produce a valid Stratum"){
@@ -44,10 +46,11 @@ TEST_CASE( "Stratum scale() closure", "[strata]" ) {
 }
 TEST_CASE( "Stratum scale() identity", "[strata]" ) {
   	std::mt19937 generator(2);
-	Stratum a = get_random_stratum(generator);
+  	const int M = 15;
+	Stratum<M> a = get_random_stratum<M>(generator);
 	float b = 1.0f;
 
-	Stratum ab;
+	Stratum<M> ab;
 	scale(a, b, ab);
 
     SECTION("there is a value that can be passed to scale() that produces the original Stratum"){
@@ -60,11 +63,12 @@ TEST_CASE( "Stratum scale() identity", "[strata]" ) {
 
 TEST_CASE( "Stratum combine() commutativity", "[strata]" ) {
   	std::mt19937 generator(2);
-	Stratum a = get_random_stratum(generator);
-	Stratum b = get_random_stratum(generator);
+  	const int M = 15;
+	Stratum<M> a = get_random_stratum<M>(generator);
+	Stratum<M> b = get_random_stratum<M>(generator);
 
-	Stratum ab;
-	Stratum bc;
+	Stratum<M> ab;
+	Stratum<M> bc;
 	combine(a, b, ab);
 	combine(b, a, bc);
 
@@ -75,14 +79,15 @@ TEST_CASE( "Stratum combine() commutativity", "[strata]" ) {
 
 TEST_CASE( "Stratum combine() associativity", "[strata]" ) {
   	std::mt19937 generator(2);
-	Stratum a = get_random_stratum(generator);
-	Stratum b = get_random_stratum(generator);
-	Stratum c = get_random_stratum(generator);
+  	const int M = 15;
+	Stratum<M> a = get_random_stratum<M>(generator);
+	Stratum<M> b = get_random_stratum<M>(generator);
+	Stratum c = get_random_stratum<M>(generator);
 
-	Stratum ab;
-	Stratum ab_c;
-	Stratum bc;
-	Stratum a_bc;
+	Stratum<M> ab;
+	Stratum<M> ab_c;
+	Stratum<M> bc;
+	Stratum<M> a_bc;
 	combine(a, b, ab);
 	combine(ab, c, ab_c);
 	combine(b, c, bc);
@@ -95,10 +100,11 @@ TEST_CASE( "Stratum combine() associativity", "[strata]" ) {
 
 TEST_CASE( "Stratum combine() closure", "[strata]" ) {
   	std::mt19937 generator(2);
-	Stratum a = get_random_stratum(generator);
-	Stratum b = get_random_stratum(generator);
+  	const int M = 15;
+	Stratum<M> a = get_random_stratum<M>(generator);
+	Stratum<M> b = get_random_stratum<M>(generator);
 
-	Stratum ab;
+	Stratum<M> ab;
 	combine(a, b, ab);
 
     SECTION("the result of passing two valid Stratum objects to combine() must itself produce a valid Stratum"){
@@ -107,14 +113,15 @@ TEST_CASE( "Stratum combine() closure", "[strata]" ) {
 }
 TEST_CASE( "Stratum combine() identity", "[strata]" ) {
   	std::mt19937 generator(2);
-	Stratum a = get_random_stratum(generator);
+  	const int M = 15;
+	Stratum<M> a = get_random_stratum<M>(generator);
 	// default constructor is required to be identity
-	Stratum b;
+	Stratum<M> b;
 	// test to make sure that any stratum with zero mass is an identity, 
 	// regardless of grain type distribution within mass pools 
 	b.mass_pools[0].grain_type_relative_volume[0] = 1000.0f;
 
-	Stratum ab;
+	Stratum<M> ab;
 	combine(a, b, ab);
 
     SECTION("there is a value that can be passed to combine() that produces the original Stratum"){

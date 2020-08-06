@@ -22,14 +22,14 @@ namespace strata
     Our chief concern here is to simplify writing unit tests and interpreting their output.
     */
 
-    template<typename Tgenerator>
-    Strata get_random_strata(Tgenerator generator)
+    template<int L, int M, typename Tgenerator>
+    Strata<L,M> get_random_strata(Tgenerator generator)
     {
-        Strata output;
+        Strata<L,M> output;
         output.count = 16;
-        for (int i = 0; i < strata_max_stratum_count; ++i)
+        for (int i = 0; i < L; ++i)
         {
-            output.content[i] = get_random_stratum(generator);
+            output.content[i] = get_random_stratum<M>(generator);
         }
         return output;
     }
@@ -38,14 +38,14 @@ namespace strata
         CHECK(strata1.count == strata2.count);                                    \
         for (int stratum_i = 0; stratum_i < strata1.count; ++stratum_i)   \
         {                                                           \
-            Stratum stratum1 = strata1.content[stratum_i];\
-            Stratum stratum2 = strata2.content[stratum_i];\
+            Stratum<M> stratum1 = strata1.content[stratum_i];\
+            Stratum<M> stratum2 = strata2.content[stratum_i];\
             STRATUM_EQUAL(stratum1, stratum2) \
         } 
     
     #define STRATA_VALID(strata1)                                       \
         CHECK(0 < strata1.count);\
-        CHECK(strata1.count <= strata_max_stratum_count);                       \
+        CHECK(strata1.count <= L);                       \
         for (int stratum_i = 0; stratum_i < strata1.count; ++stratum_i) \
         {                                                         \
             STRATUM_VALID(strata1.content[stratum_i]) \

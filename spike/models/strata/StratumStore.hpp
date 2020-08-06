@@ -81,7 +81,7 @@ namespace strata
 
     public:
 
-        void decompress(Stratum& output) const
+        void decompress(Stratum<M>& output) const
         {
             for (std::size_t i=0; i<M; i++)
             {
@@ -92,7 +92,7 @@ namespace strata
             output.age_of_world_when_deposited = age_of_world_when_deposited_in_megayears * units::megayear;
         }
 
-        void compress(const Stratum& input)
+        void compress(const Stratum<M>& input)
         {
             for (std::size_t i=0; i<M; i++)
             {
