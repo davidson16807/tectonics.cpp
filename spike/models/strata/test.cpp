@@ -1,3 +1,4 @@
+#include "./StratumTypes_to_RockType_test.hpp"
 #include "./StrataStore_test.cpp"
 #include "./StratumMassPoolStore_test.cpp"
 #include "./Stratum_operators_test.cpp"

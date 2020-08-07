@@ -8,14 +8,14 @@ namespace strata
 {
     enum struct ParticleSizeBins
     {
-        boulder,  // Krumbein phi: -10 to -8
-        cobble,   // Krumbein phi: -7 to -5
-        pebble,   // Krumbein phi: -4 to -2
-        granule,  // Krumbein phi: -1 to 1
-        sand,     // Krumbein phi:  2 to 4
-        silt,     // Krumbein phi:  5 to 7
-        clay,     // Krumbein phi:  8 to 10
         colloid,  // Krumbein phi: 11 to 13
+        clay,     // Krumbein phi:  8 to 10
+        silt,     // Krumbein phi:  5 to 7
+        sand,     // Krumbein phi:  2 to 4
+        granule,  // Krumbein phi: -1 to 1
+        pebble,   // Krumbein phi: -4 to -2
+        cobble,   // Krumbein phi: -7 to -5
+        boulder,  // Krumbein phi: -10 to -8
         count
     };
 
@@ -30,6 +30,7 @@ namespace strata
         clay_loam = 1<<2 | 1<<3,
         sand_clay = 1<<0 | 1<<2,
         silt_clay = 1<<1 | 1<<2,
+        count = 1<<3 | 1<<2 | 1<<1 | 1<<0
     };
 
     enum struct IgneousCompositionTypes
@@ -59,6 +60,24 @@ namespace strata
         high,                //         everything else
         count
     };
+
+    enum struct MetamorphicFacies
+    {
+        igneous_or_sediment,  
+        sedimentary,          
+        zeolite,              
+        magmatism,            
+        blueschist,           
+        eclogite,             
+        hornfels,             
+        prehnite_pumpellyte,  
+        greenschist,          
+        epidote_amphibiolite, 
+        amphibolite,         
+        granulite,            
+        count
+    };
+
     /*
     `RockCompositionTypes` is a structure composed of booleans 
     that document all composition criteria used within `get_rock_type()`.
@@ -77,24 +96,30 @@ namespace strata
 
     struct StratumTypes
     {
-        MetamorphicGrades       metamorphic_grades;
-        IgneousCompositionTypes igneous_composition_types;
-        IgneousFormationTypes   igneous_formation_types;
+        MetamorphicGrades       metamorphic_grade;
+        MetamorphicFacies       metamorphic_facies;
+        IgneousCompositionTypes igneous_composition_type;
+        IgneousFormationTypes   igneous_formation_type;
         ParticleSizeBins        dominant_particle_size_bin;
+        SoilTypes               soil_type;
         RockCompositionTypes    rock_composition_types;
 
         StratumTypes(
-            const MetamorphicGrades metamorphic_grades, 
-            const IgneousCompositionTypes igneous_composition_types, 
-            const IgneousFormationTypes igneous_formation_types, 
+            const MetamorphicGrades metamorphic_grade, 
+            const MetamorphicFacies metamorphic_facies, 
+            const IgneousCompositionTypes igneous_composition_type, 
+            const IgneousFormationTypes igneous_formation_type, 
             const ParticleSizeBins dominant_particle_size_bin, 
-            const RockCompositionTypes rock_composition_types 
+            const SoilTypes soil_type,
+            const RockCompositionTypes rock_composition_types
         ) :
-            metamorphic_grades(metamorphic_grades), 
-            igneous_composition_types(igneous_composition_types), 
-            igneous_formation_types(igneous_formation_types), 
+            metamorphic_grade(metamorphic_grade), 
+            metamorphic_facies(metamorphic_facies), 
+            igneous_composition_type(igneous_composition_type), 
+            igneous_formation_type(igneous_formation_type), 
             dominant_particle_size_bin(dominant_particle_size_bin), 
-            rock_composition_types(rock_composition_types) 
+            soil_type(soil_type),
+            rock_composition_types(rock_composition_types)
         { }
         /*
         "hash" returns a bitfield integer representing all aspects that might distinguish a rock stratum.
@@ -104,10 +129,12 @@ namespace strata
         int hash()
         {
             return 0
-                * int(MetamorphicGrades::count)       + int(metamorphic_grades)
-                * int(IgneousCompositionTypes::count) + int(igneous_composition_types)
-                * int(IgneousFormationTypes::count)   + int(igneous_formation_types)
+                * int(MetamorphicGrades::count)       + int(metamorphic_grade)
+                * int(MetamorphicFacies::count)       + int(metamorphic_facies)
+                * int(IgneousCompositionTypes::count) + int(igneous_composition_type)
+                * int(IgneousFormationTypes::count)   + int(igneous_formation_type)
                 * int(ParticleSizeBins::count)        + int(dominant_particle_size_bin)
+                * int(SoilTypes::count)               + int(soil_type)
                 * 2 + rock_composition_types.partly_calcareous
                 * 2 + rock_composition_types.calcareous
                 * 2 + rock_composition_types.silicaceous

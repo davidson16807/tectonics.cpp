@@ -5,14 +5,13 @@
 #include <catch/catch.hpp>
 
 // in house libraries
-#include "Stratum.hpp"
 #include "Stratum_to_StratumTypes.hpp"
 
 using namespace strata;
 
-TEST_CASE( "get_dominant_particle_size_bin() happy path", "[strata]" ) {
+TEST_CASE( "get_stratum_types() happy path", "[strata]" ) {
     const int M = 15;
-    SECTION("get_dominant_particle_size_bin() must recognize sand"){
+    SECTION("get_stratum_types() must recognize sand"){
 		StratumMassPool pool;
 		pool.mass = 1.0f;
 		pool.grain_type_relative_volume[int(GrainType::chemically_weathered_intrusive)] = 1.0f;
@@ -22,9 +21,9 @@ TEST_CASE( "get_dominant_particle_size_bin() happy path", "[strata]" ) {
 
 		StratumTypes stratum_types = get_stratum_types(stratum);
     	CHECK(stratum_types.dominant_particle_size_bin == ParticleSizeBins::sand);
-    	CHECK(stratum_types.igneous_formation_types == IgneousFormationTypes::intrusive);
-    	CHECK(stratum_types.igneous_composition_types == IgneousCompositionTypes::felsic);
-    	CHECK(stratum_types.metamorphic_grades == MetamorphicGrades::igneous_or_sediment);
+    	CHECK(stratum_types.igneous_formation_type == IgneousFormationTypes::intrusive);
+    	CHECK(stratum_types.igneous_composition_type == IgneousCompositionTypes::felsic);
+    	CHECK(stratum_types.metamorphic_grade == MetamorphicGrades::igneous_or_sediment);
     	CHECK(!stratum_types.rock_composition_types.partly_calcareous);
     	CHECK(!stratum_types.rock_composition_types.calcareous);
     	CHECK(stratum_types.rock_composition_types.silicaceous);
@@ -33,7 +32,7 @@ TEST_CASE( "get_dominant_particle_size_bin() happy path", "[strata]" ) {
     	CHECK(!stratum_types.rock_composition_types.ferrous);
     	CHECK(!stratum_types.rock_composition_types.organic);
     }
-    SECTION("get_dominant_particle_size_bin() must recognize granite"){
+    SECTION("get_stratum_types() must recognize granite"){
 		StratumMassPool quartz;
 		quartz.mass = 0.7f;
 		quartz.grain_type_relative_volume[int(GrainType::unweathered_intrusive)] = 1.0f;
@@ -47,9 +46,9 @@ TEST_CASE( "get_dominant_particle_size_bin() happy path", "[strata]" ) {
 
 		StratumTypes stratum_types = get_stratum_types(stratum);
     	CHECK(stratum_types.dominant_particle_size_bin == ParticleSizeBins::boulder);
-    	CHECK(stratum_types.igneous_formation_types == IgneousFormationTypes::intrusive);
-    	CHECK(stratum_types.igneous_composition_types == IgneousCompositionTypes::felsic);
-    	CHECK(stratum_types.metamorphic_grades == MetamorphicGrades::igneous_or_sediment);
+    	CHECK(stratum_types.igneous_formation_type == IgneousFormationTypes::intrusive);
+    	CHECK(stratum_types.igneous_composition_type == IgneousCompositionTypes::felsic);
+    	CHECK(stratum_types.metamorphic_grade == MetamorphicGrades::igneous_or_sediment);
     	CHECK(!stratum_types.rock_composition_types.partly_calcareous);
     	CHECK(!stratum_types.rock_composition_types.calcareous);
     	CHECK(!stratum_types.rock_composition_types.silicaceous);
@@ -58,7 +57,7 @@ TEST_CASE( "get_dominant_particle_size_bin() happy path", "[strata]" ) {
     	CHECK(!stratum_types.rock_composition_types.ferrous);
     	CHECK(!stratum_types.rock_composition_types.organic);
     }
-    SECTION("get_dominant_particle_size_bin() must recognize basalt"){
+    SECTION("get_stratum_types() must recognize basalt"){
 		StratumMassPool quartz;
 		quartz.mass = 0.5f;
 		quartz.grain_type_relative_volume[int(GrainType::unweathered_extrusive)] = 1.0f;
@@ -80,9 +79,9 @@ TEST_CASE( "get_dominant_particle_size_bin() happy path", "[strata]" ) {
 
 		StratumTypes stratum_types = get_stratum_types(stratum);
     	CHECK(stratum_types.dominant_particle_size_bin == ParticleSizeBins::boulder);
-    	CHECK(stratum_types.igneous_formation_types == IgneousFormationTypes::extrusive);
-    	CHECK(stratum_types.igneous_composition_types == IgneousCompositionTypes::mafic);
-    	CHECK(stratum_types.metamorphic_grades == MetamorphicGrades::igneous_or_sediment);
+    	CHECK(stratum_types.igneous_formation_type == IgneousFormationTypes::extrusive);
+    	CHECK(stratum_types.igneous_composition_type == IgneousCompositionTypes::mafic);
+    	CHECK(stratum_types.metamorphic_grade == MetamorphicGrades::igneous_or_sediment);
     	CHECK(!stratum_types.rock_composition_types.partly_calcareous);
     	CHECK(!stratum_types.rock_composition_types.calcareous);
     	CHECK(!stratum_types.rock_composition_types.silicaceous);
@@ -91,7 +90,7 @@ TEST_CASE( "get_dominant_particle_size_bin() happy path", "[strata]" ) {
     	CHECK(!stratum_types.rock_composition_types.ferrous);
     	CHECK(!stratum_types.rock_composition_types.organic);
     }
-    SECTION("get_dominant_particle_size_bin() must recognize limestone"){
+    SECTION("get_stratum_types() must recognize limestone"){
 		StratumMassPool calcite;
 		calcite.mass = 0.8f;
 		calcite.grain_type_relative_volume[int(GrainType::chemically_weathered_intrusive)] = 1.0f;
@@ -105,9 +104,9 @@ TEST_CASE( "get_dominant_particle_size_bin() happy path", "[strata]" ) {
 
 		StratumTypes stratum_types = get_stratum_types(stratum);
     	CHECK(stratum_types.dominant_particle_size_bin == ParticleSizeBins::clay);
-    	CHECK(stratum_types.igneous_formation_types == IgneousFormationTypes::intrusive);
-    	CHECK(stratum_types.igneous_composition_types == IgneousCompositionTypes::other);
-    	CHECK(stratum_types.metamorphic_grades == MetamorphicGrades::sedimentary);
+    	CHECK(stratum_types.igneous_formation_type == IgneousFormationTypes::intrusive);
+    	CHECK(stratum_types.igneous_composition_type == IgneousCompositionTypes::other);
+    	CHECK(stratum_types.metamorphic_grade == MetamorphicGrades::sedimentary);
     	CHECK(stratum_types.rock_composition_types.partly_calcareous);
     	CHECK(stratum_types.rock_composition_types.calcareous);
     	CHECK(!stratum_types.rock_composition_types.silicaceous);
@@ -116,7 +115,7 @@ TEST_CASE( "get_dominant_particle_size_bin() happy path", "[strata]" ) {
     	CHECK(!stratum_types.rock_composition_types.ferrous);
     	CHECK(!stratum_types.rock_composition_types.organic);
     }
-    SECTION("get_dominant_particle_size_bin() must recognize marble"){
+    SECTION("get_stratum_types() must recognize marble"){
 		StratumMassPool calcite;
 		calcite.mass = 0.8f;
 		calcite.grain_type_relative_volume[int(GrainType::chemically_weathered_intrusive)] = 1.0f;
@@ -130,9 +129,9 @@ TEST_CASE( "get_dominant_particle_size_bin() happy path", "[strata]" ) {
 
 		StratumTypes stratum_types = get_stratum_types(stratum);
     	CHECK(stratum_types.dominant_particle_size_bin == ParticleSizeBins::clay);
-    	CHECK(stratum_types.igneous_formation_types == IgneousFormationTypes::intrusive);
-    	CHECK(stratum_types.igneous_composition_types == IgneousCompositionTypes::other);
-    	CHECK(stratum_types.metamorphic_grades == MetamorphicGrades::low);
+    	CHECK(stratum_types.igneous_formation_type == IgneousFormationTypes::intrusive);
+    	CHECK(stratum_types.igneous_composition_type == IgneousCompositionTypes::other);
+    	CHECK(stratum_types.metamorphic_grade == MetamorphicGrades::low);
     	CHECK(stratum_types.rock_composition_types.partly_calcareous);
     	CHECK(stratum_types.rock_composition_types.calcareous);
     	CHECK(!stratum_types.rock_composition_types.silicaceous);

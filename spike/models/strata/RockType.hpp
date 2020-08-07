@@ -17,6 +17,8 @@ namespace strata
     enum RockType
     {
     // IGNEOUS
+        igneous,
+
         komatiite,
         peridotite,
 
@@ -30,11 +32,25 @@ namespace strata
         // ganodiorite,
         
         rhyolite,
-        granite
+        granite,
+
+    // SEDIMENT
+        sediment,
+
+        sand,
+        silt,
+        clay,
+        loam,
+        sand_loam,
+        silt_loam,
+        clay_loam,
+        sand_clay,
+        silt_clay,
 
     // SEDIMENTARY
     // NOTE: from http://www.kgs.ku.edu/General/Class/sedimentary.html
-        // defined by particle size
+    // defined by particle size
+        sedimentary,
         breccia,
         sandstone,
         wacke,
@@ -47,7 +63,7 @@ namespace strata
         marl,      // partly calcite
         coal,      // organics
         arkose,    // feldspar
-        ironstone  // iron
+        ironstone, // iron
 
         // defined by composition and particle size
         chert,     // quartz,   silt or smaller
@@ -56,9 +72,11 @@ namespace strata
         coquina,   // calcite,  granule or larger
         caliche,   // partly calcite, granule or larger
         peat,      // organics, sand or granule
-        jet        // organics, pebble or larger
+        jet,       // organics, pebble or larger
 
     // METAMORPHIC
+        metamorphic,
+        
         // generic
         zeolite,
         hornfels,
@@ -94,7 +112,7 @@ namespace strata
         // technically possible to represent but possibly difficult to express within get_rock_type()
         migmatite,
         
-        COUNT
+        count
     };
 
 
