@@ -20,11 +20,9 @@ namespace strata
         /*
         NOTE: we only want to combine layers when they "resemble" each other.
         We first have to define what "resemblance" means. 
-        Since resemblance serves as an identity function in this particular context, 
-        it defines what rocks layers are, in a way.
         The utility of a model guides us in assigning the definition of its concepts,
         so it's probably best to start with what the purpose a rock layer serves within our model,
-        and use that purpose to define its identity function.
+        and use that purpose to define this equality function.
         Rock layers don't have a very strong affect on model behavior,
         they do affect erosion rates and thermal conductivity, 
         but as long as those result in values that lie within a plausible range,

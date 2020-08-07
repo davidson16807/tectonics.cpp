@@ -4,7 +4,7 @@
 
 namespace strata
 {
-    template <typename T, int L>
+    template <int L, typename T>
     struct StrataValues
     {
         std::array<T, L> values;
