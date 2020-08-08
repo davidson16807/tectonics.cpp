@@ -9,7 +9,7 @@
 // in-house libraries
 #include "MassPool.hpp"
 
-namespace strata
+namespace stratum
 {
 	static void combine(const MassPool& a, const MassPool& b, MassPool& output)
 	{

@@ -5,9 +5,9 @@
 #include "MassPoolStore.hpp"
 #include "MassPool_test_utils.hpp"
 
-using namespace strata;
+using namespace stratum;
 
-TEST_CASE( "MassPoolStore compress/decompress invertibility", "[strata]" ) {
+TEST_CASE( "MassPoolStore compress/decompress invertibility", "[stratum]" ) {
   	std::mt19937 generator(2);
 
 	MassPool original = get_random_stratum_mass_pool(generator);

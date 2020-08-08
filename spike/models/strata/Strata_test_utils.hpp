@@ -7,8 +7,8 @@
 #include <catch/catch.hpp>
 
 // in-house libraries
+#include <models/stratum/Stratum_test_utils.hpp>
 #include "Strata.hpp"
-#include "Stratum_test_utils.hpp"
 
 namespace strata
 {
@@ -29,7 +29,7 @@ namespace strata
         output.count = 16;
         for (int i = 0; i < L; ++i)
         {
-            output.content[i] = get_random_stratum<M>(generator);
+            output.content[i] = stratum::get_random_stratum<M>(generator);
         }
         return output;
     }

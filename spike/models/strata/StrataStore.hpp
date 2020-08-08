@@ -4,7 +4,7 @@
 #include <array>
 
 // in-house libraries
-#include "StratumStore.hpp"
+#include <models/stratum/StratumStore.hpp>
 #include "Strata.hpp"
 
 namespace strata
@@ -32,7 +32,7 @@ namespace strata
     template <int L, int M>
     class StrataStore
     {
-        std::array<StratumStore<M>, L> strata;
+        std::array<stratum::StratumStore<M>, L> strata;
         int count;
     public:
         void decompress(Strata<L,M>& output) const

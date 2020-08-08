@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <array>
 
-namespace strata
+namespace stratum
 {
     /*
     "MassPool.grain_type_relative_volume" describes a set of bins.

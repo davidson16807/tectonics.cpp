@@ -10,7 +10,7 @@
 #include "Stratum.hpp"
 #include "MassPool_operators.hpp"
 
-namespace strata
+namespace stratum
 {
     
     // OPERATORS, regular functions of the form: Stratum x Stratum -> Stratum

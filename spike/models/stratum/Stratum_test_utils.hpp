@@ -5,7 +5,7 @@
 #include "Stratum.hpp"
 #include "MassPool_test_utils.hpp"
 
-namespace strata
+namespace stratum
 {
     /*
     NOTE: 

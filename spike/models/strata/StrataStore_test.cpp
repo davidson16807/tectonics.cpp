@@ -6,6 +6,7 @@
 #include "Strata_test_utils.hpp"
 
 using namespace strata;
+using namespace stratum;
 
 TEST_CASE( "StrataStore compress/decompress invertibility", "[strata]" ) {
   	std::mt19937 generator(2);

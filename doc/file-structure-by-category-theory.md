@@ -1,6 +1,4 @@
-File structure by category theory really proved out. 
-
-It promises every file only considers either a single data structure or a homset between them, and every folder considers only a single namespace that corresponds to a single mathematical category. A category diagram is linked to in the README.md of the folder for a category. 
+Every file in this project only considers either a single data structure or a homset between them, and every folder considers only a single namespace that corresponds to a single mathematical category. A category diagram is linked to in the README.md of the folder for a category. 
 
 The only deliberate exception to the rule is where the homset maps to a primitive data type, or where there is a compelling reason to privitize the attributes of a class. In either case, the homset is then represented as methods within the object itself. 
 

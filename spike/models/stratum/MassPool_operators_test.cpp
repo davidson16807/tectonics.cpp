@@ -8,9 +8,9 @@
 #include "MassPool_operators.hpp"
 #include "MassPool_test_utils.hpp"
 
-using namespace strata;
+using namespace stratum;
 
-TEST_CASE( "MassPool combine() commutativity", "[strata]" ) {
+TEST_CASE( "MassPool combine() commutativity", "[stratum]" ) {
   	std::mt19937 generator(2);
 	MassPool a = get_random_stratum_mass_pool(generator);
 	MassPool b = get_random_stratum_mass_pool(generator);
@@ -25,7 +25,7 @@ TEST_CASE( "MassPool combine() commutativity", "[strata]" ) {
     }
 }
 
-TEST_CASE( "MassPool combine() associativity", "[strata]" ) {
+TEST_CASE( "MassPool combine() associativity", "[stratum]" ) {
   	std::mt19937 generator(2);
 	MassPool a = get_random_stratum_mass_pool(generator);
 	MassPool b = get_random_stratum_mass_pool(generator);
@@ -45,7 +45,7 @@ TEST_CASE( "MassPool combine() associativity", "[strata]" ) {
     }
 }
 
-TEST_CASE( "MassPool combine() closure", "[strata]" ) {
+TEST_CASE( "MassPool combine() closure", "[stratum]" ) {
   	std::mt19937 generator(2);
 	MassPool a = get_random_stratum_mass_pool(generator);
 	MassPool b = get_random_stratum_mass_pool(generator);

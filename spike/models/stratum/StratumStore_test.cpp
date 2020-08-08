@@ -4,9 +4,9 @@
 
 #include "StratumStore.hpp"
 
-using namespace strata;
+using namespace stratum;
 
-TEST_CASE( "StratumStore compress/decompress invertibility", "[strata]" ) {
+TEST_CASE( "StratumStore compress/decompress invertibility", "[stratum]" ) {
   	std::mt19937 generator(2);
   	const int M = 15;
 

@@ -7,7 +7,7 @@
 /*
 Contains a large set of enums and functions for classifying individual rock layers
 */
-namespace strata
+namespace stratum
 {
     /*
     "get_rock_type" returns the best description possible for rock within a stratum.
@@ -26,7 +26,7 @@ namespace strata
         // defined by composition
         // NOTE: rocks commonly don't experience the peak pressure at the same time as the peak temperature
         // peak pressure commonly comes before peak temperature
-        // We will ignore this both to simplify the model and to reduce the memory footprint of rock strata
+        // We will ignore this both to simplify the model and to reduce the memory footprint of rock stratum
         if (stratum_type.metamorphic_grade >= MetamorphicGrades::low)
         {
             // metamorphic rocks

@@ -10,7 +10,7 @@
 namespace strata
 {
     template<int L, int M>
-    void set_max_temperatures_received_by_strata(
+    void set_max_temperatures_received(
         const Strata<L,M>& strata,
         const StrataValues<float, L>& temperatures,
         Strata<L,M>& output
@@ -24,7 +24,7 @@ namespace strata
         }
     }
     template<int L, int M>
-    void set_max_pressures_received_by_strata(
+    void set_max_pressures_received(
         const Strata<L,M>& strata,
         const StrataValues<float, L>& pressures,
         Strata<L,M>& output

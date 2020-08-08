@@ -3,14 +3,14 @@
 #include <array>
 
 // in-house libraries
-#include "Stratum.hpp"
+#include <models/stratum/Stratum.hpp>
 
 namespace strata
 {
     template <int L, int M>
     struct Strata
     {
-        std::array<Stratum<M>, L> content;
+        std::array<stratum::Stratum<M>, L> content;
         int count;
 
         ~Strata(){}

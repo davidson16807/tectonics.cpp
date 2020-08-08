@@ -4,9 +4,9 @@
 #include <cmath>
 
 // in-house libraries
+#include <models/stratum/Stratum_to_StratumTypes.hpp>
+#include <models/stratum/Stratum_operators.hpp>
 #include "Strata.hpp"
-#include "Stratum_to_StratumTypes.hpp"
-#include "Stratum_operators.hpp"
 
 namespace strata
 {
@@ -43,9 +43,9 @@ namespace strata
         int j = 0;
         for (; i < input.count-1; ++j)
         {
-            if (get_stratum_types(input.content[i]).hash() == get_stratum_types(input.content[i+1]).hash())
+            if (stratum::get_stratum_types(input.content[i]).hash() == stratum::get_stratum_types(input.content[i+1]).hash())
             {
-                combine(input.content[i], input.content[i+1], output.content[j]);
+                stratum::combine(input.content[i], input.content[i+1], output.content[j]);
                 i += 2;
                 j += 1;
             }
@@ -69,11 +69,11 @@ namespace strata
     Functionally equivalent to `overlap()` if `bottom` were a Strata object with 0 or 1 layers,
     */
     template <int L, int M>
-    static void deposit(const Strata<L,M>& bottom, const Stratum<M>& top, Strata<L,M>& output)
+    static void deposit(const Strata<L,M>& bottom, const stratum::Stratum<M>& top, Strata<L,M>& output)
     {
         int i;
         int offset = 0;
-        if (get_stratum_types(bottom.content[0]).hash() != get_stratum_types(top).hash() &&
+        if (stratum::get_stratum_types(bottom.content[0]).hash() != stratum::get_stratum_types(top).hash() &&
             top.mass() > 1e-4f)
         {
             output.content[0] = top;
@@ -82,7 +82,7 @@ namespace strata
         }
         else 
         {
-            combine(top, bottom.content[0], output.content[0]);
+            stratum::combine(top, bottom.content[0], output.content[0]);
             offset = 0;
             i = 1;
         }
@@ -92,7 +92,7 @@ namespace strata
         }
         for (; i < bottom.count && offset+i >= L; ++i)
         {
-            combine(output.content[L-1], bottom.content[i], output.content[L-1]);
+            stratum::combine(output.content[L-1], bottom.content[i], output.content[L-1]);
         }
         output.count = std::min(offset + bottom.count, L);
     }
@@ -114,7 +114,7 @@ namespace strata
         }
         for (; i < bottom.count && top.count+i >= L; ++i)
         {
-            combine(output.content[L-1], bottom.content[i], output.content[L-1]);
+            stratum::combine(output.content[L-1], bottom.content[i], output.content[L-1]);
         }
         output.count = std::min(top.count+bottom.count, L);
     }

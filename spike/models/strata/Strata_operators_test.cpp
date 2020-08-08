@@ -1,5 +1,6 @@
 
 // 3rd party libraries
+#define GLM_FORCE_PURE      // disable SIMD support for glm so we can work with webassembly
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include <catch/catch.hpp>
 
@@ -9,6 +10,7 @@
 #include "Strata_test_utils.hpp"
 
 using namespace strata;
+using namespace stratum;
 
 TEST_CASE( "Strata overlap() associativity", "[strata]" ) {
   	std::mt19937 generator(2);

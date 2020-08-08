@@ -12,7 +12,7 @@
 // in-house libraries
 #include "MassPool.hpp"
 
-namespace strata
+namespace stratum
 {
     /*
     "Stratum" describes the composition and texuture of a single rock layer

@@ -7,9 +7,9 @@
 // in house libraries
 #include "Stratum_to_StratumTypes.hpp"
 
-using namespace strata;
+using namespace stratum;
 
-TEST_CASE( "get_stratum_types() happy path", "[strata]" ) {
+TEST_CASE( "get_stratum_types() happy path", "[stratum]" ) {
     const int M = 15;
     SECTION("get_stratum_types() must recognize sand"){
 		MassPool pool;

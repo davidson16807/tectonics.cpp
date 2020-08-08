@@ -4,7 +4,7 @@
 Contains a large set of enums and functions for classifying individual rock layers
 We place them outside the Strata class to avoid polluting that class namespace.
 */
-namespace strata
+namespace stratum
 {
     enum struct ParticleSizeBins
     {

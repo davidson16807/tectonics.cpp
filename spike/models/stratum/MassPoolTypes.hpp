@@ -1,6 +1,6 @@
 
 
-namespace strata {
+namespace stratum {
   
   // NOTE: M = 24 requires three cache lines of storage, 
   // but we need to store a few small variables within Stratum like particle_size, 

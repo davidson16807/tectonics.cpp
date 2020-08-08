@@ -10,7 +10,7 @@
 // in-house libraries
 #include "MassPool.hpp"
 
-namespace strata
+namespace stratum
 {
 
 	/*

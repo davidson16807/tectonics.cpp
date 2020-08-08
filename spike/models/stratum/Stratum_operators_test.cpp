@@ -8,11 +8,11 @@
 #include "Stratum_operators.hpp"
 #include "Stratum_test_utils.hpp"
 
-using namespace strata;
+using namespace stratum;
 
 
 
-TEST_CASE( "Stratum scale() associativity", "[strata]" ) {
+TEST_CASE( "Stratum scale() associativity", "[stratum]" ) {
   	std::mt19937 generator(2);
   	const int M = 15;
 	Stratum<M> a = get_random_stratum<M>(generator);
@@ -31,7 +31,7 @@ TEST_CASE( "Stratum scale() associativity", "[strata]" ) {
     }
 }
 
-TEST_CASE( "Stratum scale() closure", "[strata]" ) {
+TEST_CASE( "Stratum scale() closure", "[stratum]" ) {
   	std::mt19937 generator(2);
   	const int M = 15;
 	Stratum<M> a = get_random_stratum<M>(generator);
@@ -44,7 +44,7 @@ TEST_CASE( "Stratum scale() closure", "[strata]" ) {
     	STRATUM_VALID(ab)
     }
 }
-TEST_CASE( "Stratum scale() identity", "[strata]" ) {
+TEST_CASE( "Stratum scale() identity", "[stratum]" ) {
   	std::mt19937 generator(2);
   	const int M = 15;
 	Stratum<M> a = get_random_stratum<M>(generator);
@@ -61,7 +61,7 @@ TEST_CASE( "Stratum scale() identity", "[strata]" ) {
 
 
 
-TEST_CASE( "Stratum combine() commutativity", "[strata]" ) {
+TEST_CASE( "Stratum combine() commutativity", "[stratum]" ) {
   	std::mt19937 generator(2);
   	const int M = 15;
 	Stratum<M> a = get_random_stratum<M>(generator);
@@ -77,7 +77,7 @@ TEST_CASE( "Stratum combine() commutativity", "[strata]" ) {
     }
 }
 
-TEST_CASE( "Stratum combine() associativity", "[strata]" ) {
+TEST_CASE( "Stratum combine() associativity", "[stratum]" ) {
   	std::mt19937 generator(2);
   	const int M = 15;
 	Stratum<M> a = get_random_stratum<M>(generator);
@@ -98,7 +98,7 @@ TEST_CASE( "Stratum combine() associativity", "[strata]" ) {
     }
 }
 
-TEST_CASE( "Stratum combine() closure", "[strata]" ) {
+TEST_CASE( "Stratum combine() closure", "[stratum]" ) {
   	std::mt19937 generator(2);
   	const int M = 15;
 	Stratum<M> a = get_random_stratum<M>(generator);
@@ -111,7 +111,7 @@ TEST_CASE( "Stratum combine() closure", "[strata]" ) {
     	STRATUM_VALID(ab)
     }
 }
-TEST_CASE( "Stratum combine() identity", "[strata]" ) {
+TEST_CASE( "Stratum combine() identity", "[stratum]" ) {
   	std::mt19937 generator(2);
   	const int M = 15;
 	Stratum<M> a = get_random_stratum<M>(generator);

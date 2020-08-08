@@ -14,7 +14,7 @@
 #include "MassPoolStore.hpp"
 #include "Stratum.hpp"
 
-namespace strata
+namespace stratum
 {
     /*
     `StratumStore` is a memory efficient variant of the 

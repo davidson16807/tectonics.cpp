@@ -4,7 +4,7 @@
 
 #include "MassPool.hpp"
 
-namespace strata
+namespace stratum
 {
 	/*
 	NOTE: 
