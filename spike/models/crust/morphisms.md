@@ -1,5 +1,5 @@
 // derived attributes: icosphere<Strata> -> icosphere<T>
-void get_mass_pool   (const tmany<StrataStore>& crust, OxygenPlanetStratumMassPoolTypes type, const tmany<float>& out)
+void get_mass_pool   (const tmany<StrataStore>& crust, OxygenPlanetMassPoolTypes type, const tmany<float>& out)
 void get_mass        (const tmany<StrataStore>& crust, const tmany<float>& out)
 void get_volume      (const tmany<StrataStore>& crust, const tmany<float>& out)
 void get_density     (const tmany<StrataStore>& crust, const tmany<float>& out)
@@ -33,8 +33,8 @@ void get_sediment(const tmany<StrataStore>& crust, const tmany<Stratum>& out)
 void phase_transition(
 	const tmany<StrataValues<float>>& pressure, const tmany<StrataValues<float>>& temperature, 
 	tmany<StrataStore>& solidification_delta,
-	std::array<StratumMassPool, Stratum::mass_pool_count> vaporization_delta&,
-	std::array<StratumMassPool, Stratum::mass_pool_count> melting_delta&
+	std::array<MassPool, Stratum::mass_pool_count> vaporization_delta&,
+	std::array<MassPool, Stratum::mass_pool_count> melting_delta&
 )
 void erosion(
 	const tmany<Stratum>& sediment, const tmany<float>& surface_height, const tmany<float>& precipitation, 

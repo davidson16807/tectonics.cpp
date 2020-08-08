@@ -8,20 +8,20 @@
 #include <array>
 
 // in-house libraries
-#include "StratumMassPool.hpp"
+#include "MassPool.hpp"
 
 namespace strata
 {
 
 	/*
-	`StratumMassPoolStore` is a memory efficient variant of the 
-	`StratumMassPool` data structure. Isn't it adorable!?
-	It would take ridiculous amounts of memory to store a `StratumMassPool` 
+	`MassPoolStore` is a memory efficient variant of the 
+	`MassPool` data structure. Isn't it adorable!?
+	It would take ridiculous amounts of memory to store a `MassPool` 
 	for every stratum within a raster, so we store each stratum in a raster
-	as a `StratumMassPoolStore`, then convert back to `StratumMassPool` when
+	as a `MassPoolStore`, then convert back to `MassPool` when
 	we want to perform some operation on it. 
 
-	The interpretation of attributes within `StratumMassPoolStore` is error prone,
+	The interpretation of attributes within `MassPoolStore` is error prone,
 	so to prevent users from doing so we encapsulate the class.
 
     The interpretation of attributes also comes with some performance penalty,
@@ -33,16 +33,16 @@ namespace strata
     treated strictly by its mappings to other states, 
     which in this case are isomorphic and invertible.
 	*/
-	class StratumMassPoolStore
+	class MassPoolStore
 	{
 		float mass; 
 		std::array<std::uint8_t, int(GrainType::count)> grain_type_relative_volume;
 
 	public:
-		~StratumMassPoolStore()
+		~MassPoolStore()
 		{
 		}
-		void decompress(StratumMassPool& output) const
+		void decompress(MassPool& output) const
 		{
 		    output.mass = mass;
 
@@ -56,7 +56,7 @@ namespace strata
                 output.grain_type_relative_volume[i] = grain_type_relative_volume[i] / total_relative_volume;
             }
 		}
-		void compress(const StratumMassPool& input)
+		void compress(const MassPool& input)
 		{
 			mass = input.mass;
             // rescale bin counts by the new max to fit inside a uint8_t

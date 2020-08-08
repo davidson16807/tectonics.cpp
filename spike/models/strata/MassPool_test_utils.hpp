@@ -2,7 +2,7 @@
 
 #include <catch/catch.hpp>
 
-#include "StratumMassPool.hpp"
+#include "MassPool.hpp"
 
 namespace strata
 {
@@ -17,9 +17,9 @@ namespace strata
 	*/
 
 	template<typename Tgenerator>
-	StratumMassPool get_random_stratum_mass_pool(Tgenerator generator)
+	MassPool get_random_stratum_mass_pool(Tgenerator generator)
 	{
-		StratumMassPool output;
+		MassPool output;
 		output.mass = generator();
 		for (int j = 0; j < int(GrainType::count); ++j)
 		{

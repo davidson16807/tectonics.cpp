@@ -3,7 +3,7 @@
 #include <catch/catch.hpp>
 
 #include "Stratum.hpp"
-#include "StratumMassPool_test_utils.hpp"
+#include "MassPool_test_utils.hpp"
 
 namespace strata
 {

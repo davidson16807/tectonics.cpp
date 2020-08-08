@@ -10,7 +10,7 @@
 #include <array>
 
 // in-house libraries
-#include "StratumMassPool.hpp"
+#include "MassPool.hpp"
 
 namespace strata
 {
@@ -29,7 +29,7 @@ namespace strata
         Grain size is primarily used to indicate distinctions between extrusive and intrusive rocks, like basalt and gabbro.
         Particle size is primarily used to indicate distinctions between things like boulders vs. pebbles vs sand vs. clay
         */
-        std::array<StratumMassPool, M>  mass_pools;
+        std::array<MassPool, M>  mass_pools;
         float max_temperature_received;
         float max_pressure_received;
         float age_of_world_when_deposited;
@@ -39,7 +39,7 @@ namespace strata
             max_pressure_received(0),
             age_of_world_when_deposited(0)
         {
-            mass_pools.fill(StratumMassPool());
+            mass_pools.fill(MassPool());
         }
 
         Stratum(
@@ -51,7 +51,7 @@ namespace strata
             max_pressure_received(max_pressure_received),
             age_of_world_when_deposited(age_of_world_when_deposited)
         {
-            mass_pools.fill(StratumMassPool());
+            mass_pools.fill(MassPool());
         }
 
         // DERIVED ATTRIBUTES, regular functions of the form: Stratum -> T

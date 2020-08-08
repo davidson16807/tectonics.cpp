@@ -7,7 +7,7 @@ namespace strata {
   // so we have to set M just shy of that to avoid wasting a cache line.
   const int oxygen_planet_mass_pool_count = 15;
 
-  enum struct CarbonPlanetStratumMassPoolTypes
+  enum struct CarbonPlanetMassPoolTypes
   {
       // NOTE: see https://www.ptable.com/#Compound/C for ideas
    // chalcophile, //                    
@@ -32,7 +32,7 @@ namespace strata {
    // hydrogen,    // H2, metallic       
   };
 
-  enum struct OxygenPlanetStratumMassPoolTypes
+  enum struct OxygenPlanetMassPoolTypes
   {
    // magnetite,   //           Fe     O for the surfaces of mars and maybe venus, representative of siderophile ores
    // chalcophile, //                    for the surfaces of maybe venus and mercury, representative of chalcophile ores

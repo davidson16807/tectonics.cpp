@@ -12,12 +12,12 @@ using namespace strata;
 TEST_CASE( "get_stratum_types() happy path", "[strata]" ) {
     const int M = 15;
     SECTION("get_stratum_types() must recognize sand"){
-		StratumMassPool pool;
+		MassPool pool;
 		pool.mass = 1.0f;
 		pool.grain_type_relative_volume[int(GrainType::chemically_weathered_intrusive)] = 1.0f;
 
 		Stratum<M> stratum(300*units::kelvin, 1e5*units::pascal, 0);
-		stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::quartz)] = pool;
+		stratum.mass_pools[int(OxygenPlanetMassPoolTypes::quartz)] = pool;
 
 		StratumTypes stratum_types = get_stratum_types(stratum);
     	CHECK(stratum_types.dominant_particle_size_bin == ParticleSizeBins::sand);
@@ -33,16 +33,16 @@ TEST_CASE( "get_stratum_types() happy path", "[strata]" ) {
     	CHECK(!stratum_types.rock_composition_types.organic);
     }
     SECTION("get_stratum_types() must recognize granite"){
-		StratumMassPool quartz;
+		MassPool quartz;
 		quartz.mass = 0.7f;
 		quartz.grain_type_relative_volume[int(GrainType::unweathered_intrusive)] = 1.0f;
-		StratumMassPool orthoclase;
+		MassPool orthoclase;
 		orthoclase.mass = 0.3f;
 		orthoclase.grain_type_relative_volume[int(GrainType::unweathered_intrusive)] = 1.0f;
 
 		Stratum<M> stratum(300*units::kelvin, 1e5*units::pascal, 0);
-		stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::quartz)] = quartz;
-		stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::orthoclase)] = orthoclase;
+		stratum.mass_pools[int(OxygenPlanetMassPoolTypes::quartz)] = quartz;
+		stratum.mass_pools[int(OxygenPlanetMassPoolTypes::orthoclase)] = orthoclase;
 
 		StratumTypes stratum_types = get_stratum_types(stratum);
     	CHECK(stratum_types.dominant_particle_size_bin == ParticleSizeBins::boulder);
@@ -58,24 +58,24 @@ TEST_CASE( "get_stratum_types() happy path", "[strata]" ) {
     	CHECK(!stratum_types.rock_composition_types.organic);
     }
     SECTION("get_stratum_types() must recognize basalt"){
-		StratumMassPool quartz;
+		MassPool quartz;
 		quartz.mass = 0.5f;
 		quartz.grain_type_relative_volume[int(GrainType::unweathered_extrusive)] = 1.0f;
-		StratumMassPool orthoclase;
+		MassPool orthoclase;
 		orthoclase.mass = 0.03f;
 		orthoclase.grain_type_relative_volume[int(GrainType::unweathered_extrusive)] = 1.0f;
-		StratumMassPool plagioclase;
+		MassPool plagioclase;
 		plagioclase.mass = 0.07f;
 		plagioclase.grain_type_relative_volume[int(GrainType::unweathered_extrusive)] = 1.0f;
-		StratumMassPool pyroxene;
+		MassPool pyroxene;
 		pyroxene.mass = 0.4f;
 		pyroxene.grain_type_relative_volume[int(GrainType::unweathered_extrusive)] = 1.0f;
 
 		Stratum<M> stratum(300*units::kelvin, 1e5*units::pascal, 0);
-		stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::quartz)] = quartz;
-		stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::orthoclase)] = orthoclase;
-		stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::plagioclase)] = plagioclase;
-		stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::pyroxene)] = pyroxene;
+		stratum.mass_pools[int(OxygenPlanetMassPoolTypes::quartz)] = quartz;
+		stratum.mass_pools[int(OxygenPlanetMassPoolTypes::orthoclase)] = orthoclase;
+		stratum.mass_pools[int(OxygenPlanetMassPoolTypes::plagioclase)] = plagioclase;
+		stratum.mass_pools[int(OxygenPlanetMassPoolTypes::pyroxene)] = pyroxene;
 
 		StratumTypes stratum_types = get_stratum_types(stratum);
     	CHECK(stratum_types.dominant_particle_size_bin == ParticleSizeBins::boulder);
@@ -91,16 +91,16 @@ TEST_CASE( "get_stratum_types() happy path", "[strata]" ) {
     	CHECK(!stratum_types.rock_composition_types.organic);
     }
     SECTION("get_stratum_types() must recognize limestone"){
-		StratumMassPool calcite;
+		MassPool calcite;
 		calcite.mass = 0.8f;
 		calcite.grain_type_relative_volume[int(GrainType::chemically_weathered_intrusive)] = 1.0f;
-		StratumMassPool quartz;
+		MassPool quartz;
 		quartz.mass = 0.2f;
 		quartz.grain_type_relative_volume[int(GrainType::chemically_weathered_intrusive)] = 1.0f;
 
 		Stratum<M> stratum(300*units::kelvin, 2e8*units::pascal, 0);
-		stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::calcite)] = calcite;
-		stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::quartz)] = quartz;
+		stratum.mass_pools[int(OxygenPlanetMassPoolTypes::calcite)] = calcite;
+		stratum.mass_pools[int(OxygenPlanetMassPoolTypes::quartz)] = quartz;
 
 		StratumTypes stratum_types = get_stratum_types(stratum);
     	CHECK(stratum_types.dominant_particle_size_bin == ParticleSizeBins::clay);
@@ -116,16 +116,16 @@ TEST_CASE( "get_stratum_types() happy path", "[strata]" ) {
     	CHECK(!stratum_types.rock_composition_types.organic);
     }
     SECTION("get_stratum_types() must recognize marble"){
-		StratumMassPool calcite;
+		MassPool calcite;
 		calcite.mass = 0.8f;
 		calcite.grain_type_relative_volume[int(GrainType::chemically_weathered_intrusive)] = 1.0f;
-		StratumMassPool quartz;
+		MassPool quartz;
 		quartz.mass = 0.2f;
 		quartz.grain_type_relative_volume[int(GrainType::chemically_weathered_intrusive)] = 1.0f;
 
 		Stratum<M> stratum(300*units::kelvin, 4e8*units::pascal, 0);
-		stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::calcite)] = calcite;
-		stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::quartz)] = quartz;
+		stratum.mass_pools[int(OxygenPlanetMassPoolTypes::calcite)] = calcite;
+		stratum.mass_pools[int(OxygenPlanetMassPoolTypes::quartz)] = quartz;
 
 		StratumTypes stratum_types = get_stratum_types(stratum);
     	CHECK(stratum_types.dominant_particle_size_bin == ParticleSizeBins::clay);

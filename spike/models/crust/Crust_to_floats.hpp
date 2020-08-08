@@ -8,7 +8,7 @@
 namespace crust
 {
     // derived attributes: icosphere<Strata> -> icosphere<T>
-    void get_mass_pool(const tmany<StrataStore>& crust, OxygenPlanetStratumMassPoolTypes type, const tmany<float>& out)
+    void get_mass_pool(const tmany<StrataStore>& crust, OxygenPlanetMassPoolTypes type, const tmany<float>& out)
     {
         assert(crust.size() == out.size());
         Strata strata;

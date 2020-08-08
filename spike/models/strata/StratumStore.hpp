@@ -11,7 +11,7 @@
 // in-house libraries
 #include <academics/units.hpp>
 
-#include "StratumMassPoolStore.hpp"
+#include "MassPoolStore.hpp"
 #include "Stratum.hpp"
 
 namespace strata
@@ -38,7 +38,7 @@ namespace strata
     template <int M>
     class StratumStore
     {
-        std::array<StratumMassPoolStore, M> mass_pools;
+        std::array<MassPoolStore, M> mass_pools;
         // Represent pressures from 1 to 6e12 Pascals with a precision of 0.02%.
         // This value was chosen to reflect the pressure of Jupiter's core. 
         std::uint16_t stored_max_temperature_received;

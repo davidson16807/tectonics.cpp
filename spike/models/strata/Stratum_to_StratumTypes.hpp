@@ -12,7 +12,7 @@
 
 #include "Stratum.hpp"
 #include "StratumTypes.hpp"
-#include "StratumMassPoolTypes.hpp"
+#include "MassPoolTypes.hpp"
 
 /*
 Contains a large set of enums and functions for classifying individual rock layers
@@ -95,8 +95,8 @@ namespace strata
         std::array<float, int(ParticleSizeBins::count)>& output
     ){
         float chemically_susceptible_mass_fraction = 
-            (stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::calcite)].mass +
-             stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::organics)].mass) / stratum.mass();
+            (stratum.mass_pools[int(OxygenPlanetMassPoolTypes::calcite)].mass +
+             stratum.mass_pools[int(OxygenPlanetMassPoolTypes::organics)].mass) / stratum.mass();
 
         output.fill(0);
 
@@ -195,20 +195,20 @@ namespace strata
     IgneousCompositionTypes get_igneous_composition_types(const Stratum<M>& stratum)
     {
         float total_mass = stratum.mass();
-        if (stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::olivine)].mass / total_mass > 0.3)
+        if (stratum.mass_pools[int(OxygenPlanetMassPoolTypes::olivine)].mass / total_mass > 0.3)
         {
             return IgneousCompositionTypes::ultramafic;
         }
-        else if (stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::pyroxene)].mass / total_mass > 0.3)
+        else if (stratum.mass_pools[int(OxygenPlanetMassPoolTypes::pyroxene)].mass / total_mass > 0.3)
         {
             return IgneousCompositionTypes::mafic;
         }
-        else if (stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::plagioclase)].mass / total_mass > 0.3)
+        else if (stratum.mass_pools[int(OxygenPlanetMassPoolTypes::plagioclase)].mass / total_mass > 0.3)
         {
             return IgneousCompositionTypes::intermediate;
         }
-        else if ((stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::orthoclase)].mass + 
-                  stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::quartz)].mass) / total_mass > 0.3)
+        else if ((stratum.mass_pools[int(OxygenPlanetMassPoolTypes::orthoclase)].mass + 
+                  stratum.mass_pools[int(OxygenPlanetMassPoolTypes::quartz)].mass) / total_mass > 0.3)
         {
             return IgneousCompositionTypes::felsic;
         }
@@ -315,19 +315,19 @@ namespace strata
     {
         RockCompositionTypes out;
         float total_mass = stratum.mass();
-        out.partly_calcareous =  stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::calcite    )].mass  / total_mass > 0.5;
-        out.calcareous        =  stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::calcite    )].mass  / total_mass > 0.75;
-        out.silicaceous       =  stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::quartz     )].mass  / total_mass > 0.9;
-        out.feldspathic       = (stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::plagioclase)].mass +
-                                 stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::orthoclase )].mass) / total_mass > 0.25;
-        out.volcanic          = (stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::olivine    )].mass +
-                                 stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::pyroxene   )].mass +
-                                 stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::plagioclase)].mass +
-                                 stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::quartz     )].mass +
-                                 stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::orthoclase )].mass) / total_mass > 0.9;
-        out.ferrous           = (stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::hematite   )].mass +
-                                 stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::pyrite     )].mass)/ total_mass > 0.15;
-        out.organic           =  stratum.mass_pools[int(OxygenPlanetStratumMassPoolTypes::organics   )].mass / total_mass > 0.9;
+        out.partly_calcareous =  stratum.mass_pools[int(OxygenPlanetMassPoolTypes::calcite    )].mass  / total_mass > 0.5;
+        out.calcareous        =  stratum.mass_pools[int(OxygenPlanetMassPoolTypes::calcite    )].mass  / total_mass > 0.75;
+        out.silicaceous       =  stratum.mass_pools[int(OxygenPlanetMassPoolTypes::quartz     )].mass  / total_mass > 0.9;
+        out.feldspathic       = (stratum.mass_pools[int(OxygenPlanetMassPoolTypes::plagioclase)].mass +
+                                 stratum.mass_pools[int(OxygenPlanetMassPoolTypes::orthoclase )].mass) / total_mass > 0.25;
+        out.volcanic          = (stratum.mass_pools[int(OxygenPlanetMassPoolTypes::olivine    )].mass +
+                                 stratum.mass_pools[int(OxygenPlanetMassPoolTypes::pyroxene   )].mass +
+                                 stratum.mass_pools[int(OxygenPlanetMassPoolTypes::plagioclase)].mass +
+                                 stratum.mass_pools[int(OxygenPlanetMassPoolTypes::quartz     )].mass +
+                                 stratum.mass_pools[int(OxygenPlanetMassPoolTypes::orthoclase )].mass) / total_mass > 0.9;
+        out.ferrous           = (stratum.mass_pools[int(OxygenPlanetMassPoolTypes::hematite   )].mass +
+                                 stratum.mass_pools[int(OxygenPlanetMassPoolTypes::pyrite     )].mass)/ total_mass > 0.15;
+        out.organic           =  stratum.mass_pools[int(OxygenPlanetMassPoolTypes::organics   )].mass / total_mass > 0.9;
         return out;
     }
 

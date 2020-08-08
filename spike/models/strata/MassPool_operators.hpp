@@ -7,11 +7,11 @@
 #include <numeric>
 
 // in-house libraries
-#include "StratumMassPool.hpp"
+#include "MassPool.hpp"
 
 namespace strata
 {
-	static void combine(const StratumMassPool& a, const StratumMassPool& b, StratumMassPool& output)
+	static void combine(const MassPool& a, const MassPool& b, MassPool& output)
 	{
 		output.mass = a.mass + b.mass;
 

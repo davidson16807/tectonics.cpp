@@ -12,12 +12,12 @@ namespace crust
         const tmany<StrataValues<float>>& pressure, const tmany<StrataValues<float>>& temperature, 
         tmany<StrataStore>& crust,
         tmany<StrataStore>& solidification_deltas,
-        std::array<StratumMassPool, Stratum::mass_pool_count> vaporization_delta&,
-        std::array<StratumMassPool, Stratum::mass_pool_count> melting_delta&
+        std::array<MassPool, Stratum::mass_pool_count> vaporization_delta&,
+        std::array<MassPool, Stratum::mass_pool_count> melting_delta&
     ){
         assert(pressure.size() == solidification_deltas.size());
         assert(temperature.size() == solidification_deltas.size());
-        using MassPools = OxygenPlanetStratumMassPoolTypes;
+        using MassPools = OxygenPlanetMassPoolTypes;
         Strata strata;
         Strata solidification_delta;
         BasicPhase phase;

@@ -195,7 +195,7 @@ namespace strata
             {
                 return RockType::limestone; // any carbonate
             }
-            // else if (stratum.mass_pools[OxygenPlanetStratumMassPoolTypes::calcite] / total_mass > 0.9)
+            // else if (stratum.mass_pools[OxygenPlanetMassPoolTypes::calcite] / total_mass > 0.9)
             // {
             //     return RockType::chalk;     // calcite
             // }

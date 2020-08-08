@@ -8,7 +8,7 @@
 
 // in-house libraries
 #include "Stratum.hpp"
-#include "StratumMassPool_operators.hpp"
+#include "MassPool_operators.hpp"
 
 namespace strata
 {
