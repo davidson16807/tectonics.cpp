@@ -60,62 +60,42 @@ namespace strata
     }
 
     /*
-    Deposits a new layer to the top of the strata.
-    Merges the deposited layer with the second layer down if there is a resembance between them.
+    Returns a new strata that represents the top strata overlapping the bottom strata, 
+    Merges adjacent layers if there is a resembance between them.
     If the are more layers than what can be stored in memory, we combine the bottom excess layers into one. 
-    We only allow combining the bottom two since doing so simplifies the problem when working with stack memory.
-    This is fine, since we care the least about properly representing the bottom layers,
-    just as long as the mass in each pool is conserved.
-    Functionally equivalent to `overlap()` if `bottom` were a Strata object with 0 or 1 layers,
+    We allow combining the bottom regardless of resemblance, 
+    since we care the least about properly representing the bottom layers, 
+    and we are required to fit within stack memory, just as long as the mass in each pool is conserved.
     */
-    template <int L, int M>
-    static void deposit(const Strata<L,M>& bottom, const stratum::Stratum<M>& top, Strata<L,M>& output)
+    template <int L1, int L2, int L3, int M>
+    static void overlap(const Strata<L1,M>& top, const Strata<L2,M>& bottom, Strata<L3,M>& output)
     {
-        int i;
-        int offset = 0;
-        if (stratum::get_stratum_types(bottom.content[0]).hash() != stratum::get_stratum_types(top).hash() &&
-            top.mass() > 1e-4f)
+        int top_i(0);
+        int bottom_i(0);
+        for (; top_i < top.count && top_i < L3; ++top_i)
         {
-            output.content[0] = top;
-            offset = 1;
-            i = 0;
+            output.content[top_i] = top.content[top_i];
         }
-        else 
+        for (; top_i < top.count && top_i >= L3; ++top_i)
         {
-            stratum::combine(top, bottom.content[0], output.content[0]);
-            offset = 0;
-            i = 1;
+            stratum::combine(output.content[L3-1], top.content[top_i], output.content[L3-1]);
         }
-        for (; offset+i < L; ++i)
+        // combine the adjacent layers of top and bottom, if similar
+        int adjacent_i = std::min(top.count, L3)-1;
+        if (stratum::get_stratum_types(output.content[adjacent_i]).hash() == 
+            stratum::get_stratum_types(bottom.content.front()).hash())
         {
-            output.content[offset+i] = bottom.content[i];
+            stratum::combine(output.content[adjacent_i], bottom.content.front(), output.content[adjacent_i]);
+            bottom_i++;
         }
-        for (; i < bottom.count && offset+i >= L; ++i)
+        for (; bottom_i < bottom.count && top_i+bottom_i < L3; ++bottom_i)
         {
-            stratum::combine(output.content[L-1], bottom.content[i], output.content[L-1]);
+            output.content[top_i+bottom_i] = bottom.content[bottom_i];
         }
-        output.count = std::min(offset + bottom.count, L);
-    }
-
-    /*
-    Returns a new strata that represents the top strata subducting the bottom strata
-    */
-    template <int L, int M>
-    static void overlap(const Strata<L,M>& top, const Strata<L,M>& bottom, Strata<L,M>& output)
-    {
-        int i;
-        for (i = 0; i < top.count; ++i)
+        for (; bottom_i < bottom.count && top_i+bottom_i >= L3; ++bottom_i)
         {
-            output.content[i] = top.content[i];
+            stratum::combine(output.content[L3-1], bottom.content[bottom_i], output.content[L3-1]);
         }
-        for (i = 0; i < bottom.count && top.count+i < L; ++i)
-        {
-            output.content[top.count+i] = bottom.content[i];
-        }
-        for (; i < bottom.count && top.count+i >= L; ++i)
-        {
-            stratum::combine(output.content[L-1], bottom.content[i], output.content[L-1]);
-        }
-        output.count = std::min(top.count+bottom.count, L);
+        output.count = std::min(top.count+bottom.count, L3);
     }
 }

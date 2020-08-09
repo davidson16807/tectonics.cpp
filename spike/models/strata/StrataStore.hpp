@@ -1,5 +1,8 @@
 #pragma once
 
+// C libraries
+#include <cstdint>
+
 // std libraries
 #include <array>
 
@@ -33,7 +36,7 @@ namespace strata
     class StrataStore
     {
         std::array<stratum::StratumStore<M>, L> strata;
-        int count;
+        std::uint16_t count;
     public:
         void decompress(Strata<L,M>& output) const
         {

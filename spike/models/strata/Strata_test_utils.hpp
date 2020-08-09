@@ -38,8 +38,8 @@ namespace strata
         CHECK(strata1.count == strata2.count);                                    \
         for (int stratum_i = 0; stratum_i < strata1.count; ++stratum_i)   \
         {                                                           \
-            Stratum<M> stratum1 = strata1.content[stratum_i];\
-            Stratum<M> stratum2 = strata2.content[stratum_i];\
+            stratum::Stratum<M> stratum1 = strata1.content[stratum_i];\
+            stratum::Stratum<M> stratum2 = strata2.content[stratum_i];\
             STRATUM_EQUAL(stratum1, stratum2) \
         } 
     
