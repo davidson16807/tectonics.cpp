@@ -3,15 +3,15 @@ The category is composed from types that describe a vertical rock profile compos
 and the properties of that stratum. 
 Types and morphisms within the category are each represented within their own file.
 
-The category diagram can be seen [here](https://tikzcd.yichuanshen.de/#N4Igdg9gJgpgziAXAbVABwnAlgFyxMJZAFgBoAmAXVJADcBDAGwFcYkQBlHAJ3p2YC2XCNzYBfUuky58hFGQCM1Ok1bsuvfgJASp2PASIBWUkpoMWbRJx59BAFQCeacZJAZ9s46QAMyi2rWAGaMEHw6bh4yhigAzL7+qlY2moIABAA6GXgC8Gkadtq67tIGcsgKFImW7ACy9HBwAAoQEIwRetHllWYqNdb1jS1tHSWeMcgAbKbVgSAAShAAxgDWTi6jUWVEPgnmSXUNza2MmdlYuXBpg8cjxVteKNN++-0gABYN7zrKMFAA5vAiKAgtwINpELsQDgIEhKiA4O8sEEcHDiqDwXCaDCkFDEcjUYgFOiwRD4TjEOQSZiidjYYhYtSIWRofTiW4MRCTKykNMEUiUbimby6UhufjBZThbSeTLQhA0EQFAAOXZBJhwGDKRj0ABGMEYLXGchA3Cw-3eqOl5FFiAA7NLlbbJtK+RS+fLFSgVWqNVqaDr9YbSo9TebLaNOUgbbKAJxiShiIA)
+The category diagram can be seen [here](https://tikzcd.yichuanshen.de/#N4Igdg9gJgpgziAXAbVABwnAlgFyxMJZARgBoAmAXVJADcBDAGwFcYkQBlHAJ3p2YC2XCNzYBfUuky58hFGWLU6TVuy69+AkBKnY8BIuVKKaDFm0ScefQQBUAnmnGSQGPbMOkADErOrLAGaMEHzaLm4yBihe3r4qFlYaggAEADqpeALwyeo2Wjqu0vpyyADMxnHm7ABKEADGANYOTmG6kSXlPqbx7AAW9HC92kowUADm8ESgAdwQWogxIDgQSGQgg1gBOKsFM3OrNMtIixtbOy5782tHiOS7s1eHK4il9-uIACxP59MPB0vPNbBCBoIjEAAcMQCTDgMCUjHoACMYIwAApFDyWbhYMa9bZveZGAFIACsBKQRJuADYxJQxEA)
 
 Or it can be viewed with the following [tikzcd](http://ctan.math.washington.edu/tex-archive/graphics/pgf/contrib/tikz-cd/tikz-cd-doc.pdf) markup:
 
 ```
 \begin{tikzcd}
-Mineral \times Mineral \arrow[rd] &                                                                              &  & Stratum \times Stratum \arrow[rd] &                                                                                                & float                            & hash     \\
-                                    & Mineral \arrow[d, shift right=2] \arrow[loop, distance=2em, in=125, out=55] &  &                                   & Stratum \arrow[d, shift right] \arrow[r] \arrow[ru] \arrow[loop, distance=2em, in=125, out=55] & StratumType \arrow[r] \arrow[ru] & RockType \\
-                                    & Mineral \arrow[u]                                                           &  &                                   & StratumStore \arrow[u, shift right]                                                            &                                  &         
+Stratum \times Stratum \arrow[rd] &                                                                                                & float                            & hash     \\
+                                  & Stratum \arrow[d, shift right] \arrow[r] \arrow[ru] \arrow[loop, distance=2em, in=125, out=55] & StratumType \arrow[r] \arrow[ru] & RockType \\
+                                  & StratumStore \arrow[u, shift right]                                                            &                                  &         
 \end{tikzcd}
 ```
 
