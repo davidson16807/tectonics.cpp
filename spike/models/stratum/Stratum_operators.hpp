@@ -7,8 +7,8 @@
 #include <array>
 
 // in-house libraries
+#include <models/mineral/Mineral_operators.hpp>
 #include "Stratum.hpp"
-#include "MassPool_operators.hpp"
 
 namespace stratum
 {
@@ -20,7 +20,7 @@ namespace stratum
         output = a;
         for (std::size_t i=0; i<M; i++)
         {
-            output.mass_pools[i].mass = a.mass_pools[i].mass * scalar;
+            output.minerals[i].mass = a.minerals[i].mass * scalar;
         }
     }
 
@@ -32,7 +32,7 @@ namespace stratum
     ) {
         for (std::size_t i=0; i<M; i++)
         {
-            combine(a.mass_pools[i], b.mass_pools[i], output.mass_pools[i]);
+            combine(a.minerals[i], b.minerals[i], output.minerals[i]);
         }
 
         output.max_temperature_received = std::max(a.max_temperature_received, b.max_temperature_received);

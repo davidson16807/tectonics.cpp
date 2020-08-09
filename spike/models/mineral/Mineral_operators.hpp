@@ -7,11 +7,11 @@
 #include <numeric>
 
 // in-house libraries
-#include "MassPool.hpp"
+#include "Mineral.hpp"
 
-namespace stratum
+namespace mineral
 {
-	static void combine(const MassPool& a, const MassPool& b, MassPool& output)
+	static void combine(const Mineral& a, const Mineral& b, Mineral& output)
 	{
 		output.mass = a.mass + b.mass;
 

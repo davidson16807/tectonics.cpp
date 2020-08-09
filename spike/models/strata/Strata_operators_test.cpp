@@ -95,7 +95,7 @@ TEST_CASE( "Strata deposit() identity", "[strata]" ) {
 	Stratum<M> b;
 	// test to make sure that any stratum with zero mass is an identity, 
 	// regardless of grain type distribution within mass pools 
-	b.mass_pools[0].grain_type_relative_volume[0] = 1000.0f;
+	b.minerals[0].grain_type_relative_volume[0] = 1000.0f;
 
 	Strata<L,M> ab;
 	deposit(a, b, ab);

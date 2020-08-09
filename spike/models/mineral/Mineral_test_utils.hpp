@@ -2,9 +2,9 @@
 
 #include <catch/catch.hpp>
 
-#include "MassPool.hpp"
+#include "Mineral.hpp"
 
-namespace stratum
+namespace mineral
 {
 	/*
 	NOTE: 
@@ -17,9 +17,9 @@ namespace stratum
 	*/
 
 	template<typename Tgenerator>
-	MassPool get_random_stratum_mass_pool(Tgenerator generator)
+	Mineral get_random_mineral(Tgenerator generator)
 	{
-		MassPool output;
+		Mineral output;
 		output.mass = generator();
 		for (int j = 0; j < int(GrainType::count); ++j)
 		{
@@ -28,19 +28,19 @@ namespace stratum
 		return output;
 	}
 	
-	#define STRATUM_MASS_POOL_EQUAL(a, b)                                                              \
+	#define MINERAL_EQUAL(a, b)                                                              \
     	CHECK(a.mass == Approx(b.mass).epsilon(1e-4));                                                 \
 		float a_total_relative_volume(a.grain_type_total_relative_volume());                           \
 		float b_total_relative_volume(b.grain_type_total_relative_volume());                           \
-		for (int grain_i = 0; grain_i < int(GrainType::count); ++grain_i)                                   \
+		for (int grain_i = 0; grain_i < int(mineral::GrainType::count); ++grain_i)                                   \
 		{                                                                                              \
     		CHECK(b.grain_type_relative_volume[grain_i] / b_total_relative_volume ==                   \
     			Approx(a.grain_type_relative_volume[grain_i] / a_total_relative_volume).margin(0.01)); \
     	}    
 
-    #define STRATUM_MASS_POOL_VALID(a)                                          \
+    #define MINERAL_VALID(a)                                          \
     	CHECK(a.mass > -1e-4);                                                  \
-		for (int grain_i = 0; grain_i < int(GrainType::count); ++grain_i)            \
+		for (int grain_i = 0; grain_i < int(mineral::GrainType::count); ++grain_i)            \
 		{                                                                       \
     		CHECK(a.grain_type_relative_volume[grain_i] > -1e-4);               \
     	}                                                                       

@@ -119,7 +119,7 @@ TEST_CASE( "Stratum combine() identity", "[stratum]" ) {
 	Stratum<M> b;
 	// test to make sure that any stratum with zero mass is an identity, 
 	// regardless of grain type distribution within mass pools 
-	b.mass_pools[0].grain_type_relative_volume[0] = 1000.0f;
+	b.minerals[0].grain_type_relative_volume[0] = 1000.0f;
 
 	Stratum<M> ab;
 	combine(a, b, ab);

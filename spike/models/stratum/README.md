@@ -9,9 +9,9 @@ Or it can be viewed with the following [tikzcd](http://ctan.math.washington.edu/
 
 ```
 \begin{tikzcd}
-MassPool \times MassPool \arrow[rd] &                                                                              &  & Stratum \times Stratum \arrow[rd] &                                                                                                & float                            & hash     \\
-                                    & MassPool \arrow[d, shift right=2] \arrow[loop, distance=2em, in=125, out=55] &  &                                   & Stratum \arrow[d, shift right] \arrow[r] \arrow[ru] \arrow[loop, distance=2em, in=125, out=55] & StratumType \arrow[r] \arrow[ru] & RockType \\
-                                    & MassPool \arrow[u]                                                           &  &                                   & StratumStore \arrow[u, shift right]                                                            &                                  &         
+Mineral \times Mineral \arrow[rd] &                                                                              &  & Stratum \times Stratum \arrow[rd] &                                                                                                & float                            & hash     \\
+                                    & Mineral \arrow[d, shift right=2] \arrow[loop, distance=2em, in=125, out=55] &  &                                   & Stratum \arrow[d, shift right] \arrow[r] \arrow[ru] \arrow[loop, distance=2em, in=125, out=55] & StratumType \arrow[r] \arrow[ru] & RockType \\
+                                    & Mineral \arrow[u]                                                           &  &                                   & StratumStore \arrow[u, shift right]                                                            &                                  &         
 \end{tikzcd}
 ```
 

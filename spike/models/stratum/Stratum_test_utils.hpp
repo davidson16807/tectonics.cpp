@@ -2,8 +2,8 @@
 
 #include <catch/catch.hpp>
 
+#include <models/mineral/Mineral_test_utils.hpp>
 #include "Stratum.hpp"
-#include "MassPool_test_utils.hpp"
 
 namespace stratum
 {
@@ -23,7 +23,7 @@ namespace stratum
         Stratum<M> output(generator(), generator(), generator());
         for (int i = 0; i < M; ++i)
         {
-            output.mass_pools[i] = get_random_stratum_mass_pool(generator);
+            output.minerals[i] = mineral::get_random_mineral(generator);
         }
         return output;
     }
@@ -31,13 +31,13 @@ namespace stratum
     #define STRATUM_EQUAL(stratum1, stratum2)                                                  \
         for (int pool_i = 0; pool_i < M; ++pool_i)         \
         {                                                                        \
-            STRATUM_MASS_POOL_EQUAL(stratum1.mass_pools[pool_i], stratum2.mass_pools[pool_i])  \
+            MINERAL_EQUAL(stratum1.minerals[pool_i], stratum2.minerals[pool_i])  \
         } 
     
     #define STRATUM_VALID(stratum1)                                              \
         for (int pool_i = 0; pool_i < M; ++pool_i)  \
         {                                                                 \
-            STRATUM_MASS_POOL_VALID(stratum1.mass_pools[pool_i])                 \
+            MINERAL_VALID(stratum1.minerals[pool_i])                 \
         }                                                                     
 }
 

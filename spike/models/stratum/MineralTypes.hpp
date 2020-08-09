@@ -2,37 +2,13 @@
 
 namespace stratum {
   
+
+
   // NOTE: M = 24 requires three cache lines of storage, 
   // but we need to store a few small variables within Stratum like particle_size, 
   // so we have to set M just shy of that to avoid wasting a cache line.
-  const int oxygen_planet_mass_pool_count = 15;
-
-  enum struct CarbonPlanetMassPoolTypes
-  {
-      // NOTE: see https://www.ptable.com/#Compound/C for ideas
-   // chalcophile, //                    
-      iron_carbide,//           Fe     C 
-      pyrite,      //           Fe     S 
-      silicon_carbide,//     SiC 
-      calcium_carbide,//   (Ca)C
-      aluminum_carbide,//     (Al,Ca)C 
-      metal_cyanides, // (Na,K,H)CN
-      metal_carbonates, // (Mg)CO3
-      organics,    // CNOHPSCaK...       
-      graphite,    // C                  
-      ice,         // H2O                
-      carbon_dioxide,//CO2               
-      co,          // CO                 
-      oxygen,      // O2                 
-      carbon_monoxide,//CO               
-      methane,     // CH4                
-   // ethane,      // C2H6               
-   // tholins,     // CNOHS              
-   // helium,      // He                 
-   // hydrogen,    // H2, metallic       
-  };
-
-  enum struct OxygenPlanetMassPoolTypes
+  const int oxygen_planet_mineral_count = 15;
+  enum struct OxygenPlanetMineralTypes
   {
    // magnetite,   //           Fe     O for the surfaces of mars and maybe venus, representative of siderophile ores
    // chalcophile, //                    for the surfaces of maybe venus and mercury, representative of chalcophile ores
@@ -61,7 +37,7 @@ namespace stratum {
    // helium,      // He                 for completeness, and padding to fit on cache lines
    // hydrogen,    // H2, metallic       for completeness, and padding to fit on cache lines
   };
-  constexpr std::array<float, oxygen_planet_mass_pool_count> oxygen_planet_mass_pool_densities {
+  constexpr std::array<float, oxygen_planet_mineral_count> oxygen_planet_mineral_densities {
       // 5000.0f, //magnetite   
       //          //chalcophile 
          5300.0f, //hematite    
@@ -88,7 +64,7 @@ namespace stratum {
       // 0187.0f, //helium      
       // 0086.0f, //hydrogen    
   };
-  constexpr std::array<float, oxygen_planet_mass_pool_count> oxygen_planet_mass_pool_thermal_conductivities {
+  constexpr std::array<float, oxygen_planet_mineral_count> oxygen_planet_mineral_thermal_conductivities {
       // NOTE: values from Cermak (1988) unless stated otherwise
       //      , //magnetite   
       //        //chalcophile 
@@ -117,10 +93,10 @@ namespace stratum {
       //      , //hydrogen    
   };
   /*
-  Use of "oxygen_planet_mass_pool_chemical_susceptibility" is limited to determining 
+  Use of "oxygen_planet_mineral_chemical_susceptibility" is limited to determining 
   the particle size of chemically weathered sediment so only a crude approximation is needed
   */
-  constexpr std::array<float, oxygen_planet_mass_pool_count> oxygen_planet_mass_pool_chemical_susceptibility {
+  constexpr std::array<float, oxygen_planet_mineral_count> oxygen_planet_mineral_chemical_susceptibility {
       // 0.0f, //magnetite   
       // 0     //chalcophile 
          0.0f, //hematite    
@@ -146,5 +122,32 @@ namespace stratum {
       // 1.0f  //tholins     Horst (2013)
       // 0.0f, //helium      
       // 0.0f, //hydrogen    
+  };
+
+
+  
+  enum struct CarbonPlanetMineralTypes
+  {
+      // NOTE: see https://www.ptable.com/#Compound/C for ideas
+   // chalcophile, //                    
+      iron_carbide,//           Fe     C 
+      pyrite,      //           Fe     S 
+      silicon_carbide,//     SiC 
+      calcium_carbide,//   (Ca)C
+      aluminum_carbide,//     (Al,Ca)C 
+      metal_cyanides, // (Na,K,H)CN
+      metal_carbonates, // (Mg)CO3
+      organics,    // CNOHPSCaK...       
+      graphite,    // C                  
+      ice,         // H2O                
+      carbon_dioxide,//CO2               
+      co,          // CO                 
+      oxygen,      // O2                 
+      carbon_monoxide,//CO               
+      methane,     // CH4                
+   // ethane,      // C2H6               
+   // tholins,     // CNOHS              
+   // helium,      // He                 
+   // hydrogen,    // H2, metallic       
   };
 }

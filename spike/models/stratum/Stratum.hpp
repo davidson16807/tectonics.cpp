@@ -10,12 +10,12 @@
 #include <array>
 
 // in-house libraries
-#include "MassPool.hpp"
+#include <models/mineral/Mineral.hpp>
 
 namespace stratum
 {
     /*
-    "Stratum" describes the composition and texuture of a single rock layer
+    "Stratum" describes the composition and texture of a single rock layer
     */
     template<int M>
     struct Stratum
@@ -29,7 +29,7 @@ namespace stratum
         Grain size is primarily used to indicate distinctions between extrusive and intrusive rocks, like basalt and gabbro.
         Particle size is primarily used to indicate distinctions between things like boulders vs. pebbles vs sand vs. clay
         */
-        std::array<MassPool, M>  mass_pools;
+        std::array<mineral::Mineral, M>  minerals;
         float max_temperature_received;
         float max_pressure_received;
         float age_of_world_when_deposited;
@@ -39,7 +39,7 @@ namespace stratum
             max_pressure_received(0),
             age_of_world_when_deposited(0)
         {
-            mass_pools.fill(MassPool());
+            minerals.fill(mineral::Mineral());
         }
 
         Stratum(
@@ -51,7 +51,7 @@ namespace stratum
             max_pressure_received(max_pressure_received),
             age_of_world_when_deposited(age_of_world_when_deposited)
         {
-            mass_pools.fill(MassPool());
+            minerals.fill(mineral::Mineral());
         }
 
         // DERIVED ATTRIBUTES, regular functions of the form: Stratum -> T
@@ -60,7 +60,7 @@ namespace stratum
             float total_mass(0.0);
             for (std::size_t i=0; i<M; i++)
             {
-                total_mass += mass_pools[i].mass;
+                total_mass += minerals[i].mass;
             }
             return total_mass;
         }
@@ -68,33 +68,33 @@ namespace stratum
         {
             return age_of_world - age_of_world_when_deposited;
         }
-        float volume(const float age_of_world, const std::array<float, M>& mass_pool_densities) const 
+        float volume(const float age_of_world, const std::array<float, M>& mineral_densities) const 
         {
             float total_volume(0.0);
             for (std::size_t i=0; i<M; i++)
             {
-                total_volume += mass_pools[i].mass / mass_pool_densities[i];
+                total_volume += minerals[i].mass / mineral_densities[i];
             }
             return total_volume;
         }
-        float density(const float age_of_world, const std::array<float, M>& mass_pool_densities) const 
+        float density(const float age_of_world, const std::array<float, M>& mineral_densities) const 
         {
-            return mass() / volume(mass_pool_densities);
+            return mass() / volume(mineral_densities);
         }
         float thermal_conductivity(
             float age_of_world,
-            const std::array<float, M>& mass_pool_densities,
-            const std::array<float, M>& mass_pool_thermal_conductivities
+            const std::array<float, M>& mineral_densities,
+            const std::array<float, M>& mineral_thermal_conductivities
         ) const 
         {
             // geometric mean weighted by fractional volume, see work by Fuchs (2013)
             float logK(0.0);
-            float total_volume(volume(mass_pool_densities));
+            float total_volume(volume(mineral_densities));
             float fractional_volume(0);
             for (std::size_t i=0; i<M; i++)
             {
-                fractional_volume = mass_pools[i].mass / (mass_pool_densities[i] * total_volume);
-                logK += fractional_volume * mass_pool_thermal_conductivities[i];
+                fractional_volume = minerals[i].mass / (mineral_densities[i] * total_volume);
+                logK += fractional_volume * mineral_thermal_conductivities[i];
             }
             return exp(logK);
         }

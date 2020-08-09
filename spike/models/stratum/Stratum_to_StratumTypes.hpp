@@ -9,10 +9,10 @@
 
 // in-house libraries
 #include <academics/units.hpp>
-
+#include <models/mineral/GrainType.hpp>
 #include "Stratum.hpp"
 #include "StratumTypes.hpp"
-#include "MassPoolTypes.hpp"
+#include "MineralTypes.hpp"
 
 /*
 Contains a large set of enums and functions for classifying individual rock layers
@@ -95,22 +95,22 @@ namespace stratum
         std::array<float, int(ParticleSizeBins::count)>& output
     ){
         float chemically_susceptible_mass_fraction = 
-            (stratum.mass_pools[int(OxygenPlanetMassPoolTypes::calcite)].mass +
-             stratum.mass_pools[int(OxygenPlanetMassPoolTypes::organics)].mass) / stratum.mass();
+            (stratum.minerals[int(OxygenPlanetMineralTypes::calcite)].mass +
+             stratum.minerals[int(OxygenPlanetMineralTypes::organics)].mass) / stratum.mass();
 
         output.fill(0);
 
         for (std::size_t i=0; i<M; i++)
         {
-            const std::array<float, int(GrainType::count)>& grains = stratum.mass_pools[i].grain_type_relative_volume;
-            output[int(ParticleSizeBins::boulder)] += grains[int(GrainType::unweathered_extrusive)];
-            output[int(ParticleSizeBins::boulder)] += grains[int(GrainType::unweathered_intrusive)];
-            output[int(ParticleSizeBins::pebble)]  += grains[int(GrainType::mechanically_weathered_extrusive)];
-            output[int(ParticleSizeBins::sand)]    += grains[int(GrainType::mechanically_weathered_intrusive)];
-            output[int(ParticleSizeBins::clay)]    += grains[int(GrainType::chemically_weathered_extrusive)] * chemically_susceptible_mass_fraction;
-            output[int(ParticleSizeBins::clay)]    += grains[int(GrainType::chemically_weathered_intrusive)] * chemically_susceptible_mass_fraction;
-            output[int(ParticleSizeBins::silt)]    += grains[int(GrainType::chemically_weathered_extrusive)] * (1.0f - chemically_susceptible_mass_fraction);
-            output[int(ParticleSizeBins::sand)]    += grains[int(GrainType::chemically_weathered_intrusive)] * (1.0f - chemically_susceptible_mass_fraction);
+            const std::array<float, int(mineral::GrainType::count)>& grains = stratum.minerals[i].grain_type_relative_volume;
+            output[int(ParticleSizeBins::boulder)] += grains[int(mineral::GrainType::unweathered_extrusive)];
+            output[int(ParticleSizeBins::boulder)] += grains[int(mineral::GrainType::unweathered_intrusive)];
+            output[int(ParticleSizeBins::pebble)]  += grains[int(mineral::GrainType::mechanically_weathered_extrusive)];
+            output[int(ParticleSizeBins::sand)]    += grains[int(mineral::GrainType::mechanically_weathered_intrusive)];
+            output[int(ParticleSizeBins::clay)]    += grains[int(mineral::GrainType::chemically_weathered_extrusive)] * chemically_susceptible_mass_fraction;
+            output[int(ParticleSizeBins::clay)]    += grains[int(mineral::GrainType::chemically_weathered_intrusive)] * chemically_susceptible_mass_fraction;
+            output[int(ParticleSizeBins::silt)]    += grains[int(mineral::GrainType::chemically_weathered_extrusive)] * (1.0f - chemically_susceptible_mass_fraction);
+            output[int(ParticleSizeBins::sand)]    += grains[int(mineral::GrainType::chemically_weathered_intrusive)] * (1.0f - chemically_susceptible_mass_fraction);
         }
 
         float total_relative_volume(0);
@@ -195,20 +195,20 @@ namespace stratum
     IgneousCompositionTypes get_igneous_composition_types(const Stratum<M>& stratum)
     {
         float total_mass = stratum.mass();
-        if (stratum.mass_pools[int(OxygenPlanetMassPoolTypes::olivine)].mass / total_mass > 0.3)
+        if (stratum.minerals[int(OxygenPlanetMineralTypes::olivine)].mass / total_mass > 0.3)
         {
             return IgneousCompositionTypes::ultramafic;
         }
-        else if (stratum.mass_pools[int(OxygenPlanetMassPoolTypes::pyroxene)].mass / total_mass > 0.3)
+        else if (stratum.minerals[int(OxygenPlanetMineralTypes::pyroxene)].mass / total_mass > 0.3)
         {
             return IgneousCompositionTypes::mafic;
         }
-        else if (stratum.mass_pools[int(OxygenPlanetMassPoolTypes::plagioclase)].mass / total_mass > 0.3)
+        else if (stratum.minerals[int(OxygenPlanetMineralTypes::plagioclase)].mass / total_mass > 0.3)
         {
             return IgneousCompositionTypes::intermediate;
         }
-        else if ((stratum.mass_pools[int(OxygenPlanetMassPoolTypes::orthoclase)].mass + 
-                  stratum.mass_pools[int(OxygenPlanetMassPoolTypes::quartz)].mass) / total_mass > 0.3)
+        else if ((stratum.minerals[int(OxygenPlanetMineralTypes::orthoclase)].mass + 
+                  stratum.minerals[int(OxygenPlanetMineralTypes::quartz)].mass) / total_mass > 0.3)
         {
             return IgneousCompositionTypes::felsic;
         }
@@ -225,13 +225,13 @@ namespace stratum
         output.fill(0);
         for (std::size_t i=0; i<M; i++)
         {
-            const std::array<float, int(GrainType::count)>& grains = stratum.mass_pools[i].grain_type_relative_volume;
-            output[int(IgneousFormationTypes::extrusive)] += grains[int(GrainType::unweathered_extrusive)];
-            output[int(IgneousFormationTypes::intrusive)] += grains[int(GrainType::unweathered_intrusive)];
-            output[int(IgneousFormationTypes::extrusive)] += grains[int(GrainType::mechanically_weathered_extrusive)];
-            output[int(IgneousFormationTypes::intrusive)] += grains[int(GrainType::mechanically_weathered_intrusive)];
-            output[int(IgneousFormationTypes::extrusive)] += grains[int(GrainType::chemically_weathered_extrusive)];
-            output[int(IgneousFormationTypes::intrusive)] += grains[int(GrainType::chemically_weathered_intrusive)];
+            const std::array<float, int(mineral::GrainType::count)>& grains = stratum.minerals[i].grain_type_relative_volume;
+            output[int(IgneousFormationTypes::extrusive)] += grains[int(mineral::GrainType::unweathered_extrusive)];
+            output[int(IgneousFormationTypes::intrusive)] += grains[int(mineral::GrainType::unweathered_intrusive)];
+            output[int(IgneousFormationTypes::extrusive)] += grains[int(mineral::GrainType::mechanically_weathered_extrusive)];
+            output[int(IgneousFormationTypes::intrusive)] += grains[int(mineral::GrainType::mechanically_weathered_intrusive)];
+            output[int(IgneousFormationTypes::extrusive)] += grains[int(mineral::GrainType::chemically_weathered_extrusive)];
+            output[int(IgneousFormationTypes::intrusive)] += grains[int(mineral::GrainType::chemically_weathered_intrusive)];
         }
         float total_relative_volume(0);
         for (std::size_t i=0; i<int(ParticleSizeBins::count); i++)
@@ -315,19 +315,19 @@ namespace stratum
     {
         RockCompositionTypes out;
         float total_mass = stratum.mass();
-        out.partly_calcareous =  stratum.mass_pools[int(OxygenPlanetMassPoolTypes::calcite    )].mass  / total_mass > 0.5;
-        out.calcareous        =  stratum.mass_pools[int(OxygenPlanetMassPoolTypes::calcite    )].mass  / total_mass > 0.75;
-        out.silicaceous       =  stratum.mass_pools[int(OxygenPlanetMassPoolTypes::quartz     )].mass  / total_mass > 0.9;
-        out.feldspathic       = (stratum.mass_pools[int(OxygenPlanetMassPoolTypes::plagioclase)].mass +
-                                 stratum.mass_pools[int(OxygenPlanetMassPoolTypes::orthoclase )].mass) / total_mass > 0.25;
-        out.volcanic          = (stratum.mass_pools[int(OxygenPlanetMassPoolTypes::olivine    )].mass +
-                                 stratum.mass_pools[int(OxygenPlanetMassPoolTypes::pyroxene   )].mass +
-                                 stratum.mass_pools[int(OxygenPlanetMassPoolTypes::plagioclase)].mass +
-                                 stratum.mass_pools[int(OxygenPlanetMassPoolTypes::quartz     )].mass +
-                                 stratum.mass_pools[int(OxygenPlanetMassPoolTypes::orthoclase )].mass) / total_mass > 0.9;
-        out.ferrous           = (stratum.mass_pools[int(OxygenPlanetMassPoolTypes::hematite   )].mass +
-                                 stratum.mass_pools[int(OxygenPlanetMassPoolTypes::pyrite     )].mass)/ total_mass > 0.15;
-        out.organic           =  stratum.mass_pools[int(OxygenPlanetMassPoolTypes::organics   )].mass / total_mass > 0.9;
+        out.partly_calcareous =  stratum.minerals[int(OxygenPlanetMineralTypes::calcite    )].mass  / total_mass > 0.5;
+        out.calcareous        =  stratum.minerals[int(OxygenPlanetMineralTypes::calcite    )].mass  / total_mass > 0.75;
+        out.silicaceous       =  stratum.minerals[int(OxygenPlanetMineralTypes::quartz     )].mass  / total_mass > 0.9;
+        out.feldspathic       = (stratum.minerals[int(OxygenPlanetMineralTypes::plagioclase)].mass +
+                                 stratum.minerals[int(OxygenPlanetMineralTypes::orthoclase )].mass) / total_mass > 0.25;
+        out.volcanic          = (stratum.minerals[int(OxygenPlanetMineralTypes::olivine    )].mass +
+                                 stratum.minerals[int(OxygenPlanetMineralTypes::pyroxene   )].mass +
+                                 stratum.minerals[int(OxygenPlanetMineralTypes::plagioclase)].mass +
+                                 stratum.minerals[int(OxygenPlanetMineralTypes::quartz     )].mass +
+                                 stratum.minerals[int(OxygenPlanetMineralTypes::orthoclase )].mass) / total_mass > 0.9;
+        out.ferrous           = (stratum.minerals[int(OxygenPlanetMineralTypes::hematite   )].mass +
+                                 stratum.minerals[int(OxygenPlanetMineralTypes::pyrite     )].mass)/ total_mass > 0.15;
+        out.organic           =  stratum.minerals[int(OxygenPlanetMineralTypes::organics   )].mass / total_mass > 0.9;
         return out;
     }
 
