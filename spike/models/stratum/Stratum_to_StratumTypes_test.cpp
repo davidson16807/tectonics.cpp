@@ -1,4 +1,4 @@
-#define GLM_FORCE_PURE      // disable SIMD support for glm so we can work with webassembly
+#define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
 
 // 3rd party libraries
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
