@@ -43,7 +43,7 @@ namespace mineral
 		~MineralStore()
 		{
 		}
-		void decompress(Mineral& output) const
+		void unpack(Mineral& output) const
 		{
 		    output.mass = mass;
 
@@ -57,7 +57,7 @@ namespace mineral
                 output.grain_type_relative_volume[i] = grain_type_relative_volume[i] / total_relative_volume;
             }
 		}
-		void compress(const Mineral& input)
+		void pack(const Mineral& input)
 		{
 			mass = input.mass;
             // rescale bin counts by the new max to fit inside a uint8_t

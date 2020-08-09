@@ -6,7 +6,7 @@
 
 using namespace stratum;
 
-TEST_CASE( "StratumStore compress/decompress invertibility", "[stratum]" ) {
+TEST_CASE( "StratumStore pack/unpack invertibility", "[stratum]" ) {
   	std::mt19937 generator(2);
   	const int M = 15;
 
@@ -21,19 +21,19 @@ TEST_CASE( "StratumStore compress/decompress invertibility", "[stratum]" ) {
 	}
 
 	StratumStore<M> stratum_mineral_store;
-	stratum_mineral_store.compress(original);
+	stratum_mineral_store.pack(original);
 
 	Stratum<M> reconstructed(generator(), generator(), generator());
-	stratum_mineral_store.decompress(reconstructed);
+	stratum_mineral_store.unpack(reconstructed);
 
-    SECTION("compressing a Stratum object then decompressing it must reproduce the original object's mass to within 4 decimal places"){
+    SECTION("packing a Stratum object then unpacking it must reproduce the original object's mass to within 4 decimal places"){
 		for (int i = 0; i < M; ++i)
 		{
     		CHECK(reconstructed.minerals[i].mass == Approx(original.minerals[i].mass).epsilon(1e-4));
 		}
 	}
 
-    SECTION("compressing a Stratum object then decompressing it must reproduce the original object's fractional grain sizes to within 1%"){
+    SECTION("packing a Stratum object then unpacking it must reproduce the original object's fractional grain sizes to within 1%"){
 		for (int i = 0; i < M; ++i)
 		{
 			float original_total_relative_volume(original.minerals[i].grain_type_total_relative_volume());

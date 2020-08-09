@@ -7,18 +7,18 @@
 
 using namespace mineral;
 
-TEST_CASE( "MineralStore compress/decompress invertibility", "[mineral]" ) {
+TEST_CASE( "MineralStore pack/unpack invertibility", "[mineral]" ) {
   	std::mt19937 generator(2);
 
 	Mineral original = get_random(generator);
 	
 	MineralStore mineral_store;
-	mineral_store.compress(original);
+	mineral_store.pack(original);
 
 	Mineral reconstructed;
-	mineral_store.decompress(reconstructed);
+	mineral_store.unpack(reconstructed);
 
-    SECTION("compressing a Mineral object then decompressing it must reproduce the original object to within acceptable tolerances"){
+    SECTION("packing a Mineral object then unpacking it must reproduce the original object to within acceptable tolerances"){
     	MINERAL_EQUAL(reconstructed, original);
 	}
 }

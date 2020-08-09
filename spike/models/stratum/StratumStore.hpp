@@ -81,22 +81,22 @@ namespace stratum
 
     public:
 
-        void decompress(Stratum<M>& output) const
+        void unpack(Stratum<M>& output) const
         {
             for (std::size_t i=0; i<M; i++)
             {
-                minerals[i].decompress(output.minerals[i]);
+                minerals[i].unpack(output.minerals[i]);
             }
             output.max_pressure_received    = exp2( log2_ref_pressure    * float(stored_max_pressure_received)    / std::numeric_limits<std::uint16_t>::max());
             output.max_temperature_received = exp2( log2_ref_temperature * float(stored_max_temperature_received) / std::numeric_limits<std::uint16_t>::max());
             output.age_of_world_when_deposited = age_of_world_when_deposited_in_megayears * units::megayear;
         }
 
-        void compress(const Stratum<M>& input)
+        void pack(const Stratum<M>& input)
         {
             for (std::size_t i=0; i<M; i++)
             {
-                minerals[i].compress(input.minerals[i]);
+                minerals[i].pack(input.minerals[i]);
             }
 
             stored_max_pressure_received    = std::uint8_t(std::numeric_limits<std::uint16_t>::max()*std::clamp( log2(input.max_pressure_received)    / log2_ref_pressure,   0., 1.0));

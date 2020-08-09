@@ -36,21 +36,21 @@ namespace strata
     class StrataStore
     {
         std::array<stratum::StratumStore<M>, L> strata;
-        std::uint16_t count;
+        int count;
     public:
-        void decompress(Strata<L,M>& output) const
+        void unpack(Strata<L,M>& output) const
         {
             for (std::size_t i=0; i<L; i++)
             {
-                strata[i].decompress(output.content[i]);
+                strata[i].unpack(output.content[i]);
             }
             output.count = count;
         }
-        void compress(const Strata<L,M>& input)
+        void pack(const Strata<L,M>& input)
         {
             for (std::size_t i=0; i<L; i++)
             {
-                strata[i].compress(input.content[i]);
+                strata[i].pack(input.content[i]);
             }
             count = input.count;
         }

@@ -8,7 +8,7 @@
 using namespace strata;
 using namespace stratum;
 
-TEST_CASE( "StrataStore compress/decompress invertibility", "[strata]" ) {
+TEST_CASE( "StrataStore pack/unpack invertibility", "[strata]" ) {
   	std::mt19937 generator(2);
   	const int L = 16;
   	const int M = 15;
@@ -16,12 +16,12 @@ TEST_CASE( "StrataStore compress/decompress invertibility", "[strata]" ) {
 	Strata<L,M> original = get_random<L,M>(generator);
 
 	StrataStore<L,M> strata_store;
-	strata_store.compress(original);
+	strata_store.pack(original);
 
 	Strata<L,M> reconstructed;
-	strata_store.decompress(reconstructed);
+	strata_store.unpack(reconstructed);
 
-    SECTION("compressing a Strata object then decompressing it must reproduce the original object to within acceptable tolerances"){
+    SECTION("packing a Strata object then unpacking it must reproduce the original object to within acceptable tolerances"){
 		STRATA_EQUAL(original, reconstructed);
 	}
 }
