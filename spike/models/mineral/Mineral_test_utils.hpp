@@ -17,7 +17,7 @@ namespace mineral
 	*/
 
 	template<typename Tgenerator>
-	Mineral get_random_mineral(Tgenerator generator)
+	Mineral get_random(Tgenerator generator)
 	{
 		Mineral output;
 		output.mass = generator();

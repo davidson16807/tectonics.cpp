@@ -54,7 +54,7 @@ namespace mineral
 			grain_type_relative_volume.fill(0.0f);
 		}
 
-        // DERIVED ATTRIBUTES, regular functions of the form: Stratum -> T
+        // DERIVED ATTRIBUTES, regular functions of the form: Mineral -> primitive
 		float grain_type_total_relative_volume() const 
 		{
 		    float total_relative_volume(0);

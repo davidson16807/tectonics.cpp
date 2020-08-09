@@ -13,7 +13,7 @@ TEST_CASE( "StrataValues getter/setter invertibility", "[strata]" ) {
   	const int L = 16;
   	const int M = 15;
 
-	Strata<L,M> original = get_random_strata<L,M>(generator);
+	Strata<L,M> original = get_random<L,M>(generator);
 	Strata<L,M> modified;
 
 	StrataValues<float, L> pressures;

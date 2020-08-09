@@ -15,7 +15,7 @@ using namespace stratum;
 TEST_CASE( "Stratum scale() associativity", "[stratum]" ) {
   	std::mt19937 generator(2);
   	const int M = 15;
-	Stratum<M> a = get_random_stratum<M>(generator);
+	Stratum<M> a = get_random<M>(generator);
 	float b = 2.0f;
 	float c = 3.0f;
 
@@ -34,7 +34,7 @@ TEST_CASE( "Stratum scale() associativity", "[stratum]" ) {
 TEST_CASE( "Stratum scale() closure", "[stratum]" ) {
   	std::mt19937 generator(2);
   	const int M = 15;
-	Stratum<M> a = get_random_stratum<M>(generator);
+	Stratum<M> a = get_random<M>(generator);
 	float b = 2.0f;
 
 	Stratum<M> ab;
@@ -47,7 +47,7 @@ TEST_CASE( "Stratum scale() closure", "[stratum]" ) {
 TEST_CASE( "Stratum scale() identity", "[stratum]" ) {
   	std::mt19937 generator(2);
   	const int M = 15;
-	Stratum<M> a = get_random_stratum<M>(generator);
+	Stratum<M> a = get_random<M>(generator);
 	float b = 1.0f;
 
 	Stratum<M> ab;
@@ -64,8 +64,8 @@ TEST_CASE( "Stratum scale() identity", "[stratum]" ) {
 TEST_CASE( "Stratum combine() commutativity", "[stratum]" ) {
   	std::mt19937 generator(2);
   	const int M = 15;
-	Stratum<M> a = get_random_stratum<M>(generator);
-	Stratum<M> b = get_random_stratum<M>(generator);
+	Stratum<M> a = get_random<M>(generator);
+	Stratum<M> b = get_random<M>(generator);
 
 	Stratum<M> ab;
 	Stratum<M> bc;
@@ -80,9 +80,9 @@ TEST_CASE( "Stratum combine() commutativity", "[stratum]" ) {
 TEST_CASE( "Stratum combine() associativity", "[stratum]" ) {
   	std::mt19937 generator(2);
   	const int M = 15;
-	Stratum<M> a = get_random_stratum<M>(generator);
-	Stratum<M> b = get_random_stratum<M>(generator);
-	Stratum c = get_random_stratum<M>(generator);
+	Stratum<M> a = get_random<M>(generator);
+	Stratum<M> b = get_random<M>(generator);
+	Stratum c = get_random<M>(generator);
 
 	Stratum<M> ab;
 	Stratum<M> ab_c;
@@ -101,8 +101,8 @@ TEST_CASE( "Stratum combine() associativity", "[stratum]" ) {
 TEST_CASE( "Stratum combine() closure", "[stratum]" ) {
   	std::mt19937 generator(2);
   	const int M = 15;
-	Stratum<M> a = get_random_stratum<M>(generator);
-	Stratum<M> b = get_random_stratum<M>(generator);
+	Stratum<M> a = get_random<M>(generator);
+	Stratum<M> b = get_random<M>(generator);
 
 	Stratum<M> ab;
 	combine(a, b, ab);
@@ -114,7 +114,7 @@ TEST_CASE( "Stratum combine() closure", "[stratum]" ) {
 TEST_CASE( "Stratum combine() identity", "[stratum]" ) {
   	std::mt19937 generator(2);
   	const int M = 15;
-	Stratum<M> a = get_random_stratum<M>(generator);
+	Stratum<M> a = get_random<M>(generator);
 	// default constructor is required to be identity
 	Stratum<M> b;
 	// test to make sure that any stratum with zero mass is an identity, 

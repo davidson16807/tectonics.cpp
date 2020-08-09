@@ -10,15 +10,14 @@
 #include "Strata_test_utils.hpp"
 
 using namespace strata;
-using namespace stratum;
 
 TEST_CASE( "Strata overlap() associativity", "[strata]" ) {
   	std::mt19937 generator(2);
   	const int L = 16;
   	const int M = 15;
-	Strata<L,M> a = get_random_strata<L,M>(generator);
-	Strata<L,M> b = get_random_strata<L,M>(generator);
-	Strata<L,M> c = get_random_strata<L,M>(generator);
+	Strata<L,M> a = get_random<L,M>(generator);
+	Strata<L,M> b = get_random<L,M>(generator);
+	Strata<L,M> c = get_random<L,M>(generator);
 
 	Strata<L,M> ab;
 	Strata<L,M> ab_c;
@@ -38,8 +37,8 @@ TEST_CASE( "Strata overlap() closure", "[strata]" ) {
   	std::mt19937 generator(2);
   	const int L = 16;
   	const int M = 15;
-	Strata<L,M> a = get_random_strata<L,M>(generator);
-	Strata<L,M> b = get_random_strata<L,M>(generator);
+	Strata<L,M> a = get_random<L,M>(generator);
+	Strata<L,M> b = get_random<L,M>(generator);
 
 	Strata<L,M> ab;
 	overlap(a, b, ab);
@@ -53,7 +52,7 @@ TEST_CASE( "Strata overlap() identity", "[strata]" ) {
   	std::mt19937 generator(2);
   	const int L = 16;
   	const int M = 15;
-	Strata<L,M> a = get_random_strata<L,M>(generator);
+	Strata<L,M> a = get_random<L,M>(generator);
 	// default constructor is required to be identity
 	Strata<L,M> b;
 
@@ -71,52 +70,11 @@ there are no tests for the invertibility of overlap(), since it is not expect to
 */
 
 
-TEST_CASE( "Strata deposit() closure", "[strata]" ) {
-  	std::mt19937 generator(2);
-  	const int L = 16;
-  	const int M = 15;
-	Strata<L,M> a = get_random_strata<L,M>(generator);
-	Stratum<M> b = get_random_stratum<M>(generator);
-
-	Strata<L,M> ab;
-	deposit(a, b, ab);
-
-    SECTION("the result of passing two valid Strata objects to deposit() must itself produce a valid Strata"){
-    	STRATA_VALID(ab)
-    }
-}
-
-TEST_CASE( "Strata deposit() identity", "[strata]" ) {
-  	std::mt19937 generator(2);
-  	const int L = 16;
-  	const int M = 15;
-	Strata<L,M> a = get_random_strata<L,M>(generator);
-	// default constructor is required to be identity
-	Stratum<M> b;
-	// test to make sure that any stratum with zero mass is an identity, 
-	// regardless of grain type distribution within mass pools 
-	b.minerals[0].grain_type_relative_volume[0] = 1000.0f;
-
-	Strata<L,M> ab;
-	deposit(a, b, ab);
-
-    SECTION("there is a value that can be passed to deposit() that produces the original Strata"){
-    	STRATA_EQUAL(ab, a)
-    }
-}
-
-/*
-NOTE: 
-there are no tests for the associativity or invertibility of deposit(), 
-since it is not expect to have that property.
-*/
-
-
 TEST_CASE( "Strata simplify() closure", "[strata]" ) {
   	std::mt19937 generator(2);
   	const int L = 16;
   	const int M = 15;
-	Strata<L,M> a = get_random_strata<L,M>(generator);
+	Strata<L,M> a = get_random<L,M>(generator);
 
 	Strata<L,M> fa;
 	simplify(a, fa);

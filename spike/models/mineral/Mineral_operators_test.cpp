@@ -12,8 +12,8 @@ using namespace mineral;
 
 TEST_CASE( "Mineral combine() commutativity", "[mineral]" ) {
   	std::mt19937 generator(2);
-	Mineral a = get_random_mineral_mineral(generator);
-	Mineral b = get_random_mineral_mineral(generator);
+	Mineral a = get_random(generator);
+	Mineral b = get_random(generator);
 
 	Mineral ab;
 	Mineral bc;
@@ -21,15 +21,15 @@ TEST_CASE( "Mineral combine() commutativity", "[mineral]" ) {
 	combine(b, a, bc);
 
     SECTION("switching arguments for combine() must produce the same Mineral object to within acceptable tolerances"){
-    	STRATUM_MASS_POOL_EQUAL(ab, bc)
+    	MINERAL_EQUAL(ab, bc)
     }
 }
 
 TEST_CASE( "Mineral combine() associativity", "[mineral]" ) {
   	std::mt19937 generator(2);
-	Mineral a = get_random_mineral_mineral(generator);
-	Mineral b = get_random_mineral_mineral(generator);
-	Mineral c = get_random_mineral_mineral(generator);
+	Mineral a = get_random(generator);
+	Mineral b = get_random(generator);
+	Mineral c = get_random(generator);
 
 	Mineral ab;
 	Mineral ab_c;
@@ -41,20 +41,20 @@ TEST_CASE( "Mineral combine() associativity", "[mineral]" ) {
 	combine(a, bc, a_bc);
 
     SECTION("switching order of invocation for combine() must produce the same Mineral object to within acceptable tolerances"){
-    	STRATUM_MASS_POOL_EQUAL(ab_c, a_bc)
+    	MINERAL_EQUAL(ab_c, a_bc)
     }
 }
 
 TEST_CASE( "Mineral combine() closure", "[mineral]" ) {
   	std::mt19937 generator(2);
-	Mineral a = get_random_mineral_mineral(generator);
-	Mineral b = get_random_mineral_mineral(generator);
+	Mineral a = get_random(generator);
+	Mineral b = get_random(generator);
 
 	Mineral ab;
 	combine(a, b, ab);
 
     SECTION("the result of passing two valid Mineral objects to combine() must itself produce a valid Mineral"){
-    	STRATUM_MASS_POOL_VALID(ab)
+    	MINERAL_VALID(ab)
     }
 }
 

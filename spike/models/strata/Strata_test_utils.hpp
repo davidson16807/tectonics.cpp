@@ -7,8 +7,8 @@
 #include <catch/catch.hpp>
 
 // in-house libraries
-#include <models/stratum/Stratum_test_utils.hpp>
 #include "Strata.hpp"
+#include <models/stratum/Stratum_test_utils.hpp>
 
 namespace strata
 {
@@ -23,13 +23,13 @@ namespace strata
     */
 
     template<int L, int M, typename Tgenerator>
-    Strata<L,M> get_random_strata(Tgenerator generator)
+    Strata<L,M> get_random(Tgenerator generator)
     {
         Strata<L,M> output;
         output.count = 16;
         for (int i = 0; i < L; ++i)
         {
-            output.content[i] = stratum::get_random_stratum<M>(generator);
+            output.content[i] = stratum::get_random<M>(generator);
         }
         return output;
     }

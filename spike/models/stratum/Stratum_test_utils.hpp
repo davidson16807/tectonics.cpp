@@ -18,12 +18,12 @@ namespace stratum
     */
 
     template<int M, typename Tgenerator>
-    Stratum<M> get_random_stratum(Tgenerator generator)
+    Stratum<M> get_random(Tgenerator generator)
     {
         Stratum<M> output(generator(), generator(), generator());
         for (int i = 0; i < M; ++i)
         {
-            output.minerals[i] = mineral::get_random_mineral(generator);
+            output.minerals[i] = mineral::get_random(generator);
         }
         return output;
     }

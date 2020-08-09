@@ -13,7 +13,7 @@ TEST_CASE( "StrataStore compress/decompress invertibility", "[strata]" ) {
   	const int L = 16;
   	const int M = 15;
 
-	Strata<L,M> original = get_random_strata<L,M>(generator);
+	Strata<L,M> original = get_random<L,M>(generator);
 
 	StrataStore<L,M> strata_store;
 	strata_store.compress(original);

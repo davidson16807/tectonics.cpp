@@ -10,7 +10,7 @@ using namespace mineral;
 TEST_CASE( "MineralStore compress/decompress invertibility", "[mineral]" ) {
   	std::mt19937 generator(2);
 
-	Mineral original = get_random_mineral_mineral(generator);
+	Mineral original = get_random(generator);
 	
 	MineralStore mineral_store;
 	mineral_store.compress(original);
@@ -19,6 +19,6 @@ TEST_CASE( "MineralStore compress/decompress invertibility", "[mineral]" ) {
 	mineral_store.decompress(reconstructed);
 
     SECTION("compressing a Mineral object then decompressing it must reproduce the original object to within acceptable tolerances"){
-    	STRATUM_MASS_POOL_EQUAL(reconstructed, original);
+    	MINERAL_EQUAL(reconstructed, original);
 	}
 }
