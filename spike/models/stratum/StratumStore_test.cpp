@@ -46,3 +46,8 @@ TEST_CASE( "StratumStore compress/decompress invertibility", "[stratum]" ) {
 		}
     }
 }
+TEST_CASE( "StratumStore memory constraints", "[strata]" ) {
+    SECTION("a StratumStore must fit within an expected memory footprint for a given number of layers and mass pools"){
+		CHECK(sizeof(StratumStore<15>) <= 188); //bytes
+	}
+}

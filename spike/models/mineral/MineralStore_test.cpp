@@ -22,3 +22,8 @@ TEST_CASE( "MineralStore compress/decompress invertibility", "[mineral]" ) {
     	MINERAL_EQUAL(reconstructed, original);
 	}
 }
+TEST_CASE( "MineralStore memory constraints", "[strata]" ) {
+    SECTION("a MineralStore must fit within an expected memory footprint"){
+		CHECK(sizeof(MineralStore) <= 12 );
+	}
+}

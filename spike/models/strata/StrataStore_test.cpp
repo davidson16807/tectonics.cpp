@@ -25,3 +25,8 @@ TEST_CASE( "StrataStore compress/decompress invertibility", "[strata]" ) {
 		STRATA_EQUAL(original, reconstructed);
 	}
 }
+TEST_CASE( "StrataStore memory constraints", "[strata]" ) {
+    SECTION("a StrataStore must fit within an expected memory footprint for a given number of layers and mass pools"){
+		CHECK(sizeof(StrataStore<16,15>) <= 3012);
+	}
+}
