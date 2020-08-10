@@ -6,6 +6,22 @@
 
 namespace crust
 {
+    template<int L, int M>
+    void get_sediment(
+        const Crust<L,M>& input, 
+        Crust<1,M>& output
+    ) {
+        assert(input.size() == output.size());
+        strata::Strata<L,M> input_strata;
+        strata::Strata<1,M> output_strata;
+        for (std::size_t i = 0; i < input.size(); ++i)
+        {
+            input[i].unpack(input_strata);
+            strata::get_sediment(input_strata, output_strata);
+            output[i].pack(output_strata);
+        }
+    }
+
     template<int L1, int L2, int L3, int M>
     void overlap(
         const Crust<L1,M>& top, 

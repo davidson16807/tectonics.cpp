@@ -23,12 +23,12 @@ namespace strata
         if (input.count > 0 && stratum::get_stratum_types(input.content[0]).dominant_particle_size_bin <= stratum::ParticleSizeBins::sand)
         {
             output.content[0] = input.content[0];
+            output.count = 1;
         }
         else 
         {
-            output.content[0] = stratum::Stratum<M>();
+            output.count = 0;
         }
-        output.count = 1;
     }
 
     /*

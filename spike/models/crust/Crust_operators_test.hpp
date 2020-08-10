@@ -91,3 +91,21 @@ TEST_CASE( "Crust overlap() mass conservation", "[crust]" ) {
 NOTE: 
 there are no tests for the invertibility or commutativity of overlap(), since it is not expect to have that property.
 */
+
+
+
+TEST_CASE( "Crust get_sediment() closure", "[crust]" ) {
+    std::mt19937 generator(2);
+    const int L = 1;
+    const int L2 = 16;
+    const int M = 15;
+    const int N = 10;
+    Crust<L2,M> a = get_random_crust<L2,M>(N, generator);
+
+    Crust<L,M> fa(N);
+    get_sediment(a, fa);
+
+    SECTION("the result of passing a valid Crust object to get_sediment() must itself produce a valid Crust"){
+      CRUST_VALID(fa)
+    }
+}

@@ -44,7 +44,7 @@ namespace strata
         } 
     
     #define STRATA_VALID(strata1)                                       \
-        CHECK(0 < strata1.count);\
+        CHECK(0 <= strata1.count);\
         CHECK(strata1.count <= L);                       \
         for (int stratum_i = 0; stratum_i < strata1.count; ++stratum_i) \
         {                                                         \
