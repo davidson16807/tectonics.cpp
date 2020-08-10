@@ -111,6 +111,19 @@ TEST_CASE( "Stratum combine() closure", "[stratum]" ) {
     	STRATUM_VALID(ab)
     }
 }
+TEST_CASE( "Stratum combine() mass conservation", "[stratum]" ) {
+  	std::mt19937 generator(2);
+  	const int M = 15;
+	Stratum<M> a = get_random<M>(generator);
+	Stratum<M> b = get_random<M>(generator);
+
+	Stratum<M> ab;
+	combine(a, b, ab);
+
+    SECTION("the result of passing two valid Stratum objects to combine() must produce a valid Stratum with equivalent mass"){
+    	CHECK(ab.mass() == a.mass() + b.mass());
+    }
+}
 TEST_CASE( "Stratum combine() identity", "[stratum]" ) {
   	std::mt19937 generator(2);
   	const int M = 15;

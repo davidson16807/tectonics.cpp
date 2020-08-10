@@ -57,6 +57,18 @@ TEST_CASE( "Mineral combine() closure", "[mineral]" ) {
     	MINERAL_VALID(ab)
     }
 }
+TEST_CASE( "Mineral combine() mass conservation", "[mineral]" ) {
+  	std::mt19937 generator(2);
+	Mineral a = get_random(generator);
+	Mineral b = get_random(generator);
+
+	Mineral ab;
+	combine(a, b, ab);
+
+    SECTION("the result of passing two valid Mineral objects to combine() must produce a new Mineral object with equal mass"){
+    	CHECK(ab.mass == a.mass + b.mass);
+    }
+}
 
 /*
 NOTE: 
