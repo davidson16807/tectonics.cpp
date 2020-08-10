@@ -1,19 +1,17 @@
-the "rock" namespace exclusively represents data structures and functions that define a mathematical category.
-The category is composed from types that describe the distribution of strata over the suface of a mesh, 
+the "crust" namespace exclusively represents data structures and functions that define a mathematical category.
+The category is composed from types that describe rock layers over the suface of a mesh, 
 and the properties of those strata. 
 
-The category diagram can be seen [here](https://tikzcd.yichuanshen.de/#N4Igdg9gJgpgziAXAbVABwnAlgFyxMJZABgBpiBdUkANwEMAbAVxiRBwjQAIAdHvALbwuaBnRzwQAX1LpMufIRQBGclVqMWbAMYAnJnBy9+WIXBFiJCGXOx4CRVcvX1mrRCFHjJNz-PtKyABMpADMLpruIHoGRnyCwq4s1rJ+dopEACykQRFuOvqGxgnmDFgAjkxYUNKpGOkOKABsOXlaHknC8abCEABmfXAwOCm2Co3IquHUnQWxtWMBjqSZbVF9DBDio2njgdnTGvke2GAA1jC6O-V7RGSrM5FsHGgLu0soIQ9H7T8+df4Mihst9Zh5+oNhtdARMWqCnuCBkMRsUeuYAEabbRnazqGBQADmkhQoD6uggAiQZHYECQIT+SDATAYDGoYnRMAYAAUYUoQAwYH0cG8yRSkKoaXTHscmSy2XQOdzeWwBUKReTKYh6RwkC0GYhZaz+QrOTyGnzVcLqHAABZYNWIAC0yl8os1oWoOsQerBhvlirNtw8lvVYsQ2UliAAHNL2n7jQHlcHBcLXRqkABWT20xDKem+5lG9mmpP8lMga12h0u1Ju3XZqX6+PFpXmlXlyv24VOmuk9PehuIADssfczZNraDZbVabDeq9ympBblCZLbeTM9r-fnOZ9CPHifX06t-IgnCIQSHZBw+hgFFnmp3SAAnKPGYX-WupyGH0gY5HlAlZciwnQMPmPUNNTzQcsybD9V0ncCQ07aspHvIA)
+The category diagram can be seen [here](https://tikzcd.yichuanshen.de/#N4Igdg9gJgpgziAXAbVABwnAlgFyxMJZARgBoAGAXVJADcBDAGwFcYkQBhAJ2bhwAIAOoLwBbePwAKjejnggAvqXSZc+QijLFqdJq3bTZ8pSux4CRcqQDMOhizaJOPPkJFZxcft144AanrGyiAYZupEAGyk2jT2+k4+rsJiEgAyWACOzFhQisGhahYoABzRdoHsif6BXskeEgDyAGZNcDA4CCYhquYaJKQATOUOlS44eaaFfQNlsRVOTYwQsp35PeEoUUNzI04AIjBgZgCeklwQTViMbF0FvUQztjvxzr4BDquT95s2wy-NrXan26YSKyFKT10uxAALaHTcKS8ACElgBjADWwLuG2QVhiUJeAFl6HA4ABlNBcLBgADmExBUyIABZZgTHK8ku5PPxiaSKVTafTsWCWZC4uzDHJOjoYFAafIUKAmudREgrCAcBAkGQ2UgwMxGIwaDIAEYwRiSdZFEDXJrjLrKiCqxA6zVIACsz0c+sNxvoZotVo0NpgdpANDgAAssGHEOQHSqkDMNVrEJ7dYgfUabf7zZbQcHbfbgo7ndYaG7EAB2L16g3Z015oPsIv00tIFkp7Xq8V1305gP5xlOVsR6Ox4gJp0eiupqIZrN+wfNkeh4tKxNp2dIUoL+tLpsFltrtub9OV9O9zP7geH4chsPGiAQNCWUg4HgwShT501ruIABOWtr37RtAyPVcwx-btt0QTsr0XW9wPvUcQCjGNxhdaCt3-YhJxLTdiGTStiHLNDx0w+NvyAA)
 
 Or it can be viewed with the following tikzcd markup:
 
 ```
-% https://tikzcd.yichuanshen.de/#N4Igdg9gJgpgziAXAbVABwnAlgFyxMJZABgBpiBdUkANwEMAbAVxiRBwjQAIAdHvALbwuaBnRzwQAX1LpMufIRQBGclVqMWbAMYAnJnBy9+WIXBFiJCGXOx4CRVcvX1mrRCFHjJNz-PtKyABMpADMLpruIHoGRnyCwq4s1rJ+dopEACykQRFuOvqGxgnmDFgAjkxYUNKpGOkOKABsOXlaHknC8abCEABmfXAwOCm2Co3IquHUnQWxtWMBjqSZbVF9DBDio2njgdnTGvke2GAA1jC6O-V7RGSrM5FsHGgLu0soIQ9H7T8+df4Mihst9Zh5+oNhtdARMWqCnuCBkMRsUeuYAEabbRnazqGBQADmkhQoD6uggAiQZHYECQIT+SDATAYDGoYnRMAYAAUYUoQAwYH0cG8yRSkKoaXTHscmSy2XQOdzeWwBUKReTKYh6RwkC0GYhZaz+QrOTyGnzVcLqHAABZYNWIAC0yl8os1oWoOsQerBhvlirNtw8lvVYsQ2UliAAHNL2n7jQHlcHBcLXRqkABWT20xDKem+5lG9mmpP8lMga12h0u1Ju3XZqX6+PFpXmlXlyv24VOmuk9PehuIADssfczZNraDZbVabDeq9ympBblCZLbeTM9r-fnOZ9CPHifX06t-IgnCIQSHZBw+hgFFnmp3SAAnKPGYX-WupyGH0gY5HlAlZciwnQMPmPUNNTzQcsybD9V0ncCQ07aspHvIA
 \begin{tikzcd}
-top \times plates \arrow[rd] & crust \times plates \arrow[d]                                                                            &                               &  &                               &  &                                               \\
-                             & plates \arrow[dd, shift left]                                                                            &                               &  &                               &  &                                               \\
-                             &                                                                                                          &                               &  & crust \times liquid \arrow[d] &  & values \times offsets \arrow[dd, shift right] \\
-                             & crust \arrow[uu, shift left] \arrow[d] \arrow[rd] \arrow[loop, distance=2em, in=145, out=215] \arrow[ld] & crust \times values \arrow[l] &  & sinking \arrow[d]             &  &                                               \\
-top                          & floats                                                                                                   & values                        &  & offsets                       &  & offsets \times blocks \arrow[uu, shift right]
+                                    & Crust \times Plates \arrow[d]                                                      &             &  &                                    &  &                               &  &                                                    \\
+MassSpring                          & Plates \arrow[d]                                                                   & floats      &  & Crust \times MassSpring \arrow[dd] &  & Crust \times Liquid \arrow[d] &  & CrustValues \times Offsets \arrow[dd, shift right] \\
+                                    & Crust \arrow[ru] \arrow[rd] \arrow[loop, distance=2em, in=235, out=305] \arrow[lu] &             &  &                                    &  & DensityProfile \arrow[d]      &  &                                                    \\
+Crust \times CrustValues \arrow[ru] &                                                                                    & CrustValues &  & Plates                             &  & Offsets                       &  & Offsets \times Blocks \arrow[uu, shift right]     
 \end{tikzcd}
 ```
 

@@ -1,10 +1,14 @@
 #pragma once
 
-#include <models/rock/StrataValues.hpp> // Strata
+// std libraries
+#include <vector>
+
+// in-house libraries
+#include <models/strata/StrataValues.hpp> // Strata
 
 namespace crust
 {
-	template<typename T>
-    typedef many::tmany<StrataValues<T>> CrustValues;
+	template <typename T, int L>
+    using CrustValues = std::vector<strata::StrataValues<L>>;
 }
 
