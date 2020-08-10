@@ -57,6 +57,18 @@ TEST_CASE( "Mineral combine() closure", "[mineral]" ) {
     	MINERAL_VALID(ab)
     }
 }
+TEST_CASE( "Mineral combine() identity", "[mineral]" ) {
+  	std::mt19937 generator(2);
+	Mineral a = get_random(generator);
+	Mineral b;
+
+	Mineral ab;
+	combine(a, b, ab);
+
+    SECTION("there is a value that can be passed to combine() that produces the original Mineral"){
+    	MINERAL_VALID(ab)
+    }
+}
 TEST_CASE( "Mineral combine() mass conservation", "[mineral]" ) {
   	std::mt19937 generator(2);
 	Mineral a = get_random(generator);

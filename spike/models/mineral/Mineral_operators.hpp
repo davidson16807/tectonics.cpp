@@ -21,8 +21,8 @@ namespace mineral
         for (std::size_t i=0; i<int(GrainType::count); i++)
         {
             output.grain_type_relative_volume[i] = 
-                (a.mass * a.grain_type_relative_volume[i] / std::max(a_sum, 1e-4f) + 
-                 b.mass * b.grain_type_relative_volume[i] / std::max(b_sum, 1e-4f)) / std::max(a.mass + b.mass, 1e-4f);
+                (a.mass * a.grain_type_relative_volume[i] / a_sum + 
+                 b.mass * b.grain_type_relative_volume[i] / b_sum) / std::max(a.mass + b.mass, 1e-4f);
         }
 	}
 }

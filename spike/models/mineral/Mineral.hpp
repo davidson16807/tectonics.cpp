@@ -51,7 +51,7 @@ namespace mineral
 		Mineral():
 			mass(0)
 		{
-			grain_type_relative_volume.fill(0.0f);
+			grain_type_relative_volume.fill(1.0f);
 		}
 
         // DERIVED ATTRIBUTES, regular functions of the form: Mineral -> primitive
