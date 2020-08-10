@@ -24,7 +24,7 @@ namespace crust
 
         for (int i = 0; i < crust.size(); ++i)
         {
-            strata.decompress(crust[i]);
+            strata.unpack(crust[i]);
             solidification_delta.count = crust[i].count;
             for (int j = 0; j < crust[i].count; ++j)
             {
@@ -151,7 +151,7 @@ namespace crust
                 vaporization_delta             [MassPools::carbon_dioxide] += phase == BasicPhase::vapor?  strata.mass_pools[MassPools::carbon_dioxide] : 0.0;
                 melting_delta                  [MassPools::carbon_dioxide] +=(phase == BasicPhase::liquid || phase == BasicPhase::supercritical)? strata.mass_pools[MassPools::carbon_dioxide] : 0.0;
             }
-            solidification_deltas[i].compress(solidification_delta);
+            solidification_deltas[i].pack(solidification_delta);
         }
     }
 
@@ -299,7 +299,7 @@ namespace crust
         for (int i = 0; i < grid.vertex_count; ++i)
         {
             float eroded_thickness = max_height_difference[i] * erosive_factor * precipitation[i];
-            crust[i].decompress(strata);
+            crust[i].unpack(strata);
             float running_thickness(strata.strata[0].thickness());
             for (int j = 0; j < max_stratum_count && eroded_thickness < running_thickness; ++j)
             {

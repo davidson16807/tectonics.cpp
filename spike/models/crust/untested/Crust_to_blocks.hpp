@@ -1,7 +1,6 @@
 #pragma once
 
 #include <many/types.hpp>         // floats, etc.
-
 #include <rasters/SpheroidGrid.hpp>        // SpheroidGrid
 #include <rasters/LayeredSpheroidGrid.hpp> // LayeredSpheroidGrid
 
@@ -9,9 +8,6 @@
 
 namespace crust
 {
-
-
-    // icosphere<Strata> <-> layered<Strata>
     template <typename T>
     void get_blocks_from_strata(
         const tmany<float>& surface_displacement, 
@@ -62,18 +58,6 @@ namespace crust
                     strata_values[i].values[strata_i] = block_values[i*block_grid.layer_count + surface_block_i+block_i];
                 }
             }
-        }
-    }
-
-
-    void get_sediment(const tmany<StrataStore>& crust, const tmany<Stratum>& out)
-    {
-        assert(crust.size() == out.size());
-        Strata strata;
-        for (int i = 0; i < crust.size(); ++i)
-        {
-            crust[i].decompress(strata);
-            out[i] = strata.count > 0? strata.strata[0] : Stratum();
         }
     }
 }
