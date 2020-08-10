@@ -9,6 +9,6 @@
 namespace crust
 {
 	template <typename T, int L>
-    using CrustValues = std::vector<strata::StrataValues<L>>;
+    using CrustValues = std::vector<strata::StrataValues<T, L>>;
 }
 
