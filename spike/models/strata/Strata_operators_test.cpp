@@ -118,3 +118,18 @@ there are no tests beside closure for simplify(),
 since it is not a binary operator (nonassociative, nonunary),
 and it is deliberately lossy (noninvertible)
 */
+
+
+TEST_CASE( "Strata get_sediment() closure", "[strata]" ) {
+    std::mt19937 generator(2);
+    const int L = 16;
+    const int M = 15;
+    Strata<L,M> a = get_random<L,M>(generator);
+
+    Strata<1,M> fa;
+    get_sediment(a, fa);
+
+    SECTION("the result of passing a valid Strata object to get_sediment() must itself produce a valid Strata"){
+      STRATA_VALID(fa)
+    }
+}

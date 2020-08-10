@@ -10,6 +10,27 @@
 
 namespace strata
 {
+
+
+    /*
+    "get_sediment" is a regular function that returns a strata with a single layer.
+    We return a strata instead of a strata to prevent the categories that invoke this function
+    from having to deal with categories below.
+    */
+    template <int L, int M>
+    static void get_sediment(const Strata<L,M>& input, Strata<1,M>& output)
+    {
+        if (input.count > 0 && stratum::get_stratum_types(input.content[0]).dominant_particle_size_bin <= stratum::ParticleSizeBins::sand)
+        {
+            output.content[0] = input.content[0];
+        }
+        else 
+        {
+            output.content[0] = stratum::Stratum<M>();
+        }
+        output.count = 1;
+    }
+
     /*
     "simplify" is a regular function that iterates through layers, 
     combines similar layers together, and stores results in output.
