@@ -16,8 +16,8 @@ namespace mineral
 		output.mass = a.mass + b.mass;
 
         // clamp lower bound to 1e-4 to prevent division by zero
-        float a_sum = std::accumulate(a.grain_type_relative_volume.begin(), a.grain_type_relative_volume.end(), 0.0f);
-        float b_sum = std::accumulate(b.grain_type_relative_volume.begin(), b.grain_type_relative_volume.end(), 0.0f);
+        float a_sum = a.grain_type_total_relative_volume();
+        float b_sum = b.grain_type_total_relative_volume();
         for (std::size_t i=0; i<int(GrainType::count); i++)
         {
             output.grain_type_relative_volume[i] = 

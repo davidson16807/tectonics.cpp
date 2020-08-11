@@ -94,24 +94,28 @@ namespace stratum
         const Stratum<M>& stratum, 
         std::array<float, int(ParticleSizeBins::count)>& output
     ){
-        float chemically_susceptible_mass_fraction = 
-            (stratum.minerals[int(OxygenPlanetMineralTypes::calcite)].mass +
-             stratum.minerals[int(OxygenPlanetMineralTypes::organics)].mass) / stratum.mass();
-
         output.fill(0);
 
         for (std::size_t i=0; i<M; i++)
         {
-            const std::array<float, int(mineral::GrainType::count)>& grains = stratum.minerals[i].grain_type_relative_volume;
-            output[int(ParticleSizeBins::boulder)] += grains[int(mineral::GrainType::unweathered_extrusive)];
-            output[int(ParticleSizeBins::boulder)] += grains[int(mineral::GrainType::unweathered_intrusive)];
-            output[int(ParticleSizeBins::pebble)]  += grains[int(mineral::GrainType::mechanically_weathered_extrusive)];
-            output[int(ParticleSizeBins::sand)]    += grains[int(mineral::GrainType::mechanically_weathered_intrusive)];
-            output[int(ParticleSizeBins::clay)]    += grains[int(mineral::GrainType::chemically_weathered_extrusive)] * chemically_susceptible_mass_fraction;
-            output[int(ParticleSizeBins::clay)]    += grains[int(mineral::GrainType::chemically_weathered_intrusive)] * chemically_susceptible_mass_fraction;
-            output[int(ParticleSizeBins::silt)]    += grains[int(mineral::GrainType::chemically_weathered_extrusive)] * (1.0f - chemically_susceptible_mass_fraction);
-            output[int(ParticleSizeBins::sand)]    += grains[int(mineral::GrainType::chemically_weathered_intrusive)] * (1.0f - chemically_susceptible_mass_fraction);
-        }
+            float mass = stratum.minerals[i].mass;
+            std::array<float, int(mineral::GrainType::count)> grains = stratum.minerals[i].grain_type_relative_volume;
+            float total_volume = stratum.minerals[i].grain_type_total_relative_volume();
+            output[int(ParticleSizeBins::boulder)] += mass * grains[int(mineral::GrainType::unweathered_extrusive)] / total_volume;
+            output[int(ParticleSizeBins::boulder)] += mass * grains[int(mineral::GrainType::unweathered_intrusive)] / total_volume;
+            output[int(ParticleSizeBins::pebble)]  += mass * grains[int(mineral::GrainType::mechanically_weathered_extrusive)] / total_volume;
+            output[int(ParticleSizeBins::sand)]    += mass * grains[int(mineral::GrainType::mechanically_weathered_intrusive)] / total_volume;
+            if (i == int(OxygenPlanetMineralTypes::calcite) || i == int(OxygenPlanetMineralTypes::organics))
+            {
+                output[int(ParticleSizeBins::clay)]    += mass  * grains[int(mineral::GrainType::chemically_weathered_extrusive)] / total_volume; 
+                output[int(ParticleSizeBins::clay)]    += mass  * grains[int(mineral::GrainType::chemically_weathered_intrusive)] / total_volume; 
+            } 
+            else 
+            {
+                output[int(ParticleSizeBins::silt)]    += mass  * grains[int(mineral::GrainType::chemically_weathered_extrusive)] / total_volume;
+                output[int(ParticleSizeBins::sand)]    += mass  * grains[int(mineral::GrainType::chemically_weathered_intrusive)] / total_volume;
+            }
+        } 
 
         float total_relative_volume(0);
         for (std::size_t i=0; i<int(ParticleSizeBins::count); i++)

@@ -16,7 +16,7 @@ namespace mineral
 {
     /*
     A "mineral" describes a mass pool composed entirely of a single compound
-    Each bin tracks the relative volume occupied by particles or grains that meet certain criteria.
+    A mineral also tracks the relative mass occupied by particles or grains that meet certain criteria.
 	We lack an accurate model to express how particle size changes in response to weathering, 
 	and we do not trust ourselves to invent our own (nor do we have the time to do so),
 	so we do not classify by size. 
@@ -51,7 +51,7 @@ namespace mineral
 		Mineral():
 			mass(0)
 		{
-			grain_type_relative_volume.fill(1.0f);
+			grain_type_relative_volume.fill(1e-4);
 		}
 
         // DERIVED ATTRIBUTES, regular functions of the form: Mineral -> primitive

@@ -29,12 +29,18 @@ namespace stratum
     }
     
     #define STRATUM_EQUAL(stratum1, stratum2)                                                  \
+        CHECK(stratum1.max_pressure_received == Approx(stratum2.max_pressure_received).epsilon(0.02) ); \
+        CHECK(stratum1.max_temperature_received == Approx(stratum2.max_temperature_received).epsilon(0.02) ); \
+        CHECK(stratum1.age_of_world_when_deposited == Approx(stratum2.age_of_world_when_deposited).epsilon(0.02) ); \
         for (int pool_i = 0; pool_i < M; ++pool_i)         \
         {                                                                        \
             MINERAL_EQUAL(stratum1.minerals[pool_i], stratum2.minerals[pool_i])  \
         } 
     
     #define STRATUM_VALID(stratum1)                                              \
+        CHECK(stratum1.max_pressure_received > -1e-4); \
+        CHECK(stratum1.max_temperature_received > -1e-4); \
+        CHECK(stratum1.age_of_world_when_deposited > -1e-4); \
         for (int pool_i = 0; pool_i < M; ++pool_i)  \
         {                                                                 \
             MINERAL_VALID(stratum1.minerals[pool_i])                 \
