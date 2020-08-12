@@ -60,11 +60,12 @@ namespace strata
         which represents a superset of the abstract values that may be returned by `get_rock_type()`,
         and is a cartesian product of the data types that are used within that function.
         */
-        int i = 0;
-        int j = 0;
-        for (; i < input.count-1; ++j)
+        int i(0);
+        int j(0);
+        for (; i < input.count; ++j)
         {
-            if (stratum::get_stratum_types(input.content[i]).hash() == stratum::get_stratum_types(input.content[i+1]).hash())
+            if (i+1 < input.count && 
+                stratum::get_stratum_types(input.content[i]).hash() == stratum::get_stratum_types(input.content[i+1]).hash())
             {
                 stratum::combine(input.content[i], input.content[i+1], output.content[j]);
                 i += 2;
@@ -77,7 +78,7 @@ namespace strata
                 j += 1;
             }
         }
-        output.count = j;
+        output.count = j-1;
     }
 
     /*

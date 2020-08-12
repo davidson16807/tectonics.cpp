@@ -1,7 +1,12 @@
 #pragma once
 
+// std libraries
+#include <random>
+
+// 3rd party libraries
 #include <catch/catch.hpp>
 
+// in-house libraries
 #include <models/mineral/Mineral_test_utils.hpp>
 #include "Stratum.hpp"
 
@@ -20,7 +25,8 @@ namespace stratum
     template<int M, typename Tgenerator>
     Stratum<M> get_random(Tgenerator generator)
     {
-        Stratum<M> output(generator(), generator(), generator());
+        std::uniform_real_distribution<float> uniform;
+        Stratum<M> output(uniform(generator), uniform(generator), uniform(generator));
         for (int i = 0; i < M; ++i)
         {
             output.minerals[i] = mineral::get_random(generator);

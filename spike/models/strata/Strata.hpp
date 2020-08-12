@@ -16,10 +16,10 @@ namespace strata
         ~Strata(){}
         Strata(): content(), count(0){}
 
-        // DERIVED ATTRIBUTES, regular functions of the form: Strata -> T
+        // DERIVED ATTRIBUTES, regular functions of the form: Strata -> primitive
         float mass_pool(const int id) const {
             float total_mass(0.0);
-            for (std::size_t i=0; i<L; i++)
+            for (int i=0; i<count; i++)
             {
                 total_mass += content[i].mass_pools[id].mass;
             }
@@ -27,7 +27,7 @@ namespace strata
         }
         float mass() const {
             float total_mass(0.0);
-            for (std::size_t i=0; i<L; i++)
+            for (int i=0; i<count; i++)
             {
                 total_mass += content[i].mass();
             }
@@ -35,7 +35,7 @@ namespace strata
         }
         float volume(const std::array<float, M>& mass_pool_densities) const {
             float total_volume(0.0);
-            for (std::size_t i=0; i<L; i++)
+            for (int i=0; i<count; i++)
             {
                 total_volume += content[i].volume(mass_pool_densities);
             }
