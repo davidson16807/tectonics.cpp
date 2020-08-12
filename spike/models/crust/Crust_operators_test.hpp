@@ -11,6 +11,23 @@
 
 using namespace crust;
 
+
+TEST_CASE( "Crust get_sediment() closure", "[crust]" ) {
+    std::mt19937 generator(2);
+    const int L = 1;
+    const int L2 = 16;
+    const int M = 15;
+    const int N = 10;
+    Crust<L2,M> a = get_random_crust<L2,M>(N, generator);
+
+    Crust<L,M> fa(N);
+    get_sediment(a, fa);
+
+    SECTION("the result of passing a valid Crust object to get_sediment() must itself produce a valid Crust"){
+      CRUST_VALID(fa)
+    }
+}
+
 TEST_CASE( "Crust overlap() associativity", "[crust]" ) {
     std::mt19937 generator(2);
     const int L = 16;
@@ -94,18 +111,35 @@ there are no tests for the invertibility or commutativity of overlap(), since it
 
 
 
-TEST_CASE( "Crust get_sediment() closure", "[crust]" ) {
+TEST_CASE( "Crust simplify() closure", "[crust]" ) {
     std::mt19937 generator(2);
-    const int L = 1;
-    const int L2 = 16;
+    const int L = 16;
     const int M = 15;
     const int N = 10;
-    Crust<L2,M> a = get_random_crust<L2,M>(N, generator);
+    Crust<L,M> a = get_random_crust<L,M>(N, generator);
+    Crust<L,M> fa = get_random_crust<L,M>(N, generator);
 
-    Crust<L,M> fa(N);
-    get_sediment(a, fa);
+    simplify(a, fa);
 
-    SECTION("the result of passing a valid Crust object to get_sediment() must itself produce a valid Crust"){
+    SECTION("the result of passing a valid Crust object to simplify() must itself produce a valid Crust"){
       CRUST_VALID(fa)
+    }
+}
+
+TEST_CASE( "Crust simplify() mass conservation", "[crust]" ) {
+    std::mt19937 generator(2);
+    const int L = 16;
+    const int M = 15;
+    const int N = 10;
+    Crust<L,M> a = get_random_crust<L,M>(N, generator);
+    Crust<L,M> fa = get_random_crust<L,M>(N, generator);
+
+    simplify(a, fa);
+
+    many::floats fa_mass(N); get_mass(fa, fa_mass);
+    many::floats a_mass(N);  get_mass(a,  a_mass );
+
+    SECTION("the result of passing a valid Crust object to simplify() must itself produce a Crust object of equivalent mass"){
+      CHECK(many::sum(fa_mass) == Approx(many::sum(a_mass)).epsilon(1e-4));
     }
 }
