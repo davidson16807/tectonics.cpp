@@ -3,7 +3,7 @@
 # Subdirectory makefiles are not bad by themself, but recursive Makefiles are considered harmful! 
 
 CPP=g++
-ROOT = ../../..
+ROOT = $(shell pwd | sed 's/tectonics.cpp.*/tectonics.cpp/')
 TEST = $(shell find ./ -type f -name '*_test.*pp')
 
 FLAGS= -Wall -Werror -pedantic-errors -rdynamic -g 
