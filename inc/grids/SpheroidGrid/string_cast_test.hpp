@@ -25,7 +25,7 @@ using namespace rasters;
 
 /*
 "octahedron" is a simple 3d grid for testing raster operations that require 
-something comparable to a unit sphere (e.g. nearest neighbor lookups using SpheroidGridVoronoi)
+something comparable to a unit sphere (e.g. nearest neighbor lookups using SpheroidVoronoi)
 */
 SpheroidGrid octahedron = SpheroidGrid(meshes::octahedron.vertices, meshes::octahedron.faces);
 

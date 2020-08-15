@@ -135,7 +135,7 @@ TEST_CASE( "LayeredSpheroidGrid nontriviality", "[LayeredSpheroidGrid]" ) {
 
     }
 }
-// SpheroidGridVoronoi voronoi(
+// SpheroidVoronoi voronoi(
 //         normalize(vec3s({
 //                         vec3( 1, 0, 0),
 //                         vec3( 0, 1, 0),
@@ -156,13 +156,13 @@ TEST_CASE( "LayeredSpheroidGrid nontriviality", "[LayeredSpheroidGrid]" ) {
 //         1./100.,
 //         10./100.
 //     );
-// TEST_CASE( "SpheroidGridVoronoi.get_value() purity", "[rasters]" ) {
-//     SECTION("SpheroidGridVoronoi.get_value() must be called repeatedly without changing the output"){
+// TEST_CASE( "SpheroidVoronoi.get_value() purity", "[rasters]" ) {
+//     SECTION("SpheroidVoronoi.get_value() must be called repeatedly without changing the output"){
 //         CHECK(voronoi.get_value(vec3(1,0,0)) == voronoi.get_value(vec3(1,0,0)));
 //     }
 // }
-// TEST_CASE( "SpheroidGridVoronoi.get_value() happy path", "[rasters]" ) {
-//     SECTION("SpheroidGridVoronoi.get_value() must return the appropriate id when answer is obvious"){
+// TEST_CASE( "SpheroidVoronoi.get_value() happy path", "[rasters]" ) {
+//     SECTION("SpheroidVoronoi.get_value() must return the appropriate id when answer is obvious"){
 //         CHECK(  voronoi.get_value(normalize(vec3( 1, 0, 0))) == 0  );
 //         CHECK(  voronoi.get_value(normalize(vec3( 0, 1, 0))) == 1  );
 //         CHECK(  voronoi.get_value(normalize(vec3( 0, 0, 1))) == 2  );
@@ -179,11 +179,11 @@ TEST_CASE( "LayeredSpheroidGrid nontriviality", "[LayeredSpheroidGrid]" ) {
 //         CHECK(  voronoi.get_value(normalize(vec3( 1, 1, 1))) == 13 );
 //     }
 // }
-// TEST_CASE( "SpheroidGridVoronoi.get_values() purity", "[rasters]" ) {
-//     SECTION("SpheroidGridVoronoi.get_value() must be called repeatedly without changing the output"){
+// TEST_CASE( "SpheroidVoronoi.get_values() purity", "[rasters]" ) {
+//     SECTION("SpheroidVoronoi.get_value() must be called repeatedly without changing the output"){
 //         // CHECK(voronoi.get_values(vec3(1,0,0)) == voronoi.get_values(vec3(1,0,0)));
 //     }
 // }
-// TEST_CASE( "SpheroidGridVoronoi.get_values() happy path", "[rasters]" ) {
+// TEST_CASE( "SpheroidVoronoi.get_values() happy path", "[rasters]" ) {
 
 // }

@@ -43,7 +43,7 @@ namespace rasters
 
 
 	template <typename T>
-	std::string to_string(const SpheroidGridVoronoi& voronoi, const series<T>& a, const T lo, const T hi, const uint line_char_width = 80)
+	std::string to_string(const SpheroidVoronoi& voronoi, const series<T>& a, const T lo, const T hi, const uint line_char_width = 80)
 	{
 		float lat(0.);
 		float lon(0.);
@@ -112,7 +112,7 @@ namespace rasters
 	  * "up" is indicated by the z axis of a 3d vector
 	*/
 	template <typename T, glm::qualifier Q>
-	std::string to_string(const SpheroidGridVoronoi& voronoi, const series<glm::vec<2,T,Q>>& a, const uint line_char_width = 80)
+	std::string to_string(const SpheroidVoronoi& voronoi, const series<glm::vec<2,T,Q>>& a, const uint line_char_width = 80)
 	{
 		series<T> a_length(a.size());
 		length(a, a_length);
@@ -202,7 +202,7 @@ namespace rasters
 	*/
 	template <typename T, glm::qualifier Q>
 	std::string to_string(
-		const SpheroidGridVoronoi& voronoi, 
+		const SpheroidVoronoi& voronoi, 
 		const series<glm::vec<3,T,Q>>& vertex_normals, 
 		const series<glm::vec<3,T,Q>>& a, 
 		const uint line_char_width = 80, 

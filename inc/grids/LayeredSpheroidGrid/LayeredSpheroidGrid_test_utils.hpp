@@ -54,7 +54,7 @@ LayeredSpheroidGrid layered_tetrahedron = LayeredSpheroidGrid(meshes::tetrahedro
 
 /*
 "layered_octahedron" is a simple 3d grid for testing raster operations that require 
-something comparable to a unit sphere (e.g. nearest neighbor lookups using SpheroidGridVoronoi)
+something comparable to a unit sphere (e.g. nearest neighbor lookups using SpheroidVoronoi)
 */
 LayeredSpheroidGrid layered_octahedron = LayeredSpheroidGrid(meshes::octahedron.vertices, meshes::octahedron.faces, 1.f, 0.f, 2u);
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Grid/Grid.hpp"
-#include "SpheroidGridVoronoi.hpp"
+#include "SpheroidVoronoi.hpp"
 
 namespace rasters {
 
@@ -15,7 +15,7 @@ namespace rasters {
 	class SpheroidGrid: public Grid
 	{
 	public:
-		SpheroidGridVoronoi voronoi;
+		SpheroidVoronoi voronoi;
 
 		~SpheroidGrid()
 		{
@@ -30,7 +30,7 @@ namespace rasters {
 		{
 
 		}
-		void get_ids(const many::vec3s& points, series<uint>& out) const
+		void get_ids(const many::vec3s& points, many::series<uint>& out) const
 		{
 			voronoi.get_values(points, out);
 		}

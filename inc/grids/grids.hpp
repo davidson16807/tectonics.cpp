@@ -1,5 +1,5 @@
 #pragma once
 
 #include "Grid.hpp"
-#include "SpheroidGridVoronoi.hpp"
+#include "SpheroidVoronoi.hpp"
 #include "SpheroidGrid.hpp"

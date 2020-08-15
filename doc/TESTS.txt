@@ -18,7 +18,7 @@ x		nonpurity
 meshes::subdivide
 x	purity
 x	correct size bounds
-rasters::SpheroidGridVoronoi
+rasters::SpheroidVoronoi
 x	purity
 x	happy path
 rasters::Grid

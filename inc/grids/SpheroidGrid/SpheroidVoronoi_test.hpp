@@ -13,13 +13,13 @@
 #include <many/glm/glm.hpp>         // *vec*s
 #include <many/glm/convenience.hpp> //  operators, etc.
 
-#include "SpheroidGridVoronoi.hpp"
+#include "SpheroidVoronoi.hpp"
 
 using namespace glm;
 using namespace many;
 using namespace rasters;
 
-SpheroidGridVoronoi voronoi(
+SpheroidVoronoi voronoi(
         normalize(vec3s({
                         vec3( 1, 0, 0),
                         vec3( 0, 1, 0),
@@ -40,13 +40,13 @@ SpheroidGridVoronoi voronoi(
         1./100.,
         10./100.
     );
-TEST_CASE( "SpheroidGridVoronoi.get_value() purity", "[rasters]" ) {
-    SECTION("SpheroidGridVoronoi.get_value() must be called repeatedly without changing the output"){
+TEST_CASE( "SpheroidVoronoi.get_value() purity", "[rasters]" ) {
+    SECTION("SpheroidVoronoi.get_value() must be called repeatedly without changing the output"){
         CHECK(voronoi.get_value(vec3(1,0,0)) == voronoi.get_value(vec3(1,0,0)));
     }
 }
-TEST_CASE( "SpheroidGridVoronoi.get_value() happy path", "[rasters]" ) {
-    SECTION("SpheroidGridVoronoi.get_value() must return the appropriate id when answer is obvious"){
+TEST_CASE( "SpheroidVoronoi.get_value() happy path", "[rasters]" ) {
+    SECTION("SpheroidVoronoi.get_value() must return the appropriate id when answer is obvious"){
         CHECK(  voronoi.get_value(normalize(vec3( 1, 0, 0))) == 0  );
         CHECK(  voronoi.get_value(normalize(vec3( 0, 1, 0))) == 1  );
         CHECK(  voronoi.get_value(normalize(vec3( 0, 0, 1))) == 2  );

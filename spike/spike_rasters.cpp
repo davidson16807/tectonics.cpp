@@ -81,7 +81,7 @@ int main(int argc, char const *argv[])
         Grid(meshes::tetrahedron.vertices, meshes::tetrahedron.faces);
     /*
     "octahedron" is a simple 3d grid for testing raster operations that require 
-    something comparable to a unit sphere (e.g. nearest neighbor lookups using SpheroidGridVoronoi)
+    something comparable to a unit sphere (e.g. nearest neighbor lookups using SpheroidVoronoi)
     */
     SpheroidGrid octahedron = 
         SpheroidGrid(meshes::octahedron.vertices, meshes::octahedron.faces);
@@ -92,7 +92,7 @@ int main(int argc, char const *argv[])
     SpheroidGrid icosahedron = 
         SpheroidGrid(meshes::icosahedron.vertices, meshes::icosahedron.faces);
 
-    SpheroidGridVoronoi voronoi_test(
+    SpheroidVoronoi voronoi_test(
             vec3s({
                     normalize(vec3( 1, 0, 0)),
                     normalize(vec3( 0, 1, 0)),

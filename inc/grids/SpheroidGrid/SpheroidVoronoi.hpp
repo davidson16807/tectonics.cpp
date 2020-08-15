@@ -21,10 +21,12 @@
 namespace rasters
 {
 
-	// performs O(1) lookups on the surface of a unit sphere 
-	// using an octahedron where each side is a 2d cartesian grid
+	/*
+	A "SpheroidLookup" allows for O(1) lookups on the surface of a unit sphere.
+	It does this using an octahedron where each side is a 2d cartesian grid.
+	*/
 	template <class T>
-	class SpheroidGridLookup
+	class SpheroidLookup
 	{
 	protected:
 		static constexpr int OCTAHEDRON_SIDE_COUNT = 8;	// number of sides on the data cube
@@ -65,10 +67,10 @@ namespace rasters
 			return get_midpoint(conceptual_id.x, conceptual_id.y, conceptual_id.z);
 		}
 	public:
-		~SpheroidGridLookup()
+		~SpheroidLookup()
 		{
 		}
-		explicit SpheroidGridLookup(
+		explicit SpheroidLookup(
 			const float cell_width,
 			const T default_value
 		) : 
@@ -85,19 +87,19 @@ namespace rasters
 				}
 			)),
 			OCTAHEDRON_SIDE_X(normalize(
-				cross(SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z, glm::vec3(0,0,1))
+				cross(SpheroidLookup<T>::OCTAHEDRON_SIDE_Z, glm::vec3(0,0,1))
 			)),
 			OCTAHEDRON_SIDE_Y(normalize(
-				cross(SpheroidGridLookup<T>::OCTAHEDRON_SIDE_Z, SpheroidGridLookup<T>::OCTAHEDRON_SIDE_X)
+				cross(SpheroidLookup<T>::OCTAHEDRON_SIDE_Z, SpheroidLookup<T>::OCTAHEDRON_SIDE_X)
 			)),
 			dimensions((int)ceil(2./cell_width)+1),
 			cell_width(cell_width),
 			cells(cell_count(), default_value)
 		{
 		}
-		explicit SpheroidGridLookup(
+		explicit SpheroidLookup(
 			const float cell_width
-		) : SpheroidGridLookup(cell_width, T(0))
+		) : SpheroidLookup(cell_width, T(0))
 		{
 		}
 
@@ -156,17 +158,19 @@ namespace rasters
 
 
 
-	// performs cached O(1) nearest neighbor lookups on the surface of a unit sphere
-	// using a SpheroidGridLookup of vectors to optimize initialization
-	class SpheroidGridVoronoi : public SpheroidGridLookup<uint>
+	/*
+	A "SpheroidVoronoi" is an instance of "SpheroidLookup" in which
+	each cell stores the index of the vertex nearest to the cell.
+	*/
+	class SpheroidVoronoi : public SpheroidLookup<uint>
 	{
 	public:
-		explicit SpheroidGridVoronoi(
+		explicit SpheroidVoronoi(
 			const many::vec3s& points, 
 			const float cell_width,
 			const float max_vertex_distance
 		  )	: 
-			SpheroidGridLookup<uint>(cell_width, 0)
+			SpheroidLookup<uint>(cell_width, 0)
 		{
 			// populate a slower lookup based on a list of vectors and their ids in `points`
 			std::vector<std::pair<int, float>> temp(cells.size(), std::pair<int, float>(-1, std::numeric_limits<float>::infinity()));

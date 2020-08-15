@@ -15,7 +15,7 @@ x		worley noise
 			fix nonnegative quantity delta
 			fix nonnegative conserved quantity delta
 			advection
-x	SpheroidGridVoronoi
+x	SpheroidVoronoi
 x	Grid rasters
 x		to_string
 		vector calculus
@@ -33,7 +33,7 @@ x			white_hat
 x			padding
 x			margin
 		image segmentation
-	LayeredSpheroidGridVoronoi
+	LayeredSpheroidVoronoi
 	LayeredSpheroidGrid
 x		to_string
 		vector calculus
