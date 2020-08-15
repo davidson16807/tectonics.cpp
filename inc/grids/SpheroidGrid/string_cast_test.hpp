@@ -1,21 +1,22 @@
 
+// std libraries
 #include <iostream>  //std::cout
 
+// 3rd party libraries
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include "catch/catch.hpp"
 
 #define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
 #include <glm/vec3.hpp>               // *vec3
 
+// in-house libraries
 #include <many/many.hpp>  
 #include <many/convenience.hpp>  
 #include <many/glm/glm.hpp>         // *vec*s
 #include <many/glm/convenience.hpp> //  operators, etc.
 
 #include <meshes/mesh.hpp>
-#include <grids/SpheroidGrid/string_cast.hpp>  
-
-// #include "academics/tectonics.hpp"
+#include "string_cast.hpp"
 
 using namespace glm;
 using namespace many;

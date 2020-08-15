@@ -27,10 +27,6 @@ spike-genes: spike/models/genes/test/test_genes.cpp
 	$(CPP) -std=c++17 -o bin/spike.out spike/models/genes/test/test_genes.cpp  $(DEVFLAGS) -I lib/ -I inc/ -I spike && chmod a+x bin/spike.out && time ./bin/spike.out
 
 # test: get it working with confidence
-test-many: test/test_many.cpp
-	$(CPP) -std=c++17 -o bin/test.out test/test_many.cpp $(DEVFLAGS) -I lib/ -I inc/ && chmod a+x bin/test.out && ./bin/test.out
-test-rasters: test/test_rasters.cpp
-	$(CPP) -std=c++17 -o bin/test.out test/test_rasters.cpp $(DEVFLAGS) -I lib/ -I inc/ && chmod a+x bin/test.out && ./bin/test.out
 test-layered-rasters: test/test_layered_rasters.cpp
 	$(CPP) -std=c++17 -o bin/test.out test/test_layered_rasters.cpp $(DEVFLAGS) -I lib/ -I inc/ && chmod a+x bin/test.out && ./bin/test.out
 

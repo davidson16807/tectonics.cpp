@@ -1,44 +1,23 @@
 
 
+// 3rd party libraries
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include "catch/catch.hpp"
 
 #define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
 #include <glm/vec3.hpp>               // *vec3
 
+// in-house libraries
 #include <meshes/mesh.hpp>  
-#include <grids/Grid/Grid.hpp>  
+
+#include "Grid.hpp"  
+
+#include "Grid_test_utils.hpp"
 
 using namespace glm;
 using namespace many;
 using namespace rasters;
 
-/* 
-"diamond" is a simple 2d grid for testing raster operations 
- that do not require spatial awareness (e.g. arithmetic on scalar fields)
-It looks like this:
-     2  
-    /|\ 
-   3-0-1
-    \|/ 
-     4   
-*/
-Grid diamond = 
-    Grid(
-        vec3s({
-                vec3( 0, 0, 0),
-                vec3( 1, 0, 0),
-                vec3( 0, 1, 0),
-                vec3(-1, 0, 0),
-                vec3( 0,-1, 0)
-            }),
-        uvec3s({
-                uvec3(0,1,2),
-                uvec3(0,1,4),
-                uvec3(0,3,2),
-                uvec3(0,3,4)
-            })
-    );
 TEST_CASE( "Grid correctness", "[Grid]" ) {
     SECTION("Grid must have the appropriate counts for vertex, edge, arrow, and face attributes"){
         CHECK(diamond.flattened_face_vertex_ids.size() == 12);
@@ -97,12 +76,6 @@ TEST_CASE( "Grid correctness", "[Grid]" ) {
         // CHECK(1.f < diamond.arrow_average_distance && diamond.arrow_average_distance < sqrt(2.f));
     }
 }
-/*
-"tetrahedron" is a simple 3d grid for testing basic raster operations
- that require spatial awareness without requiring a particular shape.
- (e.g. gradient, divergence, laplacian)
-*/
-Grid tetrahedron = Grid(meshes::tetrahedron.vertices, meshes::tetrahedron.faces);
 
 TEST_CASE( "Grid nontriviality", "[Grid]" ) {
     SECTION("Grid attributes must contain nonzero elements"){

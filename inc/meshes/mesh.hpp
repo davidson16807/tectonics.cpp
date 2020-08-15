@@ -1,16 +1,20 @@
 #pragma once
 
+// std libraries
 #include <vector>         	  	 // std::vector
 #include <unordered_map>         // std::unordered_map
 #include <algorithm>             // std::min
 
+// 3rd party libraries
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/vec3.hpp>       	 // *vec3
+#include <glm/gtx/hash.hpp>  // map<vec*, *>
+
+// in-house libraries
 #include <many/types.hpp>     	 // floats, etc.
 #include <many/glm/types.hpp>	 // *vec*s
 #include <many/glm/geometric.hpp>// normalize, etc.
 
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/hash.hpp>  // map<vec*, *>
 
 namespace meshes
 {
