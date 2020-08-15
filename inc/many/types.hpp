@@ -16,7 +16,6 @@ namespace many
 	template <class T>
 	class series
 	{
-	protected:
 		std::vector<T> values;
 
 	public:
@@ -63,23 +62,20 @@ namespace many
 			}
 		}
 
-		inline unsigned int size() const
-		{
-			return values.size();
-		}
+		// NOTE: all wrapper functions should to be marked inline 
+		inline unsigned int size() const                              { return values.size();  }
+		inline unsigned int max_size() const                          { return values.size();  }
+		inline unsigned int capacity() const                          { return values.capacity(); }
+		inline unsigned int empty() const                             { return values.empty(); }
+        inline typename std::vector<T>::reference front()             { return values.front(); }
+        inline typename std::vector<T>::const_reference front() const { return values.front(); }
+        inline typename std::vector<T>::reference back()              { return values.back();  }
+        inline typename std::vector<T>::const_reference back() const  { return values.back();  }
+	    inline typename std::vector<T>::const_iterator begin() const  { return values.begin(); }
+	    inline typename std::vector<T>::const_iterator end()   const  { return values.end();   }
+	    inline typename std::vector<T>::iterator begin()              { return values.begin(); }
+	    inline typename std::vector<T>::iterator end()                { return values.end();   }
 
-		inline std::vector<T>& vector()
-		{
-			return values;
-		}
-
-	    inline typename std::vector<T>::const_iterator begin() const { return values.begin(); }
-	    inline typename std::vector<T>::const_iterator end()   const { return values.end();   }
-
-	    inline typename std::vector<T>::iterator begin() { return values.begin(); }
-	    inline typename std::vector<T>::iterator end()   { return values.end();   }
-
-		// NOTE: all operators should to be inline because they are thin wrappers of functions
 		inline typename std::vector<T>::const_reference operator[](const unsigned int id ) const
 		{
 		   return values.operator[](id);
@@ -113,6 +109,11 @@ namespace many
 			values.resize(other.size());
 			fill(*this, other);
 			return *this;
+		}
+
+		inline std::vector<T>& vector()
+		{
+			return values;
 		}
 	};
 
