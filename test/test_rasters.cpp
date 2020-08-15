@@ -70,59 +70,6 @@ SpheroidGrid octahedron = SpheroidGrid(meshes::octahedron.vertices, meshes::octa
 */
 SpheroidGrid icosahedron = SpheroidGrid(meshes::icosahedron.vertices, meshes::icosahedron.faces);
 
-SpheroidGridVoronoi voronoi(
-        normalize(vec3s({
-                        vec3( 1, 0, 0),
-                        vec3( 0, 1, 0),
-                        vec3( 0, 0, 1),
-                        vec3(-1, 0, 0),
-                        vec3( 0,-1, 0),
-                        vec3( 0, 0,-1),
-                        vec3(-1,-1,-1),
-                        vec3( 1,-1,-1),
-                        vec3(-1, 1,-1),
-                        vec3( 1, 1,-1),
-                        vec3(-1,-1, 1),
-                        vec3( 1,-1, 1),
-                        vec3(-1, 1, 1),
-                        vec3( 1, 1, 1),
-                        vec3( 1, 1, 1)
-                    })),
-        1./100.,
-        10./100.
-    );
-TEST_CASE( "SpheroidGridVoronoi.get_value() purity", "[rasters]" ) {
-    SECTION("SpheroidGridVoronoi.get_value() must be called repeatedly without changing the output"){
-        CHECK(voronoi.get_value(vec3(1,0,0)) == voronoi.get_value(vec3(1,0,0)));
-    }
-}
-TEST_CASE( "SpheroidGridVoronoi.get_value() happy path", "[rasters]" ) {
-    SECTION("SpheroidGridVoronoi.get_value() must return the appropriate id when answer is obvious"){
-        CHECK(  voronoi.get_value(normalize(vec3( 1, 0, 0))) == 0  );
-        CHECK(  voronoi.get_value(normalize(vec3( 0, 1, 0))) == 1  );
-        CHECK(  voronoi.get_value(normalize(vec3( 0, 0, 1))) == 2  );
-        CHECK(  voronoi.get_value(normalize(vec3(-1, 0, 0))) == 3  );
-        CHECK(  voronoi.get_value(normalize(vec3( 0,-1, 0))) == 4  );
-        CHECK(  voronoi.get_value(normalize(vec3( 0, 0,-1))) == 5  );
-        CHECK(  voronoi.get_value(normalize(vec3(-1,-1,-1))) == 6  );
-        CHECK(  voronoi.get_value(normalize(vec3( 1,-1,-1))) == 7  );
-        CHECK(  voronoi.get_value(normalize(vec3(-1, 1,-1))) == 8  );
-        CHECK(  voronoi.get_value(normalize(vec3( 1, 1,-1))) == 9  );
-        CHECK(  voronoi.get_value(normalize(vec3(-1,-1, 1))) == 10 );
-        CHECK(  voronoi.get_value(normalize(vec3( 1,-1, 1))) == 11 );
-        CHECK(  voronoi.get_value(normalize(vec3(-1, 1, 1))) == 12 );
-        CHECK(  voronoi.get_value(normalize(vec3( 1, 1, 1))) == 13 );
-    }
-}
-TEST_CASE( "SpheroidGridVoronoi.get_values() purity", "[rasters]" ) {
-    SECTION("SpheroidGridVoronoi.get_value() must be called repeatedly without changing the output"){
-        // CHECK(voronoi.get_values(vec3(1,0,0)) == voronoi.get_values(vec3(1,0,0)));
-    }
-}
-TEST_CASE( "SpheroidGridVoronoi.get_values() happy path", "[rasters]" ) {
-
-}
-
 TEST_CASE( "raster string cast purity", "[rasters]" ) {
     floats a = floats({1,2,3,4,5,6});
     vec2s v2 = vec2s({
