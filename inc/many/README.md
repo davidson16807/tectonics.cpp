@@ -1,4 +1,4 @@
-This folder contains a library that introduces an unopinionated templated data structure, `many::series<T>` (analogous to `Series` in pandas), that wraps `std::vector<T>` objects to enable arithmetic operations and `glm` inspired functions to be performed on their contents as if they were primitive data types like a `float` or an `int`. It is meant to foster performant code through data oriented design. 
+This folder contains a library that introduces an unopinionated templated data structure, `many::series<T>` (analogous to `Series` in pandas), that wraps `std::vector<T>` objects to enable arithmetic operations and `glm` inspired functions to be performed on their contents as if they were primitive data types like a `float` or an `int`. A set of functions is provided which operate over the `many::series<T>` data structure using method signatures that resemble those of the `glm` library. It is meant to foster performant code through data oriented design. 
 
 `glm` can be optionally used to enhance functionality. Functionality that leverages `glm` can be found within `inc/many/glm`. 
 
