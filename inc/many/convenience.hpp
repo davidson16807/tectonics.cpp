@@ -3,6 +3,8 @@
 #include <cmath>
 
 #include "types.hpp"
+#include "relational.hpp"
+#include "common.hpp"
 
 /*
 "convenience.hpp" contains functions that pass output as return values rather than using using output parameters

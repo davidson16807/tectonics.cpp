@@ -4,6 +4,7 @@
 
 #include "../types.hpp"
 #include "../convenience.hpp"
+#include "relational.hpp"
 
 /*
 "convenience.hpp" contains functions that pass output as return values rather than using output parameters
