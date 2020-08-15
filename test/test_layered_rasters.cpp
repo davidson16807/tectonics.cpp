@@ -53,11 +53,11 @@ LayeredSpheroidGrid diamond =
                 uvec3(0,3,2),
                 uvec3(0,3,4)
             }),
-        1.f, 2u
+        1.f, 0.f, 2u
     );
 TEST_CASE( "LayeredSpheroidGrid correctness", "[LayeredSpheroidGrid]" ) {
     SECTION("LayeredSpheroidGrid must have the appropriate counts for vertex, edge, arrow, and face attributes"){
-        CHECK(diamond.buffer_array_vertex_ids.size() == 12);
+        CHECK(diamond.flattened_face_vertex_ids.size() == 12);
 
         CHECK(diamond.vertex_count == 5);
         // CHECK(diamond.vertex_neighbor_ids.size() == 5);
@@ -118,11 +118,11 @@ TEST_CASE( "LayeredSpheroidGrid correctness", "[LayeredSpheroidGrid]" ) {
  that require spatial awareness without requiring a particular shape.
  (e.g. gradient, divergence, laplacian)
 */
-LayeredSpheroidGrid tetrahedron = LayeredSpheroidGrid(meshes::tetrahedron.vertices, meshes::tetrahedron.faces, 1.f, 2u);
+LayeredSpheroidGrid tetrahedron = LayeredSpheroidGrid(meshes::tetrahedron.vertices, meshes::tetrahedron.faces, 1.f, 0.f, 2u);
 
 TEST_CASE( "LayeredSpheroidGrid nontriviality", "[LayeredSpheroidGrid]" ) {
     SECTION("LayeredSpheroidGrid attributes must contain nonzero elements"){
-        CHECK(many::sum(many::abs(tetrahedron.buffer_array_vertex_ids)) > 0.01f);
+        CHECK(many::sum(many::abs(tetrahedron.flattened_face_vertex_ids)) > 0.01f);
 
         // CHECK(many::sum(many::abs(tetrahedron.vertex_neighbor_ids)) > 0.01f);
         CHECK(many::sum(many::abs(tetrahedron.vertex_neighbor_counts)) > 0.01f);
@@ -175,12 +175,12 @@ TEST_CASE( "LayeredSpheroidGrid nontriviality", "[LayeredSpheroidGrid]" ) {
 "octahedron" is a simple 3d grid for testing raster operations that require 
 something comparable to a unit sphere (e.g. nearest neighbor lookups using SpheroidGridVoronoi)
 */
-LayeredSpheroidGrid octahedron = LayeredSpheroidGrid(meshes::octahedron.vertices, meshes::octahedron.faces, 1.f, 2u);
+LayeredSpheroidGrid octahedron = LayeredSpheroidGrid(meshes::octahedron.vertices, meshes::octahedron.faces, 1.f, 0.f, 2u);
 
 /*
 "icosahedron" is a simple 3d grid for testing rasters with a relatively large number of vertices
 */
-LayeredSpheroidGrid icosahedron = LayeredSpheroidGrid(meshes::icosahedron.vertices, meshes::icosahedron.faces, 1.f, 2u);
+LayeredSpheroidGrid icosahedron = LayeredSpheroidGrid(meshes::icosahedron.vertices, meshes::icosahedron.faces, 1.f, 0.f, 2u);
 
 // SpheroidGridVoronoi voronoi(
 //         normalize(vec3s({

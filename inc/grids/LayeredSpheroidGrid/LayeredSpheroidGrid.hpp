@@ -12,12 +12,15 @@ namespace rasters
 	over the surface of a roughly spherical object. 
 	Each grid may be subdivided into several "layers" that occur at regular
 	intervals along a dimension that's perpendicular to the surface. 
+	Layers are stored sequentially in memory, ordered from top to bottom.
+	Layers can be accessed by index, in which case layer 0 is topmost.
 	*/
 	struct LayeredSpheroidGrid: public SpheroidGrid//, public LayeredGrid
 	{
-		float profile_height;
-		float layer_count;
-		float layer_height;
+		const float profile_top_height;
+		const float profile_bottom_height;
+		const float layer_count;
+		const float layer_height;
 
 		~LayeredSpheroidGrid()
 		{
@@ -26,7 +29,8 @@ namespace rasters
 		explicit LayeredSpheroidGrid(
 			const many::vec3s& vertices, 
 			const many::uvec3s& faces, 
-			const float profile_height, 
+			const float profile_top_height, 
+			const float profile_bottom_height, 
 			const float layer_count
 		)
 			: SpheroidGrid(vertices, faces),
@@ -34,9 +38,10 @@ namespace rasters
 			//		min(arrow_lengths / 8.f), 
 			//		max(arrow_lengths * 1.f)
 			//	),
-			  profile_height(profile_height),
+			  profile_top_height(profile_top_height),
+			  profile_bottom_height(profile_bottom_height),
 			  layer_count(layer_count),
-			  layer_height(profile_height/layer_count)
+			  layer_height((profile_top_height-profile_bottom_height)/layer_count)
 		{
 
 		}

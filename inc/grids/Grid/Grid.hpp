@@ -43,36 +43,36 @@ namespace rasters
         This is often used to map vertex aligned data to a format that can be ingested by OpenGL programs,
         so it pays to have a precomputed version.
         */
-        many::tmany<unsigned int>       flattened_face_vertex_ids;
+        many::tmany<unsigned int>                   flattened_face_vertex_ids;
         /*
         This stores the content of `vertex_positions` in a format that can be accepted by OpenGL
         This is used every frame to map vertex aligned data to a format that can be ingested by OpenGL programs,
         so it pays to have a precomputed version.
         */
-        many::tmany<float>              flattened_face_vertex_coordinates;
+        many::tmany<float>                          flattened_face_vertex_coordinates;
 
         //ivecNs                                    vertex_neighbor_ids;
         uint                                        vertex_count;
-        many::tmany<unsigned int>       vertex_neighbor_counts;
-        many::tmany<glm::vec3>          vertex_positions;
-        many::tmany<glm::vec3>          vertex_normals;
-        many::tmany<float>              vertex_areas;
+        many::tmany<unsigned int>                   vertex_neighbor_counts;
+        many::tmany<glm::vec3>                      vertex_positions;
+        many::tmany<glm::vec3>                      vertex_normals;
+        many::tmany<float>                          vertex_areas;
         float                                       vertex_average_area;
 
         uint                                        face_count;
-        many::tmany<glm::uvec3>         face_vertex_ids;
-        many::tmany<unsigned int>       face_vertex_id_a;
-        many::tmany<unsigned int>       face_vertex_id_b;
-        many::tmany<unsigned int>       face_vertex_id_c;
-        //many::tmany<unsigned int>     face_edge_id_a;
-        //many::tmany<unsigned int>     face_edge_id_b;
-        //many::tmany<unsigned int>     face_edge_id_c;
-        many::tmany<glm::vec3>          face_endpoint_a;
-        many::tmany<glm::vec3>          face_endpoint_b;
-        many::tmany<glm::vec3>          face_endpoint_c;
-        many::tmany<glm::vec3>          face_midpoints;
-        many::tmany<glm::vec3>          face_normals;
-        many::tmany<float>              face_areas;
+        many::tmany<glm::uvec3>                     face_vertex_ids;
+        many::tmany<unsigned int>                   face_vertex_id_a;
+        many::tmany<unsigned int>                   face_vertex_id_b;
+        many::tmany<unsigned int>                   face_vertex_id_c;
+        //many::tmany<unsigned int>                 face_edge_id_a;
+        //many::tmany<unsigned int>                 face_edge_id_b;
+        //many::tmany<unsigned int>                 face_edge_id_c;
+        many::tmany<glm::vec3>                      face_endpoint_a;
+        many::tmany<glm::vec3>                      face_endpoint_b;
+        many::tmany<glm::vec3>                      face_endpoint_c;
+        many::tmany<glm::vec3>                      face_midpoints;
+        many::tmany<glm::vec3>                      face_normals;
+        many::tmany<float>                          face_areas;
         float                                       face_average_area;
 
         uint                                        edge_count;

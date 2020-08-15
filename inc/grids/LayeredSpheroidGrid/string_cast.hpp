@@ -30,7 +30,7 @@ namespace rasters
 		const LayeredSpheroidGrid& grid, 
 		const many::tmany<glm::vec<2,T,Q>>& a, 
 		const uint line_char_width = 80, 
-		const glm::vec3 up = vec3(0,0,1)
+		const glm::vec3 up = glm::vec3(0,0,1)
 	) {
 		assert(a.size() == grid.vertex_count * grid.layer_count);
 		many::tmany<glm::vec<2,T,Q>> layer_raster(grid.vertex_count);
@@ -49,7 +49,7 @@ namespace rasters
 		const LayeredSpheroidGrid& grid, 
 		const many::tmany<glm::vec<3,T,Q>>& a, 
 		const uint line_char_width = 80, 
-		const glm::vec3 up = vec3(0,0,1)
+		const glm::vec3 up = glm::vec3(0,0,1)
 	) {
 		assert(a.size() == grid.vertex_count * grid.layer_count);
 		many::tmany<glm::vec<3,T,Q>> layer_raster(grid.vertex_count);

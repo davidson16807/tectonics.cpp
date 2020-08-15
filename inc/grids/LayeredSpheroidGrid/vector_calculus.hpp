@@ -23,7 +23,7 @@ namespace rasters
 
 		fill    (arrow_differential, T(0));
 		uint L = grid.layer_count;
-		uvec2 arrow;
+		glm::uvec2 arrow;
 		for (unsigned int i = 0; i < grid.arrow_vertex_ids.size(); ++i)
 		{
 			arrow = grid.arrow_vertex_ids[i]; 
@@ -93,7 +93,7 @@ namespace rasters
 
 		fill    (arrow_differential, glm::vec<3,T,Q>(0.f));
 		uint L = grid.layer_count;
-		uvec2 arrow;
+		glm::uvec2 arrow;
 		for (unsigned int i = 0; i < grid.arrow_vertex_ids.size(); ++i)
 		{
 			arrow = grid.arrow_vertex_ids[i]; 
@@ -161,9 +161,9 @@ namespace rasters
 		assert(layer_differential.size() == grid.vertex_count * grid.layer_count );
 		assert(layer_rejection.size()    == grid.vertex_count * grid.layer_count );
 
-		fill    (arrow_differential, vec<3,T,Q>(0.f));
+		fill    (arrow_differential, glm::vec<3,T,Q>(0.f));
 		uint L = grid.layer_count;
-		uvec2 arrow;
+		glm::uvec2 arrow;
 		for (unsigned int i = 0; i < grid.arrow_vertex_ids.size(); ++i)
 		{
 			arrow = grid.arrow_vertex_ids[i]; 
@@ -176,7 +176,7 @@ namespace rasters
 		mult 	(arrow_rejection,   grid.arrow_dual_lengths,   arrow_rejection);
 		mult 	(arrow_rejection,   grid.layer_height,         arrow_rejection);      // flow across dual of the arrow 
 
-		fill    (layer_differential, vec<3,T,Q>(0.f));
+		fill    (layer_differential, glm::vec<3,T,Q>(0.f));
 		for (unsigned int i = 0; i < grid.vertex_count; ++i)
 		{
 			for (unsigned int j = 1; j < L; ++j)
@@ -229,7 +229,7 @@ namespace rasters
 
 		fill    (arrow_scratch, T(0));
 		uint L = grid.layer_count;
-		uvec2 arrow;
+		glm::uvec2 arrow;
 		for (unsigned int i = 0; i < grid.arrow_vertex_ids.size(); ++i)
 		{
 			arrow = grid.arrow_vertex_ids[i]; 
@@ -291,7 +291,7 @@ namespace rasters
 
 		fill    (arrow_scratch, glm::vec<L,T,Q>(0.f));
 		uint Li = grid.layer_count;
-		uvec2 arrow;
+		glm::uvec2 arrow;
 		for (unsigned int i = 0; i < grid.arrow_vertex_ids.size(); ++i)
 		{
 			arrow = grid.arrow_vertex_ids[i]; 
