@@ -20,10 +20,6 @@
 
 namespace rasters
 {
-	namespace
-	{
-		using namespace many;
-	}
 
 	// performs O(1) lookups on the surface of a unit sphere 
 	// using an octahedron where each side is a 2d cartesian grid
@@ -32,9 +28,9 @@ namespace rasters
 	{
 	protected:
 		static constexpr int OCTAHEDRON_SIDE_COUNT = 8;	// number of sides on the data cube
-		vec3s OCTAHEDRON_SIDE_Z;
-		vec3s OCTAHEDRON_SIDE_X;
-		vec3s OCTAHEDRON_SIDE_Y;
+		many::vec3s OCTAHEDRON_SIDE_Z;
+		many::vec3s OCTAHEDRON_SIDE_X;
+		many::vec3s OCTAHEDRON_SIDE_Y;
 
 		glm::ivec2 dimensions; // dimensions of the grid on each side of the data cube 
 		float cell_width;
@@ -77,7 +73,7 @@ namespace rasters
 			const T default_value
 		) : 
 			OCTAHEDRON_SIDE_Z(normalize(
-				vec3s {
+				many::vec3s {
 					glm::vec3(-1,-1,-1),
 					glm::vec3( 1,-1,-1),
 					glm::vec3(-1, 1,-1),
@@ -148,7 +144,7 @@ namespace rasters
 			return get_value(get_conceptual_id(point));
 		}
 
-		void get_values(const vec3s& points, series<T>& out) const
+		void get_values(const many::vec3s& points, many::series<T>& out) const
 		{
 			for (unsigned int i = 0; i < points.size(); ++i)
 			{
@@ -166,7 +162,7 @@ namespace rasters
 	{
 	public:
 		explicit SpheroidGridVoronoi(
-			const vec3s& points, 
+			const many::vec3s& points, 
 			const float cell_width,
 			const float max_vertex_distance
 		  )	: 
