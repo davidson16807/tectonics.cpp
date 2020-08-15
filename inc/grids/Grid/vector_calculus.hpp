@@ -99,10 +99,10 @@ namespace rasters
 	template<typename T, glm::qualifier Q>
 	void gradient(
 		const Grid& grid, 
-		const series<T>& scalar_field, 
-		series<glm::vec<3,T,Q>>& out, 
-		series<T>& arrow_differential, 
-		series<glm::vec<3,T,Q>>& arrow_flow
+		const many::series<T>& scalar_field, 
+		many::series<glm::vec<3,T,Q>>& out, 
+		many::series<T>& arrow_differential, 
+		many::series<glm::vec<3,T,Q>>& arrow_flow
 	) {
 		assert(scalar_field.size()       == grid.vertex_count);
 		assert(out.size()                == grid.vertex_count);
@@ -122,11 +122,11 @@ namespace rasters
 	}
 
 	template<typename T>
-	series<glm::vec3> gradient(const Grid& grid, const series<T>& scalar_field)
+	many::series<glm::vec3> gradient(const Grid& grid, const many::series<T>& scalar_field)
 	{
-		series<T>         arrow_differential (grid.arrow_count);
-		series<glm::vec3> arrow_flow         (grid.arrow_count);
-		series<glm::vec3> out                (grid.vertex_count);
+		many::series<T>         arrow_differential (grid.arrow_count);
+		many::series<glm::vec3> arrow_flow         (grid.arrow_count);
+		many::series<glm::vec3> out                (grid.vertex_count);
 		gradient(grid, scalar_field, out, arrow_differential, arrow_flow);
 		return out;
 	}
@@ -134,10 +134,10 @@ namespace rasters
 	template<typename T, glm::qualifier Q>
 	void divergence(
 		const Grid& grid, 
-		const series<glm::vec<3,T,Q>>& vector_field, 
-		series<T>& out, 
-		series<glm::vec<3,T,Q>>& arrow_differential, 
-		series<T>& arrow_projection
+		const many::series<glm::vec<3,T,Q>>& vector_field, 
+		many::series<T>& out, 
+		many::series<glm::vec<3,T,Q>>& arrow_differential, 
+		many::series<T>& arrow_projection
 	) {
 		assert(vector_field.size()       == grid.vertex_count);
 		assert(out.size()                == grid.vertex_count);
@@ -157,11 +157,11 @@ namespace rasters
 	}
 
 	template<typename T, glm::qualifier Q>
-	series<T> divergence(const Grid& grid, const series<glm::vec<3,T,Q>>& vector_field)
+	many::series<T> divergence(const Grid& grid, const many::series<glm::vec<3,T,Q>>& vector_field)
 	{
-		series<glm::vec<3,T,Q>> arrow_differential (grid.arrow_count);
-		series<T>               arrow_projection   (grid.arrow_count);
-		series<T>               out                (grid.vertex_count);
+		many::series<glm::vec<3,T,Q>> arrow_differential (grid.arrow_count);
+		many::series<T>               arrow_projection   (grid.arrow_count);
+		many::series<T>               out                (grid.vertex_count);
 		divergence(grid, vector_field, out, arrow_differential, arrow_projection);
 		return out;
 	}
@@ -169,10 +169,10 @@ namespace rasters
 	template<typename T, glm::qualifier Q>
 	void curl(
 		const Grid& grid, 
-		const series<glm::vec<3,T,Q>>& vector_field, 
-		series<glm::vec<3,T,Q>>& out, 
-		series<glm::vec<3,T,Q>>& arrow_differential, 
-		series<glm::vec<3,T,Q>>& arrow_rejection
+		const many::series<glm::vec<3,T,Q>>& vector_field, 
+		many::series<glm::vec<3,T,Q>>& out, 
+		many::series<glm::vec<3,T,Q>>& arrow_differential, 
+		many::series<glm::vec<3,T,Q>>& arrow_rejection
 	) {
 		assert(vector_field.size()       == grid.vertex_count);
 		assert(out.size()                == grid.vertex_count);
@@ -192,11 +192,11 @@ namespace rasters
 	}
 
 	template<typename T, glm::qualifier Q>
-	series<glm::vec<3,T,Q>> curl(const Grid& grid, const series<glm::vec<3,T,Q>>& vector_field)
+	many::series<glm::vec<3,T,Q>> curl(const Grid& grid, const many::series<glm::vec<3,T,Q>>& vector_field)
 	{
-		series<glm::vec<3,T,Q>> arrow_differential (grid.arrow_count);
-		series<glm::vec<3,T,Q>> arrow_rejection    (grid.arrow_count);
-		series<glm::vec<3,T,Q>> out                (grid.vertex_count);
+		many::series<glm::vec<3,T,Q>> arrow_differential (grid.arrow_count);
+		many::series<glm::vec<3,T,Q>> arrow_rejection    (grid.arrow_count);
+		many::series<glm::vec<3,T,Q>> out                (grid.vertex_count);
 		curl(grid, vector_field, out, arrow_differential, arrow_rejection);
 		return out;
 	}
@@ -222,9 +222,9 @@ namespace rasters
 	template<typename T>
 	void laplacian(
 		const Grid& grid, 
-		const series<T>& scalar_field, 
-		series<T>& out, 
-		series<T>& arrow_scratch
+		const many::series<T>& scalar_field, 
+		many::series<T>& out, 
+		many::series<T>& arrow_scratch
 	) {
 		assert(scalar_field.size()  == grid.vertex_count);
 		assert(out.size()           == grid.vertex_count);
@@ -242,10 +242,10 @@ namespace rasters
 		div      (out,                grid.vertex_dual_areas,    out);             // laplacian
 	}
 	template<typename T>
-	series<T> laplacian(const Grid& grid, const series<T>& scalar_field)
+	many::series<T> laplacian(const Grid& grid, const many::series<T>& scalar_field)
 	{
-		series<T> arrow_scratch (grid.arrow_count);
-		series<T> out           (grid.vertex_count);
+		many::series<T> arrow_scratch (grid.arrow_count);
+		many::series<T> out           (grid.vertex_count);
 		laplacian(grid, scalar_field, out, arrow_scratch);
 		return out;
 	}
@@ -253,9 +253,9 @@ namespace rasters
 	template<unsigned int L, typename T, glm::qualifier Q>
 	void laplacian(
 		const Grid& grid, 
-		const series<glm::vec<L,T,Q>>& vector_field, 
-		series<glm::vec<L,T,Q>>& out, 
-		series<glm::vec<L,T,Q>>& arrow_scratch
+		const many::series<glm::vec<L,T,Q>>& vector_field, 
+		many::series<glm::vec<L,T,Q>>& out, 
+		many::series<glm::vec<L,T,Q>>& arrow_scratch
 	) {
 		assert(vector_field.size()  == grid.vertex_count);
 		assert(out.size()           == grid.vertex_count);
@@ -274,10 +274,10 @@ namespace rasters
 	}
 
  	template<unsigned int L, typename T, glm::qualifier Q>
-	series<glm::vec<L,T,Q>> laplacian(const Grid& grid, const series<glm::vec<L,T,Q>>& vector_field)
+	many::series<glm::vec<L,T,Q>> laplacian(const Grid& grid, const many::series<glm::vec<L,T,Q>>& vector_field)
 	{
-		series<glm::vec<L,T,Q>> arrow_scratch (grid.arrow_count);
-		series<glm::vec<L,T,Q>> out           (grid.vertex_count);
+		many::series<glm::vec<L,T,Q>> arrow_scratch (grid.arrow_count);
+		many::series<glm::vec<L,T,Q>> out           (grid.vertex_count);
 		laplacian(grid, vector_field, out, arrow_scratch);
 		return out;
 	}

@@ -19,10 +19,6 @@
 
 namespace rasters 
 {
-    namespace 
-    {
-        using namespace many;
-    }
 
     /*
     A "grid" is a collection of interconnected grid cells on the surface of 
@@ -51,15 +47,15 @@ namespace rasters
         */
         many::series<float>                          flattened_face_vertex_coordinates;
 
-        //ivecNs                                    vertex_neighbor_ids;
-        uint                                        vertex_count;
+        //ivecNs                                     vertex_neighbor_ids;
+        uint                                         vertex_count;
         many::series<unsigned int>                   vertex_neighbor_counts;
         many::series<glm::vec3>                      vertex_positions;
         many::series<glm::vec3>                      vertex_normals;
         many::series<float>                          vertex_areas;
-        float                                       vertex_average_area;
+        float                                        vertex_average_area;
 
-        uint                                        face_count;
+        uint                                         face_count;
         many::series<glm::uvec3>                     face_vertex_ids;
         many::series<unsigned int>                   face_vertex_id_a;
         many::series<unsigned int>                   face_vertex_id_b;
@@ -73,9 +69,9 @@ namespace rasters
         many::series<glm::vec3>                      face_midpoints;
         many::series<glm::vec3>                      face_normals;
         many::series<float>                          face_areas;
-        float                                       face_average_area;
+        float                                        face_average_area;
 
-        uint                                        edge_count;
+        uint                                         edge_count;
         many::series<glm::uvec2>                     edge_vertex_ids;
         many::series<unsigned int>                   edge_vertex_id_a;
         many::series<unsigned int>                   edge_vertex_id_b;
@@ -88,9 +84,9 @@ namespace rasters
         many::series<float>                          edge_lengths;
         many::series<glm::vec3>                      edge_normals;
         //many::series<float>                        edge_areas;
-        float                                       edge_average_length;
+        float                                        edge_average_length;
         
-        uint                                        arrow_count;
+        uint                                         arrow_count;
         many::series<glm::uvec2>                     arrow_vertex_ids;
         many::series<unsigned int>                   arrow_vertex_id_from;
         many::series<unsigned int>                   arrow_vertex_id_to;
@@ -104,7 +100,7 @@ namespace rasters
         many::series<float>                          arrow_lengths;
         many::series<glm::vec3>                      arrow_normals;
         //many::series<float>                        arrow_areas;
-        float                                       arrow_average_length;
+        float                                        arrow_average_length;
 
         many::series<float>                          vertex_dual_areas;
         many::series<glm::vec3>                      arrow_dual_endpoint_a;
@@ -186,7 +182,7 @@ namespace rasters
 
         }
 
-        explicit Grid(const vec3s& vertices, const uvec3s& faces)
+        explicit Grid(const many::vec3s& vertices, const many::uvec3s& faces)
             : Grid(vertices.size(), faces.size(), 0)
         {
             if (faces.size() < 1)
@@ -197,7 +193,7 @@ namespace rasters
             copy(vertex_positions, vertices);
             copy(face_vertex_ids,  faces);
             
-            vec3s flattened_face_vertex_positions(3*face_count);
+            many::vec3s flattened_face_vertex_positions(3*face_count);
             flatten (face_vertex_ids,                             flattened_face_vertex_ids         );
             get     (vertex_positions, flattened_face_vertex_ids, flattened_face_vertex_positions   );
             flatten (flattened_face_vertex_positions,             flattened_face_vertex_coordinates );
@@ -220,16 +216,16 @@ namespace rasters
             // This way, the face normals will be somewhat standardized to face outward.
             // This will hold for most well centered convex shapes. 
 
-            floats face_vertex_areas_a = length(cross((face_endpoint_c - face_endpoint_a)/2.f, (face_endpoint_b - face_endpoint_a)/2.f)) / 2.f; 
-            floats face_vertex_areas_b = length(cross((face_endpoint_a - face_endpoint_b)/2.f, (face_endpoint_c - face_endpoint_b)/2.f)) / 2.f; 
-            floats face_vertex_areas_c = length(cross((face_endpoint_b - face_endpoint_c)/2.f, (face_endpoint_a - face_endpoint_c)/2.f)) / 2.f; 
+            many::floats face_vertex_areas_a = length(cross((face_endpoint_c - face_endpoint_a)/2.f, (face_endpoint_b - face_endpoint_a)/2.f)) / 2.f; 
+            many::floats face_vertex_areas_b = length(cross((face_endpoint_a - face_endpoint_b)/2.f, (face_endpoint_c - face_endpoint_b)/2.f)) / 2.f; 
+            many::floats face_vertex_areas_c = length(cross((face_endpoint_b - face_endpoint_c)/2.f, (face_endpoint_a - face_endpoint_c)/2.f)) / 2.f; 
             // ^^^ NOTE: these 3 represent the surface area of the face that lies within a vertex's region of influence
             aggregate_into(face_vertex_areas_a, face_vertex_id_a, [](float a, float b){ return a+b; }, vertex_areas);
             aggregate_into(face_vertex_areas_b, face_vertex_id_b, [](float a, float b){ return a+b; }, vertex_areas);
             aggregate_into(face_vertex_areas_c, face_vertex_id_c, [](float a, float b){ return a+b; }, vertex_areas);
             vertex_average_area = mean(vertex_areas);
 
-            vec3s face_area_weighted_normals = face_normals * face_areas;
+            many::vec3s face_area_weighted_normals = face_normals * face_areas;
             aggregate_into(face_area_weighted_normals, face_vertex_id_a, [](glm::vec3 a, glm::vec3 b){ return a+b; }, vertex_normals);
             aggregate_into(face_area_weighted_normals, face_vertex_id_b, [](glm::vec3 a, glm::vec3 b){ return a+b; }, vertex_normals);
             aggregate_into(face_area_weighted_normals, face_vertex_id_c, [](glm::vec3 a, glm::vec3 b){ return a+b; }, vertex_normals);
@@ -366,11 +362,11 @@ namespace rasters
             normalize(arrow_normals,                          arrow_normals      );
             arrow_average_length = mean(arrow_lengths);
 
-            vec3s  arrow_dual_offset_a    (2*edge_count);
-            vec3s  arrow_dual_offset_b    (2*edge_count);
-            vec3s  arrow_dual_offset_cross(2*edge_count);
-            vec3s  arrow_dual_offset_ab   (2*edge_count);
-            floats arrow_dual_areas       (2*edge_count);
+            many::vec3s  arrow_dual_offset_a    (2*edge_count);
+            many::vec3s  arrow_dual_offset_b    (2*edge_count);
+            many::vec3s  arrow_dual_offset_cross(2*edge_count);
+            many::vec3s  arrow_dual_offset_ab   (2*edge_count);
+            many::floats arrow_dual_areas       (2*edge_count);
 
             get     (face_midpoints,         arrow_face_id_a,       arrow_dual_endpoint_a   );
             get     (face_midpoints,         arrow_face_id_b,       arrow_dual_endpoint_b   );
