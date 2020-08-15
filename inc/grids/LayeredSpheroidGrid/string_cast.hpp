@@ -10,11 +10,11 @@ namespace rasters
 	template <typename T>
 	std::string to_string(
 		const LayeredSpheroidGrid& grid, 
-		const many::tmany<T>& a, 
+		const many::series<T>& a, 
 		const uint line_char_width = 80
 	) {
 		assert(a.size() == grid.vertex_count * grid.layer_count);
-		many::tmany<T> layer_raster(grid.vertex_count);
+		many::series<T> layer_raster(grid.vertex_count);
 		std::string out("");
 		for (uint i = 0; i < grid.layer_count; ++i)
 		{
@@ -28,12 +28,12 @@ namespace rasters
 	template <typename T, glm::qualifier Q>
 	std::string to_string(
 		const LayeredSpheroidGrid& grid, 
-		const many::tmany<glm::vec<2,T,Q>>& a, 
+		const many::series<glm::vec<2,T,Q>>& a, 
 		const uint line_char_width = 80, 
 		const glm::vec3 up = glm::vec3(0,0,1)
 	) {
 		assert(a.size() == grid.vertex_count * grid.layer_count);
-		many::tmany<glm::vec<2,T,Q>> layer_raster(grid.vertex_count);
+		many::series<glm::vec<2,T,Q>> layer_raster(grid.vertex_count);
 		std::string out("");
 		for (uint i = 0; i < grid.layer_count; ++i)
 		{
@@ -47,12 +47,12 @@ namespace rasters
 	template <typename T, glm::qualifier Q>
 	std::string to_string(
 		const LayeredSpheroidGrid& grid, 
-		const many::tmany<glm::vec<3,T,Q>>& a, 
+		const many::series<glm::vec<3,T,Q>>& a, 
 		const uint line_char_width = 80, 
 		const glm::vec3 up = glm::vec3(0,0,1)
 	) {
 		assert(a.size() == grid.vertex_count * grid.layer_count);
-		many::tmany<glm::vec<3,T,Q>> layer_raster(grid.vertex_count);
+		many::series<glm::vec<3,T,Q>> layer_raster(grid.vertex_count);
 		std::string out("");
 		for (uint i = 0; i < grid.layer_count; ++i)
 		{

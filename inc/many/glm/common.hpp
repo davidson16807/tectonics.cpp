@@ -10,21 +10,21 @@ namespace many
 {
 	/// Returns x if x >= 0; otherwise, it returns -x.
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void abs(const tmany<glm::vec<L,T,Q>>& a, tmany<glm::vec<L,T,Q>>& out)
+	void abs(const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(a, glm::abs, out);
 	}
 
 	/// Returns 1.0 if x > 0, 0.0 if x == 0, or -1.0 if x < 0.
 	template <glm::length_t L, typename T, glm::qualifier Q, class Tout>
-	void sign(const tmany<glm::vec<L,T,Q>>& a, tmany<Tout>& out)
+	void sign(const series<glm::vec<L,T,Q>>& a, series<Tout>& out)
 	{
 		transform(a, glm::sign, out);
 	}
 
 	/// Returns a value equal to the nearest integer that is less then or equal to x.
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void floor(const tmany<glm::vec<L,T,Q>>& a, tmany<glm::vec<L,T,Q>>& out)
+	void floor(const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(a, glm::floor, out);
 	}
@@ -32,7 +32,7 @@ namespace many
 	/// Returns a value equal to the nearest integer to x
 	/// whose absolute value is not larger than the absolute value of x.
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void trunc(const tmany<glm::vec<L,T,Q>>& a, tmany<glm::vec<L,T,Q>>& out)
+	void trunc(const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(a, glm::trunc, out);
 	}
@@ -43,7 +43,7 @@ namespace many
 	/// This includes the possibility that round(x) returns the
 	/// same value as roundEven(x) for all values of x.
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void round(const tmany<glm::vec<L,T,Q>>& a, tmany<glm::vec<L,T,Q>>& out)
+	void round(const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(a, glm::round, out);
 	}
@@ -51,14 +51,14 @@ namespace many
 	/// Returns a value equal to the nearest integer
 	/// that is greater than or equal to x.
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void ceil(const tmany<glm::vec<L,T,Q>>& a, tmany<glm::vec<L,T,Q>>& out)
+	void ceil(const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(a, glm::ceil, out);
 	}
 
 	/// Return x - floor(x).
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void fract(const tmany<glm::vec<L,T,Q>>& a, tmany<glm::vec<L,T,Q>>& out)
+	void fract(const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(a, glm::floor, out);
 	}
@@ -66,7 +66,7 @@ namespace many
 	/// Modulus. Returns x - y * floor(x / y)
 	/// for each component in x using the floating point value y.
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void mod(const tmany<glm::vec<L,T,Q>>& a, const tmany<glm::vec<L,T,Q>>& b, tmany<glm::vec<L,T,Q>>& out)
+	void mod(const series<glm::vec<L,T,Q>>& a, const series<glm::vec<L,T,Q>>& b, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(a, b, glm::mod, out);
 	}
@@ -76,7 +76,7 @@ namespace many
 	/// return value and the output parameter will have the same
 	/// sign as x.
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void modf(const tmany<glm::vec<L,T,Q>>& a, tmany<glm::vec<L,int,Q>>& intout, tmany<glm::vec<L,T,Q>>& fractout)
+	void modf(const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,int,Q>>& intout, series<glm::vec<L,T,Q>>& fractout)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -87,17 +87,17 @@ namespace many
 
 	/// Returns y if y < x; otherwise, it returns x.
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void min(const tmany<glm::vec<L,T,Q>>& a, const tmany<glm::vec<L,T,Q>>& b, tmany<glm::vec<L,T,Q>>& out)
+	void min(const series<glm::vec<L,T,Q>>& a, const series<glm::vec<L,T,Q>>& b, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(a, b, glm::min, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void min(const tmany<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> b, tmany<glm::vec<L,T,Q>>& out)
+	void min(const series<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> b, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(a, b, glm::min, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	glm::vec<L,T,Q> min(const tmany<glm::vec<L,T,Q>>& a)
+	glm::vec<L,T,Q> min(const series<glm::vec<L,T,Q>>& a)
 	{
 		glm::vec<L,T,Q> out = a[0];
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -108,18 +108,18 @@ namespace many
 	}
 	/// Returns y if y < x; otherwise, it returns x.
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void max(const tmany<glm::vec<L,T,Q>>& a, const tmany<glm::vec<L,T,Q>>& b, tmany<glm::vec<L,T,Q>>& out)
+	void max(const series<glm::vec<L,T,Q>>& a, const series<glm::vec<L,T,Q>>& b, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(a, b, glm::max, out);
 	}
 	/// Returns y if y < x; otherwise, it returns x.
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void max(const tmany<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> b, tmany<glm::vec<L,T,Q>>& out)
+	void max(const series<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> b, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(a, b, glm::max, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	glm::vec<L,T,Q> max(const tmany<glm::vec<L,T,Q>>& a)
+	glm::vec<L,T,Q> max(const series<glm::vec<L,T,Q>>& a)
 	{
 		glm::vec<L,T,Q> out = a[0];
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -132,22 +132,22 @@ namespace many
 	/// Returns min(max(x, minVal), maxVal) for each component in x
 	/// using the floating-point values minVal and maxVal.
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void clamp(const tmany<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> lo, const glm::vec<L,T,Q> hi, tmany<glm::vec<L,T,Q>>& out)
+	void clamp(const series<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> lo, const glm::vec<L,T,Q> hi, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(a, lo, hi, glm::clamp, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void clamp(const tmany<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> lo, const tmany<glm::vec<L,T,Q>>& hi, tmany<glm::vec<L,T,Q>>& out)
+	void clamp(const series<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> lo, const series<glm::vec<L,T,Q>>& hi, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(a, lo, hi, glm::clamp, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void clamp(const tmany<glm::vec<L,T,Q>>& a, const tmany<glm::vec<L,T,Q>>& lo, const glm::vec<L,T,Q> hi, tmany<glm::vec<L,T,Q>>& out)
+	void clamp(const series<glm::vec<L,T,Q>>& a, const series<glm::vec<L,T,Q>>& lo, const glm::vec<L,T,Q> hi, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(a, lo, hi, glm::clamp, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void clamp(const tmany<glm::vec<L,T,Q>>& a, const tmany<glm::vec<L,T,Q>>& lo, const tmany<glm::vec<L,T,Q>>& hi, tmany<glm::vec<L,T,Q>>& out)
+	void clamp(const series<glm::vec<L,T,Q>>& a, const series<glm::vec<L,T,Q>>& lo, const series<glm::vec<L,T,Q>>& hi, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(a, lo, hi, glm::clamp, out);
 	}
@@ -175,37 +175,37 @@ namespace many
 	/// @param[in]  y Value to interpolate.
 	/// @param[in]  a Interpolant.
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void mix(const tmany<glm::vec<L,T,Q>>& x, const tmany<glm::vec<L,T,Q>>& y, const tmany<T>& a, tmany<glm::vec<L,T,Q>>& out)
+	void mix(const series<glm::vec<L,T,Q>>& x, const series<glm::vec<L,T,Q>>& y, const series<T>& a, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(x, y, a, glm::mix, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void mix(const tmany<glm::vec<L,T,Q>>& x, const tmany<glm::vec<L,T,Q>>& y, const T a, tmany<glm::vec<L,T,Q>>& out)
+	void mix(const series<glm::vec<L,T,Q>>& x, const series<glm::vec<L,T,Q>>& y, const T a, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(x, y, a, glm::mix, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void mix(const tmany<glm::vec<L,T,Q>>& x, const glm::vec<L,T,Q> y, const tmany<T>& a, tmany<glm::vec<L,T,Q>>& out)
+	void mix(const series<glm::vec<L,T,Q>>& x, const glm::vec<L,T,Q> y, const series<T>& a, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(x, y, a, glm::mix, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void mix(const tmany<glm::vec<L,T,Q>>& x, const glm::vec<L,T,Q> y, const T a, tmany<glm::vec<L,T,Q>>& out)
+	void mix(const series<glm::vec<L,T,Q>>& x, const glm::vec<L,T,Q> y, const T a, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(x, y, a, glm::mix, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void mix(const glm::vec<L,T,Q> x, const tmany<glm::vec<L,T,Q>>& y, const tmany<T>& a, tmany<glm::vec<L,T,Q>>& out)
+	void mix(const glm::vec<L,T,Q> x, const series<glm::vec<L,T,Q>>& y, const series<T>& a, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(x, y, a, glm::mix, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void mix(const glm::vec<L,T,Q> x, const tmany<glm::vec<L,T,Q>>& y, const T a, tmany<glm::vec<L,T,Q>>& out)
+	void mix(const glm::vec<L,T,Q> x, const series<glm::vec<L,T,Q>>& y, const T a, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(x, y, a, glm::mix, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void mix(const glm::vec<L,T,Q> x, const glm::vec<L,T,Q> y, const tmany<T>& a, tmany<glm::vec<L,T,Q>>& out)
+	void mix(const glm::vec<L,T,Q> x, const glm::vec<L,T,Q> y, const series<T>& a, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(x, y, a, glm::mix, out);
 	}
@@ -214,37 +214,37 @@ namespace many
 
 
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void mix(const tmany<glm::vec<L,T,Q>>& x, const tmany<glm::vec<L,T,Q>>& y, const tmany<glm::vec<L,T,Q>>& a, tmany<glm::vec<L,T,Q>>& out)
+	void mix(const series<glm::vec<L,T,Q>>& x, const series<glm::vec<L,T,Q>>& y, const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(x, y, a, glm::mix, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void mix(const tmany<glm::vec<L,T,Q>>& x, const tmany<glm::vec<L,T,Q>>& y, const glm::vec<L,T,Q> a, tmany<glm::vec<L,T,Q>>& out)
+	void mix(const series<glm::vec<L,T,Q>>& x, const series<glm::vec<L,T,Q>>& y, const glm::vec<L,T,Q> a, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(x, y, a, glm::mix, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void mix(const tmany<glm::vec<L,T,Q>>& x, const glm::vec<L,T,Q> y, const tmany<glm::vec<L,T,Q>>& a, tmany<glm::vec<L,T,Q>>& out)
+	void mix(const series<glm::vec<L,T,Q>>& x, const glm::vec<L,T,Q> y, const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(x, y, a, glm::mix, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void mix(const tmany<glm::vec<L,T,Q>>& x, const glm::vec<L,T,Q> y, const glm::vec<L,T,Q> a, tmany<glm::vec<L,T,Q>>& out)
+	void mix(const series<glm::vec<L,T,Q>>& x, const glm::vec<L,T,Q> y, const glm::vec<L,T,Q> a, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(x, y, a, glm::mix, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void mix(const glm::vec<L,T,Q> x, const tmany<glm::vec<L,T,Q>>& y, const tmany<glm::vec<L,T,Q>>& a, tmany<glm::vec<L,T,Q>>& out)
+	void mix(const glm::vec<L,T,Q> x, const series<glm::vec<L,T,Q>>& y, const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(x, y, a, glm::mix, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void mix(const glm::vec<L,T,Q> x, const tmany<glm::vec<L,T,Q>>& y, const glm::vec<L,T,Q> a, tmany<glm::vec<L,T,Q>>& out)
+	void mix(const glm::vec<L,T,Q> x, const series<glm::vec<L,T,Q>>& y, const glm::vec<L,T,Q> a, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(x, y, a, glm::mix, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void mix(const glm::vec<L,T,Q> x, const glm::vec<L,T,Q> y, const tmany<glm::vec<L,T,Q>>& a, tmany<glm::vec<L,T,Q>>& out)
+	void mix(const glm::vec<L,T,Q> x, const glm::vec<L,T,Q> y, const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(x, y, a, glm::mix, out);
 	}
@@ -254,17 +254,17 @@ namespace many
 
 	/// Returns 0.0 if x < edge, otherwise it returns 1.0 for each component of a genType.
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void step(const tmany<glm::vec<L,T,Q>>& edge, const tmany<glm::vec<L,T,Q>>&  x, tmany<glm::vec<L,T,Q>>& out)
+	void step(const series<glm::vec<L,T,Q>>& edge, const series<glm::vec<L,T,Q>>&  x, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(edge, x, glm::step, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void step(const tmany<glm::vec<L,T,Q>>&  edge, const glm::vec<L,T,Q> x, tmany<glm::vec<L,T,Q>>& out)
+	void step(const series<glm::vec<L,T,Q>>&  edge, const glm::vec<L,T,Q> x, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(edge, x, glm::step, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void step(const glm::vec<L,T,Q> edge, const tmany<glm::vec<L,T,Q>>&  x, tmany<glm::vec<L,T,Q>>& out)
+	void step(const glm::vec<L,T,Q> edge, const series<glm::vec<L,T,Q>>&  x, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(edge, x, glm::step, out);
 	}
@@ -279,37 +279,37 @@ namespace many
 	/// return t * t * (3 - 2 * t);
 	/// Results are undefined if lo >= hi.
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void smoothstep(const tmany<glm::vec<L,T,Q>>& lo, const tmany<glm::vec<L,T,Q>>& hi, const tmany<glm::vec<L,T,Q>>& x, tmany<glm::vec<L,T,Q>>& out)
+	void smoothstep(const series<glm::vec<L,T,Q>>& lo, const series<glm::vec<L,T,Q>>& hi, const series<glm::vec<L,T,Q>>& x, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(lo, hi, x, glm::smoothstep, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void smoothstep(const glm::vec<L,T,Q> lo, const tmany<glm::vec<L,T,Q>>& hi, const tmany<glm::vec<L,T,Q>>& x, tmany<glm::vec<L,T,Q>>& out)
+	void smoothstep(const glm::vec<L,T,Q> lo, const series<glm::vec<L,T,Q>>& hi, const series<glm::vec<L,T,Q>>& x, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(lo, hi, x, glm::smoothstep, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void smoothstep(const tmany<glm::vec<L,T,Q>>& lo, glm::vec<L,T,Q> hi, const tmany<glm::vec<L,T,Q>>& x, tmany<glm::vec<L,T,Q>>& out)
+	void smoothstep(const series<glm::vec<L,T,Q>>& lo, glm::vec<L,T,Q> hi, const series<glm::vec<L,T,Q>>& x, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(lo, hi, x, glm::smoothstep, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void smoothstep(const glm::vec<L,T,Q> lo, const glm::vec<L,T,Q> hi, const tmany<glm::vec<L,T,Q>>& x, tmany<glm::vec<L,T,Q>>& out)
+	void smoothstep(const glm::vec<L,T,Q> lo, const glm::vec<L,T,Q> hi, const series<glm::vec<L,T,Q>>& x, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(lo, hi, x, glm::smoothstep, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void smoothstep(const tmany<glm::vec<L,T,Q>>& lo, const tmany<glm::vec<L,T,Q>>& hi, const glm::vec<L,T,Q> x, tmany<glm::vec<L,T,Q>>& out)
+	void smoothstep(const series<glm::vec<L,T,Q>>& lo, const series<glm::vec<L,T,Q>>& hi, const glm::vec<L,T,Q> x, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(lo, hi, x, glm::smoothstep, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void smoothstep(const glm::vec<L,T,Q> lo, const tmany<glm::vec<L,T,Q>>& hi, const glm::vec<L,T,Q> x, tmany<glm::vec<L,T,Q>>& out)
+	void smoothstep(const glm::vec<L,T,Q> lo, const series<glm::vec<L,T,Q>>& hi, const glm::vec<L,T,Q> x, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(lo, hi, x, glm::smoothstep, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void smoothstep(const tmany<glm::vec<L,T,Q>>& lo, const glm::vec<L,T,Q> hi, const glm::vec<L,T,Q> x, tmany<glm::vec<L,T,Q>>& out)
+	void smoothstep(const series<glm::vec<L,T,Q>>& lo, const glm::vec<L,T,Q> hi, const glm::vec<L,T,Q> x, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(lo, hi, x, glm::smoothstep, out);
 	}
@@ -320,7 +320,7 @@ namespace many
 	/// including for implementations with no NaN
 	/// representations.
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void isnan(const tmany<glm::vec<L,T,Q>>&  x, tmany<bool>& out)
+	void isnan(const series<glm::vec<L,T,Q>>&  x, series<bool>& out)
 	{
 		transform(x, glm::isnan, out);
 	}
@@ -331,44 +331,44 @@ namespace many
 	/// otherwise, including for implementations with no infinity
 	/// representations.
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void isinf(const tmany<glm::vec<L,T,Q>>&  x, tmany<bool>& out)
+	void isinf(const series<glm::vec<L,T,Q>>&  x, series<bool>& out)
 	{
 		transform(x, glm::isinf, out);
 	}
 
 	/// Computes and returns a * b + c.
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void fma(const tmany<glm::vec<L,T,Q>>& a, const tmany<glm::vec<L,T,Q>>& b, const tmany<glm::vec<L,T,Q>>& c, tmany<glm::vec<L,T,Q>>& out)
+	void fma(const series<glm::vec<L,T,Q>>& a, const series<glm::vec<L,T,Q>>& b, const series<glm::vec<L,T,Q>>& c, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(a, b, c, glm::fma, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void fma(const glm::vec<L,T,Q> a, const tmany<glm::vec<L,T,Q>>& b, const tmany<glm::vec<L,T,Q>>& c, tmany<glm::vec<L,T,Q>>& out)
+	void fma(const glm::vec<L,T,Q> a, const series<glm::vec<L,T,Q>>& b, const series<glm::vec<L,T,Q>>& c, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(a, b, c, glm::fma, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void fma(const tmany<glm::vec<L,T,Q>>& a, glm::vec<L,T,Q> b, const tmany<glm::vec<L,T,Q>>& c, tmany<glm::vec<L,T,Q>>& out)
+	void fma(const series<glm::vec<L,T,Q>>& a, glm::vec<L,T,Q> b, const series<glm::vec<L,T,Q>>& c, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(a, b, c, glm::fma, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void fma(const glm::vec<L,T,Q> a, const glm::vec<L,T,Q> b, const tmany<glm::vec<L,T,Q>>& c, tmany<glm::vec<L,T,Q>>& out)
+	void fma(const glm::vec<L,T,Q> a, const glm::vec<L,T,Q> b, const series<glm::vec<L,T,Q>>& c, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(a, b, c, glm::fma, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void fma(const tmany<glm::vec<L,T,Q>>& a, const tmany<glm::vec<L,T,Q>>& b, const glm::vec<L,T,Q> c, tmany<glm::vec<L,T,Q>>& out)
+	void fma(const series<glm::vec<L,T,Q>>& a, const series<glm::vec<L,T,Q>>& b, const glm::vec<L,T,Q> c, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(a, b, c, glm::fma, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void fma(const glm::vec<L,T,Q> a, const tmany<glm::vec<L,T,Q>>& b, const glm::vec<L,T,Q> c, tmany<glm::vec<L,T,Q>>& out)
+	void fma(const glm::vec<L,T,Q> a, const series<glm::vec<L,T,Q>>& b, const glm::vec<L,T,Q> c, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(a, b, c, glm::fma, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	void fma(const tmany<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> b, const glm::vec<L,T,Q> c, tmany<glm::vec<L,T,Q>>& out)
+	void fma(const series<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> b, const glm::vec<L,T,Q> c, series<glm::vec<L,T,Q>>& out)
 	{
 		transform(a, b, c, glm::fma, out);
 	}

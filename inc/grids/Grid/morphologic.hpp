@@ -5,7 +5,7 @@
 namespace rasters
 {
 
-	void dilate(const Grid& grid, const tmany<bool>& a, tmany<bool>& out)
+	void dilate(const Grid& grid, const series<bool>& a, series<bool>& out)
 	{
 		fill( out, false );
 		for (unsigned int i = 0; i < grid.arrow_vertex_id_from.size(); ++i)
@@ -16,11 +16,11 @@ namespace rasters
 				a  [grid.arrow_vertex_id_to[i]];
 		}
 	}
-	void dilate(const Grid& grid, const tmany<bool>& a, tmany<bool>& out, uint radius, tmany<bool>& scratch)
+	void dilate(const Grid& grid, const series<bool>& a, series<bool>& out, uint radius, series<bool>& scratch)
 	{
-		tmany<bool>* temp_in  = &out;
-		tmany<bool>* temp_out = &scratch;
-		tmany<bool>* temp_swap= &out;
+		series<bool>* temp_in  = &out;
+		series<bool>* temp_out = &scratch;
+		series<bool>* temp_swap= &out;
 		copy(*temp_in, a);
 		for (uint i = 0; i < radius; ++i)
 		{
@@ -34,13 +34,13 @@ namespace rasters
 			copy(out, *temp_out);
 		}
 	}
-	void dilate(const Grid& grid, const tmany<bool>& a, tmany<bool>& out, uint radius)
+	void dilate(const Grid& grid, const series<bool>& a, series<bool>& out, uint radius)
 	{
-		tmany<bool> scratch(a.size());
+		series<bool> scratch(a.size());
 		dilate(grid, a, out, radius, scratch);
 	}
 
-	void erode(const Grid& grid, const tmany<bool>& a, tmany<bool>& out)
+	void erode(const Grid& grid, const series<bool>& a, series<bool>& out)
 	{
 		fill(out, true);
 		for (unsigned int i = 0; i < grid.arrow_vertex_id_from.size(); ++i)
@@ -51,11 +51,11 @@ namespace rasters
 				a  [grid.arrow_vertex_id_to[i]];
 		}
 	}
-	void erode(const Grid& grid, const tmany<bool>& a, tmany<bool>& out, uint radius, tmany<bool>& scratch)
+	void erode(const Grid& grid, const series<bool>& a, series<bool>& out, uint radius, series<bool>& scratch)
 	{
-		tmany<bool>* temp_in  = &out;
-		tmany<bool>* temp_out = &scratch;
-		tmany<bool>* temp_swap= &out;
+		series<bool>* temp_in  = &out;
+		series<bool>* temp_out = &scratch;
+		series<bool>* temp_swap= &out;
 		copy(*temp_in, a);
 		for (uint i = 0; i < radius; ++i)
 		{
@@ -69,87 +69,87 @@ namespace rasters
 			copy(out, *temp_out);
 		}
 	}
-	void erode(const Grid& grid, const tmany<bool>& a, tmany<bool>& out, uint radius)
+	void erode(const Grid& grid, const series<bool>& a, series<bool>& out, uint radius)
 	{
-		tmany<bool> scratch(a.size());
+		series<bool> scratch(a.size());
 		erode(grid, a, out, radius, scratch);
 	}
 
-	void opening(const Grid& grid, const tmany<bool>& a, tmany<bool>& out, tmany<bool>& scratch)
+	void opening(const Grid& grid, const series<bool>& a, series<bool>& out, series<bool>& scratch)
 	{
 		erode ( grid, a,       scratch );
 		dilate( grid, scratch, out      );
 	}
-	void opening(const Grid& grid, const tmany<bool>& a, tmany<bool>& out)
+	void opening(const Grid& grid, const series<bool>& a, series<bool>& out)
 	{
-		tmany<bool> scratch(a.size());
+		series<bool> scratch(a.size());
 		opening(grid, a, out, scratch);
 	}
-	void opening(const Grid& grid, const tmany<bool>& a, tmany<bool>& out, uint radius, tmany<bool>& scratch1, tmany<bool>& scratch2 )
+	void opening(const Grid& grid, const series<bool>& a, series<bool>& out, uint radius, series<bool>& scratch1, series<bool>& scratch2 )
 	{
 		erode ( grid, a,        scratch1, radius, scratch2 );
 		dilate( grid, scratch1, out,      radius, scratch2 );
 	}
-	void opening(const Grid& grid, const tmany<bool>& a, tmany<bool>& out, uint radius)
+	void opening(const Grid& grid, const series<bool>& a, series<bool>& out, uint radius)
 	{
-		tmany<bool> scratch1(a.size());
-		tmany<bool> scratch2(a.size());
+		series<bool> scratch1(a.size());
+		series<bool> scratch2(a.size());
 		opening(grid, a, out, radius, scratch1, scratch2);
 	}
 
-	void closing(const Grid& grid, const tmany<bool>& a, tmany<bool>& out, tmany<bool>& scratch)
+	void closing(const Grid& grid, const series<bool>& a, series<bool>& out, series<bool>& scratch)
 	{
 		dilate( grid, a,       scratch  );
 		erode ( grid, scratch, out      );
 	}
-	void closing(const Grid& grid, const tmany<bool>& a, tmany<bool>& out)
+	void closing(const Grid& grid, const series<bool>& a, series<bool>& out)
 	{
-		tmany<bool> scratch(a.size());
+		series<bool> scratch(a.size());
 		closing(grid, a, out, scratch);
 	}
-	void closing(const Grid& grid, const tmany<bool>& a, tmany<bool>& out, uint radius, tmany<bool>& scratch1, tmany<bool>& scratch2 )
+	void closing(const Grid& grid, const series<bool>& a, series<bool>& out, uint radius, series<bool>& scratch1, series<bool>& scratch2 )
 	{
 		dilate( grid, a,        scratch1, radius, scratch2 );
 		erode ( grid, scratch1, out,      radius, scratch2 );
 	}
-	void closing(const Grid& grid, const tmany<bool>& a, tmany<bool>& out, uint radius)
+	void closing(const Grid& grid, const series<bool>& a, series<bool>& out, uint radius)
 	{
-		tmany<bool> scratch1(a.size());
-		tmany<bool> scratch2(a.size());
+		series<bool> scratch1(a.size());
+		series<bool> scratch2(a.size());
 		closing(grid, a, out, radius, scratch1, scratch2);
 	}
 
-	void white_top_hat(const Grid& grid, const tmany<bool>& a, tmany<bool>& out)
+	void white_top_hat(const Grid& grid, const series<bool>& a, series<bool>& out)
 	{
 		closing( grid, a, out );
 		differ ( out,  a, out );
 	}
-	void white_top_hat(const Grid& grid, const tmany<bool>& a, tmany<bool>& out, uint radius, tmany<bool>& scratch1, tmany<bool>& scratch2)
+	void white_top_hat(const Grid& grid, const series<bool>& a, series<bool>& out, uint radius, series<bool>& scratch1, series<bool>& scratch2)
 	{
 		closing( grid, a, out, radius, scratch1, scratch2 );
 		differ ( out,  a, out                             );
 	}
-	void white_top_hat(const Grid& grid, const tmany<bool>& a, tmany<bool>& out, uint radius)
+	void white_top_hat(const Grid& grid, const series<bool>& a, series<bool>& out, uint radius)
 	{
-		tmany<bool> scratch1(a.size());
-		tmany<bool> scratch2(a.size());
+		series<bool> scratch1(a.size());
+		series<bool> scratch2(a.size());
 		white_top_hat(grid, a, out, radius, scratch1, scratch2);
 	}
 
-	void black_top_hat(const Grid& grid, const tmany<bool>& a, tmany<bool>& out)
+	void black_top_hat(const Grid& grid, const series<bool>& a, series<bool>& out)
 	{
 		opening( grid, a, out );
 		differ ( a,  out, out );
 	}
-	void black_top_hat(const Grid& grid, const tmany<bool>& a, tmany<bool>& out, uint radius, tmany<bool>& scratch1, tmany<bool>& scratch2)
+	void black_top_hat(const Grid& grid, const series<bool>& a, series<bool>& out, uint radius, series<bool>& scratch1, series<bool>& scratch2)
 	{
 		opening( grid, a, out, radius, scratch1, scratch2 );
 		differ ( a,  out, out                             );
 	}
-	void black_top_hat(const Grid& grid, const tmany<bool>& a, tmany<bool>& out, uint radius)
+	void black_top_hat(const Grid& grid, const series<bool>& a, series<bool>& out, uint radius)
 	{
-		tmany<bool> scratch1(a.size());
-		tmany<bool> scratch2(a.size());
+		series<bool> scratch1(a.size());
+		series<bool> scratch2(a.size());
 		black_top_hat(grid, a, out, radius, scratch1, scratch2);
 	}
 
@@ -157,38 +157,38 @@ namespace rasters
 	// NOTE: this is not a standard concept in math morphology
 	// It is meant to represent the difference between a figure and its dilation
 	// Its name eludes to the "margin" concept within the html box model
-	void margin(const Grid& grid, const tmany<bool>& a, tmany<bool>& out)
+	void margin(const Grid& grid, const series<bool>& a, series<bool>& out)
 	{
 		dilate( grid, a, out );
 		differ( out,  a, out );
 	}
-	void margin(const Grid& grid, const tmany<bool>& a, tmany<bool>& out, uint radius, tmany<bool>& scratch)
+	void margin(const Grid& grid, const series<bool>& a, series<bool>& out, uint radius, series<bool>& scratch)
 	{
 		dilate( grid, a, out, radius, scratch );
 		differ( out,  a, out                  );
 	}
-	void margin(const Grid& grid, const tmany<bool>& a, tmany<bool>& out, uint radius)
+	void margin(const Grid& grid, const series<bool>& a, series<bool>& out, uint radius)
 	{
-		tmany<bool> scratch(a.size());
+		series<bool> scratch(a.size());
 		margin(grid, a, out, radius, scratch);
 	}
 	
 	// NOTE: this is not a standard concept in math morphology
 	// It is meant to represent the difference between a figure and its erosion
 	// Its name eludes to the "padding" concept within the html box model
-	void padding(const Grid& grid, const tmany<bool>& a, tmany<bool>& out)
+	void padding(const Grid& grid, const series<bool>& a, series<bool>& out)
 	{
 		erode  ( grid, a, out );
 		differ ( a,  out, out );
 	}
-	void padding(const Grid& grid, const tmany<bool>& a, tmany<bool>& out, uint radius, tmany<bool>& scratch)
+	void padding(const Grid& grid, const series<bool>& a, series<bool>& out, uint radius, series<bool>& scratch)
 	{
 		erode  ( grid, a, out, radius, scratch );
 		differ ( a,  out, out                  );
 	}
-	void padding(const Grid& grid, const tmany<bool>& a, tmany<bool>& out, uint radius)
+	void padding(const Grid& grid, const series<bool>& a, series<bool>& out, uint radius)
 	{
-		tmany<bool> scratch(a.size());
+		series<bool> scratch(a.size());
 		padding(grid, a, out, radius, scratch);
 	}
 

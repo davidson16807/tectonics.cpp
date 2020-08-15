@@ -43,74 +43,74 @@ namespace rasters
         This is often used to map vertex aligned data to a format that can be ingested by OpenGL programs,
         so it pays to have a precomputed version.
         */
-        many::tmany<unsigned int>                   flattened_face_vertex_ids;
+        many::series<unsigned int>                   flattened_face_vertex_ids;
         /*
         This stores the content of `vertex_positions` in a format that can be accepted by OpenGL
         This is used every frame to map vertex aligned data to a format that can be ingested by OpenGL programs,
         so it pays to have a precomputed version.
         */
-        many::tmany<float>                          flattened_face_vertex_coordinates;
+        many::series<float>                          flattened_face_vertex_coordinates;
 
         //ivecNs                                    vertex_neighbor_ids;
         uint                                        vertex_count;
-        many::tmany<unsigned int>                   vertex_neighbor_counts;
-        many::tmany<glm::vec3>                      vertex_positions;
-        many::tmany<glm::vec3>                      vertex_normals;
-        many::tmany<float>                          vertex_areas;
+        many::series<unsigned int>                   vertex_neighbor_counts;
+        many::series<glm::vec3>                      vertex_positions;
+        many::series<glm::vec3>                      vertex_normals;
+        many::series<float>                          vertex_areas;
         float                                       vertex_average_area;
 
         uint                                        face_count;
-        many::tmany<glm::uvec3>                     face_vertex_ids;
-        many::tmany<unsigned int>                   face_vertex_id_a;
-        many::tmany<unsigned int>                   face_vertex_id_b;
-        many::tmany<unsigned int>                   face_vertex_id_c;
-        //many::tmany<unsigned int>                 face_edge_id_a;
-        //many::tmany<unsigned int>                 face_edge_id_b;
-        //many::tmany<unsigned int>                 face_edge_id_c;
-        many::tmany<glm::vec3>                      face_endpoint_a;
-        many::tmany<glm::vec3>                      face_endpoint_b;
-        many::tmany<glm::vec3>                      face_endpoint_c;
-        many::tmany<glm::vec3>                      face_midpoints;
-        many::tmany<glm::vec3>                      face_normals;
-        many::tmany<float>                          face_areas;
+        many::series<glm::uvec3>                     face_vertex_ids;
+        many::series<unsigned int>                   face_vertex_id_a;
+        many::series<unsigned int>                   face_vertex_id_b;
+        many::series<unsigned int>                   face_vertex_id_c;
+        //many::series<unsigned int>                 face_edge_id_a;
+        //many::series<unsigned int>                 face_edge_id_b;
+        //many::series<unsigned int>                 face_edge_id_c;
+        many::series<glm::vec3>                      face_endpoint_a;
+        many::series<glm::vec3>                      face_endpoint_b;
+        many::series<glm::vec3>                      face_endpoint_c;
+        many::series<glm::vec3>                      face_midpoints;
+        many::series<glm::vec3>                      face_normals;
+        many::series<float>                          face_areas;
         float                                       face_average_area;
 
         uint                                        edge_count;
-        many::tmany<glm::uvec2>                     edge_vertex_ids;
-        many::tmany<unsigned int>                   edge_vertex_id_a;
-        many::tmany<unsigned int>                   edge_vertex_id_b;
-        many::tmany<glm::uvec2>                     edge_face_ids;
-        many::tmany<unsigned int>                   edge_face_id_a;
-        many::tmany<unsigned int>                   edge_face_id_b;
-        many::tmany<glm::vec3>                      edge_endpoint_a;
-        many::tmany<glm::vec3>                      edge_endpoint_b;
-        many::tmany<glm::vec3>                      edge_midpoints;
-        many::tmany<float>                          edge_lengths;
-        many::tmany<glm::vec3>                      edge_normals;
-        //many::tmany<float>                        edge_areas;
+        many::series<glm::uvec2>                     edge_vertex_ids;
+        many::series<unsigned int>                   edge_vertex_id_a;
+        many::series<unsigned int>                   edge_vertex_id_b;
+        many::series<glm::uvec2>                     edge_face_ids;
+        many::series<unsigned int>                   edge_face_id_a;
+        many::series<unsigned int>                   edge_face_id_b;
+        many::series<glm::vec3>                      edge_endpoint_a;
+        many::series<glm::vec3>                      edge_endpoint_b;
+        many::series<glm::vec3>                      edge_midpoints;
+        many::series<float>                          edge_lengths;
+        many::series<glm::vec3>                      edge_normals;
+        //many::series<float>                        edge_areas;
         float                                       edge_average_length;
         
         uint                                        arrow_count;
-        many::tmany<glm::uvec2>                     arrow_vertex_ids;
-        many::tmany<unsigned int>                   arrow_vertex_id_from;
-        many::tmany<unsigned int>                   arrow_vertex_id_to;
-        many::tmany<glm::uvec2>                     arrow_face_ids;
-        many::tmany<unsigned int>                   arrow_face_id_a;
-        many::tmany<unsigned int>                   arrow_face_id_b;
-        many::tmany<glm::vec3>                      arrow_endpoint_from;
-        many::tmany<glm::vec3>                      arrow_endpoint_to;
-        many::tmany<glm::vec3>                      arrow_midpoints;
-        many::tmany<glm::vec3>                      arrow_offsets;
-        many::tmany<float>                          arrow_lengths;
-        many::tmany<glm::vec3>                      arrow_normals;
-        //many::tmany<float>                        arrow_areas;
+        many::series<glm::uvec2>                     arrow_vertex_ids;
+        many::series<unsigned int>                   arrow_vertex_id_from;
+        many::series<unsigned int>                   arrow_vertex_id_to;
+        many::series<glm::uvec2>                     arrow_face_ids;
+        many::series<unsigned int>                   arrow_face_id_a;
+        many::series<unsigned int>                   arrow_face_id_b;
+        many::series<glm::vec3>                      arrow_endpoint_from;
+        many::series<glm::vec3>                      arrow_endpoint_to;
+        many::series<glm::vec3>                      arrow_midpoints;
+        many::series<glm::vec3>                      arrow_offsets;
+        many::series<float>                          arrow_lengths;
+        many::series<glm::vec3>                      arrow_normals;
+        //many::series<float>                        arrow_areas;
         float                                       arrow_average_length;
 
-        many::tmany<float>                          vertex_dual_areas;
-        many::tmany<glm::vec3>                      arrow_dual_endpoint_a;
-        many::tmany<glm::vec3>                      arrow_dual_endpoint_b;
-        many::tmany<float>                          arrow_dual_lengths;
-        many::tmany<glm::vec3>                      arrow_dual_normals;
+        many::series<float>                          vertex_dual_areas;
+        many::series<glm::vec3>                      arrow_dual_endpoint_a;
+        many::series<glm::vec3>                      arrow_dual_endpoint_b;
+        many::series<float>                          arrow_dual_lengths;
+        many::series<glm::vec3>                      arrow_dual_normals;
 
         ~Grid()
         {

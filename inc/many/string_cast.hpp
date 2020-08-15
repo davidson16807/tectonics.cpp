@@ -19,7 +19,7 @@ namespace many
 	} 
 
 	template <typename T>
-	std::string to_string(const tmany<T>& a, const T lo, const T hi, const int line_char_width = 80)
+	std::string to_string(const series<T>& a, const T lo, const T hi, const int line_char_width = 80)
 	{
 		std::string out("");
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -57,7 +57,7 @@ namespace many
 	}
 
 	template <typename T>
-	std::string to_string(const tmany<T>& a, const int line_char_width = 80)
+	std::string to_string(const series<T>& a, const int line_char_width = 80)
 	{
 		return to_string(a, min(a), max(a), line_char_width);
 	}

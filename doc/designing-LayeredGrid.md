@@ -24,11 +24,11 @@ We therefore choose option 2.).
 
 We now know we must design a horizontal structure of vertical collections. However, we have several options to pursue when implementing this. We may choose either a flat data storage method or a nested data storage method, and if we choose the latter we must choose whether to store the vertical collection as noncontiguous memory that's referenced using pointers or as contiguous memory that's constant in size. In other words, we must choose between the following options:
 
-* `tmany<tprofile<T,N>>` 
+* `series<tprofile<T,N>>` 
 	contiguous nested storage
-* `tmany<tmany<T>>`
+* `series<series<T>>`
 	noncontiguous nested storage
-* `tmany<T>` 
+* `series<T>` 
 	flat data storage
 
 Here, `tprofile<T,N>` is a placeholder name for our vertical collection, representing a contiguous block of memory of constant size N. 
@@ -36,16 +36,16 @@ Here, `tprofile<T,N>` is a placeholder name for our vertical collection, represe
 So let's look at our design considerations again and map them back to the options they allow:
 
 Memory Footprint
-	`tmany<tprofile<T,N>>`and`tmany<T>` can both be implemented in a contiguous block of memory.
-	`tmany<tmany<T>>` is forbidden because it requires pointers everywhere to noncontiguous memory
+	`series<tprofile<T,N>>`and`series<T>` can both be implemented in a contiguous block of memory.
+	`series<series<T>>` is forbidden because it requires pointers everywhere to noncontiguous memory
 Code Reuse
-	`tmany<tmany<T>>` and `tmany<tprofile<T,N>>`may allow us to reuse existing code, if possible (see comments below).
-	`tmany<T>` is forbidden because it would require existing code to have intimate knowledge of this data structure.
+	`series<series<T>>` and `series<tprofile<T,N>>`may allow us to reuse existing code, if possible (see comments below).
+	`series<T>` is forbidden because it would require existing code to have intimate knowledge of this data structure.
 Run Time Flexibility
-	`tmany<tmany<T>>` and `tmany<T>` can both be implemented in a way that allows resizing the block of memory. 
-	`tmany<tprofile<T,N>>` is forbidden because the size of `N` must be known at compile time
+	`series<series<T>>` and `series<T>` can both be implemented in a way that allows resizing the block of memory. 
+	`series<tprofile<T,N>>` is forbidden because the size of `N` must be known at compile time
 
-Our foremost concern is memory footprint, so we will dismiss `tmany<tmany<T>>` out of hand for that reason. That leaves `tmany<tprofile<T,N>>` and `tmany<T>`. 
+Our foremost concern is memory footprint, so we will dismiss `series<series<T>>` out of hand for that reason. That leaves `series<tprofile<T,N>>` and `series<T>`. 
 
 <work-in-progress>
 	Before we continue, we will note one extra thing about our "Code Reuse" consideration. Let's examine our existing code base concerning spatially aware raster operations. We will group them by the types of Grid they use:

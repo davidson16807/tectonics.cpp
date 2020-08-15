@@ -10,9 +10,9 @@ namespace crust
 {
     template <typename T>
     void get_blocks_from_strata(
-        const tmany<float>& surface_displacement, 
-        const SpheroidGrid& strata_grid, const tmany<StrataValues<float>>& strata_depths, const tmany<StrataValues<T>>& strata_values, 
-        const LayeredSpheroidGrid& block_grid, tmany<T>& block_values
+        const many::series<float>& surface_displacement, 
+        const SpheroidGrid& strata_grid, const many::series<StrataValues<float>>& strata_depths, const many::series<StrataValues<T>>& strata_values, 
+        const LayeredSpheroidGrid& block_grid, many::series<T>& block_values
     ){
         assert(strata_values.size() == strata_grid.vertex_count);
         assert(strata_values.size() == strata_depths.vertex_count);
@@ -36,9 +36,9 @@ namespace crust
     }
     template <typename T>
     void get_strata_from_blocks(
-        const tmany<float>& surface_displacement, 
-        const LayeredSpheroidGrid& block_grid, const tmany<T>& block_values, 
-        const SpheroidGrid& strata_grid, const tmany<StrataValues<float>>& strata_depths, tmany<StrataValues<T>>& strata_values
+        const many::series<float>& surface_displacement, 
+        const LayeredSpheroidGrid& block_grid, const many::series<T>& block_values, 
+        const SpheroidGrid& strata_grid, const many::series<StrataValues<float>>& strata_depths, many::series<StrataValues<T>>& strata_values
     ){
         assert(strata_values.size() == strata_grid.vertex_count);
         assert(strata_values.size() == strata_depths.vertex_count);

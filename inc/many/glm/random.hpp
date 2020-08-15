@@ -62,15 +62,15 @@ namespace many
     */
 	template <class T, class Tgenerator>
 	void get_elias_noise(
-		const many::tmany<glm::vec3>& positions, 
+		const many::series<glm::vec3>& positions, 
 		Tgenerator& generator, 
-		many::tmany<T>& out, 
+		many::series<T>& out, 
 		// NOTE: "region_count" is the number of regions where we increment grid cell values
 		uint region_count = 1000,
 		// NOTE: "region_transition_width" is the width of the transition zone for a region
 		T region_transition_width = T(0.03)
 	){
-		many::tmany<T> region_mod(out.size(), T(0));
+		many::series<T> region_mod(out.size(), T(0));
 		T region_threshold(0);
 		glm::vec3 region_center(0);
 		std::uniform_real_distribution<float> distribution(0.0, 1.0);
@@ -90,23 +90,23 @@ namespace many
 	}
 
 	template <class T, class Tgenerator>
-	many::tmany<T> get_elias_noise(
-		const many::tmany<glm::vec3>& positions, 
+	many::series<T> get_elias_noise(
+		const many::series<glm::vec3>& positions, 
 		Tgenerator& generator,
 		// NOTE: "region_count" is the number of regions where we increment grid cell values
 		uint region_count = 1000,
 		// NOTE: "region_transition_width" is the width of the transition zone for a region
 		T region_transition_width = T(0.03)
 	){
-		many::tmany<T> out(positions.size());
+		many::series<T> out(positions.size());
 		get_elias_noise(positions, generator, out, region_count, region_transition_width);
 		return out;
 	}
 
 	template <class T>
 	void get_perlin_noise(
-		const many::tmany<glm::vec3>& positions, 
-		many::tmany<T>& out,
+		const many::series<glm::vec3>& positions, 
+		many::series<T>& out,
 		glm::vec3 K = glm::vec3(1.6, 80., 7.0)
 	){
 		assert(out.size() == positions.size());
@@ -145,8 +145,8 @@ namespace many
 
 	template <class T>
 	void get_worley_noise(
-		const many::tmany<glm::vec3>& positions, 
-		many::tmany<T>& out
+		const many::series<glm::vec3>& positions, 
+		many::series<T>& out
 	){
 		assert(out.size() == positions.size());
 		glm::vec3  V(0.);

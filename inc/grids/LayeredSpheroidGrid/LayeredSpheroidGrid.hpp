@@ -48,7 +48,7 @@ namespace rasters
 	};
 
 	template <typename T>
-	void get_layer(const many::tmany<T>& a, const uint layer_id, many::tmany<T>& out) 
+	void get_layer(const many::series<T>& a, const uint layer_id, many::series<T>& out) 
 	{
 		assert(a.size() > out.size());
 		assert(a.size() % out.size() == 0);
@@ -60,7 +60,7 @@ namespace rasters
 	}
 
 	template <typename T, glm::qualifier Q>
-	void get_layer(const many::tmany<glm::vec<2,T,Q>>& a, const uint layer_id, many::tmany<glm::vec<2,T,Q>>& out) 
+	void get_layer(const many::series<glm::vec<2,T,Q>>& a, const uint layer_id, many::series<glm::vec<2,T,Q>>& out) 
 	{
 		assert(a.size() > out.size());
 		assert(a.size() % out.size() == 0);
@@ -72,7 +72,7 @@ namespace rasters
 	}
 
 	template <typename T, glm::qualifier Q>
-	void get_layer(const many::tmany<glm::vec<3,T,Q>>& a, const uint layer_id, many::tmany<glm::vec<3,T,Q>>& out) 
+	void get_layer(const many::series<glm::vec<3,T,Q>>& a, const uint layer_id, many::series<glm::vec<3,T,Q>>& out) 
 	{
 		assert(a.size() > out.size());
 		assert(a.size() % out.size() == 0);

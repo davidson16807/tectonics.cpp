@@ -8,8 +8,8 @@
 
 int main(int argc, char const *argv[])
 {
-	auto a = std::tmany<glm::vec3> { glm::vec3(1,2,3) };
-	auto b = std::tmany<glm::vec3> { glm::vec3(1,1,3) };
+	auto a = std::valarray<glm::vec3> { glm::vec3(1,2,3) };
+	auto b = std::valarray<glm::vec3> { glm::vec3(1,1,3) };
 	auto c = a + b;
 	std::cout << c[0].x << " " << c[0].y << " " << c[0].z << std::endl;
 }

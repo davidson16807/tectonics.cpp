@@ -7,12 +7,12 @@ namespace rasters
 	template<typename T, glm::qualifier Q>
 	void gradient(
 		const LayeredSpheroidGrid& grid, 
-		const many::tmany<T>& scalar_field, 
-		many::tmany<glm::vec<3,T,Q>>& out, 
-		many::tmany<T>& arrow_differential, 
-		many::tmany<T>& layer_differential, 
-		many::tmany<glm::vec<3,T,Q>>& arrow_flow,
-		many::tmany<glm::vec<3,T,Q>>& layer_flow
+		const many::series<T>& scalar_field, 
+		many::series<glm::vec<3,T,Q>>& out, 
+		many::series<T>& arrow_differential, 
+		many::series<T>& layer_differential, 
+		many::series<glm::vec<3,T,Q>>& arrow_flow,
+		many::series<glm::vec<3,T,Q>>& layer_flow
 	) {
 		assert(scalar_field.size()       == grid.vertex_count * grid.layer_count );
 		assert(out.size()                == grid.vertex_count * grid.layer_count );
@@ -62,13 +62,13 @@ namespace rasters
 	}
 
 	template<typename T>
-	many::tmany<glm::vec3> gradient(const LayeredSpheroidGrid& grid, const many::tmany<T>& scalar_field)
+	many::series<glm::vec3> gradient(const LayeredSpheroidGrid& grid, const many::series<T>& scalar_field)
 	{
-		many::tmany<T>         arrow_differential (grid.arrow_count  * grid.layer_count);
-		many::tmany<T>         layer_differential (grid.vertex_count * grid.layer_count);
-		many::tmany<glm::vec3> arrow_flow         (grid.arrow_count  * grid.layer_count);
-		many::tmany<glm::vec3> layer_flow         (grid.vertex_count * grid.layer_count);
-		many::tmany<glm::vec3> out                (grid.vertex_count * grid.layer_count);
+		many::series<T>         arrow_differential (grid.arrow_count  * grid.layer_count);
+		many::series<T>         layer_differential (grid.vertex_count * grid.layer_count);
+		many::series<glm::vec3> arrow_flow         (grid.arrow_count  * grid.layer_count);
+		many::series<glm::vec3> layer_flow         (grid.vertex_count * grid.layer_count);
+		many::series<glm::vec3> out                (grid.vertex_count * grid.layer_count);
 		gradient(grid, scalar_field, out, arrow_differential, layer_differential, arrow_flow, layer_flow);
 		return out;
 	}
@@ -77,12 +77,12 @@ namespace rasters
 	template<typename T, glm::qualifier Q>
 	void divergence(
 		const LayeredSpheroidGrid& grid, 
-		const many::tmany<glm::vec<3,T,Q>>& vector_field, 
-		many::tmany<T>& out, 
-		many::tmany<glm::vec<3,T,Q>>& arrow_differential, 
-		many::tmany<glm::vec<3,T,Q>>& layer_differential, 
-		many::tmany<T>& arrow_projection,
-		many::tmany<T>& layer_projection
+		const many::series<glm::vec<3,T,Q>>& vector_field, 
+		many::series<T>& out, 
+		many::series<glm::vec<3,T,Q>>& arrow_differential, 
+		many::series<glm::vec<3,T,Q>>& layer_differential, 
+		many::series<T>& arrow_projection,
+		many::series<T>& layer_projection
 	) {
 		assert(vector_field.size()       == grid.vertex_count * grid.layer_count );
 		assert(out.size()                == grid.vertex_count * grid.layer_count );
@@ -132,13 +132,13 @@ namespace rasters
 	}
 
 	template<typename T, glm::qualifier Q>
-	many::tmany<T> divergence(const LayeredSpheroidGrid& grid, const many::tmany<glm::vec<3,T,Q>>& vector_field)
+	many::series<T> divergence(const LayeredSpheroidGrid& grid, const many::series<glm::vec<3,T,Q>>& vector_field)
 	{
-		many::tmany<glm::vec<3,T,Q>> arrow_differential (grid.arrow_count  * grid.layer_count);
-		many::tmany<glm::vec<3,T,Q>> layer_differential (grid.vertex_count * grid.layer_count);
-		many::tmany<T>               arrow_projection   (grid.arrow_count  * grid.layer_count);
-		many::tmany<T>               layer_projection   (grid.vertex_count * grid.layer_count);
-		many::tmany<T>               out                (grid.vertex_count * grid.layer_count);
+		many::series<glm::vec<3,T,Q>> arrow_differential (grid.arrow_count  * grid.layer_count);
+		many::series<glm::vec<3,T,Q>> layer_differential (grid.vertex_count * grid.layer_count);
+		many::series<T>               arrow_projection   (grid.arrow_count  * grid.layer_count);
+		many::series<T>               layer_projection   (grid.vertex_count * grid.layer_count);
+		many::series<T>               out                (grid.vertex_count * grid.layer_count);
 		divergence(grid, vector_field, out, arrow_differential, layer_differential, arrow_projection, layer_projection);
 		return out;
 	}
@@ -147,12 +147,12 @@ namespace rasters
 	template<typename T, glm::qualifier Q>
 	void curl(
 		const LayeredSpheroidGrid& grid, 
-		const many::tmany<glm::vec<3,T,Q>>& vector_field, 
-		many::tmany<glm::vec<3,T,Q>>& out, 
-		many::tmany<glm::vec<3,T,Q>>& arrow_differential, 
-		many::tmany<glm::vec<3,T,Q>>& layer_differential, 
-		many::tmany<glm::vec<3,T,Q>>& arrow_rejection,
-		many::tmany<glm::vec<3,T,Q>>& layer_rejection
+		const many::series<glm::vec<3,T,Q>>& vector_field, 
+		many::series<glm::vec<3,T,Q>>& out, 
+		many::series<glm::vec<3,T,Q>>& arrow_differential, 
+		many::series<glm::vec<3,T,Q>>& layer_differential, 
+		many::series<glm::vec<3,T,Q>>& arrow_rejection,
+		many::series<glm::vec<3,T,Q>>& layer_rejection
 	) {
 		assert(vector_field.size()       == grid.vertex_count * grid.layer_count );
 		assert(out.size()                == grid.vertex_count * grid.layer_count );
@@ -202,13 +202,13 @@ namespace rasters
 	}
 
 	template<typename T, glm::qualifier Q>
-	many::tmany<glm::vec<3,T,Q>> curl(const LayeredSpheroidGrid& grid, const many::tmany<glm::vec<3,T,Q>>& vector_field)
+	many::series<glm::vec<3,T,Q>> curl(const LayeredSpheroidGrid& grid, const many::series<glm::vec<3,T,Q>>& vector_field)
 	{
-		many::tmany<glm::vec<3,T,Q>> arrow_differential (grid.arrow_count  * grid.layer_count);
-		many::tmany<glm::vec<3,T,Q>> layer_differential (grid.vertex_count * grid.layer_count);
-		many::tmany<glm::vec<3,T,Q>> arrow_projection   (grid.arrow_count  * grid.layer_count);
-		many::tmany<glm::vec<3,T,Q>> layer_projection   (grid.vertex_count * grid.layer_count);
-		many::tmany<glm::vec<3,T,Q>> out                (grid.vertex_count * grid.layer_count);
+		many::series<glm::vec<3,T,Q>> arrow_differential (grid.arrow_count  * grid.layer_count);
+		many::series<glm::vec<3,T,Q>> layer_differential (grid.vertex_count * grid.layer_count);
+		many::series<glm::vec<3,T,Q>> arrow_projection   (grid.arrow_count  * grid.layer_count);
+		many::series<glm::vec<3,T,Q>> layer_projection   (grid.vertex_count * grid.layer_count);
+		many::series<glm::vec<3,T,Q>> out                (grid.vertex_count * grid.layer_count);
 		curl(grid, vector_field, out, arrow_differential, layer_differential, arrow_projection, layer_projection);
 		return out;
 	}
@@ -217,10 +217,10 @@ namespace rasters
 	template<typename T>
 	void laplacian(
 		const LayeredSpheroidGrid& grid, 
-		const many::tmany<T>& scalar_field, 
-		many::tmany<T>& out, 
-		many::tmany<T>& arrow_scratch, 
-		many::tmany<T>& layer_scratch
+		const many::series<T>& scalar_field, 
+		many::series<T>& out, 
+		many::series<T>& arrow_scratch, 
+		many::series<T>& layer_scratch
 	) {
 		assert(scalar_field.size()  == grid.vertex_count * grid.layer_count );
 		assert(arrow_scratch.size() == grid.arrow_count  * grid.layer_count );
@@ -267,11 +267,11 @@ namespace rasters
 		div 	(out,                grid.layer_height,         out);             // laplacian
 	}
 	template<typename T>
-	many::tmany<T> laplacian(const LayeredSpheroidGrid& grid, const many::tmany<T>& scalar_field)
+	many::series<T> laplacian(const LayeredSpheroidGrid& grid, const many::series<T>& scalar_field)
 	{
-		many::tmany<T> arrow_scratch    (grid.arrow_count  * grid.layer_count);
-		many::tmany<T> layer_scratch    (grid.vertex_count * grid.layer_count);
-		many::tmany<T> out              (grid.vertex_count * grid.layer_count);
+		many::series<T> arrow_scratch    (grid.arrow_count  * grid.layer_count);
+		many::series<T> layer_scratch    (grid.vertex_count * grid.layer_count);
+		many::series<T> out              (grid.vertex_count * grid.layer_count);
 		laplacian(grid, scalar_field, out, arrow_scratch, layer_scratch);
 		return out;
 	}
@@ -279,10 +279,10 @@ namespace rasters
 	template<unsigned int L, typename T, glm::qualifier Q>
 	void laplacian(
 		const LayeredSpheroidGrid& grid, 
-		const many::tmany<glm::vec<L,T,Q>>& vector_field, 
-		many::tmany<glm::vec<L,T,Q>>& out, 
-		many::tmany<glm::vec<L,T,Q>>& arrow_scratch,
-		many::tmany<glm::vec<L,T,Q>>& layer_scratch
+		const many::series<glm::vec<L,T,Q>>& vector_field, 
+		many::series<glm::vec<L,T,Q>>& out, 
+		many::series<glm::vec<L,T,Q>>& arrow_scratch,
+		many::series<glm::vec<L,T,Q>>& layer_scratch
 	) {
 		assert(vector_field.size()  == grid.vertex_count * grid.layer_count );
 		assert(out.size()           == grid.vertex_count * grid.layer_count );
@@ -329,11 +329,11 @@ namespace rasters
 		div 	(out,                grid.layer_height,         out);             // laplacian
 	}
 	template<unsigned int L, typename T, glm::qualifier Q>
-	many::tmany<glm::vec<L,T,Q>> laplacian(const LayeredSpheroidGrid& grid, const many::tmany<glm::vec<L,T,Q>>& vector_field)
+	many::series<glm::vec<L,T,Q>> laplacian(const LayeredSpheroidGrid& grid, const many::series<glm::vec<L,T,Q>>& vector_field)
 	{
-		many::tmany<glm::vec<L,T,Q>> arrow_scratch (grid.arrow_count  * grid.layer_count);
-		many::tmany<glm::vec<L,T,Q>> layer_scratch (grid.vertex_count * grid.layer_count);
-		many::tmany<glm::vec<L,T,Q>> out           (grid.vertex_count * grid.layer_count);
+		many::series<glm::vec<L,T,Q>> arrow_scratch (grid.arrow_count  * grid.layer_count);
+		many::series<glm::vec<L,T,Q>> layer_scratch (grid.vertex_count * grid.layer_count);
+		many::series<glm::vec<L,T,Q>> out           (grid.vertex_count * grid.layer_count);
 		laplacian(grid, vector_field, out, arrow_scratch, layer_scratch);
 		return out;
 	}

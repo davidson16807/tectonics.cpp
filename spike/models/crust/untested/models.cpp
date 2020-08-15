@@ -9,9 +9,9 @@
 namespace crust
 {
     void phase_transition(
-        const tmany<StrataValues<float>>& pressure, const tmany<StrataValues<float>>& temperature, 
-        tmany<StrataStore>& crust,
-        tmany<StrataStore>& solidification_deltas,
+        const many::series<StrataValues<float>>& pressure, const many::series<StrataValues<float>>& temperature, 
+        many::series<StrataStore>& crust,
+        many::series<StrataStore>& solidification_deltas,
         std::array<MassPool, Stratum::mass_pool_count> vaporization_delta&,
         std::array<MassPool, Stratum::mass_pool_count> melting_delta&
     ){
@@ -158,8 +158,8 @@ namespace crust
 
     void get_arrow_slope(
         const SpheroidGrid&   grid,
-        const tmany<float>&   vertex_height,
-        tmany<float>&         arrow_height
+        const many::series<float>&   vertex_height,
+        many::series<float>&         arrow_height
     ){
         assert( vertex_height.size()  == grid.vertex_count );
         assert( arrow_height   .size()  == grid.arrow_count  );
@@ -174,10 +174,10 @@ namespace crust
 
     void get_arrow_discharge(
         const SpheroidGrid&   grid,
-        const tmany<float>&   vertex_precipitation,
-        const tmany<float>&   arrow_slope,
-        tmany<float>&         arrow_discharge,
-        tmany<float>&         scratch,
+        const many::series<float>&   vertex_precipitation,
+        const many::series<float>&   arrow_slope,
+        many::series<float>&         arrow_discharge,
+        many::series<float>&         scratch,
     ){
         assert( vertex_precipitation.size()  == grid.vertex_count );
         assert( arrow_slope         .size()  == grid.arrow_count  );
@@ -214,15 +214,15 @@ namespace crust
     // model based on Simoes (2010)
     void erosion(
         const SpheroidGrid&   grid,
-        const tmany<Stratum>& sediment, 
-        const tmany<float>&   arrow_slope, 
-        const tmany<float>&   arrow_discharge, 
+        const many::series<Stratum>& sediment, 
+        const many::series<float>&   arrow_slope, 
+        const many::series<float>&   arrow_discharge, 
         const float           seconds, 
-        tmany<Stratum>&       outgoing, 
-        tmany<Stratum>&       incoming,
-        tmany<float>&         vertex_capacity, // scratch
-        tmany<float>&         vertex_outgoing, // scratch
-        tmany<float>&         arrow_capacity   // scratch
+        many::series<Stratum>&       outgoing, 
+        many::series<Stratum>&       incoming,
+        many::series<float>&         vertex_capacity, // scratch
+        many::series<float>&         vertex_outgoing, // scratch
+        many::series<float>&         arrow_capacity   // scratch
     ) {
         const float transport_coefficient(0.0036); // fraction, from Simoes (2010)
 
@@ -287,12 +287,12 @@ namespace crust
     
     */
     void weathering(
-        const tmany<StrataStore>& crust, 
-        const tmany<float>& max_height_difference, 
-        const tmany<float>& precipitation, 
+        const many::series<StrataStore>& crust, 
+        const many::series<float>& max_height_difference, 
+        const many::series<float>& precipitation, 
         const float seconds, 
-        tmany<StrataStore>& weathering_delta, 
-        tmany<Stratum>& deposited
+        many::series<StrataStore>& weathering_delta, 
+        many::series<Stratum>& deposited
     ){
         const float erosive_factor(1.8e-7);
         Strata strata;

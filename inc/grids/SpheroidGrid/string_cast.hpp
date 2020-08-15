@@ -43,7 +43,7 @@ namespace rasters
 
 
 	template <typename T>
-	std::string to_string(const SpheroidGridVoronoi& voronoi, const tmany<T>& a, const T lo, const T hi, const uint line_char_width = 80)
+	std::string to_string(const SpheroidGridVoronoi& voronoi, const series<T>& a, const T lo, const T hi, const uint line_char_width = 80)
 	{
 		float lat(0.);
 		float lon(0.);
@@ -97,7 +97,7 @@ namespace rasters
 	}
 
 	template <typename T>
-	std::string to_string(const SpheroidGrid& grid, const tmany<T>& a, const int line_char_width = 80)
+	std::string to_string(const SpheroidGrid& grid, const series<T>& a, const int line_char_width = 80)
 	{
 		return to_string(grid.voronoi, a, min(a), max(a), line_char_width);
 	}
@@ -112,9 +112,9 @@ namespace rasters
 	  * "up" is indicated by the z axis of a 3d vector
 	*/
 	template <typename T, glm::qualifier Q>
-	std::string to_string(const SpheroidGridVoronoi& voronoi, const tmany<glm::vec<2,T,Q>>& a, const uint line_char_width = 80)
+	std::string to_string(const SpheroidGridVoronoi& voronoi, const series<glm::vec<2,T,Q>>& a, const uint line_char_width = 80)
 	{
-		tmany<T> a_length(a.size());
+		series<T> a_length(a.size());
 		length(a, a_length);
 		T a_length_max = max(a_length);
 
@@ -186,7 +186,7 @@ namespace rasters
 	  * "up" is indicated by the z axis of a 3d vector
 	*/
 	template <typename T, glm::qualifier Q>
-	std::string to_string(const SpheroidGrid& grid, const tmany<glm::vec<2,T,Q>>& a, const uint line_char_width = 80)
+	std::string to_string(const SpheroidGrid& grid, const series<glm::vec<2,T,Q>>& a, const uint line_char_width = 80)
 	{
 		return to_string(grid.voronoi, a, line_char_width);
 	}
@@ -203,8 +203,8 @@ namespace rasters
 	template <typename T, glm::qualifier Q>
 	std::string to_string(
 		const SpheroidGridVoronoi& voronoi, 
-		const tmany<glm::vec<3,T,Q>>& vertex_normals, 
-		const tmany<glm::vec<3,T,Q>>& a, 
+		const series<glm::vec<3,T,Q>>& vertex_normals, 
+		const series<glm::vec<3,T,Q>>& a, 
 		const uint line_char_width = 80, 
 		const glm::vec3 up = glm::vec3(0,0,1)
 	) {
@@ -213,7 +213,7 @@ namespace rasters
 		many::vec3s		surface_basis_z(vertex_normals);
 		many::floats	a2dx(a.size());
 		many::floats	a2dy(a.size());
-		tmany<glm::vec<2,T,Q>> a2d (vertex_normals.size());
+		series<glm::vec<2,T,Q>> a2d (vertex_normals.size());
 
 		cross		(surface_basis_z, up, 				surface_basis_x);
 		normalize	(surface_basis_x, 					surface_basis_x);
@@ -233,7 +233,7 @@ namespace rasters
 	template <typename T, glm::qualifier Q>
 	std::string to_string(
 		const SpheroidGrid& grid, 
-		const tmany<glm::vec<3,T,Q>>& a, 
+		const series<glm::vec<3,T,Q>>& a, 
 		const uint line_char_width = 80, 
 		const glm::vec3 up = glm::vec3(0,0,1)
 	) {

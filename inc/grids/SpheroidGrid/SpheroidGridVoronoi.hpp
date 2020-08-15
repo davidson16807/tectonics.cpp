@@ -140,7 +140,7 @@ namespace rasters
 			return get_value(get_conceptual_id(point));
 		}
 
-		void get_values(const vec3s& points, tmany<T>& out) const
+		void get_values(const vec3s& points, series<T>& out) const
 		{
 			for (unsigned int i = 0; i < points.size(); ++i)
 			{

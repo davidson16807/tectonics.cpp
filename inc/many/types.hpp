@@ -14,24 +14,24 @@ namespace many
 	// This template represents a statically-sized contiguous block of heap memory occupied by primitive data of the same arbitrary type
 	// See README.md for more details
 	template <class T>
-	class tmany
+	class series
 	{
 	protected:
 		std::vector<T> values;
 
 	public:
 
-		virtual ~tmany()
+		virtual ~series()
 		{
 		}
 
 		// initializer list constructor
-		tmany(std::initializer_list<T> list) : values(list.begin(), list.end())
+		series(std::initializer_list<T> list) : values(list.begin(), list.end())
 		{
 		}
 		// std container style constructor
 		template<class TIterator>
-		tmany(TIterator first, TIterator last) : values(std::distance(first, last))
+		series(TIterator first, TIterator last) : values(std::distance(first, last))
 		{
 			unsigned int id = 0;
 			while (first!=last) 
@@ -43,19 +43,19 @@ namespace many
 		}
 
 		// copy constructor
-		tmany(const tmany<T>& a)  : values(a.values) {}
+		series(const series<T>& a)  : values(a.values) {}
 
 		// convenience constructor for vectors
-		explicit tmany(std::vector<T> vector) : values(vector)
+		explicit series(std::vector<T> vector) : values(vector)
 		{
 		}
 
-		explicit tmany(const unsigned int N) : values(N) {}
+		explicit series(const unsigned int N) : values(N) {}
 
-		explicit tmany(const unsigned int N, const T a)  : values(N, a) {}
+		explicit series(const unsigned int N, const T a)  : values(N, a) {}
 
 		template <class T2>
-		explicit tmany(const tmany<T2>& a)  : values(a.size())
+		explicit series(const series<T2>& a)  : values(a.size())
 		{
 			for (unsigned int i = 0; i < a.size(); ++i)
 			{
@@ -89,26 +89,26 @@ namespace many
 		   return values[id]; // reference return 
 		}
 	
-		inline tmany<T> operator[](const tmany<bool>& mask )
+		inline series<T> operator[](const series<bool>& mask )
 		{
-			tmany<T> out = tmany<T>(mask.size());
+			series<T> out = series<T>(mask.size());
 			get(*this, mask, out);
 			return out;
 		}
-		inline tmany<T> operator[](const tmany<unsigned int>& ids )
+		inline series<T> operator[](const series<unsigned int>& ids )
 		{
-			tmany<T> out = tmany<T>(ids.size());
+			series<T> out = series<T>(ids.size());
 			get(*this, ids, out);
 			return out;
 		}
 
-		inline tmany<T>& operator=(const tmany<T>& other )
+		inline series<T>& operator=(const series<T>& other )
 		{
 			values.resize(other.size());
 			copy(*this, other);
 			return *this;
 		}
-		inline tmany<T>& operator=(const T& other )
+		inline series<T>& operator=(const T& other )
 		{
 			values.resize(other.size());
 			fill(*this, other);
@@ -118,12 +118,12 @@ namespace many
 
 
 	template <class T>
-	inline T get(const tmany<T>& a, const unsigned int id )
+	inline T get(const series<T>& a, const unsigned int id )
 	{
 		return a[id];
 	}
 	template <class T>
-	void get(const tmany<T>& a, const tmany<unsigned int>& ids, tmany<T>& out )
+	void get(const series<T>& a, const series<unsigned int>& ids, series<T>& out )
 	{
 		assert(ids.size() == out.size());
 		for (unsigned int i = 0; i < ids.size(); ++i)
@@ -136,7 +136,7 @@ namespace many
 		}
 	}
 	template <class T>
-	void get(const tmany<T>& a, const tmany<bool>& mask, tmany<T>& out )
+	void get(const series<T>& a, const series<bool>& mask, series<T>& out )
 	{
 		assert(a.size()  == mask.size());
 		int out_i = 0;
@@ -151,7 +151,7 @@ namespace many
 	}
 
 	template <class T>
-	void fill(tmany<T>& out, const T a )
+	void fill(series<T>& out, const T a )
 	{
 		for (unsigned int i = 0; i < out.size(); ++i)
 		{
@@ -159,7 +159,7 @@ namespace many
 		}
 	}
 	template <class T>
-	void fill(tmany<T>& out, const tmany<unsigned int>& ids, const T a )
+	void fill(series<T>& out, const series<unsigned int>& ids, const T a )
 	{
 		for (unsigned int i = 0; i < ids.size(); ++i)
 		{
@@ -172,7 +172,7 @@ namespace many
 		}
 	}
 	template <class T>
-	void fill(tmany<T>& out, const tmany<bool>& mask, const T a )
+	void fill(series<T>& out, const series<bool>& mask, const T a )
 	{
 		assert(out.size() == mask.size());
 		for (unsigned int i = 0; i < out.size(); ++i)
@@ -182,7 +182,7 @@ namespace many
 	}
 
 	template<class T, class TIterator>
-	void copy_iterators(tmany<T>& out, TIterator first, TIterator last)
+	void copy_iterators(series<T>& out, TIterator first, TIterator last)
 	{
 		unsigned int id = 0;
 		while (first!=last) 
@@ -193,7 +193,7 @@ namespace many
 		}
 	}
 	template <class T>
-	void copy(tmany<T>& out, const tmany<T>& a )
+	void copy(series<T>& out, const series<T>& a )
 	{
 		for (unsigned int i = 0; i < out.size(); ++i)
 		{
@@ -201,12 +201,12 @@ namespace many
 		}
 	}
 	template <class T>
-	inline void copy(tmany<T>& out, const unsigned int id, const tmany<T>& a )
+	inline void copy(series<T>& out, const unsigned int id, const series<T>& a )
 	{
 		out[id] = a[id];
 	}
 	template <class T>
-	void copy(tmany<T>& out, const tmany<unsigned int>& ids, const tmany<T>& a )
+	void copy(series<T>& out, const series<unsigned int>& ids, const series<T>& a )
 	{
 		assert(ids.size() == a.size());
 		for (unsigned int i = 0; i < ids.size(); ++i)
@@ -220,7 +220,7 @@ namespace many
 		}
 	}
 	template <class T>
-	void copy(tmany<T>& out, const tmany<bool>& mask, const tmany<T>& a )
+	void copy(series<T>& out, const series<bool>& mask, const series<T>& a )
 	{
 		assert(out.size() == mask.size());
 		assert(out.size() == a.size());
@@ -232,12 +232,12 @@ namespace many
 
 
 	template <class T>
-	inline void set(tmany<T>& out, const unsigned int id, const T a )
+	inline void set(series<T>& out, const unsigned int id, const T a )
 	{
 		out[id] = a;
 	}
 	template <class T>
-	void set(tmany<T>& out, const tmany<unsigned int>& ids, const tmany<T>& a )
+	void set(series<T>& out, const series<unsigned int>& ids, const series<T>& a )
 	{
 		assert(ids.size() == a.size());
 		for (unsigned int i = 0; i < ids.size(); ++i)
@@ -259,7 +259,7 @@ namespace many
 	
 	// UNARY TRANSFORM
 	template <class T1, class Tout, typename F>
-	inline void transform(const tmany<T1>& a, F f, tmany<Tout>& out)
+	inline void transform(const series<T1>& a, F f, series<Tout>& out)
 	{
 		assert(a.size() == out.size());
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -268,7 +268,7 @@ namespace many
 		}
 	}
 	template <class T1, class Tout, typename F>
-	inline void transform(const T1 a, F f, tmany<Tout>& out)
+	inline void transform(const T1 a, F f, series<Tout>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -281,7 +281,7 @@ namespace many
 
 	// BINARY TRANSFORM
 	template <class T1, class T2, class Tout, typename F>
-	inline void transform(const tmany<T1>& a, const tmany<T2>& b, F f, tmany<Tout>& out)
+	inline void transform(const series<T1>& a, const series<T2>& b, F f, series<Tout>& out)
 	{
 		assert(a.size() == out.size());
 		assert(a.size() >= b.size());
@@ -296,7 +296,7 @@ namespace many
 		}
 	}
 	template <class T1, class T2, class Tout, typename F>
-	inline void transform(const tmany<T1>& a, const T2 b, F f, tmany<Tout>& out)
+	inline void transform(const series<T1>& a, const T2 b, F f, series<Tout>& out)
 	{
 		assert(a.size() == out.size());
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -305,7 +305,7 @@ namespace many
 		}
 	}
 	template <class T1, class T2, class Tout, typename F>
-	inline void transform(const T1 a, const tmany<T2>& b, F f, tmany<Tout>& out)
+	inline void transform(const T1 a, const series<T2>& b, F f, series<Tout>& out)
 	{
 		assert(b.size() == out.size());
 		for (unsigned int i = 0; i < b.size(); ++i)
@@ -326,7 +326,7 @@ namespace many
 
 	// TRINARY TRANSFORM
 	template <class T1, class T2, class T3, class Tout, typename F>
-	inline void transform(const tmany<T1>& a, const tmany<T2>& b, const tmany<T3>& c, F f, tmany<Tout>& out)
+	inline void transform(const series<T1>& a, const series<T2>& b, const series<T3>& c, F f, series<Tout>& out)
 	{
 		assert(a.size() == out.size());
 		assert(b.size() == out.size());
@@ -337,7 +337,7 @@ namespace many
 		}
 	}
 	template <class T1, class T2, class T3, class Tout, typename F>
-	inline void transform(const tmany<T1>& a, const tmany<T2>& b, const T3 c, F f, tmany<Tout>& out)
+	inline void transform(const series<T1>& a, const series<T2>& b, const T3 c, F f, series<Tout>& out)
 	{
 		assert(a.size() == out.size());
 		assert(b.size() == out.size());
@@ -347,7 +347,7 @@ namespace many
 		}
 	}
 	template <class T1, class T2, class T3, class Tout, typename F>
-	inline void transform(const tmany<T1>& a, const T2 b, const tmany<T3>& c, F f, tmany<Tout>& out)
+	inline void transform(const series<T1>& a, const T2 b, const series<T3>& c, F f, series<Tout>& out)
 	{
 		assert(a.size() == out.size());
 		assert(c.size() == out.size());
@@ -357,7 +357,7 @@ namespace many
 		}
 	}
 	template <class T1, class T2, class T3, class Tout, typename F>
-	inline void transform(const tmany<T1>& a, const T2 b, const T3 c, F f, tmany<Tout>& out)
+	inline void transform(const series<T1>& a, const T2 b, const T3 c, F f, series<Tout>& out)
 	{
 		assert(a.size() == out.size());
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -366,7 +366,7 @@ namespace many
 		}
 	}
 	template <class T1, class T2, class T3, class Tout, typename F>
-	inline void transform(const T1 a, const tmany<T2>& b, const tmany<T3>& c, F f, tmany<Tout>& out)
+	inline void transform(const T1 a, const series<T2>& b, const series<T3>& c, F f, series<Tout>& out)
 	{
 		assert(b.size() == out.size());
 		assert(c.size() == out.size());
@@ -376,7 +376,7 @@ namespace many
 		}
 	}
 	template <class T1, class T2, class T3, class Tout, typename F>
-	inline void transform(const T1 a, const tmany<T2>& b, const T3 c, F f, tmany<Tout>& out)
+	inline void transform(const T1 a, const series<T2>& b, const T3 c, F f, series<Tout>& out)
 	{
 		assert(b.size() == out.size());
 		for (unsigned int i = 0; i < b.size(); ++i)
@@ -385,7 +385,7 @@ namespace many
 		}
 	}
 	template <class T1, class T2, class T3, class Tout, typename F>
-	inline void transform(const T1 a, const T2 b, const tmany<T3>& c, F f, tmany<Tout>& out)
+	inline void transform(const T1 a, const T2 b, const series<T3>& c, F f, series<Tout>& out)
 	{
 		assert(c.size() == out.size());
 		for (unsigned int i = 0; i < c.size(); ++i)
@@ -397,7 +397,7 @@ namespace many
 
 
 	template<class T, typename Taggregator>
-	void aggregate_into(const tmany<T>& a, const tmany<unsigned int>& group_ids, Taggregator aggregator, tmany<T>& group_out)
+	void aggregate_into(const series<T>& a, const series<unsigned int>& group_ids, Taggregator aggregator, series<T>& group_out)
 	{
 		assert(a.size() == group_ids.size());
 		for (unsigned int i = 0; i < group_ids.size(); ++i)
@@ -411,7 +411,7 @@ namespace many
 	}
 
 	template<class T, typename Taggregator>
-	void aggregate_into(const tmany<unsigned int>& group_ids, Taggregator aggregator, tmany<T>& group_out)
+	void aggregate_into(const series<unsigned int>& group_ids, Taggregator aggregator, series<T>& group_out)
 	{
 		for (unsigned int i = 0; i < group_ids.size(); ++i)
 		{
@@ -441,9 +441,9 @@ namespace many
 
 
 
-	typedef tmany<bool>	        bools;
-	typedef tmany<int>	        ints;
-	typedef tmany<unsigned int> uints;
-	typedef tmany<float>	    floats;
-	typedef tmany<double>       doubles;
+	typedef series<bool>	        bools;
+	typedef series<int>	        ints;
+	typedef series<unsigned int> uints;
+	typedef series<float>	    floats;
+	typedef series<double>       doubles;
 }
