@@ -1,6 +1,6 @@
 
 
-#define GLM_FORCE_PURE  // disable SIMD support for glm so we can work with webassembly
+#define GLM_FORCE_PURE  // disable anonymous structs so we can build with ISO C++
 #include <glm/vec3.hpp> // *vec3
 
 #include <composite>

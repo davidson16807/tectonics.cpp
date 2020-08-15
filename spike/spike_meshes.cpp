@@ -1,6 +1,6 @@
 #include <iostream>     // cout
 
-#define GLM_FORCE_PURE  // disable SIMD support for glm so we can work with webassembly
+#define GLM_FORCE_PURE  // disable anonymous structs so we can build with ISO C++
 #include <glm/glm.hpp>  // *vec3
 
 #include <many/many.hpp>

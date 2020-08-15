@@ -9,7 +9,7 @@
 #include <GLFW/glfw3.h>
 
 // glm libraries
-#define GLM_FORCE_PURE      // disable SIMD support for glm so we can work with webassembly
+#define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
 
 // in house libraries
 #include <many/types.hpp>                            // floats
