@@ -7,16 +7,14 @@
 #include <glm/vec3.hpp>             // *vec3
 
 // in-house libraries
-#include <many/many.hpp>  
+#include <many/types.hpp>
+#include <many/common.hpp>
 #include <many/convenience.hpp>  
 #include <many/glm/glm.hpp>         // *vec*s
 #include <many/glm/random.hpp>      // get_elias_noise
 #include <many/glm/convenience.hpp> //  operators, etc.
 
-#include <meshes/mesh.hpp>
-#include <grids/Grid/morphologic.hpp>  
-#include <grids/Grid/vector_calculus.hpp>
-#include <grids/SpheroidGrid/string_cast.hpp>  
+#include "SpheroidGridVoronoi.hpp"
 
 using namespace glm;
 using namespace many;
