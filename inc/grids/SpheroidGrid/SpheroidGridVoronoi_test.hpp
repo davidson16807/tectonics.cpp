@@ -11,7 +11,6 @@
 #include <many/common.hpp>
 #include <many/convenience.hpp>  
 #include <many/glm/glm.hpp>         // *vec*s
-#include <many/glm/random.hpp>      // get_elias_noise
 #include <many/glm/convenience.hpp> //  operators, etc.
 
 #include "SpheroidGridVoronoi.hpp"
