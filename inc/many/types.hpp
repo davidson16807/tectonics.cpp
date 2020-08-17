@@ -20,16 +20,14 @@ namespace many
 	template <typename T>
 	class series
 	{
+	protected:
 		std::vector<T> values;
 
 	public:
 
-		virtual ~series()
-		{
-		}
-
 		// initializer list constructor
-		series(std::initializer_list<T> list) : values(list.begin(), list.end())
+		template <typename T2>
+		series(std::initializer_list<T2> list) : values(list.begin(), list.end())
 		{
 		}
 		// std container style constructor
@@ -60,17 +58,17 @@ namespace many
 		template <typename T2>
 		explicit series(const series<T2>& a)  : values(a.size())
 		{
-			for (unsigned int i = 0; i < a.size(); ++i)
+			for (std::size_t i = 0; i < a.size(); ++i)
 			{
 				values[i] = a[i];
 			}
 		}
 
 		// NOTE: all wrapper functions should to be marked inline 
-		inline unsigned int size() const                              { return values.size();  }
-		inline unsigned int max_size() const                          { return values.size();  }
-		inline unsigned int capacity() const                          { return values.capacity(); }
-		inline unsigned int empty() const                             { return values.empty(); }
+		inline std::size_t size() const                               { return values.size();  }
+		inline std::size_t max_size() const                           { return values.size();  }
+		inline std::size_t capacity() const                           { return values.capacity(); }
+		inline std::size_t empty() const                              { return values.empty(); }
         inline typename std::vector<T>::reference front()             { return values.front(); }
         inline typename std::vector<T>::const_reference front() const { return values.front(); }
         inline typename std::vector<T>::reference back()              { return values.back();  }
@@ -148,10 +146,10 @@ namespace many
 	void get(const series<T>& a, const series<Tid>& ids, series<T>& out )
 	{
 		assert(ids.size() == out.size());
-		for (unsigned int i = 0; i < ids.size(); ++i)
+		for (std::size_t i = 0; i < ids.size(); ++i)
 		{
-			assert(0 <= ids[i]);
-			assert(ids[i] < a.size());
+			assert(0u <= std::size_t(ids[i]));
+			assert(std::size_t(ids[i]) < a.size());
 			assert(!std::isinf(ids[i]));
 			assert(!std::isnan(ids[i]));
 			out[i] = a[ids[i]];
@@ -162,7 +160,7 @@ namespace many
 	{
 		assert(a.size()  == mask.size());
 		int out_i = 0;
-		for (unsigned int i = 0; i < a.size(); ++i)
+		for (std::size_t i = 0; i < a.size(); ++i)
 		{
 			if (mask[i])
 			{
@@ -175,7 +173,7 @@ namespace many
 	template <typename T>
 	void fill(series<T>& out, const T a )
 	{
-		for (unsigned int i = 0; i < out.size(); ++i)
+		for (std::size_t i = 0; i < out.size(); ++i)
 		{
 			out[i] = a;
 		}
@@ -183,7 +181,7 @@ namespace many
 	template <typename T, typename Tid>
 	void fill(series<T>& out, const series<Tid>& ids, const T a )
 	{
-		for (unsigned int i = 0; i < ids.size(); ++i)
+		for (std::size_t i = 0; i < ids.size(); ++i)
 		{
 			
 			assert(0 <= ids[i]);
@@ -197,7 +195,7 @@ namespace many
 	void fill(series<T>& out, const series<bool>& mask, const T a )
 	{
 		assert(out.size() == mask.size());
-		for (unsigned int i = 0; i < out.size(); ++i)
+		for (std::size_t i = 0; i < out.size(); ++i)
 		{
 			out[i] = mask[i]? a : out[i];
 		}
@@ -217,7 +215,7 @@ namespace many
 	template <typename T, typename T2>
 	void copy(series<T>& out, const series<T2>& a )
 	{
-		for (unsigned int i = 0; i < out.size(); ++i)
+		for (std::size_t i = 0; i < out.size(); ++i)
 		{
 			out[i] = a[i];
 		}
@@ -231,7 +229,7 @@ namespace many
 	void copy(series<T>& out, const series<Tid>& ids, const series<T>& a )
 	{
 		assert(ids.size() == a.size());
-		for (unsigned int i = 0; i < ids.size(); ++i)
+		for (std::size_t i = 0; i < ids.size(); ++i)
 		{
 			
 			assert(0 <= ids[i]);
@@ -246,7 +244,7 @@ namespace many
 	{
 		assert(out.size() == mask.size());
 		assert(out.size() == a.size());
-		for (unsigned int i = 0; i < out.size(); ++i)
+		for (std::size_t i = 0; i < out.size(); ++i)
 		{
 			out[i] = mask[i]? a[i] : out[i];
 		}
@@ -262,7 +260,7 @@ namespace many
 	void set(series<T>& out, const series<Tid>& ids, const series<T>& a )
 	{
 		assert(ids.size() == a.size());
-		for (unsigned int i = 0; i < ids.size(); ++i)
+		for (std::size_t i = 0; i < ids.size(); ++i)
 		{
 			
 			assert(0 <= ids[i]);
@@ -284,7 +282,7 @@ namespace many
 	inline void transform(const series<T1>& a, F f, series<Tout>& out)
 	{
 		assert(a.size() == out.size());
-		for (unsigned int i = 0; i < a.size(); ++i)
+		for (std::size_t i = 0; i < a.size(); ++i)
 		{
 			out[i] = f(a[i]);
 		}
@@ -292,7 +290,7 @@ namespace many
 	template <typename T1, typename Tout, typename F>
 	inline void transform(const T1 a, F f, series<Tout>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
+		for (std::size_t i = 0; i < a.size(); ++i)
 		{
 			out[i] = f(a);
 		}
@@ -309,7 +307,7 @@ namespace many
 		assert(a.size() >= b.size());
 		assert(a.size() % b.size() == 0);
 		uint N = a.size() / b.size();
-		for (unsigned int i = 0; i < b.size(); ++i)
+		for (std::size_t i = 0; i < b.size(); ++i)
 		{
 			for (unsigned int j = 0; j < N; ++j)
 			{
@@ -321,7 +319,7 @@ namespace many
 	inline void transform(const series<T1>& a, const T2 b, F f, series<Tout>& out)
 	{
 		assert(a.size() == out.size());
-		for (unsigned int i = 0; i < a.size(); ++i)
+		for (std::size_t i = 0; i < a.size(); ++i)
 		{
 			out[i] = f(a[i], b);
 		}
@@ -330,7 +328,7 @@ namespace many
 	inline void transform(const T1 a, const series<T2>& b, F f, series<Tout>& out)
 	{
 		assert(b.size() == out.size());
-		for (unsigned int i = 0; i < b.size(); ++i)
+		for (std::size_t i = 0; i < b.size(); ++i)
 		{
 			out[i] = f(a, b[i]);
 		}
@@ -353,7 +351,7 @@ namespace many
 		assert(a.size() == out.size());
 		assert(b.size() == out.size());
 		assert(c.size() == out.size());
-		for (unsigned int i = 0; i < a.size(); ++i)
+		for (std::size_t i = 0; i < a.size(); ++i)
 		{
 			out[i] = f(a[i], b[i], c[i]);
 		}
@@ -363,7 +361,7 @@ namespace many
 	{
 		assert(a.size() == out.size());
 		assert(b.size() == out.size());
-		for (unsigned int i = 0; i < a.size(); ++i)
+		for (std::size_t i = 0; i < a.size(); ++i)
 		{
 			out[i] = f(a[i], b[i], c);
 		}
@@ -373,7 +371,7 @@ namespace many
 	{
 		assert(a.size() == out.size());
 		assert(c.size() == out.size());
-		for (unsigned int i = 0; i < a.size(); ++i)
+		for (std::size_t i = 0; i < a.size(); ++i)
 		{
 			out[i] = f(a[i], b, c[i]);
 		}
@@ -382,7 +380,7 @@ namespace many
 	inline void transform(const series<T1>& a, const T2 b, const T3 c, F f, series<Tout>& out)
 	{
 		assert(a.size() == out.size());
-		for (unsigned int i = 0; i < a.size(); ++i)
+		for (std::size_t i = 0; i < a.size(); ++i)
 		{
 			out[i] = f(a[i], b, c);
 		}
@@ -392,7 +390,7 @@ namespace many
 	{
 		assert(b.size() == out.size());
 		assert(c.size() == out.size());
-		for (unsigned int i = 0; i < b.size(); ++i)
+		for (std::size_t i = 0; i < b.size(); ++i)
 		{
 			out[i] = f(a, b[i], c[i]);
 		}
@@ -401,7 +399,7 @@ namespace many
 	inline void transform(const T1 a, const series<T2>& b, const T3 c, F f, series<Tout>& out)
 	{
 		assert(b.size() == out.size());
-		for (unsigned int i = 0; i < b.size(); ++i)
+		for (std::size_t i = 0; i < b.size(); ++i)
 		{
 			out[i] = f(a, b[i], c);
 		}
@@ -410,7 +408,7 @@ namespace many
 	inline void transform(const T1 a, const T2 b, const series<T3>& c, F f, series<Tout>& out)
 	{
 		assert(c.size() == out.size());
-		for (unsigned int i = 0; i < c.size(); ++i)
+		for (std::size_t i = 0; i < c.size(); ++i)
 		{
 			out[i] = f(a, b, c[i]);
 		}
@@ -422,10 +420,10 @@ namespace many
 	void aggregate_into(const series<T>& a, const series<Tid>& group_ids, Taggregator aggregator, series<T>& group_out)
 	{
 		assert(a.size() == group_ids.size());
-		for (unsigned int i = 0; i < group_ids.size(); ++i)
+		for (std::size_t i = 0; i < group_ids.size(); ++i)
 		{
 			assert(0 <= group_ids[i]);
-			assert(group_ids[i] < group_out.size());
+			assert(std::size_t(group_ids[i]) < group_out.size());
 			assert(!std::isinf(group_ids[i]));
 			assert(!std::isnan(group_ids[i]));
 			group_out[group_ids[i]] = aggregator(group_out[group_ids[i]], a[i]);
@@ -435,9 +433,9 @@ namespace many
 	template<typename T, typename Tid, typename Taggregator>
 	void aggregate_into(const series<Tid>& group_ids, Taggregator aggregator, series<T>& group_out)
 	{
-		for (unsigned int i = 0; i < group_ids.size(); ++i)
+		for (std::size_t i = 0; i < group_ids.size(); ++i)
 		{
-			assert(0 <= group_ids[i] && group_ids[i] < group_out.size() && !std::isinf(group_ids[i]) && !std::isnan(group_ids[i]));
+			assert(0u <= std::size_t(group_ids[i]) && std::size_t(group_ids[i]) < group_out.size() && !std::isinf(group_ids[i]) && !std::isnan(group_ids[i]));
 			group_out[group_ids[i]] = aggregator(group_out[group_ids[i]]);
 		}
 	}

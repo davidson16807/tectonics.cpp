@@ -17,20 +17,6 @@ It is important to keep these functions separate from the rest of the library fo
 
 namespace many
 {
-	template <class T>
-	series<T> get(const series<T>& a, const series<unsigned int>& ids)
-	{
-		series<T> out(ids.size());
-		get(a, ids, out);
-		return out;
-	}
-	template <class T>
-	series<T> copy(const series<T>& a )
-	{
-		return series<T>(a);
-	}
-	
-
 	template <class T1, typename F>
 	inline series<T1> transform(const series<T1>& a, F f)
 	{
