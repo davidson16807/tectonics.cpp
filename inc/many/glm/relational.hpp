@@ -83,34 +83,22 @@ namespace many
 	template<glm::length_t L, glm::qualifier Q>
 	void equal(const series<glm::vec<L,unsigned int,Q>>& a, const glm::vec<L,unsigned int,Q> b, series<bool>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = a[i] - b == glm::vec<L, unsigned int, Q>(0);
-		}
+		many::transform(a, b, [](const glm::vec<L,unsigned int,Q>& ai, const glm::vec<L,unsigned int,Q>& bi){ return ai == bi; }, out);
 	}
 	template<glm::length_t L, glm::qualifier Q>
 	void notEqual(const series<glm::vec<L,unsigned int,Q>>& a, const glm::vec<L,unsigned int,Q> b, series<bool>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = a[i] - b != glm::vec<L, unsigned int, Q>(0);
-		}
+		many::transform(a, b, [](const glm::vec<L,unsigned int,Q>& ai, const glm::vec<L,unsigned int,Q>& bi){ return ai != bi; }, out);
 	}
 	template<glm::length_t L, glm::qualifier Q>
 	void equal(const series<glm::vec<L,unsigned int,Q>>& a, const series<glm::vec<L,unsigned int,Q>>& b, series<bool>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = a[i] - b[i] == glm::vec<L, unsigned int, Q>(0);
-		}
+		many::transform(a, b, [](const glm::vec<L,unsigned int,Q>& ai, const glm::vec<L,unsigned int,Q>& bi){ return ai == bi; }, out);
 	}
 	template<glm::length_t L, glm::qualifier Q>
 	void notEqual(const series<glm::vec<L,unsigned int,Q>>& a, const series<glm::vec<L,unsigned int,Q>>& b, series<bool>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = a[i] - b[i] != glm::vec<L, unsigned int, Q>(0);
-		}
+		many::transform(a, b, [](const glm::vec<L,unsigned int,Q>& ai, const glm::vec<L,unsigned int,Q>& bi){ return ai != bi; }, out);
 	}
 
 
@@ -167,34 +155,22 @@ namespace many
 	template<glm::length_t L, glm::qualifier Q>
 	void equal(const series<glm::vec<L,int,Q>>& a, const glm::vec<L,int,Q> b, series<bool>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = a[i] - b == glm::vec<L, int, Q>(0);
-		}
+		many::transform(a, b, [](const glm::vec<L,int,Q>& ai, const glm::vec<L,int,Q>& bi){ return ai == bi; }, out);
 	}
 	template<glm::length_t L, glm::qualifier Q>
 	void notEqual(const series<glm::vec<L,int,Q>>& a, const glm::vec<L,int,Q> b, series<bool>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = a[i] - b != glm::vec<L, int, Q>(0);
-		}
+		many::transform(a, b, [](const glm::vec<L,int,Q>& ai, const glm::vec<L,int,Q>& bi){ return ai != bi; }, out);
 	}
 	template<glm::length_t L, glm::qualifier Q>
 	void equal(const series<glm::vec<L,int,Q>>& a, const series<glm::vec<L,int,Q>>& b, series<bool>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = a[i] - b[i] == glm::vec<L, int, Q>(0);
-		}
+		many::transform(a, b, [](const glm::vec<L,int,Q>& ai, const glm::vec<L,int,Q>& bi){ return ai == bi; }, out);
 	}
 	template<glm::length_t L, glm::qualifier Q>
 	void notEqual(const series<glm::vec<L,int,Q>>& a, const series<glm::vec<L,int,Q>>& b, series<bool>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = a[i] - b[i] != glm::vec<L, int, Q>(0);
-		}
+		many::transform(a, b, [](const glm::vec<L,int,Q>& ai, const glm::vec<L,int,Q>& bi){ return ai != bi; }, out);
 	}
 
 
@@ -252,34 +228,22 @@ namespace many
 	template<glm::length_t L, glm::qualifier Q>
 	void equal(const series<glm::vec<L,bool,Q>>& a, const glm::vec<L,bool,Q> b, series<bool>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = a[i] - b == glm::vec<L, bool, Q>(0);
-		}
+		many::transform(a, b, [](const glm::vec<L,bool,Q>& ai, const glm::vec<L,bool,Q>& bi){ return ai == bi; }, out);
 	}
 	template<glm::length_t L, glm::qualifier Q>
 	void notEqual(const series<glm::vec<L,bool,Q>>& a, const glm::vec<L,bool,Q> b, series<bool>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = a[i] - b != glm::vec<L, bool, Q>(0);
-		}
+		many::transform(a, b, [](const glm::vec<L,bool,Q>& ai, const glm::vec<L,bool,Q>& bi){ return ai != bi; }, out);
 	}
 	template<glm::length_t L, glm::qualifier Q>
 	void equal(const series<glm::vec<L,bool,Q>>& a, const series<glm::vec<L,bool,Q>>& b, series<bool>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = a[i] - b[i] == glm::vec<L, bool, Q>(0);
-		}
+		many::transform(a, b, [](const glm::vec<L,bool,Q>& ai, const glm::vec<L,bool,Q>& bi){ return ai == bi; }, out);
 	}
 	template<glm::length_t L, glm::qualifier Q>
 	void notEqual(const series<glm::vec<L,bool,Q>>& a, const series<glm::vec<L,bool,Q>>& b, series<bool>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = a[i] - b[i] != glm::vec<L, bool, Q>(0);
-		}
+		many::transform(a, b, [](const glm::vec<L,bool,Q>& ai, const glm::vec<L,bool,Q>& bi){ return ai != bi; }, out);
 	}
 
 
@@ -291,7 +255,7 @@ namespace many
 		bool out(true);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
-			out &= distance(a[i], b) <= threshold;
+			out &= glm::distance(a[i], b) <= threshold;
 		}
 		return out;
 	}
@@ -301,7 +265,7 @@ namespace many
 		bool out(false);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
-			out |= distance(a[i], b) > threshold;
+			out |= glm::distance(a[i], b) > threshold;
 		}
 		return out;
 	}
@@ -311,7 +275,7 @@ namespace many
 		bool out(true);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
-			out &= distance(a[i], b[i]) <= threshold;
+			out &= glm::distance(a[i], b[i]) <= threshold;
 		}
 		return out;
 	}
@@ -321,7 +285,7 @@ namespace many
 		bool out(false);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
-			out |= distance(a[i], b[i]) > threshold;
+			out |= glm::distance(a[i], b[i]) > threshold;
 		}
 		return out;
 	}
@@ -331,55 +295,43 @@ namespace many
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void equal(const series<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> b, series<bool>& out, T threshold = T(MANY_EPSILON))
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = distance(a[i], b) <= threshold;
-		}
+		many::transform(a, b, [threshold](const glm::vec<L,bool,Q> ai, const glm::vec<L,bool,Q> bi){ return glm::distance(ai,bi) <= threshold; }, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void notEqual(const series<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> b, series<bool>& out, T threshold = T(MANY_EPSILON))
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = distance(a[i], b) > threshold;
-		}
+		many::transform(a, b, [threshold](const glm::vec<L,bool,Q> ai, const glm::vec<L,bool,Q> bi){ return glm::distance(ai,bi) <= threshold; }, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void equal(const series<glm::vec<L,T,Q>>& a, const series<glm::vec<L,T,Q>>& b, series<bool>& out, T threshold = T(MANY_EPSILON))
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = distance(a[i], b[i]) <= threshold;
-		}
+		many::transform(a, b, [threshold](const glm::vec<L,bool,Q> ai, const glm::vec<L,bool,Q> bi){ return glm::distance(ai,bi) <= threshold; }, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void notEqual(const series<glm::vec<L,T,Q>>& a, const series<glm::vec<L,T,Q>>& b, series<bool>& out, T threshold = T(MANY_EPSILON))
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = distance(a[i], b[i]) > threshold;
-		}
+		many::transform(a, b, [threshold](const glm::vec<L,bool,Q> ai, const glm::vec<L,bool,Q> bi){ return glm::distance(ai,bi) <= threshold; }, out);
 	}
 
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void greaterThan(const series<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> b, series<glm::vec<L,bool,glm::defaultp>>& out)
 	{
-		transform(a, b, glm::greaterThan, out); 
+		many::transform(a, b, [](const glm::vec<L,bool,Q>& ai, const glm::vec<L,bool,Q>& bi){ return glm::greaterThan(ai,bi); }, out); 
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void greaterThanEqual(const series<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> b, series<glm::vec<L,bool,glm::defaultp>>& out)
 	{
-		transform(a, b, glm::greaterThanEqual, out); 
+		many::transform(a, b, [](const glm::vec<L,bool,Q>& ai, const glm::vec<L,bool,Q>& bi){ return glm::greaterThanEqual(ai,bi); }, out); 
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void lessThan(const series<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> b, series<glm::vec<L,bool,glm::defaultp>>& out)
 	{
-		transform(a, b, glm::lessThan, out); 
+		many::transform(a, b, [](const glm::vec<L,bool,Q>& ai, const glm::vec<L,bool,Q>& bi){ return glm::lessThan(ai,bi); }, out); 
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void lessThanEqual(const series<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> b, series<glm::vec<L,bool,glm::defaultp>>& out)
 	{
-		transform(a, b, glm::lessThanEqual, out); 
+		many::transform(a, b, [](const glm::vec<L,bool,Q>& ai, const glm::vec<L,bool,Q>& bi){ return glm::lessThanEqual(ai,bi); }, out); 
 	}
 
 
@@ -389,26 +341,22 @@ namespace many
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void greaterThan(const series<glm::vec<L,T,Q>>& a, const series<glm::vec<L,T,Q>>& b, series<glm::vec<L,bool,glm::defaultp>>& out)
 	{
-		transform(a, b, glm::greaterThan, out); 
+		many::transform(a, b, [](const glm::vec<L,bool,Q>& ai, const glm::vec<L,bool,Q>& bi){ return glm::greaterThan(ai,bi); }, out); 
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void greaterThanEqual(const series<glm::vec<L,T,Q>>& a, const series<glm::vec<L,T,Q>>& b, series<glm::vec<L,bool,glm::defaultp>>& out)
 	{
-		transform(a, b, glm::greaterThanEqual, out); 
+		many::transform(a, b, [](const glm::vec<L,bool,Q>& ai, const glm::vec<L,bool,Q>& bi){ return glm::greaterThanEqual(ai,bi); }, out); 
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void lessThan(const series<glm::vec<L,T,Q>>& a, const series<glm::vec<L,T,Q>>& b, series<glm::vec<L,bool,glm::defaultp>>& out)
 	{
-		transform(a, b, glm::lessThan, out); 
+		many::transform(a, b, [](const glm::vec<L,bool,Q>& ai, const glm::vec<L,bool,Q>& bi){ return glm::lessThan(ai,bi); }, out); 
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void lessThanEqual(const series<glm::vec<L,T,Q>>& a, const series<glm::vec<L,T,Q>>& b, series<glm::vec<L,bool,glm::defaultp>>& out)
 	{
-		transform(a, b, glm::lessThanEqual, out); 
+		many::transform(a, b, [](const glm::vec<L,bool,Q>& ai, const glm::vec<L,bool,Q>& bi){ return glm::lessThanEqual(ai,bi); }, out); 
 	}
-
-
-
-
 
 }

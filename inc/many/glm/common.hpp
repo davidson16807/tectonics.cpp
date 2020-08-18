@@ -12,21 +12,21 @@ namespace many
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void abs(const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(a, glm::abs, out);
+		many::transform(a, [](const glm::vec<L,T,Q>& ai){ return glm::abs(ai); }, out);
 	}
 
 	/// Returns 1.0 if x > 0, 0.0 if x == 0, or -1.0 if x < 0.
 	template <glm::length_t L, typename T, glm::qualifier Q, class Tout>
 	void sign(const series<glm::vec<L,T,Q>>& a, series<Tout>& out)
 	{
-		transform(a, glm::sign, out);
+		many::transform(a, [](const glm::vec<L,T,Q>& ai){ return glm::sign(ai); },  out);
 	}
 
 	/// Returns a value equal to the nearest integer that is less then or equal to x.
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void floor(const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(a, glm::floor, out);
+		many::transform(a, [](const glm::vec<L,T,Q>& ai){ return glm::floor(ai); }, out);
 	}
 
 	/// Returns a value equal to the nearest integer to x
@@ -34,7 +34,7 @@ namespace many
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void trunc(const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(a, glm::trunc, out);
+		many::transform(a, [](const glm::vec<L,T,Q>& ai){ return glm::trunc(ai); }, out);
 	}
 
 	/// Returns a value equal to the nearest integer to x.
@@ -45,7 +45,7 @@ namespace many
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void round(const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(a, glm::round, out);
+		many::transform(a, [](const glm::vec<L,T,Q>& ai){ return glm::round(ai); }, out);
 	}
 
 	/// Returns a value equal to the nearest integer
@@ -53,14 +53,14 @@ namespace many
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void ceil(const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(a, glm::ceil, out);
+		many::transform(a, [](const glm::vec<L,T,Q>& ai){ return glm::ceil(ai); }, out);
 	}
 
 	/// Return x - floor(x).
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void fract(const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(a, glm::floor, out);
+		many::transform(a, [](const glm::vec<L,T,Q>& ai){ return glm::fract(ai); }, out);
 	}
 
 	/// Modulus. Returns x - y * floor(x / y)
@@ -68,7 +68,7 @@ namespace many
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void mod(const series<glm::vec<L,T,Q>>& a, const series<glm::vec<L,T,Q>>& b, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(a, b, glm::mod, out);
+		many::transform(a, b, [](const glm::vec<L,T,Q>& ai, const glm::vec<L,T,Q>& bi){ return glm::mod(ai,bi); }, out);
 	}
 
 	/// Returns the fractional part of x and sets i to the integer
@@ -89,12 +89,12 @@ namespace many
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void min(const series<glm::vec<L,T,Q>>& a, const series<glm::vec<L,T,Q>>& b, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(a, b, glm::min, out);
+		many::transform(a, b, [](const glm::vec<L,T,Q>& ai, const glm::vec<L,T,Q>& bi){ return glm::min(ai,bi); }, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void min(const series<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> b, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(a, b, glm::min, out);
+		many::transform(a, b, [](const glm::vec<L,T,Q>& ai, const glm::vec<L,T,Q>& bi){ return glm::min(ai,bi); }, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	glm::vec<L,T,Q> min(const series<glm::vec<L,T,Q>>& a)
@@ -110,13 +110,13 @@ namespace many
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void max(const series<glm::vec<L,T,Q>>& a, const series<glm::vec<L,T,Q>>& b, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(a, b, glm::max, out);
+		many::transform(a, b, [](const glm::vec<L,T,Q>& ai, const glm::vec<L,T,Q>& bi){ return glm::max(ai,bi); }, out);
 	}
 	/// Returns y if y < x; otherwise, it returns x.
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void max(const series<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> b, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(a, b, glm::max, out);
+		many::transform(a, b, [](const glm::vec<L,T,Q>& ai, const glm::vec<L,T,Q>& bi){ return glm::max(ai,bi); }, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	glm::vec<L,T,Q> max(const series<glm::vec<L,T,Q>>& a)
@@ -134,22 +134,22 @@ namespace many
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void clamp(const series<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> lo, const glm::vec<L,T,Q> hi, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(a, lo, hi, glm::clamp, out);
+		many::transform(a, lo, hi, [](const glm::vec<L,T,Q>& ai, const glm::vec<L,T,Q>&  loi, const glm::vec<L,T,Q>& hii){ return glm::clamp(ai,loi,hii); }, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void clamp(const series<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> lo, const series<glm::vec<L,T,Q>>& hi, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(a, lo, hi, glm::clamp, out);
+		many::transform(a, lo, hi, [](const glm::vec<L,T,Q>& ai, const glm::vec<L,T,Q>&  loi, const glm::vec<L,T,Q>& hii){ return glm::clamp(ai,loi,hii); }, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void clamp(const series<glm::vec<L,T,Q>>& a, const series<glm::vec<L,T,Q>>& lo, const glm::vec<L,T,Q> hi, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(a, lo, hi, glm::clamp, out);
+		many::transform(a, lo, hi, [](const glm::vec<L,T,Q>& ai, const glm::vec<L,T,Q>&  loi, const glm::vec<L,T,Q>& hii){ return glm::clamp(ai,loi,hii); }, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void clamp(const series<glm::vec<L,T,Q>>& a, const series<glm::vec<L,T,Q>>& lo, const series<glm::vec<L,T,Q>>& hi, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(a, lo, hi, glm::clamp, out);
+		many::transform(a, lo, hi, [](const glm::vec<L,T,Q>& ai, const glm::vec<L,T,Q>&  loi, const glm::vec<L,T,Q>& hii){ return glm::clamp(ai,loi,hii); }, out);
 	}
 
 
@@ -177,37 +177,37 @@ namespace many
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void mix(const series<glm::vec<L,T,Q>>& x, const series<glm::vec<L,T,Q>>& y, const series<T>& a, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(x, y, a, glm::mix, out);
+		many::transform(x, y, a, [](const glm::vec<L,T,Q>& xi, const glm::vec<L,T,Q>& yi, T ai){ return glm::mix(xi,yi,ai); }, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void mix(const series<glm::vec<L,T,Q>>& x, const series<glm::vec<L,T,Q>>& y, const T a, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(x, y, a, glm::mix, out);
+		many::transform(x, y, a, [](const glm::vec<L,T,Q>& xi, const glm::vec<L,T,Q>& yi, T ai){ return glm::mix(xi,yi,ai); }, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void mix(const series<glm::vec<L,T,Q>>& x, const glm::vec<L,T,Q> y, const series<T>& a, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(x, y, a, glm::mix, out);
+		many::transform(x, y, a, [](const glm::vec<L,T,Q>& xi, const glm::vec<L,T,Q>& yi, T ai){ return glm::mix(xi,yi,ai); }, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void mix(const series<glm::vec<L,T,Q>>& x, const glm::vec<L,T,Q> y, const T a, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(x, y, a, glm::mix, out);
+		many::transform(x, y, a, [](const glm::vec<L,T,Q>& xi, const glm::vec<L,T,Q>& yi, T ai){ return glm::mix(xi,yi,ai); }, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void mix(const glm::vec<L,T,Q> x, const series<glm::vec<L,T,Q>>& y, const series<T>& a, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(x, y, a, glm::mix, out);
+		many::transform(x, y, a, [](const glm::vec<L,T,Q>& xi, const glm::vec<L,T,Q>& yi, T ai){ return glm::mix(xi,yi,ai); }, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void mix(const glm::vec<L,T,Q> x, const series<glm::vec<L,T,Q>>& y, const T a, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(x, y, a, glm::mix, out);
+		many::transform(x, y, a, [](const glm::vec<L,T,Q>& xi, const glm::vec<L,T,Q>& yi, T ai){ return glm::mix(xi,yi,ai); }, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void mix(const glm::vec<L,T,Q> x, const glm::vec<L,T,Q> y, const series<T>& a, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(x, y, a, glm::mix, out);
+		many::transform(x, y, a, [](const glm::vec<L,T,Q>& xi, const glm::vec<L,T,Q>& yi, T ai){ return glm::mix(xi,yi,ai); }, out);
 	}
 
 
@@ -216,37 +216,37 @@ namespace many
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void mix(const series<glm::vec<L,T,Q>>& x, const series<glm::vec<L,T,Q>>& y, const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(x, y, a, glm::mix, out);
+		many::transform(x, y, a, [](const glm::vec<L,T,Q>& xi, const glm::vec<L,T,Q>& yi, T ai){ return glm::mix(xi,yi,ai); }, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void mix(const series<glm::vec<L,T,Q>>& x, const series<glm::vec<L,T,Q>>& y, const glm::vec<L,T,Q> a, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(x, y, a, glm::mix, out);
+		many::transform(x, y, a, [](const glm::vec<L,T,Q>& xi, const glm::vec<L,T,Q>& yi, T ai){ return glm::mix(xi,yi,ai); }, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void mix(const series<glm::vec<L,T,Q>>& x, const glm::vec<L,T,Q> y, const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(x, y, a, glm::mix, out);
+		many::transform(x, y, a, [](const glm::vec<L,T,Q>& xi, const glm::vec<L,T,Q>& yi, T ai){ return glm::mix(xi,yi,ai); }, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void mix(const series<glm::vec<L,T,Q>>& x, const glm::vec<L,T,Q> y, const glm::vec<L,T,Q> a, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(x, y, a, glm::mix, out);
+		many::transform(x, y, a, [](const glm::vec<L,T,Q>& xi, const glm::vec<L,T,Q>& yi, T ai){ return glm::mix(xi,yi,ai); }, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void mix(const glm::vec<L,T,Q> x, const series<glm::vec<L,T,Q>>& y, const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(x, y, a, glm::mix, out);
+		many::transform(x, y, a, [](const glm::vec<L,T,Q>& xi, const glm::vec<L,T,Q>& yi, T ai){ return glm::mix(xi,yi,ai); }, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void mix(const glm::vec<L,T,Q> x, const series<glm::vec<L,T,Q>>& y, const glm::vec<L,T,Q> a, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(x, y, a, glm::mix, out);
+		many::transform(x, y, a, [](const glm::vec<L,T,Q>& xi, const glm::vec<L,T,Q>& yi, T ai){ return glm::mix(xi,yi,ai); }, out);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void mix(const glm::vec<L,T,Q> x, const glm::vec<L,T,Q> y, const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(x, y, a, glm::mix, out);
+		many::transform(x, y, a, [](const glm::vec<L,T,Q>& xi, const glm::vec<L,T,Q>& yi, T ai){ return glm::mix(xi,yi,ai); }, out);
 	}
 
 
@@ -256,17 +256,17 @@ namespace many
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void step(const series<glm::vec<L,T,Q>>& edge, const series<glm::vec<L,T,Q>>&  x, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(edge, x, glm::step, out);
+		many::transform(edge, x, [](const glm::vec<L,T,Q>& edgei, const glm::vec<L,T,Q>& xi){ return glm::step(edgei, xi); }, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void step(const series<glm::vec<L,T,Q>>&  edge, const glm::vec<L,T,Q> x, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(edge, x, glm::step, out);
+		many::transform(edge, x, [](const glm::vec<L,T,Q>& edgei, const glm::vec<L,T,Q>& xi){ return glm::step(edgei, xi); }, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void step(const glm::vec<L,T,Q> edge, const series<glm::vec<L,T,Q>>&  x, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(edge, x, glm::step, out);
+		many::transform(edge, x, [](const glm::vec<L,T,Q>& edgei, const glm::vec<L,T,Q>& xi){ return glm::step(edgei, xi); }, out);
 	}
 
 	/// Returns 0.0 if x <= lo and 1.0 if x >= hi and
@@ -281,37 +281,37 @@ namespace many
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void smoothstep(const series<glm::vec<L,T,Q>>& lo, const series<glm::vec<L,T,Q>>& hi, const series<glm::vec<L,T,Q>>& x, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(lo, hi, x, glm::smoothstep, out);
+		many::transform(lo, hi, x, [](const glm::vec<L,T,Q>& loi, const glm::vec<L,T,Q>& hii, const glm::vec<L,T,Q>& xi){ return glm::smoothstep(loi,hii,xi); }, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void smoothstep(const glm::vec<L,T,Q> lo, const series<glm::vec<L,T,Q>>& hi, const series<glm::vec<L,T,Q>>& x, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(lo, hi, x, glm::smoothstep, out);
+		many::transform(lo, hi, x, [](const glm::vec<L,T,Q>& loi, const glm::vec<L,T,Q>& hii, const glm::vec<L,T,Q>& xi){ return glm::smoothstep(loi,hii,xi); }, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void smoothstep(const series<glm::vec<L,T,Q>>& lo, glm::vec<L,T,Q> hi, const series<glm::vec<L,T,Q>>& x, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(lo, hi, x, glm::smoothstep, out);
+		many::transform(lo, hi, x, [](const glm::vec<L,T,Q>& loi, const glm::vec<L,T,Q>& hii, const glm::vec<L,T,Q>& xi){ return glm::smoothstep(loi,hii,xi); }, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void smoothstep(const glm::vec<L,T,Q> lo, const glm::vec<L,T,Q> hi, const series<glm::vec<L,T,Q>>& x, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(lo, hi, x, glm::smoothstep, out);
+		many::transform(lo, hi, x, [](const glm::vec<L,T,Q>& loi, const glm::vec<L,T,Q>& hii, const glm::vec<L,T,Q>& xi){ return glm::smoothstep(loi,hii,xi); }, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void smoothstep(const series<glm::vec<L,T,Q>>& lo, const series<glm::vec<L,T,Q>>& hi, const glm::vec<L,T,Q> x, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(lo, hi, x, glm::smoothstep, out);
+		many::transform(lo, hi, x, [](const glm::vec<L,T,Q>& loi, const glm::vec<L,T,Q>& hii, const glm::vec<L,T,Q>& xi){ return glm::smoothstep(loi,hii,xi); }, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void smoothstep(const glm::vec<L,T,Q> lo, const series<glm::vec<L,T,Q>>& hi, const glm::vec<L,T,Q> x, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(lo, hi, x, glm::smoothstep, out);
+		many::transform(lo, hi, x, [](const glm::vec<L,T,Q>& loi, const glm::vec<L,T,Q>& hii, const glm::vec<L,T,Q>& xi){ return glm::smoothstep(loi,hii,xi); }, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void smoothstep(const series<glm::vec<L,T,Q>>& lo, const glm::vec<L,T,Q> hi, const glm::vec<L,T,Q> x, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(lo, hi, x, glm::smoothstep, out);
+		many::transform(lo, hi, x, [](const glm::vec<L,T,Q>& loi, const glm::vec<L,T,Q>& hii, const glm::vec<L,T,Q>& xi){ return glm::smoothstep(loi,hii,xi); }, out);
 	}
 
 	/// Returns true if x holds a NaN (not a number)
@@ -322,7 +322,7 @@ namespace many
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void isnan(const series<glm::vec<L,T,Q>>&  x, series<bool>& out)
 	{
-		transform(x, glm::isnan, out);
+		many::transform(x, [](const glm::vec<L,T,Q>& xi){ return glm::isnan(xi); }, out);
 	}
 
 	/// Returns true if x holds a positive infinity or negative
@@ -333,44 +333,44 @@ namespace many
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void isinf(const series<glm::vec<L,T,Q>>&  x, series<bool>& out)
 	{
-		transform(x, glm::isinf, out);
+		many::transform(x, [](const glm::vec<L,T,Q>& xi){ return glm::isinf(xi); }, out);
 	}
 
 	/// Computes and returns a * b + c.
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void fma(const series<glm::vec<L,T,Q>>& a, const series<glm::vec<L,T,Q>>& b, const series<glm::vec<L,T,Q>>& c, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(a, b, c, glm::fma, out);
+		many::transform(a, b, c, [](const glm::vec<L,T,Q>& ai, const glm::vec<L,T,Q>& bi, const glm::vec<L,T,Q>& ci){ return glm::fma(ai,bi,ci); }, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void fma(const glm::vec<L,T,Q> a, const series<glm::vec<L,T,Q>>& b, const series<glm::vec<L,T,Q>>& c, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(a, b, c, glm::fma, out);
+		many::transform(a, b, c, [](const glm::vec<L,T,Q>& ai, const glm::vec<L,T,Q>& bi, const glm::vec<L,T,Q>& ci){ return glm::fma(ai,bi,ci); }, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void fma(const series<glm::vec<L,T,Q>>& a, glm::vec<L,T,Q> b, const series<glm::vec<L,T,Q>>& c, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(a, b, c, glm::fma, out);
+		many::transform(a, b, c, [](const glm::vec<L,T,Q>& ai, const glm::vec<L,T,Q>& bi, const glm::vec<L,T,Q>& ci){ return glm::fma(ai,bi,ci); }, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void fma(const glm::vec<L,T,Q> a, const glm::vec<L,T,Q> b, const series<glm::vec<L,T,Q>>& c, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(a, b, c, glm::fma, out);
+		many::transform(a, b, c, [](const glm::vec<L,T,Q>& ai, const glm::vec<L,T,Q>& bi, const glm::vec<L,T,Q>& ci){ return glm::fma(ai,bi,ci); }, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void fma(const series<glm::vec<L,T,Q>>& a, const series<glm::vec<L,T,Q>>& b, const glm::vec<L,T,Q> c, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(a, b, c, glm::fma, out);
+		many::transform(a, b, c, [](const glm::vec<L,T,Q>& ai, const glm::vec<L,T,Q>& bi, const glm::vec<L,T,Q>& ci){ return glm::fma(ai,bi,ci); }, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void fma(const glm::vec<L,T,Q> a, const series<glm::vec<L,T,Q>>& b, const glm::vec<L,T,Q> c, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(a, b, c, glm::fma, out);
+		many::transform(a, b, c, [](const glm::vec<L,T,Q>& ai, const glm::vec<L,T,Q>& bi, const glm::vec<L,T,Q>& ci){ return glm::fma(ai,bi,ci); }, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void fma(const series<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> b, const glm::vec<L,T,Q> c, series<glm::vec<L,T,Q>>& out)
 	{
-		transform(a, b, c, glm::fma, out);
+		many::transform(a, b, c, [](const glm::vec<L,T,Q>& ai, const glm::vec<L,T,Q>& bi, const glm::vec<L,T,Q>& ci){ return glm::fma(ai,bi,ci); }, out);
 	}
 
 //	/// Returns a signed integer value representing

@@ -5,14 +5,12 @@
 #include <many/many.hpp>  
 #include <many/convenience.hpp>  
 
-using namespace many;
-
 
 TEST_CASE( "many<T> arithmetic consistency", "[many]" ) {
-    floats a1 = floats({1,2,3,4,5});
-    floats a2 = floats({1,2,3,4,5});
-    floats a3 = floats({1,2,3,4,5});
-    floats b = floats({-1,1,-2,2,3});
+    many::floats a1 = many::floats({1,2,3,4,5});
+    many::floats a2 = many::floats({1,2,3,4,5});
+    many::floats a3 = many::floats({1,2,3,4,5});
+    many::floats b = many::floats({-1,1,-2,2,3});
 
     SECTION("a+=b, a=a+b, and add(a,b,a) must all work the same"){
         a1 += b;

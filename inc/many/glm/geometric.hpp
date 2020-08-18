@@ -10,104 +10,68 @@ namespace many
 {
 
 	template<typename T, glm::qualifier Q>
-	float cross(const glm::vec<2,T,Q>& a, const glm::vec<2,T,Q>& b)
+	float cross(const glm::vec<2,T,Q> a, const glm::vec<2,T,Q> b)
 	{
 		return a.x*b.y - b.x*a.y;
 	}
 
 
-
-
-
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void dot (const series<glm::vec<L,T,Q>>& u, const glm::vec<L,T,Q> v, series<T>& out) {
-		for (unsigned int i = 0; i < u.size(); ++i)
-		{
-			out[i] = dot(u[i], v);
-		}
+		many::transform(u, v, [](const glm::vec<L,T,Q>& ui, const glm::vec<L,T,Q>& vi){ return glm::dot(ui,vi); }, out);
 	}
 	template<typename T, glm::qualifier Q>
 	void cross (const series<glm::vec<3,T,Q>>& u, const glm::vec<3,T,Q> v, series<glm::vec<3,T,Q>>& out) 
 	{
-		for (unsigned int i = 0; i < u.size(); ++i)
-		{
-			out[i] = cross(u[i], v);
-		}
+		many::transform(u, v, [](glm::vec<3,T,Q>& ui, glm::vec<3,T,Q>& vi){ return glm::cross(ui,vi); }, out);
 	}
 	template<typename T, glm::qualifier Q>
 	void cross (const series<glm::vec<2,T,Q>>& u, const glm::vec<2,T,Q> v, series<float>& out) 
 	{
-		for (unsigned int i = 0; i < u.size(); ++i)
-		{
-			out[i] = cross(u[i], v);
-		}
+		many::transform(u, v, [](const glm::vec<2,T,Q>& ui, const glm::vec<2,T,Q>& vi){ return many::cross(ui,vi); }, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void mult (const series<glm::vec<L,T,Q>>& u, const glm::vec<L,T,Q> v, series<glm::vec<L,T,Q>>& out) {
-		for (unsigned int i = 0; i < u.size(); ++i)
-		{
-			out[i] = u[i] * v;
-		}
+		many::transform(u, v, [](const glm::vec<L,T,Q>& ui, const glm::vec<L,T,Q>& vi){ return ui * vi; }, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void distance(const series<glm::vec<L,T,Q>>& u, const glm::vec<L,T,Q> v, series<T>& out) 
 	{
-		for (unsigned int i = 0; i < u.size(); ++i)
-		{
-			out[i] = distance(u[i], v);
-		}
+		many::transform(u, v, [](const glm::vec<L,T,Q>& ui, const glm::vec<L,T,Q>& vi){ return glm::distance(ui,vi); }, out);
 	}
 
 
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void dot (const series<glm::vec<L,T,Q>>& u, const series<glm::vec<L,T,Q>>& v, series<T>& out) 
 	{
-		for (unsigned int i = 0; i < u.size(); ++i)
-		{
-			out[i] = dot(u[i], v[i]);
-		}
+		many::transform(u, v, [](const glm::vec<L,T,Q>& ui, const glm::vec<L,T,Q>& vi){ return glm::dot(ui,vi); }, out);
 	}
 	template<typename T, glm::qualifier Q>
 	void cross (const series<glm::vec<3,T,Q>>& u, const series<glm::vec<3,T,Q>>& v, series<glm::vec<3,T,Q>>& out) 
 	{
-		for (unsigned int i = 0; i < u.size(); ++i)
-		{
-			out[i] = cross(u[i], v[i]);
-		}
+		many::transform(u, v, [](glm::vec<3,T,Q>& ui, glm::vec<3,T,Q>& vi){ return glm::cross(ui,vi); }, out);
 	}
 	template<typename T, glm::qualifier Q>
 	void cross (const series<glm::vec<2,T,Q>>& u, const series<glm::vec<2,T,Q>>& v, series<float>& out) 
 	{
-		for (unsigned int i = 0; i < u.size(); ++i)
-		{
-			out[i] = cross(u[i], v[i]);
-		}
+		many::transform(u, v, [](const glm::vec<2,T,Q>& ui, const glm::vec<2,T,Q>& vi){ return many::cross(ui,vi); }, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void mult (const series<glm::vec<L,T,Q>>& u, const series<glm::vec<L,T,Q>>& v, series<glm::vec<L,T,Q>>& out) 
 	{
-		for (unsigned int i = 0; i < u.size(); ++i)
-		{
-			out[i] = u[i] * v[i];
-		}
+		many::transform(u, v, [](const glm::vec<L,T,Q>& ui, const glm::vec<L,T,Q>& vi){ return ui * vi; }, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void distance(const series<glm::vec<L,T,Q>>& u, const series<glm::vec<L,T,Q>>& v, series<T>& out) 
 	{
-		for (unsigned int i = 0; i < u.size(); ++i)
-		{
-			out[i] = distance(u[i], v[i]);
-		}
+		many::transform(u, v, [](const glm::vec<L,T,Q>& ui, const glm::vec<L,T,Q>& vi){ return glm::distance(ui,vi); }, out);
 	}
 
 
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void length(const series<glm::vec<L,T,Q>>& u, series<T>& out) 
 	{
-		for (unsigned int i = 0; i < u.size(); ++i)
-		{
-			out[i] = length(u[i]);
-		}
+		many::transform(u, [](const glm::vec<L,T,Q>& ui){ return glm::length(ui); }, out);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	void normalize(const series<glm::vec<L,T,Q>>& u, series<glm::vec<L,T,Q>>& out) 

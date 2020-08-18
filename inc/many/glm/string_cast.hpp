@@ -35,8 +35,8 @@ namespace many
 	std::string to_string(const series<glm::vec<2,T,Q>>& a, const int line_char_width = 80)
 	{
 		series<T> length_a(a.size());
-		length(a, length_a);
-		T max_length_a = max(length_a);
+		many::length(a, length_a);
+		T max_length_a = many::max(length_a);
 
 		std::string out("");
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -85,8 +85,8 @@ namespace many
 	std::string to_string(const series<glm::vec<3,T,Q>>& a, const glm::mat<3,2,T,Q>& basis, const int line_char_width = 80)
 	{
 		series<glm::vec<2,T,Q>> a2d(a.size());
-		mult(basis, a, a2d);
-		return to_string(a2d, line_char_width);
+		many::mult(basis, a, a2d);
+		return many::to_string(a2d, line_char_width);
 	}
 
 }//namespace many

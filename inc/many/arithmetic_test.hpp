@@ -5,15 +5,14 @@
 #include <many/many.hpp>  
 #include <many/arithmetic.hpp>  
 #include <many/convenience.hpp>  
-
-using namespace many;
+#include <many/operators.hpp>  
 
 
 TEST_CASE( "many<T> arithmetic purity", "[many]" ) {
-    floats a = floats({1,2,3,4,5});
-    floats b = floats({-1,1,-2,2,3});
-    floats c1 = floats({0,0,0,0,0});
-    floats c2 = floats({0,0,0,0,0});
+    many::floats a = many::floats({1,2,3,4,5});
+    many::floats b = many::floats({-1,1,-2,2,3});
+    many::floats c1 = many::floats({0,0,0,0,0});
+    many::floats c2 = many::floats({0,0,0,0,0});
 
     SECTION("a+b must be called repeatedly without changing the output"){
         c1 = a + b;
@@ -59,9 +58,9 @@ TEST_CASE( "many<T> arithmetic purity", "[many]" ) {
 
 
 TEST_CASE( "many<T> arithmetic identity", "[many]" ) {
-    floats a = floats({1,2,3,4,5});
-    floats zeros = floats({0,0,0,0,0});
-    floats ones  = floats({1,1,1,1,1});
+    many::floats a = many::floats({1,2,3,4,5});
+    many::floats zeros = many::floats({0,0,0,0,0});
+    many::floats ones  = many::floats({1,1,1,1,1});
 
     SECTION("a+I must equal a"){
         CHECK(a+zeros==a);
@@ -74,8 +73,8 @@ TEST_CASE( "many<T> arithmetic identity", "[many]" ) {
 }
 
 TEST_CASE( "many<T> arithmetic commutativity", "[many]" ) {
-    floats a = floats({1,2,3,4,5});
-    floats b = floats({-1,1,-2,2,3});
+    many::floats a = many::floats({1,2,3,4,5});
+    many::floats b = many::floats({-1,1,-2,2,3});
 
     SECTION("a+b must equal b+a"){
         CHECK(a+b==b+a);
@@ -87,9 +86,9 @@ TEST_CASE( "many<T> arithmetic commutativity", "[many]" ) {
 
 
 TEST_CASE( "many<T> arithmetic associativity", "[many]" ) {
-    floats a = floats({1,2,3,4,5});
-    floats b = floats({-1,1,-2,2,3});
-    floats c = floats({1,1,2,3,5});
+    many::floats a = many::floats({1,2,3,4,5});
+    many::floats b = many::floats({-1,1,-2,2,3});
+    many::floats c = many::floats({1,1,2,3,5});
 
     SECTION("(a+b)+c must equal a+(b+c)"){
         CHECK((a+b)+c==a+(b+c));
@@ -101,9 +100,9 @@ TEST_CASE( "many<T> arithmetic associativity", "[many]" ) {
 
 
 TEST_CASE( "many<T> arithmetic distributivity", "[many]" ) {
-    floats a = floats({1,2,3,4,5});
-    floats b = floats({-1,1,-2,2,3});
-    floats c = floats({1,1,2,3,5});
+    many::floats a = many::floats({1,2,3,4,5});
+    many::floats b = many::floats({-1,1,-2,2,3});
+    many::floats c = many::floats({1,1,2,3,5});
 
     SECTION("a+b must equal b+a"){
         CHECK((a+b)*c==(a*c+b*c));

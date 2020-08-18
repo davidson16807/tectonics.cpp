@@ -28,24 +28,24 @@ namespace many
 	template <glm::length_t L, class T, glm::qualifier Q>
 	inline series<T> get_x(const series<glm::vec<L,T,Q>>& a)
 	{
-		series<T> out = series<T>(a.size());
-		transform(a, [](glm::vec<L,T,Q> ai){ return ai.x; }, out);
+		series<T> out(a.size());
+		many::transform(a, [](glm::vec<L,T,Q> ai){ return ai.x; }, out);
 		return out;
 	}
 
 	template <glm::length_t L, class T, glm::qualifier Q>
 	inline series<T> get_y(const series<glm::vec<L,T,Q>>& a)
 	{
-		series<T> out = series<T>(a.size());
-		transform(a, [](glm::vec<L,T,Q> ai){ return ai.y; }, out);
+		series<T> out(a.size());
+		many::transform(a, [](glm::vec<L,T,Q> ai){ return ai.y; }, out);
 		return out;
 	}
 
 	template <glm::length_t L, class T, glm::qualifier Q>
 	inline series<T> get_z(const series<glm::vec<L,T,Q>>& a)
 	{
-		series<T> out = series<T>(a.size());
-		transform(a, [](glm::vec<L,T,Q> ai){ return ai.z; }, out);
+		series<T> out(a.size());
+		many::transform(a, [](glm::vec<L,T,Q> ai){ return ai.z; }, out);
 		return out;
 	}
 
@@ -53,7 +53,7 @@ namespace many
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	inline series<T> dot (const series<glm::vec<L,T,Q>>& u, const glm::vec<L,T,Q> v ) 
 	{
-		series<T> out = series<T>(u.size());
+		series<T> out(u.size());
 		dot(u, v, out);
 		return out;
 	}
@@ -74,14 +74,14 @@ namespace many
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	inline series<T> distance(const series<glm::vec<L,T,Q>>& u, const glm::vec<L,T,Q> v ) 
 	{
-		series<T> out = series<T>(u.size());
+		series<T> out(u.size());
 		distance(u, v, out);
 		return out;
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	inline series<T> dot (const series<glm::vec<L,T,Q>>& u, const series<glm::vec<L,T,Q>>& v ) 
 	{
-		series<T> out = series<T>(u.size());
+		series<T> out(u.size());
 		dot(u, v, out);
 		return out;
 	}
@@ -95,7 +95,7 @@ namespace many
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	inline series<T> distance(const series<glm::vec<L,T,Q>>& u, const series<glm::vec<L,T,Q>>& v ) 
 	{
-		series<T> out = series<T>(u.size());
+		series<T> out(u.size());
 		distance(u, v, out);
 		return out;
 	}
@@ -109,7 +109,7 @@ namespace many
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	inline series<T> length(const series<glm::vec<L,T,Q>>& u) 
 	{
-		series<T> out = series<T>(u.size());
+		series<T> out(u.size());
 		length(u, out);
 		return out;
 	}
