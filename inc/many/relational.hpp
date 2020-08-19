@@ -354,22 +354,22 @@ namespace many
 
 
 
-	template <class T, class T2>
+	template <class T, class T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	void greaterThan(const series<T>& a, const T2 b, series<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai > bi; }, out); 
 	}
-	template <class T, class T2>
+	template <class T, class T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	void greaterThanEqual(const series<T>& a, const T2 b, series<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai >= bi; }, out); 
 	}
-	template <class T, class T2>
+	template <class T, class T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	void lessThan(const series<T>& a, const T2 b, series<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai < bi; }, out); 
 	}
-	template <class T, class T2>
+	template <class T, class T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	void lessThanEqual(const series<T>& a, const T2 b, series<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai <= bi; }, out); 

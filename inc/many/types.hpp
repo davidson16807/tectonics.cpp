@@ -11,6 +11,8 @@
 
 namespace many
 {
+	class AbstractSeries {};
+
 	/*
 	This template represents a statically-sized contiguous block of heap memory occupied by primitive data of the same arbitrary type.
 	It is a thin wrapper for a std::vector and shares most of the same method signatures.
@@ -18,7 +20,7 @@ namespace many
 	See README.md for more details
 	*/
 	template <typename T>
-	class series
+	class series : AbstractSeries
 	{
 	protected:
 		std::vector<T> values;
@@ -287,7 +289,7 @@ namespace many
 			out[i] = f(a[i]);
 		}
 	}
-	template <typename T1, typename Tout, typename F>
+	template <typename T1, typename Tout, typename F, std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value, int> = 0>
 	inline void transform(const T1 a, F f, series<Tout>& out)
 	{
 		for (std::size_t i = 0; i < a.size(); ++i)
@@ -315,7 +317,7 @@ namespace many
 			}
 		}
 	}
-	template <typename T1, typename T2, typename Tout, typename F>
+	template <typename T1, typename T2, typename Tout, typename F, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline void transform(const series<T1>& a, const T2 b, F f, series<Tout>& out)
 	{
 		assert(a.size() == out.size());
@@ -324,7 +326,7 @@ namespace many
 			out[i] = f(a[i], b);
 		}
 	}
-	template <typename T1, typename T2, typename Tout, typename F>
+	template <typename T1, typename T2, typename Tout, typename F, std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value, int> = 0>
 	inline void transform(const T1 a, const series<T2>& b, F f, series<Tout>& out)
 	{
 		assert(b.size() == out.size());
@@ -356,7 +358,7 @@ namespace many
 			out[i] = f(a[i], b[i], c[i]);
 		}
 	}
-	template <typename T1, typename T2, typename T3, typename Tout, typename F>
+	template <typename T1, typename T2, typename T3, typename Tout, typename F, std::enable_if_t<!std::is_base_of<AbstractSeries, T3>::value, int> = 0>
 	inline void transform(const series<T1>& a, const series<T2>& b, const T3 c, F f, series<Tout>& out)
 	{
 		assert(a.size() == out.size());
@@ -366,7 +368,7 @@ namespace many
 			out[i] = f(a[i], b[i], c);
 		}
 	}
-	template <typename T1, typename T2, typename T3, typename Tout, typename F>
+	template <typename T1, typename T2, typename T3, typename Tout, typename F, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline void transform(const series<T1>& a, const T2 b, const series<T3>& c, F f, series<Tout>& out)
 	{
 		assert(a.size() == out.size());
@@ -385,7 +387,7 @@ namespace many
 			out[i] = f(a[i], b, c);
 		}
 	}
-	template <typename T1, typename T2, typename T3, typename Tout, typename F>
+	template <typename T1, typename T2, typename T3, typename Tout, typename F, std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value, int> = 0>
 	inline void transform(const T1 a, const series<T2>& b, const series<T3>& c, F f, series<Tout>& out)
 	{
 		assert(b.size() == out.size());
