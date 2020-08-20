@@ -20,7 +20,7 @@ namespace many
 	template <class T1, typename F>
 	inline series<T1> transform(const series<T1>& a, F f)
 	{
-		auto out = a;
+		series<T1> out(a.size());
 		many::transform(a, f, out); 
 		return out;
 	}
@@ -29,18 +29,20 @@ namespace many
 	template <class T1, class T2, typename F>
 	inline series<T1> transform(const series<T1>& a, const series<T2>& b, F f)
 	{
-		auto out = a;
+		series<T1> out(a.size());
 		many::transform(a, b, f, out); 
 		return out;
 	}
-	template <class T1, class T2, typename F, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <class T1, class T2, typename F, 
+		std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T1> transform(const series<T1>& a, const T2 b, F f)
 	{
-		auto out = a;
+		series<T1> out(a.size());
 		many::transform(a, b, f, out); 
 		return out;
 	}
-	template <class T1, class T2, typename F, std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value, int> = 0>
+	template <class T1, class T2, typename F, 
+		std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value, int> = 0>
 	inline series<T1> transform(const T1 a, const series<T2>& b, F f)
 	{
 		auto out = b;
@@ -51,49 +53,56 @@ namespace many
 
 
 
-	template <class T1, class T2, class T3, typename F>
+	template <class T1, class T2, class T3, typename F, 
+		std::enable_if_t<!std::is_base_of<AbstractSeries, F>::value, int> = 0>
 	inline series<T1> transform(const series<T1>& a, const series<T2>& b, const series<T3>& c, F f)
 	{
-		auto out = a;
+		series<T1> out(a.size());
 		many::transform(a, b, c, f, out); 
 		return out;
 	}
-	template <class T1, class T2, class T3, typename F, std::enable_if_t<!std::is_base_of<AbstractSeries, T3>::value, int> = 0>
+	template <class T1, class T2, class T3, typename F, 
+		std::enable_if_t<!std::is_base_of<AbstractSeries, T3>::value && !std::is_base_of<AbstractSeries, F>::value, int> = 0>
 	inline series<T1> transform(const series<T1>& a, const series<T2>& b, const T3 c, F f)
 	{
-		auto out = a;
+		series<T1> out(a.size());
 		many::transform(a, b, c, f, out); 
 		return out;
 	}
-	template <class T1, class T2, class T3, typename F, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <class T1, class T2, class T3, typename F, 
+		std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value && !std::is_base_of<AbstractSeries, F>::value, int> = 0>
 	inline series<T1> transform(const series<T1>& a, const T2 b, const series<T3>& c, F f)
 	{
-		auto out = a;
+		series<T1> out(a.size());
 		many::transform(a, b, c, f, out); 
 		return out;
 	}
-	template <class T1, class T2, class T3, typename F>
+	template <class T1, class T2, class T3, typename F,
+		std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value && !std::is_base_of<AbstractSeries, T3>::value && !std::is_base_of<AbstractSeries, F>::value, int> = 0>
 	inline series<T1> transform(const series<T1>& a, const T2 b, const T3 c, F f)
 	{
-		auto out = a;
+		series<T1> out(a.size());
 		many::transform(a, b, c, f, out); 
 		return out;
 	}
-	template <class T1, class T2, class T3, typename F, std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value, int> = 0>
+	template <class T1, class T2, class T3, typename F, 
+		std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value && !std::is_base_of<AbstractSeries, F>::value, int> = 0>
 	inline series<T1> transform(const T1 a, const series<T2>& b, const series<T3>& c, F f)
 	{
 		auto out = b;
 		many::transform(a, b, c, f, out); 
 		return out;
 	}
-	template <class T1, class T2, class T3, typename F>
+	template <class T1, class T2, class T3, typename F,
+		std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value && !std::is_base_of<AbstractSeries, T3>::value && !std::is_base_of<AbstractSeries, F>::value, int> = 0>
 	inline series<T1> transform(const T1 a, const series<T2>& b, const T3 c, F f)
 	{
 		auto out = b;
 		many::transform(a, b, c, f, out); 
 		return out;
 	}
-	template <class T1, class T2, class T3, typename F>
+	template <class T1, class T2, class T3, typename F,
+		std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value && !std::is_base_of<AbstractSeries, T2>::value && !std::is_base_of<AbstractSeries, F>::value, int> = 0>
 	inline series<T1> transform(const T1 a, const T2 b, const series<T3>& c, F f)
 	{
 		auto out = c;

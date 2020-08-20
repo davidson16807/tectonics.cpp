@@ -23,7 +23,7 @@ namespace many
 	template<typename T, glm::qualifier Q>
 	void cross (const series<glm::vec<3,T,Q>>& u, const glm::vec<3,T,Q> v, series<glm::vec<3,T,Q>>& out) 
 	{
-		many::transform(u, v, [](glm::vec<3,T,Q>& ui, glm::vec<3,T,Q>& vi){ return glm::cross(ui,vi); }, out);
+		many::transform(u, v, [](const glm::vec<3,T,Q>& ui, const glm::vec<3,T,Q>& vi){ return glm::cross(ui,vi); }, out);
 	}
 	template<typename T, glm::qualifier Q>
 	void cross (const series<glm::vec<2,T,Q>>& u, const glm::vec<2,T,Q> v, series<float>& out) 
@@ -49,7 +49,7 @@ namespace many
 	template<typename T, glm::qualifier Q>
 	void cross (const series<glm::vec<3,T,Q>>& u, const series<glm::vec<3,T,Q>>& v, series<glm::vec<3,T,Q>>& out) 
 	{
-		many::transform(u, v, [](glm::vec<3,T,Q>& ui, glm::vec<3,T,Q>& vi){ return glm::cross(ui,vi); }, out);
+		many::transform(u, v, [](const glm::vec<3,T,Q>& ui, const glm::vec<3,T,Q>& vi){ return glm::cross(ui,vi); }, out);
 	}
 	template<typename T, glm::qualifier Q>
 	void cross (const series<glm::vec<2,T,Q>>& u, const series<glm::vec<2,T,Q>>& v, series<float>& out) 

@@ -54,63 +54,63 @@ namespace many
 	inline series<T> dot (const series<glm::vec<L,T,Q>>& u, const glm::vec<L,T,Q> v ) 
 	{
 		series<T> out(u.size());
-		dot(u, v, out);
+		many::dot(u, v, out);
 		return out;
 	}
 	template<typename T, glm::qualifier Q>
 	inline series<glm::vec<3,T,Q>> cross (const series<glm::vec<3,T,Q>>& u, const glm::vec<3,T,Q> v ) 
 	{
-		series<glm::vec<3,T,Q>> out = series<glm::vec<3,T,Q>>(u.size());
-		cross(u, v, out);
+		series<glm::vec<3,T,Q>> out(u.size());
+		many::cross(u, v, out);
 		return out;
 	}
 	template<typename T, glm::qualifier Q>
 	inline series<float> cross (const series<glm::vec<2,T,Q>>& u, const glm::vec<2,T,Q> v ) 
 	{
-		series<float> out = series<float>(u.size());
-		cross(u, v, out);
+		series<float> out(u.size());
+		many::cross(u, v, out);
 		return out;
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	inline series<T> distance(const series<glm::vec<L,T,Q>>& u, const glm::vec<L,T,Q> v ) 
 	{
 		series<T> out(u.size());
-		distance(u, v, out);
+		many::distance(u, v, out);
 		return out;
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	inline series<T> dot (const series<glm::vec<L,T,Q>>& u, const series<glm::vec<L,T,Q>>& v ) 
 	{
 		series<T> out(u.size());
-		dot(u, v, out);
+		many::dot(u, v, out);
 		return out;
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	inline series<glm::vec<L,T,Q>> cross (const series<glm::vec<L,T,Q>>& u, const series<glm::vec<L,T,Q>>& v ) 
 	{
-		series<glm::vec<L,T,Q>> out = series<glm::vec<L,T,Q>>(u.size());
-		cross(u, v, out);
+		series<glm::vec<L,T,Q>> out(u.size());
+		many::cross(u, v, out);
 		return out;
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	inline series<T> distance(const series<glm::vec<L,T,Q>>& u, const series<glm::vec<L,T,Q>>& v ) 
 	{
 		series<T> out(u.size());
-		distance(u, v, out);
+		many::distance(u, v, out);
 		return out;
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	inline series<glm::vec<L,T,Q>> normalize(const series<glm::vec<L,T,Q>>& u) 
 	{
-		series<glm::vec<L,T,Q>> out = series<glm::vec<L,T,Q>>(u.size());
-		normalize(u, out);
+		series<glm::vec<L,T,Q>> out(u.size());
+		many::normalize(u, out);
 		return out;
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	inline series<T> length(const series<glm::vec<L,T,Q>>& u) 
 	{
 		series<T> out(u.size());
-		length(u, out);
+		many::length(u, out);
 		return out;
 	}
 
@@ -151,25 +151,25 @@ namespace many
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	inline series<glm::vec<L,T,Q>>& operator+=(series<glm::vec<L,T,Q>>& a, const T b) 
 	{
-		add(a, b, a);
+		many::add(a, b, a);
 		return a;
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	inline series<glm::vec<L,T,Q>>& operator-=(series<glm::vec<L,T,Q>>& a, const T b) 
 	{
-		sub(a, b, a);
+		many::sub(a, b, a);
 		return a;
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	inline series<glm::vec<L,T,Q>>& operator*=(series<glm::vec<L,T,Q>>& a, const T b) 
 	{
-		mult(a, b, a);
+		many::mult(a, b, a);
 		return a;
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
 	inline series<glm::vec<L,T,Q>>& operator/=(series<glm::vec<L,T,Q>>& a, const T b) 
 	{
-		div(a, b, a);
+		many::div(a, b, a);
 		return a;
 	}
 } // end namespace
