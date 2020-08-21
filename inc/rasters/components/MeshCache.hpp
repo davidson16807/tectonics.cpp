@@ -8,11 +8,12 @@
 #include <many/types.hpp>           // floats, etc.
 #include <many/arithmetic.hpp>      // add, sub, mult, div, etc.
 #include <many/common.hpp>          // max
-#include <many/convenience.hpp>     // operator overloads
 #include <many/statistic.hpp>       // mean
 #include <many/glm/types.hpp>       // *vec*s
-#include <many/glm/convenience.hpp> // dot
 #include <many/glm/geometric.hpp>   // cross, dot, etc.
+#include <many/glm/convenience.hpp> // dot
+#include <many/convenience.hpp>     // in place add, sub, mult, div, etc.
+#include <many/operators.hpp>       // +, -, *, /
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>           // unordered_set<vec*>
@@ -113,6 +114,7 @@ namespace rasters
         {
 
         }
+    private:
         MeshCache(const Tid vertex_count, const Tid face_count, const Tid edge_count)
             : 
                 flattened_face_vertex_ids        (3*face_count),
@@ -183,6 +185,7 @@ namespace rasters
 
         }
 
+    public:
         template <typename Tid2, typename Tfloat2>
         explicit MeshCache(const many::series<glm::vec<3,Tfloat2,glm::defaultp>>& vertices, const many::series<glm::vec<3,Tid2, glm::defaultp>>& faces):
             MeshCache(vertices.size(), faces.size(), 0)
@@ -190,7 +193,7 @@ namespace rasters
             copy(vertex_positions, vertices);
             copy(face_vertex_ids,  faces);
             
-            many::series<vec<3,Tfloat,glm::defaultp>> flattened_face_vertex_positions(3*face_count);
+            many::series<glm::vec<3,Tfloat,glm::defaultp>> flattened_face_vertex_positions(3*face_count);
             flatten (face_vertex_ids,                             flattened_face_vertex_ids         );
             get     (vertex_positions, flattened_face_vertex_ids, flattened_face_vertex_positions   );
             flatten (flattened_face_vertex_positions,             flattened_face_vertex_coordinates );
@@ -222,7 +225,7 @@ namespace rasters
             aggregate_into(face_vertex_areas_c, face_vertex_id_c, [](Tfloat a, Tfloat b){ return a+b; }, vertex_areas);
             vertex_average_area = mean(vertex_areas);
 
-            many::series<vec<3,Tfloat,glm::defaultp>> face_area_weighted_normals = face_normals * face_areas;
+            many::series<glm::vec<3,Tfloat,glm::defaultp>> face_area_weighted_normals = face_normals * face_areas;
             aggregate_into(face_area_weighted_normals, face_vertex_id_a, [](glm::vec<3,Tfloat,glm::defaultp> a, glm::vec<3,Tfloat,glm::defaultp> b){ return a+b; }, vertex_normals);
             aggregate_into(face_area_weighted_normals, face_vertex_id_b, [](glm::vec<3,Tfloat,glm::defaultp> a, glm::vec<3,Tfloat,glm::defaultp> b){ return a+b; }, vertex_normals);
             aggregate_into(face_area_weighted_normals, face_vertex_id_c, [](glm::vec<3,Tfloat,glm::defaultp> a, glm::vec<3,Tfloat,glm::defaultp> b){ return a+b; }, vertex_normals);
@@ -231,7 +234,7 @@ namespace rasters
             // Step 1: generate arrows from faces
             std::unordered_set<glm::vec<2,Tid,glm::defaultp>> arrow_vertex_ids_set;
             std::unordered_map<glm::vec<2,Tid,glm::defaultp>, std::unordered_set<Tid>> arrow_face_ids_map;
-            for (Tid i=0; i<face_vertex_ids.size(); i++)
+            for (std::size_t i=0; i<face_vertex_ids.size(); i++)
             {
                 arrow_vertex_ids_set.insert(glm::vec<2,Tid,glm::defaultp>(face_vertex_ids[i].x, face_vertex_ids[i].y));
                 arrow_vertex_ids_set.insert(glm::vec<2,Tid,glm::defaultp>(face_vertex_ids[i].y, face_vertex_ids[i].x));
@@ -311,7 +314,7 @@ namespace rasters
 
             // generate arrow_face_ids and edge_face_ids
             std::unordered_set<Tid> face_ids_set;
-            for (Tid i=0; i<edge_vertex_ids.size(); i++)
+            for (std::size_t i=0; i<edge_vertex_ids.size(); i++)
             {
                 face_ids_set = arrow_face_ids_map[edge_vertex_ids[i]];
                 if (face_ids_set.size() == 2)
@@ -319,7 +322,7 @@ namespace rasters
                     edge_face_ids[i] = glm::vec<2,Tid,glm::defaultp>(*(face_ids_set.begin()), *std::next(face_ids_set.begin()));
                 }
             }
-            for (Tid i=0; i<arrow_vertex_ids.size(); i++)
+            for (std::size_t i=0; i<arrow_vertex_ids.size(); i++)
             {
                 face_ids_set = arrow_face_ids_map[arrow_vertex_ids[i]];
                 if (face_ids_set.size() == 2)
@@ -359,10 +362,10 @@ namespace rasters
             normalize(arrow_normals,                          arrow_normals      );
             arrow_average_length = mean(arrow_lengths);
 
-            many::series<vec<3,Tfloat,glm::defaultp>>  arrow_dual_offset_a    (2*edge_count);
-            many::series<vec<3,Tfloat,glm::defaultp>>  arrow_dual_offset_b    (2*edge_count);
-            many::series<vec<3,Tfloat,glm::defaultp>>  arrow_dual_offset_cross(2*edge_count);
-            many::series<vec<3,Tfloat,glm::defaultp>>  arrow_dual_offset_ab   (2*edge_count);
+            many::series<glm::vec<3,Tfloat,glm::defaultp>>  arrow_dual_offset_a    (2*edge_count);
+            many::series<glm::vec<3,Tfloat,glm::defaultp>>  arrow_dual_offset_b    (2*edge_count);
+            many::series<glm::vec<3,Tfloat,glm::defaultp>>  arrow_dual_offset_cross(2*edge_count);
+            many::series<glm::vec<3,Tfloat,glm::defaultp>>  arrow_dual_offset_ab   (2*edge_count);
             many::series<Tfloat> arrow_dual_areas       (2*edge_count);
 
             get     (face_midpoints,         arrow_face_id_a,       arrow_dual_endpoint_a   );

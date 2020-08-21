@@ -5,7 +5,7 @@
 #include <glm/vec3.hpp>               // *vec3
 
 // in-house libraries
-#include "Grid.hpp" 
+#include "MeshCache.hpp" 
 
 using namespace glm;
 using namespace many;
@@ -20,8 +20,8 @@ It looks like this:
     \|/ 
      4   
 */
-Grid diamond = 
-    Grid(
+MeshCache diamond = 
+    MeshCache(
         vec3s({
                 vec3( 0, 0, 0),
                 vec3( 1, 0, 0),
@@ -42,4 +42,4 @@ Grid diamond =
  that require spatial awareness without requiring a particular shape.
  (e.g. gradient, divergence, laplacian)
 */
-Grid tetrahedron = Grid(meshes::tetrahedron.vertices, meshes::tetrahedron.faces);
+MeshCache tetrahedron = MeshCache(meshes::tetrahedron.vertices, meshes::tetrahedron.faces);

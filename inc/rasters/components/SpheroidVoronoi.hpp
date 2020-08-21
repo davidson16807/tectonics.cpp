@@ -17,6 +17,7 @@
 #include <many/types.hpp>
 #include <many/glm/types.hpp>
 #include <many/glm/geometric.hpp>
+#include <many/glm/convenience.hpp>
 
 namespace rasters
 {
@@ -74,7 +75,7 @@ namespace rasters
 			const float cell_width,
 			const T default_value
 		) : 
-			OCTAHEDRON_SIDE_Z(normalize(
+			OCTAHEDRON_SIDE_Z(many::normalize(
 				many::vec3s {
 					glm::vec3(-1,-1,-1),
 					glm::vec3( 1,-1,-1),
@@ -86,11 +87,11 @@ namespace rasters
 					glm::vec3( 1, 1, 1)
 				}
 			)),
-			OCTAHEDRON_SIDE_X(normalize(
-				cross(SpheroidLookup<T>::OCTAHEDRON_SIDE_Z, glm::vec3(0,0,1))
+			OCTAHEDRON_SIDE_X(many::normalize(
+				many::cross(SpheroidLookup<T>::OCTAHEDRON_SIDE_Z, glm::vec3(0,0,1))
 			)),
-			OCTAHEDRON_SIDE_Y(normalize(
-				cross(SpheroidLookup<T>::OCTAHEDRON_SIDE_Z, SpheroidLookup<T>::OCTAHEDRON_SIDE_X)
+			OCTAHEDRON_SIDE_Y(many::normalize(
+				many::cross(SpheroidLookup<T>::OCTAHEDRON_SIDE_Z, SpheroidLookup<T>::OCTAHEDRON_SIDE_X)
 			)),
 			dimensions((int)ceil(2./cell_width)+1),
 			cell_width(cell_width),
@@ -109,8 +110,8 @@ namespace rasters
 		}
 		glm::ivec3 get_conceptual_id(const glm::vec3 point, const int side_id) const
 		{
-			const double x2d = dot( OCTAHEDRON_SIDE_X[side_id], point );
-			const double y2d = dot( OCTAHEDRON_SIDE_Y[side_id], point );
+			const double x2d = glm::dot( OCTAHEDRON_SIDE_X[side_id], point );
+			const double y2d = glm::dot( OCTAHEDRON_SIDE_Y[side_id], point );
 
 			const int xi2d = (x2d + 1.) / cell_width;
 			const int yi2d = (y2d + 1.) / cell_width;

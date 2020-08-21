@@ -10,16 +10,16 @@
 // in-house libraries
 #include <meshes/mesh.hpp>  
 
-#include "Grid.hpp"  
+#include "MeshCache.hpp"  
 
-#include "Grid_test_utils.hpp"
+#include "MeshCache_test_utils.hpp"
 
 using namespace glm;
 using namespace many;
 using namespace rasters;
 
-TEST_CASE( "Grid correctness", "[Grid]" ) {
-    SECTION("Grid must have the appropriate counts for vertex, edge, arrow, and face attributes"){
+TEST_CASE( "MeshCache correctness", "[MeshCache]" ) {
+    SECTION("MeshCache must have the appropriate counts for vertex, edge, arrow, and face attributes"){
         CHECK(diamond.flattened_face_vertex_ids.size() == 12);
 
         CHECK(diamond.vertex_count == 5);
@@ -77,8 +77,8 @@ TEST_CASE( "Grid correctness", "[Grid]" ) {
     }
 }
 
-TEST_CASE( "Grid nontriviality", "[Grid]" ) {
-    SECTION("Grid attributes must contain nonzero elements"){
+TEST_CASE( "MeshCache nontriviality", "[MeshCache]" ) {
+    SECTION("MeshCache attributes must contain nonzero elements"){
         CHECK(many::sum(many::abs(tetrahedron.flattened_face_vertex_ids)) > 0.01f);
 
         // CHECK(many::sum(many::abs(tetrahedron.vertex_neighbor_ids)) > 0.01f);
