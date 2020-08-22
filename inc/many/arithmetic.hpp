@@ -6,22 +6,22 @@
 
 namespace many
 {
-	template <class T, class T2, class T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	void add(const series<T>& a, const T2 b, series<T3>& out)
 	{
 		many::transform(a, b, [](T ai, T2 bi){ return ai + bi; }, out); 
 	}
-	template <class T, class T2, class T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	void sub(const series<T>& a, const T2 b, series<T3>& out)
 	{
 		many::transform(a, b, [](T ai, T2 bi){ return ai - bi; }, out); 
 	}
-	template <class T, class T2, class T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	void mult(const series<T>& a, const T2 b, series<T3>& out)
 	{
 		many::transform(a, b, [](T ai, T2 bi){ return ai * bi; }, out); 
 	}
-	template <class T, class T2, class T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	void div(const series<T>& a, const T2 b, series<T3>& out)
 	{
 		const T2 binv = T2(1.)/b;
@@ -29,22 +29,22 @@ namespace many
 	}
 
 
-	template <class T, class T2, class T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	void add(const T2 a, const series<T>& b, series<T3>& out)
 	{
 		many::transform(a, b, [](T ai, T2 bi){ return ai + bi; }, out); 
 	}
-	template <class T, class T2, class T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	void sub(const T2 a, const series<T>& b, series<T3>& out)
 	{
 		many::transform(a, b, [](T ai, T2 bi){ return ai - bi; }, out); 
 	}
-	template <class T, class T2, class T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	void mult(const T2 a, const series<T>& b, series<T3>& out)
 	{
 		many::transform(a, b, [](T ai, T2 bi){ return ai * bi; }, out); 
 	}
-	template <class T, class T2, class T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	void div(const T2 a, const series<T>& b, series<T3>& out)
 	{
 		many::transform(a, b, [](T ai, T2 bi){ return ai / bi; }, out); 
@@ -52,24 +52,24 @@ namespace many
 
 
 
-	// NOTE: we define operators for multiple classes T and T2 in order to support 
+	// NOTE: we define operators for multiple typenames T and T2 in order to support 
 	//  vector/scalar multiplication, matrix/vect multiplication, etc.
-	template <class T, class T2, class T3>
+	template <typename T, typename T2, typename T3>
 	void add(const series<T>& a, const series<T2>& b, series<T3>& out)
 	{
 		many::transform(a, b, [](T ai, T2 bi){ return ai + bi; }, out); 
 	}
-	template <class T, class T2, class T3>
+	template <typename T, typename T2, typename T3>
 	void sub(const series<T>& a, const series<T2>& b, series<T3>& out)
 	{
 		many::transform(a, b, [](T ai, T2 bi){ return ai - bi; }, out); 
 	}
-	template <class T, class T2, class T3>
+	template <typename T, typename T2, typename T3>
 	void mult(const series<T>& a, const series<T2>& b, series<T3>& out)
 	{
 		many::transform(a, b, [](T ai, T2 bi){ return ai * bi; }, out); 
 	}
-	template <class T, class T2, class T3>
+	template <typename T, typename T2, typename T3>
 	void div(const series<T>& a, const series<T2>& b, series<T3>& out)
 	{
 		many::transform(a, b, [](T ai, T2 bi){ return ai / bi; }, out); 

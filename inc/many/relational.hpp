@@ -7,7 +7,7 @@ namespace many
 
 	const float MANY_EPSILON = 1e-4;
 
-	template <class T>
+	template <typename T>
 	bool equal(const series<T>& a, const T b, T threshold = T(MANY_EPSILON))
 	{
 		bool out(true);
@@ -19,7 +19,7 @@ namespace many
 		}
 		return out;
 	}
-	template <class T>
+	template <typename T>
 	bool notEqual(const series<T>& a, const T b, T threshold = T(MANY_EPSILON))
 	{
 		bool out(false);
@@ -31,7 +31,7 @@ namespace many
 		}
 		return out;
 	}
-	template <class T>
+	template <typename T>
 	bool equal(const series<T>& a, const series<T>& b, T threshold = T(MANY_EPSILON))
 	{
 		if (a.size() != b.size())
@@ -47,7 +47,7 @@ namespace many
 		}
 		return out;
 	}
-	template <class T>
+	template <typename T>
 	bool notEqual(const series<T>& a, const series<T>& b, T threshold = T(MANY_EPSILON))
 	{
 		if (a.size() != b.size())
@@ -66,7 +66,7 @@ namespace many
 
 
 
-	template <class T>
+	template <typename T>
 	void equal(const series<T>& a, const T b, series<bool>& out, T threshold = T(MANY_EPSILON))
 	{
 		T diff(0);
@@ -76,7 +76,7 @@ namespace many
 			out[i] = diff*diff <= threshold;
 		}
 	}
-	template <class T>
+	template <typename T>
 	void notEqual(const series<T>& a, const T b, series<bool>& out, T threshold = T(MANY_EPSILON))
 	{
 		T diff(0);
@@ -86,7 +86,7 @@ namespace many
 			out[i] = diff*diff > threshold;
 		}
 	}
-	template <class T>
+	template <typename T>
 	void equal(const series<T>& a, const series<T>& b, series<bool>& out, T threshold = T(MANY_EPSILON))
 	{
 		T diff(0);
@@ -96,7 +96,7 @@ namespace many
 			out[i] = diff*diff <= threshold;
 		}
 	}
-	template <class T>
+	template <typename T>
 	void notEqual(const series<T>& a, const series<T>& b, series<bool>& out, T threshold = T(MANY_EPSILON))
 	{
 		T diff(0);
@@ -354,22 +354,22 @@ namespace many
 
 
 
-	template <class T, class T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	void greaterThan(const series<T>& a, const T2 b, series<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai > bi; }, out); 
 	}
-	template <class T, class T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	void greaterThanEqual(const series<T>& a, const T2 b, series<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai >= bi; }, out); 
 	}
-	template <class T, class T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	void lessThan(const series<T>& a, const T2 b, series<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai < bi; }, out); 
 	}
-	template <class T, class T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	void lessThanEqual(const series<T>& a, const T2 b, series<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai <= bi; }, out); 
@@ -377,22 +377,22 @@ namespace many
 
 
 
-	template <class T, class T2>
+	template <typename T, typename T2>
 	void greaterThan(const series<T>& a, const series<T2>& b, series<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai > bi; }, out); 
 	}
-	template <class T, class T2>
+	template <typename T, typename T2>
 	void greaterThanEqual(const series<T>& a, const series<T2>& b, series<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai >= bi; }, out); 
 	}
-	template <class T, class T2>
+	template <typename T, typename T2>
 	void lessThan(const series<T>& a, const series<T2>& b, series<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai <= bi; }, out); 
 	}
-	template <class T, class T2>
+	template <typename T, typename T2>
 	void lessThanEqual(const series<T>& a, const series<T2>& b, series<bool>& out)
 	{
 		transform(a, b, [](T ai, T2 bi){ return ai < bi; }, out); 

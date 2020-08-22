@@ -20,7 +20,7 @@ namespace many
 	"get_random_point_on_unit_sphere" returns a random point that is evenly distributed on a unit sphere
 	see here for an explanation: http://corysimon.github.io/articles/uniformdistn-on-sphere/
 	*/
-	template <class Tgenerator>
+	template <typename Tgenerator>
 	glm::vec3 get_random_point_on_unit_sphere(Tgenerator& generator)
 	{
 		std::uniform_real_distribution<float> distribution(0.0, 1.0);
@@ -40,7 +40,7 @@ namespace many
 	float noise(const float seed, const float a = 10.f, const float b=10000.f) {
 		return glm::fract(std::sin(seed*a)*b);
 	}
-	template <int L, class T, glm::qualifier Q>
+	template <int L, typename T, glm::qualifier Q>
 	glm::vec<L,T,Q> noise(const glm::vec<L,T,Q> seed, const float a = 10.f, const float b=10000.f) {
 		return glm::fract(glm::sin(seed*a)*b);
 	}
@@ -60,7 +60,7 @@ namespace many
     Regions may have smooth boundaries, depending on a "region_transition_width" parameter that defines
      the width of a region's transition zone. 
     */
-	template <class T, class Tgenerator>
+	template <typename T, typename Tgenerator>
 	void get_elias_noise(
 		const many::series<glm::vec3>& positions, 
 		Tgenerator& generator, 
@@ -89,7 +89,7 @@ namespace many
 		}
 	}
 
-	template <class T, class Tgenerator>
+	template <typename T, typename Tgenerator>
 	many::series<T> get_elias_noise(
 		const many::series<glm::vec3>& positions, 
 		Tgenerator& generator,
@@ -103,7 +103,7 @@ namespace many
 		return out;
 	}
 
-	template <class T>
+	template <typename T>
 	void get_perlin_noise(
 		const many::series<glm::vec3>& positions, 
 		many::series<T>& out,
@@ -143,7 +143,7 @@ namespace many
 		}
 	}
 
-	template <class T>
+	template <typename T>
 	void get_worley_noise(
 		const many::series<glm::vec3>& positions, 
 		many::series<T>& out

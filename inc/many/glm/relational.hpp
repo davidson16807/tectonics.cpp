@@ -14,7 +14,7 @@ namespace many
 
 
 
-	template <glm::length_t L, class T, glm::qualifier Q>
+	template <glm::length_t L, typename T, glm::qualifier Q>
 	bool equal(const series<glm::vec<L,T,Q>>& a, const series<glm::vec<L,T,Q>>& b, T cosine_threshold, T length_threshold)
 	{
 		bool out(true);
@@ -24,7 +24,7 @@ namespace many
 		}
 		return out;
 	}
-	template <glm::length_t L, class T, glm::qualifier Q>
+	template <glm::length_t L, typename T, glm::qualifier Q>
 	bool equal(const series<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> b, T cosine_threshold, T length_threshold)
 	{
 		bool out(true);

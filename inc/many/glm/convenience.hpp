@@ -25,7 +25,7 @@ namespace many
 
 
 
-	template <glm::length_t L, class T, glm::qualifier Q>
+	template <glm::length_t L, typename T, glm::qualifier Q>
 	inline series<T> get_x(const series<glm::vec<L,T,Q>>& a)
 	{
 		series<T> out(a.size());
@@ -33,7 +33,7 @@ namespace many
 		return out;
 	}
 
-	template <glm::length_t L, class T, glm::qualifier Q>
+	template <glm::length_t L, typename T, glm::qualifier Q>
 	inline series<T> get_y(const series<glm::vec<L,T,Q>>& a)
 	{
 		series<T> out(a.size());
@@ -41,7 +41,7 @@ namespace many
 		return out;
 	}
 
-	template <glm::length_t L, class T, glm::qualifier Q>
+	template <glm::length_t L, typename T, glm::qualifier Q>
 	inline series<T> get_z(const series<glm::vec<L,T,Q>>& a)
 	{
 		series<T> out(a.size());

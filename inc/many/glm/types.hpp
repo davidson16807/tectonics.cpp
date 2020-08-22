@@ -5,71 +5,101 @@
 
 namespace many
 {
-	template <glm::length_t L, class T, glm::qualifier Q>
-	void get_x(const series<glm::vec<L,T,Q>>& a, series<T>& out )
+	template <glm::length_t L, typename T, glm::qualifier Q>
+	void get_x(const series<glm::vec<L,T,Q>>& a, series<T>& output )
 	{
-		transform(a, [](glm::vec<L,T,Q> ai){ return ai.x; }, out);
+		transform(a, [](glm::vec<L,T,Q> ai){ return ai.x; }, output);
 	}
-	template <glm::length_t L, class T, glm::qualifier Q>
-	void get_y(const series<glm::vec<L,T,Q>>& a, series<T>& out )
+	template <glm::length_t L, typename T, glm::qualifier Q>
+	void get_y(const series<glm::vec<L,T,Q>>& a, series<T>& output )
 	{
-		transform(a, [](glm::vec<L,T,Q> ai){ return ai.y; }, out);
+		transform(a, [](glm::vec<L,T,Q> ai){ return ai.y; }, output);
 	}
-	template <glm::length_t L, class T, glm::qualifier Q>
-	void get_z(const series<glm::vec<L,T,Q>>& a, series<T>& out )
+	template <glm::length_t L, typename T, glm::qualifier Q>
+	void get_z(const series<glm::vec<L,T,Q>>& a, series<T>& output )
 	{
-		transform(a, [](glm::vec<L,T,Q> ai){ return ai.z; }, out);
+		transform(a, [](glm::vec<L,T,Q> ai){ return ai.z; }, output);
 	}
 
 
 
-	template <glm::length_t L, class T, glm::qualifier Q>
-	void set_x(series<glm::vec<L,T,Q>>& out, const series<T>& a )
+	// old method signatures: don't use these, and get rid of them when you have the time
+	template <glm::length_t L, typename T, glm::qualifier Q>
+	void set_x(series<glm::vec<L,T,Q>>& output, const series<T>& a )
 	{
-		for (unsigned int i = 0; i < out.size(); ++i)
+		for (unsigned int i = 0; i < output.size(); ++i)
 		{
-			out[i].x = a[i];
+			output[i].x = a[i];
 		}
 	}
-	template <glm::length_t L, class T, glm::qualifier Q>
-	void set_y(series<glm::vec<L,T,Q>>& out, const series<T>& a )
+	template <glm::length_t L, typename T, glm::qualifier Q>
+	void set_y(series<glm::vec<L,T,Q>>& output, const series<T>& a )
 	{
-		for (unsigned int i = 0; i < out.size(); ++i)
+		for (unsigned int i = 0; i < output.size(); ++i)
 		{
-			out[i].y = a[i];
+			output[i].y = a[i];
 		}
 	}
-	template <glm::length_t L, class T, glm::qualifier Q>
-	void set_z(series<glm::vec<L,T,Q>>& out, const series<T>& a )
+	template <glm::length_t L, typename T, glm::qualifier Q>
+	void set_z(series<glm::vec<L,T,Q>>& output, const series<T>& a )
 	{
-		for (unsigned int i = 0; i < out.size(); ++i)
+		for (unsigned int i = 0; i < output.size(); ++i)
 		{
-			out[i].z = a[i];
+			output[i].z = a[i];
 		}
 	}
 
+	// better, overloaded method signatures: equivalent performance, but more versatile, 
+	// and fits within the definition of a regular function (as defined by Stepanov)
+	template <glm::length_t L, typename T, glm::qualifier Q>
+	void set_x(const series<glm::vec<L,T,Q>>& a, const series<T>& values, series<glm::vec<L,T,Q>>& output )
+	{
+		if (&a != &output){ many::copy(output, a); }
+		for (unsigned int i = 0; i < output.size(); ++i)
+		{
+			output[i].x = values[i];
+		}
+	}
+	template <glm::length_t L, typename T, glm::qualifier Q>
+	void set_y(const series<glm::vec<L,T,Q>>& a, const series<T>& values, series<glm::vec<L,T,Q>>& output )
+	{
+		if (&a != &output){ many::copy(output, a); }
+		for (unsigned int i = 0; i < output.size(); ++i)
+		{
+			output[i].y = values[i];
+		}
+	}
+	template <glm::length_t L, typename T, glm::qualifier Q>
+	void set_z(const series<glm::vec<L,T,Q>>& a, const series<T>& values, series<glm::vec<L,T,Q>>& output )
+	{
+		if (&a != &output){ many::copy(output, a); }
+		for (unsigned int i = 0; i < output.size(); ++i)
+		{
+			output[i].z = values[i];
+		}
+	}
 
 
 	// Converts from vec3s to flattened floats
-	template <glm::length_t L, class T, glm::qualifier Q>
-	void flatten (series<glm::vec<L,T,Q>>& a, series<T>& out) {
-		assert(a.size()*L == out.size());
+	template <glm::length_t L, typename T, glm::qualifier Q>
+	void flatten (series<glm::vec<L,T,Q>>& a, series<T>& output) {
+		assert(a.size()*L == output.size());
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
-			out[3*i+0] = a[i].x;
-			out[3*i+1] = a[i].y;
-			out[3*i+2] = a[i].z;
+			output[3*i+0] = a[i].x;
+			output[3*i+1] = a[i].y;
+			output[3*i+2] = a[i].z;
 		}
 	}
 	// Converts from flattened floats to vec3s
-	template <glm::length_t L, class T, glm::qualifier Q>
-	void unflatten (series<T>& a, series<glm::vec<L,T,Q>>& out) {
-		assert(out.size()*L == a.size());
-	    for (unsigned int i = 0; i < out.size(); ++i)
+	template <glm::length_t L, typename T, glm::qualifier Q>
+	void unflatten (series<T>& a, series<glm::vec<L,T,Q>>& output) {
+		assert(output.size()*L == a.size());
+	    for (unsigned int i = 0; i < output.size(); ++i)
 		{
-			out[i].x = a[3*i+0];
-			out[i].y = a[3*i+1];
-			out[i].z = a[3*i+2];
+			output[i].x = a[3*i+0];
+			output[i].y = a[3*i+1];
+			output[i].z = a[3*i+2];
 		}
 	}
 

@@ -13,7 +13,7 @@ namespace many
 
 
 	// component-wise min
-	template <class T>
+	template <typename T>
 	unsigned int min_id(const series<T>& a)
 	{
 		T min_value = a[0];
@@ -31,7 +31,7 @@ namespace many
 
 
 
-	template <class T>
+	template <typename T>
 	unsigned int max_id(const series<T>& a)
 	{
 		T min_value = a[0];
@@ -49,7 +49,7 @@ namespace many
 
 
 	// component-wise min
-	template <class T>
+	template <typename T>
 	T sum(const series<T>& a)
 	{
 		T out = T(0);
@@ -73,7 +73,7 @@ namespace many
 		return out;
 	}
 
-	template <class T>
+	template <typename T>
 	T mean(const series<T>& a)
 	{
 		T out = T(0);
@@ -86,7 +86,7 @@ namespace many
 	}
 
 
-	template <class T>
+	template <typename T>
 	T standard_deviation(const series<T>& a)
 	{
 		T mean_a = mean(a);
@@ -100,7 +100,7 @@ namespace many
 		return std::sqrt(sum_of_squared_differences / (a.size()-1));
 	}
 
-	template <class T>
+	template <typename T>
 	T weighted_average(const series<T>& a, const series<T>& weights)
 	{
 		T out = T(0);
@@ -113,7 +113,7 @@ namespace many
 	}
 
 	// TODO: vector version
-	template <class T>
+	template <typename T>
 	void rescale(const series<T>& a, series<T>& out, T max_new = 1., T min_new = 0.)
 	{
 	    T max_old = max(a);
@@ -128,7 +128,7 @@ namespace many
 		}
 	}
 	// // component-wise min
-	// template <class T>
+	// template <typename T>
 	// T median(const series<T>& a)
 	// {
 	// 	const series<T> temp = series<T>(a);
@@ -136,7 +136,7 @@ namespace many
 	// 	return a[a.size()/2];
 	// }
 // 
-	// template <class T>
+	// template <typename T>
 	// T mode(const series<T>& a)
 	// {
 	// 	const series<T> temp = series<T>(a);

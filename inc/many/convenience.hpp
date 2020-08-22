@@ -17,7 +17,7 @@ It is important to keep these functions separate from the rest of the library fo
 
 namespace many
 {
-	template <class T1, typename F>
+	template <typename T1, typename F>
 	inline series<T1> transform(const series<T1>& a, F f)
 	{
 		series<T1> out(a.size());
@@ -26,14 +26,14 @@ namespace many
 	}
 
 
-	template <class T1, class T2, typename F>
+	template <typename T1, typename T2, typename F>
 	inline series<T1> transform(const series<T1>& a, const series<T2>& b, F f)
 	{
 		series<T1> out(a.size());
 		many::transform(a, b, f, out); 
 		return out;
 	}
-	template <class T1, class T2, typename F, 
+	template <typename T1, typename T2, typename F, 
 		std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T1> transform(const series<T1>& a, const T2 b, F f)
 	{
@@ -41,7 +41,7 @@ namespace many
 		many::transform(a, b, f, out); 
 		return out;
 	}
-	template <class T1, class T2, typename F, 
+	template <typename T1, typename T2, typename F, 
 		std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value, int> = 0>
 	inline series<T1> transform(const T1 a, const series<T2>& b, F f)
 	{
@@ -53,7 +53,7 @@ namespace many
 
 
 
-	template <class T1, class T2, class T3, typename F, 
+	template <typename T1, typename T2, typename T3, typename F, 
 		std::enable_if_t<!std::is_base_of<AbstractSeries, F>::value, int> = 0>
 	inline series<T1> transform(const series<T1>& a, const series<T2>& b, const series<T3>& c, F f)
 	{
@@ -61,7 +61,7 @@ namespace many
 		many::transform(a, b, c, f, out); 
 		return out;
 	}
-	template <class T1, class T2, class T3, typename F, 
+	template <typename T1, typename T2, typename T3, typename F, 
 		std::enable_if_t<!std::is_base_of<AbstractSeries, T3>::value && !std::is_base_of<AbstractSeries, F>::value, int> = 0>
 	inline series<T1> transform(const series<T1>& a, const series<T2>& b, const T3 c, F f)
 	{
@@ -69,7 +69,7 @@ namespace many
 		many::transform(a, b, c, f, out); 
 		return out;
 	}
-	template <class T1, class T2, class T3, typename F, 
+	template <typename T1, typename T2, typename T3, typename F, 
 		std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value && !std::is_base_of<AbstractSeries, F>::value, int> = 0>
 	inline series<T1> transform(const series<T1>& a, const T2 b, const series<T3>& c, F f)
 	{
@@ -77,7 +77,7 @@ namespace many
 		many::transform(a, b, c, f, out); 
 		return out;
 	}
-	template <class T1, class T2, class T3, typename F,
+	template <typename T1, typename T2, typename T3, typename F,
 		std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value && !std::is_base_of<AbstractSeries, T3>::value && !std::is_base_of<AbstractSeries, F>::value, int> = 0>
 	inline series<T1> transform(const series<T1>& a, const T2 b, const T3 c, F f)
 	{
@@ -85,7 +85,7 @@ namespace many
 		many::transform(a, b, c, f, out); 
 		return out;
 	}
-	template <class T1, class T2, class T3, typename F, 
+	template <typename T1, typename T2, typename T3, typename F, 
 		std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value && !std::is_base_of<AbstractSeries, F>::value, int> = 0>
 	inline series<T1> transform(const T1 a, const series<T2>& b, const series<T3>& c, F f)
 	{
@@ -93,7 +93,7 @@ namespace many
 		many::transform(a, b, c, f, out); 
 		return out;
 	}
-	template <class T1, class T2, class T3, typename F,
+	template <typename T1, typename T2, typename T3, typename F,
 		std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value && !std::is_base_of<AbstractSeries, T3>::value && !std::is_base_of<AbstractSeries, F>::value, int> = 0>
 	inline series<T1> transform(const T1 a, const series<T2>& b, const T3 c, F f)
 	{
@@ -101,7 +101,7 @@ namespace many
 		many::transform(a, b, c, f, out); 
 		return out;
 	}
-	template <class T1, class T2, class T3, typename F,
+	template <typename T1, typename T2, typename T3, typename F,
 		std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value && !std::is_base_of<AbstractSeries, T2>::value && !std::is_base_of<AbstractSeries, F>::value, int> = 0>
 	inline series<T1> transform(const T1 a, const T2 b, const series<T3>& c, F f)
 	{
@@ -114,7 +114,7 @@ namespace many
 
 
 
-	template<class T, typename Taggregator>
+	template<typename T, typename Taggregator>
 	series<T> aggregate(const series<T>& a, const series<unsigned int>& group_ids, Taggregator aggregator)
 	{
 		series<T> group_out = series<T>(max(group_ids));
@@ -125,7 +125,7 @@ namespace many
 		return group_out;
 	}
 
-	template<class T, typename Taggregator>
+	template<typename T, typename Taggregator>
 	series<T> aggregate(const series<unsigned int>& group_ids, Taggregator aggregator)
 	{
 		series<T> group_out = series<T>(max(group_ids));
@@ -138,21 +138,21 @@ namespace many
 
 
 	/// Returns x if x >= 0; otherwise, it returns -x.
-	template <class T>
+	template <typename T>
 	series<T> abs(const series<T>& a)
 	{
 		return many::transform(a, [](T ai){ return ai >= 0? ai : -ai; });
 	}
 
 	/// Returns 1.0 if x > 0, 0.0 if x == 0, or -1.0 if x < 0.
-	template <class T>
+	template <typename T>
 	series<T> sign(const series<T>& a)
 	{
 		return many::transform(a, [](T ai){ return (T(0) < ai) - (ai < T(0)); });
 	}
 
 	/// Returns a value equal to the nearest integer that is less then or equal to x.
-	template <class T>
+	template <typename T>
 	series<T> floor(const series<T>& a)
 	{
 		return many::transform(a, std::floor);
@@ -160,7 +160,7 @@ namespace many
 
 	/// Returns a value equal to the nearest integer to x
 	/// whose absolute value is not larger than the absolute value of x.
-	template <class T>
+	template <typename T>
 	series<T> trunc(const series<T>& a)
 	{
 		return many::transform(a, std::trunc);
@@ -171,7 +171,7 @@ namespace many
 	/// implementation, presumably the direction that is fastest.
 	/// This includes the possibility that round(x) returns the
 	/// same value as roundEven(x) for all values of x.
-	template <class T>
+	template <typename T>
 	series<T> round(const series<T>& a)
 	{
 		return many::transform(a, std::round);
@@ -179,7 +179,7 @@ namespace many
 
 	/// Returns a value equal to the nearest integer
 	/// that is greater than or equal to x.
-	template <class T>
+	template <typename T>
 	series<T> ceil(const series<T>& a)
 	{
 		many::transform(a, std::ceil);

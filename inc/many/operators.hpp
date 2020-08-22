@@ -19,7 +19,7 @@ It is important to keep these functions separate from the rest of the library fo
 namespace many
 {
 
-	template <class T>
+	template <typename T>
 	std::ostream &operator<<(std::ostream &os, const series<T>& a) { 
 		os << "[";
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -32,54 +32,54 @@ namespace many
 
 
 	// NOTE: all operators are suggested to be inline because they are thin wrappers of functions
-	template <class T>
+	template <typename T>
 	inline bool operator==(const series<T>& a, const T b)
 	{
 		return many::equal(a, b);
 	}
-	template <class T>
+	template <typename T>
 	inline bool operator!=(const series<T>& a, const T b)
 	{
 		return many::notEqual(a, b);
 	}
-	template <class T>
+	template <typename T>
 	inline bool operator==(const T a, const series<T>& b)
 	{
 		return many::equal(a, b);
 	}
-	template <class T>
+	template <typename T>
 	inline bool operator!=(const T a, const series<T>& b)
 	{
 		return many::notEqual(a, b);
 	}
-	template <class T>
+	template <typename T>
 	inline bool operator==(const series<T>& a, const series<T>& b)
 	{
 		return many::equal(a, b);
 	}
-	template <class T>
+	template <typename T>
 	inline bool operator!=(const series<T>& a, const series<T>& b)
 	{
 		return many::notEqual(a, b);
 	}
 	
 
-	template <class T, class T2, class T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T3> operator>(const series<T>& a, const T2 b)
 	{
 		return many::transform(a, b, [](T ai, T2 bi){ return ai > bi; });
 	}
-	template <class T, class T2, class T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T3> operator>=(const series<T>& a, const T2 b)
 	{
 		return many::transform(a, b, [](T ai, T2 bi){ return ai >= bi; });
 	}
-	template <class T, class T2, class T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T3> operator<(const series<T>& a, const T2 b)
 	{
 		return many::transform(a, b, [](T ai, T2 bi){ return ai < bi; });
 	}
-	template <class T, class T2, class T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T3> operator<=(const series<T>& a, const T2 b)
 	{
 		return many::transform(a, b, [](T ai, T2 bi){ return ai <= bi; });
@@ -87,22 +87,22 @@ namespace many
 	
 	// NOTE: all wrappers are suggested to be inline because they are thin wrappers of functions
 
-	template <class T, class T2, class T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T3> operator>(const T2 a, const series<T>& b)
 	{
 		return many::transform(a, b, [](T ai, T2 bi){ return ai > bi; });
 	}
-	template <class T, class T2, class T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T3> operator>=(const T2 a, const series<T>& b)
 	{
 		return many::transform(a, b, [](T ai, T2 bi){ return ai >= bi; });
 	}
-	template <class T, class T2, class T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T3> operator<(const T2 a, const series<T>& b)
 	{
 		return many::transform(a, b, [](T ai, T2 bi){ return ai < bi; });
 	}
-	template <class T, class T2, class T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T3> operator<=(const T2 a, const series<T>& b)
 	{
 		return many::transform(a, b, [](T ai, T2 bi){ return ai <= bi; });
@@ -112,7 +112,7 @@ namespace many
 
 
 
-	template <class T>
+	template <typename T>
 	inline series<T>& operator+=(series<T>& a, const T b) 
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -121,7 +121,7 @@ namespace many
 		}
 		return a;
 	}
-	template <class T>
+	template <typename T>
 	inline series<T>& operator-=(series<T>& a, const T b) 
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -130,7 +130,7 @@ namespace many
 		}
 		return a;
 	}
-	template <class T>
+	template <typename T>
 	inline series<T>& operator*=(series<T>& a, const T b) 
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -139,7 +139,7 @@ namespace many
 		}
 		return a;
 	}
-	template <class T>
+	template <typename T>
 	inline series<T>& operator/=(series<T>& a, const T b) 
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -150,7 +150,7 @@ namespace many
 	}
 
 
-	template <class T, class T2>
+	template <typename T, typename T2>
 	inline series<T>& operator+=(series<T>& a, const series<T2>& b) 
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -159,7 +159,7 @@ namespace many
 		}
 		return a;
 	}
-	template <class T, class T2>
+	template <typename T, typename T2>
 	inline series<T>& operator-=(series<T>& a, const series<T2>& b) 
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -168,7 +168,7 @@ namespace many
 		}
 		return a;
 	}
-	template <class T, class T2>
+	template <typename T, typename T2>
 	inline series<T>& operator*=(series<T>& a, const series<T2>& b) 
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -177,7 +177,7 @@ namespace many
 		}
 		return a;
 	}
-	template <class T, class T2>
+	template <typename T, typename T2>
 	inline series<T>& operator/=(series<T>& a, const series<T2>& b) 
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -188,7 +188,7 @@ namespace many
 	}
 
 	// NOTE: prefix increment/decrement
-	template <class T>
+	template <typename T>
 	inline series<T>& operator++(series<T>& a)  
 	{  
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -197,7 +197,7 @@ namespace many
 		}
 		return a;
 	}  
-	template <class T>
+	template <typename T>
 	inline series<T>& operator--(series<T>& a)  
 	{  
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -208,7 +208,7 @@ namespace many
 	}  
 
 	// NOTE: postfix increment/decrement
-	template <class T>
+	template <typename T>
 	inline series<T> operator++(series<T>& a, int)  
 	{  
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -217,7 +217,7 @@ namespace many
 		}
 		return a;
 	}  
-	template <class T>
+	template <typename T>
 	inline series<T> operator--(series<T>& a, int)  
 	{  
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -231,24 +231,24 @@ namespace many
 
 
 
-	// NOTE: we define operators for multiple classes T and T2 in order to support 
+	// NOTE: we define operators for multiple typenamees T and T2 in order to support 
 	//  vector/scalar multiplication, matrix/vect multiplication, etc.
-	template <class T, class T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T> operator+(const series<T>& a, const T2 b)
 	{
 		return many::transform(a, b, [](T ai, T2 bi){ return ai + bi; });
 	}
-	template <class T, class T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T> operator-(const series<T>& a, const T2 b)
 	{
 		return many::transform(a, b, [](T ai, T2 bi){ return ai - bi; });
 	}
-	template <class T, class T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T> operator*(const series<T>& a, const T2 b)
 	{
 		return many::transform(a, b, [](T ai, T2 bi){ return ai * bi; });
 	}
-	template <class T, class T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T> operator/(const series<T>& a, const T2 b)
 	{
 		return many::transform(a, b, [](T ai, T2 bi){ return ai / bi; });
@@ -258,48 +258,48 @@ namespace many
 
 
 
-	// NOTE: we define operators for multiple classes T and T2 in order to support 
+	// NOTE: we define operators for multiple typenamees T and T2 in order to support 
 	//  vector/scalar multiplication, matrix/vect multiplication, etc.
-	template <class T, class T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T> operator+(const T2 a, const series<T>& b)
 	{
 		return many::transform(a, b, [](T ai, T2 bi){ return ai + bi; });
 	}
-	template <class T, class T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T> operator-(const T2 a, const series<T>& b)
 	{
 		return many::transform(a, b, [](T ai, T2 bi){ return ai - bi; });
 	}
-	template <class T, class T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T> operator*(const T2 a, const series<T>& b)
 	{
 		return many::transform(a, b, [](T ai, T2 bi){ return ai * bi; });
 	}
-	template <class T, class T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T> operator/(const T2 a, const series<T>& b)
 	{
 		return many::transform(a, b, [](T ai, T2 bi){ return ai / bi; });
 	}
 
 
-	// NOTE: we define operators for multiple classes T and T2 in order to support 
+	// NOTE: we define operators for multiple typenamees T and T2 in order to support 
 	//  vector/scalar multiplication, matrix/vect multiplication, etc.
-	template <class T, class T2>
+	template <typename T, typename T2>
 	inline series<T> operator+(const series<T>& a, const series<T2>& b)
 	{
 		return many::transform(a, b, [](T ai, T2 bi){ return ai + bi; });
 	}
-	template <class T, class T2>
+	template <typename T, typename T2>
 	inline series<T> operator-(const series<T>& a, const series<T2>& b)
 	{
 		return many::transform(a, b, [](T ai, T2 bi){ return ai - bi; });
 	}
-	template <class T, class T2>
+	template <typename T, typename T2>
 	inline series<T> operator*(const series<T>& a, const series<T2>& b)
 	{
 		return many::transform(a, b, [](T ai, T2 bi){ return ai * bi; });
 	}
-	template <class T, class T2>
+	template <typename T, typename T2>
 	inline series<T> operator/(const series<T>& a, const series<T2>& b)
 	{
 		return many::transform(a, b, [](T ai, T2 bi){ return ai / bi; });
