@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Layers.hpp"
+#include "morphologic.hpp"
 
 namespace layers
 {

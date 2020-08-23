@@ -34,6 +34,5 @@ namespace layers
 		layers::div(a, b, a);
 		return a;
 	}
-
 	
 }
