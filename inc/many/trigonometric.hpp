@@ -18,7 +18,7 @@ namespace many
 	void radians(const series<T>& degrees, series<T>& out)
 	{
 		T conversion_factor(M_PI/180.);
-		return transform(degrees, [conversion_factor](T degreesi){ return conversion_factor * degreesi; }, out);
+		out.store(degrees, [conversion_factor](T degreesi){ return conversion_factor * degreesi; });
 	}
 
 	/// Converts degrees to radians and returns the result.
@@ -26,7 +26,7 @@ namespace many
 	void degrees(const series<T>& radians, series<T>& out)
 	{
 		T conversion_factor(180./M_PI);
-		return transform(radians, [conversion_factor](T radiansi){ return conversion_factor * radiansi; }, out);
+		out.store(radians, [conversion_factor](T radiansi){ return conversion_factor * radiansi; });
 	}
 
 	/// The standard trigonometric sine function.
@@ -34,7 +34,7 @@ namespace many
 	template <typename T>
 	void sin(const series<T>& radians, series<T>& out)
 	{
-		return transform(radians, std::sin, out);
+		out.store(std::sin, radians);
 	}
 
 	/// The standard trigonometric cosine function.
@@ -42,14 +42,14 @@ namespace many
 	template <typename T>
 	void cos(const series<T>& radians, series<T>& out)
 	{
-		return transform(radians, std::cos, out);
+		out.store(std::cos, radians);
 	}
 
 	/// The standard trigonometric tangent function.
 	template <typename T>
 	void tan(const series<T>& radians, series<T>& out)
 	{
-		return transform(radians, std::tan, out);
+		out.store(std::tan, radians);
 	}
 
 	/// Arc sine. Returns an angle whose sine is x.
@@ -58,7 +58,7 @@ namespace many
 	template <typename T>
 	void asin(const series<T>& x, series<T>& out)
 	{
-		return transform(x, std::asin, out);
+		out.store(std::asin, x);
 	}
 
 	/// Arc cosine. Returns an angle whose sine is x.
@@ -67,7 +67,7 @@ namespace many
 	template <typename T>
 	void acos(const series<T>& x, series<T>& out)
 	{
-		return transform(x, std::acos, out);
+		out.store(std::acos, x);
 	}
 
 	/// Arc tangent. Returns an angle whose tangent is y_over_x.
@@ -78,7 +78,7 @@ namespace many
 	template <typename T>
 	void atan(const series<T>& y_over_x, series<T>& out)
 	{
-		return transform(y_over_x, std::atan, out);
+		out.store(std::atan, y_over_x);
 	}
 
 
@@ -90,7 +90,7 @@ namespace many
 	template <typename T>
 	void atan(const series<T>& x, const series<T>& y, series<T>& out)
 	{
-		return transform(x, y, std::atan2, out);
+		out.store(std::atan2, x, y);
 	}
 
 
@@ -98,28 +98,28 @@ namespace many
 	template <typename T>
 	void sinh(const series<T>& radians, series<T>& out)
 	{
-		return transform(radians, std::sinh, out);
+		out.store(std::sinh, radians);
 	}
 
 	/// Returns the hyperbolic cosine function, (exp(x) + exp(-x)) / 2
 	template <typename T>
 	void cosh(const series<T>& radians, series<T>& out)
 	{
-		return transform(radians, std::cosh, out);
+		out.store(std::cosh, radians);
 	}
 
 	/// Returns the hyperbolic tangent function, sinh(angle) / cosh(angle)
 	template <typename T>
 	void tanh(const series<T>& radians, series<T>& out)
 	{
-		return transform(radians, std::tanh, out);
+		out.store(std::tanh, radians);
 	}
 
 	/// Arc hyperbolic sine; returns the inverse of sinh.
 	template <typename T>
 	void asinh(const series<T>& x, series<T>& out)
 	{
-		return transform(x, std::asinh, out);
+		out.store(std::asinh, x);
 	}
 
 	/// Arc hyperbolic cosine; returns the non-negative inverse
@@ -127,7 +127,7 @@ namespace many
 	template <typename T>
 	void acosh(const series<T>& x, series<T>& out)
 	{
-		return transform(x, std::acosh, out);
+		out.store(std::acosh, x);
 	}
 
 	/// Arc hyperbolic tangent; returns the inverse of tanh.
@@ -135,7 +135,7 @@ namespace many
 	template <typename T>
 	void atanh(const series<T>& x, series<T>& out)
 	{
-		return transform(x, std::atanh, out);
+		out.store(std::atanh, x);
 	}
 
 }//namespace many

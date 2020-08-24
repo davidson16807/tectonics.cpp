@@ -6,17 +6,17 @@ namespace many{
 	template<glm::length_t R, glm::length_t C, typename T, glm::qualifier Q>
 	void mult(const series<glm::mat<R,C,T,Q>>& A, const series<glm::vec<R,T,Q>>& b, series<glm::vec<C,T,Q>>& out)
 	{
-		many::transform(A, b, [](glm::mat<R,C,T,Q>Ai, glm::vec<R,T,Q> bi){ return Ai * bi; }, out);
+		out.store([](glm::mat<R,C,T,Q>Ai, glm::vec<R,T,Q> bi){ return Ai * bi; }, A, b);
 	}
 	template<glm::length_t R, glm::length_t C, typename T, glm::qualifier Q>
 	void mult(const glm::mat<R,C,T,Q>& A, const series<glm::vec<R,T,Q>>& b, series<glm::vec<C,T,Q>>& out)
 	{
-		many::transform(A, b, [](glm::mat<R,C,T,Q>Ai, glm::vec<R,T,Q> bi){ return Ai * bi; }, out);
+		out.store([](glm::mat<R,C,T,Q>Ai, glm::vec<R,T,Q> bi){ return Ai * bi; }, A, b);
 	}
 	template<glm::length_t R, glm::length_t C, typename T, glm::qualifier Q>
 	void mult(const glm::mat<R,C,T,Q>& A, const glm::vec<R,T,Q>& b, series<glm::vec<C,T,Q>>& out)
 	{
-		many::transform(A, b, [](glm::mat<R,C,T,Q>Ai, glm::vec<R,T,Q> bi){ return Ai * bi; }, out);
+		out.store([](glm::mat<R,C,T,Q>Ai, glm::vec<R,T,Q> bi){ return Ai * bi; }, A, b);
 	}
 
 

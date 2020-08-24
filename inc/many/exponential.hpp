@@ -13,7 +13,7 @@ namespace many
 	template <typename T>
 	inline void pow(const series<T>& base, const series<T>& exponent, series<T>& out)
 	{
-		transform(base, exponent, [](T basei, T exponenti){ return std::pow(basei, exponenti); }, out);
+		out.store([](T basei, T exponenti){ return std::pow(basei, exponenti); }, base, exponent);
 	}
 	/// Returns 'base' raised to the power 'exponent'.
 	///
@@ -22,7 +22,7 @@ namespace many
 	template <typename T>
 	inline void pow(const series<T>& base, const T exponent, series<T>& out)
 	{
-		transform(base, exponent, [](T basei, T exponenti){ return std::pow(basei, exponenti); }, out);
+		out.store([](T basei, T exponenti){ return std::pow(basei, exponenti); }, base, exponent);
 	}
 	// TODO: vector variant
 	/// Returns the natural exponentiation of x, i.e., e^x.
@@ -31,7 +31,7 @@ namespace many
 	template <typename T>
 	inline void exp(const series<T>& a, series<T>& out)
 	{
-		transform(a, [](T ai){ return std::exp(ai); }, out);
+		out.store([](T ai){ return std::exp(ai); }, a);
 	}
 
 	// TODO: vector variant
@@ -43,7 +43,7 @@ namespace many
 	template <typename T>
 	inline void log(const series<T>& a, series<T>& out)
 	{
-		transform(a, [](T ai){ return std::log(ai); }, out);
+		out.store([](T ai){ return std::log(ai); }, a);
 	}
 
 	// TODO: vector variant
@@ -53,7 +53,7 @@ namespace many
 	template <typename T>
 	inline void exp2(const series<T>& a, series<T>& out)
 	{
-		transform(a, [](T ai){ return std::exp2(ai); }, out);
+		out.store([](T ai){ return std::exp2(ai); }, a);
 	}
 
 	// TODO: vector variant
@@ -64,7 +64,7 @@ namespace many
 	template <typename T>
 	inline void log2(const series<T>& a, series<T>& out)
 	{
-		transform(a, [](T ai){ return std::log2(ai); }, out);
+		out.store([](T ai){ return std::log2(ai); }, a);
 	}
 
 	// TODO: vector variant
@@ -74,7 +74,7 @@ namespace many
 	template <typename T>
 	inline void sqrt(const series<T>& a, series<T>& out)
 	{
-		transform(a, [](T ai){ return std::sqrt(ai); }, out);
+		out.store([](T ai){ return std::sqrt(ai); }, a);
 	}
 
 	// TODO: vector variant
@@ -84,7 +84,7 @@ namespace many
 	template <typename T>
 	inline void inversesqrt(const series<T>& a, series<T>& out)
 	{
-		transform(a, [](T ai){ return 1./std::sqrt(ai); }, out);
+		out.store([](T ai){ return 1./std::sqrt(ai); }, a);
 	}
 }//namespace many
 

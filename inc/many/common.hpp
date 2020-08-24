@@ -10,21 +10,21 @@ namespace many
 	template <typename T>
 	void abs(const series<T>& a, series<T>& out)
 	{
-		many::transform(a, [](T ai){ return ai >= 0? ai : -ai; }, out);
+		out.store([](T ai){ return ai >= 0? ai : -ai; }, a);
 	}
 
 	/// Returns 1.0 if x > 0, 0.0 if x == 0, or -1.0 if x < 0.
 	template <typename T, typename Tout>
 	void sign(const series<T>& a, series<Tout>& out)
 	{
-		many::transform(a, [](T ai){ return (T(0) < ai) - (ai < T(0)); }, out);
+		out.store([](T ai){ return (T(0) < ai) - (ai < T(0)); }, a);
 	}
 
 	/// Returns a value equal to the nearest integer that is less then or equal to x.
 	template <typename T>
 	void floor(const series<T>& a, series<T>& out)
 	{
-		many::transform(a, std::floor, out);
+		out.store(std::floor, a);
 	}
 
 	/// Returns a value equal to the nearest integer to x
@@ -32,7 +32,7 @@ namespace many
 	template <typename T>
 	void trunc(const series<T>& a, series<T>& out)
 	{
-		many::transform(a, std::trunc, out);
+		out.store(std::trunc, a);
 	}
 
 	/// Returns a value equal to the nearest integer to x.
@@ -43,7 +43,7 @@ namespace many
 	template <typename T>
 	void round(const series<T>& a, series<T>& out)
 	{
-		many::transform(a, std::round, out);
+		out.store(std::round, a);
 	}
 
 	/// Returns a value equal to the nearest integer
@@ -51,14 +51,14 @@ namespace many
 	template <typename T>
 	void ceil(const series<T>& a, series<T>& out)
 	{
-		many::transform(a, std::ceil, out);
+		out.store(std::ceil, a);
 	}
 
 	/// Return x - floor(x).
 	template <typename T>
 	void fract(const series<T>& a, series<T>& out)
 	{
-		many::transform(a, [](T ai){ return ai - std::floor(ai); }, out);
+		out.store([](T ai){ return ai - std::floor(ai); }, a);
 	}
 
 	/// Modulus. Returns x - y * floor(x / y)
@@ -66,7 +66,7 @@ namespace many
 	template <typename T>
 	void mod(const series<T>& a, const series<T>& b, series<T>& out)
 	{
-		many::transform(a, b, [](T ai, T bi){ return ai - bi * std::floor(ai / bi); }, out);
+		out.store([](T ai, T bi){ return ai - bi * std::floor(ai / bi); }, a, b);
 	}
 
 	/// Returns the fractional part of x and sets i to the integer
@@ -87,12 +87,12 @@ namespace many
 	template <typename T>
 	void min(const series<T>& a, const series<T>& b, series<T>& out)
 	{
-		many::transform(a, b, [](T ai, T bi){ return ai < bi? ai : bi; }, out);
+		out.store([](T ai, T bi){ return ai < bi? ai : bi; }, a, b);
 	}
 	template <typename T>
 	void min(const series<T>& a, const T b, series<T>& out)
 	{
-		many::transform(a, b, [](T ai, T bi){ return ai < bi? ai : bi; }, out);
+		out.store([](T ai, T bi){ return ai < bi? ai : bi; }, a, b);
 	}
 
 	// component-wise min
@@ -123,12 +123,12 @@ namespace many
 	template <typename T>
 	void max(const series<T>& a, const series<T>& b, series<T>& out)
 	{
-		many::transform(a, b, [](T ai, T bi){ return ai > bi? ai : bi; }, out);
+		out.store([](T ai, T bi){ return ai > bi? ai : bi; }, a, b);
 	}
 	template <typename T>
 	void max(const series<T>& a, const T b, series<T>& out)
 	{
-		many::transform(a, b, [](T ai, T bi){ return ai > bi? ai : bi; }, out);
+		out.store([](T ai, T bi){ return ai > bi? ai : bi; }, a, b);
 	}
 	// component-wise max
 	template <typename T>
@@ -164,23 +164,23 @@ namespace many
 	template <typename T>
 	void clamp(const series<T>& a, const T lo, const T hi, series<T>& out)
 	{
-		many::transform(a, lo, hi, [](T ai, T loi, T hii){ return ai > hii? hii : ai < loi? loi : ai; }, out);
+		out.store([](T ai, T loi, T hii){ return ai > hii? hii : ai < loi? loi : ai; }, a, lo, hi);
 	}
 	template <typename T>
 	void clamp(const series<T>& a, const T lo, const series<T>& hi, series<T>& out)
 	{
-		many::transform(a, lo, hi, [](T ai, T loi, T hii){ return ai > hii? hii : ai < loi? loi : ai; }, out);
+		out.store([](T ai, T loi, T hii){ return ai > hii? hii : ai < loi? loi : ai; }, a, lo, hi);
 	}
 	template <typename T>
 	void clamp(const series<T>& a, const series<T>& lo, const T hi, series<T>& out)
 	{
-		many::transform(a, lo, hi, [](T ai, T loi, T hii){ return ai > hii? hii : ai < loi? loi : ai; }, out);
+		out.store([](T ai, T loi, T hii){ return ai > hii? hii : ai < loi? loi : ai; }, a, lo, hi);
 	}
 	template <typename T>
 	void clamp(const series<T>& a, const series<T>& lo, const series<T>& hi, series<T>& out)
 	{
-		many::transform(a,   hi, [](T ai, T hii){ return ai > hii? hii : ai; }, out);
-		many::transform(out, lo, [](T ai, T loi){ return ai < loi? loi : ai; }, out);
+		out.store([](T ai, T hii){ return ai > hii? hii : ai; }, a,   hi);
+		out.store([](T ai, T loi){ return ai < loi? loi : ai; }, out, lo);
 	}
 
 
@@ -299,17 +299,17 @@ namespace many
 	template <typename T>
 	void step(const series<T>& edge, const series<T>&  x, series<T>& out)
 	{
-		many::transform(edge, x, [](T edgei, T xi){ return xi < edgei? T(0) : T(1); }, out); 
+		out.store([](T edgei, T xi){ return xi < edgei? T(0) : T(1); }, edge, x); 
 	}
 	template <typename T>
 	void step(const series<T>&  edge, const T x, series<T>& out)
 	{
-		many::transform(edge, x, [](T edgei, T xi){ return xi < edgei? T(0) : T(1); }, out); 
+		out.store([](T edgei, T xi){ return xi < edgei? T(0) : T(1); }, edge, x); 
 	}
 	template <typename T>
 	void step(const T edge, const series<T>&  x, series<T>& out)
 	{
-		many::transform(edge, x, [](T edgei, T xi){ return xi < edgei? T(0) : T(1); }, out); 
+		out.store([](T edgei, T xi){ return xi < edgei? T(0) : T(1); }, edge, x); 
 	}
 
 	/// Returns 0.0 if x <= lo and 1.0 if x >= hi and
@@ -324,37 +324,37 @@ namespace many
 	template <typename T>
 	void smoothstep(const series<T>& lo, const series<T>& hi, const series<T>& x, series<T>& out)
 	{
-		many::transform(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
+		out.store([](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, x, lo, hi); 
 	}
 	template <typename T>
 	void smoothstep(const T lo, const series<T>& hi, const series<T>& x, series<T>& out)
 	{
-		many::transform(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
+		out.store([](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, x, lo, hi); 
 	}
 	template <typename T>
 	void smoothstep(const series<T>& lo, T hi, const series<T>& x, series<T>& out)
 	{
-		many::transform(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
+		out.store([](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, x, lo, hi); 
 	}
 	template <typename T>
 	void smoothstep(const T lo, const T hi, const series<T>& x, series<T>& out)
 	{
-		many::transform(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
+		out.store([](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, x, lo, hi); 
 	}
 	template <typename T>
 	void smoothstep(const series<T>& lo, const series<T>& hi, const T x, series<T>& out)
 	{
-		many::transform(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
+		out.store([](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, x, lo, hi); 
 	}
 	template <typename T>
 	void smoothstep(const T lo, const series<T>& hi, const T x, series<T>& out)
 	{
-		many::transform(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
+		out.store([](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, x, lo, hi); 
 	}
 	template <typename T>
 	void smoothstep(const series<T>& lo, const T hi, const T x, series<T>& out)
 	{
-		many::transform(x, lo, hi, [](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, out); 
+		out.store([](T xi, T loi, T hii){ T t = xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); return t*t*(T(3)-T(2)*t); }, x, lo, hi); 
 	}
 	template <typename T>
 	T smoothstep(const T lo, const T hi, const T x)
@@ -376,37 +376,37 @@ namespace many
 	template <typename T>
 	void linearstep(const series<T>& lo, const series<T>& hi, const series<T>& x, series<T>& out)
 	{
-		many::transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+		out.store([](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, x, lo, hi); 
 	}
 	template <typename T>
 	void linearstep(const T lo, const series<T>& hi, const series<T>& x, series<T>& out)
 	{
-		many::transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+		out.store([](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, x, lo, hi); 
 	}
 	template <typename T>
 	void linearstep(const series<T>& lo, T hi, const series<T>& x, series<T>& out)
 	{
-		many::transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+		out.store([](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, x, lo, hi); 
 	}
 	template <typename T>
 	void linearstep(const T lo, const T hi, const series<T>& x, series<T>& out)
 	{
-		many::transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+		out.store([](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, x, lo, hi); 
 	}
 	template <typename T>
 	void linearstep(const series<T>& lo, const series<T>& hi, const T x, series<T>& out)
 	{
-		many::transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+		out.store([](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, x, lo, hi); 
 	}
 	template <typename T>
 	void linearstep(const T lo, const series<T>& hi, const T x, series<T>& out)
 	{
-		many::transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+		out.store([](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, x, lo, hi); 
 	}
 	template <typename T>
 	void linearstep(const series<T>& lo, const T hi, const T x, series<T>& out)
 	{
-		many::transform(x, lo, hi, [](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, out); 
+		out.store([](T xi, T loi, T hii){ return xi<=loi? T(0) : xi >= hii? T(1) : ((xi-loi)/(hii-loi)); }, x, lo, hi); 
 	}
 	template <typename T>
 	T linearstep(const T lo, const T hi, const T x)
@@ -422,7 +422,7 @@ namespace many
 	template <typename T>
 	void isnan(const series<T>&  x, series<bool>& out)
 	{
-		many::transform(x, std::isnan, out);
+		out.store(std::isnan, x);
 	}
 
 	/// Returns true if x holds a positive infinity or negative
@@ -433,44 +433,44 @@ namespace many
 	template <typename T>
 	void isinf(const series<T>&  x, series<bool>& out)
 	{
-		many::transform(x, std::isinf, out);
+		out.store(std::isinf, x);
 	}
 
 	/// Computes and returns a * b + c.
 	template <typename T>
 	void fma(const series<T>& a, const series<T>& b, const series<T>& c, series<T>& out)
 	{
-		many::transform(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
+		out.store([](T ai, T bi, T ci){ return ai*bi+ci; }, a, b, c); 
 	}
 	template <typename T>
 	void fma(const T a, const series<T>& b, const series<T>& c, series<T>& out)
 	{
-		many::transform(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
+		out.store([](T ai, T bi, T ci){ return ai*bi+ci; }, a, b, c); 
 	}
 	template <typename T>
 	void fma(const series<T>& a, T b, const series<T>& c, series<T>& out)
 	{
-		many::transform(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
+		out.store([](T ai, T bi, T ci){ return ai*bi+ci; }, a, b, c); 
 	}
 	template <typename T>
 	void fma(const T a, const T b, const series<T>& c, series<T>& out)
 	{
-		many::transform(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
+		out.store([](T ai, T bi, T ci){ return ai*bi+ci; }, a, b, c); 
 	}
 	template <typename T>
 	void fma(const series<T>& a, const series<T>& b, const T c, series<T>& out)
 	{
-		many::transform(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
+		out.store([](T ai, T bi, T ci){ return ai*bi+ci; }, a, b, c); 
 	}
 	template <typename T>
 	void fma(const T a, const series<T>& b, const T c, series<T>& out)
 	{
-		many::transform(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
+		out.store([](T ai, T bi, T ci){ return ai*bi+ci; }, a, b, c); 
 	}
 	template <typename T>
 	void fma(const series<T>& a, const T b, const T c, series<T>& out)
 	{
-		many::transform(a, b, c, [](T ai, T bi, T ci){ return ai*bi+ci; }, out); 
+		out.store([](T ai, T bi, T ci){ return ai*bi+ci; }, a, b, c); 
 	}
 
 //	/// Returns a signed integer value representing

@@ -4,7 +4,7 @@
 
 #include "../types.hpp"
 #include "../convenience.hpp"
-#include "relational.hpp"
+#include "geometric.hpp"
 
 /*
 "convenience.hpp" contains functions that pass output as return values rather than using output parameters
@@ -29,7 +29,7 @@ namespace many
 	inline series<T> get_x(const series<glm::vec<L,T,Q>>& a)
 	{
 		series<T> out(a.size());
-		many::transform(a, [](glm::vec<L,T,Q> ai){ return ai.x; }, out);
+		out.store([](glm::vec<L,T,Q> ai){ return ai.x; }, a);
 		return out;
 	}
 
@@ -37,7 +37,7 @@ namespace many
 	inline series<T> get_y(const series<glm::vec<L,T,Q>>& a)
 	{
 		series<T> out(a.size());
-		many::transform(a, [](glm::vec<L,T,Q> ai){ return ai.y; }, out);
+		out.store([](glm::vec<L,T,Q> ai){ return ai.y; }, a);
 		return out;
 	}
 
@@ -45,7 +45,7 @@ namespace many
 	inline series<T> get_z(const series<glm::vec<L,T,Q>>& a)
 	{
 		series<T> out(a.size());
-		many::transform(a, [](glm::vec<L,T,Q> ai){ return ai.z; }, out);
+		out.store([](glm::vec<L,T,Q> ai){ return ai.z; }, a);
 		return out;
 	}
 

@@ -67,22 +67,22 @@ namespace many
 	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T3> operator>(const series<T>& a, const T2 b)
 	{
-		return many::transform(a, b, [](T ai, T2 bi){ return ai > bi; });
+		return many::transform([](T ai, T2 bi){ return ai > bi; }, a, b);
 	}
 	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T3> operator>=(const series<T>& a, const T2 b)
 	{
-		return many::transform(a, b, [](T ai, T2 bi){ return ai >= bi; });
+		return many::transform([](T ai, T2 bi){ return ai >= bi; }, a, b);
 	}
 	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T3> operator<(const series<T>& a, const T2 b)
 	{
-		return many::transform(a, b, [](T ai, T2 bi){ return ai < bi; });
+		return many::transform([](T ai, T2 bi){ return ai < bi; }, a, b);
 	}
 	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T3> operator<=(const series<T>& a, const T2 b)
 	{
-		return many::transform(a, b, [](T ai, T2 bi){ return ai <= bi; });
+		return many::transform([](T ai, T2 bi){ return ai <= bi; }, a, b);
 	}
 	
 	// NOTE: all wrappers are suggested to be inline because they are thin wrappers of functions
@@ -90,22 +90,22 @@ namespace many
 	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T3> operator>(const T2 a, const series<T>& b)
 	{
-		return many::transform(a, b, [](T ai, T2 bi){ return ai > bi; });
+		return many::transform([](T ai, T2 bi){ return ai > bi; }, a, b);
 	}
 	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T3> operator>=(const T2 a, const series<T>& b)
 	{
-		return many::transform(a, b, [](T ai, T2 bi){ return ai >= bi; });
+		return many::transform([](T ai, T2 bi){ return ai >= bi; }, a, b);
 	}
 	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T3> operator<(const T2 a, const series<T>& b)
 	{
-		return many::transform(a, b, [](T ai, T2 bi){ return ai < bi; });
+		return many::transform([](T ai, T2 bi){ return ai < bi; }, a, b);
 	}
 	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T3> operator<=(const T2 a, const series<T>& b)
 	{
-		return many::transform(a, b, [](T ai, T2 bi){ return ai <= bi; });
+		return many::transform([](T ai, T2 bi){ return ai <= bi; }, a, b);
 	}
 
 
@@ -236,22 +236,22 @@ namespace many
 	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T> operator+(const series<T>& a, const T2 b)
 	{
-		return many::transform(a, b, [](T ai, T2 bi){ return ai + bi; });
+		return many::transform([](T ai, T2 bi){ return ai + bi; }, a, b);
 	}
 	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T> operator-(const series<T>& a, const T2 b)
 	{
-		return many::transform(a, b, [](T ai, T2 bi){ return ai - bi; });
+		return many::transform([](T ai, T2 bi){ return ai - bi; }, a, b);
 	}
 	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T> operator*(const series<T>& a, const T2 b)
 	{
-		return many::transform(a, b, [](T ai, T2 bi){ return ai * bi; });
+		return many::transform([](T ai, T2 bi){ return ai * bi; }, a, b);
 	}
 	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T> operator/(const series<T>& a, const T2 b)
 	{
-		return many::transform(a, b, [](T ai, T2 bi){ return ai / bi; });
+		return many::transform([](T ai, T2 bi){ return ai / bi; }, a, b);
 	}
 	
 
@@ -263,22 +263,22 @@ namespace many
 	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T> operator+(const T2 a, const series<T>& b)
 	{
-		return many::transform(a, b, [](T ai, T2 bi){ return ai + bi; });
+		return many::transform([](T ai, T2 bi){ return ai + bi; }, a, b);
 	}
 	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T> operator-(const T2 a, const series<T>& b)
 	{
-		return many::transform(a, b, [](T ai, T2 bi){ return ai - bi; });
+		return many::transform([](T ai, T2 bi){ return ai - bi; }, a, b);
 	}
 	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T> operator*(const T2 a, const series<T>& b)
 	{
-		return many::transform(a, b, [](T ai, T2 bi){ return ai * bi; });
+		return many::transform([](T ai, T2 bi){ return ai * bi; }, a, b);
 	}
 	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	inline series<T> operator/(const T2 a, const series<T>& b)
 	{
-		return many::transform(a, b, [](T ai, T2 bi){ return ai / bi; });
+		return many::transform([](T ai, T2 bi){ return ai / bi; }, a, b);
 	}
 
 
@@ -287,69 +287,67 @@ namespace many
 	template <typename T, typename T2>
 	inline series<T> operator+(const series<T>& a, const series<T2>& b)
 	{
-		return many::transform(a, b, [](T ai, T2 bi){ return ai + bi; });
+		return many::transform([](T ai, T2 bi){ return ai + bi; }, a, b);
 	}
 	template <typename T, typename T2>
 	inline series<T> operator-(const series<T>& a, const series<T2>& b)
 	{
-		return many::transform(a, b, [](T ai, T2 bi){ return ai - bi; });
+		return many::transform([](T ai, T2 bi){ return ai - bi; }, a, b);
 	}
 	template <typename T, typename T2>
 	inline series<T> operator*(const series<T>& a, const series<T2>& b)
 	{
-		return many::transform(a, b, [](T ai, T2 bi){ return ai * bi; });
+		return many::transform([](T ai, T2 bi){ return ai * bi; }, a, b);
 	}
 	template <typename T, typename T2>
 	inline series<T> operator/(const series<T>& a, const series<T2>& b)
 	{
-		return many::transform(a, b, [](T ai, T2 bi){ return ai / bi; });
+		return many::transform([](T ai, T2 bi){ return ai / bi; }, a, b);
 	}
 
 
 	inline series<bool> operator~(const series<bool>& a)
 	{
-		series<bool> out = series<bool>(a.size());
-		many::transform(a, [](bool ai){ return !ai; }, out);
-		return out;
+		return many::transform([](bool ai){ return !ai; }, a);
 	}
 
 
 	inline series<bool> operator|(const series<bool>& a, const bool b)
 	{
-		return many::transform(a, b, [](bool ai, bool bi){ return ai || bi; });
+		return many::transform([](bool ai, bool bi){ return ai || bi; }, a, b);
 	}
 	inline series<bool> operator&(const series<bool>& a, const bool b)
 	{
-		return many::transform(a, b, [](bool ai, bool bi){ return ai && bi; });
+		return many::transform([](bool ai, bool bi){ return ai && bi; }, a, b);
 	}
 
 	inline series<bool> operator|(const series<bool>& a, const series<bool>& b)
 	{
-		return many::transform(a, b, [](bool ai, bool bi){ return ai || bi; });
+		return many::transform([](bool ai, bool bi){ return ai || bi; }, a, b);
 	}
 	inline series<bool> operator&(const series<bool>& a, const series<bool>& b)
 	{
-		return many::transform(a, b, [](bool ai, bool bi){ return ai && bi; });
+		return many::transform([](bool ai, bool bi){ return ai && bi; }, a, b);
 	}
 
 
 
 
 	inline series<bool>& operator|=(series<bool>& a, const bool b){
-		many::transform(a, b, [](bool ai, bool bi){ return ai || bi; }, a);
+		a.store([](bool ai, bool bi){ return ai || bi; },  a, b);
 		return a;
 	}
 	inline series<bool>& operator&=(series<bool>& a, const bool b){
-		many::transform(a, b, [](bool ai, bool bi){ return ai &&  bi; }, a);
+		a.store([](bool ai, bool bi){ return ai &&  bi; },  a, b);
 		return a;
 	}
 
 	inline series<bool>& operator|=(series<bool>& a, const series<bool>& b){
-		many::transform(a, b, [](bool ai, bool bi){ return ai || bi; }, a);
+		a.store([](bool ai, bool bi){ return ai || bi; },  a, b);
 		return a;
 	}
 	inline series<bool>& operator&=(series<bool>& a, const series<bool>& b){
-		many::transform(a, b, [](bool ai, bool bi){ return ai &&  bi; }, a);
+		a.store([](bool ai, bool bi){ return ai &&  bi; },  a, b);
 		return a;
 	}
 }

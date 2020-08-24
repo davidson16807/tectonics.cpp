@@ -324,31 +324,19 @@ namespace many
 
 	void equal(const series<unsigned int>& a, const unsigned int b, series<bool>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = a[i] == b;
-		}
+		out.store([](unsigned int ai, unsigned int bi){ return ai == bi; }, a, b);
 	}
 	void notEqual(const series<unsigned int>& a, const unsigned int b, series<bool>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = a[i] != b;
-		}
+		out.store([](unsigned int ai, unsigned int bi){ return ai != bi; }, a, b);
 	}
 	void equal(const series<unsigned int>& a, const series<unsigned int>& b, series<bool>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = a[i] == b[i];
-		}
+		out.store([](unsigned int ai, unsigned int bi){ return ai == bi; }, a, b);
 	}
 	void notEqual(const series<unsigned int>& a, const series<unsigned int>& b, series<bool>& out)
 	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = a[i] != b[i];
-		}
+		out.store([](unsigned int ai, unsigned int bi){ return ai != bi; }, a, b);
 	}
 
 
@@ -358,22 +346,22 @@ namespace many
 	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	void greaterThan(const series<T>& a, const T2 b, series<bool>& out)
 	{
-		transform(a, b, [](T ai, T2 bi){ return ai > bi; }, out); 
+		out.store([](T ai, T2 bi){ return ai > bi; }, a, b); 
 	}
 	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	void greaterThanEqual(const series<T>& a, const T2 b, series<bool>& out)
 	{
-		transform(a, b, [](T ai, T2 bi){ return ai >= bi; }, out); 
+		out.store([](T ai, T2 bi){ return ai >= bi; }, a, b); 
 	}
 	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	void lessThan(const series<T>& a, const T2 b, series<bool>& out)
 	{
-		transform(a, b, [](T ai, T2 bi){ return ai < bi; }, out); 
+		out.store([](T ai, T2 bi){ return ai < bi; }, a, b); 
 	}
 	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
 	void lessThanEqual(const series<T>& a, const T2 b, series<bool>& out)
 	{
-		transform(a, b, [](T ai, T2 bi){ return ai <= bi; }, out); 
+		out.store([](T ai, T2 bi){ return ai <= bi; }, a, b); 
 	}
 
 
@@ -381,22 +369,22 @@ namespace many
 	template <typename T, typename T2>
 	void greaterThan(const series<T>& a, const series<T2>& b, series<bool>& out)
 	{
-		transform(a, b, [](T ai, T2 bi){ return ai > bi; }, out); 
+		out.store([](T ai, T2 bi){ return ai > bi; }, a, b); 
 	}
 	template <typename T, typename T2>
 	void greaterThanEqual(const series<T>& a, const series<T2>& b, series<bool>& out)
 	{
-		transform(a, b, [](T ai, T2 bi){ return ai >= bi; }, out); 
+		out.store([](T ai, T2 bi){ return ai >= bi; }, a, b); 
 	}
 	template <typename T, typename T2>
 	void lessThan(const series<T>& a, const series<T2>& b, series<bool>& out)
 	{
-		transform(a, b, [](T ai, T2 bi){ return ai <= bi; }, out); 
+		out.store([](T ai, T2 bi){ return ai <= bi; }, a, b); 
 	}
 	template <typename T, typename T2>
 	void lessThanEqual(const series<T>& a, const series<T2>& b, series<bool>& out)
 	{
-		transform(a, b, [](T ai, T2 bi){ return ai < bi; }, out); 
+		out.store([](T ai, T2 bi){ return ai < bi; }, a, b); 
 	}
 
 	

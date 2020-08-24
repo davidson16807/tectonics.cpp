@@ -20,7 +20,7 @@ namespace many
 	See README.md for more details
 	*/
 	template <typename T>
-	class series : AbstractSeries
+	class series : public AbstractSeries
 	{
 	protected:
 		std::vector<T> values;
@@ -120,6 +120,181 @@ namespace many
 		{
 			return values;
 		}
+
+
+
+		/*
+		`store(...)` methods modify the state of the object to store the output of a computation.
+		The computation is defined by applying a function `f` over any combination of `series` objects and singletons.
+		We then use the `store()` function to implement other derived functions outside the class, e.g. add() or dot()
+
+		Q:  Why aren't derived functions (like add() or dot()) implemented as methods?
+		A:  There are too many of them. Consider all the functions we'd need for trigonometry, statistics, morphology, vector calculus, etc.
+		    We want the API user to selectively include this functionality using `#include` statements,
+		    and since we don't want to change the behavior of the class depending on which include statements are present, 
+		    we decide this functionality is best defined using regular functions outside the class. 
+
+		Q:  Why is store() a method and not just a function outside the class?
+		A:  The `store()` method by default only allows element-wise comparison between series and singletons,
+		    however we want to extend this behavior when a series has a particular interpretation
+		    (for instance when multiplying a rank 2 tensor by a rank 1 tensor).
+		    We would like to allow this extension to be done outside the `many` namespace,
+		    since we want to prevent the `many` namespace from growing past the limits of our comprehension.
+		    To implement this extended behavior outside the namespace would mean that derived functions could 
+			not use this extended functionality (unless the API user added a `using` statement, which is unwise),
+			so we would have to reimplement the same large library of derived functions for each behavioral extension.
+		    We instead use derived classes to represent instances of `series` that carry extended meaning.
+
+		Q:  Why do we implement methods that modify state? Why don't we implement methods that use the object as input?
+		A:  We want it to be trivial to create derived functions like add() or dot(). 
+		    Derived functions are always declared outside the class with a standardized method signature, 
+		    like `add(const T1& input1, const T2& input2, T3& output)`
+		    We cannot guarantee whether `T1` and `T2` are singletons, 
+		    so relying on a method that treats a `series` as input would require special consideration for each overload,
+		    but we can be certain that `T3` will be a `series` in all cases where we want to use output references.
+		    This excludes functions that "condense" down into singletons, like `sum(series)`,
+		    however we want to pass output by value in those cases anyways, 
+		    and they're few enough to handle on a case-by-case basis.
+		    Creating a `store()` function that modifies state also enables encapsulation of `series` objects,
+		    so that only the object itself can modify its own state, though we admit this concern is secondary.
+		    Despite modifying state, the `store()` methods can be considered regular functions (as defined by Stepanov),
+		    in the sense that the state of the `series` object afterwards can be determined strictly from method input.
+		*/
+
+
+		// UNARY TRANSFORM
+		template <typename T1, typename F>
+		inline void store(const F f, const series<T1>& a)
+		{
+			assert(a.size() == values.size());
+			for (std::size_t i = 0; i < a.size(); ++i)
+			{
+				values[i] = f(a[i]);
+			}
+		}
+		template <typename T1, typename F, std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value, int> = 0>
+		inline void store(const F f, const T1 a)
+		{
+			for (std::size_t i = 0; i < a.size(); ++i)
+			{
+				values[i] = f(a);
+			}
+		}
+
+
+
+
+		// BINARY TRANSFORM
+		template <typename T1, typename T2, typename F>
+		inline void store(const F f, const series<T1>& a, const series<T2>& b)
+		{
+			assert(a.size() == values.size());
+			assert(a.size() == b.size());
+			for (std::size_t i = 0; i < a.size(); ++i)
+			{
+				values[i] = f(a[i], b[i]);
+			}
+		}
+		template <typename T1, typename T2, typename F, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+		inline void store(const F f, const series<T1>& a, const T2 b)
+		{
+			assert(a.size() == values.size());
+			for (std::size_t i = 0; i < a.size(); ++i)
+			{
+				values[i] = f(a[i], b);
+			}
+		}
+		template <typename T1, typename T2, typename F, std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value, int> = 0>
+		inline void store(const F f, const T1 a, const series<T2>& b)
+		{
+			assert(b.size() == values.size());
+			for (std::size_t i = 0; i < b.size(); ++i)
+			{
+				values[i] = f(a, b[i]);
+			}
+		}
+
+
+		// TRINARY TRANSFORM
+		template <typename T1, typename T2, typename T3, typename F>
+		inline void store(const F f, const series<T1>& a, const series<T2>& b, const series<T3>& c)
+		{
+			assert(a.size() == values.size());
+			assert(b.size() == values.size());
+			assert(c.size() == values.size());
+			for (std::size_t i = 0; i < a.size(); ++i)
+			{
+				values[i] = f(a[i], b[i], c[i]);
+			}
+		}
+		template <typename T1, typename T2, typename T3, typename F, std::enable_if_t<!std::is_base_of<AbstractSeries, T3>::value, int> = 0>
+		inline void store(const F f, const series<T1>& a, const series<T2>& b, const T3 c)
+		{
+			assert(a.size() == values.size());
+			assert(b.size() == values.size());
+			for (std::size_t i = 0; i < a.size(); ++i)
+			{
+				values[i] = f(a[i], b[i], c);
+			}
+		}
+		template <typename T1, typename T2, typename T3, typename F, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+		inline void store(const F f, const series<T1>& a, const T2 b, const series<T3>& c)
+		{
+			assert(a.size() == values.size());
+			assert(c.size() == values.size());
+			for (std::size_t i = 0; i < a.size(); ++i)
+			{
+				values[i] = f(a[i], b, c[i]);
+			}
+		}
+		template <typename T1, typename T2, typename T3, typename F,
+			std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value && !std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+		inline void store(const F f, const series<T1>& a, const T2 b, const T3 c)
+		{
+			assert(a.size() == values.size());
+			for (std::size_t i = 0; i < a.size(); ++i)
+			{
+				values[i] = f(a[i], b, c);
+			}
+		}
+		template <typename T1, typename T2, typename T3, typename F, std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value, int> = 0>
+		inline void store(const F f, const T1 a, const series<T2>& b, const series<T3>& c)
+		{
+			assert(b.size() == values.size());
+			assert(c.size() == values.size());
+			for (std::size_t i = 0; i < b.size(); ++i)
+			{
+				values[i] = f(a, b[i], c[i]);
+			}
+		}
+		template <typename T1, typename T2, typename T3, typename F,
+			std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value && !std::is_base_of<AbstractSeries, T3>::value, int> = 0>
+		inline void store(const F f, const T1 a, const series<T2>& b, const T3 c)
+		{
+			assert(b.size() == values.size());
+			for (std::size_t i = 0; i < b.size(); ++i)
+			{
+				values[i] = f(a, b[i], c);
+			}
+		}
+		template <typename T1, typename T2, typename T3, typename F,
+			std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value && !std::is_base_of<AbstractSeries, T2>::value, int> = 0>
+		inline void store(const F f, const T1 a, const T2 b, const series<T3>& c)
+		{
+			assert(c.size() == values.size());
+			for (std::size_t i = 0; i < c.size(); ++i)
+			{
+				values[i] = f(a, b, c[i]);
+			}
+		}
+
+
+
+
+
+
+
+
 	};
 
 
@@ -275,144 +450,6 @@ namespace many
 
 
 
-
-
-
-	
-	// UNARY TRANSFORM
-	template <typename T1, typename Tout, typename F>
-	inline void transform(const series<T1>& a, F f, series<Tout>& out)
-	{
-		assert(a.size() == out.size());
-		for (std::size_t i = 0; i < a.size(); ++i)
-		{
-			out[i] = f(a[i]);
-		}
-	}
-	template <typename T1, typename Tout, typename F, std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value, int> = 0>
-	inline void transform(const T1 a, F f, series<Tout>& out)
-	{
-		for (std::size_t i = 0; i < a.size(); ++i)
-		{
-			out[i] = f(a);
-		}
-	}
-
-
-
-
-	// BINARY TRANSFORM
-	template <typename T1, typename T2, typename Tout, typename F>
-	inline void transform(const series<T1>& a, const series<T2>& b, F f, series<Tout>& out)
-	{
-		assert(a.size() == out.size());
-		assert(a.size() == b.size());
-		for (std::size_t i = 0; i < a.size(); ++i)
-		{
-			out[i] = f(a[i], b[i]);
-		}
-	}
-	template <typename T1, typename T2, typename Tout, typename F, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
-	inline void transform(const series<T1>& a, const T2 b, F f, series<Tout>& out)
-	{
-		assert(a.size() == out.size());
-		for (std::size_t i = 0; i < a.size(); ++i)
-		{
-			out[i] = f(a[i], b);
-		}
-	}
-	template <typename T1, typename T2, typename Tout, typename F, std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value, int> = 0>
-	inline void transform(const T1 a, const series<T2>& b, F f, series<Tout>& out)
-	{
-		assert(b.size() == out.size());
-		for (std::size_t i = 0; i < b.size(); ++i)
-		{
-			out[i] = f(a, b[i]);
-		}
-	}
-
-
-
-
-
-
-
-
-
-
-
-	// TRINARY TRANSFORM
-	template <typename T1, typename T2, typename T3, typename Tout, typename F>
-	inline void transform(const series<T1>& a, const series<T2>& b, const series<T3>& c, F f, series<Tout>& out)
-	{
-		assert(a.size() == out.size());
-		assert(b.size() == out.size());
-		assert(c.size() == out.size());
-		for (std::size_t i = 0; i < a.size(); ++i)
-		{
-			out[i] = f(a[i], b[i], c[i]);
-		}
-	}
-	template <typename T1, typename T2, typename T3, typename Tout, typename F, std::enable_if_t<!std::is_base_of<AbstractSeries, T3>::value, int> = 0>
-	inline void transform(const series<T1>& a, const series<T2>& b, const T3 c, F f, series<Tout>& out)
-	{
-		assert(a.size() == out.size());
-		assert(b.size() == out.size());
-		for (std::size_t i = 0; i < a.size(); ++i)
-		{
-			out[i] = f(a[i], b[i], c);
-		}
-	}
-	template <typename T1, typename T2, typename T3, typename Tout, typename F, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
-	inline void transform(const series<T1>& a, const T2 b, const series<T3>& c, F f, series<Tout>& out)
-	{
-		assert(a.size() == out.size());
-		assert(c.size() == out.size());
-		for (std::size_t i = 0; i < a.size(); ++i)
-		{
-			out[i] = f(a[i], b, c[i]);
-		}
-	}
-	template <typename T1, typename T2, typename T3, typename Tout, typename F,
-		std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value && !std::is_base_of<AbstractSeries, T2>::value, int> = 0>
-	inline void transform(const series<T1>& a, const T2 b, const T3 c, F f, series<Tout>& out)
-	{
-		assert(a.size() == out.size());
-		for (std::size_t i = 0; i < a.size(); ++i)
-		{
-			out[i] = f(a[i], b, c);
-		}
-	}
-	template <typename T1, typename T2, typename T3, typename Tout, typename F, std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value, int> = 0>
-	inline void transform(const T1 a, const series<T2>& b, const series<T3>& c, F f, series<Tout>& out)
-	{
-		assert(b.size() == out.size());
-		assert(c.size() == out.size());
-		for (std::size_t i = 0; i < b.size(); ++i)
-		{
-			out[i] = f(a, b[i], c[i]);
-		}
-	}
-	template <typename T1, typename T2, typename T3, typename Tout, typename F,
-		std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value && !std::is_base_of<AbstractSeries, T3>::value, int> = 0>
-	inline void transform(const T1 a, const series<T2>& b, const T3 c, F f, series<Tout>& out)
-	{
-		assert(b.size() == out.size());
-		for (std::size_t i = 0; i < b.size(); ++i)
-		{
-			out[i] = f(a, b[i], c);
-		}
-	}
-	template <typename T1, typename T2, typename T3, typename Tout, typename F,
-		std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value && !std::is_base_of<AbstractSeries, T2>::value, int> = 0>
-	inline void transform(const T1 a, const T2 b, const series<T3>& c, F f, series<Tout>& out)
-	{
-		assert(c.size() == out.size());
-		for (std::size_t i = 0; i < c.size(); ++i)
-		{
-			out[i] = f(a, b, c[i]);
-		}
-	}
 
 
 
