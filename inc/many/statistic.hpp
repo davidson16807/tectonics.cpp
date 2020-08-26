@@ -14,11 +14,11 @@ namespace many
 
 	// component-wise min
 	template <typename T>
-	unsigned int min_id(const series<T>& a)
+	std::size_t min_id(const T& a)
 	{
-		T min_value = a[0];
-		unsigned int min_id = 0;
-		for (unsigned int i = 0; i < a.size(); ++i)
+		typename T::value_type min_value = a[0];
+		std::size_t min_id = 0;
+		for (std::size_t i = 0; i < a.size(); ++i)
 		{
 			if (a[i] < min_value)
 			{
@@ -32,11 +32,11 @@ namespace many
 
 
 	template <typename T>
-	unsigned int max_id(const series<T>& a)
+	std::size_t max_id(const T& a)
 	{
-		T min_value = a[0];
-		unsigned int max_id = 0;
-		for (unsigned int i = 0; i < a.size(); ++i)
+		typename T::value_type min_value = a[0];
+		std::size_t max_id = 0;
+		for (std::size_t i = 0; i < a.size(); ++i)
 		{
 			if (a[i] < min_value)
 			{
@@ -50,9 +50,9 @@ namespace many
 
 	// component-wise min
 	template <typename T>
-	T sum(const series<T>& a)
+	typename T::value_type sum(const T& a)
 	{
-		T out = T(0);
+		typename T::value_type out(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out += a[i];
@@ -74,9 +74,9 @@ namespace many
 	}
 
 	template <typename T>
-	T mean(const series<T>& a)
+	typename T::value_type mean(const T& a)
 	{
-		T out = T(0);
+		typename T::value_type out(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out += a[i];
@@ -87,13 +87,13 @@ namespace many
 
 
 	template <typename T>
-	T standard_deviation(const series<T>& a)
+	typename T::value_type standard_deviation(const T& a)
 	{
-		T mean_a = mean(a);
+		typename T::value_type mean_a = mean(a);
 
-		T difference(0);
-		T sum_of_squared_differences(0);
-		for (T i(0); i<a.size(); ++i) {
+		typename T::value_type difference(0);
+		typename T::value_type sum_of_squared_differences(0);
+		for (typename T::value_type i(0); i<a.size(); ++i) {
 			difference = (a[i] - mean_a);
 			sum_of_squared_differences += difference * difference;
 		}
@@ -101,9 +101,9 @@ namespace many
 	}
 
 	template <typename T>
-	T weighted_average(const series<T>& a, const series<T>& weights)
+	typename T::value_type weighted_average(const T& a, const T& weights)
 	{
-		T out = T(0);
+		typename T::value_type out(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out += a[i] * weights[i];
@@ -114,14 +114,14 @@ namespace many
 
 	// TODO: vector version
 	template <typename T>
-	void rescale(const series<T>& a, series<T>& out, T max_new = 1., T min_new = 0.)
+	void rescale(const T& a, T& out, typename T::value_type max_new = 1., typename T::value_type min_new = 0.)
 	{
-	    T max_old = max(a);
-	    T min_old = min(a);
-		T range_old = max_old - min_old;
-		T range_new = max_new - min_new;
+	    typename T::value_type max_old = max(a);
+	    typename T::value_type min_old = min(a);
+		typename T::value_type range_old = max_old - min_old;
+		typename T::value_type range_new = max_new - min_new;
 
-		T scaling_factor = range_new / range_old;
+		typename T::value_type scaling_factor = range_new / range_old;
 
 		for (unsigned int i=0; i<a.size(); ++i) {
 			out[i] = scaling_factor * (a[i] - min_old) + min_new;
@@ -129,17 +129,17 @@ namespace many
 	}
 	// // component-wise min
 	// template <typename T>
-	// T median(const series<T>& a)
+	// typename T::value_type median(const T& a)
 	// {
-	// 	const series<T> temp = series<T>(a);
+	// 	const typename T::value_type temp(a);
 	// 	std::sort(std::begin(temp), std::end(temp));
 	// 	return a[a.size()/2];
 	// }
 // 
 	// template <typename T>
-	// T mode(const series<T>& a)
+	// typename T::value_type mode(const T& a)
 	// {
-	// 	const series<T> temp = series<T>(a);
+	// 	const typename T::value_type temp(a);
 	// 	std::sort(std::begin(temp), std::end(temp));
 	//     int value = a[0];
 	//     int max = a[0];

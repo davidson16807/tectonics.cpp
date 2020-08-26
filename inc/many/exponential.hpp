@@ -11,27 +11,27 @@ namespace many
 	/// @param base Floating point value. pow function is defined for input values of 'base' defined in the range (inf-, inf+) in the limit of the type qualifier.
 	/// @param exponent Floating point value representing the 'exponent'.
 	template <typename T>
-	inline void pow(const series<T>& base, const series<T>& exponent, series<T>& out)
+	inline void pow(const T& base, const T& exponent, T& out)
 	{
-		out.store([](T basei, T exponenti){ return std::pow(basei, exponenti); }, base, exponent);
+		out.store([](typename T::value_type basei, typename T::value_type exponenti){ return std::pow(basei, exponenti); }, base, exponent);
 	}
 	/// Returns 'base' raised to the power 'exponent'.
 	///
 	/// @param base Floating point value. pow function is defined for input values of 'base' defined in the range (inf-, inf+) in the limit of the type qualifier.
 	/// @param exponent Floating point value representing the 'exponent'.
 	template <typename T>
-	inline void pow(const series<T>& base, const T exponent, series<T>& out)
+	inline void pow(const T& base, const typename T::value_type exponent, T& out)
 	{
-		out.store([](T basei, T exponenti){ return std::pow(basei, exponenti); }, base, exponent);
+		out.store([](typename T::value_type basei, typename T::value_type exponenti){ return std::pow(basei, exponenti); }, base, exponent);
 	}
 	// TODO: vector variant
 	/// Returns the natural exponentiation of x, i.e., e^x.
 	///
 	/// @param a exp function is defined for input values of a defined in the range (inf-, inf+) in the limit of the type qualifier.
 	template <typename T>
-	inline void exp(const series<T>& a, series<T>& out)
+	inline void exp(const T& a, T& out)
 	{
-		out.store([](T ai){ return std::exp(ai); }, a);
+		out.store([](typename T::value_type ai){ return std::exp(ai); }, a);
 	}
 
 	// TODO: vector variant
@@ -41,9 +41,9 @@ namespace many
 	///
 	/// @param a log function is defined for input values of a defined in the range (0, inf+) in the limit of the type qualifier.
 	template <typename T>
-	inline void log(const series<T>& a, series<T>& out)
+	inline void log(const T& a, T& out)
 	{
-		out.store([](T ai){ return std::log(ai); }, a);
+		out.store([](typename T::value_type ai){ return std::log(ai); }, a);
 	}
 
 	// TODO: vector variant
@@ -51,9 +51,9 @@ namespace many
 	///
 	/// @param a exp2 function is defined for input values of a defined in the range (inf-, inf+) in the limit of the type qualifier.
 	template <typename T>
-	inline void exp2(const series<T>& a, series<T>& out)
+	inline void exp2(const T& a, T& out)
 	{
-		out.store([](T ai){ return std::exp2(ai); }, a);
+		out.store([](typename T::value_type ai){ return std::exp2(ai); }, a);
 	}
 
 	// TODO: vector variant
@@ -62,9 +62,9 @@ namespace many
 	///
 	/// @param a log2 function is defined for input values of a defined in the range (0, inf+) in the limit of the type qualifier.
 	template <typename T>
-	inline void log2(const series<T>& a, series<T>& out)
+	inline void log2(const T& a, T& out)
 	{
-		out.store([](T ai){ return std::log2(ai); }, a);
+		out.store([](typename T::value_type ai){ return std::log2(ai); }, a);
 	}
 
 	// TODO: vector variant
@@ -72,9 +72,9 @@ namespace many
 	///
 	/// @param a sqrt function is defined for input values of a defined in the range [0, inf+) in the limit of the type qualifier.
 	template <typename T>
-	inline void sqrt(const series<T>& a, series<T>& out)
+	inline void sqrt(const T& a, T& out)
 	{
-		out.store([](T ai){ return std::sqrt(ai); }, a);
+		out.store([](typename T::value_type ai){ return std::sqrt(ai); }, a);
 	}
 
 	// TODO: vector variant
@@ -82,9 +82,9 @@ namespace many
 	///
 	/// @param a inversesqrt function is defined for input values of a defined in the range [0, inf+) in the limit of the type qualifier.
 	template <typename T>
-	inline void inversesqrt(const series<T>& a, series<T>& out)
+	inline void inversesqrt(const T& a, T& out)
 	{
-		out.store([](T ai){ return 1./std::sqrt(ai); }, a);
+		out.store([](typename T::value_type ai){ return 1./std::sqrt(ai); }, a);
 	}
 }//namespace many
 

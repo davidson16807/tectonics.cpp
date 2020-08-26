@@ -8,17 +8,17 @@ namespace many
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void get_x(const series<glm::vec<L,T,Q>>& a, series<T>& output )
 	{
-		transform(a, [](glm::vec<L,T,Q> ai){ return ai.x; }, output);
+		output.store([](glm::vec<L,T,Q> ai){ return ai.x; }, a);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void get_y(const series<glm::vec<L,T,Q>>& a, series<T>& output )
 	{
-		transform(a, [](glm::vec<L,T,Q> ai){ return ai.y; }, output);
+		output.store([](glm::vec<L,T,Q> ai){ return ai.y; }, a);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	void get_z(const series<glm::vec<L,T,Q>>& a, series<T>& output )
 	{
-		transform(a, [](glm::vec<L,T,Q> ai){ return ai.z; }, output);
+		output.store([](glm::vec<L,T,Q> ai){ return ai.z; }, a);
 	}
 
 

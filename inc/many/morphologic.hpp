@@ -5,39 +5,74 @@
 namespace many
 {
 
-	void unite(const series<bool>& a, const bool b, series<bool>& out)
-	{
-		out.store([](bool ai, bool bi){ return ai || bi; }, a, b);
-	}
 
-	void unite(const series<bool>& a, const series<bool>& b, series<bool>& out)
+	template <typename T, typename Tout>
+	void unite(const T& a, const T& b, Tout& out)
 	{
-		out.store([](bool ai, bool bi){ return ai || bi; }, a, b);
+		typedef typename T::value_type Ti;
+		out.store([](Ti ai, Ti bi){ return ai || bi; }, a, b);
 	}
-
-	void intersect(const series<bool>& a, const bool b, series<bool>& out)
+	template <typename T, typename Tout>
+	void unite(const T& a, const typename T::value_type b, Tout& out)
 	{
-		out.store([](bool ai, bool bi){ return ai && bi; }, a, b);
+		typedef typename T::value_type Ti;
+		out.store([](Ti ai, Ti bi){ return ai || bi; }, a, b);
 	}
-
-	void intersect(const series<bool>& a, const series<bool>& b, series<bool>& out)
+	template <typename T, typename Tout>
+	void unite(const typename T::value_type a, const T& b, Tout& out)
 	{
-		out.store([](bool ai, bool bi){ return ai && bi; }, a, b);
+		typedef typename T::value_type Ti;
+		out.store([](Ti ai, Ti bi){ return ai || bi; }, a, b);
 	}
+	
 
-	void differ(const series<bool>& a, const bool b, series<bool>& out)
+
+	template <typename T, typename Tout>
+	void intersect(const T& a, const T& b, Tout& out)
 	{
-		out.store([](bool ai, bool bi){ return ai && !bi; }, a, b);
+		typedef typename T::value_type Ti;
+		out.store([](Ti ai, Ti bi){ return ai && bi; }, a, b);
 	}
-
-	void differ(const series<bool>& a, const series<bool>& b, series<bool>& out)
+	template <typename T, typename Tout>
+	void intersect(const T& a, const typename T::value_type b, Tout& out)
 	{
-		out.store([](bool ai, bool bi){ return ai && !bi; }, a, b);
+		typedef typename T::value_type Ti;
+		out.store([](Ti ai, Ti bi){ return ai && bi; }, a, b);
 	}
-
-	void negate(const series<bool>& a, series<bool>& out)
+	template <typename T, typename Tout>
+	void intersect(const typename T::value_type a, const T& b, Tout& out)
 	{
-		out.store([](bool ai){ return !ai; }, a);
+		typedef typename T::value_type Ti;
+		out.store([](Ti ai, Ti bi){ return ai && bi; }, a, b);
+	}
+	
+
+
+	template <typename T, typename Tout>
+	void differ(const T& a, const T& b, Tout& out)
+	{
+		typedef typename T::value_type Ti;
+		out.store([](Ti ai, Ti bi){ return ai && !bi; }, a, b);
+	}
+	template <typename T, typename Tout>
+	void differ(const T& a, const typename T::value_type b, Tout& out)
+	{
+		typedef typename T::value_type Ti;
+		out.store([](Ti ai, Ti bi){ return ai && !bi; }, a, b);
+	}
+	template <typename T, typename Tout>
+	void differ(const typename T::value_type a, const T& b, Tout& out)
+	{
+		typedef typename T::value_type Ti;
+		out.store([](Ti ai, Ti bi){ return ai && !bi; }, a, b);
+	}
+	
+
+	template <typename T, typename Tout>
+	void negate(const T& a, Tout& out)
+	{
+		typedef typename T::value_type Ti;
+		out.store([](Ti ai){ return !ai; }, a);
 	}
 
 

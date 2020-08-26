@@ -79,6 +79,8 @@ namespace many
 	    inline typename std::vector<T>::const_iterator end()   const  { return values.end();   }
 	    inline typename std::vector<T>::iterator begin()              { return values.begin(); }
 	    inline typename std::vector<T>::iterator end()                { return values.end();   }
+	    using size_type = std::size_t;
+		using value_type = T;
 
 		inline typename std::vector<T>::const_reference operator[](const unsigned int id ) const
 		{
@@ -126,7 +128,7 @@ namespace many
 		/*
 		`store(...)` methods modify the state of the object to store the output of a computation.
 		The computation is defined by applying a function `f` over any combination of `series` objects and singletons.
-		We then use the `store()` function to implement other derived functions outside the class, e.g. add() or dot()
+		We then curry the `store()` function to create derived functions outside the class, e.g. add() or dot()
 
 		Q:  Why aren't derived functions (like add() or dot()) implemented as methods?
 		A:  There are too many of them. Consider all the functions we'd need for trigonometry, statistics, morphology, vector calculus, etc.
