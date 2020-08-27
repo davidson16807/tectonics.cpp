@@ -10,31 +10,29 @@ namespace many
 {
 	/// Returns x if x >= 0; otherwise, it returns -x.
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void abs(const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,T,Q>>& out)
+	inline glm::vec<L,T,Q> abs(const glm::vec<L,T,Q> a)
 	{
-		out.store([](const glm::vec<L,T,Q>& ai){ return glm::abs(ai); }, a);
+		return glm::abs(a);
 	}
 
 	/// Returns 1.0 if x > 0, 0.0 if x == 0, or -1.0 if x < 0.
-	template <glm::length_t L, typename T, glm::qualifier Q, class Tout>
-	void sign(const series<glm::vec<L,T,Q>>& a, series<Tout>& out)
+	template <glm::length_t L, typename T, glm::qualifier Q>
+	inline glm::vec<L,T,Q> sign(const glm::vec<L,T,Q> a)
 	{
-		out.store([](const glm::vec<L,T,Q>& ai){ return glm::sign(ai); },  a);
+		return glm::sign(a);
 	}
 
 	/// Returns a value equal to the nearest integer that is less then or equal to x.
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void floor(const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,T,Q>>& out)
+	inline glm::vec<L,T,Q> floor(const glm::vec<L,T,Q> a)
 	{
-		out.store([](const glm::vec<L,T,Q>& ai){ return glm::floor(ai); }, a);
+		return glm::floor(a);
 	}
 
-	/// Returns a value equal to the nearest integer to x
-	/// whose absolute value is not larger than the absolute value of x.
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void trunc(const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,T,Q>>& out)
+	inline glm::vec<L,T,Q> trunc(const glm::vec<L,T,Q> a)
 	{
-		out.store([](const glm::vec<L,T,Q>& ai){ return glm::trunc(ai); }, a);
+		return glm::trunc(a);
 	}
 
 	/// Returns a value equal to the nearest integer to x.
@@ -43,33 +41,27 @@ namespace many
 	/// This includes the possibility that round(x) returns the
 	/// same value as roundEven(x) for all values of x.
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void round(const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,T,Q>>& out)
+	inline glm::vec<L,T,Q> round(const glm::vec<L,T,Q> a)
 	{
-		out.store([](const glm::vec<L,T,Q>& ai){ return glm::round(ai); }, a);
+		return glm::round(a);
 	}
 
 	/// Returns a value equal to the nearest integer
 	/// that is greater than or equal to x.
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void ceil(const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,T,Q>>& out)
+	inline glm::vec<L,T,Q> ceil(const glm::vec<L,T,Q> a)
 	{
-		out.store([](const glm::vec<L,T,Q>& ai){ return glm::ceil(ai); }, a);
-	}
-
-	/// Return x - floor(x).
-	template <glm::length_t L, typename T, glm::qualifier Q>
-	void fract(const series<glm::vec<L,T,Q>>& a, series<glm::vec<L,T,Q>>& out)
-	{
-		out.store([](const glm::vec<L,T,Q>& ai){ return glm::fract(ai); }, a);
+		return glm::ceil(a);
 	}
 
 	/// Modulus. Returns x - y * floor(x / y)
 	/// for each component in x using the floating point value y.
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void mod(const series<glm::vec<L,T,Q>>& a, const series<glm::vec<L,T,Q>>& b, series<glm::vec<L,T,Q>>& out)
+	inline glm::vec<L,T,Q> mod(const glm::vec<L,T,Q> a, const glm::vec<L,T,Q> b)
 	{
-		out.store([](const glm::vec<L,T,Q>& ai, const glm::vec<L,T,Q>& bi){ return glm::mod(ai,bi); }, a, b);
+		return glm::mod(a,b);
 	}
+
 
 	/// Returns the fractional part of x and sets i to the integer
 	/// part (as a whole number floating point value). Both the
@@ -87,14 +79,9 @@ namespace many
 
 	/// Returns y if y < x; otherwise, it returns x.
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void min(const series<glm::vec<L,T,Q>>& a, const series<glm::vec<L,T,Q>>& b, series<glm::vec<L,T,Q>>& out)
+	inline glm::vec<L,T,Q> min(const glm::vec<L,T,Q> a, const glm::vec<L,T,Q> b)
 	{
-		out.store([](const glm::vec<L,T,Q>& ai, const glm::vec<L,T,Q>& bi){ return glm::min(ai,bi); }, a, b);
-	}
-	template <glm::length_t L, typename T, glm::qualifier Q>
-	void min(const series<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> b, series<glm::vec<L,T,Q>>& out)
-	{
-		out.store([](const glm::vec<L,T,Q>& ai, const glm::vec<L,T,Q>& bi){ return glm::min(ai,bi); }, a, b);
+		return glm::min(a,b);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	glm::vec<L,T,Q> min(const series<glm::vec<L,T,Q>>& a)
@@ -108,15 +95,9 @@ namespace many
 	}
 	/// Returns y if y < x; otherwise, it returns x.
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void max(const series<glm::vec<L,T,Q>>& a, const series<glm::vec<L,T,Q>>& b, series<glm::vec<L,T,Q>>& out)
+	inline glm::vec<L,T,Q> max(const glm::vec<L,T,Q> a, const glm::vec<L,T,Q> b)
 	{
-		out.store([](const glm::vec<L,T,Q>& ai, const glm::vec<L,T,Q>& bi){ return glm::max(ai,bi); }, a, b);
-	}
-	/// Returns y if y < x; otherwise, it returns x.
-	template <glm::length_t L, typename T, glm::qualifier Q>
-	void max(const series<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> b, series<glm::vec<L,T,Q>>& out)
-	{
-		out.store([](const glm::vec<L,T,Q>& ai, const glm::vec<L,T,Q>& bi){ return glm::max(ai,bi); }, a, b);
+		return glm::max(a,b);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q>
 	glm::vec<L,T,Q> max(const series<glm::vec<L,T,Q>>& a)
@@ -131,25 +112,11 @@ namespace many
 
 	/// Returns min(max(x, minVal), maxVal) for each component in x
 	/// using the floating-point values minVal and maxVal.
+
 	template <glm::length_t L, typename T, glm::qualifier Q>
-	void clamp(const series<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> lo, const glm::vec<L,T,Q> hi, series<glm::vec<L,T,Q>>& out)
+	inline glm::vec<L,T,Q> clamp(const glm::vec<L,T,Q> a, const glm::vec<L,T,Q> lo, const glm::vec<L,T,Q> hi)
 	{
-		out.store([](const glm::vec<L,T,Q>& ai, const glm::vec<L,T,Q>&  loi, const glm::vec<L,T,Q>& hii){ return glm::clamp(ai,loi,hii); }, a, lo, hi);
-	}
-	template <glm::length_t L, typename T, glm::qualifier Q>
-	void clamp(const series<glm::vec<L,T,Q>>& a, const glm::vec<L,T,Q> lo, const series<glm::vec<L,T,Q>>& hi, series<glm::vec<L,T,Q>>& out)
-	{
-		out.store([](const glm::vec<L,T,Q>& ai, const glm::vec<L,T,Q>&  loi, const glm::vec<L,T,Q>& hii){ return glm::clamp(ai,loi,hii); }, a, lo, hi);
-	}
-	template <glm::length_t L, typename T, glm::qualifier Q>
-	void clamp(const series<glm::vec<L,T,Q>>& a, const series<glm::vec<L,T,Q>>& lo, const glm::vec<L,T,Q> hi, series<glm::vec<L,T,Q>>& out)
-	{
-		out.store([](const glm::vec<L,T,Q>& ai, const glm::vec<L,T,Q>&  loi, const glm::vec<L,T,Q>& hii){ return glm::clamp(ai,loi,hii); }, a, lo, hi);
-	}
-	template <glm::length_t L, typename T, glm::qualifier Q>
-	void clamp(const series<glm::vec<L,T,Q>>& a, const series<glm::vec<L,T,Q>>& lo, const series<glm::vec<L,T,Q>>& hi, series<glm::vec<L,T,Q>>& out)
-	{
-		out.store([](const glm::vec<L,T,Q>& ai, const glm::vec<L,T,Q>&  loi, const glm::vec<L,T,Q>& hii){ return glm::clamp(ai,loi,hii); }, a, lo, hi);
+		return glm::clamp(a,lo,hi);
 	}
 
 

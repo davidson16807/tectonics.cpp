@@ -7,36 +7,56 @@
 namespace many
 {
 	/// Returns x if x >= 0; otherwise, it returns -x.
+	template <typename T>
+	inline T abs(const T a)
+	{
+		return std::abs(a);
+	}
 	template <typename T, typename Tout>
 	void abs(const T& a, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti ai){ return ai >= 0? ai : -ai; }, a);
+		out.store([](Ti ai){ return abs(ai); }, a);
 	}
 
 	/// Returns 1.0 if x > 0, 0.0 if x == 0, or -1.0 if x < 0.
+	template <typename T>
+	inline T sign(const T a)
+	{
+		return (T(0) < a) - (a < T(0));
+	}
 	template <typename T, typename Tout>
 	void sign(const T& a, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti ai){ return (Ti(0) < ai) - (ai < Ti(0)); }, a);
+		out.store([](Ti ai){ return sign(ai); }, a);
 	}
 
 	/// Returns a value equal to the nearest integer that is less then or equal to x.
+	template <typename T>
+	inline T floor(const T a)
+	{
+		return std::floor(a);
+	}
 	template <typename T, typename Tout>
 	void floor(const T& a, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti ai){ return std::floor(ai); }, a);
+		out.store([](Ti ai){ return floor(ai); }, a);
 	}
 
 	/// Returns a value equal to the nearest integer to x
 	/// whose absolute value is not larger than the absolute value of x.
+	template <typename T>
+	T trunc(const T a)
+	{
+		return std::trunc(a);
+	}
 	template <typename T, typename Tout>
 	void trunc(const T& a, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti ai){ return std::trunc(ai); }, a);
+		out.store([](Ti ai){ return trunc(ai); }, a);
 	}
 
 	/// Returns a value equal to the nearest integer to x.
@@ -44,15 +64,25 @@ namespace many
 	/// implementation, presumably the direction that is fastest.
 	/// This includes the possibility that round(x) returns the
 	/// same value as roundEven(x) for all values of x.
+	template <typename T>
+	T round(const T a)
+	{
+		return std::round(a);
+	}
 	template <typename T, typename Tout>
 	void round(const T& a, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti ai){ return std::round(ai); }, a);
+		out.store([](Ti ai){ return round(ai); }, a);
 	}
 
 	/// Returns a value equal to the nearest integer
 	/// that is greater than or equal to x.
+	template <typename T>
+	inline T ceil(const T a)
+	{
+		return std::ceil(a);
+	}
 	template <typename T, typename Tout>
 	void ceil(const T& a, Tout& out)
 	{
@@ -61,32 +91,42 @@ namespace many
 	}
 
 	/// Return x - floor(x).
+	template <typename T>
+	inline T fract(const T a)
+	{
+		return a-floor(a);
+	}
 	template <typename T, typename Tout>
 	void fract(const T& a, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti ai){ return ai - std::floor(ai); }, a);
+		out.store([](Ti ai){ return ai - floor(ai); }, a);
 	}
 
 	/// Modulus. Returns x - y * floor(x / y)
 	/// for each component in x using the floating point value y.
+	template <typename T>
+	inline T mod(const T a, const T b)
+	{
+		return a-b*floor(a/b);
+	}
 	template <typename T, typename Tout>
 	void mod(const T& a, const T& b, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti ai, Ti bi){ return ai - bi * std::floor(ai / bi); }, a, b);
+		out.store([](Ti ai, Ti bi){ return ai - bi * floor(ai / bi); }, a, b);
 	}
 	template <typename T, typename Tout>
 	void mod(const T& a, const typename T::value_type b, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti ai, Ti bi){ return ai - bi * std::floor(ai / bi); }, a, b);
+		out.store([](Ti ai, Ti bi){ return ai - bi * floor(ai / bi); }, a, b);
 	}
 	template <typename T, typename Tout>
 	void mod(const typename T::value_type a, const T& b, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti ai, Ti bi){ return ai - bi * std::floor(ai / bi); }, a, b);
+		out.store([](Ti ai, Ti bi){ return ai - bi * floor(ai / bi); }, a, b);
 	}
 
 	/// Returns the fractional part of x and sets i to the integer
@@ -99,28 +139,33 @@ namespace many
 		typedef typename T::value_type Ti;
 		typedef typename Tint::value_type Tinti;
 		typedef typename Tout::value_type Touti;
-		fractout.store([](Ti ai){ return ai - std::floor(ai); }, a);
+		fractout.store([](Ti ai){ return ai - floor(ai); }, a);
 		intout.store([](Ti ai, Touti fractouti){ return Tinti(ai-fractouti); }, a, fractout);
 	}
 
 	/// Returns y if y < x; otherwise, it returns x.
+	template <typename T>
+	T min(const T a, const T b)
+	{
+		return std::min(a,b);
+	}
 	template <typename T, typename Tout>
 	void min(const T& a, const T& b, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti ai, Ti bi){ return ai < bi? ai : bi; }, a, b);
+		out.store([](Ti ai, Ti bi){ return min(ai,bi); }, a, b);
 	}
 	template <typename T, typename Tout>
 	void min(const T& a, const typename T::value_type b, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti ai, Ti bi){ return ai < bi? ai : bi; }, a, b);
+		out.store([](Ti ai, Ti bi){ return min(ai,bi); }, a, b);
 	}
 	template <typename T, typename Tout>
 	void min(const typename T::value_type a, const T& b, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti ai, Ti bi){ return ai < bi? ai : bi; }, a, b);
+		out.store([](Ti ai, Ti bi){ return min(ai,bi); }, a, b);
 	}
 
 	// component-wise min
@@ -150,23 +195,28 @@ namespace many
 	}
 
 	/// Returns y if x < y; otherwise, it returns x.
+	template <typename T>
+	T max(const T a, const T b)
+	{
+		return std::max(a,b);
+	}
 	template <typename T, typename Tout>
 	void max(const T& a, const T& b, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti ai, Ti bi){ return ai > bi? ai : bi; }, a, b);
+		out.store([](Ti ai, Ti bi){ return max(ai,bi); }, a, b);
 	}
 	template <typename T, typename Tout>
 	void max(const T& a, const typename T::value_type b, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti ai, Ti bi){ return ai > bi? ai : bi; }, a, b);
+		out.store([](Ti ai, Ti bi){ return max(ai,bi); }, a, b);
 	}
 	template <typename T, typename Tout>
 	void max(const typename T::value_type a, const T& b, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti ai, Ti bi){ return ai > bi? ai : bi; }, a, b);
+		out.store([](Ti ai, Ti bi){ return max(ai,bi); }, a, b);
 	}
 	// component-wise max
 	template <typename T>
@@ -196,35 +246,35 @@ namespace many
 
 	/// Returns min(max(x, minVal), maxVal) for each component in x
 	/// using the floating-point values minVal and maxVal.
-	// template <typename T, typename Tout>
-	// T clamp(const T a, const T lo, const T hi, Tout& out)
-	// {
-	// 	return a > hi? hi : a < lo? lo : a;
-	// }
+	template <typename T>
+	inline T clamp(const T a, const T lo, const T hi)
+	{
+		return a > hi? hi : a < lo? lo : a;
+	}
 	template <typename T, typename Tout>
 	void clamp(const T& a, const typename T::value_type lo, const typename T::value_type hi, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti ai, Ti loi, Ti hii){ return ai > hii? hii : ai < loi? loi : ai; }, a, lo, hi);
+		out.store([](Ti ai, Ti loi, Ti hii){ return clamp(ai,loi,hii); }, a, lo, hi);
 	}
 	template <typename T, typename Tout>
 	void clamp(const T& a, const typename T::value_type lo, const T& hi, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti ai, Ti loi, Ti hii){ return ai > hii? hii : ai < loi? loi : ai; }, a, lo, hi);
+		out.store([](Ti ai, Ti loi, Ti hii){ return clamp(ai,loi,hii); }, a, lo, hi);
 	}
 	template <typename T, typename Tout>
 	void clamp(const T& a, const T& lo, const typename T::value_type hi, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti ai, Ti loi, Ti hii){ return ai > hii? hii : ai < loi? loi : ai; }, a, lo, hi);
+		out.store([](Ti ai, Ti loi, Ti hii){ return clamp(ai,loi,hii); }, a, lo, hi);
 	}
 	template <typename T, typename Tout>
 	void clamp(const T& a, const T& lo, const T& hi, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti ai, Ti hii){ return ai > hii? hii : ai; }, a,   hi);
-		out.store([](Ti ai, Ti loi){ return ai < loi? loi : ai; }, out, lo);
+		out.store([](Ti ai, Ti hii){ return min(ai,hii); }, a,   hi);
+		out.store([](Ti ai, Ti loi){ return max(ai,loi); }, out, lo);
 	}
 
 
