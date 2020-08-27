@@ -26,7 +26,8 @@ namespace many
 	template <typename T, typename Tout>
 	void floor(const T& a, Tout& out)
 	{
-		out.store(std::floor, a);
+		typedef typename T::value_type Ti;
+		out.store([](Ti ai){ return std::floor(ai); }, a);
 	}
 
 	/// Returns a value equal to the nearest integer to x
@@ -34,7 +35,8 @@ namespace many
 	template <typename T, typename Tout>
 	void trunc(const T& a, Tout& out)
 	{
-		out.store(std::trunc, a);
+		typedef typename T::value_type Ti;
+		out.store([](Ti ai){ return std::trunc(ai); }, a);
 	}
 
 	/// Returns a value equal to the nearest integer to x.
@@ -45,7 +47,8 @@ namespace many
 	template <typename T, typename Tout>
 	void round(const T& a, Tout& out)
 	{
-		out.store(std::round, a);
+		typedef typename T::value_type Ti;
+		out.store([](Ti ai){ return std::round(ai); }, a);
 	}
 
 	/// Returns a value equal to the nearest integer
@@ -53,7 +56,8 @@ namespace many
 	template <typename T, typename Tout>
 	void ceil(const T& a, Tout& out)
 	{
-		out.store(std::ceil, a);
+		typedef typename T::value_type Ti;
+		out.store([](Ti ai){ return std::ceil(ai); }, a);
 	}
 
 	/// Return x - floor(x).
@@ -192,25 +196,25 @@ namespace many
 
 	/// Returns min(max(x, minVal), maxVal) for each component in x
 	/// using the floating-point values minVal and maxVal.
+	// template <typename T, typename Tout>
+	// T clamp(const T a, const T lo, const T hi, Tout& out)
+	// {
+	// 	return a > hi? hi : a < lo? lo : a;
+	// }
 	template <typename T, typename Tout>
-	T clamp(const T a, const T lo, const T hi, Tout& out)
-	{
-		return a > hi? hi : a < lo? lo : a;
-	}
-	template <typename T, typename Tout>
-	void clamp(const T& a, const T lo, const T hi, Tout& out)
-	{
-		typedef typename T::value_type Ti;
-		out.store([](Ti ai, Ti loi, Ti hii){ return ai > hii? hii : ai < loi? loi : ai; }, a, lo, hi);
-	}
-	template <typename T, typename Tout>
-	void clamp(const T& a, const T lo, const T& hi, Tout& out)
+	void clamp(const T& a, const typename T::value_type lo, const typename T::value_type hi, Tout& out)
 	{
 		typedef typename T::value_type Ti;
 		out.store([](Ti ai, Ti loi, Ti hii){ return ai > hii? hii : ai < loi? loi : ai; }, a, lo, hi);
 	}
 	template <typename T, typename Tout>
-	void clamp(const T& a, const T& lo, const T hi, Tout& out)
+	void clamp(const T& a, const typename T::value_type lo, const T& hi, Tout& out)
+	{
+		typedef typename T::value_type Ti;
+		out.store([](Ti ai, Ti loi, Ti hii){ return ai > hii? hii : ai < loi? loi : ai; }, a, lo, hi);
+	}
+	template <typename T, typename Tout>
+	void clamp(const T& a, const T& lo, const typename T::value_type hi, Tout& out)
 	{
 		typedef typename T::value_type Ti;
 		out.store([](Ti ai, Ti loi, Ti hii){ return ai > hii? hii : ai < loi? loi : ai; }, a, lo, hi);

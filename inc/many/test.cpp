@@ -2,6 +2,7 @@
 #include "./glm/random_test.hpp"
 #include "./arithmetic_test.hpp"
 #include "./convenience_test.hpp"
+#include "./common_test.hpp"
 #include "./string_cast_test.hpp"
 #include "./exponential_test.hpp"
 #include "./relational_test.hpp"

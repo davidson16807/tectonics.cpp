@@ -49,4 +49,65 @@ TEST_CASE( "many<T> log consistency", "[many]" ) {
         CHECK(many::equal(log1_ , log2_));
     }
 }
+TEST_CASE( "many<T> log/exp consistency", "[many]" ) {
+    many::floats a     = many::floats({1,2,3,4,5});
+    many::floats b     = many::floats({1,1,2,3,5});
+    many::floats loga  = many::floats({0,0,0,0,0});
+    many::floats logb  = many::floats({0,0,0,0,0});
+    many::floats out   = many::floats({0,0,0,0,0});
+
+    SECTION("exp(log(a)+log(b)) must equal a*b"){
+        many::log(a, loga);
+        many::log(b, logb);
+        many::exp(loga+logb, out);
+        CHECK(many::equal(out, a*b));
+    }
+}
+TEST_CASE( "many<T> log/exp invertibility", "[many]" ) {
+    many::floats a   = many::floats({1,2,3,4,5});
+    many::floats b   = many::floats({1,1,2,3,5});
+    many::floats out = many::floats({0,0,0,0,0});
+
+    SECTION("log(exp(a)) must equal a"){
+        many::log (a,   out);
+        many::exp (out, out);
+        CHECK(many::equal(a, out));
+    }
+    SECTION("log2(exp2(a)) must equal a"){
+        many::log2(a,   out);
+        many::exp2(out, out);
+        CHECK(many::equal(a, out));
+    }
+}
+
+TEST_CASE( "many<T> log2/exp2 consistency", "[many]" ) {
+    many::floats a     = many::floats({1,2,3,4,5});
+    many::floats b     = many::floats({1,1,2,3,5});
+    many::floats loga  = many::floats({0,0,0,0,0});
+    many::floats logb  = many::floats({0,0,0,0,0});
+    many::floats out   = many::floats({0,0,0,0,0});
+
+    SECTION("exp2(log2(a)+log2(b)) must equal a*b"){
+        many::log2(a, loga);
+        many::log2(b, logb);
+        many::exp2(loga+logb, out);
+        CHECK(many::equal(out, a*b));
+    }
+}
+TEST_CASE( "many<T> log2/exp2 invertibility", "[many]" ) {
+    many::floats a   = many::floats({1,2,3,4,5});
+    many::floats b   = many::floats({1,1,2,3,5});
+    many::floats out = many::floats({0,0,0,0,0});
+
+    SECTION("log2(exp2(a)) must equal a"){
+        many::log2 (a,   out);
+        many::exp2 (out, out);
+        CHECK(many::equal(a, out));
+    }
+    SECTION("log2(exp2(a)) must equal a"){
+        many::log2(a,   out);
+        many::exp2(out, out);
+        CHECK(many::equal(a, out));
+    }
+}
 
