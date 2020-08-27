@@ -1,3 +1,4 @@
+#include "./glm/common_test.hpp"
 #include "./glm/string_cast_test.hpp"
 #include "./glm/random_test.hpp"
 #include "./arithmetic_test.hpp"
