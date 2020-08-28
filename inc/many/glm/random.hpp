@@ -120,15 +120,15 @@ namespace many
 			I = glm::floor(V);
 			F = glm::fract(V);
 
-		    float o   = noise(dot(K, I));
-		    float x   = noise(dot(K, I + glm::vec3(1, 0, 0)));
-		    float y   = noise(dot(K, I + glm::vec3(0, 1, 0)));
-		    float xy  = noise(dot(K, I + glm::vec3(1, 1, 0)));
+		    float o   = noise(many::dot(K, I));
+		    float x   = noise(many::dot(K, I + glm::vec3(1, 0, 0)));
+		    float y   = noise(many::dot(K, I + glm::vec3(0, 1, 0)));
+		    float xy  = noise(many::dot(K, I + glm::vec3(1, 1, 0)));
 
-		    float z   = noise(dot(K, I + glm::vec3(0, 0, 1)));
-		    float xz  = noise(dot(K, I + glm::vec3(1, 0, 1)));
-		    float yz  = noise(dot(K, I + glm::vec3(0, 1, 1)));
-		    float xyz = noise(dot(K, I + glm::vec3(1, 1, 1)));
+		    float z   = noise(many::dot(K, I + glm::vec3(0, 0, 1)));
+		    float xz  = noise(many::dot(K, I + glm::vec3(1, 0, 1)));
+		    float yz  = noise(many::dot(K, I + glm::vec3(0, 1, 1)));
+		    float xyz = noise(many::dot(K, I + glm::vec3(1, 1, 1)));
 
 		    G = glm::smoothstep(0.f, 1.f, F);
 

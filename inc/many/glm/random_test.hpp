@@ -26,7 +26,7 @@ TEST_CASE( "many noise generation nontriviality", "[many]" ) {
         CHECK(many::noise(0.1f) > 0.f);
     }
     SECTION("noise(seeds) must generate nontrivial output"){
-        CHECK(dot(many::noise(glm::vec3(1.f, 2.f, 3.f)), glm::vec3(1.f)) > 0.f);
+        CHECK(many::dot(many::noise(glm::vec3(1.f, 2.f, 3.f)), glm::vec3(1.f)) > 0.f);
     }
 }
 

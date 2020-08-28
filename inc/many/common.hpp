@@ -65,7 +65,7 @@ namespace many
 	/// This includes the possibility that round(x) returns the
 	/// same value as roundEven(x) for all values of x.
 	template <typename T>
-	T round(const T a)
+	inline T round(const T a)
 	{
 		return std::round(a);
 	}
@@ -145,7 +145,7 @@ namespace many
 
 	/// Returns y if y < x; otherwise, it returns x.
 	template <typename T>
-	T min(const T a, const T b)
+	inline T min(const T a, const T b)
 	{
 		return std::min(a,b);
 	}
@@ -196,7 +196,7 @@ namespace many
 
 	/// Returns y if x < y; otherwise, it returns x.
 	template <typename T>
-	T max(const T a, const T b)
+	inline T max(const T a, const T b)
 	{
 		return std::max(a,b);
 	}
@@ -299,114 +299,84 @@ namespace many
 	/// @param[in]  x Value to interpolate.
 	/// @param[in]  y Value to interpolate.
 	/// @param[in]  a Interpolant.
-	template <typename T, typename Tout>
-	void mix(const series<T>& x, const series<T>& y, const series<T>& a, Tout& out)
-	{
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] = x[i] * (1.0 - a[i]);
-		}
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] += y[i] * a[i];
-		}
-	}
-	template <typename T, typename Tout>
-	void mix(const series<T>& x, const series<T>& y, const T a, Tout& out)
-	{
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] = x[i] * (1.0 - a);
-		}
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] += y[i] * a;
-		}
-	}
-	template <typename T, typename Tout>
-	void mix(const series<T>& x, const T y, const series<T>& a, Tout& out)
-	{
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] = x[i] * (1.0 - a[i]);
-		}
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] += y * a[i];
-		}
-	}
-	template <typename T, typename Tout>
-	void mix(const series<T>& x, const T y, const T a, Tout& out)
-	{
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] = x[i] * (1.0 - a);
-		}
-		for (unsigned int i = 0; i < x.size(); ++i)
-		{
-			out[i] += y * a;
-		}
-	}
-	template <typename T, typename Tout>
-	void mix(const T x, const series<T>& y, const series<T>& a, Tout& out)
-	{
-		for (unsigned int i = 0; i < y.size(); ++i)
-		{
-			out[i] = x * (1.0 - a[i]);
-		}
-		for (unsigned int i = 0; i < y.size(); ++i)
-		{
-			out[i] += y[i] * a[i];
-		}
-	}
-	template <typename T, typename Tout>
-	void mix(const T x, const series<T>& y, const T a, Tout& out)
-	{
-		for (unsigned int i = 0; i < y.size(); ++i)
-		{
-			out[i] = x * (1.0 - a);
-		}
-		for (unsigned int i = 0; i < y.size(); ++i)
-		{
-			out[i] += y[i] * a;
-		}
-	}
-	template <typename T, typename Tout>
-	void mix(const T x, const T y, const series<T>& a, Tout& out)
-	{
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] = x * (1.0 - a[i]);
-		}
-		for (unsigned int i = 0; i < a.size(); ++i)
-		{
-			out[i] += y * a[i];
-		}
-	}
 	template <typename T>
-	T mix(const T x, const T y, const T a)
+	inline T mix(const T x, const T y, const T a)
 	{
-		return x*(1.0-a) + y*a;
+		return x*(T(1.0)-a) + y*a;
+	}
+	template <typename T, typename Tout>
+	void mix(const T& x, const T& y, const T& a, Tout& out)
+	{
+		typedef typename T::value_type Ti;
+		out.store([](Ti xi, Ti ai){ return xi * (Ti(1.0) - ai); }, x, a);
+		out.add  ([](Ti yi, Ti ai){ return yi * ai;         }, y, a);
+	}
+	template <typename T, typename Tout>
+	void mix(const T& x, const T& y, const typename T::value_type a, Tout& out)
+	{
+		typedef typename T::value_type Ti;
+		out.store([](Ti xi, Ti ai){ return xi * (Ti(1.0) - ai); }, x, a);
+		out.add  ([](Ti yi, Ti ai){ return yi * ai;         }, y, a);
+	}
+	template <typename T, typename Tout>
+	void mix(const T& x, const typename T::value_type y, const T& a, Tout& out)
+	{
+		typedef typename T::value_type Ti;
+		out.store([](Ti xi, Ti ai){ return xi * (Ti(1.0) - ai); }, x, a);
+		out.add  ([](Ti yi, Ti ai){ return yi * ai;         }, y, a);
+	}
+	template <typename T, typename Tout>
+	void mix(const T& x, const typename T::value_type y, const typename T::value_type a, Tout& out)
+	{
+		typedef typename T::value_type Ti;
+		out.store([](Ti xi, Ti ai){ return xi * (Ti(1.0) - ai); }, x, a);
+		out.add  ([](Ti yi, Ti ai){ return yi * ai;         }, y, a);
+	}
+	template <typename T, typename Tout>
+	void mix(const typename T::value_type x, const T& y, const T& a, Tout& out)
+	{
+		typedef typename T::value_type Ti;
+		out.store([](Ti xi, Ti ai){ return xi * (Ti(1.0) - ai); }, x, a);
+		out.add  ([](Ti yi, Ti ai){ return yi * ai;         }, y, a);
+	}
+	template <typename T, typename Tout>
+	void mix(const typename T::value_type x, const T& y, const typename T::value_type a, Tout& out)
+	{
+		typedef typename T::value_type Ti;
+		out.store([](Ti xi, Ti ai){ return xi * (Ti(1.0) - ai); }, x, a);
+		out.add  ([](Ti yi, Ti ai){ return yi * ai;         }, y, a);
+	}
+	template <typename T, typename Tout>
+	void mix(const typename T::value_type x, const typename T::value_type y, const T& a, Tout& out)
+	{
+		typedef typename T::value_type Ti;
+		out.store([](Ti xi, Ti ai){ return xi * (Ti(1.0) - ai); }, x, a);
+		out.add  ([](Ti yi, Ti ai){ return yi * ai;         }, y, a);
 	}
 
 	/// Returns 0.0 if x < edge, otherwise it returns 1.0 for each component of a genType.
-	template <typename T, typename Tout>
-	void step(const series<T>& edge, const series<T>&  x, Tout& out)
+	template <typename T>
+	inline T step(const T edge, const T x, const T out)
 	{
-		typedef typename T::value_type Ti;
-		out.store([](T edgei, T xi){ return xi < edgei? Ti(0) : Ti(1); }, edge, x); 
+		return x < edge? T(0) : T(1);
 	}
 	template <typename T, typename Tout>
-	void step(const series<T>&  edge, const T x, Tout& out)
+	void step(const T& edge, const T&  x, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](T edgei, T xi){ return xi < edgei? Ti(0) : Ti(1); }, edge, x); 
+		out.store([](Ti edgei, Ti xi){ return step(edgei, xi); }, edge, x); 
 	}
 	template <typename T, typename Tout>
-	void step(const T edge, const series<T>&  x, Tout& out)
+	void step(const T&  edge, const T x, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](T edgei, T xi){ return xi < edgei? Ti(0) : Ti(1); }, edge, x); 
+		out.store([](Ti edgei, Ti xi){ return step(edgei, xi); }, edge, x); 
+	}
+	template <typename T, typename Tout>
+	void step(const T edge, const T&  x, Tout& out)
+	{
+		typedef typename T::value_type Ti;
+		out.store([](Ti edgei, Ti xi){ return step(edgei, xi); }, edge, x); 
 	}
 
 	/// Returns 0.0 if x <= lo and 1.0 if x >= hi and
@@ -418,53 +388,53 @@ namespace many
 	/// t = clamp ((x - lo) / (hi - lo), 0, 1);
 	/// return t * t * (3 - 2 * t);
 	/// Results are undefined if lo >= hi.
+	template <typename T>
+	inline T smoothstep(const T lo, const T hi, const T x)
+	{
+		T t = x<=lo? T(0) : x >= hi? T(1) : ((x-lo)/(hi-lo)); 
+		return t*t*(T(3)-T(2)*t); 
+	}
 	template <typename T, typename Tout>
 	void smoothstep(const T& lo, const T& hi, const T& x, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti xi, Ti loi, Ti hii){ Ti t = xi<=loi? Ti(0) : xi >= hii? Ti(1) : ((xi-loi)/(hii-loi)); return t*t*(Ti(3)-Ti(2)*t); }, x, lo, hi); 
+		out.store([](Ti xi, Ti loi, Ti hii){ return smoothstep(xi,loi,hii); }, x, lo, hi); 
 	}
 	template <typename T, typename Tout>
 	void smoothstep(const typename T::value_type lo, const T& hi, const T& x, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti xi, Ti loi, Ti hii){ Ti t = xi<=loi? Ti(0) : xi >= hii? Ti(1) : ((xi-loi)/(hii-loi)); return t*t*(Ti(3)-Ti(2)*t); }, x, lo, hi); 
+		out.store([](Ti xi, Ti loi, Ti hii){ return smoothstep(xi,loi,hii); }, x, lo, hi); 
 	}
 	template <typename T, typename Tout>
 	void smoothstep(const T& lo, T hi, const T& x, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti xi, Ti loi, Ti hii){ Ti t = xi<=loi? Ti(0) : xi >= hii? Ti(1) : ((xi-loi)/(hii-loi)); return t*t*(Ti(3)-Ti(2)*t); }, x, lo, hi); 
+		out.store([](Ti xi, Ti loi, Ti hii){ return smoothstep(xi,loi,hii); }, x, lo, hi); 
 	}
 	template <typename T, typename Tout>
 	void smoothstep(const typename T::value_type lo, const typename T::value_type hi, const T& x, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti xi, Ti loi, Ti hii){ Ti t = xi<=loi? Ti(0) : xi >= hii? Ti(1) : ((xi-loi)/(hii-loi)); return t*t*(Ti(3)-Ti(2)*t); }, x, lo, hi); 
+		out.store([](Ti xi, Ti loi, Ti hii){ return smoothstep(xi,loi,hii); }, x, lo, hi); 
 	}
 	template <typename T, typename Tout>
 	void smoothstep(const T& lo, const T& hi, const typename T::value_type x, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti xi, Ti loi, Ti hii){ Ti t = xi<=loi? Ti(0) : xi >= hii? Ti(1) : ((xi-loi)/(hii-loi)); return t*t*(Ti(3)-Ti(2)*t); }, x, lo, hi); 
+		out.store([](Ti xi, Ti loi, Ti hii){ return smoothstep(xi,loi,hii); }, x, lo, hi); 
 	}
 	template <typename T, typename Tout>
 	void smoothstep(const typename T::value_type lo, const T& hi, const typename T::value_type x, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti xi, Ti loi, Ti hii){ Ti t = xi<=loi? Ti(0) : xi >= hii? Ti(1) : ((xi-loi)/(hii-loi)); return t*t*(Ti(3)-Ti(2)*t); }, x, lo, hi); 
+		out.store([](Ti xi, Ti loi, Ti hii){ return smoothstep(xi,loi,hii); }, x, lo, hi); 
 	}
 	template <typename T, typename Tout>
 	void smoothstep(const T& lo, const typename T::value_type hi, const typename T::value_type x, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti xi, Ti loi, Ti hii){ Ti t = xi<=loi? Ti(0) : xi >= hii? Ti(1) : ((xi-loi)/(hii-loi)); return t*t*(Ti(3)-Ti(2)*t); }, x, lo, hi); 
-	}
-	template <typename T>
-	T smoothstep(const T lo, const T hi, const T x)
-	{
-		T t = x<=lo? T(0) : x >= hi? T(1) : ((x-lo)/(hi-lo)); 
-		return t*t*(T(3)-T(2)*t); 
+		out.store([](Ti xi, Ti loi, Ti hii){ return smoothstep(xi,loi,hii); }, x, lo, hi); 
 	}
 
 
@@ -477,52 +447,52 @@ namespace many
 	/// t = clamp ((x - lo) / (hi - lo), 0, 1);
 	/// return t * t * (3 - 2 * t);
 	/// Results are undefined if lo >= hi.
+	template <typename T>
+	inline T linearstep(const T lo, const T hi, const T x)
+	{
+		return x<=lo? T(0) : x >= hi? T(1) : ((x-lo)/(hi-lo));
+	}
 	template <typename T, typename Tout>
 	void linearstep(const T& lo, const T& hi, const T& x, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti xi, Ti loi, Ti hii){ return xi<=loi? Ti(0) : xi >= hii? Ti(1) : ((xi-loi)/(hii-loi)); }, x, lo, hi); 
+		out.store([](Ti xi, Ti loi, Ti hii){ return linearstep(loi,hii,xi); }, x, lo, hi); 
 	}
 	template <typename T, typename Tout>
 	void linearstep(const typename T::value_type lo, const T& hi, const T& x, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti xi, Ti loi, Ti hii){ return xi<=loi? Ti(0) : xi >= hii? Ti(1) : ((xi-loi)/(hii-loi)); }, x, lo, hi); 
+		out.store([](Ti xi, Ti loi, Ti hii){ return linearstep(loi,hii,xi); }, x, lo, hi); 
 	}
 	template <typename T, typename Tout>
 	void linearstep(const T& lo, T hi, const T& x, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti xi, Ti loi, Ti hii){ return xi<=loi? Ti(0) : xi >= hii? Ti(1) : ((xi-loi)/(hii-loi)); }, x, lo, hi); 
+		out.store([](Ti xi, Ti loi, Ti hii){ return linearstep(loi,hii,xi); }, x, lo, hi); 
 	}
 	template <typename T, typename Tout>
 	void linearstep(const typename T::value_type lo, const typename T::value_type hi, const T& x, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti xi, Ti loi, Ti hii){ return xi<=loi? Ti(0) : xi >= hii? Ti(1) : ((xi-loi)/(hii-loi)); }, x, lo, hi); 
+		out.store([](Ti xi, Ti loi, Ti hii){ return linearstep(loi,hii,xi); }, x, lo, hi); 
 	}
 	template <typename T, typename Tout>
 	void linearstep(const T& lo, const T& hi, const typename T::value_type x, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti xi, Ti loi, Ti hii){ return xi<=loi? Ti(0) : xi >= hii? Ti(1) : ((xi-loi)/(hii-loi)); }, x, lo, hi); 
+		out.store([](Ti xi, Ti loi, Ti hii){ return linearstep(loi,hii,xi); }, x, lo, hi); 
 	}
 	template <typename T, typename Tout>
 	void linearstep(const typename T::value_type lo, const T& hi, const typename T::value_type x, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti xi, Ti loi, Ti hii){ return xi<=loi? Ti(0) : xi >= hii? Ti(1) : ((xi-loi)/(hii-loi)); }, x, lo, hi); 
+		out.store([](Ti xi, Ti loi, Ti hii){ return linearstep(loi,hii,xi); }, x, lo, hi); 
 	}
 	template <typename T, typename Tout>
 	void linearstep(const T& lo, const typename T::value_type hi, const typename T::value_type x, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti xi, Ti loi, Ti hii){ return xi<=loi? Ti(0) : xi >= hii? Ti(1) : ((xi-loi)/(hii-loi)); }, x, lo, hi); 
-	}
-	template <typename T>
-	T linearstep(const T lo, const T hi, const T x)
-	{
-		return x<=lo? T(0) : x >= hi? T(1) : ((x-lo)/(hi-lo)); 
+		out.store([](Ti xi, Ti loi, Ti hii){ return linearstep(loi,hii,xi); }, x, lo, hi); 
 	}
 
 	/// Returns true if x holds a NaN (not a number)
@@ -530,10 +500,15 @@ namespace many
 	/// floating point representations. Returns false otherwise,
 	/// including for implementations with no NaN
 	/// representations.
+	template <typename T>
+	inline void isnan(const T  x)
+	{
+		return std::isnan(x);
+	}
 	template <typename T, typename Tout>
 	void isnan(const T&  x, Tout& out)
 	{
-		out.store(std::isnan, x);
+		out.store(isnan, x);
 	}
 
 	/// Returns true if x holds a positive infinity or negative
@@ -541,10 +516,15 @@ namespace many
 	/// set of floating point representations. Returns false
 	/// otherwise, including for implementations with no infinity
 	/// representations.
+	template <typename T>
+	inline void isinf(const T  x)
+	{
+		return std::isinf(x);
+	}
 	template <typename T, typename Tout>
 	void isinf(const T&  x, Tout& out)
 	{
-		out.store(std::isinf, x);
+		out.store(isinf, x);
 	}
 
 	/// Computes and returns a * b + c.
@@ -552,43 +532,50 @@ namespace many
 	void fma(const T& a, const T& b, const T& c, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti ai, Ti bi, Ti ci){ return ai*bi+ci; }, a, b, c); 
+		out.store([](Ti ai, Ti bi){ return ai * bi; }, a, b);
+		out.add  ([](Ti ci){ return ci; }, c);
 	}
 	template <typename T, typename Tout>
 	void fma(const typename T::value_type a, const T& b, const T& c, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti ai, Ti bi, Ti ci){ return ai*bi+ci; }, a, b, c); 
+		out.store([](Ti ai, Ti bi){ return ai * bi; }, a, b);
+		out.add  ([](Ti ci){ return ci; }, c);
 	}
 	template <typename T, typename Tout>
 	void fma(const T& a, T b, const T& c, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti ai, Ti bi, Ti ci){ return ai*bi+ci; }, a, b, c); 
+		out.store([](Ti ai, Ti bi){ return ai * bi; }, a, b);
+		out.add  ([](Ti ci){ return ci; }, c);
 	}
 	template <typename T, typename Tout>
 	void fma(const typename T::value_type a, const typename T::value_type b, const T& c, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti ai, Ti bi, Ti ci){ return ai*bi+ci; }, a, b, c); 
+		out.store([](Ti ai, Ti bi){ return ai * bi; }, a, b);
+		out.add  ([](Ti ci){ return ci; }, c);
 	}
 	template <typename T, typename Tout>
 	void fma(const T& a, const T& b, const typename T::value_type c, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti ai, Ti bi, Ti ci){ return ai*bi+ci; }, a, b, c); 
+		out.store([](Ti ai, Ti bi){ return ai * bi; }, a, b);
+		out.add  ([](Ti ci){ return ci; }, c);
 	}
 	template <typename T, typename Tout>
 	void fma(const typename T::value_type a, const T& b, const typename T::value_type c, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti ai, Ti bi, Ti ci){ return ai*bi+ci; }, a, b, c); 
+		out.store([](Ti ai, Ti bi){ return ai * bi; }, a, b);
+		out.add  ([](Ti ci){ return ci; }, c);
 	}
 	template <typename T, typename Tout>
 	void fma(const T& a, const typename T::value_type b, const typename T::value_type c, Tout& out)
 	{
 		typedef typename T::value_type Ti;
-		out.store([](Ti ai, Ti bi, Ti ci){ return ai*bi+ci; }, a, b, c); 
+		out.store([](Ti ai, Ti bi){ return ai * bi; }, a, b);
+		out.add  ([](Ti ci){ return ci; }, c);
 	}
 
 //	/// Returns a signed integer value representing
