@@ -130,6 +130,22 @@ namespace many
 		}
 	}
 	template <typename T, typename Tout>
+	void equal(const typename T::value_type b, const T& a, Tout& out, float threshold = MANY_EPSILON)
+	{
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out[i] = equal( a[i], b, threshold);
+		}
+	}
+	template <typename T, typename Tout>
+	void notEqual(const typename T::value_type b, const T& a, Tout& out, float threshold = MANY_EPSILON)
+	{
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			out[i] = notEqual( a[i] , b, threshold);
+		}
+	}
+	template <typename T, typename Tout>
 	void equal(const T& a, const T& b, Tout& out, float threshold = MANY_EPSILON)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
