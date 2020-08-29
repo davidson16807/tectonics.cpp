@@ -234,7 +234,7 @@ TEST_CASE( "series<T> cross() anticommutativity", "[many]" ) {
 
     SECTION("cross(a,b) must equal -cross(b,a)"){
         cross(a, b, ab);
-        cross(a, b, ba);
+        cross(b, a, ba);
         CHECK(ab==-ba);
     }
 }
@@ -319,8 +319,8 @@ TEST_CASE( "series<T>/singleton cross() anticommutativity", "[many]" ) {
 
     SECTION("cross(a,b) must equal -cross(b,a)"){
         cross(a, b, ab);
-        cross(a, b, ba);
-        CHECK(ab==ba);
+        cross(b, a, ba);
+        CHECK(ab==-ba);
     }
 }
 

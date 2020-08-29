@@ -55,14 +55,14 @@ namespace many
 		return glm::max(a,b);
 	}
 	template <glm::length_t L, typename T, glm::qualifier Q = glm::defaultp>
+	inline glm::vec<L,T,Q> min(const glm::vec<L,T,Q> a, const glm::vec<L,T,Q> b)
+	{
+		return glm::min(a,b);
+	}
+	template <glm::length_t L, typename T, glm::qualifier Q = glm::defaultp>
 	inline glm::vec<L,T,Q> mix(const glm::vec<L,T,Q> x, const glm::vec<L,T,Q> y, const glm::vec<L,T,Q> a)
 	{
 		return glm::mix(x,y,a);
-	}
-	template <glm::length_t L, typename T, glm::qualifier Q = glm::defaultp>
-	inline glm::vec<L,T,Q> clamp(const glm::vec<L,T,Q> a, const glm::vec<L,T,Q> lo, const glm::vec<L,T,Q> hi)
-	{
-		return glm::clamp(a,lo,hi);
 	}
 	// template <glm::length_t L, typename T, glm::qualifier Q = glm::defaultp>
 	// inline glm::vec<L,T,Q> step(const glm::vec<L,T,Q> edge, const glm::vec<L,T,Q> x, const glm::vec<L,T,Q> out)

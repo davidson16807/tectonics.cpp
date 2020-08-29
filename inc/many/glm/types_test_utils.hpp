@@ -19,10 +19,9 @@ namespace many
     Our chief concern here is to simplify writing unit tests and interpreting their output.
     */
 
-    template<typename Tgenerator>
-    many::vec3s get_random_vec3s(std::size_t size, Tgenerator generator)
+    template<typename Tgenerator, typename Tdistribution>
+    many::vec3s get_random_vec3s(std::size_t size, Tdistribution& distribution, Tgenerator& generator)
     {
-        std::uniform_real_distribution<double> distribution(-1.0,1.0);
         many::vec3s output(size);
         for (std::size_t j = 0; j < size; ++j)
         {
@@ -32,9 +31,16 @@ namespace many
         }
         return output;
     }
+    template<typename Tgenerator>
+    many::vec3s get_random_vec3s(std::size_t size, Tgenerator& generator)
+    {
+        std::uniform_real_distribution<double> distribution(-5.0,5.0);
+        return get_random_vec3s(size, distribution, generator);
+    }
+
 
     template<typename Tgenerator>
-    many::bvec3s get_random_bvec3s(std::size_t size, Tgenerator generator)
+    many::bvec3s get_random_bvec3s(std::size_t size, Tgenerator& generator)
     {
         many::bvec3s output(size);
         many::vec3s temp = get_random_vec3s(size, generator);

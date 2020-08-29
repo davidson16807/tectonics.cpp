@@ -246,35 +246,11 @@ namespace many
 
 	/// Returns min(max(x, minVal), maxVal) for each component in x
 	/// using the floating-point values minVal and maxVal.
-	template <typename T>
-	inline T clamp(const T a, const T lo, const T hi)
+	template <typename T1, typename T2, typename T3, typename Tout>
+	void clamp(const T1& a, const T2& lo, const T3& hi, Tout& out)
 	{
-		return a > hi? hi : a < lo? lo : a;
-	}
-	template <typename T, typename Tout>
-	void clamp(const T& a, const typename T::value_type lo, const typename T::value_type hi, Tout& out)
-	{
-		typedef typename T::value_type Ti;
-		out.store([](Ti ai, Ti loi, Ti hii){ return clamp(ai,loi,hii); }, a, lo, hi);
-	}
-	template <typename T, typename Tout>
-	void clamp(const T& a, const typename T::value_type lo, const T& hi, Tout& out)
-	{
-		typedef typename T::value_type Ti;
-		out.store([](Ti ai, Ti loi, Ti hii){ return clamp(ai,loi,hii); }, a, lo, hi);
-	}
-	template <typename T, typename Tout>
-	void clamp(const T& a, const T& lo, const typename T::value_type hi, Tout& out)
-	{
-		typedef typename T::value_type Ti;
-		out.store([](Ti ai, Ti loi, Ti hii){ return clamp(ai,loi,hii); }, a, lo, hi);
-	}
-	template <typename T, typename Tout>
-	void clamp(const T& a, const T& lo, const T& hi, Tout& out)
-	{
-		typedef typename T::value_type Ti;
-		out.store([](Ti ai, Ti hii){ return min(ai,hii); }, a,   hi);
-		out.store([](Ti ai, Ti loi){ return max(ai,loi); }, out, lo);
+		min(a, hi, out);
+		max(out, lo, out);
 	}
 
 
