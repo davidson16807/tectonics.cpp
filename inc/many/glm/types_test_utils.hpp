@@ -5,6 +5,7 @@
 
 // in-house libraries
 #include "types.hpp"
+#include "relational.hpp"
 
 namespace many
 {
@@ -29,6 +30,15 @@ namespace many
             output[j].y = distribution(generator);
             output[j].z = distribution(generator);
         }
+        return output;
+    }
+
+    template<typename Tgenerator>
+    many::bvec3s get_random_bvec3s(std::size_t size, Tgenerator generator)
+    {
+        many::bvec3s output(size);
+        many::vec3s temp = get_random_vec3s(size, generator);
+        many::greaterThan(temp, glm::vec3(0.5f), output);
         return output;
     }
 }

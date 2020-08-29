@@ -85,6 +85,28 @@ namespace many
 		return many::transform([](T ai, T2 bi){ return ai <= bi; }, a, b);
 	}
 	
+
+	template <typename T, typename T2, typename T3>
+	inline series<T3> operator>(const series<T>& a, const series<T2> b)
+	{
+		return many::transform([](T ai, T2 bi){ return ai > bi; }, a, b);
+	}
+	template <typename T, typename T2, typename T3>
+	inline series<T3> operator>=(const series<T>& a, const series<T2> b)
+	{
+		return many::transform([](T ai, T2 bi){ return ai >= bi; }, a, b);
+	}
+	template <typename T, typename T2, typename T3>
+	inline series<T3> operator<(const series<T>& a, const series<T2> b)
+	{
+		return many::transform([](T ai, T2 bi){ return ai < bi; }, a, b);
+	}
+	template <typename T, typename T2, typename T3>
+	inline series<T3> operator<=(const series<T>& a, const series<T2> b)
+	{
+		return many::transform([](T ai, T2 bi){ return ai <= bi; }, a, b);
+	}
+	
 	// NOTE: all wrappers are suggested to be inline because they are thin wrappers of functions
 
 	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>

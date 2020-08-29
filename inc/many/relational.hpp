@@ -1,28 +1,72 @@
 #pragma once
 
+// C libraries
+#include <cmath>
+
+// in-house libraries
 #include "types.hpp"
 #include "morphologic.hpp"
+#include "common.hpp"
 
 namespace many
 {
 
 	const float MANY_EPSILON = 1e-4;
-
-	template <typename T>
-	inline float length(const T a)
+	
+	/*
+	NOTE: 
+	We want a function that can be used to easily and performantly provide 
+	a distance metric for objects of any data type.
+	It should be publically available so that API users can test equality
+	for many::series<T> that contain their own custom data types.
+	As a result, it should make sense as a publically available function.
+	However to prevent introducing additional hard requirements on the design,
+	it should be given a name that makes it unlikely for the compiler to 
+	find unintentionally similar functions from other namespaces.
+	We choose "length2", mirroring the "length2" function from glm's experimental functionality.
+	It represents the square of the magnitude for any scalar or vector,
+	and its meaning can be extended to data types of arbitrary complexity.
+	Any function with the name "length2" need only guarantee that length2(a-a) == 0 for any input a.
+	*/
+	template <typename T,
+		std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+	float length2(const T a)
 	{
 		return a*a;
+	}
+	template <typename T,
+		std::enable_if_t<std::is_arithmetic<typename T::value_type>::value, int> = 0>
+	float length2(const T a)
+	{
+		float output(0);
+		for (std::size_t i = 0; i < a.length(); ++i)
+		{
+			output += a[i]*a[i];
+		}
+		return output;
+	}
+
+	template <typename T,
+		std::enable_if_t<!std::is_base_of<AbstractSeries, T>::value, int> = 0>
+	inline bool equal(const T a, const T b, float threshold = MANY_EPSILON)
+	{
+		return length2(a-b) <= threshold;
+	}
+
+	template <typename T,
+		std::enable_if_t<!std::is_base_of<AbstractSeries, T>::value, int> = 0>
+	inline bool notEqual(const T a, const T b, float threshold = MANY_EPSILON)
+	{
+		return length2(a-b) > threshold;
 	}
 
 	template <typename T>
 	bool equal(const T& a, const typename T::value_type b, float threshold = MANY_EPSILON)
 	{
 		bool out(true);
-		typename T::value_type diff(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
-			diff = a[i] - b;
-			out &= length(diff) <= threshold;
+			out &= equal( a[i], b, threshold);
 		}
 		return out;
 	}
@@ -30,11 +74,9 @@ namespace many
 	bool notEqual(const T& a, const typename T::value_type b, float threshold = MANY_EPSILON)
 	{
 		bool out(false);
-		typename T::value_type diff(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
-			diff = a[i] - b;
-			out |= length(diff) > threshold;
+			out |= notEqual( a[i] , b, threshold);
 		}
 		return out;
 	}
@@ -47,11 +89,9 @@ namespace many
 			return false;
 		}
 		bool out(true);
-		typename T::value_type diff(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
-			diff = a[i] - b[i];
-			out &= length(diff) <= threshold;
+			out &= equal( a[i], b[i], threshold);
 		}
 		return out;
 	}
@@ -64,11 +104,9 @@ namespace many
 			return true;
 		}
 		bool out(false);
-		typename T::value_type diff(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
-			diff = a[i] - b[i];
-			out |= length(diff) > threshold;
+			out |= notEqual( a[i] , b[i], threshold);
 		}
 		return out;
 	}
@@ -78,41 +116,33 @@ namespace many
 	template <typename T, typename Tout>
 	void equal(const T& a, const typename T::value_type b, Tout& out, float threshold = MANY_EPSILON)
 	{
-		typename T::value_type diff(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
-			diff = a[i] - b;
-			out[i] = length(diff) <= threshold;
+			out[i] = equal( a[i], b, threshold);
 		}
 	}
 	template <typename T, typename Tout>
 	void notEqual(const T& a, const typename T::value_type b, Tout& out, float threshold = MANY_EPSILON)
 	{
-		typename T::value_type diff(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
-			diff = a[i] - b;
-			out[i] = length(diff) > threshold;
+			out[i] = notEqual( a[i] , b, threshold);
 		}
 	}
 	template <typename T, typename Tout>
 	void equal(const T& a, const T& b, Tout& out, float threshold = MANY_EPSILON)
 	{
-		typename T::value_type diff(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
-			diff = a[i] - b[i];
-			out[i] = length(diff) <= threshold;
+			out[i] = equal( a[i], b[i], threshold);
 		}
 	}
 	template <typename T, typename Tout>
 	void notEqual(const T& a, const T& b, Tout& out, float threshold = MANY_EPSILON)
 	{
-		typename T::value_type diff(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
-			diff = a[i] - b[i];
-			out[i] = length(diff) > threshold;
+			out[i] = notEqual( a[i] , b[i], threshold);
 		}
 	}
 

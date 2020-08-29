@@ -4,6 +4,7 @@
 
 #include <many/many.hpp>  
 #include <many/arithmetic.hpp>  
+#include <many/relational.hpp>  
 #include <many/convenience.hpp>  
 #include <many/operators.hpp>  
 

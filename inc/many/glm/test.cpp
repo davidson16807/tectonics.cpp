@@ -2,3 +2,4 @@
 #include "./string_cast_test.hpp"
 #include "./random_test.hpp"
 #include "./geometric_test.hpp"
+#include "./relational_test.hpp"

@@ -8,6 +8,7 @@
 #include <glm/vec3.hpp>               // *vec3
 
 #include <many/many.hpp>  
+#include <many/relational.hpp>  
 #include <many/convenience.hpp>  
 #include <many/glm/glm.hpp>         // *vec*s
 #include <many/glm/random.hpp>      // get_elias_noise
