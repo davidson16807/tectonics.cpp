@@ -25,7 +25,7 @@ namespace many
 		return glm::cross(a,b);
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	inline glm::vec<L,T,Q> distance(const glm::vec<L,T,Q> a, const glm::vec<L,T,Q> b)
+	inline T distance(const glm::vec<L,T,Q> a, const glm::vec<L,T,Q> b)
 	{
 		return glm::distance(a,b);
 	}
@@ -53,7 +53,25 @@ namespace many
 		out.store([](const Ti ui, const Ti vi){ return many::cross(ui,vi); }, u, v);
 	}
 	template<typename T, typename Tout>
-	void distance(const T& u, const typename T::value_type v, series<T>& out) 
+	void distance(const T& u, const typename T::value_type v, Tout& out) 
+	{
+		typedef typename T::value_type Ti;
+		out.store([](const Ti ui, const Ti vi){ return many::distance(ui,vi); }, u, v);
+	}
+
+	template<typename T, typename Tout>
+	void dot (const typename T::value_type& u, const T&  v, Tout& out) {
+		typedef typename T::value_type Ti;
+		out.store([](const Ti ui, const Ti vi){ return many::dot(ui,vi); }, u, v);
+	}
+	template<typename T, typename Tout>
+	void cross (const typename T::value_type& u, const T&  v, Tout& out) 
+	{
+		typedef typename T::value_type Ti;
+		out.store([](const Ti ui, const Ti vi){ return many::cross(ui,vi); }, u, v);
+	}
+	template<typename T, typename Tout>
+	void distance(const typename T::value_type& u, const T&  v, Tout& out) 
 	{
 		typedef typename T::value_type Ti;
 		out.store([](const Ti ui, const Ti vi){ return many::distance(ui,vi); }, u, v);
@@ -71,7 +89,7 @@ namespace many
 		out.store([](const Ti ui, const Ti vi){ return many::cross(ui,vi); }, u, v);
 	}
 	template<typename T, typename Tout>
-	void distance(const T& u, const T&  v, series<T>& out) 
+	void distance(const T& u, const T&  v, Tout& out) 
 	{
 		typedef typename T::value_type Ti;
 		out.store([](const Ti ui, const Ti vi){ return many::distance(ui,vi); }, u, v);

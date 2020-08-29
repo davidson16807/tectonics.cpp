@@ -9,31 +9,38 @@ namespace many
 	const float MANY_EPSILON = 1e-4;
 
 	template <typename T>
-	bool equal(const T& a, const typename T::value_type b, typename T::value_type threshold = typename T::value_type(MANY_EPSILON))
+	inline float length(const T a)
+	{
+		return a*a;
+	}
+
+	template <typename T>
+	bool equal(const T& a, const typename T::value_type b, float threshold = MANY_EPSILON)
 	{
 		bool out(true);
 		typename T::value_type diff(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			diff = a[i] - b;
-			out &= diff*diff <= threshold;
+			out &= length(diff) <= threshold;
 		}
 		return out;
 	}
 	template <typename T>
-	bool notEqual(const T& a, const typename T::value_type b, typename T::value_type threshold = typename T::value_type(MANY_EPSILON))
+	bool notEqual(const T& a, const typename T::value_type b, float threshold = MANY_EPSILON)
 	{
 		bool out(false);
 		typename T::value_type diff(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			diff = a[i] - b;
-			out |= diff*diff > threshold;
+			out |= length(diff) > threshold;
 		}
 		return out;
 	}
-	template <typename T>
-	bool equal(const T& a, const T& b, typename T::value_type threshold = typename T::value_type(MANY_EPSILON))
+	template <typename T, 
+		std::enable_if_t<std::is_base_of<AbstractSeries, T>::value, int> = 0>
+	bool equal(const T& a, const T& b, float threshold = MANY_EPSILON)
 	{
 		if (a.size() != b.size())
 		{
@@ -44,12 +51,13 @@ namespace many
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			diff = a[i] - b[i];
-			out &= diff*diff <= threshold;
+			out &= length(diff) <= threshold;
 		}
 		return out;
 	}
-	template <typename T>
-	bool notEqual(const T& a, const T& b, typename T::value_type threshold = typename T::value_type(MANY_EPSILON))
+	template <typename T, 
+		std::enable_if_t<std::is_base_of<AbstractSeries, T>::value, int> = 0>
+	bool notEqual(const T& a, const T& b, float threshold = MANY_EPSILON)
 	{
 		if (a.size() != b.size())
 		{
@@ -60,7 +68,7 @@ namespace many
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			diff = a[i] - b[i];
-			out |= diff*diff > threshold;
+			out |= length(diff) > threshold;
 		}
 		return out;
 	}
@@ -68,43 +76,43 @@ namespace many
 
 
 	template <typename T, typename Tout>
-	void equal(const T& a, const typename T::value_type b, Tout& out, typename T::value_type threshold = typename T::value_type(MANY_EPSILON))
+	void equal(const T& a, const typename T::value_type b, Tout& out, float threshold = MANY_EPSILON)
 	{
 		typename T::value_type diff(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			diff = a[i] - b;
-			out[i] = diff*diff <= threshold;
+			out[i] = length(diff) <= threshold;
 		}
 	}
 	template <typename T, typename Tout>
-	void notEqual(const T& a, const typename T::value_type b, Tout& out, typename T::value_type threshold = typename T::value_type(MANY_EPSILON))
+	void notEqual(const T& a, const typename T::value_type b, Tout& out, float threshold = MANY_EPSILON)
 	{
 		typename T::value_type diff(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			diff = a[i] - b;
-			out[i] = diff*diff > threshold;
+			out[i] = length(diff) > threshold;
 		}
 	}
 	template <typename T, typename Tout>
-	void equal(const T& a, const T& b, Tout& out, typename T::value_type threshold = typename T::value_type(MANY_EPSILON))
+	void equal(const T& a, const T& b, Tout& out, float threshold = MANY_EPSILON)
 	{
 		typename T::value_type diff(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			diff = a[i] - b[i];
-			out[i] = diff*diff <= threshold;
+			out[i] = length(diff) <= threshold;
 		}
 	}
 	template <typename T, typename Tout>
-	void notEqual(const T& a, const T& b, Tout& out, typename T::value_type threshold = typename T::value_type(MANY_EPSILON))
+	void notEqual(const T& a, const T& b, Tout& out, float threshold = MANY_EPSILON)
 	{
 		typename T::value_type diff(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			diff = a[i] - b[i];
-			out[i] = diff*diff > threshold;
+			out[i] = length(diff) > threshold;
 		}
 	}
 

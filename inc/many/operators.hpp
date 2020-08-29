@@ -306,6 +306,12 @@ namespace many
 	}
 
 
+	template <typename T>
+	inline series<T> operator-(const series<T>& a)
+	{
+		return many::transform([](T ai){ return -ai; }, a);
+	}
+	
 	inline series<bool> operator~(const series<bool>& a)
 	{
 		return many::transform([](bool ai){ return !ai; }, a);
