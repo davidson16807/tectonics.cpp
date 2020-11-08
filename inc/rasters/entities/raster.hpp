@@ -11,17 +11,10 @@
 #include <many/types.hpp>
 #include <many/glm/types.hpp>
 
+#include "Grid/Grid.hpp"
+
 namespace rasters
 {
-	/*
-	`mapping` is used as a template parameter for rasters to indicate whether 
-	the raster maps each element of its container to a cell or an arrow within its grid.
-	*/
-	enum mapping
-	{
-		cell,
-		arrow
-	};
 
 	/*
 	`raster` guarantees that its constructors will produce a valid object 
@@ -31,7 +24,7 @@ namespace rasters
 	Violation of this guarantee is a bug.
 	*/
 	template<typename T, typename Tgrid, rasters::mapping Tmap = rasters::mapping::cell>
-	struct raster final: public many::series<T>
+	struct raster: public many::series<T>
 	{
 		/*
 		NOTE: Grids are composed exclusively from shared pointers, 
@@ -48,13 +41,14 @@ namespace rasters
 		*/
 		Tgrid grid;
 		raster(const Tgrid& grid):
-			many::series<T>(Tmap == rasters::mapping::cell? grid.cell_count() : grid.arrow_count()),
+			many::series<T>(grid.cell_count(Tmap)),
 			grid(grid) 
-		{}
+		{
+		}
 		// std container style constructor
 		template<typename TIterator>
 		raster(const Tgrid& grid, TIterator first, TIterator last) : 
-			many::series<T>(Tmap == rasters::mapping::cell? grid.cell_count() : grid.arrow_count()),
+			many::series<T>(grid.cell_count(Tmap)),
 			grid(grid)
 		{
 			assert(std::distance(first, last) == this->size());
@@ -75,7 +69,7 @@ namespace rasters
 
 		// convenience constructor for vectors
 		explicit raster(const Tgrid& grid, const std::initializer_list<T>& vector) : 
-			many::series<T>(Tmap == rasters::mapping::cell? grid.cell_count() : grid.arrow_count()),
+			many::series<T>(grid.cell_count(Tmap)),
 			grid(grid)
 		{
 			assert(vector.size() == this->size());
@@ -91,25 +85,28 @@ namespace rasters
 				this->values[i] = a[i];
 			}
 		}
+
+
 	};
 	
 	/*
 	NOTE: constructing rasters can be annoying due to the number of template parameters involved, 
 	so we use convenience methods for generating rasters that are compatible for a given grid
 	*/
-	template<typename T, typename Tgrid, rasters::mapping Tmap=rasters::mapping::cell>
+	template<typename T, rasters::mapping Tmap = rasters::mapping::cell, typename Tgrid>
 	raster<T,Tgrid,Tmap> make_raster(const Tgrid& grid)
 	{
 		return raster<T,Tgrid,Tmap>(grid);
 	}
-	template<typename T, typename Tgrid, rasters::mapping Tmap=rasters::mapping::cell>
+	template<typename T, rasters::mapping Tmap=rasters::mapping::cell, typename Tgrid>
 	raster<T,Tgrid,Tmap> make_raster(const Tgrid& grid, const std::initializer_list<T>& vector)
 	{
 		return raster<T,Tgrid,Tmap>(grid, vector);
 	}
-	template<typename T, typename Tgrid, typename TIterator, rasters::mapping Tmap=rasters::mapping::cell>
+	template<typename T, typename TIterator, rasters::mapping Tmap=rasters::mapping::cell, typename Tgrid>
 	raster<T,Tgrid,Tmap> make_raster(const Tgrid& grid, TIterator first, TIterator last)
 	{
 		return raster<T,Tgrid,Tmap>(grid, first, last);
 	}
+
 }

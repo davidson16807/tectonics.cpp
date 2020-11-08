@@ -36,7 +36,7 @@ namespace many
 		template<typename TIterator>
 		series(TIterator first, TIterator last) : values(std::distance(first, last))
 		{
-			unsigned int id = 0;
+			std::size_t id = 0;
 			while (first!=last) 
 			{
 				this->values[id] = *first;
@@ -53,9 +53,9 @@ namespace many
 		{
 		}
 
-		explicit series(const unsigned int N) : values(N) {}
+		explicit series(const std::size_t N) : values(N) {}
 
-		explicit series(const unsigned int N, const T a)  : values(N, a) {}
+		explicit series(const std::size_t N, const T a)  : values(N, a) {}
 
 		template <typename T2>
 		explicit series(const series<T2>& a)  : values(a.size())

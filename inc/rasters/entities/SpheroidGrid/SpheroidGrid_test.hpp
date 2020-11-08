@@ -8,26 +8,17 @@
 // #include <glm/vec3.hpp>               // *vec3
 
 // in-house libraries
-#include <many/types.hpp>
-#include <many/common.hpp>
-#include <many/glm/types.hpp>
-#include <many/glm/convenience.hpp>
+#include <meshes/mesh.hpp>  
 
-#include <meshes/mesh.hpp>
+#include "SpheroidGrid.hpp"
+#include "../raster.hpp"
 
-#include "Grid.hpp"
-
-#include "Grid_test_utils.hpp"
+#include "SpheroidGrid_test_utils.hpp"
 
 using namespace rasters;
 
-TEST_CASE( "Grid predictability", "[rasters]" ) {
-    SECTION("Grid must consist of mutually consistent container attributes"){
-        CHECK(tetrahedron_grid.cell_count(rasters::mapping::cell) == 4);
-        CHECK(tetrahedron_grid.cell_count(rasters::mapping::arrow) == 12);
-    }
-}
-TEST_CASE( "Grid consistency", "[rasters]" ) {
+TEST_CASE( "SpheroidGrid consistency", "[rasters]" ) {
+    Grid tetrahedron_grid(meshes::tetrahedron.vertices, meshes::tetrahedron.faces);
     SECTION("Components of grid must consist of mutually consistent container attributes"){
         CHECK(tetrahedron_grid.cache->vertex_positions.size() == tetrahedron_grid.cache->vertex_count );
         CHECK(tetrahedron_grid.cache->face_vertex_ids.size() == tetrahedron_grid.cache->face_count );
@@ -36,18 +27,25 @@ TEST_CASE( "Grid consistency", "[rasters]" ) {
     }
 }
 
-TEST_CASE( "Grid nontriviality", "[rasters]" ) {
-    SECTION("Grid attributes must contain nonzero elements"){
+TEST_CASE( "SpheroidGrid nontriviality", "[rasters]" ) {
+    Grid tetrahedron_grid(meshes::tetrahedron.vertices, meshes::tetrahedron.faces);
+    SECTION("SpheroidGrid attributes must contain nonzero elements"){
         CHECK(many::sum(many::abs(tetrahedron_grid.cache->vertex_areas)) > 0.01f);
         CHECK(many::sum(many::abs(many::get_x(tetrahedron_grid.cache->vertex_positions))) > 0.01f);
     }
 }
 
-TEST_CASE( "Raster consistency", "[rasters]" ) {
+TEST_CASE( "SpheroidGrid consistency", "[rasters]" ) {
+    SpheroidGrid icosahedron_grid(meshes::icosahedron.vertices, meshes::icosahedron.faces);
+    SECTION("Components of grid must consist of mutually consistent container attributes"){
+        CHECK(icosahedron_grid.voronoi->get_value( icosahedron_grid.cache->vertex_positions.front() ) == 0);
+    }
+}
+
+TEST_CASE( "SpheroidGrid Raster consistency", "[rasters]" ) {
+    Grid tetrahedron_grid(meshes::tetrahedron.vertices, meshes::tetrahedron.faces);
     auto a = make_raster<float>(tetrahedron_grid);
-    auto b = make_raster<float, mapping::arrow>(tetrahedron_grid);
-    SECTION("Elements of raster of layered grid must consist of mutually consistent container attributes"){
+    SECTION("Elements of raster of grid must consist of mutually consistent container attributes"){
         CHECK(a.size() == a.grid.cell_count(rasters::mapping::cell) );
-        CHECK(b.size() == b.grid.cell_count(rasters::mapping::arrow) );
     }
 }

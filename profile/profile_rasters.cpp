@@ -18,8 +18,8 @@
 #include <many/glm/convenience.hpp> //  operators, etc.
 
 #include <meshes/mesh.hpp>
-#include <grids/Grid/morphologic.hpp>
-#include <grids/Grid/vector_calculus.hpp>
+#include <grids/MeshCache/morphologic.hpp>
+#include <grids/MeshCache/vector_calculus.hpp>
 #include <grids/SpheroidGrid/string_cast.hpp>
 #include <grids/SpheroidGrid/string_cast.hpp>  
 

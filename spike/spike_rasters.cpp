@@ -18,8 +18,8 @@
 #include <many/glm/convenience.hpp> //  operators, etc.
 
 #include <meshes/mesh.hpp>
-#include <grids/Grid/morphologic.hpp>
-#include <grids/Grid/vector_calculus.hpp>
+#include <grids/MeshCache/morphologic.hpp>
+#include <grids/MeshCache/vector_calculus.hpp>
 #include <grids/SpheroidGrid/string_cast.hpp>  
 
 // #include "academics/tectonics.hpp"
@@ -56,8 +56,8 @@ int main(int argc, char const *argv[])
         \|/ 
          4   
     */
-    Grid diamond = 
-        Grid(
+    MeshCache diamond = 
+        MeshCache(
             vec3s({
                     vec3( 0, 0, 0),
                     vec3( 1, 0, 0),
@@ -77,8 +77,8 @@ int main(int argc, char const *argv[])
      that require spatial awareness without requiring a particular shape.
      (e.g. gradient, divergence, laplacian)
     */
-    Grid tetrahedron = 
-        Grid(meshes::tetrahedron.vertices, meshes::tetrahedron.faces);
+    MeshCache tetrahedron = 
+        MeshCache(meshes::tetrahedron.vertices, meshes::tetrahedron.faces);
     /*
     "octahedron" is a simple 3d grid for testing raster operations that require 
     something comparable to a unit sphere (e.g. nearest neighbor lookups using SpheroidVoronoi)

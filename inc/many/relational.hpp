@@ -91,7 +91,7 @@ namespace many
 		bool out(true);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
-			out &= equal( a[i], b[i], threshold);
+			out &= many::equal( a[i], b[i], threshold);
 		}
 		return out;
 	}
@@ -106,7 +106,7 @@ namespace many
 		bool out(false);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
-			out |= notEqual( a[i] , b[i], threshold);
+			out |= many::notEqual( a[i] , b[i], threshold);
 		}
 		return out;
 	}

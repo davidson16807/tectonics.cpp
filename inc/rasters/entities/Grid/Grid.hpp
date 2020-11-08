@@ -17,6 +17,16 @@ namespace rasters
 {
 
 	/*
+	`mapping` is used as a template parameter for rasters to indicate whether 
+	the raster maps each element of its container to a cell or an arrow within its grid.
+	*/
+	enum mapping
+	{
+		cell,
+		arrow
+	};
+
+	/*
 	"types.hpp" represents the objects and functions of a mathematical category.
 	The category concerns the ways in which grids and rasters can be specified 
 	so that the attributes of an object always maintain internal consistency.
@@ -58,17 +68,16 @@ namespace rasters
 		Grid(const many::vec3s& vertices, const many::uvec3s& faces):
 			cache(std::make_shared< MeshCache<Tid,Tfloat>>(vertices, faces))
 		{}
-		const std::size_t cell_count() const
+		Grid(const Grid<Tid,Tfloat>& grid):
+			cache(grid.cache)
+		{}
+		const std::size_t cell_count(mapping mapping_type) const
 		{
-			return this->cache->vertex_count;
-		}
-		const std::size_t arrow_count() const
-		{
-			return this->cache->arrow_count;
+			return mapping_type == mapping::cell? this->cache->vertex_count : this->cache->arrow_count;
 		}
 		bool operator== (const Grid& other) const
 		{
-		    return (this->cache == other.cache);
+		    return (&(this->cache) == &(other.cache));
 		}
 		bool operator!= (const Grid& other) const
 		{

@@ -93,7 +93,7 @@ namespace rasters
 			OCTAHEDRON_SIDE_Y(many::normalize(
 				many::cross(SpheroidLookup<T>::OCTAHEDRON_SIDE_Z, SpheroidLookup<T>::OCTAHEDRON_SIDE_X)
 			)),
-			dimensions((int)ceil(2./cell_width)+1),
+			dimensions((int)std::ceil(2./cell_width)+1),
 			cell_width(cell_width),
 			cells(cell_count(), default_value)
 		{

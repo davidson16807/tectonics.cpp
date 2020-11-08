@@ -4,10 +4,14 @@
 #include <algorithm> //std::min
 #include <string>    //std::string
 
+#include <glm/vec3.hpp>   // *vec3
+#include <glm/common.hpp> // smoothstep
+
 #include <many/types.hpp>
 #include <many/common.hpp>
 
-#include "../SpheroidGrid/SpheroidGrid.hpp"
+#include "../raster.hpp"
+#include "SpheroidGrid.hpp"
 
 namespace rasters
 {
@@ -42,8 +46,8 @@ namespace rasters
 	}
 
 
-	template <typename T>
-	std::string to_string(const SpheroidVoronoi& voronoi, const series<T>& a, const T lo, const T hi, const uint line_char_width = 80)
+	template <typename Tgrid, typename T>
+	std::string to_string(const raster<T,Tgrid>& a, const T lo, const T hi, const uint line_char_width = 80)
 	{
 		float lat(0.);
 		float lon(0.);
@@ -62,7 +66,7 @@ namespace rasters
 				z = sin(lat);
 				r = sqrt(1.f-z*z);
 				pos = glm::vec3(r*sin(lon), r*cos(lon), z);
-				id = voronoi.get_value(pos);
+				id = a.grid.voronoi->get_value(pos);
 				if ( !(0 <= id && id < a.size()) )
 				{
 					out += "X";
@@ -77,7 +81,7 @@ namespace rasters
 				} 
 				else 
 				{
-					float shade_fraction = linearstep(lo, hi, a[id]);
+					float shade_fraction = many::linearstep(lo, hi, a[id]);
 					int shade_id = int(std::min(float(shades.size()-1), (shades.size() * shade_fraction) ));
 				    out += shades[shade_id];
 				}
@@ -89,17 +93,17 @@ namespace rasters
 		{
 			out += shades[i];
 			out += " ≥ ";
-			out += std::to_string(mix(float(lo), float(hi), float(i)/float(shades.size())));
+			out += std::to_string(glm::mix(float(lo), float(hi), float(i)/float(shades.size())));
 			out += "\n";
 			// out += ", ";
 		}
 		return out;
 	}
 
-	template <typename T>
-	std::string to_string(const SpheroidGrid& grid, const series<T>& a, const int line_char_width = 80)
+	template <typename Tgrid, typename T>
+	std::string to_string(const raster<T,Tgrid>& a, const int line_char_width = 80)
 	{
-		return to_string(grid.voronoi, a, min(a), max(a), line_char_width);
+		return to_string(a, many::min(a), many::max(a), line_char_width);
 	}
 
 	
@@ -111,12 +115,12 @@ namespace rasters
 	  * 2d vectors are expressed using local x,y coordinates on the surface of a sphere.
 	  * "up" is indicated by the z axis of a 3d vector
 	*/
-	template <typename T, glm::qualifier Q>
-	std::string to_string(const SpheroidVoronoi& voronoi, const series<glm::vec<2,T,Q>>& a, const uint line_char_width = 80)
+	template <typename Tgrid, typename T, glm::qualifier Q>
+	std::string to_string(const raster<glm::vec<2,T,Q>,Tgrid>& a, const uint line_char_width = 80)
 	{
-		series<T> a_length(a.size());
-		length(a, a_length);
-		T a_length_max = max(a_length);
+		raster<T,Tgrid> a_length(a.grid);
+		many::length(a, a_length);
+		T a_length_max = many::max(a_length);
 
 		float lat(0.);
 		float lon(0.);
@@ -135,7 +139,7 @@ namespace rasters
 				z = sin(lat);
 				r = sqrt(1.f-z*z);
 				pos = glm::vec3(r*sin(lon), r*cos(lon), z);
-				id = voronoi.get_value(pos);
+				id = a.grid.voronoi->get_value(pos);
 				if ( !(0 <= id && id < a.size()) )
 				{
 					out += "X";
@@ -177,19 +181,6 @@ namespace rasters
 		return out;
 	}
 
-	/*
-	This "to_string()" extension returns a string representation for a vec2raster,
-	  drawing 2d vectors as if on the surface of a sphere using an equirectangular projection.
-	It assumes the following:
-	  * the mesh is at least a rough approximation of a unit sphere
-	  * 2d vectors are expressed using local x,y coordinates on the surface of a sphere.
-	  * "up" is indicated by the z axis of a 3d vector
-	*/
-	template <typename T, glm::qualifier Q>
-	std::string to_string(const SpheroidGrid& grid, const series<glm::vec<2,T,Q>>& a, const uint line_char_width = 80)
-	{
-		return to_string(grid.voronoi, a, line_char_width);
-	}
 
 	/*
 	This "to_string()" extension returns a string representation for a vec2raster,
@@ -200,11 +191,10 @@ namespace rasters
 	  * the mesh is at least a rough approximation of a unit sphere
 	  * "up" is indicated by the z axis of a 3d vector
 	*/
-	template <typename T, glm::qualifier Q>
+	template <typename Tgrid, typename T, glm::qualifier Q>
 	std::string to_string(
-		const SpheroidVoronoi& voronoi, 
-		const series<glm::vec<3,T,Q>>& vertex_normals, 
-		const series<glm::vec<3,T,Q>>& a, 
+		const many::series<glm::vec<3,T,Q>>& vertex_normals, 
+		const raster<glm::vec<3,T,Q>,Tgrid>& a, 
 		const uint line_char_width = 80, 
 		const glm::vec3 up = glm::vec3(0,0,1)
 	) {
@@ -213,31 +203,30 @@ namespace rasters
 		many::vec3s		surface_basis_z(vertex_normals);
 		many::floats	a2dx(a.size());
 		many::floats	a2dy(a.size());
-		series<glm::vec<2,T,Q>> a2d (vertex_normals.size());
+		raster<glm::vec<2,T,Q>,Tgrid> a2d (a.grid);
 
-		cross		(surface_basis_z, up, 				surface_basis_x);
-		normalize	(surface_basis_x, 					surface_basis_x);
+		many::cross		(surface_basis_z, up, 				surface_basis_x);
+		many::normalize	(surface_basis_x, 					surface_basis_x);
 
-		cross		(surface_basis_z, surface_basis_x, 	surface_basis_y);
-		normalize	(surface_basis_y, 					surface_basis_y);
+		many::cross		(surface_basis_z, surface_basis_x, 	surface_basis_y);
+		many::normalize	(surface_basis_y, 					surface_basis_y);
 
-		dot 		(surface_basis_x, a, 				a2dx);
-		dot 		(surface_basis_y, a, 				a2dy);
+		many::dot 		(surface_basis_x, a, 				a2dx);
+		many::dot 		(surface_basis_y, a, 				a2dy);
 
-		set_x 		(a2d, a2dx);
-		set_y 		(a2d, a2dy);
+		many::set_x 	(a2d, a2dx);
+		many::set_y 	(a2d, a2dy);
 
-		return rasters::to_string(voronoi, a2d, line_char_width);
+		return rasters::to_string(a2d, line_char_width);
 	}
 
-	template <typename T, glm::qualifier Q>
+	template <typename Tgrid, typename T, glm::qualifier Q>
 	std::string to_string(
-		const SpheroidGrid& grid, 
-		const series<glm::vec<3,T,Q>>& a, 
+		const raster<glm::vec<3,T,Q>,Tgrid>& a, 
 		const uint line_char_width = 80, 
 		const glm::vec3 up = glm::vec3(0,0,1)
 	) {
-		return to_string(grid.voronoi, grid.vertex_normals, a, line_char_width, up);
+		return to_string(a.grid.cache->vertex_normals, a, line_char_width, up);
 	}
 
 	
