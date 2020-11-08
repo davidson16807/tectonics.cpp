@@ -7,12 +7,12 @@ namespace rasters
 {
 	template<typename Tgrid, typename T, glm::qualifier Q>
 	void gradient(
-		const layered_raster<T,Tgrid>& scalar_field, 
-		layered_raster<glm::vec<3,T,Q>,Tgrid>& out, 
-		layered_raster<T,Tgrid,mapping::arrow>& arrow_differential, 
-		layered_raster<T,Tgrid>& layer_differential, 
-		layered_raster<glm::vec<3,T,Q>,Tgrid,mapping::arrow>& arrow_flow,
-		layered_raster<glm::vec<3,T,Q>,Tgrid>& layer_flow
+		const LayeredRaster<T,Tgrid>& scalar_field, 
+		LayeredRaster<glm::vec<3,T,Q>,Tgrid>& out, 
+		LayeredRaster<T,Tgrid,mapping::arrow>& arrow_differential, 
+		LayeredRaster<T,Tgrid>& layer_differential, 
+		LayeredRaster<glm::vec<3,T,Q>,Tgrid,mapping::arrow>& arrow_flow,
+		LayeredRaster<glm::vec<3,T,Q>,Tgrid>& layer_flow
 	) {
 		many::fill (arrow_differential, T(0));
 		uint L = scalar_field.grid.layering->layer_count;
@@ -55,13 +55,13 @@ namespace rasters
 	}
 
 	template<typename Tgrid, typename T>
-	layered_raster<glm::vec3,Tgrid> gradient(const layered_raster<T,Tgrid>& scalar_field)
+	LayeredRaster<glm::vec3,Tgrid> gradient(const LayeredRaster<T,Tgrid>& scalar_field)
 	{
-		layered_raster<T,Tgrid,mapping::arrow>         arrow_differential (scalar_field.grid);
-		layered_raster<T,Tgrid>                        layer_differential (scalar_field.grid);
-		layered_raster<glm::vec3,Tgrid,mapping::arrow> arrow_flow         (scalar_field.grid);
-		layered_raster<glm::vec3,Tgrid>                layer_flow         (scalar_field.grid);
-		layered_raster<glm::vec3,Tgrid>                out                (scalar_field.grid);
+		LayeredRaster<T,Tgrid,mapping::arrow>         arrow_differential (scalar_field.grid);
+		LayeredRaster<T,Tgrid>                        layer_differential (scalar_field.grid);
+		LayeredRaster<glm::vec3,Tgrid,mapping::arrow> arrow_flow         (scalar_field.grid);
+		LayeredRaster<glm::vec3,Tgrid>                layer_flow         (scalar_field.grid);
+		LayeredRaster<glm::vec3,Tgrid>                out                (scalar_field.grid);
 		gradient(scalar_field, out, arrow_differential, layer_differential, arrow_flow, layer_flow);
 		return out;
 	}
@@ -69,12 +69,12 @@ namespace rasters
 
 	template<typename Tgrid, typename T, glm::qualifier Q>
 	void divergence(
-		const layered_raster<glm::vec<3,T,Q>,Tgrid>& vector_field, 
-		layered_raster<T,Tgrid>& out, 
-		layered_raster<glm::vec<3,T,Q>,Tgrid,mapping::arrow>& arrow_differential, 
-		layered_raster<glm::vec<3,T,Q>,Tgrid>& layer_differential, 
-		layered_raster<T,Tgrid,mapping::arrow>& arrow_projection,
-		layered_raster<T,Tgrid>& layer_projection
+		const LayeredRaster<glm::vec<3,T,Q>,Tgrid>& vector_field, 
+		LayeredRaster<T,Tgrid>& out, 
+		LayeredRaster<glm::vec<3,T,Q>,Tgrid,mapping::arrow>& arrow_differential, 
+		LayeredRaster<glm::vec<3,T,Q>,Tgrid>& layer_differential, 
+		LayeredRaster<T,Tgrid,mapping::arrow>& arrow_projection,
+		LayeredRaster<T,Tgrid>& layer_projection
 	) {
 		many::fill (arrow_differential, glm::vec<3,T,Q>(0.f));
 		uint L = vector_field.grid.layering->layer_count;
@@ -117,13 +117,13 @@ namespace rasters
 	}
 
 	template<typename Tgrid, typename T, glm::qualifier Q>
-	layered_raster<T,Tgrid> divergence(const layered_raster<glm::vec<3,T,Q>,Tgrid>& vector_field)
+	LayeredRaster<T,Tgrid> divergence(const LayeredRaster<glm::vec<3,T,Q>,Tgrid>& vector_field)
 	{
-		layered_raster<glm::vec<3,T,Q>,Tgrid, mapping::arrow> arrow_differential (vector_field.grid);
-		layered_raster<glm::vec<3,T,Q>,Tgrid> layer_differential (vector_field.grid);
-		layered_raster<T,Tgrid, mapping::arrow>               arrow_projection   (vector_field.grid);
-		layered_raster<T,Tgrid>               layer_projection   (vector_field.grid);
-		layered_raster<T,Tgrid>               out                (vector_field.grid);
+		LayeredRaster<glm::vec<3,T,Q>,Tgrid, mapping::arrow> arrow_differential (vector_field.grid);
+		LayeredRaster<glm::vec<3,T,Q>,Tgrid> layer_differential (vector_field.grid);
+		LayeredRaster<T,Tgrid, mapping::arrow>               arrow_projection   (vector_field.grid);
+		LayeredRaster<T,Tgrid>               layer_projection   (vector_field.grid);
+		LayeredRaster<T,Tgrid>               out                (vector_field.grid);
 		divergence(vector_field, out, arrow_differential, layer_differential, arrow_projection, layer_projection);
 		return out;
 	}
@@ -131,12 +131,12 @@ namespace rasters
 
 	template<typename Tgrid, typename T, glm::qualifier Q>
 	void curl(
-		const layered_raster<glm::vec<3,T,Q>,Tgrid>& vector_field, 
-		layered_raster<glm::vec<3,T,Q>,Tgrid>& out, 
-		layered_raster<glm::vec<3,T,Q>,Tgrid,mapping::arrow>& arrow_differential, 
-		layered_raster<glm::vec<3,T,Q>,Tgrid>& layer_differential, 
-		layered_raster<glm::vec<3,T,Q>,Tgrid,mapping::arrow>& arrow_rejection,
-		layered_raster<glm::vec<3,T,Q>,Tgrid>& layer_rejection
+		const LayeredRaster<glm::vec<3,T,Q>,Tgrid>& vector_field, 
+		LayeredRaster<glm::vec<3,T,Q>,Tgrid>& out, 
+		LayeredRaster<glm::vec<3,T,Q>,Tgrid,mapping::arrow>& arrow_differential, 
+		LayeredRaster<glm::vec<3,T,Q>,Tgrid>& layer_differential, 
+		LayeredRaster<glm::vec<3,T,Q>,Tgrid,mapping::arrow>& arrow_rejection,
+		LayeredRaster<glm::vec<3,T,Q>,Tgrid>& layer_rejection
 	) {
 		many::fill (arrow_differential, glm::vec<3,T,Q>(0.f));
 		uint L = vector_field.grid.layering->layer_count;
@@ -179,13 +179,13 @@ namespace rasters
 	}
 
 	template<typename Tgrid, typename T, glm::qualifier Q>
-	layered_raster<glm::vec<3,T,Q>,Tgrid> curl(const layered_raster<glm::vec<3,T,Q>,Tgrid>& vector_field)
+	LayeredRaster<glm::vec<3,T,Q>,Tgrid> curl(const LayeredRaster<glm::vec<3,T,Q>,Tgrid>& vector_field)
 	{
-		layered_raster<glm::vec<3,T,Q>,Tgrid, mapping::arrow> arrow_differential (vector_field.grid);
-		layered_raster<glm::vec<3,T,Q>,Tgrid> layer_differential (vector_field.grid);
-		layered_raster<glm::vec<3,T,Q>,Tgrid, mapping::arrow> arrow_projection   (vector_field.grid);
-		layered_raster<glm::vec<3,T,Q>,Tgrid> layer_projection   (vector_field.grid);
-		layered_raster<glm::vec<3,T,Q>,Tgrid> out                (vector_field.grid);
+		LayeredRaster<glm::vec<3,T,Q>,Tgrid, mapping::arrow> arrow_differential (vector_field.grid);
+		LayeredRaster<glm::vec<3,T,Q>,Tgrid> layer_differential (vector_field.grid);
+		LayeredRaster<glm::vec<3,T,Q>,Tgrid, mapping::arrow> arrow_projection   (vector_field.grid);
+		LayeredRaster<glm::vec<3,T,Q>,Tgrid> layer_projection   (vector_field.grid);
+		LayeredRaster<glm::vec<3,T,Q>,Tgrid> out                (vector_field.grid);
 		curl(vector_field, out, arrow_differential, layer_differential, arrow_projection, layer_projection);
 		return out;
 	}
@@ -193,10 +193,10 @@ namespace rasters
 	// ∇²ϕ = 1/V Σᵢ Δϕᵢ/|Δxᵢ| ΔSᵢ
 	template<typename Tgrid, typename T>
 	void laplacian(
-		const layered_raster<T,Tgrid>& scalar_field, 
-		layered_raster<T,Tgrid>& out, 
-		layered_raster<T,Tgrid,mapping::arrow>& arrow_scratch, 
-		layered_raster<T,Tgrid>& layer_scratch
+		const LayeredRaster<T,Tgrid>& scalar_field, 
+		LayeredRaster<T,Tgrid>& out, 
+		LayeredRaster<T,Tgrid,mapping::arrow>& arrow_scratch, 
+		LayeredRaster<T,Tgrid>& layer_scratch
 	) {
 		many::fill (arrow_scratch, T(0));
 		uint L = scalar_field.grid.layering->layer_count;
@@ -238,11 +238,11 @@ namespace rasters
 		many::div  (out,                scalar_field.grid.layering->layer_height,      out);             // laplacian
 	}
 	template<typename Tgrid, typename T>
-	layered_raster<T,Tgrid> laplacian(const layered_raster<T,Tgrid>& scalar_field)
+	LayeredRaster<T,Tgrid> laplacian(const LayeredRaster<T,Tgrid>& scalar_field)
 	{
-		layered_raster<T,Tgrid, mapping::arrow> arrow_scratch    (scalar_field.grid);
-		layered_raster<T,Tgrid> layer_scratch    (scalar_field.grid);
-		layered_raster<T,Tgrid> out              (scalar_field.grid);
+		LayeredRaster<T,Tgrid, mapping::arrow> arrow_scratch    (scalar_field.grid);
+		LayeredRaster<T,Tgrid> layer_scratch    (scalar_field.grid);
+		LayeredRaster<T,Tgrid> out              (scalar_field.grid);
 		laplacian(scalar_field, out, arrow_scratch, layer_scratch);
 		return out;
 	}
@@ -250,10 +250,10 @@ namespace rasters
 	template<typename Tgrid, unsigned int L, typename T, glm::qualifier Q>
 	void laplacian(
 		
-		const layered_raster<glm::vec<L,T,Q>,Tgrid>& vector_field, 
-		layered_raster<glm::vec<L,T,Q>,Tgrid>& out, 
-		layered_raster<glm::vec<L,T,Q>,Tgrid, mapping::arrow>& arrow_scratch,
-		layered_raster<glm::vec<L,T,Q>,Tgrid>& layer_scratch
+		const LayeredRaster<glm::vec<L,T,Q>,Tgrid>& vector_field, 
+		LayeredRaster<glm::vec<L,T,Q>,Tgrid>& out, 
+		LayeredRaster<glm::vec<L,T,Q>,Tgrid, mapping::arrow>& arrow_scratch,
+		LayeredRaster<glm::vec<L,T,Q>,Tgrid>& layer_scratch
 	) {
 		many::fill (arrow_scratch, glm::vec<L,T,Q>(0.f));
 		uint Li = vector_field.grid.layering->layer_count;
@@ -295,11 +295,11 @@ namespace rasters
 		many::div  (out,                vector_field.grid.layering->layer_height,      out);             // laplacian
 	}
 	template<typename Tgrid, unsigned int L, typename T, glm::qualifier Q>
-	layered_raster<glm::vec<L,T,Q>,Tgrid> laplacian(const layered_raster<glm::vec<L,T,Q>,Tgrid>& vector_field)
+	LayeredRaster<glm::vec<L,T,Q>,Tgrid> laplacian(const LayeredRaster<glm::vec<L,T,Q>,Tgrid>& vector_field)
 	{
-		layered_raster<glm::vec<L,T,Q>,Tgrid, mapping::arrow> arrow_scratch (vector_field.grid);
-		layered_raster<glm::vec<L,T,Q>,Tgrid> layer_scratch (vector_field.grid);
-		layered_raster<glm::vec<L,T,Q>,Tgrid> out           (vector_field.grid);
+		LayeredRaster<glm::vec<L,T,Q>,Tgrid, mapping::arrow> arrow_scratch (vector_field.grid);
+		LayeredRaster<glm::vec<L,T,Q>,Tgrid> layer_scratch (vector_field.grid);
+		LayeredRaster<glm::vec<L,T,Q>,Tgrid> out           (vector_field.grid);
 		laplacian(vector_field, out, arrow_scratch, layer_scratch);
 		return out;
 	}

@@ -19,7 +19,7 @@
 
 using namespace rasters;
 
-TEST_CASE( "raster dilation purity", "[rasters]" ) {
+TEST_CASE( "Raster dilation purity", "[rasters]" ) {
     auto upper_half =  make_raster(diamond_grid, {true,  true,  true,  true,  false });
     auto top_only   =  make_raster(diamond_grid, {false, false, true,  false, false });
     auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
@@ -41,7 +41,7 @@ TEST_CASE( "raster dilation purity", "[rasters]" ) {
         CHECK(equal(out1, out2));
     }
 }
-TEST_CASE( "raster dilation increasing", "[rasters]" ) {
+TEST_CASE( "Raster dilation increasing", "[rasters]" ) {
     auto upper_half =  make_raster(diamond_grid, {true,  true,  true,  true,  false });
     auto top_only   =  make_raster(diamond_grid, {false, false, true,  false, false });
     auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
@@ -53,7 +53,7 @@ TEST_CASE( "raster dilation increasing", "[rasters]" ) {
         CHECK(sum(out2) >= sum(out1));
     }
 }
-TEST_CASE( "raster dilation associative", "[rasters]" ) {
+TEST_CASE( "Raster dilation associative", "[rasters]" ) {
     auto A   =  make_raster(diamond_grid, {false, false, true,  false, false });
     auto AB  =  make_raster(diamond_grid, {false, false, false, false, false });
     auto ABC =  make_raster(diamond_grid, {false, false, false, false, false });
@@ -66,7 +66,7 @@ TEST_CASE( "raster dilation associative", "[rasters]" ) {
         CHECK(equal(ABC,  BCA));
     }
 }
-TEST_CASE( "raster dilation distributive over union", "[rasters]" ) {
+TEST_CASE( "Raster dilation distributive over union", "[rasters]" ) {
     auto A       =  make_raster(diamond_grid, {false, false, true,  false, false });
     auto B       =  make_raster(diamond_grid, {true,  false, true,  false, false });
     auto AC      =  make_raster(diamond_grid, {false, false, false, false, false });
@@ -92,7 +92,7 @@ TEST_CASE( "raster dilation distributive over union", "[rasters]" ) {
     \|/ 
      4   
 */
-TEST_CASE( "raster dilation happy path", "[rasters]" ) {
+TEST_CASE( "Raster dilation happy path", "[rasters]" ) {
     auto upper_half =  make_raster(diamond_grid, {true,  true,  true,  true,  false });
     auto top_only   =  make_raster(diamond_grid, {false, false, true,  false, false });
     auto empty      =  make_raster(diamond_grid, {false, false, false, false, false });
@@ -115,7 +115,7 @@ TEST_CASE( "raster dilation happy path", "[rasters]" ) {
         CHECK(equal(out1,  full));
     }
 }
-TEST_CASE( "raster erosion purity", "[rasters]" ) {
+TEST_CASE( "Raster erosion purity", "[rasters]" ) {
     auto lower_half =  make_raster(diamond_grid, {true,  true,  false,  true,  true });
     auto bottom_only=  make_raster(diamond_grid, {true,  true,  false,  true,  true  });
     auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
@@ -137,7 +137,7 @@ TEST_CASE( "raster erosion purity", "[rasters]" ) {
         CHECK(equal(out1, out2));
     }
 }
-TEST_CASE( "raster erosion decreasing", "[rasters]" ) {
+TEST_CASE( "Raster erosion decreasing", "[rasters]" ) {
     auto lower_half =  make_raster(diamond_grid, {true,  true,  false,  true,  true });
     auto bottom_only=  make_raster(diamond_grid, {true,  true,  false,  true,  true });
     auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
@@ -149,7 +149,7 @@ TEST_CASE( "raster erosion decreasing", "[rasters]" ) {
         CHECK(sum(out2) <= sum(out1));
     }
 }
-TEST_CASE( "raster erosion distributive over intersection", "[rasters]" ) {
+TEST_CASE( "Raster erosion distributive over intersection", "[rasters]" ) {
     auto A       =  make_raster(diamond_grid, {false, false, true,  false, false });
     auto B       =  make_raster(diamond_grid, {true,  false, true,  false, false });
     auto AC      =  make_raster(diamond_grid, {false, false, false, false, false });
@@ -175,7 +175,7 @@ TEST_CASE( "raster erosion distributive over intersection", "[rasters]" ) {
     \|/ 
      4   
 */
-TEST_CASE( "raster erosion happy path", "[rasters]" ) {
+TEST_CASE( "Raster erosion happy path", "[rasters]" ) {
     auto upper_half =  make_raster(diamond_grid, {true,  true,  true,  true,  false });
     auto top_only   =  make_raster(diamond_grid, {false, false, true,  false, false });
     auto empty      =  make_raster(diamond_grid, {false, false, false, false, false });
@@ -200,7 +200,7 @@ TEST_CASE( "raster erosion happy path", "[rasters]" ) {
 }
 
 
-TEST_CASE( "opening purity", "[rasters]" ) {
+TEST_CASE( "Raster opening purity", "[rasters]" ) {
     auto bottom_edge=  make_raster(diamond_grid, {false,  true, false,  true,  true });
     auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
     auto out2       =  make_raster(diamond_grid, {false, false, false, false, false });
@@ -222,7 +222,7 @@ TEST_CASE( "opening purity", "[rasters]" ) {
         CHECK(equal(out1, out2));
     }
 }
-TEST_CASE( "opening idempotence", "[rasters]" ) {
+TEST_CASE( "Raster opening idempotence", "[rasters]" ) {
     auto bottom_edge=  make_raster(diamond_grid, {false,  true, false,  true,  true });
     auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
     auto out2       =  make_raster(diamond_grid, {false, false, false, false, false });
@@ -251,7 +251,7 @@ TEST_CASE( "opening idempotence", "[rasters]" ) {
     \|/ 
      4   
 */
-TEST_CASE( "opening happy path", "[rasters]" ) {
+TEST_CASE( "Raster opening happy path", "[rasters]" ) {
     auto upper_half =  make_raster(diamond_grid, {true,  true,  true,  true,  false });
     auto top_only   =  make_raster(diamond_grid, {false, false, true,  false, false });
     auto empty      =  make_raster(diamond_grid, {false, false, false, false, false });
@@ -275,7 +275,7 @@ TEST_CASE( "opening happy path", "[rasters]" ) {
     }
 }
 
-TEST_CASE( "closing purity", "[rasters]" ) {
+TEST_CASE( "Raster closing purity", "[rasters]" ) {
     auto bottom_edge=  make_raster(diamond_grid, {false,  true, false,  true,  true });
     auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
     auto out2       =  make_raster(diamond_grid, {false, false, false, false, false });
@@ -297,7 +297,7 @@ TEST_CASE( "closing purity", "[rasters]" ) {
         CHECK(equal(out1, out2));
     }
 }
-TEST_CASE( "closing idempotence", "[rasters]" ) {
+TEST_CASE( "Raster closing idempotence", "[rasters]" ) {
     auto bottom_edge=  make_raster(diamond_grid, {false,  true, false,  true,  true });
     auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
     auto out2       =  make_raster(diamond_grid, {false, false, false, false, false });
@@ -326,7 +326,7 @@ TEST_CASE( "closing idempotence", "[rasters]" ) {
     \|/ 
      4   
 */
-TEST_CASE( "closing happy path", "[rasters]" ) {
+TEST_CASE( "Raster closing happy path", "[rasters]" ) {
     auto upper_half =  make_raster(diamond_grid, {true,  true,  true,  true,  false });
     auto top_only   =  make_raster(diamond_grid, {false, false, true,  false, false });
     auto empty      =  make_raster(diamond_grid, {false, false, false, false, false });
@@ -351,7 +351,7 @@ TEST_CASE( "closing happy path", "[rasters]" ) {
 }
 
 
-TEST_CASE( "white top hat purity", "[rasters]" ) {
+TEST_CASE( "Raster white top hat purity", "[rasters]" ) {
     auto bottom_edge=  make_raster(diamond_grid, {false,  true, false,  true,  true });
     auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
     auto out2       =  make_raster(diamond_grid, {false, false, false, false, false });
@@ -380,7 +380,7 @@ TEST_CASE( "white top hat purity", "[rasters]" ) {
     \|/ 
      4   
 */
-TEST_CASE( "raster white_top_hat happy path", "[rasters]" ) {
+TEST_CASE( "Raster white_top_hat happy path", "[rasters]" ) {
     auto upper_half =  make_raster(diamond_grid, {true,  true,  true,  true,  false });
     auto top_only   =  make_raster(diamond_grid, {false, false, true,  false, false });
     auto bottom_only=  make_raster(diamond_grid, {false, false, false, false, true  });
@@ -405,7 +405,7 @@ TEST_CASE( "raster white_top_hat happy path", "[rasters]" ) {
     }
 }
 
-TEST_CASE( "black top hat purity", "[rasters]" ) {
+TEST_CASE( "Raster black top hat purity", "[rasters]" ) {
     auto bottom_edge=  make_raster(diamond_grid, {false,  true, false,  true,  true });
     auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
     auto out2       =  make_raster(diamond_grid, {false, false, false, false, false });
@@ -434,7 +434,7 @@ TEST_CASE( "black top hat purity", "[rasters]" ) {
     \|/ 
      4   
 */
-TEST_CASE( "raster black_top_hat happy path", "[rasters]" ) {
+TEST_CASE( "Raster black_top_hat happy path", "[rasters]" ) {
     auto upper_half =  make_raster(diamond_grid, {true,  true,  true,  true,  false });
     auto top_only   =  make_raster(diamond_grid, {false, false, true,  false, false });
     auto empty      =  make_raster(diamond_grid, {false, false, false, false, false });
@@ -458,7 +458,7 @@ TEST_CASE( "raster black_top_hat happy path", "[rasters]" ) {
     }
 }
 
-TEST_CASE( "margin purity", "[rasters]" ) {
+TEST_CASE( "Raster margin purity", "[rasters]" ) {
     auto bottom_edge=  make_raster(diamond_grid, {false,  true, false,  true,  true });
     auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
     auto out2       =  make_raster(diamond_grid, {false, false, false, false, false });
@@ -487,7 +487,7 @@ TEST_CASE( "margin purity", "[rasters]" ) {
     \|/ 
      4   
 */
-TEST_CASE( "margin happy path", "[rasters]" ) {
+TEST_CASE( "Raster margin happy path", "[rasters]" ) {
     auto upper_half =  make_raster(diamond_grid, {true,  true,  true,  true,  false });
     auto top_only   =  make_raster(diamond_grid, {false, false, true,  false, false });
     auto bottom_only=  make_raster(diamond_grid, {false, false, false, false, true  });
@@ -513,7 +513,7 @@ TEST_CASE( "margin happy path", "[rasters]" ) {
     }
 }
 
-TEST_CASE( "padding purity", "[rasters]" ) {
+TEST_CASE( "Raster padding purity", "[rasters]" ) {
     auto bottom_edge=  make_raster(diamond_grid, {false,  true, false,  true,  true });
     auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
     auto out2       =  make_raster(diamond_grid, {false, false, false, false, false });
@@ -542,7 +542,7 @@ TEST_CASE( "padding purity", "[rasters]" ) {
     \|/ 
      4   
 */
-TEST_CASE( "padding happy path", "[rasters]" ) {
+TEST_CASE( "Raster padding happy path", "[rasters]" ) {
     auto upper_half =  make_raster(diamond_grid, {true,  true,  true,  true,  false });
     auto top_only   =  make_raster(diamond_grid, {false, false, true,  false, false });
     auto center     =  make_raster(diamond_grid, {true,  true,  false, true,  false });

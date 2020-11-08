@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../LayeredGrid/layered_raster.hpp"
+#include "../LayeredGrid/LayeredRaster.hpp"
 #include "LayeredSpheroidGrid.hpp"
 #include "../SpheroidGrid/string_cast.hpp"
 
@@ -12,7 +12,7 @@ namespace rasters
 
 	template <typename T, typename Tid, typename Tfloat> 
 	std::string to_string(
-		const layered_raster<T,LayeredSpheroidGrid<Tid,Tfloat>>& a, 
+		const LayeredRaster<T,LayeredSpheroidGrid<Tid,Tfloat>>& a, 
 		const uint line_char_width = 80
 	) {
 		assert(a.size() == a.grid.cache->vertex_count * a.grid.layering->layer_count);
@@ -29,7 +29,7 @@ namespace rasters
 
 	template <typename T, typename Tid, typename Tfloat, glm::qualifier Q> 
 	std::string to_string(
-		const layered_raster<glm::vec<2,T,Q>,LayeredSpheroidGrid<Tid,Tfloat>>& a, 
+		const LayeredRaster<glm::vec<2,T,Q>,LayeredSpheroidGrid<Tid,Tfloat>>& a, 
 		const uint line_char_width = 80, 
 		const glm::vec3 up = glm::vec3(0,0,1)
 	) {
@@ -47,7 +47,7 @@ namespace rasters
 
 	template <typename T, typename Tid, typename Tfloat, glm::qualifier Q> 
 	std::string to_string(
-		const layered_raster<glm::vec<3,T,Q>,LayeredSpheroidGrid<Tid,Tfloat>>& a, 
+		const LayeredRaster<glm::vec<3,T,Q>,LayeredSpheroidGrid<Tid,Tfloat>>& a, 
 		const uint line_char_width = 80, 
 		const glm::vec3 up = glm::vec3(0,0,1)
 	) {

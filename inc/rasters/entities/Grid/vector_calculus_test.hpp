@@ -32,7 +32,7 @@
 
 using namespace rasters;
 
-TEST_CASE( "gradient determinism", "[rasters]" ) {
+TEST_CASE( "Raster gradient determinism", "[rasters]" ) {
     auto a= make_raster<float>(nonspheroid_icosahedron_grid, {1,2,3,4,5,6,7,8,9,10,11,12});
     SECTION("gradient(grid, a) must generate the same output when called repeatedly"){
         CHECK(many::equal(gradient(a), gradient(a)));
@@ -111,7 +111,7 @@ TEST_CASE( "gradient determinism", "[rasters]" ) {
 // }
 
 
-TEST_CASE( "gradient distributive over addition", "[rasters]" ) {
+TEST_CASE( "Raster gradient distributive over addition", "[rasters]" ) {
 
     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
@@ -129,7 +129,7 @@ TEST_CASE( "gradient distributive over addition", "[rasters]" ) {
     }
 }
 
-TEST_CASE( "gradient multiplication relation", "[rasters]" ) {
+TEST_CASE( "Raster gradient multiplication relation", "[rasters]" ) {
 
     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
@@ -154,7 +154,7 @@ TEST_CASE( "gradient multiplication relation", "[rasters]" ) {
     }
 }
 
-TEST_CASE( "divergence determinism", "[rasters]" ) {
+TEST_CASE( "Raster divergence determinism", "[rasters]" ) {
     auto a   = make_raster<glm::vec3>(nonspheroid_icosahedron_grid, {
         glm::vec3(1, 2, 3 ),
         glm::vec3(4, 5, 6 ),
@@ -252,7 +252,7 @@ TEST_CASE( "divergence determinism", "[rasters]" ) {
 // }
 
 
-TEST_CASE( "divergence distributive over addition", "[rasters]" ) {
+TEST_CASE( "Raster divergence distributive over addition", "[rasters]" ) {
     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
     rasters::Grid icosphere_grid(icosphere_mesh.vertices, icosphere_mesh.faces);
@@ -298,7 +298,7 @@ TEST_CASE( "divergence distributive over addition", "[rasters]" ) {
 //         CHECK(many::equal( div_a_b,  div_b*a + dot(b, grad_a), 1e-0f));
 //     }
 // }
-TEST_CASE( "curl determinism", "[rasters]" ) {
+TEST_CASE( "Raster curl determinism", "[rasters]" ) {
     auto a   = make_raster<glm::vec3>(nonspheroid_icosahedron_grid, {
         glm::vec3(1, 2, 3 ),
         glm::vec3(4, 5, 6 ),
@@ -322,7 +322,7 @@ TEST_CASE( "curl determinism", "[rasters]" ) {
     }
 }
 
-TEST_CASE( "curl distributive over addition", "[rasters]" ) {
+TEST_CASE( "Raster curl distributive over addition", "[rasters]" ) {
     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
     rasters::Grid icosphere_grid(icosphere_mesh.vertices, icosphere_mesh.faces);
@@ -387,7 +387,7 @@ TEST_CASE( "curl distributive over addition", "[rasters]" ) {
 //         // CHECK(many::equal(div_curl_a, zeros));
 //     }
 // }
-TEST_CASE( "laplacian determinism", "[rasters]" ) {
+TEST_CASE( "Raster laplacian determinism", "[rasters]" ) {
     auto a    = make_raster<float>(nonspheroid_icosahedron_grid, {1,2,3,4,5,6,7,8,9,10,11,12});
     // auto b = make_raster<float>(nonspheroid_icosahedron_grid, {1,1,2,3,5,8,13,21,34,55,89,144});
     auto out1 = make_raster<float>(nonspheroid_icosahedron_grid);

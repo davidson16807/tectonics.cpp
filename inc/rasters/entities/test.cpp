@@ -1,6 +1,6 @@
 #include "./LayeredGrid/vector_calculus_test.hpp"
 #include "./LayeredGrid/LayeredGrid_test.hpp"
-#include "./LayeredGrid/layered_raster_test.hpp"
+#include "./LayeredGrid/LayeredRaster_test.hpp"
 #include "./LayeredGrid/morphologic_test.hpp"
 #include "./LayeredSpheroidGrid/LayeredSpheroidGrid_test.hpp"
 #include "./LayeredSpheroidGrid/string_cast_test.hpp"

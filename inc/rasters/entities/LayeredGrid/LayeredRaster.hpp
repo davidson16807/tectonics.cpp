@@ -24,7 +24,7 @@ namespace rasters
 	Violation of this guarantee is a bug.
 	*/
 	template<typename T, typename Tgrid, rasters::mapping Tmap = rasters::mapping::cell>
-	struct layered_raster: public raster<T,Tgrid,Tmap>
+	struct LayeredRaster: public raster<T,Tgrid,Tmap>
 	{
 		/*
 		NOTE: Grids are composed exclusively from shared pointers, 
@@ -39,7 +39,7 @@ namespace rasters
 		Composing from grid also allows us to implement raster without knowing how shared pointers are managed within Grids,
 		and it allows us to construct raster without requiring raster to be a friend class of Grids.
 		*/
-		layered_raster(const Tgrid& grid):
+		LayeredRaster(const Tgrid& grid):
 			raster<T,Tgrid,Tmap>(grid)
 		{
 			assert(this->grid.layering->layer_count < this->grid.cache->vertex_count);
@@ -47,8 +47,8 @@ namespace rasters
 		}
 		// std container style constructor
 		template<typename TIterator>
-		layered_raster(const Tgrid& grid, TIterator first, TIterator last) : 
-			layered_raster(grid)
+		LayeredRaster(const Tgrid& grid, TIterator first, TIterator last) : 
+			LayeredRaster(grid)
 		{
 			assert(this->grid.layering->layer_count < this->grid.cache->vertex_count);
 			assert(this->values.size() == this->grid.cell_count(Tmap));
@@ -63,16 +63,16 @@ namespace rasters
 		}
 
 		// copy constructor
-		layered_raster(const layered_raster<T,Tgrid,Tmap>& a)  : 
-			layered_raster(a.grid)
+		LayeredRaster(const LayeredRaster<T,Tgrid,Tmap>& a)  : 
+			LayeredRaster(a.grid)
 		{
 			assert(this->grid.layering->layer_count < this->grid.cache->vertex_count);
 			assert(this->values.size() == this->grid.cell_count(Tmap));
 		}
 
 		// convenience constructor for vectors
-		explicit layered_raster(const Tgrid& grid, const std::initializer_list<T>& vector) : 
-			layered_raster(grid)
+		explicit LayeredRaster(const Tgrid& grid, const std::initializer_list<T>& vector) : 
+			LayeredRaster(grid)
 		{
 			assert(this->grid.layering->layer_count < this->grid.cache->vertex_count);
 			assert(this->values.size() == this->grid.cell_count(Tmap));
@@ -80,8 +80,8 @@ namespace rasters
 			std::copy(vector.begin(), vector.end(), this->begin());
 		}
 		template <typename T2>
-		explicit layered_raster(const layered_raster<T2,Tgrid>& a)  : 
-			layered_raster(a.grid)
+		explicit LayeredRaster(const LayeredRaster<T2,Tgrid>& a)  : 
+			LayeredRaster(a.grid)
 		{
 			assert(this->grid.layering->layer_count < this->grid.cache->vertex_count);
 			assert(this->values.size() == this->grid.cell_count(Tmap));
@@ -237,19 +237,19 @@ namespace rasters
 	so we use convenience methods for generating rasters that are compatible for a given grid
 	*/
 	template<typename T, rasters::mapping Tmap = rasters::mapping::cell, typename Tgrid>
-	layered_raster<T,Tgrid,Tmap> make_layered_raster(const Tgrid& grid)
+	LayeredRaster<T,Tgrid,Tmap> make_LayeredRaster(const Tgrid& grid)
 	{
-		return layered_raster<T,Tgrid,Tmap>(grid);
+		return LayeredRaster<T,Tgrid,Tmap>(grid);
 	}
 	template<typename T, rasters::mapping Tmap=rasters::mapping::cell, typename Tgrid>
-	layered_raster<T,Tgrid,Tmap> make_layered_raster(const Tgrid& grid, const std::initializer_list<T>& vector)
+	LayeredRaster<T,Tgrid,Tmap> make_LayeredRaster(const Tgrid& grid, const std::initializer_list<T>& vector)
 	{
-		return layered_raster<T,Tgrid,Tmap>(grid, vector);
+		return LayeredRaster<T,Tgrid,Tmap>(grid, vector);
 	}
 	template<typename T, typename TIterator, rasters::mapping Tmap=rasters::mapping::cell, typename Tgrid>
-	layered_raster<T,Tgrid,Tmap> make_layered_raster(const Tgrid& grid, TIterator first, TIterator last)
+	LayeredRaster<T,Tgrid,Tmap> make_LayeredRaster(const Tgrid& grid, TIterator first, TIterator last)
 	{
-		return layered_raster<T,Tgrid,Tmap>(grid, first, last);
+		return LayeredRaster<T,Tgrid,Tmap>(grid, first, last);
 	}
 
 }

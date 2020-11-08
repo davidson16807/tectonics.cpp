@@ -13,7 +13,7 @@
 #include <many/glm/glm.hpp>         // *vec*s
 #include <many/glm/convenience.hpp> //  operators, etc.
 
-#include "../LayeredGrid/layered_raster.hpp"
+#include "../LayeredGrid/LayeredRaster.hpp"
 #include "../LayeredGrid/layering.hpp"
 #include "LayeredSpheroidGrid.hpp"
 #include "string_cast.hpp"
@@ -25,10 +25,10 @@ using namespace many;
 using namespace rasters;
 
 TEST_CASE( "LayeredSpheroidRaster string cast purity", "[rasters]" ) {
-    auto a = make_layered_raster(layered_octahedron_grid, 
+    auto a = make_LayeredRaster(layered_octahedron_grid, 
         { 1, 2, 3, 4, 5, 6,
           7, 8, 9,10,11,12 });
-    auto v2 = make_layered_raster(layered_octahedron_grid, 
+    auto v2 = make_LayeredRaster(layered_octahedron_grid, 
         {
             vec2(-1,-1),
             vec2(-1, 0),
@@ -46,7 +46,7 @@ TEST_CASE( "LayeredSpheroidRaster string cast purity", "[rasters]" ) {
             vec2(-1, 0),
             vec2(-1, 1),
         });
-    auto v3 = make_layered_raster(layered_octahedron_grid, 
+    auto v3 = make_LayeredRaster(layered_octahedron_grid, 
         {
             vec3(-1,-1,-1),
             vec3(-1,-1, 0),
@@ -75,10 +75,10 @@ TEST_CASE( "LayeredSpheroidRaster string cast purity", "[rasters]" ) {
     }
 }
 TEST_CASE( "LayeredSpheroidRaster string cast correctness", "[rasters]" ) {
-    auto a = make_layered_raster(layered_octahedron_grid, 
+    auto a = make_LayeredRaster(layered_octahedron_grid, 
         { 1, 2, 3, 4, 5, 6,
           7, 8, 9,10,11,12 });
-    auto v2 = make_layered_raster(layered_octahedron_grid, 
+    auto v2 = make_LayeredRaster(layered_octahedron_grid, 
         {
             vec2(-1,-1),
             vec2(-1, 0),
@@ -96,7 +96,7 @@ TEST_CASE( "LayeredSpheroidRaster string cast correctness", "[rasters]" ) {
             vec2(-1, 0),
             vec2(-1, 1),
         });
-    auto v3 = make_layered_raster(layered_octahedron_grid, {
+    auto v3 = make_LayeredRaster(layered_octahedron_grid, {
             vec3( 0,-1,-1),
             vec3( 0,-1, 0),
             vec3( 0,-1, 1),

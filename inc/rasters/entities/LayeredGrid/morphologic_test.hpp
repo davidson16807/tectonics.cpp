@@ -13,14 +13,14 @@
 
 #include <meshes/mesh.hpp>
 
-#include "layered_raster.hpp"
+#include "LayeredRaster.hpp"
 #include "morphologic.hpp"
 
 #include "LayeredGrid_test_utils.hpp" // layered_diamond_grid
 
 using namespace rasters;
 
-TEST_CASE( "raster dilation purity", "[rasters]" ) {
+TEST_CASE( "LayeredRaster dilation purity", "[rasters]" ) {
     auto upper_half =  make_raster(layered_diamond_grid, {true,  true , true,  true , false, true , true,  true , true,  false });
     auto top_only   =  make_raster(layered_diamond_grid, {false, false, true,  false, false, false, false, true , false, false });
     auto out1       =  make_raster(layered_diamond_grid, {false, false, false, false, false, false, false, false, false, false });
@@ -42,7 +42,7 @@ TEST_CASE( "raster dilation purity", "[rasters]" ) {
         CHECK(equal(out1, out2));
     }
 }
-TEST_CASE( "raster dilation increasing", "[rasters]" ) {
+TEST_CASE( "LayeredRaster dilation increasing", "[rasters]" ) {
     auto upper_half =  make_raster(layered_diamond_grid, {true,  true , true,  true , false, true , true,  true , true,  false });
     auto top_only   =  make_raster(layered_diamond_grid, {false, false, true,  false, false, false, false, true , false, false });
     auto out1       =  make_raster(layered_diamond_grid, {false, false, false, false, false, false, false, false, false, false });
@@ -54,7 +54,7 @@ TEST_CASE( "raster dilation increasing", "[rasters]" ) {
         CHECK(sum(out2) >= sum(out1));
     }
 }
-TEST_CASE( "raster dilation associative", "[rasters]" ) {
+TEST_CASE( "LayeredRaster dilation associative", "[rasters]" ) {
     auto A   =  make_raster(layered_diamond_grid, {false, false, true,  false, false, false, false, true , false, false });
     auto AB  =  make_raster(layered_diamond_grid, {false, false, false, false, false, false, false, false, false, false });
     auto ABC =  make_raster(layered_diamond_grid, {false, false, false, false, false, false, false, false, false, false });
@@ -67,7 +67,7 @@ TEST_CASE( "raster dilation associative", "[rasters]" ) {
         CHECK(equal(ABC,  BCA));
     }
 }
-TEST_CASE( "raster dilation distributive over union", "[rasters]" ) {
+TEST_CASE( "LayeredRaster dilation distributive over union", "[rasters]" ) {
     auto A       =  make_raster(layered_diamond_grid, {false, false, true,  false, false, false, false, true , false, false });
     auto B       =  make_raster(layered_diamond_grid, {true,  false, true,  false, false, true , false, true , false, false });
     auto AC      =  make_raster(layered_diamond_grid, {false, false, false, false, false, false, false, false, false, false });
@@ -94,7 +94,7 @@ TEST_CASE( "raster dilation distributive over union", "[rasters]" ) {
      4   
 */
 /*
-TEST_CASE( "raster dilation happy path", "[rasters]" ) {
+TEST_CASE( "LayeredRaster dilation happy path", "[rasters]" ) {
     auto upper_half =  make_raster(layered_diamond_grid, {true,  true , true,  true , false, true , true,  true , true,  false });
     auto top_only   =  make_raster(layered_diamond_grid, {false, false, true,  false, false, false, false, true , false, false });
     auto empty      =  make_raster(layered_diamond_grid, {false, false, false, false, false, false, false, false, false, false });
@@ -118,7 +118,7 @@ TEST_CASE( "raster dilation happy path", "[rasters]" ) {
     }
 }
 */
-TEST_CASE( "raster erosion purity", "[rasters]" ) {
+TEST_CASE( "LayeredRaster erosion purity", "[rasters]" ) {
     auto lower_half =  make_raster(layered_diamond_grid, {true,  true , false,  true , true, true , true,  false, true,  true });
     auto bottom_only=  make_raster(layered_diamond_grid, {true,  true , false,  true , true,  true , true,  false, true,  true  });
     auto out1       =  make_raster(layered_diamond_grid, {false, false, false, false, false, false, false, false, false, false });
@@ -140,7 +140,7 @@ TEST_CASE( "raster erosion purity", "[rasters]" ) {
         CHECK(equal(out1, out2));
     }
 }
-TEST_CASE( "raster erosion decreasing", "[rasters]" ) {
+TEST_CASE( "LayeredRaster erosion decreasing", "[rasters]" ) {
     auto lower_half =  make_raster(layered_diamond_grid, {true,  true , false,  true , true, true , true,  false, true,  true });
     auto bottom_only=  make_raster(layered_diamond_grid, {true,  true , false,  true , true, true , true,  false, true,  true });
     auto out1       =  make_raster(layered_diamond_grid, {false, false, false, false, false, false, false, false, false, false });
@@ -152,7 +152,7 @@ TEST_CASE( "raster erosion decreasing", "[rasters]" ) {
         CHECK(sum(out2) <= sum(out1));
     }
 }
-TEST_CASE( "raster erosion distributive over intersection", "[rasters]" ) {
+TEST_CASE( "LayeredRaster erosion distributive over intersection", "[rasters]" ) {
     auto A       =  make_raster(layered_diamond_grid, {false, false, true,  false, false, false, false, true , false, false });
     auto B       =  make_raster(layered_diamond_grid, {true,  false, true,  false, false, true , false, true , false, false });
     auto AC      =  make_raster(layered_diamond_grid, {false, false, false, false, false, false, false, false, false, false });
@@ -179,7 +179,7 @@ TEST_CASE( "raster erosion distributive over intersection", "[rasters]" ) {
      4   
 */
 /*
-TEST_CASE( "raster erosion happy path", "[rasters]" ) {
+TEST_CASE( "LayeredRaster erosion happy path", "[rasters]" ) {
     auto upper_half =  make_raster(layered_diamond_grid, {true,  true , true,  true , false, true , true,  true , true,  false });
     auto top_only   =  make_raster(layered_diamond_grid, {false, false, true,  false, false, false, false, true , false, false });
     auto empty      =  make_raster(layered_diamond_grid, {false, false, false, false, false, false, false, false, false, false });
@@ -390,7 +390,7 @@ TEST_CASE( "white top hat purity", "[rasters]" ) {
      4   
 */
 /*
-TEST_CASE( "raster white_top_hat happy path", "[rasters]" ) {
+TEST_CASE( "LayeredRaster white_top_hat happy path", "[rasters]" ) {
     auto upper_half =  make_raster(layered_diamond_grid, {true,  true , true,  true , false, true , true,  true , true,  false });
     auto top_only   =  make_raster(layered_diamond_grid, {false, false, true,  false, false, false, false, true , false, false });
     auto bottom_only=  make_raster(layered_diamond_grid, {false, false, false, false, true,  false, false, false, false, true  });
@@ -446,7 +446,7 @@ TEST_CASE( "black top hat purity", "[rasters]" ) {
      4   
 */
 /*
-TEST_CASE( "raster black_top_hat happy path", "[rasters]" ) {
+TEST_CASE( "LayeredRaster black_top_hat happy path", "[rasters]" ) {
     auto upper_half =  make_raster(layered_diamond_grid, {true,  true , true,  true , false, true , true,  true , true,  false });
     auto top_only   =  make_raster(layered_diamond_grid, {false, false, true,  false, false, false, false, true , false, false });
     auto empty      =  make_raster(layered_diamond_grid, {false, false, false, false, false, false, false, false, false, false });

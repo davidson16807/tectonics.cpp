@@ -4,7 +4,7 @@
 #include <many/glm/types.hpp>
 
 #include "LayeredGrid.hpp"
-#include "layered_raster.hpp"
+#include "LayeredRaster.hpp"
 
 namespace rasters 
 {
@@ -12,7 +12,7 @@ namespace rasters
 	// e.g. f = F₀
 	template <typename Tgrid1, typename Tgrid2, typename T, rasters::mapping Tmap>
 	void get_layer(
-		const layered_raster<T, Tgrid1, Tmap>& a, 
+		const LayeredRaster<T, Tgrid1, Tmap>& a, 
 		const std::size_t layer_id, 
 		raster<T, Tgrid2, Tmap>& output
 	){
@@ -28,10 +28,10 @@ namespace rasters
 	// e.g. F₀ = f
 	template <typename Tgrid1, typename Tgrid2, typename T, rasters::mapping Tmap>
 	void set_layer(
-		const layered_raster<T, Tgrid1, Tmap>& a, 
+		const LayeredRaster<T, Tgrid1, Tmap>& a, 
 		const std::size_t layer_id,
 		const raster<T, Tgrid2, Tmap>& value, 
-		layered_raster<T, Tgrid1, Tmap>& output
+		LayeredRaster<T, Tgrid1, Tmap>& output
 	){
 		assert(a.grid.cache == value.grid.cache);
 		assert(a.grid == output.grid);
@@ -48,7 +48,7 @@ namespace rasters
 	template <typename Tgrid1, typename Tgrid2, typename T, rasters::mapping Tmap>
 	void repeat_layers(
 		const raster<T, Tgrid2, Tmap>& a, 
-		layered_raster<T, Tgrid1, Tmap>& output
+		LayeredRaster<T, Tgrid1, Tmap>& output
 	){
 		assert(a.grid.cache == output.grid.cache);
 		std::size_t L = output.grid.layering->layer_count;

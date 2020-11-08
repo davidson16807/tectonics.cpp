@@ -7,14 +7,14 @@
 // in-house libraries
 #include "../Grid/morphologic.hpp"
 
-#include "layered_raster.hpp"
+#include "LayeredRaster.hpp"
 
 namespace rasters
 {
     template <typename Tgrid>
     void dilate(
-        const layered_raster<bool, Tgrid>& a, 
-        layered_raster<bool, Tgrid>& out
+        const LayeredRaster<bool, Tgrid>& a, 
+        LayeredRaster<bool, Tgrid>& out
     ){
         auto& arrow_vertex_id_from = a.grid.cache->arrow_vertex_id_from;
         auto& arrow_vertex_id_to = a.grid.cache->arrow_vertex_id_to;
@@ -42,8 +42,8 @@ namespace rasters
 
     template <typename Tgrid>
     void erode(
-        const layered_raster<bool, Tgrid>& a, 
-        layered_raster<bool, Tgrid>& out
+        const LayeredRaster<bool, Tgrid>& a, 
+        LayeredRaster<bool, Tgrid>& out
     ){
         auto& arrow_vertex_id_from = a.grid.cache->arrow_vertex_id_from;
         auto& arrow_vertex_id_to = a.grid.cache->arrow_vertex_id_to;
