@@ -25,15 +25,15 @@
 
 #include "vector_calculus.hpp"
 
-#include "../convenience.hpp"
-#include "../operators.hpp"
+#include "../Grid/convenience.hpp"
+#include "../Grid/operators.hpp"
 
 #include "../Grid/Grid_test_utils.hpp" // nonspheroid_icosahedron_grid
 
 using namespace rasters;
 
 TEST_CASE( "Raster gradient determinism", "[rasters]" ) {
-    auto a= make_raster<float>(nonspheroid_icosahedron_grid, {1,2,3,4,5,6,7,8,9,10,11,12});
+    auto a= make_Raster<float>(nonspheroid_icosahedron_grid, {1,2,3,4,5,6,7,8,9,10,11,12});
     SECTION("gradient(grid, a) must generate the same output when called repeatedly"){
         CHECK(many::equal(gradient(a), gradient(a)));
     }
@@ -48,15 +48,15 @@ TEST_CASE( "Raster gradient determinism", "[rasters]" ) {
 //     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
 
 
-//     auto a           = make_raster<float>(icosphere_grid);
-//     auto A_ids       = make_raster<uint>(icosphere_grid);
-//     auto Ai_ids      = make_raster<uint>(icosphere_grid);
-//     auto A_pos       = make_raster<glm::vec3>(icosphere_grid);
-//     auto Ai_pos      = make_raster<glm::vec3>(icosphere_grid);
-//     auto A_a         = make_raster<float>(icosphere_grid);
-//     auto grad_A_a    = make_raster<glm::vec3>(icosphere_grid);
-//     auto Ai_grad_A_a = make_raster<glm::vec3>(icosphere_grid);
-//     auto grad_a      = make_raster<glm::vec3>(icosphere_grid);
+//     auto a           = make_Raster<float>(icosphere_grid);
+//     auto A_ids       = make_Raster<uint>(icosphere_grid);
+//     auto Ai_ids      = make_Raster<uint>(icosphere_grid);
+//     auto A_pos       = make_Raster<glm::vec3>(icosphere_grid);
+//     auto Ai_pos      = make_Raster<glm::vec3>(icosphere_grid);
+//     auto A_a         = make_Raster<float>(icosphere_grid);
+//     auto grad_A_a    = make_Raster<glm::vec3>(icosphere_grid);
+//     auto Ai_grad_A_a = make_Raster<glm::vec3>(icosphere_grid);
+//     auto grad_a      = make_Raster<glm::vec3>(icosphere_grid);
 
 //     std::mt19937 generator(2);
 //     many::get_elias_noise(icosphere_grid.cache->vertex_positions, generator, a);
@@ -87,13 +87,13 @@ TEST_CASE( "Raster gradient determinism", "[rasters]" ) {
 //     icosphere_mesh2 = meshes::subdivide(icosphere_mesh2); many::normalize(icosphere_mesh2.vertices, icosphere_mesh2.vertices);
 //     MeshCache icosphere2(icosphere_mesh2.vertices, icosphere_mesh2.faces);
 
-//     auto a           = make_raster<float>(icosphere1.vertex_count);
-//     auto A_ids       = make_raster<uint>(icosphere2.vertex_count);
-//     auto Ai_ids      = make_raster<uint>(icosphere1.vertex_count);
-//     auto A_a         = make_raster<float>(icosphere2.vertex_count);
-//     auto grad_A_a    = make_raster<glm::vec3>(icosphere2.vertex_count);
-//     auto Ai_grad_A_a = make_raster<glm::vec3>(icosphere1.vertex_count);
-//     auto grad_a      = make_raster<glm::vec3>(icosphere1.vertex_count);
+//     auto a           = make_Raster<float>(icosphere1.vertex_count);
+//     auto A_ids       = make_Raster<uint>(icosphere2.vertex_count);
+//     auto Ai_ids      = make_Raster<uint>(icosphere1.vertex_count);
+//     auto A_a         = make_Raster<float>(icosphere2.vertex_count);
+//     auto grad_A_a    = make_Raster<glm::vec3>(icosphere2.vertex_count);
+//     auto Ai_grad_A_a = make_Raster<glm::vec3>(icosphere1.vertex_count);
+//     auto grad_a      = make_Raster<glm::vec3>(icosphere1.vertex_count);
 
 //     std::mt19937 generator(2);
 //     many::get_elias_noise(icosphere1.vertex_positions, generator, a);
@@ -117,8 +117,8 @@ TEST_CASE( "Raster gradient distributive over addition", "[rasters]" ) {
     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
     rasters::Grid icosphere_grid(icosphere_mesh.vertices, icosphere_mesh.faces);
 
-    auto a           = make_raster<float>(icosphere_grid);
-    auto b           = make_raster<float>(icosphere_grid);
+    auto a           = make_Raster<float>(icosphere_grid);
+    auto b           = make_Raster<float>(icosphere_grid);
 
     std::mt19937 generator(2);
     many::get_elias_noise(icosphere_grid.cache->vertex_positions, generator, a);
@@ -135,8 +135,8 @@ TEST_CASE( "Raster gradient multiplication relation", "[rasters]" ) {
     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
     rasters::Grid icosphere_grid(icosphere_mesh.vertices, icosphere_mesh.faces);
 
-    auto a           = make_raster<float>(icosphere_grid);
-    auto b           = make_raster<float>(icosphere_grid);
+    auto a           = make_Raster<float>(icosphere_grid);
+    auto b           = make_Raster<float>(icosphere_grid);
 
     std::mt19937 generator(2);
     many::get_elias_noise(icosphere_grid.cache->vertex_positions, generator, a);
@@ -155,7 +155,7 @@ TEST_CASE( "Raster gradient multiplication relation", "[rasters]" ) {
 }
 
 TEST_CASE( "Raster divergence determinism", "[rasters]" ) {
-    auto a   = make_raster<glm::vec3>(nonspheroid_icosahedron_grid, {
+    auto a   = make_Raster<glm::vec3>(nonspheroid_icosahedron_grid, {
         glm::vec3(1, 2, 3 ),
         glm::vec3(4, 5, 6 ),
         glm::vec3(7, 8, 9 ),
@@ -169,8 +169,8 @@ TEST_CASE( "Raster divergence determinism", "[rasters]" ) {
         glm::vec3(31,32,33),
         glm::vec3(34,35,36)
     });
-    auto out1 = make_raster<float>(nonspheroid_icosahedron_grid);
-    auto out2 = make_raster<float>(nonspheroid_icosahedron_grid);
+    auto out1 = make_Raster<float>(nonspheroid_icosahedron_grid);
+    auto out2 = make_Raster<float>(nonspheroid_icosahedron_grid);
 
     SECTION("divergence(grid, a) must generate the same output when called repeatedly"){
         CHECK(many::equal(divergence(a),divergence(a)));
@@ -185,16 +185,16 @@ TEST_CASE( "Raster divergence determinism", "[rasters]" ) {
 //     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
 
 
-//     auto scalar      = make_raster<float>(icosphere_grid);
-//     auto a           = make_raster<glm::vec3>(icosphere_grid);
-//     auto A_ids       = make_raster<uint>(icosphere_grid);
-//     auto Ai_ids      = make_raster<uint>(icosphere_grid);
-//     auto A_pos       = make_raster<glm::vec3>(icosphere_grid);
-//     auto Ai_pos      = make_raster<glm::vec3>(icosphere_grid);
-//     auto A_a         = make_raster<glm::vec3>(icosphere_grid);
-//     auto div_A_a     = make_raster<float>(icosphere_grid);
-//     auto Ai_div_A_a  = make_raster<float>(icosphere_grid);
-//     auto div_a       = make_raster<float>(icosphere_grid);
+//     auto scalar      = make_Raster<float>(icosphere_grid);
+//     auto a           = make_Raster<glm::vec3>(icosphere_grid);
+//     auto A_ids       = make_Raster<uint>(icosphere_grid);
+//     auto Ai_ids      = make_Raster<uint>(icosphere_grid);
+//     auto A_pos       = make_Raster<glm::vec3>(icosphere_grid);
+//     auto Ai_pos      = make_Raster<glm::vec3>(icosphere_grid);
+//     auto A_a         = make_Raster<glm::vec3>(icosphere_grid);
+//     auto div_A_a     = make_Raster<float>(icosphere_grid);
+//     auto Ai_div_A_a  = make_Raster<float>(icosphere_grid);
+//     auto div_a       = make_Raster<float>(icosphere_grid);
 
 //     std::mt19937 generator(2);
 //     many::get_elias_noise  ( generator, scalar   );
@@ -226,14 +226,14 @@ TEST_CASE( "Raster divergence determinism", "[rasters]" ) {
 //     icosphere_mesh2 = meshes::subdivide(icosphere_mesh2); many::normalize(icosphere_mesh2.vertices, icosphere_mesh2.vertices);
 //     MeshCache icosphere2(icosphere_mesh2.vertices, icosphere_mesh2.faces);
 
-//     auto scalar     = make_raster<float>(icosphere1.vertex_count);
-//     auto a          = make_raster<glm::vec3>(icosphere1.vertex_count);
-//     auto A_ids      = make_raster<uint>(icosphere2.vertex_count);
-//     auto Ai_ids     = make_raster<uint>(icosphere1.vertex_count);
-//     auto A_a        = make_raster<glm::vec3>(icosphere2.vertex_count);
-//     auto div_A_a    = make_raster<float>(icosphere2.vertex_count);
-//     auto Ai_div_A_a = make_raster<float>(icosphere1.vertex_count);
-//     auto div_a      = make_raster<float>(icosphere1.vertex_count);
+//     auto scalar     = make_Raster<float>(icosphere1.vertex_count);
+//     auto a          = make_Raster<glm::vec3>(icosphere1.vertex_count);
+//     auto A_ids      = make_Raster<uint>(icosphere2.vertex_count);
+//     auto Ai_ids     = make_Raster<uint>(icosphere1.vertex_count);
+//     auto A_a        = make_Raster<glm::vec3>(icosphere2.vertex_count);
+//     auto div_A_a    = make_Raster<float>(icosphere2.vertex_count);
+//     auto Ai_div_A_a = make_Raster<float>(icosphere1.vertex_count);
+//     auto div_a      = make_Raster<float>(icosphere1.vertex_count);
 
 //     std::mt19937 generator(2);
 //     many::get_elias_noise  ( icosphere1, generator, scalar );
@@ -257,12 +257,12 @@ TEST_CASE( "Raster divergence distributive over addition", "[rasters]" ) {
     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
     rasters::Grid icosphere_grid(icosphere_mesh.vertices, icosphere_mesh.faces);
 
-    auto scalar     = make_raster<float>(icosphere_grid);
-    auto a          = make_raster<glm::vec3>(icosphere_grid);
-    auto b          = make_raster<glm::vec3>(icosphere_grid);
-    auto div_a      = make_raster<float>(icosphere_grid);
-    auto div_b      = make_raster<float>(icosphere_grid);
-    auto div_a_b    = make_raster<float>(icosphere_grid);
+    auto scalar     = make_Raster<float>(icosphere_grid);
+    auto a          = make_Raster<glm::vec3>(icosphere_grid);
+    auto b          = make_Raster<glm::vec3>(icosphere_grid);
+    auto div_a      = make_Raster<float>(icosphere_grid);
+    auto div_b      = make_Raster<float>(icosphere_grid);
+    auto div_a_b    = make_Raster<float>(icosphere_grid);
 
     std::mt19937 generator(2);
     many::get_elias_noise(icosphere_grid.cache->vertex_positions, generator, scalar);
@@ -279,12 +279,12 @@ TEST_CASE( "Raster divergence distributive over addition", "[rasters]" ) {
 //     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
 //     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
 
-//     auto scalar     = make_raster<float>(icosphere_grid);
-//     auto a          = make_raster<float>(icosphere_grid);
-//     auto b          = make_raster<glm::vec3>(icosphere_grid);
-//     auto grad_a     = make_raster<glm::vec3>(icosphere_grid);
-//     auto div_b      = make_raster<float>(icosphere_grid);
-//     auto div_a_b    = make_raster<float>(icosphere_grid);
+//     auto scalar     = make_Raster<float>(icosphere_grid);
+//     auto a          = make_Raster<float>(icosphere_grid);
+//     auto b          = make_Raster<glm::vec3>(icosphere_grid);
+//     auto grad_a     = make_Raster<glm::vec3>(icosphere_grid);
+//     auto div_b      = make_Raster<float>(icosphere_grid);
+//     auto div_a_b    = make_Raster<float>(icosphere_grid);
 
 //     std::mt19937 generator(2);
 //     many::get_elias_noise(icosphere_grid.cache->vertex_positions, generator, a);
@@ -299,7 +299,7 @@ TEST_CASE( "Raster divergence distributive over addition", "[rasters]" ) {
 //     }
 // }
 TEST_CASE( "Raster curl determinism", "[rasters]" ) {
-    auto a   = make_raster<glm::vec3>(nonspheroid_icosahedron_grid, {
+    auto a   = make_Raster<glm::vec3>(nonspheroid_icosahedron_grid, {
         glm::vec3(1, 2, 3 ),
         glm::vec3(4, 5, 6 ),
         glm::vec3(7, 8, 9 ),
@@ -313,9 +313,9 @@ TEST_CASE( "Raster curl determinism", "[rasters]" ) {
         glm::vec3(31,32,33),
         glm::vec3(34,35,36)
     });
-    // auto b = make_raster<float>(    {1,1,2,3,5,8,13,21,34,55,89,144});
-    auto out1= make_raster<glm::vec3>(nonspheroid_icosahedron_grid);
-    auto out2= make_raster<glm::vec3>(nonspheroid_icosahedron_grid);
+    // auto b = make_Raster<float>(    {1,1,2,3,5,8,13,21,34,55,89,144});
+    auto out1= make_Raster<glm::vec3>(nonspheroid_icosahedron_grid);
+    auto out2= make_Raster<glm::vec3>(nonspheroid_icosahedron_grid);
 
     SECTION("curl(grid, a) must generate the same output when called repeatedly"){
         CHECK(many::equal(curl(a),curl(a), 0.1f));
@@ -327,12 +327,12 @@ TEST_CASE( "Raster curl distributive over addition", "[rasters]" ) {
     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
     rasters::Grid icosphere_grid(icosphere_mesh.vertices, icosphere_mesh.faces);
 
-    auto scalar      = make_raster<float>(icosphere_grid);
-    auto a           = make_raster<glm::vec3>(icosphere_grid);
-    auto b           = make_raster<glm::vec3>(icosphere_grid);
-    auto curl_a      = make_raster<glm::vec3>(icosphere_grid);
-    auto curl_b      = make_raster<glm::vec3>(icosphere_grid);
-    auto curl_a_b    = make_raster<glm::vec3>(icosphere_grid);
+    auto scalar      = make_Raster<float>(icosphere_grid);
+    auto a           = make_Raster<glm::vec3>(icosphere_grid);
+    auto b           = make_Raster<glm::vec3>(icosphere_grid);
+    auto curl_a      = make_Raster<glm::vec3>(icosphere_grid);
+    auto curl_b      = make_Raster<glm::vec3>(icosphere_grid);
+    auto curl_a_b    = make_Raster<glm::vec3>(icosphere_grid);
 
     std::mt19937 generator(2);
     many::get_elias_noise(icosphere_grid.cache->vertex_positions, generator, scalar);
@@ -349,10 +349,10 @@ TEST_CASE( "Raster curl distributive over addition", "[rasters]" ) {
 //     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
 //     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
 
-//     auto a          = make_raster<float>(icosphere_grid);
-//     auto grad_a     = make_raster<glm::vec3>(icosphere_grid);
-//     auto curl_grad_a= make_raster<glm::vec3>(icosphere_grid);
-//     auto zeros      = make_raster<glm::vec3>(icosphere_grid);
+//     auto a          = make_Raster<float>(icosphere_grid);
+//     auto grad_a     = make_Raster<glm::vec3>(icosphere_grid);
+//     auto curl_grad_a= make_Raster<glm::vec3>(icosphere_grid);
+//     auto zeros      = make_Raster<glm::vec3>(icosphere_grid);
 
 //     std::mt19937 generator(2);
 //     many::get_elias_noise(icosphere_grid.cache->vertex_positions, generator, a);
@@ -369,11 +369,11 @@ TEST_CASE( "Raster curl distributive over addition", "[rasters]" ) {
 //     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
 //     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
 
-//     auto scalar     = make_raster<float>(icosphere_grid);
-//     auto a          = make_raster<glm::vec3>(icosphere_grid);
-//     auto curl_a     = make_raster<glm::vec3>(icosphere_grid);
-//     auto div_curl_a = make_raster<float>(icosphere_grid);
-//     auto zeros      = make_raster<float>(icosphere_grid);
+//     auto scalar     = make_Raster<float>(icosphere_grid);
+//     auto a          = make_Raster<glm::vec3>(icosphere_grid);
+//     auto curl_a     = make_Raster<glm::vec3>(icosphere_grid);
+//     auto div_curl_a = make_Raster<float>(icosphere_grid);
+//     auto zeros      = make_Raster<float>(icosphere_grid);
 
 //     std::mt19937 generator(2);
 //     many::get_elias_noise(icosphere_grid.cache->vertex_positions, generator, scalar);
@@ -388,10 +388,10 @@ TEST_CASE( "Raster curl distributive over addition", "[rasters]" ) {
 //     }
 // }
 TEST_CASE( "Raster laplacian determinism", "[rasters]" ) {
-    auto a    = make_raster<float>(nonspheroid_icosahedron_grid, {1,2,3,4,5,6,7,8,9,10,11,12});
-    // auto b = make_raster<float>(nonspheroid_icosahedron_grid, {1,1,2,3,5,8,13,21,34,55,89,144});
-    auto out1 = make_raster<float>(nonspheroid_icosahedron_grid);
-    auto out2 = make_raster<float>(nonspheroid_icosahedron_grid);
+    auto a    = make_Raster<float>(nonspheroid_icosahedron_grid, {1,2,3,4,5,6,7,8,9,10,11,12});
+    // auto b = make_Raster<float>(nonspheroid_icosahedron_grid, {1,1,2,3,5,8,13,21,34,55,89,144});
+    auto out1 = make_Raster<float>(nonspheroid_icosahedron_grid);
+    auto out2 = make_Raster<float>(nonspheroid_icosahedron_grid);
     SECTION("laplacian(grid, a) must generate the same output when called repeatedly"){
         CHECK(many::equal(laplacian(a), laplacian(a), 0.1f));
     }
@@ -402,10 +402,10 @@ TEST_CASE( "Raster laplacian determinism", "[rasters]" ) {
 //     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
 //     icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
 
-//     auto a          = make_raster<float>(icosphere_grid);
-//     auto grad_a     = make_raster<glm::vec3>(icosphere_grid);
-//     auto div_grad_a = make_raster<float>(icosphere_grid);
-//     auto laplacian_a= make_raster<float>(icosphere_grid);
+//     auto a          = make_Raster<float>(icosphere_grid);
+//     auto grad_a     = make_Raster<glm::vec3>(icosphere_grid);
+//     auto div_grad_a = make_Raster<float>(icosphere_grid);
+//     auto laplacian_a= make_Raster<float>(icosphere_grid);
 
 //     std::mt19937 generator(2);
 //     many::get_elias_noise(generator, a);

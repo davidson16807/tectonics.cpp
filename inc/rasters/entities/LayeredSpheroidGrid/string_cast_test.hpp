@@ -129,7 +129,7 @@ TEST_CASE( "LayeredSpheroidRaster string cast correctness", "[rasters]" ) {
                     !Catch::Contains("X") 
                 );
     }
-    SECTION("to_string(grid, vec2s) must depict 2d vector raster using only appropriate arrows"){
+    SECTION("to_string(grid, vec2s) must depict 2d vector Raster using only appropriate arrows"){
         REQUIRE_THAT(to_string(v2), 
                     (Catch::Contains(" ")                        ) && 
                     (Catch::Contains("←") || Catch::Contains("⬅")) && 
@@ -149,7 +149,7 @@ TEST_CASE( "LayeredSpheroidRaster string cast correctness", "[rasters]" ) {
                     !Catch::Contains("X") 
                 );
     }
-    SECTION("to_string() must depict uniform 3d vector raster using only appropriate arrows"){
+    SECTION("to_string() must depict uniform 3d vector Raster using only appropriate arrows"){
         REQUIRE_THAT(to_string(v3), 
                     (Catch::Contains(" ")                        ) && 
                    !(Catch::Contains("←") || Catch::Contains("⬅")) &&    

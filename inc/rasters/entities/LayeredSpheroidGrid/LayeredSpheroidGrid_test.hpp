@@ -16,7 +16,7 @@
 #include <meshes/mesh.hpp>
 
 #include "LayeredSpheroidGrid.hpp"
-#include "../raster.hpp"
+#include "../Grid/Raster.hpp"
 
 #include "LayeredSpheroidGrid_test_utils.hpp"
 
@@ -46,8 +46,8 @@ TEST_CASE( "LayeredSpheroidGrid nontriviality", "[rasters]" ) {
 
 TEST_CASE( "LayeredSpheroidGrid Raster consistency", "[rasters]" ) {
     Grid tetrahedron_grid(meshes::tetrahedron.vertices, meshes::tetrahedron.faces);
-    auto a = make_raster<float>(tetrahedron_grid);
-    SECTION("Elements of a LayeredSpheroidGrid raster must consist of mutually consistent container attributes"){
+    auto a = make_Raster<float>(tetrahedron_grid);
+    SECTION("Elements of a LayeredSpheroidGrid Raster must consist of mutually consistent container attributes"){
         CHECK(a.size() == a.grid.cell_count(rasters::mapping::cell) );
     }
 }

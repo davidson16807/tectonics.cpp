@@ -13,7 +13,7 @@
 #include "Grid.hpp"
 
 /* 
-"diamond_grid" is a simple 2d grid for testing raster operations 
+"diamond_grid" is a simple 2d grid for testing Raster operations 
  that do not require spatial awareness (e.g. arithmetic on scalar fields)
 It looks like this:
      2  
@@ -39,7 +39,7 @@ rasters::Grid<int,float> diamond_grid(
     );
 
 /*
-"tetrahedron_grid" is a simple 3d grid for testing basic raster operations
+"tetrahedron_grid" is a simple 3d grid for testing basic Raster operations
  that require spatial awareness without requiring a particular shape or resolution
  (e.g. gradient, divergence, laplacian)
 */

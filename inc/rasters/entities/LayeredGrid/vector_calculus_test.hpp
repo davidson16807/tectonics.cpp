@@ -159,7 +159,7 @@ TEST_CASE( "LayeredRaster divergence determinism", "[rasters]" ) {
 
     std::mt19937 generator(2);
 
-    auto a = get_random_layered_vector_raster(layered_icosphere_grid, generator);
+    auto a = get_random_vector_LayeredRaster(layered_icosphere_grid, generator);
 
     SECTION("divergence(grid, a) must generate the same output when called repeatedly"){
         CHECK(many::equal(divergence(a),divergence(a)));
@@ -249,8 +249,8 @@ TEST_CASE( "LayeredRaster divergence distributive over addition", "[rasters]" ) 
 
     std::mt19937 generator(2);
 
-    auto a = get_random_layered_vector_raster(layered_icosphere_grid, generator);
-    auto b = get_random_layered_vector_raster(layered_icosphere_grid, generator);
+    auto a = get_random_vector_LayeredRaster(layered_icosphere_grid, generator);
+    auto b = get_random_vector_LayeredRaster(layered_icosphere_grid, generator);
 
     SECTION("divergence(a+b) must generate the same output as divergence(a)+divergence(b)"){
         CHECK(many::equal(divergence(a) + divergence( b), divergence(a+b)));
@@ -288,7 +288,7 @@ TEST_CASE( "LayeredRaster curl determinism", "[rasters]" ) {
 
     std::mt19937 generator(2);
 
-    auto a = get_random_layered_vector_raster(layered_icosphere_grid, generator);
+    auto a = get_random_vector_LayeredRaster(layered_icosphere_grid, generator);
 
     SECTION("curl(grid, a) must generate the same output when called repeatedly"){
         CHECK(many::equal(curl(a),curl(a)));
@@ -303,8 +303,8 @@ TEST_CASE( "LayeredRaster curl distributive over addition", "[rasters]" ) {
 
     std::mt19937 generator(2);
 
-    auto a = get_random_layered_vector_raster(layered_icosphere_grid, generator);
-    auto b = get_random_layered_vector_raster(layered_icosphere_grid, generator);
+    auto a = get_random_vector_LayeredRaster(layered_icosphere_grid, generator);
+    auto b = get_random_vector_LayeredRaster(layered_icosphere_grid, generator);
 
     SECTION("curl(a+b) must generate the same output as curl(a)+curl(b)"){
         CHECK(many::equal(curl(a) + curl(b), curl(a+b)));

@@ -11,7 +11,7 @@ using namespace glm;
 using namespace many;
 using namespace rasters;
 /* 
-"diamond" is a simple 2d grid for testing raster operations 
+"diamond" is a simple 2d grid for testing Raster operations 
  that do not require spatial awareness (e.g. arithmetic on scalar fields)
 It looks like this:
      2  
@@ -38,7 +38,7 @@ MeshCache diamond =
     );
 
 /*
-"tetrahedron" is a simple 3d grid for testing basic raster operations
+"tetrahedron" is a simple 3d grid for testing basic Raster operations
  that require spatial awareness without requiring a particular shape.
  (e.g. gradient, divergence, laplacian)
 */

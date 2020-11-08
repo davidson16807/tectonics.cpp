@@ -17,7 +17,7 @@
 
 #include <meshes/mesh.hpp>
 
-#include "../raster.hpp"
+#include "../Grid/Raster.hpp"
 #include "SpheroidGrid.hpp"
 #include "string_cast.hpp"
 #include "SpheroidGrid_test_utils.hpp"
@@ -25,8 +25,8 @@
 using namespace rasters;
 
 TEST_CASE( "SpheroidRaster string cast purity", "[rasters]" ) {
-    auto a = make_raster(octahedron_grid, {1,2,3,4,5,6});
-    auto v2 = make_raster(octahedron_grid, {
+    auto a = make_Raster(octahedron_grid, {1,2,3,4,5,6});
+    auto v2 = make_Raster(octahedron_grid, {
                     glm::vec2( 0,-1),
                     glm::vec2( 0, 1),
                     glm::vec2(-1, 0),
@@ -34,7 +34,7 @@ TEST_CASE( "SpheroidRaster string cast purity", "[rasters]" ) {
                     glm::vec2( 0, 0),
                     glm::vec2( 0, 0),
                 });
-    auto v3 = make_raster(octahedron_grid, {
+    auto v3 = make_Raster(octahedron_grid, {
                     glm::vec3( 1, 0, 0),
                     glm::vec3( 1, 0, 0),
                     glm::vec3( 1, 0, 0),
@@ -53,8 +53,8 @@ TEST_CASE( "SpheroidRaster string cast purity", "[rasters]" ) {
     }
 }
 TEST_CASE( "SpheroidRaster string cast correctness", "[rasters]" ) {
-    auto a = make_raster(octahedron_grid, {1,2,3,4,5,6});
-    auto v2 = make_raster(octahedron_grid, {
+    auto a = make_Raster(octahedron_grid, {1,2,3,4,5,6});
+    auto v2 = make_Raster(octahedron_grid, {
                     glm::vec2( 0,-1),
                     glm::vec2( 0, 1),
                     glm::vec2(-1, 0),
@@ -62,7 +62,7 @@ TEST_CASE( "SpheroidRaster string cast correctness", "[rasters]" ) {
                     glm::vec2( 0, 0),
                     glm::vec2( 0, 0),
                 });
-    auto v3 = make_raster(octahedron_grid, {
+    auto v3 = make_Raster(octahedron_grid, {
                     glm::vec3( 1, 0, 0),
                     glm::vec3( 1, 0, 0),
                     glm::vec3( 1, 0, 0),
@@ -86,7 +86,7 @@ TEST_CASE( "SpheroidRaster string cast correctness", "[rasters]" ) {
                     !Catch::Contains("X") 
                 );
     }
-    SECTION("to_string(grid, vec2s) must depict 2d vector raster using only appropriate arrows"){
+    SECTION("to_string(grid, vec2s) must depict 2d vector Raster using only appropriate arrows"){
         REQUIRE_THAT(to_string(v2), 
                     (Catch::Contains(" ")                        ) && 
                     (Catch::Contains("←") || Catch::Contains("⬅")) && 
@@ -106,7 +106,7 @@ TEST_CASE( "SpheroidRaster string cast correctness", "[rasters]" ) {
                     !Catch::Contains("X") 
                 );
     }
-    SECTION("to_string() must depict uniform 3d vector raster using only appropriate arrows"){
+    SECTION("to_string() must depict uniform 3d vector Raster using only appropriate arrows"){
         REQUIRE_THAT(to_string(v3), 
                     (Catch::Contains(" ")                        ) && 
                     (Catch::Contains("←") || Catch::Contains("⬅")) && 

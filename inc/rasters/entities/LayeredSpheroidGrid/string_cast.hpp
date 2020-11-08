@@ -16,7 +16,7 @@ namespace rasters
 		const uint line_char_width = 80
 	) {
 		assert(a.size() == a.grid.cache->vertex_count * a.grid.layering->layer_count);
-		raster<T,SpheroidGrid<Tid,Tfloat>> layer_raster(a.grid);
+		Raster<T,SpheroidGrid<Tid,Tfloat>> layer_raster(a.grid);
 		std::string out("");
 		for (uint i = 0; i < a.grid.layering->layer_count; ++i)
 		{
@@ -34,7 +34,7 @@ namespace rasters
 		const glm::vec3 up = glm::vec3(0,0,1)
 	) {
 		assert(a.size() == a.grid.cache->vertex_count * a.grid.layering->layer_count);
-		raster<glm::vec<2,T,Q>,SpheroidGrid<Tid,Tfloat>> layer_raster(a.grid);
+		Raster<glm::vec<2,T,Q>,SpheroidGrid<Tid,Tfloat>> layer_raster(a.grid);
 		std::string out("");
 		for (uint i = 0; i < a.grid.layering->layer_count; ++i)
 		{
@@ -52,7 +52,7 @@ namespace rasters
 		const glm::vec3 up = glm::vec3(0,0,1)
 	) {
 		assert(a.size() == a.grid.cache->vertex_count * a.grid.layering->layer_count);
-		raster<glm::vec<3,T,Q>,SpheroidGrid<Tid,Tfloat>> layer_raster(a.grid);
+		Raster<glm::vec<3,T,Q>,SpheroidGrid<Tid,Tfloat>> layer_raster(a.grid);
 		std::string out("");
 		for (uint i = 0; i < a.grid.layering->layer_count; ++i)
 		{

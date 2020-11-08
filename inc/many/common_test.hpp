@@ -188,7 +188,7 @@ TEST_CASE( "series<T> min/max/clamp consistency", "[many]" ) {
 }
 
 /*
-TEST_CASE( "raster dilation purity", "[many]" ) {
+TEST_CASE( "Raster dilation purity", "[many]" ) {
     many::floats a = many::floats({1,2,3,4,5});
     many::floats b = many::floats({-1,1,-2,2,3});
     many::floats c = many::floats({1,1,2,3,5});
@@ -214,7 +214,7 @@ TEST_CASE( "raster dilation purity", "[many]" ) {
         CHECK(equal(out1, out2));
     }
 }
-TEST_CASE( "raster dilation increasing", "[many]" ) {
+TEST_CASE( "Raster dilation increasing", "[many]" ) {
     auto upper_half =  many::floats({true,  true,  true,  true,  false });
     auto top_only   =  many::floats({false, false, true,  false, false });
     auto out1       =  many::floats({false, false, false, false, false });
@@ -226,7 +226,7 @@ TEST_CASE( "raster dilation increasing", "[many]" ) {
         CHECK(sum(out2) >= sum(out1));
     }
 }
-TEST_CASE( "raster dilation associative", "[many]" ) {
+TEST_CASE( "Raster dilation associative", "[many]" ) {
     auto A   =  many::floats({false, false, true,  false, false });
     auto AB  =  many::floats({false, false, false, false, false });
     auto ABC =  many::floats({false, false, false, false, false });
@@ -239,7 +239,7 @@ TEST_CASE( "raster dilation associative", "[many]" ) {
         CHECK(equal(ABC,  BCA));
     }
 }
-TEST_CASE( "raster dilation distributive over union", "[many]" ) {
+TEST_CASE( "Raster dilation distributive over union", "[many]" ) {
     auto A       =  many::floats({false, false, true,  false, false });
     auto B       =  many::floats({true,  false, true,  false, false });
     auto AC      =  many::floats({false, false, false, false, false });
@@ -258,7 +258,7 @@ TEST_CASE( "raster dilation distributive over union", "[many]" ) {
         CHECK(equal(AB_C,  AC_BC));
     }
 }
-TEST_CASE( "raster dilation happy path", "[many]" ) {
+TEST_CASE( "Raster dilation happy path", "[many]" ) {
     auto upper_half =  many::floats({true,  true,  true,  true,  false });
     auto top_only   =  many::floats({false, false, true,  false, false });
     auto empty      =  many::floats({false, false, false, false, false });

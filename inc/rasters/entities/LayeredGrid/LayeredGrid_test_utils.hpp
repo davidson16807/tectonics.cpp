@@ -11,9 +11,9 @@
 
 #include <meshes/mesh.hpp>
 
-#include <rasters/entities/raster.hpp>
-#include <rasters/entities/convenience.hpp>
-#include <rasters/entities/operators.hpp>
+#include <rasters/entities/Grid/Raster.hpp>
+#include <rasters/entities/Grid/convenience.hpp>
+#include <rasters/entities/Grid/operators.hpp>
 
 #include "LayeredGrid.hpp"
 #include "LayeredRaster.hpp"
@@ -33,10 +33,10 @@ template <typename Tid, typename Tgrid, typename Tgenerator>
 rasters::LayeredRaster<float,rasters::LayeredGrid<Tid,Tgrid>> get_random_LayeredRaster(rasters::LayeredGrid<Tid,Tgrid> layered_grid, Tgenerator generator){
     rasters::Grid<Tid,Tgrid> grid(layered_grid);
 
-    auto a_flat      = rasters::make_raster<float>(grid);
+    auto a_flat      = rasters::make_Raster<float>(grid);
     many::get_elias_noise(grid.cache->vertex_positions, generator, a_flat);
 
-    auto a_offset    = rasters::make_raster<float>(grid);
+    auto a_offset    = rasters::make_Raster<float>(grid);
     many::get_elias_noise(grid.cache->vertex_positions, generator, a_offset);
 
     // offset the middle layer to test vector calculus operations across layers
@@ -48,7 +48,7 @@ rasters::LayeredRaster<float,rasters::LayeredGrid<Tid,Tgrid>> get_random_Layered
 }
 
 template <typename Tid, typename Tgrid, typename Tgenerator>
-rasters::LayeredRaster<glm::vec3, rasters::LayeredGrid<Tid,Tgrid>> get_random_layered_vector_raster(rasters::LayeredGrid<Tid,Tgrid> layered_grid, Tgenerator generator)
+rasters::LayeredRaster<glm::vec3, rasters::LayeredGrid<Tid,Tgrid>> get_random_vector_LayeredRaster(rasters::LayeredGrid<Tid,Tgrid> layered_grid, Tgenerator generator)
 {
     auto u = rasters::make_LayeredRaster<glm::vec3>(layered_grid);
 

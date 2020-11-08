@@ -23,7 +23,7 @@ namespace rasters
 
     /*
     A "grid" is a collection of interconnected grid cells on the surface of 
-    an object that are intended to store values in a raster. 
+    an object that are intended to store values in a Raster. 
     It may be represented by an underlying mesh in which grid cells are 
     represented by vertices, or there may be a more complex relationship, 
     where a vertex in a mesh corresponds to several grid cells 

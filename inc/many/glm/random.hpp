@@ -46,9 +46,9 @@ namespace many
 	}
 	// TODO: rename to "get_angular_noise"
 	/*
-	"get_elias_noise()" generates a scalar raster
+	"get_elias_noise()" generates a scalar Raster
 	whose values are randomly distributed when projected onto a unit sphere
-	The values within the raster fall within [0,1].
+	The values within the Raster fall within [0,1].
 	This is particularly useful when generating a heightmap on a globe.
 	
     "get_elias_noise()" uses an implementation of the terrain generation algorithm discussed by

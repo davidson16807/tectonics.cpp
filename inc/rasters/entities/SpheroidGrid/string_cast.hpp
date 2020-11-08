@@ -10,7 +10,7 @@
 #include <many/types.hpp>
 #include <many/common.hpp>
 
-#include "../raster.hpp"
+#include "../Grid/Raster.hpp"
 #include "SpheroidGrid.hpp"
 
 namespace rasters
@@ -47,7 +47,7 @@ namespace rasters
 
 
 	template <typename Tgrid, typename T>
-	std::string to_string(const raster<T,Tgrid>& a, const T lo, const T hi, const uint line_char_width = 80)
+	std::string to_string(const Raster<T,Tgrid>& a, const T lo, const T hi, const uint line_char_width = 80)
 	{
 		float lat(0.);
 		float lon(0.);
@@ -101,14 +101,14 @@ namespace rasters
 	}
 
 	template <typename Tgrid, typename T>
-	std::string to_string(const raster<T,Tgrid>& a, const int line_char_width = 80)
+	std::string to_string(const Raster<T,Tgrid>& a, const int line_char_width = 80)
 	{
 		return to_string(a, many::min(a), many::max(a), line_char_width);
 	}
 
 	
 	/*
-	This "to_string()" extension returns a string representation for a vec2raster,
+	This "to_string()" extension returns a string representation for a vec2Raster,
 	  drawing 2d vectors as if on the surface of a sphere using an equirectangular projection.
 	It assumes the following:
 	  * the mesh is at least a rough approximation of a unit sphere
@@ -116,9 +116,9 @@ namespace rasters
 	  * "up" is indicated by the z axis of a 3d vector
 	*/
 	template <typename Tgrid, typename T, glm::qualifier Q>
-	std::string to_string(const raster<glm::vec<2,T,Q>,Tgrid>& a, const uint line_char_width = 80)
+	std::string to_string(const Raster<glm::vec<2,T,Q>,Tgrid>& a, const uint line_char_width = 80)
 	{
-		raster<T,Tgrid> a_length(a.grid);
+		Raster<T,Tgrid> a_length(a.grid);
 		many::length(a, a_length);
 		T a_length_max = many::max(a_length);
 
@@ -183,7 +183,7 @@ namespace rasters
 
 
 	/*
-	This "to_string()" extension returns a string representation for a vec2raster,
+	This "to_string()" extension returns a string representation for a vec2Raster,
 	  drawing vectors as if on the surface of a sphere using an equirectangular projection.
 	Since 3d vectors can't be easily represented in 2d ascii art, 
 	  the 3d vectors are portrayed as the 2d projections on the surface of a sphere. 
@@ -194,7 +194,7 @@ namespace rasters
 	template <typename Tgrid, typename T, glm::qualifier Q>
 	std::string to_string(
 		const many::series<glm::vec<3,T,Q>>& vertex_normals, 
-		const raster<glm::vec<3,T,Q>,Tgrid>& a, 
+		const Raster<glm::vec<3,T,Q>,Tgrid>& a, 
 		const uint line_char_width = 80, 
 		const glm::vec3 up = glm::vec3(0,0,1)
 	) {
@@ -203,7 +203,7 @@ namespace rasters
 		many::vec3s		surface_basis_z(vertex_normals);
 		many::floats	a2dx(a.size());
 		many::floats	a2dy(a.size());
-		raster<glm::vec<2,T,Q>,Tgrid> a2d (a.grid);
+		Raster<glm::vec<2,T,Q>,Tgrid> a2d (a.grid);
 
 		many::cross		(surface_basis_z, up, 				surface_basis_x);
 		many::normalize	(surface_basis_x, 					surface_basis_x);
@@ -222,7 +222,7 @@ namespace rasters
 
 	template <typename Tgrid, typename T, glm::qualifier Q>
 	std::string to_string(
-		const raster<glm::vec<3,T,Q>,Tgrid>& a, 
+		const Raster<glm::vec<3,T,Q>,Tgrid>& a, 
 		const uint line_char_width = 80, 
 		const glm::vec3 up = glm::vec3(0,0,1)
 	) {

@@ -42,12 +42,3 @@ TEST_CASE( "Grid nontriviality", "[rasters]" ) {
         CHECK(many::sum(many::abs(many::get_x(tetrahedron_grid.cache->vertex_positions))) > 0.01f);
     }
 }
-
-TEST_CASE( "Raster consistency", "[rasters]" ) {
-    auto a = make_raster<float>(tetrahedron_grid);
-    auto b = make_raster<float, mapping::arrow>(tetrahedron_grid);
-    SECTION("Elements of raster of layered grid must consist of mutually consistent container attributes"){
-        CHECK(a.size() == a.grid.cell_count(rasters::mapping::cell) );
-        CHECK(b.size() == b.grid.cell_count(rasters::mapping::arrow) );
-    }
-}

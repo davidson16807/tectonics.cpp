@@ -20,11 +20,11 @@
 using namespace rasters;
 
 TEST_CASE( "Raster dilation purity", "[rasters]" ) {
-    auto upper_half =  make_raster(diamond_grid, {true,  true,  true,  true,  false });
-    auto top_only   =  make_raster(diamond_grid, {false, false, true,  false, false });
-    auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto out2       =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto scratch    =  make_raster(diamond_grid, {false, false, false, false, false });
+    auto upper_half =  make_Raster(diamond_grid, {true,  true,  true,  true,  false });
+    auto top_only   =  make_Raster(diamond_grid, {false, false, true,  false, false });
+    auto out1       =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto out2       =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto scratch    =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("dilate(grid, top_only) must generate the same output when called repeatedly"){
         dilate(top_only, out1);
         dilate(top_only, out2);
@@ -42,10 +42,10 @@ TEST_CASE( "Raster dilation purity", "[rasters]" ) {
     }
 }
 TEST_CASE( "Raster dilation increasing", "[rasters]" ) {
-    auto upper_half =  make_raster(diamond_grid, {true,  true,  true,  true,  false });
-    auto top_only   =  make_raster(diamond_grid, {false, false, true,  false, false });
-    auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto out2       =  make_raster(diamond_grid, {false, false, false, false, false });
+    auto upper_half =  make_Raster(diamond_grid, {true,  true,  true,  true,  false });
+    auto top_only   =  make_Raster(diamond_grid, {false, false, true,  false, false });
+    auto out1       =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto out2       =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("dilate(grid, top_only) must increase the number of flagged vertices"){
         dilate(top_only, out1);
         dilate(out1,     out2);
@@ -53,12 +53,20 @@ TEST_CASE( "Raster dilation increasing", "[rasters]" ) {
         CHECK(sum(out2) >= sum(out1));
     }
 }
+TEST_CASE( "Raster dilation identity", "[rasters]" ) {
+    auto top_only   =  make_Raster(diamond_grid, {false, false, true,  false, false });
+    auto out1       =  make_Raster(diamond_grid, {false, false, false, false, false });
+    SECTION("dilate(grid, top_only, 0) must provide output equivalent to input"){
+        dilate(top_only, out1, 0);
+        CHECK(many::equal(top_only, out1));
+    }
+}
 TEST_CASE( "Raster dilation associative", "[rasters]" ) {
-    auto A   =  make_raster(diamond_grid, {false, false, true,  false, false });
-    auto AB  =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto ABC =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto BC  =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto BCA =  make_raster(diamond_grid, {false, false, false, false, false });
+    auto A   =  make_Raster(diamond_grid, {false, false, true,  false, false });
+    auto AB  =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto ABC =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto BC  =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto BCA =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("dilation (A+B)+C must equal A+(B+C) where B and C are circles of radius 1 and 2"){
         dilate(A,  AB,  1);
         dilate(AB, ABC, 2);
@@ -67,13 +75,13 @@ TEST_CASE( "Raster dilation associative", "[rasters]" ) {
     }
 }
 TEST_CASE( "Raster dilation distributive over union", "[rasters]" ) {
-    auto A       =  make_raster(diamond_grid, {false, false, true,  false, false });
-    auto B       =  make_raster(diamond_grid, {true,  false, true,  false, false });
-    auto AC      =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto BC      =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto AB      =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto AB_C    =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto AC_BC   =  make_raster(diamond_grid, {false, false, false, false, false });
+    auto A       =  make_Raster(diamond_grid, {false, false, true,  false, false });
+    auto B       =  make_Raster(diamond_grid, {true,  false, true,  false, false });
+    auto AC      =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto BC      =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto AB      =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto AB_C    =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto AC_BC   =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("dilation (A ∪ B)+C must equal (A+C) ∪ (B+C)"){
         unite (A,  B,  AB);
         dilate(AB, AB_C, 1);
@@ -93,11 +101,11 @@ TEST_CASE( "Raster dilation distributive over union", "[rasters]" ) {
      4   
 */
 TEST_CASE( "Raster dilation happy path", "[rasters]" ) {
-    auto upper_half =  make_raster(diamond_grid, {true,  true,  true,  true,  false });
-    auto top_only   =  make_raster(diamond_grid, {false, false, true,  false, false });
-    auto empty      =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto full       =  make_raster(diamond_grid, {true,  true,  true,  true,  true  });
-    auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
+    auto upper_half =  make_Raster(diamond_grid, {true,  true,  true,  true,  false });
+    auto top_only   =  make_Raster(diamond_grid, {false, false, true,  false, false });
+    auto empty      =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto full       =  make_Raster(diamond_grid, {true,  true,  true,  true,  true  });
+    auto out1       =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("dilate(grid, top_only) must return predictable results"){
         dilate(top_only, out1);
         CHECK(equal(out1,  upper_half));
@@ -116,11 +124,11 @@ TEST_CASE( "Raster dilation happy path", "[rasters]" ) {
     }
 }
 TEST_CASE( "Raster erosion purity", "[rasters]" ) {
-    auto lower_half =  make_raster(diamond_grid, {true,  true,  false,  true,  true });
-    auto bottom_only=  make_raster(diamond_grid, {true,  true,  false,  true,  true  });
-    auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto out2       =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto scratch    =  make_raster(diamond_grid, {false, false, false, false, false });
+    auto lower_half =  make_Raster(diamond_grid, {true,  true,  false,  true,  true });
+    auto bottom_only=  make_Raster(diamond_grid, {true,  true,  false,  true,  true  });
+    auto out1       =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto out2       =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto scratch    =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("erode(grid, bottom_only) must generate the same output when called repeatedly"){
         erode(bottom_only, out1);
         erode(bottom_only, out2);
@@ -138,10 +146,10 @@ TEST_CASE( "Raster erosion purity", "[rasters]" ) {
     }
 }
 TEST_CASE( "Raster erosion decreasing", "[rasters]" ) {
-    auto lower_half =  make_raster(diamond_grid, {true,  true,  false,  true,  true });
-    auto bottom_only=  make_raster(diamond_grid, {true,  true,  false,  true,  true });
-    auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto out2       =  make_raster(diamond_grid, {false, false, false, false, false });
+    auto lower_half =  make_Raster(diamond_grid, {true,  true,  false,  true,  true });
+    auto bottom_only=  make_Raster(diamond_grid, {true,  true,  false,  true,  true });
+    auto out1       =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto out2       =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("erode(grid, bottom_only) must increase the number of flagged vertices"){
         erode(bottom_only, out1);
         erode(out1,        out2);
@@ -149,14 +157,22 @@ TEST_CASE( "Raster erosion decreasing", "[rasters]" ) {
         CHECK(sum(out2) <= sum(out1));
     }
 }
+TEST_CASE( "Raster erosion identity", "[rasters]" ) {
+    auto lower_half =  make_Raster(diamond_grid, {true,  true,  false,  true,  true });
+    auto out1       =  make_Raster(diamond_grid, {false, false, false, false, false });
+    SECTION("erode(grid, lower_half, 0) must provide output equivalent to input"){
+        erode(lower_half, out1, 0);
+        CHECK(many::equal(lower_half, out1));
+    }
+}
 TEST_CASE( "Raster erosion distributive over intersection", "[rasters]" ) {
-    auto A       =  make_raster(diamond_grid, {false, false, true,  false, false });
-    auto B       =  make_raster(diamond_grid, {true,  false, true,  false, false });
-    auto AC      =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto BC      =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto AB      =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto AB_C    =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto AC_BC   =  make_raster(diamond_grid, {false, false, false, false, false });
+    auto A       =  make_Raster(diamond_grid, {false, false, true,  false, false });
+    auto B       =  make_Raster(diamond_grid, {true,  false, true,  false, false });
+    auto AC      =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto BC      =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto AB      =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto AB_C    =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto AC_BC   =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("erosion (A ∩ B)+C must equal (A+C) ∩ (B+C)"){
         intersect (A,  B,  AB);
         erode     (AB, AB_C, 1);
@@ -176,11 +192,11 @@ TEST_CASE( "Raster erosion distributive over intersection", "[rasters]" ) {
      4   
 */
 TEST_CASE( "Raster erosion happy path", "[rasters]" ) {
-    auto upper_half =  make_raster(diamond_grid, {true,  true,  true,  true,  false });
-    auto top_only   =  make_raster(diamond_grid, {false, false, true,  false, false });
-    auto empty      =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto full       =  make_raster(diamond_grid, {true,  true,  true,  true,  true  });
-    auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
+    auto upper_half =  make_Raster(diamond_grid, {true,  true,  true,  true,  false });
+    auto top_only   =  make_Raster(diamond_grid, {false, false, true,  false, false });
+    auto empty      =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto full       =  make_Raster(diamond_grid, {true,  true,  true,  true,  true  });
+    auto out1       =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("erode(grid, top_only) must return predictable results"){
         erode(top_only,   out1);
         CHECK(equal(out1,  empty));
@@ -201,11 +217,11 @@ TEST_CASE( "Raster erosion happy path", "[rasters]" ) {
 
 
 TEST_CASE( "Raster opening purity", "[rasters]" ) {
-    auto bottom_edge=  make_raster(diamond_grid, {false,  true, false,  true,  true });
-    auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto out2       =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto scratch1   =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto scratch2   =  make_raster(diamond_grid, {false, false, false, false, false });
+    auto bottom_edge=  make_Raster(diamond_grid, {false,  true, false,  true,  true });
+    auto out1       =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto out2       =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto scratch1   =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto scratch2   =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("opening(grid, bottom_edge) must generate the same output when called repeatedly"){
         opening(bottom_edge, out1);
         opening(bottom_edge, out2);
@@ -223,11 +239,11 @@ TEST_CASE( "Raster opening purity", "[rasters]" ) {
     }
 }
 TEST_CASE( "Raster opening idempotence", "[rasters]" ) {
-    auto bottom_edge=  make_raster(diamond_grid, {false,  true, false,  true,  true });
-    auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto out2       =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto scratch1   =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto scratch2   =  make_raster(diamond_grid, {false, false, false, false, false });
+    auto bottom_edge=  make_Raster(diamond_grid, {false,  true, false,  true,  true });
+    auto out1       =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto out2       =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto scratch1   =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto scratch2   =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("subsequent calls to opening(grid, bottom_edge) must generate the same output"){
         opening(bottom_edge, out1);
         opening(out1,        out2);
@@ -252,11 +268,11 @@ TEST_CASE( "Raster opening idempotence", "[rasters]" ) {
      4   
 */
 TEST_CASE( "Raster opening happy path", "[rasters]" ) {
-    auto upper_half =  make_raster(diamond_grid, {true,  true,  true,  true,  false });
-    auto top_only   =  make_raster(diamond_grid, {false, false, true,  false, false });
-    auto empty      =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto full       =  make_raster(diamond_grid, {true,  true,  true,  true,  true  });
-    auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
+    auto upper_half =  make_Raster(diamond_grid, {true,  true,  true,  true,  false });
+    auto top_only   =  make_Raster(diamond_grid, {false, false, true,  false, false });
+    auto empty      =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto full       =  make_Raster(diamond_grid, {true,  true,  true,  true,  true  });
+    auto out1       =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("opening(grid, top_only) must return predictable results"){
         opening(top_only,   out1);
         CHECK(equal(out1,  empty));
@@ -276,11 +292,11 @@ TEST_CASE( "Raster opening happy path", "[rasters]" ) {
 }
 
 TEST_CASE( "Raster closing purity", "[rasters]" ) {
-    auto bottom_edge=  make_raster(diamond_grid, {false,  true, false,  true,  true });
-    auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto out2       =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto scratch1   =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto scratch2   =  make_raster(diamond_grid, {false, false, false, false, false });
+    auto bottom_edge=  make_Raster(diamond_grid, {false,  true, false,  true,  true });
+    auto out1       =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto out2       =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto scratch1   =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto scratch2   =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("closing(grid, bottom_edge) must generate the same output when called repeatedly"){
         closing(bottom_edge, out1);
         closing(bottom_edge, out2);
@@ -298,11 +314,11 @@ TEST_CASE( "Raster closing purity", "[rasters]" ) {
     }
 }
 TEST_CASE( "Raster closing idempotence", "[rasters]" ) {
-    auto bottom_edge=  make_raster(diamond_grid, {false,  true, false,  true,  true });
-    auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto out2       =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto scratch1   =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto scratch2   =  make_raster(diamond_grid, {false, false, false, false, false });
+    auto bottom_edge=  make_Raster(diamond_grid, {false,  true, false,  true,  true });
+    auto out1       =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto out2       =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto scratch1   =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto scratch2   =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("subsequent calls to closing(grid, bottom_edge) must generate the same output"){
         closing(bottom_edge, out1);
         closing(out1,        out2);
@@ -327,11 +343,11 @@ TEST_CASE( "Raster closing idempotence", "[rasters]" ) {
      4   
 */
 TEST_CASE( "Raster closing happy path", "[rasters]" ) {
-    auto upper_half =  make_raster(diamond_grid, {true,  true,  true,  true,  false });
-    auto top_only   =  make_raster(diamond_grid, {false, false, true,  false, false });
-    auto empty      =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto full       =  make_raster(diamond_grid, {true,  true,  true,  true,  true  });
-    auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
+    auto upper_half =  make_Raster(diamond_grid, {true,  true,  true,  true,  false });
+    auto top_only   =  make_Raster(diamond_grid, {false, false, true,  false, false });
+    auto empty      =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto full       =  make_Raster(diamond_grid, {true,  true,  true,  true,  true  });
+    auto out1       =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("closing(grid, top_only) must return predictable results"){
         closing(top_only,   out1);
         CHECK(equal(out1,  top_only));
@@ -352,11 +368,11 @@ TEST_CASE( "Raster closing happy path", "[rasters]" ) {
 
 
 TEST_CASE( "Raster white top hat purity", "[rasters]" ) {
-    auto bottom_edge=  make_raster(diamond_grid, {false,  true, false,  true,  true });
-    auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto out2       =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto scratch1   =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto scratch2   =  make_raster(diamond_grid, {false, false, false, false, false });
+    auto bottom_edge=  make_Raster(diamond_grid, {false,  true, false,  true,  true });
+    auto out1       =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto out2       =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto scratch1   =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto scratch2   =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("white_top_hat(grid, bottom_edge) must generate the same output when called repeatedly"){
         white_top_hat(bottom_edge, out1);
         white_top_hat(bottom_edge, out2);
@@ -381,12 +397,12 @@ TEST_CASE( "Raster white top hat purity", "[rasters]" ) {
      4   
 */
 TEST_CASE( "Raster white_top_hat happy path", "[rasters]" ) {
-    auto upper_half =  make_raster(diamond_grid, {true,  true,  true,  true,  false });
-    auto top_only   =  make_raster(diamond_grid, {false, false, true,  false, false });
-    auto bottom_only=  make_raster(diamond_grid, {false, false, false, false, true  });
-    auto empty      =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto full       =  make_raster(diamond_grid, {true,  true,  true,  true,  true  });
-    auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
+    auto upper_half =  make_Raster(diamond_grid, {true,  true,  true,  true,  false });
+    auto top_only   =  make_Raster(diamond_grid, {false, false, true,  false, false });
+    auto bottom_only=  make_Raster(diamond_grid, {false, false, false, false, true  });
+    auto empty      =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto full       =  make_Raster(diamond_grid, {true,  true,  true,  true,  true  });
+    auto out1       =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("white_top_hat(grid, top_only) must return predictable results"){
         white_top_hat(top_only,   out1);
         CHECK(equal(out1,  empty));
@@ -406,11 +422,11 @@ TEST_CASE( "Raster white_top_hat happy path", "[rasters]" ) {
 }
 
 TEST_CASE( "Raster black top hat purity", "[rasters]" ) {
-    auto bottom_edge=  make_raster(diamond_grid, {false,  true, false,  true,  true });
-    auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto out2       =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto scratch1   =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto scratch2   =  make_raster(diamond_grid, {false, false, false, false, false });
+    auto bottom_edge=  make_Raster(diamond_grid, {false,  true, false,  true,  true });
+    auto out1       =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto out2       =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto scratch1   =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto scratch2   =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("black_top_hat(grid, bottom_edge) must generate the same output when called repeatedly"){
         black_top_hat(bottom_edge, out1);
         black_top_hat(bottom_edge, out2);
@@ -435,11 +451,11 @@ TEST_CASE( "Raster black top hat purity", "[rasters]" ) {
      4   
 */
 TEST_CASE( "Raster black_top_hat happy path", "[rasters]" ) {
-    auto upper_half =  make_raster(diamond_grid, {true,  true,  true,  true,  false });
-    auto top_only   =  make_raster(diamond_grid, {false, false, true,  false, false });
-    auto empty      =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto full       =  make_raster(diamond_grid, {true,  true,  true,  true,  true  });
-    auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
+    auto upper_half =  make_Raster(diamond_grid, {true,  true,  true,  true,  false });
+    auto top_only   =  make_Raster(diamond_grid, {false, false, true,  false, false });
+    auto empty      =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto full       =  make_Raster(diamond_grid, {true,  true,  true,  true,  true  });
+    auto out1       =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("black_top_hat(grid, top_only) must return predictable results"){
         black_top_hat(top_only,   out1);
         CHECK(equal(out1,  top_only));
@@ -459,11 +475,11 @@ TEST_CASE( "Raster black_top_hat happy path", "[rasters]" ) {
 }
 
 TEST_CASE( "Raster margin purity", "[rasters]" ) {
-    auto bottom_edge=  make_raster(diamond_grid, {false,  true, false,  true,  true });
-    auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto out2       =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto scratch1   =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto scratch2   =  make_raster(diamond_grid, {false, false, false, false, false });
+    auto bottom_edge=  make_Raster(diamond_grid, {false,  true, false,  true,  true });
+    auto out1       =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto out2       =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto scratch1   =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto scratch2   =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("margin(grid, bottom_edge) must generate the same output when called repeatedly"){
         margin(bottom_edge, out1);
         margin(bottom_edge, out2);
@@ -488,13 +504,13 @@ TEST_CASE( "Raster margin purity", "[rasters]" ) {
      4   
 */
 TEST_CASE( "Raster margin happy path", "[rasters]" ) {
-    auto upper_half =  make_raster(diamond_grid, {true,  true,  true,  true,  false });
-    auto top_only   =  make_raster(diamond_grid, {false, false, true,  false, false });
-    auto bottom_only=  make_raster(diamond_grid, {false, false, false, false, true  });
-    auto center     =  make_raster(diamond_grid, {true,  true,  false, true,  false });
-    auto empty      =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto full       =  make_raster(diamond_grid, {true,  true,  true,  true,  true  });
-    auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
+    auto upper_half =  make_Raster(diamond_grid, {true,  true,  true,  true,  false });
+    auto top_only   =  make_Raster(diamond_grid, {false, false, true,  false, false });
+    auto bottom_only=  make_Raster(diamond_grid, {false, false, false, false, true  });
+    auto center     =  make_Raster(diamond_grid, {true,  true,  false, true,  false });
+    auto empty      =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto full       =  make_Raster(diamond_grid, {true,  true,  true,  true,  true  });
+    auto out1       =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("margin(grid, top_only) must return predictable results"){
         margin(top_only,   out1);
         CHECK(equal(out1,  center));
@@ -514,11 +530,11 @@ TEST_CASE( "Raster margin happy path", "[rasters]" ) {
 }
 
 TEST_CASE( "Raster padding purity", "[rasters]" ) {
-    auto bottom_edge=  make_raster(diamond_grid, {false,  true, false,  true,  true });
-    auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto out2       =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto scratch1   =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto scratch2   =  make_raster(diamond_grid, {false, false, false, false, false });
+    auto bottom_edge=  make_Raster(diamond_grid, {false,  true, false,  true,  true });
+    auto out1       =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto out2       =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto scratch1   =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto scratch2   =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("padding(grid, bottom_edge) must generate the same output when called repeatedly"){
         padding(bottom_edge, out1);
         padding(bottom_edge, out2);
@@ -543,12 +559,12 @@ TEST_CASE( "Raster padding purity", "[rasters]" ) {
      4   
 */
 TEST_CASE( "Raster padding happy path", "[rasters]" ) {
-    auto upper_half =  make_raster(diamond_grid, {true,  true,  true,  true,  false });
-    auto top_only   =  make_raster(diamond_grid, {false, false, true,  false, false });
-    auto center     =  make_raster(diamond_grid, {true,  true,  false, true,  false });
-    auto empty      =  make_raster(diamond_grid, {false, false, false, false, false });
-    auto full       =  make_raster(diamond_grid, {true,  true,  true,  true,  true  });
-    auto out1       =  make_raster(diamond_grid, {false, false, false, false, false });
+    auto upper_half =  make_Raster(diamond_grid, {true,  true,  true,  true,  false });
+    auto top_only   =  make_Raster(diamond_grid, {false, false, true,  false, false });
+    auto center     =  make_Raster(diamond_grid, {true,  true,  false, true,  false });
+    auto empty      =  make_Raster(diamond_grid, {false, false, false, false, false });
+    auto full       =  make_Raster(diamond_grid, {true,  true,  true,  true,  true  });
+    auto out1       =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("padding(grid, top_only) must return predictable results"){
         padding(top_only,   out1);
         CHECK(equal(out1,  top_only));

@@ -14,7 +14,7 @@ namespace rasters
 	void get_layer(
 		const LayeredRaster<T, Tgrid1, Tmap>& a, 
 		const std::size_t layer_id, 
-		raster<T, Tgrid2, Tmap>& output
+		Raster<T, Tgrid2, Tmap>& output
 	){
 		assert(a.grid.cache == output.grid.cache);
 		std::size_t L = a.grid.layering->layer_count;
@@ -30,7 +30,7 @@ namespace rasters
 	void set_layer(
 		const LayeredRaster<T, Tgrid1, Tmap>& a, 
 		const std::size_t layer_id,
-		const raster<T, Tgrid2, Tmap>& value, 
+		const Raster<T, Tgrid2, Tmap>& value, 
 		LayeredRaster<T, Tgrid1, Tmap>& output
 	){
 		assert(a.grid.cache == value.grid.cache);
@@ -47,7 +47,7 @@ namespace rasters
 	// e.g. Fᵢ = f
 	template <typename Tgrid1, typename Tgrid2, typename T, rasters::mapping Tmap>
 	void repeat_layers(
-		const raster<T, Tgrid2, Tmap>& a, 
+		const Raster<T, Tgrid2, Tmap>& a, 
 		LayeredRaster<T, Tgrid1, Tmap>& output
 	){
 		assert(a.grid.cache == output.grid.cache);

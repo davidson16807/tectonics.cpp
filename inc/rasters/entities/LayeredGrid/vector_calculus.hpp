@@ -1,7 +1,6 @@
 #pragma once
 
-#include "LayeredGrid.hpp"
-#include "../raster.hpp"
+#include "LayeredRaster.hpp"
 
 namespace rasters
 {

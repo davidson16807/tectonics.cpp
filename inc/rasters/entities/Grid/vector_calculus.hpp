@@ -1,7 +1,7 @@
 #pragma once
 #include <many/arithmetic.hpp>
 #include <many/glm/geometric.hpp>
-#include "../raster.hpp"
+#include "../Grid/Raster.hpp"
 
 namespace rasters
 {
@@ -98,10 +98,10 @@ namespace rasters
     */
     template<typename T, typename Tgrid, glm::qualifier Q>
     void gradient(
-        const raster<T, Tgrid>& scalar_field, 
-        raster<glm::vec<3,T,Q>, Tgrid>& out, 
-        raster<T, Tgrid, mapping::arrow>& arrow_differential, 
-        raster<glm::vec<3,T,Q>, Tgrid, mapping::arrow>& arrow_flow
+        const Raster<T, Tgrid>& scalar_field, 
+        Raster<glm::vec<3,T,Q>, Tgrid>& out, 
+        Raster<T, Tgrid, mapping::arrow>& arrow_differential, 
+        Raster<glm::vec<3,T,Q>, Tgrid, mapping::arrow>& arrow_flow
     ) {
         const auto cache = scalar_field.grid.cache;
         glm::uvec2 arrow;
@@ -118,22 +118,22 @@ namespace rasters
     }
 
     template<typename T, typename Tgrid>
-    raster<glm::vec3, Tgrid> gradient(const raster<T, Tgrid>& scalar_field)
+    Raster<glm::vec3, Tgrid> gradient(const Raster<T, Tgrid>& scalar_field)
     {
         const auto cache = scalar_field.grid.cache;
-        raster<T, Tgrid, mapping::arrow>         arrow_differential (scalar_field.grid);
-        raster<glm::vec3, Tgrid, mapping::arrow> arrow_flow         (scalar_field.grid);
-        raster<glm::vec3, Tgrid> out                (scalar_field.grid);
+        Raster<T, Tgrid, mapping::arrow>         arrow_differential (scalar_field.grid);
+        Raster<glm::vec3, Tgrid, mapping::arrow> arrow_flow         (scalar_field.grid);
+        Raster<glm::vec3, Tgrid> out                (scalar_field.grid);
         rasters::gradient(scalar_field, out, arrow_differential, arrow_flow);
         return out;
     }
 
     template<typename T, typename Tgrid, glm::qualifier Q>
     void divergence(
-        const raster<glm::vec<3,T,Q>, Tgrid>& vector_field, 
-        raster<T, Tgrid>& out, 
-        raster<glm::vec<3,T,Q>, Tgrid, mapping::arrow>& arrow_differential, 
-        raster<T, Tgrid, mapping::arrow>& arrow_projection
+        const Raster<glm::vec<3,T,Q>, Tgrid>& vector_field, 
+        Raster<T, Tgrid>& out, 
+        Raster<glm::vec<3,T,Q>, Tgrid, mapping::arrow>& arrow_differential, 
+        Raster<T, Tgrid, mapping::arrow>& arrow_projection
     ) {
         const auto cache = vector_field.grid.cache;
         glm::uvec2 arrow;
@@ -150,22 +150,22 @@ namespace rasters
     }
 
     template<typename T, typename Tgrid, glm::qualifier Q>
-    raster<T, Tgrid> divergence(const raster<glm::vec<3,T,Q>, Tgrid>& vector_field)
+    Raster<T, Tgrid> divergence(const Raster<glm::vec<3,T,Q>, Tgrid>& vector_field)
     {
         const auto cache = vector_field.grid.cache;
-        raster<glm::vec<3,T,Q>, Tgrid, mapping::arrow> arrow_differential (vector_field.grid);
-        raster<T, Tgrid, mapping::arrow>               arrow_projection   (vector_field.grid);
-        raster<T, Tgrid>               out                (vector_field.grid);
+        Raster<glm::vec<3,T,Q>, Tgrid, mapping::arrow> arrow_differential (vector_field.grid);
+        Raster<T, Tgrid, mapping::arrow>               arrow_projection   (vector_field.grid);
+        Raster<T, Tgrid>               out                (vector_field.grid);
         rasters::divergence(vector_field, out, arrow_differential, arrow_projection);
         return out;
     }
 
     template<typename T, typename Tgrid, glm::qualifier Q>
     void curl(
-        const raster<glm::vec<3,T,Q>, Tgrid>& vector_field, 
-        raster<glm::vec<3,T,Q>, Tgrid>& out, 
-        raster<glm::vec<3,T,Q>, Tgrid, mapping::arrow>& arrow_differential, 
-        raster<glm::vec<3,T,Q>, Tgrid, mapping::arrow>& arrow_rejection
+        const Raster<glm::vec<3,T,Q>, Tgrid>& vector_field, 
+        Raster<glm::vec<3,T,Q>, Tgrid>& out, 
+        Raster<glm::vec<3,T,Q>, Tgrid, mapping::arrow>& arrow_differential, 
+        Raster<glm::vec<3,T,Q>, Tgrid, mapping::arrow>& arrow_rejection
     ) {
         const auto cache = vector_field.grid.cache;
         glm::uvec2 arrow;
@@ -182,12 +182,12 @@ namespace rasters
     }
 
     template<typename T, typename Tgrid, glm::qualifier Q>
-    raster<glm::vec<3,T,Q>, Tgrid> curl(const raster<glm::vec<3,T,Q>, Tgrid>& vector_field)
+    Raster<glm::vec<3,T,Q>, Tgrid> curl(const Raster<glm::vec<3,T,Q>, Tgrid>& vector_field)
     {
         const auto cache = vector_field.grid.cache;
-        raster<glm::vec<3,T,Q>, Tgrid, mapping::arrow> arrow_differential (vector_field.grid);
-        raster<glm::vec<3,T,Q>, Tgrid, mapping::arrow> arrow_rejection    (vector_field.grid);
-        raster<glm::vec<3,T,Q>, Tgrid> out                (vector_field.grid);
+        Raster<glm::vec<3,T,Q>, Tgrid, mapping::arrow> arrow_differential (vector_field.grid);
+        Raster<glm::vec<3,T,Q>, Tgrid, mapping::arrow> arrow_rejection    (vector_field.grid);
+        Raster<glm::vec<3,T,Q>, Tgrid> out                (vector_field.grid);
         rasters::curl(vector_field, out, arrow_differential, arrow_rejection);
         return out;
     }
@@ -212,9 +212,9 @@ namespace rasters
     */
     template<typename T, typename Tgrid>
     void laplacian(
-        const raster<T, Tgrid>& scalar_field, 
-        raster<T, Tgrid>& out, 
-        raster<T, Tgrid, mapping::arrow>& arrow_scratch
+        const Raster<T, Tgrid>& scalar_field, 
+        Raster<T, Tgrid>& out, 
+        Raster<T, Tgrid, mapping::arrow>& arrow_scratch
     ) {
         const auto cache = scalar_field.grid.cache;
         glm::uvec2 arrow;
@@ -230,20 +230,20 @@ namespace rasters
         many::div      (out,                cache->vertex_dual_areas,    out);             // laplacian
     }
     template<typename T, typename Tgrid>
-    raster<T, Tgrid> laplacian(const raster<T, Tgrid>& scalar_field)
+    Raster<T, Tgrid> laplacian(const Raster<T, Tgrid>& scalar_field)
     {
         const auto cache = scalar_field.grid.cache;
-        raster<T, Tgrid, mapping::arrow> arrow_scratch (scalar_field.grid);
-        raster<T, Tgrid> out           (scalar_field.grid);
+        Raster<T, Tgrid, mapping::arrow> arrow_scratch (scalar_field.grid);
+        Raster<T, Tgrid> out           (scalar_field.grid);
         rasters::laplacian(scalar_field, out, arrow_scratch);
         return out;
     }
 
     template<unsigned int L, typename T, typename Tgrid, glm::qualifier Q>
     void laplacian(
-        const raster<glm::vec<L,T,Q>, Tgrid>& vector_field, 
-        raster<glm::vec<L,T,Q>, Tgrid>& out, 
-        raster<glm::vec<L,T,Q>, Tgrid, mapping::arrow>& arrow_scratch
+        const Raster<glm::vec<L,T,Q>, Tgrid>& vector_field, 
+        Raster<glm::vec<L,T,Q>, Tgrid>& out, 
+        Raster<glm::vec<L,T,Q>, Tgrid, mapping::arrow>& arrow_scratch
     ) {
         const auto cache = vector_field.grid.cache;
         glm::uvec2 arrow;
@@ -260,11 +260,11 @@ namespace rasters
     }
 
     template<unsigned int L, typename T, typename Tgrid, glm::qualifier Q>
-    raster<glm::vec<L,T,Q>, Tgrid> laplacian(const raster<glm::vec<L,T,Q>, Tgrid>& vector_field)
+    Raster<glm::vec<L,T,Q>, Tgrid> laplacian(const Raster<glm::vec<L,T,Q>, Tgrid>& vector_field)
     {
         const auto cache = vector_field.grid.cache;
-        raster<glm::vec<L,T,Q>, Tgrid, mapping::arrow> arrow_scratch (vector_field.grid);
-        raster<glm::vec<L,T,Q>, Tgrid> out           (vector_field.grid);
+        Raster<glm::vec<L,T,Q>, Tgrid, mapping::arrow> arrow_scratch (vector_field.grid);
+        Raster<glm::vec<L,T,Q>, Tgrid> out           (vector_field.grid);
         rasters::laplacian(vector_field, out, arrow_scratch);
         return out;
     }
