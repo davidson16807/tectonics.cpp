@@ -11,7 +11,7 @@
 namespace many
 {
 
-	const float MANY_EPSILON = 1e-4;
+	const float epsilon = 1e-4;
 	
 	/*
 	NOTE: 
@@ -48,20 +48,20 @@ namespace many
 
 	template <typename T,
 		std::enable_if_t<!std::is_base_of<AbstractSeries, T>::value, int> = 0>
-	inline bool equal(const T a, const T b, float threshold = MANY_EPSILON)
+	inline bool equal(const T a, const T b, float threshold = epsilon)
 	{
 		return length2(a-b) <= threshold;
 	}
 
 	template <typename T,
 		std::enable_if_t<!std::is_base_of<AbstractSeries, T>::value, int> = 0>
-	inline bool notEqual(const T a, const T b, float threshold = MANY_EPSILON)
+	inline bool notEqual(const T a, const T b, float threshold = epsilon)
 	{
 		return length2(a-b) > threshold;
 	}
 
 	template <typename T>
-	bool equal(const T& a, const typename T::value_type b, float threshold = MANY_EPSILON)
+	bool equal(const T& a, const typename T::value_type b, float threshold = epsilon)
 	{
 		bool out(true);
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -71,7 +71,7 @@ namespace many
 		return out;
 	}
 	template <typename T>
-	bool notEqual(const T& a, const typename T::value_type b, float threshold = MANY_EPSILON)
+	bool notEqual(const T& a, const typename T::value_type b, float threshold = epsilon)
 	{
 		bool out(false);
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -82,7 +82,7 @@ namespace many
 	}
 	template <typename T, 
 		std::enable_if_t<std::is_base_of<AbstractSeries, T>::value, int> = 0>
-	bool equal(const T& a, const T& b, float threshold = MANY_EPSILON)
+	bool equal(const T& a, const T& b, float threshold = epsilon)
 	{
 		if (a.size() != b.size())
 		{
@@ -97,7 +97,7 @@ namespace many
 	}
 	template <typename T, 
 		std::enable_if_t<std::is_base_of<AbstractSeries, T>::value, int> = 0>
-	bool notEqual(const T& a, const T& b, float threshold = MANY_EPSILON)
+	bool notEqual(const T& a, const T& b, float threshold = epsilon)
 	{
 		if (a.size() != b.size())
 		{
@@ -114,7 +114,7 @@ namespace many
 
 
 	template <typename T, typename Tout>
-	void equal(const T& a, const typename T::value_type b, Tout& out, float threshold = MANY_EPSILON)
+	void equal(const T& a, const typename T::value_type b, Tout& out, float threshold = epsilon)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -122,7 +122,7 @@ namespace many
 		}
 	}
 	template <typename T, typename Tout>
-	void notEqual(const T& a, const typename T::value_type b, Tout& out, float threshold = MANY_EPSILON)
+	void notEqual(const T& a, const typename T::value_type b, Tout& out, float threshold = epsilon)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -130,7 +130,7 @@ namespace many
 		}
 	}
 	template <typename T, typename Tout>
-	void equal(const typename T::value_type b, const T& a, Tout& out, float threshold = MANY_EPSILON)
+	void equal(const typename T::value_type b, const T& a, Tout& out, float threshold = epsilon)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -138,7 +138,7 @@ namespace many
 		}
 	}
 	template <typename T, typename Tout>
-	void notEqual(const typename T::value_type b, const T& a, Tout& out, float threshold = MANY_EPSILON)
+	void notEqual(const typename T::value_type b, const T& a, Tout& out, float threshold = epsilon)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -146,7 +146,7 @@ namespace many
 		}
 	}
 	template <typename T, typename Tout>
-	void equal(const T& a, const T& b, Tout& out, float threshold = MANY_EPSILON)
+	void equal(const T& a, const T& b, Tout& out, float threshold = epsilon)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -154,7 +154,7 @@ namespace many
 		}
 	}
 	template <typename T, typename Tout>
-	void notEqual(const T& a, const T& b, Tout& out, float threshold = MANY_EPSILON)
+	void notEqual(const T& a, const T& b, Tout& out, float threshold = epsilon)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
