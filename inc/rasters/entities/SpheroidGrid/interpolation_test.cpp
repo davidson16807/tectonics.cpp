@@ -23,7 +23,7 @@ TEST_CASE( "nearest_neighbor_interpolation purity", "[many]" ) {
         // initialize mesh
         auto mesh1 = meshes::mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
         auto mesh2 = meshes::mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
-        mult(glm::mat3(glm::rotate(glm::mat4(1.0f), glm::radians(180.0f), glm::normalize(glm::vec3(1.0f, 1.0f, 1.0f)))), mesh2.vertices, mesh2.vertices);
+        mult(glm::mat3(glm::rotate(glm::mat4(1.0f), glm::radians(135.0f), glm::normalize(glm::vec3(1.0f, 1.0f, 1.0f)))), mesh2.vertices, mesh2.vertices);
 
         // initialize grids
         auto grid1 = rasters::SpheroidGrid<int,float>(mesh1.vertices, mesh1.faces);
@@ -56,5 +56,32 @@ TEST_CASE( "nearest_neighbor_interpolation identity", "[many]" ) {
         rasters::nearest_neighbor_interpolation(raster1, raster2);
 
         CHECK(raster1 == raster2);
+    }
+}
+
+
+TEST_CASE( "nearest_neighbor_interpolation invertibility", "[many]" ) {
+    SECTION("nearest_neighbor_interpolation can be reverted by interpolating back to original grid"){
+        // initialize mesh
+        auto mesh1 = meshes::mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
+        auto mesh2 = meshes::mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
+        mult(glm::mat3(glm::rotate(glm::mat4(1.0f), glm::radians(135.0f), glm::normalize(glm::vec3(1.0f, 1.0f, 1.0f)))), mesh2.vertices, mesh2.vertices);
+
+        // initialize grids
+        auto grid1 = rasters::SpheroidGrid<int,float>(mesh1.vertices, mesh1.faces);
+        auto grid2 = rasters::SpheroidGrid<int,float>(mesh2.vertices, mesh2.faces);
+
+        // initialize rasters
+        auto raster1 = rasters::make_Raster<float>(grid1);
+        auto raster2 = rasters::make_Raster<float>(grid2);
+        auto raster3 = rasters::make_Raster<float>(grid1);
+
+        // populate rasters
+        std::mt19937 generator(2);
+        many::get_elias_noise(icosahedron_grid.cache->vertex_positions, generator, raster1);
+        rasters::nearest_neighbor_interpolation(raster1, raster2);
+        rasters::nearest_neighbor_interpolation(raster2, raster3);
+
+        CHECK(raster1 == raster3);
     }
 }
