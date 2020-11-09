@@ -94,9 +94,9 @@ TEST_CASE( "integral_of_lerp equivalence to numerical integration", "[lerp]" ) {
 				I1 += dx * lerp::lerp(xs,ys,xi);
 			}
 			float I2 = lerp::integral_of_lerp(xs,ys,x0,x1);
-			std::cout << std::abs(I1 - I2) << " " << x0 << " " << x1 << " " << I1 << " " << I2 << std::endl;
+			// std::cout << std::abs(I1 - I2) << " " << x0 << " " << x1 << " " << I1 << " " << I2 << std::endl;
     		SECTION("calling integral_of_lerp is equivalent to result from numerical integration"){
-				CHECK(std::abs(I1 - I2) < 0.01);
+				CHECK(I1 == Approx(I2).margin(0.01));
 			}	
 		}	
 	}
