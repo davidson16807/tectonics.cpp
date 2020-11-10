@@ -70,6 +70,7 @@ namespace many
 		// NOTE: "region_transition_width" is the width of the transition zone for a region
 		T region_transition_width = T(0.03)
 	){
+		assert(out.size() == positions.size());
 		many::series<T> region_mod(out.size(), T(0));
 		T region_threshold(0);
 		glm::vec3 region_center(0);
