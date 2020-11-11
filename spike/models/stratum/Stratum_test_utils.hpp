@@ -7,6 +7,7 @@
 #include <catch/catch.hpp>
 
 // in-house libraries
+#include <physics/units.hpp>
 #include <models/mineral/Mineral_test_utils.hpp>
 #include "Stratum.hpp"
 
@@ -26,7 +27,7 @@ namespace stratum
     Stratum<M> get_random(Tgenerator generator)
     {
         std::uniform_real_distribution<float> uniform;
-        Stratum<M> output(uniform(generator), uniform(generator), uniform(generator));
+        Stratum<M> output(32768.0f * uniform(generator), 6e12f * uniform(generator), uniform(generator) * 65000.0f * units::megayear);
         for (int i = 0; i < M; ++i)
         {
             output.minerals[i] = mineral::get_random(generator);

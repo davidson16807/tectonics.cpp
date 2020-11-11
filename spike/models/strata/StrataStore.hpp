@@ -40,7 +40,7 @@ namespace strata
     public:
         void unpack(Strata<L,M>& output) const
         {
-            for (std::size_t i=0; i<L; i++)
+            for (int i=0; i<count; i++)
             {
                 strata[i].unpack(output.content[i]);
             }
@@ -48,7 +48,7 @@ namespace strata
         }
         void pack(const Strata<L,M>& input)
         {
-            for (std::size_t i=0; i<L; i++)
+            for (int i=0; i<input.count; i++)
             {
                 strata[i].pack(input.content[i]);
             }

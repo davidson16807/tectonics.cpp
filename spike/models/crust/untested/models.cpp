@@ -2,8 +2,6 @@
 
 #include <many/types.hpp>         // floats, etc.
 
-#include <rasters/Grid.hpp>       // Grid
-
 #include <models/rock/Strata.hpp> // Strata
 
 namespace crust

@@ -18,7 +18,7 @@ TEST_CASE( "StrataStore pack/unpack invertibility", "[strata]" ) {
 	StrataStore<L,M> strata_store;
 	strata_store.pack(original);
 
-	Strata<L,M> reconstructed;
+	Strata<L,M> reconstructed = get_random<L,M>(generator);
 	strata_store.unpack(reconstructed);
 
     SECTION("packing a Strata object then unpacking it must reproduce the original object to within acceptable tolerances"){

@@ -10,24 +10,24 @@ namespace units {
 	const     float microgram = 1e-9f;                  // kilograms
 	const     float milligram = 1e-6f;                  // kilograms
 	const     float gram      = 1e-3f;                  // kilograms
-	const     float kilogram  = 1.0f;                   // kilograms
+	constexpr float kilogram  = 1.0f;                   // kilograms
 	const     float ton       = 1000.f;                 // kilograms
 
 	const     float femtometer = 1e-12f;                // meters
 	const     float nanometer  = 1e-9f;                 // meters
 	const     float micrometer = 1e-6f;                 // meters
 	const     float millimeter = 1e-3f;                 // meters
-	const     float meter      = 1.0f;                  // meters
+	constexpr float meter      = 1.0f;                  // meters
 	const     float kilometer  = 1000.f;                // meters
 
-	const     float mole       = 6.02214076e23f;
+	constexpr float mole       = 6.02214076e23f;
 	constexpr float millimole  = mole / 1e3f;
 	constexpr float micromole  = mole / 1e6f;
 	constexpr float nanomole   = mole / 1e9f;
 	constexpr float femtomole  = mole / 1e12f;
 
-	const     float second     = 1.0f;                  // seconds
-	const     float minute     = 60.0f;                 // seconds
+	constexpr float second     = 1.0f;                  // seconds
+	constexpr float minute     = 60.0f;                 // seconds
 	constexpr float hour       = minute*60.0f;          // seconds
 	constexpr float day        = hour*24.0f;            // seconds
 	constexpr float week       = day*7.0f;              // seconds

@@ -20,7 +20,7 @@ TEST_CASE( "StrataValues getter/setter invertibility", "[strata]" ) {
 	get_max_pressures_received(original, pressures);
 	set_max_pressures_received(original, pressures, modified);
 
-    SECTION("packing a Strata object then unpacking it must reproduce the original object to within acceptable tolerances"){
+    SECTION("updating a Strata object attribute to its original value must produce the original object to within acceptable tolerances"){
 		STRATA_EQUAL(original, modified);
 	}
 
@@ -28,7 +28,7 @@ TEST_CASE( "StrataValues getter/setter invertibility", "[strata]" ) {
 	get_max_temperatures_received(original, temperatures);
 	set_max_temperatures_received(original, temperatures, modified);
 
-    SECTION("packing a Strata object then unpacking it must reproduce the original object to within acceptable tolerances"){
+    SECTION("updating a Strata object attribute to its original value must produce the original object to within acceptable tolerances"){
 		STRATA_EQUAL(original, modified);
 	}
 }

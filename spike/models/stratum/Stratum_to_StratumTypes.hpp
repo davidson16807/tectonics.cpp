@@ -8,7 +8,7 @@
 #include <glm/geometric.hpp>
 
 // in-house libraries
-#include <academics/units.hpp>
+#include <physics/units.hpp>
 #include <models/mineral/GrainType.hpp>
 #include "Stratum.hpp"
 #include "StratumTypes.hpp"

@@ -3,15 +3,15 @@ The category is composed from types that describe a vertical rock profile compos
 and the properties of that stratum. 
 Types and morphisms within the category are each represented within their own file.
 
-The category diagram can be seen [here](https://tikzcd.yichuanshen.de/#N4Igdg9gJgpgziAXAbVABwnAlgFyxMJZARgBoAmAXVJADcBDAGwFcYkQBlHAJ3p2YC2XCNzYBfUuky58hFGWLU6TVuy69+AkBKnY8BIuVKKaDFm0ScefQQBUAnmnGSQGPbMOkADErOrLAGaMEHzaLm4yBihe3r4qFlYaggAEADqpeALwyeo2Wjqu0vpyyADMxnHm7ABKEADGANYOTmG6kSXlPqbx7AAW9HC92kowUADm8ESgAdwQWogxIDgQSGQgg1gBOKsFM3OrNMtIixtbOy5782tHiOS7s1eHK4il9-uIACxP59MPB0vPNbBCBoIjEAAcMQCTDgMCUjHoACMYIwAApFDyWbhYMa9bZveZGAFIACsBKQRJuADYxJQxEA)
+The category diagram can be seen [here](https://tikzcd.yichuanshen.de/#N4Igdg9gJgpgziAXAbVABwnAlgFyxMJZARgBoAmAXVJADcBDAGwFcYkQBlHAJ3p2YC2XCNzYBfUuky58hFGWLU6TVuy69+AkBKnY8BIuVKKaDFm0ScefQQBUAnmnGSQGPbMOkADErOrLAGaMEHzaLm4yBihexr4qFlYaggAEADqpeALwyeo2Wjqu0vpyyADMsabx7ABKEADGANYOTmG6kSXlPpXm7AAW9HC92kowUADm8ESgAdwQWogxIDgQSGQgg1gBOKsFM3OrNMtIixtbOy5782tHiOS7s1eHK4il9-uIACxP59MPB0vPNbBCBoIjEAAcMQCTDgMCUjHoACMYIwAApFDyWbhYMa9bZveZGAFIACsBKQRJuADYxJQxEA)
 
 Or it can be viewed with the following [tikzcd](http://ctan.math.washington.edu/tex-archive/graphics/pgf/contrib/tikz-cd/tikz-cd-doc.pdf) markup:
 
 ```
 \begin{tikzcd}
-Stratum \times Stratum \arrow[rd] &                                                                                                & float                            & hash     \\
-                                  & Stratum \arrow[d, shift right] \arrow[r] \arrow[ru] \arrow[loop, distance=2em, in=125, out=55] & StratumType \arrow[r] \arrow[ru] & RockType \\
-                                  & StratumStore \arrow[u, shift right]                                                            &                                  &         
+                                 &                                                                                                & float                            & hash     \\
+Stratum \times Stratum \arrow[r] & Stratum \arrow[d, shift right] \arrow[r] \arrow[ru] \arrow[loop, distance=2em, in=125, out=55] & StratumType \arrow[r] \arrow[ru] & RockType \\
+                                 & StratumStore \arrow[u, shift right]                                                            &                                  &         
 \end{tikzcd}
 ```
 
