@@ -12,11 +12,11 @@
 
 namespace crust
 {
-    template<int L, int M>
+    template<int L, int M, typename Tgrid>
     void set_max_pressures_received(
-        const Crust<L,M>& crust, 
-        const CrustValues<float,L>& max_pressures_received, 
-        Crust<L,M>& output
+        const Crust<L,M,Tgrid>& crust, 
+        const CrustValues<float,L,Tgrid>& max_pressures_received, 
+        Crust<L,M,Tgrid>& output
     ) {
         assert(crust.size() == output.size());
         strata::Strata<L,M> strata;
@@ -27,11 +27,11 @@ namespace crust
             output[i].pack(strata);
         }
     }
-    template<int L, int M>
+    template<int L, int M, typename Tgrid>
     void set_max_temperatures_received(
-        const Crust<L,M>& crust, 
-        const CrustValues<float,L>& max_temperatures_received, 
-        Crust<L,M>& output
+        const Crust<L,M,Tgrid>& crust, 
+        const CrustValues<float,L,Tgrid>& max_temperatures_received, 
+        Crust<L,M,Tgrid>& output
     ) {
         assert(crust.size() == output.size());
         strata::Strata<L,M> strata;

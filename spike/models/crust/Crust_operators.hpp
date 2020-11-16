@@ -6,10 +6,10 @@
 
 namespace crust
 {
-    template<int L, int M>
+    template<int L, int M, typename Tgrid>
     void get_sediment(
-        const Crust<L,M>& input, 
-        Crust<1,M>& output
+        const Crust<L,M,Tgrid>& input, 
+        Crust<1,M,Tgrid>& output
     ) {
         assert(input.size() == output.size());
         strata::Strata<L,M> input_strata;
@@ -22,10 +22,10 @@ namespace crust
         }
     }
 
-    template<int L, int M>
+    template<int L, int M, typename Tgrid>
     void simplify(
-        const Crust<L,M>& input, 
-        Crust<L,M>& output
+        const Crust<L,M,Tgrid>& input, 
+        Crust<L,M,Tgrid>& output
     ) {
         assert(input.size() == output.size());
         strata::Strata<L,M> input_strata;
@@ -38,11 +38,11 @@ namespace crust
         }
     }
 
-    template<int L1, int L2, int L3, int M>
+    template<int L1, int L2, int L3, int M, typename Tgrid>
     void overlap(
-        const Crust<L1,M>& top, 
-        const Crust<L2,M>& bottom,
-        Crust<L3,M>& output
+        const Crust<L1,M,Tgrid>& top, 
+        const Crust<L2,M,Tgrid>& bottom,
+        Crust<L3,M,Tgrid>& output
     ) {
         assert(top.size() == bottom.size());
         assert(top.size() == output.size());

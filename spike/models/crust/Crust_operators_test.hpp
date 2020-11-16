@@ -5,6 +5,10 @@
 
 #include <many/types.hpp>
 #include <many/statistic.hpp>
+
+#include <rasters/entities/SpheroidGrid/SpheroidGrid.hpp>
+#include <rasters/entities/SpheroidGrid/SpheroidGrid_test_utils.hpp>
+
 #include "Crust_operators.hpp"
 #include "Crust_to_floats.hpp"
 #include "Crust_test_utils.hpp"
@@ -17,10 +21,9 @@ TEST_CASE( "Crust get_sediment() closure", "[crust]" ) {
     const int L = 1;
     const int L2 = 16;
     const int M = 15;
-    const int N = 10;
-    Crust<L2,M> a = get_random_crust<L2,M>(N, generator);
+    auto a = get_random_crust<L2,M>(icosahedron_grid, generator);
 
-    Crust<L,M> fa(N);
+    auto fa = make_Crust<L,M>(icosahedron_grid);
     get_sediment(a, fa);
 
     SECTION("the result of passing a valid Crust object to get_sediment() must itself produce a valid Crust"){
@@ -32,15 +35,14 @@ TEST_CASE( "Crust overlap() associativity", "[crust]" ) {
     std::mt19937 generator(2);
     const int L = 16;
     const int M = 15;
-    const int N = 10;
-    Crust<L,M> a = get_random_crust<L,M>(N, generator);
-    Crust<L,M> b = get_random_crust<L,M>(N, generator);
-    Crust<L,M> c = get_random_crust<L,M>(N, generator);
+    auto a = get_random_crust<L,M>(icosahedron_grid, generator);
+    auto b = get_random_crust<L,M>(icosahedron_grid, generator);
+    auto c = get_random_crust<L,M>(icosahedron_grid, generator);
 
-    Crust<L,M> ab(N);
-    Crust<L,M> ab_c(N);
-    Crust<L,M> bc(N);
-    Crust<L,M> a_bc(N);
+    auto ab = make_Crust<L,M>(icosahedron_grid);
+    auto ab_c = make_Crust<L,M>(icosahedron_grid);
+    auto bc = make_Crust<L,M>(icosahedron_grid);
+    auto a_bc = make_Crust<L,M>(icosahedron_grid);
     overlap(a, b, ab);
     overlap(ab, c, ab_c);
     overlap(b, c, bc);
@@ -55,11 +57,10 @@ TEST_CASE( "Crust overlap() closure", "[crust]" ) {
   	std::mt19937 generator(2);
   	const int L = 16;
   	const int M = 15;
-  	const int N = 10;
-  	Crust<L,M> a = get_random_crust<L,M>(N, generator);
-  	Crust<L,M> b = get_random_crust<L,M>(N, generator);
+  	auto a = get_random_crust<L,M>(icosahedron_grid, generator);
+  	auto b = get_random_crust<L,M>(icosahedron_grid, generator);
 
-  	Crust<L,M> ab(N);
+  	auto ab = make_Crust<L,M>(icosahedron_grid);
   	overlap(a, b, ab);
 
     SECTION("the result of passing two valid Crust<L,M> objects to overlap() must itself produce a valid Crust<L,M>"){
@@ -71,11 +72,10 @@ TEST_CASE( "Crust overlap() identity", "[strata]" ) {
     std::mt19937 generator(2);
     const int L = 16;
     const int M = 15;
-    const int N = 10;
-    Crust<L,M> a = get_random_crust<L,M>(N, generator);
-    Crust<L,M> b(a.size());
+    auto a = get_random_crust<L,M>(icosahedron_grid, generator);
+    auto b = make_Crust<L,M>(icosahedron_grid);
 
-    Crust<L,M> ab(N);
+    auto ab = make_Crust<L,M>(icosahedron_grid);
     overlap(a, b, ab);
 
     SECTION("there is a value that can be passed to overlap() that produces the original Crust"){
@@ -87,18 +87,17 @@ TEST_CASE( "Crust overlap() mass conservation", "[crust]" ) {
     std::mt19937 generator(2);
     const int L = 16;
     const int M = 15;
-    const int N = 10;
-    Crust<L,M> a = get_random_crust<L,M>(N, generator);
-    Crust<L,M> b = get_random_crust<L,M>(N, generator);
+    auto a = get_random_crust<L,M>(icosahedron_grid, generator);
+    auto b = get_random_crust<L,M>(icosahedron_grid, generator);
 
-    Crust<L,M> ab(N);
+    auto ab = make_Crust<L,M>(icosahedron_grid);
     overlap(a, b, ab);
 
-    many::floats ab_mass(N); get_mass(ab, ab_mass);
-    many::floats a_mass(N); get_mass(a, a_mass);
-    many::floats b_mass(N); get_mass(b, b_mass);
+    auto ab_mass = rasters::make_Raster<float>(icosahedron_grid); get_mass(ab, ab_mass);
+    auto a_mass = rasters::make_Raster<float>(icosahedron_grid); get_mass(a, a_mass);
+    auto b_mass = rasters::make_Raster<float>(icosahedron_grid); get_mass(b, b_mass);
 
-    SECTION("the result of passing two valid Crust<L,M> objects to overlap() must produce a Crust<L,M> of equivalent mass"){
+    SECTION("the result of passing two valid auto objects = make_Crust<L,M>(icosahedron_grid) to overlap() must produce a Crust<L,M> of equivalent mass"){
       CHECK(many::sum(ab_mass) == Approx(many::sum(a_mass) + many::sum(b_mass)).epsilon(1e-4));
     }
 }
@@ -115,9 +114,8 @@ TEST_CASE( "Crust simplify() closure", "[crust]" ) {
     std::mt19937 generator(2);
     const int L = 16;
     const int M = 15;
-    const int N = 10;
-    Crust<L,M> a = get_random_crust<L,M>(N, generator);
-    Crust<L,M> fa = get_random_crust<L,M>(N, generator);
+    auto a = get_random_crust<L,M>(icosahedron_grid, generator);
+    auto fa = get_random_crust<L,M>(icosahedron_grid, generator);
 
     simplify(a, fa);
 
@@ -130,14 +128,13 @@ TEST_CASE( "Crust simplify() mass conservation", "[crust]" ) {
     std::mt19937 generator(2);
     const int L = 16;
     const int M = 15;
-    const int N = 10;
-    Crust<L,M> a = get_random_crust<L,M>(N, generator);
-    Crust<L,M> fa = get_random_crust<L,M>(N, generator);
+    auto a = get_random_crust<L,M>(icosahedron_grid, generator);
+    auto fa = get_random_crust<L,M>(icosahedron_grid, generator);
 
     simplify(a, fa);
 
-    many::floats fa_mass(N); get_mass(fa, fa_mass);
-    many::floats a_mass(N);  get_mass(a,  a_mass );
+    auto fa_mass = rasters::make_Raster<float>(icosahedron_grid); get_mass(fa, fa_mass);
+    auto a_mass = rasters::make_Raster<float>(icosahedron_grid);  get_mass(a,  a_mass );
 
     SECTION("the result of passing a valid Crust object to simplify() must itself produce a Crust object of equivalent mass"){
       CHECK(many::sum(fa_mass) == Approx(many::sum(a_mass)).epsilon(1e-4));

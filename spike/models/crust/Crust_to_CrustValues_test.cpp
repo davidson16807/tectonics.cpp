@@ -2,6 +2,9 @@
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include <catch/catch.hpp>
 
+#include <rasters/entities/SpheroidGrid/SpheroidGrid.hpp>
+#include <rasters/entities/SpheroidGrid/SpheroidGrid_test_utils.hpp>
+
 #include "Crust_CrustValues_to_Crust.hpp"
 #include "Crust_to_CrustValues.hpp"
 #include "Crust_test_utils.hpp"
@@ -12,12 +15,11 @@ TEST_CASE( "CrustValues getter/setter invertibility", "[crust]" ) {
   	std::mt19937 generator(2);
   	const int L = 16;
   	const int M = 15;
-  	const int N = 10;
 
-	Crust<L,M> original = get_random_crust<L,M>(N, generator);
-	Crust<L,M> modified = get_random_crust<L,M>(N, generator);
+	auto original = get_random_crust<L,M>(icosahedron_grid, generator);
+	auto modified = get_random_crust<L,M>(icosahedron_grid, generator);
 
-	CrustValues<float, L> pressures(N);
+	auto pressures = make_CrustValues<float,L>(icosahedron_grid);
 	get_max_pressures_received(original, pressures);
 	set_max_pressures_received(original, pressures, modified);
 
@@ -25,7 +27,7 @@ TEST_CASE( "CrustValues getter/setter invertibility", "[crust]" ) {
 		CRUST_EQUAL(original, modified);
 	}
 
-	CrustValues<float, L> temperatures(N);
+	auto temperatures = make_CrustValues<float,L>(icosahedron_grid);
 	get_max_temperatures_received(original, temperatures);
 	set_max_temperatures_received(original, temperatures, modified);
 
