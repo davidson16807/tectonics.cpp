@@ -10,7 +10,7 @@
 using namespace stratum;
 
 TEST_CASE( "get_stratum_types() happy path", "[stratum]" ) {
-    const int M = 15;
+    const std::size_t M = 15;
     SECTION("get_stratum_types() must recognize sand"){
 		mineral::Mineral pool;
 		pool.mass = 1.0f;

@@ -9,10 +9,10 @@
 
 namespace crust
 {
-	template <int L, int M, typename Tgrid>
+	template <std::size_t L, std::size_t M, typename Tgrid>
     using Crust = rasters::Raster<strata::StrataStore<L,M>, Tgrid>;
 
-	template<int L, int M, typename Tgrid>
+	template<std::size_t L, std::size_t M, typename Tgrid>
 	Crust<L,M,Tgrid> make_Crust(const Tgrid& grid)
 	{
 		return Crust<L,M,Tgrid>(grid);

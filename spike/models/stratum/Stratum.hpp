@@ -17,7 +17,7 @@ namespace stratum
     /*
     "Stratum" describes the composition and texture of a single rock layer
     */
-    template<int M>
+    template<std::size_t M>
     struct Stratum
     {
         /*
@@ -79,7 +79,7 @@ namespace stratum
         }
         float density(const float age_of_world, const std::array<float, M>& mineral_densities) const 
         {
-            return mass() / volume(mineral_densities);
+            return mass() / volume(age_of_world, mineral_densities);
         }
         float thermal_conductivity(
             float age_of_world,

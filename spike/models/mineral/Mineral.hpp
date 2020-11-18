@@ -21,7 +21,7 @@ namespace mineral
 	and we do not trust ourselves to invent our own (nor do we have the time to do so),
 	so we do not classify by size. 
 
-	We instead classify by history.
+	We instead classify the particles of a given mineral by history.
 	This includes whether the grain was originally from an intrusive or extrusive volcanic rock,
 	and whether the rock experienced mechanical weathering or chemical weathering.
 	The type of source rock, the type of weathering, and the type of mineral 

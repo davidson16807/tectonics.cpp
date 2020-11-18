@@ -9,7 +9,7 @@ using namespace stratum;
 
 TEST_CASE( "StratumStore pack/unpack invertibility", "[stratum]" ) {
   	std::mt19937 generator(2);
-  	const int M = 15;
+  	const std::size_t M = 15;
 
 	Stratum<M> original = stratum::get_random<M>(generator);
 

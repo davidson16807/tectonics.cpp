@@ -10,8 +10,8 @@ using namespace stratum;
 
 TEST_CASE( "StrataStore pack/unpack invertibility", "[strata]" ) {
   	std::mt19937 generator(2);
-  	const int L = 16;
-  	const int M = 15;
+  	const std::size_t L = 16;
+  	const std::size_t M = 15;
 
 	Strata<L,M> original = get_random<L,M>(generator);
 
@@ -27,6 +27,6 @@ TEST_CASE( "StrataStore pack/unpack invertibility", "[strata]" ) {
 }
 TEST_CASE( "StrataStore memory constraints", "[strata]" ) {
     SECTION("a StrataStore must fit within an expected memory footprint for a given number of layers and mass pools"){
-		CHECK(sizeof(StrataStore<16,15>) <= 3012);
+		CHECK(sizeof(StrataStore<16,15>) <= 3016);
 	}
 }

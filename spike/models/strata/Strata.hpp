@@ -7,19 +7,19 @@
 
 namespace strata
 {
-    template <int L, int M>
+    template <std::size_t L, std::size_t M>
     struct Strata
     {
         std::array<stratum::Stratum<M>, L> content;
-        int count;
+        std::size_t count;
 
         ~Strata(){}
         Strata(): content(), count(0){}
 
         // DERIVED ATTRIBUTES, regular functions of the form: Strata -> primitive
-        float mass_pool(const int id) const {
+        float mass_pool(const std::size_t id) const {
             float total_mass(0.0);
-            for (int i=0; i<count; i++)
+            for (std::size_t i=0; i<count; i++)
             {
                 total_mass += content[i].mass_pools[id].mass;
             }
@@ -27,7 +27,7 @@ namespace strata
         }
         float mass() const {
             float total_mass(0.0);
-            for (int i=0; i<count; i++)
+            for (std::size_t i=0; i<count; i++)
             {
                 total_mass += content[i].mass();
             }
@@ -35,7 +35,7 @@ namespace strata
         }
         float volume(const std::array<float, M>& mass_pool_densities) const {
             float total_volume(0.0);
-            for (int i=0; i<count; i++)
+            for (std::size_t i=0; i<count; i++)
             {
                 total_volume += content[i].volume(mass_pool_densities);
             }

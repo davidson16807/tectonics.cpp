@@ -35,7 +35,7 @@ namespace stratum
     since the object at high level can be treated strictly by its mappings to other states, 
     as in the spirit of category theory, and in this case they are isomorphic and invertible.
     */
-    template <int M>
+    template <std::size_t M>
     class StratumStore
     {
         std::array<mineral::MineralStore, M> minerals;
@@ -99,9 +99,9 @@ namespace stratum
                 minerals[i].pack(input.minerals[i]);
             }
             stored_max_pressure_received    = std::uint16_t(
-                std::numeric_limits<std::uint16_t>::max()*std::clamp( log2(input.max_pressure_received)    / log2_ref_pressure,   0., 1.0));
+                std::numeric_limits<std::uint16_t>::max()*std::clamp( log2(float(input.max_pressure_received))    / log2_ref_pressure,   0.0f, 1.0f));
             stored_max_temperature_received = std::uint16_t(
-                std::numeric_limits<std::uint16_t>::max()*std::clamp( log2(input.max_temperature_received) / log2_ref_temperature,0., 1.0));
+                std::numeric_limits<std::uint16_t>::max()*std::clamp( log2(float(input.max_temperature_received)) / log2_ref_temperature,0.0f, 1.0f));
             age_of_world_when_deposited_in_megayears = input.age_of_world_when_deposited / units::megayear;
         }
     };

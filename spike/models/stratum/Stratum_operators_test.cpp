@@ -14,7 +14,7 @@ using namespace stratum;
 
 TEST_CASE( "Stratum scale() associativity", "[stratum]" ) {
   	std::mt19937 generator(2);
-  	const int M = 15;
+  	const std::size_t M = 15;
 	Stratum<M> a = get_random<M>(generator);
 	float b = 2.0f;
 	float c = 3.0f;
@@ -33,7 +33,7 @@ TEST_CASE( "Stratum scale() associativity", "[stratum]" ) {
 
 TEST_CASE( "Stratum scale() closure", "[stratum]" ) {
   	std::mt19937 generator(2);
-  	const int M = 15;
+  	const std::size_t M = 15;
 	Stratum<M> a = get_random<M>(generator);
 	float b = 2.0f;
 
@@ -46,7 +46,7 @@ TEST_CASE( "Stratum scale() closure", "[stratum]" ) {
 }
 TEST_CASE( "Stratum scale() identity", "[stratum]" ) {
   	std::mt19937 generator(2);
-  	const int M = 15;
+  	const std::size_t M = 15;
 	Stratum<M> a = get_random<M>(generator);
 	float b = 1.0f;
 
@@ -63,7 +63,7 @@ TEST_CASE( "Stratum scale() identity", "[stratum]" ) {
 
 TEST_CASE( "Stratum combine() commutativity", "[stratum]" ) {
   	std::mt19937 generator(2);
-  	const int M = 15;
+  	const std::size_t M = 15;
 	Stratum<M> a = get_random<M>(generator);
 	Stratum<M> b = get_random<M>(generator);
 
@@ -79,7 +79,7 @@ TEST_CASE( "Stratum combine() commutativity", "[stratum]" ) {
 
 TEST_CASE( "Stratum combine() associativity", "[stratum]" ) {
   	std::mt19937 generator(2);
-  	const int M = 15;
+  	const std::size_t M = 15;
 	Stratum<M> a = get_random<M>(generator);
 	Stratum<M> b = get_random<M>(generator);
 	Stratum c = get_random<M>(generator);
@@ -100,7 +100,7 @@ TEST_CASE( "Stratum combine() associativity", "[stratum]" ) {
 
 TEST_CASE( "Stratum combine() closure", "[stratum]" ) {
   	std::mt19937 generator(2);
-  	const int M = 15;
+  	const std::size_t M = 15;
 	Stratum<M> a = get_random<M>(generator);
 	Stratum<M> b = get_random<M>(generator);
 
@@ -113,7 +113,7 @@ TEST_CASE( "Stratum combine() closure", "[stratum]" ) {
 }
 TEST_CASE( "Stratum combine() mass conservation", "[stratum]" ) {
   	std::mt19937 generator(2);
-  	const int M = 15;
+  	const std::size_t M = 15;
 	Stratum<M> a = get_random<M>(generator);
 	Stratum<M> b = get_random<M>(generator);
 
@@ -126,7 +126,7 @@ TEST_CASE( "Stratum combine() mass conservation", "[stratum]" ) {
 }
 TEST_CASE( "Stratum combine() identity", "[stratum]" ) {
   	std::mt19937 generator(2);
-  	const int M = 15;
+  	const std::size_t M = 15;
 	Stratum<M> a = get_random<M>(generator);
 	// default constructor is required to be identity
 	Stratum<M> b;

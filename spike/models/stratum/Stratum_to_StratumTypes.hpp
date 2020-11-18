@@ -89,55 +89,55 @@ namespace stratum
         }
     }
 
-    template<int M>
+    template<std::size_t M>
     void get_particle_size_bin_fractional_volume(
         const Stratum<M>& stratum, 
-        std::array<float, int(ParticleSizeBins::count)>& output
+        std::array<float, std::size_t(ParticleSizeBins::count)>& output
     ){
         output.fill(0);
 
         for (std::size_t i=0; i<M; i++)
         {
             float mass = stratum.minerals[i].mass;
-            std::array<float, int(mineral::GrainType::count)> grains = stratum.minerals[i].grain_type_relative_volume;
+            std::array<float, std::size_t(mineral::GrainType::count)> grains = stratum.minerals[i].grain_type_relative_volume;
             float total_volume = stratum.minerals[i].grain_type_total_relative_volume();
-            output[int(ParticleSizeBins::boulder)] += mass * grains[int(mineral::GrainType::unweathered_extrusive)] / total_volume;
-            output[int(ParticleSizeBins::boulder)] += mass * grains[int(mineral::GrainType::unweathered_intrusive)] / total_volume;
-            output[int(ParticleSizeBins::pebble)]  += mass * grains[int(mineral::GrainType::mechanically_weathered_extrusive)] / total_volume;
-            output[int(ParticleSizeBins::sand)]    += mass * grains[int(mineral::GrainType::mechanically_weathered_intrusive)] / total_volume;
-            if (i == int(OxygenPlanetMineralTypes::calcite) || i == int(OxygenPlanetMineralTypes::organics))
+            output[std::size_t(ParticleSizeBins::boulder)] += mass * grains[std::size_t(mineral::GrainType::unweathered_extrusive)] / total_volume;
+            output[std::size_t(ParticleSizeBins::boulder)] += mass * grains[std::size_t(mineral::GrainType::unweathered_intrusive)] / total_volume;
+            output[std::size_t(ParticleSizeBins::pebble)]  += mass * grains[std::size_t(mineral::GrainType::mechanically_weathered_extrusive)] / total_volume;
+            output[std::size_t(ParticleSizeBins::sand)]    += mass * grains[std::size_t(mineral::GrainType::mechanically_weathered_intrusive)] / total_volume;
+            if (i == std::size_t(OxygenPlanetMineralTypes::calcite) || i == std::size_t(OxygenPlanetMineralTypes::organics))
             {
-                output[int(ParticleSizeBins::clay)]    += mass  * grains[int(mineral::GrainType::chemically_weathered_extrusive)] / total_volume; 
-                output[int(ParticleSizeBins::clay)]    += mass  * grains[int(mineral::GrainType::chemically_weathered_intrusive)] / total_volume; 
+                output[std::size_t(ParticleSizeBins::clay)]    += mass  * grains[std::size_t(mineral::GrainType::chemically_weathered_extrusive)] / total_volume; 
+                output[std::size_t(ParticleSizeBins::clay)]    += mass  * grains[std::size_t(mineral::GrainType::chemically_weathered_intrusive)] / total_volume; 
             } 
             else 
             {
-                output[int(ParticleSizeBins::silt)]    += mass  * grains[int(mineral::GrainType::chemically_weathered_extrusive)] / total_volume;
-                output[int(ParticleSizeBins::sand)]    += mass  * grains[int(mineral::GrainType::chemically_weathered_intrusive)] / total_volume;
+                output[std::size_t(ParticleSizeBins::silt)]    += mass  * grains[std::size_t(mineral::GrainType::chemically_weathered_extrusive)] / total_volume;
+                output[std::size_t(ParticleSizeBins::sand)]    += mass  * grains[std::size_t(mineral::GrainType::chemically_weathered_intrusive)] / total_volume;
             }
         } 
 
         float total_relative_volume(0);
-        for (std::size_t i=0; i<int(ParticleSizeBins::count); i++)
+        for (std::size_t i=0; i<std::size_t(ParticleSizeBins::count); i++)
         {
             total_relative_volume += output[i];
         }
-        for (std::size_t i=0; i<int(ParticleSizeBins::count); i++)
+        for (std::size_t i=0; i<std::size_t(ParticleSizeBins::count); i++)
         {
             output[i] /= total_relative_volume;
         }
     }
 
     // NOTE: based off https://upload.wikimedia.org/wikipedia/commons/6/65/SoilTextureTriangle.jpg
-    SoilTypes get_soil_type(const std::array<float, int(ParticleSizeBins::count)>& particle_size_bin_fractional_volume)
+    SoilTypes get_soil_type(const std::array<float, std::size_t(ParticleSizeBins::count)>& particle_size_bin_fractional_volume)
     {
-        if (particle_size_bin_fractional_volume[int(ParticleSizeBins::clay)] > 0.4) 
+        if (particle_size_bin_fractional_volume[std::size_t(ParticleSizeBins::clay)] > 0.4) 
         {
-            if (particle_size_bin_fractional_volume[int(ParticleSizeBins::sand)] > 0.5)
+            if (particle_size_bin_fractional_volume[std::size_t(ParticleSizeBins::sand)] > 0.5)
             {
                 return SoilTypes::sand_clay;
             }
-            else if (particle_size_bin_fractional_volume[int(ParticleSizeBins::silt)] > 0.5)
+            else if (particle_size_bin_fractional_volume[std::size_t(ParticleSizeBins::silt)] > 0.5)
             {
                 return SoilTypes::silt_clay;
             }
@@ -146,23 +146,23 @@ namespace stratum
                 return SoilTypes::clay;
             }
         }
-        else if (particle_size_bin_fractional_volume[int(ParticleSizeBins::sand)] > 0.8)
+        else if (particle_size_bin_fractional_volume[std::size_t(ParticleSizeBins::sand)] > 0.8)
         {
             return SoilTypes::sand;
         } 
-        else if (particle_size_bin_fractional_volume[int(ParticleSizeBins::silt)] > 0.8) 
+        else if (particle_size_bin_fractional_volume[std::size_t(ParticleSizeBins::silt)] > 0.8) 
         {
             return SoilTypes::silt;
         }
-        else if (particle_size_bin_fractional_volume[int(ParticleSizeBins::sand)] > 0.5) 
+        else if (particle_size_bin_fractional_volume[std::size_t(ParticleSizeBins::sand)] > 0.5) 
         {
             return SoilTypes::sand_loam;
         }
-        else if (particle_size_bin_fractional_volume[int(ParticleSizeBins::silt)] > 0.5) 
+        else if (particle_size_bin_fractional_volume[std::size_t(ParticleSizeBins::silt)] > 0.5) 
         {
             return SoilTypes::silt_loam;
         }
-        else if (particle_size_bin_fractional_volume[int(ParticleSizeBins::clay)] > 0.3) 
+        else if (particle_size_bin_fractional_volume[std::size_t(ParticleSizeBins::clay)] > 0.3) 
         {
             return SoilTypes::clay_loam;
         }
@@ -173,11 +173,11 @@ namespace stratum
     }
 
     ParticleSizeBins get_dominant_particle_size_bin(
-        const std::array<float, int(ParticleSizeBins::count)>& particle_size_bin_fractional_volume
+        const std::array<float, std::size_t(ParticleSizeBins::count)>& particle_size_bin_fractional_volume
     ){
         float v_max = 0;
         int i_max = 0;
-        for (int i = 0; i < int(ParticleSizeBins::count); ++i)
+        for (std::size_t i = 0; i < std::size_t(ParticleSizeBins::count); ++i)
         {
             if (particle_size_bin_fractional_volume[i] > v_max)
             {
@@ -195,24 +195,24 @@ namespace stratum
 
 
     // NOTE: based off https://upload.wikimedia.org/wikipedia/commons/f/f4/Mineralogy_igneous_rocks_EN.svg
-    template<int M>
+    template<std::size_t M>
     IgneousCompositionTypes get_igneous_composition_types(const Stratum<M>& stratum)
     {
         float total_mass = stratum.mass();
-        if (stratum.minerals[int(OxygenPlanetMineralTypes::olivine)].mass / total_mass > 0.3)
+        if (stratum.minerals[std::size_t(OxygenPlanetMineralTypes::olivine)].mass / total_mass > 0.3)
         {
             return IgneousCompositionTypes::ultramafic;
         }
-        else if (stratum.minerals[int(OxygenPlanetMineralTypes::pyroxene)].mass / total_mass > 0.3)
+        else if (stratum.minerals[std::size_t(OxygenPlanetMineralTypes::pyroxene)].mass / total_mass > 0.3)
         {
             return IgneousCompositionTypes::mafic;
         }
-        else if (stratum.minerals[int(OxygenPlanetMineralTypes::plagioclase)].mass / total_mass > 0.3)
+        else if (stratum.minerals[std::size_t(OxygenPlanetMineralTypes::plagioclase)].mass / total_mass > 0.3)
         {
             return IgneousCompositionTypes::intermediate;
         }
-        else if ((stratum.minerals[int(OxygenPlanetMineralTypes::orthoclase)].mass + 
-                  stratum.minerals[int(OxygenPlanetMineralTypes::quartz)].mass) / total_mass > 0.3)
+        else if ((stratum.minerals[std::size_t(OxygenPlanetMineralTypes::orthoclase)].mass + 
+                  stratum.minerals[std::size_t(OxygenPlanetMineralTypes::quartz)].mass) / total_mass > 0.3)
         {
             return IgneousCompositionTypes::felsic;
         }
@@ -221,38 +221,38 @@ namespace stratum
             return IgneousCompositionTypes::other;
         }
     }
-    template<int M>
+    template<std::size_t M>
     void get_igneous_formation_type_fractional_volume(
         const Stratum<M>& stratum, 
-        std::array<float, int(IgneousFormationTypes::count)>& output
+        std::array<float, std::size_t(IgneousFormationTypes::count)>& output
     ){
         output.fill(0);
         for (std::size_t i=0; i<M; i++)
         {
-            const std::array<float, int(mineral::GrainType::count)>& grains = stratum.minerals[i].grain_type_relative_volume;
-            output[int(IgneousFormationTypes::extrusive)] += grains[int(mineral::GrainType::unweathered_extrusive)];
-            output[int(IgneousFormationTypes::intrusive)] += grains[int(mineral::GrainType::unweathered_intrusive)];
-            output[int(IgneousFormationTypes::extrusive)] += grains[int(mineral::GrainType::mechanically_weathered_extrusive)];
-            output[int(IgneousFormationTypes::intrusive)] += grains[int(mineral::GrainType::mechanically_weathered_intrusive)];
-            output[int(IgneousFormationTypes::extrusive)] += grains[int(mineral::GrainType::chemically_weathered_extrusive)];
-            output[int(IgneousFormationTypes::intrusive)] += grains[int(mineral::GrainType::chemically_weathered_intrusive)];
+            const std::array<float, std::size_t(mineral::GrainType::count)>& grains = stratum.minerals[i].grain_type_relative_volume;
+            output[std::size_t(IgneousFormationTypes::extrusive)] += grains[std::size_t(mineral::GrainType::unweathered_extrusive)];
+            output[std::size_t(IgneousFormationTypes::intrusive)] += grains[std::size_t(mineral::GrainType::unweathered_intrusive)];
+            output[std::size_t(IgneousFormationTypes::extrusive)] += grains[std::size_t(mineral::GrainType::mechanically_weathered_extrusive)];
+            output[std::size_t(IgneousFormationTypes::intrusive)] += grains[std::size_t(mineral::GrainType::mechanically_weathered_intrusive)];
+            output[std::size_t(IgneousFormationTypes::extrusive)] += grains[std::size_t(mineral::GrainType::chemically_weathered_extrusive)];
+            output[std::size_t(IgneousFormationTypes::intrusive)] += grains[std::size_t(mineral::GrainType::chemically_weathered_intrusive)];
         }
         float total_relative_volume(0);
-        for (std::size_t i=0; i<int(ParticleSizeBins::count); i++)
+        for (std::size_t i=0; i<std::size_t(ParticleSizeBins::count); i++)
         {
             total_relative_volume += output[i];
         }
-        for (std::size_t i=0; i<int(ParticleSizeBins::count); i++)
+        for (std::size_t i=0; i<std::size_t(ParticleSizeBins::count); i++)
         {
             output[i] /= total_relative_volume;
         }
     }
 
     IgneousFormationTypes get_igneous_formation_types(
-        std::array<float, int(IgneousFormationTypes::count)>& igneous_formation_fractional_volume
+        std::array<float, std::size_t(IgneousFormationTypes::count)>& igneous_formation_fractional_volume
     ){
-        if (igneous_formation_fractional_volume[int(IgneousFormationTypes::intrusive)] > 
-            igneous_formation_fractional_volume[int(IgneousFormationTypes::extrusive)]
+        if (igneous_formation_fractional_volume[std::size_t(IgneousFormationTypes::intrusive)] > 
+            igneous_formation_fractional_volume[std::size_t(IgneousFormationTypes::extrusive)]
         ){
             return IgneousFormationTypes::intrusive;
         }
@@ -266,7 +266,7 @@ namespace stratum
 
 
     
-    template<int M>
+    template<std::size_t M>
     MetamorphicGrades get_metamorphic_grades(const Stratum<M>& stratum)
     {
         float p = 0.0; // the lowest max pressure shared by all mass pools
@@ -314,34 +314,34 @@ namespace stratum
     indicating composition criteria used by `get_rock_type()`.
     We use `get_rock_composition_types()` to simplify code and improve performance.
     */
-    template<int M>
+    template<std::size_t M>
     RockCompositionTypes get_rock_composition_types(const Stratum<M>& stratum)
     {
         RockCompositionTypes out;
         float total_mass = stratum.mass();
-        out.partly_calcareous =  stratum.minerals[int(OxygenPlanetMineralTypes::calcite    )].mass  / total_mass > 0.5;
-        out.calcareous        =  stratum.minerals[int(OxygenPlanetMineralTypes::calcite    )].mass  / total_mass > 0.75;
-        out.silicaceous       =  stratum.minerals[int(OxygenPlanetMineralTypes::quartz     )].mass  / total_mass > 0.9;
-        out.feldspathic       = (stratum.minerals[int(OxygenPlanetMineralTypes::plagioclase)].mass +
-                                 stratum.minerals[int(OxygenPlanetMineralTypes::orthoclase )].mass) / total_mass > 0.25;
-        out.volcanic          = (stratum.minerals[int(OxygenPlanetMineralTypes::olivine    )].mass +
-                                 stratum.minerals[int(OxygenPlanetMineralTypes::pyroxene   )].mass +
-                                 stratum.minerals[int(OxygenPlanetMineralTypes::plagioclase)].mass +
-                                 stratum.minerals[int(OxygenPlanetMineralTypes::quartz     )].mass +
-                                 stratum.minerals[int(OxygenPlanetMineralTypes::orthoclase )].mass) / total_mass > 0.9;
-        out.ferrous           = (stratum.minerals[int(OxygenPlanetMineralTypes::hematite   )].mass +
-                                 stratum.minerals[int(OxygenPlanetMineralTypes::pyrite     )].mass)/ total_mass > 0.15;
-        out.organic           =  stratum.minerals[int(OxygenPlanetMineralTypes::organics   )].mass / total_mass > 0.9;
+        out.partly_calcareous =  stratum.minerals[std::size_t(OxygenPlanetMineralTypes::calcite    )].mass  / total_mass > 0.5;
+        out.calcareous        =  stratum.minerals[std::size_t(OxygenPlanetMineralTypes::calcite    )].mass  / total_mass > 0.75;
+        out.silicaceous       =  stratum.minerals[std::size_t(OxygenPlanetMineralTypes::quartz     )].mass  / total_mass > 0.9;
+        out.feldspathic       = (stratum.minerals[std::size_t(OxygenPlanetMineralTypes::plagioclase)].mass +
+                                 stratum.minerals[std::size_t(OxygenPlanetMineralTypes::orthoclase )].mass) / total_mass > 0.25;
+        out.volcanic          = (stratum.minerals[std::size_t(OxygenPlanetMineralTypes::olivine    )].mass +
+                                 stratum.minerals[std::size_t(OxygenPlanetMineralTypes::pyroxene   )].mass +
+                                 stratum.minerals[std::size_t(OxygenPlanetMineralTypes::plagioclase)].mass +
+                                 stratum.minerals[std::size_t(OxygenPlanetMineralTypes::quartz     )].mass +
+                                 stratum.minerals[std::size_t(OxygenPlanetMineralTypes::orthoclase )].mass) / total_mass > 0.9;
+        out.ferrous           = (stratum.minerals[std::size_t(OxygenPlanetMineralTypes::hematite   )].mass +
+                                 stratum.minerals[std::size_t(OxygenPlanetMineralTypes::pyrite     )].mass)/ total_mass > 0.15;
+        out.organic           =  stratum.minerals[std::size_t(OxygenPlanetMineralTypes::organics   )].mass / total_mass > 0.9;
         return out;
     }
 
-    template<int M>
+    template<std::size_t M>
     StratumTypes get_stratum_types(const Stratum<M>& stratum)
     {
-        std::array<float, int(ParticleSizeBins::count)> particle_size_bin_fractional_volume;
+        std::array<float, std::size_t(ParticleSizeBins::count)> particle_size_bin_fractional_volume;
         get_particle_size_bin_fractional_volume(stratum, particle_size_bin_fractional_volume);
         
-        std::array<float, int(IgneousFormationTypes::count)> igneous_formation_fractional_volume;
+        std::array<float, std::size_t(IgneousFormationTypes::count)> igneous_formation_fractional_volume;
         get_igneous_formation_type_fractional_volume(stratum, igneous_formation_fractional_volume);
         
         return StratumTypes(

@@ -12,7 +12,7 @@
 
 namespace crust
 {
-    template<int L, int M, typename Tgrid>
+    template<std::size_t L, std::size_t M, typename Tgrid>
     void set_max_pressures_received(
         const Crust<L,M,Tgrid>& crust, 
         const CrustValues<float,L,Tgrid>& max_pressures_received, 
@@ -27,7 +27,7 @@ namespace crust
             output[i].pack(strata);
         }
     }
-    template<int L, int M, typename Tgrid>
+    template<std::size_t L, std::size_t M, typename Tgrid>
     void set_max_temperatures_received(
         const Crust<L,M,Tgrid>& crust, 
         const CrustValues<float,L,Tgrid>& max_temperatures_received, 

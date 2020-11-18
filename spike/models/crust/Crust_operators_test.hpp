@@ -18,9 +18,9 @@ using namespace crust;
 
 TEST_CASE( "Crust get_sediment() closure", "[crust]" ) {
     std::mt19937 generator(2);
-    const int L = 1;
-    const int L2 = 16;
-    const int M = 15;
+    const std::size_t L = 1;
+    const std::size_t L2 = 16;
+    const std::size_t M = 15;
     auto a = get_random_crust<L2,M>(icosahedron_grid, generator);
 
     auto fa = make_Crust<L,M>(icosahedron_grid);
@@ -33,8 +33,8 @@ TEST_CASE( "Crust get_sediment() closure", "[crust]" ) {
 
 TEST_CASE( "Crust overlap() associativity", "[crust]" ) {
     std::mt19937 generator(2);
-    const int L = 16;
-    const int M = 15;
+    const std::size_t L = 16;
+    const std::size_t M = 15;
     auto a = get_random_crust<L,M>(icosahedron_grid, generator);
     auto b = get_random_crust<L,M>(icosahedron_grid, generator);
     auto c = get_random_crust<L,M>(icosahedron_grid, generator);
@@ -55,8 +55,8 @@ TEST_CASE( "Crust overlap() associativity", "[crust]" ) {
 
 TEST_CASE( "Crust overlap() closure", "[crust]" ) {
   	std::mt19937 generator(2);
-  	const int L = 16;
-  	const int M = 15;
+  	const std::size_t L = 16;
+  	const std::size_t M = 15;
   	auto a = get_random_crust<L,M>(icosahedron_grid, generator);
   	auto b = get_random_crust<L,M>(icosahedron_grid, generator);
 
@@ -70,8 +70,8 @@ TEST_CASE( "Crust overlap() closure", "[crust]" ) {
 
 TEST_CASE( "Crust overlap() identity", "[strata]" ) {
     std::mt19937 generator(2);
-    const int L = 16;
-    const int M = 15;
+    const std::size_t L = 16;
+    const std::size_t M = 15;
     auto a = get_random_crust<L,M>(icosahedron_grid, generator);
     auto b = make_Crust<L,M>(icosahedron_grid);
 
@@ -85,8 +85,8 @@ TEST_CASE( "Crust overlap() identity", "[strata]" ) {
 
 TEST_CASE( "Crust overlap() mass conservation", "[crust]" ) {
     std::mt19937 generator(2);
-    const int L = 16;
-    const int M = 15;
+    const std::size_t L = 16;
+    const std::size_t M = 15;
     auto a = get_random_crust<L,M>(icosahedron_grid, generator);
     auto b = get_random_crust<L,M>(icosahedron_grid, generator);
 
@@ -112,8 +112,8 @@ there are no tests for the invertibility or commutativity of overlap(), since it
 
 TEST_CASE( "Crust simplify() closure", "[crust]" ) {
     std::mt19937 generator(2);
-    const int L = 16;
-    const int M = 15;
+    const std::size_t L = 16;
+    const std::size_t M = 15;
     auto a = get_random_crust<L,M>(icosahedron_grid, generator);
     auto fa = get_random_crust<L,M>(icosahedron_grid, generator);
 
@@ -126,8 +126,8 @@ TEST_CASE( "Crust simplify() closure", "[crust]" ) {
 
 TEST_CASE( "Crust simplify() mass conservation", "[crust]" ) {
     std::mt19937 generator(2);
-    const int L = 16;
-    const int M = 15;
+    const std::size_t L = 16;
+    const std::size_t M = 15;
     auto a = get_random_crust<L,M>(icosahedron_grid, generator);
     auto fa = get_random_crust<L,M>(icosahedron_grid, generator);
 

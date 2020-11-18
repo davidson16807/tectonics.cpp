@@ -6,7 +6,7 @@
 
 namespace crust
 {
-    template<int L, int M, typename Tgrid>
+    template<std::size_t L, std::size_t M, typename Tgrid>
     void get_sediment(
         const Crust<L,M,Tgrid>& input, 
         Crust<1,M,Tgrid>& output
@@ -22,7 +22,7 @@ namespace crust
         }
     }
 
-    template<int L, int M, typename Tgrid>
+    template<std::size_t L, std::size_t M, typename Tgrid>
     void simplify(
         const Crust<L,M,Tgrid>& input, 
         Crust<L,M,Tgrid>& output
@@ -38,7 +38,7 @@ namespace crust
         }
     }
 
-    template<int L1, int L2, int L3, int M, typename Tgrid>
+    template<std::size_t L1, std::size_t L2, std::size_t L3, std::size_t M, typename Tgrid>
     void overlap(
         const Crust<L1,M,Tgrid>& top, 
         const Crust<L2,M,Tgrid>& bottom,

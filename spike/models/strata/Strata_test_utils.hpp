@@ -22,12 +22,12 @@ namespace strata
     Our chief concern here is to simplify writing unit tests and interpreting their output.
     */
 
-    template<int L, int M, typename Tgenerator>
+    template<std::size_t L, std::size_t M, typename Tgenerator>
     Strata<L,M> get_random(Tgenerator generator)
     {
         Strata<L,M> output;
         output.count = 16;
-        for (int i = 0; i < L; ++i)
+        for (std::size_t i = 0; i < L; ++i)
         {
             output.content[i] = stratum::get_random<M>(generator);
         }
@@ -36,7 +36,7 @@ namespace strata
     
     #define STRATA_EQUAL(strata1, strata2)                                      \
         CHECK(strata1.count == strata2.count);                                    \
-        for (int stratum_i = 0; stratum_i < strata1.count; ++stratum_i)   \
+        for (std::size_t stratum_i = 0; stratum_i < strata1.count; ++stratum_i)   \
         {                                                           \
             stratum::Stratum<M> stratum1 = strata1.content[stratum_i];\
             stratum::Stratum<M> stratum2 = strata2.content[stratum_i];\
@@ -46,7 +46,7 @@ namespace strata
     #define STRATA_VALID(strata1)                                       \
         CHECK(0 <= strata1.count);\
         CHECK(strata1.count <= L);                       \
-        for (int stratum_i = 0; stratum_i < strata1.count; ++stratum_i) \
+        for (std::size_t stratum_i = 0; stratum_i < strata1.count; ++stratum_i) \
         {                                                         \
             STRATUM_VALID(strata1.content[stratum_i]) \
         }                                                                     

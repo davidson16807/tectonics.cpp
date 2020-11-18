@@ -13,8 +13,8 @@ using namespace crust;
 
 TEST_CASE( "CrustValues getter/setter invertibility", "[crust]" ) {
   	std::mt19937 generator(2);
-  	const int L = 16;
-  	const int M = 15;
+  	const std::size_t L = 16;
+  	const std::size_t M = 15;
 
 	auto original = get_random_crust<L,M>(icosahedron_grid, generator);
 	auto modified = get_random_crust<L,M>(icosahedron_grid, generator);

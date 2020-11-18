@@ -10,8 +10,8 @@ using namespace strata;
 
 TEST_CASE( "StrataValues getter/setter invertibility", "[strata]" ) {
   	std::mt19937 generator(2);
-  	const int L = 16;
-  	const int M = 15;
+  	const std::size_t L = 16;
+  	const std::size_t M = 15;
 
 	Strata<L,M> original = get_random<L,M>(generator);
 	Strata<L,M> modified;

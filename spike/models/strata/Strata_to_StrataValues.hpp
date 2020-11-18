@@ -9,7 +9,7 @@
 
 namespace strata
 {
-    template<int L, int M>
+    template<std::size_t L, std::size_t M>
     void get_max_pressures_received(
         const Strata<L,M>& strata,
         StrataValues<float, L>& output
@@ -20,7 +20,7 @@ namespace strata
             output.values[i] = strata.content[i].max_pressure_received;
         }
     }
-    template<int L, int M>
+    template<std::size_t L, std::size_t M>
     void get_max_temperatures_received(
         const Strata<L,M>& strata,
         StrataValues<float, L>& output
@@ -31,7 +31,7 @@ namespace strata
             output.values[i] = strata.content[i].max_temperature_received;
         }
     }
-    template<int L, int M>
+    template<std::size_t L, std::size_t M>
     void get_mass(
         const Strata<L,M>& strata,
         StrataValues<float, L>& output
@@ -42,7 +42,7 @@ namespace strata
             output.values[i] = strata.content[i].mass();
         }
     }
-    template<int L, int M>
+    template<std::size_t L, std::size_t M>
     void get_volumes(
         const Strata<L,M>& strata,
         const float age_of_world, 
@@ -55,7 +55,7 @@ namespace strata
             output.values[i] = strata.content[i].volume(age_of_world, mass_pool_densities);
         }
     }
-    template<int L, int M>
+    template<std::size_t L, std::size_t M>
     void get_densities(
         const Strata<L,M>& strata,
         const float age_of_world, 
@@ -68,7 +68,7 @@ namespace strata
             output.values[i] = strata.content[i].density(age_of_world, mass_pool_densities);
         }
     }
-    template<int L, int M>
+    template<std::size_t L, std::size_t M>
     void get_thermal_conductivities(
         const Strata<L,M>& strata,
         const float age_of_world,
@@ -93,14 +93,14 @@ namespace strata
     Total pressure requires providing too many other variables (such as ocean depth, gravity, etc.),
     so this function exists to reduce the problem scope and complexity of the method signature
     */
-    template<int L, int M>
+    template<std::size_t L, std::size_t M>
     void get_overburden_mass(
         const Strata<L,M>& strata,
         StrataValues<float, L>& output
     ) {
         output.count = strata.count;
         float overburden_mass(0);
-        for (int i = 0; i < strata.count; ++i)
+        for (std::size_t i = 0; i < strata.count; ++i)
         {
             output.values[i] = overburden_mass;
             overburden_mass += strata.content[i].mass();
@@ -112,7 +112,7 @@ namespace strata
     Total depth requires providing too many other variables (such as ocean depth, surface area, etc.),
     so this function exists to reduce the problem scope and complexity of the method signature
     */
-    template<int L, int M>
+    template<std::size_t L, std::size_t M>
     void get_overburden_volume(
         const Strata<L,M>& strata,
         const float age_of_world, 
@@ -121,7 +121,7 @@ namespace strata
     ) {
         output.count = strata.count;
         float overburden_volume(0);
-        for (int i = 0; i < strata.count; ++i)
+        for (std::size_t i = 0; i < strata.count; ++i)
         {
             output.values[i] = overburden_volume;
             overburden_volume += strata.content[i].volume(age_of_world, mass_pool_densities);

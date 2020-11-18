@@ -4,11 +4,11 @@
 
 namespace strata
 {
-    template <typename T, int L>
+    template <typename T, std::size_t L>
     struct StrataValues
     {
         std::array<T, L> values;
-        int count;
+        uint count;
         ~StrataValues(){}
         StrataValues(): values(), count(0){}
     };

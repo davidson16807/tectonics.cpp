@@ -23,12 +23,12 @@ namespace stratum
     Our chief concern here is to simplify writing unit tests and interpreting their output.
     */
 
-    template<int M, typename Tgenerator>
+    template<std::size_t M, typename Tgenerator>
     Stratum<M> get_random(Tgenerator generator)
     {
         std::uniform_real_distribution<float> uniform;
         Stratum<M> output(32768.0f * uniform(generator), 6e12f * uniform(generator), uniform(generator) * 65000.0f * units::megayear);
-        for (int i = 0; i < M; ++i)
+        for (std::size_t i = 0; i < M; ++i)
         {
             output.minerals[i] = mineral::get_random(generator);
         }
@@ -39,7 +39,7 @@ namespace stratum
         CHECK(stratum1.max_pressure_received == Approx(stratum2.max_pressure_received).epsilon(0.02) ); \
         CHECK(stratum1.max_temperature_received == Approx(stratum2.max_temperature_received).epsilon(0.02) ); \
         CHECK(stratum1.age_of_world_when_deposited == Approx(stratum2.age_of_world_when_deposited).epsilon(0.02) ); \
-        for (int pool_i = 0; pool_i < M; ++pool_i)         \
+        for (std::size_t pool_i = 0; pool_i < M; ++pool_i)         \
         {                                                                        \
             MINERAL_EQUAL(stratum1.minerals[pool_i], stratum2.minerals[pool_i])  \
         } 
@@ -48,7 +48,7 @@ namespace stratum
         CHECK(stratum1.max_pressure_received > -1e-4); \
         CHECK(stratum1.max_temperature_received > -1e-4); \
         CHECK(stratum1.age_of_world_when_deposited > -1e-4); \
-        for (int pool_i = 0; pool_i < M; ++pool_i)  \
+        for (std::size_t pool_i = 0; pool_i < M; ++pool_i)  \
         {                                                                 \
             MINERAL_VALID(stratum1.minerals[pool_i])                 \
         }                                                                     

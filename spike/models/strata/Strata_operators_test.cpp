@@ -13,8 +13,8 @@ using namespace strata;
 
 TEST_CASE( "Strata overlap() associativity", "[strata]" ) {
   	std::mt19937 generator(2);
-  	const int L = 16;
-  	const int M = 15;
+  	const std::size_t L = 16;
+  	const std::size_t M = 15;
 	Strata<L,M> a = get_random<L,M>(generator);
 	Strata<L,M> b = get_random<L,M>(generator);
 	Strata<L,M> c = get_random<L,M>(generator);
@@ -35,8 +35,8 @@ TEST_CASE( "Strata overlap() associativity", "[strata]" ) {
 
 TEST_CASE( "Strata overlap() closure", "[strata]" ) {
   	std::mt19937 generator(2);
-  	const int L = 16;
-  	const int M = 15;
+  	const std::size_t L = 16;
+  	const std::size_t M = 15;
 	Strata<L,M> a = get_random<L,M>(generator);
 	Strata<L,M> b = get_random<L,M>(generator);
 
@@ -50,8 +50,8 @@ TEST_CASE( "Strata overlap() closure", "[strata]" ) {
 
 TEST_CASE( "Strata overlap() identity", "[strata]" ) {
   	std::mt19937 generator(2);
-  	const int L = 16;
-  	const int M = 15;
+  	const std::size_t L = 16;
+  	const std::size_t M = 15;
 	Strata<L,M> a = get_random<L,M>(generator);
 	// default constructor is required to be identity
 	Strata<L,M> b;
@@ -66,8 +66,8 @@ TEST_CASE( "Strata overlap() identity", "[strata]" ) {
 
 TEST_CASE( "Strata overlap() mass conservation", "[strata]" ) {
     std::mt19937 generator(2);
-    const int L = 16;
-    const int M = 15;
+    const std::size_t L = 16;
+    const std::size_t M = 15;
     Strata<L,M> a = get_random<L,M>(generator);
     Strata<L,M> b = get_random<L,M>(generator);
 
@@ -87,8 +87,8 @@ there are no tests for the invertibility of overlap(), since it is not expect to
 
 TEST_CASE( "Strata simplify() closure", "[strata]" ) {
     std::mt19937 generator(2);
-    const int L = 16;
-    const int M = 15;
+    const std::size_t L = 16;
+    const std::size_t M = 15;
   Strata<L,M> a = get_random<L,M>(generator);
 
   Strata<L,M> fa;
@@ -101,8 +101,8 @@ TEST_CASE( "Strata simplify() closure", "[strata]" ) {
 
 TEST_CASE( "Strata simplify() mass conservation", "[strata]" ) {
     std::mt19937 generator(2);
-    const int L = 16;
-    const int M = 15;
+    const std::size_t L = 16;
+    const std::size_t M = 15;
   Strata<L,M> a = get_random<L,M>(generator);
 
   Strata<L,M> fa;
@@ -122,8 +122,8 @@ and it is deliberately lossy (noninvertible)
 
 TEST_CASE( "Strata get_sediment() closure", "[strata]" ) {
     std::mt19937 generator(2);
-    const int L = 16;
-    const int M = 15;
+    const std::size_t L = 16;
+    const std::size_t M = 15;
     Strata<L,M> a = get_random<L,M>(generator);
 
     Strata<1,M> fa;

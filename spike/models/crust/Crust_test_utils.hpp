@@ -22,7 +22,7 @@ namespace crust
     /*
     Just get random values for every float, don't care about spatial distribution
     */
-    template<int L, int M, typename Tgrid, typename Tgenerator>
+    template<std::size_t L, std::size_t M, typename Tgrid, typename Tgenerator>
     Crust<L,M,Tgrid> get_random_crust(const Tgrid grid, Tgenerator generator)
     {
         auto output = make_Crust<L,M>(grid);

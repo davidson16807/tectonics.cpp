@@ -32,15 +32,15 @@ namespace strata
     treated strictly by its mappings to other states, 
     which in this case are isomorphic and invertible.
     */
-    template <int L, int M>
+    template <std::size_t L, std::size_t M>
     class StrataStore
     {
         std::array<stratum::StratumStore<M>, L> strata;
-        int count;
+        std::size_t count;
     public:
         void unpack(Strata<L,M>& output) const
         {
-            for (int i=0; i<count; i++)
+            for (std::size_t i=0; i<count; i++)
             {
                 strata[i].unpack(output.content[i]);
             }
@@ -48,7 +48,7 @@ namespace strata
         }
         void pack(const Strata<L,M>& input)
         {
-            for (int i=0; i<input.count; i++)
+            for (std::size_t i=0; i<input.count; i++)
             {
                 strata[i].pack(input.content[i]);
             }

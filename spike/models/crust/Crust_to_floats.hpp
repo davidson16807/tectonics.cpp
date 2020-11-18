@@ -7,7 +7,7 @@
 
 namespace crust
 {
-    template<int L, int M, typename Tgrid>
+    template<std::size_t L, std::size_t M, typename Tgrid>
     void get_mass_pool(
         const Crust<L,M,Tgrid>& crust, 
         stratum::OxygenPlanetMineralTypes type, 
@@ -21,7 +21,7 @@ namespace crust
             output[i] = strata.mass_pool(type);
         }
     }
-    template<int L, int M, typename Tgrid>
+    template<std::size_t L, std::size_t M, typename Tgrid>
     void get_mass(const Crust<L,M,Tgrid>& crust, rasters::Raster<float,Tgrid>& output)
     {
         assert(crust.size() == output.size());
@@ -32,7 +32,7 @@ namespace crust
             output[i] = strata.mass();
         }
     }
-    template<int L, int M, typename Tgrid>
+    template<std::size_t L, std::size_t M, typename Tgrid>
     void get_volume(const Crust<L,M,Tgrid>& crust, rasters::Raster<float,Tgrid>& output)
     {
         assert(crust.size() == output.size());
@@ -43,7 +43,7 @@ namespace crust
             output[i] = strata.volume();
         }
     }
-    template<int L, int M, typename Tgrid>
+    template<std::size_t L, std::size_t M, typename Tgrid>
     void get_density(const Crust<L,M,Tgrid>& crust, float age, rasters::Raster<float,Tgrid>& output)
     {
         assert(crust.size() == output.size());
@@ -54,7 +54,7 @@ namespace crust
             output[i] = strata.density(age);
         }
     }
-    template<int L, int M, typename Tgrid>
+    template<std::size_t L, std::size_t M, typename Tgrid>
     void get_thickness(const Crust<L,M,Tgrid>& crust, rasters::Raster<float,Tgrid>& output)
     {
         assert(crust.size() == output.size());

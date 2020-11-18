@@ -17,7 +17,7 @@ namespace strata
     We return a strata instead of a strata to prevent the categories that invoke this function
     from having to deal with categories below.
     */
-    template <int L, int M>
+    template <std::size_t L, std::size_t M>
     static void get_sediment(const Strata<L,M>& input, Strata<1,M>& output)
     {
         if (input.count > 0 && stratum::get_stratum_types(input.content[0]).dominant_particle_size_bin <= stratum::ParticleSizeBins::sand)
@@ -35,7 +35,7 @@ namespace strata
     "simplify" is a regular function that iterates through layers, 
     combines similar layers together, and stores results in output.
     */
-    template <int L, int M>
+    template <std::size_t L, std::size_t M>
     static void simplify(const Strata<L,M>& input, Strata<L,M>& output)
     {
         /*
@@ -60,8 +60,8 @@ namespace strata
         which represents a superset of the abstract values that may be returned by `get_rock_type()`,
         and is a cartesian product of the data types that are used within that function.
         */
-        int i(0);
-        int j(0);
+        std::size_t i(0);
+        std::size_t j(0);
         for (; i < input.count; ++j)
         {
             if (i+1 < input.count && 
@@ -89,11 +89,11 @@ namespace strata
     since we care the least about properly representing the bottom layers, 
     and we are required to fit within stack memory, just as long as the mass in each pool is conserved.
     */
-    template <int L1, int L2, int L3, int M>
+    template <std::size_t L1, std::size_t L2, std::size_t L3, std::size_t M>
     static void overlap(const Strata<L1,M>& top, const Strata<L2,M>& bottom, Strata<L3,M>& output)
     {
-        int top_i(0);
-        int bottom_i(0);
+        std::size_t top_i(0);
+        std::size_t bottom_i(0);
         for (; top_i < top.count && top_i < L3; ++top_i)
         {
             output.content[top_i] = top.content[top_i];
@@ -103,7 +103,7 @@ namespace strata
             stratum::combine(output.content[L3-1], top.content[top_i], output.content[L3-1]);
         }
         // combine the adjacent layers of top and bottom, if similar
-        int adjacent_i = std::min(top.count, L3)-1;
+        std::size_t adjacent_i = std::min(top.count, L3)-1;
         if (stratum::get_stratum_types(output.content[adjacent_i]).hash() == 
             stratum::get_stratum_types(bottom.content.front()).hash())
         {

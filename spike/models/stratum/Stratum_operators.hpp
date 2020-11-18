@@ -14,7 +14,7 @@ namespace stratum
 {
     
     // OPERATORS, regular functions of the form: Stratum x Stratum -> Stratum
-    template<int M>
+    template<std::size_t M>
     static void scale(const Stratum<M>& a, float scalar, Stratum<M>& output)
     {
         output = a;
@@ -24,7 +24,7 @@ namespace stratum
         }
     }
 
-    template<int M>
+    template<std::size_t M>
     static void combine(
         const Stratum<M>& a, 
         const Stratum<M>& b, 
