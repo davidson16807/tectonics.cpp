@@ -144,14 +144,14 @@ namespace rasters
 
 		T get_value(const glm::vec3 point) const
 		{
-			return get_value(get_conceptual_id(point));
+			return get_value(get_conceptual_id(glm::normalize(point)));
 		}
 
 		void get_values(const many::vec3s& points, many::series<T>& out) const
 		{
 			for (unsigned int i = 0; i < points.size(); ++i)
 			{
-				out[i] = get_value(get_conceptual_id(points[i]));
+				out[i] = get_value(get_conceptual_id(glm::normalize(points[i])));
 			}
 		}
 
@@ -178,11 +178,12 @@ namespace rasters
 			int vicinity_radius = (max_vertex_distance/cell_width)/2 + 1;
 			for (uint point_id = 0; point_id < points.size(); ++point_id)
 			{
+				glm::vec3 point(normalize(points[point_id]));
 				for (uint side_id = 0; side_id < OCTAHEDRON_SIDE_COUNT; ++side_id)
 				{
-					if (glm::dot(OCTAHEDRON_SIDE_Z[side_id], points[point_id]) < (1/sqrt(3)) - max_vertex_distance) { continue; }
-					glm::ivec3 center_id = get_conceptual_id(points[point_id], side_id);
-					float center_distance = glm::distance(points[point_id], get_midpoint(center_id));
+					if (glm::dot(OCTAHEDRON_SIDE_Z[side_id], point) < (1/sqrt(3)) - max_vertex_distance) { continue; }
+					glm::ivec3 center_id = get_conceptual_id(point, side_id);
+					float center_distance = glm::distance(point, get_midpoint(center_id));
 					if (center_distance > max_vertex_distance) { continue; }
 					for (int xi2d = -vicinity_radius; xi2d < vicinity_radius; ++xi2d)
 					{
@@ -190,7 +191,7 @@ namespace rasters
 						{
 							glm::ivec3 offset_id = center_id + glm::ivec3(xi2d, yi2d, 0);
 							glm::vec3 midpoint = get_midpoint(offset_id);
-							float point_distance = glm::distance(points[point_id], midpoint);
+							float point_distance = glm::distance(point, midpoint);
 							if (point_distance > max_vertex_distance) { continue; }
 							float min_distance = temp[get_memory_id(offset_id)].second;
 							if (point_distance >= min_distance) { continue; }
