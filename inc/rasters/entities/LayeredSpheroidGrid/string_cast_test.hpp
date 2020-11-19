@@ -8,10 +8,10 @@
 #define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
 #include <glm/vec3.hpp>               // *vec3
 
-#include <many/many.hpp>  
-#include <many/convenience.hpp>  
-#include <many/glm/glm.hpp>         // *vec*s
-#include <many/glm/convenience.hpp> //  operators, etc.
+#include <series/series.hpp>  
+#include <series/convenience.hpp>  
+#include <series/glm/glm.hpp>         // *vec*s
+#include <series/glm/convenience.hpp> //  operators, etc.
 
 #include "../LayeredGrid/LayeredRaster.hpp"
 #include "../LayeredGrid/layering.hpp"
@@ -21,7 +21,7 @@
 #include "LayeredSpheroidGrid_test_utils.hpp"
 
 using namespace glm;
-using namespace many;
+using namespace series;
 using namespace rasters;
 
 TEST_CASE( "LayeredSpheroidRaster string cast purity", "[rasters]" ) {

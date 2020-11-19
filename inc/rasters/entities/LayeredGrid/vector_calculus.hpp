@@ -13,7 +13,7 @@ namespace rasters
 		LayeredRaster<glm::vec<3,T,Q>,Tgrid,mapping::arrow>& arrow_flow,
 		LayeredRaster<glm::vec<3,T,Q>,Tgrid>& layer_flow
 	) {
-		many::fill (arrow_differential, T(0));
+		series::fill (arrow_differential, T(0));
 		uint L = scalar_field.grid.layering->layer_count;
 		glm::uvec2 arrow;
 		for (unsigned int i = 0; i < scalar_field.grid.cache->arrow_vertex_ids.size(); ++i)
@@ -24,11 +24,11 @@ namespace rasters
 				arrow_differential[i*L+j] = scalar_field[arrow.y*L+j] - scalar_field[arrow.x*L+j]; // differential across dual of the arrow
 			}
 		}
-		many::mult (arrow_differential, scalar_field.grid.cache->arrow_dual_normals,   arrow_flow);      // flux across dual of the arrow 
-		many::mult (arrow_flow,         scalar_field.grid.cache->arrow_dual_lengths,   arrow_flow);
-		many::mult (arrow_flow,         scalar_field.grid.layering->layer_height,      arrow_flow);      // flow across dual of the arrow 
+		series::mult (arrow_differential, scalar_field.grid.cache->arrow_dual_normals,   arrow_flow);      // flux across dual of the arrow 
+		series::mult (arrow_flow,         scalar_field.grid.cache->arrow_dual_lengths,   arrow_flow);
+		series::mult (arrow_flow,         scalar_field.grid.layering->layer_height,      arrow_flow);      // flow across dual of the arrow 
 
-		many::fill (layer_differential, T(0));
+		series::fill (layer_differential, T(0));
 		for (unsigned int i = 0; i < scalar_field.grid.cache->vertex_count; ++i)
 		{
 			for (unsigned int j = 1; j < L; ++j)
@@ -37,10 +37,10 @@ namespace rasters
 				layer_differential[i*L+j]   += scalar_field[i*L+j] - scalar_field[i*L+j-1]; // /2; NOTE: 2 cancels out
 			}
 		}
-		many::mult (layer_differential, scalar_field.grid.cache->vertex_normals,       layer_flow);      // flux across layer boundary 
-		many::mult (layer_flow,         scalar_field.grid.cache->vertex_dual_areas,    layer_flow);      // flow across layer boundary
+		series::mult (layer_differential, scalar_field.grid.cache->vertex_normals,       layer_flow);      // flux across layer boundary 
+		series::mult (layer_flow,         scalar_field.grid.cache->vertex_dual_areas,    layer_flow);      // flow across layer boundary
 
-		many::copy (out,                layer_flow);
+		series::copy (out,                layer_flow);
 		for (unsigned int i = 0; i < scalar_field.grid.cache->arrow_vertex_id_from.size(); ++i)
 		{
 			for (unsigned int j = 0; j < L; ++j)
@@ -49,8 +49,8 @@ namespace rasters
 			}
 		}
 
-		many::div  (out,                scalar_field.grid.cache->vertex_dual_areas,    out);
-		many::div  (out,                scalar_field.grid.layering->layer_height,      out);             // gradient
+		series::div  (out,                scalar_field.grid.cache->vertex_dual_areas,    out);
+		series::div  (out,                scalar_field.grid.layering->layer_height,      out);             // gradient
 	}
 
 	template<typename Tgrid, typename T>
@@ -75,7 +75,7 @@ namespace rasters
 		LayeredRaster<T,Tgrid,mapping::arrow>& arrow_projection,
 		LayeredRaster<T,Tgrid>& layer_projection
 	) {
-		many::fill (arrow_differential, glm::vec<3,T,Q>(0.f));
+		series::fill (arrow_differential, glm::vec<3,T,Q>(0.f));
 		uint L = vector_field.grid.layering->layer_count;
 		glm::uvec2 arrow;
 		for (unsigned int i = 0; i < vector_field.grid.cache->arrow_vertex_ids.size(); ++i)
@@ -86,11 +86,11 @@ namespace rasters
 				arrow_differential[i*L+j] = vector_field[arrow.y*L+j] - vector_field[arrow.x*L+j]; // differential across dual of the arrow
 			}
 		}
-		many::dot  (arrow_differential, vector_field.grid.cache->arrow_dual_normals,   arrow_projection);      // flux across dual of the arrow 
-		many::mult (arrow_projection,   vector_field.grid.cache->arrow_dual_lengths,   arrow_projection);
-		many::mult (arrow_projection,   vector_field.grid.layering->layer_height,      arrow_projection);      // flow across dual of the arrow 
+		series::dot  (arrow_differential, vector_field.grid.cache->arrow_dual_normals,   arrow_projection);      // flux across dual of the arrow 
+		series::mult (arrow_projection,   vector_field.grid.cache->arrow_dual_lengths,   arrow_projection);
+		series::mult (arrow_projection,   vector_field.grid.layering->layer_height,      arrow_projection);      // flow across dual of the arrow 
 
-		many::fill (layer_differential, glm::vec<3,T,Q>(0.f));
+		series::fill (layer_differential, glm::vec<3,T,Q>(0.f));
 		for (unsigned int i = 0; i < vector_field.grid.cache->vertex_count; ++i)
 		{
 			for (unsigned int j = 1; j < L; ++j)
@@ -99,10 +99,10 @@ namespace rasters
 				layer_differential[i*L+j]   += vector_field[i*L+j] - vector_field[i*L+j-1]; // /2; NOTE: 2 cancels out
 			}
 		}
-		many::dot  (layer_differential, vector_field.grid.cache->vertex_normals,       layer_projection);      // flux across layer boundary 
-		many::mult (layer_projection,   vector_field.grid.cache->vertex_dual_areas,    layer_projection);      // flow across layer boundary
+		series::dot  (layer_differential, vector_field.grid.cache->vertex_normals,       layer_projection);      // flux across layer boundary 
+		series::mult (layer_projection,   vector_field.grid.cache->vertex_dual_areas,    layer_projection);      // flow across layer boundary
 
-		many::copy (out,                layer_projection);
+		series::copy (out,                layer_projection);
 		for (unsigned int i = 0; i < vector_field.grid.cache->arrow_vertex_id_from.size(); ++i)
 		{
 			for (unsigned int j = 0; j < L; ++j)
@@ -111,8 +111,8 @@ namespace rasters
 			}
 		}
 
-		many::div  (out,                vector_field.grid.cache->vertex_dual_areas,    out);
-		many::div  (out,                vector_field.grid.layering->layer_height,      out);             // divergence
+		series::div  (out,                vector_field.grid.cache->vertex_dual_areas,    out);
+		series::div  (out,                vector_field.grid.layering->layer_height,      out);             // divergence
 	}
 
 	template<typename Tgrid, typename T, glm::qualifier Q>
@@ -137,7 +137,7 @@ namespace rasters
 		LayeredRaster<glm::vec<3,T,Q>,Tgrid,mapping::arrow>& arrow_rejection,
 		LayeredRaster<glm::vec<3,T,Q>,Tgrid>& layer_rejection
 	) {
-		many::fill (arrow_differential, glm::vec<3,T,Q>(0.f));
+		series::fill (arrow_differential, glm::vec<3,T,Q>(0.f));
 		uint L = vector_field.grid.layering->layer_count;
 		glm::uvec2 arrow;
 		for (unsigned int i = 0; i < vector_field.grid.cache->arrow_vertex_ids.size(); ++i)
@@ -148,11 +148,11 @@ namespace rasters
 				arrow_differential[i*L+j] = vector_field[arrow.y*L+j] - vector_field[arrow.x*L+j]; // differential across dual of the arrow
 			}
 		}
-		many::cross(arrow_differential,vector_field.grid.cache->arrow_dual_normals,   arrow_rejection);      // flux across dual of the arrow 
-		many::mult (arrow_rejection,   vector_field.grid.cache->arrow_dual_lengths,   arrow_rejection);
-		many::mult (arrow_rejection,   vector_field.grid.layering->layer_height,      arrow_rejection);      // flow across dual of the arrow 
+		series::cross(arrow_differential,vector_field.grid.cache->arrow_dual_normals,   arrow_rejection);      // flux across dual of the arrow 
+		series::mult (arrow_rejection,   vector_field.grid.cache->arrow_dual_lengths,   arrow_rejection);
+		series::mult (arrow_rejection,   vector_field.grid.layering->layer_height,      arrow_rejection);      // flow across dual of the arrow 
 
-		many::fill (layer_differential, glm::vec<3,T,Q>(0.f));
+		series::fill (layer_differential, glm::vec<3,T,Q>(0.f));
 		for (unsigned int i = 0; i < vector_field.grid.cache->vertex_count; ++i)
 		{
 			for (unsigned int j = 1; j < L; ++j)
@@ -161,10 +161,10 @@ namespace rasters
 				layer_differential[i*L+j]   += vector_field[i*L+j] - vector_field[i*L+j-1]; // /2; NOTE: 2 cancels out
 			}
 		}
-		many::cross(layer_differential,vector_field.grid.cache->vertex_normals,       layer_rejection);      // flux across layer boundary 
-		many::mult (layer_rejection,   vector_field.grid.cache->vertex_dual_areas,    layer_rejection);      // flow across layer boundary
+		series::cross(layer_differential,vector_field.grid.cache->vertex_normals,       layer_rejection);      // flux across layer boundary 
+		series::mult (layer_rejection,   vector_field.grid.cache->vertex_dual_areas,    layer_rejection);      // flow across layer boundary
 
-		many::copy (out,                layer_rejection);
+		series::copy (out,                layer_rejection);
 		for (unsigned int i = 0; i < vector_field.grid.cache->arrow_vertex_id_from.size(); ++i)
 		{
 			for (unsigned int j = 0; j < L; ++j)
@@ -173,8 +173,8 @@ namespace rasters
 			}
 		}
 
-		many::div  (out,                vector_field.grid.cache->vertex_dual_areas,    out);
-		many::div  (out,                vector_field.grid.layering->layer_height,      out);             // curl
+		series::div  (out,                vector_field.grid.cache->vertex_dual_areas,    out);
+		series::div  (out,                vector_field.grid.layering->layer_height,      out);             // curl
 	}
 
 	template<typename Tgrid, typename T, glm::qualifier Q>
@@ -197,7 +197,7 @@ namespace rasters
 		LayeredRaster<T,Tgrid,mapping::arrow>& arrow_scratch, 
 		LayeredRaster<T,Tgrid>& layer_scratch
 	) {
-		many::fill (arrow_scratch, T(0));
+		series::fill (arrow_scratch, T(0));
 		uint L = scalar_field.grid.layering->layer_count;
 		glm::uvec2 arrow;
 		for (unsigned int i = 0; i < scalar_field.grid.cache->arrow_vertex_ids.size(); ++i)
@@ -208,11 +208,11 @@ namespace rasters
 				arrow_scratch[i*L+j] = scalar_field[arrow.y*L+j] - scalar_field[arrow.x*L+j]; // differential across dual of the arrow
 			}
 		}
-		many::div  (arrow_scratch, scalar_field.grid.cache->arrow_lengths,        arrow_scratch); // slope across arrow
-		many::mult (arrow_scratch, scalar_field.grid.cache->arrow_dual_lengths,   arrow_scratch);
-		many::mult (arrow_scratch, scalar_field.grid.layering->layer_height,      arrow_scratch); // flow across dual of the arrow 
+		series::div  (arrow_scratch, scalar_field.grid.cache->arrow_lengths,        arrow_scratch); // slope across arrow
+		series::mult (arrow_scratch, scalar_field.grid.cache->arrow_dual_lengths,   arrow_scratch);
+		series::mult (arrow_scratch, scalar_field.grid.layering->layer_height,      arrow_scratch); // flow across dual of the arrow 
 
-		many::fill (layer_scratch, T(0));
+		series::fill (layer_scratch, T(0));
 		for (unsigned int i = 0; i < scalar_field.grid.cache->vertex_count; ++i)
 		{
 			for (unsigned int j = 1; j < L; ++j)
@@ -221,10 +221,10 @@ namespace rasters
 				layer_scratch[i*L+j]   += scalar_field[i*L+j] - scalar_field[i*L+j-1]; // /2; NOTE: 2 cancels out
 			}
 		}
-		many::div  (layer_scratch, scalar_field.grid.layering->layer_height,         layer_scratch); // slope across layers
-		many::mult (layer_scratch, scalar_field.grid.cache->vertex_dual_areas,    layer_scratch); // flow across layer boundary
+		series::div  (layer_scratch, scalar_field.grid.layering->layer_height,         layer_scratch); // slope across layers
+		series::mult (layer_scratch, scalar_field.grid.cache->vertex_dual_areas,    layer_scratch); // flow across layer boundary
 
-		many::copy (out,                layer_scratch);
+		series::copy (out,                layer_scratch);
 		for (unsigned int i = 0; i < scalar_field.grid.cache->arrow_vertex_id_from.size(); ++i)
 		{
 			for (unsigned int j = 0; j < L; ++j)
@@ -233,8 +233,8 @@ namespace rasters
 			}
 		}
 
-		many::div  (out,                scalar_field.grid.cache->vertex_dual_areas,    out);
-		many::div  (out,                scalar_field.grid.layering->layer_height,      out);             // laplacian
+		series::div  (out,                scalar_field.grid.cache->vertex_dual_areas,    out);
+		series::div  (out,                scalar_field.grid.layering->layer_height,      out);             // laplacian
 	}
 	template<typename Tgrid, typename T>
 	LayeredRaster<T,Tgrid> laplacian(const LayeredRaster<T,Tgrid>& scalar_field)
@@ -254,7 +254,7 @@ namespace rasters
 		LayeredRaster<glm::vec<L,T,Q>,Tgrid, mapping::arrow>& arrow_scratch,
 		LayeredRaster<glm::vec<L,T,Q>,Tgrid>& layer_scratch
 	) {
-		many::fill (arrow_scratch, glm::vec<L,T,Q>(0.f));
+		series::fill (arrow_scratch, glm::vec<L,T,Q>(0.f));
 		uint Li = vector_field.grid.layering->layer_count;
 		glm::uvec2 arrow;
 		for (unsigned int i = 0; i < vector_field.grid.cache->arrow_vertex_ids.size(); ++i)
@@ -265,11 +265,11 @@ namespace rasters
 				arrow_scratch[i*Li+j] = vector_field[arrow.y*Li+j] - vector_field[arrow.x*Li+j]; // differential across dual of the arrow
 			}
 		}
-		many::div  (arrow_scratch, vector_field.grid.cache->arrow_lengths, arrow_scratch);
-		many::mult (arrow_scratch, vector_field.grid.cache->arrow_dual_lengths,   arrow_scratch);
-		many::mult (arrow_scratch, vector_field.grid.layering->layer_height,      arrow_scratch); // flow across dual of the arrow 
+		series::div  (arrow_scratch, vector_field.grid.cache->arrow_lengths, arrow_scratch);
+		series::mult (arrow_scratch, vector_field.grid.cache->arrow_dual_lengths,   arrow_scratch);
+		series::mult (arrow_scratch, vector_field.grid.layering->layer_height,      arrow_scratch); // flow across dual of the arrow 
 
-		many::fill (layer_scratch, glm::vec<L,T,Q>(0.f));
+		series::fill (layer_scratch, glm::vec<L,T,Q>(0.f));
 		for (unsigned int i = 0; i < vector_field.grid.cache->vertex_count; ++i)
 		{
 			for (unsigned int j = 1; j < Li; ++j)
@@ -278,10 +278,10 @@ namespace rasters
 				layer_scratch[i*Li+j]   += vector_field[i*Li+j] - vector_field[i*Li+j-1]; // /2; NOTE: 2 cancels out
 			}
 		}
-		many::div  (layer_scratch, vector_field.grid.layering->layer_height,      layer_scratch); // slope across layers
-		many::mult (layer_scratch, vector_field.grid.cache->vertex_dual_areas,    layer_scratch); // flow across layer boundary
+		series::div  (layer_scratch, vector_field.grid.layering->layer_height,      layer_scratch); // slope across layers
+		series::mult (layer_scratch, vector_field.grid.cache->vertex_dual_areas,    layer_scratch); // flow across layer boundary
 
-		many::copy (out,                layer_scratch);
+		series::copy (out,                layer_scratch);
 		for (unsigned int i = 0; i < vector_field.grid.cache->arrow_vertex_id_from.size(); ++i)
 		{
 			for (unsigned int j = 0; j < Li; ++j)
@@ -290,8 +290,8 @@ namespace rasters
 			}
 		}
 
-		many::div  (out,                vector_field.grid.cache->vertex_dual_areas,    out);
-		many::div  (out,                vector_field.grid.layering->layer_height,      out);             // laplacian
+		series::div  (out,                vector_field.grid.cache->vertex_dual_areas,    out);
+		series::div  (out,                vector_field.grid.layering->layer_height,      out);             // laplacian
 	}
 	template<typename Tgrid, unsigned int L, typename T, glm::qualifier Q>
 	LayeredRaster<glm::vec<L,T,Q>,Tgrid> laplacian(const LayeredRaster<glm::vec<L,T,Q>,Tgrid>& vector_field)

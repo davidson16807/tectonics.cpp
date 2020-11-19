@@ -3,7 +3,7 @@
 #define GLM_FORCE_PURE  // disable anonymous structs so we can build with ISO C++
 #include <glm/glm.hpp>  // *vec3
 
-#include <many/many.hpp>
+#include <series/series.hpp>
 #include <rasters/mesh.hpp>
 
 using namespace rasters;

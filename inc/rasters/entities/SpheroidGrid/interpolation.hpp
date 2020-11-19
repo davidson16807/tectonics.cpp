@@ -11,7 +11,7 @@ namespace rasters
         Raster<unsigned int, Tgrid2, Tmap>& scratch
     ) {
         input.grid.voronoi->get_values(output.grid.cache->vertex_positions, scratch);
-        many::get(input, scratch, output);
+        series::get(input, scratch, output);
     }
 
     template<typename T, typename Tgrid1, typename Tgrid2, rasters::mapping Tmap>

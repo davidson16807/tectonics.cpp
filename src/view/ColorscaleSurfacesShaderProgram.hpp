@@ -10,7 +10,7 @@
 #include <glm/gtc/type_ptr.hpp>// *vec4
 
 // in house libraries
-#include <many/types.hpp>     // floats
+#include <series/types.hpp>     // floats
 #include <view/ViewState.hpp> // ViewState
 
 namespace view 

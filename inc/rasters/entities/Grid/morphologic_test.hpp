@@ -6,10 +6,10 @@
 #define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
 #include <glm/vec3.hpp>               // *vec3
 
-#include <many/types.hpp>  
-#include <many/morphologic.hpp>  
-#include <many/relational.hpp>  
-#include <many/glm/glm.hpp>         // *vec*s
+#include <series/types.hpp>  
+#include <series/morphologic.hpp>  
+#include <series/relational.hpp>  
+#include <series/glm/glm.hpp>         // *vec*s
 
 #include <meshes/mesh.hpp>
 
@@ -58,7 +58,7 @@ TEST_CASE( "Raster dilation identity", "[rasters]" ) {
     auto out1       =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("dilate(grid, top_only, 0) must provide output equivalent to input"){
         dilate(top_only, out1, 0);
-        CHECK(many::equal(top_only, out1));
+        CHECK(series::equal(top_only, out1));
     }
 }
 TEST_CASE( "Raster dilation associative", "[rasters]" ) {
@@ -162,7 +162,7 @@ TEST_CASE( "Raster erosion identity", "[rasters]" ) {
     auto out1       =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("erode(grid, lower_half, 0) must provide output equivalent to input"){
         erode(lower_half, out1, 0);
-        CHECK(many::equal(lower_half, out1));
+        CHECK(series::equal(lower_half, out1));
     }
 }
 TEST_CASE( "Raster erosion distributive over intersection", "[rasters]" ) {

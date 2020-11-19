@@ -8,8 +8,8 @@
 #include <glm/vec3.hpp>               // *vec3
 
 // in-house libraries
-#include <many/types.hpp>
-#include <many/glm/types.hpp>
+#include <series/types.hpp>
+#include <series/glm/types.hpp>
 
 #include "../Grid/Raster.hpp"
 
@@ -30,9 +30,9 @@ namespace rasters
 		NOTE: Grids are composed exclusively from shared pointers, 
 		so there is little performance penalty in copying them.
 
-		We compose rasters from grid but inherit from many::Series<T>.
-		Inheriting from many::Series<T> allows us to inherit all the functionality 
-		that makes it easy to work with many::Series<T> (e.g. stl container behavior and operator overloads)
+		We compose rasters from grid but inherit from series::Series<T>.
+		Inheriting from series::Series<T> allows us to inherit all the functionality 
+		that makes it easy to work with series::Series<T> (e.g. stl container behavior and operator overloads)
 
 		However, composing from grid allows us to use templates to implement a single Raster class for all grid classes.
 		Template functions can make use of grid class attributes without having to introduce a complex class hierarchy.
@@ -130,7 +130,7 @@ namespace rasters
 
 		// BINARY TRANSFORM
 		template <typename F, typename T1, typename T2, 
-			std::enable_if_t<std::is_base_of<many::AbstractSeries, T1>::value && std::is_base_of<many::AbstractSeries, T2>::value, int> = 0>
+			std::enable_if_t<std::is_base_of<series::AbstractSeries, T1>::value && std::is_base_of<series::AbstractSeries, T2>::value, int> = 0>
 		inline void store(const F f, const T1& a, const T2& b) 
 		{
 			std::size_t L = this->grid.layering->layer_count;
@@ -173,7 +173,7 @@ namespace rasters
 			}
 		}
 		template <typename F, typename T1, typename T2, 
-			std::enable_if_t<std::is_base_of<many::AbstractSeries, T1>::value && !std::is_base_of<many::AbstractSeries, T2>::value, int> = 0>
+			std::enable_if_t<std::is_base_of<series::AbstractSeries, T1>::value && !std::is_base_of<series::AbstractSeries, T2>::value, int> = 0>
 		inline void store(const F f, const T1& a, const T2 b)
 		{
 			std::size_t L = this->grid.layering->layer_count;
@@ -199,7 +199,7 @@ namespace rasters
 			}
 		}
 		template <typename F, typename T1, typename T2, 
-			std::enable_if_t<!std::is_base_of<many::AbstractSeries, T1>::value && std::is_base_of<many::AbstractSeries, T2>::value, int> = 0>
+			std::enable_if_t<!std::is_base_of<series::AbstractSeries, T1>::value && std::is_base_of<series::AbstractSeries, T2>::value, int> = 0>
 		inline void store(const F f, const T1 a, const T2& b)
 		{
 			std::size_t L = this->grid.layering->layer_count;

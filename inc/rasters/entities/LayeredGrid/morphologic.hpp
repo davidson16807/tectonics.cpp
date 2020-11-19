@@ -19,7 +19,7 @@ namespace rasters
         auto& arrow_vertex_id_from = a.grid.cache->arrow_vertex_id_from;
         auto& arrow_vertex_id_to = a.grid.cache->arrow_vertex_id_to;
         const std::size_t L = a.grid.layering->layer_count;
-        many::fill( out, false );
+        series::fill( out, false );
         for (std::size_t i = 0; i < arrow_vertex_id_from.size(); ++i)
         {
             for (std::size_t j = 0; j < L; ++j)
@@ -48,7 +48,7 @@ namespace rasters
         auto& arrow_vertex_id_from = a.grid.cache->arrow_vertex_id_from;
         auto& arrow_vertex_id_to = a.grid.cache->arrow_vertex_id_to;
         const std::size_t L = a.grid.layering->layer_count;
-        many::fill(out, true);
+        series::fill(out, true);
         for (std::size_t i = 0; i < arrow_vertex_id_from.size(); ++i)
         {
             for (std::size_t j = 0; j < L; ++j)

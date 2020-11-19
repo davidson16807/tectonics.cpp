@@ -8,8 +8,8 @@
 #include <glm/vec3.hpp>               // *vec3
 
 // in-house libraries
-#include <many/types.hpp>
-#include <many/glm/types.hpp>
+#include <series/types.hpp>
+#include <series/glm/types.hpp>
 
 #include "Grid.hpp"
 
@@ -24,15 +24,15 @@ namespace rasters
 	Violation of this guarantee is a bug.
 	*/
 	template<typename T, typename Tgrid, rasters::mapping Tmap = rasters::mapping::cell>
-	struct Raster: public many::Series<T>
+	struct Raster: public series::Series<T>
 	{
 		/*
 		NOTE: Grids are composed exclusively from shared pointers, 
 		so there is little performance penalty in copying them.
 
-		We compose rasters from grid but inherit from many::Series<T>.
-		Inheriting from many::Series<T> allows us to inherit all the functionality 
-		that makes it easy to work with many::Series<T> (e.g. stl container behavior and operator overloads)
+		We compose rasters from grid but inherit from series::Series<T>.
+		Inheriting from series::Series<T> allows us to inherit all the functionality 
+		that makes it easy to work with series::Series<T> (e.g. stl container behavior and operator overloads)
 
 		However, composing from grid allows us to use templates to implement a single Raster class for all grid classes.
 		Template functions can make use of grid class attributes without having to introduce a complex class hierarchy.
@@ -41,14 +41,14 @@ namespace rasters
 		*/
 		Tgrid grid;
 		Raster(const Tgrid& grid):
-			many::Series<T>(grid.cell_count(Tmap)),
+			series::Series<T>(grid.cell_count(Tmap)),
 			grid(grid) 
 		{
 		}
 		// std container style constructor
 		template<typename TIterator>
 		Raster(const Tgrid& grid, TIterator first, TIterator last) : 
-			many::Series<T>(grid.cell_count(Tmap)),
+			series::Series<T>(grid.cell_count(Tmap)),
 			grid(grid)
 		{
 			assert(std::distance(first, last) == this->size());
@@ -63,13 +63,13 @@ namespace rasters
 
 		// copy constructor
 		Raster(const Raster<T,Tgrid,Tmap>& a)  : 
-			many::Series<T>(a),
+			series::Series<T>(a),
 			grid(a.grid)
 		{}
 
 		// convenience constructor for vectors
 		explicit Raster(const Tgrid& grid, const std::initializer_list<T>& vector) : 
-			many::Series<T>(grid.cell_count(Tmap)),
+			series::Series<T>(grid.cell_count(Tmap)),
 			grid(grid)
 		{
 			assert(vector.size() == this->size());
@@ -77,7 +77,7 @@ namespace rasters
 		}
 		template <typename T2>
 		explicit Raster(const Raster<T2,Tgrid>& a)  : 
-			many::Series<T>(a),
+			series::Series<T>(a),
 			grid(a.grid) 
 		{
 			for (unsigned int i = 0; i < a.size(); ++i)

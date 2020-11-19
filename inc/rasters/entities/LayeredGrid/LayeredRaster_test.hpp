@@ -8,10 +8,10 @@
 #include <glm/vec3.hpp>               // *vec3
 
 // in-house libraries
-#include <many/many.hpp>  
-#include <many/convenience.hpp>  
-#include <many/glm/glm.hpp>         // *vec*s
-#include <many/glm/convenience.hpp> //  operators, etc.
+#include <series/series.hpp>  
+#include <series/convenience.hpp>  
+#include <series/glm/glm.hpp>         // *vec*s
+#include <series/glm/convenience.hpp> //  operators, etc.
 
 #include <meshes/mesh.hpp>
 #include "../Grid/Raster.hpp"

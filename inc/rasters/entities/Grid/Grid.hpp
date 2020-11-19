@@ -8,8 +8,8 @@
 #include <glm/vec3.hpp>               // *vec3
 
 // in-house libraries
-#include <many/types.hpp>
-#include <many/glm/types.hpp>
+#include <series/types.hpp>
+#include <series/glm/types.hpp>
 
 #include <rasters/components/MeshCache.hpp>
 
@@ -65,7 +65,7 @@ namespace rasters
 	{
 		std::shared_ptr<MeshCache<Tid,Tfloat>> cache;
 
-		Grid(const many::vec3s& vertices, const many::uvec3s& faces):
+		Grid(const series::vec3s& vertices, const series::uvec3s& faces):
 			cache(std::make_shared< MeshCache<Tid,Tfloat>>(vertices, faces))
 		{}
 		Grid(const Grid<Tid,Tfloat>& grid):

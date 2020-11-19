@@ -1,6 +1,6 @@
 #pragma once
-#include <many/arithmetic.hpp>
-#include <many/glm/geometric.hpp>
+#include <series/arithmetic.hpp>
+#include <series/glm/geometric.hpp>
 #include "../Grid/Raster.hpp"
 
 namespace rasters
@@ -110,11 +110,11 @@ namespace rasters
             arrow                 = cache->arrow_vertex_ids[i]; 
             arrow_differential[i] = scalar_field[arrow.y] - scalar_field[arrow.x]; // differential across dual of the arrow
         }
-        many::mult   (arrow_differential, cache->arrow_dual_normals,   arrow_flow);      // flux across dual of the arrow
-        many::mult   (arrow_flow,         cache->arrow_dual_lengths,   arrow_flow);      // flow across dual of the arrow
-        many::fill   (out,                glm::vec<3,T,Q>(0.f));
-        many::aggregate_into(arrow_flow,    cache->arrow_vertex_id_from, [](glm::vec<3,T,Q> a, glm::vec<3,T,Q> b){ return a+b; }, out); // flow out from the vertex
-        many::div      (out,                cache->vertex_dual_areas,    out);             // gradient
+        series::mult   (arrow_differential, cache->arrow_dual_normals,   arrow_flow);      // flux across dual of the arrow
+        series::mult   (arrow_flow,         cache->arrow_dual_lengths,   arrow_flow);      // flow across dual of the arrow
+        series::fill   (out,                glm::vec<3,T,Q>(0.f));
+        series::aggregate_into(arrow_flow,    cache->arrow_vertex_id_from, [](glm::vec<3,T,Q> a, glm::vec<3,T,Q> b){ return a+b; }, out); // flow out from the vertex
+        series::div      (out,                cache->vertex_dual_areas,    out);             // gradient
     }
 
     template<typename T, typename Tgrid>
@@ -142,11 +142,11 @@ namespace rasters
             arrow                 = cache->arrow_vertex_ids[i]; 
             arrow_differential[i] = vector_field[arrow.y] - vector_field[arrow.x]; // differential across dual of the arrow
         }
-        many::dot    (arrow_differential, cache->arrow_dual_normals,   arrow_projection);      // flux across dual of the arrow
-        many::mult   (arrow_projection,   cache->arrow_dual_lengths,   arrow_projection);      // flow across dual of the arrow
-        many::fill   (out,                0.f);
-        many::aggregate_into(arrow_projection, cache->arrow_vertex_id_from, [](T a, T b){ return a+b; }, out);  // flow out from the vertex
-        many::div      (out,                cache->vertex_dual_areas,    out);             // divergence
+        series::dot    (arrow_differential, cache->arrow_dual_normals,   arrow_projection);      // flux across dual of the arrow
+        series::mult   (arrow_projection,   cache->arrow_dual_lengths,   arrow_projection);      // flow across dual of the arrow
+        series::fill   (out,                0.f);
+        series::aggregate_into(arrow_projection, cache->arrow_vertex_id_from, [](T a, T b){ return a+b; }, out);  // flow out from the vertex
+        series::div      (out,                cache->vertex_dual_areas,    out);             // divergence
     }
 
     template<typename T, typename Tgrid, glm::qualifier Q>
@@ -174,11 +174,11 @@ namespace rasters
             arrow                 = cache->arrow_vertex_ids[i]; 
             arrow_differential[i] = vector_field[arrow.y] - vector_field[arrow.x]; // differential across dual of the arrow
         }
-        many::cross      (arrow_differential, cache->arrow_dual_normals,   arrow_rejection);      // flux across dual of the arrow
-        many::mult   (arrow_rejection,    cache->arrow_dual_lengths,   arrow_rejection);      // flow across dual of the arrow
-        many::fill   (out,                glm::vec<3,T,Q>(0.f));
-        many::aggregate_into(arrow_rejection, cache->arrow_vertex_id_from, [](glm::vec<3,T,Q> a, glm::vec<3,T,Q> b){ return a+b; }, out);  // flow out from the vertex
-        many::div      (out,                cache->vertex_dual_areas,    out);             // curl
+        series::cross      (arrow_differential, cache->arrow_dual_normals,   arrow_rejection);      // flux across dual of the arrow
+        series::mult   (arrow_rejection,    cache->arrow_dual_lengths,   arrow_rejection);      // flow across dual of the arrow
+        series::fill   (out,                glm::vec<3,T,Q>(0.f));
+        series::aggregate_into(arrow_rejection, cache->arrow_vertex_id_from, [](glm::vec<3,T,Q> a, glm::vec<3,T,Q> b){ return a+b; }, out);  // flow out from the vertex
+        series::div      (out,                cache->vertex_dual_areas,    out);             // curl
     }
 
     template<typename T, typename Tgrid, glm::qualifier Q>
@@ -223,11 +223,11 @@ namespace rasters
             arrow            = cache->arrow_vertex_ids[i]; 
             arrow_scratch[i] = scalar_field[arrow.y] - scalar_field[arrow.x]; // differential across dual of the arrow
         }
-        many::div      (arrow_scratch,      cache->arrow_lengths,      arrow_scratch); // slope along the arrow
-        many::mult     (arrow_scratch,      cache->arrow_dual_lengths, arrow_scratch); // differential weighted by dual length
-        many::fill     (out,                T(0.f));
-        many::aggregate_into(arrow_scratch, cache->arrow_vertex_id_from, [](T a, T b){ return a+b; }, out);  // weight average difference across neighbors
-        many::div      (out,                cache->vertex_dual_areas,    out);             // laplacian
+        series::div      (arrow_scratch,      cache->arrow_lengths,      arrow_scratch); // slope along the arrow
+        series::mult     (arrow_scratch,      cache->arrow_dual_lengths, arrow_scratch); // differential weighted by dual length
+        series::fill     (out,                T(0.f));
+        series::aggregate_into(arrow_scratch, cache->arrow_vertex_id_from, [](T a, T b){ return a+b; }, out);  // weight average difference across neighbors
+        series::div      (out,                cache->vertex_dual_areas,    out);             // laplacian
     }
     template<typename T, typename Tgrid>
     Raster<T, Tgrid> laplacian(const Raster<T, Tgrid>& scalar_field)
@@ -252,11 +252,11 @@ namespace rasters
             arrow            = cache->arrow_vertex_ids[i]; 
             arrow_scratch[i] = vector_field[arrow.y] - vector_field[arrow.x]; // differential across dual of the arrow
         }
-        many::div      (arrow_scratch,      cache->arrow_lengths,      arrow_scratch);
-        many::mult     (arrow_scratch,      cache->arrow_dual_lengths, arrow_scratch); // differential weighted by dual length
-        many::fill     (out,                glm::vec<L,T,Q>(0.f));
-        many::aggregate_into(arrow_scratch, cache->arrow_vertex_id_from, [](glm::vec<L,T,Q> a, glm::vec<L,T,Q> b){ return a+b; }, out);  // weight average difference across neighbors
-        many::div      (out,                cache->vertex_dual_areas,    out);             // laplacian
+        series::div      (arrow_scratch,      cache->arrow_lengths,      arrow_scratch);
+        series::mult     (arrow_scratch,      cache->arrow_dual_lengths, arrow_scratch); // differential weighted by dual length
+        series::fill     (out,                glm::vec<L,T,Q>(0.f));
+        series::aggregate_into(arrow_scratch, cache->arrow_vertex_id_from, [](glm::vec<L,T,Q> a, glm::vec<L,T,Q> b){ return a+b; }, out);  // weight average difference across neighbors
+        series::div      (out,                cache->vertex_dual_areas,    out);             // laplacian
     }
 
     template<unsigned int L, typename T, typename Tgrid, glm::qualifier Q>

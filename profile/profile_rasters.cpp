@@ -9,13 +9,13 @@
 #define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
 #include <glm/vec3.hpp>               // *vec3
 
-#include <many/many.hpp>  
-#include <many/string_cast.hpp>  
-#include <many/morphologic.hpp>  
-#include <many/glm/glm.hpp>         // *vec*s
-#include <many/glm/string_cast.hpp>  
-#include <many/glm/random.hpp>  
-#include <many/glm/convenience.hpp> //  operators, etc.
+#include <series/series.hpp>  
+#include <series/string_cast.hpp>  
+#include <series/morphologic.hpp>  
+#include <series/glm/glm.hpp>         // *vec*s
+#include <series/glm/string_cast.hpp>  
+#include <series/glm/random.hpp>  
+#include <series/glm/convenience.hpp> //  operators, etc.
 
 #include <meshes/mesh.hpp>
 #include <grids/MeshCache/morphologic.hpp>
@@ -26,7 +26,7 @@
 // #include "academics/tectonics.hpp"
 
 using namespace glm;
-using namespace many;
+using namespace series;
 using namespace rasters;
 
 void handler(int sig) {
@@ -139,13 +139,13 @@ int main(int argc, char const *argv[])
     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
 
     t1 = std::chrono::high_resolution_clock::now();
-    icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-    icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-    icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-    icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-    icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-    icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-    icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+    icosphere_mesh = meshes::subdivide(icosphere_mesh); series::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+    icosphere_mesh = meshes::subdivide(icosphere_mesh); series::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+    icosphere_mesh = meshes::subdivide(icosphere_mesh); series::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+    icosphere_mesh = meshes::subdivide(icosphere_mesh); series::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+    icosphere_mesh = meshes::subdivide(icosphere_mesh); series::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+    icosphere_mesh = meshes::subdivide(icosphere_mesh); series::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+    icosphere_mesh = meshes::subdivide(icosphere_mesh); series::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
     t2 = std::chrono::high_resolution_clock::now();
     std::cout << "mesh subdivision:    " << std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count() << std::endl;
 

@@ -18,7 +18,7 @@ rasters::LayeredRaster<float,rasters::LayeredSpheroidGrid<Tid,Tgrid>> get_random
 	auto flat_grid = rasters::SpheroidGrid<Tid,Tgrid>(grid);
 
     auto a_flat      = rasters::make_Raster<float>(flat_grid);
-    many::get_elias_noise(grid.cache->vertex_positions, generator, a_flat);
+    series::get_elias_noise(grid.cache->vertex_positions, generator, a_flat);
 
     auto a           = rasters::make_LayeredRaster<float>(grid);
     rasters::repeat_layers(a_flat, a);
@@ -27,7 +27,7 @@ rasters::LayeredRaster<float,rasters::LayeredSpheroidGrid<Tid,Tgrid>> get_random
     auto a_offset    = rasters::make_Raster<float>(flat_grid);
     for (int i = 0; i < grid.layering->layer_count; ++i)
     {
-	    many::get_elias_noise(grid.cache->vertex_positions, generator, a_offset);
+	    series::get_elias_noise(grid.cache->vertex_positions, generator, a_offset);
 	    rasters::set_layer(a, i, a_flat+a_offset, a);
     }
 

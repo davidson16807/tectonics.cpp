@@ -3,8 +3,8 @@
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include <catch/catch.hpp>
 
-#include <many/types.hpp>
-#include <many/statistic.hpp>
+#include <series/types.hpp>
+#include <series/statistic.hpp>
 
 #include <rasters/entities/SpheroidGrid/SpheroidGrid.hpp>
 #include <rasters/entities/SpheroidGrid/SpheroidGrid_test_utils.hpp>
@@ -98,7 +98,7 @@ TEST_CASE( "Crust overlap() mass conservation", "[crust]" ) {
     auto b_mass = rasters::make_Raster<float>(icosahedron_grid); get_mass(b, b_mass);
 
     SECTION("the result of passing two valid auto objects = make_Crust<L,M>(icosahedron_grid) to overlap() must produce a Crust<L,M> of equivalent mass"){
-      CHECK(many::sum(ab_mass) == Approx(many::sum(a_mass) + many::sum(b_mass)).epsilon(1e-4));
+      CHECK(series::sum(ab_mass) == Approx(series::sum(a_mass) + series::sum(b_mass)).epsilon(1e-4));
     }
 }
 
@@ -137,6 +137,6 @@ TEST_CASE( "Crust simplify() mass conservation", "[crust]" ) {
     auto a_mass = rasters::make_Raster<float>(icosahedron_grid);  get_mass(a,  a_mass );
 
     SECTION("the result of passing a valid Crust object to simplify() must itself produce a Crust object of equivalent mass"){
-      CHECK(many::sum(fa_mass) == Approx(many::sum(a_mass)).epsilon(1e-4));
+      CHECK(series::sum(fa_mass) == Approx(series::sum(a_mass)).epsilon(1e-4));
     }
 }

@@ -8,8 +8,8 @@
 #include <glm/vec3.hpp>               // *vec3
 
 // in-house libraries
-#include <many/types.hpp>
-#include <many/glm/types.hpp>
+#include <series/types.hpp>
+#include <series/glm/types.hpp>
 
 #include <rasters/components/MeshCache.hpp>
 #include <rasters/components/SpheroidVoronoi.hpp>
@@ -33,14 +33,14 @@ namespace rasters
 		std::shared_ptr<SpheroidVoronoi> voronoi;
 
 		SpheroidGrid(
-			const many::vec3s& vertices, 
-			const many::uvec3s& faces
+			const series::vec3s& vertices, 
+			const series::uvec3s& faces
 		):
 			Grid<Tid, Tfloat>(vertices, faces),
 			voronoi(std::make_shared< SpheroidVoronoi>(
 				vertices, 
-				many::min(this->cache->arrow_lengths / 8.f), 
-				many::max(this->cache->arrow_lengths * 1.f)
+				series::min(this->cache->arrow_lengths / 8.f), 
+				series::max(this->cache->arrow_lengths * 1.f)
 			))
 		{}
 		bool operator== (const SpheroidGrid& other) const

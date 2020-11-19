@@ -8,10 +8,10 @@
 #include <glm/vec3.hpp>               // *vec3
 
 // in-house libraries
-#include <many/many.hpp>  
-#include <many/convenience.hpp>  
-#include <many/glm/glm.hpp>         // *vec*s
-#include <many/glm/convenience.hpp> //  operators, etc.
+#include <series/series.hpp>  
+#include <series/convenience.hpp>  
+#include <series/glm/glm.hpp>         // *vec*s
+#include <series/glm/convenience.hpp> //  operators, etc.
 
 #include <meshes/mesh.hpp>
 
@@ -44,7 +44,7 @@ TEST_CASE( "Layered Grid consistency", "[rasters]" ) {
 
 TEST_CASE( "Layered Grid nontriviality", "[rasters]" ) {
     SECTION("Layered Grid attributes must contain nonzero elements"){
-        CHECK(many::sum(many::abs(layered_tetrahedron_grid.cache->vertex_areas)) > 0.01f);
-        CHECK(many::sum(many::abs(many::get_x(layered_tetrahedron_grid.cache->vertex_positions))) > 0.01f);
+        CHECK(series::sum(series::abs(layered_tetrahedron_grid.cache->vertex_areas)) > 0.01f);
+        CHECK(series::sum(series::abs(series::get_x(layered_tetrahedron_grid.cache->vertex_positions))) > 0.01f);
     }
 }

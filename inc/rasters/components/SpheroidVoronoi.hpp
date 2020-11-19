@@ -14,10 +14,10 @@
 #include <glm/vec3.hpp>       	 // *vec3
 
 // in-house libraries
-#include <many/types.hpp>
-#include <many/glm/types.hpp>
-#include <many/glm/geometric.hpp>
-#include <many/glm/convenience.hpp>
+#include <series/types.hpp>
+#include <series/glm/types.hpp>
+#include <series/glm/geometric.hpp>
+#include <series/glm/convenience.hpp>
 
 namespace rasters
 {
@@ -31,9 +31,9 @@ namespace rasters
 	{
 	protected:
 		static constexpr int OCTAHEDRON_SIDE_COUNT = 8;	// number of sides on the data cube
-		many::vec3s OCTAHEDRON_SIDE_Z;
-		many::vec3s OCTAHEDRON_SIDE_X;
-		many::vec3s OCTAHEDRON_SIDE_Y;
+		series::vec3s OCTAHEDRON_SIDE_Z;
+		series::vec3s OCTAHEDRON_SIDE_X;
+		series::vec3s OCTAHEDRON_SIDE_Y;
 
 		glm::ivec2 dimensions; // dimensions of the grid on each side of the data cube 
 		float cell_width;
@@ -75,8 +75,8 @@ namespace rasters
 			const float cell_width,
 			const T default_value
 		) : 
-			OCTAHEDRON_SIDE_Z(many::normalize(
-				many::vec3s {
+			OCTAHEDRON_SIDE_Z(series::normalize(
+				series::vec3s {
 					glm::vec3(-1,-1,-1),
 					glm::vec3( 1,-1,-1),
 					glm::vec3(-1, 1,-1),
@@ -87,11 +87,11 @@ namespace rasters
 					glm::vec3( 1, 1, 1)
 				}
 			)),
-			OCTAHEDRON_SIDE_X(many::normalize(
-				many::cross(SpheroidLookup<T>::OCTAHEDRON_SIDE_Z, glm::vec3(0,0,1))
+			OCTAHEDRON_SIDE_X(series::normalize(
+				series::cross(SpheroidLookup<T>::OCTAHEDRON_SIDE_Z, glm::vec3(0,0,1))
 			)),
-			OCTAHEDRON_SIDE_Y(many::normalize(
-				many::cross(SpheroidLookup<T>::OCTAHEDRON_SIDE_Z, SpheroidLookup<T>::OCTAHEDRON_SIDE_X)
+			OCTAHEDRON_SIDE_Y(series::normalize(
+				series::cross(SpheroidLookup<T>::OCTAHEDRON_SIDE_Z, SpheroidLookup<T>::OCTAHEDRON_SIDE_X)
 			)),
 			dimensions((int)std::ceil(2./cell_width)+1),
 			cell_width(cell_width),
@@ -147,7 +147,7 @@ namespace rasters
 			return get_value(get_conceptual_id(glm::normalize(point)));
 		}
 
-		void get_values(const many::vec3s& points, many::Series<T>& out) const
+		void get_values(const series::vec3s& points, series::Series<T>& out) const
 		{
 			for (unsigned int i = 0; i < points.size(); ++i)
 			{
@@ -167,7 +167,7 @@ namespace rasters
 	{
 	public:
 		explicit SpheroidVoronoi(
-			const many::vec3s& points, 
+			const series::vec3s& points, 
 			const float cell_width,
 			const float max_vertex_distance
 		  )	: 

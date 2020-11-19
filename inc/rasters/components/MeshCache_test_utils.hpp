@@ -8,7 +8,7 @@
 #include "MeshCache.hpp" 
 
 using namespace glm;
-using namespace many;
+using namespace series;
 using namespace rasters;
 /* 
 "diamond" is a simple 2d grid for testing Raster operations 

@@ -12,10 +12,10 @@
 #define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
 
 // in house libraries
-#include <many/types.hpp>                            // floats
-#include <many/common.hpp>                           // max
-#include <many/statistic.hpp>                        // mean
-#include <many/glm/random.hpp>                       // get_elias_noise
+#include <series/types.hpp>                            // floats
+#include <series/common.hpp>                           // max
+#include <series/statistic.hpp>                        // mean
+#include <series/glm/random.hpp>                       // get_elias_noise
 #include <meshes/mesh.hpp>                           // subdivide
 #include <grids/SpheroidGrid/string_cast.hpp>        // to_string
 #include <update/OrbitalControlState.hpp>            // OrbitalControlState
@@ -68,7 +68,7 @@ int main() {
   meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
   for (int i = 0; i < 5; ++i)
   {
-    icosphere_mesh = meshes::subdivide(icosphere_mesh); many::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
+    icosphere_mesh = meshes::subdivide(icosphere_mesh); series::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
   }
 
   // initialize grid from mesh
@@ -76,18 +76,18 @@ int main() {
 
   // generate random raster over grid
   std::mt19937 generator(2);
-  many::floats vertex_color_values = many::floats(icosphere_grid.vertex_count);
-  many::floats vertex_displacements = many::floats(icosphere_grid.vertex_count);
-  many::get_elias_noise(icosphere_grid.vertex_positions, generator, vertex_color_values, 100, 0.0001f);
-  many::get_elias_noise(icosphere_grid.vertex_positions, generator, vertex_displacements, 100, 0.0001f);
+  series::floats vertex_color_values = series::floats(icosphere_grid.vertex_count);
+  series::floats vertex_displacements = series::floats(icosphere_grid.vertex_count);
+  series::get_elias_noise(icosphere_grid.vertex_positions, generator, vertex_color_values, 100, 0.0001f);
+  series::get_elias_noise(icosphere_grid.vertex_positions, generator, vertex_displacements, 100, 0.0001f);
   std::string str_raster = to_string(icosphere_grid, vertex_color_values);
   std::cout << str_raster << std::endl;
 
   // flatten raster for WebGL
-  many::floats flattened_face_vertex_color_values(icosphere_grid.flattened_face_vertex_ids.size());
-  many::floats flattened_face_vertex_displacements(icosphere_grid.flattened_face_vertex_ids.size());
-  many::get(vertex_color_values,  icosphere_grid.flattened_face_vertex_ids, flattened_face_vertex_color_values);
-  many::get(vertex_displacements, icosphere_grid.flattened_face_vertex_ids, flattened_face_vertex_displacements);
+  series::floats flattened_face_vertex_color_values(icosphere_grid.flattened_face_vertex_ids.size());
+  series::floats flattened_face_vertex_displacements(icosphere_grid.flattened_face_vertex_ids.size());
+  series::get(vertex_color_values,  icosphere_grid.flattened_face_vertex_ids, flattened_face_vertex_color_values);
+  series::get(vertex_displacements, icosphere_grid.flattened_face_vertex_ids, flattened_face_vertex_displacements);
 
   // initialize control state
   update::OrbitalControlState control_state;
@@ -107,20 +107,20 @@ int main() {
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);
   view::ColorscaleSurfacesViewState<float> colorscale_state;
-  colorscale_state.max_value = many::max(flattened_face_vertex_color_values);
-  colorscale_state.sealevel = many::mean(flattened_face_vertex_displacements);
+  colorscale_state.max_value = series::max(flattened_face_vertex_color_values);
+  colorscale_state.sealevel = series::mean(flattened_face_vertex_displacements);
 
   // initialize shader program
   view::ColorscaleSurfacesShaderProgram colorscale_program;  
 
   // initialize data for shader program
-  many::floats points = {
+  series::floats points = {
    0.0f,  0.5f,  0.0f,
    0.5f, -0.5f,  0.0f,
   -0.5f, -0.5f,  0.0f
   };
 
-  many::floats colors = {
+  series::floats colors = {
    1.0f,  
    0.0f,  
    0.0f

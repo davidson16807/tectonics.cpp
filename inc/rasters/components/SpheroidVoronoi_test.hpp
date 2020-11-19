@@ -7,16 +7,16 @@
 #include <glm/vec3.hpp>             // *vec3
 
 // in-house libraries
-#include <many/types.hpp>
-#include <many/common.hpp>
-#include <many/convenience.hpp>  
-#include <many/glm/glm.hpp>         // *vec*s
-#include <many/glm/convenience.hpp> //  operators, etc.
+#include <series/types.hpp>
+#include <series/common.hpp>
+#include <series/convenience.hpp>  
+#include <series/glm/glm.hpp>         // *vec*s
+#include <series/glm/convenience.hpp> //  operators, etc.
 
 #include "SpheroidVoronoi.hpp"
 
 rasters::SpheroidVoronoi voronoi(
-        many::normalize(many::vec3s({
+        series::normalize(series::vec3s({
                         glm::vec3( 1, 0, 0),
                         glm::vec3( 0, 1, 0),
                         glm::vec3( 0, 0, 1),

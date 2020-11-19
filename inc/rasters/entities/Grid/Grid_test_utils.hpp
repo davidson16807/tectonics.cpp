@@ -5,8 +5,8 @@
 #include <glm/vec3.hpp>               // *vec3
 
 // in-house libraries
-#include <many/types.hpp>
-#include <many/glm/types.hpp>
+#include <series/types.hpp>
+#include <series/glm/types.hpp>
 
 #include <meshes/mesh.hpp>
 
@@ -23,14 +23,14 @@ It looks like this:
      4   
 */
 rasters::Grid<int,float> diamond_grid(
-        many::vec3s({
+        series::vec3s({
                 glm::vec3( 0, 0, 0),
                 glm::vec3( 1, 0, 0),
                 glm::vec3( 0, 1, 0),
                 glm::vec3(-1, 0, 0),
                 glm::vec3( 0,-1, 0)
             }),
-        many::uvec3s({
+        series::uvec3s({
                 glm::uvec3(0,1,2),
                 glm::uvec3(0,1,4),
                 glm::uvec3(0,3,2),

@@ -8,8 +8,8 @@
 #define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
 #include <glm/vec3.hpp>               // *vec3
 
-#include <many/types.hpp>         // *vec*s
-#include <many/glm/glm.hpp>         // *vec*s
+#include <series/types.hpp>         // *vec*s
+#include <series/glm/glm.hpp>         // *vec*s
 
 #include <meshes/mesh.hpp>
 #include <grids/LayeredSpheroidGrid/LayeredSpheroidGrid.hpp>
@@ -19,7 +19,7 @@
 // #include "academics/tectonics.hpp"
 
 using namespace glm;
-using namespace many;
+using namespace series;
 using namespace rasters;
 
 void handler(int sig) {

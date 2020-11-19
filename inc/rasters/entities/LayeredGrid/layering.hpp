@@ -1,7 +1,7 @@
 #pragma once
 
-#include <many/types.hpp>
-#include <many/glm/types.hpp>
+#include <series/types.hpp>
+#include <series/glm/types.hpp>
 
 #include "LayeredGrid.hpp"
 #include "LayeredRaster.hpp"
@@ -35,7 +35,7 @@ namespace rasters
 	){
 		assert(a.grid.cache == value.grid.cache);
 		assert(a.grid == output.grid);
-		if (&a != &output){ many::copy(output, a); }
+		if (&a != &output){ series::copy(output, a); }
 		std::size_t L = a.grid.layering->layer_count;
 		std::size_t V = a.grid.cache->vertex_count;
 		for (std::size_t i = 0; i < V; ++i)

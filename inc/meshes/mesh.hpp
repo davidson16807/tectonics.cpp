@@ -11,9 +11,9 @@
 #include <glm/gtx/hash.hpp>  // map<vec*, *>
 
 // in-house libraries
-#include <many/types.hpp>     	 // floats, etc.
-#include <many/glm/types.hpp>	 // *vec*s
-#include <many/glm/geometric.hpp>// normalize, etc.
+#include <series/types.hpp>     	 // floats, etc.
+#include <series/glm/types.hpp>	 // *vec*s
+#include <series/glm/geometric.hpp>// normalize, etc.
 
 
 namespace meshes
@@ -23,10 +23,10 @@ namespace meshes
 		const float PHI((1.0 + sqrt(5.0)) / 2.0);
 
 		template<glm::length_t L, typename T, glm::qualifier Q>
-		inline many::Series<glm::vec<L,T,Q>> normalize(const many::Series<glm::vec<L,T,Q>>& u) 
+		inline series::Series<glm::vec<L,T,Q>> normalize(const series::Series<glm::vec<L,T,Q>>& u) 
 		{
-			many::Series<glm::vec<L,T,Q>> out = many::Series<glm::vec<L,T,Q>>(u.size());
-			many::normalize(u, out);
+			series::Series<glm::vec<L,T,Q>> out = series::Series<glm::vec<L,T,Q>>(u.size());
+			series::normalize(u, out);
 			return out;
 		}
 		inline glm::uvec2 edge_id(uint a, uint b)
@@ -42,14 +42,14 @@ namespace meshes
 	*/
 	struct mesh
 	{
-		many::vec3s  vertices;
-		many::uvec3s faces;
+		series::vec3s  vertices;
+		series::uvec3s faces;
 
 		~mesh()
 		{
 
 		}
-		mesh(const many::vec3s& vertices, const many::uvec3s& faces)
+		mesh(const series::vec3s& vertices, const series::uvec3s& faces)
 			: vertices(vertices),
 			  faces(faces)
 		{
@@ -65,7 +65,7 @@ namespace meshes
 	};
 
 	const mesh icosahedron(
-			meshes::normalize(many::vec3s({
+			meshes::normalize(series::vec3s({
 					glm::vec3(-1, PHI, 0),
 					glm::vec3( 1, PHI, 0),
 					glm::vec3(-1,-PHI, 0),
@@ -81,7 +81,7 @@ namespace meshes
 					glm::vec3(-PHI, 0,-1),
 					glm::vec3(-PHI, 0, 1)
 				})),
-			many::uvec3s({
+			series::uvec3s({
 					// 5 faces around point 0
 					glm::uvec3(0, 11, 5),
 					glm::uvec3(0, 5, 1),
@@ -113,7 +113,7 @@ namespace meshes
 		);
 
 	const mesh octahedron(
-	        meshes::normalize(many::vec3s({
+	        meshes::normalize(series::vec3s({
 	                glm::vec3( 1, 0, 0),
 	                glm::vec3(-1, 0, 0),
 	                glm::vec3( 0, 1, 0),
@@ -121,7 +121,7 @@ namespace meshes
 	                glm::vec3( 0, 0, 1),
 	                glm::vec3( 0, 0,-1),
 	            })),
-	        many::uvec3s({
+	        series::uvec3s({
 	                glm::uvec3( 0, 2, 4),
 	                glm::uvec3( 0, 2, 5),
 	                glm::uvec3( 0, 3, 4),
@@ -134,13 +134,13 @@ namespace meshes
 		);
 
 	const mesh tetrahedron(
-	        many::vec3s({
+	        series::vec3s({
 	                glm::vec3(0,0,0),
 	                glm::vec3(1,0,0),
 	                glm::vec3(0,1,0),
 	                glm::vec3(0,0,1)
 	            }),
-	        many::uvec3s({
+	        series::uvec3s({
 	                glm::uvec3(0,1,2),
 	                glm::uvec3(0,1,3),
 	                glm::uvec3(0,2,3),
@@ -181,7 +181,7 @@ namespace meshes
 			faces.emplace_back(face.z,                             midpoints[edge_id(face.z, face.x)], midpoints[edge_id(face.z, face.y)]);
 			faces.emplace_back(midpoints[edge_id(face.x, face.y)], midpoints[edge_id(face.y, face.z)], midpoints[edge_id(face.z, face.x)]);
 		}
-		return mesh(many::vec3s(vertices), many::uvec3s(faces));
+		return mesh(series::vec3s(vertices), series::uvec3s(faces));
 	}
 }
 

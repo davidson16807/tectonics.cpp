@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-#include <many/types.hpp>
+#include <series/types.hpp>
 #include "LayeredRaster.hpp"
 #include "convenience.hpp"
 
@@ -36,51 +36,51 @@ namespace rasters
 	template <class Tgrid, rasters::mapping Tmap, class T>
 	inline bool operator==(const LayeredRaster<T,Tgrid,Tmap>& a, const T b)
 	{
-		return many::equal(a, b);
+		return series::equal(a, b);
 	}
 	template <class Tgrid, rasters::mapping Tmap, class T>
 	inline bool operator!=(const LayeredRaster<T,Tgrid,Tmap>& a, const T b)
 	{
-		return many::notEqual(a, b);
+		return series::notEqual(a, b);
 	}
 	template <class Tgrid, rasters::mapping Tmap, class T>
 	inline bool operator==(const T a, const LayeredRaster<T,Tgrid,Tmap>& b)
 	{
-		return many::equal(a, b);
+		return series::equal(a, b);
 	}
 	template <class Tgrid, rasters::mapping Tmap, class T>
 	inline bool operator!=(const T a, const LayeredRaster<T,Tgrid,Tmap>& b)
 	{
-		return many::notEqual(a, b);
+		return series::notEqual(a, b);
 	}
 	template <class Tgrid, rasters::mapping Tmap, class T>
 	inline bool operator==(const LayeredRaster<T,Tgrid,Tmap>& a, const LayeredRaster<T,Tgrid,Tmap>& b)
 	{
-		return many::equal(a, b);
+		return series::equal(a, b);
 	}
 	template <class Tgrid, rasters::mapping Tmap, class T>
 	inline bool operator!=(const LayeredRaster<T,Tgrid,Tmap>& a, const LayeredRaster<T,Tgrid,Tmap>& b)
 	{
-		return many::notEqual(a, b);
+		return series::notEqual(a, b);
 	}
 	
 
-	template <class Tgrid, rasters::mapping Tmap, class T, class T2, class T3, std::enable_if_t<!std::is_base_of<many::AbstractSeries, T2>::value, int> = 0>
+	template <class Tgrid, rasters::mapping Tmap, class T, class T2, class T3, std::enable_if_t<!std::is_base_of<series::AbstractSeries, T2>::value, int> = 0>
 	inline LayeredRaster<T3,Tgrid,Tmap> operator>(const LayeredRaster<T,Tgrid,Tmap>& a, const T2 b)
 	{
 		return rasters::transform([](T ai, T2 bi){ return ai > bi; }, a, b);
 	}
-	template <class Tgrid, rasters::mapping Tmap, class T, class T2, class T3, std::enable_if_t<!std::is_base_of<many::AbstractSeries, T2>::value, int> = 0>
+	template <class Tgrid, rasters::mapping Tmap, class T, class T2, class T3, std::enable_if_t<!std::is_base_of<series::AbstractSeries, T2>::value, int> = 0>
 	inline LayeredRaster<T3,Tgrid,Tmap> operator>=(const LayeredRaster<T,Tgrid,Tmap>& a, const T2 b)
 	{
 		return rasters::transform([](T ai, T2 bi){ return ai >= bi; }, a, b);
 	}
-	template <class Tgrid, rasters::mapping Tmap, class T, class T2, class T3, std::enable_if_t<!std::is_base_of<many::AbstractSeries, T2>::value, int> = 0>
+	template <class Tgrid, rasters::mapping Tmap, class T, class T2, class T3, std::enable_if_t<!std::is_base_of<series::AbstractSeries, T2>::value, int> = 0>
 	inline LayeredRaster<T3,Tgrid,Tmap> operator<(const LayeredRaster<T,Tgrid,Tmap>& a, const T2 b)
 	{
 		return rasters::transform([](T ai, T2 bi){ return ai < bi; }, a, b);
 	}
-	template <class Tgrid, rasters::mapping Tmap, class T, class T2, class T3, std::enable_if_t<!std::is_base_of<many::AbstractSeries, T2>::value, int> = 0>
+	template <class Tgrid, rasters::mapping Tmap, class T, class T2, class T3, std::enable_if_t<!std::is_base_of<series::AbstractSeries, T2>::value, int> = 0>
 	inline LayeredRaster<T3,Tgrid,Tmap> operator<=(const LayeredRaster<T,Tgrid,Tmap>& a, const T2 b)
 	{
 		return rasters::transform([](T ai, T2 bi){ return ai <= bi; }, a, b);
@@ -88,22 +88,22 @@ namespace rasters
 	
 	// NOTE: all wrappers are suggested to be inline because they are thin wrappers of functions
 
-	template <class Tgrid, rasters::mapping Tmap, class T, class T2, class T3, std::enable_if_t<!std::is_base_of<many::AbstractSeries, T2>::value, int> = 0>
+	template <class Tgrid, rasters::mapping Tmap, class T, class T2, class T3, std::enable_if_t<!std::is_base_of<series::AbstractSeries, T2>::value, int> = 0>
 	inline LayeredRaster<T3,Tgrid,Tmap> operator>(const T2 a, const LayeredRaster<T,Tgrid,Tmap>& b)
 	{
 		return rasters::transform([](T ai, T2 bi){ return ai > bi; }, a, b);
 	}
-	template <class Tgrid, rasters::mapping Tmap, class T, class T2, class T3, std::enable_if_t<!std::is_base_of<many::AbstractSeries, T2>::value, int> = 0>
+	template <class Tgrid, rasters::mapping Tmap, class T, class T2, class T3, std::enable_if_t<!std::is_base_of<series::AbstractSeries, T2>::value, int> = 0>
 	inline LayeredRaster<T3,Tgrid,Tmap> operator>=(const T2 a, const LayeredRaster<T,Tgrid,Tmap>& b)
 	{
 		return rasters::transform([](T ai, T2 bi){ return ai >= bi; }, a, b);
 	}
-	template <class Tgrid, rasters::mapping Tmap, class T, class T2, class T3, std::enable_if_t<!std::is_base_of<many::AbstractSeries, T2>::value, int> = 0>
+	template <class Tgrid, rasters::mapping Tmap, class T, class T2, class T3, std::enable_if_t<!std::is_base_of<series::AbstractSeries, T2>::value, int> = 0>
 	inline LayeredRaster<T3,Tgrid,Tmap> operator<(const T2 a, const LayeredRaster<T,Tgrid,Tmap>& b)
 	{
 		return rasters::transform([](T ai, T2 bi){ return ai < bi; }, a, b);
 	}
-	template <class Tgrid, rasters::mapping Tmap, class T, class T2, class T3, std::enable_if_t<!std::is_base_of<many::AbstractSeries, T2>::value, int> = 0>
+	template <class Tgrid, rasters::mapping Tmap, class T, class T2, class T3, std::enable_if_t<!std::is_base_of<series::AbstractSeries, T2>::value, int> = 0>
 	inline LayeredRaster<T3,Tgrid,Tmap> operator<=(const T2 a, const LayeredRaster<T,Tgrid,Tmap>& b)
 	{
 		return rasters::transform([](T ai, T2 bi){ return ai <= bi; }, a, b);
@@ -190,7 +190,7 @@ namespace rasters
 
 
 	template <class Tgrid, rasters::mapping Tmap, class T, class T2>
-	inline LayeredRaster<T,Tgrid,Tmap>& operator+=(LayeredRaster<T,Tgrid,Tmap>& a, const many::Series<T2>& b) 
+	inline LayeredRaster<T,Tgrid,Tmap>& operator+=(LayeredRaster<T,Tgrid,Tmap>& a, const series::Series<T2>& b) 
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -199,7 +199,7 @@ namespace rasters
 		return a;
 	}
 	template <class Tgrid, rasters::mapping Tmap, class T, class T2>
-	inline LayeredRaster<T,Tgrid,Tmap>& operator-=(LayeredRaster<T,Tgrid,Tmap>& a, const many::Series<T2>& b) 
+	inline LayeredRaster<T,Tgrid,Tmap>& operator-=(LayeredRaster<T,Tgrid,Tmap>& a, const series::Series<T2>& b) 
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -208,7 +208,7 @@ namespace rasters
 		return a;
 	}
 	template <class Tgrid, rasters::mapping Tmap, class T, class T2>
-	inline LayeredRaster<T,Tgrid,Tmap>& operator*=(LayeredRaster<T,Tgrid,Tmap>& a, const many::Series<T2>& b) 
+	inline LayeredRaster<T,Tgrid,Tmap>& operator*=(LayeredRaster<T,Tgrid,Tmap>& a, const series::Series<T2>& b) 
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -217,7 +217,7 @@ namespace rasters
 		return a;
 	}
 	template <class Tgrid, rasters::mapping Tmap, class T, class T2>
-	inline LayeredRaster<T,Tgrid,Tmap>& operator/=(LayeredRaster<T,Tgrid,Tmap>& a, const many::Series<T2>& b) 
+	inline LayeredRaster<T,Tgrid,Tmap>& operator/=(LayeredRaster<T,Tgrid,Tmap>& a, const series::Series<T2>& b) 
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -228,7 +228,7 @@ namespace rasters
 
 /*
 	template <class Tgrid, rasters::mapping Tmap, class T, class T2>
-	inline LayeredRaster<T,Tgrid,Tmap>& operator+=(many::Series<T>& a, const LayeredRaster<T2,Tgrid,Tmap>& b) 
+	inline LayeredRaster<T,Tgrid,Tmap>& operator+=(series::Series<T>& a, const LayeredRaster<T2,Tgrid,Tmap>& b) 
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -237,7 +237,7 @@ namespace rasters
 		return a;
 	}
 	template <class Tgrid, rasters::mapping Tmap, class T, class T2>
-	inline LayeredRaster<T,Tgrid,Tmap>& operator-=(many::Series<T>& a, const LayeredRaster<T2,Tgrid,Tmap>& b) 
+	inline LayeredRaster<T,Tgrid,Tmap>& operator-=(series::Series<T>& a, const LayeredRaster<T2,Tgrid,Tmap>& b) 
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -246,7 +246,7 @@ namespace rasters
 		return a;
 	}
 	template <class Tgrid, rasters::mapping Tmap, class T, class T2>
-	inline LayeredRaster<T,Tgrid,Tmap>& operator*=(many::Series<T>& a, const LayeredRaster<T2,Tgrid,Tmap>& b) 
+	inline LayeredRaster<T,Tgrid,Tmap>& operator*=(series::Series<T>& a, const LayeredRaster<T2,Tgrid,Tmap>& b) 
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -255,7 +255,7 @@ namespace rasters
 		return a;
 	}
 	template <class Tgrid, rasters::mapping Tmap, class T, class T2>
-	inline LayeredRaster<T,Tgrid,Tmap>& operator/=(many::Series<T>& a, const LayeredRaster<T2,Tgrid,Tmap>& b) 
+	inline LayeredRaster<T,Tgrid,Tmap>& operator/=(series::Series<T>& a, const LayeredRaster<T2,Tgrid,Tmap>& b) 
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -340,22 +340,22 @@ namespace rasters
 
 	// NOTE: we define operators for multiple classes T and T2 in order to support 
 	//  vector/scalar multiplication, matrix/vect multiplication, etc.
-	template <class Tgrid, rasters::mapping Tmap, class T, class T2, std::enable_if_t<!std::is_base_of<many::AbstractSeries, T2>::value, int> = 0>
+	template <class Tgrid, rasters::mapping Tmap, class T, class T2, std::enable_if_t<!std::is_base_of<series::AbstractSeries, T2>::value, int> = 0>
 	inline LayeredRaster<T,Tgrid,Tmap> operator+(const LayeredRaster<T,Tgrid,Tmap>& a, const T2 b)
 	{
 		return rasters::transform([](T ai, T2 bi){ return ai + bi; }, a, b);
 	}
-	template <class Tgrid, rasters::mapping Tmap, class T, class T2, std::enable_if_t<!std::is_base_of<many::AbstractSeries, T2>::value, int> = 0>
+	template <class Tgrid, rasters::mapping Tmap, class T, class T2, std::enable_if_t<!std::is_base_of<series::AbstractSeries, T2>::value, int> = 0>
 	inline LayeredRaster<T,Tgrid,Tmap> operator-(const LayeredRaster<T,Tgrid,Tmap>& a, const T2 b)
 	{
 		return rasters::transform([](T ai, T2 bi){ return ai - bi; }, a, b);
 	}
-	template <class Tgrid, rasters::mapping Tmap, class T, class T2, std::enable_if_t<!std::is_base_of<many::AbstractSeries, T2>::value, int> = 0>
+	template <class Tgrid, rasters::mapping Tmap, class T, class T2, std::enable_if_t<!std::is_base_of<series::AbstractSeries, T2>::value, int> = 0>
 	inline LayeredRaster<T,Tgrid,Tmap> operator*(const LayeredRaster<T,Tgrid,Tmap>& a, const T2 b)
 	{
 		return rasters::transform([](T ai, T2 bi){ return ai * bi; }, a, b);
 	}
-	template <class Tgrid, rasters::mapping Tmap, class T, class T2, std::enable_if_t<!std::is_base_of<many::AbstractSeries, T2>::value, int> = 0>
+	template <class Tgrid, rasters::mapping Tmap, class T, class T2, std::enable_if_t<!std::is_base_of<series::AbstractSeries, T2>::value, int> = 0>
 	inline LayeredRaster<T,Tgrid,Tmap> operator/(const LayeredRaster<T,Tgrid,Tmap>& a, const T2 b)
 	{
 		return rasters::transform([](T ai, T2 bi){ return ai / bi; }, a, b);
@@ -367,22 +367,22 @@ namespace rasters
 
 	// NOTE: we define operators for multiple classes T and T2 in order to support 
 	//  vector/scalar multiplication, matrix/vect multiplication, etc.
-	template <class Tgrid, rasters::mapping Tmap, class T, class T2, std::enable_if_t<!std::is_base_of<many::AbstractSeries, T2>::value, int> = 0>
+	template <class Tgrid, rasters::mapping Tmap, class T, class T2, std::enable_if_t<!std::is_base_of<series::AbstractSeries, T2>::value, int> = 0>
 	inline LayeredRaster<T,Tgrid,Tmap> operator+(const T2 a, const LayeredRaster<T,Tgrid,Tmap>& b)
 	{
 		return rasters::transform([](T ai, T2 bi){ return ai + bi; }, a, b);
 	}
-	template <class Tgrid, rasters::mapping Tmap, class T, class T2, std::enable_if_t<!std::is_base_of<many::AbstractSeries, T2>::value, int> = 0>
+	template <class Tgrid, rasters::mapping Tmap, class T, class T2, std::enable_if_t<!std::is_base_of<series::AbstractSeries, T2>::value, int> = 0>
 	inline LayeredRaster<T,Tgrid,Tmap> operator-(const T2 a, const LayeredRaster<T,Tgrid,Tmap>& b)
 	{
 		return rasters::transform([](T ai, T2 bi){ return ai - bi; }, a, b);
 	}
-	template <class Tgrid, rasters::mapping Tmap, class T, class T2, std::enable_if_t<!std::is_base_of<many::AbstractSeries, T2>::value, int> = 0>
+	template <class Tgrid, rasters::mapping Tmap, class T, class T2, std::enable_if_t<!std::is_base_of<series::AbstractSeries, T2>::value, int> = 0>
 	inline LayeredRaster<T,Tgrid,Tmap> operator*(const T2 a, const LayeredRaster<T,Tgrid,Tmap>& b)
 	{
 		return rasters::transform([](T ai, T2 bi){ return ai * bi; }, a, b);
 	}
-	template <class Tgrid, rasters::mapping Tmap, class T, class T2, std::enable_if_t<!std::is_base_of<many::AbstractSeries, T2>::value, int> = 0>
+	template <class Tgrid, rasters::mapping Tmap, class T, class T2, std::enable_if_t<!std::is_base_of<series::AbstractSeries, T2>::value, int> = 0>
 	inline LayeredRaster<T,Tgrid,Tmap> operator/(const T2 a, const LayeredRaster<T,Tgrid,Tmap>& b)
 	{
 		return rasters::transform([](T ai, T2 bi){ return ai / bi; }, a, b);
@@ -413,22 +413,22 @@ namespace rasters
 	}
 
 	template <class Tgrid, rasters::mapping Tmap, class T, class T2>
-	inline LayeredRaster<T,Tgrid,Tmap> operator+(const many::Series<T>& a, const LayeredRaster<T2,Tgrid,Tmap>& b)
+	inline LayeredRaster<T,Tgrid,Tmap> operator+(const series::Series<T>& a, const LayeredRaster<T2,Tgrid,Tmap>& b)
 	{
 		return rasters::transform([](T ai, T2 bi){ return ai + bi; }, a, b);
 	}
 	template <class Tgrid, rasters::mapping Tmap, class T, class T2>
-	inline LayeredRaster<T,Tgrid,Tmap> operator-(const many::Series<T>& a, const LayeredRaster<T2,Tgrid,Tmap>& b)
+	inline LayeredRaster<T,Tgrid,Tmap> operator-(const series::Series<T>& a, const LayeredRaster<T2,Tgrid,Tmap>& b)
 	{
 		return rasters::transform([](T ai, T2 bi){ return ai - bi; }, a, b);
 	}
 	template <class Tgrid, rasters::mapping Tmap, class T, class T2>
-	inline LayeredRaster<T,Tgrid,Tmap> operator*(const many::Series<T>& a, const LayeredRaster<T2,Tgrid,Tmap>& b)
+	inline LayeredRaster<T,Tgrid,Tmap> operator*(const series::Series<T>& a, const LayeredRaster<T2,Tgrid,Tmap>& b)
 	{
 		return rasters::transform([](T ai, T2 bi){ return ai * bi; }, a, b);
 	}
 	template <class Tgrid, rasters::mapping Tmap, class T, class T2>
-	inline LayeredRaster<T,Tgrid,Tmap> operator/(const many::Series<T>& a, const LayeredRaster<T2,Tgrid,Tmap>& b)
+	inline LayeredRaster<T,Tgrid,Tmap> operator/(const series::Series<T>& a, const LayeredRaster<T2,Tgrid,Tmap>& b)
 	{
 		return rasters::transform([](T ai, T2 bi){ return ai / bi; }, a, b);
 	}
@@ -436,22 +436,22 @@ namespace rasters
 	// NOTE: we define operators for multiple classes T and T2 in order to support 
 	//  vector/scalar multiplication, matrix/vect multiplication, etc.
 	template <class Tgrid, rasters::mapping Tmap, class T, class T2>
-	inline LayeredRaster<T,Tgrid,Tmap> operator+(const LayeredRaster<T,Tgrid,Tmap>& a, const many::Series<T2>& b)
+	inline LayeredRaster<T,Tgrid,Tmap> operator+(const LayeredRaster<T,Tgrid,Tmap>& a, const series::Series<T2>& b)
 	{
 		return rasters::transform([](T ai, T2 bi){ return ai + bi; }, a, b);
 	}
 	template <class Tgrid, rasters::mapping Tmap, class T, class T2>
-	inline LayeredRaster<T,Tgrid,Tmap> operator-(const LayeredRaster<T,Tgrid,Tmap>& a, const many::Series<T2>& b)
+	inline LayeredRaster<T,Tgrid,Tmap> operator-(const LayeredRaster<T,Tgrid,Tmap>& a, const series::Series<T2>& b)
 	{
 		return rasters::transform([](T ai, T2 bi){ return ai - bi; }, a, b);
 	}
 	template <class Tgrid, rasters::mapping Tmap, class T, class T2>
-	inline LayeredRaster<T,Tgrid,Tmap> operator*(const LayeredRaster<T,Tgrid,Tmap>& a, const many::Series<T2>& b)
+	inline LayeredRaster<T,Tgrid,Tmap> operator*(const LayeredRaster<T,Tgrid,Tmap>& a, const series::Series<T2>& b)
 	{
 		return rasters::transform([](T ai, T2 bi){ return ai * bi; }, a, b);
 	}
 	template <class Tgrid, rasters::mapping Tmap, class T, class T2>
-	inline LayeredRaster<T,Tgrid,Tmap> operator/(const LayeredRaster<T,Tgrid,Tmap>& a, const many::Series<T2>& b)
+	inline LayeredRaster<T,Tgrid,Tmap> operator/(const LayeredRaster<T,Tgrid,Tmap>& a, const series::Series<T2>& b)
 	{
 		return rasters::transform([](T ai, T2 bi){ return ai / bi; }, a, b);
 	}

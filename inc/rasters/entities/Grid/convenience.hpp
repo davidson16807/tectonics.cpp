@@ -2,9 +2,9 @@
 
 #include <cmath>
 
-#include <many/relational.hpp>
-#include <many/common.hpp>
-#include <many/glm/geometric.hpp>
+#include <series/relational.hpp>
+#include <series/common.hpp>
+#include <series/glm/geometric.hpp>
 #include "Raster.hpp"
 
 /*
@@ -28,7 +28,7 @@ namespace rasters
 
 
 	template<class Tgrid, rasters::mapping Tmap, class T1, class T2, typename F, 
-		std::enable_if_t<!std::is_base_of<many::AbstractSeries, F>::value, int> = 0>
+		std::enable_if_t<!std::is_base_of<series::AbstractSeries, F>::value, int> = 0>
 	inline Raster<T1,Tgrid,Tmap> transform(const Raster<T1,Tgrid,Tmap>& a, const Raster<T2,Tgrid>& b, F f)
 	{
 		Raster<T1,Tgrid,Tmap> out(a.grid);
@@ -36,7 +36,7 @@ namespace rasters
 		return out;
 	}
 	template<class Tgrid, rasters::mapping Tmap, class T1, class T2, typename F, 
-		std::enable_if_t<!std::is_base_of<many::AbstractSeries, T2>::value && !std::is_base_of<many::AbstractSeries, F>::value, int> = 0>
+		std::enable_if_t<!std::is_base_of<series::AbstractSeries, T2>::value && !std::is_base_of<series::AbstractSeries, F>::value, int> = 0>
 	inline Raster<T1,Tgrid,Tmap> transform(const Raster<T1,Tgrid,Tmap>& a, const T2 b, F f)
 	{
 		Raster<T1,Tgrid,Tmap> out(a.grid);
@@ -44,7 +44,7 @@ namespace rasters
 		return out;
 	}
 	template<class Tgrid, rasters::mapping Tmap, class T1, class T2, typename F, 
-		std::enable_if_t<!std::is_base_of<many::AbstractSeries, T1>::value && !std::is_base_of<many::AbstractSeries, F>::value, int> = 0>
+		std::enable_if_t<!std::is_base_of<series::AbstractSeries, T1>::value && !std::is_base_of<series::AbstractSeries, F>::value, int> = 0>
 	inline Raster<T1,Tgrid,Tmap> transform(const T1 a, const Raster<T2,Tgrid>& b, F f)
 	{
 		auto out = b;
@@ -63,7 +63,7 @@ namespace rasters
 		return out;
 	}
 	template<class Tgrid, rasters::mapping Tmap, class T1, class T2, class T3, typename F, 
-		std::enable_if_t<!std::is_base_of<many::AbstractSeries, T3>::value && !std::is_base_of<many::AbstractSeries, F>::value, int> = 0>
+		std::enable_if_t<!std::is_base_of<series::AbstractSeries, T3>::value && !std::is_base_of<series::AbstractSeries, F>::value, int> = 0>
 	inline Raster<T1,Tgrid,Tmap> transform(const Raster<T1,Tgrid,Tmap>& a, const Raster<T2,Tgrid>& b, const T3 c, F f)
 	{
 		Raster<T1,Tgrid,Tmap> out(a.grid);
@@ -71,7 +71,7 @@ namespace rasters
 		return out;
 	}
 	template<class Tgrid, rasters::mapping Tmap, class T1, class T2, class T3, typename F, 
-		std::enable_if_t<!std::is_base_of<many::AbstractSeries, T2>::value && !std::is_base_of<many::AbstractSeries, F>::value, int> = 0>
+		std::enable_if_t<!std::is_base_of<series::AbstractSeries, T2>::value && !std::is_base_of<series::AbstractSeries, F>::value, int> = 0>
 	inline Raster<T1,Tgrid,Tmap> transform(const Raster<T1,Tgrid,Tmap>& a, const T2 b, const Raster<T3,Tgrid>& c, F f)
 	{
 		Raster<T1,Tgrid,Tmap> out(a.grid);
@@ -79,7 +79,7 @@ namespace rasters
 		return out;
 	}
 	template<class Tgrid, rasters::mapping Tmap, class T1, class T2, class T3, typename F,
-		std::enable_if_t<!std::is_base_of<many::AbstractSeries, T2>::value && !std::is_base_of<many::AbstractSeries, T3>::value && !std::is_base_of<many::AbstractSeries, F>::value, int> = 0>
+		std::enable_if_t<!std::is_base_of<series::AbstractSeries, T2>::value && !std::is_base_of<series::AbstractSeries, T3>::value && !std::is_base_of<series::AbstractSeries, F>::value, int> = 0>
 	inline Raster<T1,Tgrid,Tmap> transform(const Raster<T1,Tgrid,Tmap>& a, const T2 b, const T3 c, F f)
 	{
 		Raster<T1,Tgrid,Tmap> out(a.grid);
@@ -87,7 +87,7 @@ namespace rasters
 		return out;
 	}
 	template<class Tgrid, rasters::mapping Tmap, class T1, class T2, class T3, typename F, 
-		std::enable_if_t<!std::is_base_of<many::AbstractSeries, T1>::value && !std::is_base_of<many::AbstractSeries, F>::value, int> = 0>
+		std::enable_if_t<!std::is_base_of<series::AbstractSeries, T1>::value && !std::is_base_of<series::AbstractSeries, F>::value, int> = 0>
 	inline Raster<T1,Tgrid,Tmap> transform(const T1 a, const Raster<T2,Tgrid>& b, const Raster<T3,Tgrid>& c, F f)
 	{
 		auto out = b;
@@ -95,7 +95,7 @@ namespace rasters
 		return out;
 	}
 	template<class Tgrid, rasters::mapping Tmap, class T1, class T2, class T3, typename F,
-		std::enable_if_t<!std::is_base_of<many::AbstractSeries, T1>::value && !std::is_base_of<many::AbstractSeries, T3>::value && !std::is_base_of<many::AbstractSeries, F>::value, int> = 0>
+		std::enable_if_t<!std::is_base_of<series::AbstractSeries, T1>::value && !std::is_base_of<series::AbstractSeries, T3>::value && !std::is_base_of<series::AbstractSeries, F>::value, int> = 0>
 	inline Raster<T1,Tgrid,Tmap> transform(const T1 a, const Raster<T2,Tgrid>& b, const T3 c, F f)
 	{
 		auto out = b;
@@ -103,7 +103,7 @@ namespace rasters
 		return out;
 	}
 	template<class Tgrid, rasters::mapping Tmap, class T1, class T2, class T3, typename F,
-		std::enable_if_t<!std::is_base_of<many::AbstractSeries, T1>::value && !std::is_base_of<many::AbstractSeries, T2>::value && !std::is_base_of<many::AbstractSeries, F>::value, int> = 0>
+		std::enable_if_t<!std::is_base_of<series::AbstractSeries, T1>::value && !std::is_base_of<series::AbstractSeries, T2>::value && !std::is_base_of<series::AbstractSeries, F>::value, int> = 0>
 	inline Raster<T1,Tgrid,Tmap> transform(const T1 a, const T2 b, const Raster<T3,Tgrid>& c, F f)
 	{
 		auto out = c;
@@ -118,7 +118,7 @@ namespace rasters
 	template<class Tgrid, rasters::mapping Tmap, class T, typename Taggregator>
 	Raster<T,Tgrid,Tmap> aggregate(const Raster<T,Tgrid,Tmap>& a, const Raster<unsigned int,Tgrid>& group_ids, Taggregator aggregator)
 	{
-		Raster<T,Tgrid,Tmap> group_out = Raster<T,Tgrid,Tmap>(many::max(group_ids));
+		Raster<T,Tgrid,Tmap> group_out = Raster<T,Tgrid,Tmap>(series::max(group_ids));
 		for (unsigned int i = 0; i < group_ids.size(); ++i)
 		{
 			group_out[group_ids[i]] = aggregator(group_out[group_ids[i]], a[i]);
@@ -129,7 +129,7 @@ namespace rasters
 	template<class Tgrid, rasters::mapping Tmap, class T, typename Taggregator>
 	Raster<T,Tgrid,Tmap> aggregate(const Raster<unsigned int,Tgrid>& group_ids, Taggregator aggregator)
 	{
-		Raster<T,Tgrid,Tmap> group_out = Raster<T,Tgrid,Tmap>(many::max(group_ids));
+		Raster<T,Tgrid,Tmap> group_out = Raster<T,Tgrid,Tmap>(series::max(group_ids));
 		for (unsigned int i = 0; i < group_ids.size(); ++i)
 		{
 			group_out[group_ids[i]] = aggregator(group_out[group_ids[i]]);
@@ -217,63 +217,63 @@ namespace rasters
 	inline Raster<T,Tgrid,Tmap> dot (const Raster<glm::vec<L,T,Q>,Tgrid,Tmap>& u, const glm::vec<L,T,Q> v ) 
 	{
 		Raster<T,Tgrid,Tmap> out(u.size());
-		many::dot(u, v, out);
+		series::dot(u, v, out);
 		return out;
 	}
 	template<class Tgrid, rasters::mapping Tmap, typename T, glm::qualifier Q>
 	inline Raster<glm::vec<3,T,Q>,Tgrid> cross (const Raster<glm::vec<3,T,Q>,Tgrid>& u, const glm::vec<3,T,Q> v ) 
 	{
 		Raster<glm::vec<3,T,Q>,Tgrid> out = Raster<glm::vec<3,T,Q>,Tgrid>(u.size());
-		many::cross(u, v, out);
+		series::cross(u, v, out);
 		return out;
 	}
 	template<class Tgrid, rasters::mapping Tmap, typename T, glm::qualifier Q>
 	inline Raster<float,Tgrid> cross (const Raster<glm::vec<2,T,Q>,Tgrid>& u, const glm::vec<2,T,Q> v ) 
 	{
 		Raster<float,Tgrid> out = Raster<float,Tgrid>(u.size());
-		many::cross(u, v, out);
+		series::cross(u, v, out);
 		return out;
 	}
 	template<class Tgrid, rasters::mapping Tmap, glm::length_t L, typename T, glm::qualifier Q>
 	inline Raster<T,Tgrid,Tmap> distance(const Raster<glm::vec<L,T,Q>,Tgrid,Tmap>& u, const glm::vec<L,T,Q> v ) 
 	{
 		Raster<T,Tgrid,Tmap> out(u.size());
-		many::distance(u, v, out);
+		series::distance(u, v, out);
 		return out;
 	}
 	template<class Tgrid, rasters::mapping Tmap, glm::length_t L, typename T, glm::qualifier Q>
 	inline Raster<T,Tgrid,Tmap> dot (const Raster<glm::vec<L,T,Q>,Tgrid,Tmap>& u, const Raster<glm::vec<L,T,Q>,Tgrid,Tmap>& v ) 
 	{
 		Raster<T,Tgrid,Tmap> out(u.size());
-		many::dot(u, v, out);
+		series::dot(u, v, out);
 		return out;
 	}
 	template<class Tgrid, rasters::mapping Tmap, glm::length_t L, typename T, glm::qualifier Q>
 	inline Raster<glm::vec<L,T,Q>,Tgrid,Tmap> cross (const Raster<glm::vec<L,T,Q>,Tgrid,Tmap>& u, const Raster<glm::vec<L,T,Q>,Tgrid,Tmap>& v ) 
 	{
 		Raster<glm::vec<L,T,Q>,Tgrid,Tmap> out = Raster<glm::vec<L,T,Q>,Tgrid,Tmap>(u.size());
-		many::cross(u, v, out);
+		series::cross(u, v, out);
 		return out;
 	}
 	template<class Tgrid, rasters::mapping Tmap, glm::length_t L, typename T, glm::qualifier Q>
 	inline Raster<T,Tgrid,Tmap> distance(const Raster<glm::vec<L,T,Q>,Tgrid,Tmap>& u, const Raster<glm::vec<L,T,Q>,Tgrid,Tmap>& v ) 
 	{
 		Raster<T,Tgrid,Tmap> out(u.size());
-		many::distance(u, v, out);
+		series::distance(u, v, out);
 		return out;
 	}
 	template<class Tgrid, rasters::mapping Tmap, glm::length_t L, typename T, glm::qualifier Q>
 	inline Raster<glm::vec<L,T,Q>,Tgrid,Tmap> normalize(const Raster<glm::vec<L,T,Q>,Tgrid,Tmap>& u) 
 	{
 		Raster<glm::vec<L,T,Q>,Tgrid,Tmap> out = Raster<glm::vec<L,T,Q>,Tgrid,Tmap>(u.size());
-		many::normalize(u, out);
+		series::normalize(u, out);
 		return out;
 	}
 	template<class Tgrid, rasters::mapping Tmap, glm::length_t L, typename T, glm::qualifier Q>
 	inline Raster<T,Tgrid,Tmap> length(const Raster<glm::vec<L,T,Q>,Tgrid,Tmap>& u) 
 	{
 		Raster<T,Tgrid,Tmap> out(u.size());
-		many::length(u, out);
+		series::length(u, out);
 		return out;
 	}
 

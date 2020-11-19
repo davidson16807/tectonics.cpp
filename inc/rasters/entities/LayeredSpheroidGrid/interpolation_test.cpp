@@ -8,9 +8,9 @@
 #include <glm/mat4x4.hpp>             // *mat4
 #include <glm/gtc/matrix_transform.hpp> // rotate
 
-#include <many/types.hpp>
-#include <many/glm/types.hpp>
-#include <many/glm/random.hpp>  
+#include <series/types.hpp>
+#include <series/glm/types.hpp>
+#include <series/glm/random.hpp>  
 
 #include <rasters/entities/LayeredGrid/LayeredRaster.hpp>
 #include <rasters/entities/LayeredSpheroidGrid/LayeredSpheroidGrid.hpp>  

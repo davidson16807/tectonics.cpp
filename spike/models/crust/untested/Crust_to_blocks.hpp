@@ -1,6 +1,6 @@
 #pragma once
 
-#include <many/types.hpp>         // floats, etc.
+#include <series/types.hpp>         // floats, etc.
 #include <rasters/SpheroidGrid.hpp>        // SpheroidGrid
 #include <rasters/LayeredSpheroidGrid.hpp> // LayeredSpheroidGrid
 

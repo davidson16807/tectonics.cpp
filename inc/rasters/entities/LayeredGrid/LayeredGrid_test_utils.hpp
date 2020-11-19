@@ -5,9 +5,9 @@
 #include <glm/vec3.hpp>               // *vec3
 
 // in-house libraries
-#include <many/types.hpp>
-#include <many/glm/types.hpp>
-#include <many/glm/random.hpp>
+#include <series/types.hpp>
+#include <series/glm/types.hpp>
+#include <series/glm/random.hpp>
 
 #include <meshes/mesh.hpp>
 
@@ -34,10 +34,10 @@ rasters::LayeredRaster<float,rasters::LayeredGrid<Tid,Tgrid>> get_random_Layered
     rasters::Grid<Tid,Tgrid> grid(layered_grid);
 
     auto a_flat      = rasters::make_Raster<float>(grid);
-    many::get_elias_noise(grid.cache->vertex_positions, generator, a_flat);
+    series::get_elias_noise(grid.cache->vertex_positions, generator, a_flat);
 
     auto a_offset    = rasters::make_Raster<float>(grid);
-    many::get_elias_noise(grid.cache->vertex_positions, generator, a_offset);
+    series::get_elias_noise(grid.cache->vertex_positions, generator, a_offset);
 
     // offset the middle layer to test vector calculus operations across layers
     auto a           = rasters::make_LayeredRaster<float>(layered_grid);
@@ -52,9 +52,9 @@ rasters::LayeredRaster<glm::vec3, rasters::LayeredGrid<Tid,Tgrid>> get_random_ve
 {
     auto u = rasters::make_LayeredRaster<glm::vec3>(layered_grid);
 
-    many::set_x(u, get_random_LayeredRaster(layered_grid, generator), u);
-    many::set_y(u, get_random_LayeredRaster(layered_grid, generator), u);
-    many::set_z(u, get_random_LayeredRaster(layered_grid, generator), u);
+    series::set_x(u, get_random_LayeredRaster(layered_grid, generator), u);
+    series::set_y(u, get_random_LayeredRaster(layered_grid, generator), u);
+    series::set_z(u, get_random_LayeredRaster(layered_grid, generator), u);
 
     return u;
 }

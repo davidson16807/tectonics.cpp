@@ -8,9 +8,9 @@
 #include <glm/mat4x4.hpp>             // *mat4
 #include <glm/gtc/matrix_transform.hpp> // rotate
 
-#include <many/types.hpp>
-#include <many/glm/types.hpp>
-#include <many/glm/random.hpp>  
+#include <series/types.hpp>
+#include <series/glm/types.hpp>
+#include <series/glm/random.hpp>  
 
 #include <rasters/entities/Grid/Raster.hpp>
 #include <rasters/entities/SpheroidGrid/SpheroidGrid.hpp>  
@@ -36,7 +36,7 @@ TEST_CASE( "SpheroidGrid nearest_neighbor_interpolation purity", "[many]" ) {
 
         // populate rasters
         std::mt19937 generator(2);
-        many::get_elias_noise(icosahedron_grid.cache->vertex_positions, generator, raster1);
+        series::get_elias_noise(icosahedron_grid.cache->vertex_positions, generator, raster1);
         rasters::nearest_neighbor_interpolation(raster1, raster2);
         rasters::nearest_neighbor_interpolation(raster1, raster3);
 
@@ -52,7 +52,7 @@ TEST_CASE( "SpheroidGrid nearest_neighbor_interpolation identity", "[many]" ) {
 
         // populate rasters
         std::mt19937 generator(2);
-        many::get_elias_noise(icosahedron_grid.cache->vertex_positions, generator, raster1);
+        series::get_elias_noise(icosahedron_grid.cache->vertex_positions, generator, raster1);
         rasters::nearest_neighbor_interpolation(raster1, raster2);
 
         CHECK(raster1 == raster2);
@@ -78,7 +78,7 @@ TEST_CASE( "SpheroidGrid nearest_neighbor_interpolation invertibility", "[many]"
 
         // populate rasters
         std::mt19937 generator(2);
-        many::get_elias_noise(icosahedron_grid.cache->vertex_positions, generator, raster1);
+        series::get_elias_noise(icosahedron_grid.cache->vertex_positions, generator, raster1);
         rasters::nearest_neighbor_interpolation(raster1, raster2);
         rasters::nearest_neighbor_interpolation(raster2, raster3);
 

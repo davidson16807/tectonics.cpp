@@ -6,8 +6,8 @@
 #define GLM_FORCE_PURE      // disable SIMD support for glm so we can work with webassembly
 #include <glm/vec3.hpp>               // *vec3
 
-#include <many/operators.hpp>  
-#include <many/glm/operators.hpp> //  operators, etc.
+#include <series/operators.hpp>  
+#include <series/glm/operators.hpp> //  operators, etc.
 
 #include <meshes/mesh.hpp>
 

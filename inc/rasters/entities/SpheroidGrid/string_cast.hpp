@@ -7,8 +7,8 @@
 #include <glm/vec3.hpp>   // *vec3
 #include <glm/common.hpp> // smoothstep
 
-#include <many/types.hpp>
-#include <many/common.hpp>
+#include <series/types.hpp>
+#include <series/common.hpp>
 
 #include "../Grid/Raster.hpp"
 #include "SpheroidGrid.hpp"
@@ -81,7 +81,7 @@ namespace rasters
 				} 
 				else 
 				{
-					float shade_fraction = many::linearstep(lo, hi, a[id]);
+					float shade_fraction = series::linearstep(lo, hi, a[id]);
 					int shade_id = int(std::min(float(shades.size()-1), (shades.size() * shade_fraction) ));
 				    out += shades[shade_id];
 				}
@@ -103,7 +103,7 @@ namespace rasters
 	template <typename Tgrid, typename T>
 	std::string to_string(const Raster<T,Tgrid>& a, const int line_char_width = 80)
 	{
-		return to_string(a, many::min(a), many::max(a), line_char_width);
+		return to_string(a, series::min(a), series::max(a), line_char_width);
 	}
 
 	
@@ -119,8 +119,8 @@ namespace rasters
 	std::string to_string(const Raster<glm::vec<2,T,Q>,Tgrid>& a, const uint line_char_width = 80)
 	{
 		Raster<T,Tgrid> a_length(a.grid);
-		many::length(a, a_length);
-		T a_length_max = many::max(a_length);
+		series::length(a, a_length);
+		T a_length_max = series::max(a_length);
 
 		float lat(0.);
 		float lon(0.);
@@ -193,29 +193,29 @@ namespace rasters
 	*/
 	template <typename Tgrid, typename T, glm::qualifier Q>
 	std::string to_string(
-		const many::Series<glm::vec<3,T,Q>>& vertex_normals, 
+		const series::Series<glm::vec<3,T,Q>>& vertex_normals, 
 		const Raster<glm::vec<3,T,Q>,Tgrid>& a, 
 		const uint line_char_width = 80, 
 		const glm::vec3 up = glm::vec3(0,0,1)
 	) {
-		many::vec3s		surface_basis_x(a.size());
-		many::vec3s		surface_basis_y(a.size());
-		many::vec3s		surface_basis_z(vertex_normals);
-		many::floats	a2dx(a.size());
-		many::floats	a2dy(a.size());
+		series::vec3s		surface_basis_x(a.size());
+		series::vec3s		surface_basis_y(a.size());
+		series::vec3s		surface_basis_z(vertex_normals);
+		series::floats	a2dx(a.size());
+		series::floats	a2dy(a.size());
 		Raster<glm::vec<2,T,Q>,Tgrid> a2d (a.grid);
 
-		many::cross		(surface_basis_z, up, 				surface_basis_x);
-		many::normalize	(surface_basis_x, 					surface_basis_x);
+		series::cross		(surface_basis_z, up, 				surface_basis_x);
+		series::normalize	(surface_basis_x, 					surface_basis_x);
 
-		many::cross		(surface_basis_z, surface_basis_x, 	surface_basis_y);
-		many::normalize	(surface_basis_y, 					surface_basis_y);
+		series::cross		(surface_basis_z, surface_basis_x, 	surface_basis_y);
+		series::normalize	(surface_basis_y, 					surface_basis_y);
 
-		many::dot 		(surface_basis_x, a, 				a2dx);
-		many::dot 		(surface_basis_y, a, 				a2dy);
+		series::dot 		(surface_basis_x, a, 				a2dx);
+		series::dot 		(surface_basis_y, a, 				a2dy);
 
-		many::set_x 	(a2d, a2dx);
-		many::set_y 	(a2d, a2dy);
+		series::set_x 	(a2d, a2dx);
+		series::set_y 	(a2d, a2dy);
 
 		return rasters::to_string(a2d, line_char_width);
 	}

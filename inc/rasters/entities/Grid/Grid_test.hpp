@@ -8,10 +8,10 @@
 // #include <glm/vec3.hpp>               // *vec3
 
 // in-house libraries
-#include <many/types.hpp>
-#include <many/common.hpp>
-#include <many/glm/types.hpp>
-#include <many/glm/convenience.hpp>
+#include <series/types.hpp>
+#include <series/common.hpp>
+#include <series/glm/types.hpp>
+#include <series/glm/convenience.hpp>
 
 #include <meshes/mesh.hpp>
 
@@ -38,7 +38,7 @@ TEST_CASE( "Grid consistency", "[rasters]" ) {
 
 TEST_CASE( "Grid nontriviality", "[rasters]" ) {
     SECTION("Grid attributes must contain nonzero elements"){
-        CHECK(many::sum(many::abs(tetrahedron_grid.cache->vertex_areas)) > 0.01f);
-        CHECK(many::sum(many::abs(many::get_x(tetrahedron_grid.cache->vertex_positions))) > 0.01f);
+        CHECK(series::sum(series::abs(tetrahedron_grid.cache->vertex_areas)) > 0.01f);
+        CHECK(series::sum(series::abs(series::get_x(tetrahedron_grid.cache->vertex_positions))) > 0.01f);
     }
 }

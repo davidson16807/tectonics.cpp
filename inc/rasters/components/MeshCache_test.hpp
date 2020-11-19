@@ -15,7 +15,7 @@
 #include "MeshCache_test_utils.hpp"
 
 using namespace glm;
-using namespace many;
+using namespace series;
 using namespace rasters;
 
 TEST_CASE( "MeshCache correctness", "[MeshCache]" ) {
@@ -79,51 +79,51 @@ TEST_CASE( "MeshCache correctness", "[MeshCache]" ) {
 
 TEST_CASE( "MeshCache nontriviality", "[MeshCache]" ) {
     SECTION("MeshCache attributes must contain nonzero elements"){
-        CHECK(many::sum(many::abs(tetrahedron.flattened_face_vertex_ids)) > 0.01f);
+        CHECK(series::sum(series::abs(tetrahedron.flattened_face_vertex_ids)) > 0.01f);
 
-        // CHECK(many::sum(many::abs(tetrahedron.vertex_neighbor_ids)) > 0.01f);
-        CHECK(many::sum(many::abs(tetrahedron.vertex_neighbor_counts)) > 0.01f);
-        CHECK(many::sum(many::abs(many::get_x(tetrahedron.vertex_positions))) > 0.01f);
-        CHECK(many::sum(many::abs(many::get_x(tetrahedron.vertex_normals))) > 0.01f);
-        CHECK(many::sum(many::abs(tetrahedron.vertex_areas)) > 0.01f);
+        // CHECK(series::sum(series::abs(tetrahedron.vertex_neighbor_ids)) > 0.01f);
+        CHECK(series::sum(series::abs(tetrahedron.vertex_neighbor_counts)) > 0.01f);
+        CHECK(series::sum(series::abs(series::get_x(tetrahedron.vertex_positions))) > 0.01f);
+        CHECK(series::sum(series::abs(series::get_x(tetrahedron.vertex_normals))) > 0.01f);
+        CHECK(series::sum(series::abs(tetrahedron.vertex_areas)) > 0.01f);
 
-        CHECK(many::sum(many::abs(many::get_x(tetrahedron.face_vertex_ids))) > 0.01f);
-        CHECK(many::sum(many::abs(tetrahedron.face_vertex_id_a)) > 0.01f);
-        CHECK(many::sum(many::abs(tetrahedron.face_vertex_id_b)) > 0.01f);
-        CHECK(many::sum(many::abs(tetrahedron.face_vertex_id_c)) > 0.01f);
-        // CHECK(many::sum(many::abs(tetrahedron.face_edge_id_a)) > 0.01f);
-        // CHECK(many::sum(many::abs(tetrahedron.face_edge_id_b)) > 0.01f);
-        // CHECK(many::sum(many::abs(tetrahedron.face_edge_id_c)) > 0.01f);
-        CHECK(many::sum(many::abs(many::get_x(tetrahedron.face_endpoint_a))) > 0.01f);
-        CHECK(many::sum(many::abs(many::get_x(tetrahedron.face_endpoint_b))) > 0.01f);
-        CHECK(many::sum(many::abs(many::get_y(tetrahedron.face_endpoint_c))) > 0.01f);
-        CHECK(many::sum(many::abs(many::get_x(tetrahedron.face_midpoints))) > 0.01f);
-        CHECK(many::sum(many::abs(many::get_x(tetrahedron.face_normals))) > 0.01f);
-        CHECK(many::sum(many::abs(tetrahedron.face_areas)) > 0.01f);
+        CHECK(series::sum(series::abs(series::get_x(tetrahedron.face_vertex_ids))) > 0.01f);
+        CHECK(series::sum(series::abs(tetrahedron.face_vertex_id_a)) > 0.01f);
+        CHECK(series::sum(series::abs(tetrahedron.face_vertex_id_b)) > 0.01f);
+        CHECK(series::sum(series::abs(tetrahedron.face_vertex_id_c)) > 0.01f);
+        // CHECK(series::sum(series::abs(tetrahedron.face_edge_id_a)) > 0.01f);
+        // CHECK(series::sum(series::abs(tetrahedron.face_edge_id_b)) > 0.01f);
+        // CHECK(series::sum(series::abs(tetrahedron.face_edge_id_c)) > 0.01f);
+        CHECK(series::sum(series::abs(series::get_x(tetrahedron.face_endpoint_a))) > 0.01f);
+        CHECK(series::sum(series::abs(series::get_x(tetrahedron.face_endpoint_b))) > 0.01f);
+        CHECK(series::sum(series::abs(series::get_y(tetrahedron.face_endpoint_c))) > 0.01f);
+        CHECK(series::sum(series::abs(series::get_x(tetrahedron.face_midpoints))) > 0.01f);
+        CHECK(series::sum(series::abs(series::get_x(tetrahedron.face_normals))) > 0.01f);
+        CHECK(series::sum(series::abs(tetrahedron.face_areas)) > 0.01f);
 
-        CHECK(many::sum(many::abs(many::get_x(tetrahedron.edge_vertex_ids))) > 0.01f);
-        CHECK(many::sum(many::abs(tetrahedron.edge_vertex_id_a)) > 0.01f);
-        CHECK(many::sum(many::abs(tetrahedron.edge_vertex_id_b)) > 0.01f);
-        // CHECK(many::sum(many::abs(tetrahedron.edge_face_id_a)) > 0.01f);
-        // CHECK(many::sum(many::abs(tetrahedron.edge_face_id_b)) > 0.01f);
-        CHECK(many::sum(many::abs(many::get_x(tetrahedron.edge_endpoint_a))) > 0.01f);
-        CHECK(many::sum(many::abs(many::get_x(tetrahedron.edge_endpoint_b))) > 0.01f);
-        CHECK(many::sum(many::abs(many::get_x(tetrahedron.edge_midpoints))) > 0.01f);
-        CHECK(many::sum(many::abs(tetrahedron.edge_lengths)) > 0.01f);
-        CHECK(many::sum(many::abs(many::get_x(tetrahedron.edge_normals))) > 0.01f);
-        // CHECK(many::sum(many::abs(tetrahedron.edge_areas)) > 0.01f);
+        CHECK(series::sum(series::abs(series::get_x(tetrahedron.edge_vertex_ids))) > 0.01f);
+        CHECK(series::sum(series::abs(tetrahedron.edge_vertex_id_a)) > 0.01f);
+        CHECK(series::sum(series::abs(tetrahedron.edge_vertex_id_b)) > 0.01f);
+        // CHECK(series::sum(series::abs(tetrahedron.edge_face_id_a)) > 0.01f);
+        // CHECK(series::sum(series::abs(tetrahedron.edge_face_id_b)) > 0.01f);
+        CHECK(series::sum(series::abs(series::get_x(tetrahedron.edge_endpoint_a))) > 0.01f);
+        CHECK(series::sum(series::abs(series::get_x(tetrahedron.edge_endpoint_b))) > 0.01f);
+        CHECK(series::sum(series::abs(series::get_x(tetrahedron.edge_midpoints))) > 0.01f);
+        CHECK(series::sum(series::abs(tetrahedron.edge_lengths)) > 0.01f);
+        CHECK(series::sum(series::abs(series::get_x(tetrahedron.edge_normals))) > 0.01f);
+        // CHECK(series::sum(series::abs(tetrahedron.edge_areas)) > 0.01f);
         
-        CHECK(many::sum(many::abs(many::get_x(tetrahedron.arrow_vertex_ids))) > 0.01f);
-        CHECK(many::sum(many::abs(tetrahedron.arrow_vertex_id_from)) > 0.01f);
-        CHECK(many::sum(many::abs(tetrahedron.arrow_vertex_id_to)) > 0.01f);
-        // CHECK(many::sum(many::abs(tetrahedron.arrow_face_id_a)) > 0.01f);
-        // CHECK(many::sum(many::abs(tetrahedron.arrow_face_id_b)) > 0.01f);
-        CHECK(many::sum(many::abs(many::get_x(tetrahedron.arrow_endpoint_from))) > 0.01f);
-        CHECK(many::sum(many::abs(many::get_x(tetrahedron.arrow_endpoint_to))) > 0.01f);
-        CHECK(many::sum(many::abs(many::get_x(tetrahedron.arrow_midpoints))) > 0.01f);
-        CHECK(many::sum(many::abs(many::get_x(tetrahedron.arrow_offsets))) > 0.01f);
-        CHECK(many::sum(many::abs(tetrahedron.arrow_lengths)) > 0.01f);
-        CHECK(many::sum(many::abs(many::get_x(tetrahedron.arrow_normals))) > 0.01f);
+        CHECK(series::sum(series::abs(series::get_x(tetrahedron.arrow_vertex_ids))) > 0.01f);
+        CHECK(series::sum(series::abs(tetrahedron.arrow_vertex_id_from)) > 0.01f);
+        CHECK(series::sum(series::abs(tetrahedron.arrow_vertex_id_to)) > 0.01f);
+        // CHECK(series::sum(series::abs(tetrahedron.arrow_face_id_a)) > 0.01f);
+        // CHECK(series::sum(series::abs(tetrahedron.arrow_face_id_b)) > 0.01f);
+        CHECK(series::sum(series::abs(series::get_x(tetrahedron.arrow_endpoint_from))) > 0.01f);
+        CHECK(series::sum(series::abs(series::get_x(tetrahedron.arrow_endpoint_to))) > 0.01f);
+        CHECK(series::sum(series::abs(series::get_x(tetrahedron.arrow_midpoints))) > 0.01f);
+        CHECK(series::sum(series::abs(series::get_x(tetrahedron.arrow_offsets))) > 0.01f);
+        CHECK(series::sum(series::abs(tetrahedron.arrow_lengths)) > 0.01f);
+        CHECK(series::sum(series::abs(series::get_x(tetrahedron.arrow_normals))) > 0.01f);
         // CHECK(tetrahedron.arrow_areas[2] > 0.01f);
 
     }
