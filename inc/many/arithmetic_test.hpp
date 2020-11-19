@@ -8,7 +8,7 @@
 #include <many/operators.hpp>  
 
 
-TEST_CASE( "series<T> arithmetic purity", "[many]" ) {
+TEST_CASE( "Series<T> arithmetic purity", "[many]" ) {
     many::floats a = many::floats({1,2,3,4,5});
     many::floats b = many::floats({-1,1,-2,2,3});
     many::floats c1 = many::floats({0,0,0,0,0});
@@ -55,7 +55,7 @@ TEST_CASE( "series<T> arithmetic purity", "[many]" ) {
     }
 }
 
-TEST_CASE( "series<T> arithmetic identity", "[many]" ) {
+TEST_CASE( "Series<T> arithmetic identity", "[many]" ) {
     many::floats a = many::floats({1,2,3,4,5});
     many::floats zeros = many::floats({0,0,0,0,0});
     many::floats ones  = many::floats({1,1,1,1,1});
@@ -70,7 +70,7 @@ TEST_CASE( "series<T> arithmetic identity", "[many]" ) {
     }
 }
 
-TEST_CASE( "series<T> arithmetic commutativity", "[many]" ) {
+TEST_CASE( "Series<T> arithmetic commutativity", "[many]" ) {
     many::floats a = many::floats({1,2,3,4,5});
     many::floats b = many::floats({-1,1,-2,2,3});
 
@@ -82,7 +82,7 @@ TEST_CASE( "series<T> arithmetic commutativity", "[many]" ) {
     }
 }
 
-TEST_CASE( "series<T> arithmetic associativity", "[many]" ) {
+TEST_CASE( "Series<T> arithmetic associativity", "[many]" ) {
     many::floats a = many::floats({1,2,3,4,5});
     many::floats b = many::floats({-1,1,-2,2,3});
     many::floats c = many::floats({1,1,2,3,5});
@@ -95,7 +95,7 @@ TEST_CASE( "series<T> arithmetic associativity", "[many]" ) {
     }
 }
 
-TEST_CASE( "series<T> arithmetic distributivity", "[many]" ) {
+TEST_CASE( "Series<T> arithmetic distributivity", "[many]" ) {
     many::floats a = many::floats({1,2,3,4,5});
     many::floats b = many::floats({-1,1,-2,2,3});
     many::floats c = many::floats({1,1,2,3,5});
@@ -114,7 +114,7 @@ TEST_CASE( "series<T> arithmetic distributivity", "[many]" ) {
 
 
 
-TEST_CASE( "series<T>/scalar arithmetic purity", "[many]" ) {
+TEST_CASE( "Series<T>/scalar arithmetic purity", "[many]" ) {
     many::floats a = many::floats({1,2,3,4,5});
     float b = 2.0f;
     many::floats c1 = many::floats({0,0,0,0,0});
@@ -161,7 +161,7 @@ TEST_CASE( "series<T>/scalar arithmetic purity", "[many]" ) {
     }
 }
 
-TEST_CASE( "series<T>/scalar arithmetic identity", "[many]" ) {
+TEST_CASE( "Series<T>/scalar arithmetic identity", "[many]" ) {
     many::floats a = many::floats({1,2,3,4,5});
     float zeros = 0;
     float ones  = 1;
@@ -176,7 +176,7 @@ TEST_CASE( "series<T>/scalar arithmetic identity", "[many]" ) {
     }
 }
 
-TEST_CASE( "series<T>/scalar arithmetic commutativity", "[many]" ) {
+TEST_CASE( "Series<T>/scalar arithmetic commutativity", "[many]" ) {
     many::floats a = many::floats({1,2,3,4,5});
     float b = 2.0f;
 
@@ -189,7 +189,7 @@ TEST_CASE( "series<T>/scalar arithmetic commutativity", "[many]" ) {
 }
 
 
-TEST_CASE( "series<T>/scalar arithmetic associativity", "[many]" ) {
+TEST_CASE( "Series<T>/scalar arithmetic associativity", "[many]" ) {
     many::floats a = many::floats({1,2,3,4,5});
     float b = 2.0f;
     many::floats c = many::floats({1,1,2,3,5});
@@ -203,7 +203,7 @@ TEST_CASE( "series<T>/scalar arithmetic associativity", "[many]" ) {
 }
 
 
-TEST_CASE( "series<T>/scalar arithmetic distributivity", "[many]" ) {
+TEST_CASE( "Series<T>/scalar arithmetic distributivity", "[many]" ) {
     many::floats a = many::floats({1,2,3,4,5});
     float b = 2.0f;
     many::floats c = many::floats({1,1,2,3,5});

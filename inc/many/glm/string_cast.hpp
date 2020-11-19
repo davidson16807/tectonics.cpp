@@ -32,9 +32,9 @@ namespace many
 	} 
 
 	template <typename T, glm::qualifier Q>
-	std::string to_string(const series<glm::vec<2,T,Q>>& a, const int line_char_width = 80)
+	std::string to_string(const Series<glm::vec<2,T,Q>>& a, const int line_char_width = 80)
 	{
-		series<T> length_a(a.size());
+		Series<T> length_a(a.size());
 		many::length(a, length_a);
 		T max_length_a = many::max(length_a);
 
@@ -82,9 +82,9 @@ namespace many
 	}
 
 	template <typename T, glm::qualifier Q>
-	std::string to_string(const series<glm::vec<3,T,Q>>& a, const glm::mat<3,2,T,Q>& basis, const int line_char_width = 80)
+	std::string to_string(const Series<glm::vec<3,T,Q>>& a, const glm::mat<3,2,T,Q>& basis, const int line_char_width = 80)
 	{
-		series<glm::vec<2,T,Q>> a2d(a.size());
+		Series<glm::vec<2,T,Q>> a2d(a.size());
 		many::mult(basis, a, a2d);
 		return many::to_string(a2d, line_char_width);
 	}

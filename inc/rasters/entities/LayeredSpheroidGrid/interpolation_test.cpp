@@ -18,7 +18,7 @@
 
 #include "LayeredSpheroidGrid_test_utils.hpp"
 
-TEST_CASE( "nearest_neighbor_interpolation purity", "[many]" ) {
+TEST_CASE( "LayeredSpheroidGrid nearest_neighbor_interpolation purity", "[many]" ) {
     SECTION("nearest_neighbor_interpolation must be called repeatedly without changing the output"){
         // initialize mesh
         auto mesh1 = meshes::mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
@@ -43,7 +43,7 @@ TEST_CASE( "nearest_neighbor_interpolation purity", "[many]" ) {
     }
 }
 
-TEST_CASE( "nearest_neighbor_interpolation identity", "[many]" ) {
+TEST_CASE( "LayeredSpheroidGrid nearest_neighbor_interpolation identity", "[many]" ) {
     SECTION("a set of input must exist for nearest_neighbor_interpolation that when fed produces the original input"){
         // initialize rasters
         std::mt19937 generator(2);
@@ -57,7 +57,7 @@ TEST_CASE( "nearest_neighbor_interpolation identity", "[many]" ) {
 }
 
 
-TEST_CASE( "nearest_neighbor_interpolation invertibility", "[many]" ) {
+TEST_CASE( "LayeredSpheroidGrid nearest_neighbor_interpolation invertibility", "[many]" ) {
     SECTION("nearest_neighbor_interpolation can be reverted by interpolating back to original grid"){
         // initialize mesh
         auto mesh1 = meshes::mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);

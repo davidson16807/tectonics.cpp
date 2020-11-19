@@ -18,7 +18,7 @@ namespace many
 	We want a function that can be used to easily and performantly provide 
 	a distance metric for objects of any data type.
 	It should be publically available so that API users can test equality
-	for many::series<T> that contain their own custom data types.
+	for many::Series<T> that contain their own custom data types.
 	As a result, it should make sense as a publically available function.
 	However to prevent introducing additional hard requirements on the design,
 	it should be given a name that makes it unlikely for the compiler to 
@@ -167,7 +167,7 @@ namespace many
 
 
 
-	bool equal(const series<bool>& a, const bool b)
+	bool equal(const Series<bool>& a, const bool b)
 	{
 		bool out(true);
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -176,7 +176,7 @@ namespace many
 		}
 		return out;
 	}
-	bool notEqual(const series<bool>& a, const bool b)
+	bool notEqual(const Series<bool>& a, const bool b)
 	{
 		bool out(false);
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -185,7 +185,7 @@ namespace many
 		}
 		return out;
 	}
-	bool equal(const series<bool>& a, const series<bool>& b)
+	bool equal(const Series<bool>& a, const Series<bool>& b)
 	{
 		if (a.size() != b.size())
 		{
@@ -198,7 +198,7 @@ namespace many
 		}
 		return out;
 	}
-	bool notEqual(const series<bool>& a, const series<bool>& b)
+	bool notEqual(const Series<bool>& a, const Series<bool>& b)
 	{
 		if (a.size() != b.size())
 		{
@@ -214,28 +214,28 @@ namespace many
 
 
 
-	void equal(const series<bool>& a, const bool b, series<bool>& out)
+	void equal(const Series<bool>& a, const bool b, Series<bool>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out[i] = a[i] == b;
 		}
 	}
-	void notEqual(const series<bool>& a, const bool b, series<bool>& out)
+	void notEqual(const Series<bool>& a, const bool b, Series<bool>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out[i] = a[i] != b;
 		}
 	}
-	void equal(const series<bool>& a, const series<bool>& b, series<bool>& out)
+	void equal(const Series<bool>& a, const Series<bool>& b, Series<bool>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out[i] = a[i] == b[i];
 		}
 	}
-	void notEqual(const series<bool>& a, const series<bool>& b, series<bool>& out)
+	void notEqual(const Series<bool>& a, const Series<bool>& b, Series<bool>& out)
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -253,22 +253,22 @@ namespace many
 
 
 	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
-	void greaterThan(const series<T>& a, const T2 b, series<bool>& out)
+	void greaterThan(const Series<T>& a, const T2 b, Series<bool>& out)
 	{
 		out.store([](T ai, T2 bi){ return ai > bi; }, a, b); 
 	}
 	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
-	void greaterThanEqual(const series<T>& a, const T2 b, series<bool>& out)
+	void greaterThanEqual(const Series<T>& a, const T2 b, Series<bool>& out)
 	{
 		out.store([](T ai, T2 bi){ return ai >= bi; }, a, b); 
 	}
 	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
-	void lessThan(const series<T>& a, const T2 b, series<bool>& out)
+	void lessThan(const Series<T>& a, const T2 b, Series<bool>& out)
 	{
 		out.store([](T ai, T2 bi){ return ai < bi; }, a, b); 
 	}
 	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
-	void lessThanEqual(const series<T>& a, const T2 b, series<bool>& out)
+	void lessThanEqual(const Series<T>& a, const T2 b, Series<bool>& out)
 	{
 		out.store([](T ai, T2 bi){ return ai <= bi; }, a, b); 
 	}
@@ -276,28 +276,28 @@ namespace many
 
 
 	template <typename T, typename T2>
-	void greaterThan(const series<T>& a, const series<T2>& b, series<bool>& out)
+	void greaterThan(const Series<T>& a, const Series<T2>& b, Series<bool>& out)
 	{
 		out.store([](T ai, T2 bi){ return ai > bi; }, a, b); 
 	}
 	template <typename T, typename T2>
-	void greaterThanEqual(const series<T>& a, const series<T2>& b, series<bool>& out)
+	void greaterThanEqual(const Series<T>& a, const Series<T2>& b, Series<bool>& out)
 	{
 		out.store([](T ai, T2 bi){ return ai >= bi; }, a, b); 
 	}
 	template <typename T, typename T2>
-	void lessThan(const series<T>& a, const series<T2>& b, series<bool>& out)
+	void lessThan(const Series<T>& a, const Series<T2>& b, Series<bool>& out)
 	{
 		out.store([](T ai, T2 bi){ return ai <= bi; }, a, b); 
 	}
 	template <typename T, typename T2>
-	void lessThanEqual(const series<T>& a, const series<T2>& b, series<bool>& out)
+	void lessThanEqual(const Series<T>& a, const Series<T2>& b, Series<bool>& out)
 	{
 		out.store([](T ai, T2 bi){ return ai < bi; }, a, b); 
 	}
 
 	
-	bool all(const series<bool>& a)
+	bool all(const Series<bool>& a)
 	{
 		bool out = true;
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -306,7 +306,7 @@ namespace many
 		}
 		return out;
 	}
-	bool any(const series<bool>& a)
+	bool any(const Series<bool>& a)
 	{
 		bool out = false;
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -315,7 +315,7 @@ namespace many
 		}
 		return out;
 	}
-	bool none(const series<bool>& a)
+	bool none(const Series<bool>& a)
 	{
 		bool out = false;
 		for (unsigned int i = 0; i < a.size(); ++i)

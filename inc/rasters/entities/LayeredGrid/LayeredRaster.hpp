@@ -30,9 +30,9 @@ namespace rasters
 		NOTE: Grids are composed exclusively from shared pointers, 
 		so there is little performance penalty in copying them.
 
-		We compose rasters from grid but inherit from many::series<T>.
-		Inheriting from many::series<T> allows us to inherit all the functionality 
-		that makes it easy to work with many::series<T> (e.g. stl container behavior and operator overloads)
+		We compose rasters from grid but inherit from many::Series<T>.
+		Inheriting from many::Series<T> allows us to inherit all the functionality 
+		that makes it easy to work with many::Series<T> (e.g. stl container behavior and operator overloads)
 
 		However, composing from grid allows us to use templates to implement a single Raster class for all grid classes.
 		Template functions can make use of grid class attributes without having to introduce a complex class hierarchy.

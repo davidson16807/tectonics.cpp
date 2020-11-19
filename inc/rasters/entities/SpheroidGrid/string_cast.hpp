@@ -193,7 +193,7 @@ namespace rasters
 	*/
 	template <typename Tgrid, typename T, glm::qualifier Q>
 	std::string to_string(
-		const many::series<glm::vec<3,T,Q>>& vertex_normals, 
+		const many::Series<glm::vec<3,T,Q>>& vertex_normals, 
 		const Raster<glm::vec<3,T,Q>,Tgrid>& a, 
 		const uint line_char_width = 80, 
 		const glm::vec3 up = glm::vec3(0,0,1)

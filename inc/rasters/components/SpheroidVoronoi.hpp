@@ -147,7 +147,7 @@ namespace rasters
 			return get_value(get_conceptual_id(glm::normalize(point)));
 		}
 
-		void get_values(const many::vec3s& points, many::series<T>& out) const
+		void get_values(const many::vec3s& points, many::Series<T>& out) const
 		{
 			for (unsigned int i = 0; i < points.size(); ++i)
 			{

@@ -41,74 +41,74 @@ namespace rasters
         This is often used to map vertex aligned data to a format that can be ingested by OpenGL programs,
         so it pays to have a precomputed version.
         */
-        many::series<Tid>                              flattened_face_vertex_ids;
+        many::Series<Tid>                              flattened_face_vertex_ids;
         /*
         This stores the content of `vertex_positions` in a format that can be accepted by OpenGL
         This is used every frame to map vertex aligned data to a format that can be ingested by OpenGL programs,
         so it pays to have a precomputed version.
         */
-        many::series<Tfloat>                           flattened_face_vertex_coordinates;
+        many::Series<Tfloat>                           flattened_face_vertex_coordinates;
 
         //ivecNs                                       vertex_neighbor_ids;
         uint                                           vertex_count;
-        many::series<Tid>                              vertex_neighbor_counts;
-        many::series<glm::vec<3,Tfloat,glm::defaultp>> vertex_positions;
-        many::series<glm::vec<3,Tfloat,glm::defaultp>> vertex_normals;
-        many::series<Tfloat>                           vertex_areas;
+        many::Series<Tid>                              vertex_neighbor_counts;
+        many::Series<glm::vec<3,Tfloat,glm::defaultp>> vertex_positions;
+        many::Series<glm::vec<3,Tfloat,glm::defaultp>> vertex_normals;
+        many::Series<Tfloat>                           vertex_areas;
         float                                          vertex_average_area;
 
         uint                                           face_count;
-        many::series<glm::vec<3,Tid,glm::defaultp>>    face_vertex_ids;
-        many::series<Tid>                              face_vertex_id_a;
-        many::series<Tid>                              face_vertex_id_b;
-        many::series<Tid>                              face_vertex_id_c;
-        //many::series<Tid>                            face_edge_id_a;
-        //many::series<Tid>                            face_edge_id_b;
-        //many::series<Tid>                            face_edge_id_c;
-        many::series<glm::vec<3,Tfloat,glm::defaultp>> face_endpoint_a;
-        many::series<glm::vec<3,Tfloat,glm::defaultp>> face_endpoint_b;
-        many::series<glm::vec<3,Tfloat,glm::defaultp>> face_endpoint_c;
-        many::series<glm::vec<3,Tfloat,glm::defaultp>> face_midpoints;
-        many::series<glm::vec<3,Tfloat,glm::defaultp>> face_normals;
-        many::series<Tfloat>                           face_areas;
+        many::Series<glm::vec<3,Tid,glm::defaultp>>    face_vertex_ids;
+        many::Series<Tid>                              face_vertex_id_a;
+        many::Series<Tid>                              face_vertex_id_b;
+        many::Series<Tid>                              face_vertex_id_c;
+        //many::Series<Tid>                            face_edge_id_a;
+        //many::Series<Tid>                            face_edge_id_b;
+        //many::Series<Tid>                            face_edge_id_c;
+        many::Series<glm::vec<3,Tfloat,glm::defaultp>> face_endpoint_a;
+        many::Series<glm::vec<3,Tfloat,glm::defaultp>> face_endpoint_b;
+        many::Series<glm::vec<3,Tfloat,glm::defaultp>> face_endpoint_c;
+        many::Series<glm::vec<3,Tfloat,glm::defaultp>> face_midpoints;
+        many::Series<glm::vec<3,Tfloat,glm::defaultp>> face_normals;
+        many::Series<Tfloat>                           face_areas;
         float                                          face_average_area;
 
         uint                                           edge_count;
-        many::series<glm::vec<2,Tid,glm::defaultp>>    edge_vertex_ids;
-        many::series<Tid>                              edge_vertex_id_a;
-        many::series<Tid>                              edge_vertex_id_b;
-        many::series<glm::vec<2,Tid,glm::defaultp>>    edge_face_ids;
-        many::series<Tid>                              edge_face_id_a;
-        many::series<Tid>                              edge_face_id_b;
-        many::series<glm::vec<3,Tfloat,glm::defaultp>> edge_endpoint_a;
-        many::series<glm::vec<3,Tfloat,glm::defaultp>> edge_endpoint_b;
-        many::series<glm::vec<3,Tfloat,glm::defaultp>> edge_midpoints;
-        many::series<Tfloat>                           edge_lengths;
-        many::series<glm::vec<3,Tfloat,glm::defaultp>> edge_normals;
-        //many::series<Tfloat>                         edge_areas;
+        many::Series<glm::vec<2,Tid,glm::defaultp>>    edge_vertex_ids;
+        many::Series<Tid>                              edge_vertex_id_a;
+        many::Series<Tid>                              edge_vertex_id_b;
+        many::Series<glm::vec<2,Tid,glm::defaultp>>    edge_face_ids;
+        many::Series<Tid>                              edge_face_id_a;
+        many::Series<Tid>                              edge_face_id_b;
+        many::Series<glm::vec<3,Tfloat,glm::defaultp>> edge_endpoint_a;
+        many::Series<glm::vec<3,Tfloat,glm::defaultp>> edge_endpoint_b;
+        many::Series<glm::vec<3,Tfloat,glm::defaultp>> edge_midpoints;
+        many::Series<Tfloat>                           edge_lengths;
+        many::Series<glm::vec<3,Tfloat,glm::defaultp>> edge_normals;
+        //many::Series<Tfloat>                         edge_areas;
         float                                          edge_average_length;
         
         uint                                           arrow_count;
-        many::series<glm::vec<2,Tid,glm::defaultp>>    arrow_vertex_ids;
-        many::series<Tid>                              arrow_vertex_id_from;
-        many::series<Tid>                              arrow_vertex_id_to;
-        many::series<glm::vec<2,Tid,glm::defaultp>>    arrow_face_ids;
-        many::series<Tid>                              arrow_face_id_a;
-        many::series<Tid>                              arrow_face_id_b;
-        many::series<glm::vec<3,Tfloat,glm::defaultp>> arrow_endpoint_from;
-        many::series<glm::vec<3,Tfloat,glm::defaultp>> arrow_endpoint_to;
-        many::series<glm::vec<3,Tfloat,glm::defaultp>> arrow_midpoints;
-        many::series<glm::vec<3,Tfloat,glm::defaultp>> arrow_offsets;
-        many::series<Tfloat>                           arrow_lengths;
-        many::series<glm::vec<3,Tfloat,glm::defaultp>> arrow_normals;
-        //many::series<Tfloat>                         arrow_areas;
+        many::Series<glm::vec<2,Tid,glm::defaultp>>    arrow_vertex_ids;
+        many::Series<Tid>                              arrow_vertex_id_from;
+        many::Series<Tid>                              arrow_vertex_id_to;
+        many::Series<glm::vec<2,Tid,glm::defaultp>>    arrow_face_ids;
+        many::Series<Tid>                              arrow_face_id_a;
+        many::Series<Tid>                              arrow_face_id_b;
+        many::Series<glm::vec<3,Tfloat,glm::defaultp>> arrow_endpoint_from;
+        many::Series<glm::vec<3,Tfloat,glm::defaultp>> arrow_endpoint_to;
+        many::Series<glm::vec<3,Tfloat,glm::defaultp>> arrow_midpoints;
+        many::Series<glm::vec<3,Tfloat,glm::defaultp>> arrow_offsets;
+        many::Series<Tfloat>                           arrow_lengths;
+        many::Series<glm::vec<3,Tfloat,glm::defaultp>> arrow_normals;
+        //many::Series<Tfloat>                         arrow_areas;
         float                                          arrow_average_length;
 
-        many::series<Tfloat>                           vertex_dual_areas;
-        many::series<glm::vec<3,Tfloat,glm::defaultp>> arrow_dual_endpoint_a;
-        many::series<glm::vec<3,Tfloat,glm::defaultp>> arrow_dual_endpoint_b;
-        many::series<Tfloat>                           arrow_dual_lengths;
-        many::series<glm::vec<3,Tfloat,glm::defaultp>> arrow_dual_normals;
+        many::Series<Tfloat>                           vertex_dual_areas;
+        many::Series<glm::vec<3,Tfloat,glm::defaultp>> arrow_dual_endpoint_a;
+        many::Series<glm::vec<3,Tfloat,glm::defaultp>> arrow_dual_endpoint_b;
+        many::Series<Tfloat>                           arrow_dual_lengths;
+        many::Series<glm::vec<3,Tfloat,glm::defaultp>> arrow_dual_normals;
 
         ~MeshCache()
         {
@@ -187,13 +187,13 @@ namespace rasters
 
     public:
         template <typename Tid2, typename Tfloat2>
-        explicit MeshCache(const many::series<glm::vec<3,Tfloat2,glm::defaultp>>& vertices, const many::series<glm::vec<3,Tid2, glm::defaultp>>& faces):
+        explicit MeshCache(const many::Series<glm::vec<3,Tfloat2,glm::defaultp>>& vertices, const many::Series<glm::vec<3,Tid2, glm::defaultp>>& faces):
             MeshCache(vertices.size(), faces.size(), 0)
         {
             copy(vertex_positions, vertices);
             copy(face_vertex_ids,  faces);
             
-            many::series<glm::vec<3,Tfloat,glm::defaultp>> flattened_face_vertex_positions(3*face_count);
+            many::Series<glm::vec<3,Tfloat,glm::defaultp>> flattened_face_vertex_positions(3*face_count);
             flatten (face_vertex_ids,                             flattened_face_vertex_ids         );
             get     (vertex_positions, flattened_face_vertex_ids, flattened_face_vertex_positions   );
             flatten (flattened_face_vertex_positions,             flattened_face_vertex_coordinates );
@@ -216,16 +216,16 @@ namespace rasters
             // This way, the face normals will be somewhat standardized to face outward.
             // This will hold for most well centered convex shapes. 
 
-            many::series<Tfloat> face_vertex_areas_a = length(cross((face_endpoint_c - face_endpoint_a)/Tfloat(2), (face_endpoint_b - face_endpoint_a)/Tfloat(2))) / Tfloat(2); 
-            many::series<Tfloat> face_vertex_areas_b = length(cross((face_endpoint_a - face_endpoint_b)/Tfloat(2), (face_endpoint_c - face_endpoint_b)/Tfloat(2))) / Tfloat(2); 
-            many::series<Tfloat> face_vertex_areas_c = length(cross((face_endpoint_b - face_endpoint_c)/Tfloat(2), (face_endpoint_a - face_endpoint_c)/Tfloat(2))) / Tfloat(2); 
+            many::Series<Tfloat> face_vertex_areas_a = length(cross((face_endpoint_c - face_endpoint_a)/Tfloat(2), (face_endpoint_b - face_endpoint_a)/Tfloat(2))) / Tfloat(2); 
+            many::Series<Tfloat> face_vertex_areas_b = length(cross((face_endpoint_a - face_endpoint_b)/Tfloat(2), (face_endpoint_c - face_endpoint_b)/Tfloat(2))) / Tfloat(2); 
+            many::Series<Tfloat> face_vertex_areas_c = length(cross((face_endpoint_b - face_endpoint_c)/Tfloat(2), (face_endpoint_a - face_endpoint_c)/Tfloat(2))) / Tfloat(2); 
             // ^^^ NOTE: these 3 represent the surface area of the face that lies within a vertex's region of influence
             aggregate_into(face_vertex_areas_a, face_vertex_id_a, [](Tfloat a, Tfloat b){ return a+b; }, vertex_areas);
             aggregate_into(face_vertex_areas_b, face_vertex_id_b, [](Tfloat a, Tfloat b){ return a+b; }, vertex_areas);
             aggregate_into(face_vertex_areas_c, face_vertex_id_c, [](Tfloat a, Tfloat b){ return a+b; }, vertex_areas);
             vertex_average_area = mean(vertex_areas);
 
-            many::series<glm::vec<3,Tfloat,glm::defaultp>> face_area_weighted_normals = face_normals * face_areas;
+            many::Series<glm::vec<3,Tfloat,glm::defaultp>> face_area_weighted_normals = face_normals * face_areas;
             aggregate_into(face_area_weighted_normals, face_vertex_id_a, [](glm::vec<3,Tfloat,glm::defaultp> a, glm::vec<3,Tfloat,glm::defaultp> b){ return a+b; }, vertex_normals);
             aggregate_into(face_area_weighted_normals, face_vertex_id_b, [](glm::vec<3,Tfloat,glm::defaultp> a, glm::vec<3,Tfloat,glm::defaultp> b){ return a+b; }, vertex_normals);
             aggregate_into(face_area_weighted_normals, face_vertex_id_c, [](glm::vec<3,Tfloat,glm::defaultp> a, glm::vec<3,Tfloat,glm::defaultp> b){ return a+b; }, vertex_normals);
@@ -362,11 +362,11 @@ namespace rasters
             normalize(arrow_normals,                          arrow_normals      );
             arrow_average_length = mean(arrow_lengths);
 
-            many::series<glm::vec<3,Tfloat,glm::defaultp>>  arrow_dual_offset_a    (2*edge_count);
-            many::series<glm::vec<3,Tfloat,glm::defaultp>>  arrow_dual_offset_b    (2*edge_count);
-            many::series<glm::vec<3,Tfloat,glm::defaultp>>  arrow_dual_offset_cross(2*edge_count);
-            many::series<glm::vec<3,Tfloat,glm::defaultp>>  arrow_dual_offset_ab   (2*edge_count);
-            many::series<Tfloat> arrow_dual_areas       (2*edge_count);
+            many::Series<glm::vec<3,Tfloat,glm::defaultp>>  arrow_dual_offset_a    (2*edge_count);
+            many::Series<glm::vec<3,Tfloat,glm::defaultp>>  arrow_dual_offset_b    (2*edge_count);
+            many::Series<glm::vec<3,Tfloat,glm::defaultp>>  arrow_dual_offset_cross(2*edge_count);
+            many::Series<glm::vec<3,Tfloat,glm::defaultp>>  arrow_dual_offset_ab   (2*edge_count);
+            many::Series<Tfloat> arrow_dual_areas       (2*edge_count);
 
             get     (face_midpoints,         arrow_face_id_a,       arrow_dual_endpoint_a   );
             get     (face_midpoints,         arrow_face_id_b,       arrow_dual_endpoint_b   );

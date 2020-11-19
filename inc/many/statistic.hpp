@@ -60,7 +60,7 @@ namespace many
 		return out;
 	}
 	// component-wise min
-	int sum(const series<bool>& a)
+	int sum(const Series<bool>& a)
 	{
 		int out = 0;
 		for (unsigned int i = 0; i < a.size(); ++i)

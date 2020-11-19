@@ -12,40 +12,40 @@ This provides convenience at the expense of performance, since now we have to ca
 See https://codeyarns.com/2010/10/21/c-return-value-versus-output-parameter/ for more info.
 It is important to keep these functions separate from the rest of the library for two reasons:
  1.) It encourages good practice, since you have to explicitly opt-in to less performant convenience functions.
- 2.) It provides a nice itemization of functions that will have to be created if you subclass series<T> 
+ 2.) It provides a nice itemization of functions that will have to be created if you subclass Series<T> 
 */
 
 namespace many
 {
 	template <typename T1, typename F>
-	inline series<T1> transform(const F f, const series<T1>& a)
+	inline Series<T1> transform(const F f, const Series<T1>& a)
 	{
-		series<T1> out(a.size());
+		Series<T1> out(a.size());
 		out.store(f, a); 
 		return out;
 	}
 
 
 	template <typename T1, typename T2, typename F>
-	inline series<T1> transform(const F f, const series<T1>& a, const series<T2>& b)
+	inline Series<T1> transform(const F f, const Series<T1>& a, const Series<T2>& b)
 	{
-		series<T1> out(a.size());
+		Series<T1> out(a.size());
 		out.store(f, a, b); 
 		return out;
 	}
 	template <typename T1, typename T2, typename F, 
 		std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
-	inline series<T1> transform(const F f, const series<T1>& a, const T2 b)
+	inline Series<T1> transform(const F f, const Series<T1>& a, const T2 b)
 	{
-		series<T1> out(a.size());
+		Series<T1> out(a.size());
 		out.store(f, a, b); 
 		return out;
 	}
 	template <typename T1, typename T2, typename F, 
 		std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value, int> = 0>
-	inline series<T1> transform(const F f, const T1 a, const series<T2>& b)
+	inline Series<T1> transform(const F f, const T1 a, const Series<T2>& b)
 	{
-		series<T1> out(b.size());
+		Series<T1> out(b.size());
 		out.store(f, a, b); 
 		return out;
 	}
@@ -55,57 +55,57 @@ namespace many
 
 	template <typename T1, typename T2, typename T3, typename F, 
 		std::enable_if_t<!std::is_base_of<AbstractSeries, F>::value, int> = 0>
-	inline series<T1> transform(const F f, const series<T1>& a, const series<T2>& b, const series<T3>& c)
+	inline Series<T1> transform(const F f, const Series<T1>& a, const Series<T2>& b, const Series<T3>& c)
 	{
-		series<T1> out(a.size());
+		Series<T1> out(a.size());
 		out.store(f, a, b, c); 
 		return out;
 	}
 	template <typename T1, typename T2, typename T3, typename F, 
 		std::enable_if_t<!std::is_base_of<AbstractSeries, T3>::value && !std::is_base_of<AbstractSeries, F>::value, int> = 0>
-	inline series<T1> transform(const F f, const series<T1>& a, const series<T2>& b, const T3 c)
+	inline Series<T1> transform(const F f, const Series<T1>& a, const Series<T2>& b, const T3 c)
 	{
-		series<T1> out(a.size());
+		Series<T1> out(a.size());
 		out.store(f, a, b, c); 
 		return out;
 	}
 	template <typename T1, typename T2, typename T3, typename F, 
 		std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value && !std::is_base_of<AbstractSeries, F>::value, int> = 0>
-	inline series<T1> transform(const F f, const series<T1>& a, const T2 b, const series<T3>& c)
+	inline Series<T1> transform(const F f, const Series<T1>& a, const T2 b, const Series<T3>& c)
 	{
-		series<T1> out(a.size());
+		Series<T1> out(a.size());
 		out.store(f, a, b, c); 
 		return out;
 	}
 	template <typename T1, typename T2, typename T3, typename F,
 		std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value && !std::is_base_of<AbstractSeries, T3>::value && !std::is_base_of<AbstractSeries, F>::value, int> = 0>
-	inline series<T1> transform(const F f, const series<T1>& a, const T2 b, const T3 c)
+	inline Series<T1> transform(const F f, const Series<T1>& a, const T2 b, const T3 c)
 	{
-		series<T1> out(a.size());
+		Series<T1> out(a.size());
 		out.store(f, a, b, c); 
 		return out;
 	}
 	template <typename T1, typename T2, typename T3, typename F, 
 		std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value && !std::is_base_of<AbstractSeries, F>::value, int> = 0>
-	inline series<T1> transform(const F f, const T1 a, const series<T2>& b, const series<T3>& c)
+	inline Series<T1> transform(const F f, const T1 a, const Series<T2>& b, const Series<T3>& c)
 	{
-		series<T1> out(a.size());
+		Series<T1> out(a.size());
 		out.store(f, a, b, c); 
 		return out;
 	}
 	template <typename T1, typename T2, typename T3, typename F,
 		std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value && !std::is_base_of<AbstractSeries, T3>::value && !std::is_base_of<AbstractSeries, F>::value, int> = 0>
-	inline series<T1> transform(const F f, const T1 a, const series<T2>& b, const T3 c)
+	inline Series<T1> transform(const F f, const T1 a, const Series<T2>& b, const T3 c)
 	{
-		series<T1> out(a.size());
+		Series<T1> out(a.size());
 		out.store(f, a, b, c); 
 		return out;
 	}
 	template <typename T1, typename T2, typename T3, typename F,
 		std::enable_if_t<!std::is_base_of<AbstractSeries, T1>::value && !std::is_base_of<AbstractSeries, T2>::value && !std::is_base_of<AbstractSeries, F>::value, int> = 0>
-	inline series<T1> transform(const F f, const T1 a, const T2 b, const series<T3>& c)
+	inline Series<T1> transform(const F f, const T1 a, const T2 b, const Series<T3>& c)
 	{
-		series<T1> out(c.size());
+		Series<T1> out(c.size());
 		out.store(f, a, b, c); 
 		return out;
 	}
@@ -115,9 +115,9 @@ namespace many
 
 
 	template<typename T, typename Taggregator>
-	series<T> aggregate(const series<T>& a, const series<unsigned int>& group_ids, Taggregator aggregator)
+	Series<T> aggregate(const Series<T>& a, const Series<unsigned int>& group_ids, Taggregator aggregator)
 	{
-		series<T> group_out = series<T>(max(group_ids));
+		Series<T> group_out = Series<T>(max(group_ids));
 		for (unsigned int i = 0; i < group_ids.size(); ++i)
 		{
 			group_out[group_ids[i]] = aggregator(group_out[group_ids[i]], a[i]);
@@ -126,9 +126,9 @@ namespace many
 	}
 
 	template<typename T, typename Taggregator>
-	series<T> aggregate(const series<unsigned int>& group_ids, Taggregator aggregator)
+	Series<T> aggregate(const Series<unsigned int>& group_ids, Taggregator aggregator)
 	{
-		series<T> group_out = series<T>(max(group_ids));
+		Series<T> group_out = Series<T>(max(group_ids));
 		for (unsigned int i = 0; i < group_ids.size(); ++i)
 		{
 			group_out[group_ids[i]] = aggregator(group_out[group_ids[i]]);
@@ -139,21 +139,21 @@ namespace many
 
 	/// Returns x if x >= 0; otherwise, it returns -x.
 	template <typename T>
-	series<T> abs(const series<T>& a)
+	Series<T> abs(const Series<T>& a)
 	{
 		return many::transform([](T ai){ return ai >= 0? ai : -ai; }, a);
 	}
 
 	/// Returns 1.0 if x > 0, 0.0 if x == 0, or -1.0 if x < 0.
 	template <typename T>
-	series<T> sign(const series<T>& a)
+	Series<T> sign(const Series<T>& a)
 	{
 		return many::transform([](T ai){ return (T(0) < ai) - (ai < T(0)); }, a);
 	}
 
 	/// Returns a value equal to the nearest integer that is less then or equal to x.
 	template <typename T>
-	series<T> floor(const series<T>& a)
+	Series<T> floor(const Series<T>& a)
 	{
 		return many::transform(std::floor, a);
 	}
@@ -161,7 +161,7 @@ namespace many
 	/// Returns a value equal to the nearest integer to x
 	/// whose absolute value is not larger than the absolute value of x.
 	template <typename T>
-	series<T> trunc(const series<T>& a)
+	Series<T> trunc(const Series<T>& a)
 	{
 		return many::transform(std::trunc, a);
 	}
@@ -172,7 +172,7 @@ namespace many
 	/// This includes the possibility that round(x) returns the
 	/// same value as roundEven(x) for all values of x.
 	template <typename T>
-	series<T> round(const series<T>& a)
+	Series<T> round(const Series<T>& a)
 	{
 		return many::transform(std::round, a);
 	}
@@ -180,7 +180,7 @@ namespace many
 	/// Returns a value equal to the nearest integer
 	/// that is greater than or equal to x.
 	template <typename T>
-	series<T> ceil(const series<T>& a)
+	Series<T> ceil(const Series<T>& a)
 	{
 		many::transform(std::ceil, a);
 	}

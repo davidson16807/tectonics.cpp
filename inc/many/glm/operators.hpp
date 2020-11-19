@@ -12,7 +12,7 @@ This provides convenience at the expense of performance, since now we have to ca
 See https://codeyarns.com/2010/10/21/c-return-value-versus-output-parameter/ for more info.
 It is important to keep these functions separate from the rest of the library for two reasons:
  1.) It encourages good practice, since you have to explicitly opt-in to less performant convenience functions.
- 2.) It provides a nice itemization of functions that will have to be created if you subclass series<T> (as we do within the rasters library)
+ 2.) It provides a nice itemization of functions that will have to be created if you subclass Series<T> (as we do within the rasters library)
 */
 
 namespace many
@@ -41,7 +41,7 @@ namespace many
 	    return out;
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	std::ostream &operator<<(std::ostream &os, const series<glm::vec<L,T,Q>>& a) { 
+	std::ostream &operator<<(std::ostream &os, const Series<glm::vec<L,T,Q>>& a) { 
 		os << "[";
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -57,25 +57,25 @@ namespace many
 
 	// NOTE: all operators are suggested to be inline because they are thin wrappers of functions
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	inline series<glm::vec<L,T,Q>>& operator+=(series<glm::vec<L,T,Q>>& a, const T b) 
+	inline Series<glm::vec<L,T,Q>>& operator+=(Series<glm::vec<L,T,Q>>& a, const T b) 
 	{
 		many::add(a, b, a);
 		return a;
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	inline series<glm::vec<L,T,Q>>& operator-=(series<glm::vec<L,T,Q>>& a, const T b) 
+	inline Series<glm::vec<L,T,Q>>& operator-=(Series<glm::vec<L,T,Q>>& a, const T b) 
 	{
 		many::sub(a, b, a);
 		return a;
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	inline series<glm::vec<L,T,Q>>& operator*=(series<glm::vec<L,T,Q>>& a, const T b) 
+	inline Series<glm::vec<L,T,Q>>& operator*=(Series<glm::vec<L,T,Q>>& a, const T b) 
 	{
 		many::mult(a, b, a);
 		return a;
 	}
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	inline series<glm::vec<L,T,Q>>& operator/=(series<glm::vec<L,T,Q>>& a, const T b) 
+	inline Series<glm::vec<L,T,Q>>& operator/=(Series<glm::vec<L,T,Q>>& a, const T b) 
 	{
 		many::div(a, b, a);
 		return a;

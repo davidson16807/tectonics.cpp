@@ -4,6 +4,7 @@
 
 #include "types.hpp"
 #include "relational.hpp"
+#include "arithmetic.hpp"
 #include "common.hpp"
 #include "convenience.hpp"
 
@@ -13,14 +14,14 @@ This provides convenience at the expense of performance, since now we have to ca
 See https://codeyarns.com/2010/10/21/c-return-value-versus-output-parameter/ for more info.
 It is important to keep these functions separate from the rest of the library for two reasons:
  1.) It encourages good practice, since you have to explicitly opt-in to less performant convenience functions.
- 2.) It provides a nice itemization of functions that will have to be created if you subclass series<T> 
+ 2.) It provides a nice itemization of functions that will have to be created if you subclass Series<T> 
 */
 
 namespace many
 {
 
 	template <typename T>
-	std::ostream &operator<<(std::ostream &os, const series<T>& a) { 
+	std::ostream &operator<<(std::ostream &os, const Series<T>& a) { 
 		os << "[";
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -33,76 +34,76 @@ namespace many
 
 	// NOTE: all operators are suggested to be inline because they are thin wrappers of functions
 	template <typename T>
-	inline bool operator==(const series<T>& a, const T b)
+	inline bool operator==(const Series<T>& a, const T b)
 	{
 		return many::equal(a, b);
 	}
 	template <typename T>
-	inline bool operator!=(const series<T>& a, const T b)
+	inline bool operator!=(const Series<T>& a, const T b)
 	{
 		return many::notEqual(a, b);
 	}
 	template <typename T>
-	inline bool operator==(const T a, const series<T>& b)
+	inline bool operator==(const T a, const Series<T>& b)
 	{
 		return many::equal(a, b);
 	}
 	template <typename T>
-	inline bool operator!=(const T a, const series<T>& b)
+	inline bool operator!=(const T a, const Series<T>& b)
 	{
 		return many::notEqual(a, b);
 	}
 	template <typename T>
-	inline bool operator==(const series<T>& a, const series<T>& b)
+	inline bool operator==(const Series<T>& a, const Series<T>& b)
 	{
 		return many::equal(a, b);
 	}
 	template <typename T>
-	inline bool operator!=(const series<T>& a, const series<T>& b)
+	inline bool operator!=(const Series<T>& a, const Series<T>& b)
 	{
 		return many::notEqual(a, b);
 	}
 	
 
 	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
-	inline series<T3> operator>(const series<T>& a, const T2 b)
+	inline Series<T3> operator>(const Series<T>& a, const T2 b)
 	{
 		return many::transform([](T ai, T2 bi){ return ai > bi; }, a, b);
 	}
 	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
-	inline series<T3> operator>=(const series<T>& a, const T2 b)
+	inline Series<T3> operator>=(const Series<T>& a, const T2 b)
 	{
 		return many::transform([](T ai, T2 bi){ return ai >= bi; }, a, b);
 	}
 	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
-	inline series<T3> operator<(const series<T>& a, const T2 b)
+	inline Series<T3> operator<(const Series<T>& a, const T2 b)
 	{
 		return many::transform([](T ai, T2 bi){ return ai < bi; }, a, b);
 	}
 	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
-	inline series<T3> operator<=(const series<T>& a, const T2 b)
+	inline Series<T3> operator<=(const Series<T>& a, const T2 b)
 	{
 		return many::transform([](T ai, T2 bi){ return ai <= bi; }, a, b);
 	}
 	
 
 	template <typename T, typename T2, typename T3>
-	inline series<T3> operator>(const series<T>& a, const series<T2> b)
+	inline Series<T3> operator>(const Series<T>& a, const Series<T2> b)
 	{
 		return many::transform([](T ai, T2 bi){ return ai > bi; }, a, b);
 	}
 	template <typename T, typename T2, typename T3>
-	inline series<T3> operator>=(const series<T>& a, const series<T2> b)
+	inline Series<T3> operator>=(const Series<T>& a, const Series<T2> b)
 	{
 		return many::transform([](T ai, T2 bi){ return ai >= bi; }, a, b);
 	}
 	template <typename T, typename T2, typename T3>
-	inline series<T3> operator<(const series<T>& a, const series<T2> b)
+	inline Series<T3> operator<(const Series<T>& a, const Series<T2> b)
 	{
 		return many::transform([](T ai, T2 bi){ return ai < bi; }, a, b);
 	}
 	template <typename T, typename T2, typename T3>
-	inline series<T3> operator<=(const series<T>& a, const series<T2> b)
+	inline Series<T3> operator<=(const Series<T>& a, const Series<T2> b)
 	{
 		return many::transform([](T ai, T2 bi){ return ai <= bi; }, a, b);
 	}
@@ -110,22 +111,22 @@ namespace many
 	// NOTE: all wrappers are suggested to be inline because they are thin wrappers of functions
 
 	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
-	inline series<T3> operator>(const T2 a, const series<T>& b)
+	inline Series<T3> operator>(const T2 a, const Series<T>& b)
 	{
 		return many::transform([](T ai, T2 bi){ return ai > bi; }, a, b);
 	}
 	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
-	inline series<T3> operator>=(const T2 a, const series<T>& b)
+	inline Series<T3> operator>=(const T2 a, const Series<T>& b)
 	{
 		return many::transform([](T ai, T2 bi){ return ai >= bi; }, a, b);
 	}
 	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
-	inline series<T3> operator<(const T2 a, const series<T>& b)
+	inline Series<T3> operator<(const T2 a, const Series<T>& b)
 	{
 		return many::transform([](T ai, T2 bi){ return ai < bi; }, a, b);
 	}
 	template <typename T, typename T2, typename T3, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
-	inline series<T3> operator<=(const T2 a, const series<T>& b)
+	inline Series<T3> operator<=(const T2 a, const Series<T>& b)
 	{
 		return many::transform([](T ai, T2 bi){ return ai <= bi; }, a, b);
 	}
@@ -135,7 +136,7 @@ namespace many
 
 
 	template <typename T>
-	inline series<T>& operator+=(series<T>& a, const T b) 
+	inline Series<T>& operator+=(Series<T>& a, const T b) 
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -144,7 +145,7 @@ namespace many
 		return a;
 	}
 	template <typename T>
-	inline series<T>& operator-=(series<T>& a, const T b) 
+	inline Series<T>& operator-=(Series<T>& a, const T b) 
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -153,7 +154,7 @@ namespace many
 		return a;
 	}
 	template <typename T>
-	inline series<T>& operator*=(series<T>& a, const T b) 
+	inline Series<T>& operator*=(Series<T>& a, const T b) 
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -162,7 +163,7 @@ namespace many
 		return a;
 	}
 	template <typename T>
-	inline series<T>& operator/=(series<T>& a, const T b) 
+	inline Series<T>& operator/=(Series<T>& a, const T b) 
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -173,7 +174,7 @@ namespace many
 
 
 	template <typename T, typename T2>
-	inline series<T>& operator+=(series<T>& a, const series<T2>& b) 
+	inline Series<T>& operator+=(Series<T>& a, const Series<T2>& b) 
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -182,7 +183,7 @@ namespace many
 		return a;
 	}
 	template <typename T, typename T2>
-	inline series<T>& operator-=(series<T>& a, const series<T2>& b) 
+	inline Series<T>& operator-=(Series<T>& a, const Series<T2>& b) 
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -191,7 +192,7 @@ namespace many
 		return a;
 	}
 	template <typename T, typename T2>
-	inline series<T>& operator*=(series<T>& a, const series<T2>& b) 
+	inline Series<T>& operator*=(Series<T>& a, const Series<T2>& b) 
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -200,7 +201,7 @@ namespace many
 		return a;
 	}
 	template <typename T, typename T2>
-	inline series<T>& operator/=(series<T>& a, const series<T2>& b) 
+	inline Series<T>& operator/=(Series<T>& a, const Series<T2>& b) 
 	{
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -211,7 +212,7 @@ namespace many
 
 	// NOTE: prefix increment/decrement
 	template <typename T>
-	inline series<T>& operator++(series<T>& a)  
+	inline Series<T>& operator++(Series<T>& a)  
 	{  
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -220,7 +221,7 @@ namespace many
 		return a;
 	}  
 	template <typename T>
-	inline series<T>& operator--(series<T>& a)  
+	inline Series<T>& operator--(Series<T>& a)  
 	{  
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -231,7 +232,7 @@ namespace many
 
 	// NOTE: postfix increment/decrement
 	template <typename T>
-	inline series<T> operator++(series<T>& a, int)  
+	inline Series<T> operator++(Series<T>& a, int)  
 	{  
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -240,7 +241,7 @@ namespace many
 		return a;
 	}  
 	template <typename T>
-	inline series<T> operator--(series<T>& a, int)  
+	inline Series<T> operator--(Series<T>& a, int)  
 	{  
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
@@ -256,22 +257,22 @@ namespace many
 	// NOTE: we define operators for multiple typenamees T and T2 in order to support 
 	//  vector/scalar multiplication, matrix/vect multiplication, etc.
 	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
-	inline series<T> operator+(const series<T>& a, const T2 b)
+	inline Series<T> operator+(const Series<T>& a, const T2 b)
 	{
 		return many::transform([](T ai, T2 bi){ return ai + bi; }, a, b);
 	}
 	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
-	inline series<T> operator-(const series<T>& a, const T2 b)
+	inline Series<T> operator-(const Series<T>& a, const T2 b)
 	{
 		return many::transform([](T ai, T2 bi){ return ai - bi; }, a, b);
 	}
 	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
-	inline series<T> operator*(const series<T>& a, const T2 b)
+	inline Series<T> operator*(const Series<T>& a, const T2 b)
 	{
 		return many::transform([](T ai, T2 bi){ return ai * bi; }, a, b);
 	}
 	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
-	inline series<T> operator/(const series<T>& a, const T2 b)
+	inline Series<T> operator/(const Series<T>& a, const T2 b)
 	{
 		return many::transform([](T ai, T2 bi){ return ai / bi; }, a, b);
 	}
@@ -283,22 +284,22 @@ namespace many
 	// NOTE: we define operators for multiple typenamees T and T2 in order to support 
 	//  vector/scalar multiplication, matrix/vect multiplication, etc.
 	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
-	inline series<T> operator+(const T2 a, const series<T>& b)
+	inline Series<T> operator+(const T2 a, const Series<T>& b)
 	{
 		return many::transform([](T ai, T2 bi){ return ai + bi; }, a, b);
 	}
 	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
-	inline series<T> operator-(const T2 a, const series<T>& b)
+	inline Series<T> operator-(const T2 a, const Series<T>& b)
 	{
 		return many::transform([](T ai, T2 bi){ return ai - bi; }, a, b);
 	}
 	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
-	inline series<T> operator*(const T2 a, const series<T>& b)
+	inline Series<T> operator*(const T2 a, const Series<T>& b)
 	{
 		return many::transform([](T ai, T2 bi){ return ai * bi; }, a, b);
 	}
 	template <typename T, typename T2, std::enable_if_t<!std::is_base_of<AbstractSeries, T2>::value, int> = 0>
-	inline series<T> operator/(const T2 a, const series<T>& b)
+	inline Series<T> operator/(const T2 a, const Series<T>& b)
 	{
 		return many::transform([](T ai, T2 bi){ return ai / bi; }, a, b);
 	}
@@ -307,53 +308,53 @@ namespace many
 	// NOTE: we define operators for multiple typenamees T and T2 in order to support 
 	//  vector/scalar multiplication, matrix/vect multiplication, etc.
 	template <typename T, typename T2>
-	inline series<T> operator+(const series<T>& a, const series<T2>& b)
+	inline Series<T> operator+(const Series<T>& a, const Series<T2>& b)
 	{
 		return many::transform([](T ai, T2 bi){ return ai + bi; }, a, b);
 	}
 	template <typename T, typename T2>
-	inline series<T> operator-(const series<T>& a, const series<T2>& b)
+	inline Series<T> operator-(const Series<T>& a, const Series<T2>& b)
 	{
 		return many::transform([](T ai, T2 bi){ return ai - bi; }, a, b);
 	}
 	template <typename T, typename T2>
-	inline series<T> operator*(const series<T>& a, const series<T2>& b)
+	inline Series<T> operator*(const Series<T>& a, const Series<T2>& b)
 	{
 		return many::transform([](T ai, T2 bi){ return ai * bi; }, a, b);
 	}
 	template <typename T, typename T2>
-	inline series<T> operator/(const series<T>& a, const series<T2>& b)
+	inline Series<T> operator/(const Series<T>& a, const Series<T2>& b)
 	{
 		return many::transform([](T ai, T2 bi){ return ai / bi; }, a, b);
 	}
 
 
 	template <typename T>
-	inline series<T> operator-(const series<T>& a)
+	inline Series<T> operator-(const Series<T>& a)
 	{
 		return many::transform([](T ai){ return -ai; }, a);
 	}
 	
-	inline series<bool> operator~(const series<bool>& a)
+	inline Series<bool> operator~(const Series<bool>& a)
 	{
 		return many::transform([](bool ai){ return !ai; }, a);
 	}
 
 
-	inline series<bool> operator|(const series<bool>& a, const bool b)
+	inline Series<bool> operator|(const Series<bool>& a, const bool b)
 	{
 		return many::transform([](bool ai, bool bi){ return ai || bi; }, a, b);
 	}
-	inline series<bool> operator&(const series<bool>& a, const bool b)
+	inline Series<bool> operator&(const Series<bool>& a, const bool b)
 	{
 		return many::transform([](bool ai, bool bi){ return ai && bi; }, a, b);
 	}
 
-	inline series<bool> operator|(const series<bool>& a, const series<bool>& b)
+	inline Series<bool> operator|(const Series<bool>& a, const Series<bool>& b)
 	{
 		return many::transform([](bool ai, bool bi){ return ai || bi; }, a, b);
 	}
-	inline series<bool> operator&(const series<bool>& a, const series<bool>& b)
+	inline Series<bool> operator&(const Series<bool>& a, const Series<bool>& b)
 	{
 		return many::transform([](bool ai, bool bi){ return ai && bi; }, a, b);
 	}
@@ -361,20 +362,20 @@ namespace many
 
 
 
-	inline series<bool>& operator|=(series<bool>& a, const bool b){
+	inline Series<bool>& operator|=(Series<bool>& a, const bool b){
 		a.store([](bool ai, bool bi){ return ai || bi; },  a, b);
 		return a;
 	}
-	inline series<bool>& operator&=(series<bool>& a, const bool b){
+	inline Series<bool>& operator&=(Series<bool>& a, const bool b){
 		a.store([](bool ai, bool bi){ return ai &&  bi; },  a, b);
 		return a;
 	}
 
-	inline series<bool>& operator|=(series<bool>& a, const series<bool>& b){
+	inline Series<bool>& operator|=(Series<bool>& a, const Series<bool>& b){
 		a.store([](bool ai, bool bi){ return ai || bi; },  a, b);
 		return a;
 	}
-	inline series<bool>& operator&=(series<bool>& a, const series<bool>& b){
+	inline Series<bool>& operator&=(Series<bool>& a, const Series<bool>& b){
 		a.store([](bool ai, bool bi){ return ai &&  bi; },  a, b);
 		return a;
 	}

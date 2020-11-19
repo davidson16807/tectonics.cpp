@@ -12,7 +12,7 @@
 #include "relational.hpp"
 
 
-TEST_CASE( "series<T> dot() purity", "[many]" ) {
+TEST_CASE( "Series<T> dot() purity", "[many]" ) {
     std::mt19937 generator(2);
     many::vec3s a = many::get_random_vec3s(5, generator);
     many::vec3s b = many::get_random_vec3s(5, generator);
@@ -26,7 +26,7 @@ TEST_CASE( "series<T> dot() purity", "[many]" ) {
     }
 }
 
-// TEST_CASE( "series<T> dot() identity", "[many]" ) {
+// TEST_CASE( "Series<T> dot() identity", "[many]" ) {
 //     std::mt19937 generator(2);
 //     many::vec3s a = many::get_random_vec3s(5, generator);
 //     many::vec3s b = many::get_random_vec3s(5, generator);
@@ -43,7 +43,7 @@ TEST_CASE( "series<T> dot() purity", "[many]" ) {
 //     }
 // }
 
-TEST_CASE( "series<T> dot() commutativity", "[many]" ) {
+TEST_CASE( "Series<T> dot() commutativity", "[many]" ) {
     std::mt19937 generator(2);
     many::vec3s a = many::get_random_vec3s(5, generator);
     many::vec3s b = many::get_random_vec3s(5, generator);
@@ -57,7 +57,7 @@ TEST_CASE( "series<T> dot() commutativity", "[many]" ) {
     }
 }
 
-TEST_CASE( "series<T> dot() associativity", "[many]" ) {
+TEST_CASE( "Series<T> dot() associativity", "[many]" ) {
     std::mt19937 generator(2);
     many::vec3s a = many::get_random_vec3s(5, generator);
     many::vec3s b = many::get_random_vec3s(5, generator);
@@ -75,7 +75,7 @@ TEST_CASE( "series<T> dot() associativity", "[many]" ) {
     }
 }
 
-TEST_CASE( "series<T> dot() distributivity", "[many]" ) {
+TEST_CASE( "Series<T> dot() distributivity", "[many]" ) {
     std::mt19937 generator(2);
     many::vec3s a = many::get_random_vec3s(5, generator);
     many::vec3s b = many::get_random_vec3s(5, generator);
@@ -97,7 +97,7 @@ TEST_CASE( "series<T> dot() distributivity", "[many]" ) {
 
 
 
-TEST_CASE( "series<T>/singleton dot() purity", "[many]" ) {
+TEST_CASE( "Series<T>/singleton dot() purity", "[many]" ) {
     std::mt19937 generator(2);
     many::vec3s a = many::get_random_vec3s(5, generator);
     glm::vec3 b(-1,0.5,2);
@@ -111,7 +111,7 @@ TEST_CASE( "series<T>/singleton dot() purity", "[many]" ) {
     }
 }
 
-// TEST_CASE( "series<T>/singleton dot() identity", "[many]" ) {
+// TEST_CASE( "Series<T>/singleton dot() identity", "[many]" ) {
 //     std::mt19937 generator(2);
 //     many::vec3s a = many::get_random_vec3s(5, generator);
 //     glm::vec3 b(-1,0.5,2);
@@ -128,7 +128,7 @@ TEST_CASE( "series<T>/singleton dot() purity", "[many]" ) {
 //     }
 // }
 
-TEST_CASE( "series<T>/singleton dot() commutativity", "[many]" ) {
+TEST_CASE( "Series<T>/singleton dot() commutativity", "[many]" ) {
     std::mt19937 generator(2);
     many::vec3s a = many::get_random_vec3s(5, generator);
     glm::vec3 b(-1,0.5,2);
@@ -142,7 +142,7 @@ TEST_CASE( "series<T>/singleton dot() commutativity", "[many]" ) {
     }
 }
 
-TEST_CASE( "series<T>/singleton dot() associativity", "[many]" ) {
+TEST_CASE( "Series<T>/singleton dot() associativity", "[many]" ) {
     std::mt19937 generator(2);
     many::vec3s a = many::get_random_vec3s(5, generator);
     glm::vec3 b(-1,0.5,2);
@@ -160,7 +160,7 @@ TEST_CASE( "series<T>/singleton dot() associativity", "[many]" ) {
     }
 }
 
-TEST_CASE( "series<T>/singleton dot() distributivity", "[many]" ) {
+TEST_CASE( "Series<T>/singleton dot() distributivity", "[many]" ) {
     std::mt19937 generator(2);
     many::vec3s a = many::get_random_vec3s(5, generator);
     glm::vec3 b(-1,0.5,2);
@@ -194,7 +194,7 @@ TEST_CASE( "series<T>/singleton dot() distributivity", "[many]" ) {
 
 
 
-TEST_CASE( "series<T> cross() purity", "[many]" ) {
+TEST_CASE( "Series<T> cross() purity", "[many]" ) {
     std::mt19937 generator(2);
     many::vec3s a = many::get_random_vec3s(5, generator);
     many::vec3s b = many::get_random_vec3s(5, generator);
@@ -208,7 +208,7 @@ TEST_CASE( "series<T> cross() purity", "[many]" ) {
     }
 }
 
-// TEST_CASE( "series<T> cross() identity", "[many]" ) {
+// TEST_CASE( "Series<T> cross() identity", "[many]" ) {
 //     std::mt19937 generator(2);
 //     many::vec3s a = many::get_random_vec3s(5, generator);
 //     many::vec3s b = many::get_random_vec3s(5, generator);
@@ -225,7 +225,7 @@ TEST_CASE( "series<T> cross() purity", "[many]" ) {
 //     }
 // }
 
-TEST_CASE( "series<T> cross() anticommutativity", "[many]" ) {
+TEST_CASE( "Series<T> cross() anticommutativity", "[many]" ) {
     std::mt19937 generator(2);
     many::vec3s a = many::get_random_vec3s(5, generator);
     many::vec3s b = many::get_random_vec3s(5, generator);
@@ -239,7 +239,7 @@ TEST_CASE( "series<T> cross() anticommutativity", "[many]" ) {
     }
 }
 
-TEST_CASE( "series<T> cross() associativity", "[many]" ) {
+TEST_CASE( "Series<T> cross() associativity", "[many]" ) {
     std::mt19937 generator(2);
     many::vec3s a = many::get_random_vec3s(5, generator);
     many::vec3s b = many::get_random_vec3s(5, generator);
@@ -257,7 +257,7 @@ TEST_CASE( "series<T> cross() associativity", "[many]" ) {
     }
 }
 
-TEST_CASE( "series<T> cross() distributivity", "[many]" ) {
+TEST_CASE( "Series<T> cross() distributivity", "[many]" ) {
     std::mt19937 generator(2);
     many::vec3s a = many::get_random_vec3s(5, generator);
     many::vec3s b = many::get_random_vec3s(5, generator);
@@ -279,7 +279,7 @@ TEST_CASE( "series<T> cross() distributivity", "[many]" ) {
 
 
 
-TEST_CASE( "series<T>/singleton cross() purity", "[many]" ) {
+TEST_CASE( "Series<T>/singleton cross() purity", "[many]" ) {
     std::mt19937 generator(2);
     many::vec3s a = many::get_random_vec3s(5, generator);
     glm::vec3 b(-1,0.5,2);
@@ -293,7 +293,7 @@ TEST_CASE( "series<T>/singleton cross() purity", "[many]" ) {
     }
 }
 
-// TEST_CASE( "series<T>/singleton cross() identity", "[many]" ) {
+// TEST_CASE( "Series<T>/singleton cross() identity", "[many]" ) {
 //     std::mt19937 generator(2);
 //     many::vec3s a = many::get_random_vec3s(5, generator);
 //     glm::vec3 b(-1,0.5,2);
@@ -310,7 +310,7 @@ TEST_CASE( "series<T>/singleton cross() purity", "[many]" ) {
 //     }
 // }
 
-TEST_CASE( "series<T>/singleton cross() anticommutativity", "[many]" ) {
+TEST_CASE( "Series<T>/singleton cross() anticommutativity", "[many]" ) {
     std::mt19937 generator(2);
     many::vec3s a = many::get_random_vec3s(5, generator);
     glm::vec3 b(-1,0.5,2);
@@ -324,7 +324,7 @@ TEST_CASE( "series<T>/singleton cross() anticommutativity", "[many]" ) {
     }
 }
 
-TEST_CASE( "series<T>/singleton cross() associativity", "[many]" ) {
+TEST_CASE( "Series<T>/singleton cross() associativity", "[many]" ) {
     std::mt19937 generator(2);
     many::vec3s a = many::get_random_vec3s(5, generator);
     glm::vec3 b(-1,0.5,2);
@@ -342,7 +342,7 @@ TEST_CASE( "series<T>/singleton cross() associativity", "[many]" ) {
     }
 }
 
-TEST_CASE( "series<T>/singleton cross() distributivity", "[many]" ) {
+TEST_CASE( "Series<T>/singleton cross() distributivity", "[many]" ) {
     std::mt19937 generator(2);
     many::vec3s a = many::get_random_vec3s(5, generator);
     glm::vec3 b(-1,0.5,2);
@@ -384,7 +384,7 @@ TEST_CASE( "series<T>/singleton cross() distributivity", "[many]" ) {
 
 
 
-TEST_CASE( "series<T> distance() purity", "[many]" ) {
+TEST_CASE( "Series<T> distance() purity", "[many]" ) {
     std::mt19937 generator(2);
     many::vec3s a = many::get_random_vec3s(5, generator);
     many::vec3s b = many::get_random_vec3s(5, generator);
@@ -398,7 +398,7 @@ TEST_CASE( "series<T> distance() purity", "[many]" ) {
     }
 }
 
-// TEST_CASE( "series<T> distance() identity", "[many]" ) {
+// TEST_CASE( "Series<T> distance() identity", "[many]" ) {
 //     std::mt19937 generator(2);
 //     many::vec3s a = many::get_random_vec3s(5, generator);
 //     many::vec3s b = many::get_random_vec3s(5, generator);
@@ -415,7 +415,7 @@ TEST_CASE( "series<T> distance() purity", "[many]" ) {
 //     }
 // }
 
-TEST_CASE( "series<T> distance() commutativity", "[many]" ) {
+TEST_CASE( "Series<T> distance() commutativity", "[many]" ) {
     std::mt19937 generator(2);
     many::vec3s a = many::get_random_vec3s(5, generator);
     many::vec3s b = many::get_random_vec3s(5, generator);
@@ -429,7 +429,7 @@ TEST_CASE( "series<T> distance() commutativity", "[many]" ) {
     }
 }
 
-// TEST_CASE( "series<T> distance() associativity", "[many]" ) {
+// TEST_CASE( "Series<T> distance() associativity", "[many]" ) {
 //     std::mt19937 generator(2);
 //     many::vec3s a = many::get_random_vec3s(5, generator);
 //     many::vec3s b = many::get_random_vec3s(5, generator);
@@ -447,7 +447,7 @@ TEST_CASE( "series<T> distance() commutativity", "[many]" ) {
 //     }
 // }
 
-TEST_CASE( "series<T> distance() translational invariance", "[many]" ) {
+TEST_CASE( "Series<T> distance() translational invariance", "[many]" ) {
     std::mt19937 generator(2);
     many::vec3s a = many::get_random_vec3s(5, generator);
     many::vec3s b = many::get_random_vec3s(5, generator);
@@ -467,7 +467,7 @@ TEST_CASE( "series<T> distance() translational invariance", "[many]" ) {
 
 
 
-TEST_CASE( "series<T>/singleton distance() purity", "[many]" ) {
+TEST_CASE( "Series<T>/singleton distance() purity", "[many]" ) {
     std::mt19937 generator(2);
     many::vec3s a = many::get_random_vec3s(5, generator);
     glm::vec3 b(-1,0.5,2);
@@ -481,7 +481,7 @@ TEST_CASE( "series<T>/singleton distance() purity", "[many]" ) {
     }
 }
 
-// TEST_CASE( "series<T>/singleton distance() identity", "[many]" ) {
+// TEST_CASE( "Series<T>/singleton distance() identity", "[many]" ) {
 //     std::mt19937 generator(2);
 //     many::vec3s a = many::get_random_vec3s(5, generator);
 //     glm::vec3 b(-1,0.5,2);
@@ -498,7 +498,7 @@ TEST_CASE( "series<T>/singleton distance() purity", "[many]" ) {
 //     }
 // }
 
-TEST_CASE( "series<T>/singleton distance() commutativity", "[many]" ) {
+TEST_CASE( "Series<T>/singleton distance() commutativity", "[many]" ) {
     std::mt19937 generator(2);
     many::vec3s a = many::get_random_vec3s(5, generator);
     glm::vec3 b(-1,0.5,2);
@@ -512,7 +512,7 @@ TEST_CASE( "series<T>/singleton distance() commutativity", "[many]" ) {
     }
 }
 
-// TEST_CASE( "series<T>/singleton distance() associativity", "[many]" ) {
+// TEST_CASE( "Series<T>/singleton distance() associativity", "[many]" ) {
 //     std::mt19937 generator(2);
 //     many::vec3s a = many::get_random_vec3s(5, generator);
 //     glm::vec3 b(-1,0.5,2);
@@ -530,7 +530,7 @@ TEST_CASE( "series<T>/singleton distance() commutativity", "[many]" ) {
 //     }
 // }
 
-TEST_CASE( "series<T>/singleton distance() translational invariance", "[many]" ) {
+TEST_CASE( "Series<T>/singleton distance() translational invariance", "[many]" ) {
     std::mt19937 generator(2);
     many::vec3s a = many::get_random_vec3s(5, generator);
     glm::vec3 b(-1,0.5,2);
@@ -551,7 +551,7 @@ TEST_CASE( "series<T>/singleton distance() translational invariance", "[many]" )
 
 
 
-TEST_CASE( "series<T> length() scale invariance", "[many]" ) {
+TEST_CASE( "Series<T> length() scale invariance", "[many]" ) {
     std::mt19937 generator(2);
     many::vec3s a = many::get_random_vec3s(5, generator);
 

@@ -13,7 +13,7 @@
 #include "relational.hpp"
 
 
-TEST_CASE( "many<T> sqrt purity", "[many]" ) {
+TEST_CASE( "many<vec3> sqrt purity", "[many]" ) {
     std::mt19937 generator(2);
     std::uniform_real_distribution<float> distribution(0.1,5.0);
     many::vec3s a = many::get_random_vec3s(5, distribution, generator);
@@ -25,7 +25,7 @@ TEST_CASE( "many<T> sqrt purity", "[many]" ) {
         CHECK(many::equal(c1,c2));
     }
 }
-// TEST_CASE( "many<T> sqrt consistency", "[many]" ) {
+// TEST_CASE( "many<vec3> sqrt consistency", "[many]" ) {
 //     std::mt19937 generator(2);
 //     std::uniform_real_distribution<float> distribution(0.1,5.0);
 //     many::vec3s a     = many::get_random_vec3s(5, distribution, generator);
@@ -42,7 +42,7 @@ TEST_CASE( "many<T> sqrt purity", "[many]" ) {
 //     }
 
 // }
-TEST_CASE( "many<T> log consistency", "[many]" ) {
+TEST_CASE( "many<vec3> log consistency", "[many]" ) {
     std::mt19937 generator(2);
     std::uniform_real_distribution<float> distribution(0.1,5.0);
     many::vec3s a     = many::get_random_vec3s(5, distribution, generator);
@@ -57,7 +57,7 @@ TEST_CASE( "many<T> log consistency", "[many]" ) {
         CHECK(many::equal(log1_ , log2_));
     }
 }
-TEST_CASE( "many<T> log/exp consistency", "[many]" ) {
+TEST_CASE( "many<vec3> log/exp consistency", "[many]" ) {
     std::mt19937 generator(2);
     std::uniform_real_distribution<float> distribution(0.1,5.0);
     many::vec3s a     = many::get_random_vec3s(5, distribution, generator);
@@ -73,7 +73,7 @@ TEST_CASE( "many<T> log/exp consistency", "[many]" ) {
         CHECK(many::equal(out, a*b));
     }
 }
-TEST_CASE( "many<T> log/exp invertibility", "[many]" ) {
+TEST_CASE( "many<vec3> log/exp invertibility", "[many]" ) {
     std::mt19937 generator(2);
     std::uniform_real_distribution<float> distribution(0.1,5.0);
     many::vec3s a   = many::get_random_vec3s(5, distribution, generator);
@@ -92,7 +92,7 @@ TEST_CASE( "many<T> log/exp invertibility", "[many]" ) {
     }
 }
 
-TEST_CASE( "many<T> log2/exp2 consistency", "[many]" ) {
+TEST_CASE( "many<vec3> log2/exp2 consistency", "[many]" ) {
     std::mt19937 generator(2);
     std::uniform_real_distribution<float> distribution(0.1,5.0);
     many::vec3s a     = many::get_random_vec3s(5, distribution, generator);
@@ -108,7 +108,7 @@ TEST_CASE( "many<T> log2/exp2 consistency", "[many]" ) {
         CHECK(many::equal(out, a*b));
     }
 }
-TEST_CASE( "many<T> log2/exp2 invertibility", "[many]" ) {
+TEST_CASE( "many<vec3> log2/exp2 invertibility", "[many]" ) {
     std::mt19937 generator(2);
     std::uniform_real_distribution<float> distribution(0.1,5.0);
     many::vec3s a   = many::get_random_vec3s(5, distribution, generator);

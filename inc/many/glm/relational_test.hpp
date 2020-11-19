@@ -56,7 +56,7 @@ TEST_CASE( "Must be able to test many::bvec3s equivalence using the catch framew
 
 
 
-TEST_CASE( "many<T> comparator purity", "[many]" ) {
+TEST_CASE( "many<vec3> comparator purity", "[many]" ) {
     std::mt19937 generator(2);
     many::vec3s a = many::get_random_vec3s(5, generator);
     many::vec3s b = many::get_random_vec3s(5, generator);
@@ -88,7 +88,7 @@ TEST_CASE( "many<T> comparator purity", "[many]" ) {
         CHECK(many::equal(c1,c2));
     }
 }
-TEST_CASE( "many<T> comparator consistency", "[many]" ) {
+TEST_CASE( "many<vec3> comparator consistency", "[many]" ) {
     std::mt19937 generator(2);
     many::vec3s a    = many::get_random_vec3s(5, generator);
     many::vec3s b    = many::get_random_vec3s(5, generator);

@@ -10,7 +10,7 @@ namespace crust
 {
 	class Plate
 	{
-		many::series<StrataStore> crust;
+		many::Series<StrataStore> crust;
 		glm::mat3 orientation;
 
 	public:

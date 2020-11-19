@@ -14,7 +14,7 @@
 
 using namespace many;
 
-TEST_CASE( "series<T> abs purity", "[many]" ) {
+TEST_CASE( "Series<T> abs purity", "[many]" ) {
     many::floats a = many::floats({-1,1,-2,2,3});
     many::floats out1 = many::floats({0,0,0,0,0});
     many::floats out2 = many::floats({0,0,0,0,0});
@@ -24,7 +24,7 @@ TEST_CASE( "series<T> abs purity", "[many]" ) {
         CHECK(equal(out1, out2));
     }
 }
-TEST_CASE( "series<T> sign purity", "[many]" ) {
+TEST_CASE( "Series<T> sign purity", "[many]" ) {
     many::floats a = many::floats({-1,1,-2,2,3});
     many::floats out1 = many::floats({0,0,0,0,0});
     many::floats out2 = many::floats({0,0,0,0,0});
@@ -34,7 +34,7 @@ TEST_CASE( "series<T> sign purity", "[many]" ) {
         CHECK(equal(out1, out2));
     }
 }
-TEST_CASE( "series<T> abs/sign consistency", "[many]" ) {
+TEST_CASE( "Series<T> abs/sign consistency", "[many]" ) {
     many::floats a = many::floats({-1,1,-2,2,3});
     many::floats abs_a = many::floats({0,0,0,0,0});
     many::floats sign_a = many::floats({0,0,0,0,0});
@@ -44,7 +44,7 @@ TEST_CASE( "series<T> abs/sign consistency", "[many]" ) {
         CHECK(equal(sign_a*abs_a, a));
     }
 }
-TEST_CASE( "series<T> floor purity", "[many]" ) {
+TEST_CASE( "Series<T> floor purity", "[many]" ) {
     many::floats a = many::floats({-1,1,-2,2,3});
     many::floats out1 = many::floats({0,0,0,0,0});
     many::floats out2 = many::floats({0,0,0,0,0});
@@ -54,7 +54,7 @@ TEST_CASE( "series<T> floor purity", "[many]" ) {
         CHECK(equal(out1, out2));
     }
 }
-TEST_CASE( "series<T> fract purity", "[many]" ) {
+TEST_CASE( "Series<T> fract purity", "[many]" ) {
     many::floats a = many::floats({-1,1,-2,2,3});
     many::floats out1 = many::floats({0,0,0,0,0});
     many::floats out2 = many::floats({0,0,0,0,0});
@@ -64,7 +64,7 @@ TEST_CASE( "series<T> fract purity", "[many]" ) {
         CHECK(equal(out1, out2));
     }
 }
-TEST_CASE( "series<T> floor/fract consistency", "[many]" ) {
+TEST_CASE( "Series<T> floor/fract consistency", "[many]" ) {
     many::floats a = many::floats({-1,1,-2,2,3});
     many::floats floor_a = many::floats({0,0,0,0,0});
     many::floats fract_a = many::floats({0,0,0,0,0});
@@ -75,7 +75,7 @@ TEST_CASE( "series<T> floor/fract consistency", "[many]" ) {
     }
 }
 
-TEST_CASE( "series<T> mod purity", "[many]" ) {
+TEST_CASE( "Series<T> mod purity", "[many]" ) {
     many::floats a = many::floats({-1,1,-2,2,3});
     many::floats b = many::floats({1,2,3,4,5});
     many::floats out1 = many::floats({0,0,0,0,0});
@@ -86,7 +86,7 @@ TEST_CASE( "series<T> mod purity", "[many]" ) {
         CHECK(equal(out1, out2));
     }
 }
-TEST_CASE( "series<T> mod/fract consistency", "[many]" ) {
+TEST_CASE( "Series<T> mod/fract consistency", "[many]" ) {
     many::floats a = many::floats({1.0,2.1,3.1,4.2,5.3});
     many::floats ones = many::floats({1,1,1,1,1});
     many::floats out1 = many::floats({0,0,0,0,0});
@@ -102,7 +102,7 @@ TEST_CASE( "series<T> mod/fract consistency", "[many]" ) {
         CHECK(equal(out1, out2));
     }
 }
-TEST_CASE( "series<T> min purity", "[many]" ) {
+TEST_CASE( "Series<T> min purity", "[many]" ) {
     many::floats a = many::floats({3,2,-2,1,-1});
     many::floats b = many::floats({1,2,3,4,5});
     many::floats out1 = many::floats({0,0,0,0,0});
@@ -113,7 +113,7 @@ TEST_CASE( "series<T> min purity", "[many]" ) {
         CHECK(equal(out1, out2));
     }
 }
-TEST_CASE( "series<T> min decreasing", "[many]" ) {
+TEST_CASE( "Series<T> min decreasing", "[many]" ) {
     many::floats a = many::floats({3,2,-2,1,-1});
     many::floats b = many::floats({1,2,3,4,5});
     many::floats c = many::floats({10,0,0,0,-10});
@@ -125,7 +125,7 @@ TEST_CASE( "series<T> min decreasing", "[many]" ) {
         CHECK(sum(ab) >= sum(abc));
     }
 }
-TEST_CASE( "series<T> min idempotence", "[many]" ) {
+TEST_CASE( "Series<T> min idempotence", "[many]" ) {
     many::floats a = many::floats({3,2,-2,1,-1});
     many::floats b = many::floats({1,2,3,4,5});
     many::floats ab = many::floats({0,0,0,0,0});
@@ -137,7 +137,7 @@ TEST_CASE( "series<T> min idempotence", "[many]" ) {
     }
 }
 
-TEST_CASE( "series<T> max purity", "[many]" ) {
+TEST_CASE( "Series<T> max purity", "[many]" ) {
     many::floats a = many::floats({3,2,-2,1,-1});
     many::floats b = many::floats({1,2,3,4,5});
     many::floats out1 = many::floats({0,0,0,0,0});
@@ -148,7 +148,7 @@ TEST_CASE( "series<T> max purity", "[many]" ) {
         CHECK(equal(out1, out2));
     }
 }
-TEST_CASE( "series<T> max decreasing", "[many]" ) {
+TEST_CASE( "Series<T> max decreasing", "[many]" ) {
     many::floats a = many::floats({3,2,-2,1,-1});
     many::floats b = many::floats({1,2,3,4,5});
     many::floats c = many::floats({10,0,0,0,-10});
@@ -160,7 +160,7 @@ TEST_CASE( "series<T> max decreasing", "[many]" ) {
         CHECK(sum(ab) <= sum(abc));
     }
 }
-TEST_CASE( "series<T> max idempotence", "[many]" ) {
+TEST_CASE( "Series<T> max idempotence", "[many]" ) {
     many::floats a = many::floats({3,2,-2,1,-1});
     many::floats b = many::floats({1,2,3,4,5});
     many::floats ab = many::floats({0,0,0,0,0});
@@ -172,7 +172,7 @@ TEST_CASE( "series<T> max idempotence", "[many]" ) {
     }
 }
 
-TEST_CASE( "series<T> min/max/clamp consistency", "[many]" ) {
+TEST_CASE( "Series<T> min/max/clamp consistency", "[many]" ) {
     many::floats a = many::floats({1,2,3,4,5});
     many::floats lo = many::floats({-1,1,-2,2,3});
     many::floats hi = many::floats({7,6,5,4,3});
