@@ -140,8 +140,8 @@ namespace series
 		A:  The `store()` method by default only allows element-wise comparison between Series and singletons,
 		    however we want to extend this behavior when a Series has a particular interpretation
 		    (for instance when multiplying a rank 2 tensor by a rank 1 tensor).
-		    We would like to allow this extension to be done outside the `many` namespace,
-		    since we want to prevent the `many` namespace from growing past the limits of our comprehension.
+		    We would like to allow this extension to be done outside the `series` namespace,
+		    since we want to prevent the `series` namespace from growing past the limits of our comprehension.
 		    To implement this extended behavior outside the namespace would mean that derived functions could 
 			not use this extended functionality (unless the API user added a `using` statement, which is unwise),
 			so we would have to reimplement the same large library of derived functions for each behavioral extension.
