@@ -54,6 +54,25 @@ namespace stratum
             minerals.fill(mineral::Mineral());
         }
 
+        Stratum(
+            const float max_temperature_received,
+            const float max_pressure_received,
+            const float age_of_world_when_deposited,
+            const std::initializer_list<mineral::Mineral>& vector
+        ): 
+            max_temperature_received(max_temperature_received),
+            max_pressure_received(max_pressure_received),
+            age_of_world_when_deposited(age_of_world_when_deposited)
+        {
+            assert(vector.size() == M);
+            int j(0);
+            for (auto i = vector.begin(); i != vector.end(); ++i)
+            {
+                minerals[j] = *i;
+                ++j;
+            }
+        }
+
         // DERIVED ATTRIBUTES, regular functions of the form: Stratum -> T
         float mass() const 
         {

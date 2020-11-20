@@ -15,6 +15,16 @@ namespace strata
 
         ~Strata(){}
         Strata(): content(), count(0){}
+        Strata(const std::initializer_list<stratum::Stratum<M>>& vector): content(), count(vector.size())
+        {
+            assert(vector.size() <= L);
+            int j(0);
+            for (auto i = vector.begin(); i != vector.end(); ++i)
+            {
+                content[j] = *i;
+                ++j;
+            }
+        }
 
         // DERIVED ATTRIBUTES, regular functions of the form: Strata -> primitive
         float mass_pool(const std::size_t id) const {
