@@ -5,17 +5,17 @@
 
 namespace crust
 {
-	struct StratumBoundaries
+	struct StratumBorders
     {
     	float lower;
     	float upper;
-        StratumBoundaries() :
+        StratumBorders() :
             lower(0),
             upper(0)
         {
 
         }
-        StratumBoundaries(
+        StratumBorders(
             float lower, 
             float upper
         ) :
@@ -26,16 +26,16 @@ namespace crust
         }
     };
 	template <std::size_t L, typename Tgrid>
-    using StrataBoundaries = CrustValues<StratumBoundaries, L, Tgrid>;
+    using StrataBorders = CrustValues<StratumBorders, L, Tgrid>;
     
     template<std::size_t L, typename Tgrid>
-    StrataBoundaries<L,Tgrid> make_StrataBoundaries(const Tgrid& grid)
+    StrataBorders<L,Tgrid> make_StrataBorders(const Tgrid& grid)
     {
-        return StrataBoundaries<L,Tgrid>(grid);
+        return StrataBorders<L,Tgrid>(grid);
     }
     
     template<std::size_t L, typename Tgrid>
-    StrataBoundaries<L,Tgrid> make_StrataBoundaries(const Tgrid& grid, const std::initializer_list<strata::StrataValues<StratumBoundaries,L>> list)
+    StrataBorders<L,Tgrid> make_StrataBorders(const Tgrid& grid, const std::initializer_list<strata::StrataValues<StratumBorders,L>> list)
     {
         return make_CrustValues(grid, list);
     }

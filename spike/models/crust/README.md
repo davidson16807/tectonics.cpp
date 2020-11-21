@@ -9,10 +9,10 @@ Or it can be viewed with the following tikzcd markup:
 ```
 \begin{tikzcd}
                              & Crust \times Plates \arrow[d]                                                     &                                     &  &                                    &  &                                               &  &                                                               \\
-MassSpring                   & Plates \arrow[d]                                                                  & floats                              &  & Crust \times MassSpring \arrow[dd] &  & Crust \times Liquid \arrow[d]                 &  & CrustValues \times StrataBoundaries \arrow[dd, shift right]   \\
+MassSpring                   & Plates \arrow[d]                                                                  & floats                              &  & Crust \times MassSpring \arrow[dd] &  & Crust \times Liquid \arrow[d]                 &  & CrustValues \times StrataBorders \arrow[dd, shift right]   \\
 Crust \times Crust \arrow[r] & Crust \arrow[ru] \arrow[r] \arrow[loop, distance=2em, in=235, out=305] \arrow[lu] & CrustValues                         &  &                                    &  & DensityTower \arrow[d]                        &  &                                                               \\
-                             &                                                                                   & Crust \times CrustValues \arrow[lu] &  & Plates                             &  & LiquidMixture \times DensityProfile \arrow[d] &  & LayeredRaster \times StrataBoundaries \arrow[uu, shift right] \\
-                             &                                                                                   &                                     &  &                                    &  & StrataBoundaries                              &  &                                                              
+                             &                                                                                   & Crust \times CrustValues \arrow[lu] &  & Plates                             &  & LiquidMixture \times DensityProfile \arrow[d] &  & LayeredRaster \times StrataBorders \arrow[uu, shift right] \\
+                             &                                                                                   &                                     &  &                                    &  & StrataBorders                              &  &                                                              
 \end{tikzcd}
 ```
 

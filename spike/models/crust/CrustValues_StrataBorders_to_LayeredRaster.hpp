@@ -4,14 +4,14 @@
 #include <rasters/entities/LayeredGrid/LayeredRaster.hpp> // Raster
 
 #include "CrustValues.hpp" // Crust
-#include "StrataBoundaries.hpp" // Crust
+#include "StrataBorders.hpp" // Crust
 
 namespace crust
 {
     template <typename T, std::size_t L1, typename Tgrid1, typename Tgrid2>
     void get_LayeredRaster_from_CrustValues(
         const CrustValues<float, L1,Tgrid1>& strata_values, 
-        const StrataBoundaries<L1,Tgrid1>& strata_boundaries, 
+        const StrataBorders<L1,Tgrid1>& strata_boundaries, 
         rasters::LayeredRaster<T, Tgrid2>& layered_raster
     ){
         /*
@@ -47,7 +47,7 @@ namespace crust
     template <typename T, std::size_t L1, typename Tgrid1, typename Tgrid2>
     void get_CrustValues_from_LayeredRaster(
         const rasters::LayeredRaster<T, Tgrid2>& layered_raster,
-        const StrataBoundaries<L1,Tgrid1>& strata_boundaries, 
+        const StrataBorders<L1,Tgrid1>& strata_boundaries, 
         CrustValues<float, L1,Tgrid1>& strata_values
     ){
         assert(strata_values.grid.cache == strata_boundaries.grid.cache);

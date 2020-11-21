@@ -10,8 +10,8 @@
 // #include "Crust_to_CrustValues.hpp"
 // #include "Crust_to_DensityTower.hpp"
 // #include "DensityTower_to_LiquidMixtures.hpp"
-// #include "DensityTower_to_StrataBoundaries.hpp"
-#include "CrustValues_StrataBoundaries_to_LayeredRaster.hpp"
+// #include "DensityTower_to_StrataBorders.hpp"
+#include "CrustValues_StrataBorders_to_LayeredRaster.hpp"
 
 #include "CrustValues_test_utils.cpp"
 
@@ -43,19 +43,19 @@ TEST_CASE( "get_LayeredRaster_from_CrustValues regularity", "[crust]" ) {
 		strata::StrataValues<float,L>({ 7.0f, 8.0f })
 	});
 
-	auto boundaries = make_StrataBoundaries<L>(grid, {
-		strata::StrataValues<StratumBoundaries,L>({ StratumBoundaries(0.0f, 1.0f), StratumBoundaries(1.0f, 3.0f) }), // shared border
-		strata::StrataValues<StratumBoundaries,L>({ StratumBoundaries(0.0f, 1.0f), StratumBoundaries(2.0f, 3.0f) }), // open space between
-		strata::StrataValues<StratumBoundaries,L>({ StratumBoundaries(0.0f, 1.5f), StratumBoundaries(1.5f, 3.0f) }), // layer split between two strata
-		strata::StrataValues<StratumBoundaries,L>({ StratumBoundaries(0.0f, 1.0f), StratumBoundaries(1.0f, 2.0f) })  // open space above
+	auto borders = make_StrataBorders<L>(grid, {
+		strata::StrataValues<StratumBorders,L>({ StratumBorders(0.0f, 1.0f), StratumBorders(1.0f, 3.0f) }), // shared border
+		strata::StrataValues<StratumBorders,L>({ StratumBorders(0.0f, 1.0f), StratumBorders(2.0f, 3.0f) }), // open space between
+		strata::StrataValues<StratumBorders,L>({ StratumBorders(0.0f, 1.5f), StratumBorders(1.5f, 3.0f) }), // layer split between two strata
+		strata::StrataValues<StratumBorders,L>({ StratumBorders(0.0f, 1.0f), StratumBorders(1.0f, 2.0f) })  // open space above
 	});
 
     rasters::LayeredGrid layered_grid(grid, 3.0f, 0.0f, 3u);
     auto raster1 = rasters::make_LayeredRaster<float>(layered_grid);
     auto raster2 = rasters::make_LayeredRaster<float>(layered_grid);
 
-    get_LayeredRaster_from_CrustValues(original, boundaries, raster1);
-    get_LayeredRaster_from_CrustValues(original, boundaries, raster2);
+    get_LayeredRaster_from_CrustValues(original, borders, raster1);
+    get_LayeredRaster_from_CrustValues(original, borders, raster2);
 
 	SECTION("Converting crust values to and from LayeredRaster multiple times must produce the same result"){
 	    CHECK(standard_deviation(raster1, raster2) < 0.001f);
@@ -82,23 +82,23 @@ TEST_CASE( "get_CrustValues_from_LayeredRaster regularity", "[crust]" ) {
 		strata::StrataValues<float,L>({ 7.0f, 8.0f })
 	});
 
-	auto boundaries = make_StrataBoundaries<L>(grid, {
-		strata::StrataValues<StratumBoundaries,L>({ StratumBoundaries(0.0f, 1.0f), StratumBoundaries(1.0f, 3.0f) }), // shared border
-		strata::StrataValues<StratumBoundaries,L>({ StratumBoundaries(0.0f, 1.0f), StratumBoundaries(2.0f, 3.0f) }), // open space between
-		strata::StrataValues<StratumBoundaries,L>({ StratumBoundaries(0.0f, 1.5f), StratumBoundaries(1.5f, 3.0f) }), // layer split between two strata
-		strata::StrataValues<StratumBoundaries,L>({ StratumBoundaries(0.0f, 1.0f), StratumBoundaries(1.0f, 2.0f) })  // open space above
+	auto borders = make_StrataBorders<L>(grid, {
+		strata::StrataValues<StratumBorders,L>({ StratumBorders(0.0f, 1.0f), StratumBorders(1.0f, 3.0f) }), // shared border
+		strata::StrataValues<StratumBorders,L>({ StratumBorders(0.0f, 1.0f), StratumBorders(2.0f, 3.0f) }), // open space between
+		strata::StrataValues<StratumBorders,L>({ StratumBorders(0.0f, 1.5f), StratumBorders(1.5f, 3.0f) }), // layer split between two strata
+		strata::StrataValues<StratumBorders,L>({ StratumBorders(0.0f, 1.0f), StratumBorders(1.0f, 2.0f) })  // open space above
 	});
 
     rasters::LayeredGrid layered_grid(grid, 3.0f, 0.0f, 3u);
     auto raster1 = rasters::make_LayeredRaster<float>(layered_grid);
 
-    get_LayeredRaster_from_CrustValues(original, boundaries, raster1);
+    get_LayeredRaster_from_CrustValues(original, borders, raster1);
 
 	auto reproduced1 = make_CrustValues<float,L>(grid);
 	auto reproduced2 = make_CrustValues<float,L>(grid);
 
-    get_CrustValues_from_LayeredRaster(raster1, boundaries, reproduced1);
-    get_CrustValues_from_LayeredRaster(raster1, boundaries, reproduced2);
+    get_CrustValues_from_LayeredRaster(raster1, borders, reproduced1);
+    get_CrustValues_from_LayeredRaster(raster1, borders, reproduced2);
 
 	SECTION("Converting crust values to and from LayeredRaster multiple times must produce the same result"){
 	    CRUST_VALUES_EQUAL(reproduced1, reproduced2)
@@ -125,21 +125,21 @@ TEST_CASE( "get_LayeredRaster_from_CrustValues/get_CrustValues_from_LayeredRaste
 		strata::StrataValues<float,L>({ 7.0f, 8.0f })
 	});
 
-	auto boundaries = make_StrataBoundaries<L>(grid, {
-		strata::StrataValues<StratumBoundaries,L>({ StratumBoundaries(0.0f, 1.0f), StratumBoundaries(1.0f, 3.0f) }), // shared border
-		strata::StrataValues<StratumBoundaries,L>({ StratumBoundaries(0.0f, 1.0f), StratumBoundaries(2.0f, 3.0f) }), // open space between
-		strata::StrataValues<StratumBoundaries,L>({ StratumBoundaries(0.0f, 1.5f), StratumBoundaries(1.5f, 3.0f) }), // layer split between two strata
-		strata::StrataValues<StratumBoundaries,L>({ StratumBoundaries(0.0f, 1.0f), StratumBoundaries(1.0f, 2.0f) })  // open space above
+	auto borders = make_StrataBorders<L>(grid, {
+		strata::StrataValues<StratumBorders,L>({ StratumBorders(0.0f, 1.0f), StratumBorders(1.0f, 3.0f) }), // shared border
+		strata::StrataValues<StratumBorders,L>({ StratumBorders(0.0f, 1.0f), StratumBorders(2.0f, 3.0f) }), // open space between
+		strata::StrataValues<StratumBorders,L>({ StratumBorders(0.0f, 1.5f), StratumBorders(1.5f, 3.0f) }), // layer split between two strata
+		strata::StrataValues<StratumBorders,L>({ StratumBorders(0.0f, 1.0f), StratumBorders(1.0f, 2.0f) })  // open space above
 	});
 
     rasters::LayeredGrid layered_grid(grid, 3.0f, 0.0f, 3u);
     auto raster = rasters::make_LayeredRaster<float>(layered_grid);
 
-    get_LayeredRaster_from_CrustValues(original, boundaries, raster);
+    get_LayeredRaster_from_CrustValues(original, borders, raster);
 
 	auto reproduced = make_CrustValues<float,L>(grid);
 
-    get_CrustValues_from_LayeredRaster(raster, boundaries, reproduced);
+    get_CrustValues_from_LayeredRaster(raster, borders, reproduced);
 
 	SECTION("Converting crust values to and from LayeredRaster must produce the original object under controlled conditions"){
 	    CRUST_VALUES_EQUAL(original, reproduced)
@@ -273,23 +273,23 @@ TEST_CASE( "get_LayeredRaster_from_CrustValues/get_CrustValues_from_LayeredRaste
 
     auto mixture_densities = get_densities(mixtures, liquid_mass_pools, liquid_densities);
 
-    auto boundaries = make_StrataBoundaries<L>(grid);
-    get_StrataBoundaries(
+    auto borders = make_StrataBorders<L>(grid);
+    get_StrataBorders(
         tower, 
         mixtures,
         mixture_densities,
-        boundaries,
+        borders,
         rasters::make_Raster<float>(grid),
         rasters::make_Raster<float>(grid)
     );
 
     auto pressure_raster = rasters::make_LayeredRaster<float>(layered_grid);
-    get_LayeredRaster_from_CrustValues(crust_values, boundaries, units::earth_radius, pressure_raster);
+    get_LayeredRaster_from_CrustValues(crust_values, borders, units::earth_radius, pressure_raster);
 
 	auto stratum_pressures2 = make_CrustValues<float,L>(grid);
 	// get_max_pressures_received(crust, stratum_pressures2);
 
-    get_CrustValues_from_LayeredRaster(pressure_raster, boundaries, units::earth_radius, stratum_pressures2);
+    get_CrustValues_from_LayeredRaster(pressure_raster, borders, units::earth_radius, stratum_pressures2);
 
 	// SECTION("Converting crust values to and from LayeredRaster must produce the original object to within acceptable tolerances"){
 	    // CRUST_VALUES_LAYER_INTERPOLATION_EQUAL(crust_values, stratum_pressures2)
