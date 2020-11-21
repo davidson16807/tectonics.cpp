@@ -11,5 +11,12 @@ namespace strata
         uint count;
         ~StrataValues(){}
         StrataValues(): values(), count(0){}
+        StrataValues(std::initializer_list<T> list): 
+        	values(), 
+        	count(list.size()
+		){
+        	assert(count <= list.size());
+        	std::copy(list.begin(), list.end(), values.begin());
+        }
     };
 }

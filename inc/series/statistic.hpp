@@ -101,6 +101,18 @@ namespace series
 	}
 
 	template <typename T>
+	typename T::value_type standard_deviation(const T& a, const T& b)
+	{
+		typename T::value_type difference(0);
+		typename T::value_type sum_of_squared_differences(0);
+		for (typename T::value_type i(0); i<a.size(); ++i) {
+			difference = (a[i] - b[i]);
+			sum_of_squared_differences += difference * difference;
+		}
+		return std::sqrt(sum_of_squared_differences / (a.size()-1));
+	}
+
+	template <typename T>
 	typename T::value_type weighted_average(const T& a, const T& weights)
 	{
 		typename T::value_type out(0);

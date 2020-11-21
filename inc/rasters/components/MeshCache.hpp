@@ -49,15 +49,15 @@ namespace rasters
         */
         series::Series<Tfloat>                           flattened_face_vertex_coordinates;
 
-        //ivecNs                                       vertex_neighbor_ids;
-        uint                                           vertex_count;
+        //ivecNs                                         vertex_neighbor_ids;
+        Tid                                              vertex_count;
         series::Series<Tid>                              vertex_neighbor_counts;
         series::Series<glm::vec<3,Tfloat,glm::defaultp>> vertex_positions;
         series::Series<glm::vec<3,Tfloat,glm::defaultp>> vertex_normals;
         series::Series<Tfloat>                           vertex_areas;
-        float                                          vertex_average_area;
+        Tfloat                                           vertex_average_area;
 
-        uint                                           face_count;
+        Tid                                              face_count;
         series::Series<glm::vec<3,Tid,glm::defaultp>>    face_vertex_ids;
         series::Series<Tid>                              face_vertex_id_a;
         series::Series<Tid>                              face_vertex_id_b;
@@ -71,9 +71,9 @@ namespace rasters
         series::Series<glm::vec<3,Tfloat,glm::defaultp>> face_midpoints;
         series::Series<glm::vec<3,Tfloat,glm::defaultp>> face_normals;
         series::Series<Tfloat>                           face_areas;
-        float                                          face_average_area;
+        Tfloat                                           face_average_area;
 
-        uint                                           edge_count;
+        Tid                                              edge_count;
         series::Series<glm::vec<2,Tid,glm::defaultp>>    edge_vertex_ids;
         series::Series<Tid>                              edge_vertex_id_a;
         series::Series<Tid>                              edge_vertex_id_b;
@@ -86,9 +86,9 @@ namespace rasters
         series::Series<Tfloat>                           edge_lengths;
         series::Series<glm::vec<3,Tfloat,glm::defaultp>> edge_normals;
         //series::Series<Tfloat>                         edge_areas;
-        float                                          edge_average_length;
+        Tfloat                                           edge_average_length;
         
-        uint                                           arrow_count;
+        Tid                                              arrow_count;
         series::Series<glm::vec<2,Tid,glm::defaultp>>    arrow_vertex_ids;
         series::Series<Tid>                              arrow_vertex_id_from;
         series::Series<Tid>                              arrow_vertex_id_to;
@@ -102,13 +102,15 @@ namespace rasters
         series::Series<Tfloat>                           arrow_lengths;
         series::Series<glm::vec<3,Tfloat,glm::defaultp>> arrow_normals;
         //series::Series<Tfloat>                         arrow_areas;
-        float                                          arrow_average_length;
+        Tfloat                                           arrow_average_length;
 
         series::Series<Tfloat>                           vertex_dual_areas;
         series::Series<glm::vec<3,Tfloat,glm::defaultp>> arrow_dual_endpoint_a;
         series::Series<glm::vec<3,Tfloat,glm::defaultp>> arrow_dual_endpoint_b;
         series::Series<Tfloat>                           arrow_dual_lengths;
         series::Series<glm::vec<3,Tfloat,glm::defaultp>> arrow_dual_normals;
+
+        Tfloat                                           total_area;
 
         ~MeshCache()
         {
@@ -180,7 +182,9 @@ namespace rasters
                 arrow_dual_endpoint_a  (2*edge_count),
                 arrow_dual_endpoint_b  (2*edge_count),
                 arrow_dual_lengths     (2*edge_count),
-                arrow_dual_normals     (2*edge_count)
+                arrow_dual_normals     (2*edge_count),
+
+                total_area             (0)
         {
 
         }
@@ -209,6 +213,7 @@ namespace rasters
             face_areas     = length   (cross(face_endpoint_c - face_endpoint_b, face_endpoint_a - face_endpoint_b)) / Tfloat(2); 
             // ^^^ NOTE: the magnitude of cross product is the area of a parallelogram, so half that is the area of a triangle
             face_average_area = mean(face_areas);
+            total_area = sum(face_areas);
 
             face_normals   = normalize(cross(face_endpoint_c - face_endpoint_b, face_endpoint_a - face_endpoint_b)); 
             face_normals  *= sign(dot(face_normals, normalize(face_midpoints)));
