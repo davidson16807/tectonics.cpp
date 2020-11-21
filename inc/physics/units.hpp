@@ -44,6 +44,7 @@ namespace units {
 	constexpr float megapascal = 1e6f * pascal;
 	constexpr float gigapascal = 1e9f * pascal;
 
+	constexpr float earth_age             = 4.54e9f*year; // seconds
 	constexpr float earth_mass            = 5.972e24f;    // kilograms
 	constexpr float earth_radius          = 6.367e6f;     // meters
 	constexpr float standard_gravity      = 9.80665f;     // meters/second^2
