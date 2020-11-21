@@ -21,7 +21,7 @@ namespace crust
 	Crust<L,M,Tgrid> make_Crust(const Tgrid& grid, const std::initializer_list<strata::Strata<L,M>>& vector)
 	{
 		assert(vector.size() == grid.cache->vertex_count);
-		Crust<L,M,Tgrid> crust = Crust<L,M,Tgrid>(grid, vector);
+		Crust<L,M,Tgrid> crust = Crust<L,M,Tgrid>(grid);
 		strata::StrataStore<L,M> store;
         int j(0);
         for (auto i = vector.begin(); i != vector.end(); ++i)

@@ -53,6 +53,11 @@ namespace mineral
 		{
 			grain_type_relative_volume.fill(1e-4);
 		}
+		Mineral(float mass):
+			mass(mass)
+		{
+			grain_type_relative_volume.fill(1e-4);
+		}
 
         // DERIVED ATTRIBUTES, regular functions of the form: Mineral -> primitive
 		float grain_type_total_relative_volume() const 

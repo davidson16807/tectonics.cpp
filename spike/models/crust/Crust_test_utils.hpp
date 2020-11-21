@@ -4,11 +4,34 @@
 #include <catch/catch.hpp>
 
 // in-house libraries
+#include <meshes/mesh.hpp>
+#include <rasters/entities/SpheroidGrid/SpheroidGrid.hpp>
+
 #include "Crust.hpp"
 #include <models/strata/Strata_test_utils.hpp>
 
 namespace crust
 {
+    /*
+    rasters::SpheroidGrid<> get_earth_grid()
+    {
+        meshes::mesh earth_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
+        earth_mesh = meshes::subdivide(earth_mesh); series::normalize(earth_mesh.vertices, earth_mesh.vertices);
+        earth_mesh = meshes::subdivide(earth_mesh); series::normalize(earth_mesh.vertices, earth_mesh.vertices);
+        earth_mesh = meshes::subdivide(earth_mesh); series::normalize(earth_mesh.vertices, earth_mesh.vertices);
+        earth_mesh = meshes::subdivide(earth_mesh); series::normalize(earth_mesh.vertices, earth_mesh.vertices);
+        series::mult(earth_mesh.vertices, units::earth_radius, earth_mesh.vertices);
+        rasters::Grid earth_grid(earth_mesh.vertices, earth_mesh.faces);
+    }
+
+    rasters::LayeredSpheroidGrid<> get_earth_layered_grid()
+    {
+        return rasters::LayeredSpheroidGrid layered_icosahedron_grid(get_earth_grid(), 300e3f, 0.0f, 100u);
+    }
+    */
+
+
+
     /*
     NOTE: 
     This file does not exist within the concept of the mathematical category defined in README.md.
