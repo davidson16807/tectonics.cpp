@@ -16,6 +16,8 @@ commutativity
 distributivity
 increasing
 decreasing
+adjoint
+theorems for free
 translational invariance
 rotational invariance
 resolution invariance
@@ -23,4 +25,5 @@ mass conservation
 energy conservation
 memory footprint constraints
 miscellaneous equivalence relations
+reproducing real world values to within order of magnitude, factor of 2, 10%, etc.
 happy path (barring no other test)
