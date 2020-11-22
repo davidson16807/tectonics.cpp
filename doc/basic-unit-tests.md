@@ -16,6 +16,7 @@ commutativity
 distributivity
 increasing
 decreasing
+degeneracy
 adjoint
 theorems for free
 translational invariance

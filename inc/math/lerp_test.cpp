@@ -68,6 +68,14 @@ TEST_CASE( "lerp degeneracy to mix", "[math]" ) {
 	}
 }
 
+TEST_CASE( "lerp degeneracy to constant", "[math]" ) {
+  	const auto xs = std::array<float,1>{0.0f};
+  	const auto ys = std::array<float,1>{a};
+    SECTION("calling lerp with a single control point is equivalent to a constant"){
+		CHECK(math::lerp(xs,ys,f) == Approx(a).margin(0.01));
+	}
+}
+
 TEST_CASE( "integral_of_lerp purity", "[math]" ) {
   	std::mt19937 generator(2);
   	std::uniform_real_distribution<float> uniform(0.0f, 2.0f);
@@ -96,6 +104,28 @@ TEST_CASE( "integral_of_lerp equivalence to numerical integration", "[math]" ) {
 			float I2 = math::integral_of_lerp(xs,ys,x0,x1);
 			// std::cout << std::abs(I1 - I2) << " " << x0 << " " << x1 << " " << I1 << " " << I2 << std::endl;
     		SECTION("calling integral_of_lerp is equivalent to result from numerical integration"){
+				CHECK(I1 == Approx(I2).margin(0.01));
+			}
+		}	
+	}
+}
+
+TEST_CASE( "integral_of_lerp degeneracy to linear function", "[math]" ) {
+  	const auto xs = std::array<float,1>{ -0.5f };
+  	const auto ys = std::array<float,1>{ a };
+	const float dx = 0.003f;
+	for (float x0 = -0.6; x0 <= 1.6f; x0+=0.2)
+	{
+		for (float x1 = x0; x1 <= 1.6f; x1+=0.2)
+		{
+			float I1 = 0.0f;
+			for (float xi = x0; xi < x1; xi+=dx)
+			{
+				I1 += dx * math::lerp(xs,ys,xi);
+			}
+			float I2 = math::integral_of_lerp(xs,ys,x0,x1);
+			// std::cout << std::abs(I1 - I2) << " " << x0 << " " << x1 << " " << I1 << " " << I2 << std::endl;
+    		SECTION("calling integral_of_lerp with a single control point is equivalent to result from linear function"){
 				CHECK(I1 == Approx(I2).margin(0.01));
 			}
 		}	
