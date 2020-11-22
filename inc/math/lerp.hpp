@@ -1,9 +1,9 @@
 #include <array>
 
 /*
-"lerp" provides interpolation functionality that goes beyond that which is provided by glm
+"math" provides interpolation functionality that goes beyond that which is provided by glm
 */
-namespace lerp
+namespace math
 {
     /*
     "mix" duplicates glm::mix so that we don't have to require glm just to use it.
@@ -29,9 +29,13 @@ namespace lerp
     given a list of control points mapping 1d space to 1d scalars, 
     and a point in 1d space, returns a 1d scalar that maps to the point
     */
-    template <typename T, std::size_t N>
-    T lerp(const std::array<T,N> control_point_x, const std::array<T,N> control_point_y, const T x) {
-        T result = control_point_y[0];
+    template <typename T>
+    typename T::value_type lerp(
+        const T control_point_x, 
+        const T control_point_y, 
+        const typename T::value_type x
+    ) {
+        typename T::value_type result = control_point_y[0];
         for (std::size_t i = 1; i < control_point_x.size(); i++) 
         {
             result = mix(result, control_point_y[i], linearstep(control_point_x[i-1], control_point_x[i], x));
@@ -42,11 +46,16 @@ namespace lerp
     /*
     "integral_of_lerp" finds the integral of the lerp() function from a to b
     */
-    template <typename T, std::size_t N>
-    T integral_of_lerp(const std::array<T,N> control_point_x, const std::array<T,N> control_point_y, const T a, const T b) {
+    template <typename T>
+    typename T::value_type integral_of_lerp(
+        const T control_point_x, 
+        const T control_point_y, 
+        const typename T::value_type a, 
+        const typename T::value_type b
+    ) {
         std::size_t li = control_point_x.size();
-        T fa, fb, ya, yb, dydf, dxdf;
-        T I  = (a < control_point_x[0]?    std::min(control_point_x[0] - a,    b-a) * control_point_y[0]    : 0)
+        typename T::value_type fa, fb, ya, yb, dydf, dxdf;
+        typename T::value_type I  = (a < control_point_x[0]?    std::min(control_point_x[0] - a,    b-a) * control_point_y[0]    : 0)
              + (b > control_point_x[li-1]? std::min(b - control_point_x[li-1], b-a) * control_point_y[li-1] : 0);
         for (std::size_t i = 1; i < li; i++) 
         {
@@ -60,5 +69,5 @@ namespace lerp
             I += (yb - ya) * dxdf;
         }
         return I;
-    } 
+    }
 }
