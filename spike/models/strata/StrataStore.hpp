@@ -38,6 +38,17 @@ namespace strata
         std::array<stratum::StratumStore<M>, L> strata;
         std::size_t count;
     public:
+        ~StrataStore()
+        {
+        }
+        StrataStore(Strata<M>& output)
+        {
+            pack(output);
+        }
+        StrataStore()
+        {
+        }
+
         void unpack(Strata<L,M>& output) const
         {
             for (std::size_t i=0; i<count; i++)

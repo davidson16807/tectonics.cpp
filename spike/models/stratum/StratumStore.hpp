@@ -81,6 +81,17 @@ namespace stratum
 
     public:
 
+        ~StratumStore()
+        {
+        }
+        StratumStore(Stratum<M>& output)
+        {
+            pack(output);
+        }
+        StratumStore()
+        {
+        }
+
         void unpack(Stratum<M>& output) const
         {
             for (std::size_t i=0; i<M; i++)
