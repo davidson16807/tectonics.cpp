@@ -14,6 +14,7 @@ namespace mineral
 	static void combine(const Mineral& a, const Mineral& b, Mineral& output)
 	{
 		output.mass = a.mass + b.mass;
+        output.phase_id = a.mass > b.mass? a.phase_id : b.phase_id;
 
         // clamp lower bound to 1e-4 to prevent division by zero
         float a_sum = a.grain_type_total_relative_volume();

@@ -21,6 +21,7 @@ namespace mineral
 	{
 		Mineral output;
 		output.mass = generator();
+		output.phase_id = generator() % 16;
 		for (int j = 0; j < int(GrainType::count); ++j)
 		{
 			output.grain_type_relative_volume[j] = generator();
@@ -30,6 +31,7 @@ namespace mineral
 	
 	#define MINERAL_EQUAL(a, b)                                                              \
     	CHECK(a.mass == Approx(b.mass).epsilon(1e-4));                                                 \
+    	CHECK(a.phase_id == b.phase_id);                                                 \
 		for (int grain_i = 0; grain_i < int(GrainType::count); ++grain_i)                                   \
 		{                                                                                              \
 			float a_total_relative_volume(a.grain_type_total_relative_volume());                           \
@@ -38,9 +40,11 @@ namespace mineral
     			Approx(a.grain_type_relative_volume[grain_i] / a_total_relative_volume).margin(0.01)); \
     	}    
 
-    #define MINERAL_VALID(a)                                          \
+    #define MINERAL_VALID(a)                                                    \
     	CHECK(a.mass > -1e-4);                                                  \
-		for (int grain_i = 0; grain_i < int(GrainType::count); ++grain_i)            \
+    	CHECK(0 <= a.phase_id);                              \
+    	CHECK(a.phase_id < 16);                              \
+		for (int grain_i = 0; grain_i < int(GrainType::count); ++grain_i)       \
 		{                                                                       \
     		CHECK(a.grain_type_relative_volume[grain_i] > -1e-4);               \
     	}                                                                       
