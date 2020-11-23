@@ -16,15 +16,19 @@ commutativity
 distributivity
 increasing
 decreasing
-degeneracy
 adjoint
+degeneracy
 theorems for free
+miscellaneous equivalence relations
+
+precision requirements
+memory footprint requirements
+
 translational invariance
 rotational invariance
 resolution invariance
 mass conservation
 energy conservation
-memory footprint constraints
-miscellaneous equivalence relations
 reproducing real world values to within order of magnitude, factor of 2, 10%, etc.
+
 happy path (barring no other test)
