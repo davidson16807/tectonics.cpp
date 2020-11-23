@@ -41,7 +41,7 @@ namespace strata
         ~StrataStore()
         {
         }
-        StrataStore(Strata<M>& output)
+        StrataStore(Strata<L,M>& output)
         {
             pack(output);
         }

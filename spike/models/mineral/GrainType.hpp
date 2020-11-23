@@ -1,14 +1,5 @@
 #pragma once
 
-// C libraries
-#include <cmath>
-#include <cstdint>
-#include <cstddef>
-
-// std libraries
-#include <algorithm>
-#include <array>
-
 namespace mineral
 {
     /*
