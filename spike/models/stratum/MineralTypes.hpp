@@ -12,6 +12,7 @@ namespace stratum {
   {
    // magnetite,   //           Fe     O surfaces of mars and maybe venus, representative of siderophile ores
    // chalcophile, //                    surfaces of maybe venus and mercury, representative of chalcophile ores
+   // native metals      (Au,Ag,Cu)      precious metals
       hematite,    //           Fe     O surfaces of early earth, representative of iron oxides and red soils in general, and siderophile ores
       pyrite,      //           Fe     S surfaces of maybe venus and mercury, representative of siderophile ores
    // goethite,    //           Fe     O surface of mars, representative of iron oxides and red soils in general, and siderophile ores

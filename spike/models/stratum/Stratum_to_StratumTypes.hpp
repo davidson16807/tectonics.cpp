@@ -347,6 +347,7 @@ namespace stratum
         return StratumTypes(
             get_metamorphic_grades(stratum),
             get_metamorphic_facies(stratum.max_pressure_received, stratum.max_temperature_received),
+            // get_phase_id(current_pressure, current_temperature, PropertyTable),
             get_igneous_composition_types(stratum),
             get_igneous_formation_types(igneous_formation_fractional_volume),
             get_dominant_particle_size_bin(particle_size_bin_fractional_volume),
