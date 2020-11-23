@@ -30,7 +30,7 @@ namespace mineral
 	
 	#define MINERAL_EQUAL(a, b)                                                              \
     	CHECK(a.mass == Approx(b.mass).epsilon(1e-4));                                                 \
-		for (int grain_i = 0; grain_i < int(mineral::GrainType::count); ++grain_i)                                   \
+		for (int grain_i = 0; grain_i < int(GrainType::count); ++grain_i)                                   \
 		{                                                                                              \
 			float a_total_relative_volume(a.grain_type_total_relative_volume());                           \
 			float b_total_relative_volume(b.grain_type_total_relative_volume());                           \
@@ -40,7 +40,7 @@ namespace mineral
 
     #define MINERAL_VALID(a)                                          \
     	CHECK(a.mass > -1e-4);                                                  \
-		for (int grain_i = 0; grain_i < int(mineral::GrainType::count); ++grain_i)            \
+		for (int grain_i = 0; grain_i < int(GrainType::count); ++grain_i)            \
 		{                                                                       \
     		CHECK(a.grain_type_relative_volume[grain_i] > -1e-4);               \
     	}                                                                       

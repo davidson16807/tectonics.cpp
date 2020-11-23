@@ -43,7 +43,7 @@ namespace mineral
 		mechanically_weathered_intrusive,
 		chemically_weathered_extrusive,
 		chemically_weathered_intrusive,
-		count = 8
+		count = 6
 	};
 
 }

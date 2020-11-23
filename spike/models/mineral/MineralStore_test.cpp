@@ -1,7 +1,12 @@
 
+// std libraries
+#include <iostream>
+
+// 3rd party libraries
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include <catch/catch.hpp>
 
+// in-house libraries
 #include "MineralStore.hpp"
 #include "Mineral_test_utils.hpp"
 
@@ -33,6 +38,7 @@ TEST_CASE( "MineralStore pack/unpack invertibility", "[mineral]" ) {
 }
 TEST_CASE( "MineralStore memory constraints", "[strata]" ) {
     SECTION("a MineralStore must fit within an expected memory footprint"){
-		CHECK(sizeof(MineralStore) <= 12 );
+    	std::cout << "sizeof(MineralStore): " << sizeof(MineralStore) << std::endl;
+		CHECK(sizeof(MineralStore) <= 8 );
 	}
 }
