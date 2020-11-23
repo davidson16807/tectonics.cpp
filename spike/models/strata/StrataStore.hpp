@@ -41,12 +41,15 @@ namespace strata
         ~StrataStore()
         {
         }
+        // convenience constructor, equivalent to pack()
         StrataStore(Strata<L,M>& output)
         {
             pack(output);
         }
+        // identity constructor
         StrataStore()
         {
+            strata.fill(stratum::StratumStore<M>());
         }
 
         void unpack(Strata<L,M>& output) const

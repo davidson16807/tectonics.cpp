@@ -88,8 +88,13 @@ namespace stratum
         {
             pack(output);
         }
-        StratumStore()
+        StratumStore():
+            stored_max_temperature_received(0.0f),
+            stored_max_pressure_received(0.0f),
+            age_of_world_when_deposited_in_megayears(0.0f),
+            unused(0.0f)
         {
+            minerals.fill(mineral::MineralStore());
         }
 
         void unpack(Stratum<M>& output) const

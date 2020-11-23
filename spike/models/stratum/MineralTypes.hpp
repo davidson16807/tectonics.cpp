@@ -10,32 +10,38 @@ namespace stratum {
   const int oxygen_planet_mineral_count = 15;
   enum struct OxygenPlanetMineralTypes
   {
-   // magnetite,   //           Fe     O for the surfaces of mars and maybe venus, representative of siderophile ores
-   // chalcophile, //                    for the surfaces of maybe venus and mercury, representative of chalcophile ores
-      hematite,    //           Fe     O for the early earth, representative of iron oxides and red soils in general, and siderophile ores
-      pyrite,      //           Fe     S for the surfaces of maybe venus and mercury, representative of siderophile ores
-   // goethite,    //           Fe     O for the surface of mars, representative of iron oxides and red soils in general, and siderophile ores
-      olivine,     //       (Mg,Fe)  SiO for ultramafic rocks
-      pyroxene,    // (Na,Ca,Mg,Fe)AlSiO for mafic rocks
-      plagioclase, // (Na,Ca)      AlSiO for intermediate rocks
-      quartz,      //                SiO for distinguishing noteworthy felsic rocks, namely sand, and biomineral deposits like diatomaceous earth
-      orthoclase,  //  K           AlSiO for felsic rocks
-      calcite,     // CaCO3              for biomineral deposits like limestone
-      organics,    // CNOHPSCaK...       representative of peat, coal, oil shale, diamond, and tholins
-   // graphite,    // C                  for diamonds, carbon planets, and theoretical biominerals deposits
-   // apatite,     // XCa5(PO4)3         for theoretical biomineral deposits
+   // magnetite,   //           Fe     O surfaces of mars and maybe venus, representative of siderophile ores
+   // chalcophile, //                    surfaces of maybe venus and mercury, representative of chalcophile ores
+      hematite,    //           Fe     O surfaces of early earth, representative of iron oxides and red soils in general, and siderophile ores
+      pyrite,      //           Fe     S surfaces of maybe venus and mercury, representative of siderophile ores
+   // goethite,    //           Fe     O surface of mars, representative of iron oxides and red soils in general, and siderophile ores
+      olivine,     //       (Mg,Fe)  SiO ultramafic rocks
+      pyroxene,    // (Na,Ca,Mg,Fe)AlSiO mafic rocks
+      plagioclase, // (Na,Ca)      AlSiO intermediate rocks
+      quartz,      //                SiO distinguishing noteworthy felsic rocks, namely sand, and biomineral deposits like diatomaceous earth
+      orthoclase,  //  K           AlSiO felsic rocks
+      calcite,     // CaCO3              biomineral deposits like limestone
+      organics,    // CNOHPSCaK...       peat, coal, oil shale, diamond
+   // graphite,    // C                  diamonds, carbon planets, and theoretical biominerals deposits
+   // apatite,     // XCa5(PO4)3         theoretical biomineral deposits
    // corundum,    // Al2O3              representative of precious stones, excluding diamond
-      carbon_dioxide,//CO2               for the ice caps of mars
-      oxygen,      // O2                 for conserving mass if an earth like planet froze (such as in "a bucket of air")
-      ice,         // H2O                for the ice caps of earth and the surfaces of europa and pluto
-      carbon_monoxide,//CO               for the surface of pluto and possibly carbon planets
-      nitrogen,    // N2                 for the surfaces of pluto or triton
-      methane,     // CH4                for the surfaces of pluto and other kuiper belt objects
-   // halite,      // NaCl               for salt bed flats and other cool things
-   // ethane,      // C2H6               for conserving mass if, for instance, Titan's lakes froze
-   // tholins,     // CNOHS              for the surfaces of pluto and kuiper belt objects, and representative of prebiotic chemistry
-   // helium,      // He                 for completeness, and padding to fit on cache lines
-   // hydrogen,    // H2, metallic       for completeness, and padding to fit on cache lines
+      carbon_dioxide,//CO2               earth, mars, and venus like planets
+      oxygen,      // O2                 earth like planets
+   // ozone        // O3                 earth like planets
+      ice,         // H2O                the ice caps of earth and the surfaces of europa and pluto
+      carbon_monoxide,//CO               the surface of pluto and possibly carbon planets
+      nitrogen,    // N2                 the atmosphere of Earth, surfaces of pluto or triton
+      methane,     // CH4                the atmosphere of Titan, surfaces of pluto and other kuiper belt objects
+   // ammonia,     // C2H6               atmosphere of Titan
+   // sulfur_oxides,// SOx               industrial emissions
+   // nitrogen_oxides,// NOx             industrial emissions
+   // perflouromethane,// NOx            industrial emissions, also recommended by Zubrin (1996) for terraforming Mars
+   // ethane,      // C2H6               lakes of Titan
+   // halite,      // NaCl               salt bed flats and other cool things
+   // tholins,     // CNOHS              atmosphere of Titan and the surface of pluto, also representative of prebiotic chemistry
+   // argon        // Ar                 earth like planets
+   // helium,      // He                 gas giants
+   // hydrogen,    // H2, metallic       gas giants
   };
   constexpr std::array<float, oxygen_planet_mineral_count> oxygen_planet_mineral_densities {
       // 5000.0f, //magnetite   
@@ -84,6 +90,7 @@ namespace stratum {
           1.0f, //co2         // order of magnitude, Sumarakov (2003)
           1.0f, //oxygen      // order of magnitude, Jezowski (1993)
         0.598f, //ice         // wikipedia
+      //        //ice7        
           3.0f, //co          // Stachowiak (1998)
           0.7f, //nitrogen    // wikipedia
           3.0f, //methane     // Jezowski (1997)

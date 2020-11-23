@@ -15,6 +15,14 @@ namespace mineral
 	namespace
 	{
 		const float epsilon(1e-4f);
+
+		enum struct Phases
+		{
+			supercritical,
+			gas,
+			liquid,
+			solid
+		};
 	}
 
 	/*
@@ -53,11 +61,22 @@ namespace mineral
 		~MineralStore()
 		{
 		}
+		// convenience constructor, equivalent to pack()
 		MineralStore(Mineral& output)
 		{
 			pack(output);
 		}
-		MineralStore()
+		// identity constructor
+		MineralStore():
+			mass(0),
+			phase_id(std::uint8_t(Phases::solid)),                                   
+			unweathered_extrusive_part_count(1),           
+			unweathered_intrusive_part_count(1),           
+			mechanically_weathered_extrusive_part_count(1),
+			mechanically_weathered_intrusive_part_count(1),
+			chemically_weathered_extrusive_part_count(1),  
+			chemically_weathered_intrusive_part_count(1),  
+			unused(1)                                     
 		{
 		}
 		void unpack(Mineral& output) const
