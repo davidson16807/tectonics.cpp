@@ -54,7 +54,12 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
                 X           Goodman                     liquid volume, solid volume
         */
 
-
+        // taken from https://eng.libretexts.org/Bookshelves/Chemical_Engineering/Book%3A_Distillation_Science_(Coleman)/03%3A_Critical_Properties_and_Acentric_Factor
+        constexpr float get_critical_compressibility(const float critical_pressure, const float critical_temperature, const float critical_molecular_volume)
+        {
+            return critical_pressure * critical_molecular_volume / (physics::boltzmann_constant * critical_temperature);
+        }
+        
         // Klincewicz method (1982): https://en.wikipedia.org/wiki/Klincewicz_method
         constexpr float approx_critical_temperature_from_klincewicz(const float molecular_mass, const float standard_boiling_point)
         {
