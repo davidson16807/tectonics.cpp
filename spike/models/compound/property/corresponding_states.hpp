@@ -6,7 +6,7 @@
 // in-house libraries
 #include <units.hpp>      // mole
 #include <physics/constants.hpp>  // boltzmann_constant
-#include "compressibility.hpp"  // fast_approx_compressibility_factor
+#include "compressibility.hpp"  // estimate_compressibility_factor
 
 namespace compound{
     namespace property
@@ -59,32 +59,37 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
         {
             return critical_pressure * critical_molecular_volume / (physics::boltzmann_constant * critical_temperature);
         }
-        
-        // Klincewicz method (1982): https://en.wikipedia.org/wiki/Klincewicz_method
-        constexpr float approx_critical_temperature_from_klincewicz(const float molecular_mass, const float standard_boiling_point)
+        // from definition of the acentric factor: https://en.wikipedia.org/wiki/Acentric_factor
+        constexpr float get_acentric_factor(const float liquid_saturated_vapor_pressure_at_reduced_temperature_of_0_7, const float critical_pressure)
         {
-            float molar_mass_in_grams_per_mole = molecular_mass / (units::gram / units::mole);
-            float temperature_in_kelvin = 50.2f - 0.16f * molar_mass_in_grams_per_mole + 1.41f * standard_boiling_point;
+            return -log10(liquid_saturated_vapor_pressure_at_reduced_temperature_of_0_7/critical_pressure) - 1.0f;
+        }
+
+        // Klincewicz method (1982): https://en.wikipedia.org/wiki/Klincewicz_method
+        constexpr float estimate_critical_temperature_from_klincewicz(const float molecular_mass, const float standard_boiling_point)
+        {
+            float molar_mass_in_grams = molecular_mass / (units::gram / units::mole);
+            float temperature_in_kelvin = 50.2f - 0.16f * molar_mass_in_grams + 1.41f * standard_boiling_point;
             return temperature_in_kelvin * units::kelvin; 
         }
         // Klincewicz method (1982): https://en.wikipedia.org/wiki/Klincewicz_method
-        constexpr float approx_critical_pressure_from_klincewicz(const float molecular_mass, const int atom_count)
+        constexpr float estimate_critical_pressure_from_klincewicz(const float molecular_mass, const int atom_count)
         {
-            float molar_mass_in_grams_per_mole = molecular_mass / (units::gram / units::mole);
-            float Y = 0.335f + 0.009f * molar_mass_in_grams_per_mole + 0.019f * atom_count;
-            float critical_pressure_in_bars = molar_mass_in_grams_per_mole/Y;
+            float molar_mass_in_grams = molecular_mass / (units::gram / units::mole);
+            float Y = 0.335f + 0.009f * molar_mass_in_grams + 0.019f * atom_count;
+            float critical_pressure_in_bars = molar_mass_in_grams/Y;
             return critical_pressure_in_bars * units::bar;
         }
         // Klincewicz method (1982): https://en.wikipedia.org/wiki/Klincewicz_method
-        constexpr float approx_critical_molecular_volume_from_klincewicz(const float molecular_mass, const int atom_count)
+        constexpr float estimate_critical_molecular_volume_from_klincewicz(const float molecular_mass, const int atom_count)
         {
-            float molar_mass_in_grams_per_mole = molecular_mass / (units::gram / units::mole);
-            float critical_molar_volume_in_cm3 = 20.1f + 0.88f * molar_mass_in_grams_per_mole + 13.4f * atom_count;
+            float molar_mass_in_grams = molecular_mass / (units::gram / units::mole);
+            float critical_molar_volume_in_cm3 = 20.1f + 0.88f * molar_mass_in_grams + 13.4f * atom_count;
             return critical_molar_volume_in_cm3 * (units::centimeter3/units::mole);
         }
 
         // Ihmels (2010)
-        constexpr float approx_critical_temperature_from_ihmels(const float critical_pressure, const float critical_molecular_volume)
+        constexpr float estimate_critical_temperature_from_ihmels(const float critical_pressure, const float critical_molecular_volume)
         {
             float critical_volume_in_m3_per_mole = critical_molecular_volume / (units::meter3/units::mole);
             float critical_pressure_in_pascal = critical_pressure / units::pascal;
@@ -92,7 +97,7 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
             return critical_temperature_in_kelvin * units::kelvin;
         }
         // Ihmels (2010)
-        constexpr float approx_critical_molecular_volume_from_ihmels(const float critical_temperature, const float critical_pressure)
+        constexpr float estimate_critical_molecular_volume_from_ihmels(const float critical_temperature, const float critical_pressure)
         {
             float critical_pressure_in_pascal = critical_pressure / units::pascal;
             float critical_temperature_in_kelvin = critical_temperature / units::kelvin;
@@ -100,7 +105,7 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
             return critical_volume_in_m3_per_mole * (units::meter3/units::mole);
         }
         // Ihmels (2010)
-        constexpr float approx_critical_pressure_from_ihmels(const float critical_temperature, const float critical_molecular_volume)
+        constexpr float estimate_critical_pressure_from_ihmels(const float critical_temperature, const float critical_molecular_volume)
         {
             float critical_temperature_in_kelvin = critical_temperature / units::kelvin;
             float critical_volume_in_m3_per_mole = critical_molecular_volume / (units::meter3/units::mole);
@@ -108,5 +113,34 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
             return critical_pressure_in_pascal * units::pascal;
         }
 
+
+        // Sheffy Johnson: https://chemicals.readthedocs.io/en/latest/chemicals.thermal_conductivity.html#pure-low-pressure-liquid-correlations
+        constexpr float estimate_liquid_thermal_conductivity_from_sheffy_johnson(
+            const float molecular_mass,
+            const float temperature,
+            const float standard_melting_point
+        ){
+            float molar_mass_in_grams = molecular_mass / (units::gram / units::mole);
+            float temperature_in_kelvin = temperature / units::kelvin;
+            float standard_melting_point_in_kelvin = standard_melting_point / units::kelvin;
+            float liquid_thermal_conductivity_in_watts_per_meter_kelvin = 
+                1.951f * (1.0f - 0.00126f * (temperature_in_kelvin - standard_melting_point_in_kelvin)) / 
+                         (pow(standard_melting_point_in_kelvin, 0.216f)*pow(molar_mass_in_grams, 0.3f));
+            return liquid_thermal_conductivity_in_watts_per_meter_kelvin * units::watt / (units::meter*units::kelvin);
+        }
+
+        // Sato-Riedel method: https://chemicals.readthedocs.io/en/latest/chemicals.thermal_conductivity.html#pure-low-pressure-liquid-correlations
+        constexpr float estimate_liquid_thermal_conductivity_from_sato_riedel(
+            const float molecular_mass,  
+            const float temperature, 
+            const float standard_boiling_point, 
+            const float critical_temperature 
+        ){
+            float molar_mass_in_grams = molecular_mass / (units::gram / units::mole);
+            float liquid_thermal_conductivity_in_watts_per_meter_kelvin = 
+                (1.1053f / sqrt(molar_mass_in_grams)) * (3 + 20.0f * pow(1.0f -            temperature / critical_temperature, 2.0f/3.0f)) / 
+                                                        (3 + 20.0f * pow(1.0f - standard_boiling_point / critical_temperature, 2.0f/3.0f));
+            return liquid_thermal_conductivity_in_watts_per_meter_kelvin * units::watt / (units::meter*units::kelvin);
+        }
     }
 }
