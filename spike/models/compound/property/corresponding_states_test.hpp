@@ -208,7 +208,9 @@ TEST_CASE( "Rowlinson-Poling consistency", "[properties]" ) {
 
     SECTION("Rowlinson-Poling method must be invertible"){
     	CHECK(si::is_within_fraction(C_L, compound::property::estimate_constant_pressure_heat_capacity_as_liquid_from_rowlinson_poling(Tc,T,compound::property::estimate_acentric_factor_from_rowlinson_poling(Tc,T,C_L,C_G),C_G), 0.3));
+    	CHECK(si::is_within_fraction(C_G, compound::property::estimate_constant_pressure_heat_capacity_as_gas_from_rowlinson_poling(Tc,T,compound::property::estimate_acentric_factor_from_rowlinson_poling(Tc,T,C_L,C_G),C_L), 0.3));
     	CHECK(si::is_within_fraction(omega, compound::property::estimate_acentric_factor_from_rowlinson_poling(Tc,T,compound::property::estimate_constant_pressure_heat_capacity_as_liquid_from_rowlinson_poling(Tc,T,omega,C_G),C_G), 0.3));
+    	CHECK(si::is_within_fraction(omega, compound::property::estimate_acentric_factor_from_rowlinson_poling(Tc,T,C_L,compound::property::estimate_constant_pressure_heat_capacity_as_gas_from_rowlinson_poling(Tc,T,omega,C_L)), 0.3));
     }
 }
 
