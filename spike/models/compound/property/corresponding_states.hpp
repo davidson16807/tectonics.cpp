@@ -4,8 +4,8 @@
 #include <math.h>       // log10 
 
 // in-house libraries
-#include <units.hpp>      // mole
-#include <physics/constants.hpp>  // boltzmann_constant
+#include <si.hpp>  // estimate_compressibility_factor
+
 #include "compressibility.hpp"  // estimate_compressibility_factor
 
 namespace compound{
@@ -21,7 +21,6 @@ namespace compound{
 
 
 
-% https://tikzcd.yichuanshen.de/#N4Igdg9gJgpgziAXAbVABwnAlgFyxMJZARgBYAaABgF1yQA3AQwBsBXGJEAHS4CcALCAH0AMiAC+5dJlz5CKYgFYqtBi3aceA4QGUJUkBmx4CRYgHYVdJmw6JufQUIDi+6cblmKxVTY32ANVEAAgBZN0MZE3kSZR9rdTsQIJ0wiKNZUwVLeLVbTiDnNMl3TJilcgAmX0SCoT0SyI8s2PIAZhr8wPrggBUhHHSozwVyUk7-EABrUSHmmLaxiaSeCABbGABzRjmyomVxhK6QAAkhel3oogA2JaPJ-oAjS5HkS0O8yZ5sTbWdxoyVxQAE47p8VlwYDhGLMAcMWgAOMF+CHrLb-AyA17EYjI2r2VYbbYvFrESp444ABSEwHoInEJPKiw+KM0XB+f0ZXgpkyCYjh8zMB2WdREfQGXOyPKShUlJHIihF9n6AGMwn1xc8BXsUItFfckqqNYT0XKKPrwZwjb1gmcLtqgchlBbWcqhGrqWqbXa5bcXfiQEbPRqnnLLP7jkH3cFvlhfhjSo7QRGHtHg6FjZDobDMfCYkiU4a09GMzaTcSHdjcYWrcW1UEvTGuGiK7nBQpyTW3R7ow2NdT7W2dSRzUrA73owAtaO9OUWBVjqNq6eNylz8jXRfu0KhystRabg21lVhjdbnsnvflXGHy3d4LBhtzigI88PifL93Ps9H+99ldzpYt6uuOF7BABV5mOSwEBo+X6QQoepjn2sbxnOB7IfBQ6OriwJjqWQhath2Lknhv4gAAguECHIJQC7kTu-RrHOSK5CBGYAMLnE2UIwq4NHEEiNDkTM-HEaSoJsQGnHcaJc6gsJd4OLxLjoVYSnUrSOgMgJixSccZxwCGAzvoMAnkopIFcQ04nlOS+kPHKnZvjaXH8rZRDkiyAZuRIqgwFAmzwEQoAAGa8OsSB0SAOAQEguJ3mArDMMwdDMIwjwwMwlJ5pwzAwKFZkGOFkWIAlsVRb+SUpWlGVZTl7YgPlhUgHQcD8FgLWIAAtMQjQlcxiCLDFcWINFrrValTV1dluX2M1RVhRFg3DRVZVIolyVTelmWzY1C2tU1WBgEkUAQDgOABREA1IBQI1ILcm01dNu0NTqTUFYMaXHad52XVA13LbddBrQlE1bbVr1zR9LX9UDiDKPdiDkk920zW9QIw4tIA3QjIOjZU434pNkP1dDB3fSdnBnRdV1w6VlhI8QoKo6Te3vQd9ODYza2PeDz07WT+2fYDpUs6Dd382jUPCy1dD8DAjAA-YkBU5Tv2sI8+WHZlYDK20lBc-FKOg4zUtsxjIxY4dCtK5wqscOr1MQJr2t0Lr+uG8V8NkPj8WI+bL1CxzIvy4ryvgAQjtHVT9hna70ce0gBtG2VPOjYJVUQ0H7OYxTIDtZ1gxlanmdM2bAYAEI6CIlSHYLudW7wcb8NjuPM3761ZwL6Pk6HMe-bTAOl+Lo0V8czgQNAfyEBbfdywXHVdb1qeVOVo0bSBOiMLF3UAEowFgsDMPXvey19i9F0gK-e6Va+d20w2Bw3ltZNbTtx39dO34NlQm6NbRJbE2zi-eeF9mA-WdkPUWv9-5IEqE-WCuAABeMBeCnxliHWGP94FwMQCzZ+Z8sHgMgZ-aBq9VoExRoQzBed+6F2Xn1HByNKHJyAV0EmOdX7yHfgPKB-0YHwLumtBB3dpbBzoQvCBscQA0wEavYRACA7AJ7rQq2+dpGD3kcwyoij4pEw4SAohkiSEyLkd-Jad9EYiPYZMDiCtZ5cOhs3TYrdBHI2sUosRc9z711IbIr+w8dGePimDFR4jG5vw0f48xQTLG-0eqDah4SfHEL8WYwJ7jKiJK8azJxviP4BPITo9O8DN4BhEFCOALtuo6DwFlDBEj1H0KXsXG+8T4GlLKogwxqimlRP7po-hFicbw0qF0toyjekRO4XlQZMTMmrw2iI8e-hOGgN8Uszuvs8kbLSYU2JWTlm5Jof0nh0SMnFI6cjUeycDGTEqTAbqABpeAOB8roNSSYw6DC2lMOuZUW5Q0+YpPyfsvhZDtEAqBRUXZxjmlSIWVc0ZpUDYPxBdMr5CLTFaJGbjNFSNAXeLBd81OBLQYYrWUYtRAzEWXKhSila694rlOOHvRgKophQnAfCt+Li3FkuZUNVlVK+mRPOfM+leL4ZtDwYTYlezSXMNlQ-AhoLFXYvSbiuJjLk6sMQKQHpoqZlgK1cMnV+L9WAIVbyiVdLtXuOtUjR+NqaV2ovr86+-zdVDRCUNWxdh1m2rmfa81jq-VtEpUkAAkvwDYzAEBYr5S3NuMq-XZPIr0ZwOhiCNPFSGj1rSvVkpycnVZgbqVnILY60tBr7kVrFbM+akqHUloflM41Sb3VmshVdNqRaS7KomVGpAQa3XVoOZk-tV9B3XLaBMtVmKSWasndA92MA9aVUvowslEyRUNpNQUiFRSGX4uOWW11Vbm0L09T1b1+KgXzsvfm69F8k5jVTqQaKa1I3kVjfGxNy7k2uMLTO+98Mv2d1IGE441cRC5q7dWz937RqkGSUujVtKcVhs-UKyDcLx2vp+QO9pProNQfQ5MODCGgPds-Xg8jBGr28KGb2gG06d3MMNQ-I1SRnnSJVDAAA7lgFUyC81NpAPy0DXVwOlVIHout5F+PHUEyJsTEnnEpvcYx02q7T0+y6Yx29vVyJwbrgozulREa3rkwk7ZAarTZoszo-VxBoqsZPdK+Tfr92cB0ArUKoUACe3UABSEB+BgGqYQT9tbSCM084cz956DUsyS4srjqXSAjvsAAUVYJyjdOn4sbRM3ZpAighWKHrZwDi6U0AwGCxFWLzDFD6sUJRpIlI0G8GC0oXNq88GKEc-YPeEAhPSJi91HK0jNiacatJ9xI3O6KEUKnFbhKUa2fENQcQQA
 \begin{tikzcd}
                                    &                                                                    &                                            &                                                                                                     &                                                                       &                                                                                              &                                                                       &                                                                                    &                                                                   &                                                                                                &  &                                                                                               & C_S                                                                            & P_{vS}                                                                & \rho_L \arrow[r]                                                                                        & \rho_S \arrow[l, shift left]                               &  & \rho_G                                      & k_G                                                  & \eta_G                                          \\
                                    &                                                                    &                                            &                                                                                                     &                                                                       &                                                                                              &                                                                       &                                                                                    &                                                                   &                                                                                                &  &                                                                                               & T \arrow[u, "Perry151"]                                                        & H_s T T_t P_t \arrow[u, "Clapeyron"]                                  & V_L M \arrow[u] \arrow[ddd, dotted]                                                                     & V_S M \arrow[d, dotted] \arrow[u]                          &  & V_G M \arrow[u] \arrow[ddd, dotted]         & M C_v \eta_G \arrow[u, dotted] \arrow[r, shift left] & M C_v k_G \arrow[u, dotted] \arrow[l, "Eucken"] \\
@@ -55,92 +54,364 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
         */
 
         // taken from https://eng.libretexts.org/Bookshelves/Chemical_Engineering/Book%3A_Distillation_Science_(Coleman)/03%3A_Critical_Properties_and_Acentric_Factor
-        constexpr float get_critical_compressibility(const float critical_pressure, const float critical_temperature, const float critical_molecular_volume)
+        constexpr double get_critical_compressibility(const si::pressure critical_pressure, const si::temperature critical_temperature, const si::molar_volume critical_volume)
         {
-            return critical_pressure * critical_molecular_volume / (physics::boltzmann_constant * critical_temperature);
+            return si::unitless(critical_pressure * critical_volume / (si::universal_gas_constant * critical_temperature));
         }
         // from definition of the acentric factor: https://en.wikipedia.org/wiki/Acentric_factor
-        constexpr float get_acentric_factor(const float liquid_saturated_vapor_pressure_at_reduced_temperature_of_0_7, const float critical_pressure)
+        constexpr double get_acentric_factor(const si::pressure liquid_saturated_vapor_pressure_at_reduced_temperature_of_0_7, const si::pressure critical_pressure)
         {
-            return -log10(liquid_saturated_vapor_pressure_at_reduced_temperature_of_0_7/critical_pressure) - 1.0f;
+            return -log10(si::unitless(liquid_saturated_vapor_pressure_at_reduced_temperature_of_0_7/critical_pressure)) - 1.0;
         }
 
         // Klincewicz method (1982): https://en.wikipedia.org/wiki/Klincewicz_method
-        constexpr float estimate_critical_temperature_from_klincewicz(const float molecular_mass, const float standard_boiling_point)
+        constexpr si::temperature estimate_critical_temperature_from_klincewicz(const si::molar_mass molar_mass, const si::temperature normal_boiling_point)
         {
-            float molar_mass_in_grams = molecular_mass / (units::gram / units::mole);
-            float temperature_in_kelvin = 50.2f - 0.16f * molar_mass_in_grams + 1.41f * standard_boiling_point;
-            return temperature_in_kelvin * units::kelvin; 
+            double molar_mass_in_grams = si::unitless(molar_mass / (si::gram/si::mole));
+            double normal_boiling_point_in_kelvin = si::unitless(normal_boiling_point / si::kelvin);
+            double temperature_in_kelvin = 50.2 - 0.16 * molar_mass_in_grams + 1.41 * normal_boiling_point_in_kelvin;
+            return temperature_in_kelvin * si::kelvin; 
         }
         // Klincewicz method (1982): https://en.wikipedia.org/wiki/Klincewicz_method
-        constexpr float estimate_critical_pressure_from_klincewicz(const float molecular_mass, const int atom_count)
+        constexpr si::pressure estimate_critical_pressure_from_klincewicz(const si::molar_mass molar_mass, const int atom_count)
         {
-            float molar_mass_in_grams = molecular_mass / (units::gram / units::mole);
-            float Y = 0.335f + 0.009f * molar_mass_in_grams + 0.019f * atom_count;
-            float critical_pressure_in_bars = molar_mass_in_grams/Y;
-            return critical_pressure_in_bars * units::bar;
+            double molar_mass_in_grams = si::unitless(molar_mass / (si::gram / si::mole));
+            double Y = 0.335 + 0.009 * molar_mass_in_grams + 0.019 * atom_count;
+            double critical_pressure_in_bars = molar_mass_in_grams/Y;
+            return critical_pressure_in_bars * si::bar;
         }
         // Klincewicz method (1982): https://en.wikipedia.org/wiki/Klincewicz_method
-        constexpr float estimate_critical_molecular_volume_from_klincewicz(const float molecular_mass, const int atom_count)
+        constexpr si::molar_volume estimate_critical_molar_volume_from_klincewicz(const si::molar_mass molar_mass, const int atom_count)
         {
-            float molar_mass_in_grams = molecular_mass / (units::gram / units::mole);
-            float critical_molar_volume_in_cm3 = 20.1f + 0.88f * molar_mass_in_grams + 13.4f * atom_count;
-            return critical_molar_volume_in_cm3 * (units::centimeter3/units::mole);
+            double molar_mass_in_grams = si::unitless(molar_mass / (si::gram / si::mole));
+            double critical_molar_volume_in_cm3 = 20.1 + 0.88 * molar_mass_in_grams + 13.4 * atom_count;
+            return critical_molar_volume_in_cm3 * (si::centimeter3/si::mole);
         }
 
         // Ihmels (2010)
-        constexpr float estimate_critical_temperature_from_ihmels(const float critical_pressure, const float critical_molecular_volume)
+        constexpr si::temperature estimate_critical_temperature_from_ihmels(const si::pressure critical_pressure, const si::molar_volume critical_molar_volume)
         {
-            float critical_volume_in_m3_per_mole = critical_molecular_volume / (units::meter3/units::mole);
-            float critical_pressure_in_pascal = critical_pressure / units::pascal;
-            float critical_temperature_in_kelvin = (critical_pressure_in_pascal + 0.025f) * critical_volume_in_m3_per_mole / 2.215f;
-            return critical_temperature_in_kelvin * units::kelvin;
+            double critical_volume_in_m3_per_mole = si::unitless(critical_molar_volume / (si::meter3/si::mole));
+            double critical_pressure_in_pascal = si::unitless(critical_pressure / si::pascal);
+            double critical_temperature_in_kelvin = (critical_pressure_in_pascal + 0.025f) * critical_volume_in_m3_per_mole / 2.215f;
+            return critical_temperature_in_kelvin * si::kelvin;
         }
         // Ihmels (2010)
-        constexpr float estimate_critical_molecular_volume_from_ihmels(const float critical_temperature, const float critical_pressure)
+        constexpr si::molar_volume estimate_critical_molar_volume_from_ihmels(const si::temperature critical_temperature, const si::pressure critical_pressure)
         {
-            float critical_pressure_in_pascal = critical_pressure / units::pascal;
-            float critical_temperature_in_kelvin = critical_temperature / units::kelvin;
-            float critical_volume_in_m3_per_mole = critical_temperature_in_kelvin * 2.215f / (critical_pressure_in_pascal + 0.025f);
-            return critical_volume_in_m3_per_mole * (units::meter3/units::mole);
+            double critical_pressure_in_pascal = si::unitless(critical_pressure / si::pascal);
+            double critical_temperature_in_kelvin = si::unitless(critical_temperature / si::kelvin);
+            double critical_volume_in_m3_per_mole = critical_temperature_in_kelvin * 2.215 / (critical_pressure_in_pascal + 0.025f);
+            return critical_volume_in_m3_per_mole * (si::meter3/si::mole);
         }
         // Ihmels (2010)
-        constexpr float estimate_critical_pressure_from_ihmels(const float critical_temperature, const float critical_molecular_volume)
+        constexpr si::pressure estimate_critical_pressure_from_ihmels(const si::temperature critical_temperature, const si::molar_volume critical_molar_volume)
         {
-            float critical_temperature_in_kelvin = critical_temperature / units::kelvin;
-            float critical_volume_in_m3_per_mole = critical_molecular_volume / (units::meter3/units::mole);
-            float critical_pressure_in_pascal = 2.215f * critical_temperature_in_kelvin / critical_volume_in_m3_per_mole - 0.025f;
-            return critical_pressure_in_pascal * units::pascal;
+            double critical_temperature_in_kelvin = si::unitless(critical_temperature / si::kelvin);
+            double critical_volume_in_m3_per_mole = si::unitless(critical_molar_volume / (si::meter3/si::mole));
+            double critical_pressure_in_pascal = 2.215 * critical_temperature_in_kelvin / critical_volume_in_m3_per_mole - 0.025f;
+            return critical_pressure_in_pascal * si::pascal;
         }
 
+        constexpr si::molar_volume get_ideal_gas_molar_volume(const si::temperature temperature, const si::pressure pressure)
+        {
+            return si::universal_gas_constant * temperature / pressure;
+        }
 
         // Sheffy Johnson: https://chemicals.readthedocs.io/en/latest/chemicals.thermal_conductivity.html#pure-low-pressure-liquid-correlations
-        constexpr float estimate_liquid_thermal_conductivity_from_sheffy_johnson(
-            const float molecular_mass,
-            const float temperature,
-            const float standard_melting_point
+        constexpr si::thermal_conductivity estimate_thermal_conductivity_as_liquid_from_sheffy_johnson(
+            const si::molar_mass molar_mass,
+            const si::temperature temperature,
+            const si::temperature normal_melting_point
         ){
-            float molar_mass_in_grams = molecular_mass / (units::gram / units::mole);
-            float temperature_in_kelvin = temperature / units::kelvin;
-            float standard_melting_point_in_kelvin = standard_melting_point / units::kelvin;
-            float liquid_thermal_conductivity_in_watts_per_meter_kelvin = 
-                1.951f * (1.0f - 0.00126f * (temperature_in_kelvin - standard_melting_point_in_kelvin)) / 
+            double molar_mass_in_grams = si::unitless(molar_mass / (si::gram / si::mole));
+            double temperature_in_kelvin = si::unitless(temperature / si::kelvin);
+            double standard_melting_point_in_kelvin = si::unitless(normal_melting_point / si::kelvin);
+            double liquid_thermal_conductivity_in_watts_per_meter_kelvin = 
+                1.951 * (1.0 - 0.00126 * (temperature_in_kelvin - standard_melting_point_in_kelvin)) / 
                          (pow(standard_melting_point_in_kelvin, 0.216f)*pow(molar_mass_in_grams, 0.3f));
-            return liquid_thermal_conductivity_in_watts_per_meter_kelvin * units::watt / (units::meter*units::kelvin);
+            return liquid_thermal_conductivity_in_watts_per_meter_kelvin * si::watt / (si::meter*si::kelvin);
         }
 
         // Sato-Riedel method: https://chemicals.readthedocs.io/en/latest/chemicals.thermal_conductivity.html#pure-low-pressure-liquid-correlations
-        constexpr float estimate_liquid_thermal_conductivity_from_sato_riedel(
-            const float molecular_mass,  
-            const float temperature, 
-            const float standard_boiling_point, 
-            const float critical_temperature 
+        constexpr si::thermal_conductivity estimate_thermal_conductivity_as_liquid_from_sato_riedel(
+            const si::molar_mass molar_mass,  
+            const si::temperature temperature, 
+            const si::temperature normal_boiling_point, 
+            const si::temperature critical_temperature 
         ){
-            float molar_mass_in_grams = molecular_mass / (units::gram / units::mole);
-            float liquid_thermal_conductivity_in_watts_per_meter_kelvin = 
-                (1.1053f / sqrt(molar_mass_in_grams)) * (3 + 20.0f * pow(1.0f -            temperature / critical_temperature, 2.0f/3.0f)) / 
-                                                        (3 + 20.0f * pow(1.0f - standard_boiling_point / critical_temperature, 2.0f/3.0f));
-            return liquid_thermal_conductivity_in_watts_per_meter_kelvin * units::watt / (units::meter*units::kelvin);
+            double molar_mass_in_grams = si::unitless(molar_mass / (si::gram / si::mole));
+            double liquid_thermal_conductivity_in_watts_per_meter_kelvin = 
+                (1.1053 / sqrt(molar_mass_in_grams)) * (3 + 20.0 * pow(1.0 - si::unitless(         temperature / critical_temperature), 2.0/3.0)) / 
+                                                        (3 + 20.0 * pow(1.0 - si::unitless(normal_boiling_point / critical_temperature), 2.0/3.0));
+            return liquid_thermal_conductivity_in_watts_per_meter_kelvin * si::watt / (si::meter*si::kelvin);
         }
+
+        constexpr si::specific_heat_capacity get_constant_pressure_heat_capacity_as_gas(
+            si::molar_mass molar_mass,
+            double degrees_of_freedom
+        ){
+            return degrees_of_freedom * (si::universal_gas_constant / molar_mass);   
+        }
+
+        // Rowlinson-Poling: https://chemicals.readthedocs.io/en/latest/chemicals.heat_capacity.html?highlight=rowlinson#chemicals.heat_capacity.Rowlinson_Poling
+        constexpr si::molar_heat_capacity estimate_constant_pressure_heat_capacity_as_liquid_from_rowlinson_poling(
+            const si::temperature temperature,
+            const si::temperature critical_temperature,
+            const double accentric_factor,
+            const si::molar_heat_capacity constant_pressure_molar_heat_capacity_as_gas
+        ){
+            double reduced_temperature = si::unitless(temperature / critical_temperature);
+            double heat_capacity_phase_difference_versus_gas_constant = 1.586 + 
+                0.49f/(1.0-reduced_temperature) + 
+                accentric_factor * (4.2775 + 6.3f*pow(1.0 - reduced_temperature, 1.0/3.0)/reduced_temperature + 0.4355f/(1.0 - reduced_temperature));
+            return heat_capacity_phase_difference_versus_gas_constant * si::universal_gas_constant + constant_pressure_molar_heat_capacity_as_gas;
+        }
+
+        // Pitzer model: https://chemicals.readthedocs.io/en/latest/chemicals.phase_change.html#heat-of-vaporization-at-tb-correlations
+        constexpr double estimate_accentric_factor_from_pitzer(
+            const si::molar_mass molar_mass,  
+            const si::specific_energy latent_heat_of_vaporization,
+            const si::temperature temperature,
+            const si::temperature critical_temperature
+        ){
+            double reduced_temperature = si::unitless(temperature / critical_temperature);
+            return (si::unitless(latent_heat_of_vaporization * molar_mass / (si::universal_gas_constant * critical_temperature)) 
+              - (7.08 * pow(1.0 - reduced_temperature, 0.354))) 
+              / (10.95 * pow(1.0 - reduced_temperature, 0.456f));
+        }
+        // Pitzer model: https://chemicals.readthedocs.io/en/latest/chemicals.phase_change.html#heat-of-vaporization-at-tb-correlations
+        constexpr si::specific_energy estimate_latent_heat_of_vaporization_from_pitzer(
+            const double accentric_factor,
+            const si::molar_mass molar_mass,  
+            const si::temperature temperature,
+            const si::temperature critical_temperature
+        ){
+            double reduced_temperature = si::unitless(temperature / critical_temperature);
+            si::molar_energy latent_heat_of_vaporization = 
+                (7.08 * pow(1.0 - reduced_temperature, 0.354) + 10.95 * accentric_factor * pow(1.0 - reduced_temperature, 0.456f)) * si::universal_gas_constant * critical_temperature;
+            return latent_heat_of_vaporization / molar_mass;
+        }
+
+        // Chen model: https://chemicals.readthedocs.io/en/latest/chemicals.phase_change.html#heat-of-vaporization-at-tb-correlations
+        constexpr si::specific_energy estimate_latent_heat_of_vaporization_from_chen(
+            const si::molar_mass molar_mass,  
+            const si::temperature temperature,
+            const si::temperature normal_boiling_point,
+            const si::temperature critical_temperature,
+            const si::pressure critical_pressure
+        ){
+            double reduced_temperature = si::unitless(temperature / critical_temperature);
+            si::molar_energy latent_heat_of_vaporization = 
+                si::universal_gas_constant * normal_boiling_point * (3.978*reduced_temperature - 3.958 + 1.555*log(si::unitless(critical_pressure / si::pascal))) / (1.07 - reduced_temperature);
+            return latent_heat_of_vaporization / molar_mass;
+        }
+        // Chen model: https://chemicals.readthedocs.io/en/latest/chemicals.phase_change.html#heat-of-vaporization-at-tb-correlations
+        constexpr si::temperature estimate_normal_boiling_point_from_chen(
+            const si::specific_energy latent_heat_of_vaporization,  
+            const si::molar_mass molar_mass,  
+            const si::temperature temperature,
+            const si::temperature critical_temperature,
+            const si::pressure critical_pressure
+        ){
+            double reduced_temperature = si::unitless(temperature / critical_temperature);
+            return latent_heat_of_vaporization * molar_mass
+              * (1.07 - reduced_temperature)  / (si::universal_gas_constant * (3.978*reduced_temperature - 3.958 + 1.555*log(si::unitless(critical_pressure / si::pascal))));
+        }
+
+        // Letsou-Stiel method: https://chemicals.readthedocs.io/en/latest/chemicals.viscosity.html?highlight=letsou%20stiel#chemicals.viscosity.Letsou_Stiel
+        constexpr si::dynamic_viscosity estimate_liquid_viscosity_from_letsou_stiel(
+            const si::molar_mass molar_mass,  
+            const si::temperature temperature, 
+            const si::temperature critical_temperature, 
+            const si::pressure critical_pressure,
+            const double acentric_factor
+        ){
+            double molar_mass_in_grams = si::unitless(molar_mass / (si::gram / si::mole));
+            double reduced_temperature = si::unitless(temperature / critical_temperature);
+            double critical_temperature_in_kelvin = si::unitless(critical_temperature / si::kelvin);
+            double critical_pressure_in_pascal =  si::unitless(critical_pressure / si::pascal);
+            double eta_zeta_0 = (1.5174 - 2.135 * reduced_temperature + 0.75 * reduced_temperature * reduced_temperature) * 1e-5;
+            double eta_zeta_1 = (4.2552 - 7.674 * reduced_temperature + 3.40 * reduced_temperature * reduced_temperature) * 1e-5;
+            double zeta = pow(critical_temperature_in_kelvin, 1.0/6.0)  /  (sqrt(molar_mass_in_grams) * pow(critical_pressure_in_pascal, 2.0/3.0));
+            double eta_zeta = eta_zeta_0 + acentric_factor * eta_zeta_1;
+            double eta = eta_zeta / zeta;
+            return eta * si::pascal * si::second;
+        }
+
+        constexpr si::length estimate_molecular_diameter_from_tee_gotoh_steward(
+            const si::temperature critical_temperature, 
+            const si::pressure critical_pressure
+        ){
+            double critical_pressure_in_pascal = si::unitless(critical_pressure / si::pascal);
+            double critical_temperature_in_kelvin = si::unitless(critical_temperature / si::kelvin);
+            double molecular_diameter_in_angstrom = 2.3647 * pow(critical_temperature_in_kelvin / critical_pressure_in_pascal, 1.0/3.0);
+            return molecular_diameter_in_angstrom * si::angstrom;
+        }
+        
+
+        constexpr double estimate_acentric_factor_from_tee_gotoh_steward(
+            const si::length molecular_diameter,
+            const si::temperature critical_temperature, 
+            const si::pressure critical_pressure
+        ){
+            double critical_pressure_in_pascal = si::unitless(critical_pressure / si::pascal);
+            double critical_temperature_in_kelvin = si::unitless(critical_temperature / si::kelvin);
+            double molecular_diameter_in_angstrom = si::unitless(molecular_diameter / si::angstrom);
+            return -(molecular_diameter_in_angstrom / pow(critical_temperature_in_kelvin / critical_pressure_in_pascal, 1.0/3.0) - 2.3551f) / 0.0874f;
+        }
+
+        namespace {
+            /*
+            NOTE: 
+            this namespace describes subfunctions of the Lee-Kesler method: https://en.wikipedia.org/wiki/Lee%E2%80%93Kesler_method
+            */
+            constexpr double f0(const double reduced_temperature) {
+                return 5.92714 - 6.09648f/reduced_temperature - 1.28862f*log(reduced_temperature) + 0.169347f*reduced_temperature*reduced_temperature*reduced_temperature*reduced_temperature*reduced_temperature*reduced_temperature;
+            }
+            constexpr double f1(const double reduced_temperature) {
+                return 15.2518 - 15.6875f/reduced_temperature - 13.4721f*log(reduced_temperature) + 0.43577 *reduced_temperature*reduced_temperature*reduced_temperature*reduced_temperature*reduced_temperature*reduced_temperature;
+            }
+        }
+
+        // Lee Kesler method (1975): https://en.wikipedia.org/wiki/Lee%E2%80%93Kesler_method
+        constexpr double estimate_accentric_factor_from_lee_kesler(
+            const si::temperature temperature, 
+            const si::temperature critical_temperature,
+            const si::pressure liquid_saturated_vapor_pressure, 
+            const si::pressure critical_pressure
+        ){
+            double reduced_pressure    = si::unitless(liquid_saturated_vapor_pressure / critical_pressure);
+            double reduced_temperature = si::unitless(temperature / critical_temperature);
+            return (log(reduced_pressure) - f0(reduced_temperature)) / f1(reduced_temperature);
+        }
+        // Lee Kesler method: https://en.wikipedia.org/wiki/Lee%E2%80%93Kesler_method
+        constexpr si::pressure estimate_liquid_vapor_pressure_from_lee_kesler(const si::temperature temperature, 
+            const si::temperature critical_temperature, 
+            const si::pressure critical_pressure, 
+            const double acentric_factor
+        ){
+            double reduced_temperature = si::unitless(temperature / critical_temperature);
+            double reduced_pressure    = exp(acentric_factor * f1(reduced_temperature) + f0(reduced_temperature));
+            return reduced_pressure * critical_pressure;
+        }
+
+        // Bird-Steward-Lightfoot: https://chemicals.readthedocs.io/en/latest/chemicals.lennard_jones.html#molecular-diameter-correlations
+        constexpr si::length estimate_molecular_diameter_from_bird_steward_lightfoot_2(const si::molar_volume liquid_molar_volume_at_melting_point)
+        {
+            double liquid_molar_volume_in_meter3_per_mole = si::unitless(liquid_molar_volume_at_melting_point / (si::meter3/si::mole));
+            double molecular_diameter_in_angstrom = 1.222 * pow(liquid_molar_volume_in_meter3_per_mole, 1.0/3.0);
+            return molecular_diameter_in_angstrom * si::angstrom;
+        }
+
+        // Bird-Steward-Lightfoot: https://chemicals.readthedocs.io/en/latest/chemicals.lennard_jones.html#molecular-diameter-correlations
+        constexpr si::molar_volume estimate_liquid_molar_volume_from_bird_steward_lightfoot_2(const si::length molecular_diameter)
+        {
+            double molecular_diameter_in_angstrom = si::unitless(molecular_diameter / si::angstrom);
+            double liquid_molar_volume_in_meter3_per_mole = pow(molecular_diameter_in_angstrom / 1.222f, 3.0);
+            return liquid_molar_volume_in_meter3_per_mole * (si::meter3/si::mole);
+        }
+
+        // Bird-Steward-Lightfoot: https://chemicals.readthedocs.io/en/latest/chemicals.lennard_jones.html#molecular-diameter-correlations
+        constexpr si::length estimate_molecular_diameter_from_bird_steward_lightfoot_1(const si::molar_volume critical_molar_volume)
+        {
+            double critical_molar_volume_in_meter3_per_mole = si::unitless(critical_molar_volume / (si::meter3/si::mole));
+            double molecular_diameter_in_angstrom = 0.841 * pow(critical_molar_volume_in_meter3_per_mole, 1.0/3.0);
+            return molecular_diameter_in_angstrom * si::angstrom;
+        }
+
+        // Bird-Steward-Lightfoot: https://chemicals.readthedocs.io/en/latest/chemicals.lennard_jones.html#molecular-diameter-correlations
+        constexpr si::molar_volume estimate_critical_molar_volume_from_bird_steward_lightfoot_1(const si::length molecular_diameter)
+        {
+            double molecular_diameter_in_angstrom = si::unitless(molecular_diameter / si::angstrom);
+            double critical_molar_volume_in_meter3_per_mole = pow(molecular_diameter_in_angstrom / 0.841f, 3.0);
+            return critical_molar_volume_in_meter3_per_mole * (si::meter3/si::mole);
+        }
+
+        // Goodman: https://chemicals.readthedocs.io/en/latest/chemicals.volume.html#pure-solid-correlations
+        constexpr si::molar_volume estimate_solid_molar_volume_from_goodman(
+            const si::molar_volume liquid_molar_volume_at_melting_point, 
+            const si::temperature temperature, 
+            const si::temperature triple_point_temperature
+        ){
+            double temperature_in_kelvin = si::unitless(temperature / si::kelvin);
+            double triple_point_temperature_in_kelvin = si::unitless(triple_point_temperature / si::kelvin);
+            double liquid_molar_volume_in_meter3_per_mole = si::unitless(liquid_molar_volume_at_melting_point / (si::meter3/si::mole));
+            double solid_molar_volume_in_meter3_per_mole = liquid_molar_volume_in_meter3_per_mole / (1.28 - 0.16 * temperature_in_kelvin / triple_point_temperature_in_kelvin);
+            return solid_molar_volume_in_meter3_per_mole * (si::meter3/si::mole);
+        }
+
+        // Goodman: https://chemicals.readthedocs.io/en/latest/chemicals.volume.html#pure-solid-correlations
+        constexpr si::molar_volume estimate_liquid_molar_volume_from_goodman(
+            const si::molar_volume solid_molar_volume, 
+            const si::temperature temperature, 
+            const si::temperature triple_point_temperature
+        ){
+            double temperature_in_kelvin = si::unitless(temperature / si::kelvin);
+            double triple_point_temperature_in_kelvin = si::unitless(triple_point_temperature / si::kelvin);
+            double solid_molar_volume_in_meter3_per_mole = si::unitless(solid_molar_volume / (si::meter3/si::mole));
+            double liquid_molar_volume_in_meter3_per_mole = solid_molar_volume_in_meter3_per_mole * (1.28 - 0.16 * temperature_in_kelvin / triple_point_temperature_in_kelvin);
+            return liquid_molar_volume_in_meter3_per_mole * (si::meter3/si::mole);
+        }
+
+        // Rackett equation
+        constexpr si::molar_volume estimate_liquid_molar_volume_from_rackett(const si::temperature temperature, 
+            const si::temperature critical_temperature, 
+            const si::pressure critical_pressure, 
+            const double critical_compressibility
+        ){
+            double reduced_temperature = si::unitless(temperature / critical_temperature);
+            return si::universal_gas_constant * critical_temperature / critical_pressure * pow(critical_compressibility, 1.0 + pow(1.0 - reduced_temperature, 2.0/7.0));
+        }
+
+        constexpr si::molar_volume estimate_gas_molar_volume(
+            const si::pressure pressure, 
+            const si::pressure critical_pressure, 
+            const si::temperature temperature, 
+            const si::temperature critical_temperature, 
+            const double critical_compressibility
+        ){
+            double compressibility = estimate_compressibility_factor(pressure, temperature, critical_pressure, critical_temperature, critical_compressibility);
+            return compressibility * si::universal_gas_constant * temperature / pressure;
+        }
+
+        constexpr si::density get_density_from_molar_volume(const si::molar_volume molar_volume, const si::molar_mass molar_mass)
+        {
+            return molar_mass/molar_volume;
+        }
+
+        // Clapeyron: https://chemicals.readthedocs.io/en/latest/chemicals.vapor_pressure.html#sublimation-pressure-estimation-correlations
+        constexpr si::pressure estimate_vapor_pressure_as_solid_from_clapeyron(
+            const si::molar_mass molar_mass,
+            const si::specific_energy latent_heat_of_sublimation,
+            const si::temperature temperature,
+            const si::temperature triple_point_temperature,
+            const si::pressure triple_point_pressure
+        ){
+            return triple_point_pressure * exp(-si::unitless((latent_heat_of_sublimation*molar_mass / si::universal_gas_constant) * (1.0/temperature - 1.0/triple_point_temperature)));
+        }
+
+        // Eucken: https://chemicals.readthedocs.io/en/latest/chemicals.thermal_conductivity.html#pure-low-pressure-liquid-correlations
+        constexpr si::thermal_conductivity estimate_thermal_conductivity_from_eucken(
+            const si::molar_mass molar_mass,
+            const si::dynamic_viscosity viscosity_as_gas,
+            const si::specific_heat_capacity constant_volume_specific_heat_capacity_as_gas
+        ){
+            si::molar_heat_capacity constant_molar_volume_heat_capacity_as_gas = constant_volume_specific_heat_capacity_as_gas * molar_mass;
+            return (1.0 + (9.0/4.0) / si::unitless(constant_molar_volume_heat_capacity_as_gas/si::universal_gas_constant))
+                  * viscosity_as_gas * constant_molar_volume_heat_capacity_as_gas / molar_mass;
+        }
+
+        // Eucken: https://chemicals.readthedocs.io/en/latest/chemicals.thermal_conductivity.html#pure-low-pressure-liquid-correlations
+        constexpr si::dynamic_viscosity estimate_gas_viscosity_from_eucken(
+            const si::molar_mass molar_mass,
+            const si::dynamic_viscosity viscosity_as_gas,
+            const si::thermal_conductivity thermal_conductivity_as_gas,
+            const si::specific_heat_capacity constant_volume_specific_heat_capacity_as_gas
+        ){
+            si::molar_heat_capacity constant_molar_volume_heat_capacity_as_gas = constant_volume_specific_heat_capacity_as_gas * molar_mass;
+            return thermal_conductivity_as_gas *molar_mass / ((1.0 + (9.0/4.0) / si::unitless(constant_molar_volume_heat_capacity_as_gas/si::universal_gas_constant))*constant_molar_volume_heat_capacity_as_gas);
+        }
+
     }
 }
