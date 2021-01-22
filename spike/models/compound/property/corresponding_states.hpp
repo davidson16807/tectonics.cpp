@@ -168,6 +168,20 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
             return heat_capacity_phase_difference_versus_gas_constant * si::universal_gas_constant + constant_pressure_heat_capacity_as_gas;
         }
 
+        // Rowlinson-Poling: https://chemicals.readthedocs.io/en/latest/chemicals.heat_capacity.html?highlight=rowlinson#chemicals.heat_capacity.Rowlinson_Poling
+        constexpr si::molar_heat_capacity estimate_constant_pressure_heat_capacity_as_gas_from_rowlinson_poling(
+            const si::temperature critical_temperature,
+            const si::temperature temperature,
+            const double accentric_factor,
+            const si::molar_heat_capacity constant_pressure_heat_capacity_as_liquid
+        ){
+            double reduced_temperature = si::unitless(temperature / critical_temperature);
+            double heat_capacity_phase_difference_versus_gas_constant = 1.586 + 
+                0.49f/(1.0-reduced_temperature) + 
+                accentric_factor * (4.2775 + 6.3f*pow(1.0 - reduced_temperature, 1.0/3.0)/reduced_temperature + 0.4355f/(1.0 - reduced_temperature));
+            return constant_pressure_heat_capacity_as_liquid - heat_capacity_phase_difference_versus_gas_constant * si::universal_gas_constant;
+        }
+
         constexpr double estimate_acentric_factor_from_rowlinson_poling(
             const si::temperature critical_temperature,
             const si::temperature temperature,
