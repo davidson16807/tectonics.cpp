@@ -207,10 +207,62 @@ TEST_CASE( "Rowlinson-Poling consistency", "[properties]" ) {
 	double omega(0.304);
 
     SECTION("Rowlinson-Poling method must be invertible"){
-    	CHECK(si::is_within_fraction(C_L, compound::property::estimate_constant_pressure_heat_capacity_as_liquid_from_rowlinson_poling(Tc,T,compound::property::estimate_acentric_factor_from_rowlinson_poling(Tc,T,C_L,C_G),C_G), 0.3));
-    	CHECK(si::is_within_fraction(C_G, compound::property::estimate_constant_pressure_heat_capacity_as_gas_from_rowlinson_poling(Tc,T,compound::property::estimate_acentric_factor_from_rowlinson_poling(Tc,T,C_L,C_G),C_L), 0.3));
-    	CHECK(si::is_within_fraction(omega, compound::property::estimate_acentric_factor_from_rowlinson_poling(Tc,T,compound::property::estimate_constant_pressure_heat_capacity_as_liquid_from_rowlinson_poling(Tc,T,omega,C_G),C_G), 0.3));
-    	CHECK(si::is_within_fraction(omega, compound::property::estimate_acentric_factor_from_rowlinson_poling(Tc,T,C_L,compound::property::estimate_constant_pressure_heat_capacity_as_gas_from_rowlinson_poling(Tc,T,omega,C_L)), 0.3));
+    	CHECK(si::is_within_fraction(C_L, compound::property::estimate_constant_pressure_heat_capacity_as_liquid_from_rowlinson_poling(Tc,T,compound::property::estimate_acentric_factor_from_rowlinson_poling(Tc,T,C_L,C_G),C_G), 1e-4));
+    	CHECK(si::is_within_fraction(C_G, compound::property::estimate_constant_pressure_heat_capacity_as_gas_from_rowlinson_poling(Tc,T,compound::property::estimate_acentric_factor_from_rowlinson_poling(Tc,T,C_L,C_G),C_L), 1e-4));
+    	CHECK(si::is_within_fraction(omega, compound::property::estimate_acentric_factor_from_rowlinson_poling(Tc,T,compound::property::estimate_constant_pressure_heat_capacity_as_liquid_from_rowlinson_poling(Tc,T,omega,C_G),C_G), 1e-4));
+    	CHECK(si::is_within_fraction(omega, compound::property::estimate_acentric_factor_from_rowlinson_poling(Tc,T,C_L,compound::property::estimate_constant_pressure_heat_capacity_as_gas_from_rowlinson_poling(Tc,T,omega,C_L)), 1e-4));
+    }
+}
+
+
+TEST_CASE( "Pitzer method purity", "[properties]" ) {
+	// properties of acetone
+	si::molar_mass M (58.080*si::gram/si::mole);
+	si::temperature Tc (508.1*si::kelvin);
+	si::temperature T (si::standard_temperature);
+	si::specific_energy H_v = 31.3*si::kilojoule/si::mole / M;
+	double omega(0.304);
+
+	SECTION("Calling a function twiced with the same arguments must produce the same results"){
+    	CHECK(compound::property::estimate_latent_heat_of_vaporization_from_pitzer(omega, M, T, Tc) == compound::property::estimate_latent_heat_of_vaporization_from_pitzer(omega, M, T, Tc));
+    }
+
+	SECTION("Calling a function twiced with the same arguments must produce the same results"){
+    	CHECK(compound::property::estimate_accentric_factor_from_pitzer(M, H_v, T, Tc) == compound::property::estimate_accentric_factor_from_pitzer(M, H_v, T, Tc));
+    }
+}
+
+TEST_CASE( "Pitzer method accuracy", "[properties]" ) {
+	// properties of acetone
+	si::molar_mass M (58.080*si::gram/si::mole);
+	si::temperature Tc (508.1*si::kelvin);
+	si::temperature T (si::standard_temperature);
+	si::specific_energy H_v = 518.0*si::kilojoule/si::kilogram;
+	double omega(0.304);
+
+	// std::cout << compound::property::estimate_latent_heat_of_vaporization_from_pitzer(omega, M, T, Tc).to_string() << "  " << H_v.to_string() << std::endl;
+	// std::cout << compound::property::estimate_accentric_factor_from_pitzer(M, H_v, T, Tc) << "  " << omega << std::endl;
+
+	SECTION("Pitzer method must agree on predictions to within 30%"){
+    	CHECK(si::is_within_fraction(H_v, compound::property::estimate_latent_heat_of_vaporization_from_pitzer(omega, M, T, Tc), 0.3));
+    }
+
+	SECTION("Pitzer method must agree on predictions to within 40%"){
+    	CHECK(si::is_within_fraction(omega, compound::property::estimate_accentric_factor_from_pitzer(M, H_v, T, Tc), 0.4));
+    }
+}
+
+TEST_CASE( "Pitzer consistency", "[properties]" ) {
+	// properties of acetone
+	si::molar_mass M (58.080*si::gram/si::mole);
+	si::temperature Tc (508.1*si::kelvin);
+	si::temperature T (si::standard_temperature);
+	si::specific_energy H_v = 518.0*si::kilojoule/si::kilogram;
+	double omega(0.304);
+
+    SECTION("Pitzer method must be invertible"){
+    	CHECK(si::is_within_fraction(H_v, compound::property::estimate_latent_heat_of_vaporization_from_pitzer(compound::property::estimate_accentric_factor_from_pitzer(M, H_v, T, Tc), M, T, Tc), 1e-4));
+    	CHECK(si::is_within_fraction(omega, compound::property::estimate_accentric_factor_from_pitzer(M, compound::property::estimate_latent_heat_of_vaporization_from_pitzer(omega, M, T, Tc), T, Tc), 1e-4));
     }
 }
 

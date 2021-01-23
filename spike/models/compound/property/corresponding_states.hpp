@@ -201,9 +201,7 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
             const si::temperature critical_temperature
         ){
             double reduced_temperature = si::unitless(temperature / critical_temperature);
-            return (si::unitless(latent_heat_of_vaporization * molar_mass / (si::universal_gas_constant * critical_temperature)) 
-              - (7.08 * pow(1.0 - reduced_temperature, 0.354))) 
-              / (10.95 * pow(1.0 - reduced_temperature, 0.456f));
+            return (si::unitless(latent_heat_of_vaporization * molar_mass / (si::universal_gas_constant * critical_temperature)) - 7.08 * pow(1.0 - reduced_temperature, 0.354)) / (10.95 * pow(1.0 - reduced_temperature, 0.456));
         }
         // Pitzer model: https://chemicals.readthedocs.io/en/latest/chemicals.phase_change.html#heat-of-vaporization-at-tb-correlations
         constexpr si::specific_energy estimate_latent_heat_of_vaporization_from_pitzer(
@@ -213,9 +211,7 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
             const si::temperature critical_temperature
         ){
             double reduced_temperature = si::unitless(temperature / critical_temperature);
-            si::molar_energy latent_heat_of_vaporization = 
-                (7.08 * pow(1.0 - reduced_temperature, 0.354) + 10.95 * accentric_factor * pow(1.0 - reduced_temperature, 0.456f)) * si::universal_gas_constant * critical_temperature;
-            return latent_heat_of_vaporization / molar_mass;
+            return (7.08 * pow(1.0 - reduced_temperature, 0.354) + 10.95 * accentric_factor * pow(1.0 - reduced_temperature, 0.456)) * si::universal_gas_constant * critical_temperature / molar_mass;
         }
 
         // Chen model: https://chemicals.readthedocs.io/en/latest/chemicals.phase_change.html#heat-of-vaporization-at-tb-correlations

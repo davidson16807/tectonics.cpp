@@ -4,10 +4,10 @@ namespace phase
 {
     enum struct BasicPhases
     {
+        supercritical,
         vapor,
         liquid,
         solid,
-        supercritical,
         COUNT
     }
     /*
