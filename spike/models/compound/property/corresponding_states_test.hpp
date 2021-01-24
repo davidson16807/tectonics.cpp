@@ -432,8 +432,8 @@ TEST_CASE( "Bird-Steward-Lightfoot method accuracy", "[properties]" ) {
 	si::molar_volume Vc (209.0 * si::centimeter3/si::mole);
 	si::length sigma = 0.469*si::nanometer;
 
-	std::cout << compound::property::estimate_critical_molar_volume_from_bird_steward_lightfoot_1(sigma).to_string() << "  " << Vc.to_string() << std::endl;
-	std::cout << compound::property::estimate_molecular_diameter_from_bird_steward_lightfoot_1(Vc).to_string() << "  " << sigma.to_string() << std::endl;
+	// std::cout << compound::property::estimate_critical_molar_volume_from_bird_steward_lightfoot_1(sigma).to_string() << "  " << Vc.to_string() << std::endl;
+	// std::cout << compound::property::estimate_molecular_diameter_from_bird_steward_lightfoot_1(Vc).to_string() << "  " << sigma.to_string() << std::endl;
 
 	SECTION("Bird-Steward-Lightfoot method must agree on predictions to within 30%"){
     	CHECK(si::is_within_fraction(Vc, compound::property::estimate_critical_molar_volume_from_bird_steward_lightfoot_1(sigma), 0.3));
@@ -452,5 +452,57 @@ TEST_CASE( "Bird-Steward-Lightfoot consistency", "[properties]" ) {
     SECTION("Bird-Steward-Lightfoot method must be invertible"){
     	CHECK(si::is_within_fraction(Vc, compound::property::estimate_critical_molar_volume_from_bird_steward_lightfoot_1(compound::property::estimate_molecular_diameter_from_bird_steward_lightfoot_1(Vc)), 1e-4));
     	CHECK(si::is_within_fraction(sigma, compound::property::estimate_molecular_diameter_from_bird_steward_lightfoot_1(compound::property::estimate_critical_molar_volume_from_bird_steward_lightfoot_1(sigma)), 1e-4));
+    }
+}
+
+
+
+
+
+TEST_CASE( "Goodman method purity", "[properties]" ) {
+	// properties of acetone
+	si::molar_volume VL (0.0000740 * si::meter3/si::mole);
+	si::temperature T (si::standard_temperature);
+	si::temperature T0 (178.5*si::kelvin);
+	si::molar_volume VS = compound::property::estimate_solid_molar_volume_from_goodman(VL,T,T0);
+
+	SECTION("Calling a function twiced with the same arguments must produce the same results"){
+    	CHECK(compound::property::estimate_solid_molar_volume_from_goodman(VL,T,T0) == compound::property::estimate_solid_molar_volume_from_goodman(VL,T,T0));
+    }
+
+	SECTION("Calling a function twiced with the same arguments must produce the same results"){
+    	CHECK(compound::property::estimate_liquid_molar_volume_from_goodman(VS,T,T0) == compound::property::estimate_liquid_molar_volume_from_goodman(VS,T,T0));
+    }
+}
+
+TEST_CASE( "Goodman method accuracy", "[properties]" ) {
+	// properties of acetone
+	si::molar_volume VL (0.0000740 * si::meter3/si::mole);
+	si::temperature T (si::standard_temperature);
+	si::temperature T0 (178.5*si::kelvin);
+	si::molar_volume VS = compound::property::estimate_solid_molar_volume_from_goodman(VL,T,T0);
+
+	// std::cout << compound::property::estimate_solid_molar_volume_from_goodman(VL,T,T0).to_string() << "  " << VS.to_string() << std::endl;
+	// std::cout << compound::property::estimate_liquid_molar_volume_from_goodman(VS,T,T0).to_string() << "  " << VL.to_string() << std::endl;
+
+	SECTION("Goodman method must agree on predictions to within 30%"){
+    	CHECK(si::is_within_fraction(VS, compound::property::estimate_solid_molar_volume_from_goodman(VL,T,T0), 0.3));
+    }
+
+	SECTION("Goodman method must agree on predictions to within 30%"){
+    	CHECK(si::is_within_fraction(VL, compound::property::estimate_liquid_molar_volume_from_goodman(VS,T,T0), 0.3));
+    }
+}
+
+TEST_CASE( "Goodman consistency", "[properties]" ) {
+	// properties of acetone
+	si::molar_volume VL (0.0000740 * si::meter3/si::mole);
+	si::temperature T (si::standard_temperature);
+	si::temperature T0 (178.5*si::kelvin);
+	si::molar_volume VS = compound::property::estimate_solid_molar_volume_from_goodman(VL,T,T0);
+
+    SECTION("Goodman method must be invertible"){
+    	CHECK(si::is_within_fraction(VS, compound::property::estimate_solid_molar_volume_from_goodman(compound::property::estimate_liquid_molar_volume_from_goodman(VS,T,T0),T,T0), 1e-4));
+    	CHECK(si::is_within_fraction(VL, compound::property::estimate_liquid_molar_volume_from_goodman(compound::property::estimate_solid_molar_volume_from_goodman(VL,T,T0),T,T0), 1e-4));
     }
 }
