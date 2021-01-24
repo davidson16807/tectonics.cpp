@@ -228,7 +228,7 @@ TEST_CASE( "Pitzer method purity", "[properties]" ) {
     }
 
 	SECTION("Calling a function twiced with the same arguments must produce the same results"){
-    	CHECK(compound::property::estimate_accentric_factor_from_pitzer(M, H_v, T, Tc) == compound::property::estimate_accentric_factor_from_pitzer(M, H_v, T, Tc));
+    	CHECK(compound::property::estimate_accentric_factor_from_pitzer(H_v, M, T, Tc) == compound::property::estimate_accentric_factor_from_pitzer(H_v, M, T, Tc));
     }
 }
 
@@ -241,14 +241,14 @@ TEST_CASE( "Pitzer method accuracy", "[properties]" ) {
 	double omega(0.304);
 
 	// std::cout << compound::property::estimate_latent_heat_of_vaporization_from_pitzer(omega, M, T, Tc).to_string() << "  " << H_v.to_string() << std::endl;
-	// std::cout << compound::property::estimate_accentric_factor_from_pitzer(M, H_v, T, Tc) << "  " << omega << std::endl;
+	// std::cout << compound::property::estimate_accentric_factor_from_pitzer(H_v, M, T, Tc) << "  " << omega << std::endl;
 
 	SECTION("Pitzer method must agree on predictions to within 30%"){
     	CHECK(si::is_within_fraction(H_v, compound::property::estimate_latent_heat_of_vaporization_from_pitzer(omega, M, T, Tc), 0.3));
     }
 
 	SECTION("Pitzer method must agree on predictions to within 40%"){
-    	CHECK(si::is_within_fraction(omega, compound::property::estimate_accentric_factor_from_pitzer(M, H_v, T, Tc), 0.4));
+    	CHECK(si::is_within_fraction(omega, compound::property::estimate_accentric_factor_from_pitzer(H_v, M, T, Tc), 0.4));
     }
 }
 
@@ -261,10 +261,63 @@ TEST_CASE( "Pitzer consistency", "[properties]" ) {
 	double omega(0.304);
 
     SECTION("Pitzer method must be invertible"){
-    	CHECK(si::is_within_fraction(H_v, compound::property::estimate_latent_heat_of_vaporization_from_pitzer(compound::property::estimate_accentric_factor_from_pitzer(M, H_v, T, Tc), M, T, Tc), 1e-4));
-    	CHECK(si::is_within_fraction(omega, compound::property::estimate_accentric_factor_from_pitzer(M, compound::property::estimate_latent_heat_of_vaporization_from_pitzer(omega, M, T, Tc), T, Tc), 1e-4));
+    	CHECK(si::is_within_fraction(H_v, compound::property::estimate_latent_heat_of_vaporization_from_pitzer(compound::property::estimate_accentric_factor_from_pitzer(H_v, M, T, Tc), M, T, Tc), 1e-4));
+    	CHECK(si::is_within_fraction(omega, compound::property::estimate_accentric_factor_from_pitzer(compound::property::estimate_latent_heat_of_vaporization_from_pitzer(omega, M, T, Tc), M, T, Tc), 1e-4));
     }
 }
 
 
+TEST_CASE( "Letsou-Stiel method purity", "[properties]" ) {
+	// properties of acetone
+	si::molar_mass M (58.080*si::gram/si::mole);
+	si::temperature T (si::standard_temperature);
+	si::temperature Tc (508.1*si::kelvin);
+	si::pressure pc (47.0*si::bar);
+	si::dynamic_viscosity eta_L = 0.316*si::centipoise;
+	double omega(0.304);
+
+	SECTION("Calling a function twiced with the same arguments must produce the same results"){
+    	CHECK(compound::property::estimate_liquid_viscosity_from_letsou_stiel(omega, M, T, Tc, pc) == compound::property::estimate_liquid_viscosity_from_letsou_stiel(omega, M, T, Tc, pc));
+    }
+
+	SECTION("Calling a function twiced with the same arguments must produce the same results"){
+    	CHECK(compound::property::estimate_acentric_factor_from_letsou_stiel(eta_L, M, T, Tc, pc) == compound::property::estimate_acentric_factor_from_letsou_stiel(eta_L, M, T, Tc, pc));
+    }
+}
+
+TEST_CASE( "Letsou-Stiel method accuracy", "[properties]" ) {
+	// properties of acetone
+	si::molar_mass M (58.080*si::gram/si::mole);
+	si::temperature T (si::standard_temperature);
+	si::temperature Tc (508.1*si::kelvin);
+	si::pressure pc (47.0*si::bar);
+	si::dynamic_viscosity eta_L = 0.316*si::centipoise;
+	double omega(0.304);
+
+	// std::cout << compound::property::estimate_liquid_viscosity_from_letsou_stiel(omega, M, T, Tc, pc).to_string() << "  " << eta_L.to_string() << std::endl;
+	// std::cout << compound::property::estimate_acentric_factor_from_letsou_stiel(eta_L, M, T, Tc, pc) << "  " << omega << std::endl;
+
+	SECTION("Letsou-Stiel method must agree on predictions to within 30%"){
+    	CHECK(si::is_within_fraction(eta_L, compound::property::estimate_liquid_viscosity_from_letsou_stiel(omega, M, T, Tc, pc), 0.3));
+    }
+
+	SECTION("Letsou-Stiel method must agree on predictions to within 30%"){
+    	CHECK(si::is_within_fraction(omega, compound::property::estimate_acentric_factor_from_letsou_stiel(eta_L, M, T, Tc, pc), 0.3));
+    }
+}
+
+TEST_CASE( "Letsou-Stiel consistency", "[properties]" ) {
+	// properties of acetone
+	si::molar_mass M (58.080*si::gram/si::mole);
+	si::temperature Tc (508.1*si::kelvin);
+	si::temperature T (si::standard_temperature);
+	si::pressure pc (47.0*si::bar);
+	si::dynamic_viscosity eta_L = 0.316*si::centipoise;
+	double omega(0.304);
+
+    SECTION("Letsou-Stiel method must be invertible"){
+    	CHECK(si::is_within_fraction(eta_L, compound::property::estimate_liquid_viscosity_from_letsou_stiel(compound::property::estimate_acentric_factor_from_letsou_stiel(eta_L, M, T, Tc, pc), M, T, Tc, pc), 1e-4));
+    	CHECK(si::is_within_fraction(omega, compound::property::estimate_acentric_factor_from_letsou_stiel(compound::property::estimate_liquid_viscosity_from_letsou_stiel(omega, M, T, Tc, pc), M, T, Tc, pc), 1e-4));
+    }
+}
 
