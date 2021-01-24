@@ -384,8 +384,8 @@ TEST_CASE( "Lee-Kesler method accuracy", "[properties]" ) {
 	si::pressure pvL = 9.639 * si::kilopascal;
 	double omega(0.304);
 
-	std::cout << compound::property::estimate_liquid_vapor_pressure_from_lee_kesler(omega, T, Tc, pc).to_string() << "  " << pvL.to_string() << std::endl;
-	std::cout << compound::property::estimate_accentric_factor_from_lee_kesler(pvL, T, Tc, pc) << "  " << omega << std::endl;
+	// std::cout << compound::property::estimate_liquid_vapor_pressure_from_lee_kesler(omega, T, Tc, pc).to_string() << "  " << pvL.to_string() << std::endl;
+	// std::cout << compound::property::estimate_accentric_factor_from_lee_kesler(pvL, T, Tc, pc) << "  " << omega << std::endl;
 
 	SECTION("Lee-Kesler method must agree on predictions to within 30%"){
     	CHECK(si::is_within_fraction(pvL, compound::property::estimate_liquid_vapor_pressure_from_lee_kesler(omega, T, Tc, pc), 0.3));
@@ -407,5 +407,50 @@ TEST_CASE( "Lee-Kesler consistency", "[properties]" ) {
     SECTION("Letsou-Stiel method must be invertible"){
     	CHECK(si::is_within_fraction(pvL, compound::property::estimate_liquid_vapor_pressure_from_lee_kesler(compound::property::estimate_accentric_factor_from_lee_kesler(pvL, T, Tc, pc), T, Tc, pc), 1e-4));
     	CHECK(si::is_within_fraction(omega, compound::property::estimate_accentric_factor_from_lee_kesler(compound::property::estimate_liquid_vapor_pressure_from_lee_kesler(omega, T, Tc, pc), T, Tc, pc), 1e-4));
+    }
+}
+
+
+
+
+TEST_CASE( "Bird-Steward-Lightfoot method purity", "[properties]" ) {
+	// properties of acetone
+	si::molar_volume Vc (209.0 * si::centimeter3/si::mole);
+	si::length sigma = 0.469*si::nanometer;
+
+	SECTION("Calling a function twiced with the same arguments must produce the same results"){
+    	CHECK(compound::property::estimate_critical_molar_volume_from_bird_steward_lightfoot_1(sigma) == compound::property::estimate_critical_molar_volume_from_bird_steward_lightfoot_1(sigma));
+    }
+
+	SECTION("Calling a function twiced with the same arguments must produce the same results"){
+    	CHECK(compound::property::estimate_molecular_diameter_from_bird_steward_lightfoot_1(Vc) == compound::property::estimate_molecular_diameter_from_bird_steward_lightfoot_1(Vc));
+    }
+}
+
+TEST_CASE( "Bird-Steward-Lightfoot method accuracy", "[properties]" ) {
+	// properties of acetone
+	si::molar_volume Vc (209.0 * si::centimeter3/si::mole);
+	si::length sigma = 0.469*si::nanometer;
+
+	std::cout << compound::property::estimate_critical_molar_volume_from_bird_steward_lightfoot_1(sigma).to_string() << "  " << Vc.to_string() << std::endl;
+	std::cout << compound::property::estimate_molecular_diameter_from_bird_steward_lightfoot_1(Vc).to_string() << "  " << sigma.to_string() << std::endl;
+
+	SECTION("Bird-Steward-Lightfoot method must agree on predictions to within 30%"){
+    	CHECK(si::is_within_fraction(Vc, compound::property::estimate_critical_molar_volume_from_bird_steward_lightfoot_1(sigma), 0.3));
+    }
+
+	SECTION("Bird-Steward-Lightfoot method must agree on predictions to within 30%"){
+    	CHECK(si::is_within_fraction(sigma, compound::property::estimate_molecular_diameter_from_bird_steward_lightfoot_1(Vc), 0.3));
+    }
+}
+
+TEST_CASE( "Bird-Steward-Lightfoot consistency", "[properties]" ) {
+	// properties of acetone
+	si::molar_volume Vc (209.0 * si::centimeter3/si::mole);
+	si::length sigma = 0.469*si::nanometer;
+
+    SECTION("Bird-Steward-Lightfoot method must be invertible"){
+    	CHECK(si::is_within_fraction(Vc, compound::property::estimate_critical_molar_volume_from_bird_steward_lightfoot_1(compound::property::estimate_molecular_diameter_from_bird_steward_lightfoot_1(Vc)), 1e-4));
+    	CHECK(si::is_within_fraction(sigma, compound::property::estimate_molecular_diameter_from_bird_steward_lightfoot_1(compound::property::estimate_critical_molar_volume_from_bird_steward_lightfoot_1(sigma)), 1e-4));
     }
 }
