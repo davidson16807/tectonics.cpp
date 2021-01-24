@@ -290,9 +290,9 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
 
         // Lee Kesler method (1975): https://en.wikipedia.org/wiki/Lee%E2%80%93Kesler_method
         constexpr double estimate_accentric_factor_from_lee_kesler(
+            const si::pressure liquid_saturated_vapor_pressure, 
             const si::temperature temperature, 
             const si::temperature critical_temperature,
-            const si::pressure liquid_saturated_vapor_pressure, 
             const si::pressure critical_pressure
         ){
             double reduced_pressure    = si::unitless(liquid_saturated_vapor_pressure / critical_pressure);
@@ -300,10 +300,11 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
             return (log(reduced_pressure) - f0(reduced_temperature)) / f1(reduced_temperature);
         }
         // Lee Kesler method: https://en.wikipedia.org/wiki/Lee%E2%80%93Kesler_method
-        constexpr si::pressure estimate_liquid_vapor_pressure_from_lee_kesler(const si::temperature temperature, 
+        constexpr si::pressure estimate_liquid_vapor_pressure_from_lee_kesler(
+            const double acentric_factor, 
+            const si::temperature temperature, 
             const si::temperature critical_temperature, 
-            const si::pressure critical_pressure, 
-            const double acentric_factor
+            const si::pressure critical_pressure
         ){
             double reduced_temperature = si::unitless(temperature / critical_temperature);
             double reduced_pressure    = exp(acentric_factor * f1(reduced_temperature) + f0(reduced_temperature));
