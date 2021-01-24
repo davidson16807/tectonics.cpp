@@ -243,10 +243,10 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
             double molar_mass_in_grams = si::unitless(molar_mass / (si::gram / si::mole));
             double reduced_temperature = si::unitless(temperature / critical_temperature);
             double critical_temperature_in_kelvin = si::unitless(critical_temperature / si::kelvin);
-            double critical_pressure_in_pascal =  si::unitless(critical_pressure / si::pascal);
+            double critical_pressure_in_atm =  si::unitless(critical_pressure / si::pascal);
             double eta_zeta_0 = (1.5174 - 2.135 * reduced_temperature + 0.75 * reduced_temperature * reduced_temperature) * 1e-5;
             double eta_zeta_1 = (4.2552 - 7.674 * reduced_temperature + 3.40 * reduced_temperature * reduced_temperature) * 1e-5;
-            double zeta = 2173.424 * pow(critical_temperature_in_kelvin, 1.0/6.0)  /  (sqrt(molar_mass_in_grams) * pow(critical_pressure_in_pascal, 2.0/3.0));
+            double zeta = 2173.424 * pow(critical_temperature_in_kelvin, 1.0/6.0)  /  (sqrt(molar_mass_in_grams) * pow(critical_pressure_in_atm, 2.0/3.0));
             return (si::unitless(viscosity_as_liquid * zeta / (si::pascal * si::second)) - eta_zeta_0) / eta_zeta_1;
         }
 
@@ -254,23 +254,26 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
             const si::temperature critical_temperature, 
             const si::pressure critical_pressure
         ){
-            double critical_pressure_in_pascal = si::unitless(critical_pressure / si::pascal);
+            double critical_pressure_in_atm = si::unitless(critical_pressure / si::standard_pressure);
             double critical_temperature_in_kelvin = si::unitless(critical_temperature / si::kelvin);
-            double molecular_diameter_in_angstrom = 2.3647 * pow(critical_temperature_in_kelvin / critical_pressure_in_pascal, 1.0/3.0);
+            double molecular_diameter_in_angstrom = 2.3647 * pow(critical_temperature_in_kelvin / critical_pressure_in_atm, 1.0/3.0);
             return molecular_diameter_in_angstrom * si::angstrom;
         }
         
-
+        /*
+        // NOTE: We're commenting this out due to poor accuracy, it's off by almost an order of magnitude 
+        // for a property that doesn't vary much and might be better predicted by simply assuming a constant value.
         constexpr double estimate_acentric_factor_from_tee_gotoh_steward(
             const si::length molecular_diameter,
             const si::temperature critical_temperature, 
             const si::pressure critical_pressure
         ){
-            double critical_pressure_in_pascal = si::unitless(critical_pressure / si::pascal);
+            double critical_pressure_in_atm = si::unitless(critical_pressure / si::standard_pressure);
             double critical_temperature_in_kelvin = si::unitless(critical_temperature / si::kelvin);
             double molecular_diameter_in_angstrom = si::unitless(molecular_diameter / si::angstrom);
-            return -(molecular_diameter_in_angstrom / pow(critical_temperature_in_kelvin / critical_pressure_in_pascal, 1.0/3.0) - 2.3551f) / 0.0874f;
+            return -(molecular_diameter_in_angstrom * pow(critical_pressure_in_atm/critical_temperature_in_kelvin, 1.0/3.0) - 2.3551) / 0.0874;
         }
+        */
 
         namespace {
             /*

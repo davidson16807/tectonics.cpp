@@ -321,3 +321,39 @@ TEST_CASE( "Letsou-Stiel consistency", "[properties]" ) {
     }
 }
 
+
+
+
+TEST_CASE( "Tee-Gotoh-Steward method purity", "[properties]" ) {
+	// properties of acetone
+	// si::length sigma = 0.469*si::nanometer;
+	si::temperature Tc (508.1*si::kelvin);
+	si::pressure pc (47.0*si::bar);
+
+	SECTION("Calling a function twiced with the same arguments must produce the same results"){
+    	CHECK(compound::property::estimate_molecular_diameter_from_tee_gotoh_steward(Tc, pc) == compound::property::estimate_molecular_diameter_from_tee_gotoh_steward(Tc, pc));
+    }
+
+ // SECTION("Calling a function twiced with the same arguments must produce the same results"){
+ //     CHECK(compound::property::estimate_acentric_factor_from_tee_gotoh_steward(sigma, Tc, pc) == compound::property::estimate_acentric_factor_from_tee_gotoh_steward(sigma, Tc, pc));
+ // }
+}
+
+TEST_CASE( "Tee-Gotoh-Steward method accuracy", "[properties]" ) {
+	// properties of acetone
+	si::length sigma = 0.469*si::nanometer;
+	si::temperature Tc (508.1*si::kelvin);
+	si::pressure pc (47.0*si::bar);
+	// double omega(0.304);
+
+	// std::cout << compound::property::estimate_molecular_diameter_from_tee_gotoh_steward(Tc, pc).to_string() << "  " << sigma.to_string() << std::endl;
+	// std::cout << compound::property::estimate_acentric_factor_from_tee_gotoh_steward(sigma, Tc, pc) << "  " << omega << std::endl;
+
+	SECTION("Tee-Gotoh-Steward method must agree on predictions to within 30%"){
+    	CHECK(si::is_within_fraction(sigma, compound::property::estimate_molecular_diameter_from_tee_gotoh_steward(Tc, pc), 0.3));
+    }
+
+ // SECTION("Tee-Gotoh-Steward method must agree on predictions to within 30%"){
+ //    	CHECK(si::is_within_fraction(omega, compound::property::estimate_acentric_factor_from_tee_gotoh_steward(sigma, Tc, pc), 0.3));
+ // }
+}
