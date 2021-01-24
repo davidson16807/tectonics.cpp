@@ -202,18 +202,27 @@ namespace si{
 
 	    std::string to_string() const 
 	    {
-	    	std::array<std::string, 17> prefixes {"y","z","a","","p","n","u","m","","k","M","G","T","P","E","Z","Y"};
+	    	std::array<std::string, 17> prefixes {"y","z","a","f","p","n","u","m","","k","M","G","T","P","E","Z","Y"};
 
 	    	// customize formatting for area and volume, which follow separate rules for prefix conversion
     		if( M1 != 0 && (KG1|S1|K1|MOL1|A1|CD1) == 0)
     		{
-		    	std::string prefixed_value = std::to_string(raw / pow(1000.0, std::min(8.0, floor(log10(raw)/(3.0*M1)))));
-		    	std::string prefix(prefixes[int(log10(raw)/(3.0*M1))+8]);
-    			return prefixed_value + prefix + (M1<0? "m"  + (  M1<1? std::to_string(abs(M1  )) : "") : "");
+				T1 prefix_id = floor(log10(raw)/(3.0*M1));
+		    	std::string prefixed_value = std::to_string(raw / pow(1000.0, M1*std::min(8.0, prefix_id)));
+		    	std::string prefix(prefixes[int(prefix_id)+8]);
+    			return prefixed_value + (M1<0? "1/":"") + prefix + "m" + (M1!=1? std::to_string(abs(M1)) : "");
+    		}
+	    	// customize formatting for mass, which must be converted to grams
+    		if( KG1 != 0 && (M1|S1|K1|MOL1|A1|CD1) == 0)
+    		{
+				T1 prefix_id = floor(log10(raw)/(3.0*KG1));
+		    	std::string prefixed_value = std::to_string(raw / pow(1000.0, KG1*std::min(8.0, prefix_id)));
+		    	std::string prefix(prefixes[int(prefix_id)+KG1+8]);
+    			return prefixed_value + (KG1<0? "1/":"") + prefix + "g" + (KG1!=1? std::to_string(abs(KG1)) : "");
     		}
 
 	    	// customize formatting for common derived units for pretty printing
-	    	std::array<std::pair<std::array<int,3>, std::string>, 9> named_mks {
+	    	std::array<std::pair<std::array<int,3>, std::string>, 10> named_mks {
 	    		std::pair<std::array<int,3>, std::string>{std::array<int,3>{ 1,1,-2}, "N"},
 	    		std::pair<std::array<int,3>, std::string>{std::array<int,3>{ 2,1,-2}, "N*m"},
 	    		std::pair<std::array<int,3>, std::string>{std::array<int,3>{-1,1,-2}, "Pa"},
@@ -228,8 +237,9 @@ namespace si{
 	    	{
 	    		if(named_mks[i].first == std::array<int,3>{M1,KG1,S1})
 	    		{
-			    	std::string prefixed_value =  std::to_string(raw / pow(1000.0, std::min(8.0, floor(log10(raw)/3.0))));
-			    	std::string prefix(prefixes[int(log10(raw)/3.0)+8]);
+					T1 prefix_id = floor(log10(raw)/3.0);
+			    	std::string prefixed_value =  std::to_string(raw / pow(1000.0, std::min(8.0, prefix_id)));
+			    	std::string prefix(prefixes[int(prefix_id)+8]);
 	    			std::string result = prefixed_value + prefix;
 	    			result += named_mks[i].second;
 			    	result +=   K1<0? "K"  + (  K1<1? std::to_string(abs(K1  )) : "") : ""; 
@@ -466,7 +476,7 @@ namespace si{
 	constexpr quantity  deci ## suffix (1e-1  * suffix); \
 	constexpr quantity  deca ## suffix (1e1   * suffix); \
 	constexpr quantity hecto ## suffix (1e2   * suffix); \
-	constexpr quantity  kilo ## suffix (1e2   * suffix); \
+	constexpr quantity  kilo ## suffix (1e3   * suffix); \
 	constexpr quantity  mega ## suffix (1e6   * suffix); \
 	constexpr quantity  giga ## suffix (1e9   * suffix); \
 	constexpr quantity  tera ## suffix (1e12  * suffix); \
@@ -488,7 +498,7 @@ namespace si{
 	constexpr quantity prefix ##  deci ## suffix (1e-1  * prefix ## suffix); \
 	constexpr quantity prefix ##  deca ## suffix (1e1   * prefix ## suffix); \
 	constexpr quantity prefix ## hecto ## suffix (1e2   * prefix ## suffix); \
-	constexpr quantity prefix ##  kilo ## suffix (1e2   * prefix ## suffix); \
+	constexpr quantity prefix ##  kilo ## suffix (1e3   * prefix ## suffix); \
 	constexpr quantity prefix ##  mega ## suffix (1e6   * prefix ## suffix); \
 	constexpr quantity prefix ##  giga ## suffix (1e9   * prefix ## suffix); \
 	constexpr quantity prefix ##  tera ## suffix (1e12  * prefix ## suffix); \
@@ -687,7 +697,7 @@ namespace si{
 	constexpr quantity  deci ## suffix ( 1e-1  * suffix ); \
 	constexpr quantity  deca ## suffix ( 1e1   * suffix ); \
 	constexpr quantity hecto ## suffix ( 1e2   * suffix ); \
-	constexpr quantity  kilo ## suffix ( 1e2   * suffix ); \
+	constexpr quantity  kilo ## suffix ( 1e3   * suffix ); \
 	constexpr quantity  mega ## suffix ( 1e6   * suffix );
 
 	// see https://en.wikipedia.org/wiki/Non-SI_units_mentioned_in_the_SI
