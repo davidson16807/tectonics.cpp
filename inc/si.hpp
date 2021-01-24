@@ -242,10 +242,10 @@ namespace si{
 			    	std::string prefix(prefixes[int(prefix_id)+8]);
 	    			std::string result = prefixed_value + prefix;
 	    			result += named_mks[i].second;
-			    	result +=   K1<0? "K"  + (  K1<1? std::to_string(abs(K1  )) : "") : ""; 
-			    	result += MOL1<0? "mol"+ (MOL1<1? std::to_string(abs(MOL1)) : "") : ""; 
-			    	result +=   A1<0? "A"  + (  A1<1? std::to_string(abs(  A1)) : "") : ""; 
-			    	result +=  CD1<0? "Cd" + ( CD1<1? std::to_string(abs( CD1)) : "") : ""; 
+			    	result +=   K1>0? "K"  + (  K1>1? std::to_string(abs(K1  )) : "") : ""; 
+			    	result += MOL1>0? "mol"+ (MOL1>1? std::to_string(abs(MOL1)) : "") : ""; 
+			    	result +=   A1>0? "A"  + (  A1>1? std::to_string(abs(  A1)) : "") : ""; 
+			    	result +=  CD1>0? "Cd" + ( CD1>1? std::to_string(abs( CD1)) : "") : ""; 
 			    	result += K1<0 || MOL1<0? "/" : "";
 			    	result +=   K1<0? "K"  + (  K1<1? std::to_string(abs(K1  )) : "") : ""; 
 			    	result += MOL1<0? "mol"+ (MOL1<1? std::to_string(abs(MOL1)) : "") : ""; 
@@ -258,13 +258,13 @@ namespace si{
 	    	// fall back on SI base units 
 			std::string result = std::to_string(raw);
 	    	result += M1<0 && KG1<0 && S1<0 && K1<0 && MOL1<0? "1" : "";
-	    	result +=   M1<0? "m"  + (  M1<1? std::to_string(abs(M1  )) : "") : ""; 
-	    	result +=  KG1<0? "kg" + ( KG1<1? std::to_string(abs(KG1 )) : "") : ""; 
-	    	result +=   S1<0? "s"  + (  S1<1? std::to_string(abs(S1  )) : "") : ""; 
-	    	result +=   K1<0? "K"  + (  K1<1? std::to_string(abs(K1  )) : "") : ""; 
-	    	result += MOL1<0? "mol"+ (MOL1<1? std::to_string(abs(MOL1)) : "") : ""; 
-	    	result +=   A1<0? "A"  + (  A1<1? std::to_string(abs(  A1)) : "") : ""; 
-	    	result +=  CD1<0? "Cd" + ( CD1<1? std::to_string(abs( CD1)) : "") : ""; 
+	    	result +=   M1>0? "m"  + (  M1>1? std::to_string(abs(M1  )) : "") : ""; 
+	    	result +=  KG1>0? "kg" + ( KG1>1? std::to_string(abs(KG1 )) : "") : ""; 
+	    	result +=   S1>0? "s"  + (  S1>1? std::to_string(abs(S1  )) : "") : ""; 
+	    	result +=   K1>0? "K"  + (  K1>1? std::to_string(abs(K1  )) : "") : ""; 
+	    	result += MOL1>0? "mol"+ (MOL1>1? std::to_string(abs(MOL1)) : "") : ""; 
+	    	result +=   A1>0? "A"  + (  A1>1? std::to_string(abs(  A1)) : "") : ""; 
+	    	result +=  CD1>0? "Cd" + ( CD1>1? std::to_string(abs( CD1)) : "") : ""; 
 	    	result += M1<0 || KG1<0 || S1<0 || K1<0 || MOL1<0? "/" : "";
 	    	result +=   M1<0? "m"  + (  M1<1? std::to_string(abs(M1  )) : "") : ""; 
 	    	result +=  KG1<0? "kg" + ( KG1<1? std::to_string(abs(KG1 )) : "") : ""; 
