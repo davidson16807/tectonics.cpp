@@ -506,3 +506,55 @@ TEST_CASE( "Goodman consistency", "[properties]" ) {
     	CHECK(si::is_within_fraction(VL, compound::property::estimate_liquid_molar_volume_from_goodman(compound::property::estimate_solid_molar_volume_from_goodman(VL,T,T0),T,T0), 1e-4));
     }
 }
+
+
+
+
+
+TEST_CASE( "Eucken method purity", "[properties]" ) {
+	// properties of chloroform
+	si::molar_mass M (119.377*si::gram/si::mole);
+	si::dynamic_viscosity eta_G (1.01e-5*si::pascal* si::second);
+	si::thermal_conductivity k_G (0.008499 * si::watt / (si::meter*si::kelvin));
+	si::specific_heat_capacity C_G (65.33*si::joule/(si::mole*si::kelvin) / M);
+
+	SECTION("Calling a function twiced with the same arguments must produce the same results"){
+    	CHECK(compound::property::estimate_thermal_conductivity_as_gas_from_eucken(eta_G,M,C_G) == compound::property::estimate_thermal_conductivity_as_gas_from_eucken(eta_G,M,C_G));
+    }
+
+	SECTION("Calling a function twiced with the same arguments must produce the same results"){
+    	CHECK(compound::property::estimate_viscosity_as_gas_from_eucken(k_G,M,C_G) == compound::property::estimate_viscosity_as_gas_from_eucken(k_G,M,C_G));
+    }
+}
+
+TEST_CASE( "Eucken method accuracy", "[properties]" ) {
+	// properties of chloroform
+	si::molar_mass M (119.377*si::gram/si::mole);
+	si::dynamic_viscosity eta_G (1.01e-5*si::pascal* si::second);
+	si::thermal_conductivity k_G (0.008499 * si::watt / (si::meter*si::kelvin));
+	si::specific_heat_capacity C_G (65.33*si::joule/(si::mole*si::kelvin) / M);
+
+	// std::cout << compound::property::estimate_thermal_conductivity_as_gas_from_eucken(eta_G,M,C_G).to_string() << "  " << k_G.to_string() << std::endl;
+	// std::cout << compound::property::estimate_viscosity_as_gas_from_eucken(k_G,M,C_G).to_string() << "  " << eta_G.to_string() << std::endl;
+
+	SECTION("Eucken method must agree on predictions to within 30%"){
+    	CHECK(si::is_within_fraction(k_G, compound::property::estimate_thermal_conductivity_as_gas_from_eucken(eta_G,M,C_G), 0.3));
+    }
+
+	SECTION("Eucken method must agree on predictions to within 30%"){
+    	CHECK(si::is_within_fraction(eta_G, compound::property::estimate_viscosity_as_gas_from_eucken(k_G,M,C_G), 0.3));
+    }
+}
+
+TEST_CASE( "Eucken consistency", "[properties]" ) {
+	// properties of chloroform
+	si::molar_mass M (119.377*si::gram/si::mole);
+	si::dynamic_viscosity eta_G (1.01e-5*si::pascal* si::second);
+	si::thermal_conductivity k_G (0.008499 * si::watt / (si::meter*si::kelvin));
+	si::specific_heat_capacity C_G (65.33*si::joule/(si::mole*si::kelvin) / M);
+
+    SECTION("Eucken method must be invertible"){
+    	CHECK(si::is_within_fraction(k_G, compound::property::estimate_thermal_conductivity_as_gas_from_eucken(compound::property::estimate_viscosity_as_gas_from_eucken(k_G,M,C_G), M, C_G), 1e-4));
+    	CHECK(si::is_within_fraction(eta_G, compound::property::estimate_viscosity_as_gas_from_eucken(compound::property::estimate_thermal_conductivity_as_gas_from_eucken(eta_G,M,C_G), M, C_G), 1e-4));
+    }
+}
