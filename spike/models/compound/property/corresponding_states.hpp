@@ -57,6 +57,18 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
         {
             return si::unitless(critical_pressure * critical_volume / (si::universal_gas_constant * critical_temperature));
         }
+        constexpr si::molar_volume get_critical_volume(const si::pressure critical_pressure, const si::temperature critical_temperature, const double critical_compressibility)
+        {
+            return critical_compressibility * si::universal_gas_constant * critical_temperature / critical_pressure;
+        }
+        constexpr si::pressure get_critical_pressure(const si::temperature critical_temperature, const si::molar_volume critical_volume, const double critical_compressibility)
+        {
+            return critical_compressibility * si::universal_gas_constant * critical_temperature / critical_volume;
+        }
+        constexpr si::temperature get_critical_temperature(const si::pressure critical_pressure, const si::molar_volume critical_volume, const double critical_compressibility)
+        {
+            return critical_pressure * critical_volume/(critical_compressibility*si::universal_gas_constant);
+        }
         // from definition of the acentric factor: https://en.wikipedia.org/wiki/Acentric_factor
         constexpr double get_acentric_factor(const si::pressure liquid_saturated_vapor_pressure_at_reduced_temperature_of_0_7, const si::pressure critical_pressure)
         {
