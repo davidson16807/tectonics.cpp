@@ -313,22 +313,6 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
         }
 
         // Bird-Steward-Lightfoot: https://chemicals.readthedocs.io/en/latest/chemicals.lennard_jones.html#molecular-diameter-correlations
-        constexpr si::length estimate_molecular_diameter_from_bird_steward_lightfoot_2(const si::molar_volume liquid_molar_volume_at_melting_point)
-        {
-            double liquid_molar_volume_in_meter3_per_mole = si::unitless(liquid_molar_volume_at_melting_point / (si::meter3/si::mole));
-            double molecular_diameter_in_angstrom = 1.222 * pow(liquid_molar_volume_in_meter3_per_mole, 1.0/3.0);
-            return molecular_diameter_in_angstrom * si::angstrom;
-        }
-
-        // Bird-Steward-Lightfoot: https://chemicals.readthedocs.io/en/latest/chemicals.lennard_jones.html#molecular-diameter-correlations
-        constexpr si::molar_volume estimate_liquid_molar_volume_from_bird_steward_lightfoot_2(const si::length molecular_diameter)
-        {
-            double molecular_diameter_in_angstrom = si::unitless(molecular_diameter / si::angstrom);
-            double liquid_molar_volume_in_meter3_per_mole = pow(molecular_diameter_in_angstrom / 1.222f, 3.0);
-            return liquid_molar_volume_in_meter3_per_mole * (si::meter3/si::mole);
-        }
-
-        // Bird-Steward-Lightfoot: https://chemicals.readthedocs.io/en/latest/chemicals.lennard_jones.html#molecular-diameter-correlations
         constexpr si::length estimate_molecular_diameter_from_bird_steward_lightfoot_1(const si::molar_volume critical_molar_volume)
         {
             double critical_molar_volume_in_meter3_per_mole = si::unitless(critical_molar_volume / (si::milliliter/si::mole));
@@ -342,6 +326,22 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
             double molecular_diameter_in_angstrom = si::unitless(molecular_diameter / si::angstrom);
             double critical_molar_volume_in_meter3_per_mole = pow(molecular_diameter_in_angstrom / 0.841f, 3.0);
             return critical_molar_volume_in_meter3_per_mole * (si::milliliter/si::mole);
+        }
+
+        // Bird-Steward-Lightfoot: https://chemicals.readthedocs.io/en/latest/chemicals.lennard_jones.html#molecular-diameter-correlations
+        constexpr si::length estimate_molecular_diameter_from_bird_steward_lightfoot_2(const si::molar_volume liquid_molar_volume_at_melting_point)
+        {
+            double liquid_molar_volume_in_meter3_per_mole = si::unitless(liquid_molar_volume_at_melting_point / (si::milliliter/si::mole));
+            double molecular_diameter_in_angstrom = 1.222 * pow(liquid_molar_volume_in_meter3_per_mole, 1.0/3.0);
+            return molecular_diameter_in_angstrom * si::angstrom;
+        }
+
+        // Bird-Steward-Lightfoot: https://chemicals.readthedocs.io/en/latest/chemicals.lennard_jones.html#molecular-diameter-correlations
+        constexpr si::molar_volume estimate_liquid_molar_volume_from_bird_steward_lightfoot_2(const si::length molecular_diameter)
+        {
+            double molecular_diameter_in_angstrom = si::unitless(molecular_diameter / si::angstrom);
+            double liquid_molar_volume_in_meter3_per_mole = pow(molecular_diameter_in_angstrom / 1.222f, 3.0);
+            return liquid_molar_volume_in_meter3_per_mole * (si::milliliter/si::mole);
         }
 
         // Goodman: https://chemicals.readthedocs.io/en/latest/chemicals.volume.html#pure-solid-correlations
