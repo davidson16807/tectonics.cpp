@@ -277,7 +277,7 @@ TEST_CASE( "Letsou-Stiel method purity", "[properties]" ) {
 	double omega(0.304);
 
 	SECTION("Calling a function twiced with the same arguments must produce the same results"){
-    	CHECK(compound::property::estimate_liquid_viscosity_from_letsou_stiel(omega, M, T, Tc, pc) == compound::property::estimate_liquid_viscosity_from_letsou_stiel(omega, M, T, Tc, pc));
+    	CHECK(compound::property::estimate_viscosity_as_liquid_from_letsou_stiel(omega, M, T, Tc, pc) == compound::property::estimate_viscosity_as_liquid_from_letsou_stiel(omega, M, T, Tc, pc));
     }
 
 	SECTION("Calling a function twiced with the same arguments must produce the same results"){
@@ -294,11 +294,11 @@ TEST_CASE( "Letsou-Stiel method accuracy", "[properties]" ) {
 	si::dynamic_viscosity eta_L = 0.316*si::centipoise;
 	double omega(0.304);
 
-	// std::cout << compound::property::estimate_liquid_viscosity_from_letsou_stiel(omega, M, T, Tc, pc).to_string() << "  " << eta_L.to_string() << std::endl;
+	// std::cout << compound::property::estimate_viscosity_as_liquid_from_letsou_stiel(omega, M, T, Tc, pc).to_string() << "  " << eta_L.to_string() << std::endl;
 	// std::cout << compound::property::estimate_acentric_factor_from_letsou_stiel(eta_L, M, T, Tc, pc) << "  " << omega << std::endl;
 
 	SECTION("Letsou-Stiel method must agree on predictions to within 30%"){
-    	CHECK(si::is_within_fraction(eta_L, compound::property::estimate_liquid_viscosity_from_letsou_stiel(omega, M, T, Tc, pc), 0.3));
+    	CHECK(si::is_within_fraction(eta_L, compound::property::estimate_viscosity_as_liquid_from_letsou_stiel(omega, M, T, Tc, pc), 0.3));
     }
 
 	SECTION("Letsou-Stiel method must agree on predictions to within 30%"){
@@ -316,8 +316,8 @@ TEST_CASE( "Letsou-Stiel consistency", "[properties]" ) {
 	double omega(0.304);
 
     SECTION("Letsou-Stiel method must be invertible"){
-    	CHECK(si::is_within_fraction(eta_L, compound::property::estimate_liquid_viscosity_from_letsou_stiel(compound::property::estimate_acentric_factor_from_letsou_stiel(eta_L, M, T, Tc, pc), M, T, Tc, pc), 1e-4));
-    	CHECK(si::is_within_fraction(omega, compound::property::estimate_acentric_factor_from_letsou_stiel(compound::property::estimate_liquid_viscosity_from_letsou_stiel(omega, M, T, Tc, pc), M, T, Tc, pc), 1e-4));
+    	CHECK(si::is_within_fraction(eta_L, compound::property::estimate_viscosity_as_liquid_from_letsou_stiel(compound::property::estimate_acentric_factor_from_letsou_stiel(eta_L, M, T, Tc, pc), M, T, Tc, pc), 1e-4));
+    	CHECK(si::is_within_fraction(omega, compound::property::estimate_acentric_factor_from_letsou_stiel(compound::property::estimate_viscosity_as_liquid_from_letsou_stiel(omega, M, T, Tc, pc), M, T, Tc, pc), 1e-4));
     }
 }
 
@@ -368,7 +368,7 @@ TEST_CASE( "Lee-Kesler method purity", "[properties]" ) {
 	double omega(0.304);
 
 	SECTION("Calling a function twiced with the same arguments must produce the same results"){
-    	CHECK(compound::property::estimate_liquid_vapor_pressure_from_lee_kesler(omega, T, Tc, pc) == compound::property::estimate_liquid_vapor_pressure_from_lee_kesler(omega, T, Tc, pc));
+    	CHECK(compound::property::estimate_vapor_pressure_as_liquid_from_lee_kesler(omega, T, Tc, pc) == compound::property::estimate_vapor_pressure_as_liquid_from_lee_kesler(omega, T, Tc, pc));
     }
 
 	SECTION("Calling a function twiced with the same arguments must produce the same results"){
@@ -384,11 +384,11 @@ TEST_CASE( "Lee-Kesler method accuracy", "[properties]" ) {
 	si::pressure pvL = 9.639 * si::kilopascal;
 	double omega(0.304);
 
-	// std::cout << compound::property::estimate_liquid_vapor_pressure_from_lee_kesler(omega, T, Tc, pc).to_string() << "  " << pvL.to_string() << std::endl;
+	// std::cout << compound::property::estimate_vapor_pressure_as_liquid_from_lee_kesler(omega, T, Tc, pc).to_string() << "  " << pvL.to_string() << std::endl;
 	// std::cout << compound::property::estimate_accentric_factor_from_lee_kesler(pvL, T, Tc, pc) << "  " << omega << std::endl;
 
 	SECTION("Lee-Kesler method must agree on predictions to within 30%"){
-    	CHECK(si::is_within_fraction(pvL, compound::property::estimate_liquid_vapor_pressure_from_lee_kesler(omega, T, Tc, pc), 0.3));
+    	CHECK(si::is_within_fraction(pvL, compound::property::estimate_vapor_pressure_as_liquid_from_lee_kesler(omega, T, Tc, pc), 0.3));
     }
 
 	SECTION("Lee-Kesler method must agree on predictions to within 30%"){
@@ -405,8 +405,8 @@ TEST_CASE( "Lee-Kesler consistency", "[properties]" ) {
 	double omega(0.304);
 
     SECTION("Letsou-Stiel method must be invertible"){
-    	CHECK(si::is_within_fraction(pvL, compound::property::estimate_liquid_vapor_pressure_from_lee_kesler(compound::property::estimate_accentric_factor_from_lee_kesler(pvL, T, Tc, pc), T, Tc, pc), 1e-4));
-    	CHECK(si::is_within_fraction(omega, compound::property::estimate_accentric_factor_from_lee_kesler(compound::property::estimate_liquid_vapor_pressure_from_lee_kesler(omega, T, Tc, pc), T, Tc, pc), 1e-4));
+    	CHECK(si::is_within_fraction(pvL, compound::property::estimate_vapor_pressure_as_liquid_from_lee_kesler(compound::property::estimate_accentric_factor_from_lee_kesler(pvL, T, Tc, pc), T, Tc, pc), 1e-4));
+    	CHECK(si::is_within_fraction(omega, compound::property::estimate_accentric_factor_from_lee_kesler(compound::property::estimate_vapor_pressure_as_liquid_from_lee_kesler(omega, T, Tc, pc), T, Tc, pc), 1e-4));
     }
 }
 
@@ -432,7 +432,7 @@ TEST_CASE( "Bird-Steward-Lightfoot method purity", "[properties]" ) {
     }
 
 	SECTION("Calling a function twiced with the same arguments must produce the same results"){
-    	CHECK(compound::property::estimate_liquid_molar_volume_from_bird_steward_lightfoot_2(sigma) == compound::property::estimate_liquid_molar_volume_from_bird_steward_lightfoot_2(sigma));
+    	CHECK(compound::property::estimate_molar_volume_as_liquid_from_bird_steward_lightfoot_2(sigma) == compound::property::estimate_molar_volume_as_liquid_from_bird_steward_lightfoot_2(sigma));
     }
 }
 
@@ -445,7 +445,7 @@ TEST_CASE( "Bird-Steward-Lightfoot method accuracy", "[properties]" ) {
 	// std::cout << compound::property::estimate_critical_molar_volume_from_bird_steward_lightfoot_1(sigma).to_string() << "  " << Vc.to_string() << std::endl;
 	// std::cout << compound::property::estimate_molecular_diameter_from_bird_steward_lightfoot_1(Vc).to_string() << "  " << sigma.to_string() << std::endl;
 
-	// std::cout << compound::property::estimate_liquid_molar_volume_from_bird_steward_lightfoot_2(sigma).to_string() << "  " << VL.to_string() << std::endl;
+	// std::cout << compound::property::estimate_molar_volume_as_liquid_from_bird_steward_lightfoot_2(sigma).to_string() << "  " << VL.to_string() << std::endl;
 	// std::cout << compound::property::estimate_molecular_diameter_from_bird_steward_lightfoot_2(VL).to_string() << "  " << sigma.to_string() << std::endl;
 
 	SECTION("Bird-Steward-Lightfoot method must agree on predictions to within 30%"){
@@ -457,7 +457,7 @@ TEST_CASE( "Bird-Steward-Lightfoot method accuracy", "[properties]" ) {
     }
 
 	SECTION("Bird-Steward-Lightfoot method must agree on predictions to within 40%"){
-    	CHECK(si::is_within_fraction(VL, compound::property::estimate_liquid_molar_volume_from_bird_steward_lightfoot_2(sigma), 0.4));
+    	CHECK(si::is_within_fraction(VL, compound::property::estimate_molar_volume_as_liquid_from_bird_steward_lightfoot_2(sigma), 0.4));
     }
 
 	SECTION("Bird-Steward-Lightfoot method must agree on predictions to within 40%"){
@@ -474,8 +474,8 @@ TEST_CASE( "Bird-Steward-Lightfoot consistency", "[properties]" ) {
     SECTION("Bird-Steward-Lightfoot method must be invertible"){
     	CHECK(si::is_within_fraction(Vc, compound::property::estimate_critical_molar_volume_from_bird_steward_lightfoot_1(compound::property::estimate_molecular_diameter_from_bird_steward_lightfoot_1(Vc)), 1e-4));
     	CHECK(si::is_within_fraction(sigma, compound::property::estimate_molecular_diameter_from_bird_steward_lightfoot_1(compound::property::estimate_critical_molar_volume_from_bird_steward_lightfoot_1(sigma)), 1e-4));
-    	CHECK(si::is_within_fraction(VL, compound::property::estimate_liquid_molar_volume_from_bird_steward_lightfoot_2(compound::property::estimate_molecular_diameter_from_bird_steward_lightfoot_2(VL)), 1e-4));
-    	CHECK(si::is_within_fraction(sigma, compound::property::estimate_molecular_diameter_from_bird_steward_lightfoot_2(compound::property::estimate_liquid_molar_volume_from_bird_steward_lightfoot_2(sigma)), 1e-4));
+    	CHECK(si::is_within_fraction(VL, compound::property::estimate_molar_volume_as_liquid_from_bird_steward_lightfoot_2(compound::property::estimate_molecular_diameter_from_bird_steward_lightfoot_2(VL)), 1e-4));
+    	CHECK(si::is_within_fraction(sigma, compound::property::estimate_molecular_diameter_from_bird_steward_lightfoot_2(compound::property::estimate_molar_volume_as_liquid_from_bird_steward_lightfoot_2(sigma)), 1e-4));
     }
 }
 
@@ -488,14 +488,14 @@ TEST_CASE( "Goodman method purity", "[properties]" ) {
 	si::molar_volume VL (0.0000740 * si::meter3/si::mole);
 	si::temperature T (si::standard_temperature);
 	si::temperature T0 (178.5*si::kelvin);
-	si::molar_volume VS = compound::property::estimate_solid_molar_volume_from_goodman(VL,T,T0);
+	si::molar_volume VS = compound::property::estimate_molar_volume_as_solid_from_goodman(VL,T,T0);
 
 	SECTION("Calling a function twiced with the same arguments must produce the same results"){
-    	CHECK(compound::property::estimate_solid_molar_volume_from_goodman(VL,T,T0) == compound::property::estimate_solid_molar_volume_from_goodman(VL,T,T0));
+    	CHECK(compound::property::estimate_molar_volume_as_solid_from_goodman(VL,T,T0) == compound::property::estimate_molar_volume_as_solid_from_goodman(VL,T,T0));
     }
 
 	SECTION("Calling a function twiced with the same arguments must produce the same results"){
-    	CHECK(compound::property::estimate_liquid_molar_volume_from_goodman(VS,T,T0) == compound::property::estimate_liquid_molar_volume_from_goodman(VS,T,T0));
+    	CHECK(compound::property::estimate_molar_volume_as_liquid_from_goodman(VS,T,T0) == compound::property::estimate_molar_volume_as_liquid_from_goodman(VS,T,T0));
     }
 }
 
@@ -504,17 +504,17 @@ TEST_CASE( "Goodman method accuracy", "[properties]" ) {
 	si::molar_volume VL (0.0000740 * si::meter3/si::mole);
 	si::temperature T (si::standard_temperature);
 	si::temperature T0 (178.5*si::kelvin);
-	si::molar_volume VS = compound::property::estimate_solid_molar_volume_from_goodman(VL,T,T0);
+	si::molar_volume VS = compound::property::estimate_molar_volume_as_solid_from_goodman(VL,T,T0);
 
-	// std::cout << compound::property::estimate_solid_molar_volume_from_goodman(VL,T,T0).to_string() << "  " << VS.to_string() << std::endl;
-	// std::cout << compound::property::estimate_liquid_molar_volume_from_goodman(VS,T,T0).to_string() << "  " << VL.to_string() << std::endl;
+	// std::cout << compound::property::estimate_molar_volume_as_solid_from_goodman(VL,T,T0).to_string() << "  " << VS.to_string() << std::endl;
+	// std::cout << compound::property::estimate_molar_volume_as_liquid_from_goodman(VS,T,T0).to_string() << "  " << VL.to_string() << std::endl;
 
 	SECTION("Goodman method must agree on predictions to within 30%"){
-    	CHECK(si::is_within_fraction(VS, compound::property::estimate_solid_molar_volume_from_goodman(VL,T,T0), 0.3));
+    	CHECK(si::is_within_fraction(VS, compound::property::estimate_molar_volume_as_solid_from_goodman(VL,T,T0), 0.3));
     }
 
 	SECTION("Goodman method must agree on predictions to within 30%"){
-    	CHECK(si::is_within_fraction(VL, compound::property::estimate_liquid_molar_volume_from_goodman(VS,T,T0), 0.3));
+    	CHECK(si::is_within_fraction(VL, compound::property::estimate_molar_volume_as_liquid_from_goodman(VS,T,T0), 0.3));
     }
 }
 
@@ -523,11 +523,11 @@ TEST_CASE( "Goodman consistency", "[properties]" ) {
 	si::molar_volume VL (0.0000740 * si::meter3/si::mole);
 	si::temperature T (si::standard_temperature);
 	si::temperature T0 (178.5*si::kelvin);
-	si::molar_volume VS = compound::property::estimate_solid_molar_volume_from_goodman(VL,T,T0);
+	si::molar_volume VS = compound::property::estimate_molar_volume_as_solid_from_goodman(VL,T,T0);
 
     SECTION("Goodman method must be invertible"){
-    	CHECK(si::is_within_fraction(VS, compound::property::estimate_solid_molar_volume_from_goodman(compound::property::estimate_liquid_molar_volume_from_goodman(VS,T,T0),T,T0), 1e-4));
-    	CHECK(si::is_within_fraction(VL, compound::property::estimate_liquid_molar_volume_from_goodman(compound::property::estimate_solid_molar_volume_from_goodman(VL,T,T0),T,T0), 1e-4));
+    	CHECK(si::is_within_fraction(VS, compound::property::estimate_molar_volume_as_solid_from_goodman(compound::property::estimate_molar_volume_as_liquid_from_goodman(VS,T,T0),T,T0), 1e-4));
+    	CHECK(si::is_within_fraction(VL, compound::property::estimate_molar_volume_as_liquid_from_goodman(compound::property::estimate_molar_volume_as_solid_from_goodman(VL,T,T0),T,T0), 1e-4));
     }
 }
 

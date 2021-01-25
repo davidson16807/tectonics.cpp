@@ -124,11 +124,6 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
             return critical_pressure_in_pascal * si::pascal;
         }
 
-        constexpr si::molar_volume get_ideal_gas_molar_volume(const si::temperature temperature, const si::pressure pressure)
-        {
-            return si::universal_gas_constant * temperature / pressure;
-        }
-
         // Sheffy Johnson: https://chemicals.readthedocs.io/en/latest/chemicals.thermal_conductivity.html#pure-low-pressure-liquid-correlations
         constexpr si::thermal_conductivity estimate_thermal_conductivity_as_liquid_from_sheffy_johnson(
             const si::molar_mass molar_mass,
@@ -156,6 +151,11 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
                 (1.1053 / sqrt(molar_mass_in_grams)) * (3 + 20.0 * pow(1.0 - si::unitless(         temperature / critical_temperature), 2.0/3.0)) / 
                                                         (3 + 20.0 * pow(1.0 - si::unitless(normal_boiling_point / critical_temperature), 2.0/3.0));
             return liquid_thermal_conductivity_in_watts_per_meter_kelvin * si::watt / (si::meter*si::kelvin);
+        }
+
+        constexpr si::molar_volume get_molar_volume_as_ideal_gas(const si::temperature temperature, const si::pressure pressure)
+        {
+            return si::universal_gas_constant * temperature / pressure;
         }
 
         constexpr si::specific_heat_capacity get_constant_pressure_heat_capacity_as_gas(
@@ -226,7 +226,7 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
         }
 
         // Letsou-Stiel method: https://chemicals.readthedocs.io/en/latest/chemicals.viscosity.html?highlight=letsou%20stiel#chemicals.viscosity.Letsou_Stiel
-        constexpr si::dynamic_viscosity estimate_liquid_viscosity_from_letsou_stiel(
+        constexpr si::dynamic_viscosity estimate_viscosity_as_liquid_from_letsou_stiel(
             const double acentric_factor,
             const si::molar_mass molar_mass,  
             const si::temperature temperature, 
@@ -313,7 +313,7 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
             return (log(reduced_pressure) - f0(reduced_temperature)) / f1(reduced_temperature);
         }
         // Lee Kesler method: https://en.wikipedia.org/wiki/Lee%E2%80%93Kesler_method
-        constexpr si::pressure estimate_liquid_vapor_pressure_from_lee_kesler(
+        constexpr si::pressure estimate_vapor_pressure_as_liquid_from_lee_kesler(
             const double acentric_factor, 
             const si::temperature temperature, 
             const si::temperature critical_temperature, 
@@ -349,7 +349,7 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
         }
 
         // Bird-Steward-Lightfoot: https://chemicals.readthedocs.io/en/latest/chemicals.lennard_jones.html#molecular-diameter-correlations
-        constexpr si::molar_volume estimate_liquid_molar_volume_from_bird_steward_lightfoot_2(const si::length molecular_diameter)
+        constexpr si::molar_volume estimate_molar_volume_as_liquid_from_bird_steward_lightfoot_2(const si::length molecular_diameter)
         {
             double molecular_diameter_in_angstrom = si::unitless(molecular_diameter / si::angstrom);
             double liquid_molar_volume_in_meter3_per_mole = pow(molecular_diameter_in_angstrom / 1.222f, 3.0);
@@ -357,7 +357,7 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
         }
 
         // Goodman: https://chemicals.readthedocs.io/en/latest/chemicals.volume.html#pure-solid-correlations
-        constexpr si::molar_volume estimate_solid_molar_volume_from_goodman(
+        constexpr si::molar_volume estimate_molar_volume_as_solid_from_goodman(
             const si::molar_volume liquid_molar_volume_at_melting_point, 
             const si::temperature temperature, 
             const si::temperature triple_point_temperature
@@ -370,7 +370,7 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
         }
 
         // Goodman: https://chemicals.readthedocs.io/en/latest/chemicals.volume.html#pure-solid-correlations
-        constexpr si::molar_volume estimate_liquid_molar_volume_from_goodman(
+        constexpr si::molar_volume estimate_molar_volume_as_liquid_from_goodman(
             const si::molar_volume solid_molar_volume, 
             const si::temperature temperature, 
             const si::temperature triple_point_temperature
@@ -383,7 +383,7 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
         }
 
         // Rackett equation
-        constexpr si::molar_volume estimate_liquid_molar_volume_from_rackett(const si::temperature temperature, 
+        constexpr si::molar_volume estimate_molar_volume_as_liquid_from_rackett(const si::temperature temperature, 
             const si::temperature critical_temperature, 
             const si::pressure critical_pressure, 
             const double critical_compressibility
@@ -392,7 +392,7 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
             return si::universal_gas_constant * critical_temperature / critical_pressure * pow(critical_compressibility, 1.0 + pow(1.0 - reduced_temperature, 2.0/7.0));
         }
 
-        constexpr si::molar_volume estimate_gas_molar_volume(
+        constexpr si::molar_volume estimate_molar_volume_as_gas(
             const si::pressure pressure, 
             const si::pressure critical_pressure, 
             const si::temperature temperature, 
@@ -406,17 +406,6 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
         constexpr si::density get_density_from_molar_volume(const si::molar_volume molar_volume, const si::molar_mass molar_mass)
         {
             return molar_mass/molar_volume;
-        }
-
-        // Clapeyron: https://chemicals.readthedocs.io/en/latest/chemicals.vapor_pressure.html#sublimation-pressure-estimation-correlations
-        constexpr si::pressure estimate_vapor_pressure_as_solid_from_clapeyron(
-            const si::molar_mass molar_mass,
-            const si::specific_energy latent_heat_of_sublimation,
-            const si::temperature temperature,
-            const si::temperature triple_point_temperature,
-            const si::pressure triple_point_pressure
-        ){
-            return triple_point_pressure * exp(-si::unitless((latent_heat_of_sublimation*molar_mass / si::universal_gas_constant) * (1.0/temperature - 1.0/triple_point_temperature)));
         }
 
         // Eucken: https://chemicals.readthedocs.io/en/latest/chemicals.thermal_conductivity.html#pure-low-pressure-liquid-correlations
@@ -438,6 +427,17 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
         ){
             si::molar_heat_capacity constant_molar_volume_heat_capacity_as_gas = constant_volume_specific_heat_capacity_as_gas * molar_mass;
             return thermal_conductivity_as_gas *molar_mass / ((1.0 + (9.0/4.0) / si::unitless(constant_molar_volume_heat_capacity_as_gas/si::universal_gas_constant))*constant_molar_volume_heat_capacity_as_gas);
+        }
+
+        // Clapeyron: https://chemicals.readthedocs.io/en/latest/chemicals.vapor_pressure.html#sublimation-pressure-estimation-correlations
+        constexpr si::pressure estimate_vapor_pressure_as_solid_from_clapeyron(
+            const si::molar_mass molar_mass,
+            const si::specific_energy latent_heat_of_sublimation,
+            const si::temperature temperature,
+            const si::temperature triple_point_temperature,
+            const si::pressure triple_point_pressure
+        ){
+            return triple_point_pressure * exp(-si::unitless((latent_heat_of_sublimation*molar_mass / si::universal_gas_constant) * (1.0/temperature - 1.0/triple_point_temperature)));
         }
 
     }
