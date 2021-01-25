@@ -14,9 +14,7 @@ namespace compound{
 
         /*
         NOTE: 
-        The namespace here each serves as a "category of primitives" where objects are variables of primitive types.
-        We may consider moving to the academic layer if we discover its implementation can be done in a general way.
-
+        `compound::property` serves as a "category of primitives" where objects are variables of primitive types.
         This namespace maps to and from critical point metrics: pressure, volume, temperature, compressibility, and acentricity
 
 
@@ -35,21 +33,13 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
 \end{tikzcd}
 
 
-        ROADMAP: 
-        Tested  Implemented Correlation                 Property
-        X       X           Klincewicz                  critical properties
-        X       X           Ihmels                      critical properties
-        X       X           Sato Reidel                 liquid thermal conductivity, boiling point
-        X       X           Pitzer                      heat of vaporization, accentric factor
-        X       X           Chen                        heat of vaporization, boiling point
-        X       X           Tee Gotoh Steward 1         molecular diameter, critical properties
-        X       X           Tee Gotoh Steward 2         acentric factor, molecular diameter, critical properties
-        X       X           Letsou-Stiel                liquid viscosity, accentric factor
-        X       X           Lee-Kestler                 vapor pressure, accentric factor
-                X           Bird Stewart Lightfoot 1    molecular diameter, critical volume
-                X           Bird Stewart Lightfoot 2    molecular diameter, liquid volume
-                X           Rackett                     liquid volume, critical properties
-                X           Goodman                     liquid volume, solid volume
+        `vetted.hpp` describes mappings within this category which are vetted by peer review. 
+        Other mappings within this category describe custom correlations which were created exclusively for use within the model.
+        These more speculative correlations are largely created out of desperation, 
+        and should only be used when there are no other peer-review correlations available to derive a property.
+        The speculative correlations are included in a separate file, `speculative.hpp`, 
+        so that we can clearly delineatly what is or is not peer-reviewed,
+        and we append them with the prefix `guess_*` (as opposed to `estimate_*`) to warn about their limited use.
         */
 
         // taken from https://eng.libretexts.org/Bookshelves/Chemical_Engineering/Book%3A_Distillation_Science_(Coleman)/03%3A_Critical_Properties_and_Acentric_Factor
@@ -439,6 +429,5 @@ MTT_m \arrow[ru, "Sheffy-Johnson"] & T_c M T T_b \arrow[u, "Sato-Reidel", shift 
         ){
             return triple_point_pressure * exp(-si::unitless((latent_heat_of_sublimation*molar_mass / si::universal_gas_constant) * (1.0/temperature - 1.0/triple_point_temperature)));
         }
-
     }
 }

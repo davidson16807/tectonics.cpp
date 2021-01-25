@@ -4,8 +4,10 @@
 #include <catch/catch.hpp>
 
 // in house libraries
-#include "si_test_utils.hpp"
-#include "corresponding_states.hpp"
+#include <si.hpp>
+#include <si_test_utils.hpp>
+
+#include "vetted.hpp"
 
 
 TEST_CASE( "Klincewicz method purity", "[properties]" ) {
