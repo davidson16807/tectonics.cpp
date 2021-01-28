@@ -499,6 +499,10 @@ TEST_CASE( "Goodman method purity", "[properties]" ) {
 	SECTION("Calling a function twiced with the same arguments must produce the same results"){
     	CHECK(compound::property::estimate_molar_volume_as_liquid_from_goodman(VS,T,T0) == compound::property::estimate_molar_volume_as_liquid_from_goodman(VS,T,T0));
     }
+
+	SECTION("Calling a function twiced with the same arguments must produce the same results"){
+    	CHECK(compound::property::estimate_triple_point_temperature_from_goodman(VL,VS,T) == compound::property::estimate_triple_point_temperature_from_goodman(VL,VS,T));
+    }
 }
 
 TEST_CASE( "Goodman method accuracy", "[properties]" ) {
@@ -510,6 +514,7 @@ TEST_CASE( "Goodman method accuracy", "[properties]" ) {
 
 	// std::cout << compound::property::estimate_molar_volume_as_solid_from_goodman(VL,T,T0).to_string() << "  " << VS.to_string() << std::endl;
 	// std::cout << compound::property::estimate_molar_volume_as_liquid_from_goodman(VS,T,T0).to_string() << "  " << VL.to_string() << std::endl;
+	// std::cout << compound::property::estimate_triple_point_temperature_from_goodman(VL,T,T0).to_string() << "  " << T0.to_string() << std::endl;
 
 	SECTION("Goodman method must agree on predictions to within 30%"){
     	CHECK(si::is_within_fraction(VS, compound::property::estimate_molar_volume_as_solid_from_goodman(VL,T,T0), 0.3));
@@ -517,6 +522,10 @@ TEST_CASE( "Goodman method accuracy", "[properties]" ) {
 
 	SECTION("Goodman method must agree on predictions to within 30%"){
     	CHECK(si::is_within_fraction(VL, compound::property::estimate_molar_volume_as_liquid_from_goodman(VS,T,T0), 0.3));
+    }
+
+	SECTION("Goodman method must agree on predictions to within 30%"){
+    	CHECK(si::is_within_fraction(T0, compound::property::estimate_triple_point_temperature_from_goodman(VL,VS,T), 0.3));
     }
 }
 
@@ -530,6 +539,10 @@ TEST_CASE( "Goodman consistency", "[properties]" ) {
     SECTION("Goodman method must be invertible"){
     	CHECK(si::is_within_fraction(VS, compound::property::estimate_molar_volume_as_solid_from_goodman(compound::property::estimate_molar_volume_as_liquid_from_goodman(VS,T,T0),T,T0), 1e-4));
     	CHECK(si::is_within_fraction(VL, compound::property::estimate_molar_volume_as_liquid_from_goodman(compound::property::estimate_molar_volume_as_solid_from_goodman(VL,T,T0),T,T0), 1e-4));
+    	CHECK(si::is_within_fraction(T0, compound::property::estimate_triple_point_temperature_from_goodman(
+    		compound::property::estimate_molar_volume_as_liquid_from_goodman(VS,T,T0),
+    		compound::property::estimate_molar_volume_as_solid_from_goodman(VL,T,T0), T
+    	), 1e-4));
     }
 }
 
