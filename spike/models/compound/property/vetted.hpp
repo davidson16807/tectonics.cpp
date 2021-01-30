@@ -255,6 +255,18 @@ namespace compound{
             }
         }
 
+        // Lee Kesler method (1975): https://chemicals.readthedocs.io/en/latest/chemicals.acentric.html
+        constexpr double estimate_accentric_factor_from_lee_kesler(
+            const si::pressure liquid_saturated_vapor_pressure, 
+            const si::temperature normal_melting_point_temperature, 
+            const si::temperature critical_temperature,
+            const si::temperature temperature, 
+            const si::pressure critical_pressure
+        ){
+            double reduced_pressure    = si::unitless(liquid_saturated_vapor_pressure / critical_pressure);
+            double reduced_temperature = si::unitless(temperature / critical_temperature);
+            return (log(reduced_pressure) - f0(reduced_temperature)) / f1(reduced_temperature);
+        }
         // Lee Kesler method (1975): https://en.wikipedia.org/wiki/Lee%E2%80%93Kesler_method
         constexpr double estimate_accentric_factor_from_lee_kesler(
             const si::pressure liquid_saturated_vapor_pressure, 
@@ -388,9 +400,9 @@ namespace compound{
 
         // Eucken: https://chemicals.readthedocs.io/en/latest/chemicals.thermal_conductivity.html#pure-low-pressure-liquid-correlations
         constexpr si::dynamic_viscosity estimate_viscosity_as_gas_from_eucken(
-            const si::thermal_conductivity thermal_conductivity_as_gas,
+            const si::specific_heat_capacity constant_volume_specific_heat_capacity_as_gas,
             const si::molar_mass molar_mass,
-            const si::specific_heat_capacity constant_volume_specific_heat_capacity_as_gas
+            const si::thermal_conductivity thermal_conductivity_as_gas
         ){
             si::molar_heat_capacity constant_molar_volume_heat_capacity_as_gas = constant_volume_specific_heat_capacity_as_gas * molar_mass;
             return thermal_conductivity_as_gas *molar_mass / ((1.0 + (9.0/4.0) / si::unitless(constant_molar_volume_heat_capacity_as_gas/si::universal_gas_constant))*constant_molar_volume_heat_capacity_as_gas);
@@ -398,8 +410,18 @@ namespace compound{
 
         // Clapeyron: https://chemicals.readthedocs.io/en/latest/chemicals.vapor_pressure.html#sublimation-pressure-estimation-correlations
         constexpr si::pressure estimate_vapor_pressure_as_solid_from_clapeyron(
-            const si::molar_mass molar_mass,
             const si::specific_energy latent_heat_of_sublimation,
+            const si::molar_mass molar_mass,
+            const si::temperature temperature,
+            const si::temperature triple_point_temperature,
+            const si::pressure triple_point_pressure
+        ){
+            return triple_point_pressure * exp(-si::unitless((latent_heat_of_sublimation*molar_mass / si::universal_gas_constant) * (1.0/temperature - 1.0/triple_point_temperature)));
+        }
+
+        constexpr si::pressure estimate_latent_heat_of_sublimation_from_clapeyron(
+            const si::specific_energy vapor_pressure_as_solid,
+            const si::molar_mass molar_mass,
             const si::temperature temperature,
             const si::temperature triple_point_temperature,
             const si::pressure triple_point_pressure
