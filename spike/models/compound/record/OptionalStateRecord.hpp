@@ -146,7 +146,7 @@ namespace record {
         */
         constexpr OptionalStateRecord<T1> substitute(const OptionalStateRecord<T1> other) const
         {
-            return index() > 0? *this : other;
+            return value.index() > 0? *this : other;
         }
         /*
         Return whichever record provides more information, going by the following definition:
@@ -155,14 +155,18 @@ namespace record {
         */
         constexpr OptionalStateRecord<T1> compare(const OptionalStateRecord<T1> other) const
         {
-            return index() >= other.index()? *this : other;
+            return value.index() >= other.value.index()? *this : other;
+        }
+        constexpr OptionalStateRecordVariant<T1> entry() const 
+        {
+        	return value;
         }
         /*
 		Return whether a value exists within the record
         */
         constexpr bool has_value() const
         {
-            return index() == 0;
+            return value.index() == 0;
         }
         /*
 		Return whether a value exists within the record
