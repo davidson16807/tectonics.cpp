@@ -14,7 +14,7 @@ double test_OptionalSpectralField(const si::wavenumber nlo, const si::wavenumber
 	return si::unitless(si::mole*si::universal_gas_constant*T/p/si::liter);
 }
 
-TEST_CASE( "OptionalSpectralField substitute() purity", "[field]" ) {
+TEST_CASE( "OptionalSpectralField value_or() purity", "[field]" ) {
     si::wavenumber nlo = 14286.0/si::centimeter;
     si::wavenumber nhi = 25000.0/si::centimeter;
     si::pressure p = si::standard_pressure;
@@ -28,18 +28,18 @@ TEST_CASE( "OptionalSpectralField substitute() purity", "[field]" ) {
 
 	SECTION("Calling a function twice with the same arguments must produce the same results")
 	{
-    	CHECK(unknown.substitute(unknown )(nlo, nhi, p, T) 
-    	   == unknown.substitute(unknown )(nlo, nhi, p, T));
-    	CHECK(constant.substitute(constant)(nlo, nhi, p, T) 
-    	   == constant.substitute(constant)(nlo, nhi, p, T));
-    	CHECK(sample.substitute(sample  )(nlo, nhi, p, T) 
-    	   == sample.substitute(sample  )(nlo, nhi, p, T));
-    	CHECK(relation.substitute(relation)(nlo, nhi, p, T) 
-    	   == relation.substitute(relation)(nlo, nhi, p, T));
+    	CHECK(unknown.value_or(unknown )(nlo, nhi, p, T) 
+    	   == unknown.value_or(unknown )(nlo, nhi, p, T));
+    	CHECK(constant.value_or(constant)(nlo, nhi, p, T) 
+    	   == constant.value_or(constant)(nlo, nhi, p, T));
+    	CHECK(sample.value_or(sample  )(nlo, nhi, p, T) 
+    	   == sample.value_or(sample  )(nlo, nhi, p, T));
+    	CHECK(relation.value_or(relation)(nlo, nhi, p, T) 
+    	   == relation.value_or(relation)(nlo, nhi, p, T));
     }
 }
 
-TEST_CASE( "OptionalSpectralField substitute() identity", "[field]" ) {
+TEST_CASE( "OptionalSpectralField value_or() identity", "[field]" ) {
     si::wavenumber nlo = 14286.0/si::centimeter;
     si::wavenumber nhi = 25000.0/si::centimeter;
     si::pressure p = si::standard_pressure;
@@ -51,16 +51,16 @@ TEST_CASE( "OptionalSpectralField substitute() identity", "[field]" ) {
 	compound::field::OptionalSpectralField<double> relation  = compound::field::SpectralFunction<double>([](const si::wavenumber nlo, si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_OptionalSpectralField(nlo,nhi,p,T); });
 
 
-	SECTION("There exists a value that when applied to a function returns the original value")
+	SECTION("There exists a entry that when applied to a function returns the original entry")
 	{
-    	CHECK(unknown.substitute(unknown)(nlo, nhi, p, T) == unknown(nlo, nhi, p, T));
-    	CHECK(constant.substitute(unknown)(nlo, nhi, p, T) == constant(nlo, nhi, p, T));
-    	CHECK(sample.substitute(unknown)(nlo, nhi, p, T) == sample(nlo, nhi, p, T));
-    	CHECK(relation.substitute(unknown)(nlo, nhi, p, T) == relation(nlo, nhi, p, T));
+    	CHECK(unknown.value_or(unknown)(nlo, nhi, p, T) == unknown(nlo, nhi, p, T));
+    	CHECK(constant.value_or(unknown)(nlo, nhi, p, T) == constant(nlo, nhi, p, T));
+    	CHECK(sample.value_or(unknown)(nlo, nhi, p, T) == sample(nlo, nhi, p, T));
+    	CHECK(relation.value_or(unknown)(nlo, nhi, p, T) == relation(nlo, nhi, p, T));
     }
 }
 
-TEST_CASE( "OptionalSpectralField substitute() associativity", "[field]" ) {
+TEST_CASE( "OptionalSpectralField value_or() associativity", "[field]" ) {
     si::wavenumber nlo = 14286.0/si::centimeter;
     si::wavenumber nhi = 25000.0/si::centimeter;
     si::pressure p = si::standard_pressure;
@@ -72,41 +72,41 @@ TEST_CASE( "OptionalSpectralField substitute() associativity", "[field]" ) {
 
 	SECTION("Functions can be applied in any order and still produce the same results")
 	{
-    	CHECK(unknown.substitute(constant.substitute(sample))(nlo, nhi, p, T) == 
-    		  unknown.substitute(constant).substitute(sample)(nlo, nhi, p, T));
+    	CHECK(unknown.value_or(constant.value_or(sample))(nlo, nhi, p, T) == 
+    		  unknown.value_or(constant).value_or(sample)(nlo, nhi, p, T));
 
-    	CHECK(unknown.substitute(sample.substitute(constant))(nlo, nhi, p, T) == 
-    		  unknown.substitute(sample).substitute(constant)(nlo, nhi, p, T));
-
-
-    	CHECK(unknown.substitute(constant.substitute(sample))(nlo, nhi, p, T) == 
-    		  unknown.substitute(constant).substitute(sample)(nlo, nhi, p, T));
-
-    	CHECK(unknown.substitute(sample.substitute(constant))(nlo, nhi, p, T) == 
-    		  unknown.substitute(sample).substitute(constant)(nlo, nhi, p, T));
+    	CHECK(unknown.value_or(sample.value_or(constant))(nlo, nhi, p, T) == 
+    		  unknown.value_or(sample).value_or(constant)(nlo, nhi, p, T));
 
 
+    	CHECK(unknown.value_or(constant.value_or(sample))(nlo, nhi, p, T) == 
+    		  unknown.value_or(constant).value_or(sample)(nlo, nhi, p, T));
+
+    	CHECK(unknown.value_or(sample.value_or(constant))(nlo, nhi, p, T) == 
+    		  unknown.value_or(sample).value_or(constant)(nlo, nhi, p, T));
 
 
 
-    	CHECK(constant.substitute(sample.substitute(unknown))(nlo, nhi, p, T) == 
-    		  constant.substitute(sample).substitute(unknown)(nlo, nhi, p, T));
-
-    	CHECK(constant.substitute(unknown.substitute(sample))(nlo, nhi, p, T) == 
-    		  constant.substitute(unknown).substitute(sample)(nlo, nhi, p, T));
 
 
-    	CHECK(constant.substitute(sample.substitute(unknown))(nlo, nhi, p, T) == 
-    		  constant.substitute(sample).substitute(unknown)(nlo, nhi, p, T));
+    	CHECK(constant.value_or(sample.value_or(unknown))(nlo, nhi, p, T) == 
+    		  constant.value_or(sample).value_or(unknown)(nlo, nhi, p, T));
 
-    	CHECK(constant.substitute(unknown.substitute(sample))(nlo, nhi, p, T) == 
-    		  constant.substitute(unknown).substitute(sample)(nlo, nhi, p, T));
+    	CHECK(constant.value_or(unknown.value_or(sample))(nlo, nhi, p, T) == 
+    		  constant.value_or(unknown).value_or(sample)(nlo, nhi, p, T));
+
+
+    	CHECK(constant.value_or(sample.value_or(unknown))(nlo, nhi, p, T) == 
+    		  constant.value_or(sample).value_or(unknown)(nlo, nhi, p, T));
+
+    	CHECK(constant.value_or(unknown.value_or(sample))(nlo, nhi, p, T) == 
+    		  constant.value_or(unknown).value_or(sample)(nlo, nhi, p, T));
 
     }
 }
 
 
-TEST_CASE( "OptionalSpectralField substitute() increasing", "[field]" ) {
+TEST_CASE( "OptionalSpectralField value_or() increasing", "[field]" ) {
     si::wavenumber nlo = 14286.0/si::centimeter;
     si::wavenumber nhi = 25000.0/si::centimeter;
     si::pressure p = si::standard_pressure;
@@ -117,31 +117,31 @@ TEST_CASE( "OptionalSpectralField substitute() increasing", "[field]" ) {
 	compound::field::OptionalSpectralField<double> sample  = compound::field::SpectralSample<double>(2.0, nlo, nhi, p, T);
 	compound::field::OptionalSpectralField<double> relation  = compound::field::SpectralFunction<double>([](const si::wavenumber nlo, si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_OptionalSpectralField(nlo,nhi,p,T); });
 
-	SECTION("An attribute of a function's return value either increases or remains the same when compared to the same attribute of the input value")
+	SECTION("An attribute of a function's return entry either increases or remains the same when compared to the same attribute of the input entry")
 	{
 
-    	CHECK(unknown.substitute(unknown).index() >= unknown.index());
-    	CHECK(unknown.substitute(constant).index() >= unknown.index());
-    	CHECK(unknown.substitute(sample).index() >= unknown.index());
-    	CHECK(unknown.substitute(relation).index() >= unknown.index());
+    	CHECK(unknown.value_or(unknown).index() >= unknown.index());
+    	CHECK(unknown.value_or(constant).index() >= unknown.index());
+    	CHECK(unknown.value_or(sample).index() >= unknown.index());
+    	CHECK(unknown.value_or(relation).index() >= unknown.index());
 
 
-    	CHECK(constant.substitute(unknown).index() >= constant.index());
-    	CHECK(constant.substitute(constant).index() >= constant.index());
-    	CHECK(constant.substitute(sample).index() >= constant.index());
-    	CHECK(constant.substitute(relation).index() >= constant.index());
+    	CHECK(constant.value_or(unknown).index() >= constant.index());
+    	CHECK(constant.value_or(constant).index() >= constant.index());
+    	CHECK(constant.value_or(sample).index() >= constant.index());
+    	CHECK(constant.value_or(relation).index() >= constant.index());
 
 
-    	CHECK(sample.substitute(unknown).index() >= sample.index());
-    	CHECK(sample.substitute(constant).index() >= sample.index());
-    	CHECK(sample.substitute(sample).index() >= sample.index());
-    	CHECK(sample.substitute(relation).index() >= sample.index());
+    	CHECK(sample.value_or(unknown).index() >= sample.index());
+    	CHECK(sample.value_or(constant).index() >= sample.index());
+    	CHECK(sample.value_or(sample).index() >= sample.index());
+    	CHECK(sample.value_or(relation).index() >= sample.index());
 
 
-    	CHECK(relation.substitute(unknown).index() >= relation.index());
-    	CHECK(relation.substitute(constant).index() >= relation.index());
-    	CHECK(relation.substitute(sample).index() >= relation.index());
-    	CHECK(relation.substitute(relation).index() >= relation.index());
+    	CHECK(relation.value_or(unknown).index() >= relation.index());
+    	CHECK(relation.value_or(constant).index() >= relation.index());
+    	CHECK(relation.value_or(sample).index() >= relation.index());
+    	CHECK(relation.value_or(relation).index() >= relation.index());
 
     }
 }
@@ -188,7 +188,7 @@ TEST_CASE( "OptionalSpectralField compare() identity", "[field]" ) {
 	compound::field::OptionalSpectralField<double> sample  = compound::field::SpectralSample<double>(2.0, nlo, nhi, p, T);
 	compound::field::OptionalSpectralField<double> relation  = compound::field::SpectralFunction<double>([](const si::wavenumber nlo, si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_OptionalSpectralField(nlo,nhi,p,T); });
 
-	SECTION("There exists a value that when applied to a function returns the original value")
+	SECTION("There exists a entry that when applied to a function returns the original entry")
 	{
     	CHECK(unknown.compare(unknown)(nlo, nhi, p, T) == unknown(nlo, nhi, p, T));
     	CHECK(constant.compare(unknown)(nlo, nhi, p, T) == constant(nlo, nhi, p, T));
@@ -254,7 +254,7 @@ TEST_CASE( "OptionalSpectralField compare() increasing", "[field]" ) {
 	compound::field::OptionalSpectralField<double> sample  = compound::field::SpectralSample<double>(2.0, nlo, nhi, p, T);
 	compound::field::OptionalSpectralField<double> relation  = compound::field::SpectralFunction<double>([](const si::wavenumber nlo, si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_OptionalSpectralField(nlo,nhi,p,T); });
 
-	SECTION("An attribute of a function's return value either increases or remains the same when compared to the same attribute of the input value")
+	SECTION("An attribute of a function's return entry either increases or remains the same when compared to the same attribute of the input entry")
 	{
 
     	CHECK(unknown.compare(unknown).index() >= unknown.index());
@@ -341,7 +341,7 @@ TEST_CASE( "OptionalSpectralField map() purity", "[field]" ) {
 	compound::field::OptionalSpectralField<double> constant  = 1.0;
 	compound::field::OptionalSpectralField<double> sample  = compound::field::SpectralSample<double>(2.0, nlo, nhi, p, T);
 	compound::field::OptionalSpectralField<double> relation  = compound::field::SpectralFunction<double>([](const si::wavenumber nlo, si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_OptionalSpectralField(nlo,nhi,p,T); });
-	std::function<double(const double)> f  = [](const double value){ return 1.0 - 2.0*value; };
+	std::function<double(const double)> f  = [](const double entry){ return 1.0 - 2.0*entry; };
 
 	SECTION("Calling a function twice with the same arguments must produce the same results")
 	{
@@ -362,9 +362,9 @@ TEST_CASE( "OptionalSpectralField map() identity", "[field]" ) {
 	compound::field::OptionalSpectralField<double> constant  = 1.0;
 	compound::field::OptionalSpectralField<double> sample  = compound::field::SpectralSample<double>(2.0, nlo, nhi, p, T);
 	compound::field::OptionalSpectralField<double> relation  = compound::field::SpectralFunction<double>([](const si::wavenumber nlo, si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_OptionalSpectralField(nlo,nhi,p,T); });
-	std::function<double(const double)> I  = [](const double value){ return value; };
+	std::function<double(const double)> I  = [](const double entry){ return entry; };
 
-	SECTION("There exists a value that when applied to a function returns the original value")
+	SECTION("There exists a entry that when applied to a function returns the original entry")
 	{
     	CHECK(unknown.map(I)(nlo, nhi, p, T) == unknown(nlo, nhi, p, T));
     	CHECK(constant.map(I)(nlo, nhi, p, T) == constant(nlo, nhi, p, T));
@@ -392,7 +392,7 @@ TEST_CASE( "OptionalSpectralField map_to_constant() purity", "[field]" ) {
 	compound::field::OptionalSpectralField<double> sample  = compound::field::SpectralSample<double>(2.0, nlo, nhi, p, T);
 	compound::field::OptionalSpectralField<double> relation  = compound::field::SpectralFunction<double>([](const si::wavenumber nlo, si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_OptionalSpectralField(nlo,nhi,p,T); });
 	std::function<double(const double, const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure, const si::temperature)> f  = 
-		[](const double value, const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return 1.0 - 2.0*value; };
+		[](const double entry, const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return 1.0 - 2.0*entry; };
 
 	SECTION("Calling a function twice with the same arguments must produce the same results")
 	{
@@ -414,9 +414,9 @@ TEST_CASE( "OptionalSpectralField map_to_constant() identity", "[field]" ) {
 	compound::field::OptionalSpectralField<double> sample  = compound::field::SpectralSample<double>(2.0, nlo, nhi, p, T);
 	compound::field::OptionalSpectralField<double> relation  = compound::field::SpectralFunction<double>([](const si::wavenumber nlo, si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_OptionalSpectralField(nlo,nhi,p,T); });
 	std::function<double(const double, const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure, const si::temperature)> I  = 
-		[](const double value, const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return value; };
+		[](const double entry, const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return entry; };
 
-	SECTION("There exists a value that when applied to a function returns the original value")
+	SECTION("There exists a entry that when applied to a function returns the original entry")
 	{
     	CHECK(unknown.map_to_constant(nlo,nhi,p,T,I)  == unknown(nlo,nhi,p,T) );
     	CHECK(constant.map_to_constant(nlo,nhi,p,T,I)  == constant(nlo,nhi,p,T) );

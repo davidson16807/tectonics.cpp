@@ -103,7 +103,7 @@ TEST_CASE( "CompletedSpectralField compare() increasing", "[field]" ) {
 	compound::field::CompletedSpectralField<double> sample  = compound::field::SpectralSample<double>(2.0, nlo, nhi, p, T);
 	compound::field::CompletedSpectralField<double> relation  = compound::field::SpectralFunction<double>([](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_CompletedSpectralField(nlo,nhi,p,T); });
 
-	SECTION("An attribute of a function's return value either increases or remains the same when compared to the same attribute of the input value")
+	SECTION("An attribute of a function's return entry either increases or remains the same when compared to the same attribute of the input entry")
 	{
 
     	CHECK(constant.compare(constant).index() >= constant.index());
@@ -171,7 +171,7 @@ TEST_CASE( "CompletedSpectralField map() purity", "[field]" ) {
 	compound::field::CompletedSpectralField<double> constant  = 1.0;
 	compound::field::CompletedSpectralField<double> sample  = compound::field::SpectralSample<double>(2.0, nlo, nhi, p, T);
 	compound::field::CompletedSpectralField<double> relation  = compound::field::SpectralFunction<double>([](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_CompletedSpectralField(nlo,nhi,p,T); });
-	std::function<double(const double)> f  = [](const double value){ return 1.0 - 2.0*value; };
+	std::function<double(const double)> f  = [](const double entry){ return 1.0 - 2.0*entry; };
 
 	SECTION("Calling a function twice with the same arguments must produce the same results")
 	{
@@ -190,9 +190,9 @@ TEST_CASE( "CompletedSpectralField map() identity", "[field]" ) {
 	compound::field::CompletedSpectralField<double> constant  = 1.0;
 	compound::field::CompletedSpectralField<double> sample  = compound::field::SpectralSample<double>(2.0, nlo, nhi, p, T);
 	compound::field::CompletedSpectralField<double> relation  = compound::field::SpectralFunction<double>([](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_CompletedSpectralField(nlo,nhi,p,T); });
-	std::function<double(const double)> I  = [](const double value){ return value; };
+	std::function<double(const double)> I  = [](const double entry){ return entry; };
 
-	SECTION("There exists a value that when applied to a function returns the original value")
+	SECTION("There exists a entry that when applied to a function returns the original entry")
 	{
     	CHECK(constant.map(I)(nlo, nhi, p, T) == constant(nlo, nhi, p, T));
     	CHECK(sample.map(I)(nlo, nhi, p, T) == sample(nlo, nhi, p, T));
@@ -218,7 +218,7 @@ TEST_CASE( "CompletedSpectralField map_to_constant() purity", "[field]" ) {
 	compound::field::CompletedSpectralField<double> sample  = compound::field::SpectralSample<double>(2.0, nlo, nhi, p, T);
 	compound::field::CompletedSpectralField<double> relation  = compound::field::SpectralFunction<double>([](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_CompletedSpectralField(nlo,nhi,p,T); });
 	std::function<double(const double, const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure, const si::temperature)> f  = 
-		[](const double value, const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return 1.0 - 2.0*value; };
+		[](const double entry, const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return 1.0 - 2.0*entry; };
 
 	SECTION("Calling a function twice with the same arguments must produce the same results")
 	{
@@ -238,9 +238,9 @@ TEST_CASE( "CompletedSpectralField map_to_constant() identity", "[field]" ) {
     compound::field::CompletedSpectralField<double> sample  = compound::field::SpectralSample<double>(2.0, nlo, nhi, p, T);
     compound::field::CompletedSpectralField<double> relation  = compound::field::SpectralFunction<double>([](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_CompletedSpectralField(nlo,nhi,p,T); });
     std::function<double(const double, const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure, const si::temperature)> I  = 
-        [](const double value, const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return value; };
+        [](const double entry, const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return entry; };
 
-    SECTION("There exists a value that when applied to a function returns the original value")
+    SECTION("There exists a entry that when applied to a function returns the original entry")
     {
         CHECK(constant.map_to_constant(nlo, nhi, p,T,I)  == constant(nlo,nhi,p,T) );
         CHECK(sample.map_to_constant(nlo, nhi, p,T,I)  == sample(nlo,nhi,p,T) );

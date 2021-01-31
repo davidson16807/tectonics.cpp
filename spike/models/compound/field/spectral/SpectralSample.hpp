@@ -7,20 +7,20 @@ namespace field{
 	template<typename T>
     struct SpectralSample
     {
-    	T value;
+    	T entry;
         si::wavenumber nlo;
         si::wavenumber nhi;
     	si::pressure pressure;
     	si::temperature temperature;
 
     	SpectralSample(
-            const T value, 
+            const T entry, 
             const si::wavenumber nlo,
             const si::wavenumber nhi,
             const si::pressure pressure, 
             const si::temperature temperature
         ): 
-            value(value), 
+            entry(entry), 
             nlo(nlo),
             nhi(nhi),
             pressure(pressure), 
@@ -30,7 +30,7 @@ namespace field{
 	    constexpr bool operator==(const SpectralSample& other) const 
 	    {
 	    	return 
-               value == other.value 
+               entry == other.entry 
             && nlo == other.nlo
             && nhi == other.nhi
             && pressure == other.pressure 

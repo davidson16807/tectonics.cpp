@@ -102,7 +102,7 @@ TEST_CASE( "OptionalSpectralField complete() increasing", "[field]" ) {
     compound::field::CompletedSpectralField<double> known_sample  = compound::field::SpectralSample<double>(2.0, nlo, nhi, si::standard_pressure, si::standard_temperature);
     compound::field::CompletedSpectralField<double> known_relation  = compound::field::SpectralFunction<double>([](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_OptionalSpectralField2(nlo,nhi,p,T); });
 
-	SECTION("An attribute of a function's return value either increases or remains the same when compared to the same attribute of the input value")
+	SECTION("An attribute of a function's return entry either increases or remains the same when compared to the same attribute of the input entry")
 	{
     	CHECK(compound::field::complete(unknown,known_constant).index()+1 >= unknown.index());
     	CHECK(compound::field::complete(unknown,known_sample).index()+1 >= unknown.index());
