@@ -66,6 +66,28 @@ namespace field {
                 return [fcopy, a](const si::pressure p, const si::temperature T){ return fcopy(a(p, T)); };
             }
         };
+        class CompletedStateFieldFunctionVisitor
+        {
+        public:
+            CompletedStateFieldFunctionVisitor()
+            {
+
+            }
+            StateFunction<T1> operator()(const T1 a) const {
+                return [a](const si::pressure p, const si::temperature T) { return a; };
+            }
+            StateFunction<T1> operator()(const StateSample<T1> a) const {
+                T1 value = a.value;
+                return [value](const si::pressure p, const si::temperature T) { return value; };
+            }
+            StateFunction<T1> operator()(const StateFunction<T1> a) const {
+                // NOTE: capturing `this` results in a segfault when we call `this->f()`
+                // This occurs even when we capture `this` by value.
+                // I haven't clarified the reason, but it seems likely related to accessing 
+                // the `f` attribute in a object that destructs after we exit out of the `map` function.
+                return a;
+            }
+        };
         template<typename T2>
         class CompletedStateFieldMapToConstantVisitor
         {
@@ -149,6 +171,10 @@ namespace field {
         constexpr bool has_value() const
         {
             return value.index() == 0;
+        }
+        constexpr StateFunction<T1> function() const
+        {
+            return std::visit(CompletedStateFieldFunctionVisitor(), value);
         }
         /*
         Return a CompletedStateField<T1> field representing `a` after applying the map `f`

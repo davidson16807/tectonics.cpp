@@ -205,18 +205,33 @@ TEST_CASE( "CompletedStateField map_to_constant() purity", "[field]" ) {
 }
 
 TEST_CASE( "CompletedStateField map_to_constant() identity", "[field]" ) {
-	compound::field::CompletedStateField<double> constant  = 1.0;
-	compound::field::CompletedStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
-	compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
-	std::function<double(const double, const si::pressure, const si::temperature)> I  = 
-		[](const double value, const si::pressure p, const si::temperature T){ return value; };
-	si::pressure p = si::standard_pressure;
-	si::temperature T = si::standard_temperature;
+    compound::field::CompletedStateField<double> constant  = 1.0;
+    compound::field::CompletedStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
+    compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
+    std::function<double(const double, const si::pressure, const si::temperature)> I  = 
+        [](const double value, const si::pressure p, const si::temperature T){ return value; };
+    si::pressure p = si::standard_pressure;
+    si::temperature T = si::standard_temperature;
 
-	SECTION("There exists a value that when applied to a function returns the original value")
-	{
-    	CHECK(constant.map_to_constant(p,T,I)  == constant(p,T) );
-    	CHECK(sample.map_to_constant(p,T,I)  == sample(p,T) );
-    	CHECK(relation.map_to_constant(p,T,I)  == relation(p,T) );
+    SECTION("There exists a value that when applied to a function returns the original value")
+    {
+        CHECK(constant.map_to_constant(p,T,I)  == constant(p,T) );
+        CHECK(sample.map_to_constant(p,T,I)  == sample(p,T) );
+        CHECK(relation.map_to_constant(p,T,I)  == relation(p,T) );
+    }
+}
+
+TEST_CASE( "CompletedStateField function() consistency", "[field]" ) {
+    compound::field::CompletedStateField<double> constant  = 1.0;
+    compound::field::CompletedStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
+    compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
+    si::pressure p = si::standard_pressure;
+    si::temperature T = si::standard_temperature;
+
+    SECTION("field.function()(p,T) should return the same result as field(p,T)")
+    {
+        CHECK(constant.function()(p,T)  == constant(p,T) );
+        CHECK(sample.function()(p,T)  == sample(p,T) );
+        CHECK(relation.function()(p,T)  == relation(p,T) );
     }
 }
