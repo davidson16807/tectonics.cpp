@@ -88,7 +88,7 @@ TEST_CASE( "CompletedStateField compare() increasing", "[field]" ) {
 	compound::field::CompletedStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
 	compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
 
-	SECTION("An attribute of a function's return value either increases or remains the same when compared to the same attribute of the input value")
+	SECTION("An attribute of a function's return entry either increases or remains the same when compared to the same attribute of the input entry")
 	{
 
 
@@ -151,7 +151,7 @@ TEST_CASE( "CompletedStateField map() purity", "[field]" ) {
 	compound::field::CompletedStateField<double> constant  = 1.0;
 	compound::field::CompletedStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
 	compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
-	std::function<double(const double)> f  = [](const double value){ return 1.0 - 2.0*value; };
+	std::function<double(const double)> f  = [](const double entry){ return 1.0 - 2.0*entry; };
 	si::pressure p = si::standard_pressure;
 	si::temperature T = si::standard_temperature;
 
@@ -167,11 +167,11 @@ TEST_CASE( "CompletedStateField map() identity", "[field]" ) {
 	compound::field::CompletedStateField<double> constant  = 1.0;
 	compound::field::CompletedStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
 	compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
-	std::function<double(const double)> I  = [](const double value){ return value; };
+	std::function<double(const double)> I  = [](const double entry){ return entry; };
 	si::pressure p = si::standard_pressure;
 	si::temperature T = si::standard_temperature;
 
-	SECTION("There exists a value that when applied to a function returns the original value")
+	SECTION("There exists a entry that when applied to a function returns the original entry")
 	{
     	CHECK(constant.map(I)(p, T) == constant(p, T));
     	CHECK(sample.map(I)(p, T) == sample(p, T));
@@ -192,7 +192,7 @@ TEST_CASE( "CompletedStateField map_to_constant() purity", "[field]" ) {
 	compound::field::CompletedStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
 	compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
 	std::function<double(const double, const si::pressure, const si::temperature)> f  = 
-		[](const double value, const si::pressure p, const si::temperature T){ return 1.0 - 2.0*value; };
+		[](const double entry, const si::pressure p, const si::temperature T){ return 1.0 - 2.0*entry; };
 	si::pressure p = si::standard_pressure;
 	si::temperature T = si::standard_temperature;
 
@@ -209,11 +209,11 @@ TEST_CASE( "CompletedStateField map_to_constant() identity", "[field]" ) {
     compound::field::CompletedStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
     compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
     std::function<double(const double, const si::pressure, const si::temperature)> I  = 
-        [](const double value, const si::pressure p, const si::temperature T){ return value; };
+        [](const double entry, const si::pressure p, const si::temperature T){ return entry; };
     si::pressure p = si::standard_pressure;
     si::temperature T = si::standard_temperature;
 
-    SECTION("There exists a value that when applied to a function returns the original value")
+    SECTION("There exists a entry that when applied to a function returns the original entry")
     {
         CHECK(constant.map_to_constant(p,T,I)  == constant(p,T) );
         CHECK(sample.map_to_constant(p,T,I)  == sample(p,T) );

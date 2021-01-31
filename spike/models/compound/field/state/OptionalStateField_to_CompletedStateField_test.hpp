@@ -94,7 +94,7 @@ TEST_CASE( "OptionalStateField complete() increasing", "[field]" ) {
     compound::field::CompletedStateField<double> known_sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
     compound::field::CompletedStateField<double> known_relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional2(p,T); });
 
-	SECTION("An attribute of a function's return value either increases or remains the same when compared to the same attribute of the input value")
+	SECTION("An attribute of a function's return entry either increases or remains the same when compared to the same attribute of the input entry")
 	{
     	CHECK(compound::field::complete(unknown,known_constant).index()+1 >= unknown.index());
     	CHECK(compound::field::complete(unknown,known_sample).index()+1 >= unknown.index());

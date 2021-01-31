@@ -7,16 +7,16 @@ namespace field{
     template<typename T>
     struct StateSample
     {
-        T value;
+        T entry;
         si::pressure pressure;
         si::temperature temperature;
 
         StateSample(
-            const T value, 
+            const T entry, 
             const si::pressure pressure, 
             const si::temperature temperature
         ): 
-            value(value), 
+            entry(entry), 
             pressure(pressure), 
             temperature(temperature) 
         {}
@@ -24,7 +24,7 @@ namespace field{
         constexpr bool operator==(const StateSample& other) const 
         {
             return 
-               value == other.value 
+               entry == other.entry 
             && pressure == other.pressure 
             && temperature == other.temperature;
         }

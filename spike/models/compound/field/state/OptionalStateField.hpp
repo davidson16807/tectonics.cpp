@@ -18,7 +18,9 @@ namespace field {
     class OptionalStateField
     {
     	template<typename T2>
-	    using OptionalStateFieldVariant = std::variant<std::monostate, T2, StateSample<T2>, StateFunction<T2>>;
+        using OptionalStateFieldVariant = std::variant<std::monostate, T2, StateSample<T2>, StateFunction<T2>>;
+        template<typename T2>
+	    using CompletedStateFieldVariant = std::variant<T2, StateSample<T2>, StateFunction<T2>>;
 
         class OptionalStateFieldValueVisitor
         {
@@ -37,7 +39,7 @@ namespace field {
                 return a;
             }
             std::optional<T1> operator()(const StateSample<T1> a        ) const {
-                return a.value;
+                return a.entry;
             }
             std::optional<T1> operator()(const StateFunction<T1> a ) const {
                 return a(p,T);
@@ -61,11 +63,11 @@ namespace field {
                 return f(a);
             }
             OptionalStateFieldVariant<T2> operator()(const StateSample<T1> a        ) const {
-                return StateSample<T1>(f(a.value), a.pressure, a.temperature);
+                return StateSample<T1>(f(a.entry), a.pressure, a.temperature);
             }
             OptionalStateFieldVariant<T2> operator()(const StateFunction<T1> a ) const {
                 // NOTE: capturing `this` results in a segfault when we call `this->f()`
-                // This occurs even when we capture `this` by value.
+                // This occurs even when we capture `this` by entry.
                 // I haven't clarified the reason, but it seems likely related to accessing 
                 // the `f` attribute in a object that destructs after we exit out of the `map` function.
                 auto fcopy = f; 
@@ -97,56 +99,70 @@ namespace field {
                 return f(a, default_p, default_T);
             }
             std::optional<T2> operator()( const StateSample<T1> a        ) const {
-                return f(a.value, a.pressure, a.temperature);
+                return f(a.entry, a.pressure, a.temperature);
             }
             std::optional<T2> operator()( const StateFunction<T1> a ) const {
                 return f(a(default_p, default_T), default_p, default_T);
             }
         };
+        class OptionalStateFieldCompletionVisitor
+        {
+            CompletedStateFieldVariant<T1> fallback;
+        public:
+            OptionalStateFieldCompletionVisitor(CompletedStateFieldVariant<T1> fallback) : fallback(fallback)
+            {
 
-        OptionalStateFieldVariant<T1> value;
+            }
+            CompletedStateFieldVariant<T1> operator()(const std::monostate a               ) const {
+                return fallback;
+            }
+            CompletedStateFieldVariant<T1> operator()(const T1 a                           ) const {
+                return a;
+            }
+            CompletedStateFieldVariant<T1> operator()(const StateSample<T1> a        ) const {
+                return a;
+            }
+            CompletedStateFieldVariant<T1> operator()(const StateFunction<T1> a ) const {
+                return a;
+            }
+        };
+
+        OptionalStateFieldVariant<T1> entry;
     public:
-        constexpr OptionalStateField(const OptionalStateFieldVariant<T1> value)
-        : value(value)
+        constexpr OptionalStateField(const OptionalStateFieldVariant<T1> entry)
+        : entry(entry)
         {
 
         }
-        constexpr OptionalStateField(const std::monostate value)
-        : value(value)
+        constexpr OptionalStateField(const std::monostate entry)
+        : entry(entry)
         {
 
         }
-        constexpr OptionalStateField(const T1 value)
-        : value(value)
+        constexpr OptionalStateField(const T1 entry)
+        : entry(entry)
         {
 
         }
-        constexpr OptionalStateField(const StateSample<T1> value)
-        : value(value)
+        constexpr OptionalStateField(const StateSample<T1> entry)
+        : entry(entry)
         {
 
         }
-        constexpr OptionalStateField(const StateFunction<T1> value)
-        : value(value)
+        constexpr OptionalStateField(const StateFunction<T1> entry)
+        : entry(entry)
         {
 
         }
     	template<typename T2>
         constexpr OptionalStateField<T1>& operator=(const T2& other)
         {
-        	value = OptionalStateFieldVariant<T1>(other);
+        	entry = OptionalStateFieldVariant<T1>(other);
         	return *this;
         }
         constexpr std::optional<T1> operator()(const si::pressure p, const si::temperature T) const
         {
-            return std::visit(OptionalStateFieldValueVisitor(p, T), value);
-        }
-        /*
-        Return `a` if available, otherwise return `b` as a substitute.
-        */
-        constexpr OptionalStateField<T1> substitute(const OptionalStateField<T1> other) const
-        {
-            return value.index() > 0? *this : other;
+            return std::visit(OptionalStateFieldValueVisitor(p, T), entry);
         }
         /*
         Return whichever field provides more information, going by the following definition:
@@ -155,25 +171,32 @@ namespace field {
         */
         constexpr OptionalStateField<T1> compare(const OptionalStateField<T1> other) const
         {
-            return value.index() >= other.value.index()? *this : other;
-        }
-        constexpr OptionalStateFieldVariant<T1> entry() const 
-        {
-        	return value;
+            return entry.index() >= other.entry.index()? *this : other;
         }
         /*
-		Return whether a value exists within the field
+        Return `a` if available, otherwise return `b` as a substitute.
         */
-        constexpr bool has_value() const
+        constexpr OptionalStateField<T1> value_or(const OptionalStateField<T1> other) const
         {
-            return value.index() == 0;
+            return entry.index() > 0? *this : other;
+        }
+        constexpr CompletedStateFieldVariant<T1> value_or(CompletedStateFieldVariant<T1> fallback) const 
+        {
+            return std::visit(OptionalStateFieldCompletionVisitor(fallback), entry);
         }
         /*
-		Return whether a value exists within the field
+		Return whether a entry exists within the field
+        */
+        constexpr bool has_entry() const
+        {
+            return entry.index() == 0;
+        }
+        /*
+		Return whether a entry exists within the field
         */
         constexpr int index() const
         {
-            return value.index();
+            return entry.index();
         }
         /*
         Return a OptionalStateField<T1> field representing `a` after applying the map `f`
@@ -181,7 +204,7 @@ namespace field {
         template<typename T2>
         constexpr OptionalStateField<T2> map(const std::function<T2(const T1)> f) const
         {
-            return OptionalStateField<T2>(std::visit(OptionalStateFieldMapVisitor<T2>(f), value));
+            return OptionalStateField<T2>(std::visit(OptionalStateFieldMapVisitor<T2>(f), entry));
         }
         /*
         Return a OptionalStateField<T1> field representing `a` after applying the map `f`
@@ -192,7 +215,7 @@ namespace field {
             const si::temperature default_T, 
             const std::function<T2(const T1, const si::pressure, const si::temperature)> f
         ) const {
-            return std::visit(OptionalStateFieldMapToConstantVisitor<T2>(default_p, default_T, f), value);
+            return std::visit(OptionalStateFieldMapToConstantVisitor<T2>(default_p, default_T, f), entry);
         }
 
         template<typename T2>

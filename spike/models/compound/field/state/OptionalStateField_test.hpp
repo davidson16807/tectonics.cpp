@@ -14,7 +14,7 @@ double test_ideal_gas_law_optional(const si::pressure p, const si::temperature T
 	return si::unitless(si::mole*si::universal_gas_constant*T/p/si::liter);
 }
 
-TEST_CASE( "OptionalStateField substitute() purity", "[field]" ) {
+TEST_CASE( "OptionalStateField value_or() purity", "[field]" ) {
 	compound::field::OptionalStateField<double> unknown  = std::monostate();
 	compound::field::OptionalStateField<double> constant  = 1.0;
 	compound::field::OptionalStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
@@ -24,18 +24,18 @@ TEST_CASE( "OptionalStateField substitute() purity", "[field]" ) {
 
 	SECTION("Calling a function twice with the same arguments must produce the same results")
 	{
-    	CHECK(unknown.substitute(unknown )(p, T) 
-    	   == unknown.substitute(unknown )(p, T));
-    	CHECK(constant.substitute(constant)(p, T) 
-    	   == constant.substitute(constant)(p, T));
-    	CHECK(sample.substitute(sample  )(p, T) 
-    	   == sample.substitute(sample  )(p, T));
-    	CHECK(relation.substitute(relation)(p, T) 
-    	   == relation.substitute(relation)(p, T));
+    	CHECK(unknown.value_or(unknown )(p, T) 
+    	   == unknown.value_or(unknown )(p, T));
+    	CHECK(constant.value_or(constant)(p, T) 
+    	   == constant.value_or(constant)(p, T));
+    	CHECK(sample.value_or(sample  )(p, T) 
+    	   == sample.value_or(sample  )(p, T));
+    	CHECK(relation.value_or(relation)(p, T) 
+    	   == relation.value_or(relation)(p, T));
     }
 }
 
-TEST_CASE( "OptionalStateField substitute() identity", "[field]" ) {
+TEST_CASE( "OptionalStateField value_or() identity", "[field]" ) {
 	compound::field::OptionalStateField<double> unknown  = std::monostate();
 	compound::field::OptionalStateField<double> constant  = 1.0;
 	compound::field::OptionalStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
@@ -43,16 +43,16 @@ TEST_CASE( "OptionalStateField substitute() identity", "[field]" ) {
 	si::pressure p = si::standard_pressure;
 	si::temperature T = si::standard_temperature;
 
-	SECTION("There exists a value that when applied to a function returns the original value")
+	SECTION("There exists a entry that when applied to a function returns the original entry")
 	{
-    	CHECK(unknown.substitute(unknown)(p, T) == unknown(p, T));
-    	CHECK(constant.substitute(unknown)(p, T) == constant(p, T));
-    	CHECK(sample.substitute(unknown)(p, T) == sample(p, T));
-    	CHECK(relation.substitute(unknown)(p, T) == relation(p, T));
+    	CHECK(unknown.value_or(unknown)(p, T) == unknown(p, T));
+    	CHECK(constant.value_or(unknown)(p, T) == constant(p, T));
+    	CHECK(sample.value_or(unknown)(p, T) == sample(p, T));
+    	CHECK(relation.value_or(unknown)(p, T) == relation(p, T));
     }
 }
 
-TEST_CASE( "OptionalStateField substitute() associativity", "[field]" ) {
+TEST_CASE( "OptionalStateField value_or() associativity", "[field]" ) {
 	compound::field::OptionalStateField<double> unknown  = std::monostate();
 	compound::field::OptionalStateField<double> constant  = 1.0;
 	compound::field::OptionalStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
@@ -61,71 +61,71 @@ TEST_CASE( "OptionalStateField substitute() associativity", "[field]" ) {
 
 	SECTION("Functions can be applied in any order and still produce the same results")
 	{
-    	CHECK(unknown.substitute(constant.substitute(sample))(p, T) == 
-    		  unknown.substitute(constant).substitute(sample)(p, T));
+    	CHECK(unknown.value_or(constant.value_or(sample))(p, T) == 
+    		  unknown.value_or(constant).value_or(sample)(p, T));
 
-    	CHECK(unknown.substitute(sample.substitute(constant))(p, T) == 
-    		  unknown.substitute(sample).substitute(constant)(p, T));
-
-
-    	CHECK(unknown.substitute(constant.substitute(sample))(p, T) == 
-    		  unknown.substitute(constant).substitute(sample)(p, T));
-
-    	CHECK(unknown.substitute(sample.substitute(constant))(p, T) == 
-    		  unknown.substitute(sample).substitute(constant)(p, T));
+    	CHECK(unknown.value_or(sample.value_or(constant))(p, T) == 
+    		  unknown.value_or(sample).value_or(constant)(p, T));
 
 
+    	CHECK(unknown.value_or(constant.value_or(sample))(p, T) == 
+    		  unknown.value_or(constant).value_or(sample)(p, T));
+
+    	CHECK(unknown.value_or(sample.value_or(constant))(p, T) == 
+    		  unknown.value_or(sample).value_or(constant)(p, T));
 
 
 
-    	CHECK(constant.substitute(sample.substitute(unknown))(p, T) == 
-    		  constant.substitute(sample).substitute(unknown)(p, T));
-
-    	CHECK(constant.substitute(unknown.substitute(sample))(p, T) == 
-    		  constant.substitute(unknown).substitute(sample)(p, T));
 
 
-    	CHECK(constant.substitute(sample.substitute(unknown))(p, T) == 
-    		  constant.substitute(sample).substitute(unknown)(p, T));
+    	CHECK(constant.value_or(sample.value_or(unknown))(p, T) == 
+    		  constant.value_or(sample).value_or(unknown)(p, T));
 
-    	CHECK(constant.substitute(unknown.substitute(sample))(p, T) == 
-    		  constant.substitute(unknown).substitute(sample)(p, T));
+    	CHECK(constant.value_or(unknown.value_or(sample))(p, T) == 
+    		  constant.value_or(unknown).value_or(sample)(p, T));
+
+
+    	CHECK(constant.value_or(sample.value_or(unknown))(p, T) == 
+    		  constant.value_or(sample).value_or(unknown)(p, T));
+
+    	CHECK(constant.value_or(unknown.value_or(sample))(p, T) == 
+    		  constant.value_or(unknown).value_or(sample)(p, T));
 
     }
 }
 
 
-TEST_CASE( "OptionalStateField substitute() increasing", "[field]" ) {
+TEST_CASE( "OptionalStateField value_or() increasing", "[field]" ) {
 	compound::field::OptionalStateField<double> unknown  = std::monostate();
 	compound::field::OptionalStateField<double> constant  = 1.0;
 	compound::field::OptionalStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
 	compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
 
-	SECTION("An attribute of a function's return value either increases or remains the same when compared to the same attribute of the input value")
+	SECTION("An attribute of a function's return entry either increases or remains the same when compared to the same attribute of the input entry")
 	{
 
-    	CHECK(unknown.substitute(unknown).index() >= unknown.index());
-    	CHECK(unknown.substitute(constant).index() >= unknown.index());
-    	CHECK(unknown.substitute(sample).index() >= unknown.index());
-    	CHECK(unknown.substitute(relation).index() >= unknown.index());
+    	CHECK(unknown.value_or(unknown).index() >= unknown.index());
+    	CHECK(unknown.value_or(constant).index() >= unknown.index());
+    	CHECK(unknown.value_or(sample).index() >= unknown.index());
+    	CHECK(unknown.value_or(relation).index() >= unknown.index());
 
 
-    	CHECK(constant.substitute(unknown).index() >= constant.index());
-    	CHECK(constant.substitute(constant).index() >= constant.index());
-    	CHECK(constant.substitute(sample).index() >= constant.index());
-    	CHECK(constant.substitute(relation).index() >= constant.index());
+    	CHECK(constant.value_or(unknown).index() >= constant.index());
+    	CHECK(constant.value_or(constant).index() >= constant.index());
+    	CHECK(constant.value_or(sample).index() >= constant.index());
+    	CHECK(constant.value_or(relation).index() >= constant.index());
 
 
-    	CHECK(sample.substitute(unknown).index() >= sample.index());
-    	CHECK(sample.substitute(constant).index() >= sample.index());
-    	CHECK(sample.substitute(sample).index() >= sample.index());
-    	CHECK(sample.substitute(relation).index() >= sample.index());
+    	CHECK(sample.value_or(unknown).index() >= sample.index());
+    	CHECK(sample.value_or(constant).index() >= sample.index());
+    	CHECK(sample.value_or(sample).index() >= sample.index());
+    	CHECK(sample.value_or(relation).index() >= sample.index());
 
 
-    	CHECK(relation.substitute(unknown).index() >= relation.index());
-    	CHECK(relation.substitute(constant).index() >= relation.index());
-    	CHECK(relation.substitute(sample).index() >= relation.index());
-    	CHECK(relation.substitute(relation).index() >= relation.index());
+    	CHECK(relation.value_or(unknown).index() >= relation.index());
+    	CHECK(relation.value_or(constant).index() >= relation.index());
+    	CHECK(relation.value_or(sample).index() >= relation.index());
+    	CHECK(relation.value_or(relation).index() >= relation.index());
 
     }
 }
@@ -166,7 +166,7 @@ TEST_CASE( "OptionalStateField compare() identity", "[field]" ) {
 	si::pressure p = si::standard_pressure;
 	si::temperature T = si::standard_temperature;
 
-	SECTION("There exists a value that when applied to a function returns the original value")
+	SECTION("There exists a entry that when applied to a function returns the original entry")
 	{
     	CHECK(unknown.compare(unknown)(p, T) == unknown(p, T));
     	CHECK(constant.compare(unknown)(p, T) == constant(p, T));
@@ -224,7 +224,7 @@ TEST_CASE( "OptionalStateField compare() increasing", "[field]" ) {
 	compound::field::OptionalStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
 	compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
 
-	SECTION("An attribute of a function's return value either increases or remains the same when compared to the same attribute of the input value")
+	SECTION("An attribute of a function's return entry either increases or remains the same when compared to the same attribute of the input entry")
 	{
 
     	CHECK(unknown.compare(unknown).index() >= unknown.index());
@@ -303,7 +303,7 @@ TEST_CASE( "OptionalStateField map() purity", "[field]" ) {
 	compound::field::OptionalStateField<double> constant  = 1.0;
 	compound::field::OptionalStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
 	compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
-	std::function<double(const double)> f  = [](const double value){ return 1.0 - 2.0*value; };
+	std::function<double(const double)> f  = [](const double entry){ return 1.0 - 2.0*entry; };
 	si::pressure p = si::standard_pressure;
 	si::temperature T = si::standard_temperature;
 
@@ -321,11 +321,11 @@ TEST_CASE( "OptionalStateField map() identity", "[field]" ) {
 	compound::field::OptionalStateField<double> constant  = 1.0;
 	compound::field::OptionalStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
 	compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
-	std::function<double(const double)> I  = [](const double value){ return value; };
+	std::function<double(const double)> I  = [](const double entry){ return entry; };
 	si::pressure p = si::standard_pressure;
 	si::temperature T = si::standard_temperature;
 
-	SECTION("There exists a value that when applied to a function returns the original value")
+	SECTION("There exists a entry that when applied to a function returns the original entry")
 	{
     	CHECK(unknown.map(I)(p, T) == unknown(p, T));
     	CHECK(constant.map(I)(p, T) == constant(p, T));
@@ -348,7 +348,7 @@ TEST_CASE( "OptionalStateField map_to_constant() purity", "[field]" ) {
 	compound::field::OptionalStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
 	compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
 	std::function<double(const double, const si::pressure, const si::temperature)> f  = 
-		[](const double value, const si::pressure p, const si::temperature T){ return 1.0 - 2.0*value; };
+		[](const double entry, const si::pressure p, const si::temperature T){ return 1.0 - 2.0*entry; };
 	si::pressure p = si::standard_pressure;
 	si::temperature T = si::standard_temperature;
 
@@ -367,11 +367,11 @@ TEST_CASE( "OptionalStateField map_to_constant() identity", "[field]" ) {
 	compound::field::OptionalStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
 	compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
 	std::function<double(const double, const si::pressure, const si::temperature)> I  = 
-		[](const double value, const si::pressure p, const si::temperature T){ return value; };
+		[](const double entry, const si::pressure p, const si::temperature T){ return entry; };
 	si::pressure p = si::standard_pressure;
 	si::temperature T = si::standard_temperature;
 
-	SECTION("There exists a value that when applied to a function returns the original value")
+	SECTION("There exists a entry that when applied to a function returns the original entry")
 	{
     	CHECK(unknown.map_to_constant(p,T,I)  == unknown(p,T) );
     	CHECK(constant.map_to_constant(p,T,I)  == constant(p,T) );

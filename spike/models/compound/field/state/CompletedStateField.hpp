@@ -34,7 +34,7 @@ namespace field {
                 return a;
             }
             T1 operator()(const StateSample<T1> a        ) const {
-                return a.value;
+                return a.entry;
             }
             T1 operator()(const StateFunction<T1> a ) const {
                 return a(p,T);
@@ -55,11 +55,11 @@ namespace field {
                 return f(a);
             }
             CompletedStateFieldVariant<T2> operator()(const StateSample<T1> a        ) const {
-                return StateSample<T1>(f(a.value), a.pressure, a.temperature);
+                return StateSample<T1>(f(a.entry), a.pressure, a.temperature);
             }
             CompletedStateFieldVariant<T2> operator()(const StateFunction<T1> a ) const {
                 // NOTE: capturing `this` results in a segfault when we call `this->f()`
-                // This occurs even when we capture `this` by value.
+                // This occurs even when we capture `this` by entry.
                 // I haven't clarified the reason, but it seems likely related to accessing 
                 // the `f` attribute in a object that destructs after we exit out of the `map` function.
                 auto fcopy = f; 
@@ -77,12 +77,12 @@ namespace field {
                 return [a](const si::pressure p, const si::temperature T) { return a; };
             }
             StateFunction<T1> operator()(const StateSample<T1> a) const {
-                T1 value = a.value;
-                return [value](const si::pressure p, const si::temperature T) { return value; };
+                T1 entry = a.entry;
+                return [entry](const si::pressure p, const si::temperature T) { return entry; };
             }
             StateFunction<T1> operator()(const StateFunction<T1> a) const {
                 // NOTE: capturing `this` results in a segfault when we call `this->f()`
-                // This occurs even when we capture `this` by value.
+                // This occurs even when we capture `this` by entry.
                 // I haven't clarified the reason, but it seems likely related to accessing 
                 // the `f` attribute in a object that destructs after we exit out of the `map` function.
                 return a;
@@ -110,44 +110,44 @@ namespace field {
                 return f(a, default_p, default_T);
             }
             T2 operator()( const StateSample<T1> a        ) const {
-                return f(a.value, a.pressure, a.temperature);
+                return f(a.entry, a.pressure, a.temperature);
             }
             T2 operator()( const StateFunction<T1> a ) const {
                 return f(a(default_p, default_T), default_p, default_T);
             }
         };
 
-        CompletedStateFieldVariant<T1> value;
+        CompletedStateFieldVariant<T1> entry;
     public:
-        constexpr CompletedStateField(const CompletedStateFieldVariant<T1> value)
-        : value(value)
+        constexpr CompletedStateField(const CompletedStateFieldVariant<T1> entry)
+        : entry(entry)
         {
 
         }
-        constexpr CompletedStateField(const T1 value)
-        : value(value)
+        constexpr CompletedStateField(const T1 entry)
+        : entry(entry)
         {
 
         }
-        constexpr CompletedStateField(const StateSample<T1> value)
-        : value(value)
+        constexpr CompletedStateField(const StateSample<T1> entry)
+        : entry(entry)
         {
 
         }
-        constexpr CompletedStateField(const StateFunction<T1> value)
-        : value(value)
+        constexpr CompletedStateField(const StateFunction<T1> entry)
+        : entry(entry)
         {
 
         }
     	template<typename T2>
         constexpr CompletedStateField<T1>& operator=(const T2& other)
         {
-        	value = CompletedStateFieldVariant<T1>(other);
+        	entry = CompletedStateFieldVariant<T1>(other);
         	return *this;
         }
         constexpr T1 operator()(const si::pressure p, const si::temperature T) const
         {
-            return std::visit(CompletedStateFieldValueVisitor(p, T), value);
+            return std::visit(CompletedStateFieldValueVisitor(p, T), entry);
         }
         /*
         Return whichever field provides more information, going by the following definition:
@@ -156,25 +156,29 @@ namespace field {
         */
         constexpr CompletedStateField<T1> compare(const CompletedStateField<T1> other) const
         {
-            return value.index() >= other.value.index()? *this : other;
+            return entry.index() >= other.entry.index()? *this : other;
+        }
+        constexpr CompletedStateFieldVariant<T1> value() const
+        {
+            return entry;
         }
         /*
-		Return whether a value exists within the field
+		Return whether a entry exists within the field
         */
         constexpr int index() const
         {
-            return value.index();
+            return entry.index();
         }
         /*
-		Return whether a value exists within the field
+		Return whether a entry exists within the field
         */
-        constexpr bool has_value() const
+        constexpr bool has_entry() const
         {
-            return value.index() == 0;
+            return entry.index() == 0;
         }
         constexpr StateFunction<T1> function() const
         {
-            return std::visit(CompletedStateFieldFunctionVisitor(), value);
+            return std::visit(CompletedStateFieldFunctionVisitor(), entry);
         }
         /*
         Return a CompletedStateField<T1> field representing `a` after applying the map `f`
@@ -182,7 +186,7 @@ namespace field {
         template<typename T2>
         constexpr CompletedStateField<T2> map(const std::function<T2(const T1)> f) const
         {
-            return CompletedStateField<T2>(std::visit(CompletedStateFieldMapVisitor<T2>(f), value));
+            return CompletedStateField<T2>(std::visit(CompletedStateFieldMapVisitor<T2>(f), entry));
         }
         /*
         Return a CompletedStateField<T1> field representing `a` after applying the map `f`
@@ -193,7 +197,7 @@ namespace field {
             const si::temperature default_T, 
             const std::function<T2(const T1, const si::pressure, const si::temperature)> f
         ) const {
-            return std::visit(CompletedStateFieldMapToConstantVisitor<T2>(default_p, default_T, f), value);
+            return std::visit(CompletedStateFieldMapToConstantVisitor<T2>(default_p, default_T, f), entry);
         }
 
         template<typename T2>
