@@ -13,11 +13,13 @@
 
 namespace compound { 
 namespace record {
-    namespace {
-		template<typename T1>
-	    using OptionalStateRecordVariant = std::variant<std::monostate, T1, StateSampleRecord<T1>, AuthoritativeStateRecord<T1>>;
 
-        template<typename T1>
+    template<typename T1>
+    class OptionalStateRecord
+    {
+    	template<typename T2>
+	    using OptionalStateRecordVariant = std::variant<std::monostate, T2, StateSampleRecord<T2>, AuthoritativeStateRecord<T2>>;
+
         class OptionalStateRecordValueVisitor
         {
             si::pressure p;
@@ -41,7 +43,7 @@ namespace record {
                 return a(p,T);
             }
         };
-        template<typename T1, typename T2>
+        template<typename T2>
         class OptionalStateRecordMapVisitor
         {
         public:
@@ -70,7 +72,7 @@ namespace record {
                 return [fcopy, a](const si::pressure p, const si::temperature T){ return fcopy(a(p, T)); };
             }
         };
-        template<typename T1, typename T2>
+        template<typename T2>
         class OptionalStateRecordMapToConstantVisitor
         {
             si::pressure default_p;
@@ -101,11 +103,7 @@ namespace record {
                 return f(a(default_p, default_T), default_p, default_T);
             }
         };
-    }
 
-    template<typename T1>
-    class OptionalStateRecord
-    {
         OptionalStateRecordVariant<T1> value;
     public:
         constexpr OptionalStateRecord(const OptionalStateRecordVariant<T1> value)
@@ -141,7 +139,7 @@ namespace record {
         }
         constexpr std::optional<T1> operator()(const si::pressure p, const si::temperature T) const
         {
-            return std::visit(OptionalStateRecordValueVisitor<T1>(p, T), value);
+            return std::visit(OptionalStateRecordValueVisitor(p, T), value);
         }
         /*
         Return `a` if available, otherwise return `b` as a substitute.
@@ -179,7 +177,7 @@ namespace record {
         template<typename T2>
         constexpr OptionalStateRecord<T2> map(const std::function<T2(const T1)> f) const
         {
-            return OptionalStateRecord<T2>(std::visit(OptionalStateRecordMapVisitor<T1,T2>(f), value));
+            return OptionalStateRecord<T2>(std::visit(OptionalStateRecordMapVisitor<T2>(f), value));
         }
         /*
         Return a OptionalStateRecord<T1> record representing `a` after applying the map `f`
@@ -190,7 +188,7 @@ namespace record {
             const si::temperature default_T, 
             const std::function<T2(const T1, const si::pressure, const si::temperature)> f
         ) const {
-            return std::visit(OptionalStateRecordMapToConstantVisitor<T1,T2>(default_p, default_T, f), value);
+            return std::visit(OptionalStateRecordMapToConstantVisitor<T2>(default_p, default_T, f), value);
         }
 
         template<typename T2>
