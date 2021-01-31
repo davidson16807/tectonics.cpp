@@ -6,26 +6,26 @@
 // in-house libraries
 #include <si.hpp>
 
-#include "StateSampleRecord.hpp"
-#include "AuthoritativeStateRecord.hpp"
+#include "StateSample.hpp"
+#include "StateFunction.hpp"
 
-#include "CompletedStateRecord.hpp"
+#include "CompletedStateField.hpp"
 
 namespace compound { 
-namespace record {
+namespace field {
 
     template<typename T1>
-    class CompletedStateRecord
+    class CompletedStateField
     {
     	template<typename T2>
-	    using CompletedStateRecordVariant = std::variant<T2, StateSampleRecord<T2>, AuthoritativeStateRecord<T2>>;
+	    using CompletedStateFieldVariant = std::variant<T2, StateSample<T2>, StateFunction<T2>>;
 
-        class CompletedStateRecordValueVisitor
+        class CompletedStateFieldValueVisitor
         {
             si::pressure p;
             si::temperature T;
         public:
-            CompletedStateRecordValueVisitor(const si::pressure p, const si::temperature T)
+            CompletedStateFieldValueVisitor(const si::pressure p, const si::temperature T)
             : p(p), T(T)
             {
 
@@ -33,31 +33,31 @@ namespace record {
             T1 operator()(const T1 a                           ) const {
                 return a;
             }
-            T1 operator()(const StateSampleRecord<T1> a        ) const {
+            T1 operator()(const StateSample<T1> a        ) const {
                 return a.value;
             }
-            T1 operator()(const AuthoritativeStateRecord<T1> a ) const {
+            T1 operator()(const StateFunction<T1> a ) const {
                 return a(p,T);
             }
         };
         template<typename T2>
-        class CompletedStateRecordMapVisitor
+        class CompletedStateFieldMapVisitor
         {
         public:
             typedef std::function<T2(const T1)> F;
             F f;
-            CompletedStateRecordMapVisitor(const F f)
+            CompletedStateFieldMapVisitor(const F f)
             : f(f)
             {
 
             }
-            CompletedStateRecordVariant<T2> operator()(const T1 a                           ) const {
+            CompletedStateFieldVariant<T2> operator()(const T1 a                           ) const {
                 return f(a);
             }
-            CompletedStateRecordVariant<T2> operator()(const StateSampleRecord<T1> a        ) const {
-                return StateSampleRecord<T1>(f(a.value), a.pressure, a.temperature);
+            CompletedStateFieldVariant<T2> operator()(const StateSample<T1> a        ) const {
+                return StateSample<T1>(f(a.value), a.pressure, a.temperature);
             }
-            CompletedStateRecordVariant<T2> operator()(const AuthoritativeStateRecord<T1> a ) const {
+            CompletedStateFieldVariant<T2> operator()(const StateFunction<T1> a ) const {
                 // NOTE: capturing `this` results in a segfault when we call `this->f()`
                 // This occurs even when we capture `this` by value.
                 // I haven't clarified the reason, but it seems likely related to accessing 
@@ -67,13 +67,13 @@ namespace record {
             }
         };
         template<typename T2>
-        class CompletedStateRecordMapToConstantVisitor
+        class CompletedStateFieldMapToConstantVisitor
         {
             si::pressure default_p;
             si::temperature default_T;
             std::function<T2(T1, si::pressure, si::temperature)> f;
         public:
-            CompletedStateRecordMapToConstantVisitor(
+            CompletedStateFieldMapToConstantVisitor(
                 const si::pressure default_p, 
                 const si::temperature default_T,
                 const std::function<T2(const T1, const si::pressure, const si::temperature)> f
@@ -87,79 +87,79 @@ namespace record {
             T2 operator()( const T1 a                           ) const {
                 return f(a, default_p, default_T);
             }
-            T2 operator()( const StateSampleRecord<T1> a        ) const {
+            T2 operator()( const StateSample<T1> a        ) const {
                 return f(a.value, a.pressure, a.temperature);
             }
-            T2 operator()( const AuthoritativeStateRecord<T1> a ) const {
+            T2 operator()( const StateFunction<T1> a ) const {
                 return f(a(default_p, default_T), default_p, default_T);
             }
         };
 
-        CompletedStateRecordVariant<T1> value;
+        CompletedStateFieldVariant<T1> value;
     public:
-        constexpr CompletedStateRecord(const CompletedStateRecordVariant<T1> value)
+        constexpr CompletedStateField(const CompletedStateFieldVariant<T1> value)
         : value(value)
         {
 
         }
-        constexpr CompletedStateRecord(const T1 value)
+        constexpr CompletedStateField(const T1 value)
         : value(value)
         {
 
         }
-        constexpr CompletedStateRecord(const StateSampleRecord<T1> value)
+        constexpr CompletedStateField(const StateSample<T1> value)
         : value(value)
         {
 
         }
-        constexpr CompletedStateRecord(const AuthoritativeStateRecord<T1> value)
+        constexpr CompletedStateField(const StateFunction<T1> value)
         : value(value)
         {
 
         }
     	template<typename T2>
-        constexpr CompletedStateRecord<T1>& operator=(const T2& other)
+        constexpr CompletedStateField<T1>& operator=(const T2& other)
         {
-        	value = CompletedStateRecordVariant<T1>(other);
+        	value = CompletedStateFieldVariant<T1>(other);
         	return *this;
         }
         constexpr T1 operator()(const si::pressure p, const si::temperature T) const
         {
-            return std::visit(CompletedStateRecordValueVisitor(p, T), value);
+            return std::visit(CompletedStateFieldValueVisitor(p, T), value);
         }
         /*
-        Return whichever record provides more information, going by the following definition:
-            std::monostate < T1 < AuthoritativeStateRecord<T1> < std::pair<T1, AuthoritativeStateRecord<T1>>
+        Return whichever field provides more information, going by the following definition:
+            std::monostate < T1 < StateFunction<T1> < std::pair<T1, StateFunction<T1>>
         If both provide the same amount of information, return `a` by default.
         */
-        constexpr CompletedStateRecord<T1> compare(const CompletedStateRecord<T1> other) const
+        constexpr CompletedStateField<T1> compare(const CompletedStateField<T1> other) const
         {
             return value.index() >= other.value.index()? *this : other;
         }
         /*
-		Return whether a value exists within the record
+		Return whether a value exists within the field
         */
         constexpr int index() const
         {
             return value.index();
         }
         /*
-		Return whether a value exists within the record
+		Return whether a value exists within the field
         */
         constexpr bool has_value() const
         {
             return value.index() == 0;
         }
         /*
-        Return a CompletedStateRecord<T1> record representing `a` after applying the map `f`
+        Return a CompletedStateField<T1> field representing `a` after applying the map `f`
         */
         template<typename T2>
-        constexpr CompletedStateRecord<T2> map(const std::function<T2(const T1)> f) const
+        constexpr CompletedStateField<T2> map(const std::function<T2(const T1)> f) const
         {
-            return CompletedStateRecord<T2>(std::visit(CompletedStateRecordMapVisitor<T2>(f), value));
+            return CompletedStateField<T2>(std::visit(CompletedStateFieldMapVisitor<T2>(f), value));
         }
         /*
-        Return a CompletedStateRecord<T1> record representing `a` after applying the map `f`
+        Return a CompletedStateField<T1> field representing `a` after applying the map `f`
         */
         template<typename T2>
         constexpr T1 map_to_constant(
@@ -167,11 +167,11 @@ namespace record {
             const si::temperature default_T, 
             const std::function<T2(const T1, const si::pressure, const si::temperature)> f
         ) const {
-            return std::visit(CompletedStateRecordMapToConstantVisitor<T2>(default_p, default_T, f), value);
+            return std::visit(CompletedStateFieldMapToConstantVisitor<T2>(default_p, default_T, f), value);
         }
 
         template<typename T2>
-		friend class CompletedStateRecord;
+		friend class CompletedStateField;
     };
     
 }}

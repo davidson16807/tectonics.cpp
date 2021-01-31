@@ -7,7 +7,7 @@
 #include <si.hpp>
 #include <si_test_utils.hpp>
 
-#include "CompletedStateRecord.hpp"
+#include "CompletedStateField.hpp"
 
 double test_ideal_gas_law_completed(const si::pressure p, const si::temperature T)
 {
@@ -22,10 +22,10 @@ double test_ideal_gas_law_completed(const si::pressure p, const si::temperature 
 
 
 
-TEST_CASE( "CompletedStateRecord compare() purity", "[record]" ) {
-	compound::record::CompletedStateRecord<double> constant  = 1.0;
-	compound::record::CompletedStateRecord<double> sample  = compound::record::StateSampleRecord<double>(2.0, si::standard_pressure, si::standard_temperature);
-	compound::record::CompletedStateRecord<double> relation  = compound::record::AuthoritativeStateRecord<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
+TEST_CASE( "CompletedStateField compare() purity", "[field]" ) {
+	compound::field::CompletedStateField<double> constant  = 1.0;
+	compound::field::CompletedStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
+	compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
 	si::pressure p = si::standard_pressure;
 	si::temperature T = si::standard_temperature;
 
@@ -41,10 +41,10 @@ TEST_CASE( "CompletedStateRecord compare() purity", "[record]" ) {
 }
 
 
-TEST_CASE( "CompletedStateRecord compare() associativity", "[record]" ) {
-    compound::record::CompletedStateRecord<double> constant1  = 1.0;
-	compound::record::CompletedStateRecord<double> constant2  = 2.0;
-	compound::record::CompletedStateRecord<double> sample  = compound::record::StateSampleRecord<double>(3.0, si::standard_pressure, si::standard_temperature);
+TEST_CASE( "CompletedStateField compare() associativity", "[field]" ) {
+    compound::field::CompletedStateField<double> constant1  = 1.0;
+	compound::field::CompletedStateField<double> constant2  = 2.0;
+	compound::field::CompletedStateField<double> sample  = compound::field::StateSample<double>(3.0, si::standard_pressure, si::standard_temperature);
 	si::pressure p = si::standard_pressure;
 	si::temperature T = si::standard_temperature;
 
@@ -83,10 +83,10 @@ TEST_CASE( "CompletedStateRecord compare() associativity", "[record]" ) {
 }
 
 
-TEST_CASE( "CompletedStateRecord compare() increasing", "[record]" ) {
-	compound::record::CompletedStateRecord<double> constant  = 1.0;
-	compound::record::CompletedStateRecord<double> sample  = compound::record::StateSampleRecord<double>(2.0, si::standard_pressure, si::standard_temperature);
-	compound::record::CompletedStateRecord<double> relation  = compound::record::AuthoritativeStateRecord<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
+TEST_CASE( "CompletedStateField compare() increasing", "[field]" ) {
+	compound::field::CompletedStateField<double> constant  = 1.0;
+	compound::field::CompletedStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
+	compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
 
 	SECTION("An attribute of a function's return value either increases or remains the same when compared to the same attribute of the input value")
 	{
@@ -110,10 +110,10 @@ TEST_CASE( "CompletedStateRecord compare() increasing", "[record]" ) {
     }
 }
 
-TEST_CASE( "CompletedStateRecord best() commutativity", "[record]" ) {
-	compound::record::CompletedStateRecord<double> constant  = 1.0;
-	compound::record::CompletedStateRecord<double> sample  = compound::record::StateSampleRecord<double>(2.0, si::standard_pressure, si::standard_temperature);
-	compound::record::CompletedStateRecord<double> relation  = compound::record::AuthoritativeStateRecord<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
+TEST_CASE( "CompletedStateField best() commutativity", "[field]" ) {
+	compound::field::CompletedStateField<double> constant  = 1.0;
+	compound::field::CompletedStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
+	compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
 	si::pressure p = si::standard_pressure;
 	si::temperature T = si::standard_temperature;
 
@@ -147,10 +147,10 @@ TEST_CASE( "CompletedStateRecord best() commutativity", "[record]" ) {
 
 
 
-TEST_CASE( "CompletedStateRecord map() purity", "[record]" ) {
-	compound::record::CompletedStateRecord<double> constant  = 1.0;
-	compound::record::CompletedStateRecord<double> sample  = compound::record::StateSampleRecord<double>(2.0, si::standard_pressure, si::standard_temperature);
-	compound::record::CompletedStateRecord<double> relation  = compound::record::AuthoritativeStateRecord<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
+TEST_CASE( "CompletedStateField map() purity", "[field]" ) {
+	compound::field::CompletedStateField<double> constant  = 1.0;
+	compound::field::CompletedStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
+	compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
 	std::function<double(const double)> f  = [](const double value){ return 1.0 - 2.0*value; };
 	si::pressure p = si::standard_pressure;
 	si::temperature T = si::standard_temperature;
@@ -163,10 +163,10 @@ TEST_CASE( "CompletedStateRecord map() purity", "[record]" ) {
     }
 }
 
-TEST_CASE( "CompletedStateRecord map() identity", "[record]" ) {
-	compound::record::CompletedStateRecord<double> constant  = 1.0;
-	compound::record::CompletedStateRecord<double> sample  = compound::record::StateSampleRecord<double>(2.0, si::standard_pressure, si::standard_temperature);
-	compound::record::CompletedStateRecord<double> relation  = compound::record::AuthoritativeStateRecord<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
+TEST_CASE( "CompletedStateField map() identity", "[field]" ) {
+	compound::field::CompletedStateField<double> constant  = 1.0;
+	compound::field::CompletedStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
+	compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
 	std::function<double(const double)> I  = [](const double value){ return value; };
 	si::pressure p = si::standard_pressure;
 	si::temperature T = si::standard_temperature;
@@ -187,10 +187,10 @@ TEST_CASE( "CompletedStateRecord map() identity", "[record]" ) {
 
 
 
-TEST_CASE( "CompletedStateRecord map_to_constant() purity", "[record]" ) {
-	compound::record::CompletedStateRecord<double> constant  = 1.0;
-	compound::record::CompletedStateRecord<double> sample  = compound::record::StateSampleRecord<double>(2.0, si::standard_pressure, si::standard_temperature);
-	compound::record::CompletedStateRecord<double> relation  = compound::record::AuthoritativeStateRecord<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
+TEST_CASE( "CompletedStateField map_to_constant() purity", "[field]" ) {
+	compound::field::CompletedStateField<double> constant  = 1.0;
+	compound::field::CompletedStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
+	compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
 	std::function<double(const double, const si::pressure, const si::temperature)> f  = 
 		[](const double value, const si::pressure p, const si::temperature T){ return 1.0 - 2.0*value; };
 	si::pressure p = si::standard_pressure;
@@ -204,10 +204,10 @@ TEST_CASE( "CompletedStateRecord map_to_constant() purity", "[record]" ) {
     }
 }
 
-TEST_CASE( "CompletedStateRecord map_to_constant() identity", "[record]" ) {
-	compound::record::CompletedStateRecord<double> constant  = 1.0;
-	compound::record::CompletedStateRecord<double> sample  = compound::record::StateSampleRecord<double>(2.0, si::standard_pressure, si::standard_temperature);
-	compound::record::CompletedStateRecord<double> relation  = compound::record::AuthoritativeStateRecord<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
+TEST_CASE( "CompletedStateField map_to_constant() identity", "[field]" ) {
+	compound::field::CompletedStateField<double> constant  = 1.0;
+	compound::field::CompletedStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
+	compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
 	std::function<double(const double, const si::pressure, const si::temperature)> I  = 
 		[](const double value, const si::pressure p, const si::temperature T){ return value; };
 	si::pressure p = si::standard_pressure;

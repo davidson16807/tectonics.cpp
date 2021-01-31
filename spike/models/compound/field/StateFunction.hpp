@@ -4,7 +4,7 @@
 #include <functional>          // function
 
 namespace compound { 
-namespace record {
+namespace field {
 	template<typename T1>
-    using AuthoritativeStateRecord = std::function<T1(const si::pressure p, const si::temperature T)>;
+    using StateFunction = std::function<T1(const si::pressure p, const si::temperature T)>;
 }}

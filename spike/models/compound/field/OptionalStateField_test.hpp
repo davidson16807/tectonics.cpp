@@ -7,18 +7,18 @@
 #include <si.hpp>
 #include <si_test_utils.hpp>
 
-#include "OptionalStateRecord.hpp"
+#include "OptionalStateField.hpp"
 
 double test_ideal_gas_law_optional(const si::pressure p, const si::temperature T)
 {
 	return si::unitless(si::mole*si::universal_gas_constant*T/p/si::liter);
 }
 
-TEST_CASE( "OptionalStateRecord substitute() purity", "[record]" ) {
-	compound::record::OptionalStateRecord<double> unknown  = std::monostate();
-	compound::record::OptionalStateRecord<double> constant  = 1.0;
-	compound::record::OptionalStateRecord<double> sample  = compound::record::StateSampleRecord<double>(2.0, si::standard_pressure, si::standard_temperature);
-	compound::record::OptionalStateRecord<double> relation  = compound::record::AuthoritativeStateRecord<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
+TEST_CASE( "OptionalStateField substitute() purity", "[field]" ) {
+	compound::field::OptionalStateField<double> unknown  = std::monostate();
+	compound::field::OptionalStateField<double> constant  = 1.0;
+	compound::field::OptionalStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
+	compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
 	si::pressure p = si::standard_pressure;
 	si::temperature T = si::standard_temperature;
 
@@ -35,11 +35,11 @@ TEST_CASE( "OptionalStateRecord substitute() purity", "[record]" ) {
     }
 }
 
-TEST_CASE( "OptionalStateRecord substitute() identity", "[record]" ) {
-	compound::record::OptionalStateRecord<double> unknown  = std::monostate();
-	compound::record::OptionalStateRecord<double> constant  = 1.0;
-	compound::record::OptionalStateRecord<double> sample  = compound::record::StateSampleRecord<double>(2.0, si::standard_pressure, si::standard_temperature);
-	compound::record::OptionalStateRecord<double> relation  = compound::record::AuthoritativeStateRecord<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
+TEST_CASE( "OptionalStateField substitute() identity", "[field]" ) {
+	compound::field::OptionalStateField<double> unknown  = std::monostate();
+	compound::field::OptionalStateField<double> constant  = 1.0;
+	compound::field::OptionalStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
+	compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
 	si::pressure p = si::standard_pressure;
 	si::temperature T = si::standard_temperature;
 
@@ -52,10 +52,10 @@ TEST_CASE( "OptionalStateRecord substitute() identity", "[record]" ) {
     }
 }
 
-TEST_CASE( "OptionalStateRecord substitute() associativity", "[record]" ) {
-	compound::record::OptionalStateRecord<double> unknown  = std::monostate();
-	compound::record::OptionalStateRecord<double> constant  = 1.0;
-	compound::record::OptionalStateRecord<double> sample  = compound::record::StateSampleRecord<double>(2.0, si::standard_pressure, si::standard_temperature);
+TEST_CASE( "OptionalStateField substitute() associativity", "[field]" ) {
+	compound::field::OptionalStateField<double> unknown  = std::monostate();
+	compound::field::OptionalStateField<double> constant  = 1.0;
+	compound::field::OptionalStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
 	si::pressure p = si::standard_pressure;
 	si::temperature T = si::standard_temperature;
 
@@ -95,11 +95,11 @@ TEST_CASE( "OptionalStateRecord substitute() associativity", "[record]" ) {
 }
 
 
-TEST_CASE( "OptionalStateRecord substitute() increasing", "[record]" ) {
-	compound::record::OptionalStateRecord<double> unknown  = std::monostate();
-	compound::record::OptionalStateRecord<double> constant  = 1.0;
-	compound::record::OptionalStateRecord<double> sample  = compound::record::StateSampleRecord<double>(2.0, si::standard_pressure, si::standard_temperature);
-	compound::record::OptionalStateRecord<double> relation  = compound::record::AuthoritativeStateRecord<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
+TEST_CASE( "OptionalStateField substitute() increasing", "[field]" ) {
+	compound::field::OptionalStateField<double> unknown  = std::monostate();
+	compound::field::OptionalStateField<double> constant  = 1.0;
+	compound::field::OptionalStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
+	compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
 
 	SECTION("An attribute of a function's return value either increases or remains the same when compared to the same attribute of the input value")
 	{
@@ -137,11 +137,11 @@ TEST_CASE( "OptionalStateRecord substitute() increasing", "[record]" ) {
 
 
 
-TEST_CASE( "OptionalStateRecord compare() purity", "[record]" ) {
-	compound::record::OptionalStateRecord<double> unknown  = std::monostate();
-	compound::record::OptionalStateRecord<double> constant  = 1.0;
-	compound::record::OptionalStateRecord<double> sample  = compound::record::StateSampleRecord<double>(2.0, si::standard_pressure, si::standard_temperature);
-	compound::record::OptionalStateRecord<double> relation  = compound::record::AuthoritativeStateRecord<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
+TEST_CASE( "OptionalStateField compare() purity", "[field]" ) {
+	compound::field::OptionalStateField<double> unknown  = std::monostate();
+	compound::field::OptionalStateField<double> constant  = 1.0;
+	compound::field::OptionalStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
+	compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
 	si::pressure p = si::standard_pressure;
 	si::temperature T = si::standard_temperature;
 
@@ -158,11 +158,11 @@ TEST_CASE( "OptionalStateRecord compare() purity", "[record]" ) {
     }
 }
 
-TEST_CASE( "OptionalStateRecord compare() identity", "[record]" ) {
-	compound::record::OptionalStateRecord<double> unknown  = std::monostate();
-	compound::record::OptionalStateRecord<double> constant  = 1.0;
-	compound::record::OptionalStateRecord<double> sample  = compound::record::StateSampleRecord<double>(2.0, si::standard_pressure, si::standard_temperature);
-	compound::record::OptionalStateRecord<double> relation  = compound::record::AuthoritativeStateRecord<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
+TEST_CASE( "OptionalStateField compare() identity", "[field]" ) {
+	compound::field::OptionalStateField<double> unknown  = std::monostate();
+	compound::field::OptionalStateField<double> constant  = 1.0;
+	compound::field::OptionalStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
+	compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
 	si::pressure p = si::standard_pressure;
 	si::temperature T = si::standard_temperature;
 
@@ -175,10 +175,10 @@ TEST_CASE( "OptionalStateRecord compare() identity", "[record]" ) {
     }
 }
 
-TEST_CASE( "OptionalStateRecord compare() associativity", "[record]" ) {
-	compound::record::OptionalStateRecord<double> unknown  = std::monostate();
-	compound::record::OptionalStateRecord<double> constant  = 1.0;
-	compound::record::OptionalStateRecord<double> sample  = compound::record::StateSampleRecord<double>(2.0, si::standard_pressure, si::standard_temperature);
+TEST_CASE( "OptionalStateField compare() associativity", "[field]" ) {
+	compound::field::OptionalStateField<double> unknown  = std::monostate();
+	compound::field::OptionalStateField<double> constant  = 1.0;
+	compound::field::OptionalStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
 	si::pressure p = si::standard_pressure;
 	si::temperature T = si::standard_temperature;
 
@@ -218,11 +218,11 @@ TEST_CASE( "OptionalStateRecord compare() associativity", "[record]" ) {
 }
 
 
-TEST_CASE( "OptionalStateRecord compare() increasing", "[record]" ) {
-	compound::record::OptionalStateRecord<double> unknown  = std::monostate();
-	compound::record::OptionalStateRecord<double> constant  = 1.0;
-	compound::record::OptionalStateRecord<double> sample  = compound::record::StateSampleRecord<double>(2.0, si::standard_pressure, si::standard_temperature);
-	compound::record::OptionalStateRecord<double> relation  = compound::record::AuthoritativeStateRecord<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
+TEST_CASE( "OptionalStateField compare() increasing", "[field]" ) {
+	compound::field::OptionalStateField<double> unknown  = std::monostate();
+	compound::field::OptionalStateField<double> constant  = 1.0;
+	compound::field::OptionalStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
+	compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
 
 	SECTION("An attribute of a function's return value either increases or remains the same when compared to the same attribute of the input value")
 	{
@@ -253,11 +253,11 @@ TEST_CASE( "OptionalStateRecord compare() increasing", "[record]" ) {
     }
 }
 
-TEST_CASE( "OptionalStateRecord best() commutativity", "[record]" ) {
-	compound::record::OptionalStateRecord<double> unknown  = std::monostate();
-	compound::record::OptionalStateRecord<double> constant  = 1.0;
-	compound::record::OptionalStateRecord<double> sample  = compound::record::StateSampleRecord<double>(2.0, si::standard_pressure, si::standard_temperature);
-	compound::record::OptionalStateRecord<double> relation  = compound::record::AuthoritativeStateRecord<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
+TEST_CASE( "OptionalStateField best() commutativity", "[field]" ) {
+	compound::field::OptionalStateField<double> unknown  = std::monostate();
+	compound::field::OptionalStateField<double> constant  = 1.0;
+	compound::field::OptionalStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
+	compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
 	si::pressure p = si::standard_pressure;
 	si::temperature T = si::standard_temperature;
 
@@ -298,11 +298,11 @@ TEST_CASE( "OptionalStateRecord best() commutativity", "[record]" ) {
 
 
 
-TEST_CASE( "OptionalStateRecord map() purity", "[record]" ) {
-	compound::record::OptionalStateRecord<double> unknown  = std::monostate();
-	compound::record::OptionalStateRecord<double> constant  = 1.0;
-	compound::record::OptionalStateRecord<double> sample  = compound::record::StateSampleRecord<double>(2.0, si::standard_pressure, si::standard_temperature);
-	compound::record::OptionalStateRecord<double> relation  = compound::record::AuthoritativeStateRecord<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
+TEST_CASE( "OptionalStateField map() purity", "[field]" ) {
+	compound::field::OptionalStateField<double> unknown  = std::monostate();
+	compound::field::OptionalStateField<double> constant  = 1.0;
+	compound::field::OptionalStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
+	compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
 	std::function<double(const double)> f  = [](const double value){ return 1.0 - 2.0*value; };
 	si::pressure p = si::standard_pressure;
 	si::temperature T = si::standard_temperature;
@@ -316,11 +316,11 @@ TEST_CASE( "OptionalStateRecord map() purity", "[record]" ) {
     }
 }
 
-TEST_CASE( "OptionalStateRecord map() identity", "[record]" ) {
-	compound::record::OptionalStateRecord<double> unknown  = std::monostate();
-	compound::record::OptionalStateRecord<double> constant  = 1.0;
-	compound::record::OptionalStateRecord<double> sample  = compound::record::StateSampleRecord<double>(2.0, si::standard_pressure, si::standard_temperature);
-	compound::record::OptionalStateRecord<double> relation  = compound::record::AuthoritativeStateRecord<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
+TEST_CASE( "OptionalStateField map() identity", "[field]" ) {
+	compound::field::OptionalStateField<double> unknown  = std::monostate();
+	compound::field::OptionalStateField<double> constant  = 1.0;
+	compound::field::OptionalStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
+	compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
 	std::function<double(const double)> I  = [](const double value){ return value; };
 	si::pressure p = si::standard_pressure;
 	si::temperature T = si::standard_temperature;
@@ -342,11 +342,11 @@ TEST_CASE( "OptionalStateRecord map() identity", "[record]" ) {
 
 
 
-TEST_CASE( "OptionalStateRecord map_to_constant() purity", "[record]" ) {
-	compound::record::OptionalStateRecord<double> unknown  = std::monostate();
-	compound::record::OptionalStateRecord<double> constant  = 1.0;
-	compound::record::OptionalStateRecord<double> sample  = compound::record::StateSampleRecord<double>(2.0, si::standard_pressure, si::standard_temperature);
-	compound::record::OptionalStateRecord<double> relation  = compound::record::AuthoritativeStateRecord<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
+TEST_CASE( "OptionalStateField map_to_constant() purity", "[field]" ) {
+	compound::field::OptionalStateField<double> unknown  = std::monostate();
+	compound::field::OptionalStateField<double> constant  = 1.0;
+	compound::field::OptionalStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
+	compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
 	std::function<double(const double, const si::pressure, const si::temperature)> f  = 
 		[](const double value, const si::pressure p, const si::temperature T){ return 1.0 - 2.0*value; };
 	si::pressure p = si::standard_pressure;
@@ -361,11 +361,11 @@ TEST_CASE( "OptionalStateRecord map_to_constant() purity", "[record]" ) {
     }
 }
 
-TEST_CASE( "OptionalStateRecord map_to_constant() identity", "[record]" ) {
-	compound::record::OptionalStateRecord<double> unknown  = std::monostate();
-	compound::record::OptionalStateRecord<double> constant  = 1.0;
-	compound::record::OptionalStateRecord<double> sample  = compound::record::StateSampleRecord<double>(2.0, si::standard_pressure, si::standard_temperature);
-	compound::record::OptionalStateRecord<double> relation  = compound::record::AuthoritativeStateRecord<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
+TEST_CASE( "OptionalStateField map_to_constant() identity", "[field]" ) {
+	compound::field::OptionalStateField<double> unknown  = std::monostate();
+	compound::field::OptionalStateField<double> constant  = 1.0;
+	compound::field::OptionalStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
+	compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
 	std::function<double(const double, const si::pressure, const si::temperature)> I  = 
 		[](const double value, const si::pressure p, const si::temperature T){ return value; };
 	si::pressure p = si::standard_pressure;
