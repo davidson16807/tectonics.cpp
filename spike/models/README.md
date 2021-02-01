@@ -21,20 +21,20 @@ Identity arrows are omitted. Dotted arrows indicate trivial product morphisms, w
 Objects within the commutative diagram represent classes within the implementation. 
 
 The most important objects in the diagram are as follows. 
-* `P` plates                                                                    raster of columns with variable width layers and bitmask
-* `C` global crust                                                              raster of columns with variable width layers
-* `L` liquid mass pools                                                         scalars mapping to mass pools
-* `G` gaseous mass pools                                                        scalars mapping to mass pools
-* `V*`view layers
-* `B` boundary indicators for rock strata, oceans, and atmosphere
-* `K` thermal conductivity and heat capacitance                                 fixed-width layered raster
-* `Q` heat transfer                                                             fixed-width layered raster
-* `H` thermal energy                                                            fixed-width layered raster
-* `Θ` temperature                                                               fixed-width layered raster
-* `Λ` solar radiation                                                           scalars mapping to bins of fixed wavelength
-* `R` placement of celestial bodies                                             
-* `Δ` deltas indicating rates of change
-* `t` timestep                                                                  scalar
+* `P` **plates**                                                                    raster of columns with variable width layers and bitmask
+* `C` **global crust**                                                              raster of columns with variable width layers
+* `L` **liquid mass pools**                                                         scalars mapping to mass pools
+* `G` **gaseous mass pools**                                                        scalars mapping to mass pools
+* `V*`**view layers**
+* `B` **boundary indicators for rock strata, oceans, and atmosphere**
+* `K` **thermal conductivity and heat capacitance**                                 fixed-width layered raster
+* `Q` **heat transfer**                                                             fixed-width layered raster
+* `H` **thermal energy**                                                            fixed-width layered raster
+* `Θ` **temperature**                                                               fixed-width layered raster
+* `Λ` **solar radiation**                                                           scalars mapping to bins of fixed wavelength
+* `R` **placement of celestial bodies**                                             
+* `Δ` **deltas**                                                                    data structure indicating rates of change
+* `t` **timestep**                                                                  scalar
 
 And the following are objects that play secondary roles:
 * `T` tables of chemical properties
