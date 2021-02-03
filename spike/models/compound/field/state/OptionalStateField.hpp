@@ -157,8 +157,12 @@ namespace field {
     	template<typename T2>
         constexpr OptionalStateField<T1>& operator=(const T2& other)
         {
-        	entry = OptionalStateFieldVariant<T1>(other);
-        	return *this;
+            entry = OptionalStateFieldVariant<T1>(other);
+            return *this;
+        }
+        constexpr bool operator==(const OptionalStateField<T1> other) const
+        {
+            return entry == other.entry;
         }
         constexpr std::optional<T1> operator()(const si::pressure p, const si::temperature T) const
         {

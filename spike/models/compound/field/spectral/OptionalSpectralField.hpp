@@ -168,6 +168,10 @@ namespace field {
         	entry = OptionalSpectralFieldVariant<T1>(other);
         	return *this;
         }
+        constexpr bool operator==(const OptionalSpectralField<T1> other) const
+        {
+            return entry == other.entry;
+        }
         constexpr std::optional<T1> operator()(const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T) const
         {
             return std::visit(OptionalSpectralFieldValueVisitor(nlo, nhi, p, T), entry);
