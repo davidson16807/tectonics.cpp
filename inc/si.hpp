@@ -207,7 +207,7 @@ namespace si{
 	    	// customize formatting for area and volume, which follow separate rules for prefix conversion
     		if( M1 != 0 && (KG1|S1|K1|MOL1|A1|CD1) == 0)
     		{
-				T1 prefix_id = raw == T1(0)? 0 : std::clamp(floor(log10(raw)/3.0), -8, 8);
+				T1 prefix_id = floor(log10(raw)/3.0); prefix_id = abs(prefix_id) < 8? prefix_id : 0;
 		    	std::string prefixed_value = std::to_string(raw / pow(1000.0, M1*std::min(8.0, prefix_id)));
 		    	std::string prefix(prefixes[int(prefix_id)+8]);
     			return prefixed_value + " " + (M1<0? "1/":"") + prefix + "m" + (M1!=1? std::to_string(abs(M1)) : "");
@@ -215,7 +215,7 @@ namespace si{
 	    	// customize formatting for mass, which must be converted to grams
     		if( KG1 != 0 && (M1|S1|K1|MOL1|A1|CD1) == 0)
     		{
-				T1 prefix_id = raw == T1(0)? 0 : std::clamp(floor(log10(raw)/3.0), -8, 8);
+				T1 prefix_id = floor(log10(raw)/3.0); prefix_id = abs(prefix_id) < 8? prefix_id : 0;
 		    	std::string prefixed_value = std::to_string(raw / pow(1000.0, KG1*std::min(8.0, prefix_id)));
 		    	std::string prefix(prefixes[int(prefix_id)+KG1+8]);
     			return prefixed_value + " " + (KG1<0? "1/":"") + prefix + "g" + (KG1!=1? std::to_string(abs(KG1)) : "");
@@ -237,7 +237,7 @@ namespace si{
 	    	{
 	    		if(named_mks[i].first == std::array<int,3>{M1,KG1,S1})
 	    		{
-					T1 prefix_id = raw == T1(0)? 0 : std::clamp(floor(log10(raw)/3.0), -8, 8);
+					T1 prefix_id = floor(log10(raw)/3.0); prefix_id = abs(prefix_id) < 8? prefix_id : 0;
 			    	std::string prefixed_value =  std::to_string(raw / pow(1000.0, std::min(8.0, prefix_id)));
 			    	std::string prefix(prefixes[int(prefix_id)+8]);
 	    			std::string result = prefixed_value + " " + prefix;
