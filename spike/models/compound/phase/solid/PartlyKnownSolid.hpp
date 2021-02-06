@@ -115,6 +115,13 @@ namespace phase {
                 pwave_modulus          == other.pwave_modulus          &&
                 lame_parameter         == other.lame_parameter         &&
 
+                compressive_fracture_strength == other.compressive_fracture_strength &&
+                tensile_fracture_strength     == other.tensile_fracture_strength     &&
+                shear_fracture_strength       == other.shear_fracture_strength       &&
+                compressive_yield_strength    == other.compressive_yield_strength    &&
+                tensile_yield_strength        == other.tensile_yield_strength        &&
+                shear_yield_strength          == other.shear_yield_strength          &&
+
                 chemical_susceptibility_estimate == other.chemical_susceptibility_estimate;
         }
 
