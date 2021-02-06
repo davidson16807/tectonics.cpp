@@ -7,7 +7,7 @@
 
 // in house libraries
 #include <units/si.hpp>
-#include <si_test_utils.hpp>
+#include "units/si_test_utils.hpp"
 
 #include "PartlyKnownSolid.hpp"
 
