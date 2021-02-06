@@ -118,6 +118,34 @@ compound::phase::PartlyKnownSolid dummy {
 
     /*chemical_susceptibility_estimate*/  false
 };
+
+int PartlyKnownSolid_attribute_index_sum(const compound::phase::PartlyKnownSolid& solid)
+{
+    return
+        solid.specific_heat_capacity          .index() +
+        solid.thermal_conductivity            .index() +
+        solid.dynamic_viscosity               .index() +
+        solid.density                         .index() +
+        solid.vapor_pressure                  .index() +
+        solid.refractive_index                .index() +
+        solid.spectral_reflectance            .index() +
+
+        solid.bulk_modulus                    .index() +
+        solid.tensile_modulus                 .index() +
+        solid.shear_modulus                   .index() +
+        solid.pwave_modulus                   .index() +
+        solid.lame_parameter                  .index() +
+        solid.poisson_ratio                   .index() +
+
+        solid.compressive_fracture_strength   .index() +
+        solid.tensile_fracture_strength       .index() +
+        solid.shear_fracture_strength         .index() +
+        solid.compressive_yield_strength      .index() +
+        solid.tensile_yield_strength          .index() +
+        solid.shear_yield_strength            .index() +
+
+        solid.chemical_susceptibility_estimate.index();
+}
 TEST_CASE( "PartlyKnownSolid value_or() purity", "[field]" ) {
 	SECTION("Calling a function twice with the same arguments must produce the same results")
 	{
@@ -162,41 +190,33 @@ TEST_CASE( "PartlyKnownSolid value_or() associativity", "[field]" ) {
     }
 }
 
-/*
 TEST_CASE( "PartlyKnownSolid value_or() increasing", "[field]" ) {
-	compound::field::PartlyKnownSolid<double> unknown  = std::monostate();
-	compound::field::PartlyKnownSolid<double> constant  = 1.0;
-	compound::field::PartlyKnownSolid<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
-	compound::field::PartlyKnownSolid<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
-
 	SECTION("An attribute of a function's return entry either increases or remains the same when compared to the same attribute of the input entry")
 	{
 
-    	CHECK(unknown.value_or(unknown).index() >= unknown.index());
-    	CHECK(unknown.value_or(constant).index() >= unknown.index());
-    	CHECK(unknown.value_or(sample).index() >= unknown.index());
-    	CHECK(unknown.value_or(relation).index() >= unknown.index());
+    	CHECK(PartlyKnownSolid_attribute_index_sum(unknown.value_or(unknown)) >= PartlyKnownSolid_attribute_index_sum(unknown));
+    	CHECK(PartlyKnownSolid_attribute_index_sum(unknown.value_or(ice)) >= PartlyKnownSolid_attribute_index_sum(unknown));
+    	CHECK(PartlyKnownSolid_attribute_index_sum(unknown.value_or(copper)) >= PartlyKnownSolid_attribute_index_sum(unknown));
+    	CHECK(PartlyKnownSolid_attribute_index_sum(unknown.value_or(dummy)) >= PartlyKnownSolid_attribute_index_sum(unknown));
 
 
-    	CHECK(constant.value_or(unknown).index() >= constant.index());
-    	CHECK(constant.value_or(constant).index() >= constant.index());
-    	CHECK(constant.value_or(sample).index() >= constant.index());
-    	CHECK(constant.value_or(relation).index() >= constant.index());
+    	CHECK(PartlyKnownSolid_attribute_index_sum(ice.value_or(unknown)) >= PartlyKnownSolid_attribute_index_sum(ice));
+    	CHECK(PartlyKnownSolid_attribute_index_sum(ice.value_or(ice)) >= PartlyKnownSolid_attribute_index_sum(ice));
+    	CHECK(PartlyKnownSolid_attribute_index_sum(ice.value_or(copper)) >= PartlyKnownSolid_attribute_index_sum(ice));
+    	CHECK(PartlyKnownSolid_attribute_index_sum(ice.value_or(dummy)) >= PartlyKnownSolid_attribute_index_sum(ice));
 
 
-    	CHECK(sample.value_or(unknown).index() >= sample.index());
-    	CHECK(sample.value_or(constant).index() >= sample.index());
-    	CHECK(sample.value_or(sample).index() >= sample.index());
-    	CHECK(sample.value_or(relation).index() >= sample.index());
+    	CHECK(PartlyKnownSolid_attribute_index_sum(copper.value_or(unknown)) >= PartlyKnownSolid_attribute_index_sum(copper));
+    	CHECK(PartlyKnownSolid_attribute_index_sum(copper.value_or(ice)) >= PartlyKnownSolid_attribute_index_sum(copper));
+    	CHECK(PartlyKnownSolid_attribute_index_sum(copper.value_or(copper)) >= PartlyKnownSolid_attribute_index_sum(copper));
+    	CHECK(PartlyKnownSolid_attribute_index_sum(copper.value_or(dummy)) >= PartlyKnownSolid_attribute_index_sum(copper));
 
 
-    	CHECK(relation.value_or(unknown).index() >= relation.index());
-    	CHECK(relation.value_or(constant).index() >= relation.index());
-    	CHECK(relation.value_or(sample).index() >= relation.index());
-    	CHECK(relation.value_or(relation).index() >= relation.index());
+    	CHECK(PartlyKnownSolid_attribute_index_sum(dummy.value_or(unknown)) >= PartlyKnownSolid_attribute_index_sum(dummy));
+    	CHECK(PartlyKnownSolid_attribute_index_sum(dummy.value_or(ice)) >= PartlyKnownSolid_attribute_index_sum(dummy));
+    	CHECK(PartlyKnownSolid_attribute_index_sum(dummy.value_or(copper)) >= PartlyKnownSolid_attribute_index_sum(dummy));
+    	CHECK(PartlyKnownSolid_attribute_index_sum(dummy.value_or(dummy)) >= PartlyKnownSolid_attribute_index_sum(dummy));
 
     }
 }
-*/
-
 
