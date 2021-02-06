@@ -125,6 +125,12 @@ namespace phase {
                 chemical_susceptibility_estimate == other.chemical_susceptibility_estimate;
         }
 
-        // friend class PartlyKnownSolid;
     };
+    /*
+    Synonymous to `value_or()`, analogous with similar functions for CompletedSolid
+    */
+    PartlyKnownSolid complete(const PartlyKnownSolid& known, const PartlyKnownSolid& fallback)
+    {
+        return known.value_or(fallback);
+    }
 }}

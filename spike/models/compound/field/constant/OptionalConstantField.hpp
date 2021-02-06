@@ -121,4 +121,13 @@ namespace field {
 		friend class OptionalConstantField;
     };
     
+    /*
+    Return a T1 representing `a`. Underwrite with `b` if `a` is missing a entry.
+    This function exists merely to be analogous with similar functions for OptionalStateField and OptionalSpectralField
+    */
+    template<typename T1>
+    constexpr T1 complete(const OptionalConstantField<T1> a, const T1 b)
+    {
+        return a.value_or(b);
+    }
 }}
