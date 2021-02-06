@@ -4,7 +4,7 @@
 #include <variant>          // variant
 
 // in-house libraries
-#include <si.hpp>
+#include <units/si.hpp>
 
 #include "StateSample.hpp"
 #include "StateFunction.hpp"

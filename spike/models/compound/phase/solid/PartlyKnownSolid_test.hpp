@@ -6,7 +6,7 @@
 #include <catch/catch.hpp>
 
 // in house libraries
-#include <si.hpp>
+#include <units/si.hpp>
 #include <si_test_utils.hpp>
 
 #include "PartlyKnownSolid.hpp"

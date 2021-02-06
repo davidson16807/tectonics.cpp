@@ -130,11 +130,6 @@ namespace si{
 		{
 			return units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(raw*T1(scalar));
 		}
-		template<typename T2>
-		constexpr units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> divide(const T2 scalar) const
-		{
-			return units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(raw/T1(scalar));
-		}
 
 		constexpr bool operator==(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
 		{
@@ -307,7 +302,7 @@ namespace si{
 	template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
 	constexpr auto operator/(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const T1 b)
 	{
-		return a.divide(b);
+		return a.multiply(T1(1)/b);
 	}
 
 	template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1,  int M2, int KG2, int S2, int K2, int MOL2, int A2, int CD2, typename T1>
@@ -847,8 +842,6 @@ namespace si{
 	  Unit names are normally printed in roman (upright) type, and they are treated like ordinary nouns. 
 	  In English, the names of units start with a lower-case letter (even when the symbol for the unit begins with a capital letter), 
 	  except at the beginning of a sentence or in capitalized material such as a title. 
-	  In keeping with this rule, the correct spelling of the name of the unit with the symbol °C is "degree Celsius" 
-  	  (the unit degree begins with a lower-case d and the modifier Celsius begins with an upper-case C because it is a proper name).
 	*/
 	constexpr energy      calorie (4.184);
 	SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(energy, calorie)

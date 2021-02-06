@@ -4,7 +4,7 @@
 #include <cmath>        // std::abs
 
 // 3rd party libraries
-#include <si.hpp>
+#include "si.hpp"
 
 namespace si{
 

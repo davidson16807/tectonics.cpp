@@ -5,7 +5,7 @@
 
 // in-house libraries
 #include <math/lerp.hpp> // lerp()
-#include <si.hpp> // pressure, temperature, unitless
+#include <units/si.hpp> // pressure, temperature, unitless
 
 namespace compound{
     namespace property
