@@ -27,7 +27,7 @@ namespace field{
             temperature(temperature) 
         {}
 
-	    constexpr bool operator==(const SpectralSample& other) const 
+	    constexpr bool operator==(const SpectralSample<T>& other) const 
 	    {
 	    	return 
                entry == other.entry 
@@ -36,6 +36,10 @@ namespace field{
             && pressure == other.pressure 
             && temperature == other.temperature;
 	    }
+        constexpr bool operator!=(const SpectralSample<T>& other) const 
+        {
+            return !((*this)==other);
+        }
     };
 
 }}

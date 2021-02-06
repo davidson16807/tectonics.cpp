@@ -21,12 +21,16 @@ namespace field{
             temperature(temperature) 
         {}
 
-        constexpr bool operator==(const StateSample& other) const 
+        constexpr bool operator==(const StateSample<T>& other) const 
         {
             return 
                entry == other.entry 
             && pressure == other.pressure 
             && temperature == other.temperature;
+        }
+        constexpr bool operator!=(const StateSample<T>& other) const 
+        {
+            return !((*this)==other);
         }
     };
 

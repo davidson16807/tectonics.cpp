@@ -45,6 +45,28 @@ namespace field {
                 return a(p,T);
             }
         };
+        class OptionalStateFieldEqualityVisitor
+        {
+            OptionalStateFieldVariant<T1> other;
+        public:
+            OptionalStateFieldEqualityVisitor(OptionalStateFieldVariant<T1> other)
+            : other(other)
+            {
+
+            }
+            bool operator()(const std::monostate a               ) const {
+                return other == a;
+            }
+            bool operator()(const T1 a                           ) const {
+                return other == a;
+            }
+            bool operator()(const StateSample<T1> a        ) const {
+                return other == a;
+            }
+            bool operator()(const StateFunction<T1> a ) const {
+                return other(0.0 * si::pascal, 0.0* si::kelvin) == a(0.0 * si::pascal, 0.0* si::kelvin);
+            }
+        };
         template<typename T2>
         class OptionalStateFieldMapVisitor
         {
@@ -160,13 +182,32 @@ namespace field {
             entry = OptionalStateFieldVariant<T1>(other);
             return *this;
         }
-        constexpr bool operator==(const OptionalStateField<T1> other) const
-        {
-            return entry == other.entry;
-        }
         constexpr std::optional<T1> operator()(const si::pressure p, const si::temperature T) const
         {
             return std::visit(OptionalStateFieldValueVisitor(p, T), entry);
+        }
+        constexpr bool operator==(const OptionalStateField<T1> other) const
+        {
+            // std::function does not and cannot have a comparator,
+            // so equality can only be determined pragmatically by sampling at given pressures/temperatures
+            if(entry.index() != other.entry.index()){
+                return false;
+            }
+            si::pressure max_p = si::standard_pressure;
+            si::temperature max_T = si::standard_temperature;
+            auto f = std::function<StateSample<T1>(const T1, const si::pressure, const si::temperature)>(
+                [](const T1 x, const si::pressure p, const si::temperature T) -> const StateSample<T1>{
+                    return StateSample<T1>(x,p,T); 
+                }
+            );
+            for(si::pressure p = 0.0*si::pascal; p<=max_p; p+=(max_p/2.0))
+            {
+                for(si::temperature T = 0.0*si::kelvin; T<=max_T; T+=(max_T/2.0))
+                {
+                    if( map_to_constant(p, T, f) != other.map_to_constant(p, T, f)){ return false; }
+                }
+            }
+            return true;
         }
         /*
         Return whichever field provides more information, going by the following definition:
@@ -214,7 +255,7 @@ namespace field {
         Return a OptionalStateField<T1> field representing `a` after applying the map `f`
         */
         template<typename T2>
-        constexpr std::optional<T1> map_to_constant(
+        constexpr std::optional<T2> map_to_constant(
             const si::pressure default_p, 
             const si::temperature default_T, 
             const std::function<T2(const T1, const si::pressure, const si::temperature)> f
