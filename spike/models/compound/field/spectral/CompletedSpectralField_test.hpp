@@ -9,11 +9,7 @@
 
 #include "CompletedSpectralField.hpp"
 
-double test_CompletedSpectralField(const si::wavenumber nlo, const si:: wavenumber nhi, const si::pressure p, const si::temperature T)
-{
-	return si::unitless(si::mole*si::universal_gas_constant*T/p/si::liter);
-}
-
+#include "CompletedSpectralField_test_utils.hpp"
 
 
 
@@ -36,12 +32,12 @@ TEST_CASE( "CompletedSpectralField compare() purity", "[field]" ) {
 
 	SECTION("Calling a function twice with the same arguments must produce the same results")
 	{
-    	CHECK(constant.compare(constant)(nlo, nhi, p, T) 
-    	   == constant.compare(constant)(nlo, nhi, p, T));
-    	CHECK(sample.compare(sample  )(nlo, nhi, p, T) 
-    	   == sample.compare(sample  )(nlo, nhi, p, T));
-    	CHECK(relation.compare(relation)(nlo, nhi, p, T) 
-    	   == relation.compare(relation)(nlo, nhi, p, T));
+    	CHECK(constant.compare(constant) 
+    	   == constant.compare(constant));
+    	CHECK(sample.compare(sample  ) 
+    	   == sample.compare(sample  ));
+    	CHECK(relation.compare(relation) 
+    	   == relation.compare(relation));
     }
 }
 
@@ -61,33 +57,33 @@ TEST_CASE( "CompletedSpectralField compare() associativity", "[field]" ) {
 	SECTION("Functions can be applied in any order and still produce the same results")
 	{
 
-        CHECK(constant1.compare(constant2.compare(sample))(nlo, nhi, p, T) == 
-              constant1.compare(constant2).compare(sample)(nlo, nhi, p, T));
+        CHECK(constant1.compare(constant2.compare(sample)) == 
+              constant1.compare(constant2).compare(sample));
 
-        CHECK(constant1.compare(sample.compare(constant2))(nlo, nhi, p, T) == 
-              constant1.compare(sample).compare(constant2)(nlo, nhi, p, T));
-
-
-        CHECK(constant1.compare(constant2.compare(sample))(nlo, nhi, p, T) == 
-              constant1.compare(constant2).compare(sample)(nlo, nhi, p, T));
-
-        CHECK(constant1.compare(sample.compare(constant2))(nlo, nhi, p, T) == 
-              constant1.compare(sample).compare(constant2)(nlo, nhi, p, T));
+        CHECK(constant1.compare(sample.compare(constant2)) == 
+              constant1.compare(sample).compare(constant2));
 
 
+        CHECK(constant1.compare(constant2.compare(sample)) == 
+              constant1.compare(constant2).compare(sample));
 
-        CHECK(constant2.compare(sample.compare(constant1))(nlo, nhi, p, T) == 
-              constant2.compare(sample).compare(constant1)(nlo, nhi, p, T));
-
-        CHECK(constant2.compare(constant1.compare(sample))(nlo, nhi, p, T) == 
-              constant2.compare(constant1).compare(sample)(nlo, nhi, p, T));
+        CHECK(constant1.compare(sample.compare(constant2)) == 
+              constant1.compare(sample).compare(constant2));
 
 
-        CHECK(constant2.compare(sample.compare(constant1))(nlo, nhi, p, T) == 
-              constant2.compare(sample).compare(constant1)(nlo, nhi, p, T));
 
-        CHECK(constant2.compare(constant1.compare(sample))(nlo, nhi, p, T) == 
-              constant2.compare(constant1).compare(sample)(nlo, nhi, p, T));
+        CHECK(constant2.compare(sample.compare(constant1)) == 
+              constant2.compare(sample).compare(constant1));
+
+        CHECK(constant2.compare(constant1.compare(sample)) == 
+              constant2.compare(constant1).compare(sample));
+
+
+        CHECK(constant2.compare(sample.compare(constant1)) == 
+              constant2.compare(sample).compare(constant1));
+
+        CHECK(constant2.compare(constant1.compare(sample)) == 
+              constant2.compare(constant1).compare(sample));
 
     }
 }
@@ -137,19 +133,19 @@ TEST_CASE( "CompletedSpectralField best() commutativity", "[field]" ) {
 	SECTION("Arguments to a function can be swapped and still produce the same results")
 	{
 
-    	CHECK(constant.compare(constant)(nlo, nhi, p, T) == constant.compare(constant)(nlo, nhi, p, T));
-    	CHECK(constant.compare(sample)(nlo, nhi, p, T) == sample.compare(constant)(nlo, nhi, p, T));
-    	CHECK(constant.compare(relation)(nlo, nhi, p, T) == relation.compare(constant)(nlo, nhi, p, T));
+    	CHECK(constant.compare(constant) == constant.compare(constant));
+    	CHECK(constant.compare(sample) == sample.compare(constant));
+    	CHECK(constant.compare(relation) == relation.compare(constant));
 
 
-    	CHECK(sample.compare(constant)(nlo, nhi, p, T) == constant.compare(sample)(nlo, nhi, p, T));
-    	CHECK(sample.compare(sample)(nlo, nhi, p, T) == sample.compare(sample)(nlo, nhi, p, T));
-    	CHECK(sample.compare(relation)(nlo, nhi, p, T) == relation.compare(sample)(nlo, nhi, p, T));
+    	CHECK(sample.compare(constant) == constant.compare(sample));
+    	CHECK(sample.compare(sample) == sample.compare(sample));
+    	CHECK(sample.compare(relation) == relation.compare(sample));
 
 
-    	CHECK(relation.compare(constant)(nlo, nhi, p, T) == constant.compare(relation)(nlo, nhi, p, T));
-    	CHECK(relation.compare(sample)(nlo, nhi, p, T) == sample.compare(relation)(nlo, nhi, p, T));
-    	CHECK(relation.compare(relation)(nlo, nhi, p, T) == relation.compare(relation)(nlo, nhi, p, T));
+    	CHECK(relation.compare(constant) == constant.compare(relation));
+    	CHECK(relation.compare(sample) == sample.compare(relation));
+    	CHECK(relation.compare(relation) == relation.compare(relation));
 
     }
 }
@@ -175,9 +171,9 @@ TEST_CASE( "CompletedSpectralField map() purity", "[field]" ) {
 
 	SECTION("Calling a function twice with the same arguments must produce the same results")
 	{
-    	CHECK(constant.map(f)(nlo, nhi, p, T) == constant.map(f)(nlo, nhi, p, T));
-    	CHECK(sample.map(f)(nlo, nhi, p, T) == sample.map(f)(nlo, nhi, p, T));
-    	CHECK(relation.map(f)(nlo, nhi, p, T) == relation.map(f)(nlo, nhi, p, T));
+    	CHECK(constant.map(f) == constant.map(f));
+    	CHECK(sample.map(f) == sample.map(f));
+    	CHECK(relation.map(f) == relation.map(f));
     }
 }
 
@@ -194,9 +190,9 @@ TEST_CASE( "CompletedSpectralField map() identity", "[field]" ) {
 
 	SECTION("There exists a entry that when applied to a function returns the original entry")
 	{
-    	CHECK(constant.map(I)(nlo, nhi, p, T) == constant(nlo, nhi, p, T));
-    	CHECK(sample.map(I)(nlo, nhi, p, T) == sample(nlo, nhi, p, T));
-    	CHECK(relation.map(I)(nlo, nhi, p, T) == relation(nlo, nhi, p, T));
+    	CHECK(constant.map(I) == constant);
+    	CHECK(sample.map(I) == sample);
+    	CHECK(relation.map(I) == relation);
     }
 }
 
