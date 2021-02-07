@@ -145,29 +145,6 @@ namespace field {
         	entry = CompletedStateFieldVariant<T1>(other);
         	return *this;
         }
-        constexpr bool operator==(const CompletedStateField<T1> other) const
-        {
-            // std::function does not and cannot have a comparator,
-            // so equality can only be determined pragmatically by sampling at given pressures/temperatures
-            if(entry.index() != other.entry.index()){
-                return false;
-            }
-            si::pressure max_p = si::standard_pressure;
-            si::temperature max_T = si::standard_temperature;
-            auto f = std::function<StateSample<T1>(const T1, const si::pressure, const si::temperature)>(
-                [](const T1 x, const si::pressure p, const si::temperature T) -> const StateSample<T1>{
-                    return StateSample<T1>(x,p,T); 
-                }
-            );
-            for(si::pressure p = 0.0*si::pascal; p<=max_p; p+=(max_p/2.0))
-            {
-                for(si::temperature T = 0.0*si::kelvin; T<=max_T; T+=(max_T/2.0))
-                {
-                    if( map_to_constant(p, T, f) != other.map_to_constant(p, T, f)){ return false; }
-                }
-            }
-            return true;
-        }
         constexpr T1 operator()(const si::pressure p, const si::temperature T) const
         {
             return std::visit(CompletedStateFieldValueVisitor(p, T), entry);

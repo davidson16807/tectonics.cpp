@@ -67,33 +67,98 @@ namespace field {
                 return other(0.0 * si::pascal, 0.0* si::kelvin) == a(0.0 * si::pascal, 0.0* si::kelvin);
             }
         };
-        template<typename T2>
-        class OptionalStateFieldMapVisitor
+        template<typename Tout, typename Tin1>
+        class OptionalStateFieldUnaryMapVisitor
         {
         public:
-            typedef std::function<T2(const T1)> F;
+            typedef std::function<Tout(const Tin1)> F;
             F f;
-            OptionalStateFieldMapVisitor(const F f)
+            OptionalStateFieldUnaryMapVisitor(const F f)
             : f(f)
             {
 
             }
-            OptionalStateFieldVariant<T2> operator()(const std::monostate a               ) const {
+            OptionalStateFieldVariant<Tout> operator()(const std::monostate a               ) const {
                 return std::monostate();
             }
-            OptionalStateFieldVariant<T2> operator()(const T1 a                           ) const {
+            OptionalStateFieldVariant<Tout> operator()(const Tin1 a                           ) const {
                 return f(a);
             }
-            OptionalStateFieldVariant<T2> operator()(const StateSample<T1> a        ) const {
-                return StateSample<T1>(f(a.entry), a.pressure, a.temperature);
+            OptionalStateFieldVariant<Tout> operator()(const StateSample<Tin1> a        ) const {
+                return StateSample<Tin1>(f(a.entry), a.pressure, a.temperature);
             }
-            OptionalStateFieldVariant<T2> operator()(const StateFunction<T1> a ) const {
+            OptionalStateFieldVariant<Tout> operator()(const StateFunction<Tin1> a ) const {
                 // NOTE: capturing `this` results in a segfault when we call `this->f()`
                 // This occurs even when we capture `this` by entry.
                 // I haven't clarified the reason, but it seems likely related to accessing 
                 // the `f` attribute in a object that destructs after we exit out of the `map` function.
                 auto fcopy = f; 
                 return [fcopy, a](const si::pressure p, const si::temperature T){ return fcopy(a(p, T)); };
+            }
+        };
+        template<typename Tout, typename Tin1, typename Tin2>
+        class OptionalStateFieldBinaryMapVisitor
+        {
+        public:
+            typedef std::function<Tout(const Tin1, const Tin2)> F;
+            F f;
+            OptionalStateFieldBinaryMapVisitor(const F f)
+            : f(f)
+            {
+
+            }
+            OptionalStateFieldVariant<Tout> operator()(const std::monostate a,      const std::monostate b      ) const {
+                return std::monostate();
+            }
+            OptionalStateFieldVariant<Tout> operator()(const std::monostate a,      const Tin2 b                ) const {
+                return std::monostate();
+            }
+            OptionalStateFieldVariant<Tout> operator()(const std::monostate a,      const StateSample<Tin2> b   ) const {
+                return std::monostate(); 
+            }
+            OptionalStateFieldVariant<Tout> operator()(const std::monostate a,      const StateFunction<Tin2> b ) const {
+                return std::monostate(); 
+            }
+            OptionalStateFieldVariant<Tout> operator()(const Tin1 a,                const std::monostate b      ) const {
+                return std::monostate();
+            }
+            OptionalStateFieldVariant<Tout> operator()(const Tin1 a,                const Tin2 b                ) const {
+                return f(a,b);
+            }
+            OptionalStateFieldVariant<Tout> operator()(const Tin1 a,                const StateSample<Tin2> b   ) const {
+                return f(a,b.entry);
+            }
+            OptionalStateFieldVariant<Tout> operator()(const Tin1 a,                const StateFunction<Tin2> b ) const {
+                auto fcopy = f; 
+                return [fcopy, a, b](const si::pressure p, const si::temperature T){ return fcopy(a, b(p, T)); };
+            }
+            OptionalStateFieldVariant<Tout> operator()(const StateSample<Tin1> a,   const std::monostate b      ) const {
+                return std::monostate();
+            }
+            OptionalStateFieldVariant<Tout> operator()(const StateSample<Tin1> a,   const Tin2 b                ) const {
+                return f(a.entry,b);
+            }
+            OptionalStateFieldVariant<Tout> operator()(const StateSample<Tin1> a,   const StateSample<Tin2> b   ) const {
+                return f(a.entry,b.entry);
+            }
+            OptionalStateFieldVariant<Tout> operator()(const StateSample<Tin1> a,   const StateFunction<Tin2> b ) const {
+                auto fcopy = f; 
+                return [fcopy, a, b](const si::pressure p, const si::temperature T){ return fcopy(a.entry, b(p, T)); };
+            }
+            OptionalStateFieldVariant<Tout> operator()(const StateFunction<Tin1> a, const std::monostate b      ) const {
+                return std::monostate();
+            }
+            OptionalStateFieldVariant<Tout> operator()(const StateFunction<Tin1> a, const Tin2 b                ) const {
+                auto fcopy = f; 
+                return [fcopy, a, b](const si::pressure p, const si::temperature T){ return fcopy(a(p, T), b); };
+            }
+            OptionalStateFieldVariant<Tout> operator()(const StateFunction<Tin1> a, const StateSample<Tin2> b   ) const {
+                auto fcopy = f; 
+                return [fcopy, a, b](const si::pressure p, const si::temperature T){ return fcopy(a(p, T), b.entry); };
+            }
+            OptionalStateFieldVariant<Tout> operator()(const StateFunction<Tin1> a, const StateFunction<Tin2> b ) const {
+                auto fcopy = f; 
+                return [fcopy, a, b](const si::pressure p, const si::temperature T){ return fcopy(a(p, T), a(p, T)); };
             }
         };
         template<typename T2>
@@ -186,29 +251,6 @@ namespace field {
         {
             return std::visit(OptionalStateFieldValueVisitor(p, T), entry);
         }
-        constexpr bool operator==(const OptionalStateField<T1> other) const
-        {
-            // std::function does not and cannot have a comparator,
-            // so equality can only be determined pragmatically by sampling at given pressures/temperatures
-            if(entry.index() != other.entry.index()){
-                return false;
-            }
-            si::pressure max_p = si::standard_pressure;
-            si::temperature max_T = si::standard_temperature;
-            auto f = std::function<StateSample<T1>(const T1, const si::pressure, const si::temperature)>(
-                [](const T1 x, const si::pressure p, const si::temperature T) -> const StateSample<T1>{
-                    return StateSample<T1>(x,p,T); 
-                }
-            );
-            for(si::pressure p = 0.0*si::pascal; p<=max_p; p+=(max_p/2.0))
-            {
-                for(si::temperature T = 0.0*si::kelvin; T<=max_T; T+=(max_T/2.0))
-                {
-                    if( map_to_constant(p, T, f) != other.map_to_constant(p, T, f)){ return false; }
-                }
-            }
-            return true;
-        }
         /*
         Return whichever field provides more information, going by the following definition:
             std::monostate < T1 < StateFunction<T1> < std::pair<T1, StateFunction<T1>>
@@ -230,9 +272,29 @@ namespace field {
             return std::visit(OptionalStateFieldCompletionVisitor(fallback), entry);
         }
         /*
+        Return `this` if a value exists, otherwise return the result of function `f` applied to parameter `a`
+        */
+        template<typename T2>
+        constexpr OptionalStateField<T1> value_or(const std::function<T1(const T2)> f, OptionalStateField<T2> a) const
+        {
+            return OptionalStateField<T2>(std::visit(OptionalStateFieldUnaryMapVisitor<T1,T2>(f), a.entry));
+        }
+        /*
+        Return `this` if a value exists, otherwise return the result of function `f` applied to parameters `a` and `b`
+        */
+        template<typename T2, typename T3>
+        constexpr OptionalStateField<T1> value_or(
+            const std::function<T1(const T2, const T2)> f, 
+            const OptionalStateField<T2> a, 
+            const OptionalStateField<T3> b) const
+        {
+            return entry.index() > 0? *this 
+                : OptionalStateField<T2>(std::visit(OptionalStateFieldBinaryMapVisitor<T1,T2,T3>(f), a.entry, b.entry));
+        }
+        /*
 		Return whether a entry exists within the field
         */
-        constexpr bool has_entry() const
+        constexpr bool has_value() const
         {
             return entry.index() == 0;
         }
@@ -249,7 +311,7 @@ namespace field {
         template<typename T2>
         constexpr OptionalStateField<T2> map(const std::function<T2(const T1)> f) const
         {
-            return OptionalStateField<T2>(std::visit(OptionalStateFieldMapVisitor<T2>(f), entry));
+            return OptionalStateField<T2>(std::visit(OptionalStateFieldUnaryMapVisitor<T1,T2>(f), entry));
         }
         /*
         Return a OptionalStateField<T1> field representing `a` after applying the map `f`

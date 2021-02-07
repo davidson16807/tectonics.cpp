@@ -10,30 +10,25 @@
 #include "OptionalStateField.hpp"
 #include "OptionalStateField_to_CompletedStateField.hpp"
 
-double test_ideal_gas_law_optional2(const si::pressure p, const si::temperature T)
-{
-	return si::unitless(si::mole*si::universal_gas_constant*T/p/si::liter);
-}
+#include "CompletedStateField_test_utils.hpp"
+
 
 TEST_CASE( "OptionalStateField complete() purity", "[field]" ) {
 	compound::field::OptionalStateField<double> unknown  = std::monostate();
 	compound::field::OptionalStateField<double> constant  = 1.0;
     compound::field::OptionalStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
-    compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional2(p,T); });
+    compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
 
     compound::field::CompletedStateField<double> known_constant  = 1.0;
     compound::field::CompletedStateField<double> known_sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
-    compound::field::CompletedStateField<double> known_relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional2(p,T); });
-
-	si::pressure p = si::standard_pressure;
-	si::temperature T = si::standard_temperature;
+    compound::field::CompletedStateField<double> known_relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
 
 	SECTION("Calling a function twice with the same arguments must produce the same results")
 	{
-    	CHECK(compound::field::complete(unknown,known_constant )(p, T) == compound::field::complete(unknown,known_constant )(p, T));
-    	CHECK(compound::field::complete(constant,known_constant)(p, T) == compound::field::complete(constant,known_constant)(p, T));
-    	CHECK(compound::field::complete(sample,known_sample  )(p, T) == compound::field::complete(sample,known_sample  )(p, T));
-    	CHECK(compound::field::complete(relation,known_relation)(p, T) == compound::field::complete(relation,known_relation)(p, T));
+    	CHECK(compound::field::complete(unknown,known_constant ) == compound::field::complete(unknown,known_constant ));
+    	CHECK(compound::field::complete(constant,known_constant) == compound::field::complete(constant,known_constant));
+    	CHECK(compound::field::complete(sample,known_sample  ) == compound::field::complete(sample,known_sample  ));
+    	CHECK(compound::field::complete(relation,known_relation) == compound::field::complete(relation,known_relation));
     }
 }
 
@@ -45,40 +40,37 @@ TEST_CASE( "OptionalStateField complete() associativity", "[field]" ) {
 
     compound::field::CompletedStateField<double> known_constant  = 1.0;
     compound::field::CompletedStateField<double> known_sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
-    compound::field::CompletedStateField<double> known_relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional2(p,T); });
-
-	si::pressure p = si::standard_pressure;
-	si::temperature T = si::standard_temperature;
+    compound::field::CompletedStateField<double> known_relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
 
 	SECTION("Functions can be applied in any order and still produce the same results")
 	{
-    	CHECK(compound::field::complete(unknown, compound::field::complete(constant,known_sample))(p, T) == 
-    		  compound::field::complete(unknown,known_constant)(p, T));
+    	CHECK(compound::field::complete(unknown, compound::field::complete(constant,known_sample)) == 
+    		  compound::field::complete(unknown,known_constant));
 
-    	CHECK(compound::field::complete(unknown, compound::field::complete(sample,known_constant))(p, T) == 
-    		  compound::field::complete(unknown,known_sample)(p, T));
-
-
-    	CHECK(compound::field::complete(unknown, compound::field::complete(constant,known_sample))(p, T) == 
-    		  compound::field::complete(unknown,known_constant)(p, T));
-
-    	CHECK(compound::field::complete(unknown, compound::field::complete(sample,known_constant))(p, T) == 
-    		  compound::field::complete(unknown,known_sample)(p, T));
+    	CHECK(compound::field::complete(unknown, compound::field::complete(sample,known_constant)) == 
+    		  compound::field::complete(unknown,known_sample));
 
 
+    	CHECK(compound::field::complete(unknown, compound::field::complete(constant,known_sample)) == 
+    		  compound::field::complete(unknown,known_constant));
 
-    	CHECK(compound::field::complete(constant, compound::field::complete(sample,known_constant))(p, T) == 
-    		  compound::field::complete(constant,known_sample)(p, T));
-
-    	CHECK(compound::field::complete(constant, compound::field::complete(unknown,known_sample))(p, T) == 
-    		  compound::field::complete(constant,known_constant)(p, T));
+    	CHECK(compound::field::complete(unknown, compound::field::complete(sample,known_constant)) == 
+    		  compound::field::complete(unknown,known_sample));
 
 
-    	CHECK(compound::field::complete(constant, compound::field::complete(sample,known_constant))(p, T) == 
-    		  compound::field::complete(constant,known_sample)(p, T));
 
-    	CHECK(compound::field::complete(constant, compound::field::complete(unknown,known_sample))(p, T) == 
-    		  compound::field::complete(constant,known_constant)(p, T));
+    	CHECK(compound::field::complete(constant, compound::field::complete(sample,known_constant)) == 
+    		  compound::field::complete(constant,known_sample));
+
+    	CHECK(compound::field::complete(constant, compound::field::complete(unknown,known_sample)) == 
+    		  compound::field::complete(constant,known_constant));
+
+
+    	CHECK(compound::field::complete(constant, compound::field::complete(sample,known_constant)) == 
+    		  compound::field::complete(constant,known_sample));
+
+    	CHECK(compound::field::complete(constant, compound::field::complete(unknown,known_sample)) == 
+    		  compound::field::complete(constant,known_constant));
 
     }
 }
@@ -88,11 +80,11 @@ TEST_CASE( "OptionalStateField complete() increasing", "[field]" ) {
 	compound::field::OptionalStateField<double> unknown  = std::monostate();
 	compound::field::OptionalStateField<double> constant  = 1.0;
 	compound::field::OptionalStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
-	compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional2(p,T); });
+	compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
 
     compound::field::CompletedStateField<double> known_constant  = 1.0;
     compound::field::CompletedStateField<double> known_sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
-    compound::field::CompletedStateField<double> known_relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional2(p,T); });
+    compound::field::CompletedStateField<double> known_relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
 
 	SECTION("An attribute of a function's return entry either increases or remains the same when compared to the same attribute of the input entry")
 	{
