@@ -309,14 +309,6 @@ namespace field {
         Return a OptionalStateField<T1> field representing `a` after applying the map `f`
         */
         template<typename T2>
-        constexpr OptionalStateField<T2> map(const std::function<T2(const T1)> f) const
-        {
-            return OptionalStateField<T2>(std::visit(OptionalStateFieldUnaryMapVisitor<T2,T1>(f), entry));
-        }
-        /*
-        Return a OptionalStateField<T1> field representing `a` after applying the map `f`
-        */
-        template<typename T2>
         constexpr std::optional<T2> map_to_constant(
             const si::pressure default_p, 
             const si::temperature default_T, 

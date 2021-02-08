@@ -98,32 +98,6 @@ namespace phase {
             return guess;
         }
 
-        bool operator==(const PartlyKnownSolid& other) const
-        {
-            return 
-                specific_heat_capacity == other.specific_heat_capacity &&
-                vapor_pressure         == other.vapor_pressure         &&
-                thermal_conductivity   == other.thermal_conductivity   &&
-                dynamic_viscosity      == other.dynamic_viscosity      &&
-                density                == other.density                &&
-                refractive_index       == other.refractive_index       &&
-                spectral_reflectance   == other.spectral_reflectance   &&
-
-                bulk_modulus           == other.bulk_modulus           &&
-                tensile_modulus        == other.tensile_modulus        &&
-                shear_modulus          == other.shear_modulus          &&
-                pwave_modulus          == other.pwave_modulus          &&
-                lame_parameter         == other.lame_parameter         &&
-
-                compressive_fracture_strength == other.compressive_fracture_strength &&
-                tensile_fracture_strength     == other.tensile_fracture_strength     &&
-                shear_fracture_strength       == other.shear_fracture_strength       &&
-                compressive_yield_strength    == other.compressive_yield_strength    &&
-                tensile_yield_strength        == other.tensile_yield_strength        &&
-                shear_yield_strength          == other.shear_yield_strength          &&
-
-                chemical_susceptibility_estimate == other.chemical_susceptibility_estimate;
-        }
 
     };
     /*
