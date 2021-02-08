@@ -6,6 +6,7 @@
 #include <models/compound/field/spectral/OptionalSpectralField_test_utils.hpp>
 
 #include "PartlyKnownSolid.hpp"
+#include "CompletedSolid.hpp"
 
 compound::phase::PartlyKnownSolid unknown {
     /*specific_heat_capacity*/            std::monostate(),
