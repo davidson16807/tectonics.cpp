@@ -126,7 +126,7 @@ namespace field {
                 return f(a,b);
             }
             OptionalStateFieldVariant<Tout> operator()(const Tin1 a,                const StateSample<Tin2> b   ) const {
-                return f(a,b.entry);
+                return StateSample<Tout>(f(a,b.entry), b.pressure, b.temperature);
             }
             OptionalStateFieldVariant<Tout> operator()(const Tin1 a,                const StateFunction<Tin2> b ) const {
                 auto fcopy = f; 
@@ -136,7 +136,7 @@ namespace field {
                 return std::monostate();
             }
             OptionalStateFieldVariant<Tout> operator()(const StateSample<Tin1> a,   const Tin2 b                ) const {
-                return f(a.entry,b);
+                return StateSample<Tout>(f(a.entry,b), a.pressure, a.temperature);
             }
             OptionalStateFieldVariant<Tout> operator()(const StateSample<Tin1> a,   const StateSample<Tin2> b   ) const {
                 return f(a.entry,b.entry);
@@ -267,7 +267,7 @@ namespace field {
         {
             return entry.index() > 0? *this : other;
         }
-        constexpr CompletedStateFieldVariant<T1> value_or(CompletedStateFieldVariant<T1> fallback) const 
+        constexpr CompletedStateFieldVariant<T1> value_or(const CompletedStateFieldVariant<T1> fallback) const 
         {
             return std::visit(OptionalStateFieldCompletionVisitor(fallback), entry);
         }
@@ -275,7 +275,7 @@ namespace field {
         Return `this` if a value exists, otherwise return the result of function `f` applied to parameter `a`
         */
         template<typename T2>
-        constexpr OptionalStateField<T1> value_or(const std::function<T1(const T2)> f, OptionalStateField<T2> a) const
+        constexpr OptionalStateField<T1> value_or(const std::function<T1(const T2)> f, const OptionalStateField<T2> a) const
         {
             return OptionalStateField<T2>(std::visit(OptionalStateFieldUnaryMapVisitor<T1,T2>(f), a.entry));
         }
@@ -289,7 +289,7 @@ namespace field {
             const OptionalStateField<T3> b) const
         {
             return entry.index() > 0? *this 
-                : OptionalStateField<T2>(std::visit(OptionalStateFieldBinaryMapVisitor<T1,T2,T3>(f), a.entry, b.entry));
+                : std::visit(OptionalStateFieldBinaryMapVisitor<T1,T2,T3>(f), a.entry, b.entry);
         }
         /*
 		Return whether a entry exists within the field
@@ -311,7 +311,7 @@ namespace field {
         template<typename T2>
         constexpr OptionalStateField<T2> map(const std::function<T2(const T1)> f) const
         {
-            return OptionalStateField<T2>(std::visit(OptionalStateFieldUnaryMapVisitor<T1,T2>(f), entry));
+            return OptionalStateField<T2>(std::visit(OptionalStateFieldUnaryMapVisitor<T2,T1>(f), entry));
         }
         /*
         Return a OptionalStateField<T1> field representing `a` after applying the map `f`
