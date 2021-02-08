@@ -70,35 +70,6 @@ namespace field {
             }
         };
         template<typename T2>
-        class OptionalSpectralFieldMapVisitor
-        {
-        public:
-            typedef std::function<T2(const T1)> F;
-            F f;
-            OptionalSpectralFieldMapVisitor(const F f)
-            : f(f)
-            {
-
-            }
-            OptionalSpectralFieldVariant<T2> operator()(const std::monostate a               ) const {
-                return std::monostate();
-            }
-            OptionalSpectralFieldVariant<T2> operator()(const T1 a                           ) const {
-                return f(a);
-            }
-            OptionalSpectralFieldVariant<T2> operator()(const SpectralSample<T1> a        ) const {
-                return SpectralSample<T1>(f(a.entry), a.nlo, a.nhi, a.pressure, a.temperature);
-            }
-            OptionalSpectralFieldVariant<T2> operator()(const SpectralFunction<T1> a ) const {
-                // NOTE: capturing `this` results in a segfault when we call `this->f()`
-                // This occurs even when we capture `this` by entry.
-                // I haven't clarified the reason, but it seems likely related to accessing 
-                // the `f` attribute in a object that destructs after we exit out of the `map` function.
-                auto fcopy = f; 
-                return [fcopy, a](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return fcopy(a(nlo, nhi, p, T)); };
-            }
-        };
-        template<typename T2>
         class OptionalSpectralFieldMapToConstantVisitor
         {
             si::wavenumber default_nlo;
@@ -157,6 +128,100 @@ namespace field {
             }
         };
 
+        template<typename Tout, typename Tin1>
+        class OptionalSpectralFieldUnaryMapVisitor
+        {
+        public:
+            typedef std::function<Tout(const Tin1)> F;
+            F f;
+            OptionalSpectralFieldUnaryMapVisitor(const F f)
+            : f(f)
+            {
+
+            }
+            OptionalSpectralFieldVariant<Tout> operator()(const std::monostate a               ) const {
+                return std::monostate();
+            }
+            OptionalSpectralFieldVariant<Tout> operator()(const Tin1 a                           ) const {
+                return f(a);
+            }
+            OptionalSpectralFieldVariant<Tout> operator()(const SpectralSample<Tin1> a        ) const {
+                return SpectralSample<Tin1>(f(a.entry), a.nlo, a.nhi, a.pressure, a.temperature);
+            }
+            OptionalSpectralFieldVariant<Tout> operator()(const SpectralFunction<Tin1> a ) const {
+                // NOTE: capturing `this` results in a segfault when we call `this->f()`
+                // This occurs even when we capture `this` by entry.
+                // I haven't clarified the reason, but it seems likely related to accessing 
+                // the `f` attribute in a object that destructs after we exit out of the `map` function.
+                auto fcopy = f; 
+                return [fcopy, a](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return fcopy(a(nlo, nhi, p, T)); };
+            }
+        };
+        template<typename Tout, typename Tin1, typename Tin2>
+        class OptionalSpectralFieldBinaryMapVisitor
+        {
+        public:
+            typedef std::function<Tout(const Tin1, const Tin2)> F;
+            F f;
+            OptionalSpectralFieldBinaryMapVisitor(const F f)
+            : f(f)
+            {
+
+            }
+            OptionalSpectralFieldVariant<Tout> operator()(const std::monostate a,      const std::monostate b      ) const {
+                return std::monostate();
+            }
+            OptionalSpectralFieldVariant<Tout> operator()(const std::monostate a,      const Tin2 b                ) const {
+                return std::monostate();
+            }
+            OptionalSpectralFieldVariant<Tout> operator()(const std::monostate a,      const SpectralSample<Tin2> b   ) const {
+                return std::monostate(); 
+            }
+            OptionalSpectralFieldVariant<Tout> operator()(const std::monostate a,      const SpectralFunction<Tin2> b ) const {
+                return std::monostate(); 
+            }
+            OptionalSpectralFieldVariant<Tout> operator()(const Tin1 a,                const std::monostate b      ) const {
+                return std::monostate();
+            }
+            OptionalSpectralFieldVariant<Tout> operator()(const Tin1 a,                const Tin2 b                ) const {
+                return f(a,b);
+            }
+            OptionalSpectralFieldVariant<Tout> operator()(const Tin1 a,                const SpectralSample<Tin2> b   ) const {
+                return SpectralSample<Tout>(f(a,b.entry), b.nlo, b.nhi, b.pressure, b.temperature);
+            }
+            OptionalSpectralFieldVariant<Tout> operator()(const Tin1 a,                const SpectralFunction<Tin2> b ) const {
+                auto fcopy = f; 
+                return [fcopy, a, b](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return fcopy(a, b(nlo, nhi, p, T)); };
+            }
+            OptionalSpectralFieldVariant<Tout> operator()(const SpectralSample<Tin1> a,   const std::monostate b      ) const {
+                return std::monostate();
+            }
+            OptionalSpectralFieldVariant<Tout> operator()(const SpectralSample<Tin1> a,   const Tin2 b                ) const {
+                return SpectralSample<Tout>(f(a.entry,b), a.nlo, a.nhi, a.pressure, a.temperature);
+            }
+            OptionalSpectralFieldVariant<Tout> operator()(const SpectralSample<Tin1> a,   const SpectralSample<Tin2> b   ) const {
+                return f(a.entry,b.entry);
+            }
+            OptionalSpectralFieldVariant<Tout> operator()(const SpectralSample<Tin1> a,   const SpectralFunction<Tin2> b ) const {
+                auto fcopy = f; 
+                return [fcopy, a, b](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return fcopy(a.entry, b(nlo, nhi, p, T)); };
+            }
+            OptionalSpectralFieldVariant<Tout> operator()(const SpectralFunction<Tin1> a, const std::monostate b      ) const {
+                return std::monostate();
+            }
+            OptionalSpectralFieldVariant<Tout> operator()(const SpectralFunction<Tin1> a, const Tin2 b                ) const {
+                auto fcopy = f; 
+                return [fcopy, a, b](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return fcopy(a(nlo, nhi, p, T), b); };
+            }
+            OptionalSpectralFieldVariant<Tout> operator()(const SpectralFunction<Tin1> a, const SpectralSample<Tin2> b   ) const {
+                auto fcopy = f; 
+                return [fcopy, a, b](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return fcopy(a(nlo, nhi, p, T), b.entry); };
+            }
+            OptionalSpectralFieldVariant<Tout> operator()(const SpectralFunction<Tin1> a, const SpectralFunction<Tin2> b ) const {
+                auto fcopy = f; 
+                return [fcopy, a, b](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return fcopy(a(nlo, nhi, p, T), a(nlo, nhi, p, T)); };
+            }
+        };
         OptionalSpectralFieldVariant<T1> entry;
     public:
         constexpr OptionalSpectralField(const OptionalSpectralFieldVariant<T1> entry)
@@ -222,6 +287,27 @@ namespace field {
             return std::visit(OptionalSpectralFieldCompletionVisitor(fallback), entry);
         }
         /*
+        Return `this` if a value exists, otherwise return the result of function `f` applied to parameter `a`
+        */
+        template<typename T2>
+        constexpr OptionalSpectralField<T1> value_or(
+            const std::function<T1(const T2)> f, OptionalSpectralField<T2> a) const
+        {
+            return OptionalSpectralField<T2>(std::visit(OptionalSpectralFieldUnaryMapVisitor<T1,T2>(f), a.entry));
+        }
+        /*
+        Return `this` if a value exists, otherwise return the result of function `f` applied to parameters `a` and `b`
+        */
+        template<typename T2, typename T3>
+        constexpr OptionalSpectralField<T1> value_or(
+            const std::function<T1(const T2, const T2)> f, 
+            const OptionalSpectralField<T2> a, 
+            const OptionalSpectralField<T3> b) const
+        {
+            return entry.index() > 0? *this 
+                : std::visit(OptionalSpectralFieldBinaryMapVisitor<T1,T2,T3>(f), a.entry, b.entry);
+        }
+        /*
 		Return whether a entry exists within the field
         */
         constexpr bool has_entry() const
@@ -241,7 +327,7 @@ namespace field {
         template<typename T2>
         constexpr OptionalSpectralField<T2> map(const std::function<T2(const T1)> f) const
         {
-            return OptionalSpectralField<T2>(std::visit(OptionalSpectralFieldMapVisitor<T2>(f), entry));
+            return OptionalSpectralField<T2>(std::visit(OptionalSpectralFieldUnaryMapVisitor<T2,T1>(f), entry));
         }
         /*
         Return a OptionalSpectralField<T1> field representing `a` after applying the map `f`
