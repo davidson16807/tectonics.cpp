@@ -3,6 +3,11 @@
 #include "PartlyKnownSolid.hpp"
 #include "CompletedSolid.hpp"
 
+#include <models/compound/field/state/CompletedStateField_test_utils.hpp>
+#include <models/compound/field/spectral/CompletedSpectralField_test_utils.hpp>
+#include <models/compound/field/state/OptionalStateField_test_utils.hpp>
+#include <models/compound/field/spectral/OptionalSpectralField_test_utils.hpp>
+
 compound::phase::CompletedSolid known_ice (
     /*specific_heat_capacity*/            2.05 * si::joule / (si::gram * si::kelvin), // wikipedia
     /*thermal_conductivity*/              2.09 * si::watt / (si::meter * si::kelvin), // wikipedia

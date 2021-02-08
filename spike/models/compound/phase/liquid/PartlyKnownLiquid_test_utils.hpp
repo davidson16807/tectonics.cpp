@@ -60,6 +60,16 @@ int PartlyKnownLiquid_attribute_index_sum(const compound::phase::PartlyKnownLiqu
         liquid.vapor_pressure                  .index() +
         liquid.refractive_index                .index();
 }
+int PartlyKnownLiquid_attribute_known_count(const compound::phase::PartlyKnownLiquid& liquid)
+{
+    return
+        liquid.specific_heat_capacity          .has_value() +
+        liquid.thermal_conductivity            .has_value() +
+        liquid.dynamic_viscosity               .has_value() +
+        liquid.density                         .has_value() +
+        liquid.vapor_pressure                  .has_value() +
+        liquid.refractive_index                .has_value();
+}
 bool operator==(const compound::phase::PartlyKnownLiquid& first, const compound::phase::PartlyKnownLiquid& second)
 {
     return 

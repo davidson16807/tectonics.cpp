@@ -1,12 +1,13 @@
 #pragma once
 
+#include "PartlyKnownSolid.hpp"
+#include "CompletedSolid.hpp"
+
 #include <models/compound/field/state/CompletedStateField_test_utils.hpp>
 #include <models/compound/field/spectral/CompletedSpectralField_test_utils.hpp>
 #include <models/compound/field/state/OptionalStateField_test_utils.hpp>
 #include <models/compound/field/spectral/OptionalSpectralField_test_utils.hpp>
 
-#include "PartlyKnownSolid.hpp"
-#include "CompletedSolid.hpp"
 
 compound::phase::PartlyKnownSolid unknown {
     /*specific_heat_capacity*/            std::monostate(),
@@ -177,6 +178,33 @@ int PartlyKnownSolid_attribute_index_sum(const compound::phase::PartlyKnownSolid
         solid.shear_yield_strength            .index() +
 
         solid.chemical_susceptibility_estimate.index();
+}
+int PartlyKnownSolid_attribute_known_count(const compound::phase::PartlyKnownSolid& solid)
+{
+    return
+        solid.specific_heat_capacity          .has_value() +
+        solid.thermal_conductivity            .has_value() +
+        solid.dynamic_viscosity               .has_value() +
+        solid.density                         .has_value() +
+        solid.vapor_pressure                  .has_value() +
+        solid.refractive_index                .has_value() +
+        solid.spectral_reflectance            .has_value() +
+
+        solid.bulk_modulus                    .has_value() +
+        solid.tensile_modulus                 .has_value() +
+        solid.shear_modulus                   .has_value() +
+        solid.pwave_modulus                   .has_value() +
+        solid.lame_parameter                  .has_value() +
+        solid.poisson_ratio                   .has_value() +
+
+        solid.compressive_fracture_strength   .has_value() +
+        solid.tensile_fracture_strength       .has_value() +
+        solid.shear_fracture_strength         .has_value() +
+        solid.compressive_yield_strength      .has_value() +
+        solid.tensile_yield_strength          .has_value() +
+        solid.shear_yield_strength            .has_value() +
+
+        solid.chemical_susceptibility_estimate.has_value();
 }
 bool operator==(const compound::phase::PartlyKnownSolid& first, const compound::phase::PartlyKnownSolid& second)
 {
