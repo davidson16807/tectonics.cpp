@@ -22,6 +22,7 @@ namespace field {
         template<typename T2>
 	    using CompletedStateFieldVariant = std::variant<T2, StateSample<T2>, StateFunction<T2>>;
 
+        template<typename Tout>
         class OptionalStateFieldValueVisitor
         {
             si::pressure p;
@@ -32,16 +33,16 @@ namespace field {
             {
 
             }
-            std::optional<T1> operator()(const std::monostate a               ) const {
-                return std::optional<T1>();
+            std::optional<Tout> operator()(const std::monostate a               ) const {
+                return std::optional<Tout>();
             }
-            std::optional<T1> operator()(const T1 a                           ) const {
+            std::optional<Tout> operator()(const Tout a                           ) const {
                 return a;
             }
-            std::optional<T1> operator()(const StateSample<T1> a        ) const {
+            std::optional<Tout> operator()(const StateSample<Tout> a        ) const {
                 return a.entry;
             }
-            std::optional<T1> operator()(const StateFunction<T1> a ) const {
+            std::optional<Tout> operator()(const StateFunction<Tout> a ) const {
                 return a(p,T);
             }
         };
@@ -72,6 +73,7 @@ namespace field {
         {
         public:
             typedef std::function<Tout(const Tin1)> F;
+            typedef std::function<Tout(const si::pressure, const si::temperature)> FpT;
             F f;
             OptionalStateFieldUnaryMapVisitor(const F f)
             : f(f)
@@ -92,8 +94,8 @@ namespace field {
                 // This occurs even when we capture `this` by entry.
                 // I haven't clarified the reason, but it seems likely related to accessing 
                 // the `f` attribute in a object that destructs after we exit out of the `map` function.
-                auto fcopy = f; 
-                return [fcopy, a](const si::pressure p, const si::temperature T){ return fcopy(a(p, T)); };
+                F fcopy = f; 
+                return FpT([fcopy, a](const si::pressure p, const si::temperature T){ return fcopy(a(p, T)); });
             }
         };
         template<typename Tout, typename Tin1, typename Tin2>
@@ -101,6 +103,7 @@ namespace field {
         {
         public:
             typedef std::function<Tout(const Tin1,const Tin2)> F;
+            typedef std::function<Tout(const si::pressure, const si::temperature)> FpT;
             F f;
             Tin2 b;
             OptionalStateFieldRightCurriedBinaryMapVisitor(const F f, const Tin2 b)
@@ -122,9 +125,9 @@ namespace field {
                 // This occurs even when we capture `this` by entry.
                 // I haven't clarified the reason, but it seems likely related to accessing 
                 // the `f` attribute in b object that destructs after we ebit out of the `map` function.
-                auto fcopy = f; 
-                auto bcopy = b; 
-                return [fcopy, bcopy, a](const si::pressure p, const si::temperature T){ return fcopy(a(p, T), bcopy); };
+                F fcopy = f; 
+                Tin2 bcopy = b; 
+                return FpT([fcopy, bcopy, a](const si::pressure p, const si::temperature T){ return fcopy(a(p, T), bcopy); });
             }
         };
         template<typename Tout, typename Tin1, typename Tin2>
@@ -132,6 +135,7 @@ namespace field {
         {
         public:
             typedef std::function<Tout(const Tin1,const Tin2)> F;
+            typedef std::function<Tout(const si::pressure, const si::temperature)> FpT;
             F f;
             OptionalStateFieldVariant<Tin1> a;
             OptionalStateFieldLeftCurriedBinaryMapVisitor(const F f, const OptionalStateFieldVariant<Tin1> a)
@@ -153,8 +157,8 @@ namespace field {
                 si::pressure p = b.pressure;
                 si::temperature T = b.temperature;
                 return 
-                    a.index() == 1?  StateSample<Tout>(f(std::visit(OptionalStateFieldValueVisitor(p, T), a).value(), b.entry), p, T) 
-                  : a.index() == 2?  f(std::visit(OptionalStateFieldValueVisitor(p, T), a).value(), b.entry)
+                    a.index() == 1?  StateSample<Tout>(f(std::visit(OptionalStateFieldValueVisitor<Tin1>(p, T), a).value(), b.entry), p, T) 
+                  : a.index() == 2?  f(std::visit(OptionalStateFieldValueVisitor<Tin1>(p, T), a).value(), b.entry)
                   : std::visit(OptionalStateFieldRightCurriedBinaryMapVisitor<Tout,Tin1,Tin2>(f, b.entry), a);
             }
             OptionalStateFieldVariant<Tout> operator()(const StateFunction<Tin2> b ) const {
@@ -162,13 +166,13 @@ namespace field {
                 // This occurs even when we capture `this` by entry.
                 // I haven't clarified the reason, but it seems likely related to accessing 
                 // the `f` attribute in a object that destructs after we exit out of the `map` function.
-                auto fcopy = f; 
-                auto acopy = a; 
+                F fcopy = f; 
+                OptionalStateFieldVariant<Tin1> acopy = a; 
                 return
                     a.index() == 0? OptionalStateFieldVariant<Tout>(std::monostate() )
-                  : OptionalStateFieldVariant<Tout>([fcopy, acopy, b](const si::pressure p, const si::temperature T){ 
-                                          return fcopy(std::visit(OptionalStateFieldValueVisitor(p, T), acopy).value(), b(p, T)); 
-                                      });
+                  : OptionalStateFieldVariant<Tout>(FpT([fcopy, acopy, b](const si::pressure p, const si::temperature T){ 
+                                                            return fcopy(std::visit(OptionalStateFieldValueVisitor<Tin1>(p, T), acopy).value(), b(p, T)); 
+                                                        }));
             }
         };
         template<typename T2>
@@ -259,7 +263,7 @@ namespace field {
         }
         constexpr std::optional<T1> operator()(const si::pressure p, const si::temperature T) const
         {
-            return std::visit(OptionalStateFieldValueVisitor(p, T), entry);
+            return std::visit(OptionalStateFieldValueVisitor<T1>(p, T), entry);
         }
         /*
         Return whichever field provides more information, going by the following definition:
@@ -287,14 +291,15 @@ namespace field {
         template<typename T2>
         constexpr OptionalStateField<T1> value_or(const std::function<T1(const T2)> f, const OptionalStateField<T2> a) const
         {
-            return OptionalStateField<T2>(std::visit(OptionalStateFieldUnaryMapVisitor<T1,T2>(f), a.entry));
+            return entry.index() > 0? *this 
+                : OptionalStateField<T2>(std::visit(OptionalStateFieldUnaryMapVisitor<T1,T2>(f), a.entry));
         }
         /*
         Return `this` if a value exists, otherwise return the result of function `f` applied to parameters `a` and `b`
         */
         template<typename T2, typename T3>
         constexpr OptionalStateField<T1> value_or(
-            const std::function<T1(const T2, const T2)> f, 
+            const std::function<T1(const T2, const T3)> f, 
             const OptionalStateField<T2> a, 
             const OptionalStateField<T3> b) const
         {
@@ -306,7 +311,7 @@ namespace field {
         */
         constexpr bool has_value() const
         {
-            return entry.index() == 0;
+            return entry.index() > 0;
         }
         /*
 		Return whether a entry exists within the field

@@ -44,6 +44,7 @@ namespace field {
                 return other(0.0 * si::pascal, 0.0* si::kelvin) == a(0.0 * si::pascal, 0.0* si::kelvin);
             }
         };
+        template<typename Tout>
         class OptionalSpectralFieldValueVisitor
         {
             si::wavenumber nlo;
@@ -56,16 +57,16 @@ namespace field {
             {
 
             }
-            std::optional<T1> operator()(const std::monostate a               ) const {
-                return std::optional<T1>();
+            std::optional<Tout> operator()(const std::monostate a               ) const {
+                return std::optional<Tout>();
             }
-            std::optional<T1> operator()(const T1 a                           ) const {
+            std::optional<Tout> operator()(const Tout a                           ) const {
                 return a;
             }
-            std::optional<T1> operator()(const SpectralSample<T1> a        ) const {
+            std::optional<Tout> operator()(const SpectralSample<Tout> a        ) const {
                 return a.entry;
             }
-            std::optional<T1> operator()(const SpectralFunction<T1> a ) const {
+            std::optional<Tout> operator()(const SpectralFunction<Tout> a ) const {
                 return a(nlo, nhi,p,T);
             }
         };
@@ -162,6 +163,7 @@ namespace field {
         {
         public:
             typedef std::function<Tout(const Tin1,const Tin2)> F;
+            typedef std::function<Tout(const si::wavenumber, const si::wavenumber, const si::pressure, const si::temperature)> FpT;
             F f;
             Tin2 b;
             OptionalSpectralFieldRightCurriedBinaryMapVisitor(const F f, const Tin2 b)
@@ -180,6 +182,7 @@ namespace field {
                 si::wavenumber nhi = a.nhi;
                 si::pressure p = a.pressure;
                 si::temperature T = a.temperature;
+
                 return SpectralSample<Tout>(f(a.entry,b), nlo, nhi, p, T);
             }
             OptionalSpectralFieldVariant<Tout> operator()(const SpectralFunction<Tin1> a ) const {
@@ -187,9 +190,9 @@ namespace field {
                 // This occurs even when we capture `this` by entry.
                 // I haven't clarified the reason, but it seems likely related to accessing 
                 // the `f` attribute in b object that destructs after we ebit out of the `map` function.
-                auto fcopy = f; 
-                auto bcopy = b; 
-                return [fcopy, bcopy, a](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return fcopy(a(nlo, nhi, p, T), bcopy); };
+                F fcopy = f; 
+                Tin2 bcopy = b; 
+                return FpT([fcopy, bcopy, a](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return fcopy(a(nlo, nhi, p, T), bcopy); });
             }
         };
         template<typename Tout, typename Tin1, typename Tin2>
@@ -197,6 +200,7 @@ namespace field {
         {
         public:
             typedef std::function<Tout(const Tin1,const Tin2)> F;
+            typedef std::function<Tout(const si::wavenumber, const si::wavenumber, const si::pressure, const si::temperature)> FpT;
             F f;
             OptionalSpectralFieldVariant<Tin1> a;
             OptionalSpectralFieldLeftCurriedBinaryMapVisitor(const F f, const OptionalSpectralFieldVariant<Tin1> a)
@@ -212,7 +216,7 @@ namespace field {
             }
             OptionalSpectralFieldVariant<Tout> operator()(const SpectralSample<Tin2> b) const {
                 /*
-                if both a and b are SpectralSamples, we cannot represent the pressure/temperature metadata from both of them in the result,
+                if both a and b are StateSamples, we cannot represent the pressure/temperature metadata from both of them in the result,
                 so we simply strip the metadata from the result and store as a constant.
                 */
                 si::wavenumber nlo = b.nlo;
@@ -220,8 +224,8 @@ namespace field {
                 si::pressure p = b.pressure;
                 si::temperature T = b.temperature;
                 return 
-                    a.index() == 1?  SpectralSample<Tout>(f(std::visit(OptionalSpectralFieldValueVisitor(nlo, nhi, p, T), a).value(), b.entry), nlo, nhi, p, T) 
-                  : a.index() == 2?  f(std::visit(OptionalSpectralFieldValueVisitor(nlo, nhi, p, T), a).value(), b.entry)
+                    a.index() == 1?  SpectralSample<Tout>(f(std::visit(OptionalSpectralFieldValueVisitor<Tin1>(nlo, nhi, p, T), a).value(), b.entry), nlo, nhi, p, T) 
+                  : a.index() == 2?  f(std::visit(OptionalSpectralFieldValueVisitor<Tin1>(nlo, nhi, p, T), a).value(), b.entry)
                   : std::visit(OptionalSpectralFieldRightCurriedBinaryMapVisitor<Tout,Tin1,Tin2>(f, b.entry), a);
             }
             OptionalSpectralFieldVariant<Tout> operator()(const SpectralFunction<Tin2> b ) const {
@@ -229,13 +233,13 @@ namespace field {
                 // This occurs even when we capture `this` by entry.
                 // I haven't clarified the reason, but it seems likely related to accessing 
                 // the `f` attribute in a object that destructs after we exit out of the `map` function.
-                auto fcopy = f; 
-                auto acopy = a; 
+                F fcopy = f; 
+                OptionalSpectralFieldVariant<Tin1> acopy = a; 
                 return
                     a.index() == 0? OptionalSpectralFieldVariant<Tout>(std::monostate() )
-                  : OptionalSpectralFieldVariant<Tout>([fcopy, acopy, b](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ 
-                                          return fcopy(std::visit(OptionalSpectralFieldValueVisitor(nlo, nhi, p, T), acopy).value(), b(nlo, nhi, p, T)); 
-                                      });
+                  : OptionalSpectralFieldVariant<Tout>(FpT([fcopy, acopy, b](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ 
+                                                            return fcopy(std::visit(OptionalSpectralFieldValueVisitor<Tin1>(nlo, nhi, p, T), acopy).value(), b(nlo, nhi, p, T)); 
+                                                        }));
             }
         };
         OptionalSpectralFieldVariant<T1> entry;
@@ -273,7 +277,7 @@ namespace field {
         }
         constexpr std::optional<T1> operator()(const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T) const
         {
-            return std::visit(OptionalSpectralFieldValueVisitor(nlo, nhi, p, T), entry);
+            return std::visit(OptionalSpectralFieldValueVisitor<T1>(nlo, nhi, p, T), entry);
         }
         /*
         Return `a` if available, otherwise return `b` as a substitute.
@@ -309,14 +313,15 @@ namespace field {
         constexpr OptionalSpectralField<T1> value_or(
             const std::function<T1(const T2)> f, OptionalSpectralField<T2> a) const
         {
-            return OptionalSpectralField<T2>(std::visit(OptionalSpectralFieldUnaryMapVisitor<T1,T2>(f), a.entry));
+            return entry.index() > 0? *this 
+                : OptionalSpectralField<T2>(std::visit(OptionalSpectralFieldUnaryMapVisitor<T1,T2>(f), a.entry));
         }
         /*
         Return `this` if a value exists, otherwise return the result of function `f` applied to parameters `a` and `b`
         */
         template<typename T2, typename T3>
         constexpr OptionalSpectralField<T1> value_or(
-            const std::function<T1(const T2, const T2)> f, 
+            const std::function<T1(const T2, const T3)> f, 
             const OptionalSpectralField<T2> a, 
             const OptionalSpectralField<T3> b) const
         {
@@ -328,7 +333,7 @@ namespace field {
         */
         constexpr bool has_value() const
         {
-            return entry.index() == 0;
+            return entry.index() > 0;
         }
         /*
 		Return whether a entry exists within the field

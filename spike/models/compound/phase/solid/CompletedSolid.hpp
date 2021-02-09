@@ -18,12 +18,12 @@ namespace phase {
         field::CompletedSpectralField<double> refractive_index;
         field::CompletedSpectralField<double> spectral_reflectance;
 
-        field::CompletedSpectralField<si::pressure> bulk_modulus;     // K   bulk modulus
-        field::CompletedSpectralField<si::pressure> tensile_modulus;  // E   tensile Modulus, Young's modulus, modulus of elasticity
-        field::CompletedSpectralField<si::pressure> shear_modulus;    // G,μ shear modulus, dynamic viscosity, or modulus of rigidity
-        field::CompletedSpectralField<si::pressure> pwave_modulus;    // M   P-wave modulus
-        field::CompletedSpectralField<si::pressure> lame_parameter;   // λ   Lamé's first parameter
-        field::CompletedSpectralField<double> poisson_ratio;          // ν   Poisson's ratio
+        field::CompletedStateField<si::pressure> bulk_modulus;     // K   bulk modulus
+        field::CompletedStateField<si::pressure> tensile_modulus;  // E   tensile Modulus, Young's modulus, modulus of elasticity
+        field::CompletedStateField<si::pressure> shear_modulus;    // G,μ shear modulus, dynamic viscosity, or modulus of rigidity
+        field::CompletedStateField<si::pressure> pwave_modulus;    // M   P-wave modulus
+        field::CompletedStateField<si::pressure> lame_parameter;   // λ   Lamé's first parameter
+        field::CompletedStateField<double> poisson_ratio;          // ν   Poisson's ratio
         
         field::CompletedStateField<si::pressure> compressive_fracture_strength;
         field::CompletedStateField<si::pressure> tensile_fracture_strength;
@@ -43,12 +43,12 @@ namespace phase {
             const field::CompletedSpectralField<double> refractive_index,
             const field::CompletedSpectralField<double> spectral_reflectance,
 
-            const field::CompletedSpectralField<si::pressure> bulk_modulus,     // K   bulk modulus
-            const field::CompletedSpectralField<si::pressure> tensile_modulus,  // E   tensile Modulus, Young's modulus, modulus of elasticity
-            const field::CompletedSpectralField<si::pressure> shear_modulus,    // G,μ shear modulus, dynamic viscosity, or modulus of rigidity
-            const field::CompletedSpectralField<si::pressure> pwave_modulus,    // M   P-wave modulus
-            const field::CompletedSpectralField<si::pressure> lame_parameter,   // λ   Lamé's first parameter
-            const field::CompletedSpectralField<double> poisson_ratio,          // ν   Poisson's ratio
+            const field::CompletedStateField<si::pressure> bulk_modulus,     // K   bulk modulus
+            const field::CompletedStateField<si::pressure> tensile_modulus,  // E   tensile Modulus, Young's modulus, modulus of elasticity
+            const field::CompletedStateField<si::pressure> shear_modulus,    // G,μ shear modulus, dynamic viscosity, or modulus of rigidity
+            const field::CompletedStateField<si::pressure> pwave_modulus,    // M   P-wave modulus
+            const field::CompletedStateField<si::pressure> lame_parameter,   // λ   Lamé's first parameter
+            const field::CompletedStateField<double> poisson_ratio,          // ν   Poisson's ratio
             
             const field::CompletedStateField<si::pressure> compressive_fracture_strength,
             const field::CompletedStateField<si::pressure> tensile_fracture_strength,

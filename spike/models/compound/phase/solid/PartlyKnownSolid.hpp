@@ -17,12 +17,12 @@ namespace phase {
         field::OptionalSpectralField<double> refractive_index;
         field::OptionalSpectralField<double> spectral_reflectance;
 
-        field::OptionalSpectralField<si::pressure> bulk_modulus;     // K   bulk modulus
-        field::OptionalSpectralField<si::pressure> tensile_modulus;  // E   tensile Modulus, Young's modulus, modulus of elasticity
-        field::OptionalSpectralField<si::pressure> shear_modulus;    // G,μ shear modulus, dynamic viscosity, or modulus of rigidity
-        field::OptionalSpectralField<si::pressure> pwave_modulus;    // M   P-wave modulus
-        field::OptionalSpectralField<si::pressure> lame_parameter;   // λ   Lamé's first parameter
-        field::OptionalSpectralField<double> poisson_ratio;          // ν   Poisson's ratio
+        field::OptionalStateField<si::pressure> bulk_modulus;     // K   bulk modulus
+        field::OptionalStateField<si::pressure> tensile_modulus;  // E   tensile Modulus, Young's modulus, modulus of elasticity
+        field::OptionalStateField<si::pressure> shear_modulus;    // G,μ shear modulus, dynamic viscosity, or modulus of rigidity
+        field::OptionalStateField<si::pressure> pwave_modulus;    // M   P-wave modulus
+        field::OptionalStateField<si::pressure> lame_parameter;   // λ   Lamé's first parameter
+        field::OptionalStateField<double> poisson_ratio;          // ν   Poisson's ratio
         
         field::OptionalStateField<si::pressure> compressive_fracture_strength;
         field::OptionalStateField<si::pressure> tensile_fracture_strength;

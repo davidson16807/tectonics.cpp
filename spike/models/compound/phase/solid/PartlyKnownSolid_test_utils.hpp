@@ -222,6 +222,7 @@ bool operator==(const compound::phase::PartlyKnownSolid& first, const compound::
         first.shear_modulus          == second.shear_modulus          &&
         first.pwave_modulus          == second.pwave_modulus          &&
         first.lame_parameter         == second.lame_parameter         &&
+        first.poisson_ratio          == second.poisson_ratio          &&
 
         first.compressive_fracture_strength == second.compressive_fracture_strength &&
         first.tensile_fracture_strength     == second.tensile_fracture_strength     &&

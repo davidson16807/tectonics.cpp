@@ -26,101 +26,101 @@ pwave    M    P-wave modulus
 
 
 // (K,E)->* 
-constexpr float get_lame_from_bulk_and_tensile ( const float bulk, const float tensile) { return ( 3.0f*bulk*(3.0f*bulk-tensile) )/( 9.0f*bulk-tensile )                                                       ;}
-constexpr float get_shear_from_bulk_and_tensile ( const float bulk, const float tensile) { return ( 3.0f*bulk*tensile )/( 9.0f*bulk-tensile )                                                                  ;}
-constexpr float get_poisson_from_bulk_and_tensile ( const float bulk, const float tensile) { return ( 3.0f*bulk-tensile )/( 6.0f*bulk )                                                                      ;}
-constexpr float get_pwave_from_bulk_and_tensile ( const float bulk, const float tensile) { return ( 3.0f*bulk*(3.0f*bulk+tensile) )/( 9.0f*bulk-tensile )                                                      ;}
+constexpr si::pressure get_lame_from_bulk_and_tensile ( const si::pressure bulk, const si::pressure tensile) { return ( 3.0*bulk*(3.0*bulk-tensile) )/( 9.0*bulk-tensile )  ;}
+constexpr si::pressure get_shear_from_bulk_and_tensile ( const si::pressure bulk, const si::pressure tensile) { return ( 3.0*bulk*tensile )/( 9.0*bulk-tensile )            ;}
+constexpr double       get_poisson_from_bulk_and_tensile ( const si::pressure bulk, const si::pressure tensile) { return si::unitless(( 3.0*bulk-tensile )/( 6.0*bulk ))    ;}
+constexpr si::pressure get_pwave_from_bulk_and_tensile ( const si::pressure bulk, const si::pressure tensile) { return ( 3.0*bulk*(3.0*bulk+tensile) )/( 9.0*bulk-tensile ) ;}
 
 // (K,λ)->* 
-constexpr float get_tensile_from_bulk_and_lame ( const float bulk, const float lame) { return ( 9.0f*bulk*(bulk-lame) )/( 3.0f*bulk-lame )                                                               ;}
-constexpr float get_shear_from_bulk_and_lame ( const float bulk, const float lame) { return ( 3.0f*(bulk-lame) )/( 2.0f )                                                                              ;}
-constexpr float get_poisson_from_bulk_and_lame ( const float bulk, const float lame) { return ( lame )/( 3.0f*bulk-lame )                                                                              ;}
-constexpr float get_pwave_from_bulk_and_lame ( const float bulk, const float lame) { return 3.0f*bulk-2.0f*lame                                                                                        ;}
+constexpr si::pressure get_tensile_from_bulk_and_lame ( const si::pressure bulk, const si::pressure lame) { return ( 9.0*bulk*(bulk-lame) )/( 3.0*bulk-lame )               ;}
+constexpr si::pressure get_shear_from_bulk_and_lame ( const si::pressure bulk, const si::pressure lame) { return ( 3.0*(bulk-lame) )/( 2.0 )                                ;}
+constexpr double       get_poisson_from_bulk_and_lame ( const si::pressure bulk, const si::pressure lame) { return si::unitless(( lame )/( 3.0*bulk-lame ))                 ;}
+constexpr si::pressure get_pwave_from_bulk_and_lame ( const si::pressure bulk, const si::pressure lame) { return 3.0*bulk-2.0*lame                                          ;}
 
 // (K,G)->* 
-constexpr float get_tensile_from_bulk_and_shear ( const float bulk, const float shear) { return ( 9.0f*bulk*shear )/( 3.0f*bulk+shear )                                                                  ;}
-constexpr float get_lame_from_bulk_and_shear ( const float bulk, const float shear) { return bulk - ( 2.0f*shear )/( 3.0f )                                                                            ;}
-constexpr float get_poisson_from_bulk_and_shear ( const float bulk, const float shear) { return ( 3.0f*bulk-2.0f*shear )/( 2.0f*(3.0f*bulk+shear) )                                                    ;}
-constexpr float get_pwave_from_bulk_and_shear ( const float bulk, const float shear) { return bulk + ( 4.0f*shear )/( 3.0f )                                                                           ;}
+constexpr si::pressure get_tensile_from_bulk_and_shear ( const si::pressure bulk, const si::pressure shear) { return ( 9.0*bulk*shear )/( 3.0*bulk+shear )                  ;}
+constexpr si::pressure get_lame_from_bulk_and_shear ( const si::pressure bulk, const si::pressure shear) { return bulk - ( 2.0*shear )/( 3.0 )                              ;}
+constexpr double       get_poisson_from_bulk_and_shear ( const si::pressure bulk, const si::pressure shear) { return si::unitless(( 3.0*bulk-2.0*shear )/( 2.0*(3.0*bulk+shear) ));}
+constexpr si::pressure get_pwave_from_bulk_and_shear ( const si::pressure bulk, const si::pressure shear) { return bulk + ( 4.0*shear )/( 3.0 )                             ;}
 
 // (K,ν)->* 
-constexpr float get_tensile_from_bulk_and_poisson ( const float bulk, const float poisson) { return 3.0f*bulk*(1.0f-2.0f*poisson)                                                                        ;}
-constexpr float get_lame_from_bulk_and_poisson ( const float bulk, const float poisson) { return ( 3.0f*bulk*poisson )/( 1.0f+poisson )                                                                ;}
-constexpr float get_shear_from_bulk_and_poisson ( const float bulk, const float poisson) { return ( 3.0f*bulk*(1.0f-2.0f*poisson) )/( 2.0f*(1.0f+poisson) )                                            ;}
-constexpr float get_pwave_from_bulk_and_poisson ( const float bulk, const float poisson) { return ( 3.0f*bulk*(1.0f-poisson) )/( 1.0f+poisson )                                                        ;}
+constexpr si::pressure get_tensile_from_bulk_and_poisson ( const si::pressure bulk, const double poisson) { return 3.0*bulk*(1.0-2.0*poisson)                               ;}
+constexpr si::pressure get_lame_from_bulk_and_poisson ( const si::pressure bulk, const double poisson) { return ( 3.0*bulk*poisson )/( 1.0+poisson )                        ;}
+constexpr si::pressure get_shear_from_bulk_and_poisson ( const si::pressure bulk, const double poisson) { return ( 3.0*bulk*(1.0-2.0*poisson) )/( 2.0*(1.0+poisson) )       ;}
+constexpr si::pressure get_pwave_from_bulk_and_poisson ( const si::pressure bulk, const double poisson) { return ( 3.0*bulk*(1.0-poisson) )/( 1.0+poisson )                 ;}
 
 // (K,M)->* 
-constexpr float get_tensile_from_bulk_and_pwave ( const float bulk, const float pwave) { return ( 9.0f*bulk*(pwave-bulk) )/( 3.0f*bulk+pwave )                                                           ;}
-constexpr float get_lame_from_bulk_and_pwave ( const float bulk, const float pwave) { return ( 3.0f*bulk-pwave )/( 2.0f )                                                                              ;}
-constexpr float get_shear_from_bulk_and_pwave ( const float bulk, const float pwave) { return ( 3.0f*(pwave-bulk) )/( 4.0f )                                                                           ;}
-constexpr float get_poisson_from_bulk_and_pwave ( const float bulk, const float pwave) { return ( 3.0f*bulk-pwave )/( 3.0f*bulk+pwave )                                                                ;}
+constexpr si::pressure get_tensile_from_bulk_and_pwave ( const si::pressure bulk, const si::pressure pwave) { return ( 9.0*bulk*(pwave-bulk) )/( 3.0*bulk+pwave )           ;}
+constexpr si::pressure get_lame_from_bulk_and_pwave ( const si::pressure bulk, const si::pressure pwave) { return ( 3.0*bulk-pwave )/( 2.0 )                                ;}
+constexpr si::pressure get_shear_from_bulk_and_pwave ( const si::pressure bulk, const si::pressure pwave) { return ( 3.0*(pwave-bulk) )/( 4.0 )                             ;}
+constexpr double       get_poisson_from_bulk_and_pwave ( const si::pressure bulk, const si::pressure pwave) { return si::unitless(( 3.0*bulk-pwave )/( 3.0*bulk+pwave ))    ;}
 
 // (E,λ)->* 
-// NOTE: these functions cannot be marked constexpr due to their use of `sqrt`, however we still want to convey they should be inlined
-inline float get_bulk_from_tensile_and_lame ( const float tensile, const float lame) { float R = sqrt(tensile*tensile + 9*lame*lame + 2*tensile*lame ); return ( tensile + 3.0f*lame + R )/( 6.0f )             ;}
-inline float get_shear_from_tensile_and_lame ( const float tensile, const float lame) { float R = sqrt(tensile*tensile + 9*lame*lame + 2*tensile*lame ); return ( tensile-3.0f*lame+R )/( 4.0f )                ;}
-inline float get_poisson_from_tensile_and_lame ( const float tensile, const float lame) { float R = sqrt(tensile*tensile + 9*lame*lame + 2*tensile*lame ); return ( 2.0f*lame )/( tensile+lame+R )              ;}
-inline float get_pwave_from_tensile_and_lame ( const float tensile, const float lame) { float R = sqrt(tensile*tensile + 9*lame*lame + 2*tensile*lame ); return ( tensile-lame+R )/( 2.0f )                     ;}
+// NOTE: these functions cannot be marked constexpr due to their use of `si::sqrt`, however we still want to convey they should be inlined
+inline si::pressure get_bulk_from_tensile_and_lame ( const si::pressure tensile, const si::pressure lame) { si::pressure R = si::sqrt(tensile*tensile + 9.0*lame*lame + 2.0*tensile*lame ); return ( tensile + 3.0*lame + R )/( 6.0 )             ;}
+inline si::pressure get_shear_from_tensile_and_lame ( const si::pressure tensile, const si::pressure lame) { si::pressure R = si::sqrt(tensile*tensile + 9.0*lame*lame + 2.0*tensile*lame ); return ( tensile-3.0*lame+R )/( 4.0 )                ;}
+inline double       get_poisson_from_tensile_and_lame ( const si::pressure tensile, const si::pressure lame) { si::pressure R = si::sqrt(tensile*tensile + 9.0*lame*lame + 2.0*tensile*lame ); return si::unitless(( 2.0*lame )/( tensile+lame+R ));}
+inline si::pressure get_pwave_from_tensile_and_lame ( const si::pressure tensile, const si::pressure lame) { si::pressure R = si::sqrt(tensile*tensile + 9.0*lame*lame + 2.0*tensile*lame ); return ( tensile-lame+R )/( 2.0 )                     ;}
 
 // (E,G)->* 
-constexpr float get_bulk_from_tensile_and_shear ( const float tensile, const float shear) { return ( tensile*shear )/( 3.0f*(3.0f*shear-tensile) )                                                             ;}
-constexpr float get_lame_from_tensile_and_shear ( const float tensile, const float shear) { return ( shear*(tensile-2.0f*shear) )/( 3.0f*shear-tensile )                                                       ;}
-constexpr float get_poisson_from_tensile_and_shear ( const float tensile, const float shear) { return ( tensile )/( 2.0f*shear)-1.0f                                                                         ;}
-constexpr float get_pwave_from_tensile_and_shear ( const float tensile, const float shear) { return ( shear*(4.0f*shear-tensile) )/( 3.0f*shear-tensile )                                                      ;}
+constexpr si::pressure get_bulk_from_tensile_and_shear ( const si::pressure tensile, const si::pressure shear) { return ( tensile*shear )/( 3.0*(3.0*shear-tensile) )                                                             ;}
+constexpr si::pressure get_lame_from_tensile_and_shear ( const si::pressure tensile, const si::pressure shear) { return ( shear*(tensile-2.0*shear) )/( 3.0*shear-tensile )                                                       ;}
+constexpr double       get_poisson_from_tensile_and_shear ( const si::pressure tensile, const si::pressure shear) { return si::unitless(( tensile )/( 2.0*shear))-1.0                                                             ;}
+constexpr si::pressure get_pwave_from_tensile_and_shear ( const si::pressure tensile, const si::pressure shear) { return ( shear*(4.0*shear-tensile) )/( 3.0*shear-tensile )                                                      ;}
 
 // (E,ν)->* 
-constexpr float get_bulk_from_tensile_and_poisson ( const float tensile, const float poisson) { return ( tensile )/( 3.0f*(1.0f-2.0f*poisson) )                                                              ;}
-constexpr float get_lame_from_tensile_and_poisson ( const float tensile, const float poisson) { return ( tensile*poisson )/( (1.0f+poisson)(1.0f-2.0f*poisson) )                                             ;}
-constexpr float get_shear_from_tensile_and_poisson ( const float tensile, const float poisson) { return ( tensile )/( 2.0f*(1.0f+poisson) )                                                                  ;}
-constexpr float get_pwave_from_tensile_and_poisson ( const float tensile, const float poisson) { return ( tensile*(1.0f-poisson) )/( (1.0f+poisson)(1.0f-2.0f*poisson) )                                     ;}
+constexpr si::pressure get_bulk_from_tensile_and_poisson ( const si::pressure tensile, const double poisson) { return ( tensile )/( 3.0*(1.0-2.0*poisson) )                                                              ;}
+constexpr si::pressure get_lame_from_tensile_and_poisson ( const si::pressure tensile, const double poisson) { return ( tensile*poisson )/( (1.0+poisson)*(1.0-2.0*poisson) )                                             ;}
+constexpr si::pressure get_shear_from_tensile_and_poisson ( const si::pressure tensile, const double poisson) { return ( tensile )/( 2.0*(1.0+poisson) )                                                                  ;}
+constexpr si::pressure get_pwave_from_tensile_and_poisson ( const si::pressure tensile, const double poisson) { return ( tensile*(1.0-poisson) )/( (1.0+poisson)*(1.0-2.0*poisson) )                                     ;}
 
 // (E,M)->* 
 // NOTE: There are two valid solutions, such that S can be positive or negative. To prevent introducing dependencies we represent them as separate functions
-// NOTE: these functions cannot be marked constexpr due to their use of `sqrt`, however we still want to convey they should be inlined
-inline float get_bulk1_from_tensile_and_pwave ( const float tensile, const float pwave) { float S = sqrt(tensile*tensile + 9*pwave*pwave - 10.0f*tensile*pwave); return ( 3.0f*pwave-tensile+S )/( 6.0f )        ;}
-inline float get_lame1_from_tensile_and_pwave ( const float tensile, const float pwave) { float S = sqrt(tensile*tensile + 9*pwave*pwave - 10.0f*tensile*pwave); return ( pwave-tensile+S )/( 4.0f )             ;}
-inline float get_shear1_from_tensile_and_pwave ( const float tensile, const float pwave) { float S = sqrt(tensile*tensile + 9*pwave*pwave - 10.0f*tensile*pwave); return ( 3.0f*pwave+tensile-S )/( 8.0f )       ;}
-inline float get_poisson1_from_tensile_and_pwave ( const float tensile, const float pwave) { float S = sqrt(tensile*tensile + 9*pwave*pwave - 10.0f*tensile*pwave); return ( tensile-pwave+S )/( 4.0f*pwave )    ;}
-inline float get_bulk2_from_tensile_and_pwave ( const float tensile, const float pwave) { float S = -sqrt(tensile*tensile + 9*pwave*pwave - 10.0f*tensile*pwave); return ( 3.0f*pwave-tensile+S )/( 6.0f )        ;}
-inline float get_lame2_from_tensile_and_pwave ( const float tensile, const float pwave) { float S = -sqrt(tensile*tensile + 9*pwave*pwave - 10.0f*tensile*pwave); return ( pwave-tensile+S )/( 4.0f )             ;}
-inline float get_shear2_from_tensile_and_pwave ( const float tensile, const float pwave) { float S = -sqrt(tensile*tensile + 9*pwave*pwave - 10.0f*tensile*pwave); return ( 3.0f*pwave+tensile-S )/( 8.0f )       ;}
-inline float get_poisson2_from_tensile_and_pwave ( const float tensile, const float pwave) { float S = -sqrt(tensile*tensile + 9*pwave*pwave - 10.0f*tensile*pwave); return ( tensile-pwave+S )/( 4.0f*pwave )    ;}
+// NOTE: these functions cannot be marked constexpr due to their use of `si::sqrt`, however we still want to convey they should be inlined
+inline si::pressure get_bulk1_from_tensile_and_pwave ( const si::pressure tensile, const si::pressure pwave) { si::pressure S = si::sqrt(tensile*tensile + 9.0*pwave*pwave - 10.0*tensile*pwave); return ( 3.0*pwave-tensile+S )/( 6.0 )        ;}
+inline si::pressure get_lame1_from_tensile_and_pwave ( const si::pressure tensile, const si::pressure pwave) { si::pressure S = si::sqrt(tensile*tensile + 9.0*pwave*pwave - 10.0*tensile*pwave); return ( pwave-tensile+S )/( 4.0 )             ;}
+inline si::pressure get_shear1_from_tensile_and_pwave ( const si::pressure tensile, const si::pressure pwave) { si::pressure S = si::sqrt(tensile*tensile + 9.0*pwave*pwave - 10.0*tensile*pwave); return ( 3.0*pwave+tensile-S )/( 8.0 )       ;}
+inline double       get_poisson1_from_tensile_and_pwave ( const si::pressure tensile, const si::pressure pwave) { si::pressure S = si::sqrt(tensile*tensile + 9.0*pwave*pwave - 10.0*tensile*pwave); return si::unitless(( tensile-pwave+S )/( 4.0*pwave ))                    ;}
+inline si::pressure get_bulk2_from_tensile_and_pwave ( const si::pressure tensile, const si::pressure pwave) { si::pressure S = -si::sqrt(tensile*tensile + 9.0*pwave*pwave - 10.0*tensile*pwave); return ( 3.0*pwave-tensile+S )/( 6.0 )        ;}
+inline si::pressure get_lame2_from_tensile_and_pwave ( const si::pressure tensile, const si::pressure pwave) { si::pressure S = -si::sqrt(tensile*tensile + 9.0*pwave*pwave - 10.0*tensile*pwave); return ( pwave-tensile+S )/( 4.0 )             ;}
+inline si::pressure get_shear2_from_tensile_and_pwave ( const si::pressure tensile, const si::pressure pwave) { si::pressure S = -si::sqrt(tensile*tensile + 9.0*pwave*pwave - 10.0*tensile*pwave); return ( 3.0*pwave+tensile-S )/( 8.0 )       ;}
+inline double       get_poisson2_from_tensile_and_pwave ( const si::pressure tensile, const si::pressure pwave) { si::pressure S = -si::sqrt(tensile*tensile + 9.0*pwave*pwave - 10.0*tensile*pwave); return si::unitless(( tensile-pwave+S )/( 4.0*pwave ))                    ;}
 
 // (λ,G)->* 
-constexpr float get_bulk_from_lame_and_shear ( const float lame, const float shear) { return lame+ ( 2.0f*shear )/( 3.0f )                                                                             ;}
-constexpr float get_tensile_from_lame_and_shear ( const float lame, const float shear) { return ( shear*(3.0f*lame + 2.0f*shear) )/( lame + shear )                                                      ;}
-constexpr float get_poisson_from_lame_and_shear ( const float lame, const float shear) { return ( lame )/( 2.0f*(lame + shear) )                                                                       ;}
-constexpr float get_pwave_from_lame_and_shear ( const float lame, const float shear) { return lame+2.0f*shear                                                                                          ;}
+constexpr si::pressure get_bulk_from_lame_and_shear ( const si::pressure lame, const si::pressure shear) { return lame+ ( 2.0*shear )/( 3.0 )                                 ;}
+constexpr si::pressure get_tensile_from_lame_and_shear ( const si::pressure lame, const si::pressure shear) { return ( shear*(3.0*lame + 2.0*shear) )/( lame + shear )        ;}
+constexpr double       get_poisson_from_lame_and_shear ( const si::pressure lame, const si::pressure shear) { return si::unitless(( lame )/( 2.0*(lame + shear) ))            ;}
+constexpr si::pressure get_pwave_from_lame_and_shear ( const si::pressure lame, const si::pressure shear) { return lame+2.0*shear                                             ;}
 
 // (λ,ν)->* 
-constexpr float get_bulk_from_lame_and_poisson ( const float lame, const float poisson) { return ( lame*(1.0f+poisson) )/( 3.0f*poisson )                                                              ;}
-constexpr float get_tensile_from_lame_and_poisson ( const float lame, const float poisson) { return ( lame*(1.0f+poisson)(1.0f-2.0f*poisson) )/( poisson )                                               ;}
-constexpr float get_shear_from_lame_and_poisson ( const float lame, const float poisson) { return ( lame*(1.0f-2.0f*poisson) )/( 2.0f*poisson )                                                        ;}
-constexpr float get_pwave_from_lame_and_poisson ( const float lame, const float poisson) { return ( lame*(1.0f-poisson) )/( poisson )                                                                  ;}
+constexpr si::pressure get_bulk_from_lame_and_poisson ( const si::pressure lame, const double poisson) { return ( lame*(1.0+poisson) )/( 3.0*poisson )                        ;}
+constexpr si::pressure get_tensile_from_lame_and_poisson ( const si::pressure lame, const double poisson) { return ( lame*(1.0+poisson)*(1.0-2.0*poisson) )/( poisson )       ;}
+constexpr si::pressure get_shear_from_lame_and_poisson ( const si::pressure lame, const double poisson) { return ( lame*(1.0-2.0*poisson) )/( 2.0*poisson )                   ;}
+constexpr si::pressure get_pwave_from_lame_and_poisson ( const si::pressure lame, const double poisson) { return ( lame*(1.0-poisson) )/( poisson )                           ;}
 
 // (λ,M)->* 
-constexpr float get_bulk_from_lame_and_pwave ( const float lame, const float pwave) { return ( pwave + 2.0f*lame )/( 3.0f )                                                                            ;}
-constexpr float get_tensile_from_lame_and_pwave ( const float lame, const float pwave) { return ( (pwave-lame)(pwave+2.0f*lame) )/( pwave+lame )                                                         ;}
-constexpr float get_shear_from_lame_and_pwave ( const float lame, const float pwave) { return ( pwave-lame )/( 2.0f )                                                                                  ;}
-constexpr float get_poisson_from_lame_and_pwave ( const float lame, const float pwave) { return ( lame )/( pwave+lame )                                                                                ;}
+constexpr si::pressure get_bulk_from_lame_and_pwave ( const si::pressure lame, const si::pressure pwave) { return ( pwave + 2.0*lame )/( 3.0 )                                ;}
+constexpr si::pressure get_tensile_from_lame_and_pwave ( const si::pressure lame, const si::pressure pwave) { return ( (pwave-lame)*(pwave+2.0*lame) )/( pwave+lame )         ;}
+constexpr si::pressure get_shear_from_lame_and_pwave ( const si::pressure lame, const si::pressure pwave) { return ( pwave-lame )/( 2.0 )                                     ;}
+constexpr double       get_poisson_from_lame_and_pwave ( const si::pressure lame, const si::pressure pwave) { return si::unitless(( lame )/( pwave+lame ))                    ;}
 
 // (G,ν)->* 
-constexpr float get_bulk_from_shear_and_poisson ( const float shear, const float poisson) { return ( 2.0f*shear*(1.0f+poisson) )/( 3.0f*(1.0f-2.0f*poisson) )                                          ;}
-constexpr float get_tensile_from_shear_and_poisson ( const float shear, const float poisson) { return 2.0f*shear*(1.0f+poisson)                                                                          ;}
-constexpr float get_lame_from_shear_and_poisson ( const float shear, const float poisson) { return ( 2.0f* shear poisson )/( 1.0f-2.0f*poisson )                                                       ;}
-constexpr float get_pwave_from_shear_and_poisson ( const float shear, const float poisson) { return ( 2.0f*shear*(1.0f-poisson) )/( 1.0f-2.0f*poisson )                                                ;}
+constexpr si::pressure get_bulk_from_shear_and_poisson ( const si::pressure shear, const double poisson) { return ( 2.0*shear*(1.0+poisson) )/( 3.0*(1.0-2.0*poisson) )       ;}
+constexpr si::pressure get_tensile_from_shear_and_poisson ( const si::pressure shear, const double poisson) { return 2.0*shear*(1.0+poisson)                                  ;}
+constexpr si::pressure get_lame_from_shear_and_poisson ( const si::pressure shear, const double poisson) { return ( 2.0* shear*poisson )/( 1.0-2.0*poisson )                  ;}
+constexpr si::pressure get_pwave_from_shear_and_poisson ( const si::pressure shear, const double poisson) { return ( 2.0*shear*(1.0-poisson) )/( 1.0-2.0*poisson )            ;}
 
 // (G,M)->* 
-constexpr float get_bulk_from_shear_and_pwave ( const float shear, const float pwave) { return pwave - ( 4.0f*shear )/( 3.0f )                                                                         ;}
-constexpr float get_tensile_from_shear_and_pwave ( const float shear, const float pwave) { return ( shear*(3.0f*pwave-4.0f*shear) )/( pwave-shear )                                                      ;}
-constexpr float get_lame_from_shear_and_pwave ( const float shear, const float pwave) { return pwave - 2.0f*shear                                                                                      ;}
-constexpr float get_poisson_from_shear_and_pwave ( const float shear, const float pwave) { return ( pwave - 2.0f*shear )/( 2.0f*pwave - 2.0f*shear )                                                   ;}
+constexpr si::pressure get_bulk_from_shear_and_pwave ( const si::pressure shear, const si::pressure pwave) { return pwave - ( 4.0*shear )/( 3.0 )                             ;}
+constexpr si::pressure get_tensile_from_shear_and_pwave ( const si::pressure shear, const si::pressure pwave) { return ( shear*(3.0*pwave-4.0*shear) )/( pwave-shear )        ;}
+constexpr si::pressure get_lame_from_shear_and_pwave ( const si::pressure shear, const si::pressure pwave) { return pwave - 2.0*shear                                         ;}
+constexpr double       get_poisson_from_shear_and_pwave ( const si::pressure shear, const si::pressure pwave) { return si::unitless(( pwave - 2.0*shear )/( 2.0*pwave - 2.0*shear )) ;}
 
 // (ν,M)->* 
-constexpr float get_bulk_from_poisson_and_pwave ( const float poisson, const float pwave) { return ( pwave*(1.0f+poisson) )/( 3.0f*(1.0f-poisson) )                                                    ;}
-constexpr float get_tensile_from_poisson_and_pwave ( const float poisson, const float pwave) { return ( pwave*(1.0f+poisson)(1.0f-2.0f*poisson) )/( 1.0f-poisson )                                       ;}
-constexpr float get_lame_from_poisson_and_pwave ( const float poisson, const float pwave) { return ( pwave*poisson )/( 1.0f-poisson )                                                                  ;}
-constexpr float get_shear_from_poisson_and_pwave ( const float poisson, const float pwave) { return ( pwave*(1.0f-2.0f*poisson) )/( 2.0f*(1.0f-poisson) )                                              ;}
+constexpr si::pressure get_bulk_from_poisson_and_pwave ( const double poisson, const si::pressure pwave) { return ( pwave*(1.0+poisson) )/( 3.0*(1.0-poisson) )               ;}
+constexpr si::pressure get_tensile_from_poisson_and_pwave ( const double poisson, const si::pressure pwave) { return ( pwave*(1.0+poisson)*(1.0-2.0*poisson) )/( 1.0-poisson ) ;}
+constexpr si::pressure get_lame_from_poisson_and_pwave ( const double poisson, const si::pressure pwave) { return ( pwave*poisson )/( 1.0-poisson )                           ;}
+constexpr si::pressure get_shear_from_poisson_and_pwave ( const double poisson, const si::pressure pwave) { return ( pwave*(1.0-2.0*poisson) )/( 2.0*(1.0-poisson) )          ;}
 
     }
 }
