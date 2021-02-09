@@ -63,34 +63,3 @@ TEST_CASE( "PartlyKnownLiquid complete() associativity", "[phase]" ) {
 
     }
 }
-
-TEST_CASE( "PartlyKnownLiquid value_or() increasing", "[phase]" ) {
-    SECTION("An attribute of a function's return value either increases or remains the same when compared to the same attribute of the input value")
-    {
-
-        CHECK(PartlyKnownLiquid_attribute_index_sum(unknown.value_or(unknown)) >= PartlyKnownLiquid_attribute_index_sum(unknown));
-        CHECK(PartlyKnownLiquid_attribute_index_sum(unknown.value_or(molten_silica)) >= PartlyKnownLiquid_attribute_index_sum(unknown));
-        CHECK(PartlyKnownLiquid_attribute_index_sum(unknown.value_or(liquid_ammonia)) >= PartlyKnownLiquid_attribute_index_sum(unknown));
-        CHECK(PartlyKnownLiquid_attribute_index_sum(unknown.value_or(dummy)) >= PartlyKnownLiquid_attribute_index_sum(unknown));
-
-
-        CHECK(PartlyKnownLiquid_attribute_index_sum(molten_silica.value_or(unknown)) >= PartlyKnownLiquid_attribute_index_sum(molten_silica));
-        CHECK(PartlyKnownLiquid_attribute_index_sum(molten_silica.value_or(molten_silica)) >= PartlyKnownLiquid_attribute_index_sum(molten_silica));
-        CHECK(PartlyKnownLiquid_attribute_index_sum(molten_silica.value_or(liquid_ammonia)) >= PartlyKnownLiquid_attribute_index_sum(molten_silica));
-        CHECK(PartlyKnownLiquid_attribute_index_sum(molten_silica.value_or(dummy)) >= PartlyKnownLiquid_attribute_index_sum(molten_silica));
-
-
-        CHECK(PartlyKnownLiquid_attribute_index_sum(liquid_ammonia.value_or(unknown)) >= PartlyKnownLiquid_attribute_index_sum(liquid_ammonia));
-        CHECK(PartlyKnownLiquid_attribute_index_sum(liquid_ammonia.value_or(molten_silica)) >= PartlyKnownLiquid_attribute_index_sum(liquid_ammonia));
-        CHECK(PartlyKnownLiquid_attribute_index_sum(liquid_ammonia.value_or(liquid_ammonia)) >= PartlyKnownLiquid_attribute_index_sum(liquid_ammonia));
-        CHECK(PartlyKnownLiquid_attribute_index_sum(liquid_ammonia.value_or(dummy)) >= PartlyKnownLiquid_attribute_index_sum(liquid_ammonia));
-
-
-        CHECK(PartlyKnownLiquid_attribute_index_sum(dummy.value_or(unknown)) >= PartlyKnownLiquid_attribute_index_sum(dummy));
-        CHECK(PartlyKnownLiquid_attribute_index_sum(dummy.value_or(molten_silica)) >= PartlyKnownLiquid_attribute_index_sum(dummy));
-        CHECK(PartlyKnownLiquid_attribute_index_sum(dummy.value_or(liquid_ammonia)) >= PartlyKnownLiquid_attribute_index_sum(dummy));
-        CHECK(PartlyKnownLiquid_attribute_index_sum(dummy.value_or(dummy)) >= PartlyKnownLiquid_attribute_index_sum(dummy));
-
-    }
-}
-

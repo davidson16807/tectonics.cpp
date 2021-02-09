@@ -310,7 +310,7 @@ namespace field {
         /*
 		Return whether a entry exists within the field
         */
-        constexpr bool has_entry() const
+        constexpr bool has_value() const
         {
             return entry.index() == 0;
         }

@@ -64,34 +64,3 @@ TEST_CASE( "PartlyKnownSolid complete() associativity", "[phase]" ) {
 
     }
 }
-
-TEST_CASE( "PartlyKnownSolid value_or() increasing", "[phase]" ) {
-    SECTION("An attribute of a function's return value either increases or remains the same when compared to the same attribute of the input value")
-    {
-
-        CHECK(PartlyKnownSolid_attribute_index_sum(unknown.value_or(unknown)) >= PartlyKnownSolid_attribute_index_sum(unknown));
-        CHECK(PartlyKnownSolid_attribute_index_sum(unknown.value_or(ice)) >= PartlyKnownSolid_attribute_index_sum(unknown));
-        CHECK(PartlyKnownSolid_attribute_index_sum(unknown.value_or(copper)) >= PartlyKnownSolid_attribute_index_sum(unknown));
-        CHECK(PartlyKnownSolid_attribute_index_sum(unknown.value_or(dummy)) >= PartlyKnownSolid_attribute_index_sum(unknown));
-
-
-        CHECK(PartlyKnownSolid_attribute_index_sum(ice.value_or(unknown)) >= PartlyKnownSolid_attribute_index_sum(ice));
-        CHECK(PartlyKnownSolid_attribute_index_sum(ice.value_or(ice)) >= PartlyKnownSolid_attribute_index_sum(ice));
-        CHECK(PartlyKnownSolid_attribute_index_sum(ice.value_or(copper)) >= PartlyKnownSolid_attribute_index_sum(ice));
-        CHECK(PartlyKnownSolid_attribute_index_sum(ice.value_or(dummy)) >= PartlyKnownSolid_attribute_index_sum(ice));
-
-
-        CHECK(PartlyKnownSolid_attribute_index_sum(copper.value_or(unknown)) >= PartlyKnownSolid_attribute_index_sum(copper));
-        CHECK(PartlyKnownSolid_attribute_index_sum(copper.value_or(ice)) >= PartlyKnownSolid_attribute_index_sum(copper));
-        CHECK(PartlyKnownSolid_attribute_index_sum(copper.value_or(copper)) >= PartlyKnownSolid_attribute_index_sum(copper));
-        CHECK(PartlyKnownSolid_attribute_index_sum(copper.value_or(dummy)) >= PartlyKnownSolid_attribute_index_sum(copper));
-
-
-        CHECK(PartlyKnownSolid_attribute_index_sum(dummy.value_or(unknown)) >= PartlyKnownSolid_attribute_index_sum(dummy));
-        CHECK(PartlyKnownSolid_attribute_index_sum(dummy.value_or(ice)) >= PartlyKnownSolid_attribute_index_sum(dummy));
-        CHECK(PartlyKnownSolid_attribute_index_sum(dummy.value_or(copper)) >= PartlyKnownSolid_attribute_index_sum(dummy));
-        CHECK(PartlyKnownSolid_attribute_index_sum(dummy.value_or(dummy)) >= PartlyKnownSolid_attribute_index_sum(dummy));
-
-    }
-}
-

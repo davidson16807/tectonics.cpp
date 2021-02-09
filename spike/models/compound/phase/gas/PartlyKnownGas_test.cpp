@@ -57,34 +57,33 @@ TEST_CASE( "PartlyKnownGas value_or() associativity", "[phase]" ) {
     }
 }
 
-/*
-TEST_CASE( "CompletedLiquid value_or() increasing", "[phase]" ) {
-	SECTION("An attribute of a function's return value either increases or remains the same when compared to the same attribute of the input value")
-	{
+TEST_CASE( "PartlyKnownGas value_or() increasing", "[phase]" ) {
+    SECTION("An attribute of a function's return value either increases or remains the same when compared to the same attribute of the input value")
+    {
 
-    	CHECK(CompletedLiquid_attribute_index_sum(unknown.value_or(unknown)) >= PartlyKnownGas_attribute_index_sum(unknown));
-    	CHECK(CompletedLiquid_attribute_index_sum(unknown.value_or(nitrogen)) >= PartlyKnownGas_attribute_index_sum(unknown));
-    	CHECK(CompletedLiquid_attribute_index_sum(unknown.value_or(steam)) >= PartlyKnownGas_attribute_index_sum(unknown));
-    	CHECK(CompletedLiquid_attribute_index_sum(unknown.value_or(dummy)) >= PartlyKnownGas_attribute_index_sum(unknown));
-
-
-    	CHECK(CompletedLiquid_attribute_index_sum(nitrogen.value_or(unknown)) >= PartlyKnownGas_attribute_index_sum(nitrogen));
-    	CHECK(CompletedLiquid_attribute_index_sum(nitrogen.value_or(nitrogen)) >= PartlyKnownGas_attribute_index_sum(nitrogen));
-    	CHECK(CompletedLiquid_attribute_index_sum(nitrogen.value_or(steam)) >= PartlyKnownGas_attribute_index_sum(nitrogen));
-    	CHECK(CompletedLiquid_attribute_index_sum(nitrogen.value_or(dummy)) >= PartlyKnownGas_attribute_index_sum(nitrogen));
+        CHECK(PartlyKnownGas_attribute_index_sum(unknown.value_or(unknown)) >= PartlyKnownGas_attribute_index_sum(unknown));
+        CHECK(PartlyKnownGas_attribute_index_sum(unknown.value_or(perflouromethane)) >= PartlyKnownGas_attribute_index_sum(unknown));
+        CHECK(PartlyKnownGas_attribute_index_sum(unknown.value_or(known_steam)) >= PartlyKnownGas_attribute_index_sum(unknown));
+        CHECK(PartlyKnownGas_attribute_index_sum(unknown.value_or(dummy)) >= PartlyKnownGas_attribute_index_sum(unknown));
 
 
-    	CHECK(CompletedLiquid_attribute_index_sum(steam.value_or(unknown)) >= PartlyKnownGas_attribute_index_sum(steam));
-    	CHECK(CompletedLiquid_attribute_index_sum(steam.value_or(nitrogen)) >= PartlyKnownGas_attribute_index_sum(steam));
-    	CHECK(CompletedLiquid_attribute_index_sum(steam.value_or(steam)) >= PartlyKnownGas_attribute_index_sum(steam));
-    	CHECK(CompletedLiquid_attribute_index_sum(steam.value_or(dummy)) >= PartlyKnownGas_attribute_index_sum(steam));
+        CHECK(PartlyKnownGas_attribute_index_sum(perflouromethane.value_or(unknown)) >= PartlyKnownGas_attribute_index_sum(perflouromethane));
+        CHECK(PartlyKnownGas_attribute_index_sum(perflouromethane.value_or(perflouromethane)) >= PartlyKnownGas_attribute_index_sum(perflouromethane));
+        CHECK(PartlyKnownGas_attribute_index_sum(perflouromethane.value_or(known_steam)) >= PartlyKnownGas_attribute_index_sum(perflouromethane));
+        CHECK(PartlyKnownGas_attribute_index_sum(perflouromethane.value_or(dummy)) >= PartlyKnownGas_attribute_index_sum(perflouromethane));
 
 
-    	CHECK(CompletedLiquid_attribute_index_sum(dummy.value_or(unknown)) >= PartlyKnownGas_attribute_index_sum(dummy));
-    	CHECK(CompletedLiquid_attribute_index_sum(dummy.value_or(nitrogen)) >= PartlyKnownGas_attribute_index_sum(dummy));
-    	CHECK(CompletedLiquid_attribute_index_sum(dummy.value_or(steam)) >= PartlyKnownGas_attribute_index_sum(dummy));
-    	CHECK(CompletedLiquid_attribute_index_sum(dummy.value_or(dummy)) >= PartlyKnownGas_attribute_index_sum(dummy));
+        CHECK(PartlyKnownGas_attribute_index_sum(known_steam.value_or(unknown)) >= PartlyKnownGas_attribute_index_sum(known_steam));
+        CHECK(PartlyKnownGas_attribute_index_sum(known_steam.value_or(perflouromethane)) >= PartlyKnownGas_attribute_index_sum(known_steam));
+        CHECK(PartlyKnownGas_attribute_index_sum(known_steam.value_or(known_steam)) >= PartlyKnownGas_attribute_index_sum(known_steam));
+        CHECK(PartlyKnownGas_attribute_index_sum(known_steam.value_or(dummy)) >= PartlyKnownGas_attribute_index_sum(known_steam));
+
+
+        CHECK(PartlyKnownGas_attribute_index_sum(dummy.value_or(unknown)) >= PartlyKnownGas_attribute_index_sum(dummy));
+        CHECK(PartlyKnownGas_attribute_index_sum(dummy.value_or(perflouromethane)) >= PartlyKnownGas_attribute_index_sum(dummy));
+        CHECK(PartlyKnownGas_attribute_index_sum(dummy.value_or(known_steam)) >= PartlyKnownGas_attribute_index_sum(dummy));
+        CHECK(PartlyKnownGas_attribute_index_sum(dummy.value_or(dummy)) >= PartlyKnownGas_attribute_index_sum(dummy));
 
     }
 }
-*/
+

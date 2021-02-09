@@ -102,11 +102,18 @@ namespace field {
             return std::visit(OptionalConstantFieldCompletionVisitor(fallback), entry);
         }
         /*
-        Return whether a entry exists within the field
+        Return the index of the variant
         */
         constexpr int index() const
         {
             return entry.index();
+        }
+        /*
+        Return whether a entry exists within the field
+        */
+        constexpr bool has_value() const
+        {
+            return entry.index() == 0;
         }
         /*
         Return a OptionalConstantField<T1> field representing `a` after applying the map `f`
