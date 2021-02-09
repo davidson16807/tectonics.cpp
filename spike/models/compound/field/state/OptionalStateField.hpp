@@ -97,68 +97,78 @@ namespace field {
             }
         };
         template<typename Tout, typename Tin1, typename Tin2>
-        class OptionalStateFieldBinaryMapVisitor
+        class OptionalStateFieldRightCurriedBinaryMapVisitor
         {
         public:
-            typedef std::function<Tout(const Tin1, const Tin2)> F;
+            typedef std::function<Tout(const Tin1,const Tin2)> F;
             F f;
-            OptionalStateFieldBinaryMapVisitor(const F f)
-            : f(f)
+            Tin2 b;
+            OptionalStateFieldRightCurriedBinaryMapVisitor(const F f, const Tin2 b)
+            : f(f), b(b)
             {
 
             }
-            OptionalStateFieldVariant<Tout> operator()(const std::monostate a,      const std::monostate b      ) const {
+            OptionalStateFieldVariant<Tout> operator()(const std::monostate a) const {
                 return std::monostate();
             }
-            OptionalStateFieldVariant<Tout> operator()(const std::monostate a,      const Tin2 b                ) const {
-                return std::monostate();
-            }
-            OptionalStateFieldVariant<Tout> operator()(const std::monostate a,      const StateSample<Tin2> b   ) const {
-                return std::monostate(); 
-            }
-            OptionalStateFieldVariant<Tout> operator()(const std::monostate a,      const StateFunction<Tin2> b ) const {
-                return std::monostate(); 
-            }
-            OptionalStateFieldVariant<Tout> operator()(const Tin1 a,                const std::monostate b      ) const {
-                return std::monostate();
-            }
-            OptionalStateFieldVariant<Tout> operator()(const Tin1 a,                const Tin2 b                ) const {
+            OptionalStateFieldVariant<Tout> operator()(const Tin1 a) const {
                 return f(a,b);
             }
-            OptionalStateFieldVariant<Tout> operator()(const Tin1 a,                const StateSample<Tin2> b   ) const {
-                return StateSample<Tout>(f(a,b.entry), b.pressure, b.temperature);
-            }
-            OptionalStateFieldVariant<Tout> operator()(const Tin1 a,                const StateFunction<Tin2> b ) const {
-                auto fcopy = f; 
-                return [fcopy, a, b](const si::pressure p, const si::temperature T){ return fcopy(a, b(p, T)); };
-            }
-            OptionalStateFieldVariant<Tout> operator()(const StateSample<Tin1> a,   const std::monostate b      ) const {
-                return std::monostate();
-            }
-            OptionalStateFieldVariant<Tout> operator()(const StateSample<Tin1> a,   const Tin2 b                ) const {
+            OptionalStateFieldVariant<Tout> operator()(const StateSample<Tin1> a) const {
                 return StateSample<Tout>(f(a.entry,b), a.pressure, a.temperature);
             }
-            OptionalStateFieldVariant<Tout> operator()(const StateSample<Tin1> a,   const StateSample<Tin2> b   ) const {
-                return f(a.entry,b.entry);
-            }
-            OptionalStateFieldVariant<Tout> operator()(const StateSample<Tin1> a,   const StateFunction<Tin2> b ) const {
+            OptionalStateFieldVariant<Tout> operator()(const StateFunction<Tin1> a ) const {
+                // NOTE: capturing `this` results in b segfault when we call `this->f()`
+                // This occurs even when we capture `this` by entry.
+                // I haven't clarified the reason, but it seems likely related to accessing 
+                // the `f` attribute in b object that destructs after we ebit out of the `map` function.
                 auto fcopy = f; 
-                return [fcopy, a, b](const si::pressure p, const si::temperature T){ return fcopy(a.entry, b(p, T)); };
+                auto bcopy = b; 
+                return [fcopy, bcopy, a](const si::pressure p, const si::temperature T){ return fcopy(a(p, T), bcopy); };
             }
-            OptionalStateFieldVariant<Tout> operator()(const StateFunction<Tin1> a, const std::monostate b      ) const {
+        };
+        template<typename Tout, typename Tin1, typename Tin2>
+        class OptionalStateFieldLeftCurriedBinaryMapVisitor
+        {
+        public:
+            typedef std::function<Tout(const Tin1,const Tin2)> F;
+            F f;
+            OptionalStateFieldVariant<Tin1> a;
+            OptionalStateFieldLeftCurriedBinaryMapVisitor(const F f, const OptionalStateFieldVariant<Tin1> a)
+            : f(f), a(a)
+            {
+
+            }
+            OptionalStateFieldVariant<Tout> operator()(const std::monostate b) const {
                 return std::monostate();
             }
-            OptionalStateFieldVariant<Tout> operator()(const StateFunction<Tin1> a, const Tin2 b                ) const {
-                auto fcopy = f; 
-                return [fcopy, a, b](const si::pressure p, const si::temperature T){ return fcopy(a(p, T), b); };
+            OptionalStateFieldVariant<Tout> operator()(const Tin2 b) const {
+                return std::visit(OptionalStateFieldRightCurriedBinaryMapVisitor<Tout,Tin1,Tin2>(f, b), a);
             }
-            OptionalStateFieldVariant<Tout> operator()(const StateFunction<Tin1> a, const StateSample<Tin2> b   ) const {
-                auto fcopy = f; 
-                return [fcopy, a, b](const si::pressure p, const si::temperature T){ return fcopy(a(p, T), b.entry); };
+            OptionalStateFieldVariant<Tout> operator()(const StateSample<Tin2> b) const {
+                /*
+                if both a and b are StateSamples, we cannot represent the pressure/temperature metadata from both of them in the result,
+                so we simply strip the metadata from the result and store as a constant.
+                */
+                si::pressure p = b.pressure;
+                si::temperature T = b.temperature;
+                return 
+                    a.index() == 1?  StateSample<Tout>(f(std::visit(OptionalStateFieldValueVisitor(p, T), a).value(), b.entry), p, T) 
+                  : a.index() == 2?  f(std::visit(OptionalStateFieldValueVisitor(p, T), a).value(), b.entry)
+                  : std::visit(OptionalStateFieldRightCurriedBinaryMapVisitor<Tout,Tin1,Tin2>(f, b.entry), a);
             }
-            OptionalStateFieldVariant<Tout> operator()(const StateFunction<Tin1> a, const StateFunction<Tin2> b ) const {
+            OptionalStateFieldVariant<Tout> operator()(const StateFunction<Tin2> b ) const {
+                // NOTE: capturing `this` results in a segfault when we call `this->f()`
+                // This occurs even when we capture `this` by entry.
+                // I haven't clarified the reason, but it seems likely related to accessing 
+                // the `f` attribute in a object that destructs after we exit out of the `map` function.
                 auto fcopy = f; 
-                return [fcopy, a, b](const si::pressure p, const si::temperature T){ return fcopy(a(p, T), a(p, T)); };
+                auto acopy = a; 
+                return
+                    a.index() == 0? OptionalStateFieldVariant<Tout>(std::monostate() )
+                  : OptionalStateFieldVariant<Tout>([fcopy, acopy, b](const si::pressure p, const si::temperature T){ 
+                                          return fcopy(std::visit(OptionalStateFieldValueVisitor(p, T), acopy).value(), b(p, T)); 
+                                      });
             }
         };
         template<typename T2>
@@ -289,7 +299,7 @@ namespace field {
             const OptionalStateField<T3> b) const
         {
             return entry.index() > 0? *this 
-                : std::visit(OptionalStateFieldBinaryMapVisitor<T1,T2,T3>(f), a.entry, b.entry);
+                : std::visit(OptionalStateFieldLeftCurriedBinaryMapVisitor<T1,T2,T3>(f, a.entry), b.entry);
         }
         /*
 		Return whether a entry exists within the field
