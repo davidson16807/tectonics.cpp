@@ -98,83 +98,6 @@ namespace field {
                 return FpT([fcopy, a](const si::pressure p, const si::temperature T){ return fcopy(a(p, T)); });
             }
         };
-        template<typename Tout, typename Tin1, typename Tin2>
-        class OptionalStateFieldRightCurriedBinaryMapVisitor
-        {
-        public:
-            typedef std::function<Tout(const Tin1,const Tin2)> F;
-            typedef std::function<Tout(const si::pressure, const si::temperature)> FpT;
-            F f;
-            Tin2 b;
-            OptionalStateFieldRightCurriedBinaryMapVisitor(const F f, const Tin2 b)
-            : f(f), b(b)
-            {
-
-            }
-            OptionalStateFieldVariant<Tout> operator()(const std::monostate a) const {
-                return std::monostate();
-            }
-            OptionalStateFieldVariant<Tout> operator()(const Tin1 a) const {
-                return f(a,b);
-            }
-            OptionalStateFieldVariant<Tout> operator()(const StateSample<Tin1> a) const {
-                return StateSample<Tout>(f(a.entry,b), a.pressure, a.temperature);
-            }
-            OptionalStateFieldVariant<Tout> operator()(const StateFunction<Tin1> a ) const {
-                // NOTE: capturing `this` results in b segfault when we call `this->f()`
-                // This occurs even when we capture `this` by entry.
-                // I haven't clarified the reason, but it seems likely related to accessing 
-                // the `f` attribute in b object that destructs after we ebit out of the `map` function.
-                F fcopy = f; 
-                Tin2 bcopy = b; 
-                return FpT([fcopy, bcopy, a](const si::pressure p, const si::temperature T){ return fcopy(a(p, T), bcopy); });
-            }
-        };
-        template<typename Tout, typename Tin1, typename Tin2>
-        class OptionalStateFieldLeftCurriedBinaryMapVisitor
-        {
-        public:
-            typedef std::function<Tout(const Tin1,const Tin2)> F;
-            typedef std::function<Tout(const si::pressure, const si::temperature)> FpT;
-            F f;
-            OptionalStateFieldVariant<Tin1> a;
-            OptionalStateFieldLeftCurriedBinaryMapVisitor(const F f, const OptionalStateFieldVariant<Tin1> a)
-            : f(f), a(a)
-            {
-
-            }
-            OptionalStateFieldVariant<Tout> operator()(const std::monostate b) const {
-                return std::monostate();
-            }
-            OptionalStateFieldVariant<Tout> operator()(const Tin2 b) const {
-                return std::visit(OptionalStateFieldRightCurriedBinaryMapVisitor<Tout,Tin1,Tin2>(f, b), a);
-            }
-            OptionalStateFieldVariant<Tout> operator()(const StateSample<Tin2> b) const {
-                /*
-                if both a and b are StateSamples, we cannot represent the pressure/temperature metadata from both of them in the result,
-                so we simply strip the metadata from the result and store as a constant.
-                */
-                si::pressure p = b.pressure;
-                si::temperature T = b.temperature;
-                return 
-                    a.index() == 1?  StateSample<Tout>(f(std::visit(OptionalStateFieldValueVisitor<Tin1>(p, T), a).value(), b.entry), p, T)
-                  : a.index() == 2?  f(std::visit(OptionalStateFieldValueVisitor<Tin1>(p, T), a).value(), b.entry)
-                  : std::visit(OptionalStateFieldRightCurriedBinaryMapVisitor<Tout,Tin1,Tin2>(f, b.entry), a);
-            }
-            OptionalStateFieldVariant<Tout> operator()(const StateFunction<Tin2> b ) const {
-                // NOTE: capturing `this` results in a segfault when we call `this->f()`
-                // This occurs even when we capture `this` by entry.
-                // I haven't clarified the reason, but it seems likely related to accessing 
-                // the `f` attribute in a object that destructs after we exit out of the `map` function.
-                F fcopy = f; 
-                OptionalStateFieldVariant<Tin1> acopy = a; 
-                return
-                    a.index() == 0? OptionalStateFieldVariant<Tout>(std::monostate() )
-                  : OptionalStateFieldVariant<Tout>(FpT([fcopy, acopy, b](const si::pressure p, const si::temperature T){ 
-                                                            return fcopy(std::visit(OptionalStateFieldValueVisitor<Tin1>(p, T), acopy).value(), b(p, T)); 
-                                                        }));
-            }
-        };
         template<typename T2>
         class OptionalStateFieldMapToConstantVisitor
         {
@@ -349,13 +272,13 @@ namespace field {
                 if(a.index() == 2)
                 {
                     return a.map_to_constant(p,T, 
-                        F2pT([f2,b2](const T2 apT, const si::pressure p, const si::temperature T)->StateSample<T1>{ return StateSample<T1>(f2(apT,b2(p,T).value()),p,T); })
+                        F2pT([f2,b2](const T2 apT, const si::pressure p, const si::temperature T){ return StateSample<T1>(f2(apT,b2(p,T).value()),p,T); })
                     );
                 }
                 else // if(b.index() == 2)
                 {
                     return b.map_to_constant(p,T, 
-                        F3pT([f2,a2](const T3 bpT, const si::pressure p, const si::temperature T)->StateSample<T1>{ return StateSample<T1>(f2(a2(p,T).value(),bpT),p,T); })
+                        F3pT([f2,a2](const T3 bpT, const si::pressure p, const si::temperature T){ return StateSample<T1>(f2(a2(p,T).value(),bpT),p,T); })
                     );
                 }
             }
@@ -410,20 +333,20 @@ namespace field {
                 if(a.index() == 2)
                 {
                     return a.map_to_constant(p,T, 
-                        F2pT([f2,b2,c2](const T2 apT, const si::pressure p, const si::temperature T)->StateSample<T1>{ return StateSample<T1>(f2(apT,b2(p,T).value(),c2(p,T).value()),p,T); })
-                    ).value();
+                        F2pT([f2,b2,c2](const T2 apT, const si::pressure p, const si::temperature T){ return StateSample<T1>(f2(apT,b2(p,T).value(),c2(p,T).value()),p,T); })
+                    );
                 }
                 else if(b.index() == 2)
                 {
                     return b.map_to_constant(p,T, 
-                        F3pT([f2,a2,c2](const T3 bpT, const si::pressure p, const si::temperature T)->StateSample<T1>{ return StateSample<T1>(f2(a2(p,T).value(),bpT,c2(p,T).value()),p,T); })
-                    ).value();
+                        F3pT([f2,a2,c2](const T3 bpT, const si::pressure p, const si::temperature T){ return StateSample<T1>(f2(a2(p,T).value(),bpT,c2(p,T).value()),p,T); })
+                    );
                 }
                 else // if(c.index() == 2)
                 {
                     return c.map_to_constant(p,T, 
-                        F4pT([f2,a2,b2](const T4 cpT, const si::pressure p, const si::temperature T)->StateSample<T1>{ return StateSample<T1>(f2(a2(p,T).value(),b2(p,T).value(),cpT),p,T); })
-                    ).value();
+                        F4pT([f2,a2,b2](const T4 cpT, const si::pressure p, const si::temperature T){ return StateSample<T1>(f2(a2(p,T).value(),b2(p,T).value(),cpT),p,T); })
+                    );
                 }
             }
             else

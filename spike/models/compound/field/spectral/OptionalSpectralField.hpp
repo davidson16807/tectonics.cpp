@@ -158,90 +158,6 @@ namespace field {
                 return [fcopy, a](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return fcopy(a(nlo, nhi, p, T)); };
             }
         };
-        template<typename Tout, typename Tin1, typename Tin2>
-        class OptionalSpectralFieldRightCurriedBinaryMapVisitor
-        {
-        public:
-            typedef std::function<Tout(const Tin1,const Tin2)> F;
-            typedef std::function<Tout(const si::wavenumber, const si::wavenumber, const si::pressure, const si::temperature)> FpT;
-            F f;
-            Tin2 b;
-            OptionalSpectralFieldRightCurriedBinaryMapVisitor(const F f, const Tin2 b)
-            : f(f), b(b)
-            {
-
-            }
-            OptionalSpectralFieldVariant<Tout> operator()(const std::monostate a) const {
-                return std::monostate();
-            }
-            OptionalSpectralFieldVariant<Tout> operator()(const Tin1 a) const {
-                return f(a,b);
-            }
-            OptionalSpectralFieldVariant<Tout> operator()(const SpectralSample<Tin1> a) const {
-                si::wavenumber nlo = a.nlo;
-                si::wavenumber nhi = a.nhi;
-                si::pressure p = a.pressure;
-                si::temperature T = a.temperature;
-
-                return SpectralSample<Tout>(f(a.entry,b), nlo, nhi, p, T);
-            }
-            OptionalSpectralFieldVariant<Tout> operator()(const SpectralFunction<Tin1> a ) const {
-                // NOTE: capturing `this` results in b segfault when we call `this->f()`
-                // This occurs even when we capture `this` by entry.
-                // I haven't clarified the reason, but it seems likely related to accessing 
-                // the `f` attribute in b object that destructs after we ebit out of the `map` function.
-                F fcopy = f; 
-                Tin2 bcopy = b; 
-                return FpT([fcopy, bcopy, a](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return fcopy(a(nlo, nhi, p, T), bcopy); });
-            }
-        };
-        template<typename Tout, typename Tin1, typename Tin2>
-        class OptionalSpectralFieldLeftCurriedBinaryMapVisitor
-        {
-        public:
-            typedef std::function<Tout(const Tin1,const Tin2)> F;
-            typedef std::function<Tout(const si::wavenumber, const si::wavenumber, const si::pressure, const si::temperature)> FpT;
-            F f;
-            OptionalSpectralFieldVariant<Tin1> a;
-            OptionalSpectralFieldLeftCurriedBinaryMapVisitor(const F f, const OptionalSpectralFieldVariant<Tin1> a)
-            : f(f), a(a)
-            {
-
-            }
-            OptionalSpectralFieldVariant<Tout> operator()(const std::monostate b) const {
-                return std::monostate();
-            }
-            OptionalSpectralFieldVariant<Tout> operator()(const Tin2 b) const {
-                return std::visit(OptionalSpectralFieldRightCurriedBinaryMapVisitor<Tout,Tin1,Tin2>(f, b), a);
-            }
-            OptionalSpectralFieldVariant<Tout> operator()(const SpectralSample<Tin2> b) const {
-                /*
-                if both a and b are StateSamples, we cannot represent the pressure/temperature metadata from both of them in the result,
-                so we simply strip the metadata from the result and store as a constant.
-                */
-                si::wavenumber nlo = b.nlo;
-                si::wavenumber nhi = b.nhi;
-                si::pressure p = b.pressure;
-                si::temperature T = b.temperature;
-                return 
-                    a.index() == 1?  SpectralSample<Tout>(f(std::visit(OptionalSpectralFieldValueVisitor<Tin1>(nlo, nhi, p, T), a).value(), b.entry), nlo, nhi, p, T) 
-                  : a.index() == 2?  f(std::visit(OptionalSpectralFieldValueVisitor<Tin1>(nlo, nhi, p, T), a).value(), b.entry)
-                  : std::visit(OptionalSpectralFieldRightCurriedBinaryMapVisitor<Tout,Tin1,Tin2>(f, b.entry), a);
-            }
-            OptionalSpectralFieldVariant<Tout> operator()(const SpectralFunction<Tin2> b ) const {
-                // NOTE: capturing `this` results in a segfault when we call `this->f()`
-                // This occurs even when we capture `this` by entry.
-                // I haven't clarified the reason, but it seems likely related to accessing 
-                // the `f` attribute in a object that destructs after we exit out of the `map` function.
-                F fcopy = f; 
-                OptionalSpectralFieldVariant<Tin1> acopy = a; 
-                return
-                    a.index() == 0? OptionalSpectralFieldVariant<Tout>(std::monostate() )
-                  : OptionalSpectralFieldVariant<Tout>(FpT([fcopy, acopy, b](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ 
-                                                            return fcopy(std::visit(OptionalSpectralFieldValueVisitor<Tin1>(nlo, nhi, p, T), acopy).value(), b(nlo, nhi, p, T)); 
-                                                        }));
-            }
-        };
         OptionalSpectralFieldVariant<T1> entry;
     public:
         constexpr OptionalSpectralField(const OptionalSpectralFieldVariant<T1> entry)
@@ -266,6 +182,21 @@ namespace field {
         }
         constexpr OptionalSpectralField(const SpectralFunction<T1> entry)
         : entry(entry)
+        {
+
+        }
+        constexpr OptionalSpectralField(const std::optional<T1> option)
+        : entry(option.has_value()? OptionalSpectralFieldVariant<T1>(option.value()) : OptionalSpectralFieldVariant<T1>(std::monostate()))
+        {
+
+        }
+        constexpr OptionalSpectralField(const std::optional<SpectralSample<T1>> option)
+        : entry(option.has_value()? OptionalSpectralFieldVariant<T1>(option.value()) : OptionalSpectralFieldVariant<T1>(std::monostate()))
+        {
+
+        }
+        constexpr OptionalSpectralField(const std::optional<SpectralFunction<T1>> option)
+        : entry(option.has_value()? OptionalSpectralFieldVariant<T1>(option.value()) : OptionalSpectralFieldVariant<T1>(std::monostate()))
         {
 
         }
@@ -325,8 +256,143 @@ namespace field {
             const OptionalSpectralField<T2> a, 
             const OptionalSpectralField<T3> b) const
         {
-            return entry.index() > 0? *this 
-                : std::visit(OptionalSpectralFieldLeftCurriedBinaryMapVisitor<T1,T2,T3>(f, a.entry), b.entry);
+            if(entry.index() > 0) // no substitute needed
+            {
+                return *this;
+            }
+            else if(!a.has_value() || !b.has_value()) // any monostates
+            {
+                return std::monostate();
+            }
+            else if((a.index() == 3) || (b.index() == 3)) // any functions
+            {
+                auto f2 = f;
+                auto a2 = a;
+                auto b2 = b;
+                return SpectralFunction<T1>(
+                    [f2, a2, b2]
+                    (const si::wavenumber nlo, const si::wavenumber nhi,  const si::pressure p, const si::temperature T)
+                    { return f2(a2(nlo,nhi,p,T).value(), b2(nlo,nhi,p,T).value()); }
+                );
+            }
+            else if((a.index() == 2) + (b.index() == 2) == 1) // one sample
+            {
+                auto f2 = f;
+                auto a2 = a;
+                auto b2 = b;
+                const si::wavenumber nlo = 14286.0/si::centimeter;
+                const si::wavenumber nhi = 25000.0/si::centimeter;
+                const si::pressure p = si::standard_pressure;
+                const si::temperature T = si::standard_temperature;
+                typedef std::function<SpectralSample<T1>(const T2, const si::wavenumber, const si::wavenumber, const si::pressure, const si::temperature)> F2nnpT;
+                typedef std::function<SpectralSample<T1>(const T3, const si::wavenumber, const si::wavenumber, const si::pressure, const si::temperature)> F3nnpT;
+                if(a.index() == 2)
+                {
+                    return a.map_to_constant(nlo,nhi,p,T, 
+                        F2nnpT([f2,b2]
+                            (const T2 apT, const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T)
+                            { return SpectralSample<T1>(f2(apT,b2(nlo,nhi,p,T).value()),nlo,nhi,p,T); }
+                        )
+                    );
+                }
+                else // if(b.index() == 2)
+                {
+                    return b.map_to_constant(nlo,nhi,p,T, 
+                        F3nnpT([f2,a2]
+                            (const T3 bpT, const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T)
+                            { return SpectralSample<T1>(f2(a2(nlo,nhi,p,T).value(),bpT),nlo,nhi,p,T); }
+                        )
+                    );
+                }
+            }
+            else // constant
+            {
+                const si::wavenumber nlo = 14286.0/si::centimeter;
+                const si::wavenumber nhi = 25000.0/si::centimeter;
+                const si::pressure p = si::standard_pressure;
+                const si::temperature T = si::standard_temperature;
+                return f(a(nlo,nhi,p,T).value(), b(nlo,nhi,p,T).value());
+            }
+        }
+        /*
+        Return `this` if a value exists, otherwise return the result of function `f` applied to parameters `a` and `b`
+        */
+        template<typename T2, typename T3, typename T4>
+        constexpr OptionalSpectralField<T1> value_or(
+            const std::function<T1(const T2, const T3, const T4)> f, 
+            const OptionalSpectralField<T2> a, 
+            const OptionalSpectralField<T3> b, 
+            const OptionalSpectralField<T4> c) const
+        {
+            if(entry.index() > 0)
+            {
+                return *this;
+            }
+            else if(!a.has_value() || !b.has_value() || !c.has_value()) // any monostates
+            {
+                return std::monostate();
+            }
+            else if((a.index() == 3) || (b.index() == 3) || (c.index() == 3)) // any functions
+            {
+                auto f2 = f;
+                auto a2 = a;
+                auto b2 = b;
+                auto c2 = c;
+                return SpectralFunction<T1>(
+                    [f2, a2, b2, c2]
+                    (const si::wavenumber nlo, const si::wavenumber nhi,  const si::pressure p, const si::temperature T)
+                    { return f2(a2(nlo,nhi,p,T).value(), b2(nlo,nhi,p,T).value(), c2(nlo,nhi,p,T).value()); }
+                );
+            }
+            else if((a.index() == 2) + (b.index() == 2) + (c.index() == 2) == 1) // one sample
+            {
+                auto f2 = f;
+                auto a2 = a;
+                auto b2 = b;
+                auto c2 = c;
+                const si::wavenumber nlo = 14286.0/si::centimeter;
+                const si::wavenumber nhi = 25000.0/si::centimeter;
+                const si::pressure p = si::standard_pressure;
+                const si::temperature T = si::standard_temperature;
+                typedef std::function<SpectralSample<T1>(const T2, const si::wavenumber, const si::wavenumber, const si::pressure, const si::temperature)> F2nnpT;
+                typedef std::function<SpectralSample<T1>(const T3, const si::wavenumber, const si::wavenumber, const si::pressure, const si::temperature)> F3nnpT;
+                typedef std::function<SpectralSample<T1>(const T4, const si::wavenumber, const si::wavenumber, const si::pressure, const si::temperature)> F4nnpT;
+                if(a.index() == 2)
+                {
+                    return a.map_to_constant(nlo,nhi,p,T, 
+                        F2nnpT([f2,b2,c2]
+                            (const T2 apT, const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T)
+                            { return SpectralSample<T1>(f2(apT,b2(nlo,nhi,p,T).value(),c2(nlo,nhi,p,T).value()),nlo,nhi,p,T); }
+                        )
+                    );
+                }
+                else if(b.index() == 2)
+                {
+                    return b.map_to_constant(nlo,nhi,p,T, 
+                        F3nnpT([f2,a2,c2]
+                            (const T3 bpT, const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T)
+                            { return SpectralSample<T1>(f2(a2(nlo,nhi,p,T).value(),bpT,c2(nlo,nhi,p,T).value()),nlo,nhi,p,T); }
+                        )
+                    );
+                }
+                else // if(c.index() == 2)
+                {
+                    return c.map_to_constant(nlo,nhi,p,T, 
+                        F4nnpT([f2,a2,b2]
+                            (const T4 cpT, const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T)
+                            { return SpectralSample<T1>(f2(a2(nlo,nhi,p,T).value(),b2(nlo,nhi,p,T).value(),cpT),nlo,nhi,p,T); }
+                        )
+                    );
+                }
+            }
+            else
+            {
+                const si::wavenumber nlo = 14286.0/si::centimeter;
+                const si::wavenumber nhi = 25000.0/si::centimeter;
+                const si::pressure p = si::standard_pressure;
+                const si::temperature T = si::standard_temperature;
+                return f(a(nlo,nhi,p,T).value(), b(nlo,nhi,p,T).value(), c(nlo,nhi,p,T).value());
+            }
         }
         /*
 		Return whether a entry exists within the field
