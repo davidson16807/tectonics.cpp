@@ -157,7 +157,7 @@ namespace field {
                 si::pressure p = b.pressure;
                 si::temperature T = b.temperature;
                 return 
-                    a.index() == 1?  StateSample<Tout>(f(std::visit(OptionalStateFieldValueVisitor<Tin1>(p, T), a).value(), b.entry), p, T) 
+                    a.index() == 1?  StateSample<Tout>(f(std::visit(OptionalStateFieldValueVisitor<Tin1>(p, T), a).value(), b.entry), p, T)
                   : a.index() == 2?  f(std::visit(OptionalStateFieldValueVisitor<Tin1>(p, T), a).value(), b.entry)
                   : std::visit(OptionalStateFieldRightCurriedBinaryMapVisitor<Tout,Tin1,Tin2>(f, b.entry), a);
             }
@@ -255,6 +255,21 @@ namespace field {
         {
 
         }
+        constexpr OptionalStateField(const std::optional<T1> option)
+        : entry(option.has_value()? OptionalStateFieldVariant<T1>(option.value()) : OptionalStateFieldVariant<T1>(std::monostate()))
+        {
+
+        }
+        constexpr OptionalStateField(const std::optional<StateSample<T1>> option)
+        : entry(option.has_value()? OptionalStateFieldVariant<T1>(option.value()) : OptionalStateFieldVariant<T1>(std::monostate()))
+        {
+
+        }
+        constexpr OptionalStateField(const std::optional<StateFunction<T1>> option)
+        : entry(option.has_value()? OptionalStateFieldVariant<T1>(option.value()) : OptionalStateFieldVariant<T1>(std::monostate()))
+        {
+
+        }
     	template<typename T2>
         constexpr OptionalStateField<T1>& operator=(const T2& other)
         {
@@ -303,8 +318,120 @@ namespace field {
             const OptionalStateField<T2> a, 
             const OptionalStateField<T3> b) const
         {
-            return entry.index() > 0? *this 
-                : std::visit(OptionalStateFieldLeftCurriedBinaryMapVisitor<T1,T2,T3>(f, a.entry), b.entry);
+            if(entry.index() > 0) // no substitute needed
+            {
+                return *this;
+            }
+            else if(!a.has_value() || !b.has_value()) // any monostates
+            {
+                return std::monostate();
+            }
+            else if((a.index() == 3) || (b.index() == 3)) // any functions
+            {
+                auto f2 = f;
+                auto a2 = a;
+                auto b2 = b;
+                return StateFunction<T1>(
+                    [f2, a2, b2]
+                    (const si::pressure p, const si::temperature T)
+                    { return f2(a2(p,T).value(), b2(p,T).value()); }
+                );
+            }
+            else if((a.index() == 2) + (b.index() == 2) == 1) // one sample
+            {
+                auto f2 = f;
+                auto a2 = a;
+                auto b2 = b;
+                const si::pressure p = si::standard_pressure;
+                const si::temperature T = si::standard_temperature;
+                typedef std::function<StateSample<T1>(const T2, const si::pressure, const si::temperature)> F2pT;
+                typedef std::function<StateSample<T1>(const T3, const si::pressure, const si::temperature)> F3pT;
+                if(a.index() == 2)
+                {
+                    return a.map_to_constant(p,T, 
+                        F2pT([f2,b2](const T2 apT, const si::pressure p, const si::temperature T)->StateSample<T1>{ return StateSample<T1>(f2(apT,b2(p,T).value()),p,T); })
+                    );
+                }
+                else // if(b.index() == 2)
+                {
+                    return b.map_to_constant(p,T, 
+                        F3pT([f2,a2](const T3 bpT, const si::pressure p, const si::temperature T)->StateSample<T1>{ return StateSample<T1>(f2(a2(p,T).value(),bpT),p,T); })
+                    );
+                }
+            }
+            else // constant
+            {
+                const si::pressure p = si::standard_pressure;
+                const si::temperature T = si::standard_temperature;
+                return f(a(p,T).value(), b(p,T).value());
+            }
+        }
+        /*
+        Return `this` if a value exists, otherwise return the result of function `f` applied to parameters `a` and `b`
+        */
+        template<typename T2, typename T3, typename T4>
+        constexpr OptionalStateField<T1> value_or(
+            const std::function<T1(const T2, const T3, const T4)> f, 
+            const OptionalStateField<T2> a, 
+            const OptionalStateField<T3> b, 
+            const OptionalStateField<T4> c) const
+        {
+            if(entry.index() > 0)
+            {
+                return *this;
+            }
+            else if(!a.has_value() || !b.has_value() || !c.has_value()) // any monostates
+            {
+                return std::monostate();
+            }
+            else if((a.index() == 3) || (b.index() == 3) || (c.index() == 3)) // any functions
+            {
+                auto f2 = f;
+                auto a2 = a;
+                auto b2 = b;
+                auto c2 = c;
+                return StateFunction<T1>(
+                    [f2, a2, b2, c2]
+                    (const si::pressure p, const si::temperature T)
+                    { return f2(a2(p,T).value(), b2(p,T).value(), c2(p,T).value()); }
+                );
+            }
+            else if((a.index() == 2) + (b.index() == 2) + (c.index() == 2) == 1) // one sample
+            {
+                auto f2 = f;
+                auto a2 = a;
+                auto b2 = b;
+                auto c2 = c;
+                const si::pressure p = si::standard_pressure;
+                const si::temperature T = si::standard_temperature;
+                typedef std::function<StateSample<T1>(const T2, const si::pressure, const si::temperature)> F2pT;
+                typedef std::function<StateSample<T1>(const T3, const si::pressure, const si::temperature)> F3pT;
+                typedef std::function<StateSample<T1>(const T4, const si::pressure, const si::temperature)> F4pT;
+                if(a.index() == 2)
+                {
+                    return a.map_to_constant(p,T, 
+                        F2pT([f2,b2,c2](const T2 apT, const si::pressure p, const si::temperature T)->StateSample<T1>{ return StateSample<T1>(f2(apT,b2(p,T).value(),c2(p,T).value()),p,T); })
+                    ).value();
+                }
+                else if(b.index() == 2)
+                {
+                    return b.map_to_constant(p,T, 
+                        F3pT([f2,a2,c2](const T3 bpT, const si::pressure p, const si::temperature T)->StateSample<T1>{ return StateSample<T1>(f2(a2(p,T).value(),bpT,c2(p,T).value()),p,T); })
+                    ).value();
+                }
+                else // if(c.index() == 2)
+                {
+                    return c.map_to_constant(p,T, 
+                        F4pT([f2,a2,b2](const T4 cpT, const si::pressure p, const si::temperature T)->StateSample<T1>{ return StateSample<T1>(f2(a2(p,T).value(),b2(p,T).value(),cpT),p,T); })
+                    ).value();
+                }
+            }
+            else
+            {
+                const si::pressure p = si::standard_pressure;
+                const si::temperature T = si::standard_temperature;
+                return f(a(p,T).value(), b(p,T).value(), c(p,T).value());
+            }
         }
         /*
 		Return whether a entry exists within the field
