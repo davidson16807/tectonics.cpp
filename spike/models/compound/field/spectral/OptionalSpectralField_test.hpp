@@ -385,6 +385,12 @@ TEST_CASE( "OptionalSpectralField value_or(f,a) identity", "[field]" ) {
 
 
 
+
+
+
+
+
+
 TEST_CASE( "OptionalSpectralField value_or(f,a,b) purity", "[field]" ) {
     si::wavenumber nlo = 14286.0/si::centimeter;
     si::wavenumber nhi = 25000.0/si::centimeter;
@@ -396,6 +402,14 @@ TEST_CASE( "OptionalSpectralField value_or(f,a,b) purity", "[field]" ) {
     compound::field::OptionalSpectralField<double> sample  = compound::field::SpectralSample<double>(2.0, nlo, nhi, p, T);
     compound::field::OptionalSpectralField<double> relation  = compound::field::SpectralFunction<double>([](const si::wavenumber nlo, si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_OptionalSpectralField(nlo,nhi,p,T); });
     std::function<double(const double, const double)> f  = [](const double first, const double second){ return 1.0 - 2.0*first + 3.0*second; };
+
+    compound::field::OptionalSpectralField<int> unknown_i  = std::monostate();
+    compound::field::OptionalSpectralField<int> constant_i  = 1.0;
+    compound::field::OptionalSpectralField<int> sample_i  = compound::field::SpectralSample<int>(2.0, nlo, nhi, p, T);
+    compound::field::OptionalSpectralField<int> relation_i  = compound::field::SpectralFunction<int>([](const si::wavenumber nlo, si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_OptionalSpectralField(nlo,nhi,p,T); });
+    std::function<double(const int, const double)> f_id  = [](const int first, const double second){ return 1.0 - 2.0*first + 3.0*second; };
+    std::function<double(const double, const int)> f_di  = [](const double first, const int second){ return 1.0 - 2.0*first + 3.0*second; };
+    std::function<double(const int, const int)> f_ii  = [](const int first, const int second){ return 1.0 - 2.0*first + 3.0*second; };
 
     SECTION("Calling a function twice with the same arguments must produce the same results")
     {
@@ -430,6 +444,108 @@ TEST_CASE( "OptionalSpectralField value_or(f,a,b) purity", "[field]" ) {
         CHECK(constant.value_or(f, relation, relation) == constant.value_or(f, relation, relation));
         CHECK(sample  .value_or(f, relation, relation) == sample  .value_or(f, relation, relation));
         CHECK(relation.value_or(f, relation, relation) == relation.value_or(f, relation, relation));
+
+
+
+        CHECK(unknown.value_or(f_ii, unknown_i,  unknown_i) == unknown.value_or(f_ii, unknown_i,  unknown_i));
+        CHECK(unknown.value_or(f_ii, constant_i, unknown_i) == unknown.value_or(f_ii, constant_i, unknown_i));
+        CHECK(unknown.value_or(f_ii, sample_i,   unknown_i) == unknown.value_or(f_ii, sample_i,   unknown_i));
+        CHECK(unknown.value_or(f_ii, relation_i, unknown_i) == unknown.value_or(f_ii, relation_i, unknown_i));
+
+        CHECK(unknown.value_or(f_ii, unknown_i,  constant_i) == unknown.value_or(f_ii, unknown_i,  constant_i));
+        CHECK(unknown.value_or(f_ii, constant_i, constant_i) == unknown.value_or(f_ii, constant_i, constant_i));
+        CHECK(unknown.value_or(f_ii, sample_i,   constant_i) == unknown.value_or(f_ii, sample_i,   constant_i));
+        CHECK(unknown.value_or(f_ii, relation_i, constant_i) == unknown.value_or(f_ii, relation_i, constant_i));
+
+        CHECK(unknown.value_or(f_ii, unknown_i,  sample_i) == unknown.value_or(f_ii, unknown_i,  sample_i));
+        CHECK(unknown.value_or(f_ii, constant_i, sample_i) == unknown.value_or(f_ii, constant_i, sample_i));
+        CHECK(unknown.value_or(f_ii, sample_i,   sample_i) == unknown.value_or(f_ii, sample_i,   sample_i));
+        CHECK(unknown.value_or(f_ii, relation_i, sample_i) == unknown.value_or(f_ii, relation_i, sample_i));
+
+        CHECK(unknown.value_or(f_ii, unknown_i,  relation_i) == unknown.value_or(f_ii, unknown_i,  relation_i));
+        CHECK(unknown.value_or(f_ii, constant_i, relation_i) == unknown.value_or(f_ii, constant_i, relation_i));
+        CHECK(unknown.value_or(f_ii, sample_i,   relation_i) == unknown.value_or(f_ii, sample_i,   relation_i));
+        CHECK(unknown.value_or(f_ii, relation_i, relation_i) == unknown.value_or(f_ii, relation_i, relation_i));
+
+        CHECK(constant.value_or(f_ii, constant_i, constant_i) == constant.value_or(f_ii, constant_i, constant_i));
+        CHECK(sample  .value_or(f_ii, constant_i, constant_i) == sample  .value_or(f_ii, constant_i, constant_i));
+        CHECK(relation.value_or(f_ii, constant_i, constant_i) == relation.value_or(f_ii, constant_i, constant_i));
+
+        CHECK(constant.value_or(f_ii, sample_i, sample_i) == constant.value_or(f_ii, sample_i, sample_i));
+        CHECK(sample  .value_or(f_ii, sample_i, sample_i) == sample  .value_or(f_ii, sample_i, sample_i));
+        CHECK(relation.value_or(f_ii, sample_i, sample_i) == relation.value_or(f_ii, sample_i, sample_i));
+
+        CHECK(constant.value_or(f_ii, relation_i, relation_i) == constant.value_or(f_ii, relation_i, relation_i));
+        CHECK(sample  .value_or(f_ii, relation_i, relation_i) == sample  .value_or(f_ii, relation_i, relation_i));
+        CHECK(relation.value_or(f_ii, relation_i, relation_i) == relation.value_or(f_ii, relation_i, relation_i));
+
+
+
+        CHECK(unknown.value_or(f_id, unknown_i,  unknown) == unknown.value_or(f_id, unknown_i,  unknown));
+        CHECK(unknown.value_or(f_id, constant_i, unknown) == unknown.value_or(f_id, constant_i, unknown));
+        CHECK(unknown.value_or(f_id, sample_i,   unknown) == unknown.value_or(f_id, sample_i,   unknown));
+        // CHECK(unknown.value_or(f_id, relation_i, unknown) == unknown.value_or(f_id, relation_i, unknown));
+
+        CHECK(unknown.value_or(f_id, unknown_i,  constant) == unknown.value_or(f_id, unknown_i,  constant));
+        CHECK(unknown.value_or(f_id, constant_i, constant) == unknown.value_or(f_id, constant_i, constant));
+        CHECK(unknown.value_or(f_id, sample_i,   constant) == unknown.value_or(f_id, sample_i,   constant));
+        // CHECK(unknown.value_or(f_id, relation_i, constant) == unknown.value_or(f_id, relation_i, constant));
+
+        CHECK(unknown.value_or(f_id, unknown_i,  sample) == unknown.value_or(f_id, unknown_i,  sample));
+        CHECK(unknown.value_or(f_id, constant_i, sample) == unknown.value_or(f_id, constant_i, sample));
+        CHECK(unknown.value_or(f_id, sample_i,   sample) == unknown.value_or(f_id, sample_i,   sample));
+        // CHECK(unknown.value_or(f_id, relation_i, sample) == unknown.value_or(f_id, relation_i, sample));
+
+        // CHECK(unknown.value_or(f_id, unknown_i,  relation) == unknown.value_or(f_id, unknown_i,  relation));
+        // CHECK(unknown.value_or(f_id, constant_i, relation) == unknown.value_or(f_id, constant_i, relation));
+        // CHECK(unknown.value_or(f_id, sample_i,   relation) == unknown.value_or(f_id, sample_i,   relation));
+        // CHECK(unknown.value_or(f_id, relation_i, relation) == unknown.value_or(f_id, relation_i, relation));
+
+        CHECK(constant.value_or(f_id, constant_i, constant) == constant.value_or(f_id, constant_i, constant));
+        CHECK(sample  .value_or(f_id, constant_i, constant) == sample  .value_or(f_id, constant_i, constant));
+        // CHECK(relation.value_or(f_id, constant_i, constant) == relation.value_or(f_id, constant_i, constant));
+
+        CHECK(constant.value_or(f_id, sample_i, sample) == constant.value_or(f_id, sample_i, sample));
+        CHECK(sample  .value_or(f_id, sample_i, sample) == sample  .value_or(f_id, sample_i, sample));
+        // CHECK(relation.value_or(f_id, sample_i, sample) == relation.value_or(f_id, sample_i, sample));
+
+        // CHECK(constant.value_or(f_id, relation_i, relation) == constant.value_or(f_id, relation_i, relation));
+        // CHECK(sample  .value_or(f_id, relation_i, relation) == sample  .value_or(f_id, relation_i, relation));
+        // CHECK(relation.value_or(f_id, relation_i, relation) == relation.value_or(f_id, relation_i, relation));
+
+
+
+        CHECK(unknown.value_or(f_di, unknown,  unknown_i) == unknown.value_or(f_di, unknown,  unknown_i));
+        CHECK(unknown.value_or(f_di, constant, unknown_i) == unknown.value_or(f_di, constant, unknown_i));
+        CHECK(unknown.value_or(f_di, sample,   unknown_i) == unknown.value_or(f_di, sample,   unknown_i));
+        // CHECK(unknown.value_or(f_di, relation, unknown_i) == unknown.value_or(f_di, relation, unknown_i));
+
+        CHECK(unknown.value_or(f_di, unknown,  constant_i) == unknown.value_or(f_di, unknown,  constant_i));
+        CHECK(unknown.value_or(f_di, constant, constant_i) == unknown.value_or(f_di, constant, constant_i));
+        CHECK(unknown.value_or(f_di, sample,   constant_i) == unknown.value_or(f_di, sample,   constant_i));
+        // CHECK(unknown.value_or(f_di, relation, constant_i) == unknown.value_or(f_di, relation, constant_i));
+
+        CHECK(unknown.value_or(f_di, unknown,  sample_i) == unknown.value_or(f_di, unknown,  sample_i));
+        CHECK(unknown.value_or(f_di, constant, sample_i) == unknown.value_or(f_di, constant, sample_i));
+        CHECK(unknown.value_or(f_di, sample,   sample_i) == unknown.value_or(f_di, sample,   sample_i));
+        // CHECK(unknown.value_or(f_di, relation, sample_i) == unknown.value_or(f_di, relation, sample_i));
+
+        // CHECK(unknown.value_or(f_di, unknown,  relation_i) == unknown.value_or(f_di, unknown,  relation_i));
+        // CHECK(unknown.value_or(f_di, constant, relation_i) == unknown.value_or(f_di, constant, relation_i));
+        // CHECK(unknown.value_or(f_di, sample,   relation_i) == unknown.value_or(f_di, sample,   relation_i));
+        // CHECK(unknown.value_or(f_di, relation, relation_i) == unknown.value_or(f_di, relation, relation_i));
+
+        CHECK(constant.value_or(f_di, constant, constant_i) == constant.value_or(f_di, constant, constant_i));
+        CHECK(sample  .value_or(f_di, constant, constant_i) == sample  .value_or(f_di, constant, constant_i));
+        // CHECK(relation.value_or(f_di, constant, constant_i) == relation.value_or(f_di, constant, constant_i));
+
+        CHECK(constant.value_or(f_di, sample, sample_i) == constant.value_or(f_di, sample, sample_i));
+        CHECK(sample  .value_or(f_di, sample, sample_i) == sample  .value_or(f_di, sample, sample_i));
+        // CHECK(relation.value_or(f_di, sample, sample_i) == relation.value_or(f_di, sample, sample_i));
+
+        // CHECK(constant.value_or(f_di, relation, relation_i) == constant.value_or(f_di, relation, relation_i));
+        // CHECK(sample  .value_or(f_di, relation, relation_i) == sample  .value_or(f_di, relation, relation_i));
+        // CHECK(relation.value_or(f_di, relation, relation_i) == relation.value_or(f_di, relation, relation_i));
     }
 }
 
@@ -490,6 +606,9 @@ TEST_CASE( "OptionalSpectralField value_or(f,a,b) free theorem commutativity", "
         CHECK(unknown.value_or(f, relation, relation) == unknown.value_or(f, relation, relation ));
     }
 }
+
+
+
 
 
 
