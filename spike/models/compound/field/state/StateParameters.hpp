@@ -10,7 +10,7 @@ namespace field{
         si::pressure pressure;
         si::temperature temperature;
 
-        StateParameters(
+        constexpr StateParameters(
             const si::pressure pressure, 
             const si::temperature temperature
         ): 
@@ -29,5 +29,16 @@ namespace field{
             return !((*this)==other);
         }
     };
-    struct StateParametersAggregate{};
+    struct StateParametersAggregate{
+        constexpr StateParametersAggregate(){}
+
+        constexpr bool operator==(const StateParametersAggregate& other) const 
+        {
+            return true;
+        }
+        constexpr bool operator!=(const StateParametersAggregate& other) const 
+        {
+            return !((*this)==other);
+        }
+    };
 }}

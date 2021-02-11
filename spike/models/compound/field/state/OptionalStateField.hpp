@@ -9,7 +9,7 @@
 #include "StateSample.hpp"
 #include "StateFunction.hpp"
 
-#include "StateParameters.hpp"
+#include "OptionalStateParameters.hpp"
 
 namespace compound { 
 namespace field {
@@ -17,7 +17,6 @@ namespace field {
     template<typename T1>
     class OptionalStateField
     {
-        typedef std::variant<std::monostate, StateParameters, StateParametersAggregate> OptionalStateParametersVariant;
     	template<typename T2>
         using OptionalStateFieldVariant = std::variant<std::monostate, T2, StateSample<T2>, StateFunction<T2>>;
         template<typename T2>
@@ -45,28 +44,6 @@ namespace field {
             }
             std::optional<Tout> operator()(const StateFunction<Tout> a ) const {
                 return a(p,T);
-            }
-        };
-        class OptionalStateFieldEqualityVisitor
-        {
-            OptionalStateFieldVariant<T1> other;
-        public:
-            OptionalStateFieldEqualityVisitor(OptionalStateFieldVariant<T1> other)
-            : other(other)
-            {
-
-            }
-            bool operator()(const std::monostate a               ) const {
-                return other == a;
-            }
-            bool operator()(const T1 a                           ) const {
-                return other == a;
-            }
-            bool operator()(const StateSample<T1> a        ) const {
-                return other == a;
-            }
-            bool operator()(const StateFunction<T1> a ) const {
-                return other(0.0 * si::pascal, 0.0* si::kelvin) == a(0.0 * si::pascal, 0.0* si::kelvin);
             }
         };
         template<typename Tout, typename Tin1>
@@ -137,16 +114,16 @@ namespace field {
             {
 
             }
-            OptionalStateParametersVariant operator()( const std::monostate a               ) const {
+            OptionalStateParameters operator()( const std::monostate a               ) const {
                 return std::monostate();
             }
-            OptionalStateParametersVariant operator()( const T1 a                           ) const {
+            OptionalStateParameters operator()( const T1 a                           ) const {
                 return std::monostate();
             }
-            OptionalStateParametersVariant operator()( const StateSample<T1> a        ) const {
+            OptionalStateParameters operator()( const StateSample<T1> a        ) const {
                 return StateParameters(a.pressure, a.temperature);
             }
-            OptionalStateParametersVariant operator()( const StateFunction<T1> a ) const {
+            OptionalStateParameters operator()( const StateFunction<T1> a ) const {
                 return std::monostate();
             }
         };
@@ -154,7 +131,7 @@ namespace field {
         {
             CompletedStateFieldVariant<T1> fallback;
         public:
-            OptionalStateFieldCompletionVisitor(CompletedStateFieldVariant<T1> fallback) : fallback(fallback)
+            OptionalStateFieldCompletionVisitor(const CompletedStateFieldVariant<T1> fallback) : fallback(fallback)
             {
 
             }
@@ -262,9 +239,6 @@ namespace field {
             const OptionalStateField<T2> a, 
             const OptionalStateField<T3> b) const
         {
-            // the following are dummy values, since we only invoke them on StateSamples or constants
-            const si::pressure p = si::standard_pressure;
-            const si::temperature T = si::standard_temperature;
             if(entry.index() > 0) // no substitute needed
             {
                 return *this;
@@ -284,29 +258,14 @@ namespace field {
                     { return f2(a2(p,T).value(), b2(p,T).value()); }
                 );
             }
-            else if((a.index() == 2) + (b.index() == 2) == 1) // one sample
-            {
-                auto f2 = f;
-                auto a2 = a;
-                auto b2 = b;
-                typedef std::function<StateSample<T1>(const T2, const si::pressure, const si::temperature)> F2pT;
-                typedef std::function<StateSample<T1>(const T3, const si::pressure, const si::temperature)> F3pT;
-                if(a.index() == 2)
-                {
-                    return a.map_to_constant(p,T, 
-                        F2pT([f2,b2](const T2 apT, const si::pressure p, const si::temperature T){ return StateSample<T1>(f2(apT,b2(p,T).value()),p,T); })
-                    );
-                }
-                else // if(b.index() == 2)
-                {
-                    return b.map_to_constant(p,T, 
-                        F3pT([f2,a2](const T3 bpT, const si::pressure p, const si::temperature T){ return StateSample<T1>(f2(a2(p,T).value(),bpT),p,T); })
-                    );
-                }
-            }
             else // constant
             {
-                return f(a(p,T).value(), b(p,T).value());
+                OptionalStateParameters parameters = aggregate(a.parameters(), b.parameters());
+                StateParameters defaults = parameters.value_or(StateParameters(si::standard_pressure, si::standard_temperature));
+                si::pressure p = defaults.pressure;
+                si::temperature T = defaults.temperature;
+                T1 result = f(a(p,T).value(), b(p,T).value());
+                return parameters.has_value()? OptionalStateField<T1>(StateSample<T1>(result, p,T)) : OptionalStateField<T1>(result);
             }
         }
         /*
@@ -342,37 +301,14 @@ namespace field {
                     { return f2(a2(p,T).value(), b2(p,T).value(), c2(p,T).value()); }
                 );
             }
-            else if((a.index() == 2) + (b.index() == 2) + (c.index() == 2) == 1) // one sample
+            else // constant
             {
-                auto f2 = f;
-                auto a2 = a;
-                auto b2 = b;
-                auto c2 = c;
-                typedef std::function<StateSample<T1>(const T2, const si::pressure, const si::temperature)> F2pT;
-                typedef std::function<StateSample<T1>(const T3, const si::pressure, const si::temperature)> F3pT;
-                typedef std::function<StateSample<T1>(const T4, const si::pressure, const si::temperature)> F4pT;
-                if(a.index() == 2)
-                {
-                    return a.map_to_constant(p,T, 
-                        F2pT([f2,b2,c2](const T2 apT, const si::pressure p, const si::temperature T){ return StateSample<T1>(f2(apT,b2(p,T).value(),c2(p,T).value()),p,T); })
-                    );
-                }
-                else if(b.index() == 2)
-                {
-                    return b.map_to_constant(p,T, 
-                        F3pT([f2,a2,c2](const T3 bpT, const si::pressure p, const si::temperature T){ return StateSample<T1>(f2(a2(p,T).value(),bpT,c2(p,T).value()),p,T); })
-                    );
-                }
-                else // if(c.index() == 2)
-                {
-                    return c.map_to_constant(p,T, 
-                        F4pT([f2,a2,b2](const T4 cpT, const si::pressure p, const si::temperature T){ return StateSample<T1>(f2(a2(p,T).value(),b2(p,T).value(),cpT),p,T); })
-                    );
-                }
-            }
-            else
-            {
-                return f(a(p,T).value(), b(p,T).value(), c(p,T).value());
+                OptionalStateParameters parameters = aggregate(a.parameters(), aggregate(b.parameters(), c.parameters()));
+                StateParameters defaults = parameters.value_or(StateParameters(si::standard_pressure, si::standard_temperature));
+                si::pressure p = defaults.pressure;
+                si::temperature T = defaults.temperature;
+                T1 result = f(a(p,T).value(), b(p,T).value(), c(p,T).value());
+                return parameters.has_value()? OptionalStateField<T1>(StateSample<T1>(result, p,T)) : OptionalStateField<T1>(result);
             }
         }
         /*
@@ -389,7 +325,7 @@ namespace field {
         {
             return entry.index();
         }
-        constexpr OptionalStateParametersVariant parameters() const
+        constexpr OptionalStateParameters parameters() const
         {
             return std::visit(OptionalStateFieldParametersVisitor(), entry);
         }
