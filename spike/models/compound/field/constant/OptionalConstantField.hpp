@@ -36,24 +36,6 @@ namespace field {
                 return a;
             }
         };
-        template<typename T2>
-        class OptionalConstantFieldMapVisitor
-        {
-        public:
-            typedef std::function<T2(const T1)> F;
-            F f;
-            OptionalConstantFieldMapVisitor(const F f)
-            : f(f)
-            {
-
-            }
-            OptionalConstantFieldVariant<T2> operator()(const std::monostate a) const {
-                return std::monostate();
-            }
-            OptionalConstantFieldVariant<T2> operator()(const T1 a            ) const {
-                return f(a);
-            }
-        };
 
         OptionalConstantFieldVariant<T1> entry;
     public:
@@ -113,15 +95,7 @@ namespace field {
         */
         constexpr bool has_value() const
         {
-            return entry.index() == 0;
-        }
-        /*
-        Return a OptionalConstantField<T1> field representing `a` after applying the map `f`
-        */
-        template<typename T2>
-        constexpr OptionalConstantField<T2> map(const std::function<T2(const T1)> f) const
-        {
-            return OptionalConstantField<T2>(std::visit(OptionalConstantFieldMapVisitor<T2>(f), entry));
+            return entry.index() != 0;
         }
 
         template<typename T2>
