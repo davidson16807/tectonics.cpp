@@ -9,7 +9,7 @@
 #include "StateSample.hpp"
 #include "StateFunction.hpp"
 
-#include "OptionalStateField.hpp"
+#include "StateParameters.hpp"
 
 namespace compound { 
 namespace field {
@@ -17,6 +17,7 @@ namespace field {
     template<typename T1>
     class OptionalStateField
     {
+        typedef std::variant<std::monostate, StateParameters, StateParametersAggregate> OptionalStateParametersVariant;
     	template<typename T2>
         using OptionalStateFieldVariant = std::variant<std::monostate, T2, StateSample<T2>, StateFunction<T2>>;
         template<typename T2>
@@ -127,6 +128,26 @@ namespace field {
             }
             std::optional<T2> operator()( const StateFunction<T1> a ) const {
                 return f(a(default_p, default_T), default_p, default_T);
+            }
+        };
+        class OptionalStateFieldParametersVisitor
+        {
+        public:
+            OptionalStateFieldParametersVisitor()
+            {
+
+            }
+            OptionalStateParametersVariant operator()( const std::monostate a               ) const {
+                return std::monostate();
+            }
+            OptionalStateParametersVariant operator()( const T1 a                           ) const {
+                return std::monostate();
+            }
+            OptionalStateParametersVariant operator()( const StateSample<T1> a        ) const {
+                return StateParameters(a.pressure, a.temperature);
+            }
+            OptionalStateParametersVariant operator()( const StateFunction<T1> a ) const {
+                return std::monostate();
             }
         };
         class OptionalStateFieldCompletionVisitor
@@ -241,6 +262,9 @@ namespace field {
             const OptionalStateField<T2> a, 
             const OptionalStateField<T3> b) const
         {
+            // the following are dummy values, since we only invoke them on StateSamples or constants
+            const si::pressure p = si::standard_pressure;
+            const si::temperature T = si::standard_temperature;
             if(entry.index() > 0) // no substitute needed
             {
                 return *this;
@@ -265,8 +289,6 @@ namespace field {
                 auto f2 = f;
                 auto a2 = a;
                 auto b2 = b;
-                const si::pressure p = si::standard_pressure;
-                const si::temperature T = si::standard_temperature;
                 typedef std::function<StateSample<T1>(const T2, const si::pressure, const si::temperature)> F2pT;
                 typedef std::function<StateSample<T1>(const T3, const si::pressure, const si::temperature)> F3pT;
                 if(a.index() == 2)
@@ -284,8 +306,6 @@ namespace field {
             }
             else // constant
             {
-                const si::pressure p = si::standard_pressure;
-                const si::temperature T = si::standard_temperature;
                 return f(a(p,T).value(), b(p,T).value());
             }
         }
@@ -299,6 +319,9 @@ namespace field {
             const OptionalStateField<T3> b, 
             const OptionalStateField<T4> c) const
         {
+            // the following are dummy values, since we only invoke them on StateSamples or constants
+            const si::pressure p = si::standard_pressure;
+            const si::temperature T = si::standard_temperature;
             if(entry.index() > 0)
             {
                 return *this;
@@ -325,8 +348,6 @@ namespace field {
                 auto a2 = a;
                 auto b2 = b;
                 auto c2 = c;
-                const si::pressure p = si::standard_pressure;
-                const si::temperature T = si::standard_temperature;
                 typedef std::function<StateSample<T1>(const T2, const si::pressure, const si::temperature)> F2pT;
                 typedef std::function<StateSample<T1>(const T3, const si::pressure, const si::temperature)> F3pT;
                 typedef std::function<StateSample<T1>(const T4, const si::pressure, const si::temperature)> F4pT;
@@ -351,8 +372,6 @@ namespace field {
             }
             else
             {
-                const si::pressure p = si::standard_pressure;
-                const si::temperature T = si::standard_temperature;
                 return f(a(p,T).value(), b(p,T).value(), c(p,T).value());
             }
         }
@@ -369,6 +388,10 @@ namespace field {
         constexpr int index() const
         {
             return entry.index();
+        }
+        constexpr OptionalStateParametersVariant parameters() const
+        {
+            return std::visit(OptionalStateFieldParametersVisitor(), entry);
         }
         /*
         Return a OptionalStateField<T1> field representing `a` after applying the map `f`

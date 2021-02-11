@@ -9,7 +9,7 @@
 #include "SpectralSample.hpp"
 #include "SpectralFunction.hpp"
 
-#include "OptionalSpectralField.hpp"
+#include "SpectralParameters.hpp"
 
 namespace compound { 
 namespace field {
@@ -17,6 +17,7 @@ namespace field {
     template<typename T1>
     class OptionalSpectralField
     {
+        typedef std::variant<std::monostate, SpectralParameters, SpectralParametersAggregate> OptionalSpectralParametersVariant;
     	template<typename T2>
 	    using OptionalSpectralFieldVariant = std::variant<std::monostate, T2, SpectralSample<T2>, SpectralFunction<T2>>;
         template<typename T2>
@@ -105,6 +106,26 @@ namespace field {
             }
             std::optional<T2> operator()( const SpectralFunction<T1> a ) const {
                 return f(a(default_nlo, default_nhi, default_p, default_T), default_nlo, default_nhi, default_p, default_T);
+            }
+        };
+        class OptionalSpectralFieldParametersVisitor
+        {
+        public:
+            OptionalSpectralFieldParametersVisitor()
+            {
+
+            }
+            OptionalSpectralParametersVariant operator()( const std::monostate a               ) const {
+                return std::monostate();
+            }
+            OptionalSpectralParametersVariant operator()( const T1 a                           ) const {
+                return std::monostate();
+            }
+            OptionalSpectralParametersVariant operator()( const SpectralSample<T1> a        ) const {
+                return SpectralParameters(a.nlo, a.nhi, a.pressure, a.temperature);
+            }
+            OptionalSpectralParametersVariant operator()( const SpectralFunction<T1> a ) const {
+                return std::monostate();
             }
         };
         class OptionalSpectralFieldCompletionVisitor
@@ -256,6 +277,11 @@ namespace field {
             const OptionalSpectralField<T2> a, 
             const OptionalSpectralField<T3> b) const
         {
+            // the following are dummy values, since we only invoke them on SpectralSamples or constants
+            const si::wavenumber nlo = 14286.0/si::centimeter;
+            const si::wavenumber nhi = 25000.0/si::centimeter;
+            const si::pressure p = si::standard_pressure;
+            const si::temperature T = si::standard_temperature;
             if(entry.index() > 0) // no substitute needed
             {
                 return *this;
@@ -280,10 +306,6 @@ namespace field {
                 auto f2 = f;
                 auto a2 = a;
                 auto b2 = b;
-                const si::wavenumber nlo = 14286.0/si::centimeter;
-                const si::wavenumber nhi = 25000.0/si::centimeter;
-                const si::pressure p = si::standard_pressure;
-                const si::temperature T = si::standard_temperature;
                 typedef std::function<SpectralSample<T1>(const T2, const si::wavenumber, const si::wavenumber, const si::pressure, const si::temperature)> F2nnpT;
                 typedef std::function<SpectralSample<T1>(const T3, const si::wavenumber, const si::wavenumber, const si::pressure, const si::temperature)> F3nnpT;
                 if(a.index() == 2)
@@ -305,12 +327,8 @@ namespace field {
                     );
                 }
             }
-            else // constant
+            else // multiple samples or constants
             {
-                const si::wavenumber nlo = 14286.0/si::centimeter;
-                const si::wavenumber nhi = 25000.0/si::centimeter;
-                const si::pressure p = si::standard_pressure;
-                const si::temperature T = si::standard_temperature;
                 return f(a(nlo,nhi,p,T).value(), b(nlo,nhi,p,T).value());
             }
         }
@@ -324,6 +342,11 @@ namespace field {
             const OptionalSpectralField<T3> b, 
             const OptionalSpectralField<T4> c) const
         {
+            // the following are dummy values, since we only invoke them on SpectralSamples or constants
+            const si::wavenumber nlo = 14286.0/si::centimeter;
+            const si::wavenumber nhi = 25000.0/si::centimeter;
+            const si::pressure p = si::standard_pressure;
+            const si::temperature T = si::standard_temperature;
             if(entry.index() > 0)
             {
                 return *this;
@@ -350,10 +373,6 @@ namespace field {
                 auto a2 = a;
                 auto b2 = b;
                 auto c2 = c;
-                const si::wavenumber nlo = 14286.0/si::centimeter;
-                const si::wavenumber nhi = 25000.0/si::centimeter;
-                const si::pressure p = si::standard_pressure;
-                const si::temperature T = si::standard_temperature;
                 typedef std::function<SpectralSample<T1>(const T2, const si::wavenumber, const si::wavenumber, const si::pressure, const si::temperature)> F2nnpT;
                 typedef std::function<SpectralSample<T1>(const T3, const si::wavenumber, const si::wavenumber, const si::pressure, const si::temperature)> F3nnpT;
                 typedef std::function<SpectralSample<T1>(const T4, const si::wavenumber, const si::wavenumber, const si::pressure, const si::temperature)> F4nnpT;
@@ -387,10 +406,6 @@ namespace field {
             }
             else
             {
-                const si::wavenumber nlo = 14286.0/si::centimeter;
-                const si::wavenumber nhi = 25000.0/si::centimeter;
-                const si::pressure p = si::standard_pressure;
-                const si::temperature T = si::standard_temperature;
                 return f(a(nlo,nhi,p,T).value(), b(nlo,nhi,p,T).value(), c(nlo,nhi,p,T).value());
             }
         }
@@ -408,13 +423,9 @@ namespace field {
         {
             return entry.index();
         }
-        /*
-        Return a OptionalSpectralField<T1> field representing `a` after applying the map `f`
-        */
-        template<typename T2>
-        constexpr OptionalSpectralField<T2> map(const std::function<T2(const T1)> f) const
+        constexpr OptionalSpectralParametersVariant parameters() const
         {
-            return OptionalSpectralField<T2>(std::visit(OptionalSpectralFieldUnaryMapVisitor<T2,T1>(f), entry));
+            return std::visit(OptionalSpectralFieldParametersVisitor(), entry);
         }
         /*
         Return a OptionalSpectralField<T1> field representing `a` after applying the map `f`
