@@ -151,6 +151,8 @@ namespace field {
 
         OptionalStateFieldVariant<T1> entry;
     public:
+        using value_type = T1;
+        using parameter_type = StateParameters;
         constexpr OptionalStateField(const OptionalStateFieldVariant<T1> entry)
         : entry(entry)
         {
@@ -200,6 +202,10 @@ namespace field {
         constexpr std::optional<T1> operator()(const si::pressure p, const si::temperature T) const
         {
             return std::visit(OptionalStateFieldValueVisitor<T1>(p, T), entry);
+        }
+        constexpr std::optional<T1> operator()(const StateParameters parameters) const
+        {
+            return std::visit(OptionalSpectralFieldValueVisitor<T1>(parameters.pressure, parameters.temperature), entry);
         }
         /*
         Return whichever field provides more information, going by the following definition:

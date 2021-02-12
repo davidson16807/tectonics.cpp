@@ -181,6 +181,8 @@ namespace field {
         };
         OptionalSpectralFieldVariant<T1> entry;
     public:
+        using value_type = T1;
+        using parameter_type = SpectralParameters;
         constexpr OptionalSpectralField(const OptionalSpectralFieldVariant<T1> entry)
         : entry(entry)
         {
@@ -230,6 +232,10 @@ namespace field {
         constexpr std::optional<T1> operator()(const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T) const
         {
             return std::visit(OptionalSpectralFieldValueVisitor<T1>(nlo, nhi, p, T), entry);
+        }
+        constexpr std::optional<T1> operator()(const SpectralParameters parameters) const
+        {
+            return std::visit(OptionalSpectralFieldValueVisitor<T1>(parameters.nlo, parameters.nhi, parameters.pressure, parameters.temperature), entry);
         }
         /*
         Return `a` if available, otherwise return `b` as a substitute.
@@ -301,7 +307,7 @@ namespace field {
                 OptionalSpectralParameters parameters = aggregate(a.parameters(), b.parameters());
                 // NOTE: The values in "dummy" are never read, since a and b are not functions by this point, 
                 // and we only record values in a SpectralSample if exactly one of a and b are defined.
-                SpectralParameters dummy(14286.0/si::centimeter, 25000.0/si::centimeter, si::standard_pressure, si::standard_temperature);
+                SpectralParameters dummy();
                 SpectralParameters defaults = parameters.value_or(dummy);
                 si::wavenumber nlo = defaults.nlo;
                 si::wavenumber nhi = defaults.nhi;
@@ -349,7 +355,7 @@ namespace field {
                 OptionalSpectralParameters parameters = aggregate(a.parameters(), aggregate(b.parameters(), c.parameters()));
                 // NOTE: The values in "dummy" are never read, since a, b, and c are not functions by this point, 
                 // and we only record values in a SpectralSample if exactly one of a, b, and c are defined.
-                SpectralParameters dummy(14286.0/si::centimeter, 25000.0/si::centimeter, si::standard_pressure, si::standard_temperature);
+                SpectralParameters dummy();
                 SpectralParameters defaults = parameters.value_or(dummy);
                 si::wavenumber nlo = defaults.nlo;
                 si::wavenumber nhi = defaults.nhi;

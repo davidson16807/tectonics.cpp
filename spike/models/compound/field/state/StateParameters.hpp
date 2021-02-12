@@ -17,6 +17,10 @@ namespace field{
             pressure(pressure), 
             temperature(temperature) 
         {}
+        constexpr StateParameters(): 
+            pressure(si::standard_pressure), 
+            temperature(si::standard_temperature) 
+        {}
 
         constexpr bool operator==(const StateParameters& other) const 
         {

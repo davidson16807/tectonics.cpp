@@ -24,6 +24,13 @@ namespace field{
             temperature(temperature) 
         {}
 
+        constexpr SpectralParameters(): 
+            nlo(14286.0/si::centimeter),
+            nhi(25000.0/si::centimeter),
+            pressure(si::standard_pressure), 
+            temperature(si::standard_temperature) 
+        {}
+
         constexpr bool operator==(const SpectralParameters& other) const 
         {
             return 
