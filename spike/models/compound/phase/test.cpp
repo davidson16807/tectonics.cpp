@@ -1,0 +1,6 @@
+#include "./liquid/PartlyKnownLiquid_test.hpp"
+#include "./liquid/PartlyKnownLiquid_to_CompletedLiquid_test.hpp"
+#include "./gas/PartlyKnownGas_test.hpp"
+#include "./gas/PartlyKnownGas_to_CompletedGas_test.hpp"
+#include "./solid/PartlyKnownSolid_to_CompletedSolid_test.hpp"
+#include "./solid/PartlyKnownSolid_test.hpp"
