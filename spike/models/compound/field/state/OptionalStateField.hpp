@@ -261,7 +261,10 @@ namespace field {
             else // constant
             {
                 OptionalStateParameters parameters = aggregate(a.parameters(), b.parameters());
-                StateParameters defaults = parameters.value_or(StateParameters(si::standard_pressure, si::standard_temperature));
+                // NOTE: The values in "dummy" are never read, since a and b are not functions by this point, 
+                // and we only record values in a SpectralSample if exactly one of a and b are defined.
+                StateParameters dummy(si::standard_pressure, si::standard_temperature);
+                StateParameters defaults = parameters.value_or(dummy);
                 si::pressure p = defaults.pressure;
                 si::temperature T = defaults.temperature;
                 T1 result = f(a(p,T).value(), b(p,T).value());
@@ -304,7 +307,10 @@ namespace field {
             else // constant
             {
                 OptionalStateParameters parameters = aggregate(a.parameters(), aggregate(b.parameters(), c.parameters()));
-                StateParameters defaults = parameters.value_or(StateParameters(si::standard_pressure, si::standard_temperature));
+                // NOTE: The values in "dummy" are never read, since a, b, and c are not functions by this point, 
+                // and we only record values in a SpectralSample if exactly one of a, b, and c are defined.
+                StateParameters dummy(si::standard_pressure, si::standard_temperature);
+                StateParameters defaults = parameters.value_or(dummy);
                 si::pressure p = defaults.pressure;
                 si::temperature T = defaults.temperature;
                 T1 result = f(a(p,T).value(), b(p,T).value(), c(p,T).value());

@@ -9,7 +9,7 @@
 #include "SpectralSample.hpp"
 #include "SpectralFunction.hpp"
 
-#include "SpectralParameters.hpp"
+#include "OptionalSpectralParameters.hpp"
 
 namespace compound { 
 namespace field {
@@ -277,11 +277,6 @@ namespace field {
             const OptionalSpectralField<T2> a, 
             const OptionalSpectralField<T3> b) const
         {
-            // the following are dummy values, since we only invoke them on SpectralSamples or constants
-            const si::wavenumber nlo = 14286.0/si::centimeter;
-            const si::wavenumber nhi = 25000.0/si::centimeter;
-            const si::pressure p = si::standard_pressure;
-            const si::temperature T = si::standard_temperature;
             if(entry.index() > 0) // no substitute needed
             {
                 return *this;
@@ -297,39 +292,23 @@ namespace field {
                 auto b2 = b;
                 return SpectralFunction<T1>(
                     [f2, a2, b2]
-                    (const si::wavenumber nlo, const si::wavenumber nhi,  const si::pressure p, const si::temperature T)
+                    (const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T)
                     { return f2(a2(nlo,nhi,p,T).value(), b2(nlo,nhi,p,T).value()); }
                 );
             }
-            else if((a.index() == 2) + (b.index() == 2) == 1) // one sample
+            else // constant
             {
-                auto f2 = f;
-                auto a2 = a;
-                auto b2 = b;
-                typedef std::function<SpectralSample<T1>(const T2, const si::wavenumber, const si::wavenumber, const si::pressure, const si::temperature)> F2nnpT;
-                typedef std::function<SpectralSample<T1>(const T3, const si::wavenumber, const si::wavenumber, const si::pressure, const si::temperature)> F3nnpT;
-                if(a.index() == 2)
-                {
-                    return a.map_to_constant(nlo,nhi,p,T, 
-                        F2nnpT([f2,b2]
-                            (const T2 apT, const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T)
-                            { return SpectralSample<T1>(f2(apT,b2(nlo,nhi,p,T).value()),nlo,nhi,p,T); }
-                        )
-                    );
-                }
-                else // if(b.index() == 2)
-                {
-                    return b.map_to_constant(nlo,nhi,p,T, 
-                        F3nnpT([f2,a2]
-                            (const T3 bpT, const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T)
-                            { return SpectralSample<T1>(f2(a2(nlo,nhi,p,T).value(),bpT),nlo,nhi,p,T); }
-                        )
-                    );
-                }
-            }
-            else // multiple samples or constants
-            {
-                return f(a(nlo,nhi,p,T).value(), b(nlo,nhi,p,T).value());
+                OptionalSpectralParameters parameters = aggregate(a.parameters(), b.parameters());
+                // NOTE: The values in "dummy" are never read, since a and b are not functions by this point, 
+                // and we only record values in a SpectralSample if exactly one of a and b are defined.
+                SpectralParameters dummy(14286.0/si::centimeter, 25000.0/si::centimeter, si::standard_pressure, si::standard_temperature);
+                SpectralParameters defaults = parameters.value_or(dummy);
+                si::wavenumber nlo = defaults.nlo;
+                si::wavenumber nhi = defaults.nhi;
+                si::pressure p = defaults.pressure;
+                si::temperature T = defaults.temperature;
+                T1 result = f(a(nlo,nhi,p,T).value(), b(nlo,nhi,p,T).value());
+                return parameters.has_value()? OptionalSpectralField<T1>(SpectralSample<T1>(result, nlo,nhi,p,T)) : OptionalSpectralField<T1>(result);
             }
         }
         /*
@@ -343,8 +322,6 @@ namespace field {
             const OptionalSpectralField<T4> c) const
         {
             // the following are dummy values, since we only invoke them on SpectralSamples or constants
-            const si::wavenumber nlo = 14286.0/si::centimeter;
-            const si::wavenumber nhi = 25000.0/si::centimeter;
             const si::pressure p = si::standard_pressure;
             const si::temperature T = si::standard_temperature;
             if(entry.index() > 0)
@@ -363,50 +340,23 @@ namespace field {
                 auto c2 = c;
                 return SpectralFunction<T1>(
                     [f2, a2, b2, c2]
-                    (const si::wavenumber nlo, const si::wavenumber nhi,  const si::pressure p, const si::temperature T)
+                    (const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T)
                     { return f2(a2(nlo,nhi,p,T).value(), b2(nlo,nhi,p,T).value(), c2(nlo,nhi,p,T).value()); }
                 );
             }
-            else if((a.index() == 2) + (b.index() == 2) + (c.index() == 2) == 1) // one sample
+            else // constant
             {
-                auto f2 = f;
-                auto a2 = a;
-                auto b2 = b;
-                auto c2 = c;
-                typedef std::function<SpectralSample<T1>(const T2, const si::wavenumber, const si::wavenumber, const si::pressure, const si::temperature)> F2nnpT;
-                typedef std::function<SpectralSample<T1>(const T3, const si::wavenumber, const si::wavenumber, const si::pressure, const si::temperature)> F3nnpT;
-                typedef std::function<SpectralSample<T1>(const T4, const si::wavenumber, const si::wavenumber, const si::pressure, const si::temperature)> F4nnpT;
-                if(a.index() == 2)
-                {
-                    return a.map_to_constant(nlo,nhi,p,T, 
-                        F2nnpT([f2,b2,c2]
-                            (const T2 apT, const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T)
-                            { return SpectralSample<T1>(f2(apT,b2(nlo,nhi,p,T).value(),c2(nlo,nhi,p,T).value()),nlo,nhi,p,T); }
-                        )
-                    );
-                }
-                else if(b.index() == 2)
-                {
-                    return b.map_to_constant(nlo,nhi,p,T, 
-                        F3nnpT([f2,a2,c2]
-                            (const T3 bpT, const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T)
-                            { return SpectralSample<T1>(f2(a2(nlo,nhi,p,T).value(),bpT,c2(nlo,nhi,p,T).value()),nlo,nhi,p,T); }
-                        )
-                    );
-                }
-                else // if(c.index() == 2)
-                {
-                    return c.map_to_constant(nlo,nhi,p,T, 
-                        F4nnpT([f2,a2,b2]
-                            (const T4 cpT, const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T)
-                            { return SpectralSample<T1>(f2(a2(nlo,nhi,p,T).value(),b2(nlo,nhi,p,T).value(),cpT),nlo,nhi,p,T); }
-                        )
-                    );
-                }
-            }
-            else
-            {
-                return f(a(nlo,nhi,p,T).value(), b(nlo,nhi,p,T).value(), c(nlo,nhi,p,T).value());
+                OptionalSpectralParameters parameters = aggregate(a.parameters(), aggregate(b.parameters(), c.parameters()));
+                // NOTE: The values in "dummy" are never read, since a, b, and c are not functions by this point, 
+                // and we only record values in a SpectralSample if exactly one of a, b, and c are defined.
+                SpectralParameters dummy(14286.0/si::centimeter, 25000.0/si::centimeter, si::standard_pressure, si::standard_temperature);
+                SpectralParameters defaults = parameters.value_or(dummy);
+                si::wavenumber nlo = defaults.nlo;
+                si::wavenumber nhi = defaults.nhi;
+                si::pressure p = defaults.pressure;
+                si::temperature T = defaults.temperature;
+                T1 result = f(a(nlo,nhi,p,T).value(), b(nlo,nhi,p,T).value(), c(nlo,nhi,p,T).value());
+                return parameters.has_value()? OptionalSpectralField<T1>(SpectralSample<T1>(result, nlo,nhi,p,T)) : OptionalSpectralField<T1>(result);
             }
         }
         /*

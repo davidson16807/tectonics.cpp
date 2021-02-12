@@ -12,7 +12,7 @@ namespace field{
         si::pressure pressure;
         si::temperature temperature;
 
-        SpectralParameters(
+        constexpr SpectralParameters(
             const si::wavenumber nlo,
             const si::wavenumber nhi,
             const si::pressure pressure, 
@@ -27,7 +27,9 @@ namespace field{
         constexpr bool operator==(const SpectralParameters& other) const 
         {
             return 
-               pressure == other.pressure 
+               nlo == other.nlo 
+            && nhi == other.nhi
+            && pressure == other.pressure 
             && temperature == other.temperature;
         }
         constexpr bool operator!=(const SpectralParameters& other) const 
@@ -36,5 +38,16 @@ namespace field{
         }
     };
 
-    struct SpectralParametersAggregate{};
+    struct SpectralParametersAggregate{
+        constexpr SpectralParametersAggregate(){}
+
+        constexpr bool operator==(const SpectralParametersAggregate& other) const 
+        {
+            return true;
+        }
+        constexpr bool operator!=(const SpectralParametersAggregate& other) const 
+        {
+            return !((*this)==other);
+        }
+    };
 }}
