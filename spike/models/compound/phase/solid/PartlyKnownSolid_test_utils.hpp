@@ -9,7 +9,7 @@
 #include <models/compound/field/spectral/OptionalSpectralField_test_utils.hpp>
 
 
-compound::phase::PartlyKnownSolid unknown {
+compound::phase::PartlyKnownSolid unknown_solid {
     /*specific_heat_capacity*/            std::monostate(),
     /*thermal_conductivity*/              std::monostate(),
     /*dynamic_viscosity*/                 std::monostate(),
@@ -126,7 +126,7 @@ compound::phase::PartlyKnownSolid copper{
 
     /*chemical_susceptibility_estimate*/  std::monostate(),
 }; 
-compound::phase::PartlyKnownSolid dummy {
+compound::phase::PartlyKnownSolid dummy_solid {
     /*specific_heat_capacity*/            1.0 * si::joule / (si::gram * si::kelvin), 
     /*thermal_conductivity*/              2.0 * si::watt / (si::meter * si::kelvin), 
     /*dynamic_viscosity*/                 3.0 * si::poise, 

@@ -26,7 +26,7 @@ compound::phase::PartlyKnownGas known_nitrogen{
             return 1.0 + 6.8552e-5 + 3.243157e-2 / (144.0 - invl2);
         })
 };
-compound::phase::PartlyKnownGas known_dummy {
+compound::phase::PartlyKnownGas known_dummy_gas {
     /*specific_heat_capacity*/            1.0 * si::joule / (si::gram * si::kelvin), 
     /*thermal_conductivity*/              2.0 * si::watt / (si::meter * si::kelvin), 
     /*dynamic_viscosity*/                 3.0 * si::poise, 

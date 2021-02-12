@@ -5,7 +5,7 @@
 
 #include "PartlyKnownLiquid.hpp"
 
-compound::phase::PartlyKnownLiquid unknown {
+compound::phase::PartlyKnownLiquid unknown_liquid {
     /*specific_heat_capacity*/            std::monostate(),
     /*thermal_conductivity*/              std::monostate(),
     /*dynamic_viscosity*/                 std::monostate(),
@@ -32,7 +32,7 @@ compound::phase::PartlyKnownLiquid liquid_nitrogen {
         }), // Friedman (1950)
     /*refractive_index*/                  1.19876
 };
-compound::phase::PartlyKnownLiquid dummy {
+compound::phase::PartlyKnownLiquid dummy_liquid {
     /*specific_heat_capacity*/            1.0 * si::joule / (si::gram * si::kelvin), 
     /*thermal_conductivity*/              2.0 * si::watt / (si::meter * si::kelvin), 
     /*dynamic_viscosity*/                 3.0 * si::poise, 

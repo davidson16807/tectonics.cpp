@@ -33,7 +33,7 @@ compound::phase::CompletedSolid known_ice (
 
     /*chemical_susceptibility_estimate*/  0.0
 );
-compound::phase::CompletedSolid known_dummy (
+compound::phase::CompletedSolid known_dummy_solid (
     /*specific_heat_capacity*/            1.0 * si::joule / (si::gram * si::kelvin), 
     /*thermal_conductivity*/              2.0 * si::watt / (si::meter * si::kelvin), 
     /*dynamic_viscosity*/                 3.0 * si::poise, 

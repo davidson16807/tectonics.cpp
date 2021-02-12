@@ -18,7 +18,7 @@ compound::phase::CompletedLiquid known_liquid_nitrogen (
         }), // Friedman (1950)
     /*refractive_index*/                  1.19876
 );
-compound::phase::CompletedLiquid known_dummy (
+compound::phase::CompletedLiquid known_dummy_liquid (
     /*specific_heat_capacity*/            1.0 * si::joule / (si::gram * si::kelvin), 
     /*thermal_conductivity*/              2.0 * si::watt / (si::meter * si::kelvin), 
     /*dynamic_viscosity*/                 3.0 * si::poise, 

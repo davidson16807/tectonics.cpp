@@ -5,7 +5,7 @@
 
 #include "PartlyKnownGas.hpp"
 
-compound::phase::PartlyKnownGas unknown {
+compound::phase::PartlyKnownGas unknown_gas {
     /*specific_heat_capacity*/            std::monostate(),
     /*thermal_conductivity*/              std::monostate(),
     /*dynamic_viscosity*/                 std::monostate(),
@@ -31,7 +31,7 @@ compound::phase::PartlyKnownGas nitrogen{
             return 1.0 + 6.8552e-5 + 3.243157e-2 / (144.0 - invl2);
         })
 };
-compound::phase::PartlyKnownGas dummy {
+compound::phase::PartlyKnownGas dummy_gas {
     /*specific_heat_capacity*/            1.0 * si::joule / (si::gram * si::kelvin), 
     /*thermal_conductivity*/              2.0 * si::watt / (si::meter * si::kelvin), 
     /*dynamic_viscosity*/                 3.0 * si::poise, 
