@@ -205,7 +205,7 @@ namespace field {
         }
         constexpr std::optional<T1> operator()(const StateParameters parameters) const
         {
-            return std::visit(OptionalSpectralFieldValueVisitor<T1>(parameters.pressure, parameters.temperature), entry);
+            return std::visit(OptionalStateFieldValueVisitor<T1>(parameters.pressure, parameters.temperature), entry);
         }
         /*
         Return whichever field provides more information, going by the following definition:
@@ -269,7 +269,7 @@ namespace field {
                 OptionalStateParameters parameters = aggregate(a.parameters(), b.parameters());
                 // NOTE: The values in "dummy" are never read, since a and b are not functions by this point, 
                 // and we only record values in a SpectralSample if exactly one of a and b are defined.
-                StateParameters dummy(si::standard_pressure, si::standard_temperature);
+                StateParameters dummy;
                 StateParameters defaults = parameters.value_or(dummy);
                 si::pressure p = defaults.pressure;
                 si::temperature T = defaults.temperature;
@@ -315,7 +315,7 @@ namespace field {
                 OptionalStateParameters parameters = aggregate(a.parameters(), aggregate(b.parameters(), c.parameters()));
                 // NOTE: The values in "dummy" are never read, since a, b, and c are not functions by this point, 
                 // and we only record values in a SpectralSample if exactly one of a, b, and c are defined.
-                StateParameters dummy(si::standard_pressure, si::standard_temperature);
+                StateParameters dummy;
                 StateParameters defaults = parameters.value_or(dummy);
                 si::pressure p = defaults.pressure;
                 si::temperature T = defaults.temperature;

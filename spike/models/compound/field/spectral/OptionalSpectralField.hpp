@@ -307,7 +307,7 @@ namespace field {
                 OptionalSpectralParameters parameters = aggregate(a.parameters(), b.parameters());
                 // NOTE: The values in "dummy" are never read, since a and b are not functions by this point, 
                 // and we only record values in a SpectralSample if exactly one of a and b are defined.
-                SpectralParameters dummy();
+                SpectralParameters dummy;
                 SpectralParameters defaults = parameters.value_or(dummy);
                 si::wavenumber nlo = defaults.nlo;
                 si::wavenumber nhi = defaults.nhi;
@@ -355,7 +355,7 @@ namespace field {
                 OptionalSpectralParameters parameters = aggregate(a.parameters(), aggregate(b.parameters(), c.parameters()));
                 // NOTE: The values in "dummy" are never read, since a, b, and c are not functions by this point, 
                 // and we only record values in a SpectralSample if exactly one of a, b, and c are defined.
-                SpectralParameters dummy();
+                SpectralParameters dummy;
                 SpectralParameters defaults = parameters.value_or(dummy);
                 si::wavenumber nlo = defaults.nlo;
                 si::wavenumber nhi = defaults.nhi;
