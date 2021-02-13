@@ -1,3 +1,4 @@
+#include "./PartlyKnownCompound_test.hpp"
 #include "./phase/liquid/PartlyKnownLiquid_test.cpp"
 #include "./phase/liquid/PartlyKnownLiquid_to_CompletedLiquid_test.cpp"
 #include "./phase/gas/PartlyKnownGas_to_CompletedGas_test.cpp"
