@@ -26,7 +26,7 @@ compound::phase::PartlyKnownGas nitrogen{
     /*density*/                           std::monostate(),
     /*refractive_index*/                  //1.0002990,
         compound::field::SpectralFunction<double>([](const si::wavenumber nhi, const si::wavenumber nlo, const si::pressure p, const si::temperature T) {
-            double l = si::unitless(2.0 / (nhi+nlo) / si::micrometer);
+            double l = (2.0 / (nhi+nlo) / si::micrometer);
             double invl2 = 1.0/(l*l);
             return 1.0 + 6.8552e-5 + 3.243157e-2 / (144.0 - invl2);
         })

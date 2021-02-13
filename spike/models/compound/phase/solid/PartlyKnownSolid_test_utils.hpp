@@ -68,7 +68,7 @@ compound::phase::PartlyKnownSolid quartz {
     /*refractive_index*/                  1.4585,  // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
     /*spectral_reflectance*/              
         compound::field::SpectralFunction<double>([](const si::wavenumber nhi, const si::wavenumber nlo, const si::pressure p, const si::temperature T) {
-            double l = si::unitless(2.0 / (nhi+nlo) / si::micrometer);
+            double l = (2.0 / (nhi+nlo) / si::micrometer);
             return sqrt(
                 1.0
                 + 0.6961663  * l*l / (l*l - pow(0.0684043, 2.0))
@@ -106,7 +106,7 @@ compound::phase::PartlyKnownSolid copper{
             auto l = 2.0 / (nhi+nlo);
             constexpr double n = 0.059513; 
             constexpr auto dndl = 13.100 / si::micrometer;
-            return n + si::unitless(dndl * l);
+            return n + (dndl * l);
         }), 
     /*spectral_reflectance*/              std::monostate(),
 
