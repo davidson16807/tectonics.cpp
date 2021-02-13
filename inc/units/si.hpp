@@ -959,6 +959,6 @@ namespace si{
 	template<typename T1>
 	constexpr T1 operator/(const temperature_type<T1> K, const celcius_type)
 	{
-		return unitless((K - standard_temperature) / kelvin);
+		return ((K - standard_temperature) / kelvin);
 	}
 }

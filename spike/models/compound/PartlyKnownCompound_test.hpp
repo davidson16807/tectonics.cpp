@@ -126,6 +126,120 @@ compound::PartlyKnownCompound water {
     
 };
 
+
+
+compound::PartlyKnownCompound nitrogen {
+    /*molar_mass*/                        28.013  * si::gram/si::mole,
+    /*atoms_per_molecule*/                2u,
+    /*molecular_diameter*/                357.8 * si::picometer, // Mehio (2014)
+    /*molecular_degrees_of_freedom*/      compound::field::missing(),
+    /*acentric_factor*/                   0.040,
+
+    /*critical_point_pressure*/           3.390 * si::megapascal,
+    /*critical_point_volume*/             compound::field::missing(),
+    /*critical_point_temperature*/        126.20 * si::kelvin,
+    /*critical_point_compressibility*/    compound::field::missing(),
+
+    /*latent_heat_of_vaporization*/       198.8 * si::joule/si::gram,
+    /*latent_heat_of_fusion*/             compound::field::missing(),
+    /*triple_point_pressure*/             12.463 * si::kilopascal,
+    /*triple_point_temperature*/          63.15 * si::kelvin,
+    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_temperature*/ -210.0*si::celcius,
+    /*simon_glatzel_slope*/               1607e5,
+    /*simon_glatzel_exponent*/            1.7910,
+
+    /*molecular_absorption_cross_section*/ 
+        compound::field::SpectralFunction<si::area>([](
+            const si::wavenumber nlo, 
+            const si::wavenumber nhi, 
+            const si::pressure p, 
+            const si::temperature T
+        ) {
+            return std::pow(10.0, math::integral_of_lerp(
+                std::vector<double>{ 8.22e6, 9.25e6, 9.94e6, 1.03e7, 1.13e7, 1.21e7, 1.89e7, 3.35e7, 3.93e7, 9.31e7, 1.07e9 },
+                std::vector<double>{ -26.22, -23.04, -20.64, -20.27, -20.29, -20.62, -20.58, -20.93, -20.96, -21.80, -23.38 },
+                (nlo*si::meter), (nhi*si::meter)
+            ) / (nhi*si::meter - nlo*si::meter)) * si::meter2;
+        }),
+
+    /*gas*/
+    compound::phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ 1.040 * si::joule / (si::gram * si::kelvin), // wikipedia
+        /*thermal_conductivity*/   0.0234 * si::watt / (si::meter * si::kelvin), // wikipedia
+        /*dynamic_viscosity*/      1.76e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
+        /*density*/                compound::field::missing(),
+        /*refractive_index*/       
+            compound::field::SpectralFunction<double>([](
+                const si::wavenumber nlo, 
+                const si::wavenumber nhi, 
+                const si::pressure p, 
+                const si::temperature T
+            ) {
+                double l = (2.0 / (nhi+nlo) / si::micrometer);
+                double invl2 = 1.0/(l*l);
+                return 1.0 + 6.8552e-5 + 3.243157e-2 / (144.0 - invl2);
+            }) 
+    },
+
+    /*liquid*/
+    compound::phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ 2.04 * si::kilojoule / (si::kilogram * si::kelvin), // Timmerhaus (1989)
+        /*thermal_conductivity*/   0.1396 * si::watt / (si::meter * si::kelvin), // Timmerhaus (1989)
+        /*dynamic_viscosity*/      157.9 * si::kilogram / (si::meter * 1e6*si::second), // Timmerhaus (1989)
+        /*density*/                0807.0 * si::kilogram/si::meter3,
+        /*vapor_pressure*/         
+            compound::field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
+                return (3.720822 - 293.94358*si::kelvin/T + 10.31993/si::kelvin*T) * si::standard_pressure;
+            }), // Solomon (1950)
+        /*refractive_index*/       1.19876,
+    },
+
+    /*solid*/ 
+    std::vector<compound::phase::PartlyKnownSolid>{
+        compound::phase::PartlyKnownSolid {
+            /*specific_heat_capacity*/                   
+                compound::field::StateFunction<si::specific_heat_capacity>([](si::pressure p, si::temperature T){ 
+                    return 926.91*exp(0.0093*(T/si::kelvin))*si::joule/(si::kilogram*si::kelvin);
+                }), // wikipedia
+            /*thermal_conductivity*/              
+                compound::field::StateFunction<si::thermal_conductivity>([](si::pressure p, si::temperature T){ 
+                    return 180.2*pow((T/si::kelvin), 0.1041)*si::watt / (si::meter * si::kelvin);
+                }), // wikipedia
+            /*dynamic_viscosity*/                 compound::field::missing(),
+            /*density*/                           0850.0 * si::kilogram/si::meter3,
+            /*vapor_pressure*/                    compound::field::missing(),
+            /*refractive_index*/                  1.25, // wikipedia
+            /*spectral_reflectance*/              compound::field::missing(),
+
+            /*bulk_modulus*/                      
+                compound::field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
+                    return math::mix(2.16, 1.47, math::linearstep(20.0, 44.0, T/si::kelvin))*si::gigapascal;
+                }), // wikipedia
+            /*tensile_modulus*/                   
+                compound::field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
+                    return math::mix(161.0, 225.0, math::linearstep(58.0, 40.6, T/si::kelvin))*si::megapascal;
+                }), // wikipedia
+            /*shear_modulus*/                     compound::field::missing(),
+            /*pwave_modulus*/                     compound::field::missing(),
+            /*lame_parameter*/                    compound::field::missing(),
+            /*poisson_ratio*/                     compound::field::missing(),
+
+            /*compressive_fracture_strength*/     
+                compound::field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
+                    return math::mix(0.24, 0.54, math::linearstep(58.0, 40.6, T/si::kelvin))*si::megapascal;
+                }), // wikipedia
+            /*tensile_fracture_strength*/         compound::field::missing(),
+            /*shear_fracture_strength*/           compound::field::missing(),
+            /*compressive_yield_strength*/        compound::field::missing(),
+            /*tensile_yield_strength*/            compound::field::missing(),
+            /*shear_yield_strength*/              compound::field::missing(),
+
+            /*chemical_susceptibility_estimate*/  compound::field::missing()
+        }
+    }
+};
+
 bool operator==(const compound::PartlyKnownCompound& first, const compound::PartlyKnownCompound& second)
 {
     if(
@@ -171,18 +285,16 @@ TEST_CASE( "PartlyKnownCompound value_or() purity", "[phase]" ) {
     SECTION("Calling a function twice with the same arguments must produce the same results")
     {
         CHECK(water.value_or(water) == water.value_or(water));
-        // CHECK(nitrogen.value_or(nitrogen) == nitrogen.value_or(nitrogen));
-        // CHECK(steam.value_or(steam) == steam.value_or(steam));
-        // CHECK(dummy_gas.value_or(dummy_gas) == dummy_gas.value_or(dummy_gas));
+        CHECK(nitrogen.value_or(nitrogen) == nitrogen.value_or(nitrogen));
+        CHECK(nitrogen.value_or(water) == nitrogen.value_or(water));
+        CHECK(water.value_or(nitrogen) == water.value_or(nitrogen));
     }
 }
-TEST_CASE( "PartlyKnownCompound value_or() right identity", "[phase]" ) {
+TEST_CASE( "PartlyKnownCompound value_or() left identity", "[phase]" ) {
     SECTION("There exists a value that when applied as the second operand to a function returns the original value")
     {
         CHECK(water.value_or(water) == water);
-        // CHECK(nitrogen.value_or(water) == nitrogen);
-        // CHECK(steam.value_or(water) == steam);
-        // CHECK(dummy_gas.value_or(water) == dummy_gas);
+        CHECK(water.value_or(nitrogen) == water);
     }
 }
 /*

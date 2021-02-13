@@ -19,7 +19,7 @@ compound::phase::PartlyKnownGas steam{
     /*density*/                           std::monostate(),
     /*refractive_index*/                  1.000261, // engineering toolbox
 };
-compound::phase::PartlyKnownGas nitrogen{
+compound::phase::PartlyKnownGas nitrogen_gas{
     /*specific_heat_capacity*/            1.040 * si::joule / (si::gram * si::kelvin), // wikipedia
     /*thermal_conductivity*/              0.0234 * si::watt / (si::meter * si::kelvin), // wikipedia
     /*dynamic_viscosity*/                 1.76e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
