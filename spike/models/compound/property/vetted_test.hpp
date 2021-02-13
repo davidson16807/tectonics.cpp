@@ -562,7 +562,7 @@ TEST_CASE( "Eucken method purity", "[properties]" ) {
     }
 
 	SECTION("Calling a function twiced with the same arguments must produce the same results"){
-    	CHECK(compound::property::estimate_viscosity_as_gas_from_eucken(k_G,M,C_G) == compound::property::estimate_viscosity_as_gas_from_eucken(k_G,M,C_G));
+    	CHECK(compound::property::estimate_viscosity_as_gas_from_eucken(C_G,M,k_G) == compound::property::estimate_viscosity_as_gas_from_eucken(C_G,M,k_G));
     }
 }
 
@@ -581,7 +581,7 @@ TEST_CASE( "Eucken method accuracy", "[properties]" ) {
     }
 
 	SECTION("Eucken method must agree on predictions to within 30%"){
-    	CHECK(si::is_within_fraction(eta_G, compound::property::estimate_viscosity_as_gas_from_eucken(k_G,M,C_G), 0.3));
+    	CHECK(si::is_within_fraction(eta_G, compound::property::estimate_viscosity_as_gas_from_eucken(C_G,M,k_G), 0.3));
     }
 }
 
@@ -593,7 +593,7 @@ TEST_CASE( "Eucken consistency", "[properties]" ) {
 	si::specific_heat_capacity C_G (65.33*si::joule/(si::mole*si::kelvin) / M);
 
     SECTION("Eucken method must be invertible"){
-    	CHECK(si::is_within_fraction(k_G, compound::property::estimate_thermal_conductivity_as_gas_from_eucken(compound::property::estimate_viscosity_as_gas_from_eucken(k_G,M,C_G), M, C_G), 1e-4));
-    	CHECK(si::is_within_fraction(eta_G, compound::property::estimate_viscosity_as_gas_from_eucken(compound::property::estimate_thermal_conductivity_as_gas_from_eucken(eta_G,M,C_G), M, C_G), 1e-4));
+    	CHECK(si::is_within_fraction(k_G, compound::property::estimate_thermal_conductivity_as_gas_from_eucken(compound::property::estimate_viscosity_as_gas_from_eucken(C_G,M,k_G), M, C_G), 1e-4));
+    	CHECK(si::is_within_fraction(eta_G, compound::property::estimate_viscosity_as_gas_from_eucken(C_G, M, compound::property::estimate_thermal_conductivity_as_gas_from_eucken(eta_G,M,C_G)), 1e-4));
     }
 }

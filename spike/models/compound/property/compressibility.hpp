@@ -139,8 +139,8 @@ namespace compound{
             const si::temperature critical_temperature,
             const float critical_compressibility = 0.278f
         ){
-            float reduced_pressure = si::unitless(pressure/critical_pressure);
-            float reduced_temperature = si::unitless(temperature/critical_temperature);
+            float reduced_pressure = (pressure/critical_pressure);
+            float reduced_temperature = (temperature/critical_temperature);
 
             const auto Zc = std::array<float,3>{ 0.244f, 0.278f, 0.316f };
             auto Z = std::array<float,3>{

@@ -11,7 +11,7 @@
 
 double test_ideal_gas_law_completed(const si::pressure p, const si::temperature T)
 {
-	return si::unitless(si::mole*si::universal_gas_constant*T/p/si::liter);
+	return (si::mole*si::universal_gas_constant*T/p/si::liter);
 }
 
 

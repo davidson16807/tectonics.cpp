@@ -1,0 +1,15 @@
+
+PartlyKnownSolid.infer() purity
+PartlyKnownSolid.infer() left identity (fully unknown)
+PartlyKnownSolid.infer() left identity (fully known)
+PartlyKnownSolid.infer() increasing
+PartlyKnownSolid.infer() idempotent
+PartlyKnownSolid.infer() within order of magnitude of values from CompletedSolid
+PartlyKnownCompound.complete() purity
+PartlyKnownCompound.complete() left identity (fully unknown)
+PartlyKnownCompound.complete() left identity (fully known)
+PartlyKnownCompound.complete() associativity
+PartlyKnownCompound.infer() purity
+PartlyKnownCompound.infer() increasing
+PartlyKnownCompound.infer() idempotent
+PartlyKnownCompound.infer() within order of magnitude of values from CompletedCompound

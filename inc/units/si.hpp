@@ -6,7 +6,7 @@
 namespace si{
 	/*
 	`si` is a principled units library. It minimizes class constructs, maximizes readability, and has a single well-defined purpose: 
-	  To track scalar quantities that are stored in terms of the six Standard International ("SI") base units.
+	  To store scalar quantities in terms of the six Standard International ("SI") base units.
 
 	`si` is built on the following principles:
 
@@ -71,7 +71,7 @@ namespace si{
 	  Since abbreviated namespaces are preferred, we should pick the shortest abbreviation
       recognized by an official standards institute. This is why we call it `si`.
 
-    * The library should minimize the amount of unit conversion that occurs when reporting measurements.
+    * The library should minimize the amount of explicit unit conversion that occurs when reporting measurements.
       This applies for both unit conversion in the developer's head as well as in the developer's code.
       So in contrast to the `si::units` class template, which is as simple as possible, 
       the list of built-in measures (e.g. `si::length`) and units of measure (e.g. `si::kilometer`) 
@@ -82,7 +82,7 @@ namespace si{
       and units of measure from other common measurement systems (e.g. `si::hour`, `si::poise`, `si::earth_radius`),
       or common exponents of measures (e.g. `si::kelvin4`)
       Please note this principle does not apply to plurality variants that are meant for convenience (e.g. not `si::kilometers`)
-      or variants that could be written using operators instead (e.g. not `si::kilometer_per_second`)
+      or variants that could be written using operators instead (e.g. not `si::kilometer_per_second` or `si::kmps`)
 	  We settle upon including all common units of time, units from the CGS, and astronomical units from the IAU standard.
 
     * The library should provide default measurement types (e.g. `si::length`) 
@@ -134,6 +134,7 @@ namespace si{
 		{
 			return units<M1/2,KG1/2,S1/2,K1/2,MOL1/2,A1/2,CD1/2,T1>(std::sqrt(raw));
 		}
+		
 
 		constexpr bool operator==(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
 		{
@@ -327,6 +328,17 @@ namespace si{
 	}
 
 	template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
+	constexpr auto operator*(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<-M1,-KG1,-S1,-K1,-MOL1,-A1,-CD1,T1> b)
+	{
+		return si::unitless(b.multiply(a));
+	}
+	template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
+	constexpr auto operator/(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
+	{
+		return si::unitless(b.invert().multiply(a));
+	}
+
+	template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
 	constexpr auto abs(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
 	{
 		return a > units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(0)? a : a.multiply(-1.0);
@@ -465,6 +477,8 @@ namespace si{
 	typedef units< 0, 0,-1, 0, 1, 0, 0> catalytic_activity           ;
 	typedef units< 2, 0,-2, 0, 0, 0, 0> ionizing_radiation_dosage    ;
 	typedef units< 0, 0,-1, 0, 0, 0, 0> radioactivity                ;
+
+
 
 
 
@@ -932,4 +946,18 @@ namespace si{
 	constexpr length       observable_universe_radius       ( 4.4e26 );
 	constexpr mass         observable_universe_ordinary_mass( 1.5e53 );
 	constexpr volume       observable_universe_volume       ( 4e80 );
+
+
+	struct celcius_type {};
+	celcius_type celcius;
+	template<typename T1>
+	constexpr temperature_type<T1> operator*(const T1 C, const celcius_type)
+	{
+		return C*kelvin + standard_temperature;
+	}
+	template<typename T1>
+	constexpr T1 operator/(const temperature_type<T1> K, const celcius_type)
+	{
+		return unitless((K - standard_temperature) / kelvin);
+	}
 }
