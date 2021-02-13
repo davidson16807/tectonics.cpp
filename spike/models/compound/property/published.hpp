@@ -14,7 +14,7 @@ namespace compound{
 
         /*
         NOTE: 
-        `vetted.hpp` describes mappings within the "property" category which are vetted by peer review. 
+        `published.hpp` describes mappings within the "property" category which are published in peer reviewed literature. 
         More speculative correlations within the catch_objc are are included in a separate file, `speculative.hpp`,
         so that we can clearly delineatly what is or is not peer-reviewed,
         */

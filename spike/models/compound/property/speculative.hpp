@@ -15,7 +15,7 @@ namespace compound{
         /*
         NOTE: 
         `compound::property` serves as a "category of primitives" where objects are variables of primitive types.
-        More information about this category can be found under `vetted.hpp`.
+        More information about this category can be found under `published.hpp`.
         `speculative.hpp` contains only mappings within this category which are not peer reviewed.
         We mostly create these correlations out of desperation when no other peer reviewed derivations exist.
         We store these correlations in a separate file so that we can clearly delineatly what is or is not peer-reviewed,
