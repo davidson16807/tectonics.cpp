@@ -240,6 +240,79 @@ compound::PartlyKnownCompound nitrogen {
     }
 };
 
+
+compound::PartlyKnownCompound unknown {
+    /*molar_mass*/                        1.0 * si::gram/si::mole,
+    /*atoms_per_molecule*/                1u,
+    /*molecular_diameter*/                compound::field::missing(),
+    /*molecular_degrees_of_freedom*/      compound::field::missing(),
+    /*acentric_factor*/                   compound::field::missing(),
+
+    /*critical_point_pressure*/           compound::field::missing(),
+    /*critical_point_volume*/             compound::field::missing(),
+    /*critical_point_temperature*/        compound::field::missing(),
+    /*critical_point_compressibility*/    compound::field::missing(),
+
+    /*latent_heat_of_vaporization*/       compound::field::missing(),
+    /*latent_heat_of_fusion*/             compound::field::missing(),
+    /*triple_point_pressure*/             compound::field::missing(),
+    /*triple_point_temperature*/          compound::field::missing(),
+    /*freezing_point_sample_pressure*/    compound::field::missing(),
+    /*freezing_point_sample_temperature*/ compound::field::missing(),
+    /*simon_glatzel_slope*/               compound::field::missing(),
+    /*simon_glatzel_exponent*/            compound::field::missing(),
+
+    /*molecular_absorption_cross_section*/ compound::field::missing(),
+
+    /*gas*/
+    compound::phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ compound::field::missing(),
+        /*thermal_conductivity*/   compound::field::missing(),
+        /*dynamic_viscosity*/      compound::field::missing(),
+        /*density*/                compound::field::missing(),
+        /*refractive_index*/       compound::field::missing(),
+    },
+
+    /*liquid*/
+    compound::phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ compound::field::missing(),
+        /*thermal_conductivity*/   compound::field::missing(),
+        /*dynamic_viscosity*/      compound::field::missing(),
+        /*density*/                compound::field::missing(),
+        /*vapor_pressure*/         compound::field::missing(),
+        /*refractive_index*/       compound::field::missing(),
+    },
+
+    /*solid*/ 
+    std::vector<compound::phase::PartlyKnownSolid>{
+        compound::phase::PartlyKnownSolid {
+            /*specific_heat_capacity*/            compound::field::missing(),
+            /*thermal_conductivity*/              compound::field::missing(),
+            /*dynamic_viscosity*/                 compound::field::missing(),
+            /*density*/                           compound::field::missing(),
+            /*vapor_pressure*/                    compound::field::missing(),
+            /*refractive_index*/                  compound::field::missing(),
+            /*spectral_reflectance*/              compound::field::missing(),
+
+            /*bulk_modulus*/                      compound::field::missing(),
+            /*tensile_modulus*/                   compound::field::missing(),
+            /*shear_modulus*/                     compound::field::missing(),
+            /*pwave_modulus*/                     compound::field::missing(),
+            /*lame_parameter*/                    compound::field::missing(),
+            /*poisson_ratio*/                     compound::field::missing(),
+
+            /*compressive_fracture_strength*/     compound::field::missing(),
+            /*tensile_fracture_strength*/         compound::field::missing(),
+            /*shear_fracture_strength*/           compound::field::missing(),
+            /*compressive_yield_strength*/        compound::field::missing(),
+            /*tensile_yield_strength*/            compound::field::missing(),
+            /*shear_yield_strength*/              compound::field::missing(),
+
+            /*chemical_susceptibility_estimate*/  compound::field::missing()
+        }
+    }
+};
+
 bool operator==(const compound::PartlyKnownCompound& first, const compound::PartlyKnownCompound& second)
 {
     if(
@@ -281,7 +354,7 @@ bool operator!=(const compound::PartlyKnownCompound& first, const compound::Part
     return !(first==second);
 }
 
-TEST_CASE( "PartlyKnownCompound value_or() purity", "[phase]" ) {
+TEST_CASE( "PartlyKnownCompound value_or() purity", "[compound]" ) {
     SECTION("Calling a function twice with the same arguments must produce the same results")
     {
         CHECK(water.value_or(water) == water.value_or(water));
@@ -290,15 +363,22 @@ TEST_CASE( "PartlyKnownCompound value_or() purity", "[phase]" ) {
         CHECK(water.value_or(nitrogen) == water.value_or(nitrogen));
     }
 }
-TEST_CASE( "PartlyKnownCompound value_or() left identity", "[phase]" ) {
-    SECTION("There exists a value that when applied as the second operand to a function returns the original value")
+TEST_CASE( "PartlyKnownCompound value_or() left identity", "[compound]" ) {
+    SECTION("There exists a value that when applied as the first operand to a function returns the original value")
     {
         CHECK(water.value_or(water) == water);
         CHECK(water.value_or(nitrogen) == water);
     }
 }
+TEST_CASE( "PartlyKnownCompound value_or() right identity", "[compound]" ) {
+    SECTION("There exists a value that when applied as the second operand to a function returns the original value")
+    {
+        CHECK(water.value_or(unknown) == water);
+        CHECK(nitrogen.value_or(unknown) == nitrogen);
+    }
+}
 /*
-TEST_CASE( "PartlyKnownCompound value_or() associativity", "[phase]" ) {
+TEST_CASE( "PartlyKnownCompound value_or() associativity", "[compound]" ) {
     SECTION("Functions can be applied in any order and still produce the same results")
     {
         CHECK(nitrogen.value_or(steam.value_or(dummy_gas)) == 
@@ -323,7 +403,7 @@ TEST_CASE( "PartlyKnownCompound value_or() associativity", "[phase]" ) {
     }
 }
 
-TEST_CASE( "PartlyKnownCompound value_or() increasing", "[phase]" ) {
+TEST_CASE( "PartlyKnownCompound value_or() increasing", "[compound]" ) {
     SECTION("An attribute of a function's return value either increases or remains the same when compared to the same attribute of the input value")
     {
 
