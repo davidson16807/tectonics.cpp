@@ -1,3 +1,5 @@
+#pragma once
+
 #include <array>
 
 /*
@@ -7,21 +9,20 @@ namespace math
 {
     /*
     "mix" duplicates glm::mix so that we don't have to require glm just to use it.
-    It's in a private namespace to discourage its use outside of the library.
     */
-    template <typename T>
-    constexpr T mix(const T x, const T y, const T a) {
-        return x*(T(1)-a) + y*a;
+    template <typename T, typename T2>
+    constexpr T mix(const T x, const T y, const T2 a) {
+        return x*(T2(1)-a) + y*a;
     }
 
     /*
     "linearstep" provides a strictly linear alternative to glm::smoothstep()
     */
     template <typename T>
-    constexpr T linearstep(const T edge0, const T edge1, const T x) 
+    constexpr auto linearstep(const T edge0, const T edge1, const T x) 
     {
-        T fraction = (x - edge0) / (edge1 - edge0);
-        return fraction > T(1)? T(1) : fraction < T(0)? T(0) : fraction;
+        auto fraction = (x - edge0) / (edge1 - edge0);
+        return fraction > T(1)? 1 : fraction < T(0)? 0 : fraction;
     }
 
     /*
