@@ -80,3 +80,8 @@ bool operator==(const compound::phase::PartlyKnownLiquid& first, const compound:
         first.vapor_pressure         == second.vapor_pressure         &&
         first.refractive_index       == second.refractive_index;
 }
+
+bool operator!=(const compound::phase::PartlyKnownLiquid& first, const compound::phase::PartlyKnownLiquid& second)
+{
+    return !(first==second);
+}

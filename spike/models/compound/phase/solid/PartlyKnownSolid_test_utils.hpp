@@ -206,7 +206,7 @@ int PartlyKnownSolid_attribute_known_count(const compound::phase::PartlyKnownSol
 
         solid.chemical_susceptibility_estimate.has_value();
 }
-bool operator==(const compound::phase::PartlyKnownSolid& first, const compound::phase::PartlyKnownSolid& second)
+bool operator==(const compound::phase::PartlyKnownSolid first, const compound::phase::PartlyKnownSolid second)
 {
     return 
         first.specific_heat_capacity == second.specific_heat_capacity &&
@@ -232,4 +232,9 @@ bool operator==(const compound::phase::PartlyKnownSolid& first, const compound::
         first.shear_yield_strength          == second.shear_yield_strength          &&
 
         first.chemical_susceptibility_estimate == second.chemical_susceptibility_estimate;
+}
+
+bool operator!=(const compound::phase::PartlyKnownSolid first, const compound::phase::PartlyKnownSolid second)
+{
+    return !(first==second);
 }

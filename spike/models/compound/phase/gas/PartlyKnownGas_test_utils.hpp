@@ -74,3 +74,7 @@ bool operator==(const compound::phase::PartlyKnownGas& first, const compound::ph
         first.density                == second.density                &&
         first.refractive_index       == second.refractive_index;
 }
+bool operator!=(const compound::phase::PartlyKnownGas& first, const compound::phase::PartlyKnownGas& second)
+{
+    return !(first==second);
+}

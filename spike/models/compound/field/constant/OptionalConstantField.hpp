@@ -88,6 +88,10 @@ namespace field {
         {
             return entry == other.entry;
         }
+        constexpr bool operator!=(const OptionalConstantField<T1> other) const
+        {
+            return entry != other.entry;
+        }
         constexpr std::optional<T1> operator()() const
         {
             return std::visit(OptionalConstantFieldValueVisitor(), entry);

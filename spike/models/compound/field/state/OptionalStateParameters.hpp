@@ -69,6 +69,10 @@ namespace field {
         {
             return entry == other.entry;
         }
+        constexpr bool operator!=(const OptionalStateParameters other) const
+        {
+            return entry != other.entry;
+        }
         /*
         Return `a` if available, otherwise return `b` as a substitute.
         */
