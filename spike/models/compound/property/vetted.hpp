@@ -416,7 +416,7 @@ namespace compound{
             const si::temperature triple_point_temperature,
             const si::pressure triple_point_pressure
         ){
-            return triple_point_pressure * exp(-si::unitless((latent_heat_of_sublimation*molar_mass / si::universal_gas_constant) * (1.0/temperature - 1.0/triple_point_temperature)));
+            return triple_point_pressure * exp(-((latent_heat_of_sublimation*molar_mass / si::universal_gas_constant) * (1.0/temperature - 1.0/triple_point_temperature)));
         }
 
         constexpr si::specific_energy estimate_latent_heat_of_sublimation_from_clapeyron(

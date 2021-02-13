@@ -316,7 +316,8 @@ namespace si{
 		return a.multiply(T1(1)/b);
 	}
 
-	template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1,  int M2, int KG2, int S2, int K2, int MOL2, int A2, int CD2, typename T1>
+	template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1,  int M2, int KG2, int S2, int K2, int MOL2, int A2, int CD2, typename T1,
+		std::enable_if_t<M1!=-M2||KG1!=-KG2||S1!=-S2||K1!=-K2||MOL1!=-MOL2||A1!=-A2||CD1!=-CD2, int> = 0>
 	constexpr auto operator*(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<M2,KG2,S2,K2,MOL2,A2,CD2,T1> b)
 	{
 		return a.multiply(b);
@@ -328,12 +329,12 @@ namespace si{
 	}
 
 	template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-	constexpr auto operator*(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<-M1,-KG1,-S1,-K1,-MOL1,-A1,-CD1,T1> b)
+	constexpr T1 operator*(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<-M1,-KG1,-S1,-K1,-MOL1,-A1,-CD1,T1> b)
 	{
 		return si::unitless(b.multiply(a));
 	}
 	template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-	constexpr auto operator/(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
+	constexpr T1 operator/(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
 	{
 		return si::unitless(b.invert().multiply(a));
 	}
