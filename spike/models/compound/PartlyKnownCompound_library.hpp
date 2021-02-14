@@ -64,9 +64,9 @@ PartlyKnownCompound water {
     /*molecular_degrees_of_freedom*/      6.8,
     /*acentric_factor*/                   0.345,
 
-    /*critical_point_pressure*/           22.064e6 * si::pascal,
-    /*critical_point_volume*/             56.0 *  si::centimeter3/si::mole,                         // engineering toolbox
-    /*critical_point_temperature*/        647.096 * si::kelvin,
+    /*critical_point_pressure*/           22.06 *  si::megapascal,
+    /*critical_point_volume*/             56.0 *  si::centimeter3/si::mole,                         
+    /*critical_point_temperature*/        647.01 * si::kelvin,
     /*critical_point_compressibility*/    0.230,                                                    // engineering toolbox
 
     /*latent_heat_of_vaporization*/       22.6e5 * si::joule/si::kilogram, 
@@ -170,9 +170,9 @@ PartlyKnownCompound nitrogen {
     /*molecular_degrees_of_freedom*/      field::missing(),
     /*acentric_factor*/                   0.040,
 
-    /*critical_point_pressure*/           3.390 * si::megapascal,
-    /*critical_point_volume*/             field::missing(),
-    /*critical_point_temperature*/        126.20 * si::kelvin,
+    /*critical_point_pressure*/           3.39 * si::megapascal,
+    /*critical_point_volume*/             90.0 * si::centimeter3/si::mole,
+    /*critical_point_temperature*/        126.21 * si::kelvin,
     /*critical_point_compressibility*/    field::missing(),
 
     /*latent_heat_of_vaporization*/       198.8 * si::joule/si::gram,
@@ -288,8 +288,8 @@ PartlyKnownCompound oxygen {
     /*acentric_factor*/                   0.022,
 
     /*critical_point_pressure*/           5.043 * si::megapascal,
-    /*critical_point_volume*/             field::missing(),
-    /*critical_point_temperature*/        154.581 * si::kelvin,
+    /*critical_point_volume*/             73.0 * si::centimeter3/si::mole,
+    /*critical_point_temperature*/        154.59 * si::kelvin,
     /*critical_point_compressibility*/    field::missing(),
 
     /*latent_heat_of_vaporization*/       213.1 * si::joule/si::gram,
@@ -388,9 +388,9 @@ PartlyKnownCompound carbon_dioxide {
     /*molecular_degrees_of_freedom*/      field::missing(),
     /*acentric_factor*/                   0.228,
 
-    /*critical_point_pressure*/           7380e3 * si::pascal,
-    /*critical_point_volume*/             field::missing(),
-    /*critical_point_temperature*/        304.19 * si::kelvin,
+    /*critical_point_pressure*/           7.375 * si::megapascal,
+    /*critical_point_volume*/             94.0 * si::centimeter3/si::mole,
+    /*critical_point_temperature*/        304.13 * si::kelvin,
     /*critical_point_compressibility*/    field::missing(),
 
     /*latent_heat_of_vaporization*/       205.0 * si::joule / si::gram,
@@ -492,8 +492,8 @@ PartlyKnownCompound methane {
     /*molecular_degrees_of_freedom*/      5.1,
     /*acentric_factor*/                   0.011,
 
-    /*critical_point_pressure*/           4.592 * si::megapascal,
-    /*critical_point_volume*/             field::missing(),
+    /*critical_point_pressure*/           4.60 * si::megapascal,
+    /*critical_point_volume*/             99.0 * si::centimeter3/si::mole,
     /*critical_point_temperature*/        190.56 * si::kelvin,
     /*critical_point_compressibility*/    field::missing(),
 
@@ -596,9 +596,9 @@ PartlyKnownCompound argon {
     /*molecular_degrees_of_freedom*/      field::missing(),
     /*acentric_factor*/                   0.0,
 
-    /*critical_point_pressure*/           4.860 * si::megapascal,
-    /*critical_point_volume*/             field::missing(),
-    /*critical_point_temperature*/        150.663 * si::kelvin,
+    /*critical_point_pressure*/           4.898* si::megapascal,
+    /*critical_point_volume*/             75.0 * si::centimeter3/si::mole,
+    /*critical_point_temperature*/        150.87 * si::kelvin,
     /*critical_point_compressibility*/    field::missing(),
 
     /*latent_heat_of_vaporization*/       161.0 * si::joule/si::gram,
@@ -685,9 +685,9 @@ PartlyKnownCompound helium {
     /*molecular_degrees_of_freedom*/      3.0,
     /*acentric_factor*/                   -0.39,
 
-    /*critical_point_pressure*/           0.227460 * si::megapascal,
-    /*critical_point_volume*/             field::missing(),
-    /*critical_point_temperature*/        5.1953 * si::kelvin,
+    /*critical_point_pressure*/           0.227 * si::megapascal,
+    /*critical_point_volume*/             57.0 * si::centimeter3/si::mole,
+    /*critical_point_temperature*/        5.19 * si::kelvin,
     /*critical_point_compressibility*/    field::missing(),
 
     /*latent_heat_of_vaporization*/       20.7 * si::joule / si::gram,
@@ -770,9 +770,9 @@ PartlyKnownCompound hydrogen {
     /*molecular_degrees_of_freedom*/      field::missing(),
     /*acentric_factor*/                   -0.215,
 
-    /*critical_point_pressure*/           1.293 * si::megapascal,
-    /*critical_point_volume*/             field::missing(),
-    /*critical_point_temperature*/        32.98 * si::kelvin,
+    /*critical_point_pressure*/           1.293 *  si::megapascal,
+    /*critical_point_volume*/             65.0 * si::centimeter3/si::mole,
+    /*critical_point_temperature*/        32.97 * si::kelvin,
     /*critical_point_compressibility*/    field::missing(),
 
     /*latent_heat_of_vaporization*/       445.0 * si::joule/si::gram,
@@ -858,6 +858,103 @@ PartlyKnownCompound hydrogen {
     }
 };
 
+// ammonia, NH3
+// for the atmosphere of Titan
+compound::PartlyKnownCompound ammonia {
+
+    /*molar_mass*/                        17.031 * si::gram/si::mole,
+    /*atoms_per_molecule*/                4u,
+    /*molecular_diameter*/                260.0 * si::picometer, // Breck (1974)
+    /*molecular_degrees_of_freedom*/      6.0,
+    /*acentric_factor*/                   0.252,
+
+    /*critical_point_pressure*/           11.357*si::megapascal,
+    /*critical_point_volume*/             69.8*si::centimeter3/si::mole,
+    /*critical_point_temperature*/        405.56 * si::kelvin,
+    /*critical_point_compressibility*/    compound::field::missing(),
+
+    /*latent_heat_of_vaporization*/       23.33*si::kilojoule/(17.031*si::gram),
+    /*latent_heat_of_fusion*/             compound::field::missing(),
+    /*triple_point_pressure*/             6.060e3 * si::pascal,
+    /*triple_point_temperature*/          195.30 * si::kelvin,
+    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_temperature*/ 77.65*si::celcius,
+    /*simon_glatzel_slope*/               5270e5,
+    /*simon_glatzel_exponent*/            4.3,
+
+    /*molecular_absorption_cross_section*/ 
+    compound::field::SpectralFunction<si::area>([](
+        const si::wavenumber nlo, 
+        const si::wavenumber nhi, 
+        const si::pressure p, 
+        const si::temperature T
+    ) {
+        return std::pow(10.0, math::integral_of_lerp(
+            std::vector<double>{  4.35e6, 4.84e6, 5.26e6, 6.14e6, 6.61e6, 7.28e6, 8.03e6, 9.32e6, 1.06e7, 1.23e7, 2.52e7, 5.80e7, 1.93e8f  },
+            std::vector<double>{  -26.43, -21.51, -21.17, -21.60, -21.58, -21.00, -20.92, -20.56, -20.76, -20.44, -20.78, -21.60, -22.61f  },
+            (nlo*si::meter), (nhi*si::meter)
+        ) / (nhi*si::meter - nlo*si::meter)) * si::meter2;
+    }),
+
+    /*gas*/
+    compound::phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ 35.06 * si::joule / (17.031 * si::gram * si::kelvin), // wikipedia data page
+        /*thermal_conductivity*/   25.1 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
+        /*dynamic_viscosity*/      0.99e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
+        /*density*/                compound::field::missing(),
+        /*refractive_index*/       //1.000376,
+        compound::field::SpectralFunction<double>([](
+            const si::wavenumber nlo, 
+            const si::wavenumber nhi, 
+            const si::pressure p, 
+            const si::temperature T
+        ) {
+            double l = (2.0 / (nhi+nlo) / si::micrometer);
+            double invl2 = 1.0/(l*l);
+            return 1.0
+                + 0.032953f/(90.392f  - invl2);
+        }) 
+    },
+    
+    /*liquid*/
+    compound::phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ 4.700 * si::joule / (si::gram * si::kelvin), // wikipedia
+        /*thermal_conductivity*/   compound::field::missing(),
+        /*dynamic_viscosity*/      compound::field::missing(),
+        /*density*/                681.97 * si::kilogram / si::meter3,  //encyclopedia.airliquide.com
+        /*vapor_pressure*/         compound::field::missing(),
+        /*refractive_index*/       1.3944,
+    },
+
+    /*solid*/ 
+    std::vector<compound::phase::PartlyKnownSolid>{
+        compound::phase::PartlyKnownSolid {
+            /*specific_heat_capacity*/            compound::field::missing(),
+            /*thermal_conductivity*/              compound::field::missing(),
+            /*dynamic_viscosity*/                 compound::field::missing(),
+            /*density*/                           compound::field::missing(),
+            /*vapor_pressure*/                    compound::field::missing(),
+            /*refractive_index*/                  compound::field::missing(),
+            /*spectral_reflectance*/              compound::field::missing(),
+
+            /*bulk_modulus*/                      compound::field::missing(),
+            /*tensile_modulus*/                   compound::field::missing(),
+            /*shear_modulus*/                     compound::field::missing(),
+            /*pwave_modulus*/                     compound::field::missing(),
+            /*lame_parameter*/                    compound::field::missing(),
+            /*poisson_ratio*/                     compound::field::missing(),
+
+            /*compressive_fracture_strength*/     compound::field::missing(),
+            /*tensile_fracture_strength*/         compound::field::missing(),
+            /*shear_fracture_strength*/           compound::field::missing(),
+            /*compressive_yield_strength*/        compound::field::missing(),
+            /*tensile_yield_strength*/            compound::field::missing(),
+            /*shear_yield_strength*/              compound::field::missing(),
+
+            /*chemical_susceptibility_estimate*/  compound::field::missing()
+        }
+    }
+};
 
 // ozone, O3
 // for modeling the ozone layer of earth like planets
@@ -868,9 +965,9 @@ PartlyKnownCompound ozone {
     /*molecular_degrees_of_freedom*/      6.0,
     /*acentric_factor*/                   0.227,
 
-    /*critical_point_pressure*/           55.7 * si::bar, //encyclopedia.airliquide.com
-    /*critical_point_volume*/             field::missing(),
-    /*critical_point_temperature*/        - 193.0*si::celcius,
+    /*critical_point_pressure*/           5.57 *  si::megapascal,
+    /*critical_point_volume*/             89.0 * si::centimeter3/si::mole,
+    /*critical_point_temperature*/        261.1 * si::kelvin,
     /*critical_point_compressibility*/    field::missing(),
 
     /*latent_heat_of_vaporization*/       288.49 * si::kilojoule / si::kilogram,
@@ -955,9 +1052,9 @@ PartlyKnownCompound nitrous_oxide {
     /*molecular_degrees_of_freedom*/      field::missing(),
     /*acentric_factor*/                   0.142,
 
-    /*critical_point_pressure*/           7240.0 * si::kilopascal,
+    /*critical_point_pressure*/           7.245 *  si::megapascal,
     /*critical_point_volume*/             field::missing(),
-    /*critical_point_temperature*/        309.5 * si::kelvin,
+    /*critical_point_temperature*/        309.52 * si::kelvin,
     /*critical_point_compressibility*/    field::missing(),
 
     /*latent_heat_of_vaporization*/       374.286 * si::kilojoule / si::kilogram, //encyclopedia.airliquide.com
@@ -1042,9 +1139,9 @@ PartlyKnownCompound  sulfur_dioxide {
     /*molecular_degrees_of_freedom*/      6.0,
     /*acentric_factor*/                   0.245,
 
-    /*critical_point_pressure*/           7873e3 * si::pascal,
-    /*critical_point_volume*/             field::missing(),
-    /*critical_point_temperature*/        430.65 * si::kelvin,
+    /*critical_point_pressure*/           7.884 * si::megapascal,
+    /*critical_point_volume*/             122.0 * si::centimeter3/si::mole,
+    /*critical_point_temperature*/        430.64 * si::kelvin,
     /*critical_point_compressibility*/    field::missing(),
 
     /*latent_heat_of_vaporization*/       24.94 *si::kilojoule/(64.064*si::gram),
@@ -1129,9 +1226,9 @@ PartlyKnownCompound  sulfur_dioxide {
     /*molecular_degrees_of_freedom*/      field::missing(),
     /*acentric_factor*/                   0.585,
 
-    /*critical_point_pressure*/           7240e3 * si::pascal,
-    /*critical_point_volume*/             field::missing(),
-    /*critical_point_temperature*/        309.5 * si::kelvin,
+    /*critical_point_pressure*/           6.48 *  si::megapascal,
+    /*critical_point_volume*/             58.0 *  si::centimeter3/si::mole,
+    /*critical_point_temperature*/        180.0 * si::kelvin,
     /*critical_point_compressibility*/    field::missing(),
 
     /*latent_heat_of_vaporization*/       13.83 * si::kilojoule/(30.006*si::gram),
@@ -1215,9 +1312,9 @@ PartlyKnownCompound carbon_monoxide {
     /*molecular_degrees_of_freedom*/      field::missing(),
     /*acentric_factor*/                   0.066,
 
-    /*critical_point_pressure*/           3498e3 * si::pascal, // wikipedia data page
-    /*critical_point_volume*/             field::missing(),
-    /*critical_point_temperature*/        132.85 * si::kelvin,
+    /*critical_point_pressure*/           3.494 *  si::megapascal,
+    /*critical_point_volume*/             93.0 * si::centimeter3/si::mole,
+    /*critical_point_temperature*/        132.86 * si::kelvin,
     /*critical_point_compressibility*/    field::missing(),
 
     /*latent_heat_of_vaporization*/       6.04 * si::kilojoule/(28.010*si::gram),
@@ -1326,9 +1423,9 @@ PartlyKnownCompound ethane {
     /*molecular_degrees_of_freedom*/      6.8,
     /*acentric_factor*/                   0.099,
 
-    /*critical_point_pressure*/           4890e3 * si::pascal,
-    /*critical_point_volume*/             field::missing(),
-    /*critical_point_temperature*/        305.3 * si::kelvin,
+    /*critical_point_pressure*/           4.88 * si::megapascal,
+    /*critical_point_volume*/             146.0 * si::centimeter3/si::mole,
+    /*critical_point_temperature*/        305.36 * si::kelvin,
     /*critical_point_compressibility*/    field::missing(),
 
     /*latent_heat_of_vaporization*/       14.69 * si::kilojoule/(30.070*si::gram),
@@ -1526,9 +1623,9 @@ PartlyKnownCompound ethanol {
     /*molecular_degrees_of_freedom*/      6.0,
     /*acentric_factor*/                   0.637,
 
-    /*critical_point_pressure*/           63.0 * si::bar, // wikipedia data page
-    /*critical_point_volume*/             field::missing(),
-    /*critical_point_temperature*/        514.0 * si::kelvin, // wikipedia data page
+    /*critical_point_pressure*/           6.25 * si::megapascal,
+    /*critical_point_volume*/             169.0 * si::centimeter3/si::mole,
+    /*critical_point_temperature*/        351.44 * si::kelvin,
     /*critical_point_compressibility*/    field::missing(),
 
     /*latent_heat_of_vaporization*/       38.56 * si::kilojoule/(46.068*si::gram), // wikipedia data page
@@ -1701,9 +1798,9 @@ PartlyKnownCompound formic_acid {
     /*molecular_degrees_of_freedom*/      6.0,
     /*acentric_factor*/                   0.473,
 
-    /*critical_point_pressure*/           8.63 * si::megapascal,
-    /*critical_point_volume*/             field::missing(),
-    /*critical_point_temperature*/        306.8 * si::kelvin,
+    /*critical_point_pressure*/           field::missing(),
+    /*critical_point_volume*/             115.9*9*si::centimeter3/si::mole,
+    /*critical_point_temperature*/        588.0 * si::kelvin,
     /*critical_point_compressibility*/    field::missing(),
 
     /*latent_heat_of_vaporization*/       20.10 * si::kilojoule/(46.026*si::gram),
@@ -1778,9 +1875,9 @@ PartlyKnownCompound perflouromethane{
     /*molecular_degrees_of_freedom*/      field::missing(),
     /*acentric_factor*/                   0.186,
 
-    /*critical_point_pressure*/           3793e3 * si::pascal,
-    /*critical_point_volume*/             field::missing(),
-    /*critical_point_temperature*/        227.6 * si::kelvin,
+    /*critical_point_pressure*/           3.73 * si::megapascal,
+    /*critical_point_volume*/             140.0 * si::centimeter3/si::mole,
+    /*critical_point_temperature*/        227.54 * si::kelvin,
     /*critical_point_compressibility*/    field::missing(),
 
     /*latent_heat_of_vaporization*/       137000.0 * si::joule / si::kilogram,
@@ -1871,16 +1968,16 @@ PartlyKnownCompound perflouromethane{
 // benzene, C6H6
 // representative of aromatic compounds, predominantly low-grade coal,
 // and serves as a template for compounds in prebiotic chemistry such as nucleic acids or tholins
-PartlyKnownCompound base {
+PartlyKnownCompound benzene {
     /*molar_mass*/                        79.102 * si::gram/si::mole, // wikipedia
     /*atoms_per_molecule*/                12u, // wikipedia
     /*molecular_diameter*/                field::missing(),
     /*molecular_degrees_of_freedom*/      6.0, // wikipedia
     /*acentric_factor*/                   0.211,
 
-    /*critical_point_pressure*/           4.89 * si::kilopascal, // wikipedia data page
-    /*critical_point_volume*/             field::missing(),
-    /*critical_point_temperature*/        562.0 * si::kelvin, // wikipedia data page
+    /*critical_point_pressure*/           4.9 * si::megapascal,
+    /*critical_point_volume*/             257.0*si::centimeter3/si::mole,
+    /*critical_point_temperature*/        562.0 * si::kelvin,
     /*critical_point_compressibility*/    field::missing(),
 
     /*latent_heat_of_vaporization*/       33.9 * si::kilojoule / (79.109 * si::gram), // wikipedia
@@ -3213,7 +3310,7 @@ PartlyKnownCompound  silver {
 
     /*critical_point_pressure*/           field::missing(),
     /*critical_point_volume*/             field::missing(),
-    /*critical_point_temperature*/        field::missing(),
+    /*critical_point_temperature*/        6410.0 * si::kelvin,
     /*critical_point_compressibility*/    field::missing(),
 
     /*latent_heat_of_vaporization*/       field::missing(),
@@ -3588,7 +3685,7 @@ PartlyKnownCompound  chalcopyrite {
             /*specific_heat_capacity*/            0.54 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988), for chalcopyrite
             /*thermal_conductivity*/              8.19 * si::watt / (si::centimeter * si::kelvin), // Cermak (1988), for chalcopyrite
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           field::missing(),
+            /*density*/                           4200.0 *  si::kilogram/si::meter3, //wikipedia
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  field::missing(),
             /*spectral_reflectance*/              field::missing(),
