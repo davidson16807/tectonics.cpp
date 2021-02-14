@@ -6,7 +6,7 @@
 #include "./phase/solid/PartlyKnownSolid_operators_test.hpp"
 #include "./phase/solid/PartlyKnownSolid_test.cpp"
 #include "./phase/solid/PartlyKnownSolid_to_CompletedSolid_test.cpp"
-#include "./property/vetted_test.hpp"
+#include "./property/published_test.hpp"
 #include "./field/spectral/OptionalSpectralField_to_CompletedSpectralField_test.hpp"
 #include "./field/spectral/CompletedSpectralField_test.hpp"
 #include "./field/spectral/OptionalSpectralField_test.hpp"

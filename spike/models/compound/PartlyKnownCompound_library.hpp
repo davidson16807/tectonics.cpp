@@ -50,7 +50,7 @@ There are likely some among you who think this is excessive. That is all.
 
 // "GOLD STANDARD" COMPOUNDS:
 // Compounds for which almost all properties have published values
-// These can serve as representative "base" values for other compounds
+// These can serve as representative "fallback" values for other compounds
 // whose properties are not published.
 // See PartlyKnownCompound for implementation details concerning this.
 
@@ -157,7 +157,6 @@ PartlyKnownCompound water {
             /*chemical_susceptibility_estimate*/  false
         }
     }
-    
 };
 
 
@@ -228,7 +227,7 @@ PartlyKnownCompound nitrogen {
             field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
                 return (3.720822 - 293.94358*si::kelvin/T + 10.31993/si::kelvin*T) * si::standard_pressure;
             }), // Solomon (1950)
-        /*refractive_index*/       1.19876,
+        /*refractive_index*/       1.19876
     },
 
     /*solid*/ 
@@ -343,7 +342,7 @@ PartlyKnownCompound oxygen {
         /*dynamic_viscosity*/      188.0 * si::kilogram / (si::meter * 1e6*si::second),             // Timmerhaus (1989)
         /*density*/                1141.0 * si::kilogram/si::meter3,
         /*vapor_pressure*/         field::missing(),
-        /*refractive_index*/       1.2243,
+        /*refractive_index*/       1.2243
     },
 
     /*solid*/ 
@@ -448,7 +447,7 @@ PartlyKnownCompound carbon_dioxide {
         /*dynamic_viscosity*/      0.0712 * si::millipascal*si::second,                             // wikipedia data page
         /*density*/                1101.0 * si::kilogram/si::meter3,
         /*vapor_pressure*/         field::missing(),
-        /*refractive_index*/       1.6630,
+        /*refractive_index*/       1.6630
     },
 
     /*solid*/ 
@@ -580,7 +579,7 @@ PartlyKnownCompound methane {
             /*tensile_yield_strength*/            field::missing(),
             /*shear_yield_strength*/              field::missing(),
 
-            /*chemical_susceptibility_estimate*/  field::missing(),
+            /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
 };
@@ -642,7 +641,7 @@ PartlyKnownCompound argon {
         /*dynamic_viscosity*/      252.1 * si::kilogram / (si::meter * 1e6*si::second),             // Timmerhaus (1989)
         /*density*/                1401.0 * si::kilogram/si::meter3,
         /*vapor_pressure*/         field::missing(),
-        /*refractive_index*/       1.23,
+        /*refractive_index*/       1.23
     },
 
     /*solid*/ 
@@ -679,7 +678,7 @@ PartlyKnownCompound argon {
 
 // helium, He
 // for the atmospheres of gas giants
-compound::PartlyKnownCompound helium {
+PartlyKnownCompound helium {
     /*molar_mass*/                        4.0026 * si::gram/si::mole,
     /*atoms_per_molecule*/                1u,
     /*molecular_diameter*/                255.7 * si::picometer, // Mehio (2014)
@@ -687,12 +686,12 @@ compound::PartlyKnownCompound helium {
     /*acentric_factor*/                   -0.39,
 
     /*critical_point_pressure*/           0.227460 * si::megapascal,
-    /*critical_point_volume*/             compound::field::missing(),
+    /*critical_point_volume*/             field::missing(),
     /*critical_point_temperature*/        5.1953 * si::kelvin,
-    /*critical_point_compressibility*/    compound::field::missing(),
+    /*critical_point_compressibility*/    field::missing(),
 
     /*latent_heat_of_vaporization*/       20.7 * si::joule / si::gram,
-    /*latent_heat_of_fusion*/             compound::field::missing(),
+    /*latent_heat_of_fusion*/             field::missing(),
     /*triple_point_pressure*/             5.048e3 * si::pascal,
     /*triple_point_temperature*/          2.1768 * si::kelvin,
     /*freezing_point_sample_pressure*/    25.0 * si::standard_pressure,
@@ -703,13 +702,13 @@ compound::PartlyKnownCompound helium {
     /*molecular_absorption_cross_section*/ 1e-35* si::meter2,
 
     /*gas*/
-    compound::phase::PartlyKnownGas {
+    phase::PartlyKnownGas {
         /*specific_heat_capacity*/ 5.1932 * si::joule / (si::gram * si::kelvin), // wikipedia
         /*thermal_conductivity*/   155.7 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
         /*dynamic_viscosity*/      1.96e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
-        /*density*/                compound::field::missing(),
+        /*density*/                field::missing(),
         /*refractive_index*/       //1.000036,
-        compound::field::SpectralFunction<double>([](
+        field::SpectralFunction<double>([](
             const si::wavenumber nlo, 
             const si::wavenumber nhi, 
             const si::pressure p, 
@@ -723,61 +722,61 @@ compound::PartlyKnownCompound helium {
     },
 
     /*liquid*/
-    compound::phase::PartlyKnownLiquid {
+    phase::PartlyKnownLiquid {
         /*specific_heat_capacity*/ 4.56 * si::kilojoule / (si::kilogram * si::kelvin), // Timmerhaus (1989)
         /*thermal_conductivity*/   0.0272 * si::watt / (si::meter * si::kelvin), // Timmerhaus (1989)
         /*dynamic_viscosity*/      3.57 * si::kilogram / (si::meter * 1e6*si::second), // Timmerhaus (1989)
         /*density*/                124.901 * si::kilogram/si::meter3,
-        /*vapor_pressure*/         compound::field::missing(),
+        /*vapor_pressure*/         field::missing(),
         /*refractive_index*/       1.02451
     },
 
     /*solid*/ 
-    std::vector<compound::phase::PartlyKnownSolid>{
-        compound::phase::PartlyKnownSolid {
-            /*specific_heat_capacity*/            compound::field::missing(),
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+            /*specific_heat_capacity*/            field::missing(),
             /*thermal_conductivity*/              0.1 * si::watt / (si::centimeter * si::kelvin), // Webb (1952)
-            /*dynamic_viscosity*/                 compound::field::missing(),
+            /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           0187.0 * si::kilogram/si::meter3,
-            /*vapor_pressure*/                    compound::field::missing(),
-            /*refractive_index*/                  compound::field::missing(),
-            /*spectral_reflectance*/              compound::field::missing(),
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  field::missing(),
+            /*spectral_reflectance*/              field::missing(),
 
-            /*bulk_modulus*/                      compound::field::missing(),
-            /*tensile_modulus*/                   compound::field::missing(),
-            /*shear_modulus*/                     compound::field::missing(),
-            /*pwave_modulus*/                     compound::field::missing(),
-            /*lame_parameter*/                    compound::field::missing(),
-            /*poisson_ratio*/                     compound::field::missing(),
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   field::missing(),
+            /*shear_modulus*/                     field::missing(),
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
 
-            /*compressive_fracture_strength*/     compound::field::missing(),
-            /*tensile_fracture_strength*/         compound::field::missing(),
-            /*shear_fracture_strength*/           compound::field::missing(),
-            /*compressive_yield_strength*/        compound::field::missing(),
-            /*tensile_yield_strength*/            compound::field::missing(),
-            /*shear_yield_strength*/              compound::field::missing(),
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
 
-            /*chemical_susceptibility_estimate*/  compound::field::missing()
+            /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
 };
 
 // hydrogen, H2
 // for the atmospheres of gas giants
-compound::PartlyKnownCompound hydrogen {
+PartlyKnownCompound hydrogen {
     /*molar_mass*/                        2.016   * si::gram/si::mole,
     /*atoms_per_molecule*/                2u,
     /*molecular_diameter*/                287.7 * si::picometer, // wikipedia,  Ismail (2015)
-    /*molecular_degrees_of_freedom*/      compound::field::missing(),
+    /*molecular_degrees_of_freedom*/      field::missing(),
     /*acentric_factor*/                   -0.215,
 
     /*critical_point_pressure*/           1.293 * si::megapascal,
-    /*critical_point_volume*/             compound::field::missing(),
+    /*critical_point_volume*/             field::missing(),
     /*critical_point_temperature*/        32.98 * si::kelvin,
-    /*critical_point_compressibility*/    compound::field::missing(),
+    /*critical_point_compressibility*/    field::missing(),
 
     /*latent_heat_of_vaporization*/       445.0 * si::joule/si::gram,
-    /*latent_heat_of_fusion*/             compound::field::missing(),
+    /*latent_heat_of_fusion*/             field::missing(),
     /*triple_point_pressure*/             7.042 * si::kilopascal,
     /*triple_point_temperature*/          13.8 * si::kelvin,
     /*freezing_point_sample_pressure*/    si::standard_pressure,
@@ -786,7 +785,7 @@ compound::PartlyKnownCompound hydrogen {
     /*simon_glatzel_exponent*/            1.74407,
 
     /*molecular_absorption_cross_section*/ 
-    compound::field::SpectralFunction<si::area>([](
+    field::SpectralFunction<si::area>([](
         const si::wavenumber nlo, 
         const si::wavenumber nhi, 
         const si::pressure p, 
@@ -800,13 +799,13 @@ compound::PartlyKnownCompound hydrogen {
     }),
 
     /*gas*/
-    compound::phase::PartlyKnownGas {
+    phase::PartlyKnownGas {
         /*specific_heat_capacity*/ 14.30 * si::joule / (si::gram * si::kelvin), // wikipedia
         /*thermal_conductivity*/   186.6 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
         /*dynamic_viscosity*/      0.88e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
-        /*density*/                compound::field::missing(),
+        /*density*/                field::missing(),
         /*refractive_index*/       // 1.0001392,
-        compound::field::SpectralFunction<double>([](
+        field::SpectralFunction<double>([](
             const si::wavenumber nlo, 
             const si::wavenumber nhi, 
             const si::pressure p, 
@@ -820,41 +819,41 @@ compound::PartlyKnownCompound hydrogen {
     },
 
     /*liquid*/
-    compound::phase::PartlyKnownLiquid {
+    phase::PartlyKnownLiquid {
         /*specific_heat_capacity*/ 9.78 * si::kilojoule / (si::kilogram * si::kelvin), // Timmerhaus (1989)
         /*thermal_conductivity*/   0.1185 * si::watt / (si::meter * si::kelvin), // Timmerhaus (1989)
         /*dynamic_viscosity*/      13.06 * si::kilogram / (si::meter * 1e6*si::second), // Timmerhaus (1989)
         /*density*/                70.8 * si::kilogram/si::meter3,
-        /*vapor_pressure*/         compound::field::missing(),
+        /*vapor_pressure*/         field::missing(),
         /*refractive_index*/       1.1096
     },
 
     /*solid*/ 
-    std::vector<compound::phase::PartlyKnownSolid>{
-        compound::phase::PartlyKnownSolid {
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
             /*specific_heat_capacity*/            0.2550 * si::calorie / (si::gram * si::kelvin), // Johnson (1960)
             /*thermal_conductivity*/              1.819 * si::watt / ( si::meter * si::kelvin ), // wikipedia
-            /*dynamic_viscosity*/                 compound::field::missing(),
+            /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           0086.0 * si::kilogram/si::meter3, // https://en.wikipedia.org/wiki/Solid_hydrogen
-            /*vapor_pressure*/                    compound::field::missing(),
-            /*refractive_index*/                  compound::field::missing(),
-            /*spectral_reflectance*/              compound::field::missing(),
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  field::missing(),
+            /*spectral_reflectance*/              field::missing(),
 
-            /*bulk_modulus*/                      compound::field::missing(),
-            /*tensile_modulus*/                   compound::field::missing(),
-            /*shear_modulus*/                     compound::field::missing(),
-            /*pwave_modulus*/                     compound::field::missing(),
-            /*lame_parameter*/                    compound::field::missing(),
-            /*poisson_ratio*/                     compound::field::missing(),
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   field::missing(),
+            /*shear_modulus*/                     field::missing(),
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
 
-            /*compressive_fracture_strength*/     compound::field::missing(),
-            /*tensile_fracture_strength*/         compound::field::missing(),
-            /*shear_fracture_strength*/           compound::field::missing(),
-            /*compressive_yield_strength*/        compound::field::missing(),
-            /*tensile_yield_strength*/            compound::field::missing(),
-            /*shear_yield_strength*/              compound::field::missing(),
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
 
-            /*chemical_susceptibility_estimate*/  compound::field::missing()
+            /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
 };
@@ -903,7 +902,7 @@ PartlyKnownCompound ozone {
         /*thermal_conductivity*/   field::missing(),
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                field::missing(),
-        /*refractive_index*/       1.00052,
+        /*refractive_index*/       1.00052
     },
 
     /*liquid*/
@@ -913,7 +912,7 @@ PartlyKnownCompound ozone {
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                1349.0 * si::kilogram / si::meter3, //encyclopedia.airliquide.com
         /*vapor_pressure*/         field::missing(),
-        /*refractive_index*/       1.2226,
+        /*refractive_index*/       1.2226
     },
 
     /*solid*/ 
@@ -941,7 +940,7 @@ PartlyKnownCompound ozone {
             /*tensile_yield_strength*/            field::missing(),
             /*shear_yield_strength*/              field::missing(),
 
-            /*chemical_susceptibility_estimate*/  field::missing(),
+            /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
 };
@@ -990,7 +989,7 @@ PartlyKnownCompound nitrous_oxide {
         /*thermal_conductivity*/   17.4 * si::milliwatt/(si::meter*si::kelvin), // Huber & Harvey
         /*dynamic_viscosity*/      1.47e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
         /*density*/                field::missing(),
-        /*refractive_index*/       1.000516,
+        /*refractive_index*/       1.000516
     },
 
     /*liquid*/
@@ -1000,7 +999,7 @@ PartlyKnownCompound nitrous_oxide {
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                1230.458 * si::kilogram / si::meter3, 
         /*vapor_pressure*/         field::missing(),
-        /*refractive_index*/       1.238,
+        /*refractive_index*/       1.238
     },
 
     /*solid*/ 
@@ -1034,6 +1033,2584 @@ PartlyKnownCompound nitrous_oxide {
 };
 
 
+// sulfur dioxide, SO2
+// representative of industrial emissions
+PartlyKnownCompound  sulfur_dioxide {
+    /*molar_mass*/                        64.064 * si::gram/si::mole,
+    /*atoms_per_molecule*/                3u,
+    /*molecular_diameter*/                360.0 * si::picometer, // wikipedia, Breck (1974)
+    /*molecular_degrees_of_freedom*/      6.0,
+    /*acentric_factor*/                   0.245,
+
+    /*critical_point_pressure*/           7873e3 * si::pascal,
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        430.65 * si::kelvin,
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       24.94 *si::kilojoule/(64.064*si::gram),
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             1.67e3 * si::pascal,
+    /*triple_point_temperature*/          197.69 * si::kelvin,
+    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_temperature*/ -75.45 * si::celcius,
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+
+    /*molecular_absorption_cross_section*/ 
+    field::SpectralFunction<si::area>([](
+        const si::wavenumber nlo, 
+        const si::wavenumber nhi, 
+        const si::pressure p, 
+        const si::temperature T
+    ) {
+        return std::pow(10.0, math::integral_of_lerp(
+            std::vector<double>{2.47e6,2.69e6,2.91e6,3.12e6,3.41e6,3.76e6,4.25e6,4.37e6,4.95e6,5.45e6,6.01e6,6.63e6,7.36e6,7.95e6,8.51e6,8.80e6,9.07e6,9.35e6},
+            std::vector<double>{-28.29,-25.86,-25.90,-23.18,-22.04,-22.33,-23.69,-22.55,-20.88,-21.43,-22.48,-21.25,-21.45,-19.92,-21.12,-20.35,-20.88,-20.68},
+            (nlo*si::meter), (nhi*si::meter)
+        ) / (nhi*si::meter - nlo*si::meter)) * si::meter2;
+    }),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   9.6 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
+        /*dynamic_viscosity*/      1.26e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
+        /*density*/                field::missing(),
+        /*refractive_index*/       1.000686
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      0.368 * si::millipascal*si::second, // pubchem
+        /*density*/                389.06 * si::kilogram / si::meter3, // encyclopedia.airliquide.com
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       1.3396
+    },
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+            /*specific_heat_capacity*/            field::missing(),
+            /*thermal_conductivity*/              field::missing(),
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           field::missing(),
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  field::missing(),
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   field::missing(),
+            /*shear_modulus*/                     field::missing(),
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
+
+
+// nitric oxide, NO
+// representative of industrial emissions
+    PartlyKnownCompound nitric_oxide {
+    /*molar_mass*/                        30.006 * si::gram/si::mole,
+    /*atoms_per_molecule*/                2u,
+    /*molecular_diameter*/                317.0 * si::picometer, // wikipedia, Matteucci
+    /*molecular_degrees_of_freedom*/      field::missing(),
+    /*acentric_factor*/                   0.585,
+
+    /*critical_point_pressure*/           7240e3 * si::pascal,
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        309.5 * si::kelvin,
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       13.83 * si::kilojoule/(30.006*si::gram),
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             87.85e3 * si::pascal,
+    /*triple_point_temperature*/          182.34 * si::kelvin,
+    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_temperature*/ -163.6*si::celcius,
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+
+    /*molecular_absorption_cross_section*/ 
+    field::SpectralFunction<si::area>([](
+        const si::wavenumber nlo, 
+        const si::wavenumber nhi, 
+        const si::pressure p, 
+        const si::temperature T
+    ) {
+        return std::pow(10.0, math::integral_of_lerp(
+            std::vector<double>{4.82e6, 5.61e6, 5.83e6, 6.55e6, 7.23e6, 7.65e6, 8.31e6, 9.94e6, 1.11e7, 1.26e7, 1.67e7, 4.05e7, 7.18e7, 1.85e8},
+            std::vector<double>{-22.20, -21.43, -21.37, -21.56, -21.49, -21.56, -21.57, -20.71, -20.41, -20.71, -20.60, -20.94, -21.42, -22.55}, 
+            (nlo*si::meter), (nhi*si::meter)
+        ) / (nhi*si::meter - nlo*si::meter)) * si::meter2;
+    }),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   25.9 * si::milliwatt/(si::meter*si::kelvin), // Huber & Harvey
+        /*dynamic_viscosity*/      0.0188 * si::millipascal * si::second, //pubchem
+        /*density*/                field::missing(),
+        /*refractive_index*/       1.000297
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                1230.458 * si::kilogram / si::meter3,  //encyclopedia.airliquide.com
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       1.330
+    },
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+            /*specific_heat_capacity*/            field::missing(),
+            /*thermal_conductivity*/              field::missing(),
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           field::missing(),
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  field::missing(),
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   field::missing(),
+            /*shear_modulus*/                     field::missing(),
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
+
+// carbon monoxide, CO
+// for the surface of pluto
+PartlyKnownCompound carbon_monoxide {
+    /*molar_mass*/                        28.010 * si::gram/si::mole, 
+    /*atoms_per_molecule*/                2u,
+    /*molecular_diameter*/                357.0 * si::picometer, // Mehio (2014)
+    /*molecular_degrees_of_freedom*/      field::missing(),
+    /*acentric_factor*/                   0.066,
+
+    /*critical_point_pressure*/           3498e3 * si::pascal, // wikipedia data page
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        132.85 * si::kelvin,
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       6.04 * si::kilojoule/(28.010*si::gram),
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             1.53e-1 * si::bar, //encyclopedia.airliquide.com
+    /*triple_point_temperature*/          -204.99*si::celcius,
+    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_temperature*/ -205.02*si::celcius,
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+
+    /*molecular_absorption_cross_section*/ 
+    field::SpectralFunction<si::area>([](
+        const si::wavenumber nlo, 
+        const si::wavenumber nhi, 
+        const si::pressure p, 
+        const si::temperature T
+    ) {
+        return std::pow(10.0, math::integral_of_lerp(
+            std::vector<double>{  4.83e6, 4.85e6, 4.88e6, 5.00e6, 5.02e6, 5.05e6, 5.17e6, 5.19e6, 5.22e6, 5.33e6, 5.36e6, 5.38e6, 5.49e6, 5.51e6, 5.55e6, 5.64e6, 5.67e6, 5.68e6, 5.71e6, 6.02e6, 6.85e6, 7.98e6, 8.42e6, 9.28e6, 1.00e7, 1.05e7, 1.13e7, 1.21e7, 1.38e7, 2.10e7, 4.54e7, 5.15e8 },
+            std::vector<double>{  -28.38, -24.93, -28.40, -28.39, -24.91, -28.40, -28.39, -25.16, -28.42, -28.39, -25.52, -28.39, -28.38, -25.72, -28.41, -28.40, -25.96, -23.41, -28.42, -22.47, -20.89, -21.48, -22.01, -20.72, -20.93, -20.48, -20.35, -20.56, -20.56, -20.68, -21.04, -22.55 },
+            (nlo*si::meter), (nhi*si::meter)
+        ) / (nhi*si::meter - nlo*si::meter)) * si::meter2;
+    }),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ 29.0 * si::joule / (28.010 * si::gram * si::kelvin), // wikipedia data page
+        /*thermal_conductivity*/   25.0 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
+        /*dynamic_viscosity*/      1.74e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
+        /*density*/                field::missing(),
+        /*refractive_index*/       // 1.00036320, //https://refractiveindex.info
+        field::SpectralFunction<double>([](
+            const si::wavenumber nlo, 
+            const si::wavenumber nhi, 
+            const si::pressure p, 
+            const si::temperature T
+        ) {
+            double l = (2.0 / (nhi+nlo) / si::micrometer);
+            constexpr double n = 1.00036350f;
+            constexpr double dndl = -0.00027275f;
+            return n + dndl * l;
+        }) 
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ 60.351 * si::joule / (28.010 * si::gram * si::kelvin), // pubchem
+        /*thermal_conductivity*/   0.1428 * si::watt / (si::meter * si::kelvin), // pubchem
+        /*dynamic_viscosity*/      0.170 * si::millipascal * si::second, // Johnson (1960)
+        /*density*/                793.2 * si::kilogram / si::meter3,
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       //1.33336f,
+        field::SpectralFunction<double>([](
+            const si::wavenumber nlo, 
+            const si::wavenumber nhi, 
+            const si::pressure p, 
+            const si::temperature T
+        ) {
+            double l = (2.0 / (nhi+nlo) / si::micrometer);
+            return math::lerp(
+                    std::vector<double>{},
+                    std::vector<double>{},
+                    log10(l)
+                );
+        }) 
+    },
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+            /*specific_heat_capacity*/            12.29 * si::calorie / (28.010 * si::gram * si::kelvin), // Johnson (1960)
+            /*thermal_conductivity*/              30.0 * si::milliwatt / (si::centimeter * si::kelvin), // Stachowiak (1998)
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           1.0288 * si::kilogram / si::meter3, // Johnson (1960), for alpha, 0.929 for beta
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  field::missing(),
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   field::missing(),
+            /*shear_modulus*/                     field::missing(),
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
+
+
+// ethane, C2H6
+// for the lakes of Titan
+PartlyKnownCompound ethane {
+    /*molar_mass*/                        30.070 * si::gram/si::mole,
+    /*atoms_per_molecule*/                8u,
+    /*molecular_diameter*/                443.0 * si::picometer,  // Aguado (2012)
+    /*molecular_degrees_of_freedom*/      6.8,
+    /*acentric_factor*/                   0.099,
+
+    /*critical_point_pressure*/           4890e3 * si::pascal,
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        305.3 * si::kelvin,
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       14.69 * si::kilojoule/(30.070*si::gram),
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             1.4 * si::pascal,
+    /*triple_point_temperature*/          90.35 * si::kelvin,
+    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_temperature*/ -183.01 * si::celcius, // wikipedia data page
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+
+    /*molecular_absorption_cross_section*/ 
+    field::SpectralFunction<si::area>([](
+        const si::wavenumber nlo, 
+        const si::wavenumber nhi, 
+        const si::pressure p, 
+        const si::temperature T
+    ) {
+        return std::pow(10.0, math::integral_of_lerp(
+            std::vector<double>{ 5.6e6, 6.25e6, 6.73e6, 7.49e6, 8.23e6, 9.26e6, 1.01e7, 1.14e7, 2.42e7, 5.43e7, 1.72e8 },
+            std::vector<double>{ -35.0, -25.67, -21.86, -20.50, -20.60, -20.27, -20.25, -20.08, -20.57, -21.44, -22.57 },
+            (nlo*si::meter), (nhi*si::meter)
+        ) / (nhi*si::meter - nlo*si::meter)) * si::meter2;
+    }),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ 52.49 * si::joule / (30.070 * si::gram * si::kelvin), // wikipedia data page
+        /*thermal_conductivity*/   21.2 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
+        /*dynamic_viscosity*/      9.4 * si::micropascal*si::second,
+        /*density*/                field::missing(),
+        /*refractive_index*/       // 1.0377,
+        field::SpectralFunction<double>([](
+            const si::wavenumber nlo, 
+            const si::wavenumber nhi, 
+            const si::pressure p, 
+            const si::temperature T
+        ) {
+            double l = (2.0 / (nhi+nlo) / si::micrometer);
+            double invl2 = 1.0/(l*l);
+            return 1.0007330f
+                + 6.822764e-6 * invl2;
+        }) 
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ 68.5 * si::joule / (30.070 * si::gram * si::kelvin), // wikipedia data page
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                545.0 * si::kilogram/si::meter3,
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       //1.33336f,
+        field::SpectralFunction<double>([](
+            const si::wavenumber nlo, 
+            const si::wavenumber nhi, 
+            const si::pressure p, 
+            const si::temperature T
+        ) {
+            double l = (2.0 / (nhi+nlo) / si::micrometer);
+            return math::lerp(
+                    std::vector<double>{},
+                    std::vector<double>{},
+                    log10(l)
+                );
+        }) 
+    },
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+            /*specific_heat_capacity*/            field::missing(),
+            /*thermal_conductivity*/              field::missing(),
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           field::missing(),
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  field::missing(),
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   field::missing(),
+            /*shear_modulus*/                     field::missing(),
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
+
+
+// hydrogen cyanide, HCN
+// for small bodies in the outer solar system and interstellar space
+// one of the most abundant compounds following from elemental abundances in the universe
+PartlyKnownCompound hydrogen_cyanide {
+    /*molar_mass*/                        27.026 * si::gram/si::mole,
+    /*atoms_per_molecule*/                2u,
+    /*molecular_diameter*/                376.0 * si::picometer, // wikipedia, Matteucci
+    /*molecular_degrees_of_freedom*/      field::missing(),
+    /*acentric_factor*/                   0.407,
+
+    /*critical_point_pressure*/           5400e3 * si::pascal,
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        456.65 * si::kelvin,
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       25.2 * si::kilojoule/(27.026*si::gram), // pubchem
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             0.153e3 * si::pascal,
+    /*triple_point_temperature*/          259.7 * si::kelvin,
+    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_temperature*/ -13.29 * si::celcius,
+    /*simon_glatzel_slope*/               3080e5,
+    /*simon_glatzel_exponent*/            3.6,
+
+    /*molecular_absorption_cross_section*/ 
+    field::SpectralFunction<si::area>([](
+        const si::wavenumber nlo, 
+        const si::wavenumber nhi, 
+        const si::pressure p, 
+        const si::temperature T
+    ) {
+        return std::pow(10.0, math::integral_of_lerp(
+            std::vector<double>{  8.50e6, 8.58e6, 9.19e6, 9.59e6, 9.89e6, 9.99e6, 1.01e7, 1.02e7, 1.03e7, 1.05e7, 1.07e7, 1.09e7, 1.26e7, 1.35e7, 1.41e7, 1.46e7, 1.62e7 },
+            std::vector<double>{   -24.2,  -21.8,  -21.5,  -22.1,  -20.3,  -20.6,  -20.3,  -20.7,  -20.2,  -20.2,  -20.6,  -20.3,  -20.5,  -20.3,  -20.4,  -20.4,  -20.5 },
+            (nlo*si::meter), (nhi*si::meter)
+        ) / (nhi*si::meter - nlo*si::meter)) * si::meter2;
+    }),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                687.6 * si::kilogram/si::meter3,
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       1.2614
+    },
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+            /*specific_heat_capacity*/            field::missing(),
+            /*thermal_conductivity*/              field::missing(),
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           field::missing(),
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  field::missing(),
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   field::missing(),
+            /*shear_modulus*/                     field::missing(),
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
+
+
+// ethanol, C2H6O
+// for small bodies in the outer solar system and interstellar space
+// one of the most abundant compounds following from elemental abundances in the universe
+PartlyKnownCompound ethanol {
+    /*molar_mass*/                        46.068 * si::gram/si::mole,
+    /*atoms_per_molecule*/                9u,
+    /*molecular_diameter*/                field::missing(),
+    /*molecular_degrees_of_freedom*/      6.0,
+    /*acentric_factor*/                   0.637,
+
+    /*critical_point_pressure*/           63.0 * si::bar, // wikipedia data page
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        514.0 * si::kelvin, // wikipedia data page
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       38.56 * si::kilojoule/(46.068*si::gram), // wikipedia data page
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             0.00043 * si::pascal,  // wikipedia data page
+    /*triple_point_temperature*/          150.0 * si::kelvin,  // wikipedia data page
+    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_temperature*/ -114.14 * si::celcius,
+    /*simon_glatzel_slope*/               10600e5,
+    /*simon_glatzel_exponent*/            1.61,
+
+    /*molecular_absorption_cross_section*/ field::missing(),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ 78.28 * si::joule / (46.068*si::gram*si::kelvin), // wikipedia data page
+        /*thermal_conductivity*/   14.4 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ 112.4 * si::joule / (46.068*si::gram*si::kelvin), // wikipedia data page
+        /*thermal_conductivity*/   0.167 * si::watt / ( si::meter * si::kelvin ),
+        /*dynamic_viscosity*/      1.095 * si::millipascal * si::second, // engineering toolbox, at 300K
+        /*density*/                0789.3 * si::kilogram/si::meter3,
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       //1.361,  // wikipedia data page
+        field::SpectralFunction<double>([](
+            const si::wavenumber nlo, 
+            const si::wavenumber nhi, 
+            const si::pressure p, 
+            const si::temperature T
+        ) {
+            double l = (2.0 / (nhi+nlo) / si::micrometer);
+            double invl2 = 1.0/(l*l);
+            return 1.35265f
+                + 0.00306 * invl2
+                + 0.00002 * invl2*invl2;
+        })
+    },
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid> {
+        phase::PartlyKnownSolid {
+            /*specific_heat_capacity*/            111.46 * si::joule / (46.068*si::gram*si::kelvin), // wikipedia data page
+            /*thermal_conductivity*/              field::missing(),
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           field::missing(),
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  field::missing(),
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   field::missing(),
+            /*shear_modulus*/                     field::missing(),
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+}; 
+
+// formaldehyde, CH2O
+// for small bodies in the outer solar system and interstellar space
+// one of the most abundant compounds following from elemental abundances in the universe
+PartlyKnownCompound formaldehyde {
+    /*molar_mass*/                        30.026 * si::gram/si::mole, // wikipedia
+    /*atoms_per_molecule*/                4u,
+    /*molecular_diameter*/                field::missing(),
+    /*molecular_degrees_of_freedom*/      6.0,
+    /*acentric_factor*/                   0.282,
+
+    /*critical_point_pressure*/           6788e3 * si::pascal,
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        410.3 * si::kelvin,
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       23.3 * si::kilojoule/(30.026*si::gram),//pubchem
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             71549032.0 * si::pascal,
+    /*triple_point_temperature*/          155.10 * si::kelvin,
+    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_temperature*/ 181.0 * si::kelvin,
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+
+    /*molecular_absorption_cross_section*/ 
+    field::SpectralFunction<si::area>([](
+        const si::wavenumber nlo, 
+        const si::wavenumber nhi, 
+        const si::pressure p, 
+        const si::temperature T
+    ) {
+        return std::pow(10.0, math::integral_of_lerp(
+            std::vector<double>{  2.51e6, 2.67e6, 2.70e6, 2.74e6, 2.83e6, 2.86e6, 2.95e6, 2.98e6, 3.06e6, 3.09e6, 3.18e6, 3.62e6, 4.02e6, 4.44e6 },
+            std::vector<double>{   -26.5,  -26.1,  -25.2,  -26.1,  -23.6,  -25.4,  -23.2,  -25.0,  -23.1,  -24.5,  -23.2,  -23.6,  -24.5,  -25.7 },
+            (nlo*si::meter), (nhi*si::meter)
+        ) / (nhi*si::meter - nlo*si::meter)) * si::meter2;
+    }),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      0.1421 * si::millipascal * si::second, //pubchem
+        /*density*/                0.8153 * si::kilogram/si::meter3,  // wikipedia
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       1.3714  // wikipedia
+    },
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+            /*specific_heat_capacity*/            field::missing(),
+            /*thermal_conductivity*/              field::missing(),
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           field::missing(),
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  field::missing(),
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   field::missing(),
+            /*shear_modulus*/                     field::missing(),
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
+
+
+// formic acid, CH2O2
+// for small bodies in the outer solar system and interstellar space
+// one of the most abundant compounds following from elemental abundances in the universe
+PartlyKnownCompound formic_acid {
+    /*molar_mass*/                        46.026 * si::gram/si::mole,
+    /*atoms_per_molecule*/                5u,
+    /*molecular_diameter*/                field::missing(),
+    /*molecular_degrees_of_freedom*/      6.0,
+    /*acentric_factor*/                   0.473,
+
+    /*critical_point_pressure*/           8.63 * si::megapascal,
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        306.8 * si::kelvin,
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       20.10 * si::kilojoule/(46.026*si::gram),
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             2.2 * si::kilopascal,
+    /*triple_point_temperature*/          281.4 * si::kelvin,
+    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_temperature*/ 8.3 * si::celcius,
+    /*simon_glatzel_slope*/               4100e5,
+    /*simon_glatzel_exponent*/            5.2,
+
+    /*molecular_absorption_cross_section*/ field::missing(),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ 45.68 * si::joule / (46.026*si::gram*si::kelvin), // wikipedia data page
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ 101.3 * si::joule / (46.026*si::gram*si::kelvin), // wikipedia data page
+        /*thermal_conductivity*/   0.267 * si::watt / (si::meter * si::kelvin),
+        /*dynamic_viscosity*/      1.607 * si::millipascal*si::second,
+        /*density*/                1220.0 * si::kilogram/si::meter3,
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       1.3714 
+    },
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+            /*specific_heat_capacity*/            74.5 * si::joule / (46.026*si::gram*si::kelvin), // wikipedia data page
+            /*thermal_conductivity*/              field::missing(),
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           field::missing(),
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  field::missing(),
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   field::missing(),
+            /*shear_modulus*/                     field::missing(),
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
+
+// POORLY CHARACTERIZED COMPOUNDS:
+// perflouromethane, CF4
+// for modeling industrial emissions and the terraforming of Mars as suggested by Zubrin (1996) 
+// We went out of our way searching for an IR graph since 
+// we use CF4 in the model to study pollution and Martian terraformation
+PartlyKnownCompound perflouromethane{
+    /*molar_mass*/                        88.0  * si::gram/si::mole,
+    /*atoms_per_molecule*/                5u,
+    /*molecular_diameter*/                470.0 * si::picometer, // Motkuri (2014)
+    /*molecular_degrees_of_freedom*/      field::missing(),
+    /*acentric_factor*/                   0.186,
+
+    /*critical_point_pressure*/           3793e3 * si::pascal,
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        227.6 * si::kelvin,
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       137000.0 * si::joule / si::kilogram,
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             0.1012e3 * si::pascal,
+    /*triple_point_temperature*/          89.54 * si::kelvin,
+    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_temperature*/ -183.61*si::celcius,
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+
+    /*molecular_absorption_cross_section*/ 
+    field::SpectralFunction<si::area>([](
+        const si::wavenumber nlo, 
+        const si::wavenumber nhi, 
+        const si::pressure p, 
+        const si::temperature T
+    ) {
+        return std::pow(10.0, math::integral_of_lerp(
+            std::vector<double>{  1.28e5, 1.28e5, 1.28e5, 1.28e5, 1.28e5, 1.28e5, 1.28e5, 1.28e5, 1.28e5, 7.99e6, 8.62e6, 9.25e6, 1.00e7, 1.05e7, 1.08e7, 1.13e7, 1.20e7, 1.28e7, 1.33e7, 1.79e7, 2.14e7, 3.37e7, 5.79e7, 1.71e8 },
+            std::vector<double>{  -20.19, -20.19, -19.97, -19.91, -19.92, -20.05, -20.10, -20.12, -20.17, -23.26, -23.10, -22.58, -21.35, -21.52, -20.18, -20.24, -21.06, -20.16, -20.43, -20.13, -20.31, -20.33, -20.68, -21.63 },
+            (nlo*si::meter), (nhi*si::meter)
+        ) / (nhi*si::meter - nlo*si::meter)) * si::meter2;
+    }),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   16.0 * si::milliwatt/(si::meter*si::kelvin), // Huber & Harvey
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*refractive_index*/       1.0004823
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                1890.0 * si::kilogram/si::meter3, //pubchem
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       //1.33336f,
+        field::SpectralFunction<double>([](
+            const si::wavenumber nlo, 
+            const si::wavenumber nhi, 
+            const si::pressure p, 
+            const si::temperature T
+        ) {
+            double l = (2.0 / (nhi+nlo) / si::micrometer);
+            return math::lerp(
+                    std::vector<double>{},
+                    std::vector<double>{},
+                    log10(l)
+                );
+        }) 
+    },
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+            /*specific_heat_capacity*/            field::missing(),
+            /*thermal_conductivity*/              field::missing(),
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           1980.0 * si::kilogram/si::meter3, // pubchem
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  field::missing(),
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   field::missing(),
+            /*shear_modulus*/                     field::missing(),
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
+
+// benzene, C6H6
+// representative of aromatic compounds, predominantly low-grade coal,
+// and serves as a template for compounds in prebiotic chemistry such as nucleic acids or tholins
+PartlyKnownCompound base {
+    /*molar_mass*/                        79.102 * si::gram/si::mole, // wikipedia
+    /*atoms_per_molecule*/                12u, // wikipedia
+    /*molecular_diameter*/                field::missing(),
+    /*molecular_degrees_of_freedom*/      6.0, // wikipedia
+    /*acentric_factor*/                   0.211,
+
+    /*critical_point_pressure*/           4.89 * si::kilopascal, // wikipedia data page
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        562.0 * si::kelvin, // wikipedia data page
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       33.9 * si::kilojoule / (79.109 * si::gram), // wikipedia
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             4.83 * si::kilopascal, // wikipedia data page
+    /*triple_point_temperature*/          278.5 * si::kelvin, // wikipedia data page
+    /*freezing_point_sample_pressure*/    si::standard_pressure, 
+    /*freezing_point_sample_temperature*/ 5.53 * si::celcius, // wikipedia
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+
+    /*molecular_absorption_cross_section*/ 
+    field::SpectralFunction<si::area>([](
+        const si::wavenumber nlo, 
+        const si::wavenumber nhi, 
+        const si::pressure p, 
+        const si::temperature T
+    ) {
+        return std::pow(10.0, math::integral_of_lerp(
+            std::vector<double>{  3.63e6, 3.73e6, 3.75e6, 3.76e6, 3.82e6, 3.86e6, 3.87e6, 3.92e6, 3.95e6, 3.97e6, 4.03e6, 4.04e6, 4.07e6, 4.12e6, 4.14e6, 4.16e6, 4.21e6, 4.23e6, 4.25e6, 4.33e6, 4.52e6, 4.75e6, 4.91e6, 5.03e6, 5.33e6, 5.58e6, 5.85e6, 6.72e6, 7.54e6, 8.11e6, 8.79e6, 9.59e6, 1.03e7, 1.12e7, 1.41e7, 3.33e7, 2.11e8 },
+            std::vector<double>{   -25.0,  -23.9,  -23.0,  -23.8,  -23.2,  -21.7,  -23.2,  -22.6,  -21.7,  -23.1,  -22.5,  -21.7,  -23.1,  -22.7,  -21.9,  -23.2,  -22.9,  -22.6,  -23.3,  -23.3,  -24.0,  -23.3,  -20.7,  -20.6,  -20.8,  -19.5,  -20.2,  -21.1,  -20.4,  -20.5,  -20.1,  -20.2,  -20.0,  -20.2,  -19.8,  -20.5,  -22.3 },
+            (nlo*si::meter), (nhi*si::meter)
+        ) / (nhi*si::meter - nlo*si::meter)) * si::meter2;
+    }),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ 82.44 * si::joule / (79.109 * si::gram * si::kelvin),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      0.75e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
+        /*density*/                field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ 134.8 * si::joule / (79.109 * si::gram * si::kelvin),
+        /*thermal_conductivity*/   0.1411 * si::watt / ( si::meter * si::kelvin ),
+        /*dynamic_viscosity*/      0.601 * si::millipascal * si::second, // engineering toolbox, at 300K
+        /*density*/                0.8765 * si::gram/si::centimeter3, // wikipedia
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       //1.5011,
+        field::SpectralFunction<double>([](
+            const si::wavenumber nlo, 
+            const si::wavenumber nhi, 
+            const si::pressure p, 
+            const si::temperature T
+        ) {
+            double l = (2.0 / (nhi+nlo) / si::micrometer);
+            double l2 = l*l;
+            double invl2 = 1.0/(l*l);
+            return sqrt(
+                2.170184597f
+                + 0.00059399 * l2
+                + 0.02303464 * invl2
+                - 0.000499485 * invl2*invl2
+                + 0.000178796 * invl2*invl2*invl2
+            );
+        }) 
+    },
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+            /*specific_heat_capacity*/            118.4 * si::joule / (79.109 * si::gram * si::kelvin),
+            /*thermal_conductivity*/              field::missing(),
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           field::missing(),
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  field::missing(),
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   0.0614e11*si::pascal,
+            /*shear_modulus*/                     0.0197e11*si::pascal,
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
+
+// pyramidine, C4H4N2
+// representative of prebiotic chemistry and tholins,
+// since it's been observed from Kawai (2019) that tholins may contain them among other nucleotides
+PartlyKnownCompound pyrimidine {
+    /*molar_mass*/                        80.088 * si::gram/si::mole, // wikipedia
+    /*atoms_per_molecule*/                10u, // wikipedia
+    /*molecular_diameter*/                field::missing(),
+    /*molecular_degrees_of_freedom*/      6.0, // wikipedia
+    /*acentric_factor*/                   field::missing(),
+
+    /*critical_point_pressure*/           field::missing(),
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        field::missing(),
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       field::missing(),
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             field::missing(),
+    /*triple_point_temperature*/          field::missing(),
+    /*freezing_point_sample_pressure*/    si::standard_pressure, 
+    /*freezing_point_sample_temperature*/ -22.6 * si::celcius, // wikipedia
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+
+
+    /*molecular_absorption_cross_section*/ field::missing(),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                1.016 * si::gram/si::centimeter3, // wikipedia
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+            /*specific_heat_capacity*/            field::missing(),
+            /*thermal_conductivity*/              field::missing(),
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           field::missing(),
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  field::missing(),
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   field::missing(),
+            /*shear_modulus*/                     field::missing(),
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
+
+// halite, NaCl, sodium chloride, salt
+// for salt bed flats and potentially modeling ocean salinity
+PartlyKnownCompound  halite {
+    /*molar_mass*/                        90.442*si::gram/si::mole,
+    /*atoms_per_molecule*/                2u,
+    /*molecular_diameter*/                field::missing(),
+    /*molecular_degrees_of_freedom*/      field::missing(),
+    /*acentric_factor*/                   field::missing(),
+
+    /*critical_point_pressure*/           26e6 * si::pascal, // wikipedia data page
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        3900.0 * si::kelvin, // wikipedia data page
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       field::missing(),
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             30.0 * si::pascal, // wikipedia data page
+    /*triple_point_temperature*/          1074.0 * si::kelvin, // wikipedia data page
+    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_temperature*/ 800.7*si::celcius,
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+    
+    /*molecular_absorption_cross_section*/ field::missing(),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      1270.15 * si::millipascal * si::second, // Dortmund data bank, 1270.15C
+        /*density*/                1549.0 * si::kilogram/si::meter3,  // wikipedia data page
+        /*refractive_index*/       field::missing()
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+            /*specific_heat_capacity*/            50.0 * si::joule / (90.442 * si::gram * si::kelvin), // wikipedia data page
+            /*thermal_conductivity*/              6.5 * si::watt / ( si::meter * si::kelvin ), // wikipedia data page
+            /*dynamic_viscosity*/                 1e17 * si::poise, // various sources, Carey (1953) cites this number from Weinberg (1927), and Mukherjee (2010), provides a literature review and findings from salt diapirs. Science is weird.
+            /*density*/                           2170.0 * si::kilogram/si::meter3,
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  
+                field::SpectralFunction<double>([](
+                    const si::wavenumber nlo, 
+                    const si::wavenumber nhi, 
+                    const si::pressure p, 
+                    const si::temperature T
+                ) {
+                    double l = (2.0 / (nhi+nlo) / si::micrometer);
+                    double l2 = l*l;
+                    return sqrt(
+                        1.0
+                        + 0.00055f
+                        + 0.19800 * l2 / (l2 - pow(0.050, 2.0))
+                        + 0.48398 * l2 / (l2 - pow(0.100, 2.0))
+                        + 0.38696 * l2 / (l2 - pow(0.128, 2.0))
+                        + 0.25998 * l2 / (l2 - pow(0.158, 2.0))
+                        + 0.08796 * l2 / (l2 - pow(40.50, 2.0))
+                        + 3.17064 * l2 / (l2 - pow(60.98, 2.0))
+                        + 0.30038 * l2 / (l2 - pow(120.34, 2.0))
+                    );
+                }), 
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   0.4947e11*si::pascal, 
+            /*shear_modulus*/                     0.1287e11*si::pascal, 
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
+
+// corundum, Al2O3, aluminum sequioxide, alumina, ruby, sapphire, beryl
+// representative of precious stones, excluding diamond
+PartlyKnownCompound  corundum {
+    /*molar_mass*/                        101.96 * si::gram/si::mole, 
+    /*atoms_per_molecule*/                5u,
+    /*molecular_diameter*/                field::missing(),
+    /*molecular_degrees_of_freedom*/      3.0,
+    /*acentric_factor*/                   field::missing(),
+
+    /*critical_point_pressure*/           field::missing(),
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        field::missing(),
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       field::missing(),
+    /*latent_heat_of_fusion*/             900.0*si::kilojoule / si::kilogram,
+    /*triple_point_pressure*/             field::missing(),
+    /*triple_point_temperature*/          field::missing(),
+    /*freezing_point_sample_pressure*/    field::missing(),
+    /*freezing_point_sample_temperature*/ field::missing(),
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+
+    /*molecular_absorption_cross_section*/ field::missing(),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        // .dynamic_viscosity = 0.035 * si::pascal * si::second, // Blomquist (1978)
+        /*dynamic_viscosity*/      field::StateFunction<si::dynamic_viscosity>([](const si::pressure p, const si::temperature T){ return exp((11448.0*si::kelvin/T - 8.2734))*si::pascal*si::second; }), // Blomquist (1978)
+        /*density*/                field::missing(),
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+            /*specific_heat_capacity*/            field::StateSample<si::specific_heat_capacity>(750.0*si::joule/(si::kilogram* si::kelvin), si::standard_pressure, 25.0*si::celcius),//azom.com/article.aspx?ArticleId=1948
+            /*thermal_conductivity*/              field::StateSample<si::thermal_conductivity>(37.0*si::watt/(si::meter * si::kelvin), si::standard_pressure, 20.0*si::celcius),//azom.com/article.aspx?ArticleId=1948
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           3970.0 * si::kilogram/si::meter3,
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  
+                field::SpectralFunction<double>([](
+                    const si::wavenumber nlo, 
+                    const si::wavenumber nhi, 
+                    const si::pressure p, 
+                    const si::temperature T
+                ) {
+                    double l = (2.0 / (nhi+nlo) / si::micrometer);
+                    double l2 = l*l;
+                    return sqrt(
+                        1.0
+                        + 1.4313493 * l2 / (l2 - pow(0.1193242, 2.0))
+                        + 0.65054713 * l2 / (l2 - pow(0.0726631, 2.0))
+                        + 5.3414021 * l2 / (l2 - pow(18.028251, 2.0))
+                    );
+                }),
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      305.0 * si::gigapascal, //azom.com/article.aspx?ArticleId=1948
+            /*tensile_modulus*/                   4.9735e11*si::pascal,
+            /*shear_modulus*/                     1.4739e11*si::pascal,
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     0.28,  //azom.com/article.aspx?ArticleId=1948
+
+            /*compressive_fracture_strength*/     2265.0*si::megapascal, //azom.com/article.aspx?ArticleId=1948
+            /*tensile_fracture_strength*/         325.0*si::megapascal, //azom.com/article.aspx?ArticleId=1948
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  false
+        }
+    }
+};
+
+
+// apatite, XCa5(PO4)3
+// theoretical biomineral deposits, analogous to limestone, that could occur on alien planets
+PartlyKnownCompound  apatite {
+    /*molar_mass*/                        509.1 * si::gram/si::mole, 
+    /*atoms_per_molecule*/                21u,
+    /*molecular_diameter*/                field::missing(),
+    /*molecular_degrees_of_freedom*/      3.0,
+    /*acentric_factor*/                   field::missing(),
+
+    /*critical_point_pressure*/           field::missing(),
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        field::missing(),
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       field::missing(),
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             field::missing(),
+    /*triple_point_temperature*/          field::missing(),
+    /*freezing_point_sample_pressure*/    field::missing(),
+    /*freezing_point_sample_temperature*/ field::missing(),
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+
+    /*molecular_absorption_cross_section*/ field::missing(),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+
+            /*specific_heat_capacity*/            field::missing(),
+            /*thermal_conductivity*/              1.37 * si::watt / (si::meter*si::kelvin), // Cermak (1988)
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           3180.0 * si::kilogram/si::meter3,
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  1.645,
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   1.667e11*si::pascal,
+            /*shear_modulus*/                     field::missing(),
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
+// carbon, C
+// for diamonds, graphite, high-grade anthracite coal, 
+// and theoretical exobiominerals deposits analogous to limestone  // TODO: custom polymorphic class, with complex phase diagram
+PartlyKnownCompound carbon {
+    /*molar_mass*/                        12.011 * si::gram/si::mole, 
+    /*atoms_per_molecule*/                1u,
+    /*molecular_diameter*/                field::missing(),
+    /*molecular_degrees_of_freedom*/      3.0,
+    /*acentric_factor*/                   field::missing(),
+
+    /*critical_point_pressure*/           field::missing(),
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        field::missing(),
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       field::missing(),
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             field::missing(),
+    /*triple_point_temperature*/          field::missing(),
+    /*freezing_point_sample_pressure*/    field::missing(),
+    /*freezing_point_sample_temperature*/ field::missing(),
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+
+    /*molecular_absorption_cross_section*/ field::missing(),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+
+            /*specific_heat_capacity*/            0.710 * si::joule / (si::gram * si::kelvin), // wikipedia, Diamond is 0.5091
+            /*thermal_conductivity*/              247.0 * si::watt / ( si::meter * si::kelvin ), // wikipedia (middle range value), Diamond is 2200.0
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           2260.0 * si::kilogram/si::meter3, // 3513.0 for diamond
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  
+                field::SpectralFunction<double>([](
+                    const si::wavenumber nlo, 
+                    const si::wavenumber nhi, 
+                    const si::pressure p, 
+                    const si::temperature T
+                ) {
+                    double l = (2.0 / (nhi+nlo) / si::micrometer);
+                    constexpr double n = 2.4202f;
+                    constexpr double dndl = -0.16730f;
+                    return n + dndl * l;
+                }),
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      443.0 * si::gigapascal, // wikipedia, for diamond
+            /*tensile_modulus*/                   1050.0 * si::gigapascal, // wikipedia, for diamond
+            /*shear_modulus*/                     478.0 * si::gigapascal, // wikipedia, from McSkimin (1972), for diamond
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
+// calcite, CaCO3, calcium carbonate
+// for biomineral deposits like limestone  // TODO: custom polymorphic class, with complex phase diagram
+PartlyKnownCompound  calcite {
+    /*molar_mass*/                        100.087 * si::gram/si::mole, 
+    /*atoms_per_molecule*/                4u,
+    /*molecular_diameter*/                field::missing(),
+    /*molecular_degrees_of_freedom*/      6.0,
+    /*acentric_factor*/                   field::missing(),
+
+    /*critical_point_pressure*/           field::missing(),
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        field::missing(),
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       field::missing(),
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             field::missing(),
+    /*triple_point_temperature*/          field::missing(),
+    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_temperature*/ 1612.0 * si::kelvin, // 1098.0 for aragonite
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+
+    /*molecular_absorption_cross_section*/ field::missing(),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+    
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+
+            /*specific_heat_capacity*/            0.793 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988, room temperature, 0.79 for aragonite
+            /*thermal_conductivity*/              3.57 * si::watt / (si::meter * si::kelvin), // Cermak (1988), wikipedia, 2.23 for aragonite
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           2710.0 * si::kilogram/si::meter3,
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  
+                field::SpectralFunction<double>([](
+                    const si::wavenumber nlo, 
+                    const si::wavenumber nhi, 
+                    const si::pressure p, 
+                    const si::temperature T
+                ) {
+                    double l = (2.0 / (nhi+nlo) / si::micrometer);
+                    return sqrt(
+                        1.0
+                        + 0.73358749f 
+                        + 0.96464345 * l*l / (l*l - 1.94325203f)
+                        + 1.82831454 * l*l / (l*l - 120.0)
+                    );
+                }),
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   1.4806e11*si::pascal, // for calcite // 1.5958e11*si::pascal, // for aragonite
+            /*shear_modulus*/                     0.3269e11*si::pascal, // for calcite // 0.4132e11*si::pascal, // for aragonite
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    56.0 *  si::gigapascal, // https://www.subsurfwiki.org/wiki/1st_Lam%C3%A9_parameter,
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
+// quartz, SiO2, silicon dioxide, silica, glass
+// representative of felsic rocks, namely sand, and biomineral deposits like diatomaceous earth  // TODO: custom polymorphic class, with complex phase diagram
+PartlyKnownCompound  quartz {
+    /*molar_mass*/                        60.08 * si::gram/si::mole, 
+    /*atoms_per_molecule*/                3u,
+    /*molecular_diameter*/                field::missing(),
+    /*molecular_degrees_of_freedom*/      6.0,
+    /*acentric_factor*/                   field::missing(),
+
+    /*critical_point_pressure*/           1.7e8 * si::pascal,
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        5300.0* si::kelvin,
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       11770e3 * si::joule / si::kilogram,
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             0.0003 * si::pascal,
+    /*triple_point_temperature*/          1983.0 * si::kelvin,
+    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_temperature*/ 1983.0 * si::celcius,
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+
+    /*molecular_absorption_cross_section*/ field::missing(),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      exp(10.0) * si::poise, // Doremus (2002), at 1400 C
+        /*density*/                2180.0 * si::kilogram/si::meter3, // from Murase and McBirney (1973), for rhyolitic magma
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+    
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+            /*specific_heat_capacity*/            0.703 * si::joule / (si::gram * si::kelvin), // Cermak (1988), wikipedia, for vitreous silica
+            /*thermal_conductivity*/              1.36 * si::watt / (si::centimeter * si::kelvin), // Cermak (1988), wikipedia, for vitreous silica
+            /*dynamic_viscosity*/                 std::monostate(),
+            /*density*/                           2650.0 *  si::kilogram/si::meter3, // alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
+            /*vapor_pressure*/                    std::monostate(),
+            /*refractive_index*/                  1.4585,  // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
+            /*spectral_reflectance*/              
+                field::SpectralFunction<double>([](
+                    const si::wavenumber nlo, 
+                    const si::wavenumber nhi, 
+                    const si::pressure p, 
+                    const si::temperature T
+                ) {
+                    double l = (2.0 / (nhi+nlo) / si::micrometer);
+                    return sqrt(
+                        1.0
+                        + 0.6961663 * l*l / (l*l - pow(0.0684043, 2.0))
+                        + 0.4079426 * l*l / (l*l - pow(0.1162414, 2.0))
+                        + 0.8974794 * l*l / (l*l - pow(9.896161,  2.0))
+                    );
+                }),
+
+            /*bulk_modulus*/                      37.0 * si::gigapascal, // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
+            /*tensile_modulus*/                   0.8680e11*si::pascal, 
+            /*shear_modulus*/                     0.5820e11*si::pascal, 
+            /*pwave_modulus*/                     std::monostate(),
+            /*lame_parameter*/                    8.0 * si::gigapascal, // https://www.subsurfwiki.org/wiki/1st_Lam%C3%A9_parameter,
+            /*poisson_ratio*/                     0.17, // https://www.momentive.com/en-us/categories/quartz/mechanical-properties
+
+            /*compressive_fracture_strength*/     1.1 * si::gigapascal, // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
+            /*tensile_fracture_strength*/         48.0 * si::megapascal, // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
+            /*shear_fracture_strength*/           std::monostate(),
+            /*compressive_yield_strength*/        std::monostate(),
+            /*tensile_yield_strength*/            std::monostate(),
+            /*shear_yield_strength*/              std::monostate(),
+
+            /*chemical_susceptibility_estimate*/  std::monostate()
+        }
+    }
+};
+// orthoclase, KAlSi3O8, 
+// representative of felsic rocks
+PartlyKnownCompound  orthoclase {
+    /*molar_mass*/                        278.33 * si::gram/si::mole, 
+    /*atoms_per_molecule*/                13u,
+    /*molecular_diameter*/                field::missing(),
+    /*molecular_degrees_of_freedom*/      6.0,
+    /*acentric_factor*/                   field::missing(),
+
+    /*critical_point_pressure*/           field::missing(),
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        field::missing(),
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       field::missing(),
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             field::missing(),
+    /*triple_point_temperature*/          field::missing(),
+    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_temperature*/ 1170.0*si::celcius, // http://www.minsocam.org/msa/collectors_corner/arc/tempmagmas.htm
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+
+    /*molecular_absorption_cross_section*/ field::missing(),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      1e8 * si::poise, // observed by Bowen (1934) for molten Orthoclase, seems large compared to other silicates, but continental crust has been observed to have higher viscosity than oceanic (Itô 1979, "Rheology of the crust...", I can only get a hold of the abstract)
+        /*density*/                2180.0 * si::kilogram/si::meter3, // from Murase and McBirney (1973), for rhyolitic magma
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+
+            /*specific_heat_capacity*/            0.61 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988)
+            /*thermal_conductivity*/              field::missing(),
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           2560.0 * si::kilogram/si::meter3,
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  1.527,
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      50.0 * si::gigapascal, // for Granite, wikipedia
+            /*tensile_modulus*/                   52.0 * si::gigapascal, // for Granite, engineering toolbox
+            /*shear_modulus*/                     24.0*si::gigapascal, // for Granite, wikipedia
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
+// andesine, (Ca,Na)(Al,Si)4O8
+// representative of plagioclase as a common plagioclase mineral in andesite and diorite,
+// representative of intermediate rocks in general
+PartlyKnownCompound andesine {
+    /*molar_mass*/                        268.6 * si::gram/si::mole, 
+    /*atoms_per_molecule*/                13u,
+    /*molecular_diameter*/                field::missing(),
+    /*molecular_degrees_of_freedom*/      6.0,
+    /*acentric_factor*/                   field::missing(),
+
+    /*critical_point_pressure*/           field::missing(),
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        field::missing(),
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       field::missing(),
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             field::missing(),
+    /*triple_point_temperature*/          field::missing(),
+    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_temperature*/ 1100.0 * si::celcius, // for Albite, http://www.minsocam.org/msa/collectors_corner/arc/tempmagmas.htm
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+
+    /*molecular_absorption_cross_section*/ field::missing(),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      1.38e2 * si::poise, // 1.36-1.19 poises, observed by Kani for andesitic basaltic magma at 1400C, referenced by Bowen (1934)
+        // .dynamic_viscosity = exp(5.0) * si::poise, // Doremus (2002) for Albite, at 1400 C
+        // .dynamic_viscosity = 4e4 * si::poise, // observed by Bowen (1934) for Albite at 1400C
+        // .dynamic_viscosity = 3.8e1 * si::poise, // observed by McCaffery for molten anorthite at 1550C, referenced by Bowen (1934)
+        // .dynamic_viscosity = 1.38e2 * si::poise, // 1.36-1.19 poises, observed by Kani for andesitic basaltic magma at 1400C, referenced by Bowen (1934)
+        // .dynamic_viscosity = 3.0e11 * si::pascal * si::second, // Melosh (2011), from Hiesinger (2007), for andesite lava flow, middle value on log scale
+        /*density*/                2180.0 * si::kilogram/si::meter3, // from Murase and McBirney (1973), for rhyolitic magma
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+
+            /*specific_heat_capacity*/            66.0 * si::joule / (268.6 * si::gram * si::kelvin), // Richet (1984)
+            /*thermal_conductivity*/              1.68 * si::watt / (si::centimeter * si::kelvin), // Cermak (1988), for anorthite
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           2670.0 * si::kilogram/si::meter3,
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  1.553,
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   field::missing(),
+            /*shear_modulus*/                     field::missing(),
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    58.23*si::gigapascal, // for Gabbro, Shaocheng (2010)
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
+// augite, (Ca,Na)(Mg,Fe,Al,Ti)(Si,Al)2O6
+// representative of pyroxenes as the most common pyroxene mineral
+// representative of mafic rocks in general
+PartlyKnownCompound augite {
+    /*molar_mass*/                        236.4 * si::gram/si::mole, 
+    /*atoms_per_molecule*/                10u,
+    /*molecular_diameter*/                field::missing(),
+    /*molecular_degrees_of_freedom*/      6.0,
+    /*acentric_factor*/                   field::missing(),
+
+    /*critical_point_pressure*/           field::missing(),
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        field::missing(),
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       field::missing(),
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             field::missing(),
+    /*triple_point_temperature*/          field::missing(),
+    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_temperature*/ 984.0*si::celcius, // for Basalt, http://www.minsocam.org/msa/collectors_corner/arc/tempmagmas.htm
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+
+    /*molecular_absorption_cross_section*/ field::missing(),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                2800.0 * si::kilogram/si::meter3, // from Murase and McBirney (1973), for basaltic  magma
+        /*refractive_index*/       field::missing()
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+            // .dynamic_viscosity = 1e4 * si::pascal * si::second, // Melosh (2011), from Hiesinger (2007), for basaltic lava flow, order of magnitude estimate
+
+            /*specific_heat_capacity*/            0.7 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988), representative of pyroxenes
+            /*thermal_conductivity*/              3.82 * si::watt / (si::centimeter * si::kelvin), // Cermak (1988)
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           3380.0 * si::kilogram/si::meter3,
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  1.707,
+            /*spectral_reflectance*/              field::missing(),
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   field::missing(),
+            /*shear_modulus*/                     69.0*si::gigapascal, // for Pyroxenite, Shaocheng (2010)
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
+// forsterite, MgSiO 
+// representative of Olivine ((Mg,Fe)SiO) as its much more common Mg-rich end member (Smyth 2006)
+// representative of ultramafic rocks in general
+// also appears most common on the surface of Mercury (Namur 2016)
+PartlyKnownCompound forsterite {
+    /*molar_mass*/                        153.31 * si::gram/si::mole, 
+    /*atoms_per_molecule*/                7u,
+    /*molecular_diameter*/                field::missing(),
+    /*molecular_degrees_of_freedom*/      6.0,
+    /*acentric_factor*/                   field::missing(),
+
+    /*critical_point_pressure*/           field::missing(),
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        field::missing(),
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       field::missing(),
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             field::missing(),
+    /*triple_point_temperature*/          field::missing(),
+    /*freezing_point_sample_pressure*/    field::missing(),
+    /*freezing_point_sample_temperature*/ field::missing(),
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+
+    /*molecular_absorption_cross_section*/ field::missing(),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      1.27e2 * si::poise, // 1.36-1.19 poises, observed by Kani for olivine basaltic magma at 1400C, referenced by Bowen (1934)
+        // .dynamic_viscosity = exp(1.5) * si::poise, // Doremus (2002) for Olivine, at 1400 C
+        /*density*/                field::missing(),
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+
+            /*specific_heat_capacity*/            0.79 * si::joule / (si::gram * si::kelvin), // Cermak (1988), for fayalite/forsterite mix
+            /*thermal_conductivity*/              5.06 * si::watt / (si::centimeter * si::kelvin), // Cermak (1988)
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           3810.0 * si::kilogram/si::meter3,
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  1.651,
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   3.2848e11*si::pascal,
+            /*shear_modulus*/                     0.6515e11*si::pascal,
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    73.5*si::gigapascal, // for Peridotite, Shaocheng (2010)
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
+// Goethite, FeO(OH)
+// for surface of mars, representative of iron oxides and red soils in general, and siderophile ores
+PartlyKnownCompound  goethite {
+    /*molar_mass*/                        88.85 * si::gram/si::mole, 
+    /*atoms_per_molecule*/                4u,
+    /*molecular_diameter*/                field::missing(),
+    /*molecular_degrees_of_freedom*/      6.0,
+    /*acentric_factor*/                   field::missing(),
+
+    /*critical_point_pressure*/           field::missing(),
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        field::missing(),
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       field::missing(),
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             field::missing(),
+    /*triple_point_temperature*/          field::missing(),
+    /*freezing_point_sample_pressure*/    field::missing(),
+    /*freezing_point_sample_temperature*/ field::missing(),
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+
+    /*molecular_absorption_cross_section*/ field::missing(),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+
+            /*specific_heat_capacity*/            0.701 * si::joule / (88.85 * si::gram * si::kelvin), // Majzlan (2003)
+            /*thermal_conductivity*/              2.91 * si::watt / (si::meter * si::kelvin), // Cermak (1988)
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           4300.0 * si::kilogram/si::meter3,
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  2.401,
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   field::missing(),
+            /*shear_modulus*/                     field::missing(),
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
+// pyrite, FeS2
+// for surfaces of the heaviest planets, maybe venus and mercury, and representative of siderophile ores
+PartlyKnownCompound  pyrite {
+    /*molar_mass*/                        119.98 * si::gram/si::mole, 
+    /*atoms_per_molecule*/                3u,
+    /*molecular_diameter*/                field::missing(),
+    /*molecular_degrees_of_freedom*/      6.0,
+    /*acentric_factor*/                   field::missing(),
+
+    /*critical_point_pressure*/           field::missing(),
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        field::missing(),
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       field::missing(),
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             field::missing(),
+    /*triple_point_temperature*/          field::missing(),
+    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_temperature*/ 1180.0 * si::celcius, // new world encyclopedia
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+
+    /*molecular_absorption_cross_section*/ field::missing(),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+
+            /*specific_heat_capacity*/            0.5 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988, room temperature
+            /*thermal_conductivity*/              19.2 * si::watt / (si::meter * si::kelvin), // Cermak (1988)
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           5020.0 * si::kilogram/si::meter3,
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  1.78, //gemologyproject.com
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   3.818e11*si::pascal,
+            /*shear_modulus*/                     1.094e11*si::pascal,
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    59.0 * si::gigapascal, // https://www.subsurfwiki.org/wiki/1st_Lam%C3%A9_parameter
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
+// hematite, Fe2O3 
+// representative of iron oxides and red soils in general, surfaces of early earth, and siderophile ores
+// TODO: pick one, goethite or hematite, we can't afford them both
+PartlyKnownCompound hematite {
+    /*molar_mass*/                        159.69 * si::gram/si::mole, 
+    /*atoms_per_molecule*/                5u,
+    /*molecular_diameter*/                field::missing(),
+    /*molecular_degrees_of_freedom*/      6.0,
+    /*acentric_factor*/                   field::missing(),
+
+    /*critical_point_pressure*/           field::missing(),
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        field::missing(),
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       field::missing(),
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             field::missing(),
+    /*triple_point_temperature*/          field::missing(),
+    /*freezing_point_sample_pressure*/    field::missing(),
+    /*freezing_point_sample_temperature*/ field::missing(),
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+
+    /*molecular_absorption_cross_section*/ field::missing(),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+
+            /*specific_heat_capacity*/            0.61 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988)
+            /*thermal_conductivity*/              11.3 * si::watt / (si::meter * si::kelvin), // Cermak (1988)
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           5250.0 * si::kilogram/si::meter3,
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  
+                field::SpectralFunction<double>([](
+                    const si::wavenumber nlo, 
+                    const si::wavenumber nhi, 
+                    const si::pressure p, 
+                    const si::temperature T
+                ) {
+                    double l = (2.0 / (nhi+nlo) / si::micrometer);
+                    return math::lerp(
+                            std::vector<double>{-0.67, -0.61, -0.48, -0.44, -0.34, -0.23, -0.11,  0.68,  0.99,  1.12,  1.20,  1.26,  1.29,  1.33,  1.37,  1.46,  1.55,  1.63,  1.65,  1.73,  1.96},
+                            std::vector<double>{ 1.32,  1.87,  2.49,  2.49,  3.28,  3.43,  2.93,  2.69,  2.31,  1.73,  0.49,  0.46,  2.84,  1.02,  7.39,  0.93, 12.55,  6.71,  7.07,  5.80,  5.10},
+                            log10(l)
+                        );
+                }),
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   2.4243e11*si::pascal, 
+            /*shear_modulus*/                     0.8569e11*si::pascal, 
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
+
+// native gold, Au
+// for precious metals
+PartlyKnownCompound  gold {
+    /*molar_mass*/                        196.967 * si::gram/si::mole, 
+    /*atoms_per_molecule*/                1u,
+    /*molecular_diameter*/                field::missing(),
+    /*molecular_degrees_of_freedom*/      3.0,
+    /*acentric_factor*/                   field::missing(),
+
+    /*critical_point_pressure*/           510e3 * si::kilopascal,
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        7250.0 * si::kelvin, // wow!
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       324.0 * si::kilojoule/(196.967*si::gram),
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             field::missing(),
+    /*triple_point_temperature*/          field::missing(),
+    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_temperature*/ 1064.180*si::celcius,
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+
+    /*molecular_absorption_cross_section*/ field::missing(),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                17310.0 * si::kilogram/si::meter3, 
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+
+            /*specific_heat_capacity*/            0.129 * si::joule / (si::gram * si::kelvin), // wikipedia, room temperature
+            /*thermal_conductivity*/              314.0 * si::watt / ( si::meter * si::kelvin ), // wikipedia
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           19300.0 * si::kilogram/si::meter3,
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  
+                field::SpectralFunction<double>([](
+                    const si::wavenumber nlo, 
+                    const si::wavenumber nhi, 
+                    const si::pressure p, 
+                    const si::temperature T
+                ) {
+                    double l = (2.0 / (nhi+nlo) / si::micrometer);
+                    constexpr double n = 0.35018f; 
+                    constexpr double dndl = -4.1791f;
+                    return n + dndl * l;
+                }),
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   1.9244e11*si::pascal,
+            /*shear_modulus*/                     0.4200e11*si::pascal,
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     0.43, // wikipedia
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
+// native silver, Ag
+// for precious metals
+PartlyKnownCompound  silver {
+    /*molar_mass*/                        107.868 * si::gram/si::mole, 
+    /*atoms_per_molecule*/                1u,
+    /*molecular_diameter*/                field::missing(),
+    /*molecular_degrees_of_freedom*/      3.0,
+    /*acentric_factor*/                   field::missing(),
+
+    /*critical_point_pressure*/           field::missing(),
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        field::missing(),
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       field::missing(),
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             field::missing(),
+    /*triple_point_temperature*/          field::missing(),
+    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_temperature*/ 961.78*si::celcius,
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+
+    /*molecular_absorption_cross_section*/ field::missing(),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                9320.0 * si::kilogram/si::meter3, 
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+
+            /*specific_heat_capacity*/            0.233 * si::joule / (si::gram * si::kelvin), // wikipedia
+            /*thermal_conductivity*/              427.0 * si::watt / ( si::meter * si::kelvin ), // wikipedia
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           10500.0 * si::kilogram/si::meter3,
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  
+                field::SpectralFunction<double>([](
+                    const si::wavenumber nlo, 
+                    const si::wavenumber nhi, 
+                    const si::pressure p, 
+                    const si::temperature T
+                ) {
+                    double l = (2.0 / (nhi+nlo) / si::micrometer);
+                    constexpr double n = 0.051585f; 
+                    constexpr double dndl = 0.28818f;
+                    return n + dndl * l;
+                }),
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   1.2399e11*si::pascal,
+            /*shear_modulus*/                     0.4612e11*si::pascal,
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
+// native copper, Cu
+// for precious metals
+PartlyKnownCompound  copper {
+    /*molar_mass*/                        63.546 * si::gram/si::mole, 
+    /*atoms_per_molecule*/                1u,
+    /*molecular_diameter*/                field::missing(),
+    /*molecular_degrees_of_freedom*/      3.0,
+    /*acentric_factor*/                   field::missing(),
+
+    /*critical_point_pressure*/           field::missing(),
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        field::missing(),
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       204.8 * si::joule/si::gram,
+    /*latent_heat_of_fusion*/             5234.0 * si::joule/si::gram,
+    /*triple_point_pressure*/             field::missing(),
+    /*triple_point_temperature*/          field::missing(),
+    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_temperature*/ 1084.62*si::celcius,
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+
+    /*molecular_absorption_cross_section*/ field::missing(),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                8020.0 * si::kilogram/si::meter3, 
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+
+            /*specific_heat_capacity*/            0.385 * si::joule / (si::gram * si::kelvin), // wikipedia
+            /*thermal_conductivity*/              401.0 * si::watt / (si::meter * si::kelvin), // wikipedia
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           8960.0 * si::kilogram/si::meter3,
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  
+                field::SpectralFunction<double>([](
+                    const si::wavenumber nlo, 
+                    const si::wavenumber nhi, 
+                    const si::pressure p, 
+                    const si::temperature T
+                ) {
+                    double l = (2.0 / (nhi+nlo) / si::micrometer);
+                    constexpr double n = 0.059513f; 
+                    constexpr double dndl = 13.100f;
+                    return n + dndl * l;
+                }),
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   1.683e11*si::pascal,
+            /*shear_modulus*/                     0.757e11*si::pascal,
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     0.33,
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         220.0 * si::megapascal, // engineering toolbox
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            70.0 * si::megapascal, // engineering toolbox
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
+// magnetite, Fe3O4
+// representative of siderophile ores, and for surfaces of mars and maybe venus
+PartlyKnownCompound  magnetite {
+    /*molar_mass*/                        231.53 * si::gram/si::mole,
+    /*atoms_per_molecule*/                7u,
+    /*molecular_diameter*/                field::missing(),
+    /*molecular_degrees_of_freedom*/      6.0,
+    /*acentric_factor*/                   field::missing(),
+
+    /*critical_point_pressure*/           field::missing(),
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        field::missing(),
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       field::missing(),
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             field::missing(),
+    /*triple_point_temperature*/          field::missing(),
+    /*freezing_point_sample_pressure*/    field::missing(),
+    /*freezing_point_sample_temperature*/ field::missing(),
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+
+    /*molecular_absorption_cross_section*/ field::missing(),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+
+            /*specific_heat_capacity*/            0.6 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988)
+            /*thermal_conductivity*/              5.1 * si::watt / (si::centimeter * si::kelvin), // Cermak (1988), wikipedia, for vitrous silica
+            /*dynamic_viscosity*/                 3e8 * si::pascal * si::second, // Melosh (2011), from Hiesinger (2007), for venusian lava flows, middle of range on log scale
+            /*density*/                           5170.0 * si::kilogram/si::meter3,
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  
+                field::SpectralFunction<double>([](
+                    const si::wavenumber nlo, 
+                    const si::wavenumber nhi, 
+                    const si::pressure p, 
+                    const si::temperature T
+                ) {
+                    double l = (2.0 / (nhi+nlo) / si::micrometer);
+                    return math::lerp(
+                            std::vector<double>{-0.68, -0.59, -0.49, -0.40, -0.32, -0.15, 0.00, 0.10, 0.50, 0.88, 1.06, 1.12, 1.23, 1.26, 1.30, 1.40, 1.47, 1.52, 1.55, 1.61, 1.74},
+                            std::vector<double>{ 2.26,  2.43,  2.43,  2.49,  2.39,  2.39, 2.14, 2.13, 3.06, 3.59, 3.62, 3.52, 3.46, 5.29, 4.45, 4.39, 7.35, 6.48, 6.33, 6.55, 7.90},
+                            log10(l)
+                        );
+                }),
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   2.730e11*si::pascal,
+            /*shear_modulus*/                     0.971e11*si::pascal,
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
+// chalcocite, Cu2S, 
+// representative of chalcophile ores, and for surfaces of maybe venus and mercury
+PartlyKnownCompound chalcocite {
+    /*molar_mass*/                        159.16 * si::gram/si::mole, 
+    /*atoms_per_molecule*/                3u,
+    /*molecular_diameter*/                field::missing(),
+    /*molecular_degrees_of_freedom*/      6.0,
+    /*acentric_factor*/                   field::missing(),
+
+    /*critical_point_pressure*/           field::missing(),
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        field::missing(),
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       field::missing(),
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             field::missing(),
+    /*triple_point_temperature*/          field::missing(),
+    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_temperature*/ 1130.0 * si::celcius, // wikipedia
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+
+    /*molecular_absorption_cross_section*/ field::missing(),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+
+            /*specific_heat_capacity*/            field::missing(),
+            /*thermal_conductivity*/              field::missing(),
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           5600.0 * si::kilogram/si::meter3,
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  field::missing(),
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   field::missing(),
+            /*shear_modulus*/                     field::missing(),
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
+// chalcopyrite, Cu2S, 
+// representative of chalcophile ores, and for surfaces of maybe venus and mercury
+PartlyKnownCompound  chalcopyrite {
+    /*molar_mass*/                        183.5 * si::gram/si::mole,
+    /*atoms_per_molecule*/                3u,
+    /*molecular_diameter*/                field::missing(),
+    /*molecular_degrees_of_freedom*/      6.0,
+    /*acentric_factor*/                   field::missing(),
+
+    /*critical_point_pressure*/           field::missing(),
+    /*critical_point_volume*/             field::missing(),
+    /*critical_point_temperature*/        field::missing(),
+    /*critical_point_compressibility*/    field::missing(),
+
+    /*latent_heat_of_vaporization*/       field::missing(),
+    /*latent_heat_of_fusion*/             field::missing(),
+    /*triple_point_pressure*/             field::missing(),
+    /*triple_point_temperature*/          field::missing(),
+    /*freezing_point_sample_pressure*/    field::missing(),
+    /*freezing_point_sample_temperature*/ field::missing(),
+    /*simon_glatzel_slope*/               field::missing(),
+    /*simon_glatzel_exponent*/            field::missing(),
+
+    /*molecular_absorption_cross_section*/ field::missing(),
+
+    /*gas*/
+    phase::PartlyKnownGas {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*liquid*/
+    phase::PartlyKnownLiquid {
+        /*specific_heat_capacity*/ field::missing(),
+        /*thermal_conductivity*/   field::missing(),
+        /*dynamic_viscosity*/      field::missing(),
+        /*density*/                field::missing(),
+        /*vapor_pressure*/         field::missing(),
+        /*refractive_index*/       field::missing()
+    },
+
+    /*solid*/ 
+    std::vector<phase::PartlyKnownSolid>{
+        phase::PartlyKnownSolid {
+
+            /*specific_heat_capacity*/            0.54 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988), for chalcopyrite
+            /*thermal_conductivity*/              8.19 * si::watt / (si::centimeter * si::kelvin), // Cermak (1988), for chalcopyrite
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           field::missing(),
+            /*vapor_pressure*/                    field::missing(),
+            /*refractive_index*/                  field::missing(),
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   field::missing(),
+            /*shear_modulus*/                     field::missing(),
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }
+    }
+};
 
 
 
