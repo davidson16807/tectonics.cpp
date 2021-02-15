@@ -53,55 +53,28 @@ namespace{
     template<typename Tx, typename Ty>
     field::OptionalStateField<Ty> get_exponential_temperature_function(
         const Tx xunits, const Ty yunits,
-        const double x0, const double x1, const double x2, 
-        const double y0, const double y1, const double y2)
-    {
+        const std::vector<double>xs, 
+        const std::vector<double>ys
+    ){
         return field::StateFunction<Ty>(
-            [xunits, yunits, x0,x1,x2, y0,y1,y2]
+            [xunits, yunits, xs, ys]
             (const si::pressure p, const si::temperature T)
             {
-                return math::lerp(
-                    std::vector<double>{x0, x1, x2},
-                    std::vector<double>{y0, y1, y2},
-                    T/xunits
-                ) * yunits;
+                return math::lerp(xs, ys, T/xunits) * yunits;
             }
         );
     }
     template<typename Tx, typename Ty>
     field::OptionalStateField<Ty> get_interpolated_temperature_function(
         const Tx xunits, const Ty yunits,
-        const double x0, const double x1, const double x2, 
-        const double y0, const double y1, const double y2)
-    {
+        const std::vector<double>xs, 
+        const std::vector<double>ys
+    ){
         return field::StateFunction<Ty>(
-            [xunits, yunits, x0,x1,x2, y0,y1,y2]
+            [xunits, yunits, xs, ys]
             (const si::pressure p, const si::temperature T)
             {
-                return math::lerp(
-                    std::vector<double>{x0, x1, x2},
-                    std::vector<double>{y0, y1, y2},
-                    T/xunits
-                ) * yunits;
-            }
-        );
-    }
-
-    template<typename Tx, typename Ty>
-    field::OptionalStateField<Ty> get_linear_temperature_function(
-        const Tx xunits, const Ty yunits,
-        const double x0, const double x1, 
-        const double y0, const double y1)
-    {
-        return field::StateFunction<Ty>(
-            [xunits, yunits, x0,x1, y0,y1]
-            (const si::pressure p, const si::temperature T)
-            {
-                return math::lerp(
-                    std::vector<double>{x0, x1},
-                    std::vector<double>{y0, y1},
-                    T/xunits
-                ) * yunits;
+                return math::lerp(xs, ys, T/xunits) * yunits;
             }
         );
     }
@@ -158,13 +131,13 @@ PartlyKnownCompound water {
         /*thermal_conductivity*/   // 0.016 * si::watt / (si::meter * si::kelvin),                     // wikipedia
             get_exponential_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                  300.0, 400.0,  600.0,
-                   18.7,  27.1,   47.1),
+                  std::vector<double>{300.0,     400.0,     600.0},
+                  std::vector<double>{ 18.7,     27.1,      47.1}),
         /*dynamic_viscosity*/      // 1.24e-5 * si::pascal * si::second,                               // engineering toolbox, at 100 C
             get_exponential_temperature_function
                 (si::kelvin, si::micropascal*si::second,
-                 300.0, 400.0, 600.0,              
-                 10.0,   13.3,   21.4),
+                 std::vector<double>{300.0,     400.0,     600.0},              
+                 std::vector<double>{10.0,      13.3,      21.4}),
         /*density*/                0.6* si::kilogram/si::meter3,
         /*refractive_index*/       1.000261                                                         // engineering toolbox
     },
@@ -175,13 +148,13 @@ PartlyKnownCompound water {
         /*thermal_conductivity*/   // 0.6062 * si::watt / (si::meter * si::kelvin), 
             get_exponential_temperature_function
                 (si::celcius, si::watt/(si::meter*si::kelvin),
-                0.0, 25.0, 100.0,
-                 0.5562, 0.6062,   0.6729),
+                std::vector<double>{0.0,     25.0,     100.0},
+                std::vector<double>{ 0.5562, 0.6062,   0.6729}),
         /*dynamic_viscosity*/      
             get_exponential_temperature_function
                 (si::celcius, si::millipascal*si::second, 
-                 0.0  ,                 25.0  ,                 75.0,
-                 1.793,  0.890 ,  0.378 ),
+                 std::vector<double>{0.0  ,     25.0  ,     75.0},
+                 std::vector<double>{1.793,     0.890 ,     0.378 }),
         /*density*/                997.0 * si::kilogram/si::meter3,                                
         /*vapor_pressure*/         
             field::StateFunction<si::pressure>([](const si::pressure p, const si::temperature T) {
@@ -215,8 +188,8 @@ PartlyKnownCompound water {
             /*vapor_pressure*/                    //138.268 * si::megapascal,
                 get_exponential_temperature_function
                     (si::kelvin, si::pascal,
-                     190.0, 240.0,  270.0, 
-                     0.032, 27.28, 470.1),
+                     std::vector<double>{190.0,     240.0,     270.0}, 
+                     std::vector<double>{0.032,     27.28,     470.1}),
             /*refractive_index*/                  1.3098,
             /*spectral_reflectance*/              0.9,
 
@@ -284,13 +257,13 @@ PartlyKnownCompound nitrogen {
         /*thermal_conductivity*/   // 0.0234 * si::watt / (si::meter * si::kelvin),                    // wikipedia
             get_exponential_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                 100.0, 300.0,600.0,
-                 9.8,  26.0,   44.0),
+                 std::vector<double>{100.0,     300.0,     600.0},
+                 std::vector<double>{9.8,       26.0,      44.0}),
         /*dynamic_viscosity*/      // 1.76e-5 * si::pascal * si::second,                               // engineering toolbox, at 20 C
             get_exponential_temperature_function
                 (si::kelvin, si::micropascal*si::second,
-                 200.0, 300.0, 600.0,              
-                 12.9,   17.9,   29.6),
+                 std::vector<double>{200.0,     300.0,     600.0},              
+                 std::vector<double>{12.9,      17.9,      29.6}),
         /*density*/                4.622 * si::gram/si::liter,
         /*refractive_index*/       
             field::SpectralFunction<double>([](
@@ -334,8 +307,8 @@ PartlyKnownCompound nitrogen {
             /*vapor_pressure*/                    
                 get_exponential_temperature_function
                     (si::celcius, si::pascal,
-                      -236.0, -226.8,  -211.1, 
-                     1.0,   100.0,    10e3),
+                      std::vector<double>{-236.0,     -226.8,     -211.1}, 
+                     std::vector<double>{1.0,         100.0,      10e3}),
             /*refractive_index*/                  1.25,                                             // wikipedia
             /*spectral_reflectance*/              field::missing(),
 
@@ -413,13 +386,13 @@ PartlyKnownCompound oxygen {
         /*thermal_conductivity*/   // 0.0238 * si::watt / (si::meter * si::kelvin),                    // wikipedia
             get_exponential_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                 100.0, 300.0,600.0,
-                 9.3,  26.3,   48.1),
+                 std::vector<double>{100.0,     300.0,     600.0},
+                 std::vector<double>{9.3,       26.3,      48.1}),
         /*dynamic_viscosity*/      // 2.04e-5 * si::pascal * si::second,                               // engineering toolbox, at 20 C
             get_exponential_temperature_function
                 (si::kelvin, si::micropascal*si::second,
-                 100.0, 300.0, 600.0,              
-                 7.5,   20.8,   35.1),
+                 std::vector<double>{100.0,     300.0,     600.0},              
+                 std::vector<double>{7.5,       20.8,      35.1}),
         /*density*/                4.467* si::gram/si::liter,
         /*refractive_index*/       // 1.0002709,
         field::SpectralFunction<double>([](
@@ -444,8 +417,8 @@ PartlyKnownCompound oxygen {
         /*vapor_pressure*/         
                 get_exponential_temperature_function
                     (si::celcius, si::kilopascal,
-                     -211.9, -200.5,     -183.1, 
-                     1.0,    10.0,  100.0),
+                     std::vector<double>{-211.9,     -200.5,     -183.1}, 
+                     std::vector<double>{1.0,        10.0,       100.0}),
         /*refractive_index*/       1.2243
     },
 
@@ -526,13 +499,13 @@ PartlyKnownCompound carbon_dioxide {
         /*thermal_conductivity*/   // 0.01662 * si::watt / ( si::meter * si::kelvin ),                 // wikipedia
             get_exponential_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                 200.0, 300.0,600.0,
-                 9.6,  16.8,   41.6),
+                 std::vector<double>{200.0,     300.0,     600.0},
+                 std::vector<double>{9.6,       16.8,      41.6}),
         /*dynamic_viscosity*/      // 1.47e-5 * si::pascal * si::second,                               // engineering toolbox, at 20 C
             get_exponential_temperature_function
                 (si::kelvin, si::micropascal*si::second,
-                 200.0, 300.0, 600.0,              
-                 10.0,   15.0,   28.0),
+                 std::vector<double>{200.0,     300.0,     600.0},              
+                 std::vector<double>{10.0,      15.0,      28.0}),
         /*density*/                field::missing(),
         /*refractive_index*/       // 1.0004493,
         field::SpectralFunction<double>([](
@@ -561,8 +534,8 @@ PartlyKnownCompound carbon_dioxide {
         /*vapor_pressure*/         
                 get_exponential_temperature_function
                     (si::celcius, si::pascal,
-                     -159.1, -121.6,      -78.6, 
-                     1.0 ,     1e3,  100e3),
+                     std::vector<double>{-159.1,     -121.6,     -78.6}, 
+                     std::vector<double>{1.0 ,       1e3,        100e3}),
         /*refractive_index*/       1.6630
     },
 
@@ -577,8 +550,8 @@ PartlyKnownCompound carbon_dioxide {
             /*vapor_pressure*/                    
                 get_exponential_temperature_function
                     (si::kelvin, si::kilopascal,
-                     130.0,     170.0,      205.0,     
-                     0.032,  9.98, 227.1),
+                     std::vector<double>{130.0,     170.0,     205.0},     
+                     std::vector<double>{0.032,     9.98,      227.1}),
             /*refractive_index*/                  1.4,                                              // Warren (1986)
             /*spectral_reflectance*/              field::missing(),
 
@@ -646,13 +619,13 @@ PartlyKnownCompound methane {
         /*thermal_conductivity*/   // 34.4 * si::milliwatt / ( si::meter * si::kelvin ),               // Huber & Harvey
             get_exponential_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                 200.0, 300.0,600.0,
-                 22.5,  34.1,   84.1),
+                 std::vector<double>{200.0,     300.0,     600.0},
+                 std::vector<double>{22.5,      34.1,      84.1}),
         /*dynamic_viscosity*/      // 1.10e-5 * si::pascal * si::second,                               // engineering toolbox, at 20 C
             get_exponential_temperature_function
                 (si::kelvin, si::micropascal*si::second,
-                 200.0, 300.0, 600.0,              
-                 7.7,   11.2,   19.4),
+                 std::vector<double>{200.0,     300.0,     600.0},              
+                 std::vector<double>{7.7,       11.2,      19.4}),
         /*density*/                1.816* si::gram/si::liter,
         /*refractive_index*/       // 1.000444,
         field::SpectralFunction<double>([](
@@ -679,8 +652,8 @@ PartlyKnownCompound methane {
         /*vapor_pressure*/         
                 get_exponential_temperature_function
                     (si::celcius, si::kilopascal,
-                     -197.0, -183.6,     -161.7, 
-                     1.0,    10.0,  100.0),
+                     std::vector<double>{-197.0,     -183.6,     -161.7}, 
+                     std::vector<double>{1.0,        10.0,       100.0}),
         /*refractive_index*/       1.2730, 
     },
 
@@ -696,8 +669,8 @@ PartlyKnownCompound methane {
             /*vapor_pressure*/                    
                 get_exponential_temperature_function
                     (si::kelvin, si::kilopascal,
-                      65.0,      75.0,       85.0,     
-                     0.1 ,  0.8 ,  4.9 ),
+                      std::vector<double>{65.0,     75.0,     85.0},     
+                      std::vector<double>{0.1 ,      0.8 ,     4.9 }),
             /*refractive_index*/                  1.3219,
             /*spectral_reflectance*/              field::missing(),
 
@@ -754,13 +727,13 @@ PartlyKnownCompound argon {
         /*thermal_conductivity*/   // 0.016 * si::watt / ( si::meter * si::kelvin ),                   // wikipedia
             get_exponential_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                 100.0, 300.0,600.0,
-                 6.2,  17.9,   30.6),
+                 std::vector<double>{100.0,     300.0,     600.0},
+                 std::vector<double>{6.2,       17.9,      30.6}),
         /*dynamic_viscosity*/      // 2.23e-5 * si::pascal * si::second,                               // engineering toolbox, at 20 C
             get_exponential_temperature_function
                 (si::kelvin, si::micropascal*si::second,
-                 100.0, 300.0, 600.0,              
-                 8.0,   22.9,   39.0),
+                 std::vector<double>{100.0,     300.0,     600.0},              
+                 std::vector<double>{8.0,       22.9,      39.0}),
         /*density*/                5.79 * si::gram/si::liter,
         /*refractive_index*/       // 1.000281,
         field::SpectralFunction<double>([](
@@ -787,8 +760,8 @@ PartlyKnownCompound argon {
         /*vapor_pressure*/         
                 get_exponential_temperature_function
                     (si::celcius, si::kilopascal,
-                     -212.4, -201.7,     -186.0, 
-                     1.0 ,    10.0,  100.0),
+                     std::vector<double>{-212.4,     -201.7,     -186.0}, 
+                     std::vector<double>{1.0 ,       10.0,       100.0}),
         /*refractive_index*/       1.23
     },
 
@@ -802,8 +775,8 @@ PartlyKnownCompound argon {
             /*vapor_pressure*/                    
                 get_exponential_temperature_function
                     (si::kelvin, si::kilopascal,
-                     55.0,    65.0,     75.0, 
-                     0.2, 2.8, 18.7),
+                     std::vector<double>{55.0,     65.0,     75.0}, 
+                     std::vector<double>{0.2,      2.8,      18.7}),
             /*refractive_index*/                  1.2703,
             /*spectral_reflectance*/              field::missing(),
 
@@ -859,13 +832,13 @@ PartlyKnownCompound helium {
         /*thermal_conductivity*/   // 155.7 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
             get_exponential_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                 100.0, 300.0,600.0,
-                 75.5, 156.7,  252.4),
+                 std::vector<double>{100.0,     300.0,     600.0},
+                 std::vector<double>{75.5,      156.7,     252.4}),
         /*dynamic_viscosity*/      // 1.96e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
             get_exponential_temperature_function
                 (si::kelvin, si::micropascal*si::second,
-                 100.0, 300.0, 600.0,              
-                 9.7,   20.0,   32.3),
+                 std::vector<double>{100.0,     300.0,     600.0},              
+                 std::vector<double>{9.7,       20.0,      32.3}),
         /*density*/                16.89 * si::gram/si::liter,
         /*refractive_index*/       //1.000036,
         field::SpectralFunction<double>([](
@@ -890,8 +863,8 @@ PartlyKnownCompound helium {
         /*vapor_pressure*/         
                 get_exponential_temperature_function
                     (si::kelvin, si::kilopascal,
-                         2.2,     3.6,         5.0,  
-                     5.3,    52.9,  195.4),
+                         std::vector<double>{2.2,     3.6,     5.0},  
+                         std::vector<double>{5.3,    52.9,     195.4}),
         /*refractive_index*/       1.02451
     },
 
@@ -968,13 +941,13 @@ PartlyKnownCompound hydrogen {
         /*thermal_conductivity*/   // 186.6 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
             get_exponential_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                 100.0, 300.0,400.0,
-                 68.6, 186.9,  230.4),
+                 std::vector<double>{100.0,     300.0,     400.0},
+                 std::vector<double>{68.6,      186.9,     230.4}),
         /*dynamic_viscosity*/      // 0.88e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
             get_exponential_temperature_function
                 (si::kelvin, si::micropascal*si::second,
-                 100.0, 300.0, 600.0,              
-                 4.2,    9.0,   14.4),
+                 std::vector<double>{100.0,     300.0,     600.0},              
+                 std::vector<double>{4.2,       9.0,       14.4}),
         /*density*/                1.3390 * si::gram/si::liter,
         /*refractive_index*/       // 1.0001392,
         field::SpectralFunction<double>([](
@@ -999,8 +972,8 @@ PartlyKnownCompound hydrogen {
         /*vapor_pressure*/         
                 get_exponential_temperature_function
                     (si::kelvin, si::kilopascal,
-                        14.0,    23.0,        32.0,  
-                     7.9,   209.0, 1119.0),
+                        std::vector<double>{14.0,     23.0,     32.0},  
+                        std::vector<double>{7.9,      209.0,    1119.0}),
         /*refractive_index*/       1.1096
     },
 
@@ -1078,8 +1051,8 @@ PartlyKnownCompound ammonia {
         /*thermal_conductivity*/   // 25.1 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
             get_exponential_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                 300.0, 400.0,600.0,
-                 24.4,  37.4,   66.8),
+                 std::vector<double>{300.0,     400.0,     600.0},
+                 std::vector<double>{24.4,      37.4,      66.8}),
         /*dynamic_viscosity*/      0.99e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
         /*density*/                field::missing(),
         /*refractive_index*/       //1.000376,
@@ -1105,8 +1078,8 @@ PartlyKnownCompound ammonia {
         /*vapor_pressure*/         
                 get_exponential_temperature_function
                     (si::celcius, si::kilopascal,
-                     -139.0,  -71.3,      -36.6, 
-                     1.0,   10.0,  100.0),
+                     std::vector<double>{-139.0,     -71.3,     -36.6}, 
+                     std::vector<double>{1.0,        10.0,      100.0}),
         /*refractive_index*/       1.3944,
     },
 
@@ -1120,8 +1093,8 @@ PartlyKnownCompound ammonia {
             /*vapor_pressure*/                    
                 get_exponential_temperature_function
                     (si::kelvin, si::kilopascal,
-                     160.0,     180.0,      190.0,     
-                     0.1  , 1.2  , 3.5  ),
+                     std::vector<double>{160.0,     180.0,     190.0},     
+                     std::vector<double>{0.1  ,     1.2  ,     3.5  }),
             /*refractive_index*/                  field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
@@ -1199,8 +1172,8 @@ PartlyKnownCompound ozone {
         /*vapor_pressure*/         
                 get_exponential_temperature_function
                     (si::celcius, si::pascal,
-                     -189.0, -158.0,     -111.5, 
-                     1.0 ,     1e3,  100e3),
+                     std::vector<double>{-189.0,     -158.0,     -111.5}, 
+                     std::vector<double>{1.0 ,       1e3,        100e3}),
         /*refractive_index*/       1.2226
     },
 
@@ -1278,13 +1251,13 @@ PartlyKnownCompound nitrous_oxide {
         /*thermal_conductivity*/   // 17.4 * si::milliwatt/(si::meter*si::kelvin), // Huber & Harvey
             get_exponential_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                 200.0, 300.0,600.0,
-                 9.8,  17.4,   41.8),
+                 std::vector<double>{200.0,     300.0,     600.0},
+                 std::vector<double>{9.8,       17.4,      41.8}),
         /*dynamic_viscosity*/      // 1.47e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
             get_exponential_temperature_function
                 (si::kelvin, si::micropascal*si::second,
-                 200.0, 300.0, 600.0,              
-                 10.0,   15.0,   27.4),
+                 std::vector<double>{200.0,     300.0,     600.0},              
+                 std::vector<double>{10.0,      15.0,      27.4}),
         /*density*/                field::missing(),
         /*refractive_index*/       1.000516
     },
@@ -1298,8 +1271,8 @@ PartlyKnownCompound nitrous_oxide {
         /*vapor_pressure*/         
                 get_exponential_temperature_function
                     (si::celcius, si::kilopascal,
-                     -131.1, -112.9,      -88.7, 
-                     1.0,    10.0,  100.0),
+                     std::vector<double>{-131.1,     -112.9,     -88.7}, 
+                     std::vector<double>{1.0,        10.0,       100.0}),
         /*refractive_index*/       1.238
     },
 
@@ -1377,13 +1350,13 @@ PartlyKnownCompound  sulfur_dioxide {
         /*thermal_conductivity*/   // 9.6 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
             get_exponential_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                 300.0, 400.0,600.0,
-                 9.6,  14.3,   25.6),
+                 std::vector<double>{300.0,     400.0,     600.0},
+                 std::vector<double>{9.6,       14.3,      25.6}),
         /*dynamic_viscosity*/      // 1.26e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
             get_exponential_temperature_function
                 (si::kelvin, si::micropascal*si::second,
-                 200.0, 300.0, 500.0,              
-                 8.6,   12.9,   21.7),
+                 std::vector<double>{200.0,     300.0,     500.0},              
+                 std::vector<double>{8.6,       12.9,      21.7}),
         /*density*/                field::missing(),
         /*refractive_index*/       1.000686
     },
@@ -1397,8 +1370,8 @@ PartlyKnownCompound  sulfur_dioxide {
         /*vapor_pressure*/         
                 get_exponential_temperature_function
                     (si::celcius, si::kilopascal,
-                      -80.0,  -52.0,      -10.3, 
-                     1.0,    10.0,  100.0),
+                      std::vector<double>{-80.0,     -52.0,     -10.3}, 
+                       std::vector<double>{1.0,        10.0,      100.0}),
         /*refractive_index*/       1.3396
     },
 
@@ -1476,13 +1449,13 @@ PartlyKnownCompound  sulfur_dioxide {
         /*thermal_conductivity*/   // 25.9 * si::milliwatt/(si::meter*si::kelvin), // Huber & Harvey
             get_exponential_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                 200.0, 300.0,600.0,
-                 17.8,  25.9,   46.2),
+                 std::vector<double>{200.0,     300.0,     600.0},
+                 std::vector<double>{17.8,      25.9,      46.2}),
         /*dynamic_viscosity*/      // 0.0188 * si::millipascal * si::second, //pubchem
             get_exponential_temperature_function
                 (si::kelvin, si::micropascal*si::second,
-                 200.0, 300.0, 600.0,              
-                 13.8,   19.2,   31.9),
+                 std::vector<double>{200.0,     300.0,     600.0},              
+                 std::vector<double>{13.8,      19.2,      31.9}),
         /*density*/                field::missing(),
         /*refractive_index*/       1.000297
     },
@@ -1496,8 +1469,8 @@ PartlyKnownCompound  sulfur_dioxide {
         /*vapor_pressure*/         
                 get_exponential_temperature_function
                     (si::celcius, si::kilopascal,
-                     -179.3, -168.1,     -159.9, 
-                     1.0,   10.0,  100.0),
+                     std::vector<double>{-179.3,     -168.1,     -159.9}, 
+                     std::vector<double>{1.0,        10.0,       100.0}),
         /*refractive_index*/       1.330
     },
 
@@ -1511,8 +1484,8 @@ PartlyKnownCompound  sulfur_dioxide {
             /*vapor_pressure*/                    
                 get_exponential_temperature_function
                     (si::kelvin, si::kilopascal,
-                      85.0,      95.0,      105.0,     
-                     0.1 ,  1.3 , 10.0 ),
+                      std::vector<double>{85.0,     95.0,     105.0},     
+                      std::vector<double>{0.1 ,      1.3 ,     10.0 }),
             /*refractive_index*/                  field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
@@ -1578,13 +1551,13 @@ PartlyKnownCompound carbon_monoxide {
         /*thermal_conductivity*/   // 25.0 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
             get_exponential_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                 300.0, 400.0,600.0,
-                 25.0,  32.3,   45.7),
+                 std::vector<double>{300.0,     400.0,     600.0},
+                 std::vector<double>{25.0,      32.3,      45.7}),
         /*dynamic_viscosity*/      // 1.74e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
             get_exponential_temperature_function
                 (si::kelvin, si::micropascal*si::second,
-                 100.0, 300.0, 600.0,              
-                 6.7,   17.8,   29.1),
+                 std::vector<double>{100.0,     300.0,     600.0},              
+                 std::vector<double>{6.7,       17.8,      29.1}),
         /*density*/                field::missing(),
         /*refractive_index*/       // 1.00036320, //https://refractiveindex.info
         field::SpectralFunction<double>([](
@@ -1609,8 +1582,8 @@ PartlyKnownCompound carbon_monoxide {
         /*vapor_pressure*/         
                 get_exponential_temperature_function
                     (si::celcius, si::pascal,
-                     -223.0, -216.5,     -191.7, 
-                     100.0 ,     1e3,  100e3),
+                     std::vector<double>{-223.0,     -216.5,     -191.7}, 
+                     std::vector<double>{100.0 ,     1e3,        100e3}),
         /*refractive_index*/       //1.33336f,
         field::SpectralFunction<double>([](
             const si::wavenumber nlo, 
@@ -1637,8 +1610,8 @@ PartlyKnownCompound carbon_monoxide {
             /*vapor_pressure*/                    
                 get_exponential_temperature_function
                     (si::kelvin, si::kilopascal,
-                      50.0,      55.0,       65.0,     
-                     0.1 ,  0.6 ,  8.2 ),
+                      std::vector<double>{50.0,     55.0,     65.0},     
+                      std::vector<double>{0.1 ,      0.6 ,     8.2 }),
             /*refractive_index*/                  field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
@@ -1705,13 +1678,13 @@ PartlyKnownCompound ethane {
         /*thermal_conductivity*/   // 21.2 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
             get_exponential_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                 200.0, 300.0,600.0,
-                 11.0,  21.3,   70.5),
+                 std::vector<double>{200.0,     300.0,     600.0},
+                 std::vector<double>{11.0,      21.3,      70.5}),
         /*dynamic_viscosity*/      // 9.4 * si::micropascal*si::second,
             get_exponential_temperature_function
                 (si::kelvin, si::micropascal*si::second,
-                 200.0, 300.0, 600.0,              
-                 6.4,    9.5,   17.3),
+                 std::vector<double>{200.0,     300.0,     600.0},              
+                 std::vector<double>{6.4,       9.5,       17.3}),
         /*density*/                field::missing(),
         /*refractive_index*/       // 1.0377,
         field::SpectralFunction<double>([](
@@ -1736,8 +1709,8 @@ PartlyKnownCompound ethane {
         /*vapor_pressure*/         
                 get_exponential_temperature_function
                     (si::celcius, si::pascal,
-                     -183.3, -145.3,      -88.8, 
-                     1.0 ,     1e3,  100e3),
+                     std::vector<double>{-183.3,     -145.3,     -88.8}, 
+                     std::vector<double>{1.0 ,       1e3,        100e3}),
         /*refractive_index*/       //1.33336f,
         field::SpectralFunction<double>([](
             const si::wavenumber nlo, 
@@ -1837,16 +1810,16 @@ PartlyKnownCompound hydrogen_cyanide {
         /*specific_heat_capacity*/ field::missing(),
         /*thermal_conductivity*/   field::missing(),
         /*dynamic_viscosity*/      
-            get_linear_temperature_function
+            get_interpolated_temperature_function
                 (si::celcius, si::millipascal*si::second, 
-                 0.0  ,                 25.0  ,              
-                    0.235,  0.183 ),
+                 std::vector<double>{0.0,   25.0},
+                 std::vector<double>{0.235, 0.183} ),
         /*density*/                687.6 * si::kilogram/si::meter3,
         /*vapor_pressure*/         
             get_exponential_temperature_function
                 (si::celcius, si::kilopascal,
-                  -52.6,  -22.7,       25.4, 
-                 1.0,    10.0,  100.0),
+                 std::vector<double>{-52.6,     -22.7,      25.4}, 
+                 std::vector<double>{1.0,        10.0,      100.0}),
         /*refractive_index*/       1.2614
     },
 
@@ -1860,8 +1833,8 @@ PartlyKnownCompound hydrogen_cyanide {
             /*vapor_pressure*/                    
                 get_exponential_temperature_function
                     (si::kelvin, si::kilopascal,
-                     200.0,     230.0,      250.0,     
-                     0.2  , 2.2  , 9.7  ),
+                     std::vector<double>{200.0,     230.0,     250.0},     
+                     std::vector<double>{0.2  ,     2.2  ,     9.7  }),
             /*refractive_index*/                  field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
@@ -1917,13 +1890,13 @@ PartlyKnownCompound ethanol {
         /*thermal_conductivity*/   // 14.4 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
             get_exponential_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                 300.0, 300.0,600.0,
-                 14.4,  25.8,   53.2),
+                 std::vector<double>{300.0,     300.0,     600.0},
+                 std::vector<double>{14.4,      25.8,      53.2}),
         /*dynamic_viscosity*/      
             get_exponential_temperature_function
                 (si::kelvin, si::micropascal*si::second,
-                 400.0, 500.0, 600.0,              
-                 11.6,   14.5,   17.0),
+                 std::vector<double>{400.0,     500.0,     600.0},              
+                 std::vector<double>{11.6,      14.5,      17.0}),
         /*density*/                field::missing(),
         /*refractive_index*/       field::missing()
     },
@@ -1934,19 +1907,19 @@ PartlyKnownCompound ethanol {
         /*thermal_conductivity*/   // 0.167 * si::watt / ( si::meter * si::kelvin ),
             get_exponential_temperature_function
                 (si::celcius, si::watt/(si::meter*si::kelvin),
-                -25.0, 0.0, 100.0,
-                 0.181 , 0.1742,   0.148 ),
+                std::vector<double>{-25.0,     0.0,     100.0},
+                std::vector<double>{ 0.181 ,   0.1742,  0.148 }),
         /*dynamic_viscosity*/      
             get_exponential_temperature_function
                 (si::celcius, si::millipascal*si::second, 
-               -25.0  ,                 25.0  ,                 75.0,
-                 3.262,  1.074 ,  0.476 ),
+               std::vector<double>{-25.0  ,     25.0  ,     75.0},
+               std::vector<double>{  3.262,     1.074 ,     0.476 }),
         /*density*/                0789.3 * si::kilogram/si::meter3,
         /*vapor_pressure*/         
                 get_exponential_temperature_function
                     (si::celcius, si::pascal,
-                      -73.0,   -7.0,       78.0, 
-                     1.0 ,     1e3,  100e3),
+                      std::vector<double>{-73.0,     -7.0,     78.0}, 
+                     std::vector<double>{1.0 ,       1e3,      100e3}),
         /*refractive_index*/       //1.361,  // wikipedia data page
         field::SpectralFunction<double>([](
             const si::wavenumber nlo, 
@@ -2048,8 +2021,8 @@ PartlyKnownCompound formaldehyde {
         /*vapor_pressure*/         
                 get_exponential_temperature_function
                     (si::celcius, si::kilopascal,
-                      -91.0,  -61.7,      -19.3, 
-                     1.0,    10.0,  100.0),
+                      std::vector<double>{-91.0,     -61.7,     -19.3}, 
+                     std::vector<double>{1.0,        10.0,      100.0}),
         /*refractive_index*/       1.3714  // wikipedia
     },
 
@@ -2125,15 +2098,15 @@ PartlyKnownCompound formic_acid {
         /*thermal_conductivity*/   // 0.267 * si::watt / (si::meter * si::kelvin),
             get_exponential_temperature_function
                 (si::celcius, si::watt/(si::meter*si::kelvin),
-                25.0, 50.0, 100.0,
-                 0.267 , 0.2652,   0.261 ),
+                std::vector<double>{25.0,     50.0,     100.0},
+                std::vector<double>{ 0.267 ,  0.2652,   0.261 }),
         /*dynamic_viscosity*/      1.607 * si::millipascal*si::second,
         /*density*/                1220.0 * si::kilogram/si::meter3,
         /*vapor_pressure*/         
                 get_exponential_temperature_function
                     (si::celcius, si::kilopascal,
-                       -0.8,   37.0,      100.2, 
-                     1.0,    10.0,  100.0),
+                       std::vector<double>{-0.8,     37.0,     100.2}, 
+                       std::vector<double>{1.0,        10.0,     100.0}),
         /*refractive_index*/       1.3714 
     },
 
@@ -2147,8 +2120,8 @@ PartlyKnownCompound formic_acid {
             /*vapor_pressure*/                    
                 get_exponential_temperature_function
                     (si::celcius, si::pascal,
-                      -56.0,  -40.4,    -0.8, 
-                     1.0 ,   100.0,     1000.0),
+                      std::vector<double>{-56.0,     -40.4,     -0.8}, 
+                     std::vector<double>{1.0 ,       100.0,     1000.0}),
             /*refractive_index*/                  field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
@@ -2217,8 +2190,8 @@ PartlyKnownCompound perflouromethane{
         /*thermal_conductivity*/   // 16.0 * si::milliwatt/(si::meter*si::kelvin), // Huber & Harvey
             get_exponential_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                 300.0, 400.0,600.0,
-                 16.0,  24.1,   39.9),
+                 std::vector<double>{300.0,     400.0,     600.0},
+                 std::vector<double>{16.0,      24.1,      39.9}),
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                field::missing(),
         /*refractive_index*/       1.0004823
@@ -2233,8 +2206,8 @@ PartlyKnownCompound perflouromethane{
         /*vapor_pressure*/         
                 get_exponential_temperature_function
                     (si::celcius, si::kilopascal,
-                     -171.6, -153.9,     -128.3, 
-                     1.0,     1.0,  100.0),
+                     std::vector<double>{-171.6,     -153.9,     -128.3}, 
+                     std::vector<double>{1.0,        1.0,        100.0}),
         /*refractive_index*/       //1.33336f,
         field::SpectralFunction<double>([](
             const si::wavenumber nlo, 
@@ -2261,8 +2234,8 @@ PartlyKnownCompound perflouromethane{
             /*vapor_pressure*/                    
                 get_exponential_temperature_function
                     (si::celcius, si::pascal,
-                     -199.9, -193.0,  -183.9, 
-                     1.0 ,    10.0,   100.0  ),
+                     std::vector<double>{-199.9,     -193.0,     -183.9}, 
+                     std::vector<double>{1.0 ,       10.0,       100.0  }),
             /*refractive_index*/                  field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
@@ -2338,19 +2311,19 @@ PartlyKnownCompound benzene {
         /*thermal_conductivity*/   // 0.1411 * si::watt / ( si::meter * si::kelvin ),
             get_exponential_temperature_function
                 (si::celcius, si::watt/(si::meter*si::kelvin),
-                25.0, 50.0, 75.0,
-                 0.1411, 0.1329,   0.1247),
+                std::vector<double>{25.0,     50.0,     75.0},
+                std::vector<double>{ 0.1411,  0.1329,   0.1247}),
         /*dynamic_viscosity*/      // 0.601 * si::millipascal * si::second, // engineering toolbox, at 300K
             get_exponential_temperature_function
                 (si::celcius, si::millipascal*si::second, 
-                25.0  ,                 50.0  ,                 75.0,
-                 0.604,  0.436 ,  0.335 ),
+                std::vector<double>{25.0  ,     50.0  ,     75.0},
+                std::vector<double>{ 0.604,     0.436 ,     0.335 }),
         /*density*/                0.8765 * si::gram/si::centimeter3, // wikipedia
         /*vapor_pressure*/         
                 get_exponential_temperature_function
                     (si::celcius, si::kilopascal,
-                      -15.1,   20.0,       79.7, 
-                     1.0,    10.0,  100.0),
+                      std::vector<double>{-15.1,     20.0,     79.7}, 
+                     std::vector<double>{1.0,        10.0,     100.0}),
         /*refractive_index*/       //1.5011,
         field::SpectralFunction<double>([](
             const si::wavenumber nlo, 
@@ -2381,8 +2354,8 @@ PartlyKnownCompound benzene {
             /*vapor_pressure*/                    
                 get_exponential_temperature_function
                     (si::celcius, si::pascal,
-                      -40.0,  -15.1,       20.0, 
-                     100.0 ,     1e3,   10e3),
+                      std::vector<double>{-40.0,     -15.1,     20.0}, 
+                     std::vector<double>{100.0 ,     1e3,       10e3}),
             /*refractive_index*/                  field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
@@ -2524,8 +2497,8 @@ PartlyKnownCompound  halite {
         /*vapor_pressure*/         
                 get_exponential_temperature_function
                     (si::celcius, si::pascal,
-                      835.0,  987.0,     1461.0, 
-                     100.0 ,     1e3,  100e3),
+                      std::vector<double>{835.0,     987.0,     1461.0}, 
+                     std::vector<double>{100.0 ,     1e3,       100e3}),
         /*refractive_index*/       field::missing()
     },
 
@@ -2539,8 +2512,8 @@ PartlyKnownCompound  halite {
             /*vapor_pressure*/                    
                 get_exponential_temperature_function
                     (si::kelvin, si::pascal,
-                       653.0,   733.0,    835.0,  
-                     1.0,    10.0,   100.0 ),
+                       std::vector<double>{653.0,     733.0,     835.0},  
+                       std::vector<double>{1.0,         10.0,      100.0 }),
             /*refractive_index*/                  
                 field::SpectralFunction<double>([](
                     const si::wavenumber nlo, 
@@ -2635,8 +2608,8 @@ PartlyKnownCompound  corundum {
             /*thermal_conductivity*/              // field::StateSample<si::thermal_conductivity>(37.0*si::watt/(si::meter * si::kelvin), si::standard_pressure, 20.0*si::celcius),//azom.com/article.aspx?ArticleId=1948
                 get_interpolated_temperature_function
                     (si::kelvin, si::watt / (si::centimeter * si::kelvin),
-                     4.0, 50.0, 100.0, 
-                     3.0 , 70.0, 30.0), // Timmerhaus (1989)
+                     std::vector<double>{4.0, 50.0, 100.0}, 
+                     std::vector<double>{3.0 , 70.0, 30.0}), // Timmerhaus (1989)
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           3970.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    field::missing(),
@@ -2797,8 +2770,8 @@ PartlyKnownCompound carbon {
         /*vapor_pressure*/         
                 get_exponential_temperature_function
                     (si::celcius, si::pascal,
-                     2566.0, 3016.0,     3635.0, 
-                     1.0 ,     1e3,  100e3),
+                     std::vector<double>{2566.0,     3016.0,     3635.0}, 
+                     std::vector<double>{1.0 ,       1e3,        100e3}),
                                                                          // TOOD: autocomplete vapor pressure for solids/liquids if function is present for other phase
         /*refractive_index*/       field::missing()
     },
@@ -2815,8 +2788,8 @@ PartlyKnownCompound carbon {
             /*vapor_pressure*/                    
                 get_exponential_temperature_function
                     (si::celcius, si::pascal,
-                     2566.0, 3016.0,     3635.0, 
-                     10.0 ,     1e3,  100e3),
+                     std::vector<double>{2566.0,     3016.0,     3635.0}, 
+                     std::vector<double>{10.0 ,      1e3,        100e3}),
             /*refractive_index*/                  
                 field::SpectralFunction<double>([](
                     const si::wavenumber nlo, 
@@ -2981,8 +2954,8 @@ PartlyKnownCompound  quartz {
         /*vapor_pressure*/         
                 get_exponential_temperature_function
                     (si::celcius, si::pascal,
-                     1966.0, 2149.0,  2368.0, 
-                     1.0 ,    10.0,   100.0  ),
+                     std::vector<double>{1966.0,     2149.0,     2368.0}, 
+                     std::vector<double>{1.0 ,       10.0,       100.0  }),
         /*refractive_index*/       field::missing()
     },
     
@@ -2994,8 +2967,8 @@ PartlyKnownCompound  quartz {
             /*thermal_conductivity*/              // 1.36 * si::watt / (si::centimeter * si::kelvin), // Cermak (1988), wikipedia, for vitreous silica
                 get_interpolated_temperature_function
                     (si::kelvin, si::watt / (si::centimeter * si::kelvin),
-                     4.0, 77.0, 200.0, 
-                     0.0001 , 0.003, 0.01), // Timmerhaus (1989), for glass
+                     std::vector<double>{4.0, 77.0, 200.0}, 
+                     std::vector<double>{0.0001 , 0.003, 0.01}), // Timmerhaus (1989), for glass
             /*dynamic_viscosity*/                 std::monostate(),
             /*density*/                           2650.0 *  si::kilogram/si::meter3, // alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
             /*vapor_pressure*/                    std::monostate(),
@@ -3621,8 +3594,8 @@ PartlyKnownCompound  gold {
         /*vapor_pressure*/         
                 get_exponential_temperature_function
                     (si::celcius, si::pascal,
-                     1373.0, 2008.0,     2805.0, 
-                     1.0 ,     1e3,  100e3),
+                     std::vector<double>{1373.0,     2008.0,     2805.0}, 
+                     std::vector<double>{1.0 ,       1e3,        100e3}),
         /*refractive_index*/       field::missing()
     },
 
@@ -3711,8 +3684,8 @@ PartlyKnownCompound  silver {
         /*vapor_pressure*/         
                 get_exponential_temperature_function
                     (si::celcius, si::pascal,
-                     1010.0, 1509.0,     2160.0, 
-                     1.0 ,     1e3,  100e3),
+                     std::vector<double>{1010.0,     1509.0,     2160.0}, 
+                     std::vector<double>{1.0 ,       1e3,        100e3}),
         /*refractive_index*/       field::missing()
     },
 
@@ -3801,8 +3774,8 @@ PartlyKnownCompound  copper {
         /*vapor_pressure*/         
                 get_exponential_temperature_function
                     (si::celcius, si::pascal,
-                     1236.0, 1816.0,     2563.0, 
-                     1.0 ,     1e3,  100e3),
+                     std::vector<double>{1236.0,     1816.0,     2563.0}, 
+                     std::vector<double>{1.0 ,       1e3,        100e3}),
         /*refractive_index*/       field::missing()
     },
 
@@ -3815,8 +3788,8 @@ PartlyKnownCompound  copper {
             /*thermal_conductivity*/              // 401.0 * si::watt / (si::meter * si::kelvin), // wikipedia
                 get_interpolated_temperature_function
                     (si::kelvin, si::watt / (si::centimeter * si::kelvin),
-                     4.0, 20.0, 77.0, 
-                     100.0 , 70.0, 4.0), // Timmerhaus (1989)
+                     std::vector<double>{4.0, 20.0, 77.0}, 
+                     std::vector<double>{100.0 , 70.0, 4.0}), // Timmerhaus (1989)
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           8960.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    field::missing(),
