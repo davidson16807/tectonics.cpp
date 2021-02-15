@@ -95,6 +95,23 @@ namespace{
             }
         );
     }
+    field::OptionalSpectralField<double> get_interpolated_refractive_index_function(
+        const si::length lunits, 
+        const std::vector<double>log10ls, 
+        const std::vector<double>     ns
+    ){
+        return field::SpectralFunction<double>(
+            [lunits, log10ls, ns]
+            (const si::wavenumber nlo, 
+             const si::wavenumber nhi, 
+             const si::pressure p, 
+             const si::temperature T)
+            {
+                double l = (2.0 / (nhi+nlo) / lunits);
+                return math::lerp(log10ls, ns, log10(l));
+            }
+        );
+    }
 }
 
 // "GOLD STANDARD" COMPOUNDS:
@@ -171,19 +188,10 @@ PartlyKnownCompound water {
                 return 0.61121*exp((18.678-C/234.5) * (C/(257.14+C))) * si::kilopascal; 
             }),
         /*refractive_index*/       //1.33336,
-        field::SpectralFunction<double>([](
-            const si::wavenumber nlo, 
-            const si::wavenumber nhi, 
-            const si::pressure p, 
-            const si::temperature T
-        ) {
-            double l = (2.0 / (nhi+nlo) / si::micrometer);
-            return math::lerp(
-                    std::vector<double>{-0.69, -0.53,  0.24,  0.36,  0.41,  0.45,  0.50,  0.56,  0.65,  0.73,  0.77,  0.79,  0.84,  0.97,  1.08,  1.27,  1.33,  1.46,  1.59,  1.68,  1.85,  2.00,  2.05,  2.08,  2.30f},
-                    std::vector<double>{1.391, 1.351, 1.315, 1.288, 1.243, 1.148, 1.476, 1.382, 1.337, 1.310, 1.243, 1.346, 1.324, 1.256, 1.117, 1.458, 1.490, 1.548, 1.526, 1.548, 1.841, 1.957, 1.957, 2.002, 2.124f},
-                    log10(l)
-                );
-        }) 
+            get_interpolated_refractive_index_function
+                (si::micrometer, 
+                 std::vector<double>{-0.69, -0.53,  0.24,  0.36,  0.41,  0.45,  0.50,  0.56,  0.65,  0.73,  0.77,  0.79,  0.84,  0.97,  1.08,  1.27,  1.33,  1.46,  1.59,  1.68,  1.85,  2.00,  2.05,  2.08,  2.30f},
+                 std::vector<double>{1.391, 1.351, 1.315, 1.288, 1.243, 1.148, 1.476, 1.382, 1.337, 1.310, 1.243, 1.346, 1.324, 1.256, 1.117, 1.458, 1.490, 1.548, 1.526, 1.548, 1.841, 1.957, 1.957, 2.002, 2.124f}),
     },
 
     /*solid*/ 
@@ -612,19 +620,10 @@ PartlyKnownCompound methane {
                  std::vector<double>{7.7,       11.2,      19.4}),
         /*density*/                1.816* si::gram/si::liter,
         /*refractive_index*/       // 1.000444,
-        field::SpectralFunction<double>([](
-            const si::wavenumber nlo, 
-            const si::wavenumber nhi, 
-            const si::pressure p, 
-            const si::temperature T
-        ) {
-            double l = (2.0 / (nhi+nlo) / si::micrometer);
-            return math::lerp(
-                    std::vector<double>{    1.67,     2.70,     3.01,     3.66,     3.79,     4.46,     5.66,     6.51,     7.00,     8.38,     8.95,    10.09,    10.86,    11.54,    11.93,    12.37,    13.22,    13.63,    14.02,    14.83},
-                    std::vector<double>{1.000430, 1.000425, 1.000417, 1.000440, 1.000437, 1.000431, 1.000427, 1.000419, 1.000402, 1.000466, 1.000451, 1.000445, 1.000442, 1.000443, 1.000440, 1.000441, 1.000440, 1.000439, 1.000444, 1.000439},
-                    log10(l)
-                );
-        }) 
+            get_interpolated_refractive_index_function
+                (si::micrometer, 
+                 std::vector<double>{    1.67,     2.70,     3.01,     3.66,     3.79,     4.46,     5.66,     6.51,     7.00,     8.38,     8.95,    10.09,    10.86,    11.54,    11.93,    12.37,    13.22,    13.63,    14.02,    14.83},
+                 std::vector<double>{1.000430, 1.000425, 1.000417, 1.000440, 1.000437, 1.000431, 1.000427, 1.000419, 1.000402, 1.000466, 1.000451, 1.000445, 1.000442, 1.000443, 1.000440, 1.000441, 1.000440, 1.000439, 1.000444, 1.000439}),
     },
 
     /*liquid*/
@@ -1512,20 +1511,7 @@ PartlyKnownCompound carbon_monoxide {
                     (si::celcius, si::pascal,
                      std::vector<double>{-223.0,     -216.5,     -191.7}, 
                      std::vector<double>{100.0 ,     1e3,        100e3}),
-        /*refractive_index*/       //1.33336f,
-        field::SpectralFunction<double>([](
-            const si::wavenumber nlo, 
-            const si::wavenumber nhi, 
-            const si::pressure p, 
-            const si::temperature T
-        ) {
-            double l = (2.0 / (nhi+nlo) / si::micrometer);
-            return math::lerp(
-                    std::vector<double>{},
-                    std::vector<double>{},
-                    log10(l)
-                );
-        }) 
+        /*refractive_index*/       field::missing(),
     },
 
     /*solid*/ 
@@ -1631,20 +1617,7 @@ PartlyKnownCompound ethane {
                     (si::celcius, si::pascal,
                      std::vector<double>{-183.3,     -145.3,     -88.8}, 
                      std::vector<double>{1.0 ,       1e3,        100e3}),
-        /*refractive_index*/       //1.33336f,
-        field::SpectralFunction<double>([](
-            const si::wavenumber nlo, 
-            const si::wavenumber nhi, 
-            const si::pressure p, 
-            const si::temperature T
-        ) {
-            double l = (2.0 / (nhi+nlo) / si::micrometer);
-            return math::lerp(
-                    std::vector<double>{},
-                    std::vector<double>{},
-                    log10(l)
-                );
-        }) 
+        /*refractive_index*/       field::missing(),
     },
 
     /*solid*/ 
@@ -2104,20 +2077,7 @@ PartlyKnownCompound perflouromethane{
                     (si::celcius, si::kilopascal,
                      std::vector<double>{-171.6,     -153.9,     -128.3}, 
                      std::vector<double>{1.0,        1.0,        100.0}),
-        /*refractive_index*/       //1.33336f,
-        field::SpectralFunction<double>([](
-            const si::wavenumber nlo, 
-            const si::wavenumber nhi, 
-            const si::pressure p, 
-            const si::temperature T
-        ) {
-            double l = (2.0 / (nhi+nlo) / si::micrometer);
-            return math::lerp(
-                    std::vector<double>{},
-                    std::vector<double>{},
-                    log10(l)
-                );
-        }) 
+        /*refractive_index*/       field::missing(),
     },
 
     /*solid*/ 
@@ -3405,19 +3365,10 @@ PartlyKnownCompound hematite {
             /*density*/                           5250.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  
-                field::SpectralFunction<double>([](
-                    const si::wavenumber nlo, 
-                    const si::wavenumber nhi, 
-                    const si::pressure p, 
-                    const si::temperature T
-                ) {
-                    double l = (2.0 / (nhi+nlo) / si::micrometer);
-                    return math::lerp(
-                            std::vector<double>{-0.67, -0.61, -0.48, -0.44, -0.34, -0.23, -0.11,  0.68,  0.99,  1.12,  1.20,  1.26,  1.29,  1.33,  1.37,  1.46,  1.55,  1.63,  1.65,  1.73,  1.96},
-                            std::vector<double>{ 1.32,  1.87,  2.49,  2.49,  3.28,  3.43,  2.93,  2.69,  2.31,  1.73,  0.49,  0.46,  2.84,  1.02,  7.39,  0.93, 12.55,  6.71,  7.07,  5.80,  5.10},
-                            log10(l)
-                        );
-                }),
+                get_interpolated_refractive_index_function
+                    (si::micrometer, 
+                     std::vector<double>{-0.67, -0.61, -0.48, -0.44, -0.34, -0.23, -0.11,  0.68,  0.99,  1.12,  1.20,  1.26,  1.29,  1.33,  1.37,  1.46,  1.55,  1.63,  1.65,  1.73,  1.96},
+                     std::vector<double>{ 1.32,  1.87,  2.49,  2.49,  3.28,  3.43,  2.93,  2.69,  2.31,  1.73,  0.49,  0.46,  2.84,  1.02,  7.39,  0.93, 12.55,  6.71,  7.07,  5.80,  5.10}),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -3768,19 +3719,10 @@ PartlyKnownCompound  magnetite {
             /*density*/                           5170.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  
-                field::SpectralFunction<double>([](
-                    const si::wavenumber nlo, 
-                    const si::wavenumber nhi, 
-                    const si::pressure p, 
-                    const si::temperature T
-                ) {
-                    double l = (2.0 / (nhi+nlo) / si::micrometer);
-                    return math::lerp(
-                            std::vector<double>{-0.68, -0.59, -0.49, -0.40, -0.32, -0.15, 0.00, 0.10, 0.50, 0.88, 1.06, 1.12, 1.23, 1.26, 1.30, 1.40, 1.47, 1.52, 1.55, 1.61, 1.74},
-                            std::vector<double>{ 2.26,  2.43,  2.43,  2.49,  2.39,  2.39, 2.14, 2.13, 3.06, 3.59, 3.62, 3.52, 3.46, 5.29, 4.45, 4.39, 7.35, 6.48, 6.33, 6.55, 7.90},
-                            log10(l)
-                        );
-                }),
+                get_interpolated_refractive_index_function
+                    (si::micrometer, 
+                     std::vector<double>{-0.68, -0.59, -0.49, -0.40, -0.32, -0.15, 0.00, 0.10, 0.50, 0.88, 1.06, 1.12, 1.23, 1.26, 1.30, 1.40, 1.47, 1.52, 1.55, 1.61, 1.74},
+                     std::vector<double>{ 2.26,  2.43,  2.43,  2.49,  2.39,  2.39, 2.14, 2.13, 3.06, 3.59, 3.62, 3.52, 3.46, 5.29, 4.45, 4.39, 7.35, 6.48, 6.33, 6.55, 7.90}),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
