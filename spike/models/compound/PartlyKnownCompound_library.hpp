@@ -51,7 +51,7 @@ There are likely some among you who think this is excessive. That is all.
 namespace{
 
     template<typename Tx, typename Ty>
-    field::OptionalStateField<Ty> get_exponential_temperature_function(
+    field::OptionalStateField<Ty> get_interpolated_temperature_function(
         const Tx xunits, const Ty yunits,
         const std::vector<double>xs, 
         const std::vector<double>ys
@@ -64,17 +64,47 @@ namespace{
             }
         );
     }
-    template<typename Tx, typename Ty>
-    field::OptionalStateField<Ty> get_interpolated_temperature_function(
-        const Tx xunits, const Ty yunits,
-        const std::vector<double>xs, 
-        const std::vector<double>ys
+    template<typename TT, typename Ty>
+    field::OptionalStateField<Ty> get_interpolated_pressure_temperature_function(
+        const TT Tunits,  const Ty yunits,
+        const std::vector<double>Ts, 
+        const si::pressure lop, const std::vector<double>lop_ys, 
+        const si::pressure hip, const std::vector<double>hip_ys
     ){
         return field::StateFunction<Ty>(
-            [xunits, yunits, xs, ys]
+            [Tunits, yunits, Ts, lop, lop_ys, hip, hip_ys]
             (const si::pressure p, const si::temperature T)
             {
-                return math::lerp(xs, ys, T/xunits) * yunits;
+                return math::mix(math::lerp(Ts, lop_ys, T/Tunits), 
+                                 math::lerp(Ts, hip_ys, T/Tunits), 
+                                 math::linearstep(lop, hip, p)) * yunits;
+            }
+        );
+    }
+    template<typename TT>
+    field::OptionalStateField<si::pressure> get_antoine_vapor_pressure_function(
+        const TT Tunits, const si::pressure punits,
+        const double A, const double B, const double C
+    ){
+        return field::StateFunction<si::pressure>(
+            [Tunits, punits, A,B,C]
+            (const si::pressure p, const si::temperature T)
+            {
+                return exp(A - B / (C+T/Tunits)) * punits;
+            }
+        );
+    }
+    template<typename TT>
+    field::OptionalStateField<si::pressure> get_antoine_vapor_pressure_function(
+        const TT Tunits, const si::pressure punits,
+        const double A, const double B, const double C,
+        const double Tmin, double Tmax
+    ){
+        return field::StateFunction<si::pressure>(
+            [Tunits, punits, A,B,C, Tmin, Tmax]
+            (const si::pressure p, const si::temperature T)
+            {
+                return exp(A - B / (C+std::clamp(T/Tunits,Tmin,Tmax))) * punits;
             }
         );
     }
@@ -139,7 +169,7 @@ PartlyKnownCompound water {
     /*latent_heat_of_fusion*/             6.01*si::kilojoule/(18.015*si::gram),
     /*triple_point_pressure*/             0.6116e3*si::pascal,
     /*triple_point_temperature*/          273.15 * si::kelvin,
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ si::standard_temperature,
     /*simon_glatzel_slope*/               7070e5,
     /*simon_glatzel_exponent*/            4.46,
@@ -154,12 +184,12 @@ PartlyKnownCompound water {
     phase::PartlyKnownGas {
         /*specific_heat_capacity*/ 2.080 * si::joule / (si::gram * si::kelvin),                     // wikipedia
         /*thermal_conductivity*/   // 0.016 * si::watt / (si::meter * si::kelvin),                     // wikipedia
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
                   std::vector<double>{300.0,     400.0,     600.0},
                   std::vector<double>{ 18.7,     27.1,      47.1}),
         /*dynamic_viscosity*/      // 1.24e-5 * si::pascal * si::second,                               // engineering toolbox, at 100 C
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 (si::kelvin, si::micropascal*si::second,
                  std::vector<double>{300.0,     400.0,     600.0},              
                  std::vector<double>{10.0,      13.3,      21.4}),
@@ -171,17 +201,20 @@ PartlyKnownCompound water {
     phase::PartlyKnownLiquid {
         /*specific_heat_capacity*/ 4.1813 * si::joule / (si::gram * si::kelvin),                    // wikipedia
         /*thermal_conductivity*/   // 0.6062 * si::watt / (si::meter * si::kelvin), 
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 (si::celcius, si::watt/(si::meter*si::kelvin),
                 std::vector<double>{0.0,     25.0,     100.0},
                 std::vector<double>{ 0.5562, 0.6062,   0.6729}),
         /*dynamic_viscosity*/      
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 (si::celcius, si::millipascal*si::second, 
                  std::vector<double>{0.0  ,     25.0  ,     75.0},
                  std::vector<double>{1.793,     0.890 ,     0.378 }),
         /*density*/                997.0 * si::kilogram/si::meter3,                                
         /*vapor_pressure*/         
+            // get_antoine_vapor_pressure_function(
+            //     si::celcius, si::millimeter_mercury, 
+            //     7.94917, 1657.462, 1474.68, 213.69), // Physical and Chemical Equilibrium for Chemical Engineers, Second Edition. 
             field::StateFunction<si::pressure>([](const si::pressure p, const si::temperature T) {
                 // Buck equation
                 double C = T/si::celcius;
@@ -190,8 +223,8 @@ PartlyKnownCompound water {
         /*refractive_index*/       //1.33336,
             get_interpolated_refractive_index_function
                 (si::micrometer, 
-                 std::vector<double>{-0.69, -0.53,  0.24,  0.36,  0.41,  0.45,  0.50,  0.56,  0.65,  0.73,  0.77,  0.79,  0.84,  0.97,  1.08,  1.27,  1.33,  1.46,  1.59,  1.68,  1.85,  2.00,  2.05,  2.08,  2.30f},
-                 std::vector<double>{1.391, 1.351, 1.315, 1.288, 1.243, 1.148, 1.476, 1.382, 1.337, 1.310, 1.243, 1.346, 1.324, 1.256, 1.117, 1.458, 1.490, 1.548, 1.526, 1.548, 1.841, 1.957, 1.957, 2.002, 2.124f}),
+                 std::vector<double>{-0.69, -0.53,  0.24,  0.36,  0.41,  0.45,  0.50,  0.56,  0.65,  0.73,  0.77,  0.79,  0.84,  0.97,  1.08,  1.27,  1.33,  1.46,  1.59,  1.68,  1.85,  2.00,  2.05,  2.08,  2.30},
+                 std::vector<double>{1.391, 1.351, 1.315, 1.288, 1.243, 1.148, 1.476, 1.382, 1.337, 1.310, 1.243, 1.346, 1.324, 1.256, 1.117, 1.458, 1.490, 1.548, 1.526, 1.548, 1.841, 1.957, 1.957, 2.002, 2.124}),
     },
 
     /*solid*/ 
@@ -202,7 +235,7 @@ PartlyKnownCompound water {
             /*dynamic_viscosity*/                 1e13 * si::poise,                                 // reference by Carey (1953)
             /*density*/                           0916.9 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    //138.268 * si::megapascal,
-                get_exponential_temperature_function
+                get_interpolated_temperature_function
                     (si::kelvin, si::pascal,
                      std::vector<double>{190.0,     240.0,     270.0}, 
                      std::vector<double>{0.032,     27.28,     470.1}),
@@ -248,7 +281,7 @@ PartlyKnownCompound nitrogen {
     /*latent_heat_of_fusion*/             0.71*si::kilojoule/(28.013*si::gram),
     /*triple_point_pressure*/             12.463 * si::kilopascal,
     /*triple_point_temperature*/          63.15 * si::kelvin,
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ -210.0*si::celcius,
     /*simon_glatzel_slope*/               1607e5,
     /*simon_glatzel_exponent*/            1.7910,
@@ -271,16 +304,29 @@ PartlyKnownCompound nitrogen {
     phase::PartlyKnownGas {
         /*specific_heat_capacity*/ 1.341 * si::joule / (si::gram * si::kelvin),
         /*thermal_conductivity*/   // 0.0234 * si::watt / (si::meter * si::kelvin),                    // wikipedia
-            get_exponential_temperature_function
-                ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                 std::vector<double>{100.0,     300.0,     600.0},
-                 std::vector<double>{9.8,       26.0,      44.0}),
+            // field::StateFunction<si::thermal_conductivity>([](
+            //     const si::pressure p, const si::temperature T)
+            // { 
+            //     return 926.91*exp(0.0093*(T/si::kelvin))*si::joule/(si::kilogram*si::kelvin);
+            // }), // wikipedia
+            // field::StateFunction<si::thermal_conductivity>([](
+            //     const si::pressure p, const si::temperature T)
+            // { 
+            //     (6.15e-6 * sqrt(T/si::kelvin)) / (1+(235.5*si::kelvin/T)*pow(10.0, -12.0*si::kelvin/T))
+            //      * si::calorie/(si::centimeter*si::second*si::kelvin);
+            // }), // Johnson (1960)
+            get_interpolated_pressure_temperature_function
+                (si::kelvin, si::calorie/(si::centimeter*si::second*si::kelvin),
+                                       std::vector<double>{92.0,      125.9,     150.0,     314.3},
+                   1.0*si::atmosphere, std::vector<double>{0.208e-4,  0.300e-4,  0.329e-4,  0.647e-4},
+                 134.0*si::atmosphere, std::vector<double>{3.16e-4,   1.935e-4,  1.260e-4,  0.840e-4}), // Johnson (1960)
         /*dynamic_viscosity*/      // 1.76e-5 * si::pascal * si::second,                               // engineering toolbox, at 20 C
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 (si::kelvin, si::micropascal*si::second,
                  std::vector<double>{200.0,     300.0,     600.0},              
                  std::vector<double>{12.9,      17.9,      29.6}),
-        /*density*/                4.622 * si::gram/si::liter,
+        /*density*/                
+            field::StateSample<si::density>(0.001165*si::gram/si::centimeter3), 
         /*refractive_index*/       
             field::SpectralFunction<double>([](
                 const si::wavenumber nlo, 
@@ -297,13 +343,19 @@ PartlyKnownCompound nitrogen {
     /*liquid*/
     phase::PartlyKnownLiquid {
         /*specific_heat_capacity*/ 2.042 * si::joule / (si::gram * si::kelvin),
-        /*thermal_conductivity*/   0.1396 * si::watt / (si::meter * si::kelvin),                    // Timmerhaus (1989)
+        /*thermal_conductivity*/   
+            get_interpolated_pressure_temperature_function
+                (si::kelvin, si::calorie/(si::centimeter*si::second*si::kelvin),
+                                       std::vector<double>{92.0,      125.9,     150.0,     314.3},
+                   1.0*si::atmosphere, std::vector<double>{0.208e-4,  0.300e-4,  0.329e-4,  0.647e-4},
+                 134.0*si::atmosphere, std::vector<double>{3.16e-4,   1.935e-4,  1.260e-4,  0.840e-4}), // Johnson (1960)
         /*dynamic_viscosity*/      157.9 * si::kilogram / (si::meter * 1e6*si::second),             // Timmerhaus (1989)
-        /*density*/                0.807 * si::gram/si::milliliter,
+        /*density*/                
+            field::StateSample<si::density>(0.4314*si::gram/si::centimeter3, si::atmosphere, 125.01*si::kelvin), // Johnson (1960)
         /*vapor_pressure*/         
-            field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
-                return (3.720822 - 293.94358*si::kelvin/T + 10.31993/si::kelvin*T) * si::standard_pressure;
-            }), // Solomon (1950)
+            get_antoine_vapor_pressure_function(
+                si::celcius, si::millimeter_mercury, 
+                6.4945425, 5.6784, 266.55), // Physical and Chemical Equilibrium for Chemical Engineers, Second Edition. 
         /*refractive_index*/       1.19876
     },
 
@@ -319,9 +371,10 @@ PartlyKnownCompound nitrogen {
                     return 180.2*pow((T/si::kelvin), 0.1041)*si::watt / (si::meter * si::kelvin);
                 }), // wikipedia
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           0850.0 * si::kilogram/si::meter3,
+            /*density*/                           
+                field::StateSample<si::density>(1.0265*si::gram/si::centimeter3, si::standard_pressure, 20.7*si::kelvin), // Johnson (1960)
             /*vapor_pressure*/                    
-                get_exponential_temperature_function
+                get_interpolated_temperature_function
                     (si::celcius, si::pascal,
                       std::vector<double>{-236.0,     -226.8,     -211.1}, 
                      std::vector<double>{1.0,         100.0,      10e3}),
@@ -377,7 +430,7 @@ PartlyKnownCompound oxygen {
     /*latent_heat_of_fusion*/             0.44*si::kilojoule/(31.9988*si::gram),
     /*triple_point_pressure*/             0.14633 * si::kilopascal,
     /*triple_point_temperature*/          54.35 * si::kelvin,
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ -218.79*si::celcius,
     /*simon_glatzel_slope*/               2733e5,
     /*simon_glatzel_exponent*/            1.7425,
@@ -392,16 +445,18 @@ PartlyKnownCompound oxygen {
     phase::PartlyKnownGas {
         /*specific_heat_capacity*/ 0.980 * si::joule / (si::gram * si::kelvin),                     
         /*thermal_conductivity*/   // 0.0238 * si::watt / (si::meter * si::kelvin),                    // wikipedia
-            get_exponential_temperature_function
-                ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                 std::vector<double>{100.0,     300.0,     600.0},
-                 std::vector<double>{9.3,       26.3,      48.1}),
+            get_interpolated_pressure_temperature_function
+                (si::kelvin, si::milliwatt/(si::centimeter*si::kelvin),
+                                       std::vector<double>{73.16,     133.16,   173.16,   313.16,  600.0},
+                   1.0*si::atmosphere, std::vector<double>{0.0651,    0.1209,   0.14607,  0.1582,  0.481},
+                 100.0*si::atmosphere, std::vector<double>{1.744,     1.0118,   0.4617,   0.3349,  0.481}), // values below 600K are from  Johnson (1960)
         /*dynamic_viscosity*/      // 2.04e-5 * si::pascal * si::second,                               // engineering toolbox, at 20 C
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 (si::kelvin, si::micropascal*si::second,
                  std::vector<double>{100.0,     300.0,     600.0},              
                  std::vector<double>{7.5,       20.8,      35.1}),
-        /*density*/                4.467* si::gram/si::liter,
+        /*density*/                
+            field::StateSample<si::density>(1.4458*si::gram/si::centimeter3, si::atmosphere, 270.0*si::kelvin), // Johnson (1960)
         /*refractive_index*/       // 1.0002709,
         field::SpectralFunction<double>([](
             const si::wavenumber nlo, 
@@ -419,14 +474,19 @@ PartlyKnownCompound oxygen {
     /*liquid*/
     phase::PartlyKnownLiquid {
         /*specific_heat_capacity*/ 1.699 * si::kilojoule / (si::gram * si::kelvin),             
-        /*thermal_conductivity*/   0.1514 * si::watt / (si::meter * si::kelvin),                    // Timmerhaus (1989)
+        /*thermal_conductivity*/   // 0.1514 * si::watt / (si::meter * si::kelvin),                    // Timmerhaus (1989)
+            get_interpolated_pressure_temperature_function
+                (si::kelvin, si::milliwatt/(si::centimeter*si::kelvin),
+                                       std::vector<double>{73.16,     133.16,   173.16,   313.16},
+                   1.0*si::atmosphere, std::vector<double>{0.0651,    0.1209,   0.14607,  0.1582},
+                 100.0*si::atmosphere, std::vector<double>{1.744,     1.0118,   0.4617,   0.3349}), // Johnson (1960)
         /*dynamic_viscosity*/      188.0 * si::kilogram / (si::meter * 1e6*si::second),             // Timmerhaus (1989)
-        /*density*/                1.141 * si::gram/si::milliliter,
+        /*density*/                // 1.141 * si::gram/si::milliliter,
+            field::StateSample<si::density>(0.6779*si::gram/si::centimeter3, si::atmosphere, 149.8*si::kelvin), // Johnson (1960)
         /*vapor_pressure*/         
-                get_exponential_temperature_function
-                    (si::celcius, si::kilopascal,
-                     std::vector<double>{-211.9,     -200.5,     -183.1}, 
-                     std::vector<double>{1.0,        10.0,       100.0}),
+            get_antoine_vapor_pressure_function(
+                si::celcius, si::millimeter_mercury, 
+                6.69147, 319.0117, 266.7), // Physical and Chemical Equilibrium for Chemical Engineers, Second Edition. 
         /*refractive_index*/       1.2243
     },
 
@@ -482,7 +542,7 @@ PartlyKnownCompound carbon_dioxide {
     /*latent_heat_of_fusion*/             9.02*si::kilojoule/(44.01*si::gram),
     /*triple_point_pressure*/             517e3 * si::pascal,
     /*triple_point_temperature*/          216.56 * si::kelvin,
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ -56.56 * si::celcius,
     /*simon_glatzel_slope*/               4000e5,
     /*simon_glatzel_exponent*/            2.60,
@@ -497,12 +557,12 @@ PartlyKnownCompound carbon_dioxide {
     phase::PartlyKnownGas {
         /*specific_heat_capacity*/ 36.61 * si::joule / (44.01 * si::gram * si::kelvin),             // wikipedia
         /*thermal_conductivity*/   // 0.01662 * si::watt / ( si::meter * si::kelvin ),                 // wikipedia
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
                  std::vector<double>{200.0,     300.0,     600.0},
                  std::vector<double>{9.6,       16.8,      41.6}),
         /*dynamic_viscosity*/      // 1.47e-5 * si::pascal * si::second,                               // engineering toolbox, at 20 C
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 (si::kelvin, si::micropascal*si::second,
                  std::vector<double>{200.0,     300.0,     600.0},              
                  std::vector<double>{10.0,      15.0,      28.0}),
@@ -532,10 +592,9 @@ PartlyKnownCompound carbon_dioxide {
         /*dynamic_viscosity*/      0.0712 * si::millipascal*si::second,                             // wikipedia data page
         /*density*/                1101.0 * si::kilogram/si::meter3,
         /*vapor_pressure*/         
-                get_exponential_temperature_function
-                    (si::celcius, si::pascal,
-                     std::vector<double>{-159.1,     -121.6,     -78.6}, 
-                     std::vector<double>{1.0 ,       1e3,        100e3}),
+            get_antoine_vapor_pressure_function(
+                si::celcius, si::millimeter_mercury, 
+                7.5788, 865.35, 273.15), // Physical and Chemical Equilibrium for Chemical Engineers, Second Edition. 
         /*refractive_index*/       1.6630
     },
 
@@ -543,15 +602,17 @@ PartlyKnownCompound carbon_dioxide {
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
             /*specific_heat_capacity*/            47.11 * si::joule / (44.01 * si::gram * si::kelvin), // wikipedia
-            // .thermal_conductivity = 720.0 * si::watt / (si::meter * si::kelvin),                 // Sumarakov (2003), peak conductivity, unusual for its variance
-            /*thermal_conductivity*/              0.6 * si::watt / (si::meter * si::kelvin),        // Melosh (2011)
+            /*thermal_conductivity*/              
+                get_interpolated_temperature_function
+                    (si::kelvin, si::watt / (si::meter * si::kelvin),
+                     std::vector<double>{1.0,  3.0,  20.0, 100.0},              
+                     std::vector<double>{2.0,100.0,  10.0,   0.8}), // Sumarakov (2003), unusual for its variance
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           1562.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    
-                get_exponential_temperature_function
-                    (si::kelvin, si::kilopascal,
-                     std::vector<double>{130.0,     170.0,     205.0},     
-                     std::vector<double>{0.032,     9.98,      227.1}),
+            get_antoine_vapor_pressure_function(
+                si::celcius, si::millimeter_mercury, 
+                9.81064, 1347.788, 272.99), // Physical and Chemical Equilibrium for Chemical Engineers, Second Edition. 
             /*refractive_index*/                  1.4,                                              // Warren (1986)
             /*spectral_reflectance*/              field::missing(),
 
@@ -594,7 +655,7 @@ PartlyKnownCompound methane {
     /*latent_heat_of_fusion*/             0.94*si::kilojoule/(16.043*si::gram),
     /*triple_point_pressure*/             11.696 * si::kilopascal,
     /*triple_point_temperature*/          90.694 * si::kelvin,
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ -182.46 * si::celcius,
     /*simon_glatzel_slope*/               2080e5,
     /*simon_glatzel_exponent*/            1.698,
@@ -609,16 +670,17 @@ PartlyKnownCompound methane {
     phase::PartlyKnownGas {
         /*specific_heat_capacity*/ 2.218 * si::joule / (si::gram * si::kelvin),                     
         /*thermal_conductivity*/   // 34.4 * si::milliwatt / ( si::meter * si::kelvin ),               // Huber & Harvey
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                 std::vector<double>{200.0,     300.0,     600.0},
-                 std::vector<double>{22.5,      34.1,      84.1}),
+                 std::vector<double>{120.0,     200.0,     300.0,     600.0},
+                 std::vector<double>{10.0,       22.5,      34.1,      84.1}), // low temperature data provided by Johnson (1960)
         /*dynamic_viscosity*/      // 1.10e-5 * si::pascal * si::second,                               // engineering toolbox, at 20 C
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 (si::kelvin, si::micropascal*si::second,
                  std::vector<double>{200.0,     300.0,     600.0},              
                  std::vector<double>{7.7,       11.2,      19.4}),
-        /*density*/                1.816* si::gram/si::liter,
+        /*density*/                
+            field::StateSample<si::density>(0.0006664*si::gram/si::centimeter3, 33.8*si::kilopascal, 99.8*si::kelvin), // Johnson (1960)
         /*refractive_index*/       // 1.000444,
             get_interpolated_refractive_index_function
                 (si::micrometer, 
@@ -629,14 +691,18 @@ PartlyKnownCompound methane {
     /*liquid*/
     phase::PartlyKnownLiquid {
         /*specific_heat_capacity*/ 3.481 * si::kilojoule / (si::gram * si::kelvin),              
-        /*thermal_conductivity*/   0.1931 * si::watt / (si::meter * si::kelvin),                    // Timmerhaus (1989)
+        /*thermal_conductivity*/   // 0.1931 * si::watt / (si::meter * si::kelvin),                    // Timmerhaus (1989)
+            get_interpolated_temperature_function
+                (si::kelvin, si::milliwatt/(si::centimeter * si::kelvin),
+                 std::vector<double>{108.0, 160.0},              
+                 std::vector<double>{  2.0,   1.0}), // Johnson (1960)
         /*dynamic_viscosity*/      118.6 * si::kilogram / (si::meter * 1e6*si::second),             // Timmerhaus (1989)
-        /*density*/                0.4224 * si::gram/si::milliliter,
+        /*density*/                
+            field::StateSample<si::density>(0.4407*si::gram/si::centimeter3, 33.8*si::kilopascal, 99.8*si::kelvin), // Johnson (1960)
         /*vapor_pressure*/         
-                get_exponential_temperature_function
-                    (si::celcius, si::kilopascal,
-                     std::vector<double>{-197.0,     -183.6,     -161.7}, 
-                     std::vector<double>{1.0,        10.0,       100.0}),
+            get_antoine_vapor_pressure_function(
+                si::celcius, si::millimeter_mercury, 
+                6.61184, 389.9278, 265.99), // Physical and Chemical Equilibrium for Chemical Engineers, Second Edition. 
         /*refractive_index*/       1.2730, 
     },
 
@@ -646,11 +712,16 @@ PartlyKnownCompound methane {
         phase::PartlyKnownSolid {
 
             /*specific_heat_capacity*/            5.193 * si::calorie / (16.043*si::gram * si::kelvin), // Johnson (1960)
-            /*thermal_conductivity*/              0.010 * si::watt / (si::centimeter * si::kelvin), // Jezowski (1997)
+            /*thermal_conductivity*/              // 0.010 * si::watt / (si::centimeter * si::kelvin), // Jezowski (1997)
+                get_interpolated_temperature_function
+                    (si::kelvin, si::milliwatt/(si::centimeter * si::kelvin),
+                     std::vector<double>{18.0, 20.0, 20.4, 21.0},              
+                     std::vector<double>{0.7,  2.5,  11.0,  0.7}), // Johnson (1960)
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           0522.0 * si::kilogram/si::meter3,
+            /*density*/                           
+                field::StateSample<si::density>(0.517*si::gram/si::centimeter3, si::atmosphere, 20.4*si::kelvin), // Johnson (1960)
             /*vapor_pressure*/                    
-                get_exponential_temperature_function
+                get_interpolated_temperature_function
                     (si::kelvin, si::kilopascal,
                       std::vector<double>{65.0,     75.0,     85.0},     
                       std::vector<double>{0.1 ,      0.8 ,     4.9 }),
@@ -697,7 +768,7 @@ PartlyKnownCompound argon {
     /*latent_heat_of_fusion*/             5.66*si::kilojoule/(39.948*si::gram),
     /*triple_point_pressure*/             68.95 * si::kilopascal,
     /*triple_point_temperature*/          83.8058 * si::kelvin,
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ -189.36*si::celcius,
     /*simon_glatzel_slope*/               2114e5,
     /*simon_glatzel_exponent*/            1.593,
@@ -708,16 +779,18 @@ PartlyKnownCompound argon {
     phase::PartlyKnownGas {
         /*specific_heat_capacity*/ 0.570 * si::joule / (si::gram * si::kelvin),                    
         /*thermal_conductivity*/   // 0.016 * si::watt / ( si::meter * si::kelvin ),                   // wikipedia
-            get_exponential_temperature_function
+            get_interpolated_pressure_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                 std::vector<double>{100.0,     300.0,     600.0},
-                 std::vector<double>{6.2,       17.9,      30.6}),
+                                       std::vector<double>{150.0,  174.0,  300.0,   600.0},
+                   1.0*si::atmosphere, std::vector<double>{ 10.0,   15.0,   17.9,    30.6},
+                  96.0*si::atmosphere, std::vector<double>{ 59.0,   37.0,   24.0,    30.6}), // high pressure and intermediate data from Johnson (1960)
         /*dynamic_viscosity*/      // 2.23e-5 * si::pascal * si::second,                               // engineering toolbox, at 20 C
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 (si::kelvin, si::micropascal*si::second,
                  std::vector<double>{100.0,     300.0,     600.0},              
                  std::vector<double>{8.0,       22.9,      39.0}),
-        /*density*/                5.79 * si::gram/si::liter,
+        /*density*/                
+            field::StateSample<si::density>(1.8048*si::gram/si::centimeter3, si::atmosphere, 270.0*si::kelvin), // Johnson (1960)
         /*refractive_index*/       // 1.000281,
         field::SpectralFunction<double>([](
             const si::wavenumber nlo, 
@@ -739,12 +812,15 @@ PartlyKnownCompound argon {
         /*specific_heat_capacity*/ 1.078 * si::kilojoule / (si::gram * si::kelvin),              
         /*thermal_conductivity*/   0.1232 * si::watt / (si::meter * si::kelvin),                    // Timmerhaus (1989)
         /*dynamic_viscosity*/      252.1 * si::kilogram / (si::meter * 1e6*si::second),             // Timmerhaus (1989)
-        /*density*/                1.396 * si::gram/si::milliliter,
+        /*density*/                
+            get_interpolated_temperature_function
+                (si::kelvin, si::gram/si::centimeter3,
+                 std::vector<double>{  84.0,    90.0},              
+                 std::vector<double>{1.4233,  1.3845}), // Johnson (1960)
         /*vapor_pressure*/         
-                get_exponential_temperature_function
-                    (si::celcius, si::kilopascal,
-                     std::vector<double>{-212.4,     -201.7,     -186.0}, 
-                     std::vector<double>{1.0 ,       10.0,       100.0}),
+            get_antoine_vapor_pressure_function(
+                si::celcius, si::millimeter_mercury, 
+                6.61562, 304.2283, 267.31), // Physical and Chemical Equilibrium for Chemical Engineers, Second Edition. 
         /*refractive_index*/       1.23
     },
 
@@ -752,11 +828,19 @@ PartlyKnownCompound argon {
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
             /*specific_heat_capacity*/            0.197 * si::calorie / (si::gram * si::kelvin),    // Johnson (1960)
-            /*thermal_conductivity*/              0.045 * si::watt / (si::centimeter * si::kelvin), // White (1956)
+            /*thermal_conductivity*/              
+                get_interpolated_temperature_function
+                    (si::kelvin, si::milliwatt / (si::centimeter * si::kelvin),
+                     std::vector<double>{1.0,  8.0, 50.0},              
+                     std::vector<double>{4.0, 40.0,  5.0}),  // Johnson (1960)
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           1680.7 * si::kilogram/si::meter3,
+            /*density*/                           
+                get_interpolated_temperature_function
+                    (si::kelvin, si::gram/si::centimeter3,
+                     std::vector<double>{ 20.0,    50.0,     84.0},              
+                     std::vector<double>{1.764,   1.714,    1.623}), // Johnson (1960)
             /*vapor_pressure*/                    
-                get_exponential_temperature_function
+                get_interpolated_temperature_function
                     (si::kelvin, si::kilopascal,
                      std::vector<double>{55.0,     65.0,     75.0}, 
                      std::vector<double>{0.2,      2.8,      18.7}),
@@ -802,7 +886,7 @@ PartlyKnownCompound helium {
     /*latent_heat_of_fusion*/             field::missing(),
     /*triple_point_pressure*/             5.048e3 * si::pascal,
     /*triple_point_temperature*/          2.1768 * si::kelvin,
-    /*freezing_point_sample_pressure*/    25.0 * si::standard_pressure,
+    /*freezing_point_sample_pressure*/    25.0 * si::atmosphere,
     /*freezing_point_sample_temperature*/ 0.92778 * si::kelvin,
     /*simon_glatzel_slope*/               50.96e5,
     /*simon_glatzel_exponent*/            1.5602,
@@ -813,51 +897,68 @@ PartlyKnownCompound helium {
     phase::PartlyKnownGas {
         /*specific_heat_capacity*/ 9.78 * si::joule / (si::gram * si::kelvin), 
         /*thermal_conductivity*/   // 155.7 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                 std::vector<double>{100.0,     300.0,     600.0},
-                 std::vector<double>{75.5,      156.7,     252.4}),
+                 std::vector<double>{5.38,  33.16, 100.0, 300.0, 600.0},
+                 std::vector<double>{10.9,  36.3,  75.5,  156.7, 252.4}), // Johnson (1960)
         /*dynamic_viscosity*/      // 1.96e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 (si::kelvin, si::micropascal*si::second,
                  std::vector<double>{100.0,     300.0,     600.0},              
                  std::vector<double>{9.7,       20.0,      32.3}),
-        /*density*/                16.89 * si::gram/si::liter,
+        /*density*/                
+            field::StateSample<si::density>(0.000156*si::gram/si::centimeter3, si::atmosphere, 311.0*si::kelvin), // Johnson (1960)
         /*refractive_index*/       //1.000036,
-        field::SpectralFunction<double>([](
-            const si::wavenumber nlo, 
-            const si::wavenumber nhi, 
-            const si::pressure p, 
-            const si::temperature T
-        ) {
-            double l = (2.0 / (nhi+nlo) / si::micrometer);
-            double invl2 = 1.0/(l*l);
-            return 1.0
-                + 0.014755297f/(426.29740f  - invl2);
-        }) 
+            field::SpectralFunction<double>([](
+                const si::wavenumber nlo, 
+                const si::wavenumber nhi, 
+                const si::pressure p, 
+                const si::temperature T
+            ) {
+                double l = (2.0 / (nhi+nlo) / si::micrometer);
+                double invl2 = 1.0/(l*l);
+                return 1.0
+                    + 0.014755297f/(426.29740f  - invl2);
+            }) 
     },
 
     /*liquid*/
     phase::PartlyKnownLiquid {
         /*specific_heat_capacity*/ 4.545 * si::kilojoule / (si::gram * si::kelvin), 
-        /*thermal_conductivity*/   0.0272 * si::watt / (si::meter * si::kelvin), // Timmerhaus (1989)
+        /*thermal_conductivity*/   
+            get_interpolated_temperature_function
+                (si::kelvin, si::milliwatt / (si::centimeter * si::kelvin),
+                 std::vector<double>{2.3,   3.0,   4.2}, 
+                 std::vector<double>{0.181, 0.214, 0.271}), // Johnson (1960)
         /*dynamic_viscosity*/      3.57 * si::kilogram / (si::meter * 1e6*si::second), // Timmerhaus (1989)
-        /*density*/                0.124901* si::gram/si::milliliter,
+        /*density*/                
+            field::StateSample<si::density>(0.101*si::gram/si::centimeter3, si::atmosphere, 5.0*si::kelvin), // Johnson (1960)
         /*vapor_pressure*/         
-                get_exponential_temperature_function
-                    (si::kelvin, si::kilopascal,
-                         std::vector<double>{2.2,     3.6,     5.0},  
-                         std::vector<double>{5.3,    52.9,     195.4}),
+            get_antoine_vapor_pressure_function(
+                si::celcius, si::millimeter_mercury, 
+                5.32072, 14.6500, 274.94), // Physical and Chemical Equilibrium for Chemical Engineers, Second Edition. 
         /*refractive_index*/       1.02451
     },
 
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
-            /*specific_heat_capacity*/            field::missing(),
-            /*thermal_conductivity*/              0.1 * si::watt / (si::centimeter * si::kelvin), // Webb (1952)
+            /*specific_heat_capacity*/            
+                get_interpolated_temperature_function
+                    (si::kelvin, si::calorie/(si::gram*si::kelvin),
+                     std::vector<double>{55.0,     65.0,     75.0}, 
+                     std::vector<double>{0.2,      2.8,      18.7}),
+            /*thermal_conductivity*/              // 0.1 * si::watt / (si::centimeter * si::kelvin), // Webb (1952)
+                get_interpolated_temperature_function
+                    (si::kelvin, si::watt / (si::centimeter * si::kelvin),
+                     std::vector<double>{1.39, 1.70, 2.12, 4.05}, 
+                     std::vector<double>{0.32, 0.63, 0.40, 0.01}), // Johnson (1960)
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           0187.0 * si::kilogram/si::meter3,
+            /*density*/                           // 0187.0 * si::kilogram/si::meter3,
+                get_interpolated_temperature_function
+                    (si::kelvin, si::gram / si::centimeter3,
+                     std::vector<double>{1.0,    4.0,    26.0}, 
+                     std::vector<double>{0.1891, 0.2305,  0.3963}), // Johnson (1960)
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  field::missing(),
             /*spectral_reflectance*/              field::missing(),
@@ -899,7 +1000,7 @@ PartlyKnownCompound hydrogen {
     /*latent_heat_of_fusion*/             0.12*si::kilojoule/(2.016*si::gram),
     /*triple_point_pressure*/             7.042 * si::kilopascal,
     /*triple_point_temperature*/          13.8 * si::kelvin,
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ -259.198*si::celcius,
     /*simon_glatzel_slope*/               274.22e5,
     /*simon_glatzel_exponent*/            1.74407,
@@ -914,41 +1015,45 @@ PartlyKnownCompound hydrogen {
     phase::PartlyKnownGas {
         /*specific_heat_capacity*/ 12.24 * si::joule / (si::gram * si::kelvin), 
         /*thermal_conductivity*/   // 186.6 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                 std::vector<double>{100.0,     300.0,     400.0},
-                 std::vector<double>{68.6,      186.9,     230.4}),
+                 std::vector<double>{10.0, 30.0, 100.0,  300.0, 400.0},
+                 std::vector<double>{ 7.4, 29.8,  68.6,  186.9, 230.4}), 
+                 // values below 100K provided by Johnson (1960), everything else is from Handbook of Physics & Chemistry
         /*dynamic_viscosity*/      // 0.88e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 (si::kelvin, si::micropascal*si::second,
                  std::vector<double>{100.0,     300.0,     600.0},              
                  std::vector<double>{4.2,       9.0,       14.4}),
         /*density*/                1.3390 * si::gram/si::liter,
         /*refractive_index*/       // 1.0001392,
-        field::SpectralFunction<double>([](
-            const si::wavenumber nlo, 
-            const si::wavenumber nhi, 
-            const si::pressure p, 
-            const si::temperature T
-        ) {
-            double l = (2.0 / (nhi+nlo) / si::micrometer);
-            constexpr double n = 1.00014930f;
-            constexpr double dndl = -0.000082645f;
-            return n + dndl * l;
-        }) 
+            field::SpectralFunction<double>([](
+                const si::wavenumber nlo, 
+                const si::wavenumber nhi, 
+                const si::pressure p, 
+                const si::temperature T
+            ) {
+                double l = (2.0 / (nhi+nlo) / si::micrometer);
+                constexpr double n = 1.00014930f;
+                constexpr double dndl = -0.000082645f;
+                return n + dndl * l;
+            }) 
     },
 
     /*liquid*/
     phase::PartlyKnownLiquid {
         /*specific_heat_capacity*/ 9.668 * si::kilojoule / (si::gram * si::kelvin), 
-        /*thermal_conductivity*/   0.1185 * si::watt / (si::meter * si::kelvin), // Timmerhaus (1989)
+        /*thermal_conductivity*/   
+            get_interpolated_temperature_function
+                ( si::kelvin, si::watt/(si::centimeter*si::kelvin),
+                 std::vector<double>{    16.0,     24.0,     30.0},
+                 std::vector<double>{10.85e-4, 12.72e-4, 14.12e-4}), // Johnson (1960)
         /*dynamic_viscosity*/      13.06 * si::kilogram / (si::meter * 1e6*si::second), // Timmerhaus (1989)
         /*density*/                0.0708 * si::gram/si::milliliter,
         /*vapor_pressure*/         
-                get_exponential_temperature_function
-                    (si::kelvin, si::kilopascal,
-                        std::vector<double>{14.0,     23.0,     32.0},  
-                        std::vector<double>{7.9,      209.0,    1119.0}),
+            get_antoine_vapor_pressure_function(
+                si::celcius, si::millimeter_mercury, 
+                5.92088, 71.6153, 276.34), // Physical and Chemical Equilibrium for Chemical Engineers, Second Edition. 
         /*refractive_index*/       1.1096
     },
 
@@ -1001,7 +1106,7 @@ PartlyKnownCompound ammonia {
     /*latent_heat_of_fusion*/             5.66*si::kilojoule/(17.031*si::gram),
     /*triple_point_pressure*/             6.060e3 * si::pascal,
     /*triple_point_temperature*/          195.30 * si::kelvin,
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ 77.65*si::celcius,
     /*simon_glatzel_slope*/               5270e5,
     /*simon_glatzel_exponent*/            4.3,
@@ -1016,7 +1121,7 @@ PartlyKnownCompound ammonia {
     phase::PartlyKnownGas {
         /*specific_heat_capacity*/ 35.06 * si::joule / (17.031 * si::gram * si::kelvin), // wikipedia data page
         /*thermal_conductivity*/   // 25.1 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
                  std::vector<double>{300.0,     400.0,     600.0},
                  std::vector<double>{24.4,      37.4,      66.8}),
@@ -1043,10 +1148,9 @@ PartlyKnownCompound ammonia {
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                681.97 * si::kilogram / si::meter3,  //encyclopedia.airliquide.com
         /*vapor_pressure*/         
-                get_exponential_temperature_function
-                    (si::celcius, si::kilopascal,
-                     std::vector<double>{-139.0,     -71.3,     -36.6}, 
-                     std::vector<double>{1.0,        10.0,      100.0}),
+            get_antoine_vapor_pressure_function(
+                si::celcius, si::millimeter_mercury, 
+                7.36048, 926.13, 240.17), // Physical and Chemical Equilibrium for Chemical Engineers, Second Edition. 
         /*refractive_index*/       1.3944,
     },
 
@@ -1058,7 +1162,7 @@ PartlyKnownCompound ammonia {
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           field::missing(),
             /*vapor_pressure*/                    
-                get_exponential_temperature_function
+                get_interpolated_temperature_function
                     (si::kelvin, si::kilopascal,
                      std::vector<double>{160.0,     180.0,     190.0},     
                      std::vector<double>{0.1  ,     1.2  ,     3.5  }),
@@ -1102,7 +1206,7 @@ PartlyKnownCompound ozone {
     /*latent_heat_of_fusion*/             field::missing(),
     /*triple_point_pressure*/             7.346e-6 * si::bar, //encyclopedia.airliquide.com
     /*triple_point_temperature*/          -193.0 * si::celcius, //encyclopedia.airliquide.com
-    /*freezing_point_sample_pressure*/    si::standard_pressure, 
+    /*freezing_point_sample_pressure*/    si::atmosphere, 
     /*freezing_point_sample_temperature*/ -193.0*si::celcius,
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),
@@ -1129,10 +1233,9 @@ PartlyKnownCompound ozone {
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                1349.0 * si::kilogram / si::meter3, //encyclopedia.airliquide.com
         /*vapor_pressure*/         
-                get_exponential_temperature_function
-                    (si::celcius, si::pascal,
-                     std::vector<double>{-189.0,     -158.0,     -111.5}, 
-                     std::vector<double>{1.0 ,       1e3,        100e3}),
+            get_antoine_vapor_pressure_function(
+                si::celcius, si::millimeter_mercury, 
+                6.83670, 552.5020, 250.99), // Physical and Chemical Equilibrium for Chemical Engineers, Second Edition. 
         /*refractive_index*/       1.2226
     },
 
@@ -1185,7 +1288,7 @@ PartlyKnownCompound nitrous_oxide {
     /*latent_heat_of_fusion*/             6.54*si::kilojoule/(44.012*si::gram),
     /*triple_point_pressure*/             8.785e-1 * si::bar, //encyclopedia.airliquide.com
     /*triple_point_temperature*/          -90.82 * si::celcius, //encyclopedia.airliquide.com
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ -90.8*si::celcius,
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),
@@ -1200,12 +1303,12 @@ PartlyKnownCompound nitrous_oxide {
     phase::PartlyKnownGas {
         /*specific_heat_capacity*/ field::missing(),
         /*thermal_conductivity*/   // 17.4 * si::milliwatt/(si::meter*si::kelvin), // Huber & Harvey
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
                  std::vector<double>{200.0,     300.0,     600.0},
                  std::vector<double>{9.8,       17.4,      41.8}),
         /*dynamic_viscosity*/      // 1.47e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 (si::kelvin, si::micropascal*si::second,
                  std::vector<double>{200.0,     300.0,     600.0},              
                  std::vector<double>{10.0,      15.0,      27.4}),
@@ -1220,10 +1323,10 @@ PartlyKnownCompound nitrous_oxide {
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                1230.458 * si::kilogram / si::meter3, 
         /*vapor_pressure*/         
-                get_exponential_temperature_function
-                    (si::celcius, si::kilopascal,
-                     std::vector<double>{-131.1,     -112.9,     -88.7}, 
-                     std::vector<double>{1.0,        10.0,       100.0}),
+            get_interpolated_temperature_function
+                (si::celcius, si::kilopascal,
+                 std::vector<double>{-131.1,     -112.9,     -88.7}, 
+                 std::vector<double>{1.0,        10.0,       100.0}),
         /*refractive_index*/       1.238
     },
 
@@ -1276,7 +1379,7 @@ PartlyKnownCompound  sulfur_dioxide {
     /*latent_heat_of_fusion*/             field::missing(),
     /*triple_point_pressure*/             1.67e3 * si::pascal,
     /*triple_point_temperature*/          197.69 * si::kelvin,
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ -75.45 * si::celcius,
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),
@@ -1291,12 +1394,12 @@ PartlyKnownCompound  sulfur_dioxide {
     phase::PartlyKnownGas {
         /*specific_heat_capacity*/ field::missing(),
         /*thermal_conductivity*/   // 9.6 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
                  std::vector<double>{300.0,     400.0,     600.0},
                  std::vector<double>{9.6,       14.3,      25.6}),
         /*dynamic_viscosity*/      // 1.26e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 (si::kelvin, si::micropascal*si::second,
                  std::vector<double>{200.0,     300.0,     500.0},              
                  std::vector<double>{8.6,       12.9,      21.7}),
@@ -1311,10 +1414,10 @@ PartlyKnownCompound  sulfur_dioxide {
         /*dynamic_viscosity*/      0.368 * si::millipascal*si::second, // pubchem
         /*density*/                389.06 * si::kilogram / si::meter3, // encyclopedia.airliquide.com
         /*vapor_pressure*/         
-                get_exponential_temperature_function
-                    (si::celcius, si::kilopascal,
-                      std::vector<double>{-80.0,     -52.0,     -10.3}, 
-                       std::vector<double>{1.0,        10.0,      100.0}),
+            get_interpolated_temperature_function
+                (si::celcius, si::kilopascal,
+                  std::vector<double>{-80.0,     -52.0,     -10.3}, 
+                   std::vector<double>{1.0,        10.0,      100.0}),
         /*refractive_index*/       1.3396
     },
 
@@ -1367,7 +1470,7 @@ PartlyKnownCompound  sulfur_dioxide {
     /*latent_heat_of_fusion*/             2.3*si::kilojoule/(30.006*si::gram),
     /*triple_point_pressure*/             87.85e3 * si::pascal,
     /*triple_point_temperature*/          182.34 * si::kelvin,
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ -163.6*si::celcius,
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),
@@ -1382,12 +1485,12 @@ PartlyKnownCompound  sulfur_dioxide {
     phase::PartlyKnownGas {
         /*specific_heat_capacity*/ field::missing(),
         /*thermal_conductivity*/   // 25.9 * si::milliwatt/(si::meter*si::kelvin), // Huber & Harvey
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
                  std::vector<double>{200.0,     300.0,     600.0},
                  std::vector<double>{17.8,      25.9,      46.2}),
         /*dynamic_viscosity*/      // 0.0188 * si::millipascal * si::second, //pubchem
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 (si::kelvin, si::micropascal*si::second,
                  std::vector<double>{200.0,     300.0,     600.0},              
                  std::vector<double>{13.8,      19.2,      31.9}),
@@ -1402,10 +1505,9 @@ PartlyKnownCompound  sulfur_dioxide {
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                1230.458 * si::kilogram / si::meter3,  //encyclopedia.airliquide.com
         /*vapor_pressure*/         
-                get_exponential_temperature_function
-                    (si::celcius, si::kilopascal,
-                     std::vector<double>{-179.3,     -168.1,     -159.9}, 
-                     std::vector<double>{1.0,        10.0,       100.0}),
+            get_antoine_vapor_pressure_function(
+                si::celcius, si::millimeter_mercury, 
+                8.7429568, 2.9382, 268.27), // Physical and Chemical Equilibrium for Chemical Engineers, Second Edition. 
         /*refractive_index*/       1.330
     },
 
@@ -1417,7 +1519,7 @@ PartlyKnownCompound  sulfur_dioxide {
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           field::missing(),
             /*vapor_pressure*/                    
-                get_exponential_temperature_function
+                get_interpolated_temperature_function
                     (si::kelvin, si::kilopascal,
                       std::vector<double>{85.0,     95.0,     105.0},     
                       std::vector<double>{0.1 ,      1.3 ,     10.0 }),
@@ -1461,7 +1563,7 @@ PartlyKnownCompound carbon_monoxide {
     /*latent_heat_of_fusion*/             0.833*si::kilojoule/(28.010*si::gram),
     /*triple_point_pressure*/             1.53e-1 * si::bar, //encyclopedia.airliquide.com
     /*triple_point_temperature*/          -204.99*si::celcius,
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ -205.02*si::celcius,
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),
@@ -1476,56 +1578,88 @@ PartlyKnownCompound carbon_monoxide {
     phase::PartlyKnownGas {
         /*specific_heat_capacity*/ 29.0 * si::joule / (28.010 * si::gram * si::kelvin), // wikipedia data page
         /*thermal_conductivity*/   // 25.0 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                 std::vector<double>{300.0,     400.0,     600.0},
-                 std::vector<double>{25.0,      32.3,      45.7}),
+                 std::vector<double>{30.0,  100.0,  300.0,     400.0,     600.0},
+                 std::vector<double>{ 7.0,    9.0,   25.0,      32.3,      45.7}), // data below 100K provided by Johnson (1960)
         /*dynamic_viscosity*/      // 1.74e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 (si::kelvin, si::micropascal*si::second,
                  std::vector<double>{100.0,     300.0,     600.0},              
                  std::vector<double>{6.7,       17.8,      29.1}),
-        /*density*/                field::missing(),
+        /*density*/                
+            field::StateSample<si::density>(1.250*si::gram/si::liter), // Johnson (1960)
         /*refractive_index*/       // 1.00036320, //https://refractiveindex.info
-        field::SpectralFunction<double>([](
-            const si::wavenumber nlo, 
-            const si::wavenumber nhi, 
-            const si::pressure p, 
-            const si::temperature T
-        ) {
-            double l = (2.0 / (nhi+nlo) / si::micrometer);
-            constexpr double n = 1.00036350f;
-            constexpr double dndl = -0.00027275f;
-            return n + dndl * l;
-        }) 
+            field::SpectralFunction<double>([](
+                const si::wavenumber nlo, 
+                const si::wavenumber nhi, 
+                const si::pressure p, 
+                const si::temperature T
+            ) {
+                double l = (2.0 / (nhi+nlo) / si::micrometer);
+                constexpr double n = 1.00036350f;
+                constexpr double dndl = -0.00027275f;
+                return n + dndl * l;
+            }) 
     },
 
     /*liquid*/
     phase::PartlyKnownLiquid {
         /*specific_heat_capacity*/ 60.351 * si::joule / (28.010 * si::gram * si::kelvin), // pubchem
-        /*thermal_conductivity*/   0.1428 * si::watt / (si::meter * si::kelvin), // pubchem
+        /*thermal_conductivity*/   // 0.1428 * si::watt / (si::meter * si::kelvin), // pubchem
+            get_interpolated_temperature_function
+                ( si::kelvin, si::calorie/(si::centimeter*si::second*si::kelvin),
+                 std::vector<double>{78.46,   90.46,   102.86,  112.46},
+                 std::vector<double>{3.55e-4, 2.88e-4, 2.38e-4, 2.1e-4}),  // Johnson (1960)
         /*dynamic_viscosity*/      0.170 * si::millipascal * si::second, // Johnson (1960)
-        /*density*/                793.2 * si::kilogram / si::meter3,
+        /*density*/                
+            field::StateSample<si::density>(0.69953*si::gram/si::centimeter3, si::atmosphere, 100.93*si::kelvin), // Johnson (1960)
         /*vapor_pressure*/         
-                get_exponential_temperature_function
-                    (si::celcius, si::pascal,
-                     std::vector<double>{-223.0,     -216.5,     -191.7}, 
-                     std::vector<double>{100.0 ,     1e3,        100e3}),
+            get_antoine_vapor_pressure_function(
+                si::celcius, si::millimeter_mercury, 
+                6.24021, 230.272, 260.0), // Physical and Chemical Equilibrium for Chemical Engineers, Second Edition. 
         /*refractive_index*/       field::missing(),
     },
 
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
-        phase::PartlyKnownSolid {
+        phase::PartlyKnownSolid { // beta: warmer form, transitions to alpha at 61.5K
             /*specific_heat_capacity*/            12.29 * si::calorie / (28.010 * si::gram * si::kelvin), // Johnson (1960)
             /*thermal_conductivity*/              30.0 * si::milliwatt / (si::centimeter * si::kelvin), // Stachowiak (1998)
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           1.0288 * si::kilogram / si::meter3, // Johnson (1960), for alpha, 0.929 for beta
+            /*density*/                           
+                field::StateSample<si::density>(0.929*si::gram/si::centimeter3, si::atmosphere, 20.0*si::kelvin), // Johnson (1960)
             /*vapor_pressure*/                    
-                get_exponential_temperature_function
+                get_interpolated_temperature_function
                     (si::kelvin, si::kilopascal,
                       std::vector<double>{50.0,     55.0,     65.0},     
                       std::vector<double>{0.1 ,      0.6 ,     8.2 }),
+            /*refractive_index*/                  field::missing(),
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   field::missing(),
+            /*shear_modulus*/                     field::missing(),
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }, 
+        phase::PartlyKnownSolid { //alpha
+            /*specific_heat_capacity*/            field::missing(),
+            /*thermal_conductivity*/              field::missing(),
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           
+                field::StateSample<si::density>(1.0288*si::gram/si::centimeter3, si::atmosphere, 65.0*si::kelvin), // Johnson (1960)
+            /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
@@ -1567,7 +1701,7 @@ PartlyKnownCompound ethane {
     /*latent_heat_of_fusion*/             2.72*si::kilojoule/(30.070*si::gram),
     /*triple_point_pressure*/             1.4 * si::pascal,
     /*triple_point_temperature*/          90.35 * si::kelvin,
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ -183.79 * si::celcius, 
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),
@@ -1582,12 +1716,12 @@ PartlyKnownCompound ethane {
     phase::PartlyKnownGas {
         /*specific_heat_capacity*/ 52.49 * si::joule / (30.070 * si::gram * si::kelvin), // wikipedia data page
         /*thermal_conductivity*/   // 21.2 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
                  std::vector<double>{200.0,     300.0,     600.0},
                  std::vector<double>{11.0,      21.3,      70.5}),
         /*dynamic_viscosity*/      // 9.4 * si::micropascal*si::second,
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 (si::kelvin, si::micropascal*si::second,
                  std::vector<double>{200.0,     300.0,     600.0},              
                  std::vector<double>{6.4,       9.5,       17.3}),
@@ -1613,10 +1747,9 @@ PartlyKnownCompound ethane {
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                545.0 * si::kilogram/si::meter3,
         /*vapor_pressure*/         
-                get_exponential_temperature_function
-                    (si::celcius, si::pascal,
-                     std::vector<double>{-183.3,     -145.3,     -88.8}, 
-                     std::vector<double>{1.0 ,       1e3,        100e3}),
+            get_antoine_vapor_pressure_function(
+                si::celcius, si::millimeter_mercury, 
+                6.80267, 656.4028, 255.99), // Physical and Chemical Equilibrium for Chemical Engineers, Second Edition. 
         /*refractive_index*/       field::missing(),
     },
 
@@ -1670,7 +1803,7 @@ PartlyKnownCompound hydrogen_cyanide {
     /*latent_heat_of_fusion*/             field::missing(),
     /*triple_point_pressure*/             0.153e3 * si::pascal,
     /*triple_point_temperature*/          259.7 * si::kelvin,
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ -13.29 * si::celcius,
     /*simon_glatzel_slope*/               3080e5,
     /*simon_glatzel_exponent*/            3.6,
@@ -1701,7 +1834,7 @@ PartlyKnownCompound hydrogen_cyanide {
                  std::vector<double>{0.235, 0.183} ),
         /*density*/                687.6 * si::kilogram/si::meter3,
         /*vapor_pressure*/         
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 (si::celcius, si::kilopascal,
                  std::vector<double>{-52.6,     -22.7,      25.4}, 
                  std::vector<double>{1.0,        10.0,      100.0}),
@@ -1716,7 +1849,7 @@ PartlyKnownCompound hydrogen_cyanide {
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           field::missing(),
             /*vapor_pressure*/                    
-                get_exponential_temperature_function
+                get_interpolated_temperature_function
                     (si::kelvin, si::kilopascal,
                      std::vector<double>{200.0,     230.0,     250.0},     
                      std::vector<double>{0.2  ,     2.2  ,     9.7  }),
@@ -1762,7 +1895,7 @@ PartlyKnownCompound ethanol {
     /*latent_heat_of_fusion*/             4.931*si::kilojoule/(46.068*si::gram),
     /*triple_point_pressure*/             0.00043 * si::pascal,  // wikipedia data page
     /*triple_point_temperature*/          150.0 * si::kelvin,  // wikipedia data page
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ -114.14 * si::celcius,
     /*simon_glatzel_slope*/               10600e5,
     /*simon_glatzel_exponent*/            1.61,
@@ -1773,12 +1906,12 @@ PartlyKnownCompound ethanol {
     phase::PartlyKnownGas {
         /*specific_heat_capacity*/ 78.28 * si::joule / (46.068*si::gram*si::kelvin), // wikipedia data page
         /*thermal_conductivity*/   // 14.4 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
                  std::vector<double>{300.0,     300.0,     600.0},
                  std::vector<double>{14.4,      25.8,      53.2}),
         /*dynamic_viscosity*/      
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 (si::kelvin, si::micropascal*si::second,
                  std::vector<double>{400.0,     500.0,     600.0},              
                  std::vector<double>{11.6,      14.5,      17.0}),
@@ -1790,18 +1923,18 @@ PartlyKnownCompound ethanol {
     phase::PartlyKnownLiquid {
         /*specific_heat_capacity*/ 112.4 * si::joule / (46.068*si::gram*si::kelvin), // wikipedia data page
         /*thermal_conductivity*/   // 0.167 * si::watt / ( si::meter * si::kelvin ),
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 (si::celcius, si::watt/(si::meter*si::kelvin),
                 std::vector<double>{-25.0,     0.0,     100.0},
                 std::vector<double>{ 0.181 ,   0.1742,  0.148 }),
         /*dynamic_viscosity*/      
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 (si::celcius, si::millipascal*si::second, 
                std::vector<double>{-25.0  ,     25.0  ,     75.0},
                std::vector<double>{  3.262,     1.074 ,     0.476 }),
         /*density*/                0789.3 * si::kilogram/si::meter3,
         /*vapor_pressure*/         
-                get_exponential_temperature_function
+                get_interpolated_temperature_function
                     (si::celcius, si::pascal,
                       std::vector<double>{-73.0,     -7.0,     78.0}, 
                      std::vector<double>{1.0 ,       1e3,      100e3}),
@@ -1869,7 +2002,7 @@ PartlyKnownCompound formaldehyde {
     /*latent_heat_of_fusion*/             field::missing(),
     /*triple_point_pressure*/             71549032.0 * si::pascal,
     /*triple_point_temperature*/          155.10 * si::kelvin,
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ 181.0 * si::kelvin,
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),
@@ -1896,10 +2029,9 @@ PartlyKnownCompound formaldehyde {
         /*dynamic_viscosity*/      0.1421 * si::millipascal * si::second, //pubchem
         /*density*/                0.8153 * si::kilogram/si::meter3,  // wikipedia
         /*vapor_pressure*/         
-                get_exponential_temperature_function
-                    (si::celcius, si::kilopascal,
-                      std::vector<double>{-91.0,     -61.7,     -19.3}, 
-                     std::vector<double>{1.0,        10.0,      100.0}),
+            get_antoine_vapor_pressure_function(
+                si::celcius, si::millimeter_mercury, 
+                7.15610, 957.240, 243.010, -88.0, -2.0), // https://www.academia.edu/10200207/Antoine_coefficient_table_PDF
         /*refractive_index*/       1.3714  // wikipedia
     },
 
@@ -1953,7 +2085,7 @@ PartlyKnownCompound formic_acid {
     /*latent_heat_of_fusion*/             12.68*si::kilojoule/(46.026*si::gram),
     /*triple_point_pressure*/             2.2 * si::kilopascal,
     /*triple_point_temperature*/          281.4 * si::kelvin,
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ 8.3 * si::celcius,
     /*simon_glatzel_slope*/               4100e5,
     /*simon_glatzel_exponent*/            5.2,
@@ -1973,17 +2105,16 @@ PartlyKnownCompound formic_acid {
     phase::PartlyKnownLiquid {
         /*specific_heat_capacity*/ 101.3 * si::joule / (46.026*si::gram*si::kelvin), // wikipedia data page
         /*thermal_conductivity*/   // 0.267 * si::watt / (si::meter * si::kelvin),
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 (si::celcius, si::watt/(si::meter*si::kelvin),
                 std::vector<double>{25.0,     50.0,     100.0},
                 std::vector<double>{ 0.267 ,  0.2652,   0.261 }),
         /*dynamic_viscosity*/      1.607 * si::millipascal*si::second,
         /*density*/                1220.0 * si::kilogram/si::meter3,
         /*vapor_pressure*/         
-                get_exponential_temperature_function
-                    (si::celcius, si::kilopascal,
-                       std::vector<double>{-0.8,     37.0,     100.2}, 
-                       std::vector<double>{1.0,        10.0,     100.0}),
+            get_antoine_vapor_pressure_function(
+                si::celcius, si::millimeter_mercury, 
+                7.37790, 1563.280, 247.070, -2.0, 136.0), // https://www.academia.edu/10200207/Antoine_coefficient_table_PDF
         /*refractive_index*/       1.3714 
     },
 
@@ -1995,7 +2126,7 @@ PartlyKnownCompound formic_acid {
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           field::missing(),
             /*vapor_pressure*/                    
-                get_exponential_temperature_function
+                get_interpolated_temperature_function
                     (si::celcius, si::pascal,
                       std::vector<double>{-56.0,     -40.4,     -0.8}, 
                      std::vector<double>{1.0 ,       100.0,     1000.0}),
@@ -2022,7 +2153,7 @@ PartlyKnownCompound formic_acid {
 };
 
 // POORLY CHARACTERIZED COMPOUNDS:
-// perflouromethane, tetraflouromethane, CF4
+// perflouromethane, tetraflouride, CF4
 // for modeling industrial emissions and the terraforming of Mars as suggested by Zubrin (1996) 
 // We went out of our way searching for an IR graph since 
 // we use CF4 in the model to study pollution and Martian terraformation
@@ -2042,7 +2173,7 @@ PartlyKnownCompound perflouromethane{
     /*latent_heat_of_fusion*/             0.704*si::kilojoule/(88.0*si::gram),
     /*triple_point_pressure*/             0.1012e3 * si::pascal,
     /*triple_point_temperature*/          89.54 * si::kelvin,
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ -183.60*si::celcius,
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),
@@ -2057,7 +2188,7 @@ PartlyKnownCompound perflouromethane{
     phase::PartlyKnownGas {
         /*specific_heat_capacity*/ field::missing(),
         /*thermal_conductivity*/   // 16.0 * si::milliwatt/(si::meter*si::kelvin), // Huber & Harvey
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
                  std::vector<double>{300.0,     400.0,     600.0},
                  std::vector<double>{16.0,      24.1,      39.9}),
@@ -2073,10 +2204,9 @@ PartlyKnownCompound perflouromethane{
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                1890.0 * si::kilogram/si::meter3, //pubchem
         /*vapor_pressure*/         
-                get_exponential_temperature_function
-                    (si::celcius, si::kilopascal,
-                     std::vector<double>{-171.6,     -153.9,     -128.3}, 
-                     std::vector<double>{1.0,        1.0,        100.0}),
+            get_antoine_vapor_pressure_function(
+                si::celcius, si::millimeter_mercury, 
+                6.97230, 540.5, 260.1, -180.0, -125.0), // https://www.academia.edu/10200207/Antoine_coefficient_table_PDF
         /*refractive_index*/       field::missing(),
     },
 
@@ -2088,7 +2218,7 @@ PartlyKnownCompound perflouromethane{
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           1980.0 * si::kilogram/si::meter3, // pubchem
             /*vapor_pressure*/                    
-                get_exponential_temperature_function
+                get_interpolated_temperature_function
                     (si::celcius, si::pascal,
                      std::vector<double>{-199.9,     -193.0,     -183.9}, 
                      std::vector<double>{1.0 ,       10.0,       100.0  }),
@@ -2133,7 +2263,7 @@ PartlyKnownCompound benzene {
     /*latent_heat_of_fusion*/             9.87*si::kilojoule/(79.102*si::gram),
     /*triple_point_pressure*/             4.83 * si::kilopascal, // wikipedia data page
     /*triple_point_temperature*/          278.5 * si::kelvin, // wikipedia data page
-    /*freezing_point_sample_pressure*/    si::standard_pressure, 
+    /*freezing_point_sample_pressure*/    si::atmosphere, 
     /*freezing_point_sample_temperature*/ 5.49 * si::celcius, 
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),
@@ -2157,21 +2287,20 @@ PartlyKnownCompound benzene {
     phase::PartlyKnownLiquid {
         /*specific_heat_capacity*/ 134.8 * si::joule / (79.109 * si::gram * si::kelvin),
         /*thermal_conductivity*/   // 0.1411 * si::watt / ( si::meter * si::kelvin ),
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 (si::celcius, si::watt/(si::meter*si::kelvin),
                 std::vector<double>{25.0,     50.0,     75.0},
                 std::vector<double>{ 0.1411,  0.1329,   0.1247}),
         /*dynamic_viscosity*/      // 0.601 * si::millipascal * si::second, // engineering toolbox, at 300K
-            get_exponential_temperature_function
+            get_interpolated_temperature_function
                 (si::celcius, si::millipascal*si::second, 
                 std::vector<double>{25.0  ,     50.0  ,     75.0},
                 std::vector<double>{ 0.604,     0.436 ,     0.335 }),
         /*density*/                0.8765 * si::gram/si::centimeter3, // wikipedia
         /*vapor_pressure*/         
-                get_exponential_temperature_function
-                    (si::celcius, si::kilopascal,
-                      std::vector<double>{-15.1,     20.0,     79.7}, 
-                     std::vector<double>{1.0,        10.0,     100.0}),
+            get_antoine_vapor_pressure_function(
+                si::celcius, si::millimeter_mercury, 
+                6.90565, 1211.033, 220.79), // Physical and Chemical Equilibrium for Chemical Engineers, Second Edition. 
         /*refractive_index*/       //1.5011,
         field::SpectralFunction<double>([](
             const si::wavenumber nlo, 
@@ -2200,7 +2329,7 @@ PartlyKnownCompound benzene {
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           field::missing(),
             /*vapor_pressure*/                    
-                get_exponential_temperature_function
+                get_interpolated_temperature_function
                     (si::celcius, si::pascal,
                       std::vector<double>{-40.0,     -15.1,     20.0}, 
                      std::vector<double>{100.0 ,     1e3,       10e3}),
@@ -2245,7 +2374,7 @@ PartlyKnownCompound pyrimidine {
     /*latent_heat_of_fusion*/             field::missing(),
     /*triple_point_pressure*/             field::missing(),
     /*triple_point_temperature*/          field::missing(),
-    /*freezing_point_sample_pressure*/    si::standard_pressure, 
+    /*freezing_point_sample_pressure*/    si::atmosphere, 
     /*freezing_point_sample_temperature*/ -22.6 * si::celcius, // wikipedia
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),
@@ -2320,7 +2449,7 @@ PartlyKnownCompound  halite {
     /*latent_heat_of_fusion*/             28.16*si::kilojoule/(90.442*si::gram),
     /*triple_point_pressure*/             30.0 * si::pascal, // wikipedia data page
     /*triple_point_temperature*/          1074.0 * si::kelvin, // wikipedia data page
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ 800.7*si::celcius,
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),
@@ -2343,7 +2472,7 @@ PartlyKnownCompound  halite {
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                field::missing(),
         /*vapor_pressure*/         
-                get_exponential_temperature_function
+                get_interpolated_temperature_function
                     (si::celcius, si::pascal,
                       std::vector<double>{835.0,     987.0,     1461.0}, 
                      std::vector<double>{100.0 ,     1e3,       100e3}),
@@ -2358,7 +2487,7 @@ PartlyKnownCompound  halite {
             /*dynamic_viscosity*/                 1e17 * si::poise, // various sources, Carey (1953) cites this number from Weinberg (1927), and Mukherjee (2010), provides a literature review and findings from salt diapirs. Science is weird.
             /*density*/                           2170.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    
-                get_exponential_temperature_function
+                get_interpolated_temperature_function
                     (si::kelvin, si::pascal,
                        std::vector<double>{653.0,     733.0,     835.0},  
                        std::vector<double>{1.0,         10.0,      100.0 }),
@@ -2452,8 +2581,8 @@ PartlyKnownCompound  corundum {
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
-            /*specific_heat_capacity*/            field::StateSample<si::specific_heat_capacity>(750.0*si::joule/(si::kilogram* si::kelvin), si::standard_pressure, 25.0*si::celcius),//azom.com/article.aspx?ArticleId=1948
-            /*thermal_conductivity*/              // field::StateSample<si::thermal_conductivity>(37.0*si::watt/(si::meter * si::kelvin), si::standard_pressure, 20.0*si::celcius),//azom.com/article.aspx?ArticleId=1948
+            /*specific_heat_capacity*/            field::StateSample<si::specific_heat_capacity>(750.0*si::joule/(si::kilogram* si::kelvin), si::atmosphere, 25.0*si::celcius),//azom.com/article.aspx?ArticleId=1948
+            /*thermal_conductivity*/              // field::StateSample<si::thermal_conductivity>(37.0*si::watt/(si::meter * si::kelvin), si::atmosphere, 20.0*si::celcius),//azom.com/article.aspx?ArticleId=1948
                 get_interpolated_temperature_function
                     (si::kelvin, si::watt / (si::centimeter * si::kelvin),
                      std::vector<double>{4.0, 50.0, 100.0}, 
@@ -2616,7 +2745,7 @@ PartlyKnownCompound carbon {
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                field::missing(),
         /*vapor_pressure*/         
-                get_exponential_temperature_function
+                get_interpolated_temperature_function
                     (si::celcius, si::pascal,
                      std::vector<double>{2566.0,     3016.0,     3635.0}, 
                      std::vector<double>{1.0 ,       1e3,        100e3}),
@@ -2634,7 +2763,7 @@ PartlyKnownCompound carbon {
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           2260.0 * si::kilogram/si::meter3, // 3513.0 for diamond
             /*vapor_pressure*/                    
-                get_exponential_temperature_function
+                get_interpolated_temperature_function
                     (si::celcius, si::pascal,
                      std::vector<double>{2566.0,     3016.0,     3635.0}, 
                      std::vector<double>{10.0 ,      1e3,        100e3}),
@@ -2688,7 +2817,7 @@ PartlyKnownCompound  calcite {
     /*latent_heat_of_fusion*/             field::missing(),
     /*triple_point_pressure*/             field::missing(),
     /*triple_point_temperature*/          field::missing(),
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ 1612.0 * si::kelvin, // 1098.0 for aragonite
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),
@@ -2777,7 +2906,7 @@ PartlyKnownCompound  quartz {
     /*latent_heat_of_fusion*/             9.76*si::kilojoule/(60.08*si::gram), // cristobalite
     /*triple_point_pressure*/             0.0003 * si::pascal,
     /*triple_point_temperature*/          1983.0 * si::kelvin,
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ 1722.0 * si::celcius, // cristobalite
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),
@@ -2800,7 +2929,7 @@ PartlyKnownCompound  quartz {
         /*dynamic_viscosity*/      exp(10.0) * si::poise, // Doremus (2002), at 1400 C
         /*density*/                2180.0 * si::kilogram/si::meter3, // from Murase and McBirney (1973), for rhyolitic magma
         /*vapor_pressure*/         
-                get_exponential_temperature_function
+                get_interpolated_temperature_function
                     (si::celcius, si::pascal,
                      std::vector<double>{1966.0,     2149.0,     2368.0}, 
                      std::vector<double>{1.0 ,       10.0,       100.0  }),
@@ -2873,7 +3002,7 @@ PartlyKnownCompound  orthoclase {
     /*latent_heat_of_fusion*/             field::missing(),
     /*triple_point_pressure*/             field::missing(),
     /*triple_point_temperature*/          field::missing(),
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ 1170.0*si::celcius, // http://www.minsocam.org/msa/collectors_corner/arc/tempmagmas.htm
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),
@@ -2948,7 +3077,7 @@ PartlyKnownCompound andesine {
     /*latent_heat_of_fusion*/             field::missing(),
     /*triple_point_pressure*/             field::missing(),
     /*triple_point_temperature*/          field::missing(),
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ 1100.0 * si::celcius, // for Albite, http://www.minsocam.org/msa/collectors_corner/arc/tempmagmas.htm
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),
@@ -3028,7 +3157,7 @@ PartlyKnownCompound augite {
     /*latent_heat_of_fusion*/             field::missing(),
     /*triple_point_pressure*/             field::missing(),
     /*triple_point_temperature*/          field::missing(),
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ 984.0*si::celcius, // for Basalt, http://www.minsocam.org/msa/collectors_corner/arc/tempmagmas.htm
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),
@@ -3254,7 +3383,7 @@ PartlyKnownCompound  pyrite {
     /*latent_heat_of_fusion*/             field::missing(),
     /*triple_point_pressure*/             field::missing(),
     /*triple_point_temperature*/          field::missing(),
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ 1180.0 * si::celcius, // new world encyclopedia
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),
@@ -3408,7 +3537,7 @@ PartlyKnownCompound  gold {
     /*latent_heat_of_fusion*/             12.55*si::kilojoule/(196.967*si::gram),
     /*triple_point_pressure*/             field::missing(),
     /*triple_point_temperature*/          field::missing(),
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ 1064.180*si::celcius,
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),
@@ -3431,7 +3560,7 @@ PartlyKnownCompound  gold {
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                17310.0 * si::kilogram/si::meter3, 
         /*vapor_pressure*/         
-                get_exponential_temperature_function
+                get_interpolated_temperature_function
                     (si::celcius, si::pascal,
                      std::vector<double>{1373.0,     2008.0,     2805.0}, 
                      std::vector<double>{1.0 ,       1e3,        100e3}),
@@ -3498,7 +3627,7 @@ PartlyKnownCompound  silver {
     /*latent_heat_of_fusion*/             11.3*si::kilojoule/(107.868*si::gram),
     /*triple_point_pressure*/             field::missing(),
     /*triple_point_temperature*/          field::missing(),
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ 961.78*si::celcius,
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),
@@ -3521,7 +3650,7 @@ PartlyKnownCompound  silver {
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                9320.0 * si::kilogram/si::meter3, 
         /*vapor_pressure*/         
-                get_exponential_temperature_function
+                get_interpolated_temperature_function
                     (si::celcius, si::pascal,
                      std::vector<double>{1010.0,     1509.0,     2160.0}, 
                      std::vector<double>{1.0 ,       1e3,        100e3}),
@@ -3588,7 +3717,7 @@ PartlyKnownCompound  copper {
     /*latent_heat_of_fusion*/             13.26*si::kilojoule/(63.546*si::gram),
     /*triple_point_pressure*/             field::missing(),
     /*triple_point_temperature*/          field::missing(),
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ 1084.62*si::celcius,
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),
@@ -3611,7 +3740,7 @@ PartlyKnownCompound  copper {
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                8020.0 * si::kilogram/si::meter3, 
         /*vapor_pressure*/         
-                get_exponential_temperature_function
+                get_interpolated_temperature_function
                     (si::celcius, si::pascal,
                      std::vector<double>{1236.0,     1816.0,     2563.0}, 
                      std::vector<double>{1.0 ,       1e3,        100e3}),
@@ -3761,7 +3890,7 @@ PartlyKnownCompound chalcocite {
     /*latent_heat_of_fusion*/             field::missing(),
     /*triple_point_pressure*/             field::missing(),
     /*triple_point_temperature*/          field::missing(),
-    /*freezing_point_sample_pressure*/    si::standard_pressure,
+    /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ 1130.0 * si::celcius, // wikipedia
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),

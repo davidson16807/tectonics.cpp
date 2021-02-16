@@ -357,6 +357,12 @@ namespace si{
 		return a > b? a : b;
 	}
 
+	template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
+	constexpr auto clamp(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> lo, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> hi)
+	{
+		return a < lo? lo : a > hi? hi : a;
+	}
+
 
 
 

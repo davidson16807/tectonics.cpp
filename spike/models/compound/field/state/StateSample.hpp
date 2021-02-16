@@ -20,6 +20,13 @@ namespace field{
             pressure(pressure), 
             temperature(temperature) 
         {}
+        StateSample(
+            const T entry
+        ): 
+            entry(entry), 
+            pressure(si::standard_pressure), 
+            temperature(si::standard_temperature) 
+        {}
 
         constexpr bool operator==(const StateSample<T>& other) const 
         {
