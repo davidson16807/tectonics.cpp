@@ -103,6 +103,46 @@ namespace{
             }
         );
     }
+    template<typename TT, typename Tp, typename Ty>
+    field::OptionalStateField<Ty> get_exponent_pressure_temperature_function(
+        const TT Tunits, const Tp punits, const Ty yunits, 
+        const double pslope, const double pexponent, 
+        const double Tslope, const double Texponent, 
+        const double intercept
+    ){
+        return field::StateFunction<Ty>(
+            [Tunits, punits, yunits, pslope, pexponent, Tslope, Texponent, intercept]
+            (const si::pressure p, const si::temperature T)
+            {
+                return (pslope*std::pow(p/punits, pexponent)
+                      + Tslope*std::pow(T/Tunits, Texponent)
+                      + intercept) * yunits;
+            }
+        );
+    }
+    template<typename TT, typename Tp, typename Ty>
+    field::OptionalStateField<Ty> get_sigmoid_exponent_pressure_temperature_function(
+        const TT Tunits, const Tp punits, const Ty yunits, 
+        const double pslope, const double pexponent, 
+        const double Tslope, const double Texponent, 
+        const double Tsigmoid_max, const double Tsigmoid_scale, const double Tsigmoid_center,  
+        const double intercept
+    ){
+        return field::StateFunction<Ty>(
+            [Tunits, punits, yunits, 
+             pslope, pexponent, Tslope, Texponent, 
+             Tsigmoid_max, Tsigmoid_scale, Tsigmoid_center, 
+             intercept]
+            (const si::pressure p, const si::temperature T)
+            {
+                const double Tsigmoid_input = (T/Tunits - Tsigmoid_center)/Tsigmoid_scale;
+                return (pslope*std::pow(p/punits, pexponent)
+                      + Tslope*std::pow(T/Tunits, Texponent)
+                      + Tsigmoid_max * Tsigmoid_input / std::sqrt(1.0 + Tsigmoid_input*Tsigmoid_input)
+                      + intercept) * yunits;
+            }
+        );
+    }
     template<typename TT>
     field::OptionalStateField<si::pressure> get_antoine_vapor_pressure_function(
         const TT Tunits, const si::pressure punits,
@@ -204,17 +244,21 @@ PartlyKnownCompound water {
 
     /*gas*/
     phase::PartlyKnownGas {
-        /*specific_heat_capacity*/ 2.080 * si::joule / (si::gram * si::kelvin),                     // wikipedia
+        /*specific_heat_capacity*/ // 2.080 * si::joule / (si::gram * si::kelvin),                     // wikipedia
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
+                0.01766, 0.80539, 0.00707, 0.69586, 1.42782), 
+                // water, mean error: 0.8%, max error: 3.4%, range: 300-1273.2K, 0-10MPa, stp estimate: 1.781
         /*thermal_conductivity*/   // 0.016 * si::watt / (si::meter * si::kelvin),                     // wikipedia
-            get_interpolated_temperature_function
-                ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                  std::vector<double>{300.0,     400.0,     600.0},
-                  std::vector<double>{ 18.7,     27.1,      47.1}),
+            get_sigmoid_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
+                0.00054, 1.09614, 0.00000, 0.00000, 0.09827, 691.90362, 883.95160, 0.08323), 
+                // water, mean error: 2.5%, max error: 9.7%, range: 300-1273.2K, 0-10MPa, stp estimate: 0.018
         /*dynamic_viscosity*/      // 1.24e-5 * si::pascal * si::second,                               // engineering toolbox, at 100 C
-            get_interpolated_temperature_function
-                (si::kelvin, si::micropascal*si::second,
-                 std::vector<double>{300.0,     400.0,     600.0},              
-                 std::vector<double>{10.0,      13.3,      21.4}),
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::micropascal*si::second, 
+                0.00019, 3.33694, 0.02183, 1.08016, -0.58257), 
+                // water, mean error: 1.2%, max error: 3.5%, range: 300-1273.2K, 0-10MPa, stp estimate: 8.765
         /*density*/                0.6* si::kilogram/si::meter3,
         /*refractive_index*/       1.000261                                                         // engineering toolbox
     },
@@ -325,26 +369,20 @@ PartlyKnownCompound nitrogen {
     /*gas*/
     phase::PartlyKnownGas {
         /*specific_heat_capacity*/ // 1.341 * si::joule / (si::gram * si::kelvin),
-            get_interpolated_pressure_temperature_function
-                ( si::kelvin, si::kilojoule/(si::kilogram*si::kelvin),
-                                       std::vector<double>{100.0, 200.0, 300.0, 1000.0},
-                   0.1*si::megapascal, std::vector<double>{1.071, 1.043, 1.041, 1.167 },
-                   1.0*si::megapascal, std::vector<double>{1.652, 1.085, 1.056, 1.168 },
-                  10.0*si::megapascal, std::vector<double>{2.022, 1.628, 1.195, 1.176 }),
+            get_sigmoid_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
+                0.00115, 0.62179, 0.00000, 0.00000, 2.54371, 2268.64874, -2637.49785, -0.99334), 
+                // nitrogen, mean error: 0.8%, max error: 5.4%, range: 163.15-2013.2K, 0-3MPa, stp estimate: 1.013
         /*thermal_conductivity*/   // 0.0234 * si::watt / (si::meter * si::kelvin),                    // wikipedia
-            get_interpolated_pressure_temperature_function
-                ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                                       std::vector<double>{100.0, 200.0, 300.0, 1000.0},
-                   0.1*si::megapascal, std::vector<double>{9.381, 18.28, 25.97, 65.36 },
-                   1.0*si::megapascal, std::vector<double>{11.67, 18.81, 26.29, 65.45 },
-                  10.0*si::megapascal, std::vector<double>{115.9, 29.38, 31.14, 66.54 }),
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
+                0.00026, 1.21142, 0.00037, 0.75287, -0.00165), 
+                // nitrogen, mean error: 0.8%, max error: 5.0%, range: 113.15-2013.2K, 0-3MPa, stp estimate: 0.024
         /*dynamic_viscosity*/      // 1.76e-5 * si::pascal * si::second,                               // engineering toolbox, at 20 C
-            get_interpolated_pressure_temperature_function
-                ( si::kelvin, si::micropascal*si::second,
-                                       std::vector<double>{100.0, 200.0, 300.0, 1000.0},
-                   0.1*si::megapascal, std::vector<double>{6.958, 12.91, 17.89, 41.54 },
-                   1.0*si::megapascal, std::vector<double>{7.835, 13.13, 18.01, 41.57 },
-                  10.0*si::megapascal, std::vector<double>{93.65, 17.70, 19.96, 41.88 }),
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::micropascal*si::second, 
+                0.04908, 2.30670, 0.50611, 0.64605, -2.56297), 
+                // nitrogen, mean error: 1.5%, max error: 5.1%, range: 113.15-2013.2K, 0-3MPa, stp estimate: 16.416
         /*density*/                
             field::StateSample<si::density>(0.001165*si::gram/si::centimeter3), 
         /*refractive_index*/       
@@ -459,26 +497,20 @@ PartlyKnownCompound oxygen {
     /*gas*/
     phase::PartlyKnownGas {
         /*specific_heat_capacity*/        // 0.980 * si::joule / (si::gram * si::kelvin),              
-            get_interpolated_pressure_temperature_function
-                ( si::kelvin, si::kilojoule/(si::kilogram*si::kelvin),
-                                       std::vector<double>{100.0, 200.0, 300.0, 400.0, 1000.0},
-                   0.1*si::megapascal, std::vector<double>{0.9352,0.9146,0.9199,0.9416,1.090 },
-                   1.0*si::megapascal, std::vector<double>{1.268, 0.9568,0.9340,0.9487,1.091 },
-                  10.0*si::megapascal, std::vector<double>{1.894, 1.894, 1.086, 1.017, 1.176 }),
+            get_sigmoid_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
+                -0.00022, 0.00063, 0.00000, 0.00000, 1.11067, 1268.80242, -836.03510, 0.17582), 
+                // oxygen, mean error: 0.7%, max error: 3.3%, range: 204.36-1004.4K, 0-3MPa, stp estimate: 0.907
         /*thermal_conductivity*/   // 0.0238 * si::watt / (si::meter * si::kelvin),                    // wikipedia
-            get_interpolated_pressure_temperature_function
-                ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                                       std::vector<double>{100.0, 200.0, 300.0, 400.0, 1000.0},
-                   0.1*si::megapascal, std::vector<double>{8.131, 18.24, 26.49, 34.03, 71.55 },
-                   1.0*si::megapascal, std::vector<double>{12.43, 18.88, 26.89, 34.33, 71.67 },
-                  10.0*si::megapascal, std::vector<double>{144.8, 31.77, 31.47, 37.45, 72.85 }),
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
+                0.00023, 1.29450, 0.00018, 0.88149, -0.00130), 
+                // oxygen, mean error: 0.8%, max error: 4.2%, range: 104.36-1004.4K, 0-3MPa, stp estimate: 0.025
         /*dynamic_viscosity*/      // 2.04e-5 * si::pascal * si::second,                               // engineering toolbox, at 20 C
-            get_interpolated_pressure_temperature_function
-                ( si::kelvin, si::micropascal*si::second,
-                                       std::vector<double>{100.0, 200.0, 300.0, 400.0, 1000.0},
-                   0.1*si::megapascal, std::vector<double>{6.940, 14.72, 20.65, 25.84, 49.12 },
-                   1.0*si::megapascal, std::vector<double>{9.392, 14.94, 20.85, 26.01, 49.20 },
-                  10.0*si::megapascal, std::vector<double>{169.5, 20.74, 23.15, 27.74, 50.03 }),
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::micropascal*si::second, 
+                -0.08909, 0.00000, 0.39475, 0.70840, -2.08620), 
+                // oxygen, mean error: 2.1%, max error: 8.1%, range: 104.36-1004.4K, 0-3MPa, stp estimate: 18.827
         /*density*/                
             field::StateSample<si::density>(1.4458*si::gram/si::centimeter3, si::atmosphere, 270.0*si::kelvin), // Johnson (1960)
         /*refractive_index*/       // 1.0002709,
@@ -580,26 +612,20 @@ PartlyKnownCompound carbon_dioxide {
     /*gas*/
     phase::PartlyKnownGas {
         /*specific_heat_capacity*/ // 36.61 * si::joule / (44.01 * si::gram * si::kelvin),             // wikipedia
-            get_interpolated_pressure_temperature_function
-                ( si::kelvin, si::kilojoule/(si::kilogram*si::kelvin),
-                                       std::vector<double>{220.0, 260.0, 300.0, 1000.0},
-                   0.1*si::megapascal, std::vector<double>{0.7807,0.8142,0.8525,1.234 },
-                   1.0*si::megapascal, std::vector<double>{1.032, 0.9450,0.9209,473.6 },
-                  10.0*si::megapascal, std::vector<double>{1.904, 2.052, 2.991, 485.9 }),
+            get_sigmoid_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
+                0.00034, 3.89562, 0.00000, 0.00000, 3.24445, 600.78481, -562.26128, -1.80573), 
+                // carbon dioxide, mean error: 0.8%, max error: 2.8%, range: 266.59-1116.6K, 0-3MPa, stp estimate: 0.828
         /*thermal_conductivity*/   // 0.01662 * si::watt / ( si::meter * si::kelvin ),                 // wikipedia
-            get_interpolated_pressure_temperature_function
-                ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                                       std::vector<double>{220.0, 260.0, 300.0, 1000.0},
-                   0.1*si::megapascal, std::vector<double>{10.90, 13.68, 16.79, 70.57 },
-                   1.0*si::megapascal, std::vector<double>{12.53, 14.26, 17.25, 70.69 },
-                  10.0*si::megapascal, std::vector<double>{183.6, 136.0, 88.91, 72.05 }),
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
+                0.00032, 1.14102, 0.00027, 0.83072, -0.01434), 
+                // carbon dioxide, mean error: 0.8%, max error: 2.7%, range: 266.59-1116.6K, 0-3MPa, stp estimate: 0.015
         /*dynamic_viscosity*/      // 1.47e-5 * si::pascal * si::second,                               // engineering toolbox, at 20 C
-            get_interpolated_pressure_temperature_function
-                ( si::kelvin, si::micropascal*si::second,
-                                       std::vector<double>{220.0, 260.0, 300.0, 1000.0},
-                   0.1*si::megapascal, std::vector<double>{11.06, 13.06, 15.02, 41.26 },
-                   1.0*si::megapascal, std::vector<double>{11.86, 13.18, 15.11, 41.28 },
-                  10.0*si::megapascal, std::vector<double>{260.2, 139.5, 71.03, 72.05 }),
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::micropascal*si::second, 
+                0.05967, 1.75501, 0.18576, 0.79011, -1.65245), 
+                // carbon dioxide, mean error: 1.5%, max error: 3.2%, range: 266.59-1116.6K, 0-3MPa, stp estimate: 13.980
         /*density*/                field::missing(),
         /*refractive_index*/       // 1.0004493,
         field::SpectralFunction<double>([](
@@ -703,26 +729,20 @@ PartlyKnownCompound methane {
     /*gas*/
     phase::PartlyKnownGas {
         /*specific_heat_capacity*/ // 2.218 * si::joule / (si::gram * si::kelvin),                     
-            get_interpolated_pressure_temperature_function
-                ( si::kelvin, si::kilojoule/(si::kilogram*si::kelvin),
-                                       std::vector<double>{140.0, 200.0, 300.0, 1000.0},
-                   0.1*si::megapascal, std::vector<double>{2.129, 2.106, 2.236, 4.538 },
-                   1.0*si::megapascal, std::vector<double>{2.876, 2.239, 2.289, 4.541 },
-                  10.0*si::megapascal, std::vector<double>{3.552, 5.304, 3.002, 4.568 }),
+            get_sigmoid_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
+                0.02624, 1.04690, 0.00000, 0.00000, 1.04105, 264.87732, 492.16481, 2.86235), 
+                // methane, mean error: 0.7%, max error: 2.1%, range: 140.69-640.69K, 0-3MPa, stp estimate: 2.201
         /*thermal_conductivity*/   // 34.4 * si::milliwatt / ( si::meter * si::kelvin ),               // Huber & Harvey         
-            get_interpolated_pressure_temperature_function
-                ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                                       std::vector<double>{140.0, 200.0, 300.0, 1000.0},
-                   0.1*si::megapascal, std::vector<double>{14.65, 21.65, 34.19, 176.7 },
-                   1.0*si::megapascal, std::vector<double>{18.17, 22.74, 34.59, 176.8 },
-                  10.0*si::megapascal, std::vector<double>{157.0, 83.93, 44.37, 178.5 }),
+            get_sigmoid_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
+                0.00081, 1.07534, 0.00000, 0.00000, 0.28162, 818.25156, 1044.83566, 0.22399), 
+                // methane, mean error: 1.1%, max error: 3.2%, range: 140.69-640.69K, 0-3MPa, stp estimate: 0.031
         /*dynamic_viscosity*/      // 1.10e-5 * si::pascal * si::second,                               // engineering toolbox, at 20 C
-            get_interpolated_pressure_temperature_function
-                ( si::kelvin, si::micropascal*si::second,
-                                       std::vector<double>{140.0, 200.0, 300.0, 1000.0},
-                   0.1*si::megapascal, std::vector<double>{5.449, 7.697, 11.13, 27.49 },
-                   1.0*si::megapascal, std::vector<double>{5.788, 7.838, 11.25, 27.54 },
-                  10.0*si::megapascal, std::vector<double>{78.30, 29.55, 13.75, 28.02 }),
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::micropascal*si::second, 
+                0.12223, 1.53060, 0.09521, 0.83600, -0.21904), 
+                // methane, mean error: 1.9%, max error: 5.2%, range: 140.69-640.69K, 0-3MPa, stp estimate: 10.148
         /*density*/                
             field::StateSample<si::density>(0.0006664*si::gram/si::centimeter3, 33.8*si::kilopascal, 99.8*si::kelvin), // Johnson (1960)
         /*refractive_index*/       // 1.000444,
@@ -829,19 +849,15 @@ PartlyKnownCompound argon {
                    1.0*si::megapascal, std::vector<double>{0.3795,0.3682,0.5556,0.3124},
                   10.0*si::megapascal, std::vector<double>{1.085, 1.163, 1.215, 0.5271}),
         /*thermal_conductivity*/   // 0.016 * si::watt / ( si::meter * si::kelvin ),                   // wikipedia
-            get_interpolated_pressure_temperature_function
-                ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                                       std::vector<double>{90.0,  200.0, 300.0, 1000.0},
-                   0.1*si::megapascal, std::vector<double>{5.614, 12.54, 17.84, 43.58 },
-                   1.0*si::megapascal, std::vector<double>{8.608, 13.00, 18.14, 43.68 },
-                  10.0*si::megapascal, std::vector<double>{137.1, 23.57, 22.19, 44.71 }),
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
+                0.00034, 1.11244, 0.00029, 0.73962, -0.00193), 
+                // argon, mean error: 1.2%, max error: 2.7%, range: 133.81-683.81K, 0-3MPa, stp estimate: 0.016
         /*dynamic_viscosity*/      // 2.23e-5 * si::pascal * si::second,                               // engineering toolbox, at 20 C
-            get_interpolated_pressure_temperature_function
-                ( si::kelvin, si::micropascal*si::second,
-                                       std::vector<double>{90.0,  200.0, 300.0, 1000.0},
-                   0.1*si::megapascal, std::vector<double>{7.157, 16.00, 22.74, 55.69 },
-                   1.0*si::megapascal, std::vector<double>{10.12, 16.26, 22.90, 55.72 },
-                  10.0*si::megapascal, std::vector<double>{205.8, 23.43, 25.58, 56.16 }),
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::micropascal*si::second, 
+                0.41072, 0.79782, 0.22045, 0.81080, -0.33331), 
+                // argon, mean error: 1.7%, max error: 4.2%, range: 133.81-683.81K, 0-3MPa, stp estimate: 20.565
         /*density*/                
             field::StateSample<si::density>(1.8048*si::gram/si::centimeter3, si::atmosphere, 270.0*si::kelvin), // Johnson (1960)
         /*refractive_index*/       // 1.000281,
@@ -956,19 +972,15 @@ PartlyKnownCompound helium {
                    1.0*si::megapascal, std::vector<double>{5.728, 5.317, 5.206, 5.193 },
                   10.0*si::megapascal, std::vector<double>{5.413, 5.721, 5.303, 5.188 }),
         /*thermal_conductivity*/   // 155.7 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
-            get_interpolated_pressure_temperature_function
-                ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                                       std::vector<double>{20.0,  40.0,  200.0, 1000.0},
-                   0.1*si::megapascal, std::vector<double>{26.20, 40.44, 118.0, 360.6 },
-                   1.0*si::megapascal, std::vector<double>{29.04, 42.01, 118.7, 361.1 },
-                  10.0*si::megapascal, std::vector<double>{58.72, 59.90, 125.7, 365.1 }),
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
+                -0.15319, 1.77283, 0.00284, 0.70030, 0.00337), 
+                // helium, mean error: 0.8%, max error: 4.1%, range: 52.177-1502.2K, 0-0.1MPa, stp estimate: 0.145
         /*dynamic_viscosity*/      // 1.96e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
-            get_interpolated_pressure_temperature_function
-                ( si::kelvin, si::micropascal*si::second,
-                                       std::vector<double>{20.0,  40.0,  200.0, 1000.0},
-                   0.1*si::megapascal, std::vector<double>{3.582, 5.542, 15.14, 46.16 },
-                   1.0*si::megapascal, std::vector<double>{3.933, 5.740, 15.21, 46.17 },
-                  10.0*si::megapascal, std::vector<double>{6.928, 7.483, 15.82, 46.26 }),
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::micropascal*si::second, 
+                -0.19093, 1.50359, 0.28815, 0.73057, 1.34631), 
+                // helium, mean error: 0.1%, max error: 0.7%, range: 52.177-1502.2K, 0-0.1MPa, stp estimate: 18.702
         /*density*/                
             field::StateSample<si::density>(0.000156*si::gram/si::centimeter3, si::atmosphere, 311.0*si::kelvin), // Johnson (1960)
         /*refractive_index*/       //1.000036,
@@ -1077,27 +1089,20 @@ PartlyKnownCompound hydrogen {
     /*gas*/
     phase::PartlyKnownGas {
         /*specific_heat_capacity*/ // 12.24 * si::joule / (si::gram * si::kelvin),       
-            get_interpolated_pressure_temperature_function
-                ( si::kelvin, si::kilojoule/(si::kilogram*si::kelvin),
-                                       std::vector<double>{20.0,  60.0,  200.0, 500.0, 1000.0},
-                   0.1*si::megapascal, std::vector<double>{12.01, 10.72, 16.08, 14.53, 14.99 },
-                   1.0*si::megapascal, std::vector<double>{14.12, 11.70, 16.14, 14.55, 15.00 },
-                  10.0*si::megapascal, std::vector<double>{7.566, 16.19, 17.01, 14.60, 15.00 }),
+            get_sigmoid_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
+                0.02971, 21.52834, 1116.18449, 51.63246, 3.23568, 107.08994, 116.34534, 11.50257), 
+                // hydrogen, mean error: 0.6%, max error: 2.0%, range: 63.957-1014K, 0-1MPa, stp estimate: 14.153
         /*thermal_conductivity*/   // 186.6 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
-            get_interpolated_pressure_temperature_function
-                ( si::kelvin, si::milliwatt/(si::meter * si::kelvin),
-                                       std::vector<double>{20.0,  60.0,  200.0, 500.0, 1000.0},
-                   0.1*si::megapascal, std::vector<double>{16.95, 45.53, 155.6, 275.0, 494.3 },
-                   1.0*si::megapascal, std::vector<double>{38.44, 48.40, 156.7, 275.5, 494.6 },
-                  10.0*si::megapascal, std::vector<double>{120.3, 100.6, 167.3, 280.0, 497.3 }),
-                 // values below 100K provided by Johnson (1960), everything else is from Handbook of Physics & Chemistry
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
+                0.00197, 1.33064, 0.00154, 0.84231, -0.00399), 
+                // hydrogen, mean error: 1.3%, max error: 2.5%, range: 63.957-1014K, 0-1MPa, stp estimate: 0.169
         /*dynamic_viscosity*/      // 0.88e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
-            get_interpolated_pressure_temperature_function
-                ( si::kelvin, si::micropascal*si::second,
-                                       std::vector<double>{20.0,  60.0,  200.0, 500.0, 1000.0},
-                   0.1*si::megapascal, std::vector<double>{1.071, 2.865, 6.780, 12.67, 20.30 },
-                   1.0*si::megapascal, std::vector<double>{2.096, 6.812, 6.812, 12.68, 20.30 },
-                  10.0*si::megapascal, std::vector<double>{23.45, 5.594, 7.151, 12.81, 20.37 }),
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::micropascal*si::second, 
+                0.05907, 1.95272, 0.20949, 0.66373, -0.28287), 
+                // hydrogen, mean error: 0.2%, max error: 0.9%, range: 63.957-1014K, 0-1MPa, stp estimate: 8.393
         /*density*/                1.3390 * si::gram/si::liter,
         /*refractive_index*/       // 1.0001392,
             field::SpectralFunction<double>([](
@@ -1192,13 +1197,21 @@ PartlyKnownCompound ammonia {
 
     /*gas*/
     phase::PartlyKnownGas {
-        /*specific_heat_capacity*/ 35.06 * si::joule / (17.031 * si::gram * si::kelvin), // wikipedia data page
+        /*specific_heat_capacity*/ // 35.06 * si::joule / (17.031 * si::gram * si::kelvin), // wikipedia data page
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
+                0.04652, 0.81959, 0.02155, 0.67889, 1.04112), 
+                // ammonia, mean error: 1.2%, max error: 4.3%, range: 245.5-695.5K, 0-10MPa, stp estimate: 2.020
         /*thermal_conductivity*/   // 25.1 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
-            get_interpolated_temperature_function
-                ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                 std::vector<double>{300.0,     400.0,     600.0},
-                 std::vector<double>{24.4,      37.4,      66.8}),
-        /*dynamic_viscosity*/      0.99e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
+            get_sigmoid_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
+                0.00076, 1.10036, 0.00000, 0.00000, 0.07387, 491.21103, 544.10090, 0.05855), 
+                // ammonia, mean error: 2.5%, max error: 6.9%, range: 245.5-695.5K, 0-10MPa, stp estimate: 0.023
+        /*dynamic_viscosity*/      // 0.99e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::micropascal*si::second, 
+                0.00986, 1.88109, 0.02443, 1.06310, -0.30191), 
+                // ammonia, mean error: 0.7%, max error: 3.5%, range: 245.5-695.5K, 0-10MPa, stp estimate: 9.204
         /*density*/                field::missing(),
         /*refractive_index*/       //1.000376,
         field::SpectralFunction<double>([](
@@ -1465,7 +1478,11 @@ PartlyKnownCompound  sulfur_dioxide {
 
     /*gas*/
     phase::PartlyKnownGas {
-        /*specific_heat_capacity*/ field::missing(),
+        /*specific_heat_capacity*/ 
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
+                0.03124, 1.38702, 0.00214, 0.79655, 0.42765), 
+                // sulfur dioxide, mean error: 0.7%, max error: 2.0%, range: 247.7-547.7K, 0-1MPa, stp estimate: 0.615
         /*thermal_conductivity*/   // 9.6 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
             get_interpolated_temperature_function
                 ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
@@ -1649,17 +1666,21 @@ PartlyKnownCompound carbon_monoxide {
 
     /*gas*/
     phase::PartlyKnownGas {
-        /*specific_heat_capacity*/ 29.0 * si::joule / (28.010 * si::gram * si::kelvin), // wikipedia data page
+        /*specific_heat_capacity*/ // 29.0 * si::joule / (28.010 * si::gram * si::kelvin), // wikipedia data page
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
+                0.00728, 0.92688, 0.00010, 0.97052, 1.01709), 
+                // carbon monoxide, mean error: 0.3%, max error: 0.8%, range: 168.16-518.16K, 0-3MPa, stp estimate: 1.041
         /*thermal_conductivity*/   // 25.0 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
-            get_interpolated_temperature_function
-                ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                 std::vector<double>{30.0,  100.0,  300.0,     400.0,     600.0},
-                 std::vector<double>{ 7.0,    9.0,   25.0,      32.3,      45.7}), // data below 100K provided by Johnson (1960)
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
+                0.00045, 0.43412, 0.00055, 0.70174, -0.00365), 
+                // carbon monoxide, mean error: 0.8%, max error: 2.5%, range: 118.16-518.16K, 0-3MPa, stp estimate: 0.025
         /*dynamic_viscosity*/      // 1.74e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
-            get_interpolated_temperature_function
-                (si::kelvin, si::micropascal*si::second,
-                 std::vector<double>{100.0,     300.0,     600.0},              
-                 std::vector<double>{6.7,       17.8,      29.1}),
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::micropascal*si::second, 
+                0.26687, 1.09457, 0.33802, 0.70825, -1.67961), 
+                // carbon monoxide, mean error: 1.2%, max error: 2.9%, range: 118.16-518.16K, 0-3MPa, stp estimate: 16.311
         /*density*/                
             field::StateSample<si::density>(1.250*si::gram/si::liter), // Johnson (1960)
         /*refractive_index*/       // 1.00036320, //https://refractiveindex.info
@@ -1788,26 +1809,20 @@ PartlyKnownCompound ethane {
     /*gas*/
     phase::PartlyKnownGas {
         /*specific_heat_capacity*/ // 52.49 * si::joule / (30.070 * si::gram * si::kelvin), // wikipedia data page
-            get_interpolated_pressure_temperature_function
-                ( si::kelvin, si::kilojoule/(si::kilogram*si::kelvin),
-                                       std::vector<double>{180.0, 240.0, 300.0, 1000.0},
-                   0.1*si::megapascal, std::vector<double>{1.432, 1.554, 1.764, 4.076 },
-                   1.0*si::megapascal, std::vector<double>{1.994, 1.994, 1.898, 4.081 },
-                  10.0*si::megapascal, std::vector<double>{2.374, 2.646, 3.419, 4.122 }),
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
+                0.05856, 0.85039, 0.00090, 1.21385, 0.86559), 
+                // ethane, mean error: 1.3%, max error: 3.3%, range: 140.35-640.35K, 0-3MPa, stp estimate: 1.687
         /*thermal_conductivity*/   // 21.2 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
-            get_interpolated_pressure_temperature_function
-                ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                                       std::vector<double>{180.0, 240.0, 300.0, 1000.0},
-                   0.1*si::megapascal, std::vector<double>{9.471, 14.39, 21.22, 156.8 },
-                   1.0*si::megapascal, std::vector<double>{16.36, 16.36, 22.18, 156.9 },
-                  10.0*si::megapascal, std::vector<double>{179.3, 128.5, 86.39, 158.2 }),
+            get_sigmoid_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
+                0.00064, 1.08467, 0.00000, 0.00000, 0.08892, 442.87962, 573.08449, 0.06794), 
+                // ethane, mean error: 1.1%, max error: 3.8%, range: 140.35-640.35K, 0-3MPa, stp estimate: 0.018
         /*dynamic_viscosity*/      // 9.4 * si::micropascal*si::second,
-            get_interpolated_pressure_temperature_function
-                ( si::kelvin, si::micropascal*si::second,
-                                       std::vector<double>{180.0, 240.0, 300.0, 1000.0},
-                   0.1*si::megapascal, std::vector<double>{5.877, 7.608, 9.408, 25.10 },
-                   1.0*si::megapascal, std::vector<double>{7.929, 7.929, 9.652, 25.20 },
-                  10.0*si::megapascal, std::vector<double>{190.5, 99.96, 52.87, 26.40 }),
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::micropascal*si::second, 
+                0.07538, 2.19443, 0.07385, 0.85870, -0.57044), 
+                // ethane, mean error: 1.2%, max error: 2.9%, range: 140.35-640.35K, 0-3MPa, stp estimate: 8.560
         /*density*/                field::missing(),
         /*refractive_index*/       // 1.0377,
         field::SpectralFunction<double>([](
@@ -2269,13 +2284,21 @@ PartlyKnownCompound perflouromethane{
 
     /*gas*/
     phase::PartlyKnownGas {
-        /*specific_heat_capacity*/ field::missing(),
+        /*specific_heat_capacity*/ 
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
+                0.00845, 1.30975, 0.00914, 0.70892, 0.16266), 
+                // tetrafluoromethane, mean error: 2.6%, max error: 5.3%, range: 148.94-598.94K, 0-3MPa, stp estimate: 0.651
         /*thermal_conductivity*/   // 16.0 * si::milliwatt/(si::meter*si::kelvin), // Huber & Harvey
-            get_interpolated_temperature_function
-                ( si::kelvin, si::milliwatt/(si::meter*si::kelvin),
-                 std::vector<double>{300.0,     400.0,     600.0},
-                 std::vector<double>{16.0,      24.1,      39.9}),
-        /*dynamic_viscosity*/      field::missing(),
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
+                0.00019, 1.49795, 0.00010, 0.95277, -0.00704), 
+                // tetrafluoromethane, mean error: 3.3%, max error: 8.4%, range: 148.94-598.94K, 0-3MPa, stp estimate: 0.015
+        /*dynamic_viscosity*/      
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::micropascal*si::second, 
+                0.22721, 1.71531, 0.16433, 0.82188, -0.84952), 
+                // tetrafluoromethane, mean error: 2.0%, max error: 4.9%, range: 148.94-598.94K, 0-3MPa, stp estimate: 15.680
         /*density*/                field::missing(),
         /*refractive_index*/       1.0004823
     },
@@ -2359,7 +2382,11 @@ PartlyKnownCompound benzene {
 
     /*gas*/
     phase::PartlyKnownGas {
-        /*specific_heat_capacity*/ 82.44 * si::joule / (79.109 * si::gram * si::kelvin),
+        /*specific_heat_capacity*/ // 82.44 * si::joule / (79.109 * si::gram * si::kelvin),
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
+                0.11074, 0.98216, 0.00048, 1.26428, 0.48272), 
+                // benzene, mean error: 2.6%, max error: 7.1%, range: 300-628.7K, 0-1MPa, stp estimate: 1.069
         /*thermal_conductivity*/   field::missing(),
         /*dynamic_viscosity*/      0.75e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
         /*density*/                field::missing(),
