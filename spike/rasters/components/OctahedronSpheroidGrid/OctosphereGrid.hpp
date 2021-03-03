@@ -71,14 +71,14 @@ namespace rasters
 		static constexpr glm::vec3 corner_ny = glm::vec3(0,-1,0);
 		std::vector<OctosphereSide> sides;
 
-		glm::vec2 standardize_grid_position(const glm::vec2 grid_position) const 
+		glm::vec2 standardize(const glm::vec2 grid_position) const 
 		{
 			const glm::vec2 tesselation_id = glm::round((grid_position)/float(tesselation_leg_cell_count));
 			float negative_if_tesselation_is_inverted = cos(pi*tesselation_id.x) * cos(pi*tesselation_id.y);
-			const glm::vec2 standard_grid_position = 
+			const glm::vec2 standardized = 
 				(grid_position - tesselation_id * float(tesselation_leg_cell_count)) * negative_if_tesselation_is_inverted;
 
-			return standard_grid_position;
+			return standardized;
 		}
 
 		uint get_side_id(const glm::vec3 sphere_position) const
@@ -89,12 +89,12 @@ namespace rasters
 			  (( sphere_position.z < 0) << 2) ; 
 		}
 
-		uint get_side_id(const glm::vec2 standard_grid_position) const
+		uint get_side_id(const glm::vec2 standardized) const
 		{
 			const uint side_id =
-			  ((standard_grid_position.x < 0) << 0) +
-			  ((standard_grid_position.y < 0) << 1) +
-			  ((std::abs(standard_grid_position.x) + std::abs(standard_grid_position.y) > side_leg_cell_count) << 2);
+			  ((standardized.x < 0) << 0) +
+			  ((standardized.y < 0) << 1) +
+			  ((std::abs(standardized.x) + std::abs(standardized.y) > side_leg_cell_count) << 2);
 
 			return side_id;
 		}
@@ -153,10 +153,10 @@ namespace rasters
 		glm::vec3 sphere_position(const glm::vec2 grid_position) const {
 
 			const glm::vec2 border_aligned = grid_position + 0.5f;
-			const glm::vec2 standard_grid_position = standardize_grid_position(border_aligned);
-			const uint side_id = get_side_id(standard_grid_position);
+			const glm::vec2 standardized = standardize(border_aligned);
+			const uint side_id = get_side_id(standardized);
 			const glm::vec2 quadrant_id = 
-				standard_grid_position * glm::sign(glm::vec2(sides[side_id].normal.x, sides[side_id].normal.y)) / float(side_leg_cell_count);
+				standardized * glm::sign(glm::vec2(sides[side_id].normal.x, sides[side_id].normal.y)) / float(side_leg_cell_count);
 			const glm::vec2 side_position = side_id < 4? 
 		    	quadrant_id : 1.0f - quadrant_id;
 		    const glm::vec3 offset = sides[side_id].transform * glm::vec3(side_position.x, side_position.y, 0);
@@ -167,8 +167,8 @@ namespace rasters
 		}
 
 		int memory_id(const glm::vec2 grid_position) const {
-			const glm::vec2 standard_grid_position = glm::round(grid_position);
-			const glm::ivec2 standard_grid_id = glm::ivec2(standard_grid_position) + side_leg_cell_count;
+			const glm::vec2 standardized = standardize(glm::round(grid_position) + 0.5f) - 0.5f;
+			const glm::ivec2 standard_grid_id = glm::ivec2(standardized) + side_leg_cell_count;
 			const glm::ivec2 unique_grid_id = glm::ivec2(standard_grid_id.x % tesselation_leg_cell_count, standard_grid_id.y % tesselation_leg_cell_count);
 			const int memory_id = std::clamp(unique_grid_id.x, 0, tesselation_leg_cell_count-1)
 				  + std::clamp(unique_grid_id.y, 0, tesselation_leg_cell_count-1) * tesselation_leg_cell_count;

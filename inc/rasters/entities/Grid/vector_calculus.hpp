@@ -105,7 +105,7 @@ namespace rasters
     ) {
         const auto cache = scalar_field.grid.cache;
         glm::uvec2 arrow;
-        for (unsigned int i = 0; i < cache->arrow_vertex_ids.size(); ++i)
+        for (std::size_t i = 0; i < cache->arrow_vertex_ids.size(); ++i)
         {
             arrow                 = cache->arrow_vertex_ids[i]; 
             arrow_differential[i] = scalar_field[arrow.y] - scalar_field[arrow.x]; // differential across dual of the arrow
@@ -137,7 +137,7 @@ namespace rasters
     ) {
         const auto cache = vector_field.grid.cache;
         glm::uvec2 arrow;
-        for (unsigned int i = 0; i < cache->arrow_vertex_ids.size(); ++i)
+        for (std::size_t i = 0; i < cache->arrow_vertex_ids.size(); ++i)
         {
             arrow                 = cache->arrow_vertex_ids[i]; 
             arrow_differential[i] = vector_field[arrow.y] - vector_field[arrow.x]; // differential across dual of the arrow
@@ -169,7 +169,7 @@ namespace rasters
     ) {
         const auto cache = vector_field.grid.cache;
         glm::uvec2 arrow;
-        for (unsigned int i = 0; i < cache->arrow_vertex_ids.size(); ++i)
+        for (std::size_t i = 0; i < cache->arrow_vertex_ids.size(); ++i)
         {
             arrow                 = cache->arrow_vertex_ids[i]; 
             arrow_differential[i] = vector_field[arrow.y] - vector_field[arrow.x]; // differential across dual of the arrow
@@ -218,7 +218,7 @@ namespace rasters
     ) {
         const auto cache = scalar_field.grid.cache;
         glm::uvec2 arrow;
-        for (unsigned int i = 0; i < cache->arrow_vertex_ids.size(); ++i)
+        for (std::size_t i = 0; i < cache->arrow_vertex_ids.size(); ++i)
         {
             arrow            = cache->arrow_vertex_ids[i]; 
             arrow_scratch[i] = scalar_field[arrow.y] - scalar_field[arrow.x]; // differential across dual of the arrow
@@ -247,7 +247,7 @@ namespace rasters
     ) {
         const auto cache = vector_field.grid.cache;
         glm::uvec2 arrow;
-        for (unsigned int i = 0; i < cache->arrow_vertex_ids.size(); ++i)
+        for (std::size_t i = 0; i < cache->arrow_vertex_ids.size(); ++i)
         {
             arrow            = cache->arrow_vertex_ids[i]; 
             arrow_scratch[i] = vector_field[arrow.y] - vector_field[arrow.x]; // differential across dual of the arrow

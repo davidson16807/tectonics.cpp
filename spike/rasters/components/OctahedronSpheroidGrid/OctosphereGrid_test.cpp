@@ -98,6 +98,21 @@ TEST_CASE( "OctosphereGrid grid_position() / sphere_position() invertibility", "
 
 
 
+TEST_CASE( "OctosphereGrid memory_id() congruence", "[rasters]" ) {
+    SECTION("an modulo can be applied to input which results in the same output"){
+        const glm::vec2 nx(2*octosphere_grid.tesselation_leg_cell_count, 0);
+        const glm::vec2 ny(0, 2*octosphere_grid.tesselation_leg_cell_count);
+        for(float x = -2.0*octosphere_grid.tesselation_leg_cell_count; x < 2.0*octosphere_grid.tesselation_leg_cell_count; x+=1.0){
+        for(float y = -2.0*octosphere_grid.tesselation_leg_cell_count; y < 2.0*octosphere_grid.tesselation_leg_cell_count; y+=1.0){
+            glm::vec2 v = glm::vec2(x,y);
+            CHECK( octosphere_grid.memory_id(v) == octosphere_grid.memory_id(v+nx));
+            CHECK( octosphere_grid.memory_id(v) == octosphere_grid.memory_id(v-nx));
+            CHECK( octosphere_grid.memory_id(v) == octosphere_grid.memory_id(v+ny));
+            CHECK( octosphere_grid.memory_id(v) == octosphere_grid.memory_id(v-ny));
+        }}
+    }
+}
+
 TEST_CASE( "OctosphereGrid memory_id() / grid_position() invertibility", "[rasters]" ) {
     SECTION("OctosphereGrid.grid_position() must reconstruct input passed to memory_id() for any unit vector"){
         for(int i = 0; i < octosphere_grid.tesselation_cell_count; i++){

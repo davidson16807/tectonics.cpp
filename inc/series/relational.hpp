@@ -39,7 +39,7 @@ namespace series
 	float length2(const T a)
 	{
 		float output(0);
-		for (std::size_t i = 0; i < a.length(); ++i)
+		for (typename T::length_type i = 0; i < a.length(); ++i)
 		{
 			output += a[i]*a[i];
 		}

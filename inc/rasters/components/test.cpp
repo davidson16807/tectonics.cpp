@@ -1,2 +1,2 @@
-#include "./SpheroidVoronoi_test.hpp"
-#include "./MeshCache_test.hpp"
+#include "./MeshCache/MeshCache_test.hpp"
+#include "./SpheroidVoronoi/SpheroidVoronoi_test.hpp"

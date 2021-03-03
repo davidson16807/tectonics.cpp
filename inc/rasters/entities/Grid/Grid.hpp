@@ -11,7 +11,7 @@
 #include <series/types.hpp>
 #include <series/glm/types.hpp>
 
-#include <rasters/components/MeshCache.hpp>
+#include <rasters/components/MeshCache/MeshCache.hpp>
 
 namespace rasters
 {
@@ -65,6 +65,9 @@ namespace rasters
 	{
 		std::shared_ptr<MeshCache<Tid,Tfloat>> cache;
 
+        using size_type = Tid;
+        using value_type = Tfloat;
+        
 		Grid(const series::vec3s& vertices, const series::uvec3s& faces):
 			cache(std::make_shared< MeshCache<Tid,Tfloat>>(vertices, faces))
 		{}

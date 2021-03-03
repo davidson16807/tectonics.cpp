@@ -7,8 +7,8 @@
 // 3rd party libraries
 
 // in-house libraries
-#include <rasters/components/MeshCache.hpp>
-#include <rasters/components/LayerScheme.hpp>
+#include <rasters/components/MeshCache/MeshCache.hpp>
+#include <rasters/components/LayerScheme/LayerScheme.hpp>
 #include <rasters/entities/Grid/Grid.hpp>
 
 namespace rasters

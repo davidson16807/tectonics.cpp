@@ -178,7 +178,7 @@ namespace rasters
 			int vicinity_radius = (max_vertex_distance/cell_width)/2 + 1;
 			for (uint point_id = 0; point_id < points.size(); ++point_id)
 			{
-				glm::vec3 point(normalize(points[point_id]));
+				glm::vec3 point(series::normalize(points[point_id]));
 				for (uint side_id = 0; side_id < OCTAHEDRON_SIDE_COUNT; ++side_id)
 				{
 					if (glm::dot(OCTAHEDRON_SIDE_Z[side_id], point) < (1/sqrt(3)) - max_vertex_distance) { continue; }

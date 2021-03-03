@@ -50,14 +50,14 @@ namespace rasters
         series::Series<Tfloat>                           flattened_face_vertex_coordinates;
 
         //ivecNs                                         vertex_neighbor_ids;
-        Tid                                              vertex_count;
+        std::size_t                                      vertex_count;
         series::Series<Tid>                              vertex_neighbor_counts;
         series::Series<glm::vec<3,Tfloat,glm::defaultp>> vertex_positions;
         series::Series<glm::vec<3,Tfloat,glm::defaultp>> vertex_normals;
         series::Series<Tfloat>                           vertex_areas;
         Tfloat                                           vertex_average_area;
 
-        Tid                                              face_count;
+        std::size_t                                      face_count;
         series::Series<glm::vec<3,Tid,glm::defaultp>>    face_vertex_ids;
         series::Series<Tid>                              face_vertex_id_a;
         series::Series<Tid>                              face_vertex_id_b;
@@ -73,7 +73,7 @@ namespace rasters
         series::Series<Tfloat>                           face_areas;
         Tfloat                                           face_average_area;
 
-        Tid                                              edge_count;
+        std::size_t                                      edge_count;
         series::Series<glm::vec<2,Tid,glm::defaultp>>    edge_vertex_ids;
         series::Series<Tid>                              edge_vertex_id_a;
         series::Series<Tid>                              edge_vertex_id_b;
@@ -88,7 +88,7 @@ namespace rasters
         //series::Series<Tfloat>                         edge_areas;
         Tfloat                                           edge_average_length;
         
-        Tid                                              arrow_count;
+        std::size_t                                      arrow_count;
         series::Series<glm::vec<2,Tid,glm::defaultp>>    arrow_vertex_ids;
         series::Series<Tid>                              arrow_vertex_id_from;
         series::Series<Tid>                              arrow_vertex_id_to;
@@ -111,6 +111,7 @@ namespace rasters
         series::Series<glm::vec<3,Tfloat,glm::defaultp>> arrow_dual_normals;
 
         Tfloat                                           total_area;
+
 
         ~MeshCache()
         {
