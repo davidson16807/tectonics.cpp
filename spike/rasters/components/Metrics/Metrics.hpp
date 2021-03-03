@@ -224,4 +224,51 @@ namespace rasters
 
         }
     };
+
+    template<typename Tid, typename Tfloat>
+    void scale(const Metrics<Tid,Tfloat>& input, const Tfloat length_factor, Metrics<Tid,Tfloat>& output){
+
+        const Tfloat invariant_factor = Tfloat(1.0);
+        const Tfloat area_factor = length_factor * length_factor;
+
+        mult(input.flattened_face_vertex_coordinates, length_factor, output.flattened_face_vertex_coordinates);
+
+        mult(input.vertex_positions,      length_factor,    output.vertex_positions     );
+        mult(input.vertex_normals,        invariant_factor, output.vertex_normals       );
+        mult(input.vertex_areas,          area_factor,      output.vertex_areas         );
+        mult(input.vertex_average_area,   area_factor,      output.vertex_average_area  );
+
+        mult(input.face_endpoint_a,       length_factor,    output.face_endpoint_a      );
+        mult(input.face_endpoint_b,       length_factor,    output.face_endpoint_b      );
+        mult(input.face_endpoint_c,       length_factor,    output.face_endpoint_c      );
+        mult(input.face_midpoints,        length_factor,    output.face_midpoints       );
+        mult(input.face_normals,          invariant_factor, output.face_normals         );
+        mult(input.face_areas,            area_factor,      output.face_areas           );
+        mult(input.face_average_area,     area_factor,      output.face_average_area    );
+
+        mult(input.edge_endpoint_a,       length_factor,    output.edge_endpoint_a      );
+        mult(input.edge_endpoint_b,       length_factor,    output.edge_endpoint_b      );
+        mult(input.edge_midpoints,        length_factor,    output.edge_midpoints       );
+        mult(input.edge_lengths,          length_factor,    output.edge_lengths         );
+        mult(input.edge_normals,          invariant_factor, output.edge_normals         );
+    //  edge_areas
+        mult(input.edge_average_length,   length_factor,    output.edge_average_length  );
+        
+        mult(input.arrow_endpoint_from,   length_factor,    output.arrow_endpoint_from  );
+        mult(input.arrow_endpoint_to,     length_factor,    output.arrow_endpoint_to    );
+        mult(input.arrow_midpoints,       length_factor,    output.arrow_midpoints      );
+        mult(input.arrow_offsets,         length_factor,    output.arrow_offsets        );
+        mult(input.arrow_lengths,         length_factor,    output.arrow_lengths        );
+        mult(input.arrow_normals,         invariant_factor, output.arrow_normals        );
+    //  arrow_areas
+        mult(input.arrow_average_length,  length_factor,    output.arrow_average_length );
+
+        mult(input.vertex_dual_areas,     area_factor,      output.vertex_dual_areas    );
+        mult(input.arrow_dual_endpoint_a, length_factor,    output.arrow_dual_endpoint_a);
+        mult(input.arrow_dual_endpoint_b, length_factor,    output.arrow_dual_endpoint_b);
+        mult(input.arrow_dual_lengths,    length_factor,    output.arrow_dual_lengths   );
+        mult(input.arrow_dual_normals,    invariant_factor, output.arrow_dual_normals   );
+
+        mult(input.total_area,            area_factor,      output.total_area           );
+    }
 }
