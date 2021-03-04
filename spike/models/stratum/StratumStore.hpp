@@ -9,7 +9,7 @@
 #include <array>
 
 // in-house libraries
-#include <physics/units.hpp>
+#include <units/si.hpp>
 
 #include <models/mineral/MineralStore.hpp>
 #include "Stratum.hpp"
@@ -60,22 +60,22 @@ namespace stratum
         but exp2 is not constexpr and I can't set a variable as static unless it's constexpr,
         so I settle for using static methods instead.
         */
-        static float temperature_max ()
+        static si::temperature temperature_max ()
         {
-            return exp2(std::numeric_limits<std::uint16_t>::max()/log2_ref_temperature);
+            return exp2(std::numeric_limits<std::uint16_t>::max()/log2_ref_temperature) * si::kelvin;
         } 
-        static float pressure_max    ()
+        static si::pressure pressure_max    ()
         {
-            return exp2(std::numeric_limits<std::uint16_t>::max()/log2_ref_pressure);
+            return exp2(std::numeric_limits<std::uint16_t>::max()/log2_ref_pressure) * si::pascal;
         } 
 
-        static float temperature_min ()
+        static si::temperature temperature_min ()
         {
-            return exp2(0./log2_ref_temperature);
+            return exp2(0./log2_ref_temperature) * si::kelvin;
         } 
-        static float pressure_min    ()
+        static si::pressure pressure_min    ()
         {
-            return exp2(0./log2_ref_pressure);
+            return exp2(0./log2_ref_pressure) * si::pascal;
         } 
 
 
@@ -103,9 +103,9 @@ namespace stratum
             {
                 minerals[i].unpack(output.minerals[i]);
             }
-            output.max_pressure_received    = exp2( log2_ref_pressure    * float(stored_max_pressure_received)    / float(std::numeric_limits<std::uint16_t>::max()));
-            output.max_temperature_received = exp2( log2_ref_temperature * float(stored_max_temperature_received) / float(std::numeric_limits<std::uint16_t>::max()));
-            output.age_of_world_when_deposited = age_of_world_when_deposited_in_megayears * units::megayear;
+            output.max_pressure_received    = exp2( log2_ref_pressure    * float(stored_max_pressure_received)    / float(std::numeric_limits<std::uint16_t>::max())) * si::pascal;
+            output.max_temperature_received = exp2( log2_ref_temperature * float(stored_max_temperature_received) / float(std::numeric_limits<std::uint16_t>::max())) * si::kelvin;
+            output.age_of_world_when_deposited = age_of_world_when_deposited_in_megayears * si::megayear;
         }
 
         void pack(const Stratum<M>& input)
@@ -115,10 +115,10 @@ namespace stratum
                 minerals[i].pack(input.minerals[i]);
             }
             stored_max_pressure_received    = std::uint16_t(
-                std::numeric_limits<std::uint16_t>::max()*std::clamp( float(log2(input.max_pressure_received))    / log2_ref_pressure,   0.0f, 1.0f));
+                std::numeric_limits<std::uint16_t>::max()*std::clamp( float(log2(input.max_pressure_received/si::pascal))    / log2_ref_pressure,   0.0f, 1.0f));
             stored_max_temperature_received = std::uint16_t(
-                std::numeric_limits<std::uint16_t>::max()*std::clamp( float(log2(input.max_temperature_received)) / log2_ref_temperature,0.0f, 1.0f));
-            age_of_world_when_deposited_in_megayears = input.age_of_world_when_deposited / units::megayear;
+                std::numeric_limits<std::uint16_t>::max()*std::clamp( float(log2(input.max_temperature_received/si::kelvin)) / log2_ref_temperature,0.0f, 1.0f));
+            age_of_world_when_deposited_in_megayears = input.age_of_world_when_deposited / si::megayear;
         }
     };
 }

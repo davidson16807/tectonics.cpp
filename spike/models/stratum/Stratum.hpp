@@ -10,6 +10,7 @@
 #include <array>
 
 // in-house libraries
+#include <units/si.hpp>
 #include <models/mineral/Mineral.hpp>
 
 namespace stratum
@@ -30,22 +31,22 @@ namespace stratum
         Particle size is primarily used to indicate distinctions between things like boulders vs. pebbles vs sand vs. clay
         */
         std::array<mineral::Mineral, M>  minerals;
-        float max_temperature_received;
-        float max_pressure_received;
-        float age_of_world_when_deposited;
+        si::temperature max_temperature_received;
+        si::pressure max_pressure_received;
+        si::time age_of_world_when_deposited;
 
         Stratum():
-            max_temperature_received(0),
-            max_pressure_received(0),
-            age_of_world_when_deposited(0)
+            max_temperature_received(0*si::kelvin),
+            max_pressure_received(0*si::pascal),
+            age_of_world_when_deposited(0*si::megayear)
         {
             minerals.fill(mineral::Mineral());
         }
 
         Stratum(
-            const float max_temperature_received,
-            const float max_pressure_received,
-            const float age_of_world_when_deposited
+            const si::temperature max_temperature_received,
+            const si::pressure max_pressure_received,
+            const si::time age_of_world_when_deposited
         ):
             max_temperature_received(max_temperature_received),
             max_pressure_received(max_pressure_received),
@@ -55,9 +56,9 @@ namespace stratum
         }
 
         Stratum(
-            const float max_temperature_received,
-            const float max_pressure_received,
-            const float age_of_world_when_deposited,
+            const si::temperature max_temperature_received,
+            const si::pressure max_pressure_received,
+            const si::time age_of_world_when_deposited,
             const std::initializer_list<mineral::Mineral>& vector
         ): 
             max_temperature_received(max_temperature_received),
@@ -74,49 +75,49 @@ namespace stratum
         }
 
         // DERIVED ATTRIBUTES, regular functions of the form: Stratum -> T
-        float mass() const 
+        si::mass mass() const 
         {
-            float total_mass(0.0);
+            si::mass total_mass(0.0);
             for (std::size_t i=0; i<M; i++)
             {
                 total_mass += minerals[i].mass;
             }
             return total_mass;
         }
-        float age(const float age_of_world) const
+        si::time age(const si::time age_of_world) const
         {
             return age_of_world - age_of_world_when_deposited;
         }
-        float volume(const float age_of_world, const std::array<float, M>& mineral_densities) const 
+        si::volume volume(const si::time age_of_world, const std::array<si::density, M>& mineral_densities) const 
         {
-            float total_volume(0.0);
+            si::volume total_volume(0.0);
             for (std::size_t i=0; i<M; i++)
             {
                 total_volume += minerals[i].mass / mineral_densities[i];
             }
             return total_volume;
         }
-        float density(const float age_of_world, const std::array<float, M>& mineral_densities) const 
+        si::density density(const si::time age_of_world, const std::array<si::density, M>& mineral_densities) const 
         {
             return mass() / volume(age_of_world, mineral_densities);
         }
-        float thermal_conductivity(
-            float age_of_world,
-            const std::array<float, M>& mineral_densities,
-            const std::array<float, M>& mineral_thermal_conductivities
-        ) const 
-        {
-            // geometric mean weighted by fractional volume, see work by Fuchs (2013)
-            float logK(0.0);
-            float total_volume(volume(mineral_densities));
-            float fractional_volume(0);
-            for (std::size_t i=0; i<M; i++)
-            {
-                fractional_volume = minerals[i].mass / (mineral_densities[i] * total_volume);
-                logK += fractional_volume * mineral_thermal_conductivities[i];
-            }
-            return exp(logK);
-        }
+        // si::thermal_conductivity thermal_conductivity(
+        //     si::time age_of_world,
+        //     const std::array<si::density, M>& mineral_densities,
+        //     const std::array<si::thermal_conductivity, M>& mineral_thermal_conductivities
+        // ) const 
+        // {
+        //     // geometric mean weighted by fractional volume, see work by Fuchs (2013)
+        //     float logK(0.0);
+        //     si::volume total_volume(volume(mineral_densities));
+        //     float fractional_volume(0);
+        //     for (std::size_t i=0; i<M; i++)
+        //     {
+        //         fractional_volume = minerals[i].mass / (mineral_densities[i] * total_volume);
+        //         logK += fractional_volume * mineral_thermal_conductivities[i];
+        //     }
+        //     return exp(logK);
+        // }
     };
 
 }

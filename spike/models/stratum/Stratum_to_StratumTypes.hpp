@@ -8,7 +8,7 @@
 #include <glm/geometric.hpp>
 
 // in-house libraries
-#include <physics/units.hpp>
+#include <units/si.hpp>
 #include <models/mineral/GrainType.hpp>
 #include "Stratum.hpp"
 #include "StratumTypes.hpp"
@@ -39,9 +39,9 @@ namespace stratum
     We also use this diagram as reason to set an equivalence of 900K = 20kb 
     for determining less well known forms of metamorphism and lithification.
     */
-    MetamorphicFacies get_metamorphic_facies(float p, float t)
+    MetamorphicFacies get_metamorphic_facies(si::pressure p, si::temperature t)
     {
-        glm::vec2 pt_scaled = glm::vec2(p,t) / glm::vec2(2e8*units::pascal, 100*units::kelvin);
+        glm::vec2 pt_scaled = glm::vec2(p/si::pascal,t/si::kelvin) / glm::vec2(2e8, 100);
 
         if ( glm::length(pt_scaled-glm::vec2(0,2.65))  < 0.011 )
         {
@@ -98,7 +98,7 @@ namespace stratum
 
         for (std::size_t i=0; i<M; i++)
         {
-            float mass = stratum.minerals[i].mass;
+            float mass = stratum.minerals[i].mass / si::kilogram; // NOTE: units do not matter here
             std::array<float, std::size_t(mineral::GrainType::count)> grains = stratum.minerals[i].grain_type_relative_volume;
             float total_volume = stratum.minerals[i].grain_type_total_relative_volume();
             output[std::size_t(ParticleSizeBins::boulder)] += mass * grains[std::size_t(mineral::GrainType::unweathered_extrusive)] / total_volume;
@@ -198,7 +198,7 @@ namespace stratum
     template<std::size_t M>
     IgneousCompositionTypes get_igneous_composition_types(const Stratum<M>& stratum)
     {
-        float total_mass = stratum.mass();
+        si::mass total_mass = stratum.mass();
         if (stratum.minerals[std::size_t(OxygenPlanetMineralTypes::olivine)].mass / total_mass > 0.3)
         {
             return IgneousCompositionTypes::ultramafic;
@@ -269,19 +269,17 @@ namespace stratum
     template<std::size_t M>
     MetamorphicGrades get_metamorphic_grades(const Stratum<M>& stratum)
     {
-        float p = 0.0; // the lowest max pressure shared by all mass pools
-        float t = 0.0; // the lowest max temperature shared by all mass pools
-        p = stratum.max_pressure_received;
-        t = stratum.max_temperature_received;
-        glm::vec2 PT(p, std::max(t-units::standard_temperature, 0.0f));
-        glm::vec2 scale(2e8*units::pascal, 100*units::kelvin);
+        si::pressure p = stratum.max_pressure_received; // the lowest max pressure shared by all mass pools
+        si::temperature t = stratum.max_temperature_received; // the lowest max temperature shared by all mass pools
+        glm::vec2 PT(p/si::pascal, std::max((t-si::standard_temperature)/si::kelvin, 0.0));
+        glm::vec2 scale(2e8, 100);
         float distance = glm::length(PT/scale);
         /*
         NOTE: 
         2.2e6 Pascals is the pressure equivalent of 500ft of sediment @ 1500kg/m^3 density
         500ft from http://wiki.aapg.org/Sandstone_diagenetic_processes
         */
-        if ( p < 2.2e6 && distance < 1.5f )
+        if ( p < 2.2e6*si::pascal && distance < 1.5f )
         {
             return MetamorphicGrades::igneous_or_sediment;
         }
@@ -318,7 +316,7 @@ namespace stratum
     RockCompositionTypes get_rock_composition_types(const Stratum<M>& stratum)
     {
         RockCompositionTypes out;
-        float total_mass = stratum.mass();
+        si::mass total_mass = stratum.mass();
         out.partly_calcareous =  stratum.minerals[std::size_t(OxygenPlanetMineralTypes::calcite    )].mass  / total_mass > 0.5;
         out.calcareous        =  stratum.minerals[std::size_t(OxygenPlanetMineralTypes::calcite    )].mass  / total_mass > 0.75;
         out.silicaceous       =  stratum.minerals[std::size_t(OxygenPlanetMineralTypes::quartz     )].mass  / total_mass > 0.9;

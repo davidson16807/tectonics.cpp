@@ -13,10 +13,10 @@ TEST_CASE( "get_stratum_types() happy path", "[stratum]" ) {
     const std::size_t M = 15;
     SECTION("get_stratum_types() must recognize sand"){
 		mineral::Mineral pool;
-		pool.mass = 1.0f;
+		pool.mass = 1.0f*si::kilogram;
 		pool.grain_type_relative_volume[int(mineral::GrainType::chemically_weathered_intrusive)] = 1.0f;
 
-		Stratum<M> stratum(300*units::kelvin, 1e5*units::pascal, 0);
+		Stratum<M> stratum(300*si::kelvin, 1e5*si::pascal, 0*si::second);
 		stratum.minerals[int(OxygenPlanetMineralTypes::quartz)] = pool;
 
 		StratumTypes stratum_types = get_stratum_types(stratum);
@@ -34,13 +34,13 @@ TEST_CASE( "get_stratum_types() happy path", "[stratum]" ) {
     }
     SECTION("get_stratum_types() must recognize granite"){
 		mineral::Mineral quartz;
-		quartz.mass = 0.7f;
+		quartz.mass = 0.7f*si::kilogram;
 		quartz.grain_type_relative_volume[int(mineral::GrainType::unweathered_intrusive)] = 1.0f;
 		mineral::Mineral orthoclase;
-		orthoclase.mass = 0.3f;
+		orthoclase.mass = 0.3f*si::kilogram;
 		orthoclase.grain_type_relative_volume[int(mineral::GrainType::unweathered_intrusive)] = 1.0f;
 
-		Stratum<M> stratum(300*units::kelvin, 1e5*units::pascal, 0);
+		Stratum<M> stratum(300*si::kelvin, 1e5*si::pascal, 0*si::second);
 		stratum.minerals[int(OxygenPlanetMineralTypes::quartz)] = quartz;
 		stratum.minerals[int(OxygenPlanetMineralTypes::orthoclase)] = orthoclase;
 
@@ -59,19 +59,19 @@ TEST_CASE( "get_stratum_types() happy path", "[stratum]" ) {
     }
     SECTION("get_stratum_types() must recognize basalt"){
 		mineral::Mineral quartz;
-		quartz.mass = 0.5f;
+		quartz.mass = 0.5f*si::kilogram;
 		quartz.grain_type_relative_volume[int(mineral::GrainType::unweathered_extrusive)] = 1.0f;
 		mineral::Mineral orthoclase;
-		orthoclase.mass = 0.03f;
+		orthoclase.mass = 0.03f*si::kilogram;
 		orthoclase.grain_type_relative_volume[int(mineral::GrainType::unweathered_extrusive)] = 1.0f;
 		mineral::Mineral plagioclase;
-		plagioclase.mass = 0.07f;
+		plagioclase.mass = 0.07f*si::kilogram;
 		plagioclase.grain_type_relative_volume[int(mineral::GrainType::unweathered_extrusive)] = 1.0f;
 		mineral::Mineral pyroxene;
-		pyroxene.mass = 0.4f;
+		pyroxene.mass = 0.4f*si::kilogram;
 		pyroxene.grain_type_relative_volume[int(mineral::GrainType::unweathered_extrusive)] = 1.0f;
 
-		Stratum<M> stratum(300*units::kelvin, 1e5*units::pascal, 0);
+		Stratum<M> stratum(300*si::kelvin, 1e5*si::pascal, 0*si::second);
 		stratum.minerals[int(OxygenPlanetMineralTypes::quartz)] = quartz;
 		stratum.minerals[int(OxygenPlanetMineralTypes::orthoclase)] = orthoclase;
 		stratum.minerals[int(OxygenPlanetMineralTypes::plagioclase)] = plagioclase;
@@ -92,13 +92,13 @@ TEST_CASE( "get_stratum_types() happy path", "[stratum]" ) {
     }
     SECTION("get_stratum_types() must recognize limestone"){
 		mineral::Mineral calcite;
-		calcite.mass = 0.8f;
+		calcite.mass = 0.8f*si::kilogram;
 		calcite.grain_type_relative_volume[int(mineral::GrainType::chemically_weathered_intrusive)] = 1.0f;
 		mineral::Mineral quartz;
-		quartz.mass = 0.2f;
+		quartz.mass = 0.2f*si::kilogram;
 		quartz.grain_type_relative_volume[int(mineral::GrainType::chemically_weathered_intrusive)] = 1.0f;
 
-		Stratum<M> stratum(300*units::kelvin, 2e8*units::pascal, 0);
+		Stratum<M> stratum(300*si::kelvin, 2e8*si::pascal, 0*si::second);
 		stratum.minerals[int(OxygenPlanetMineralTypes::calcite)] = calcite;
 		stratum.minerals[int(OxygenPlanetMineralTypes::quartz)] = quartz;
 
@@ -117,13 +117,13 @@ TEST_CASE( "get_stratum_types() happy path", "[stratum]" ) {
     }
     SECTION("get_stratum_types() must recognize marble"){
 		mineral::Mineral calcite;
-		calcite.mass = 0.8f;
+		calcite.mass = 0.8f*si::kilogram;
 		calcite.grain_type_relative_volume[int(mineral::GrainType::chemically_weathered_intrusive)] = 1.0f;
 		mineral::Mineral quartz;
-		quartz.mass = 0.2f;
+		quartz.mass = 0.2f*si::kilogram;
 		quartz.grain_type_relative_volume[int(mineral::GrainType::chemically_weathered_intrusive)] = 1.0f;
 
-		Stratum<M> stratum(300*units::kelvin, 4e8*units::pascal, 0);
+		Stratum<M> stratum(300*si::kelvin, 4e8*si::pascal, 0*si::second);
 		stratum.minerals[int(OxygenPlanetMineralTypes::calcite)] = calcite;
 		stratum.minerals[int(OxygenPlanetMineralTypes::quartz)] = quartz;
 
