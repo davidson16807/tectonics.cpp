@@ -8,6 +8,7 @@
 #include <array>
 
 // in-house libraries
+#include <units/si.hpp>
 #include "Mineral.hpp"
 
 namespace mineral
@@ -81,7 +82,7 @@ namespace mineral
 		}
 		void unpack(Mineral& output) const
 		{
-		    output.mass = mass;
+		    output.mass = mass * si::kilogram;
 		    output.phase_id = phase_id;
 		    float total_relative_volume(epsilon);
 			total_relative_volume += unweathered_extrusive_part_count           ;
@@ -100,7 +101,7 @@ namespace mineral
 		}
 		void pack(const Mineral& input)
 		{
-			mass = input.mass;
+			mass = input.mass / si::kilogram;
 			phase_id = std::clamp(input.phase_id, 0u, 15u);
             // rescale bin counts by the new max to fit inside a uint8_t
             float grain_type_relative_volume_max(epsilon);

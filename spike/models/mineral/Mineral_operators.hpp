@@ -23,7 +23,7 @@ namespace mineral
         {
             output.grain_type_relative_volume[i] = 
                 (a.mass * a.grain_type_relative_volume[i] / a_sum + 
-                 b.mass * b.grain_type_relative_volume[i] / b_sum) / std::max(a.mass + b.mass, 1e-4f);
+                 b.mass * b.grain_type_relative_volume[i] / b_sum) / std::max(a.mass + b.mass, 1e-4f*si::kilogram);
         }
 	}
 }

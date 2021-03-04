@@ -21,7 +21,7 @@ namespace mineral
 	mineral::Mineral get_random(Tgenerator generator)
 	{
 		mineral::Mineral output;
-		output.mass = generator();
+		output.mass = generator() * si::kilogram;
 		output.phase_id = generator() % 16;
 		for (int j = 0; j < int(mineral::GrainType::count); ++j)
 		{
@@ -31,7 +31,7 @@ namespace mineral
 	}
 	
 	#define MINERAL_EQUAL(a, b)                                                              \
-    	CHECK(a.mass == Approx(b.mass).epsilon(1e-4));                                                 \
+    	CHECK(a.mass/si::kilogram == Approx(b.mass/si::kilogram).epsilon(1e-4));                                                 \
     	CHECK(a.phase_id == b.phase_id);                                                 \
 		for (int grain_i = 0; grain_i < int(mineral::GrainType::count); ++grain_i)                                   \
 		{                                                                                              \
@@ -42,7 +42,7 @@ namespace mineral
     	}    
 
     #define MINERAL_VALID(a)                                                    \
-    	CHECK(a.mass > -1e-4);                                                  \
+    	CHECK(a.mass/si::kilogram > -1e-4);                                                  \
     	CHECK(0 <= a.phase_id);                              \
     	CHECK(a.phase_id < 16);                              \
 		for (int grain_i = 0; grain_i < int(mineral::GrainType::count); ++grain_i)       \
