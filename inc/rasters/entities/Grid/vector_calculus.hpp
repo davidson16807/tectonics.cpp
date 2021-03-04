@@ -103,24 +103,26 @@ namespace rasters
         Raster<T, Tgrid, mapping::arrow>& arrow_differential, 
         Raster<glm::vec<3,T,Q>, Tgrid, mapping::arrow>& arrow_flow
     ) {
-        const auto cache = scalar_field.grid.cache;
+        const auto metrics = scalar_field.grid.metrics;
+        const auto structure = scalar_field.grid.structure;
         glm::uvec2 arrow;
-        for (std::size_t i = 0; i < cache->arrow_vertex_ids.size(); ++i)
+        for (std::size_t i = 0; i < structure->arrow_vertex_ids.size(); ++i)
         {
-            arrow                 = cache->arrow_vertex_ids[i]; 
+            arrow                 = structure->arrow_vertex_ids[i]; 
             arrow_differential[i] = scalar_field[arrow.y] - scalar_field[arrow.x]; // differential across dual of the arrow
         }
-        series::mult   (arrow_differential, cache->arrow_dual_normals,   arrow_flow);      // flux across dual of the arrow
-        series::mult   (arrow_flow,         cache->arrow_dual_lengths,   arrow_flow);      // flow across dual of the arrow
+        series::mult   (arrow_differential, metrics->arrow_dual_normals,   arrow_flow);      // flux across dual of the arrow
+        series::mult   (arrow_flow,         metrics->arrow_dual_lengths,   arrow_flow);      // flow across dual of the arrow
         series::fill   (out,                glm::vec<3,T,Q>(0.f));
-        series::aggregate_into(arrow_flow,    cache->arrow_vertex_id_from, [](glm::vec<3,T,Q> a, glm::vec<3,T,Q> b){ return a+b; }, out); // flow out from the vertex
-        series::div      (out,                cache->vertex_dual_areas,    out);             // gradient
+        series::aggregate_into(arrow_flow,    structure->arrow_vertex_id_from, [](glm::vec<3,T,Q> a, glm::vec<3,T,Q> b){ return a+b; }, out); // flow out from the vertex
+        series::div      (out,                metrics->vertex_dual_areas,    out);             // gradient
     }
 
     template<typename T, typename Tgrid>
     Raster<glm::vec3, Tgrid> gradient(const Raster<T, Tgrid>& scalar_field)
     {
-        const auto cache = scalar_field.grid.cache;
+        const auto metrics = scalar_field.grid.metrics;
+        const auto structure = scalar_field.grid.structure;
         Raster<T, Tgrid, mapping::arrow>         arrow_differential (scalar_field.grid);
         Raster<glm::vec3, Tgrid, mapping::arrow> arrow_flow         (scalar_field.grid);
         Raster<glm::vec3, Tgrid> out                (scalar_field.grid);
@@ -135,24 +137,26 @@ namespace rasters
         Raster<glm::vec<3,T,Q>, Tgrid, mapping::arrow>& arrow_differential, 
         Raster<T, Tgrid, mapping::arrow>& arrow_projection
     ) {
-        const auto cache = vector_field.grid.cache;
+        const auto metrics = vector_field.grid.metrics;
+        const auto structure = vector_field.grid.structure;
         glm::uvec2 arrow;
-        for (std::size_t i = 0; i < cache->arrow_vertex_ids.size(); ++i)
+        for (std::size_t i = 0; i < structure->arrow_vertex_ids.size(); ++i)
         {
-            arrow                 = cache->arrow_vertex_ids[i]; 
+            arrow                 = structure->arrow_vertex_ids[i]; 
             arrow_differential[i] = vector_field[arrow.y] - vector_field[arrow.x]; // differential across dual of the arrow
         }
-        series::dot    (arrow_differential, cache->arrow_dual_normals,   arrow_projection);      // flux across dual of the arrow
-        series::mult   (arrow_projection,   cache->arrow_dual_lengths,   arrow_projection);      // flow across dual of the arrow
+        series::dot    (arrow_differential, metrics->arrow_dual_normals,   arrow_projection);      // flux across dual of the arrow
+        series::mult   (arrow_projection,   metrics->arrow_dual_lengths,   arrow_projection);      // flow across dual of the arrow
         series::fill   (out,                0.f);
-        series::aggregate_into(arrow_projection, cache->arrow_vertex_id_from, [](T a, T b){ return a+b; }, out);  // flow out from the vertex
-        series::div      (out,                cache->vertex_dual_areas,    out);             // divergence
+        series::aggregate_into(arrow_projection, structure->arrow_vertex_id_from, [](T a, T b){ return a+b; }, out);  // flow out from the vertex
+        series::div      (out,                metrics->vertex_dual_areas,    out);             // divergence
     }
 
     template<typename T, typename Tgrid, glm::qualifier Q>
     Raster<T, Tgrid> divergence(const Raster<glm::vec<3,T,Q>, Tgrid>& vector_field)
     {
-        const auto cache = vector_field.grid.cache;
+        const auto metrics = vector_field.grid.metrics;
+        const auto structure = vector_field.grid.structure;
         Raster<glm::vec<3,T,Q>, Tgrid, mapping::arrow> arrow_differential (vector_field.grid);
         Raster<T, Tgrid, mapping::arrow>               arrow_projection   (vector_field.grid);
         Raster<T, Tgrid>               out                (vector_field.grid);
@@ -167,24 +171,26 @@ namespace rasters
         Raster<glm::vec<3,T,Q>, Tgrid, mapping::arrow>& arrow_differential, 
         Raster<glm::vec<3,T,Q>, Tgrid, mapping::arrow>& arrow_rejection
     ) {
-        const auto cache = vector_field.grid.cache;
+        const auto metrics = vector_field.grid.metrics;
+        const auto structure = vector_field.grid.structure;
         glm::uvec2 arrow;
-        for (std::size_t i = 0; i < cache->arrow_vertex_ids.size(); ++i)
+        for (std::size_t i = 0; i < structure->arrow_vertex_ids.size(); ++i)
         {
-            arrow                 = cache->arrow_vertex_ids[i]; 
+            arrow                 = structure->arrow_vertex_ids[i]; 
             arrow_differential[i] = vector_field[arrow.y] - vector_field[arrow.x]; // differential across dual of the arrow
         }
-        series::cross      (arrow_differential, cache->arrow_dual_normals,   arrow_rejection);      // flux across dual of the arrow
-        series::mult   (arrow_rejection,    cache->arrow_dual_lengths,   arrow_rejection);      // flow across dual of the arrow
+        series::cross      (arrow_differential, metrics->arrow_dual_normals,   arrow_rejection);      // flux across dual of the arrow
+        series::mult   (arrow_rejection,    metrics->arrow_dual_lengths,   arrow_rejection);      // flow across dual of the arrow
         series::fill   (out,                glm::vec<3,T,Q>(0.f));
-        series::aggregate_into(arrow_rejection, cache->arrow_vertex_id_from, [](glm::vec<3,T,Q> a, glm::vec<3,T,Q> b){ return a+b; }, out);  // flow out from the vertex
-        series::div      (out,                cache->vertex_dual_areas,    out);             // curl
+        series::aggregate_into(arrow_rejection, structure->arrow_vertex_id_from, [](glm::vec<3,T,Q> a, glm::vec<3,T,Q> b){ return a+b; }, out);  // flow out from the vertex
+        series::div      (out,                metrics->vertex_dual_areas,    out);             // curl
     }
 
     template<typename T, typename Tgrid, glm::qualifier Q>
     Raster<glm::vec<3,T,Q>, Tgrid> curl(const Raster<glm::vec<3,T,Q>, Tgrid>& vector_field)
     {
-        const auto cache = vector_field.grid.cache;
+        const auto metrics = vector_field.grid.metrics;
+        const auto structure = vector_field.grid.structure;
         Raster<glm::vec<3,T,Q>, Tgrid, mapping::arrow> arrow_differential (vector_field.grid);
         Raster<glm::vec<3,T,Q>, Tgrid, mapping::arrow> arrow_rejection    (vector_field.grid);
         Raster<glm::vec<3,T,Q>, Tgrid> out                (vector_field.grid);
@@ -216,23 +222,25 @@ namespace rasters
         Raster<T, Tgrid>& out, 
         Raster<T, Tgrid, mapping::arrow>& arrow_scratch
     ) {
-        const auto cache = scalar_field.grid.cache;
+        const auto metrics = scalar_field.grid.metrics;
+        const auto structure = scalar_field.grid.structure;
         glm::uvec2 arrow;
-        for (std::size_t i = 0; i < cache->arrow_vertex_ids.size(); ++i)
+        for (std::size_t i = 0; i < structure->arrow_vertex_ids.size(); ++i)
         {
-            arrow            = cache->arrow_vertex_ids[i]; 
+            arrow            = structure->arrow_vertex_ids[i]; 
             arrow_scratch[i] = scalar_field[arrow.y] - scalar_field[arrow.x]; // differential across dual of the arrow
         }
-        series::div      (arrow_scratch,      cache->arrow_lengths,      arrow_scratch); // slope along the arrow
-        series::mult     (arrow_scratch,      cache->arrow_dual_lengths, arrow_scratch); // differential weighted by dual length
+        series::div      (arrow_scratch,      metrics->arrow_lengths,      arrow_scratch); // slope along the arrow
+        series::mult     (arrow_scratch,      metrics->arrow_dual_lengths, arrow_scratch); // differential weighted by dual length
         series::fill     (out,                T(0.f));
-        series::aggregate_into(arrow_scratch, cache->arrow_vertex_id_from, [](T a, T b){ return a+b; }, out);  // weight average difference across neighbors
-        series::div      (out,                cache->vertex_dual_areas,    out);             // laplacian
+        series::aggregate_into(arrow_scratch, structure->arrow_vertex_id_from, [](T a, T b){ return a+b; }, out);  // weight average difference across neighbors
+        series::div      (out,                metrics->vertex_dual_areas,    out);             // laplacian
     }
     template<typename T, typename Tgrid>
     Raster<T, Tgrid> laplacian(const Raster<T, Tgrid>& scalar_field)
     {
-        const auto cache = scalar_field.grid.cache;
+        const auto metrics = scalar_field.grid.metrics;
+        const auto structure = scalar_field.grid.structure;
         Raster<T, Tgrid, mapping::arrow> arrow_scratch (scalar_field.grid);
         Raster<T, Tgrid> out           (scalar_field.grid);
         rasters::laplacian(scalar_field, out, arrow_scratch);
@@ -245,24 +253,26 @@ namespace rasters
         Raster<glm::vec<L,T,Q>, Tgrid>& out, 
         Raster<glm::vec<L,T,Q>, Tgrid, mapping::arrow>& arrow_scratch
     ) {
-        const auto cache = vector_field.grid.cache;
+        const auto metrics = vector_field.grid.metrics;
+        const auto structure = vector_field.grid.structure;
         glm::uvec2 arrow;
-        for (std::size_t i = 0; i < cache->arrow_vertex_ids.size(); ++i)
+        for (std::size_t i = 0; i < structure->arrow_vertex_ids.size(); ++i)
         {
-            arrow            = cache->arrow_vertex_ids[i]; 
+            arrow            = structure->arrow_vertex_ids[i]; 
             arrow_scratch[i] = vector_field[arrow.y] - vector_field[arrow.x]; // differential across dual of the arrow
         }
-        series::div      (arrow_scratch,      cache->arrow_lengths,      arrow_scratch);
-        series::mult     (arrow_scratch,      cache->arrow_dual_lengths, arrow_scratch); // differential weighted by dual length
+        series::div      (arrow_scratch,      metrics->arrow_lengths,      arrow_scratch);
+        series::mult     (arrow_scratch,      metrics->arrow_dual_lengths, arrow_scratch); // differential weighted by dual length
         series::fill     (out,                glm::vec<L,T,Q>(0.f));
-        series::aggregate_into(arrow_scratch, cache->arrow_vertex_id_from, [](glm::vec<L,T,Q> a, glm::vec<L,T,Q> b){ return a+b; }, out);  // weight average difference across neighbors
-        series::div      (out,                cache->vertex_dual_areas,    out);             // laplacian
+        series::aggregate_into(arrow_scratch, structure->arrow_vertex_id_from, [](glm::vec<L,T,Q> a, glm::vec<L,T,Q> b){ return a+b; }, out);  // weight average difference across neighbors
+        series::div      (out,                metrics->vertex_dual_areas,    out);             // laplacian
     }
 
     template<unsigned int L, typename T, typename Tgrid, glm::qualifier Q>
     Raster<glm::vec<L,T,Q>, Tgrid> laplacian(const Raster<glm::vec<L,T,Q>, Tgrid>& vector_field)
     {
-        const auto cache = vector_field.grid.cache;
+        const auto metrics = vector_field.grid.metrics;
+        const auto structure = vector_field.grid.structure;
         Raster<glm::vec<L,T,Q>, Tgrid, mapping::arrow> arrow_scratch (vector_field.grid);
         Raster<glm::vec<L,T,Q>, Tgrid> out           (vector_field.grid);
         rasters::laplacian(vector_field, out, arrow_scratch);

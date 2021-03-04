@@ -16,20 +16,20 @@ namespace rasters
 		series::fill (arrow_differential, T(0));
 		std::size_t L = scalar_field.grid.layering->layer_count;
 		glm::uvec2 arrow;
-		for (std::size_t i = 0; i < scalar_field.grid.cache->arrow_count; ++i)
+		for (std::size_t i = 0; i < scalar_field.grid.structure->arrow_count; ++i)
 		{
-			arrow = scalar_field.grid.cache->arrow_vertex_ids[i]; 
+			arrow = scalar_field.grid.structure->arrow_vertex_ids[i]; 
 			for (std::size_t j = 0; j < L; ++j)
 			{
 				arrow_differential[i*L+j] = scalar_field[arrow.y*L+j] - scalar_field[arrow.x*L+j]; // differential across dual of the arrow
 			}
 		}
-		series::mult (arrow_differential, scalar_field.grid.cache->arrow_dual_normals,   arrow_flow);      // flux across dual of the arrow 
-		series::mult (arrow_flow,         scalar_field.grid.cache->arrow_dual_lengths,   arrow_flow);
+		series::mult (arrow_differential, scalar_field.grid.metrics->arrow_dual_normals,   arrow_flow);      // flux across dual of the arrow 
+		series::mult (arrow_flow,         scalar_field.grid.metrics->arrow_dual_lengths,   arrow_flow);
 		series::mult (arrow_flow,         scalar_field.grid.layering->layer_height,      arrow_flow);      // flow across dual of the arrow 
 
 		series::fill (layer_differential, T(0));
-		for (std::size_t i = 0; i < scalar_field.grid.cache->vertex_count; ++i)
+		for (std::size_t i = 0; i < scalar_field.grid.structure->vertex_count; ++i)
 		{
 			for (std::size_t j = 1; j < L; ++j)
 			{
@@ -37,19 +37,19 @@ namespace rasters
 				layer_differential[i*L+j]   += scalar_field[i*L+j] - scalar_field[i*L+j-1]; // /2; NOTE: 2 cancels out
 			}
 		}
-		series::mult (layer_differential, scalar_field.grid.cache->vertex_normals,       layer_flow);      // flux across layer boundary 
-		series::mult (layer_flow,         scalar_field.grid.cache->vertex_dual_areas,    layer_flow);      // flow across layer boundary
+		series::mult (layer_differential, scalar_field.grid.metrics->vertex_normals,       layer_flow);      // flux across layer boundary 
+		series::mult (layer_flow,         scalar_field.grid.metrics->vertex_dual_areas,    layer_flow);      // flow across layer boundary
 
 		series::copy (out,                layer_flow);
-		for (std::size_t i = 0; i < scalar_field.grid.cache->arrow_vertex_id_from.size(); ++i)
+		for (std::size_t i = 0; i < scalar_field.grid.structure->arrow_vertex_id_from.size(); ++i)
 		{
 			for (std::size_t j = 0; j < L; ++j)
 			{
-				out[scalar_field.grid.cache->arrow_vertex_id_from[i]*L+j] += arrow_flow[i*L+j];
+				out[scalar_field.grid.structure->arrow_vertex_id_from[i]*L+j] += arrow_flow[i*L+j];
 			}
 		}
 
-		series::div  (out,                scalar_field.grid.cache->vertex_dual_areas,    out);
+		series::div  (out,                scalar_field.grid.metrics->vertex_dual_areas,    out);
 		series::div  (out,                scalar_field.grid.layering->layer_height,      out);             // gradient
 	}
 
@@ -78,20 +78,20 @@ namespace rasters
 		series::fill (arrow_differential, glm::vec<3,T,Q>(0.f));
 		std::size_t L = vector_field.grid.layering->layer_count;
 		glm::uvec2 arrow;
-		for (std::size_t i = 0; i < vector_field.grid.cache->arrow_count; ++i)
+		for (std::size_t i = 0; i < vector_field.grid.structure->arrow_count; ++i)
 		{
-			arrow = vector_field.grid.cache->arrow_vertex_ids[i]; 
+			arrow = vector_field.grid.structure->arrow_vertex_ids[i]; 
 			for (std::size_t j = 0; j < L; ++j)
 			{
 				arrow_differential[i*L+j] = vector_field[arrow.y*L+j] - vector_field[arrow.x*L+j]; // differential across dual of the arrow
 			}
 		}
-		series::dot  (arrow_differential, vector_field.grid.cache->arrow_dual_normals,   arrow_projection);      // flux across dual of the arrow 
-		series::mult (arrow_projection,   vector_field.grid.cache->arrow_dual_lengths,   arrow_projection);
+		series::dot  (arrow_differential, vector_field.grid.metrics->arrow_dual_normals,   arrow_projection);      // flux across dual of the arrow 
+		series::mult (arrow_projection,   vector_field.grid.metrics->arrow_dual_lengths,   arrow_projection);
 		series::mult (arrow_projection,   vector_field.grid.layering->layer_height,      arrow_projection);      // flow across dual of the arrow 
 
 		series::fill (layer_differential, glm::vec<3,T,Q>(0.f));
-		for (std::size_t i = 0; i < vector_field.grid.cache->vertex_count; ++i)
+		for (std::size_t i = 0; i < vector_field.grid.structure->vertex_count; ++i)
 		{
 			for (std::size_t j = 1; j < L; ++j)
 			{
@@ -99,19 +99,19 @@ namespace rasters
 				layer_differential[i*L+j]   += vector_field[i*L+j] - vector_field[i*L+j-1]; // /2; NOTE: 2 cancels out
 			}
 		}
-		series::dot  (layer_differential, vector_field.grid.cache->vertex_normals,       layer_projection);      // flux across layer boundary 
-		series::mult (layer_projection,   vector_field.grid.cache->vertex_dual_areas,    layer_projection);      // flow across layer boundary
+		series::dot  (layer_differential, vector_field.grid.metrics->vertex_normals,       layer_projection);      // flux across layer boundary 
+		series::mult (layer_projection,   vector_field.grid.metrics->vertex_dual_areas,    layer_projection);      // flow across layer boundary
 
 		series::copy (out,                layer_projection);
-		for (std::size_t i = 0; i < vector_field.grid.cache->arrow_vertex_id_from.size(); ++i)
+		for (std::size_t i = 0; i < vector_field.grid.structure->arrow_vertex_id_from.size(); ++i)
 		{
 			for (std::size_t j = 0; j < L; ++j)
 			{
-				out[vector_field.grid.cache->arrow_vertex_id_from[i]*L+j] += arrow_projection[i*L+j];
+				out[vector_field.grid.structure->arrow_vertex_id_from[i]*L+j] += arrow_projection[i*L+j];
 			}
 		}
 
-		series::div  (out,                vector_field.grid.cache->vertex_dual_areas,    out);
+		series::div  (out,                vector_field.grid.metrics->vertex_dual_areas,    out);
 		series::div  (out,                vector_field.grid.layering->layer_height,      out);             // divergence
 	}
 
@@ -140,20 +140,20 @@ namespace rasters
 		series::fill (arrow_differential, glm::vec<3,T,Q>(0.f));
 		std::size_t L = vector_field.grid.layering->layer_count;
 		glm::uvec2 arrow;
-		for (std::size_t i = 0; i < vector_field.grid.cache->arrow_count; ++i)
+		for (std::size_t i = 0; i < vector_field.grid.structure->arrow_count; ++i)
 		{
-			arrow = vector_field.grid.cache->arrow_vertex_ids[i]; 
+			arrow = vector_field.grid.structure->arrow_vertex_ids[i]; 
 			for (std::size_t j = 0; j < L; ++j)
 			{
 				arrow_differential[i*L+j] = vector_field[arrow.y*L+j] - vector_field[arrow.x*L+j]; // differential across dual of the arrow
 			}
 		}
-		series::cross(arrow_differential,vector_field.grid.cache->arrow_dual_normals,   arrow_rejection);      // flux across dual of the arrow 
-		series::mult (arrow_rejection,   vector_field.grid.cache->arrow_dual_lengths,   arrow_rejection);
+		series::cross(arrow_differential,vector_field.grid.metrics->arrow_dual_normals,   arrow_rejection);      // flux across dual of the arrow 
+		series::mult (arrow_rejection,   vector_field.grid.metrics->arrow_dual_lengths,   arrow_rejection);
 		series::mult (arrow_rejection,   vector_field.grid.layering->layer_height,      arrow_rejection);      // flow across dual of the arrow 
 
 		series::fill (layer_differential, glm::vec<3,T,Q>(0.f));
-		for (std::size_t i = 0; i < vector_field.grid.cache->vertex_count; ++i)
+		for (std::size_t i = 0; i < vector_field.grid.structure->vertex_count; ++i)
 		{
 			for (std::size_t j = 1; j < L; ++j)
 			{
@@ -161,19 +161,19 @@ namespace rasters
 				layer_differential[i*L+j]   += vector_field[i*L+j] - vector_field[i*L+j-1]; // /2; NOTE: 2 cancels out
 			}
 		}
-		series::cross(layer_differential,vector_field.grid.cache->vertex_normals,       layer_rejection);      // flux across layer boundary 
-		series::mult (layer_rejection,   vector_field.grid.cache->vertex_dual_areas,    layer_rejection);      // flow across layer boundary
+		series::cross(layer_differential,vector_field.grid.metrics->vertex_normals,       layer_rejection);      // flux across layer boundary 
+		series::mult (layer_rejection,   vector_field.grid.metrics->vertex_dual_areas,    layer_rejection);      // flow across layer boundary
 
 		series::copy (out,                layer_rejection);
-		for (std::size_t i = 0; i < vector_field.grid.cache->arrow_vertex_id_from.size(); ++i)
+		for (std::size_t i = 0; i < vector_field.grid.structure->arrow_vertex_id_from.size(); ++i)
 		{
 			for (std::size_t j = 0; j < L; ++j)
 			{
-				out[vector_field.grid.cache->arrow_vertex_id_from[i]*L+j] += arrow_rejection[i*L+j];
+				out[vector_field.grid.structure->arrow_vertex_id_from[i]*L+j] += arrow_rejection[i*L+j];
 			}
 		}
 
-		series::div  (out,                vector_field.grid.cache->vertex_dual_areas,    out);
+		series::div  (out,                vector_field.grid.metrics->vertex_dual_areas,    out);
 		series::div  (out,                vector_field.grid.layering->layer_height,      out);             // curl
 	}
 
@@ -200,20 +200,20 @@ namespace rasters
 		series::fill (arrow_scratch, T(0));
 		std::size_t L = scalar_field.grid.layering->layer_count;
 		glm::uvec2 arrow;
-		for (std::size_t i = 0; i < scalar_field.grid.cache->arrow_count; ++i)
+		for (std::size_t i = 0; i < scalar_field.grid.structure->arrow_count; ++i)
 		{
-			arrow = scalar_field.grid.cache->arrow_vertex_ids[i]; 
+			arrow = scalar_field.grid.structure->arrow_vertex_ids[i]; 
 			for (std::size_t j = 0; j < L; ++j)
 			{
 				arrow_scratch[i*L+j] = scalar_field[arrow.y*L+j] - scalar_field[arrow.x*L+j]; // differential across dual of the arrow
 			}
 		}
-		series::div  (arrow_scratch, scalar_field.grid.cache->arrow_lengths,        arrow_scratch); // slope across arrow
-		series::mult (arrow_scratch, scalar_field.grid.cache->arrow_dual_lengths,   arrow_scratch);
+		series::div  (arrow_scratch, scalar_field.grid.metrics->arrow_lengths,        arrow_scratch); // slope across arrow
+		series::mult (arrow_scratch, scalar_field.grid.metrics->arrow_dual_lengths,   arrow_scratch);
 		series::mult (arrow_scratch, scalar_field.grid.layering->layer_height,      arrow_scratch); // flow across dual of the arrow 
 
 		series::fill (layer_scratch, T(0));
-		for (std::size_t i = 0; i < scalar_field.grid.cache->vertex_count; ++i)
+		for (std::size_t i = 0; i < scalar_field.grid.structure->vertex_count; ++i)
 		{
 			for (std::size_t j = 1; j < L; ++j)
 			{
@@ -222,18 +222,18 @@ namespace rasters
 			}
 		}
 		series::div  (layer_scratch, scalar_field.grid.layering->layer_height,         layer_scratch); // slope across layers
-		series::mult (layer_scratch, scalar_field.grid.cache->vertex_dual_areas,    layer_scratch); // flow across layer boundary
+		series::mult (layer_scratch, scalar_field.grid.metrics->vertex_dual_areas,    layer_scratch); // flow across layer boundary
 
 		series::copy (out,                layer_scratch);
-		for (std::size_t i = 0; i < scalar_field.grid.cache->arrow_vertex_id_from.size(); ++i)
+		for (std::size_t i = 0; i < scalar_field.grid.structure->arrow_vertex_id_from.size(); ++i)
 		{
 			for (std::size_t j = 0; j < L; ++j)
 			{
-				out[scalar_field.grid.cache->arrow_vertex_id_from[i]*L+j] += arrow_scratch[i*L+j];
+				out[scalar_field.grid.structure->arrow_vertex_id_from[i]*L+j] += arrow_scratch[i*L+j];
 			}
 		}
 
-		series::div  (out,                scalar_field.grid.cache->vertex_dual_areas,    out);
+		series::div  (out,                scalar_field.grid.metrics->vertex_dual_areas,    out);
 		series::div  (out,                scalar_field.grid.layering->layer_height,      out);             // laplacian
 	}
 	template<typename Tgrid, typename T>
@@ -257,20 +257,20 @@ namespace rasters
 		series::fill (arrow_scratch, glm::vec<L,T,Q>(0.f));
 		uint Li = vector_field.grid.layering->layer_count;
 		glm::uvec2 arrow;
-		for (std::size_t i = 0; i < vector_field.grid.cache->arrow_count; ++i)
+		for (std::size_t i = 0; i < vector_field.grid.structure->arrow_count; ++i)
 		{
-			arrow = vector_field.grid.cache->arrow_vertex_ids[i]; 
+			arrow = vector_field.grid.structure->arrow_vertex_ids[i]; 
 			for (std::size_t j = 0; j < Li; ++j)
 			{
 				arrow_scratch[i*Li+j] = vector_field[arrow.y*Li+j] - vector_field[arrow.x*Li+j]; // differential across dual of the arrow
 			}
 		}
-		series::div  (arrow_scratch, vector_field.grid.cache->arrow_lengths, arrow_scratch);
-		series::mult (arrow_scratch, vector_field.grid.cache->arrow_dual_lengths,   arrow_scratch);
+		series::div  (arrow_scratch, vector_field.grid.metrics->arrow_lengths, arrow_scratch);
+		series::mult (arrow_scratch, vector_field.grid.metrics->arrow_dual_lengths,   arrow_scratch);
 		series::mult (arrow_scratch, vector_field.grid.layering->layer_height,      arrow_scratch); // flow across dual of the arrow 
 
 		series::fill (layer_scratch, glm::vec<L,T,Q>(0.f));
-		for (std::size_t i = 0; i < vector_field.grid.cache->vertex_count; ++i)
+		for (std::size_t i = 0; i < vector_field.grid.structure->vertex_count; ++i)
 		{
 			for (std::size_t j = 1; j < Li; ++j)
 			{
@@ -279,18 +279,18 @@ namespace rasters
 			}
 		}
 		series::div  (layer_scratch, vector_field.grid.layering->layer_height,      layer_scratch); // slope across layers
-		series::mult (layer_scratch, vector_field.grid.cache->vertex_dual_areas,    layer_scratch); // flow across layer boundary
+		series::mult (layer_scratch, vector_field.grid.metrics->vertex_dual_areas,    layer_scratch); // flow across layer boundary
 
 		series::copy (out,                layer_scratch);
-		for (std::size_t i = 0; i < vector_field.grid.cache->arrow_vertex_id_from.size(); ++i)
+		for (std::size_t i = 0; i < vector_field.grid.structure->arrow_vertex_id_from.size(); ++i)
 		{
 			for (std::size_t j = 0; j < Li; ++j)
 			{
-				out[vector_field.grid.cache->arrow_vertex_id_from[i]*Li+j] += arrow_scratch[i*Li+j];
+				out[vector_field.grid.structure->arrow_vertex_id_from[i]*Li+j] += arrow_scratch[i*Li+j];
 			}
 		}
 
-		series::div  (out,                vector_field.grid.cache->vertex_dual_areas,    out);
+		series::div  (out,                vector_field.grid.metrics->vertex_dual_areas,    out);
 		series::div  (out,                vector_field.grid.layering->layer_height,      out);             // laplacian
 	}
 	template<typename Tgrid, unsigned int L, typename T, glm::qualifier Q>

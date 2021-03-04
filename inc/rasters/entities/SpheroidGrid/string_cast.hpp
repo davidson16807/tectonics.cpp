@@ -226,7 +226,7 @@ namespace rasters
 		const uint line_char_width = 80, 
 		const glm::vec3 up = glm::vec3(0,0,1)
 	) {
-		return to_string(a.grid.cache->vertex_normals, a, line_char_width, up);
+		return to_string(a.grid.metrics->vertex_normals, a, line_char_width, up);
 	}
 
 	

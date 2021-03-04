@@ -42,11 +42,11 @@ namespace rasters
 		{}
 		const std::size_t cell_count(mapping mapping_type) const
 		{
-			return this->layering->layer_count * (mapping_type == mapping::cell? this->cache->vertex_count : this->cache->arrow_count);
+			return this->layering->layer_count * (mapping_type == mapping::cell? this->structure->vertex_count : this->structure->arrow_count);
 		}
 		const std::size_t column_count(mapping mapping_type) const
 		{
-			return mapping_type == mapping::cell? this->cache->vertex_count : this->cache->arrow_count;
+			return mapping_type == mapping::cell? this->structure->vertex_count : this->structure->arrow_count;
 		}
 		bool operator== (const LayeredSpheroidGrid& other) const
 		{

@@ -26,8 +26,8 @@ TEST_CASE( "LayeredSpheroidGrid nearest_neighbor_interpolation purity", "[many]"
         mult(glm::mat3(glm::rotate(glm::mat4(1.0f), glm::radians(135.0f), glm::normalize(glm::vec3(1.0f, 1.0f, 1.0f)))), mesh2.vertices, mesh2.vertices);
 
         // initialize grids
-        auto grid1 = rasters::LayeredSpheroidGrid<int,float>(rasters::SpheroidGrid<int,float>(mesh1.vertices, mesh1.faces), 1.0f, 0.0f, 2u);
-        auto grid2 = rasters::LayeredSpheroidGrid<int,float>(rasters::SpheroidGrid<int,float>(mesh2.vertices, mesh2.faces), 1.0f, 0.0f, 2u);
+        auto grid1 = rasters::LayeredSpheroidGrid<uint,float>(rasters::SpheroidGrid<uint,float>(mesh1.vertices, mesh1.faces), 1.0f, 0.0f, 2u);
+        auto grid2 = rasters::LayeredSpheroidGrid<uint,float>(rasters::SpheroidGrid<uint,float>(mesh2.vertices, mesh2.faces), 1.0f, 0.0f, 2u);
 
         // initialize rasters
         std::mt19937 generator(2);
@@ -65,8 +65,8 @@ TEST_CASE( "LayeredSpheroidGrid nearest_neighbor_interpolation invertibility", "
         mult(glm::mat3(glm::rotate(glm::mat4(1.0f), glm::radians(135.0f), glm::normalize(glm::vec3(1.0f, 1.0f, 1.0f)))), mesh2.vertices, mesh2.vertices);
 
         // initialize grids
-        auto grid1 = rasters::LayeredSpheroidGrid<int,float>(rasters::SpheroidGrid<int,float>(mesh1.vertices, mesh1.faces), 1.0f, 0.0f, 2u);
-        auto grid2 = rasters::LayeredSpheroidGrid<int,float>(rasters::SpheroidGrid<int,float>(mesh2.vertices, mesh2.faces), 1.0f, 0.0f, 2u);
+        auto grid1 = rasters::LayeredSpheroidGrid<uint,float>(rasters::SpheroidGrid<uint,float>(mesh1.vertices, mesh1.faces), 1.0f, 0.0f, 2u);
+        auto grid2 = rasters::LayeredSpheroidGrid<uint,float>(rasters::SpheroidGrid<uint,float>(mesh2.vertices, mesh2.faces), 1.0f, 0.0f, 2u);
 
         // initialize rasters
         std::mt19937 generator(2);

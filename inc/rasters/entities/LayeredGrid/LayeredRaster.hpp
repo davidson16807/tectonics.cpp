@@ -42,7 +42,7 @@ namespace rasters
 		LayeredRaster(const Tgrid& grid):
 			Raster<T,Tgrid,Tmap>(grid)
 		{
-			assert(this->grid.layering->layer_count < this->grid.cache->vertex_count);
+			assert(this->grid.layering->layer_count < this->grid.structure->vertex_count);
 			assert(this->values.size() == this->grid.cell_count(Tmap));
 		}
 		// std container style constructor
@@ -50,7 +50,7 @@ namespace rasters
 		LayeredRaster(const Tgrid& grid, TIterator first, TIterator last) : 
 			LayeredRaster(grid)
 		{
-			assert(this->grid.layering->layer_count < this->grid.cache->vertex_count);
+			assert(this->grid.layering->layer_count < this->grid.structure->vertex_count);
 			assert(this->values.size() == this->grid.cell_count(Tmap));
 			assert(std::distance(first, last) == this->size());
 			unsigned int id = 0;
@@ -66,7 +66,7 @@ namespace rasters
 		LayeredRaster(const LayeredRaster<T,Tgrid,Tmap>& a)  : 
 			LayeredRaster(a.grid)
 		{
-			assert(this->grid.layering->layer_count < this->grid.cache->vertex_count);
+			assert(this->grid.layering->layer_count < this->grid.structure->vertex_count);
 			assert(this->values.size() == this->grid.cell_count(Tmap));
 		}
 
@@ -74,7 +74,7 @@ namespace rasters
 		explicit LayeredRaster(const Tgrid& grid, const std::initializer_list<T>& vector) : 
 			LayeredRaster(grid)
 		{
-			assert(this->grid.layering->layer_count < this->grid.cache->vertex_count);
+			assert(this->grid.layering->layer_count < this->grid.structure->vertex_count);
 			assert(this->values.size() == this->grid.cell_count(Tmap));
 			assert(vector.size() == this->values.size());
 			std::copy(vector.begin(), vector.end(), this->begin());
@@ -83,7 +83,7 @@ namespace rasters
 		explicit LayeredRaster(const LayeredRaster<T2,Tgrid>& a)  : 
 			LayeredRaster(a.grid)
 		{
-			assert(this->grid.layering->layer_count < this->grid.cache->vertex_count);
+			assert(this->grid.layering->layer_count < this->grid.structure->vertex_count);
 			assert(this->values.size() == this->grid.cell_count(Tmap));
 			for (unsigned int i = 0; i < a.size(); ++i)
 			{

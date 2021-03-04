@@ -33,19 +33,20 @@ namespace rasters
 		std::shared_ptr<SpheroidVoronoi> voronoi;
 
 		SpheroidGrid(
-			const series::vec3s& vertices, 
-			const series::uvec3s& faces
+			const series::Series<glm::vec<3,Tfloat,glm::defaultp>>& vertices, 
+			const series::Series<glm::vec<3,Tid, glm::defaultp>>& faces
 		):
 			Grid<Tid, Tfloat>(vertices, faces),
 			voronoi(std::make_shared< SpheroidVoronoi>(
 				vertices, 
-				series::min(this->cache->arrow_lengths / 8.f), 
-				series::max(this->cache->arrow_lengths * 1.f)
+				series::min(this->metrics->arrow_lengths / 8.f), 
+				series::max(this->metrics->arrow_lengths * 1.f)
 			))
 		{}
 		bool operator== (const SpheroidGrid& other) const
 		{
-		    return (this->cache == other.cache && 
+		    return (this->structure == other.structure && 
+		    	    this->metrics == other.metrics && 
 		    	    voronoi == other.voronoi);
 		}
 		bool operator!= (const SpheroidGrid& other) const

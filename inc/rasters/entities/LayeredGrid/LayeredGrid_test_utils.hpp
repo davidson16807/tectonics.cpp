@@ -21,23 +21,23 @@
 
 #include <rasters/entities/Grid/Grid_test_utils.hpp>
 
-rasters::LayeredGrid<int,float> layered_diamond_grid(diamond_grid, 1.0f, 0.0f, 2u);
+rasters::LayeredGrid<uint,float> layered_diamond_grid(diamond_grid, 1.0f, 0.0f, 2u);
 
-rasters::LayeredGrid<int,float> layered_tetrahedron_grid(tetrahedron_grid, 1.0f, 0.0f, 2u);
+rasters::LayeredGrid<uint,float> layered_tetrahedron_grid(tetrahedron_grid, 1.0f, 0.0f, 2u);
 
-rasters::LayeredGrid<int,float> layered_nonspheroid_octahedron_grid(nonspheroid_octahedron_grid, 1.0f, 0.0f, 2u);
+rasters::LayeredGrid<uint,float> layered_nonspheroid_octahedron_grid(nonspheroid_octahedron_grid, 1.0f, 0.0f, 2u);
 
-rasters::LayeredGrid<int,float> layered_nonspheroid_icosahedron_grid(nonspheroid_icosahedron_grid, 1.0f, 0.0f, 2u);
+rasters::LayeredGrid<uint,float> layered_nonspheroid_icosahedron_grid(nonspheroid_icosahedron_grid, 1.0f, 0.0f, 2u);
 
 template <typename Tid, typename Tgrid, typename Tgenerator>
 rasters::LayeredRaster<float,rasters::LayeredGrid<Tid,Tgrid>> get_random_LayeredRaster(rasters::LayeredGrid<Tid,Tgrid> layered_grid, Tgenerator generator){
     rasters::Grid<Tid,Tgrid> grid(layered_grid);
 
     auto a_flat      = rasters::make_Raster<float>(grid);
-    series::get_elias_noise(grid.cache->vertex_positions, generator, a_flat);
+    series::get_elias_noise(grid.metrics->vertex_positions, generator, a_flat);
 
     auto a_offset    = rasters::make_Raster<float>(grid);
-    series::get_elias_noise(grid.cache->vertex_positions, generator, a_offset);
+    series::get_elias_noise(grid.metrics->vertex_positions, generator, a_offset);
 
     // offset the middle layer to test vector calculus operations across layers
     auto a           = rasters::make_LayeredRaster<float>(layered_grid);

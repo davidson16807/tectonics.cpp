@@ -22,7 +22,7 @@ It looks like this:
     \|/ 
      4   
 */
-rasters::Grid<int,float> diamond_grid(
+rasters::Grid<uint,float> diamond_grid(
         series::vec3s({
                 glm::vec3( 0, 0, 0),
                 glm::vec3( 1, 0, 0),
@@ -43,8 +43,8 @@ rasters::Grid<int,float> diamond_grid(
  that require spatial awareness without requiring a particular shape or resolution
  (e.g. gradient, divergence, laplacian)
 */
-rasters::Grid<int,float> tetrahedron_grid(meshes::tetrahedron.vertices, meshes::tetrahedron.faces);
+rasters::Grid<uint,float> tetrahedron_grid(meshes::tetrahedron.vertices, meshes::tetrahedron.faces);
 
-rasters::Grid<int,float> nonspheroid_octahedron_grid(meshes::octahedron.vertices, meshes::octahedron.faces);
+rasters::Grid<uint,float> nonspheroid_octahedron_grid(meshes::octahedron.vertices, meshes::octahedron.faces);
 
-rasters::Grid<int,float> nonspheroid_icosahedron_grid(meshes::icosahedron.vertices, meshes::icosahedron.faces);
+rasters::Grid<uint,float> nonspheroid_icosahedron_grid(meshes::icosahedron.vertices, meshes::icosahedron.faces);

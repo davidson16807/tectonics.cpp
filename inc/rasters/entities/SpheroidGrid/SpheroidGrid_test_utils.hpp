@@ -14,6 +14,6 @@
 
 #include <rasters/entities/Grid/Grid_test_utils.hpp>
 
-rasters::SpheroidGrid<int,float> octahedron_grid(meshes::octahedron.vertices, meshes::octahedron.faces);
+rasters::SpheroidGrid<uint,float> octahedron_grid(meshes::octahedron.vertices, meshes::octahedron.faces);
 
-rasters::SpheroidGrid<int,float> icosahedron_grid(meshes::icosahedron.vertices, meshes::icosahedron.faces);
+rasters::SpheroidGrid<uint,float> icosahedron_grid(meshes::icosahedron.vertices, meshes::icosahedron.faces);

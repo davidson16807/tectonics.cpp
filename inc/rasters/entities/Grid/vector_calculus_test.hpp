@@ -59,7 +59,7 @@ TEST_CASE( "Raster gradient determinism", "[rasters]" ) {
 //     auto grad_a      = make_Raster<glm::vec3>(icosphere_grid);
 
 //     std::mt19937 generator(2);
-//     series::get_elias_noise(icosphere_grid.cache->vertex_positions, generator, a);
+//     series::get_elias_noise(icosphere_grid.metrics->vertex_positions, generator, a);
 
 //     mat4   A      = glm::rotate(mat4(1.f), 3.14f/3.f, glm::glm::vec3(1,1,1));
 //     mult(A,  icosphere.vertex_positions, A_pos);
@@ -121,8 +121,8 @@ TEST_CASE( "Raster gradient distributive over addition", "[rasters]" ) {
     auto b           = make_Raster<float>(icosphere_grid);
 
     std::mt19937 generator(2);
-    series::get_elias_noise(icosphere_grid.cache->vertex_positions, generator, a);
-    series::get_elias_noise(icosphere_grid.cache->vertex_positions, generator, b);
+    series::get_elias_noise(icosphere_grid.metrics->vertex_positions, generator, a);
+    series::get_elias_noise(icosphere_grid.metrics->vertex_positions, generator, b);
 
     SECTION("gradient(a+b) must generate the same output as gradient(a)+gradient(b)"){
         CHECK(series::equal( gradient(a+b),  gradient(a) + gradient(b), 0.01f ));
@@ -139,9 +139,9 @@ TEST_CASE( "Raster gradient multiplication relation", "[rasters]" ) {
     auto b           = make_Raster<float>(icosphere_grid);
 
     std::mt19937 generator(2);
-    series::get_elias_noise(icosphere_grid.cache->vertex_positions, generator, a);
+    series::get_elias_noise(icosphere_grid.metrics->vertex_positions, generator, a);
     a /= std::max(-series::min(a), series::max(a));
-    series::get_elias_noise(icosphere_grid.cache->vertex_positions, generator, b);
+    series::get_elias_noise(icosphere_grid.metrics->vertex_positions, generator, b);
     b /= std::max(-series::min(b), series::max(b));
 
     // glm::mat3x2 basis = glm::mat3x2(1,0,0,
@@ -265,9 +265,9 @@ TEST_CASE( "Raster divergence distributive over addition", "[rasters]" ) {
     auto div_a_b    = make_Raster<float>(icosphere_grid);
 
     std::mt19937 generator(2);
-    series::get_elias_noise(icosphere_grid.cache->vertex_positions, generator, scalar);
+    series::get_elias_noise(icosphere_grid.metrics->vertex_positions, generator, scalar);
     a = gradient(scalar);
-    series::get_elias_noise(icosphere_grid.cache->vertex_positions, generator, scalar);
+    series::get_elias_noise(icosphere_grid.metrics->vertex_positions, generator, scalar);
     b = gradient(scalar);
 
     SECTION("divergence(a+b) must generate the same output as divergence(a)+divergence(b)"){
@@ -287,8 +287,8 @@ TEST_CASE( "Raster divergence distributive over addition", "[rasters]" ) {
 //     auto div_a_b    = make_Raster<float>(icosphere_grid);
 
 //     std::mt19937 generator(2);
-//     series::get_elias_noise(icosphere_grid.cache->vertex_positions, generator, a);
-//     series::get_elias_noise(icosphere_grid.cache->vertex_positions, generator, scalar);
+//     series::get_elias_noise(icosphere_grid.metrics->vertex_positions, generator, a);
+//     series::get_elias_noise(icosphere_grid.metrics->vertex_positions, generator, scalar);
 //     b = gradient( scalar);
 //     grad_a = gradient( a     );
 
@@ -335,9 +335,9 @@ TEST_CASE( "Raster curl distributive over addition", "[rasters]" ) {
     auto curl_a_b    = make_Raster<glm::vec3>(icosphere_grid);
 
     std::mt19937 generator(2);
-    series::get_elias_noise(icosphere_grid.cache->vertex_positions, generator, scalar);
+    series::get_elias_noise(icosphere_grid.metrics->vertex_positions, generator, scalar);
     a = gradient(scalar);
-    series::get_elias_noise(icosphere_grid.cache->vertex_positions, generator, scalar);
+    series::get_elias_noise(icosphere_grid.metrics->vertex_positions, generator, scalar);
     b = gradient(scalar);
 
     SECTION("curl(a+b) must generate the same output as curl(a)+curl(b)"){
@@ -355,7 +355,7 @@ TEST_CASE( "Raster curl distributive over addition", "[rasters]" ) {
 //     auto zeros      = make_Raster<glm::vec3>(icosphere_grid);
 
 //     std::mt19937 generator(2);
-//     series::get_elias_noise(icosphere_grid.cache->vertex_positions, generator, a);
+//     series::get_elias_noise(icosphere_grid.metrics->vertex_positions, generator, a);
 //     fill  (zeros, glm::vec3(0));
 
 //     grad_a = gradient  (a);
@@ -376,7 +376,7 @@ TEST_CASE( "Raster curl distributive over addition", "[rasters]" ) {
 //     auto zeros      = make_Raster<float>(icosphere_grid);
 
 //     std::mt19937 generator(2);
-//     series::get_elias_noise(icosphere_grid.cache->vertex_positions, generator, scalar);
+//     series::get_elias_noise(icosphere_grid.metrics->vertex_positions, generator, scalar);
 //     a = gradient(scalar);
 //     fill  (zeros, 0.f);
 

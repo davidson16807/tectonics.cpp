@@ -12,8 +12,8 @@ namespace rasters
     ) {
         // TODO: relax this assertion to work for arbitrary combinations of layer schemes
         assert(*input.grid.layering == *output.grid.layering);
-        input.grid.voronoi->get_values(output.grid.cache->vertex_positions, scratch);
-        int V = output.grid.cache->vertex_count;
+        input.grid.voronoi->get_values(output.grid.metrics->vertex_positions, scratch);
+        int V = output.grid.structure->vertex_count;
         int L = output.grid.layering->layer_count;
         for (int i = 0; i < V; ++i)
         {

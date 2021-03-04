@@ -26,8 +26,8 @@ TEST_CASE( "SpheroidGrid nearest_neighbor_interpolation purity", "[many]" ) {
         mult(glm::mat3(glm::rotate(glm::mat4(1.0f), glm::radians(135.0f), glm::normalize(glm::vec3(1.0f, 1.0f, 1.0f)))), mesh2.vertices, mesh2.vertices);
 
         // initialize grids
-        auto grid1 = rasters::SpheroidGrid<int,float>(mesh1.vertices, mesh1.faces);
-        auto grid2 = rasters::SpheroidGrid<int,float>(mesh2.vertices, mesh2.faces);
+        auto grid1 = rasters::SpheroidGrid<uint,float>(mesh1.vertices, mesh1.faces);
+        auto grid2 = rasters::SpheroidGrid<uint,float>(mesh2.vertices, mesh2.faces);
 
         // initialize rasters
         auto raster1 = rasters::make_Raster<float>(grid1);
@@ -36,7 +36,7 @@ TEST_CASE( "SpheroidGrid nearest_neighbor_interpolation purity", "[many]" ) {
 
         // populate rasters
         std::mt19937 generator(2);
-        series::get_elias_noise(icosahedron_grid.cache->vertex_positions, generator, raster1);
+        series::get_elias_noise(icosahedron_grid.metrics->vertex_positions, generator, raster1);
         rasters::nearest_neighbor_interpolation(raster1, raster2);
         rasters::nearest_neighbor_interpolation(raster1, raster3);
 
@@ -52,7 +52,7 @@ TEST_CASE( "SpheroidGrid nearest_neighbor_interpolation identity", "[many]" ) {
 
         // populate rasters
         std::mt19937 generator(2);
-        series::get_elias_noise(icosahedron_grid.cache->vertex_positions, generator, raster1);
+        series::get_elias_noise(icosahedron_grid.metrics->vertex_positions, generator, raster1);
         rasters::nearest_neighbor_interpolation(raster1, raster2);
 
         CHECK(raster1 == raster2);
@@ -68,8 +68,8 @@ TEST_CASE( "SpheroidGrid nearest_neighbor_interpolation invertibility", "[many]"
         mult(glm::mat3(glm::rotate(glm::mat4(1.0f), glm::radians(135.0f), glm::normalize(glm::vec3(1.0f, 1.0f, 1.0f)))), mesh2.vertices, mesh2.vertices);
 
         // initialize grids
-        auto grid1 = rasters::SpheroidGrid<int,float>(mesh1.vertices, mesh1.faces);
-        auto grid2 = rasters::SpheroidGrid<int,float>(mesh2.vertices, mesh2.faces);
+        auto grid1 = rasters::SpheroidGrid<uint,float>(mesh1.vertices, mesh1.faces);
+        auto grid2 = rasters::SpheroidGrid<uint,float>(mesh2.vertices, mesh2.faces);
 
         // initialize rasters
         auto raster1 = rasters::make_Raster<float>(grid1);
@@ -78,7 +78,7 @@ TEST_CASE( "SpheroidGrid nearest_neighbor_interpolation invertibility", "[many]"
 
         // populate rasters
         std::mt19937 generator(2);
-        series::get_elias_noise(icosahedron_grid.cache->vertex_positions, generator, raster1);
+        series::get_elias_noise(icosahedron_grid.metrics->vertex_positions, generator, raster1);
         rasters::nearest_neighbor_interpolation(raster1, raster2);
         rasters::nearest_neighbor_interpolation(raster2, raster3);
 

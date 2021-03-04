@@ -294,24 +294,24 @@ namespace si{
 		return a.sqrt();
 	}
 
-	template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-	constexpr auto operator*(const T1 a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
+	template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1, typename T2>
+	constexpr auto operator*(const T2 a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
 	{
 		return b.multiply(a);
 	}
-	template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-	constexpr auto operator/(const T1 a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
+	template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1, typename T2>
+	constexpr auto operator/(const T2 a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
 	{
 		return b.invert().multiply(a);
 	}
 
-	template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-	constexpr auto operator*(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const T1 b)
+	template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1, typename T2>
+	constexpr auto operator*(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const T2 b)
 	{
 		return a.multiply(b);
 	}
-	template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-	constexpr auto operator/(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const T1 b)
+	template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1, typename T2>
+	constexpr auto operator/(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const T2 b)
 	{
 		return a.multiply(T1(1)/b);
 	}

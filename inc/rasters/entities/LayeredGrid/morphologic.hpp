@@ -16,8 +16,8 @@ namespace rasters
         const LayeredRaster<bool, Tgrid>& a, 
         LayeredRaster<bool, Tgrid>& out
     ){
-        auto& arrow_vertex_id_from = a.grid.cache->arrow_vertex_id_from;
-        auto& arrow_vertex_id_to = a.grid.cache->arrow_vertex_id_to;
+        auto& arrow_vertex_id_from = a.grid.structure->arrow_vertex_id_from;
+        auto& arrow_vertex_id_to = a.grid.structure->arrow_vertex_id_to;
         const std::size_t L = a.grid.layering->layer_count;
         series::fill( out, false );
         for (std::size_t i = 0; i < arrow_vertex_id_from.size(); ++i)
@@ -30,7 +30,7 @@ namespace rasters
                     a  [arrow_vertex_id_to  [i*L+j]] ;
             }
         }
-        for (std::size_t i = 0; i < a.grid.cache->vertex_count; ++i)
+        for (std::size_t i = 0; i < a.grid.structure->vertex_count; ++i)
         {
             for (std::size_t j = 1; j < L; ++j)
             {
@@ -45,8 +45,8 @@ namespace rasters
         const LayeredRaster<bool, Tgrid>& a, 
         LayeredRaster<bool, Tgrid>& out
     ){
-        auto& arrow_vertex_id_from = a.grid.cache->arrow_vertex_id_from;
-        auto& arrow_vertex_id_to = a.grid.cache->arrow_vertex_id_to;
+        auto& arrow_vertex_id_from = a.grid.structure->arrow_vertex_id_from;
+        auto& arrow_vertex_id_to = a.grid.structure->arrow_vertex_id_to;
         const std::size_t L = a.grid.layering->layer_count;
         series::fill(out, true);
         for (std::size_t i = 0; i < arrow_vertex_id_from.size(); ++i)
@@ -59,7 +59,7 @@ namespace rasters
                     a  [arrow_vertex_id_to  [i*L+j]] ;
             }
         }
-        for (std::size_t i = 0; i < a.grid.cache->vertex_count; ++i)
+        for (std::size_t i = 0; i < a.grid.structure->vertex_count; ++i)
         {
             for (std::size_t j = 1; j < L; ++j)
             {

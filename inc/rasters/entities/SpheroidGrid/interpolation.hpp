@@ -10,7 +10,7 @@ namespace rasters
         Raster<T, Tgrid2, Tmap>& output,
         Raster<unsigned int, Tgrid2, Tmap>& scratch
     ) {
-        input.grid.voronoi->get_values(output.grid.cache->vertex_positions, scratch);
+        input.grid.voronoi->get_values(output.grid.metrics->vertex_positions, scratch);
         series::get(input, scratch, output);
     }
 

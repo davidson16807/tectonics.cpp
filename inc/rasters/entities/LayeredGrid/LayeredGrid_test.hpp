@@ -35,16 +35,16 @@ TEST_CASE( "Layered Grid predictability", "[rasters]" ) {
 
 TEST_CASE( "Layered Grid consistency", "[rasters]" ) {
     SECTION("Components of layered grid must consist of mutually consistent container attributes"){
-        CHECK(layered_tetrahedron_grid.cache->vertex_positions.size() == layered_tetrahedron_grid.cache->vertex_count );
-        CHECK(layered_tetrahedron_grid.cache->face_vertex_ids.size() == layered_tetrahedron_grid.cache->face_count );
-        CHECK(layered_tetrahedron_grid.cache->edge_vertex_ids.size() == layered_tetrahedron_grid.cache->edge_count );
-        CHECK(layered_tetrahedron_grid.cache->arrow_vertex_ids.size() == layered_tetrahedron_grid.cache->arrow_count );
+        CHECK(layered_tetrahedron_grid.metrics->vertex_positions.size() == layered_tetrahedron_grid.structure->vertex_count );
+        CHECK(layered_tetrahedron_grid.structure->face_vertex_ids.size() == layered_tetrahedron_grid.structure->face_count );
+        CHECK(layered_tetrahedron_grid.structure->edge_vertex_ids.size() == layered_tetrahedron_grid.structure->edge_count );
+        CHECK(layered_tetrahedron_grid.structure->arrow_vertex_ids.size() == layered_tetrahedron_grid.structure->arrow_count );
     }
 }
 
 TEST_CASE( "Layered Grid nontriviality", "[rasters]" ) {
     SECTION("Layered Grid attributes must contain nonzero elements"){
-        CHECK(series::sum(series::abs(layered_tetrahedron_grid.cache->vertex_areas)) > 0.01f);
-        CHECK(series::sum(series::abs(series::get_x(layered_tetrahedron_grid.cache->vertex_positions))) > 0.01f);
+        CHECK(series::sum(series::abs(layered_tetrahedron_grid.metrics->vertex_areas)) > 0.01f);
+        CHECK(series::sum(series::abs(series::get_x(layered_tetrahedron_grid.metrics->vertex_positions))) > 0.01f);
     }
 }

@@ -11,7 +11,8 @@
 #include <series/types.hpp>
 #include <series/glm/types.hpp>
 
-#include <rasters/components/MeshCache/MeshCache.hpp>
+#include <rasters/components/Metrics/Metrics.hpp>
+#include <rasters/components/Structure/Structure.hpp>
 
 namespace rasters
 {
@@ -63,24 +64,32 @@ namespace rasters
     template<typename Tid=std::uint16_t, typename Tfloat=float>
 	struct Grid
 	{
-		std::shared_ptr<MeshCache<Tid,Tfloat>> cache;
+		std::shared_ptr<Structure<Tid>> structure;
+		std::shared_ptr<Metrics<Tid,Tfloat>> metrics;
 
         using size_type = Tid;
         using value_type = Tfloat;
         
-		Grid(const series::vec3s& vertices, const series::uvec3s& faces):
-			cache(std::make_shared< MeshCache<Tid,Tfloat>>(vertices, faces))
+		Grid(
+			const series::Series<glm::vec<3,Tfloat,glm::defaultp>>& vertices, 
+			const series::Series<glm::vec<3,Tid, glm::defaultp>>& faces
+		):
+			structure(std::make_shared<Structure<Tid>>(vertices.size(), faces)),
+			metrics(std::make_shared<Metrics<Tid,Tfloat>>(vertices, *structure))
 		{}
 		Grid(const Grid<Tid,Tfloat>& grid):
-			cache(grid.cache)
+			structure(grid.structure),
+			metrics(grid.metrics)
 		{}
 		const std::size_t cell_count(mapping mapping_type) const
 		{
-			return mapping_type == mapping::cell? this->cache->vertex_count : this->cache->arrow_count;
+			return mapping_type == mapping::cell? this->structure->vertex_count : this->structure->arrow_count;
 		}
 		bool operator== (const Grid& other) const
 		{
-		    return (&(this->cache) == &(other.cache));
+		    return 
+		      (&(this->metrics) == &(other.metrics)) && 
+		      (&(this->structure) == &(other.structure));
 		}
 		bool operator!= (const Grid& other) const
 		{

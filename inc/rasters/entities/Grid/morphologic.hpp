@@ -9,12 +9,12 @@ namespace rasters
 	void dilate(const Raster<bool,Tgrid>& a, Raster<bool,Tgrid>& out)
 	{
 		fill( out, false );
-		for (unsigned int i = 0; i < a.grid.cache->arrow_vertex_id_from.size(); ++i)
+		for (unsigned int i = 0; i < a.grid.structure->arrow_vertex_id_from.size(); ++i)
 		{
-			out[a.grid.cache->arrow_vertex_id_from[i]] = 
-				out[a.grid.cache->arrow_vertex_id_from[i]] || 
-				a  [a.grid.cache->arrow_vertex_id_from[i]] || 
-				a  [a.grid.cache->arrow_vertex_id_to[i]];
+			out[a.grid.structure->arrow_vertex_id_from[i]] = 
+				out[a.grid.structure->arrow_vertex_id_from[i]] || 
+				a  [a.grid.structure->arrow_vertex_id_from[i]] || 
+				a  [a.grid.structure->arrow_vertex_id_to[i]];
 		}
 	}
 	template <typename Tgrid>
@@ -55,12 +55,12 @@ namespace rasters
 	void erode(const Raster<bool,Tgrid>& a, Raster<bool,Tgrid>& out)
 	{
 		fill(out, true);
-		for (unsigned int i = 0; i < a.grid.cache->arrow_vertex_id_from.size(); ++i)
+		for (unsigned int i = 0; i < a.grid.structure->arrow_vertex_id_from.size(); ++i)
 		{
-			out[a.grid.cache->arrow_vertex_id_from[i]] = 
-				out[a.grid.cache->arrow_vertex_id_from[i]] && 
-				a  [a.grid.cache->arrow_vertex_id_from[i]] && 
-				a  [a.grid.cache->arrow_vertex_id_to[i]];
+			out[a.grid.structure->arrow_vertex_id_from[i]] = 
+				out[a.grid.structure->arrow_vertex_id_from[i]] && 
+				a  [a.grid.structure->arrow_vertex_id_from[i]] && 
+				a  [a.grid.structure->arrow_vertex_id_to[i]];
 		}
 	}
 	template <typename Tgrid>
