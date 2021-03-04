@@ -12,5 +12,6 @@
 #include "./entities/Grid/Raster_test.hpp"
 #include "./entities/Grid/morphologic_test.hpp"
 #include "./entities/Grid/Grid_test.hpp"
-#include "./components/SpheroidVoronoi_test.hpp"
-#include "./components/MeshCache_test.hpp"
+#include "./components/SpheroidVoronoi/SpheroidVoronoi_test.hpp"
+#include "./components/Structure/Structure_test.cpp"
+#include "./components/Metrics/Metrics_test.cpp"

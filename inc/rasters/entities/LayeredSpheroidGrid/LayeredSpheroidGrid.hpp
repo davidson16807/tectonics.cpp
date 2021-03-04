@@ -11,7 +11,6 @@
 #include <series/types.hpp>
 #include <series/glm/types.hpp>
 
-#include <rasters/components/MeshCache/MeshCache.hpp>
 #include <rasters/components/SpheroidVoronoi/SpheroidVoronoi.hpp>
 #include <rasters/components/LayerScheme/LayerScheme.hpp>
 
