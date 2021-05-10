@@ -131,6 +131,8 @@ namespace compound
         field::OptionalConstantField<si::temperature>     triple_point_temperature;
         field::OptionalConstantField<si::pressure>        freezing_point_sample_pressure;
         field::OptionalConstantField<si::temperature>     freezing_point_sample_temperature;
+        field::OptionalConstantField<si::pressure>        boiling_point_sample_pressure;
+        field::OptionalConstantField<si::temperature>     boiling_point_sample_temperature;
 
         /* 
         OPTIONAL PHASE CHANGE PROPERTIES
@@ -175,6 +177,8 @@ namespace compound
             const field::OptionalConstantField<si::temperature>   triple_point_temperature,
             const field::OptionalConstantField<si::pressure>      freezing_point_sample_pressure,
             const field::OptionalConstantField<si::temperature>   freezing_point_sample_temperature,
+            const field::OptionalConstantField<si::pressure>      boiling_point_sample_pressure,
+            const field::OptionalConstantField<si::temperature>   boiling_point_sample_temperature,
             const field::OptionalConstantField<float>             simon_glatzel_slope,
             const field::OptionalConstantField<float>             simon_glatzel_exponent,
             const field::OptionalSpectralField<si::area>          molecular_absorption_cross_section,
@@ -201,6 +205,8 @@ namespace compound
             triple_point_temperature           (triple_point_temperature),
             freezing_point_sample_pressure     (freezing_point_sample_pressure),
             freezing_point_sample_temperature  (freezing_point_sample_temperature),
+            boiling_point_sample_pressure      (boiling_point_sample_pressure),
+            boiling_point_sample_temperature   (boiling_point_sample_temperature),
             simon_glatzel_slope                (simon_glatzel_slope),
             simon_glatzel_exponent             (simon_glatzel_exponent),
             molecular_absorption_cross_section (molecular_absorption_cross_section),
@@ -240,6 +246,8 @@ namespace compound
             guess.triple_point_temperature          = triple_point_temperature          .value_or(fallback.triple_point_temperature       );
             guess.freezing_point_sample_pressure    = freezing_point_sample_pressure    .value_or(fallback.freezing_point_sample_pressure );
             guess.freezing_point_sample_temperature = freezing_point_sample_temperature .value_or(fallback.freezing_point_sample_temperature);
+            guess.boiling_point_sample_pressure     = boiling_point_sample_pressure     .value_or(fallback.boiling_point_sample_pressure  );
+            guess.boiling_point_sample_temperature  = boiling_point_sample_temperature  .value_or(fallback.boiling_point_sample_temperature);
             guess.simon_glatzel_slope               = simon_glatzel_slope               .value_or(fallback.simon_glatzel_slope            );
             guess.simon_glatzel_exponent            = simon_glatzel_exponent            .value_or(fallback.simon_glatzel_exponent         );
 

@@ -35,6 +35,8 @@ bool operator==(const compound::PartlyKnownCompound& first, const compound::Part
         first.triple_point_temperature           != second.triple_point_temperature           ||
         first.freezing_point_sample_pressure     != second.freezing_point_sample_pressure     ||
         first.freezing_point_sample_temperature  != second.freezing_point_sample_temperature  ||
+        first.boiling_point_sample_pressure      != second.boiling_point_sample_pressure      ||
+        first.boiling_point_sample_temperature   != second.boiling_point_sample_temperature   ||
         first.simon_glatzel_slope                != second.simon_glatzel_slope                ||
         first.simon_glatzel_exponent             != second.simon_glatzel_exponent             ||
         first.molecular_absorption_cross_section != second.molecular_absorption_cross_section ||
@@ -84,6 +86,8 @@ compound::PartlyKnownCompound unknown_hydrogen {
     /*triple_point_temperature*/          compound::field::missing(),
     /*freezing_point_sample_pressure*/    compound::field::missing(),
     /*freezing_point_sample_temperature*/ compound::field::missing(),
+    /*boiling_point_sample_pressure*/     compound::field::missing(),
+    /*boiling_point_sample_temperature*/  compound::field::missing(),
     /*simon_glatzel_slope*/               compound::field::missing(),
     /*simon_glatzel_exponent*/            compound::field::missing(),
 
