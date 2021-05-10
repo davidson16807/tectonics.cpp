@@ -19,12 +19,12 @@ namespace crust
         This means it is easier to index a LayeredRaster than Strata.
         This is why we iterate through Strata first and only then lookup the raster layer
         */
-        assert(strata_values.grid.cache == strata_boundaries.grid.cache);
-        assert(strata_values.grid.cache == layered_raster.grid.cache);
+        assert(strata_values.grid == strata_boundaries.grid);
+        assert(strata_values.grid == layered_raster.grid);
         float height_to_upper_boundary(0.0f);
         float height_to_layer(0.0f);
         float layer_height(layered_raster.grid.layering->layer_height);
-        std::size_t N(strata_values.grid.cache->vertex_count);
+        std::size_t N(strata_values.grid.structure->vertex_count);
         std::size_t L2(layered_raster.grid.layering->layer_count);
         std::size_t j2 (0);
         for (std::size_t i = 0; i < N; ++i)
@@ -50,10 +50,10 @@ namespace crust
         const StrataBorders<L1,Tgrid1>& strata_boundaries, 
         CrustValues<float, L1,Tgrid1>& strata_values
     ){
-        assert(strata_values.grid.cache == strata_boundaries.grid.cache);
-        assert(strata_values.grid.cache == layered_raster.grid.cache);
+        assert(strata_values.grid == strata_boundaries.grid);
+        assert(strata_values.grid == layered_raster.grid);
         float layer_height(layered_raster.grid.layering->layer_height);
-        std::size_t N(strata_values.grid.cache->vertex_count);
+        std::size_t N(strata_values.grid.structure->vertex_count);
         std::size_t L2(layered_raster.grid.layering->layer_count);
         std::size_t j2 (0);
         for (std::size_t i = 0; i < N; ++i)

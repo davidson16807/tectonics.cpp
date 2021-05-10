@@ -20,7 +20,7 @@ namespace crust
 	template<std::size_t L, std::size_t M, typename Tgrid>
 	Crust<L,M,Tgrid> make_Crust(const Tgrid& grid, const std::initializer_list<strata::Strata<L,M>>& vector)
 	{
-		assert(vector.size() == grid.cache->vertex_count);
+		assert(vector.size() == grid.structure->vertex_count);
 		Crust<L,M,Tgrid> crust = Crust<L,M,Tgrid>(grid);
 		strata::StrataStore<L,M> store;
         int j(0);

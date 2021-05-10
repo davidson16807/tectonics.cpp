@@ -18,7 +18,7 @@ namespace crust
 	template<typename T, std::size_t L, typename Tgrid>
 	CrustValues<T,L,Tgrid> make_CrustValues(const Tgrid& grid, const std::initializer_list<strata::StrataValues<T,L>>& list)
 	{
-		assert(list.size() == grid.cache->vertex_count);
+		assert(list.size() == grid.structure->vertex_count);
 		return CrustValues<T,L,Tgrid>(grid, list);
 	}
 }
