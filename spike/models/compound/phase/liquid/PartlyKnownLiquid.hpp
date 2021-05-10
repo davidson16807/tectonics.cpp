@@ -14,6 +14,7 @@ namespace phase {
         field::OptionalStateField<si::dynamic_viscosity> dynamic_viscosity;
         field::OptionalStateField<si::density> density;
         field::OptionalStateField<si::pressure> vapor_pressure;
+        field::OptionalStateField<si::surface_energy> surface_tension;
         field::OptionalSpectralField<double> refractive_index;
 
         /*
@@ -25,6 +26,7 @@ namespace phase {
 
             guess.specific_heat_capacity = specific_heat_capacity .value_or(fallback.specific_heat_capacity);
             guess.vapor_pressure         = vapor_pressure         .value_or(fallback.vapor_pressure);
+            guess.surface_tension        = surface_tension        .value_or(fallback.surface_tension);
             guess.thermal_conductivity   = thermal_conductivity   .value_or(fallback.thermal_conductivity);
             guess.dynamic_viscosity      = dynamic_viscosity      .value_or(fallback.dynamic_viscosity);
             guess.density                = density                .value_or(fallback.density);
@@ -43,6 +45,7 @@ namespace phase {
 
             guess.specific_heat_capacity = specific_heat_capacity .compare(other.specific_heat_capacity);
             guess.vapor_pressure         = vapor_pressure         .compare(other.vapor_pressure);
+            guess.surface_tension        = surface_tension        .compare(other.surface_tension);
             guess.thermal_conductivity   = thermal_conductivity   .compare(other.thermal_conductivity);
             guess.dynamic_viscosity      = dynamic_viscosity      .compare(other.dynamic_viscosity);
             guess.density                = density                .compare(other.density);

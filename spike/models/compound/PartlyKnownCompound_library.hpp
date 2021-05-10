@@ -405,6 +405,7 @@ PartlyKnownCompound water {
                 double C = T/si::celcius;
                 return 0.61121*exp((18.678-C/234.5) * (C/(257.14+C))) * si::kilopascal; 
             }),
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       //1.33336,
             get_interpolated_refractive_index_function
                 (si::micrometer, 
@@ -550,20 +551,8 @@ PartlyKnownCompound nitrogen {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  58.282, -1084.1, -8.3144, 0.044127, 1.0), // 63.15-126.2K
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       1.19876
-
-        // /*specific_heat_capacity*/
-        // field::missing(),
-        // /*thermal_conductivity*/
-        // field::missing(),
-        // /*dynamic_viscosity*/
-        // field::missing(),
-        // /*density*/
-        // field::missing(),
-        // /*vapor_pressure*/
-        // field::missing(),
-        // /*refractive_index*/
-        // field::missing()
     },
 
     /*solid*/ 
@@ -709,6 +698,7 @@ PartlyKnownCompound oxygen {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  51.245, -1200.2, -6.4361, 0.028405, 1.0), // 54.36-154.58K
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       1.2243
     },
 
@@ -836,6 +826,7 @@ PartlyKnownCompound carbon_dioxide {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  47.0169, -2839.0, -3.86388, 2.81e-16, 6.0), // 216.58-304.21K
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       1.6630
     },
 
@@ -956,6 +947,7 @@ PartlyKnownCompound methane {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  39.205, -1324.4, -3.4366, 0.000031019, 2.0), // 90.69-190.56K
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       1.2730, 
     },
 
@@ -1086,6 +1078,7 @@ PartlyKnownCompound argon {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  42.127, -1093.1, -4.1425, 0.000057254, 2.0), // 83.78-150.86K
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       1.23
     },
 
@@ -1219,6 +1212,7 @@ PartlyKnownCompound helium {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  11.533, -8.99, 0.6724, 0.2743, 1.0), // 1.76-5.2K
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       1.02451
     },
 
@@ -1346,6 +1340,7 @@ PartlyKnownCompound hydrogen {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  12.69, -94.896, 1.1125, 0.00032915, 2.0), // 13.95-33.19K
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       1.1096
     },
 
@@ -1466,6 +1461,7 @@ PartlyKnownCompound ammonia {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  90.483, -4669.7, -11.607, 0.017194, 1.0), // 195.41-405.65K
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       1.3944,
     },
 
@@ -1568,6 +1564,7 @@ PartlyKnownCompound ozone {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  40.067, -2204.8, -2.9351, 7.75e-16, 6.0), // 80.15-261K
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       1.2226
     },
 
@@ -1671,6 +1668,7 @@ PartlyKnownCompound nitrous_oxide {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  96.512, -4045, -12.277, 0.00002886, 2.0),// 182.3-309.57K
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       1.238
     },
 
@@ -1729,8 +1727,8 @@ PartlyKnownCompound  sulfur_dioxide {
     /*triple_point_temperature*/          197.69 * si::kelvin,
     /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ -75.45 * si::celcius, // Perry
-    /*boiling_point_sample_pressure*/     field::missing(),
-    /*boiling_point_sample_temperature*/  field::missing(),
+    /*boiling_point_sample_pressure*/     si::atmosphere,
+    /*boiling_point_sample_temperature*/  -10.02*si::celcius,
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),
 
@@ -1778,6 +1776,7 @@ PartlyKnownCompound  sulfur_dioxide {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  47.365, -4084.5, -3.6469, 1.80e-17, 6.0),//197.67-430.75K
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       1.3396
     },
 
@@ -1882,6 +1881,7 @@ PartlyKnownCompound  sulfur_dioxide {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  72.974, -2650.0, -8.261, 9.7e-15, 6.0),// 109.5-180.15K
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       1.330
     },
 
@@ -2002,6 +2002,7 @@ PartlyKnownCompound carbon_monoxide {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  45.698, -1076.6, -4.8814, 0.000075673, 2.0), // 68.15-132.92K
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       field::missing(),
     },
 
@@ -2149,6 +2150,7 @@ PartlyKnownCompound ethane {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  51.857,-2598.7, -5.1283, 0.000014913, 2.0), // 90.35-305.32K
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       field::missing(),
     },
 
@@ -2253,6 +2255,7 @@ PartlyKnownCompound hydrogen_cyanide {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  36.75, -3927.1, -2.1245, 3.89e-17, 6.0),
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       1.2614
     },
 
@@ -2353,6 +2356,7 @@ PartlyKnownCompound ethanol {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  73.304, -7122.3, -7.1424, 2.8853e-6, 2.0), 
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       //1.361,  // wikipedia data page
         field::SpectralFunction<double>([](
             const si::wavenumber nlo, 
@@ -2464,6 +2468,7 @@ PartlyKnownCompound formaldehyde {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  49.3632, -3847.87, -4.09834, 4.64e-17, 6.0), // 155.15-420K
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       1.3714  // wikipedia
     },
 
@@ -2561,6 +2566,7 @@ PartlyKnownCompound formic_acid {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  43.8066, -5131.03, -3.18777, 2.37819e-6, 2.0), // 281.45-588K
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       1.3714 
     },
 
@@ -2599,7 +2605,7 @@ PartlyKnownCompound formic_acid {
 };
 
 // POORLY CHARACTERIZED COMPOUNDS:
-// perflouromethane, tetraflouride, CF4
+// perflouromethane, tetraflouromethane, carbon tetraflouride, CF4
 // for modeling industrial emissions and the terraforming of Mars as suggested by Zubrin (1996) 
 // We went out of our way searching for an IR graph since 
 // we use CF4 in the model to study pollution and Martian terraformation
@@ -2621,8 +2627,8 @@ PartlyKnownCompound perflouromethane{
     /*triple_point_temperature*/          89.54 * si::kelvin,
     /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ -183.60*si::celcius,
-    /*boiling_point_sample_pressure*/     field::missing(),
-    /*boiling_point_sample_temperature*/  field::missing(),
+    /*boiling_point_sample_pressure*/     si::atmosphere,
+    /*boiling_point_sample_temperature*/  -128.05*si::celcius,
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),
 
@@ -2672,6 +2678,7 @@ PartlyKnownCompound perflouromethane{
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  61.89, -2296.3, -7.086, 0.000034687, 2.0), // 89.56-227.51K
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       field::missing(),
     },
 
@@ -2779,6 +2786,7 @@ PartlyKnownCompound benzene {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  83.107, -6486.2, -9.2194, 6.9844e-06, 2.0), // 278.68-562.05K
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       //1.5011,
         field::SpectralFunction<double>([](
             const si::wavenumber nlo, 
@@ -2878,6 +2886,7 @@ PartlyKnownCompound pyrimidine {
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                1.016 * si::gram/si::centimeter3, // wikipedia
         /*vapor_pressure*/         field::missing(),
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       field::missing()
     },
 
@@ -2962,6 +2971,7 @@ PartlyKnownCompound  halite {
                 (si::celcius, si::pascal,
                   std::vector<double>{835.0,     987.0,     1461.0}, 
                  std::vector<double>{100.0 ,     1e3,       100e3}),
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       field::missing()
     },
 
@@ -3064,6 +3074,7 @@ PartlyKnownCompound  corundum {
         /*dynamic_viscosity*/      field::StateFunction<si::dynamic_viscosity>([](const si::pressure p, const si::temperature T){ return exp((11448.0*si::kelvin/T - 8.2734))*si::pascal*si::second; }), // Blomquist (1978)
         /*density*/                field::missing(),
         /*vapor_pressure*/         field::missing(),
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       field::missing()
     },
 
@@ -3161,6 +3172,7 @@ PartlyKnownCompound  apatite {
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                field::missing(),
         /*vapor_pressure*/         field::missing(),
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       field::missing()
     },
 
@@ -3244,6 +3256,7 @@ PartlyKnownCompound carbon {
                      std::vector<double>{2566.0,     3016.0,     3635.0}, 
                      std::vector<double>{1.0 ,       1e3,        100e3}),
                                                                          // TOOD: autocomplete vapor pressure for solids/liquids if function is present for other phase
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       field::missing()
     },
 
@@ -3366,6 +3379,7 @@ PartlyKnownCompound  calcite {
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                field::missing(),
         /*vapor_pressure*/         field::missing(),
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       field::missing()
     },
     
@@ -3489,6 +3503,7 @@ PartlyKnownCompound  quartz {
                     (si::celcius, si::pascal,
                      std::vector<double>{1966.0,     2149.0,     2368.0}, 
                      std::vector<double>{1.0 ,       10.0,       100.0  }),
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       field::missing()
     },
     
@@ -3666,6 +3681,7 @@ PartlyKnownCompound  orthoclase {
         /*dynamic_viscosity*/      1e8 * si::poise, // observed by Bowen (1934) for molten Orthoclase, seems large compared to other silicates, but continental crust has been observed to have higher viscosity than oceanic (Itô 1979, "Rheology of the crust...", I can only get a hold of the abstract)
         /*density*/                2180.0 * si::kilogram/si::meter3, // from Murase and McBirney (1973), for rhyolitic magma
         /*vapor_pressure*/         field::missing(),
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       field::missing()
     },
 
@@ -3750,6 +3766,7 @@ PartlyKnownCompound andesine {
         // .dynamic_viscosity = 3.0e11 * si::pascal * si::second, // Melosh (2011), from Hiesinger (2007), for andesite lava flow, middle value on log scale
         /*density*/                2180.0 * si::kilogram/si::meter3, // from Murase and McBirney (1973), for rhyolitic magma
         /*vapor_pressure*/         field::missing(),
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       field::missing()
     },
 
@@ -3828,6 +3845,7 @@ PartlyKnownCompound augite {
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                field::missing(),
         /*vapor_pressure*/         field::missing(),
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       field::missing()
     },
 
@@ -3909,6 +3927,7 @@ PartlyKnownCompound forsterite {
         // .dynamic_viscosity = exp(1.5) * si::poise, // Doremus (2002) for Olivine, at 1400 C
         /*density*/                field::missing(),
         /*vapor_pressure*/         field::missing(),
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       field::missing()
     },
 
@@ -3986,6 +4005,7 @@ PartlyKnownCompound  goethite {
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                field::missing(),
         /*vapor_pressure*/         field::missing(),
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       field::missing()
     },
 
@@ -4062,6 +4082,7 @@ PartlyKnownCompound  pyrite {
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                field::missing(),
         /*vapor_pressure*/         field::missing(),
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       field::missing()
     },
 
@@ -4140,6 +4161,7 @@ PartlyKnownCompound hematite {
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                field::missing(),
         /*vapor_pressure*/         field::missing(),
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       field::missing()
     },
 
@@ -4226,6 +4248,7 @@ PartlyKnownCompound  gold {
                     (si::celcius, si::pascal,
                      std::vector<double>{1373.0,     2008.0,     2805.0}, 
                      std::vector<double>{1.0 ,       1e3,        100e3}),
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       field::missing()
     },
 
@@ -4327,6 +4350,7 @@ PartlyKnownCompound  silver {
                     (si::celcius, si::pascal,
                      std::vector<double>{1010.0,     1509.0,     2160.0}, 
                      std::vector<double>{1.0 ,       1e3,        100e3}),
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       field::missing()
     },
 
@@ -4427,6 +4451,7 @@ PartlyKnownCompound  copper {
                     (si::celcius, si::pascal,
                      std::vector<double>{1236.0,     1816.0,     2563.0}, 
                      std::vector<double>{1.0 ,       1e3,        100e3}),
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       field::missing()
     },
 
@@ -4524,6 +4549,7 @@ PartlyKnownCompound  magnetite {
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                field::missing(),
         /*vapor_pressure*/         field::missing(),
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       field::missing()
     },
 
@@ -4606,6 +4632,7 @@ PartlyKnownCompound chalcocite {
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                field::missing(),
         /*vapor_pressure*/         field::missing(),
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       field::missing()
     },
 
@@ -4710,6 +4737,7 @@ PartlyKnownCompound  chalcopyrite {
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                field::missing(),
         /*vapor_pressure*/         field::missing(),
+        /*surface_tension*/        field::missing(),
         /*refractive_index*/       field::missing()
     },
 

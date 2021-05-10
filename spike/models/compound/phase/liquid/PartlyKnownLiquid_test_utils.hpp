@@ -11,6 +11,7 @@ compound::phase::PartlyKnownLiquid unknown_liquid {
     /*dynamic_viscosity*/                 std::monostate(),
     /*density*/                           std::monostate(),
     /*vapor_pressure*/                    std::monostate(),
+    /*surface_tension*/                   std::monostate(),
     /*refractive_index*/                  std::monostate()
 };
 compound::phase::PartlyKnownLiquid molten_silica {
@@ -19,6 +20,7 @@ compound::phase::PartlyKnownLiquid molten_silica {
     /*dynamic_viscosity*/                 exp(10.0) * si::poise, // Doremus (2002), at 1400 C
     /*density*/                           2180.0 * si::kilogram/si::meter3, // from Murase and McBirney (1973), for rhyolitic magma
     /*vapor_pressure*/                    std::monostate(),
+    /*surface_tension*/                   250.0 * si::dyne/si::centimeter,
     /*refractive_index*/                  std::monostate()
 };
 compound::phase::PartlyKnownLiquid liquid_nitrogen {
@@ -30,6 +32,7 @@ compound::phase::PartlyKnownLiquid liquid_nitrogen {
         compound::field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
             return 3.720822*si::standard_pressure - (293.94358*si::kelvin/T + 10.31993/si::kelvin*T) * si::standard_pressure;
         }), // Friedman (1950)
+    /*surface_tension*/                   11.8000 * si::millinewton / si::meter,
     /*refractive_index*/                  1.19876
 };
 compound::phase::PartlyKnownLiquid dummy_liquid {
@@ -38,6 +41,7 @@ compound::phase::PartlyKnownLiquid dummy_liquid {
     /*dynamic_viscosity*/                 3.0 * si::poise, 
     /*density*/                           4.0 * si::kilogram/si::meter3,
     /*vapor_pressure*/                    5.0 * si::megapascal,
+    /*surface_tension*/                   6.0 * si::millinewton / si::meter,
     /*refractive_index*/                  1.3
 };
 
@@ -47,6 +51,7 @@ compound::phase::PartlyKnownLiquid liquid_ammonia {
     /*dynamic_viscosity*/                 std::monostate(),
     /*density*/                           681.97 * si::kilogram / si::meter3,  //encyclopedia.airliquide.com
     /*vapor_pressure*/                    std::monostate(),
+    /*surface_tension*/                   std::monostate(),
     /*refractive_index*/                  1.3944
 };
 
@@ -58,6 +63,7 @@ int PartlyKnownLiquid_attribute_index_sum(const compound::phase::PartlyKnownLiqu
         liquid.dynamic_viscosity               .index() +
         liquid.density                         .index() +
         liquid.vapor_pressure                  .index() +
+        liquid.surface_tension                 .index() +
         liquid.refractive_index                .index();
 }
 int PartlyKnownLiquid_attribute_known_count(const compound::phase::PartlyKnownLiquid& liquid)
@@ -68,6 +74,7 @@ int PartlyKnownLiquid_attribute_known_count(const compound::phase::PartlyKnownLi
         liquid.dynamic_viscosity               .has_value() +
         liquid.density                         .has_value() +
         liquid.vapor_pressure                  .has_value() +
+        liquid.surface_tension                 .has_value() +
         liquid.refractive_index                .has_value();
 }
 bool operator==(const compound::phase::PartlyKnownLiquid& first, const compound::phase::PartlyKnownLiquid& second)
@@ -78,6 +85,7 @@ bool operator==(const compound::phase::PartlyKnownLiquid& first, const compound:
         first.dynamic_viscosity      == second.dynamic_viscosity      &&
         first.density                == second.density                &&
         first.vapor_pressure         == second.vapor_pressure         &&
+        first.surface_tension        == second.surface_tension        &&
         first.refractive_index       == second.refractive_index;
 }
 

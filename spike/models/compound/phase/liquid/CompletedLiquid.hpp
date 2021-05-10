@@ -15,6 +15,7 @@ namespace phase {
         field::CompletedStateField<si::dynamic_viscosity> dynamic_viscosity;
         field::CompletedStateField<si::density> density;
         field::CompletedStateField<si::pressure> vapor_pressure;
+        field::CompletedStateField<si::surface_energy> surface_tension;
         field::CompletedSpectralField<double> refractive_index;
 
         CompletedLiquid(
@@ -23,6 +24,7 @@ namespace phase {
             const field::CompletedStateField<si::dynamic_viscosity> dynamic_viscosity,
             const field::CompletedStateField<si::density> density,
             const field::CompletedStateField<si::pressure> vapor_pressure,
+            const field::CompletedStateField<si::surface_energy> surface_tension,
             const field::CompletedSpectralField<double> refractive_index
         ):
             specific_heat_capacity(specific_heat_capacity),
@@ -30,6 +32,7 @@ namespace phase {
             dynamic_viscosity(dynamic_viscosity),
             density(density),
             vapor_pressure(vapor_pressure),
+            surface_tension(surface_tension),
             refractive_index(refractive_index)
         {
 

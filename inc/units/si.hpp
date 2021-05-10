@@ -408,6 +408,7 @@ namespace si{
 	template <typename T> using kinematic_viscosity_type       = units< 2, 0,-1, 0, 0, 0, 0, T>;
 	template <typename T> using dynamic_viscosity_type         = units<-1, 1,-1, 0, 0, 0, 0, T>;
 	template <typename T> using energy_type                    = units< 2, 1,-2, 0, 0, 0, 0, T>;
+	template <typename T> using surface_energy_type            = units< 0, 1,-2, 0, 0, 0, 0, T>;
 	template <typename T> using power_type                     = units< 2, 1,-3, 0, 0, 0, 0, T>;
 	template <typename T> using intensity_type                 = units< 0, 1,-3, 0, 0, 0, 0, T>;
 	template <typename T> using molar_mass_type                = units< 0, 1, 0, 0,-1, 0, 0, T>;
@@ -460,6 +461,7 @@ namespace si{
 	typedef units< 2, 0,-1, 0, 0, 0, 0> kinematic_viscosity          ;
 	typedef units<-1, 1,-1, 0, 0, 0, 0> dynamic_viscosity            ;
 	typedef units< 2, 1,-2, 0, 0, 0, 0> energy                       ;
+	typedef units< 0, 1,-2, 0, 0, 0, 0> surface_energy               ;
 	typedef units< 2, 1,-3, 0, 0, 0, 0> power                        ;
 	typedef units< 0, 1,-3, 0, 0, 0, 0> intensity                    ;
 	typedef units< 0, 1, 0, 0,-1, 0, 0> molar_mass                   ;

@@ -21,6 +21,7 @@ namespace phase {
             field::complete(known.dynamic_viscosity,                fallback.dynamic_viscosity                ),
             field::complete(known.density,                          fallback.density                          ),
             field::complete(known.vapor_pressure,                   fallback.vapor_pressure                   ),
+            field::complete(known.surface_tension,                  fallback.surface_tension                  ),
             field::complete(known.refractive_index,                 fallback.refractive_index                 )
         );
     }

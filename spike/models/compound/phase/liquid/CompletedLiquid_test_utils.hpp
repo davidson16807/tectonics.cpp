@@ -16,6 +16,7 @@ compound::phase::CompletedLiquid known_liquid_nitrogen (
         compound::field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
             return 3.720822*si::standard_pressure - (293.94358*si::kelvin/T + 10.31993/si::kelvin*T) * si::standard_pressure;
         }), // Friedman (1950)
+    /*surface_tension*/                   11.8000 * si::millinewton / si::meter,
     /*refractive_index*/                  1.19876
 );
 compound::phase::CompletedLiquid known_dummy_liquid (
@@ -24,6 +25,7 @@ compound::phase::CompletedLiquid known_dummy_liquid (
     /*dynamic_viscosity*/                 3.0 * si::poise, 
     /*density*/                           4.0 * si::kilogram/si::meter3,
     /*vapor_pressure*/                    5.0 * si::megapascal,
+    /*surface_tension*/                   6.0 * si::newton / si::meter,
     /*refractive_index*/                  1.3
 );
 
@@ -35,5 +37,6 @@ bool operator==(const compound::phase::CompletedLiquid& first, const compound::p
         first.dynamic_viscosity      == second.dynamic_viscosity      &&
         first.density                == second.density                &&
         first.vapor_pressure         == second.vapor_pressure         &&
+        first.surface_tension        == second.surface_tension        &&
         first.refractive_index       == second.refractive_index;
 }

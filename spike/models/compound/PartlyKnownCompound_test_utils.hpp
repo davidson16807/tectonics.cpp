@@ -99,7 +99,7 @@ compound::PartlyKnownCompound unknown_hydrogen {
         /*thermal_conductivity*/   compound::field::missing(),
         /*dynamic_viscosity*/      compound::field::missing(),
         /*density*/                compound::field::missing(),
-        /*refractive_index*/       compound::field::missing(),
+        /*refractive_index*/       compound::field::missing()
     },
 
     /*liquid*/
@@ -109,7 +109,8 @@ compound::PartlyKnownCompound unknown_hydrogen {
         /*dynamic_viscosity*/      compound::field::missing(),
         /*density*/                compound::field::missing(),
         /*vapor_pressure*/         compound::field::missing(),
-        /*refractive_index*/       compound::field::missing(),
+        /*surface_tension*/        compound::field::missing(),
+        /*refractive_index*/       compound::field::missing()
     },
 
     /*solid*/ 
