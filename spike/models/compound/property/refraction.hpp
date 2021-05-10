@@ -27,7 +27,7 @@ namespace compound{
         as well as https://refractiveindex.info/?shelf=organic&book=ethane&page=Loria
         */
         constexpr float get_molecular_refraction_of_refractive_index_at_stp(const float n) {
-            return ((n*n-1.0f)/(n*n+2.0f)) * units::standard_molar_volume / units::mole;
+            return ((n*n-1.0f)/(n*n+2.0f)) * si::standard_molar_volume / si::mole;
         }
     }
 

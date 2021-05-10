@@ -20,7 +20,7 @@ namespace crust
         earth_mesh = meshes::subdivide(earth_mesh); series::normalize(earth_mesh.vertices, earth_mesh.vertices);
         earth_mesh = meshes::subdivide(earth_mesh); series::normalize(earth_mesh.vertices, earth_mesh.vertices);
         earth_mesh = meshes::subdivide(earth_mesh); series::normalize(earth_mesh.vertices, earth_mesh.vertices);
-        series::mult(earth_mesh.vertices, units::earth_radius, earth_mesh.vertices);
+        series::mult(earth_mesh.vertices, si::earth_radius, earth_mesh.vertices);
         rasters::Grid earth_grid(earth_mesh.vertices, earth_mesh.faces);
     }
 

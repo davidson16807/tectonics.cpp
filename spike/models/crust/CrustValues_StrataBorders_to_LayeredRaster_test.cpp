@@ -265,7 +265,7 @@ TEST_CASE( "get_LayeredRaster_from_CrustValues/get_CrustValues_from_LayeredRaste
         mineral_densities,
         liquid_densities,
         liquid_mass_pools,
-        units::earth_age,
+        si::earth_age,
         tower
     );
 
@@ -284,12 +284,12 @@ TEST_CASE( "get_LayeredRaster_from_CrustValues/get_CrustValues_from_LayeredRaste
     );
 
     auto pressure_raster = rasters::make_LayeredRaster<float>(layered_grid);
-    get_LayeredRaster_from_CrustValues(crust_values, borders, units::earth_radius, pressure_raster);
+    get_LayeredRaster_from_CrustValues(crust_values, borders, si::earth_radius, pressure_raster);
 
 	auto stratum_pressures2 = make_CrustValues<float,L>(grid);
 	// get_max_pressures_received(crust, stratum_pressures2);
 
-    get_CrustValues_from_LayeredRaster(pressure_raster, borders, units::earth_radius, stratum_pressures2);
+    get_CrustValues_from_LayeredRaster(pressure_raster, borders, si::earth_radius, stratum_pressures2);
 
 	// SECTION("Converting crust values to and from LayeredRaster must produce the original object to within acceptable tolerances"){
 	    // CRUST_VALUES_LAYER_INTERPOLATION_EQUAL(crust_values, stratum_pressures2)

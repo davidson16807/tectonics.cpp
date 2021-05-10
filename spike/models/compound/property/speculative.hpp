@@ -80,7 +80,7 @@ namespace compound{
         {
             const float liquid_solid_density_slope = 84.587f;
             const float liquid_solid_density_intercept = 1.112f;
-            constexpr float kilogram_per_meter3 = units::kilogram/units::meter3; 
+            constexpr float kilogram_per_meter3 = si::kilogram/si::meter3; 
         }
         float guess_density_as_solid_from_density_as_liquid(const float density_as_liquid)
         {
