@@ -405,7 +405,11 @@ PartlyKnownCompound water {
                 double C = T/si::celcius;
                 return 0.61121*exp((18.678-C/234.5) * (C/(257.14+C))) * si::kilopascal; 
             }),
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        
+            get_interpolated_temperature_function
+                (si::celcius, si::millinewton/si::meter,
+                 std::vector<double>{ 10.0,  25.0,  50.0,  75.0, 100.0 }, 
+                 std::vector<double>{74.23, 71.99, 67.94, 63.57, 58.91 }), 
         /*refractive_index*/       //1.33336,
             get_interpolated_refractive_index_function
                 (si::micrometer, 
@@ -551,7 +555,11 @@ PartlyKnownCompound nitrogen {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  58.282, -1084.1, -8.3144, 0.044127, 1.0), // 63.15-126.2K
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        
+            get_interpolated_temperature_function
+                (si::kelvin, si::millinewton/si::meter,
+                 std::vector<double>{64.80, 80.00, 100.0, 120.24 }, 
+                 std::vector<double>{11.80, 8.270, 4.060, 0.6440 }), // Dortmund Databank
         /*refractive_index*/       1.19876
     },
 
@@ -698,7 +706,7 @@ PartlyKnownCompound oxygen {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  51.245, -1200.2, -6.4361, 0.028405, 1.0), // 54.36-154.58K
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        13.2 * si::dyne/si::centimeter, // wikipedia
         /*refractive_index*/       1.2243
     },
 
@@ -826,7 +834,11 @@ PartlyKnownCompound carbon_dioxide {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  47.0169, -2839.0, -3.86388, 2.81e-16, 6.0), // 216.58-304.21K
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        
+            get_interpolated_temperature_function
+                (si::kelvin, si::millinewton/si::meter,
+                 std::vector<double>{216.55, 273.15, 302.0  }, 
+                 std::vector<double>{16.9,   4.57,   0.1480 }), // Dortmund Databank
         /*refractive_index*/       1.6630
     },
 
@@ -947,7 +959,11 @@ PartlyKnownCompound methane {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  39.205, -1324.4, -3.4366, 0.000031019, 2.0), // 90.69-190.56K
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        
+            get_interpolated_temperature_function
+                (si::kelvin, si::millinewton/si::meter,
+                 std::vector<double>{90.67, 120.25, 150.99, 188.84}, 
+                 std::vector<double>{17.78, 11.260, 5.7100, 0.1020}), // Dortmund Databank
         /*refractive_index*/       1.2730, 
     },
 
@@ -1461,7 +1477,7 @@ PartlyKnownCompound ammonia {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  90.483, -4669.7, -11.607, 0.017194, 1.0), // 195.41-405.65K
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        0.021 * si::newton/si::meter, // 25C, engineering toolbox
         /*refractive_index*/       1.3944,
     },
 
@@ -1564,7 +1580,7 @@ PartlyKnownCompound ozone {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  40.067, -2204.8, -2.9351, 7.75e-16, 6.0), // 80.15-261K
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        38.1 * si::dyne/si::centimeter, // -182.7C, Jenkins (1956)
         /*refractive_index*/       1.2226
     },
 
@@ -1668,7 +1684,11 @@ PartlyKnownCompound nitrous_oxide {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  96.512, -4045, -12.277, 0.00002886, 2.0),// 182.3-309.57K
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        
+            get_interpolated_temperature_function
+                (si::celcius, si::dyne/si::centimeter,
+                 std::vector<double>{30.0,    0.0, -20.0, -50.0 }, 
+                 std::vector<double>{0.552, 5.400, 9.134, 14.39 }), // Quinn (1930)
         /*refractive_index*/       1.238
     },
 
@@ -1776,7 +1796,7 @@ PartlyKnownCompound  sulfur_dioxide {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  47.365, -4084.5, -3.6469, 1.80e-17, 6.0),//197.67-430.75K
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        33.5 * si::dyne/si::centimeter, // -25C Stowe (1928)
         /*refractive_index*/       1.3396
     },
 
@@ -2002,7 +2022,7 @@ PartlyKnownCompound carbon_monoxide {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  45.698, -1076.6, -4.8814, 0.000075673, 2.0), // 68.15-132.92K
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        9.8 * si::millinewton/si::meter, // 80K, PubChem
         /*refractive_index*/       field::missing(),
     },
 
@@ -2150,7 +2170,7 @@ PartlyKnownCompound ethane {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  51.857,-2598.7, -5.1283, 0.000014913, 2.0), // 90.35-305.32K
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        0.00048 * si::newton/si::meter, // 25C, engineering toolbox
         /*refractive_index*/       field::missing(),
     },
 
@@ -2356,7 +2376,11 @@ PartlyKnownCompound ethanol {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  73.304, -7122.3, -7.1424, 2.8853e-6, 2.0), 
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        
+            get_interpolated_temperature_function
+                (si::celcius, si::millinewton/si::meter,
+                 std::vector<double>{ 10.0,  25.0,  50.0 }, 
+                 std::vector<double>{23.22, 21.97, 19.89 }), 
         /*refractive_index*/       //1.361,  // wikipedia data page
         field::SpectralFunction<double>([](
             const si::wavenumber nlo, 
@@ -2468,7 +2492,7 @@ PartlyKnownCompound formaldehyde {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  49.3632, -3847.87, -4.09834, 4.64e-17, 6.0), // 155.15-420K
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        27.3797 * si::dyne/si::centimeter, // 25 °C, PubChem
         /*refractive_index*/       1.3714  // wikipedia
     },
 
@@ -2566,7 +2590,11 @@ PartlyKnownCompound formic_acid {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  43.8066, -5131.03, -3.18777, 2.37819e-6, 2.0), // 281.45-588K
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        
+            get_interpolated_temperature_function
+                (si::celcius, si::millinewton/si::meter,
+                 std::vector<double>{ 25.0,  50.0,  75.0 }, 
+                 std::vector<double>{37.13, 34.38, 31.64 }), 
         /*refractive_index*/       1.3714 
     },
 
@@ -2786,7 +2814,11 @@ PartlyKnownCompound benzene {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  83.107, -6486.2, -9.2194, 6.9844e-06, 2.0), // 278.68-562.05K
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        
+            get_interpolated_temperature_function
+                (si::celcius, si::millinewton/si::meter,
+                 std::vector<double>{ 25.0,  50.0,  75.0 }, 
+                 std::vector<double>{28.22, 25.00, 21.77 }), 
         /*refractive_index*/       //1.5011,
         field::SpectralFunction<double>([](
             const si::wavenumber nlo, 
@@ -2886,7 +2918,11 @@ PartlyKnownCompound pyrimidine {
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                1.016 * si::gram/si::centimeter3, // wikipedia
         /*vapor_pressure*/         field::missing(),
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        
+            get_interpolated_temperature_function
+                (si::celcius, si::millinewton/si::meter,
+                 std::vector<double>{ 25.0,  50.0,  75.0, 100.0 }, 
+                 std::vector<double>{30.33, 27.80, 25.28, 22.75 }), 
         /*refractive_index*/       field::missing()
     },
 
