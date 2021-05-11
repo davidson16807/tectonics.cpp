@@ -245,6 +245,21 @@ namespace{
             }
         );
     }
+    // from Mulero (2012)
+    template<typename Tx, typename Ty>
+    field::OptionalStateField<Ty> get_refprop_liquid_surface_tension_temperature_function(
+        const Tx Tc, const Ty yunits,
+        const double sigma1, const double n1, const double sigma2, const double n2, const double sigma3, const double n3
+    ){
+        return field::StateFunction<Ty>(
+            [Tc, yunits, sigma1, n1, sigma2, n2, sigma3, n3]
+            (const si::pressure p, const si::temperature T)
+            {
+                double t = T/Tc;
+                return ( sigma1*std::pow(1.0 - t, n1) + sigma2*std::pow(1.0 - t, n2) + sigma3*std::pow(1.0 - t, n3) )*yunits;
+            }
+        );
+    }
     template<typename TT>
     field::OptionalStateField<si::pressure> get_antoine_vapor_pressure_function(
         const TT Tunits, const si::pressure punits,
@@ -405,11 +420,10 @@ PartlyKnownCompound water {
                 double C = T/si::celcius;
                 return 0.61121*exp((18.678-C/234.5) * (C/(257.14+C))) * si::kilopascal; 
             }),
-        /*surface_tension*/        
-            get_interpolated_temperature_function
-                (si::celcius, si::millinewton/si::meter,
-                 std::vector<double>{ 10.0,  25.0,  50.0,  75.0, 100.0 }, 
-                 std::vector<double>{74.23, 71.99, 67.94, 63.57, 58.91 }), 
+        /*surface_tension*/            
+            get_refprop_liquid_surface_tension_temperature_function
+                (647.01 * si::kelvin, si::millinewton/si::meter,
+                 -0.1306, 2.471, 0.2151, 1.233, 0.0, 0.0), // Mulero (2012)
         /*refractive_index*/       //1.33336,
             get_interpolated_refractive_index_function
                 (si::micrometer, 
@@ -556,10 +570,9 @@ PartlyKnownCompound nitrogen {
                 (si::kelvin, si::pascal,
                  58.282, -1084.1, -8.3144, 0.044127, 1.0), // 63.15-126.2K
         /*surface_tension*/        
-            get_interpolated_temperature_function
-                (si::kelvin, si::millinewton/si::meter,
-                 std::vector<double>{64.80, 80.00, 100.0, 120.24 }, 
-                 std::vector<double>{11.80, 8.270, 4.060, 0.6440 }), // Dortmund Databank
+            get_refprop_liquid_surface_tension_temperature_function
+                (126.21 * si::kelvin, si::millinewton/si::meter,
+                 0.02898, 1.246, 0.0, 0.0, 0.0, 0.0), // Mulero (2012)
         /*refractive_index*/       1.19876
     },
 
@@ -706,7 +719,10 @@ PartlyKnownCompound oxygen {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  51.245, -1200.2, -6.4361, 0.028405, 1.0), // 54.36-154.58K
-        /*surface_tension*/        13.2 * si::dyne/si::centimeter, // wikipedia
+        /*surface_tension*/        
+            get_refprop_liquid_surface_tension_temperature_function
+                (154.59 * si::kelvin, si::millinewton/si::meter,
+                 0.03843, 1.225, 0.0, 0.0, 0.0, 0.0), // Mulero (2012)
         /*refractive_index*/       1.2243
     },
 
@@ -835,10 +851,9 @@ PartlyKnownCompound carbon_dioxide {
                 (si::kelvin, si::pascal,
                  47.0169, -2839.0, -3.86388, 2.81e-16, 6.0), // 216.58-304.21K
         /*surface_tension*/        
-            get_interpolated_temperature_function
-                (si::kelvin, si::millinewton/si::meter,
-                 std::vector<double>{216.55, 273.15, 302.0  }, 
-                 std::vector<double>{16.9,   4.57,   0.1480 }), // Dortmund Databank
+            get_refprop_liquid_surface_tension_temperature_function
+                (304.13 * si::kelvin, si::millinewton/si::meter,
+                 0.07863, 1.254, 0.0, 0.0, 0.0, 0.0), // Mulero (2012)
         /*refractive_index*/       1.6630
     },
 
@@ -960,10 +975,9 @@ PartlyKnownCompound methane {
                 (si::kelvin, si::pascal,
                  39.205, -1324.4, -3.4366, 0.000031019, 2.0), // 90.69-190.56K
         /*surface_tension*/        
-            get_interpolated_temperature_function
-                (si::kelvin, si::millinewton/si::meter,
-                 std::vector<double>{90.67, 120.25, 150.99, 188.84}, 
-                 std::vector<double>{17.78, 11.260, 5.7100, 0.1020}), // Dortmund Databank
+            get_refprop_liquid_surface_tension_temperature_function
+                (190.56 * si::kelvin, si::millinewton/si::meter,
+                 0.03825, 1.191, -0.006024, 5.422, -0.0007065, 0.6161), // Mulero (2012)
         /*refractive_index*/       1.2730, 
     },
 
@@ -1094,7 +1108,10 @@ PartlyKnownCompound argon {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  42.127, -1093.1, -4.1425, 0.000057254, 2.0), // 83.78-150.86K
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        
+            get_refprop_liquid_surface_tension_temperature_function
+                (150.87 * si::kelvin, si::millinewton/si::meter,
+                 0.037, 1.25, 0.0, 0.0, 0.0, 0.0), // Mulero (2012)
         /*refractive_index*/       1.23
     },
 
@@ -1228,7 +1245,10 @@ PartlyKnownCompound helium {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  11.533, -8.99, 0.6724, 0.2743, 1.0), // 1.76-5.2K
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        
+            get_refprop_liquid_surface_tension_temperature_function
+                (5.19 * si::kelvin, si::millinewton/si::meter,
+                 0.0004656, 1.040, 0.001889, 2.468, -0.002006, 2.661), // Mulero (2012)
         /*refractive_index*/       1.02451
     },
 
@@ -1356,7 +1376,10 @@ PartlyKnownCompound hydrogen {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  12.69, -94.896, 1.1125, 0.00032915, 2.0), // 13.95-33.19K
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        
+            get_refprop_liquid_surface_tension_temperature_function
+                (32.97 * si::kelvin, si::millinewton/si::meter,
+                 -1.4165, 0.63882, 0.746383, 0.659804, 0.675625, 0.619149), // Mulero (2012)
         /*refractive_index*/       1.1096
     },
 
@@ -1477,7 +1500,10 @@ PartlyKnownCompound ammonia {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  90.483, -4669.7, -11.607, 0.017194, 1.0), // 195.41-405.65K
-        /*surface_tension*/        0.021 * si::newton/si::meter, // 25C, engineering toolbox
+        /*surface_tension*/        // 0.021 * si::newton/si::meter, // 25C, engineering toolbox
+            get_refprop_liquid_surface_tension_temperature_function
+                (405.56 * si::kelvin, si::millinewton/si::meter,
+                 0.1028, 1.211, -0.09453, 5.585, 0.0, 0.0), // Mulero (2012)
         /*refractive_index*/       1.3944,
     },
 
@@ -1685,10 +1711,9 @@ PartlyKnownCompound nitrous_oxide {
                 (si::kelvin, si::pascal,
                  96.512, -4045, -12.277, 0.00002886, 2.0),// 182.3-309.57K
         /*surface_tension*/        
-            get_interpolated_temperature_function
-                (si::celcius, si::dyne/si::centimeter,
-                 std::vector<double>{30.0,    0.0, -20.0, -50.0 }, 
-                 std::vector<double>{0.552, 5.400, 9.134, 14.39 }), // Quinn (1930)
+            get_refprop_liquid_surface_tension_temperature_function
+                (309.52 * si::kelvin, si::millinewton/si::meter,
+                 0.07087, 1.204, 0.0, 0.0, 0.0, 0.0), // Mulero (2012)
         /*refractive_index*/       1.238
     },
 
@@ -1796,7 +1821,10 @@ PartlyKnownCompound  sulfur_dioxide {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  47.365, -4084.5, -3.6469, 1.80e-17, 6.0),//197.67-430.75K
-        /*surface_tension*/        33.5 * si::dyne/si::centimeter, // -25C Stowe (1928)
+        /*surface_tension*/        
+            get_refprop_liquid_surface_tension_temperature_function
+                (430.64 * si::kelvin, si::millinewton/si::meter,
+                 0.0803, 0.928, 0.0139, 1.570, -0.0114, 0.364), // Mulero (2012)
         /*refractive_index*/       1.3396
     },
 
@@ -2022,7 +2050,10 @@ PartlyKnownCompound carbon_monoxide {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  45.698, -1076.6, -4.8814, 0.000075673, 2.0), // 68.15-132.92K
-        /*surface_tension*/        9.8 * si::millinewton/si::meter, // 80K, PubChem
+        /*surface_tension*/        
+            get_refprop_liquid_surface_tension_temperature_function
+                (132.86 * si::kelvin, si::millinewton/si::meter,
+                 0.02843, 1.148, 0.0, 0.0, 0.0, 0.0), // Mulero (2012)
         /*refractive_index*/       field::missing(),
     },
 
@@ -2170,7 +2201,10 @@ PartlyKnownCompound ethane {
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
                  51.857,-2598.7, -5.1283, 0.000014913, 2.0), // 90.35-305.32K
-        /*surface_tension*/        0.00048 * si::newton/si::meter, // 25C, engineering toolbox
+        /*surface_tension*/        
+            get_refprop_liquid_surface_tension_temperature_function
+                (305.36 * si::kelvin, si::millinewton/si::meter,
+                 0.07602, 1.320, -0.02912, 1.676, 0.0, 0.0), // Mulero (2012)
         /*refractive_index*/       field::missing(),
     },
 
@@ -2377,10 +2411,9 @@ PartlyKnownCompound ethanol {
                 (si::kelvin, si::pascal,
                  73.304, -7122.3, -7.1424, 2.8853e-6, 2.0), 
         /*surface_tension*/        
-            get_interpolated_temperature_function
-                (si::celcius, si::millinewton/si::meter,
-                 std::vector<double>{ 10.0,  25.0,  50.0 }, 
-                 std::vector<double>{23.22, 21.97, 19.89 }), 
+            get_refprop_liquid_surface_tension_temperature_function
+                (351.44 * si::kelvin, si::millinewton/si::meter,
+                 0.05, 0.952, 0.0, 0.0, 0.0, 0.0), // Mulero (2012)
         /*refractive_index*/       //1.361,  // wikipedia data page
         field::SpectralFunction<double>([](
             const si::wavenumber nlo, 
@@ -2815,10 +2848,9 @@ PartlyKnownCompound benzene {
                 (si::kelvin, si::pascal,
                  83.107, -6486.2, -9.2194, 6.9844e-06, 2.0), // 278.68-562.05K
         /*surface_tension*/        
-            get_interpolated_temperature_function
-                (si::celcius, si::millinewton/si::meter,
-                 std::vector<double>{ 25.0,  50.0,  75.0 }, 
-                 std::vector<double>{28.22, 25.00, 21.77 }), 
+            get_refprop_liquid_surface_tension_temperature_function
+                (562.0 * si::kelvin, si::millinewton/si::meter,
+                 0.07298, 1.232, -0.0007802, 0.8635, -0.0001756, 0.3065), // Mulero (2012)
         /*refractive_index*/       //1.5011,
         field::SpectralFunction<double>([](
             const si::wavenumber nlo, 
@@ -3539,7 +3571,7 @@ PartlyKnownCompound  quartz {
                     (si::celcius, si::pascal,
                      std::vector<double>{1966.0,     2149.0,     2368.0}, 
                      std::vector<double>{1.0 ,       10.0,       100.0  }),
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        312.0 * si::dyne / si::centimeter, // 1400C, Shartsis (1951)
         /*refractive_index*/       field::missing()
     },
     
