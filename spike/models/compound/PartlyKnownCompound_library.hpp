@@ -260,6 +260,21 @@ namespace{
             }
         );
     }
+    // from Mulero (2012)
+    template<typename Tx, typename Ty>
+    field::OptionalStateField<Ty> get_linear_liquid_surface_tension_temperature_function(
+        const Tx Tunits, const Ty yunits,
+        const double TL, const double gammaTL, const double dgamma_dT
+    ){
+        return field::StateFunction<Ty>(
+            [Tunits, yunits, TL, gammaTL, dgamma_dT]
+            (const si::pressure p, const si::temperature T)
+            {
+                double t = T/Tunits;
+                return ( gammaTL + dgamma_dT * (t-TL) )*yunits;
+            }
+        );
+    }
     template<typename TT>
     field::OptionalStateField<si::pressure> get_antoine_vapor_pressure_function(
         const TT Tunits, const si::pressure punits,
@@ -3039,7 +3054,11 @@ PartlyKnownCompound  halite {
                 (si::celcius, si::pascal,
                   std::vector<double>{835.0,     987.0,     1461.0}, 
                  std::vector<double>{100.0 ,     1e3,       100e3}),
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        
+            get_interpolated_temperature_function
+                (si::celcius, si::dyne/si::centimeter,
+                 std::vector<double>{ 1080.0, 1250.0 },
+                 std::vector<double>{  112.5,  102.5 }), // Sato (1990)
         /*refractive_index*/       field::missing()
     },
 
@@ -3086,11 +3105,11 @@ PartlyKnownCompound  halite {
             /*lame_parameter*/                    field::missing(),
             /*poisson_ratio*/                     field::missing(),
 
-            /*compressive_fracture_strength*/     field::missing(),
+            /*compressive_fracture_strength*/     20.0 * si::megapascal, // Bauer (2019)
             /*tensile_fracture_strength*/         field::missing(),
             /*shear_fracture_strength*/           field::missing(),
-            /*compressive_yield_strength*/        field::missing(),
-            /*tensile_yield_strength*/            field::missing(),
+            /*compressive_yield_strength*/        15.0 * si::megapascal, // Bauer (2019)
+            /*tensile_yield_strength*/            1.65 * si::megapascal, // https://material-properties.org/strength-of-materials-tensile-yield/
             /*shear_yield_strength*/              field::missing(),
 
             /*chemical_susceptibility_estimate*/  field::missing()
@@ -3371,7 +3390,7 @@ PartlyKnownCompound carbon {
             /*tensile_fracture_strength*/         field::missing(),
             /*shear_fracture_strength*/           field::missing(),
             /*compressive_yield_strength*/        field::missing(),
-            /*tensile_yield_strength*/            field::missing(),
+            /*tensile_yield_strength*/            14.0 * si::megapascal, // https://material-properties.org/strength-of-materials-tensile-yield/
             /*shear_yield_strength*/              field::missing(),
 
             /*chemical_susceptibility_estimate*/  field::missing()
@@ -3621,7 +3640,7 @@ PartlyKnownCompound  quartz {
             /*tensile_fracture_strength*/         48.0 * si::megapascal, // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
             /*shear_fracture_strength*/           field::missing(),
             /*compressive_yield_strength*/        field::missing(),
-            /*tensile_yield_strength*/            field::missing(),
+            /*tensile_yield_strength*/            48.0 * si::megapascal, // https://material-properties.org/strength-of-materials-tensile-yield/
             /*shear_yield_strength*/              field::missing(),
 
             /*chemical_susceptibility_estimate*/  field::missing()
@@ -3834,7 +3853,11 @@ PartlyKnownCompound andesine {
         // .dynamic_viscosity = 3.0e11 * si::pascal * si::second, // Melosh (2011), from Hiesinger (2007), for andesite lava flow, middle value on log scale
         /*density*/                2180.0 * si::kilogram/si::meter3, // from Murase and McBirney (1973), for rhyolitic magma
         /*vapor_pressure*/         field::missing(),
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        
+            get_interpolated_temperature_function
+                (si::celcius, si::dyne/si::centimeter,
+                 std::vector<double>{ 1300.0, 1600.0 },
+                 std::vector<double>{  400.0,  300.0 }), // from Taniguchi (1988), for Anorthite
         /*refractive_index*/       field::missing()
     },
 
@@ -3913,7 +3936,11 @@ PartlyKnownCompound augite {
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                field::missing(),
         /*vapor_pressure*/         field::missing(),
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        
+            get_interpolated_temperature_function
+                (si::celcius, si::dyne/si::centimeter,
+                 std::vector<double>{ 1228.0, 1438.0 },
+                 std::vector<double>{  388.5,  364.4 }), // from Walker (1981), for Basalt
         /*refractive_index*/       field::missing()
     },
 
@@ -3995,7 +4022,11 @@ PartlyKnownCompound forsterite {
         // .dynamic_viscosity = exp(1.5) * si::poise, // Doremus (2002) for Olivine, at 1400 C
         /*density*/                field::missing(),
         /*vapor_pressure*/         field::missing(),
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        
+            get_interpolated_temperature_function
+                (si::celcius, si::dyne/si::centimeter,
+                 std::vector<double>{ 1246.0, 1450.0 },
+                 std::vector<double>{  380.0,  350.0 }), // from Walker (1981), for Limburgite
         /*refractive_index*/       field::missing()
     },
 
@@ -4316,7 +4347,10 @@ PartlyKnownCompound  gold {
                     (si::celcius, si::pascal,
                      std::vector<double>{1373.0,     2008.0,     2805.0}, 
                      std::vector<double>{1.0 ,       1e3,        100e3}),
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        
+                get_linear_liquid_surface_tension_temperature_function
+                    (si::kelvin, si::newton/si::meter, 
+                     1338.0, 1.162, -1.8e-4), // Egry(2010)
         /*refractive_index*/       field::missing()
     },
 
@@ -4364,7 +4398,7 @@ PartlyKnownCompound  gold {
             /*tensile_fracture_strength*/         field::missing(),
             /*shear_fracture_strength*/           field::missing(),
             /*compressive_yield_strength*/        field::missing(),
-            /*tensile_yield_strength*/            field::missing(),
+            /*tensile_yield_strength*/            300.0 * si::megapascal, // https://material-properties.org/strength-of-materials-tensile-yield/
             /*shear_yield_strength*/              field::missing(),
 
             /*chemical_susceptibility_estimate*/  field::missing()
@@ -4418,7 +4452,10 @@ PartlyKnownCompound  silver {
                     (si::celcius, si::pascal,
                      std::vector<double>{1010.0,     1509.0,     2160.0}, 
                      std::vector<double>{1.0 ,       1e3,        100e3}),
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        
+                get_linear_liquid_surface_tension_temperature_function
+                    (si::kelvin, si::newton/si::meter, 
+                     1234.0, 0.914, -1.5e-4), // Egry(2010)
         /*refractive_index*/       field::missing()
     },
 
@@ -4519,7 +4556,10 @@ PartlyKnownCompound  copper {
                     (si::celcius, si::pascal,
                      std::vector<double>{1236.0,     1816.0,     2563.0}, 
                      std::vector<double>{1.0 ,       1e3,        100e3}),
-        /*surface_tension*/        field::missing(),
+        /*surface_tension*/        
+                get_linear_liquid_surface_tension_temperature_function
+                    (si::kelvin, si::newton/si::meter, 
+                     1357.0, 1.339, -1.8e-4), // Egry(2010)
         /*refractive_index*/       field::missing()
     },
 
