@@ -53,8 +53,8 @@ TEST_CASE( "approx_reflectance_from_attenuation_coefficient_and_refractive_index
         );
     }
 }
-TEST_CASE( "solve_attenuation_coefficient_from_reflectance_and_refactive_index() / approx_reflectance_from_attenuation_coefficient_and_refractive_index()  left invertibility", "[compound]" ) {
-    SECTION("There exists a value that when applied as the first operand to a function returns the original value")
+TEST_CASE( "solve_attenuation_coefficient_from_reflectance_and_refactive_index() / approx_reflectance_from_attenuation_coefficient_and_refractive_index() invertibility", "[compound]" ) {
+    SECTION("There exists a function which undoes the operation of the other function")
     {
         const double attenuation_coefficient = 7.79e-9;
         const double refractive_index_of_material = 1.3325;

@@ -83,8 +83,8 @@ namespace compound{
             // Since reflectance is always positive for realistic values, 
             // the x-intercept is also guaranteed to occur before the desired reflectance is reached, 
             // which means we can set solutions not to fall below the x-intercept to prevent nonphysical solutions.
-            const double intercept = sqrt(-delta_n * delta_n / n1_lambda_over_4pi_squared);
-            // const double asymptote = sqrt(-sum_n * sum_n / n1_lambda_over_4pi_squared);
+            const double intercept = sqrt(delta_n * delta_n / n1_lambda_over_4pi_squared);
+            // const double asymptote = sqrt(sum_n * sum_n / n1_lambda_over_4pi_squared);
             double alpha = intercept;
             double error = 0.0;
             double dF_dalpha = 0.0;
@@ -94,8 +94,8 @@ namespace compound{
                 dF_dalpha = 
                     (approx_reflectance_from_attenuation_coefficient_and_refractive_index(alpha + dalpha, refractive_index_of_material, refractive_index_of_medium, wavelength) - 
                      approx_reflectance_from_attenuation_coefficient_and_refractive_index(alpha, refractive_index_of_material, refractive_index_of_medium, wavelength)) / dalpha;
-                error = reflectance - approx_reflectance_from_attenuation_coefficient_and_refractive_index(alpha, refractive_index_of_material, refractive_index_of_medium, wavelength);
-                alpha = std::max(alpha + error / dF_dalpha, intercept);
+                error = approx_reflectance_from_attenuation_coefficient_and_refractive_index(alpha, refractive_index_of_material, refractive_index_of_medium, wavelength) - reflectance;
+                alpha = std::max(alpha - error / dF_dalpha, 0.0);
             }
             return alpha;
         }
