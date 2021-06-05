@@ -78,12 +78,28 @@ namespace field {
         {
 
         }
-    	template<typename T2>
-        constexpr OptionalConstantField<T1>& operator=(const T2& other)
+        
+        constexpr OptionalSpectralField<T1>& operator=(const std::monostate other)
         {
-            entry = OptionalConstantFieldVariant<T1>(other);
+            entry = other;
             return *this;
         }
+        constexpr OptionalSpectralField<T1>& operator=(const T1 other)
+        {
+            entry = other;
+            return *this;
+        }
+        constexpr OptionalSpectralField<T1>& operator=(const StateSample<T1> other)
+        {
+            entry = other;
+            return *this;
+        }
+        constexpr OptionalSpectralField<T1>& operator=(const StateFunction<T1> other)
+        {
+            entry = other;
+            return *this;
+        }
+
         constexpr bool operator==(const OptionalConstantField<T1> other) const
         {
             return entry == other.entry;
@@ -100,6 +116,14 @@ namespace field {
         {
             return std::visit(OptionalConstantFieldValueVisitor(), entry);
         }
+        constexpr std::optional<T1> operator()(const si::pressure p, const si::temperature T) const
+        {
+            return std::visit(OptionalConstantFieldValueVisitor(), entry);
+        }
+        constexpr std::optional<T1> operator()(const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T) const
+        {
+            return std::visit(OptionalConstantFieldValueVisitor(), entry);
+        }
         /*
         Return `a` if available, otherwise return `b` as a substitute.
         */
@@ -110,17 +134,17 @@ namespace field {
         /*
         Return `a` if available, otherwise return `b` as a substitute.
         */
-        constexpr T1 value_or(T1 fallback) const 
+        constexpr T1 complete(T1 fallback) const 
         {
             return std::visit(OptionalConstantFieldCompletionVisitor(fallback), entry);
         }
         /*
         Return `this` if a value exists, otherwise return the result of function `f` applied to parameters `a` and `b`
         */
-        template<typename Tfield2>
+        template<typename Tfield2, typename Tparameters>
         constexpr OptionalConstantField<T1> value_or(
             const std::function<T1(const typename Tfield2::value_type)> f, 
-            const typename Tfield2::parameter_type defaults,
+            const Tparameters defaults,
             const Tfield2 a) const
         {
             if(entry.index() > 0) // no substitute needed
@@ -133,17 +157,17 @@ namespace field {
             }
             else // constant
             {
-                typename Tfield2::parameter_type parameters = a.parameters().value_or(defaults);
-                return f(a(parameters).value());
+                Tparameters parameters = a.parameters().complete(defaults);
+                return OptionalConstantField<T1>(f(a(parameters).value()));
             }
         }
         /*
         Return `this` if a value exists, otherwise return the result of function `f` applied to parameters `a` and `b`
         */
-        template<typename Tfield2, typename Tfield3>
+        template<typename Tfield2, typename Tfield3, typename Tparameters>
         constexpr OptionalConstantField<T1> value_or(
             const std::function<T1(const typename Tfield2::value_type, const typename Tfield3::value_type)> f, 
-            const typename Tfield2::parameter_type defaults,
+            const Tparameters defaults,
             const Tfield2 a, 
             const Tfield3 b) const
         {
@@ -157,17 +181,17 @@ namespace field {
             }
             else // constant
             {
-                typename Tfield2::parameter_type parameters = aggregate(a.parameters(), b.parameters()).value_or(defaults);
-                return f(a(parameters).value(), b(parameters).value());
+                Tparameters parameters = aggregate(a.parameters(), b.parameters()).complete(defaults);
+                return OptionalConstantField<T1>(f(a(parameters).value(), b(parameters).value()));
             }
         }
         /*
         Return `this` if a value exists, otherwise return the result of function `f` applied to parameters `a`, `b`, and `c`
         */
-        template<typename Tfield2, typename Tfield3, typename Tfield4>
+        template<typename Tfield2, typename Tfield3, typename Tfield4, typename Tparameters>
         constexpr OptionalConstantField<T1> value_or(
             const std::function<T1(const typename Tfield2::value_type, const typename Tfield3::value_type, const typename Tfield4::value_type)> f, 
-            const typename Tfield2::parameter_type defaults,
+            const Tparameters defaults,
             const Tfield2 a, 
             const Tfield3 b, 
             const Tfield4 c) const
@@ -182,10 +206,139 @@ namespace field {
             }
             else // constant
             {
-                typename Tfield2::parameter_type parameters = aggregate(a.parameters(), aggregate(b.parameters(), c.parameters())).value_or(defaults);
-                return f(a(parameters).value(), b(parameters).value(), c(parameters).value());
+                Tparameters parameters = aggregate(a.parameters(), aggregate(b.parameters(), c.parameters())).complete(defaults);
+                return OptionalConstantField<T1>(f(a(parameters).value(), b(parameters).value(), c(parameters).value()));
             }
         }
+        /*
+        Return `this` if a value exists, otherwise return the result of function `f` applied to parameters `a`, `b`, and `c`
+        */
+        template<typename Tfield2, typename Tfield3, typename Tfield4, typename Tfield5, typename Tparameters>
+        constexpr OptionalConstantField<T1> value_or(
+            const std::function<T1(const typename Tfield2::value_type, const typename Tfield3::value_type, const typename Tfield4::value_type, const typename Tfield5::value_type)> f, 
+            const Tparameters defaults,
+            const Tfield2 a, 
+            const Tfield3 b, 
+            const Tfield4 c, 
+            const Tfield4 d) const
+        {
+            if(entry.index() > 0) // no substitute needed
+            {
+                return *this;
+            }
+            else if(!a.has_value() || !b.has_value() || !c.has_value() || !d.has_value()) // any monostates
+            {
+                return std::monostate();
+            }
+            else // constant
+            {
+                Tparameters parameters = aggregate(a.parameters(), aggregate(b.parameters(), aggregate(c.parameters(), d.parameters()))).complete(defaults);
+                return OptionalConstantField<T1>(f(a(parameters).value(), b(parameters).value(), c(parameters).value(), d(parameters).value()));
+            }
+        }
+
+
+        /*
+        Return `this` if a value exists, otherwise return the result of function `f` applied to parameters `a` and `b`
+        */
+        template<typename Tfield2>
+        constexpr OptionalConstantField<T1> value_or(
+            const std::function<T1(const StateParameters, const typename Tfield2::value_type)> f, 
+            const StateParameters defaults,
+            const Tfield2 a) const
+        {
+            if(entry.index() > 0) // no substitute needed
+            {
+                return *this;
+            }
+            else if(!a.has_value()) // any monostates
+            {
+                return std::monostate();
+            }
+            else // constant
+            {
+                StateParameters parameters = a.parameters().complete(defaults);
+                return OptionalConstantField<T1>(f(parameters, a(parameters).value()));
+            }
+        }
+        /*
+        Return `this` if a value exists, otherwise return the result of function `f` applied to parameters `a` and `b`
+        */
+        template<typename Tfield2, typename Tfield3>
+        constexpr OptionalConstantField<T1> value_or(
+            const std::function<T1(const StateParameters, const typename Tfield2::value_type, const typename Tfield3::value_type)> f, 
+            const StateParameters defaults,
+            const Tfield2 a, 
+            const Tfield3 b) const
+        {
+            if(entry.index() > 0) // no substitute needed
+            {
+                return *this;
+            }
+            else if(!a.has_value() || !b.has_value()) // any monostates
+            {
+                return std::monostate();
+            }
+            else // constant
+            {
+                StateParameters parameters = aggregate(a.parameters(), b.parameters()).complete(defaults);
+                return OptionalConstantField<T1>(f(parameters, a(parameters).value(), b(parameters).value()));
+            }
+        }
+        /*
+        Return `this` if a value exists, otherwise return the result of function `f` applied to parameters `a`, `b`, and `c`
+        */
+        template<typename Tfield2, typename Tfield3, typename Tfield4>
+        constexpr OptionalConstantField<T1> value_or(
+            const std::function<T1(const StateParameters, const typename Tfield2::value_type, const typename Tfield3::value_type, const typename Tfield4::value_type)> f, 
+            const StateParameters defaults,
+            const Tfield2 a, 
+            const Tfield3 b, 
+            const Tfield4 c) const
+        {
+            if(entry.index() > 0) // no substitute needed
+            {
+                return *this;
+            }
+            else if(!a.has_value() || !b.has_value() || !c.has_value()) // any monostates
+            {
+                return std::monostate();
+            }
+            else // constant
+            {
+                StateParameters parameters = aggregate(a.parameters(), aggregate(b.parameters(), c.parameters())).complete(defaults);
+                return OptionalConstantField<T1>(f(parameters, a(parameters).value(), b(parameters).value(), c(parameters).value()));
+            }
+        }
+        /*
+        Return `this` if a value exists, otherwise return the result of function `f` applied to parameters `a`, `b`, and `c`
+        */
+        template<typename Tfield2, typename Tfield3, typename Tfield4, typename Tfield5>
+        constexpr OptionalConstantField<T1> value_or(
+            const std::function<T1(const StateParameters, const typename Tfield2::value_type, const typename Tfield3::value_type, const typename Tfield4::value_type, const typename Tfield5::value_type)> f, 
+            const StateParameters defaults,
+            const Tfield2 a, 
+            const Tfield3 b, 
+            const Tfield4 c, 
+            const Tfield4 d) const
+        {
+            if(entry.index() > 0) // no substitute needed
+            {
+                return *this;
+            }
+            else if(!a.has_value() || !b.has_value() || !c.has_value() || !d.has_value()) // any monostates
+            {
+                return std::monostate();
+            }
+            else // constant
+            {
+                StateParameters parameters = aggregate(a.parameters(), aggregate(b.parameters(), aggregate(c.parameters(), d.parameters()))).complete(defaults);
+                return OptionalConstantField<T1>(f(parameters, a(parameters).value(), b(parameters).value(), c(parameters).value(), d(parameters).value()));
+            }
+        }
+
+
+
         /*
         Return the index of the variant
         */
@@ -216,6 +369,6 @@ namespace field {
     template<typename T1>
     constexpr T1 complete(const OptionalConstantField<T1> a, const T1 b)
     {
-        return a.value_or(b);
+        return a.complete(b);
     }
 }}

@@ -103,7 +103,7 @@ namespace phase {
     /*
     Synonymous to `value_or()`, analogous with similar functions for CompletedSolid
     */
-    PartlyKnownSolid complete(const PartlyKnownSolid& known, const PartlyKnownSolid& fallback)
+    PartlyKnownSolid value_or(const PartlyKnownSolid& known, const PartlyKnownSolid& fallback)
     {
         return known.value_or(fallback);
     }

@@ -38,7 +38,7 @@ compound::phase::PartlyKnownGas dummy_gas {
     /*density*/                           4.0 * si::kilogram/si::meter3,
     /*refractive_index*/                  1.3
 };
-compound::phase::PartlyKnownGas perflouromethane{
+compound::phase::PartlyKnownGas perflouromethane_gas{
     /*specific_heat_capacity*/            std::monostate(),
     /*thermal_conductivity*/              16.0 * si::milliwatt/(si::meter*si::kelvin), // Huber & Harvey
     /*dynamic_viscosity*/                 std::monostate(),

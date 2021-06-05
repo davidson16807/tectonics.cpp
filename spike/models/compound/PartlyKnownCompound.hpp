@@ -125,8 +125,8 @@ namespace compound
 
         // PHASE TRANSITION PROPERTIES
         // derived by Klincewicz -> Ihmels -> Tee-Gotoh-Steward1 -> Tee-Gotoh-Steward2 -> Pitzer
-        field::OptionalConstantField<si::specific_energy>  latent_heat_of_vaporization;
-        field::OptionalConstantField<si::specific_energy>  latent_heat_of_fusion;
+        field::OptionalConstantField<si::specific_energy> latent_heat_of_vaporization;
+        field::OptionalConstantField<si::specific_energy> latent_heat_of_fusion;
         field::OptionalConstantField<si::pressure>        triple_point_pressure;
         field::OptionalConstantField<si::temperature>     triple_point_temperature;
         field::OptionalConstantField<si::pressure>        freezing_point_sample_pressure;
@@ -193,9 +193,9 @@ namespace compound
             acentric_factor                    (acentric_factor),
 
             critical_point_pressure            (critical_point_pressure
-                .value_or(property::estimate_critical_pressure_from_klincewicz(molar_mass, atoms_per_molecule))),
+                .complete(property::estimate_critical_pressure_from_klincewicz(molar_mass, atoms_per_molecule))),
             critical_point_volume              (critical_point_volume
-                .value_or(property::estimate_critical_molar_volume_from_klincewicz(molar_mass, atoms_per_molecule))),
+                .complete(property::estimate_critical_molar_volume_from_klincewicz(molar_mass, atoms_per_molecule))),
             critical_point_temperature         (0.0*si::kelvin), // guaranteed to populate within constructor
             critical_point_compressibility     (0.0), // guaranteed to populate within constructor
 
@@ -217,15 +217,15 @@ namespace compound
 
             // derived by Klincewicz -> Ihmels
             this->critical_point_temperature     = critical_point_temperature     
-                .value_or(property::estimate_critical_temperature_from_ihmels(this->critical_point_pressure, this->critical_point_volume));
+                .complete(property::estimate_critical_temperature_from_ihmels(this->critical_point_pressure, this->critical_point_volume));
 
             // derived by Klincewicz -> Ihmels, then by definition
             this->critical_point_compressibility = critical_point_compressibility 
-                .value_or(property::get_critical_compressibility(this->critical_point_pressure, this->critical_point_temperature, this->critical_point_volume));
+                .complete(property::get_critical_compressibility(this->critical_point_pressure, this->critical_point_temperature, this->critical_point_volume));
 
             // derived by Klincewicz -> Ihmels -> Tee-Gotoh-Steward1 
             this->molecular_diameter = molecular_diameter
-                .value_or(property::estimate_molecular_diameter_from_tee_gotoh_steward(this->critical_point_temperature, this->critical_point_pressure));
+                .complete(property::estimate_molecular_diameter_from_tee_gotoh_steward(this->critical_point_temperature, this->critical_point_pressure));
 
         }
 

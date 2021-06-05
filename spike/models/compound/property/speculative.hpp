@@ -5,6 +5,7 @@
 
 // in-house libraries
 #include <units/si.hpp>  // estimate_compressibility_factor
+#include <math/lerp.hpp> // lerp
 
 #include "compressibility.hpp"  // estimate_compressibility_factor
 
@@ -49,13 +50,13 @@ namespace compound{
         1 Pa*s. This is unfortunately the best we have to go on. We decide upon 1e17 as a conversion factor since it is
         consistent with estimates for both granite and halite.
         */
-        float guess_viscosity_as_liquid_from_viscosity_as_solid(const float viscosity_as_solid)
+        double guess_viscosity_as_liquid_from_viscosity_as_solid(const double viscosity_as_solid)
         {
-            return viscosity_as_solid / 1e17f;
+            return viscosity_as_solid / 1e17;
         }
-        float guess_viscosity_as_solid_from_viscosity_as_liquid(const float viscosity_as_liquid)
+        double guess_viscosity_as_solid_from_viscosity_as_liquid(const double viscosity_as_liquid)
         {
-            return viscosity_as_liquid * 1e17f;
+            return viscosity_as_liquid * 1e17;
         }
 
         /*
@@ -79,16 +80,32 @@ namespace compound{
         namespace 
         {
             const float liquid_solid_density_slope = 84.587f;
-            const float liquid_solid_density_intercept = 1.112f;
-            constexpr float kilogram_per_meter3 = si::kilogram/si::meter3; 
+            const si::density liquid_solid_density_intercept = 1.112 * si::kilogram/si::meter3;
+            constexpr si::density kilogram_per_meter3 = si::kilogram/si::meter3; 
         }
-        float guess_density_as_solid_from_density_as_liquid(const float density_as_liquid)
+
+        si::density guess_density_as_solid_from_density_as_liquid(const si::density density_as_liquid)
         {
-            return (liquid_solid_density_slope * (density_as_liquid / kilogram_per_meter3) + liquid_solid_density_intercept) * kilogram_per_meter3;
+            return liquid_solid_density_slope * density_as_liquid + liquid_solid_density_intercept;
         }
-        float guess_density_as_liquid_as_density_as_solid(const float density_as_solid)
+
+        si::density guess_density_as_liquid_from_density_as_solid(const si::density density_as_solid)
         {
-            return (((density_as_solid / kilogram_per_meter3) - liquid_solid_density_intercept) / liquid_solid_density_slope) * kilogram_per_meter3;
+            return (density_as_solid - liquid_solid_density_intercept) / liquid_solid_density_slope;
+        }
+
+        /*
+        This is a handwave I wrote while noticing some patterns in known values.
+        Acentric factor is a reflection of how asymmetric the molecule is, 
+        and asymmetry along an axis increases the degrees of freedom for a molecule,
+        so it makes sense there should be a relation between the two properties.
+        */
+        double guess_molecular_degrees_of_freedom(const double acentric_factor, const double atoms_per_molecule)
+        {
+            return
+              atoms_per_molecule == 1u? 3.0
+            : atoms_per_molecule == 2u? 5.0
+            : math::mix(5.0, 6.8, math::linearstep(0.2, 0.345, acentric_factor));
         }
     }
 }

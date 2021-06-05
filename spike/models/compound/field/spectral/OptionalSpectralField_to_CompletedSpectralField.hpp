@@ -12,6 +12,6 @@ namespace field {
     template<typename T1>
     constexpr CompletedSpectralField<T1> complete(const OptionalSpectralField<T1> a, const CompletedSpectralField<T1> b)
     {
-        return a.value_or(b.value());
+        return a.complete(b.value());
     }
 }}

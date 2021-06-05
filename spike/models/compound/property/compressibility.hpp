@@ -142,32 +142,42 @@ namespace compound{
             float reduced_pressure = (pressure/critical_pressure);
             float reduced_temperature = (temperature/critical_temperature);
 
-            const auto Zc = std::array<float,3>{ 0.244f, 0.278f, 0.316f };
+            const auto Zc = std::array<float,3>{ 0.244, 0.278, 0.316 };
             auto Z = std::array<float,3>{
                 estimate_compressibility_factor(
                     reduced_pressure, reduced_temperature,
-                    0.139f, -0.103f,       // intercept and slope for the linear contribution of inverse reduced temperature to the high pressure estimate of compressibility
-                    5.0f, 0.95f, 0.6f,     // scale height, max, and midpoint for the sigmoid contribution of inverse reduced temperature to the high pressure estimate of compressibility
-                    0.103f, 0.92f,         // slope and exponent for the contribution of the pressure/reduced temperature ratio to the high pressure estimate of compressibility
-                    8.0f, 1.0f, 0.8f       // scale height, max, and midpoint for the sigmoid that describes the value of Z at which we start interpolation between the estimates for high and low pressure
+                    0.139, -0.103,      // intercept and slope for the linear contribution of inverse reduced temperature to the high pressure estimate of compressibility
+                    5.0, 0.95, 0.6,     // scale height, max, and midpoint for the sigmoid contribution of inverse reduced temperature to the high pressure estimate of compressibility
+                    0.103, 0.92,        // slope and exponent for the contribution of the pressure/reduced temperature ratio to the high pressure estimate of compressibility
+                    8.0, 1.0, 0.8       // scale height, max, and midpoint for the sigmoid that describes the value of Z at which we start interpolation between the estimates for high and low pressure
                 ),
                 estimate_compressibility_factor(
                     reduced_pressure, reduced_temperature,
-                    0.153f, -0.143f,       // intercept and slope for the linear contribution of inverse reduced temperature to the high pressure estimate of compressibility
-                    8.988f, 0.672f, 0.773f,// scale height, max, and midpoint for the sigmoid contribution of inverse reduced temperature to the high pressure estimate of compressibility
-                    0.145f, 0.9f,          // slope and exponent for the contribution of the pressure/reduced temperature ratio to the high pressure estimate of compressibility
-                    8.38f, 0.833f, 1.11f   // scale height, max, and midpoint for the sigmoid that describes the value of Z at which we start interpolation between the estimates for high and low pressure
+                    0.153, -0.143,      // intercept and slope for the linear contribution of inverse reduced temperature to the high pressure estimate of compressibility
+                    8.988, 0.672, 0.773,// scale height, max, and midpoint for the sigmoid contribution of inverse reduced temperature to the high pressure estimate of compressibility
+                    0.145, 0.9,         // slope and exponent for the contribution of the pressure/reduced temperature ratio to the high pressure estimate of compressibility
+                    8.38, 0.833, 1.11   // scale height, max, and midpoint for the sigmoid that describes the value of Z at which we start interpolation between the estimates for high and low pressure
                 ),
                 estimate_compressibility_factor(
                     reduced_pressure, reduced_temperature,
-                    1.229f, -0.967f,       // intercept and slope for the linear contribution of inverse reduced temperature to the high pressure estimate of compressibility
-                    -4.89f, -0.209f, 1.087f,// scale height, max, and midpoint for the sigmoid contribution of inverse reduced temperature to the high pressure estimate of compressibility
-                    0.07f, 1.129f,         // slope and exponent for the contribution of the pressure/reduced temperature ratio to the high pressure estimate of compressibility
-                    5.387f, 1.248f, 0.772f // scale height, max, and midpoint for the sigmoid that describes the value of Z at which we start interpolation between the estimates for high and low pressure
+                    1.229, -0.967,      // intercept and slope for the linear contribution of inverse reduced temperature to the high pressure estimate of compressibility
+                    -4.89, -0.209, 1.087,// scale height, max, and midpoint for the sigmoid contribution of inverse reduced temperature to the high pressure estimate of compressibility
+                    0.07, 1.129,        // slope and exponent for the contribution of the pressure/reduced temperature ratio to the high pressure estimate of compressibility
+                    5.387, 1.248, 0.772 // scale height, max, and midpoint for the sigmoid that describes the value of Z at which we start interpolation between the estimates for high and low pressure
                 )
             };
 
             return math::lerp(Zc, Z, critical_compressibility);
+        }
+
+        constexpr double get_compressibility_from_molar_volume(const si::pressure pressure, const si::temperature temperature, const si::molar_volume molar_volume)
+        {
+            return molar_volume * pressure / (si::universal_gas_constant * temperature);
+        }
+
+        constexpr si::molar_volume get_molar_volume_from_compressibility(const si::pressure pressure, const si::temperature temperature, const double compressibility)
+        {
+            return (compressibility * si::universal_gas_constant * temperature) / pressure;
         }
     }
 }

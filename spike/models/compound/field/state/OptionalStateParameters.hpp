@@ -83,9 +83,111 @@ namespace field {
         /*
         Return `a` if available, otherwise return `b` as a substitute.
         */
-        constexpr StateParameters value_or(const StateParameters fallback) const 
+        constexpr StateParameters complete(const StateParameters fallback) const 
         {
             return std::visit(OptionalStateParametersCompletionVisitor(fallback), entry);
+        }
+        /*
+        Return `this` if a value exists, otherwise return the result of function `f` applied to parameters `a`, `b`, and `c`
+        */
+        template<typename Tfield2, typename Tfield3, typename Tfield4>
+        constexpr OptionalStateParameters value_or(
+            const std::function<OptionalStateParameters(const typename Tfield2::value_type)> f, 
+            const Tfield2 a) const
+        {
+            if(entry.index() > 0) // no substitute needed
+            {
+                return *this;
+            }
+            else if(!a.has_value()) // any monostates
+            {
+                return std::monostate();
+            }
+            else // constant
+            {
+                return f(a(a.parameters()).value());
+            }
+        }
+        /*
+        Return `this` if a value exists, otherwise return the result of function `f` applied to parameters `a`, `b`, and `c`
+        */
+        template<typename Tfield2, typename Tfield3, typename Tfield4>
+        constexpr OptionalStateParameters value_or(
+            const std::function<OptionalStateParameters(const typename Tfield2::value_type, const typename Tfield3::value_type)> f, 
+            const Tfield2 a, 
+            const Tfield3 b) const
+        {
+            if(entry.index() > 0) // no substitute needed
+            {
+                return *this;
+            }
+            else if(!a.has_value() || !b.has_value()) // any monostates
+            {
+                return std::monostate();
+            }
+            else // constant
+            {
+                return f(
+                    a(a.parameters()).value(),
+                    b(b.parameters()).value()
+                );
+            }
+        }
+        /*
+        Return `this` if a value exists, otherwise return the result of function `f` applied to parameters `a`, `b`, and `c`
+        */
+        template<typename Tfield2, typename Tfield3, typename Tfield4>
+        constexpr OptionalStateParameters value_or(
+            const std::function<OptionalStateParameters(const typename Tfield2::value_type, const typename Tfield3::value_type, const typename Tfield4::value_type)> f, 
+            const Tfield2 a, 
+            const Tfield3 b, 
+            const Tfield4 c) const
+        {
+            if(entry.index() > 0) // no substitute needed
+            {
+                return *this;
+            }
+            else if(!a.has_value() || !b.has_value() || !c.has_value()) // any monostates
+            {
+                return std::monostate();
+            }
+            else // constant
+            {
+                return f(
+                    a(a.parameters()).value(),
+                    b(b.parameters()).value(),
+                    c(c.parameters()).value()
+                );
+            }
+        }
+        /*
+        Return `this` if a value exists, otherwise return the result of function `f` applied to parameters `a`, `b`, and `c`
+        */
+        template<typename Tfield2, typename Tfield3, typename Tfield4, typename Tfield5>
+        constexpr OptionalStateParameters value_or(
+            const std::function<OptionalStateParameters(const typename Tfield2::value_type, const typename Tfield3::value_type, const typename Tfield4::value_type, const typename Tfield5::value_type)> f, 
+            const Tfield2 a, 
+            const Tfield3 b, 
+            const Tfield4 c, 
+            const Tfield5 d) const
+        {
+            if(entry.index() > 0) // no substitute needed
+            {
+                return *this;
+            }
+            else if(!a.has_value() || !b.has_value() || !c.has_value() || !d.has_value()) // any monostates
+            {
+                return std::monostate();
+            }
+            else // constant
+            {
+                return f(
+                    a(a.parameters()).value(),
+                    b(b.parameters()).value(),
+                    c(c.parameters()).value(),
+                    d(d.parameters()).value()
+                );
+            }
         }
         /*
         Return the index of the variant
@@ -110,7 +212,7 @@ namespace field {
     */
     constexpr StateParameters complete(const OptionalStateParameters a, const StateParameters b)
     {
-        return a.value_or(b);
+        return a.complete(b);
     }
 
     constexpr OptionalStateParameters aggregate(const OptionalStateParameters a, const OptionalStateParameters b)

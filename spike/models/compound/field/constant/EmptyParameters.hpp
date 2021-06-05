@@ -32,6 +32,13 @@ namespace field {
             return fallback;
         }
         /*
+        Return `a` if available, otherwise return `b` as a substitute.
+        */
+        constexpr EmptyParameters complete(const EmptyParameters fallback) const 
+        {
+            return fallback;
+        }
+        /*
         Return whether a entry exists within the field
         */
         constexpr bool has_value() const

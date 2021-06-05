@@ -59,7 +59,7 @@ namespace phase {
     /*
     Synonymous to `value_or()`, analogous with similar functions for CompletedLiquid
     */
-    PartlyKnownLiquid complete(const PartlyKnownLiquid& known, const PartlyKnownLiquid& fallback)
+    PartlyKnownLiquid value_or(const PartlyKnownLiquid& known, const PartlyKnownLiquid& fallback)
     {
         return known.value_or(fallback);
     }

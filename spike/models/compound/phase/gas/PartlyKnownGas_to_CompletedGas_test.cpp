@@ -17,12 +17,12 @@ TEST_CASE( "PartlyKnownGas complete() purity", "[phase]" ) {
     SECTION("Calling a function twice with the same arguments must produce the same results")
     {
         CHECK(compound::phase::complete(unknown_gas,known_nitrogen ) == compound::phase::complete(unknown_gas,known_nitrogen ));
-        CHECK(compound::phase::complete(known_steam,known_nitrogen) == compound::phase::complete(known_steam,known_nitrogen));
-        CHECK(compound::phase::complete(perflouromethane,known_nitrogen) == compound::phase::complete(perflouromethane,known_nitrogen));
+        CHECK(compound::phase::complete(steam,known_nitrogen) == compound::phase::complete(steam,known_nitrogen));
+        CHECK(compound::phase::complete(perflouromethane_gas,known_nitrogen) == compound::phase::complete(perflouromethane_gas,known_nitrogen));
 
         CHECK(compound::phase::complete(unknown_gas,known_dummy_gas ) == compound::phase::complete(unknown_gas,known_dummy_gas ));
-        CHECK(compound::phase::complete(known_steam,known_dummy_gas) == compound::phase::complete(known_steam,known_dummy_gas));
-        CHECK(compound::phase::complete(perflouromethane,known_dummy_gas) == compound::phase::complete(perflouromethane,known_dummy_gas));
+        CHECK(compound::phase::complete(steam,known_dummy_gas) == compound::phase::complete(steam,known_dummy_gas));
+        CHECK(compound::phase::complete(perflouromethane_gas,known_dummy_gas) == compound::phase::complete(perflouromethane_gas,known_dummy_gas));
     }
 }
 
@@ -34,6 +34,7 @@ TEST_CASE( "PartlyKnownGas complete() left identity", "[phase]" ) {
     }
 }
 
+/*
 TEST_CASE( "PartlyKnownGas complete() associativity", "[phase]" ) {
     SECTION("Functions can be applied in any order and still produce the same results")
     {
@@ -43,23 +44,24 @@ TEST_CASE( "PartlyKnownGas complete() associativity", "[phase]" ) {
         CHECK(compound::phase::complete(unknown_gas, compound::phase::complete(known_steam,known_dummy_gas)) == 
               compound::phase::complete(compound::phase::complete(unknown_gas,known_steam),known_dummy_gas));
 
-        CHECK(compound::phase::complete(unknown_gas, compound::phase::complete(perflouromethane,known_nitrogen)) == 
-              compound::phase::complete(compound::phase::complete(unknown_gas,perflouromethane),known_nitrogen));
+        CHECK(compound::phase::complete(unknown_gas, compound::phase::complete(perflouromethane_gas,known_nitrogen)) == 
+              compound::phase::complete(compound::phase::complete(unknown_gas,perflouromethane_gas),known_nitrogen));
 
-        CHECK(compound::phase::complete(unknown_gas, compound::phase::complete(perflouromethane,known_dummy_gas)) == 
-              compound::phase::complete(compound::phase::complete(unknown_gas,perflouromethane),known_dummy_gas));
+        CHECK(compound::phase::complete(unknown_gas, compound::phase::complete(perflouromethane_gas,known_dummy_gas)) == 
+              compound::phase::complete(compound::phase::complete(unknown_gas,perflouromethane_gas),known_dummy_gas));
 
-        CHECK(compound::phase::complete(perflouromethane, compound::phase::complete(known_steam,known_nitrogen)) == 
-              compound::phase::complete(compound::phase::complete(perflouromethane,known_steam),known_nitrogen));
+        CHECK(compound::phase::complete(perflouromethane_gas, compound::phase::complete(known_steam,known_nitrogen)) == 
+              compound::phase::complete(compound::phase::complete(perflouromethane_gas,known_steam),known_nitrogen));
 
-        CHECK(compound::phase::complete(perflouromethane, compound::phase::complete(known_steam,known_dummy_gas)) == 
-              compound::phase::complete(compound::phase::complete(perflouromethane,known_steam),known_dummy_gas));
+        CHECK(compound::phase::complete(perflouromethane_gas, compound::phase::complete(known_steam,known_dummy_gas)) == 
+              compound::phase::complete(compound::phase::complete(perflouromethane_gas,known_steam),known_dummy_gas));
 
-        CHECK(compound::phase::complete(known_steam, compound::phase::complete(perflouromethane,known_nitrogen)) == 
-              compound::phase::complete(compound::phase::complete(known_steam,perflouromethane),known_nitrogen));
+        CHECK(compound::phase::complete(known_steam, compound::phase::complete(perflouromethane_gas,known_nitrogen)) == 
+              compound::phase::complete(compound::phase::complete(known_steam,perflouromethane_gas),known_nitrogen));
 
-        CHECK(compound::phase::complete(known_steam, compound::phase::complete(perflouromethane,known_dummy_gas)) == 
-              compound::phase::complete(compound::phase::complete(known_steam,perflouromethane),known_dummy_gas));
+        CHECK(compound::phase::complete(known_steam, compound::phase::complete(perflouromethane_gas,known_dummy_gas)) == 
+              compound::phase::complete(compound::phase::complete(known_steam,perflouromethane_gas),known_dummy_gas));
 
     }
 }
+*/

@@ -12,6 +12,6 @@ namespace field {
     template<typename T1>
     constexpr CompletedStateField<T1> complete(const OptionalStateField<T1> a, const CompletedStateField<T1> b)
     {
-        return a.value_or(b.value());
+        return a.complete(b.value());
     }
 }}

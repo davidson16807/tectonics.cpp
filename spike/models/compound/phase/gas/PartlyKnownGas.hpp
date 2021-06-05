@@ -48,12 +48,11 @@ namespace phase {
             return guess;
         }
 
-
     };
     /*
     Synonymous to `value_or()`, analogous with similar functions for CompletedGas
     */
-    PartlyKnownGas complete(const PartlyKnownGas& known, const PartlyKnownGas& fallback)
+    PartlyKnownGas value_or(const PartlyKnownGas& known, const PartlyKnownGas& fallback)
     {
         return known.value_or(fallback);
     }

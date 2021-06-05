@@ -8,6 +8,7 @@
 #include "./phase/solid/PartlyKnownSolid_to_CompletedSolid_test.cpp"
 #include "./property/color_test.cpp"
 #include "./property/published_test.hpp"
+#include "./PartlyKnownCompound_operators_test.hpp"
 #include "./field/spectral/OptionalSpectralField_to_CompletedSpectralField_test.hpp"
 #include "./field/spectral/CompletedSpectralField_test.hpp"
 #include "./field/spectral/OptionalSpectralField_test.hpp"

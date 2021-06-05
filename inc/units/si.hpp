@@ -395,6 +395,7 @@ namespace si{
 	template <typename T> using volumetric_flow_type           = units< 3, 0,-1, 0, 0, 0, 0, T>;
 	template <typename T> using area_density_type              = units<-2, 1, 0, 0, 0, 0, 0, T>;
 	template <typename T> using density_type                   = units<-3, 1, 0, 0, 0, 0, 0, T>;
+	template <typename T> using number_density_type            = units<-3, 0, 0, 0, 0, 0, 0, T>;
 	template <typename T> using frequency_type                 = units< 0, 0,-1, 0, 0, 0, 0, T>;
 	template <typename T> using speed_type                     = units< 1, 0,-1, 0, 0, 0, 0, T>;
 	template <typename T> using acceleration_type              = units< 1, 0,-2, 0, 0, 0, 0, T>;
@@ -448,6 +449,7 @@ namespace si{
 	typedef units< 3, 0,-1, 0, 0, 0, 0> volumetric_flow              ;
 	typedef units<-2, 1, 0, 0, 0, 0, 0> area_density                 ;
 	typedef units<-3, 1, 0, 0, 0, 0, 0> density                      ;
+	typedef units<-3, 0, 0, 0, 0, 0, 0> number_density               ;
 	typedef units< 0, 0,-1, 0, 0, 0, 0> frequency                    ;
 	typedef units< 1, 0,-1, 0, 0, 0, 0> speed                        ;
 	typedef units< 1, 0,-2, 0, 0, 0, 0> acceleration                 ;

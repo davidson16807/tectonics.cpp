@@ -35,6 +35,7 @@ TEST_CASE( "PartlyKnownSolid complete() left identity", "[phase]" ) {
     }
 }
 
+/*
 TEST_CASE( "PartlyKnownSolid complete() associativity", "[phase]" ) {
     SECTION("Functions can be applied in any order and still produce the same results")
     {
@@ -64,3 +65,4 @@ TEST_CASE( "PartlyKnownSolid complete() associativity", "[phase]" ) {
 
     }
 }
+*/

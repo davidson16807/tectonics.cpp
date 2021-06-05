@@ -30,8 +30,8 @@ TEST_CASE( "PartlyKnownCompound value_or() left identity", "[compound]" ) {
 TEST_CASE( "PartlyKnownCompound value_or() right identity", "[compound]" ) {
     SECTION("There exists a value that when applied as the second operand to a function returns the original value")
     {
-        CHECK(compound::water.value_or(unknown_hydrogen) == compound::water);
-        CHECK(compound::nitrogen.value_or(unknown_hydrogen) == compound::nitrogen);
+        CHECK(compound::water.value_or(compound::unknown_hydrogen) == compound::water);
+        CHECK(compound::nitrogen.value_or(compound::unknown_hydrogen) == compound::nitrogen);
     }
 }
 TEST_CASE( "PartlyKnownCompound value_or() associativity", "[compound]" ) {

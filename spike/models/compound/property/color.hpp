@@ -24,14 +24,6 @@ namespace compound{
             // {
             //     return density / particle_mass;
             // }
-            // double get_attenuation_coefficient_from_cross_section(const double attenuation_cross_section, const double number_density)
-            // {
-            //     return attenuation_cross_section * number_density;
-            // }
-            // double get_cross_section_from_attenuation_coefficient(const double attenuation_coefficient, const double number_density)
-            // {
-            //     return attenuation_coefficient / number_density;
-            // }
             // double get_transmittance(const double attenuation_coefficient, const double path_length)
             // {
             //     return exp(-attenuation_coefficient*path_length);
@@ -46,7 +38,17 @@ namespace compound{
             // }
             const double pi = 3.141592653589;
         }
-        
+
+        double get_attenuation_coefficient_from_cross_section(const double attenuation_cross_section, const double number_density)
+        {
+            return attenuation_cross_section * number_density;
+        }
+
+        double get_cross_section_from_attenuation_coefficient(const double attenuation_coefficient, const double number_density)
+        {
+            return attenuation_coefficient / number_density;
+        }
+
         // the following is a first order approximation from Vincent and Hunt (1968), copied from Eastes (1989)
         double approx_reflectance_from_attenuation_coefficient_and_refractive_index(
             const double attenuation_coefficient, 

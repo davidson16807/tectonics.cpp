@@ -83,10 +83,115 @@ namespace field {
         /*
         Return `a` if available, otherwise return `b` as a substitute.
         */
-        constexpr SpectralParameters value_or(const SpectralParameters fallback) const 
+        constexpr SpectralParameters complete(const SpectralParameters fallback) const 
         {
             return std::visit(OptionalSpectralParametersCompletionVisitor(fallback), entry);
         }
+
+
+        /*
+        Return `this` if a value exists, otherwise return the result of function `f` applied to parameters `a`, `b`, and `c`
+        */
+        template<typename Tfield2, typename Tfield3, typename Tfield4>
+        constexpr OptionalSpectralParameters value_or(
+            const std::function<OptionalSpectralParameters(const typename Tfield2::value_type)> f, 
+            const Tfield2 a) const
+        {
+            if(entry.index() > 0) // no substitute needed
+            {
+                return *this;
+            }
+            else if(!a.has_value()) // any monostates
+            {
+                return std::monostate();
+            }
+            else // constant
+            {
+                return f(a(a.parameters()).value());
+            }
+        }
+        /*
+        Return `this` if a value exists, otherwise return the result of function `f` applied to parameters `a`, `b`, and `c`
+        */
+        template<typename Tfield2, typename Tfield3, typename Tfield4>
+        constexpr OptionalSpectralParameters value_or(
+            const std::function<OptionalSpectralParameters(const typename Tfield2::value_type, const typename Tfield3::value_type)> f, 
+            const Tfield2 a, 
+            const Tfield3 b) const
+        {
+            if(entry.index() > 0) // no substitute needed
+            {
+                return *this;
+            }
+            else if(!a.has_value() || !b.has_value()) // any monostates
+            {
+                return std::monostate();
+            }
+            else // constant
+            {
+                return f(
+                    a(a.parameters()).value(),
+                    b(b.parameters()).value()
+                );
+            }
+        }
+        /*
+        Return `this` if a value exists, otherwise return the result of function `f` applied to parameters `a`, `b`, and `c`
+        */
+        template<typename Tfield2, typename Tfield3, typename Tfield4>
+        constexpr OptionalSpectralParameters value_or(
+            const std::function<OptionalSpectralParameters(const typename Tfield2::value_type, const typename Tfield3::value_type, const typename Tfield4::value_type)> f, 
+            const Tfield2 a, 
+            const Tfield3 b, 
+            const Tfield4 c) const
+        {
+            if(entry.index() > 0) // no substitute needed
+            {
+                return *this;
+            }
+            else if(!a.has_value() || !b.has_value() || !c.has_value()) // any monostates
+            {
+                return std::monostate();
+            }
+            else // constant
+            {
+                return f(
+                    a(a.parameters()).value(),
+                    b(b.parameters()).value(),
+                    c(c.parameters()).value()
+                );
+            }
+        }
+        /*
+        Return `this` if a value exists, otherwise return the result of function `f` applied to parameters `a`, `b`, and `c`
+        */
+        template<typename Tfield2, typename Tfield3, typename Tfield4, typename Tfield5>
+        constexpr OptionalSpectralParameters value_or(
+            const std::function<OptionalSpectralParameters(const typename Tfield2::value_type, const typename Tfield3::value_type, const typename Tfield4::value_type, const typename Tfield5::value_type)> f, 
+            const Tfield2 a, 
+            const Tfield3 b, 
+            const Tfield4 c, 
+            const Tfield5 d) const
+        {
+            if(entry.index() > 0) // no substitute needed
+            {
+                return *this;
+            }
+            else if(!a.has_value() || !b.has_value() || !c.has_value() || !d.has_value()) // any monostates
+            {
+                return std::monostate();
+            }
+            else // constant
+            {
+                return f(
+                    a(a.parameters()).value(),
+                    b(b.parameters()).value(),
+                    c(c.parameters()).value(),
+                    d(d.parameters()).value()
+                );
+            }
+        }
+
         /*
         Return the index of the variant
         */
@@ -110,7 +215,7 @@ namespace field {
     */
     constexpr SpectralParameters complete(const OptionalSpectralParameters a, const SpectralParameters b)
     {
-        return a.value_or(b);
+        return a.complete(b);
     }
 
     constexpr OptionalSpectralParameters aggregate(const OptionalSpectralParameters a, const OptionalSpectralParameters b)
