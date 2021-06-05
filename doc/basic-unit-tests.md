@@ -6,14 +6,17 @@ then a unit test must be written to demonstrate the function has that property f
 determinism
 nondeterminism
 purity
+conceptual purity
 regularity
-idempotence
 closure
 identity
 associativity
 invertibility
 commutativity
 distributivity
+idempotence
+involutivity
+congruence
 increasing
 decreasing
 adjoint
@@ -21,8 +24,12 @@ degeneracy
 theorems for free
 miscellaneous equivalence relations
 
+transitivity
+reflexivity
+symmetry
+
 precision requirements
-memory footprint requirements
+memory footprint size requirements
 
 translational invariance
 rotational invariance
