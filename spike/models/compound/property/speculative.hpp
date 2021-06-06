@@ -47,14 +47,20 @@ namespace compound{
 
         Halite is another mineral that is known to behave as a viscous fluid.
         We have estimates of its viscosity anywhere from 1e17-1e21 Pa*s, and its molten form has a viscosity of 
-        1 Pa*s. This is unfortunately the best we have to go on. We decide upon 1e17 as a conversion factor since it is
-        consistent with estimates for both granite and halite.
+        1 Pa*s. 
+
+        Lastly, water ice has a viscosity of 1e13 Pa*s, 
+        and liquid water has a viscosity of 1e-3 to 1e-4 Pa*s, depending on temperature. 
+
+        We decide upon 1e17 as a conversion factor since it is consistent with estimates for granite, halite, and water.
+        This is unfortunately the best we have to go on, but it's at least consistent with several compounds
+        with wildly different temperature responses.
         */
-        double guess_viscosity_as_liquid_from_viscosity_as_solid(const double viscosity_as_solid)
+        si::dynamic_viscosity guess_viscosity_as_liquid_from_viscosity_as_solid(const si::dynamic_viscosity viscosity_as_solid)
         {
             return viscosity_as_solid / 1e17;
         }
-        double guess_viscosity_as_solid_from_viscosity_as_liquid(const double viscosity_as_liquid)
+        si::dynamic_viscosity guess_viscosity_as_solid_from_viscosity_as_liquid(const si::dynamic_viscosity viscosity_as_liquid)
         {
             return viscosity_as_liquid * 1e17;
         }

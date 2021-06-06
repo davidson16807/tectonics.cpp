@@ -147,10 +147,10 @@ namespace compound
             optional_gas_sample     = optional_gas_sample.complete(sample);
         }
 
-        // field::StateParameters solid_sample   = optional_solid_sample.complete(standard_sample);
+        field::StateParameters solid_sample   = optional_solid_sample.complete(standard_sample);
         // field::StateParameters melting_sample = optional_melting_sample.complete(standard_sample);
         field::StateParameters liquid_sample  = optional_liquid_sample.complete(critical_point_sample);
-        // field::StateParameters boiling_sample = optional_boiling_sample.complete(critical_point_sample);
+        field::StateParameters boiling_sample = optional_boiling_sample.complete(critical_point_sample);
         // field::StateParameters gas_sample     = optional_gas_sample.complete(critical_point_sample);
 
         // CALCULATE DENSITY
@@ -189,87 +189,85 @@ namespace compound
         if (guess.solids.size() > 0)
         {
             guess.triple_point_temperature = guess.triple_point_temperature.value_or(
-                [](field::StateParameters parameters, si::density density_as_liquid){ 
-                    return si::standard_temperature; // property::estimate_triple_point_temperature_from_goodman(M / density_as_liquid, M / density_as_solid, parameters.temperature);
+                [M](field::StateParameters parameters, si::density density_as_liquid, si::density density_as_solid){ 
+                    return property::estimate_triple_point_temperature_from_goodman(M / density_as_liquid, M / density_as_solid, parameters.temperature);
                 },
                 liquid_sample,
-                guess.liquid.density
+                guess.liquid.density,
+                guess.solids[0].density
             );
         }
 
-        return guess;
-/*
-
         // CALCULATE POSSIBLE ROUTES TO ACENTRIC FACTOR
-        guess.solids[i].vapor_pressure = guess.solids[i].vapor_pressure.value_or( 
-            [M](field::StateParameters parameters, 
-               si::specific_energy latent_heat_of_vaporization, si::specific_energy latent_heat_of_fusion, 
-               si::pressure triple_point_pressure, si::temperature triple_point_temperature){
-                return property::estimate_vapor_pressure_as_solid_from_clapeyron(
-                    M, 
-                    latent_heat_of_vaporization + latent_heat_of_fusion,
-                    parameters.temperature, triple_point_temperature,
-                    triple_point_pressure
-                );
-            },
-            solid_sample,
-            guess.latent_heat_of_vaporization,
-            guess.latent_heat_of_fusion,
-            guess.triple_point_temperature,
-            guess.triple_point_pressure
-        );
+        for (std::size_t i = 0; i < guess.solids.size(); i++)
+        {
+            guess.solids[i].vapor_pressure = guess.solids[i].vapor_pressure.value_or( 
+                [M](field::StateParameters parameters, 
+                   si::specific_energy latent_heat_of_vaporization, si::specific_energy latent_heat_of_fusion, 
+                   si::pressure triple_point_pressure, si::temperature triple_point_temperature){
+                    return property::estimate_vapor_pressure_as_solid_from_clapeyron(
+                        latent_heat_of_vaporization + latent_heat_of_fusion,
+                        M, 
+                        parameters.temperature, triple_point_temperature,
+                        triple_point_pressure
+                    );
+                },
+                solid_sample,
+                guess.latent_heat_of_vaporization,
+                guess.latent_heat_of_fusion,
+                guess.triple_point_pressure,
+                guess.triple_point_temperature
+            );
+        }
 
-        guess.latent_heat_of_vaporization = guess.latent_heat_of_vaporization.value_or(
-            [M](field::StateParameters parameters
-                si::pressure vapor_pressure, 
-                si::temperature triple_point_temperature, 
-                si::pressure triple_point_pressure, 
-                si::specific_energy latent_heat_of_fusion){
-                return property::estimate_latent_heat_of_sublimation_from_clapeyron(
-                    vapor_pressure,
-                    M, 
-                    parameters.temperature, 
-                    triple_point_temperature, 
-                    triple_point_pressure
-                ) - latent_heat_of_fusion;
-            },
-            solid_sample,
-            guess.solids[i].vapor_pressure,
-            guess.triple_point_temperature, 
-            guess.triple_point_pressure,
-            guess.latent_heat_of_vaporization
-        );
+        if (guess.solids.size() > 0)
+        {
+            guess.latent_heat_of_vaporization = guess.latent_heat_of_vaporization.value_or(
+                [M](field::StateParameters parameters,
+                    si::pressure vapor_pressure, 
+                    si::temperature triple_point_temperature, 
+                    si::pressure triple_point_pressure, 
+                    si::specific_energy latent_heat_of_fusion){
+                    return property::estimate_latent_heat_of_sublimation_from_clapeyron(
+                        vapor_pressure,
+                        M, 
+                        parameters.temperature, 
+                        triple_point_temperature, 
+                        triple_point_pressure
+                    ) - latent_heat_of_fusion;
+                },
+                solid_sample,
+                guess.solids[0].vapor_pressure,
+                guess.triple_point_temperature, 
+                guess.triple_point_pressure,
+                guess.latent_heat_of_fusion
+            );
+        }
 
-        guess.latent_heat_of_fusion = guess.latent_heat_of_fusion.value_or(
-            [M](field::StateParameters parameters, 
-                si::pressure vapor_pressure, 
-                si::temperature triple_point_temperature, 
-                si::pressure triple_point_pressure, 
-                si::specific_energy latent_heat_of_vaporization){ 
-                return property::estimate_latent_heat_of_sublimation_from_clapeyron(
-                    vapor_pressure,
-                    M, 
-                    parameters.temperature, 
-                    triple_point_temperature, 
-                    triple_point_pressure
-                ) - latent_heat_of_vaporization;
-            },
-            solid_sample,
-            guess.solids[i].vapor_pressure,
-            guess.triple_point_temperature, 
-            guess.triple_point_pressure,
-            guess.latent_heat_of_vaporization
-        );
+        if (guess.solids.size() > 0)
+        {
+            guess.latent_heat_of_fusion = guess.latent_heat_of_fusion.value_or(
+                [M](field::StateParameters parameters, 
+                    si::pressure vapor_pressure, 
+                    si::temperature triple_point_temperature, 
+                    si::pressure triple_point_pressure, 
+                    si::specific_energy latent_heat_of_vaporization){ 
+                    return property::estimate_latent_heat_of_sublimation_from_clapeyron(
+                        vapor_pressure,
+                        M, 
+                        parameters.temperature, 
+                        triple_point_temperature, 
+                        triple_point_pressure
+                    ) - latent_heat_of_vaporization;
+                },
+                solid_sample,
+                guess.solids[0].vapor_pressure,
+                guess.triple_point_temperature, 
+                guess.triple_point_pressure,
+                guess.latent_heat_of_vaporization
+            );
+        }
 
-
-        guess.solids[i].dynamic_viscosity = guess.solids[i].dynamic_viscosity.value_or( 
-            [](si::dynamic_viscosity dynamic_viscosity_as_liquid){ 
-                return property::guess_viscosity_as_solid_from_viscosity_as_liquid(dynamic_viscosity_as_liquid);
-            }
-            guess.liquid.dynamic_viscosity 
-        );
-
-        // CALCULATE ACENTRIC FACTOR
         guess.acentric_factor = guess.acentric_factor.value_or( 
             [M, Tc](field::StateParameters parameters, si::specific_energy latent_heat_of_vaporization){ 
                 return property::estimate_accentric_factor_from_pitzer(
@@ -281,25 +279,35 @@ namespace compound
             guess.latent_heat_of_vaporization
         );
         guess.acentric_factor = guess.acentric_factor.value_or( 
-            [M, Pc, Tc](field::StateParameters parameters, si::dynamic_viscosity dynamic_viscosity_as_liquid){ 
+            [M, pc, Tc](field::StateParameters parameters, si::dynamic_viscosity dynamic_viscosity_as_liquid){ 
                 return property::estimate_acentric_factor_from_letsou_stiel(
                     dynamic_viscosity_as_liquid,
-                    M, parameters.temperature, Tc, Pc
+                    M, parameters.temperature, Tc, pc
                 );
             },
             liquid_sample,
             guess.liquid.dynamic_viscosity
         );
         guess.acentric_factor = guess.acentric_factor.value_or( 
-            [M, Pc, Tc](field::StateParameters parameters, si::pressure vapor_pressure_as_liquid){ 
+            [M, pc, Tc](field::StateParameters parameters, si::pressure vapor_pressure_as_liquid){ 
                 return property::estimate_accentric_factor_from_lee_kesler(
-                    vapor_pressure_as_liquid, M, 
-                    parameters.temperature, Tc, Pc
+                    vapor_pressure_as_liquid, 
+                    parameters.temperature, Tc, pc
                 );
-            }
+            },
             boiling_sample,
             guess.liquid.vapor_pressure
         );
+
+        return guess;
+/*
+
+
+
+
+
+
+        // CALCULATE ACENTRIC FACTOR
 
         // CALCULATE PROPERTIES THAT CAN BE DERIVED FROM ACENTRIC FACTOR
         guess.latent_heat_of_vaporization = latent_heat_of_vaporization.value_or( 
@@ -422,6 +430,16 @@ namespace compound
                     return property::guess_density_as_liquid_from_density_as_solid(density_as_solid); 
                 },
                 guess.solids[0].density
+            );
+        }
+
+        for (std::size_t i = 0; i < guess.solids.size(); i++)
+        {
+            guess.solids[i].dynamic_viscosity = guess.solids[i].dynamic_viscosity.value_or( 
+                [](si::dynamic_viscosity dynamic_viscosity_as_liquid){ 
+                    return property::guess_viscosity_as_solid_from_viscosity_as_liquid(dynamic_viscosity_as_liquid);
+                },
+                guess.liquid.dynamic_viscosity 
             );
         }
 

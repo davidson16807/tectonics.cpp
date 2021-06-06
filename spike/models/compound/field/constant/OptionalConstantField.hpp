@@ -116,6 +116,14 @@ namespace field {
         {
             return std::visit(OptionalConstantFieldValueVisitor(), entry);
         }
+        constexpr std::optional<T1> operator()(const StateParameters parameters) const
+        {
+            return std::visit(OptionalConstantFieldValueVisitor(), entry);
+        }
+        constexpr std::optional<T1> operator()(const SpectralParameters parameters) const
+        {
+            return std::visit(OptionalConstantFieldValueVisitor(), entry);
+        }
         constexpr std::optional<T1> operator()(const si::pressure p, const si::temperature T) const
         {
             return std::visit(OptionalConstantFieldValueVisitor(), entry);
@@ -257,7 +265,9 @@ namespace field {
             }
             else // constant
             {
-                StateParameters parameters = a.parameters().complete(defaults);
+                OptionalStateParameters optional_parameters = defaults;
+                optional_parameters = aggregate(a.parameters(), optional_parameters);
+                StateParameters parameters = optional_parameters.complete(defaults);
                 return OptionalConstantField<T1>(f(parameters, a(parameters).value()));
             }
         }
@@ -281,7 +291,10 @@ namespace field {
             }
             else // constant
             {
-                StateParameters parameters = aggregate(a.parameters(), b.parameters()).complete(defaults);
+                OptionalStateParameters optional_parameters = defaults;
+                optional_parameters = aggregate(b.parameters(), optional_parameters);
+                optional_parameters = aggregate(a.parameters(), optional_parameters);
+                StateParameters parameters = optional_parameters.complete(defaults);
                 return OptionalConstantField<T1>(f(parameters, a(parameters).value(), b(parameters).value()));
             }
         }
@@ -306,7 +319,11 @@ namespace field {
             }
             else // constant
             {
-                StateParameters parameters = aggregate(a.parameters(), aggregate(b.parameters(), c.parameters())).complete(defaults);
+                OptionalStateParameters optional_parameters = defaults;
+                optional_parameters = aggregate(c.parameters(), optional_parameters);
+                optional_parameters = aggregate(b.parameters(), optional_parameters);
+                optional_parameters = aggregate(a.parameters(), optional_parameters);
+                StateParameters parameters = optional_parameters.complete(defaults);
                 return OptionalConstantField<T1>(f(parameters, a(parameters).value(), b(parameters).value(), c(parameters).value()));
             }
         }
@@ -320,7 +337,7 @@ namespace field {
             const Tfield2 a, 
             const Tfield3 b, 
             const Tfield4 c, 
-            const Tfield4 d) const
+            const Tfield5 d) const
         {
             if(entry.index() > 0) // no substitute needed
             {
@@ -332,7 +349,12 @@ namespace field {
             }
             else // constant
             {
-                StateParameters parameters = aggregate(a.parameters(), aggregate(b.parameters(), aggregate(c.parameters(), d.parameters()))).complete(defaults);
+                OptionalStateParameters optional_parameters = defaults;
+                optional_parameters = aggregate(d.parameters(), optional_parameters);
+                optional_parameters = aggregate(c.parameters(), optional_parameters);
+                optional_parameters = aggregate(b.parameters(), optional_parameters);
+                optional_parameters = aggregate(a.parameters(), optional_parameters);
+                StateParameters parameters = optional_parameters.complete(defaults);
                 return OptionalConstantField<T1>(f(parameters, a(parameters).value(), b(parameters).value(), c(parameters).value(), d(parameters).value()));
             }
         }

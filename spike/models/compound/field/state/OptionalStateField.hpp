@@ -365,7 +365,9 @@ namespace field {
             }
             else // constant
             {
-                StateParameters parameters = a.parameters().complete(defaults);
+                OptionalStateParameters optional_parameters = defaults;
+                optional_parameters = aggregate(a.parameters(), optional_parameters);
+                StateParameters parameters = optional_parameters.complete(defaults);
                 si::pressure p = parameters.pressure;
                 si::temperature T = parameters.temperature;
                 T1 result = f(parameters, a(p,T).value());
@@ -403,7 +405,10 @@ namespace field {
             }
             else // constant
             {
-                StateParameters parameters = aggregate(a.parameters(), b.parameters()).complete(defaults);
+                OptionalStateParameters optional_parameters = defaults;
+                optional_parameters = aggregate(b.parameters(), optional_parameters);
+                optional_parameters = aggregate(a.parameters(), optional_parameters);
+                StateParameters parameters = optional_parameters.complete(defaults);
                 si::pressure p = parameters.pressure;
                 si::temperature T = parameters.temperature;
                 T1 result = f(parameters, a(p,T).value(), b(p,T).value());
@@ -421,9 +426,6 @@ namespace field {
             const T3 b, 
             const T4 c) const
         {
-            // the following are dummy values, since we only invoke them on StateSamples or constants
-            const si::pressure p = si::standard_pressure;
-            const si::temperature T = si::standard_temperature;
             if(entry.index() > 0)
             {
                 return *this;
@@ -446,10 +448,61 @@ namespace field {
             }
             else // constant
             {
-                StateParameters parameters = aggregate(a.parameters(), aggregate(b.parameters(), c.parameters())).complete(defaults);
+                OptionalStateParameters optional_parameters = defaults;
+                optional_parameters = aggregate(c.parameters(), optional_parameters);
+                optional_parameters = aggregate(b.parameters(), optional_parameters);
+                optional_parameters = aggregate(a.parameters(), optional_parameters);
+                StateParameters parameters = optional_parameters.complete(defaults);
                 si::pressure p = parameters.pressure;
                 si::temperature T = parameters.temperature;
                 T1 result = f(parameters, a(p,T).value(), b(p,T).value(), c(p,T).value());
+                return OptionalStateField<T1>(StateSample<T1>(result, p,T));
+            }
+        }
+        /*
+        Return `this` if a value exists, otherwise return the result of function `f` applied to parameters `a` and `b`
+        */
+        template<typename T2, typename T3, typename T4, typename T5>
+        constexpr OptionalStateField<T1> value_or(
+            const std::function<T1(const StateParameters, const typename T2::value_type, const typename T3::value_type, const typename T4::value_type, const typename T5::value_type)> f, 
+            const StateParameters defaults,
+            const T2 a, 
+            const T3 b, 
+            const T4 c, 
+            const T5 d) const
+        {
+            if(entry.index() > 0)
+            {
+                return *this;
+            }
+            else if(!a.has_value() || !b.has_value() || !c.has_value() || !d.has_value()) // any monostates
+            {
+                return std::monostate();
+            }
+            else if((a.index() == 3) || (b.index() == 3) || (c.index() == 3) || (d.index() == 3)) // any functions
+            {
+                auto f2 = f;
+                auto a2 = a;
+                auto b2 = b;
+                auto c2 = c;
+                auto d2 = d;
+                return StateFunction<T1>(
+                    [f2, a2, b2, c2, d2]
+                    (const si::pressure p, const si::temperature T)
+                    { return f2(StateParameters(p,T), a2(p,T).value(), b2(p,T).value(), c2(p,T).value(), d2(p,T).value()); }
+                );
+            }
+            else // constant
+            {
+                OptionalStateParameters optional_parameters = defaults;
+                optional_parameters = aggregate(d.parameters(), optional_parameters);
+                optional_parameters = aggregate(c.parameters(), optional_parameters);
+                optional_parameters = aggregate(b.parameters(), optional_parameters);
+                optional_parameters = aggregate(a.parameters(), optional_parameters);
+                StateParameters parameters = optional_parameters.complete(defaults);
+                si::pressure p = parameters.pressure;
+                si::temperature T = parameters.temperature;
+                T1 result = f(parameters, a(p,T).value(), b(p,T).value(), c(p,T).value(), d(p,T).value());
                 return OptionalStateField<T1>(StateSample<T1>(result, p,T));
             }
         }
