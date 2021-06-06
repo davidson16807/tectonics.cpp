@@ -148,7 +148,7 @@ namespace compound
         si::length sigma = known.molecular_diameter;
         si::temperature Tc = known.critical_point_temperature;
         si::pressure pc = known.critical_point_pressure;
-        auto k = si::boltzmann_constant;
+        // auto k = si::boltzmann_constant;
         double Zc = known.critical_point_compressibility;
 
         StateParameterSamples samples(guess);

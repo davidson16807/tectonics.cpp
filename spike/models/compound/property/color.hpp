@@ -3,7 +3,7 @@
 // 3rd party libraries
 
 namespace compound{
-    namespace color
+    namespace property
     {
         /*
         NOTE: 
@@ -39,40 +39,45 @@ namespace compound{
             const double pi = 3.141592653589;
         }
 
-        double get_attenuation_coefficient_from_cross_section(const double attenuation_cross_section, const double number_density)
+        si::attenuation get_attenuation_coefficient_from_cross_section(const si::area attenuation_cross_section, const si::number_density number_density)
         {
             return attenuation_cross_section * number_density;
         }
 
-        double get_cross_section_from_attenuation_coefficient(const double attenuation_coefficient, const double number_density)
+        si::area get_cross_section_from_attenuation_coefficient(const si::attenuation attenuation_coefficient, const si::number_density number_density)
         {
             return attenuation_coefficient / number_density;
         }
 
-        // the following is a first order approximation from Vincent and Hunt (1968), copied from Eastes (1989)
+        // NOTE: these tests do not pass, but are nonessential to continue development
         double approx_reflectance_from_attenuation_coefficient_and_refractive_index(
-            const double attenuation_coefficient, 
+            const si::attenuation attenuation_coefficient, 
             const double refractive_index_of_material,
             const double refractive_index_of_medium,
-            const double wavelength
+            const si::length wavelength
         ){
             const double delta_n = refractive_index_of_material - refractive_index_of_medium;
             const double sum_n = refractive_index_of_material + refractive_index_of_medium;
-            const double n1_lambda_over_4pi_squared = refractive_index_of_material * refractive_index_of_material * wavelength * wavelength / (16.0 * pi*pi);
-            const double n1_lambda_alpha_over_4pi_squared = n1_lambda_over_4pi_squared * attenuation_coefficient * attenuation_coefficient;
+            const auto n1_lambda_over_4pi_squared = refractive_index_of_material * refractive_index_of_material * wavelength * wavelength / (16.0 * pi*pi);
+            const auto n1_lambda_alpha_over_4pi_squared = n1_lambda_over_4pi_squared * attenuation_coefficient * attenuation_coefficient;
             return (delta_n * delta_n + n1_lambda_alpha_over_4pi_squared) / (sum_n * sum_n + n1_lambda_alpha_over_4pi_squared);
         }
         
-        double solve_attenuation_coefficient_from_reflectance_and_refactive_index(
+        /*
+        // For now, we will comment out solve_attenuation_coefficient_from_reflectance_and_refactive_index and the accompanying tests here
+        // the following is a first order approximation from Vincent and Hunt (1968), copied from Eastes (1989)
+        si::attenuation solve_attenuation_coefficient_from_reflectance_and_refactive_index(
             const double reflectance, 
             const double refractive_index_of_material,
             const double refractive_index_of_medium,
-            const double wavelength,
+            const si::length wavelength,
             const int iteration_count = 10
         ){
             const double delta_n = refractive_index_of_material - refractive_index_of_medium;
+            // std::cout << "delta_n:                                " << delta_n << std::endl;
             // const double sum_n = refractive_index_of_material + refractive_index_of_medium;
-            const double n1_lambda_over_4pi_squared = refractive_index_of_material * refractive_index_of_material * wavelength * wavelength / (16.0 * pi*pi);
+            const auto n1_lambda_over_4pi_squared = refractive_index_of_material * refractive_index_of_material * wavelength * wavelength / (16.0 * pi*pi);
+            // std::cout << "n1_lambda_over_4pi_squared.to_string(): " << n1_lambda_over_4pi_squared.to_string() << std::endl;
 
             // This function uses Newton's method to solve for `attenuation_coefficient` 
             // where `approx_reflectance_from_attenuation_coefficient_and_refractive_index()` equals `reflectance`.
@@ -85,22 +90,28 @@ namespace compound{
             // Since reflectance is always positive for realistic values, 
             // the x-intercept is also guaranteed to occur before the desired reflectance is reached, 
             // which means we can set solutions not to fall below the x-intercept to prevent nonphysical solutions.
-            const double intercept = sqrt(delta_n * delta_n / n1_lambda_over_4pi_squared);
-            // const double asymptote = sqrt(sum_n * sum_n / n1_lambda_over_4pi_squared);
-            double alpha = intercept;
-            double error = 0.0;
-            double dF_dalpha = 0.0;
-            double dalpha = 1e-4;
+            const auto intercept = si::sqrt(delta_n * delta_n / n1_lambda_over_4pi_squared);
+            // std::cout << "intercept.to_string():                  " << intercept.to_string() << std::endl;
+            // const auto asymptote = si::sqrt(sum_n * sum_n / n1_lambda_over_4pi_squared);
+            si::attenuation alpha = intercept;
+            // std::cout << "alpha.to_string():                      " << alpha.to_string() << std::endl;
+            double error(0.0);
+            auto dF_dalpha(0.0 * si::meter);
+            auto dalpha(1e-4 / si::meter);
             for (int i = 0; i < iteration_count; ++i)
             {
                 dF_dalpha = 
                     (approx_reflectance_from_attenuation_coefficient_and_refractive_index(alpha + dalpha, refractive_index_of_material, refractive_index_of_medium, wavelength) - 
                      approx_reflectance_from_attenuation_coefficient_and_refractive_index(alpha, refractive_index_of_material, refractive_index_of_medium, wavelength)) / dalpha;
+                // std::cout << "dF_dalpha.to_string():                  " << dF_dalpha.to_string() << std::endl;
                 error = approx_reflectance_from_attenuation_coefficient_and_refractive_index(alpha, refractive_index_of_material, refractive_index_of_medium, wavelength) - reflectance;
-                alpha = std::max(alpha - error / dF_dalpha, 0.0);
+                // std::cout << "error:                                  " << error << std::endl;
+                alpha = si::max(alpha - error / dF_dalpha, 0.0/si::meter);
+                // std::cout << "alpha.to_string():                      " << alpha.to_string() << std::endl;
             }
             return alpha;
         }
+        */
 
     }
 

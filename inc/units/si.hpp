@@ -210,7 +210,7 @@ namespace si{
 				T1 prefix_id = std::floor(std::log10(raw)/3.0); prefix_id = std::abs(prefix_id) < 8? prefix_id : 0;
 		    	std::string prefixed_value = std::to_string(raw / std::pow(1000.0, M1*std::min(8.0, prefix_id)));
 		    	std::string prefix(prefixes[int(prefix_id)+8]);
-    			return prefixed_value + " " + (M1<0? "1/":"") + prefix + "m" + (M1!=1? std::to_string(std::abs(M1)) : "");
+    			return prefixed_value + " " + (M1<0? "1/":"") + prefix + "m" + (std::abs(M1)!=1? std::to_string(std::abs(M1)) : "");
     		}
 	    	// customize formatting for mass, which must be converted to grams
     		if( KG1 != 0 && (M1|S1|K1|MOL1|A1|CD1) == 0)
@@ -218,7 +218,7 @@ namespace si{
 				T1 prefix_id = std::floor(std::log10(raw)/3.0); prefix_id = std::abs(prefix_id) < 8? prefix_id : 0;
 		    	std::string prefixed_value = std::to_string(raw / std::pow(1000.0, KG1*std::min(8.0, prefix_id)));
 		    	std::string prefix(prefixes[int(prefix_id)+KG1+8]);
-    			return prefixed_value + " " + (KG1<0? "1/":"") + prefix + "g" + (KG1!=1? std::to_string(std::abs(KG1)) : "");
+    			return prefixed_value + " " + (KG1<0? "1/":"") + prefix + "g" + (std::abs(KG1)!=1? std::to_string(std::abs(KG1)) : "");
     		}
 
 	    	// customize formatting for common derived units for pretty printing
@@ -242,15 +242,15 @@ namespace si{
 			    	std::string prefix(prefixes[int(prefix_id)+8]);
 	    			std::string result = prefixed_value + " " + prefix;
 	    			result += named_mks[i].second;
-			    	result +=   K1>0? "K"  + (  K1>1? std::to_string(std::abs(K1  )) : "") : ""; 
-			    	result += MOL1>0? "mol"+ (MOL1>1? std::to_string(std::abs(MOL1)) : "") : ""; 
-			    	result +=   A1>0? "A"  + (  A1>1? std::to_string(std::abs(  A1)) : "") : ""; 
-			    	result +=  CD1>0? "Cd" + ( CD1>1? std::to_string(std::abs( CD1)) : "") : ""; 
+			    	result +=   K1>0? "K"  + (std::abs(  K1)>1? std::to_string(std::abs(K1  )) : "") : ""; 
+			    	result += MOL1>0? "mol"+ (std::abs(MOL1)>1? std::to_string(std::abs(MOL1)) : "") : ""; 
+			    	result +=   A1>0? "A"  + (std::abs(  A1)>1? std::to_string(std::abs(  A1)) : "") : ""; 
+			    	result +=  CD1>0? "Cd" + (std::abs( CD1)>1? std::to_string(std::abs( CD1)) : "") : ""; 
 			    	result += K1<0 || MOL1<0 || A1<0 || CD1<0? "/" : "";
-			    	result +=   K1<0? "K"  + (  K1<1? std::to_string(std::abs(K1  )) : "") : ""; 
-			    	result += MOL1<0? "mol"+ (MOL1<1? std::to_string(std::abs(MOL1)) : "") : ""; 
-			    	result +=   A1<0? "A"  + (  A1<1? std::to_string(std::abs(  A1)) : "") : ""; 
-			    	result +=  CD1<0? "Cd" + ( CD1<1? std::to_string(std::abs( CD1)) : "") : ""; 
+			    	result +=   K1<0? "K"  + (std::abs(  K1)<1? std::to_string(std::abs(K1  )) : "") : ""; 
+			    	result += MOL1<0? "mol"+ (std::abs(MOL1)<1? std::to_string(std::abs(MOL1)) : "") : ""; 
+			    	result +=   A1<0? "A"  + (std::abs(  A1)<1? std::to_string(std::abs(  A1)) : "") : ""; 
+			    	result +=  CD1<0? "Cd" + (std::abs( CD1)<1? std::to_string(std::abs( CD1)) : "") : ""; 
 			    	return result;
 	    		}
 	    	}
@@ -258,21 +258,21 @@ namespace si{
 	    	// fall back on SI base units 
 			std::string result = std::to_string(raw) + " ";
 	    	result += M1<0 && KG1<0 && S1<0 && K1<0 && MOL1<0 && A1<0 && CD1<0? "1" : "";
-	    	result +=   M1>0? "m"  + (  M1>1? std::to_string(std::abs(M1  )) : "") : ""; 
-	    	result +=  KG1>0? "kg" + ( KG1>1? std::to_string(std::abs(KG1 )) : "") : ""; 
-	    	result +=   S1>0? "s"  + (  S1>1? std::to_string(std::abs(S1  )) : "") : ""; 
-	    	result +=   K1>0? "K"  + (  K1>1? std::to_string(std::abs(K1  )) : "") : ""; 
-	    	result += MOL1>0? "mol"+ (MOL1>1? std::to_string(std::abs(MOL1)) : "") : ""; 
-	    	result +=   A1>0? "A"  + (  A1>1? std::to_string(std::abs(  A1)) : "") : ""; 
-	    	result +=  CD1>0? "Cd" + ( CD1>1? std::to_string(std::abs( CD1)) : "") : ""; 
+	    	result +=   M1>0? "m"  + (std::abs(  M1)>1? std::to_string(std::abs(M1  )) : "") : ""; 
+	    	result +=  KG1>0? "kg" + (std::abs( KG1)>1? std::to_string(std::abs(KG1 )) : "") : ""; 
+	    	result +=   S1>0? "s"  + (std::abs(  S1)>1? std::to_string(std::abs(S1  )) : "") : ""; 
+	    	result +=   K1>0? "K"  + (std::abs(  K1)>1? std::to_string(std::abs(K1  )) : "") : ""; 
+	    	result += MOL1>0? "mol"+ (std::abs(MOL1)>1? std::to_string(std::abs(MOL1)) : "") : ""; 
+	    	result +=   A1>0? "A"  + (std::abs(  A1)>1? std::to_string(std::abs(  A1)) : "") : ""; 
+	    	result +=  CD1>0? "Cd" + (std::abs( CD1)>1? std::to_string(std::abs( CD1)) : "") : ""; 
 	    	result += M1<0 || KG1<0 || S1<0 || K1<0 || MOL1<0 || A1<0 || CD1<0? "/" : "";
-	    	result +=   M1<0? "m"  + (  M1<1? std::to_string(std::abs(M1  )) : "") : ""; 
-	    	result +=  KG1<0? "kg" + ( KG1<1? std::to_string(std::abs(KG1 )) : "") : ""; 
-	    	result +=   S1<0? "s"  + (  S1<1? std::to_string(std::abs(S1  )) : "") : ""; 
-	    	result +=   K1<0? "K"  + (  K1<1? std::to_string(std::abs(K1  )) : "") : ""; 
-	    	result += MOL1<0? "mol"+ (MOL1<1? std::to_string(std::abs(MOL1)) : "") : ""; 
-	    	result +=   A1<0? "A"  + (  A1<1? std::to_string(std::abs(  A1)) : "") : ""; 
-	    	result +=  CD1<0? "Cd" + ( CD1<1? std::to_string(std::abs( CD1)) : "") : ""; 
+	    	result +=   M1<0? "m"  + (std::abs(  M1)<1? std::to_string(std::abs(M1  )) : "") : ""; 
+	    	result +=  KG1<0? "kg" + (std::abs( KG1)<1? std::to_string(std::abs(KG1 )) : "") : ""; 
+	    	result +=   S1<0? "s"  + (std::abs(  S1)<1? std::to_string(std::abs(S1  )) : "") : ""; 
+	    	result +=   K1<0? "K"  + (std::abs(  K1)<1? std::to_string(std::abs(K1  )) : "") : ""; 
+	    	result += MOL1<0? "mol"+ (std::abs(MOL1)<1? std::to_string(std::abs(MOL1)) : "") : ""; 
+	    	result +=   A1<0? "A"  + (std::abs(  A1)<1? std::to_string(std::abs(  A1)) : "") : ""; 
+	    	result +=  CD1<0? "Cd" + (std::abs( CD1)<1? std::to_string(std::abs( CD1)) : "") : ""; 
 	    	return result;
     	}
 
