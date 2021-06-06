@@ -95,9 +95,9 @@ namespace series
 		return std::log2(ai);
 	}
 	template <typename T>
-	inline void log2(const T& a, T& out)
+	inline void sqrt(const T ai)
 	{
-		out.store([](typename T::value_type ai){ return log2(ai); }, a);
+		return std::sqrt(ai);
 	}
 
 	// TODO: vector variant
@@ -105,9 +105,9 @@ namespace series
 	///
 	/// @param a sqrt function is defined for input values of a defined in the range [0, inf+) in the limit of the type qualifier.
 	template <typename T>
-	inline T sqrt(const T ai)
+	inline T log2(const T& a, T& out)
 	{
-		return std::sqrt(ai);
+		out.store([](typename T::value_type ai){ return log2(ai); }, a);
 	}
 	template <typename T>
 	inline void sqrt(const T& a, T& out)

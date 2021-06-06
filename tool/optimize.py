@@ -6,7 +6,8 @@ class OptimizationBasis:
         self.get_output = get_output
         self.get_string = get_string
     def get_cost(self, params, io):
-        return sum([(o - self.get_output(i,params)) ** 2 for i,o in io]) / len(io)
+        return (sum([abs(o - self.get_output(i,params))/o  for (i,o) in io]) / len(io))
+
 
 def gradient_descent_algorithm(basis, io, x, mobility=3e-6, delta=1e-5):
     def gradient(a, cost, delta=1e-5):
@@ -28,6 +29,7 @@ def gradient_descent_algorithm(basis, io, x, mobility=3e-6, delta=1e-5):
             print('∇cost:', grad_cost)
     except KeyboardInterrupt as e:
         return best
+        
 
 def genetic_algorithm(basis, io, solutions, survival_rate=0.5):
     def mate(a,b):
@@ -47,6 +49,6 @@ def genetic_algorithm(basis, io, solutions, survival_rate=0.5):
                 for i in solutions[cutoff:len(solutions)]
             ]
             print(basis.get_string(solutions[0]))
-            print('cost: ', cost(solutions[0]))
+            print('cost: ', cost(solutions[0]), '\n')
     except KeyboardInterrupt as e:
         return solutions
