@@ -468,7 +468,9 @@ namespace field {
             }
             else // constant
             {
-                SpectralParameters parameters = a.parameters().complete(defaults);
+                OptionalSpectralParameters optional_parameters = defaults;
+                optional_parameters = aggregate(a.parameters(), optional_parameters);
+                SpectralParameters parameters = optional_parameters.complete(defaults);
                 si::wavenumber nlo = parameters.nlo;
                 si::wavenumber nhi = parameters.nhi;
                 si::pressure p = parameters.pressure;
@@ -508,7 +510,10 @@ namespace field {
             }
             else // constant
             {
-                SpectralParameters parameters = aggregate(a.parameters(), b.parameters()).complete(defaults);
+                OptionalSpectralParameters optional_parameters = defaults;
+                optional_parameters = aggregate(b.parameters(), optional_parameters);
+                optional_parameters = aggregate(a.parameters(), optional_parameters);
+                SpectralParameters parameters = optional_parameters.complete(defaults);
                 si::wavenumber nlo = parameters.nlo;
                 si::wavenumber nhi = parameters.nhi;
                 si::pressure p = parameters.pressure;
@@ -529,8 +534,6 @@ namespace field {
             const T4 c) const
         {
             // the following are dummy values, since we only invoke them on SpectralSamples or constants
-            const si::pressure p = si::standard_pressure;
-            const si::temperature T = si::standard_temperature;
             if(entry.index() > 0)
             {
                 return *this;
@@ -553,7 +556,11 @@ namespace field {
             }
             else // constant
             {
-                SpectralParameters parameters = aggregate(a.parameters(), aggregate(b.parameters(), c.parameters())).complete(defaults);
+                OptionalSpectralParameters optional_parameters = defaults;
+                optional_parameters = aggregate(c.parameters(), optional_parameters);
+                optional_parameters = aggregate(b.parameters(), optional_parameters);
+                optional_parameters = aggregate(a.parameters(), optional_parameters);
+                SpectralParameters parameters = optional_parameters.complete(defaults);
                 si::wavenumber nlo = parameters.nlo;
                 si::wavenumber nhi = parameters.nhi;
                 si::pressure p = parameters.pressure;

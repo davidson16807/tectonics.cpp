@@ -382,7 +382,7 @@ namespace si{
 
 
 
-														//           m kg  s  K mol A Cd
+														                             //           m kg  s  K mol A Cd
 	template <typename T> using length_type                    = units< 1, 0, 0, 0, 0, 0, 0, T>;
 	template <typename T> using mass_type                      = units< 0, 1, 0, 0, 0, 0, 0, T>;
 	template <typename T> using time_type                      = units< 0, 0, 1, 0, 0, 0, 0, T>;
@@ -396,6 +396,7 @@ namespace si{
 	template <typename T> using area_density_type              = units<-2, 1, 0, 0, 0, 0, 0, T>;
 	template <typename T> using density_type                   = units<-3, 1, 0, 0, 0, 0, 0, T>;
 	template <typename T> using number_density_type            = units<-3, 0, 0, 0, 0, 0, 0, T>;
+	template <typename T> using molar_density_type             = units<-3, 0, 0, 0, 1, 0, 0, T>;
 	template <typename T> using frequency_type                 = units< 0, 0,-1, 0, 0, 0, 0, T>;
 	template <typename T> using speed_type                     = units< 1, 0,-1, 0, 0, 0, 0, T>;
 	template <typename T> using acceleration_type              = units< 1, 0,-2, 0, 0, 0, 0, T>;
@@ -420,6 +421,7 @@ namespace si{
 	template <typename T> using specific_energy_type           = units< 2, 0,-2, 0, 0, 0, 0, T>;
 	template <typename T> using thermal_conductivity_type      = units< 1, 1,-3,-1, 0, 0, 0, T>;
 	template <typename T> using wavenumber_type                = units<-1, 0, 0, 0, 0, 0, 0, T>;
+	template <typename T> using attenuation_type               = units<-1, 0, 0, 0, 0, 0, 0, T>;
 	template <typename T> using voltage_type                   = units< 2, 1,-3, 0, 0,-1, 0, T>;
 	template <typename T> using electric_charge_type           = units< 0, 0, 1, 0, 0, 1, 0, T>;
 	template <typename T> using electric_capacitance_type      = units<-2,-1, 4, 0, 0, 2, 0, T>;
@@ -450,6 +452,7 @@ namespace si{
 	typedef units<-2, 1, 0, 0, 0, 0, 0> area_density                 ;
 	typedef units<-3, 1, 0, 0, 0, 0, 0> density                      ;
 	typedef units<-3, 0, 0, 0, 0, 0, 0> number_density               ;
+	typedef units<-3, 0, 0, 0, 1, 0, 0> molar_density                ;
 	typedef units< 0, 0,-1, 0, 0, 0, 0> frequency                    ;
 	typedef units< 1, 0,-1, 0, 0, 0, 0> speed                        ;
 	typedef units< 1, 0,-2, 0, 0, 0, 0> acceleration                 ;
@@ -474,6 +477,7 @@ namespace si{
 	typedef units< 2, 0,-2, 0, 0, 0, 0> specific_energy              ;
 	typedef units< 1, 1,-3,-1, 0, 0, 0> thermal_conductivity         ;
 	typedef units<-1, 0, 0, 0, 0, 0, 0> wavenumber                   ;
+	typedef units<-1, 0, 0, 0, 0, 0, 0> attenuation                  ;
 	typedef units< 2, 1,-3, 0, 0,-1, 0> voltage                      ;
 	typedef units< 0, 0, 1, 0, 0, 1, 0> electric_charge              ;
 	typedef units<-2,-1, 4, 0, 0, 2, 0> electric_capacitance         ;

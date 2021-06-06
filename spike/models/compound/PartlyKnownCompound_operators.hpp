@@ -5,14 +5,136 @@
 
 #include <models/compound/property/published.hpp>
 #include <models/compound/property/speculative.hpp>
+// #include <models/compound/property/color.hpp>
 
 #include <models/compound/field/OptionalConstantField_OptionalSpectralField.hpp>
 #include <models/compound/field/OptionalConstantField_OptionalStateField.hpp>
+#include <models/compound/field/OptionalStateField_OptionalSpectralField.hpp>
 
 #include "PartlyKnownCompound.hpp"
 
 namespace compound
 {
+    namespace
+    {
+        struct StateParameterSamples{
+            field::StateParameters solid;   
+            field::StateParameters melting; 
+            field::StateParameters liquid;  
+            field::StateParameters boiling; 
+            field::StateParameters gas;     
+            field::StateParameters standard;
+            field::StateParameters critical_point;
+
+            StateParameterSamples(const PartlyKnownCompound& guess) :
+                standard(si::standard_pressure, si::standard_temperature),
+                critical_point(guess.critical_point_pressure, guess.critical_point_temperature)
+            {
+                field::OptionalStateParameters optional_gas_sample;
+                field::OptionalStateParameters optional_boiling_sample;
+                field::OptionalStateParameters optional_liquid_sample;
+                field::OptionalStateParameters optional_melting_sample;
+                field::OptionalStateParameters optional_solid_sample;
+
+                // CALCULATE PRESSURE/TEMPERATURE SAMPLE POINTS
+                if (guess.freezing_point_sample_pressure == guess.boiling_point_sample_pressure)
+                {
+                    optional_liquid_sample = optional_liquid_sample.value_or(
+                        []( si::pressure freezing_point_sample_pressure, si::temperature freezing_point_sample_temperature, 
+                            si::pressure boiling_point_sample_pressure, si::temperature boiling_point_sample_temperature)
+                        {
+                            if (freezing_point_sample_temperature < si::standard_temperature && 
+                                                                    si::standard_temperature < boiling_point_sample_temperature)
+                            {
+                                return field::OptionalStateParameters(
+                                    field::StateParameters(
+                                        freezing_point_sample_pressure, 
+                                        si::standard_temperature
+                                    )
+                                );
+                            }
+                            else
+                            {
+                                return field::OptionalStateParameters(
+                                    field::StateParameters(
+                                        freezing_point_sample_pressure, 
+                                        (freezing_point_sample_temperature + boiling_point_sample_temperature) / 2.0
+                                    )
+                                );
+                            }
+                        },
+                        guess.freezing_point_sample_pressure,
+                        guess.freezing_point_sample_temperature,
+                        guess.boiling_point_sample_pressure,
+                        guess.boiling_point_sample_temperature
+                    );
+                }
+
+                if (guess.freezing_point_sample_temperature.has_value())
+                {
+                    field::StateParameters sample(
+                        guess.freezing_point_sample_pressure.complete(si::standard_pressure), 
+                        guess.freezing_point_sample_temperature.complete(si::standard_temperature)
+                    );
+                    if (sample.pressure == si::standard_pressure)
+                    {
+                        if (si::standard_temperature < sample.temperature)
+                        {
+                            optional_solid_sample = optional_solid_sample.complete(standard);
+                        }
+                        if (sample.temperature < si::standard_temperature)
+                        {
+                            optional_liquid_sample = optional_liquid_sample.complete(standard);
+                        }
+                    }
+                    optional_solid_sample   = optional_solid_sample.complete(sample);
+                    optional_melting_sample = optional_melting_sample.complete(sample);
+                    optional_liquid_sample  = optional_liquid_sample.complete(sample);
+                }
+
+                if (guess.boiling_point_sample_temperature.has_value())
+                {
+                    field::StateParameters sample(
+                        guess.boiling_point_sample_pressure.complete(si::standard_pressure), 
+                        guess.boiling_point_sample_temperature.complete(si::standard_temperature)
+                    );
+                    if (sample.pressure == si::standard_pressure)
+                    {
+                        if (si::standard_temperature < sample.temperature)
+                        {
+                            optional_solid_sample = optional_solid_sample.complete(standard);
+                        }
+                        if (sample.temperature < si::standard_temperature)
+                        {
+                            optional_liquid_sample = optional_liquid_sample.complete(standard);
+                        }
+                    }
+                    optional_liquid_sample  = optional_liquid_sample.complete(sample);
+                    optional_boiling_sample = optional_boiling_sample.complete(sample);
+                    optional_gas_sample     = optional_gas_sample.complete(sample);
+                }
+
+                if (guess.triple_point_temperature.has_value() && guess.triple_point_pressure.has_value())
+                {
+                    field::StateParameters sample(
+                        guess.triple_point_pressure.complete(si::standard_pressure), 
+                        guess.triple_point_temperature.complete(si::standard_temperature)
+                    );
+                    optional_solid_sample   = optional_solid_sample.complete(sample);
+                    optional_melting_sample = optional_melting_sample.complete(sample);
+                    optional_liquid_sample  = optional_liquid_sample.complete(sample);
+                    optional_boiling_sample = optional_boiling_sample.complete(sample);
+                    optional_gas_sample     = optional_gas_sample.complete(sample);
+                }
+
+                solid   = optional_solid_sample.complete(standard);
+                melting = optional_melting_sample.complete(standard);
+                liquid  = optional_liquid_sample.complete(critical_point);
+                boiling = optional_boiling_sample.complete(critical_point);
+                gas     = optional_gas_sample.complete(critical_point);
+            }
+        };
+    }
         
     /*
     Return a `PartlyKnownCompound` that has the properties of `known` where present, 
@@ -26,8 +148,10 @@ namespace compound
         si::length sigma = known.molecular_diameter;
         si::temperature Tc = known.critical_point_temperature;
         si::pressure pc = known.critical_point_pressure;
-        // auto k = si::boltzmann_constant;
+        auto k = si::boltzmann_constant;
         double Zc = known.critical_point_compressibility;
+
+        StateParameterSamples samples(guess);
 
         // Refer to property/published.png to see the category that we are traversing here.
         // We want to get to acentric factor ("omega") as soon as possible, 
@@ -48,111 +172,6 @@ namespace compound
         //   properties derived by acentric factor
         //   miscellaneous properties
 
-        field::OptionalStateParameters optional_gas_sample;
-        field::OptionalStateParameters optional_boiling_sample;
-        field::OptionalStateParameters optional_liquid_sample;
-        field::OptionalStateParameters optional_melting_sample;
-        field::OptionalStateParameters optional_solid_sample;
-        field::StateParameters standard_sample(si::standard_pressure, si::standard_temperature);
-        field::StateParameters critical_point_sample(guess.critical_point_pressure, guess.critical_point_temperature);
-
-        // CALCULATE PRESSURE/TEMPERATURE SAMPLE POINTS
-        if (guess.freezing_point_sample_pressure == guess.boiling_point_sample_pressure)
-        {
-            optional_liquid_sample = optional_liquid_sample.value_or(
-                []( si::pressure freezing_point_sample_pressure, si::temperature freezing_point_sample_temperature, 
-                    si::pressure boiling_point_sample_pressure, si::temperature boiling_point_sample_temperature)
-                {
-                    if (freezing_point_sample_temperature < si::standard_temperature && 
-                                                            si::standard_temperature < boiling_point_sample_temperature)
-                    {
-                        return field::OptionalStateParameters(
-                            field::StateParameters(
-                                freezing_point_sample_pressure, 
-                                si::standard_temperature
-                            )
-                        );
-                    }
-                    else
-                    {
-                        return field::OptionalStateParameters(
-                            field::StateParameters(
-                                freezing_point_sample_pressure, 
-                                (freezing_point_sample_temperature + boiling_point_sample_temperature) / 2.0
-                            )
-                        );
-                    }
-                },
-                guess.freezing_point_sample_pressure,
-                guess.freezing_point_sample_temperature,
-                guess.boiling_point_sample_pressure,
-                guess.boiling_point_sample_temperature
-            );
-        }
-
-        if (guess.freezing_point_sample_temperature.has_value())
-        {
-            field::StateParameters sample(
-                guess.freezing_point_sample_pressure.complete(si::standard_pressure), 
-                guess.freezing_point_sample_temperature.complete(si::standard_temperature)
-            );
-            if (sample.pressure == si::standard_pressure)
-            {
-                if (si::standard_temperature < sample.temperature)
-                {
-                    optional_solid_sample = optional_solid_sample.complete(standard_sample);
-                }
-                if (sample.temperature < si::standard_temperature)
-                {
-                    optional_liquid_sample = optional_liquid_sample.complete(standard_sample);
-                }
-            }
-            optional_solid_sample   = optional_solid_sample.complete(sample);
-            optional_melting_sample = optional_melting_sample.complete(sample);
-            optional_liquid_sample  = optional_liquid_sample.complete(sample);
-        }
-
-        if (guess.boiling_point_sample_temperature.has_value())
-        {
-            field::StateParameters sample(
-                guess.boiling_point_sample_pressure.complete(si::standard_pressure), 
-                guess.boiling_point_sample_temperature.complete(si::standard_temperature)
-            );
-            if (sample.pressure == si::standard_pressure)
-            {
-                if (si::standard_temperature < sample.temperature)
-                {
-                    optional_solid_sample = optional_solid_sample.complete(standard_sample);
-                }
-                if (sample.temperature < si::standard_temperature)
-                {
-                    optional_liquid_sample = optional_liquid_sample.complete(standard_sample);
-                }
-            }
-            optional_liquid_sample  = optional_liquid_sample.complete(sample);
-            optional_boiling_sample = optional_boiling_sample.complete(sample);
-            optional_gas_sample     = optional_gas_sample.complete(sample);
-        }
-
-        if (guess.triple_point_temperature.has_value() && guess.triple_point_pressure.has_value())
-        {
-            field::StateParameters sample(
-                guess.triple_point_pressure.complete(si::standard_pressure), 
-                guess.triple_point_temperature.complete(si::standard_temperature)
-            );
-            optional_solid_sample   = optional_solid_sample.complete(sample);
-            optional_melting_sample = optional_melting_sample.complete(sample);
-            optional_liquid_sample  = optional_liquid_sample.complete(sample);
-            optional_boiling_sample = optional_boiling_sample.complete(sample);
-            optional_gas_sample     = optional_gas_sample.complete(sample);
-        }
-
-        field::StateParameters solid_sample   = optional_solid_sample.complete(standard_sample);
-        // field::StateParameters melting_sample = optional_melting_sample.complete(standard_sample);
-        field::StateParameters liquid_sample  = optional_liquid_sample.complete(critical_point_sample);
-        field::StateParameters boiling_sample = optional_boiling_sample.complete(critical_point_sample);
-        // field::StateParameters gas_sample     = optional_gas_sample.complete(critical_point_sample);
-
         // CALCULATE DENSITY
         guess.liquid.density = guess.liquid.density
             .complete(M / property::estimate_molar_volume_as_liquid_from_bird_steward_lightfoot_2(sigma));
@@ -168,7 +187,7 @@ namespace compound
                 [M](field::StateParameters parameters, si::density density_as_liquid, si::temperature triple_point_temperature){ 
                     return M / property::estimate_molar_volume_as_solid_from_goodman(M / density_as_liquid, parameters.temperature, triple_point_temperature); 
                 },
-                liquid_sample,
+                samples.liquid,
                 guess.liquid.density,
                 guess.triple_point_temperature
             );
@@ -180,7 +199,7 @@ namespace compound
                 [M](field::StateParameters parameters, si::density density_as_solid, si::temperature triple_point_temperature){ 
                     return M / property::estimate_molar_volume_as_liquid_from_goodman(M / density_as_solid, parameters.temperature, triple_point_temperature); 
                 },
-                liquid_sample,
+                samples.liquid,
                 guess.solids[0].density,
                 guess.triple_point_temperature
             );
@@ -192,7 +211,7 @@ namespace compound
                 [M](field::StateParameters parameters, si::density density_as_liquid, si::density density_as_solid){ 
                     return property::estimate_triple_point_temperature_from_goodman(M / density_as_liquid, M / density_as_solid, parameters.temperature);
                 },
-                liquid_sample,
+                samples.liquid,
                 guess.liquid.density,
                 guess.solids[0].density
             );
@@ -212,7 +231,7 @@ namespace compound
                         triple_point_pressure
                     );
                 },
-                solid_sample,
+                samples.solid,
                 guess.latent_heat_of_vaporization,
                 guess.latent_heat_of_fusion,
                 guess.triple_point_pressure,
@@ -236,7 +255,7 @@ namespace compound
                         triple_point_pressure
                     ) - latent_heat_of_fusion;
                 },
-                solid_sample,
+                samples.solid,
                 guess.solids[0].vapor_pressure,
                 guess.triple_point_temperature, 
                 guess.triple_point_pressure,
@@ -260,7 +279,7 @@ namespace compound
                         triple_point_pressure
                     ) - latent_heat_of_vaporization;
                 },
-                solid_sample,
+                samples.solid,
                 guess.solids[0].vapor_pressure,
                 guess.triple_point_temperature, 
                 guess.triple_point_pressure,
@@ -268,6 +287,7 @@ namespace compound
             );
         }
 
+        // CALCULATE ACENTRIC FACTOR
         guess.acentric_factor = guess.acentric_factor.value_or( 
             [M, Tc](field::StateParameters parameters, si::specific_energy latent_heat_of_vaporization){ 
                 return property::estimate_accentric_factor_from_pitzer(
@@ -275,7 +295,7 @@ namespace compound
                         parameters.temperature, Tc
                     );
             },
-            liquid_sample,
+            samples.liquid,
             guess.latent_heat_of_vaporization
         );
         guess.acentric_factor = guess.acentric_factor.value_or( 
@@ -285,115 +305,106 @@ namespace compound
                     M, parameters.temperature, Tc, pc
                 );
             },
-            liquid_sample,
+            samples.liquid,
             guess.liquid.dynamic_viscosity
         );
         guess.acentric_factor = guess.acentric_factor.value_or( 
-            [M, pc, Tc](field::StateParameters parameters, si::pressure vapor_pressure_as_liquid){ 
+            [pc, Tc](field::StateParameters parameters, si::pressure vapor_pressure_as_liquid){ 
                 return property::estimate_accentric_factor_from_lee_kesler(
                     vapor_pressure_as_liquid, 
                     parameters.temperature, Tc, pc
                 );
             },
-            boiling_sample,
+            samples.boiling,
             guess.liquid.vapor_pressure
         );
 
-        return guess;
-/*
-
-
-
-
-
-
-        // CALCULATE ACENTRIC FACTOR
-
         // CALCULATE PROPERTIES THAT CAN BE DERIVED FROM ACENTRIC FACTOR
-        guess.latent_heat_of_vaporization = latent_heat_of_vaporization.value_or( 
+        guess.latent_heat_of_vaporization = guess.latent_heat_of_vaporization.value_or( 
             [M, Tc](field::StateParameters parameters, double acentric_factor){ 
                 return property::estimate_latent_heat_of_vaporization_from_pitzer(
-                    acentric_factor, M, T, Tc
+                    acentric_factor, M, parameters.temperature, Tc
                 );
             }, 
-            liquid_sample,
+            samples.liquid,
             guess.acentric_factor
         );
-        guess.liquid.dynamic_viscosity = liquid.dynamic_viscosity.value_or(    
-            [M, Tc, Pc](field::StateParameters parameters, double acentric_factor){ 
+        guess.liquid.dynamic_viscosity = guess.liquid.dynamic_viscosity.value_or(    
+            [M, Tc, pc](field::StateParameters parameters, double acentric_factor){ 
                 return property::estimate_viscosity_as_liquid_from_letsou_stiel(
-                    acentric_factor, M, T, Tc, Pc
+                    acentric_factor, M, parameters.temperature, Tc, pc
                 );
             }, 
-            liquid_sample,
+            samples.liquid,
             guess.acentric_factor
         );
-        guess.liquid.vapor_pressure = liquid.vapor_pressure.value_or( 
-            [M, Tc, Pc](field::StateParameters parameters, double acentric_factor){ 
+        guess.liquid.vapor_pressure = guess.liquid.vapor_pressure.value_or( 
+            [Tc, pc](field::StateParameters parameters, double acentric_factor){ 
                 return property::estimate_vapor_pressure_as_liquid_from_lee_kesler(
-                    acentric_factor, M, T, Tc, Pc
+                    acentric_factor, parameters.temperature, Tc, pc
                 );
             }, 
-            boiling_sample,
+            samples.boiling,
             guess.acentric_factor
         );
-
-        guess.molecular_degrees_of_freedom = guess.molecular_degrees_of_freedom.value_or(
-            [A](double acentric_factor){
-                return property::guess_molecular_degrees_of_freedom(acentric_factor, A);
-            },
-            guess.acentric_factor
-        );
-        guess.molecular_degrees_of_freedom = guess.molecular_degrees_of_freedom.value_or(6.0);
 
         // CALCULATE MISCELLANEOUS PROPERTIES
         guess.liquid.thermal_conductivity = guess.liquid.thermal_conductivity.value_or(
-            [](field::StateParameters parameters, si::temperature freezing_point_sample_temperature){
+            [M](field::StateParameters parameters, si::temperature freezing_point_sample_temperature){
                 return property::estimate_thermal_conductivity_as_liquid_from_sheffy_johnson(
                     M, parameters.temperature, freezing_point_sample_temperature
                 );
             },
-            liquid_sample,
+            samples.liquid,
             guess.freezing_point_sample_temperature
         );
 
         guess.gas.dynamic_viscosity = guess.gas.dynamic_viscosity.value_or(
-            [M](si::thermal_conductivity thermal_conductivity_as_gas, si::specific_heat_capacity heat_capacity_as_gas){ 
-                return property::estimate_viscosity_as_gas_from_eucken(thermal_conductivity_as_gas, M, heat_capacity_as_gas);
+            [M](si::specific_heat_capacity heat_capacity_as_gas, si::thermal_conductivity thermal_conductivity_as_gas){ 
+                return property::estimate_viscosity_as_gas_from_eucken(heat_capacity_as_gas, M, thermal_conductivity_as_gas);
             },
-            guess.gas.thermal_conductivity, 
-            guess.gas.heat_capacity
+            guess.gas.specific_heat_capacity, 
+            guess.gas.thermal_conductivity
         );
 
         guess.gas.thermal_conductivity = guess.gas.thermal_conductivity.value_or( 
             [M](si::dynamic_viscosity dynamic_viscosity_as_gas, si::specific_heat_capacity heat_capacity_as_gas){ 
                 return property::estimate_thermal_conductivity_as_gas_from_eucken(dynamic_viscosity_as_gas, M, heat_capacity_as_gas);
-            }
+            },
             guess.gas.dynamic_viscosity, 
-            guess.gas.heat_capacity
+            guess.gas.specific_heat_capacity
         );
 
-        guess.molecular_absorption_cross_section = guess.molecular_absorption_cross_section.value_or(
-            [M, k, Pc, Tc, Zc](field::SpectralParameters sample, si::density density_as_solid, double reflectance, double refractive_index){
-                si::length wavelength = 2.0/(sample.nlo+sample.nhi);
-                double attenuation_coefficient_as_solid = property::solve_attenuation_coefficient_from_reflectance_and_refactive_index(reflectance, refractive_index, 1.0, wavelength);
-                si::number_density number_density_as_solid = density_as_solid/M;
-                return property::get_cross_section_from_attenuation_coefficient(attenuation_coefficient_as_solid, number_density_as_solid/si::molecule);
-            },
-            guess.solids[i].density,
-            guess.solids[i].spectral_reflectance,
-            guess.solids[i].refractive_index
-        );
-*/
+
+        return guess;
+
+        /*
+        for (std::size_t i = 0; i < guess.solids.size(); i++)
+        {
+            guess.molecular_absorption_cross_section = guess.molecular_absorption_cross_section.value_or(
+                [M, k, pc, Tc, Zc](field::SpectralParameters sample, si::density density_as_solid, double reflectance, double refractive_index){
+                    si::length wavelength = 2.0/(sample.nlo+sample.nhi);
+                    si::attenuation attenuation_coefficient_as_solid = property::solve_attenuation_coefficient_from_reflectance_and_refactive_index(reflectance, refractive_index, 1.0, wavelength);
+                    si::molar_density molar_density_as_solid = density_as_solid/M;
+                    return property::get_cross_section_from_attenuation_coefficient(attenuation_coefficient_as_solid, molar_density_as_solid/si::molecule);
+                },
+                field::SpectralParameters(1.0/(500.0*si::nanometer), 1.0/(500.0*si::nanometer), samples.solid.pressure, samples.solid.temperature),
+                guess.solids[i].density,
+                guess.solids[i].spectral_reflectance,
+                guess.solids[i].refractive_index
+            );
+        }
+        */
+
         /*
         NOTE: the following is not currently very useful, but could be useful if we discover other correlations in the future
         guess.solids[i].spectral_reflectance = guess.solids[i].spectral_reflectance.value_or(
-            [k, Pc, Tc, Zc](field::StateParameters sample, si::density density_as_solid, double refractive_index_as_solid, double molecular_absorption_cross_section){
+            [k, pc, Tc, Zc](field::StateParameters sample, si::density density_as_solid, double refractive_index_as_solid, double molecular_absorption_cross_section){
                 // find number density of sample
                 double Z = property::estimate_compressibility_factor(sample.pressure, sample.temperature, Pc, Tc, Zc);
                 si::number_density number_density_as_gas = property::get_number_density_from_compressibility(sample.pressure, sample.temperature, Z);
-                si::number_density number_density_as_solid = density_as_solid/M;
-                si::area attenuation_coefficient_as_solid = property::get_attenuation_coefficient_from_cross_section(molecular_absorption_cross_section, number_density_as_solid/si::molecule);
+                si::molar_density molar_density_as_solid = density_as_solid/M;
+                si::attenuation attenuation_coefficient_as_solid = property::get_attenuation_coefficient_from_cross_section(molecular_absorption_cross_section, molar_density_as_solid/si::molecule);
                 return property::approx_reflectance_from_attenuation_coefficient_and_refractive_index(attenuation_coefficient_as_solid, refractive_index_as_solid, 1.0, wavelength);
             },
             guess.solids[i].density,
@@ -413,6 +424,10 @@ namespace compound
     */
     PartlyKnownCompound speculate(const PartlyKnownCompound& known){
         PartlyKnownCompound guess = known;
+        int A = known.atoms_per_molecule;
+
+        // StateParameterSamples samples(guess);
+
         for (std::size_t i = 0; i < guess.solids.size(); i++)
         {
             guess.solids[i].density = guess.solids[i].density.value_or( 
@@ -442,6 +457,15 @@ namespace compound
                 guess.liquid.dynamic_viscosity 
             );
         }
+
+        guess.molecular_degrees_of_freedom = guess.molecular_degrees_of_freedom.value_or(
+            [A](double acentric_factor){
+                return property::guess_molecular_degrees_of_freedom(acentric_factor, A);
+            },
+            guess.acentric_factor
+        );
+
+        guess.molecular_degrees_of_freedom = guess.molecular_degrees_of_freedom.value_or(6.0);
 
         return guess;
     }

@@ -251,6 +251,30 @@ namespace field {
         */
         template<typename Tfield2>
         constexpr OptionalConstantField<T1> value_or(
+            const std::function<T1(const typename Tfield2::value_type)> f, 
+            const Tfield2 a) const
+        {
+            if(entry.index() > 0) // no substitute needed
+            {
+                return *this;
+            }
+            else if(!a.has_value()) // any monostates
+            {
+                return std::monostate();
+            }
+            else // constant
+            {
+                return OptionalConstantField<T1>(f(a(EmptyParameters()).value()));
+            }
+        }
+
+
+
+        /*
+        Return `this` if a value exists, otherwise return the result of function `f` applied to parameters `a` and `b`
+        */
+        template<typename Tfield2>
+        constexpr OptionalConstantField<T1> value_or(
             const std::function<T1(const StateParameters, const typename Tfield2::value_type)> f, 
             const StateParameters defaults,
             const Tfield2 a) const
