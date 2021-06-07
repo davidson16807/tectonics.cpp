@@ -7,9 +7,9 @@
 #include <models/compound/property/speculative.hpp>
 // #include <models/compound/property/color.hpp>
 
-#include <models/compound/field/OptionalConstantField_OptionalSpectralField.hpp>
-#include <models/compound/field/OptionalConstantField_OptionalStateField.hpp>
-#include <models/compound/field/OptionalStateField_OptionalSpectralField.hpp>
+#include <models/compound/field/EmptyParameters_OptionalSpectralParameters.hpp>
+#include <models/compound/field/EmptyParameters_OptionalStateParameters.hpp>
+#include <models/compound/field/OptionalStateParameters_OptionalSpectralParameters.hpp>
 
 #include "PartlyKnownCompound.hpp"
 
