@@ -32,4 +32,10 @@ namespace field {
         }
         return true;
     }
+    template<typename T1>
+    bool operator!=(const CompletedStateField<T1>& first, const CompletedStateField<T1>& second)
+    {
+        return !(first==second);
+    }
+
 }}

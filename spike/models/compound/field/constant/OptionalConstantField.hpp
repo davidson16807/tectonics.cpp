@@ -7,6 +7,8 @@
 #include <units/si.hpp>
 
 #include "EmptyParameters.hpp"
+#include "../state/OptionalStateParameters.hpp"
+#include "../spectral/SpectralParameters.hpp"
 
 namespace compound { 
 namespace field {
@@ -79,22 +81,12 @@ namespace field {
 
         }
         
-        constexpr OptionalSpectralField<T1>& operator=(const std::monostate other)
+        constexpr OptionalConstantField<T1>& operator=(const std::monostate other)
         {
             entry = other;
             return *this;
         }
-        constexpr OptionalSpectralField<T1>& operator=(const T1 other)
-        {
-            entry = other;
-            return *this;
-        }
-        constexpr OptionalSpectralField<T1>& operator=(const StateSample<T1> other)
-        {
-            entry = other;
-            return *this;
-        }
-        constexpr OptionalSpectralField<T1>& operator=(const StateFunction<T1> other)
+        constexpr OptionalConstantField<T1>& operator=(const T1 other)
         {
             entry = other;
             return *this;

@@ -43,6 +43,11 @@ namespace field {
         }
         return true;
     }
+    template<typename T1>
+    bool operator!=(const CompletedSpectralField<T1>& first, const CompletedSpectralField<T1>& second)
+    {
+        return !(first==second);
+    }
 }}
 double test_CompletedSpectralField(const si::wavenumber nlo, const si:: wavenumber nhi, const si::pressure p, const si::temperature T)
 {
