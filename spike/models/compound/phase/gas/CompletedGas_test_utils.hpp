@@ -1,9 +1,10 @@
 #pragma once
 
-#include <models/compound/field/state/CompletedStateField_test_utils.hpp>
-#include <models/compound/field/spectral/CompletedSpectralField_test_utils.hpp>
 #include <models/compound/field/state/OptionalStateField_test_utils.hpp>
 #include <models/compound/field/spectral/OptionalSpectralField_test_utils.hpp>
+
+#include <models/compound/field/state/CompletedStateField_test_utils.hpp>
+#include <models/compound/field/spectral/CompletedSpectralField_test_utils.hpp>
 
 #include "CompletedGas.hpp"
 
@@ -33,12 +34,20 @@ compound::phase::CompletedGas known_dummy_gas {
     /*density*/                           4.0 * si::kilogram/si::meter3,
     /*refractive_index*/                  1.3
 };
-bool operator==(const compound::phase::CompletedGas& first, const compound::phase::CompletedGas& second)
-{
-    return 
-        first.specific_heat_capacity == second.specific_heat_capacity &&
-        first.thermal_conductivity   == second.thermal_conductivity   &&
-        first.dynamic_viscosity      == second.dynamic_viscosity      &&
-        first.density                == second.density                &&
-        first.refractive_index       == second.refractive_index;
-}
+
+namespace compound {
+namespace phase {
+    bool operator==(const CompletedGas& first, const CompletedGas& second)
+    {
+        return 
+            first.specific_heat_capacity == second.specific_heat_capacity &&
+            first.thermal_conductivity   == second.thermal_conductivity   &&
+            first.dynamic_viscosity      == second.dynamic_viscosity      &&
+            first.density                == second.density                &&
+            first.refractive_index       == second.refractive_index;
+    }
+    bool operator!=(const CompletedGas& first, const CompletedGas& second)
+    {
+        return !(first==second);
+    }
+}}

@@ -1,11 +1,12 @@
 #pragma once
 
 // in-house libraries
+#include <models/compound/field/state/OptionalStateField_to_CompletedStateField.hpp>
+#include <models/compound/field/spectral/OptionalSpectralField_to_CompletedSpectralField.hpp>
+
 #include "PartlyKnownGas.hpp"
 #include "CompletedGas.hpp"
 
-#include <models/compound/field/state/OptionalStateField_to_CompletedStateField.hpp>
-#include <models/compound/field/spectral/OptionalSpectralField_to_CompletedSpectralField.hpp>
 
 namespace compound { 
 namespace phase { 

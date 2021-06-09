@@ -1,12 +1,12 @@
 #pragma once
 
-#include "PartlyKnownSolid.hpp"
-#include "CompletedSolid.hpp"
+#include <models/compound/field/state/OptionalStateField_test_utils.hpp>
+#include <models/compound/field/spectral/OptionalSpectralField_test_utils.hpp>
 
 #include <models/compound/field/state/CompletedStateField_test_utils.hpp>
 #include <models/compound/field/spectral/CompletedSpectralField_test_utils.hpp>
-#include <models/compound/field/state/OptionalStateField_test_utils.hpp>
-#include <models/compound/field/spectral/OptionalSpectralField_test_utils.hpp>
+
+#include "CompletedSolid.hpp"
 
 compound::phase::CompletedSolid known_ice (
     /*specific_heat_capacity*/            2.05 * si::joule / (si::gram * si::kelvin), // wikipedia
@@ -59,29 +59,38 @@ compound::phase::CompletedSolid known_dummy_solid (
     /*chemical_susceptibility_estimate*/  0.0
 );
 
-bool operator==(const compound::phase::CompletedSolid& first, const compound::phase::CompletedSolid& second)
-{
-    return 
-        first.specific_heat_capacity == second.specific_heat_capacity &&
-        first.vapor_pressure         == second.vapor_pressure         &&
-        first.thermal_conductivity   == second.thermal_conductivity   &&
-        first.dynamic_viscosity      == second.dynamic_viscosity      &&
-        first.density                == second.density                &&
-        first.refractive_index       == second.refractive_index       &&
-        first.spectral_reflectance   == second.spectral_reflectance   &&
+namespace compound {
+namespace phase {
 
-        first.bulk_modulus           == second.bulk_modulus           &&
-        first.tensile_modulus        == second.tensile_modulus        &&
-        first.shear_modulus          == second.shear_modulus          &&
-        first.pwave_modulus          == second.pwave_modulus          &&
-        first.lame_parameter         == second.lame_parameter         &&
+    bool operator==(const CompletedSolid& first, const CompletedSolid& second)
+    {
+        return 
+            first.specific_heat_capacity == second.specific_heat_capacity &&
+            first.vapor_pressure         == second.vapor_pressure         &&
+            first.thermal_conductivity   == second.thermal_conductivity   &&
+            first.dynamic_viscosity      == second.dynamic_viscosity      &&
+            first.density                == second.density                &&
+            first.refractive_index       == second.refractive_index       &&
+            first.spectral_reflectance   == second.spectral_reflectance   &&
 
-        first.compressive_fracture_strength == second.compressive_fracture_strength &&
-        first.tensile_fracture_strength     == second.tensile_fracture_strength     &&
-        first.shear_fracture_strength       == second.shear_fracture_strength       &&
-        first.compressive_yield_strength    == second.compressive_yield_strength    &&
-        first.tensile_yield_strength        == second.tensile_yield_strength        &&
-        first.shear_yield_strength          == second.shear_yield_strength          &&
+            first.bulk_modulus           == second.bulk_modulus           &&
+            first.tensile_modulus        == second.tensile_modulus        &&
+            first.shear_modulus          == second.shear_modulus          &&
+            first.pwave_modulus          == second.pwave_modulus          &&
+            first.lame_parameter         == second.lame_parameter         &&
 
-        first.chemical_susceptibility_estimate == second.chemical_susceptibility_estimate;
-}
+            first.compressive_fracture_strength == second.compressive_fracture_strength &&
+            first.tensile_fracture_strength     == second.tensile_fracture_strength     &&
+            first.shear_fracture_strength       == second.shear_fracture_strength       &&
+            first.compressive_yield_strength    == second.compressive_yield_strength    &&
+            first.tensile_yield_strength        == second.tensile_yield_strength        &&
+            first.shear_yield_strength          == second.shear_yield_strength          &&
+
+            first.chemical_susceptibility_estimate == second.chemical_susceptibility_estimate;
+    }
+    bool operator!=(const CompletedSolid& first, const CompletedSolid& second)
+    {
+        return !(first==second);
+    }
+
+}}

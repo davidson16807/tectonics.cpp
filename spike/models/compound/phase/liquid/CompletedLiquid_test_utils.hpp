@@ -1,9 +1,10 @@
 #pragma once
 
-#include <models/compound/field/state/CompletedStateField_test_utils.hpp>
-#include <models/compound/field/spectral/CompletedSpectralField_test_utils.hpp>
 #include <models/compound/field/state/OptionalStateField_test_utils.hpp>
 #include <models/compound/field/spectral/OptionalSpectralField_test_utils.hpp>
+
+#include <models/compound/field/state/CompletedStateField_test_utils.hpp>
+#include <models/compound/field/spectral/CompletedSpectralField_test_utils.hpp>
 
 #include "CompletedLiquid.hpp"
 
@@ -29,14 +30,23 @@ compound::phase::CompletedLiquid known_dummy_liquid (
     /*refractive_index*/                  1.3
 );
 
-bool operator==(const compound::phase::CompletedLiquid& first, const compound::phase::CompletedLiquid& second)
-{
-    return 
-        first.specific_heat_capacity == second.specific_heat_capacity &&
-        first.thermal_conductivity   == second.thermal_conductivity   &&
-        first.dynamic_viscosity      == second.dynamic_viscosity      &&
-        first.density                == second.density                &&
-        first.vapor_pressure         == second.vapor_pressure         &&
-        first.surface_tension        == second.surface_tension        &&
-        first.refractive_index       == second.refractive_index;
-}
+namespace compound {
+namespace phase {
+
+    bool operator==(const CompletedLiquid& first, const CompletedLiquid& second)
+    {
+        return 
+            first.specific_heat_capacity == second.specific_heat_capacity &&
+            first.thermal_conductivity   == second.thermal_conductivity   &&
+            first.dynamic_viscosity      == second.dynamic_viscosity      &&
+            first.density                == second.density                &&
+            first.vapor_pressure         == second.vapor_pressure         &&
+            first.surface_tension        == second.surface_tension        &&
+            first.refractive_index       == second.refractive_index;
+    }
+    bool operator!=(const CompletedLiquid& first, const CompletedLiquid& second)
+    {
+        return !(first==second);
+    }
+
+}}

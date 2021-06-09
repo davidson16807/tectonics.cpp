@@ -77,19 +77,26 @@ int PartlyKnownLiquid_attribute_known_count(const compound::phase::PartlyKnownLi
         liquid.surface_tension                 .has_value() +
         liquid.refractive_index                .has_value();
 }
-bool operator==(const compound::phase::PartlyKnownLiquid& first, const compound::phase::PartlyKnownLiquid& second)
-{
-    return 
-        first.specific_heat_capacity == second.specific_heat_capacity &&
-        first.thermal_conductivity   == second.thermal_conductivity   &&
-        first.dynamic_viscosity      == second.dynamic_viscosity      &&
-        first.density                == second.density                &&
-        first.vapor_pressure         == second.vapor_pressure         &&
-        first.surface_tension        == second.surface_tension        &&
-        first.refractive_index       == second.refractive_index;
-}
 
-bool operator!=(const compound::phase::PartlyKnownLiquid& first, const compound::phase::PartlyKnownLiquid& second)
-{
-    return !(first==second);
-}
+
+namespace compound {
+namespace phase {
+
+    bool operator==(const PartlyKnownLiquid& first, const PartlyKnownLiquid& second)
+    {
+        return 
+            first.specific_heat_capacity == second.specific_heat_capacity &&
+            first.thermal_conductivity   == second.thermal_conductivity   &&
+            first.dynamic_viscosity      == second.dynamic_viscosity      &&
+            first.density                == second.density                &&
+            first.vapor_pressure         == second.vapor_pressure         &&
+            first.surface_tension        == second.surface_tension        &&
+            first.refractive_index       == second.refractive_index;
+    }
+
+    bool operator!=(const PartlyKnownLiquid& first, const PartlyKnownLiquid& second)
+    {
+        return !(first==second);
+    }
+
+}}

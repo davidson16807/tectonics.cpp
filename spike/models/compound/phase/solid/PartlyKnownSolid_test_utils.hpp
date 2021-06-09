@@ -206,35 +206,41 @@ int PartlyKnownSolid_attribute_known_count(const compound::phase::PartlyKnownSol
 
         solid.chemical_susceptibility_estimate.has_value();
 }
-bool operator==(const compound::phase::PartlyKnownSolid first, const compound::phase::PartlyKnownSolid second)
-{
-    return 
-        first.specific_heat_capacity == second.specific_heat_capacity &&
-        first.vapor_pressure         == second.vapor_pressure         &&
-        first.thermal_conductivity   == second.thermal_conductivity   &&
-        first.dynamic_viscosity      == second.dynamic_viscosity      &&
-        first.density                == second.density                &&
-        first.refractive_index       == second.refractive_index       &&
-        first.spectral_reflectance   == second.spectral_reflectance   &&
 
-        first.bulk_modulus           == second.bulk_modulus           &&
-        first.tensile_modulus        == second.tensile_modulus        &&
-        first.shear_modulus          == second.shear_modulus          &&
-        first.pwave_modulus          == second.pwave_modulus          &&
-        first.lame_parameter         == second.lame_parameter         &&
-        first.poisson_ratio          == second.poisson_ratio          &&
+namespace compound {
+namespace phase {
 
-        first.compressive_fracture_strength == second.compressive_fracture_strength &&
-        first.tensile_fracture_strength     == second.tensile_fracture_strength     &&
-        first.shear_fracture_strength       == second.shear_fracture_strength       &&
-        first.compressive_yield_strength    == second.compressive_yield_strength    &&
-        first.tensile_yield_strength        == second.tensile_yield_strength        &&
-        first.shear_yield_strength          == second.shear_yield_strength          &&
+    bool operator==(const PartlyKnownSolid first, const PartlyKnownSolid second)
+    {
+        return 
+            first.specific_heat_capacity == second.specific_heat_capacity &&
+            first.vapor_pressure         == second.vapor_pressure         &&
+            first.thermal_conductivity   == second.thermal_conductivity   &&
+            first.dynamic_viscosity      == second.dynamic_viscosity      &&
+            first.density                == second.density                &&
+            first.refractive_index       == second.refractive_index       &&
+            first.spectral_reflectance   == second.spectral_reflectance   &&
 
-        first.chemical_susceptibility_estimate == second.chemical_susceptibility_estimate;
-}
+            first.bulk_modulus           == second.bulk_modulus           &&
+            first.tensile_modulus        == second.tensile_modulus        &&
+            first.shear_modulus          == second.shear_modulus          &&
+            first.pwave_modulus          == second.pwave_modulus          &&
+            first.lame_parameter         == second.lame_parameter         &&
+            first.poisson_ratio          == second.poisson_ratio          &&
 
-bool operator!=(const compound::phase::PartlyKnownSolid first, const compound::phase::PartlyKnownSolid second)
-{
-    return !(first==second);
-}
+            first.compressive_fracture_strength == second.compressive_fracture_strength &&
+            first.tensile_fracture_strength     == second.tensile_fracture_strength     &&
+            first.shear_fracture_strength       == second.shear_fracture_strength       &&
+            first.compressive_yield_strength    == second.compressive_yield_strength    &&
+            first.tensile_yield_strength        == second.tensile_yield_strength        &&
+            first.shear_yield_strength          == second.shear_yield_strength          &&
+
+            first.chemical_susceptibility_estimate == second.chemical_susceptibility_estimate;
+    }
+
+    bool operator!=(const PartlyKnownSolid first, const PartlyKnownSolid second)
+    {
+        return !(first==second);
+    }
+
+}}
