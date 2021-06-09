@@ -8,7 +8,7 @@
 
 #include "CompletedSolid.hpp"
 
-compound::phase::CompletedSolid known_ice (
+compound::phase::CompletedSolid known_ice {
     /*specific_heat_capacity*/            2.05 * si::joule / (si::gram * si::kelvin), // wikipedia
     /*thermal_conductivity*/              2.09 * si::watt / (si::meter * si::kelvin), // wikipedia
     /*dynamic_viscosity*/                 1e13 * si::poise, // reference by Carey (1953)
@@ -32,8 +32,8 @@ compound::phase::CompletedSolid known_ice (
     /*shear_yield_strength*/              1.1 * si::megapascal, // brittle, effectively the same as fracture strength
 
     /*chemical_susceptibility_estimate*/  0.0
-);
-compound::phase::CompletedSolid known_dummy_solid (
+};
+compound::phase::CompletedSolid known_dummy_solid {
     /*specific_heat_capacity*/            1.0 * si::joule / (si::gram * si::kelvin), 
     /*thermal_conductivity*/              2.0 * si::watt / (si::meter * si::kelvin), 
     /*dynamic_viscosity*/                 3.0 * si::poise, 
@@ -57,7 +57,7 @@ compound::phase::CompletedSolid known_dummy_solid (
     /*shear_yield_strength*/              16.1 * si::megapascal,
 
     /*chemical_susceptibility_estimate*/  0.0
-);
+};
 
 namespace compound {
 namespace phase {

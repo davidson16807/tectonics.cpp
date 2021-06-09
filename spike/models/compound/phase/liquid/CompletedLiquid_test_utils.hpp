@@ -8,7 +8,7 @@
 
 #include "CompletedLiquid.hpp"
 
-compound::phase::CompletedLiquid known_liquid_nitrogen (
+compound::phase::CompletedLiquid known_liquid_nitrogen {
     /*specific_heat_capacity*/            2.04 * si::kilojoule / (si::kilogram * si::kelvin), // Timmerhaus (1989)
     /*thermal_conductivity*/              0.1396 * si::watt / (si::meter * si::kelvin), // Timmerhaus (1989)
     /*dynamic_viscosity*/                 157.9 * si::kilogram / (si::meter * 1e6*si::second), // Timmerhaus (1989)
@@ -19,8 +19,8 @@ compound::phase::CompletedLiquid known_liquid_nitrogen (
         }), // Friedman (1950)
     /*surface_tension*/                   11.8000 * si::millinewton / si::meter,
     /*refractive_index*/                  1.19876
-);
-compound::phase::CompletedLiquid known_dummy_liquid (
+};
+compound::phase::CompletedLiquid known_dummy_liquid {
     /*specific_heat_capacity*/            1.0 * si::joule / (si::gram * si::kelvin), 
     /*thermal_conductivity*/              2.0 * si::watt / (si::meter * si::kelvin), 
     /*dynamic_viscosity*/                 3.0 * si::poise, 
@@ -28,7 +28,7 @@ compound::phase::CompletedLiquid known_dummy_liquid (
     /*vapor_pressure*/                    5.0 * si::megapascal,
     /*surface_tension*/                   6.0 * si::newton / si::meter,
     /*refractive_index*/                  1.3
-);
+};
 
 namespace compound {
 namespace phase {

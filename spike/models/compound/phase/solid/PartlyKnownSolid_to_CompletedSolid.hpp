@@ -15,7 +15,7 @@ namespace phase {
     */
     CompletedSolid complete(const PartlyKnownSolid& known, const CompletedSolid& fallback)
     {
-        return CompletedSolid(
+        return CompletedSolid{
             field::complete(known.specific_heat_capacity,           fallback.specific_heat_capacity           ),
             field::complete(known.thermal_conductivity,             fallback.thermal_conductivity             ),
             field::complete(known.dynamic_viscosity,                fallback.dynamic_viscosity                ),
@@ -39,6 +39,6 @@ namespace phase {
             field::complete(known.shear_yield_strength,             fallback.shear_yield_strength             ),
 
             field::complete(known.chemical_susceptibility_estimate, fallback.chemical_susceptibility_estimate )
-        );
+        };
     }
 }}

@@ -16,12 +16,12 @@ namespace phase {
     */
     CompletedGas complete(const PartlyKnownGas& known, const CompletedGas& fallback)
     {
-        return CompletedGas(
+        return CompletedGas{
             field::complete(known.specific_heat_capacity,           fallback.specific_heat_capacity           ),
             field::complete(known.thermal_conductivity,             fallback.thermal_conductivity             ),
             field::complete(known.dynamic_viscosity,                fallback.dynamic_viscosity                ),
             field::complete(known.density,                          fallback.density                          ),
             field::complete(known.refractive_index,                 fallback.refractive_index                 )
-        );
+        };
     }
 }}

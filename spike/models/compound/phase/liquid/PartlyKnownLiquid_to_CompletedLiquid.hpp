@@ -15,7 +15,7 @@ namespace phase {
     */
     CompletedLiquid complete(const PartlyKnownLiquid& known, const CompletedLiquid& fallback)
     {
-        return CompletedLiquid(
+        return CompletedLiquid{
             field::complete(known.specific_heat_capacity,           fallback.specific_heat_capacity           ),
             field::complete(known.thermal_conductivity,             fallback.thermal_conductivity             ),
             field::complete(known.dynamic_viscosity,                fallback.dynamic_viscosity                ),
@@ -23,6 +23,6 @@ namespace phase {
             field::complete(known.vapor_pressure,                   fallback.vapor_pressure                   ),
             field::complete(known.surface_tension,                  fallback.surface_tension                  ),
             field::complete(known.refractive_index,                 fallback.refractive_index                 )
-        );
+        };
     }
 }}
