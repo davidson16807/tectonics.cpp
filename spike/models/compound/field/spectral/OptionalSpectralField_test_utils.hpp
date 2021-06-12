@@ -6,18 +6,19 @@
 
 #include "OptionalSpectralField.hpp"
 
-namespace compound {
-namespace field {
-
+namespace compound{
+namespace field{
     template<typename T1>
     bool operator==(const OptionalSpectralField<T1> first, const OptionalSpectralField<T1> second)
     {
         // std::function does not and cannot have a comparator,
         // so equality can only be determined pragmatically by sampling at given pressures/temperatures
-        if(first.index() != second.index()){
+        if(first.index() != second.index())
+        {
             return false;
         }
-        if((first.index() | second.index()) == 0){
+        if((first.index() | second.index()) == 0)
+        {
             return true;
         }
         if(first.parameters() != second.parameters())
@@ -47,7 +48,6 @@ namespace field {
     {
         return !(first==second);
     }
-
 }}
 
 double test_OptionalSpectralField(const si::wavenumber nlo, const si::wavenumber nhi, si::pressure p, const si::temperature T)

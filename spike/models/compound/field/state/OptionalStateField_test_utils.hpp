@@ -6,9 +6,8 @@
 
 #include "OptionalStateField.hpp"
 
-namespace compound {
-namespace field {
-
+namespace compound{
+namespace field{
     template<typename T1>
     bool operator==(const OptionalStateField<T1> first, const OptionalStateField<T1> second)
     {
@@ -45,7 +44,6 @@ namespace field {
     {
         return !(first==second);
     }
-
 }}
 
 double test_ideal_gas_law_optional(const si::pressure p, const si::temperature T)

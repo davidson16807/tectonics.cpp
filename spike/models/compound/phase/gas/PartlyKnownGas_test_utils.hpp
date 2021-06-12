@@ -1,5 +1,8 @@
 #pragma once
 
+#include <units/si.hpp>
+
+#include <models/compound/field/constant/OptionalConstantField_test_utils.hpp>
 #include <models/compound/field/state/OptionalStateField_test_utils.hpp>
 #include <models/compound/field/spectral/OptionalSpectralField_test_utils.hpp>
 
@@ -66,10 +69,8 @@ int PartlyKnownGas_attribute_known_count(const compound::phase::PartlyKnownGas& 
         liquid.refractive_index                .has_value();
 }
 
-
-namespace compound {
-namespace phase {
-
+namespace compound{
+namespace phase{
     bool operator==(const PartlyKnownGas& first, const PartlyKnownGas& second)
     {
         return 
