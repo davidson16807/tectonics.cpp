@@ -157,6 +157,10 @@ namespace field {
         {
             return std::visit(CompletedSpectralFieldValueVisitor(nlo, nhi, p, T), entry);
         }
+        constexpr T1 operator()(const SpectralParameters parameters) const
+        {
+            return std::visit(CompletedSpectralFieldValueVisitor(parameters.nlo, parameters.nhi, parameters.pressure, parameters.temperature), entry);
+        }
         /*
         Return whichever field provides more information, going by the following definition:
             std::monostate < T1 < SpectralFunction<T1> < std::pair<T1, SpectralFunction<T1>>

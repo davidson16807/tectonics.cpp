@@ -8,11 +8,7 @@
 #include "units/si_test_utils.hpp"
 
 #include "CompletedStateField.hpp"
-
-double test_ideal_gas_law_completed(const si::pressure p, const si::temperature T)
-{
-	return (si::mole*si::universal_gas_constant*T/p/si::liter);
-}
+#include "CompletedStateField_test_utils.hpp"
 
 
 

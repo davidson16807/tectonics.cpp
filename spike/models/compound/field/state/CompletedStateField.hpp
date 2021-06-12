@@ -149,6 +149,14 @@ namespace field {
         {
             return std::visit(CompletedStateFieldValueVisitor(p, T), entry);
         }
+        constexpr T1 operator()(const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T) const
+        {
+            return std::visit(CompletedStateFieldValueVisitor(p, T), entry);
+        }
+        constexpr T1 operator()(const StateParameters parameters) const
+        {
+            return std::visit(CompletedStateFieldValueVisitor(parameters.pressure, parameters.temperature), entry);
+        }
         /*
         Return whichever field provides more information, going by the following definition:
             std::monostate < T1 < StateFunction<T1> < std::pair<T1, StateFunction<T1>>
