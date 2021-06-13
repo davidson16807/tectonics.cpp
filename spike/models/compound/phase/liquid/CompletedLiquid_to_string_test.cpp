@@ -7,7 +7,7 @@
 #include "CompletedLiquid_to_string.hpp"
 #include "CompletedLiquid_test_utils.hpp"
 
-TEST_CASE( "CompletedConstantField to_string() purity", "[field]" ) {
+TEST_CASE( "CompletedLiquid to_string() purity", "[field]" ) {
 	SECTION("Calling a function twice with the same arguments must produce the same results")
 	{
 		CHECK(compound::phase::to_string(known_liquid_nitrogen)
@@ -17,7 +17,7 @@ TEST_CASE( "CompletedConstantField to_string() purity", "[field]" ) {
     }
 }
 
-TEST_CASE( "CompletedConstantField to_string() appreciable difference preservation", "[field]" ) {
+TEST_CASE( "CompletedLiquid to_string() appreciable difference preservation", "[field]" ) {
 	compound::phase::CompletedLiquid nudge_specific_heat_capacity = known_dummy_liquid; nudge_specific_heat_capacity .specific_heat_capacity = 1.01 * nudge_specific_heat_capacity .specific_heat_capacity (compound::field::StateParameters());
 	compound::phase::CompletedLiquid nudge_thermal_conductivity   = known_dummy_liquid; nudge_thermal_conductivity   .thermal_conductivity   = 1.01 * nudge_thermal_conductivity   .thermal_conductivity   (compound::field::StateParameters());
 	compound::phase::CompletedLiquid nudge_dynamic_viscosity      = known_dummy_liquid; nudge_dynamic_viscosity      .dynamic_viscosity      = 1.01 * nudge_dynamic_viscosity      .dynamic_viscosity      (compound::field::StateParameters());

@@ -7,7 +7,7 @@
 #include "CompletedSolid_to_string.hpp"
 #include "CompletedSolid_test_utils.hpp"
 
-TEST_CASE( "CompletedConstantField to_string() purity", "[field]" ) {
+TEST_CASE( "CompletedSolid to_string() purity", "[field]" ) {
 	SECTION("Calling a function twice with the same arguments must produce the same results")
 	{
 		CHECK(compound::phase::to_string(known_ice)
@@ -17,7 +17,7 @@ TEST_CASE( "CompletedConstantField to_string() purity", "[field]" ) {
     }
 }
 
-TEST_CASE( "CompletedConstantField to_string() appreciable difference preservation", "[field]" ) {
+TEST_CASE( "CompletedSolid to_string() appreciable difference preservation", "[field]" ) {
 	compound::phase::CompletedSolid nudge_specific_heat_capacity           = known_dummy_solid; nudge_specific_heat_capacity           .specific_heat_capacity           = 1.01 * nudge_specific_heat_capacity           .specific_heat_capacity        (compound::field::StateParameters());
 	compound::phase::CompletedSolid nudge_thermal_conductivity             = known_dummy_solid; nudge_thermal_conductivity             .thermal_conductivity             = 1.01 * nudge_thermal_conductivity             .thermal_conductivity          (compound::field::StateParameters());
 	compound::phase::CompletedSolid nudge_dynamic_viscosity                = known_dummy_solid; nudge_dynamic_viscosity                .dynamic_viscosity                = 1.01 * nudge_dynamic_viscosity                .dynamic_viscosity             (compound::field::StateParameters());

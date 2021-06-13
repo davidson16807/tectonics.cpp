@@ -7,7 +7,7 @@
 #include "PartlyKnownSolid_to_string.hpp"
 #include "PartlyKnownSolid_test_utils.hpp"
 
-TEST_CASE( "OptionalConstantField to_string() purity", "[field]" ) {
+TEST_CASE( "PartlyKnownSolid to_string() purity", "[field]" ) {
 	SECTION("Calling a function twice with the same arguments must produce the same results")
 	{
 		CHECK(compound::phase::to_string(unknown_solid)
@@ -23,7 +23,7 @@ TEST_CASE( "OptionalConstantField to_string() purity", "[field]" ) {
     }
 }
 
-TEST_CASE( "OptionalConstantField to_string() appreciable difference preservation", "[field]" ) {
+TEST_CASE( "PartlyKnownSolid to_string() appreciable difference preservation", "[field]" ) {
 	compound::phase::PartlyKnownSolid nudge_specific_heat_capacity           = dummy_solid; nudge_specific_heat_capacity           .specific_heat_capacity           = std::monostate();
 	compound::phase::PartlyKnownSolid nudge_thermal_conductivity             = dummy_solid; nudge_thermal_conductivity             .thermal_conductivity             = std::monostate();
 	compound::phase::PartlyKnownSolid nudge_dynamic_viscosity                = dummy_solid; nudge_dynamic_viscosity                .dynamic_viscosity                = std::monostate();

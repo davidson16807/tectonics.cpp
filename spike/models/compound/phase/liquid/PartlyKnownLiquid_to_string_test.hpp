@@ -7,7 +7,7 @@
 #include "PartlyKnownLiquid_to_string.hpp"
 #include "PartlyKnownLiquid_test_utils.hpp"
 
-TEST_CASE( "OptionalConstantField to_string() purity", "[field]" ) {
+TEST_CASE( "PartlyKnownLiquid to_string() purity", "[field]" ) {
 	SECTION("Calling a function twice with the same arguments must produce the same results")
 	{
 		CHECK(compound::phase::to_string(unknown_liquid)
@@ -23,7 +23,7 @@ TEST_CASE( "OptionalConstantField to_string() purity", "[field]" ) {
     }
 }
 
-TEST_CASE( "OptionalConstantField to_string() appreciable difference preservation", "[field]" ) {
+TEST_CASE( "PartlyKnownLiquid to_string() appreciable difference preservation", "[field]" ) {
 	compound::phase::PartlyKnownLiquid nudge_specific_heat_capacity = dummy_liquid; nudge_specific_heat_capacity .specific_heat_capacity = std::monostate();
 	compound::phase::PartlyKnownLiquid nudge_thermal_conductivity   = dummy_liquid; nudge_thermal_conductivity   .thermal_conductivity   = std::monostate();
 	compound::phase::PartlyKnownLiquid nudge_dynamic_viscosity      = dummy_liquid; nudge_dynamic_viscosity      .dynamic_viscosity      = std::monostate();
