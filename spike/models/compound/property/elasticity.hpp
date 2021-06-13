@@ -16,12 +16,12 @@ we may consider coupling it with data from http://dx.doi.org/10.5061/dryad.h505v
 
 The parameters are abbreviated as follows:
 
-bulk     K    bulk modulus
-tensile  E    tensile Modulus, Young's modulus, modulus of elasticity
-lame     λ    Lamé's first parameter
-shear    G,μ  shear modulus, dynamic viscosity, or modulus of rigidity
-poisson  ν    Poisson's ratio
-pwave    M    P-wave modulus
+bulk     K         bulk modulus
+tensile  E    c11  tensile Modulus, Young's modulus, modulus of elasticity
+lame     λ         Lamé's first parameter
+shear    G,μ  c44  shear modulus, dynamic viscosity, or modulus of rigidity
+poisson  ν         Poisson's ratio
+pwave    M         P-wave modulus
 */
 
 

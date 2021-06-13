@@ -9,6 +9,7 @@
 // 3rd party libraries
 #include "CompletedCompound.hpp"
 #include "PartlyKnownCompound.hpp"
+#include "StateParameterSamples.hpp"
 
 namespace compound
 {
@@ -24,6 +25,7 @@ namespace compound
         const PartlyKnownCompound& known,
         const CompletedCompound& fallback
     ){
+        StateParameterSamples samples(known);
         std::vector<phase::CompletedSolid> solids;
         if (fallback.solids.size() > 0)
         {
@@ -46,10 +48,10 @@ namespace compound
             field::complete(known.latent_heat_of_fusion,              fallback.latent_heat_of_fusion              ),
             field::complete(known.triple_point_pressure,              fallback.triple_point_pressure              ),
             field::complete(known.triple_point_temperature,           fallback.triple_point_temperature           ),
-            field::complete(known.freezing_point_sample_pressure,     fallback.freezing_point_sample_pressure     ),
-            field::complete(known.freezing_point_sample_temperature,  fallback.freezing_point_sample_temperature  ),
-            field::complete(known.boiling_point_sample_pressure,      fallback.boiling_point_sample_pressure      ),
-            field::complete(known.boiling_point_sample_temperature,   fallback.boiling_point_sample_temperature   ),
+            field::complete(known.freezing_point_sample_pressure,     samples.melting.pressure                    ),
+            field::complete(known.freezing_point_sample_temperature,  samples.melting.temperature                 ),
+            field::complete(known.boiling_point_sample_pressure,      samples.boiling.pressure                    ),
+            field::complete(known.boiling_point_sample_temperature,   samples.boiling.temperature                 ),
             known.simon_glatzel_slope(),
             known.simon_glatzel_exponent(),
             field::complete(known.molecular_absorption_cross_section, fallback.molecular_absorption_cross_section ),

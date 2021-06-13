@@ -16,6 +16,7 @@
 #include "./property/published_test.hpp"
 #include "./PartlyKnownCompound_operators_test.hpp"
 #include "./PartlyKnownCompound_to_CompletedCompound_test.hpp"
+#include "./CompletedCompound_to_string_test.cpp"
 #include "./field/spectral/OptionalSpectralField_to_CompletedSpectralField_test.hpp"
 #include "./field/spectral/CompletedSpectralField_test.hpp"
 #include "./field/spectral/OptionalSpectralField_test.hpp"
