@@ -1,15 +1,18 @@
 #pragma once
 
 // std libraries
-#include <optional>          // optional
+#include <vector>            // vector
 
 // in-house libraries
+#include "field/constant/OptionalConstantField.hpp"
+#include "field/state/OptionalStateField.hpp"
+#include "field/spectral/OptionalSpectralField.hpp"
+
 #include "phase/gas/PartlyKnownGas.hpp"
 #include "phase/liquid/PartlyKnownLiquid.hpp"
 #include "phase/solid/PartlyKnownSolid.hpp"
 
 #include "property/published.hpp"
-
 
 namespace compound
 {
@@ -255,9 +258,14 @@ namespace compound
 
             guess.liquid = liquid.value_or(fallback.liquid);
             guess.gas    = gas   .value_or(fallback.gas);
-            for (std::size_t i=0; i<solids.size(); i++){
-                guess.solids[i] = guess.solids[i].value_or(fallback.solids[i]);
-            }
+            guess.solids[0] = solids[0].value_or(fallback.solids[0]);
+            /*
+            NOTE: We only perform `value_or()` on the first phase.
+            This is done foremost to preserve the associativity of `value_or()`.
+            If the api user wants to populate the remaining solids for the compound, 
+            they would be better served to propagate properties from the first phase, 
+            since the remaining phases are likely to have more in common with the first phase of the same compound.
+            */
 
             return guess;
         }

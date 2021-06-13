@@ -1,3 +1,4 @@
+#include "./liquid/CompletedLiquid_to_string_test.cpp"
 #include "./liquid/PartlyKnownLiquid_test.cpp"
 #include "./liquid/PartlyKnownLiquid_to_CompletedLiquid_test.cpp"
 #include "./liquid/PartlyKnownLiquid_to_string_test.hpp"
@@ -5,6 +6,7 @@
 #include "./gas/CompletedGas_to_string_test.cpp"
 #include "./gas/PartlyKnownGas_to_CompletedGas_test.cpp"
 #include "./gas/PartlyKnownGas_test.cpp"
+#include "./solid/CompletedSolid_to_string_test.cpp"
 #include "./solid/PartlyKnownSolid_operators_test.hpp"
 #include "./solid/PartlyKnownSolid_test.cpp"
 #include "./solid/PartlyKnownSolid_to_CompletedSolid_test.cpp"

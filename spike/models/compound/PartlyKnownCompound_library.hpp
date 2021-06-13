@@ -6,6 +6,7 @@
 
 #include "field/missing.hpp"
 #include "PartlyKnownCompound.hpp"
+#include "state_functions.hpp"
 
 namespace compound {
 
@@ -52,439 +53,10 @@ SIDE NOTE:
 There are likely some among you who think this is excessive. That is all.
 */   
 
-namespace{
-
-    template<typename Tx, typename Ty>
-    field::OptionalStateField<Ty> get_interpolated_temperature_function(
-        const Tx xunits, const Ty yunits,
-        const std::vector<double>xs, 
-        const std::vector<double>ys
-    ){
-        return field::StateFunction<Ty>(
-            [xunits, yunits, xs, ys]
-            (const si::pressure p, const si::temperature T)
-            {
-                return math::lerp(xs, ys, T/xunits) * yunits;
-            }
-        );
-    }
-    template<typename TT, typename Ty>
-    field::OptionalStateField<Ty> get_interpolated_pressure_temperature_function(
-        const TT Tunits,  const Ty yunits,
-        const std::vector<double>Ts, 
-        const si::pressure lop, const std::vector<double>lop_ys, 
-        const si::pressure hip, const std::vector<double>hip_ys
-    ){
-        return field::StateFunction<Ty>(
-            [Tunits, yunits, Ts, lop, lop_ys, hip, hip_ys]
-            (const si::pressure p, const si::temperature T)
-            {
-                return math::mix(math::lerp(Ts, lop_ys, T/Tunits), 
-                                 math::lerp(Ts, hip_ys, T/Tunits), 
-                                 math::linearstep(lop, hip, p)) * yunits;
-            }
-        );
-    }
-    template<typename TT, typename Ty>
-    field::OptionalStateField<Ty> get_interpolated_pressure_temperature_function(
-        const TT Tunits, const Ty yunits,
-        const std::vector<double>Ts, 
-        const si::pressure p0, const std::vector<double>yp0, 
-        const si::pressure p1, const std::vector<double>yp1,
-        const si::pressure p2, const std::vector<double>yp2
-    ){
-        return field::StateFunction<Ty>(
-            [Tunits, yunits, Ts, p0, p1, p2, yp0, yp1, yp2]
-            (const si::pressure p, const si::temperature T)
-            {
-                return math::lerp(
-                    std::vector<si::pressure>{p0, p1, p2},
-                    std::vector<double>{
-                        math::lerp(Ts, yp0, T/Tunits), 
-                        math::lerp(Ts, yp1, T/Tunits), 
-                        math::lerp(Ts, yp2, T/Tunits)
-                    }, p) * yunits; 
-            }
-        );
-    }
-    template<typename TT, typename Tp, typename Ty>
-    field::OptionalStateField<Ty> get_exponent_pressure_temperature_function(
-        const TT Tunits, const Tp punits, const Ty yunits, 
-        const double pslope, const double pexponent, 
-        const double Tslope, const double Texponent, 
-        const double intercept
-    ){
-        return field::StateFunction<Ty>(
-            [Tunits, punits, yunits, pslope, pexponent, Tslope, Texponent, intercept]
-            (const si::pressure p, const si::temperature T)
-            {
-                return (pslope*std::pow(p/punits, pexponent)
-                      + Tslope*std::pow(T/Tunits, Texponent)
-                      + intercept) * yunits;
-            }
-        );
-    }
-    template<typename TT, typename Tp, typename Ty>
-    field::OptionalStateField<Ty> get_sigmoid_exponent_pressure_temperature_function(
-        const TT Tunits, const Tp punits, const Ty yunits, 
-        const double pslope, const double pexponent, 
-        const double Tslope, const double Texponent, 
-        const double Tsigmoid_max, const double Tsigmoid_scale, const double Tsigmoid_center,  
-        const double intercept
-    ){
-        return field::StateFunction<Ty>(
-            [Tunits, punits, yunits, 
-             pslope, pexponent, Tslope, Texponent, 
-             Tsigmoid_max, Tsigmoid_scale, Tsigmoid_center, 
-             intercept]
-            (const si::pressure p, const si::temperature T)
-            {
-                const double Tsigmoid_input = (T/Tunits - Tsigmoid_center)/Tsigmoid_scale;
-                return (pslope*std::pow(p/punits, pexponent)
-                      + Tslope*std::pow(T/Tunits, Texponent)
-                      + Tsigmoid_max * Tsigmoid_input / std::sqrt(1.0 + Tsigmoid_input*Tsigmoid_input)
-                      + intercept) * yunits;
-            }
-        );
-    }
-    template<typename Tx, typename Ty>
-    field::OptionalStateField<Ty> get_perry_temperature_function(
-        const Tx Tunits, const Ty yunits,
-        const double intercept, const double linear, const double inverse_square, const double square
-    ){
-        return field::StateFunction<Ty>(
-            [Tunits, yunits, intercept, linear, inverse_square, square]
-            (const si::pressure p, const si::temperature T)
-            {
-                double t = T/Tunits;
-                return (intercept + linear*t + inverse_square/(t*t) + square*t*t)*yunits;
-            }
-        );
-    }
-    template<typename Tx, typename Ty>
-    field::OptionalStateField<Ty> get_dippr_liquid_density_temperature_function(
-        const Tx Tunits, const Ty yunits,
-        const double c1, const double c2, const double c3, const double c4
-    ){
-        return field::StateFunction<Ty>(
-            [Tunits, yunits, c1, c2, c3, c4]
-            (const si::pressure p, const si::temperature T)
-            {
-                double t = T/Tunits;
-                return (c1 / std::pow(c2, 1+std::pow(1.0-(t/c3), c4)))*yunits;
-            }
-        );
-    }
-    template<typename Tx, typename Ty>
-    field::OptionalStateField<Ty> get_dippr_gas_viscosity_temperature_function(
-        const Tx Tunits, const Ty yunits,
-        const double c1, const double c2, const double c3, const double c4
-    ){
-        return field::StateFunction<Ty>(
-            [Tunits, yunits, c1, c2, c3, c4]
-            (const si::pressure p, const si::temperature T)
-            {
-                double t = T/Tunits;
-                return (c1*std::pow(t, c2) / (1.0+c3/t + c4/(t*t)))*yunits;
-            }
-        );
-    }
-    template<typename Tx, typename Ty>
-    field::OptionalStateField<Ty> get_dippr_liquid_viscosity_temperature_function(
-        const Tx Tunits, const Ty yunits,
-        const double c1, const double c2, const double c3, const double c4, const double c5
-    ){
-        return field::StateFunction<Ty>(
-            [Tunits, yunits, c1, c2, c3, c4, c5]
-            (const si::pressure p, const si::temperature T)
-            {
-                double t = T/Tunits;
-                return exp(c1 + c2/t + c3*std::log(t) + c4*std::pow(t,c5))*yunits;
-            }
-        );
-    }
-    template<typename Tx, typename Ty>
-    field::OptionalStateField<Ty> get_dippr_gas_thermal_conductivity_temperature_function(
-        const Tx Tunits, const Ty yunits,
-        const double c1, const double c2, const double c3, const double c4
-    ){
-        return field::StateFunction<Ty>(
-            [Tunits, yunits, c1, c2, c3, c4]
-            (const si::pressure p, const si::temperature T)
-            {
-                double t = T/Tunits;
-                return (c1*std::pow(t,c2) / (1.0 + c3/t + c4/(t*t)))*yunits;
-            }
-        );
-    }
-    template<typename Tx, typename Ty>
-    field::OptionalStateField<Ty> get_dippr_liquid_thermal_conductivity_temperature_function(
-        const Tx Tunits, const Ty yunits,
-        const double c1, const double c2, const double c3, const double c4, const double c5
-    ){
-        return field::StateFunction<Ty>(
-            [Tunits, yunits, c1, c2, c3, c4, c5]
-            (const si::pressure p, const si::temperature T)
-            {
-                double t = T/Tunits;
-                return (c1 + c2*t + c3*t*t + c4*t*t*t + c5*t*t*t*t)*yunits;
-            }
-        );
-    }
-    template<typename Tx, typename Ty>
-    field::OptionalStateField<Ty> get_dippr_liquid_vapor_pressure_temperature_function(
-        const Tx Tunits, const Ty yunits,
-        const double c1, const double c2, const double c3, const double c4, const double c5
-    ){
-        return field::StateFunction<Ty>(
-            [Tunits, yunits, c1, c2, c3, c4, c5]
-            (const si::pressure p, const si::temperature T)
-            {
-                double t = T/Tunits;
-                return ( std::exp(c1 + c2/t + c3*std::log(t) + c4*std::pow(t,c5)) )*yunits;
-            }
-        );
-    }
-    // from Mulero (2012)
-    template<typename Tx, typename Ty>
-    field::OptionalStateField<Ty> get_refprop_liquid_surface_tension_temperature_function(
-        const Tx Tc, const Ty yunits,
-        const double sigma1, const double n1, const double sigma2, const double n2, const double sigma3, const double n3
-    ){
-        return field::StateFunction<Ty>(
-            [Tc, yunits, sigma1, n1, sigma2, n2, sigma3, n3]
-            (const si::pressure p, const si::temperature T)
-            {
-                double t = T/Tc;
-                return ( sigma1*std::pow(1.0 - t, n1) + sigma2*std::pow(1.0 - t, n2) + sigma3*std::pow(1.0 - t, n3) )*yunits;
-            }
-        );
-    }
-    // from Mulero (2012)
-    template<typename Tx, typename Ty>
-    field::OptionalStateField<Ty> get_linear_liquid_surface_tension_temperature_function(
-        const Tx Tunits, const Ty yunits,
-        const double TL, const double gammaTL, const double dgamma_dT
-    ){
-        return field::StateFunction<Ty>(
-            [Tunits, yunits, TL, gammaTL, dgamma_dT]
-            (const si::pressure p, const si::temperature T)
-            {
-                double t = T/Tunits;
-                return ( gammaTL + dgamma_dT * (t-TL) )*yunits;
-            }
-        );
-    }
-    template<typename TT>
-    field::OptionalStateField<si::pressure> get_antoine_vapor_pressure_function(
-        const TT Tunits, const si::pressure punits,
-        const double A, const double B, const double C
-    ){
-        return field::StateFunction<si::pressure>(
-            [Tunits, punits, A,B,C]
-            (const si::pressure p, const si::temperature T)
-            {
-                return exp(A - B / (C+T/Tunits)) * punits;
-            }
-        );
-    }
-    template<typename TT>
-    field::OptionalStateField<si::pressure> get_antoine_vapor_pressure_function(
-        const TT Tunits, const si::pressure punits,
-        const double A, const double B, const double C,
-        const double Tmin, double Tmax
-    ){
-        return field::StateFunction<si::pressure>(
-            [Tunits, punits, A,B,C, Tmin, Tmax]
-            (const si::pressure p, const si::temperature T)
-            {
-                return exp(A - B / (C+std::clamp(T/Tunits,Tmin,Tmax))) * punits;
-            }
-        );
-    }
-    field::OptionalSpectralField<si::area> get_molecular_absorption_cross_section_function(
-        const si::wavenumber xunits, const si::area yunits,
-        const std::vector<double>     xs, 
-        const std::vector<double>log10ys
-    ){
-        return field::SpectralFunction<si::area>(
-            [xunits, yunits, xs, log10ys]
-            (const si::wavenumber nlo, 
-             const si::wavenumber nhi, 
-             const si::pressure p, 
-             const si::temperature T)
-            {
-                return std::pow(10.0, math::integral_of_lerp(xs, log10ys, (nlo*si::meter), (nhi*si::meter)) 
-                    / (nhi/xunits - nlo/xunits)) * yunits;
-            }
-        );
-    }
-    field::OptionalSpectralField<double> get_interpolated_refractive_index_function(
-        const si::length lunits, 
-        const std::vector<double>log10ls, 
-        const std::vector<double>     ns
-    ){
-        return field::SpectralFunction<double>(
-            [lunits, log10ls, ns]
-            (const si::wavenumber nlo, 
-             const si::wavenumber nhi, 
-             const si::pressure p, 
-             const si::temperature T)
-            {
-                double l = (2.0 / (nhi+nlo) / lunits);
-                return math::lerp(log10ls, ns, log10(l));
-            }
-        );
-    }
-}
-
-// "GOLD STANDARD" COMPOUNDS:
-// Compounds for which almost all properties have published values
-// These can serve as representative "fallback" values for other compounds
-// whose properties are not published.
-// See PartlyKnownCompound for implementation details concerning this.
-
-
-// water, H2O
-// for the oceans and ice caps of earth, and the surface and mantle of europa, and the surface of pluto
-PartlyKnownCompound water {
-    /*molar_mass*/                        18.015 * si::gram/si::mole,
-    /*atoms_per_molecule*/                3u,
-    /*molecular_diameter*/                265.0 * si::picometer,                                    // wikipedia,  Ismail (2015)
-    /*molecular_degrees_of_freedom*/      6.8,
-    /*acentric_factor*/                   0.345,
-
-    /*critical_point_pressure*/           22.06 *  si::megapascal,
-    /*critical_point_volume*/             56.0 *  si::centimeter3/si::mole,                         
-    /*critical_point_temperature*/        647.01 * si::kelvin,
-    /*critical_point_compressibility*/    0.230,                                                    // engineering toolbox
-
-    /*latent_heat_of_vaporization*/       22.6e5 * si::joule/si::kilogram, 
-    /*latent_heat_of_fusion*/             6.01*si::kilojoule/(18.015*si::gram),
-    /*triple_point_pressure*/             0.6116e3*si::pascal,
-    /*triple_point_temperature*/          273.15 * si::kelvin,
-    /*freezing_point_sample_pressure*/    si::atmosphere,
-    /*freezing_point_sample_temperature*/ si::standard_temperature,
-    /*boiling_point_sample_pressure*/     si::atmosphere,
-    /*boiling_point_sample_temperature*/  100.0*si::celcius,
-    /*simon_glatzel_slope*/               7070e5,
-    /*simon_glatzel_exponent*/            4.46,
-
-    /*molecular_absorption_cross_section*/ 
-    get_molecular_absorption_cross_section_function
-        ( 1.0/si::meter, si::meter2,
-          std::vector<double>{  9.73e1, 6.05e2, 7.37e3, 1.65e4, 2.98e4, 6.50e4, 9.73e4, 1.38e5, 1.62e5, 2.63e5, 3.35e5, 4.39e5, 5.15e5, 5.89e5, 6.93e5, 9.82e5, 1.25e6, 1.64e6, 2.08e6, 2.38e6, 2.41e6, 2.44e6, 2.47e6, 2.53e6, 2.59e6, 2.63e6, 2.73e6, 2.78e6, 2.93e6, 2.98e6, 3.05e6, 3.08e6, 5.11e6, 5.63e6, 6.04e6, 6.45e6, 6.86e6, 8.04e6, 9.68e6, 1.08e7, 1.24e7, 1.37e7, 2.37e7, 3.94e7, 6.98e7, 1.69e8 },
-          std::vector<double>{  -24.98, -24.44, -23.93, -23.46, -23.46, -22.97, -23.70, -23.77, -23.11, -24.44, -22.46, -25.14, -24.47, -25.68, -25.10, -27.10, -28.15, -29.10, -30.25, -29.38, -29.28, -29.28, -29.47, -29.22, -29.47, -29.55, -29.28, -29.21, -29.27, -28.95, -28.71, -28.69, -25.41, -21.62, -21.41, -21.51, -21.76, -21.09, -20.98, -20.74, -20.82, -20.75, -20.83, -21.08, -21.54, -22.44 }),
-
-    /*gas*/
-    phase::PartlyKnownGas {
-        /*specific_heat_capacity*/ // 2.080 * si::joule / (si::gram * si::kelvin),                     // wikipedia
-            get_exponent_pressure_temperature_function
-                (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
-                0.01766, 0.80539, 0.00707, 0.69586, 1.42782), 
-                // water, mean error: 0.8%, max error: 3.4%, range: 300-1273.2K, 0-10MPa, stp estimate: 1.781
-        /*thermal_conductivity*/   // 0.016 * si::watt / (si::meter * si::kelvin),                     // wikipedia
-            get_sigmoid_exponent_pressure_temperature_function
-                (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
-                0.00054, 1.09614, 0.00000, 0.00000, 0.09827, 691.90362, 883.95160, 0.08323), 
-                // water, mean error: 2.5%, max error: 9.7%, range: 300-1273.2K, 0-10MPa, stp estimate: 0.018
-        /*dynamic_viscosity*/      // 1.24e-5 * si::pascal * si::second,                               // engineering toolbox, at 100 C
-            get_exponent_pressure_temperature_function
-                (si::kelvin, si::megapascal, si::micropascal*si::second, 
-                0.00019, 3.33694, 0.02183, 1.08016, -0.58257), 
-                // water, mean error: 1.2%, max error: 3.5%, range: 300-1273.2K, 0-10MPa, stp estimate: 8.765
-        /*density*/                0.6* si::kilogram/si::meter3,
-        /*refractive_index*/       1.000261                                                         // engineering toolbox
-    },
-
-    /*liquid*/
-    phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ 4.1813 * si::joule / (si::gram * si::kelvin),                    // wikipedia
-        /*thermal_conductivity*/   // 0.6062 * si::watt / (si::meter * si::kelvin), 
-            get_dippr_liquid_thermal_conductivity_temperature_function
-                (si::kelvin, si::watt / (si::meter * si::kelvin),
-                 -0.432, 0.0057255, -0.000008078, 1.861e-9, 0.0), // 273.15-633.15K
-        /*dynamic_viscosity*/      
-            get_dippr_liquid_viscosity_temperature_function
-                (si::kelvin, si::pascal* si::second, 
-                 -52.843, 3703.6, 5.866, -5.879e-29, 10.0), // 273.16-646.15
-        /*density*/                // 997.0 * si::kilogram/si::meter3,                                
-            field::StateFunction<si::density>([](const si::pressure p, const si::temperature T) {
-                // Perry equation 119, specialized for water
-                // valid for 273.16-647.096K
-                si::temperature Tc = 647.096 * si::kelvin;
-                double tau = 1.0 - (T/Tc);
-                double rho = 17.874 
-                    + 35.618*pow(tau,0.33) 
-                    + 19.655*pow(tau,0.66)
-                    - 9.1306*pow(tau, 5.0/3.0) 
-                    - 31.367*pow(tau, 16.0/3.0) 
-                    - 813.56*pow(tau,43.0/3.0) 
-                    - 17421000.0*pow(tau,110.0/3.0);
-                return rho * 18.015 * si::gram / si::decimeter3;
-            }),
-        /*vapor_pressure*/         
-            // get_antoine_vapor_pressure_function(
-            //     si::celcius, si::millimeter_mercury, 
-            //     7.94917, 1657.462, 1474.68, 213.69), // Physical and Chemical Equilibrium for Chemical Engineers, Second Edition. 
-            // get_dippr_liquid_vapor_pressure_temperature_function
-            //     (si::kelvin, si::pascal,
-            //      73.649, -7258.2, -7.3037, 4.1653e-6),//273.16-647.1K
-            field::StateFunction<si::pressure>([](const si::pressure p, const si::temperature T) {
-                // Buck equation
-                double C = T/si::celcius;
-                return 0.61121*exp((18.678-C/234.5) * (C/(257.14+C))) * si::kilopascal; 
-            }),
-        /*surface_tension*/            
-            get_refprop_liquid_surface_tension_temperature_function
-                (647.01 * si::kelvin, si::millinewton/si::meter,
-                 -0.1306, 2.471, 0.2151, 1.233, 0.0, 0.0), // Mulero (2012)
-        /*refractive_index*/       //1.33336,
-            get_interpolated_refractive_index_function
-                (si::micrometer, 
-                 std::vector<double>{-0.69, -0.53,  0.24,  0.36,  0.41,  0.45,  0.50,  0.56,  0.65,  0.73,  0.77,  0.79,  0.84,  0.97,  1.08,  1.27,  1.33,  1.46,  1.59,  1.68,  1.85,  2.00,  2.05,  2.08,  2.30},
-                 std::vector<double>{1.391, 1.351, 1.315, 1.288, 1.243, 1.148, 1.476, 1.382, 1.337, 1.310, 1.243, 1.346, 1.324, 1.256, 1.117, 1.458, 1.490, 1.548, 1.526, 1.548, 1.841, 1.957, 1.957, 2.002, 2.124}),
-    },
-
-    /*solid*/ 
-    std::vector<phase::PartlyKnownSolid>{
-        phase::PartlyKnownSolid {
-            /*specific_heat_capacity*/            2.05 * si::joule / (si::gram * si::kelvin),       // wikipedia
-            /*thermal_conductivity*/              2.09 * si::watt / (si::meter * si::kelvin),       // wikipedia
-            /*dynamic_viscosity*/                 1e13 * si::poise,                                 // reference by Carey (1953)
-            /*density*/                           0916.9 * si::kilogram/si::meter3,
-            /*vapor_pressure*/                    //138.268 * si::megapascal,
-                get_interpolated_temperature_function
-                    (si::celcius, si::millimeter_mercury,
-                     std::vector<double>{-17.3,  11.2,   51.6,   100.0  }, 
-                     std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
-            /*refractive_index*/                  1.3098,
-            /*spectral_reflectance*/              0.9,
-
-            /*bulk_modulus*/                      8.899 * si::gigapascal,                           // gammon (1983)
-            /*tensile_modulus*/                   9.332 * si::gigapascal,                           // gammon (1983)
-            /*shear_modulus*/                     3.521 * si::gigapascal,                           // gammon (1983)
-            /*pwave_modulus*/                     13.59 * si::gigapascal,                           // gammon (1983)
-            /*lame_parameter*/                    6.552 * si::gigapascal,                           // gammon (1983)
-            /*poisson_ratio*/                     0.3252,                                           // gammon (1983)
-
-            /*compressive_fracture_strength*/     6.0 * si::megapascal,                             //engineering toolbox
-            /*tensile_fracture_strength*/         1.0 * si::megapascal,                             //engineering toolbox
-            /*shear_fracture_strength*/           1.1 * si::megapascal,                             // Frederking (1989)
-            /*compressive_yield_strength*/        6.0 * si::megapascal,                             // brittle, effectively the same as fracture strength
-            /*tensile_yield_strength*/            1.0 * si::megapascal,                             // brittle, effectively the same as fracture strength
-            /*shear_yield_strength*/              1.1 * si::megapascal,                             // brittle, effectively the same as fracture strength
-
-            /*chemical_susceptibility_estimate*/  false
-        }
-    }
-};
-
-
 
 // nitrogen, N2
 // for the atmosphere of Earth, and the surfaces of pluto or triton
-PartlyKnownCompound nitrogen {
+PartlyKnownCompound nitrogen (
     /*molar_mass*/                        28.013  * si::gram/si::mole,
     /*atoms_per_molecule*/                2u,
     /*molecular_diameter*/                357.8 * si::picometer,                                    // Mehio (2014)
@@ -574,7 +146,7 @@ PartlyKnownCompound nitrogen {
         /*dynamic_viscosity*/      // 157.9 * si::kilogram / (si::meter * 1e6*si::second),             // Timmerhaus (1989)
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
-                 16.004, -181.61, -5.1551, 0.0, 0.0), // 63.15-124
+                 16.004, -181.61, -5.1551, 0.0, 0.0), // 63.15-124K
         /*density*/                
             // field::StateSample<si::density>(0.4314*si::gram/si::centimeter3, si::atmosphere, 125.01*si::kelvin), // Johnson (1960)
             get_dippr_liquid_density_temperature_function
@@ -593,6 +165,7 @@ PartlyKnownCompound nitrogen {
 
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
+        // beta
         phase::PartlyKnownSolid {
             /*specific_heat_capacity*/                   
                 field::StateFunction<si::specific_heat_capacity>([](si::pressure p, si::temperature T){ 
@@ -602,7 +175,10 @@ PartlyKnownCompound nitrogen {
                 field::StateFunction<si::thermal_conductivity>([](si::pressure p, si::temperature T){ 
                     return 180.2*pow((T/si::kelvin), 0.1041)*si::watt / (si::meter * si::kelvin);
                 }), // wikipedia
-            /*dynamic_viscosity*/                 field::missing(),
+            /*dynamic_viscosity*/
+                field::StateFunction<si::dynamic_viscosity>([](si::pressure p, si::temperature T){ 
+                    return math::mix(2.5e9, 0.6e9, math::linearstep(45.0, 56.0, T/si::kelvin))*si::pascal*si::second;
+                }), // Yamashita 2010
             /*density*/                           
                 field::StateSample<si::density>(1.0265*si::gram/si::centimeter3, si::standard_pressure, 20.7*si::kelvin), // Johnson (1960)
             /*vapor_pressure*/                    
@@ -616,37 +192,110 @@ PartlyKnownCompound nitrogen {
             /*bulk_modulus*/                      
                 field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
                     return math::mix(2.16, 1.47, math::linearstep(20.0, 44.0, T/si::kelvin))*si::gigapascal;
-                }), // wikipedia
+                }), // Yamashita (2010)
             /*tensile_modulus*/                   
                 field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
-                    return math::mix(161.0, 225.0, math::linearstep(58.0, 40.6, T/si::kelvin))*si::megapascal;
-                }), // wikipedia
-            /*shear_modulus*/                     field::missing(),
-            /*pwave_modulus*/                     field::missing(),
+                    return math::mix(1.87, 3.26, math::linearstep(63.0, 15.0, T/si::kelvin))*si::gigapascal;
+                }), // Bezuglyi (1969), from "Physics of Cryocrystals"
+            /*shear_modulus*/                     
+                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
+                    return math::mix(0.63, 0.81, math::linearstep(63.0, 15.0, T/si::kelvin))*si::gigapascal;
+                }), // Bezuglyi (1969), from "Physics of Cryocrystals"
+            /*pwave_modulus*/                     
+                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
+                    return math::mix(0.27, 0.34, math::linearstep(16.0, 56.0, T/si::kelvin))*si::gigapascal;
+                }), // Bezuglyi (1969)
             /*lame_parameter*/                    field::missing(),
             /*poisson_ratio*/                     field::missing(),
 
             /*compressive_fracture_strength*/     
                 field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
-                    return math::mix(0.24, 0.54, math::linearstep(58.0, 40.6, T/si::kelvin))*si::megapascal;
-                }), // wikipedia
-            /*tensile_fracture_strength*/         field::missing(),
+                    return math::mix(0.24, 6.00, math::linearstep(58.0, 5.0, T/si::kelvin))*si::megapascal;
+                }), // wikipedia, and Yamashita (2010)
+            /*tensile_fracture_strength*/         
+                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
+                    return math::mix(5.30, 2.16, math::linearstep(22.0, 40.0, T/si::kelvin))*si::megapascal;
+                }), // Leonteva 1971, taken from Sagmiller 2020
             /*shear_fracture_strength*/           field::missing(),
             /*compressive_yield_strength*/        field::missing(),
-            /*tensile_yield_strength*/            field::missing(),
+            /*tensile_yield_strength*/            
+                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
+                    return math::mix(0.69, 1.71, math::linearstep(22.0, 40.0, T/si::kelvin))*si::megapascal;
+                }), // Leonteva 1971, taken from Sagmiller 2020
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        }, 
+        // alpha
+        phase::PartlyKnownSolid {
+            /*specific_heat_capacity*/                   
+                field::StateFunction<si::specific_heat_capacity>([](si::pressure p, si::temperature T){ 
+                    return 926.91*exp(0.0093*(T/si::kelvin))*si::joule/(si::kilogram*si::kelvin);
+                }), // wikipedia
+            /*thermal_conductivity*/              
+                field::StateFunction<si::thermal_conductivity>([](si::pressure p, si::temperature T){ 
+                    return 180.2*pow((T/si::kelvin), 0.1041)*si::watt / (si::meter * si::kelvin);
+                }), // wikipedia
+            /*dynamic_viscosity*/
+                field::StateFunction<si::dynamic_viscosity>([](si::pressure p, si::temperature T){ 
+                    return math::mix(2.5e9, 0.6e9, math::linearstep(45.0, 56.0, T/si::kelvin))*si::pascal*si::second;
+                }), // Yamashita 2010
+            /*density*/                           
+                field::StateSample<si::density>(1.0265*si::gram/si::centimeter3, si::standard_pressure, 20.7*si::kelvin), // Johnson (1960)
+            /*vapor_pressure*/                    
+                get_interpolated_temperature_function
+                    (si::celcius, si::millimeter_mercury,
+                     std::vector<double>{-226.1, -219.1, -209.7, -195.8 }, 
+                     std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
+            /*refractive_index*/                  1.25,                                             // wikipedia
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      
+                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
+                    return math::mix(2.16, 1.47, math::linearstep(20.0, 44.0, T/si::kelvin))*si::gigapascal;
+                }), // Yamashita (2010)
+            /*tensile_modulus*/                   
+                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
+                    return math::mix(1.87, 3.26, math::linearstep(63.0, 15.0, T/si::kelvin))*si::gigapascal;
+                }), // Bezuglyi (1969), from "Physics of Cryocrystals"
+            /*shear_modulus*/                     
+                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
+                    return math::mix(0.63, 0.81, math::linearstep(63.0, 15.0, T/si::kelvin))*si::gigapascal;
+                }), // Bezuglyi (1969), from "Physics of Cryocrystals"
+            /*pwave_modulus*/                     
+                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
+                    return math::mix(0.27, 0.34, math::linearstep(16.0, 56.0, T/si::kelvin))*si::gigapascal;
+                }), // Bezuglyi (1969)
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     
+                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
+                    return math::mix(0.24, 6.00, math::linearstep(58.0, 5.0, T/si::kelvin))*si::megapascal;
+                }), // wikipedia, and Yamashita (2010)
+            /*tensile_fracture_strength*/         
+                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
+                    return math::mix(5.30, 2.16, math::linearstep(22.0, 40.0, T/si::kelvin))*si::megapascal;
+                }), // Leonteva 1971, taken from Sagmiller 2020
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            
+                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
+                    return math::mix(0.69, 1.71, math::linearstep(22.0, 40.0, T/si::kelvin))*si::megapascal;
+                }), // Leonteva 1971, taken from Sagmiller 2020
             /*shear_yield_strength*/              field::missing(),
 
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 
 
 
 
 // oxygen, O2
 // for atmospheres of earth like planets
-PartlyKnownCompound oxygen {
+PartlyKnownCompound oxygen (
     /*molar_mass*/                        31.9988 * si::gram/si::mole,
     /*atoms_per_molecule*/                2u,
     /*molecular_diameter*/                334.0 * si::picometer,                                    // Mehio (2014)
@@ -743,6 +392,38 @@ PartlyKnownCompound oxygen {
 
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
+        // gamma
+        phase::PartlyKnownSolid { 
+            /*specific_heat_capacity*/            11.06 * si::calorie / (31.9988*si::gram * si::kelvin), // Johnson (1960), 10.73 for solid II, 4.4 for solid III
+            /*thermal_conductivity*/              0.17 * si::watt / (si::centimeter * si::kelvin),  // Jezowski (1993)
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           1524.0 * si::kilogram/si::meter3,
+            /*vapor_pressure*/                    
+                get_interpolated_temperature_function
+                    (si::celcius, si::millimeter_mercury,
+                     std::vector<double>{-219.1, -210.6, -198.8, -183.1 }, 
+                     std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
+            /*refractive_index*/                  field::missing(),
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   field::missing(),
+            /*shear_modulus*/                     field::missing(),
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           
+                field::StateSample<si::pressure>(0.31 * si::megapascal, si::standard_pressure, 45.0*si::kelvin), // Bates 1995
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        },
+        // beta
         phase::PartlyKnownSolid {
             /*specific_heat_capacity*/            11.06 * si::calorie / (31.9988*si::gram * si::kelvin), // Johnson (1960), 10.73 for solid II, 4.4 for solid III
             /*thermal_conductivity*/              0.17 * si::watt / (si::centimeter * si::kelvin),  // Jezowski (1993)
@@ -765,7 +446,43 @@ PartlyKnownCompound oxygen {
 
             /*compressive_fracture_strength*/     field::missing(),
             /*tensile_fracture_strength*/         field::missing(),
-            /*shear_fracture_strength*/           field::missing(),
+            /*shear_fracture_strength*/           
+                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
+                    return math::mix(1.4, 2.7, math::linearstep(40.0, 30.0, T/si::kelvin))*si::megapascal;
+                }), // Bates 1995
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            field::missing(),
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        },
+        // alpha
+        phase::PartlyKnownSolid {
+            /*specific_heat_capacity*/            11.06 * si::calorie / (31.9988*si::gram * si::kelvin), // Johnson (1960), 10.73 for solid II, 4.4 for solid III
+            /*thermal_conductivity*/              0.17 * si::watt / (si::centimeter * si::kelvin),  // Jezowski (1993)
+            /*dynamic_viscosity*/                 field::missing(),
+            /*density*/                           1524.0 * si::kilogram/si::meter3,
+            /*vapor_pressure*/                    
+                get_interpolated_temperature_function
+                    (si::celcius, si::millimeter_mercury,
+                     std::vector<double>{-219.1, -210.6, -198.8, -183.1 }, 
+                     std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
+            /*refractive_index*/                  field::missing(),
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      field::missing(),
+            /*tensile_modulus*/                   field::missing(),
+            /*shear_modulus*/                     field::missing(),
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     field::missing(),
+
+            /*compressive_fracture_strength*/     field::missing(),
+            /*tensile_fracture_strength*/         field::missing(),
+            /*shear_fracture_strength*/           
+                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
+                    return math::mix(4.46, 3.49, math::linearstep(18.0, 4.0, T/si::kelvin))*si::megapascal;
+                }), // Bates 1995
             /*compressive_yield_strength*/        field::missing(),
             /*tensile_yield_strength*/            field::missing(),
             /*shear_yield_strength*/              field::missing(),
@@ -773,7 +490,7 @@ PartlyKnownCompound oxygen {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 
 // carbon dioxide, CO2
 // for the atmospheres earth, venus, and mars, as well as the ice caps of mars
@@ -781,7 +498,7 @@ PartlyKnownCompound oxygen {
 // 2.5nm to 1mm with only one gap in Vis (at the 2.5e6 m^-1 mark),
 // which we fill on the assumption it is invisible there.
 // Truly only the best for such a common and highly influential gas!
-PartlyKnownCompound carbon_dioxide {
+PartlyKnownCompound carbon_dioxide (
     /*molar_mass*/                        44.01 * si::gram/si::mole,
     /*atoms_per_molecule*/                3u,
     /*molecular_diameter*/                346.9 * si::picometer,                                    // Mehio (2014)
@@ -881,7 +598,8 @@ PartlyKnownCompound carbon_dioxide {
                     (si::kelvin, si::watt / (si::meter * si::kelvin),
                      std::vector<double>{1.0,  3.0,  20.0, 100.0},              
                      std::vector<double>{2.0,100.0,  10.0,   0.8}), // Sumarakov (2003), unusual for its variance
-            /*dynamic_viscosity*/                 field::missing(),
+            /*dynamic_viscosity*/                 
+                field::StateSample<si::dynamic_viscosity>(1e14 * si::pascal*si::second, 0.1*si::megapascal, 180.0*si::kelvin), // Yamashita (1997)
             /*density*/                           1562.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
@@ -892,8 +610,10 @@ PartlyKnownCompound carbon_dioxide {
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
-            /*tensile_modulus*/                   field::missing(),
-            /*shear_modulus*/                     field::missing(),
+            /*tensile_modulus*/                   
+                field::StateSample<si::pressure>(13.6 * si::gigapascal, si::standard_pressure, 95.0*si::kelvin), // Manzhelii (2003)
+            /*shear_modulus*/                     
+                field::StateSample<si::pressure>(5.1 * si::gigapascal, si::standard_pressure, 95.0*si::kelvin), // Manzhelii (2003)
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
             /*poisson_ratio*/                     field::missing(),
@@ -908,13 +628,13 @@ PartlyKnownCompound carbon_dioxide {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 
 // methane, CH4
 // for the atmosphere of Titan, and surfaces of pluto or other kuiper belt objects
 // The absorption cross section graph for CO2 also included CH4, so CH4 has good coverage as well: 
 // 2nm to 1mm with virtually zero gaps or overlaps between sources! Can you believe this? This thing predicts the color of Neptune!
-PartlyKnownCompound methane {
+PartlyKnownCompound methane (
     /*molar_mass*/                        16.043 * si::gram/si::mole,
     /*atoms_per_molecule*/                5u,
     /*molecular_diameter*/                404.6 * si::picometer,                                    // Mehio (2014)
@@ -1007,7 +727,8 @@ PartlyKnownCompound methane {
                     (si::kelvin, si::milliwatt/(si::centimeter * si::kelvin),
                      std::vector<double>{18.0, 20.0, 20.4, 21.0},              
                      std::vector<double>{0.7,  2.5,  11.0,  0.7}), // Johnson (1960)
-            /*dynamic_viscosity*/                 field::missing(),
+            /*dynamic_viscosity*/                 
+                field::StateSample<si::dynamic_viscosity>(1e11 * si::pascal*si::second, 0.1*si::megapascal, 77.0*si::kelvin), // Yamashita (1997)
             /*density*/                           
                 field::StateSample<si::density>(0.517*si::gram/si::centimeter3, si::atmosphere, 20.4*si::kelvin), // Johnson (1960)
             /*vapor_pressure*/                    
@@ -1019,13 +740,15 @@ PartlyKnownCompound methane {
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
-            /*tensile_modulus*/                   field::missing(),
-            /*shear_modulus*/                     field::missing(),
+            /*tensile_modulus*/                   
+                field::StateSample<si::pressure>(2.96 * si::gigapascal, si::standard_pressure, 30.0*si::kelvin), // Manzhelii (2003)
+            /*shear_modulus*/                     
+                field::StateSample<si::pressure>(1.65 * si::gigapascal, si::standard_pressure, 30.0*si::kelvin), // Manzhelii (2003)
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
             /*poisson_ratio*/                     field::missing(),
 
-            /*compressive_fracture_strength*/     field::missing(),
+            /*compressive_fracture_strength*/     8.0 * si::megapascal, // Yamashita (2010)
             /*tensile_fracture_strength*/         field::missing(),
             /*shear_fracture_strength*/           field::missing(),
             /*compressive_yield_strength*/        field::missing(),
@@ -1035,14 +758,14 @@ PartlyKnownCompound methane {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 
 
 
 
 // argon, Ar
 // for the atmospheres of earth like planets
-PartlyKnownCompound argon {
+PartlyKnownCompound argon (
     /*molar_mass*/                        39.948 * si::gram/si::mole,
     /*atoms_per_molecule*/                1u,
     /*molecular_diameter*/                340.0 * si::picometer,                                    // wikipedia, Breck (1974)
@@ -1170,13 +893,13 @@ PartlyKnownCompound argon {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 
 
 
 // helium, He
 // for the atmospheres of gas giants
-PartlyKnownCompound helium {
+PartlyKnownCompound helium (
     /*molar_mass*/                        4.0026 * si::gram/si::mole,
     /*atoms_per_molecule*/                1u,
     /*molecular_diameter*/                255.7 * si::picometer, // Mehio (2014)
@@ -1307,11 +1030,11 @@ PartlyKnownCompound helium {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 
 // hydrogen, H2
 // for the atmospheres of gas giants
-PartlyKnownCompound hydrogen {
+PartlyKnownCompound hydrogen (
     /*molar_mass*/                        2.016   * si::gram/si::mole,
     /*atoms_per_molecule*/                2u,
     /*molecular_diameter*/                287.7 * si::picometer, // wikipedia,  Ismail (2015)
@@ -1430,11 +1153,11 @@ PartlyKnownCompound hydrogen {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 
 // ammonia, NH3
 // for the atmosphere of Titan
-PartlyKnownCompound ammonia {
+PartlyKnownCompound ammonia (
 
     /*molar_mass*/                        17.031 * si::gram/si::mole,
     /*atoms_per_molecule*/                4u,
@@ -1554,11 +1277,11 @@ PartlyKnownCompound ammonia {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 
 // ozone, O3
 // for modeling the ozone layer of earth like planets
-PartlyKnownCompound ozone {
+PartlyKnownCompound ozone (
     /*molar_mass*/                        47.998 * si::gram/si::mole,
     /*atoms_per_molecule*/                3u,
     /*molecular_diameter*/                335.0 * si::picometer, // Streng (1961)
@@ -1657,12 +1380,12 @@ PartlyKnownCompound ozone {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 
 // LESS CHARACTERIZED COMPOUNDS:
 // nitrous oxide, N2O
 // representative of industrial emissions
-PartlyKnownCompound nitrous_oxide {
+PartlyKnownCompound nitrous_oxide (
     /*molar_mass*/                        44.012 * si::gram/si::mole,
     /*atoms_per_molecule*/                3u,
     /*molecular_diameter*/                330.0 * si::picometer, // wikipedia, Matteucci
@@ -1764,12 +1487,12 @@ PartlyKnownCompound nitrous_oxide {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 
 
 // sulfur dioxide, SO2
 // representative of industrial emissions
-PartlyKnownCompound  sulfur_dioxide {
+PartlyKnownCompound  sulfur_dioxide (
     /*molar_mass*/                        64.064 * si::gram/si::mole,
     /*atoms_per_molecule*/                3u,
     /*molecular_diameter*/                360.0 * si::picometer, // wikipedia, Breck (1974)
@@ -1875,12 +1598,12 @@ PartlyKnownCompound  sulfur_dioxide {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 
 
 // nitric oxide, NO
 // representative of industrial emissions
-    PartlyKnownCompound nitric_oxide {
+    PartlyKnownCompound nitric_oxide (
     /*molar_mass*/                        30.006 * si::gram/si::mole,
     /*atoms_per_molecule*/                2u,
     /*molecular_diameter*/                317.0 * si::picometer, // wikipedia, Matteucci
@@ -1980,11 +1703,11 @@ PartlyKnownCompound  sulfur_dioxide {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 
 // carbon monoxide, CO
 // for the surface of pluto
-PartlyKnownCompound carbon_monoxide {
+PartlyKnownCompound carbon_monoxide (
     /*molar_mass*/                        28.010 * si::gram/si::mole, 
     /*atoms_per_molecule*/                2u,
     /*molecular_diameter*/                357.0 * si::picometer, // Mehio (2014)
@@ -2089,8 +1812,10 @@ PartlyKnownCompound carbon_monoxide {
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
-            /*tensile_modulus*/                   field::missing(),
-            /*shear_modulus*/                     field::missing(),
+            /*tensile_modulus*/                   
+                field::StateSample<si::pressure>(2.41 * si::gigapascal, si::standard_pressure, 60.9*si::kelvin), // Manzhelii (2003)
+            /*shear_modulus*/                     
+                field::StateSample<si::pressure>(1.06 * si::gigapascal, si::standard_pressure, 60.9*si::kelvin), // Manzhelii (2003)
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
             /*poisson_ratio*/                     field::missing(),
@@ -2131,12 +1856,12 @@ PartlyKnownCompound carbon_monoxide {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 
 
 // ethane, C2H6
 // for the lakes of Titan
-PartlyKnownCompound ethane {
+PartlyKnownCompound ethane (
     /*molar_mass*/                        30.070 * si::gram/si::mole,
     /*atoms_per_molecule*/                8u,
     /*molecular_diameter*/                443.0 * si::picometer,  // Aguado (2012)
@@ -2255,13 +1980,13 @@ PartlyKnownCompound ethane {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 
 
 // hydrogen cyanide, HCN
 // for small bodies in the outer solar system and interstellar space
 // one of the most abundant compounds following from elemental abundances in the universe
-PartlyKnownCompound hydrogen_cyanide {
+PartlyKnownCompound hydrogen_cyanide (
     /*molar_mass*/                        27.026 * si::gram/si::mole,
     /*atoms_per_molecule*/                2u,
     /*molecular_diameter*/                376.0 * si::picometer, // wikipedia, Matteucci
@@ -2360,13 +2085,13 @@ PartlyKnownCompound hydrogen_cyanide {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 
 
 // ethanol, C2H6O
 // for small bodies in the outer solar system and interstellar space
 // one of the most abundant compounds following from elemental abundances in the universe
-PartlyKnownCompound ethanol {
+PartlyKnownCompound ethanol (
     /*molar_mass*/                        46.068 * si::gram/si::mole,
     /*atoms_per_molecule*/                9u,
     /*molecular_diameter*/                field::missing(),
@@ -2472,12 +2197,12 @@ PartlyKnownCompound ethanol {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-}; 
+); 
 
 // formaldehyde, CH2O
 // for small bodies in the outer solar system and interstellar space
 // one of the most abundant compounds following from elemental abundances in the universe
-PartlyKnownCompound formaldehyde {
+PartlyKnownCompound formaldehyde (
     /*molar_mass*/                        30.026 * si::gram/si::mole, // wikipedia
     /*atoms_per_molecule*/                4u,
     /*molecular_diameter*/                field::missing(),
@@ -2576,13 +2301,13 @@ PartlyKnownCompound formaldehyde {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 
 
 // formic acid, CH2O2
 // for small bodies in the outer solar system and interstellar space
 // one of the most abundant compounds following from elemental abundances in the universe
-PartlyKnownCompound formic_acid {
+PartlyKnownCompound formic_acid (
     /*molar_mass*/                        46.026 * si::gram/si::mole,
     /*atoms_per_molecule*/                5u,
     /*molecular_diameter*/                field::missing(),
@@ -2678,14 +2403,14 @@ PartlyKnownCompound formic_acid {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 
 // POORLY CHARACTERIZED COMPOUNDS:
 // perflouromethane, tetraflouromethane, carbon tetraflouride, CF4
 // for modeling industrial emissions and the terraforming of Mars as suggested by Zubrin (1996) 
 // We went out of our way searching for an IR graph since 
 // we use CF4 in the model to study pollution and Martian terraformation
-PartlyKnownCompound perflouromethane{
+PartlyKnownCompound perflouromethane(
     /*molar_mass*/                        88.0  * si::gram/si::mole,
     /*atoms_per_molecule*/                5u,
     /*molecular_diameter*/                470.0 * si::picometer, // Motkuri (2014)
@@ -2790,12 +2515,12 @@ PartlyKnownCompound perflouromethane{
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 
 // benzene, C6H6
 // representative of aromatic compounds, predominantly low-grade coal,
 // and serves as a template for compounds in prebiotic chemistry such as nucleic acids or tholins
-PartlyKnownCompound benzene {
+PartlyKnownCompound benzene (
     /*molar_mass*/                        79.102 * si::gram/si::mole, // wikipedia
     /*atoms_per_molecule*/                12u, // wikipedia
     /*molecular_diameter*/                field::missing(),
@@ -2918,12 +2643,12 @@ PartlyKnownCompound benzene {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 
 // pyramidine, C4H4N2
 // representative of prebiotic chemistry and tholins,
 // since it's been observed from Kawai (2019) that tholins may contain them among other nucleotides
-PartlyKnownCompound pyrimidine {
+PartlyKnownCompound pyrimidine (
     /*molar_mass*/                        80.088 * si::gram/si::mole, // wikipedia
     /*atoms_per_molecule*/                10u, // wikipedia
     /*molecular_diameter*/                field::missing(),
@@ -3001,11 +2726,11 @@ PartlyKnownCompound pyrimidine {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 
 // halite, NaCl, sodium chloride, salt
 // for salt bed flats and potentially modeling ocean salinity
-PartlyKnownCompound  halite {
+PartlyKnownCompound  halite (
     /*molar_mass*/                        90.442*si::gram/si::mole,
     /*atoms_per_molecule*/                2u,
     /*molecular_diameter*/                field::missing(),
@@ -3115,11 +2840,11 @@ PartlyKnownCompound  halite {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 
 // corundum, Al2O3, aluminum sequioxide, aluminum oxide, alumina, ruby, sapphire, beryl
 // representative of precious stones, excluding diamond
-PartlyKnownCompound  corundum {
+PartlyKnownCompound  corundum (
     /*molar_mass*/                        101.96 * si::gram/si::mole, 
     /*atoms_per_molecule*/                5u,
     /*molecular_diameter*/                field::missing(),
@@ -3213,12 +2938,12 @@ PartlyKnownCompound  corundum {
             /*chemical_susceptibility_estimate*/  false
         }
     }
-};
+);
 
 
 // apatite, XCa5(PO4)3
 // theoretical biomineral deposits, analogous to limestone, that could occur on alien planets
-PartlyKnownCompound  apatite {
+PartlyKnownCompound  apatite (
     /*molar_mass*/                        509.1 * si::gram/si::mole, 
     /*atoms_per_molecule*/                21u,
     /*molecular_diameter*/                field::missing(),
@@ -3293,11 +3018,11 @@ PartlyKnownCompound  apatite {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 // carbon, C
 // for diamonds, graphite, high-grade anthracite coal, 
 // and theoretical exobiominerals deposits analogous to limestone  // TODO: custom polymorphic class, with complex phase diagram
-PartlyKnownCompound carbon {
+PartlyKnownCompound carbon (
     /*molar_mass*/                        12.011 * si::gram/si::mole, 
     /*atoms_per_molecule*/                1u,
     /*molecular_diameter*/                field::missing(),
@@ -3396,7 +3121,7 @@ PartlyKnownCompound carbon {
             /*chemical_susceptibility_estimate*/  field::missing()
         },
         phase::PartlyKnownSolid { // diamond
-            /*specific_heat_capacity*/            // 0.5091* si::joule / (si::gram * si::kelvin) // wikipedia 
+            /*specific_heat_capacity*/            // 0.5091* si::joule / (si::gram * si::kelvin), // wikipedia 
                 get_perry_temperature_function(si::kelvin, si::calorie/(12.011 * si::gram*si::kelvin), 2.162, 0.003059, -130300.0, 0.0), 
             /*thermal_conductivity*/              2200.0 * si::watt / ( si::meter * si::kelvin ), //wikipedia 
             /*dynamic_viscosity*/                 field::missing(),
@@ -3422,10 +3147,10 @@ PartlyKnownCompound carbon {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 // calcite, CaCO3, calcium carbonate
 // for biomineral deposits like limestone  // TODO: custom polymorphic class, with complex phase diagram
-PartlyKnownCompound  calcite {
+PartlyKnownCompound  calcite (
     /*molar_mass*/                        100.087 * si::gram/si::mole, 
     /*atoms_per_molecule*/                4u,
     /*molecular_diameter*/                field::missing(),
@@ -3542,10 +3267,10 @@ PartlyKnownCompound  calcite {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 // quartz, SiO2, silicon dioxide, silica, glass
 // representative of felsic rocks, namely sand, and biomineral deposits like diatomaceous earth  // TODO: custom polymorphic class, with complex phase diagram
-PartlyKnownCompound  quartz {
+PartlyKnownCompound  quartz (
     /*molar_mass*/                        60.08 * si::gram/si::mole, 
     /*atoms_per_molecule*/                3u,
     /*molecular_diameter*/                field::missing(),
@@ -3724,10 +3449,10 @@ PartlyKnownCompound  quartz {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 // orthoclase, KAlSi3O8, 
 // representative of felsic rocks
-PartlyKnownCompound  orthoclase {
+PartlyKnownCompound  orthoclase (
     /*molar_mass*/                        278.33 * si::gram/si::mole, 
     /*atoms_per_molecule*/                13u,
     /*molecular_diameter*/                field::missing(),
@@ -3802,11 +3527,11 @@ PartlyKnownCompound  orthoclase {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 // andesine, (Ca,Na)(Al,Si)4O8
 // representative of plagioclase as a common plagioclase mineral in andesite and diorite,
 // representative of intermediate rocks in general
-PartlyKnownCompound andesine {
+PartlyKnownCompound andesine (
     /*molar_mass*/                        268.6 * si::gram/si::mole, 
     /*atoms_per_molecule*/                13u,
     /*molecular_diameter*/                field::missing(),
@@ -3891,11 +3616,11 @@ PartlyKnownCompound andesine {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 // augite, (Ca,Na)(Mg,Fe,Al,Ti)(Si,Al)2O6
 // representative of pyroxenes as the most common pyroxene mineral
 // representative of mafic rocks in general
-PartlyKnownCompound augite {
+PartlyKnownCompound augite (
     /*molar_mass*/                        236.4 * si::gram/si::mole, 
     /*atoms_per_molecule*/                10u,
     /*molecular_diameter*/                field::missing(),
@@ -3975,12 +3700,12 @@ PartlyKnownCompound augite {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 // forsterite, MgSiO 
 // representative of Olivine ((Mg,Fe)SiO) as its much more common Mg-rich end member (Smyth 2006)
 // representative of ultramafic rocks in general
 // also appears most common on the surface of Mercury (Namur 2016)
-PartlyKnownCompound forsterite {
+PartlyKnownCompound forsterite (
     /*molar_mass*/                        153.31 * si::gram/si::mole, 
     /*atoms_per_molecule*/                7u,
     /*molecular_diameter*/                field::missing(),
@@ -4060,10 +3785,10 @@ PartlyKnownCompound forsterite {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 // Goethite, FeO(OH)
 // for surface of mars, representative of iron oxides and red soils in general, and siderophile ores
-PartlyKnownCompound  goethite {
+PartlyKnownCompound  goethite (
     /*molar_mass*/                        88.85 * si::gram/si::mole, 
     /*atoms_per_molecule*/                4u,
     /*molecular_diameter*/                field::missing(),
@@ -4137,10 +3862,10 @@ PartlyKnownCompound  goethite {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 // pyrite, FeS2
 // for surfaces of the heaviest planets, maybe venus and mercury, and representative of siderophile ores
-PartlyKnownCompound  pyrite {
+PartlyKnownCompound  pyrite (
     /*molar_mass*/                        119.98 * si::gram/si::mole, 
     /*atoms_per_molecule*/                3u,
     /*molecular_diameter*/                field::missing(),
@@ -4215,11 +3940,11 @@ PartlyKnownCompound  pyrite {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 // hematite, Fe2O3 
 // representative of iron oxides and red soils in general, surfaces of early earth, and siderophile ores
 // TODO: pick one, goethite or hematite, we can't afford them both
-PartlyKnownCompound hematite {
+PartlyKnownCompound hematite (
     /*molar_mass*/                        159.69 * si::gram/si::mole, 
     /*atoms_per_molecule*/                5u,
     /*molecular_diameter*/                field::missing(),
@@ -4298,11 +4023,11 @@ PartlyKnownCompound hematite {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 
 // native gold, Au
 // for precious metals
-PartlyKnownCompound  gold {
+PartlyKnownCompound  gold (
     /*molar_mass*/                        196.967 * si::gram/si::mole, 
     /*atoms_per_molecule*/                1u,
     /*molecular_diameter*/                field::missing(),
@@ -4404,10 +4129,10 @@ PartlyKnownCompound  gold {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 // native silver, Ag
 // for precious metals
-PartlyKnownCompound  silver {
+PartlyKnownCompound  silver (
     /*molar_mass*/                        107.868 * si::gram/si::mole, 
     /*atoms_per_molecule*/                1u,
     /*molecular_diameter*/                field::missing(),
@@ -4508,10 +4233,10 @@ PartlyKnownCompound  silver {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 // native copper, Cu
 // for precious metals
-PartlyKnownCompound  copper {
+PartlyKnownCompound  copper (
     /*molar_mass*/                        63.546 * si::gram/si::mole, 
     /*atoms_per_molecule*/                1u,
     /*molecular_diameter*/                field::missing(),
@@ -4613,10 +4338,10 @@ PartlyKnownCompound  copper {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 // magnetite, Fe3O4
 // representative of siderophile ores, and for surfaces of mars and maybe venus
-PartlyKnownCompound  magnetite {
+PartlyKnownCompound  magnetite (
     /*molar_mass*/                        231.53 * si::gram/si::mole,
     /*atoms_per_molecule*/                7u,
     /*molecular_diameter*/                field::missing(),
@@ -4696,10 +4421,10 @@ PartlyKnownCompound  magnetite {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 // chalcocite, copper sulfide, Cu2S, 
 // representative of chalcophile ores, and for surfaces of maybe venus and mercury
-PartlyKnownCompound chalcocite {
+PartlyKnownCompound chalcocite (
     /*molar_mass*/                        159.16 * si::gram/si::mole, 
     /*atoms_per_molecule*/                3u,
     /*molecular_diameter*/                field::missing(),
@@ -4784,9 +4509,9 @@ PartlyKnownCompound chalcocite {
             /*refractive_index*/                  field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
-            /*bulk_modulus*/                      field::missing(),
+            /*bulk_modulus*/                      242.88 * si::gigapascal, // de Jong (2015)
             /*tensile_modulus*/                   field::missing(),
-            /*shear_modulus*/                     field::missing(),
+            /*shear_modulus*/                     91.89 * si::gigapascal, // de Jong (2015)
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
             /*poisson_ratio*/                     field::missing(),
@@ -4801,10 +4526,10 @@ PartlyKnownCompound chalcocite {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 // chalcopyrite, CuFeS, 
 // representative of chalcophile ores, and for surfaces of maybe venus and mercury
-PartlyKnownCompound  chalcopyrite {
+PartlyKnownCompound  chalcopyrite (
     /*molar_mass*/                        183.5 * si::gram/si::mole,
     /*atoms_per_molecule*/                3u,
     /*molecular_diameter*/                field::missing(),
@@ -4878,7 +4603,7 @@ PartlyKnownCompound  chalcopyrite {
             /*chemical_susceptibility_estimate*/  field::missing()
         }
     }
-};
+);
 
 
 
