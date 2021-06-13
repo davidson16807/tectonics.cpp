@@ -1,7 +1,7 @@
 #pragma once
 
-#include <models/compound/field/state/OptionalStateField_test_utils.hpp>
-#include <models/compound/field/spectral/OptionalSpectralField_test_utils.hpp>
+#include <models/compound/field/state/CompletedStateField_test_utils.hpp>
+#include <models/compound/field/spectral/CompletedSpectralField_test_utils.hpp>
 
 #include <models/compound/field/state/CompletedStateField_test_utils.hpp>
 #include <models/compound/field/spectral/CompletedSpectralField_test_utils.hpp>
