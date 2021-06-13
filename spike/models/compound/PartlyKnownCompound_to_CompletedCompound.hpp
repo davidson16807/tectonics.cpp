@@ -3,11 +3,14 @@
 // C libraries
 #include "math.h"
 
+// std libraries
+#include <vector>
+
 // 3rd party libraries
 #include "CompletedCompound.hpp"
 #include "PartlyKnownCompound.hpp"
 
-namespace matter
+namespace compound
 {
     /*
     Set the values of unknown properties to match those of a default.
@@ -17,37 +20,45 @@ namespace matter
     In effect, the `CompletedCompound` is underwriting for any values that the 
     `PartlyKnownCompound` does not provide.
     */
-    void coalesce(
+    CompletedCompound complete(
         const PartlyKnownCompound& known,
-        const CompletedCompound& base,
-        CompletedCompound& guess
+        const CompletedCompound& fallback
     ){
-        // copy known values from base
-        guess = base;
+        std::vector<phase::CompletedSolid> solids;
+        if (fallback.solids.size() > 0)
+        {
+            for (std::size_t i = 0; i < known.solids.size(); i++)
+            {
+                solids.push_back(phase::complete(known.solids[i], fallback.solids[0]));
+            }
+        }
+        CompletedCompound compound(
+            known.molar_mass,
+            known.atoms_per_molecule,
+            known.molecular_diameter,
+            field::complete(known.molecular_degrees_of_freedom,       fallback.molecular_degrees_of_freedom       ),
+            field::complete(known.acentric_factor,                    fallback.acentric_factor                    ),
+            known.critical_point_pressure,
+            known.critical_point_volume,
+            known.critical_point_temperature,
+            known.critical_point_compressibility,
+            field::complete(known.latent_heat_of_vaporization,        fallback.latent_heat_of_vaporization        ),
+            field::complete(known.latent_heat_of_fusion,              fallback.latent_heat_of_fusion              ),
+            field::complete(known.triple_point_pressure,              fallback.triple_point_pressure              ),
+            field::complete(known.triple_point_temperature,           fallback.triple_point_temperature           ),
+            field::complete(known.freezing_point_sample_pressure,     fallback.freezing_point_sample_pressure     ),
+            field::complete(known.freezing_point_sample_temperature,  fallback.freezing_point_sample_temperature  ),
+            field::complete(known.boiling_point_sample_pressure,      fallback.boiling_point_sample_pressure      ),
+            field::complete(known.boiling_point_sample_temperature,   fallback.boiling_point_sample_temperature   ),
+            known.simon_glatzel_slope(),
+            known.simon_glatzel_exponent(),
+            field::complete(known.molecular_absorption_cross_section, fallback.molecular_absorption_cross_section ),
+            phase::complete(known.gas,                                fallback.gas    ),
+            phase::complete(known.liquid,                             fallback.liquid ),
+            solids
+        );
 
-        // by this point we can guarantee that `guess` has all the values needed to represent a valid compound
-        // from this point on we merely refine our estimates
 
-        // copy over attributes that CompletedCompound represents as `std::optional`s 
-        // CompletedCompound is able to handle missing values for these attributes
-        guess.critical_point_pressure    = known.critical_point_pressure;
-        guess.critical_point_temperature = known.critical_point_temperature;
-        guess.simon_glatzel_slope        = known.simon_glatzel_slope;
-        guess.simon_glatzel_exponent     = known.simon_glatzel_exponent;
-
-        // copy known values where present or set values to defaults from a template
-        guess.triple_point_pressure             = coalesce(known.triple_point_pressure,             base.triple_point_pressure);
-        guess.triple_point_temperature          = coalesce(known.triple_point_temperature,          base.triple_point_temperature);
-        guess.freezing_point_sample_pressure    = coalesce(known.freezing_point_sample_pressure,    base.freezing_point_sample_pressure);
-        guess.freezing_point_sample_temperature = coalesce(known.freezing_point_sample_temperature, base.freezing_point_sample_temperature);
-        guess.melting_point_sample_pressure     = coalesce(known.melting_point_sample_pressure,     base.melting_point_sample_pressure);
-        guess.melting_point_sample_temperature  = coalesce(known.melting_point_sample_temperature,  base.melting_point_sample_temperature);
-        guess.latent_heat_of_vaporization       = coalesce(known.latent_heat_of_vaporization,       base.latent_heat_of_vaporization      );
-        guess.latent_heat_of_evaporation        = coalesce(known.latent_heat_of_evaporation,        base.latent_heat_of_evaporation      );
-        guess.thermal_conductivity_as_liquid    = coalesce(known.thermal_conductivity_as_gas,       base.thermal_conductivity_as_gas);
-        guess.thermal_conductivity_as_liquid    = coalesce(known.thermal_conductivity_as_liquid,    base.thermal_conductivity_as_liquid);
-        guess.thermal_conductivity_as_solid     = coalesce(known.thermal_conductivity_as_solid,     base.thermal_conductivity_as_solid);
-        guess.atoms_per_molecule                = coalesce(known.atoms_per_molecule,                base.atoms_per_molecule)
-
+        return compound;
     }
 }
