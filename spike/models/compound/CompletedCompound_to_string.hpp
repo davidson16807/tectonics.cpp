@@ -43,8 +43,8 @@ namespace compound
 		out += "Freezing Point Sample Temperature:   " + si   ::to_string(compound.freezing_point_sample_temperature) + "\n";
 		out += "Boiling Point Sample Pressure:       " + si   ::to_string(compound.boiling_point_sample_pressure)     + "\n";
 		out += "Boiling Point Sample Temperature:    " + si   ::to_string(compound.boiling_point_sample_temperature)  + "\n";
-		out += "Simon Glatzel Slope:                 " + compound.simon_glatzel_slope   .has_value()? std  ::to_string(compound.simon_glatzel_slope   .value()) : "[missing]";
-		out += "Simon Glatzel Exponent:              " + compound.simon_glatzel_exponent.has_value()? std  ::to_string(compound.simon_glatzel_exponent.value()) : "[missing]";
+		out += "Simon Glatzel Slope:                 " + (compound.simon_glatzel_slope   .has_value()? std::to_string(compound.simon_glatzel_slope   .value()) : "[missing]") + "\n";
+		out += "Simon Glatzel Exponent:              " + (compound.simon_glatzel_exponent.has_value()? std::to_string(compound.simon_glatzel_exponent.value()) : "[missing]") + "\n";
 		out += "Molecular Absorption Cross Section:  " + field::to_string(compound.molecular_absorption_cross_section, field::SpectralParameters(nlo, nhi, stp.pressure, stp.temperature)) + "\n";
 		out += "Gas:"    + phase::to_string(compound.gas,    gas_sample,    gas_spectrum   );
 		out += "Liquid:" + phase::to_string(compound.liquid, liquid_sample, liquid_spectrum);

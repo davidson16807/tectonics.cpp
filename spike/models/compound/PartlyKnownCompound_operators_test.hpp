@@ -28,6 +28,7 @@ TEST_CASE( "PartlyKnownCompound infer() idempotence", "[compound]" ) {
         CHECK(compound::infer(compound::nitrogen) == compound::infer(compound::infer(compound::nitrogen)));
         CHECK(compound::infer(compound::benzene) == compound::infer(compound::infer(compound::benzene)));
         CHECK(compound::infer(compound::quartz) == compound::infer(compound::infer(compound::quartz)));
+        // CHECK(compound::to_string(compound::speculate(compound::infer(compound::quartz))) == compound::to_string(compound::quartz));
     }
 }
 TEST_CASE( "PartlyKnownCompound infer() increasing", "[compound]" ) {

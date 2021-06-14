@@ -15,50 +15,35 @@
 #include "PartlyKnownCompound_library.hpp"
 #include "CompletedCompound_library.hpp"
 
-/*
+#include "PartlyKnownCompound_operators.hpp"
+#include "PartlyKnownCompound_to_string.hpp"
+#include "CompletedCompound_to_string.hpp"
+
 TEST_CASE( "PartlyKnownCompound complete() purity", "[compound]" ) {
     SECTION("Calling a function twice with the same arguments must produce the same results")
     {
-        CHECK(compound::complete(compound::unknown_hydrogen, compound::water ) == compound::complete(compound::unknown_hydrogen, compound::water ));
+        CHECK(compound::to_string(compound::complete(compound::unknown_hydrogen, compound::water )) 
+           == compound::to_string(compound::complete(compound::unknown_hydrogen, compound::water )));
     }
 }
 
+/*
+// NOTE: left identity does not apply to compounds, unlike for gas/liquid/solid objects,
+// since some attributes like molecular_mass are not read from the right argument
 TEST_CASE( "PartlyKnownCompound complete() left identity", "[compound]" ) {
     SECTION("There exists a value that when applied as the left argument of the function returns the original value")
     {
         CHECK(compound::complete(compound::unknown_hydrogen, compound::water ) ==  compound::water);
     }
 }
-*/
 
-/*
+// NOTE: associativity does not apply to compound completion,
+// since this would require converting the first parameter back to a PartlyKnownCompound
 TEST_CASE( "PartlyKnownCompound complete() associativity", "[compound]" ) {
     SECTION("Functions can be applied in any order and still produce the same results")
     {
-        CHECK(compound::complete(unknown_hydrogen, compound::complete(known_steam,known_nitrogen)) == 
-              compound::complete(compound::complete(unknown_hydrogen,known_steam),known_nitrogen));
-
-        CHECK(compound::complete(unknown_hydrogen, compound::complete(known_steam,known_dummy_gas)) == 
-              compound::complete(compound::complete(unknown_hydrogen,known_steam),known_dummy_gas));
-
-        CHECK(compound::complete(unknown_hydrogen, compound::complete(perflouromethane_gas,known_nitrogen)) == 
-              compound::complete(compound::complete(unknown_hydrogen,perflouromethane_gas),known_nitrogen));
-
-        CHECK(compound::complete(unknown_hydrogen, compound::complete(perflouromethane_gas,known_dummy_gas)) == 
-              compound::complete(compound::complete(unknown_hydrogen,perflouromethane_gas),known_dummy_gas));
-
-        CHECK(compound::complete(perflouromethane_gas, compound::complete(known_steam,known_nitrogen)) == 
-              compound::complete(compound::complete(perflouromethane_gas,known_steam),known_nitrogen));
-
-        CHECK(compound::complete(perflouromethane_gas, compound::complete(known_steam,known_dummy_gas)) == 
-              compound::complete(compound::complete(perflouromethane_gas,known_steam),known_dummy_gas));
-
-        CHECK(compound::complete(known_steam, compound::complete(perflouromethane_gas,known_nitrogen)) == 
-              compound::complete(compound::complete(known_steam,perflouromethane_gas),known_nitrogen));
-
-        CHECK(compound::complete(known_steam, compound::complete(perflouromethane_gas,known_dummy_gas)) == 
-              compound::complete(compound::complete(known_steam,perflouromethane_gas),known_dummy_gas));
-
+        CHECK(compound::complete(compound::unknown_hydrogen, compound::complete(compound::partly_known_dummy_compound,compound::water)) == 
+              compound::complete(compound::complete(compound::unknown_hydrogen,compound::known_dummy_compound),compound::water));
     }
 }
 */

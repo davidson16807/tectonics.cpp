@@ -255,8 +255,6 @@ namespace compound
         );
 
 
-        return guess;
-
         /*
         for (std::size_t i = 0; i < guess.solids.size(); i++)
         {
@@ -291,6 +289,27 @@ namespace compound
             guess.molecular_absorption_cross_section
         );
         */
+
+        for (std::size_t i = 0; i < guess.solids.size(); i++)
+        {
+            guess.solids[i] = compound::phase::infer(guess.solids[i]);
+        }
+        for (std::size_t i = 0; i < guess.solids.size(); i++)
+        {
+            for (std::size_t j = 0; j < guess.solids.size(); j++)
+            {
+                if (i!=j)
+                {
+                    guess.solids[j] = guess.solids[j].value_or(guess.solids[i]);
+                }
+            }
+        }
+        for (std::size_t i = 0; i < guess.solids.size(); i++)
+        {
+            guess.solids[i] = compound::phase::infer(guess.solids[i]);
+        }
+
+        return guess;
     }
 
 

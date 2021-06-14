@@ -68,5 +68,6 @@ TEST_CASE( "CompletedCompound to_string() appreciable difference preservation", 
 		CHECK( compound::to_string(nudge_solid_last                        ) != compound::to_string(compound::water) ); 
 		CHECK( compound::to_string(nudge_liquid                            ) != compound::to_string(compound::water) ); 
 		CHECK( compound::to_string(nudge_gas                               ) != compound::to_string(compound::water) ); 
+
     }
 }
