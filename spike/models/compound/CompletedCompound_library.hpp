@@ -18,7 +18,7 @@ namespace compound {
 
 // water, H2O
 // for the oceans and ice caps of earth, and the surface and mantle of europa, and the surface of pluto
-CompletedCompound water (
+CompletedCompound complete_water (
     /*molar_mass*/                        18.015 * si::gram/si::mole,
     /*atoms_per_molecule*/                3u,
     /*molecular_diameter*/                265.0 * si::picometer,                                    // wikipedia,  Ismail (2015)
