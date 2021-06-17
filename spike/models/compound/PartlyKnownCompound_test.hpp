@@ -6,8 +6,8 @@
 #include <catch/catch.hpp>
 
 // in house libraries
-#include "PartlyKnownCompound_library.hpp"
 #include "PartlyKnownCompound_to_string.hpp"
+#include "published.hpp"
 
 // test utility libraries
 #include "PartlyKnownCompound_test_utils.hpp"
@@ -16,47 +16,47 @@ TEST_CASE( "PartlyKnownCompound value_or() purity", "[compound]" ) {
     SECTION("Calling a function twice with the same arguments must produce the same results")
     {
         CHECK(compound::test_water.value_or(compound::test_water) == compound::test_water.value_or(compound::test_water));
-        CHECK(compound::nitrogen.value_or(compound::nitrogen) == compound::nitrogen.value_or(compound::nitrogen));
-        CHECK(compound::nitrogen.value_or(compound::test_water) == compound::nitrogen.value_or(compound::test_water));
-        CHECK(compound::test_water.value_or(compound::nitrogen) == compound::test_water.value_or(compound::nitrogen));
+        CHECK(compound::published::nitrogen.value_or(compound::published::nitrogen) == compound::published::nitrogen.value_or(compound::published::nitrogen));
+        CHECK(compound::published::nitrogen.value_or(compound::test_water) == compound::published::nitrogen.value_or(compound::test_water));
+        CHECK(compound::test_water.value_or(compound::published::nitrogen) == compound::test_water.value_or(compound::published::nitrogen));
     }
 }
 TEST_CASE( "PartlyKnownCompound value_or() left identity", "[compound]" ) {
     SECTION("There exists a value that when applied as the first operand to a function returns the original value")
     {
         CHECK(compound::test_water.value_or(compound::test_water) == compound::test_water);
-        CHECK(compound::test_water.value_or(compound::nitrogen) == compound::test_water);
+        CHECK(compound::test_water.value_or(compound::published::nitrogen) == compound::test_water);
     }
 }
 TEST_CASE( "PartlyKnownCompound value_or() right identity", "[compound]" ) {
     SECTION("There exists a value that when applied as the second operand to a function returns the original value")
     {
         CHECK(compound::test_water.value_or(compound::unknown_hydrogen) == compound::test_water);
-        CHECK(compound::nitrogen.value_or(compound::unknown_hydrogen) == compound::nitrogen);
+        CHECK(compound::published::nitrogen.value_or(compound::unknown_hydrogen) == compound::published::nitrogen);
     }
 }
 TEST_CASE( "PartlyKnownCompound value_or() associativity", "[compound]" ) {
     SECTION("Functions can be applied in any order and still produce the same results")
     {
-        CHECK(compound::to_string(compound::nitrogen.value_or(compound::test_water.value_or(compound::oxygen))) == 
-              compound::to_string(compound::nitrogen.value_or(compound::test_water).value_or(compound::oxygen)));
+        CHECK(compound::to_string(compound::published::nitrogen.value_or(compound::test_water.value_or(compound::published::oxygen))) == 
+              compound::to_string(compound::published::nitrogen.value_or(compound::test_water).value_or(compound::published::oxygen)));
 
-        CHECK(compound::nitrogen.value_or(compound::oxygen.value_or(compound::test_water)) == 
-              compound::nitrogen.value_or(compound::oxygen).value_or(compound::test_water));
-
-        
-        CHECK(compound::test_water.value_or(compound::nitrogen.value_or(compound::oxygen)) == 
-              compound::test_water.value_or(compound::nitrogen).value_or(compound::oxygen));
-
-        CHECK(compound::test_water.value_or(compound::oxygen.value_or(compound::nitrogen)) == 
-              compound::test_water.value_or(compound::oxygen).value_or(compound::nitrogen));
+        CHECK(compound::published::nitrogen.value_or(compound::published::oxygen.value_or(compound::test_water)) == 
+              compound::published::nitrogen.value_or(compound::published::oxygen).value_or(compound::test_water));
 
         
-        CHECK(compound::oxygen.value_or(compound::nitrogen.value_or(compound::oxygen)) == 
-              compound::oxygen.value_or(compound::nitrogen).value_or(compound::oxygen));
+        CHECK(compound::test_water.value_or(compound::published::nitrogen.value_or(compound::published::oxygen)) == 
+              compound::test_water.value_or(compound::published::nitrogen).value_or(compound::published::oxygen));
 
-        CHECK(compound::oxygen.value_or(compound::oxygen.value_or(compound::nitrogen)) == 
-              compound::oxygen.value_or(compound::oxygen).value_or(compound::nitrogen));
+        CHECK(compound::test_water.value_or(compound::published::oxygen.value_or(compound::published::nitrogen)) == 
+              compound::test_water.value_or(compound::published::oxygen).value_or(compound::published::nitrogen));
+
+        
+        CHECK(compound::published::oxygen.value_or(compound::published::nitrogen.value_or(compound::published::oxygen)) == 
+              compound::published::oxygen.value_or(compound::published::nitrogen).value_or(compound::published::oxygen));
+
+        CHECK(compound::published::oxygen.value_or(compound::published::oxygen.value_or(compound::published::nitrogen)) == 
+              compound::published::oxygen.value_or(compound::published::oxygen).value_or(compound::published::nitrogen));
     }
 }
 

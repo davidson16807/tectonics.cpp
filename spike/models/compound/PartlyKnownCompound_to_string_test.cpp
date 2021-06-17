@@ -6,7 +6,7 @@
 // in house libraries
 #include "PartlyKnownCompound_to_string.hpp"
 #include "PartlyKnownCompound_test_utils.hpp"
-#include "PartlyKnownCompound_library.hpp"
+#include "published.hpp"
 
 TEST_CASE( "PartlyKnownCompound to_string() purity", "[field]" ) {
 	SECTION("Calling a function twice with the same arguments must produce the same results")
@@ -15,12 +15,12 @@ TEST_CASE( "PartlyKnownCompound to_string() purity", "[field]" ) {
 		   == compound::to_string(compound::unknown_hydrogen));
 		CHECK(compound::to_string(compound::test_water)
 		   == compound::to_string(compound::test_water));
-		CHECK(compound::to_string(compound::nitrogen)
-		   == compound::to_string(compound::nitrogen));
-		CHECK(compound::to_string(compound::quartz)
-		   == compound::to_string(compound::quartz));
-		CHECK(compound::to_string(compound::gold)
-		   == compound::to_string(compound::gold));
+		CHECK(compound::to_string(compound::published::nitrogen)
+		   == compound::to_string(compound::published::nitrogen));
+		CHECK(compound::to_string(compound::published::quartz)
+		   == compound::to_string(compound::published::quartz));
+		CHECK(compound::to_string(compound::published::gold)
+		   == compound::to_string(compound::published::gold));
     }
 }
 
