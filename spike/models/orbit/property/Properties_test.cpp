@@ -37,7 +37,7 @@ TEST_CASE( "get_mean_anomaly_from_eccentric_anomaly()/solve_eccentric_anomaly_fr
 	    	for (double j = 0.0; j < max_j; ++j)
 	    	{
 	    		double M = math::mix(-2.0*pi, 2.0*pi, i/max_i);
-	    		double eccentricity = math::mix(0.0, 1.2, i/max_j);
+	    		double eccentricity = math::mix(0.0, 1.1, j/max_j);
 				CHECK( 
 					properties.get_mean_anomaly_from_eccentric_anomaly(
 						properties.solve_eccentric_anomaly_from_mean_anomaly(M, eccentricity), eccentricity
@@ -47,7 +47,6 @@ TEST_CASE( "get_mean_anomaly_from_eccentric_anomaly()/solve_eccentric_anomaly_fr
 	    }
 	}
 }
-/*
 TEST_CASE( "get_true_anomaly_from_eccentric_anomaly()/solve_eccentric_anomaly_from_true_anomaly() invertibility", "[orbit]" ) {
 	Properties properties(glm::vec3(1,0,0), glm::vec3(0,0,1), si::gravitational_constant * si::earth_mass / (si::meter3/si::second2));
     SECTION("For every function there exists another function that negates its effect"){
@@ -58,15 +57,16 @@ TEST_CASE( "get_true_anomaly_from_eccentric_anomaly()/solve_eccentric_anomaly_fr
     	{
 	    	for (double j = 0.0; j < max_j; ++j)
 	    	{
-	    		double M = math::mix(-pi, 2.0*pi, i/max_i);
-	    		double eccentricity = math::mix(0.0, 1.5, i/max_j);
+	    		double nu = math::mix(0.0, pi, i/max_i);
+	    		double eccentricity = math::mix(0.0, 0.99, j/max_j);
 				CHECK( 
 					properties.get_true_anomaly_from_eccentric_anomaly(
-						properties.solve_eccentric_anomaly_from_true_anomaly(M, eccentricity), eccentricity
-					) == Approx(M).margin(0.01)
+						properties.solve_eccentric_anomaly_from_true_anomaly(nu, eccentricity), eccentricity
+					) == Approx(nu).margin(0.01)
 				);
 			}
     	}
 	}
 }
+/*
 */

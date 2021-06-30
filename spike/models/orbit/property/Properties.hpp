@@ -145,24 +145,34 @@ public:
 	// "E"
 	double solve_eccentric_anomaly_from_true_anomaly(const double true_anomaly, const double eccentricity, const int iterations = 10)
 	{
+        const double pi = 3.1415926;
+        const double epsilon = 0.0001;
         double e = eccentricity;
-        double E = true_anomaly;
+        double E = pi/2.0;
         double nu = true_anomaly;
         double nu_E(0.0);
         double dnudE(0.0);
         double error(0.0);
         double denominator(0.0);
+        double denominator2(0.0);
         double numerator(0.0);
-        double quotient(0.0);
+        double numerator2(0.0);
+        // There are discontinuities in get_true_anomaly_from_eccentric_anomaly(),
+        // so we cannot use Newton's method. We use an iterated bounds search instead.
         for (int i = 0; i < iterations; i++) {
             numerator = std::cos(E) - e;
+            numerator2 = numerator*numerator;
             denominator = 1.0 - e*std::cos(E);
-            quotient = numerator / denominator;
-            nu_E   = std::acos(quotient);
-            dnudE  = -(numerator*(e*std::sin(E)) - denominator*(-std::sin(E))) / 
-                      (denominator * denominator * std::sqrt(1.0 - quotient*quotient));
+            denominator2 = denominator*denominator;
+            std::cout << "i:     " << i << std::endl;
+            nu_E   = std::acos(numerator / denominator);
+            std::cout << "nu_E:  " << nu_E << std::endl;
+            dnudE  = -(-std::sin(E)/denominator - e*std::sin(E)*numerator/denominator2) / std::sqrt(1.0 - numerator2/denominator2);
+            std::cout << "dnudE: " << dnudE << std::endl;
             error = nu - nu_E;
-            E = E + error/dnudE;
+            std::cout << "error: " << error << std::endl;
+            E = std::clamp(E + error/dnudE, epsilon, 2.0*pi-epsilon);
+            std::cout << "E:     " << E << std::endl;
         }
         return E;
 	}
@@ -180,6 +190,7 @@ public:
         double M_E_(0.0);
         double dMdE(0.0);
         double error(0.0);
+        // solve using Newton's method
         for (int i = 0; i < iterations; i++) {
             M_E_   = E-e*std::sin(E);
             dMdE  = 1.0-e*std::cos(E);
