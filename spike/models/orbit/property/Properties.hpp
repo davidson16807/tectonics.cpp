@@ -11,7 +11,7 @@
 
 /*
 `Properties` is a mathematical small category implemented as a class for which methods are conceptually pure functions.
-Arrows are pure functions that map orbital properties of a single orbit for which the gravitational parameter is known.
+Arrows in the category map orbital properties of a single orbit for which the gravitational parameter is known.
 Objects in the category are orbital properties expressed as primitive data types and glm vectors.
 
 It implements the following commutative diagram:
@@ -164,15 +164,10 @@ public:
             numerator2 = numerator*numerator;
             denominator = 1.0 - e*std::cos(E);
             denominator2 = denominator*denominator;
-            std::cout << "i:     " << i << std::endl;
             nu_E   = std::acos(numerator / denominator);
-            std::cout << "nu_E:  " << nu_E << std::endl;
             dnudE  = -(-std::sin(E)/denominator - e*std::sin(E)*numerator/denominator2) / std::sqrt(1.0 - numerator2/denominator2);
-            std::cout << "dnudE: " << dnudE << std::endl;
             error = nu - nu_E;
-            std::cout << "error: " << error << std::endl;
             E = std::clamp(E + error/dnudE, epsilon, 2.0*pi-epsilon);
-            std::cout << "E:     " << E << std::endl;
         }
         return E;
 	}
