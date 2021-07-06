@@ -203,12 +203,8 @@ namespace property {
 		glm::vec<3,Tfloat,glm::defaultp> get_perifocal_position(const double semi_latus_rectum, const double eccentricity, const double true_anomaly) const
 		{
 			const glm::vec<3,Tfloat,glm::defaultp> P = vernal_equinox_direction;
-			std::cout << "P: " << P.x << ", " << P.y << ", " << P.z << std::endl;
 			const glm::vec<3,Tfloat,glm::defaultp> Q = glm::cross(north_pole_direction,vernal_equinox_direction);
-			std::cout << "Q: " << Q.x << ", " << Q.y << ", " << Q.z << std::endl;
 			const Tfloat radius = semi_latus_rectum / (1.0 + eccentricity*std::cos(true_anomaly));
-			std::cout << "radius: " << radius << std::endl;
-			std::cout << "true_anomaly: " << true_anomaly << std::endl;
 			return radius * (std::cos(true_anomaly) * P + std::sin(true_anomaly) * Q);
 		}
 		glm::vec<3,Tfloat,glm::defaultp> get_perifocal_velocity(const double semi_latus_rectum, const double eccentricity, const double true_anomaly) const
@@ -216,7 +212,6 @@ namespace property {
 			const glm::vec<3,Tfloat,glm::defaultp> P = vernal_equinox_direction;
 			const glm::vec<3,Tfloat,glm::defaultp> Q = glm::cross(north_pole_direction,vernal_equinox_direction);
 			const Tfloat noneccentric_speed = std::sqrt(gravitational_parameter / semi_latus_rectum);
-			std::cout << "noneccentric_speed: " << noneccentric_speed << std::endl;
 			return noneccentric_speed * (-std::sin(true_anomaly) * P + (eccentricity + std::cos(true_anomaly)) * Q);
 		}
 	};

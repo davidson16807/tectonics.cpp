@@ -21,12 +21,12 @@ namespace orbit {
     Our chief concern here is to simplify writing unit tests and interpreting their output.
     */
 
-    #define STATE_EQUAL(state1, state2)                             \
-        CHECK(state1.position.x == Approx(state2.position.x).margin(0.0001)); \
-        CHECK(state1.position.y == Approx(state2.position.y).margin(0.0001)); \
-        CHECK(state1.position.z == Approx(state2.position.z).margin(0.0001)); \
-        CHECK(state1.velocity.x == Approx(state2.velocity.x).margin(0.0001)); \
-        CHECK(state1.velocity.y == Approx(state2.velocity.y).margin(0.0001)); \
-        CHECK(state1.velocity.z == Approx(state2.velocity.z).margin(0.0001));
+    #define STATE_EQUAL(state1, state2)                                      \
+        CHECK(state1.position.x == Approx(state2.position.x).epsilon(1e-4)); \
+        CHECK(state1.position.y == Approx(state2.position.y).epsilon(1e-4)); \
+        CHECK(state1.position.z == Approx(state2.position.z).epsilon(1e-4)); \
+        CHECK(state1.velocity.x == Approx(state2.velocity.x).epsilon(1e-4)); \
+        CHECK(state1.velocity.y == Approx(state2.velocity.y).epsilon(1e-4)); \
+        CHECK(state1.velocity.z == Approx(state2.velocity.z).epsilon(1e-4));
         
 }
