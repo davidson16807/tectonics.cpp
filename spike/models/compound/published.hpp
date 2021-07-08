@@ -467,8 +467,7 @@ PartlyKnownCompound oxygen (
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
                 -0.08909, 0.00000, 0.39475, 0.70840, -2.08620), 
                 // oxygen, mean error: 2.1%, max error: 8.1%, range: 104.36-1004.4K, 0-3MPa, stp estimate: 18.827
-        /*density*/                
-            field::StateSample<si::density>(1.4458*si::gram/si::centimeter3, si::atmosphere, 270.0*si::kelvin), // Johnson (1960)
+        /*density*/                field::missing(),
         /*refractive_index*/       // 1.0002709,
         field::SpectralFunction<double>([](
             const si::wavenumber nlo, 
@@ -935,8 +934,7 @@ PartlyKnownCompound argon (
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
                 0.41072, 0.79782, 0.22045, 0.81080, -0.33331), 
                 // argon, mean error: 1.7%, max error: 4.2%, range: 133.81-683.81K, 0-3MPa, stp estimate: 20.565
-        /*density*/                
-            field::StateSample<si::density>(1.8048*si::gram/si::centimeter3, si::atmosphere, 270.0*si::kelvin), // Johnson (1960)
+        /*density*/                field::missing(),
         /*refractive_index*/       // 1.000281,
         field::SpectralFunction<double>([](
             const si::wavenumber nlo, 
@@ -1191,11 +1189,12 @@ PartlyKnownCompound hydrogen (
 
     /*gas*/
     phase::PartlyKnownGas {
-        /*specific_heat_capacity*/ // 12.24 * si::joule / (si::gram * si::kelvin),       
-            get_sigmoid_exponent_pressure_temperature_function
-                (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
-                0.02971, 21.52834, 1116.18449, 51.63246, 3.23568, 107.08994, 116.34534, 11.50257), 
-                // hydrogen, mean error: 0.6%, max error: 2.0%, range: 63.957-1014K, 0-1MPa, stp estimate: 14.153
+        /*specific_heat_capacity*/ 12.24 * si::joule / (si::gram * si::kelvin),       
+            // NOTE: this entry produces absurd high values at STP, we need to reimplement this
+            // get_sigmoid_exponent_pressure_temperature_function
+            //     (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
+            //     0.02971, 21.52834, 1116.18449, 51.63246, 3.23568, 107.08994, 116.34534, 11.50257), 
+            //     // hydrogen, mean error: 0.6%, max error: 2.0%, range: 63.957-1014K, 0-1MPa, stp estimate: 14.153
         /*thermal_conductivity*/   // 186.6 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
@@ -3776,7 +3775,7 @@ PartlyKnownCompound augite (
         /*specific_heat_capacity*/ field::missing(),
         /*thermal_conductivity*/   field::missing(),
         /*dynamic_viscosity*/      field::missing(),
-        /*density*/                2800.0 * si::kilogram/si::meter3, // from Murase and McBirney (1973), for basaltic  magma
+        /*density*/                field::missing(),
         /*refractive_index*/       field::missing()
     },
 
@@ -3785,7 +3784,7 @@ PartlyKnownCompound augite (
         /*specific_heat_capacity*/ field::missing(),
         /*thermal_conductivity*/   field::missing(),
         /*dynamic_viscosity*/      field::missing(),
-        /*density*/                field::missing(),
+        /*density*/                2800.0 * si::kilogram/si::meter3, // from Murase and McBirney (1973), for basaltic  magma
         /*vapor_pressure*/         field::missing(),
         /*surface_tension*/        
             get_interpolated_temperature_function

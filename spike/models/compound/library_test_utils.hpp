@@ -32,45 +32,51 @@
     CHECK(compound.boiling_point_sample_temperature / (si::kelvin) > 0.0); \
     CHECK(compound.boiling_point_sample_temperature / (si::kelvin) < 10000.0); \
     CHECK(compound.molecular_absorption_cross_section(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), si::standard_pressure, si::standard_temperature) / (si::meter2) > 1e-36); \
-    CHECK(compound.molecular_absorption_cross_section(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), si::standard_pressure, si::standard_temperature) / (si::meter2) < 1e-15); 
+    CHECK(compound.molecular_absorption_cross_section(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), si::standard_pressure, si::standard_temperature) / (si::meter2) < 1e-15); \
+    CHECK(compound.gas.specific_heat_capacity(si::standard_pressure, si::standard_temperature) / (si::joule / (si::kilogram * si::kelvin)) > 3e2 ); /*based on argon*/ \
+    CHECK(compound.gas.specific_heat_capacity(si::standard_pressure, si::standard_temperature) / (si::joule / (si::kilogram * si::kelvin)) < 3e4 ); /*based on hydrogen*/ \
+    CHECK(compound.gas.thermal_conductivity(si::standard_pressure, si::standard_temperature) / (si::watt / (si::meter * si::kelvin)) > 0.003); /*based on sulfur dioxide*/ \
+    CHECK(compound.gas.thermal_conductivity(si::standard_pressure, si::standard_temperature) / (si::watt / (si::meter * si::kelvin)) < 0.3); /*based on hydrogen*/ \
+    CHECK(compound.gas.dynamic_viscosity(si::standard_pressure, si::standard_temperature) / (si::pascal * si::second) < 3e-5); /*based on argon*/ \
+    CHECK(compound.gas.dynamic_viscosity(si::standard_pressure, si::standard_temperature) / (si::pascal * si::second) > 1e-6); /*based on steam*/ \
+    CHECK(compound.gas.density(si::standard_pressure, si::standard_temperature) / (si::kilogram/si::meter3) < 30.0); /*based on theoretical estimate for rocks*/ \
+    CHECK(compound.gas.density(si::standard_pressure, si::standard_temperature) / (si::kilogram/si::meter3) > 0.08); /*based on hydrogen*/ \
+    CHECK(compound.gas.refractive_index(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), si::standard_pressure, si::standard_temperature) > 1.00003 ); /*based on helium*/ \
+    CHECK(compound.gas.refractive_index(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), si::standard_pressure, si::standard_temperature) < 1.001 ); /*based on air*/ \
+    CHECK(compound.solids.size() != 0);
+
     // compound.critical_point_volume
     // compound.critical_point_compressibility
     // compound.simon_glatzel_slope
     // compound.simon_glatzel_exponent
     /*
-    compound.gas.specific_heat_capacity
-    compound.gas.thermal_conductivity
-    compound.gas.dynamic_viscosity
-    compound.gas.density
-    compound.gas.refractive_index
-    compound.liquid.specific_heat_capacity
-    compound.liquid.thermal_conductivity
-    compound.liquid.dynamic_viscosity
-    compound.liquid.density
-    compound.liquid.vapor_pressure
-    compound.liquid.surface_tension
-    compound.liquid.refractive_index
-    compound.solids[i].specific_heat_capacity
-    compound.solids[i].thermal_conductivity
-    compound.solids[i].dynamic_viscosity
-    compound.solids[i].density
-    compound.solids[i].vapor_pressure
-    compound.solids[i].refractive_index
-    compound.solids[i].spectral_reflectance
-    compound.solids[i].bulk_modulus
-    compound.solids[i].tensile_modulus
-    compound.solids[i].shear_modulus
-    compound.solids[i].pwave_modulus
-    compound.solids[i].lame_parameter
-    compound.solids[i].poisson_ratio
-    compound.solids[i].compressive_fracture_strength
-    compound.solids[i].tensile_fracture_strength
-    compound.solids[i].shear_fracture_strength
-    compound.solids[i].compressive_yield_strength
-    compound.solids[i].tensile_yield_strength
-    compound.solids[i].shear_yield_strength
+    compound.liquid.specific_heat_capacity(si::standard_pressure, si::standard_temperature)
+    compound.liquid.thermal_conductivity(si::standard_pressure, si::standard_temperature)
+    compound.liquid.dynamic_viscosity(si::standard_pressure, si::standard_temperature)
+    compound.liquid.density(si::standard_pressure, si::standard_temperature)
+    compound.liquid.vapor_pressure(si::standard_pressure, si::standard_temperature)
+    compound.liquid.surface_tension(si::standard_pressure, si::standard_temperature)
+    compound.liquid.refractive_index(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), si::standard_pressure, si::standard_temperature)
+    compound.solids[i].specific_heat_capacity(si::standard_pressure, si::standard_temperature)
+    compound.solids[i].thermal_conductivity(si::standard_pressure, si::standard_temperature)
+    compound.solids[i].dynamic_viscosity(si::standard_pressure, si::standard_temperature)
+    compound.solids[i].density(si::standard_pressure, si::standard_temperature)
+    compound.solids[i].vapor_pressure(si::standard_pressure, si::standard_temperature)
+    compound.solids[i].refractive_index(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), si::standard_pressure, si::standard_temperature)
+    compound.solids[i].spectral_reflectance(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), si::standard_pressure, si::standard_temperature)
+    compound.solids[i].bulk_modulus(si::standard_pressure, si::standard_temperature)
+    compound.solids[i].tensile_modulus(si::standard_pressure, si::standard_temperature)
+    compound.solids[i].shear_modulus(si::standard_pressure, si::standard_temperature)
+    compound.solids[i].pwave_modulus(si::standard_pressure, si::standard_temperature)
+    compound.solids[i].lame_parameter(si::standard_pressure, si::standard_temperature)
+    compound.solids[i].poisson_ratio(si::standard_pressure, si::standard_temperature)
+    compound.solids[i].compressive_fracture_strength(si::standard_pressure, si::standard_temperature)
+    compound.solids[i].tensile_fracture_strength(si::standard_pressure, si::standard_temperature)
+    compound.solids[i].shear_fracture_strength(si::standard_pressure, si::standard_temperature)
+    compound.solids[i].compressive_yield_strength(si::standard_pressure, si::standard_temperature)
+    compound.solids[i].tensile_yield_strength(si::standard_pressure, si::standard_temperature)
+    compound.solids[i].shear_yield_strength(si::standard_pressure, si::standard_temperature)
     compound.solids[i].chemical_susceptibility_estimate
-    CHECK(crust1.size() != 0);\
     for (std::size_t strata_i = 0; strata_i < crust1.size(); ++strata_i) \
     {                                                         \
         strata::Strata<L,M> strata1; crust1[strata_i].unpack(strata1);\
