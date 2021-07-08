@@ -145,31 +145,10 @@ namespace property {
 			return semi_latus_rectum / (1.0 - eccentricity*eccentricity);
 		}
 		// "E"
-		double solve_eccentric_anomaly_from_true_anomaly(const double true_anomaly, const double eccentricity, const int iterations = 10) const
+		double get_eccentric_anomaly_from_true_anomaly(const double true_anomaly, const double eccentricity, const int iterations = 10) const
 		{
 	        const double pi = 3.1415926;
-	        const double epsilon = 0.0001;
-	        double e = eccentricity;
-	        double E = pi/2.0;
-	        double nu = true_anomaly;
-	        double nu_E(0.0);
-	        double dnudE(0.0);
-	        double error(0.0);
-	        double denominator(0.0);
-	        double denominator2(0.0);
-	        double numerator(0.0);
-	        double numerator2(0.0);
-	        for (int i = 0; i < iterations; i++) {
-	            numerator = std::cos(E) - e;
-	            numerator2 = numerator*numerator;
-	            denominator = 1.0 - e*std::cos(E);
-	            denominator2 = denominator*denominator;
-	            nu_E   = std::acos(numerator / denominator);
-	            dnudE  = -(-std::sin(E)/denominator - e*std::sin(E)*numerator/denominator2) / std::sqrt(1.0 - numerator2/denominator2);
-	            error = nu - nu_E;
-	            E = std::clamp(E + error/dnudE, epsilon, 2.0*pi-epsilon);
-	        }
-	        return E;
+			return std::acos(-(std::cos(pi - true_anomaly) - eccentricity) / (1.0 - eccentricity * std::cos(pi - true_anomaly)));
 		}
 		// "ν₀"
 		double get_true_anomaly_from_eccentric_anomaly(const double eccentric_anomaly, const double eccentricity) const

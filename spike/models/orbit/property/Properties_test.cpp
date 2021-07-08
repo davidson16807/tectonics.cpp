@@ -36,7 +36,7 @@ namespace property {
 		    }
 		}
 	}
-	TEST_CASE( "get_true_anomaly_from_eccentric_anomaly()/solve_eccentric_anomaly_from_true_anomaly() invertibility", "[orbit]" ) {
+	TEST_CASE( "get_true_anomaly_from_eccentric_anomaly()/get_eccentric_anomaly_from_true_anomaly() invertibility", "[orbit]" ) {
 		Properties<double> properties(glm::dvec3(1,0,0), glm::dvec3(0,0,1), si::gravitational_constant * si::earth_mass / (si::meter3/si::second2));
 	    SECTION("For every function there exists another function that negates its effect"){
 	    	const double max_i = 10.0;
@@ -50,7 +50,7 @@ namespace property {
 		    		double e = math::mix(0.0, 0.99, j/max_j);
 					CHECK( 
 						properties.get_true_anomaly_from_eccentric_anomaly(
-							properties.solve_eccentric_anomaly_from_true_anomaly(nu, e), e
+							properties.get_eccentric_anomaly_from_true_anomaly(nu, e), e
 						) == Approx(nu).margin(0.01)
 					);
 				}

@@ -6,6 +6,8 @@
 #include <glm/mat3x3.hpp>     // *mat3
 
 // in-house libraries
+#include <math/lerp.hpp>
+
 #include "property/Properties.hpp"
 
 #include "Elements.hpp"
@@ -32,7 +34,7 @@ struct ElementsAndState
 		// Tfloat argument_of_latitude        = properties.get_argument_of_latitude_from_position_and_node             (position, node_vector);
 		// Tfloat true_longitude              = properties.get_true_longitude                                          (longitude_of_ascending_node, argument_of_latitude);
 		Tfloat eccentricity                = glm::length                                                            (eccentricity_vector);
-		Tfloat eccentric_anomaly           = properties.solve_eccentric_anomaly_from_true_anomaly                   (true_anomaly, eccentricity);
+		Tfloat eccentric_anomaly           = properties.get_eccentric_anomaly_from_true_anomaly                     (true_anomaly, eccentricity);
 		Tfloat mean_anomaly                = properties.get_mean_anomaly_from_eccentric_anomaly                     (eccentric_anomaly, eccentricity);
 		Tfloat semi_latus_rectum           = properties.get_semi_latus_rectum_from_momentum_vector                  (angular_momentum_vector);
 		Tfloat semi_major_axis             = properties.get_semi_major_axis_from_semi_latus_rectum_and_eccentricity (semi_latus_rectum, eccentricity);
