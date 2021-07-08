@@ -8,6 +8,7 @@
 
 #include "StateSample.hpp"
 #include "StateFunction.hpp"
+#include "StateParameters.hpp"
 
 #include "CompletedStateField.hpp"
 

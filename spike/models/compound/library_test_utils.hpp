@@ -1,43 +1,43 @@
 #pragma once
 
 #define COMPLETED_COMPOUND_VALID(compound) \
-    CHECK(compound.molar_mass > 1.0 * si::gram/si::mole); \
-    CHECK(compound.molar_mass < 1000.0 * si::gram/si::mole); \
+    CHECK(compound.molar_mass / (si::gram/si::mole) > 1.0); \
+    CHECK(compound.molar_mass / (si::gram/si::mole) < 1000.0); \
     CHECK(compound.atoms_per_molecule < 100u); \
     CHECK(compound.atoms_per_molecule > 0u); \
-    CHECK(compound.molecular_diameter > 100.0 * si::picometer); \
-    CHECK(compound.molecular_diameter < 1000.0 * si::picometer); \
+    CHECK(compound.molecular_diameter / (si::picometer) > 100.0); \
+    CHECK(compound.molecular_diameter / (si::picometer) < 1000.0); \
     CHECK(compound.molecular_degrees_of_freedom <= 8.0); \
     CHECK(compound.molecular_degrees_of_freedom >= 3.0); \
     CHECK(compound.acentric_factor > -1.0); \
     CHECK(compound.acentric_factor <  1.0); \
-    CHECK(compound.critical_point_pressure > 0.1 * si::megapascal); \
-    CHECK(compound.critical_point_pressure < 100.0 * si::megapascal); \
-    CHECK(compound.critical_point_temperature > 0.0 * si::kelvin); \
-    CHECK(compound.critical_point_temperature < 1000.0 * si::kelvin); \
-    CHECK(compound.latent_heat_of_vaporization < 1e8 * si::joule / si::kilogram); \
-    CHECK(compound.latent_heat_of_vaporization > 1e4 * si::joule / si::kilogram); \
-    CHECK(compound.latent_heat_of_fusion < 1e7 * si::joule / si::kilogram); \
-    CHECK(compound.latent_heat_of_fusion > 1e5 * si::joule / si::kilogram); \
-    CHECK(compound.triple_point_pressure > 0.0001 * si::pascal); \
-    CHECK(compound.triple_point_pressure < 1e5 * si::pascal); \
-    CHECK(compound.triple_point_temperature > 0.0 * si::kelvin); \
-    CHECK(compound.triple_point_temperature < 10000.0 * si::kelvin); \
-    CHECK(compound.freezing_point_sample_pressure > 0.0001 * si::pascal); \
-    CHECK(compound.freezing_point_sample_pressure < 1e6 * si::pascal); \
-    CHECK(compound.freezing_point_sample_temperature > 0.0 * si::kelvin); \
-    CHECK(compound.freezing_point_sample_temperature < 10000.0 * si::kelvin); \
-    CHECK(compound.boiling_point_sample_pressure > 0.0001 * si::pascal); \
-    CHECK(compound.boiling_point_sample_pressure < 1e6 * si::pascal); \
-    CHECK(compound.boiling_point_sample_temperature > 0.0 * si::kelvin); \
-    CHECK(compound.boiling_point_sample_temperature < 10000.0 * si::kelvin);
+    CHECK(compound.critical_point_pressure / (si::megapascal) > 0.1); \
+    CHECK(compound.critical_point_pressure / (si::megapascal) < 1000.0); /*based on gold*/ \
+    CHECK(compound.critical_point_temperature / (si::kelvin) > 0.0); \
+    CHECK(compound.critical_point_temperature / (si::kelvin) < 10000.0); /*based on aluminum*/ \
+    CHECK(compound.latent_heat_of_vaporization / (si::joule / si::kilogram) < 1e8); /*based on aluminum*/\
+    CHECK(compound.latent_heat_of_vaporization / (si::joule / si::kilogram) > 1e4); /*based on helium*/\
+    CHECK(compound.latent_heat_of_fusion / (si::joule / si::kilogram) < 1e6); /*based on aluminum*/\
+    CHECK(compound.latent_heat_of_fusion / (si::joule / si::kilogram) > 1e4); /*based on nitrogen*/\
+    CHECK(compound.triple_point_pressure / (si::pascal) > 0.0001); \
+    CHECK(compound.triple_point_pressure / (si::atmosphere) < 10.0); /*based on carbon dioxide*/ \
+    CHECK(compound.triple_point_temperature / (si::kelvin) > 0.0); \
+    CHECK(compound.triple_point_temperature / (si::kelvin) < 10000.0); \
+    CHECK(compound.freezing_point_sample_pressure / (si::pascal) > 0.0001); \
+    CHECK(compound.freezing_point_sample_pressure / (si::megapascal) < 10.0); \
+    CHECK(compound.freezing_point_sample_temperature / (si::kelvin) > 0.0); \
+    CHECK(compound.freezing_point_sample_temperature / (si::kelvin) < 10000.0); \
+    CHECK(compound.boiling_point_sample_pressure / (si::pascal) > 0.0001); \
+    CHECK(compound.boiling_point_sample_pressure / (si::megapascal) < 1.0); \
+    CHECK(compound.boiling_point_sample_temperature / (si::kelvin) > 0.0); \
+    CHECK(compound.boiling_point_sample_temperature / (si::kelvin) < 10000.0);
     // compound.critical_point_volume
     // compound.critical_point_compressibility
     // compound.simon_glatzel_slope
     // compound.simon_glatzel_exponent
     /*
-    CHECK(compound.molecular_absorption_cross_section > 1e-36 * si::meter2); \
-    CHECK(compound.molecular_absorption_cross_section < 1e-10 * si::meter2);
+    CHECK(compound.molecular_absorption_cross_section / (si::meter2) > 1e-36); \
+    CHECK(compound.molecular_absorption_cross_section / (si::meter2) < 1e-10);
     CHECK(compound.gas.specific_heat_capacity)
     compound.gas.thermal_conductivity
     compound.gas.dynamic_viscosity

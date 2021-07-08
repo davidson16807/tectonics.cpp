@@ -52,7 +52,7 @@ struct ElementsAndState
 		const glm::vec<3,Tfloat,glm::defaultp> K = properties.north_pole_direction;
 
 		Tfloat eccentric_anomaly = properties.solve_eccentric_anomaly_from_mean_anomaly        (elements.mean_anomaly, elements.eccentricity);
-		Tfloat true_anomaly          = properties.get_true_anomaly_from_eccentric_anomaly      (eccentric_anomaly, elements.eccentricity);
+		Tfloat true_anomaly      = properties.get_true_anomaly_from_eccentric_anomaly      (eccentric_anomaly, elements.eccentricity);
 		Tfloat semi_latus_rectum = properties.get_semi_latus_rectum_from_semi_major_axis_and_eccentricity (elements.semi_major_axis, elements.eccentricity);
 		glm::vec<3,Tfloat,glm::defaultp> perifocal_position = properties.get_perifocal_position(semi_latus_rectum, elements.eccentricity, true_anomaly);
 		glm::vec<3,Tfloat,glm::defaultp> perifocal_velocity = properties.get_perifocal_velocity(semi_latus_rectum, elements.eccentricity, true_anomaly);

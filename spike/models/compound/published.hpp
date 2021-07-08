@@ -2789,11 +2789,11 @@ PartlyKnownCompound pyrimidine (
     /*latent_heat_of_vaporization*/       49.79*79 * si::kilojoule / (80.088*si::gram),
     /*latent_heat_of_fusion*/             field::missing(),
     /*triple_point_pressure*/             field::missing(),
-    /*triple_point_temperature*/          field::missing(),
+    /*triple_point_temperature*/          155.1 * si::kelvin, // NIST
     /*freezing_point_sample_pressure*/    si::atmosphere, 
-    /*freezing_point_sample_temperature*/ -22.6 * si::celcius, // wikipedia
-    /*boiling_point_sample_pressure*/     field::missing(),
-    /*boiling_point_sample_temperature*/  field::missing(),
+    /*freezing_point_sample_temperature*/ 293.0 * si::kelvin, // wikipedia
+    /*boiling_point_sample_pressure*/     si::atmosphere,
+    /*boiling_point_sample_temperature*/  397.0 * si::kelvin, // wikipedia
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),
 
@@ -3210,7 +3210,7 @@ PartlyKnownCompound carbon (
                      std::vector<double>{10.0, 100.0,  300.0, 1400.0}, 
                      std::vector<double>{81.0,4980.0, 2000.0,  370.0}), // Perry, perpendicular to basal plane
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                     compound      2260.0 * si::kilogram/si::meter3, 
+            /*density*/                           2260.0 * si::kilogram/si::meter3, 
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::celcius, si::pascal,
@@ -3256,9 +3256,9 @@ PartlyKnownCompound carbon (
             /*refractive_index*/                  field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
-            /*bulk_modulus*/                      443.0 * si::gigapascal, // wikipedia, for diamond
+            /*bulk_modulus*/                      443.0 * si::gigapascal,  // wikipedia, for diamond
             /*tensile_modulus*/                   1050.0 * si::gigapascal, // wikipedia, for diamond
-            /*shear_modulus*/                     478.0 * si::gigapascal, // wikipedia, from McSkimin (1972), for diamond
+            /*shear_modulus*/                     478.0 * si::gigapascal,  // wikipedia, from McSkimin (1972), for diamond
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
             /*poisson_ratio*/                     field::missing(),
@@ -4156,7 +4156,7 @@ PartlyKnownCompound hematite (
 PartlyKnownCompound  gold (
     /*molar_mass*/                        196.967 * si::gram/si::mole, 
     /*atoms_per_molecule*/                1u,
-    /*molecular_diameter*/                field::missing(),
+    /*molecular_diameter*/                2.0 * 174.0 * si::picometer, // www.webelements.com, from calculated radius
     /*molecular_degrees_of_freedom*/      3.0,
     /*acentric_factor*/                   field::missing(),
 
@@ -4172,7 +4172,7 @@ PartlyKnownCompound  gold (
     /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ 1064.180*si::celcius,
     /*boiling_point_sample_pressure*/     si::atmosphere,
-    /*boiling_point_sample_temperature*/  2600.0 *si::celcius, // Perry
+    /*boiling_point_sample_temperature*/  3243.0 * si::kelvin, // wikipedia
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),
 
@@ -4261,7 +4261,7 @@ PartlyKnownCompound  gold (
 PartlyKnownCompound  silver (
     /*molar_mass*/                        107.868 * si::gram/si::mole, 
     /*atoms_per_molecule*/                1u,
-    /*molecular_diameter*/                field::missing(),
+    /*molecular_diameter*/                2.0*165.0 * si::picometer, // www.webelements.com, from calculated radius
     /*molecular_degrees_of_freedom*/      3.0,
     /*acentric_factor*/                   field::missing(),
 
@@ -4276,8 +4276,8 @@ PartlyKnownCompound  silver (
     /*triple_point_temperature*/          field::missing(),
     /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ 961.78*si::celcius,
-    /*boiling_point_sample_pressure*/     field::missing(),
-    /*boiling_point_sample_temperature*/  field::missing(),
+    /*boiling_point_sample_pressure*/     si::atmosphere,
+    /*boiling_point_sample_temperature*/  2435.0 * si::kelvin, // wikipedia
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),
 
@@ -4365,7 +4365,7 @@ PartlyKnownCompound  silver (
 PartlyKnownCompound  copper (
     /*molar_mass*/                        63.546 * si::gram/si::mole, 
     /*atoms_per_molecule*/                1u,
-    /*molecular_diameter*/                field::missing(),
+    /*molecular_diameter*/                2.0 * 145.0 * si::picometer, // www.webelements.com, from calculated radius
     /*molecular_degrees_of_freedom*/      3.0,
     /*acentric_factor*/                   field::missing(),
 
@@ -4380,8 +4380,8 @@ PartlyKnownCompound  copper (
     /*triple_point_temperature*/          field::missing(),
     /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ 1084.62*si::celcius,
-    /*boiling_point_sample_pressure*/     field::missing(),
-    /*boiling_point_sample_temperature*/  field::missing(),
+    /*boiling_point_sample_pressure*/     si::atmosphere,
+    /*boiling_point_sample_temperature*/  2835 * si::kelvin, // wikipedia
     /*simon_glatzel_slope*/               field::missing(),
     /*simon_glatzel_exponent*/            field::missing(),
 

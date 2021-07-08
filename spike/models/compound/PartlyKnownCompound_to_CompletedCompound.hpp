@@ -7,6 +7,10 @@
 #include <vector>
 
 // 3rd party libraries
+#include "phase/gas/PartlyKnownGas_to_CompletedGas.hpp"
+#include "phase/liquid/PartlyKnownLiquid_to_CompletedLiquid.hpp"
+#include "phase/solid/PartlyKnownSolid_to_CompletedSolid.hpp"
+
 #include "CompletedCompound.hpp"
 #include "PartlyKnownCompound.hpp"
 #include "StateParameterSamples.hpp"

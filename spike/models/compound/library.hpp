@@ -9,6 +9,10 @@
 
 #include "CompletedCompound.hpp"
 #include "PartlyKnownCompound.hpp"
+#include "PartlyKnownCompound_operators.hpp"
+#include "PartlyKnownCompound_to_CompletedCompound.hpp"
+
+#include "published.hpp"
 
 namespace compound {
     namespace fallback {
@@ -200,53 +204,53 @@ namespace compound {
 
         */
 
-        CompletedCompound water = complete( speculate(infer(published::water)), fallback::water );
+        CompletedCompound water = compound::complete( speculate(infer(published::water)), fallback::water );
 
-        CompletedCompound hydrogen = complete( speculate(infer(published::hydrogen)), fallback::water );
-        CompletedCompound helium = complete( speculate(infer(published::helium)), hydrogen );
-        CompletedCompound argon = complete( speculate(infer(published::argon)), helium );
+        CompletedCompound hydrogen = compound::complete( speculate(infer(published::hydrogen)), fallback::water );
+        CompletedCompound helium = compound::complete( speculate(infer(published::helium)), hydrogen );
+        CompletedCompound argon = compound::complete( speculate(infer(published::argon)), helium );
 
-        CompletedCompound nitrogen = complete( speculate(infer(published::nitrogen)), fallback::water );
-        CompletedCompound oxygen = complete( speculate(infer(published::oxygen)), nitrogen );
-        CompletedCompound ammonia = complete( speculate(infer(published::ammonia)), nitrogen );
-        CompletedCompound ozone = complete( speculate(infer(published::ozone)), nitrogen );
-        CompletedCompound sulfur_dioxide = complete( speculate(infer(published::sulfur_dioxide)), nitrogen );
-        CompletedCompound nitrous_oxide = complete( speculate(infer(published::nitrous_oxide)), nitrogen );
-        CompletedCompound nitric_oxide = complete( speculate(infer(published::nitric_oxide)), nitrogen );
+        CompletedCompound nitrogen = compound::complete( speculate(infer(published::nitrogen)), fallback::water );
+        CompletedCompound oxygen = compound::complete( speculate(infer(published::oxygen)), nitrogen );
+        CompletedCompound ammonia = compound::complete( speculate(infer(published::ammonia)), nitrogen );
+        CompletedCompound ozone = compound::complete( speculate(infer(published::ozone)), nitrogen );
+        CompletedCompound sulfur_dioxide = compound::complete( speculate(infer(published::sulfur_dioxide)), nitrogen );
+        CompletedCompound nitrous_oxide = compound::complete( speculate(infer(published::nitrous_oxide)), nitrogen );
+        CompletedCompound nitric_oxide = compound::complete( speculate(infer(published::nitric_oxide)), nitrogen );
 
-        CompletedCompound carbon_dioxide = complete( speculate(infer(published::carbon_dioxide)), fallback::water );
-        CompletedCompound carbon_monoxide = complete( speculate(infer(published::carbon_monoxide)), carbon_dioxide );
-        CompletedCompound hydrogen_cyanide = complete( speculate(infer(published::hydrogen_cyanide)), carbon_dioxide );
-        CompletedCompound methane = complete( speculate(infer(published::methane)), carbon_dioxide );
-        CompletedCompound perflouromethane = complete( speculate(infer(published::perflouromethane)), methane );
-        CompletedCompound formaldehyde = complete( speculate(infer(published::formaldehyde)), methane );
-        CompletedCompound formic_acid = complete( speculate(infer(published::formic_acid)), formaldehyde );
-        CompletedCompound benzene = complete( speculate(infer(published::benzene)), formaldehyde );
-        CompletedCompound pyrimidine = complete( speculate(infer(published::pyrimidine)), benzene );
-        CompletedCompound ethane = complete( speculate(infer(published::ethane)), methane );
-        CompletedCompound ethanol = complete( speculate(infer(published::ethanol)), ethane );
+        CompletedCompound carbon_dioxide = compound::complete( speculate(infer(published::carbon_dioxide)), fallback::water );
+        CompletedCompound carbon_monoxide = compound::complete( speculate(infer(published::carbon_monoxide)), carbon_dioxide );
+        CompletedCompound hydrogen_cyanide = compound::complete( speculate(infer(published::hydrogen_cyanide)), carbon_dioxide );
+        CompletedCompound methane = compound::complete( speculate(infer(published::methane)), carbon_dioxide );
+        CompletedCompound perflouromethane = compound::complete( speculate(infer(published::perflouromethane)), methane );
+        CompletedCompound formaldehyde = compound::complete( speculate(infer(published::formaldehyde)), methane );
+        CompletedCompound formic_acid = compound::complete( speculate(infer(published::formic_acid)), formaldehyde );
+        CompletedCompound benzene = compound::complete( speculate(infer(published::benzene)), formaldehyde );
+        CompletedCompound pyrimidine = compound::complete( speculate(infer(published::pyrimidine)), benzene );
+        CompletedCompound ethane = compound::complete( speculate(infer(published::ethane)), methane );
+        CompletedCompound ethanol = compound::complete( speculate(infer(published::ethanol)), ethane );
 
-        CompletedCompound quartz = complete( speculate(infer(published::quartz)), carbon_dioxide);
-        CompletedCompound corundum = complete( speculate(infer(published::corundum)), quartz);
-        CompletedCompound carbon = complete( speculate(infer(published::carbon)), quartz);
-        CompletedCompound orthoclase = complete( speculate(infer(published::orthoclase)), quartz);
-        CompletedCompound andesine = complete( speculate(infer(published::andesine)), quartz);
-        CompletedCompound augite = complete( speculate(infer(published::augite)), quartz);
-        CompletedCompound forsterite = complete( speculate(infer(published::forsterite)), quartz);
-        CompletedCompound hematite = complete( speculate(infer(published::hematite)), quartz);
-        CompletedCompound goethite = complete( speculate(infer(published::goethite)), quartz);
-        CompletedCompound magnetite = complete( speculate(infer(published::magnetite)), quartz);
+        CompletedCompound quartz = compound::complete( speculate(infer(published::quartz)), carbon_dioxide);
+        CompletedCompound corundum = compound::complete( speculate(infer(published::corundum)), quartz);
+        CompletedCompound carbon = compound::complete( speculate(infer(published::carbon)), quartz);
+        CompletedCompound orthoclase = compound::complete( speculate(infer(published::orthoclase)), quartz);
+        CompletedCompound andesine = compound::complete( speculate(infer(published::andesine)), quartz);
+        CompletedCompound augite = compound::complete( speculate(infer(published::augite)), quartz);
+        CompletedCompound forsterite = compound::complete( speculate(infer(published::forsterite)), quartz);
+        CompletedCompound hematite = compound::complete( speculate(infer(published::hematite)), quartz);
+        CompletedCompound goethite = compound::complete( speculate(infer(published::goethite)), quartz);
+        CompletedCompound magnetite = compound::complete( speculate(infer(published::magnetite)), quartz);
 
-        CompletedCompound pyrite = complete( speculate(infer(published::pyrite)), quartz);
-        CompletedCompound chalcocite = complete( speculate(infer(published::chalcocite)), pyrite);
-        CompletedCompound chalcopyrite = complete( speculate(infer(published::chalcopyrite)), pyrite);
-        CompletedCompound copper = complete( speculate(infer(published::copper)), chalcopyrite);
-        CompletedCompound silver = complete( speculate(infer(published::silver)), copper);
-        CompletedCompound gold = complete( speculate(infer(published::gold)), copper);
+        CompletedCompound pyrite = compound::complete( speculate(infer(published::pyrite)), quartz);
+        CompletedCompound chalcocite = compound::complete( speculate(infer(published::chalcocite)), pyrite);
+        CompletedCompound chalcopyrite = compound::complete( speculate(infer(published::chalcopyrite)), pyrite);
+        CompletedCompound copper = compound::complete( speculate(infer(published::copper)), chalcopyrite);
+        CompletedCompound silver = compound::complete( speculate(infer(published::silver)), copper);
+        CompletedCompound gold = compound::complete( speculate(infer(published::gold)), copper);
 
-        CompletedCompound halite = complete( speculate(infer(published::halite)), fallback::water);
-        CompletedCompound calcite = complete( speculate(infer(published::calcite)), halite);
-        CompletedCompound apatite = complete( speculate(infer(published::apatite)), halite);
+        CompletedCompound halite = compound::complete( speculate(infer(published::halite)), fallback::water);
+        CompletedCompound calcite = compound::complete( speculate(infer(published::calcite)), halite);
+        CompletedCompound apatite = compound::complete( speculate(infer(published::apatite)), halite);
 
     }
 

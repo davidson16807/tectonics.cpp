@@ -1,15 +1,19 @@
 #pragma once
 
 // C libraries
-#include "math.h"
+#include <cmath>
 
-#include <models/compound/property/published.hpp>
-#include <models/compound/property/speculative.hpp>
-// #include <models/compound/property/color.hpp>
+#include "models/compound/property/published.hpp"
+#include "models/compound/property/speculative.hpp"
+// #include "models/compound/property/color.hpp"
 
-#include <models/compound/field/EmptyParameters_OptionalSpectralParameters.hpp>
-#include <models/compound/field/EmptyParameters_OptionalStateParameters.hpp>
-#include <models/compound/field/OptionalStateParameters_OptionalSpectralParameters.hpp>
+#include "field/EmptyParameters_OptionalSpectralParameters.hpp"
+#include "field/EmptyParameters_OptionalStateParameters.hpp"
+#include "field/OptionalStateParameters_OptionalSpectralParameters.hpp"
+
+// #include "phase/gas/PartlyKnownGas_operators.hpp"
+// #include "phase/liquid/PartlyKnownLiquid_operators.hpp"
+#include "phase/solid/PartlyKnownSolid_operators.hpp"
 
 #include "PartlyKnownCompound.hpp"
 
@@ -88,7 +92,10 @@ namespace compound
         {
             guess.triple_point_temperature = guess.triple_point_temperature.value_or(
                 [M](field::StateParameters parameters, si::density density_as_liquid, si::density density_as_solid){ 
-                    return property::estimate_triple_point_temperature_from_goodman(M / density_as_liquid, M / density_as_solid, parameters.temperature);
+                    auto estimate = property::estimate_triple_point_temperature_from_goodman(M / density_as_liquid, M / density_as_solid, parameters.temperature);
+                    return estimate > 0.0 * si::kelvin? 
+                        field::OptionalConstantField<si::temperature>(estimate) : 
+                        field::OptionalConstantField<si::temperature>();
                 },
                 samples.liquid,
                 guess.liquid.density,
@@ -126,13 +133,15 @@ namespace compound
                     si::temperature triple_point_temperature, 
                     si::pressure triple_point_pressure, 
                     si::specific_energy latent_heat_of_fusion){
-                    return property::estimate_latent_heat_of_sublimation_from_clapeyron(
+                    si::specific_energy estimate = property::estimate_latent_heat_of_sublimation_from_clapeyron(
                         vapor_pressure,
                         M, 
                         parameters.temperature, 
                         triple_point_temperature, 
                         triple_point_pressure
                     ) - latent_heat_of_fusion;
+                    bool is_valid = si::specific_energy(0.0) < estimate && !std::isinf(estimate/si::specific_energy(1.0));
+                    return is_valid? field::OptionalConstantField<si::specific_energy>(estimate) : field::OptionalConstantField<si::specific_energy>();
                 },
                 samples.solid,
                 guess.solids[0].vapor_pressure,
@@ -150,13 +159,15 @@ namespace compound
                     si::temperature triple_point_temperature, 
                     si::pressure triple_point_pressure, 
                     si::specific_energy latent_heat_of_vaporization){ 
-                    return property::estimate_latent_heat_of_sublimation_from_clapeyron(
+                    si::specific_energy estimate = property::estimate_latent_heat_of_sublimation_from_clapeyron(
                         vapor_pressure,
                         M, 
                         parameters.temperature, 
                         triple_point_temperature, 
                         triple_point_pressure
                     ) - latent_heat_of_vaporization;
+                    bool is_valid = si::specific_energy(0.0) < estimate && !std::isinf(estimate/si::specific_energy(1.0));
+                    return is_valid? field::OptionalConstantField<si::specific_energy>(estimate) : field::OptionalConstantField<si::specific_energy>();
                 },
                 samples.solid,
                 guess.solids[0].vapor_pressure,
@@ -169,30 +180,36 @@ namespace compound
         // CALCULATE ACENTRIC FACTOR
         guess.acentric_factor = guess.acentric_factor.value_or( 
             [M, Tc](field::StateParameters parameters, si::specific_energy latent_heat_of_vaporization){ 
-                return property::estimate_accentric_factor_from_pitzer(
+                double estimate = property::estimate_accentric_factor_from_pitzer(
                         latent_heat_of_vaporization, M, 
                         parameters.temperature, Tc
                     );
+                bool is_valid = -1.0 < estimate && estimate < 1.0;
+                return is_valid? field::OptionalConstantField<double>(estimate) : field::OptionalConstantField<double>();
             },
             samples.liquid,
             guess.latent_heat_of_vaporization
         );
         guess.acentric_factor = guess.acentric_factor.value_or( 
             [M, pc, Tc](field::StateParameters parameters, si::dynamic_viscosity dynamic_viscosity_as_liquid){ 
-                return property::estimate_acentric_factor_from_letsou_stiel(
+                double estimate = property::estimate_acentric_factor_from_letsou_stiel(
                     dynamic_viscosity_as_liquid,
                     M, parameters.temperature, Tc, pc
                 );
+                bool is_valid = -1.0 < estimate && estimate < 1.0;
+                return is_valid? field::OptionalConstantField<double>(estimate) : field::OptionalConstantField<double>();
             },
             samples.liquid,
             guess.liquid.dynamic_viscosity
         );
         guess.acentric_factor = guess.acentric_factor.value_or( 
             [pc, Tc](field::StateParameters parameters, si::pressure vapor_pressure_as_liquid){ 
-                return property::estimate_accentric_factor_from_lee_kesler(
+                double estimate = property::estimate_accentric_factor_from_lee_kesler(
                     vapor_pressure_as_liquid, 
                     parameters.temperature, Tc, pc
                 );
+                bool is_valid = -1.0 < estimate && estimate < 1.0;
+                return is_valid? field::OptionalConstantField<double>(estimate) : field::OptionalConstantField<double>();
             },
             samples.boiling,
             guess.liquid.vapor_pressure
@@ -201,9 +218,11 @@ namespace compound
         // CALCULATE PROPERTIES THAT CAN BE DERIVED FROM ACENTRIC FACTOR
         guess.latent_heat_of_vaporization = guess.latent_heat_of_vaporization.value_or( 
             [M, Tc](field::StateParameters parameters, double acentric_factor){ 
-                return property::estimate_latent_heat_of_vaporization_from_pitzer(
+                si::specific_energy estimate = property::estimate_latent_heat_of_vaporization_from_pitzer(
                     acentric_factor, M, parameters.temperature, Tc
                 );
+                bool is_valid = si::specific_energy(0.0) < estimate && !std::isinf(estimate/si::specific_energy(1.0));
+                return is_valid? field::OptionalConstantField<si::specific_energy>(estimate) : field::OptionalConstantField<si::specific_energy>();
             }, 
             samples.liquid,
             guess.acentric_factor
