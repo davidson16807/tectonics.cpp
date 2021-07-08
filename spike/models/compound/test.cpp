@@ -29,4 +29,5 @@
 #include "./field/state/CompletedStateField_to_string_test.hpp"
 #include "./field/state/OptionalStateField_to_string_test.hpp"
 #include "./field/state/CompletedStateField_test.hpp"
+#include "./library_test.cpp"
 #include "./PartlyKnownCompound_to_string_test.cpp"

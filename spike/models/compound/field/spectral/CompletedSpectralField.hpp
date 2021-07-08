@@ -8,6 +8,7 @@
 
 #include "SpectralSample.hpp"
 #include "SpectralFunction.hpp"
+#include "SpectralParameters.hpp"
 
 #include "CompletedSpectralField.hpp"
 

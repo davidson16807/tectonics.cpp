@@ -251,8 +251,11 @@ namespace compound
             guess.freezing_point_sample_temperature = freezing_point_sample_temperature .value_or(fallback.freezing_point_sample_temperature);
             guess.boiling_point_sample_pressure     = boiling_point_sample_pressure     .value_or(fallback.boiling_point_sample_pressure  );
             guess.boiling_point_sample_temperature  = boiling_point_sample_temperature  .value_or(fallback.boiling_point_sample_temperature);
-            guess.simon_glatzel_slope               = simon_glatzel_slope               .value_or(fallback.simon_glatzel_slope            );
-            guess.simon_glatzel_exponent            = simon_glatzel_exponent            .value_or(fallback.simon_glatzel_exponent         );
+
+            // NOTE: we do not populate simon glatzel parameters with fallbacks, 
+            // since they're absence may indicate that the function does not apply
+            // guess.simon_glatzel_slope               = simon_glatzel_slope               .value_or(fallback.simon_glatzel_slope            );
+            // guess.simon_glatzel_exponent            = simon_glatzel_exponent            .value_or(fallback.simon_glatzel_exponent         );
 
             guess.molecular_absorption_cross_section = molecular_absorption_cross_section.value_or(fallback.molecular_absorption_cross_section);
 

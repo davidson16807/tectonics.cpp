@@ -143,7 +143,7 @@ namespace field {
         */
         template<typename Tfield2, typename Tparameters>
         constexpr OptionalConstantField<T1> value_or(
-            const std::function<T1(const typename Tfield2::value_type)> f, 
+            const std::function<OptionalConstantField<T1>(const typename Tfield2::value_type)> f, 
             const Tparameters defaults,
             const Tfield2 a) const
         {
@@ -166,7 +166,7 @@ namespace field {
         */
         template<typename Tfield2, typename Tfield3, typename Tparameters>
         constexpr OptionalConstantField<T1> value_or(
-            const std::function<T1(const typename Tfield2::value_type, const typename Tfield3::value_type)> f, 
+            const std::function<OptionalConstantField<T1>(const typename Tfield2::value_type, const typename Tfield3::value_type)> f, 
             const Tparameters defaults,
             const Tfield2 a, 
             const Tfield3 b) const
@@ -190,7 +190,7 @@ namespace field {
         */
         template<typename Tfield2, typename Tfield3, typename Tfield4, typename Tparameters>
         constexpr OptionalConstantField<T1> value_or(
-            const std::function<T1(const typename Tfield2::value_type, const typename Tfield3::value_type, const typename Tfield4::value_type)> f, 
+            const std::function<OptionalConstantField<T1>(const typename Tfield2::value_type, const typename Tfield3::value_type, const typename Tfield4::value_type)> f, 
             const Tparameters defaults,
             const Tfield2 a, 
             const Tfield3 b, 
@@ -215,7 +215,7 @@ namespace field {
         */
         template<typename Tfield2, typename Tfield3, typename Tfield4, typename Tfield5, typename Tparameters>
         constexpr OptionalConstantField<T1> value_or(
-            const std::function<T1(const typename Tfield2::value_type, const typename Tfield3::value_type, const typename Tfield4::value_type, const typename Tfield5::value_type)> f, 
+            const std::function<OptionalConstantField<T1>(const typename Tfield2::value_type, const typename Tfield3::value_type, const typename Tfield4::value_type, const typename Tfield5::value_type)> f, 
             const Tparameters defaults,
             const Tfield2 a, 
             const Tfield3 b, 
@@ -243,7 +243,7 @@ namespace field {
         */
         template<typename Tfield2>
         constexpr OptionalConstantField<T1> value_or(
-            const std::function<T1(const typename Tfield2::value_type)> f, 
+            const std::function<OptionalConstantField<T1>(const typename Tfield2::value_type)> f, 
             const Tfield2 a) const
         {
             if(entry.index() > 0) // no substitute needed
@@ -267,7 +267,7 @@ namespace field {
         */
         template<typename Tfield2>
         constexpr OptionalConstantField<T1> value_or(
-            const std::function<T1(const StateParameters, const typename Tfield2::value_type)> f, 
+            const std::function<OptionalConstantField<T1>(const StateParameters, const typename Tfield2::value_type)> f, 
             const StateParameters defaults,
             const Tfield2 a) const
         {
@@ -292,7 +292,7 @@ namespace field {
         */
         template<typename Tfield2, typename Tfield3>
         constexpr OptionalConstantField<T1> value_or(
-            const std::function<T1(const StateParameters, const typename Tfield2::value_type, const typename Tfield3::value_type)> f, 
+            const std::function<OptionalConstantField<T1>(const StateParameters, const typename Tfield2::value_type, const typename Tfield3::value_type)> f, 
             const StateParameters defaults,
             const Tfield2 a, 
             const Tfield3 b) const
@@ -319,7 +319,7 @@ namespace field {
         */
         template<typename Tfield2, typename Tfield3, typename Tfield4>
         constexpr OptionalConstantField<T1> value_or(
-            const std::function<T1(const StateParameters, const typename Tfield2::value_type, const typename Tfield3::value_type, const typename Tfield4::value_type)> f, 
+            const std::function<OptionalConstantField<T1>(const StateParameters, const typename Tfield2::value_type, const typename Tfield3::value_type, const typename Tfield4::value_type)> f, 
             const StateParameters defaults,
             const Tfield2 a, 
             const Tfield3 b, 
@@ -348,7 +348,7 @@ namespace field {
         */
         template<typename Tfield2, typename Tfield3, typename Tfield4, typename Tfield5>
         constexpr OptionalConstantField<T1> value_or(
-            const std::function<T1(const StateParameters, const typename Tfield2::value_type, const typename Tfield3::value_type, const typename Tfield4::value_type, const typename Tfield5::value_type)> f, 
+            const std::function<OptionalConstantField<T1>(const StateParameters, const typename Tfield2::value_type, const typename Tfield3::value_type, const typename Tfield4::value_type, const typename Tfield5::value_type)> f, 
             const StateParameters defaults,
             const Tfield2 a, 
             const Tfield3 b, 

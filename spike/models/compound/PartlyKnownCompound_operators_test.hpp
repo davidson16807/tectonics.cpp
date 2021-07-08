@@ -6,7 +6,7 @@
 #include <catch/catch.hpp>
 
 // in house libraries
-#include "PartlyKnownCompound_library.hpp"
+#include "published.hpp"
 #include "PartlyKnownCompound_operators.hpp"
 
 // test utility libraries
@@ -16,19 +16,20 @@ TEST_CASE( "PartlyKnownCompound infer() purity", "[compound]" ) {
     SECTION("Calling a function twice with the same arguments must produce the same results")
     {
         CHECK(compound::infer(compound::test_water) == compound::infer(compound::test_water));
-        CHECK(compound::infer(compound::nitrogen) == compound::infer(compound::nitrogen));
-        CHECK(compound::infer(compound::benzene) == compound::infer(compound::benzene));
-        CHECK(compound::infer(compound::quartz) == compound::infer(compound::quartz));
+        CHECK(compound::infer(compound::published::nitrogen) == compound::infer(compound::published::nitrogen));
+        CHECK(compound::infer(compound::published::benzene) == compound::infer(compound::published::benzene));
+        CHECK(compound::infer(compound::published::quartz) == compound::infer(compound::published::quartz));
     }
 }
 TEST_CASE( "PartlyKnownCompound infer() idempotence", "[compound]" ) {
     SECTION("Calling a function twice with the same arguments must produce the same results")
     {
         CHECK(compound::infer(compound::test_water) == compound::infer(compound::infer(compound::test_water)));
-        CHECK(compound::infer(compound::nitrogen) == compound::infer(compound::infer(compound::nitrogen)));
-        CHECK(compound::infer(compound::benzene) == compound::infer(compound::infer(compound::benzene)));
-        CHECK(compound::infer(compound::quartz) == compound::infer(compound::infer(compound::quartz)));
-        // CHECK(compound::to_string(compound::speculate(compound::infer(compound::quartz))) == compound::to_string(compound::quartz));
+        CHECK(compound::infer(compound::published::nitrogen) == compound::infer(compound::infer(compound::published::nitrogen)));
+        CHECK(compound::infer(compound::published::benzene) == compound::infer(compound::infer(compound::published::benzene)));
+        CHECK(compound::infer(compound::published::quartz) == compound::infer(compound::infer(compound::published::quartz)));
+        // CHECK(compound::to_string(compound::speculate(compound::infer(compound::published::quartz))) == compound::to_string(compound::published::quartz));
+        // CHECK(compound::to_string(compound::infer(compound::published::nitrogen)) == compound::to_string(compound::published::nitrogen));
     }
 }
 TEST_CASE( "PartlyKnownCompound infer() increasing", "[compound]" ) {
@@ -36,8 +37,8 @@ TEST_CASE( "PartlyKnownCompound infer() increasing", "[compound]" ) {
     {
 
         CHECK(compound::PartlyKnownCompound_attribute_index_sum(compound::infer(compound::test_water)) >= compound::PartlyKnownCompound_attribute_index_sum(compound::test_water));
-        CHECK(compound::PartlyKnownCompound_attribute_index_sum(compound::infer(compound::nitrogen)) >= compound::PartlyKnownCompound_attribute_index_sum(compound::nitrogen));
-        CHECK(compound::PartlyKnownCompound_attribute_index_sum(compound::infer(compound::benzene)) >= compound::PartlyKnownCompound_attribute_index_sum(compound::benzene));
-        CHECK(compound::PartlyKnownCompound_attribute_index_sum(compound::infer(compound::quartz)) >= compound::PartlyKnownCompound_attribute_index_sum(compound::quartz));
+        CHECK(compound::PartlyKnownCompound_attribute_index_sum(compound::infer(compound::published::nitrogen)) >= compound::PartlyKnownCompound_attribute_index_sum(compound::published::nitrogen));
+        CHECK(compound::PartlyKnownCompound_attribute_index_sum(compound::infer(compound::published::benzene)) >= compound::PartlyKnownCompound_attribute_index_sum(compound::published::benzene));
+        CHECK(compound::PartlyKnownCompound_attribute_index_sum(compound::infer(compound::published::quartz)) >= compound::PartlyKnownCompound_attribute_index_sum(compound::published::quartz));
     }
 }

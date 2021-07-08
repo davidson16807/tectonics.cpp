@@ -12,8 +12,7 @@
 #include "PartlyKnownCompound_test_utils.hpp"
 #include "CompletedCompound_test_utils.hpp"
 
-#include "PartlyKnownCompound_library.hpp"
-#include "CompletedCompound_library.hpp"
+#include "library.hpp"
 
 #include "PartlyKnownCompound_operators.hpp"
 #include "PartlyKnownCompound_to_string.hpp"
@@ -22,8 +21,8 @@
 TEST_CASE( "PartlyKnownCompound complete() purity", "[compound]" ) {
     SECTION("Calling a function twice with the same arguments must produce the same results")
     {
-        CHECK(compound::to_string(compound::complete(compound::unknown_hydrogen, compound::water )) 
-           == compound::to_string(compound::complete(compound::unknown_hydrogen, compound::water )));
+        CHECK(compound::to_string(compound::complete(compound::unknown_hydrogen, compound::fallback::water )) 
+           == compound::to_string(compound::complete(compound::unknown_hydrogen, compound::fallback::water )));
     }
 }
 
@@ -33,7 +32,7 @@ TEST_CASE( "PartlyKnownCompound complete() purity", "[compound]" ) {
 TEST_CASE( "PartlyKnownCompound complete() left identity", "[compound]" ) {
     SECTION("There exists a value that when applied as the left argument of the function returns the original value")
     {
-        CHECK(compound::complete(compound::unknown_hydrogen, compound::water ) ==  compound::water);
+        CHECK(compound::complete(compound::unknown_hydrogen, compound::fallback::water ) ==  compound::fallback::water);
     }
 }
 
@@ -42,8 +41,8 @@ TEST_CASE( "PartlyKnownCompound complete() left identity", "[compound]" ) {
 TEST_CASE( "PartlyKnownCompound complete() associativity", "[compound]" ) {
     SECTION("Functions can be applied in any order and still produce the same results")
     {
-        CHECK(compound::complete(compound::unknown_hydrogen, compound::complete(compound::partly_known_dummy_compound,compound::water)) == 
-              compound::complete(compound::complete(compound::unknown_hydrogen,compound::known_dummy_compound),compound::water));
+        CHECK(compound::complete(compound::unknown_hydrogen, compound::complete(compound::partly_known_dummy_compound,compound::fallback::water)) == 
+              compound::complete(compound::complete(compound::unknown_hydrogen,compound::known_dummy_compound),compound::fallback::water));
     }
 }
 */
