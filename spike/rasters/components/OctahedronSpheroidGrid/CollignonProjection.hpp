@@ -53,14 +53,12 @@ namespace rasters
 				hemiwedge_width * scale_factor,
 				side_leg_length * (1.0f-scale_factor) * glm::sign(normalized.y)
 			);
-			const glm::vec2 scaled = collignon / side_leg_length;
-			return scaled;
+			return collignon;
 		}
 
 		/*
 		*/
-		glm::vec3 collignon_to_sphere(const glm::vec2 scaled, const float center_longitude) const {
-			const glm::vec2 collignon = scaled * side_leg_length;
+		glm::vec3 collignon_to_sphere(const glm::vec2 collignon, const float center_longitude) const {
 			const float scale_factor = 1.0f - std::abs(collignon.y) / side_leg_length;
 			const float hemiwedge_width = collignon.x / scale_factor;
 			const float hemiwedge_area = hemiwedge_width * side_leg_length;

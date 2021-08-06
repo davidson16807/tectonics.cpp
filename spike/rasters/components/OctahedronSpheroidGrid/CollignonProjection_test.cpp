@@ -49,6 +49,24 @@ TEST_CASE( "CollignonProjection collignon_to_sphere() closeness preservation", "
         }}
     }
 }
+TEST_CASE( "CollignonProjection.collignon_to_sphere() area preservation", "[rasters]" ) {
+    SECTION("CollignonProjection.collignon_to_sphere() must not result in changes to areas that exceed a reasonable multiple"){
+        const float epsilon(0.003);
+        const float area(0.03*0.03);
+        const glm::vec2 dx(0.03, 0.0);
+        const glm::vec2 dy(0.0, 0.03);
+        for(float x = -1.0f; x < 1.0f; x+=0.1f){
+        for(float y = -1.0f; y < 1.0f; y+=0.1f){
+            if (std::abs(x)+std::abs(y) < 0.95)
+            {
+                glm::vec2 v = glm::vec2(x,y);
+                const float width = glm::distance(projection.collignon_to_sphere(v, 0.0f), projection.collignon_to_sphere(v+dx, 0.0f));
+                const float height = glm::distance(projection.collignon_to_sphere(v, 0.0f), projection.collignon_to_sphere(v+dy, 0.0f));
+                CHECK( (width * height) == Approx(area).margin(epsilon) );
+            }
+        }}
+    }
+}
 // TEST_CASE( "CollignonProjection collignon_to_sphere() congruence", "[rasters]" ) {
 //     SECTION("a modulo can be applied to input which results in the same output"){
 //         const float epsilon(1e-4f);
@@ -100,10 +118,10 @@ TEST_CASE( "CollignonProjection.sphere_to_collignon() closeness preservation", "
 }
 TEST_CASE( "CollignonProjection.sphere_to_collignon() area preservation", "[rasters]" ) {
     SECTION("CollignonProjection.sphere_to_collignon() must not result in changes to areas that exceed a reasonable multiple"){
-        const float epsilon(1e-4f);
-        const float area(0.01*0.01);
-        const glm::vec3 dx(0.01, 0.0, 0.0);
-        const glm::vec3 dy(0.0, 0.01, 0.0);
+        const float epsilon(1.0);
+        const float area(0.03*0.03);
+        const glm::vec3 dx(0.03, 0.0, 0.0);
+        const glm::vec3 dy(0.0, 0.03, 0.0);
         const float z(1.0f);
         for(float x = -1.0f; x < 1.0f; x+=0.1f){
         for(float y = -1.0f; y < 1.0f; y+=0.1f){
@@ -112,7 +130,7 @@ TEST_CASE( "CollignonProjection.sphere_to_collignon() area preservation", "[rast
                 glm::vec3 v = glm::normalize(glm::vec3(x,y,z));
                 const float width = glm::distance(projection.sphere_to_collignon(v, 0.0f), projection.sphere_to_collignon(glm::normalize(v+dx), 0.0f));
                 const float height = glm::distance(projection.sphere_to_collignon(v, 0.0f), projection.sphere_to_collignon(glm::normalize(v+dy), 0.0f));
-                CHECK( std::abs(width * height - area) < epsilon );
+                CHECK( (width * height) == Approx(area).epsilon(epsilon) );
             }
         }}
     }
