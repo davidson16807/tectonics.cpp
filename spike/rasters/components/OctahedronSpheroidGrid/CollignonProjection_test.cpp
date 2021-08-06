@@ -117,19 +117,19 @@ TEST_CASE( "CollignonProjection.sphere_to_collignon() area preservation", "[rast
         }}
     }
 }
-// TEST_CASE( "CollignonProjection sphere_to_collignon() / collignon_to_sphere() invertibility", "[rasters]" ) {
-//     SECTION("CollignonProjection.collignon_to_sphere() must reconstruct input passed to sphere_to_collignon() for any unit vector"){
-//         const float epsilon(1e-4f);
-//         const float z(1.0f);
-//         for(float x = -1.0f; x < 1.0f; x+=0.1f){
-//         for(float y = -1.0f; y < 1.0f; y+=0.1f){
-//             glm::vec3 v = glm::normalize(glm::vec3(x,y,z));
-//             glm::vec3 v2 = projection.collignon_to_sphere( projection.sphere_to_collignon(v, 0.0f), 0.0f );
-//             CHECK( v2.x == Approx(v.x).margin(epsilon) );
-//             CHECK( v2.y == Approx(v.y).margin(epsilon) );
-//             CHECK( v2.z == Approx(v.z).margin(epsilon) );
-//         }}
-//     }
-// }
+TEST_CASE( "CollignonProjection sphere_to_collignon() / collignon_to_sphere() invertibility", "[rasters]" ) {
+    SECTION("CollignonProjection.collignon_to_sphere() must reconstruct input passed to sphere_to_collignon() for any unit vector"){
+        const float epsilon(1e-4f);
+        const float z(1.0f);
+        for(float x = -1.0f; x < 1.0f; x+=0.1f){
+        for(float y = -1.0f; y < 1.0f; y+=0.1f){
+            glm::vec3 v = glm::normalize(glm::vec3(x,y,z));
+            glm::vec3 v2 = projection.collignon_to_sphere( projection.sphere_to_collignon(v, 0.0f), 0.0f );
+            CHECK( v2.x == Approx(v.x).margin(epsilon) );
+            CHECK( v2.y == Approx(v.y).margin(epsilon) );
+            CHECK( v2.z == Approx(v.z).margin(epsilon) );
+        }}
+    }
+}
 
 
