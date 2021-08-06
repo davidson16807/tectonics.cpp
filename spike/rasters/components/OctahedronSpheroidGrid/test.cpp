@@ -1,1 +1,1 @@
-#include "./OctosphereGrid_test.cpp"
+#include "./CollignonProjection_test.cpp"
