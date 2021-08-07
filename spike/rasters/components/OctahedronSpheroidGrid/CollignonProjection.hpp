@@ -28,7 +28,12 @@ namespace rasters
 		static constexpr float quadrant_area = pi;
 		static constexpr float hemisphere_area = 2.0f * pi;
 		static constexpr float circumference = 2.0f * pi;
-		static constexpr float side_leg_length = std::sqrt(quadrant_area);
+		static constexpr float quadrant_projection_length = std::sqrt(quadrant_area);
+
+		// NOTE: we need a dedicated sign function to simplify code such that an input of 0 returns a nonzero number.
+		float sign(const float x) const {
+			return x >= 0.0f? 1.0 : -1.0;
+		}
 
 	public:
 		~CollignonProjection()
@@ -43,36 +48,36 @@ namespace rasters
 		Each ordinate is scaled to the range [-1,1], and x=0 on the 2d grid represents a `center_longitude` along the sphere.
 		`center_longitude` is described as an angle around the y axis in radians, where 0 indicates the vector [0,0,1].
 		*/
-		glm::vec2 sphere_to_collignon(const glm::vec3 sphere_position, const float center_longitude) const {
-			const glm::vec3 normalized = glm::normalize(sphere_position);
+		glm::vec2 hemisphere_to_collignon(const glm::vec3 hemisphere_position, const float center_longitude) const {
+			const glm::vec3 normalized = glm::normalize(hemisphere_position);
 			const float scale_factor = std::sqrt(1.0f - std::abs(normalized.y));
-			const float longitude = std::atan2(normalized.x, normalized.z);
-			const float hemiwedge_area = hemisphere_area * (longitude - center_longitude) / circumference;
-			const float hemiwedge_width = hemiwedge_area / side_leg_length;
+			const float longitude = std::atan2(normalized.x * sign(normalized.z), std::abs(normalized.z));
+			const float hemiwedge_area = hemisphere_area * longitude / circumference;
+			const float hemiwedge_projection_width = hemiwedge_area / quadrant_projection_length;
 			const glm::vec2 collignon = glm::vec2(
-				hemiwedge_width * scale_factor,
-				side_leg_length * (1.0f-scale_factor) * glm::sign(normalized.y)
+				hemiwedge_projection_width * scale_factor,
+				quadrant_projection_length * (1.0f-scale_factor) * sign(normalized.y)
 			);
 			return collignon;
 		}
 
 		/*
 		*/
-		glm::vec3 collignon_to_sphere(const glm::vec2 collignon, const float center_longitude) const {
-			const float scale_factor = 1.0f - std::abs(collignon.y) / side_leg_length;
-			const float hemiwedge_width = collignon.x / scale_factor;
-			const float hemiwedge_area = hemiwedge_width * side_leg_length;
+		glm::vec3 collignon_to_hemisphere(const glm::vec2 collignon, const float center_longitude) const {
+			const float scale_factor = 1.0f - std::abs(collignon.y) / quadrant_projection_length;
+			const float hemiwedge_projection_width = scale_factor == 0.0f? 0.0f : (collignon.x / scale_factor);
+			const float hemiwedge_area = hemiwedge_projection_width * quadrant_projection_length;
 			const float longitude = (hemiwedge_area * circumference / hemisphere_area) + center_longitude;
 
-			const float y = glm::sign(collignon.y) * (1.0f - scale_factor * scale_factor);
-			const float rxz = std::sqrt(1.0 - y*y);
-			const glm::vec3 sphere_position = glm::vec3(
+			const float y = sign(collignon.y) * (1.0f - scale_factor * scale_factor);
+			const float rxz = 1.0 - y*y <= 0.0f? 0.0f : std::sqrt(1.0 - y*y);
+			const glm::vec3 hemisphere_position = glm::vec3(
 				std::sin(longitude) * rxz,
 				y,
 				std::cos(longitude) * rxz
 			);
 
-			return sphere_position;
+			return hemisphere_position;
 		}
 
 	};
