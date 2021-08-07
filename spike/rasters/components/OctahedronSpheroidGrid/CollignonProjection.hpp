@@ -53,7 +53,7 @@ namespace rasters
 			const float scale_factor = std::sqrt(1.0f - std::abs(normalized.y));
 			const float longitude = std::atan2(normalized.x * sign(normalized.z), std::abs(normalized.z));
 			const float hemiwedge_area = hemisphere_area * longitude / circumference;
-			const float hemiwedge_projection_width = hemiwedge_area / quadrant_projection_length;
+			const float hemiwedge_projection_width = 2.0f * hemiwedge_area / quadrant_projection_length;
 			const glm::vec2 collignon = glm::vec2(
 				hemiwedge_projection_width * scale_factor,
 				quadrant_projection_length * (1.0f-scale_factor) * sign(normalized.y)
@@ -66,7 +66,7 @@ namespace rasters
 		glm::vec3 collignon_to_hemisphere(const glm::vec2 collignon, const float center_longitude) const {
 			const float scale_factor = 1.0f - std::abs(collignon.y) / quadrant_projection_length;
 			const float hemiwedge_projection_width = scale_factor == 0.0f? 0.0f : (collignon.x / scale_factor);
-			const float hemiwedge_area = hemiwedge_projection_width * quadrant_projection_length;
+			const float hemiwedge_area = hemiwedge_projection_width * quadrant_projection_length / 2.0f;
 			const float longitude = (hemiwedge_area * circumference / hemisphere_area) + center_longitude;
 
 			const float y = sign(collignon.y) * (1.0f - scale_factor * scale_factor);

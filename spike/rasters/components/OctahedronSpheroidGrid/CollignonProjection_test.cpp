@@ -31,10 +31,11 @@ TEST_CASE( "CollignonProjection.collignon_to_hemisphere() regularity", "[rasters
         }}
     }
 }
-TEST_CASE( "CollignonProjection collignon_to_hemisphere() known cases", "[rasters]" ) {
-    SECTION("CollignonProjection.hemisphere_to_collignon() must reproduce results for known cases"){
-        const float margin(0.03);
+TEST_CASE( "CollignonProjection collignon_to_hemisphere() limiting cases", "[rasters]" ) {
+    SECTION("CollignonProjection.hemisphere_to_collignon() must reproduce results for limiting cases"){
+        const float margin(0.01);
         const float pi(3.14159);
+        const float quadrant(std::sqrt(pi)); // length of a quadrant when projected
 
         CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,0), 0.0f).x == Approx(0).margin(margin) );
         CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,0), 0.0f).y == Approx(0).margin(margin) );
@@ -44,26 +45,37 @@ TEST_CASE( "CollignonProjection collignon_to_hemisphere() known cases", "[raster
         CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,0), pi).y == Approx(0).margin(margin) );
         CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,0), pi).z == Approx(-1).margin(margin) );
 
-        // CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(1,0), 0.0f).x == Approx(1).margin(margin) );
-        // CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(1,0), 0.0f).y == Approx(0).margin(margin) );
-        // CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(1,0), 0.0f).z == Approx(0).margin(margin) );
+        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,quadrant), 0.0f).x == Approx(0).margin(margin) );
+        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,quadrant), 0.0f).y == Approx(1).margin(margin) );
+        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,quadrant), 0.0f).z == Approx(0).margin(margin) );
 
-        // CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(-1,0), 0.0f).x == Approx(-1).margin(margin) );
-        // CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(-1,0), 0.0f).y == Approx(0).margin(margin) );
-        // CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(-1,0), 0.0f).z == Approx(0).margin(margin) );
+        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,-quadrant), 0.0f).x == Approx(0).margin(margin) );
+        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,-quadrant), 0.0f).y == Approx(-1).margin(margin) );
+        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,-quadrant), 0.0f).z == Approx(0).margin(margin) );
 
-        // CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,1), 0.0f).x == Approx(0).margin(margin) );
-        // CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,1), 0.0f).y == Approx(1).margin(margin) );
-        // CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,1), 0.0f).z == Approx(0).margin(margin) );
+        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(quadrant,0), 0.0f).x == Approx(1).margin(margin) );
+        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(quadrant,0), 0.0f).y == Approx(0).margin(margin) );
+        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(quadrant,0), 0.0f).z == Approx(0).margin(margin) );
 
-        // CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,-1), 0.0f).x == Approx(0).margin(margin) );
-        // CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,-1), 0.0f).y == Approx(-1).margin(margin) );
-        // CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,-1), 0.0f).z == Approx(0).margin(margin) );
+        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(-quadrant,0), 0.0f).x == Approx(-1).margin(margin) );
+        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(-quadrant,0), 0.0f).y == Approx(0).margin(margin) );
+        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(-quadrant,0), 0.0f).z == Approx(0).margin(margin) );
+
+
+
+        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,quadrant), pi).x == Approx(0).margin(margin) );
+        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,quadrant), pi).y == Approx(1).margin(margin) );
+        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,quadrant), pi).z == Approx(0).margin(margin) );
+
+        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,-quadrant), pi).x == Approx(0).margin(margin) );
+        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,-quadrant), pi).y == Approx(-1).margin(margin) );
+        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,-quadrant), pi).z == Approx(0).margin(margin) );
+
     }
 }
 TEST_CASE( "CollignonProjection collignon_to_hemisphere() closeness preservation", "[rasters]" ) {
     SECTION("changes in hemisphere_to_collignon must not result in changes that exceed a reasonable multiple"){
-        const float factor(3.0f);
+        const float factor(2.0f);
         const glm::vec2 dx(0.001, 0.0);
         const glm::vec2 dy(0.0, 0.001);
         for(float x = -1.0; x < 1.0; x+=0.1){
@@ -130,7 +142,7 @@ TEST_CASE( "CollignonProjection.hemisphere_to_collignon() regularity", "[rasters
 TEST_CASE( "CollignonProjection.hemisphere_to_collignon() closeness preservation", "[rasters]" ) {
     SECTION("CollignonProjection.hemisphere_to_collignon() must not result in changes that exceed a reasonable multiple"){
         const float pi(3.141592653589f);
-        const float factor(1.3f);
+        const float factor(2.0f);
         const glm::vec3 dx(0.1, 0.0, 0.0);
         const glm::vec3 dy(0.0, 0.1, 0.0);
         const glm::vec3 dz(0.0, 0.0, 0.1);
