@@ -51,25 +51,19 @@ namespace rasters
 		}
 
 		// NOTE: we need a dedicated sign function to simplify code such that an input of 0 returns a nonzero number.
-		float sign(const float x) const {
-			return x >= 0.0f? 1.0 : -1.0;
-		}
-
-		// NOTE: we need a dedicated sign function to simplify code such that an input of 0 returns a nonzero number.
-		glm::vec2 sign(const glm::vec2 v) const {
-			return glm::vec2(
-				v.x >= 0.0f? 1.0 : -1.0, 
-				v.y >= 0.0f? 1.0 : -1.0
+		// Whether it returns 1 or -1 doesn't matter, it just needs to pick a side from which all further decisions can be made
+		glm::vec3 get_octant_id(const glm::vec3 v) const {
+			return glm::vec3(
+				v.x >= 0.0f? 1.0f : -1.0f, 
+				v.y >= 0.0f? 1.0f : -1.0f,
+				v.z >= 0.0f? 1.0f : -1.0f
 			);
 		}
-
-		// NOTE: we need a dedicated sign function to simplify code such that an input of 0 returns a nonzero number.
-		// Whether it returns 1 or -1 doesn't matter, it just needs to pick a side from which all further decisions can be made
-		glm::vec3 sign(const glm::vec3 v) const {
+		glm::vec3 get_octant_id(const glm::vec2 v) const {
 			return glm::vec3(
-				v.x >= 0.0f? 1.0 : -1.0, 
-				v.y >= 0.0f? 1.0 : -1.0,
-				v.z >= 0.0f? 1.0 : -1.0
+				v.x >= 0.0f? 1.0f : -1.0f, 
+				v.y >= 0.0f? 1.0f : -1.0f,
+				std::abs(v.x) + std::abs(v.y) <= 1.0f? 1.0f : -1.0f
 			);
 		}
 
@@ -86,7 +80,7 @@ namespace rasters
 		glm::vec2 sphere_to_tesselation(const glm::vec3 sphere_position) const {
 			// `octant_id` is the canonical octant on which all subsequent operations concerning octant are based.
 			// it is used to prevent edge case errors in which different operations assume different octants due to float imprecision.
-			const glm::vec3 octant_id = sign(sphere_position);
+			const glm::vec3 octant_id = get_octant_id(sphere_position);
 			const float center_longitude = octant_id.z > 0.0f? 0.0f : pi;
 			const glm::vec2 projected = projection.hemisphere_to_collignon(sphere_position, center_longitude) / quadrant_projection_length;
 			const glm::vec2 rotated = glm::vec2(projected.y, -projected.x) * -octant_id.x * octant_id.y;
@@ -97,10 +91,12 @@ namespace rasters
 
 		glm::vec3 tesselation_to_sphere(const glm::vec2 grid_position) const {
 			const glm::vec2 standardized = standardize(grid_position);
-			const bool is_front = std::abs(standardized.x) + std::abs(standardized.y) <= 1.0f;
-			const glm::vec2 detranslated = standardized - sign(standardized);
-			const glm::vec2 derotated = glm::vec2(detranslated.y, -detranslated.x) * sign(standardized.x * standardized.y);
-			const glm::vec3 sphere_position = is_front? 
+			// `octant_id` is the canonical octant on which all subsequent operations concerning octant are based.
+			// it is used to prevent edge case errors in which different operations assume different octants due to float imprecision.
+			const glm::vec3 octant_id = get_octant_id(standardized);
+			const glm::vec2 detranslated = standardized - glm::vec2(octant_id.x, octant_id.y);
+			const glm::vec2 derotated = glm::vec2(detranslated.y, -detranslated.x) * octant_id.x * octant_id.y;
+			const glm::vec3 sphere_position = octant_id.z > 0.0? 
 				projection.collignon_to_hemisphere(quadrant_projection_length * standardized, 0.0f) 
 			  : projection.collignon_to_hemisphere(quadrant_projection_length * derotated, pi);
 			return sphere_position;
