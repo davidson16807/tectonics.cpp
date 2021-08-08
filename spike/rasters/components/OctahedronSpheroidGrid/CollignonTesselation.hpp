@@ -84,8 +84,7 @@ namespace rasters
 			const float center_longitude = octant_id.z > 0.0f? 0.0f : pi;
 			const glm::vec2 projected = projection.hemisphere_to_collignon(sphere_position, center_longitude) / quadrant_projection_length;
 			const glm::vec2 rotated = glm::vec2(projected.y, -projected.x) * -octant_id.x * octant_id.y;
-			const glm::vec2 octant_rotated = glm::vec2(octant_id.y, octant_id.x) * -octant_id.x * octant_id.y;
-			const glm::vec2 translated = rotated - octant_rotated; 
+			const glm::vec2 translated = rotated + glm::vec2(octant_id.x, octant_id.y); 
 			return octant_id.z > 0.0f? projected : translated; 
 		}
 
