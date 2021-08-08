@@ -21,9 +21,10 @@ rasters::CollignonProjection projection;
 
 TEST_CASE( "CollignonProjection.collignon_to_hemisphere() regularity", "[rasters]" ) {
     SECTION("CollignonProjection.collignon_to_hemisphere() must be called repeatedly without changing the output"){
-        for(float x = -1.0; x < 1.0; x+=0.1){
-        for(float y = -1.0; y < 1.0; y+=0.1){
-            if (std::abs(x)+std::abs(y) < 0.95)
+        const float quadrant(std::sqrt(3.14159265f)); // length of a quadrant when projected
+        for(float x = -quadrant; x < quadrant; x+=0.1){
+        for(float y = -quadrant; y < quadrant; y+=0.1){
+            if (std::abs(x)+std::abs(y) < 0.95 * quadrant)
             {
                 CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(x,y), 0.0f) == 
                       rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(x,y), 0.0f));
@@ -75,12 +76,13 @@ TEST_CASE( "CollignonProjection collignon_to_hemisphere() limiting cases", "[ras
 }
 TEST_CASE( "CollignonProjection collignon_to_hemisphere() closeness preservation", "[rasters]" ) {
     SECTION("changes in collignon_to_hemisphere must not result in changes that exceed a reasonable multiple"){
+        const float quadrant(std::sqrt(3.14159265f)); // length of a quadrant when projected
         const float factor(2.0f);
         const glm::vec2 dx(0.001, 0.0);
         const glm::vec2 dy(0.0, 0.001);
-        for(float x = -1.0; x < 1.0; x+=0.1){
-        for(float y = -1.0; y < 1.0; y+=0.1){
-            if (std::abs(x)+std::abs(y) < 0.95)
+        for(float x = -quadrant; x < quadrant; x+=0.1){
+        for(float y = -quadrant; y < quadrant; y+=0.1){
+            if (std::abs(x)+std::abs(y) < 0.95 * quadrant)
             {
                 glm::vec2 v = glm::vec2(x,y);
                 CHECK( glm::distance(projection.collignon_to_hemisphere(v, 0.0f), projection.collignon_to_hemisphere(v+dx, 0.0f)) < factor * glm::distance(v, v+dx) );
@@ -93,13 +95,14 @@ TEST_CASE( "CollignonProjection collignon_to_hemisphere() closeness preservation
 }
 TEST_CASE( "CollignonProjection.collignon_to_hemisphere() area preservation", "[rasters]" ) {
     SECTION("CollignonProjection.collignon_to_hemisphere() must not result in changes to areas that exceed a reasonable multiple"){
+        const float quadrant(std::sqrt(3.14159265f)); // length of a quadrant when projected
         const float epsilon(0.003);
         const float area(0.03*0.03);
         const glm::vec2 dx(0.03, 0.0);
         const glm::vec2 dy(0.0, 0.03);
-        for(float x = -1.0f; x < 1.0f; x+=0.1f){
-        for(float y = -1.0f; y < 1.0f; y+=0.1f){
-            if (std::abs(x)+std::abs(y) < 0.95)
+        for(float x = -quadrant; x < quadrant; x+=0.1f){
+        for(float y = -quadrant; y < quadrant; y+=0.1f){
+            if (std::abs(x)+std::abs(y) < 0.95 * quadrant)
             {
                 glm::vec2 v = glm::vec2(x,y);
                 const float width = glm::distance(projection.collignon_to_hemisphere(v, 0.0f), projection.collignon_to_hemisphere(v+dx, 0.0f));
@@ -115,7 +118,7 @@ TEST_CASE( "CollignonProjection.collignon_to_hemisphere() area preservation", "[
 //         const glm::vec2 nx(4.0, 0);
 //         for(float x = -1.0; x < 1.0; x+=0.1){
 //         for(float y = -1.0; y < 1.0; y+=0.1){
-//             if (std::abs(x)+std::abs(y) < 0.95)
+//             if (std::abs(x)+std::abs(y) < 0.95 * quadrant)
 //             {
 //                 glm::vec2 v = glm::vec2(x,y);
 //                 CHECK( glm::distance(projection.collignon_to_hemisphere(v, 0.0f), projection.collignon_to_hemisphere(v+nx, 0.0f)) < epsilon );
@@ -131,8 +134,8 @@ TEST_CASE( "CollignonProjection.collignon_to_hemisphere() area preservation", "[
 TEST_CASE( "CollignonProjection.hemisphere_to_collignon() regularity", "[rasters]" ) {
     SECTION("CollignonProjection.hemisphere_to_collignon() must be called repeatedly without changing the output"){
         const float z(1.0f);
-        for(float x = -1.0f; x < 1.0f; x+=0.1f){
-        for(float y = -1.0f; y < 1.0f; y+=0.1f){
+        for(float x = -1.0; x < 1.0; x+=0.1f){
+        for(float y = -1.0; y < 1.0; y+=0.1f){
             glm::vec3 v(x,y,z);
             CHECK(rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(x,y,z), 0.0f) == 
                   rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(x,y,z), 0.0f));
@@ -176,9 +179,9 @@ TEST_CASE( "CollignonProjection.hemisphere_to_collignon() closeness preservation
         const glm::vec3 dx(0.1, 0.0, 0.0);
         const glm::vec3 dy(0.0, 0.1, 0.0);
         const glm::vec3 dz(0.0, 0.0, 0.1);
-        for(float x = -1.0f; x < 1.0f; x+=0.1f){
-        for(float y = -1.0f; y < 1.0f; y+=0.1f){
-            if (std::abs(x)+std::abs(y) < 0.99)
+        for(float x = -1.0; x < 1.0; x+=0.1f){
+        for(float y = -1.0; y < 1.0; y+=0.1f){
+            if (std::abs(x)+std::abs(y) < 0.95)
             {
                 glm::vec3 v = glm::normalize(glm::vec3(x,y,0.1f));
                 CHECK( glm::distance(projection.hemisphere_to_collignon(v, 0.0f), projection.hemisphere_to_collignon(glm::normalize(v+dx), 0.0f)) < factor * glm::distance(v, v+dx) );
@@ -189,9 +192,9 @@ TEST_CASE( "CollignonProjection.hemisphere_to_collignon() closeness preservation
                 CHECK( glm::distance(projection.hemisphere_to_collignon(v, 0.0f), projection.hemisphere_to_collignon(glm::normalize(v-dz), 0.0f)) < factor * glm::distance(v, v-dz) );
             }
         }}
-        for(float x = -1.0f; x < 1.0f; x+=0.1f){
-        for(float y = -1.0f; y < 1.0f; y+=0.1f){
-            if (std::abs(x)+std::abs(y) < 0.99)
+        for(float x = -1.0; x < 1.0; x+=0.1f){
+        for(float y = -1.0; y < 1.0; y+=0.1f){
+            if (std::abs(x)+std::abs(y) < 0.95)
             {
                 glm::vec3 v = glm::normalize(glm::vec3(x,y,-0.1f));
                 CHECK( glm::distance(projection.hemisphere_to_collignon(v, pi), projection.hemisphere_to_collignon(glm::normalize(v+dx), pi)) < factor * glm::distance(v, v+dx) );
@@ -211,8 +214,8 @@ TEST_CASE( "CollignonProjection.hemisphere_to_collignon() area preservation", "[
         const glm::vec3 dx(0.03, 0.0, 0.0);
         const glm::vec3 dy(0.0, 0.03, 0.0);
         const float z(1.0f);
-        for(float x = -1.0f; x < 1.0f; x+=0.1f){
-        for(float y = -1.0f; y < 1.0f; y+=0.1f){
+        for(float x = -1.0; x < 1.0; x+=0.1f){
+        for(float y = -1.0; y < 1.0; y+=0.1f){
             if (std::abs(x)+std::abs(y) < 0.95)
             {
                 glm::vec3 v = glm::normalize(glm::vec3(x,y,z));
