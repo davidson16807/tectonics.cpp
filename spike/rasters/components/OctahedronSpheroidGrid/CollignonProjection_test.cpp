@@ -32,8 +32,8 @@ TEST_CASE( "CollignonProjection.collignon_to_hemisphere() regularity", "[rasters
     }
 }
 TEST_CASE( "CollignonProjection collignon_to_hemisphere() limiting cases", "[rasters]" ) {
-    SECTION("CollignonProjection.hemisphere_to_collignon() must reproduce results for limiting cases"){
-        const float margin(0.01);
+    SECTION("CollignonProjection.collignon_to_hemisphere() must reproduce results for limiting cases"){
+        const float margin(1e-4f);
         const float pi(3.14159);
         const float quadrant(std::sqrt(pi)); // length of a quadrant when projected
 
@@ -74,7 +74,7 @@ TEST_CASE( "CollignonProjection collignon_to_hemisphere() limiting cases", "[ras
     }
 }
 TEST_CASE( "CollignonProjection collignon_to_hemisphere() closeness preservation", "[rasters]" ) {
-    SECTION("changes in hemisphere_to_collignon must not result in changes that exceed a reasonable multiple"){
+    SECTION("changes in collignon_to_hemisphere must not result in changes that exceed a reasonable multiple"){
         const float factor(2.0f);
         const glm::vec2 dx(0.001, 0.0);
         const glm::vec2 dy(0.0, 0.001);
@@ -139,6 +139,36 @@ TEST_CASE( "CollignonProjection.hemisphere_to_collignon() regularity", "[rasters
         }}
     }
 }
+
+TEST_CASE( "CollignonProjection.hemisphere_to_collignon() limiting cases", "[rasters]" ) {
+    SECTION("CollignonProjection.hemisphere_to_collignon() must reproduce results for limiting cases"){
+        const float margin(1e-4f);
+        const float pi(3.14159);
+        const float quadrant(std::sqrt(pi)); // length of a quadrant when projected
+
+        CHECK(rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(0,1,0), 0.0f).x == Approx(0).margin(margin) );
+        CHECK(rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(0,1,0), 0.0f).y == Approx(quadrant).margin(margin) );
+
+        CHECK(rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(0,-1,0), 0.0f).x == Approx(0).margin(margin) );
+        CHECK(rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(0,-1,0), 0.0f).y == Approx(-quadrant).margin(margin) );
+
+
+        CHECK(rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(1,0,0), 0.0f).x == Approx(quadrant).margin(margin) );
+        CHECK(rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(1,0,0), 0.0f).y == Approx(0).margin(margin) );
+
+        CHECK(rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(-1,0,0), 0.0f).x == Approx(-quadrant).margin(margin) );
+        CHECK(rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(-1,0,0), 0.0f).y == Approx(0).margin(margin) );
+
+
+        CHECK(rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(0,0,1), 0.0f).x == Approx(0).margin(margin) );
+        CHECK(rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(0,0,1), 0.0f).y == Approx(0).margin(margin) );
+
+        CHECK(rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(0,0,-1), 0.0f).x == Approx(0).margin(margin) );
+        CHECK(rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(0,0,-1), 0.0f).y == Approx(0).margin(margin) );
+
+    }
+}
+
 TEST_CASE( "CollignonProjection.hemisphere_to_collignon() closeness preservation", "[rasters]" ) {
     SECTION("CollignonProjection.hemisphere_to_collignon() must not result in changes that exceed a reasonable multiple"){
         const float pi(3.141592653589f);
@@ -193,7 +223,7 @@ TEST_CASE( "CollignonProjection.hemisphere_to_collignon() area preservation", "[
         }}
     }
 }
-TEST_CASE( "CollignonProjection hemisphere_to_collignon() / collignon_to_hemisphere() invertibility", "[rasters]" ) {
+TEST_CASE( "CollignonProjection.hemisphere_to_collignon() / collignon_to_hemisphere() invertibility", "[rasters]" ) {
     SECTION("CollignonProjection.collignon_to_hemisphere() must reconstruct input passed to hemisphere_to_collignon() for any unit vector"){
         const float pi(3.141592653589f);
         const float epsilon(1e-4f);

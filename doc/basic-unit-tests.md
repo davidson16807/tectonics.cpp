@@ -20,9 +20,12 @@ congruence
 increasing
 decreasing
 adjoint
-degeneracy
 theorems for free
 miscellaneous equivalence relations
+limiting cases
+degenerate cases
+special cases
+edge cases
 
 transitivity
 reflexivity
