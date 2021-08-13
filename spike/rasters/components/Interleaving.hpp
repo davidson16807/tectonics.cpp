@@ -1,19 +1,5 @@
 #pragma once
 
-// C libraries
-#include <math.h>       // ceil, round 
-
-// std libraries
-#include <algorithm> 	// max, min, clamp
-#include <vector>		// vectors
-#include <array>		// arrays
-#include <limits>       // infinity
-
-// 3rd party libraries
-#include <glm/vec2.hpp>       	 // *vec3
-#include <glm/vec3.hpp>       	 // *vec3
-#include <glm/mat3x3.hpp>        // *mat3
-
 namespace rasters
 {
 

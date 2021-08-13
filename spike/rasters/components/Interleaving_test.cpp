@@ -1,32 +1,50 @@
+#include "Interleaving.hpp"
 
-TEST_CASE( "CollignonMesh.tesselation_to_sphere() purity", "[rasters]" ) {
-    SECTION("CollignonMesh.tesselation_to_sphere() must be called repeatedly without changing the output"){
-        rasters::CollignonProjection projection;
-        rasters::CollignonTesselation tesselation(projection);
-        for(float x = -1.0f; x < 1.0f; x+=0.1f){
-        for(float y = -1.0f; y < 1.0f; y+=0.1f){
-            CHECK(rasters::CollignonMesh(tesselation).tesselation_to_sphere(glm::vec2(x,y)) == 
-                  rasters::CollignonMesh(tesselation).tesselation_to_sphere(glm::vec2(x,y)));
+TEST_CASE( "Interleaving.interleaved_id() purity", "[rasters]" ) {
+    SECTION("Interleaving.interleaved_id() must be called repeatedly without changing the output"){
+        for(int x = 0; x < 10; x+=1){
+        for(int y = 0; y < 10; y+=1){
+            CHECK(rasters::Interleaving(10).interleaved_id(y,x) == 
+                  rasters::Interleaving(10).interleaved_id(y,x));
         }}
     }
 }
-
-TEST_CASE( "CollignonMesh sphere_to_tesselation() / tesselation_to_sphere() invertibility", "[rasters]" ) {
-    SECTION("CollignonMesh.tesselation_to_sphere() must reconstruct input passed to sphere_to_tesselation() for any unit vector"){
-        rasters::CollignonProjection projection;
-        rasters::CollignonTesselation tesselation(projection);
-        const float epsilon(1e-4f);
-        for(float x = -1.0f; x < 1.0f; x+=0.5f){
-        for(float y = -1.0f; y < 1.0f; y+=0.5f){
-        for(float z = -1.0f; z < 1.0f; z+=0.5f){
-            if(glm::length(glm::vec3(x,y,z)) > epsilon){
-                glm::vec3 v = glm::normalize(glm::vec3(x,y,z));
-                glm::vec2 u = mesh.sphere_to_tesselation(v);
-                glm::vec3 v2 = mesh.tesselation_to_sphere( u );
-                CHECK( v2.x == Approx(v.x).margin(epsilon) );
-                CHECK( v2.y == Approx(v.y).margin(epsilon) );
-                CHECK( v2.z == Approx(v.z).margin(epsilon) );
-            }
-        }}}
+TEST_CASE( "Interleaving block_id() / element_id() / interleaved_id() invertibility", "[rasters]" ) {
+    SECTION("block_id() / element_id() must reconstruct input passed to interleaved_id() for any input"){
+        rasters::Interleaving interleaving(10);
+        for(int block_id = 0; block_id < 10; block_id+=1){
+        for(int element_id = 0; element_id < 10; element_id+=1){
+            int interleaved_id = interleaving.interleaved_id( block_id, element_id );
+            CHECK( interleaving.block_id(interleaved_id) == block_id );
+            CHECK( interleaving.element_id(interleaved_id) == element_id );
+        }}
+    }
+    SECTION("interleaved_id() must reconstruct input passed to block_id() / element_id() for any input"){
+        rasters::Interleaving interleaving(10);
+        for(int interleaved_id = 0; interleaved_id < 100; interleaved_id+=1){
+            CHECK(interleaving.interleaved_id( interleaving.block_id(interleaved_id), interleaving.element_id(interleaved_id) )  == interleaved_id );
+        }
     }
 }
+TEST_CASE( "Interleaving block_id() / element_id() / interleaved_id() range restrictions", "[rasters]" ) {
+    SECTION("interleaved_id() must not produce results outside expected range"){
+        rasters::Interleaving interleaving(10);
+        for(int block_id = 0; block_id < 10; block_id+=1){
+        for(int element_id = 0; element_id < 10; element_id+=1){
+            int interleaved_id = interleaving.interleaved_id( block_id, element_id );
+            CHECK( interleaved_id < 100 );
+            CHECK( interleaved_id >= 0 );
+        }}
+    }
+    SECTION("block_id() / element_id() must not produce results outside expected range"){
+        rasters::Interleaving interleaving(10);
+        for(int interleaved_id = 0; interleaved_id < 100; interleaved_id+=1){
+            CHECK(interleaving.block_id(interleaved_id) >= 0 );
+            CHECK(interleaving.block_id(interleaved_id) < 10 );
+            CHECK(interleaving.element_id(interleaved_id) >= 0 );
+            CHECK(interleaving.element_id(interleaved_id) < 10 );
+        }
+    }
+}
+/*
+*/

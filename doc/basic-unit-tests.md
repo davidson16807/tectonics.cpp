@@ -23,6 +23,7 @@ decreasing
 adjoint
 theorems for free
 miscellaneous equivalence relations
+range restrictions
 limiting cases
 degenerate cases
 special cases
