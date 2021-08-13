@@ -15,7 +15,7 @@ namespace rasters
     `CollignonMesh` is a wrapper around a `CollignonTesselation` 
     that introduces the concepts of sphere radius, vertex count, and boundary alignment. That is all.
     */
-    template<typename Tid=std::uint16_t, typename Tfloat=float>
+    template<typename Tid, typename Tfloat>
     class CollignonMesh
     {
     private:
@@ -46,35 +46,39 @@ namespace rasters
         {
         }
 
-        Tid memory_id(const glm::vec<2,Tid,glm::defaultp> grid_position) const {
-            const glm::vec<2,Tfloat,glm::defaultp> standardized = standardize(glm::vec<2,Tfloat,glm::defaultp>(grid_position*vertex_count_per_half_meridian_float) + half_cell) / vertex_count_per_half_meridian_float - half_cell;
-            const glm::vec<2,Tid,glm::defaultp> standard_grid_id = glm::vec<2,Tid,glm::defaultp>(standardized) + vertex_count_per_half_meridian;
-            const glm::vec<2,Tid,glm::defaultp> unique_grid_id = glm::vec<2,Tid,glm::defaultp>(standard_grid_id.x % vertex_count_per_meridian, standard_grid_id.y % vertex_count_per_meridian);
+        Tid memory_id(const glm::vec<2,Tid,glm::defaultp> grid_id) const {
+            const glm::vec<2,Tfloat,glm::defaultp> world_position = (grid_position + half_cell) / vertex_count_per_half_meridian_float;
+            const glm::vec<2,Tfloat,glm::defaultp> standardized_world_position = tesselation.standardize(world_position);
+            const glm::vec<2,Tfloat,glm::defaultp> standard_grid_position = standardized_world_position * vertex_count_per_half_meridian_float - half_cell;
+
+            const glm::vec<2,Tid,glm::defaultp> standard_grid_uid = glm::vec<2,Tid,glm::defaultp>(glm::round(standard_grid_position)) + vertex_count_per_half_meridian;
             const Tid memory_id = interleaving.interleaved_id(
-                std::clamp(unique_grid_id.y, 0, vertex_count_per_meridian-1), 
-                std::clamp(unique_grid_id.x, 0, vertex_count_per_meridian-1)
+                std::clamp(standard_grid_uid.y, 0, vertex_count_per_meridian-1), 
+                std::clamp(standard_grid_uid.x, 0, vertex_count_per_meridian-1)
             );
             return memory_id;
         }
         Tid memory_id(const glm::vec<2,Tfloat,glm::defaultp> grid_position) const {
-            const glm::vec<2,Tfloat,glm::defaultp> standardized = standardize(glm::round(grid_position*vertex_count_per_half_meridian_float) + half_cell) / vertex_count_per_half_meridian_float - half_cell;
-            const glm::vec<2,Tid,glm::defaultp> standard_grid_id = glm::vec<2,Tid,glm::defaultp>(standardized) + vertex_count_per_half_meridian;
-            const glm::vec<2,Tid,glm::defaultp> unique_grid_id = glm::vec<2,Tid,glm::defaultp>(standard_grid_id.x % vertex_count_per_meridian, standard_grid_id.y % vertex_count_per_meridian);
+            const glm::vec<2,Tfloat,glm::defaultp> world_position = (grid_position + half_cell) / vertex_count_per_half_meridian_float;
+            const glm::vec<2,Tfloat,glm::defaultp> standardized_world_position = tesselation.standardize(world_position);
+            const glm::vec<2,Tfloat,glm::defaultp> standard_grid_position = standardized_world_position * vertex_count_per_half_meridian_float - half_cell;
+
+            const glm::vec<2,Tid,glm::defaultp> standard_grid_uid = glm::vec<2,Tid,glm::defaultp>(glm::round(standard_grid_position)) + vertex_count_per_half_meridian;
             const Tid memory_id = interleaving.interleaved_id(
-                std::clamp(unique_grid_id.y, 0, vertex_count_per_meridian-1), 
-                std::clamp(unique_grid_id.x, 0, vertex_count_per_meridian-1)
+                std::clamp(standard_grid_uid.y, 0, vertex_count_per_meridian-1), 
+                std::clamp(standard_grid_uid.x, 0, vertex_count_per_meridian-1)
             );
             return memory_id;
         }
 
         glm::vec<2,Tid,glm::defaultp> grid_id(const Tid memory_id) const {
-            return glm::vec<2,Tfloat,glm::defaultp> (interleaving.element_id(memory_id), interleaving.block_id(memory_id)) - vertex_count_per_half_meridian_float;
+            return glm::vec<2,Tid,glm::defaultp> (interleaving.element_id(memory_id), interleaving.block_id(memory_id)) - vertex_count_per_half_meridian;
         }
 
 
         glm::vec<2,Tid,glm::defaultp> grid_id(const glm::vec<2,Tfloat,glm::defaultp> grid_position) const
         {
-            return tesselation.sphere_to_tesselation(glm::normalize(sphere_position)) * vertex_count_per_half_meridian_float - half_cell;
+            return grid_position;
         }
         glm::vec<2,Tid,glm::defaultp> grid_id(const glm::vec<3,Tfloat,glm::defaultp> sphere_position) const
         {
@@ -82,6 +86,10 @@ namespace rasters
         }
 
 
+
+        glm::vec<2,Tfloat,glm::defaultp> grid_position(const Tid memory_id) const {
+            return glm::vec<2,Tfloat,glm::defaultp> (interleaving.element_id(memory_id), interleaving.block_id(memory_id)) - vertex_count_per_half_meridian_float;
+        }
         glm::vec<2,Tfloat,glm::defaultp> grid_position(const glm::vec<2,Tid,glm::defaultp> grid_id) const
         {
             return grid_id;
@@ -94,7 +102,7 @@ namespace rasters
 
         glm::vec<3,Tfloat,glm::defaultp> sphere_position(const glm::vec<2,Tid,glm::defaultp> grid_id) const
         {
-            return tesselation.tesselation_to_sphere((grid_position + half_cell) / vertex_count_per_half_meridian_float) * radius;
+            return tesselation.tesselation_to_sphere((glm::vec<2,Tfloat,glm::defaultp>(grid_id) + half_cell) / vertex_count_per_half_meridian_float) * radius;
         }
         glm::vec<3,Tfloat,glm::defaultp> sphere_position(const glm::vec<2,Tfloat,glm::defaultp> grid_position) const
         {

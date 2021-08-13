@@ -85,10 +85,10 @@ TEST_CASE( "CollignonProjection collignon_to_hemisphere() closeness preservation
             if (std::abs(x)+std::abs(y) < 0.95 * quadrant)
             {
                 glm::vec2 v = glm::vec2(x,y);
-                CHECK( glm::distance(projection.collignon_to_hemisphere(v, 0.0f), projection.collignon_to_hemisphere(v+dx, 0.0f)) < factor * glm::distance(v, v+dx) );
-                CHECK( glm::distance(projection.collignon_to_hemisphere(v, 0.0f), projection.collignon_to_hemisphere(v-dx, 0.0f)) < factor * glm::distance(v, v-dx) );
-                CHECK( glm::distance(projection.collignon_to_hemisphere(v, 0.0f), projection.collignon_to_hemisphere(v+dy, 0.0f)) < factor * glm::distance(v, v+dy) );
-                CHECK( glm::distance(projection.collignon_to_hemisphere(v, 0.0f), projection.collignon_to_hemisphere(v-dy, 0.0f)) < factor * glm::distance(v, v-dy) );
+                CHECK( glm::distance(projection.collignon_to_hemisphere(v, 0.0f), projection.collignon_to_hemisphere(v+dx, 0.0f)) < factor * glm::length(dx) );
+                CHECK( glm::distance(projection.collignon_to_hemisphere(v, 0.0f), projection.collignon_to_hemisphere(v-dx, 0.0f)) < factor * glm::length(dx) );
+                CHECK( glm::distance(projection.collignon_to_hemisphere(v, 0.0f), projection.collignon_to_hemisphere(v+dy, 0.0f)) < factor * glm::length(dy) );
+                CHECK( glm::distance(projection.collignon_to_hemisphere(v, 0.0f), projection.collignon_to_hemisphere(v-dy, 0.0f)) < factor * glm::length(dy) );
             }
         }}
     }
@@ -184,12 +184,12 @@ TEST_CASE( "CollignonProjection.hemisphere_to_collignon() closeness preservation
             if (std::abs(x)+std::abs(y) < 0.95)
             {
                 glm::vec3 v = glm::normalize(glm::vec3(x,y,0.1f));
-                CHECK( glm::distance(projection.hemisphere_to_collignon(v, 0.0f), projection.hemisphere_to_collignon(glm::normalize(v+dx), 0.0f)) < factor * glm::distance(v, v+dx) );
-                CHECK( glm::distance(projection.hemisphere_to_collignon(v, 0.0f), projection.hemisphere_to_collignon(glm::normalize(v-dx), 0.0f)) < factor * glm::distance(v, v-dx) );
-                CHECK( glm::distance(projection.hemisphere_to_collignon(v, 0.0f), projection.hemisphere_to_collignon(glm::normalize(v+dy), 0.0f)) < factor * glm::distance(v, v+dy) );
-                CHECK( glm::distance(projection.hemisphere_to_collignon(v, 0.0f), projection.hemisphere_to_collignon(glm::normalize(v-dy), 0.0f)) < factor * glm::distance(v, v-dy) );
-                CHECK( glm::distance(projection.hemisphere_to_collignon(v, 0.0f), projection.hemisphere_to_collignon(glm::normalize(v+dz), 0.0f)) < factor * glm::distance(v, v+dz) );
-                CHECK( glm::distance(projection.hemisphere_to_collignon(v, 0.0f), projection.hemisphere_to_collignon(glm::normalize(v-dz), 0.0f)) < factor * glm::distance(v, v-dz) );
+                CHECK( glm::distance(projection.hemisphere_to_collignon(v, 0.0f), projection.hemisphere_to_collignon(glm::normalize(v+dx), 0.0f)) < factor * glm::length(dx) );
+                CHECK( glm::distance(projection.hemisphere_to_collignon(v, 0.0f), projection.hemisphere_to_collignon(glm::normalize(v-dx), 0.0f)) < factor * glm::length(dx) );
+                CHECK( glm::distance(projection.hemisphere_to_collignon(v, 0.0f), projection.hemisphere_to_collignon(glm::normalize(v+dy), 0.0f)) < factor * glm::length(dy) );
+                CHECK( glm::distance(projection.hemisphere_to_collignon(v, 0.0f), projection.hemisphere_to_collignon(glm::normalize(v-dy), 0.0f)) < factor * glm::length(dy) );
+                CHECK( glm::distance(projection.hemisphere_to_collignon(v, 0.0f), projection.hemisphere_to_collignon(glm::normalize(v+dz), 0.0f)) < factor * glm::length(dz) );
+                CHECK( glm::distance(projection.hemisphere_to_collignon(v, 0.0f), projection.hemisphere_to_collignon(glm::normalize(v-dz), 0.0f)) < factor * glm::length(dz) );
             }
         }}
         for(float x = -1.0; x < 1.0; x+=0.1f){
@@ -197,12 +197,12 @@ TEST_CASE( "CollignonProjection.hemisphere_to_collignon() closeness preservation
             if (std::abs(x)+std::abs(y) < 0.95)
             {
                 glm::vec3 v = glm::normalize(glm::vec3(x,y,-0.1f));
-                CHECK( glm::distance(projection.hemisphere_to_collignon(v, pi), projection.hemisphere_to_collignon(glm::normalize(v+dx), pi)) < factor * glm::distance(v, v+dx) );
-                CHECK( glm::distance(projection.hemisphere_to_collignon(v, pi), projection.hemisphere_to_collignon(glm::normalize(v-dx), pi)) < factor * glm::distance(v, v-dx) );
-                CHECK( glm::distance(projection.hemisphere_to_collignon(v, pi), projection.hemisphere_to_collignon(glm::normalize(v+dy), pi)) < factor * glm::distance(v, v+dy) );
-                CHECK( glm::distance(projection.hemisphere_to_collignon(v, pi), projection.hemisphere_to_collignon(glm::normalize(v-dy), pi)) < factor * glm::distance(v, v-dy) );
-                CHECK( glm::distance(projection.hemisphere_to_collignon(v, pi), projection.hemisphere_to_collignon(glm::normalize(v+dz), pi)) < factor * glm::distance(v, v+dz) );
-                CHECK( glm::distance(projection.hemisphere_to_collignon(v, pi), projection.hemisphere_to_collignon(glm::normalize(v-dz), pi)) < factor * glm::distance(v, v-dz) );
+                CHECK( glm::distance(projection.hemisphere_to_collignon(v, pi), projection.hemisphere_to_collignon(glm::normalize(v+dx), pi)) < factor * glm::length(dx) );
+                CHECK( glm::distance(projection.hemisphere_to_collignon(v, pi), projection.hemisphere_to_collignon(glm::normalize(v-dx), pi)) < factor * glm::length(dx) );
+                CHECK( glm::distance(projection.hemisphere_to_collignon(v, pi), projection.hemisphere_to_collignon(glm::normalize(v+dy), pi)) < factor * glm::length(dy) );
+                CHECK( glm::distance(projection.hemisphere_to_collignon(v, pi), projection.hemisphere_to_collignon(glm::normalize(v-dy), pi)) < factor * glm::length(dy) );
+                CHECK( glm::distance(projection.hemisphere_to_collignon(v, pi), projection.hemisphere_to_collignon(glm::normalize(v+dz), pi)) < factor * glm::length(dz) );
+                CHECK( glm::distance(projection.hemisphere_to_collignon(v, pi), projection.hemisphere_to_collignon(glm::normalize(v-dz), pi)) < factor * glm::length(dz) );
             }
         }}
     }

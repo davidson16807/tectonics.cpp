@@ -41,10 +41,10 @@ TEST_CASE( "CollignonTesselation tesselation_to_sphere() closeness preservation"
         for(float x = -2.0f; x < 2.0f; x+=0.1f){
         for(float y = -2.0f; y < 2.0f; y+=0.1f){
             glm::vec2 v = glm::vec2(x,y);
-            CHECK( glm::distance(tesselation.tesselation_to_sphere(v), tesselation.tesselation_to_sphere(v+dx)) < factor * glm::distance(v, v+dx) );
-            CHECK( glm::distance(tesselation.tesselation_to_sphere(v), tesselation.tesselation_to_sphere(v-dx)) < factor * glm::distance(v, v-dx) );
-            CHECK( glm::distance(tesselation.tesselation_to_sphere(v), tesselation.tesselation_to_sphere(v+dy)) < factor * glm::distance(v, v+dy) );
-            CHECK( glm::distance(tesselation.tesselation_to_sphere(v), tesselation.tesselation_to_sphere(v-dy)) < factor * glm::distance(v, v-dy) );
+            CHECK( glm::distance(tesselation.tesselation_to_sphere(v), tesselation.tesselation_to_sphere(v+dx)) < factor * glm::length(dx) );
+            CHECK( glm::distance(tesselation.tesselation_to_sphere(v), tesselation.tesselation_to_sphere(v-dx)) < factor * glm::length(dx) );
+            CHECK( glm::distance(tesselation.tesselation_to_sphere(v), tesselation.tesselation_to_sphere(v+dy)) < factor * glm::length(dy) );
+            CHECK( glm::distance(tesselation.tesselation_to_sphere(v), tesselation.tesselation_to_sphere(v-dy)) < factor * glm::length(dy) );
         }}
     }
 }
