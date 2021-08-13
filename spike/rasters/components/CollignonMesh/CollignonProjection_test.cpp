@@ -19,7 +19,7 @@
 
 rasters::CollignonProjection projection;
 
-TEST_CASE( "CollignonProjection.collignon_to_hemisphere() regularity", "[rasters]" ) {
+TEST_CASE( "CollignonProjection.collignon_to_hemisphere() purity", "[rasters]" ) {
     SECTION("CollignonProjection.collignon_to_hemisphere() must be called repeatedly without changing the output"){
         const float quadrant(std::sqrt(3.14159265f)); // length of a quadrant when projected
         for(float x = -quadrant; x < quadrant; x+=0.1){
@@ -131,7 +131,7 @@ TEST_CASE( "CollignonProjection.collignon_to_hemisphere() area preservation", "[
 
 
 
-TEST_CASE( "CollignonProjection.hemisphere_to_collignon() regularity", "[rasters]" ) {
+TEST_CASE( "CollignonProjection.hemisphere_to_collignon() purity", "[rasters]" ) {
     SECTION("CollignonProjection.hemisphere_to_collignon() must be called repeatedly without changing the output"){
         const float z(1.0f);
         for(float x = -1.0; x < 1.0; x+=0.1f){

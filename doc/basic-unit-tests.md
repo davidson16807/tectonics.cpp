@@ -15,6 +15,7 @@ invertibility
 commutativity
 distributivity
 idempotence
+orbit
 involutivity
 congruence
 increasing

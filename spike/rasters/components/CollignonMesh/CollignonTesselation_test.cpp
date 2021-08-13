@@ -20,7 +20,7 @@
 
 
 
-TEST_CASE( "CollignonTesselation.tesselation_to_sphere() regularity", "[rasters]" ) {
+TEST_CASE( "CollignonTesselation.tesselation_to_sphere() purity", "[rasters]" ) {
     SECTION("CollignonTesselation.tesselation_to_sphere() must be called repeatedly without changing the output"){
         rasters::CollignonProjection projection;
         rasters::CollignonTesselation tesselation(projection);
@@ -67,7 +67,7 @@ TEST_CASE( "CollignonTesselation tesselation_to_sphere() congruence", "[rasters]
     }
 }
 
-TEST_CASE( "CollignonTesselation.sphere_to_tesselation() regularity", "[rasters]" ) {
+TEST_CASE( "CollignonTesselation.sphere_to_tesselation() purity", "[rasters]" ) {
     SECTION("CollignonTesselation.sphere_to_tesselation() must be called repeatedly without changing the output"){
         rasters::CollignonProjection projection;
         rasters::CollignonTesselation tesselation(projection);
