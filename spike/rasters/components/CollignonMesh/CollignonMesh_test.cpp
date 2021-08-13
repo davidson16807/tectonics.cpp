@@ -105,12 +105,11 @@ TEST_CASE( "CollignonMesh memory_id() / grid_position() invertibility", "[raster
         }
     }
 }
-/*
 TEST_CASE( "CollignonMesh memory_id() congruence", "[rasters]" ) {
     SECTION("an modulo can be applied to input which results in the same output"){
         rasters::CollignonMesh mesh(2.0f, 10);
-        const glm::vec2 nx(2, 0);
-        const glm::vec2 ny(0, 2);
+        const glm::vec2 nx(40, 0);
+        const glm::vec2 ny(0, 40);
         for(int x = -10; x < 10; x+=1){
         for(int y = -10; y < 10; y+=1){
             glm::vec2 v = glm::vec2(x,y);
@@ -121,7 +120,6 @@ TEST_CASE( "CollignonMesh memory_id() congruence", "[rasters]" ) {
         }}
     }
 }
-
 TEST_CASE( "CollignonMesh memory_id() range restrictions", "[rasters]" ) {
     SECTION("CollignonMesh.memory_id() must not produce results outside valid range"){
         rasters::CollignonMesh mesh(2.0f, 10);
@@ -129,8 +127,9 @@ TEST_CASE( "CollignonMesh memory_id() range restrictions", "[rasters]" ) {
         for(int y = -10; y < 10; y+=1){
             int i = mesh.memory_id(glm::vec2(x,y));
             CHECK( 0 <= i );
-            CHECK( i < mesh.vertex_count_per_meridian );
+            CHECK( i < mesh.vertex_count );
         }}
     }
 }
+/*
 */
