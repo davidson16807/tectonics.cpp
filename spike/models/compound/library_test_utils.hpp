@@ -34,7 +34,7 @@
     CHECK(compound.molecular_absorption_cross_section(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), si::standard_pressure, si::standard_temperature) / (si::meter2) > 1e-36); \
     CHECK(compound.molecular_absorption_cross_section(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), si::standard_pressure, si::standard_temperature) / (si::meter2) < 1e-15); \
     CHECK(compound.gas.specific_heat_capacity(si::standard_pressure, si::standard_temperature) / (si::joule / (si::kilogram * si::kelvin)) > 3e2 ); /*based on argon*/ \
-    CHECK(compound.gas.specific_heat_capacity(si::standard_pressure, si::standard_temperature) / (si::joule / (si::kilogram * si::kelvin)) < 3e4 ); /*based on hydrogen*/ \
+    CHECK(compound.gas.specific_heat_capacity(si::standard_pressure, si::standard_temperature) / (si::joule / (si::kilogram * si::kelvin)) < 1e5 ); /*based on hydrogen*/ \
     CHECK(compound.gas.thermal_conductivity(si::standard_pressure, si::standard_temperature) / (si::watt / (si::meter * si::kelvin)) > 0.003); /*based on sulfur dioxide*/ \
     CHECK(compound.gas.thermal_conductivity(si::standard_pressure, si::standard_temperature) / (si::watt / (si::meter * si::kelvin)) < 0.3); /*based on hydrogen*/ \
     CHECK(compound.gas.dynamic_viscosity(si::standard_pressure, si::standard_temperature) / (si::pascal * si::second) < 3e-5); /*based on argon*/ \
@@ -43,6 +43,10 @@
     CHECK(compound.gas.density(si::standard_pressure, si::standard_temperature) / (si::kilogram/si::meter3) > 0.08); /*based on hydrogen*/ \
     CHECK(compound.gas.refractive_index(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), si::standard_pressure, si::standard_temperature) > 1.00003 ); /*based on helium*/ \
     CHECK(compound.gas.refractive_index(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), si::standard_pressure, si::standard_temperature) < 1.001 ); /*based on air*/ \
+    CHECK(compound.liquid.specific_heat_capacity(si::standard_pressure, si::standard_temperature) / (si::joule/(si::gram*si::kelvin)) < 100.0); /*based on hydrogen*/ \
+    CHECK(compound.liquid.specific_heat_capacity(si::standard_pressure, si::standard_temperature) / (si::joule/(si::gram*si::kelvin)) > 0.1); /*based on gold*/ \
+    CHECK(compound.liquid.thermal_conductivity(si::standard_pressure, si::standard_temperature) / (si::watt / (si::meter * si::kelvin)) < 200.0); /*based on silver*/ \
+    CHECK(compound.liquid.thermal_conductivity(si::standard_pressure, si::standard_temperature) / (si::watt / (si::meter * si::kelvin)) > 0.01); /*based on helium*/ \
     CHECK(compound.solids.size() != 0);
 
     // compound.critical_point_volume
@@ -50,8 +54,6 @@
     // compound.simon_glatzel_slope
     // compound.simon_glatzel_exponent
     /*
-    compound.liquid.specific_heat_capacity(si::standard_pressure, si::standard_temperature)
-    compound.liquid.thermal_conductivity(si::standard_pressure, si::standard_temperature)
     compound.liquid.dynamic_viscosity(si::standard_pressure, si::standard_temperature)
     compound.liquid.density(si::standard_pressure, si::standard_temperature)
     compound.liquid.vapor_pressure(si::standard_pressure, si::standard_temperature)

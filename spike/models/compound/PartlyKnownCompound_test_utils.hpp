@@ -256,7 +256,7 @@ namespace compound
             /*thermal_conductivity*/   // 0.6062 * si::watt / (si::meter * si::kelvin), 
                 get_dippr_liquid_thermal_conductivity_temperature_function
                     (si::kelvin, si::watt / (si::meter * si::kelvin),
-                     -0.432, 0.0057255, -0.000008078, 1.861e-9, 0.0), // 273.15-633.15K
+                     -0.432, 0.0057255, -0.000008078, 1.861e-9, 0.0, 273.15, 633.15), 
             /*dynamic_viscosity*/      
                 get_dippr_liquid_viscosity_temperature_function
                     (si::kelvin, si::pascal* si::second, 

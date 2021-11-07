@@ -120,6 +120,41 @@ namespace compound {
         );
     }
     template<typename Tx, typename Ty>
+    field::OptionalStateField<Ty> get_dippr_liquid_heat_capacity_temperature_function_114(
+        const Tx Tc, const Ty yunits,
+        const double c1, const double c2, const double c3, const double c4, const double c5,
+        const Tx Tmin, Tx Tmax
+    ){
+        return field::StateFunction<Ty>(
+            [Tc, yunits, Tmin, Tmax, c1, c2, c3, c4, c5]
+            (const si::pressure p, const si::temperature T)
+            {
+                double Tr = std::clamp(T, Tmin, Tmax)/Tc;
+                double tau = 1.0-Tr;
+                double tau2 = tau*tau;
+                double tau3 = tau2*tau;
+                double tau4 = tau3*tau;
+                double tau5 = tau4*tau;
+                return (c1*c1/tau + c2 - 2.0*c1*c3*tau - c1*c4*tau2 - c3*c3*tau3/3.0 - c3*c4*tau4/2.0 - c4*c4*tau5/5.0)*yunits;
+            }
+        );
+    }
+    template<typename Tx, typename Ty>
+    field::OptionalStateField<Ty> get_dippr_liquid_heat_capacity_temperature_function_100(
+        const Tx Tunits, const Ty yunits,
+        const double c1, const double c2, const double c3, const double c4, const double c5,
+        const Tx Tmin, Tx Tmax
+    ){
+        return field::StateFunction<Ty>(
+            [Tunits, yunits, Tmin, Tmax, c1, c2, c3, c4, c5]
+            (const si::pressure p, const si::temperature T)
+            {
+                double t = std::clamp(T, Tmin, Tmax)/Tunits;
+                return (c1+c2*t + c3*t*t + c4*t*t*t + c5*t*t*t*t)*yunits;
+            }
+        );
+    }
+    template<typename Tx, typename Ty>
     field::OptionalStateField<Ty> get_dippr_liquid_density_temperature_function(
         const Tx Tunits, const Ty yunits,
         const double c1, const double c2, const double c3, const double c4
@@ -178,13 +213,14 @@ namespace compound {
     template<typename Tx, typename Ty>
     field::OptionalStateField<Ty> get_dippr_liquid_thermal_conductivity_temperature_function(
         const Tx Tunits, const Ty yunits,
-        const double c1, const double c2, const double c3, const double c4, const double c5
+        const double c1, const double c2, const double c3, const double c4, const double c5,
+        const double Tmin, const double Tmax
     ){
         return field::StateFunction<Ty>(
-            [Tunits, yunits, c1, c2, c3, c4, c5]
+            [Tunits, yunits, c1, c2, c3, c4, c5, Tmin, Tmax]
             (const si::pressure p, const si::temperature T)
             {
-                double t = T/Tunits;
+                double t = std::clamp(T/Tunits, Tmin, Tmax);
                 return (c1 + c2*t + c3*t*t + c4*t*t*t + c5*t*t*t*t)*yunits;
             }
         );
@@ -407,6 +443,21 @@ namespace compound {
             {
                 double t = T/Tunits;
                 return (intercept + linear*t + inverse_square/(t*t) + square*t*t)*yunits;
+            }
+        );
+    }
+    template<typename Tx, typename Ty>
+    field::CompletedStateField<Ty> get_completed_dippr_liquid_heat_capacity_temperature_function_100(
+        const Tx Tunits, const Ty yunits,
+        const double c1, const double c2, const double c3, const double c4, const double c5,
+        const Tx Tmin, const Tx Tmax
+    ){
+        return field::StateFunction<Ty>(
+            [Tunits, yunits, Tmin, Tmax, c1, c2, c3, c4, c5]
+            (const si::pressure p, const si::temperature T)
+            {
+                double t = std::clamp(T, Tmin, Tmax)/Tunits;
+                return (c1+c2*t + c3*t*t + c4*t*t*t + c5*t*t*t*t)*yunits;
             }
         );
     }

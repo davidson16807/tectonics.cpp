@@ -103,7 +103,7 @@ namespace compound{
             double liquid_thermal_conductivity_in_watts_per_meter_kelvin = 
                 1.951 * (1.0 - 0.00126 * (temperature_in_kelvin - standard_melting_point_in_kelvin)) / 
                          (pow(standard_melting_point_in_kelvin, 0.216f)*pow(molar_mass_in_grams, 0.3f));
-            return liquid_thermal_conductivity_in_watts_per_meter_kelvin * si::watt / (si::meter*si::kelvin);
+            return std::max(liquid_thermal_conductivity_in_watts_per_meter_kelvin, 0.0) * si::watt / (si::meter*si::kelvin);
         }
 
         // Sato-Riedel method: https://chemicals.readthedocs.io/chemicals.thermal_conductivity.html#pure-low-pressure-liquid-correlations

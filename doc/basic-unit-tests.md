@@ -3,44 +3,64 @@ This minimal set tests for the following physical, mathmatical, and computationa
 If a function is expected or required to have one of these properties, 
 then a unit test must be written to demonstrate the function has that property for at least one circumstance.
 
-determinism
-nondeterminism
-purity
-conceptual purity
-regularity
-closure
-identity
-associativity
-invertibility
-commutativity
-distributivity
-idempotence
-orbit
-involutivity
-congruence
-increasing
-decreasing
-adjoint
-theorems for free
-miscellaneous equivalence relations
-range restrictions
-limiting cases
-degenerate cases
-special cases
-edge cases
 
-transitivity
-reflexivity
-symmetry
+functions
+	determinism
+	nondeterminism
+	purity
+	conceptual purity
+	regularity
 
-precision requirements
-memory footprint size requirements
+groups
+	closure
+	identity
+	associativity
+	invertibility
+	commutativity
+	distributivity
 
-translational invariance
-rotational invariance
-resolution invariance
-mass conservation
-energy conservation
-reproducing real world values to within order of magnitude, factor of 2, 10%, etc.
+relations
+	transitivity
+	reflexivity
+	symmetry
+
+metric spaces
+	nilpotence
+	symmetry
+	triangle inequality
+
+geometric algebra
+	idempotence
+	antisymmetry
+
+miscellaneous math
+	idempotence
+	orbit
+	involutivity
+	congruence
+	increasing
+	decreasing
+	adjoint
+	theorems for free
+	miscellaneous equivalence relations
+	range restrictions
+
+physics
+	translational invariance
+	rotational invariance
+	resolution invariance
+	mass conservation
+	energy conservation
+	reproducing real world values to within order of magnitude, factor of 2, 10%, etc.
+
+definitions
+	limiting cases
+	degenerate cases
+	special cases
+	edge cases
+
+performance
+	precision requirements
+	memory footprint size requirements
 
 happy path (barring no other test)

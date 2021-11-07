@@ -1,0 +1,75 @@
+In my last post, I describe how I was able to remove an entire for loop from a ray march by solving an integral. 
+
+In this post I go one step further: I solve an integral for the outer loop.
+
+The outer for loop in my previous post was not even close to a form that could be understood as an integral. Putting it in such terms was the first task. One problem with doing so is that samples from the light ray are currently expressed as vectors derived from an iterator, i. For it to be an integral, it would need to be a scalar expressed in terms of v. But L in my previous post was a vector, how could it be understood as a scalar within an integral?
+
+The solution I came to involved some geometric insight. Vectors l⃗ and v⃗ can be understood as being in a common plane. This plane is at a certain distance from the origin of the sphere. Throughout our raymarch, we are only ever concerned by what goes on in a subsection of this plane, defined by by v₀+ll⃗+vv⃗ where v₀ is the view origin and l and v are nonnegative.
+
+
+
+
+
+
+So we are now equipped with all the information needed to describe our outer for loop as an integral. To do so, we'll first introduce some terminology: a series of functions 
+
+First there is rho, the density of the atmosphere relative to some desired reference level (for brevity, we will call this "sealevel", though any level along a planet's atmosphere will do):
+
+ρ = 
+
+The other functions have no common names. To keep track of them, we will abbreviate them F, G, and H. Each one builds on top of its predecessors, culminating in H, which represents the result of our outer for loop.
+
+First there is F. F is the inner for loop, the integral we approximated in the last blog post, the integral of ρ. F can be thought of as the equivalent distance that would need to be traveled at sealevel to encounter the same mass of air as a ray of light traveling through the atmosphere. 
+
+F = 
+
+F is not a solvable integral. It's tempting to try integration by substitution, but if we did so we would get incorrect results. If we compare these results with numerical integration, we would find that it is fairly accurate as x→∞, however it becomes wildly inaccurate as x→0, where a division by 0 occurs. However, if we introduce an offset to the denominator of this approximation (called "N"), we can prevent the division by 0:
+
+Furthermore, if we choose the right expression for N, we can even make the approximation produce results that are strikingly similar to results from numerical integration. To find such an expression, we calculate F using numerical integration and then solve for the offset algebraically:
+
+
+Next there is G. G is a calculation made within the outer for loop:
+
+
+To see why G takes the form we see above, we start by considering the path that light must take to reach the the camera. Light enters the atmosphere at a given direction, and a certain fraction must bounce off particles in the atmosphere in order to enter a path along the view ray where they can be seen by the viewer. This is known as the "incoming fraction":
+
+	exp(r-sqrt(vi*vi+y2+zv2)) * βγ * dv
+
+However all along the path there are particles that prevent the light from reaching the viewer. This could occur either along the light's original path, in which case the light fails to enter the view ray, or it could occur along the view ray itself, in which case the light is deflected before it reaches the viewer. Both cases can be modeled using [Beer's law], which states that for every unit along a path of a given density, a certain fraction is lost:
+
+
+This can be adapted to what is known as the "outgoing fraction"
+
+	exp(-β * F);
+
+Where F is the equivalent distance that would need to be traveled at sealevel, and β is some measure for the amount that is scattered or absorbed before it reaches the viewer.
+
+For a given region along the view ray, the fraction of light that reaches the viewer is the incoming fraction multiplied by the outgoing fraction.
+
+	exp(r-sqrt(vi*vi+y2+zv2)) * βγ * exp(-B * (F(l)+F(v)))
+
+We won't discuss what βγ is here, but we will state that it can be treated as a constant throughout the raymarch without loss of generality. This means it can be multiplied outside the for loop, and we take this opportunity to do so in order to improve the performance of the raymarch and reduce the complexity of the integral. That just leaves the remainder:
+
+	exp(r-sqrt(vi*vi+y2+zv2)) * exp(-β * (F(l)+F(v)))
+
+A single exponential is much easier to integrate than a product of them, and fortunately it is a property of the exponential that lets us merge them:
+
+	G = exp(r-sqrt(vi*vi+y2+zv2) -β * (F(l)+F(v)))
+
+And here we have our function, "G".
+
+
+Finally, we have the result of our outer loop, H. H represents the fraction that can be 
+
+H is considerably more complex than our previous integral, F, however we notice that it is still ammenable to the same approach. Integration by substitution produces a result that won't be correct, but it may have regions of parameter space which are fairly accurate. The integration by substitution looks something like this:
+
+
+
+And we will introduce a new term, "M" that performs a similar role to what "N" did for "F", preventing divisions by 0 and correcting any other issues we may have with the approximation.
+
+
+We're in luck, because the derivative of F is obviously our starting function, ρ! Some of the terms in our denominator can simplify:
+
+
+We're very close. Now only to approximate M. We run the same trick as previous, solving H numerically, using results to find M algebraically, then finding an approximation for the results. 
+

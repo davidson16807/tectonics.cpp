@@ -70,7 +70,11 @@ namespace compound {
 
             /*liquid*/
             phase::CompletedLiquid {
-                /*specific_heat_capacity*/ 4.1813 * si::joule / (si::gram * si::kelvin),                    // wikipedia
+                /*specific_heat_capacity*/ // 4.1813 * si::joule / (si::gram * si::kelvin),                    // wikipedia
+                    get_completed_dippr_liquid_heat_capacity_temperature_function_100
+                        (si::kelvin, si::joule / (18.01528 * si::kilogram * si::kelvin), 
+                        276370.0, -2090.1, 8.125, -0.014116, 9.3701e-6,
+                        273.16*si::kelvin, 533.15*si::kelvin), 
                 /*thermal_conductivity*/   // 0.6062 * si::watt / (si::meter * si::kelvin), 
                     get_completed_dippr_liquid_thermal_conductivity_temperature_function
                         (si::kelvin, si::watt / (si::meter * si::kelvin),
@@ -213,7 +217,7 @@ namespace compound {
         CompletedCompound nitrogen = compound::complete( speculate(infer(published::nitrogen)), fallback::water );
         CompletedCompound oxygen = compound::complete( speculate(infer(published::oxygen)), nitrogen );
         CompletedCompound ammonia = compound::complete( speculate(infer(published::ammonia)), nitrogen );
-        CompletedCompound ozone = compound::complete( speculate(infer(published::ozone)), nitrogen );
+        CompletedCompound ozone = compound::complete( speculate(infer(published::ozone)), oxygen );
         CompletedCompound sulfur_dioxide = compound::complete( speculate(infer(published::sulfur_dioxide)), nitrogen );
         CompletedCompound nitrous_oxide = compound::complete( speculate(infer(published::nitrous_oxide)), nitrogen );
         CompletedCompound nitric_oxide = compound::complete( speculate(infer(published::nitric_oxide)), nitrogen );

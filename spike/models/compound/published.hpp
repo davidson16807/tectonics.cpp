@@ -109,11 +109,16 @@ PartlyKnownCompound water (
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ 4.1813 * si::joule / (si::gram * si::kelvin),                    // wikipedia
+        /*specific_heat_capacity*/ // 4.1813 * si::joule / (si::gram * si::kelvin),                    // wikipedia
+            get_dippr_liquid_heat_capacity_temperature_function_100
+                (si::kelvin, si::joule / (18.01528 * si::kilogram * si::kelvin), 
+                276370.0, -2090.1, 8.125, -0.014116, 9.3701e-6,
+                273.16*si::kelvin, 533.15*si::kelvin), 
         /*thermal_conductivity*/   // 0.6062 * si::watt / (si::meter * si::kelvin), 
             get_dippr_liquid_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin),
-                 -0.432, 0.0057255, -0.000008078, 1.861e-9, 0.0), // 273.15-633.15K
+                 -0.432, 0.0057255, -0.000008078, 1.861e-9, 0.0,
+                  273.15, 633.15), 
         /*dynamic_viscosity*/      
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
@@ -264,11 +269,20 @@ PartlyKnownCompound nitrogen (
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ 2.042 * si::joule / (si::gram * si::kelvin),
+        /*specific_heat_capacity*/ // 2.042 * si::joule / (si::gram * si::kelvin),
+            get_dippr_liquid_heat_capacity_temperature_function_100
+                (si::kelvin, si::joule / (28.0134 * si::kilogram * si::kelvin), 
+                281970.0, -12281.0, 248.0, -2.2182, 0.0074902,
+                63.15*si::kelvin, 112.0*si::kelvin), 
+            // get_interpolated_temperature_function
+            //     ( si::kelvin, si::joule/(si::gram * si::kelvin),
+            //       std::vector<double>{63.2,90.0,110.0,120.0},
+            //       std::vector<double>{2.00,2.14,2.743,4.508}),
         /*thermal_conductivity*/                  
             get_dippr_liquid_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin),
-                 0.2654, -0.001677,  0.0,  0.0,  0.0), // 63.15-124K
+                 0.2654, -0.001677,  0.0,  0.0,  0.0,
+                  63.15, 124), 
         /*dynamic_viscosity*/      // 157.9 * si::kilogram / (si::meter * 1e6*si::second),             // Timmerhaus (1989)
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
@@ -484,12 +498,20 @@ PartlyKnownCompound oxygen (
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ 1.699 * si::kilojoule / (si::gram * si::kelvin),             
+        /*specific_heat_capacity*/ // 1.699 * si::joule / (si::gram * si::kelvin),             
+            get_dippr_liquid_heat_capacity_temperature_function_100
+                (si::kelvin, si::joule / (31.9988 * si::kilogram * si::kelvin), 
+                175430.0, -6152.3, 113.92, -0.92382, 0.0027963,
+                4.36*si::kelvin, 142.0*si::kelvin), 
+            // get_interpolated_temperature_function
+            //     ( si::kelvin, si::joule/(si::gram * si::kelvin),
+            //       std::vector<double>{54.4,100.0,120.0,140.0,150.0},
+            //       std::vector<double>{2.00,1.738,1.927,2.691,6.625}),
         /*thermal_conductivity*/   // 0.1514 * si::watt / (si::meter * si::kelvin),                    // Timmerhaus (1989)
-
             get_dippr_liquid_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin),
-                 0.2741, -0.00138, 0.0,  0.0,  0.0), // 60-150K
+                 0.2741, -0.00138, 0.0,  0.0,  0.0,
+                  60, 150), 
             // get_interpolated_pressure_temperature_function
             //     (si::kelvin, si::milliwatt/(si::centimeter*si::kelvin),
             //                            std::vector<double>{73.16,     133.16,   173.16,   313.16},
@@ -690,11 +712,20 @@ PartlyKnownCompound carbon_dioxide (
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ field::missing(),
+        /*specific_heat_capacity*/ // field::missing(),
+            get_dippr_liquid_heat_capacity_temperature_function_100
+                (si::kelvin, si::joule / (44.0095 * si::kilogram * si::kelvin), 
+                -8304300.0, 104370.0, -433.33, 0.60052, 0.0,
+                220*si::kelvin, 290*si::kelvin), 
+            // get_interpolated_temperature_function
+            //     ( si::kelvin, si::joule/(si::gram * si::kelvin),
+            //       std::vector<double>{216.6,240.0,260.0,280.0,290.0,300.0},
+            //       std::vector<double>{1.953,2.051,2.255,2.814,3.676,8.698}),
         /*thermal_conductivity*/   // 0.087 * si::watt / (si::meter * si::kelvin),                     // wikipedia
             get_dippr_liquid_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin),
-                 0.4406, -0.0012175, 0.0,  0.0,  0.0), // 216.58-300K
+                 0.4406, -0.0012175, 0.0,  0.0,  0.0,
+                  216.58, 300), 
         /*dynamic_viscosity*/      // 0.0712 * si::millipascal*si::second,                             // wikipedia data page
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
@@ -816,11 +847,20 @@ PartlyKnownCompound methane (
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ 3.481 * si::kilojoule / (si::gram * si::kelvin),              
+        /*specific_heat_capacity*/ // 3.481 * si::joule / (si::gram * si::kelvin),              
+            get_dippr_liquid_heat_capacity_temperature_function_114
+                (190.56 * si::kelvin, si::joule / (16.0425 * si::kilogram * si::kelvin), 
+                65.708, 38883.0, -257.95, 614.07, 0.0,
+                90.69*si::kelvin, 190.0*si::kelvin), 
+            // get_interpolated_temperature_function
+            //     ( si::kelvin, si::joule/(si::gram * si::kelvin),
+            //       std::vector<double>{90.7,150.0,170.0,180.0,190.0},
+            //       std::vector<double>{3.36,4.047,5.187,7.292,94.01}),
         /*thermal_conductivity*/   // 0.1931 * si::watt / (si::meter * si::kelvin),                    // Timmerhaus (1989)
             get_dippr_liquid_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin),
-                 0.41768, -0.0024528, 3.5588e-6,  0.0,  0.0), // 90.69-180K
+                 0.41768, -0.0024528, 3.5588e-6,  0.0,  0.0,
+                  90.69, 180), 
         /*dynamic_viscosity*/      // 118.6 * si::kilogram / (si::meter * 1e6*si::second),             // Timmerhaus (1989)
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
@@ -953,11 +993,20 @@ PartlyKnownCompound argon (
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ 1.078 * si::kilojoule / (si::gram * si::kelvin),              
+        /*specific_heat_capacity*/ //1.078 * si::joule / (si::gram * si::kelvin),              
+            get_dippr_liquid_heat_capacity_temperature_function_100
+                (si::kelvin, si::joule / (39.948 * si::kilogram * si::kelvin), 
+                134390.0, -1989.4, 11.043, 0.0, 0.0,
+                83.78*si::kelvin, 135.0*si::kelvin), 
+            // get_interpolated_temperature_function
+            //     ( si::kelvin, si::joule/(si::gram * si::kelvin),
+            //       std::vector<double>{83.8,100.0,120.0,140.0,150.0},
+            //       std::vector<double>{1.12,1.154,1.332,2.225,23.60}),
         /*thermal_conductivity*/   // 0.1232 * si::watt / (si::meter * si::kelvin),                    // Timmerhaus (1989)
             get_dippr_liquid_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin),
-                 0.1819, -0.0003176, -0.00000411, 0.0, 0.0), // 83.78-150K
+                 0.1819, -0.0003176, -0.00000411, 0.0, 0.0,
+                  83.78, 150), 
         /*dynamic_viscosity*/      // 252.1 * si::kilogram / (si::meter * 1e6*si::second),             // Timmerhaus (1989)
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal * si::second, 
@@ -1085,15 +1134,16 @@ PartlyKnownCompound helium (
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ // 4.545 * si::kilojoule / (si::gram * si::kelvin), 
+        /*specific_heat_capacity*/ // 4.545 * si::joule / (si::gram * si::kelvin), 
             get_interpolated_temperature_function
                 ( si::kelvin, si::joule/(si::gram * si::kelvin),
-                  std::vector<double>{1.8, 2.0, 2.1735, 2.2, 4.6, 5.05},
-                  std::vector<double>{2.81,5.18,12.6,   3.98,5.94,13.5}), // Johnson (1960)
+                  std::vector<double>{3.0,3.5, 4.0, 4.5, 5.0  },
+                  std::vector<double>{2.6,3.41,4.52,6.78,20.24}),
         /*thermal_conductivity*/   
             get_dippr_liquid_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin),
-                 -0.013833, 0.022913, -0.0054872, 0.0004585, 0.0), // 2.2-4.8K
+                 -0.013833, 0.022913, -0.0054872, 0.0004585, 0.0,
+                  2.2, 4.8), 
         /*dynamic_viscosity*/      // 3.57 * si::kilogram / (si::meter * 1e6*si::second), // Timmerhaus (1989)
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
@@ -1189,7 +1239,11 @@ PartlyKnownCompound hydrogen (
 
     /*gas*/
     phase::PartlyKnownGas {
-        /*specific_heat_capacity*/ 12.24 * si::joule / (si::gram * si::kelvin),       
+        /*specific_heat_capacity*/ // 12.24 * si::joule / (si::gram * si::kelvin),       
+            get_interpolated_temperature_function
+                ( si::kelvin, si::joule/(si::gram * si::kelvin),
+                  std::vector<double>{13.8,16.0,20.0,24.0,28.0,32.0},
+                  std::vector<double>{10.5,10.9,11.9,14.4,21.5,92.4}),
             // NOTE: this entry produces absurd high values at STP, we need to reimplement this
             // get_sigmoid_exponent_pressure_temperature_function
             //     (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
@@ -1222,11 +1276,21 @@ PartlyKnownCompound hydrogen (
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ 9.668 * si::kilojoule / (si::gram * si::kelvin), 
+        /*specific_heat_capacity*/ // 9.668 * si::joule / (si::gram * si::kelvin), 
+            // NOTE: this estimate produces bogus results outside its range, we may need to clamp this
+            get_dippr_liquid_heat_capacity_temperature_function_114
+                (32.97 * si::kelvin, si::joule / (2.01588 * si::kilogram * si::kelvin), 
+                66.653, 6765.9, -123.63, 478.27, 0.0,
+                13.95*si::kelvin, 32.0*si::kelvin), 
+            // get_interpolated_temperature_function
+            //     ( si::kelvin, si::joule/(si::gram * si::kelvin),
+            //       std::vector<double>{13.8,16.0,20.0,24.0,28.0,32.0},
+            //       std::vector<double>{6.92,7.66,9.57,12.5,18.5,68.2}),
         /*thermal_conductivity*/   
             get_dippr_liquid_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin),
-                 -0.0917, 0.017678, -0.000382, -3.3324e-6, 1.0266e-7), // 13.95-31K
+                 -0.0917, 0.017678, -0.000382, -3.3324e-6, 1.0266e-7,
+                  13.95, 31), 
         /*dynamic_viscosity*/      // 13.06 * si::kilogram / (si::meter * 1e6*si::second), // Timmerhaus (1989)
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
@@ -1346,11 +1410,20 @@ PartlyKnownCompound ammonia (
     
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ 4.700 * si::joule / (si::gram * si::kelvin), // wikipedia
+        /*specific_heat_capacity*/ // 4.700 * si::joule / (si::gram * si::kelvin), // wikipedia
+            get_dippr_liquid_heat_capacity_temperature_function_114
+                (405.56 * si::kelvin, si::joule / (17.031 * si::kilogram * si::kelvin), 
+                61.289, 80925.0, 799.4, -2651.0, 0.0,
+                203.15*si::kelvin, 401.15*si::kelvin), 
+            // get_interpolated_temperature_function
+            //     ( si::kelvin, si::joule/(si::gram * si::kelvin),
+            //       std::vector<double>{195.5,260.0,300.0,340.0,380.0,400.0},
+            //       std::vector<double>{4.202,4.548,4.800,5.385,7.818,22.73}),
         /*thermal_conductivity*/   
             get_dippr_liquid_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin),
-                 1.169, -0.002314, 0.0, 0.0,  0.0), // 195.41-400.05K
+                 1.169, -0.002314, 0.0, 0.0,  0.0,
+                  195.41, 400.05), 
         /*dynamic_viscosity*/      
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
@@ -1452,11 +1525,16 @@ PartlyKnownCompound ozone (
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ field::missing(),
+        /*specific_heat_capacity*/ // field::missing(),
+            get_dippr_liquid_heat_capacity_temperature_function_100
+                (si::kelvin, si::joule / (47.9982 * si::kilogram * si::kelvin), 
+                60046.0, 281.16, 0.0, 0.0, 0.0,
+                90.0*si::kelvin, 150.0*si::kelvin), 
         /*thermal_conductivity*/   
             get_dippr_liquid_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin),
-                 0.17483, 0.00075288, -2.5228e-6, 0.0, 0.0), // 77.35-161.85
+                 0.17483, 0.00075288, -2.5228e-6, 0.0, 0.0,
+                  77.35, 161.85), 
         /*dynamic_viscosity*/      
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
@@ -1556,11 +1634,16 @@ PartlyKnownCompound nitrous_oxide (
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ field::missing(),
+        /*specific_heat_capacity*/ // field::missing(),
+            get_dippr_liquid_heat_capacity_temperature_function_100
+                (si::kelvin, si::joule / (44.0128 * si::kilogram * si::kelvin), 
+                67556.0, 54.373, 0.0, 0.0, 0.0,
+                182.3*si::kelvin, 200.0*si::kelvin), 
         /*thermal_conductivity*/   
             get_dippr_liquid_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin),
-                 0.10112, 0.0, 0.0, 0.0,  0.0), // 277.59-277.59K
+                 0.10112, 0.0, 0.0, 0.0,  0.0,
+                  277.59, 277.59), 
         /*dynamic_viscosity*/      
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
@@ -1667,11 +1750,20 @@ PartlyKnownCompound  sulfur_dioxide (
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ field::missing(),
+        /*specific_heat_capacity*/ // field::missing(),
+            get_dippr_liquid_heat_capacity_temperature_function_100
+                (si::kelvin, si::joule / (64.0638 * si::kilogram * si::kelvin), 
+                85743.0, 5.7443, 0.0, 0.0, 0.0,
+                197.67*si::kelvin, 350.0*si::kelvin), 
+            // get_interpolated_temperature_function
+            //     ( si::kelvin, si::joule/(si::gram * si::kelvin),
+            //       std::vector<double>{197.70,280.0,300.0,380.0,400.0,420.0},
+            //       std::vector<double>{0.8776,0.811,0.799,0.783,0.792,3.867}),
         /*thermal_conductivity*/   
             get_dippr_liquid_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin),
-                 0.38218, -0.0006254, 0.0, 0.0, 0.0), // 197.67-400
+                 0.38218, -0.0006254, 0.0, 0.0, 0.0,
+                  197.67, 400), 
         /*dynamic_viscosity*/      // 0.368 * si::millipascal*si::second, // pubchem
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
@@ -1775,11 +1867,16 @@ PartlyKnownCompound  sulfur_dioxide (
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ field::missing(),
+        /*specific_heat_capacity*/ // field::missing(),
+            get_dippr_liquid_heat_capacity_temperature_function_100
+                (si::kelvin, si::joule / (30.0061 * si::kilogram * si::kelvin), 
+                -2979600.0, 76602.0, -652.59, 1.8879, 0.0,
+                109.5*si::kelvin, 150.0*si::kelvin), 
         /*thermal_conductivity*/   
             get_dippr_liquid_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin),
-                 0.1878, 0.0010293, -0.00000943,  0.0, 0.0), // 110-176.4
+                 0.1878, 0.0010293, -0.00000943,  0.0, 0.0,
+                  110, 176.4), 
         /*dynamic_viscosity*/      
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
@@ -1895,11 +1992,21 @@ PartlyKnownCompound carbon_monoxide (
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ 60.351 * si::joule / (28.010 * si::gram * si::kelvin), // pubchem
+        /*specific_heat_capacity*/ // 60.351 * si::joule / (28.010 * si::gram * si::kelvin), // pubchem
+            // NOTE: this function is not producing physically sensible values, we may need to remove it if it can't be fixed
+            // get_dippr_liquid_heat_capacity_temperature_function_114
+            //     (132.86 * si::kelvin, si::joule / (28.0101* si::kilogram * si::kelvin), 
+            //     65.429, 28723.0, -847.39, 1959.6, 0.0,
+            //     68.15*si::kelvin, 132.0*si::kelvin
+            get_interpolated_temperature_function
+                ( si::kelvin, si::joule/(si::gram * si::kelvin),
+                  std::vector<double>{68.16, 80.0,100.0,110.0,120.0,130.0},
+                  std::vector<double>{2.157,2.142,2.306,2.558,3.202,8.070}),
         /*thermal_conductivity*/   // 0.1428 * si::watt / (si::meter * si::kelvin), // pubchem
             get_dippr_liquid_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin),
-                 0.2855, -0.001784, 0.0,  0.0,  0.0), // 68.15-125K
+                 0.2855, -0.001784, 0.0,  0.0,  0.0,
+                  68.15, 125), 
         /*dynamic_viscosity*/      // 0.170 * si::millipascal * si::second, // Johnson (1960)
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
@@ -2049,11 +2156,20 @@ PartlyKnownCompound ethane (
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ 68.5 * si::joule / (30.070 * si::gram * si::kelvin), // wikipedia data page
+        /*specific_heat_capacity*/ // 68.5 * si::joule / (30.070 * si::gram * si::kelvin), // wikipedia data page
+            get_dippr_liquid_heat_capacity_temperature_function_114
+                (305.36 * si::kelvin, si::joule / (30.069 * si::kilogram * si::kelvin), 
+                44.009, 89718.0, 918.77, -1886.0, 0.0,
+                92.0*si::kelvin, 290.0*si::kelvin), 
+            // get_interpolated_temperature_function
+            //     ( si::kelvin, si::joule/(si::gram * si::kelvin),
+            //       std::vector<double>{90.4,120.0,160.0,240.0,280.0,300.0},
+            //       std::vector<double>{2.33,2.280,2.357,2.847,3.987,10.02}),
         /*thermal_conductivity*/   
             get_dippr_liquid_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin),
-                 0.35758, -0.0011458, 6.1866e-7, 0.0, 0.0), // 90.35-300K
+                 0.35758, -0.0011458, 6.1866e-7, 0.0, 0.0,
+                  90.35, 300), 
         /*dynamic_viscosity*/      
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
@@ -2157,11 +2273,16 @@ PartlyKnownCompound hydrogen_cyanide (
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ field::missing(),
+        /*specific_heat_capacity*/ // field::missing(),
+            get_dippr_liquid_heat_capacity_temperature_function_100
+                (si::kelvin, si::joule / (27.02534 * si::kilogram * si::kelvin), 
+                95398.0, -197.52, 0.3883, 0.0, 0.0,
+                259.83*si::kelvin, 298.85*si::kelvin), 
         /*thermal_conductivity*/   
             get_dippr_liquid_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin),
-                 0.43454, -0.0007008,  0.0,  0.0,  0.0), // 259.83-298.85K
+                 0.43454, -0.0007008,  0.0,  0.0,  0.0,
+                  259.83, 298.85), 
         /*dynamic_viscosity*/      
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
@@ -2258,11 +2379,20 @@ PartlyKnownCompound ethanol (
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ 112.4 * si::joule / (46.068*si::gram*si::kelvin), // wikipedia data page
+        /*specific_heat_capacity*/ // 112.4 * si::joule / (46.068*si::gram*si::kelvin), // wikipedia data page
+            get_dippr_liquid_heat_capacity_temperature_function_100
+                (si::kelvin, si::joule / (46.06844 * si::kilogram * si::kelvin), 
+                102640.0, -139.63, -0.030341, 0.0020386, 0.0,
+                159*si::kelvin, 390*si::kelvin), 
+            // get_interpolated_temperature_function
+            //     ( si::kelvin, si::joule/(si::gram * si::kelvin),
+            //       std::vector<double>{250.0,280.0,300.0,440.0,480.0,500.0},
+            //       std::vector<double>{2.032,2.351,2.597,4.109,5.091,7.255}),
         /*thermal_conductivity*/   // 0.167 * si::watt / ( si::meter * si::kelvin ),
             get_dippr_liquid_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin),
-                 0.2468, -0.000264,  0.0,  0.0,  0.0), // 159.05-353.15K
+                 0.2468, -0.000264,  0.0,  0.0,  0.0,
+                  159.05, 353.15), 
         /*dynamic_viscosity*/      
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
@@ -2373,11 +2503,16 @@ PartlyKnownCompound formaldehyde (
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ field::missing(),
+        /*specific_heat_capacity*/ // field::missing(),
+            get_dippr_liquid_heat_capacity_temperature_function_100
+                (si::kelvin, si::joule / (30.02598* si::kilogram * si::kelvin), 
+                70077.0, -661.79, 5.9749, -0.01813, 0.00001983,
+                155.15*si::kelvin, 253.85*si::kelvin), 
         /*thermal_conductivity*/   
             get_dippr_liquid_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin),
-                 0.336003243, -0.00054, 0.0, 0.0, 0.0), // 155.15-253.85
+                 0.336003243, -0.00054, 0.0, 0.0, 0.0,
+                  155.15, 253.85), 
         /*dynamic_viscosity*/      // 0.1421 * si::millipascal * si::second, //pubchem
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
@@ -2471,11 +2606,16 @@ PartlyKnownCompound formic_acid (
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ 101.3 * si::joule / (46.026*si::gram*si::kelvin), // wikipedia data page
+        /*specific_heat_capacity*/ // 101.3 * si::joule / (46.026*si::gram*si::kelvin), // wikipedia data page
+            get_dippr_liquid_heat_capacity_temperature_function_100
+                (si::kelvin, si::joule / (46.0257* si::kilogram * si::kelvin), 
+                78060.0, 71.54, 0.0, 0.0, 0.0,
+                281.45*si::kelvin, 380.0*si::kelvin), 
         /*thermal_conductivity*/   // 0.267 * si::watt / (si::meter * si::kelvin),
             get_dippr_liquid_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin),
-                 0.302, -0.00018, 0.0,  0.0,  0.0), // 281.45-373.71
+                 0.302, -0.00018, 0.0,  0.0,  0.0,
+                  281.45, 373.71), 
         /*dynamic_viscosity*/      // 1.607 * si::millipascal*si::second,
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
@@ -2587,11 +2727,16 @@ PartlyKnownCompound perflouromethane(
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ field::missing(),
+        /*specific_heat_capacity*/ // field::missing(),
+            get_dippr_liquid_heat_capacity_temperature_function_100
+                (si::kelvin, si::joule / (88.0043* si::kilogram * si::kelvin), 
+                104600.0, -500.6, 2.2851, 0.0, 0.0,
+                89.56*si::kelvin, 145.1*si::kelvin), 
         /*thermal_conductivity*/   
             get_dippr_liquid_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin),
-                 0.20771, -0.00078883,  0.0,  0.0,  0.0), // 89.56-145.1
+                 0.20771, -0.00078883,  0.0,  0.0,  0.0,
+                  89.56, 145.1), 
         /*dynamic_viscosity*/      
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
@@ -2695,11 +2840,16 @@ PartlyKnownCompound benzene (
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ 134.8 * si::joule / (79.109 * si::gram * si::kelvin),
+        /*specific_heat_capacity*/ // 134.8 * si::joule / (79.109 * si::gram * si::kelvin),
+            get_interpolated_temperature_function
+                ( si::kelvin, si::joule/(si::gram * si::kelvin),
+                  std::vector<double>{278.7,300.0,320.0,450.0,500.0,550.0},
+                  std::vector<double>{1.708,1.706,1.766,2.279,2.637,4.765}),
         /*thermal_conductivity*/   // 0.1411 * si::watt / ( si::meter * si::kelvin ),
             get_dippr_liquid_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin),
-                 0.23444, -0.00030572, 0.0,  0.0,  0.0), // 278.68-413.1
+                 0.23444, -0.00030572, 0.0,  0.0,  0.0,
+                  278.68, 413.1), 
         /*dynamic_viscosity*/      // 0.601 * si::millipascal * si::second, // engineering toolbox, at 300K
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
@@ -3716,7 +3866,7 @@ PartlyKnownCompound andesine (
         phase::PartlyKnownSolid {
 
             /*specific_heat_capacity*/            // 66.0 * si::joule / (268.6 * si::gram * si::kelvin), // Richet (1984)
-                get_perry_temperature_function(si::kelvin, si::calorie/(268.6 * si::gram*si::kelvin), 63.13, 0.01500, -1537000.0, 0.0), // for anothite
+                get_perry_temperature_function(si::kelvin, si::calorie/(268.6 * si::gram*si::kelvin), 63.13, 0.01500, -1537000.0, 0.0), // for anorthite
             /*thermal_conductivity*/              1.68 * si::watt / (si::centimeter * si::kelvin), // Cermak (1988), for anorthite
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           2670.0 * si::kilogram/si::meter3,
@@ -4189,7 +4339,7 @@ PartlyKnownCompound  gold (
     /*liquid*/
     phase::PartlyKnownLiquid {
         /*specific_heat_capacity*/ 7.0 * si::calorie/(196.967 * si::gram*si::kelvin), // Perry, 1336-1573K
-        /*thermal_conductivity*/   field::missing(),
+        /*thermal_conductivity*/   105.0 * si::watt / (si::meter * si::kelvin), // Mills (1996)
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                17310.0 * si::kilogram/si::meter3, 
         /*vapor_pressure*/         
@@ -4294,7 +4444,7 @@ PartlyKnownCompound  silver (
     /*liquid*/
     phase::PartlyKnownLiquid {
         /*specific_heat_capacity*/ 8.2 * si::calorie/(107.868 * si::gram*si::kelvin), // Perry
-        /*thermal_conductivity*/   field::missing(),
+        /*thermal_conductivity*/   180.0 * si::watt / (si::meter * si::kelvin), // Mills (1996)
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                9320.0 * si::kilogram/si::meter3, 
         /*vapor_pressure*/         
@@ -4398,7 +4548,7 @@ PartlyKnownCompound  copper (
     /*liquid*/
     phase::PartlyKnownLiquid {
         /*specific_heat_capacity*/ field::missing(),
-        /*thermal_conductivity*/   field::missing(),
+        /*thermal_conductivity*/   160.0 * si::watt / (si::meter * si::kelvin), // Mills (1996)
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                8020.0 * si::kilogram/si::meter3, 
         /*vapor_pressure*/         
