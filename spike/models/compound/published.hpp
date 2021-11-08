@@ -91,7 +91,8 @@ PartlyKnownCompound water (
         /*specific_heat_capacity*/ // 2.080 * si::joule / (si::gram * si::kelvin),                     // wikipedia
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
-                0.01766, 0.80539, 0.00707, 0.69586, 1.42782), 
+                0.01766, 0.80539, 0.00707, 0.69586, 1.42782,
+                 300.0, 1273.2,  0.0, 10.0), 
                 // water, mean error: 0.8%, max error: 3.4%, range: 300-1273.2K, 0-10MPa, stp estimate: 1.781
         /*thermal_conductivity*/   // 0.016 * si::watt / (si::meter * si::kelvin),                     // wikipedia
             get_sigmoid_exponent_pressure_temperature_function
@@ -101,7 +102,8 @@ PartlyKnownCompound water (
         /*dynamic_viscosity*/      // 1.24e-5 * si::pascal * si::second,                               // engineering toolbox, at 100 C
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
-                0.00019, 3.33694, 0.02183, 1.08016, -0.58257), 
+                0.00019, 3.33694, 0.02183, 1.08016, -0.58257,
+                 300.0, 1273.2,  0.0, 10.0), 
                 // water, mean error: 1.2%, max error: 3.5%, range: 300-1273.2K, 0-10MPa, stp estimate: 8.765
         /*density*/                0.6* si::kilogram/si::meter3,
         /*refractive_index*/       1.000261                                                         // engineering toolbox
@@ -122,7 +124,8 @@ PartlyKnownCompound water (
         /*dynamic_viscosity*/      
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
-                 -52.843, 3703.6, 5.866, -5.879e-29, 10.0), // 273.16-646.15
+                 -52.843, 3703.6, 5.866, -5.879e-29, 10.0,
+                  273.16, 646.15), // 273.16-646.15K
         /*density*/                // 997.0 * si::kilogram/si::meter3,                                
             field::StateFunction<si::density>([](const si::pressure p, const si::temperature T) {
                 // Perry equation 119, specialized for water
@@ -245,12 +248,14 @@ PartlyKnownCompound nitrogen (
         /*thermal_conductivity*/   // 0.0234 * si::watt / (si::meter * si::kelvin),                    // wikipedia
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
-                0.00026, 1.21142, 0.00037, 0.75287, -0.00165), 
+                0.00026, 1.21142, 0.00037, 0.75287, -0.00165,
+                 113.15, 2013.2,  0.0, 3.0), 
                 // nitrogen, mean error: 0.8%, max error: 5.0%, range: 113.15-2013.2K, 0-3MPa, stp estimate: 0.024
         /*dynamic_viscosity*/      // 1.76e-5 * si::pascal * si::second,                               // engineering toolbox, at 20 C
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
-                0.04908, 2.30670, 0.50611, 0.64605, -2.56297), 
+                0.04908, 2.30670, 0.50611, 0.64605, -2.56297,
+                 113.15, 2013.2,  0.0, 3.0), 
                 // nitrogen, mean error: 1.5%, max error: 5.1%, range: 113.15-2013.2K, 0-3MPa, stp estimate: 16.416
         /*density*/                
             field::StateSample<si::density>(0.001165*si::gram/si::centimeter3), 
@@ -286,7 +291,8 @@ PartlyKnownCompound nitrogen (
         /*dynamic_viscosity*/      // 157.9 * si::kilogram / (si::meter * 1e6*si::second),             // Timmerhaus (1989)
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
-                 16.004, -181.61, -5.1551, 0.0, 0.0), // 63.15-124K
+                 16.004, -181.61, -5.1551, 0.0, 0.0,
+                  63.15, 124), // 63.15-124K
         /*density*/                
             // field::StateSample<si::density>(0.4314*si::gram/si::centimeter3, si::atmosphere, 125.01*si::kelvin), // Johnson (1960)
             get_dippr_liquid_density_temperature_function
@@ -474,12 +480,14 @@ PartlyKnownCompound oxygen (
         /*thermal_conductivity*/   // 0.0238 * si::watt / (si::meter * si::kelvin),                    // wikipedia
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
-                0.00023, 1.29450, 0.00018, 0.88149, -0.00130), 
+                0.00023, 1.29450, 0.00018, 0.88149, -0.00130,
+                 104.36, 1004.4,  0.0, 3.0), 
                 // oxygen, mean error: 0.8%, max error: 4.2%, range: 104.36-1004.4K, 0-3MPa, stp estimate: 0.025
         /*dynamic_viscosity*/      // 2.04e-5 * si::pascal * si::second,                               // engineering toolbox, at 20 C
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
-                -0.08909, 0.00000, 0.39475, 0.70840, -2.08620), 
+                -0.08909, 0.00000, 0.39475, 0.70840, -2.08620,
+                 104.36, 1004.4,  0.0, 3.0), 
                 // oxygen, mean error: 2.1%, max error: 8.1%, range: 104.36-1004.4K, 0-3MPa, stp estimate: 18.827
         /*density*/                field::missing(),
         /*refractive_index*/       // 1.0002709,
@@ -520,7 +528,8 @@ PartlyKnownCompound oxygen (
         /*dynamic_viscosity*/      // 188.0 * si::kilogram / (si::meter * 1e6*si::second),             // Timmerhaus (1989)
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
-                 -4.1476, 94.04, -1.207, 0.0, 0.0), // 54.36-150K
+                 -4.1476, 94.04, -1.207, 0.0, 0.0,
+                  54.36, 150), // 54.36-150K
         /*density*/                // 1.141 * si::gram/si::milliliter,
             // field::StateSample<si::density>(0.6779*si::gram/si::centimeter3, si::atmosphere, 149.8*si::kelvin), // Johnson (1960)
             get_dippr_liquid_density_temperature_function
@@ -684,12 +693,14 @@ PartlyKnownCompound carbon_dioxide (
         /*thermal_conductivity*/   // 0.01662 * si::watt / ( si::meter * si::kelvin ),                 // wikipedia
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
-                0.00032, 1.14102, 0.00027, 0.83072, -0.01434), 
+                0.00032, 1.14102, 0.00027, 0.83072, -0.01434,
+                 266.59, 1116.6,  0.0, 3.0), 
                 // carbon dioxide, mean error: 0.8%, max error: 2.7%, range: 266.59-1116.6K, 0-3MPa, stp estimate: 0.015
         /*dynamic_viscosity*/      // 1.47e-5 * si::pascal * si::second,                               // engineering toolbox, at 20 C
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
-                0.05967, 1.75501, 0.18576, 0.79011, -1.65245), 
+                0.05967, 1.75501, 0.18576, 0.79011, -1.65245,
+                 266.59, 1116.6,  0.0, 3.0), 
                 // carbon dioxide, mean error: 1.5%, max error: 3.2%, range: 266.59-1116.6K, 0-3MPa, stp estimate: 13.980
         /*density*/                1.87 * si::kilogram/si::meter3, // Perry
         /*refractive_index*/       // 1.0004493,
@@ -729,7 +740,8 @@ PartlyKnownCompound carbon_dioxide (
         /*dynamic_viscosity*/      // 0.0712 * si::millipascal*si::second,                             // wikipedia data page
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
-                 18.775, -402.92, -4.6854, -6.9171e-26, 10.0), // 216.58-303.15K
+                 18.775, -402.92, -4.6854, -6.9171e-26, 10.0,
+                  216.58, 303.15), // 216.58-303.15K
         /*density*/                // 1101.0 * si::kilogram/si::meter3,
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 44.01 * si::gram/si::decimeter3,
@@ -834,7 +846,8 @@ PartlyKnownCompound methane (
         /*dynamic_viscosity*/      // 1.10e-5 * si::pascal * si::second,                               // engineering toolbox, at 20 C
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
-                0.12223, 1.53060, 0.09521, 0.83600, -0.21904), 
+                0.12223, 1.53060, 0.09521, 0.83600, -0.21904,
+                 140.69, 640.69,  0.0, 3.0), 
                 // methane, mean error: 1.9%, max error: 5.2%, range: 140.69-640.69K, 0-3MPa, stp estimate: 10.148
         /*density*/                
             field::StateSample<si::density>(0.0006664*si::gram/si::centimeter3, 33.8*si::kilopascal, 99.8*si::kelvin), // Johnson (1960)
@@ -864,7 +877,8 @@ PartlyKnownCompound methane (
         /*dynamic_viscosity*/      // 118.6 * si::kilogram / (si::meter * 1e6*si::second),             // Timmerhaus (1989)
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
-                 -6.1572, 178.15, -0.95239, -9.0606e-24, 10.0), // 90.69-188K
+                 -6.1572, 178.15, -0.95239, -9.0606e-24, 10.0,
+                  90.69, 188), // 90.69-188K
         /*density*/                
             // field::StateSample<si::density>(0.4407*si::gram/si::centimeter3, 33.8*si::kilopascal, 99.8*si::kelvin), // Johnson (1960)
             get_dippr_liquid_density_temperature_function
@@ -967,12 +981,14 @@ PartlyKnownCompound argon (
         /*thermal_conductivity*/   // 0.016 * si::watt / ( si::meter * si::kelvin ),                   // wikipedia
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
-                0.00034, 1.11244, 0.00029, 0.73962, -0.00193), 
+                0.00034, 1.11244, 0.00029, 0.73962, -0.00193,
+                 133.81, 683.81,  0.0, 3.0), 
                 // argon, mean error: 1.2%, max error: 2.7%, range: 133.81-683.81K, 0-3MPa, stp estimate: 0.016
         /*dynamic_viscosity*/      // 2.23e-5 * si::pascal * si::second,                               // engineering toolbox, at 20 C
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
-                0.41072, 0.79782, 0.22045, 0.81080, -0.33331), 
+                0.41072, 0.79782, 0.22045, 0.81080, -0.33331,
+                 133.81, 683.81,  0.0, 3.0), 
                 // argon, mean error: 1.7%, max error: 4.2%, range: 133.81-683.81K, 0-3MPa, stp estimate: 20.565
         /*density*/                field::missing(),
         /*refractive_index*/       // 1.000281,
@@ -1010,7 +1026,8 @@ PartlyKnownCompound argon (
         /*dynamic_viscosity*/      // 252.1 * si::kilogram / (si::meter * 1e6*si::second),             // Timmerhaus (1989)
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal * si::second, 
-                 -8.8685, 204.29, -0.38305, -1.294e-22, 10.0), // 83.78-150.0
+                 -8.8685, 204.29, -0.38305, -1.294e-22, 10.0,
+                  83.78, 150.0), // 83.78-150.0K
         /*density*/                
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 39.948 * si::gram/si::decimeter3,
@@ -1109,12 +1126,14 @@ PartlyKnownCompound helium (
         /*thermal_conductivity*/   // 155.7 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
-                -0.15319, 1.77283, 0.00284, 0.70030, 0.00337), 
+                -0.15319, 1.77283, 0.00284, 0.70030, 0.00337,
+                 52.177, 1502.2,  0.0, 0.1), 
                 // helium, mean error: 0.8%, max error: 4.1%, range: 52.177-1502.2K, 0-0.1MPa, stp estimate: 0.145
         /*dynamic_viscosity*/      // 1.96e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
-                -0.19093, 1.50359, 0.28815, 0.73057, 1.34631), 
+                -0.19093, 1.50359, 0.28815, 0.73057, 1.34631,
+                 52.177, 1502.2,  0.0, 0.1), 
                 // helium, mean error: 0.1%, max error: 0.7%, range: 52.177-1502.2K, 0-0.1MPa, stp estimate: 18.702
         /*density*/                
             field::StateSample<si::density>(0.000156*si::gram/si::centimeter3, si::atmosphere, 311.0*si::kelvin), // Johnson (1960)
@@ -1147,7 +1166,8 @@ PartlyKnownCompound helium (
         /*dynamic_viscosity*/      // 3.57 * si::kilogram / (si::meter * 1e6*si::second), // Timmerhaus (1989)
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
-                 -9.6312, -3.841, -1.458, -1.065e-8, 10.0), // 2.2-5.1
+                 -9.6312, -3.841, -1.458, -1.065e-8, 10.0,
+                  2.2, 5.1), // 2.2-5.1K
         /*density*/                
             // field::StateSample<si::density>(0.101*si::gram/si::centimeter3, si::atmosphere, 5.0*si::kelvin), // Johnson (1960)
             get_dippr_liquid_density_temperature_function
@@ -1252,12 +1272,14 @@ PartlyKnownCompound hydrogen (
         /*thermal_conductivity*/   // 186.6 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
-                0.00197, 1.33064, 0.00154, 0.84231, -0.00399), 
+                0.00197, 1.33064, 0.00154, 0.84231, -0.00399,
+                 63.957, 1014,  0.0, 1.0), 
                 // hydrogen, mean error: 1.3%, max error: 2.5%, range: 63.957-1014K, 0-1MPa, stp estimate: 0.169
         /*dynamic_viscosity*/      // 0.88e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
-                0.05907, 1.95272, 0.20949, 0.66373, -0.28287), 
+                0.05907, 1.95272, 0.20949, 0.66373, -0.28287,
+                 63.957, 1014,  0.0, 1.0), 
                 // hydrogen, mean error: 0.2%, max error: 0.9%, range: 63.957-1014K, 0-1MPa, stp estimate: 8.393
         /*density*/                1.3390 * si::gram/si::liter,
         /*refractive_index*/       // 1.0001392,
@@ -1294,7 +1316,8 @@ PartlyKnownCompound hydrogen (
         /*dynamic_viscosity*/      // 13.06 * si::kilogram / (si::meter * 1e6*si::second), // Timmerhaus (1989)
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
-                 -11.661, 24.7, -0.261, -4.10e-16, 10.0), // 13.95-33K
+                 -11.661, 24.7, -0.261, -4.10e-16, 10.0,
+                  13.95, 33), // 13.95-33K
         /*density*/                // 0.0708 * si::gram/si::milliliter,
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 2.016   * si::gram/si::decimeter3,
@@ -1381,7 +1404,8 @@ PartlyKnownCompound ammonia (
         /*specific_heat_capacity*/ // 35.06 * si::joule / (17.031 * si::gram * si::kelvin), // wikipedia data page
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
-                0.04652, 0.81959, 0.02155, 0.67889, 1.04112), 
+                0.04652, 0.81959, 0.02155, 0.67889, 1.04112,
+                 245.5, 695.5,  0.0, 10.0), 
                 // ammonia, mean error: 1.2%, max error: 4.3%, range: 245.5-695.5K, 0-10MPa, stp estimate: 2.020
         /*thermal_conductivity*/   // 25.1 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
             get_sigmoid_exponent_pressure_temperature_function
@@ -1391,7 +1415,8 @@ PartlyKnownCompound ammonia (
         /*dynamic_viscosity*/      // 0.99e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
-                0.00986, 1.88109, 0.02443, 1.06310, -0.30191), 
+                0.00986, 1.88109, 0.02443, 1.06310, -0.30191,
+                 245.5, 695.5,  0.0, 10.0), 
                 // ammonia, mean error: 0.7%, max error: 3.5%, range: 245.5-695.5K, 0-10MPa, stp estimate: 9.204
         /*density*/                field::missing(),
         /*refractive_index*/       //1.000376,
@@ -1427,7 +1452,8 @@ PartlyKnownCompound ammonia (
         /*dynamic_viscosity*/      
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
-                 -6.743,598.3,-0.7341,-3.690e-27,10.0), // 195.41-393.15K
+                 -6.743,598.3,-0.7341,-3.690e-27,10.0,
+                  195.41, 393.15), // 195.41-393.15K
         /*density*/                // 681.97 * si::kilogram / si::meter3,  //encyclopedia.airliquide.com
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 17.031 * si::gram/si::decimeter3,
@@ -1538,7 +1564,8 @@ PartlyKnownCompound ozone (
         /*dynamic_viscosity*/      
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
-                 -10.94, 415.96, 0.0, 0.0, 0.0), // 75.55-208.8
+                 -10.94, 415.96, 0.0, 0.0, 0.0,
+                  75.55, 208.8), // 75.55-208.8K
         /*density*/                // 1349.0 * si::kilogram / si::meter3, //encyclopedia.airliquide.com
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 47.998 * si::gram/si::decimeter3,
@@ -1647,7 +1674,8 @@ PartlyKnownCompound nitrous_oxide (
         /*dynamic_viscosity*/      
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
-                 19.329, -381.68, -4.8618, 0.0, 0.0), // 210-283.09K
+                 19.329, -381.68, -4.8618, 0.0, 0.0,
+                  210, 283.09), // 210-283.09K
         /*density*/                // 1230.458 * si::kilogram / si::meter3, 
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 44.012 * si::gram/si::decimeter3,
@@ -1734,7 +1762,8 @@ PartlyKnownCompound  sulfur_dioxide (
         /*specific_heat_capacity*/ 
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
-                0.03124, 1.38702, 0.00214, 0.79655, 0.42765), 
+                0.03124, 1.38702, 0.00214, 0.79655, 0.42765,
+                 247.7, 547.7,  0.0, 1.0), 
                 // sulfur dioxide, mean error: 0.7%, max error: 2.0%, range: 247.7-547.7K, 0-1MPa, stp estimate: 0.615
         /*thermal_conductivity*/   // 9.6 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
             get_dippr_gas_thermal_conductivity_temperature_function
@@ -1767,7 +1796,8 @@ PartlyKnownCompound  sulfur_dioxide (
         /*dynamic_viscosity*/      // 0.368 * si::millipascal*si::second, // pubchem
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
-                 46.223, -1378.0, -8.7475, 0.0, 0.0), // 225-400K
+                 46.223, -1378.0, -8.7475, 0.0, 0.0,
+                  225, 400), // 225-400K
         /*density*/                // 389.06 * si::kilogram / si::meter3, // encyclopedia.airliquide.com
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 64.064 * si::gram/si::decimeter3,
@@ -1880,7 +1910,8 @@ PartlyKnownCompound  sulfur_dioxide (
         /*dynamic_viscosity*/      
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
-                 -246.65, 3150.3, 49.98, -0.22541, 1.0), // 109.5-180.05K
+                 -246.65, 3150.3, 49.98, -0.22541, 1.0,
+                  109.5, 180.05), // 109.5-180.05K
         /*density*/                // 1230.458 * si::kilogram / si::meter3,  //encyclopedia.airliquide.com
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 30.006 * si::gram/si::decimeter3,
@@ -1963,17 +1994,20 @@ PartlyKnownCompound carbon_monoxide (
         /*specific_heat_capacity*/ // 29.0 * si::joule / (28.010 * si::gram * si::kelvin), // wikipedia data page
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
-                0.00728, 0.92688, 0.00010, 0.97052, 1.01709), 
+                0.00728, 0.92688, 0.00010, 0.97052, 1.01709,
+                 168.16, 518.16,  0.0, 3.0), 
                 // carbon monoxide, mean error: 0.3%, max error: 0.8%, range: 168.16-518.16K, 0-3MPa, stp estimate: 1.041
         /*thermal_conductivity*/   // 25.0 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
-                0.00045, 0.43412, 0.00055, 0.70174, -0.00365), 
+                0.00045, 0.43412, 0.00055, 0.70174, -0.00365,
+                 118.16, 518.16,  0.0, 3.0), 
                 // carbon monoxide, mean error: 0.8%, max error: 2.5%, range: 118.16-518.16K, 0-3MPa, stp estimate: 0.025
         /*dynamic_viscosity*/      // 1.74e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
-                0.26687, 1.09457, 0.33802, 0.70825, -1.67961), 
+                0.26687, 1.09457, 0.33802, 0.70825, -1.67961,
+                 118.16, 518.16,  0.0, 3.0), 
                 // carbon monoxide, mean error: 1.2%, max error: 2.9%, range: 118.16-518.16K, 0-3MPa, stp estimate: 16.311
         /*density*/                1.1858 *  si::kilogram/si::meter3, // Perry
         /*refractive_index*/       // 1.00036320, //https://refractiveindex.info
@@ -2010,7 +2044,8 @@ PartlyKnownCompound carbon_monoxide (
         /*dynamic_viscosity*/      // 0.170 * si::millipascal * si::second, // Johnson (1960)
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
-                 -4.9735, 97.67, -1.1088, 0.0, 0.0), // 68.15-131.37K
+                 -4.9735, 97.67, -1.1088, 0.0, 0.0,
+                  68.15, 131.37), // 68.15-131.37K
         /*density*/                
             // field::StateSample<si::density>(0.69953*si::gram/si::centimeter3, si::atmosphere, 100.93*si::kelvin), // Johnson (1960)
             get_dippr_liquid_density_temperature_function
@@ -2127,7 +2162,8 @@ PartlyKnownCompound ethane (
         /*specific_heat_capacity*/ // 52.49 * si::joule / (30.070 * si::gram * si::kelvin), // wikipedia data page
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
-                0.05856, 0.85039, 0.00090, 1.21385, 0.86559), 
+                0.05856, 0.85039, 0.00090, 1.21385, 0.86559,
+                 140.35, 640.35,  0.0, 3.0), 
                 // ethane, mean error: 1.3%, max error: 3.3%, range: 140.35-640.35K, 0-3MPa, stp estimate: 1.687
         /*thermal_conductivity*/   // 21.2 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
             get_sigmoid_exponent_pressure_temperature_function
@@ -2137,7 +2173,8 @@ PartlyKnownCompound ethane (
         /*dynamic_viscosity*/      // 9.4 * si::micropascal*si::second,
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
-                0.07538, 2.19443, 0.07385, 0.85870, -0.57044), 
+                0.07538, 2.19443, 0.07385, 0.85870, -0.57044,
+                 140.35, 640.35,  0.0, 3.0), 
                 // ethane, mean error: 1.2%, max error: 2.9%, range: 140.35-640.35K, 0-3MPa, stp estimate: 8.560
         /*density*/                0.668 * si::kilogram/si::meter3,
         /*refractive_index*/       // 1.0377,
@@ -2173,7 +2210,8 @@ PartlyKnownCompound ethane (
         /*dynamic_viscosity*/      
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
-                 -7.0046, 276.38, -0.6087, -3.11e-18, 7.0), // 90.35-300K
+                 -7.0046, 276.38, -0.6087, -3.11e-18, 7.0,
+                  90.35, 300), // 90.35-300K
         /*density*/                // 545.0 * si::kilogram/si::meter3,
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 30.070 * si::gram/si::decimeter3,
@@ -2286,7 +2324,8 @@ PartlyKnownCompound hydrogen_cyanide (
         /*dynamic_viscosity*/      
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
-                 -21.927, 1266.5, 1.5927, 0.0, 0.0), // 259.83-298.85
+                 -21.927, 1266.5, 1.5927, 0.0, 0.0,
+                  259.83, 298.85), // 259.83-298.85K
         /*density*/                // 687.6 * si::kilogram/si::meter3,
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 27.026 * si::gram/si::decimeter3,
@@ -2396,7 +2435,8 @@ PartlyKnownCompound ethanol (
         /*dynamic_viscosity*/      
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
-                 7.875, 781.98, -3.0418, 0.0, 0.0), // 200-440K
+                 7.875, 781.98, -3.0418, 0.0, 0.0,
+                  200, 440), // 200-440K
         /*density*/                // 0789.3 * si::kilogram/si::meter3,
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 46.068 * si::gram/si::decimeter3,
@@ -2516,7 +2556,8 @@ PartlyKnownCompound formaldehyde (
         /*dynamic_viscosity*/      // 0.1421 * si::millipascal * si::second, //pubchem
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
-                 -7.6591, 603.36, -0.53378, 0.0, 0.0), // 155.15-253.85
+                 -7.6591, 603.36, -0.53378, 0.0, 0.0,
+                  155.15, 253.85), // 155.15-253.85K
         /*density*/                // 0.8153 * si::kilogram/si::meter3,  // wikipedia
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 30.026 * si::gram/si::decimeter3,
@@ -2619,7 +2660,8 @@ PartlyKnownCompound formic_acid (
         /*dynamic_viscosity*/      // 1.607 * si::millipascal*si::second,
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
-                 -48.529, 3394.7, 5.3903, 0.0, 0.0), // 281.45-373.71
+                 -48.529, 3394.7, 5.3903, 0.0, 0.0,
+                  281.45, 373.71), // 281.45-373.71K
         /*density*/                // 1220.0 * si::kilogram/si::meter3,
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 46.026 * si::gram/si::decimeter3,
@@ -2709,17 +2751,20 @@ PartlyKnownCompound perflouromethane(
         /*specific_heat_capacity*/ 
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
-                0.00845, 1.30975, 0.00914, 0.70892, 0.16266), 
+                0.00845, 1.30975, 0.00914, 0.70892, 0.16266,
+                 148.94, 598.94,  0.0, 3.0), 
                 // tetrafluoromethane, mean error: 2.6%, max error: 5.3%, range: 148.94-598.94K, 0-3MPa, stp estimate: 0.651
         /*thermal_conductivity*/   // 16.0 * si::milliwatt/(si::meter*si::kelvin), // Huber & Harvey
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
-                0.00019, 1.49795, 0.00010, 0.95277, -0.00704), 
+                0.00019, 1.49795, 0.00010, 0.95277, -0.00704,
+                 148.94, 598.94,  0.0, 3.0), 
                 // tetrafluoromethane, mean error: 3.3%, max error: 8.4%, range: 148.94-598.94K, 0-3MPa, stp estimate: 0.015
         /*dynamic_viscosity*/      
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
-                0.22721, 1.71531, 0.16433, 0.82188, -0.84952), 
+                0.22721, 1.71531, 0.16433, 0.82188, -0.84952,
+                 148.94, 598.94,  0.0, 3.0), 
                 // tetrafluoromethane, mean error: 2.0%, max error: 4.9%, range: 148.94-598.94K, 0-3MPa, stp estimate: 15.680
         /*density*/                field::missing(),
         /*refractive_index*/       1.0004823
@@ -2740,7 +2785,8 @@ PartlyKnownCompound perflouromethane(
         /*dynamic_viscosity*/      
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
-                 -9.9212, 300.5, 0.0, 0.0, 0.0), // 89.56-145.1K
+                 -9.9212, 300.5, 0.0, 0.0, 0.0,
+                  89.56, 145.1), // 89.56-145.1K
         /*density*/                // 1890.0 * si::kilogram/si::meter3, //pubchem
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 88.0  * si::gram/si::decimeter3,
@@ -2824,7 +2870,8 @@ PartlyKnownCompound benzene (
         /*specific_heat_capacity*/ // 82.44 * si::joule / (79.109 * si::gram * si::kelvin),
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
-                0.11074, 0.98216, 0.00048, 1.26428, 0.48272), 
+                0.11074, 0.98216, 0.00048, 1.26428, 0.48272,
+                 300, 628.7,  0.0, 1.0), 
                 // benzene, mean error: 2.6%, max error: 7.1%, range: 300-628.7K, 0-1MPa, stp estimate: 1.069
         /*thermal_conductivity*/   
             get_dippr_gas_thermal_conductivity_temperature_function
@@ -2853,7 +2900,8 @@ PartlyKnownCompound benzene (
         /*dynamic_viscosity*/      // 0.601 * si::millipascal * si::second, // engineering toolbox, at 300K
             get_dippr_liquid_viscosity_temperature_function
                 (si::kelvin, si::pascal* si::second, 
-                 7.5117, 294.68, -2.794, 0.0, 0.0), // 278.68-545K
+                 7.5117, 294.68, -2.794, 0.0, 0.0,
+                  278.68, 545), // 278.68-545K
         /*density*/                // 879.0 * si::kilogram/si::meter3, // Perry
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 79.102 * si::gram/si::decimeter3,
@@ -3158,7 +3206,7 @@ PartlyKnownCompound  corundum (
         /*specific_heat_capacity*/ field::missing(),
         /*thermal_conductivity*/   field::missing(),
         // .dynamic_viscosity = 0.035 * si::pascal * si::second, // Blomquist (1978)
-        /*dynamic_viscosity*/      field::StateFunction<si::dynamic_viscosity>([](const si::pressure p, const si::temperature T){ return exp((11448.0*si::kelvin/T - 8.2734))*si::pascal*si::second; }), // Blomquist (1978)
+        /*dynamic_viscosity*/      field::StateFunction<si::dynamic_viscosity>([](const si::pressure p, const si::temperature T){ return exp((11448.0/std::clamp(T/si::kelvin, 2400.0, 2750.0) - 8.2734))*si::pascal*si::second; }), // Blomquist (1978)
         /*density*/                field::missing(),
         /*vapor_pressure*/         field::missing(),
         /*surface_tension*/        field::missing(),
@@ -3333,10 +3381,22 @@ PartlyKnownCompound carbon (
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ field::missing(),
-        /*thermal_conductivity*/   field::missing(),
+        /*specific_heat_capacity*/ 26.0 * si::joule / (12.011 * si::gram * si::kelvin), // Steinbeck (1990)
+            // NOTE: the following equation is reported, but fails dimensionality check
+            // field::StateFunction<si::specific_heat_capacity>([](const si::pressure p, const si::temperature T){
+            //     const si::energy fermi_energy = 16.9 * si::electronvolt;
+            //     const double pi = 3.1415926;
+            //     return 3.0*si::universal_gas_constant + pi*pi*si::universal_gas_constant*si::boltzmann_constant*T/(2.0*fermi_energy);
+            // }), // Steinbeck (1990)
+        /*thermal_conductivity*/   // 2.9 * si::watt / (si::centimeter*si::kelvin), // Steinbeck (1990)
+            field::StateFunction<si::thermal_conductivity>([](const si::pressure p, const si::temperature T){
+                const double pi = 3.1415926;
+                const auto rho1 = 39.5*si::microohm*si::centimeter;
+                return pi*pi*si::boltzmann_constant*si::boltzmann_constant*T  /
+                    (3.0*si::elementary_charge_constant*si::elementary_charge_constant*rho1);
+            }), // Steinbeck (1990)
         /*dynamic_viscosity*/      field::missing(),
-        /*density*/                field::missing(),
+        /*density*/                1.6*si::gram/si::centimeter3, // Bundy, referenced in Steinbeck (1990)
         /*vapor_pressure*/         
                 get_interpolated_temperature_function
                     (si::celcius, si::pascal,
@@ -4340,7 +4400,11 @@ PartlyKnownCompound  gold (
     phase::PartlyKnownLiquid {
         /*specific_heat_capacity*/ 7.0 * si::calorie/(196.967 * si::gram*si::kelvin), // Perry, 1336-1573K
         /*thermal_conductivity*/   105.0 * si::watt / (si::meter * si::kelvin), // Mills (1996)
-        /*dynamic_viscosity*/      field::missing(),
+        /*dynamic_viscosity*/      
+                get_interpolated_inverse_temperature_function
+                    (si::kelvin, si::centipoise,
+                     std::vector<double>{0.6, 0.725}, 
+                     std::vector<double>{4.0, 5.3  }), // Chapman (1966)
         /*density*/                17310.0 * si::kilogram/si::meter3, 
         /*vapor_pressure*/         
                 get_interpolated_temperature_function
@@ -4445,7 +4509,11 @@ PartlyKnownCompound  silver (
     phase::PartlyKnownLiquid {
         /*specific_heat_capacity*/ 8.2 * si::calorie/(107.868 * si::gram*si::kelvin), // Perry
         /*thermal_conductivity*/   180.0 * si::watt / (si::meter * si::kelvin), // Mills (1996)
-        /*dynamic_viscosity*/      field::missing(),
+        /*dynamic_viscosity*/      
+                get_interpolated_inverse_temperature_function
+                    (si::kelvin, si::centipoise,
+                     std::vector<double>{0.6, 0.8}, 
+                     std::vector<double>{2.4, 4.0}), // Chapman (1966)
         /*density*/                9320.0 * si::kilogram/si::meter3, 
         /*vapor_pressure*/         
                 get_interpolated_temperature_function
@@ -4549,7 +4617,11 @@ PartlyKnownCompound  copper (
     phase::PartlyKnownLiquid {
         /*specific_heat_capacity*/ field::missing(),
         /*thermal_conductivity*/   160.0 * si::watt / (si::meter * si::kelvin), // Mills (1996)
-        /*dynamic_viscosity*/      field::missing(),
+        /*dynamic_viscosity*/      
+                get_interpolated_inverse_temperature_function
+                    (si::kelvin, si::centipoise,
+                     std::vector<double>{0.6, 0.725}, 
+                     std::vector<double>{2.4, 5.0  }), // Chapman (1966)
         /*density*/                8020.0 * si::kilogram/si::meter3, 
         /*vapor_pressure*/         
                 get_interpolated_temperature_function

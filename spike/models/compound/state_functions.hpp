@@ -26,6 +26,20 @@ namespace compound {
             }
         );
     }
+    template<typename Tx, typename Ty>
+    field::OptionalStateField<Ty> get_interpolated_inverse_temperature_function(
+        const Tx xunits, const Ty yunits,
+        const std::vector<double>xs, 
+        const std::vector<double>ys
+    ){
+        return field::StateFunction<Ty>(
+            [xunits, yunits, xs, ys]
+            (const si::pressure p, const si::temperature T)
+            {
+                return math::lerp(xs, ys, 1.0/(T/xunits)) * yunits;
+            }
+        );
+    }
     template<typename TT, typename Ty>
     field::OptionalStateField<Ty> get_interpolated_pressure_temperature_function(
         const TT Tunits,  const Ty yunits,
@@ -70,14 +84,18 @@ namespace compound {
         const TT Tunits, const Tp punits, const Ty yunits, 
         const double pslope, const double pexponent, 
         const double Tslope, const double Texponent, 
-        const double intercept
+        const double intercept,
+        const double Tmin, const double Tmax, 
+        const double Pmin, const double Pmax
     ){
         return field::StateFunction<Ty>(
-            [Tunits, punits, yunits, pslope, pexponent, Tslope, Texponent, intercept]
+            [Tunits, punits, yunits, 
+             pslope, pexponent, Tslope, Texponent, intercept, 
+             Tmin, Tmax, Pmin, Pmax]
             (const si::pressure p, const si::temperature T)
             {
-                return (pslope*std::pow(p/punits, pexponent)
-                      + Tslope*std::pow(T/Tunits, Texponent)
+                return (pslope*std::pow(std::clamp(p/punits, Pmin, Pmax), pexponent)
+                      + Tslope*std::pow(std::clamp(T/Tunits, Tmin, Tmax), Texponent)
                       + intercept) * yunits;
             }
         );
@@ -185,13 +203,14 @@ namespace compound {
     template<typename Tx, typename Ty>
     field::OptionalStateField<Ty> get_dippr_liquid_viscosity_temperature_function(
         const Tx Tunits, const Ty yunits,
-        const double c1, const double c2, const double c3, const double c4, const double c5
+        const double c1, const double c2, const double c3, const double c4, const double c5,
+        const double Tmin, const double Tmax
     ){
         return field::StateFunction<Ty>(
-            [Tunits, yunits, c1, c2, c3, c4, c5]
+            [Tunits, yunits, c1, c2, c3, c4, c5, Tmin, Tmax]
             (const si::pressure p, const si::temperature T)
             {
-                double t = T/Tunits;
+                double t = std::clamp(T/Tunits, Tmin, Tmax);
                 return exp(c1 + c2/t + c3*std::log(t) + c4*std::pow(t,c5))*yunits;
             }
         );

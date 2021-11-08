@@ -209,7 +209,7 @@ namespace compound{
             double zeta = 2173.424 * pow(critical_temperature_in_kelvin, 1.0/6.0)  /  (sqrt(molar_mass_in_grams) * pow(critical_pressure_in_pascal, 2.0/3.0));
             double eta_zeta = eta_zeta_0 + acentric_factor * eta_zeta_1;
             double eta = eta_zeta / zeta;
-            return eta * si::pascal * si::second;
+            return std::max(eta, 1e-6) * si::pascal * si::second; // clamped not to fall below the lowest viscosity reported of any compound, helium
         }
 
         // Letsou-Stiel method: https://chemicals.readthedocs.io/chemicals.viscosity.html?highlight=letsou%20stiel#chemicals.viscosity.Letsou_Stiel
