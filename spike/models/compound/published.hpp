@@ -130,8 +130,9 @@ PartlyKnownCompound water (
             field::StateFunction<si::density>([](const si::pressure p, const si::temperature T) {
                 // Perry equation 119, specialized for water
                 // valid for 273.16-647.096K
-                si::temperature Tc = 647.096 * si::kelvin;
-                double tau = 1.0 - (T/Tc);
+                double Tc = 647.096;
+                double t = std::clamp(T/si::kelvin, 273.16, Tc);
+                double tau = 1.0 - (t/Tc);
                 double rho = 17.874 
                     + 35.618*pow(tau,0.33) 
                     + 19.655*pow(tau,0.66)
@@ -297,7 +298,8 @@ PartlyKnownCompound nitrogen (
             // field::StateSample<si::density>(0.4314*si::gram/si::centimeter3, si::atmosphere, 125.01*si::kelvin), // Johnson (1960)
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 28.013  * si::gram/si::decimeter3,
-                 3.2091, 0.2861, 126.2, 0.2966), // 63.15-126.2K
+                 3.2091, 0.2861, 126.2, 0.2966,
+                 63.15, 126.2), // 63.15-126.2K
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
@@ -534,7 +536,8 @@ PartlyKnownCompound oxygen (
             // field::StateSample<si::density>(0.6779*si::gram/si::centimeter3, si::atmosphere, 149.8*si::kelvin), // Johnson (1960)
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 31.9988 * si::gram/si::decimeter3,
-                 3.9143, 0.28772, 154.58, 0.2924), // 54.35-154.58K
+                 3.9143, 0.28772, 154.58, 0.2924,
+                 54.35, 154.58), // 54.35-154.58K
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
@@ -745,7 +748,8 @@ PartlyKnownCompound carbon_dioxide (
         /*density*/                // 1101.0 * si::kilogram/si::meter3,
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 44.01 * si::gram/si::decimeter3,
-                 2.768, 0.26212, 304.21, 0.2908), // 216.58-304.21
+                 2.768, 0.26212, 304.21, 0.2908,
+                 216.58, 304.21), // 216.58-304.21K
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
@@ -883,7 +887,8 @@ PartlyKnownCompound methane (
             // field::StateSample<si::density>(0.4407*si::gram/si::centimeter3, 33.8*si::kilopascal, 99.8*si::kelvin), // Johnson (1960)
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 16.043 * si::gram/si::decimeter3,
-                 2.9214, 0.28976, 190.56, 0.28881), // 90.69-190.56K
+                 2.9214, 0.28976, 190.56, 0.28881,
+                 90.69, 190.56), // 90.69-190.56K
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
@@ -1031,7 +1036,8 @@ PartlyKnownCompound argon (
         /*density*/                
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 39.948 * si::gram/si::decimeter3,
-                 3.8469, 0.2881, 150.86, 0.29783), // 83.78, 150.86
+                 3.8469, 0.2881, 150.86, 0.29783,
+                 3.78, 150.86), // 83.78, 150.86K
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
@@ -1172,7 +1178,8 @@ PartlyKnownCompound helium (
             // field::StateSample<si::density>(0.101*si::gram/si::centimeter3, si::atmosphere, 5.0*si::kelvin), // Johnson (1960)
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 4.0026 * si::gram/si::decimeter3,
-                 7.2475, 0.41865, 5.2, 0.24096), // 2.2-5.2K
+                 7.2475, 0.41865, 5.2, 0.24096,
+                 2.2, 5.2), // 2.2-5.2K
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
@@ -1320,8 +1327,9 @@ PartlyKnownCompound hydrogen (
                   13.95, 33), // 13.95-33K
         /*density*/                // 0.0708 * si::gram/si::milliliter,
             get_dippr_liquid_density_temperature_function
-                (si::kelvin, 2.016   * si::gram/si::decimeter3,
-                 5.414, 0.34893, 3319, 0.2706), // 13.95-33.19K
+                (si::kelvin, 2.016 * si::gram/si::decimeter3,
+                 5.414, 0.34893, 33.19, 0.2706,
+                 13.95, 33.19), // 13.95-33.19K
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
@@ -1457,7 +1465,8 @@ PartlyKnownCompound ammonia (
         /*density*/                // 681.97 * si::kilogram / si::meter3,  //encyclopedia.airliquide.com
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 17.031 * si::gram/si::decimeter3,
-                 3.5383, 0.25443, 405.65, 0.2888), // 195.41-405.65K
+                 3.5383, 0.25443, 405.65, 0.2888,
+                 195.41, 405.65), // 195.41-405.65K
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
@@ -1569,7 +1578,8 @@ PartlyKnownCompound ozone (
         /*density*/                // 1349.0 * si::kilogram / si::meter3, //encyclopedia.airliquide.com
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 47.998 * si::gram/si::decimeter3,
-                 3.3592, 0.29884, 261.0, 0.28523), // 80.15-261.0K
+                 3.3592, 0.29884, 261.0, 0.28523,
+                 80.15, 261.0), // 80.15-261.0K
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
@@ -1679,7 +1689,8 @@ PartlyKnownCompound nitrous_oxide (
         /*density*/                // 1230.458 * si::kilogram / si::meter3, 
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 44.012 * si::gram/si::decimeter3,
-                 2.781, 0.27244, 309.57, 0.2882), // 182.3-309.57K
+                 2.781, 0.27244, 309.57, 0.2882,
+                 182.3, 309.57), // 182.3-309.57K
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
@@ -1801,7 +1812,8 @@ PartlyKnownCompound  sulfur_dioxide (
         /*density*/                // 389.06 * si::kilogram / si::meter3, // encyclopedia.airliquide.com
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 64.064 * si::gram/si::decimeter3,
-                 2.106, 0.25842, 430.75, 0.2895), // 197.67-430.75K
+                 2.106, 0.25842, 430.75, 0.2895,
+                 197.67, 430.75), // 197.67-430.75K
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
@@ -1915,7 +1927,8 @@ PartlyKnownCompound  sulfur_dioxide (
         /*density*/                // 1230.458 * si::kilogram / si::meter3,  //encyclopedia.airliquide.com
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 30.006 * si::gram/si::decimeter3,
-                 5.246, 0.3044, 180.15, 0.242), // 109.5-180.15K
+                 5.246, 0.3044, 180.15, 0.242,
+                 109.5, 180.15), // 109.5-180.15K
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
@@ -2050,7 +2063,8 @@ PartlyKnownCompound carbon_monoxide (
             // field::StateSample<si::density>(0.69953*si::gram/si::centimeter3, si::atmosphere, 100.93*si::kelvin), // Johnson (1960)
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 28.010 * si::gram/si::decimeter3,
-                 2.897, 0.27532, 132.92, 0.2813), // 68.15-132.92
+                 2.897, 0.27532, 132.92, 0.2813,
+                 68.15, 132.92), // 68.15-132.92K
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
@@ -2215,7 +2229,8 @@ PartlyKnownCompound ethane (
         /*density*/                // 545.0 * si::kilogram/si::meter3,
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 30.070 * si::gram/si::decimeter3,
-                 1.9122, 0.27937, 305.32, 0.29187), // 90.35-305.32K
+                 1.9122, 0.27937, 305.32, 0.29187,
+                 90.35, 305.32), // 90.35-305.32K
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
@@ -2329,7 +2344,8 @@ PartlyKnownCompound hydrogen_cyanide (
         /*density*/                // 687.6 * si::kilogram/si::meter3,
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 27.026 * si::gram/si::decimeter3,
-                 1.3413, 0.18589, 456.65, 0.28206), // 259.83-456.65K
+                 1.3413, 0.18589, 456.65, 0.28206,
+                 259.83, 456.65), // 259.83-456.65K
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
@@ -2440,7 +2456,8 @@ PartlyKnownCompound ethanol (
         /*density*/                // 0789.3 * si::kilogram/si::meter3,
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 46.068 * si::gram/si::decimeter3,
-                 1.6288, 0.27469, 514.0, 0.23178), // 159.05-514K
+                 1.6288, 0.27469, 514.0, 0.23178,
+                 159.05, 514), // 159.05-514K
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
@@ -2561,7 +2578,8 @@ PartlyKnownCompound formaldehyde (
         /*density*/                // 0.8153 * si::kilogram/si::meter3,  // wikipedia
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 30.026 * si::gram/si::decimeter3,
-                 3.897011, 0.331636, 420.0, 0.28571), // 155.15-420.0K
+                 3.897011, 0.331636, 420.0, 0.28571,
+                 155.15, 420.0), // 155.15-420.0K
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
@@ -2665,7 +2683,8 @@ PartlyKnownCompound formic_acid (
         /*density*/                // 1220.0 * si::kilogram/si::meter3,
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 46.026 * si::gram/si::decimeter3,
-                 1.938, 0.24225, 588.0, 0.24435), // 281.45-588.0K
+                 1.938, 0.24225, 588.0, 0.24435,
+                 281.45, 588.0), // 281.45-588.0K
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
@@ -2790,7 +2809,8 @@ PartlyKnownCompound perflouromethane(
         /*density*/                // 1890.0 * si::kilogram/si::meter3, //pubchem
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 88.0  * si::gram/si::decimeter3,
-                 1.955, 0.27884, 227.51, 0.28571), // 89.56-227.51K
+                 1.955, 0.27884, 227.51, 0.28571,
+                 89.56, 227.51), // 89.56-227.51K
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
@@ -2905,7 +2925,8 @@ PartlyKnownCompound benzene (
         /*density*/                // 879.0 * si::kilogram/si::meter3, // Perry
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 79.102 * si::gram/si::decimeter3,
-                 1.0259, 0.266666, 562.05, 0.28394), // 278.68, 562.05
+                 1.0259, 0.266666, 562.05, 0.28394,
+                 278.68, 562.05), // 278.68-562.05K
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,

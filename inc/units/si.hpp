@@ -649,8 +649,8 @@ namespace si{
   constexpr  area micrometer2 (1e-12);
   constexpr  area millimeter2 (1e-6 );
   constexpr  area centimeter2 (1e-4 );
-  constexpr  area  decimeter2 (1e2  );
-  constexpr  area  decameter2 (1e-2 );
+  constexpr  area  decimeter2 (1e-2 );
+  constexpr  area  decameter2 (1e2  );
   constexpr  area hectometer2 (1e4  );
   constexpr  area  kilometer2 (1e6  );
   constexpr  area  megameter2 (1e12 );
@@ -671,8 +671,8 @@ namespace si{
   constexpr volume micrometer3 (1e-18);
   constexpr volume millimeter3 (1e-9 );
   constexpr volume centimeter3 (1e-6 );
-  constexpr volume  decimeter3 (1e3  );
-  constexpr volume  decameter3 (1e-3 );
+  constexpr volume  decimeter3 (1e-3 );
+  constexpr volume  decameter3 (1e3  );
   constexpr volume hectometer3 (1e6  );
   constexpr volume  kilometer3 (1e9  );
   constexpr volume  megameter3 (1e18 );

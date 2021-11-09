@@ -49,6 +49,8 @@
     CHECK(compound.liquid.thermal_conductivity(si::standard_pressure, si::standard_temperature) / (si::watt / (si::meter * si::kelvin)) > 0.01); /*based on helium*/ \
     CHECK(compound.liquid.dynamic_viscosity(si::standard_pressure, si::standard_temperature) / (si::pascal * si::second) < 1e8); /*based on mantle peridotite*/ \
     CHECK(compound.liquid.dynamic_viscosity(si::standard_pressure, si::standard_temperature) / (si::pascal * si::second) >= 1e-6); /*based on helium*/ \
+    CHECK(compound.liquid.density(si::standard_pressure, si::standard_temperature) / (si::gram / si::centimeter3) < 20.0); /*based on gold*/ \
+    CHECK(compound.liquid.density(si::standard_pressure, si::standard_temperature) / (si::gram / si::centimeter3) > 0.01); /*based on mercury*/ \
     CHECK(compound.solids.size() != 0);
 
     // compound.critical_point_volume
