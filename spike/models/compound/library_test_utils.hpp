@@ -53,6 +53,8 @@
     CHECK(compound.liquid.density(si::standard_pressure, si::standard_temperature) / (si::gram / si::centimeter3) > 0.01); /*based on mercury*/ \
     CHECK(compound.liquid.vapor_pressure(si::standard_pressure, si::standard_temperature) / si::pascal < 1e7); /*based on high temperature acetaldehyde*/ \
     CHECK(compound.liquid.vapor_pressure(si::standard_pressure, si::standard_temperature) / si::pascal > 0.1); /*based on low temperature ethylene glycol*/ \
+    CHECK(compound.liquid.surface_tension(si::standard_pressure, si::standard_temperature) / (si::millinewton/si::meter) < 3e3); /*based on molten copper */ \
+    CHECK(compound.liquid.surface_tension(si::standard_pressure, si::standard_temperature) / (si::millinewton/si::meter) > 0.001); /*based on liquid helium */ \
     CHECK(compound.solids.size() != 0);
 
     // compound.critical_point_volume
@@ -60,8 +62,6 @@
     // compound.simon_glatzel_slope
     // compound.simon_glatzel_exponent
     /*
-    compound.liquid.vapor_pressure(si::standard_pressure, si::standard_temperature)
-    compound.liquid.surface_tension(si::standard_pressure, si::standard_temperature)
     compound.liquid.refractive_index(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), si::standard_pressure, si::standard_temperature)
     compound.solids[i].specific_heat_capacity(si::standard_pressure, si::standard_temperature)
     compound.solids[i].thermal_conductivity(si::standard_pressure, si::standard_temperature)

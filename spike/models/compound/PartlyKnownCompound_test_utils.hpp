@@ -293,8 +293,9 @@ namespace compound
                 }),
             /*surface_tension*/            
                 get_refprop_liquid_surface_tension_temperature_function
-                    (647.01 * si::kelvin, si::millinewton/si::meter,
-                     -0.1306, 2.471, 0.2151, 1.233, 0.0, 0.0), // Mulero (2012)
+                    (si::kelvin, si::millinewton/si::meter,
+                     647.01, -0.1306, 2.471, 0.2151, 1.233, 0.0, 0.0,
+                     233.22, 646.15), // Mulero (2012)
             /*refractive_index*/       //1.33336,
                 get_interpolated_refractive_index_function
                     (si::micrometer, 

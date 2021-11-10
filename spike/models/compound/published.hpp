@@ -157,8 +157,9 @@ PartlyKnownCompound water (
             }),
         /*surface_tension*/            
             get_refprop_liquid_surface_tension_temperature_function
-                (647.01 * si::kelvin, si::millinewton/si::meter,
-                 -0.1306, 2.471, 0.2151, 1.233, 0.0, 0.0), // Mulero (2012)
+                (si::kelvin, si::newton/si::meter,
+                 647.01, -0.1306, 2.471, 0.2151, 1.233, 0.0, 0.0, 
+                 233.22, 646.15), // Mulero (2012)
         /*refractive_index*/       //1.33336,
             get_interpolated_refractive_index_function
                 (si::micrometer, 
@@ -308,8 +309,9 @@ PartlyKnownCompound nitrogen (
                   63.15, 126.2), // 63.15-126.2K
         /*surface_tension*/        
             get_refprop_liquid_surface_tension_temperature_function
-                (126.21 * si::kelvin, si::millinewton/si::meter,
-                 0.02898, 1.246, 0.0, 0.0, 0.0, 0.0), // Mulero (2012)
+                (si::kelvin, si::newton/si::meter,
+                 126.21, 0.02898, 1.246, 0.0, 0.0, 0.0, 0.0,
+                 64.8, 120.24), // Mulero (2012)
         /*refractive_index*/       1.19876
     },
 
@@ -547,8 +549,9 @@ PartlyKnownCompound oxygen (
                   54.36, 154.58), // 54.36-154.58K
         /*surface_tension*/        
             get_refprop_liquid_surface_tension_temperature_function
-                (154.59 * si::kelvin, si::millinewton/si::meter,
-                 0.03843, 1.225, 0.0, 0.0, 0.0, 0.0), // Mulero (2012)
+                (si::kelvin, si::newton/si::meter,
+                 154.59, 0.03843, 1.225, 0.0, 0.0, 0.0, 0.0,
+                 55.7, 152.08), // Mulero (2012)
         /*refractive_index*/       1.2243
     },
 
@@ -760,8 +763,9 @@ PartlyKnownCompound carbon_dioxide (
                   216.58, 304.21), // 216.58-304.21K
         /*surface_tension*/        
             get_refprop_liquid_surface_tension_temperature_function
-                (304.13 * si::kelvin, si::millinewton/si::meter,
-                 0.07863, 1.254, 0.0, 0.0, 0.0, 0.0), // Mulero (2012)
+                (si::kelvin, si::newton/si::meter,
+                 304.13, 0.07863, 1.254, 0.0, 0.0, 0.0, 0.0,
+                 216.55, 304.11), // Mulero (2012)
         /*refractive_index*/       1.6630
     },
 
@@ -900,8 +904,9 @@ PartlyKnownCompound methane (
                   90.69, 190.56), // 90.69-190.56K
         /*surface_tension*/        
             get_refprop_liquid_surface_tension_temperature_function
-                (190.56 * si::kelvin, si::millinewton/si::meter,
-                 0.03825, 1.191, -0.006024, 5.422, -0.0007065, 0.6161), // Mulero (2012)
+                (si::kelvin, si::newton/si::meter,
+                 190.56, 0.03825, 1.191, -0.006024, 5.422, -0.0007065, 0.6161,
+                 90.67, 188.84), // Mulero (2012)
         /*refractive_index*/       1.2730, 
     },
 
@@ -1050,8 +1055,9 @@ PartlyKnownCompound argon (
                   83.78, 150.86), // 83.78-150.86K
         /*surface_tension*/        
             get_refprop_liquid_surface_tension_temperature_function
-                (150.87 * si::kelvin, si::millinewton/si::meter,
-                 0.037, 1.25, 0.0, 0.0, 0.0, 0.0), // Mulero (2012)
+                (si::kelvin, si::newton/si::meter,
+                 150.87, 0.037, 1.25, 0.0, 0.0, 0.0, 0.0,
+                 83.82, 148.15), // Mulero (2012)
         /*refractive_index*/       1.23
     },
 
@@ -1193,8 +1199,9 @@ PartlyKnownCompound helium (
                   1.76, 5.2), // 1.76-5.2K
         /*surface_tension*/        
             get_refprop_liquid_surface_tension_temperature_function
-                (5.19 * si::kelvin, si::millinewton/si::meter,
-                 0.0004656, 1.040, 0.001889, 2.468, -0.002006, 2.661), // Mulero (2012)
+                (si::kelvin, si::newton/si::meter,
+                 5.19, 0.0004656, 1.040, 0.001889, 2.468, -0.002006, 2.661,
+                 0.0, 5.11), // Mulero (2012)
         /*refractive_index*/       1.02451
     },
 
@@ -1344,8 +1351,9 @@ PartlyKnownCompound hydrogen (
                   13.95, 33.19), // 13.95-33.19K
         /*surface_tension*/        
             get_refprop_liquid_surface_tension_temperature_function
-                (32.97 * si::kelvin, si::millinewton/si::meter,
-                 -1.4165, 0.63882, 0.746383, 0.659804, 0.675625, 0.619149), // Mulero (2012)
+                (si::kelvin, si::newton/si::meter,
+                 32.97, -1.4165, 0.63882, 0.746383, 0.659804, 0.675625, 0.619149,
+                 13.8, 31.0), // Mulero (2012)
         /*refractive_index*/       1.1096
     },
 
@@ -1482,8 +1490,9 @@ PartlyKnownCompound ammonia (
                   195.41, 405.65), // 195.41-405.65K
         /*surface_tension*/        // 0.021 * si::newton/si::meter, // 25C, engineering toolbox
             get_refprop_liquid_surface_tension_temperature_function
-                (405.56 * si::kelvin, si::millinewton/si::meter,
-                 0.1028, 1.211, -0.09453, 5.585, 0.0, 0.0), // Mulero (2012)
+                (si::kelvin, si::newton/si::meter,
+                 405.56, 0.1028, 1.211, -0.09453, 5.585, 0.0, 0.0,
+                 197.85, 403.15), // Mulero (2012)
         /*refractive_index*/       1.3944,
     },
 
@@ -1708,8 +1717,9 @@ PartlyKnownCompound nitrous_oxide (
                   182.3, 309.57),// 182.3-309.57K
         /*surface_tension*/        
             get_refprop_liquid_surface_tension_temperature_function
-                (309.52 * si::kelvin, si::millinewton/si::meter,
-                 0.07087, 1.204, 0.0, 0.0, 0.0, 0.0), // Mulero (2012)
+                (si::kelvin, si::newton/si::meter,
+                 309.52, 0.07087, 1.204, 0.0, 0.0, 0.0, 0.0,
+                 182.50, 293.15), // Mulero (2012)
         /*refractive_index*/       1.238
     },
 
@@ -1832,8 +1842,9 @@ PartlyKnownCompound  sulfur_dioxide (
                  197.67, 430.75),//197.67-430.75K
         /*surface_tension*/        
             get_refprop_liquid_surface_tension_temperature_function
-                (430.64 * si::kelvin, si::millinewton/si::meter,
-                 0.0803, 0.928, 0.0139, 1.570, -0.0114, 0.364), // Mulero (2012)
+                (si::kelvin, si::newton/si::meter,
+                 430.64, 0.0803, 0.928, 0.0139, 1.570, -0.0114, 0.364,
+                 189.15, 373.15), // Mulero (2012)
         /*refractive_index*/       1.3396
     },
 
@@ -2085,8 +2096,9 @@ PartlyKnownCompound carbon_monoxide (
                   68.15, 132.92), // 68.15-132.92K
         /*surface_tension*/        
             get_refprop_liquid_surface_tension_temperature_function
-                (132.86 * si::kelvin, si::millinewton/si::meter,
-                 0.02843, 1.148, 0.0, 0.0, 0.0, 0.0), // Mulero (2012)
+                (si::kelvin, si::newton/si::meter,
+                 132.86, 0.02843, 1.148, 0.0, 0.0, 0.0, 0.0,
+                 70.0, 91.89), // Mulero (2012)
         /*refractive_index*/       field::missing(),
     },
 
@@ -2252,8 +2264,9 @@ PartlyKnownCompound ethane (
                   90.35, 305.32), // 90.35-305.32K
         /*surface_tension*/        
             get_refprop_liquid_surface_tension_temperature_function
-                (305.36 * si::kelvin, si::millinewton/si::meter,
-                 0.07602, 1.320, -0.02912, 1.676, 0.0, 0.0), // Mulero (2012)
+                (si::kelvin, si::newton/si::meter,
+                 305.36, 0.07602, 1.320, -0.02912, 1.676, 0.0, 0.0,
+                 89.87, 304.93), // Mulero (2012)
         /*refractive_index*/       field::missing(),
     },
 
@@ -2481,8 +2494,9 @@ PartlyKnownCompound ethanol (
                  159.05, 514.0), 
         /*surface_tension*/        
             get_refprop_liquid_surface_tension_temperature_function
-                (351.44 * si::kelvin, si::millinewton/si::meter,
-                 0.05, 0.952, 0.0, 0.0, 0.0, 0.0), // Mulero (2012)
+                (si::kelvin, si::newton/si::meter,
+                 351.44, 0.05, 0.952, 0.0, 0.0, 0.0, 0.0,
+                 180.12, 513.15), // Mulero (2012)
         /*refractive_index*/       //1.361,  // wikipedia data page
         field::SpectralFunction<double>([](
             const si::wavenumber nlo, 
@@ -2954,8 +2968,9 @@ PartlyKnownCompound benzene (
                   278.68, 562.05), // 278.68-562.05K
         /*surface_tension*/        
             get_refprop_liquid_surface_tension_temperature_function
-                (562.0 * si::kelvin, si::millinewton/si::meter,
-                 0.07298, 1.232, -0.0007802, 0.8635, -0.0001756, 0.3065), // Mulero (2012)
+                (si::kelvin, si::newton/si::meter,
+                 562.0, 0.07298, 1.232, -0.0007802, 0.8635, -0.0001756, 0.3065,
+                 272.95, 553.15), // Mulero (2012)
         /*refractive_index*/       //1.5011,
         field::SpectralFunction<double>([](
             const si::wavenumber nlo, 

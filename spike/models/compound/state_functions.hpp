@@ -263,15 +263,16 @@ namespace compound {
     // from Mulero (2012)
     template<typename Tx, typename Ty>
     field::OptionalStateField<Ty> get_refprop_liquid_surface_tension_temperature_function(
-        const Tx Tc, const Ty yunits,
-        const double sigma1, const double n1, const double sigma2, const double n2, const double sigma3, const double n3
+        const Tx Tunits, const Ty yunits,
+        const double Tc, const double sigma0, const double n0, const double sigma1, const double n1, const double sigma2, const double n2,
+        const double Tmin, const double Tmax
     ){
         return field::StateFunction<Ty>(
-            [Tc, yunits, sigma1, n1, sigma2, n2, sigma3, n3]
+            [Tunits, yunits, Tc, sigma0, n0, sigma1, n1, sigma2, n2, Tmin, Tmax]
             (const si::pressure p, const si::temperature T)
             {
-                double t = T/Tc;
-                return ( sigma1*std::pow(1.0 - t, n1) + sigma2*std::pow(1.0 - t, n2) + sigma3*std::pow(1.0 - t, n3) )*yunits;
+                double Tr = std::clamp(T/Tunits, Tmin, Tmax)/Tc;
+                return ( sigma0*std::pow(1.0 - Tr, n0) + sigma1*std::pow(1.0 - Tr, n1) + sigma2*std::pow(1.0 - Tr, n2) )*yunits;
             }
         );
     }
