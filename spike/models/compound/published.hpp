@@ -148,7 +148,8 @@ PartlyKnownCompound water (
             //     7.94917, 1657.462, 1474.68, 213.69), // Physical and Chemical Equilibrium for Chemical Engineers, Second Edition. 
             // get_dippr_liquid_vapor_pressure_temperature_function
             //     (si::kelvin, si::pascal,
-            //      73.649, -7258.2, -7.3037, 4.1653e-6),//273.16-647.1K
+            //      73.649, -7258.2, -7.3037, 4.1653e-6,
+            //      273.16, 647.1),//273.16-647.1K
             field::StateFunction<si::pressure>([](const si::pressure p, const si::temperature T) {
                 // Buck equation
                 double C = T/si::celcius;
@@ -303,7 +304,8 @@ PartlyKnownCompound nitrogen (
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
-                 58.282, -1084.1, -8.3144, 0.044127, 1.0), // 63.15-126.2K
+                 58.282, -1084.1, -8.3144, 0.044127, 1.0,
+                  63.15, 126.2), // 63.15-126.2K
         /*surface_tension*/        
             get_refprop_liquid_surface_tension_temperature_function
                 (126.21 * si::kelvin, si::millinewton/si::meter,
@@ -541,7 +543,8 @@ PartlyKnownCompound oxygen (
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
-                 51.245, -1200.2, -6.4361, 0.028405, 1.0), // 54.36-154.58K
+                 51.245, -1200.2, -6.4361, 0.028405, 1.0,
+                  54.36, 154.58), // 54.36-154.58K
         /*surface_tension*/        
             get_refprop_liquid_surface_tension_temperature_function
                 (154.59 * si::kelvin, si::millinewton/si::meter,
@@ -753,7 +756,8 @@ PartlyKnownCompound carbon_dioxide (
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
-                 47.0169, -2839.0, -3.86388, 2.81e-16, 6.0), // 216.58-304.21K
+                 47.0169, -2839.0, -3.86388, 2.81e-16, 6.0,
+                  216.58, 304.21), // 216.58-304.21K
         /*surface_tension*/        
             get_refprop_liquid_surface_tension_temperature_function
                 (304.13 * si::kelvin, si::millinewton/si::meter,
@@ -892,7 +896,8 @@ PartlyKnownCompound methane (
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
-                 39.205, -1324.4, -3.4366, 0.000031019, 2.0), // 90.69-190.56K
+                 39.205, -1324.4, -3.4366, 0.000031019, 2.0,
+                  90.69, 190.56), // 90.69-190.56K
         /*surface_tension*/        
             get_refprop_liquid_surface_tension_temperature_function
                 (190.56 * si::kelvin, si::millinewton/si::meter,
@@ -1041,7 +1046,8 @@ PartlyKnownCompound argon (
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
-                 42.127, -1093.1, -4.1425, 0.000057254, 2.0), // 83.78-150.86K
+                 42.127, -1093.1, -4.1425, 0.000057254, 2.0,
+                  83.78, 150.86), // 83.78-150.86K
         /*surface_tension*/        
             get_refprop_liquid_surface_tension_temperature_function
                 (150.87 * si::kelvin, si::millinewton/si::meter,
@@ -1183,7 +1189,8 @@ PartlyKnownCompound helium (
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
-                 11.533, -8.99, 0.6724, 0.2743, 1.0), // 1.76-5.2K
+                 11.533, -8.99, 0.6724, 0.2743, 1.0,
+                  1.76, 5.2), // 1.76-5.2K
         /*surface_tension*/        
             get_refprop_liquid_surface_tension_temperature_function
                 (5.19 * si::kelvin, si::millinewton/si::meter,
@@ -1333,7 +1340,8 @@ PartlyKnownCompound hydrogen (
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
-                 12.69, -94.896, 1.1125, 0.00032915, 2.0), // 13.95-33.19K
+                 12.69, -94.896, 1.1125, 0.00032915, 2.0,
+                  13.95, 33.19), // 13.95-33.19K
         /*surface_tension*/        
             get_refprop_liquid_surface_tension_temperature_function
                 (32.97 * si::kelvin, si::millinewton/si::meter,
@@ -1470,7 +1478,8 @@ PartlyKnownCompound ammonia (
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
-                 90.483, -4669.7, -11.607, 0.017194, 1.0), // 195.41-405.65K
+                 90.483, -4669.7, -11.607, 0.017194, 1.0,
+                  195.41, 405.65), // 195.41-405.65K
         /*surface_tension*/        // 0.021 * si::newton/si::meter, // 25C, engineering toolbox
             get_refprop_liquid_surface_tension_temperature_function
                 (405.56 * si::kelvin, si::millinewton/si::meter,
@@ -1583,7 +1592,8 @@ PartlyKnownCompound ozone (
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
-                 40.067, -2204.8, -2.9351, 7.75e-16, 6.0), // 80.15-261K
+                 40.067, -2204.8, -2.9351, 7.75e-16, 6.0,
+                  80.15, 261), // 80.15-261K
         /*surface_tension*/        38.1 * si::dyne/si::centimeter, // -182.7C, Jenkins (1956)
         /*refractive_index*/       1.2226
     },
@@ -1694,7 +1704,8 @@ PartlyKnownCompound nitrous_oxide (
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
-                 96.512, -4045, -12.277, 0.00002886, 2.0),// 182.3-309.57K
+                 96.512, -4045, -12.277, 0.00002886, 2.0,
+                  182.3, 309.57),// 182.3-309.57K
         /*surface_tension*/        
             get_refprop_liquid_surface_tension_temperature_function
                 (309.52 * si::kelvin, si::millinewton/si::meter,
@@ -1817,7 +1828,8 @@ PartlyKnownCompound  sulfur_dioxide (
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
-                 47.365, -4084.5, -3.6469, 1.80e-17, 6.0),//197.67-430.75K
+                 47.365, -4084.5, -3.6469, 1.80e-17, 6.0,
+                 197.67, 430.75),//197.67-430.75K
         /*surface_tension*/        
             get_refprop_liquid_surface_tension_temperature_function
                 (430.64 * si::kelvin, si::millinewton/si::meter,
@@ -1932,7 +1944,8 @@ PartlyKnownCompound  sulfur_dioxide (
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
-                 72.974, -2650.0, -8.261, 9.7e-15, 6.0),// 109.5-180.15K
+                 72.974, -2650.0, -8.261, 9.7e-15, 6.0,
+                  109.5, 180.15),// 109.5-180.15K
         /*surface_tension*/        field::missing(),
         /*refractive_index*/       1.330
     },
@@ -2068,7 +2081,8 @@ PartlyKnownCompound carbon_monoxide (
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
-                 45.698, -1076.6, -4.8814, 0.000075673, 2.0), // 68.15-132.92K
+                 45.698, -1076.6, -4.8814, 0.000075673, 2.0,
+                  68.15, 132.92), // 68.15-132.92K
         /*surface_tension*/        
             get_refprop_liquid_surface_tension_temperature_function
                 (132.86 * si::kelvin, si::millinewton/si::meter,
@@ -2234,7 +2248,8 @@ PartlyKnownCompound ethane (
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
-                 51.857,-2598.7, -5.1283, 0.000014913, 2.0), // 90.35-305.32K
+                 51.857,-2598.7, -5.1283, 0.000014913, 2.0,
+                  90.35, 305.32), // 90.35-305.32K
         /*surface_tension*/        
             get_refprop_liquid_surface_tension_temperature_function
                 (305.36 * si::kelvin, si::millinewton/si::meter,
@@ -2349,7 +2364,8 @@ PartlyKnownCompound hydrogen_cyanide (
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
-                 36.75, -3927.1, -2.1245, 3.89e-17, 6.0),
+                 36.75, -3927.1, -2.1245, 3.89e-17, 6.0,
+                 259.83, 456.65),
         /*surface_tension*/        field::missing(),
         /*refractive_index*/       1.2614
     },
@@ -2461,7 +2477,8 @@ PartlyKnownCompound ethanol (
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
-                 73.304, -7122.3, -7.1424, 2.8853e-6, 2.0), 
+                 73.304, -7122.3, -7.1424, 2.8853e-6, 2.0,
+                 159.05, 514.0), 
         /*surface_tension*/        
             get_refprop_liquid_surface_tension_temperature_function
                 (351.44 * si::kelvin, si::millinewton/si::meter,
@@ -2583,7 +2600,8 @@ PartlyKnownCompound formaldehyde (
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
-                 49.3632, -3847.87, -4.09834, 4.64e-17, 6.0), // 155.15-420K
+                 49.3632, -3847.87, -4.09834, 4.64e-17, 6.0,
+                  155.15, 420), // 155.15-420K
         /*surface_tension*/        27.3797 * si::dyne/si::centimeter, // 25 °C, PubChem
         /*refractive_index*/       1.3714  // wikipedia
     },
@@ -2688,7 +2706,8 @@ PartlyKnownCompound formic_acid (
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
-                 43.8066, -5131.03, -3.18777, 2.37819e-6, 2.0), // 281.45-588K
+                 43.8066, -5131.03, -3.18777, 2.37819e-6, 2.0,
+                  281.45, 588), // 281.45-588K
         /*surface_tension*/        
             get_interpolated_temperature_function
                 (si::celcius, si::millinewton/si::meter,
@@ -2814,7 +2833,8 @@ PartlyKnownCompound perflouromethane(
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
-                 61.89, -2296.3, -7.086, 0.000034687, 2.0), // 89.56-227.51K
+                 61.89, -2296.3, -7.086, 0.000034687, 2.0,
+                  89.56, 227.51), // 89.56-227.51K
         /*surface_tension*/        field::missing(),
         /*refractive_index*/       field::missing(),
     },
@@ -2930,7 +2950,8 @@ PartlyKnownCompound benzene (
         /*vapor_pressure*/         
             get_dippr_liquid_vapor_pressure_temperature_function
                 (si::kelvin, si::pascal,
-                 83.107, -6486.2, -9.2194, 6.9844e-06, 2.0), // 278.68-562.05K
+                 83.107, -6486.2, -9.2194, 6.9844e-06, 2.0,
+                  278.68, 562.05), // 278.68-562.05K
         /*surface_tension*/        
             get_refprop_liquid_surface_tension_temperature_function
                 (562.0 * si::kelvin, si::millinewton/si::meter,

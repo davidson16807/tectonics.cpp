@@ -248,13 +248,14 @@ namespace compound {
     template<typename Tx, typename Ty>
     field::OptionalStateField<Ty> get_dippr_liquid_vapor_pressure_temperature_function(
         const Tx Tunits, const Ty yunits,
-        const double c1, const double c2, const double c3, const double c4, const double c5
+        const double c1, const double c2, const double c3, const double c4, const double c5,
+        const double Tmin, const double Tmax
     ){
         return field::StateFunction<Ty>(
-            [Tunits, yunits, c1, c2, c3, c4, c5]
+            [Tunits, yunits, c1, c2, c3, c4, c5, Tmin, Tmax]
             (const si::pressure p, const si::temperature T)
             {
-                double t = T/Tunits;
+                double t = std::clamp(T/Tunits, Tmin, Tmax);
                 return ( std::exp(c1 + c2/t + c3*std::log(t) + c4*std::pow(t,c5)) )*yunits;
             }
         );

@@ -47,10 +47,12 @@
     CHECK(compound.liquid.specific_heat_capacity(si::standard_pressure, si::standard_temperature) / (si::joule/(si::gram*si::kelvin)) > 0.1); /*based on gold*/ \
     CHECK(compound.liquid.thermal_conductivity(si::standard_pressure, si::standard_temperature) / (si::watt / (si::meter * si::kelvin)) < 200.0); /*based on silver*/ \
     CHECK(compound.liquid.thermal_conductivity(si::standard_pressure, si::standard_temperature) / (si::watt / (si::meter * si::kelvin)) > 0.01); /*based on helium*/ \
-    CHECK(compound.liquid.dynamic_viscosity(si::standard_pressure, si::standard_temperature) / (si::pascal * si::second) < 1e8); /*based on mantle peridotite*/ \
+    CHECK(compound.liquid.dynamic_viscosity(si::standard_pressure, si::standard_temperature) / (si::pascal * si::second) < 1e9); /*based on pitch*/ \
     CHECK(compound.liquid.dynamic_viscosity(si::standard_pressure, si::standard_temperature) / (si::pascal * si::second) >= 1e-6); /*based on helium*/ \
     CHECK(compound.liquid.density(si::standard_pressure, si::standard_temperature) / (si::gram / si::centimeter3) < 20.0); /*based on gold*/ \
     CHECK(compound.liquid.density(si::standard_pressure, si::standard_temperature) / (si::gram / si::centimeter3) > 0.01); /*based on mercury*/ \
+    CHECK(compound.liquid.vapor_pressure(si::standard_pressure, si::standard_temperature) / si::pascal < 1e7); /*based on high temperature acetaldehyde*/ \
+    CHECK(compound.liquid.vapor_pressure(si::standard_pressure, si::standard_temperature) / si::pascal > 0.1); /*based on low temperature ethylene glycol*/ \
     CHECK(compound.solids.size() != 0);
 
     // compound.critical_point_volume
@@ -58,8 +60,6 @@
     // compound.simon_glatzel_slope
     // compound.simon_glatzel_exponent
     /*
-    compound.liquid.dynamic_viscosity(si::standard_pressure, si::standard_temperature)
-    compound.liquid.density(si::standard_pressure, si::standard_temperature)
     compound.liquid.vapor_pressure(si::standard_pressure, si::standard_temperature)
     compound.liquid.surface_tension(si::standard_pressure, si::standard_temperature)
     compound.liquid.refractive_index(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), si::standard_pressure, si::standard_temperature)
