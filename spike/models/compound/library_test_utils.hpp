@@ -55,16 +55,24 @@
     CHECK(compound.liquid.vapor_pressure(si::standard_pressure, si::standard_temperature) / si::pascal > 0.1); /*based on low temperature ethylene glycol*/ \
     CHECK(compound.liquid.surface_tension(si::standard_pressure, si::standard_temperature) / (si::millinewton/si::meter) < 3e3); /*based on molten copper */ \
     CHECK(compound.liquid.surface_tension(si::standard_pressure, si::standard_temperature) / (si::millinewton/si::meter) > 0.001); /*based on liquid helium */ \
-    CHECK(compound.solids.size() != 0);
+    CHECK(compound.liquid.refractive_index(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), si::standard_pressure, si::standard_temperature) > 1.02 ); /*based on liquid helium*/ \
+    CHECK(compound.liquid.refractive_index(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), si::standard_pressure, si::standard_temperature) < 1.7 ); /*based on carbon disulfide*/ \
+    CHECK(compound.solids.size() != 0); \
+    for (std::size_t i = 0; i < compound.solids.size(); ++i) \
+    {                                                        \
+        CHECK(compound.solids[i].specific_heat_capacity(si::standard_pressure, si::standard_temperature) / (si::joule/(si::kilogram * si::kelvin)) < 30000.0); /*based on hydrogen*/ \
+        CHECK(compound.solids[i].specific_heat_capacity(si::standard_pressure, si::standard_temperature) / (si::joule/(si::kilogram * si::kelvin)) > 116.0); /*based on uranium*/ \
+        CHECK(compound.solids[i].thermal_conductivity(si::standard_pressure, si::standard_temperature) / (si::watt/(si::meter * si::kelvin)) < 3000.0); /*based on boron arsenide*/ \
+        CHECK(compound.solids[i].thermal_conductivity(si::standard_pressure, si::standard_temperature) / (si::watt/(si::meter * si::kelvin)) > 0.01); /*based on aerogel*/ \
+    }
 
     // compound.critical_point_volume
     // compound.critical_point_compressibility
     // compound.simon_glatzel_slope
     // compound.simon_glatzel_exponent
     /*
-    compound.liquid.refractive_index(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), si::standard_pressure, si::standard_temperature)
-    compound.solids[i].specific_heat_capacity(si::standard_pressure, si::standard_temperature)
-    compound.solids[i].thermal_conductivity(si::standard_pressure, si::standard_temperature)
+    CHECK(compound.solids[i].dynamic_viscosity(si::standard_pressure, si::standard_temperature) / (si::pascal * si::second) < 1e22); based on goethite
+    CHECK(compound.solids[i].dynamic_viscosity(si::standard_pressure, si::standard_temperature) / (si::pascal * si::second) > 1e11); based on goethite
     compound.solids[i].dynamic_viscosity(si::standard_pressure, si::standard_temperature)
     compound.solids[i].density(si::standard_pressure, si::standard_temperature)
     compound.solids[i].vapor_pressure(si::standard_pressure, si::standard_temperature)
@@ -83,9 +91,6 @@
     compound.solids[i].tensile_yield_strength(si::standard_pressure, si::standard_temperature)
     compound.solids[i].shear_yield_strength(si::standard_pressure, si::standard_temperature)
     compound.solids[i].chemical_susceptibility_estimate
-    for (std::size_t strata_i = 0; strata_i < crust1.size(); ++strata_i) \
-    {                                                         \
-        strata::Strata<L,M> strata1; crust1[strata_i].unpack(strata1);\
-        STRATA_VALID(strata1) \
-    }
+        strata::Strata<L,M> strata1; crust1[i].unpack(strata1);
+        STRATA_VALID(strata1) 
     */

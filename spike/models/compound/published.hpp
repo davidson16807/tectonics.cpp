@@ -4229,7 +4229,11 @@ PartlyKnownCompound  goethite (
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
 
-            /*specific_heat_capacity*/            0.701 * si::joule / (88.85 * si::gram * si::kelvin), // Majzlan (2003)
+            /*specific_heat_capacity*/            
+                get_interpolated_temperature_function  // Majzlan (2003)
+                    (si::kelvin, si::joule/(si::kelvin * 88.85 * si::gram),
+                     std::vector<double>{10.0,   25.0,  150.0, 250.0, 375.0 }, 
+                     std::vector<double>{0.0339, 0.701, 38.13, 64.48, 91.33 }), // Perry
             /*thermal_conductivity*/              2.91 * si::watt / (si::meter * si::kelvin), // Cermak (1988)
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           4300.0 * si::kilogram/si::meter3,
