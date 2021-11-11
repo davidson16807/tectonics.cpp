@@ -328,9 +328,10 @@ PartlyKnownCompound nitrogen (
                     return 180.2*pow((T/si::kelvin), 0.1041)*si::watt / (si::meter * si::kelvin);
                 }), // wikipedia
             /*dynamic_viscosity*/
-                field::StateFunction<si::dynamic_viscosity>([](si::pressure p, si::temperature T){ 
-                    return math::mix(2.5e9, 0.6e9, math::linearstep(45.0, 56.0, T/si::kelvin))*si::pascal*si::second;
-                }), // Yamashita 2010
+                field::missing(),
+                // field::StateFunction<si::dynamic_viscosity>([](si::pressure p, si::temperature T){ 
+                //     return math::mix(2.5e9, 0.6e9, math::linearstep(45.0, 56.0, T/si::kelvin))*si::pascal*si::second;
+                // }), // Yamashita 2010
             /*density*/                           
                 field::StateSample<si::density>(1.0265*si::gram/si::centimeter3, si::standard_pressure, 20.7*si::kelvin), // Johnson (1960)
             /*vapor_pressure*/                    
@@ -389,9 +390,10 @@ PartlyKnownCompound nitrogen (
                     return 180.2*pow((T/si::kelvin), 0.1041)*si::watt / (si::meter * si::kelvin);
                 }), // wikipedia
             /*dynamic_viscosity*/
-                field::StateFunction<si::dynamic_viscosity>([](si::pressure p, si::temperature T){ 
-                    return math::mix(2.5e9, 0.6e9, math::linearstep(45.0, 56.0, T/si::kelvin))*si::pascal*si::second;
-                }), // Yamashita 2010
+                field::missing(),
+                // field::StateFunction<si::dynamic_viscosity>([](si::pressure p, si::temperature T){ 
+                //     return math::mix(2.5e9, 0.6e9, math::linearstep(45.0, 56.0, T/si::kelvin))*si::pascal*si::second;
+                // }), // Yamashita 2010
             /*density*/                           
                 field::StateSample<si::density>(1.0265*si::gram/si::centimeter3, si::standard_pressure, 20.7*si::kelvin), // Johnson (1960)
             /*vapor_pressure*/                    
@@ -4802,7 +4804,7 @@ PartlyKnownCompound  magnetite (
             /*specific_heat_capacity*/            // 0.6 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988)
                 get_perry_temperature_function(si::kelvin, si::calorie/(231.53 * si::gram*si::kelvin), 41.17, 0.01882, -979500.0, 0.0),
             /*thermal_conductivity*/              5.1 * si::watt / (si::centimeter * si::kelvin), // Cermak (1988), wikipedia, for vitrous silica
-            /*dynamic_viscosity*/                 3e8 * si::pascal * si::second, // Melosh (2011), from Hiesinger (2007), for venusian lava flows, middle of range on log scale
+            /*dynamic_viscosity*/                 field::missing(), // 3e8 * si::pascal * si::second, // Melosh (2011), from Hiesinger (2007), for venusian lava flows, middle of range on log scale
             /*density*/                           5170.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  
