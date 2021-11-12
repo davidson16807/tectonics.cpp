@@ -4513,17 +4513,10 @@ PartlyKnownCompound  gold (
                      std::vector<double>{1869.0, 2154.0, 2521.0, 2966.0 }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  
-                field::SpectralFunction<double>([](
-                    const si::wavenumber nlo, 
-                    const si::wavenumber nhi, 
-                    const si::pressure p, 
-                    const si::temperature T
-                ) {
-                    double l = (2.0 / (nhi+nlo) / si::micrometer);
-                    constexpr double n = 0.35018f; 
-                    constexpr double dndl = -4.1791f;
-                    return n + dndl * l;
-                }),
+                get_interpolated_refractive_index_function
+                    (si::micrometer, 
+                     std::vector<double>{-5.082, -3.906, -2.450, -2.110, -1.906, -1.833, -1.751, -1.605, -1.508, -1.390, -1.268, -1.082, -0.835, -0.529, -0.286,  2.394},
+                     std::vector<double>{   1.0,    1.0,  0.992,   0.97,  0.889,  0.865,  0.828,  0.795,  0.754,  0.844,   1.08,   1.54,  1.666,  1.927,  0.878,  345.0}), // Hagemann (1974)
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -4621,17 +4614,10 @@ PartlyKnownCompound  silver (
                      std::vector<double>{1357.0, 1575.0, 1865.0, 2212.0 }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  
-                field::SpectralFunction<double>([](
-                    const si::wavenumber nlo, 
-                    const si::wavenumber nhi, 
-                    const si::pressure p, 
-                    const si::temperature T
-                ) {
-                    double l = (2.0 / (nhi+nlo) / si::micrometer);
-                    constexpr double n = 0.051585f; 
-                    constexpr double dndl = 0.28818f;
-                    return n + dndl * l;
-                }),
+                get_interpolated_refractive_index_function
+                    (si::micrometer, 
+                     std::vector<double>{-5.605, -4.207, -3.304, -2.450, -2.082, -1.809, -1.684, -1.578, -1.438, -1.329, -1.239, -1.020, -0.647, -0.482,  0.394, 2.394},
+                     std::vector<double>{ 1.003,  0.999,  1.001,  1.001,  0.963,  0.848,  0.873,  0.893,  0.879,  0.889,  1.368,  1.655,  1.446,  0.527,  0.669, 531  }), // Hagemann (1974)
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -4730,17 +4716,10 @@ PartlyKnownCompound  copper (
                      std::vector<double>{1628.0, 1879.0, 2207.0, 2595.0 }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  
-                field::SpectralFunction<double>([](
-                    const si::wavenumber nlo, 
-                    const si::wavenumber nhi, 
-                    const si::pressure p, 
-                    const si::temperature T
-                ) {
-                    double l = (2.0 / (nhi+nlo) / si::micrometer);
-                    constexpr double n = 0.059513f; 
-                    constexpr double dndl = 13.100f;
-                    return n + dndl * l;
-                }),
+                get_interpolated_refractive_index_function
+                    (si::micrometer, 
+                     std::vector<double>{-2.985, -2.207, -1.841, -1.781, -1.719, -1.647, -1.559, -1.450, -1.304, -1.096, -0.835, -0.605, -0.383, -0.161,  2.394},
+                     std::vector<double>{ 0.999,  0.978,  0.966, 0.983,   0.966,  0.958,  0.949,  0.917,   0.96,  0.981,  1.029,  1.47,   1.184,  0.213,  270.0}), // Hagemann (1974)
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
