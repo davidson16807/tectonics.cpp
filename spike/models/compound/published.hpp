@@ -3730,7 +3730,7 @@ PartlyKnownCompound  quartz (
                 get_interpolated_temperature_function
                     (si::kelvin, si::millimeter_mercury,
                      std::vector<double>{1732.0, 1969.0, 2227.0 }, 
-                     std::vector<double>{10.0,   100.0,  760.0  }), // Perry
+                     std::vector<double>{10.0,   100.0,  760.0  }), // Perry, nonspecific solid phase
             /*refractive_index*/                  1.4585,  // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
             /*spectral_reflectance*/              
                 field::SpectralFunction<double>([](
@@ -3770,7 +3770,11 @@ PartlyKnownCompound  quartz (
             /*thermal_conductivity*/              field::missing(),// 1.36 * si::watt / (si::centimeter * si::kelvin), // Cermak (1988), wikipedia, for vitreous silica
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           2533.0 *  si::kilogram/si::meter3, // 2650 alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
-            /*vapor_pressure*/                    field::missing(),
+            /*vapor_pressure*/                    
+                get_interpolated_temperature_function
+                    (si::kelvin, si::millimeter_mercury,
+                     std::vector<double>{1732.0, 1969.0, 2227.0 }, 
+                     std::vector<double>{10.0,   100.0,  760.0  }), // Perry, nonspecific solid phase
             /*refractive_index*/                  field::missing(),// 1.4585,  // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
             /*spectral_reflectance*/              field::missing(),
 
@@ -3796,7 +3800,11 @@ PartlyKnownCompound  quartz (
             /*thermal_conductivity*/              field::missing(),// 1.36 * si::watt / (si::centimeter * si::kelvin), // Cermak (1988), wikipedia, for vitreous silica
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           2334.0 *  si::kilogram/si::meter3, // 2650 alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
-            /*vapor_pressure*/                    field::missing(),
+            /*vapor_pressure*/                    
+                get_interpolated_temperature_function
+                    (si::kelvin, si::millimeter_mercury,
+                     std::vector<double>{1732.0, 1969.0, 2227.0 }, 
+                     std::vector<double>{10.0,   100.0,  760.0  }), // Perry, nonspecific solid phase
             /*refractive_index*/                  field::missing(),// 1.4585,  // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
             /*spectral_reflectance*/              field::missing(),
 
@@ -3822,7 +3830,11 @@ PartlyKnownCompound  quartz (
             /*thermal_conductivity*/              field::missing(),// 1.36 * si::watt / (si::centimeter * si::kelvin), // Cermak (1988), wikipedia, for vitreous silica
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           2334.0 *  si::kilogram/si::meter3, // 2650 alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
-            /*vapor_pressure*/                    field::missing(),
+            /*vapor_pressure*/                    
+                get_interpolated_temperature_function
+                    (si::kelvin, si::millimeter_mercury,
+                     std::vector<double>{1732.0, 1969.0, 2227.0 }, 
+                     std::vector<double>{10.0,   100.0,  760.0  }), // Perry, nonspecific solid phase
             /*refractive_index*/                  field::missing(),// 1.4585,  // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
             /*spectral_reflectance*/              field::missing(),
 

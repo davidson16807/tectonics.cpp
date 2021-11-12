@@ -68,6 +68,8 @@
         CHECK(compound.solids[i].dynamic_viscosity(si::standard_pressure, si::standard_temperature) / (si::pascal * si::second) > 1e10); /*based on ice*/ \
         CHECK(compound.solids[i].density(si::standard_pressure, si::standard_temperature) / (si::kilogram / si::meter3) < 30000.0); /*based on iridium*/ \
         CHECK(compound.solids[i].density(si::standard_pressure, si::standard_temperature) / (si::kilogram / si::meter3) > 1.5); /*based on aerogel*/ \
+        CHECK(compound.solids[i].vapor_pressure(si::standard_pressure, si::standard_temperature) / si::kilopascal < 300.0); /*based on tetraflourosilane*/ \
+        CHECK(compound.solids[i].vapor_pressure(si::standard_pressure, si::standard_temperature) / si::pascal > 0.001); /*based on phenazine*/ \
     }
 
     // compound.critical_point_volume
@@ -75,7 +77,6 @@
     // compound.simon_glatzel_slope
     // compound.simon_glatzel_exponent
     /*
-    compound.solids[i].vapor_pressure(si::standard_pressure, si::standard_temperature)
     compound.solids[i].refractive_index(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), si::standard_pressure, si::standard_temperature)
     compound.solids[i].spectral_reflectance(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), si::standard_pressure, si::standard_temperature)
     compound.solids[i].bulk_modulus(si::standard_pressure, si::standard_temperature)
@@ -91,6 +92,4 @@
     compound.solids[i].tensile_yield_strength(si::standard_pressure, si::standard_temperature)
     compound.solids[i].shear_yield_strength(si::standard_pressure, si::standard_temperature)
     compound.solids[i].chemical_susceptibility_estimate
-        strata::Strata<L,M> strata1; crust1[i].unpack(strata1);
-        STRATA_VALID(strata1) 
     */
