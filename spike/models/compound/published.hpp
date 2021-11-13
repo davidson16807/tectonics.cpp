@@ -163,8 +163,15 @@ PartlyKnownCompound water (
         /*refractive_index*/       //1.33336,
             get_interpolated_refractive_index_function
                 (si::micrometer, 
-                 std::vector<double>{-0.69, -0.53,  0.24,  0.36,  0.41,  0.45,  0.50,  0.56,  0.65,  0.73,  0.77,  0.79,  0.84,  0.97,  1.08,  1.27,  1.33,  1.46,  1.59,  1.68,  1.85,  2.00,  2.05,  2.08,  2.30},
-                 std::vector<double>{1.391, 1.351, 1.315, 1.288, 1.243, 1.148, 1.476, 1.382, 1.337, 1.310, 1.243, 1.346, 1.324, 1.256, 1.117, 1.458, 1.490, 1.548, 1.526, 1.548, 1.841, 1.957, 1.957, 2.002, 2.124}),
+                 std::vector<double>{0.2,   0.3,   0.425,  0.55, 0.675,   0.8, 0.925,   1.4,   2.4,   2.8,  3.05,  3.3,   5.6,   6.6,   7.6,  13.0,  15.5,  18.0,  21.0,  26.0,  32.0,  42.0,  60.0, 110.0, 160.0,200.0},
+                 std::vector<double>{1.396, 1.349, 1.338, 1.333, 1.331, 1.329, 1.328, 1.321, 1.279, 1.142, 1.426, 1.45, 1.289, 1.334, 1.302, 1.146, 1.297, 1.423, 1.487, 1.539, 1.546, 1.522, 1.703, 1.966, 2.081, 2.13}),
+                // Hale (1973)
+        /*extinction_coefficient*/ 
+            get_interpolated_refractive_index_function
+                (si::micrometer, 
+                 std::vector<double>{0.2,     0.3,     0.425,   0.55,     0.675,    0.8,      0.925,    1.4,      2.8,   3.0,   3.3,    3.6,     4.1,     4.6,    5.6,    6.1,      6.6,    9.2,   10.5,  13.0,  15.5,  18.0,  32.0,  60.0, 200.0},
+                 std::vector<double>{1.1e-07, 1.6e-08, 1.3e-09, 1.96e-09, 2.23e-08, 1.25e-07, 1.06e-06, 0.000138, 0.115, 0.272, 0.0368, 0.00515, 0.00562, 0.0147, 0.0142, 0.131, 0.0356, 0.0415, 0.0662, 0.305, 0.414, 0.426, 0.324, 0.587, 0.504})
+                // Hale (1973)
     },
 
     /*solid*/ 
@@ -313,7 +320,8 @@ PartlyKnownCompound nitrogen (
                 (si::kelvin, si::newton/si::meter,
                  126.21, 0.02898, 1.246, 0.0, 0.0, 0.0, 0.0,
                  64.8, 120.24), // Mulero (2012)
-        /*refractive_index*/       1.19876
+        /*refractive_index*/       1.19876,
+        /*extinction_coefficient*/        field::missing()
     },
 
     /*solid*/ 
@@ -557,7 +565,8 @@ PartlyKnownCompound oxygen (
                 (si::kelvin, si::newton/si::meter,
                  154.59, 0.03843, 1.225, 0.0, 0.0, 0.0, 0.0,
                  55.7, 152.08), // Mulero (2012)
-        /*refractive_index*/       1.2243
+        /*refractive_index*/       1.2243,
+        /*extinction_coefficient*/ field::missing()
     },
 
     /*solid*/ 
@@ -774,7 +783,9 @@ PartlyKnownCompound carbon_dioxide (
                 (si::kelvin, si::newton/si::meter,
                  304.13, 0.07863, 1.254, 0.0, 0.0, 0.0, 0.0,
                  216.55, 304.11), // Mulero (2012)
-        /*refractive_index*/       1.6630
+        /*refractive_index*/       1.6630,
+        /*extinction_coefficient*/ field::missing()
+
     },
 
     /*solid*/ 
@@ -917,7 +928,9 @@ PartlyKnownCompound methane (
                  190.56, 0.03825, 1.191, -0.006024, 5.422, -0.0007065, 0.6161,
                  90.67, 188.84), // Mulero (2012)
         /*refractive_index*/       1.2730, 
+        /*extinction_coefficient*/ field::missing()
     },
+
 
 
     /*solid*/ 
@@ -1029,7 +1042,7 @@ PartlyKnownCompound argon (
                 + 2.50141e-3/(91.012  - invl2)
                 + 5.00283e-4/(87.892  - invl2)
                 + 5.22343e-2/(214.02  - invl2);
-        }) 
+        })
     },
 
     /*liquid*/
@@ -1068,7 +1081,9 @@ PartlyKnownCompound argon (
                 (si::kelvin, si::newton/si::meter,
                  150.87, 0.037, 1.25, 0.0, 0.0, 0.0, 0.0,
                  83.82, 148.15), // Mulero (2012)
-        /*refractive_index*/       1.23
+        /*refractive_index*/       1.23,
+        /*extinction_coefficient*/ field::missing()
+
     },
 
     /*solid*/ 
@@ -1177,7 +1192,7 @@ PartlyKnownCompound helium (
                 double invl2 = 1.0/(l*l);
                 return 1.0
                     + 0.014755297f/(426.29740f  - invl2);
-            }) 
+            })
     },
 
     /*liquid*/
@@ -1213,7 +1228,9 @@ PartlyKnownCompound helium (
                 (si::kelvin, si::newton/si::meter,
                  5.19, 0.0004656, 1.040, 0.001889, 2.468, -0.002006, 2.661,
                  0.0, 5.11), // Mulero (2012)
-        /*refractive_index*/       1.02451
+        /*refractive_index*/       1.02451,
+        /*extinction_coefficient*/ field::missing()
+
     },
 
     /*solid*/ 
@@ -1366,7 +1383,9 @@ PartlyKnownCompound hydrogen (
                 (si::kelvin, si::newton/si::meter,
                  32.97, -1.4165, 0.63882, 0.746383, 0.659804, 0.675625, 0.619149,
                  13.8, 31.0), // Mulero (2012)
-        /*refractive_index*/       1.1096
+        /*refractive_index*/       1.1096,
+        /*extinction_coefficient*/ field::missing()
+
     },
 
     /*solid*/ 
@@ -1507,6 +1526,8 @@ PartlyKnownCompound ammonia (
                  405.56, 0.1028, 1.211, -0.09453, 5.585, 0.0, 0.0,
                  197.85, 403.15), // Mulero (2012)
         /*refractive_index*/       1.3944,
+        /*extinction_coefficient*/ field::missing()
+
     },
 
     /*solid*/ 
@@ -1618,7 +1639,9 @@ PartlyKnownCompound ozone (
                  40.067, -2204.8, -2.9351, 7.75e-16, 6.0,
                   80.15, 261), // 80.15-261K
         /*surface_tension*/        38.1 * si::dyne/si::centimeter, // -182.7C, Jenkins (1956)
-        /*refractive_index*/       1.2226
+        /*refractive_index*/       1.2226,
+        /*extinction_coefficient*/ field::missing()
+
     },
 
     /*solid*/ 
@@ -1735,7 +1758,9 @@ PartlyKnownCompound nitrous_oxide (
                 (si::kelvin, si::newton/si::meter,
                  309.52, 0.07087, 1.204, 0.0, 0.0, 0.0, 0.0,
                  182.50, 293.15), // Mulero (2012)
-        /*refractive_index*/       1.238
+        /*refractive_index*/       1.238,
+        /*extinction_coefficient*/ field::missing()
+
     },
 
     /*solid*/ 
@@ -1861,7 +1886,9 @@ PartlyKnownCompound  sulfur_dioxide (
                 (si::kelvin, si::newton/si::meter,
                  430.64, 0.0803, 0.928, 0.0139, 1.570, -0.0114, 0.364,
                  189.15, 373.15), // Mulero (2012)
-        /*refractive_index*/       1.3396
+        /*refractive_index*/       1.3396,
+        /*extinction_coefficient*/ field::missing()
+
     },
 
     /*solid*/ 
@@ -1975,7 +2002,9 @@ PartlyKnownCompound  sulfur_dioxide (
                  72.974, -2650.0, -8.261, 9.7e-15, 6.0,
                   109.5, 180.15),// 109.5-180.15K
         /*surface_tension*/        field::missing(),
-        /*refractive_index*/       1.330
+        /*refractive_index*/       1.330,
+        /*extinction_coefficient*/ field::missing()
+
     },
 
     /*solid*/ 
@@ -2118,6 +2147,8 @@ PartlyKnownCompound carbon_monoxide (
                  132.86, 0.02843, 1.148, 0.0, 0.0, 0.0, 0.0,
                  70.0, 91.89), // Mulero (2012)
         /*refractive_index*/       field::missing(),
+        /*extinction_coefficient*/ field::missing()
+
     },
 
     /*solid*/ 
@@ -2288,6 +2319,8 @@ PartlyKnownCompound ethane (
                  305.36, 0.07602, 1.320, -0.02912, 1.676, 0.0, 0.0,
                  89.87, 304.93), // Mulero (2012)
         /*refractive_index*/       field::missing(),
+        /*extinction_coefficient*/ field::missing()
+
     },
 
     /*solid*/ 
@@ -2401,7 +2434,9 @@ PartlyKnownCompound hydrogen_cyanide (
                  36.75, -3927.1, -2.1245, 3.89e-17, 6.0,
                  259.83, 456.65),
         /*surface_tension*/        field::missing(),
-        /*refractive_index*/       1.2614
+        /*refractive_index*/       1.2614,
+        /*extinction_coefficient*/ field::missing()
+
     },
 
     /*solid*/ 
@@ -2531,7 +2566,9 @@ PartlyKnownCompound ethanol (
             return 1.35265f
                 + 0.00306 * invl2
                 + 0.00002 * invl2*invl2;
-        })
+        }),
+        /*extinction_coefficient*/        field::missing()
+
     },
 
     /*solid*/ 
@@ -2640,7 +2677,9 @@ PartlyKnownCompound formaldehyde (
                  49.3632, -3847.87, -4.09834, 4.64e-17, 6.0,
                   155.15, 420), // 155.15-420K
         /*surface_tension*/        27.3797 * si::dyne/si::centimeter, // 25 °C, PubChem
-        /*refractive_index*/       1.3714  // wikipedia
+        /*refractive_index*/       1.3714,  // wikipedia
+        /*extinction_coefficient*/ field::missing()
+
     },
 
     /*solid*/ 
@@ -2751,7 +2790,9 @@ PartlyKnownCompound formic_acid (
                 (si::celcius, si::millinewton/si::meter,
                  std::vector<double>{ 25.0,  50.0,  75.0 }, 
                  std::vector<double>{37.13, 34.38, 31.64 }), 
-        /*refractive_index*/       1.3714 
+        /*refractive_index*/       1.3714,
+        /*extinction_coefficient*/ field::missing()
+
     },
 
     /*solid*/ 
@@ -2876,6 +2917,8 @@ PartlyKnownCompound perflouromethane(
                   89.56, 227.51), // 89.56-227.51K
         /*surface_tension*/        field::missing(),
         /*refractive_index*/       field::missing(),
+        /*extinction_coefficient*/ field::missing()
+
     },
 
     /*solid*/ 
@@ -3014,7 +3057,9 @@ PartlyKnownCompound benzene (
                 - 0.000499485 * invl2*invl2
                 + 0.000178796 * invl2*invl2*invl2
             );
-        }) 
+        }),
+        /*extinction_coefficient*/        field::missing()
+
     },
 
     /*solid*/ 
@@ -3102,7 +3147,9 @@ PartlyKnownCompound pyrimidine (
                 (si::celcius, si::millinewton/si::meter,
                  std::vector<double>{ 25.0,  50.0,  75.0, 100.0 }, 
                  std::vector<double>{30.33, 27.80, 25.28, 22.75 }), 
-        /*refractive_index*/       field::missing()
+        /*refractive_index*/       field::missing(),
+        /*extinction_coefficient*/ field::missing()
+
     },
 
     /*solid*/ 
@@ -3192,7 +3239,9 @@ PartlyKnownCompound  halite (
                 (si::celcius, si::dyne/si::centimeter,
                  std::vector<double>{ 1080.0, 1250.0 },
                  std::vector<double>{  112.5,  102.5 }), // Sato (1990)
-        /*refractive_index*/       field::missing()
+        /*refractive_index*/       field::missing(),
+        /*extinction_coefficient*/ field::missing()
+
     },
 
     /*solid*/ 
@@ -3296,7 +3345,9 @@ PartlyKnownCompound  corundum (
         /*density*/                field::missing(),
         /*vapor_pressure*/         field::missing(),
         /*surface_tension*/        field::missing(),
-        /*refractive_index*/       field::missing()
+        /*refractive_index*/       field::missing(),
+        /*extinction_coefficient*/ field::missing()
+
     },
 
     /*solid*/ 
@@ -3395,8 +3446,10 @@ PartlyKnownCompound  apatite (
         /*density*/                field::missing(),
         /*vapor_pressure*/         field::missing(),
         /*surface_tension*/        field::missing(),
-        /*refractive_index*/       field::missing()
+        /*refractive_index*/       field::missing(),
+        /*extinction_coefficient*/ field::missing()
     },
+
 
 
     /*solid*/ 
@@ -3492,9 +3545,9 @@ PartlyKnownCompound carbon (
                      std::vector<double>{1.0 ,       1e3,        100e3}),
                                                                          // TOOD: autocomplete vapor pressure for solids/liquids if function is present for other phase
         /*surface_tension*/        field::missing(),
-        /*refractive_index*/       field::missing()
+        /*refractive_index*/       field::missing(),
+        /*extinction_coefficient*/ field::missing()
     },
-
 
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
@@ -3617,8 +3670,10 @@ PartlyKnownCompound  calcite (
         /*density*/                field::missing(),
         /*vapor_pressure*/         field::missing(),
         /*surface_tension*/        field::missing(),
-        /*refractive_index*/       field::missing()
+        /*refractive_index*/       field::missing(),
+        /*extinction_coefficient*/ field::missing()
     },
+
     
 
     /*solid*/ 
@@ -3743,8 +3798,10 @@ PartlyKnownCompound  quartz (
                      std::vector<double>{1966.0,     2149.0,     2368.0}, 
                      std::vector<double>{1.0 ,       10.0,       100.0  }),
         /*surface_tension*/        312.0 * si::dyne / si::centimeter, // 1400C, Shartsis (1951)
-        /*refractive_index*/       field::missing()
+        /*refractive_index*/       field::missing(),
+        /*extinction_coefficient*/ field::missing()
     },
+
     
 
     /*solid*/ 
@@ -3937,7 +3994,9 @@ PartlyKnownCompound  orthoclase (
         /*density*/                2180.0 * si::kilogram/si::meter3, // from Murase and McBirney (1973), for rhyolitic magma
         /*vapor_pressure*/         field::missing(),
         /*surface_tension*/        field::missing(),
-        /*refractive_index*/       field::missing()
+        /*refractive_index*/       field::missing(),
+        /*extinction_coefficient*/ field::missing()
+
     },
 
     /*solid*/ 
@@ -4027,7 +4086,9 @@ PartlyKnownCompound andesine (
                 (si::celcius, si::dyne/si::centimeter,
                  std::vector<double>{ 1300.0, 1600.0 },
                  std::vector<double>{  400.0,  300.0 }), // from Taniguchi (1988), for Anorthite
-        /*refractive_index*/       field::missing()
+        /*refractive_index*/       field::missing(),
+        /*extinction_coefficient*/ field::missing()
+
     },
 
     /*solid*/ 
@@ -4111,8 +4172,10 @@ PartlyKnownCompound augite (
                 (si::celcius, si::dyne/si::centimeter,
                  std::vector<double>{ 1228.0, 1438.0 },
                  std::vector<double>{  388.5,  364.4 }), // from Walker (1981), for Basalt
-        /*refractive_index*/       field::missing()
+        /*refractive_index*/       field::missing(),
+        /*extinction_coefficient*/ field::missing()
     },
+
 
 
     /*solid*/ 
@@ -4198,7 +4261,9 @@ PartlyKnownCompound forsterite (
                 (si::celcius, si::dyne/si::centimeter,
                  std::vector<double>{ 1246.0, 1450.0 },
                  std::vector<double>{  380.0,  350.0 }), // from Walker (1981), for Limburgite
-        /*refractive_index*/       field::missing()
+        /*refractive_index*/       field::missing(),
+        /*extinction_coefficient*/ field::missing()
+
     },
 
     /*solid*/ 
@@ -4277,7 +4342,9 @@ PartlyKnownCompound  goethite (
         /*density*/                field::missing(),
         /*vapor_pressure*/         field::missing(),
         /*surface_tension*/        field::missing(),
-        /*refractive_index*/       field::missing()
+        /*refractive_index*/       field::missing(),
+        /*extinction_coefficient*/ field::missing()
+
     },
 
     /*solid*/ 
@@ -4359,7 +4426,9 @@ PartlyKnownCompound  pyrite (
         /*density*/                field::missing(),
         /*vapor_pressure*/         field::missing(),
         /*surface_tension*/        field::missing(),
-        /*refractive_index*/       field::missing()
+        /*refractive_index*/       field::missing(),
+        /*extinction_coefficient*/ field::missing()
+
     },
 
     /*solid*/ 
@@ -4439,7 +4508,9 @@ PartlyKnownCompound hematite (
         /*density*/                field::missing(),
         /*vapor_pressure*/         field::missing(),
         /*surface_tension*/        field::missing(),
-        /*refractive_index*/       field::missing()
+        /*refractive_index*/       field::missing(),
+        /*extinction_coefficient*/ field::missing()
+
     },
 
     /*solid*/ 
@@ -4534,8 +4605,10 @@ PartlyKnownCompound  gold (
                 get_linear_liquid_surface_tension_temperature_function
                     (si::kelvin, si::newton/si::meter, 
                      1338.0, 1.162, -1.8e-4), // Egry(2010)
-        /*refractive_index*/       field::missing()
+        /*refractive_index*/       field::missing(),
+        /*extinction_coefficient*/ field::missing()
     },
+
 
 
     /*solid*/ 
@@ -4637,8 +4710,10 @@ PartlyKnownCompound  silver (
                 get_linear_liquid_surface_tension_temperature_function
                     (si::kelvin, si::newton/si::meter, 
                      1234.0, 0.914, -1.5e-4), // Egry(2010)
-        /*refractive_index*/       field::missing()
+        /*refractive_index*/       field::missing(),
+        /*extinction_coefficient*/ field::missing()
     },
+
 
 
     /*solid*/ 
@@ -4739,8 +4814,10 @@ PartlyKnownCompound  copper (
                 get_linear_liquid_surface_tension_temperature_function
                     (si::kelvin, si::newton/si::meter, 
                      1357.0, 1.339, -1.8e-4), // Egry(2010)
-        /*refractive_index*/       field::missing()
+        /*refractive_index*/       field::missing(),
+        /*extinction_coefficient*/ field::missing()
     },
+
 
 
     /*solid*/ 
@@ -4831,8 +4908,10 @@ PartlyKnownCompound  magnetite (
         /*density*/                field::missing(),
         /*vapor_pressure*/         field::missing(),
         /*surface_tension*/        field::missing(),
-        /*refractive_index*/       field::missing()
+        /*refractive_index*/       field::missing(),
+        /*extinction_coefficient*/ field::missing()
     },
+
 
 
     /*solid*/ 
@@ -4915,8 +4994,10 @@ PartlyKnownCompound chalcocite (
         /*density*/                field::missing(),
         /*vapor_pressure*/         field::missing(),
         /*surface_tension*/        field::missing(),
-        /*refractive_index*/       field::missing()
+        /*refractive_index*/       field::missing(),
+        /*extinction_coefficient*/ field::missing()
     },
+
 
 
     /*solid*/ 
@@ -5022,7 +5103,9 @@ PartlyKnownCompound  chalcopyrite (
         /*density*/                field::missing(),
         /*vapor_pressure*/         field::missing(),
         /*surface_tension*/        field::missing(),
-        /*refractive_index*/       field::missing()
+        /*refractive_index*/       field::missing(),
+        /*extinction_coefficient*/ field::missing()
+
     },
 
     /*solid*/ 

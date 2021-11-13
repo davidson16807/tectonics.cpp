@@ -106,7 +106,8 @@ namespace compound
             /*density*/                1.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/         1.0 * si::pascal,
             /*surface_tension*/        1.0 * si::millinewton/si::meter,
-            /*refractive_index*/       1.1
+            /*refractive_index*/       1.1,
+            /*extinction_coefficient*/ 0.9
         },
 
         /*solid*/ 

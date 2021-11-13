@@ -31,6 +31,7 @@ TEST_CASE( "PartlyKnownLiquid to_string() appreciable difference preservation", 
 	compound::phase::PartlyKnownLiquid nudge_vapor_pressure         = dummy_liquid; nudge_vapor_pressure         .vapor_pressure         = std::monostate();
 	compound::phase::PartlyKnownLiquid nudge_surface_tension        = dummy_liquid; nudge_surface_tension        .surface_tension        = std::monostate();
 	compound::phase::PartlyKnownLiquid nudge_refractive_index       = dummy_liquid; nudge_refractive_index       .refractive_index       = std::monostate();
+	compound::phase::PartlyKnownLiquid nudge_extinction_coefficient = dummy_liquid; nudge_extinction_coefficient .refractive_index       = std::monostate();
 	
 	SECTION("Appreciable differences in input are preserved within output")
 	{
@@ -41,5 +42,6 @@ TEST_CASE( "PartlyKnownLiquid to_string() appreciable difference preservation", 
 		CHECK(compound::phase::to_string(nudge_vapor_pressure        ) != compound::phase::to_string(dummy_liquid));
 		CHECK(compound::phase::to_string(nudge_surface_tension       ) != compound::phase::to_string(dummy_liquid));
 		CHECK(compound::phase::to_string(nudge_refractive_index      ) != compound::phase::to_string(dummy_liquid));
+		CHECK(compound::phase::to_string(nudge_extinction_coefficient) != compound::phase::to_string(dummy_liquid));
     }
 }

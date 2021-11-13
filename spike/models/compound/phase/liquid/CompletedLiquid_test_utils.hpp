@@ -18,7 +18,8 @@ compound::phase::CompletedLiquid known_liquid_nitrogen {
             return 3.720822*si::standard_pressure - (293.94358*si::kelvin/T + 10.31993/si::kelvin*T) * si::standard_pressure;
         }), // Friedman (1950)
     /*surface_tension*/                   11.8000 * si::millinewton / si::meter,
-    /*refractive_index*/                  1.19876
+    /*refractive_index*/                  1.19876,
+    /*extinction_coefficient*/            0.0
 };
 compound::phase::CompletedLiquid known_dummy_liquid {
     /*specific_heat_capacity*/            1.0 * si::joule / (si::gram * si::kelvin), 
@@ -27,7 +28,8 @@ compound::phase::CompletedLiquid known_dummy_liquid {
     /*density*/                           4.0 * si::kilogram/si::meter3,
     /*vapor_pressure*/                    5.0 * si::megapascal,
     /*surface_tension*/                   6.0 * si::newton / si::meter,
-    /*refractive_index*/                  1.3
+    /*refractive_index*/                  1.3,
+    /*extinction_coefficient*/            0.3
 };
 
 namespace compound {
@@ -42,7 +44,8 @@ namespace phase {
             first.density                == second.density                &&
             first.vapor_pressure         == second.vapor_pressure         &&
             first.surface_tension        == second.surface_tension        &&
-            first.refractive_index       == second.refractive_index;
+            first.refractive_index       == second.refractive_index       && 
+            first.extinction_coefficient == second.extinction_coefficient;
     }
     bool operator!=(const CompletedLiquid& first, const CompletedLiquid& second)
     {

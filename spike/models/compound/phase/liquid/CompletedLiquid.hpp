@@ -17,5 +17,6 @@ namespace phase {
         field::CompletedStateField<si::pressure> vapor_pressure;
         field::CompletedStateField<si::surface_energy> surface_tension;
         field::CompletedSpectralField<double> refractive_index;
+        field::CompletedSpectralField<double> extinction_coefficient;
     };
 }}

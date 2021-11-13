@@ -12,7 +12,8 @@ compound::phase::PartlyKnownLiquid unknown_liquid {
     /*density*/                           std::monostate(),
     /*vapor_pressure*/                    std::monostate(),
     /*surface_tension*/                   std::monostate(),
-    /*refractive_index*/                  std::monostate()
+    /*refractive_index*/                  std::monostate(),
+    /*extinction_coefficient*/            std::monostate()
 };
 compound::phase::PartlyKnownLiquid molten_silica {
     /*specific_heat_capacity*/            std::monostate(),
@@ -21,7 +22,8 @@ compound::phase::PartlyKnownLiquid molten_silica {
     /*density*/                           2180.0 * si::kilogram/si::meter3, // from Murase and McBirney (1973), for rhyolitic magma
     /*vapor_pressure*/                    std::monostate(),
     /*surface_tension*/                   250.0 * si::dyne/si::centimeter,
-    /*refractive_index*/                  std::monostate()
+    /*refractive_index*/                  std::monostate(),
+    /*extinction_coefficient*/            std::monostate()
 };
 compound::phase::PartlyKnownLiquid liquid_nitrogen {
     /*specific_heat_capacity*/            2.04 * si::kilojoule / (si::kilogram * si::kelvin), // Timmerhaus (1989)
@@ -33,7 +35,8 @@ compound::phase::PartlyKnownLiquid liquid_nitrogen {
             return 3.720822*si::standard_pressure - (293.94358*si::kelvin/T + 10.31993/si::kelvin*T) * si::standard_pressure;
         }), // Friedman (1950)
     /*surface_tension*/                   11.8000 * si::millinewton / si::meter,
-    /*refractive_index*/                  1.19876
+    /*refractive_index*/                  1.19876,
+    /*extinction_coefficient*/            0.0
 };
 compound::phase::PartlyKnownLiquid dummy_liquid {
     /*specific_heat_capacity*/            1.0 * si::joule / (si::gram * si::kelvin), 
@@ -42,7 +45,8 @@ compound::phase::PartlyKnownLiquid dummy_liquid {
     /*density*/                           4.0 * si::kilogram/si::meter3,
     /*vapor_pressure*/                    5.0 * si::megapascal,
     /*surface_tension*/                   6.0 * si::millinewton / si::meter,
-    /*refractive_index*/                  1.3
+    /*refractive_index*/                  1.3,
+    /*extinction_coefficient*/            0.3
 };
 
 compound::phase::PartlyKnownLiquid liquid_ammonia {
@@ -52,7 +56,8 @@ compound::phase::PartlyKnownLiquid liquid_ammonia {
     /*density*/                           681.97 * si::kilogram / si::meter3,  //encyclopedia.airliquide.com
     /*vapor_pressure*/                    std::monostate(),
     /*surface_tension*/                   std::monostate(),
-    /*refractive_index*/                  1.3944
+    /*refractive_index*/                  1.3944,
+    /*extinction_coefficient*/            0.0
 };
 
 int PartlyKnownLiquid_attribute_index_sum(const compound::phase::PartlyKnownLiquid& liquid)
@@ -64,7 +69,8 @@ int PartlyKnownLiquid_attribute_index_sum(const compound::phase::PartlyKnownLiqu
         liquid.density                         .index() +
         liquid.vapor_pressure                  .index() +
         liquid.surface_tension                 .index() +
-        liquid.refractive_index                .index();
+        liquid.refractive_index                .index() +
+        liquid.extinction_coefficient          .index();
 }
 int PartlyKnownLiquid_attribute_known_count(const compound::phase::PartlyKnownLiquid& liquid)
 {
@@ -75,7 +81,8 @@ int PartlyKnownLiquid_attribute_known_count(const compound::phase::PartlyKnownLi
         liquid.density                         .has_value() +
         liquid.vapor_pressure                  .has_value() +
         liquid.surface_tension                 .has_value() +
-        liquid.refractive_index                .has_value();
+        liquid.refractive_index                .has_value() +
+        liquid.extinction_coefficient          .has_value();
 }
 
 
@@ -91,7 +98,8 @@ namespace phase {
             first.density                == second.density                &&
             first.vapor_pressure         == second.vapor_pressure         &&
             first.surface_tension        == second.surface_tension        &&
-            first.refractive_index       == second.refractive_index;
+            first.refractive_index       == second.refractive_index       &&
+            first.extinction_coefficient == second.extinction_coefficient;
     }
 
     bool operator!=(const PartlyKnownLiquid& first, const PartlyKnownLiquid& second)

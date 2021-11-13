@@ -21,6 +21,7 @@ namespace phase {
 		out += "Vapor Pressure                       " + field::to_string(liquid.vapor_pressure,         state)    + "\n";
 		out += "Surface Tension                      " + field::to_string(liquid.surface_tension,        state)    + "\n";
 		out += "Refractive Index                     " + field::to_string(liquid.refractive_index,       spectrum) + "\n";
+		out += "Extinction Coefficient               " + field::to_string(liquid.extinction_coefficient, spectrum) + "\n";
         out += "\n";
 		return out;
 	}
