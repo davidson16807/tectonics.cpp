@@ -118,6 +118,7 @@ namespace compound
                 /*density*/                           1.0 * si::kilogram/si::meter3,
                 /*vapor_pressure*/                    1.0 * si::pascal,
                 /*refractive_index*/                  1.1,
+                /*extinction_coefficient*/            0.9,
                 /*spectral_reflectance*/              0.9,
                 /*bulk_modulus*/                      1.0 * si::gigapascal,
                 /*tensile_modulus*/                   1.0 * si::gigapascal,

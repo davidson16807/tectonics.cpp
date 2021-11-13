@@ -15,6 +15,7 @@ namespace phase {
         field::OptionalStateField<si::density> density;
         field::OptionalStateField<si::pressure> vapor_pressure;
         field::OptionalSpectralField<double> refractive_index;
+        field::OptionalSpectralField<double> extinction_coefficient;
         field::OptionalSpectralField<double> spectral_reflectance;
 
         field::OptionalStateField<si::pressure> bulk_modulus;     // K   bulk modulus
@@ -46,6 +47,7 @@ namespace phase {
             guess.dynamic_viscosity      = dynamic_viscosity      .value_or(fallback.dynamic_viscosity);
             guess.density                = density                .value_or(fallback.density);
             guess.refractive_index       = refractive_index       .value_or(fallback.refractive_index);
+            guess.extinction_coefficient = extinction_coefficient .value_or(fallback.extinction_coefficient);
             guess.spectral_reflectance   = spectral_reflectance   .value_or(fallback.spectral_reflectance);
 
             guess.bulk_modulus    = bulk_modulus    .value_or(fallback.bulk_modulus   );
@@ -79,6 +81,7 @@ namespace phase {
             guess.dynamic_viscosity      = dynamic_viscosity      .compare(other.dynamic_viscosity);
             guess.density                = density                .compare(other.density);
             guess.refractive_index       = refractive_index       .compare(other.refractive_index);
+            guess.extinction_coefficient = extinction_coefficient .compare(other.extinction_coefficient);
             guess.spectral_reflectance   = spectral_reflectance   .compare(other.spectral_reflectance);
 
             guess.bulk_modulus    = bulk_modulus    .compare(other.bulk_modulus   );

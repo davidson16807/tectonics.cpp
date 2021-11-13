@@ -22,6 +22,7 @@ namespace phase {
             field::complete(known.density,                          fallback.density                          ),
             field::complete(known.vapor_pressure,                   fallback.vapor_pressure                   ),
             field::complete(known.refractive_index,                 fallback.refractive_index                 ),
+            field::complete(known.extinction_coefficient,           fallback.extinction_coefficient           ),
             field::complete(known.spectral_reflectance,             fallback.spectral_reflectance             ),
 
             field::complete(known.bulk_modulus,                     fallback.bulk_modulus                     ),

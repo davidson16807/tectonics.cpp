@@ -16,6 +16,7 @@ compound::phase::PartlyKnownSolid unknown_solid {
     /*density*/                           std::monostate(),
     /*vapor_pressure*/                    std::monostate(),
     /*refractive_index*/                  std::monostate(),
+    /*extinction_coefficient*/            std::monostate(),
     /*spectral_reflectance*/              std::monostate(),
 
     /*bulk_modulus*/                      std::monostate(),
@@ -41,6 +42,7 @@ compound::phase::PartlyKnownSolid ice {
     /*density*/                           0916.9 * si::kilogram/si::meter3,
     /*vapor_pressure*/                    138.268 * si::megapascal,
     /*refractive_index*/                  1.3098,
+    /*extinction_coefficient*/            0.03,
     /*spectral_reflectance*/              0.9,
 
     /*bulk_modulus*/                      8.899 * si::gigapascal, // gammon (1983)
@@ -66,6 +68,7 @@ compound::phase::PartlyKnownSolid quartz {
     /*density*/                           2650.0 * si::kilogram/si::meter3, // alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
     /*vapor_pressure*/                    std::monostate(),
     /*refractive_index*/                  1.4585,  // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
+    /*extinction_coefficient*/            0.00014657, 
     /*spectral_reflectance*/              
         compound::field::SpectralFunction<double>([](const si::wavenumber nhi, const si::wavenumber nlo, const si::pressure p, const si::temperature T) {
             double l = (2.0 / (nhi+nlo) / si::micrometer);
@@ -108,6 +111,7 @@ compound::phase::PartlyKnownSolid copper{
             constexpr auto dndl = 13.100 / si::micrometer;
             return n + (dndl * l);
         }), 
+    /*extinction_coefficient*/            13.430, 
     /*spectral_reflectance*/              std::monostate(),
 
     /*bulk_modulus*/                      130.0 * si::gigapascal,
@@ -133,6 +137,7 @@ compound::phase::PartlyKnownSolid dummy_solid {
     /*density*/                           4.0 * si::kilogram/si::meter3,
     /*vapor_pressure*/                    5.0 * si::megapascal,
     /*refractive_index*/                  1.3,
+    /*extinction_coefficient*/            0.03, 
     /*spectral_reflectance*/              0.5,
 
     /*bulk_modulus*/                      6.0 * si::gigapascal, 
@@ -161,6 +166,7 @@ int PartlyKnownSolid_attribute_index_sum(const compound::phase::PartlyKnownSolid
         solid.density                         .index() +
         solid.vapor_pressure                  .index() +
         solid.refractive_index                .index() +
+        solid.extinction_coefficient          .index() +
         solid.spectral_reflectance            .index() +
 
         solid.bulk_modulus                    .index() +
@@ -188,6 +194,7 @@ int PartlyKnownSolid_attribute_known_count(const compound::phase::PartlyKnownSol
         solid.density                         .has_value() +
         solid.vapor_pressure                  .has_value() +
         solid.refractive_index                .has_value() +
+        solid.extinction_coefficient          .has_value() +
         solid.spectral_reflectance            .has_value() +
 
         solid.bulk_modulus                    .has_value() +
@@ -219,6 +226,7 @@ namespace phase {
             first.dynamic_viscosity      == second.dynamic_viscosity      &&
             first.density                == second.density                &&
             first.refractive_index       == second.refractive_index       &&
+            first.extinction_coefficient == second.extinction_coefficient &&
             first.spectral_reflectance   == second.spectral_reflectance   &&
 
             first.bulk_modulus           == second.bulk_modulus           &&

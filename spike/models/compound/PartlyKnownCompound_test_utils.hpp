@@ -174,6 +174,7 @@ namespace compound
                 /*density*/                           compound::field::missing(),
                 /*vapor_pressure*/                    compound::field::missing(),
                 /*refractive_index*/                  compound::field::missing(),
+                /*extinction_coefficient*/            compound::field::missing(),
                 /*spectral_reflectance*/              compound::field::missing(),
 
                 /*bulk_modulus*/                      compound::field::missing(),
@@ -316,6 +317,7 @@ namespace compound
                          std::vector<double>{-17.3,  11.2,   51.6,   100.0  }, 
                          std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
                 /*refractive_index*/                  1.3098,
+                /*extinction_coefficient*/            0.3,
                 /*spectral_reflectance*/              0.9,
 
                 /*bulk_modulus*/                      8.899 * si::gigapascal,                           // gammon (1983)
@@ -391,6 +393,7 @@ namespace compound
                 /*density*/                           1.0 * si::kilogram/si::meter3,
                 /*vapor_pressure*/                    1.0 * si::pascal,
                 /*refractive_index*/                  1.1,
+                /*extinction_coefficient*/            0.3,
                 /*spectral_reflectance*/              0.9,
                 /*bulk_modulus*/                      1.0 * si::gigapascal,
                 /*tensile_modulus*/                   1.0 * si::gigapascal,

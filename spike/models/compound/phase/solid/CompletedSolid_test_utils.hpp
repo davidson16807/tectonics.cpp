@@ -14,7 +14,8 @@ compound::phase::CompletedSolid known_ice {
     /*dynamic_viscosity*/                 1e13 * si::poise, // reference by Carey (1953)
     /*density*/                           0916.9 * si::kilogram/si::meter3,
     /*vapor_pressure*/                    138.268 * si::megapascal,
-    /*refractive_index*/                  1.3098,
+    /*refractive_index*/                  1.4607,
+    /*extinction_coefficient*/            0.029000,
     /*spectral_reflectance*/              0.9,
 
     /*bulk_modulus*/                      8.899 * si::gigapascal, // gammon (1983)
@@ -40,6 +41,7 @@ compound::phase::CompletedSolid known_dummy_solid {
     /*density*/                           4.0 * si::kilogram/si::meter3,
     /*vapor_pressure*/                    5.0 * si::megapascal,
     /*refractive_index*/                  1.3,
+    /*extinction_coefficient*/            0.03,
     /*spectral_reflectance*/              0.5,
 
     /*bulk_modulus*/                      6.0 * si::gigapascal, 
@@ -71,6 +73,7 @@ namespace phase {
             first.dynamic_viscosity      == second.dynamic_viscosity      &&
             first.density                == second.density                &&
             first.refractive_index       == second.refractive_index       &&
+            first.extinction_coefficient == second.extinction_coefficient &&
             first.spectral_reflectance   == second.spectral_reflectance   &&
 
             first.bulk_modulus           == second.bulk_modulus           &&

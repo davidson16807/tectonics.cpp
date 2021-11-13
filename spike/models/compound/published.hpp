@@ -180,6 +180,7 @@ PartlyKnownCompound water (
                      std::vector<double>{-17.3,  11.2,   51.6,   100.0  }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  1.3098,
+            /*extinction_coefficient*/            0.9,
             /*spectral_reflectance*/              0.9,
 
             /*bulk_modulus*/                      8.899 * si::gigapascal,                           // gammon (1983)
@@ -340,6 +341,7 @@ PartlyKnownCompound nitrogen (
                      std::vector<double>{-226.1, -219.1, -209.7, -195.8 }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  1.25,                                             // wikipedia
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      
@@ -402,6 +404,7 @@ PartlyKnownCompound nitrogen (
                      std::vector<double>{-226.1, -219.1, -209.7, -195.8 }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  1.25,                                             // wikipedia
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      
@@ -571,6 +574,7 @@ PartlyKnownCompound oxygen (
                      std::vector<double>{-219.1, -210.6, -198.8, -183.1 }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  field::missing(),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -602,6 +606,7 @@ PartlyKnownCompound oxygen (
                      std::vector<double>{-219.1, -210.6, -198.8, -183.1 }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  field::missing(),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -635,6 +640,7 @@ PartlyKnownCompound oxygen (
                      std::vector<double>{-219.1, -210.6, -198.8, -183.1 }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  field::missing(),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -789,6 +795,7 @@ PartlyKnownCompound carbon_dioxide (
                      std::vector<double>{-134.3, -119.5, -100.2, -78.2  }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  1.4,                                              // Warren (1986)
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -933,6 +940,7 @@ PartlyKnownCompound methane (
                       std::vector<double>{65.0,     75.0,     85.0},     
                       std::vector<double>{0.1 ,      0.8 ,     4.9 }),
             /*refractive_index*/                  1.3219,
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -1084,6 +1092,7 @@ PartlyKnownCompound argon (
                      std::vector<double>{55.0,     65.0,     75.0}, 
                      std::vector<double>{0.2,      2.8,      18.7}),
             /*refractive_index*/                  1.2703,
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -1228,6 +1237,7 @@ PartlyKnownCompound helium (
                      std::vector<double>{-271.7, -271.3, -270.3, -268.6 }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  field::missing(),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -1372,6 +1382,7 @@ PartlyKnownCompound hydrogen (
                      std::vector<double>{-263.3, -261.3, -257.9, -252.5 }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  field::missing(),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -1511,6 +1522,7 @@ PartlyKnownCompound ammonia (
                      std::vector<double>{160.0,     180.0,     190.0},     
                      std::vector<double>{0.1  ,     1.2  ,     3.5  }),
             /*refractive_index*/                  field::missing(),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -1622,6 +1634,7 @@ PartlyKnownCompound ozone (
                      std::vector<double>{-180.4, -163.2, -141.0, -111.1 }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  field::missing(),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -1738,6 +1751,7 @@ PartlyKnownCompound nitrous_oxide (
                      std::vector<double>{-143.4, -128.7, -110.3, -85.5  }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  field::missing(),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -1863,6 +1877,7 @@ PartlyKnownCompound  sulfur_dioxide (
                      std::vector<double>{-95.5,  -76.8,  -46.9,  -10.0  }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  field::missing(),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -1976,6 +1991,7 @@ PartlyKnownCompound  sulfur_dioxide (
                      std::vector<double>{-184.5, -178.2, -166.0, -151.7 }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  field::missing(),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -2118,6 +2134,7 @@ PartlyKnownCompound carbon_monoxide (
                      std::vector<double>{-222.0, -215.0, -205.7, -191.3 }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  field::missing(),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -2146,6 +2163,7 @@ PartlyKnownCompound carbon_monoxide (
                 field::StateSample<si::density>(1.0288*si::gram/si::centimeter3, si::atmosphere, 65.0*si::kelvin), // Johnson (1960)
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  field::missing(),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -2285,6 +2303,7 @@ PartlyKnownCompound ethane (
                      std::vector<double>{-159.5, -142.9, -119.3, -88.6  }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  field::missing(),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -2398,6 +2417,7 @@ PartlyKnownCompound hydrogen_cyanide (
                      std::vector<double>{-71.0,  -47.7,  -17.8,  25.9   }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  field::missing(),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -2523,6 +2543,7 @@ PartlyKnownCompound ethanol (
             /*density*/                           field::missing(),
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  field::missing(),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -2635,6 +2656,7 @@ PartlyKnownCompound formaldehyde (
                      std::vector<double>{ -88.0,  51.6,   100.0  }, 
                      std::vector<double>{ 10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  field::missing(),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -2745,6 +2767,7 @@ PartlyKnownCompound formic_acid (
                       std::vector<double>{-56.0,     -40.4,     -0.8}, 
                      std::vector<double>{1.0 ,       100.0,     1000.0}),
             /*refractive_index*/                  field::missing(),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -2868,6 +2891,7 @@ PartlyKnownCompound perflouromethane(
                      std::vector<double>{-184.6, -169.3, -150.7, -127.7 }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  field::missing(),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -3006,6 +3030,7 @@ PartlyKnownCompound benzene (
                      std::vector<double>{-36.7,  -11.5,  26.1,   80.1   }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  field::missing(),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -3089,6 +3114,7 @@ PartlyKnownCompound pyrimidine (
             /*density*/                           field::missing(),
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  field::missing(),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -3203,6 +3229,7 @@ PartlyKnownCompound  halite (
                         + 0.30038 * l2 / (l2 - pow(120.34, 2.0))
                     );
                 }), 
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -3301,6 +3328,7 @@ PartlyKnownCompound  corundum (
                         + 5.3414021 * l2 / (l2 - pow(18.028251, 2.0))
                     );
                 }),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      305.0 * si::gigapascal, //azom.com/article.aspx?ArticleId=1948
@@ -3381,6 +3409,7 @@ PartlyKnownCompound  apatite (
             /*density*/                           3180.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  1.645,
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -3496,6 +3525,7 @@ PartlyKnownCompound carbon (
                     constexpr double dndl = -0.16730f;
                     return n + dndl * l;
                 }),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(), 
@@ -3522,6 +3552,7 @@ PartlyKnownCompound carbon (
             /*density*/                           3513.0  * si::kilogram/si::meter3, 
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  field::missing(),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      443.0 * si::gigapascal,  // wikipedia, for diamond
@@ -3615,6 +3646,7 @@ PartlyKnownCompound  calcite (
                         + 1.82831454 * l*l / (l*l - 120.0)
                     );
                 }),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -3642,6 +3674,7 @@ PartlyKnownCompound  calcite (
             /*density*/                           2930.0 * si::kilogram/si::meter3, // Perry
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  field::missing(),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -3732,6 +3765,7 @@ PartlyKnownCompound  quartz (
                      std::vector<double>{1732.0, 1969.0, 2227.0 }, 
                      std::vector<double>{10.0,   100.0,  760.0  }), // Perry, nonspecific solid phase
             /*refractive_index*/                  1.4585,  // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              
                 field::SpectralFunction<double>([](
                     const si::wavenumber nlo, 
@@ -3776,6 +3810,7 @@ PartlyKnownCompound  quartz (
                      std::vector<double>{1732.0, 1969.0, 2227.0 }, 
                      std::vector<double>{10.0,   100.0,  760.0  }), // Perry, nonspecific solid phase
             /*refractive_index*/                  field::missing(),// 1.4585,  // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -3806,6 +3841,7 @@ PartlyKnownCompound  quartz (
                      std::vector<double>{1732.0, 1969.0, 2227.0 }, 
                      std::vector<double>{10.0,   100.0,  760.0  }), // Perry, nonspecific solid phase
             /*refractive_index*/                  field::missing(),// 1.4585,  // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -3836,6 +3872,7 @@ PartlyKnownCompound  quartz (
                      std::vector<double>{1732.0, 1969.0, 2227.0 }, 
                      std::vector<double>{10.0,   100.0,  760.0  }), // Perry, nonspecific solid phase
             /*refractive_index*/                  field::missing(),// 1.4585,  // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -3914,6 +3951,7 @@ PartlyKnownCompound  orthoclase (
             /*density*/                           2560.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  1.527,
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      50.0 * si::gigapascal, // for Granite, wikipedia
@@ -4003,6 +4041,7 @@ PartlyKnownCompound andesine (
             /*density*/                           2670.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  1.553,
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -4088,6 +4127,7 @@ PartlyKnownCompound augite (
             /*density*/                           3380.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  1.707,
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
             /*bulk_modulus*/                      field::missing(),
             /*tensile_modulus*/                   field::missing(),
@@ -4172,6 +4212,7 @@ PartlyKnownCompound forsterite (
             /*density*/                           3810.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  1.651,
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -4253,6 +4294,7 @@ PartlyKnownCompound  goethite (
             /*density*/                           4300.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  2.401,
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -4331,6 +4373,7 @@ PartlyKnownCompound  pyrite (
             /*density*/                           5020.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  1.78, //gemologyproject.com
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -4414,6 +4457,7 @@ PartlyKnownCompound hematite (
                     (si::micrometer, 
                      std::vector<double>{-0.67, -0.61, -0.48, -0.44, -0.34, -0.23, -0.11,  0.68,  0.99,  1.12,  1.20,  1.26,  1.29,  1.33,  1.37,  1.46,  1.55,  1.63,  1.65,  1.73,  1.96},
                      std::vector<double>{ 1.32,  1.87,  2.49,  2.49,  3.28,  3.43,  2.93,  2.69,  2.31,  1.73,  0.49,  0.46,  2.84,  1.02,  7.39,  0.93, 12.55,  6.71,  7.07,  5.80,  5.10}),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -4517,6 +4561,7 @@ PartlyKnownCompound  gold (
                     (si::micrometer, 
                      std::vector<double>{-5.082, -3.906, -2.450, -2.110, -1.906, -1.833, -1.751, -1.605, -1.508, -1.390, -1.268, -1.082, -0.835, -0.529, -0.286,  2.394},
                      std::vector<double>{   1.0,    1.0,  0.992,   0.97,  0.889,  0.865,  0.828,  0.795,  0.754,  0.844,   1.08,   1.54,  1.666,  1.927,  0.878,  345.0}), // Hagemann (1974)
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -4618,6 +4663,7 @@ PartlyKnownCompound  silver (
                     (si::micrometer, 
                      std::vector<double>{-5.605, -4.207, -3.304, -2.450, -2.082, -1.809, -1.684, -1.578, -1.438, -1.329, -1.239, -1.020, -0.647, -0.482,  0.394, 2.394},
                      std::vector<double>{ 1.003,  0.999,  1.001,  1.001,  0.963,  0.848,  0.873,  0.893,  0.879,  0.889,  1.368,  1.655,  1.446,  0.527,  0.669, 531  }), // Hagemann (1974)
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -4720,6 +4766,7 @@ PartlyKnownCompound  copper (
                     (si::micrometer, 
                      std::vector<double>{-2.985, -2.207, -1.841, -1.781, -1.719, -1.647, -1.559, -1.450, -1.304, -1.096, -0.835, -0.605, -0.383, -0.161,  2.394},
                      std::vector<double>{ 0.999,  0.978,  0.966, 0.983,   0.966,  0.958,  0.949,  0.917,   0.96,  0.981,  1.029,  1.47,   1.184,  0.213,  270.0}), // Hagemann (1974)
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -4803,6 +4850,7 @@ PartlyKnownCompound  magnetite (
                     (si::micrometer, 
                      std::vector<double>{-0.68, -0.59, -0.49, -0.40, -0.32, -0.15, 0.00, 0.10, 0.50, 0.88, 1.06, 1.12, 1.23, 1.26, 1.30, 1.40, 1.47, 1.52, 1.55, 1.61, 1.74},
                      std::vector<double>{ 2.26,  2.43,  2.43,  2.49,  2.39,  2.39, 2.14, 2.13, 3.06, 3.59, 3.62, 3.52, 3.46, 5.29, 4.45, 4.39, 7.35, 6.48, 6.33, 6.55, 7.90}),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -4882,6 +4930,7 @@ PartlyKnownCompound chalcocite (
             /*density*/                           5600.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  field::missing(),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -4908,6 +4957,7 @@ PartlyKnownCompound chalcocite (
             /*density*/                           5600.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  field::missing(),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      242.88 * si::gigapascal, // de Jong (2015)
@@ -4985,6 +5035,7 @@ PartlyKnownCompound  chalcopyrite (
             /*density*/                           4200.0 *  si::kilogram/si::meter3, //wikipedia
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  field::missing(),
+            /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),

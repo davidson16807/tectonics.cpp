@@ -16,6 +16,7 @@ namespace phase {
         field::CompletedStateField<si::density> density;
         field::CompletedStateField<si::pressure> vapor_pressure;
         field::CompletedSpectralField<double> refractive_index;
+        field::CompletedSpectralField<double> extinction_coefficient;
         field::CompletedSpectralField<double> spectral_reflectance;
 
         field::CompletedStateField<si::pressure> bulk_modulus;     // K   bulk modulus

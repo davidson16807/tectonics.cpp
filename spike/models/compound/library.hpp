@@ -134,6 +134,7 @@ namespace compound {
                              std::vector<double>{-17.3,  11.2,   51.6,   100.0  }, 
                              std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
                     /*refractive_index*/                  1.3098,
+                    /*extinction_coefficient*/            0.9,
                     /*spectral_reflectance*/              0.9,
 
                     /*bulk_modulus*/                      8.899 * si::gigapascal,                           // gammon (1983)

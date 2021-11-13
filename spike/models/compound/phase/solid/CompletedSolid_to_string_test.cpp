@@ -24,6 +24,7 @@ TEST_CASE( "CompletedSolid to_string() appreciable difference preservation", "[f
 	compound::phase::CompletedSolid nudge_density                          = known_dummy_solid; nudge_density                          .density                          = 1.01 * nudge_density                          .density                       (compound::field::StateParameters());
 	compound::phase::CompletedSolid nudge_vapor_pressure                   = known_dummy_solid; nudge_vapor_pressure                   .vapor_pressure                   = 1.01 * nudge_vapor_pressure                   .vapor_pressure                (compound::field::StateParameters());
 	compound::phase::CompletedSolid nudge_refractive_index                 = known_dummy_solid; nudge_refractive_index                 .refractive_index                 = 1.01 * nudge_refractive_index                 .refractive_index              (compound::field::SpectralParameters());
+	compound::phase::CompletedSolid nudge_extinction_coefficient           = known_dummy_solid; nudge_extinction_coefficient           .extinction_coefficient           = 1.01 * nudge_extinction_coefficient           .extinction_coefficient        (compound::field::SpectralParameters());
 	compound::phase::CompletedSolid nudge_spectral_reflectance             = known_dummy_solid; nudge_spectral_reflectance             .spectral_reflectance             = 1.01 * nudge_spectral_reflectance             .spectral_reflectance          (compound::field::SpectralParameters());
 	compound::phase::CompletedSolid nudge_bulk_modulus                     = known_dummy_solid; nudge_bulk_modulus                     .bulk_modulus                     = 1.01 * nudge_bulk_modulus                     .bulk_modulus                  (compound::field::StateParameters());
 	compound::phase::CompletedSolid nudge_tensile_modulus                  = known_dummy_solid; nudge_tensile_modulus                  .tensile_modulus                  = 1.01 * nudge_tensile_modulus                  .tensile_modulus               (compound::field::StateParameters());
@@ -47,6 +48,7 @@ TEST_CASE( "CompletedSolid to_string() appreciable difference preservation", "[f
 		CHECK(compound::phase::to_string(nudge_density                         ) != compound::phase::to_string(known_dummy_solid));
 		CHECK(compound::phase::to_string(nudge_vapor_pressure                  ) != compound::phase::to_string(known_dummy_solid));
 		CHECK(compound::phase::to_string(nudge_refractive_index                ) != compound::phase::to_string(known_dummy_solid));
+		CHECK(compound::phase::to_string(nudge_extinction_coefficient          ) != compound::phase::to_string(known_dummy_solid));
 		CHECK(compound::phase::to_string(nudge_spectral_reflectance            ) != compound::phase::to_string(known_dummy_solid));
 		CHECK(compound::phase::to_string(nudge_bulk_modulus                    ) != compound::phase::to_string(known_dummy_solid));
 		CHECK(compound::phase::to_string(nudge_tensile_modulus                 ) != compound::phase::to_string(known_dummy_solid));
