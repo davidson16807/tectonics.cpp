@@ -71,7 +71,7 @@
         CHECK(compound.solids[i].vapor_pressure(si::standard_pressure, si::standard_temperature) / si::kilopascal < 300.0); /*based on tetraflourosilane*/ \
         CHECK(compound.solids[i].vapor_pressure(si::standard_pressure, si::standard_temperature) / si::pascal > 0.001); /*based on phenazine*/ \
         CHECK(compound.solids[i].refractive_index(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), si::standard_pressure, si::standard_temperature) < 4.1 ); /*based on germanium */\
-        CHECK(compound.solids[i].refractive_index(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), si::standard_pressure, si::standard_temperature) > 0.5); /*based on silver*/\
+        CHECK(compound.solids[i].refractive_index(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), si::standard_pressure, si::standard_temperature) > 0.2); /*based on silver*/\
     }
 
     // compound.critical_point_volume

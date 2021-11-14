@@ -352,6 +352,23 @@ namespace compound {
             }
         );
     }
+    field::OptionalSpectralField<double> get_linear_interpolated_refractive_index_function(
+        const si::length lunits, 
+        const std::vector<double>ls, 
+        const std::vector<double>     ns
+    ){
+        return field::SpectralFunction<double>(
+            [lunits, ls, ns]
+            (const si::wavenumber nlo, 
+             const si::wavenumber nhi, 
+             const si::pressure p, 
+             const si::temperature T)
+            {
+                double l = (2.0 / (nhi+nlo) / lunits);
+                return math::lerp(ls, ns, l);
+            }
+        );
+    }
 
 
 
@@ -655,6 +672,23 @@ namespace compound {
             {
                 double l = (2.0 / (nhi+nlo) / lunits);
                 return math::lerp(log10ls, ns, log10(l));
+            }
+        );
+    }
+    field::CompletedSpectralField<double> get_completed_linear_interpolated_refractive_index_function(
+        const si::length lunits, 
+        const std::vector<double>ls, 
+        const std::vector<double>     ns
+    ){
+        return field::SpectralFunction<double>(
+            [lunits, ls, ns]
+            (const si::wavenumber nlo, 
+             const si::wavenumber nhi, 
+             const si::pressure p, 
+             const si::temperature T)
+            {
+                double l = (2.0 / (nhi+nlo) / lunits);
+                return math::lerp(ls, ns, l);
             }
         );
     }
