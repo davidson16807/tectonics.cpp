@@ -289,8 +289,8 @@ PartlyKnownCompound nitrogen (
             ) {
                 double l = (2.0 / (nhi+nlo) / si::micrometer);
                 double invl2 = 1.0/(l*l);
-                return 1.0 + 6.8552e-5 + 3.243157e-2 / (144.0 - invl2);
-            }) 
+                return 1.0 + 6.497378e-5 + 3.0738649e-2 / (144.0 - invl2);
+            }) // Peck (1966)
     },
 
     /*liquid*/
@@ -1201,8 +1201,8 @@ PartlyKnownCompound helium (
                 double l = (2.0 / (nhi+nlo) / si::micrometer);
                 double invl2 = 1.0/(l*l);
                 return 1.0
-                    + 0.014755297f/(426.29740f  - invl2);
-            })
+                    + 0.01470091/(423.98  - invl2);
+            }) // Mansfield (1969)
     },
 
     /*liquid*/
@@ -1350,10 +1350,8 @@ PartlyKnownCompound hydrogen (
                 const si::temperature T
             ) {
                 double l = (2.0 / (nhi+nlo) / si::micrometer);
-                constexpr double n = 1.00014930f;
-                constexpr double dndl = -0.000082645f;
-                return n + dndl * l;
-            }) 
+                return 1.0 + 0.0148956/(180.7-1.0/(l*l)) + 0.0049037/(92.0-1.0/(l*l))
+            }) // Peck & Hung (1977)
     },
 
     /*liquid*/
@@ -3193,7 +3191,7 @@ PartlyKnownCompound pyrimidine (
     }
 );
 
-// halite, NaCl, sodium chloride, salt
+// halite, NaCl, sodium chloride, table salt
 // for salt bed flats and potentially modeling ocean salinity
 PartlyKnownCompound  halite (
     /*molar_mass*/                        90.442*si::gram/si::mole,
@@ -3267,27 +3265,18 @@ PartlyKnownCompound  halite (
                     (si::celcius, si::millimeter_mercury,
                      std::vector<double>{865.0,  1017.0, 1220.0, 1460.0 }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
-            /*refractive_index*/                  
-                field::SpectralFunction<double>([](
-                    const si::wavenumber nlo, 
-                    const si::wavenumber nhi, 
-                    const si::pressure p, 
-                    const si::temperature T
-                ) {
-                    double l = (2.0 / (nhi+nlo) / si::micrometer);
-                    double l2 = l*l;
-                    return sqrt(
-                        1.0
-                        + 0.00055f
-                        + 0.19800 * l2 / (l2 - pow(0.050, 2.0))
-                        + 0.48398 * l2 / (l2 - pow(0.100, 2.0))
-                        + 0.38696 * l2 / (l2 - pow(0.128, 2.0))
-                        + 0.25998 * l2 / (l2 - pow(0.158, 2.0))
-                        + 0.08796 * l2 / (l2 - pow(40.50, 2.0))
-                        + 3.17064 * l2 / (l2 - pow(60.98, 2.0))
-                        + 0.30038 * l2 / (l2 - pow(120.34, 2.0))
-                    );
-                }), 
+            /*refractive_index*/      
+                get_interpolated_refractive_index_function
+                    (si::micrometer, 
+                     std::vector<double>{0.22,  0.24,  0.26,   0.4,    0.6,   1.2,    1.4,    1.8,    2.0, 4.7619, 6.6667, 9.0909, 11.1111,14.2857,20.0, 33.333, 100.0, 166.6667},
+                     std::vector<double>{1.66, 1.709, 1.683, 1.583,  1.544, 1.542,  1.539,  1.536,  1.534,  1.525,  1.516,  1.506,  1.49,  1.46,  1.386,  0.866, 2.756,    2.493}),
+                    // Querry (1987)
+            /*extinction_coefficient*/ 
+                get_interpolated_refractive_index_function
+                    (si::micrometer, 
+                     std::vector<double>{17.2414, 17.8571, 18.5185, 19.2308,  20.0, 20.8333, 21.7391, 22.7273, 23.8095,  25.0, 26.3158, 27.7778, 29.4118, 31.25, 33.3333, 35.7143, 38.4615, 41.6667, 45.4545, 50.0, 55.5556,  62.5, 71.4286, 83.3333, 100.0,  125.0, 166.6667},
+                     std::vector<double>{    0.0,   0.001,   0.003,   0.006, 0.005,   0.004,   0.003,   0.002,   0.003, 0.003,   0.014,   0.011,   0.031, 0.049,   0.102,   0.172,   0.617,   0.792,   1.147, 1.97,   3.582, 1.948,   0.226,   0.095, 0.077,  0.071,    0.056})
+                    // Querry (1987)
             /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
