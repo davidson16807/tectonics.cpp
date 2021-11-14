@@ -13,6 +13,23 @@
 namespace compound {
 
     template<typename Tx, typename Ty>
+    field::OptionalSpectralField<Ty> get_dewaele2003_pressure_function(
+        const Tx xunits, const Ty yunits,
+        const double a, const double b, const double c, const double d,
+        const double Pmin, const double Pmax
+    ){
+        return field::SpectralFunction<Ty>(
+            [xunits, yunits, a,b,c,d, Pmin, Pmax]
+            (const si::wavenumber nlo, 
+             const si::wavenumber nhi, 
+             const si::pressure p, 
+             const si::temperature T)
+            {
+                return (a+b*std::pow(1.0+c*std::clamp(p/xunits, Pmin, Pmax), d)) * yunits;
+            }
+        );
+    }
+    template<typename Tx, typename Ty>
     field::OptionalStateField<Ty> get_interpolated_temperature_function(
         const Tx xunits, const Ty yunits,
         const std::vector<double>xs, 
