@@ -1422,7 +1422,15 @@ PartlyKnownCompound hydrogen (
                     (si::celcius, si::millimeter_mercury,
                      std::vector<double>{-263.3, -261.3, -257.9, -252.5 }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
-            /*refractive_index*/                  field::missing(),
+            /*refractive_index*/                  
+                field::SpectralFunction<double>([](
+                    const si::wavenumber nlo, 
+                    const si::wavenumber nhi, 
+                    const si::pressure p, 
+                    const si::temperature T
+                ) {
+                    return 0.95+0.1144*std::pow(std::clamp(p/si::kilobar, 52.0, 350.0), 0.3368);
+                }) // Peck & Hung (1977)
             /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
@@ -1547,7 +1555,11 @@ PartlyKnownCompound ammonia (
                 (si::kelvin, si::newton/si::meter,
                  405.56, 0.1028, 1.211, -0.09453, 5.585, 0.0, 0.0,
                  197.85, 403.15), // Mulero (2012)
-        /*refractive_index*/       1.3944,
+        /*refractive_index*/       // 1.3944,
+            get_interpolated_temperature_function
+                (si::celcius, si::millimeter_mercury,
+                 std::vector<double>{ -20.0,  40.0}, 
+                 std::vector<double>{1.3475, 1.321}), // Francis (1960)
         /*extinction_coefficient*/ field::missing()
 
     },
@@ -1564,7 +1576,7 @@ PartlyKnownCompound ammonia (
                     (si::kelvin, si::kilopascal,
                      std::vector<double>{160.0,     180.0,     190.0},     
                      std::vector<double>{0.1  ,     1.2  ,     3.5  }),
-            /*refractive_index*/                  field::missing(),
+            /*refractive_index*/                  1.5,
             /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
@@ -1791,13 +1803,13 @@ PartlyKnownCompound nitrous_oxide (
             /*specific_heat_capacity*/            field::missing(),
             /*thermal_conductivity*/              field::missing(),
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           field::missing(),
+            /*density*/                           1.263 * si::gram/si::centimeter3, // Hudson (2020)
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::celcius, si::millimeter_mercury,
                      std::vector<double>{-143.4, -128.7, -110.3, -85.5  }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
-            /*refractive_index*/                  field::missing(),
+            /*refractive_index*/                  1.317, // Hudson (2020)
             /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
@@ -1908,7 +1920,11 @@ PartlyKnownCompound  sulfur_dioxide (
                 (si::kelvin, si::newton/si::meter,
                  430.64, 0.0803, 0.928, 0.0139, 1.570, -0.0114, 0.364,
                  189.15, 373.15), // Mulero (2012)
-        /*refractive_index*/       1.3396,
+        /*refractive_index*/       // 1.3396,
+            get_interpolated_temperature_function
+                (si::celcius, si::millimeter_mercury,
+                 std::vector<double>{-20.0, 40.0}, 
+                 std::vector<double>{ 1.37, 1.33}), // Francis (1960)
         /*extinction_coefficient*/ field::missing()
 
     },
@@ -2457,7 +2473,7 @@ PartlyKnownCompound hydrogen_cyanide (
                  259.83, 456.65),
         /*surface_tension*/        field::missing(),
         /*refractive_index*/       1.2614,
-        /*extinction_coefficient*/ field::missing()
+        /*extinction_coefficient*/ 7.63, // Moore 2010, 95K, 5000cm-1
 
     },
 
@@ -2473,8 +2489,8 @@ PartlyKnownCompound hydrogen_cyanide (
                     (si::celcius, si::millimeter_mercury,
                      std::vector<double>{-71.0,  -47.7,  -17.8,  25.9   }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
-            /*refractive_index*/                  field::missing(),
-            /*extinction_coefficient*/            field::missing(),
+            /*refractive_index*/                  1.37,    // Moore 2010, 95K 5000 cm-1
+            /*extinction_coefficient*/            1.876e-4 // Moore 2010, 95K 5000 cm-1
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -2599,9 +2615,9 @@ PartlyKnownCompound ethanol (
             /*specific_heat_capacity*/            111.46 * si::joule / (46.068*si::gram*si::kelvin), // wikipedia data page
             /*thermal_conductivity*/              field::missing(),
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           field::missing(),
+            /*density*/                           0.739 * si::gram / si::centimeter3, // Hudson (2020)
             /*vapor_pressure*/                    field::missing(),
-            /*refractive_index*/                  field::missing(),
+            /*refractive_index*/                  1.319, // Hudson (2020)
             /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
@@ -2823,13 +2839,13 @@ PartlyKnownCompound formic_acid (
             /*specific_heat_capacity*/            74.5 * si::joule / (46.026*si::gram*si::kelvin), // wikipedia data page
             /*thermal_conductivity*/              field::missing(),
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           field::missing(),
+            /*density*/                           0.979 * si::gram / si::centimeter3, // Hudson (2020)
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::celcius, si::pascal,
                       std::vector<double>{-56.0,     -40.4,     -0.8}, 
                      std::vector<double>{1.0 ,       100.0,     1000.0}),
-            /*refractive_index*/                  field::missing(),
+            /*refractive_index*/                  1.291, // Hudson (2020)
             /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
@@ -3027,7 +3043,7 @@ PartlyKnownCompound benzene (
                 (si::kelvin, si::pascal * si::second,
                 3.1340e-8, 0.9676, 7.9, 0.0), // 278.68-1000K
         /*density*/                field::missing(),
-        /*refractive_index*/       field::missing()
+        /*refractive_index*/       1.53
     },
 
     /*liquid*/
