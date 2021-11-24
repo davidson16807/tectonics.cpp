@@ -21,6 +21,7 @@ SOURCES:
 * exponential and sigmoid functions for fluids at pressure and temperature were parameterized using data from NIST, https://webbook.nist.gov/chemistry/fluid/
 * "perry" functions for temperature were taken from the 9th edition of Perry's Chemical Engineer's Handbook
 * "dippr" functions for temperature are from the "DIPPR Data Compilation of Pure Chemical Properties", copied from the 9th edition of Perry's Chemical Engineer's Handbook
+* "prokhvatilov" functions for yield and fracture strength are taken from "Plasticity and Elasticity of Cryocrystals" by Prokhvatilov (2001)
 
 NOTE:
 Specific heat always denotes specific heat at constant pressure, c_p.
@@ -346,13 +347,15 @@ PartlyKnownCompound nitrogen (
                 field::StateFunction<si::thermal_conductivity>([](si::pressure p, si::temperature T){ 
                     return 180.2*pow((T/si::kelvin), 0.1041)*si::watt / (si::meter * si::kelvin);
                 }), // wikipedia
-            /*dynamic_viscosity*/
-                field::missing(),
+            /*dynamic_viscosity*/                 field::missing(),
                 // field::StateFunction<si::dynamic_viscosity>([](si::pressure p, si::temperature T){ 
                 //     return math::mix(2.5e9, 0.6e9, math::linearstep(45.0, 56.0, T/si::kelvin))*si::pascal*si::second;
                 // }), // Yamashita 2010
             /*density*/                           
-                field::StateSample<si::density>(1.0265*si::gram/si::centimeter3, si::standard_pressure, 20.7*si::kelvin), // Johnson (1960)
+                get_interpolated_temperature_function
+                    (si::kelvin, si::gram/si::centimeter3,
+                     std::vector<double>{  37.0,  40.0,  42.0,  44.0,  48.0,  52.0,  56.0}, 
+                     std::vector<double>{0.9955,0.9899,0.9862,0.9845,0.9748,0.9669,0.9586}), // Prokhvatilov
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::celcius, si::millimeter_mercury,
@@ -363,38 +366,44 @@ PartlyKnownCompound nitrogen (
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      
-                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
-                    return math::mix(2.16, 1.47, math::linearstep(20.0, 44.0, T/si::kelvin))*si::gigapascal;
-                }), // Yamashita (2010)
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{ 37.0,  40.0,  42.0,  44.0,  48.0,  52.0,  56.0}, 
+                     std::vector<double>{14.91, 14.54, 14.26, 14.26, 13.26, 12.52, 11.71}), // Prokhvatilov
             /*tensile_modulus*/                   
-                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
-                    return math::mix(1.87, 3.26, math::linearstep(63.0, 15.0, T/si::kelvin))*si::gigapascal;
-                }), // Bezuglyi (1969), from "Physics of Cryocrystals"
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{ 37.0,  40.0,  42.0,  44.0,  48.0,  52.0,  56.0}, 
+                     std::vector<double>{18.18, 17.95, 17.81, 17.66, 17.31, 16.94, 16.54}), // Prokhvatilov
             /*shear_modulus*/                     
-                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
-                    return math::mix(0.63, 0.81, math::linearstep(63.0, 15.0, T/si::kelvin))*si::gigapascal;
-                }), // Bezuglyi (1969), from "Physics of Cryocrystals"
-            /*pwave_modulus*/                     
-                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
-                    return math::mix(0.27, 0.34, math::linearstep(16.0, 56.0, T/si::kelvin))*si::gigapascal;
-                }), // Bezuglyi (1969)
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{ 37.0,  40.0,  42.0,  44.0,  48.0,  52.0,  56.0}, 
+                     std::vector<double>{7.008, 6.935, 6.893, 6.893, 6.472, 6.645, 6.540}), // Prokhvatilov
+            /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     field::missing(),
+            /*poisson_ratio*/                     
+                get_interpolated_temperature_function
+                    (si::kelvin, 1.0,
+                     std::vector<double>{ 37.0,  40.0,  42.0,  44.0,  48.0,  52.0,  56.0}, 
+                     std::vector<double>{ 0.30,  0.29,  0.29,  0.29,  0.28,  0.28,  0.27}), // Prokhvatilov
 
             /*compressive_fracture_strength*/     
                 field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
                     return math::mix(0.24, 6.00, math::linearstep(58.0, 5.0, T/si::kelvin))*si::megapascal;
                 }), // wikipedia, and Yamashita (2010)
             /*tensile_fracture_strength*/         
-                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
-                    return math::mix(5.30, 2.16, math::linearstep(22.0, 40.0, T/si::kelvin))*si::megapascal;
-                }), // Leonteva 1971, taken from Sagmiller 2020
+                get_interpolated_temperature_function
+                    (si::kelvin, si::standard_gravity * si::gram/si::millimeter2,
+                     std::vector<double>{ 22.0,  24.0,  26.0,  28.0,  30.0,  35.0,  40.0}, 
+                     std::vector<double>{220.0, 234.0, 350.0, 540.0, 515.0, 446.0, 240.0}), // Prokhvatilov
             /*shear_fracture_strength*/           field::missing(),
             /*compressive_yield_strength*/        field::missing(),
             /*tensile_yield_strength*/            
-                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
-                    return math::mix(0.69, 1.71, math::linearstep(22.0, 40.0, T/si::kelvin))*si::megapascal;
-                }), // Leonteva 1971, taken from Sagmiller 2020
+                get_interpolated_temperature_function
+                    (si::kelvin, si::standard_gravity * si::gram/si::millimeter2,
+                     std::vector<double>{ 22.0,  24.0,  26.0,  28.0,  30.0,  35.0,  40.0}, 
+                     std::vector<double>{175.0, 130.0, 100.0,  80.0,  78.0,  76.0,  70.0}), // Prokhvatilov
             /*shear_yield_strength*/              field::missing(),
 
             /*chemical_susceptibility_estimate*/  field::missing()
@@ -409,13 +418,15 @@ PartlyKnownCompound nitrogen (
                 field::StateFunction<si::thermal_conductivity>([](si::pressure p, si::temperature T){ 
                     return 180.2*pow((T/si::kelvin), 0.1041)*si::watt / (si::meter * si::kelvin);
                 }), // wikipedia
-            /*dynamic_viscosity*/
-                field::missing(),
+            /*dynamic_viscosity*/                 field::missing(),
                 // field::StateFunction<si::dynamic_viscosity>([](si::pressure p, si::temperature T){ 
                 //     return math::mix(2.5e9, 0.6e9, math::linearstep(45.0, 56.0, T/si::kelvin))*si::pascal*si::second;
                 // }), // Yamashita 2010
             /*density*/                           
-                field::StateSample<si::density>(1.0265*si::gram/si::centimeter3, si::standard_pressure, 20.7*si::kelvin), // Johnson (1960)
+                get_interpolated_temperature_function
+                    (si::kelvin, si::gram/si::centimeter3,
+                     std::vector<double>{  16.0,  18.0,  20.0,  22.0,  24.0,  26.0,  28.0,  30.0,  32.0,  34.0}, 
+                     std::vector<double>{1.0296,1.0284,1.0271,1.0255,1.0237,1.0216,1.0192,1.0166,1.0134,1.0095}), // Prokhvatilov
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::celcius, si::millimeter_mercury,
@@ -426,38 +437,44 @@ PartlyKnownCompound nitrogen (
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      
-                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
-                    return math::mix(2.16, 1.47, math::linearstep(20.0, 44.0, T/si::kelvin))*si::gigapascal;
-                }), // Yamashita (2010)
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{ 16.0,  18.0,  20.0,  22.0,  24.0,  26.0,  28.0,  30.0,  32.0,  34.0}, 
+                     std::vector<double>{21.71, 21.65, 21.54, 21.38, 21.15, 20.81, 20.42, 20.01, 19.42, 18.76}), // Prokhvatilov
             /*tensile_modulus*/                   
-                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
-                    return math::mix(1.87, 3.26, math::linearstep(63.0, 15.0, T/si::kelvin))*si::gigapascal;
-                }), // Bezuglyi (1969), from "Physics of Cryocrystals"
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{ 16.0,  18.0,  20.0,  22.0,  24.0,  26.0,  28.0,  30.0,  32.0,  34.0}, 
+                     std::vector<double>{21.48, 21.45, 21.37, 21.29, 21.18, 21.06, 20.90, 20.70, 20.38, 19.98}), // Prokhvatilov
             /*shear_modulus*/                     
-                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
-                    return math::mix(0.63, 0.81, math::linearstep(63.0, 15.0, T/si::kelvin))*si::gigapascal;
-                }), // Bezuglyi (1969), from "Physics of Cryocrystals"
-            /*pwave_modulus*/                     
-                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
-                    return math::mix(0.27, 0.34, math::linearstep(16.0, 56.0, T/si::kelvin))*si::gigapascal;
-                }), // Bezuglyi (1969)
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{ 16.0,  18.0,  20.0,  22.0,  24.0,  26.0,  28.0,  30.0,  32.0,  34.0}, 
+                     std::vector<double>{8.046, 8.036, 8.008, 7.978, 7.946, 7.911, 7.857, 7.783, 7.688, 7.553}), // Prokhvatilov
+            /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     field::missing(),
+            /*poisson_ratio*/                     
+                get_interpolated_temperature_function
+                    (si::kelvin, 1.0,
+                     std::vector<double>{ 16.0,  18.0,  20.0,  22.0,  24.0,  26.0,  28.0,  30.0,  32.0,  34.0}, 
+                     std::vector<double>{ 0.34,  0.34,  0.34,  0.33,  0.33,  0.33,  0.33,  0.33,  0.33,  0.32}), // Prokhvatilov
 
             /*compressive_fracture_strength*/     
                 field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
                     return math::mix(0.24, 6.00, math::linearstep(58.0, 5.0, T/si::kelvin))*si::megapascal;
                 }), // wikipedia, and Yamashita (2010)
             /*tensile_fracture_strength*/         
-                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
-                    return math::mix(5.30, 2.16, math::linearstep(22.0, 40.0, T/si::kelvin))*si::megapascal;
-                }), // Leonteva 1971, taken from Sagmiller 2020
+                get_interpolated_temperature_function
+                    (si::kelvin, si::standard_gravity * si::gram/si::millimeter2,
+                     std::vector<double>{ 22.0,  24.0,  26.0,  28.0,  30.0,  35.0,  40.0}, 
+                     std::vector<double>{220.0, 234.0, 350.0, 540.0, 515.0, 446.0, 240.0}), // Prokhvatilov
             /*shear_fracture_strength*/           field::missing(),
             /*compressive_yield_strength*/        field::missing(),
             /*tensile_yield_strength*/            
-                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
-                    return math::mix(0.69, 1.71, math::linearstep(22.0, 40.0, T/si::kelvin))*si::megapascal;
-                }), // Leonteva 1971, taken from Sagmiller 2020
+                get_interpolated_temperature_function
+                    (si::kelvin, si::standard_gravity * si::gram/si::millimeter2,
+                     std::vector<double>{ 22.0,  24.0,  26.0,  28.0,  30.0,  35.0,  40.0}, 
+                     std::vector<double>{175.0, 130.0, 100.0,  80.0,  78.0,  76.0,  70.0}), // Prokhvatilov
             /*shear_yield_strength*/              field::missing(),
 
             /*chemical_susceptibility_estimate*/  field::missing()
@@ -469,7 +486,7 @@ PartlyKnownCompound nitrogen (
 
 
 // oxygen, O2
-// for atmospheres of earth like planets
+// for atmospheres of earth-like planets
 PartlyKnownCompound oxygen (
     /*molar_mass*/                        31.9988 * si::gram/si::mole,
     /*atoms_per_molecule*/                2u,
@@ -586,7 +603,11 @@ PartlyKnownCompound oxygen (
             /*specific_heat_capacity*/            11.06 * si::calorie / (31.9988*si::gram * si::kelvin), // Johnson (1960), 10.73 for solid II, 4.4 for solid III
             /*thermal_conductivity*/              0.17 * si::watt / (si::centimeter * si::kelvin),  // Jezowski (1993)
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           1524.0 * si::kilogram/si::meter3,
+            /*density*/                           
+                get_interpolated_temperature_function
+                    (si::kelvin, si::gram/si::centimeter3,
+                     std::vector<double>{ 44.0,  46.0,  48.0,  50.0,  52.0}, 
+                     std::vector<double>{1.396, 1.390, 1.383, 1.377, 1.370}), // Prokhvatilov
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::celcius, si::millimeter_mercury,
@@ -596,17 +617,33 @@ PartlyKnownCompound oxygen (
             /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
-            /*bulk_modulus*/                      field::missing(),
-            /*tensile_modulus*/                   field::missing(),
-            /*shear_modulus*/                     field::missing(),
+            /*bulk_modulus*/                      
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{ 44.0,  46.0,  48.0,  50.0,  52.0}, 
+                     std::vector<double>{24.76, 24.27, 23.81, 23.33, 22.84}), // Prokhvatilov
+            /*tensile_modulus*/                   
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{ 44.0,  46.0,  48.0,  50.0,  52.0}, 
+                     std::vector<double>{ 7.55,  7.48,  7.44,  7.37,  7.30}), // Prokhvatilov
+            /*shear_modulus*/                     
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{ 44.0,  46.0,  48.0,  50.0,  52.0}, 
+                     std::vector<double>{ 2.61,  2.58,  2.57,  2.55,  2.52}), // Prokhvatilov
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     field::missing(),
+            /*poisson_ratio*/                     
+                get_interpolated_temperature_function
+                    (si::kelvin, 1.0,
+                     std::vector<double>{ 44.0,  46.0,  48.0,  50.0,  52.0}, 
+                     std::vector<double>{0.449, 0.449, 0.448, 0.447, 0.447}), // Prokhvatilov
 
             /*compressive_fracture_strength*/     field::missing(),
             /*tensile_fracture_strength*/         field::missing(),
             /*shear_fracture_strength*/           
-                field::StateSample<si::pressure>(0.31 * si::megapascal, si::standard_pressure, 45.0*si::kelvin), // Bates 1995
+                field::StateSample<si::pressure>(0.31 * si::megapascal, si::standard_pressure, 45.0*si::kelvin), // Bates 1955
             /*compressive_yield_strength*/        field::missing(),
             /*tensile_yield_strength*/            field::missing(),
             /*shear_yield_strength*/              field::missing(),
@@ -618,7 +655,11 @@ PartlyKnownCompound oxygen (
             /*specific_heat_capacity*/            11.06 * si::calorie / (31.9988*si::gram * si::kelvin), // Johnson (1960), 10.73 for solid II, 4.4 for solid III
             /*thermal_conductivity*/              0.17 * si::watt / (si::centimeter * si::kelvin),  // Jezowski (1993)
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           1524.0 * si::kilogram/si::meter3,
+            /*density*/                           
+                get_interpolated_temperature_function
+                    (si::kelvin, si::gram/si::centimeter3,
+                     std::vector<double>{ 24.5,  28.0,  30.0,  32.0,  34.0,  36.0,  38.0,  40.0,  43.0}, 
+                     std::vector<double>{1.521, 1.513, 1.510, 1.505, 1.501, 1.496, 1.490, 1.485, 1.475}), // Prokhvatilov
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::celcius, si::millimeter_mercury,
@@ -628,19 +669,35 @@ PartlyKnownCompound oxygen (
             /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
-            /*bulk_modulus*/                      field::missing(),
-            /*tensile_modulus*/                   field::missing(),
-            /*shear_modulus*/                     field::missing(),
+            /*bulk_modulus*/                      
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{ 24.5,  28.0,  30.0,  32.0,  34.0,  36.0,  38.0,  40.0,  43.0}, 
+                     std::vector<double>{33.67, 32.93, 32.78, 32.42, 31.92, 31.06, 30.70, 29.97, 29.22}), // Prokhvatilov
+            /*tensile_modulus*/                   
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{ 24.5,  28.0,  30.0,  32.0,  34.0,  36.0,  38.0,  40.0,  43.0}, 
+                     std::vector<double>{15.84, 18.33, 19.62, 20.85, 21.92, 23.04, 23.79, 24.34, 23.41}), // Prokhvatilov
+            /*shear_modulus*/                     
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{ 24.5,  28.0,  30.0,  32.0,  34.0,  36.0,  38.0,  40.0,  43.0}, 
+                     std::vector<double>{ 5.57,  6.51,  7.00,  7.48,  7.91,  8.37,  8.68,  8.92,  8.56}), // Prokhvatilov
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     field::missing(),
+            /*poisson_ratio*/                     
+                get_interpolated_temperature_function
+                    (si::kelvin, 1.0,
+                     std::vector<double>{ 24.5,  28.0,  30.0,  32.0,  34.0,  36.0,  38.0,  40.0,  43.0}, 
+                     std::vector<double>{0.422, 0.407, 0.400, 0.393, 0.385, 0.376, 0.371, 0.365, 0.366}), // Prokhvatilov
 
             /*compressive_fracture_strength*/     field::missing(),
             /*tensile_fracture_strength*/         field::missing(),
             /*shear_fracture_strength*/           
                 field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
                     return math::mix(1.4, 2.7, math::linearstep(40.0, 30.0, T/si::kelvin))*si::megapascal;
-                }), // Bates 1995
+                }), // Bates 1955
             /*compressive_yield_strength*/        field::missing(),
             /*tensile_yield_strength*/            field::missing(),
             /*shear_yield_strength*/              field::missing(),
@@ -652,7 +709,11 @@ PartlyKnownCompound oxygen (
             /*specific_heat_capacity*/            11.06 * si::calorie / (31.9988*si::gram * si::kelvin), // Johnson (1960), 10.73 for solid II, 4.4 for solid III
             /*thermal_conductivity*/              0.17 * si::watt / (si::centimeter * si::kelvin),  // Jezowski (1993)
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           1524.0 * si::kilogram/si::meter3,
+            /*density*/                           //1524.0 * si::kilogram/si::meter3,
+                get_interpolated_temperature_function
+                    (si::kelvin, si::gram/si::centimeter3,
+                     std::vector<double>{ 24.5,  28.0,  30.0,  32.0,  34.0,  36.0,  38.0,  40.0,  43.0}, 
+                     std::vector<double>{1.537, 1.536, 1.535, 1.535, 1.534, 1.532, 1.531, 1.528, 1.525}), // Prokhvatilov
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::celcius, si::millimeter_mercury,
@@ -662,19 +723,36 @@ PartlyKnownCompound oxygen (
             /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
-            /*bulk_modulus*/                      field::missing(),
-            /*tensile_modulus*/                   field::missing(),
-            /*shear_modulus*/                     field::missing(),
+            /*bulk_modulus*/                      
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{  4.0,   7.0,  10.0,  12.0,  14.0,  16.0,  18.0,  20.0,  22.0,  23.5}, 
+                     std::vector<double>{35.75, 35.73, 35.56, 35.47, 35.29, 35.17, 35.01, 34.74, 34.41, 34.19}), // Prokhvatilov
+            /*tensile_modulus*/                   
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{  4.0,   7.0,  10.0,  12.0,  14.0,  16.0,  18.0,  20.0,  22.0,  23.5}, 
+                     std::vector<double>{34.54, 33.47, 32.38, 31.44, 30.50, 29.32, 27.77, 25.66, 21.85, 15.14}), // Prokhvatilov
+            /*shear_modulus*/                     
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{  4.0,   7.0,  10.0,  12.0,  14.0,  16.0,  18.0,  20.0,  22.0,  23.5}, 
+                     std::vector<double>{ 12.9, 12.45, 12.01, 11.63, 11.25, 10.77, 10.16,  9.32,  7.84,  5.31}), // Prokhvatilov
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     field::missing(),
+            /*poisson_ratio*/                     
+                get_interpolated_temperature_function
+                    (si::kelvin, 1.0,
+                     std::vector<double>{  4.0,   7.0,  10.0,  12.0,  14.0,  16.0,  18.0,  20.0,  22.0,  23.5}, 
+                     std::vector<double>{0.345, 0.344, 0.348, 0.352, 0.356, 0.361, 0.368, 0.377, 0.394, 0.426}), // Prokhvatilov
 
             /*compressive_fracture_strength*/     field::missing(),
             /*tensile_fracture_strength*/         field::missing(),
             /*shear_fracture_strength*/           
-                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
-                    return math::mix(4.46, 3.49, math::linearstep(18.0, 4.0, T/si::kelvin))*si::megapascal;
-                }), // Bates 1995
+                get_interpolated_temperature_function
+                    (si::celcius, si::megapascal,
+                     std::vector<double>{30.0, 18.0,  4.0}, 
+                     std::vector<double>{2.70, 4.46, 3.49}), // Bates 1955
             /*compressive_yield_strength*/        field::missing(),
             /*tensile_yield_strength*/            field::missing(),
             /*shear_yield_strength*/              field::missing(),
@@ -809,7 +887,11 @@ PartlyKnownCompound carbon_dioxide (
                      std::vector<double>{2.0,100.0,  10.0,   0.8}), // Sumarakov (2003), unusual for its variance
             /*dynamic_viscosity*/                 
                 field::StateSample<si::dynamic_viscosity>(1e14 * si::pascal*si::second, 0.1*si::megapascal, 180.0*si::kelvin), // Yamashita (1997)
-            /*density*/                           1562.0 * si::kilogram/si::meter3,
+            /*density*/                           
+                get_interpolated_temperature_function
+                    (si::kelvin, si::gram/si::centimeter3,
+                     std::vector<double>{  15.0,  30.0,  50.0,  70.0,  90.0, 110.0, 130.0, 150.0, 170.0, 190.0}, 
+                     std::vector<double>{1.7056,1.7036,1.6963,1.6852,1.6718,1.6568,1.6403,1.6223,1.6022,1.5789}), // Prokhvatilov
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::celcius, si::millimeter_mercury,
@@ -827,11 +909,21 @@ PartlyKnownCompound carbon_dioxide (
                      std::vector<double>{1.17e-01, 3.14e-01, 4.96e-01, 3.39e-01, 3.39e-01, 6.98e-01, 5.35e-01, 8.45e-01, 7.25e-01, 1.02e+00, 1.10e+00, 2.74e+00, 2.15e-01, 9.89e-03, 6.58e-07, 7.10e-07, 2.22e-06, 2.17e-06, 7.66e-06, 1.22e-05, 2.45e-02, 8.01e-04, 1.50e-03, 2.37e-02, 1.40e-03, 3.77e-05, 8.37e-05, 8.65e-05, 3.30e-05, 5.62e-05, 2.21e-05, 2.39e-06, 2.83e-06, 1.64e-02, 7.66e-03, 1.34e-02, 2.31e+00, 8.10e-02, 1.30e-02, 3.69e-03, 1.08e-03, 8.37e-05, 3.65e-05, 1.68e-04, 3.90e-05, 1.48e-05, 4.97e-06, 2.92e-06, 4.97e-06, 7.58e-05, 1.12e-04, 4.03e-05, 6.21e-05, 1.16e-04, 6.86e-05, 2.37e-05, 3.65e-05, 2.21e-05, 1.03e-05, 3.69e-06, 4.35e-06, 1.14e-05, 7.17e-06, 7.17e-06, 1.06e-05, 2.15e-05, 7.53e-03, 4.57e-03, 4.88e-03, 1.16e-02, 2.27e-03, 7.05e-03, 1.95e+00, 9.46e-02, 2.11e-02, 4.27e-03, 3.89e-04, 1.48e-04, 1.25e-04, 1.58e-04, 3.06e-03, 1.23e-01, 2.19e-03, 3.74e-03, 1.90e-01, 3.50e-03}), // Warren (1986)
             /*spectral_reflectance*/              field::missing(),
 
-            /*bulk_modulus*/                      field::missing(),
+            /*bulk_modulus*/                      
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{ 15.0,  30.0,  50.0,  70.0,  90.0, 110.0, 130.0, 150.0, 170.0, 190.0}, 
+                     std::vector<double>{79.73, 79.06, 78.53, 76.16, 72.73, 70.12, 67.67, 63.46, 58.25, 52.45}), // Prokhvatilov
             /*tensile_modulus*/                   
-                field::StateSample<si::pressure>(13.6 * si::gigapascal, si::standard_pressure, 95.0*si::kelvin), // Manzhelii (2003)
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{ 15.0,  30.0,  50.0,  70.0,  90.0, 110.0, 130.0, 150.0, 170.0, 190.0}, 
+                     std::vector<double>{111.7,111.45,110.66,109.09,106.22,102.60, 97.72, 91.48, 84.14, 75.37}), // Prokhvatilov
             /*shear_modulus*/                     
-                field::StateSample<si::pressure>(5.1 * si::gigapascal, si::standard_pressure, 95.0*si::kelvin), // Manzhelii (2003)
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{ 15.0,  30.0,  50.0,  70.0,  90.0, 110.0, 130.0, 150.0, 170.0, 190.0}, 
+                     std::vector<double>{44.10, 44.05, 43.81, 43.25, 42.26, 40.84, 38.80, 36.31, 33.41, 29.89}), // Prokhvatilov
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
             /*poisson_ratio*/                     field::missing(),
@@ -953,7 +1045,7 @@ PartlyKnownCompound methane (
 
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
-        phase::PartlyKnownSolid {
+        phase::PartlyKnownSolid { // alpha
 
             /*specific_heat_capacity*/            5.193 * si::calorie / (16.043*si::gram * si::kelvin), // Johnson (1960)
             /*thermal_conductivity*/              // 0.010 * si::watt / (si::centimeter * si::kelvin), // Jezowski (1997)
@@ -964,7 +1056,7 @@ PartlyKnownCompound methane (
             /*dynamic_viscosity*/                 
                 field::StateSample<si::dynamic_viscosity>(1e11 * si::pascal*si::second, 0.1*si::megapascal, 77.0*si::kelvin), // Yamashita (1997)
             /*density*/                           
-                field::StateSample<si::density>(0.517*si::gram/si::centimeter3, si::atmosphere, 20.4*si::kelvin), // Johnson (1960)
+                field::StateSample<si::density>(0.5245*si::gram/si::centimeter3, si::atmosphere, 14.4*si::kelvin), // Prokhvatilov
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::kelvin, si::kilopascal,
@@ -974,20 +1066,93 @@ PartlyKnownCompound methane (
             /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
-            /*bulk_modulus*/                      field::missing(),
+            /*bulk_modulus*/                      
+                field::StateSample<si::pressure>(19.69*si::kilobar, si::standard_pressure, 14.4*si::kelvin), // Prokhvatilov
             /*tensile_modulus*/                   
-                field::StateSample<si::pressure>(2.96 * si::gigapascal, si::standard_pressure, 30.0*si::kelvin), // Manzhelii (2003)
+                field::StateSample<si::pressure>(30.83 * si::gigapascal, si::standard_pressure, 30.0*si::kelvin), // Manzhelii (2003)
             /*shear_modulus*/                     
-                field::StateSample<si::pressure>(1.65 * si::gigapascal, si::standard_pressure, 30.0*si::kelvin), // Manzhelii (2003)
+                field::StateSample<si::pressure>(12.4*si::kilobar, si::standard_pressure, 14.4*si::kelvin), // Prokhvatilov
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     field::missing(),
+            /*poisson_ratio*/                     
+                field::StateSample<double>(0.39, si::standard_pressure, 14.4*si::kelvin), // Prokhvatilov
 
             /*compressive_fracture_strength*/     8.0 * si::megapascal, // Yamashita (2010)
-            /*tensile_fracture_strength*/         field::missing(),
+            /*tensile_fracture_strength*/         
+                get_interpolated_temperature_function
+                    (si::kelvin, si::standard_gravity * si::gram/si::millimeter2,
+                     std::vector<double>{  5.0,  10.0,  15.0,  20.0,  25.0,  30.0}, 
+                     std::vector<double>{180.0, 178.0, 176.0, 174.0, 170.0, 165.0}), // Prokhvatilov
             /*shear_fracture_strength*/           field::missing(),
             /*compressive_yield_strength*/        field::missing(),
-            /*tensile_yield_strength*/            field::missing(),
+            /*tensile_yield_strength*/            
+                get_interpolated_temperature_function
+                    (si::kelvin, si::standard_gravity * si::gram/si::millimeter2,
+                     std::vector<double>{  5.0,  10.0,  15.0,  20.0,  25.0,  30.0}, 
+                     std::vector<double>{178.0, 159.0, 145.0, 137.0, 135.0, 117.0}), // Prokhvatilov
+            /*shear_yield_strength*/              field::missing(),
+
+            /*chemical_susceptibility_estimate*/  field::missing()
+        },
+        phase::PartlyKnownSolid { // beta
+            /*specific_heat_capacity*/            5.193 * si::calorie / (16.043*si::gram * si::kelvin), // Johnson (1960)
+            /*thermal_conductivity*/              // 0.010 * si::watt / (si::centimeter * si::kelvin), // Jezowski (1997)
+                get_interpolated_temperature_function
+                    (si::kelvin, si::milliwatt/(si::centimeter * si::kelvin),
+                     std::vector<double>{18.0, 20.0, 20.4, 21.0},              
+                     std::vector<double>{0.7,  2.5,  11.0,  0.7}), // Johnson (1960)
+            /*dynamic_viscosity*/                 
+                field::StateSample<si::dynamic_viscosity>(1e11 * si::pascal*si::second, 0.1*si::megapascal, 77.0*si::kelvin), // Yamashita (1997)
+            /*density*/                           
+                get_interpolated_temperature_function
+                    (si::kelvin, si::gram/si::centimeter3,
+                     std::vector<double>{  25.0,  40.0,  50.0,  60.0,  70.0,  80.0}, 
+                     std::vector<double>{0.5228,0.5278,0.5136,0.5087,0.5031,0.4969}), // Prokhvatilov
+            /*vapor_pressure*/                    
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilopascal,
+                      std::vector<double>{65.0,     75.0,     85.0},     
+                      std::vector<double>{0.1 ,      0.8 ,     4.9}),
+            /*refractive_index*/                  1.3219,
+            /*extinction_coefficient*/            field::missing(),
+            /*spectral_reflectance*/              field::missing(),
+
+            /*bulk_modulus*/                      
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{  25.0,  40.0,  50.0,  60.0,  70.0,  80.0}, 
+                     std::vector<double>{ 20.72, 20.30, 19.66, 18.82, 17.85, 17.11}), // Prokhvatilov
+            /*tensile_modulus*/                   
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{  25.0,  40.0,  50.0,  60.0,  70.0,  80.0}, 
+                     std::vector<double>{ 25.74, 24.51, 23.31, 22.38, 20.85, 19.39}), // Prokhvatilov
+            /*shear_modulus*/                     
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{  25.0,  40.0,  50.0,  60.0,  70.0,  80.0}, 
+                     std::vector<double>{  9.96,  9.44,  8.95,  8.60,  7.99,  7.39}), // Prokhvatilov
+            /*pwave_modulus*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     
+                get_interpolated_temperature_function
+                    (si::kelvin, 1.0,
+                     std::vector<double>{  25.0,  40.0,  50.0,  60.0,  70.0,  80.0}, 
+                     std::vector<double>{ 0.293, 0.299, 0.302, 0.302, 0.305, 0.311}), // Prokhvatilov
+
+            /*compressive_fracture_strength*/     8.0 * si::megapascal, // Yamashita (2010)
+            /*tensile_fracture_strength*/         
+                get_interpolated_temperature_function
+                    (si::kelvin, si::standard_gravity * si::gram/si::millimeter2,
+                     std::vector<double>{  5.0,  10.0,  15.0,  20.0,  25.0,  30.0}, 
+                     std::vector<double>{180.0, 178.0, 176.0, 174.0, 170.0, 165.0}), // Prokhvatilov
+            /*shear_fracture_strength*/           field::missing(),
+            /*compressive_yield_strength*/        field::missing(),
+            /*tensile_yield_strength*/            
+                get_interpolated_temperature_function
+                    (si::kelvin, si::standard_gravity * si::gram/si::millimeter2,
+                     std::vector<double>{  5.0,  10.0,  15.0,  20.0,  25.0,  30.0}, 
+                     std::vector<double>{178.0, 159.0, 145.0, 137.0, 135.0, 117.0}), // Prokhvatilov
             /*shear_yield_strength*/              field::missing(),
 
             /*chemical_susceptibility_estimate*/  field::missing()
@@ -1117,8 +1282,8 @@ PartlyKnownCompound argon (
             /*density*/                           
                 get_interpolated_temperature_function
                     (si::kelvin, si::gram/si::centimeter3,
-                     std::vector<double>{ 20.0,    50.0,     84.0},              
-                     std::vector<double>{1.764,   1.714,    1.623}), // Johnson (1960)
+                     std::vector<double>{  10.0,  20.0,  30.0,  40.0,  50.0,  60.0,  70.0,  80.0}, 
+                     std::vector<double>{1.7705,1.7641,1.7518,1.7349,1.7148,1.6919,1.6657,1.6349}), // Prokhvatilov
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::kelvin, si::kilopascal,
@@ -1128,18 +1293,42 @@ PartlyKnownCompound argon (
             /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
-            /*bulk_modulus*/                      field::missing(),
-            /*tensile_modulus*/                   0.0529e11*si::pascal,
-            /*shear_modulus*/                     0.0159e11*si::pascal,
+            /*bulk_modulus*/                      
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{ 10.0,  20.0,  30.0,  40.0,  50.0,  60.0,  70.0,  80.0}, 
+                     std::vector<double>{26.07, 25.98, 24.72, 24.61, 23.24, 20.89, 19.62, 17.38}), // Prokhvatilov
+            /*tensile_modulus*/                   
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{ 10.0,  20.0,  30.0,  40.0,  50.0,  60.0,  70.0,  80.0}, 
+                     std::vector<double>{39.11, 38.97, 37.07, 35.22, 33.46, 30.08, 27.08, 23.70}), // Prokhvatilov
+            /*shear_modulus*/                     
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{ 10.0,  20.0,  30.0,  40.0,  50.0,  60.0,  70.0,  80.0}, 
+                     std::vector<double>{15.64, 15.59, 14.83, 14.06, 13.28, 11.94, 10.66,  9.44}), // Prokhvatilov
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     field::missing(),
+            /*poisson_ratio*/                     
+                get_interpolated_temperature_function
+                    (si::kelvin, 1.0,
+                     std::vector<double>{ 10.0,  20.0,  30.0,  40.0,  50.0,  60.0,  70.0,  80.0}, 
+                     std::vector<double>{ 0.25,  0.25,  0.25,  0.26,  0.26,  0.27,  0.27,  0.27}), // Prokhvatilov
 
             /*compressive_fracture_strength*/     field::missing(),
-            /*tensile_fracture_strength*/         field::missing(),
+            /*tensile_fracture_strength*/         
+                get_interpolated_temperature_function
+                    (si::kelvin, si::standard_gravity * si::gram/si::millimeter2,
+                     std::vector<double>{  5.0,  20.0,  30.0,  40.0,  50.0,  60.0,  75.0}, 
+                     std::vector<double>{160.0, 159.0, 155.0, 150.0, 130.0,  99.0,  38.0}), // Prokhvatilov
             /*shear_fracture_strength*/           field::missing(),
             /*compressive_yield_strength*/        field::missing(),
-            /*tensile_yield_strength*/            field::missing(),
+            /*tensile_yield_strength*/            
+                get_interpolated_temperature_function
+                    (si::kelvin, si::standard_gravity * si::gram/si::millimeter2,
+                     std::vector<double>{  5.0,  20.0,  30.0,  40.0,  50.0,  60.0,  75.0}, 
+                     std::vector<double>{151.0, 107.0,  82.0,  61.0,  49.0,  43.0,  20.0}), // Prokhvatilov
             /*shear_yield_strength*/              field::missing(),
 
             /*chemical_susceptibility_estimate*/  field::missing()
@@ -1280,8 +1469,16 @@ PartlyKnownCompound helium (
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
-            /*tensile_modulus*/                   field::missing(),
-            /*shear_modulus*/                     field::missing(),
+            /*tensile_modulus*/                   
+                get_interpolated_temperature_function
+                    (si::kelvin, 1e8 * si::dyne/si::centimeter2,
+                     std::vector<double>{ 23.8,  24.06,  24.4}, 
+                     std::vector<double>{ 2.43,   2.32,  2.17}), // Prokhvatilov 
+            /*shear_modulus*/                     
+                get_interpolated_temperature_function
+                    (si::kelvin, 1e8 * si::dyne/si::centimeter2,
+                     std::vector<double>{ 23.8,  24.06,  24.4}, 
+                     std::vector<double>{ 1.16,   1.05,  1.00}), // Prokhvatilov 
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
             /*poisson_ratio*/                     field::missing(),
@@ -1416,7 +1613,11 @@ PartlyKnownCompound hydrogen (
             /*specific_heat_capacity*/            0.2550 * si::calorie / (si::gram * si::kelvin), // Johnson (1960)
             /*thermal_conductivity*/              1.819 * si::watt / ( si::meter * si::kelvin ), // wikipedia
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           0086.0 * si::kilogram/si::meter3, // https://en.wikipedia.org/wiki/Solid_hydrogen
+            /*density*/                           // 86.0 * si::kilogram/si::meter3, // https://en.wikipedia.org/wiki/Solid_hydrogen
+                get_interpolated_temperature_function
+                    (si::kelvin, si::gram/si::centimeter3,
+                     std::vector<double>{   2.0,   4.0,   6.0,   8.0,  10.0,  12.0,  13.5}, 
+                     std::vector<double>{.08740,.08740,.08738,.08732,.08718,.08706,.08656}), // Prokhvatilov, for parahydrogen (more common at low temperatures)
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::celcius, si::millimeter_mercury,
@@ -1430,22 +1631,46 @@ PartlyKnownCompound hydrogen (
                     const si::temperature T
                 ) {
                     return 0.95+0.1144*std::pow(std::clamp(p/si::kilobar, 52.0, 350.0), 0.3368);
-                }) // Peck & Hung (1977)
+                }), // Peck & Hung (1977)
             /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
-            /*bulk_modulus*/                      field::missing(),
-            /*tensile_modulus*/                   field::missing(),
-            /*shear_modulus*/                     field::missing(),
+            /*bulk_modulus*/                      
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{  2.0,   4.0,   6.0,   8.0,  10.0,  12.0,  13.5}, 
+                     std::vector<double>{1.861, 1.849, 1.834, 1.815, 1.790, 1.761, 1.737}), // Prokhvatilov, for parahydrogen (more common at low temperatures)
+            /*tensile_modulus*/                   
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{  2.0,   4.0,   6.0,   8.0,  10.0,  12.0,  13.5}, 
+                     std::vector<double>{3.135, 3.115, 3.089, 3.056, 3.015, 2.966, 2.924}), // Prokhvatilov, for parahydrogen (more common at low temperatures)
+            /*shear_modulus*/                     
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{  2.0,   4.0,   6.0,   8.0,  10.0,  12.0,  13.5}, 
+                     std::vector<double>{1.285, 1.278, 1.267, 1.253, 1.237, 1.216, 1.199}), // Prokhvatilov, for parahydrogen (more common at low temperatures)
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     field::missing(),
+            /*poisson_ratio*/                     
+                get_interpolated_temperature_function
+                    (si::kelvin, 1.0,
+                     std::vector<double>{  2.0,  13.5}, 
+                     std::vector<double>{0.219, 0.219}), // Prokhvatilov, for parahydrogen (more common at low temperatures)
 
             /*compressive_fracture_strength*/     field::missing(),
-            /*tensile_fracture_strength*/         field::missing(),
+            /*tensile_fracture_strength*/         
+                get_interpolated_temperature_function
+                    (si::kelvin, si::standard_gravity * si::gram/si::millimeter2,
+                     std::vector<double>{  1.4,   2.0,   3.0,   4.2,   6.0,   8.0,  10.0,  12.0,  13.0}, 
+                     std::vector<double>{ 50.8,  50.4,  50.0,  49.2,  44.5,  37.2,  28.6,  17.1,  10.0}), // Prokhvatilov, for parahydrogen (more common at low temperatures)
             /*shear_fracture_strength*/           field::missing(),
             /*compressive_yield_strength*/        field::missing(),
-            /*tensile_yield_strength*/            field::missing(),
+            /*tensile_yield_strength*/            
+                get_interpolated_temperature_function
+                    (si::kelvin, si::standard_gravity * si::gram/si::millimeter2,
+                     std::vector<double>{  1.4,   2.0,   3.0,   4.2,   6.0,   8.0,  10.0,  12.0,  13.0}, 
+                     std::vector<double>{  8.4,   7.6,   7.0,   6.6,   5.5,   4.3,   3.8,   3.0,   1.6}), // Prokhvatilov, for parahydrogen (more common at low temperatures)
             /*shear_yield_strength*/              field::missing(),
 
             /*chemical_susceptibility_estimate*/  field::missing()
@@ -1525,7 +1750,7 @@ PartlyKnownCompound ammonia (
             get_dippr_liquid_heat_capacity_temperature_function_114
                 (405.56 * si::kelvin, si::joule / (17.031 * si::kilogram * si::kelvin), 
                 61.289, 80925.0, 799.4, -2651.0, 0.0,
-                203.15*si::kelvin, 401.15*si::kelvin), 
+                203.15*si::kelvin, 401.15*si::kelvin),
             // get_interpolated_temperature_function
             //     ( si::kelvin, si::joule/(si::gram * si::kelvin),
             //       std::vector<double>{195.5,260.0,300.0,340.0,380.0,400.0},
@@ -1555,11 +1780,11 @@ PartlyKnownCompound ammonia (
                 (si::kelvin, si::newton/si::meter,
                  405.56, 0.1028, 1.211, -0.09453, 5.585, 0.0, 0.0,
                  197.85, 403.15), // Mulero (2012)
-        /*refractive_index*/       // 1.3944,
-            get_interpolated_temperature_function
-                (si::celcius, si::millimeter_mercury,
-                 std::vector<double>{ -20.0,  40.0}, 
-                 std::vector<double>{1.3475, 1.321}), // Francis (1960)
+        /*refractive_index*/        1.3944,
+            // get_interpolated_temperature_function
+            //     (si::celcius, 1.0,
+            //      std::vector<double>{ -20.0,  40.0}, 
+            //      std::vector<double>{1.3475, 1.321}), // Francis (1960)
         /*extinction_coefficient*/ field::missing()
 
     },
@@ -1570,7 +1795,11 @@ PartlyKnownCompound ammonia (
             /*specific_heat_capacity*/            field::missing(),
             /*thermal_conductivity*/              field::missing(),
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           field::missing(),
+            /*density*/                           
+                get_interpolated_temperature_function
+                    (si::kelvin, si::gram/si::centimeter3,
+                     std::vector<double>{ 90.0, 100.0, 120.0, 140.0, 160.0, 180.0, 190.0}, 
+                     std::vector<double>{0.855, 0.853, 0.848, 0.841, 0.834, 0.826, 0.821}), // Prokhvatilov
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::kelvin, si::kilopascal,
@@ -1580,17 +1809,41 @@ PartlyKnownCompound ammonia (
             /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
-            /*bulk_modulus*/                      field::missing(),
+            /*bulk_modulus*/                      
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{ 90.0, 100.0, 120.0, 140.0, 160.0, 180.0, 190.0}, 
+                     std::vector<double>{61.24, 61.02, 59.16, 56.23, 53.20, 49.64, 47.83}), // Prokhvatilov
             /*tensile_modulus*/                   field::missing(),
-            /*shear_modulus*/                     field::missing(),
+            /*shear_modulus*/                     
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{ 90.0, 100.0, 120.0, 140.0, 160.0, 180.0, 190.0}, 
+                     std::vector<double>{43.28, 43.14, 42.70, 41.67, 40.18, 49.64, 47.83}), // Prokhvatilov
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     field::missing(),
+            /*poisson_ratio*/                     
+                get_interpolated_temperature_function
+                    (si::kelvin, 1.0,
+                     std::vector<double>{ 90.0, 100.0, 120.0, 140.0, 160.0, 180.0, 190.0}, 
+                     std::vector<double>{0.214, 0.214, 0.209, 0.203, 0.198, 0.195, 0.196}), // Prokhvatilov
 
-            /*compressive_fracture_strength*/     field::missing(),
-            /*tensile_fracture_strength*/         field::missing(),
+            /*compressive_fracture_strength*/     
+                get_interpolated_temperature_function
+                    (si::kelvin, si::standard_gravity * si::gram/si::centimeter2,
+                     std::vector<double>{ 77.0, 100.0, 120.0, 130.0, 140.0, 150.0, 160.0}, 
+                     std::vector<double>{580.0, 620.0, 540.0, 450.0, 360.0, 270.0, 190.0}), // Prokhvatilov
+            /*tensile_fracture_strength*/         
+                get_interpolated_temperature_function
+                    (si::kelvin, si::standard_gravity * si::gram/si::centimeter2,
+                     std::vector<double>{ 77.0, 120.0, 130.0, 140.0, 150.0, 160.0}, 
+                     std::vector<double>{120.0, 140.0, 160.0, 180.0,  90.0,  50.0}), // Prokhvatilov
             /*shear_fracture_strength*/           field::missing(),
-            /*compressive_yield_strength*/        field::missing(),
+            /*compressive_yield_strength*/        
+                get_interpolated_temperature_function
+                    (si::kelvin, si::standard_gravity * si::gram/si::centimeter2,
+                     std::vector<double>{ 77.0, 100.0, 120.0, 130.0, 140.0, 150.0}, 
+                     std::vector<double>{580.0, 480.0, 230.0, 150.0, 110.0, 200.0}), // Prokhvatilov
             /*tensile_yield_strength*/            field::missing(),
             /*shear_yield_strength*/              field::missing(),
 
@@ -1920,11 +2173,11 @@ PartlyKnownCompound  sulfur_dioxide (
                 (si::kelvin, si::newton/si::meter,
                  430.64, 0.0803, 0.928, 0.0139, 1.570, -0.0114, 0.364,
                  189.15, 373.15), // Mulero (2012)
-        /*refractive_index*/       // 1.3396,
-            get_interpolated_temperature_function
-                (si::celcius, si::millimeter_mercury,
-                 std::vector<double>{-20.0, 40.0}, 
-                 std::vector<double>{ 1.37, 1.33}), // Francis (1960)
+        /*refractive_index*/        1.3396,
+            // get_interpolated_temperature_function
+            //     (si::celcius, 1.0,
+            //      std::vector<double>{-20.0, 40.0}, 
+            //      std::vector<double>{ 1.37, 1.33}), // Francis (1960)
         /*extinction_coefficient*/ field::missing()
 
     },
@@ -2192,11 +2445,18 @@ PartlyKnownCompound carbon_monoxide (
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid { // beta: warmer form, transitions to alpha at 61.5K
-            /*specific_heat_capacity*/            12.29 * si::calorie / (28.010 * si::gram * si::kelvin), // Johnson (1960)
+            /*specific_heat_capacity*/            
+                get_interpolated_temperature_function
+                    (si::kelvin, si::joule/(28.010*si::gram*si::kelvin),
+                     std::vector<double>{ 63.0,  64.0,  65.0,  66.0,  67.0}, 
+                     std::vector<double>{50.10, 50.58, 51.08, 51.58, 52.29}), // Manzhelii (1997)
             /*thermal_conductivity*/              30.0 * si::milliwatt / (si::centimeter * si::kelvin), // Stachowiak (1998)
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           
-                field::StateSample<si::density>(0.929*si::gram/si::centimeter3, si::atmosphere, 20.0*si::kelvin), // Johnson (1960)
+                get_interpolated_temperature_function
+                    (si::kelvin, si::gram/si::centimeter3,
+                     std::vector<double>{  62.0,  64.0,  66.0,  67.0}, 
+                     std::vector<double>{0.9378,0.9326,0.9269,0.9238}), // Prokhvatilov
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::celcius, si::millimeter_mercury,
@@ -2206,14 +2466,28 @@ PartlyKnownCompound carbon_monoxide (
             /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
-            /*bulk_modulus*/                      field::missing(),
+            /*bulk_modulus*/                      
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{ 62.0,  64.0,  66.0,  67.0}, 
+                     std::vector<double>{15.65, 15.23, 14.80, 14.55}), // Prokhvatilov
             /*tensile_modulus*/                   
-                field::StateSample<si::pressure>(2.41 * si::gigapascal, si::standard_pressure, 60.9*si::kelvin), // Manzhelii (2003)
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{ 62.0,  64.0,  66.0,  67.0}, 
+                     std::vector<double>{11.27, 10.88, 10.49, 10.33}), // Prokhvatilov
             /*shear_modulus*/                     
-                field::StateSample<si::pressure>(1.06 * si::gigapascal, si::standard_pressure, 60.9*si::kelvin), // Manzhelii (2003)
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{ 62.0,  64.0,  66.0,  67.0}, 
+                     std::vector<double>{ 4.08,  3.94,  3.80,  3.74}), // Prokhvatilov
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     field::missing(),
+            /*poisson_ratio*/                     
+                get_interpolated_temperature_function
+                    (si::kelvin, 1.0,
+                     std::vector<double>{ 62.0,  64.0,  66.0,  67.0}, 
+                     std::vector<double>{0.380, 0.381, 0.382, 0.382}), // Prokhvatilov
 
             /*compressive_fracture_strength*/     field::missing(),
             /*tensile_fracture_strength*/         field::missing(),
@@ -2225,25 +2499,52 @@ PartlyKnownCompound carbon_monoxide (
             /*chemical_susceptibility_estimate*/  field::missing()
         }, 
         phase::PartlyKnownSolid { //alpha
-            /*specific_heat_capacity*/            field::missing(),
+            /*specific_heat_capacity*/            
+                get_interpolated_temperature_function
+                    (si::kelvin, si::joule/(28.010*si::gram*si::kelvin),
+                     std::vector<double>{  0.0,   6.0,  12.0,  18.0,  24.0,  30.0,  36.0,  42.0,  48.0,  54.0,  61.0}, 
+                     std::vector<double>{  0.0, 0.467, 4.375, 11.77, 18.92, 25.04, 30.73, 35.92, 41.45, 48.53, 67.83}), // Manzhelii (1997)
             /*thermal_conductivity*/              field::missing(),
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           
-                field::StateSample<si::density>(1.0288*si::gram/si::centimeter3, si::atmosphere, 65.0*si::kelvin), // Johnson (1960)
+                get_interpolated_temperature_function
+                    (si::kelvin, si::gram/si::centimeter3,
+                     std::vector<double>{  20.0,  24.0,  28.0,  32.0,  36.0,  40.0,  44.0,  52.0,  56.0,  60.0}, 
+                     std::vector<double>{1.0293,1.0273,1.0232,1.0202,1.0159,1.0110,1.0054,0.9909,0.9812,0.9689}), // Prokhvatilov
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  field::missing(),
             /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
-            /*bulk_modulus*/                      field::missing(),
-            /*tensile_modulus*/                   field::missing(),
-            /*shear_modulus*/                     field::missing(),
+            /*bulk_modulus*/                      
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{ 20.0,  24.0,  28.0,  32.0,  36.0,  40.0,  44.0,  52.0,  56.0,  60.0}, 
+                     std::vector<double>{22.29, 22.04, 21.70, 21.34, 20.91, 20.24, 19.24, 16.52, 15.07, 13.56}), // Prokhvatilov
+            /*tensile_modulus*/                   
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{ 20.0,  24.0,  28.0,  32.0,  36.0,  40.0,  44.0,  52.0,  56.0,  60.0}, 
+                     std::vector<double>{37.69, 37.30, 36.83, 36.33, 35.73, 34.85, 33.71, 30.15, 27.68, 24.73}), // Prokhvatilov
+            /*shear_modulus*/                     
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilobar,
+                     std::vector<double>{ 20.0,  24.0,  28.0,  32.0,  36.0,  40.0,  44.0,  52.0,  56.0,  60.0}, 
+                     std::vector<double>{15.47, 15.32, 15.13, 14.94, 14.70, 14.36, 13.95, 12.60, 11.59, 10.34}), // Prokhvatilov
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     field::missing(),
+            /*poisson_ratio*/                     
+                get_interpolated_temperature_function
+                    (si::kelvin, 1.0,
+                     std::vector<double>{ 20.0,  24.0,  28.0,  32.0,  36.0,  40.0,  44.0,  52.0,  56.0,  60.0}, 
+                     std::vector<double>{0.218, 0.218, 0.217, 0.216, 0.215, 0.213, 0.208, 0.196, 0.194, 0.196}), // Prokhvatilov
 
             /*compressive_fracture_strength*/     field::missing(),
-            /*tensile_fracture_strength*/         field::missing(),
+            /*tensile_fracture_strength*/         
+                get_interpolated_temperature_function
+                    (si::kelvin, si::standard_gravity * si::gram / si::millimeter2,
+                     std::vector<double>{ 53.0,  55.0,  56.0,  57.0,  59.0,  63.5}, 
+                     std::vector<double>{ 70.0,  85.0,  96.0, 110.0,  65.0,  24.0}), // Prokhvatilov
             /*shear_fracture_strength*/           field::missing(),
             /*compressive_yield_strength*/        field::missing(),
             /*tensile_yield_strength*/            field::missing(),
@@ -2490,7 +2791,7 @@ PartlyKnownCompound hydrogen_cyanide (
                      std::vector<double>{-71.0,  -47.7,  -17.8,  25.9   }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  1.37,    // Moore 2010, 95K 5000 cm-1
-            /*extinction_coefficient*/            1.876e-4 // Moore 2010, 95K 5000 cm-1
+            /*extinction_coefficient*/            1.876e-4, // Moore 2010, 95K 5000 cm-1
             /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
@@ -3043,7 +3344,7 @@ PartlyKnownCompound benzene (
                 (si::kelvin, si::pascal * si::second,
                 3.1340e-8, 0.9676, 7.9, 0.0), // 278.68-1000K
         /*density*/                field::missing(),
-        /*refractive_index*/       1.53
+        /*refractive_index*/       field::missing(),
     },
 
     /*liquid*/
@@ -3868,21 +4169,7 @@ PartlyKnownCompound  quartz (
                      std::vector<double>{ 1.5,  7.9,  7.9,  8.6,  8.7,  8.7,  8.7,  8.7,  8.8,  8.8,  8.8,  8.9,  8.9,  8.9,  9.0,  9.1,  9.1,  9.1,  9.2,  9.2,  9.2,  9.3,  9.3,  9.3,  9.4,  9.4,  9.4,  9.5,  9.5,  9.5,  9.6,  9.6,  9.8,  9.9,  9.9, 10.0, 10.0, 10.0, 10.1, 10.1, 10.2, 10.2, 10.2, 10.3, 10.3, 10.4, 14.3},
                      std::vector<double>{0.00002, 0.12770, 0.15315, 0.91466, 0.94547, 0.98260, 1.02616, 1.07603, 1.13242, 1.19597, 1.26754, 1.34784, 1.43703, 1.53432, 1.84907, 1.94684, 2.03267, 2.10448, 2.16419, 2.21577, 2.26057, 2.29387, 2.30736, 2.29703, 2.26706, 2.22350, 2.16431, 2.08460, 1.99475, 1.89944, 1.78965, 1.66503, 0.92326, 0.80887, 0.70568, 0.61411, 0.53217, 0.45759, 0.38927, 0.32737, 0.27266, 0.22569, 0.18645, 0.15438, 0.12857, 0.10802, 0.06946}),
                     // Kischkat (2012)
-            /*spectral_reflectance*/              
-                field::SpectralFunction<double>([](
-                    const si::wavenumber nlo, 
-                    const si::wavenumber nhi, 
-                    const si::pressure p, 
-                    const si::temperature T
-                ) {
-                    double l = (2.0 / (nhi+nlo) / si::micrometer);
-                    return sqrt(
-                        1.0
-                        + 0.6961663 * l*l / (l*l - pow(0.0684043, 2.0))
-                        + 0.4079426 * l*l / (l*l - pow(0.1162414, 2.0))
-                        + 0.8974794 * l*l / (l*l - pow(9.896161,  2.0))
-                    );
-                }),
+            /*spectral_reflectance*/              field::missing(),
 
             /*bulk_modulus*/                      37.0 * si::gigapascal, // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
             /*tensile_modulus*/                   0.8680e11*si::pascal, 
