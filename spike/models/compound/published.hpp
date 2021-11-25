@@ -21,7 +21,8 @@ SOURCES:
 * exponential and sigmoid functions for fluids at pressure and temperature were parameterized using data from NIST, https://webbook.nist.gov/chemistry/fluid/
 * "perry" functions for temperature were taken from the 9th edition of Perry's Chemical Engineer's Handbook
 * "dippr" functions for temperature are from the "DIPPR Data Compilation of Pure Chemical Properties", copied from the 9th edition of Perry's Chemical Engineer's Handbook
-* "prokhvatilov" functions for yield and fracture strength are taken from "Plasticity and Elasticity of Cryocrystals" by Prokhvatilov (2001)
+* "prokhvatilov" functions for yield and fracture strength of cryogenic solids are taken from "Plasticity and Elasticity of Cryocrystals" by Prokhvatilov (2001)
+* "schön" properties for elastic moduli for minerals are taken from "Physical Properties of Rocks: Fundamentals and Principles of Petrophysics" by Juergen H. Schön (2015)
 
 NOTE:
 Specific heat always denotes specific heat at constant pressure, c_p.
@@ -3588,7 +3589,7 @@ PartlyKnownCompound  halite (
         phase::PartlyKnownSolid {
             /*specific_heat_capacity*/            // 50.0 * si::joule / (90.442 * si::gram * si::kelvin), // wikipedia data page
                 get_perry_temperature_function(si::kelvin, si::calorie/(80.088 * si::gram*si::kelvin), 10.79, 0.00420, 0.0, 0.0),
-            /*thermal_conductivity*/              6.5 * si::watt / ( si::meter * si::kelvin ), // wikipedia data page
+            /*thermal_conductivity*/              5.55 * si::watt / ( si::meter * si::kelvin ), // Wilkens (2011)
             /*dynamic_viscosity*/                 1e17 * si::poise, // various sources, Carey (1953) cites this number from Weinberg (1927), and Mukherjee (2010), provides a literature review and findings from salt diapirs. Science is weird.
             /*density*/                           2170.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    
@@ -3615,7 +3616,7 @@ PartlyKnownCompound  halite (
             /*shear_modulus*/                     0.1287e11*si::pascal, 
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     field::missing(),
+            /*poisson_ratio*/                     0.26, // Schön (2015)
 
             /*compressive_fracture_strength*/     20.0 * si::megapascal, // Bauer (2019)
             /*tensile_fracture_strength*/         field::missing(),
@@ -3709,12 +3710,12 @@ PartlyKnownCompound  corundum (
                     // Querry (1985)
             /*spectral_reflectance*/              field::missing(),
 
-            /*bulk_modulus*/                      305.0 * si::gigapascal, //azom.com/article.aspx?ArticleId=1948
+            /*bulk_modulus*/                      field::missing(),
             /*tensile_modulus*/                   4.9735e11*si::pascal,
             /*shear_modulus*/                     1.4739e11*si::pascal,
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     0.28,  //azom.com/article.aspx?ArticleId=1948
+            /*poisson_ratio*/                     field::missing(),
 
             /*compressive_fracture_strength*/     2265.0*si::megapascal, //azom.com/article.aspx?ArticleId=1948
             /*tensile_fracture_strength*/         325.0*si::megapascal, //azom.com/article.aspx?ArticleId=1948
@@ -3783,8 +3784,8 @@ PartlyKnownCompound  apatite (
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
 
-            /*specific_heat_capacity*/            field::missing(),
-            /*thermal_conductivity*/              1.37 * si::watt / (si::meter*si::kelvin), // Cermak (1988)
+            /*specific_heat_capacity*/            0.7 * si::kilojoule / (si::kilogram*si::kelvin), // Schön (2015)
+            /*thermal_conductivity*/              1.38 * si::watt / (si::meter*si::kelvin), // Schön (2015)
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           3180.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    field::missing(),
@@ -3797,7 +3798,7 @@ PartlyKnownCompound  apatite (
             /*shear_modulus*/                     field::missing(),
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     field::missing(),
+            /*poisson_ratio*/                     0.26, // Schön (2015)
 
             /*compressive_fracture_strength*/     field::missing(),
             /*tensile_fracture_strength*/         field::missing(),
@@ -4014,11 +4015,11 @@ PartlyKnownCompound  calcite (
 
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
-        phase::PartlyKnownSolid {
+        phase::PartlyKnownSolid { // calcite
 
             /*specific_heat_capacity*/            // 0.793 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988, room temperature, 0.79 for aragonite
                 get_perry_temperature_function(si::kelvin, si::calorie/(100.087 * si::gram*si::kelvin), 19.68, 0.01189, -307600.0, 0.0), 
-            /*thermal_conductivity*/              3.57 * si::watt / (si::meter * si::kelvin), // Cermak (1988), wikipedia
+            /*thermal_conductivity*/              3.59 * si::watt / (si::meter * si::kelvin), // Schön (2015)
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           2710.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    field::missing(),
@@ -4040,12 +4041,12 @@ PartlyKnownCompound  calcite (
             /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
-            /*bulk_modulus*/                      field::missing(),
+            /*bulk_modulus*/                      73.0 * si::gigapascal, // Schön (2015)
             /*tensile_modulus*/                   1.4806e11*si::pascal, 
             /*shear_modulus*/                     0.3269e11*si::pascal, 
             /*pwave_modulus*/                     field::missing(),
-            /*lame_parameter*/                    56.0 *  si::gigapascal, // https://www.subsurfwiki.org/wiki/1st_Lam%C3%A9_parameter,
-            /*poisson_ratio*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     0.32,
 
             /*compressive_fracture_strength*/     field::missing(),
             /*tensile_fracture_strength*/         field::missing(),
@@ -4060,7 +4061,7 @@ PartlyKnownCompound  calcite (
 
             /*specific_heat_capacity*/            // 0.793 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988, room temperature, 0.79 for aragonite
                 get_perry_temperature_function(si::kelvin, si::calorie/(100.087 * si::gram*si::kelvin), 19.68, 0.01189, -307600.0, 0.0), 
-            /*thermal_conductivity*/              2.23 * si::watt / (si::meter * si::kelvin), // Cermak (1988), wikipedia
+            /*thermal_conductivity*/              2.24 * si::watt / (si::meter * si::kelvin), // Schön (2015)
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           2930.0 * si::kilogram/si::meter3, // Perry
             /*vapor_pressure*/                    field::missing(),
@@ -4068,12 +4069,12 @@ PartlyKnownCompound  calcite (
             /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
-            /*bulk_modulus*/                      field::missing(),
+            /*bulk_modulus*/                      47.0 * si::gigapascal, // Schön (2015)
             /*tensile_modulus*/                   1.5958e11*si::pascal,
             /*shear_modulus*/                     0.4132e11*si::pascal,
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     field::missing(),
+            /*poisson_ratio*/                     0.18, // Schön (2015)
 
             /*compressive_fracture_strength*/     field::missing(),
             /*tensile_fracture_strength*/         field::missing(),
@@ -4145,11 +4146,11 @@ PartlyKnownCompound  quartz (
         phase::PartlyKnownSolid { // alpha
             /*specific_heat_capacity*/            // 0.703 * si::joule / (si::gram * si::kelvin), // Cermak (1988), wikipedia, for vitreous silica
                 get_perry_temperature_function(si::kelvin, si::calorie/(60.08 * si::gram*si::kelvin), 10.87, 0.008712, 241200.0, 0.0), 
-            /*thermal_conductivity*/              // 1.36 * si::watt / (si::centimeter * si::kelvin), // Cermak (1988), wikipedia, for vitreous silica
+            /*thermal_conductivity*/              
                 get_interpolated_temperature_function
                     (si::kelvin, si::watt / (si::meter * si::kelvin),
-                     std::vector<double>{10.0,    20.0,  80.0}, 
-                     std::vector<double>{1200.0, 480.0,  30.0}), // Perry
+                     std::vector<double>{10.0,    20.0,  80.0, 273.15}, 
+                     std::vector<double>{1200.0, 480.0,  30.0, 7.69}), // Perry, with Schön (2015) for standard temperature 
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           2650.0 *  si::kilogram/si::meter3, // 2650 alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
             /*vapor_pressure*/                    
@@ -4171,12 +4172,12 @@ PartlyKnownCompound  quartz (
                     // Kischkat (2012)
             /*spectral_reflectance*/              field::missing(),
 
-            /*bulk_modulus*/                      37.0 * si::gigapascal, // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
+            /*bulk_modulus*/                      37.0 * si::gigapascal, // Schön (2015)
             /*tensile_modulus*/                   0.8680e11*si::pascal, 
             /*shear_modulus*/                     0.5820e11*si::pascal, 
             /*pwave_modulus*/                     field::missing(),
-            /*lame_parameter*/                    8.0 * si::gigapascal, // https://www.subsurfwiki.org/wiki/1st_Lam%C3%A9_parameter,
-            /*poisson_ratio*/                     0.17, // https://www.momentive.com/en-us/categories/quartz/mechanical-properties
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     0.08, // Schön (2015)
 
             /*compressive_fracture_strength*/     1.1 * si::gigapascal, // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
             /*tensile_fracture_strength*/         48.0 * si::megapascal, // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
@@ -4190,7 +4191,7 @@ PartlyKnownCompound  quartz (
         phase::PartlyKnownSolid { // beta
             /*specific_heat_capacity*/            // 0.703 * si::joule / (si::gram * si::kelvin), // Cermak (1988), wikipedia, for vitreous silica
                 get_perry_temperature_function(si::kelvin, si::calorie/(60.08 * si::gram*si::kelvin), 10.87, 0.008712, 241200.0, 0.0), 
-            /*thermal_conductivity*/              field::missing(),// 1.36 * si::watt / (si::centimeter * si::kelvin), // Cermak (1988), wikipedia, for vitreous silica
+            /*thermal_conductivity*/              field::missing(),
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           2533.0 *  si::kilogram/si::meter3, // 2650 alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
             /*vapor_pressure*/                    
@@ -4221,7 +4222,7 @@ PartlyKnownCompound  quartz (
         phase::PartlyKnownSolid { // crystobalite alpha
             /*specific_heat_capacity*/            // 0.703 * si::joule / (si::gram * si::kelvin), // Cermak (1988), wikipedia, for vitreous silica
                 get_perry_temperature_function(si::kelvin, si::calorie/(60.08 * si::gram*si::kelvin), 3.65, 0.0240, 0.0, 0.0), 
-            /*thermal_conductivity*/              field::missing(),// 1.36 * si::watt / (si::centimeter * si::kelvin), // Cermak (1988), wikipedia, for vitreous silica
+            /*thermal_conductivity*/              field::missing(),
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           2334.0 *  si::kilogram/si::meter3, // 2650 alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
             /*vapor_pressure*/                    
@@ -4252,7 +4253,7 @@ PartlyKnownCompound  quartz (
         phase::PartlyKnownSolid { // crystobalite beta
             /*specific_heat_capacity*/            // 0.703 * si::joule / (si::gram * si::kelvin), // Cermak (1988), wikipedia, for vitreous silica
                 get_perry_temperature_function(si::kelvin, si::calorie/(60.08 * si::gram*si::kelvin), 17.09, 0.000454, -897200.0, 0.0), 
-            /*thermal_conductivity*/              field::missing(),// 1.36 * si::watt / (si::centimeter * si::kelvin), // Cermak (1988), wikipedia, for vitreous silica
+            /*thermal_conductivity*/              field::missing(),
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           2334.0 *  si::kilogram/si::meter3, // 2650 alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
             /*vapor_pressure*/                    
@@ -4337,7 +4338,7 @@ PartlyKnownCompound  orthoclase (
 
             /*specific_heat_capacity*/            // 0.61 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988)
                 get_perry_temperature_function(si::kelvin, si::calorie/(278.33 * si::gram*si::kelvin), 69.26, 0.00821, -2331000.0, 0.0),
-            /*thermal_conductivity*/              field::missing(),
+            /*thermal_conductivity*/              2.31 * si::watt/(si::meter*si::kelvin), // Schön (2015)
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           2560.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    field::missing(),
@@ -4345,9 +4346,9 @@ PartlyKnownCompound  orthoclase (
             /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
-            /*bulk_modulus*/                      50.0 * si::gigapascal, // for Granite, wikipedia
-            /*tensile_modulus*/                   52.0 * si::gigapascal, // for Granite, engineering toolbox
-            /*shear_modulus*/                     24.0*si::gigapascal, // for Granite, wikipedia
+            /*bulk_modulus*/                      46.8 * si::gigapascal, // Schön (2015)
+            /*tensile_modulus*/                   field::missing(),
+            /*shear_modulus*/                     27.3 * si::gigapascal, // Schön (2015)
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
             /*poisson_ratio*/                     field::missing(),
@@ -4429,7 +4430,7 @@ PartlyKnownCompound andesine (
 
             /*specific_heat_capacity*/            // 66.0 * si::joule / (268.6 * si::gram * si::kelvin), // Richet (1984)
                 get_perry_temperature_function(si::kelvin, si::calorie/(268.6 * si::gram*si::kelvin), 63.13, 0.01500, -1537000.0, 0.0), // for anorthite
-            /*thermal_conductivity*/              1.68 * si::watt / (si::centimeter * si::kelvin), // Cermak (1988), for anorthite
+            /*thermal_conductivity*/              1.69 * si::watt / (si::centimeter * si::kelvin), // Schön (2015), for anorthite
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           2670.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    field::missing(),
@@ -4437,12 +4438,12 @@ PartlyKnownCompound andesine (
             /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
-            /*bulk_modulus*/                      field::missing(),
+            /*bulk_modulus*/                      84.0 * si::gigapascal, // Schön (2015), for anorthite
             /*tensile_modulus*/                   field::missing(),
-            /*shear_modulus*/                     field::missing(),
+            /*shear_modulus*/                     40.0 * si::gigapascal, // Schön (2015), for anorthite
             /*pwave_modulus*/                     field::missing(),
-            /*lame_parameter*/                    58.23*si::gigapascal, // for Gabbro, Shaocheng (2010)
-            /*poisson_ratio*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     0.29, // Schön (2015), for anorthite
 
             /*compressive_fracture_strength*/     field::missing(),
             /*tensile_fracture_strength*/         field::missing(),
@@ -4494,8 +4495,8 @@ PartlyKnownCompound augite (
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ field::missing(),
-        /*thermal_conductivity*/   field::missing(),
+        /*specific_heat_capacity*/ 1.08 * si::kilojoule / (si::kilogram*si::kelvin), // Schön (2015), for basaltic lava
+        /*thermal_conductivity*/   2.5 * si::watt / (si::meter*si::kelvin), // Schön (2015), for basaltic lava
         /*dynamic_viscosity*/      field::missing(),
         /*density*/                2800.0 * si::kilogram/si::meter3, // from Murase and McBirney (1973), for basaltic  magma
         /*vapor_pressure*/         field::missing(),
@@ -4517,19 +4518,20 @@ PartlyKnownCompound augite (
 
             /*specific_heat_capacity*/            // 0.7 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988), representative of pyroxenes
                 get_perry_temperature_function(si::kelvin, si::calorie/(236.4 * si::gram*si::kelvin), 23.35, 0.008062, -558800.0, 0.0), // for maganese pyroxenes 
-            /*thermal_conductivity*/              3.82 * si::watt / (si::centimeter * si::kelvin), // Cermak (1988)
+            /*thermal_conductivity*/              4.66 * si::watt / (si::centimeter * si::kelvin), // Schön (2015)
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           3380.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  1.707,
             /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
-            /*bulk_modulus*/                      field::missing(),
+
+            /*bulk_modulus*/                      94.1 * si::gigapascal, // Schön (2015)
             /*tensile_modulus*/                   field::missing(),
-            /*shear_modulus*/                     69.0*si::gigapascal, // for Pyroxenite, Shaocheng (2010)
+            /*shear_modulus*/                     57.0*si::gigapascal, // Schön (2015)
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     field::missing(),
+            /*poisson_ratio*/                     0.25, // Schön (2015)
 
             /*compressive_fracture_strength*/     field::missing(),
             /*tensile_fracture_strength*/         field::missing(),
@@ -4604,7 +4606,7 @@ PartlyKnownCompound forsterite (
 
             /*specific_heat_capacity*/            // 0.79 * si::joule / (si::gram * si::kelvin), // Cermak (1988), for fayalite/forsterite mix
                 get_perry_temperature_function(si::kelvin, si::calorie/(153.31 * si::gram*si::kelvin), 33.57, 0.01907, -87970.0, 0.0), // for fayalite
-            /*thermal_conductivity*/              5.06 * si::watt / (si::centimeter * si::kelvin), // Cermak (1988)
+            /*thermal_conductivity*/              7.69 * si::watt / (si::centimeter * si::kelvin), // Schön (2015)
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           3810.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    field::missing(),
@@ -4612,12 +4614,12 @@ PartlyKnownCompound forsterite (
             /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
-            /*bulk_modulus*/                      field::missing(),
+            /*bulk_modulus*/                      129.6 * si::gigapascal, // Schön (2015)
             /*tensile_modulus*/                   3.2848e11*si::pascal,
             /*shear_modulus*/                     0.6515e11*si::pascal,
             /*pwave_modulus*/                     field::missing(),
-            /*lame_parameter*/                    73.5*si::gigapascal, // for Peridotite, Shaocheng (2010)
-            /*poisson_ratio*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     0.24,
 
             /*compressive_fracture_strength*/     field::missing(),
             /*tensile_fracture_strength*/         field::missing(),
@@ -4769,7 +4771,7 @@ PartlyKnownCompound  pyrite (
 
             /*specific_heat_capacity*/            // 0.5 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988, room temperature
                 get_perry_temperature_function(si::kelvin, si::calorie/(119.98 * si::gram*si::kelvin), 10.7, 0.01336, 0.0, 0.0),
-            /*thermal_conductivity*/              19.2 * si::watt / (si::meter * si::kelvin), // Cermak (1988)
+            /*thermal_conductivity*/              19.21 * si::watt / (si::meter * si::kelvin), // Schön (2015)
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           5020.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    field::missing(),
@@ -4777,12 +4779,12 @@ PartlyKnownCompound  pyrite (
             /*extinction_coefficient*/            field::missing(),
             /*spectral_reflectance*/              field::missing(),
 
-            /*bulk_modulus*/                      field::missing(),
+            /*bulk_modulus*/                      143.0 * si::gigapascal, // Schön (2015)
             /*tensile_modulus*/                   3.818e11*si::pascal,
             /*shear_modulus*/                     1.094e11*si::pascal,
             /*pwave_modulus*/                     field::missing(),
-            /*lame_parameter*/                    59.0 * si::gigapascal, // https://www.subsurfwiki.org/wiki/1st_Lam%C3%A9_parameter
-            /*poisson_ratio*/                     field::missing(),
+            /*lame_parameter*/                    field::missing(),
+            /*poisson_ratio*/                     0.16, // Schön (2015)
 
             /*compressive_fracture_strength*/     field::missing(),
             /*tensile_fracture_strength*/         field::missing(),
@@ -4851,7 +4853,7 @@ PartlyKnownCompound hematite (
 
             /*specific_heat_capacity*/            // 0.61 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988)
                 get_perry_temperature_function(si::kelvin, si::calorie/(159.69 * si::gram*si::kelvin), 24.72, 0.01604, -423400.0, 0.0),
-            /*thermal_conductivity*/              11.3 * si::watt / (si::meter * si::kelvin), // Cermak (1988)
+            /*thermal_conductivity*/              11.28 * si::watt / (si::meter * si::kelvin), // Schön (2015)
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           5250.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    field::missing(),
@@ -5276,7 +5278,7 @@ PartlyKnownCompound  magnetite (
 
             /*specific_heat_capacity*/            // 0.6 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988)
                 get_perry_temperature_function(si::kelvin, si::calorie/(231.53 * si::gram*si::kelvin), 41.17, 0.01882, -979500.0, 0.0),
-            /*thermal_conductivity*/              5.1 * si::watt / (si::centimeter * si::kelvin), // Cermak (1988), wikipedia, for vitrous silica
+            /*thermal_conductivity*/              5.1 * si::watt / (si::centimeter * si::kelvin), // Schön (2015)
             /*dynamic_viscosity*/                 field::missing(), // 3e8 * si::pascal * si::second, // Melosh (2011), from Hiesinger (2007), for venusian lava flows, middle of range on log scale
             /*density*/                           5170.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    field::missing(),
