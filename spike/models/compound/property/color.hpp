@@ -49,6 +49,46 @@ namespace compound{
             return attenuation_coefficient / number_density;
         }
 
+        /*
+        `get_extinction_coefficient_from_absorption_coefficient` converts from 
+        absorption coefficient (i.e., the coefficient used in Beer's law) 
+        to extinction coefficient (i.e., the imaginary index of refraction)
+        See Clark (1999, eq. 1.3) for discussion surrounding it.
+        */
+        float get_extinction_coefficient_from_absorption_coefficient(const si::attenuation absorption_coefficient, const si::length wavelength)
+        {
+            const float _4pi = 4.0 * 3.1415926535;
+            return absorption_coefficient * wavelength / _4pi;
+        }
+        /*
+        `get_absorption_coefficient_from_extinction_coefficient` converts 
+        from extinction coefficient (i.e., the imaginary index of refraction)
+        to absorption coefficient (i.e., the coefficient used in Beer's law).
+        See Clark (1999, eq. 1.3) for discussion surrounding it.
+        */
+        si::attenuation get_absorption_coefficient_from_extinction_coefficient(const float extinction_coefficient, const si::length wavelength)
+        {
+            const float _4pi = 4.0 * 3.1415926535;
+            return _4pi * extinction_coefficient / wavelength;
+        }
+
+        /*
+        `get_reflectance_from_extinction_coefficient_and_refractive_index` converts 
+        from refractive index and extinction coefficient (i.e., the complex index of refraction)
+        to reflectance (i.e., the fraction of light reflected back at the source on the first scatter event of a head-on collision with a uniform material).
+        See Clark (1999, eq. 1.3) for discussion surrounding it.
+        */
+        double get_reflectance_from_extinction_coefficient_and_refractive_index(
+            const double extinction_coefficient, 
+            const double refractive_index_of_material,
+            const double refractive_index_of_medium
+        ){
+            const double K2 = extinction_coefficient*extinction_coefficient;
+            const double delta_n = refractive_index_of_material - refractive_index_of_medium;
+            const double sum_n = refractive_index_of_material + refractive_index_of_medium;
+            return (delta_n*delta_n + K2) / (sum_n*sum_n + K2);
+        }
+
         // NOTE: these tests do not pass, but are nonessential to continue development
         double approx_reflectance_from_attenuation_coefficient_and_refractive_index(
             const si::attenuation attenuation_coefficient, 

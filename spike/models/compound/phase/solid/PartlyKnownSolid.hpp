@@ -16,7 +16,7 @@ namespace phase {
         field::OptionalStateField<si::pressure> vapor_pressure;
         field::OptionalSpectralField<double> refractive_index;
         field::OptionalSpectralField<double> extinction_coefficient;
-        field::OptionalSpectralField<double> spectral_reflectance;
+        field::OptionalSpectralField<si::attenuation> absorption_coefficient;
 
         field::OptionalStateField<si::pressure> bulk_modulus;     // K   bulk modulus
         field::OptionalStateField<si::pressure> tensile_modulus;  // E   tensile Modulus, Young's modulus, modulus of elasticity
@@ -48,7 +48,7 @@ namespace phase {
             guess.density                = density                .value_or(fallback.density);
             guess.refractive_index       = refractive_index       .value_or(fallback.refractive_index);
             guess.extinction_coefficient = extinction_coefficient .value_or(fallback.extinction_coefficient);
-            guess.spectral_reflectance   = spectral_reflectance   .value_or(fallback.spectral_reflectance);
+            guess.absorption_coefficient   = absorption_coefficient   .value_or(fallback.absorption_coefficient);
 
             guess.bulk_modulus    = bulk_modulus    .value_or(fallback.bulk_modulus   );
             guess.tensile_modulus = tensile_modulus .value_or(fallback.tensile_modulus);
@@ -82,7 +82,7 @@ namespace phase {
             guess.density                = density                .compare(other.density);
             guess.refractive_index       = refractive_index       .compare(other.refractive_index);
             guess.extinction_coefficient = extinction_coefficient .compare(other.extinction_coefficient);
-            guess.spectral_reflectance   = spectral_reflectance   .compare(other.spectral_reflectance);
+            guess.absorption_coefficient   = absorption_coefficient   .compare(other.absorption_coefficient);
 
             guess.bulk_modulus    = bulk_modulus    .compare(other.bulk_modulus   );
             guess.tensile_modulus = tensile_modulus .compare(other.tensile_modulus);

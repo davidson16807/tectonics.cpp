@@ -20,7 +20,7 @@ namespace phase {
 		out += "Vapor Pressure                       " + field::to_string(solid.vapor_pressure,                   state)     + "\n";
 		out += "Refractive Index                     " + field::to_string(solid.refractive_index,                 spectrum)  + "\n";
 		out += "Extinction Coefficient               " + field::to_string(solid.extinction_coefficient,           spectrum)  + "\n";
-		out += "Spectral Reflectance                 " + field::to_string(solid.spectral_reflectance,             spectrum)  + "\n";
+		out += "Absorption Coefficient               " + field::to_string(solid.absorption_coefficient,           spectrum)  + "\n";
 		out += "Bulk Modulus                         " + field::to_string(solid.bulk_modulus,                     state)     + "\n";
 		out += "Tensile Modulus                      " + field::to_string(solid.tensile_modulus,                  state)     + "\n";
 		out += "Shear Modulus                        " + field::to_string(solid.shear_modulus,                    state)     + "\n";

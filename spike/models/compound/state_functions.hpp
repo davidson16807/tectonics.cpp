@@ -4,6 +4,8 @@
 #include <math/lerp.hpp>
 #include <units/si.hpp>
 
+#include "property/reflectance.hpp"
+
 #include "field/state/OptionalStateField.hpp"
 #include "field/spectral/OptionalSpectralField.hpp"
 
@@ -383,6 +385,98 @@ namespace compound {
             {
                 double l = (2.0 / (nhi+nlo) / lunits);
                 return math::lerp(ls, ns, l);
+            }
+        );
+    }
+    field::OptionalSpectralField<double> get_linear_interpolated_refractive_index_function_of_wavenumbers(
+        const si::attenuation xunits, 
+        const std::vector<double> xs, 
+        const std::vector<double> ns
+    ){
+        return field::SpectralFunction<double>(
+            [xunits, xs, ns]
+            (const si::wavenumber nlo, 
+             const si::wavenumber nhi, 
+             const si::pressure p, 
+             const si::temperature T)
+            {
+                return math::integral_of_lerp(xs, ns, nlo/xunits, nhi/xunits) / (nhi/xunits - nlo/xunits);
+            }
+        );
+    }
+    field::OptionalSpectralField<si::attenuation> get_absorption_coefficient_function_from_reflectance_at_wavelengths(
+        const si::length lunits,
+        const si::length particle_diameter, 
+        const std::vector<double>wavelengths, 
+        const std::vector<double>reflectances
+    ){
+        return field::SpectralFunction<si::attenuation>(
+            [lunits, wavelengths, reflectances, particle_diameter]
+            (const si::wavenumber nlo, 
+             const si::wavenumber nhi, 
+             const si::pressure p, 
+             const si::temperature T)
+            {
+                double wavelength = (2.0 / (nhi+nlo) / lunits);
+                double reflectance = math::lerp(wavelengths, reflectances, wavelength);
+                double single_scatter_albedo = compound::property::approx_single_scatter_albedo_from_reflectance(reflectance);
+                double scattering_efficiency = single_scatter_albedo; // we assume extinction efficiency is close to 1, in which case the two are equal
+                return compound::property::approx_absorption_coefficient_from_scattering_efficiency(scattering_efficiency, particle_diameter);
+            }
+        );
+    }
+    field::OptionalSpectralField<si::attenuation> get_absorption_coefficient_function_from_reflectance_at_wavenumbers(
+        const si::wavenumber xunits,
+        const si::length particle_diameter, 
+        const std::vector<double>wavenumbers, 
+        const std::vector<double>reflectances
+    ){
+        return field::SpectralFunction<si::attenuation>(
+            [xunits, wavenumbers, reflectances, particle_diameter]
+            (const si::wavenumber nlo, 
+             const si::wavenumber nhi, 
+             const si::pressure p, 
+             const si::temperature T)
+            {
+                double reflectance = math::integral_of_lerp(wavenumbers, reflectances, (nlo/xunits), (nhi/xunits)) / (nhi/xunits - nlo/xunits);
+                double single_scatter_albedo = compound::property::approx_single_scatter_albedo_from_reflectance(reflectance);
+                double scattering_efficiency = single_scatter_albedo; // we assume extinction efficiency is close to 1, in which case the two are equal
+                return compound::property::approx_absorption_coefficient_from_scattering_efficiency(scattering_efficiency, particle_diameter);
+            }
+        );
+    }
+    field::OptionalSpectralField<si::attenuation> get_absorption_coefficient_function_at_wavelengths(
+        const si::length lunits, 
+        const si::attenuation yunits, 
+        const std::vector<double>wavelengths, 
+        const std::vector<double>reflectances
+    ){
+        return field::SpectralFunction<si::attenuation>(
+            [lunits, yunits, wavelengths, reflectances]
+            (const si::wavenumber nlo, 
+             const si::wavenumber nhi, 
+             const si::pressure p, 
+             const si::temperature T)
+            {
+                double wavelength = (2.0 / (nhi+nlo) / lunits);
+                return math::lerp(wavelengths, reflectances, wavelength) * yunits;
+            }
+        );
+    }
+    field::OptionalSpectralField<si::attenuation> get_absorption_coefficient_function_at_wavenumbers(
+        const si::wavenumber xunits, 
+        const si::attenuation yunits, 
+        const std::vector<double>wavenumbers, 
+        const std::vector<double>reflectances
+    ){
+        return field::SpectralFunction<si::attenuation>(
+            [xunits, yunits, wavenumbers, reflectances]
+            (const si::wavenumber nlo, 
+             const si::wavenumber nhi, 
+             const si::pressure p, 
+             const si::temperature T)
+            {
+                return math::integral_of_lerp(wavenumbers, reflectances, (nlo/xunits), (nhi/xunits)) / (nhi/xunits - nlo/xunits) * yunits;
             }
         );
     }

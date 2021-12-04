@@ -31,7 +31,7 @@ TEST_CASE( "PartlyKnownSolid to_string() appreciable difference preservation", "
 	compound::phase::PartlyKnownSolid nudge_vapor_pressure                   = dummy_solid; nudge_vapor_pressure                   .vapor_pressure                   = std::monostate();
 	compound::phase::PartlyKnownSolid nudge_refractive_index                 = dummy_solid; nudge_refractive_index                 .refractive_index                 = std::monostate();
 	compound::phase::PartlyKnownSolid nudge_extinction_coefficient           = dummy_solid; nudge_extinction_coefficient           .extinction_coefficient           = std::monostate();
-	compound::phase::PartlyKnownSolid nudge_spectral_reflectance             = dummy_solid; nudge_spectral_reflectance             .spectral_reflectance             = std::monostate();
+	compound::phase::PartlyKnownSolid nudge_absorption_coefficient           = dummy_solid; nudge_absorption_coefficient           .absorption_coefficient           = std::monostate();
 	compound::phase::PartlyKnownSolid nudge_bulk_modulus                     = dummy_solid; nudge_bulk_modulus                     .bulk_modulus                     = std::monostate();
 	compound::phase::PartlyKnownSolid nudge_tensile_modulus                  = dummy_solid; nudge_tensile_modulus                  .tensile_modulus                  = std::monostate();
 	compound::phase::PartlyKnownSolid nudge_shear_modulus                    = dummy_solid; nudge_shear_modulus                    .shear_modulus                    = std::monostate();
@@ -55,7 +55,7 @@ TEST_CASE( "PartlyKnownSolid to_string() appreciable difference preservation", "
 		CHECK(compound::phase::to_string(nudge_vapor_pressure                  ) != compound::phase::to_string(dummy_solid));
 		CHECK(compound::phase::to_string(nudge_refractive_index                ) != compound::phase::to_string(dummy_solid));
 		CHECK(compound::phase::to_string(nudge_extinction_coefficient          ) != compound::phase::to_string(dummy_solid));
-		CHECK(compound::phase::to_string(nudge_spectral_reflectance            ) != compound::phase::to_string(dummy_solid));
+		CHECK(compound::phase::to_string(nudge_absorption_coefficient          ) != compound::phase::to_string(dummy_solid));
 		CHECK(compound::phase::to_string(nudge_bulk_modulus                    ) != compound::phase::to_string(dummy_solid));
 		CHECK(compound::phase::to_string(nudge_tensile_modulus                 ) != compound::phase::to_string(dummy_solid));
 		CHECK(compound::phase::to_string(nudge_shear_modulus                   ) != compound::phase::to_string(dummy_solid));

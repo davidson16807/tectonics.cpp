@@ -3,7 +3,7 @@
 // 3rd party libraries
 
 namespace compound{
-    namespace refraction
+    namespace property
     {
         /*
         NOTE: 

@@ -17,7 +17,7 @@ compound::phase::PartlyKnownSolid unknown_solid {
     /*vapor_pressure*/                    std::monostate(),
     /*refractive_index*/                  std::monostate(),
     /*extinction_coefficient*/            std::monostate(),
-    /*spectral_reflectance*/              std::monostate(),
+    /*absorption_coefficient*/            std::monostate(),
 
     /*bulk_modulus*/                      std::monostate(),
     /*tensile_modulus*/                   std::monostate(),
@@ -43,7 +43,7 @@ compound::phase::PartlyKnownSolid ice {
     /*vapor_pressure*/                    138.268 * si::megapascal,
     /*refractive_index*/                  1.3098,
     /*extinction_coefficient*/            0.03,
-    /*spectral_reflectance*/              0.9,
+    /*absorption_coefficient*/            25.0 / si::centimeter,
 
     /*bulk_modulus*/                      8.899 * si::gigapascal, // gammon (1983)
     /*tensile_modulus*/                   9.332 * si::gigapascal, // gammon (1983)
@@ -69,16 +69,7 @@ compound::phase::PartlyKnownSolid quartz {
     /*vapor_pressure*/                    std::monostate(),
     /*refractive_index*/                  1.4585,  // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
     /*extinction_coefficient*/            0.00014657, 
-    /*spectral_reflectance*/              
-        compound::field::SpectralFunction<double>([](const si::wavenumber nhi, const si::wavenumber nlo, const si::pressure p, const si::temperature T) {
-            double l = (2.0 / (nhi+nlo) / si::micrometer);
-            return sqrt(
-                1.0
-                + 0.6961663  * l*l / (l*l - pow(0.0684043, 2.0))
-                + 0.4079426  * l*l / (l*l - pow(0.1162414, 2.0))
-                + 0.8974794  * l*l / (l*l - pow(9.896161,  2.0))
-            );
-        }), 
+    /*absorption_coefficient*/            1.0 / si::centimeter,
 
     /*bulk_modulus*/                      37.0 * si::gigapascal, // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
     /*tensile_modulus*/                   72.0 * si::gigapascal, // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
@@ -112,7 +103,7 @@ compound::phase::PartlyKnownSolid copper{
             return n + (dndl * l);
         }), 
     /*extinction_coefficient*/            13.430, 
-    /*spectral_reflectance*/              std::monostate(),
+    /*absorption_coefficient*/            std::monostate(),
 
     /*bulk_modulus*/                      130.0 * si::gigapascal,
     /*tensile_modulus*/                   117.0 * si::gigapascal,
@@ -138,7 +129,7 @@ compound::phase::PartlyKnownSolid dummy_solid {
     /*vapor_pressure*/                    5.0 * si::megapascal,
     /*refractive_index*/                  1.3,
     /*extinction_coefficient*/            0.03, 
-    /*spectral_reflectance*/              0.5,
+    /*absorption_coefficient*/            1.0 / si::centimeter,
 
     /*bulk_modulus*/                      6.0 * si::gigapascal, 
     /*tensile_modulus*/                   7.0 * si::gigapascal, 
@@ -167,7 +158,7 @@ int PartlyKnownSolid_attribute_index_sum(const compound::phase::PartlyKnownSolid
         solid.vapor_pressure                  .index() +
         solid.refractive_index                .index() +
         solid.extinction_coefficient          .index() +
-        solid.spectral_reflectance            .index() +
+        solid.absorption_coefficient          .index() +
 
         solid.bulk_modulus                    .index() +
         solid.tensile_modulus                 .index() +
@@ -195,7 +186,7 @@ int PartlyKnownSolid_attribute_known_count(const compound::phase::PartlyKnownSol
         solid.vapor_pressure                  .has_value() +
         solid.refractive_index                .has_value() +
         solid.extinction_coefficient          .has_value() +
-        solid.spectral_reflectance            .has_value() +
+        solid.absorption_coefficient          .has_value() +
 
         solid.bulk_modulus                    .has_value() +
         solid.tensile_modulus                 .has_value() +
@@ -227,7 +218,7 @@ namespace phase {
             first.density                == second.density                &&
             first.refractive_index       == second.refractive_index       &&
             first.extinction_coefficient == second.extinction_coefficient &&
-            first.spectral_reflectance   == second.spectral_reflectance   &&
+            first.absorption_coefficient == second.absorption_coefficient &&
 
             first.bulk_modulus           == second.bulk_modulus           &&
             first.tensile_modulus        == second.tensile_modulus        &&

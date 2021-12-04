@@ -17,7 +17,7 @@ namespace phase {
         field::CompletedStateField<si::pressure> vapor_pressure;
         field::CompletedSpectralField<double> refractive_index;
         field::CompletedSpectralField<double> extinction_coefficient;
-        field::CompletedSpectralField<double> spectral_reflectance;
+        field::CompletedSpectralField<si::attenuation> absorption_coefficient;
 
         field::CompletedStateField<si::pressure> bulk_modulus;     // K   bulk modulus
         field::CompletedStateField<si::pressure> tensile_modulus;  // E   tensile Modulus, Young's modulus, modulus of elasticity

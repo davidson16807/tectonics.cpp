@@ -120,7 +120,7 @@ namespace compound
                 /*vapor_pressure*/                    1.0 * si::pascal,
                 /*refractive_index*/                  1.1,
                 /*extinction_coefficient*/            0.9,
-                /*spectral_reflectance*/              0.9,
+                /*absorption_ceofficient*/            25.0 / si::centimeter,
                 /*bulk_modulus*/                      1.0 * si::gigapascal,
                 /*tensile_modulus*/                   1.0 * si::gigapascal,
                 /*shear_modulus*/                     1.0 * si::gigapascal,
