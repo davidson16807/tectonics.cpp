@@ -6,6 +6,7 @@
 
 #include "PartlyKnownCompound.hpp"
 #include "state_functions.hpp"
+#include "spectral_functions.hpp"
 
 namespace compound {
 namespace published {

@@ -5,6 +5,7 @@
 #include <units/si.hpp>
 
 #include "state_functions.hpp"
+#include "spectral_functions.hpp"
 
 #include "CompletedCompound.hpp"
 #include "PartlyKnownCompound.hpp"
