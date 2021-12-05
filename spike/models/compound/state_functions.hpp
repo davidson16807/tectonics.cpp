@@ -14,6 +14,37 @@
 
 namespace compound {
 
+    template<typename Ty>
+    field::OptionalSpectralField<Ty> spectral_invariant(
+        const Ty value
+    ){
+        return field::SpectralFunction<Ty>(
+            [value]
+            (const si::wavenumber nlo, 
+             const si::wavenumber nhi, 
+             const si::pressure p, 
+             const si::temperature T)
+            {
+                return value;
+            }
+        );
+    }
+    template<typename Ty>
+    field::OptionalStateField<Ty> state_invariant(
+        const Ty value
+    ){
+        return field::StateFunction<Ty>(
+            [value]
+            (const si::pressure p, 
+             const si::temperature T)
+            {
+                return value;
+            }
+        );
+    }
+
+
+
     template<typename Tx, typename Ty>
     field::OptionalSpectralField<Ty> get_dewaele2003_pressure_function(
         const Tx xunits, const Ty yunits,

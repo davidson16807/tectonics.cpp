@@ -108,8 +108,8 @@ PartlyKnownCompound water (
                 0.00019, 3.33694, 0.02183, 1.08016, -0.58257,
                  300.0, 1273.2,  0.0, 10.0), 
                 // water, mean error: 1.2%, max error: 3.5%, range: 300-1273.2K, 0-10MPa, stp estimate: 8.765
-        /*density*/                0.6* si::kilogram/si::meter3,
-        /*refractive_index*/       1.000261                                                         // engineering toolbox
+        /*density*/                state_invariant(0.6* si::kilogram/si::meter3),
+        /*refractive_index*/       spectral_invariant(1.000261)                                        // engineering toolbox
     },
 
     /*liquid*/
@@ -180,10 +180,10 @@ PartlyKnownCompound water (
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
-            /*specific_heat_capacity*/            2.05 * si::joule / (si::gram * si::kelvin),       // wikipedia
-            /*thermal_conductivity*/              2.09 * si::watt / (si::meter * si::kelvin),       // wikipedia
-            /*dynamic_viscosity*/                 1e13 * si::poise,                                 // reference by Carey (1953)
-            /*density*/                           0916.9 * si::kilogram/si::meter3,
+            /*specific_heat_capacity*/            state_invariant(2.05 * si::joule / (si::gram * si::kelvin)),       // wikipedia
+            /*thermal_conductivity*/              state_invariant(2.09 * si::watt / (si::meter * si::kelvin)),       // wikipedia
+            /*dynamic_viscosity*/                 state_invariant(1e13 * si::poise),                                 // reference by Carey (1953)
+            /*density*/                           state_invariant(0916.9 * si::kilogram/si::meter3),
             /*vapor_pressure*/                    //138.268 * si::megapascal,
                 get_interpolated_temperature_function
                     (si::celcius, si::millimeter_mercury,
@@ -208,19 +208,19 @@ PartlyKnownCompound water (
                     std::vector<double>{  -0.982,  -0.375,   0.089,   0.321,   0.393,   0.036,  -0.304,  -0.429,  -0.446,  -0.107,   0.554,   1.107,   1.125,   1.179,   0.946,   1.000,   1.268,   2.482,   2.679,   2.625,   2.589,   2.179,   2.482,   2.161,   1.625,   1.625,   1.732,   2.500,   2.964,   2.946,   2.768,   2.339,   1.661,   2.357,   2.393,   2.482,   2.393,   2.571,   3.589,   3.571,   3.268,   3.286,   3.571,   3.661,   3.589 }),
 
 
-            /*bulk_modulus*/                      8.899 * si::gigapascal,                           // gammon (1983)
-            /*tensile_modulus*/                   9.332 * si::gigapascal,                           // gammon (1983)
-            /*shear_modulus*/                     3.521 * si::gigapascal,                           // gammon (1983)
-            /*pwave_modulus*/                     13.59 * si::gigapascal,                           // gammon (1983)
-            /*lame_parameter*/                    6.552 * si::gigapascal,                           // gammon (1983)
-            /*poisson_ratio*/                     0.3252,                                           // gammon (1983)
+            /*bulk_modulus*/                      state_invariant(8.899 * si::gigapascal),                           // gammon (1983)
+            /*tensile_modulus*/                   state_invariant(9.332 * si::gigapascal),                           // gammon (1983)
+            /*shear_modulus*/                     state_invariant(3.521 * si::gigapascal),                           // gammon (1983)
+            /*pwave_modulus*/                     state_invariant(13.59 * si::gigapascal),                           // gammon (1983)
+            /*lame_parameter*/                    state_invariant(6.552 * si::gigapascal),                           // gammon (1983)
+            /*poisson_ratio*/                     state_invariant(0.3252),                                           // gammon (1983)
 
-            /*compressive_fracture_strength*/     6.0 * si::megapascal,                             //engineering toolbox
-            /*tensile_fracture_strength*/         1.0 * si::megapascal,                             //engineering toolbox
-            /*shear_fracture_strength*/           1.1 * si::megapascal,                             // Frederking (1989)
-            /*compressive_yield_strength*/        6.0 * si::megapascal,                             // brittle, effectively the same as fracture strength
-            /*tensile_yield_strength*/            1.0 * si::megapascal,                             // brittle, effectively the same as fracture strength
-            /*shear_yield_strength*/              1.1 * si::megapascal,                             // brittle, effectively the same as fracture strength
+            /*compressive_fracture_strength*/     state_invariant(6.0 * si::megapascal),                             //engineering toolbox
+            /*tensile_fracture_strength*/         state_invariant(1.0 * si::megapascal),                             //engineering toolbox
+            /*shear_fracture_strength*/           state_invariant(1.1 * si::megapascal),                             // Frederking (1989)
+            /*compressive_yield_strength*/        state_invariant(6.0 * si::megapascal),                             // brittle, effectively the same as fracture strength
+            /*tensile_yield_strength*/            state_invariant(1.0 * si::megapascal),                             // brittle, effectively the same as fracture strength
+            /*shear_yield_strength*/              state_invariant(1.1 * si::megapascal),                             // brittle, effectively the same as fracture strength
 
             /*chemical_susceptibility_estimate*/  false
         }
@@ -286,8 +286,7 @@ PartlyKnownCompound nitrogen (
                 0.04908, 2.30670, 0.50611, 0.64605, -2.56297,
                  113.15, 2013.2,  0.0, 3.0), 
                 // nitrogen, mean error: 1.5%, max error: 5.1%, range: 113.15-2013.2K, 0-3MPa, stp estimate: 16.416
-        /*density*/                
-            field::StateSample<si::density>(0.001165*si::gram/si::centimeter3), 
+        /*density*/                               state_invariant(0.001165*si::gram/si::centimeter3), 
         /*refractive_index*/       
             field::SpectralFunction<double>([](
                 const si::wavenumber nlo, 
@@ -322,8 +321,7 @@ PartlyKnownCompound nitrogen (
                 (si::kelvin, si::pascal* si::second, 
                  16.004, -181.61, -5.1551, 0.0, 0.0,
                   63.15, 124), // 63.15-124K
-        /*density*/                
-            // field::StateSample<si::density>(0.4314*si::gram/si::centimeter3, si::atmosphere, 125.01*si::kelvin), // Johnson (1960)
+        /*density*/                // state_invariant(0.4314*si::gram/si::centimeter3), // Johnson (1960), @ si::atmosphere, 125.01*si::kelvin
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 28.013  * si::gram/si::decimeter3,
                  3.2091, 0.2861, 126.2, 0.2966,
@@ -339,7 +337,7 @@ PartlyKnownCompound nitrogen (
                  126.21, 0.02898, 1.246, 0.0, 0.0, 0.0, 0.0,
                  64.8, 120.24), // Mulero (2012)
         /*refractive_index*/       1.19876,
-        /*extinction_coefficient*/        field::missing()
+        /*extinction_coefficient*/                field::missing()
     },
 
     /*solid*/ 
@@ -368,7 +366,7 @@ PartlyKnownCompound nitrogen (
                     (si::celcius, si::millimeter_mercury,
                      std::vector<double>{-226.1, -219.1, -209.7, -195.8 }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
-            /*refractive_index*/                  1.25,                                             // wikipedia
+            /*refractive_index*/                  spectral_invariant(1.25), // wikipedia
             /*extinction_coefficient*/            field::missing(),
             /*absorption_coefficient*/            field::missing(),
 
@@ -439,7 +437,7 @@ PartlyKnownCompound nitrogen (
                     (si::celcius, si::millimeter_mercury,
                      std::vector<double>{-226.1, -219.1, -209.7, -195.8 }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
-            /*refractive_index*/                  1.25,                                             // wikipedia
+            /*refractive_index*/                  spectral_invariant(1.25),                                             // wikipedia
             /*extinction_coefficient*/            field::missing(),
             /*absorption_coefficient*/            field::missing(),
 
@@ -599,7 +597,7 @@ PartlyKnownCompound oxygen (
                 (si::kelvin, si::newton/si::meter,
                  154.59, 0.03843, 1.225, 0.0, 0.0, 0.0, 0.0,
                  55.7, 152.08), // Mulero (2012)
-        /*refractive_index*/       1.2243,
+        /*refractive_index*/       spectral_invariant(1.2243),
         /*extinction_coefficient*/ field::missing()
     },
 
@@ -607,8 +605,8 @@ PartlyKnownCompound oxygen (
     std::vector<phase::PartlyKnownSolid>{
         // gamma
         phase::PartlyKnownSolid { 
-            /*specific_heat_capacity*/            11.06 * si::calorie / (31.9988*si::gram * si::kelvin), // Johnson (1960), 10.73 for solid II, 4.4 for solid III
-            /*thermal_conductivity*/              0.17 * si::watt / (si::centimeter * si::kelvin),  // Jezowski (1993)
+            /*specific_heat_capacity*/            state_invariant(11.06 * si::calorie / (31.9988*si::gram * si::kelvin)), // Johnson (1960), 10.73 for solid II, 4.4 for solid III
+            /*thermal_conductivity*/              state_invariant(0.17 * si::watt / (si::centimeter * si::kelvin)),  // Jezowski (1993)
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           
                 get_interpolated_temperature_function
@@ -649,8 +647,7 @@ PartlyKnownCompound oxygen (
 
             /*compressive_fracture_strength*/     field::missing(),
             /*tensile_fracture_strength*/         field::missing(),
-            /*shear_fracture_strength*/           
-                field::StateSample<si::pressure>(0.31 * si::megapascal, si::standard_pressure, 45.0*si::kelvin), // Bates 1955
+            /*shear_fracture_strength*/           state_invariant(0.31 * si::megapascal), // Bates 1955, @ 1atm, 45.0K
             /*compressive_yield_strength*/        field::missing(),
             /*tensile_yield_strength*/            field::missing(),
             /*shear_yield_strength*/              field::missing(),
@@ -659,8 +656,8 @@ PartlyKnownCompound oxygen (
         },
         // beta
         phase::PartlyKnownSolid {
-            /*specific_heat_capacity*/            11.06 * si::calorie / (31.9988*si::gram * si::kelvin), // Johnson (1960), 10.73 for solid II, 4.4 for solid III
-            /*thermal_conductivity*/              0.17 * si::watt / (si::centimeter * si::kelvin),  // Jezowski (1993)
+            /*specific_heat_capacity*/            state_invariant(11.06 * si::calorie / (31.9988*si::gram * si::kelvin)), // Johnson (1960), 10.73 for solid II, 4.4 for solid III
+            /*thermal_conductivity*/              state_invariant(0.17 * si::watt / (si::centimeter * si::kelvin)),  // Jezowski (1993)
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           
                 get_interpolated_temperature_function
@@ -713,8 +710,8 @@ PartlyKnownCompound oxygen (
         },
         // alpha
         phase::PartlyKnownSolid {
-            /*specific_heat_capacity*/            11.06 * si::calorie / (31.9988*si::gram * si::kelvin), // Johnson (1960), 10.73 for solid II, 4.4 for solid III
-            /*thermal_conductivity*/              0.17 * si::watt / (si::centimeter * si::kelvin),  // Jezowski (1993)
+            /*specific_heat_capacity*/            state_invariant(11.06 * si::calorie / (31.9988*si::gram * si::kelvin)), // Johnson (1960), 10.73 for solid II, 4.4 for solid III
+            /*thermal_conductivity*/              state_invariant(0.17 * si::watt / (si::centimeter * si::kelvin)),  // Jezowski (1993)
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           //1524.0 * si::kilogram/si::meter3,
                 get_interpolated_temperature_function
@@ -823,7 +820,7 @@ PartlyKnownCompound carbon_dioxide (
                 0.05967, 1.75501, 0.18576, 0.79011, -1.65245,
                  266.59, 1116.6,  0.0, 3.0), 
                 // carbon dioxide, mean error: 1.5%, max error: 3.2%, range: 266.59-1116.6K, 0-3MPa, stp estimate: 13.980
-        /*density*/                1.87 * si::kilogram/si::meter3, // Perry
+        /*density*/                state_invariant(1.87 * si::kilogram/si::meter3), // Perry
         /*refractive_index*/       // 1.0004493,
         field::SpectralFunction<double>([](
             const si::wavenumber nlo, 
@@ -878,7 +875,7 @@ PartlyKnownCompound carbon_dioxide (
                 (si::kelvin, si::newton/si::meter,
                  304.13, 0.07863, 1.254, 0.0, 0.0, 0.0, 0.0,
                  216.55, 304.11), // Mulero (2012)
-        /*refractive_index*/       1.6630,
+        /*refractive_index*/       spectral_invariant(1.6630),
         /*extinction_coefficient*/ field::missing()
 
     },
@@ -886,14 +883,13 @@ PartlyKnownCompound carbon_dioxide (
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
-            /*specific_heat_capacity*/            47.11 * si::joule / (44.01 * si::gram * si::kelvin), // wikipedia
+            /*specific_heat_capacity*/            state_invariant(47.11 * si::joule / (44.01 * si::gram * si::kelvin)), // wikipedia
             /*thermal_conductivity*/              
                 get_interpolated_temperature_function
                     (si::kelvin, si::watt / (si::meter * si::kelvin),
                      std::vector<double>{1.0,  3.0,  20.0, 100.0},              
                      std::vector<double>{2.0,100.0,  10.0,   0.8}), // Sumarakov (2003), unusual for its variance
-            /*dynamic_viscosity*/                 
-                field::StateSample<si::dynamic_viscosity>(1e14 * si::pascal*si::second, 0.1*si::megapascal, 180.0*si::kelvin), // Yamashita (1997)
+            /*dynamic_viscosity*/                 state_invariant(1e14 * si::pascal*si::second), // Yamashita (1997) @1 bar, 180K
             /*density*/                           
                 get_interpolated_temperature_function
                     (si::kelvin, si::gram/si::centimeter3,
@@ -1002,8 +998,7 @@ PartlyKnownCompound methane (
                 0.12223, 1.53060, 0.09521, 0.83600, -0.21904,
                  140.69, 640.69,  0.0, 3.0), 
                 // methane, mean error: 1.9%, max error: 5.2%, range: 140.69-640.69K, 0-3MPa, stp estimate: 10.148
-        /*density*/                
-            field::StateSample<si::density>(0.0006664*si::gram/si::centimeter3, 33.8*si::kilopascal, 99.8*si::kelvin), // Johnson (1960)
+        /*density*/                state_invariant(0.0006664*si::gram/si::centimeter3), // Johnson (1960) @ 33.8kPa, 99.8K
         /*refractive_index*/       // 1.000444,
             get_interpolated_refractive_index_function
                 (si::micrometer, 
@@ -1048,7 +1043,7 @@ PartlyKnownCompound methane (
                 (si::kelvin, si::newton/si::meter,
                  190.56, 0.03825, 1.191, -0.006024, 5.422, -0.0007065, 0.6161,
                  90.67, 188.84), // Mulero (2012)
-        /*refractive_index*/       1.2730, 
+        /*refractive_index*/       spectral_invariant(1.2730), 
         /*extinction_coefficient*/ field::missing()
     },
 
@@ -1058,16 +1053,14 @@ PartlyKnownCompound methane (
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid { // alpha
 
-            /*specific_heat_capacity*/            5.193 * si::calorie / (16.043*si::gram * si::kelvin), // Johnson (1960)
+            /*specific_heat_capacity*/            state_invariant(5.193 * si::calorie / (16.043*si::gram * si::kelvin)), // Johnson (1960)
             /*thermal_conductivity*/              // 0.010 * si::watt / (si::centimeter * si::kelvin), // Jezowski (1997)
                 get_interpolated_temperature_function
                     (si::kelvin, si::milliwatt/(si::centimeter * si::kelvin),
                      std::vector<double>{18.0, 20.0, 20.4, 21.0},              
                      std::vector<double>{0.7,  2.5,  11.0,  0.7}), // Johnson (1960)
-            /*dynamic_viscosity*/                 
-                field::StateSample<si::dynamic_viscosity>(1e11 * si::pascal*si::second, 0.1*si::megapascal, 77.0*si::kelvin), // Yamashita (1997)
-            /*density*/                           
-                field::StateSample<si::density>(0.5245*si::gram/si::centimeter3, si::atmosphere, 14.4*si::kelvin), // Prokhvatilov
+            /*dynamic_viscosity*/                 state_invariant(1e11 * si::pascal*si::second), // Yamashita (1997), @ 0.1*si::megapascal, 77.0*si::kelvin
+            /*density*/                           state_invariant(0.5245*si::gram/si::centimeter3), // Prokhvatilov, @ si::atmosphere, 14.4*si::kelvin
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::kelvin, si::kilopascal,
@@ -1086,16 +1079,12 @@ PartlyKnownCompound methane (
                      std::vector<double>{  -2.134,  -1.866,  -1.966,  -0.978,  -1.514,  -0.642,  -1.078,  -0.844,  -1.346,  -0.693,  -1.698,  -1.430,  -1.564,  -1.950,  -2.218,  -2.084,  -2.101,  -1.749,  -1.045,  -1.246,  -0.173,  -0.391,   0.246,  -0.743,   0.547,  -0.994,  -0.190,  -0.860,  -0.542,  -1.263,  -1.749,  -2.050,  -1.447,  -1.749,  -1.581,  -2.117,  -2.335,  -2.067,  -2.134,  -1.179,   0.682,  -0.391,   0.330,   0.296,  -0.089,   0.145,  -0.039,   0.430,   0.313,  -0.609,  -0.927,  -0.609,  -1.279,  -0.324,  -1.849,  -2.034,  -1.782,  -2.168,  -1.028,   0.732,   1.335,   0.229,   0.078,   1.101,  -0.123,   0.061,   0.933,  -0.458,  -1.112,   0.011,  -1.715,  -0.642,  -0.911,  -1.615,  -0.642,   0.547,   1.419,   0.782,   1.419,   2.257,   1.134,   2.374,   0.430,   0.782,  -0.358,   0.464,   1.570,  -1.598,  -0.508,   1.369,   3.715,   1.268,   1.905,   0.196,   1.184,  -1.061 }),
 
 
-            /*bulk_modulus*/                      
-                field::StateSample<si::pressure>(19.69*si::kilobar, si::standard_pressure, 14.4*si::kelvin), // Prokhvatilov
-            /*tensile_modulus*/                   
-                field::StateSample<si::pressure>(30.83 * si::gigapascal, si::standard_pressure, 30.0*si::kelvin), // Manzhelii (2003)
-            /*shear_modulus*/                     
-                field::StateSample<si::pressure>(12.4*si::kilobar, si::standard_pressure, 14.4*si::kelvin), // Prokhvatilov
+            /*bulk_modulus*/                      state_invariant(19.69 * si::kilobar), // Prokhvatilov, @ si::standard_pressure, 14.4*si::kelvin
+            /*tensile_modulus*/                   state_invariant(30.83 * si::gigapascal), // Manzhelii (2003), @ si::standard_pressure, 30.0*si::kelvin
+            /*shear_modulus*/                     state_invariant(12.4*si::kilobar), // Prokhvatilov, @ si::standard_pressure, 14.4*si::kelvin
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     
-                field::StateSample<double>(0.39, si::standard_pressure, 14.4*si::kelvin), // Prokhvatilov
+            /*poisson_ratio*/                     state_invariant(0.39), // Prokhvatilov, @ si::standard_pressure, 14.4*si::kelvin
 
             /*compressive_fracture_strength*/     8.0 * si::megapascal, // Yamashita (2010)
             /*tensile_fracture_strength*/         
@@ -1115,14 +1104,13 @@ PartlyKnownCompound methane (
             /*chemical_susceptibility_estimate*/  field::missing()
         },
         phase::PartlyKnownSolid { // beta
-            /*specific_heat_capacity*/            5.193 * si::calorie / (16.043*si::gram * si::kelvin), // Johnson (1960)
+            /*specific_heat_capacity*/            state_invariant(5.193 * si::calorie / (16.043*si::gram * si::kelvin)), // Johnson (1960)
             /*thermal_conductivity*/              // 0.010 * si::watt / (si::centimeter * si::kelvin), // Jezowski (1997)
                 get_interpolated_temperature_function
                     (si::kelvin, si::milliwatt/(si::centimeter * si::kelvin),
                      std::vector<double>{18.0, 20.0, 20.4, 21.0},              
                      std::vector<double>{0.7,  2.5,  11.0,  0.7}), // Johnson (1960)
-            /*dynamic_viscosity*/                 
-                field::StateSample<si::dynamic_viscosity>(1e11 * si::pascal*si::second, 0.1*si::megapascal, 77.0*si::kelvin), // Yamashita (1997)
+            /*dynamic_viscosity*/                 state_invariant(1e11 * si::pascal*si::second), // Yamashita (1997), @ 0.1*si::megapascal, 77.0*si::kelvin
             /*density*/                           
                 get_interpolated_temperature_function
                     (si::kelvin, si::gram/si::centimeter3,
@@ -1169,7 +1157,7 @@ PartlyKnownCompound methane (
                      std::vector<double>{  25.0,  40.0,  50.0,  60.0,  70.0,  80.0}, 
                      std::vector<double>{ 0.293, 0.299, 0.302, 0.302, 0.305, 0.311}), // Prokhvatilov
 
-            /*compressive_fracture_strength*/     8.0 * si::megapascal, // Yamashita (2010)
+            /*compressive_fracture_strength*/     state_invariant(8.0 * si::megapascal), // Yamashita (2010)
             /*tensile_fracture_strength*/         
                 get_interpolated_temperature_function
                     (si::kelvin, si::standard_gravity * si::gram/si::millimeter2,
@@ -1293,7 +1281,7 @@ PartlyKnownCompound argon (
                 (si::kelvin, si::newton/si::meter,
                  150.87, 0.037, 1.25, 0.0, 0.0, 0.0, 0.0,
                  83.82, 148.15), // Mulero (2012)
-        /*refractive_index*/       1.23,
+        /*refractive_index*/       spectral_invariant(1.23),
         /*extinction_coefficient*/ field::missing()
 
     },
@@ -1301,7 +1289,7 @@ PartlyKnownCompound argon (
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
-            /*specific_heat_capacity*/            0.197 * si::calorie / (si::gram * si::kelvin),    // Johnson (1960)
+            /*specific_heat_capacity*/            state_invariant(0.197 * si::calorie / (si::gram * si::kelvin)),    // Johnson (1960)
             /*thermal_conductivity*/              
                 get_interpolated_temperature_function
                     (si::kelvin, si::milliwatt / (si::centimeter * si::kelvin),
@@ -1318,7 +1306,7 @@ PartlyKnownCompound argon (
                     (si::kelvin, si::kilopascal,
                      std::vector<double>{55.0,     65.0,     75.0}, 
                      std::vector<double>{0.2,      2.8,      18.7}),
-            /*refractive_index*/                  1.2703,
+            /*refractive_index*/                  spectral_invariant(1.2703),
             /*extinction_coefficient*/            field::missing(),
             /*absorption_coefficient*/            field::missing(),
 
@@ -1392,7 +1380,7 @@ PartlyKnownCompound helium (
     /*simon_glatzel_slope*/               50.96e5,
     /*simon_glatzel_exponent*/            1.5602,
 
-    /*molecular_absorption_cross_section*/ 1e-35* si::meter2,
+    /*molecular_absorption_cross_section*/ spectral_invariant(1e-35* si::meter2),
 
     /*gas*/
     phase::PartlyKnownGas {
@@ -1415,8 +1403,7 @@ PartlyKnownCompound helium (
                 -0.19093, 1.50359, 0.28815, 0.73057, 1.34631,
                  52.177, 1502.2,  0.0, 0.1), 
                 // helium, mean error: 0.1%, max error: 0.7%, range: 52.177-1502.2K, 0-0.1MPa, stp estimate: 18.702
-        /*density*/                
-            field::StateSample<si::density>(0.000156*si::gram/si::centimeter3, si::atmosphere, 311.0*si::kelvin), // Johnson (1960)
+        /*density*/                state_invariant(0.000156*si::gram/si::centimeter3), // Johnson (1960), @1atm, 311K
         /*refractive_index*/       //1.000036,
             field::SpectralFunction<double>([](
                 const si::wavenumber nlo, 
@@ -1579,7 +1566,7 @@ PartlyKnownCompound hydrogen (
                 0.05907, 1.95272, 0.20949, 0.66373, -0.28287,
                  63.957, 1014,  0.0, 1.0), 
                 // hydrogen, mean error: 0.2%, max error: 0.9%, range: 63.957-1014K, 0-1MPa, stp estimate: 8.393
-        /*density*/                1.3390 * si::gram/si::liter,
+        /*density*/                state_invariant(1.3390 * si::gram/si::liter),
         /*refractive_index*/       // 1.0001392,
             field::SpectralFunction<double>([](
                 const si::wavenumber nlo, 
@@ -1639,8 +1626,8 @@ PartlyKnownCompound hydrogen (
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
-            /*specific_heat_capacity*/            0.2550 * si::calorie / (si::gram * si::kelvin), // Johnson (1960)
-            /*thermal_conductivity*/              1.819 * si::watt / ( si::meter * si::kelvin ), // wikipedia
+            /*specific_heat_capacity*/            state_invariant(0.2550 * si::calorie / (si::gram * si::kelvin)), // Johnson (1960)
+            /*thermal_conductivity*/              state_invariant(1.819 * si::watt / ( si::meter * si::kelvin )), // wikipedia
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           // 86.0 * si::kilogram/si::meter3, // https://en.wikipedia.org/wiki/Solid_hydrogen
                 get_interpolated_temperature_function
@@ -1927,8 +1914,8 @@ PartlyKnownCompound ozone (
             get_dippr_gas_viscosity_temperature_function
                 (si::kelvin, si::pascal * si::second,
                 1.196e-7, 0.84797, 0.0, 0.0), // 80.15-1000K
-        /*density*/                2.03 * si::kilogram/si::meter3, // Perry
-        /*refractive_index*/       1.00052
+        /*density*/                state_invariant(2.03 * si::kilogram/si::meter3), // Perry
+        /*refractive_index*/       spectral_invariant(1.00052)
     },
 
     /*liquid*/
@@ -1958,8 +1945,8 @@ PartlyKnownCompound ozone (
                 (si::kelvin, si::pascal,
                  40.067, -2204.8, -2.9351, 7.75e-16, 6.0,
                   80.15, 261), // 80.15-261K
-        /*surface_tension*/        38.1 * si::dyne/si::centimeter, // -182.7C, Jenkins (1956)
-        /*refractive_index*/       1.2226,
+        /*surface_tension*/        state_invariant(38.1 * si::dyne/si::centimeter), // -182.7C, Jenkins (1956)
+        /*refractive_index*/       spectral_invariant(1.2226),
         /*extinction_coefficient*/ field::missing()
 
     },
@@ -1968,9 +1955,9 @@ PartlyKnownCompound ozone (
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
             /*specific_heat_capacity*/            field::missing(),
-            /*thermal_conductivity*/              5.21e-4 * si::calorie / (si::second*si::centimeter2*si::kelvin/si::centimeter), // Streng (1961)
+            /*thermal_conductivity*/              state_invariant(5.21e-4 * si::calorie / (si::second*si::centimeter2*si::kelvin/si::centimeter)), // Streng (1961)
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           1354.0  * si::kilogram / si::meter3, //https://www.aqua-calc.com/page/density-table/substance/solid-blank-ozone
+            /*density*/                           state_invariant(1354.0  * si::kilogram / si::meter3), //https://www.aqua-calc.com/page/density-table/substance/solid-blank-ozone
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::celcius, si::millimeter_mercury,
@@ -2042,8 +2029,8 @@ PartlyKnownCompound nitrous_oxide (
             get_dippr_gas_viscosity_temperature_function
                 (si::kelvin, si::pascal * si::second,
                 2.1150e-6, 0.4642, 305.7, 0.0), // 182.3-1000 K
-        /*density*/                1.87 *  si::kilogram/si::meter3, // Perry
-        /*refractive_index*/       1.000516
+        /*density*/                state_invariant(1.87 *  si::kilogram/si::meter3), // Perry
+        /*refractive_index*/       spectral_invariant(1.000516)
     },
 
     /*liquid*/
@@ -2078,7 +2065,7 @@ PartlyKnownCompound nitrous_oxide (
                 (si::kelvin, si::newton/si::meter,
                  309.52, 0.07087, 1.204, 0.0, 0.0, 0.0, 0.0,
                  182.50, 293.15), // Mulero (2012)
-        /*refractive_index*/       1.238,
+        /*refractive_index*/       spectral_invariant(1.238),
         /*extinction_coefficient*/ field::missing()
 
     },
@@ -2089,13 +2076,13 @@ PartlyKnownCompound nitrous_oxide (
             /*specific_heat_capacity*/            field::missing(),
             /*thermal_conductivity*/              field::missing(),
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           1.263 * si::gram/si::centimeter3, // Hudson (2020)
+            /*density*/                           state_invariant(1.263 * si::gram/si::centimeter3), // Hudson (2020)
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::celcius, si::millimeter_mercury,
                      std::vector<double>{-143.4, -128.7, -110.3, -85.5  }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
-            /*refractive_index*/                  1.317, // Hudson (2020)
+            /*refractive_index*/                  spectral_invariant(1.317), // Hudson (2020)
             /*extinction_coefficient*/            field::missing(),
             /*absorption_coefficient*/            field::missing(),
 
@@ -2167,7 +2154,7 @@ PartlyKnownCompound  sulfur_dioxide (
                 (si::kelvin, si::pascal * si::second,
                 6.8630e-7, 0.6112, 217.0, 0.0), // 197.67-1000K
         /*density*/                field::missing(),
-        /*refractive_index*/       1.000686
+        /*refractive_index*/       spectral_invariant(1.000686)
     },
 
     /*liquid*/
@@ -2206,7 +2193,7 @@ PartlyKnownCompound  sulfur_dioxide (
                 (si::kelvin, si::newton/si::meter,
                  430.64, 0.0803, 0.928, 0.0139, 1.570, -0.0114, 0.364,
                  189.15, 373.15), // Mulero (2012)
-        /*refractive_index*/        1.3396,
+        /*refractive_index*/        spectral_invariant(1.3396),
             // get_interpolated_temperature_function
             //     (si::celcius, 1.0,
             //      std::vector<double>{-20.0, 40.0}, 
@@ -2303,7 +2290,7 @@ PartlyKnownCompound  sulfur_dioxide (
                 (si::kelvin, si::pascal * si::second,
                 1.4670e-6, 0.5123, 125.4, 0.0), // 110-1500K
         /*density*/                field::missing(),
-        /*refractive_index*/       1.000297
+        /*refractive_index*/       spectral_invariant(1.000297)
     },
 
     /*liquid*/
@@ -2334,7 +2321,7 @@ PartlyKnownCompound  sulfur_dioxide (
                  72.974, -2650.0, -8.261, 9.7e-15, 6.0,
                   109.5, 180.15),// 109.5-180.15K
         /*surface_tension*/        field::missing(),
-        /*refractive_index*/       1.330,
+        /*refractive_index*/       spectral_invariant(1.330),
         /*extinction_coefficient*/ field::missing()
 
     },
@@ -2425,7 +2412,7 @@ PartlyKnownCompound carbon_monoxide (
                 0.26687, 1.09457, 0.33802, 0.70825, -1.67961,
                  118.16, 518.16,  0.0, 3.0), 
                 // carbon monoxide, mean error: 1.2%, max error: 2.9%, range: 118.16-518.16K, 0-3MPa, stp estimate: 16.311
-        /*density*/                1.1858 *  si::kilogram/si::meter3, // Perry
+        /*density*/                state_invariant(1.1858 *  si::kilogram/si::meter3), // Perry
         /*refractive_index*/       // 1.00036320, //https://refractiveindex.info
             field::SpectralFunction<double>([](
                 const si::wavenumber nlo, 
@@ -2655,7 +2642,7 @@ PartlyKnownCompound ethane (
                 0.07538, 2.19443, 0.07385, 0.85870, -0.57044,
                  140.35, 640.35,  0.0, 3.0), 
                 // ethane, mean error: 1.2%, max error: 2.9%, range: 140.35-640.35K, 0-3MPa, stp estimate: 8.560
-        /*density*/                0.668 * si::kilogram/si::meter3,
+        /*density*/                state_invariant(0.668 * si::kilogram/si::meter3),
         /*refractive_index*/       // 1.0377,
         field::SpectralFunction<double>([](
             const si::wavenumber nlo, 
@@ -2822,8 +2809,8 @@ PartlyKnownCompound hydrogen_cyanide (
                  36.75, -3927.1, -2.1245, 3.89e-17, 6.0,
                  259.83, 456.65),
         /*surface_tension*/        field::missing(),
-        /*refractive_index*/       1.2614,
-        /*extinction_coefficient*/ 7.63, // Moore 2010, 95K, 5000cm-1
+        /*refractive_index*/       spectral_invariant(1.2614),
+        /*extinction_coefficient*/ spectral_invariant(7.63), // Moore 2010, 95K, 5000cm-1
 
     },
 
@@ -2962,12 +2949,12 @@ PartlyKnownCompound ethanol (
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid> {
         phase::PartlyKnownSolid {
-            /*specific_heat_capacity*/            111.46 * si::joule / (46.068*si::gram*si::kelvin), // wikipedia data page
+            /*specific_heat_capacity*/            state_invariant(111.46 * si::joule / (46.068*si::gram*si::kelvin)), // wikipedia data page
             /*thermal_conductivity*/              field::missing(),
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           0.739 * si::gram / si::centimeter3, // Hudson (2020)
+            /*density*/                           state_invariant(0.739 * si::gram / si::centimeter3), // Hudson (2020)
             /*vapor_pressure*/                    field::missing(),
-            /*refractive_index*/                  1.319, // Hudson (2020)
+            /*refractive_index*/                  spectral_invariant(1.319), // Hudson (2020)
             /*extinction_coefficient*/            field::missing(),
             /*absorption_coefficient*/            field::missing(),
 
@@ -3033,7 +3020,7 @@ PartlyKnownCompound formaldehyde (
             get_dippr_gas_viscosity_temperature_function
                 (si::kelvin, si::pascal * si::second,
                 1.5948e-5, 0.21516, 1151.1, 0.0), // 167.55-1000K
-        /*density*/                1.0 * si::kilogram/si::meter3, // Perry
+        /*density*/                state_invariant(1.0 * si::kilogram/si::meter3), // Perry
         /*refractive_index*/       field::missing()
     },
 
@@ -3064,8 +3051,8 @@ PartlyKnownCompound formaldehyde (
                 (si::kelvin, si::pascal,
                  49.3632, -3847.87, -4.09834, 4.64e-17, 6.0,
                   155.15, 420), // 155.15-420K
-        /*surface_tension*/        27.3797 * si::dyne/si::centimeter, // 25 °C, PubChem
-        /*refractive_index*/       1.3714,  // wikipedia
+        /*surface_tension*/        state_invariant(27.3797 * si::dyne/si::centimeter), // 25 °C, PubChem
+        /*refractive_index*/       spectral_invariant(1.3714),  // wikipedia
         /*extinction_coefficient*/ field::missing()
 
     },
@@ -3178,7 +3165,7 @@ PartlyKnownCompound formic_acid (
                 (si::celcius, si::millinewton/si::meter,
                  std::vector<double>{ 25.0,  50.0,  75.0 }, 
                  std::vector<double>{37.13, 34.38, 31.64 }), 
-        /*refractive_index*/       1.3714,
+        /*refractive_index*/       spectral_invariant(1.3714),
         /*extinction_coefficient*/ field::missing()
 
     },
@@ -3186,16 +3173,16 @@ PartlyKnownCompound formic_acid (
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
-            /*specific_heat_capacity*/            74.5 * si::joule / (46.026*si::gram*si::kelvin), // wikipedia data page
+            /*specific_heat_capacity*/            state_invariant(74.5 * si::joule / (46.026*si::gram*si::kelvin)), // wikipedia data page
             /*thermal_conductivity*/              field::missing(),
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           0.979 * si::gram / si::centimeter3, // Hudson (2020)
+            /*density*/                           state_invariant(0.979 * si::gram / si::centimeter3), // Hudson (2020)
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::celcius, si::pascal,
                       std::vector<double>{-56.0,     -40.4,     -0.8}, 
                      std::vector<double>{1.0 ,       100.0,     1000.0}),
-            /*refractive_index*/                  1.291, // Hudson (2020)
+            /*refractive_index*/                  spectral_invariant(1.291), // Hudson (2020)
             /*extinction_coefficient*/            field::missing(),
             /*absorption_coefficient*/            field::missing(),
 
@@ -3273,7 +3260,7 @@ PartlyKnownCompound perflouromethane(
                  148.94, 598.94,  0.0, 3.0), 
                 // tetrafluoromethane, mean error: 2.0%, max error: 4.9%, range: 148.94-598.94K, 0-3MPa, stp estimate: 15.680
         /*density*/                field::missing(),
-        /*refractive_index*/       1.0004823
+        /*refractive_index*/       spectral_invariant(1.0004823)
     },
 
     /*liquid*/
@@ -3315,7 +3302,7 @@ PartlyKnownCompound perflouromethane(
             /*specific_heat_capacity*/            field::missing(),
             /*thermal_conductivity*/              field::missing(),
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           1980.0 * si::kilogram/si::meter3, // pubchem
+            /*density*/                           state_invariant(1980.0 * si::kilogram/si::meter3), // pubchem
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::celcius, si::millimeter_mercury,
@@ -3453,7 +3440,7 @@ PartlyKnownCompound benzene (
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
-            /*specific_heat_capacity*/            118.4 * si::joule / (79.109 * si::gram * si::kelvin),
+            /*specific_heat_capacity*/            state_invariant(118.4 * si::joule / (79.109 * si::gram * si::kelvin)),
             /*thermal_conductivity*/              field::missing(),
             /*dynamic_viscosity*/                 field::missing(),
             /*density*/                           field::missing(),
@@ -3467,8 +3454,8 @@ PartlyKnownCompound benzene (
             /*absorption_coefficient*/            field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
-            /*tensile_modulus*/                   0.0614e11*si::pascal,
-            /*shear_modulus*/                     0.0197e11*si::pascal,
+            /*tensile_modulus*/                   state_invariant(0.0614e11*si::pascal),
+            /*shear_modulus*/                     state_invariant(0.0197e11*si::pascal),
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
             /*poisson_ratio*/                     field::missing(),
@@ -3528,7 +3515,7 @@ PartlyKnownCompound pyrimidine (
         /*specific_heat_capacity*/ field::missing(),
         /*thermal_conductivity*/   field::missing(),
         /*dynamic_viscosity*/      field::missing(),
-        /*density*/                1.016 * si::gram/si::centimeter3, // wikipedia
+        /*density*/                state_invariant(1.016 * si::gram/si::centimeter3), // wikipedia
         /*vapor_pressure*/         field::missing(),
         /*surface_tension*/        
             get_interpolated_temperature_function
@@ -3609,7 +3596,7 @@ PartlyKnownCompound  halite (
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ 15.9 * si::calorie/(80.088 * si::gram*si::kelvin), // Perry
+        /*specific_heat_capacity*/ state_invariant(15.9 * si::calorie/(80.088 * si::gram*si::kelvin)), // Perry
         /*thermal_conductivity*/   field::missing(),
         /*dynamic_viscosity*/      
             get_interpolated_temperature_function
@@ -3637,9 +3624,9 @@ PartlyKnownCompound  halite (
         phase::PartlyKnownSolid {
             /*specific_heat_capacity*/            // 50.0 * si::joule / (90.442 * si::gram * si::kelvin), // wikipedia data page
                 get_perry_temperature_function(si::kelvin, si::calorie/(80.088 * si::gram*si::kelvin), 10.79, 0.00420, 0.0, 0.0),
-            /*thermal_conductivity*/              5.55 * si::watt / ( si::meter * si::kelvin ), // Wilkens (2011)
-            /*dynamic_viscosity*/                 1e17 * si::poise, // various sources, Carey (1953) cites this number from Weinberg (1927), and Mukherjee (2010), provides a literature review and findings from salt diapirs. Science is weird.
-            /*density*/                           2170.0 * si::kilogram/si::meter3,
+            /*thermal_conductivity*/              state_invariant(5.55 * si::watt / ( si::meter * si::kelvin )), // Wilkens (2011)
+            /*dynamic_viscosity*/                 state_invariant(1e17 * si::poise), // various sources, Carey (1953) cites this number from Weinberg (1927), and Mukherjee (2010), provides a literature review and findings from salt diapirs. Science is weird.
+            /*density*/                           state_invariant(2170.0 * si::kilogram/si::meter3),
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::celcius, si::millimeter_mercury,
@@ -3664,17 +3651,17 @@ PartlyKnownCompound  halite (
                      std::vector<double>{ 0.59984, 0.63333, 0.64910, 0.64975, 0.54138, 0.67077, 0.71872, 0.81461, 0.86059, 0.89146, 0.90263, 0.90328, 0.89343, 0.90657, 0.90394, 0.87176, 0.87241, 0.90066, 0.90985, 0.90394, 0.90197, 0.86256, 0.78112, 0.55057, 0.45271, 0.44154, 0.41921, 0.40805, 0.41724, 0.87214, 0.82290, 0.83550, 0.78511, 0.75534, 0.60191, 0.04198, 0.00420, 0.00305, 0.03740, 0.17023, 0.22405, 0.14504, 0.22519, 0.23435, 0.36260, 0.44275, 0.50573, 0.55840, 0.66489, 0.67405, 0.66718, 0.62137, 0.24466, 0.18969, 0.16450, 0.14389, 0.12557, 0.13130, 0.11412, 0.11756, 0.10611, 0.10382, 0.12214, 0.11641, 0.11756, 0.13244 }),
 
             /*bulk_modulus*/                      field::missing(),
-            /*tensile_modulus*/                   0.4947e11*si::pascal, 
-            /*shear_modulus*/                     0.1287e11*si::pascal, 
+            /*tensile_modulus*/                   state_invariant(0.4947e11*si::pascal), 
+            /*shear_modulus*/                     state_invariant(0.1287e11*si::pascal), 
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     0.26, // Schön (2015)
+            /*poisson_ratio*/                     state_invariant(0.26), // Schön (2015)
 
-            /*compressive_fracture_strength*/     20.0 * si::megapascal, // Bauer (2019)
+            /*compressive_fracture_strength*/     state_invariant(20.0 * si::megapascal), // Bauer (2019)
             /*tensile_fracture_strength*/         field::missing(),
             /*shear_fracture_strength*/           field::missing(),
-            /*compressive_yield_strength*/        15.0 * si::megapascal, // Bauer (2019)
-            /*tensile_yield_strength*/            1.65 * si::megapascal, // https://material-properties.org/strength-of-materials-tensile-yield/
+            /*compressive_yield_strength*/        state_invariant(15.0 * si::megapascal), // Bauer (2019)
+            /*tensile_yield_strength*/            state_invariant(1.65 * si::megapascal), // https://material-properties.org/strength-of-materials-tensile-yield/
             /*shear_yield_strength*/              field::missing(),
 
             /*chemical_susceptibility_estimate*/  field::missing()
@@ -3746,7 +3733,7 @@ PartlyKnownCompound  corundum (
                      std::vector<double>{10.0, 60.0,  300.0, 400.0, 1400.0}, 
                      std::vector<double>{7.0,  174.0,  36.0,  26.0,    6.0}), // Perry
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           3970.0 * si::kilogram/si::meter3,
+            /*density*/                           state_invariant(3970.0 * si::kilogram/si::meter3),
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  
                 get_linear_interpolated_refractive_index_function
@@ -3767,14 +3754,14 @@ PartlyKnownCompound  corundum (
                      std::vector<double>{  0.0529,  0.0582,  0.0794,  0.2286,  0.2561,  0.4741,  0.4878,  0.4455,  0.4561,  0.5175,  0.5767,  0.5968,  0.5407,  0.6159,  0.6339,  0.6508,  0.5788,  0.5778,  0.6106,  0.6233,  0.6360,  0.7249,  0.7365,  0.7418,  0.7566,  0.7672,  0.7767,  0.7926,  0.8593,  0.8677,  0.8550,  0.8614,  0.8392,  0.8127,  0.5302,  0.5153,  0.5164,  0.5323,  0.5365,  0.5249,  0.4963,  0.4878,  0.4910,  0.4772,  0.4561,  0.4265,  0.3873,  0.3820,  0.2476,  0.2233,  0.1577,  0.1016,  0.0984 }),
 
             /*bulk_modulus*/                      field::missing(),
-            /*tensile_modulus*/                   4.9735e11*si::pascal,
-            /*shear_modulus*/                     1.4739e11*si::pascal,
+            /*tensile_modulus*/                   state_invariant(4.9735e11*si::pascal),
+            /*shear_modulus*/                     state_invariant(1.4739e11*si::pascal),
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
             /*poisson_ratio*/                     field::missing(),
 
-            /*compressive_fracture_strength*/     2265.0*si::megapascal, //azom.com/article.aspx?ArticleId=1948
-            /*tensile_fracture_strength*/         325.0*si::megapascal, //azom.com/article.aspx?ArticleId=1948
+            /*compressive_fracture_strength*/     state_invariant(2265.0*si::megapascal), //azom.com/article.aspx?ArticleId=1948
+            /*tensile_fracture_strength*/         state_invariant(325.0*si::megapascal), //azom.com/article.aspx?ArticleId=1948
             /*shear_fracture_strength*/           field::missing(),
             /*compressive_yield_strength*/        field::missing(),
             /*tensile_yield_strength*/            field::missing(),
@@ -3840,21 +3827,21 @@ PartlyKnownCompound  apatite (
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
 
-            /*specific_heat_capacity*/            0.7 * si::kilojoule / (si::kilogram*si::kelvin), // Schön (2015)
-            /*thermal_conductivity*/              1.38 * si::watt / (si::meter*si::kelvin), // Schön (2015)
+            /*specific_heat_capacity*/            state_invariant(0.7 * si::kilojoule / (si::kilogram*si::kelvin)), // Schön (2015)
+            /*thermal_conductivity*/              state_invariant(1.38 * si::watt / (si::meter*si::kelvin)), // Schön (2015)
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           3180.0 * si::kilogram/si::meter3,
+            /*density*/                           state_invariant(3180.0 * si::kilogram/si::meter3),
             /*vapor_pressure*/                    field::missing(),
-            /*refractive_index*/                  1.645,
+            /*refractive_index*/                  spectral_invariant(1.645),
             /*extinction_coefficient*/            field::missing(),
             /*absorption_coefficient*/            field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
-            /*tensile_modulus*/                   1.667e11*si::pascal,
+            /*tensile_modulus*/                   state_invariant(1.667e11*si::pascal),
             /*shear_modulus*/                     field::missing(),
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     0.26, // Schön (2015)
+            /*poisson_ratio*/                     state_invariant(0.26), // Schön (2015)
 
             /*compressive_fracture_strength*/     field::missing(),
             /*tensile_fracture_strength*/         field::missing(),
@@ -3906,7 +3893,7 @@ PartlyKnownCompound carbon (
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ 26.0 * si::joule / (12.011 * si::gram * si::kelvin), // Steinbeck (1990)
+        /*specific_heat_capacity*/ state_invariant(26.0 * si::joule / (12.011 * si::gram * si::kelvin)), // Steinbeck (1990)
             // NOTE: the following equation is reported, but fails dimensionality check
             // field::StateFunction<si::specific_heat_capacity>([](const si::pressure p, const si::temperature T){
             //     const si::energy fermi_energy = 16.9 * si::electronvolt;
@@ -3921,7 +3908,7 @@ PartlyKnownCompound carbon (
                     (3.0*si::elementary_charge_constant*si::elementary_charge_constant*rho1);
             }), // Steinbeck (1990)
         /*dynamic_viscosity*/      field::missing(),
-        /*density*/                1.6*si::gram/si::centimeter3, // Bundy, referenced in Steinbeck (1990)
+        /*density*/                state_invariant(1.6*si::gram/si::centimeter3), // Bundy, referenced in Steinbeck (1990)
         /*vapor_pressure*/         
                 get_interpolated_temperature_function
                     (si::celcius, si::pascal,
@@ -3944,7 +3931,7 @@ PartlyKnownCompound carbon (
                      std::vector<double>{10.0, 100.0,  300.0, 1400.0}, 
                      std::vector<double>{81.0,4980.0, 2000.0,  370.0}), // Perry, perpendicular to basal plane
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           2260.0 * si::kilogram/si::meter3, 
+            /*density*/                           state_invariant(2260.0 * si::kilogram/si::meter3), 
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::celcius, si::pascal,
@@ -3980,7 +3967,7 @@ PartlyKnownCompound carbon (
             /*tensile_fracture_strength*/         field::missing(),
             /*shear_fracture_strength*/           field::missing(),
             /*compressive_yield_strength*/        field::missing(),
-            /*tensile_yield_strength*/            14.0 * si::megapascal, // https://material-properties.org/strength-of-materials-tensile-yield/
+            /*tensile_yield_strength*/            state_invariant(14.0 * si::megapascal), // https://material-properties.org/strength-of-materials-tensile-yield/
             /*shear_yield_strength*/              field::missing(),
 
             /*chemical_susceptibility_estimate*/  field::missing()
@@ -3988,9 +3975,9 @@ PartlyKnownCompound carbon (
         phase::PartlyKnownSolid { // diamond
             /*specific_heat_capacity*/            // 0.5091* si::joule / (si::gram * si::kelvin), // wikipedia 
                 get_perry_temperature_function(si::kelvin, si::calorie/(12.011 * si::gram*si::kelvin), 2.162, 0.003059, -130300.0, 0.0), 
-            /*thermal_conductivity*/              2200.0 * si::watt / ( si::meter * si::kelvin ), //wikipedia 
+            /*thermal_conductivity*/              state_invariant(2200.0 * si::watt / ( si::meter * si::kelvin )), //wikipedia 
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           3513.0  * si::kilogram/si::meter3, 
+            /*density*/                           state_invariant(3513.0  * si::kilogram/si::meter3), 
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/      
                 get_linear_interpolated_refractive_index_function
@@ -4006,9 +3993,9 @@ PartlyKnownCompound carbon (
                     // Philip (1964)
             /*absorption_coefficient*/            field::missing(),
 
-            /*bulk_modulus*/                      443.0 * si::gigapascal,  // wikipedia, for diamond
-            /*tensile_modulus*/                   1050.0 * si::gigapascal, // wikipedia, for diamond
-            /*shear_modulus*/                     478.0 * si::gigapascal,  // wikipedia, from McSkimin (1972), for diamond
+            /*bulk_modulus*/                      state_invariant(443.0 * si::gigapascal),  // wikipedia, for diamond
+            /*tensile_modulus*/                   state_invariant(1050.0 * si::gigapascal), // wikipedia, for diamond
+            /*shear_modulus*/                     state_invariant(478.0 * si::gigapascal),  // wikipedia, from McSkimin (1972), for diamond
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
             /*poisson_ratio*/                     field::missing(),
@@ -4080,9 +4067,9 @@ PartlyKnownCompound  calcite (
 
             /*specific_heat_capacity*/            // 0.793 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988, room temperature, 0.79 for aragonite
                 get_perry_temperature_function(si::kelvin, si::calorie/(100.087 * si::gram*si::kelvin), 19.68, 0.01189, -307600.0, 0.0), 
-            /*thermal_conductivity*/              3.59 * si::watt / (si::meter * si::kelvin), // Schön (2015)
+            /*thermal_conductivity*/              state_invariant(3.59 * si::watt / (si::meter * si::kelvin)), // Schön (2015)
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           2710.0 * si::kilogram/si::meter3,
+            /*density*/                           state_invariant(2710.0 * si::kilogram/si::meter3),
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  
                 field::SpectralFunction<double>([](
@@ -4106,12 +4093,12 @@ PartlyKnownCompound  calcite (
                     std::vector<double>{  0.246,  0.271,  0.279,  0.327,  0.358,  0.450,  0.501,  0.818,  0.844,  0.920,  1.034,  1.451,  1.492,  1.584,  1.606,  1.709,  1.749,  1.777,  1.815,  1.855,  1.876,  1.898,  1.915,  1.947,  1.963,  1.983,  1.996,  2.026,  2.053,  2.090,  2.109,  2.136,  2.143,  2.162,  2.186,  2.226,  2.258,  2.296,  2.307,  2.335,  2.380,  2.389,  2.419,  2.500,  2.529,  2.560,  2.592,  2.627,  2.659,  2.690,  2.757,  2.785,  2.814,  2.879,  2.914,  2.946,  2.979,  1.354,  2.709,  3.694,  4.433,  5.295,  7.266,  8.497, 12.931, 15.270, 16.871, 17.610, 19.088, 20.812, 23.522, 26.477, 30.665, 33.251, 34.482, 37.438, 38.546, 41.748, 43.472, 46.305, 48.275, 49.137, 50.000, 51.724, 52.955, 54.433, 55.911, 56.773, 60.591, 61.453, 62.807, 64.162, 66.379, 69.088, 70.197, 72.044, 73.891, 77.463, 79.926, 82.142, 85.344, 87.807, 97.536, 99.753,101.477,103.571,107.512,112.561,117.487,123.522,129.433,132.758,136.330,140.147,143.842,148.522,152.586,156.896,178.940,191.871,199.630,207.019,216.1330},
                     std::vector<double>{  0.709,  0.715,  0.743,  0.794,  0.797,  0.919,  0.936,  0.955,  0.960,  0.953,  0.964,  0.958,  0.962,  0.957,  0.960,  0.947,  0.937,  0.951,  0.940,  0.910,  0.864,  0.925,  0.929,  0.921,  0.900,  0.887,  0.865,  0.929,  0.940,  0.936,  0.921,  0.908,  0.877,  0.868,  0.893,  0.859,  0.789,  0.656,  0.648,  0.573,  0.810,  0.829,  0.812,  0.552,  0.490,  0.601,  0.775,  0.841,  0.844,  0.800,  0.602,  0.496,  0.609,  0.709,  0.677,  0.682,  0.660,  0.580,  0.563,  0.071,  0.459,  0.024,  0.055,  0.245,  0.239,  0.199,  0.089,  0.084,  0.038,  0.019,  0.010,  0.078,  0.099,  0.128,  0.117,  0.133,  0.122,  0.033,  0.066,  0.102,  0.158,  0.157,  0.174,  0.183,  0.172,  0.176,  0.163,  0.183,  0.160,  0.165,  0.158,  0.183,  0.100,  0.092,  0.066,  0.066,  0.038,  0.039,  0.021,  0.041,  0.053,  0.071,  0.116,  0.103,  0.099,  0.104,  0.086,  0.111,  0.108,  0.147,  0.134,  0.141,  0.166,  0.178,  0.146,  0.157,  0.161,  0.177,  0.209,  0.171,  0.215,  0.355,  0.4454}),
 
-            /*bulk_modulus*/                      73.0 * si::gigapascal, // Schön (2015)
-            /*tensile_modulus*/                   1.4806e11*si::pascal, 
-            /*shear_modulus*/                     0.3269e11*si::pascal, 
+            /*bulk_modulus*/                      state_invariant(73.0 * si::gigapascal), // Schön (2015)
+            /*tensile_modulus*/                   state_invariant(1.4806e11*si::pascal), 
+            /*shear_modulus*/                     state_invariant(0.3269e11*si::pascal), 
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     0.32,
+            /*poisson_ratio*/                     state_invariant(0.32),
 
             /*compressive_fracture_strength*/     field::missing(),
             /*tensile_fracture_strength*/         field::missing(),
@@ -4126,20 +4113,20 @@ PartlyKnownCompound  calcite (
 
             /*specific_heat_capacity*/            // 0.793 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988, room temperature, 0.79 for aragonite
                 get_perry_temperature_function(si::kelvin, si::calorie/(100.087 * si::gram*si::kelvin), 19.68, 0.01189, -307600.0, 0.0), 
-            /*thermal_conductivity*/              2.24 * si::watt / (si::meter * si::kelvin), // Schön (2015)
+            /*thermal_conductivity*/              state_invariant(2.24 * si::watt / (si::meter * si::kelvin)), // Schön (2015)
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           2930.0 * si::kilogram/si::meter3, // Perry
+            /*density*/                           state_invariant(2930.0 * si::kilogram/si::meter3), // Perry
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  field::missing(),
             /*extinction_coefficient*/            field::missing(),
             /*absorption_coefficient*/            field::missing(),
 
-            /*bulk_modulus*/                      47.0 * si::gigapascal, // Schön (2015)
-            /*tensile_modulus*/                   1.5958e11*si::pascal,
-            /*shear_modulus*/                     0.4132e11*si::pascal,
+            /*bulk_modulus*/                      state_invariant(47.0 * si::gigapascal), // Schön (2015)
+            /*tensile_modulus*/                   state_invariant(1.5958e11*si::pascal),
+            /*shear_modulus*/                     state_invariant(0.4132e11*si::pascal),
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     0.18, // Schön (2015)
+            /*poisson_ratio*/                     state_invariant(0.18), // Schön (2015)
 
             /*compressive_fracture_strength*/     field::missing(),
             /*tensile_fracture_strength*/         field::missing(),
@@ -4192,14 +4179,14 @@ PartlyKnownCompound  quartz (
     phase::PartlyKnownLiquid {
         /*specific_heat_capacity*/ field::missing(),
         /*thermal_conductivity*/   field::missing(),
-        /*dynamic_viscosity*/      exp(10.0) * si::poise, // Doremus (2002), at 1400 C
-        /*density*/                2180.0 * si::kilogram/si::meter3, // from Murase and McBirney (1973), for rhyolitic magma
+        /*dynamic_viscosity*/      state_invariant(exp(10.0) * si::poise), // Doremus (2002), at 1400 C
+        /*density*/                state_invariant(2180.0 * si::kilogram/si::meter3), // from Murase and McBirney (1973), for rhyolitic magma
         /*vapor_pressure*/         
                 get_interpolated_temperature_function
                     (si::celcius, si::pascal,
                      std::vector<double>{1966.0,     2149.0,     2368.0}, 
                      std::vector<double>{1.0 ,       10.0,       100.0  }),
-        /*surface_tension*/        312.0 * si::dyne / si::centimeter, // 1400C, Shartsis (1951)
+        /*surface_tension*/        state_invariant(312.0 * si::dyne / si::centimeter), // 1400C, Shartsis (1951)
         /*refractive_index*/       field::missing(),
         /*extinction_coefficient*/ field::missing()
     },
@@ -4217,7 +4204,7 @@ PartlyKnownCompound  quartz (
                      std::vector<double>{10.0,    20.0,  80.0, 273.15}, 
                      std::vector<double>{1200.0, 480.0,  30.0, 7.69}), // Perry, with Schön (2015) for standard temperature 
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           2650.0 *  si::kilogram/si::meter3, // 2650 alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
+            /*density*/                           state_invariant(2650.0 *  si::kilogram/si::meter3), // 2650 alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::kelvin, si::millimeter_mercury,
@@ -4241,18 +4228,18 @@ PartlyKnownCompound  quartz (
                      std::vector<double>{ 0.221, 0.239, 0.263, 0.280, 0.348, 0.416, 0.531, 0.784, 1.862, 1.918, 2.152, 2.193, 2.309, 2.317, 2.475, 2.593, 2.662, 2.692, 2.720, 2.784, 2.848, 2.886, 2.915, 2.985, 3.452, 3.667, 3.721, 3.963, 4.084, 4.192, 4.340, 4.475, 4.596, 4.905, 7.395, 7.624, 7.893, 8.216, 8.526, 8.620, 8.714, 9.239, 9.495, 9.724,10.114,10.531,11.958,12.281,12.402,12.483,12.644,12.806,12.994,13.156,13.600,14.313,14.448,14.757,17.476,17.839,17.920,18.176,18.257,18.445,18.903,19.091,19.333,19.831,20.141,20.572,20.935,21.729,22.025,22.483,22.900,23.331,23.586,23.869,24.057,24.380,24.582,24.703 },
                      std::vector<double>{ 0.447, 0.465, 0.546, 0.550, 0.710, 0.761, 0.803, 0.831, 0.865, 0.861, 0.879, 0.867, 0.871, 0.876, 0.874, 0.861, 0.867, 0.847, 0.816, 0.720, 0.710, 0.728, 0.696, 0.729, 0.389, 0.352, 0.291, 0.303, 0.271, 0.186, 0.168, 0.071, 0.175, 0.034, 0.009, 0.031, 0.206, 0.791, 0.678, 0.406, 0.597, 0.905, 0.330, 0.210, 0.132, 0.102, 0.049, 0.022, 0.165, 0.198, 0.152, 0.192, 0.125, 0.096, 0.075, 0.053, 0.087, 0.066, 0.028, 0.039, 0.077, 0.195, 0.207, 0.188, 0.099, 0.097, 0.157, 0.684, 0.791, 0.829, 0.802, 0.584, 0.546, 0.309, 0.213, 0.175, 0.167, 0.131, 0.136, 0.104, 0.063, 0.065 }),
 
-            /*bulk_modulus*/                      37.0 * si::gigapascal, // Schön (2015)
-            /*tensile_modulus*/                   0.8680e11*si::pascal, 
-            /*shear_modulus*/                     0.5820e11*si::pascal, 
+            /*bulk_modulus*/                      state_invariant(37.0 * si::gigapascal), // Schön (2015)
+            /*tensile_modulus*/                   state_invariant(0.8680e11*si::pascal), 
+            /*shear_modulus*/                     state_invariant(0.5820e11*si::pascal), 
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     0.08, // Schön (2015)
+            /*poisson_ratio*/                     state_invariant(0.08), // Schön (2015)
 
-            /*compressive_fracture_strength*/     1.1 * si::gigapascal, // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
-            /*tensile_fracture_strength*/         48.0 * si::megapascal, // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
+            /*compressive_fracture_strength*/     state_invariant(1.1 * si::gigapascal), // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
+            /*tensile_fracture_strength*/         state_invariant(48.0 * si::megapascal), // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
             /*shear_fracture_strength*/           field::missing(),
             /*compressive_yield_strength*/        field::missing(),
-            /*tensile_yield_strength*/            48.0 * si::megapascal, // https://material-properties.org/strength-of-materials-tensile-yield/
+            /*tensile_yield_strength*/            state_invariant(48.0 * si::megapascal), // https://material-properties.org/strength-of-materials-tensile-yield/
             /*shear_yield_strength*/              field::missing(),
 
             /*chemical_susceptibility_estimate*/  field::missing()
@@ -4262,7 +4249,7 @@ PartlyKnownCompound  quartz (
                 get_perry_temperature_function(si::kelvin, si::calorie/(60.08 * si::gram*si::kelvin), 10.87, 0.008712, 241200.0, 0.0), 
             /*thermal_conductivity*/              field::missing(),
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           2533.0 *  si::kilogram/si::meter3, // 2650 alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
+            /*density*/                           state_invariant(2533.0 *  si::kilogram/si::meter3), // 2650 alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::kelvin, si::millimeter_mercury,
@@ -4296,7 +4283,7 @@ PartlyKnownCompound  quartz (
                 get_perry_temperature_function(si::kelvin, si::calorie/(60.08 * si::gram*si::kelvin), 3.65, 0.0240, 0.0, 0.0), 
             /*thermal_conductivity*/              field::missing(),
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           2334.0 *  si::kilogram/si::meter3, // 2650 alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
+            /*density*/                           state_invariant(2334.0 *  si::kilogram/si::meter3), // 2650 alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::kelvin, si::millimeter_mercury,
@@ -4327,7 +4314,7 @@ PartlyKnownCompound  quartz (
                 get_perry_temperature_function(si::kelvin, si::calorie/(60.08 * si::gram*si::kelvin), 17.09, 0.000454, -897200.0, 0.0), 
             /*thermal_conductivity*/              field::missing(),
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           2334.0 *  si::kilogram/si::meter3, // 2650 alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
+            /*density*/                           state_invariant(2334.0 *  si::kilogram/si::meter3), // 2650 alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::kelvin, si::millimeter_mercury,
@@ -4395,8 +4382,8 @@ PartlyKnownCompound  orthoclase (
     phase::PartlyKnownLiquid {
         /*specific_heat_capacity*/ field::missing(),
         /*thermal_conductivity*/   field::missing(),
-        /*dynamic_viscosity*/      1e8 * si::poise, // observed by Bowen (1934) for molten Orthoclase, seems large compared to other silicates, but continental crust has been observed to have higher viscosity than oceanic (Itô 1979, "Rheology of the crust...", I can only get a hold of the abstract)
-        /*density*/                2180.0 * si::kilogram/si::meter3, // from Murase and McBirney (1973), for rhyolitic magma
+        /*dynamic_viscosity*/      state_invariant(1e8 * si::poise), // observed by Bowen (1934) for molten Orthoclase, seems large compared to other silicates, but continental crust has been observed to have higher viscosity than oceanic (Itô 1979, "Rheology of the crust...", I can only get a hold of the abstract)
+        /*density*/                state_invariant(2180.0 * si::kilogram/si::meter3), // from Murase and McBirney (1973), for rhyolitic magma
         /*vapor_pressure*/         field::missing(),
         /*surface_tension*/        field::missing(),
         /*refractive_index*/       field::missing(),
@@ -4410,11 +4397,11 @@ PartlyKnownCompound  orthoclase (
 
             /*specific_heat_capacity*/            // 0.61 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988)
                 get_perry_temperature_function(si::kelvin, si::calorie/(278.33 * si::gram*si::kelvin), 69.26, 0.00821, -2331000.0, 0.0),
-            /*thermal_conductivity*/              2.31 * si::watt/(si::meter*si::kelvin), // Schön (2015)
+            /*thermal_conductivity*/              state_invariant(2.31 * si::watt/(si::meter*si::kelvin)), // Schön (2015)
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           2560.0 * si::kilogram/si::meter3,
+            /*density*/                           state_invariant(2560.0 * si::kilogram/si::meter3),
             /*vapor_pressure*/                    field::missing(),
-            /*refractive_index*/                  1.527,
+            /*refractive_index*/                  spectral_invariant(1.527),
             /*extinction_coefficient*/            field::missing(),
             /*absorption_coefficient*/            
                 get_absorption_coefficient_function_from_reflectance_at_wavelengths // for orthoclase
@@ -4422,9 +4409,9 @@ PartlyKnownCompound  orthoclase (
                     std::vector<double>{ 0.256, 0.281, 0.321, 0.351, 0.354, 0.367, 0.376, 0.390, 0.471, 0.542, 0.893, 1.234, 1.359, 1.626, 2.115, 2.122, 2.195, 2.301, 2.329, 2.600, 2.661, 2.721, 2.785, 2.821, 2.853, 2.883, 2.914, 2.982, 3.094, 3.334, 3.454, 3.560, 3.840, 3.987, 4.227, 4.666, 4.920, 5.013, 5.293, 5.652, 5.959, 6.265, 6.558, 6.945, 7.558, 7.784, 8.104, 8.344, 8.464, 8.704, 8.917, 9.290, 9.463,10.036,10.249,10.769,12.101,12.248,12.541,13.447,15.179,16.232,16.752,18.151,19.350,20.029,20.962,23.014,23.281,24.960 },
                     std::vector<double>{ 0.069, 0.146, 0.482, 0.551, 0.602, 0.616, 0.605, 0.654, 0.716, 0.743, 0.788, 0.767, 0.769, 0.794, 0.809, 0.816, 0.803, 0.803, 0.811, 0.801, 0.807, 0.729, 0.596, 0.598, 0.561, 0.590, 0.569, 0.586, 0.661, 0.711, 0.658, 0.745, 0.757, 0.743, 0.730, 0.510, 0.481, 0.481, 0.295, 0.178, 0.180, 0.140, 0.148, 0.117, 0.023, 0.009, 0.018, 0.082, 0.103, 0.111, 0.096, 0.106, 0.129, 0.117, 0.103, 0.112, 0.144, 0.134, 0.102, 0.121, 0.140, 0.171, 0.201, 0.223, 0.273, 0.282, 0.333, 0.376, 0.374, 0.403 }),
 
-            /*bulk_modulus*/                      46.8 * si::gigapascal, // Schön (2015)
+            /*bulk_modulus*/                      state_invariant(46.8 * si::gigapascal), // Schön (2015)
             /*tensile_modulus*/                   field::missing(),
-            /*shear_modulus*/                     27.3 * si::gigapascal, // Schön (2015)
+            /*shear_modulus*/                     state_invariant(27.3 * si::gigapascal), // Schön (2015)
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
             /*poisson_ratio*/                     field::missing(),
@@ -4482,13 +4469,13 @@ PartlyKnownCompound andesine (
         /*specific_heat_capacity*/ 
             get_perry_temperature_function(si::kelvin, si::calorie/(268.6 * si::gram*si::kelvin), 63.78, 0.01171, -1678000.0, 0.0), // for Albite
         /*thermal_conductivity*/   field::missing(),
-        /*dynamic_viscosity*/      1.38e2 * si::poise, // 1.36-1.19 poises, observed by Kani for andesitic basaltic magma at 1400C, referenced by Bowen (1934)
+        /*dynamic_viscosity*/      state_invariant(1.38e2 * si::poise), // 1.36-1.19 poises, observed by Kani for andesitic basaltic magma at 1400C, referenced by Bowen (1934)
         // .dynamic_viscosity = exp(5.0) * si::poise, // Doremus (2002) for Albite, at 1400 C
         // .dynamic_viscosity = 4e4 * si::poise, // observed by Bowen (1934) for Albite at 1400C
         // .dynamic_viscosity = 3.8e1 * si::poise, // observed by McCaffery for molten anorthite at 1550C, referenced by Bowen (1934)
         // .dynamic_viscosity = 1.38e2 * si::poise, // 1.36-1.19 poises, observed by Kani for andesitic basaltic magma at 1400C, referenced by Bowen (1934)
         // .dynamic_viscosity = 3.0e11 * si::pascal * si::second, // Melosh (2011), from Hiesinger (2007), for andesite lava flow, middle value on log scale
-        /*density*/                2180.0 * si::kilogram/si::meter3, // from Murase and McBirney (1973), for rhyolitic magma
+        /*density*/                state_invariant(2180.0 * si::kilogram/si::meter3), // from Murase and McBirney (1973), for rhyolitic magma
         /*vapor_pressure*/         field::missing(),
         /*surface_tension*/        
             get_interpolated_temperature_function
@@ -4506,11 +4493,11 @@ PartlyKnownCompound andesine (
 
             /*specific_heat_capacity*/            // 66.0 * si::joule / (268.6 * si::gram * si::kelvin), // Richet (1984)
                 get_perry_temperature_function(si::kelvin, si::calorie/(268.6 * si::gram*si::kelvin), 63.13, 0.01500, -1537000.0, 0.0), // for anorthite
-            /*thermal_conductivity*/              1.69 * si::watt / (si::centimeter * si::kelvin), // Schön (2015), for anorthite
+            /*thermal_conductivity*/              state_invariant(1.69 * si::watt / (si::centimeter * si::kelvin)), // Schön (2015), for anorthite
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           2670.0 * si::kilogram/si::meter3,
+            /*density*/                           state_invariant(2670.0 * si::kilogram/si::meter3),
             /*vapor_pressure*/                    field::missing(),
-            /*refractive_index*/                  1.553,
+            /*refractive_index*/                  spectral_invariant(1.553),
             /*extinction_coefficient*/            field::missing(),
             /*absorption_coefficient*/            
                 get_absorption_coefficient_function_from_reflectance_at_wavelengths // for andesine
@@ -4518,12 +4505,12 @@ PartlyKnownCompound andesine (
                     std::vector<double>{  0.253,  0.278,  0.348,  0.378,  0.563,  0.615,  1.405,  1.441,  1.460,  1.838,  1.897,  1.908,  2.075,  2.156,  2.242,  2.308,  2.327,  2.626,  2.659,  2.786,  2.821,  2.848,  2.881,  2.916,  2.973,  4.139,  5.614,  7.704,  8.688, 10.409, 10.532, 12.377, 12.991, 15.204, 19.385, 20.000, 23.811, 24.795, 25.901, 27.008, 29.344, 30.327, 37.704, 42.745, 55.409, 64.754, 66.598, 68.196, 82.704, 85.286, 93.401, 99.549,107.172,112.827,133.606,136.680,140.245,148.237,152.418,167.909,172.950,185.368,199.385,207.254,215.983 },
                     std::vector<double>{  0.097,  0.124,  0.243,  0.254,  0.472,  0.493,  0.579,  0.581,  0.595,  0.662,  0.653,  0.628,  0.682,  0.690,  0.672,  0.669,  0.680,  0.614,  0.594,  0.228,  0.226,  0.216,  0.228,  0.214,  0.207,  0.515,  0.043,  0.010,  0.224,  0.153,  0.086,  0.035,  0.057,  0.036,  0.075,  0.119,  0.135,  0.087,  0.094,  0.140,  0.072,  0.099,  0.076,  0.098,  0.115,  0.094,  0.137,  0.104,  0.102,  0.129,  0.119,  0.159,  0.159,  0.145,  0.166,  0.150,  0.153,  0.232,  0.187,  0.230,  0.220,  0.222,  0.266,  0.269,  0.216 }),
 
-            /*bulk_modulus*/                      84.0 * si::gigapascal, // Schön (2015), for anorthite
+            /*bulk_modulus*/                      state_invariant(84.0 * si::gigapascal), // Schön (2015), for anorthite
             /*tensile_modulus*/                   field::missing(),
-            /*shear_modulus*/                     40.0 * si::gigapascal, // Schön (2015), for anorthite
+            /*shear_modulus*/                     state_invariant(40.0 * si::gigapascal), // Schön (2015), for anorthite
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     0.29, // Schön (2015), for anorthite
+            /*poisson_ratio*/                     state_invariant(0.29), // Schön (2015), for anorthite
 
             /*compressive_fracture_strength*/     field::missing(),
             /*tensile_fracture_strength*/         field::missing(),
@@ -4575,10 +4562,10 @@ PartlyKnownCompound augite (
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ 1.08 * si::kilojoule / (si::kilogram*si::kelvin), // Schön (2015), for basaltic lava
-        /*thermal_conductivity*/   2.5 * si::watt / (si::meter*si::kelvin), // Schön (2015), for basaltic lava
+        /*specific_heat_capacity*/ state_invariant(1.08 * si::kilojoule / (si::kilogram*si::kelvin)), // Schön (2015), for basaltic lava
+        /*thermal_conductivity*/   state_invariant(2.5 * si::watt / (si::meter*si::kelvin)), // Schön (2015), for basaltic lava
         /*dynamic_viscosity*/      field::missing(),
-        /*density*/                2800.0 * si::kilogram/si::meter3, // from Murase and McBirney (1973), for basaltic  magma
+        /*density*/                state_invariant(2800.0 * si::kilogram/si::meter3), // from Murase and McBirney (1973), for basaltic  magma
         /*vapor_pressure*/         field::missing(),
         /*surface_tension*/        
             get_interpolated_temperature_function
@@ -4598,11 +4585,11 @@ PartlyKnownCompound augite (
 
             /*specific_heat_capacity*/            // 0.7 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988), representative of pyroxenes
                 get_perry_temperature_function(si::kelvin, si::calorie/(236.4 * si::gram*si::kelvin), 23.35, 0.008062, -558800.0, 0.0), // for maganese pyroxenes 
-            /*thermal_conductivity*/              4.66 * si::watt / (si::centimeter * si::kelvin), // Schön (2015)
+            /*thermal_conductivity*/              state_invariant(4.66 * si::watt / (si::centimeter * si::kelvin)), // Schön (2015)
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           3380.0 * si::kilogram/si::meter3,
+            /*density*/                           state_invariant(3380.0 * si::kilogram/si::meter3),
             /*vapor_pressure*/                    field::missing(),
-            /*refractive_index*/                  1.707,
+            /*refractive_index*/                  spectral_invariant(1.707),
             /*extinction_coefficient*/            field::missing(),
             /*absorption_coefficient*/            
                 get_absorption_coefficient_function_from_reflectance_at_wavelengths // for augite
@@ -4610,12 +4597,12 @@ PartlyKnownCompound augite (
                     std::vector<double>{  0.221,  0.282,  0.365,  0.508,  0.586,  0.748,  0.797,  0.872,  1.029,  1.225,  2.055,  2.497,  2.625,  2.660,  2.692,  2.750,  2.791,  2.852,  2.916,  2.950,  2.977,  1.391,  2.741,  3.846,  8.510, 10.842, 11.947, 13.543, 14.893, 16.857, 18.085, 20.540, 21.276, 23.854, 25.327, 27.291, 28.764, 29.746, 32.446, 34.042, 35.147, 38.952, 40.671, 41.039, 42.880, 49.140, 54.787, 58.960, 62.397, 66.816, 73.199,114.934,117.757,123.649,126.841,129.418,140.220,143.535,152.127,162.315,172.381,178.273,191.530,199.018,207.119,215.589 },
                     std::vector<double>{  0.026,  0.029,  0.095,  0.168,  0.179,  0.130,  0.127,  0.145,  0.141,  0.150,  0.354,  0.442,  0.468,  0.473,  0.466,  0.337,  0.333,  0.299,  0.325,  0.326,  0.360,  0.238,  0.474,  0.496,  0.037,  0.144,  0.099,  0.093,  0.032,  0.038,  0.181,  0.137,  0.148,  0.077,  0.095,  0.074,  0.070,  0.081,  0.062,  0.093,  0.095,  0.080,  0.095,  0.111,  0.122,  0.095,  0.094,  0.081,  0.089,  0.084,  0.103,  0.114,  0.106,  0.122,  0.118,  0.118,  0.132,  0.141,  0.127,  0.137,  0.131,  0.141,  0.051,  0.048,  0.100,  0.133 }),
 
-            /*bulk_modulus*/                      94.1 * si::gigapascal, // Schön (2015)
+            /*bulk_modulus*/                      state_invariant(94.1 * si::gigapascal), // Schön (2015)
             /*tensile_modulus*/                   field::missing(),
-            /*shear_modulus*/                     57.0*si::gigapascal, // Schön (2015)
+            /*shear_modulus*/                     state_invariant(57.0*si::gigapascal), // Schön (2015)
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     0.25, // Schön (2015)
+            /*poisson_ratio*/                     state_invariant(0.25), // Schön (2015)
 
             /*compressive_fracture_strength*/     field::missing(),
             /*tensile_fracture_strength*/         field::missing(),
@@ -4670,7 +4657,7 @@ PartlyKnownCompound forsterite (
     phase::PartlyKnownLiquid {
         /*specific_heat_capacity*/ field::missing(),
         /*thermal_conductivity*/   field::missing(),
-        /*dynamic_viscosity*/      1.27e2 * si::poise, // 1.36-1.19 poises, observed by Kani for olivine basaltic magma at 1400C, referenced by Bowen (1934)
+        /*dynamic_viscosity*/      state_invariant(1.27e2 * si::poise), // 1.36-1.19 poises, observed by Kani for olivine basaltic magma at 1400C, referenced by Bowen (1934)
         // .dynamic_viscosity = exp(1.5) * si::poise, // Doremus (2002) for Olivine, at 1400 C
         /*density*/                field::missing(),
         /*vapor_pressure*/         field::missing(),
@@ -4690,11 +4677,11 @@ PartlyKnownCompound forsterite (
 
             /*specific_heat_capacity*/            // 0.79 * si::joule / (si::gram * si::kelvin), // Cermak (1988), for fayalite/forsterite mix
                 get_perry_temperature_function(si::kelvin, si::calorie/(153.31 * si::gram*si::kelvin), 33.57, 0.01907, -87970.0, 0.0), // for fayalite
-            /*thermal_conductivity*/              7.69 * si::watt / (si::centimeter * si::kelvin), // Schön (2015)
+            /*thermal_conductivity*/              state_invariant(7.69 * si::watt / (si::centimeter * si::kelvin)), // Schön (2015)
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           3810.0 * si::kilogram/si::meter3,
+            /*density*/                           state_invariant(3810.0 * si::kilogram/si::meter3),
             /*vapor_pressure*/                    field::missing(),
-            /*refractive_index*/                  1.651,
+            /*refractive_index*/                  spectral_invariant(1.651),
             /*extinction_coefficient*/            field::missing(),
             /*absorption_coefficient*/            
                 get_absorption_coefficient_function_from_reflectance_at_wavelengths // for olivine
@@ -4702,12 +4689,12 @@ PartlyKnownCompound forsterite (
                     std::vector<double>{  0.221,  0.232,  0.256,  0.303,  0.371,  0.405,  0.411,  0.463,  0.464,  0.557,  0.584,  0.636,  0.666,  0.696,  0.837,  0.853,  1.013,  1.045,  1.085,  1.149,  1.258,  1.335,  1.562,  1.639,  1.780,  1.842,  1.903,  1.956,  2.154,  2.170,  2.353,  2.364,  2.563,  2.627,  2.657,  2.716,  2.758,  2.788,  2.822,  2.886,  2.915,  2.945,  2.977,  3.524,  4.754,  5.614,  6.721,  8.688, 10.655, 12.254, 13.114, 14.959, 15.942, 17.172, 18.893, 20.737, 23.811, 24.795, 26.762, 27.991, 32.049, 34.139, 35.000, 35.737, 40.655, 57.008, 68.565, 72.131, 80.122, 82.459, 85.040, 87.991, 89.344, 92.172,105.942,129.549,136.188,152.172,157.213,168.155,191.639,199.508,207.131,215.614 },
                     std::vector<double>{  0.039,  0.056,  0.057,  0.088,  0.321,  0.362,  0.382,  0.404,  0.418,  0.476,  0.472,  0.448,  0.455,  0.445,  0.299,  0.296,  0.165,  0.155,  0.159,  0.191,  0.218,  0.254,  0.428,  0.448,  0.457,  0.454,  0.455,  0.447,  0.465,  0.460,  0.444,  0.454,  0.439,  0.446,  0.437,  0.164,  0.213,  0.237,  0.249,  0.303,  0.299,  0.316,  0.319,  0.419,  0.267,  0.046,  0.143,  0.014,  0.234,  0.057,  0.032,  0.014,  0.062,  0.030,  0.169,  0.051,  0.180,  0.146,  0.092,  0.129,  0.058,  0.137,  0.135,  0.118,  0.085,  0.070,  0.081,  0.078,  0.105,  0.103,  0.128,  0.128,  0.114,  0.134,  0.142,  0.199,  0.187,  0.239,  0.242,  0.232,  0.260,  0.303,  0.359,  0.380 }),
 
-            /*bulk_modulus*/                      129.6 * si::gigapascal, // Schön (2015)
-            /*tensile_modulus*/                   3.2848e11*si::pascal,
-            /*shear_modulus*/                     0.6515e11*si::pascal,
+            /*bulk_modulus*/                      state_invariant(129.6 * si::gigapascal), // Schön (2015)
+            /*tensile_modulus*/                   state_invariant(3.2848e11*si::pascal),
+            /*shear_modulus*/                     state_invariant(0.6515e11*si::pascal),
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     0.24,
+            /*poisson_ratio*/                     state_invariant(0.24),
 
             /*compressive_fracture_strength*/     field::missing(),
             /*tensile_fracture_strength*/         field::missing(),
@@ -4777,11 +4764,11 @@ PartlyKnownCompound  goethite (
                     (si::kelvin, si::joule/(si::kelvin * 88.85 * si::gram),
                      std::vector<double>{10.0,   25.0,  150.0, 250.0, 375.0 }, 
                      std::vector<double>{0.0339, 0.701, 38.13, 64.48, 91.33 }), // Perry
-            /*thermal_conductivity*/              2.91 * si::watt / (si::meter * si::kelvin), // Cermak (1988)
+            /*thermal_conductivity*/              state_invariant(2.91 * si::watt / (si::meter * si::kelvin)), // Cermak (1988)
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           4300.0 * si::kilogram/si::meter3,
+            /*density*/                           state_invariant(4300.0 * si::kilogram/si::meter3),
             /*vapor_pressure*/                    field::missing(),
-            /*refractive_index*/                  2.401,
+            /*refractive_index*/                  spectral_invariant(2.401),
             /*extinction_coefficient*/            field::missing(),
             /*absorption_coefficient*/            
                 get_absorption_coefficient_function_from_reflectance_at_wavelengths // for goethite
@@ -4862,11 +4849,11 @@ PartlyKnownCompound  pyrite (
 
             /*specific_heat_capacity*/            // 0.5 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988, room temperature
                 get_perry_temperature_function(si::kelvin, si::calorie/(119.98 * si::gram*si::kelvin), 10.7, 0.01336, 0.0, 0.0),
-            /*thermal_conductivity*/              19.21 * si::watt / (si::meter * si::kelvin), // Schön (2015)
+            /*thermal_conductivity*/              state_invariant(19.21 * si::watt / (si::meter * si::kelvin)), // Schön (2015)
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           5020.0 * si::kilogram/si::meter3,
+            /*density*/                           state_invariant(5020.0 * si::kilogram/si::meter3),
             /*vapor_pressure*/                    field::missing(),
-            /*refractive_index*/                  1.78, //gemologyproject.com
+            /*refractive_index*/                  spectral_invariant(1.78), //gemologyproject.com
             /*extinction_coefficient*/            field::missing(),
             /*absorption_coefficient*/            
                 get_absorption_coefficient_function_from_reflectance_at_wavelengths // for pyrite
@@ -4874,12 +4861,12 @@ PartlyKnownCompound  pyrite (
                     std::vector<double>{  0.23550,  0.24665,  0.31676,  0.34226,  0.37731,  0.46176,  0.50000,  0.58764,  0.62588,  0.69280,  0.73263,  0.84098,  0.90153,  1.02900,  1.17559,  1.36998,  1.60739,  1.66953,  1.70459,  2.05672,  2.32760,  2.49490,  2.66061,  2.68929,  2.72275,  2.75621,  2.78649,  2.88050,  2.91396,  2.94583,  3.03656,  3.56466,  3.87610,  4.03859,  4.93230,  5.14895,  5.41977,  6.04265,  6.44888,  6.69262,  6.93636,  7.07177,  7.65403,  7.83006,  8.10088,  8.16858,  8.43940,  8.58835,  8.73731,  8.89980,  9.02167,  9.36019,  9.59039,  9.71225,  9.84766,  9.92891, 10.09140, 11.35071, 12.20379, 12.65064, 12.81313, 14.08599, 14.65471, 14.83074, 14.99323, 15.20988, 15.39946, 15.88693, 16.15775, 16.87542, 17.03791, 17.29519, 17.95870, 18.13473, 19.24509, 21.39810, 22.27827, 22.72512, 22.86053, 23.11781, 24.22817, 24.81043, 24.93230 },
                     std::vector<double>{ 0.00702, 0.02027, 0.03712, 0.03753, 0.05559, 0.07873, 0.09264, 0.10428, 0.10428, 0.10936, 0.10896, 0.09612, 0.09425, 0.08421, 0.08047, 0.07900, 0.08060, 0.07953, 0.08033, 0.07405, 0.07766, 0.08087, 0.08528, 0.08475, 0.08876, 0.07833, 0.07659, 0.04890, 0.04582, 0.03418, 0.02283, 0.05607, 0.06561, 0.07341, 0.07890, 0.08584, 0.08237, 0.05549, 0.08064, 0.06676, 0.08121, 0.08410, 0.08988, 0.09509, 0.10896, 0.10405, 0.09913, 0.08844, 0.08844, 0.07717, 0.07601, 0.07890, 0.09827, 0.07399, 0.07225, 0.06301, 0.06012, 0.06532, 0.05289, 0.04971, 0.05202, 0.05665, 0.06474, 0.06965, 0.06734, 0.05780, 0.05694, 0.06590, 0.06156, 0.07572, 0.07457, 0.06879, 0.06647, 0.06850, 0.06734, 0.05723, 0.04364, 0.02601, 0.03064, 0.08497, 0.20318, 0.24451, 0.23988 }),
 
-            /*bulk_modulus*/                      143.0 * si::gigapascal, // Schön (2015)
-            /*tensile_modulus*/                   3.818e11*si::pascal,
-            /*shear_modulus*/                     1.094e11*si::pascal,
+            /*bulk_modulus*/                      state_invariant(143.0 * si::gigapascal), // Schön (2015)
+            /*tensile_modulus*/                   state_invariant(3.818e11*si::pascal),
+            /*shear_modulus*/                     state_invariant(1.094e11*si::pascal),
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     0.16, // Schön (2015)
+            /*poisson_ratio*/                     state_invariant(0.16), // Schön (2015)
 
             /*compressive_fracture_strength*/     field::missing(),
             /*tensile_fracture_strength*/         field::missing(),
@@ -4948,9 +4935,9 @@ PartlyKnownCompound hematite (
 
             /*specific_heat_capacity*/            // 0.61 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988)
                 get_perry_temperature_function(si::kelvin, si::calorie/(159.69 * si::gram*si::kelvin), 24.72, 0.01604, -423400.0, 0.0),
-            /*thermal_conductivity*/              11.28 * si::watt / (si::meter * si::kelvin), // Schön (2015)
+            /*thermal_conductivity*/              state_invariant(11.28 * si::watt / (si::meter * si::kelvin)), // Schön (2015)
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           5250.0 * si::kilogram/si::meter3,
+            /*density*/                           state_invariant(5250.0 * si::kilogram/si::meter3),
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  
                 get_linear_interpolated_refractive_index_function
@@ -4971,8 +4958,8 @@ PartlyKnownCompound hematite (
                     std::vector<double>{ 0.1100, 0.0969, 0.0950, 0.0843, 0.0856, 0.0766, 0.0741, 0.0884, 0.0878, 0.0820, 0.0781, 0.0802, 0.0792, 0.0850, 0.0865, 0.0926, 0.0918, 0.0850, 0.0893, 0.0875, 0.0902, 0.0858, 0.0857, 0.1266, 0.1279, 0.1235, 0.1217, 0.1254, 0.1250, 0.1274, 0.1450, 0.1476, 0.1503, 0.1485, 0.1380, 0.1342, 0.0908, 0.1087, 0.0900, 0.0828, 0.0979, 0.0836, 0.0890, 0.1104, 0.1633, 0.0549, 0.0067, 0.1623, 0.2621, 0.0837, 0.2109, 0.1704, 0.0939, 0.1131, 0.0625, 0.2890, 0.4106, 0.2601, 0.2180, 0.1689, 0.1881, 0.1562, 0.1390, 0.1253, 0.1476, 0.1192, 0.1562, 0.1476, 0.1668, 0.1430, 0.1456, 0.1897, 0.1947, 0.1461, 0.1435, 0.1861, 0.3650, 0.2317, 0.2023 }),
 
             /*bulk_modulus*/                      field::missing(),
-            /*tensile_modulus*/                   2.4243e11*si::pascal, 
-            /*shear_modulus*/                     0.8569e11*si::pascal, 
+            /*tensile_modulus*/                   state_invariant(2.4243e11*si::pascal), 
+            /*shear_modulus*/                     state_invariant(0.8569e11*si::pascal), 
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
             /*poisson_ratio*/                     field::missing(),
@@ -5027,8 +5014,8 @@ PartlyKnownCompound  gold (
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ 7.0 * si::calorie/(196.967 * si::gram*si::kelvin), // Perry, 1336-1573K
-        /*thermal_conductivity*/   105.0 * si::watt / (si::meter * si::kelvin), // Mills (1996)
+        /*specific_heat_capacity*/ state_invariant(7.0 * si::calorie/(196.967 * si::gram*si::kelvin)), // Perry, 1336-1573K
+        /*thermal_conductivity*/   state_invariant(105.0 * si::watt / (si::meter * si::kelvin)), // Mills (1996)
         /*dynamic_viscosity*/      
                 get_interpolated_inverse_temperature_function
                     (si::kelvin, si::centipoise,
@@ -5062,7 +5049,7 @@ PartlyKnownCompound  gold (
                      std::vector<double>{10.0,    60.0,  300.0, 1200.0}, 
                      std::vector<double>{2800.0, 380.0,  315.0,  262.0}), // Perry
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           19300.0 * si::kilogram/si::meter3,
+            /*density*/                           state_invariant(19300.0 * si::kilogram/si::meter3),
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::celcius, si::millimeter_mercury,
@@ -5083,17 +5070,17 @@ PartlyKnownCompound  gold (
             /*absorption_coefficient*/            field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
-            /*tensile_modulus*/                   1.9244e11*si::pascal,
-            /*shear_modulus*/                     0.4200e11*si::pascal,
+            /*tensile_modulus*/                   state_invariant(1.9244e11*si::pascal),
+            /*shear_modulus*/                     state_invariant(0.4200e11*si::pascal),
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     0.43, // wikipedia
+            /*poisson_ratio*/                     state_invariant(0.43), // wikipedia
 
             /*compressive_fracture_strength*/     field::missing(),
             /*tensile_fracture_strength*/         field::missing(),
             /*shear_fracture_strength*/           field::missing(),
             /*compressive_yield_strength*/        field::missing(),
-            /*tensile_yield_strength*/            300.0 * si::megapascal, // https://material-properties.org/strength-of-materials-tensile-yield/
+            /*tensile_yield_strength*/            state_invariant(300.0 * si::megapascal), // https://material-properties.org/strength-of-materials-tensile-yield/
             /*shear_yield_strength*/              field::missing(),
 
             /*chemical_susceptibility_estimate*/  field::missing()
@@ -5138,8 +5125,8 @@ PartlyKnownCompound  silver (
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*specific_heat_capacity*/ 8.2 * si::calorie/(107.868 * si::gram*si::kelvin), // Perry
-        /*thermal_conductivity*/   180.0 * si::watt / (si::meter * si::kelvin), // Mills (1996)
+        /*specific_heat_capacity*/ state_invariant(8.2 * si::calorie/(107.868 * si::gram*si::kelvin)), // Perry
+        /*thermal_conductivity*/   state_invariant(180.0 * si::watt / (si::meter * si::kelvin)), // Mills (1996)
         /*dynamic_viscosity*/      
                 get_interpolated_inverse_temperature_function
                     (si::kelvin, si::centipoise,
@@ -5172,7 +5159,7 @@ PartlyKnownCompound  silver (
                      std::vector<double>{10.0,     60.0,  300.0, 1200.0}, 
                      std::vector<double>{16500.0, 630.0,  424.0,  358.0}), // Perry
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           10500.0 * si::kilogram/si::meter3,
+            /*density*/                           state_invariant(10500.0 * si::kilogram/si::meter3),
             /*vapor_pressure*/                    
                 get_interpolated_temperature_function
                     (si::celcius, si::millimeter_mercury,
@@ -5193,8 +5180,8 @@ PartlyKnownCompound  silver (
             /*absorption_coefficient*/            field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
-            /*tensile_modulus*/                   1.2399e11*si::pascal,
-            /*shear_modulus*/                     0.4612e11*si::pascal,
+            /*tensile_modulus*/                   state_invariant(1.2399e11*si::pascal),
+            /*shear_modulus*/                     state_invariant(0.4612e11*si::pascal),
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
             /*poisson_ratio*/                     field::missing(),
@@ -5249,7 +5236,7 @@ PartlyKnownCompound  copper (
     /*liquid*/
     phase::PartlyKnownLiquid {
         /*specific_heat_capacity*/ field::missing(),
-        /*thermal_conductivity*/   160.0 * si::watt / (si::meter * si::kelvin), // Mills (1996)
+        /*thermal_conductivity*/   state_invariant(160.0 * si::watt / (si::meter * si::kelvin)), // Mills (1996)
         /*dynamic_viscosity*/      
                 get_interpolated_inverse_temperature_function
                     (si::kelvin, si::centipoise,
@@ -5304,17 +5291,17 @@ PartlyKnownCompound  copper (
             /*absorption_coefficient*/            field::missing(),
 
             /*bulk_modulus*/                      field::missing(),
-            /*tensile_modulus*/                   1.683e11*si::pascal,
-            /*shear_modulus*/                     0.757e11*si::pascal,
+            /*tensile_modulus*/                   state_invariant(1.683e11*si::pascal),
+            /*shear_modulus*/                     state_invariant(0.757e11*si::pascal),
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
-            /*poisson_ratio*/                     0.33,
+            /*poisson_ratio*/                     state_invariant(0.33),
 
             /*compressive_fracture_strength*/     field::missing(),
-            /*tensile_fracture_strength*/         220.0 * si::megapascal, // engineering toolbox
+            /*tensile_fracture_strength*/         state_invariant(220.0 * si::megapascal), // engineering toolbox
             /*shear_fracture_strength*/           field::missing(),
             /*compressive_yield_strength*/        field::missing(),
-            /*tensile_yield_strength*/            70.0 * si::megapascal, // engineering toolbox
+            /*tensile_yield_strength*/            state_invariant(70.0 * si::megapascal), // engineering toolbox
             /*shear_yield_strength*/              field::missing(),
 
             /*chemical_susceptibility_estimate*/  field::missing()
@@ -5377,9 +5364,9 @@ PartlyKnownCompound  magnetite (
 
             /*specific_heat_capacity*/            // 0.6 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988)
                 get_perry_temperature_function(si::kelvin, si::calorie/(231.53 * si::gram*si::kelvin), 41.17, 0.01882, -979500.0, 0.0),
-            /*thermal_conductivity*/              5.1 * si::watt / (si::centimeter * si::kelvin), // Schön (2015)
+            /*thermal_conductivity*/              state_invariant(5.1 * si::watt / (si::centimeter * si::kelvin)), // Schön (2015)
             /*dynamic_viscosity*/                 field::missing(), // 3e8 * si::pascal * si::second, // Melosh (2011), from Hiesinger (2007), for venusian lava flows, middle of range on log scale
-            /*density*/                           5170.0 * si::kilogram/si::meter3,
+            /*density*/                           state_invariant(5170.0 * si::kilogram/si::meter3),
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  
                 get_linear_interpolated_refractive_index_function
@@ -5400,8 +5387,8 @@ PartlyKnownCompound  magnetite (
                     std::vector<double>{  0.052,  0.051,  0.058,  0.056,  0.059,  0.061,  0.057,  0.057,  0.058,  0.057,  0.044,  0.044,  0.048,  0.071,  0.075,  0.073,  0.079,  0.077,  0.081,  0.086,  0.084,  0.087,  0.086,  0.089,  0.087,  0.095,  0.081,  0.088,  0.090,  0.090,  0.102,  0.080,  0.110,  0.141,  0.164,  0.182,  0.222,  0.180,  0.175,  0.179,  0.186,  0.305,  0.270,  0.268,  0.277,  0.303,  0.300,  0.303,  0.319,  0.310,  0.324,  0.321,  0.315,  0.329,  0.315,  0.330,  0.321,  0.323,  0.340,  0.324,  0.332,  0.331,  0.324 }),
 
             /*bulk_modulus*/                      field::missing(),
-            /*tensile_modulus*/                   2.730e11*si::pascal,
-            /*shear_modulus*/                     0.971e11*si::pascal,
+            /*tensile_modulus*/                   state_invariant(2.730e11*si::pascal),
+            /*shear_modulus*/                     state_invariant(0.971e11*si::pascal),
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
             /*poisson_ratio*/                     field::missing(),
@@ -5465,8 +5452,6 @@ PartlyKnownCompound chalcocite (
         /*extinction_coefficient*/ field::missing()
     },
 
-
-
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid { // alpha
@@ -5475,7 +5460,7 @@ PartlyKnownCompound chalcocite (
                 get_perry_temperature_function(si::kelvin, si::calorie/(159.16 * si::gram*si::kelvin), 9.38, 0.0312, 0.0, 0.0),
             /*thermal_conductivity*/              field::missing(),
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           5600.0 * si::kilogram/si::meter3,
+            /*density*/                           state_invariant(5600.0 * si::kilogram/si::meter3),
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  field::missing(),
             /*extinction_coefficient*/            field::missing(),
@@ -5499,18 +5484,18 @@ PartlyKnownCompound chalcocite (
         },
         phase::PartlyKnownSolid { // beta
 
-            /*specific_heat_capacity*/            20.9 * si::calorie/(159.16 * si::gram*si::kelvin), // Perry
+            /*specific_heat_capacity*/            state_invariant(20.9 * si::calorie/(159.16 * si::gram*si::kelvin)), // Perry
             /*thermal_conductivity*/              field::missing(),
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           5600.0 * si::kilogram/si::meter3,
+            /*density*/                           state_invariant(5600.0 * si::kilogram/si::meter3),
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  field::missing(),
             /*extinction_coefficient*/            field::missing(),
             /*absorption_coefficient*/            field::missing(),
 
-            /*bulk_modulus*/                      242.88 * si::gigapascal, // de Jong (2015)
+            /*bulk_modulus*/                      state_invariant(242.88 * si::gigapascal), // de Jong (2015)
             /*tensile_modulus*/                   field::missing(),
-            /*shear_modulus*/                     91.89 * si::gigapascal, // de Jong (2015)
+            /*shear_modulus*/                     state_invariant(91.89 * si::gigapascal), // de Jong (2015)
             /*pwave_modulus*/                     field::missing(),
             /*lame_parameter*/                    field::missing(),
             /*poisson_ratio*/                     field::missing(),
@@ -5579,10 +5564,10 @@ PartlyKnownCompound  chalcopyrite (
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
 
-            /*specific_heat_capacity*/            0.54 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988), for chalcopyrite
-            /*thermal_conductivity*/              8.19 * si::watt / (si::centimeter * si::kelvin), // Cermak (1988), for chalcopyrite
+            /*specific_heat_capacity*/            state_invariant(0.54 * si::kilojoule / (si::kilogram * si::kelvin)), // Cermak (1988), for chalcopyrite
+            /*thermal_conductivity*/              state_invariant(8.19 * si::watt / (si::centimeter * si::kelvin)), // Cermak (1988), for chalcopyrite
             /*dynamic_viscosity*/                 field::missing(),
-            /*density*/                           4200.0 *  si::kilogram/si::meter3, //wikipedia
+            /*density*/                           state_invariant(4200.0 *  si::kilogram/si::meter3), //wikipedia
             /*vapor_pressure*/                    field::missing(),
             /*refractive_index*/                  field::missing(),
             /*extinction_coefficient*/            field::missing(),
