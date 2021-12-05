@@ -372,48 +372,48 @@ namespace compound
 
         /*gas*/
         phase::PartlyKnownGas {
-            /*specific_heat_capacity*/ 1.0 * si::joule / (si::kilogram * si::kelvin),
-            /*thermal_conductivity*/   1.0 * si::watt / (si::meter * si::kelvin),
-            /*dynamic_viscosity*/      1.0 * si::pascal * si::second,
-            /*density*/                1.0 * si::kilogram/si::meter3,
-            /*refractive_index*/       1.1
+            /*specific_heat_capacity*/ state_invariant(1.0 * si::joule / (si::kilogram * si::kelvin)),
+            /*thermal_conductivity*/   state_invariant(1.0 * si::watt / (si::meter * si::kelvin)),
+            /*dynamic_viscosity*/      state_invariant(1.0 * si::pascal * si::second),
+            /*density*/                state_invariant(1.0 * si::kilogram/si::meter3),
+            /*refractive_index*/       spectral_invariant(1.1)
         },
 
         /*liquid*/
         phase::PartlyKnownLiquid {
-            /*specific_heat_capacity*/ 1.0 * si::joule / (si::kilogram * si::kelvin),
-            /*thermal_conductivity*/   1.0 * si::watt / (si::meter * si::kelvin),
-            /*dynamic_viscosity*/      1.0 * si::kilogram / (si::meter * si::second),
-            /*density*/                1.0 * si::kilogram/si::meter3,
-            /*vapor_pressure*/         1.0 * si::pascal,
-            /*surface_tension*/        1.0 * si::millinewton/si::meter,
-            /*refractive_index*/       1.1,
-            /*extinction_coefficient*/ 0.9
+            /*specific_heat_capacity*/ state_invariant(1.0 * si::joule / (si::kilogram * si::kelvin)),
+            /*thermal_conductivity*/   state_invariant(1.0 * si::watt / (si::meter * si::kelvin)),
+            /*dynamic_viscosity*/      state_invariant(1.0 * si::kilogram / (si::meter * si::second)),
+            /*density*/                state_invariant(1.0 * si::kilogram/si::meter3),
+            /*vapor_pressure*/         state_invariant(1.0 * si::pascal),
+            /*surface_tension*/        state_invariant(1.0 * si::millinewton/si::meter),
+            /*refractive_index*/       spectral_invariant(1.1),
+            /*extinction_coefficient*/ spectral_invariant(0.9)
         },
 
         /*solid*/ 
         std::vector<phase::PartlyKnownSolid>{
             phase::PartlyKnownSolid {
-                /*specific_heat_capacity*/            1.0 * si::joule/(si::kilogram*si::kelvin),
-                /*thermal_conductivity*/              1.0 * si::watt / (si::meter * si::kelvin),
-                /*dynamic_viscosity*/                 1.0 * si::pascal*si::second,
-                /*density*/                           1.0 * si::kilogram/si::meter3,
-                /*vapor_pressure*/                    1.0 * si::pascal,
-                /*refractive_index*/                  1.1,
-                /*extinction_coefficient*/            0.3,
-                /*absorption_coefficient*/            25.0 / si::centimeter,
-                /*bulk_modulus*/                      1.0 * si::gigapascal,
-                /*tensile_modulus*/                   1.0 * si::gigapascal,
-                /*shear_modulus*/                     1.0 * si::gigapascal,
-                /*pwave_modulus*/                     1.0 * si::gigapascal,
-                /*lame_parameter*/                    1.0 * si::gigapascal,
-                /*poisson_ratio*/                     1.0,
-                /*compressive_fracture_strength*/     1.0 * si::megapascal,
-                /*tensile_fracture_strength*/         1.0 * si::megapascal,
-                /*shear_fracture_strength*/           1.0 * si::megapascal,
-                /*compressive_yield_strength*/        1.0 * si::megapascal,
-                /*tensile_yield_strength*/            1.0 * si::megapascal,
-                /*shear_yield_strength*/              1.0 * si::megapascal,
+                /*specific_heat_capacity*/            state_invariant(1.0 * si::joule/(si::kilogram*si::kelvin)),
+                /*thermal_conductivity*/              state_invariant(1.0 * si::watt / (si::meter * si::kelvin)),
+                /*dynamic_viscosity*/                 state_invariant(1.0 * si::pascal*si::second),
+                /*density*/                           state_invariant(1.0 * si::kilogram/si::meter3),
+                /*vapor_pressure*/                    state_invariant(1.0 * si::pascal),
+                /*refractive_index*/                  spectral_invariant(1.1),
+                /*extinction_coefficient*/            spectral_invariant(0.3),
+                /*absorption_coefficient*/            spectral_invariant(25.0 / si::centimeter),
+                /*bulk_modulus*/                      state_invariant(1.0 * si::gigapascal),
+                /*tensile_modulus*/                   state_invariant(1.0 * si::gigapascal),
+                /*shear_modulus*/                     state_invariant(1.0 * si::gigapascal),
+                /*pwave_modulus*/                     state_invariant(1.0 * si::gigapascal),
+                /*lame_parameter*/                    state_invariant(1.0 * si::gigapascal),
+                /*poisson_ratio*/                     state_invariant(1.0),
+                /*compressive_fracture_strength*/     state_invariant(1.0 * si::megapascal),
+                /*tensile_fracture_strength*/         state_invariant(1.0 * si::megapascal),
+                /*shear_fracture_strength*/           state_invariant(1.0 * si::megapascal),
+                /*compressive_yield_strength*/        state_invariant(1.0 * si::megapascal),
+                /*tensile_yield_strength*/            state_invariant(1.0 * si::megapascal),
+                /*shear_yield_strength*/              state_invariant(1.0 * si::megapascal),
                 /*chemical_susceptibility_estimate*/  1.0
             }
         }

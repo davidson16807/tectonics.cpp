@@ -12,11 +12,11 @@
 
 TEST_CASE( "OptionalStateField to_string() purity", "[field]" ) {
 	compound::field::OptionalStateField<double> unknown  = std::monostate();
-	compound::field::OptionalStateField<double> unit  = 1.0;
-	compound::field::OptionalStateField<double> unit_nudged  = 1.01;
-	compound::field::OptionalStateField<si::mass> unit_mass  = 1.0 * si::kilogram;
-	compound::field::OptionalStateField<si::length> unit_length  = 1.0 * si::meter;
-	compound::field::OptionalStateField<double> sample  = compound::field::StateSample<double>(2.0, si::standard_pressure, si::standard_temperature);
+	compound::field::OptionalStateField<double> unit  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 1.0; });
+	compound::field::OptionalStateField<double> unit_nudged  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 1.01; });
+	compound::field::OptionalStateField<si::mass> unit_mass  = compound::field::StateFunction<si::mass>([](const si::pressure p, const si::temperature T){ return 1.0 * si::kilogram; });
+	compound::field::OptionalStateField<si::length> unit_length  = compound::field::StateFunction<si::length>([](const si::pressure p, const si::temperature T){ return 1.0 * si::meter; });
+	compound::field::OptionalStateField<double> sample  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 2.0; });
 	compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
 
 	SECTION("Calling a function twice with the same arguments must produce the same results")
@@ -40,10 +40,10 @@ TEST_CASE( "OptionalStateField to_string() purity", "[field]" ) {
 
 TEST_CASE( "OptionalStateField to_string() appreciable difference preservation", "[field]" ) {
 	compound::field::OptionalStateField<double> unknown  = std::monostate();
-	compound::field::OptionalStateField<double> unit  = 1.0;
-	compound::field::OptionalStateField<double> unit_nudged  = 1.01;
-	compound::field::OptionalStateField<si::mass> unit_mass  = 1.0 * si::kilogram;
-	compound::field::OptionalStateField<si::length> unit_length  = 1.0 * si::meter;
+	compound::field::OptionalStateField<double> unit  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 1.0; });
+	compound::field::OptionalStateField<double> unit_nudged  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 1.01; });
+	compound::field::OptionalStateField<si::mass> unit_mass  = compound::field::StateFunction<si::mass>([](const si::pressure p, const si::temperature T){ return 1.0 * si::kilogram; });
+	compound::field::OptionalStateField<si::length> unit_length  = compound::field::StateFunction<si::length>([](const si::pressure p, const si::temperature T){ return 1.0 * si::meter; });
 
 	SECTION("Appreciable differences in input are preserved within output")
 	{

@@ -18,16 +18,11 @@ namespace field {
         }
         si::pressure max_p = 2.0*si::standard_pressure;
         si::temperature max_T = 2.0*si::standard_temperature;
-        auto f = std::function<StateSample<T1>(const T1, const si::pressure, const si::temperature)>(
-            [](const T1 x, const si::pressure p, const si::temperature T) -> const StateSample<T1>{
-                return StateSample<T1>(x,p,T); 
-            }
-        );
         for(si::pressure p = 0.01*si::pascal; p<max_p; p+=(max_p/3.0))
         {
             for(si::temperature T = 0.01*si::kelvin; T<max_T; T+=(max_T/3.0))
             {
-                if( first.map_to_constant(p, T, f) != second.map_to_constant(p, T, f)){ return false; }
+                if( first(p, T) != second(p, T)){ return false; }
             }
         }
         return true;

@@ -3,6 +3,8 @@
 // C libraries
 #include <cmath>
 
+// std libraries
+
 #include "models/compound/property/published.hpp"
 #include "models/compound/property/speculative.hpp"
 // #include "models/compound/property/color.hpp"
@@ -63,6 +65,23 @@ namespace compound
             .complete([M,pc,Tc,Zc](si::pressure p, si::temperature T) { 
                 return M / property::estimate_molar_volume_as_gas(p, pc, T, Tc, Zc);
             });
+
+        /*
+        Solids are ordered by some measure of relevance. 
+        For instance, water.solids[0] is ice I, the form we are most familiar with. 
+        For this reason, we treat the first solid in the array with priveleged status,
+        and we infer its missing properties from other solid phases 
+        before using it to infer properties for the rest of the solid.
+        This save us from having to perform a O(N²) algorithm where everything is inferred from everything else.
+        */
+        for (std::size_t i = 1; i < guess.solids.size(); i++)
+        {
+            guess.solids[0] = guess.solids[0].value_or(guess.solids[i]);
+        }
+        for (std::size_t i = 1; i < guess.solids.size(); i++)
+        {
+            guess.solids[i] = guess.solids[i].value_or(guess.solids[0]);
+        }
 
         for (std::size_t i = 0; i < guess.solids.size(); i++)
         {
@@ -313,15 +332,13 @@ namespace compound
         {
             guess.solids[i] = compound::phase::infer(guess.solids[i]);
         }
-        for (std::size_t i = 0; i < guess.solids.size(); i++)
+        for (std::size_t i = 1; i < guess.solids.size(); i++)
         {
-            for (std::size_t j = 0; j < guess.solids.size(); j++)
-            {
-                if (i!=j)
-                {
-                    guess.solids[j] = guess.solids[j].value_or(guess.solids[i]);
-                }
-            }
+            guess.solids[0] = guess.solids[0].value_or(guess.solids[i]);
+        }
+        for (std::size_t i = 1; i < guess.solids.size(); i++)
+        {
+            guess.solids[i] = guess.solids[i].value_or(guess.solids[0]);
         }
         for (std::size_t i = 0; i < guess.solids.size(); i++)
         {

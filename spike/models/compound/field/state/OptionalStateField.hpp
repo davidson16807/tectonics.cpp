@@ -6,7 +6,6 @@
 // in-house libraries
 #include <units/si.hpp>
 
-#include "StateSample.hpp"
 #include "StateFunction.hpp"
 
 #include "OptionalStateParameters.hpp"
@@ -18,9 +17,9 @@ namespace field {
     class OptionalStateField
     {
     	template<typename T2>
-        using OptionalStateFieldVariant = std::variant<std::monostate, T2, StateSample<T2>, StateFunction<T2>>;
+        using OptionalStateFieldVariant = std::variant<std::monostate, StateFunction<T2>>;
         template<typename T2>
-	    using CompletedStateFieldVariant = std::variant<T2, StateSample<T2>, StateFunction<T2>>;
+	    using CompletedStateFieldVariant = std::variant<StateFunction<T2>>;
 
         template<typename Tout>
         class OptionalStateFieldValueVisitor
@@ -36,12 +35,6 @@ namespace field {
             std::optional<Tout> operator()(const std::monostate a      ) const {
                 return std::optional<Tout>();
             }
-            std::optional<Tout> operator()(const Tout a                ) const {
-                return a;
-            }
-            std::optional<Tout> operator()(const StateSample<Tout> a   ) const {
-                return a.entry;
-            }
             std::optional<Tout> operator()(const StateFunction<Tout> a ) const {
                 return a(p,T);
             }
@@ -55,12 +48,6 @@ namespace field {
             }
             OptionalStateParameters operator()( const std::monostate a          ) const {
                 return std::monostate();
-            }
-            OptionalStateParameters operator()( const T1 a                      ) const {
-                return std::monostate();
-            }
-            OptionalStateParameters operator()( const StateSample<T1> a         ) const {
-                return StateParameters(a.pressure, a.temperature);
             }
             OptionalStateParameters operator()( const StateFunction<T1> a       ) const {
                 return std::monostate();
@@ -77,12 +64,6 @@ namespace field {
             CompletedStateFieldVariant<T1> operator()(const std::monostate a    ) const {
                 return fallback;
             }
-            CompletedStateFieldVariant<T1> operator()(const T1 a                ) const {
-                return a;
-            }
-            CompletedStateFieldVariant<T1> operator()(const StateSample<T1> a   ) const {
-                return a;
-            }
             CompletedStateFieldVariant<T1> operator()(const StateFunction<T1> a ) const {
                 return a;
             }
@@ -93,12 +74,6 @@ namespace field {
             CompletedStateFieldOptionalizeVisitor()
             {
 
-            }
-            OptionalStateFieldVariant<T1> operator()(const T1 a                   ) const {
-                return OptionalStateFieldVariant<T1>(a);
-            }
-            OptionalStateFieldVariant<T1> operator()(const StateSample<T1> a   ) const {
-                return OptionalStateFieldVariant<T1>(a);
             }
             OptionalStateFieldVariant<T1> operator()(const StateFunction<T1> a ) const {
                 return OptionalStateFieldVariant<T1>(a);
@@ -114,40 +89,43 @@ namespace field {
         {
 
         }
-        constexpr OptionalStateField(const std::monostate entry)
-        : entry(entry)
+        constexpr OptionalStateField(const T1 value)
         {
-
-        }
-        constexpr OptionalStateField(const T1 entry)
-        : entry(entry)
-        {
-
-        }
-        constexpr OptionalStateField(const StateSample<T1> entry)
-        : entry(entry)
-        {
-
+            auto value2 = value;
+            entry = StateFunction<T1>([value2](
+                const si::pressure p, 
+                const si::temperature T
+              ){
+                return value2;
+              });
         }
         constexpr OptionalStateField(const StateFunction<T1> entry)
         : entry(entry)
         {
 
         }
-        constexpr OptionalStateField(const std::optional<T1> option)
-        : entry(option.has_value()? OptionalStateFieldVariant<T1>(option.value()) : OptionalStateFieldVariant<T1>(std::monostate()))
+        constexpr OptionalStateField(const std::monostate entry)
+        : entry(entry)
         {
 
         }
-        constexpr OptionalStateField(const std::optional<StateSample<T1>> option)
-        : entry(option.has_value()? OptionalStateFieldVariant<T1>(option.value()) : OptionalStateFieldVariant<T1>(std::monostate()))
+        constexpr OptionalStateField(const std::optional<T1> option)
         {
-
+            auto value = option.value();
+            entry = option.has_value()? OptionalStateFieldVariant<T1>(
+                field::StateFunction<T1>(
+                    [value]
+                    (const si::pressure p, 
+                     const si::temperature T)
+                    {
+                        return value;
+                    })
+                ) : OptionalStateFieldVariant<T1>(std::monostate());
         }
         constexpr OptionalStateField(const std::optional<StateFunction<T1>> option)
-        : entry(option.has_value()? OptionalStateFieldVariant<T1>(option.value()) : OptionalStateFieldVariant<T1>(std::monostate()))
         {
-
+            auto value = option.value();
+            entry = option.has_value()? OptionalStateFieldVariant<T1>(value) : OptionalStateFieldVariant<T1>(std::monostate());
         }
 
         constexpr OptionalStateField<T1>& operator=(const std::monostate other)
@@ -157,12 +135,13 @@ namespace field {
         }
         constexpr OptionalStateField<T1>& operator=(const T1 other)
         {
-            entry = other;
-            return *this;
-        }
-        constexpr OptionalStateField<T1>& operator=(const StateSample<T1> other)
-        {
-            entry = other;
+            auto value = other;
+            entry = StateFunction<T1>([value](
+                const si::pressure p, 
+                const si::temperature T
+              ){
+                return value;
+              });
             return *this;
         }
         constexpr OptionalStateField<T1>& operator=(const StateFunction<T1> other)
@@ -197,6 +176,17 @@ namespace field {
         {
             return entry.index() >= other.entry.index()? *this : other;
         }
+        constexpr CompletedStateFieldVariant<T1> complete(const T1 fallback) const 
+        {
+            auto fallback2 = fallback;
+            StateFunction<T1> f = StateFunction<T1>([fallback2](
+                const si::pressure p, 
+                const si::temperature T
+              ){
+                return fallback2;
+              });
+            return std::visit(OptionalStateFieldCompletionVisitor(f), entry);
+        }
         constexpr CompletedStateFieldVariant<T1> complete(const CompletedStateFieldVariant<T1> fallback) const 
         {
             return std::visit(OptionalStateFieldCompletionVisitor(fallback), entry);
@@ -206,7 +196,7 @@ namespace field {
         */
         constexpr OptionalStateField<T1> value_or(const OptionalStateField<T1> other) const
         {
-            return entry.index() > 0? *this : other;
+            return has_value()? *this : other;
         }
         /*
         Return `this` if a value exists, otherwise return the result of function `f` applied to parameter `a`
@@ -214,7 +204,7 @@ namespace field {
         template<typename T2>
         constexpr OptionalStateField<T1> value_or(const std::function<T1(const typename T2::value_type)> f, const T2 a) const
         {
-            if(entry.index() > 0) // no substitute needed
+            if(has_value()) // no substitute needed
             {
                 return *this;
             }
@@ -222,7 +212,7 @@ namespace field {
             {
                 return std::monostate();
             }
-            else if((a.index() == 3)) // any functions
+            else
             {
                 auto f2 = f;
                 auto a2 = a;
@@ -231,18 +221,6 @@ namespace field {
                     (const si::pressure p, const si::temperature T)
                     { return f2(a2(p,T).value()); }
                 );
-            }
-            else // constant
-            {
-                OptionalStateParameters parameters = a.parameters();
-                // NOTE: The values in "dummy" are never read, since a and b are not functions by this point, 
-                // and we only record values in a StateSample if exactly one of a and b are defined.
-                StateParameters dummy;
-                StateParameters defaults = parameters.complete(dummy);
-                si::pressure p = defaults.pressure;
-                si::temperature T = defaults.temperature;
-                T1 result = f(a(p,T).value());
-                return parameters.has_value()? OptionalStateField<T1>(StateSample<T1>(result, p,T)) : OptionalStateField<T1>(result);
             }
         }
         /*
@@ -254,7 +232,7 @@ namespace field {
             const T2 a, 
             const T3 b) const
         {
-            if(entry.index() > 0) // no substitute needed
+            if(has_value()) // no substitute needed
             {
                 return *this;
             }
@@ -262,7 +240,7 @@ namespace field {
             {
                 return std::monostate();
             }
-            else if((a.index() == 3) || (b.index() == 3)) // any functions
+            else
             {
                 auto f2 = f;
                 auto a2 = a;
@@ -272,18 +250,6 @@ namespace field {
                     (const si::pressure p, const si::temperature T)
                     { return f2(a2(p,T).value(), b2(p,T).value()); }
                 );
-            }
-            else // constant
-            {
-                OptionalStateParameters parameters = aggregate(a.parameters(), b.parameters());
-                // NOTE: The values in "dummy" are never read, since a and b are not functions by this point, 
-                // and we only record values in a StateSample if exactly one of a and b are defined.
-                StateParameters dummy;
-                StateParameters defaults = parameters.complete(dummy);
-                si::pressure p = defaults.pressure;
-                si::temperature T = defaults.temperature;
-                T1 result = f(a(p,T).value(), b(p,T).value());
-                return parameters.has_value()? OptionalStateField<T1>(StateSample<T1>(result, p,T)) : OptionalStateField<T1>(result);
             }
         }
         /*
@@ -299,7 +265,7 @@ namespace field {
             // the following are dummy values, since we only invoke them on StateSamples or constants
             const si::pressure p = si::standard_pressure;
             const si::temperature T = si::standard_temperature;
-            if(entry.index() > 0)
+            if(has_value())
             {
                 return *this;
             }
@@ -307,7 +273,7 @@ namespace field {
             {
                 return std::monostate();
             }
-            else if((a.index() == 3) || (b.index() == 3) || (c.index() == 3)) // any functions
+            else
             {
                 auto f2 = f;
                 auto a2 = a;
@@ -318,18 +284,6 @@ namespace field {
                     (const si::pressure p, const si::temperature T)
                     { return f2(a2(p,T).value(), b2(p,T).value(), c2(p,T).value()); }
                 );
-            }
-            else // constant
-            {
-                OptionalStateParameters parameters = aggregate(a.parameters(), aggregate(b.parameters(), c.parameters()));
-                // NOTE: The values in "dummy" are never read, since a, b, and c are not functions by this point, 
-                // and we only record values in a StateSample if exactly one of a, b, and c are defined.
-                StateParameters dummy;
-                StateParameters defaults = parameters.complete(dummy);
-                si::pressure p = defaults.pressure;
-                si::temperature T = defaults.temperature;
-                T1 result = f(a(p,T).value(), b(p,T).value(), c(p,T).value());
-                return parameters.has_value()? OptionalStateField<T1>(StateSample<T1>(result, p,T)) : OptionalStateField<T1>(result);
             }
         }
 
@@ -345,7 +299,7 @@ namespace field {
             const StateParameters defaults,
             const T2 a) const
         {
-            if(entry.index() > 0) // no substitute needed
+            if(has_value()) // no substitute needed
             {
                 return *this;
             }
@@ -353,7 +307,7 @@ namespace field {
             {
                 return std::monostate();
             }
-            else if((a.index() == 3)) // any functions
+            else
             {
                 auto f2 = f;
                 auto a2 = a;
@@ -362,16 +316,6 @@ namespace field {
                     (const si::pressure p, const si::temperature T)
                     { return f2(StateParameters(p,T), a2(p,T).value()); }
                 );
-            }
-            else // constant
-            {
-                OptionalStateParameters optional_parameters = defaults;
-                optional_parameters = aggregate(a.parameters(), optional_parameters);
-                StateParameters parameters = optional_parameters.complete(defaults);
-                si::pressure p = parameters.pressure;
-                si::temperature T = parameters.temperature;
-                T1 result = f(parameters, a(p,T).value());
-                return OptionalStateField<T1>(StateSample<T1>(result, p,T));
             }
         }
         /*
@@ -384,7 +328,7 @@ namespace field {
             const T2 a, 
             const T3 b) const
         {
-            if(entry.index() > 0) // no substitute needed
+            if(has_value()) // no substitute needed
             {
                 return *this;
             }
@@ -392,7 +336,7 @@ namespace field {
             {
                 return std::monostate();
             }
-            else if((a.index() == 3) || (b.index() == 3)) // any functions
+            else
             {
                 auto f2 = f;
                 auto a2 = a;
@@ -402,17 +346,6 @@ namespace field {
                     (const si::pressure p, const si::temperature T)
                     { return f2(StateParameters(p,T), a2(p,T).value(), b2(p,T).value()); }
                 );
-            }
-            else // constant
-            {
-                OptionalStateParameters optional_parameters = defaults;
-                optional_parameters = aggregate(b.parameters(), optional_parameters);
-                optional_parameters = aggregate(a.parameters(), optional_parameters);
-                StateParameters parameters = optional_parameters.complete(defaults);
-                si::pressure p = parameters.pressure;
-                si::temperature T = parameters.temperature;
-                T1 result = f(parameters, a(p,T).value(), b(p,T).value());
-                return OptionalStateField<T1>(StateSample<T1>(result, p,T));
             }
         }
         /*
@@ -426,7 +359,7 @@ namespace field {
             const T3 b, 
             const T4 c) const
         {
-            if(entry.index() > 0)
+            if(has_value())
             {
                 return *this;
             }
@@ -434,7 +367,7 @@ namespace field {
             {
                 return std::monostate();
             }
-            else if((a.index() == 3) || (b.index() == 3) || (c.index() == 3)) // any functions
+            else
             {
                 auto f2 = f;
                 auto a2 = a;
@@ -445,18 +378,6 @@ namespace field {
                     (const si::pressure p, const si::temperature T)
                     { return f2(StateParameters(p,T), a2(p,T).value(), b2(p,T).value(), c2(p,T).value()); }
                 );
-            }
-            else // constant
-            {
-                OptionalStateParameters optional_parameters = defaults;
-                optional_parameters = aggregate(c.parameters(), optional_parameters);
-                optional_parameters = aggregate(b.parameters(), optional_parameters);
-                optional_parameters = aggregate(a.parameters(), optional_parameters);
-                StateParameters parameters = optional_parameters.complete(defaults);
-                si::pressure p = parameters.pressure;
-                si::temperature T = parameters.temperature;
-                T1 result = f(parameters, a(p,T).value(), b(p,T).value(), c(p,T).value());
-                return OptionalStateField<T1>(StateSample<T1>(result, p,T));
             }
         }
         /*
@@ -471,7 +392,7 @@ namespace field {
             const T4 c, 
             const T5 d) const
         {
-            if(entry.index() > 0)
+            if(has_value())
             {
                 return *this;
             }
@@ -479,7 +400,7 @@ namespace field {
             {
                 return std::monostate();
             }
-            else if((a.index() == 3) || (b.index() == 3) || (c.index() == 3) || (d.index() == 3)) // any functions
+            else
             {
                 auto f2 = f;
                 auto a2 = a;
@@ -491,19 +412,6 @@ namespace field {
                     (const si::pressure p, const si::temperature T)
                     { return f2(StateParameters(p,T), a2(p,T).value(), b2(p,T).value(), c2(p,T).value(), d2(p,T).value()); }
                 );
-            }
-            else // constant
-            {
-                OptionalStateParameters optional_parameters = defaults;
-                optional_parameters = aggregate(d.parameters(), optional_parameters);
-                optional_parameters = aggregate(c.parameters(), optional_parameters);
-                optional_parameters = aggregate(b.parameters(), optional_parameters);
-                optional_parameters = aggregate(a.parameters(), optional_parameters);
-                StateParameters parameters = optional_parameters.complete(defaults);
-                si::pressure p = parameters.pressure;
-                si::temperature T = parameters.temperature;
-                T1 result = f(parameters, a(p,T).value(), b(p,T).value(), c(p,T).value(), d(p,T).value());
-                return OptionalStateField<T1>(StateSample<T1>(result, p,T));
             }
         }
 

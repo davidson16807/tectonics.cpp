@@ -179,7 +179,7 @@ namespace field {
             {
                 return std::monostate();
             }
-            else // constant
+            else 
             {
                 return f(
                     a(a.parameters()).value(),
