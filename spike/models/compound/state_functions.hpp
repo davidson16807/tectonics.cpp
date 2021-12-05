@@ -13,6 +13,7 @@
 #include "field/spectral/CompletedSpectralField.hpp"
 
 namespace compound {
+    using missing = std::monostate;
 
     template<typename Ty>
     field::OptionalSpectralField<Ty> spectral_invariant(

@@ -33,8 +33,8 @@ namespace field {
                 {
                     for(si::length lhi = 100.0*si::nanometer; lhi<max_lhi; lhi+=200.0*si::nanometer)
                     {
-                        if( first.map_to_constant(1.0/lhi, 1.0/llo, p, T, f) != 
-                            second.map_to_constant(1.0/lhi, 1.0/llo, p, T, f) ){
+                        if( first(1.0/lhi, 1.0/llo, p, T) != 
+                            second(1.0/lhi, 1.0/llo, p, T) ){
                             return false;
                         }
                     }
@@ -47,6 +47,22 @@ namespace field {
     bool operator!=(const CompletedSpectralField<T1>& first, const CompletedSpectralField<T1>& second)
     {
         return !(first==second);
+    }
+
+    template<typename Ty>
+    field::CompletedSpectralField<Ty> completed_spectral_invariant_test(
+        const Ty value
+    ){
+        return field::SpectralFunction<Ty>(
+            [value]
+            (const si::wavenumber nlo, 
+             const si::wavenumber nhi, 
+             const si::pressure p, 
+             const si::temperature T)
+            {
+                return value;
+            }
+        );
     }
 }}
 double test_CompletedSpectralField(const si::wavenumber nlo, const si:: wavenumber nhi, const si::pressure p, const si::temperature T)

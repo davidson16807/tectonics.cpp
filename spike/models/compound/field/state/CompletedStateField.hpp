@@ -149,25 +149,6 @@ namespace field {
         {
             return entry.index();
         }
-        /*
-		Return whether a entry exists within the field
-        */
-        constexpr bool has_entry() const
-        {
-            return entry.index() == 0;
-        }
-        constexpr StateFunction<T1> function() const
-        {
-            return std::visit(CompletedStateFieldFunctionVisitor(), entry);
-        }
-        /*
-        Return a CompletedStateField<T1> field representing `a` after applying the map `f`
-        */
-        template<typename T2>
-        constexpr CompletedStateField<T2> map(const std::function<T2(const T1)> f) const
-        {
-            return CompletedStateField<T2>(std::visit(CompletedStateFieldMapVisitor<T2>(f), entry));
-        }
 
         template<typename T2>
 		friend class CompletedStateField;

@@ -31,23 +31,6 @@ namespace phase {
             return guess;
         }
 
-        /*
-        Return a `PartlyKnownGas` that for each property copies whichever observation offers the most information from the two arguments available.
-        If arguments offer different observations with the same amount of information, default to the observation from the first argument.
-        */
-        PartlyKnownGas fuse(const PartlyKnownGas& other)  const {
-            // copy what you do know
-            PartlyKnownGas guess = *this;
-
-            guess.specific_heat_capacity = specific_heat_capacity .compare(other.specific_heat_capacity);
-            guess.thermal_conductivity   = thermal_conductivity   .compare(other.thermal_conductivity);
-            guess.dynamic_viscosity      = dynamic_viscosity      .compare(other.dynamic_viscosity);
-            guess.density                = density                .compare(other.density);
-            guess.refractive_index       = refractive_index       .compare(other.refractive_index);
-
-            return guess;
-        }
-
     };
     /*
     Synonymous to `value_or()`, analogous with similar functions for CompletedGas

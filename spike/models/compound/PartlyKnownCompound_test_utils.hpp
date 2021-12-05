@@ -5,7 +5,7 @@
 #include <units/si.hpp>
 
 #include "PartlyKnownCompound.hpp"
-#include "field/missing.hpp"
+#include "state_functions.hpp"
 
 // test utility libraries
 #include <units/si_test_utils.hpp>
@@ -123,76 +123,76 @@ namespace compound
     PartlyKnownCompound unknown_hydrogen {
         /*molar_mass*/                        1.0 * si::gram/si::mole,
         /*atoms_per_molecule*/                1u,
-        /*molecular_diameter*/                compound::field::missing(),
-        /*molecular_degrees_of_freedom*/      compound::field::missing(),
-        /*acentric_factor*/                   compound::field::missing(),
+        /*molecular_diameter*/                compound::missing(),
+        /*molecular_degrees_of_freedom*/      compound::missing(),
+        /*acentric_factor*/                   compound::missing(),
 
-        /*critical_point_pressure*/           compound::field::missing(),
-        /*critical_point_volume*/             compound::field::missing(),
-        /*critical_point_temperature*/        compound::field::missing(),
-        /*critical_point_compressibility*/    compound::field::missing(),
+        /*critical_point_pressure*/           compound::missing(),
+        /*critical_point_volume*/             compound::missing(),
+        /*critical_point_temperature*/        compound::missing(),
+        /*critical_point_compressibility*/    compound::missing(),
 
-        /*latent_heat_of_vaporization*/       compound::field::missing(),
-        /*latent_heat_of_fusion*/             compound::field::missing(),
-        /*triple_point_pressure*/             compound::field::missing(),
-        /*triple_point_temperature*/          compound::field::missing(),
-        /*freezing_point_sample_pressure*/    compound::field::missing(),
-        /*freezing_point_sample_temperature*/ compound::field::missing(),
-        /*boiling_point_sample_pressure*/     compound::field::missing(),
-        /*boiling_point_sample_temperature*/  compound::field::missing(),
-        /*simon_glatzel_slope*/               compound::field::missing(),
-        /*simon_glatzel_exponent*/            compound::field::missing(),
+        /*latent_heat_of_vaporization*/       compound::missing(),
+        /*latent_heat_of_fusion*/             compound::missing(),
+        /*triple_point_pressure*/             compound::missing(),
+        /*triple_point_temperature*/          compound::missing(),
+        /*freezing_point_sample_pressure*/    compound::missing(),
+        /*freezing_point_sample_temperature*/ compound::missing(),
+        /*boiling_point_sample_pressure*/     compound::missing(),
+        /*boiling_point_sample_temperature*/  compound::missing(),
+        /*simon_glatzel_slope*/               compound::missing(),
+        /*simon_glatzel_exponent*/            compound::missing(),
 
-        /*molecular_absorption_cross_section*/ compound::field::missing(),
+        /*molecular_absorption_cross_section*/ compound::missing(),
 
         /*gas*/
         compound::phase::PartlyKnownGas {
-            /*specific_heat_capacity*/ compound::field::missing(),
-            /*thermal_conductivity*/   compound::field::missing(),
-            /*dynamic_viscosity*/      compound::field::missing(),
-            /*density*/                compound::field::missing(),
-            /*refractive_index*/       compound::field::missing()
+            /*specific_heat_capacity*/ compound::missing(),
+            /*thermal_conductivity*/   compound::missing(),
+            /*dynamic_viscosity*/      compound::missing(),
+            /*density*/                compound::missing(),
+            /*refractive_index*/       compound::missing()
         },
 
         /*liquid*/
         compound::phase::PartlyKnownLiquid {
-            /*specific_heat_capacity*/ compound::field::missing(),
-            /*thermal_conductivity*/   compound::field::missing(),
-            /*dynamic_viscosity*/      compound::field::missing(),
-            /*density*/                compound::field::missing(),
-            /*vapor_pressure*/         compound::field::missing(),
-            /*surface_tension*/        compound::field::missing(),
-            /*refractive_index*/       compound::field::missing(),
-            /*extinction_coefficient*/ compound::field::missing()
+            /*specific_heat_capacity*/ compound::missing(),
+            /*thermal_conductivity*/   compound::missing(),
+            /*dynamic_viscosity*/      compound::missing(),
+            /*density*/                compound::missing(),
+            /*vapor_pressure*/         compound::missing(),
+            /*surface_tension*/        compound::missing(),
+            /*refractive_index*/       compound::missing(),
+            /*extinction_coefficient*/ compound::missing()
         },
 
         /*solid*/ 
         std::vector<compound::phase::PartlyKnownSolid>{
             compound::phase::PartlyKnownSolid {
-                /*specific_heat_capacity*/            compound::field::missing(),
-                /*thermal_conductivity*/              compound::field::missing(),
-                /*dynamic_viscosity*/                 compound::field::missing(),
-                /*density*/                           compound::field::missing(),
-                /*vapor_pressure*/                    compound::field::missing(),
-                /*refractive_index*/                  compound::field::missing(),
-                /*extinction_coefficient*/            compound::field::missing(),
-                /*absorption_coefficient*/            compound::field::missing(),
+                /*specific_heat_capacity*/            compound::missing(),
+                /*thermal_conductivity*/              compound::missing(),
+                /*dynamic_viscosity*/                 compound::missing(),
+                /*density*/                           compound::missing(),
+                /*vapor_pressure*/                    compound::missing(),
+                /*refractive_index*/                  compound::missing(),
+                /*extinction_coefficient*/            compound::missing(),
+                /*absorption_coefficient*/            compound::missing(),
 
-                /*bulk_modulus*/                      compound::field::missing(),
-                /*tensile_modulus*/                   compound::field::missing(),
-                /*shear_modulus*/                     compound::field::missing(),
-                /*pwave_modulus*/                     compound::field::missing(),
-                /*lame_parameter*/                    compound::field::missing(),
-                /*poisson_ratio*/                     compound::field::missing(),
+                /*bulk_modulus*/                      compound::missing(),
+                /*tensile_modulus*/                   compound::missing(),
+                /*shear_modulus*/                     compound::missing(),
+                /*pwave_modulus*/                     compound::missing(),
+                /*lame_parameter*/                    compound::missing(),
+                /*poisson_ratio*/                     compound::missing(),
 
-                /*compressive_fracture_strength*/     compound::field::missing(),
-                /*tensile_fracture_strength*/         compound::field::missing(),
-                /*shear_fracture_strength*/           compound::field::missing(),
-                /*compressive_yield_strength*/        compound::field::missing(),
-                /*tensile_yield_strength*/            compound::field::missing(),
-                /*shear_yield_strength*/              compound::field::missing(),
+                /*compressive_fracture_strength*/     compound::missing(),
+                /*tensile_fracture_strength*/         compound::missing(),
+                /*shear_fracture_strength*/           compound::missing(),
+                /*compressive_yield_strength*/        compound::missing(),
+                /*tensile_yield_strength*/            compound::missing(),
+                /*shear_yield_strength*/              compound::missing(),
 
-                /*chemical_susceptibility_estimate*/  compound::field::missing()
+                /*chemical_susceptibility_estimate*/  compound::missing()
             }
         }
     };

@@ -19,9 +19,9 @@ namespace field {
     {
         typedef std::variant<std::monostate, SpectralParameters, SpectralParametersAggregate> OptionalSpectralParametersVariant;
     	template<typename T2>
-	    using OptionalSpectralFieldVariant = std::variant<std::monostate, T2, SpectralSample<T2>, SpectralFunction<T2>>;
+	    using OptionalSpectralFieldVariant = std::variant<std::monostate, SpectralFunction<T2>>;
         template<typename T2>
-        using CompletedSpectralFieldVariant = std::variant<T2, SpectralSample<T2>, SpectralFunction<T2>>;
+        using CompletedSpectralFieldVariant = std::variant<SpectralFunction<T2>>;
 
         class OptionalSpectralFieldEqualityVisitor
         {
@@ -33,12 +33,6 @@ namespace field {
 
             }
             bool operator()(const std::monostate a               ) const {
-                return other == a;
-            }
-            bool operator()(const T1 a                           ) const {
-                return other == a;
-            }
-            bool operator()(const SpectralSample<T1> a        ) const {
                 return other == a;
             }
             bool operator()(const SpectralFunction<T1> a ) const {
@@ -60,12 +54,6 @@ namespace field {
             }
             std::optional<Tout> operator()(const std::monostate a               ) const {
                 return std::optional<Tout>();
-            }
-            std::optional<Tout> operator()(const Tout a                           ) const {
-                return a;
-            }
-            std::optional<Tout> operator()(const SpectralSample<Tout> a        ) const {
-                return a.entry;
             }
             std::optional<Tout> operator()(const SpectralFunction<Tout> a ) const {
                 return a(nlo, nhi,p,T);
@@ -98,12 +86,6 @@ namespace field {
             std::optional<T2> operator()( const std::monostate a               ) const {
                 return std::optional<T2>();
             }
-            std::optional<T2> operator()( const T1 a                           ) const {
-                return f(a, default_nlo, default_nhi, default_p, default_T);
-            }
-            std::optional<T2> operator()( const SpectralSample<T1> a        ) const {
-                return f(a.entry, a.nlo, a.nhi, a.pressure, a.temperature);
-            }
             std::optional<T2> operator()( const SpectralFunction<T1> a ) const {
                 return f(a(default_nlo, default_nhi, default_p, default_T), default_nlo, default_nhi, default_p, default_T);
             }
@@ -117,12 +99,6 @@ namespace field {
             }
             OptionalSpectralParametersVariant operator()( const std::monostate a               ) const {
                 return std::monostate();
-            }
-            OptionalSpectralParametersVariant operator()( const T1 a                           ) const {
-                return std::monostate();
-            }
-            OptionalSpectralParametersVariant operator()( const SpectralSample<T1> a        ) const {
-                return SpectralParameters(a.nlo, a.nhi, a.pressure, a.temperature);
             }
             OptionalSpectralParametersVariant operator()( const SpectralFunction<T1> a ) const {
                 return std::monostate();
@@ -139,12 +115,6 @@ namespace field {
             CompletedSpectralFieldVariant<T1> operator()(const std::monostate a               ) const {
                 return fallback;
             }
-            CompletedSpectralFieldVariant<T1> operator()(const T1 a                           ) const {
-                return a;
-            }
-            CompletedSpectralFieldVariant<T1> operator()(const SpectralSample<T1> a        ) const {
-                return a;
-            }
             CompletedSpectralFieldVariant<T1> operator()(const SpectralFunction<T1> a ) const {
                 return a;
             }
@@ -155,12 +125,6 @@ namespace field {
             CompletedSpectralFieldOptionalizeVisitor()
             {
 
-            }
-            OptionalSpectralFieldVariant<T1> operator()(const T1 a                   ) const {
-                return OptionalSpectralFieldVariant<T1>(a);
-            }
-            OptionalSpectralFieldVariant<T1> operator()(const SpectralSample<T1> a   ) const {
-                return OptionalSpectralFieldVariant<T1>(a);
             }
             OptionalSpectralFieldVariant<T1> operator()(const SpectralFunction<T1> a ) const {
                 return OptionalSpectralFieldVariant<T1>(a);
@@ -180,12 +144,6 @@ namespace field {
             }
             OptionalSpectralFieldVariant<Tout> operator()(const std::monostate a               ) const {
                 return std::monostate();
-            }
-            OptionalSpectralFieldVariant<Tout> operator()(const Tin1 a                           ) const {
-                return f(a);
-            }
-            OptionalSpectralFieldVariant<Tout> operator()(const SpectralSample<Tin1> a        ) const {
-                return SpectralSample<Tin1>(f(a.entry), a.nlo, a.nhi, a.pressure, a.temperature);
             }
             OptionalSpectralFieldVariant<Tout> operator()(const SpectralFunction<Tin1> a ) const {
                 // NOTE: capturing `this` results in a segfault when we call `this->f()`
@@ -210,33 +168,20 @@ namespace field {
         {
 
         }
-        constexpr OptionalSpectralField(const T1 entry)
-        : entry(entry)
+        constexpr OptionalSpectralField(const T1 value)
         {
-
-        }
-        constexpr OptionalSpectralField(const SpectralSample<T1> entry)
-        : entry(entry)
-        {
-
+            auto value2 = value;
+            entry = SpectralFunction<T1>([value2](
+                const si::wavenumber nlo,
+                const si::wavenumber nhi,
+                const si::pressure p, 
+                const si::temperature T
+              ){
+                return value2;
+              });
         }
         constexpr OptionalSpectralField(const SpectralFunction<T1> entry)
         : entry(entry)
-        {
-
-        }
-        constexpr OptionalSpectralField(const std::optional<T1> option)
-        : entry(option.has_value()? OptionalSpectralFieldVariant<T1>(option.value()) : OptionalSpectralFieldVariant<T1>(std::monostate()))
-        {
-
-        }
-        constexpr OptionalSpectralField(const std::optional<SpectralSample<T1>> option)
-        : entry(option.has_value()? OptionalSpectralFieldVariant<T1>(option.value()) : OptionalSpectralFieldVariant<T1>(std::monostate()))
-        {
-
-        }
-        constexpr OptionalSpectralField(const std::optional<SpectralFunction<T1>> option)
-        : entry(option.has_value()? OptionalSpectralFieldVariant<T1>(option.value()) : OptionalSpectralFieldVariant<T1>(std::monostate()))
         {
 
         }
@@ -248,12 +193,15 @@ namespace field {
         }
         constexpr OptionalSpectralField<T1>& operator=(const T1 other)
         {
-            entry = other;
-            return *this;
-        }
-        constexpr OptionalSpectralField<T1>& operator=(const SpectralSample<T1> other)
-        {
-            entry = other;
+            auto value = other;
+            entry = SpectralFunction<T1>([value](
+                const si::wavenumber nlo,
+                const si::wavenumber nhi,
+                const si::pressure p, 
+                const si::temperature T
+              ){
+                return value;
+              });
             return *this;
         }
         constexpr OptionalSpectralField<T1>& operator=(const SpectralFunction<T1> other)
@@ -283,15 +231,6 @@ namespace field {
             return entry.index() > 0? *this : other;
         }
         /*
-        Return whichever field provides more information, going by the following definition:
-            std::monostate < T1 < SpectralFunction<T1> < std::pair<T1, SpectralFunction<T1>>
-        If both provide the same amount of information, return `a` by default.
-        */
-        constexpr OptionalSpectralField<T1> compare(const OptionalSpectralField<T1> other) const
-        {
-            return entry.index() >= other.entry.index()? *this : other;
-        }
-        /*
         Return `a` if available, otherwise return `b` as a substitute.
         */
         constexpr OptionalSpectralField<T1> value_or(const OptionalSpectralField<T1> other) const
@@ -319,7 +258,7 @@ namespace field {
             {
                 return std::monostate();
             }
-            else if((a.index() == 3)) // any functions
+            else
             {
                 auto f2 = f;
                 auto a2 = a;
@@ -328,20 +267,6 @@ namespace field {
                     (const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T)
                     { return f2(a2(nlo,nhi,p,T).value()); }
                 );
-            }
-            else // constant
-            {
-                OptionalSpectralParameters parameters = a.parameters();
-                // NOTE: The values in "dummy" are never read, since a and b are not functions by this point, 
-                // and we only record values in a SpectralSample if exactly one of a and b are defined.
-                SpectralParameters dummy;
-                SpectralParameters defaults = parameters.complete(dummy);
-                si::wavenumber nlo = defaults.nlo;
-                si::wavenumber nhi = defaults.nhi;
-                si::pressure p = defaults.pressure;
-                si::temperature T = defaults.temperature;
-                T1 result = f(a(nlo,nhi,p,T).value());
-                return parameters.has_value()? OptionalSpectralField<T1>(SpectralSample<T1>(result, nlo,nhi,p,T)) : OptionalSpectralField<T1>(result);
             }
         }
         /*
@@ -361,7 +286,7 @@ namespace field {
             {
                 return std::monostate();
             }
-            else if((a.index() == 3) || (b.index() == 3)) // any functions
+            else 
             {
                 auto f2 = f;
                 auto a2 = a;
@@ -371,20 +296,6 @@ namespace field {
                     (const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T)
                     { return f2(a2(nlo,nhi,p,T).value(), b2(nlo,nhi,p,T).value()); }
                 );
-            }
-            else // constant
-            {
-                OptionalSpectralParameters parameters = aggregate(a.parameters(), b.parameters());
-                // NOTE: The values in "dummy" are never read, since a and b are not functions by this point, 
-                // and we only record values in a SpectralSample if exactly one of a and b are defined.
-                SpectralParameters dummy;
-                SpectralParameters defaults = parameters.complete(dummy);
-                si::wavenumber nlo = defaults.nlo;
-                si::wavenumber nhi = defaults.nhi;
-                si::pressure p = defaults.pressure;
-                si::temperature T = defaults.temperature;
-                T1 result = f(a(nlo,nhi,p,T).value(), b(nlo,nhi,p,T).value());
-                return parameters.has_value()? OptionalSpectralField<T1>(SpectralSample<T1>(result, nlo,nhi,p,T)) : OptionalSpectralField<T1>(result);
             }
         }
         /*
@@ -408,7 +319,7 @@ namespace field {
             {
                 return std::monostate();
             }
-            else if((a.index() == 3) || (b.index() == 3) || (c.index() == 3)) // any functions
+            else
             {
                 auto f2 = f;
                 auto a2 = a;
@@ -419,20 +330,6 @@ namespace field {
                     (const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T)
                     { return f2(a2(nlo,nhi,p,T).value(), b2(nlo,nhi,p,T).value(), c2(nlo,nhi,p,T).value()); }
                 );
-            }
-            else // constant
-            {
-                OptionalSpectralParameters parameters = aggregate(a.parameters(), aggregate(b.parameters(), c.parameters()));
-                // NOTE: The values in "dummy" are never read, since a, b, and c are not functions by this point, 
-                // and we only record values in a SpectralSample if exactly one of a, b, and c are defined.
-                SpectralParameters dummy;
-                SpectralParameters defaults = parameters.complete(dummy);
-                si::wavenumber nlo = defaults.nlo;
-                si::wavenumber nhi = defaults.nhi;
-                si::pressure p = defaults.pressure;
-                si::temperature T = defaults.temperature;
-                T1 result = f(a(nlo,nhi,p,T).value(), b(nlo,nhi,p,T).value(), c(nlo,nhi,p,T).value());
-                return parameters.has_value()? OptionalSpectralField<T1>(SpectralSample<T1>(result, nlo,nhi,p,T)) : OptionalSpectralField<T1>(result);
             }
         }
 
@@ -456,7 +353,7 @@ namespace field {
             {
                 return std::monostate();
             }
-            else if((a.index() == 3)) // any functions
+            else
             {
                 auto f2 = f;
                 auto a2 = a;
@@ -465,18 +362,6 @@ namespace field {
                     (const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T)
                     { return f2(SpectralParameters(nlo,nhi,p,T), a2(nlo,nhi,p,T).value()); }
                 );
-            }
-            else // constant
-            {
-                OptionalSpectralParameters optional_parameters = defaults;
-                optional_parameters = aggregate(a.parameters(), optional_parameters);
-                SpectralParameters parameters = optional_parameters.complete(defaults);
-                si::wavenumber nlo = parameters.nlo;
-                si::wavenumber nhi = parameters.nhi;
-                si::pressure p = parameters.pressure;
-                si::temperature T = parameters.temperature;
-                T1 result = f(parameters, a(nlo,nhi,p,T).value());
-                return OptionalSpectralField<T1>(SpectralSample<T1>(result, nlo,nhi,p,T));
             }
         }
         /*
@@ -497,7 +382,7 @@ namespace field {
             {
                 return std::monostate();
             }
-            else if((a.index() == 3) || (b.index() == 3)) // any functions
+            else 
             {
                 auto f2 = f;
                 auto a2 = a;
@@ -507,19 +392,6 @@ namespace field {
                     (const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T)
                     { return f2(SpectralParameters(nlo,nhi,p,T), a2(nlo,nhi,p,T).value(), b2(nlo,nhi,p,T).value()); }
                 );
-            }
-            else // constant
-            {
-                OptionalSpectralParameters optional_parameters = defaults;
-                optional_parameters = aggregate(b.parameters(), optional_parameters);
-                optional_parameters = aggregate(a.parameters(), optional_parameters);
-                SpectralParameters parameters = optional_parameters.complete(defaults);
-                si::wavenumber nlo = parameters.nlo;
-                si::wavenumber nhi = parameters.nhi;
-                si::pressure p = parameters.pressure;
-                si::temperature T = parameters.temperature;
-                T1 result = f(parameters, a(nlo,nhi,p,T).value(), b(nlo,nhi,p,T).value());
-                return OptionalSpectralField<T1>(SpectralSample<T1>(result, nlo,nhi,p,T));
             }
         }
         /*
@@ -542,7 +414,7 @@ namespace field {
             {
                 return std::monostate();
             }
-            else if((a.index() == 3) || (b.index() == 3) || (c.index() == 3)) // any functions
+            else
             {
                 auto f2 = f;
                 auto a2 = a;
@@ -553,20 +425,6 @@ namespace field {
                     (const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T)
                     { return f2(SpectralParameters(nlo,nhi,p,T), a2(nlo,nhi,p,T).value(), b2(nlo,nhi,p,T).value(), c2(nlo,nhi,p,T).value()); }
                 );
-            }
-            else // constant
-            {
-                OptionalSpectralParameters optional_parameters = defaults;
-                optional_parameters = aggregate(c.parameters(), optional_parameters);
-                optional_parameters = aggregate(b.parameters(), optional_parameters);
-                optional_parameters = aggregate(a.parameters(), optional_parameters);
-                SpectralParameters parameters = optional_parameters.complete(defaults);
-                si::wavenumber nlo = parameters.nlo;
-                si::wavenumber nhi = parameters.nhi;
-                si::pressure p = parameters.pressure;
-                si::temperature T = parameters.temperature;
-                T1 result = f(parameters, a(nlo,nhi,p,T).value(), b(nlo,nhi,p,T).value(), c(nlo,nhi,p,T).value());
-                return OptionalSpectralField<T1>(SpectralSample<T1>(result, nlo,nhi,p,T));
             }
         }
 

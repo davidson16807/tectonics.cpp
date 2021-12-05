@@ -67,39 +67,6 @@ namespace phase {
             return guess;
         }
 
-        /*
-        Return a `PartlyKnownLiquid` that for each property copies whichever observation offers the most information from the two arguments available.
-        If arguments offer different observations with the same amount of information, default to the observation from the first argument.
-        */
-        PartlyKnownSolid fuse(const PartlyKnownSolid& other)  const {
-            // copy what you do know
-            PartlyKnownSolid guess = *this;
-
-            guess.specific_heat_capacity = specific_heat_capacity .compare(other.specific_heat_capacity);
-            guess.vapor_pressure         = vapor_pressure         .compare(other.vapor_pressure);
-            guess.thermal_conductivity   = thermal_conductivity   .compare(other.thermal_conductivity);
-            guess.dynamic_viscosity      = dynamic_viscosity      .compare(other.dynamic_viscosity);
-            guess.density                = density                .compare(other.density);
-            guess.refractive_index       = refractive_index       .compare(other.refractive_index);
-            guess.extinction_coefficient = extinction_coefficient .compare(other.extinction_coefficient);
-            guess.absorption_coefficient   = absorption_coefficient   .compare(other.absorption_coefficient);
-
-            guess.bulk_modulus    = bulk_modulus    .compare(other.bulk_modulus   );
-            guess.tensile_modulus = tensile_modulus .compare(other.tensile_modulus);
-            guess.shear_modulus   = shear_modulus   .compare(other.shear_modulus  );
-            guess.pwave_modulus   = pwave_modulus   .compare(other.pwave_modulus  );
-            guess.lame_parameter  = lame_parameter  .compare(other.lame_parameter );
-        
-            guess.compressive_fracture_strength = compressive_fracture_strength .compare(other.compressive_fracture_strength);
-            guess.tensile_fracture_strength     = tensile_fracture_strength     .compare(other.tensile_fracture_strength    );
-            guess.shear_fracture_strength       = shear_fracture_strength       .compare(other.shear_fracture_strength      );
-            guess.compressive_yield_strength    = compressive_yield_strength    .compare(other.compressive_yield_strength   );
-            guess.tensile_yield_strength        = tensile_yield_strength        .compare(other.tensile_yield_strength       );
-            guess.shear_yield_strength          = shear_yield_strength          .compare(other.shear_yield_strength         );
-
-            guess.chemical_susceptibility_estimate = chemical_susceptibility_estimate.value_or(other.chemical_susceptibility_estimate);
-            return guess;
-        }
 
 
     };

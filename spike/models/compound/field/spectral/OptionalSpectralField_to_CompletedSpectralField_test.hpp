@@ -22,12 +22,12 @@ TEST_CASE( "OptionalSpectralField complete() purity", "[field]" ) {
     si::temperature T = si::standard_temperature;
 
 	compound::field::OptionalSpectralField<double> unknown  = std::monostate();
-	compound::field::OptionalSpectralField<double> constant  = 1.0;
-    compound::field::OptionalSpectralField<double> sample  = compound::field::SpectralSample<double>(2.0, nlo, nhi, si::standard_pressure, si::standard_temperature);
+	compound::field::OptionalSpectralField<double> constant  = compound::field::optional_spectral_invariant_test(1.0);
+    compound::field::OptionalSpectralField<double> sample  = compound::field::optional_spectral_invariant_test(2.0);
     compound::field::OptionalSpectralField<double> relation  = compound::field::SpectralFunction<double>([](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_OptionalSpectralField2(nlo,nhi,p,T); });
 
-    compound::field::CompletedSpectralField<double> known_constant  = 1.0;
-    compound::field::CompletedSpectralField<double> known_sample  = compound::field::SpectralSample<double>(2.0, nlo, nhi, si::standard_pressure, si::standard_temperature);
+    compound::field::CompletedSpectralField<double> known_constant  = compound::field::completed_spectral_invariant_test(1.0);
+    compound::field::CompletedSpectralField<double> known_sample  = compound::field::completed_spectral_invariant_test(2.0);
     compound::field::CompletedSpectralField<double> known_relation  = compound::field::SpectralFunction<double>([](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_OptionalSpectralField2(nlo,nhi,p,T); });
 
 
@@ -48,11 +48,11 @@ TEST_CASE( "OptionalSpectralField complete() associativity", "[field]" ) {
     si::temperature T = si::standard_temperature;
     
 	compound::field::OptionalSpectralField<double> unknown  = std::monostate();
-	compound::field::OptionalSpectralField<double> constant  = 1.0;
-	compound::field::OptionalSpectralField<double> sample  = compound::field::SpectralSample<double>(2.0, nlo, nhi, si::standard_pressure, si::standard_temperature);
+	compound::field::OptionalSpectralField<double> constant  = compound::field::optional_spectral_invariant_test(1.0);
+	compound::field::OptionalSpectralField<double> sample  = compound::field::optional_spectral_invariant_test(2.0);
 
-    compound::field::CompletedSpectralField<double> known_constant  = 1.0;
-    compound::field::CompletedSpectralField<double> known_sample  = compound::field::SpectralSample<double>(2.0, nlo, nhi, si::standard_pressure, si::standard_temperature);
+    compound::field::CompletedSpectralField<double> known_constant  = compound::field::completed_spectral_invariant_test(1.0);
+    compound::field::CompletedSpectralField<double> known_sample  = compound::field::completed_spectral_invariant_test(2.0);
     compound::field::CompletedSpectralField<double> known_relation  = compound::field::SpectralFunction<double>([](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_OptionalSpectralField2(nlo,nhi,p,T); });
 
 	SECTION("Functions can be applied in any order and still produce the same results")
@@ -90,16 +90,13 @@ TEST_CASE( "OptionalSpectralField complete() associativity", "[field]" ) {
 
 
 TEST_CASE( "OptionalSpectralField complete() increasing", "[field]" ) {
-    si::wavenumber nlo = 14286.0/si::centimeter;
-    si::wavenumber nhi = 25000.0/si::centimeter;
-    
 	compound::field::OptionalSpectralField<double> unknown  = std::monostate();
-	compound::field::OptionalSpectralField<double> constant  = 1.0;
-	compound::field::OptionalSpectralField<double> sample  = compound::field::SpectralSample<double>(2.0, nlo, nhi, si::standard_pressure, si::standard_temperature);
+	compound::field::OptionalSpectralField<double> constant  = compound::field::optional_spectral_invariant_test(1.0);
+	compound::field::OptionalSpectralField<double> sample  = compound::field::optional_spectral_invariant_test(2.0);
 	compound::field::OptionalSpectralField<double> relation  = compound::field::SpectralFunction<double>([](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_OptionalSpectralField2(nlo,nhi,p,T); });
 
-    compound::field::CompletedSpectralField<double> known_constant  = 1.0;
-    compound::field::CompletedSpectralField<double> known_sample  = compound::field::SpectralSample<double>(2.0, nlo, nhi, si::standard_pressure, si::standard_temperature);
+    compound::field::CompletedSpectralField<double> known_constant  = compound::field::completed_spectral_invariant_test(1.0);
+    compound::field::CompletedSpectralField<double> known_sample  = compound::field::completed_spectral_invariant_test(2.0);
     compound::field::CompletedSpectralField<double> known_relation  = compound::field::SpectralFunction<double>([](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_OptionalSpectralField2(nlo,nhi,p,T); });
 
 	SECTION("An attribute of a function's return entry either increases or remains the same when compared to the same attribute of the input entry")

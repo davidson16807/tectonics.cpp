@@ -105,7 +105,7 @@ namespace field {
             }
             else // constant
             {
-                return f(a(a.parameters()).value());
+                return f(a().value());
             }
         }
         /*
@@ -128,8 +128,8 @@ namespace field {
             else // constant
             {
                 return f(
-                    a(a.parameters()).value(),
-                    b(b.parameters()).value()
+                    a().value(),
+                    b().value()
                 );
             }
         }
@@ -154,9 +154,9 @@ namespace field {
             else // constant
             {
                 return f(
-                    a(a.parameters()).value(),
-                    b(b.parameters()).value(),
-                    c(c.parameters()).value()
+                    a().value(),
+                    b().value(),
+                    c().value()
                 );
             }
         }
@@ -182,10 +182,10 @@ namespace field {
             else 
             {
                 return f(
-                    a(a.parameters()).value(),
-                    b(b.parameters()).value(),
-                    c(c.parameters()).value(),
-                    d(d.parameters()).value()
+                    a().value(),
+                    b().value(),
+                    c().value(),
+                    d().value()
                 );
             }
         }

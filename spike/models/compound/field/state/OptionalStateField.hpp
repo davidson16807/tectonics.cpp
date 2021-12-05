@@ -109,24 +109,6 @@ namespace field {
         {
 
         }
-        constexpr OptionalStateField(const std::optional<T1> option)
-        {
-            auto value = option.value();
-            entry = option.has_value()? OptionalStateFieldVariant<T1>(
-                field::StateFunction<T1>(
-                    [value]
-                    (const si::pressure p, 
-                     const si::temperature T)
-                    {
-                        return value;
-                    })
-                ) : OptionalStateFieldVariant<T1>(std::monostate());
-        }
-        constexpr OptionalStateField(const std::optional<StateFunction<T1>> option)
-        {
-            auto value = option.value();
-            entry = option.has_value()? OptionalStateFieldVariant<T1>(value) : OptionalStateFieldVariant<T1>(std::monostate());
-        }
 
         constexpr OptionalStateField<T1>& operator=(const std::monostate other)
         {
@@ -166,15 +148,6 @@ namespace field {
         constexpr std::optional<T1> operator()(const StateParameters parameters) const
         {
             return std::visit(OptionalStateFieldValueVisitor<T1>(parameters.pressure, parameters.temperature), entry);
-        }
-        /*
-        Return whichever field provides more information, going by the following definition:
-            std::monostate < T1 < StateFunction<T1> < std::pair<T1, StateFunction<T1>>
-        If both provide the same amount of information, return `a` by default.
-        */
-        constexpr OptionalStateField<T1> compare(const OptionalStateField<T1> other) const
-        {
-            return entry.index() >= other.entry.index()? *this : other;
         }
         constexpr CompletedStateFieldVariant<T1> complete(const T1 fallback) const 
         {

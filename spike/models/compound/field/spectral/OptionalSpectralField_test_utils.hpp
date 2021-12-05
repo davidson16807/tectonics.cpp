@@ -48,6 +48,22 @@ namespace field{
     {
         return !(first==second);
     }
+
+    template<typename Ty>
+    field::OptionalSpectralField<Ty> optional_spectral_invariant_test(
+        const Ty value
+    ){
+        return field::SpectralFunction<Ty>(
+            [value]
+            (const si::wavenumber nlo, 
+             const si::wavenumber nhi, 
+             const si::pressure p, 
+             const si::temperature T)
+            {
+                return value;
+            }
+        );
+    }
 }}
 
 double test_OptionalSpectralField(const si::wavenumber nlo, const si::wavenumber nhi, si::pressure p, const si::temperature T)

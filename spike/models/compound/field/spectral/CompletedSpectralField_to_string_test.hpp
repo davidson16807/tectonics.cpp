@@ -11,11 +11,11 @@
 #include "CompletedSpectralField_to_string.hpp"
 
 TEST_CASE( "CompletedSpectralField to_string() purity", "[field]" ) {
-	compound::field::CompletedSpectralField<double> unit  = 1.0;
-	compound::field::CompletedSpectralField<double> unit_nudged  = 1.01;
-	compound::field::CompletedSpectralField<si::mass> unit_mass  = 1.0 * si::kilogram;
-	compound::field::CompletedSpectralField<si::length> unit_length  = 1.0 * si::meter;
-	compound::field::CompletedSpectralField<double> sample  = compound::field::SpectralSample<double>(2.0, 1.0/(600*si::nanometer), 1.0/(400*si::nanometer), si::standard_pressure, si::standard_temperature);
+	compound::field::CompletedSpectralField<double> unit  = compound::field::completed_spectral_invariant_test(1.0);
+	compound::field::CompletedSpectralField<double> unit_nudged  = compound::field::completed_spectral_invariant_test(1.01);
+	compound::field::CompletedSpectralField<si::mass> unit_mass  = compound::field::completed_spectral_invariant_test(1.0 * si::kilogram);
+	compound::field::CompletedSpectralField<si::length> unit_length  = compound::field::completed_spectral_invariant_test(1.0 * si::meter);
+	compound::field::CompletedSpectralField<double> sample  = compound::field::completed_spectral_invariant_test(2.0);
 	compound::field::CompletedSpectralField<double> relation  = compound::field::SpectralFunction<double>([](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_CompletedSpectralField(nlo,nhi,p,T); });
 
 	SECTION("Calling a function twice with the same arguments must produce the same results")
@@ -36,10 +36,10 @@ TEST_CASE( "CompletedSpectralField to_string() purity", "[field]" ) {
 }
 
 TEST_CASE( "CompletedSpectralField to_string() appreciable difference preservation", "[field]" ) {
-	compound::field::CompletedSpectralField<double> unit  = 1.0;
-	compound::field::CompletedSpectralField<double> unit_nudged  = 1.01;
-	compound::field::CompletedSpectralField<si::mass> unit_mass  = 1.0 * si::kilogram;
-	compound::field::CompletedSpectralField<si::length> unit_length  = 1.0 * si::meter;
+	compound::field::CompletedSpectralField<double> unit  = compound::field::completed_spectral_invariant_test(1.0);
+	compound::field::CompletedSpectralField<double> unit_nudged  = compound::field::completed_spectral_invariant_test(1.01);
+	compound::field::CompletedSpectralField<si::mass> unit_mass  = compound::field::completed_spectral_invariant_test(1.0 * si::kilogram);
+	compound::field::CompletedSpectralField<si::length> unit_length  = compound::field::completed_spectral_invariant_test(1.0 * si::meter);
 
 	SECTION("Appreciable differences in input are preserved within output")
 	{

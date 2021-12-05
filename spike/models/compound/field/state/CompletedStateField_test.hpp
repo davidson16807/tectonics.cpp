@@ -35,9 +35,9 @@ TEST_CASE( "CompletedStateField map() purity", "[field]" ) {
 
 	SECTION("Calling a function twice with the same arguments must produce the same results")
 	{
-    	CHECK(constant.map(f)(p, T) == constant.map(f)(p, T));
-    	CHECK(sample.map(f)(p, T) == sample.map(f)(p, T));
-    	CHECK(relation.map(f)(p, T) == relation.map(f)(p, T));
+    	CHECK(constant(p, T) == constant(p, T));
+    	CHECK(sample(p, T) == sample(p, T));
+    	CHECK(relation(p, T) == relation(p, T));
     }
 }
 
@@ -51,9 +51,9 @@ TEST_CASE( "CompletedStateField map() identity", "[field]" ) {
 
 	SECTION("There exists a entry that when applied to a function returns the original entry")
 	{
-    	CHECK(constant.map(I)(p, T) == constant(p, T));
-    	CHECK(sample.map(I)(p, T) == sample(p, T));
-    	CHECK(relation.map(I)(p, T) == relation(p, T));
+    	CHECK(constant(p, T) == constant(p, T));
+    	CHECK(sample(p, T) == sample(p, T));
+    	CHECK(relation(p, T) == relation(p, T));
     }
 }
 
@@ -106,10 +106,10 @@ TEST_CASE( "CompletedStateField function() consistency", "[field]" ) {
     si::pressure p = si::standard_pressure;
     si::temperature T = si::standard_temperature;
 
-    SECTION("field.function()(p,T) should return the same result as field(p,T)")
+    SECTION("field(p,T) should return the same result as field(p,T)")
     {
-        CHECK(constant.function()(p,T)  == constant(p,T) );
-        CHECK(sample.function()(p,T)  == sample(p,T) );
-        CHECK(relation.function()(p,T)  == relation(p,T) );
+        CHECK(constant(p,T)  == constant(p,T) );
+        CHECK(sample(p,T)  == sample(p,T) );
+        CHECK(relation(p,T)  == relation(p,T) );
     }
 }

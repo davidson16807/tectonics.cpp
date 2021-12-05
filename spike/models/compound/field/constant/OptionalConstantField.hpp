@@ -144,7 +144,7 @@ namespace field {
         template<typename Tfield2, typename Tparameters>
         constexpr OptionalConstantField<T1> value_or(
             const std::function<OptionalConstantField<T1>(const typename Tfield2::value_type)> f, 
-            const Tparameters defaults,
+            const Tparameters parameters,
             const Tfield2 a) const
         {
             if(entry.index() > 0) // no substitute needed
@@ -157,7 +157,6 @@ namespace field {
             }
             else // constant
             {
-                Tparameters parameters = a.parameters().complete(defaults);
                 return OptionalConstantField<T1>(f(a(parameters).value()));
             }
         }
@@ -167,7 +166,7 @@ namespace field {
         template<typename Tfield2, typename Tfield3, typename Tparameters>
         constexpr OptionalConstantField<T1> value_or(
             const std::function<OptionalConstantField<T1>(const typename Tfield2::value_type, const typename Tfield3::value_type)> f, 
-            const Tparameters defaults,
+            const Tparameters parameters,
             const Tfield2 a, 
             const Tfield3 b) const
         {
@@ -181,7 +180,6 @@ namespace field {
             }
             else // constant
             {
-                Tparameters parameters = aggregate(a.parameters(), b.parameters()).complete(defaults);
                 return OptionalConstantField<T1>(f(a(parameters).value(), b(parameters).value()));
             }
         }
@@ -191,7 +189,7 @@ namespace field {
         template<typename Tfield2, typename Tfield3, typename Tfield4, typename Tparameters>
         constexpr OptionalConstantField<T1> value_or(
             const std::function<OptionalConstantField<T1>(const typename Tfield2::value_type, const typename Tfield3::value_type, const typename Tfield4::value_type)> f, 
-            const Tparameters defaults,
+            const Tparameters parameters,
             const Tfield2 a, 
             const Tfield3 b, 
             const Tfield4 c) const
@@ -206,7 +204,6 @@ namespace field {
             }
             else // constant
             {
-                Tparameters parameters = aggregate(a.parameters(), aggregate(b.parameters(), c.parameters())).complete(defaults);
                 return OptionalConstantField<T1>(f(a(parameters).value(), b(parameters).value(), c(parameters).value()));
             }
         }
@@ -216,7 +213,7 @@ namespace field {
         template<typename Tfield2, typename Tfield3, typename Tfield4, typename Tfield5, typename Tparameters>
         constexpr OptionalConstantField<T1> value_or(
             const std::function<OptionalConstantField<T1>(const typename Tfield2::value_type, const typename Tfield3::value_type, const typename Tfield4::value_type, const typename Tfield5::value_type)> f, 
-            const Tparameters defaults,
+            const Tparameters parameters,
             const Tfield2 a, 
             const Tfield3 b, 
             const Tfield4 c, 
@@ -232,7 +229,6 @@ namespace field {
             }
             else // constant
             {
-                Tparameters parameters = aggregate(a.parameters(), aggregate(b.parameters(), aggregate(c.parameters(), d.parameters()))).complete(defaults);
                 return OptionalConstantField<T1>(f(a(parameters).value(), b(parameters).value(), c(parameters).value(), d(parameters).value()));
             }
         }
@@ -268,7 +264,7 @@ namespace field {
         template<typename Tfield2>
         constexpr OptionalConstantField<T1> value_or(
             const std::function<OptionalConstantField<T1>(const StateParameters, const typename Tfield2::value_type)> f, 
-            const StateParameters defaults,
+            const StateParameters parameters,
             const Tfield2 a) const
         {
             if(entry.index() > 0) // no substitute needed
@@ -281,9 +277,6 @@ namespace field {
             }
             else // constant
             {
-                OptionalStateParameters optional_parameters = defaults;
-                optional_parameters = aggregate(a.parameters(), optional_parameters);
-                StateParameters parameters = optional_parameters.complete(defaults);
                 return OptionalConstantField<T1>(f(parameters, a(parameters).value()));
             }
         }
@@ -293,7 +286,7 @@ namespace field {
         template<typename Tfield2, typename Tfield3>
         constexpr OptionalConstantField<T1> value_or(
             const std::function<OptionalConstantField<T1>(const StateParameters, const typename Tfield2::value_type, const typename Tfield3::value_type)> f, 
-            const StateParameters defaults,
+            const StateParameters parameters,
             const Tfield2 a, 
             const Tfield3 b) const
         {
@@ -307,10 +300,6 @@ namespace field {
             }
             else // constant
             {
-                OptionalStateParameters optional_parameters = defaults;
-                optional_parameters = aggregate(b.parameters(), optional_parameters);
-                optional_parameters = aggregate(a.parameters(), optional_parameters);
-                StateParameters parameters = optional_parameters.complete(defaults);
                 return OptionalConstantField<T1>(f(parameters, a(parameters).value(), b(parameters).value()));
             }
         }
@@ -320,7 +309,7 @@ namespace field {
         template<typename Tfield2, typename Tfield3, typename Tfield4>
         constexpr OptionalConstantField<T1> value_or(
             const std::function<OptionalConstantField<T1>(const StateParameters, const typename Tfield2::value_type, const typename Tfield3::value_type, const typename Tfield4::value_type)> f, 
-            const StateParameters defaults,
+            const StateParameters parameters,
             const Tfield2 a, 
             const Tfield3 b, 
             const Tfield4 c) const
@@ -335,11 +324,6 @@ namespace field {
             }
             else // constant
             {
-                OptionalStateParameters optional_parameters = defaults;
-                optional_parameters = aggregate(c.parameters(), optional_parameters);
-                optional_parameters = aggregate(b.parameters(), optional_parameters);
-                optional_parameters = aggregate(a.parameters(), optional_parameters);
-                StateParameters parameters = optional_parameters.complete(defaults);
                 return OptionalConstantField<T1>(f(parameters, a(parameters).value(), b(parameters).value(), c(parameters).value()));
             }
         }
@@ -349,7 +333,7 @@ namespace field {
         template<typename Tfield2, typename Tfield3, typename Tfield4, typename Tfield5>
         constexpr OptionalConstantField<T1> value_or(
             const std::function<OptionalConstantField<T1>(const StateParameters, const typename Tfield2::value_type, const typename Tfield3::value_type, const typename Tfield4::value_type, const typename Tfield5::value_type)> f, 
-            const StateParameters defaults,
+            const StateParameters parameters,
             const Tfield2 a, 
             const Tfield3 b, 
             const Tfield4 c, 
@@ -365,12 +349,6 @@ namespace field {
             }
             else // constant
             {
-                OptionalStateParameters optional_parameters = defaults;
-                optional_parameters = aggregate(d.parameters(), optional_parameters);
-                optional_parameters = aggregate(c.parameters(), optional_parameters);
-                optional_parameters = aggregate(b.parameters(), optional_parameters);
-                optional_parameters = aggregate(a.parameters(), optional_parameters);
-                StateParameters parameters = optional_parameters.complete(defaults);
                 return OptionalConstantField<T1>(f(parameters, a(parameters).value(), b(parameters).value(), c(parameters).value(), d(parameters).value()));
             }
         }
@@ -390,10 +368,6 @@ namespace field {
         constexpr bool has_value() const
         {
             return entry.index() != 0;
-        }
-        constexpr EmptyParameters parameters() const
-        {
-            return EmptyParameters();
         }
 
         template<typename T2>

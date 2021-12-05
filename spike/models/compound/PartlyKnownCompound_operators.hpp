@@ -9,8 +9,6 @@
 #include "models/compound/property/speculative.hpp"
 // #include "models/compound/property/color.hpp"
 
-#include "field/EmptyParameters_OptionalSpectralParameters.hpp"
-#include "field/EmptyParameters_OptionalStateParameters.hpp"
 #include "field/OptionalStateParameters_OptionalSpectralParameters.hpp"
 
 // #include "phase/gas/PartlyKnownGas_operators.hpp"

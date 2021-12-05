@@ -19,7 +19,7 @@ namespace field {
     class CompletedSpectralField
     {
     	template<typename T2>
-	    using CompletedSpectralFieldVariant = std::variant<T2, SpectralSample<T2>, SpectralFunction<T2>>;
+	    using CompletedSpectralFieldVariant = std::variant<SpectralFunction<T2>>;
 
         class CompletedSpectralFieldValueVisitor
         {
@@ -32,12 +32,6 @@ namespace field {
             : nlo(nlo), nhi(nhi), p(p), T(T)
             {
 
-            }
-            T1 operator()(const T1 a                           ) const {
-                return a;
-            }
-            T1 operator()(const SpectralSample<T1> a        ) const {
-                return a.entry;
             }
             T1 operator()(const SpectralFunction<T1> a ) const {
                 return a(nlo, nhi,p,T);
@@ -54,12 +48,6 @@ namespace field {
             {
 
             }
-            CompletedSpectralFieldVariant<T2> operator()(const T1 a                           ) const {
-                return f(a);
-            }
-            CompletedSpectralFieldVariant<T2> operator()(const SpectralSample<T1> a        ) const {
-                return SpectralSample<T1>(f(a.entry), a.nlo, a.nhi, a.pressure, a.temperature);
-            }
             CompletedSpectralFieldVariant<T2> operator()(const SpectralFunction<T1> a ) const {
                 // NOTE: capturing `this` results in a segfault when we call `this->f()`
                 // This occurs even when we capture `this` by entry.
@@ -75,13 +63,6 @@ namespace field {
             CompletedSpectralFieldFunctionVisitor()
             {
 
-            }
-            SpectralFunction<T1> operator()(const T1 a) const {
-                return [a](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T) { return a; };
-            }
-            SpectralFunction<T1> operator()(const SpectralSample<T1> a) const {
-                T1 entry = a.entry;
-                return [entry](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T) { return entry; };
             }
             SpectralFunction<T1> operator()(const SpectralFunction<T1> a) const {
                 // NOTE: capturing `this` results in a segfault when we call `this->f()`
@@ -115,12 +96,6 @@ namespace field {
             {
 
             }
-            T2 operator()( const T1 a                           ) const {
-                return f(a, default_nlo, default_nhi, default_p, default_T);
-            }
-            T2 operator()( const SpectralSample<T1> a        ) const {
-                return f(a.entry, a.nlo, a.nhi, a.pressure, a.temperature);
-            }
             T2 operator()( const SpectralFunction<T1> a ) const {
                 return f(a(default_nlo, default_nhi, default_p, default_T), default_nlo, default_nhi, default_p, default_T);
             }
@@ -133,15 +108,17 @@ namespace field {
         {
 
         }
-        constexpr CompletedSpectralField(const T1 entry)
-        : entry(entry)
+        constexpr CompletedSpectralField(const T1 value)
         {
-
-        }
-        constexpr CompletedSpectralField(const SpectralSample<T1> entry)
-        : entry(entry)
-        {
-
+            auto value2 = value;
+            entry = SpectralFunction<T1>([value2](
+                const si::wavenumber nlo,
+                const si::wavenumber nhi,
+                const si::pressure p, 
+                const si::temperature T
+              ){
+                return value2;
+              });
         }
         constexpr CompletedSpectralField(const SpectralFunction<T1> entry)
         : entry(entry)
@@ -151,7 +128,15 @@ namespace field {
     	template<typename T2>
         constexpr CompletedSpectralField<T1>& operator=(const T2& other)
         {
-        	entry = CompletedSpectralFieldVariant<T1>(other);
+            auto value = other;
+            entry = SpectralFunction<T1>([value](
+                const si::wavenumber nlo,
+                const si::wavenumber nhi,
+                const si::pressure p, 
+                const si::temperature T
+              ){
+                return value;
+              });
         	return *this;
         }
         constexpr T1 operator()(const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T) const
@@ -181,38 +166,6 @@ namespace field {
         constexpr int index() const
         {
             return entry.index();
-        }
-        /*
-		Return whether a entry exists within the field
-        */
-        constexpr bool has_entry() const
-        {
-            return entry.index() == 0;
-        }
-        constexpr SpectralFunction<T1> function() const
-        {
-            return std::visit(CompletedSpectralFieldFunctionVisitor(), entry);
-        }
-        /*
-        Return a CompletedSpectralField<T1> field representing `a` after applying the map `f`
-        */
-        template<typename T2>
-        constexpr CompletedSpectralField<T2> map(const std::function<T2(const T1)> f) const
-        {
-            return CompletedSpectralField<T2>(std::visit(CompletedSpectralFieldMapVisitor<T2>(f), entry));
-        }
-        /*
-        Return a CompletedSpectralField<T1> field representing `a` after applying the map `f`
-        */
-        template<typename T2>
-        constexpr T2 map_to_constant(
-            const si::wavenumber default_nlo, 
-            const si::wavenumber default_nhi, 
-            const si::pressure default_p, 
-            const si::temperature default_T, 
-            const std::function<T2(const T1, const si::wavenumber, const si::wavenumber, const si::pressure, const si::temperature)> f
-        ) const {
-            return std::visit(CompletedSpectralFieldMapToConstantVisitor<T2>(default_nlo, default_nhi, default_p, default_T, f), entry);
         }
 
         template<typename T2>
