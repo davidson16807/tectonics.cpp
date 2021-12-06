@@ -84,10 +84,18 @@
         CHECK(compound.solids[i].lame_parameter(si::standard_pressure, si::standard_temperature) / si::gigapascal < 1000.0); /*based on various rocks*/ \
         CHECK(compound.solids[i].poisson_ratio(si::standard_pressure, si::standard_temperature) < 0.5); /*based on rubber*/ \
         CHECK(compound.solids[i].poisson_ratio(si::standard_pressure, si::standard_temperature) > 0.0); /*based on cork*/ \
-        CHECK(compound.solids[i].tensile_yield_strength(si::standard_pressure, si::standard_temperature) / si::megapascal < 10000.0); /*based on silicon carbide*/ \
-        CHECK(compound.solids[i].tensile_yield_strength(si::standard_pressure, si::standard_temperature) / si::megapascal > 0.01); /*based on methane*/ \
+        CHECK(compound.solids[i].tensile_yield_strength(si::standard_pressure, si::standard_temperature) / si::megapascal < 10000.0); /*based on carbon nanotube*/ \
+        CHECK(compound.solids[i].tensile_yield_strength(si::standard_pressure, si::standard_temperature) / si::megapascal > 0.01); /*based on hydrogen*/ \
+        CHECK(compound.solids[i].compressive_yield_strength(si::standard_pressure, si::standard_temperature) / si::megapascal < 3000.0); /*based on ceramics*/ \
+        CHECK(compound.solids[i].compressive_yield_strength(si::standard_pressure, si::standard_temperature) / si::megapascal > 1.0); /*based on hydrogen*/ \
+        CHECK(compound.solids[i].shear_yield_strength(si::standard_pressure, si::standard_temperature) / si::megapascal < 10000.0); /*based on high performance steels*/ \
+        CHECK(compound.solids[i].shear_yield_strength(si::standard_pressure, si::standard_temperature) / si::megapascal > 0.003); /*based on hydrogen*/ \
         CHECK(compound.solids[i].tensile_fracture_strength(si::standard_pressure, si::standard_temperature) / si::megapascal < 3000.0); /*based on titanium*/ \
         CHECK(compound.solids[i].tensile_fracture_strength(si::standard_pressure, si::standard_temperature) / si::megapascal > 0.03); /*based on hydrogen*/ \
+        CHECK(compound.solids[i].compressive_fracture_strength(si::standard_pressure, si::standard_temperature) / si::megapascal < 10000.0); /*based on ceramics*/ \
+        CHECK(compound.solids[i].compressive_fracture_strength(si::standard_pressure, si::standard_temperature) / si::megapascal > 0.1); /*based on nitrogen*/ \
+        CHECK(compound.solids[i].shear_fracture_strength(si::standard_pressure, si::standard_temperature) / si::megapascal < 10000.0); /*based on high performance steels*/ \
+        CHECK(compound.solids[i].shear_fracture_strength(si::standard_pressure, si::standard_temperature) / si::megapascal > 0.1); /*based on hydrogen*/ \
     }
 
     // compound.critical_point_volume
@@ -95,16 +103,4 @@
     // compound.simon_glatzel_slope
     // compound.simon_glatzel_exponent
     /*
-    compound.solids[i].tensile_modulus(si::standard_pressure, si::standard_temperature)
-    compound.solids[i].shear_modulus(si::standard_pressure, si::standard_temperature)
-    compound.solids[i].pwave_modulus(si::standard_pressure, si::standard_temperature)
-    compound.solids[i].lame_parameter(si::standard_pressure, si::standard_temperature)
-    compound.solids[i].poisson_ratio(si::standard_pressure, si::standard_temperature)
-    compound.solids[i].compressive_fracture_strength(si::standard_pressure, si::standard_temperature)
-    compound.solids[i].tensile_fracture_strength(si::standard_pressure, si::standard_temperature)
-    compound.solids[i].shear_fracture_strength(si::standard_pressure, si::standard_temperature)
-    compound.solids[i].compressive_yield_strength(si::standard_pressure, si::standard_temperature)
-    compound.solids[i].tensile_yield_strength(si::standard_pressure, si::standard_temperature)
-    compound.solids[i].shear_yield_strength(si::standard_pressure, si::standard_temperature)
-    compound.solids[i].chemical_susceptibility_estimate
     */
