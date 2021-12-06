@@ -76,6 +76,18 @@
         CHECK(compound.solids[i].absorption_coefficient(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), si::standard_pressure, si::standard_temperature) * si::centimeter >= 0.0); /*based on nitrogen*/ \
         CHECK(compound.solids[i].bulk_modulus(si::standard_pressure, si::standard_temperature) / si::gigapascal < 1000.0); /*based on diamond*/ \
         CHECK(compound.solids[i].bulk_modulus(si::standard_pressure, si::standard_temperature) / si::gigapascal > 0.003); /*based on helium*/ \
+        CHECK(compound.solids[i].tensile_modulus(si::standard_pressure, si::standard_temperature) / si::gigapascal > 0.01); /*based on helium*/ \
+        CHECK(compound.solids[i].tensile_modulus(si::standard_pressure, si::standard_temperature) / si::gigapascal < 3000.0); /*based on graphite*/ \
+        CHECK(compound.solids[i].shear_modulus(si::standard_pressure, si::standard_temperature) / si::gigapascal > 0.01); /*based on helium*/ \
+        CHECK(compound.solids[i].shear_modulus(si::standard_pressure, si::standard_temperature) / si::gigapascal < 1000.0); /*based on tungsten*/ \
+        CHECK(compound.solids[i].lame_parameter(si::standard_pressure, si::standard_temperature) / si::gigapascal > 0.001); /*based on helium*/ \
+        CHECK(compound.solids[i].lame_parameter(si::standard_pressure, si::standard_temperature) / si::gigapascal < 1000.0); /*based on various rocks*/ \
+        CHECK(compound.solids[i].poisson_ratio(si::standard_pressure, si::standard_temperature) < 0.5); /*based on rubber*/ \
+        CHECK(compound.solids[i].poisson_ratio(si::standard_pressure, si::standard_temperature) > 0.0); /*based on cork*/ \
+        CHECK(compound.solids[i].tensile_yield_strength(si::standard_pressure, si::standard_temperature) / si::megapascal < 10000.0); /*based on silicon carbide*/ \
+        CHECK(compound.solids[i].tensile_yield_strength(si::standard_pressure, si::standard_temperature) / si::megapascal > 0.01); /*based on methane*/ \
+        CHECK(compound.solids[i].tensile_fracture_strength(si::standard_pressure, si::standard_temperature) / si::megapascal < 3000.0); /*based on titanium*/ \
+        CHECK(compound.solids[i].tensile_fracture_strength(si::standard_pressure, si::standard_temperature) / si::megapascal > 0.03); /*based on hydrogen*/ \
     }
 
     // compound.critical_point_volume

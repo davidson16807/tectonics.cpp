@@ -1850,18 +1850,18 @@ PartlyKnownCompound ammonia (
 
             /*compressive_fracture_strength*/     
                 get_interpolated_temperature_function
-                    (si::kelvin, si::standard_gravity * si::gram/si::centimeter2,
+                    (si::kelvin, si::standard_gravity * si::gram/si::millimeter2,
                      std::vector<double>{ 77.0, 100.0, 120.0, 130.0, 140.0, 150.0, 160.0}, 
                      std::vector<double>{580.0, 620.0, 540.0, 450.0, 360.0, 270.0, 190.0}), // Prokhvatilov
             /*tensile_fracture_strength*/         
                 get_interpolated_temperature_function
-                    (si::kelvin, si::standard_gravity * si::gram/si::centimeter2,
+                    (si::kelvin, si::standard_gravity * si::gram/si::millimeter2,
                      std::vector<double>{ 77.0, 120.0, 130.0, 140.0, 150.0, 160.0}, 
                      std::vector<double>{120.0, 140.0, 160.0, 180.0,  90.0,  50.0}), // Prokhvatilov
             /*shear_fracture_strength*/           missing(),
             /*compressive_yield_strength*/        
                 get_interpolated_temperature_function
-                    (si::kelvin, si::standard_gravity * si::gram/si::centimeter2,
+                    (si::kelvin, si::standard_gravity * si::gram/si::millimeter2,
                      std::vector<double>{ 77.0, 100.0, 120.0, 130.0, 140.0, 150.0}, 
                      std::vector<double>{580.0, 480.0, 230.0, 150.0, 110.0, 200.0}), // Prokhvatilov
             /*tensile_yield_strength*/            missing(),
@@ -4094,11 +4094,11 @@ PartlyKnownCompound  calcite (
                     std::vector<double>{  0.709,  0.715,  0.743,  0.794,  0.797,  0.919,  0.936,  0.955,  0.960,  0.953,  0.964,  0.958,  0.962,  0.957,  0.960,  0.947,  0.937,  0.951,  0.940,  0.910,  0.864,  0.925,  0.929,  0.921,  0.900,  0.887,  0.865,  0.929,  0.940,  0.936,  0.921,  0.908,  0.877,  0.868,  0.893,  0.859,  0.789,  0.656,  0.648,  0.573,  0.810,  0.829,  0.812,  0.552,  0.490,  0.601,  0.775,  0.841,  0.844,  0.800,  0.602,  0.496,  0.609,  0.709,  0.677,  0.682,  0.660,  0.580,  0.563,  0.071,  0.459,  0.024,  0.055,  0.245,  0.239,  0.199,  0.089,  0.084,  0.038,  0.019,  0.010,  0.078,  0.099,  0.128,  0.117,  0.133,  0.122,  0.033,  0.066,  0.102,  0.158,  0.157,  0.174,  0.183,  0.172,  0.176,  0.163,  0.183,  0.160,  0.165,  0.158,  0.183,  0.100,  0.092,  0.066,  0.066,  0.038,  0.039,  0.021,  0.041,  0.053,  0.071,  0.116,  0.103,  0.099,  0.104,  0.086,  0.111,  0.108,  0.147,  0.134,  0.141,  0.166,  0.178,  0.146,  0.157,  0.161,  0.177,  0.209,  0.171,  0.215,  0.355,  0.4454}),
 
             /*bulk_modulus*/                      state_invariant(73.0 * si::gigapascal), // Schön (2015)
-            /*tensile_modulus*/                   state_invariant(1.4806e11*si::pascal), 
-            /*shear_modulus*/                     state_invariant(0.3269e11*si::pascal), 
+            /*tensile_modulus*/                   missing(),                                              
+            /*shear_modulus*/                     state_invariant(32.0 * si::gigapascal), // Schön (2015) 
             /*pwave_modulus*/                     missing(),
             /*lame_parameter*/                    missing(),
-            /*poisson_ratio*/                     state_invariant(0.32),
+            /*poisson_ratio*/                     state_invariant(0.32), // Schön (2015)
 
             /*compressive_fracture_strength*/     missing(),
             /*tensile_fracture_strength*/         missing(),
@@ -4122,8 +4122,8 @@ PartlyKnownCompound  calcite (
             /*absorption_coefficient*/            missing(),
 
             /*bulk_modulus*/                      state_invariant(47.0 * si::gigapascal), // Schön (2015)
-            /*tensile_modulus*/                   state_invariant(1.5958e11*si::pascal),
-            /*shear_modulus*/                     state_invariant(0.4132e11*si::pascal),
+            /*tensile_modulus*/                   missing(),                                              
+            /*shear_modulus*/                     state_invariant(38.5 * si::gigapascal), // Schön (2015) 
             /*pwave_modulus*/                     missing(),
             /*lame_parameter*/                    missing(),
             /*poisson_ratio*/                     state_invariant(0.18), // Schön (2015)
