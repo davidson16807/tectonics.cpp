@@ -166,17 +166,17 @@ namespace compound {
         const si::length lunits, 
         const si::attenuation yunits, 
         const std::vector<double>wavelengths, 
-        const std::vector<double>reflectances
+        const std::vector<double>alphas
     ){
         return field::SpectralFunction<si::attenuation>(
-            [lunits, yunits, wavelengths, reflectances]
+            [lunits, yunits, wavelengths, alphas]
             (const si::wavenumber nlo, 
              const si::wavenumber nhi, 
              const si::pressure p, 
              const si::temperature T)
             {
                 double wavelength = (2.0 / (nhi+nlo) / lunits);
-                return math::lerp(wavelengths, reflectances, wavelength) * yunits;
+                return math::lerp(wavelengths, alphas, wavelength) * yunits;
             }
         );
     }
@@ -185,16 +185,53 @@ namespace compound {
         const si::wavenumber xunits, 
         const si::attenuation yunits, 
         const std::vector<double>wavenumbers, 
-        const std::vector<double>reflectances
+        const std::vector<double>alphas
     ){
         return field::SpectralFunction<si::attenuation>(
-            [xunits, yunits, wavenumbers, reflectances]
+            [xunits, yunits, wavenumbers, alphas]
             (const si::wavenumber nlo, 
              const si::wavenumber nhi, 
              const si::pressure p, 
              const si::temperature T)
             {
-                return math::integral_of_lerp(wavenumbers, reflectances, (nlo/xunits), (nhi/xunits)) / (nhi/xunits - nlo/xunits) * yunits;
+                return math::integral_of_lerp(wavenumbers, alphas, (nlo/xunits), (nhi/xunits)) / (nhi/xunits - nlo/xunits) * yunits;
+            }
+        );
+    }
+    
+    field::SpectralFunction<si::attenuation> get_absorption_coefficient_function_from_log_at_wavelengths(
+        const si::length lunits, 
+        const si::attenuation yunits, 
+        const std::vector<double>wavelengths, 
+        const std::vector<double>log_alphas
+    ){
+        return field::SpectralFunction<si::attenuation>(
+            [lunits, yunits, wavelengths, log_alphas]
+            (const si::wavenumber nlo, 
+             const si::wavenumber nhi, 
+             const si::pressure p, 
+             const si::temperature T)
+            {
+                double wavelength = (2.0 / (nhi+nlo) / lunits);
+                return std::pow(10.0, math::lerp(wavelengths, log_alphas, wavelength)) * yunits;
+            }
+        );
+    }
+    
+    field::SpectralFunction<si::attenuation> get_absorption_coefficient_function_from_log_at_wavenumbers(
+        const si::wavenumber xunits, 
+        const si::attenuation yunits, 
+        const std::vector<double>wavenumbers, 
+        const std::vector<double>log_alphas
+    ){
+        return field::SpectralFunction<si::attenuation>(
+            [xunits, yunits, wavenumbers, log_alphas]
+            (const si::wavenumber nlo, 
+             const si::wavenumber nhi, 
+             const si::pressure p, 
+             const si::temperature T)
+            {
+                return std::pow(10.0, math::integral_of_lerp(wavenumbers, log_alphas, (nlo/xunits), (nhi/xunits)) / (nhi/xunits - nlo/xunits)) * yunits;
             }
         );
     }

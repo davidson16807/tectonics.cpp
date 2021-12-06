@@ -250,7 +250,7 @@ namespace compound{
             const si::length particle_diameter
         ){
             const si::length De = 2.0*particle_diameter;
-            return (1.0/scattering_efficiency - 1.0) / De;
+            return std::max(1.0/scattering_efficiency - 1.0, 0.0) / De;
         }
         /*
         `get_absorption_coefficient_from_refractive_index() ` calculates "Qₛ" from Hapke (1981, eq. 33)
@@ -262,7 +262,7 @@ namespace compound{
             const si::length wavelength
         ){
             const double _4pi = 4.0 * 3.14159265358979;
-            return _4pi * refractive_index * extinction_coefficient / wavelength;
+            return std::max(_4pi * refractive_index * extinction_coefficient, 0.0) / wavelength;
         }
 
 
