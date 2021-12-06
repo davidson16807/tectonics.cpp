@@ -74,6 +74,8 @@
         CHECK(compound.solids[i].refractive_index(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), si::standard_pressure, si::standard_temperature) > 0.2); /*based on silver*/\
         CHECK(compound.solids[i].absorption_coefficient(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), si::standard_pressure, si::standard_temperature) * si::centimeter < 1000000.0); /*based on water*/ \
         CHECK(compound.solids[i].absorption_coefficient(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), si::standard_pressure, si::standard_temperature) * si::centimeter >= 0.0); /*based on nitrogen*/ \
+        CHECK(compound.solids[i].bulk_modulus(si::standard_pressure, si::standard_temperature) / si::gigapascal < 1000.0); /*based on diamond*/ \
+        CHECK(compound.solids[i].bulk_modulus(si::standard_pressure, si::standard_temperature) / si::gigapascal > 0.003); /*based on helium*/ \
     }
 
     // compound.critical_point_volume
@@ -81,7 +83,6 @@
     // compound.simon_glatzel_slope
     // compound.simon_glatzel_exponent
     /*
-    compound.solids[i].bulk_modulus(si::standard_pressure, si::standard_temperature)
     compound.solids[i].tensile_modulus(si::standard_pressure, si::standard_temperature)
     compound.solids[i].shear_modulus(si::standard_pressure, si::standard_temperature)
     compound.solids[i].pwave_modulus(si::standard_pressure, si::standard_temperature)

@@ -3454,8 +3454,8 @@ PartlyKnownCompound benzene (
             /*absorption_coefficient*/            missing(),
 
             /*bulk_modulus*/                      missing(),
-            /*tensile_modulus*/                   state_invariant(0.0614e11*si::pascal),
-            /*shear_modulus*/                     state_invariant(0.0197e11*si::pascal),
+            /*tensile_modulus*/                   missing(),
+            /*shear_modulus*/                     missing(),
             /*pwave_modulus*/                     missing(),
             /*lame_parameter*/                    missing(),
             /*poisson_ratio*/                     missing(),
@@ -3650,12 +3650,12 @@ PartlyKnownCompound  halite (
                      std::vector<double>{  0.2183,  0.2295,  0.2439,  0.2615,  0.2743,  0.2903,  0.3207,  0.4455,  0.5656,  0.7928,  1.0617,  1.3802,  1.4523,  1.5531,  1.8588,  1.9292,  1.9900,  2.0605,  2.1309,  2.2349,  2.3549,  2.6558,  2.7247,  2.7855,  2.8479,  2.8847,  2.9119,  2.9439,  2.9807,  8.1565,  9.3855, 10.7373, 12.2121, 12.7037, 18.1112, 27.6972, 30.1552, 32.4903, 35.1940, 37.1604, 38.3893, 40.2328, 42.4450, 43.7969, 45.7632, 48.5899, 50.0646, 51.1707, 55.1034, 56.4553, 58.1759, 60.0194, 65.5498, 67.7619, 71.4489, 73.7839, 78.5769, 86.4424, 93.0789, 98.7322,109.9159,114.4631,127.7360,146.2936,153.9133,167.1862 },
                      std::vector<double>{ 0.59984, 0.63333, 0.64910, 0.64975, 0.54138, 0.67077, 0.71872, 0.81461, 0.86059, 0.89146, 0.90263, 0.90328, 0.89343, 0.90657, 0.90394, 0.87176, 0.87241, 0.90066, 0.90985, 0.90394, 0.90197, 0.86256, 0.78112, 0.55057, 0.45271, 0.44154, 0.41921, 0.40805, 0.41724, 0.87214, 0.82290, 0.83550, 0.78511, 0.75534, 0.60191, 0.04198, 0.00420, 0.00305, 0.03740, 0.17023, 0.22405, 0.14504, 0.22519, 0.23435, 0.36260, 0.44275, 0.50573, 0.55840, 0.66489, 0.67405, 0.66718, 0.62137, 0.24466, 0.18969, 0.16450, 0.14389, 0.12557, 0.13130, 0.11412, 0.11756, 0.10611, 0.10382, 0.12214, 0.11641, 0.11756, 0.13244 }),
 
-            /*bulk_modulus*/                      missing(),
-            /*tensile_modulus*/                   state_invariant(0.4947e11*si::pascal), 
-            /*shear_modulus*/                     state_invariant(0.1287e11*si::pascal), 
+            /*bulk_modulus*/                      state_invariant(24.8 * si::gigapascal), // Mavko (2009)
+            /*tensile_modulus*/                   missing(),                              // state_invariant(0.4947e11*si::pascal), // values from Perry produce negative bulk modulus so they are commented out
+            /*shear_modulus*/                     state_invariant(14.9 * si::gigapascal), // state_invariant(0.1287e11*si::pascal), // values from Perry produce negative bulk modulus so they are commented out
             /*pwave_modulus*/                     missing(),
             /*lame_parameter*/                    missing(),
-            /*poisson_ratio*/                     state_invariant(0.26), // Schön (2015)
+            /*poisson_ratio*/                     state_invariant(0.25), // Mavko (2009)
 
             /*compressive_fracture_strength*/     state_invariant(20.0 * si::megapascal), // Bauer (2019)
             /*tensile_fracture_strength*/         missing(),
@@ -3753,12 +3753,12 @@ PartlyKnownCompound  corundum (
                      std::vector<double>{ 0.22736, 0.27200, 0.29592, 0.31824, 0.34216, 0.36129, 0.36926, 0.37883, 0.39318, 0.39636, 0.41071, 0.43144, 0.45217, 0.47449, 0.47608, 0.48884, 0.55261, 0.57334, 0.63552, 0.69133, 0.72162, 0.84917, 0.85236, 0.87468, 0.90019, 0.93846, 1.08036, 1.14573, 1.30676, 1.38489, 1.41199, 1.44866, 1.50925, 1.54273, 1.77232, 1.81218, 1.84885, 1.89509, 1.93973, 1.96524, 2.00510, 2.05134, 2.15179, 2.30485, 2.38297, 2.43399, 2.59343, 2.65402, 2.75128, 2.78795, 2.85013, 2.94420, 2.97449 },
                      std::vector<double>{  0.0529,  0.0582,  0.0794,  0.2286,  0.2561,  0.4741,  0.4878,  0.4455,  0.4561,  0.5175,  0.5767,  0.5968,  0.5407,  0.6159,  0.6339,  0.6508,  0.5788,  0.5778,  0.6106,  0.6233,  0.6360,  0.7249,  0.7365,  0.7418,  0.7566,  0.7672,  0.7767,  0.7926,  0.8593,  0.8677,  0.8550,  0.8614,  0.8392,  0.8127,  0.5302,  0.5153,  0.5164,  0.5323,  0.5365,  0.5249,  0.4963,  0.4878,  0.4910,  0.4772,  0.4561,  0.4265,  0.3873,  0.3820,  0.2476,  0.2233,  0.1577,  0.1016,  0.0984 }),
 
-            /*bulk_modulus*/                      missing(),
-            /*tensile_modulus*/                   state_invariant(4.9735e11*si::pascal),
-            /*shear_modulus*/                     state_invariant(1.4739e11*si::pascal),
+            /*bulk_modulus*/                      252.9 * si::gigapascal, // Mavko (2009)
+            /*tensile_modulus*/                   missing(),
+            /*shear_modulus*/                     162.1 * si::gigapascal, // Mavko (2009)
             /*pwave_modulus*/                     missing(),
             /*lame_parameter*/                    missing(),
-            /*poisson_ratio*/                     missing(),
+            /*poisson_ratio*/                     0.24, // Mavko (2009)
 
             /*compressive_fracture_strength*/     state_invariant(2265.0*si::megapascal), //azom.com/article.aspx?ArticleId=1948
             /*tensile_fracture_strength*/         state_invariant(325.0*si::megapascal), //azom.com/article.aspx?ArticleId=1948
@@ -5070,8 +5070,8 @@ PartlyKnownCompound  gold (
             /*absorption_coefficient*/            missing(),
 
             /*bulk_modulus*/                      missing(),
-            /*tensile_modulus*/                   state_invariant(1.9244e11*si::pascal),
-            /*shear_modulus*/                     state_invariant(0.4200e11*si::pascal),
+            /*tensile_modulus*/                   state_invariant((76.0+81.0)/2.0*si::gigapascal), // https://www.azom.com/properties.aspx?ArticleID=598 // state_invariant(1.9244e11*si::pascal), // values from Perry produce negative bulk modulus so they are commented out
+            /*shear_modulus*/                     state_invariant((26.0+30.0)/2.0*si::gigapascal), // https://www.azom.com/properties.aspx?ArticleID=598 state_invariant(0.4200e11*si::pascal),    // values from Perry produce negative bulk modulus so they are commented out
             /*pwave_modulus*/                     missing(),
             /*lame_parameter*/                    missing(),
             /*poisson_ratio*/                     state_invariant(0.43), // wikipedia
