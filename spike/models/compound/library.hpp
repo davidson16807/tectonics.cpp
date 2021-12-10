@@ -38,8 +38,122 @@ namespace compound {
             /*freezing_point_sample_temperature*/ si::standard_temperature,
             /*boiling_point_sample_pressure*/     si::atmosphere,
             /*boiling_point_sample_temperature*/  100.0*si::celcius,
-            /*simon_glatzel_slope*/               7070e5,
-            /*simon_glatzel_exponent*/            4.46,
+
+            /*phase*/
+            field::StateFunction<int>([]
+                    (const si::pressure pressure, 
+                     const si::temperature temperature)
+                    {
+                        const int supercritical = -3;
+                        const int gas = -2;
+                        const int liquid = -1;
+                        const int ice1h = 0;
+                        const int ice1c = 1;
+                        const int ice2 = 2;
+                        const int ice3 = 3;
+                        // const int ice4 = 4; // unused
+                        const int ice5 = 5;
+                        const int ice6 = 6;
+                        const int ice7 = 7;
+                        const int ice8 = 8;
+                        const int ice9 = 9;
+                        const int ice10 = 10;
+                        const int ice11h = 11;
+                        const int ice11o = 12;
+                        // const int ice12 = 13; // unused
+                        // const int ice13 = 14; // unused
+                        // const int ice14 = 15; // unused
+                        const int ice15 = 16;
+                        const double p = pressure / si::pascal;
+                        const double t = temperature / si::kelvin;
+                        const     double Ru(8.3144598);          // universal gas constant
+                        const     double M (0.0180153);          // molar mass, kg/mol
+                        const     double L (22.6e5);             // specific latent heat of vaporization (J/kg)
+                        const     double p0(0.6116e3);           // triple point pressure (Pa)
+                        const     double t0(273.15);             // triple point temperature (K)
+                        constexpr double R (Ru/M);               // individual gas constant
+                        constexpr double m (-R/L);               // slope of clapeyron equation for vaporus
+                        constexpr double b (1/t0 - m * std::log(p0)); // intercept for clapeyron equation for vaporus
+                        const     double tc(647.096);            // critical point temperature (K) 
+                        const     double pc(22.064e6);           // critical point pressure (Pa)
+                        const     double a3(7070e5);             // slope of clapeyron equation repurposed for liquidus, estimated from phase diagram
+                        const     double c3(4.46);               // intercept for clapeyron equation repurposed for liquidus, estimted from phase diagram
+                        if ( t > 1.0/(m*std::log(p)+b) && p<1e9f)
+                        {
+                            if (t > tc && p > pc)
+                            {
+                                return supercritical;
+                            }
+                            else
+                            {
+                                return gas;
+                            }
+                        }
+                        else if ( t > t0 * std::pow(std::max((p-p0)/a3 + 1.0, 0.0), 1.0/c3) )
+                        {
+                            if (t > tc && p > pc)
+                            {
+                                return supercritical;
+                            }
+                            else
+                            {
+                                return liquid;
+                            }
+                        }
+                        else if (p < 209.9e6 && t < 73.15f)
+                        {
+                            return ice11o;
+                        }
+                        else if (p < 209.9e6 && t < 173.15f)
+                        {
+                            return ice1c;
+                        }
+                        else if (p < 209.9e6f)
+                        {
+                            return ice1h;
+                        }
+                        else if (p < 632.4e6 && t < 170.0f)
+                        {
+                            return ice9;
+                        }
+                        else if (p < 350.1e6 && t > 238.5f)
+                        {
+                            return ice3;
+                        }
+                        else if (350.1e6 < p && p < 632.4e6 && t > 218.0f)
+                        {
+                            return ice5;
+                        }
+                        else if (p < 632.4e6f)
+                        {
+                            return ice2;
+                        }
+                        else if (p < 2.216e9 && t < 130.0f)
+                        {
+                            return ice15;
+                        }
+                        else if (p < 2.216e9f)
+                        {
+                            return ice6;
+                        }
+                        else if (p < 62e9 && (t-100.0f)/(278.0f-100.0f) < (p-62e9f)/(2.1e9f-62e9f))
+                        {
+                            return ice8;
+                        }
+                        else if (p < 62e9f)
+                        {
+                            return ice7;
+                        }
+                        else if (p < 350e9f)
+                        {
+                            return ice10;
+                        }
+                        else 
+                        {
+                            return ice11h;
+                        }
+                    }
+                ),
 
             /*molecular_absorption_cross_section*/ 
             get_molecular_absorption_cross_section_function

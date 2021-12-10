@@ -41,8 +41,7 @@ namespace compound
             first.freezing_point_sample_temperature  != second.freezing_point_sample_temperature  ||
             first.boiling_point_sample_pressure      != second.boiling_point_sample_pressure      ||
             first.boiling_point_sample_temperature   != second.boiling_point_sample_temperature   ||
-            first.simon_glatzel_slope                != second.simon_glatzel_slope                ||
-            first.simon_glatzel_exponent             != second.simon_glatzel_exponent             ||
+            first.phase                              != second.phase                              ||
             first.molecular_absorption_cross_section != second.molecular_absorption_cross_section ||
             first.gas                                != second.gas                                ||
             first.liquid                             != second.liquid                             
@@ -85,9 +84,8 @@ namespace compound
         /*freezing_point_sample_temperature*/ 0.0*si::celcius,
         /*boiling_point_sample_pressure*/     si::standard_pressure,
         /*boiling_point_sample_temperature*/  100.8 * si::celcius, 
-        /*simon_glatzel_slope*/               1.0,
-        /*simon_glatzel_exponent*/            1.0,
 
+        /*phase*/                             0,
         /*molecular_absorption_cross_section*/ 1e-25 * si::meter2,
 
         /*gas*/

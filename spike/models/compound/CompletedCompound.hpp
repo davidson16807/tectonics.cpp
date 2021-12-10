@@ -49,22 +49,9 @@ namespace compound
         si::pressure        boiling_point_sample_pressure;
         si::temperature     boiling_point_sample_temperature;
 
-        /* 
-        OPTIONAL PHASE CHANGE PROPERTIES
-        These change the behavior of `get_phase_ids_for_pressures_and_temperatures()`,
-        so we include them in `CompletedCompound` rather than map them from 
-        attributes within `CompletedCompound` as per usual. 
-        Please note the presence/absence of values for these parameters 
-        does not indicate missing data. 
-        Some compounds are not known to have supercritical phases,
-        and some compounds legitimately cannot be modeled by simon glatzel parameters.
-        Missing data for these values should be indicated by using the 
-        equivalent optional parameters a `CompletedCompound` object
-        */
-        std::optional<float> simon_glatzel_slope;
-        std::optional<float> simon_glatzel_exponent;
+        field::CompletedStateField<int> phase;
 
-        // MISCELLANEOUS PROPERTIES
+        // generic 
         field::CompletedSpectralField<si::area> molecular_absorption_cross_section;
 
         // PHASE PROPERTIES
@@ -92,8 +79,7 @@ namespace compound
             const si::temperature      freezing_point_sample_temperature,
             const si::pressure         boiling_point_sample_pressure,
             const si::temperature      boiling_point_sample_temperature,
-            const std::optional<float> simon_glatzel_slope,
-            const std::optional<float> simon_glatzel_exponent,
+            const field::CompletedStateField<int> phase,
             const field::CompletedSpectralField<si::area> molecular_absorption_cross_section,
             const phase::CompletedGas                     gas,
             const phase::CompletedLiquid                  liquid,
@@ -118,8 +104,7 @@ namespace compound
             freezing_point_sample_temperature  (freezing_point_sample_temperature),
             boiling_point_sample_pressure      (boiling_point_sample_pressure),
             boiling_point_sample_temperature   (boiling_point_sample_temperature),
-            simon_glatzel_slope                (simon_glatzel_slope),
-            simon_glatzel_exponent             (simon_glatzel_exponent),
+            phase                              (phase),
             molecular_absorption_cross_section (molecular_absorption_cross_section),
             gas                                (gas),
             liquid                             (liquid),

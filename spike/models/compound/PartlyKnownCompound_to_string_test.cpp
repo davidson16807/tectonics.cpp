@@ -42,8 +42,7 @@ TEST_CASE( "PartlyKnownCompound to_string() appreciable difference preservation"
 	compound::PartlyKnownCompound nudge_freezing_point_sample_temperature  = compound::test_water; nudge_freezing_point_sample_temperature  .freezing_point_sample_temperature  = std::monostate();
 	compound::PartlyKnownCompound nudge_boiling_point_sample_pressure      = compound::test_water; nudge_boiling_point_sample_pressure      .boiling_point_sample_pressure      = std::monostate();
 	compound::PartlyKnownCompound nudge_boiling_point_sample_temperature   = compound::test_water; nudge_boiling_point_sample_temperature   .boiling_point_sample_temperature   = std::monostate();
-	compound::PartlyKnownCompound nudge_simon_glatzel_slope                = compound::test_water; nudge_simon_glatzel_slope                .simon_glatzel_slope                = std::monostate();
-	compound::PartlyKnownCompound nudge_simon_glatzel_exponent             = compound::test_water; nudge_simon_glatzel_exponent             .simon_glatzel_exponent             = std::monostate();
+	compound::PartlyKnownCompound nudge_phase                              = compound::test_water; nudge_phase                              .phase                              = std::monostate();
 	compound::PartlyKnownCompound nudge_molecular_absorption_cross_section = compound::test_water; nudge_molecular_absorption_cross_section .molecular_absorption_cross_section = std::monostate();
 	compound::PartlyKnownCompound nudge_solid_first                        = compound::test_water; nudge_solid_first.solids[0]              .density                            = std::monostate();
 	compound::PartlyKnownCompound nudge_solid_last                         = compound::test_water; nudge_solid_last.solids[nudge_solid_last.solids.size()-1].density            = std::monostate();
@@ -69,8 +68,7 @@ TEST_CASE( "PartlyKnownCompound to_string() appreciable difference preservation"
 		CHECK( compound::to_string(nudge_freezing_point_sample_temperature ) != compound::to_string(compound::test_water) ); 
 		CHECK( compound::to_string(nudge_boiling_point_sample_pressure     ) != compound::to_string(compound::test_water) ); 
 		CHECK( compound::to_string(nudge_boiling_point_sample_temperature  ) != compound::to_string(compound::test_water) ); 
-		CHECK( compound::to_string(nudge_simon_glatzel_slope               ) != compound::to_string(compound::test_water) ); 
-		CHECK( compound::to_string(nudge_simon_glatzel_exponent            ) != compound::to_string(compound::test_water) ); 
+		CHECK( compound::to_string(nudge_phase                             ) != compound::to_string(compound::test_water) ); 
 		CHECK( compound::to_string(nudge_molecular_absorption_cross_section) != compound::to_string(compound::test_water) ); 
 		CHECK( compound::to_string(nudge_solid_first                       ) != compound::to_string(compound::test_water) ); 
 		CHECK( compound::to_string(nudge_solid_last                        ) != compound::to_string(compound::test_water) ); 

@@ -80,8 +80,122 @@ PartlyKnownCompound water (
     /*freezing_point_sample_temperature*/ si::standard_temperature,
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  100.0*si::celcius,
-    /*simon_glatzel_slope*/               7070e5,
-    /*simon_glatzel_exponent*/            4.46,
+
+    /*phase*/
+    field::StateFunction<int>([]
+            (const si::pressure pressure, 
+             const si::temperature temperature)
+            {
+                const int supercritical = -3;
+                const int gas = -2;
+                const int liquid = -1;
+                const int ice1h = 0;
+                const int ice1c = 1;
+                const int ice2 = 2;
+                const int ice3 = 3;
+                // const int ice4 = 4; // unused
+                const int ice5 = 5;
+                const int ice6 = 6;
+                const int ice7 = 7;
+                const int ice8 = 8;
+                const int ice9 = 9;
+                const int ice10 = 10;
+                const int ice11h = 11;
+                const int ice11o = 12;
+                // const int ice12 = 13; // unused
+                // const int ice13 = 14; // unused
+                // const int ice14 = 15; // unused
+                const int ice15 = 16;
+                const double p = pressure / si::pascal;
+                const double t = temperature / si::kelvin;
+                const     double Ru(8.3144598);          // universal gas constant
+                const     double M (0.0180153);          // molar mass, kg/mol
+                const     double L (22.6e5);             // specific latent heat of vaporization (J/kg)
+                const     double p0(0.6116e3);           // triple point pressure (Pa)
+                const     double t0(273.15);             // triple point temperature (K)
+                constexpr double R (Ru/M);               // individual gas constant
+                constexpr double m (-R/L);               // slope of clapeyron equation for vaporus
+                constexpr double b (1/t0 - m * std::log(p0)); // intercept for clapeyron equation for vaporus
+                const     double tc(647.096);            // critical point temperature (K) 
+                const     double pc(22.064e6);           // critical point pressure (Pa)
+                const     double a3(7070e5);             // slope of clapeyron equation repurposed for liquidus, estimated from phase diagram
+                const     double c3(4.46);               // intercept for clapeyron equation repurposed for liquidus, estimted from phase diagram
+                if ( t > 1.0/(m*std::log(p)+b) && p<1e9f)
+                {
+                    if (t > tc && p > pc)
+                    {
+                        return supercritical;
+                    }
+                    else
+                    {
+                        return gas;
+                    }
+                }
+                else if ( t > t0 * std::pow(std::max((p-p0)/a3 + 1.0, 0.0), 1.0/c3) )
+                {
+                    if (t > tc && p > pc)
+                    {
+                        return supercritical;
+                    }
+                    else
+                    {
+                        return liquid;
+                    }
+                }
+                else if (p < 209.9e6 && t < 73.15f)
+                {
+                    return ice11o;
+                }
+                else if (p < 209.9e6 && t < 173.15f)
+                {
+                    return ice1c;
+                }
+                else if (p < 209.9e6f)
+                {
+                    return ice1h;
+                }
+                else if (p < 632.4e6 && t < 170.0f)
+                {
+                    return ice9;
+                }
+                else if (p < 350.1e6 && t > 238.5f)
+                {
+                    return ice3;
+                }
+                else if (350.1e6 < p && p < 632.4e6 && t > 218.0f)
+                {
+                    return ice5;
+                }
+                else if (p < 632.4e6f)
+                {
+                    return ice2;
+                }
+                else if (p < 2.216e9 && t < 130.0f)
+                {
+                    return ice15;
+                }
+                else if (p < 2.216e9f)
+                {
+                    return ice6;
+                }
+                else if (p < 62e9 && (t-100.0f)/(278.0f-100.0f) < (p-62e9f)/(2.1e9f-62e9f))
+                {
+                    return ice8;
+                }
+                else if (p < 62e9f)
+                {
+                    return ice7;
+                }
+                else if (p < 350e9f)
+                {
+                    return ice10;
+                }
+                else 
+                {
+                    return ice11h;
+                }
+            }
+        ),
 
     /*molecular_absorption_cross_section*/ 
     get_molecular_absorption_cross_section_function
@@ -250,8 +364,18 @@ PartlyKnownCompound nitrogen (
     /*freezing_point_sample_temperature*/ -210.0*si::celcius,
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  -195.8 * si::celcius, // Perry
-    /*simon_glatzel_slope*/               1607e5,
-    /*simon_glatzel_exponent*/            1.7910,
+
+    /*phase*/                             
+    get_simon_glatzel_phase_function(
+            /*triple_point_pressure*/       12.463 * si::kilopascal,
+            /*triple_point_temperature*/    63.15 * si::kelvin,
+            /*critical_point_pressure*/     3.39 * si::megapascal,
+            /*critical_point_temperature*/  126.21 * si::kelvin,
+            /*latent_heat_of_vaporization*/ 198.8 * si::joule/si::gram,
+            /*molar_mass*/                  28.013  * si::gram/si::mole,
+            /*simon_glatzel_slope*/         1607e5 * si::pascal,
+            /*simon_glatzel_exponent*/      1.7910
+        ),
 
     /*molecular_absorption_cross_section*/ 
         field::SpectralFunction<si::area>([](
@@ -512,8 +636,18 @@ PartlyKnownCompound oxygen (
     /*freezing_point_sample_temperature*/ -218.79*si::celcius,
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  -183.0 * si::celcius, // Perry
-    /*simon_glatzel_slope*/               2733e5,
-    /*simon_glatzel_exponent*/            1.7425,
+
+    /*phase*/                             
+    get_simon_glatzel_phase_function(
+            /*triple_point_pressure*/       0.14633 * si::kilopascal,
+            /*triple_point_temperature*/    54.35 * si::kelvin,
+            /*critical_point_pressure*/     5.043 * si::megapascal,
+            /*critical_point_temperature*/  154.59 * si::kelvin,
+            /*latent_heat_of_vaporization*/ 213.1 * si::joule/si::gram,
+            /*molar_mass*/                  31.9988 * si::gram/si::mole,
+            /*simon_glatzel_slope*/         2733e5 * si::pascal,
+            /*simon_glatzel_exponent*/      1.7425
+        ),
 
     /*molecular_absorption_cross_section*/ 
     get_molecular_absorption_cross_section_function
@@ -792,8 +926,18 @@ PartlyKnownCompound carbon_dioxide (
     /*freezing_point_sample_temperature*/ -56.56 * si::celcius,
     /*boiling_point_sample_pressure*/     missing(),
     /*boiling_point_sample_temperature*/  missing(),
-    /*simon_glatzel_slope*/               4000e5,
-    /*simon_glatzel_exponent*/            2.60,
+
+    /*phase*/                             
+    get_simon_glatzel_phase_function(
+            /*triple_point_pressure*/       517e3 * si::pascal,
+            /*triple_point_temperature*/    216.56 * si::kelvin,
+            /*critical_point_pressure*/     7.375 * si::megapascal,
+            /*critical_point_temperature*/  304.13 * si::kelvin,
+            /*latent_heat_of_vaporization*/ 205.0 * si::joule / si::gram,
+            /*molar_mass*/                  44.01 * si::gram/si::mole,
+            /*simon_glatzel_slope*/         4000e5 * si::pascal,
+            /*simon_glatzel_exponent*/      2.60
+        ),
 
     /*molecular_absorption_cross_section*/ 
     get_molecular_absorption_cross_section_function
@@ -971,8 +1115,18 @@ PartlyKnownCompound methane (
     /*freezing_point_sample_temperature*/ -182.46 * si::celcius,
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  -161.4 * si::celcius, // Perry
-    /*simon_glatzel_slope*/               2080e5,
-    /*simon_glatzel_exponent*/            1.698,
+    
+    /*phase*/                             
+    get_simon_glatzel_phase_function(
+            /*triple_point_pressure*/       11.696 * si::kilopascal,
+            /*triple_point_temperature*/    90.694 * si::kelvin,
+            /*critical_point_pressure*/     4.60 * si::megapascal,
+            /*critical_point_temperature*/  190.56 * si::kelvin,
+            /*latent_heat_of_vaporization*/ 510.83 * si::joule/si::gram,
+            /*molar_mass*/                  16.043 * si::gram/si::mole,
+            /*simon_glatzel_slope*/         2080e5 * si::pascal,
+            /*simon_glatzel_exponent*/      1.698
+        ),
 
     /*molecular_absorption_cross_section*/ 
     get_molecular_absorption_cross_section_function
@@ -1202,8 +1356,18 @@ PartlyKnownCompound argon (
     /*freezing_point_sample_temperature*/ -189.36*si::celcius,
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  -185.7*si::celcius,
-    /*simon_glatzel_slope*/               2114e5,
-    /*simon_glatzel_exponent*/            1.593,
+
+    /*phase*/                             
+    get_simon_glatzel_phase_function(
+            /*triple_point_pressure*/       68.95 * si::kilopascal,
+            /*triple_point_temperature*/    83.8058 * si::kelvin,
+            /*critical_point_pressure*/     4.898* si::megapascal,
+            /*critical_point_temperature*/  150.87 * si::kelvin,
+            /*latent_heat_of_vaporization*/ 161.0 * si::joule/si::gram,
+            /*molar_mass*/                  39.948 * si::gram/si::mole,
+            /*simon_glatzel_slope*/         2114e5 * si::pascal,
+            /*simon_glatzel_exponent*/      1.593
+        ),
     
     /*molecular_absorption_cross_section*/ 1e-35*si::meter2,
 
@@ -1377,8 +1541,18 @@ PartlyKnownCompound helium (
     /*freezing_point_sample_temperature*/ 0.92778 * si::kelvin,
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  -268.9 * si::celcius, // Perry
-    /*simon_glatzel_slope*/               50.96e5,
-    /*simon_glatzel_exponent*/            1.5602,
+    
+    /*phase*/                             
+    get_simon_glatzel_phase_function(
+            /*triple_point_pressure*/       5.048e3 * si::pascal,
+            /*triple_point_temperature*/    2.1768 * si::kelvin,
+            /*critical_point_pressure*/     0.227 * si::megapascal,
+            /*critical_point_temperature*/  5.19 * si::kelvin,
+            /*latent_heat_of_vaporization*/ 20.7 * si::joule / si::gram,
+            /*molar_mass*/                  4.0026 * si::gram/si::mole,
+            /*simon_glatzel_slope*/         50.96e5 * si::pascal,
+            /*simon_glatzel_exponent*/      1.5602
+        ),
 
     /*molecular_absorption_cross_section*/ spectral_invariant(1e-35* si::meter2),
 
@@ -1533,9 +1707,19 @@ PartlyKnownCompound hydrogen (
     /*freezing_point_sample_temperature*/ -259.198*si::celcius,
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  -252.7 * si::celcius, // Perry
-    /*simon_glatzel_slope*/               274.22e5,
-    /*simon_glatzel_exponent*/            1.74407,
-
+    
+    /*phase*/                             
+    get_simon_glatzel_phase_function(
+            /*triple_point_pressure*/       7.042 * si::kilopascal,
+            /*triple_point_temperature*/    13.8 * si::kelvin,
+            /*critical_point_pressure*/     1.293 *  si::megapascal,
+            /*critical_point_temperature*/  32.97 * si::kelvin,
+            /*latent_heat_of_vaporization*/ 445.0 * si::joule/si::gram,
+            /*molar_mass*/                  2.016   * si::gram/si::mole,
+            /*simon_glatzel_slope*/         274.22e5 * si::pascal,
+            /*simon_glatzel_exponent*/      1.74407
+        ),
+    
     /*molecular_absorption_cross_section*/ 
     get_molecular_absorption_cross_section_function
         ( 1.0/si::meter, si::meter2,
@@ -1717,9 +1901,19 @@ PartlyKnownCompound ammonia (
     /*freezing_point_sample_temperature*/ -77.65*si::celcius,
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  -33.4*si::celcius, // Perry
-    /*simon_glatzel_slope*/               5270e5,
-    /*simon_glatzel_exponent*/            4.3,
-
+    
+    /*phase*/                             
+    get_simon_glatzel_phase_function(
+            /*triple_point_pressure*/       6.060e3 * si::pascal,
+            /*triple_point_temperature*/    195.30 * si::kelvin,
+            /*critical_point_pressure*/     11.357*si::megapascal,
+            /*critical_point_temperature*/  405.56 * si::kelvin,
+            /*latent_heat_of_vaporization*/ 23.33*si::kilojoule/(17.031*si::gram),
+            /*molar_mass*/                  17.031 * si::gram/si::mole,
+            /*simon_glatzel_slope*/         5270e5 * si::pascal,
+            /*simon_glatzel_exponent*/      4.3
+        ),
+    
     /*molecular_absorption_cross_section*/ 
     get_molecular_absorption_cross_section_function
         ( 1.0/si::meter, si::meter2,
@@ -1894,9 +2088,8 @@ PartlyKnownCompound ozone (
     /*freezing_point_sample_temperature*/ -193.0*si::celcius,
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  -112.0 * si::celcius, // Perry
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ 
     get_molecular_absorption_cross_section_function
         ( 1.0/si::meter, si::meter2,
@@ -2009,9 +2202,8 @@ PartlyKnownCompound nitrous_oxide (
     /*freezing_point_sample_temperature*/ -102.3*si::celcius, // Perry
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  -90.7 * si::celcius,// Perry
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ 
     get_molecular_absorption_cross_section_function
         ( 1.0/si::meter, si::meter2,
@@ -2128,9 +2320,8 @@ PartlyKnownCompound  sulfur_dioxide (
     /*freezing_point_sample_temperature*/ -75.45 * si::celcius, // Perry
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  -10.02*si::celcius,
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ 
     get_molecular_absorption_cross_section_function
         ( 1.0/si::meter, si::meter2,
@@ -2266,11 +2457,10 @@ PartlyKnownCompound  sulfur_dioxide (
     /*triple_point_temperature*/          182.34 * si::kelvin,
     /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ -163.6*si::celcius,
-        /*boiling_point_sample_pressure*/     missing(),
-        /*boiling_point_sample_temperature*/  missing(),
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
+    /*boiling_point_sample_pressure*/     missing(),
+    /*boiling_point_sample_temperature*/  missing(),
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ 
     get_molecular_absorption_cross_section_function
         ( 1.0/si::meter, si::meter2,
@@ -2383,9 +2573,8 @@ PartlyKnownCompound carbon_monoxide (
     /*freezing_point_sample_temperature*/ -205.02*si::celcius,
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  -192.0 * si::celcius,// Perry
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ 
     get_molecular_absorption_cross_section_function
         ( 1.0/si::meter, si::meter2,
@@ -2614,9 +2803,8 @@ PartlyKnownCompound ethane (
     /*freezing_point_sample_temperature*/ -183.79 * si::celcius, 
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  -88.6 * si::celcius, // Perry
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ 
     get_molecular_absorption_cross_section_function
         ( 1.0/si::meter, si::meter2,
@@ -2757,9 +2945,19 @@ PartlyKnownCompound hydrogen_cyanide (
     /*freezing_point_sample_temperature*/ -13.29 * si::celcius,
     /*boiling_point_sample_pressure*/     missing(),
     /*boiling_point_sample_temperature*/  missing(),
-    /*simon_glatzel_slope*/               3080e5,
-    /*simon_glatzel_exponent*/            3.6,
-
+    
+    /*phase*/                             
+    get_simon_glatzel_phase_function(
+            /*triple_point_pressure*/       0.153e3 * si::pascal,
+            /*triple_point_temperature*/    259.7 * si::kelvin,
+            /*critical_point_pressure*/     5.4 * si::megapascal,
+            /*critical_point_temperature*/  456.65 * si::kelvin,
+            /*latent_heat_of_vaporization*/ 6027.0*si::calorie/(27.026 * si::gram), // Perry
+            /*molar_mass*/                  27.026 * si::gram/si::mole,
+            /*simon_glatzel_slope*/         3080e5 * si::pascal,
+            /*simon_glatzel_exponent*/      3.6
+        ),
+    
     /*molecular_absorption_cross_section*/ 
     get_molecular_absorption_cross_section_function
         ( 1.0/si::meter, si::meter2,
@@ -2873,9 +3071,19 @@ PartlyKnownCompound ethanol (
     /*freezing_point_sample_temperature*/ -114.14 * si::celcius,
     /*boiling_point_sample_pressure*/     missing(),
     /*boiling_point_sample_temperature*/  missing(),
-    /*simon_glatzel_slope*/               10600e5,
-    /*simon_glatzel_exponent*/            1.61,
-
+    
+    /*phase*/                             
+    get_simon_glatzel_phase_function(
+            /*triple_point_pressure*/       0.00043 * si::pascal,  // wikipedia data page
+            /*triple_point_temperature*/    150.0 * si::kelvin,  // wikipedia data page
+            /*critical_point_pressure*/     6.25 * si::megapascal,
+            /*critical_point_temperature*/  351.44 * si::kelvin,
+            /*latent_heat_of_vaporization*/ 42.32 * si::kilojoule/(46.068*si::gram), 
+            /*molar_mass*/                  46.068 * si::gram/si::mole,
+            /*simon_glatzel_slope*/         10600e5 * si::pascal,
+            /*simon_glatzel_exponent*/      1.61
+        ),
+    
     /*molecular_absorption_cross_section*/ missing(),
 
     /*gas*/
@@ -2993,16 +3201,15 @@ PartlyKnownCompound formaldehyde (
     /*critical_point_compressibility*/    missing(),
 
     /*latent_heat_of_vaporization*/       23.3 * si::kilojoule/(30.026*si::gram),//pubchem
-    /*latent_heat_of_fusion*/             missing(),
+    /*latent_heat_of_fusion*/             7.53 * si::kilojoule/(30.026*si::gram),// Vasil'ev et al. (1998)
     /*triple_point_pressure*/             missing(), //71549032.0 * si::pascal, // unverified
     /*triple_point_temperature*/          155.10 * si::kelvin,
     /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ 181.0 * si::kelvin,
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  -21.0 * si::celcius, // Perry
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ 
     get_molecular_absorption_cross_section_function
         ( 1.0/si::meter, si::meter2,
@@ -3116,9 +3323,8 @@ PartlyKnownCompound formic_acid (
     /*freezing_point_sample_temperature*/ 8.3 * si::celcius,
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  100.8 * si::celcius, // Perry
-    /*simon_glatzel_slope*/               4100e5,
-    /*simon_glatzel_exponent*/            5.2,
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ missing(),
 
     /*gas*/
@@ -3230,9 +3436,8 @@ PartlyKnownCompound perflouromethane(
     /*freezing_point_sample_temperature*/ -183.60*si::celcius,
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  -128.05*si::celcius,
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ 
     get_molecular_absorption_cross_section_function
         ( 1.0/si::meter, si::meter2,
@@ -3354,9 +3559,8 @@ PartlyKnownCompound benzene (
     /*freezing_point_sample_temperature*/ 5.49 * si::celcius, 
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  80.1 * si::celcius, // Perry
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ 
     get_molecular_absorption_cross_section_function
         ( 1.0/si::meter, si::meter2,
@@ -3495,10 +3699,8 @@ PartlyKnownCompound pyrimidine (
     /*freezing_point_sample_temperature*/ 293.0 * si::kelvin, // wikipedia
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  397.0 * si::kelvin, // wikipedia
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
-
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ missing(),
 
     /*gas*/
@@ -3580,9 +3782,8 @@ PartlyKnownCompound  halite (
     /*freezing_point_sample_temperature*/ 800.7*si::celcius,
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  1413.0 * si::celcius, // Perry
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
     
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ missing(),
 
     /*gas*/
@@ -3691,9 +3892,8 @@ PartlyKnownCompound  corundum (
     /*freezing_point_sample_temperature*/ 2000.0*si::celcius, // Perry
     /*boiling_point_sample_pressure*/     si::atmosphere,     // Perry
     /*boiling_point_sample_temperature*/  2210.0*si::celcius, // Perry
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ missing(),
 
     /*gas*/
@@ -3795,9 +3995,8 @@ PartlyKnownCompound  apatite (
     /*freezing_point_sample_temperature*/ missing(),
     /*boiling_point_sample_pressure*/     missing(),
     /*boiling_point_sample_temperature*/  missing(),
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ missing(),
 
     /*gas*/
@@ -3877,9 +4076,52 @@ PartlyKnownCompound carbon (
     /*freezing_point_sample_temperature*/ 3500.0 *si::celcius, // Perry, lower bound, for both forms
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  4200.0 *si::celcius, // Perry, lower bound, for both forms
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
+    
+    /*phase*/
+    field::StateFunction<int>([]
+            (const si::pressure pressure, 
+             const si::temperature temperature)
+            {
+                const double supercritical = -3;
+                const double vapor = -2;
+                const double liquid = -1;
+                const double graphite = 0;
+                const double diamond = 1;
+                const double p = pressure / si::pascal;
+                const double t = temperature / si::kelvin;
+                const     double Ru(8.3144598);           // universal gas constant
+                const     double M (0.012);               // molar mass, kg/mol
+                const     double Lv(29650000);            // specific latent heat of vaporization (J/kg)
+                const     double p0(0.2e6);               // triple point pressure (Pa)
+                const     double t0(4600);                // triple point temperature (K)
+                constexpr double R (Ru/M);                // individual gas constant
+                constexpr double mv(-R/Lv);               // slope of clapeyron equation for vaporus
+                constexpr double bv(1/t0 - mv * std::log(p0)); // intercept for clapeyron equation for vaporus
+                const     double ml(1e-3);                // slope of clapeyron equation repurposed for liquidus, estimated from phase diagram
+                const     double bl(-3.411e-5);           // intercept for clapeyron equation repurposed for liquidus, estimted from phase diagram
+                if ( t > 1/(mv*std::log(p)+bv) )
+                {
+                    if (t > 6810 && p > 2.2e8)
+                    {
+                        return supercritical; // based on Leider (1973)
+                    }
+                    return vapor;
+                }
+                else if ( t < t0 && p < 1e10 )
+                {
+                    return graphite;
+                }
+                else if ( t > 1/(ml*std::log(p)+bl) )
+                {
+                    return liquid;
+                }
+                else
+                {
+                    return diamond;
+                }
+            }
+        ),
     /*molecular_absorption_cross_section*/ missing(),
 
     /*gas*/
@@ -4033,9 +4275,8 @@ PartlyKnownCompound  calcite (
     /*freezing_point_sample_temperature*/ 823.0 * si::celcius, // for calcite, 1339 for aragonite
     /*boiling_point_sample_pressure*/     missing(),
     /*boiling_point_sample_temperature*/  missing(),
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ missing(),
 
     /*gas*/
@@ -4161,9 +4402,8 @@ PartlyKnownCompound  quartz (
     /*freezing_point_sample_temperature*/ 1425.0 * si::celcius, // Perry
     /*boiling_point_sample_pressure*/     si::atmosphere, 
     /*boiling_point_sample_temperature*/  2230.0 * si::celcius, // Perry
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ missing(),
 
     /*gas*/
@@ -4364,9 +4604,8 @@ PartlyKnownCompound  orthoclase (
     /*freezing_point_sample_temperature*/ 1170.0*si::celcius, // Perry
     /*boiling_point_sample_pressure*/     missing(),
     /*boiling_point_sample_temperature*/  missing(),
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ missing(),
 
     /*gas*/
@@ -4450,9 +4689,8 @@ PartlyKnownCompound andesine (
     /*freezing_point_sample_temperature*/ 1551.0 * si::celcius, // Perry, for anothite
     /*boiling_point_sample_pressure*/     missing(),
     /*boiling_point_sample_temperature*/  missing(),
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ missing(),
 
     /*gas*/
@@ -4546,9 +4784,8 @@ PartlyKnownCompound augite (
     /*freezing_point_sample_temperature*/ 984.0*si::celcius, // for Basalt, http://www.minsocam.org/msa/collectors_corner/arc/tempmagmas.htm
     /*boiling_point_sample_pressure*/     missing(),
     /*boiling_point_sample_temperature*/  missing(),
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ missing(),
 
     /*gas*/
@@ -4639,9 +4876,8 @@ PartlyKnownCompound forsterite (
     /*freezing_point_sample_temperature*/ missing(),
     /*boiling_point_sample_pressure*/     missing(),
     /*boiling_point_sample_temperature*/  missing(),
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ missing(),
 
     /*gas*/
@@ -4729,9 +4965,8 @@ PartlyKnownCompound  goethite (
     /*freezing_point_sample_temperature*/ missing(),
     /*boiling_point_sample_pressure*/     missing(),
     /*boiling_point_sample_temperature*/  missing(),
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ missing(),
 
     /*gas*/
@@ -4816,9 +5051,8 @@ PartlyKnownCompound  pyrite (
     /*freezing_point_sample_temperature*/ 1180.0 * si::celcius, // new world encyclopedia
     /*boiling_point_sample_pressure*/     missing(),
     /*boiling_point_sample_temperature*/  missing(),
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ missing(),
 
     /*gas*/
@@ -4902,9 +5136,8 @@ PartlyKnownCompound hematite (
     /*freezing_point_sample_temperature*/ 1560.0 * si::celcius, // Perry
     /*boiling_point_sample_pressure*/     missing(),
     /*boiling_point_sample_temperature*/  missing(),
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ missing(),
 
     /*gas*/
@@ -4998,9 +5231,8 @@ PartlyKnownCompound  gold (
     /*freezing_point_sample_temperature*/ 1064.180*si::celcius,
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  3243.0 * si::kelvin, // wikipedia
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ missing(),
 
     /*gas*/
@@ -5109,9 +5341,8 @@ PartlyKnownCompound  silver (
     /*freezing_point_sample_temperature*/ 961.78*si::celcius,
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  2435.0 * si::kelvin, // wikipedia
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ missing(),
 
     /*gas*/
@@ -5219,9 +5450,8 @@ PartlyKnownCompound  copper (
     /*freezing_point_sample_temperature*/ 1084.62*si::celcius,
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  2835 * si::kelvin, // wikipedia
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ missing(),
 
     /*gas*/
@@ -5330,9 +5560,8 @@ PartlyKnownCompound  magnetite (
     /*freezing_point_sample_temperature*/ 1538.0 * si::celcius, // Perry
     /*boiling_point_sample_pressure*/     missing(),
     /*boiling_point_sample_temperature*/  missing(),
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ missing(),
 
     /*gas*/
@@ -5426,9 +5655,8 @@ PartlyKnownCompound chalcocite (
     /*freezing_point_sample_temperature*/ 1130.0 * si::celcius, // wikipedia
     /*boiling_point_sample_pressure*/     missing(),
     /*boiling_point_sample_temperature*/  missing(),
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ missing(),
 
     /*gas*/
@@ -5533,9 +5761,8 @@ PartlyKnownCompound  chalcopyrite (
     /*freezing_point_sample_temperature*/ missing(),
     /*boiling_point_sample_pressure*/     missing(),
     /*boiling_point_sample_temperature*/  missing(),
-    /*simon_glatzel_slope*/               missing(),
-    /*simon_glatzel_exponent*/            missing(),
 
+    /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ missing(),
 
     /*gas*/

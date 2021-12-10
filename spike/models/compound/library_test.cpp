@@ -13,6 +13,7 @@ TEST_CASE( "CompletedCompound order of magnitude", "[field]" ) {
         COMPLETED_COMPOUNDS_STP_VALID()
         for (float p = 1.0; p <= 100000000.0; p*=10.0)
         {
+            // COMPLETED_COMPOUNDS_VALID(0.0*si::celcius, p*si::pascal) // absolute zero
             COMPLETED_COMPOUNDS_VALID(0.0*si::celcius, p*si::pascal) // standard temperature
             COMPLETED_COMPOUNDS_VALID(20.0*si::celcius, p*si::pascal) // room temperature
             // COMPLETED_COMPOUNDS_VALID(100.0*si::celcius, p*si::pascal) // boiling point of water at standard pressure

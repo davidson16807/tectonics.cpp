@@ -41,8 +41,7 @@ namespace compound
 		out += "Freezing Point Sample Temperature:   " + field::to_string(compound.freezing_point_sample_temperature) + "\n";
 		out += "Boiling Point Sample Pressure:       " + field::to_string(compound.boiling_point_sample_pressure)     + "\n";
 		out += "Boiling Point Sample Temperature:    " + field::to_string(compound.boiling_point_sample_temperature)  + "\n";
-		out += "Simon Glatzel Slope:                 " + field::to_string(compound.simon_glatzel_slope)               + "\n";
-		out += "Simon Glatzel Exponent:              " + field::to_string(compound.simon_glatzel_exponent)            + "\n";
+		out += "Phase:                               " + field::to_string(compound.phase, field::StateParameters(stp.pressure, stp.temperature)) + "\n";
         out += "\n";
 		out += "Molecular Absorption Cross Section:  " + field::to_string(compound.molecular_absorption_cross_section, field::SpectralParameters(nlo, nhi, stp.pressure, stp.temperature)) + "\n";
 		out += "Gas:"    + phase::to_string(compound.gas,    samples.gas,    gas_spectrum   );

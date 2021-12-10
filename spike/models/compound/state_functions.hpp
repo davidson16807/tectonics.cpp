@@ -4,6 +4,7 @@
 #include <math/lerp.hpp>
 #include <units/si.hpp>
 
+#include "property/phase.hpp"
 #include "property/reflectance.hpp"
 
 #include "field/state/OptionalStateField.hpp"
@@ -25,6 +26,26 @@ namespace compound {
              const si::temperature T)
             {
                 return value;
+            }
+        );
+    }
+
+    field::StateFunction<int> get_simon_glatzel_phase_function(
+        const si::pressure        p0, // triple point pressure
+        const si::temperature     t0, // triple point temperature
+        const si::pressure        pc, // critical point pressure
+        const si::temperature     tc, // critical point temperature
+        const si::specific_energy L,  // latent heat of vaporization at boiling point
+        const si::molar_mass      M,  // molar mass
+        const si::pressure        a,  // simon glatzel slope
+        const float               c   // simon glatzel exponent
+    ){
+        return field::StateFunction<int>(
+            [p0, t0, pc, tc, L,  M, a, c]
+            (const si::pressure p, 
+             const si::temperature T)
+            {
+                return property::get_simon_glatzel_phase(p, T, p0, t0, pc, tc, L,  M, a, c);
             }
         );
     }

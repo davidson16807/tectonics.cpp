@@ -34,8 +34,7 @@ TEST_CASE( "CompletedCompound to_string() appreciable difference preservation", 
 	compound::CompletedCompound nudge_freezing_point_sample_temperature  = compound::fallback::water; nudge_freezing_point_sample_temperature  .freezing_point_sample_temperature  = 1.01 * nudge_freezing_point_sample_temperature  .freezing_point_sample_temperature  ;
 	compound::CompletedCompound nudge_boiling_point_sample_pressure      = compound::fallback::water; nudge_boiling_point_sample_pressure      .boiling_point_sample_pressure      = 1.01 * nudge_boiling_point_sample_pressure      .boiling_point_sample_pressure      ;
 	compound::CompletedCompound nudge_boiling_point_sample_temperature   = compound::fallback::water; nudge_boiling_point_sample_temperature   .boiling_point_sample_temperature   = 1.01 * nudge_boiling_point_sample_temperature   .boiling_point_sample_temperature   ;
-	compound::CompletedCompound nudge_simon_glatzel_slope                = compound::fallback::water; nudge_simon_glatzel_slope                .simon_glatzel_slope                = 1.01 * nudge_simon_glatzel_slope                .simon_glatzel_slope                .value();
-	compound::CompletedCompound nudge_simon_glatzel_exponent             = compound::fallback::water; nudge_simon_glatzel_exponent             .simon_glatzel_exponent             = 1.01 * nudge_simon_glatzel_exponent             .simon_glatzel_exponent             .value();
+	compound::CompletedCompound nudge_phase                              = compound::fallback::water; nudge_phase                              .phase                              = 1    + nudge_phase                              .phase                              (compound::field::StateParameters());
 	compound::CompletedCompound nudge_molecular_absorption_cross_section = compound::fallback::water; nudge_molecular_absorption_cross_section .molecular_absorption_cross_section = 1e-20 * si::meter2;
 	compound::CompletedCompound nudge_solid_first                        = compound::fallback::water; nudge_solid_first.solids[0]              .density                            = 1.01 * nudge_solid_first.solids[0]              .density                            (compound::field::StateParameters());
 	compound::CompletedCompound nudge_solid_last                         = compound::fallback::water; nudge_solid_last.solids[nudge_solid_last.solids.size()-1].density            = 1.01 * nudge_solid_last.solids[nudge_solid_last.solids.size()-1].density            (compound::field::StateParameters());
@@ -61,13 +60,11 @@ TEST_CASE( "CompletedCompound to_string() appreciable difference preservation", 
 		CHECK( compound::to_string(nudge_freezing_point_sample_temperature ) != compound::to_string(compound::fallback::water) ); 
 		CHECK( compound::to_string(nudge_boiling_point_sample_pressure     ) != compound::to_string(compound::fallback::water) ); 
 		CHECK( compound::to_string(nudge_boiling_point_sample_temperature  ) != compound::to_string(compound::fallback::water) ); 
-		CHECK( compound::to_string(nudge_simon_glatzel_slope               ) != compound::to_string(compound::fallback::water) ); 
-		CHECK( compound::to_string(nudge_simon_glatzel_exponent            ) != compound::to_string(compound::fallback::water) ); 
+		CHECK( compound::to_string(nudge_phase                             ) != compound::to_string(compound::fallback::water) ); 
 		CHECK( compound::to_string(nudge_molecular_absorption_cross_section) != compound::to_string(compound::fallback::water) ); 
 		CHECK( compound::to_string(nudge_solid_first                       ) != compound::to_string(compound::fallback::water) ); 
 		CHECK( compound::to_string(nudge_solid_last                        ) != compound::to_string(compound::fallback::water) ); 
 		CHECK( compound::to_string(nudge_liquid                            ) != compound::to_string(compound::fallback::water) ); 
 		CHECK( compound::to_string(nudge_gas                               ) != compound::to_string(compound::fallback::water) ); 
-
     }
 }

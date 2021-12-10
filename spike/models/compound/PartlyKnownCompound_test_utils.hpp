@@ -40,8 +40,7 @@ namespace compound
             first.freezing_point_sample_temperature  != second.freezing_point_sample_temperature  ||
             first.boiling_point_sample_pressure      != second.boiling_point_sample_pressure      ||
             first.boiling_point_sample_temperature   != second.boiling_point_sample_temperature   ||
-            first.simon_glatzel_slope                != second.simon_glatzel_slope                ||
-            first.simon_glatzel_exponent             != second.simon_glatzel_exponent             ||
+            first.phase                              != second.phase                              ||
             first.molecular_absorption_cross_section != second.molecular_absorption_cross_section ||
             first.gas                                != second.gas                                ||
             first.liquid                             != second.liquid                             
@@ -76,8 +75,7 @@ namespace compound
             compound.freezing_point_sample_temperature  .index() +
             compound.boiling_point_sample_pressure      .index() +
             compound.boiling_point_sample_temperature   .index() +
-            compound.simon_glatzel_slope                .index() +
-            compound.simon_glatzel_exponent             .index() +
+            compound.phase                              .index() +
             compound.molecular_absorption_cross_section .index() +
             PartlyKnownGas_attribute_index_sum(compound.gas) +
             PartlyKnownLiquid_attribute_index_sum(compound.liquid) ;
@@ -101,8 +99,7 @@ namespace compound
             compound.freezing_point_sample_temperature  .has_value() +
             compound.boiling_point_sample_pressure      .has_value() +
             compound.boiling_point_sample_temperature   .has_value() +
-            compound.simon_glatzel_slope                .has_value() +
-            compound.simon_glatzel_exponent             .has_value() +
+            compound.phase                              .has_value() +
             compound.molecular_absorption_cross_section .has_value() +
             PartlyKnownGas_attribute_known_count(compound.gas) +
             PartlyKnownLiquid_attribute_known_count(compound.liquid) ;
@@ -141,9 +138,8 @@ namespace compound
         /*freezing_point_sample_temperature*/ compound::missing(),
         /*boiling_point_sample_pressure*/     compound::missing(),
         /*boiling_point_sample_temperature*/  compound::missing(),
-        /*simon_glatzel_slope*/               compound::missing(),
-        /*simon_glatzel_exponent*/            compound::missing(),
 
+        /*phase*/                             compound::missing(),
         /*molecular_absorption_cross_section*/ compound::missing(),
 
         /*gas*/
@@ -223,9 +219,8 @@ namespace compound
         /*freezing_point_sample_temperature*/ si::standard_temperature,
         /*boiling_point_sample_pressure*/     si::atmosphere,
         /*boiling_point_sample_temperature*/  100.0*si::celcius,
-        /*simon_glatzel_slope*/               7070e5,
-        /*simon_glatzel_exponent*/            4.46,
 
+        /*phase*/                             0,
         /*molecular_absorption_cross_section*/ 
         get_molecular_absorption_cross_section_function
             ( 1.0/si::meter, si::meter2,
@@ -366,9 +361,8 @@ namespace compound
         /*freezing_point_sample_temperature*/ 0.0*si::celcius,
         /*boiling_point_sample_pressure*/     si::standard_pressure,
         /*boiling_point_sample_temperature*/  100.8 * si::celcius, 
-        /*simon_glatzel_slope*/               1.0,
-        /*simon_glatzel_exponent*/            1.0,
 
+        /*phase*/                             -1,
         /*molecular_absorption_cross_section*/ 1e-25 * si::meter2,
 
         /*gas*/

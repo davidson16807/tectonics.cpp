@@ -18,46 +18,6 @@ namespace compound
 {
 
     /*
-    "BasicPhases" tracks phase ids for phases that commonly occur in compounds.
-
-    Some compounds may have complex phase diagrams with many different 
-    phases of solids (for instance, water ice, silicon, or graphite/diamond)
-    These phases may each carry different properties, and we want to be able to
-    track all these properties if they are available.
-    
-    However the number of phases differs between compounds,
-    so we can't have one attribute within `PartlyKnownCompound` for each phase
-    (e.g. `density_as_solid`, `density_as_iceIX`, etc.)
-    Since most properties are often reported as a single value for each phase 
-    (e.g. density, refractive index) we cannot simply 
-
-    We could get around this problem using polymorphism, 
-    and we tried this initially, but we found that it what we can do with the
-    `PartlyKnownCompound` class. `PartlyKnownCompound` only has mappings to
-    the `CompletedCompound` class, so to have a polymorphic `Water` class
-    for instance we would either have to know the compound entirely,
-    or we'd have to handwave estimates for it that would pollute the 
-    dataset for water that we got from published research, 
-    or we'd have to create a duplicate of the `PartlyKnownCompound` 
-    class just for that polymorphic class.
-
-    Our solution is to index properties in unordered_maps that are hashed 
-    by an id indicating a unique phase for that compound.
-    This leaves the compound free to use however many phases it wants.
-    For practical considerations we limit phases to the number that 
-    can be represented in a uint8, or 256. 
-
-    There are nevertheless phases that frequently occur in compounds,
-    namely a basic solid, a liquid, and a gas. So that's why we have `BasicPhases`.
-    */
-    enum BasicPhases
-    {
-        supercritical,
-        gas,
-        liquid,
-        solid
-    };
-    /*
     `PartlyKnownCompound` stores all the properties of a given compound
     for which some data may be missing. 
 
@@ -137,20 +97,7 @@ namespace compound
         field::OptionalConstantField<si::pressure>        boiling_point_sample_pressure;
         field::OptionalConstantField<si::temperature>     boiling_point_sample_temperature;
 
-        /* 
-        OPTIONAL PHASE CHANGE PROPERTIES
-        These change the behavior of `get_phase_ids_for_pressures_and_temperatures()`,
-        so we include them in `CompletedCompound` rather than map them from 
-        attributes within `PartlyKnownCompound` as per usual. 
-        Please note the presence/absence of values for these parameters 
-        does not indicate missing data. 
-        Some compounds are not known to have supercritical phases,
-        and some compounds legitimately cannot be modeled by simon glatzel parameters.
-        Missing data for these values should be indicated by using the 
-        equivalent optional parameters a `PartlyKnownCompound` object
-        */
-        field::OptionalConstantField<float> simon_glatzel_slope;
-        field::OptionalConstantField<float> simon_glatzel_exponent;
+        field::OptionalStateField<int> phase;
 
         // MISCELLANEOUS PROPERTIES
         field::OptionalSpectralField<si::area> molecular_absorption_cross_section;
@@ -159,8 +106,6 @@ namespace compound
         phase::PartlyKnownGas gas;
         phase::PartlyKnownLiquid liquid;
         std::vector<phase::PartlyKnownSolid> solids;
-
-
 
         PartlyKnownCompound(
             const si::molar_mass molar_mass,
@@ -182,12 +127,11 @@ namespace compound
             const field::OptionalConstantField<si::temperature>   freezing_point_sample_temperature,
             const field::OptionalConstantField<si::pressure>      boiling_point_sample_pressure,
             const field::OptionalConstantField<si::temperature>   boiling_point_sample_temperature,
-            const field::OptionalConstantField<float>             simon_glatzel_slope,
-            const field::OptionalConstantField<float>             simon_glatzel_exponent,
+            const field::OptionalStateField<int>                  phase,
             const field::OptionalSpectralField<si::area>          molecular_absorption_cross_section,
-            const phase::PartlyKnownGas                    gas,
-            const phase::PartlyKnownLiquid                 liquid,
-            const std::vector<phase::PartlyKnownSolid>     solids
+            const phase::PartlyKnownGas                           gas,
+            const phase::PartlyKnownLiquid                        liquid,
+            const std::vector<phase::PartlyKnownSolid>            solids
         ):
             molar_mass                         (molar_mass),
             atoms_per_molecule                 (atoms_per_molecule),
@@ -210,8 +154,7 @@ namespace compound
             freezing_point_sample_temperature  (freezing_point_sample_temperature),
             boiling_point_sample_pressure      (boiling_point_sample_pressure),
             boiling_point_sample_temperature   (boiling_point_sample_temperature),
-            simon_glatzel_slope                (simon_glatzel_slope),
-            simon_glatzel_exponent             (simon_glatzel_exponent),
+            phase                              (phase),
             molecular_absorption_cross_section (molecular_absorption_cross_section),
             gas                                (gas),
             liquid                             (liquid),
@@ -252,10 +195,9 @@ namespace compound
             guess.boiling_point_sample_pressure     = boiling_point_sample_pressure     .value_or(fallback.boiling_point_sample_pressure  );
             guess.boiling_point_sample_temperature  = boiling_point_sample_temperature  .value_or(fallback.boiling_point_sample_temperature);
 
-            // NOTE: we do not populate simon glatzel parameters with fallbacks, 
-            // since they're absence may indicate that the function does not apply
-            // guess.simon_glatzel_slope               = simon_glatzel_slope               .value_or(fallback.simon_glatzel_slope            );
-            // guess.simon_glatzel_exponent            = simon_glatzel_exponent            .value_or(fallback.simon_glatzel_exponent         );
+            // NOTE: we do not populate the `phase` function with fallbacks, 
+            // since the phase function of the fallback may refer to indices that do not exist for the compound
+            // We instead guarantee that the phase function is always populated with a default upon the call to complete().
 
             guess.molecular_absorption_cross_section = molecular_absorption_cross_section.value_or(fallback.molecular_absorption_cross_section);
 
