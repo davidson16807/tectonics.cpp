@@ -431,10 +431,6 @@ PartlyKnownCompound nitrogen (
                 (si::kelvin, si::joule / (28.0134 * si::kilogram * si::kelvin), 
                 281970.0, -12281.0, 248.0, -2.2182, 0.0074902,
                 63.15*si::kelvin, 112.0*si::kelvin), 
-            // get_interpolated_temperature_function
-            //     ( si::kelvin, si::joule/(si::gram * si::kelvin),
-            //       std::vector<double>{63.2,90.0,110.0,120.0},
-            //       std::vector<double>{2.00,2.14,2.743,4.508}),
         /*thermal_conductivity*/                  
             get_dippr_liquid_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin),
@@ -469,13 +465,15 @@ PartlyKnownCompound nitrogen (
         // beta
         phase::PartlyKnownSolid {
             /*specific_heat_capacity*/                   
-                field::StateFunction<si::specific_heat_capacity>([](si::pressure p, si::temperature T){ 
-                    return 926.91*exp(0.0093*(T/si::kelvin))*si::joule/(si::kilogram*si::kelvin);
-                }), // wikipedia
+                get_interpolated_temperature_function
+                    ( si::kelvin, si::joule/(28.013*si::gram * si::kelvin),
+                      std::vector<double>{ 39.0, 60.0, 62.5},
+                      std::vector<double>{37.39,45.64,46.97}), // Manzhelii (1997)
             /*thermal_conductivity*/              
-                field::StateFunction<si::thermal_conductivity>([](si::pressure p, si::temperature T){ 
-                    return 180.2*pow((T/si::kelvin), 0.1041)*si::watt / (si::meter * si::kelvin);
-                }), // wikipedia
+                get_interpolated_temperature_function
+                    ( si::kelvin, si::milliwatt/(si::centimeter * si::kelvin),
+                     std::vector<double>{ 45.0, 57.5}, 
+                     std::vector<double>{ 2.21, 2.09}), // Manzhelii (1997)
             /*dynamic_viscosity*/                 missing(),
                 // field::StateFunction<si::dynamic_viscosity>([](si::pressure p, si::temperature T){ 
                 //     return math::mix(2.5e9, 0.6e9, math::linearstep(45.0, 56.0, T/si::kelvin))*si::pascal*si::second;
@@ -539,14 +537,15 @@ PartlyKnownCompound nitrogen (
         }, 
         // alpha
         phase::PartlyKnownSolid {
-            /*specific_heat_capacity*/                   
-                field::StateFunction<si::specific_heat_capacity>([](si::pressure p, si::temperature T){ 
-                    return 926.91*exp(0.0093*(T/si::kelvin))*si::joule/(si::kilogram*si::kelvin);
-                }), // wikipedia
+                get_interpolated_temperature_function
+                    ( si::kelvin, si::joule/(28.013*si::gram * si::kelvin),
+                      std::vector<double>{0.0,  2.0,  6.0, 10.0, 30.0, 35.3},
+                      std::vector<double>{0.0,0.024,0.907,4.832,34.16,45.53}), // Manzhelli (1997)
             /*thermal_conductivity*/              
-                field::StateFunction<si::thermal_conductivity>([](si::pressure p, si::temperature T){ 
-                    return 180.2*pow((T/si::kelvin), 0.1041)*si::watt / (si::meter * si::kelvin);
-                }), // wikipedia
+                get_interpolated_temperature_function
+                    ( si::kelvin, si::milliwatt/(si::centimeter * si::kelvin),
+                     std::vector<double>{  1.1,  1.5,  2.0,  3.3,   3.9,   4.5,   5.0,   6.0,   7.0,   8.0,   9.0,  14.0,  17.0,  24.0,  30.0,  34.0 }, 
+                     std::vector<double>{17.08,40.27, 84.9,237.1, 238.5, 199.1, 156.3, 87.82, 50.56, 32.55, 22.73,  7.56,  5.26,  3.33,  2.81,  2.66 }), // Manzhelii (1997)
             /*dynamic_viscosity*/                 missing(),
                 // field::StateFunction<si::dynamic_viscosity>([](si::pressure p, si::temperature T){ 
                 //     return math::mix(2.5e9, 0.6e9, math::linearstep(45.0, 56.0, T/si::kelvin))*si::pascal*si::second;
@@ -1027,12 +1026,16 @@ PartlyKnownCompound carbon_dioxide (
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
-            /*specific_heat_capacity*/            state_invariant(47.11 * si::joule / (44.01 * si::gram * si::kelvin)), // wikipedia
+            /*specific_heat_capacity*/            
+                get_interpolated_temperature_function
+                    ( si::kelvin, si::joule/(28.013*si::gram * si::kelvin),
+                     std::vector<double>{0.0,   3.0,  10.0, 40.0, 70.0, 200.0, 215.0}, 
+                     std::vector<double>{0.0,0.0151,0.5883,19.64,33.38, 56.77, 61.90}), // Manzhelii (1997)
             /*thermal_conductivity*/              
                 get_interpolated_temperature_function
-                    (si::kelvin, si::watt / (si::meter * si::kelvin),
-                     std::vector<double>{1.0,  3.0,  20.0, 100.0},              
-                     std::vector<double>{2.0,100.0,  10.0,   0.8}), // Sumarakov (2003), unusual for its variance
+                    ( si::kelvin, si::milliwatt/(si::centimeter * si::kelvin),
+                     std::vector<double>{ 25.0, 40.0, 50.0, 80.0, 120.0, 210.0}, 
+                     std::vector<double>{59.17,27.32,20.24,11.68,  7.79,  4.19}), // Manzhelii (1997)
             /*dynamic_viscosity*/                 state_invariant(1e14 * si::pascal*si::second), // Yamashita (1997) @1 bar, 180K
             /*density*/                           
                 get_interpolated_temperature_function
@@ -2269,8 +2272,16 @@ PartlyKnownCompound nitrous_oxide (
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
-            /*specific_heat_capacity*/            missing(),
-            /*thermal_conductivity*/              missing(),
+            /*specific_heat_capacity*/            
+                get_interpolated_temperature_function
+                    ( si::kelvin, si::joule/(28.013*si::gram * si::kelvin),
+                     std::vector<double>{0.0,   3.0,  10.0, 40.0, 60.0, 150.0, 180.0}, 
+                     std::vector<double>{0.0,0.0189, 0.822,21.65,31.47, 50.70, 58.28}), // Manzhelii (1997)
+            /*thermal_conductivity*/              
+                get_interpolated_temperature_function
+                    ( si::kelvin, si::milliwatt/(si::centimeter * si::kelvin),
+                     std::vector<double>{ 23.0, 30.0, 40.0, 60.0, 120.0, 180.0}, 
+                     std::vector<double>{17.08,40.27, 10.8, 7.89,  4.96,  3.38}), // Manzhelii (1997)
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           state_invariant(1.263 * si::gram/si::centimeter3), // Hudson (2020)
             /*vapor_pressure*/                    
@@ -2679,7 +2690,11 @@ PartlyKnownCompound carbon_monoxide (
                     (si::kelvin, si::joule/(28.010*si::gram*si::kelvin),
                      std::vector<double>{ 63.0,  64.0,  65.0,  66.0,  67.0}, 
                      std::vector<double>{50.10, 50.58, 51.08, 51.58, 52.29}), // Manzhelii (1997)
-            /*thermal_conductivity*/              30.0 * si::milliwatt / (si::centimeter * si::kelvin), // Stachowiak (1998)
+            /*thermal_conductivity*/              
+                get_interpolated_temperature_function
+                    ( si::kelvin, si::milliwatt/(si::centimeter * si::kelvin),
+                     std::vector<double>{22.5, 25.0, 35.0, 45.0, 58.0}, 
+                     std::vector<double>{6.37, 5.69, 4.16, 3.34, 2.62}), // Manzhelii (1997)
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           
                 get_interpolated_temperature_function
