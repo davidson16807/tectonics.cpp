@@ -15,6 +15,7 @@
     {                                                        \
         CHECK(compound.solids[i].thermal_conductivity(si::standard_pressure, si::standard_temperature) / (si::watt/(si::meter * si::kelvin)) < 3000.0); /*based on graphite*/ \
         CHECK(compound.solids[i].vapor_pressure(si::standard_pressure, si::standard_temperature) / si::pascal > 0.001); /*based on phenazine*/ \
+        CHECK(compound.solids[i].specific_heat_capacity(si::standard_pressure, si::standard_temperature) / (si::joule/(si::kilogram * si::kelvin)) > 116.0); /*based on uranium*/ \
     }
 
 #define COMPLETED_COMPOUNDS_STP_VALID() \
@@ -111,7 +112,7 @@
     {\
         CHECK(compound.liquid.specific_heat_capacity(pressure, temperature) / (si::joule/(si::gram*si::kelvin)) < 100.0); /*based on hydrogen*/ \
         CHECK(compound.liquid.specific_heat_capacity(pressure, temperature) / (si::joule/(si::gram*si::kelvin)) > 0.1); /*based on gold*/ \
-        CHECK(compound.liquid.thermal_conductivity(pressure, temperature) / (si::watt / (si::meter * si::kelvin)) < 200.0); /*based on silver*/ \
+        CHECK(compound.liquid.thermal_conductivity(pressure, temperature) / (si::watt / (si::meter * si::kelvin)) < 1000.0); /*based on carbon*/ \
         CHECK(compound.liquid.thermal_conductivity(pressure, temperature) / (si::watt / (si::meter * si::kelvin)) > 0.01); /*based on helium*/ \
         CHECK(compound.liquid.dynamic_viscosity(pressure, temperature) / (si::pascal * si::second) < 1e9); /*based on pitch*/ \
         CHECK(compound.liquid.dynamic_viscosity(pressure, temperature) / (si::pascal * si::second) >= 1e-6); /*based on helium*/ \
@@ -130,7 +131,7 @@
         for (std::size_t i = 0; i < compound.solids.size(); ++i) \
         {                                                        \
             CHECK(compound.solids[i].specific_heat_capacity(pressure, temperature) / (si::joule/(si::kilogram * si::kelvin)) < 30000.0); /*based on hydrogen*/ \
-            CHECK(compound.solids[i].specific_heat_capacity(pressure, temperature) / (si::joule/(si::kilogram * si::kelvin)) > 116.0); /*based on uranium*/ \
+            CHECK(compound.solids[i].specific_heat_capacity(pressure, temperature) / (si::joule/(si::kilogram * si::kelvin)) >= 0.0); /*based on predicted behavior at 0K*/ \
             CHECK(compound.solids[i].thermal_conductivity(pressure, temperature) / (si::watt/(si::meter * si::kelvin)) < 30000.0); /*based on silver at 10K*/ \
             CHECK(compound.solids[i].thermal_conductivity(pressure, temperature) / (si::watt/(si::meter * si::kelvin)) > 0.01); /*based on aerogel*/ \
             CHECK(compound.solids[i].dynamic_viscosity(pressure, temperature) / (si::pascal * si::second) <= 1e24); /*based on granite*/ \

@@ -3083,8 +3083,8 @@ PartlyKnownCompound ethanol (
     /*triple_point_temperature*/          150.0 * si::kelvin,  // wikipedia data page
     /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ -114.14 * si::celcius,
-    /*boiling_point_sample_pressure*/     missing(),
-    /*boiling_point_sample_temperature*/  missing(),
+    /*boiling_point_sample_pressure*/     si::atmosphere,
+    /*boiling_point_sample_temperature*/  352.2 * si::kelvin, // NIST webbook
     
     /*phase*/                             
     get_simon_glatzel_phase_function(
