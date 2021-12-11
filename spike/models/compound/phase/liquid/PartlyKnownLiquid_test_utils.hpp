@@ -6,7 +6,7 @@
 #include "PartlyKnownLiquid.hpp"
 
 compound::phase::PartlyKnownLiquid unknown_liquid {
-    /*specific_heat_capacity*/            std::monostate(),
+    /*isobaric_specific_heat_capacity*/            std::monostate(),
     /*thermal_conductivity*/              std::monostate(),
     /*dynamic_viscosity*/                 std::monostate(),
     /*density*/                           std::monostate(),
@@ -16,7 +16,7 @@ compound::phase::PartlyKnownLiquid unknown_liquid {
     /*extinction_coefficient*/            std::monostate()
 };
 compound::phase::PartlyKnownLiquid molten_silica {
-    /*specific_heat_capacity*/            std::monostate(),
+    /*isobaric_specific_heat_capacity*/            std::monostate(),
     /*thermal_conductivity*/              std::monostate(),
     /*dynamic_viscosity*/                 exp(10.0) * si::poise, // Doremus (2002), at 1400 C
     /*density*/                           2180.0 * si::kilogram/si::meter3, // from Murase and McBirney (1973), for rhyolitic magma
@@ -26,7 +26,7 @@ compound::phase::PartlyKnownLiquid molten_silica {
     /*extinction_coefficient*/            std::monostate()
 };
 compound::phase::PartlyKnownLiquid liquid_nitrogen {
-    /*specific_heat_capacity*/            2.04 * si::kilojoule / (si::kilogram * si::kelvin), // Timmerhaus (1989)
+    /*isobaric_specific_heat_capacity*/            2.04 * si::kilojoule / (si::kilogram * si::kelvin), // Timmerhaus (1989)
     /*thermal_conductivity*/              0.1396 * si::watt / (si::meter * si::kelvin), // Timmerhaus (1989)
     /*dynamic_viscosity*/                 157.9 * si::kilogram / (si::meter * 1e6*si::second), // Timmerhaus (1989)
     /*density*/                           0807.0 * si::kilogram/si::meter3,
@@ -39,7 +39,7 @@ compound::phase::PartlyKnownLiquid liquid_nitrogen {
     /*extinction_coefficient*/            0.0
 };
 compound::phase::PartlyKnownLiquid dummy_liquid {
-    /*specific_heat_capacity*/            1.0 * si::joule / (si::gram * si::kelvin), 
+    /*isobaric_specific_heat_capacity*/            1.0 * si::joule / (si::gram * si::kelvin), 
     /*thermal_conductivity*/              2.0 * si::watt / (si::meter * si::kelvin), 
     /*dynamic_viscosity*/                 3.0 * si::poise, 
     /*density*/                           4.0 * si::kilogram/si::meter3,
@@ -50,7 +50,7 @@ compound::phase::PartlyKnownLiquid dummy_liquid {
 };
 
 compound::phase::PartlyKnownLiquid liquid_ammonia {
-    /*specific_heat_capacity*/            4.700 * si::joule / (si::gram * si::kelvin), // wikipedia
+    /*isobaric_specific_heat_capacity*/            4.700 * si::joule / (si::gram * si::kelvin), // wikipedia
     /*thermal_conductivity*/              std::monostate(),
     /*dynamic_viscosity*/                 std::monostate(),
     /*density*/                           681.97 * si::kilogram / si::meter3,  //encyclopedia.airliquide.com
@@ -63,7 +63,7 @@ compound::phase::PartlyKnownLiquid liquid_ammonia {
 int PartlyKnownLiquid_attribute_index_sum(const compound::phase::PartlyKnownLiquid& liquid)
 {
     return
-        liquid.specific_heat_capacity          .index() +
+        liquid.isobaric_specific_heat_capacity          .index() +
         liquid.thermal_conductivity            .index() +
         liquid.dynamic_viscosity               .index() +
         liquid.density                         .index() +
@@ -75,7 +75,7 @@ int PartlyKnownLiquid_attribute_index_sum(const compound::phase::PartlyKnownLiqu
 int PartlyKnownLiquid_attribute_known_count(const compound::phase::PartlyKnownLiquid& liquid)
 {
     return
-        liquid.specific_heat_capacity          .has_value() +
+        liquid.isobaric_specific_heat_capacity          .has_value() +
         liquid.thermal_conductivity            .has_value() +
         liquid.dynamic_viscosity               .has_value() +
         liquid.density                         .has_value() +
@@ -92,14 +92,14 @@ namespace phase {
     bool operator==(const PartlyKnownLiquid& first, const PartlyKnownLiquid& second)
     {
         return 
-            first.specific_heat_capacity == second.specific_heat_capacity &&
-            first.thermal_conductivity   == second.thermal_conductivity   &&
-            first.dynamic_viscosity      == second.dynamic_viscosity      &&
-            first.density                == second.density                &&
-            first.vapor_pressure         == second.vapor_pressure         &&
-            first.surface_tension        == second.surface_tension        &&
-            first.refractive_index       == second.refractive_index       &&
-            first.extinction_coefficient == second.extinction_coefficient;
+            first.isobaric_specific_heat_capacity == second.isobaric_specific_heat_capacity &&
+            first.thermal_conductivity            == second.thermal_conductivity            &&
+            first.dynamic_viscosity               == second.dynamic_viscosity               &&
+            first.density                         == second.density                         &&
+            first.vapor_pressure                  == second.vapor_pressure                  &&
+            first.surface_tension                 == second.surface_tension                 &&
+            first.refractive_index                == second.refractive_index                &&
+            first.extinction_coefficient          == second.extinction_coefficient;         
     }
 
     bool operator!=(const PartlyKnownLiquid& first, const PartlyKnownLiquid& second)

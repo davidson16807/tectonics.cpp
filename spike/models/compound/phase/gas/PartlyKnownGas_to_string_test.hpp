@@ -24,18 +24,18 @@ TEST_CASE( "PartlyKnownGas to_string() purity", "[field]" ) {
 }
 
 TEST_CASE( "PartlyKnownGas to_string() appreciable difference preservation", "[field]" ) {
-	compound::phase::PartlyKnownGas nudge_specific_heat_capacity = dummy_gas; nudge_specific_heat_capacity .specific_heat_capacity = std::monostate();
-	compound::phase::PartlyKnownGas nudge_thermal_conductivity   = dummy_gas; nudge_thermal_conductivity   .thermal_conductivity   = std::monostate();
-	compound::phase::PartlyKnownGas nudge_dynamic_viscosity      = dummy_gas; nudge_dynamic_viscosity      .dynamic_viscosity      = std::monostate();
-	compound::phase::PartlyKnownGas nudge_density                = dummy_gas; nudge_density                .density                = std::monostate();
-	compound::phase::PartlyKnownGas nudge_refractive_index       = dummy_gas; nudge_refractive_index       .refractive_index       = std::monostate();
+	compound::phase::PartlyKnownGas nudge_isobaric_specific_heat_capacity = dummy_gas; nudge_isobaric_specific_heat_capacity .isobaric_specific_heat_capacity = std::monostate();
+	compound::phase::PartlyKnownGas nudge_thermal_conductivity            = dummy_gas; nudge_thermal_conductivity            .thermal_conductivity            = std::monostate();
+	compound::phase::PartlyKnownGas nudge_dynamic_viscosity               = dummy_gas; nudge_dynamic_viscosity               .dynamic_viscosity               = std::monostate();
+	compound::phase::PartlyKnownGas nudge_density                         = dummy_gas; nudge_density                         .density                         = std::monostate();
+	compound::phase::PartlyKnownGas nudge_refractive_index                = dummy_gas; nudge_refractive_index                .refractive_index                = std::monostate();
 	
 	SECTION("Appreciable differences in input are preserved within output")
 	{
-    	CHECK(compound::phase::to_string(nudge_specific_heat_capacity) != compound::phase::to_string(dummy_gas));
-		CHECK(compound::phase::to_string(nudge_thermal_conductivity  ) != compound::phase::to_string(dummy_gas));
-		CHECK(compound::phase::to_string(nudge_dynamic_viscosity     ) != compound::phase::to_string(dummy_gas));
-		CHECK(compound::phase::to_string(nudge_density               ) != compound::phase::to_string(dummy_gas));
-		CHECK(compound::phase::to_string(nudge_refractive_index      ) != compound::phase::to_string(dummy_gas));
+    	CHECK(compound::phase::to_string(nudge_isobaric_specific_heat_capacity) != compound::phase::to_string(dummy_gas));
+		CHECK(compound::phase::to_string(nudge_thermal_conductivity  )          != compound::phase::to_string(dummy_gas));
+		CHECK(compound::phase::to_string(nudge_dynamic_viscosity     )          != compound::phase::to_string(dummy_gas));
+		CHECK(compound::phase::to_string(nudge_density               )          != compound::phase::to_string(dummy_gas));
+		CHECK(compound::phase::to_string(nudge_refractive_index      )          != compound::phase::to_string(dummy_gas));
     }
 }

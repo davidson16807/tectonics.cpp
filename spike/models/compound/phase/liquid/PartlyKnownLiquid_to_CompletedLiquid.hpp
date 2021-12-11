@@ -16,7 +16,7 @@ namespace phase {
     CompletedLiquid complete(const PartlyKnownLiquid& known, const CompletedLiquid& fallback)
     {
         return CompletedLiquid{
-            field::complete(known.specific_heat_capacity,           fallback.specific_heat_capacity           ),
+            field::complete(known.isobaric_specific_heat_capacity,  fallback.isobaric_specific_heat_capacity  ),
             field::complete(known.thermal_conductivity,             fallback.thermal_conductivity             ),
             field::complete(known.dynamic_viscosity,                fallback.dynamic_viscosity                ),
             field::complete(known.density,                          fallback.density                          ),

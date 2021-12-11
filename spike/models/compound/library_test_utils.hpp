@@ -1,8 +1,8 @@
 #pragma once
 
 #define COMPLETED_COMPOUND_STP_VALID(compound) \
-    CHECK(compound.gas.specific_heat_capacity(si::standard_pressure, si::standard_temperature) / (si::joule / (si::kilogram * si::kelvin)) > 3e2 ); /*based on argon*/ \
-    CHECK(compound.gas.specific_heat_capacity(si::standard_pressure, si::standard_temperature) / (si::joule / (si::kilogram * si::kelvin)) < 1e5 ); /*based on hydrogen*/ \
+    CHECK(compound.gas.isobaric_specific_heat_capacity(si::standard_pressure, si::standard_temperature) / (si::joule / (si::kilogram * si::kelvin)) > 3e2 ); /*based on argon*/ \
+    CHECK(compound.gas.isobaric_specific_heat_capacity(si::standard_pressure, si::standard_temperature) / (si::joule / (si::kilogram * si::kelvin)) < 1e5 ); /*based on hydrogen*/ \
     CHECK(compound.gas.thermal_conductivity(si::standard_pressure, si::standard_temperature) / (si::watt / (si::meter * si::kelvin)) > 0.003); /*based on xenon*/ \
     CHECK(compound.gas.thermal_conductivity(si::standard_pressure, si::standard_temperature) / (si::watt / (si::meter * si::kelvin)) < 0.3); /*based on hydrogen*/ \
     CHECK(compound.gas.dynamic_viscosity(si::standard_pressure, si::standard_temperature) / (si::pascal * si::second) < 3e-5); /*based on argon*/ \
@@ -15,7 +15,7 @@
     {                                                        \
         CHECK(compound.solids[i].thermal_conductivity(si::standard_pressure, si::standard_temperature) / (si::watt/(si::meter * si::kelvin)) < 3000.0); /*based on graphite*/ \
         CHECK(compound.solids[i].vapor_pressure(si::standard_pressure, si::standard_temperature) / si::pascal > 0.001); /*based on phenazine*/ \
-        CHECK(compound.solids[i].specific_heat_capacity(si::standard_pressure, si::standard_temperature) / (si::joule/(si::kilogram * si::kelvin)) > 116.0); /*based on uranium*/ \
+        CHECK(compound.solids[i].isobaric_specific_heat_capacity(si::standard_pressure, si::standard_temperature) / (si::joule/(si::kilogram * si::kelvin)) > 116.0); /*based on uranium*/ \
     }
 
 #define COMPLETED_COMPOUNDS_STP_VALID() \
@@ -97,8 +97,8 @@
     CHECK(compound.molecular_absorption_cross_section(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), pressure, temperature) / (si::meter2) < 1e-15); \
     if(compound.phase(pressure, temperature) == -2)\
     {\
-        CHECK(compound.gas.specific_heat_capacity(si::standard_pressure, si::standard_temperature) / (si::joule / (si::kilogram * si::kelvin)) > 3e2 ); /*based on argon*/ \
-        CHECK(compound.gas.specific_heat_capacity(si::standard_pressure, si::standard_temperature) / (si::joule / (si::kilogram * si::kelvin)) < 1e5 ); /*based on hydrogen*/ \
+        CHECK(compound.gas.isobaric_specific_heat_capacity(si::standard_pressure, si::standard_temperature) / (si::joule / (si::kilogram * si::kelvin)) > 3e2 ); /*based on argon*/ \
+        CHECK(compound.gas.isobaric_specific_heat_capacity(si::standard_pressure, si::standard_temperature) / (si::joule / (si::kilogram * si::kelvin)) < 1e5 ); /*based on hydrogen*/ \
         CHECK(compound.gas.thermal_conductivity(pressure, temperature) / (si::watt / (si::meter * si::kelvin)) > 0.001); /*based on xenon at 200°K*/ \
         CHECK(compound.gas.thermal_conductivity(pressure, temperature) / (si::watt / (si::meter * si::kelvin)) < 1.0); /*based on hydrogen at 600°K*/ \
         CHECK(compound.gas.dynamic_viscosity(pressure, temperature) / (si::pascal * si::second) < 10e-5); /*based on argon at 500°C*/ \
@@ -110,8 +110,8 @@
     }\
     if(compound.phase(pressure, temperature) == -1)\
     {\
-        CHECK(compound.liquid.specific_heat_capacity(pressure, temperature) / (si::joule/(si::gram*si::kelvin)) < 100.0); /*based on hydrogen*/ \
-        CHECK(compound.liquid.specific_heat_capacity(pressure, temperature) / (si::joule/(si::gram*si::kelvin)) > 0.1); /*based on gold*/ \
+        CHECK(compound.liquid.isobaric_specific_heat_capacity(pressure, temperature) / (si::joule/(si::gram*si::kelvin)) < 100.0); /*based on hydrogen*/ \
+        CHECK(compound.liquid.isobaric_specific_heat_capacity(pressure, temperature) / (si::joule/(si::gram*si::kelvin)) > 0.1); /*based on gold*/ \
         CHECK(compound.liquid.thermal_conductivity(pressure, temperature) / (si::watt / (si::meter * si::kelvin)) < 1000.0); /*based on carbon*/ \
         CHECK(compound.liquid.thermal_conductivity(pressure, temperature) / (si::watt / (si::meter * si::kelvin)) > 0.01); /*based on helium*/ \
         CHECK(compound.liquid.dynamic_viscosity(pressure, temperature) / (si::pascal * si::second) < 1e9); /*based on pitch*/ \
@@ -130,8 +130,8 @@
     {\
         for (std::size_t i = 0; i < compound.solids.size(); ++i) \
         {                                                        \
-            CHECK(compound.solids[i].specific_heat_capacity(pressure, temperature) / (si::joule/(si::kilogram * si::kelvin)) < 30000.0); /*based on hydrogen*/ \
-            CHECK(compound.solids[i].specific_heat_capacity(pressure, temperature) / (si::joule/(si::kilogram * si::kelvin)) >= 0.0); /*based on predicted behavior at 0K*/ \
+            CHECK(compound.solids[i].isobaric_specific_heat_capacity(pressure, temperature) / (si::joule/(si::kilogram * si::kelvin)) < 30000.0); /*based on hydrogen*/ \
+            CHECK(compound.solids[i].isobaric_specific_heat_capacity(pressure, temperature) / (si::joule/(si::kilogram * si::kelvin)) >= 0.0); /*based on predicted behavior at 0K*/ \
             CHECK(compound.solids[i].thermal_conductivity(pressure, temperature) / (si::watt/(si::meter * si::kelvin)) < 30000.0); /*based on silver at 10K*/ \
             CHECK(compound.solids[i].thermal_conductivity(pressure, temperature) / (si::watt/(si::meter * si::kelvin)) > 0.01); /*based on aerogel*/ \
             CHECK(compound.solids[i].dynamic_viscosity(pressure, temperature) / (si::pascal * si::second) <= 1e24); /*based on granite*/ \

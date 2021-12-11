@@ -24,7 +24,7 @@ TEST_CASE( "PartlyKnownSolid to_string() purity", "[field]" ) {
 }
 
 TEST_CASE( "PartlyKnownSolid to_string() appreciable difference preservation", "[field]" ) {
-	compound::phase::PartlyKnownSolid nudge_specific_heat_capacity           = dummy_solid; nudge_specific_heat_capacity           .specific_heat_capacity           = std::monostate();
+	compound::phase::PartlyKnownSolid nudge_isobaric_specific_heat_capacity  = dummy_solid; nudge_isobaric_specific_heat_capacity  .isobaric_specific_heat_capacity  = std::monostate();
 	compound::phase::PartlyKnownSolid nudge_thermal_conductivity             = dummy_solid; nudge_thermal_conductivity             .thermal_conductivity             = std::monostate();
 	compound::phase::PartlyKnownSolid nudge_dynamic_viscosity                = dummy_solid; nudge_dynamic_viscosity                .dynamic_viscosity                = std::monostate();
 	compound::phase::PartlyKnownSolid nudge_density                          = dummy_solid; nudge_density                          .density                          = std::monostate();
@@ -48,7 +48,7 @@ TEST_CASE( "PartlyKnownSolid to_string() appreciable difference preservation", "
 	
 	SECTION("Appreciable differences in input are preserved within output")
 	{
-		CHECK(compound::phase::to_string(nudge_specific_heat_capacity          ) != compound::phase::to_string(dummy_solid));
+		CHECK(compound::phase::to_string(nudge_isobaric_specific_heat_capacity ) != compound::phase::to_string(dummy_solid));
 		CHECK(compound::phase::to_string(nudge_thermal_conductivity            ) != compound::phase::to_string(dummy_solid));
 		CHECK(compound::phase::to_string(nudge_dynamic_viscosity               ) != compound::phase::to_string(dummy_solid));
 		CHECK(compound::phase::to_string(nudge_density                         ) != compound::phase::to_string(dummy_solid));

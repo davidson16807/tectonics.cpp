@@ -10,7 +10,7 @@
 
 
 compound::phase::PartlyKnownSolid unknown_solid {
-    /*specific_heat_capacity*/            std::monostate(),
+    /*isobaric_specific_heat_capacity*/            std::monostate(),
     /*thermal_conductivity*/              std::monostate(),
     /*dynamic_viscosity*/                 std::monostate(),
     /*density*/                           std::monostate(),
@@ -36,7 +36,7 @@ compound::phase::PartlyKnownSolid unknown_solid {
     /*chemical_susceptibility_estimate*/  std::monostate()
 };
 compound::phase::PartlyKnownSolid ice {
-    /*specific_heat_capacity*/            2.05 * si::joule / (si::gram * si::kelvin), // wikipedia
+    /*isobaric_specific_heat_capacity*/            2.05 * si::joule / (si::gram * si::kelvin), // wikipedia
     /*thermal_conductivity*/              2.09 * si::watt / (si::meter * si::kelvin), // wikipedia
     /*dynamic_viscosity*/                 1e13 * si::poise, // reference by Carey (1953)
     /*density*/                           0916.9 * si::kilogram/si::meter3,
@@ -62,7 +62,7 @@ compound::phase::PartlyKnownSolid ice {
     /*chemical_susceptibility_estimate*/  false
 };
 compound::phase::PartlyKnownSolid quartz {
-    /*specific_heat_capacity*/            0.703 * si::joule / (si::gram * si::kelvin), // Cermak (1988), wikipedia, for vitreous silica
+    /*isobaric_specific_heat_capacity*/            0.703 * si::joule / (si::gram * si::kelvin), // Cermak (1988), wikipedia, for vitreous silica
     /*thermal_conductivity*/              1.36 * si::watt / (si::centimeter * si::kelvin), // Cermak (1988), wikipedia, for vitreous silica
     /*dynamic_viscosity*/                 std::monostate(),
     /*density*/                           2650.0 * si::kilogram/si::meter3, // alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
@@ -90,7 +90,7 @@ compound::phase::PartlyKnownSolid quartz {
 
 compound::phase::PartlyKnownSolid copper{
 
-    /*specific_heat_capacity*/            0.385 * si::joule / (si::gram * si::kelvin), // wikipedia
+    /*isobaric_specific_heat_capacity*/            0.385 * si::joule / (si::gram * si::kelvin), // wikipedia
     /*thermal_conductivity*/              401.0 * si::watt / (si::meter * si::kelvin), // wikipedia
     /*dynamic_viscosity*/                 std::monostate(),
     /*density*/                           8960.0 * si::kilogram/si::meter3,
@@ -122,7 +122,7 @@ compound::phase::PartlyKnownSolid copper{
     /*chemical_susceptibility_estimate*/  std::monostate(),
 }; 
 compound::phase::PartlyKnownSolid dummy_solid {
-    /*specific_heat_capacity*/            1.0 * si::joule / (si::gram * si::kelvin), 
+    /*isobaric_specific_heat_capacity*/            1.0 * si::joule / (si::gram * si::kelvin), 
     /*thermal_conductivity*/              2.0 * si::watt / (si::meter * si::kelvin), 
     /*dynamic_viscosity*/                 3.0 * si::poise, 
     /*density*/                           4.0 * si::kilogram/si::meter3,
@@ -151,7 +151,7 @@ compound::phase::PartlyKnownSolid dummy_solid {
 int PartlyKnownSolid_attribute_index_sum(const compound::phase::PartlyKnownSolid& solid)
 {
     return
-        solid.specific_heat_capacity          .index() +
+        solid.isobaric_specific_heat_capacity          .index() +
         solid.thermal_conductivity            .index() +
         solid.dynamic_viscosity               .index() +
         solid.density                         .index() +
@@ -179,7 +179,7 @@ int PartlyKnownSolid_attribute_index_sum(const compound::phase::PartlyKnownSolid
 int PartlyKnownSolid_attribute_known_count(const compound::phase::PartlyKnownSolid& solid)
 {
     return
-        solid.specific_heat_capacity          .has_value() +
+        solid.isobaric_specific_heat_capacity          .has_value() +
         solid.thermal_conductivity            .has_value() +
         solid.dynamic_viscosity               .has_value() +
         solid.density                         .has_value() +
@@ -211,14 +211,14 @@ namespace phase {
     bool operator==(const PartlyKnownSolid first, const PartlyKnownSolid second)
     {
         return 
-            first.specific_heat_capacity == second.specific_heat_capacity &&
-            first.vapor_pressure         == second.vapor_pressure         &&
-            first.thermal_conductivity   == second.thermal_conductivity   &&
-            first.dynamic_viscosity      == second.dynamic_viscosity      &&
-            first.density                == second.density                &&
-            first.refractive_index       == second.refractive_index       &&
-            first.extinction_coefficient == second.extinction_coefficient &&
-            first.absorption_coefficient == second.absorption_coefficient &&
+            first.isobaric_specific_heat_capacity == second.isobaric_specific_heat_capacity &&
+            first.vapor_pressure                  == second.vapor_pressure                  &&
+            first.thermal_conductivity            == second.thermal_conductivity            &&
+            first.dynamic_viscosity               == second.dynamic_viscosity               &&
+            first.density                         == second.density                         &&
+            first.refractive_index                == second.refractive_index                &&
+            first.extinction_coefficient          == second.extinction_coefficient          &&
+            first.absorption_coefficient          == second.absorption_coefficient          &&
 
             first.bulk_modulus           == second.bulk_modulus           &&
             first.tensile_modulus        == second.tensile_modulus        &&

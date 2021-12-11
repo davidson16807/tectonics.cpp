@@ -10,7 +10,7 @@ namespace compound {
 namespace phase { 
     struct CompletedSolid
     {
-        field::CompletedStateField<si::specific_heat_capacity> specific_heat_capacity;
+        field::CompletedStateField<si::specific_heat_capacity> isobaric_specific_heat_capacity;
         field::CompletedStateField<si::thermal_conductivity> thermal_conductivity;
         field::CompletedStateField<si::dynamic_viscosity> dynamic_viscosity;
         field::CompletedStateField<si::density> density;

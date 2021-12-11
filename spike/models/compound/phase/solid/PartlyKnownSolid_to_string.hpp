@@ -14,7 +14,7 @@ namespace phase {
 	{
 		std::string out("");
         out += "\n";
-        out += "Specific Heat Capacity               " + field::to_string(solid.specific_heat_capacity,           state)     + "\n";
+        out += "Isobaric Specific Heat Capacity      " + field::to_string(solid.isobaric_specific_heat_capacity,  state)     + "\n";
 		out += "Thermal Conductivity                 " + field::to_string(solid.thermal_conductivity,             state)     + "\n";
 		out += "Dynamic Viscosity                    " + field::to_string(solid.dynamic_viscosity,                state)     + "\n";
 		out += "Density                              " + field::to_string(solid.density,                          state)     + "\n";

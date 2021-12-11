@@ -27,7 +27,7 @@ TEST_CASE( "PartlyKnownSolid infer() identity", "[phase]" ) {
 	SECTION("There exists a value that when applied to a function returns the original value")
 	{
         CHECK(compound::phase::infer(unknown_solid) == unknown_solid);
-        CHECK(compound::phase::infer(ice) == ice);CHECK(compound::phase::infer(ice).specific_heat_capacity == ice.specific_heat_capacity );
+        CHECK(compound::phase::infer(ice) == ice);CHECK(compound::phase::infer(ice).isobaric_specific_heat_capacity == ice.isobaric_specific_heat_capacity );
     }
 }
 

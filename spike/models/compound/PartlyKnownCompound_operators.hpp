@@ -288,7 +288,7 @@ namespace compound
             [M](si::specific_heat_capacity heat_capacity_as_gas, si::thermal_conductivity thermal_conductivity_as_gas){ 
                 return property::estimate_viscosity_as_gas_from_eucken(heat_capacity_as_gas, M, thermal_conductivity_as_gas);
             },
-            guess.gas.specific_heat_capacity, 
+            guess.gas.isobaric_specific_heat_capacity, 
             guess.gas.thermal_conductivity
         );
 
@@ -297,7 +297,7 @@ namespace compound
                 return property::estimate_thermal_conductivity_as_gas_from_eucken(dynamic_viscosity_as_gas, M, heat_capacity_as_gas);
             },
             guess.gas.dynamic_viscosity, 
-            guess.gas.specific_heat_capacity
+            guess.gas.isobaric_specific_heat_capacity
         );
 
 

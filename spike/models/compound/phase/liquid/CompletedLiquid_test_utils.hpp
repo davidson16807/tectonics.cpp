@@ -9,7 +9,7 @@
 #include "CompletedLiquid.hpp"
 
 compound::phase::CompletedLiquid known_liquid_nitrogen {
-    /*specific_heat_capacity*/            2.04 * si::kilojoule / (si::kilogram * si::kelvin), // Timmerhaus (1989)
+    /*isobaric_specific_heat_capacity*/            2.04 * si::kilojoule / (si::kilogram * si::kelvin), // Timmerhaus (1989)
     /*thermal_conductivity*/              0.1396 * si::watt / (si::meter * si::kelvin), // Timmerhaus (1989)
     /*dynamic_viscosity*/                 157.9 * si::kilogram / (si::meter * 1e6*si::second), // Timmerhaus (1989)
     /*density*/                           0807.0 * si::kilogram/si::meter3,
@@ -22,7 +22,7 @@ compound::phase::CompletedLiquid known_liquid_nitrogen {
     /*extinction_coefficient*/            0.0
 };
 compound::phase::CompletedLiquid known_dummy_liquid {
-    /*specific_heat_capacity*/            1.0 * si::joule / (si::gram * si::kelvin), 
+    /*isobaric_specific_heat_capacity*/            1.0 * si::joule / (si::gram * si::kelvin), 
     /*thermal_conductivity*/              2.0 * si::watt / (si::meter * si::kelvin), 
     /*dynamic_viscosity*/                 3.0 * si::poise, 
     /*density*/                           4.0 * si::kilogram/si::meter3,
@@ -38,14 +38,14 @@ namespace phase {
     bool operator==(const CompletedLiquid& first, const CompletedLiquid& second)
     {
         return 
-            first.specific_heat_capacity == second.specific_heat_capacity &&
-            first.thermal_conductivity   == second.thermal_conductivity   &&
-            first.dynamic_viscosity      == second.dynamic_viscosity      &&
-            first.density                == second.density                &&
-            first.vapor_pressure         == second.vapor_pressure         &&
-            first.surface_tension        == second.surface_tension        &&
-            first.refractive_index       == second.refractive_index       && 
-            first.extinction_coefficient == second.extinction_coefficient;
+            first.isobaric_specific_heat_capacity== second.isobaric_specific_heat_capacity&&
+            first.thermal_conductivity           == second.thermal_conductivity           &&
+            first.dynamic_viscosity              == second.dynamic_viscosity              &&
+            first.density                        == second.density                        &&
+            first.vapor_pressure                 == second.vapor_pressure                 &&
+            first.surface_tension                == second.surface_tension                &&
+            first.refractive_index               == second.refractive_index               && 
+            first.extinction_coefficient         == second.extinction_coefficient;
     }
     bool operator!=(const CompletedLiquid& first, const CompletedLiquid& second)
     {

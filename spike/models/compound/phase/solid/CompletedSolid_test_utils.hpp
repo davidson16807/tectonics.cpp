@@ -9,7 +9,7 @@
 #include "CompletedSolid.hpp"
 
 compound::phase::CompletedSolid known_ice {
-    /*specific_heat_capacity*/            2.05 * si::joule / (si::gram * si::kelvin), // wikipedia
+    /*isobaric_specific_heat_capacity*/   2.05 * si::joule / (si::gram * si::kelvin), // wikipedia
     /*thermal_conductivity*/              2.09 * si::watt / (si::meter * si::kelvin), // wikipedia
     /*dynamic_viscosity*/                 1e13 * si::poise, // reference by Carey (1953)
     /*density*/                           0916.9 * si::kilogram/si::meter3,
@@ -35,7 +35,7 @@ compound::phase::CompletedSolid known_ice {
     /*chemical_susceptibility_estimate*/  0.0
 };
 compound::phase::CompletedSolid known_dummy_solid {
-    /*specific_heat_capacity*/            1.0 * si::joule / (si::gram * si::kelvin), 
+    /*isobaric_specific_heat_capacity*/   1.0 * si::joule / (si::gram * si::kelvin), 
     /*thermal_conductivity*/              2.0 * si::watt / (si::meter * si::kelvin), 
     /*dynamic_viscosity*/                 3.0 * si::poise, 
     /*density*/                           4.0 * si::kilogram/si::meter3,
@@ -67,14 +67,14 @@ namespace phase {
     bool operator==(const CompletedSolid& first, const CompletedSolid& second)
     {
         return 
-            first.specific_heat_capacity == second.specific_heat_capacity &&
-            first.vapor_pressure         == second.vapor_pressure         &&
-            first.thermal_conductivity   == second.thermal_conductivity   &&
-            first.dynamic_viscosity      == second.dynamic_viscosity      &&
-            first.density                == second.density                &&
-            first.refractive_index       == second.refractive_index       &&
-            first.extinction_coefficient == second.extinction_coefficient &&
-            first.absorption_coefficient == second.absorption_coefficient &&
+            first.isobaric_specific_heat_capacity == second.isobaric_specific_heat_capacity &&
+            first.vapor_pressure                  == second.vapor_pressure                  &&
+            first.thermal_conductivity            == second.thermal_conductivity            &&
+            first.dynamic_viscosity               == second.dynamic_viscosity               &&
+            first.density                         == second.density                         &&
+            first.refractive_index                == second.refractive_index                &&
+            first.extinction_coefficient          == second.extinction_coefficient          &&
+            first.absorption_coefficient          == second.absorption_coefficient          &&
 
             first.bulk_modulus           == second.bulk_modulus           &&
             first.tensile_modulus        == second.tensile_modulus        &&

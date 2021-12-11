@@ -13,11 +13,11 @@ namespace phase {
 	{
 		std::string out("");
         out += "\n";
-		out += "Specific Heat Capacity               " + field::to_string(gas.specific_heat_capacity, state)    + "\n";
-		out += "Thermal Conductivity                 " + field::to_string(gas.thermal_conductivity,   state)    + "\n";
-		out += "Dynamic Viscosity                    " + field::to_string(gas.dynamic_viscosity,      state)    + "\n";
-		out += "Density                              " + field::to_string(gas.density,                state)    + "\n";
-		out += "Refractive Index                     " + field::to_string(gas.refractive_index,       spectrum) + "\n";
+		out += "Isobaric Specific Heat Capacity      " + field::to_string(gas.isobaric_specific_heat_capacity, state)    + "\n";
+		out += "Thermal Conductivity                 " + field::to_string(gas.thermal_conductivity,            state)    + "\n";
+		out += "Dynamic Viscosity                    " + field::to_string(gas.dynamic_viscosity,               state)    + "\n";
+		out += "Density                              " + field::to_string(gas.density,                         state)    + "\n";
+		out += "Refractive Index                     " + field::to_string(gas.refractive_index,                spectrum) + "\n";
         out += "\n";
 		return out;
 	}
