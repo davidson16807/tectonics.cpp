@@ -14,7 +14,7 @@ TEST_CASE( "CompletedCompound order of magnitude", "[field]" ) {
         for (float p = 1.0; p <= 100000000.0; p*=10.0)
         {
             // COMPLETED_COMPOUNDS_VALID(3.0*si::kelvin, p*si::pascal) // cosmic background radiation
-            // COMPLETED_COMPOUNDS_VALID(33.0*si::kelvin, p*si::pascal) // temperature of Pluto
+            COMPLETED_COMPOUNDS_VALID(33.0*si::kelvin, p*si::pascal) // temperature of Pluto
             COMPLETED_COMPOUNDS_VALID(90.0*si::kelvin, p*si::pascal) // temperature of Titan
             COMPLETED_COMPOUNDS_VALID(0.0*si::celcius, p*si::pascal) // standard temperature
             COMPLETED_COMPOUNDS_VALID(20.0*si::celcius, p*si::pascal) // room temperature
