@@ -71,4 +71,21 @@ namespace math
         }
         return I;
     }
+
+    /*
+    "derivative_of_lerp" finds the derivative of the lerp() function for a value a
+    */
+    template <typename T>
+    constexpr typename T::value_type derivative_of_lerp(
+        const T control_points_x, 
+        const T control_points_y, 
+        const typename T::value_type x 
+    ) {
+        typename T::value_type result = T(0);
+        for (std::size_t i = 1; i < control_points_x.size(); i++) 
+        {
+            result = x < control_points_x[i-1]? result : (control_points_y[i]-control_points_y[i-1])/(control_points_x[i]-control_points_x[i-1]);
+        }
+        return x < control_points_x[control_points_x.size()-1]? result : T(0);
+    }
 }
