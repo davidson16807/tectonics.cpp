@@ -170,13 +170,14 @@ namespace compound {
     template<typename Tx, typename Ty>
     field::StateFunction<Ty> get_perry_temperature_function(
         const Tx Tunits, const Ty yunits,
-        const double intercept, const double linear, const double inverse_square, const double square
+        const double intercept, const double linear, const double inverse_square, const double square,
+        const double Tmin, const double Tmax
     ){
         return field::StateFunction<Ty>(
-            [Tunits, yunits, intercept, linear, inverse_square, square]
+            [Tunits, yunits, intercept, linear, inverse_square, square, Tmin, Tmax]
             (const si::pressure p, const si::temperature T)
             {
-                double t = T/Tunits;
+                double t = std::clamp(T/Tunits, Tmin, Tmax);
                 return (intercept + linear*t + inverse_square/(t*t) + square*t*t)*yunits;
             }
         );
@@ -330,6 +331,21 @@ namespace compound {
         );
     }
     // from Mulero (2012)
+
+
+    field::StateFunction<si::surface_energy> get_jasper_temperature_function(
+        const double intercept, const double linear, const double square
+    ){
+        return field::StateFunction<si::surface_energy>(
+            [intercept, linear, square]
+            (const si::pressure p, const si::temperature T)
+            {
+                double t = T/si::celcius;
+                return (intercept + linear*t + square*t*t)*si::dyne/si::centimeter;
+            }
+        );
+    }
+    // from Jasper (1972)
 
     template<typename Tx, typename Ty>
     field::StateFunction<Ty> get_linear_liquid_surface_tension_temperature_function(
