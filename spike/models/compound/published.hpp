@@ -290,7 +290,7 @@ PartlyKnownCompound water (
 
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
-        phase::PartlyKnownSolid {
+        phase::PartlyKnownSolid { // ice1h, regular ice
             /*isobaric_specific_heat_capacity*/   state_invariant(2.05 * si::joule / (si::gram * si::kelvin)),       // wikipedia
             /*thermal_conductivity*/              state_invariant(2.09 * si::watt / (si::meter * si::kelvin)),       // wikipedia
             /*dynamic_viscosity*/                 state_invariant(1e13 * si::poise),                                 // reference by Carey (1953)
@@ -334,6 +334,438 @@ PartlyKnownCompound water (
             /*shear_yield_strength*/              state_invariant(1.1 * si::megapascal),                             // brittle, effectively the same as fracture strength
 
             /*chemical_susceptibility_estimate*/  false
+        },
+        phase::PartlyKnownSolid { // ice1c
+
+            /*isobaric_specific_heat_capacity*/   missing(),
+            /*thermal_conductivity*/              missing(),
+            /*dynamic_viscosity*/                 missing(),
+            /*density*/                           missing(),
+            /*vapor_pressure*/                    missing(),
+            /*refractive_index*/                  missing(),
+            /*extinction_coefficient*/            missing(),
+            /*absorption_coefficient*/            missing(),
+
+            /*bulk_modulus*/                      missing(),
+            /*tensile_modulus*/                   missing(),
+            /*shear_modulus*/                     missing(),
+            /*pwave_modulus*/                     missing(),
+            /*lame_parameter*/                    missing(),
+            /*poisson_ratio*/                     missing(),
+
+            /*compressive_fracture_strength*/     missing(),
+            /*tensile_fracture_strength*/         missing(),
+            /*shear_fracture_strength*/           missing(),
+            /*compressive_yield_strength*/        missing(),
+            /*tensile_yield_strength*/            missing(),
+            /*shear_yield_strength*/              missing(),
+
+            /*chemical_susceptibility_estimate*/  missing()
+        },
+        phase::PartlyKnownSolid { // ice2
+
+            /*isobaric_specific_heat_capacity*/   missing(),
+            /*thermal_conductivity*/              missing(),
+            /*dynamic_viscosity*/                 missing(),
+            /*density*/                           missing(),
+            /*vapor_pressure*/                    missing(),
+            /*refractive_index*/                  missing(),
+            /*extinction_coefficient*/            missing(),
+            /*absorption_coefficient*/            missing(),
+
+            /*bulk_modulus*/                      missing(),
+            /*tensile_modulus*/                   missing(),
+            /*shear_modulus*/                     missing(),
+            /*pwave_modulus*/                     missing(),
+            /*lame_parameter*/                    missing(),
+            /*poisson_ratio*/                     missing(),
+
+            /*compressive_fracture_strength*/     missing(),
+            /*tensile_fracture_strength*/         missing(),
+            /*shear_fracture_strength*/           missing(),
+            /*compressive_yield_strength*/        missing(),
+            /*tensile_yield_strength*/            missing(),
+            /*shear_yield_strength*/              missing(),
+
+            /*chemical_susceptibility_estimate*/  missing()
+        },
+        phase::PartlyKnownSolid { // ice3
+
+            /*isobaric_specific_heat_capacity*/   missing(),
+            /*thermal_conductivity*/              missing(),
+            /*dynamic_viscosity*/                 missing(),
+            /*density*/                           missing(),
+            /*vapor_pressure*/                    missing(),
+            /*refractive_index*/                  missing(),
+            /*extinction_coefficient*/            missing(),
+            /*absorption_coefficient*/            missing(),
+
+            /*bulk_modulus*/                      missing(),
+            /*tensile_modulus*/                   missing(),
+            /*shear_modulus*/                     missing(),
+            /*pwave_modulus*/                     missing(),
+            /*lame_parameter*/                    missing(),
+            /*poisson_ratio*/                     missing(),
+
+            /*compressive_fracture_strength*/     missing(),
+            /*tensile_fracture_strength*/         missing(),
+            /*shear_fracture_strength*/           missing(),
+            /*compressive_yield_strength*/        missing(),
+            /*tensile_yield_strength*/            missing(),
+            /*shear_yield_strength*/              missing(),
+
+            /*chemical_susceptibility_estimate*/  missing()
+        },
+        phase::PartlyKnownSolid { // ice4
+
+            /*isobaric_specific_heat_capacity*/   missing(),
+            /*thermal_conductivity*/              missing(),
+            /*dynamic_viscosity*/                 missing(),
+            /*density*/                           missing(),
+            /*vapor_pressure*/                    missing(),
+            /*refractive_index*/                  missing(),
+            /*extinction_coefficient*/            missing(),
+            /*absorption_coefficient*/            missing(),
+
+            /*bulk_modulus*/                      missing(),
+            /*tensile_modulus*/                   missing(),
+            /*shear_modulus*/                     missing(),
+            /*pwave_modulus*/                     missing(),
+            /*lame_parameter*/                    missing(),
+            /*poisson_ratio*/                     missing(),
+
+            /*compressive_fracture_strength*/     missing(),
+            /*tensile_fracture_strength*/         missing(),
+            /*shear_fracture_strength*/           missing(),
+            /*compressive_yield_strength*/        missing(),
+            /*tensile_yield_strength*/            missing(),
+            /*shear_yield_strength*/              missing(),
+
+            /*chemical_susceptibility_estimate*/  missing()
+        },
+        phase::PartlyKnownSolid { // ice5
+
+            /*isobaric_specific_heat_capacity*/   missing(),
+            /*thermal_conductivity*/              missing(),
+            /*dynamic_viscosity*/                 missing(),
+            /*density*/                           missing(),
+            /*vapor_pressure*/                    missing(),
+            /*refractive_index*/                  missing(),
+            /*extinction_coefficient*/            missing(),
+            /*absorption_coefficient*/            missing(),
+
+            /*bulk_modulus*/                      missing(),
+            /*tensile_modulus*/                   missing(),
+            /*shear_modulus*/                     missing(),
+            /*pwave_modulus*/                     missing(),
+            /*lame_parameter*/                    missing(),
+            /*poisson_ratio*/                     missing(),
+
+            /*compressive_fracture_strength*/     missing(),
+            /*tensile_fracture_strength*/         missing(),
+            /*shear_fracture_strength*/           missing(),
+            /*compressive_yield_strength*/        missing(),
+            /*tensile_yield_strength*/            missing(),
+            /*shear_yield_strength*/              missing(),
+
+            /*chemical_susceptibility_estimate*/  missing()
+        },
+        phase::PartlyKnownSolid { // ice6
+
+            /*isobaric_specific_heat_capacity*/   missing(),
+            /*thermal_conductivity*/              missing(),
+            /*dynamic_viscosity*/                 missing(),
+            /*density*/                           missing(),
+            /*vapor_pressure*/                    missing(),
+            /*refractive_index*/                  missing(),
+            /*extinction_coefficient*/            missing(),
+            /*absorption_coefficient*/            missing(),
+
+            /*bulk_modulus*/                      missing(),
+            /*tensile_modulus*/                   missing(),
+            /*shear_modulus*/                     missing(),
+            /*pwave_modulus*/                     missing(),
+            /*lame_parameter*/                    missing(),
+            /*poisson_ratio*/                     missing(),
+
+            /*compressive_fracture_strength*/     missing(),
+            /*tensile_fracture_strength*/         missing(),
+            /*shear_fracture_strength*/           missing(),
+            /*compressive_yield_strength*/        missing(),
+            /*tensile_yield_strength*/            missing(),
+            /*shear_yield_strength*/              missing(),
+
+            /*chemical_susceptibility_estimate*/  missing()
+        },
+        phase::PartlyKnownSolid { // ice7
+
+            /*isobaric_specific_heat_capacity*/   missing(),
+            /*thermal_conductivity*/              missing(),
+            /*dynamic_viscosity*/                 missing(),
+            /*density*/                           missing(),
+            /*vapor_pressure*/                    missing(),
+            /*refractive_index*/                  missing(),
+            /*extinction_coefficient*/            missing(),
+            /*absorption_coefficient*/            missing(),
+
+            /*bulk_modulus*/                      missing(),
+            /*tensile_modulus*/                   missing(),
+            /*shear_modulus*/                     missing(),
+            /*pwave_modulus*/                     missing(),
+            /*lame_parameter*/                    missing(),
+            /*poisson_ratio*/                     missing(),
+
+            /*compressive_fracture_strength*/     missing(),
+            /*tensile_fracture_strength*/         missing(),
+            /*shear_fracture_strength*/           missing(),
+            /*compressive_yield_strength*/        missing(),
+            /*tensile_yield_strength*/            missing(),
+            /*shear_yield_strength*/              missing(),
+
+            /*chemical_susceptibility_estimate*/  missing()
+        },
+        phase::PartlyKnownSolid { // ice8
+
+            /*isobaric_specific_heat_capacity*/   missing(),
+            /*thermal_conductivity*/              missing(),
+            /*dynamic_viscosity*/                 missing(),
+            /*density*/                           missing(),
+            /*vapor_pressure*/                    missing(),
+            /*refractive_index*/                  missing(),
+            /*extinction_coefficient*/            missing(),
+            /*absorption_coefficient*/            missing(),
+
+            /*bulk_modulus*/                      missing(),
+            /*tensile_modulus*/                   missing(),
+            /*shear_modulus*/                     missing(),
+            /*pwave_modulus*/                     missing(),
+            /*lame_parameter*/                    missing(),
+            /*poisson_ratio*/                     missing(),
+
+            /*compressive_fracture_strength*/     missing(),
+            /*tensile_fracture_strength*/         missing(),
+            /*shear_fracture_strength*/           missing(),
+            /*compressive_yield_strength*/        missing(),
+            /*tensile_yield_strength*/            missing(),
+            /*shear_yield_strength*/              missing(),
+
+            /*chemical_susceptibility_estimate*/  missing()
+        },
+        phase::PartlyKnownSolid { // ice9
+
+            /*isobaric_specific_heat_capacity*/   missing(),
+            /*thermal_conductivity*/              missing(),
+            /*dynamic_viscosity*/                 missing(),
+            /*density*/                           missing(),
+            /*vapor_pressure*/                    missing(),
+            /*refractive_index*/                  missing(),
+            /*extinction_coefficient*/            missing(),
+            /*absorption_coefficient*/            missing(),
+
+            /*bulk_modulus*/                      missing(),
+            /*tensile_modulus*/                   missing(),
+            /*shear_modulus*/                     missing(),
+            /*pwave_modulus*/                     missing(),
+            /*lame_parameter*/                    missing(),
+            /*poisson_ratio*/                     missing(),
+
+            /*compressive_fracture_strength*/     missing(),
+            /*tensile_fracture_strength*/         missing(),
+            /*shear_fracture_strength*/           missing(),
+            /*compressive_yield_strength*/        missing(),
+            /*tensile_yield_strength*/            missing(),
+            /*shear_yield_strength*/              missing(),
+
+            /*chemical_susceptibility_estimate*/  missing()
+        },
+        phase::PartlyKnownSolid { // ice10
+
+            /*isobaric_specific_heat_capacity*/   missing(),
+            /*thermal_conductivity*/              missing(),
+            /*dynamic_viscosity*/                 missing(),
+            /*density*/                           missing(),
+            /*vapor_pressure*/                    missing(),
+            /*refractive_index*/                  missing(),
+            /*extinction_coefficient*/            missing(),
+            /*absorption_coefficient*/            missing(),
+
+            /*bulk_modulus*/                      missing(),
+            /*tensile_modulus*/                   missing(),
+            /*shear_modulus*/                     missing(),
+            /*pwave_modulus*/                     missing(),
+            /*lame_parameter*/                    missing(),
+            /*poisson_ratio*/                     missing(),
+
+            /*compressive_fracture_strength*/     missing(),
+            /*tensile_fracture_strength*/         missing(),
+            /*shear_fracture_strength*/           missing(),
+            /*compressive_yield_strength*/        missing(),
+            /*tensile_yield_strength*/            missing(),
+            /*shear_yield_strength*/              missing(),
+
+            /*chemical_susceptibility_estimate*/  missing()
+        },
+        phase::PartlyKnownSolid { // ice11h
+
+            /*isobaric_specific_heat_capacity*/   missing(),
+            /*thermal_conductivity*/              missing(),
+            /*dynamic_viscosity*/                 missing(),
+            /*density*/                           missing(),
+            /*vapor_pressure*/                    missing(),
+            /*refractive_index*/                  missing(),
+            /*extinction_coefficient*/            missing(),
+            /*absorption_coefficient*/            missing(),
+
+            /*bulk_modulus*/                      missing(),
+            /*tensile_modulus*/                   missing(),
+            /*shear_modulus*/                     missing(),
+            /*pwave_modulus*/                     missing(),
+            /*lame_parameter*/                    missing(),
+            /*poisson_ratio*/                     missing(),
+
+            /*compressive_fracture_strength*/     missing(),
+            /*tensile_fracture_strength*/         missing(),
+            /*shear_fracture_strength*/           missing(),
+            /*compressive_yield_strength*/        missing(),
+            /*tensile_yield_strength*/            missing(),
+            /*shear_yield_strength*/              missing(),
+
+            /*chemical_susceptibility_estimate*/  missing()
+        },
+        phase::PartlyKnownSolid { // ice11o
+
+            /*isobaric_specific_heat_capacity*/   missing(),
+            /*thermal_conductivity*/              missing(),
+            /*dynamic_viscosity*/                 missing(),
+            /*density*/                           missing(),
+            /*vapor_pressure*/                    missing(),
+            /*refractive_index*/                  missing(),
+            /*extinction_coefficient*/            missing(),
+            /*absorption_coefficient*/            missing(),
+
+            /*bulk_modulus*/                      missing(),
+            /*tensile_modulus*/                   missing(),
+            /*shear_modulus*/                     missing(),
+            /*pwave_modulus*/                     missing(),
+            /*lame_parameter*/                    missing(),
+            /*poisson_ratio*/                     missing(),
+
+            /*compressive_fracture_strength*/     missing(),
+            /*tensile_fracture_strength*/         missing(),
+            /*shear_fracture_strength*/           missing(),
+            /*compressive_yield_strength*/        missing(),
+            /*tensile_yield_strength*/            missing(),
+            /*shear_yield_strength*/              missing(),
+
+            /*chemical_susceptibility_estimate*/  missing()
+        },
+        phase::PartlyKnownSolid { // ice12
+
+            /*isobaric_specific_heat_capacity*/   missing(),
+            /*thermal_conductivity*/              missing(),
+            /*dynamic_viscosity*/                 missing(),
+            /*density*/                           missing(),
+            /*vapor_pressure*/                    missing(),
+            /*refractive_index*/                  missing(),
+            /*extinction_coefficient*/            missing(),
+            /*absorption_coefficient*/            missing(),
+
+            /*bulk_modulus*/                      missing(),
+            /*tensile_modulus*/                   missing(),
+            /*shear_modulus*/                     missing(),
+            /*pwave_modulus*/                     missing(),
+            /*lame_parameter*/                    missing(),
+            /*poisson_ratio*/                     missing(),
+
+            /*compressive_fracture_strength*/     missing(),
+            /*tensile_fracture_strength*/         missing(),
+            /*shear_fracture_strength*/           missing(),
+            /*compressive_yield_strength*/        missing(),
+            /*tensile_yield_strength*/            missing(),
+            /*shear_yield_strength*/              missing(),
+
+            /*chemical_susceptibility_estimate*/  missing()
+        },
+        phase::PartlyKnownSolid { // ice13
+
+            /*isobaric_specific_heat_capacity*/   missing(),
+            /*thermal_conductivity*/              missing(),
+            /*dynamic_viscosity*/                 missing(),
+            /*density*/                           missing(),
+            /*vapor_pressure*/                    missing(),
+            /*refractive_index*/                  missing(),
+            /*extinction_coefficient*/            missing(),
+            /*absorption_coefficient*/            missing(),
+
+            /*bulk_modulus*/                      missing(),
+            /*tensile_modulus*/                   missing(),
+            /*shear_modulus*/                     missing(),
+            /*pwave_modulus*/                     missing(),
+            /*lame_parameter*/                    missing(),
+            /*poisson_ratio*/                     missing(),
+
+            /*compressive_fracture_strength*/     missing(),
+            /*tensile_fracture_strength*/         missing(),
+            /*shear_fracture_strength*/           missing(),
+            /*compressive_yield_strength*/        missing(),
+            /*tensile_yield_strength*/            missing(),
+            /*shear_yield_strength*/              missing(),
+
+            /*chemical_susceptibility_estimate*/  missing()
+        },
+        phase::PartlyKnownSolid { // ice14
+
+            /*isobaric_specific_heat_capacity*/   missing(),
+            /*thermal_conductivity*/              missing(),
+            /*dynamic_viscosity*/                 missing(),
+            /*density*/                           missing(),
+            /*vapor_pressure*/                    missing(),
+            /*refractive_index*/                  missing(),
+            /*extinction_coefficient*/            missing(),
+            /*absorption_coefficient*/            missing(),
+
+            /*bulk_modulus*/                      missing(),
+            /*tensile_modulus*/                   missing(),
+            /*shear_modulus*/                     missing(),
+            /*pwave_modulus*/                     missing(),
+            /*lame_parameter*/                    missing(),
+            /*poisson_ratio*/                     missing(),
+
+            /*compressive_fracture_strength*/     missing(),
+            /*tensile_fracture_strength*/         missing(),
+            /*shear_fracture_strength*/           missing(),
+            /*compressive_yield_strength*/        missing(),
+            /*tensile_yield_strength*/            missing(),
+            /*shear_yield_strength*/              missing(),
+
+            /*chemical_susceptibility_estimate*/  missing()
+        },
+        phase::PartlyKnownSolid { // ice15
+
+            /*isobaric_specific_heat_capacity*/   missing(),
+            /*thermal_conductivity*/              missing(),
+            /*dynamic_viscosity*/                 missing(),
+            /*density*/                           missing(),
+            /*vapor_pressure*/                    missing(),
+            /*refractive_index*/                  missing(),
+            /*extinction_coefficient*/            missing(),
+            /*absorption_coefficient*/            missing(),
+
+            /*bulk_modulus*/                      missing(),
+            /*tensile_modulus*/                   missing(),
+            /*shear_modulus*/                     missing(),
+            /*pwave_modulus*/                     missing(),
+            /*lame_parameter*/                    missing(),
+            /*poisson_ratio*/                     missing(),
+
+            /*compressive_fracture_strength*/     missing(),
+            /*tensile_fracture_strength*/         missing(),
+            /*shear_fracture_strength*/           missing(),
+            /*compressive_yield_strength*/        missing(),
+            /*tensile_yield_strength*/            missing(),
+            /*shear_yield_strength*/              missing(),
+
+            /*chemical_susceptibility_estimate*/  missing()
         }
     }
 );
