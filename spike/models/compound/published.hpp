@@ -448,7 +448,7 @@ PartlyKnownCompound water (
             /*isobaric_specific_heat_capacity*/   missing(),
             /*thermal_conductivity*/              missing(),
             /*dynamic_viscosity*/                 missing(),
-            /*density*/                           missing(),
+            /*density*/                           state_invariant(1.24*si::gram/si::centimeter3), //wikipedia
             /*vapor_pressure*/                    missing(),
             /*refractive_index*/                  missing(),
             /*extinction_coefficient*/            missing(),
@@ -475,7 +475,7 @@ PartlyKnownCompound water (
             /*isobaric_specific_heat_capacity*/   missing(),
             /*thermal_conductivity*/              missing(),
             /*dynamic_viscosity*/                 missing(),
-            /*density*/                           missing(),
+            /*density*/                           state_invariant(1.31*si::gram/si::centimeter3), //wikipedia
             /*vapor_pressure*/                    missing(),
             /*refractive_index*/                  missing(),
             /*extinction_coefficient*/            missing(),
@@ -502,7 +502,7 @@ PartlyKnownCompound water (
             /*isobaric_specific_heat_capacity*/   missing(),
             /*thermal_conductivity*/              missing(),
             /*dynamic_viscosity*/                 missing(),
-            /*density*/                           missing(),
+            /*density*/                           state_invariant(1.65*si::gram/si::centimeter3), //wikipedia
             /*vapor_pressure*/                    missing(),
             /*refractive_index*/                  missing(),
             /*extinction_coefficient*/            missing(),
@@ -556,7 +556,7 @@ PartlyKnownCompound water (
             /*isobaric_specific_heat_capacity*/   missing(),
             /*thermal_conductivity*/              missing(),
             /*dynamic_viscosity*/                 missing(),
-            /*density*/                           missing(),
+            /*density*/                           state_invariant(1.16*si::gram/si::centimeter3), //wikipedia
             /*vapor_pressure*/                    missing(),
             /*refractive_index*/                  missing(),
             /*extinction_coefficient*/            missing(),
@@ -664,7 +664,7 @@ PartlyKnownCompound water (
             /*isobaric_specific_heat_capacity*/   missing(),
             /*thermal_conductivity*/              missing(),
             /*dynamic_viscosity*/                 missing(),
-            /*density*/                           missing(),
+            /*density*/                           state_invariant(1.29*si::gram/si::centimeter3), //wikipedia
             /*vapor_pressure*/                    missing(),
             /*refractive_index*/                  missing(),
             /*extinction_coefficient*/            missing(),
@@ -746,6 +746,33 @@ PartlyKnownCompound water (
             /*thermal_conductivity*/              missing(),
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           missing(),
+            /*vapor_pressure*/                    missing(),
+            /*refractive_index*/                  missing(),
+            /*extinction_coefficient*/            missing(),
+            /*absorption_coefficient*/            missing(),
+
+            /*bulk_modulus*/                      missing(),
+            /*tensile_modulus*/                   missing(),
+            /*shear_modulus*/                     missing(),
+            /*pwave_modulus*/                     missing(),
+            /*lame_parameter*/                    missing(),
+            /*poisson_ratio*/                     missing(),
+
+            /*compressive_fracture_strength*/     missing(),
+            /*tensile_fracture_strength*/         missing(),
+            /*shear_fracture_strength*/           missing(),
+            /*compressive_yield_strength*/        missing(),
+            /*tensile_yield_strength*/            missing(),
+            /*shear_yield_strength*/              missing(),
+
+            /*chemical_susceptibility_estimate*/  missing()
+        },
+        phase::PartlyKnownSolid { // ice16
+
+            /*isobaric_specific_heat_capacity*/   missing(),
+            /*thermal_conductivity*/              missing(),
+            /*dynamic_viscosity*/                 missing(),
+            /*density*/                           state_invariant(0.81*si::gram/si::centimeter3), //wikipedia
             /*vapor_pressure*/                    missing(),
             /*refractive_index*/                  missing(),
             /*extinction_coefficient*/            missing(),
