@@ -239,13 +239,14 @@ namespace compound {
     template<typename Tx, typename Ty>
     field::StateFunction<Ty> get_dippr_gas_viscosity_temperature_function(
         const Tx Tunits, const Ty yunits,
-        const double c1, const double c2, const double c3, const double c4
+        const double c1, const double c2, const double c3, const double c4,
+        const double Tmin, const double Tmax
     ){
         return field::StateFunction<Ty>(
-            [Tunits, yunits, c1, c2, c3, c4]
+            [Tunits, yunits, c1, c2, c3, c4, Tmin, Tmax]
             (const si::pressure p, const si::temperature T)
             {
-                double t = T/Tunits;
+                double t = std::clamp(T/Tunits, Tmin, Tmax);
                 return (c1*std::pow(t, c2) / (1.0+c3/t + c4/(t*t)))*yunits;
             }
         );
@@ -270,13 +271,14 @@ namespace compound {
     template<typename Tx, typename Ty>
     field::StateFunction<Ty> get_dippr_gas_thermal_conductivity_temperature_function(
         const Tx Tunits, const Ty yunits,
-        const double c1, const double c2, const double c3, const double c4
+        const double c1, const double c2, const double c3, const double c4,
+        const double Tmin, const double Tmax
     ){
         return field::StateFunction<Ty>(
-            [Tunits, yunits, c1, c2, c3, c4]
+            [Tunits, yunits, c1, c2, c3, c4, Tmin, Tmax]
             (const si::pressure p, const si::temperature T)
             {
-                double t = T/Tunits;
+                double t = std::clamp(T/Tunits, Tmin, Tmax);
                 return (c1*std::pow(t,c2) / (1.0 + c3/t + c4/(t*t)))*yunits;
             }
         );

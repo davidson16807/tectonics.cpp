@@ -265,6 +265,16 @@ namespace compound
 
         // CALCULATE MISCELLANEOUS PROPERTIES
         guess.liquid.thermal_conductivity = guess.liquid.thermal_conductivity.value_or(
+            [M, Tc](field::StateParameters parameters, si::temperature boiling_point_sample_temperature){
+                return property::estimate_thermal_conductivity_as_liquid_from_sato_riedel(
+                    M, parameters.temperature, boiling_point_sample_temperature, Tc
+                );
+            },
+            samples.liquid,
+            guess.boiling_point_sample_temperature
+        );
+
+        guess.liquid.thermal_conductivity = guess.liquid.thermal_conductivity.value_or(
             [M](field::StateParameters parameters, si::temperature freezing_point_sample_temperature){
                 return property::estimate_thermal_conductivity_as_liquid_from_sheffy_johnson(
                     M, parameters.temperature, freezing_point_sample_temperature

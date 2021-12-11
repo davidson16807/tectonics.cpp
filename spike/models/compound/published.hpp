@@ -2102,11 +2102,13 @@ PartlyKnownCompound ozone (
         /*thermal_conductivity*/   
             get_dippr_gas_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin), 
-                 0.0043147, 0.47999, 700.09, 0.0), // 161.85-1000K
+                 0.0043147, 0.47999, 700.09, 0.0,
+                 161.85, 1000.0), // 161.85-1000K
         /*dynamic_viscosity*/      
             get_dippr_gas_viscosity_temperature_function
                 (si::kelvin, si::pascal * si::second,
-                1.196e-7, 0.84797, 0.0, 0.0), // 80.15-1000K
+                1.196e-7, 0.84797, 0.0, 0.0,
+                80.15, 1000.0), // 80.15-1000K
         /*density*/                state_invariant(2.03 * si::kilogram/si::meter3), // Perry
         /*refractive_index*/       spectral_invariant(1.00052)
     },
@@ -2216,11 +2218,13 @@ PartlyKnownCompound nitrous_oxide (
         /*thermal_conductivity*/   // 17.4 * si::milliwatt/(si::meter*si::kelvin), // Huber & Harvey
             get_dippr_gas_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin), 
-                 0.001096, 0.667, 540.0, 0.0), // 182.3-1000K
+                 0.001096, 0.667, 540.0, 0.0,
+                 182.3, 1000.0), // 182.3-1000K
         /*dynamic_viscosity*/      // 1.47e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
             get_dippr_gas_viscosity_temperature_function
                 (si::kelvin, si::pascal * si::second,
-                2.1150e-6, 0.4642, 305.7, 0.0), // 182.3-1000 K
+                2.1150e-6, 0.4642, 305.7, 0.0,
+                182.3, 1000.0), // 182.3-1000 K
         /*density*/                state_invariant(1.87 *  si::kilogram/si::meter3), // Perry
         /*refractive_index*/       spectral_invariant(1.000516)
     },
@@ -2339,11 +2343,13 @@ PartlyKnownCompound  sulfur_dioxide (
         /*thermal_conductivity*/   // 9.6 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
             get_dippr_gas_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin), 
-                 10.527, -0.7732, -1333.0, 1506400.0), // 250-900K
+                 10.527, -0.7732, -1333.0, 1506400.0,
+                 250.0, 900.0), // 250-900K
         /*dynamic_viscosity*/      // 1.26e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
             get_dippr_gas_viscosity_temperature_function
                 (si::kelvin, si::pascal * si::second,
-                6.8630e-7, 0.6112, 217.0, 0.0), // 197.67-1000K
+                6.8630e-7, 0.6112, 217.0, 0.0,
+                197.67, 1000.0), // 197.67-1000K
         /*density*/                missing(),
         /*refractive_index*/       spectral_invariant(1.000686)
     },
@@ -2474,11 +2480,13 @@ PartlyKnownCompound  sulfur_dioxide (
         /*thermal_conductivity*/   // 25.9 * si::milliwatt/(si::meter*si::kelvin), // Huber & Harvey
             get_dippr_gas_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin), 
-                 0.0004096, 0.7509, 45.6, 0.0), // 121.38-750K
+                 0.0004096, 0.7509, 45.6, 0.0,
+                 121.38, 750.0), // 121.38-750K
         /*dynamic_viscosity*/      // 0.0188 * si::millipascal * si::second, //pubchem
             get_dippr_gas_viscosity_temperature_function
                 (si::kelvin, si::pascal * si::second,
-                1.4670e-6, 0.5123, 125.4, 0.0), // 110-1500K
+                1.4670e-6, 0.5123, 125.4, 0.0,
+                110.0, 1500.0), // 110-1500K
         /*density*/                missing(),
         /*refractive_index*/       spectral_invariant(1.000297)
     },
@@ -2974,11 +2982,13 @@ PartlyKnownCompound hydrogen_cyanide (
         /*thermal_conductivity*/   
             get_dippr_gas_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin), 
-                 4.6496e-6, 1.3669, -210.76, 58295.0), // 273.15-673.15
+                 4.6496e-6, 1.3669, -210.76, 58295.0,
+                 273.15, 673.15), // 273.15-673.15K
         /*dynamic_viscosity*/      
             get_dippr_gas_viscosity_temperature_function
                 (si::kelvin, si::pascal * si::second,
-                1.2780e-8, 1.0631, 340.0, 0.0), // 183.65-1000K
+                1.2780e-8, 1.0631, 340.0, 0.0,
+                183.65, 1000.0), // 183.65-1000K
         /*density*/                missing(),
         /*refractive_index*/       missing()
     },
@@ -3096,11 +3106,13 @@ PartlyKnownCompound ethanol (
         /*thermal_conductivity*/   // 14.4 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
             get_dippr_gas_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin), 
-                 -0.010109, 0.6475, -7332.0, -268e3), // 293.15-1000K
+                 -0.010109, 0.6475, -7332.0, -268e3,
+                 293.15, 1000.0), // 293.15-1000K
         /*dynamic_viscosity*/      
             get_dippr_gas_viscosity_temperature_function
                 (si::kelvin, si::pascal * si::second,
-                1.0613e-7, 0.8066, 52.7, 0.0), // 200-1000K
+                1.0613e-7, 0.8066, 52.7, 0.0,
+                200.0, 1000.0), // 200-1000K
         /*density*/                missing(),
         /*refractive_index*/       missing()
     },
@@ -3226,11 +3238,13 @@ PartlyKnownCompound formaldehyde (
         /*thermal_conductivity*/   
             get_dippr_gas_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin), 
-                 5.2201e-06, 1.417, 0.0, 0.0), // 253.85-1000K
+                 5.2201e-06, 1.417, 0.0, 0.0,
+                 253.85, 1000.0), // 253.85-1000K
         /*dynamic_viscosity*/      
             get_dippr_gas_viscosity_temperature_function
                 (si::kelvin, si::pascal * si::second,
-                1.5948e-5, 0.21516, 1151.1, 0.0), // 167.55-1000K
+                1.5948e-5, 0.21516, 1151.1, 0.0,
+                167.55, 1000.0), // 167.55-1000K
         /*density*/                state_invariant(1.0 * si::kilogram/si::meter3), // Perry
         /*refractive_index*/       missing()
     },
@@ -3338,7 +3352,8 @@ PartlyKnownCompound formic_acid (
         /*dynamic_viscosity*/      
             get_dippr_gas_viscosity_temperature_function
                 (si::kelvin, si::pascal * si::second,
-                5.0702e-8, 0.9114, 0.0, 0.0), // 281.45-1000K
+                5.0702e-8, 0.9114, 0.0, 0.0,
+                281.45, 1000.0), // 281.45-1000K
         /*density*/                missing(),
         /*refractive_index*/       missing()
     },
@@ -3582,11 +3597,13 @@ PartlyKnownCompound benzene (
         /*thermal_conductivity*/   
             get_dippr_gas_thermal_conductivity_temperature_function
                 (si::kelvin, si::watt / (si::meter * si::kelvin), 
-                 0.00001652, 1.3117, 491, 0.0), // 339.15-1000K
+                 0.00001652, 1.3117, 491, 0.0,
+                 339.15, 1000.0), // 339.15-1000K
         /*dynamic_viscosity*/      // 0.75e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
             get_dippr_gas_viscosity_temperature_function
                 (si::kelvin, si::pascal * si::second,
-                3.1340e-8, 0.9676, 7.9, 0.0), // 278.68-1000K
+                3.1340e-8, 0.9676, 7.9, 0.0,
+                278.68, 1000.0), // 278.68-1000K
         /*density*/                missing(),
         /*refractive_index*/       missing(),
     },

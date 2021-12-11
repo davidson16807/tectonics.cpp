@@ -20,7 +20,7 @@ TEST_CASE( "CompletedCompound order of magnitude", "[field]" ) {
             COMPLETED_COMPOUNDS_VALID(20.0*si::celcius, p*si::pascal) // room temperature
             COMPLETED_COMPOUNDS_VALID(100.0*si::celcius, p*si::pascal) // boiling point of water at standard pressure
             COMPLETED_COMPOUNDS_VALID(380.0*si::celcius, p*si::pascal) // temperature of Venus
-            // COMPLETED_COMPOUNDS_VALID(3410.0*si::kelvin, p*si::pascal) // melting point of tungsten
+            COMPLETED_COMPOUNDS_VALID(3410.0*si::kelvin, p*si::pascal) // melting point of tungsten
             // COMPLETED_COMPOUNDS_VALID(si::solar_temperature, p*si::pascal) // temperature of the sun
         }
     }

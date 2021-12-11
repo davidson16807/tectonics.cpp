@@ -102,8 +102,8 @@ namespace compound{
             double standard_melting_point_in_kelvin = (normal_melting_point / si::kelvin);
             double liquid_thermal_conductivity_in_watts_per_meter_kelvin = 
                 1.951 * (1.0 - 0.00126 * (temperature_in_kelvin - standard_melting_point_in_kelvin)) / 
-                         (pow(standard_melting_point_in_kelvin, 0.216f)*pow(molar_mass_in_grams, 0.3f));
-            return std::max(liquid_thermal_conductivity_in_watts_per_meter_kelvin, 0.0) * si::watt / (si::meter*si::kelvin);
+                         (std::pow(standard_melting_point_in_kelvin, 0.216)*std::pow(molar_mass_in_grams, 0.3));
+            return std::max(liquid_thermal_conductivity_in_watts_per_meter_kelvin, 0.01) * si::watt / (si::meter*si::kelvin); // We assume thermal conductivity must be positive and nonzero, so we cap it to the lowest order of magnitude ever observed
         }
 
         // Sato-Riedel method: https://chemicals.readthedocs.io/chemicals.thermal_conductivity.html#pure-low-pressure-liquid-correlations
