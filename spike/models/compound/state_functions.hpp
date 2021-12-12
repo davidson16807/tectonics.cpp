@@ -202,17 +202,17 @@ namespace compound {
     `get_perry_johnson_temperature_function()` uses Perry coefficients for high temperature,
     and interpolated values from Johnson (1960) for low temperature.
     */
-    template<typename Tx, typename Ty>
-    field::StateFunction<Ty> get_perry_johnson_temperature_function(
+    template<typename Tx>
+    field::StateFunction<si::specific_heat_capacity> get_perry_johnson_temperature_function(
         const Tx Tunits, 
-        const Ty y_units_johnson, 
+        const si::specific_heat_capacity y_units_johnson, 
         const double linear_johnson, const double cube_johnson, 
         const double T_max_johnson,
-        const Ty y_units_perry,
+        const si::specific_heat_capacity y_units_perry,
         const double intercept_perry, const double linear_perry, const double inverse_square_perry, const double square_perry, 
         const double T_min_perry, const double T_max_perry
     ){
-        return field::StateFunction<Ty>(
+        return field::StateFunction<si::specific_heat_capacity>(
             [Tunits, 
              y_units_johnson, linear_johnson, cube_johnson, T_max_johnson,
              y_units_perry, intercept_perry, linear_perry, inverse_square_perry, square_perry, T_min_perry, T_max_perry]
@@ -394,7 +394,6 @@ namespace compound {
         );
     }
     // from Jasper (1972)
-
 
     template<typename Tx, typename Ty>
     field::StateFunction<Ty> get_quadratic_temperature_function(

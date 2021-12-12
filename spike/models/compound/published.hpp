@@ -333,7 +333,6 @@ PartlyKnownCompound water (
                     std::vector<double>{ 10257.4, 10118.8,  9930.7,  9722.8,  9445.5,  9306.9,  9227.7,  9069.3,  8802.0,  8574.3,  8346.5,  7920.8,  7752.5,  7653.5,  7485.1,  7198.0,  7019.8,  6752.5,  6663.4,  6564.4,  6386.1,  6178.2,  6059.4,  5990.1,  5762.4,  5425.7,  5346.5,  5198.0,  5039.6,  4841.6,  4782.2,  4683.2,  4465.3,  4257.4,  4118.8,  3980.2,  3821.8,  3752.5,  3604.0,  2940.6,  2861.4,  2762.4,  2574.3,  2366.3,  2287.1 },
                     std::vector<double>{  -0.982,  -0.375,   0.089,   0.321,   0.393,   0.036,  -0.304,  -0.429,  -0.446,  -0.107,   0.554,   1.107,   1.125,   1.179,   0.946,   1.000,   1.268,   2.482,   2.679,   2.625,   2.589,   2.179,   2.482,   2.161,   1.625,   1.625,   1.732,   2.500,   2.964,   2.946,   2.768,   2.339,   1.661,   2.357,   2.393,   2.482,   2.393,   2.571,   3.589,   3.571,   3.268,   3.286,   3.571,   3.661,   3.589 }),
 
-
             /*bulk_modulus*/                      state_invariant(8.899 * si::gigapascal),                           // gammon (1983)
             /*tensile_modulus*/                   state_invariant(9.332 * si::gigapascal),                           // gammon (1983)
             /*shear_modulus*/                     state_invariant(3.521 * si::gigapascal),                           // gammon (1983)
@@ -951,7 +950,7 @@ PartlyKnownCompound nitrogen (
                 (si::kelvin, si::newton/si::meter,
                  126.21, 0.02898, 1.246, 0.0, 0.0, 0.0, 0.0,
                  64.8, 120.24), // Mulero (2012)
-        /*refractive_index*/       1.19876,
+        /*refractive_index*/                      1.19876,
         /*extinction_coefficient*/                missing()
     },
 
@@ -1232,9 +1231,13 @@ PartlyKnownCompound oxygen (
 
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
-        // gamma
+        // gamma, a.k.a "Solid I"
         phase::PartlyKnownSolid { 
-            /*isobaric_specific_heat_capacity*/   state_invariant(11.06 * si::calorie / (31.9988*si::gram * si::kelvin)), // Johnson (1960), 10.73 for solid II, 4.4 for solid III
+            /*isobaric_specific_heat_capacity*/   
+                get_interpolated_temperature_function
+                    ( si::kelvin, si::calorie / (31.9988*si::gram * si::kelvin),
+                      std::vector<double>{45.90, 54.39},
+                      std::vector<double>{11.02, 11.06}), // Johnson (1960)
             /*thermal_conductivity*/              state_invariant(0.17 * si::watt / (si::centimeter * si::kelvin)),  // Jezowski (1993)
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           
@@ -1283,9 +1286,13 @@ PartlyKnownCompound oxygen (
 
             /*chemical_susceptibility_estimate*/  missing()
         },
-        // beta
+        // beta, a.k.a. "Solid II"
         phase::PartlyKnownSolid {
-            /*isobaric_specific_heat_capacity*/   state_invariant(11.06 * si::calorie / (31.9988*si::gram * si::kelvin)), // Johnson (1960), 10.73 for solid II, 4.4 for solid III
+            /*isobaric_specific_heat_capacity*/   
+                get_interpolated_temperature_function
+                    ( si::kelvin, si::calorie / (31.9988*si::gram * si::kelvin),
+                      std::vector<double>{25.02, 42.21},
+                      std::vector<double>{ 5.42, 10.73}), // Johnson (1960)
             /*thermal_conductivity*/              state_invariant(0.17 * si::watt / (si::centimeter * si::kelvin)),  // Jezowski (1993)
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           
@@ -1339,7 +1346,11 @@ PartlyKnownCompound oxygen (
         },
         // alpha
         phase::PartlyKnownSolid {
-            /*isobaric_specific_heat_capacity*/   state_invariant(11.06 * si::calorie / (31.9988*si::gram * si::kelvin)), // Johnson (1960), 10.73 for solid II, 4.4 for solid III
+            /*isobaric_specific_heat_capacity*/   
+                get_interpolated_temperature_function
+                    ( si::kelvin, si::calorie / (31.9988*si::gram * si::kelvin),
+                      std::vector<double>{0.0,          2.0, 12.97, 22.24},
+                      std::vector<double>{0.0, 11.7/31.9988,  1.10,  4.40}), // Johnson (1960)
             /*thermal_conductivity*/              state_invariant(0.17 * si::watt / (si::centimeter * si::kelvin)),  // Jezowski (1993)
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           //1524.0 * si::kilogram/si::meter3,
@@ -1681,7 +1692,6 @@ PartlyKnownCompound methane (
                  -6.1572, 178.15, -0.95239, -9.0606e-24, 10.0,
                   90.69, 188), // 90.69-188K
         /*density*/                
-            // field::StateSample<si::density>(0.4407*si::gram/si::centimeter3, 33.8*si::kilopascal, 99.8*si::kelvin), // Johnson (1960)
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 16.043 * si::gram/si::decimeter3,
                  2.9214, 0.28976, 190.56, 0.28881,
@@ -1706,7 +1716,11 @@ PartlyKnownCompound methane (
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid { // alpha
 
-            /*isobaric_specific_heat_capacity*/   state_invariant(5.193 * si::calorie / (16.043*si::gram * si::kelvin)), // Johnson (1960)
+            /*isobaric_specific_heat_capacity*/ 
+                get_interpolated_temperature_function
+                    ( si::kelvin, si::calorie / (16.043*si::gram * si::kelvin),
+                      std::vector<double>{21.35, 61.40, 87.20},
+                      std::vector<double>{4.325, 8.673, 10.19}), // Johnson (1960)
             /*thermal_conductivity*/              // 0.010 * si::watt / (si::centimeter * si::kelvin), // Jezowski (1997)
                 get_interpolated_temperature_function
                     (si::kelvin, si::milliwatt/(si::centimeter * si::kelvin),
@@ -1757,7 +1771,11 @@ PartlyKnownCompound methane (
             /*chemical_susceptibility_estimate*/  missing()
         },
         phase::PartlyKnownSolid { // beta
-            /*isobaric_specific_heat_capacity*/   state_invariant(5.193 * si::calorie / (16.043*si::gram * si::kelvin)), // Johnson (1960)
+            /*isobaric_specific_heat_capacity*/   
+                get_interpolated_temperature_function
+                    ( si::kelvin, si::calorie / (16.043*si::gram * si::kelvin),
+                      std::vector<double>{0.0, 10.33, 15.48, 19.94},
+                      std::vector<double>{0.0, 0.954, 2.774, 10.91}), // Johnson (1960)
             /*thermal_conductivity*/              // 0.010 * si::watt / (si::centimeter * si::kelvin), // Jezowski (1997)
                 get_interpolated_temperature_function
                     (si::kelvin, si::milliwatt/(si::centimeter * si::kelvin),
@@ -1952,7 +1970,11 @@ PartlyKnownCompound argon (
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
-            /*isobaric_specific_heat_capacity*/   state_invariant(0.197 * si::calorie / (si::gram * si::kelvin)),    // Johnson (1960)
+            /*isobaric_specific_heat_capacity*/   
+                get_interpolated_temperature_function
+                    ( si::kelvin, si::calorie / (si::gram * si::kelvin),
+                      std::vector<double>{0.0, 90.68},
+                      std::vector<double>{0.0, 0.197}), // Johnson (1960)
             /*thermal_conductivity*/              
                 get_interpolated_temperature_function
                     (si::kelvin, si::milliwatt / (si::centimeter * si::kelvin),
@@ -2109,7 +2131,6 @@ PartlyKnownCompound helium (
                  -9.6312, -3.841, -1.458, -1.065e-8, 10.0,
                   2.2, 5.1), // 2.2-5.1K
         /*density*/                
-            // field::StateSample<si::density>(0.101*si::gram/si::centimeter3, si::atmosphere, 5.0*si::kelvin), // Johnson (1960)
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 4.0026 * si::gram/si::decimeter3,
                  7.2475, 0.41865, 5.2, 0.24096,
@@ -2309,7 +2330,11 @@ PartlyKnownCompound hydrogen (
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
-            /*isobaric_specific_heat_capacity*/   state_invariant(0.2550 * si::calorie / (si::gram * si::kelvin)), // Johnson (1960)
+            /*isobaric_specific_heat_capacity*/   
+                get_interpolated_temperature_function
+                    ( si::kelvin, si::calorie / (si::gram * si::kelvin),
+                      std::vector<double>{0.0,    3.04,    5.95,   9.87},
+                      std::vector<double>{0.0, 0.02584, 0.06349, 0.2763}), // Johnson (1960)
             /*thermal_conductivity*/              state_invariant(1.819 * si::watt / ( si::meter * si::kelvin )), // wikipedia
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           // 86.0 * si::kilogram/si::meter3, // https://en.wikipedia.org/wiki/Solid_hydrogen
@@ -3158,7 +3183,6 @@ PartlyKnownCompound carbon_monoxide (
                  -4.9735, 97.67, -1.1088, 0.0, 0.0,
                   68.15, 131.37), // 68.15-131.37K
         /*density*/                
-            // field::StateSample<si::density>(0.69953*si::gram/si::centimeter3, si::atmosphere, 100.93*si::kelvin), // Johnson (1960)
             get_dippr_liquid_density_temperature_function
                 (si::kelvin, 28.010 * si::gram/si::decimeter3,
                  2.897, 0.27532, 132.92, 0.2813,
@@ -3684,7 +3708,11 @@ PartlyKnownCompound ethanol (
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid> {
         phase::PartlyKnownSolid {
-            /*isobaric_specific_heat_capacity*/   state_invariant(111.46 * si::joule / (46.068*si::gram*si::kelvin)), // wikipedia data page
+            /*isobaric_specific_heat_capacity*/   
+                get_interpolated_temperature_function
+                    (si::kelvin, si::joule/(46.068*si::gram*si::kelvin),
+                     std::vector<double>{0.0, 159.2}, 
+                     std::vector<double>{0.0,111.46}), // wikipedia data page
             /*thermal_conductivity*/              missing(),
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           state_invariant(0.739 * si::gram / si::centimeter3), // Hudson (2020)
@@ -3909,7 +3937,11 @@ PartlyKnownCompound formic_acid (
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
-            /*isobaric_specific_heat_capacity*/   state_invariant(74.5 * si::joule / (46.026*si::gram*si::kelvin)), // wikipedia data page
+            /*isobaric_specific_heat_capacity*/   
+                get_interpolated_temperature_function
+                    (si::kelvin, si::joule / (46.026*si::gram*si::kelvin),
+                     std::vector<double>{0.0, 281.5}, 
+                     std::vector<double>{0.0,  74.5}), // wikipedia data page
             /*thermal_conductivity*/              missing(),
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           state_invariant(0.979 * si::gram / si::centimeter3), // Hudson (2020)
@@ -4176,7 +4208,11 @@ PartlyKnownCompound benzene (
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
-            /*isobaric_specific_heat_capacity*/   state_invariant(118.4 * si::joule / (79.109 * si::gram * si::kelvin)),
+            /*isobaric_specific_heat_capacity*/   
+                get_interpolated_temperature_function
+                    (si::kelvin, si::joule / (79.109*si::gram*si::kelvin),
+                     std::vector<double>{0.0, 278.7}, 
+                     std::vector<double>{0.0, 118.4}), // wikipedia data page
             /*thermal_conductivity*/              missing(),
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           missing(),
@@ -4558,7 +4594,11 @@ PartlyKnownCompound  apatite (
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
 
-            /*isobaric_specific_heat_capacity*/   state_invariant(0.7 * si::kilojoule / (si::kilogram*si::kelvin)), // Schön (2015)
+            /*isobaric_specific_heat_capacity*/   
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilojoule / (si::kilogram*si::kelvin),
+                     std::vector<double>{0.0, 300.0}, 
+                     std::vector<double>{0.0,   0.7}), // Schön (2015)
             /*thermal_conductivity*/              state_invariant(1.38 * si::watt / (si::meter*si::kelvin)), // Schön (2015)
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           state_invariant(3180.0 * si::kilogram/si::meter3),
@@ -6369,7 +6409,11 @@ PartlyKnownCompound  chalcopyrite (
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
 
-            /*isobaric_specific_heat_capacity*/   state_invariant(0.54 * si::kilojoule / (si::kilogram * si::kelvin)), // Cermak (1988), for chalcopyrite
+            /*isobaric_specific_heat_capacity*/   
+                get_interpolated_temperature_function
+                    (si::kelvin, si::kilojoule / (si::kilogram*si::kelvin),
+                     std::vector<double>{0.0, 300.0}, 
+                     std::vector<double>{0.0,  0.54}), // Cermak (1988), for chalcopyrite
             /*thermal_conductivity*/              state_invariant(8.19 * si::watt / (si::centimeter * si::kelvin)), // Cermak (1988), for chalcopyrite
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           state_invariant(4200.0 *  si::kilogram/si::meter3), //wikipedia
