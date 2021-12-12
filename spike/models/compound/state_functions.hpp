@@ -66,6 +66,21 @@ namespace compound {
     }
 
     template<typename Tx, typename Ty>
+    field::StateFunction<Ty> get_interpolated_pressure_function(
+        const Tx xunits, const Ty yunits,
+        const std::vector<double>xs, 
+        const std::vector<double>ys
+    ){
+        return field::StateFunction<Ty>(
+            [xunits, yunits, xs, ys]
+            (const si::pressure p, const si::temperature T)
+            {
+                return math::lerp(xs, ys, p/xunits) * yunits;
+            }
+        );
+    }
+
+    template<typename Tx, typename Ty>
     field::StateFunction<Ty> get_interpolated_inverse_temperature_function(
         const Tx xunits, const Ty yunits,
         const std::vector<double>xs, 
@@ -348,6 +363,37 @@ namespace compound {
         );
     }
     // from Jasper (1972)
+
+
+    template<typename Tx, typename Ty>
+    field::StateFunction<Ty> get_quadratic_temperature_function(
+        const Tx Tunits, const Ty yunits,
+        const double intercept, const double linear, const double square
+    ){
+        return field::StateFunction<Ty>(
+            [Tunits, yunits, intercept, linear, square]
+            (const si::pressure p, const si::temperature T)
+            {
+                double t = T/Tunits;
+                return (intercept + linear*t + square*t*t)*yunits;
+            }
+        );
+    }
+
+    template<typename Tx, typename Ty>
+    field::StateFunction<Ty> get_quadratic_pressure_function(
+        const Tx Punits, const Ty yunits,
+        const double intercept, const double linear, const double square
+    ){
+        return field::StateFunction<Ty>(
+            [Punits, yunits, intercept, linear, square]
+            (const si::pressure p, const si::temperature T)
+            {
+                double P = p/Punits;
+                return (intercept + linear*P + square*P*P)*yunits;
+            }
+        );
+    }
 
     template<typename Tx, typename Ty>
     field::StateFunction<Ty> get_linear_liquid_surface_tension_temperature_function(

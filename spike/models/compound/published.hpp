@@ -294,7 +294,10 @@ PartlyKnownCompound water (
             /*isobaric_specific_heat_capacity*/   state_invariant(2.05 * si::joule / (si::gram * si::kelvin)),       // wikipedia
             /*thermal_conductivity*/              state_invariant(2.09 * si::watt / (si::meter * si::kelvin)),       // wikipedia
             /*dynamic_viscosity*/                 state_invariant(1e13 * si::poise),                                 // reference by Carey (1953)
-            /*density*/                           state_invariant(0916.9 * si::kilogram/si::meter3),
+            /*density*/                           
+                get_quadratic_pressure_function
+                   (si::kilobar, si::gram/si::centimeter3,
+                    0.9228, 0.00728, 0.00075), // Gagnon (1990)
             /*vapor_pressure*/                    //138.268 * si::megapascal,
                 get_interpolated_temperature_function
                     (si::celcius, si::millimeter_mercury,
@@ -340,7 +343,7 @@ PartlyKnownCompound water (
             /*isobaric_specific_heat_capacity*/   missing(),
             /*thermal_conductivity*/              missing(),
             /*dynamic_viscosity*/                 missing(),
-            /*density*/                           missing(),
+            /*density*/                           state_invariant(0.964 * si::gram/si::centimeter3),                    // Tchijov (2008)
             /*vapor_pressure*/                    missing(),
             /*refractive_index*/                  missing(),
             /*extinction_coefficient*/            missing(),
@@ -367,15 +370,18 @@ PartlyKnownCompound water (
             /*isobaric_specific_heat_capacity*/   missing(),
             /*thermal_conductivity*/              missing(),
             /*dynamic_viscosity*/                 missing(),
-            /*density*/                           missing(),
+            /*density*/                           
+                get_quadratic_pressure_function
+                   (si::kilobar, si::gram/si::centimeter3,
+                    1.1698, 0.00818, 0.0), // Gagnon (1990)
             /*vapor_pressure*/                    missing(),
             /*refractive_index*/                  missing(),
             /*extinction_coefficient*/            missing(),
             /*absorption_coefficient*/            missing(),
 
-            /*bulk_modulus*/                      missing(),
+            /*bulk_modulus*/                      state_invariant(14.39e4 * si::bar),                                   // Gagnon (1990)
             /*tensile_modulus*/                   missing(),
-            /*shear_modulus*/                     missing(),
+            /*shear_modulus*/                     state_invariant(6.2e4 * si::bar),                                     // Gagnon (1990)
             /*pwave_modulus*/                     missing(),
             /*lame_parameter*/                    missing(),
             /*poisson_ratio*/                     missing(),
@@ -391,18 +397,21 @@ PartlyKnownCompound water (
         },
         phase::PartlyKnownSolid { // ice3
 
-            /*isobaric_specific_heat_capacity*/   missing(),
+            /*isobaric_specific_heat_capacity*/   state_invariant(2500.0*si::joule/(si::kilogram*si::kelvin)),          // Tchijov (2008)
             /*thermal_conductivity*/              missing(),
             /*dynamic_viscosity*/                 missing(),
-            /*density*/                           missing(),
+            /*density*/                           
+                get_quadratic_pressure_function
+                   (si::kilobar, si::gram/si::centimeter3,
+                    1.1321, 0.01206, 0.0), // Gagnon (1990)
             /*vapor_pressure*/                    missing(),
             /*refractive_index*/                  missing(),
             /*extinction_coefficient*/            missing(),
             /*absorption_coefficient*/            missing(),
 
-            /*bulk_modulus*/                      missing(),
+            /*bulk_modulus*/                      state_invariant(9.6e4 * si::bar),                                     // Gagnon (1990)
             /*tensile_modulus*/                   missing(),
-            /*shear_modulus*/                     missing(),
+            /*shear_modulus*/                     state_invariant(4.6e4 * si::bar),                                     // Gagnon (1990)
             /*pwave_modulus*/                     missing(),
             /*lame_parameter*/                    missing(),
             /*poisson_ratio*/                     missing(),
@@ -421,7 +430,7 @@ PartlyKnownCompound water (
             /*isobaric_specific_heat_capacity*/   missing(),
             /*thermal_conductivity*/              missing(),
             /*dynamic_viscosity*/                 missing(),
-            /*density*/                           missing(),
+            /*density*/                           state_invariant(1.314 * si::gram/si::centimeter3),                    // Tchijov (2008)
             /*vapor_pressure*/                    missing(),
             /*refractive_index*/                  missing(),
             /*extinction_coefficient*/            missing(),
@@ -445,18 +454,21 @@ PartlyKnownCompound water (
         },
         phase::PartlyKnownSolid { // ice5
 
-            /*isobaric_specific_heat_capacity*/   missing(),
+            /*isobaric_specific_heat_capacity*/   state_invariant(2500.0*si::joule/(si::kilogram*si::kelvin)),          // Tchijov (2008)
             /*thermal_conductivity*/              missing(),
             /*dynamic_viscosity*/                 missing(),
-            /*density*/                           state_invariant(1.24*si::gram/si::centimeter3), //wikipedia
+            /*density*/                           
+                get_quadratic_pressure_function
+                   (si::kilobar, si::gram/si::centimeter3,
+                    1.1974, 0.01963, 0.0), // Gagnon (1990)
             /*vapor_pressure*/                    missing(),
             /*refractive_index*/                  missing(),
             /*extinction_coefficient*/            missing(),
             /*absorption_coefficient*/            missing(),
 
-            /*bulk_modulus*/                      missing(),
+            /*bulk_modulus*/                      state_invariant(13.86e4 * si::bar),                                   // Gagnon (1990)
             /*tensile_modulus*/                   missing(),
-            /*shear_modulus*/                     missing(),
+            /*shear_modulus*/                     state_invariant(6.1e4 * si::bar),                                     // Gagnon (1990)
             /*pwave_modulus*/                     missing(),
             /*lame_parameter*/                    missing(),
             /*poisson_ratio*/                     missing(),
@@ -472,18 +484,25 @@ PartlyKnownCompound water (
         },
         phase::PartlyKnownSolid { // ice6
 
-            /*isobaric_specific_heat_capacity*/   missing(),
-            /*thermal_conductivity*/              missing(),
+            /*isobaric_specific_heat_capacity*/   state_invariant(2600.0*si::joule/(si::kilogram*si::kelvin)),          // Tchijov (2008)
+            /*thermal_conductivity*/              
+                get_interpolated_pressure_function
+                    (si::gigapascal, si::watt/(si::meter*si::kelvin),
+                     std::vector<double>{ 0.96, 2.17}, 
+                     std::vector<double>{ 1.69, 1.79}), // Carretero (2018)
             /*dynamic_viscosity*/                 missing(),
-            /*density*/                           state_invariant(1.31*si::gram/si::centimeter3), //wikipedia
+            /*density*/                           
+                get_quadratic_pressure_function
+                   (si::kilobar, si::gram/si::centimeter3,
+                    1.1559, 0.04521, -0.002435), // Gagnon (1990)
             /*vapor_pressure*/                    missing(),
             /*refractive_index*/                  missing(),
             /*extinction_coefficient*/            missing(),
             /*absorption_coefficient*/            missing(),
 
-            /*bulk_modulus*/                      missing(),
+            /*bulk_modulus*/                      state_invariant(18.48e4 * si::bar),                                   // Gagnon (1990)
             /*tensile_modulus*/                   missing(),
-            /*shear_modulus*/                     missing(),
+            /*shear_modulus*/                     state_invariant(7.5e4 * si::bar),                                     // Gagnon (1990)
             /*pwave_modulus*/                     missing(),
             /*lame_parameter*/                    missing(),
             /*poisson_ratio*/                     missing(),
@@ -500,15 +519,23 @@ PartlyKnownCompound water (
         phase::PartlyKnownSolid { // ice7
 
             /*isobaric_specific_heat_capacity*/   missing(),
-            /*thermal_conductivity*/              missing(),
+            /*thermal_conductivity*/              
+                get_interpolated_pressure_function
+                    (si::gigapascal, si::watt/(si::meter*si::kelvin),
+                     std::vector<double>{7.52,  9.97,  19.75 }, 
+                     std::vector<double>{ 4.6,   5.7,   9.85 }), // Carretero (2018)
             /*dynamic_viscosity*/                 missing(),
-            /*density*/                           state_invariant(1.65*si::gram/si::centimeter3), //wikipedia
+            /*density*/                           
+                get_interpolated_pressure_function
+                    (si::gigapascal, si::gram/si::centimeter3,
+                     std::vector<double>{ 7.52,  9.97,  19.75 }, 
+                     std::vector<double>{1.688, 1.748,  1.915 }), // Carretero (2018)
             /*vapor_pressure*/                    missing(),
             /*refractive_index*/                  missing(),
             /*extinction_coefficient*/            missing(),
             /*absorption_coefficient*/            missing(),
 
-            /*bulk_modulus*/                      missing(),
+            /*bulk_modulus*/                      state_invariant(23.9*si::gigapascal),                                 //Fei (1993)
             /*tensile_modulus*/                   missing(),
             /*shear_modulus*/                     missing(),
             /*pwave_modulus*/                     missing(),
@@ -529,7 +556,7 @@ PartlyKnownCompound water (
             /*isobaric_specific_heat_capacity*/   missing(),
             /*thermal_conductivity*/              missing(),
             /*dynamic_viscosity*/                 missing(),
-            /*density*/                           missing(),
+            /*density*/                           state_invariant(1.674 * si::gram/si::centimeter3),                    // Tchijov (2008)
             /*vapor_pressure*/                    missing(),
             /*refractive_index*/                  missing(),
             /*extinction_coefficient*/            missing(),
@@ -556,7 +583,7 @@ PartlyKnownCompound water (
             /*isobaric_specific_heat_capacity*/   missing(),
             /*thermal_conductivity*/              missing(),
             /*dynamic_viscosity*/                 missing(),
-            /*density*/                           state_invariant(1.16*si::gram/si::centimeter3), //wikipedia
+            /*density*/                           state_invariant(1.210 * si::gram/si::centimeter3),                    // Tchijov (2008)
             /*vapor_pressure*/                    missing(),
             /*refractive_index*/                  missing(),
             /*extinction_coefficient*/            missing(),
@@ -664,7 +691,7 @@ PartlyKnownCompound water (
             /*isobaric_specific_heat_capacity*/   missing(),
             /*thermal_conductivity*/              missing(),
             /*dynamic_viscosity*/                 missing(),
-            /*density*/                           state_invariant(1.29*si::gram/si::centimeter3), //wikipedia
+            /*density*/                           state_invariant(1.314 * si::gram/si::centimeter3),                    // Tchijov (2008)
             /*vapor_pressure*/                    missing(),
             /*refractive_index*/                  missing(),
             /*extinction_coefficient*/            missing(),
