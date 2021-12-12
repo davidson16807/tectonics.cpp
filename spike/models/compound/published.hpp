@@ -291,9 +291,21 @@ PartlyKnownCompound water (
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid { // ice1h, regular ice
-            /*isobaric_specific_heat_capacity*/   state_invariant(2.05 * si::joule / (si::gram * si::kelvin)),       // wikipedia
-            /*thermal_conductivity*/              state_invariant(2.09 * si::watt / (si::meter * si::kelvin)),       // wikipedia
-            /*dynamic_viscosity*/                 state_invariant(1e13 * si::poise),                                 // reference by Carey (1953)
+            /*isobaric_specific_heat_capacity*/   
+                get_perry_johnson_temperature_function
+                    (si::kelvin, 
+                     si::joule/(si::gram*si::kelvin),
+                     0.0, 1.0/66e3, 15.0,
+                     si::kilojoule / (si::kilogram * si::kelvin), 
+                     2.05, 1.0/186.0, 0.0, -1.0/80e3,
+                     173.15, 273.15), // Johnson (1960) and Engineering Toolbox, custom fit
+            /*thermal_conductivity*/              
+                get_interpolated_temperature_function
+                    (si::kelvin, si::watt/(si::meter*si::kelvin),
+                     std::vector<double>{ 2.0,  4.0,  8.0, 10.0, 30.0, 100.0, 173.0, 193.0, 233.0, 253.0, 273.15 }, 
+                     std::vector<double>{21.0, 57.0, 87.0, 81.0, 22.0,   6.0,  3.48,  3.19,  2.63,  2.39,   2.22 }), // Ahmad (1994) and Engineering Toolbox
+            /*dynamic_viscosity*/                 
+                state_invariant(1e13 * si::poise),                                 // reference by Carey (1953)
             /*density*/                           
                 get_quadratic_pressure_function
                    (si::kilobar, si::gram/si::centimeter3,
@@ -4686,12 +4698,18 @@ PartlyKnownCompound carbon (
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid { // graphite
             /*isobaric_specific_heat_capacity*/   // 0.710 * si::joule / (si::gram * si::kelvin), // wikipedia, Diamond is 0.5091
-                get_perry_temperature_function(si::kelvin, si::calorie/(12.011 * si::gram*si::kelvin), 2.673, 0.002617, -116900.0, 0.0, 273.0, 1373.0), 
+                get_perry_johnson_temperature_function
+                    (si::kelvin, 
+                     si::joule/(si::gram*si::kelvin),
+                     1e-5, 1.0/970e3, 10.0,
+                     si::calorie/(12.011 * si::gram*si::kelvin),
+                     2.673, 0.002617, -116900.0, 0.0,
+                     273.0, 1373.0), // Johnson (1960) and Perry
             /*thermal_conductivity*/              // 247.0 * si::watt / ( si::meter * si::kelvin ), // wikipedia (middle range value)
                 get_interpolated_temperature_function
                     (si::kelvin, si::watt / (si::meter * si::kelvin),
-                     std::vector<double>{10.0, 100.0,  300.0, 1400.0}, 
-                     std::vector<double>{81.0,4980.0, 2000.0,  370.0}), // Perry, perpendicular to basal plane
+                     std::vector<double>{  7.0, 10.0, 100.0,  300.0, 1400.0}, 
+                     std::vector<double>{ 15.0, 81.0,4980.0, 2000.0,  370.0}), // Johnson (1960) and Perry, perpendicular to basal plane
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           state_invariant(2260.0 * si::kilogram/si::meter3), 
             /*vapor_pressure*/                    
@@ -4736,7 +4754,13 @@ PartlyKnownCompound carbon (
         },
         phase::PartlyKnownSolid { // diamond
             /*isobaric_specific_heat_capacity*/   // 0.5091* si::joule / (si::gram * si::kelvin), // wikipedia 
-                get_perry_temperature_function(si::kelvin, si::calorie/(12.011 * si::gram*si::kelvin), 2.162, 0.003059, -130300.0, 0.0, 273.0, 1313.0), 
+                get_perry_johnson_temperature_function
+                    (si::kelvin, 
+                     si::joule/(si::gram*si::kelvin),
+                     3e-6, 1.0/67e6, 30.0,
+                     si::calorie/(12.011 * si::gram*si::kelvin),
+                     2.162, 0.003059, -130300.0, 0.0, 
+                     273.0, 1313.0), // Johnson (1960) and Perry
             /*thermal_conductivity*/              state_invariant(2200.0 * si::watt / ( si::meter * si::kelvin )), //wikipedia 
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           state_invariant(3513.0  * si::kilogram/si::meter3), 
@@ -4957,7 +4981,13 @@ PartlyKnownCompound  quartz (
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid { // alpha
             /*isobaric_specific_heat_capacity*/            // 0.703 * si::joule / (si::gram * si::kelvin), // Cermak (1988), wikipedia, for vitreous silica
-                get_perry_temperature_function(si::kelvin, si::calorie/(60.08 * si::gram*si::kelvin), 10.87, 0.008712, 241200.0, 0.0, 273.0, 848.0), 
+                get_perry_johnson_temperature_function
+                    (si::kelvin, 
+                     si::joule/(si::gram*si::kelvin),
+                     0.0, 1.0/1.4e6, 10.0,
+                     si::calorie/(60.08 * si::gram*si::kelvin), 
+                     10.87, 0.008712, 241200.0, 0.0, 
+                     273.0, 848.0), // Johnson (1960) and Perry
             /*thermal_conductivity*/              
                 get_interpolated_temperature_function
                     (si::kelvin, si::watt / (si::meter * si::kelvin),
@@ -5006,7 +5036,13 @@ PartlyKnownCompound  quartz (
         },
         phase::PartlyKnownSolid { // beta
             /*isobaric_specific_heat_capacity*/   // 0.703 * si::joule / (si::gram * si::kelvin), // Cermak (1988), wikipedia, for vitreous silica
-                get_perry_temperature_function(si::kelvin, si::calorie/(60.08 * si::gram*si::kelvin), 10.95, 0.00550, 0.0, 0.0, 848.0, 1873.0), 
+                get_perry_johnson_temperature_function
+                    (si::kelvin, 
+                     si::joule/(si::gram*si::kelvin),
+                     0.0, 1.0/1.4e6, 10.0,
+                     si::calorie/(60.08 * si::gram*si::kelvin), 
+                     10.95, 0.00550, 0.0, 0.0, 
+                     848.0, 1873.0), // Johnson (1960) and Perry
             /*thermal_conductivity*/              missing(),
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           state_invariant(2533.0 *  si::kilogram/si::meter3), // 2650 alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
@@ -5040,7 +5076,13 @@ PartlyKnownCompound  quartz (
         },
         phase::PartlyKnownSolid { // crystobalite alpha
             /*isobaric_specific_heat_capacity*/   // 0.703 * si::joule / (si::gram * si::kelvin), // Cermak (1988), wikipedia, for vitreous silica
-                get_perry_temperature_function(si::kelvin, si::calorie/(60.08 * si::gram*si::kelvin), 3.65, 0.0240, 0.0, 0.0, 273.0, 523.0), 
+                get_perry_johnson_temperature_function
+                    (si::kelvin, 
+                     si::joule/(si::gram*si::kelvin),
+                     0.0, 1.0/1.4e6, 10.0,
+                     si::calorie/(60.08 * si::gram*si::kelvin), 
+                     3.65, 0.0240, 0.0, 0.0,
+                     273.0, 523.0), // Johnson (1960) and Perry
             /*thermal_conductivity*/              missing(),
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           state_invariant(2334.0 *  si::kilogram/si::meter3), // 2650 alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
@@ -5071,7 +5113,13 @@ PartlyKnownCompound  quartz (
         },
         phase::PartlyKnownSolid { // crystobalite beta
             /*isobaric_specific_heat_capacity*/   // 0.703 * si::joule / (si::gram * si::kelvin), // Cermak (1988), wikipedia, for vitreous silica
-                get_perry_temperature_function(si::kelvin, si::calorie/(60.08 * si::gram*si::kelvin), 17.09, 0.000454, -897200.0, 0.0, 523.0, 1973.0), 
+                get_perry_johnson_temperature_function
+                    (si::kelvin, 
+                     si::joule/(si::gram*si::kelvin),
+                     0.0, 1.0/1.4e6, 10.0,
+                     si::calorie/(60.08 * si::gram*si::kelvin), 
+                     17.09, 0.000454, -897200.0, 0.0,
+                     523.0, 1973.0), // Johnson (1960) and Perry
             /*thermal_conductivity*/              missing(),
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           state_invariant(2334.0 *  si::kilogram/si::meter3), // 2650 alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
@@ -5786,14 +5834,19 @@ PartlyKnownCompound  gold (
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
-
             /*isobaric_specific_heat_capacity*/   // 0.129 * si::joule / (si::gram * si::kelvin), // wikipedia, room temperature
-                get_perry_temperature_function(si::kelvin, si::calorie/(196.967 * si::gram*si::kelvin), 5.61, 0.00144, 0.0, 0.0, 273.0, 1336.0),
+                get_perry_johnson_temperature_function
+                    (si::kelvin, 
+                     si::joule/(si::gram*si::kelvin),
+                     3.75e-6, 9.86/(165.0*165.0*165.0), 15.0,
+                     si::calorie/(196.967 * si::gram*si::kelvin), 
+                     5.61, 0.00144, 0.0, 0.0, 
+                     273.0, 1336.0), // Johnson (1960) and Perry
             /*thermal_conductivity*/              // 314.0 * si::watt / ( si::meter * si::kelvin ), // wikipedia
                 get_interpolated_temperature_function
                     (si::kelvin, si::watt / (si::meter * si::kelvin),
-                     std::vector<double>{10.0,    60.0,  300.0, 1200.0}, 
-                     std::vector<double>{2800.0, 380.0,  315.0,  262.0}), // Perry
+                     std::vector<double>{   4.0, 10.0,    60.0,  300.0, 1200.0}, 
+                     std::vector<double>{1600.0, 2800.0, 380.0,  315.0,  262.0}), // Johnson (1960) and Perry
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           state_invariant(19300.0 * si::kilogram/si::meter3),
             /*vapor_pressure*/                    
@@ -5897,7 +5950,13 @@ PartlyKnownCompound  silver (
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
             /*isobaric_specific_heat_capacity*/   // 0.233 * si::joule / (si::gram * si::kelvin), // wikipedia
-                get_perry_temperature_function(si::kelvin, si::calorie/(107.868 * si::gram*si::kelvin), 5.6, 0.00150, 0.0, 0.0, 273.0, 1234.0), 
+                get_perry_johnson_temperature_function
+                    (si::kelvin, 
+                     si::joule/(si::gram*si::kelvin),
+                     0.0, 1.0/600e3, 30.0,
+                     si::calorie/(107.868 * si::gram*si::kelvin), 
+                     5.6, 0.00150, 0.0, 0.0, 
+                     273.0, 1336.0), // Johnson (1960) and Perry
             /*thermal_conductivity*/              // 427.0 * si::watt / ( si::meter * si::kelvin ), // wikipedia
                 get_interpolated_temperature_function
                     (si::kelvin, si::watt / (si::meter * si::kelvin),
@@ -6006,14 +6065,18 @@ PartlyKnownCompound  copper (
     /*solid*/ 
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
-
             /*isobaric_specific_heat_capacity*/            // 0.385 * si::joule / (si::gram * si::kelvin), // wikipedia
-                get_perry_temperature_function(si::kelvin, si::calorie/(63.546 * si::gram*si::kelvin), 5.44, 0.001462, 0.0, 0.0, 273.0, 1357.0),
+                get_perry_johnson_temperature_function
+                    (si::kelvin, 
+                     si::joule/(si::gram*si::kelvin),
+                     10.8e-6, 30.6/(344.5*344.5*344.5), 10.0,
+                     si::calorie/(63.546 * si::gram*si::kelvin), 
+                     5.44, 0.001462, 0.0, 0.0, 273.0, 1357.0), // Johnson (1960) and Perry
             /*thermal_conductivity*/              // 401.0 * si::watt / (si::meter * si::kelvin), // wikipedia
                 get_interpolated_temperature_function
                     (si::kelvin, si::watt / (si::meter * si::kelvin),
-                     std::vector<double>{10.0,     60.0,  300.0, 1200.0}, 
-                     std::vector<double>{19000.0, 850.0,  398.0,  342.0}), // Perry
+                     std::vector<double>{   4.0, 10.0,     60.0,  300.0, 1200.0}, 
+                     std::vector<double>{7000.0, 19000.0, 850.0,  398.0,  342.0}), // Johnson (1960)  and Perry
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           8960.0 * si::kilogram/si::meter3,
             /*vapor_pressure*/                    
