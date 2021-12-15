@@ -54,30 +54,30 @@ namespace compound{
         */
         constexpr int get_basic_phase(
             si::pressure        p,  // current pressure
-            si::temperature     t,  // current temperature
+            si::temperature     T,  // current temperature
             si::pressure        p0, // triple point pressure
-            si::temperature     t0, // triple point temperature
+            si::temperature     T0, // triple point temperature
             si::pressure        pc, // critical point pressure
-            si::temperature     tc, // critical point temperature
+            si::temperature     Tc, // critical point temperature
             si::pressure        pf, // freezing point pressure
-            si::temperature     tf, // freezing point temperature
+            si::temperature     Tf, // freezing point temperature
             si::specific_energy L,  // latent heat of vaporization at boiling point
             si::molar_mass      M   // molar mass
         ){
             const auto Ru = si::universal_gas_constant;
             auto R = Ru/M;
             auto m = -(R/L);
-            auto b = 1/tc - m * std::log(pc/si::pascal);
-            auto A = (tf-t0) / (pf-p0);
-            if (t > tc && p > pc)
+            auto b = 1/Tc - m * std::log(pc/si::pascal);
+            auto A = (Tf-T0) / (pf-p0);
+            if (T > Tc && p > pc)
             {
                 return BasicPhases::supercritical;
             }
-            else if ( t > 1/(m*std::log(p/si::pascal)+b) )
+            else if ( T > 1/(m*std::log(p/si::pascal)+b) )
             {
                 return BasicPhases::vapor;
             }
-            else if ( t > t0 + A*p ) // linear relation, for when simon glatzel exponent can't be determined
+            else if ( T > T0 + A*p ) // linear relation, for when simon glatzel exponent can't be determined
             {
                 return BasicPhases::liquid;
             }
@@ -95,29 +95,30 @@ namespace compound{
         */
         constexpr int get_simon_glatzel_phase(
             const si::pressure        p,  // current pressure
-            const si::temperature     t,  // current temperature
+            const si::temperature     T,  // current temperature
             const si::pressure        p0, // triple point pressure
-            const si::temperature     t0, // triple point temperature
+            const si::temperature     T0, // triple point temperature
             const si::pressure        pc, // critical point pressure
-            const si::temperature     tc, // critical point temperature
+            const si::temperature     Tc, // critical point temperature
             const si::specific_energy L,  // latent heat of vaporization at boiling point
             const si::molar_mass      M,  // molar mass
             const si::pressure        a,  // simon glatzel slope
+            const si::pressure        b,  // simon glatzel intercept
             const double              c   // simon glatzel exponent
         ){
             const auto Ru = si::universal_gas_constant;
             auto R = Ru/M;
-            auto m = -(R/L);
-            auto b = 1/tc - m * std::log(pc/si::pascal);
-            if (t > tc && p > pc)
+            auto slope = -(R/L);
+            auto intercept = 1.0/Tc - slope * std::log(pc/si::pascal);
+            if (T > Tc && p > pc)
             {
                 return BasicPhases::supercritical;
             }
-            else if ( t > 1/(m*std::log(p/si::pascal)+b) )
+            else if ( T > 1/(slope*std::log(p/si::pascal)+intercept) )
             {
                 return BasicPhases::vapor;
             }
-            else if ( t >  t0 * std::pow(std::max((p-p0)/a + 1.0, 0.0), 1.0/c) )
+            else if ( T >  T0 * std::pow(std::max((p-p0)/a + 1.0, 0.0), 1.0/c) )
             {
                 return BasicPhases::liquid;
             }

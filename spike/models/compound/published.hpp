@@ -16,6 +16,7 @@ Hi, and welcome to Crazy Eddie's Chemical Properties Emporium, where WE'VE GONE 
 
 SOURCES (unless otherwise noted in comments):
 * Generic properties (those not mentioned below) are taken from 91st Handbook Of Chemistry And Physics. 
+* Custom phase functions are taken from phase diagrams by Young (1975), "Phase Diagrams of the Elements", unless otherwise noted
 * Molecular absorption functions are taken from the MPI-Mainz UV/VIS Spectral Atlas of Gaseous Molecules of Atmospheric Interest.
 * Refraction index functions are taken from refractionindex.info.
 * Reflectance functions are taken from version 7 of the USGS spectral library
@@ -859,16 +860,55 @@ PartlyKnownCompound nitrogen (
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  -195.8 * si::celcius, // Perry
 
-    /*phase*/                             
-    get_simon_glatzel_phase_function(
-            /*triple_point_pressure*/       12.463 * si::kilopascal,
-            /*triple_point_temperature*/    63.15 * si::kelvin,
-            /*critical_point_pressure*/     3.39 * si::megapascal,
-            /*critical_point_temperature*/  126.21 * si::kelvin,
-            /*latent_heat_of_vaporization*/ 198.8 * si::joule/si::gram,
-            /*molar_mass*/                  28.013  * si::gram/si::mole,
-            /*simon_glatzel_slope*/         1607e5 * si::pascal,
-            /*simon_glatzel_exponent*/      1.7910
+    /*phase*/
+    field::StateFunction<int>([]
+            (const si::pressure p, 
+             const si::temperature T)
+            {
+                // const int supercritical = -3;
+                // const int gas = -2;
+                // const int liquid = -1;
+                const int beta = 0;
+                const int alpha = 1;
+                const int gamma = 2;
+
+                // current pressure and temperature
+                // triple point between solid, liquid, and gas
+                const si::pressure        p0 = 12.463 * si::kilopascal;
+                const si::temperature     T0 = 63.15 * si::kelvin;
+                // triple point between alpha, beta, and gamma solids
+                const si::pressure        pabg = 4650 * si::atmosphere;
+                const si::temperature     Tabg = 44.5 * si::kelvin;
+                // critical point
+                const si::pressure        pc = 3.39 * si::megapascal;
+                const si::temperature     Tc = 126.21 * si::kelvin;
+                // latent heat of vaporization and molar mass
+                const si::specific_energy L  = 198.8 * si::joule/si::gram;
+                const si::molar_mass      M  = 28.013  * si::gram/si::mole;
+                // Simon-Glatzel constants, from Manzhelii (1997)
+                const si::pressure        a  = 0.9598 * si::bar;
+                const si::pressure        b  = -1592.0 * si::bar;
+                const double              c  = 1.7895;
+                const auto                dpdTab = (pabg-p0) / (Tabg-T0);
+
+                const int basic_phase = property::get_simon_glatzel_phase(p, T, p0, T0, pc, Tc, L,  M, a, b, c);
+                if (basic_phase < 0)
+                {
+                    return basic_phase;
+                } 
+                else if ( p < dpdTab * (T-Tabg) + pabg )
+                {
+                    return beta;
+                }
+                else if ( p > pabg )
+                {
+                    return alpha;
+                }
+                else
+                {
+                    return gamma;
+                }
+            }
         ),
 
     /*molecular_absorption_cross_section*/ 
@@ -1101,6 +1141,32 @@ PartlyKnownCompound nitrogen (
             /*shear_yield_strength*/              missing(),
 
             /*chemical_susceptibility_estimate*/  missing()
+        },
+        phase::PartlyKnownSolid { // gamma
+            /*isobaric_specific_heat_capacity*/   missing(),
+            /*thermal_conductivity*/              missing(),
+            /*dynamic_viscosity*/                 missing(),
+            /*density*/                           missing(),
+            /*vapor_pressure*/                    missing(),
+            /*refractive_index*/                  missing(),
+            /*extinction_coefficient*/            missing(),
+            /*absorption_coefficient*/            missing(),
+
+            /*bulk_modulus*/                      missing(),
+            /*tensile_modulus*/                   missing(),
+            /*shear_modulus*/                     missing(),
+            /*pwave_modulus*/                     missing(),
+            /*lame_parameter*/                    missing(),
+            /*poisson_ratio*/                     missing(),
+
+            /*compressive_fracture_strength*/     missing(),
+            /*tensile_fracture_strength*/         missing(),
+            /*shear_fracture_strength*/           missing(),
+            /*compressive_yield_strength*/        missing(),
+            /*tensile_yield_strength*/            missing(),
+            /*shear_yield_strength*/              missing(),
+
+            /*chemical_susceptibility_estimate*/  missing()
         }
     }
 );
@@ -1131,16 +1197,60 @@ PartlyKnownCompound oxygen (
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  -183.0 * si::celcius, // Perry
 
-    /*phase*/                             
-    get_simon_glatzel_phase_function(
-            /*triple_point_pressure*/       0.14633 * si::kilopascal,
-            /*triple_point_temperature*/    54.35 * si::kelvin,
-            /*critical_point_pressure*/     5.043 * si::megapascal,
-            /*critical_point_temperature*/  154.59 * si::kelvin,
-            /*latent_heat_of_vaporization*/ 213.1 * si::joule/si::gram,
-            /*molar_mass*/                  31.9988 * si::gram/si::mole,
-            /*simon_glatzel_slope*/         2733e5 * si::pascal,
-            /*simon_glatzel_exponent*/      1.7425
+    /*phase*/
+    field::StateFunction<int>([]
+            (const si::pressure p, 
+             const si::temperature T)
+            {
+                // const int supercritical = -3;
+                // const int gas = -2;
+                // const int liquid = -1;
+                const int beta = 0;
+                const int alpha = 1;
+                const int gamma = 2;
+
+                // triple point between solid, liquid, and gas
+                const si::pressure        p0 = 0.14633 * si::kilopascal;
+                const si::temperature     T0 = 54.35 * si::kelvin;
+                // critical point
+                const si::pressure        pc = 5.043 * si::megapascal;
+                const si::temperature     Tc = 154.59 * si::kelvin;
+                // latent heat of vaporization and molar mass
+                const si::specific_energy L  = 213.1 * si::joule/si::gram;
+                const si::molar_mass      M  = 31.9988 * si::gram/si::mole;
+                // Simon-Glatzel constants
+                const si::pressure        a  = 2733e5 * si::pascal;
+                const si::pressure        b  = 0.0 * si::pascal;
+                const double              c  = 1.7425;
+                const si::pressure        pab0 = 0.0 * si::kilobar;
+                const si::temperature     Tab0 = 24.0 * si::kelvin;
+                const si::pressure        pab1 = 9.0 * si::kilobar;
+                const si::temperature     Tab1 = 52.0 * si::kelvin;
+                const auto                dpdTab = (pab1-pab0) / (Tab1-Tab0);
+                const si::pressure        pbg0 = 0.0 * si::kilobar;
+                const si::temperature     Tbg0 = 44.0 * si::kelvin;
+                const si::pressure        pbg1 = 2.0 * si::kilobar;
+                const si::temperature     Tbg1 = 55.0 * si::kelvin;
+                const auto                dpdTbg = (pbg1-pbg0) / (Tbg1-Tbg0);
+
+                const int basic_phase = property::get_simon_glatzel_phase(p, T, p0, T0, pc, Tc, L,  M, a, b, c);
+                if (basic_phase < 0)
+                {
+                    return basic_phase;
+                } 
+                else if ( p > dpdTab * (T-Tab0) + pab0 )
+                {
+                    return alpha;
+                }
+                else if ( p > dpdTbg * (T-Tbg0) + pbg0 )
+                {
+                    return beta;
+                }
+                else
+                {
+                    return gamma;
+                }
+            }
         ),
 
     /*molecular_absorption_cross_section*/ 
@@ -1441,8 +1551,9 @@ PartlyKnownCompound carbon_dioxide (
             /*critical_point_temperature*/  304.13 * si::kelvin,
             /*latent_heat_of_vaporization*/ 205.0 * si::joule / si::gram,
             /*molar_mass*/                  44.01 * si::gram/si::mole,
-            /*simon_glatzel_slope*/         4000e5 * si::pascal,
-            /*simon_glatzel_exponent*/      2.60
+            /*simon_glatzel_slope*/         3.3080e-4 * si::bar,
+            /*simon_glatzel_intercept*/     -3355.42 * si::bar,
+            /*simon_glatzel_exponent*/      3.0
         ),
 
     /*molecular_absorption_cross_section*/ 
@@ -1626,16 +1737,45 @@ PartlyKnownCompound methane (
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  -161.4 * si::celcius, // Perry
     
-    /*phase*/                             
-    get_simon_glatzel_phase_function(
-            /*triple_point_pressure*/       11.696 * si::kilopascal,
-            /*triple_point_temperature*/    90.694 * si::kelvin,
-            /*critical_point_pressure*/     4.60 * si::megapascal,
-            /*critical_point_temperature*/  190.56 * si::kelvin,
-            /*latent_heat_of_vaporization*/ 510.83 * si::joule/si::gram,
-            /*molar_mass*/                  16.043 * si::gram/si::mole,
-            /*simon_glatzel_slope*/         2080e5 * si::pascal,
-            /*simon_glatzel_exponent*/      1.698
+    /*phase*/
+    field::StateFunction<int>([]
+            (const si::pressure p, 
+             const si::temperature T)
+            {
+                // const int supercritical = -3;
+                // const int gas = -2;
+                // const int liquid = -1;
+                const int beta = 0;
+                const int alpha = 1;
+
+                // triple point between solid, liquid, and gas
+                const si::pressure        p0 = 11.696 * si::kilopascal;
+                const si::temperature     T0 = 90.694 * si::kelvin;
+                // critical point
+                const si::pressure        pc = 4.60 * si::megapascal;
+                const si::temperature     Tc = 190.56 * si::kelvin;
+                // latent heat of vaporization and molar mass
+                const si::specific_energy L  = 510.83 * si::joule/si::gram;
+                const si::molar_mass      M  = 16.043 * si::gram/si::mole;
+                // Simon-Glatzel constants
+                const si::pressure        a  = 2080e5 * si::pascal;
+                const si::pressure        b  = 0.0 * si::pascal;
+                const double              c  = 1.698;
+
+                const int basic_phase = property::get_simon_glatzel_phase(p, T, p0, T0, pc, Tc, L,  M, a, b, c);
+                if (basic_phase < 0)
+                {
+                    return basic_phase;
+                } 
+                else if ( T > 20.0 * si::kelvin )
+                {
+                    return alpha;
+                }
+                else
+                {
+                    return beta;
+                }
+            }
         ),
 
     /*molecular_absorption_cross_section*/ 
@@ -1883,6 +2023,7 @@ PartlyKnownCompound argon (
             /*latent_heat_of_vaporization*/ 161.0 * si::joule/si::gram,
             /*molar_mass*/                  39.948 * si::gram/si::mole,
             /*simon_glatzel_slope*/         2114e5 * si::pascal,
+            /*simon_glatzel_intercept*/     0.0 * si::pascal,
             /*simon_glatzel_exponent*/      1.593
         ),
     
@@ -2062,17 +2203,51 @@ PartlyKnownCompound helium (
     /*freezing_point_sample_temperature*/ 0.92778 * si::kelvin,
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  -268.9 * si::celcius, // Perry
-    
-    /*phase*/                             
-    get_simon_glatzel_phase_function(
-            /*triple_point_pressure*/       5.048e3 * si::pascal,
-            /*triple_point_temperature*/    2.1768 * si::kelvin,
-            /*critical_point_pressure*/     0.227 * si::megapascal,
-            /*critical_point_temperature*/  5.19 * si::kelvin,
-            /*latent_heat_of_vaporization*/ 20.7 * si::joule / si::gram,
-            /*molar_mass*/                  4.0026 * si::gram/si::mole,
-            /*simon_glatzel_slope*/         50.96e5 * si::pascal,
-            /*simon_glatzel_exponent*/      1.5602
+
+    /*phase*/
+    field::StateFunction<int>([]
+            (const si::pressure p, 
+             const si::temperature T)
+            {
+                // const int supercritical = -3;
+                // const int gas = -2;
+                // const int liquid = -1;
+                const int hcp = 0;
+                const int fcc = 1;
+
+                // triple point between solid, liquid, and gas
+                const si::pressure        p0 = 5.048e3 * si::pascal;
+                const si::temperature     T0 = 2.1768 * si::kelvin;
+                // critical point
+                const si::pressure        pc = 0.227 * si::megapascal;
+                const si::temperature     Tc = 5.19 * si::kelvin;
+                // latent heat of vaporization and molar mass
+                const si::specific_energy L  = 20.7 * si::joule / si::gram;
+                const si::molar_mass      M  = 4.0026 * si::gram/si::mole;
+                // Simon-Glatzel constants
+                const si::pressure        a  = 50.96e5 * si::pascal;
+                const si::pressure        b  = 0.0 * si::pascal;
+                const double              c  = 1.5602;
+                const si::pressure        pab0 = 1.1 * si::kilobar;
+                const si::temperature     Tab0 = 15.0 * si::kelvin;
+                const si::pressure        pab1 = 3.25 * si::kilobar;
+                const si::temperature     Tab1 = 20.0 * si::kelvin;
+                const auto                dpdTab = (pab1-pab0) / (Tab1-Tab0);
+
+                const int basic_phase = property::get_simon_glatzel_phase(p, T, p0, T0, pc, Tc, L,  M, a, b, c);
+                if (basic_phase < 0)
+                {
+                    return basic_phase;
+                } 
+                else if ( p > dpdTab * (T-Tab0) + pab0 )
+                {
+                    return hcp;
+                }
+                else
+                {
+                    return fcc;
+                }
+            }
         ),
 
     /*molecular_absorption_cross_section*/ spectral_invariant(1e-35* si::meter2),
@@ -2237,6 +2412,7 @@ PartlyKnownCompound hydrogen (
             /*latent_heat_of_vaporization*/ 445.0 * si::joule/si::gram,
             /*molar_mass*/                  2.016   * si::gram/si::mole,
             /*simon_glatzel_slope*/         274.22e5 * si::pascal,
+            /*simon_glatzel_intercept*/     0.0 * si::pascal,
             /*simon_glatzel_exponent*/      1.74407
         ),
     
@@ -2435,6 +2611,7 @@ PartlyKnownCompound ammonia (
             /*latent_heat_of_vaporization*/ 23.33*si::kilojoule/(17.031*si::gram),
             /*molar_mass*/                  17.031 * si::gram/si::mole,
             /*simon_glatzel_slope*/         5270e5 * si::pascal,
+            /*simon_glatzel_intercept*/     0.0 * si::pascal,
             /*simon_glatzel_exponent*/      4.3
         ),
     
@@ -2722,14 +2899,26 @@ PartlyKnownCompound nitrous_oxide (
 
     /*latent_heat_of_vaporization*/       374.286 * si::kilojoule / si::kilogram, //encyclopedia.airliquide.com
     /*latent_heat_of_fusion*/             6.54*si::kilojoule/(44.012*si::gram),
-    /*triple_point_pressure*/             8.785e-1 * si::bar, //encyclopedia.airliquide.com
-    /*triple_point_temperature*/          -90.82 * si::celcius, //encyclopedia.airliquide.com
+    /*triple_point_pressure*/             87.85 * si::kilopascal, // wikipedia
+    /*triple_point_temperature*/          -90.82 * si::celcius,   // wikipedia
     /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ -102.3*si::celcius, // Perry
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  -90.7 * si::celcius,// Perry
 
-    /*phase*/                             missing(),
+    /*phase*/                              
+    get_simon_glatzel_phase_function(
+            /*triple_point_pressure*/       87.85 * si::kilopascal,// wikipedia
+            /*triple_point_temperature*/    -90.82 * si::celcius,  // wikipedia
+            /*critical_point_pressure*/     7.245 * si::megapascal,
+            /*critical_point_temperature*/  309.52 * si::kelvin,
+            /*latent_heat_of_vaporization*/ 374.286 * si::kilojoule / si::kilogram,
+            /*molar_mass*/                  44.012 * si::gram/si::mole,
+            /*simon_glatzel_slope*/         3.5674e-3 * si::bar,   // Manzhelii (1997)
+            /*simon_glatzel_intercept*/     -4052.1 * si::bar,     // Manzhelii (1997)
+            /*simon_glatzel_exponent*/      2.6786                 // Manzhelii (1997)
+        ),
+    
     /*molecular_absorption_cross_section*/ 
     get_molecular_absorption_cross_section_function
         ( 1.0/si::meter, si::meter2,
@@ -3111,14 +3300,62 @@ PartlyKnownCompound carbon_monoxide (
 
     /*latent_heat_of_vaporization*/       6.04 * si::kilojoule/(28.010*si::gram),
     /*latent_heat_of_fusion*/             0.833*si::kilojoule/(28.010*si::gram),
-    /*triple_point_pressure*/             1.53e-1 * si::bar, //encyclopedia.airliquide.com
-    /*triple_point_temperature*/          -204.99*si::celcius,
+    /*triple_point_pressure*/             15.35 * si::kilopascal, // PubChem
+    /*triple_point_temperature*/          68.15 * si::kelvin,     // PubChem
     /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ -205.02*si::celcius,
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  -192.0 * si::celcius,// Perry
 
-    /*phase*/                             missing(),
+    /*phase*/
+    field::StateFunction<int>([]
+            (const si::pressure p, 
+             const si::temperature T)
+            {
+                // const int supercritical = -3;
+                // const int gas = -2;
+                // const int liquid = -1;
+                const int beta = 0;
+                const int alpha = 1;
+
+                // triple point between solid, liquid, and gas
+                const si::pressure        p0 = 15.35 * si::kilopascal; // PubChem
+                const si::temperature     T0 = 68.15 * si::kelvin;     // PubChem
+                // sample point along alpha and beta line
+                const si::pressure        pab0 = 1.0 * si::atmosphere;
+                const si::temperature     Tab0 = 62.0 * si::kelvin;
+                // sample point along alpha and beta line
+                const si::pressure        pab1 = 3.5 * si::gigapascal;
+                const si::temperature     Tab1 = 150.0 * si::kelvin;
+                // critical point
+                const si::pressure        pc = 3.494 *  si::megapascal;
+                const si::temperature     Tc = 132.86 * si::kelvin;
+                // latent heat of vaporization and molar mass
+                const si::specific_energy L  = 6.04 * si::kilojoule/(28.010*si::gram);
+                const si::molar_mass      M  = 28.010 * si::gram/si::mole;
+                // Simon-Glatzel constants, from Manzhelii (1997)
+                const si::pressure        a  = 1.4198e-2 * si::bar;// Manzhelii (1997)
+                const si::pressure        b  = -1240.0 * si::bar;  // Manzhelii (1997)
+                const double              c  = 2.695;              // Manzhelii (1997)
+                const auto                dpdTab = (pab1-pab0) / (Tab1-Tab0);
+
+                const int basic_phase = property::get_simon_glatzel_phase(p, T, p0, T0, pc, Tc, L, M, a, b, c);
+                if (basic_phase < 0)
+                {
+                    return basic_phase;
+                } 
+                else if ( p < dpdTab * (T-Tab0) + pab0 )
+                {
+                    return beta;
+                }
+                else
+                {
+                    return alpha;
+                }
+            }
+        ),
+
+
     /*molecular_absorption_cross_section*/ 
     get_molecular_absorption_cross_section_function
         ( 1.0/si::meter, si::meter2,
@@ -3502,6 +3739,7 @@ PartlyKnownCompound hydrogen_cyanide (
             /*latent_heat_of_vaporization*/ 6027.0*si::calorie/(27.026 * si::gram), // Perry
             /*molar_mass*/                  27.026 * si::gram/si::mole,
             /*simon_glatzel_slope*/         3080e5 * si::pascal,
+            /*simon_glatzel_intercept*/     0.0 * si::pascal,
             /*simon_glatzel_exponent*/      3.6
         ),
     
@@ -3630,6 +3868,7 @@ PartlyKnownCompound ethanol (
             /*latent_heat_of_vaporization*/ 42.32 * si::kilojoule/(46.068*si::gram), 
             /*molar_mass*/                  46.068 * si::gram/si::mole,
             /*simon_glatzel_slope*/         10600e5 * si::pascal,
+            /*simon_glatzel_intercept*/     0.0 * si::pascal,
             /*simon_glatzel_exponent*/      1.61
         ),
     
@@ -4637,22 +4876,21 @@ PartlyKnownCompound carbon (
     /*molecular_degrees_of_freedom*/      3.0,
     /*acentric_factor*/                   missing(),
 
-    /*critical_point_pressure*/           missing(),
+    /*critical_point_pressure*/           2200.0 * si::atmosphere, // Leider (1973)
     /*critical_point_volume*/             missing(),
-    /*critical_point_temperature*/        missing(),
+    /*critical_point_temperature*/        6810.0 * si::kelvin,     // Leider (1973)
     /*critical_point_compressibility*/    missing(),
 
-    /*latent_heat_of_vaporization*/       missing(),
+    /*latent_heat_of_vaporization*/       355.8*si::kilojoule/(12.011*si::gram),
     /*latent_heat_of_fusion*/             117.4*si::kilojoule/(12.011*si::gram),
-    /*triple_point_pressure*/             missing(),
-    /*triple_point_temperature*/          missing(),
+    /*triple_point_pressure*/             107.0 * si::atmosphere,  // Haaland (1976)
+    /*triple_point_temperature*/          4765.0 * si::kelvin,       // Leider (1973)
     /*freezing_point_sample_pressure*/    si::atmosphere,
     /*freezing_point_sample_temperature*/ 3500.0 *si::celcius, // Perry, lower bound, for both forms
     /*boiling_point_sample_pressure*/     si::atmosphere,
     /*boiling_point_sample_temperature*/  4200.0 *si::celcius, // Perry, lower bound, for both forms
 
-    
-    /*phase*/
+    /*phase*/ // estimated from phase diagram
     field::StateFunction<int>([]
             (const si::pressure pressure, 
              const si::temperature temperature)
@@ -4666,9 +4904,9 @@ PartlyKnownCompound carbon (
                 const double t = temperature / si::kelvin;
                 const     double Ru(8.3144598);           // universal gas constant
                 const     double M (0.012);               // molar mass, kg/mol
-                const     double Lv(29650000);            // specific latent heat of vaporization (J/kg)
-                const     double p0(0.2e6);               // triple point pressure (Pa)
-                const     double t0(4600);                // triple point temperature (K)
+                const     double Lv(355.8*si::kilojoule/(12.011*si::gram) /(si::joule/si::kilogram)); // specific latent heat of vaporization (J/kg)
+                const     double p0(107e5);               // triple point pressure (Pa)
+                const     double t0(4765);                // triple point temperature (K)
                 constexpr double R (Ru/M);                // individual gas constant
                 constexpr double mv(-R/Lv);               // slope of clapeyron equation for vaporus
                 constexpr double bv(1/t0 - mv * std::log(p0)); // intercept for clapeyron equation for vaporus
@@ -4696,6 +4934,7 @@ PartlyKnownCompound carbon (
                 }
             }
         ),
+
     /*molecular_absorption_cross_section*/ missing(),
 
     /*gas*/
@@ -4991,7 +5230,92 @@ PartlyKnownCompound  quartz (
     /*boiling_point_sample_pressure*/     si::atmosphere, 
     /*boiling_point_sample_temperature*/  2230.0 * si::celcius, // Perry
 
-    /*phase*/                             missing(),
+    /*phase*/
+    field::StateFunction<int>([]
+            (const si::pressure p, 
+             const si::temperature T)
+            {
+                // const int supercritical = -3;
+                // const int gas = -2;
+                // const int liquid = -1;
+                const int beta = 0;
+                const int alpha = 1;
+                const int cristobalite_alpha = 2;
+                const int cristobalite_beta = 3;
+                const int coesite = 4;
+                const int stishovite = 5; // unused
+
+                // triple point between solid, liquid, and gas
+                const si::pressure        p0 = 0.0003 * si::pascal;
+                const si::temperature     T0 = 1983.0 * si::kelvin;
+                // triple point between alpha, beta, and coesite
+                const si::pressure        pabc = 3.1 * si::gigapascal;
+                const si::temperature     Tabc = 1190.0 * si::celcius;
+                // sample point between solid and liquid
+                const si::pressure        pf = si::atmosphere;
+                const si::temperature     Tf = 1425.0 * si::celcius;
+                // sample point between stishovite and coesite
+                const si::pressure        psc0 = 7.75 * si::gigapascal;
+                const si::temperature     Tsc0 = 0.0 * si::celcius;
+                // sample point between stishovite and coesite
+                const si::pressure        psc1 = 11.0 * si::gigapascal;
+                const si::temperature     Tsc1 = 1400.0 * si::celcius;
+                // sample point between alpha and coesite
+                const si::pressure        pac = 1.8 * si::gigapascal;
+                const si::temperature     Tac = 0.0 * si::celcius;
+                // sample point between beta and coesite
+                const si::pressure        pbc = 4.3 * si::gigapascal;
+                const si::temperature     Tbc = 2200.0 * si::celcius;
+                // sample point between alpha and beta
+                const si::pressure        pab = 0.0 * si::gigapascal;
+                const si::temperature     Tab = 573.0 * si::celcius;
+                // sample point between beta and cristobalite alpha
+                const si::pressure        pbca = 0.0 * si::gigapascal;
+                const si::temperature     Tbca = 870.0 * si::celcius;
+                // sample point between beta and cristobalite beta
+                const si::pressure        pbcb = 1.0 * si::gigapascal;
+                const si::temperature     Tbcb = 1705.0 * si::celcius;
+                // sample point between cristobalite alpha and cristobalite beta
+                const si::temperature     Tcacb = 1470.0 * si::celcius;
+                // critical point
+                const si::pressure        pc = 1.7e8 * si::pascal;
+                const si::temperature     Tc = 5300.0* si::kelvin;
+                // latent heat of vaporization and molar mass
+                const si::specific_energy L  = 11770e3 * si::joule / si::kilogram;
+                const si::molar_mass      M  = 60.08 * si::gram/si::mole;
+
+                const int basic_phase = property::get_basic_phase(p,T,p0,T0,pc,Tc,pf,Tf,L,M);
+                if (basic_phase < 0)
+                {
+                    return basic_phase;
+                } 
+                else if ( p > (psc1-psc0)/(Tsc1-Tsc0) * (T-Tsc0) + psc0 )
+                {
+                    return stishovite;
+                }
+                else if ( p > (pbc-pac)/(Tbc-Tac) * (T-Tac) + pac )
+                {
+                    return coesite;
+                }
+                else if ( p > (pabc-pab)/(Tabc-Tab) * (T-Tab) + pab )
+                {
+                    return alpha;
+                }
+                else if ( p > (pbcb-pbca)/(Tbcb-Tbca) * (T-Tbca) + pbca )
+                {
+                    return beta;
+                }
+                else if ( T < Tcacb )
+                {
+                    return cristobalite_alpha;
+                }
+                else
+                {
+                    return cristobalite_beta;
+                }
+            }
+        ),
+
     /*molecular_absorption_cross_section*/ missing(),
 
     /*gas*/

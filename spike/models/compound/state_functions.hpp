@@ -38,14 +38,15 @@ namespace compound {
         const si::specific_energy L,  // latent heat of vaporization at boiling point
         const si::molar_mass      M,  // molar mass
         const si::pressure        a,  // simon glatzel slope
+        const si::pressure        b,  // simon glatzel intercept
         const float               c   // simon glatzel exponent
     ){
         return field::StateFunction<int>(
-            [p0, t0, pc, tc, L,  M, a, c]
+            [p0, t0, pc, tc, L,  M, a, b, c]
             (const si::pressure p, 
              const si::temperature T)
             {
-                return property::get_simon_glatzel_phase(p, T, p0, t0, pc, tc, L,  M, a, c);
+                return property::get_simon_glatzel_phase(p, T, p0, t0, pc, tc, L,  M, a, b, c);
             }
         );
     }
