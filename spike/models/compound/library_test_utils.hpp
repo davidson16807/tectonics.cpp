@@ -62,7 +62,7 @@
     COMPLETED_COMPOUND_STP_VALID(compound::library::apatite         ); 
 
 
-#define COMPLETED_COMPOUND_VALID(compound, temperature, pressure) \
+#define COMPLETED_COMPOUND_VALID(compound) \
     CHECK(compound.molar_mass / (si::gram/si::mole) > 1.0); \
     CHECK(compound.molar_mass / (si::gram/si::mole) < 1000.0); \
     CHECK(compound.atoms_per_molecule < 100u); \
@@ -82,9 +82,9 @@
     CHECK(compound.latent_heat_of_fusion / (si::joule / si::kilogram) < 1e7); /*based on graphite*/\
     CHECK(compound.latent_heat_of_fusion / (si::joule / si::kilogram) > 3e3); /*based on perflouromethane*/\
     CHECK(compound.triple_point_pressure / (si::pascal) > 0.0001); \
-    CHECK(compound.triple_point_pressure / (si::atmosphere) < 10.0); /*based on carbon dioxide*/ \
+    CHECK(compound.triple_point_pressure / (si::atmosphere) < 300.0); /*based on carbon*/ \
     CHECK(compound.triple_point_temperature / (si::kelvin) > 0.0); \
-    CHECK(compound.triple_point_temperature / (si::kelvin) < 10000.0); \
+    CHECK(compound.triple_point_temperature / (si::kelvin) < 10000.0); /*based on carbon*/ \
     CHECK(compound.freezing_point_sample_pressure / (si::pascal) > 0.0001); \
     CHECK(compound.freezing_point_sample_pressure / (si::megapascal) < 10.0); \
     CHECK(compound.freezing_point_sample_temperature / (si::kelvin) > 0.0); \
@@ -92,7 +92,10 @@
     CHECK(compound.boiling_point_sample_pressure / (si::pascal) > 0.0001); \
     CHECK(compound.boiling_point_sample_pressure / (si::megapascal) < 1000.0); /*same as for critical point*/ \
     CHECK(compound.boiling_point_sample_temperature / (si::kelvin) > 0.0); \
-    CHECK(compound.boiling_point_sample_temperature / (si::kelvin) < 10000.0); \
+    CHECK(compound.boiling_point_sample_temperature / (si::kelvin) < 10000.0); 
+
+
+#define COMPLETED_PHASES_OF_COMPOUND_VALID(compound, temperature, pressure) \
     CHECK(compound.molecular_absorption_cross_section(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), pressure, temperature) / (si::meter2) > 1e-36); \
     CHECK(compound.molecular_absorption_cross_section(1.0/(600.0*si::nanometer), 1.0/(400.0*si::nanometer), pressure, temperature) / (si::meter2) < 1e-15); \
     if(compound.phase(pressure, temperature) == -2)\
@@ -176,46 +179,89 @@
     /*
     */
 
-#define COMPLETED_COMPOUNDS_VALID(temperature, pressure) \
-    COMPLETED_COMPOUND_VALID(compound::library::water,            temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::hydrogen,         temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::helium,           temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::argon,            temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::nitrogen,         temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::oxygen,           temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::ammonia,          temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::ozone,            temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::sulfur_dioxide,   temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::nitrous_oxide,    temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::nitric_oxide,     temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::carbon_dioxide,   temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::carbon_monoxide,  temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::hydrogen_cyanide, temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::methane,          temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::perflouromethane, temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::formaldehyde,     temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::formic_acid,      temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::benzene,          temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::pyrimidine,       temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::ethane,           temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::ethanol,          temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::quartz,           temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::corundum,         temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::carbon,           temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::orthoclase,       temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::andesine,         temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::augite,           temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::forsterite,       temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::hematite,         temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::goethite,         temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::magnetite,        temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::pyrite,           temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::chalcocite,       temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::chalcopyrite,     temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::copper,           temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::silver,           temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::gold,             temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::halite,           temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::calcite,          temperature, pressure); \
-    COMPLETED_COMPOUND_VALID(compound::library::apatite,          temperature, pressure); 
+#define COMPLETED_PHASES_OF_COMPOUNDS_VALID(temperature, pressure) \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::water,            temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::hydrogen,         temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::helium,           temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::argon,            temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::nitrogen,         temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::oxygen,           temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::ammonia,          temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::ozone,            temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::sulfur_dioxide,   temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::nitrous_oxide,    temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::nitric_oxide,     temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::carbon_dioxide,   temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::carbon_monoxide,  temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::hydrogen_cyanide, temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::methane,          temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::perflouromethane, temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::formaldehyde,     temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::formic_acid,      temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::benzene,          temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::pyrimidine,       temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::ethane,           temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::ethanol,          temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::quartz,           temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::corundum,         temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::carbon,           temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::orthoclase,       temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::andesine,         temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::augite,           temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::forsterite,       temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::hematite,         temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::goethite,         temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::magnetite,        temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::pyrite,           temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::chalcocite,       temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::chalcopyrite,     temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::copper,           temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::silver,           temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::gold,             temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::halite,           temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::calcite,          temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::apatite,          temperature, pressure); 
+
+#define COMPLETED_COMPOUNDS_VALID() \
+    COMPLETED_COMPOUND_VALID(compound::library::water           ); \
+    COMPLETED_COMPOUND_VALID(compound::library::hydrogen        ); \
+    COMPLETED_COMPOUND_VALID(compound::library::helium          ); \
+    COMPLETED_COMPOUND_VALID(compound::library::argon           ); \
+    COMPLETED_COMPOUND_VALID(compound::library::nitrogen        ); \
+    COMPLETED_COMPOUND_VALID(compound::library::oxygen          ); \
+    COMPLETED_COMPOUND_VALID(compound::library::ammonia         ); \
+    COMPLETED_COMPOUND_VALID(compound::library::ozone           ); \
+    COMPLETED_COMPOUND_VALID(compound::library::sulfur_dioxide  ); \
+    COMPLETED_COMPOUND_VALID(compound::library::nitrous_oxide   ); \
+    COMPLETED_COMPOUND_VALID(compound::library::nitric_oxide    ); \
+    COMPLETED_COMPOUND_VALID(compound::library::carbon_dioxide  ); \
+    COMPLETED_COMPOUND_VALID(compound::library::carbon_monoxide ); \
+    COMPLETED_COMPOUND_VALID(compound::library::hydrogen_cyanide); \
+    COMPLETED_COMPOUND_VALID(compound::library::methane         ); \
+    COMPLETED_COMPOUND_VALID(compound::library::perflouromethane); \
+    COMPLETED_COMPOUND_VALID(compound::library::formaldehyde    ); \
+    COMPLETED_COMPOUND_VALID(compound::library::formic_acid     ); \
+    COMPLETED_COMPOUND_VALID(compound::library::benzene         ); \
+    COMPLETED_COMPOUND_VALID(compound::library::pyrimidine      ); \
+    COMPLETED_COMPOUND_VALID(compound::library::ethane          ); \
+    COMPLETED_COMPOUND_VALID(compound::library::ethanol         ); \
+    COMPLETED_COMPOUND_VALID(compound::library::quartz          ); \
+    COMPLETED_COMPOUND_VALID(compound::library::corundum        ); \
+    COMPLETED_COMPOUND_VALID(compound::library::carbon          ); \
+    COMPLETED_COMPOUND_VALID(compound::library::orthoclase      ); \
+    COMPLETED_COMPOUND_VALID(compound::library::andesine        ); \
+    COMPLETED_COMPOUND_VALID(compound::library::augite          ); \
+    COMPLETED_COMPOUND_VALID(compound::library::forsterite      ); \
+    COMPLETED_COMPOUND_VALID(compound::library::hematite        ); \
+    COMPLETED_COMPOUND_VALID(compound::library::goethite        ); \
+    COMPLETED_COMPOUND_VALID(compound::library::magnetite       ); \
+    COMPLETED_COMPOUND_VALID(compound::library::pyrite          ); \
+    COMPLETED_COMPOUND_VALID(compound::library::chalcocite      ); \
+    COMPLETED_COMPOUND_VALID(compound::library::chalcopyrite    ); \
+    COMPLETED_COMPOUND_VALID(compound::library::copper          ); \
+    COMPLETED_COMPOUND_VALID(compound::library::silver          ); \
+    COMPLETED_COMPOUND_VALID(compound::library::gold            ); \
+    COMPLETED_COMPOUND_VALID(compound::library::halite          ); \
+    COMPLETED_COMPOUND_VALID(compound::library::calcite         ); \
+    COMPLETED_COMPOUND_VALID(compound::library::apatite         ); 
 
