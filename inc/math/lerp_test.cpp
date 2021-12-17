@@ -1,13 +1,16 @@
 
+// 3rd-party libraries
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include <catch/catch.hpp>
 
+// in-house libraries
 #include "lerp.hpp"
 
 const float a = 1.6180;
 const float b = 3.1415;
 const float c = 1.6807;
 const float f = 0.25;
+const float g = 0.75;
 
 TEST_CASE( "mix purity", "[math]" ) {
     SECTION("calling mix() multiple times returns the same result"){
@@ -26,7 +29,6 @@ TEST_CASE( "mix distributivity over multiplication", "[math]" ) {
 		CHECK(c*math::mix(a,b,f) == Approx(math::mix(c*a,c*b,f)).margin(0.01));
 	}
 }
-
 
 
 TEST_CASE( "linearstep purity", "[math]" ) {
@@ -73,6 +75,18 @@ TEST_CASE( "lerp degeneracy to constant", "[math]" ) {
   	const auto ys = std::array<float,1>{a};
     SECTION("calling lerp with a single control point is equivalent to a constant"){
 		CHECK(math::lerp(xs,ys,f) == Approx(a).margin(0.01));
+	}
+}
+
+TEST_CASE( "lerp commutativity", "[math]" ) {
+  	std::mt19937 generator(2);
+  	std::uniform_real_distribution<float> uniform(0.0f, 2.0f);
+  	const auto xs = std::vector<float>{ -0.5f, 0.75f };
+  	const auto xs2 = std::vector<float>{ xs[1], xs[0] };
+  	const auto ys = std::vector<float>{ uniform(generator), uniform(generator) };
+  	const auto ys2 = std::vector<float>{ ys[1], ys[0] };
+    SECTION("calling lerp with interpolant points reversed returns the same result"){
+		CHECK(math::lerp(xs,ys,f) == math::lerp(xs2,ys2,f));
 	}
 }
 
