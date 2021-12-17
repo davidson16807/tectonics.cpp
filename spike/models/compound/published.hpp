@@ -220,7 +220,7 @@ PartlyKnownCompound water (
                 0.00019, 3.33694, 0.02183, 1.08016, -0.58257,
                  300.0, 1273.2,  0.0, 10.0), 
                 // water, mean error: 1.2%, max error: 3.5%, range: 300-1273.2K, 0-10MPa, stp estimate: 8.765
-        /*density*/                state_invariant(0.6* si::kilogram/si::meter3),
+        /*density*/                missing(),
         /*refractive_index*/       spectral_invariant(1.000261)                                        // engineering toolbox
     },
 
@@ -944,7 +944,7 @@ PartlyKnownCompound nitrogen (
                 0.04908, 2.30670, 0.50611, 0.64605, -2.56297,
                  113.15, 2013.2,  0.0, 3.0), 
                 // nitrogen, mean error: 1.5%, max error: 5.1%, range: 113.15-2013.2K, 0-3MPa, stp estimate: 16.416
-        /*density*/                               state_invariant(0.001165*si::gram/si::centimeter3), 
+        /*density*/                missing(),
         /*refractive_index*/       
             field::SpectralFunction<double>([](
                 const si::wavenumber nlo, 
@@ -1581,7 +1581,7 @@ PartlyKnownCompound carbon_dioxide (
                 0.05967, 1.75501, 0.18576, 0.79011, -1.65245,
                  266.59, 1116.6,  0.0, 3.0), 
                 // carbon dioxide, mean error: 1.5%, max error: 3.2%, range: 266.59-1116.6K, 0-3MPa, stp estimate: 13.980
-        /*density*/                state_invariant(1.87 * si::kilogram/si::meter3), // Perry
+        /*density*/                missing(),
         /*refractive_index*/       // 1.0004493,
         field::SpectralFunction<double>([](
             const si::wavenumber nlo, 
@@ -1802,7 +1802,7 @@ PartlyKnownCompound methane (
                 0.12223, 1.53060, 0.09521, 0.83600, -0.21904,
                  140.69, 640.69,  0.0, 3.0), 
                 // methane, mean error: 1.9%, max error: 5.2%, range: 140.69-640.69K, 0-3MPa, stp estimate: 10.148
-        /*density*/                state_invariant(0.0006664*si::gram/si::centimeter3), // Johnson (1960) @ 33.8kPa, 99.8K
+        /*density*/                missing(),
         /*refractive_index*/       // 1.000444,
             get_interpolated_refractive_index_function
                 (si::micrometer, 
@@ -2273,7 +2273,7 @@ PartlyKnownCompound helium (
                 -0.19093, 1.50359, 0.28815, 0.73057, 1.34631,
                  52.177, 1502.2,  0.0, 0.1), 
                 // helium, mean error: 0.1%, max error: 0.7%, range: 52.177-1502.2K, 0-0.1MPa, stp estimate: 18.702
-        /*density*/                state_invariant(0.000156*si::gram/si::centimeter3), // Johnson (1960), @1atm, 311K
+        /*density*/                missing(),
         /*refractive_index*/       //1.000036,
             field::SpectralFunction<double>([](
                 const si::wavenumber nlo, 
@@ -2446,7 +2446,7 @@ PartlyKnownCompound hydrogen (
                 0.05907, 1.95272, 0.20949, 0.66373, -0.28287,
                  63.957, 1014,  0.0, 1.0), 
                 // hydrogen, mean error: 0.2%, max error: 0.9%, range: 63.957-1014K, 0-1MPa, stp estimate: 8.393
-        /*density*/                state_invariant(1.3390 * si::gram/si::liter),
+        /*density*/                missing(),
         /*refractive_index*/       // 1.0001392,
             field::SpectralFunction<double>([](
                 const si::wavenumber nlo, 
@@ -2810,7 +2810,7 @@ PartlyKnownCompound ozone (
                 (si::kelvin, si::pascal * si::second,
                 1.196e-7, 0.84797, 0.0, 0.0,
                 80.15, 1000.0), // 80.15-1000K
-        /*density*/                state_invariant(2.03 * si::kilogram/si::meter3), // Perry
+        /*density*/                missing(),
         /*refractive_index*/       spectral_invariant(1.00052)
     },
 
@@ -2938,7 +2938,7 @@ PartlyKnownCompound nitrous_oxide (
                 (si::kelvin, si::pascal * si::second,
                 2.1150e-6, 0.4642, 305.7, 0.0,
                 182.3, 1000.0), // 182.3-1000 K
-        /*density*/                state_invariant(1.87 *  si::kilogram/si::meter3), // Perry
+        /*density*/                missing(),
         /*refractive_index*/       spectral_invariant(1.000516)
     },
 
@@ -3382,7 +3382,7 @@ PartlyKnownCompound carbon_monoxide (
                 0.26687, 1.09457, 0.33802, 0.70825, -1.67961,
                  118.16, 518.16,  0.0, 3.0), 
                 // carbon monoxide, mean error: 1.2%, max error: 2.9%, range: 118.16-518.16K, 0-3MPa, stp estimate: 16.311
-        /*density*/                state_invariant(1.1858 *  si::kilogram/si::meter3), // Perry
+        /*density*/                missing(),
         /*refractive_index*/       // 1.00036320, //https://refractiveindex.info
             field::SpectralFunction<double>([](
                 const si::wavenumber nlo, 
@@ -3614,7 +3614,7 @@ PartlyKnownCompound ethane (
                 0.07538, 2.19443, 0.07385, 0.85870, -0.57044,
                  140.35, 640.35,  0.0, 3.0), 
                 // ethane, mean error: 1.2%, max error: 2.9%, range: 140.35-640.35K, 0-3MPa, stp estimate: 8.560
-        /*density*/                state_invariant(0.668 * si::kilogram/si::meter3),
+        /*density*/                missing(),
         /*refractive_index*/       // 1.0377,
         field::SpectralFunction<double>([](
             const si::wavenumber nlo, 
@@ -4023,7 +4023,7 @@ PartlyKnownCompound formaldehyde (
                 (si::kelvin, si::pascal * si::second,
                 1.5948e-5, 0.21516, 1151.1, 0.0,
                 167.55, 1000.0), // 167.55-1000K
-        /*density*/                state_invariant(1.0 * si::kilogram/si::meter3), // Perry
+        /*density*/                missing(),
         /*refractive_index*/       missing()
     },
 
