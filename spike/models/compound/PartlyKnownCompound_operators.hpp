@@ -301,41 +301,6 @@ namespace compound
         );
 
 
-        /*
-        for (std::size_t i = 0; i < guess.solids.size(); i++)
-        {
-            guess.molecular_absorption_cross_section = guess.molecular_absorption_cross_section.value_or(
-                [M, k, pc, Tc, Zc](field::SpectralParameters sample, si::density density_as_solid, double reflectance, double refractive_index){
-                    si::length wavelength = 2.0/(sample.nlo+sample.nhi);
-                    si::attenuation attenuation_coefficient_as_solid = property::solve_attenuation_coefficient_from_reflectance_and_refactive_index(reflectance, refractive_index, 1.0, wavelength);
-                    si::molar_density molar_density_as_solid = density_as_solid/M;
-                    return property::get_cross_section_from_attenuation_coefficient(attenuation_coefficient_as_solid, molar_density_as_solid/si::molecule);
-                },
-                field::SpectralParameters(1.0/(500.0*si::nanometer), 1.0/(500.0*si::nanometer), samples.solid.pressure, samples.solid.temperature),
-                guess.solids[i].density,
-                guess.solids[i].spectral_reflectance,
-                guess.solids[i].refractive_index
-            );
-        }
-        */
-
-        /*
-        NOTE: the following is not currently very useful, but could be useful if we discover other correlations in the future
-        guess.solids[i].spectral_reflectance = guess.solids[i].spectral_reflectance.value_or(
-            [k, pc, Tc, Zc](field::StateParameters sample, si::density density_as_solid, double refractive_index_as_solid, double molecular_absorption_cross_section){
-                // find number density of sample
-                double Z = property::estimate_compressibility_factor(sample.pressure, sample.temperature, Pc, Tc, Zc);
-                si::number_density number_density_as_gas = property::get_number_density_from_compressibility(sample.pressure, sample.temperature, Z);
-                si::molar_density molar_density_as_solid = density_as_solid/M;
-                si::attenuation attenuation_coefficient_as_solid = property::get_attenuation_coefficient_from_cross_section(molecular_absorption_cross_section, molar_density_as_solid/si::molecule);
-                return property::approx_reflectance_from_attenuation_coefficient_and_refractive_index(attenuation_coefficient_as_solid, refractive_index_as_solid, 1.0, wavelength);
-            },
-            guess.solids[i].density,
-            guess.solids[i].refractive_index,
-            guess.molecular_absorption_cross_section
-        );
-        */
-
         for (std::size_t i = 0; i < guess.solids.size(); i++)
         {
             guess.solids[i] = compound::phase::infer(guess.solids[i]);
