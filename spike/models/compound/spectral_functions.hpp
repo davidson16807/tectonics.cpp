@@ -60,44 +60,61 @@ namespace compound {
              const si::pressure p, 
              const si::temperature T)
             {
-                return std::pow(10.0, math::integral_of_lerp(xs, log10ys, (nlo*si::meter), (nhi*si::meter)) 
+                return std::pow(10.0, math::integral_of_lerp(xs, log10ys, (nlo/xunits), (nhi/xunits)) 
                     / (nhi/xunits - nlo/xunits)) * yunits;
             }
         );
     }
+
     
     field::SpectralFunction<double> get_interpolated_refractive_index_function(
         const si::length lunits, 
         const std::vector<double>log10ls, 
         const std::vector<double>     ns
     ){
+        std::vector<double> wavenumbers;
+        std::vector<double> refractive_indices = ns;
+        for (std::size_t i=0; i<log10ls.size(); i++){
+            wavenumbers.push_back(1.0/(std::pow(10.0, log10ls[i])*lunits/si::meter));
+        }
+        std::reverse(wavenumbers.begin(), wavenumbers.end());
+        std::reverse(refractive_indices.begin(), refractive_indices.end());
         return field::SpectralFunction<double>(
-            [lunits, log10ls, ns]
+            [lunits, wavenumbers, refractive_indices]
             (const si::wavenumber nlo, 
              const si::wavenumber nhi, 
              const si::pressure p, 
              const si::temperature T)
             {
-                double l = (2.0 / (nhi+nlo) / lunits);
-                return math::lerp(log10ls, ns, log10(l));
+                return math::integral_of_lerp(wavenumbers, refractive_indices, (nlo*si::meter), (nhi*si::meter)) 
+                    / (nhi*si::meter - nlo*si::meter);
             }
         );
     }
     
+    
     field::SpectralFunction<double> get_linear_interpolated_refractive_index_function(
         const si::length lunits, 
-        const std::vector<double>ls, 
-        const std::vector<double>     ns
+        const std::vector<double> ls, 
+        const std::vector<double> ns
     ){
+        std::vector<double> wavenumbers;
+        std::vector<double> refractive_indices = ns;
+        for (std::size_t i=0; i<ls.size(); i++){
+            wavenumbers.push_back(1.0/(ls[i]));
+        }
+        std::reverse(wavenumbers.begin(), wavenumbers.end());
+        std::reverse(refractive_indices.begin(), refractive_indices.end());
+
         return field::SpectralFunction<double>(
-            [lunits, ls, ns]
+            [lunits, wavenumbers, refractive_indices]
             (const si::wavenumber nlo, 
              const si::wavenumber nhi, 
              const si::pressure p, 
              const si::temperature T)
             {
-                double l = (2.0 / (nhi+nlo) / lunits);
-                return math::lerp(ls, ns, l);
+                return math::integral_of_lerp(wavenumbers, refractive_indices, (nlo*lunits), (nhi*lunits)) 
+                    / (nhi*lunits - nlo*lunits);
             }
         );
     }
@@ -125,15 +142,23 @@ namespace compound {
         const std::vector<double>wavelengths, 
         const std::vector<double>reflectances
     ){
+        std::vector<double> wavenumbers;
+        std::vector<double> wavenumber_reflectances = reflectances;
+        for (std::size_t i=0; i<reflectances.size(); i++){
+            wavenumbers.push_back(1.0/wavelengths[i]);
+        }
+        std::reverse(wavenumbers.begin(), wavenumbers.end());
+        std::reverse(wavenumber_reflectances.begin(), wavenumber_reflectances.end());
+
         return field::SpectralFunction<si::attenuation>(
-            [lunits, wavelengths, reflectances, particle_diameter]
+            [lunits, wavenumbers, wavenumber_reflectances, particle_diameter]
             (const si::wavenumber nlo, 
              const si::wavenumber nhi, 
              const si::pressure p, 
              const si::temperature T)
             {
-                double wavelength = (2.0 / (nhi+nlo) / lunits);
-                double reflectance = math::lerp(wavelengths, reflectances, wavelength);
+                double reflectance = math::integral_of_lerp(wavenumbers, wavenumber_reflectances, (nlo*lunits), (nhi*lunits)) 
+                    / (nhi*lunits - nlo*lunits);
                 double single_scatter_albedo = compound::property::approx_single_scatter_albedo_from_reflectance(reflectance);
                 double scattering_efficiency = single_scatter_albedo; // we assume extinction efficiency is close to 1, in which case the two are equal
                 return compound::property::approx_absorption_coefficient_from_scattering_efficiency(scattering_efficiency, particle_diameter);
@@ -168,15 +193,23 @@ namespace compound {
         const std::vector<double>wavelengths, 
         const std::vector<double>alphas
     ){
+        std::vector<double> wavenumbers;
+        std::vector<double> wavenumber_alphas = alphas;
+        for (std::size_t i=0; i<wavelengths.size(); i++){
+            wavenumbers.push_back(1.0/wavelengths[i]);
+        }
+        std::reverse(wavenumbers.begin(), wavenumbers.end());
+        std::reverse(wavenumber_alphas.begin(), wavenumber_alphas.end());
+
         return field::SpectralFunction<si::attenuation>(
-            [lunits, yunits, wavelengths, alphas]
+            [lunits, yunits, wavenumbers, wavenumber_alphas]
             (const si::wavenumber nlo, 
              const si::wavenumber nhi, 
              const si::pressure p, 
              const si::temperature T)
             {
-                double wavelength = (2.0 / (nhi+nlo) / lunits);
-                return math::lerp(wavelengths, alphas, wavelength) * yunits;
+                return  math::integral_of_lerp(wavenumbers, wavenumber_alphas, (nlo*lunits), (nhi*lunits)) 
+                    / (nhi*lunits - nlo*lunits) * yunits;
             }
         );
     }
@@ -205,15 +238,22 @@ namespace compound {
         const std::vector<double>wavelengths, 
         const std::vector<double>log_alphas
     ){
+        std::vector<double> wavenumbers;
+        std::vector<double> wavenumber_log_alphas = log_alphas;
+        for (std::size_t i=0; i<wavenumbers.size(); i++){
+            wavenumbers.push_back(1.0/wavelengths[i]);
+        }
+        std::reverse(wavenumbers.begin(), wavenumbers.end());
+        std::reverse(wavenumber_log_alphas.begin(), wavenumber_log_alphas.end());
+
         return field::SpectralFunction<si::attenuation>(
-            [lunits, yunits, wavelengths, log_alphas]
+            [lunits, yunits, wavenumbers, wavenumber_log_alphas]
             (const si::wavenumber nlo, 
              const si::wavenumber nhi, 
              const si::pressure p, 
              const si::temperature T)
             {
-                double wavelength = (2.0 / (nhi+nlo) / lunits);
-                return std::pow(10.0, math::lerp(wavelengths, log_alphas, wavelength)) * yunits;
+                return std::pow(10.0, math::integral_of_lerp(wavenumbers, wavenumber_log_alphas, (nlo*lunits), (nhi*lunits)) / (nhi*lunits - nlo*lunits)) * yunits;
             }
         );
     }
