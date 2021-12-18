@@ -87,7 +87,6 @@ namespace compound
                 [M](field::StateParameters parameters, si::density density_as_liquid, si::temperature triple_point_temperature){ 
                     return M / property::estimate_molar_volume_as_solid_from_goodman(M / density_as_liquid, parameters.temperature, triple_point_temperature); 
                 },
-                samples.liquid,
                 guess.liquid.density,
                 guess.triple_point_temperature
             );
@@ -99,7 +98,6 @@ namespace compound
                 [M](field::StateParameters parameters, si::density density_as_solid, si::temperature triple_point_temperature){ 
                     return M / property::estimate_molar_volume_as_liquid_from_goodman(M / density_as_solid, parameters.temperature, triple_point_temperature); 
                 },
-                samples.liquid,
                 guess.solids[0].density,
                 guess.triple_point_temperature
             );
@@ -134,7 +132,6 @@ namespace compound
                         triple_point_pressure
                     );
                 },
-                samples.solid,
                 guess.latent_heat_of_vaporization,
                 guess.latent_heat_of_fusion,
                 guess.triple_point_pressure,
@@ -250,7 +247,6 @@ namespace compound
                     acentric_factor, M, parameters.temperature, Tc, pc
                 );
             }, 
-            samples.liquid,
             guess.acentric_factor
         );
         guess.liquid.vapor_pressure = guess.liquid.vapor_pressure.value_or( 
@@ -259,7 +255,6 @@ namespace compound
                     acentric_factor, parameters.temperature, Tc, pc
                 );
             }, 
-            samples.boiling,
             guess.acentric_factor
         );
 
@@ -270,7 +265,6 @@ namespace compound
                     M, parameters.temperature, boiling_point_sample_temperature, Tc
                 );
             },
-            samples.liquid,
             guess.boiling_point_sample_temperature
         );
 
@@ -280,12 +274,11 @@ namespace compound
                     M, parameters.temperature, freezing_point_sample_temperature
                 );
             },
-            samples.liquid,
             guess.freezing_point_sample_temperature
         );
 
         guess.gas.dynamic_viscosity = guess.gas.dynamic_viscosity.value_or(
-            [M](si::specific_heat_capacity heat_capacity_as_gas, si::thermal_conductivity thermal_conductivity_as_gas){ 
+            [M](field::StateParameters parameters, si::specific_heat_capacity heat_capacity_as_gas, si::thermal_conductivity thermal_conductivity_as_gas){ 
                 return property::estimate_viscosity_as_gas_from_eucken(heat_capacity_as_gas, M, thermal_conductivity_as_gas);
             },
             guess.gas.isobaric_specific_heat_capacity, 
@@ -293,7 +286,7 @@ namespace compound
         );
 
         guess.gas.thermal_conductivity = guess.gas.thermal_conductivity.value_or( 
-            [M](si::dynamic_viscosity dynamic_viscosity_as_gas, si::specific_heat_capacity heat_capacity_as_gas){ 
+            [M](field::StateParameters parameters, si::dynamic_viscosity dynamic_viscosity_as_gas, si::specific_heat_capacity heat_capacity_as_gas){ 
                 return property::estimate_thermal_conductivity_as_gas_from_eucken(dynamic_viscosity_as_gas, M, heat_capacity_as_gas);
             },
             guess.gas.dynamic_viscosity, 
@@ -333,12 +326,10 @@ namespace compound
         PartlyKnownCompound guess = known;
         int A = known.atoms_per_molecule;
 
-        // StateParameterSamples samples(guess);
-
         for (std::size_t i = 0; i < guess.solids.size(); i++)
         {
             guess.solids[i].density = guess.solids[i].density.value_or( 
-                [](si::density density_as_liquid){ 
+                [](field::StateParameters parameters, si::density density_as_liquid){ 
                     return property::guess_density_as_solid_from_density_as_liquid(density_as_liquid); 
                 },
                 guess.liquid.density
@@ -348,7 +339,7 @@ namespace compound
         if (guess.solids.size() > 0)
         {
             guess.liquid.density = guess.liquid.density.value_or( 
-                [](si::density density_as_solid){ 
+                [](field::StateParameters parameters, si::density density_as_solid){ 
                     return property::guess_density_as_liquid_from_density_as_solid(density_as_solid); 
                 },
                 guess.solids[0].density
@@ -358,7 +349,7 @@ namespace compound
         for (std::size_t i = 0; i < guess.solids.size(); i++)
         {
             guess.solids[i].dynamic_viscosity = guess.solids[i].dynamic_viscosity.value_or( 
-                [](si::dynamic_viscosity dynamic_viscosity_as_liquid){ 
+                [](field::StateParameters parameters, si::dynamic_viscosity dynamic_viscosity_as_liquid){ 
                     return property::guess_viscosity_as_solid_from_viscosity_as_liquid(dynamic_viscosity_as_liquid);
                 },
                 guess.liquid.dynamic_viscosity 

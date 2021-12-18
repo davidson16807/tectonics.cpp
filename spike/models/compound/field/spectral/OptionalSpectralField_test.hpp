@@ -145,7 +145,7 @@ TEST_CASE( "OptionalSpectralField value_or(f,a) purity", "[field]" ) {
     compound::field::OptionalSpectralField<double> constant  = compound::field::optional_spectral_invariant_test(1.0);
     compound::field::OptionalSpectralField<double> sample  = compound::field::optional_spectral_invariant_test(2.0);
     compound::field::OptionalSpectralField<double> relation  = compound::field::SpectralFunction<double>([](const si::wavenumber nlo, si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_OptionalSpectralField(nlo,nhi,p,T); });
-    std::function<double(const double)> f  = [](const double entry){ return 1.0 - 2.0*entry; };
+    std::function<double(compound::field::SpectralParameters, const double)> f  = [](const compound::field::SpectralParameters params, const double entry){ return 1.0 - 2.0*entry; };
 
     SECTION("Calling a function twice with the same arguments must produce the same results")
     {
@@ -171,7 +171,7 @@ TEST_CASE( "OptionalSpectralField value_or(f,a) identity", "[field]" ) {
     compound::field::OptionalSpectralField<double> constant  = compound::field::optional_spectral_invariant_test(1.0);
     compound::field::OptionalSpectralField<double> sample  = compound::field::optional_spectral_invariant_test(2.0);
     compound::field::OptionalSpectralField<double> relation  = compound::field::SpectralFunction<double>([](const si::wavenumber nlo, si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_OptionalSpectralField(nlo,nhi,p,T); });
-    std::function<double(const double)> I  = [](const double entry){ return entry; };
+    std::function<double(compound::field::SpectralParameters, const double)> I  = [](const compound::field::SpectralParameters params, const double entry){ return entry; };
 
     SECTION("There exists a entry that when applied to a function returns the original entry")
     {
@@ -196,15 +196,15 @@ TEST_CASE( "OptionalSpectralField value_or(f,a,b) purity", "[field]" ) {
     compound::field::OptionalSpectralField<double> constant  = compound::field::optional_spectral_invariant_test(1.0);
     compound::field::OptionalSpectralField<double> sample  = compound::field::optional_spectral_invariant_test(2.0);
     compound::field::OptionalSpectralField<double> relation  = compound::field::SpectralFunction<double>([](const si::wavenumber nlo, si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_OptionalSpectralField(nlo,nhi,p,T); });
-    std::function<double(const double, const double)> f  = [](const double first, const double second){ return 1.0 - 2.0*first + 3.0*second; };
+    std::function<double(compound::field::SpectralParameters, const double, const double)> f  = [](const compound::field::SpectralParameters params, const double first, const double second){ return 1.0 - 2.0*first + 3.0*second; };
 
     compound::field::OptionalSpectralField<int> unknown_i  = std::monostate();
     compound::field::OptionalSpectralField<int> constant_i  =compound::field::optional_spectral_invariant_test(1);
     compound::field::OptionalSpectralField<int> sample_i  = compound::field::optional_spectral_invariant_test(2);
     compound::field::OptionalSpectralField<int> relation_i  = compound::field::SpectralFunction<int>([](const si::wavenumber nlo, si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_OptionalSpectralField(nlo,nhi,p,T); });
-    std::function<double(const int, const double)> f_id  = [](const int first, const double second){ return 1.0 - 2.0*first + 3.0*second; };
-    std::function<double(const double, const int)> f_di  = [](const double first, const int second){ return 1.0 - 2.0*first + 3.0*second; };
-    std::function<double(const int, const int)> f_ii  = [](const int first, const int second){ return 1.0 - 2.0*first + 3.0*second; };
+    std::function<double(compound::field::SpectralParameters, const int, const double)> f_id  = [](const compound::field::SpectralParameters params, const int first, const double second){ return 1.0 - 2.0*first + 3.0*second; };
+    std::function<double(compound::field::SpectralParameters, const double, const int)> f_di  = [](const compound::field::SpectralParameters params, const double first, const int second){ return 1.0 - 2.0*first + 3.0*second; };
+    std::function<double(compound::field::SpectralParameters, const int, const int)> f_ii  = [](const compound::field::SpectralParameters params, const int first, const int second){ return 1.0 - 2.0*first + 3.0*second; };
 
     SECTION("Calling a function twice with the same arguments must produce the same results")
     {
@@ -349,7 +349,7 @@ TEST_CASE( "OptionalSpectralField value_or(f,a,b) free theorem identity", "[fiel
     compound::field::OptionalSpectralField<double> constant  = compound::field::optional_spectral_invariant_test(1.0);
     compound::field::OptionalSpectralField<double> sample  = compound::field::optional_spectral_invariant_test(2.0);
     compound::field::OptionalSpectralField<double> relation  = compound::field::SpectralFunction<double>([](const si::wavenumber nlo, si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_OptionalSpectralField(nlo,nhi,p,T); });
-    std::function<double(const double, const double)> f  = [](const double first, const double second){ return first + second; };
+    std::function<double(compound::field::SpectralParameters, const double, const double)> f  = [](const compound::field::SpectralParameters params, const double first, const double second){ return first + second; };
     compound::field::OptionalSpectralField<double> I  = 0.0;
 
     SECTION("A function will have the identity property if it is passed a function that itself has the identity property (this presumes for our case that the function is invoked)")
@@ -366,7 +366,7 @@ TEST_CASE( "OptionalSpectralField value_or(f,a,b) free theorem commutativity", "
     compound::field::OptionalSpectralField<double> constant  = compound::field::optional_spectral_invariant_test(1.0);
     compound::field::OptionalSpectralField<double> sample  = compound::field::optional_spectral_invariant_test(2.0);
     compound::field::OptionalSpectralField<double> relation  = compound::field::SpectralFunction<double>([](const si::wavenumber nlo, si::wavenumber nhi, const si::pressure p, const si::temperature T){ return test_OptionalSpectralField(nlo,nhi,p,T); });
-    std::function<double(const double, const double)> f  = [](const double first, const double second){ return first + second; };
+    std::function<double(compound::field::SpectralParameters, const double, const double)> f  = [](const compound::field::SpectralParameters params, const double first, const double second){ return first + second; };
 
     SECTION("A function will have the commutativity property if it is passed a function that itself has the commutativity property (this presumes for our case that the function is invoked)")
     {

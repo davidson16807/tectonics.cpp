@@ -248,101 +248,8 @@ namespace field {
         Return `this` if a value exists, otherwise return the result of function `f` applied to parameter `a`
         */
         template<typename T2>
-        constexpr OptionalSpectralField<T1> value_or(const std::function<T1(const typename T2::value_type)> f, const T2 a) const
-        {
-            if(entry.index() > 0) // no substitute needed
-            {
-                return *this;
-            }
-            else if(!a.has_value()) // any monostates
-            {
-                return std::monostate();
-            }
-            else
-            {
-                auto f2 = f;
-                auto a2 = a;
-                return SpectralFunction<T1>(
-                    [f2, a2]
-                    (const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T)
-                    { return f2(a2(nlo,nhi,p,T).value()); }
-                );
-            }
-        }
-        /*
-        Return `this` if a value exists, otherwise return the result of function `f` applied to parameters `a` and `b`
-        */
-        template<typename T2, typename T3>
-        constexpr OptionalSpectralField<T1> value_or(
-            const std::function<T1(const typename T2::value_type, const typename T3::value_type)> f, 
-            const T2 a, 
-            const T3 b) const
-        {
-            if(entry.index() > 0) // no substitute needed
-            {
-                return *this;
-            }
-            else if(!a.has_value() || !b.has_value()) // any monostates
-            {
-                return std::monostate();
-            }
-            else 
-            {
-                auto f2 = f;
-                auto a2 = a;
-                auto b2 = b;
-                return SpectralFunction<T1>(
-                    [f2, a2, b2]
-                    (const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T)
-                    { return f2(a2(nlo,nhi,p,T).value(), b2(nlo,nhi,p,T).value()); }
-                );
-            }
-        }
-        /*
-        Return `this` if a value exists, otherwise return the result of function `f` applied to parameters `a` and `b`
-        */
-        template<typename T2, typename T3, typename T4>
-        constexpr OptionalSpectralField<T1> value_or(
-            const std::function<T1(const typename T2::value_type, const typename T3::value_type, const typename T4::value_type)> f, 
-            const T2 a, 
-            const T3 b, 
-            const T4 c) const
-        {
-            // the following are dummy values, since we only invoke them on SpectralSamples or constants
-            const si::pressure p = si::standard_pressure;
-            const si::temperature T = si::standard_temperature;
-            if(entry.index() > 0)
-            {
-                return *this;
-            }
-            else if(!a.has_value() || !b.has_value() || !c.has_value()) // any monostates
-            {
-                return std::monostate();
-            }
-            else
-            {
-                auto f2 = f;
-                auto a2 = a;
-                auto b2 = b;
-                auto c2 = c;
-                return SpectralFunction<T1>(
-                    [f2, a2, b2, c2]
-                    (const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T)
-                    { return f2(a2(nlo,nhi,p,T).value(), b2(nlo,nhi,p,T).value(), c2(nlo,nhi,p,T).value()); }
-                );
-            }
-        }
-
-
-
-
-        /*
-        Return `this` if a value exists, otherwise return the result of function `f` applied to parameter `a`
-        */
-        template<typename T2>
         constexpr OptionalSpectralField<T1> value_or(
             const std::function<T1(const SpectralParameters, const typename T2::value_type)> f, 
-            const SpectralParameters defaults,
             const T2 a) const
         {
             if(entry.index() > 0) // no substitute needed
@@ -370,7 +277,6 @@ namespace field {
         template<typename T2, typename T3>
         constexpr OptionalSpectralField<T1> value_or(
             const std::function<T1(const SpectralParameters, const typename T2::value_type, const typename T3::value_type)> f, 
-            const SpectralParameters defaults,
             const T2 a, 
             const T3 b) const
         {
@@ -400,7 +306,6 @@ namespace field {
         template<typename T2, typename T3, typename T4>
         constexpr OptionalSpectralField<T1> value_or(
             const std::function<T1(const SpectralParameters, const typename T2::value_type, const typename T3::value_type, const typename T4::value_type)> f, 
-            const SpectralParameters defaults,
             const T2 a, 
             const T3 b, 
             const T4 c) const

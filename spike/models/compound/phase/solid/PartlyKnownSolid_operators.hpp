@@ -31,7 +31,6 @@ namespace phase{
                         return compound::property::get_absorption_coefficient_from_refractive_index(n, k, 2.0/(spectral_parameters.nlo+spectral_parameters.nhi));
                     }
                 ),
-                field::SpectralParameters(),
                 known.refractive_index,
                 known.extinction_coefficient
             );
@@ -44,7 +43,6 @@ namespace phase{
                         return compound::property::get_refractive_index_from_absorption_coefficient(alpha, k, 2.0/(spectral_parameters.nlo+spectral_parameters.nhi));
                     }
                 ),
-                field::SpectralParameters(),
                 known.absorption_coefficient,
                 known.refractive_index
             );
@@ -57,7 +55,6 @@ namespace phase{
                         return compound::property::get_extinction_coefficient_from_absorption_coefficient(alpha, n, 2.0/(spectral_parameters.nlo+spectral_parameters.nhi));
                     }
                 ),
-                field::SpectralParameters(),
                 known.absorption_coefficient,
                 known.extinction_coefficient
             );
@@ -72,18 +69,18 @@ namespace phase{
         We reuse abbreviations for modulii to represent yield strengths:
         */
 
-        typedef std::function<si::pressure(si::pressure)> Pp;
-        typedef std::function<si::pressure(si::pressure,si::pressure)> Ppp;
-        typedef std::function<si::pressure(si::pressure,double)> Ppd;
-        typedef std::function<si::pressure(double,si::pressure)> Pdp;
-        typedef std::function<double(si::pressure,si::pressure)> Dpp;
+        typedef std::function<si::pressure(field::StateParameters, si::pressure)> Pp;
+        typedef std::function<si::pressure(field::StateParameters, si::pressure,si::pressure)> Ppp;
+        typedef std::function<si::pressure(field::StateParameters, si::pressure,double)> Ppd;
+        typedef std::function<si::pressure(field::StateParameters, double,si::pressure)> Pdp;
+        typedef std::function<double(field::StateParameters, si::pressure,si::pressure)> Dpp;
 
         guess.shear_yield_strength = known.shear_yield_strength
-            .value_or(Pp([](si::pressure E){ return property::get_shear_yield_strength_from_tensile_yield_strength(E); }), 
+            .value_or(Pp([](field::StateParameters, si::pressure E){ return property::get_shear_yield_strength_from_tensile_yield_strength(E); }), 
                 known.tensile_yield_strength
             );
         guess.tensile_yield_strength = known.tensile_yield_strength
-            .value_or(Pp([](si::pressure G){ return property::get_tensile_yield_strength_from_shear_yield_strength(G); }), 
+            .value_or(Pp([](field::StateParameters, si::pressure G){ return property::get_tensile_yield_strength_from_shear_yield_strength(G); }), 
                 known.shear_yield_strength
             );
 
@@ -111,40 +108,40 @@ namespace phase{
         auto M = known.pwave_modulus;
 
         guess.tensile_modulus = guess.tensile_modulus
-            .value_or(Ppp([](si::pressure K, si::pressure G) { return property::get_tensile_from_bulk_and_shear(K, G); }), K, G )
-            .value_or(Ppd([](si::pressure K, double nu)      { return property::get_tensile_from_bulk_and_poisson(K, nu); }), K, nu )
-            .value_or(Ppp([](si::pressure K, si::pressure M) { return property::get_tensile_from_bulk_and_pwave(K, M); }), K, M )
-            .value_or(Ppp([](si::pressure l, si::pressure G) { return property::get_tensile_from_lame_and_shear(l, G); }), l, G )
-            .value_or(Ppd([](si::pressure l, double nu)      { return property::get_tensile_from_lame_and_poisson(l, nu); }), l, nu )
-            .value_or(Ppp([](si::pressure l, si::pressure M) { return property::get_tensile_from_lame_and_pwave(l, M); }), l, M )
-            .value_or(Ppd([](si::pressure G, double nu)      { return property::get_tensile_from_shear_and_poisson(G, nu); }), G, nu )
-            .value_or(Ppp([](si::pressure G, si::pressure M) { return property::get_tensile_from_shear_and_pwave(G, M); }), G, M )
-            .value_or(Pdp([](double nu,      si::pressure M) { return property::get_tensile_from_poisson_and_pwave(nu, M); }), nu, M )
+            .value_or(Ppp([](field::StateParameters params, si::pressure K, si::pressure G) { return property::get_tensile_from_bulk_and_shear(K, G); }), K, G )
+            .value_or(Ppd([](field::StateParameters params, si::pressure K, double nu)      { return property::get_tensile_from_bulk_and_poisson(K, nu); }), K, nu )
+            .value_or(Ppp([](field::StateParameters params, si::pressure K, si::pressure M) { return property::get_tensile_from_bulk_and_pwave(K, M); }), K, M )
+            .value_or(Ppp([](field::StateParameters params, si::pressure l, si::pressure G) { return property::get_tensile_from_lame_and_shear(l, G); }), l, G )
+            .value_or(Ppd([](field::StateParameters params, si::pressure l, double nu)      { return property::get_tensile_from_lame_and_poisson(l, nu); }), l, nu )
+            .value_or(Ppp([](field::StateParameters params, si::pressure l, si::pressure M) { return property::get_tensile_from_lame_and_pwave(l, M); }), l, M )
+            .value_or(Ppd([](field::StateParameters params, si::pressure G, double nu)      { return property::get_tensile_from_shear_and_poisson(G, nu); }), G, nu )
+            .value_or(Ppp([](field::StateParameters params, si::pressure G, si::pressure M) { return property::get_tensile_from_shear_and_pwave(G, M); }), G, M )
+            .value_or(Pdp([](field::StateParameters params, double nu,      si::pressure M) { return property::get_tensile_from_poisson_and_pwave(nu, M); }), nu, M )
             ;
 
         guess.bulk_modulus = guess.bulk_modulus
-            .value_or(Ppp([](si::pressure E, si::pressure l) { return property::get_bulk_from_tensile_and_lame(E, l); }), E, l)
-            .value_or(Ppp([](si::pressure E, si::pressure G) { return property::get_bulk_from_tensile_and_shear(E, G); }), E, G)
-            .value_or(Ppd([](si::pressure E, double nu)      { return property::get_bulk_from_tensile_and_poisson(E, nu); }), E, nu)
-            .value_or(Ppp([](si::pressure l, si::pressure G) { return property::get_bulk_from_lame_and_shear(l, G); }), l, G)
-            .value_or(Ppd([](si::pressure l, double nu)      { return property::get_bulk_from_lame_and_poisson(l, nu); }), l, nu)
-            .value_or(Ppp([](si::pressure l, si::pressure M) { return property::get_bulk_from_lame_and_pwave(l, M); }), l, M)
-            .value_or(Ppd([](si::pressure G, double nu)      { return property::get_bulk_from_shear_and_poisson(G, nu); }), G, nu)
-            .value_or(Ppp([](si::pressure G, si::pressure M) { return property::get_bulk_from_shear_and_pwave(G, M); }), G, M)
-            .value_or(Pdp([](double nu,      si::pressure M) { return property::get_bulk_from_poisson_and_pwave(nu, M); }), nu, M)
+            .value_or(Ppp([](field::StateParameters params, si::pressure E, si::pressure l) { return property::get_bulk_from_tensile_and_lame(E, l); }), E, l)
+            .value_or(Ppp([](field::StateParameters params, si::pressure E, si::pressure G) { return property::get_bulk_from_tensile_and_shear(E, G); }), E, G)
+            .value_or(Ppd([](field::StateParameters params, si::pressure E, double nu)      { return property::get_bulk_from_tensile_and_poisson(E, nu); }), E, nu)
+            .value_or(Ppp([](field::StateParameters params, si::pressure l, si::pressure G) { return property::get_bulk_from_lame_and_shear(l, G); }), l, G)
+            .value_or(Ppd([](field::StateParameters params, si::pressure l, double nu)      { return property::get_bulk_from_lame_and_poisson(l, nu); }), l, nu)
+            .value_or(Ppp([](field::StateParameters params, si::pressure l, si::pressure M) { return property::get_bulk_from_lame_and_pwave(l, M); }), l, M)
+            .value_or(Ppd([](field::StateParameters params, si::pressure G, double nu)      { return property::get_bulk_from_shear_and_poisson(G, nu); }), G, nu)
+            .value_or(Ppp([](field::StateParameters params, si::pressure G, si::pressure M) { return property::get_bulk_from_shear_and_pwave(G, M); }), G, M)
+            .value_or(Pdp([](field::StateParameters params, double nu,      si::pressure M) { return property::get_bulk_from_poisson_and_pwave(nu, M); }), nu, M)
             ;
 
         K = guess.bulk_modulus;
         E = guess.tensile_modulus;
 
         guess.lame_parameter = guess.lame_parameter
-            .value_or(Ppp([](si::pressure K, si::pressure E){ return property::get_lame_from_bulk_and_tensile(K,E); }), K, E );
+            .value_or(Ppp([](field::StateParameters params, si::pressure K, si::pressure E){ return property::get_lame_from_bulk_and_tensile(K,E); }), K, E );
         guess.shear_modulus = guess.shear_modulus
-            .value_or(Ppp([](si::pressure K, si::pressure E){ return property::get_shear_from_bulk_and_tensile(K,E); }), K, E );
+            .value_or(Ppp([](field::StateParameters params, si::pressure K, si::pressure E){ return property::get_shear_from_bulk_and_tensile(K,E); }), K, E );
         guess.poisson_ratio = guess.poisson_ratio
-            .value_or(Dpp([](si::pressure K, si::pressure E){ return property::get_poisson_from_bulk_and_tensile(K,E); }), K, E );
+            .value_or(Dpp([](field::StateParameters params, si::pressure K, si::pressure E){ return property::get_poisson_from_bulk_and_tensile(K,E); }), K, E );
         guess.pwave_modulus = guess.pwave_modulus
-            .value_or(Ppp([](si::pressure K, si::pressure E){ return property::get_pwave_from_bulk_and_tensile(K,E); }), K, E );
+            .value_or(Ppp([](field::StateParameters params, si::pressure K, si::pressure E){ return property::get_pwave_from_bulk_and_tensile(K,E); }), K, E );
 
         return guess;
 

@@ -139,7 +139,7 @@ TEST_CASE( "OptionalStateField value_or(f,a) purity", "[field]" ) {
     compound::field::OptionalStateField<double> constant  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 1.0; });
     compound::field::OptionalStateField<double> sample  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 2.0; });
     compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
-    std::function<double(const double)> f  = [](const double entry){ return 1.0 - 2.0*entry; };
+    std::function<double(const compound::field::StateParameters, const double)> f  = [](const compound::field::StateParameters params, const double entry){ return 1.0 - 2.0*entry; };
 
     SECTION("Calling a function twice with the same arguments must produce the same results")
     {
@@ -165,7 +165,7 @@ TEST_CASE( "OptionalStateField value_or(f,a) identity", "[field]" ) {
     compound::field::OptionalStateField<double> constant  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 1.0; });
     compound::field::OptionalStateField<double> sample  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 2.0; });
     compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
-    std::function<double(const double)> I  = [](const double entry){ return entry; };
+    std::function<double(const compound::field::StateParameters, const double)> I  = [](const compound::field::StateParameters params, const double entry){ return entry; };
 
     SECTION("There exists a entry that when applied to a function returns the original entry")
     {
@@ -184,15 +184,15 @@ TEST_CASE( "OptionalStateField value_or(f,a,b) purity", "[field]" ) {
     compound::field::OptionalStateField<double> constant  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 1.0; });
     compound::field::OptionalStateField<double> sample  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 2.0; });
     compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
-    std::function<double(const double, const double)> f  = [](const double first, const double second){ return 1.0 - 2.0*first + 3.0*second; };
+    std::function<double(const compound::field::StateParameters, const double, const double)> f  = [](const compound::field::StateParameters state, const double first, const double second){ return 1.0 - 2.0*first + 3.0*second; };
 
     compound::field::OptionalStateField<int> unknown_i  = std::monostate();
     compound::field::OptionalStateField<int> constant_i  = compound::field::StateFunction<int>([](const si::pressure p, const si::temperature T){ return 1; });
     compound::field::OptionalStateField<int> sample_i  = compound::field::StateFunction<int>([](const si::pressure p, const si::temperature T){ return 2; });
     compound::field::OptionalStateField<int> relation_i  = compound::field::StateFunction<int>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
-    std::function<double(const int, const double)> f_id  = [](const int first, const double second){ return first + second; };
-    std::function<double(const double, const int)> f_di  = [](const double first, const int second){ return first + second; };
-    std::function<double(const int, const int)> f_ii  = [](const int first, const int second){ return first + second; };
+    std::function<double(const compound::field::StateParameters, const int, const double)> f_id  = [](const compound::field::StateParameters state, const int first, const double second){ return first + second; };
+    std::function<double(const compound::field::StateParameters, const double, const int)> f_di  = [](const compound::field::StateParameters state, const double first, const int second){ return first + second; };
+    std::function<double(const compound::field::StateParameters, const int, const int)> f_ii  = [](const compound::field::StateParameters state, const int first, const int second){ return first + second; };
     compound::field::OptionalStateField<int> I_i  = compound::field::StateFunction<int>([](const si::pressure p, const si::temperature T){ return 0; });
 
     SECTION("Calling a function twice with the same arguments must produce the same results")
@@ -338,7 +338,7 @@ TEST_CASE( "OptionalStateField value_or(f,a,b) free theorem identity", "[field]"
     compound::field::OptionalStateField<double> constant  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 1.0; });
     compound::field::OptionalStateField<double> sample  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 2.0; });
     compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
-    std::function<double(const double, const double)> f  = [](const double first, const double second){ return first + second; };
+    std::function<double(const compound::field::StateParameters, const double, const double)> f  = [](const compound::field::StateParameters state, const double first, const double second){ return first + second; };
     compound::field::OptionalStateField<double> I  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 0.0; });
 
     SECTION("A function will have the identity property if it is passed a function that itself has the identity property (this presumes for our case that the function is invoked)")
@@ -355,7 +355,7 @@ TEST_CASE( "OptionalStateField value_or(f,a,b) free theorem commutativity", "[fi
     compound::field::OptionalStateField<double> constant  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 1.0; });
     compound::field::OptionalStateField<double> sample  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 2.0; });
     compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
-    std::function<double(const double, const double)> f  = [](const double first, const double second){ return first + second; };
+    std::function<double(const compound::field::StateParameters, const double, const double)> f  = [](const compound::field::StateParameters state, const double first, const double second){ return first + second; };
 
     SECTION("A function will have the commutativity property if it is passed a function that itself has the commutativity property (this presumes for our case that the function is invoked)")
     {

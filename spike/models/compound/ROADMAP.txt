@@ -1,0 +1,104 @@
+REQUIRED:
+	write unit tests for spectral properties
+	refactor state and spectral functions to provide variants that operate on vectors
+	redo absorption coefficients for cryogenic solids so that visible spectrum is covered
+							n 	k 	α
+		water 				x 	x
+		nitrogen	 		
+		oxygen	 	 				!
+		carbon dioxide 		x 	x
+		methane	 			  	-	!
+		argon	 			!
+		helium	 	 		x
+		hydrogen	 	 	x 	
+		ammonia	 	 		 	- 	!
+		ozone	 	 		
+		nitrous oxide	 	x
+		sulfur dioxide	 		-	-
+		nitric oxide	
+		carbon monoxide	 		 	-
+		ethane 						!
+		hydrogen cyanide	
+		ethanol
+		formaldehyde
+		formic acid
+		perflouromethane
+		benzene						!
+		pyrimidine
+		halite 				x 	x 	x
+		corundum 			x 	x 	x
+		apatite 			
+		carbon 				x 	x 	x
+		calcite 			 	 	x
+		quartz 				x 	x 	x
+		orthoclase 			 	 	x
+		andesine 			 	 	x
+		augite 				 	 	x
+		forsterite 					x
+		goethite 			 	 	x
+		pyrite 						x 
+		hematite 			x 	x 	x
+		gold 				x 	x 	
+		silver 				x 	x 	
+		copper 				x 	x 	
+		magnetite 			x 	x 	x
+		chalcocite 			
+		chalcopyrite 		 	 	x
+
+
+mixture laws:
+	pseudocritical temperature: kays rule
+	pseudocritical pressure: prausnitz-gunn
+	acentric factor
+	molar volume: amagat's law
+
+
+EXTRA CREDIT:
+	consolidate state and spectral functions
+	compile bibliography
+	new compounds:
+		iron 
+		nickel
+		steel
+		iron carbide
+		silicon carbide
+		calcium carbide
+		aluminum carbide
+	run through "The properties of gases and liquids" on internet archive and identify missing correlations (e.g. surface tension)
+	write unit tests for triple points of phases and polymorphs
+
+missing:
+	refractive index and extinction coefficient of liquid nitrogen
+	refractive index and extinction coefficient of nitrogen ice
+	strengths of dry ice
+
+
+
+ACCOMPLISHED:
+	extinction coefficients
+	plasticity and elasticity of cryocrystals
+	spectral reflectivity of solids
+	refactor field classes to use only functions
+	unit tests for completed compounds
+	expand unit tests to cover entire range of input
+	rename "specific_heat_capacity" → "isobaric_specific_heat_capacity"
+	properties of exotic water ice
+	fix wavelength spectral functions to work using wavenumber
+	ensure that gas and liquid densities can be inferred by compressibility
+	ensure inference of absorption from refraction indices
+	redo refractive index and extinction coefficient for carbon dioxide
+	complex phase diagrams for:
+		water
+		nitrogen
+		helium
+		oxygen
+		carbon
+		methane
+		carbon monoxide
+		quartz
+
+
+
+DEFERRED:
+ensure that vapor pressure reaches 0 at 0K
+
