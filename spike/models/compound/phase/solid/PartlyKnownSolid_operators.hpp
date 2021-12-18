@@ -8,6 +8,8 @@
 #include <models/compound/property/elasticity.hpp>
 #include <models/compound/property/strength.hpp>
 
+#include <models/compound/field/spectral/SpectralFunction.hpp>
+
 namespace compound{
 namespace phase{
     
@@ -20,6 +22,45 @@ namespace phase{
     PartlyKnownSolid infer(const PartlyKnownSolid& known){
         // copy what you do know
         PartlyKnownSolid guess = known;
+
+        guess.absorption_coefficient = known.absorption_coefficient.value_or(
+                std::function<si::attenuation(field::SpectralParameters, double, double)>(
+                    [](const field::SpectralParameters spectral_parameters, const double n, const double k)
+                    {
+                        // TODO: remove assumption that representative wavelength is the middle value
+                        return compound::property::get_absorption_coefficient_from_refractive_index(n, k, 2.0/(spectral_parameters.nlo+spectral_parameters.nhi));
+                    }
+                ),
+                field::SpectralParameters(),
+                known.refractive_index,
+                known.extinction_coefficient
+            );
+
+        guess.refractive_index = known.refractive_index.value_or(
+                std::function<double(field::SpectralParameters, si::attenuation, double)>(
+                    [](const field::SpectralParameters spectral_parameters, const si::attenuation alpha, const double k)
+                    {
+                        // TODO: remove assumption that representative wavelength is the middle value
+                        return compound::property::get_refractive_index_from_absorption_coefficient(alpha, k, 2.0/(spectral_parameters.nlo+spectral_parameters.nhi));
+                    }
+                ),
+                field::SpectralParameters(),
+                known.absorption_coefficient,
+                known.refractive_index
+            );
+
+        guess.extinction_coefficient = known.extinction_coefficient.value_or(
+                std::function<double(field::SpectralParameters, si::attenuation, double)>(
+                    [](const field::SpectralParameters spectral_parameters, const si::attenuation alpha, const double n)
+                    {
+                        // TODO: remove assumption that representative wavelength is the middle value
+                        return compound::property::get_extinction_coefficient_from_absorption_coefficient(alpha, n, 2.0/(spectral_parameters.nlo+spectral_parameters.nhi));
+                    }
+                ),
+                field::SpectralParameters(),
+                known.absorption_coefficient,
+                known.extinction_coefficient
+            );
 
         /*
         We can correlate tensile and shear yield strengths using the Von Misces Theorem.

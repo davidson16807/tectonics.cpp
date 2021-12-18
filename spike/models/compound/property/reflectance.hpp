@@ -264,6 +264,22 @@ namespace compound{
             const double _4pi = 4.0 * 3.14159265358979;
             return std::max(_4pi * refractive_index * extinction_coefficient, 0.0) / wavelength;
         }
+        constexpr double get_refractive_index_from_absorption_coefficient(
+            const si::attenuation absorption_coefficient,
+            const double extinction_coefficient,
+            const si::length wavelength
+        ){
+            const double _4pi = 4.0 * 3.14159265358979;
+            return absorption_coefficient * wavelength / (_4pi*extinction_coefficient);
+        }
+        constexpr double get_extinction_coefficient_from_absorption_coefficient(
+            const si::attenuation absorption_coefficient,
+            const double refractive_index,
+            const si::length wavelength
+        ){
+            const double _4pi = 4.0 * 3.14159265358979;
+            return absorption_coefficient * wavelength / (_4pi*refractive_index);
+        }
 
 
 
