@@ -3,7 +3,7 @@ REQUIRED:
 	refactor state and spectral functions to provide variants that operate on vectors
 	redo absorption coefficients for cryogenic solids so that visible spectrum is covered
 	redo refractive indices for solid methane phases
-	add test for all solid polymorphs 
+	add test to ensure phase function returns value within acceptable arrange, while also account for number of polymorphs
 							n 	k 	α
 		water 				x 	x
 		nitrogen	 		

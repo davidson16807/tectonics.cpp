@@ -245,7 +245,7 @@ namespace compound {
             }
         );
     }
-    
+
     field::SpectralFunction<si::attenuation> get_absorption_coefficient_function_from_reflectance_at_wavenumbers(
         const si::wavenumber xunits,
         const si::length particle_diameter, 
@@ -266,95 +266,5 @@ namespace compound {
             }
         );
     }
-    
-    field::SpectralFunction<si::attenuation> get_absorption_coefficient_function_at_wavelengths(
-        const si::length lunits, 
-        const si::attenuation yunits, 
-        const std::vector<double>wavelengths, 
-        const std::vector<double>alphas
-    ){
-        std::vector<double> wavenumbers;
-        std::vector<double> wavenumber_alphas = alphas;
-        for (std::size_t i=0; i<wavelengths.size(); i++){
-            wavenumbers.push_back(1.0/wavelengths[i]);
-        }
-        std::reverse(wavenumbers.begin(), wavenumbers.end());
-        std::reverse(wavenumber_alphas.begin(), wavenumber_alphas.end());
-
-        return field::SpectralFunction<si::attenuation>(
-            [lunits, yunits, wavenumbers, wavenumber_alphas]
-            (const si::wavenumber nlo, 
-             const si::wavenumber nhi, 
-             const si::pressure p, 
-             const si::temperature T)
-            {
-                return  math::integral_of_lerp(wavenumbers, wavenumber_alphas, (nlo*lunits), (nhi*lunits)) 
-                    / (nhi*lunits - nlo*lunits) * yunits;
-            }
-        );
-    }
-    
-    field::SpectralFunction<si::attenuation> get_absorption_coefficient_function_at_wavenumbers(
-        const si::wavenumber xunits, 
-        const si::attenuation yunits, 
-        const std::vector<double>wavenumbers, 
-        const std::vector<double>alphas
-    ){
-        return field::SpectralFunction<si::attenuation>(
-            [xunits, yunits, wavenumbers, alphas]
-            (const si::wavenumber nlo, 
-             const si::wavenumber nhi, 
-             const si::pressure p, 
-             const si::temperature T)
-            {
-                return math::integral_of_lerp(wavenumbers, alphas, (nlo/xunits), (nhi/xunits)) / (nhi/xunits - nlo/xunits) * yunits;
-            }
-        );
-    }
-    
-    field::SpectralFunction<si::attenuation> get_absorption_coefficient_function_from_log_at_wavelengths(
-        const si::length lunits, 
-        const si::attenuation yunits, 
-        const std::vector<double>wavelengths, 
-        const std::vector<double>log_alphas
-    ){
-        std::vector<double> wavenumbers;
-        std::vector<double> wavenumber_log_alphas = log_alphas;
-        for (std::size_t i=0; i<wavenumbers.size(); i++){
-            wavenumbers.push_back(1.0/wavelengths[i]);
-        }
-        std::reverse(wavenumbers.begin(), wavenumbers.end());
-        std::reverse(wavenumber_log_alphas.begin(), wavenumber_log_alphas.end());
-
-        return field::SpectralFunction<si::attenuation>(
-            [lunits, yunits, wavenumbers, wavenumber_log_alphas]
-            (const si::wavenumber nlo, 
-             const si::wavenumber nhi, 
-             const si::pressure p, 
-             const si::temperature T)
-            {
-                return std::pow(10.0, math::integral_of_lerp(wavenumbers, wavenumber_log_alphas, (nlo*lunits), (nhi*lunits)) / (nhi*lunits - nlo*lunits)) * yunits;
-            }
-        );
-    }
-    
-    field::SpectralFunction<si::attenuation> get_absorption_coefficient_function_from_log_at_wavenumbers(
-        const si::wavenumber xunits, 
-        const si::attenuation yunits, 
-        const std::vector<double>wavenumbers, 
-        const std::vector<double>log_alphas
-    ){
-        return field::SpectralFunction<si::attenuation>(
-            [xunits, yunits, wavenumbers, log_alphas]
-            (const si::wavenumber nlo, 
-             const si::wavenumber nhi, 
-             const si::pressure p, 
-             const si::temperature T)
-            {
-                return std::pow(10.0, math::integral_of_lerp(wavenumbers, log_alphas, (nlo/xunits), (nhi/xunits)) / (nhi/xunits - nlo/xunits)) * yunits;
-            }
-        );
-    }
-
 
 } // end namespace compound
