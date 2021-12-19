@@ -2016,13 +2016,11 @@ PartlyKnownCompound argon (
 
     /*gas*/
     phase::PartlyKnownGas {
-        /*isobaric_specific_heat_capacity*/  // 0.570 * si::joule / (si::gram * si::kelvin),                    
-            get_interpolated_pressure_temperature_function
-                ( si::kelvin, si::kilojoule/(si::kilogram*si::kelvin),
-                                       std::vector<double>{90.0,  120.0, 200.0, 1000.0},
-                   0.1*si::megapascal, std::vector<double>{0.5654,0.5347,0.5236,0.5210},
-                   1.0*si::megapascal, std::vector<double>{0.3795,0.3682,0.5556,0.3124},
-                  10.0*si::megapascal, std::vector<double>{1.085, 1.163, 1.215, 0.5271}),
+        /*isobaric_specific_heat_capacity*/  // 0.570 * si::joule / (si::gram * si::kelvin),        
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::kilojoule/(si::kilogram*si::kelvin),
+                 -1e-8, 0.98, 2.75e-4, 1.02, 5.6e-1,
+                 90.0, 1000.0,  0.1, 10.0),             
         /*thermal_conductivity*/   // 0.016 * si::watt / ( si::meter * si::kelvin ),                   // wikipedia
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
@@ -2240,12 +2238,10 @@ PartlyKnownCompound helium (
     /*gas*/
     phase::PartlyKnownGas {
         /*isobaric_specific_heat_capacity*/ // 9.78 * si::joule / (si::gram * si::kelvin), 
-            get_interpolated_pressure_temperature_function
-                ( si::kelvin, si::kilojoule/(si::kilogram*si::kelvin),
-                                       std::vector<double>{20.0,  40.0,  100.0, 1000.0},
-                   0.1*si::megapascal, std::vector<double>{5.250, 5.206, 5.194, 5.193 },
-                   1.0*si::megapascal, std::vector<double>{5.728, 5.317, 5.206, 5.193 },
-                  10.0*si::megapascal, std::vector<double>{5.413, 5.721, 5.303, 5.188 }),
+            get_exponent_pressure_temperature_function
+                (si::kelvin, si::megapascal, si::kilojoule/(si::kilogram*si::kelvin),
+                 -1e-6, 0.95, 1.86e-2, 1.02, 5.7e-1,
+                 20.0, 1000.0,  0.1, 10.0),             
         /*thermal_conductivity*/   // 155.7 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
             get_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),

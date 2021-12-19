@@ -96,29 +96,6 @@ namespace compound {
         );
     }
 
-    template<typename TT, typename Ty>
-    field::StateFunction<Ty> get_interpolated_pressure_temperature_function( // 2 uses: helium and argon
-        const TT Tunits, const Ty yunits,
-        const std::vector<double>Ts, 
-        const si::pressure p0, const std::vector<double>yp0, 
-        const si::pressure p1, const std::vector<double>yp1,
-        const si::pressure p2, const std::vector<double>yp2
-    ){
-        return field::StateFunction<Ty>(
-            [Tunits, yunits, Ts, p0, p1, p2, yp0, yp1, yp2]
-            (const si::pressure p, const si::temperature T)
-            {
-                return math::lerp(
-                    std::vector<si::pressure>{p0, p1, p2},
-                    std::vector<double>{
-                        math::lerp(Ts, yp0, T/Tunits), 
-                        math::lerp(Ts, yp1, T/Tunits), 
-                        math::lerp(Ts, yp2, T/Tunits)
-                    }, p) * yunits; 
-            }
-        );
-    }
-
     template<typename TT, typename Tp, typename Ty>
     field::StateFunction<Ty> get_exponent_pressure_temperature_function( // 27 uses
         const TT Tunits, const Tp punits, const Ty yunits, 
