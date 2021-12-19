@@ -187,17 +187,17 @@ namespace compound {
             /*liquid*/
             phase::CompletedLiquid {
                 /*specific_heat_capacity*/ // 4.1813 * si::joule / (si::gram * si::kelvin),                    // wikipedia
-                    get_dippr_liquid_heat_capacity_temperature_function_100
+                    get_dippr_quartic_temperature_function_100
                         (si::kelvin, si::joule / (18.01528 * si::kilogram * si::kelvin), 
                         276370.0, -2090.1, 8.125, -0.014116, 9.3701e-6,
-                        273.16*si::kelvin, 533.15*si::kelvin), 
+                        273.16, 533.15), 
                 /*thermal_conductivity*/   // 0.6062 * si::watt / (si::meter * si::kelvin), 
-                    get_dippr_liquid_thermal_conductivity_temperature_function
+                    get_dippr_quartic_temperature_function_100
                         (si::kelvin, si::watt / (si::meter * si::kelvin),
                          -0.432, 0.0057255, -0.000008078, 1.861e-9, 0.0,
                           273.15, 633.15), 
                 /*dynamic_viscosity*/      
-                    get_dippr_liquid_viscosity_temperature_function
+                    get_dippr_temperature_function_101
                         (si::kelvin, si::pascal* si::second, 
                          -52.843, 3703.6, 5.866, -5.879e-29, 10.0,
                           273.16, 646.15), // 273.16-646.15K
