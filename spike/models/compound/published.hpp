@@ -3186,9 +3186,10 @@ PartlyKnownCompound  sulfur_dioxide (
     /*gas*/
     phase::PartlyKnownGas {
         /*isobaric_specific_heat_capacity*/ 
-            get_perry_temperature_function
-                (si::kelvin, si::calorie/(30.006 * si::gram*si::kelvin), 
-                 8.05, 0.000233, -156300.0, 0.0,
+            get_perry_johnson_temperature_function
+                (si::kelvin, 
+                 si::joule/(si::gram*si::kelvin), 0.0, 0.0, 0.0,
+                 si::calorie/(30.006 * si::gram*si::kelvin), 8.05, 0.000233, -156300.0, 0.0,
                   300.0, 5000.0),
         /*thermal_conductivity*/   // 25.9 * si::milliwatt/(si::meter*si::kelvin), // Huber & Harvey
             get_dippr_temperature_function_102
@@ -4628,8 +4629,10 @@ PartlyKnownCompound  halite (
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
             /*isobaric_specific_heat_capacity*/   // 50.0 * si::joule / (90.442 * si::gram * si::kelvin), // wikipedia data page
-                get_perry_temperature_function_for_specific_heat_capacity_as_solid
-                    (si::kelvin, si::calorie/(80.088 * si::gram*si::kelvin), 10.79, 0.00420, 0.0, 0.0, 273.0, 1074.0),
+                get_perry_johnson_temperature_function
+                    (si::kelvin, 
+                     si::joule/(si::gram*si::kelvin), 0.0, 0.0, 0.0,
+                     si::calorie/(80.088 * si::gram*si::kelvin), 10.79, 0.00420, 0.0, 0.0, 273.0, 1074.0),
             /*thermal_conductivity*/              state_invariant(5.55 * si::watt / ( si::meter * si::kelvin )), // Wilkens (2011)
             /*dynamic_viscosity*/                 state_invariant(1e17 * si::poise), // various sources, Carey (1953) cites this number from Weinberg (1927), and Mukherjee (2010), provides a literature review and findings from salt diapirs. Science is weird.
             /*density*/                           state_invariant(2170.0 * si::kilogram/si::meter3),
@@ -4731,8 +4734,10 @@ PartlyKnownCompound  corundum (
     std::vector<phase::PartlyKnownSolid>{
         phase::PartlyKnownSolid {
             /*isobaric_specific_heat_capacity*/   // 750.0*si::joule/(si::kilogram* si::kelvin)
-                get_perry_temperature_function_for_specific_heat_capacity_as_solid
-                    (si::kelvin, si::calorie/(101.96 * si::gram*si::kelvin), 22.08, 0.008971, -522500.0, 0.0, 273.0, 1973.0), 
+                get_perry_johnson_temperature_function
+                    (si::kelvin, 
+                     si::joule/(si::gram*si::kelvin), 0.0, 0.0, 0.0,
+                     si::calorie/(101.96 * si::gram*si::kelvin), 22.08, 0.008971, -522500.0, 0.0, 273.0, 1973.0), 
             /*thermal_conductivity*/              // field::StateSample<si::thermal_conductivity>(37.0*si::watt/(si::meter * si::kelvin), si::atmosphere, 20.0*si::celcius),//azom.com/article.aspx?ArticleId=1948
                 get_interpolated_temperature_function
                     (si::kelvin, si::watt / (si::meter * si::kelvin),
@@ -5129,8 +5134,10 @@ PartlyKnownCompound  calcite (
         phase::PartlyKnownSolid { // calcite
 
             /*isobaric_specific_heat_capacity*/   // 0.793 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988, room temperature, 0.79 for aragonite
-                get_perry_temperature_function_for_specific_heat_capacity_as_solid
-                    (si::kelvin, si::calorie/(100.087 * si::gram*si::kelvin), 19.68, 0.01189, -307600.0, 0.0, 273.0, 1033.0), 
+                get_perry_johnson_temperature_function
+                    (si::kelvin, 
+                     si::joule/(si::gram*si::kelvin), 0.0, 0.0, 0.0,
+                     si::calorie/(100.087 * si::gram*si::kelvin), 19.68, 0.01189, -307600.0, 0.0, 273.0, 1033.0), 
             /*thermal_conductivity*/              state_invariant(3.59 * si::watt / (si::meter * si::kelvin)), // Schön (2015)
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           state_invariant(2710.0 * si::kilogram/si::meter3),
@@ -5176,8 +5183,10 @@ PartlyKnownCompound  calcite (
         phase::PartlyKnownSolid { // aragonite
 
             /*isobaric_specific_heat_capacity*/   // 0.793 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988, room temperature, 0.79 for aragonite
-                get_perry_temperature_function_for_specific_heat_capacity_as_solid
-                    (si::kelvin, si::calorie/(100.087 * si::gram*si::kelvin), 19.68, 0.01189, -307600.0, 0.0, 273.0, 1033.0), 
+                get_perry_johnson_temperature_function
+                    (si::kelvin, 
+                     si::joule/(si::gram*si::kelvin), 0.0, 0.0, 0.0,
+                     si::calorie/(100.087 * si::gram*si::kelvin), 19.68, 0.01189, -307600.0, 0.0, 273.0, 1033.0), 
             /*thermal_conductivity*/              state_invariant(2.24 * si::watt / (si::meter * si::kelvin)), // Schön (2015)
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           state_invariant(2930.0 * si::kilogram/si::meter3), // Perry
@@ -5568,8 +5577,10 @@ PartlyKnownCompound  orthoclase (
         phase::PartlyKnownSolid {
 
             /*isobaric_specific_heat_capacity*/   // 0.61 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988)
-                get_perry_temperature_function_for_specific_heat_capacity_as_solid
-                    (si::kelvin, si::calorie/(278.33 * si::gram*si::kelvin), 69.26, 0.00821, -2331000.0, 0.0, 273.0, 1373.0),
+                get_perry_johnson_temperature_function
+                    (si::kelvin, 
+                     si::joule/(si::gram*si::kelvin), 0.0, 0.0, 0.0,
+                     si::calorie/(278.33 * si::gram*si::kelvin), 69.26, 0.00821, -2331000.0, 0.0, 273.0, 1373.0),
             /*thermal_conductivity*/              state_invariant(2.31 * si::watt/(si::meter*si::kelvin)), // Schön (2015)
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           state_invariant(2560.0 * si::kilogram/si::meter3),
@@ -5663,8 +5674,10 @@ PartlyKnownCompound andesine (
         phase::PartlyKnownSolid {
 
             /*isobaric_specific_heat_capacity*/   // 66.0 * si::joule / (268.6 * si::gram * si::kelvin), // Richet (1984)
-                get_perry_temperature_function_for_specific_heat_capacity_as_solid
-                    (si::kelvin, si::calorie/(268.6 * si::gram*si::kelvin), 63.13, 0.01500, -1537000.0, 0.0, 273.0, 1673.0), // for anorthite
+                get_perry_johnson_temperature_function
+                    (si::kelvin, 
+                     si::joule/(si::gram*si::kelvin), 0.0, 0.0, 0.0,
+                 si::calorie/(268.6 * si::gram*si::kelvin), 63.13, 0.01500, -1537000.0, 0.0, 273.0, 1673.0), // for anorthite
             /*thermal_conductivity*/              state_invariant(1.69 * si::watt / (si::centimeter * si::kelvin)), // Schön (2015), for anorthite
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           state_invariant(2670.0 * si::kilogram/si::meter3),
@@ -5755,8 +5768,10 @@ PartlyKnownCompound augite (
             // .dynamic_viscosity = 1e4 * si::pascal * si::second, // Melosh (2011), from Hiesinger (2007), for basaltic lava flow, order of magnitude estimate
 
             /*isobaric_specific_heat_capacity*/   // 0.7 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988), representative of pyroxenes
-                get_perry_temperature_function_for_specific_heat_capacity_as_solid
-                    (si::kelvin, si::calorie/(236.4 * si::gram*si::kelvin), 23.35, 0.008062, -558800.0, 0.0, 273.0, 773.0), // for maganese pyroxenes 
+                get_perry_johnson_temperature_function
+                    (si::kelvin, 
+                     si::joule/(si::gram*si::kelvin), 0.0, 0.0, 0.0,
+                 si::calorie/(236.4 * si::gram*si::kelvin), 23.35, 0.008062, -558800.0, 0.0, 273.0, 773.0), // for maganese pyroxenes 
             /*thermal_conductivity*/              state_invariant(4.66 * si::watt / (si::centimeter * si::kelvin)), // Schön (2015)
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           state_invariant(3380.0 * si::kilogram/si::meter3),
@@ -5847,8 +5862,10 @@ PartlyKnownCompound forsterite (
         phase::PartlyKnownSolid {
 
             /*isobaric_specific_heat_capacity*/   // 0.79 * si::joule / (si::gram * si::kelvin), // Cermak (1988), for fayalite/forsterite mix
-                get_perry_temperature_function_for_specific_heat_capacity_as_solid
-                    (si::kelvin, si::calorie/(153.31 * si::gram*si::kelvin), 33.57, 0.01907, -879700.0, 0.0, 273.0, 1161.0), // for fayalite
+                get_perry_johnson_temperature_function
+                    (si::kelvin, 
+                     si::joule/(si::gram*si::kelvin), 0.0, 0.0, 0.0,
+                 si::calorie/(153.31 * si::gram*si::kelvin), 33.57, 0.01907, -879700.0, 0.0, 273.0, 1161.0), // for fayalite
             /*thermal_conductivity*/              state_invariant(7.69 * si::watt / (si::centimeter * si::kelvin)), // Schön (2015)
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           state_invariant(3810.0 * si::kilogram/si::meter3),
@@ -6013,8 +6030,10 @@ PartlyKnownCompound  pyrite (
         phase::PartlyKnownSolid {
 
             /*isobaric_specific_heat_capacity*/   // 0.5 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988, room temperature
-                get_perry_temperature_function_for_specific_heat_capacity_as_solid
-                    (si::kelvin, si::calorie/(119.98 * si::gram*si::kelvin), 10.7, 0.01336, 0.0, 0.0, 273.0, 773.0),
+                get_perry_johnson_temperature_function
+                    (si::kelvin, 
+                     si::joule/(si::gram*si::kelvin), 0.0, 0.0, 0.0,
+                     si::calorie/(119.98 * si::gram*si::kelvin), 10.7, 0.01336, 0.0, 0.0, 273.0, 773.0),
             /*thermal_conductivity*/              state_invariant(19.21 * si::watt / (si::meter * si::kelvin)), // Schön (2015)
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           state_invariant(5020.0 * si::kilogram/si::meter3),
@@ -6099,8 +6118,10 @@ PartlyKnownCompound hematite (
         phase::PartlyKnownSolid {
 
             /*isobaric_specific_heat_capacity*/   // 0.61 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988)
-                get_perry_temperature_function_for_specific_heat_capacity_as_solid
-                    (si::kelvin, si::calorie/(159.69 * si::gram*si::kelvin), 24.72, 0.01604, -423400.0, 0.0, 273.0, 1097.0),
+                get_perry_johnson_temperature_function
+                    (si::kelvin, 
+                     si::joule/(si::gram*si::kelvin), 0.0, 0.0, 0.0,
+                     si::calorie/(159.69 * si::gram*si::kelvin), 24.72, 0.01604, -423400.0, 0.0, 273.0, 1097.0),
             /*thermal_conductivity*/              state_invariant(11.28 * si::watt / (si::meter * si::kelvin)), // Schön (2015)
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           state_invariant(5250.0 * si::kilogram/si::meter3),
@@ -6410,10 +6431,10 @@ PartlyKnownCompound  copper (
     /*liquid*/
     phase::PartlyKnownLiquid {
         /*isobaric_specific_heat_capacity*/ 
-            get_perry_temperature_function
+            get_dippr_quartic_temperature_function_100
                 (si::kelvin, si::calorie/(63.546 * si::gram*si::kelvin), 
-                 5.44, 0.001462, 0.0, 0.0,
-                  1357.0, 1573.0),
+                 5.44, 0.001462, 0.0, 0.0, 0.0,
+                 1357.0, 1573.0),
         /*thermal_conductivity*/   state_invariant(160.0 * si::watt / (si::meter * si::kelvin)), // Mills (1996)
         /*dynamic_viscosity*/      
                 get_interpolated_inverse_temperature_function
@@ -6544,8 +6565,10 @@ PartlyKnownCompound  magnetite (
         phase::PartlyKnownSolid {
 
             /*isobaric_specific_heat_capacity*/   // 0.6 * si::kilojoule / (si::kilogram * si::kelvin), // Cermak (1988)
-                get_perry_temperature_function_for_specific_heat_capacity_as_solid
-                    (si::kelvin, si::calorie/(231.53 * si::gram*si::kelvin), 41.17, 0.01882, -979500.0, 0.0, 273.0, 1065.0),
+                get_perry_johnson_temperature_function
+                    (si::kelvin, 
+                     si::joule/(si::gram*si::kelvin), 0.0, 0.0, 0.0,
+                     si::calorie/(231.53 * si::gram*si::kelvin), 41.17, 0.01882, -979500.0, 0.0, 273.0, 1065.0),
             /*thermal_conductivity*/              state_invariant(5.1 * si::watt / (si::centimeter * si::kelvin)), // Schön (2015)
             /*dynamic_viscosity*/                 missing(), // 3e8 * si::pascal * si::second, // Melosh (2011), from Hiesinger (2007), for venusian lava flows, middle of range on log scale
             /*density*/                           state_invariant(5170.0 * si::kilogram/si::meter3),
@@ -6638,8 +6661,10 @@ PartlyKnownCompound chalcocite (
         phase::PartlyKnownSolid { // alpha
 
             /*isobaric_specific_heat_capacity*/            
-                get_perry_temperature_function_for_specific_heat_capacity_as_solid
-                    (si::kelvin, si::calorie/(159.16 * si::gram*si::kelvin), 9.38, 0.0312, 0.0, 0.0, 273.0, 376.0),
+                get_perry_johnson_temperature_function
+                    (si::kelvin, 
+                     si::joule/(si::gram*si::kelvin), 0.0, 0.0, 0.0,
+                     si::calorie/(159.16 * si::gram*si::kelvin), 9.38, 0.0312, 0.0, 0.0, 273.0, 376.0),
             /*thermal_conductivity*/              missing(),
             /*dynamic_viscosity*/                 missing(),
             /*density*/                           state_invariant(5600.0 * si::kilogram/si::meter3),

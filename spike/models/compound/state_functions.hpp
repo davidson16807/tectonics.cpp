@@ -125,28 +125,12 @@ namespace compound {
         );
     }
 
-    template<typename Tx, typename Ty>
-    field::StateFunction<Ty> get_perry_temperature_function( // 2 uses
-        const Tx Tunits, const Ty yunits,
-        const double intercept, const double linear, const double inverse_square, const double square,
-        const double Tmin, const double Tmax
-    ){
-        return field::StateFunction<Ty>(
-            [Tunits, yunits, intercept, linear, inverse_square, square, Tmin, Tmax]
-            (const si::pressure p, const si::temperature T)
-            {
-                double t = std::clamp(T/Tunits, Tmin, Tmax);
-                return (intercept + linear*t + inverse_square/(t*t) + square*t*t)*yunits;
-            }
-        );
-    }
-
     /*
     `get_perry_johnson_temperature_function()` uses Perry coefficients for high temperature,
     and interpolated values from Johnson (1960) for low temperature.
     */
     template<typename Tx>
-    field::StateFunction<si::specific_heat_capacity> get_perry_johnson_temperature_function( // 10 uses, all for heat capacity of solids
+    field::StateFunction<si::specific_heat_capacity> get_perry_johnson_temperature_function( // 23 uses, all for heat capacity of solids
         const Tx Tunits, 
         const si::specific_heat_capacity y_units_johnson, 
         const double linear_johnson, const double cube_johnson, 
@@ -172,31 +156,12 @@ namespace compound {
         );
     }
 
-    template<typename Tx, typename Ty>
-    field::StateFunction<Ty> get_perry_temperature_function_for_specific_heat_capacity_as_solid( // 12 uses
-        const Tx Tunits, const Ty yunits,
-        const double intercept, const double linear, const double inverse_square, const double square,
-        const double Tmin, const double Tmax
-    ){
-        return field::StateFunction<Ty>(
-            [Tunits, yunits, intercept, linear, inverse_square, square, Tmin, Tmax]
-            (const si::pressure p, const si::temperature T)
-            {
-                double t = std::clamp(T/Tunits, Tmin, Tmax);
-                auto y_perry = intercept + linear*t + inverse_square/(t*t) + square*t*t;
-                return math::lerp(
-                    std::vector<double>{0.0,    Tmin},
-                    std::vector<double>{0.0, y_perry}, T/Tunits) * yunits;
-            }
-        );
-    }
-
     /*
     `get_dippr_quartic_temperature_function_100()` is equivalent to dippr function 100,
     for liquid thermal conductivity, heat capacity, and solid density
     */
     template<typename Tx, typename Ty>
-    field::StateFunction<Ty> get_dippr_quartic_temperature_function_100( // 25 uses, for liquid thermal conductivity and heat capacity
+    field::StateFunction<Ty> get_dippr_quartic_temperature_function_100( // 26 uses, for liquid thermal conductivity and heat capacity
         const Tx Tunits, const Ty yunits,
         const double intercept, const double slope, const double square, const double cube, const double fourth,
         const double Tmin, double Tmax
