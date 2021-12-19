@@ -97,45 +97,28 @@ namespace compound {
     }
 
     template<typename TT, typename Tp, typename Ty>
-    field::StateFunction<Ty> get_exponent_pressure_temperature_function( // 27 uses
-        const TT Tunits, const Tp punits, const Ty yunits, 
-        const double pslope, const double pexponent, 
-        const double Tslope, const double Texponent, 
-        const double intercept,
-        const double Tmin, const double Tmax, 
-        const double Pmin, const double Pmax
-    ){
-        return field::StateFunction<Ty>(
-            [Tunits, punits, yunits, 
-             pslope, pexponent, Tslope, Texponent, intercept, 
-             Tmin, Tmax, Pmin, Pmax]
-            (const si::pressure p, const si::temperature T)
-            {
-                return (pslope*std::pow(std::clamp(p/punits, Pmin, Pmax), pexponent)
-                      + Tslope*std::pow(std::clamp(T/Tunits, Tmin, Tmax), Texponent)
-                      + intercept) * yunits;
-            }
-        );
-    }
-
-    template<typename TT, typename Tp, typename Ty>
-    field::StateFunction<Ty> get_sigmoid_exponent_pressure_temperature_function( // 9 uses
+    field::StateFunction<Ty> get_sigmoid_exponent_pressure_temperature_function( // 36 uses
         const TT Tunits, const Tp punits, const Ty yunits, 
         const double pslope, const double pexponent, 
         const double Tslope, const double Texponent, 
         const double Tsigmoid_max, const double Tsigmoid_scale, const double Tsigmoid_center,  
-        const double intercept
+        const double intercept,
+        const double Tmin, const double Tmax, 
+        const double pmin, const double pmax
     ){
         return field::StateFunction<Ty>(
             [Tunits, punits, yunits, 
              pslope, pexponent, Tslope, Texponent, 
              Tsigmoid_max, Tsigmoid_scale, Tsigmoid_center, 
-             intercept]
+             intercept,
+             Tmin, Tmax, pmin, pmax]
             (const si::pressure p, const si::temperature T)
             {
-                const double Tsigmoid_input = (T/Tunits - Tsigmoid_center)/Tsigmoid_scale;
-                return (pslope*std::pow(p/punits, pexponent)
-                      + Tslope*std::pow(T/Tunits, Texponent)
+                const double Tclamped = std::clamp(T/Tunits, Tmin, Tmax);
+                const double pclamped = std::clamp(p/punits, pmin, pmax);
+                const double Tsigmoid_input = (Tclamped - Tsigmoid_center)/Tsigmoid_scale;
+                return (pslope*std::pow(pclamped, pexponent)
+                      + Tslope*std::pow(Tclamped, Texponent)
                       + Tsigmoid_max * Tsigmoid_input / std::sqrt(1.0 + Tsigmoid_input*Tsigmoid_input)
                       + intercept) * yunits;
             }
@@ -227,7 +210,7 @@ namespace compound {
             }
         );
     }
-    
+
     template<typename Tx, typename Ty>
     field::StateFunction<Ty> get_dippr_temperature_function_101( // 42 uses
         const Tx Tunits, const Ty yunits,
