@@ -196,43 +196,43 @@ PartlyKnownCompound water (
         ),
 
     /*molecular_absorption_cross_section*/ 
-    get_molecular_absorption_cross_section_function
+    get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output
         ( 1.0/si::meter, si::meter2,
           std::vector<double>{  9.73e1, 6.05e2, 7.37e3, 1.65e4, 2.98e4, 6.50e4, 9.73e4, 1.38e5, 1.62e5, 2.63e5, 3.35e5, 4.39e5, 5.15e5, 5.89e5, 6.93e5, 9.82e5, 1.25e6, 1.64e6, 2.08e6, 2.38e6, 2.41e6, 2.44e6, 2.47e6, 2.53e6, 2.59e6, 2.63e6, 2.73e6, 2.78e6, 2.93e6, 2.98e6, 3.05e6, 3.08e6, 5.11e6, 5.63e6, 6.04e6, 6.45e6, 6.86e6, 8.04e6, 9.68e6, 1.08e7, 1.24e7, 1.37e7, 2.37e7, 3.94e7, 6.98e7, 1.69e8 },
           std::vector<double>{  -24.98, -24.44, -23.93, -23.46, -23.46, -22.97, -23.70, -23.77, -23.11, -24.44, -22.46, -25.14, -24.47, -25.68, -25.10, -27.10, -28.15, -29.10, -30.25, -29.38, -29.28, -29.28, -29.47, -29.22, -29.47, -29.55, -29.28, -29.21, -29.27, -28.95, -28.71, -28.69, -25.41, -21.62, -21.41, -21.51, -21.76, -21.09, -20.98, -20.74, -20.82, -20.75, -20.83, -21.08, -21.54, -22.44 }),
 
     /*gas*/
     phase::PartlyKnownGas {
-        /*isobaric_specific_heat_capacity*/ // 2.080 * si::joule / (si::gram * si::kelvin),                     // wikipedia
+        /*isobaric_specific_heat_capacity*/ 
             get_sigmoid_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
                 0.01766, 0.80539, 0.00707, 0.69586, 0.0, 1.0, 0.0, 1.42782,
                  300.0, 1273.2,  0.0, 10.0), 
                 // water, mean error: 0.8%, max error: 3.4%, range: 300-1273.2K, 0-10MPa, stp estimate: 1.781
-        /*thermal_conductivity*/   // 0.016 * si::watt / (si::meter * si::kelvin),                     // wikipedia
+        /*thermal_conductivity*/   
             get_sigmoid_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
                 0.00054, 1.09614, 0.00000, 0.00000, 0.09827, 691.90362, 883.95160, 0.08323,
                 300.0, 1273.2, 0.0, 10.0), 
                 // water, mean error: 2.5%, max error: 9.7%, range: 300-1273.2K, 0-10MPa, stp estimate: 0.018
-        /*dynamic_viscosity*/      // 1.24e-5 * si::pascal * si::second,                               // engineering toolbox, at 100 C
+        /*dynamic_viscosity*/      
             get_sigmoid_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
                 0.00019, 3.33694, 0.02183, 1.08016, 0.0, 1.0, 0.0, -0.58257,
                  300.0, 1273.2,  0.0, 10.0), 
                 // water, mean error: 1.2%, max error: 3.5%, range: 300-1273.2K, 0-10MPa, stp estimate: 8.765
         /*density*/                missing(),
-        /*refractive_index*/       spectral_invariant(1.000261)                                        // engineering toolbox
+        /*refractive_index*/       spectral_invariant(1.000261)                                        
     },
 
     /*liquid*/
     phase::PartlyKnownLiquid {
-        /*isobaric_specific_heat_capacity*/ // 4.1813 * si::joule / (si::gram * si::kelvin),                    // wikipedia
+        /*isobaric_specific_heat_capacity*/ 
             get_dippr_quartic_temperature_function_100
                 (si::kelvin, si::joule / (18.01528 * si::kilogram * si::kelvin), 
                 276370.0, -2090.1, 8.125, -0.014116, 9.3701e-6,
                 273.16, 533.15), 
-        /*thermal_conductivity*/   // 0.6062 * si::watt / (si::meter * si::kelvin), 
+        /*thermal_conductivity*/   
             get_dippr_quartic_temperature_function_100
                 (si::kelvin, si::watt / (si::meter * si::kelvin),
                  -0.432, 0.0057255, -0.000008078, 1.861e-9, 0.0,
@@ -242,7 +242,7 @@ PartlyKnownCompound water (
                 (si::kelvin, si::pascal* si::second, 
                  -52.843, 3703.6, 5.866, -5.879e-29, 10.0,
                   273.16, 646.15), // 273.16-646.15K
-        /*density*/                // 997.0 * si::kilogram/si::meter3,                                
+        /*density*/                
             field::StateFunction<si::density>([](const si::pressure p, const si::temperature T) {
                 // Perry equation 119, specialized for water
                 // valid for 273.16-647.096K
@@ -277,14 +277,14 @@ PartlyKnownCompound water (
                  647.01, -0.1306, 2.471, 0.2151, 1.233, 0.0, 0.0, 
                  233.22, 646.15), // Mulero (2012)
         /*refractive_index*/       //1.33336,
-            get_linear_interpolated_refractive_index_function
-                (si::micrometer, 
+            get_spectral_linear_interpolation_function_of_wavelength
+                (si::micrometer, 1.0,
                  std::vector<double>{0.2,   0.3,   0.425,  0.55, 0.675,   0.8, 0.925,   1.4,   2.4,   2.8,  3.05,  3.3,   5.6,   6.6,   7.6,  13.0,  15.5,  18.0,  21.0,  26.0,  32.0,  42.0,  60.0, 110.0, 160.0,200.0},
                  std::vector<double>{1.396, 1.349, 1.338, 1.333, 1.331, 1.329, 1.328, 1.321, 1.279, 1.142, 1.426, 1.45, 1.289, 1.334, 1.302, 1.146, 1.297, 1.423, 1.487, 1.539, 1.546, 1.522, 1.703, 1.966, 2.081, 2.13}),
                 // Hale (1973)
         /*extinction_coefficient*/ 
-            get_linear_interpolated_refractive_index_function
-                (si::micrometer, 
+            get_spectral_linear_interpolation_function_of_wavelength
+                (si::micrometer, 1.0,
                  std::vector<double>{0.2,     0.3,     0.425,   0.55,     0.675,    0.8,      0.925,    1.4,      2.8,   3.0,   3.3,    3.6,     4.1,     4.6,    5.6,    6.1,      6.6,    9.2,   10.5,  13.0,  15.5,  18.0,  32.0,  60.0, 200.0},
                  std::vector<double>{1.1e-07, 1.6e-08, 1.3e-09, 1.96e-09, 2.23e-08, 1.25e-07, 1.06e-06, 0.000138, 0.115, 0.272, 0.0368, 0.00515, 0.00562, 0.0147, 0.0142, 0.131, 0.0356, 0.0415, 0.0662, 0.305, 0.414, 0.426, 0.324, 0.587, 0.504})
                 // Hale (1973)
@@ -312,20 +312,20 @@ PartlyKnownCompound water (
                 get_quadratic_pressure_function
                    (si::kilobar, si::gram/si::centimeter3,
                     0.9228, 0.00728, 0.00075), // Gagnon (1990)
-            /*vapor_pressure*/                    //138.268 * si::megapascal,
+            /*vapor_pressure*/                   
                 get_interpolated_temperature_function
                     (si::celcius, si::millimeter_mercury,
                      std::vector<double>{-17.3,  11.2,   51.6,   100.0  }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
-            /*refractive_index*/       //1.33336,
-                get_linear_interpolated_refractive_index_function
-                    (si::micrometer, 
+            /*refractive_index*/       
+                get_spectral_linear_interpolation_function_of_wavelength
+                    (si::micrometer, 1.0,
                      std::vector<double>{0.0443, 0.0528, 0.067,  0.0886, 0.1181, 0.137,  0.1468, 0.158,  0.177,  0.197,  0.41,   0.51,   0.81,   1.515,  1.76,   1.923,  2.29,   2.52,   2.817,  2.985,  3.175,  3.39,   3.775,  4.56,   5.714,  6.329,  7.143,  8.333,  10.31,  11.9,   14.08,  17.24,  22.22,  34.48,  46.15,  55,     62.5,   76.29,  210, 1300.0},
                      std::vector<double>{0.8228, 0.8505, 0.9679, 1.3807, 1.3783, 1.2849, 1.5729, 1.6309, 1.4462, 1.3974, 1.3185, 1.3126, 1.3047, 1.2914, 1.2843, 1.2771, 1.2545, 1.2232, 1.0657, 1.018, 1.6336, 1.5086, 1.385, 1.3482, 1.2933, 1.3178, 1.3236, 1.2964, 1.1501, 1.2546, 1.5701, 1.5303, 1.4575, 1.253, 1.2543, 1.7955, 1.6372, 1.8504, 1.8114, 1.7868}),
                     // Warren (2008)
             /*extinction_coefficient*/ 
-                get_linear_interpolated_refractive_index_function
-                    (si::micrometer, 
+                get_spectral_linear_interpolation_function_of_wavelength
+                    (si::micrometer, 1.0,
                      std::vector<double>{0.0443,   0.0528,   0.067,    0.0886,   0.1181,   0.137,    0.1468,   0.158,    0.177,    0.197,    0.41,     0.51,     0.61,     0.71,     0.81,     0.91,     1.01,     1.11,     1.21,     1.31,     1.41,     1.515,    1.76,     1.923,    2.13,     2.29,     2.52,     2.817,    3.003,    3.175,    3.39,     3.775,    4.56,     5.714,    6.329,    7.143,    8.333,    10.31,    11.9,     14.08,    17.24,    22.22,    34.48,    46.15,    55,       76.29,    210,      140000,   240000,   2000000  },
                      std::vector<double>{0.164,    0.268,    0.492,    0.468,    0.244,    0.271,    0.345,    0.083,    1.061e-05,2.816e-10,2.669e-11,8.036e-10,6.89e-09, 3.44e-08, 1.4e-07,  4.44e-07, 2e-06,    1.76e-06, 8.66e-06, 1.31e-05, 3.442e-05,0.0005143,0.0001522,0.000706, 0.0005255,0.0002538,0.0007685,0.03245,  0.438,    0.372,    0.04286,  0.006966, 0.03007,  0.03256,  0.0617,   0.0494,   0.037,    0.075,    0.409,    0.271,    0.107,    0.029,    0.1615,   0.7684,   0.4214,   0.334,    0.04282,  9.36e-05, 0.0001066,0.0006596}),
                     // Warren (2008)
@@ -908,18 +908,10 @@ PartlyKnownCompound nitrogen (
         ),
 
     /*molecular_absorption_cross_section*/ 
-        field::SpectralFunction<si::area>([](
-            const si::wavenumber nlo, 
-            const si::wavenumber nhi, 
-            const si::pressure p, 
-            const si::temperature T
-        ) {
-            return std::pow(10.0, math::integral_of_lerp(
-                std::vector<double>{ 8.22e6, 9.25e6, 9.94e6, 1.03e7, 1.13e7, 1.21e7, 1.89e7, 3.35e7, 3.93e7, 9.31e7, 1.07e9 },
-                std::vector<double>{ -26.22, -23.04, -20.64, -20.27, -20.29, -20.62, -20.58, -20.93, -20.96, -21.80, -23.38 },
-                (nlo*si::meter), (nhi*si::meter)
-            ) / (nhi*si::meter - nlo*si::meter)) * si::meter2;
-        }),
+        get_spectral_linear_interpolation_function_of_wavelength_for_log10_sample_output
+            (si::meter, si::meter2,
+             std::vector<double>{ 8.22e6, 9.25e6, 9.94e6, 1.03e7, 1.13e7, 1.21e7, 1.89e7, 3.35e7, 3.93e7, 9.31e7, 1.07e9 },
+             std::vector<double>{ -26.22, -23.04, -20.64, -20.27, -20.29, -20.62, -20.58, -20.93, -20.96, -21.80, -23.38 }),
 
     /*gas*/
     phase::PartlyKnownGas {
@@ -1251,26 +1243,26 @@ PartlyKnownCompound oxygen (
         ),
 
     /*molecular_absorption_cross_section*/ 
-    get_molecular_absorption_cross_section_function
+    get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output
         ( 1.0/si::meter, si::meter2,
           std::vector<double>{  5.58e6, 5.72e6, 6.36e6, 6.93e6, 7.26e6, 7.40e6, 7.50e6, 7.65e6, 7.74e6, 7.86e6, 8.05e6, 8.24e6, 8.36e6, 8.43e6, 8.52e6, 8.66e6, 8.80e6, 8.88e6, 8.99e6, 9.06e6, 9.20e6, 9.28e6, 9.75e6, 1.05e7, 1.13e7, 1.22e7, 1.36e7, 1.46e7, 1.83e7, 2.14e7, 3.50e7, 6.28e7, 1.11e8, 4.23e8  },
           std::vector<double>{  -24.99, -22.55, -21.15, -20.81, -20.86, -21.15, -21.70, -22.61, -22.16, -23.10, -21.82, -24.11, -22.09, -24.11, -21.91, -23.78, -21.50, -23.63, -23.80, -22.07, -22.14, -22.21, -21.36, -21.04, -21.01, -20.68, -20.60, -20.65, -20.59, -20.70, -20.81, -21.28, -21.79, -23.05  }),
 
     /*gas*/
     phase::PartlyKnownGas {
-        /*isobaric_specific_heat_capacity*/        // 0.980 * si::joule / (si::gram * si::kelvin),              
+        /*isobaric_specific_heat_capacity*/        
             get_sigmoid_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
                 -0.00022, 0.00063, 0.00000, 0.00000, 1.11067, 1268.80242, -836.03510, 0.17582,
                 204.36, 1004.4, 0.0, 3.0), 
                 // oxygen, mean error: 0.7%, max error: 3.3%, range: 204.36-1004.4K, 0-3MPa, stp estimate: 0.907
-        /*thermal_conductivity*/   // 0.0238 * si::watt / (si::meter * si::kelvin),                    // wikipedia
+        /*thermal_conductivity*/   
             get_sigmoid_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
                 0.00023, 1.29450, 0.00018, 0.88149, 0.0, 1.0, 0.0, -0.00130,
                  104.36, 1004.4,  0.0, 3.0), 
                 // oxygen, mean error: 0.8%, max error: 4.2%, range: 104.36-1004.4K, 0-3MPa, stp estimate: 0.025
-        /*dynamic_viscosity*/      // 2.04e-5 * si::pascal * si::second,                               // engineering toolbox, at 20 C
+        /*dynamic_viscosity*/      
             get_sigmoid_exponent_pressure_temperature_function
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
                 -0.08909, 0.00000, 0.39475, 0.70840, 0.0, 1.0, 0.0, -2.08620,
@@ -1550,7 +1542,7 @@ PartlyKnownCompound carbon_dioxide (
         ),
 
     /*molecular_absorption_cross_section*/ 
-    get_molecular_absorption_cross_section_function
+    get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output
         ( 1.0/si::meter, si::meter2,
           std::vector<double>{ 8.58e2,  8.58e3,  2.75e4,  3.26e4,  3.78e4,  6.70e4,  8.58e4,  9.53e4,  1.00e5,  1.07e5,  1.11e5,  1.18e5,  1.27e5,  1.32e5,  1.36e5,  1.45e5,  1.53e5,  1.56e5,  1.60e5,  1.66e5,  1.69e5,  1.73e5,  1.87e5,  1.92e5,  2.00e5,  2.23e5,  2.32e5,  2.37e5,  2.40e5,  2.47e5,  2.53e5,  2.60e5,  2.69e5,  2.76e5,  2.88e5,  3.10e5,  3.41e5,  3.59e5,  3.72e5,  3.90e5,  4.30e5,  5.01e5,  5.74e5,  6.20e5,  6.57e5,  6.99e5,  8.13e5,  9.54e5,  1.07e6,  1.29e6,  1.32e6,  2.50e6,  4.95e6,  5.00e6,  6.14e6,  6.73e6,  7.17e6,  7.62e6,  8.39e6,  8.90e6,  9.21e6,  1.11e7,  1.21e7,  1.29e7,  1.52e7,  2.91e7,  4.65e7,  1.26e8,  1.89e8,  2.41e8,  4.42e8 },
           std::vector<double>{ -33.32,  -35.77,  -38.01,  -37.15,  -32.27,  -22.83,  -28.57,  -26.72,  -28.50,  -26.46,  -30.22,  -31.21,  -28.04,  -30.02,  -28.11,  -32.47,  -32.60,  -33.79,  -36.49,  -37.22,  -35.11,  -32.07,  -28.17,  -26.66,  -28.64,  -25.03,  -22.21,  -21.30,  -26.74,  -27.46,  -30.28,  -28.25,  -31.00,  -29.30,  -32.57,  -29.89,  -28.05,  -24.31,  -23.66,  -28.38,  -32.11,  -24.84,  -31.52,  -26.54,  -30.21,  -26.02,  -31.13,  -28.70,  -37.36,  -29.75,  -35.98,  -35.98,  -29.16,  -27.60,  -22.96,  -22.26,  -22.30,  -22.01,  -23.52,  -20.24,  -21.06,  -20.04,  -20.86,  -20.36,  -20.45,  -20.56,  -20.83,  -21.74,  -22.21,  -21.69,  -21.96 }),
@@ -1660,13 +1652,13 @@ PartlyKnownCompound carbon_dioxide (
                      std::vector<double>{-134.3, -119.5, -100.2, -78.2  }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  
-                get_linear_interpolated_refractive_index_function
-                    (si::micrometer,
+                get_spectral_linear_interpolation_function_of_wavelength
+                    (si::micrometer,1.0,
                      std::vector<double>{  0.051,   0.055,   0.060,   0.064,   0.068,   0.078,   0.086,   0.091,   0.098,   0.103,   0.110,   0.116,   0.120,   0.129,   0.142,   0.168,   0.238,   0.437,   0.985,   0.989,   3.235,   3.838,   4.095,   4.189,   4.269,   4.221,   4.302,   4.384,   4.606,   5.322,   9.887,   9.628,  13.141,  14.284,  14.837,  14.724,  15.528,  17.137,  23.390,  70.273,  81.169,  85.596,  90.265,  98.121, 134.942, 146.687, 150.064, 158.249, 180.034, 948.278}, 
                      std::vector<double>{   0.51,    0.51,    0.79,    0.88,    0.88,    0.70,    0.93,    0.79,    1.03,    0.93,    1.06,    0.79,    3.79,    2.32,    1.82,    1.60,    1.47,    1.40,    1.38,    1.41,    1.40,    1.36,    1.29,    0.98,    0.45,    3.02,    1.81,    1.54,    1.46,    1.42,    1.40,    1.41,    1.36,    1.26,    0.39,    3.21,    1.57,    1.46,    1.43,    1.41,    1.38,    1.34,    1.48,    1.45,    1.41,    1.33,    1.57,    1.48,    1.45,    1.43}), // Warren (1986)
             /*extinction_coefficient*/
-                get_linear_interpolated_refractive_index_function
-                    (si::micrometer,
+                get_spectral_linear_interpolation_function_of_wavelength
+                    (si::micrometer,1.0,
                      std::vector<double>{  0.051,   0.054,   0.057,   0.067,   0.072,   0.082,   0.086,   0.092,   0.097,   0.105,   0.109,   0.116,   0.123,   0.125,   0.351,   0.482,   0.993,   1.004,   2.443,   2.556,   2.654,   2.684,   2.715,   2.756,   2.756,   2.862,   3.028,   3.086,   3.253,   3.302,   3.327,   3.588,   3.754,   4.017,   4.109,   4.140,   4.219,   4.299,   4.315,   4.464,   4.481,   4.814,   4.980,   5.075,   5.132,   5.289,   5.661,   6.173,   6.483,   6.682,   6.912,   7.097,   7.259,   7.481,   7.595,   7.946,   8.128,   8.408,   8.536,   8.797,   9.101,   9.450,   9.703,   9.925,  10.076,  10.620,  11.537,  11.979,  12.345,  12.819,  13.820,  14.350,  14.901,  15.356,  15.589,  16.309,  19.101,  22.203,  23.938,  24.856,  79.194,  87.333, 100.000, 137.169, 146.780, 160.651}, 
                      std::vector<double>{1.2e-01, 3.1e-01, 5.0e-01, 3.4e-01, 3.4e-01, 7.0e-01, 5.4e-01, 8.5e-01, 7.3e-01, 1.0e+00, 1.1e+00, 2.7e+00, 2.2e-01, 9.9e-03, 6.6e-07, 7.1e-07, 2.2e-06, 2.2e-06, 7.7e-06, 1.2e-05, 2.5e-02, 8.0e-04, 1.5e-03, 2.4e-02, 1.4e-03, 3.8e-05, 8.4e-05, 8.7e-05, 3.3e-05, 5.6e-05, 2.2e-05, 2.4e-06, 2.8e-06, 1.6e-02, 7.7e-03, 1.3e-02, 2.3e+00, 8.1e-02, 1.3e-02, 3.7e-03, 1.1e-03, 8.4e-05, 3.7e-05, 1.7e-04, 3.9e-05, 1.5e-05, 5.0e-06, 2.9e-06, 5.0e-06, 7.6e-05, 1.1e-04, 4.0e-05, 6.2e-05, 1.2e-04, 6.9e-05, 2.4e-05, 3.7e-05, 2.2e-05, 1.0e-05, 3.7e-06, 4.4e-06, 1.1e-05, 7.2e-06, 7.2e-06, 1.1e-05, 2.2e-05, 7.5e-03, 4.6e-03, 4.9e-03, 1.2e-02, 2.3e-03, 7.1e-03, 2.0e+00, 9.5e-02, 2.1e-02, 4.3e-03, 3.9e-04, 1.5e-04, 1.3e-04, 1.6e-04, 3.1e-03, 1.2e-01, 2.2e-03, 3.7e-03, 1.9e-01, 3.5e-03}), // Warren (1986)
             /*absorption_coefficient*/            missing(),
@@ -1768,7 +1760,7 @@ PartlyKnownCompound methane (
         ),
 
     /*molecular_absorption_cross_section*/ 
-    get_molecular_absorption_cross_section_function
+    get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output
         ( 1.0/si::meter, si::meter2,
           std::vector<double>{  9.47e5, 9.92e5, 1.02e6, 1.05e6, 1.07e6, 1.11e6, 1.13e6, 1.14e6, 1.16e6, 1.17e6, 1.19e6, 1.21e6, 1.25e6, 1.28e6, 1.33e6, 1.38e6, 1.40e6, 1.43e6, 1.44e6, 1.48e6, 1.50e6, 1.57e6, 1.61e6, 1.70e6, 1.73e6, 1.80e6, 1.84e6, 1.91e6, 1.96e6, 2.03e6, 2.05e6, 2.10e6, 2.15e6, 2.17e6, 2.25e6, 2.28e6, 2.30e6, 6.56e6, 7.00e6, 7.66e6, 8.65e6, 1.08e7, 2.83e7, 4.90e7, 1.82e8, 2.23e8, 2.38e8, 2.57e8, 3.12e8, 3.24e8, 3.61e8, 3.94e8, 4.45e8, 4.89e8, 5.15e8, 5.95e8, 6.36e8, 7.38e8, 7.91e8, 8.66e8, 9.40e8  },
           std::vector<double>{  -28.89, -27.28, -27.50, -29.05, -29.13, -27.31, -27.03, -28.16, -27.76, -28.91, -28.60, -30.96, -28.43, -28.67, -29.96, -27.88, -29.30, -28.99, -29.93, -29.91, -29.27, -30.48, -28.66, -31.16, -29.91, -31.27, -29.36, -31.86, -30.34, -32.07, -29.75, -31.26, -31.40, -30.69, -32.07, -30.48, -31.86, -27.37, -22.93, -20.76, -20.71, -20.22, -20.83, -21.53, -22.69, -29.75, -23.23, -21.93, -25.62, -29.16, -30.28, -28.11, -26.80, -30.93, -22.60, -27.39, -31.20, -27.26, -33.23, -27.72, -33.23  }),
@@ -1795,8 +1787,8 @@ PartlyKnownCompound methane (
                 // methane, mean error: 1.9%, max error: 5.2%, range: 140.69-640.69K, 0-3MPa, stp estimate: 10.148
         /*density*/                missing(),
         /*refractive_index*/       // 1.000444,
-            get_interpolated_refractive_index_function
-                (si::micrometer, 
+            get_spectral_linear_interpolation_function_of_wavelength_for_log10_sample_input
+                (si::micrometer, 1.0,
                  std::vector<double>{    1.67,     2.70,     3.01,     3.66,     3.79,     4.46,     5.66,     6.51,     7.00,     8.38,     8.95,    10.09,    10.86,    11.54,    11.93,    12.37,    13.22,    13.63,    14.02,    14.83},
                  std::vector<double>{1.000430, 1.000425, 1.000417, 1.000440, 1.000437, 1.000431, 1.000427, 1.000419, 1.000402, 1.000466, 1.000451, 1.000445, 1.000442, 1.000443, 1.000440, 1.000441, 1.000440, 1.000439, 1.000444, 1.000439}),
     },
@@ -1866,10 +1858,10 @@ PartlyKnownCompound methane (
                       std::vector<double>{0.1 ,      0.8 ,     4.9 }),
             /*refractive_index*/                  1.3219,
             /*extinction_coefficient*/            
-                get_linear_interpolated_refractive_index_function_of_wavenumbers
-                    (1.0/si::centimeter, 
+                get_spectral_linear_interpolation_function_of_wavenumber
+                    (1.0/si::centimeter, 1.0,
                      std::vector<double>{ 4017.56,  3126.23,  3042.81,  3012.07,  2994.51,  2959.38,  1365.53,  1321.62,  1299.67,  1282.10, 1251.37 },
-                     std::vector<double>{   1.503,   1.503,   1.528,   1.672,   1.538,   1.503,   1.506,   1.522,   2.095,   1.519,   1.503,   1.509 }),
+                     std::vector<double>{   1.503,    1.503,    1.528,    1.672,    1.538,    1.503,    1.506,    1.522,    2.095,    1.519,    1.503 }),
             /*absorption_coefficient*/            
                 get_absorption_coefficient_function_from_log_at_wavenumbers
                     (1.0/si::centimeter, 1.0/si::centimeter,
@@ -1925,10 +1917,10 @@ PartlyKnownCompound methane (
                       std::vector<double>{0.1 ,      0.8 ,     4.9}),
             /*refractive_index*/                  1.3219,
             /*extinction_coefficient*/            
-                get_linear_interpolated_refractive_index_function_of_wavenumbers
-                    (1.0/si::centimeter, 
+                get_spectral_linear_interpolation_function_of_wavenumber
+                    (1.0/si::centimeter, 1.0,
                      std::vector<double>{ 4017.56,  3126.23,  3042.81,  3012.07,  2994.51,  2959.38,  1365.53,  1321.62,  1299.67,  1282.10, 1251.37 },
-                     std::vector<double>{   1.503,   1.503,   1.528,   1.672,   1.538,   1.503,   1.506,   1.522,   2.095,   1.519,   1.503,   1.509 }),
+                     std::vector<double>{   1.503,    1.503,    1.528,    1.672,    1.538,    1.503,    1.506,    1.522,    2.095,    1.519,    1.503 }),
             /*absorption_coefficient*/            
                 get_absorption_coefficient_function_from_log_at_wavenumbers
                     (1.0/si::centimeter, 1.0/si::centimeter,
@@ -2404,7 +2396,7 @@ PartlyKnownCompound hydrogen (
         ),
     
     /*molecular_absorption_cross_section*/ 
-    get_molecular_absorption_cross_section_function
+    get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output
         ( 1.0/si::meter, si::meter2,
           std::vector<double>{   5e6, 8.06e6, 8.48e6, 9.97e6, 1.05e7, 1.13e7, 1.41e7, 2.66e7, 5.74e7  },
           std::vector<double>{ -29.5, -23.05, -22.54, -20.41, -20.44, -20.79, -20.97, -21.66, -22.68  }),
@@ -2604,7 +2596,7 @@ PartlyKnownCompound ammonia (
         ),
     
     /*molecular_absorption_cross_section*/ 
-    get_molecular_absorption_cross_section_function
+    get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output
         ( 1.0/si::meter, si::meter2,
           std::vector<double>{  4.35e6, 4.84e6, 5.26e6, 6.14e6, 6.61e6, 7.28e6, 8.03e6, 9.32e6, 1.06e7, 1.23e7, 2.52e7, 5.80e7, 1.93e8f  },
           std::vector<double>{  -26.43, -21.51, -21.17, -21.60, -21.58, -21.00, -20.92, -20.56, -20.76, -20.44, -20.78, -21.60, -22.61f  }),
@@ -2707,8 +2699,8 @@ PartlyKnownCompound ammonia (
                      std::vector<double>{0.1  ,     1.2  ,     3.5  }),
             /*refractive_index*/                  1.5,
             /*extinction_coefficient*/            
-                get_linear_interpolated_refractive_index_function_of_wavenumbers
-                    (1.0/si::centimeter, 
+                get_spectral_linear_interpolation_function_of_wavenumber
+                    (1.0/si::centimeter, 1.0,
                      std::vector<double>{ 4017.54, 3412.28, 3381.57, 3364.03, 3342.10, 3197.36, 3144.73, 1697.36, 1627.19, 1583.33, 1188.59, 1140.35, 1078.94, 1021.93,  969.29,  631.57,  561.40,  473.68,  403.50,  144.73,   83.333 },
                      std::vector<double>{   1.100,   1.103,   1.285,   1.282,   1.160,   1.141,   1.097,   1.103,   1.166,   1.129,   1.113,   1.216,   1.530,   1.132,   1.110,   1.125,   1.169,   1.342,   1.395,   1.226,   1.219 }),
             /*absorption_coefficient*/            missing(),
@@ -2781,7 +2773,7 @@ PartlyKnownCompound ozone (
 
     /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ 
-    get_molecular_absorption_cross_section_function
+    get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output
         ( 1.0/si::meter, si::meter2,
           std::vector<double>{   0.0,  2e5,  7e5,  9e5,1.6e6,  2e6,2.5e6,2.8e6,  3e6,3.5e6,4.6e6,  6e6,7.7e6,1.2e7f },
           std::vector<double>{ -28.0,-26.0,-31.0,-28.0,-24.0,-25.0,-27.0,-24.5,-23.0,-21.0,-22.5,-22.0,-21.0,-21.0  }),
@@ -2909,7 +2901,7 @@ PartlyKnownCompound nitrous_oxide (
         ),
     
     /*molecular_absorption_cross_section*/ 
-    get_molecular_absorption_cross_section_function
+    get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output
         ( 1.0/si::meter, si::meter2,
           std::vector<double>{  3.16e6, 3.29e6, 3.85e6, 4.15e6, 5.10e6, 5.62e6, 5.95e6, 6.29e6, 6.33e6, 6.66e6, 6.91e6, 7.25e6, 7.31e6, 7.73e6, 8.00e6, 9.68e6, 1.07e7, 1.32e7, 1.54e7, 2.82e7, 4.30e7, 7.11e7, 2.34e8  },
           std::vector<double>{  -28.02, -27.33, -27.38, -26.88, -23.17, -22.83, -23.13, -23.43, -23.43, -21.58, -21.14, -20.67, -22.14, -20.17, -20.53, -20.62, -20.75, -20.37, -20.40, -20.57, -20.85, -21.29, -22.43  }),
@@ -3037,7 +3029,7 @@ PartlyKnownCompound  sulfur_dioxide (
 
     /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ 
-    get_molecular_absorption_cross_section_function
+    get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output
         ( 1.0/si::meter, si::meter2,
           std::vector<double>{2.47e6,2.69e6,2.91e6,3.12e6,3.41e6,3.76e6,4.25e6,4.37e6,4.95e6,5.45e6,6.01e6,6.63e6,7.36e6,7.95e6,8.51e6,8.80e6,9.07e6,9.35e6},
           std::vector<double>{-28.29,-25.86,-25.90,-23.18,-22.04,-22.33,-23.69,-22.55,-20.88,-21.43,-22.48,-21.25,-21.45,-19.92,-21.12,-20.35,-20.88,-20.68}),
@@ -3123,8 +3115,8 @@ PartlyKnownCompound  sulfur_dioxide (
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  missing(),
             /*extinction_coefficient*/            
-                get_linear_interpolated_refractive_index_function_of_wavenumbers
-                    (1.0/si::centimeter, 
+                get_spectral_linear_interpolation_function_of_wavenumber
+                    (1.0/si::centimeter, 1.0,
                      std::vector<double>{ 4032.02, 1483.46, 1381.00, 1361.79, 1336.18, 1323.37, 1321.24, 1299.89, 1171.82, 1163.29, 1150.48, 1135.54,  569.90,  552.83,  537.89,  525.08,  522.95,  508.00,  405.55,  405.55 },
                      std::vector<double>{   2.598,   2.598,   2.617,   2.653,   3.233,   3.190,   2.724,   2.604,   2.604,   3.043,   3.052,   2.607,   2.601,   2.623,   3.040,   3.052,   2.613,   2.595,   2.601,   2.601 }),
             /*absorption_coefficient*/            
@@ -3178,7 +3170,7 @@ PartlyKnownCompound  sulfur_dioxide (
 
     /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ 
-    get_molecular_absorption_cross_section_function
+    get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output
         ( 1.0/si::meter, si::meter2,
           std::vector<double>{4.82e6, 5.61e6, 5.83e6, 6.55e6, 7.23e6, 7.65e6, 8.31e6, 9.94e6, 1.11e7, 1.26e7, 1.67e7, 4.05e7, 7.18e7, 1.85e8},
           std::vector<double>{-22.20, -21.43, -21.37, -21.56, -21.49, -21.56, -21.57, -20.71, -20.41, -20.71, -20.60, -20.94, -21.42, -22.55}),
@@ -3350,7 +3342,7 @@ PartlyKnownCompound carbon_monoxide (
 
 
     /*molecular_absorption_cross_section*/ 
-    get_molecular_absorption_cross_section_function
+    get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output
         ( 1.0/si::meter, si::meter2,
           std::vector<double>{  4.83e6, 4.85e6, 4.88e6, 5.00e6, 5.02e6, 5.05e6, 5.17e6, 5.19e6, 5.22e6, 5.33e6, 5.36e6, 5.38e6, 5.49e6, 5.51e6, 5.55e6, 5.64e6, 5.67e6, 5.68e6, 5.71e6, 6.02e6, 6.85e6, 7.98e6, 8.42e6, 9.28e6, 1.00e7, 1.05e7, 1.13e7, 1.21e7, 1.38e7, 2.10e7, 4.54e7, 5.15e8 },
           std::vector<double>{  -28.38, -24.93, -28.40, -28.39, -24.91, -28.40, -28.39, -25.16, -28.42, -28.39, -25.52, -28.39, -28.38, -25.72, -28.41, -28.40, -25.96, -23.41, -28.42, -22.47, -20.89, -21.48, -22.01, -20.72, -20.93, -20.48, -20.35, -20.56, -20.56, -20.68, -21.04, -22.55 }),
@@ -3583,7 +3575,7 @@ PartlyKnownCompound ethane (
 
     /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ 
-    get_molecular_absorption_cross_section_function
+    get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output
         ( 1.0/si::meter, si::meter2,
           std::vector<double>{ 5.6e6, 6.25e6, 6.73e6, 7.49e6, 8.23e6, 9.26e6, 1.01e7, 1.14e7, 2.42e7, 5.43e7, 1.72e8 },
           std::vector<double>{ -35.0, -25.67, -21.86, -20.50, -20.60, -20.27, -20.25, -20.08, -20.57, -21.44, -22.57 }),
@@ -3738,7 +3730,7 @@ PartlyKnownCompound hydrogen_cyanide (
         ),
     
     /*molecular_absorption_cross_section*/ 
-    get_molecular_absorption_cross_section_function
+    get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output
         ( 1.0/si::meter, si::meter2,
           std::vector<double>{  8.50e6, 8.58e6, 9.19e6, 9.59e6, 9.89e6, 9.99e6, 1.01e7, 1.02e7, 1.03e7, 1.05e7, 1.07e7, 1.09e7, 1.26e7, 1.35e7, 1.41e7, 1.46e7, 1.62e7 },
           std::vector<double>{   -24.2,  -21.8,  -21.5,  -22.1,  -20.3,  -20.6,  -20.3,  -20.7,  -20.2,  -20.2,  -20.6,  -20.3,  -20.5,  -20.3,  -20.4,  -20.4,  -20.5 }),
@@ -4003,7 +3995,7 @@ PartlyKnownCompound formaldehyde (
 
     /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ 
-    get_molecular_absorption_cross_section_function
+    get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output
         ( 1.0/si::meter, si::meter2,
           std::vector<double>{  2.51e6, 2.67e6, 2.70e6, 2.74e6, 2.83e6, 2.86e6, 2.95e6, 2.98e6, 3.06e6, 3.09e6, 3.18e6, 3.62e6, 4.02e6, 4.44e6 },
           std::vector<double>{   -26.5,  -26.1,  -25.2,  -26.1,  -23.6,  -25.4,  -23.2,  -25.0,  -23.1,  -24.5,  -23.2,  -23.6,  -24.5,  -25.7 }),
@@ -4238,7 +4230,7 @@ PartlyKnownCompound perflouromethane(
 
     /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ 
-    get_molecular_absorption_cross_section_function
+    get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output
         ( 1.0/si::meter, si::meter2,
           std::vector<double>{  1.28e5, 1.28e5, 1.28e5, 1.28e5, 1.28e5, 1.28e5, 1.28e5, 1.28e5, 1.28e5, 7.99e6, 8.62e6, 9.25e6, 1.00e7, 1.05e7, 1.08e7, 1.13e7, 1.20e7, 1.28e7, 1.33e7, 1.79e7, 2.14e7, 3.37e7, 5.79e7, 1.71e8 },
           std::vector<double>{  -20.19, -20.19, -19.97, -19.91, -19.92, -20.05, -20.10, -20.12, -20.17, -23.26, -23.10, -22.58, -21.35, -21.52, -20.18, -20.24, -21.06, -20.16, -20.43, -20.13, -20.31, -20.33, -20.68, -21.63 }),
@@ -4361,7 +4353,7 @@ PartlyKnownCompound benzene (
 
     /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/ 
-    get_molecular_absorption_cross_section_function
+    get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output
         ( 1.0/si::meter, si::meter2,
           std::vector<double>{  3.63e6, 3.73e6, 3.75e6, 3.76e6, 3.82e6, 3.86e6, 3.87e6, 3.92e6, 3.95e6, 3.97e6, 4.03e6, 4.04e6, 4.07e6, 4.12e6, 4.14e6, 4.16e6, 4.21e6, 4.23e6, 4.25e6, 4.33e6, 4.52e6, 4.75e6, 4.91e6, 5.03e6, 5.33e6, 5.58e6, 5.85e6, 6.72e6, 7.54e6, 8.11e6, 8.79e6, 9.59e6, 1.03e7, 1.12e7, 1.41e7, 3.33e7, 2.11e8 },
           std::vector<double>{   -25.0,  -23.9,  -23.0,  -23.8,  -23.2,  -21.7,  -23.2,  -22.6,  -21.7,  -23.1,  -22.5,  -21.7,  -23.1,  -22.7,  -21.9,  -23.2,  -22.9,  -22.6,  -23.3,  -23.3,  -24.0,  -23.3,  -20.7,  -20.6,  -20.8,  -19.5,  -20.2,  -21.1,  -20.4,  -20.5,  -20.1,  -20.2,  -20.0,  -20.2,  -19.8,  -20.5,  -22.3 }),
@@ -4642,14 +4634,14 @@ PartlyKnownCompound  halite (
                      std::vector<double>{865.0,  1017.0, 1220.0, 1460.0 }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/      
-                get_linear_interpolated_refractive_index_function
-                    (si::micrometer, 
+                get_spectral_linear_interpolation_function_of_wavelength
+                    (si::micrometer, 1.0,
                      std::vector<double>{  0.22,   0.24,   0.26,   0.28,  23.81,  26.32,  27.78,  29.41,  31.25,  33.33,  38.46,  41.67,  45.45,  50.00,  55.56,  62.50,  71.43,  83.33, 100.00, 125.00, 166.67},
                      std::vector<double>{1.66, 1.71, 1.68, 1.64, 1.30, 1.23, 1.17, 1.09, 1.00, 0.87, 0.48, 0.50, 0.27, 0.19, 0.43, 6.29, 3.66, 3.05, 2.76, 2.58, 2.49}),
                     // Querry (1987)
             /*extinction_coefficient*/ 
-                get_linear_interpolated_refractive_index_function
-                    (si::micrometer, 
+                get_spectral_linear_interpolation_function_of_wavelength
+                    (si::micrometer, 1.0,
                      std::vector<double>{ 0.22,  26.32,  27.78,  31.25,  33.33,  35.71,  38.46,  41.67,  45.45,  50.00,  55.56,  62.50,  71.43,  83.33, 100.00, 166.67},
                      std::vector<double>{0.000, 0.014, 0.011, 0.049, 0.102, 0.172, 0.617, 0.792, 1.147, 1.970, 3.582, 1.948, 0.226, 0.095, 0.077, 0.056}),
                     // Querry (1987)
@@ -4747,14 +4739,14 @@ PartlyKnownCompound  corundum (
             /*density*/                           state_invariant(3970.0 * si::kilogram/si::meter3),
             /*vapor_pressure*/                    missing(),
             /*refractive_index*/                  
-                get_linear_interpolated_refractive_index_function
-                    (si::micrometer, 
+                get_spectral_linear_interpolation_function_of_wavelength
+                    (si::micrometer, 1.0,
                      std::vector<double>{ 0.21,  7.94,  8.33,  8.55,  9.26, 10.64, 10.75, 10.99, 11.11, 11.24, 11.36, 14.49, 14.71, 14.93, 15.15, 15.38, 15.62, 15.87, 16.13, 16.39, 16.67, 16.95, 17.24, 17.54, 17.86, 18.18, 18.52, 18.87, 19.23, 19.61, 20.00, 20.41, 20.83, 21.28, 21.74, 22.22, 22.73, 23.26, 23.81, 24.39, 25.00, 25.64, 26.32, 27.03, 27.78, 28.57, 29.41, 30.30, 31.25, 33.33, 34.48, 37.04, 55.56},
                      std::vector<double>{1.831, 1.345, 1.294, 1.243, 1.113, 0.592, 0.514, 0.279, 0.182, 0.124, 0.098, 0.117, 0.135, 0.172, 0.243, 0.369, 0.664, 1.672, 0.735, 0.774, 1.062, 1.523, 2.382, 5.146, 8.559, 6.585, 5.308, 4.497, 3.797, 3.232, 2.725, 1.951, 0.629, 0.283, 0.512, 1.472, 7.250, 9.484, 6.881, 5.718, 5.020, 3.879, 5.677, 4.903, 4.560, 4.279, 4.122, 4.000, 3.893, 3.723, 3.667, 3.617, 3.326}),
                     // Querry (1985)
             /*extinction_coefficient*/            
-                get_linear_interpolated_refractive_index_function
-                    (si::micrometer, 
+                get_spectral_linear_interpolation_function_of_wavelength
+                    (si::micrometer, 1.0,
                      std::vector<double>{ 0.21,  7.87,  8.62,  9.09,  9.52, 10.75, 10.87, 10.99, 11.11, 11.36, 13.89, 14.08, 14.29, 14.49, 14.71, 14.93, 15.15, 15.38, 15.62, 15.87, 16.13, 16.39, 16.67, 16.95, 17.24, 17.54, 17.86, 18.18, 18.52, 18.87, 19.23, 19.61, 20.00, 20.41, 20.83, 21.28, 21.74, 22.22, 22.73, 23.26, 23.81, 24.39, 25.00, 25.64, 26.32, 27.03, 27.78, 28.57, 30.30, 31.25, 32.26, 33.33, 34.48, 41.67, 55.56},
                      std::vector<double>{-0.052, 0.044, 0.068, 0.080, 0.089, 0.139, 0.166, 0.239, 0.355, 0.608, 2.178, 2.311, 2.466, 2.645, 2.838, 3.049, 3.326, 3.683, 4.250, 3.460, 3.626, 4.260, 4.919, 5.835, 6.996, 8.491, 3.839, 1.299, 0.642, 0.420, 0.480, 0.662, 0.591, 0.573, 1.220, 2.824, 4.730, 7.373,11.173, 1.231, 0.312, 0.108, 0.066, 0.606, 1.312, 0.108,-0.069,-0.089, 0.010, 0.046, 0.019, 0.013, 0.077, 0.013, 0.011}),
                     // Querry (1985)
@@ -5001,14 +4993,14 @@ PartlyKnownCompound carbon (
                      std::vector<double>{2566.0,     3016.0,     3635.0}, 
                      std::vector<double>{10.0 ,      1e3,        100e3}),
             /*refractive_index*/      
-                get_linear_interpolated_refractive_index_function
-                    (si::micrometer, 
+                get_spectral_linear_interpolation_function_of_wavelength
+                    (si::micrometer, 1.0,
                      std::vector<double>{0.2, 0.22, 0.23, 0.24, 0.26, 0.27, 0.28, 0.29, 3.9526, 4.2017, 4.8544, 4.902, 5, 5.0505, 6.25, 6.2893, 6.3291, 6.4516, 8.0645, 9.009, 10.2041, 10.3093, 11.3636, 11.4943, 11.6279, 12.3457, 14.4928, 14.9254, 15.3846, 15.625, 15.873, 16.129, 20, 20.4082, 20.8333, 21.2766, 22.2222, 23.8095, 25.641, 27.027, 27.7778, 28.5714, 29.4118, 30.303, 31.25, 32.2581, 33.3333, 34.4828, 35.7143, 37.037, 38.4615, 40, 41.6667, 43.4783, 45.4545, 47.619, 50, 52.6316, 55.5556},
                      std::vector<double>{0.84, 0.962, 1.045, 1.162, 1.49, 1.591, 1.646, 1.679, 3.747, 3.844, 4.141, 4.173, 4.192, 4.237, 4.693, 4.713, 4.764, 4.78, 5.113, 5.26, 5.458, 5.458, 5.572, 5.571, 5.616, 5.677, 5.877, 5.935, 5.971, 5.972, 5.996, 6.042, 6.438, 6.46, 6.511, 6.582, 6.686, 6.95, 7.247, 7.469, 7.602, 7.709, 7.83, 8.035, 8.224, 8.425, 8.682, 8.969, 9.225, 9.586, 9.984, 10.214, 10.813, 10.952, 11.266, 11.898, 12.39, 13.618, 14.474}),
                     // Querry (1985)
             /*extinction_coefficient*/ 
-                get_linear_interpolated_refractive_index_function
-                    (si::micrometer, 
+                get_spectral_linear_interpolation_function_of_wavelength
+                    (si::micrometer, 1.0,
                      std::vector<double>{0.2, 0.24, 0.25, 0.26, 0.28, 0.29, 2.7322, 3.7736, 3.7879, 4.1841, 4.878, 5, 5.0251, 5.7143, 6.25, 6.2893, 6.3291, 6.3694, 6.4103, 8.1301, 8.9286, 10.101, 10.2041, 11.236, 11.3636, 11.4943, 11.6279, 11.7647, 12.5, 12.6582, 14.7059, 15.625, 15.873, 19.2308, 20, 20.4082, 20.8333, 21.7391, 22.7273, 23.2558, 24.3902, 25, 27.7778, 28.5714, 30.303, 31.25, 33.3333, 34.4828, 35.7143, 37.037, 38.4615, 41.6667, 43.4783, 45.4545, 47.619, 50, 52.6316, 55.5556},
                      std::vector<double>{0.723, 1.162, 1.221, 1.195, 1.061, 1.009, 2.395, 2.762, 2.785, 2.91, 3.124, 3.154, 3.179, 3.254, 3.312, 3.347, 3.343, 3.323, 3.316, 3.489, 3.598, 3.774, 3.776, 3.927, 3.934, 3.979, 4.009, 4.015, 4.153, 4.168, 4.541, 4.705, 4.784, 5.434, 5.606, 5.702, 5.823, 6.02, 6.281, 6.393, 6.645, 6.755, 7.307, 7.462, 7.891, 8.052, 8.482, 8.664, 8.868, 9.1, 9.171, 9.559, 9.451, 9.974, 10.13, 10.524, 10.803, 10.332}),
                     // Querry (1985)
@@ -5049,14 +5041,14 @@ PartlyKnownCompound carbon (
             /*density*/                           state_invariant(3513.0  * si::kilogram/si::meter3), 
             /*vapor_pressure*/                    missing(),
             /*refractive_index*/      
-                get_linear_interpolated_refractive_index_function
-                    (si::micrometer, 
+                get_spectral_linear_interpolation_function_of_wavelength
+                    (si::micrometer, 1.0,
                      std::vector<double>{0.035,  0.058,  0.058,  0.059,  0.076,  0.083,  0.084,  0.091,  0.093,  0.094,  0.095,  0.097,  0.098,  0.100,  0.102,  0.103,  0.105,  0.107,  0.109,  0.111,  0.113,  0.117,  0.122,  0.124,  0.129,  0.135,  0.148,  0.155,  0.159,  0.172,  0.177,  0.182,  0.188,  0.200,  0.230, 10.000},
                      std::vector<double>{ 0.58,   0.46,   0.46,   0.45,   0.78,   0.94,   0.97,   1.09,   1.10,   1.14,   1.21,   1.34,   1.68,   2.08,   2.55,   2.85,   3.06,   3.28,   3.44,   3.51,   3.49,   3.50,   3.45,   3.42,   3.32,   3.26,   3.22,   3.25,   3.28,   3.42,   3.28,   3.11,   2.99,   2.86,   2.69, 2.38  }),
                     // Philip (1964)
             /*extinction_coefficient*/ 
-                get_linear_interpolated_refractive_index_function
-                    (si::micrometer, 
+                get_spectral_linear_interpolation_function_of_wavelength
+                    (si::micrometer, 1.0,
                      std::vector<double>{0.035, 0.056, 0.057, 0.058, 0.058, 0.060, 0.063, 0.087, 0.090, 0.091, 0.093, 0.094, 0.095, 0.097, 0.098, 0.100, 0.102, 0.103, 0.105, 0.107, 0.109, 0.111, 0.113, 0.115, 0.117, 0.119, 0.129, 0.163, 0.168, 0.172, 0.177, 0.182,10.000},
                      std::vector<double>{0.242, 0.858, 0.956, 1.023, 1.046, 1.120, 1.241, 2.111, 2.257, 2.354, 2.466, 2.608, 2.777, 3.017, 3.372, 3.511, 3.516, 3.220, 2.970, 2.675, 2.398, 2.174, 1.919, 1.749, 1.607, 1.449, 1.071, 0.614, 0.507, 0.386, 0.088, 0.029, 0.000}),
                     // Philip (1964)
@@ -5375,14 +5367,14 @@ PartlyKnownCompound  quartz (
                      std::vector<double>{1732.0, 1969.0, 2227.0 }, 
                      std::vector<double>{10.0,   100.0,  760.0  }), // Perry, nonspecific solid phase
             /*refractive_index*/      
-                get_linear_interpolated_refractive_index_function
-                    (si::micrometer, 
+                get_spectral_linear_interpolation_function_of_wavelength
+                    (si::micrometer, 1.0,
                      std::vector<double>{ 1.5,  8.0,  8.0,  8.6,  8.8,  8.9,  8.9,  8.9,  9.0,  9.0,  9.0,  9.1,  9.1,  9.1,  9.2,  9.2,  9.2,  9.3,  9.3,  9.4,  9.4,  9.5,  9.5,  9.5,  9.6,  9.6,  9.7,  9.7,  9.7,  9.8,  9.8,  9.8,  9.9,  9.9, 14.3},
                      std::vector<double>{1.44, 0.52, 0.51, 0.56, 0.47, 0.47, 0.47, 0.49, 0.53, 0.58, 0.65, 0.74, 0.84, 0.95, 1.07, 1.20, 1.33, 1.47, 1.78, 1.94, 2.22, 2.36, 2.47, 2.58, 2.68, 2.77, 2.83, 2.87, 2.91, 2.93, 2.94, 2.94, 2.92, 2.89, 1.75}),
                     // Kischkat (2012)
             /*extinction_coefficient*/ 
-                get_linear_interpolated_refractive_index_function
-                    (si::micrometer, 
+                get_spectral_linear_interpolation_function_of_wavelength
+                    (si::micrometer, 1.0,
                      std::vector<double>{ 1.5,  7.9,  7.9,  8.6,  8.7,  8.7,  8.7,  8.7,  8.8,  8.8,  8.8,  8.9,  8.9,  8.9,  9.0,  9.1,  9.1,  9.1,  9.2,  9.2,  9.2,  9.3,  9.3,  9.3,  9.4,  9.4,  9.4,  9.5,  9.5,  9.5,  9.6,  9.6,  9.8,  9.9,  9.9, 10.0, 10.0, 10.0, 10.1, 10.1, 10.2, 10.2, 10.2, 10.3, 10.3, 10.4, 14.3},
                      std::vector<double>{0.00002, 0.12770, 0.15315, 0.91466, 0.94547, 0.98260, 1.02616, 1.07603, 1.13242, 1.19597, 1.26754, 1.34784, 1.43703, 1.53432, 1.84907, 1.94684, 2.03267, 2.10448, 2.16419, 2.21577, 2.26057, 2.29387, 2.30736, 2.29703, 2.26706, 2.22350, 2.16431, 2.08460, 1.99475, 1.89944, 1.78965, 1.66503, 0.92326, 0.80887, 0.70568, 0.61411, 0.53217, 0.45759, 0.38927, 0.32737, 0.27266, 0.22569, 0.18645, 0.15438, 0.12857, 0.10802, 0.06946}),
                     // Kischkat (2012)
@@ -6127,14 +6119,14 @@ PartlyKnownCompound hematite (
             /*density*/                           state_invariant(5250.0 * si::kilogram/si::meter3),
             /*vapor_pressure*/                    missing(),
             /*refractive_index*/                  
-                get_linear_interpolated_refractive_index_function
-                    (si::micrometer, 
+                get_spectral_linear_interpolation_function_of_wavelength
+                    (si::micrometer, 1.0,
                      std::vector<double>{ 0.21,  0.22,  0.23,  0.24,  0.27,  0.28,  0.29,  0.32,  0.33,  0.34,  0.35,  0.36,  0.37,  0.38,  0.43,  0.44,  0.45,  0.46,  0.49,  0.50,  0.52,  0.53,  0.54,  0.56,  0.57,  0.58, 14.29, 14.49, 14.71, 15.15, 15.38, 15.62, 16.13, 16.39, 16.67, 17.24, 17.54, 17.86, 18.18, 18.52, 18.87, 19.23, 19.61, 20.00, 20.41, 20.83, 21.28, 21.74, 22.22, 22.73, 23.26, 23.81, 24.39, 25.00, 25.64, 26.32, 27.03, 27.78, 28.57, 29.41, 30.30, 31.25, 32.26, 33.33, 34.48, 35.71, 37.04, 38.46, 40.00, 41.67, 43.48, 45.45, 47.62, 50.00, 52.63, 55.56, 58.82, 62.50, 66.67, 71.43, 90.91},
                      std::vector<double>{ 1.20,  1.47,  1.66,  1.79,  2.11,  2.20,  2.26,  2.42,  2.45,  2.45,  2.43,  2.43,  2.47,  2.54,  3.05,  3.13,  3.18,  3.22,  3.28,  3.28,  3.26,  3.27,  3.29,  3.35,  3.36,  3.35,  1.15,  1.04,  0.91,  0.60,  0.48,  0.40,  0.33,  0.31,  0.30,  0.34,  0.40,  0.52,  0.79,  1.26,  2.01,  2.82,  2.67,  1.76,  1.10,  0.90,  1.01,  1.27,  2.23,  4.99,  7.43,  6.23,  4.97,  4.10,  3.26,  2.38,  1.55,  1.03,  0.81,  0.85,  1.00,  1.40,  2.68,  6.49, 12.59, 11.93,  9.43,  8.31,  7.29,  6.65,  7.02,  6.79,  6.36,  6.09,  5.84,  5.66,  5.51,  5.39,  5.29,  5.20,  5.00}),
                     // Querry (1985)
             /*extinction_coefficient*/            
-                get_linear_interpolated_refractive_index_function
-                    (si::micrometer, 
+                get_spectral_linear_interpolation_function_of_wavelength
+                    (si::micrometer, 1.0,
                      std::vector<double>{ 0.21,  0.22,  0.23,  0.26,  0.27,  0.29,  0.30,  0.31,  0.32,  0.34,  0.35,  0.36,  0.38,  0.39,  0.40,  0.41,  0.42,  0.43,  0.50,  0.51,  0.52,  0.54,  0.55,  0.56,  0.59,  0.60, 14.49, 14.71, 14.93, 15.15, 15.38, 16.13, 16.39, 16.95, 17.24, 17.54, 17.86, 18.18, 18.52, 18.87, 19.23, 19.61, 20.00, 20.41, 20.83, 21.28, 21.74, 22.22, 22.73, 23.26, 23.81, 24.39, 25.00, 25.64, 26.32, 27.03, 27.78, 28.57, 29.41, 30.30, 31.25, 32.26, 33.33, 34.48, 35.71, 37.04, 38.46, 40.00, 41.67, 43.48, 45.45, 47.62, 50.00, 52.63, 90.91},
                      std::vector<double>{ 1.207,  1.291,  1.309,  1.317,  1.300,  1.233,  1.208,  1.195,  1.169,  1.085,  1.093,  1.140,  1.258,  1.291,  1.294,  1.271,  1.231,  1.173,  0.675,  0.622,  0.587,  0.538,  0.498,  0.437,  0.202,  0.149,  0.297,  0.350,  0.440,  0.586,  0.779,  1.406,  1.624,  2.096,  2.358,  2.669,  3.035,  3.436,  3.791,  3.911,  3.368,  2.292,  2.054,  2.553,  3.328,  4.068,  4.993,  6.303,  6.991,  4.077,  1.587,  0.982,  0.718,  0.656,  0.803,  1.390,  2.254,  3.245,  4.284,  5.382,  6.922,  9.062, 11.145,  8.306,  2.150,  0.782,  0.389,  0.132,  0.601,  0.668,  0.030, -0.074, -0.117, -0.148, -0.076}),
                     // Querry (1985)
@@ -6247,14 +6239,14 @@ PartlyKnownCompound  gold (
                      std::vector<double>{1869.0, 2154.0, 2521.0, 2966.0 }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  
-                get_linear_interpolated_refractive_index_function
-                    (si::micrometer, 
+                get_spectral_linear_interpolation_function_of_wavelength
+                    (si::micrometer, 1.0,
                      std::vector<double>{0.003542,0.005636,0.008266,0.008856,0.009537,0.01127, 0.01378, 0.01459, 0.01631, 0.01722, 0.01771, 0.01879, 0.02,    0.02138, 0.02214, 0.02296, 0.02339, 0.02384, 0.0248,  0.0253,  0.02818, 0.03263, 0.03542, 0.03875, 0.03999, 0.04133, 0.04592, 0.04679, 0.04862, 0.05061, 0.05391, 0.0551,  0.05636, 0.05767, 0.05904, 0.06199, 0.06525, 0.07293, 0.07749, 0.08266, 0.08551, 0.08856, 0.1127,  0.124,   0.155,   0.1653,  0.2066,  0.261,   0.2755,  0.2952,  0.3024,  0.31,    0.3179,  0.3263, 0.3351, 0.3444, 0.3542, 0.3815, 0.4133, 0.4959, 0.6199, 0.8266, 1.24,  4.133, 6.199, 12.4,  24.8, 49.59, 124.0, 248.0},
                      std::vector<double>{1.001,   0.987,   0.963,   0.955,   0.943,   0.902,   0.849,   0.846,   0.853,   0.851,   0.859,   0.883,   0.881,   0.868,   0.871,   0.885,   0.89,    0.889,   0.884,   0.885,   0.899,   0.892,   0.865,   0.921,   0.932,   0.93,    0.886,   0.889,   0.913,   0.989,   1.175,   1.262,   1.338,   1.368,   1.346,   1.29,    1.266,   1.33,    1.421,   1.66,    1.644,   1.72,    1.545,   1.462,   1.16,    1.142,   1.339,   1.612,   1.694,   1.752,   1.729,   1.615,   1.295,   0.727,  0.3,    0.23,   0.211,  0.229,  0.226,  0.237,  0.269,  0.271,  0.278, 1.411, 2.842, 9.936, 36.7, 118.0, 309.0, 531.0}),
                 // Hagemann (1974)
             /*extinction_coefficient*/            
-                get_linear_interpolated_refractive_index_function
-                    (si::micrometer, 
+                get_spectral_linear_interpolation_function_of_wavelength
+                    (si::micrometer, 1.0,
                      std::vector<double>{8.266E-06,1.494E-05,1.55E-05, 2.48E-05, 4.133E-05,6.199E-05,8.266E-05,8.856E-05,9.537E-05,0.000124, 0.000248, 0.0004275,0.0004959,0.0006199,0.00124,  0.00155,  0.002066, 0.00248,  0.003542, 0.004133, 0.005166, 0.005636, 0.007749, 0.008856, 0.009184, 0.01033,  0.01127,  0.01181,  0.01393,  0.01409,  0.01459,  0.01467,  0.01476,  0.01485,  0.01494,  0.01512,  0.01722,  0.02,     0.02214,  0.02384,  0.02638,  0.03024,  0.03444,  0.03542,  0.03757,  0.03999,  0.04065,  0.04133,  0.04275,  0.04428,  0.04592,  0.04959,  0.05166,  0.0551,   0.05636,  0.05904,  0.06199,  0.06888,  0.07749,  0.08266,  0.09537,  0.1078,   0.1127,   0.1378,   0.155,    0.1653,   0.1771,   0.2066,   0.2254,   0.248,    0.2818,   0.2952,   0.3263,   0.3444,   0.3757,   0.3936,   0.4428,   0.4769,   0.5166,   0.6199,   0.8266,   1.24,     2.48,     12.4,     24.8,     124.0,    248.0},
                      std::vector<double>{2.56E-09, 1.95E-08, 5.22E-09, 3.05E-08, 1.85E-07, 8.83E-07, 2.28E-06, 1.94E-06, 2.56E-06, 2.53E-06, 2.87E-05, 0.000164, 0.000211, 0.00012,  0.00096,  0.00163,  0.0034,   0.00471,  0.00731,  0.00895,  0.0113,   0.0118,   0.0101,   0.0109,   0.0118,   0.0178,   0.0283,   0.0353,   0.0807,   0.0838,   0.0956,   0.0962,   0.0938,   0.0943,   0.0963,   0.101,    0.14,     0.211,    0.23,     0.255,    0.315,    0.415,    0.54,     0.573,    0.672,    0.788,    0.799,    0.804,    0.802,    0.814,    0.855,    1,        1.12,     1.28,     1.29,     1.21,     1.07,     0.865,    0.898,    0.934,    0.899,    0.92,     0.945,    1.14,     1.22,     1.15,     1.13,     1.3,      1.45,     1.65,     1.87,     1.89,     1.86,     1.81,     1.88,     1.89,     1.81,     1.71,     2.01,     3.31,     5.13,     8.36,     18.1,     80.7,     124.0,    256.0,    379.0}),
                 // Hagemann (1974)
@@ -6362,14 +6354,14 @@ PartlyKnownCompound  silver (
                      std::vector<double>{1357.0, 1575.0, 1865.0, 2212.0 }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  
-                get_linear_interpolated_refractive_index_function
-                    (si::micrometer, 
+                get_spectral_linear_interpolation_function_of_wavelength
+                    (si::micrometer, 1.0,
                      std::vector<double>{0.003542,0.005636,0.008266,0.008856,0.009537,0.01127, 0.01378, 0.01459, 0.01631, 0.01722, 0.01771, 0.01879, 0.02,    0.02138, 0.02214, 0.02296, 0.02339, 0.02384, 0.0248,  0.0253,  0.02818, 0.03263, 0.03542, 0.03875, 0.03999, 0.04133, 0.04592, 0.04679, 0.04862, 0.05061, 0.05391, 0.0551,  0.05636, 0.05767, 0.05904, 0.06199, 0.06525, 0.07293, 0.07749, 0.08266, 0.08551, 0.08856, 0.1127,  0.124,   0.155,   0.1653,  0.2066,  0.261,   0.2755,  0.2952,  0.3024,  0.31,    0.3179,  0.3263, 0.3351, 0.3444, 0.3542, 0.3815, 0.4133, 0.4959, 0.6199, 0.8266, 1.24,  4.133, 6.199, 12.4,  24.8, 49.59, 124.0, 248.0},
                      std::vector<double>{1.001,   0.987,   0.963,   0.955,   0.943,   0.902,   0.849,   0.846,   0.853,   0.851,   0.859,   0.883,   0.881,   0.868,   0.871,   0.885,   0.89,    0.889,   0.884,   0.885,   0.899,   0.892,   0.865,   0.921,   0.932,   0.93,    0.886,   0.889,   0.913,   0.989,   1.175,   1.262,   1.338,   1.368,   1.346,   1.29,    1.266,   1.33,    1.421,   1.66,    1.644,   1.72,    1.545,   1.462,   1.16,    1.142,   1.339,   1.612,   1.694,   1.752,   1.729,   1.615,   1.295,   0.727,  0.3,    0.23,   0.211,  0.229,  0.226,  0.237,  0.269,  0.271,  0.278, 1.411, 2.842, 9.936, 36.7, 118.0, 309.0, 531.0}),
                 // Hagemann (1974)
             /*extinction_coefficient*/            
-                get_linear_interpolated_refractive_index_function
-                    (si::micrometer, 
+                get_spectral_linear_interpolation_function_of_wavelength
+                    (si::micrometer, 1.0,
                      std::vector<double>{2.48e-06, 6.199e-06,1.24e-05, 1.653e-05,2.48e-05, 3.1e-05, 4.133e-05,4.769e-05,4.959e-05,6.199e-05,0.000124, 0.000155, 0.0002066,0.000248, 0.0006199,0.0008266,0.00155,0.001675, 0.002066, 0.00248,  0.0031, 0.003351, 0.003542,0.005166, 0.005636, 0.006199, 0.006888, 0.007749, 0.008266, 0.01033,0.01127, 0.01305, 0.0155, 0.01675, 0.01823, 0.01879,  0.02, 0.02296, 0.02384, 0.02638, 0.02695,  0.02952,  0.031, 0.03351,  0.03444,  0.03647,  0.03757, 0.04428,  0.04509, 0.05166,0.05276,  0.05391,  0.0551, 0.05904, 0.06199,0.07749,  0.08266, 0.08551, 0.08856,0.09537,  0.1127,   0.1378,   0.1653,  0.1907,   0.2254,   0.261,   0.2755,   0.2883,   0.2952,   0.31,   0.3179,   0.3289, 0.4133,  0.4959,  0.6199, 0.8266,   1.24,    2.48,     3.1,   4.133,   6.199,    12.4,     24.8,    49.59,    124.0,    248.0    },
                      std::vector<double>{3.98e-12, 1.15e-10, 1.49e-09, 4.33e-09, 1.92e-08, 4.64e-08,1.32e-07, 2.11e-07,  3.63e-08, 9.57e-08,1.29e-06, 2.92e-06,  8.36e-06,1.52e-05, 4.72e-05,  0.000121,0.00108, 0.00142,  0.00269, 0.00457, 0.00882,  0.00823,  0.00168,  0.0035,  0.00345,  0.00377,  0.00431,  0.00438,  0.00407, 0.00622, 0.0172,  0.0565,  0.139,   0.166,   0.208,   0.211, 0.211,   0.274,   0.276,   0.317,   0.323,    0.349,  0.368,     0.4,    0.418,    0.489,    0.514,    0.59,    0.616,   0.904,   0.93,    0.943,   0.935,   0.745,   0.714,   0.91,    0.918,   0.875,   0.783,   0.64,   0.553,    0.562,    0.911,    1.18,     1.34,    1.34,     1.28,     1.13,     1.06,    0.599,   0.36,    0.399,   2.28,    3.09,    4.18,    5.8,   9.02,    18.8,    22.9,    30.5,    45.7,    90.2,    173.0,    306.0,    506.0,    689.0    }),
                 // Hagemann (1974)
@@ -6480,14 +6472,14 @@ PartlyKnownCompound  copper (
                      std::vector<double>{1628.0, 1879.0, 2207.0, 2595.0 }, 
                      std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
             /*refractive_index*/                  
-                get_linear_interpolated_refractive_index_function
-                    (si::micrometer, 
+                get_spectral_linear_interpolation_function_of_wavelength
+                    (si::micrometer, 1.0,
                      std::vector<double>{2.5e-05, 2.5e-03, 4.1e-03, 8.3e-03, 1.0e-02, 3.9e-02, 4.0e-02, 4.1e-02, 4.3e-02, 4.4e-02, 4.6e-02, 5.0e-02, 5.2e-02, 5.4e-02, 5.6e-02, 5.9e-02, 6.2e-02, 6.5e-02, 6.9e-02, 7.3e-02, 7.7e-02, 8.6e-02, 8.9e-02, 9.5e-02, 1.0e-01, 1.1e-01, 1.2e-01, 1.3e-01, 1.4e-01, 1.5e-01, 1.7e-01, 1.8e-01, 1.9e-01, 2.1e-01, 2.1e-01, 2.2e-01, 2.3e-01, 2.4e-01, 2.5e-01, 2.6e-01, 2.7e-01, 2.8e-01, 3.0e-01, 3.1e-01, 3.3e-01, 3.4e-01, 3.9e-01, 4.1e-01, 4.8e-01, 5.2e-01, 5.4e-01, 5.6e-01, 5.9e-01, 6.2e-01, 6.5e-01, 7.1e-01, 7.3e-01, 8.3e-01, 1.2e+00, 2.5e+00, 1.2e+01, 2.5e+01, 1.2e+02, 2.5e+02},
                      std::vector<double>{  1.00,   1.00,   0.99,   0.97,   0.96,   0.89,   0.88,   0.86,   0.85,   0.86,   0.88,   0.96,   0.96,   0.94,   0.92,   0.90,   0.88,   0.88,   0.89,   0.91,   0.95,   1.03,   1.05,   1.08,   1.09,   1.07,   1.04,   1.03,   1.03,   1.03,   1.00,   0.97,   0.96,   1.04,   1.10,   1.18,   1.28,   1.38,   1.47,   1.53,   1.52,   1.49,   1.42,   1.34,   1.34,   1.31,   1.23,   1.18,   1.15,   1.12,   1.04,   0.83,   0.47,   0.27,   0.21,   0.21,   0.22,   0.26,   0.43,   1.69,  29.10,  62.80, 186.00, 270.00}),
                 // Hagemann (1974)
             /*extinction_coefficient*/            
-                get_linear_interpolated_refractive_index_function
-                    (si::micrometer, 
+                get_spectral_linear_interpolation_function_of_wavelength
+                    (si::micrometer, 1.0,
                      std::vector<double>{2.5e-05, 4.1e-03, 6.2e-03, 8.3e-03, 1.0e-02, 3.9e-02, 4.0e-02, 4.1e-02, 4.3e-02, 4.4e-02, 4.6e-02, 4.8e-02, 5.0e-02, 5.2e-02, 5.4e-02, 5.6e-02, 5.9e-02, 6.2e-02, 6.9e-02, 7.3e-02, 7.7e-02, 8.0e-02, 8.9e-02, 9.5e-02, 1.0e-01, 1.1e-01, 1.2e-01, 1.3e-01, 1.5e-01, 1.5e-01, 1.7e-01, 1.8e-01, 1.9e-01, 2.1e-01, 2.1e-01, 2.2e-01, 2.3e-01, 2.4e-01, 2.5e-01, 2.6e-01, 2.7e-01, 2.8e-01, 3.0e-01, 3.1e-01, 3.3e-01, 3.4e-01, 3.6e-01, 3.9e-01, 4.1e-01, 4.4e-01, 4.8e-01, 5.2e-01, 5.4e-01, 5.6e-01, 5.9e-01, 6.5e-01, 7.3e-01, 8.3e-01, 1.2e+00, 2.5e+00, 1.2e+01, 2.5e+01, 1.2e+02, 2.5e+02},
                      std::vector<double>{4.5e-09, 5.1e-03, 1.6e-02, 3.1e-02, 5.4e-02, 2.2e-01, 2.4e-01, 2.6e-01, 3.0e-01, 3.5e-01, 3.8e-01, 4.0e-01, 4.0e-01, 3.7e-01, 3.7e-01, 3.8e-01, 4.1e-01, 4.6e-01, 5.6e-01, 6.2e-01, 6.7e-01, 6.9e-01, 7.2e-01, 7.2e-01, 7.1e-01, 7.5e-01, 8.2e-01, 8.7e-01, 9.8e-01, 1.0e+00, 1.1e+00, 1.2e+00, 1.4e+00, 1.6e+00, 1.7e+00, 1.7e+00, 1.8e+00, 1.8e+00, 1.8e+00, 1.7e+00, 1.7e+00, 1.6e+00, 1.6e+00, 1.7e+00, 1.8e+00, 1.9e+00, 1.9e+00, 2.1e+00, 2.2e+00, 2.4e+00, 2.5e+00, 2.6e+00, 2.6e+00, 2.6e+00, 2.8e+00, 3.7e+00, 4.4e+00, 5.3e+00, 8.5e+00, 1.8e+01, 7.1e+01, 1.0e+02, 2.1e+02, 2.9e+02}),
                 // Hagemann (1974)
@@ -6574,14 +6566,14 @@ PartlyKnownCompound  magnetite (
             /*density*/                           state_invariant(5170.0 * si::kilogram/si::meter3),
             /*vapor_pressure*/                    missing(),
             /*refractive_index*/                  
-                get_linear_interpolated_refractive_index_function
-                    (si::micrometer, 
+                get_spectral_linear_interpolation_function_of_wavelength
+                    (si::micrometer, 1.0,
                      std::vector<double>{ 0.21,  0.22,  4.18,  4.24,  4.20, 15.62, 16.13, 16.39, 16.67, 16.95, 17.24, 17.54, 17.86, 18.18, 18.52, 18.87, 19.23, 19.61, 20.00, 20.41, 20.83, 21.28, 25.00, 25.64, 26.32, 27.03, 27.78, 28.57, 29.41, 30.30, 31.25, 32.26, 33.33, 34.48, 35.71, 37.04, 38.46, 40.00, 41.67, 43.48, 47.62, 50.00, 52.63, 55.56},
                      std::vector<double>{2.3, 2.3, 3.3, 3.3, 3.3, 3.5, 3.5, 3.5, 3.5, 3.5, 3.8, 4.4, 5.1, 5.3, 5.1, 4.9, 4.7, 4.6, 4.5, 4.5, 4.4, 4.4, 4.4, 4.4, 4.5, 4.7, 5.2, 6.3, 7.4, 7.3, 6.9, 6.6, 6.4, 6.3, 6.3, 6.4, 6.4, 6.5, 6.7, 6.7, 7.1, 7.3, 7.7, 7.9}),
                     // Querry (1985)
             /*extinction_coefficient*/            
-                get_linear_interpolated_refractive_index_function
-                    (si::micrometer, 
+                get_spectral_linear_interpolation_function_of_wavelength
+                    (si::micrometer, 1.0,
                      std::vector<double>{ 0.21,  0.22,  2.83,  2.96,  9.90, 15.38, 15.62, 16.13, 16.39, 16.67, 16.95, 17.24, 17.54, 17.86, 18.18, 18.52, 18.87, 19.23, 19.61, 20.00, 20.41, 23.26, 23.81, 24.39, 25.00, 25.64, 26.32, 27.03, 27.78, 28.57, 29.41, 30.30, 31.25, 32.26, 33.33, 34.48, 35.71, 37.04, 38.46, 40.00, 41.67, 43.48, 45.45, 47.62, 50.00, 52.63, 55.56},
                      std::vector<double>{0.085, 0.109, 1.194, 1.180, 1.464, 2.348, 2.427, 2.626, 2.761, 2.963, 3.249, 3.642, 3.907, 3.604, 2.966, 2.540, 2.383, 2.348, 2.365, 2.402, 2.460, 2.959, 3.078, 3.224, 3.413, 3.655, 3.958, 4.392, 4.940, 5.210, 4.290, 3.268, 2.855, 2.776, 2.807, 2.858, 2.950, 3.017, 3.058, 3.185, 3.226, 3.253, 3.357, 3.331, 3.400, 3.351, 3.209}),
                     // Querry (1985)

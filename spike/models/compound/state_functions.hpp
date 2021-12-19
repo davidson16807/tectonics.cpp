@@ -30,7 +30,7 @@ namespace compound {
         );
     }
 
-    field::StateFunction<int> get_simon_glatzel_phase_function( // 7 matches
+    field::StateFunction<int> get_simon_glatzel_phase_function( // 7 uses
         const si::pressure        p0, // triple point pressure
         const si::temperature     t0, // triple point temperature
         const si::pressure        pc, // critical point pressure

@@ -30,6 +30,174 @@ namespace compound {
         );
     }
 
+    template<typename Ty>
+    field::SpectralFunction<Ty> get_spectral_linear_interpolation_function_of_wavenumber(
+        const si::wavenumber nunits, const Ty yunits,
+        const std::vector<double> ls, 
+        const std::vector<double> ys
+    ){
+        assert(ls.size() == ys.size());
+        return field::SpectralFunction<Ty>(
+            [nunits, yunits, ls, ys]
+            (const si::wavenumber nlo, 
+             const si::wavenumber nhi, 
+             const si::pressure p, 
+             const si::temperature T)
+            {
+                return (math::integral_of_lerp(ls, ys, (nlo/nunits), (nhi/nunits)) 
+                    / (nhi/nunits - nlo/nunits)) * yunits;
+            }
+        );
+    }
+
+    template<typename Ty>
+    field::SpectralFunction<Ty> get_spectral_linear_interpolation_function_of_wavelength(
+        const si::length lunits, const Ty yunits,
+        const std::vector<double> ls, 
+        const std::vector<double> ys
+    ){
+        assert(ls.size() == ys.size());
+        const si::wavenumber nunits = 1.0/lunits;
+        std::vector<double> ns;
+        std::vector<double> nys;
+        for (std::size_t i=0; i<ys.size(); i++){
+            ns.push_back(1.0/(ls[i]));
+            nys.push_back(ys[i]);
+        }
+        std::reverse(ns.begin(), ns.end());
+        std::reverse(nys.begin(), nys.end());
+        return field::SpectralFunction<Ty>(
+            [nunits, yunits, ns, nys]
+            (const si::wavenumber nlo, 
+             const si::wavenumber nhi, 
+             const si::pressure p, 
+             const si::temperature T)
+            {
+                return (math::integral_of_lerp(ns, nys, (nlo/nunits), (nhi/nunits)) 
+                    / (nhi/nunits - nlo/nunits)) * yunits;
+            }
+        );
+    }
+
+    template<typename Ty>
+    field::SpectralFunction<Ty> get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output(
+        const si::wavenumber lunits, const Ty yunits,
+        const std::vector<double>     ls, 
+        const std::vector<double>log10ys
+    ){
+        assert(ls.size() == log10ys.size());
+        return field::SpectralFunction<Ty>(
+            [lunits, yunits, ls, log10ys]
+            (const si::wavenumber nlo, 
+             const si::wavenumber nhi, 
+             const si::pressure p, 
+             const si::temperature T)
+            {
+                return std::pow(10.0, math::integral_of_lerp(
+                        ls, log10ys, 
+                        (nlo/lunits), 
+                        (nhi/lunits)) 
+                    / (nhi/lunits - nlo/lunits)) * yunits;
+            }
+        );
+    }
+
+    template<typename Ty>
+    field::SpectralFunction<Ty> get_spectral_linear_interpolation_function_of_wavelength_for_log10_sample_output(
+        const si::length lunits, const Ty yunits,
+        const std::vector<double>     ls, 
+        const std::vector<double>log10ys
+    ){
+        assert(ls.size() == log10ys.size());
+        const si::wavenumber nunits = 1.0/lunits;
+        std::vector<double> ns;
+        std::vector<double> nlog10ys;
+        for (std::size_t i=0; i<log10ys.size(); i++){
+            ns.push_back(1.0/(ls[i]));
+            nlog10ys.push_back(log10ys[i]);
+        }
+        std::reverse(ns.begin(), ns.end());
+        std::reverse(nlog10ys.begin(), nlog10ys.end());
+        return field::SpectralFunction<Ty>(
+            [nunits, yunits, ns, nlog10ys]
+            (const si::wavenumber nlo, 
+             const si::wavenumber nhi, 
+             const si::pressure p, 
+             const si::temperature T)
+            {
+                return std::pow(10.0, math::integral_of_lerp(
+                        ns, nlog10ys, 
+                        (nlo/nunits), 
+                        (nhi/nunits)) 
+                    / (nhi/nunits - nlo/nunits)) * yunits;
+            }
+        );
+    }
+
+    template<typename Ty>
+    field::SpectralFunction<Ty> get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_input(
+        const si::wavenumber lunits, const Ty yunits,
+        const std::vector<double>log10ls, 
+        const std::vector<double>     ys
+    ){
+        assert(log10ls.size() == ys.size());
+        const si::wavenumber nunits = 1.0/lunits;
+        std::vector<double> ns;
+        std::vector<double> nys;
+        for (std::size_t i=0; i<ys.size(); i++){
+            ns.push_back(1.0/std::pow(10.0, log10ls[i]));
+            nys.push_back(ys[i]);
+        }
+        std::reverse(ns.begin(), ns.end());
+        std::reverse(nys.begin(), nys.end());
+        return field::SpectralFunction<Ty>(
+            [lunits, yunits, ns, nys]
+            (const si::wavenumber nlo, 
+             const si::wavenumber nhi, 
+             const si::pressure p, 
+             const si::temperature T)
+            {
+                return (math::integral_of_lerp(
+                        ns, nys, 
+                        nlo/lunits, 
+                        nhi/lunits) 
+                    / (nhi/lunits - nlo/lunits)) * yunits;
+            }
+        );
+    }
+
+    template<typename Ty>
+    field::SpectralFunction<Ty> get_spectral_linear_interpolation_function_of_wavelength_for_log10_sample_input(
+        const si::length lunits, const Ty yunits,
+        const std::vector<double>log10ls, 
+        const std::vector<double>     ys
+    ){
+        assert(log10ls.size() == ys.size());
+        const si::wavenumber nunits = 1.0/lunits;
+        std::vector<double> ns;
+        std::vector<double> nys;
+        for (std::size_t i=0; i<log10ls.size(); i++){
+            ns.push_back(1.0/std::pow(10.0, log10ls[i]));
+            nys.push_back(ys[i]);
+        }
+        std::reverse(ns.begin(), ns.end());
+        std::reverse(nys.begin(), nys.end());
+        return field::SpectralFunction<Ty>(
+            [nunits, yunits, ns, nys]
+            (const si::wavenumber nlo, 
+             const si::wavenumber nhi, 
+             const si::pressure p, 
+             const si::temperature T)
+            {
+                return (math::integral_of_lerp(
+                        ns, nys,
+                        nlo/nunits, 
+                        nhi/nunits) 
+                    / (nhi/nunits - nlo/nunits)) * yunits;
+            }
+        );
+    }
+
     template<typename Tx, typename Ty>
     field::SpectralFunction<Ty> get_dewaele2003_pressure_function(
         const Tx xunits, const Ty yunits,
@@ -44,94 +212,6 @@ namespace compound {
              const si::temperature T)
             {
                 return (a+b*std::pow(1.0+c*std::clamp(p/xunits, Pmin, Pmax), d)) * yunits;
-            }
-        );
-    }
-
-    field::SpectralFunction<si::area> get_molecular_absorption_cross_section_function(
-        const si::wavenumber xunits, const si::area yunits,
-        const std::vector<double>     xs, 
-        const std::vector<double>log10ys
-    ){
-        return field::SpectralFunction<si::area>(
-            [xunits, yunits, xs, log10ys]
-            (const si::wavenumber nlo, 
-             const si::wavenumber nhi, 
-             const si::pressure p, 
-             const si::temperature T)
-            {
-                return std::pow(10.0, math::integral_of_lerp(xs, log10ys, (nlo/xunits), (nhi/xunits)) 
-                    / (nhi/xunits - nlo/xunits)) * yunits;
-            }
-        );
-    }
-
-    
-    field::SpectralFunction<double> get_interpolated_refractive_index_function(
-        const si::length lunits, 
-        const std::vector<double>log10ls, 
-        const std::vector<double>     ns
-    ){
-        std::vector<double> wavenumbers;
-        std::vector<double> refractive_indices = ns;
-        for (std::size_t i=0; i<log10ls.size(); i++){
-            wavenumbers.push_back(1.0/(std::pow(10.0, log10ls[i])*lunits/si::meter));
-        }
-        std::reverse(wavenumbers.begin(), wavenumbers.end());
-        std::reverse(refractive_indices.begin(), refractive_indices.end());
-        return field::SpectralFunction<double>(
-            [lunits, wavenumbers, refractive_indices]
-            (const si::wavenumber nlo, 
-             const si::wavenumber nhi, 
-             const si::pressure p, 
-             const si::temperature T)
-            {
-                return math::integral_of_lerp(wavenumbers, refractive_indices, (nlo*si::meter), (nhi*si::meter)) 
-                    / (nhi*si::meter - nlo*si::meter);
-            }
-        );
-    }
-    
-    
-    field::SpectralFunction<double> get_linear_interpolated_refractive_index_function(
-        const si::length lunits, 
-        const std::vector<double> ls, 
-        const std::vector<double> ns
-    ){
-        std::vector<double> wavenumbers;
-        std::vector<double> refractive_indices = ns;
-        for (std::size_t i=0; i<ls.size(); i++){
-            wavenumbers.push_back(1.0/(ls[i]));
-        }
-        std::reverse(wavenumbers.begin(), wavenumbers.end());
-        std::reverse(refractive_indices.begin(), refractive_indices.end());
-
-        return field::SpectralFunction<double>(
-            [lunits, wavenumbers, refractive_indices]
-            (const si::wavenumber nlo, 
-             const si::wavenumber nhi, 
-             const si::pressure p, 
-             const si::temperature T)
-            {
-                return math::integral_of_lerp(wavenumbers, refractive_indices, (nlo*lunits), (nhi*lunits)) 
-                    / (nhi*lunits - nlo*lunits);
-            }
-        );
-    }
-    
-    field::SpectralFunction<double> get_linear_interpolated_refractive_index_function_of_wavenumbers(
-        const si::attenuation xunits, 
-        const std::vector<double> xs, 
-        const std::vector<double> ns
-    ){
-        return field::SpectralFunction<double>(
-            [xunits, xs, ns]
-            (const si::wavenumber nlo, 
-             const si::wavenumber nhi, 
-             const si::pressure p, 
-             const si::temperature T)
-            {
-                return math::integral_of_lerp(xs, ns, nlo/xunits, nhi/xunits) / (nhi/xunits - nlo/xunits);
             }
         );
     }

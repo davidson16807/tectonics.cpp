@@ -2,6 +2,8 @@ REQUIRED:
 	write unit tests for spectral properties
 	refactor state and spectral functions to provide variants that operate on vectors
 	redo absorption coefficients for cryogenic solids so that visible spectrum is covered
+	redo refractive indices for solid methane phases
+	add test for all solid polymorphs 
 							n 	k 	α
 		water 				x 	x
 		nitrogen	 		
