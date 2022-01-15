@@ -13,6 +13,8 @@
 #include "field/state/CompletedStateField.hpp"
 #include "field/spectral/CompletedSpectralField.hpp"
 
+#include "relation/state/GasPropertyStateRelation.hpp"
+
 namespace compound {
     using missing = std::monostate;
 
@@ -30,16 +32,18 @@ namespace compound {
         );
     }
 
-    field::StateFunction<int> get_simon_glatzel_phase_function( // 7 uses
-        const si::pressure        p0, // triple point pressure
-        const si::temperature     t0, // triple point temperature
-        const si::pressure        pc, // critical point pressure
-        const si::temperature     tc, // critical point temperature
-        const si::specific_energy L,  // latent heat of vaporization at boiling point
-        const si::molar_mass      M,  // molar mass
-        const si::pressure        a,  // simon glatzel slope
-        const si::pressure        b,  // simon glatzel intercept
-        const float               c   // simon glatzel exponent
+    // 7 uses
+    
+    field::StateFunction<int> get_simon_glatzel_phase_function( 
+        const si::pressure        p0, /*triple point pressure*/
+        const si::temperature     t0, /*triple point temperature*/
+        const si::pressure        pc, /*critical point pressure*/
+        const si::temperature     tc, /*critical point temperature*/
+        const si::specific_energy L,  /*latent heat of vaporization at boiling point*/
+        const si::molar_mass      M,  /*molar mass*/
+        const si::pressure        a,  /*simon glatzel slope*/
+        const si::pressure        b,  /*simon glatzel intercept*/
+        const float               c   /*simon glatzel exponent*/
     ){
         return field::StateFunction<int>(
             [p0, t0, pc, tc, L,  M, a, b, c]
@@ -51,8 +55,9 @@ namespace compound {
         );
     }
 
+    // 175 uses
     template<typename Tx, typename Ty>
-    field::StateFunction<Ty> get_interpolated_temperature_function( // 175 uses
+    field::StateFunction<Ty> get_interpolated_temperature_function(
         const Tx xunits, const Ty yunits,
         const std::vector<double>xs, 
         const std::vector<double>ys
@@ -66,8 +71,9 @@ namespace compound {
         );
     }
 
+    // 3 uses: ice6 and ice7, for thermal conductivity and density
     template<typename Tx, typename Ty>
-    field::StateFunction<Ty> get_interpolated_pressure_function( // 3 uses: ice6 and ice7
+    field::StateFunction<Ty> get_interpolated_pressure_function(
         const Tx xunits, const Ty yunits,
         const std::vector<double>xs, 
         const std::vector<double>ys
@@ -81,8 +87,9 @@ namespace compound {
         );
     }
 
+    // 3 uses: gold, silver, and copper, for dynamic viscosity of liquids
     template<typename Tx, typename Ty>
-    field::StateFunction<Ty> get_interpolated_inverse_temperature_function( // 3 uses: gold, silver, and copper
+    field::StateFunction<Ty> get_interpolated_inverse_temperature_function( 
         const Tx xunits, const Ty yunits,
         const std::vector<double>xs, 
         const std::vector<double>ys
@@ -129,8 +136,9 @@ namespace compound {
     `get_perry_johnson_temperature_function()` uses Perry coefficients for high temperature,
     and interpolated values from Johnson (1960) for low temperature.
     */
+    // 23 uses, all for heat capacity of solids
     template<typename Tx>
-    field::StateFunction<si::specific_heat_capacity> get_perry_johnson_temperature_function( // 23 uses, all for heat capacity of solids
+    field::StateFunction<si::specific_heat_capacity> get_perry_johnson_temperature_function( 
         const Tx Tunits, 
         const si::specific_heat_capacity y_units_johnson, 
         const double linear_johnson, const double cube_johnson, 
@@ -155,13 +163,13 @@ namespace compound {
             }
         );
     }
-
     /*
     `get_dippr_quartic_temperature_function_100()` is equivalent to dippr function 100,
     for liquid thermal conductivity, heat capacity, and solid density
     */
+    // 26 uses, for liquid thermal conductivity and heat capacity
     template<typename Tx, typename Ty>
-    field::StateFunction<Ty> get_dippr_quartic_temperature_function_100( // 26 uses, for liquid thermal conductivity and heat capacity
+    field::StateFunction<Ty> get_dippr_quartic_temperature_function_100( 
         const Tx Tunits, const Ty yunits,
         const double intercept, const double slope, const double square, const double cube, const double fourth,
         const double Tmin, double Tmax
@@ -176,8 +184,9 @@ namespace compound {
         );
     }
 
+    // 42 uses, for viscosity and vapor pressures of liquids
     template<typename Tx, typename Ty>
-    field::StateFunction<Ty> get_dippr_temperature_function_101( // 42 uses
+    field::StateFunction<Ty> get_dippr_temperature_function_101( 
         const Tx Tunits, const Ty yunits,
         const double log_intercept, const double log_slope, const double log_log, const double log_exponentiated, const double exponent,
         const double Tmin, const double Tmax
@@ -192,24 +201,27 @@ namespace compound {
         );
     }
 
+    // 9 uses, for viscosity and thermal conductivity of gas
     template<typename Tx, typename Ty>
-    field::StateFunction<Ty> get_dippr_temperature_function_102( // 9 uses
+    relation::GasPropertyStateRelation<Ty> get_dippr_temperature_function_102( 
         const Tx Tunits, const Ty yunits,
         const double c1, const double c2, const double c3, const double c4,
         const double Tmin, const double Tmax
     ){
-        return field::StateFunction<Ty>(
-            [Tunits, yunits, c1, c2, c3, c4, Tmin, Tmax]
-            (const si::pressure p, const si::temperature T)
-            {
-                double t = std::clamp(T/Tunits, Tmin, Tmax);
-                return (c1*std::pow(t,c2) / (1.0 + c3/t + c4/(t*t)))*yunits;
-            }
+        return relation::GasPropertyStateRelation<Ty>(
+            si::pascal, Tunits, yunits,
+            0.0, 0.0, // pressure min and max
+            Tmin, Tmax, // temperature min and max
+            0.0, 1.0, // pressure slope and exponent
+            c1, c2, c3, c4, // temperature slope, exponent, o-plus slope, and squared o-plus slope
+            0.0, 0.0, 0.0, // temperature sigmoid slope and other parameters
+            0.0 // intercept
         );
     }
 
+    // 20 uses, for density of liquids
     template<typename Tx, typename Ty>
-    field::StateFunction<Ty> get_dippr_temperature_function_105( // 20 uses
+    field::StateFunction<Ty> get_dippr_temperature_function_105( 
         const Tx Tunits, const Ty yunits,
         const double c1, const double c2, const double c3, const double c4,
         const double Tmin, const double Tmax
@@ -224,8 +236,9 @@ namespace compound {
         );
     }
 
+    // 5 uses, for heat capacities of liquids
     template<typename Tx, typename Ty>
-    field::StateFunction<Ty> get_dippr_liquid_heat_capacity_temperature_function_114( // 5 uses
+    field::StateFunction<Ty> get_dippr_liquid_heat_capacity_temperature_function_114( 
         const Tx Tc, const Ty yunits,
         const double c1, const double c2, const double c3, const double c4, const double c5,
         const Tx Tmin, Tx Tmax
@@ -245,8 +258,9 @@ namespace compound {
         );
     }
 
+    // 15 uses, for liquid surface tension
     template<typename Tx, typename Ty>
-    field::StateFunction<Ty> get_refprop_liquid_surface_tension_temperature_function( // 15 uses
+    field::StateFunction<Ty> get_refprop_liquid_surface_tension_temperature_function( 
         const Tx Tunits, const Ty yunits,
         const double Tc, const double sigma0, const double n0, const double sigma1, const double n1, const double sigma2, const double n2,
         const double Tmin, const double Tmax
@@ -262,8 +276,9 @@ namespace compound {
     }
     // from Mulero (2012)
 
+    // 5 uses, for solid densities
     template<typename Tx, typename Ty>
-    field::StateFunction<Ty> get_quadratic_pressure_function( // 5 uses
+    field::StateFunction<Ty> get_quadratic_pressure_function( 
         const Tx Punits, const Ty yunits,
         const double intercept, const double linear, const double square
     ){
@@ -277,8 +292,9 @@ namespace compound {
         );
     }
 
+    // 3 uses, for liquid surface tension
     template<typename Tx, typename Ty>
-    field::StateFunction<Ty> get_linear_liquid_surface_tension_temperature_function( // 3 uses
+    field::StateFunction<Ty> get_linear_liquid_surface_tension_temperature_function( 
         const Tx Tunits, const Ty yunits,
         const double TL, const double gammaTL, const double dgamma_dT
     ){

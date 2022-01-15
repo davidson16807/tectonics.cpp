@@ -7,6 +7,7 @@
 
 #include <models/compound/property/elasticity.hpp>
 #include <models/compound/property/strength.hpp>
+#include <models/compound/property/reflectance.hpp>
 
 #include <models/compound/field/spectral/SpectralFunction.hpp>
 

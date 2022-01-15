@@ -1,17 +1,22 @@
 #pragma once
 
+// std libraries
+
 // in-house libraries
 #include <models/compound/field/state/OptionalStateField.hpp>
 #include <models/compound/field/spectral/OptionalSpectralField.hpp>
 #include <models/compound/field/constant/OptionalConstantField.hpp>
 
+#include <models/compound/relation/state/OptionalStateRelation.hpp>
+#include <models/compound/relation/state/GasPropertyStateRelation.hpp>
+
 namespace compound { 
 namespace phase { 
     struct PartlyKnownGas
     {
-        field::OptionalStateField<si::specific_heat_capacity> isobaric_specific_heat_capacity;
-        field::OptionalStateField<si::thermal_conductivity> thermal_conductivity;
-        field::OptionalStateField<si::dynamic_viscosity> dynamic_viscosity;
+        relation::OptionalStateRelation<relation::GasPropertyStateRelation<si::specific_heat_capacity>> isobaric_specific_heat_capacity;
+        relation::OptionalStateRelation<relation::GasPropertyStateRelation<si::thermal_conductivity>> thermal_conductivity;
+        relation::OptionalStateRelation<relation::GasPropertyStateRelation<si::dynamic_viscosity>> dynamic_viscosity;
         field::OptionalStateField<si::density> density;
         field::OptionalSpectralField<double> refractive_index;
 

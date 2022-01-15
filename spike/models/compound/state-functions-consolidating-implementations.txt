@@ -1,0 +1,130 @@
+
+
+
+
+
+// isobaric_specific_heat_capacity
+field::StateFunction<Ty> get_interpolated_temperature_function()
+field::StateFunction<Ty> get_sigmoid_exponent_pressure_temperature_function ()
+                const double Tsigmoid_input = (Tclamped - Tsigmoid_center)/Tsigmoid_scale;
+                return (pslope*std::pow(pclamped, pexponent)
+                      + Tslope*std::pow(Tclamped, Texponent)
+                      + Tsigmoid_max * Tsigmoid_input / std::sqrt(1.0 + Tsigmoid_input*Tsigmoid_input)
+                      + intercept) * yunits;
+// thermal_conductivity
+field::StateFunction<Ty> get_sigmoid_exponent_pressure_temperature_function ()
+                const double Tsigmoid_input = (Tclamped - Tsigmoid_center)/Tsigmoid_scale;
+                return (pslope*std::pow(pclamped, pexponent)
+                      + Tslope*std::pow(Tclamped, Texponent)
+                      + Tsigmoid_max * Tsigmoid_input / std::sqrt(1.0 + Tsigmoid_input*Tsigmoid_input)
+                      + intercept) * yunits;
+field::StateFunction<Ty> get_dippr_temperature_function_102 ()
+                return (c1*std::pow(t,c2) / (1.0 + c3/t + c4/(t*t)))*yunits;
+// dynamic_viscosity
+field::StateFunction<Ty> get_sigmoid_exponent_pressure_temperature_function ()
+                const double Tsigmoid_input = (Tclamped - Tsigmoid_center)/Tsigmoid_scale;
+                return (pslope*std::pow(pclamped, pexponent)
+                      + Tslope*std::pow(Tclamped, Texponent)
+                      + Tsigmoid_max * Tsigmoid_input / std::sqrt(1.0 + Tsigmoid_input*Tsigmoid_input)
+                      + intercept) * yunits;
+field::StateFunction<Ty> get_dippr_temperature_function_102 ()
+                return (c1*std::pow(t,c2) / (1.0 + c3/t + c4/(t*t)))*yunits;
+// density
+// refractive_index
+
+
+
+
+
+// isobaric_specific_heat_capacity
+field::StateFunction<Ty> get_interpolated_temperature_function() // NOTE: we'll convert instances of this to equation 100
+field::StateFunction<Ty> get_dippr_quartic_temperature_function_100 ()
+                return (intercept + slope*t + square*t*t + cube*t*t*t + fourth*t*t*t*t)*yunits;
+field::StateFunction<Ty> get_dippr_liquid_heat_capacity_temperature_function_114 ()
+                double Tr = std::clamp(T, Tmin, Tmax)/Tc;
+                double tau = 1.0-Tr;
+                double tau2 = tau*tau;
+                double tau3 = tau2*tau;
+                double tau4 = tau3*tau;
+                double tau5 = tau4*tau;
+                return (c1*c1/tau + c2 - 2.0*c1*c3*tau - c1*c4*tau2 - c3*c3*tau3/3.0 - c3*c4*tau4/2.0 - c4*c4*tau5/5.0)*yunits;
+// thermal_conductivity
+field::StateFunction<Ty> get_dippr_quartic_temperature_function_100 ()
+                return (intercept + slope*t + square*t*t + cube*t*t*t + fourth*t*t*t*t)*yunits;
+// dynamic_viscosity
+field::StateFunction<Ty> get_interpolated_inverse_temperature_function() // NOTE: in all invocations this is effectively used as a 1/t term with Tmax and Tmin
+field::StateFunction<Ty> get_interpolated_temperature_function() // NOTE: should we convert instances of this to equation 101?
+field::StateFunction<Ty> get_dippr_temperature_function_101 ()
+                return std::exp(log_intercept + log_slope/t + log_log*std::log(t) + log_exponentiated*std::pow(t,exponent))*yunits;
+// density
+field::StateFunction<Ty> get_dippr_temperature_function_105 ()
+                return (c1 / std::pow(c2, 1+std::pow(1.0-(t/c3), c4)))*yunits;
+// vapor_pressure
+field::StateFunction<Ty> get_interpolated_temperature_function()
+field::StateFunction<Ty> get_dippr_temperature_function_101 ()
+                return std::exp(log_intercept + log_slope/t + log_log*std::log(t) + log_exponentiated*std::pow(t,exponent))*yunits;
+// surface_tension
+field::StateFunction<Ty> get_interpolated_temperature_function()
+field::StateFunction<Ty> get_refprop_liquid_surface_tension_temperature_function ()
+                double Tr = std::clamp(T/Tunits, Tmin, Tmax)/Tc;
+                return ( sigma0*std::pow(1.0 - Tr, n0) + sigma1*std::pow(1.0 - Tr, n1) + sigma2*std::pow(1.0 - Tr, n2) )*yunits;
+field::StateFunction<Ty> get_linear_liquid_surface_tension_temperature_function ()
+                return ( gammaTL + dgamma_dT * (t-TL) )*yunits;
+// refractive_index
+// extinction_coefficient
+
+
+
+
+
+// isobaric_specific_heat_capacity
+field::StateFunction<si::specific_heat_capacity> get_perry_johnson_temperature_function ()
+                double tj = std::clamp(T/Tunits, 0.0, T_max_johnson);
+                auto y_johnson = (linear_johnson*tj + cube_johnson*tj*tj*tj) * y_units_johnson;
+                double tp = std::clamp(T/Tunits, T_min_perry, T_max_perry);
+                auto y_perry   = (intercept_perry + linear_perry*tp + inverse_square_perry/(tp*tp) + square_perry*tp*tp) * y_units_perry;
+                return math::lerp(
+                    std::vector<double>{T_max_johnson,             T_min_perry            },
+                    std::vector<double>{y_johnson/y_units_johnson, y_perry/y_units_johnson}, T/Tunits) * y_units_johnson;
+field::StateFunction<Ty> get_interpolated_temperature_function()
+// thermal_conductivity
+field::StateFunction<Ty> get_interpolated_pressure_function()
+field::StateFunction<Ty> get_interpolated_temperature_function()
+// dynamic_viscosity
+// density
+field::StateFunction<Ty> get_interpolated_pressure_function()
+field::StateFunction<Ty> get_quadratic_pressure_function ()
+                return (intercept + linear*P + square*P*P)*yunits;
+field::StateFunction<Ty> get_interpolated_temperature_function()
+// vapor_pressure
+field::StateFunction<Ty> get_interpolated_temperature_function()
+// refractive_index
+// extinction_coefficient
+// absorption_coefficient
+// bulk_modulus
+field::StateFunction<Ty> get_interpolated_temperature_function()
+// tensile_modulus
+field::StateFunction<Ty> get_interpolated_temperature_function()
+// shear_modulus
+field::StateFunction<Ty> get_interpolated_temperature_function()
+// pwave_modulus
+field::StateFunction<Ty> get_interpolated_temperature_function()
+// lame_parameter
+field::StateFunction<Ty> get_interpolated_temperature_function()
+// poisson_ratio
+field::StateFunction<Ty> get_interpolated_temperature_function()
+// compressive_fracture_strength
+field::StateFunction<Ty> get_interpolated_temperature_function()
+// tensile_fracture_strength
+field::StateFunction<Ty> get_interpolated_temperature_function()
+// shear_fracture_strength
+field::StateFunction<Ty> get_interpolated_temperature_function()
+// compressive_yield_strength
+field::StateFunction<Ty> get_interpolated_temperature_function()
+// tensile_yield_strength
+field::StateFunction<Ty> get_interpolated_temperature_function()
+// shear_yield_strength
+field::StateFunction<Ty> get_interpolated_temperature_function()
+
+// chemical_susceptibility_estimate
+// 

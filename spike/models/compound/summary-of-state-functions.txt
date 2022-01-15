@@ -1,0 +1,62 @@
+// 7 uses
+template<typename Tx>
+field::StateFunction<Tx> get_simon_glatzel_phase_function 
+/*
+bulk_modulus
+compressive_fracture_strength
+compressive_yield_strength
+density
+dynamic_viscosity
+isobaric_specific_heat_capacity
+poisson_ratio
+refractive_index
+shear_fracture_strength
+shear_modulus
+surface_tension
+tensile_fracture_strength
+tensile_modulus
+tensile_yield_strength
+thermal_conductivity
+vapor_pressure
+*/
+// 175 uses, see above, mostly for solids except heat capacity for liquid and gas, and surface_tension/vapor_pressure/dynamic_viscosity of liquids
+template<typename Tx, typename Ty>
+field::StateFunction<Ty> get_interpolated_temperature_function()
+// 3 uses: ice6 and ice7, for thermal conductivity and density
+template<typename Tx, typename Ty>
+field::StateFunction<Ty> get_interpolated_pressure_function()
+// 3 uses: gold, silver, and copper, for dynamic viscosity of liquids
+template<typename Tx, typename Ty>
+field::StateFunction<Ty> get_interpolated_inverse_temperature_function ()
+// 36 uses, for dynamic_viscosity, isobaric_specific_heat_capacity, and thermal_conductivity of gases
+template<typename TT, typename Tp, typename Ty>
+field::StateFunction<Ty> get_sigmoid_exponent_pressure_temperature_function ()
+// 23 uses, all for heat capacity of solids
+template<typename Tx>
+field::StateFunction<si::specific_heat_capacity> get_perry_johnson_temperature_function ()
+// 26 uses, for liquid thermal conductivity and heat capacity
+template<typename Tx, typename Ty>
+field::StateFunction<Ty> get_dippr_quartic_temperature_function_100 ()
+// 42 uses, for viscosity and vapor pressures of liquids
+template<typename Tx, typename Ty>
+field::StateFunction<Ty> get_dippr_temperature_function_101 ()
+// 9 uses, for viscosity and thermal conductivity of gas
+template<typename Tx, typename Ty>
+field::StateFunction<Ty> get_dippr_temperature_function_102 ()
+// 20 uses, for density of liquids
+template<typename Tx, typename Ty>
+field::StateFunction<Ty> get_dippr_temperature_function_105 ()
+// 5 uses, for heat capacities of liquids
+template<typename Tx, typename Ty>
+field::StateFunction<Ty> get_dippr_liquid_heat_capacity_temperature_function_114 ()
+// 15 uses, for liquid surface tension
+template<typename Tx, typename Ty>
+field::StateFunction<Ty> get_refprop_liquid_surface_tension_temperature_function ()
+// 5 uses, for solid densities
+template<typename Tx, typename Ty>
+field::StateFunction<Ty> get_quadratic_pressure_function ()
+// 3 uses, for liquid surface tension
+template<typename Tx, typename Ty>
+field::StateFunction<Ty> get_linear_liquid_surface_tension_temperature_function ()
+
+

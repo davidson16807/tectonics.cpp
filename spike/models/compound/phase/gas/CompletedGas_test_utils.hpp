@@ -6,6 +6,8 @@
 #include <models/compound/field/state/CompletedStateField_test_utils.hpp>
 #include <models/compound/field/spectral/CompletedSpectralField_test_utils.hpp>
 
+#include <models/compound/relation/state/GasPropertyStateRelation_test_utils.hpp>
+
 #include "CompletedGas.hpp"
 
 compound::phase::CompletedGas known_steam {

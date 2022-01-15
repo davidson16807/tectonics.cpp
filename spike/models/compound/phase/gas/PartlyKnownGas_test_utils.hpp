@@ -6,6 +6,8 @@
 #include <models/compound/field/state/OptionalStateField_test_utils.hpp>
 #include <models/compound/field/spectral/OptionalSpectralField_test_utils.hpp>
 
+#include <models/compound/relation/state/OptionalStateRelation_test_utils.hpp>
+
 #include "PartlyKnownGas.hpp"
 
 compound::phase::PartlyKnownGas unknown_gas  {
@@ -48,16 +50,6 @@ compound::phase::PartlyKnownGas perflouromethane_gas {
     /*density*/                           std::monostate(),
     /*refractive_index*/                  1.0004823
 };
-
-int PartlyKnownGas_attribute_index_sum(const compound::phase::PartlyKnownGas& liquid)
-{
-    return
-        liquid.isobaric_specific_heat_capacity .index() +
-        liquid.thermal_conductivity            .index() +
-        liquid.dynamic_viscosity               .index() +
-        liquid.density                         .index() +
-        liquid.refractive_index                .index();
-}
 
 int PartlyKnownGas_attribute_known_count(const compound::phase::PartlyKnownGas& liquid)
 {

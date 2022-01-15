@@ -90,9 +90,9 @@ namespace compound
 
         /*gas*/
         phase::CompletedGas {
-            /*specific_heat_capacity*/ state_invariant(1.0 * si::joule / (si::kilogram * si::kelvin)),
-            /*thermal_conductivity*/   state_invariant(1.0 * si::watt / (si::meter * si::kelvin)),
-            /*dynamic_viscosity*/      state_invariant(1.0 * si::pascal * si::second),
+            /*specific_heat_capacity*/ (1.0 * si::joule / (si::kilogram * si::kelvin)),
+            /*thermal_conductivity*/   (1.0 * si::watt / (si::meter * si::kelvin)),
+            /*dynamic_viscosity*/      (1.0 * si::pascal * si::second),
             /*density*/                state_invariant(1.0 * si::kilogram/si::meter3),
             /*refractive_index*/       1.1,
         },

@@ -6,6 +6,8 @@
 #include <models/compound/field/state/OptionalStateField_to_string.hpp>
 #include <models/compound/field/spectral/OptionalSpectralField_to_string.hpp>
 
+#include <models/compound/relation/state/OptionalStateRelation_to_string.hpp>
+
 #include <models/compound/phase/gas/PartlyKnownGas.hpp>
 
 namespace compound {
@@ -14,9 +16,9 @@ namespace phase {
 	{
 		std::string out("");
         out += "\n";
-		out += "Isobaric Specific Heat Capacity      " + field::to_string(gas.isobaric_specific_heat_capacity, state)    + "\n";
-		out += "Thermal Conductivity                 " + field::to_string(gas.thermal_conductivity,            state)    + "\n";
-		out += "Dynamic Viscosity                    " + field::to_string(gas.dynamic_viscosity,               state)    + "\n";
+		out += "Isobaric Specific Heat Capacity      " + relation::to_string(gas.isobaric_specific_heat_capacity, state)    + "\n";
+		out += "Thermal Conductivity                 " + relation::to_string(gas.thermal_conductivity,            state)    + "\n";
+		out += "Dynamic Viscosity                    " + relation::to_string(gas.dynamic_viscosity,               state)    + "\n";
 		out += "Density                              " + field::to_string(gas.density,                         state)    + "\n";
 		out += "Refractive Index                     " + field::to_string(gas.refractive_index,                spectrum) + "\n";
         out += "\n";

@@ -277,22 +277,53 @@ namespace compound
             guess.freezing_point_sample_temperature
         );
 
+        /*
         guess.gas.dynamic_viscosity = guess.gas.dynamic_viscosity.value_or(
-            [M](field::StateParameters parameters, si::specific_heat_capacity heat_capacity_as_gas, si::thermal_conductivity thermal_conductivity_as_gas){ 
-                return property::estimate_viscosity_as_gas_from_eucken(heat_capacity_as_gas, M, thermal_conductivity_as_gas);
+            [M](relation::GasPropertyStateRelation<si::specific_heat_capacity> heat_capacity_as_gas, 
+                relation::GasPropertyStateRelation<si::thermal_conductivity>   thermal_conductivity_as_gas
+            ) -> relation::GasPropertyStateRelation<si::dynamic_viscosity>{ 
+                return relation::approx_inferred_pressure_temperature_gas_relation(
+                    si::kelvin, si::pascal, si::dynamic_viscosity(1.0),
+                    [=](si::pressure p, si::temperature T) -> si::dynamic_viscosity {
+                        return property::estimate_viscosity_as_gas_from_eucken(
+                            heat_capacity_as_gas(p,T), M, thermal_conductivity_as_gas(p,T));
+                    },
+                    // TODO: add logic to compose estimates for valid ranges from source relations
+                    3.0,    // kelvin,
+                    1000.0, // kelvin,
+                    0.1,    // pascal
+                    1e6,    // pascal
+                    0.0     // known_max_fractional_error
+                );
             },
             guess.gas.isobaric_specific_heat_capacity, 
             guess.gas.thermal_conductivity
         );
 
         guess.gas.thermal_conductivity = guess.gas.thermal_conductivity.value_or( 
-            [M](field::StateParameters parameters, si::dynamic_viscosity dynamic_viscosity_as_gas, si::specific_heat_capacity heat_capacity_as_gas){ 
-                return property::estimate_thermal_conductivity_as_gas_from_eucken(dynamic_viscosity_as_gas, M, heat_capacity_as_gas);
+            [M](relation::GasPropertyStateRelation<si::dynamic_viscosity>      dynamic_viscosity_as_gas, 
+                relation::GasPropertyStateRelation<si::specific_heat_capacity> heat_capacity_as_gas
+            ) -> relation::GasPropertyStateRelation<si::thermal_conductivity> { 
+                relation::GasPropertyStateRelation<si::thermal_conductivity> result =
+                    relation::approx_inferred_pressure_temperature_gas_relation(
+                    si::kelvin, si::pascal, si::thermal_conductivity(1.0),
+                    [=](si::pressure p, si::temperature T) -> si::thermal_conductivity {
+                        return property::estimate_thermal_conductivity_as_gas_from_eucken(
+                            dynamic_viscosity_as_gas(p,T), M, heat_capacity_as_gas(p,T));
+                    },
+                    // TODO: add logic to compose estimates for valid ranges from source relations
+                    3.0,    // kelvin,
+                    1000.0, // kelvin,
+                    0.1,    // pascal
+                    1e6,    // pascal
+                    0.0     // known_max_fractional_error
+                );
+                return result;
             },
             guess.gas.dynamic_viscosity, 
             guess.gas.isobaric_specific_heat_capacity
         );
-
+        */
 
         for (std::size_t i = 0; i < guess.solids.size(); i++)
         {

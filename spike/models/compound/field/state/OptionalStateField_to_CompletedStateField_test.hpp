@@ -14,7 +14,7 @@
 
 
 TEST_CASE( "OptionalStateField complete() purity", "[field]" ) {
-	compound::field::OptionalStateField<double> unknown  = std::monostate();
+	// compound::field::OptionalStateField<double> unknown  = std::monostate();
     compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
 
     compound::field::CompletedStateField<double> known_relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });

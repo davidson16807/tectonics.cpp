@@ -77,7 +77,7 @@ namespace compound
             compound.boiling_point_sample_temperature   .index() +
             compound.phase                              .index() +
             compound.molecular_absorption_cross_section .index() +
-            PartlyKnownGas_attribute_index_sum(compound.gas) +
+            PartlyKnownGas_attribute_known_count(compound.gas) +
             PartlyKnownLiquid_attribute_index_sum(compound.liquid) ;
         for (std::size_t i = 0; i < compound.solids.size(); ++i)
         {
@@ -230,22 +230,22 @@ namespace compound
         /*gas*/
         phase::PartlyKnownGas {
             /*specific_heat_capacity*/ // 2.080 * si::joule / (si::gram * si::kelvin),                     // wikipedia
-                get_sigmoid_exponent_pressure_temperature_function
+                relation::get_sigmoid_exponent_pressure_temperature_relation
                     (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
                     0.01766, 0.80539, 0.00707, 0.69586, 0.0, 1.0, 0.0, 1.42782,
-                    300.0, 1273.2, 0.0, 10.0), 
+                    300.0, 1273.2, 0.0, 10.0, 0.034), 
                     // water, mean error: 0.8%, max error: 3.4%, range: 300-1273.2K, 0-10MPa, stp estimate: 1.781
             /*thermal_conductivity*/   // 0.016 * si::watt / (si::meter * si::kelvin),                     // wikipedia
-                get_sigmoid_exponent_pressure_temperature_function
+                relation::get_sigmoid_exponent_pressure_temperature_relation
                     (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
                     0.00054, 1.09614, 0.00000, 0.00000, 0.09827, 691.90362, 883.95160, 0.08323,
-                    300.0, 1273.2, 0.0, 10.0), 
+                    300.0, 1273.2, 0.0, 10.0, 0.097), 
                     // water, mean error: 2.5%, max error: 9.7%, range: 300-1273.2K, 0-10MPa, stp estimate: 0.018
             /*dynamic_viscosity*/      // 1.24e-5 * si::pascal * si::second,                               // engineering toolbox, at 100 C
-                get_sigmoid_exponent_pressure_temperature_function
+                relation::get_sigmoid_exponent_pressure_temperature_relation
                     (si::kelvin, si::megapascal, si::micropascal*si::second, 
                     0.00019, 3.33694, 0.02183, 1.08016, 0.0, 1.0, 0.0, -0.58257,
-                    300.0, 1273.2, 0.0, 10.0), 
+                    300.0, 1273.2, 0.0, 10.0, 0.035), 
                     // water, mean error: 1.2%, max error: 3.5%, range: 300-1273.2K, 0-10MPa, stp estimate: 8.765
             /*density*/                0.6* si::kilogram/si::meter3,
             /*refractive_index*/       1.000261                                                         // engineering toolbox
@@ -368,9 +368,9 @@ namespace compound
 
         /*gas*/
         phase::PartlyKnownGas {
-            /*specific_heat_capacity*/ state_invariant(1.0 * si::joule / (si::kilogram * si::kelvin)),
-            /*thermal_conductivity*/   state_invariant(1.0 * si::watt / (si::meter * si::kelvin)),
-            /*dynamic_viscosity*/      state_invariant(1.0 * si::pascal * si::second),
+            /*specific_heat_capacity*/ (1.0 * si::joule / (si::kilogram * si::kelvin)),
+            /*thermal_conductivity*/   (1.0 * si::watt / (si::meter * si::kelvin)),
+            /*dynamic_viscosity*/      (1.0 * si::pascal * si::second),
             /*density*/                state_invariant(1.0 * si::kilogram/si::meter3),
             /*refractive_index*/       spectral_invariant(1.1)
         },

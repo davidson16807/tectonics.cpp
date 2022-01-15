@@ -193,7 +193,6 @@ TEST_CASE( "OptionalStateField value_or(f,a,b) purity", "[field]" ) {
     std::function<double(const compound::field::StateParameters, const int, const double)> f_id  = [](const compound::field::StateParameters state, const int first, const double second){ return first + second; };
     std::function<double(const compound::field::StateParameters, const double, const int)> f_di  = [](const compound::field::StateParameters state, const double first, const int second){ return first + second; };
     std::function<double(const compound::field::StateParameters, const int, const int)> f_ii  = [](const compound::field::StateParameters state, const int first, const int second){ return first + second; };
-    compound::field::OptionalStateField<int> I_i  = compound::field::StateFunction<int>([](const si::pressure p, const si::temperature T){ return 0; });
 
     SECTION("Calling a function twice with the same arguments must produce the same results")
     {

@@ -4,6 +4,8 @@
 #include <models/compound/field/state/OptionalStateField_to_CompletedStateField.hpp>
 #include <models/compound/field/spectral/OptionalSpectralField_to_CompletedSpectralField.hpp>
 
+#include <models/compound/relation/state/OptionalStateRelation.hpp>
+
 #include "PartlyKnownGas.hpp"
 #include "CompletedGas.hpp"
 
@@ -17,9 +19,9 @@ namespace phase {
     CompletedGas complete(const PartlyKnownGas& known, const CompletedGas& fallback)
     {
         return CompletedGas{
-            field::complete(known.isobaric_specific_heat_capacity,  fallback.isobaric_specific_heat_capacity  ),
-            field::complete(known.thermal_conductivity,             fallback.thermal_conductivity             ),
-            field::complete(known.dynamic_viscosity,                fallback.dynamic_viscosity                ),
+            known.isobaric_specific_heat_capacity .complete(fallback.isobaric_specific_heat_capacity  ),
+            known.thermal_conductivity            .complete(fallback.thermal_conductivity             ),
+            known.dynamic_viscosity               .complete(fallback.dynamic_viscosity                ),
             field::complete(known.density,                          fallback.density                          ),
             field::complete(known.refractive_index,                 fallback.refractive_index                 )
         };
