@@ -23,4 +23,8 @@ namespace math {
         return df;
     }
 
+    constexpr float derivative(const float k) 
+    {
+        return 0.0f;
+    }
 }

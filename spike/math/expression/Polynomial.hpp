@@ -1,11 +1,13 @@
 #pragma once
 
 #include <algorithm>
+#include <type_traits>
 
 // in-house libraries
 #include "Identity.hpp"
 #include "Scaling.hpp"
 #include "Shifting.hpp"
+#include "Polynomial.hpp"
 
 #include <math/combinatorics.hpp>
 #include <math/calculus.hpp>
@@ -13,14 +15,21 @@
 namespace math {
 
     /* 
-    `Polynomial<N>` is a class template that represents functions of the form f(x)=k₀x⁰+k₁x¹+k₂x²+...+kₙxⁿ.
-    N is the degree of the polynomial, or the highest exponent of any nonzero term within the polynomial,
-    meaning that a polynomial of degree N has N+1 coeffiicents, which are denoted k[0] through k[N].
+    `Polynomial<Nlo,Nhi>` is a class template that represents functions of the form f(x)=Σᵢaᵢxᵇⁱ where bᵢ∈ℤ.
+    It is designed for high performance applications where a function must be composed from other functions.
+    To address data locality concerns, the data structure is stored on the heap, 
+    and users may control size in memory by specifying the highest and lowest exponent within the polynomial.
+
+    A side effect of this design is that it allows the user to specify negative exponents.
+    Introducing a negative exponent into the expression creates what is known as a "Laurent polynomial".
+    A Laurent polynomial runs in the same amount of time as a classic polynomial that has the same number of terms,
+    and support for Laurent polynomials places little to no performance penalties on classic polynomial behavior,
+    so we support Laurent polynomials as a degenerate case to avoid creating a separate implementation.
     */
-    template<int N>
+    template<int Nlo, int Nhi>
     struct Polynomial
     {
-        std::array<float,N+1> k;
+        std::array<float,Nhi+1-Nlo> k;
         constexpr Polynomial(const Polynomial& p): k()
         {
             std::copy(p.k.begin(), p.k.end(), k.begin());
@@ -42,14 +51,17 @@ namespace math {
             k[0] = f.offset;
             k[1] = 1.0f;
         }
-        constexpr explicit Polynomial(const std::array<float,N+1> k2): k()
+        constexpr explicit Polynomial(const std::array<float,Nhi+1-Nlo> k2): k()
         {
             std::copy(k2.begin(), k2.end(), k.begin());
         }
-        template <int M> 
-        constexpr Polynomial(const Polynomial<M>& p): k()
+        template <int Mlo, int Mhi> 
+        constexpr Polynomial(const Polynomial<Mlo,Mhi>& p): k()
         {
-            std::copy(p.k.begin(), p.k.end(), k.begin());
+            for (int i = Mlo; i <= Mhi; ++i)
+            {
+                k[i] = p[i];
+            }
         }
         template <typename... T> 
         constexpr explicit Polynomial(T... ts) : k{ts...}
@@ -59,14 +71,8 @@ namespace math {
         {}
         constexpr float operator()(const float x) const
         {
-            /*
-            we forego a common optimization technique here (multiplying then adding into a single variable), 
-            since it would either require traversing k in the opposite order (which is inefficient),
-            or it would require complicating the design of other functions 
-            that assume lower indices denote coefficients of smaller degree.
-            */
             float y(0.0f);
-            float xi(1.0f);
+            float xi(std::pow(x, Nlo));
             for (std::size_t i = 0; i < k.size(); ++i)
             {
                 y  =k[i]*xi;
@@ -76,52 +82,52 @@ namespace math {
         }
         constexpr float& operator[](const int i)
         {
-            return k[i];
+            return k[i-Nlo];
         }
         constexpr float operator[](const int i) const
         {
-            return 0<=i&&i<N? k[i] : 0.0f;
+            return Nlo<=i&&i<=Nhi? k[i-Nlo] : 0.0f;
         }
-        template<int M>
-        constexpr Polynomial<N>& operator+=(const Polynomial<M>& p)
+        template<int Mlo, int Mhi>
+        constexpr Polynomial<Nlo,Nhi>& operator+=(const Polynomial<Mlo,Mhi>& p)
         {
-            for (std::size_t i = 0; i < k.size(); ++i)
+            for (int i = Mlo; i <= Mhi; ++i)
             {
                 k[i] += p[i];
             }
             return *this;
         }
-        template<int M>
-        constexpr Polynomial<N>& operator-=(const Polynomial<M>& p)
+        template<int Mlo, int Mhi>
+        constexpr Polynomial<Nlo,Nhi>& operator-=(const Polynomial<Mlo,Mhi>& p)
         {
-            for (std::size_t i = 0; i < k.size(); ++i)
+            for (int i = Mlo; i <= Mhi; ++i)
             {
                 k[i] -= p[i];
             }
             return *this;
         }
-        constexpr Polynomial<N>& operator*=(const float k2)
+        constexpr Polynomial<Nlo,Nhi>& operator*=(const float k2)
         {
-            for (std::size_t i = 0; i < k.size(); ++i)
+            for (int i = Nlo; i <= Nhi; ++i)
             {
                 k[i] *= k2;
             }
             return *this;
         }
-        constexpr Polynomial<N>& operator/=(const float k2)
+        constexpr Polynomial<Nlo,Nhi>& operator/=(const float k2)
         {
-            for (std::size_t i = 0; i < k.size(); ++i)
+            for (int i = Nlo; i <= Nhi; ++i)
             {
                 k[i] /= k2;
             }
             return *this;
         }
-        constexpr Polynomial<N>& operator+=(const float k2)
+        constexpr Polynomial<Nlo,Nhi>& operator+=(const float k2)
         {
             k[0] += k2;
             return *this;
         }
-        constexpr Polynomial<N>& operator-=(const float k2)
+        constexpr Polynomial<Nlo,Nhi>& operator-=(const float k2)
         {
             k[0] -= k2;
             return *this;
@@ -129,194 +135,254 @@ namespace math {
     };
 
 
-    // operators with reals that are closed under Polynomial<N> relations
-    template<int N>
-    constexpr Polynomial<N> operator+(const Polynomial<N>& p, const float k)
+    // operators with reals that are closed under Polynomial<Nlo,Nhi> relations
+    template<int Nlo, int Nhi>
+    constexpr Polynomial<std::min(Nlo,0),std::max(Nhi,0)> operator+(const Polynomial<Nlo,Nhi>& p, const float& k)
     {
-        Polynomial<N> y(p);
+        Polynomial<std::min(Nlo,0),std::max(Nhi,0)> y(p);
         y +=k;
         return y;
     }
-    template<int N>
-    constexpr Polynomial<N> operator+(const float k, const Polynomial<N>& p)
+    template<int Nlo, int Nhi>
+    constexpr Polynomial<std::min(Nlo,0),std::max(Nhi,0)> operator+(const float k, const Polynomial<Nlo,Nhi>& p)
     {
-        Polynomial<N> y(p);
+        Polynomial<std::min(Nlo,0),std::max(Nhi,0)> y(p);
         y +=k;
         return y;
     }
-    template<int N>
-    constexpr Polynomial<N> operator-(const Polynomial<N>& p, const float k)
+    template<int Nlo, int Nhi>
+    constexpr Polynomial<std::min(Nlo,0),std::max(Nhi,0)> operator-(const Polynomial<Nlo,Nhi>& p, const float k)
     {
-        Polynomial<N> y(p);
+        Polynomial<std::min(Nlo,0),std::max(Nhi,0)> y(p);
         y -=k;
         return y;
     }
-    template<int N>
-    constexpr Polynomial<N> operator-(const float k, const Polynomial<N>& p)
+    template<int Nlo, int Nhi>
+    constexpr Polynomial<std::min(Nlo,0),std::max(Nhi,0)> operator-(const float k, const Polynomial<Nlo,Nhi>& p)
     {
-        Polynomial<N> y(p);
+        Polynomial<std::min(Nlo,0),std::max(Nhi,0)> y(p);
         y *=-1.0f;
         y += k;
         return y;
     }
-    template<int N>
-    constexpr Polynomial<N> operator*(const Polynomial<N>& p, const float k)
+    template<int Nlo, int Nhi>
+    constexpr Polynomial<Nlo,Nhi> operator*(const Polynomial<Nlo,Nhi>& p, const float k)
     {
-        Polynomial<N> y(p);
+        Polynomial<Nlo,Nhi> y(p);
         y *= k;
         return y;
     }
-    template<int N>
-    constexpr Polynomial<N> operator*(const float k, const Polynomial<N>& p)
+    template<int Nlo, int Nhi>
+    constexpr Polynomial<Nlo,Nhi> operator*(const float k, const Polynomial<Nlo,Nhi>& p)
     {
-        Polynomial<N> y(p);
+        Polynomial<Nlo,Nhi> y(p);
         y *= k;
         return y;
     }
-    template<int N>
-    constexpr Polynomial<N> operator/(const Polynomial<N>& p, const float k)
+    template<int Nlo, int Nhi>
+    constexpr Polynomial<Nlo,Nhi> operator/(const Polynomial<Nlo,Nhi>& p, const float k)
     {
-        Polynomial<N> y(p);
+        Polynomial<Nlo,Nhi> y(p);
         y /= k;
         return y;
     }
     template<int N>
-    constexpr Polynomial<N> operator-(const Polynomial<N>& p)
+    constexpr Polynomial<-N,-N> operator/(const float k, const Polynomial<N,N>&  p)
     {
-        Polynomial<N> y(p);
+        return Polynomial<-N,-N>(k/p[N]);
+    }
+    template<int Nlo, int Nhi>
+    constexpr Polynomial<Nlo,Nhi> operator-(const Polynomial<Nlo,Nhi>& p)
+    {
+        Polynomial<Nlo,Nhi> y(p);
         y *=-1.0f;
         return y;
     }
 
-    // operators that are not closed under Polynomial<N> relations, but produce Polynomial<> relations of some degree
-    template<int N, int M>
-    constexpr Polynomial<std::max(N,M)> operator+(const Polynomial<N>& p, const Polynomial<M>& q)
+    // operators that are not closed under Polynomial<Nlo,Nhi> relations, but produce Polynomial<> relations of some degree
+    template<int Nlo, int Nhi, int Mlo, int Mhi>
+    constexpr Polynomial<std::min(Nlo,Mlo),std::max(Nhi,Mhi)> operator+(const Polynomial<Nlo,Nhi>& p, const Polynomial<Mlo,Mhi>& q)
     {
-        Polynomial<std::max(N,M)> y(p);
+        Polynomial<std::min(Nlo,Mlo),std::max(Nhi,Mhi)> y(p);
         y += q;
         return y;
     }
-    template<int N, int M>
-    constexpr Polynomial<std::max(N,M)> operator-(const Polynomial<N>& p, const Polynomial<M>& q)
+    template<int Nlo, int Nhi, int Mlo, int Mhi>
+    constexpr Polynomial<std::min(Nlo,Mlo),std::max(Nhi,Mhi)> operator-(const Polynomial<Nlo,Nhi>& p, const Polynomial<Mlo,Mhi>& q)
     {
-        Polynomial<std::max(N,M)> y(p);
+        Polynomial<std::min(Nlo,Mlo),std::max(Nhi,Mhi)> y(p);
         y -= q;
         return y;
     }
-    template<int N, int M>
-    constexpr Polynomial<N+M> operator*(const Polynomial<N>& p, const Polynomial<M>& q)
+    template<int Nlo, int Nhi, int Mlo, int Mhi>
+    constexpr Polynomial<Nlo+Mlo,Nhi+Mhi> operator*(const Polynomial<Nlo,Nhi>& p, const Polynomial<Mlo,Mhi>& q)
     {
-        Polynomial<N+M> y;
-        for (std::size_t i = 0; i < p.k.size(); ++i)
+        Polynomial<Nlo-Mlo,Nhi-Mhi> y;
+        for (int i = Nlo; i <= Nhi; ++i)
         {
-            for (std::size_t j = 0; j < q.k.size(); ++j)
+            for (int j = Mlo; j <= Mhi; ++j)
             {
-                y.k[i+j] += p.k[i]*q.k[j];
+                y[i+j] += p[i]*q[j];
             }
         }
         return y;
     }
-
-
-
-
-    // operators with reals that produce Polynomial<N> relations given other relations as input
-    template<int N>
-    constexpr auto operator+(const Polynomial<N>& p, const Identity e)
+    template<int Nlo, int Nhi, int M>
+    constexpr Polynomial<Nlo-M,Nhi-M> operator/(const Polynomial<Nlo,Nhi>& p, const Polynomial<M,M>& q)
     {
-        return p + Polynomial<1>(e);
+        Polynomial<Nlo-M,Nhi-M> y;
+        for (int i = Nlo; i <= Nhi; ++i)
+        {
+            y[i-M] += p[i]/q[M];
+        }
+        return y;
     }
     template<int N>
-    constexpr auto operator+(const Identity e, const Polynomial<N>& p)
+    constexpr float operator/(const Polynomial<N,N>& p, const Polynomial<N,N>& q)
     {
-        return Polynomial<1>(e) + p;
-    }
-    template<int N>
-    constexpr auto operator-(const Polynomial<N>& p, const Identity e)
-    {
-        return p - Polynomial<1>(e);
-    }
-    template<int N>
-    constexpr auto operator-(const Identity e, const Polynomial<N>& p)
-    {
-        return Polynomial<1>(e) - p;
-    }
-    template<int N>
-    constexpr auto operator*(const Polynomial<N>& p, const Identity e)
-    {
-        return p * Polynomial<1>(e);
-    }
-    template<int N>
-    constexpr auto operator*(const Identity e, const Polynomial<N>& p)
-    {
-        return Polynomial<1>(e) * p;
+        return p[N]/q[N];
     }
 
 
 
-    template<int N>
-    constexpr auto operator+(const Polynomial<N>& p, const Scaling f)
+
+
+    // operators with reals that produce Polynomial<Nlo,Nhi> relations given other relations as input
+    template<int Nlo, int Nhi>
+    constexpr auto operator+(const Polynomial<Nlo,Nhi>& p, const Identity e)
     {
-        return p + Polynomial<1>(f);
+        return p + Polynomial<1,1>(e);
+    }
+    template<int Nlo, int Nhi>
+    constexpr auto operator+(const Identity e, const Polynomial<Nlo,Nhi>& p)
+    {
+        return Polynomial<1,1>(e) + p;
+    }
+    template<int Nlo, int Nhi>
+    constexpr auto operator-(const Polynomial<Nlo,Nhi>& p, const Identity e)
+    {
+        return p - Polynomial<1,1>(e);
+    }
+    template<int Nlo, int Nhi>
+    constexpr auto operator-(const Identity e, const Polynomial<Nlo,Nhi>& p)
+    {
+        return Polynomial<1,1>(e) - p;
+    }
+    template<int Nlo, int Nhi>
+    constexpr auto operator*(const Polynomial<Nlo,Nhi>& p, const Identity e)
+    {
+        return p * Polynomial<1,1>(e);
+    }
+    template<int Nlo, int Nhi>
+    constexpr auto operator*(const Identity e, const Polynomial<Nlo,Nhi>& p)
+    {
+        return Polynomial<1,1>(e) * p;
+    }
+    template<int Nlo, int Nhi>
+    constexpr auto operator/(const Polynomial<Nlo,Nhi>& p, const Identity e)
+    {
+        return p / Polynomial<1,1>(e);
     }
     template<int N>
-    constexpr auto operator+(const Scaling f, const Polynomial<N>& p)
+    constexpr auto operator/(const Identity e, const Polynomial<N,N>& p)
     {
-        return Polynomial<1>(f) + p;
-    }
-    template<int N>
-    constexpr auto operator-(const Polynomial<N>& p, const Scaling f)
-    {
-        return p - Polynomial<1>(f);
-    }
-    template<int N>
-    constexpr auto operator-(const Scaling f, const Polynomial<N>& p)
-    {
-        return Polynomial<1>(f) - p;
-    }
-    template<int N>
-    constexpr auto operator*(const Polynomial<N>& p, const Scaling f)
-    {
-        return p * Polynomial<1>(f);
-    }
-    template<int N>
-    constexpr auto operator*(const Scaling f, const Polynomial<N>& p)
-    {
-        return Polynomial<1>(f) * p;
+        return Polynomial<1,1>(e) / p;
     }
 
 
 
-    template<int N>
-    constexpr auto operator+(const Polynomial<N>& p, const Shifting f)
+    template<int Nlo, int Nhi>
+    constexpr auto operator+(const Polynomial<Nlo,Nhi>& p, const Scaling f)
     {
-        return p + Polynomial<1>(f);
+        return p + Polynomial<1,1>(f);
+    }
+    template<int Nlo, int Nhi>
+    constexpr auto operator+(const Scaling f, const Polynomial<Nlo,Nhi>& p)
+    {
+        return Polynomial<1,1>(f) + p;
+    }
+    template<int Nlo, int Nhi>
+    constexpr auto operator-(const Polynomial<Nlo,Nhi>& p, const Scaling f)
+    {
+        return p - Polynomial<1,1>(f);
+    }
+    template<int Nlo, int Nhi>
+    constexpr auto operator-(const Scaling f, const Polynomial<Nlo,Nhi>& p)
+    {
+        return Polynomial<1,1>(f) - p;
+    }
+    template<int Nlo, int Nhi>
+    constexpr auto operator*(const Polynomial<Nlo,Nhi>& p, const Scaling f)
+    {
+        return p * Polynomial<1,1>(f);
+    }
+    template<int Nlo, int Nhi>
+    constexpr auto operator*(const Scaling f, const Polynomial<Nlo,Nhi>& p)
+    {
+        return Polynomial<1,1>(f) * p;
+    }
+    template<int Nlo, int Nhi>
+    constexpr auto operator/(const Polynomial<Nlo,Nhi>& p, const Scaling f)
+    {
+        return p / Polynomial<1,1>(f);
     }
     template<int N>
-    constexpr auto operator+(const Shifting f, const Polynomial<N>& p)
+    constexpr auto operator/(const Scaling f, const Polynomial<N,N>& p)
     {
-        return Polynomial<1>(f) + p;
+        return Polynomial<1,1>(f) / p;
+    }
+
+
+
+    template<int Nlo, int Nhi>
+    constexpr auto operator+(const Polynomial<Nlo,Nhi>& p, const Shifting f)
+    {
+        return p + Polynomial<0,1>(f);
+    }
+    template<int Nlo, int Nhi>
+    constexpr auto operator+(const Shifting f, const Polynomial<Nlo,Nhi>& p)
+    {
+        return Polynomial<0,1>(f) + p;
+    }
+    template<int Nlo, int Nhi>
+    constexpr auto operator-(const Polynomial<Nlo,Nhi>& p, const Shifting f)
+    {
+        return p - Polynomial<0,1>(f);
+    }
+    template<int Nlo, int Nhi>
+    constexpr auto operator-(const Shifting f, const Polynomial<Nlo,Nhi>& p)
+    {
+        return Polynomial<0,1>(f) - p;
+    }
+    template<int Nlo, int Nhi>
+    constexpr auto operator*(const Polynomial<Nlo,Nhi>& p, const Shifting f)
+    {
+        return p * Polynomial<0,1>(f);
+    }
+    template<int Nlo, int Nhi>
+    constexpr auto operator*(const Shifting f, const Polynomial<Nlo,Nhi>& p)
+    {
+        return Polynomial<0,1>(f) * p;
     }
     template<int N>
-    constexpr auto operator-(const Polynomial<N>& p, const Shifting f)
+    constexpr auto operator/(const Shifting f, const Polynomial<N,N>& p)
     {
-        return p - Polynomial<1>(f);
+        return Polynomial<0,1>(f) / p;
     }
-    template<int N>
-    constexpr auto operator-(const Shifting f, const Polynomial<N>& p)
-    {
-        return Polynomial<1>(f) - p;
-    }
-    template<int N>
-    constexpr auto operator*(const Polynomial<N>& p, const Shifting f)
-    {
-        return p * Polynomial<1>(f);
-    }
-    template<int N>
-    constexpr auto operator*(const Shifting f, const Polynomial<N>& p)
-    {
-        return Polynomial<1>(f) * p;
-    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -332,87 +398,73 @@ namespace math {
     template<int N>
     constexpr auto operator-(const Shifting f)
     {
-        return -Polynomial<1>(f);
+        return -Polynomial<0,1>(f);
     }
-
-
 
     
 
     constexpr auto operator*(const Identity e, const Scaling f)
     {
-        return Polynomial<1>(e) * Polynomial<1>(f);
+        return Polynomial<1,1>(e) * Polynomial<1,1>(f);
     }
     constexpr auto operator*(const Scaling f, const Identity e)
     {
-        return Polynomial<1>(f) * Polynomial<1>(e);
+        return Polynomial<1,1>(f) * Polynomial<1,1>(e);
     }
-
 
 
 
     constexpr auto operator+(const Identity e, const Shifting f)
     {
-        return Polynomial<1>(e) + Polynomial<1>(f);
+        return Polynomial<1,1>(e) + Polynomial<0,1>(f);
     }
     constexpr auto operator+(const Shifting f, const Identity e)
     {
-        return Polynomial<1>(f) + Polynomial<1>(e);
+        return Polynomial<0,1>(f) + Polynomial<1,1>(e);
     }
     constexpr auto operator-(const Identity e, const Shifting f)
     {
-        return Polynomial<1>(e) - Polynomial<1>(f);
+        return Polynomial<1,1>(e) - Polynomial<0,1>(f);
     }
     constexpr auto operator-(const Shifting f, const Identity e)
     {
-        return Polynomial<1>(f) - Polynomial<1>(e);
+        return Polynomial<0,1>(f) - Polynomial<1,1>(e);
     }
     constexpr auto operator*(const Identity e, const Shifting f)
     {
-        return Polynomial<1>(e) * Polynomial<1>(f);
+        return Polynomial<1,1>(e) * Polynomial<0,1>(f);
     }
     constexpr auto operator*(const Shifting f, const Identity e)
     {
-        return Polynomial<1>(f) * Polynomial<1>(e);
+        return Polynomial<0,1>(f) * Polynomial<1,1>(e);
     }
 
 
 
     constexpr auto operator+(const Shifting g, const Scaling f)
     {
-        return Polynomial<1>(g) + Polynomial<1>(f);
+        return Polynomial<0,1>(g) + Polynomial<1,1>(f);
     }
     constexpr auto operator+(const Scaling f, const Shifting g)
     {
-        return Polynomial<1>(f) + Polynomial<1>(g);
+        return Polynomial<1,1>(f) + Polynomial<0,1>(g);
     }
     constexpr auto operator-(const Shifting g, const Scaling f)
     {
-        return Polynomial<1>(g) - Polynomial<1>(f);
+        return Polynomial<0,1>(g) - Polynomial<1,1>(f);
     }
     constexpr auto operator-(const Scaling f, const Shifting g)
     {
-        return Polynomial<1>(f) - Polynomial<1>(g);
+        return Polynomial<1,1>(f) - Polynomial<0,1>(g);
     }
     constexpr auto operator*(const Shifting g, const Scaling f)
     {
-        return Polynomial<1>(g) * Polynomial<1>(f);
+        return Polynomial<0,1>(g) * Polynomial<1,1>(f);
     }
     constexpr auto operator*(const Scaling f, const Shifting g)
     {
-        return Polynomial<1>(f) * Polynomial<1>(g);
+        return Polynomial<1,1>(f) * Polynomial<0,1>(g);
     }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -422,54 +474,70 @@ namespace math {
 
     // constexpr auto operator+(const float k, const Identity e)
     // {
-    //     return k + Polynomial<1>(e);
+    //     return k + Polynomial<1,1>(e);
     // }
     // constexpr auto operator+(const Identity e, const float k)
     // {
-    //     return Polynomial<1>(e) + k;
+    //     return Polynomial<1,1>(e) + k;
     // }
     constexpr auto operator-(const float k, const Identity e)
     {
-        return k - Polynomial<1>(e);
+        return k - Polynomial<1,1>(e);
     }
     // constexpr auto operator-(const Identity e, const float k)
     // {
-    //     return Polynomial<1>(e) - k;
+    //     return Polynomial<1,1>(e) - k;
     // }
     // constexpr auto operator*(const float k, const Identity e)
     // {
-    //     return k * Polynomial<1>(e);
+    //     return k * Polynomial<1,1>(e);
     // }
     // constexpr auto operator*(const Identity e, const float k)
     // {
-    //     return Polynomial<1>(e) * k;
+    //     return Polynomial<1,1>(e) * k;
+    // }
+    constexpr auto operator/(const float k, const Identity e)
+    {
+        return k / Polynomial<1,1>(e);
+    }
+    // constexpr auto operator/(const Identity e, const float k)
+    // {
+    //     return Polynomial<1,1>(e) / k;
     // }
 
 
 
     constexpr auto operator+(const float k, const Scaling f)
     {
-        return k + Polynomial<1>(f);
+        return k + Polynomial<1,1>(f);
     }
     constexpr auto operator+(const Scaling f, const float k)
     {
-        return Polynomial<1>(f) + k;
+        return Polynomial<1,1>(f) + k;
     }
     constexpr auto operator-(const float k, const Scaling f)
     {
-        return k - Polynomial<1>(f);
+        return k - Polynomial<1,1>(f);
     }
     constexpr auto operator-(const Scaling f, const float k)
     {
-        return Polynomial<1>(f) - k;
+        return Polynomial<1,1>(f) - k;
     }
     // constexpr auto operator*(const float k, const Scaling f)
     // {
-    //     return k * Polynomial<1>(f);
+    //     return k * Polynomial<1,1>(f);
     // }
     // constexpr auto operator*(const Scaling f, const float k)
     // {
-    //     return Polynomial<1>(f) * k;
+    //     return Polynomial<1,1>(f) * k;
+    // }
+    constexpr auto operator/(const float k, const Scaling f)
+    {
+        return k / Polynomial<1,1>(f);
+    }
+    // constexpr auto operator/(const Scaling f, const float k)
+    // {
+    //     return Polynomial<1,1>(f) / k;
     // }
 
 
@@ -477,29 +545,36 @@ namespace math {
 
     // constexpr auto operator+(const float k, const Shifting f)
     // {
-    //     return k + Polynomial<1>(f);
+    //     return k + Polynomial<0,1>(f);
     // }
     // constexpr auto operator+(const Shifting f, const float k)
     // {
-    //     return Polynomial<1>(f) + k;
+    //     return Polynomial<0,1>(f) + k;
     // }
     constexpr auto operator-(const float k, const Shifting f)
     {
-        return k - Polynomial<1>(f);
+        return k - Polynomial<0,1>(f);
     }
     // constexpr auto operator-(const Shifting f, const float k)
     // {
-    //     return Polynomial<1>(f) - k;
+    //     return Polynomial<0,1>(f) - k;
     // }
     constexpr auto operator*(const float k, const Shifting f)
     {
-        return k * Polynomial<1>(f);
+        return k * Polynomial<0,1>(f);
     }
     constexpr auto operator*(const Shifting f, const float k)
     {
-        return Polynomial<1>(f) * k;
+        return Polynomial<0,1>(f) * k;
     }
-
+    // constexpr auto operator/(const float k, const Shifting f)
+    // {
+    //     return k / Polynomial<0,1>(f);
+    // }
+    constexpr auto operator/(const Shifting f, const float k)
+    {
+        return Polynomial<0,1>(f) / k;
+    }
 
 
 
@@ -510,17 +585,22 @@ namespace math {
     template<int N>
     constexpr auto operator+(const Scaling f, const Scaling g)
     {
-        return Polynomial<1>(f) + Polynomial<1>(g);
+        return Polynomial<1,1>(f) + Polynomial<1,1>(g);
     }
     template<int N>
     constexpr auto operator-(const Scaling f, const Scaling g)
     {
-        return Polynomial<1>(f) - Polynomial<1>(g);
+        return Polynomial<1,1>(f) - Polynomial<1,1>(g);
     }
     // template<int N>
     // constexpr auto operator*(const Scaling f, const Scaling g)
     // {
-    //     return Polynomial<1>(f) * Polynomial<1>(g);
+    //     return Polynomial<1,1>(f) * Polynomial<1,1>(g);
+    // }
+    // template<int N>
+    // constexpr auto operator/(const Scaling f, const Scaling g)
+    // {
+    //     return Polynomial<1,1>(f) / Polynomial<1,1>(g);
     // }
 
 
@@ -528,53 +608,46 @@ namespace math {
     // template<int N>
     // constexpr auto operator+(const Shifting f, const Shifting g)
     // {
-    //     return Polynomial<1>(f) + Polynomial<1>(e);
+    //     return Polynomial<0,1>(f) + Polynomial<0,1>(g);
     // }
     // template<int N>
     // constexpr auto operator-(const Shifting f, const Shifting g)
     // {
-    //     return Polynomial<1>(f) - Polynomial<1>(e);
+    //     return Polynomial<0,1>(f) - Polynomial<0,1>(g);
     // }
     template<int N>
     constexpr auto operator*(const Shifting f, const Shifting g)
     {
-        return Polynomial<1>(f) * Polynomial<1>(g);
+        return Polynomial<0,1>(f) * Polynomial<0,1>(g);
     }
+    // template<int N>
+    // constexpr auto operator/(const Shifting f, const Shifting g)
+    // {
+    //     return Polynomial<0,1>(f) / Polynomial<0,1>(g);
+    // }
 
 
 
     // template<int N>
     // constexpr auto operator+(const Identity e1, const Identity e2)
     // {
-    //     return Polynomial<1>(e) + Polynomial<1>(e);
+    //     return Polynomial<1,1>(e) + Polynomial<1,1>(e);
     // }
     // template<int N>
     // constexpr auto operator-(const Identity e1, const Identity e2)
     // {
-    //     return Polynomial<1>(e) - Polynomial<1>(e);
+    //     return Polynomial<1,1>(e) - Polynomial<1,1>(e);
     // }
     template<int N>
     constexpr auto operator*(const Identity e1, const Identity e2)
     {
-        return Polynomial<1>(e1) * Polynomial<1>(e2);
+        return Polynomial<1,1>(e1) * Polynomial<1,1>(e2);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    // template<int N>
+    // constexpr auto operator/(const Identity e1, const Identity e2)
+    // {
+    //     return Polynomial<1,1>(e1) / Polynomial<1,1>(e2);
+    // }
 
 
 
@@ -585,45 +658,44 @@ namespace math {
     since not all equations are closed under derivatives and integrals,
     and such methods would complicate the order with which classes must be declared
     */
-    constexpr float derivative(const float k) 
-    {
-        return 0.0f;
-    }
-    constexpr float derivative(const Polynomial<1> p) 
+    constexpr float derivative(const Polynomial<0,1> p) 
     {
         return p[0];
     }
-    template<int N>
-    Polynomial<N-1> derivative(const Polynomial<N>& p)
+    constexpr float derivative(const Polynomial<1,1> p) 
     {
-        Polynomial<N-1> dpdx;
-        for (std::size_t i = 1; i < p.k.size(); ++i)
+        return 0.0f;
+    }
+    template<int Nlo, int Nhi>
+    Polynomial<Nlo==0?0:Nlo-1,Nhi-1> derivative(const Polynomial<Nlo,Nhi>& p)
+    {
+        Polynomial<Nlo==0?0:Nlo-1,Nhi-1> dpdx;
+        for (int i = Nlo; i <=Nhi; ++i)
         {
-            dpdx.k[i-1] = i*p.k[i];
+            dpdx[i-1] = i*p[i];
         }
         return dpdx;
     }
 
-    constexpr Scaling integral(const float k) 
+
+    template<int Nlo, int Nhi, 
+        typename = std::enable_if_t<!(Nlo <= -1&&-1 <= Nhi)>>
+    Polynomial<Nlo+1,Nhi+1> integral(const Polynomial<Nlo,Nhi>& p)
     {
-        return Scaling(k);
-    }
-    template<int N>
-    Polynomial<N+1> integral(const Polynomial<N>& p)
-    {
-        Polynomial<N+1> dpdx;
-        for (std::size_t i = 0; i < p.k.size(); ++i)
+        Polynomial<Nlo+1,Nhi+1> dpdx;
+        for (int i = Nlo; i <=Nhi; ++i)
         {
-            dpdx.k[i+1] = p.k[i]/(i+1);
+            dpdx[i+1] = p[i]/(i+1);
         }
         return dpdx;
     }
 
-    constexpr float solve(const Polynomial<1> p, const float y) 
+
+    constexpr float solve(const Polynomial<0,1> p, const float y) 
     {
         return y-p[0] / p[1];
     }
-    std::vector<float> solve(const Polynomial<2> p, const float y) 
+    std::vector<float> solve(const Polynomial<0,2> p, const float y) 
     {
         // the quadratic formula
         std::vector<float> solutions;
@@ -641,8 +713,8 @@ namespace math {
         return solutions;
     }
 
-    template<int N>
-    constexpr auto extremum(const Polynomial<N>& p) 
+    template<int Nlo, int Nhi>
+    constexpr auto extremum(const Polynomial<Nlo,Nhi>& p) 
     {
         return solve(derivative(p), 0.0f);
     }
@@ -651,30 +723,30 @@ namespace math {
     `max()` and `min()` returns the highest output of the function over the given range.
     These are used together when determining whether to include the function as a term in a larger equation.
     */
-    constexpr float maximum(const Polynomial<1> p, const float lo, const float hi) 
+    constexpr float maximum(const Polynomial<0,1> p, const float lo, const float hi) 
     {
         // function is monotonic, so solution must be either lo or hi
         return p(hi) > p(lo)? hi : lo;
     }
-    constexpr float minimum(const Polynomial<1> p, const float lo, const float hi) 
+    constexpr float minimum(const Polynomial<0,1> p, const float lo, const float hi) 
     {
         // function is monotonic, so solution must be either lo or hi
         return p(hi) < p(lo)? hi : lo;
     }
 
-    constexpr float maximum(const Polynomial<2> p, const float lo, const float hi) 
+    constexpr float maximum(const Polynomial<0,2> p, const float lo, const float hi) 
     {
         float x = std::clamp(extremum(p), lo, hi);
         return p(x) > p(hi)? x : p(hi) > p(lo)? hi : lo;
     }
-    constexpr float minimum(const Polynomial<2> p, const float lo, const float hi) 
+    constexpr float minimum(const Polynomial<0,2> p, const float lo, const float hi) 
     {
         float x = std::clamp(extremum(p), lo, hi);
         return p(x) < p(hi)? x : p(hi) < p(lo)? hi : lo;
     }
 
-    template<int N>
-    float maximum(const Polynomial<N>& p, const float lo, const float hi) 
+    template<int Nlo, int Nhi>
+    float maximum(const Polynomial<Nlo,Nhi>& p, const float lo, const float hi) 
     {
         auto candidates = extremum(p);
         candidates.push_back(lo);
@@ -682,8 +754,8 @@ namespace math {
         return *std::max_element(candidates.begin(), candidates.end(), 
             [&](float a, float b){ return p(std::clamp(a,lo,hi)) < p(std::clamp(b,lo,hi)); });
     }
-    template<int N>
-    float minimum(const Polynomial<N>& p, const float lo, const float hi) 
+    template<int Nlo, int Nhi>
+    float minimum(const Polynomial<Nlo,Nhi>& p, const float lo, const float hi) 
     {
         auto candidates = extremum(p);
         candidates.push_back(lo);
@@ -692,27 +764,27 @@ namespace math {
             [&](float a, float b){ return p(std::clamp(a,lo,hi)) < p(std::clamp(b,lo,hi)); });
     }
 
-    template<int N>
-    constexpr Polynomial<N> compose(const Polynomial<N>& p, const Identity e)
+    template<int Nlo, int Nhi>
+    constexpr Polynomial<Nlo,Nhi> compose(const Polynomial<Nlo,Nhi>& p, const Identity e)
     {
         return p;
     }
 
-    template<int N>
-    constexpr Polynomial<N> compose(const Polynomial<N>& p, const Scaling g)
+    template<int Nlo, int Nhi>
+    constexpr Polynomial<Nlo,Nhi> compose(const Polynomial<Nlo,Nhi>& p, const Scaling g)
     {
-        Polynomial<N+1> pq = p;
+        Polynomial<Nlo,Nhi> pq = p;
         for (std::size_t i = 1; i < p.k.size(); ++i)
         {
-            pq.k[i] *= std::pow(g.factor, float(i));
+            pq[i] *= std::pow(g.factor, float(i));
         }
         return pq;
     }
 
-    template<int N>
-    constexpr Polynomial<N> compose(const Polynomial<N>& p, const Shifting g)
+    template<int Nlo, int Nhi>
+    constexpr Polynomial<Nlo,Nhi> compose(const Polynomial<Nlo,Nhi>& p, const Shifting g)
     {
-        Polynomial<N> pq;
+        Polynomial<Nlo,Nhi> pq;
         for (std::size_t i = 0; i < p.k.size(); ++i)
         {
             for (std::size_t j = i; j < p.k.size(); ++j)
@@ -723,20 +795,23 @@ namespace math {
         return pq;
     }
 
-    template<int M>
-    constexpr float compose(const Polynomial<0>& p, const Polynomial<M>& q)
+    template<int Mlo, int Mhi, 
+        typename = std::enable_if_t<(Mlo >= 0 && Mhi >= 0)> >
+    constexpr float compose(const Polynomial<0,0>& p, const Polynomial<Mlo,Mhi>& q)
     {
         return p[0];
     }
 
-    template<int M>
-    constexpr Polynomial<M> compose(const Polynomial<1> p, const Polynomial<M>& q)
+    template<int Nlo, int Mlo, int Mhi, 
+        typename = std::enable_if_t<(Nlo >= 0 && Mlo >= 0 && Mhi >= 0)> >
+    constexpr Polynomial<Mlo,Mhi> compose(const Polynomial<Nlo,Nlo+1> p, const Polynomial<Mlo,Mhi>& q)
     {
-        return p[0] + p[1]*q;
+        return p[Nlo] + p[Nlo+1]*q;
     }
 
-    template<int N, int M>
-    constexpr Polynomial<N*M> compose(const Polynomial<N>& p, const Polynomial<M>& q)
+    template<int Nlo, int Nhi, int Mlo, int Mhi, 
+        typename = std::enable_if_t<(Nlo >= 0 && Nhi >= 0 && Mlo >= 0 && Mhi >= 0)> >
+    constexpr Polynomial<std::min(Nlo*Mlo,Nhi*Mhi),std::max(Nlo*Mlo,Nhi*Mhi)> compose(const Polynomial<Nlo,Nhi>& p, const Polynomial<Mlo,Mhi>& q)
     {
         /*
         we rely on the fact that, e.g.
@@ -747,13 +822,15 @@ namespace math {
             p₀(u) = k₀+xu 
             pₙ₋₁(u) = k₁+(k₂+k₃u)u = k₁u⁰+k₂u¹+k₃u²
         */
-        return p[0]+Identity()*compose(Polynomial<N-1>(p.k.begin()+1, p.k.end()), q);
+        return p[0]+Identity()*compose(Polynomial<Nlo,Nhi-1>(p.k.begin()+1, p.k.end()), q);
     }
 
 
 
+
+
     template<typename F>
-    constexpr Polynomial<1> linear_newton_polynomial(
+    constexpr Polynomial<0,1> linear_newton_polynomial(
         const F f, 
         const float x1, 
         const float x2
@@ -763,18 +840,18 @@ namespace math {
     }
 
     template<typename F>
-    constexpr Polynomial<1> linear_taylor_series(const F f, const float x, const float dx)
+    constexpr Polynomial<0,1> linear_taylor_series(const F f, const float x, const float dx)
     {
         const float dx2 = dx*dx;
         return compose(
-            Polynomial<1>(f(x), 
+            Polynomial<0,1>(f(x), 
                 central_finite_difference(f, x, dx, 1) / dx),
             Shifting(-x)
         );
     }
 
     template<typename F>
-    constexpr Polynomial<2> quadratic_newton_polynomial(
+    constexpr Polynomial<0,2> quadratic_newton_polynomial(
         const F f, 
         const float x1, 
         const float x2, 
@@ -789,11 +866,11 @@ namespace math {
     }
 
     template<typename F>
-    constexpr Polynomial<2> quadratic_taylor_series(const F f, const float x, const float dx)
+    constexpr Polynomial<0,2> quadratic_taylor_series(const F f, const float x, const float dx)
     {
         const float dx2 = dx*dx;
         return compose(
-            Polynomial<2>(f(x), 
+            Polynomial<0,2>(f(x), 
                 central_finite_difference(f, x, dx, 1) / dx, 
                 central_finite_difference(f, x, dx, 2) /(dx2*2.0f)),
             Shifting(-x)
@@ -801,7 +878,7 @@ namespace math {
     }
 
     template<typename F>
-    constexpr Polynomial<3> cubic_newton_polynomial(
+    constexpr Polynomial<0,3> cubic_newton_polynomial(
         const F f, 
         const float x1, 
         const float x2, 
@@ -821,13 +898,13 @@ namespace math {
     }
 
     template<typename F>
-    constexpr Polynomial<3> cubic_taylor_series(const F f, const float x, const float dx)
+    constexpr Polynomial<0,3> cubic_taylor_series(const F f, const float x, const float dx)
     {
         const float dx2 = dx*dx;
         const float dx3 = dx2*dx;
         return 
             compose(
-                Polynomial<3>(f(x), 
+                Polynomial<0,3>(f(x), 
                     central_finite_difference(f, x, dx, 1) / dx, 
                     central_finite_difference(f, x, dx, 2) /(dx2*2.0f), 
                     central_finite_difference(f, x, dx, 3) /(dx3*6.0f)),

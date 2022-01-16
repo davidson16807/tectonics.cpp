@@ -134,5 +134,15 @@ namespace math {
 
 
 
+    constexpr float derivative(const Scaling f) 
+    {
+        return f.factor;
+    }
+
+    constexpr Scaling integral(const float k) 
+    {
+        return Scaling(k);
+    }
+
 }
 
