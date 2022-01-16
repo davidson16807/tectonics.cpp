@@ -206,9 +206,9 @@ PartlyKnownCompound water (
     /*gas*/
     phase::PartlyKnownGas {
         /*isobaric_specific_heat_capacity*/ 
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
-                0.01766, 0.80539, 0.00707, 0.69586, 0.0, 1.0, 0.0, 1.42782,
+                0.01766, 0.80539, 0.00707, 0.69586, 1.42782,
                  300.0, 1273.2,  0.0, 10.0, 0.034),
                 // water, mean error: 0.8%, max error: 3.4%, range: 300-1273.2K, 0-10MPa, stp estimate: 1.781
         /*thermal_conductivity*/   
@@ -218,9 +218,9 @@ PartlyKnownCompound water (
                 300.0, 1273.2, 0.0, 10.0, 0.097), 
                 // water, mean error: 2.5%, max error: 9.7%, range: 300-1273.2K, 0-10MPa, stp estimate: 0.018
         /*dynamic_viscosity*/      
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
-                0.00019, 3.33694, 0.02183, 1.08016, 0.0, 1.0, 0.0, -0.58257,
+                0.00019, 3.33694, 0.02183, 1.08016, -0.58257,
                  300.0, 1273.2,  0.0, 10.0, 0.035), 
                 // water, mean error: 1.2%, max error: 3.5%, range: 300-1273.2K, 0-10MPa, stp estimate: 8.765
         /*density*/                missing(),
@@ -924,15 +924,15 @@ PartlyKnownCompound nitrogen (
                 163.15, 2013.2, 0.0, 3.0, 0.054), 
                 // nitrogen, mean error: 0.8%, max error: 5.4%, range: 163.15-2013.2K, 0-3MPa, stp estimate: 1.013
         /*thermal_conductivity*/   // 0.0234 * si::watt / (si::meter * si::kelvin),                    // wikipedia
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
-                0.00026, 1.21142, 0.00037, 0.75287, 0.0, 1.0, 0.0, -0.00165,
+                0.00026, 1.21142, 0.00037, 0.75287, -0.00165,
                  113.15, 2013.2,  0.0, 3.0, 0.050), 
                 // nitrogen, mean error: 0.8%, max error: 5.0%, range: 113.15-2013.2K, 0-3MPa, stp estimate: 0.024
         /*dynamic_viscosity*/      // 1.76e-5 * si::pascal * si::second,                               // engineering toolbox, at 20 C
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
-                0.04908, 2.30670, 0.50611, 0.64605, 0.0, 1.0, 0.0, -2.56297,
+                0.04908, 2.30670, 0.50611, 0.64605, -2.56297,
                  113.15, 2013.2,  0.0, 3.0, 0.051), 
                 // nitrogen, mean error: 1.5%, max error: 5.1%, range: 113.15-2013.2K, 0-3MPa, stp estimate: 16.416
         /*density*/                missing(),
@@ -1259,15 +1259,15 @@ PartlyKnownCompound oxygen (
                 204.36, 1004.4, 0.0, 3.0, 0.033), 
                 // oxygen, mean error: 0.7%, max error: 3.3%, range: 204.36-1004.4K, 0-3MPa, stp estimate: 0.907
         /*thermal_conductivity*/   
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
-                0.00023, 1.29450, 0.00018, 0.88149, 0.0, 1.0, 0.0, -0.00130,
+                0.00023, 1.29450, 0.00018, 0.88149, -0.00130,
                  104.36, 1004.4,  0.0, 3.0, 0.042), 
                 // oxygen, mean error: 0.8%, max error: 4.2%, range: 104.36-1004.4K, 0-3MPa, stp estimate: 0.025
         /*dynamic_viscosity*/      
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
-                -0.08909, 0.00000, 0.39475, 0.70840, 0.0, 1.0, 0.0, -2.08620,
+                -0.08909, 0.00000, 0.39475, 0.70840, -2.08620,
                  104.36, 1004.4,  0.0, 3.0, 0.081), 
                 // oxygen, mean error: 2.1%, max error: 8.1%, range: 104.36-1004.4K, 0-3MPa, stp estimate: 18.827
         /*density*/                missing(),
@@ -1554,15 +1554,15 @@ PartlyKnownCompound carbon_dioxide (
                 266.59, 1116.6, 0.0, 3.0, 0.028), 
                 // carbon dioxide, mean error: 0.8%, max error: 2.8%, range: 266.59-1116.6K, 0-3MPa, stp estimate: 0.828
         /*thermal_conductivity*/   // 0.01662 * si::watt / ( si::meter * si::kelvin ),                 // wikipedia
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
-                0.00032, 1.14102, 0.00027, 0.83072, 0.0, 1.0, 0.0, -0.01434,
+                0.00032, 1.14102, 0.00027, 0.83072, -0.01434,
                  266.59, 1116.6,  0.0, 3.0, 0.027), 
                 // carbon dioxide, mean error: 0.8%, max error: 2.7%, range: 266.59-1116.6K, 0-3MPa, stp estimate: 0.015
         /*dynamic_viscosity*/      // 1.47e-5 * si::pascal * si::second,                               // engineering toolbox, at 20 C
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
-                0.05967, 1.75501, 0.18576, 0.79011, 0.0, 1.0, 0.0, -1.65245,
+                0.05967, 1.75501, 0.18576, 0.79011, -1.65245,
                  266.59, 1116.6,  0.0, 3.0, 0.032), 
                 // carbon dioxide, mean error: 1.5%, max error: 3.2%, range: 266.59-1116.6K, 0-3MPa, stp estimate: 13.980
         /*density*/                missing(),
@@ -1774,9 +1774,9 @@ PartlyKnownCompound methane (
                 140.69, 640.69, 0.0, 3.0, 0.032), 
                 // methane, mean error: 1.1%, max error: 3.2%, range: 140.69-640.69K, 0-3MPa, stp estimate: 0.031
         /*dynamic_viscosity*/      // 1.10e-5 * si::pascal * si::second,                               // engineering toolbox, at 20 C
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
-                0.12223, 1.53060, 0.09521, 0.83600, 0.0, 1.0, 0.0, -0.21904,
+                0.12223, 1.53060, 0.09521, 0.83600, -0.21904,
                  140.69, 640.69,  0.0, 3.0, 0.052), 
                 // methane, mean error: 1.9%, max error: 5.2%, range: 140.69-640.69K, 0-3MPa, stp estimate: 10.148
         /*density*/                missing(),
@@ -2005,20 +2005,20 @@ PartlyKnownCompound argon (
     /*gas*/
     phase::PartlyKnownGas {
         /*isobaric_specific_heat_capacity*/  // 0.570 * si::joule / (si::gram * si::kelvin),        
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::kilojoule/(si::kilogram*si::kelvin),
-                 -1e-8, 0.98, 2.75e-4, 1.02, 0.0, 1.0, 0.0, 5.6e-1,
+                 -1e-8, 0.98, 2.75e-4, 1.02, 5.6e-1,
                  90.0, 1000.0,  0.1, 10.0, 0.0),             
         /*thermal_conductivity*/   // 0.016 * si::watt / ( si::meter * si::kelvin ),                   // wikipedia
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
-                0.00034, 1.11244, 0.00029, 0.73962, 0.0, 1.0, 0.0, -0.00193,
+                0.00034, 1.11244, 0.00029, 0.73962, -0.00193,
                  133.81, 683.81,  0.0, 3.0, 0.027), 
                 // argon, mean error: 1.2%, max error: 2.7%, range: 133.81-683.81K, 0-3MPa, stp estimate: 0.016
         /*dynamic_viscosity*/      // 2.23e-5 * si::pascal * si::second,                               // engineering toolbox, at 20 C
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
-                0.41072, 0.79782, 0.22045, 0.81080, 0.0, 1.0, 0.0, -0.33331,
+                0.41072, 0.79782, 0.22045, 0.81080, -0.33331,
                  133.81, 683.81,  0.0, 3.0, 0.042), 
                 // argon, mean error: 1.7%, max error: 4.2%, range: 133.81-683.81K, 0-3MPa, stp estimate: 20.565
         /*density*/                missing(),
@@ -2222,20 +2222,20 @@ PartlyKnownCompound helium (
     /*gas*/
     phase::PartlyKnownGas {
         /*isobaric_specific_heat_capacity*/ // 9.78 * si::joule / (si::gram * si::kelvin), 
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::kilojoule/(si::kilogram*si::kelvin),
-                 -1e-6, 0.95, 1.86e-2, 1.02, 0.0, 1.0, 0.0, 5.7e-1,
+                 -1e-6, 0.95, 1.86e-2, 1.02, 5.7e-1,
                  20.0, 1000.0,  0.1, 10.0, 0.0),             
         /*thermal_conductivity*/   // 155.7 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
-                -0.15319, 1.77283, 0.00284, 0.70030, 0.0, 1.0, 0.0, 0.00337,
+                -0.15319, 1.77283, 0.00284, 0.70030, 0.00337,
                  52.177, 1502.2,  0.0, 0.1, 0.041), 
                 // helium, mean error: 0.8%, max error: 4.1%, range: 52.177-1502.2K, 0-0.1MPa, stp estimate: 0.145
         /*dynamic_viscosity*/      // 1.96e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
-                -0.19093, 1.50359, 0.28815, 0.73057, 0.0, 1.0, 0.0, 1.34631,
+                -0.19093, 1.50359, 0.28815, 0.73057, 1.34631,
                  52.177, 1502.2,  0.0, 0.1, 0.007), 
                 // helium, mean error: 0.1%, max error: 0.7%, range: 52.177-1502.2K, 0-0.1MPa, stp estimate: 18.702
         /*density*/                missing(),
@@ -2396,15 +2396,15 @@ PartlyKnownCompound hydrogen (
                  63.957, 1014.0, 0.0, 1.0, 0.08), 
                  // hydrogen, mean error: 0.3%, max error: 1.4%, range: 63.957-1014K, 0-1MPa, stp estimate: 14.133
         /*thermal_conductivity*/   // 186.6 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
-                0.00197, 1.33064, 0.00154, 0.84231, 0.0, 1.0, 0.0, -0.00399,
+                0.00197, 1.33064, 0.00154, 0.84231, -0.00399,
                  63.957, 1014,  0.0, 1.0, 0.025), 
                 // hydrogen, mean error: 1.3%, max error: 2.5%, range: 63.957-1014K, 0-1MPa, stp estimate: 0.169
         /*dynamic_viscosity*/      // 0.88e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
-                0.05907, 1.95272, 0.20949, 0.66373, 0.0, 1.0, 0.0, -0.28287,
+                0.05907, 1.95272, 0.20949, 0.66373, -0.28287,
                  63.957, 1014,  0.0, 1.0, 0.009), 
                 // hydrogen, mean error: 0.2%, max error: 0.9%, range: 63.957-1014K, 0-1MPa, stp estimate: 8.393
         /*density*/                missing(),
@@ -2581,9 +2581,9 @@ PartlyKnownCompound ammonia (
     /*gas*/
     phase::PartlyKnownGas {
         /*isobaric_specific_heat_capacity*/ // 35.06 * si::joule / (17.031 * si::gram * si::kelvin), // wikipedia data page
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
-                0.04652, 0.81959, 0.02155, 0.67889, 0.0, 1.0, 0.0, 1.04112,
+                0.04652, 0.81959, 0.02155, 0.67889, 1.04112,
                  245.5, 695.5,  0.0, 10.0, 0.043), 
                 // ammonia, mean error: 1.2%, max error: 4.3%, range: 245.5-695.5K, 0-10MPa, stp estimate: 2.020
         /*thermal_conductivity*/   // 25.1 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
@@ -2593,9 +2593,9 @@ PartlyKnownCompound ammonia (
                 245.5, 695.5, 0.0, 10.0, 0.069), 
                 // ammonia, mean error: 2.5%, max error: 6.9%, range: 245.5-695.5K, 0-10MPa, stp estimate: 0.023
         /*dynamic_viscosity*/      // 0.99e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
-                0.00986, 1.88109, 0.02443, 1.06310, 0.0, 1.0, 0.0, -0.30191,
+                0.00986, 1.88109, 0.02443, 1.06310, -0.30191,
                  245.5, 695.5,  0.0, 10.0, 0.035), 
                 // ammonia, mean error: 0.7%, max error: 3.5%, range: 245.5-695.5K, 0-10MPa, stp estimate: 9.204
         /*density*/                missing(),
@@ -3010,9 +3010,9 @@ PartlyKnownCompound  sulfur_dioxide (
     /*gas*/
     phase::PartlyKnownGas {
         /*isobaric_specific_heat_capacity*/ 
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
-                0.03124, 1.38702, 0.00214, 0.79655, 0.0, 1.0, 0.0, 0.42765,
+                0.03124, 1.38702, 0.00214, 0.79655, 0.42765,
                  247.7, 547.7,  0.0, 1.0, 0.020), 
                 // sulfur dioxide, mean error: 0.7%, max error: 2.0%, range: 247.7-547.7K, 0-1MPa, stp estimate: 0.615
         /*thermal_conductivity*/   // 9.6 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
@@ -3318,21 +3318,21 @@ PartlyKnownCompound carbon_monoxide (
     /*gas*/
     phase::PartlyKnownGas {
         /*isobaric_specific_heat_capacity*/ // 29.0 * si::joule / (28.010 * si::gram * si::kelvin), // wikipedia data page
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
-                0.00728, 0.92688, 0.00010, 0.97052, 0.0, 1.0, 0.0, 1.01709,
+                0.00728, 0.92688, 0.00010, 0.97052, 1.01709,
                  168.16, 518.16,  0.0, 3.0, 0.008), 
                 // carbon monoxide, mean error: 0.3%, max error: 0.8%, range: 168.16-518.16K, 0-3MPa, stp estimate: 1.041
         /*thermal_conductivity*/   // 25.0 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
-                0.00045, 0.43412, 0.00055, 0.70174, 0.0, 1.0, 0.0, -0.00365,
+                0.00045, 0.43412, 0.00055, 0.70174, -0.00365,
                  118.16, 518.16,  0.0, 3.0, 0.025), 
                 // carbon monoxide, mean error: 0.8%, max error: 2.5%, range: 118.16-518.16K, 0-3MPa, stp estimate: 0.025
         /*dynamic_viscosity*/      // 1.74e-5 * si::pascal * si::second, // engineering toolbox, at 20 C
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
-                0.26687, 1.09457, 0.33802, 0.70825, 0.0, 1.0, 0.0, -1.67961,
+                0.26687, 1.09457, 0.33802, 0.70825, -1.67961,
                  118.16, 518.16,  0.0, 3.0, 0.029), 
                 // carbon monoxide, mean error: 1.2%, max error: 2.9%, range: 118.16-518.16K, 0-3MPa, stp estimate: 16.311
         /*density*/                missing(),
@@ -3551,9 +3551,9 @@ PartlyKnownCompound ethane (
     /*gas*/
     phase::PartlyKnownGas {
         /*isobaric_specific_heat_capacity*/ // 52.49 * si::joule / (30.070 * si::gram * si::kelvin), // wikipedia data page
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
-                0.05856, 0.85039, 0.00090, 1.21385, 0.0, 1.0, 0.0, 0.86559,
+                0.05856, 0.85039, 0.00090, 1.21385, 0.86559,
                  140.35, 640.35,  0.0, 3.0, 0.033), 
                 // ethane, mean error: 1.3%, max error: 3.3%, range: 140.35-640.35K, 0-3MPa, stp estimate: 1.687
         /*thermal_conductivity*/   // 21.2 * si::milliwatt / ( si::meter * si::kelvin ),  // Huber & Harvey
@@ -3563,9 +3563,9 @@ PartlyKnownCompound ethane (
                 140.35, 640.35, 0.0, 3.0, 0.038), 
                 // ethane, mean error: 1.1%, max error: 3.8%, range: 140.35-640.35K, 0-3MPa, stp estimate: 0.018
         /*dynamic_viscosity*/      // 9.4 * si::micropascal*si::second,
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
-                0.07538, 2.19443, 0.07385, 0.85870, 0.0, 1.0, 0.0, -0.57044,
+                0.07538, 2.19443, 0.07385, 0.85870, -0.57044,
                  140.35, 640.35,  0.0, 3.0, 0.029), 
                 // ethane, mean error: 1.2%, max error: 2.9%, range: 140.35-640.35K, 0-3MPa, stp estimate: 8.560
         /*density*/                missing(),
@@ -4206,21 +4206,21 @@ PartlyKnownCompound perflouromethane(
     /*gas*/
     phase::PartlyKnownGas {
         /*isobaric_specific_heat_capacity*/ 
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
-                0.00845, 1.30975, 0.00914, 0.70892, 0.0, 1.0, 0.0, 0.16266,
+                0.00845, 1.30975, 0.00914, 0.70892, 0.16266,
                  148.94, 598.94,  0.0, 3.0, 0.053), 
                 // tetrafluoromethane, mean error: 2.6%, max error: 5.3%, range: 148.94-598.94K, 0-3MPa, stp estimate: 0.651
         /*thermal_conductivity*/   // 16.0 * si::milliwatt/(si::meter*si::kelvin), // Huber & Harvey
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),
-                0.00019, 1.49795, 0.00010, 0.95277, 0.0, 1.0, 0.0, -0.00704,
+                0.00019, 1.49795, 0.00010, 0.95277, -0.00704,
                  148.94, 598.94,  0.0, 3.0, 0.084), 
                 // tetrafluoromethane, mean error: 3.3%, max error: 8.4%, range: 148.94-598.94K, 0-3MPa, stp estimate: 0.015
         /*dynamic_viscosity*/      
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::micropascal*si::second, 
-                0.22721, 1.71531, 0.16433, 0.82188, 0.0, 1.0, 0.0, -0.84952,
+                0.22721, 1.71531, 0.16433, 0.82188, -0.84952,
                  148.94, 598.94,  0.0, 3.0, 0.049), 
                 // tetrafluoromethane, mean error: 2.0%, max error: 4.9%, range: 148.94-598.94K, 0-3MPa, stp estimate: 15.680
         /*density*/                missing(),
@@ -4329,9 +4329,9 @@ PartlyKnownCompound benzene (
     /*gas*/
     phase::PartlyKnownGas {
         /*isobaric_specific_heat_capacity*/ // 82.44 * si::joule / (79.109 * si::gram * si::kelvin),
-            relation::get_sigmoid_exponent_pressure_temperature_relation
+            relation::get_exponent_pressure_temperature_relation
                 (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),
-                0.11074, 0.98216, 0.00048, 1.26428, 0.0, 1.0, 0.0, 0.48272,
+                0.11074, 0.98216, 0.00048, 1.26428, 0.48272,
                  300, 628.7,  0.0, 1.0, 0.071), 
                 // benzene, mean error: 2.6%, max error: 7.1%, range: 300-628.7K, 0-1MPa, stp estimate: 1.069
         /*thermal_conductivity*/   

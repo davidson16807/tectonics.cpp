@@ -103,35 +103,6 @@ namespace compound {
         );
     }
 
-    template<typename TT, typename Tp, typename Ty>
-    field::StateFunction<Ty> get_sigmoid_exponent_pressure_temperature_function( // 36 uses
-        const TT Tunits, const Tp punits, const Ty yunits, 
-        const double pslope, const double pexponent, 
-        const double Tslope, const double Texponent, 
-        const double Tsigmoid_max, const double Tsigmoid_scale, const double Tsigmoid_center,  
-        const double intercept,
-        const double Tmin, const double Tmax, 
-        const double pmin, const double pmax
-    ){
-        return field::StateFunction<Ty>(
-            [Tunits, punits, yunits, 
-             pslope, pexponent, Tslope, Texponent, 
-             Tsigmoid_max, Tsigmoid_scale, Tsigmoid_center, 
-             intercept,
-             Tmin, Tmax, pmin, pmax]
-            (const si::pressure p, const si::temperature T)
-            {
-                const double Tclamped = std::clamp(T/Tunits, Tmin, Tmax);
-                const double pclamped = std::clamp(p/punits, pmin, pmax);
-                const double Tsigmoid_input = (Tclamped - Tsigmoid_center)/Tsigmoid_scale;
-                return (pslope*std::pow(pclamped, pexponent)
-                      + Tslope*std::pow(Tclamped, Texponent)
-                      + Tsigmoid_max * Tsigmoid_input / std::sqrt(1.0 + Tsigmoid_input*Tsigmoid_input)
-                      + intercept) * yunits;
-            }
-        );
-    }
-
     /*
     `get_perry_johnson_temperature_function()` uses Perry coefficients for high temperature,
     and interpolated values from Johnson (1960) for low temperature.
@@ -198,24 +169,6 @@ namespace compound {
                 double t = std::clamp(T/Tunits, Tmin, Tmax);
                 return std::exp(log_intercept + log_slope/t + log_log*std::log(t) + log_exponentiated*std::pow(t,exponent))*yunits;
             }
-        );
-    }
-
-    // 9 uses, for viscosity and thermal conductivity of gas
-    template<typename Tx, typename Ty>
-    relation::GasPropertyStateRelation<Ty> get_dippr_temperature_function_102( 
-        const Tx Tunits, const Ty yunits,
-        const double c1, const double c2, const double c3, const double c4,
-        const double Tmin, const double Tmax
-    ){
-        return relation::GasPropertyStateRelation<Ty>(
-            si::pascal, Tunits, yunits,
-            0.0, 0.0, // pressure min and max
-            Tmin, Tmax, // temperature min and max
-            0.0, 1.0, // pressure slope and exponent
-            c1, c2, c3, c4, // temperature slope, exponent, o-plus slope, and squared o-plus slope
-            0.0, 0.0, 0.0, // temperature sigmoid slope and other parameters
-            0.0 // intercept
         );
     }
 
