@@ -6,127 +6,121 @@
 // in-house libraries
 #include <math/expression/Scaling.hpp>
 #include <math/expression/Polynomial.hpp>
+#include <math/expression/Clamped.hpp>
 #include <math/inspection.hpp>
 #include <units/si.hpp>
 
 namespace compound {
 namespace relation {
 
-    struct ClampedExponent {
-        float lo;
-        float hi;
+    struct Exponent {
         float weight;
         float exponent;
-        constexpr explicit ClampedExponent(const float lo, const float hi, const float weight, const float exponent):
-            lo(lo),
-            hi(hi),
+        constexpr explicit Exponent(const float weight, const float exponent):
             weight(weight),
             exponent(exponent)
         {}
-        constexpr explicit ClampedExponent():
-            lo(0.0f),
-            hi(0.0f),
+        constexpr explicit Exponent():
             weight(0.0f),
             exponent(1.0f)
         {}
+        constexpr Exponent(const Exponent& f):
+            weight(f.weight),
+            exponent(f.exponent)
+        {}
         constexpr float operator()(const float x) const
         {
-            return weight*std::pow(std::clamp(x,lo,hi), exponent);
+            return weight*std::pow(x, exponent);
         }
-        constexpr ClampedExponent& operator*=(const float k)
+        constexpr Exponent& operator*=(const float k)
         {
             weight *= k;
             return *this;
         }
-        constexpr ClampedExponent& operator/=(const float k)
+        constexpr Exponent& operator/=(const float k)
         {
             weight /= k;
             return *this;
         }
     };
 
-    constexpr ClampedExponent operator*(const ClampedExponent f, const float k)
+    constexpr Exponent operator*(const Exponent f, const float k)
     {
-        return ClampedExponent(f.lo, f.hi, f.weight*k, f.exponent);
+        return Exponent(f.weight*k, f.exponent);
     }
-    constexpr ClampedExponent operator*(const float k, const ClampedExponent f)
+    constexpr Exponent operator*(const float k, const Exponent f)
     {
-        return ClampedExponent(f.lo, f.hi, f.weight*k, f.exponent);
+        return Exponent(f.weight*k, f.exponent);
     }
-    constexpr ClampedExponent operator/(const ClampedExponent f, const float k)
+    constexpr Exponent operator/(const Exponent f, const float k)
     {
-        return ClampedExponent(f.lo, f.hi, f.weight/k, f.exponent);
+        return Exponent(f.weight/k, f.exponent);
     }
-    constexpr ClampedExponent operator/(const float k, const ClampedExponent f)
+    constexpr Exponent operator/(const float k, const Exponent f)
     {
-        return ClampedExponent(f.lo, f.hi, k/f.weight, -f.exponent);
+        return Exponent(k/f.weight, -f.exponent);
     }
 
-    constexpr ClampedExponent compose(const ClampedExponent f, const math::Scaling g)
+    constexpr Exponent compose(const Exponent f, const math::Scaling g)
     {
-        return ClampedExponent(
-            f.lo*g.factor,
-            f.hi*g.factor,
+        return Exponent(
             f.weight*std::pow(g.factor, f.exponent),
             f.exponent
         );
     }
 
-    struct ClampedSigmoid {
-        float xlo;
-        float xhi;
+    struct Sigmoid {
         float xscale;
         float xoffset;
         float ymax;
-        constexpr explicit ClampedSigmoid(const float xlo, const float xhi, const float xscale, const float xoffset, const float ymax):
-            xlo(xlo),
-            xhi(xhi),
+        constexpr explicit Sigmoid(const float xscale, const float xoffset, const float ymax):
             xscale(xscale),
             xoffset(xoffset),
             ymax(ymax)
         {}
-        constexpr explicit ClampedSigmoid():
-            xlo(0.0f),
-            xhi(0.0f),
+        constexpr explicit Sigmoid():
             xscale(0.0f),
             xoffset(0.0f),
             ymax(0.0f)
         {}
+        constexpr Sigmoid(const Sigmoid& f):
+            xscale(f.xscale),
+            xoffset(f.xoffset),
+            ymax(f.ymax)
+        {}
         constexpr float operator()(const float x) const
         {
-            float u = xscale * std::clamp(x, xlo, xhi) + xoffset;
+            float u = xscale * x + xoffset;
             return ymax * u / std::sqrt(1.0f + u*u);
         }
-        constexpr ClampedSigmoid& operator*=(const float scalar)
+        constexpr Sigmoid& operator*=(const float scalar)
         {
             ymax *= scalar;
             return *this;
         }
-        constexpr ClampedSigmoid& operator/=(const float scalar)
+        constexpr Sigmoid& operator/=(const float scalar)
         {
             ymax /= scalar;
             return *this;
         }
     };
-    constexpr ClampedSigmoid operator*(const ClampedSigmoid relation, const float scalar)
+    constexpr Sigmoid operator*(const Sigmoid relation, const float scalar)
     {
-        return ClampedSigmoid(relation.xlo, relation.xhi, relation.xscale, relation.xoffset, relation.ymax*scalar);
+        return Sigmoid(relation.xscale, relation.xoffset, relation.ymax*scalar);
     }
-    constexpr ClampedSigmoid operator*(const float scalar, const ClampedSigmoid relation)
+    constexpr Sigmoid operator*(const float scalar, const Sigmoid relation)
     {
-        return ClampedSigmoid(relation.xlo, relation.xhi, relation.xscale, relation.xoffset, relation.ymax*scalar);
+        return Sigmoid(relation.xscale, relation.xoffset, relation.ymax*scalar);
     }
-    constexpr ClampedSigmoid operator/(const ClampedSigmoid relation, const float scalar)
+    constexpr Sigmoid operator/(const Sigmoid relation, const float scalar)
     {
-        return ClampedSigmoid(relation.xlo, relation.xhi, relation.xscale, relation.xoffset, relation.ymax/scalar);
+        return Sigmoid(relation.xscale, relation.xoffset, relation.ymax/scalar);
     }
 
 
-    constexpr ClampedSigmoid compose(const ClampedSigmoid f, const math::Scaling g)
+    constexpr Sigmoid compose(const Sigmoid f, const math::Scaling g)
     {
-        return ClampedSigmoid(
-            g.factor > 0.0f? f.xlo * g.factor : f.xhi * g.factor,
-            g.factor > 0.0f? f.xhi * g.factor : f.xlo * g.factor,
+        return Sigmoid(
             f.xscale * g.factor,
             f.xoffset,
             f.ymax
@@ -134,38 +128,36 @@ namespace relation {
     }
 
     struct Dippr102 {
-        float lo;
-        float hi;
         float c1;
         float c2;
         float c3;
         float c4;
         constexpr explicit Dippr102(
-            const float lo,
-            const float hi,
             const float c1,
             const float c2,
             const float c3,
             const float c4
         ):
-            lo(lo),
-            hi(hi),
             c1(c1),
             c2(c2),
             c3(c3),
             c4(c4)
         {}
         constexpr explicit Dippr102():
-            lo(0.0f),
-            hi(0.0f),
             c1(0.0f),
             c2(1.0f),
             c3(0.0f),
             c4(0.0f)
         {}
+        constexpr Dippr102(const Dippr102& f):
+            c1(f.c1),
+            c2(f.c2),
+            c3(f.c3),
+            c4(f.c4)
+        {}
         constexpr float operator()(const float x) const
         {
-            const float u = std::clamp(x, lo, hi);
+            const float u = x;
             return c1 * std::pow(u, c2) / (1.0f + c3/u + c4/(u*u));
         }
         constexpr Dippr102& operator*=(const float scalar)
@@ -181,27 +173,25 @@ namespace relation {
     };
     constexpr Dippr102 operator*(const Dippr102 relation, const float scalar)
     {
-        return Dippr102(relation.lo, relation.hi, relation.c1 * scalar, relation.c2, relation.c3, relation.c4);
+        return Dippr102(relation.c1 * scalar, relation.c2, relation.c3, relation.c4);
     }
     constexpr Dippr102 operator*(const float scalar, const Dippr102 relation)
     {
-        return Dippr102(relation.lo, relation.hi, relation.c1 * scalar, relation.c2, relation.c3, relation.c4);
+        return Dippr102(relation.c1 * scalar, relation.c2, relation.c3, relation.c4);
     }
     constexpr Dippr102 operator/(const Dippr102 relation, const float scalar)
     {
-        return Dippr102(relation.lo, relation.hi, relation.c1 / scalar, relation.c2, relation.c3, relation.c4);
+        return Dippr102(relation.c1 / scalar, relation.c2, relation.c3, relation.c4);
     }
     constexpr Dippr102 operator-(const Dippr102 relation)
     {
-        return Dippr102(relation.lo, relation.hi, relation.c1 * -1.0f, relation.c2, relation.c3, relation.c4);
+        return Dippr102(relation.c1 * -1.0f, relation.c2, relation.c3, relation.c4);
     }
 
 
     constexpr Dippr102 compose(Dippr102 f, const math::Scaling g)
     {
         return Dippr102(
-            g.factor > 0.0f? f.lo * g.factor : f.hi * g.factor,
-            g.factor > 0.0f? f.hi * g.factor : f.lo * g.factor,
             f.c1 * std::pow(g.factor, f.c2),
             f.c2,
             f.c3 / g.factor,
@@ -209,25 +199,25 @@ namespace relation {
         );
     }
 
-    constexpr float maximum(const ClampedExponent& f, const float lo, const float hi)
+    constexpr float maximum(const Exponent& f, const float lo, const float hi)
     {
         // function is monotonic, so solution must be either lo or hi
         return f(hi) > f(lo)? hi : lo;
     }
 
-    constexpr float minimum(const ClampedExponent& f, const float lo, const float hi) 
+    constexpr float minimum(const Exponent& f, const float lo, const float hi) 
     {
         // function is monotonic, so solution must be either lo or hi
         return f(hi) < f(lo)? hi : lo;
     }
 
-    constexpr float maximum(const ClampedSigmoid& f, const float lo, const float hi) 
+    constexpr float maximum(const Sigmoid& f, const float lo, const float hi) 
     {
         // function is monotonic, so solution must be either lo or hi
         return f(hi) > f(lo)? hi : lo;
     }
 
-    constexpr float minimum(const ClampedSigmoid& f, const float lo, const float hi) 
+    constexpr float minimum(const Sigmoid& f, const float lo, const float hi) 
     {
         // function is monotonic, so solution must be either lo or hi
         return f(hi) < f(lo)? hi : lo;
@@ -237,7 +227,7 @@ namespace relation {
     `max_distance` measures the largest absolute difference between the output of two functions over the given range.
     This is useful when determining whether two functions should be consolidated when used in a larger equation.
     */
-    constexpr float max_distance(const ClampedExponent relation1, const ClampedExponent relation2, const float lo, const float hi)
+    constexpr float max_distance(const Exponent relation1, const Exponent relation2, const float lo, const float hi)
     {
         return std::max(
             std::abs(relation1(hi)-relation2(hi)),
@@ -245,7 +235,7 @@ namespace relation {
         );
     }
 
-    constexpr float max_distance(const ClampedSigmoid relation1, const ClampedSigmoid relation2, const float lo, const float hi)
+    constexpr float max_distance(const Sigmoid relation1, const Sigmoid relation2, const float lo, const float hi)
     {
         return std::max(
             std::abs(relation1(hi)-relation2(hi)),
@@ -261,16 +251,16 @@ namespace relation {
 
     More broadly, GasPropertyStateRelation should be capable of representing any smooth pressure/temperature relation
     in which pressure and temperature interactions are negligible.
-    ClampedExponents can be used to represent arbitrary polynomials,
-    and ClampedSigmoids can be used to represent arbitrary lerp functions.
+    Clamped<Exponent>s can be used to represent arbitrary polynomials,
+    and Clamped<Sigmoid>s can be used to represent arbitrary lerp functions.
     */
     template<typename Ty>
     class GasPropertyStateRelation
     {
-        std::vector<ClampedExponent> pexponents;
-        std::vector<ClampedExponent> Texponents;
-        std::vector<ClampedSigmoid>  Tsigmoids;
-        std::vector<Dippr102> Tdippr102s;
+        std::vector<math::Clamped<Exponent>> pexponents;
+        std::vector<math::Clamped<Exponent>> Texponents;
+        std::vector<math::Clamped<Sigmoid>>  Tsigmoids;
+        std::vector<math::Clamped<Dippr102>> Tdippr102s;
 
         si::pressure    punits;
         si::temperature Tunits;
@@ -284,10 +274,10 @@ namespace relation {
         using parameter_type = field::StateParameters;
 
         constexpr GasPropertyStateRelation(
-            const std::vector<ClampedExponent> pexponents,
-            const std::vector<ClampedExponent> Texponents,
-            const std::vector<ClampedSigmoid>  Tsigmoids,
-            const std::vector<Dippr102> Tdippr102s,
+            const std::vector<math::Clamped<Exponent>> pexponents,
+            const std::vector<math::Clamped<Exponent>> Texponents,
+            const std::vector<math::Clamped<Sigmoid>>  Tsigmoids,
+            const std::vector<math::Clamped<Dippr102>> Tdippr102s,
 
             const si::pressure    punits,
             const si::temperature Tunits,
@@ -346,32 +336,32 @@ namespace relation {
         {
             const float p = float(pressure/punits);
             const float T = float(temperature/Tunits);
-            ClampedExponent exponent;
-            ClampedSigmoid sigmoid;
-            Dippr102 dippr102;
+            math::Clamped<Exponent> exponent;
+            math::Clamped<Sigmoid> sigmoid;
+            math::Clamped<Dippr102> dippr102;
             float u = 0.0f;
             float y = intercept;
             for (std::size_t i = 0; i < pexponents.size(); ++i)
             {
                 exponent = pexponents[i];
-                y += exponent.weight * std::pow(std::clamp(p, exponent.lo, exponent.hi), exponent.exponent);
+                y += exponent.f.weight * std::pow(std::clamp(p, exponent.lo, exponent.hi), exponent.f.exponent);
             }
             for (std::size_t i = 0; i < Texponents.size(); ++i)
             {
                 exponent = Texponents[i];
-                y += exponent.weight * std::pow(std::clamp(T, exponent.lo, exponent.hi), exponent.exponent);
+                y += exponent.f.weight * std::pow(std::clamp(T, exponent.lo, exponent.hi), exponent.f.exponent);
             }
             for (std::size_t i = 0; i < Tsigmoids.size(); ++i)
             {
                 sigmoid = Tsigmoids[i];
-                u = sigmoid.xscale * std::clamp(T, sigmoid.xlo, sigmoid.xhi) + sigmoid.xoffset;
-                y += sigmoid.ymax * u / std::sqrt(1.0f + u*u);
+                u = sigmoid.f.xscale * std::clamp(T, sigmoid.lo, sigmoid.hi) + sigmoid.f.xoffset;
+                y += sigmoid.f.ymax * u / std::sqrt(1.0f + u*u);
             }
             for (std::size_t i = 0; i < Tdippr102s.size(); ++i)
             {
                 dippr102 = Tdippr102s[i];
                 u = std::clamp(T, dippr102.lo, dippr102.hi);
-                y += dippr102.c1 * std::pow(u, dippr102.c2) / (1.0f + dippr102.c3/u + dippr102.c4/(u*u));
+                y += dippr102.f.c1 * std::pow(u, dippr102.f.c2) / (1.0f + dippr102.f.c3/u + dippr102.f.c4/(u*u));
             }
 
             // return intercept * yunits;
@@ -399,25 +389,25 @@ namespace relation {
             float least_useful_term_error;
             while(restricted.known_max_fractional_error < known_max_fractional_error) {
                 auto least_useful_pexponent = std::min_element(restricted.pexponents.begin(), restricted.pexponents.end(),
-                    [&](const ClampedExponent& f1, const ClampedExponent& f2){
+                    [&](const math::Clamped<Exponent>& f1, const math::Clamped<Exponent>& f2){
                         (maximum(f1,plo,phi)-minimum(f1,plo,phi)) < (maximum(f2,plo,phi)-minimum(f2,plo,phi));
                     });
                 float least_useful_pexponent_error = maximum(least_useful_pexponent, plo,phi) - minimum(least_useful_pexponent, Tlo,Thi);
                 auto least_useful_Texponent = std::min_element(
                     restricted.Texponents.begin(), restricted.Texponents.end(),
-                    [&](const ClampedExponent& f1, const ClampedExponent& f2){
+                    [&](const math::Clamped<Exponent>& f1, const math::Clamped<Exponent>& f2){
                         (maximum(f1,Tlo,Thi)-minimum(f1,Tlo,Thi)) < (maximum(f2,Tlo,Thi)-minimum(f2,Tlo,Thi));
                     });
                 float least_useful_Texponent_error = maximum(least_useful_Texponent, plo,phi) - minimum(least_useful_Texponent, Tlo,Thi);
                 auto least_useful_Tsigmoid = std::min_element(
                     restricted.Tsigmoids.begin(), restricted.Tsigmoids.end(),
-                    [&](const ClampedExponent& f1, const ClampedExponent& f2){
+                    [&](const math::Clamped<Exponent>& f1, const math::Clamped<Exponent>& f2){
                         (maximum(f1,Tlo,Thi)-minimum(f1,Tlo,Thi)) < (maximum(f2,Tlo,Thi)-minimum(f2,Tlo,Thi));
                     });
                 float least_useful_Tsigmoid_error = maximum(least_useful_Tsigmoid, plo,phi) - minimum(least_useful_Tsigmoid, Tlo,Thi);
                 auto least_useful_Tdippr102 = std::min_element(
                     restricted.Tdippr102s.begin(), restricted.Tdippr102s.end(),
-                    [&](const ClampedExponent& f1, const ClampedExponent& f2){
+                    [&](const math::Clamped<Exponent>& f1, const math::Clamped<Exponent>& f2){
                         (maximum(f1,Tlo,Thi)-minimum(f1,Tlo,Thi)) < (maximum(f2,Tlo,Thi)-minimum(f2,Tlo,Thi));
                     });
                 float least_useful_Tdippr102_error = maximum(least_useful_Tdippr102, plo,phi) - minimum(least_useful_Tdippr102, Tlo,Thi);
@@ -583,10 +573,10 @@ namespace relation {
         const float known_max_fractional_error
     ) {
         return GasPropertyStateRelation<Ty>(
-            std::vector<ClampedExponent>{ClampedExponent(pmin, pmax, pslope, pexponent)},
-            std::vector<ClampedExponent>{ClampedExponent(Tmin, Tmax, Tslope, Texponent)},
-            std::vector<ClampedSigmoid>{ClampedSigmoid(Tmin, Tmax, 1.0f/Tsigmoid_scale, -Tsigmoid_center/Tsigmoid_scale, Tsigmoid_max)},
-            std::vector<Dippr102>(),
+            std::vector<math::Clamped<Exponent>>{math::Clamped<Exponent>(pmin, pmax, Exponent(pslope, pexponent))},
+            std::vector<math::Clamped<Exponent>>{math::Clamped<Exponent>(Tmin, Tmax, Exponent(Tslope, Texponent))},
+            std::vector<math::Clamped<Sigmoid>>{math::Clamped<Sigmoid>(Tmin, Tmax, Sigmoid(1.0f/Tsigmoid_scale, -Tsigmoid_center/Tsigmoid_scale, Tsigmoid_max))},
+            std::vector<math::Clamped<Dippr102>>(),
 
             punits, Tunits, yunits,
 
@@ -606,10 +596,10 @@ namespace relation {
         const float known_max_fractional_error
     ) {
         return GasPropertyStateRelation<Ty>(
-            std::vector<ClampedExponent>{ClampedExponent(pmin, pmax, pslope, pexponent)},
-            std::vector<ClampedExponent>{ClampedExponent(Tmin, Tmax, Tslope, Texponent)},
-            std::vector<ClampedSigmoid>{},
-            std::vector<Dippr102>(),
+            std::vector<math::Clamped<Exponent>>{math::Clamped<Exponent>(pmin, pmax, Exponent(pslope, pexponent))},
+            std::vector<math::Clamped<Exponent>>{math::Clamped<Exponent>(Tmin, Tmax, Exponent(Tslope, Texponent))},
+            std::vector<math::Clamped<Sigmoid>>{},
+            std::vector<math::Clamped<Dippr102>>(),
 
             punits, Tunits, yunits,
 
@@ -627,10 +617,10 @@ namespace relation {
         const float Tmin, const float Tmax
     ) {
         return GasPropertyStateRelation<Ty>(
-            std::vector<ClampedExponent>(0),
-            std::vector<ClampedExponent>(0),
-            std::vector<ClampedSigmoid>(0),
-            std::vector<Dippr102>{Dippr102(Tmin, Tmax, c1, c2, c3, c4)},
+            std::vector<math::Clamped<Exponent>>(0),
+            std::vector<math::Clamped<Exponent>>(0),
+            std::vector<math::Clamped<Sigmoid>>(0),
+            std::vector<math::Clamped<Dippr102>>{math::Clamped<Dippr102>(Tmin, Tmax, Dippr102(c1, c2, c3, c4))},
 
             si::pressure(1.0), Tunits, yunits,
 
@@ -681,16 +671,16 @@ namespace relation {
         auto fp   = math::quadratic_newton_polynomial([&](float p) -> float{ return f(p*punits,   Tmid*Tunits) / yunits; }, pmin, pmid, pmax);
         auto fT   = math::quadratic_newton_polynomial([&](float T) -> float{ return f(pmin*punits,T*Tunits   ) / yunits; }, Tmin, Tmid, Tmax);
         auto fhat = GasPropertyStateRelation<Ty>(
-            std::vector<ClampedExponent>{
-                ClampedExponent(pmin, pmax, fp[1], 1.0f),
-                ClampedExponent(pmin, pmax, fp[2], 2.0f)
+            std::vector<math::Clamped<Exponent>>{
+                math::Clamped<Exponent>(pmin, pmax, Exponent(fp[1], 1.0f)),
+                math::Clamped<Exponent>(pmin, pmax, Exponent(fp[2], 2.0f))
             },
-            std::vector<ClampedExponent>{
-                ClampedExponent(Tmin, Tmax, fT[1], 1.0f),
-                ClampedExponent(Tmin, Tmax, fT[2], 2.0f)
+            std::vector<math::Clamped<Exponent>>{
+                math::Clamped<Exponent>(Tmin, Tmax, Exponent(fT[1], 1.0f)),
+                math::Clamped<Exponent>(Tmin, Tmax, Exponent(fT[2], 2.0f))
             },
-            std::vector<ClampedSigmoid>(),
-            std::vector<Dippr102>(),
+            std::vector<math::Clamped<Sigmoid>>(),
+            std::vector<math::Clamped<Dippr102>>(),
 
             si::pressure(1.0), Tunits, yunits,
 
@@ -720,14 +710,14 @@ namespace relation {
         const float Tmin, const float Tmax
     ) {
         return GasPropertyStateRelation<Ty>(
-            std::vector<ClampedExponent>(),
-            std::vector<ClampedExponent>{
-                ClampedExponent(Tmin, Tmax, linear, 1.0f),
-                ClampedExponent(Tmin, Tmax, inverse_square, -2.0f),
-                ClampedExponent(Tmin, Tmax, square, 2.0f)
+            std::vector<math::Clamped<Exponent>>(),
+            std::vector<math::Clamped<Exponent>>{
+                math::Clamped<Exponent>(Tmin, Tmax, Exponent(linear, 1.0f)),
+                math::Clamped<Exponent>(Tmin, Tmax, Exponent(inverse_square, -2.0f)),
+                math::Clamped<Exponent>(Tmin, Tmax, Exponent(square, 2.0f))
             },
-            std::vector<ClampedSigmoid>(),
-            std::vector<Dippr102>(),
+            std::vector<math::Clamped<Sigmoid>>(),
+            std::vector<math::Clamped<Dippr102>>(),
 
             si::pressure(1.0), Tunits, yunits,
 

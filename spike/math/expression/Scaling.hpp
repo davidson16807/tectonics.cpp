@@ -7,8 +7,10 @@ namespace math {
 
     /* 
     `Scaling` is a trivial class that represents the function f(x)=ax,
-    it was needed to provide an idiomatic way to request that input to other functions be scaled using compose(),
-    however it has since found other uses.
+    it was needed to provide an idiomatic way to request that input to other functions be scaled using compose() - 
+    some functions may only be closed under composition with scalar multiplication and division,
+    so there was need for a function that restricted users to these kinds of operations.
+    Since having implemented it though, it has found other uses.
     */
     struct Scaling {
         float factor;

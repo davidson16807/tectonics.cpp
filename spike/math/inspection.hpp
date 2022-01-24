@@ -15,7 +15,6 @@ to problems for function parameters that offer no specialized analytic solution.
 */
 
 namespace math {
-
     template<typename F>
     float maximum(const F& f, float lo, float hi, const int iteration_count)
     {
@@ -37,7 +36,7 @@ namespace math {
                     math::central_finite_difference(f, x, dx, 2)/(dx2* math::factorial(2.0))),
                 math::Shifting(-x)
             );
-            x2 = maximum(derivative(approximation), lo, hi);
+            x2 = solve(derivative(approximation), 0.0f);
             x = f(x2) > f(x)? x2 : x;
         }
         return f(x);
@@ -46,6 +45,9 @@ namespace math {
     template<typename F>
     float minimum(const F& f, float lo, float hi, const int iteration_count) 
     {
+        /*
+        See equivalent implementation for maximum() for details
+        */
         const float dx = (hi-lo)/1000.0f;
         const float dx2 = dx*dx;
         math::Polynomial<0,2> approximation(0.0f, 0.0f, 0.0f);
@@ -59,7 +61,7 @@ namespace math {
                     math::central_finite_difference(f, x, dx, 2)/(dx2* math::factorial(2.0))),
                 math::Shifting(-x)
             );
-            x2 = minimum(derivative(approximation), lo, hi);
+            x2 = solve(derivative(approximation), 0.0f);
             x = f(x2) > f(x)? x2 : x;
         }
         return f(x);

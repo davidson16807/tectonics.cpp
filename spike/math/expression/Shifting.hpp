@@ -5,9 +5,11 @@
 namespace math {
 
     /* 
-    `Shifting` is a trivial class that represents the function f(x)=x+b,
-    it was needed to provide an idiomatic way to generate taylor series using compose(),
-    however it has since found other uses.
+    `Shifting` is a trivial class that represents the function f(x)=ax,
+    it was needed to provide an idiomatic way to request that input to other functions be scaled using compose() - 
+    some functions may only be closed under composition with scalar addition and subtraction,
+    so there was need for a function that restricted users to these kinds of operations.
+    Since having implemented it though, it has found other uses.
     */
     struct Shifting {
         float offset;
