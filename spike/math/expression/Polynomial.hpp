@@ -1,6 +1,6 @@
 #pragma once
 
-#include <algorithm>   // clamp, min_element
+#include <algorithm>   // clamp, min_element, fill, copy
 #include <complex>     // complex
 #include <type_traits> // enable_if_t
 
@@ -30,26 +30,30 @@ namespace math {
     struct Polynomial
     {
         std::array<float,Nhi+1-Nlo> k;
+        constexpr Polynomial(): k()
+        {
+            std::fill(k.begin(), k.end(), 0.0f);
+        }
         constexpr Polynomial(const Polynomial& p): k()
         {
             std::copy(p.k.begin(), p.k.end(), k.begin());
         }
         constexpr explicit Polynomial(const float k2): k()
         {
-            k[0] = k2;
+            k[0-Nlo] = k2;
         }
         constexpr explicit Polynomial(const Identity e): k()
         {
-            k[1] = 1.0f;
+            k[1-Nlo] = 1.0f;
         }
         constexpr explicit Polynomial(const Scaling f): k()
         {
-            k[1] = f.factor;
+            k[1-Nlo] = f.factor;
         }
         constexpr explicit Polynomial(const Shifting f): k()
         {
-            k[0] = f.offset;
-            k[1] = 1.0f;
+            k[0-Nlo] = f.offset;
+            k[1-Nlo] = 1.0f;
         }
         constexpr explicit Polynomial(const std::array<float,Nhi+1-Nlo> k2): k()
         {
@@ -60,7 +64,7 @@ namespace math {
         {
             for (int i = Qlo; i <= Qhi; ++i)
             {
-                k[i] = p[i];
+                k[i-Nlo] = p.k[i-Qlo];
             }
         }
         template <typename... T> 
@@ -72,11 +76,18 @@ namespace math {
         constexpr float operator()(const float x) const
         {
             float y(0.0f);
-            float xi(std::pow(x, Nlo));
-            for (std::size_t i = 0; i < k.size(); ++i)
+            for (int i = Nlo; i <= -1; ++i)
             {
-                y  =k[i]*xi;
-                xi*=x;
+                // exponents are calculated using pow(), 
+                // rather than repeated multiplication, to avoid precision errors
+                y += k[i-Nlo] * std::pow(x, i);
+            }
+            int i0(std::max(Nlo,0));
+            float xi(std::pow(x, i0));
+            for (int i = i0; i < Nhi; ++i)
+            {
+                y += k[i-Nlo] * xi;
+                xi*= x;
             }
             return y;
         }
@@ -93,7 +104,7 @@ namespace math {
         {
             for (int i = Qlo; i <= Qhi; ++i)
             {
-                k[i] += p[i];
+                k[i-Nlo] += p.k[i-Qlo];
             }
             return *this;
         }
@@ -102,7 +113,7 @@ namespace math {
         {
             for (int i = Qlo; i <= Qhi; ++i)
             {
-                k[i] -= p[i];
+                k[i-Nlo] -= p.k[i-Qlo];
             }
             return *this;
         }
@@ -110,7 +121,7 @@ namespace math {
         {
             for (int i = Nlo; i <= Nhi; ++i)
             {
-                k[i] *= k2;
+                k[i-Nlo] *= k2;
             }
             return *this;
         }
@@ -118,18 +129,8 @@ namespace math {
         {
             for (int i = Nlo; i <= Nhi; ++i)
             {
-                k[i] /= k2;
+                k[i-Nlo] /= k2;
             }
-            return *this;
-        }
-        constexpr Polynomial<Nlo,Nhi>& operator+=(const float k2)
-        {
-            k[0] += k2;
-            return *this;
-        }
-        constexpr Polynomial<Nlo,Nhi>& operator-=(const float k2)
-        {
-            k[0] -= k2;
             return *this;
         }
     };
@@ -140,21 +141,21 @@ namespace math {
     constexpr Polynomial<std::min(Plo,0),std::max(Phi,0)> operator+(const Polynomial<Plo,Phi>& p, const float& k)
     {
         Polynomial<std::min(Plo,0),std::max(Phi,0)> y(p);
-        y +=k;
+        y[0] +=k;
         return y;
     }
     template<int Plo, int Phi>
     constexpr Polynomial<std::min(Plo,0),std::max(Phi,0)> operator+(const float k, const Polynomial<Plo,Phi>& p)
     {
         Polynomial<std::min(Plo,0),std::max(Phi,0)> y(p);
-        y +=k;
+        y[0] +=k;
         return y;
     }
     template<int Plo, int Phi>
     constexpr Polynomial<std::min(Plo,0),std::max(Phi,0)> operator-(const Polynomial<Plo,Phi>& p, const float k)
     {
         Polynomial<std::min(Plo,0),std::max(Phi,0)> y(p);
-        y -=k;
+        y[0] -=k;
         return y;
     }
     template<int Plo, int Phi>
@@ -162,7 +163,7 @@ namespace math {
     {
         Polynomial<std::min(Plo,0),std::max(Phi,0)> y(p);
         y *=-1.0f;
-        y += k;
+        y[0] += k;
         return y;
     }
     template<int Plo, int Phi>
@@ -217,7 +218,7 @@ namespace math {
     template<int Plo, int Phi, int Qlo, int Qhi>
     constexpr Polynomial<Plo+Qlo,Phi+Qhi> operator*(const Polynomial<Plo,Phi>& p, const Polynomial<Qlo,Qhi>& q)
     {
-        Polynomial<Plo-Qlo,Phi-Qhi> y;
+        Polynomial<Plo+Qlo,Phi+Qhi> y;
         for (int i = Plo; i <= Phi; ++i)
         {
             for (int j = Qlo; j <= Qhi; ++j)
@@ -651,6 +652,16 @@ namespace math {
 
 
 
+    template<int Plo, int Phi>
+    Polynomial<Plo,Phi> abs(const Polynomial<Plo,Phi>& p)
+    {
+        Polynomial<Plo,Phi> y;
+        for (int i = Plo; i <=Phi; ++i)
+        {
+            y[i] = std::abs(p[i]);
+        }
+        return y;
+    }
 
 
     /* 
@@ -677,7 +688,26 @@ namespace math {
         return dpdx;
     }
 
+    /*
+    `derivative` returns the derivative of a polynomial at a point.
+    It is meant to compliment the method signature for integral(p, lo, hi)
+    */
+    template<int Plo, int Phi>
+    float derivative(const Polynomial<Plo,Phi>& p, const float x)
+    {
+        float dydx(0.0f);
+        float xi(std::pow(x, Plo-1));
+        for (int i=Plo; i < Phi; ++i)
+        {
+            dydx += p[i] * xi * i;
+            xi *= x;
+        }
+        return dydx;
+    }
 
+    /*
+    `integral` returns a polynomial that represents the indefinite integral of `this`.
+    */
     template<int Plo, int Phi, 
         typename = std::enable_if_t<!(Plo <= -1&&-1 <= Phi)>>
     Polynomial<Plo+1,Phi+1> integral(const Polynomial<Plo,Phi>& p)
@@ -689,6 +719,45 @@ namespace math {
         }
         return dpdx;
     }
+
+
+    /*
+    `integral` returns the definite integral of a polynomial 
+    without representing the integral as its own function object.
+    This is meant to be used as a fallback in the event the function is a 
+    Laurent polynomial with a coefficient of degree -1, 
+    since the integral for such a function includes a logarithmic term.
+    */
+    template<int Plo, int Phi>
+    float integral(const Polynomial<Plo,Phi>& p, const float lo, const float hi)
+    {
+        float I_hi(0.0f);
+        float I_lo(0.0f);
+
+        for (int i = Plo; i < -1; ++i)
+        {
+            // exponents are calculated using pow(), 
+            // rather than repeated multiplication, to avoid precision errors
+            I_hi += p[i] * std::pow(lo, i+1) / (i+1);
+            I_lo += p[i] * std::pow(hi, i+1) / (i+1);
+        }
+
+        I_hi += p[-1] * std::log(std::abs(lo));
+        I_lo += p[-1] * std::log(std::abs(hi));
+
+        float lo_i  = 1.0f;
+        float hi_i  = 1.0f;
+        for (int i = 0; i <= Phi; ++i)
+        {
+            I_hi += p[i] * lo_i / (i+1);
+            I_lo += p[i] * hi_i / (i+1);
+            lo_i *= lo;
+            hi_i *= hi;
+        }
+        return I_hi - I_lo;
+    }
+
+
 
 
     template<int Plo, 
@@ -813,6 +882,30 @@ namespace math {
         candidates.push_back(hi);
         return *std::min_element(candidates.begin(), candidates.end(), 
             [&](float a, float b){ return p(std::clamp(a,lo,hi)) < p(std::clamp(b,lo,hi)); });
+    }
+
+
+
+    template<int Plo, int Phi>
+    constexpr float max_square_difference(const Polynomial<Plo,Phi> p, const Polynomial<Plo,Phi> q, const float lo, const float hi)
+    {
+        return maximum((p-q)*(p-q), lo, hi);
+    }
+
+    template<int Plo, int Phi, int Qlo, int Qhi>
+    constexpr float mean_square_difference(const Polynomial<Plo,Phi> p, const Polynomial<Qlo,Qhi> q, const float lo, const float hi)
+    {
+        return integral(abs(p-q), lo, hi) / (hi-lo);
+    }
+    template<int Plo, int Phi>
+    constexpr float mean_square_difference(const Polynomial<Plo,Phi> p, const float k, const float lo, const float hi)
+    {
+        return integral(abs(p-k), lo, hi) / (hi-lo);
+    }
+    template<int Plo, int Phi>
+    constexpr float mean_square_difference(const float k, const Polynomial<Plo, Phi> p, const float lo, const float hi)
+    {
+        return integral(abs(p-k), lo, hi) / (hi-lo);
     }
 
     template<int Plo, int Phi>
