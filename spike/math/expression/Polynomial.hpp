@@ -648,18 +648,6 @@ namespace math {
 
 
 
-    template<int Plo, int Phi>
-    Polynomial<Plo,Phi> abs(const Polynomial<Plo,Phi>& p)
-    {
-        Polynomial<Plo,Phi> y;
-        for (int i = Plo; i <=Phi; ++i)
-        {
-            y[i] = std::abs(p[i]);
-        }
-        return y;
-    }
-
-
     /* 
     NOTE: we avoid expressing derivatives and integrals as methods,
     since not all equations are closed under derivatives and integrals,
@@ -891,17 +879,17 @@ namespace math {
     template<int Plo, int Phi, int Qlo, int Qhi>
     constexpr float mean_square_difference(const Polynomial<Plo,Phi> p, const Polynomial<Qlo,Qhi> q, const float lo, const float hi)
     {
-        return integral(abs(p-q), lo, hi) / (hi-lo);
+        return integral((p-q)*(p-q), lo, hi) / (hi-lo);
     }
     template<int Plo, int Phi>
     constexpr float mean_square_difference(const Polynomial<Plo,Phi> p, const float k, const float lo, const float hi)
     {
-        return integral(abs(p-k), lo, hi) / (hi-lo);
+        return integral((p-k)*(p-k), lo, hi) / (hi-lo);
     }
     template<int Plo, int Phi>
     constexpr float mean_square_difference(const float k, const Polynomial<Plo, Phi> p, const float lo, const float hi)
     {
-        return integral(abs(p-k), lo, hi) / (hi-lo);
+        return integral((p-k)*(p-k), lo, hi) / (hi-lo);
     }
 
     template<int Plo, int Phi>
