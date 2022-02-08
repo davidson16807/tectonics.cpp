@@ -10,7 +10,7 @@
 #include <math/expression/Polynomial.hpp>  
 
 
-TEST_CASE( "Polynomial arithmetic purity", "[many]" ) {
+TEST_CASE( "Polynomial arithmetic purity", "[math]" ) {
     const float threshold = 1e-7;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
@@ -100,7 +100,7 @@ TEST_CASE( "Polynomial arithmetic purity", "[many]" ) {
     }
 }
 
-TEST_CASE( "Polynomial arithmetic identity", "[many]" ) {
+TEST_CASE( "Polynomial arithmetic identity", "[math]" ) {
     const float threshold = std::numeric_limits<float>::epsilon();
     const float lo = -1e3;
     const float hi =  1e3;
@@ -136,7 +136,7 @@ TEST_CASE( "Polynomial arithmetic identity", "[many]" ) {
     }
 }
 
-TEST_CASE( "Polynomial arithmetic commutativity", "[many]" ) {
+TEST_CASE( "Polynomial arithmetic commutativity", "[math]" ) {
     const float threshold = std::numeric_limits<float>::epsilon();
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
@@ -188,7 +188,7 @@ TEST_CASE( "Polynomial arithmetic commutativity", "[many]" ) {
     }
 }
 
-TEST_CASE( "Polynomial arithmetic associativity", "[many]" ) {
+TEST_CASE( "Polynomial arithmetic associativity", "[math]" ) {
     const float threshold = std::numeric_limits<float>::epsilon();
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
@@ -222,7 +222,7 @@ TEST_CASE( "Polynomial arithmetic associativity", "[many]" ) {
     }
 }
 
-TEST_CASE( "Polynomial arithmetic distributivity", "[many]" ) {
+TEST_CASE( "Polynomial arithmetic distributivity", "[math]" ) {
     const float threshold = std::numeric_limits<float>::epsilon();
     // `mid*` variables are used when the degree of a polynomial is so large 
     // that a square integral of it will produce nans for all but the smallest input.
@@ -261,7 +261,7 @@ TEST_CASE( "Polynomial arithmetic distributivity", "[many]" ) {
 
 
 
-TEST_CASE( "Polynomial/scalar arithmetic purity", "[many]" ) {
+TEST_CASE( "Polynomial/scalar arithmetic purity", "[math]" ) {
     const float threshold = std::numeric_limits<float>::epsilon();
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
@@ -353,7 +353,7 @@ TEST_CASE( "Polynomial/scalar arithmetic purity", "[many]" ) {
     }
 }
 
-TEST_CASE( "Polynomial/scalar arithmetic identity", "[many]" ) {
+TEST_CASE( "Polynomial/scalar arithmetic identity", "[math]" ) {
     const float threshold = std::numeric_limits<float>::epsilon();
     const float lo = -1e3;
     const float hi =  1e3;
@@ -392,7 +392,7 @@ TEST_CASE( "Polynomial/scalar arithmetic identity", "[many]" ) {
     }
 }
 
-TEST_CASE( "Polynomial/scalar arithmetic commutativity", "[many]" ) {
+TEST_CASE( "Polynomial/scalar arithmetic commutativity", "[math]" ) {
     const float threshold = std::numeric_limits<float>::epsilon();
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
@@ -449,7 +449,7 @@ TEST_CASE( "Polynomial/scalar arithmetic commutativity", "[many]" ) {
 }
 
 
-TEST_CASE( "Polynomial/scalar arithmetic associativity", "[many]" ) {
+TEST_CASE( "Polynomial/scalar arithmetic associativity", "[math]" ) {
     const float threshold = std::numeric_limits<float>::epsilon();
     const float lo = -1e3;
     const float hi =  1e3;
@@ -516,7 +516,7 @@ TEST_CASE( "Polynomial/scalar arithmetic associativity", "[many]" ) {
 }
 
 
-TEST_CASE( "Polynomial/scalar arithmetic distributivity", "[many]" ) {
+TEST_CASE( "Polynomial/scalar arithmetic distributivity", "[math]" ) {
     const float threshold = std::numeric_limits<float>::epsilon();
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
@@ -565,27 +565,27 @@ TEST_CASE( "Polynomial/scalar arithmetic distributivity", "[many]" ) {
         CHECK(math::mean_square_difference((p+k0)*q, (p*q+k0*q), midlo, midhi) < threshold);
         CHECK(math::mean_square_difference((p+k1)*q, (p*q+k1*q), midlo, midhi) < threshold);
         CHECK(math::mean_square_difference((p+k2)*q, (p*q+k2*q), midlo, midhi) < threshold);
-        
+
         CHECK(math::mean_square_difference((p+k0)*r, (p*r+k0*r), midlo, midhi) < threshold);
         CHECK(math::mean_square_difference((p+k1)*r, (p*r+k1*r), midlo, midhi) < threshold);
         CHECK(math::mean_square_difference((p+k2)*r, (p*r+k2*r), midlo, midhi) < threshold);
-        
+
         CHECK(math::mean_square_difference((p+k0)*s, (p*s+k0*s), midlo, midhi) < threshold);
         CHECK(math::mean_square_difference((p+k1)*s, (p*s+k1*s), midlo, midhi) < threshold);
         CHECK(math::mean_square_difference((p+k2)*s, (p*s+k2*s), midlo, midhi) < threshold);
-        
+
         CHECK(math::mean_square_difference((q+k0)*r, (q*r+k0*r), midlo, midhi) < threshold);
         CHECK(math::mean_square_difference((q+k1)*r, (q*r+k1*r), midlo, midhi) < threshold);
         CHECK(math::mean_square_difference((q+k2)*r, (q*r+k2*r), midlo, midhi) < threshold);
-        
+
         CHECK(math::mean_square_difference((q+k0)*s, (q*s+k0*s), midlo, midhi) < threshold);
         CHECK(math::mean_square_difference((q+k1)*s, (q*s+k1*s), midlo, midhi) < threshold);
         CHECK(math::mean_square_difference((q+k2)*s, (q*s+k2*s), midlo, midhi) < threshold);
-        
+
         CHECK(math::mean_square_difference((r+k0)*s, (r*s+k0*s), midlo, midhi) < threshold);
         CHECK(math::mean_square_difference((r+k1)*s, (r*s+k1*s), midlo, midhi) < threshold);
         CHECK(math::mean_square_difference((r+k2)*s, (r*s+k2*s), midlo, midhi) < threshold);
-        
+
     }
 }
 
@@ -596,7 +596,7 @@ TEST_CASE( "Polynomial/scalar arithmetic distributivity", "[many]" ) {
 
 
 
-TEST_CASE( "Polynomial/monomial arithmetic purity", "[many]" ) {
+TEST_CASE( "Polynomial/monomial arithmetic purity", "[math]" ) {
     const float threshold = std::numeric_limits<float>::epsilon();
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
@@ -688,7 +688,7 @@ TEST_CASE( "Polynomial/monomial arithmetic purity", "[many]" ) {
     }
 }
 
-TEST_CASE( "Polynomial/monomial arithmetic identity", "[many]" ) {
+TEST_CASE( "Polynomial/monomial arithmetic identity", "[math]" ) {
     const float threshold = std::numeric_limits<float>::epsilon();
     const float lo = -1e3;
     const float hi =  1e3;
@@ -727,7 +727,7 @@ TEST_CASE( "Polynomial/monomial arithmetic identity", "[many]" ) {
     }
 }
 
-TEST_CASE( "Polynomial/monomial arithmetic commutativity", "[many]" ) {
+TEST_CASE( "Polynomial/monomial arithmetic commutativity", "[math]" ) {
     const float threshold = std::numeric_limits<float>::epsilon();
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
@@ -784,7 +784,7 @@ TEST_CASE( "Polynomial/monomial arithmetic commutativity", "[many]" ) {
 }
 
 
-TEST_CASE( "Polynomial/monomial arithmetic associativity", "[many]" ) {
+TEST_CASE( "Polynomial/monomial arithmetic associativity", "[math]" ) {
     const float threshold = std::numeric_limits<float>::epsilon();
     const float lo = -1e3;
     const float hi =  1e3;
@@ -851,7 +851,7 @@ TEST_CASE( "Polynomial/monomial arithmetic associativity", "[many]" ) {
 }
 
 
-TEST_CASE( "Polynomial/monomial arithmetic distributivity", "[many]" ) {
+TEST_CASE( "Polynomial/monomial arithmetic distributivity", "[math]" ) {
     const float threshold = std::numeric_limits<float>::epsilon();
     // `mid*` variables are used when the degree of a polynomial is so large 
     // that a square integral of it will produce nans for all but the smallest input.
@@ -937,7 +937,7 @@ TEST_CASE( "Polynomial/monomial arithmetic distributivity", "[many]" ) {
 
 
 
-TEST_CASE( "Polynomial/Shifting arithmetic purity", "[many]" ) {
+TEST_CASE( "Polynomial/Shifting arithmetic purity", "[math]" ) {
     const float threshold = std::numeric_limits<float>::epsilon();
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
@@ -1029,7 +1029,7 @@ TEST_CASE( "Polynomial/Shifting arithmetic purity", "[many]" ) {
     // }
 }
 
-TEST_CASE( "Polynomial/Shifting arithmetic identity", "[many]" ) {
+TEST_CASE( "Polynomial/Shifting arithmetic identity", "[math]" ) {
     const float threshold = std::numeric_limits<float>::epsilon();
     const float lo = -1e3;
     const float hi =  1e3;
@@ -1059,7 +1059,7 @@ TEST_CASE( "Polynomial/Shifting arithmetic identity", "[many]" ) {
     }
 }
 
-TEST_CASE( "Polynomial/Shifting arithmetic commutativity", "[many]" ) {
+TEST_CASE( "Polynomial/Shifting arithmetic commutativity", "[math]" ) {
     const float threshold = std::numeric_limits<float>::epsilon();
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
@@ -1116,7 +1116,7 @@ TEST_CASE( "Polynomial/Shifting arithmetic commutativity", "[many]" ) {
 }
 
 
-TEST_CASE( "Polynomial/Shifting arithmetic associativity", "[many]" ) {
+TEST_CASE( "Polynomial/Shifting arithmetic associativity", "[math]" ) {
     const float threshold = std::numeric_limits<float>::epsilon();
     const float lo = -1e3;
     const float hi =  1e3;
@@ -1183,7 +1183,7 @@ TEST_CASE( "Polynomial/Shifting arithmetic associativity", "[many]" ) {
 }
 
 
-TEST_CASE( "Polynomial/Shifting arithmetic distributivity", "[many]" ) {
+TEST_CASE( "Polynomial/Shifting arithmetic distributivity", "[math]" ) {
     const float threshold = std::numeric_limits<float>::epsilon();
     // `mid*` variables are used when the degree of a polynomial is so large 
     // that a square integral of it will produce nans for all but the smallest input.
@@ -1270,7 +1270,7 @@ TEST_CASE( "Polynomial/Shifting arithmetic distributivity", "[many]" ) {
 
 
 
-TEST_CASE( "Polynomial/Scaling arithmetic purity", "[many]" ) {
+TEST_CASE( "Polynomial/Scaling arithmetic purity", "[math]" ) {
     const float threshold = std::numeric_limits<float>::epsilon();
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
@@ -1362,7 +1362,7 @@ TEST_CASE( "Polynomial/Scaling arithmetic purity", "[many]" ) {
     }
 }
 
-TEST_CASE( "Polynomial/Scaling arithmetic identity", "[many]" ) {
+TEST_CASE( "Polynomial/Scaling arithmetic identity", "[math]" ) {
     const float threshold = std::numeric_limits<float>::epsilon();
     const float lo = -1e3;
     const float hi =  1e3;
@@ -1392,7 +1392,7 @@ TEST_CASE( "Polynomial/Scaling arithmetic identity", "[many]" ) {
     }
 }
 
-TEST_CASE( "Polynomial/Scaling arithmetic commutativity", "[many]" ) {
+TEST_CASE( "Polynomial/Scaling arithmetic commutativity", "[math]" ) {
     const float threshold = std::numeric_limits<float>::epsilon();
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
@@ -1449,7 +1449,7 @@ TEST_CASE( "Polynomial/Scaling arithmetic commutativity", "[many]" ) {
 }
 
 
-TEST_CASE( "Polynomial/Scaling arithmetic associativity", "[many]" ) {
+TEST_CASE( "Polynomial/Scaling arithmetic associativity", "[math]" ) {
     const float threshold = std::numeric_limits<float>::epsilon();
     const float lo = -1e3;
     const float hi =  1e3;
@@ -1516,7 +1516,7 @@ TEST_CASE( "Polynomial/Scaling arithmetic associativity", "[many]" ) {
 }
 
 
-TEST_CASE( "Polynomial/Scaling arithmetic distributivity", "[many]" ) {
+TEST_CASE( "Polynomial/Scaling arithmetic distributivity", "[math]" ) {
     const float threshold = std::numeric_limits<float>::epsilon();
     // `mid*` variables are used when the degree of a polynomial is so large 
     // that a square integral of it will produce nans for all but the smallest input.
@@ -1593,3 +1593,28 @@ TEST_CASE( "Polynomial/Scaling arithmetic distributivity", "[many]" ) {
     }
 }
 
+
+
+
+
+
+
+TEST_CASE( "Polynomial integral/derivative invertibility", "[math]" ) {
+    const float threshold = std::numeric_limits<float>::epsilon();
+    // `lo*` variables are used as bounds to a square integral 
+    // that is used to calculate deviation from the correct output.
+    const float lo = -1e3;
+    const float hi =  1e3;
+    
+    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    // math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    // math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+
+    SECTION("the derivative of a function's integral must equal the original function"){
+        CHECK(math::mean_square_difference(p, derivative(integral(p)), lo, hi) < threshold);
+        CHECK(math::mean_square_difference(q, derivative(integral(q)), lo, hi) < threshold);
+        // CHECK(math::mean_square_difference(r, derivative(integral(r)), lo, hi) < threshold);
+        // CHECK(math::mean_square_difference(s, derivative(integral(s)), lo, hi) < threshold);
+    }
+}
