@@ -38,10 +38,6 @@ namespace math {
         {
             std::copy(p.k.begin(), p.k.end(), k.begin());
         }
-        constexpr explicit Polynomial(const float k2): k()
-        {
-            k[0-Nlo] = k2;
-        }
         constexpr explicit Polynomial(const Identity e): k()
         {
             k[1-Nlo] = 1.0f;
@@ -234,7 +230,7 @@ namespace math {
         Polynomial<Plo-M,Phi-M> y;
         for (int i = Plo; i <= Phi; ++i)
         {
-            y[i-M] += p[i]/q[M];
+            y[i-M] = p[i]/q[M];
         }
         return y;
     }
