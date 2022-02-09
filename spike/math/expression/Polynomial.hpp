@@ -869,27 +869,38 @@ namespace math {
     }
 
 
-
-    template<int Plo, int Phi>
-    constexpr float max_square_difference(const Polynomial<Plo,Phi> p, const Polynomial<Plo,Phi> q, const float lo, const float hi)
-    {
-        return maximum((p-q)*(p-q), lo, hi);
-    }
-
+    /*
+    `distance` is the root of the integrated squared difference 
+    between two polynomials over a given range divided by the range.
+    It provides a metric that expresses the extent to which two polynomials differ 
+    using the same units as the output of the polynomial. 
+    It is analogous to the standard deviation of a dataset in statistics,
+    and it satisfies all criteria needed to be considered a metric:
+    * d(a,b) ∈ ℝ⁺ 
+    * d(a,b) = 0 ⟺ a=b
+    * d(a,b) = d(b,a)
+    * d(a,b) ≤ d(a,c)+d(c,b)
+    Other functions satisfy these criteria and may also serve as distance metrics
+    (for instance, maximum of the squared difference, or the mean of the absolute difference),
+    however those we could find have no closed-form, non-piecewise solution for arbitrary polynomials 
+    We do not presume that this metric serves more naturally as a distance metric compared to others,
+    however we address this function as `distance` since the alternative names
+    are either unwieldy (`root_mean_square_difference`) or nonobvious (`rmsd`).
+    */
     template<int Plo, int Phi, int Qlo, int Qhi>
-    constexpr float mean_square_difference(const Polynomial<Plo,Phi> p, const Polynomial<Qlo,Qhi> q, const float lo, const float hi)
+    constexpr float distance(const Polynomial<Plo,Phi> p, const Polynomial<Qlo,Qhi> q, const float lo, const float hi)
     {
-        return integral((p-q)*(p-q), lo, hi) / (hi-lo);
+        return std::sqrt(integral((p-q)*(p-q), lo, hi)) / (hi-lo);
     }
     template<int Plo, int Phi>
-    constexpr float mean_square_difference(const Polynomial<Plo,Phi> p, const float k, const float lo, const float hi)
+    constexpr float distance(const Polynomial<Plo,Phi> p, const float k, const float lo, const float hi)
     {
-        return integral((p-k)*(p-k), lo, hi) / (hi-lo);
+        return std::sqrt(integral((p-k)*(p-k), lo, hi)) / (hi-lo);
     }
     template<int Plo, int Phi>
-    constexpr float mean_square_difference(const float k, const Polynomial<Plo, Phi> p, const float lo, const float hi)
+    constexpr float distance(const float k, const Polynomial<Plo, Phi> p, const float lo, const float hi)
     {
-        return integral((p-k)*(p-k), lo, hi) / (hi-lo);
+        return std::sqrt(integral((p-k)*(p-k), lo, hi)) / (hi-lo);
     }
 
     template<int Plo, int Phi>
