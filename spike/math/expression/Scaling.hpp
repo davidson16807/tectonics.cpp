@@ -12,38 +12,39 @@ namespace math {
     so there was need for a function that restricted users to these kinds of operations.
     Since having implemented it though, it has found other uses.
     */
+    template<typename T>
     struct Scaling {
-        float factor;
-        constexpr explicit Scaling(const float factor):
+        T factor;
+        constexpr explicit Scaling(const T factor):
             factor(factor)
         {}
-        constexpr explicit Scaling(const Identity e):
-            factor(1.0f)
+        constexpr explicit Scaling(const Identity<T> e):
+            factor(T(1.0))
         {}
-        constexpr float operator()(const float x) const
+        constexpr T operator()(const T x) const
         {
             return factor*x;
         }
 
-        constexpr Scaling& operator*=(const float k)
+        constexpr Scaling<T>& operator*=(const T k)
         {
             factor *= k;
             return *this;
         }
 
-        constexpr Scaling& operator/=(const float k)
+        constexpr Scaling<T>& operator/=(const T k)
         {
             factor /= k;
             return *this;
         }
 
-        constexpr Scaling& operator+=(const Scaling f)
+        constexpr Scaling<T>& operator+=(const Scaling<T> f)
         {
             factor += f.factor;
             return *this;
         }
 
-        constexpr Scaling& operator-=(const Scaling f)
+        constexpr Scaling<T>& operator-=(const Scaling<T> f)
         {
             factor -= f.factor;
             return *this;
@@ -52,82 +53,99 @@ namespace math {
     };
 
     // operators that are closed under Scaling relations
-    constexpr Scaling operator+(const Scaling f, const Scaling g)
+    template<typename T>
+    constexpr Scaling<T> operator+(const Scaling<T> f, const Scaling<T> g)
     {
         Scaling y = f;
         y += g;
         return y;
     }
-    constexpr Scaling operator-(const Scaling f, const Scaling g)
+    template<typename T>
+    constexpr Scaling<T> operator-(const Scaling<T> f, const Scaling<T> g)
     {
         Scaling y = f;
         y += g;
         return y;
     }
-    constexpr Scaling operator-(const Scaling f)
+    template<typename T>
+    constexpr Scaling<T> operator-(const Scaling<T> f)
     {
-        return Scaling(-f.factor);
+        return Scaling<T>(-f.factor);
     }
 
     // operators with reals that are closed under Scaling relations
-    constexpr Scaling operator*(const Scaling f, const float k)
+    template<typename T>
+    constexpr Scaling<T> operator*(const Scaling<T> f, const T k)
     {
-        return Scaling(f.factor * k);
+        return Scaling<T>(f.factor * k);
     }
-    constexpr Scaling operator*(const float k, const Scaling f)
+    template<typename T>
+    constexpr Scaling<T> operator*(const T k, const Scaling<T> f)
     {
-        return Scaling(k * f.factor);
+        return Scaling<T>(k * f.factor);
     }
-    constexpr Scaling operator/(const Scaling f, const float k)
+    template<typename T>
+    constexpr Scaling<T> operator/(const Scaling<T> f, const T k)
     {
-        return Scaling(f.factor / k);
+        return Scaling<T>(f.factor / k);
     }
 
     // operators that produce Scaling relations when given other relations as input
-    constexpr Scaling operator*(const Identity f, const float k)
+    template<typename T>
+    constexpr Scaling<T> operator*(const Identity<T> f, const T k)
     {
-        return Scaling(k);
+        return Scaling<T>(k);
     }
-    constexpr Scaling operator*(const float k, const Identity f)
+    template<typename T>
+    constexpr Scaling<T> operator*(const T k, const Identity<T> f)
     {
-        return Scaling(k);
+        return Scaling<T>(k);
     }
-    constexpr Scaling operator/(const Identity f, const float k)
+    template<typename T>
+    constexpr Scaling<T> operator/(const Identity<T> f, const T k)
     {
-        return Scaling(1.0f / k);
+        return Scaling<T>(1.0f / k);
     }
-    constexpr Scaling operator-(const Identity e)
+    template<typename T>
+    constexpr Scaling<T> operator-(const Identity<T> e)
     {
-        return Scaling(-1.0f);
+        return Scaling<T>(-1.0f);
     }
 
-    constexpr auto operator+(const Identity e, const Scaling f)
+    template<typename T>
+    constexpr auto operator+(const Identity<T> e, const Scaling<T> f)
     {
-        return Scaling(e) + Scaling(f);
+        return Scaling<T>(e) + Scaling<T>(f);
     }
-    constexpr auto operator+(const Scaling f, const Identity e)
+    template<typename T>
+    constexpr auto operator+(const Scaling<T> f, const Identity<T> e)
     {
-        return Scaling(f) + Scaling(e);
+        return Scaling<T>(f) + Scaling<T>(e);
     }
-    constexpr auto operator-(const Identity e, const Scaling f)
+    template<typename T>
+    constexpr auto operator-(const Identity<T> e, const Scaling<T> f)
     {
-        return Scaling(e) - Scaling(f);
+        return Scaling<T>(e) - Scaling<T>(f);
     }
-    constexpr auto operator-(const Scaling f, const Identity e)
+    template<typename T>
+    constexpr auto operator-(const Scaling<T> f, const Identity<T> e)
     {
-        return Scaling(f) - Scaling(e);
+        return Scaling<T>(f) - Scaling<T>(e);
     }
 
     // operators that cause cancelation
-    constexpr float operator/(const Scaling f, const Scaling g)
+    template<typename T>
+    constexpr T operator/(const Scaling<T> f, const Scaling<T> g)
     {
         return f.factor/g.factor;
     }
-    constexpr float operator/(const Identity e, const Scaling f)
+    template<typename T>
+    constexpr T operator/(const Identity<T> e, const Scaling<T> f)
     {
         return 1.0f/f.factor;
     }
-    constexpr float operator/(const Scaling f, const Identity e)
+    template<typename T>
+    constexpr T operator/(const Scaling<T> f, const Identity<T> e)
     {
         return f.factor;
     }
@@ -136,12 +154,14 @@ namespace math {
 
 
 
-    constexpr float derivative(const Scaling f) 
+    template<typename T>
+    constexpr T derivative(const Scaling<T> f) 
     {
         return f.factor;
     }
 
-    constexpr Scaling integral(const float k) 
+    template<typename T>
+    constexpr Scaling<T> integral(const T k) 
     {
         return Scaling(k);
     }

@@ -7,23 +7,26 @@ namespace math {
     oddly enough, it was useful for something, so we implemented it.
     (it was useful as the base case for the recursive implementation of `compose()` for polynomials)
     */
+    template<typename T>
     struct Identity {
         constexpr explicit Identity()
         {}
-        constexpr float operator()(const float x) const
+        constexpr T operator()(const T x) const
         {
             return x;
         }
     };
     
     // operators that cause cancelation
-    constexpr float operator-(const Identity e1, const Identity e2)
+    template<typename T>
+    constexpr T operator-(const Identity<T> e1, const Identity<T> e2)
     {
-        return 0.0f;
+        return T(0.0);
     }
-    constexpr float operator/(const Identity e1, const Identity e2)
+    template<typename T>
+    constexpr T operator/(const Identity<T> e1, const Identity<T> e2)
     {
-        return 0.0f;
+        return T(0.0);
     }
 
 }

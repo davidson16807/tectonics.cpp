@@ -11,20 +11,20 @@
 
 
 TEST_CASE( "Polynomial arithmetic purity", "[math]" ) {
-    const float threshold = 1e-7;
+    const double threshold = 1e-7;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
-    const float lo = -1e3;
-    const float hi =  1e3;
+    const double lo = -1e3;
+    const double hi =  1e3;
     // `mid*` variables are used when the degree of a polynomial is so large 
     // that a square integral of it will produce nans for all but the smallest input.
-    const float midlo = -1e2;
-    const float midhi =  1e2;
+    const double midlo = -1e2;
+    const double midhi =  1e2;
 
-    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
 
 
     SECTION("p+q must be called repeatedly without changing the output"){
@@ -96,17 +96,17 @@ TEST_CASE( "Polynomial arithmetic purity", "[math]" ) {
 }
 
 TEST_CASE( "Polynomial arithmetic identity", "[math]" ) {
-    const float threshold = std::numeric_limits<float>::epsilon();
-    const float lo = -1e3;
-    const float hi =  1e3;
+    const double threshold = 1e-6;
+    const double lo = -1e3;
+    const double hi =  1e3;
 
-    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
 
-    math::Polynomial<0,0> zero = math::Polynomial<0,0>{0.0f};
-    math::Polynomial<0,0> one  = math::Polynomial<0,0>{1.0f};
+    math::Polynomial<double,0,0> zero = math::Polynomial<double,0,0>{0.0f};
+    math::Polynomial<double,0,0> one  = math::Polynomial<double,0,0>{1.0f};
 
     SECTION("p+I must equal p"){
         CHECK(math::distance(p+zero, p, lo, hi) < threshold);
@@ -132,20 +132,20 @@ TEST_CASE( "Polynomial arithmetic identity", "[math]" ) {
 }
 
 TEST_CASE( "Polynomial arithmetic commutativity", "[math]" ) {
-    const float threshold = std::numeric_limits<float>::epsilon();
+    const double threshold = 1e-6;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
-    const float lo = -1e3;
-    const float hi =  1e3;
+    const double lo = -1e3;
+    const double hi =  1e3;
     // `mid*` variables are used when the degree of a polynomial is so large 
     // that a square integral of it will produce nans for all but the smallest input.
-    const float midlo = -1e2;
-    const float midhi =  1e2;
+    const double midlo = -1e2;
+    const double midhi =  1e2;
 
-    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
 
     SECTION("p+q must equal q+p"){
         CHECK(math::distance(p+q, q+p, lo, hi) < threshold);
@@ -184,20 +184,20 @@ TEST_CASE( "Polynomial arithmetic commutativity", "[math]" ) {
 }
 
 TEST_CASE( "Polynomial arithmetic associativity", "[math]" ) {
-    const float threshold = std::numeric_limits<float>::epsilon();
+    const double threshold = 1e-6;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
-    const float lo = -1e3;
-    const float hi =  1e3;
+    const double lo = -1e3;
+    const double hi =  1e3;
     // `mid*` variables are used when the degree of a polynomial is so large 
     // that a square integral of it will produce nans for all but the smallest input.
-    const float midlo = -3e1;
-    const float midhi =  3e1;
+    const double midlo = -3e1;
+    const double midhi =  3e1;
 
-    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
 
     SECTION("(p+q)+r must equal p+(q+r)"){
         CHECK(math::distance((p+q)+r, p+(q+r), lo, hi) < threshold);
@@ -218,16 +218,16 @@ TEST_CASE( "Polynomial arithmetic associativity", "[math]" ) {
 }
 
 TEST_CASE( "Polynomial arithmetic distributivity", "[math]" ) {
-    const float threshold = std::numeric_limits<float>::epsilon();
+    const double threshold = 1e-6;
     // `mid*` variables are used when the degree of a polynomial is so large 
     // that a square integral of it will produce nans for all but the smallest input.
-    const float midlo = -1e2;
-    const float midhi =  1e2;
+    const double midlo = -1e2;
+    const double midhi =  1e2;
 
-    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
 
     SECTION("p+q must equal q+p"){
         CHECK(math::distance((p+q)*r, p*r+q*r, midlo, midhi) < threshold);
@@ -257,23 +257,23 @@ TEST_CASE( "Polynomial arithmetic distributivity", "[math]" ) {
 
 
 TEST_CASE( "Polynomial/scalar arithmetic purity", "[math]" ) {
-    const float threshold = std::numeric_limits<float>::epsilon();
+    const double threshold = 1e-6;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
-    const float lo = -1e3;
-    const float hi =  1e3;
+    const double lo = -1e3;
+    const double hi =  1e3;
     // `mid*` variables are used when the degree of a polynomial is so large 
     // that a square integral of it will produce nans for all but the smallest input.
-    const float midlo = -1e2;
-    const float midhi =  1e2;
+    const double midlo = -1e2;
+    const double midhi =  1e2;
     
-    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
-    float k0(0.0f);
-    float k1(2.0f);
-    float k2(-2.0f);
+    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+    double k0(0.0f);
+    double k1(2.0f);
+    double k2(-2.0f);
 
     SECTION("p+k1 must be called repeatedly without changing the output"){
         CHECK(math::distance(p+k0, p+k0, lo, hi) < threshold);
@@ -349,16 +349,16 @@ TEST_CASE( "Polynomial/scalar arithmetic purity", "[math]" ) {
 }
 
 TEST_CASE( "Polynomial/scalar arithmetic identity", "[math]" ) {
-    const float threshold = std::numeric_limits<float>::epsilon();
-    const float lo = -1e3;
-    const float hi =  1e3;
+    const double threshold = 1e-6;
+    const double lo = -1e3;
+    const double hi =  1e3;
     
-    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
-    float zero(0.0f);
-    float one (1.0f);
+    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+    double zero(0.0f);
+    double one (1.0f);
 
     SECTION("p+I must equal p"){
         CHECK(math::distance(p+zero, p, lo, hi) < threshold);
@@ -388,23 +388,23 @@ TEST_CASE( "Polynomial/scalar arithmetic identity", "[math]" ) {
 }
 
 TEST_CASE( "Polynomial/scalar arithmetic commutativity", "[math]" ) {
-    const float threshold = std::numeric_limits<float>::epsilon();
+    const double threshold = 1e-6;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
-    const float lo = -1e3;
-    const float hi =  1e3;
+    const double lo = -1e3;
+    const double hi =  1e3;
     // `mid*` variables are used when the degree of a polynomial is so large 
     // that a square integral of it will produce nans for all but the smallest input.
-    const float midlo = -1e2;
-    const float midhi =  1e2;
+    const double midlo = -1e2;
+    const double midhi =  1e2;
 
-    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
-    float k0(0.0f);
-    float k1(2.0f);
-    float k2(-2.0f);
+    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+    double k0(0.0f);
+    double k1(2.0f);
+    double k2(-2.0f);
 
     SECTION("p+k must equal k+p"){
         CHECK(math::distance(p+k0, k0+p, lo, hi) < threshold);
@@ -445,17 +445,17 @@ TEST_CASE( "Polynomial/scalar arithmetic commutativity", "[math]" ) {
 
 
 TEST_CASE( "Polynomial/scalar arithmetic associativity", "[math]" ) {
-    const float threshold = std::numeric_limits<float>::epsilon();
-    const float lo = -1e3;
-    const float hi =  1e3;
+    const double threshold = 1e-6;
+    const double lo = -1e3;
+    const double hi =  1e3;
     
-    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
-    float k0(0.0f);
-    float k1(2.0f);
-    float k2(-2.0f);
+    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+    double k0(0.0f);
+    double k1(2.0f);
+    double k2(-2.0f);
 
     SECTION("(p+q)+r must equal p+(q+r)"){
         CHECK(math::distance((p+q)+k0, p+(q+k0), lo, hi) < threshold);
@@ -512,23 +512,23 @@ TEST_CASE( "Polynomial/scalar arithmetic associativity", "[math]" ) {
 
 
 TEST_CASE( "Polynomial/scalar arithmetic distributivity", "[math]" ) {
-    const float threshold = std::numeric_limits<float>::epsilon();
+    const double threshold = 1e-6;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
-    const float lo = -1e3;
-    const float hi =  1e3;
+    const double lo = -1e3;
+    const double hi =  1e3;
     // `mid*` variables are used when the degree of a polynomial is so large 
     // that a square integral of it will produce nans for all but the smallest input.
-    const float midlo = -1e2;
-    const float midhi =  1e2;
+    const double midlo = -1e2;
+    const double midhi =  1e2;
 
-    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
-    float k0(0.0f);
-    float k1(2.0f);
-    float k2(-2.0f);
+    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+    double k0(0.0f);
+    double k1(2.0f);
+    double k2(-2.0f);
 
     SECTION("(p+q)*k must equal p*k + q*k"){
         CHECK(math::distance((p+q)*k0, (p*k0+q*k0), lo, hi) < threshold);
@@ -592,23 +592,23 @@ TEST_CASE( "Polynomial/scalar arithmetic distributivity", "[math]" ) {
 
 
 TEST_CASE( "Polynomial/monomial arithmetic purity", "[math]" ) {
-    const float threshold = std::numeric_limits<float>::epsilon();
+    const double threshold = 1e-6;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
-    const float lo = -1e3;
-    const float hi =  1e3;
+    const double lo = -1e3;
+    const double hi =  1e3;
     // `mid*` variables are used when the degree of a polynomial is so large 
     // that a square integral of it will produce nans for all but the smallest input.
-    const float midlo = -1e2;
-    const float midhi =  1e2;
+    const double midlo = -1e2;
+    const double midhi =  1e2;
     
-    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
-    math::Polynomial<0,0> m0{2.0f};
-    math::Polynomial<2,2> m1{2.0f};
-    math::Polynomial<-2,-2> m2{2.0f};
+    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+    math::Polynomial<double,0,0> m0{2.0f};
+    math::Polynomial<double,2,2> m1{2.0f};
+    math::Polynomial<double,-2,-2> m2{2.0f};
 
     SECTION("p+m1 must be called repeatedly without changing the output"){
         CHECK(math::distance(p+m0, p+m0, lo, hi) < threshold);
@@ -684,16 +684,16 @@ TEST_CASE( "Polynomial/monomial arithmetic purity", "[math]" ) {
 }
 
 TEST_CASE( "Polynomial/monomial arithmetic identity", "[math]" ) {
-    const float threshold = std::numeric_limits<float>::epsilon();
-    const float lo = -1e3;
-    const float hi =  1e3;
+    const double threshold = 1e-6;
+    const double lo = -1e3;
+    const double hi =  1e3;
     
-    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
-    math::Polynomial<0,0> zero{0.0f};
-    math::Polynomial<0,0> one {1.0f};
+    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+    math::Polynomial<double,0,0> zero{0.0f};
+    math::Polynomial<double,0,0> one {1.0f};
 
     SECTION("p+I must equal p"){
         CHECK(math::distance(p+zero, p, lo, hi) < threshold);
@@ -723,23 +723,23 @@ TEST_CASE( "Polynomial/monomial arithmetic identity", "[math]" ) {
 }
 
 TEST_CASE( "Polynomial/monomial arithmetic commutativity", "[math]" ) {
-    const float threshold = std::numeric_limits<float>::epsilon();
+    const double threshold = 1e-6;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
-    const float lo = -1e3;
-    const float hi =  1e3;
+    const double lo = -1e3;
+    const double hi =  1e3;
     // `mid*` variables are used when the degree of a polynomial is so large 
     // that a square integral of it will produce nans for all but the smallest input.
-    const float midlo = -1e2;
-    const float midhi =  1e2;
+    const double midlo = -1e2;
+    const double midhi =  1e2;
     
-    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
-    math::Polynomial<0,0> m0{2.0f};
-    math::Polynomial<2,2> m1{2.0f};
-    math::Polynomial<-2,-2> m2{-2.0f};
+    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+    math::Polynomial<double,0,0> m0{2.0f};
+    math::Polynomial<double,2,2> m1{2.0f};
+    math::Polynomial<double,-2,-2> m2{-2.0f};
 
     SECTION("p+k must equal k+p"){
         CHECK(math::distance(p+m0, m0+p, lo, hi) < threshold);
@@ -780,17 +780,17 @@ TEST_CASE( "Polynomial/monomial arithmetic commutativity", "[math]" ) {
 
 
 TEST_CASE( "Polynomial/monomial arithmetic associativity", "[math]" ) {
-    const float threshold = std::numeric_limits<float>::epsilon();
-    const float lo = -1e3;
-    const float hi =  1e3;
+    const double threshold = 1e-6;
+    const double lo = -1e3;
+    const double hi =  1e3;
     
-    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
-    math::Polynomial<0,0> m0{2.0f};
-    math::Polynomial<2,2> m1{2.0f};
-    math::Polynomial<-2,-2> m2{-2.0f};
+    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+    math::Polynomial<double,0,0> m0{2.0f};
+    math::Polynomial<double,2,2> m1{2.0f};
+    math::Polynomial<double,-2,-2> m2{-2.0f};
 
     SECTION("(p+q)+r must equal p+(q+r)"){
         CHECK(math::distance((p+q)+m0, p+(q+m0), lo, hi) < threshold);
@@ -847,19 +847,19 @@ TEST_CASE( "Polynomial/monomial arithmetic associativity", "[math]" ) {
 
 
 TEST_CASE( "Polynomial/monomial arithmetic distributivity", "[math]" ) {
-    const float threshold = std::numeric_limits<float>::epsilon();
+    const double threshold = 1e-6;
     // `mid*` variables are used when the degree of a polynomial is so large 
     // that a square integral of it will produce nans for all but the smallest input.
-    const float midlo = -1e2;
-    const float midhi =  1e2;
+    const double midlo = -1e2;
+    const double midhi =  1e2;
     
-    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
-    math::Polynomial<0,0> m0{2.0f};
-    math::Polynomial<2,2> m1{2.0f};
-    math::Polynomial<-2,-2> m2{-2.0f};
+    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+    math::Polynomial<double,0,0> m0{2.0f};
+    math::Polynomial<double,2,2> m1{2.0f};
+    math::Polynomial<double,-2,-2> m2{-2.0f};
 
     SECTION("(p+q)*k must equal p*k + q*k"){
         CHECK(math::distance((p+q)*m0, (p*m0+q*m0), midlo, midhi) < threshold);
@@ -933,23 +933,23 @@ TEST_CASE( "Polynomial/monomial arithmetic distributivity", "[math]" ) {
 
 
 TEST_CASE( "Polynomial/Shifting arithmetic purity", "[math]" ) {
-    const float threshold = std::numeric_limits<float>::epsilon();
+    const double threshold = 1e-6;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
-    const float lo = -1e3;
-    const float hi =  1e3;
+    const double lo = -1e3;
+    const double hi =  1e3;
     // `mid*` variables are used when the degree of a polynomial is so large 
     // that a square integral of it will produce nans for all but the smallest input.
-    const float midlo = -1e2;
-    const float midhi =  1e2;
+    const double midlo = -1e2;
+    const double midhi =  1e2;
     
-    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
-    math::Shifting f(2.0f);
-    math::Shifting g(-2.0f);
-    math::Shifting h(0.0f);
+    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+    math::Shifting<double> f(2.0f);
+    math::Shifting<double> g(-2.0f);
+    math::Shifting<double> h(0.0f);
 
     SECTION("p+g must be called repeatedly without changing the output"){
         CHECK(math::distance(p+f, p+f, lo, hi) < threshold);
@@ -1025,15 +1025,15 @@ TEST_CASE( "Polynomial/Shifting arithmetic purity", "[math]" ) {
 }
 
 TEST_CASE( "Polynomial/Shifting arithmetic identity", "[math]" ) {
-    const float threshold = std::numeric_limits<float>::epsilon();
-    const float lo = -1e3;
-    const float hi =  1e3;
+    const double threshold = 1e-6;
+    const double lo = -1e3;
+    const double hi =  1e3;
     
-    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
-    math::Shifting zero(0.0f);
+    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+    math::Shifting<double> zero(0.0f);
 
     SECTION("p+I must equal p"){
         CHECK(math::distance(p+zero, p, lo, hi) < threshold);
@@ -1055,23 +1055,23 @@ TEST_CASE( "Polynomial/Shifting arithmetic identity", "[math]" ) {
 }
 
 TEST_CASE( "Polynomial/Shifting arithmetic commutativity", "[math]" ) {
-    const float threshold = std::numeric_limits<float>::epsilon();
+    const double threshold = 1e-6;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
-    const float lo = -1e3;
-    const float hi =  1e3;
+    const double lo = -1e3;
+    const double hi =  1e3;
     // `mid*` variables are used when the degree of a polynomial is so large 
     // that a square integral of it will produce nans for all but the smallest input.
-    const float midlo = -1e2;
-    const float midhi =  1e2;
+    const double midlo = -1e2;
+    const double midhi =  1e2;
     
-    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
-    math::Shifting f(2.0f);
-    math::Shifting g(-2.0f);
-    math::Shifting h(0.0f);
+    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+    math::Shifting<double> f(2.0f);
+    math::Shifting<double> g(-2.0f);
+    math::Shifting<double> h(0.0f);
 
     SECTION("p+k must equal k+p"){
         CHECK(math::distance(p+f, f+p, lo, hi) < threshold);
@@ -1112,17 +1112,17 @@ TEST_CASE( "Polynomial/Shifting arithmetic commutativity", "[math]" ) {
 
 
 TEST_CASE( "Polynomial/Shifting arithmetic associativity", "[math]" ) {
-    const float threshold = std::numeric_limits<float>::epsilon();
-    const float lo = -1e3;
-    const float hi =  1e3;
+    const double threshold = 1e-6;
+    const double lo = -1e3;
+    const double hi =  1e3;
     
-    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
-    math::Shifting f(2.0f);
-    math::Shifting g(-2.0f);
-    math::Shifting h(0.0f);
+    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+    math::Shifting<double> f(2.0f);
+    math::Shifting<double> g(-2.0f);
+    math::Shifting<double> h(0.0f);
 
     SECTION("(p+q)+r must equal p+(q+r)"){
         CHECK(math::distance((p+q)+f, p+(q+f), lo, hi) < threshold);
@@ -1179,19 +1179,19 @@ TEST_CASE( "Polynomial/Shifting arithmetic associativity", "[math]" ) {
 
 
 TEST_CASE( "Polynomial/Shifting arithmetic distributivity", "[math]" ) {
-    const float threshold = std::numeric_limits<float>::epsilon();
+    const double threshold = 1e-6;
     // `mid*` variables are used when the degree of a polynomial is so large 
     // that a square integral of it will produce nans for all but the smallest input.
-    const float midlo = -1e2;
-    const float midhi =  1e2;
+    const double midlo = -1e2;
+    const double midhi =  1e2;
     
-    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
-    math::Shifting f(2.0f);
-    math::Shifting g(-2.0f);
-    math::Shifting h(0.0f);
+    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+    math::Shifting<double> f(2.0f);
+    math::Shifting<double> g(-2.0f);
+    math::Shifting<double> h(0.0f);
 
     SECTION("(p+q)*k must equal p*k + q*k"){
         CHECK(math::distance((p+q)*f, (p*f+q*f), midlo, midhi) < threshold);
@@ -1266,23 +1266,23 @@ TEST_CASE( "Polynomial/Shifting arithmetic distributivity", "[math]" ) {
 
 
 TEST_CASE( "Polynomial/Scaling arithmetic purity", "[math]" ) {
-    const float threshold = std::numeric_limits<float>::epsilon();
+    const double threshold = 1e-6;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
-    const float lo = -1e3;
-    const float hi =  1e3;
+    const double lo = -1e3;
+    const double hi =  1e3;
     // `mid*` variables are used when the degree of a polynomial is so large 
     // that a square integral of it will produce nans for all but the smallest input.
-    const float midlo = -1e2;
-    const float midhi =  1e2;
+    const double midlo = -1e2;
+    const double midhi =  1e2;
     
-    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
-    math::Scaling f(2.0f);
-    math::Scaling g(-2.0f);
-    math::Scaling h(0.0f);
+    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+    math::Scaling<double> f(2.0f);
+    math::Scaling<double> g(-2.0f);
+    math::Scaling<double> h(0.0f);
 
     SECTION("p+g must be called repeatedly without changing the output"){
         CHECK(math::distance(p+f, p+f, lo, hi) < threshold);
@@ -1358,15 +1358,15 @@ TEST_CASE( "Polynomial/Scaling arithmetic purity", "[math]" ) {
 }
 
 TEST_CASE( "Polynomial/Scaling arithmetic identity", "[math]" ) {
-    const float threshold = std::numeric_limits<float>::epsilon();
-    const float lo = -1e3;
-    const float hi =  1e3;
+    const double threshold = 1e-6;
+    const double lo = -1e3;
+    const double hi =  1e3;
     
-    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
-    math::Shifting zero(0.0f);
+    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+    math::Shifting<double> zero(0.0f);
 
     SECTION("p+I must equal p"){
         CHECK(math::distance(p+zero, p, lo, hi) < threshold);
@@ -1388,23 +1388,23 @@ TEST_CASE( "Polynomial/Scaling arithmetic identity", "[math]" ) {
 }
 
 TEST_CASE( "Polynomial/Scaling arithmetic commutativity", "[math]" ) {
-    const float threshold = std::numeric_limits<float>::epsilon();
+    const double threshold = 1e-6;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
-    const float lo = -1e3;
-    const float hi =  1e3;
+    const double lo = -1e3;
+    const double hi =  1e3;
     // `mid*` variables are used when the degree of a polynomial is so large 
     // that a square integral of it will produce nans for all but the smallest input.
-    const float midlo = -1e2;
-    const float midhi =  1e2;
+    const double midlo = -1e2;
+    const double midhi =  1e2;
     
-    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
-    math::Scaling f(2.0f);
-    math::Scaling g(-2.0f);
-    math::Scaling h(0.0f);
+    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+    math::Scaling<double> f(2.0f);
+    math::Scaling<double> g(-2.0f);
+    math::Scaling<double> h(0.0f);
 
     SECTION("p+k must equal k+p"){
         CHECK(math::distance(p+f, f+p, lo, hi) < threshold);
@@ -1445,17 +1445,17 @@ TEST_CASE( "Polynomial/Scaling arithmetic commutativity", "[math]" ) {
 
 
 TEST_CASE( "Polynomial/Scaling arithmetic associativity", "[math]" ) {
-    const float threshold = std::numeric_limits<float>::epsilon();
-    const float lo = -1e3;
-    const float hi =  1e3;
+    const double threshold = 1e-6;
+    const double lo = -1e3;
+    const double hi =  1e3;
     
-    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
-    math::Scaling f(2.0f);
-    math::Scaling g(-2.0f);
-    math::Scaling h(0.0f);
+    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+    math::Scaling<double> f(2.0f);
+    math::Scaling<double> g(-2.0f);
+    math::Scaling<double> h(0.0f);
 
     SECTION("(p+q)+r must equal p+(q+r)"){
         CHECK(math::distance((p+q)+f, p+(q+f), lo, hi) < threshold);
@@ -1512,19 +1512,19 @@ TEST_CASE( "Polynomial/Scaling arithmetic associativity", "[math]" ) {
 
 
 TEST_CASE( "Polynomial/Scaling arithmetic distributivity", "[math]" ) {
-    const float threshold = std::numeric_limits<float>::epsilon();
+    const double threshold = 1e-6;
     // `mid*` variables are used when the degree of a polynomial is so large 
     // that a square integral of it will produce nans for all but the smallest input.
-    const float midlo = -1e2;
-    const float midhi =  1e2;
+    const double midlo = -1e2;
+    const double midhi =  1e2;
     
-    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
-    math::Scaling f(2.0f);
-    math::Scaling g(-2.0f);
-    math::Scaling h(0.0f);
+    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+    math::Scaling<double> f(2.0f);
+    math::Scaling<double> g(-2.0f);
+    math::Scaling<double> h(0.0f);
 
     SECTION("(p+q)*k must equal p*k + q*k"){
         CHECK(math::distance((p+q)*f, (p*f+q*f), midlo, midhi) < threshold);
@@ -1595,16 +1595,16 @@ TEST_CASE( "Polynomial/Scaling arithmetic distributivity", "[math]" ) {
 
 
 TEST_CASE( "Polynomial integral/derivative invertibility", "[math]" ) {
-    const float threshold = std::numeric_limits<float>::epsilon();
+    const double threshold = 1e-6;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
-    const float lo = -1e3;
-    const float hi =  1e3;
+    const double lo = -1e3;
+    const double hi =  1e3;
     
-    math::Polynomial<0,4> p = math::Polynomial<0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<0,4> q = math::Polynomial<0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    // math::Polynomial<-2,2> r = math::Polynomial<-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    // math::Polynomial<-2,2> s = math::Polynomial<-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
+    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
+    // math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
+    // math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
 
     SECTION("the derivative of a function's integral must equal the original function"){
         CHECK(math::distance(p, derivative(integral(p)), lo, hi) < threshold);

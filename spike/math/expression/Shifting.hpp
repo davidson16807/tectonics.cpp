@@ -11,23 +11,24 @@ namespace math {
     so there was need for a function that restricted users to these kinds of operations.
     Since having implemented it though, it has found other uses.
     */
+    template<typename T>
     struct Shifting {
-        float offset;
-        constexpr explicit Shifting(const float offset):
+        T offset;
+        constexpr explicit Shifting(const T offset):
             offset(offset)
         {}
-        constexpr float operator()(const float x) const
+        constexpr T operator()(const T x) const
         {
             return x+offset;
         }
 
-        Shifting& operator+=(const float k)
+        Shifting& operator+=(const T k)
         {
             offset += k;
             return *this;
         }
 
-        Shifting& operator-=(const float k)
+        Shifting& operator-=(const T k)
         {
             offset -= k;
             return *this;
@@ -35,35 +36,42 @@ namespace math {
     };
 
     // operators with reals that are closed under Shifting relations
-    constexpr Shifting operator+(const Shifting f, const float k)
+    template<typename T>
+    constexpr Shifting<T> operator+(const Shifting<T> f, const T k)
     {
-        return Shifting(f.offset + k);
+        return Shifting<T>(f.offset + k);
     }
-    constexpr Shifting operator+(const float k, const Shifting f)
+    template<typename T>
+    constexpr Shifting<T> operator+(const T k, const Shifting<T> f)
     {
-        return Shifting(f.offset + k);
+        return Shifting<T>(f.offset + k);
     }
-    constexpr Shifting operator-(const Shifting f, const float k)
+    template<typename T>
+    constexpr Shifting<T> operator-(const Shifting<T> f, const T k)
     {
-        return Shifting(f.offset - k);
+        return Shifting<T>(f.offset - k);
     }
 
     // operators that produce Scaling relations when given other relations as input
-    constexpr Shifting operator+(const Identity f, const float k)
+    template<typename T>
+    constexpr Shifting<T> operator+(const Identity<T> f, const T k)
     {
-        return Shifting(k);
+        return Shifting<T>(k);
     }
-    constexpr Shifting operator+(const float k, const Identity f)
+    template<typename T>
+    constexpr Shifting<T> operator+(const T k, const Identity<T> f)
     {
-        return Shifting(k);
+        return Shifting<T>(k);
     }
-    constexpr Shifting operator-(const Identity f, const float k)
+    template<typename T>
+    constexpr Shifting<T> operator-(const Identity<T> f, const T k)
     {
-        return Shifting(-k);
+        return Shifting<T>(-k);
     }
 
     // operators that cause cancelation
-    constexpr float operator-(const Shifting f, const Shifting g)
+    template<typename T>
+    constexpr T operator-(const Shifting<T> f, const Shifting<T> g)
     {
         return f.offset-g.offset;
     }
