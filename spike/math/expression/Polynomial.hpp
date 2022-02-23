@@ -754,6 +754,35 @@ namespace math {
         return dpdx;
     }
 
+    /*
+    `integral` returns the definite integral of a polynomial 
+    without representing the integral as its own function object.
+    This is meant to be used as a fallback in the event the function is a 
+    Laurent polynomial with a coefficient of degree -1, 
+    since the integral for such a function includes a logarithmic term.
+    */
+    template<typename T, int Plo, int Phi>
+    T integral(const Polynomial<T,Plo,Phi>& p, const T x)
+    {
+        T I(0.0f);
+
+        for (int i = Plo; i < -1; ++i)
+        {
+            // exponents are calculated using pow(), 
+            // rather than repeated multiplication, to avoid precision errors
+            I += p[i] * std::pow(x, i+1) / (i+1);
+        }
+
+        I += p[-1] * std::log(std::abs(x));
+
+        T xi  = 1.0f;
+        for (int i = 0; i <= Phi; ++i)
+        {
+            I += p[i] * xi / (i+1);
+            xi *= x;
+        }
+        return I;
+    }
 
     /*
     `integral` returns the definite integral of a polynomial 
@@ -765,30 +794,7 @@ namespace math {
     template<typename T, int Plo, int Phi>
     T integral(const Polynomial<T,Plo,Phi>& p, const T lo, const T hi)
     {
-        T I_hi(0.0f);
-        T I_lo(0.0f);
-
-        for (int i = Plo; i < -1; ++i)
-        {
-            // exponents are calculated using pow(), 
-            // rather than repeated multiplication, to avoid precision errors
-            I_hi += p[i] * std::pow(lo, i+1) / (i+1);
-            I_lo += p[i] * std::pow(hi, i+1) / (i+1);
-        }
-
-        I_hi += p[-1] * std::log(std::abs(lo));
-        I_lo += p[-1] * std::log(std::abs(hi));
-
-        T lo_i  = 1.0f;
-        T hi_i  = 1.0f;
-        for (int i = 0; i <= Phi; ++i)
-        {
-            I_hi += p[i] * lo_i / (i+1);
-            I_lo += p[i] * hi_i / (i+1);
-            lo_i *= lo;
-            hi_i *= hi;
-        }
-        return I_hi - I_lo;
+        return integral(p, hi) - integral(p, lo);
     }
 
 
