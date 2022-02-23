@@ -573,25 +573,6 @@ namespace math {
         return dydx;
     }
 
-
-    template<typename T, int Plo, int Phi>
-    constexpr Spline<T,Plo+1,Phi+1> integral(const Spline<T,Plo,Phi>& p)
-    {
-        using PiecewisePolynomial = Piecewise<T,Polynomial<T,Plo+1,Phi+1>>;
-        std::vector<PiecewisePolynomial> pieces;
-        PiecewisePolynomial f;
-        for (std::size_t i=0; i<p.pieces.size(); i++)
-        {
-            f = PiecewisePolynomial(p.pieces[i].lo, p.pieces[i].hi, integral(p.pieces[i].f));
-            pieces.push_back(f);
-            pieces.push_back(
-                PiecewisePolynomial( 
-                    f.hi, std::numeric_limits<T>::max(), Polynomial<T,Plo+1,Phi+1>( f.f( f.hi ) ) )
-            );
-        }
-        return Spline(pieces);
-    }
-
     /*
     `integral` returns the definite integral of a polynomial 
     without representing the integral as its own function object.
@@ -621,6 +602,25 @@ namespace math {
             I -= integral(p.pieces[i].f, std::clamp(lo, p.pieces[i].hi, p.pieces[i].hi));
         }
         return I;
+    }
+
+    template<typename T, int Plo, int Phi>
+    constexpr Spline<T,Plo+1,Phi+1> integral(const Spline<T,Plo,Phi>& p)
+    {
+        using PiecewisePolynomial = Piecewise<T,Polynomial<T,Plo+1,Phi+1>>;
+        std::vector<PiecewisePolynomial> pieces;
+        PiecewisePolynomial f;
+        for (std::size_t i=0; i<p.pieces.size(); i++)
+        {
+            f = PiecewisePolynomial(p.pieces[i].lo, p.pieces[i].hi, 
+                    integral(p.pieces[i].f) - integral(p.pieces[i].f, p.pieces[i].lo));
+            pieces.push_back(f);
+            pieces.push_back(
+                PiecewisePolynomial( 
+                    f.hi, std::numeric_limits<T>::max(), Polynomial<T,Plo+1,Phi+1>( f.f( f.hi ) ) )
+            );
+        }
+        return Spline(pieces);
     }
 
 

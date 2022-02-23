@@ -1,0 +1,303 @@
+
+#namespace
+SampleDatasetComparison = function(input, output, predict){
+	list(
+		pe = function(parameters){
+			(output-predict(parameters)(input))/output
+		},
+		e = function(parameters){
+			output-predict(parameters)(input)
+		},
+		plot = function(parameters, parameters2=NULL, type='p'){
+			plot(input, output, type=type)
+			points(input, predict(parameters)(input), type=type, col=2)
+			if(!is.null(parameters2)){
+				points(input, predict(parameters)(input), type=type, col=3)
+			}
+		}
+	)
+}
+
+#namespace
+SampledFunctionComparison = function(samples, truth, predict){
+	list(
+		pe = function(parameters){
+			(truth(samples)-predict(parameters)(samples))/truth(samples)
+		},
+		e = function(parameters){
+			truth(samples)-predict(parameters)(samples)
+		},
+		plot = function(parameters, parameters2=NULL){
+			plot(samples, truth(samples), type='l')
+			points(samples, predict(parameters)(samples), type='l', col=2)
+			if(!is.null(parameters2)){
+				points(samples, predict(parameters2)(samples), type='l', col=3)
+			}
+		}
+	)
+}
+
+#namespace
+SampleCosts = function(comparison){
+	list(
+		# mean percent error
+		mpe = function(parameters) {
+			mean(abs(comparison$pe(parameters)))
+		},
+		# mean error
+		me = function(parameters) {
+			mean(abs(comparison$e(parameters)))
+		},
+		# max percent error
+		mxpe = function(parameters) {
+			max(abs(comparison$pe(parameters)))
+		},
+		# max error
+		mxe = function(parameters) {
+			max(abs(comparison$e(parameters)))
+		}
+	)
+}
+
+
+
+# linear Newton polynomial
+p2 = function(x1,x2,x3, y1,y2,y3){
+    dfdx  = (y2-y1) / (x2-x1)
+    function(x){ y1 + dfdx * (x-x1) }
+}
+
+# quadratic Newton polynomial
+p2 = function(x1,x2,x3, y1,y2,y3){
+    y21  = (y2-y1)   / (x2-x1)
+    y32  = (y3-y2)   / (x3-x2)
+    y321 = (y32-y21) / (x3-x1)
+    function(x){ y1 + y21*(x-x1) + y321*(x-x1)*(x-x2) }
+}
+
+# cubic Newton polynomial
+p3 = function(x1,x2,x3,x4, y1,y2,y3,y4){
+    y21   = (y2-y1)     / (x2-x1);
+    y32   = (y3-y2)     / (x3-x2);
+    y43   = (y4-y3)     / (x4-x3);
+    y321  = (y32-y21)   / (x3-x1);
+    y432  = (y43-y32)   / (x4-x2);
+    y4321 = (y432-y321) / (x4-x1);
+    function(x) {
+	   y1 + y21*(x-x1) + y321*(x-x1)*(x-x2) + y4321*(x-x1)*(x-x2)*(x-x3)
+    }
+}
+
+gauss = function(x){ exp(-x^2) }
+
+# 3 pieces of 2nd degree
+gauss3p2d = list(
+	initialize=function(){ c(-0.4,0.0,-0.7) },
+	decode=function(parameters) {
+		cumsum(exp(parameters))
+	},
+	predict=function(parameters){
+		transformed = cumsum(exp(parameters))
+		a = transformed[1]
+		b = transformed[2]
+		c = transformed[3]
+		function(xsigned) {
+			x = abs(xsigned)
+			ifelse(x<a, p2(-a,0,a, gauss(-a),gauss(0),gauss(a))(x), 
+				ifelse(x<c, p2(a,b,c, gauss(a), gauss(b), 0)(x), 0))
+		}
+	}
+)
+
+comparison = SampledFunctionComparison(((-400):400)/100, gauss, gauss3p2d$predict)
+costs = SampleCosts(comparison)
+parameters = optim(gauss3p2d$initialize(), costs$mxe)$par
+comparison$plot(gauss3p2d$initialize(), parameters)
+gauss3p2d$decode(parameters)
+costs$mxe(parameters)
+parameters
+
+
+
+# 3 pieces of 3rd degree
+gauss2p3d = list(
+	initialize=function(){ c(-1.4, -1.0, -0.9, -0.4, -0.6) },
+	decode=function(parameters) {
+		cumsum(exp(parameters))
+	},
+	predict=function(parameters){
+		transformed = cumsum(exp(parameters))
+		a = transformed[1]
+		b = transformed[2]
+		c = transformed[3]
+		d = transformed[4]
+		e = transformed[5]
+		function(xsigned) {
+			x = abs(xsigned)
+			ifelse(x<b, p3(-b,-a,a,b, gauss(-b),gauss(-a),gauss(a),gauss(b))(x), 
+				ifelse(x<e, p3(b,c,d,e, gauss(b), gauss(c), gauss(d), 0)(x), 0))
+		}
+	}
+)
+
+comparison = SampledFunctionComparison(((-400):400)/100, gauss, gauss2p3d$predict)
+costs = SampleCosts(comparison)
+parameters = optim(gauss2p3d$initialize(), costs$mxe)$par
+comparison$plot(gauss2p3d$initialize(), parameters)
+gauss2p3d$decode(parameters)
+costs$mxe(parameters)
+parameters
+
+
+
+
+
+erf = function(x) { 2 * pnorm(x * sqrt(2)) - 1 }
+
+# 6 pieces of 2nd degree
+erf4p2d = list(
+	initialize=function(){ c(-0.85,-0.5,-0.7,-0.85) },
+	decode=function(parameters) {
+		cumsum(exp(parameters))
+	},
+	predict=function(parameters){
+		transformed = cumsum(exp(parameters))
+		a = transformed[1]
+		b = transformed[2]
+		c = transformed[3]
+		d = transformed[4]
+		function(xsigned) {
+			x = abs(xsigned)
+			sign(xsigned) * ifelse(x<b, p2(0,a,b, erf(0),erf(a),erf(b))(x), 
+												ifelse(x<d, p2(b,c,d, erf(b), erf(c), 1)(x), 1))
+		}
+	}
+)
+
+comparison = SampledFunctionComparison(((-400):400)/100, erf, erf4p2d$predict)
+costs = SampleCosts(comparison)
+parameters = optim(erf4p2d$initialize(), costs$mxe)$par
+comparison$plot(erf4p2d$initialize(), parameters)
+erf4p2d$decode(parameters)
+costs$mxe(parameters)
+parameters
+
+
+
+
+# 4 pieces of 2nd degree
+erf2p2d = list(
+	initialize=function(){ c(0.1,-0.6) },
+	decode=function(parameters) {
+		cumsum(exp(parameters))
+	},
+	predict=function(parameters){
+		transformed = cumsum(exp(parameters))
+		a = transformed[1]
+		b = transformed[2]
+		function(xsigned) {
+			x = abs(xsigned)
+			sign(xsigned) * ifelse(x<b, p2(0,a,b, erf(0),erf(a),1)(x),  1)
+		}
+	}
+)
+
+comparison = SampledFunctionComparison(((-400):400)/100, erf, erf2p2d$predict)
+costs = SampleCosts(comparison)
+parameters = optim(erf2p2d$initialize(), costs$mxe)$par
+comparison$plot(erf2p2d$initialize(), parameters)
+erf2p2d$decode(parameters)
+costs$mxe(parameters)
+parameters
+
+
+
+
+
+# 4 pieces of 2nd degree
+tanh2p2d = list(
+	initialize=function(){ c(0.2,-0.2) },
+	decode=function(parameters) {
+		cumsum(exp(parameters))
+	},
+	predict=function(parameters){
+		transformed = cumsum(exp(parameters))
+		a = transformed[1]
+		b = transformed[2]
+		function(xsigned) {
+			x = abs(xsigned)
+			sign(xsigned) * ifelse(x<b, p2(0,a,b, tanh(0),tanh(a),1)(x),  1)
+		}
+	}
+)
+
+comparison = SampledFunctionComparison(((-400):400)/100, tanh, tanh2p2d$predict)
+costs = SampleCosts(comparison)
+parameters = optim(tanh2p2d$initialize(), costs$mxe)$par
+comparison$plot(tanh2p2d$initialize(), parameters)
+tanh2p2d$decode(parameters)
+costs$mxe(parameters)
+parameters
+
+
+
+
+sech2 = function(x){ 1/(cosh(x)*cosh(x)) }
+
+# 3 pieces of 2nd degree
+sech23p2d = list(
+	initialize=function(){ c(-0.3,0.05,-0.3) },
+	decode=function(parameters) {
+		cumsum(exp(parameters))
+	},
+	predict=function(parameters){
+		transformed = cumsum(exp(parameters))
+		a = transformed[1]
+		b = transformed[2]
+		c = transformed[3]
+		function(xsigned) {
+			x = abs(xsigned)
+			ifelse(x<a, p2(-a,0,a, sech2(-a),sech2(0),sech2(a))(x), 
+				ifelse(x<c, p2(a,b,c, sech2(a), sech2(b), 0)(x), 0))
+		}
+	}
+)
+
+comparison = SampledFunctionComparison(((-400):400)/100, sech2, sech23p2d$predict)
+costs = SampleCosts(comparison)
+parameters = optim(sech23p2d$initialize(), costs$mxe)$par
+comparison$plot(sech23p2d$initialize(), parameters)
+sech23p2d$decode(parameters)
+costs$mxe(parameters)
+parameters
+
+
+
+ddxsech2 = function(x){ -2*tanh(x)/(cosh(x)*cosh(x)) }
+
+ddxsech24p2d = list(
+	initialize=function(){ c(-0.7,-1.0,0.3,-0.3) },
+	decode=function(parameters) {
+		cumsum(exp(parameters))
+	},
+	predict=function(parameters){
+		transformed = cumsum(exp(parameters))
+		a = transformed[1]
+		b = transformed[2]
+		c = transformed[3]
+		d = transformed[4]
+		function(xsigned) {
+			x = abs(xsigned)
+			sign(xsigned) * ifelse(x<b, p2(0,a,b, ddxsech2(0),ddxsech2(a),ddxsech2(b))(x), 
+												ifelse(x<d, p2(b,c,d, ddxsech2(b), ddxsech2(c), 0)(x), 0))
+		}
+	}
+)
+
+comparison = SampledFunctionComparison(((-400):400)/100, ddxsech2, ddxsech24p2d$predict)
+costs = SampleCosts(comparison)
+parameters = optim(ddxsech24p2d$initialize(), costs$mxe)$par
+comparison$plot(ddxsech24p2d$initialize(), parameters)
+ddxsech24p2d$decode(parameters)
+costs$mxe(parameters)
+parameters
