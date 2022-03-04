@@ -766,16 +766,19 @@ namespace math {
     {
         T I(0.0f);
 
+        T xi = std::pow(x, Plo+1);
         for (int i = Plo; i < -1; ++i)
         {
             // exponents are calculated using pow(), 
             // rather than repeated multiplication, to avoid precision errors
-            I += p[i] * std::pow(x, i+1) / (i+1);
+            I += p[i] * xi / (i+1);
+            xi *= x;
         }
 
-        I += p[-1] * std::log(std::abs(x));
+        I += p[-1] * (p[-1] != T(0.0f) && Plo < 0? 
+            std::log(std::abs(x)) : T(0.0f));
 
-        T xi  = 1.0f;
+        xi  = x;
         for (int i = 0; i <= Phi; ++i)
         {
             I += p[i] * xi / (i+1);
@@ -794,7 +797,31 @@ namespace math {
     template<typename T, int Plo, int Phi>
     T integral(const Polynomial<T,Plo,Phi>& p, const T lo, const T hi)
     {
-        return integral(p, hi) - integral(p, lo);
+        T I(0.0f);
+
+        T hii  = std::pow(hi, Plo+1);
+        T loi  = std::pow(lo, Plo+1);
+        for (int i = Plo; i < -1; ++i)
+        {
+            I += p[i] * hii / (i+1) 
+               - p[i] * loi / (i+1);
+            hii *= hi;
+            loi *= lo;
+        }
+
+        I += p[-1] * (p[-1] != T(0.0f) && Plo < 0? 
+            std::log(std::abs(hi)) - std::log(std::abs(lo)) : T(0.0f));
+
+        hii = hi;
+        loi = lo;
+        for (int i = 0; i <= Phi; ++i)
+        {
+            I += p[i] * hii / (i+1)
+               - p[i] * loi / (i+1);
+            hii *= hi;
+            loi *= lo;
+        }
+        return I;
     }
 
 

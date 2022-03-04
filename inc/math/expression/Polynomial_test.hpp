@@ -8,6 +8,7 @@
 #include <catch/catch.hpp>
 
 #include <math/expression/Polynomial.hpp>  
+#include <math/expression/Polynomial_to_string.hpp>  
 
 
 TEST_CASE( "Polynomial arithmetic purity", "[math]" ) {
@@ -1024,36 +1025,6 @@ TEST_CASE( "Polynomial/Shifting arithmetic purity", "[math]" ) {
     // }
 }
 
-TEST_CASE( "Polynomial/Shifting arithmetic identity", "[math]" ) {
-    const double threshold = 1e-6;
-    const double lo = -1e3;
-    const double hi =  1e3;
-    
-    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
-    math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
-    math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
-    math::Shifting<double> zero(0.0f);
-
-    SECTION("p+I must equal p"){
-        CHECK(math::distance(p+zero, p, lo, hi) < threshold);
-        CHECK(math::distance(p-zero, p, lo, hi) < threshold);
-        // CHECK(math::distance(p-p, zero, lo, hi) < threshold);
-
-        CHECK(math::distance(q+zero, q, lo, hi) < threshold);
-        CHECK(math::distance(q-zero, q, lo, hi) < threshold);
-        // CHECK(math::distance(q-q, zero, lo, hi) < threshold);
-
-        CHECK(math::distance(r+zero, r, lo, hi) < threshold);
-        CHECK(math::distance(r-zero, r, lo, hi) < threshold);
-        // CHECK(math::distance(r-r, zero, lo, hi) < threshold);
-
-        CHECK(math::distance(s+zero, s, lo, hi) < threshold);
-        CHECK(math::distance(s-zero, s, lo, hi) < threshold);
-        // CHECK(math::distance(s-s, zero, lo, hi) < threshold);
-    }
-}
-
 TEST_CASE( "Polynomial/Shifting arithmetic commutativity", "[math]" ) {
     const double threshold = 1e-6;
     // `lo*` variables are used as bounds to a square integral 
@@ -1366,7 +1337,7 @@ TEST_CASE( "Polynomial/Scaling arithmetic identity", "[math]" ) {
     math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>{-1.0f,0.0f,1.0f,2.0f,3.0f};
     math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>{1.0f,2.0f,3.0f,4.0f,5.0f};
     math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>{-1.0f,1.0f,-2.0f,2.0f,3.0f};
-    math::Shifting<double> zero(0.0f);
+    math::Scaling<double> zero(0.0f);
 
     SECTION("p+I must equal p"){
         CHECK(math::distance(p+zero, p, lo, hi) < threshold);

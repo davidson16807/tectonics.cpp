@@ -16,9 +16,9 @@ namespace math {
         for (int i = Plo; i <= Phi; ++i)
         {
             output += std::to_string(p[i]);
-            output += i>0? "x" : "";
-            output += "^" + std::to_string(i);
-            output += i<Phi? " + " : "";
+            output += i==0?       "" : "x";
+            output += 0<=i&&i<=1? "" : "^" + std::to_string(i);
+            output += i>=Phi?     "" : " + ";
         }
         return output;
     }
