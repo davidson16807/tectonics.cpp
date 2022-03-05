@@ -4,7 +4,7 @@
 #include <models/compound/field/state/OptionalStateField_to_CompletedStateField.hpp>
 #include <models/compound/field/spectral/OptionalSpectralField_to_CompletedSpectralField.hpp>
 
-#include <models/compound/relation/state/OptionalStateRelation.hpp>
+#include <models/compound/relation/OptionalStateRelation.hpp>
 
 #include "PartlyKnownGas.hpp"
 #include "CompletedGas.hpp"
@@ -23,7 +23,7 @@ namespace phase {
             known.thermal_conductivity            .complete(fallback.thermal_conductivity             ),
             known.dynamic_viscosity               .complete(fallback.dynamic_viscosity                ),
             field::complete(known.density,                          fallback.density                          ),
-            field::complete(known.refractive_index,                 fallback.refractive_index                 )
+            known.refractive_index                .complete(fallback.refractive_index                 )
         };
     }
 }}

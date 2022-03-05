@@ -2,6 +2,7 @@
 
 // 3rd party libraries
 #include <string>
+#include <optional>
 
 // in house libraries
 #include <models/compound/field/state/StateParameters.hpp>
@@ -27,6 +28,18 @@ namespace relation {
 	std::string to_string(const GasPropertyStateRelation<T>& known)
 	{
 		return to_string(known, field::StateParameters());
+	}
+
+	template <typename T>
+	std::string to_string(const std::optional<GasPropertyStateRelation<T>>& value, field::StateParameters parameters)
+	{
+		return value.has_value()? si::to_string(value.value()(parameters)) : "[missing]";
+	}
+
+	template <typename T>
+	std::string to_string(const std::optional<GasPropertyStateRelation<T>>& value)
+	{
+		return to_string(value, field::StateParameters());
 	}
 
 } //namespace field

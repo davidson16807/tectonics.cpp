@@ -7,8 +7,9 @@
 #include <models/compound/field/spectral/OptionalSpectralField.hpp>
 #include <models/compound/field/constant/OptionalConstantField.hpp>
 
-#include <models/compound/relation/state/OptionalStateRelation.hpp>
-#include <models/compound/relation/state/GasPropertyStateRelation.hpp>
+#include <models/compound/relation/OptionalStateRelation.hpp>
+#include <models/compound/relation/GasPropertyStateRelation.hpp>
+#include <models/compound/relation/SplineRelation.hpp>
 
 namespace compound { 
 namespace phase { 
@@ -18,7 +19,7 @@ namespace phase {
         relation::OptionalStateRelation<relation::GasPropertyStateRelation<si::thermal_conductivity>> thermal_conductivity;
         relation::OptionalStateRelation<relation::GasPropertyStateRelation<si::dynamic_viscosity>> dynamic_viscosity;
         field::OptionalStateField<si::density> density;
-        field::OptionalSpectralField<double> refractive_index;
+        relation::OptionalStateRelation<relation::SplineRelation<si::wavenumber,float,0,1>> refractive_index;
 
         /*
         Return a `PartlyKnownGas` that has the properties of `known` where present, otherwise substitute with properties of `base`

@@ -20,11 +20,11 @@ TEST_CASE( "CompletedGas to_string() purity", "[field]" ) {
 }
 
 TEST_CASE( "CompletedGas to_string() appreciable difference preservation", "[field]" ) {
-	compound::phase::CompletedGas isobaric_specific_heat_capacity       = known_dummy_gas; isobaric_specific_heat_capacity       .isobaric_specific_heat_capacity = 1.01 * isobaric_specific_heat_capacity       .isobaric_specific_heat_capacity ;
-	compound::phase::CompletedGas nudge_thermal_conductivity            = known_dummy_gas; nudge_thermal_conductivity            .thermal_conductivity            = 1.01 * nudge_thermal_conductivity            .thermal_conductivity            ;
-	compound::phase::CompletedGas nudge_dynamic_viscosity               = known_dummy_gas; nudge_dynamic_viscosity               .dynamic_viscosity               = 1.01 * nudge_dynamic_viscosity               .dynamic_viscosity               ;
-	compound::phase::CompletedGas nudge_density                         = known_dummy_gas; nudge_density                         .density                         = 1.01 * nudge_density                         .density                         (compound::field::StateParameters());
-	compound::phase::CompletedGas nudge_refractive_index                = known_dummy_gas; nudge_refractive_index                .refractive_index                = 1.01 * nudge_refractive_index                .refractive_index                (compound::field::SpectralParameters());
+	compound::phase::CompletedGas isobaric_specific_heat_capacity       = known_dummy_gas; isobaric_specific_heat_capacity .isobaric_specific_heat_capacity = 1.01 * isobaric_specific_heat_capacity       .isobaric_specific_heat_capacity ;
+	compound::phase::CompletedGas nudge_thermal_conductivity            = known_dummy_gas; nudge_thermal_conductivity      .thermal_conductivity            = 1.01 * nudge_thermal_conductivity            .thermal_conductivity            ;
+	compound::phase::CompletedGas nudge_dynamic_viscosity               = known_dummy_gas; nudge_dynamic_viscosity         .dynamic_viscosity               = 1.01 * nudge_dynamic_viscosity               .dynamic_viscosity               ;
+	compound::phase::CompletedGas nudge_density                         = known_dummy_gas; nudge_density                   .density                         = 1.01 * nudge_density                         .density                         (compound::field::StateParameters());
+	compound::phase::CompletedGas nudge_refractive_index                = known_dummy_gas; nudge_refractive_index          .refractive_index                = 1.01 * nudge_refractive_index                .refractive_index                ;
 	
 	SECTION("Appreciable differences in input are preserved within output")
 	{

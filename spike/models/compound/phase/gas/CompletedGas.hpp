@@ -6,7 +6,8 @@
 #include <models/compound/field/state/CompletedStateField.hpp>
 #include <models/compound/field/spectral/CompletedSpectralField.hpp>
 
-#include <models/compound/relation/state/GasPropertyStateRelation.hpp>
+#include <models/compound/relation/GasPropertyStateRelation.hpp>
+#include <models/compound/relation/SplineRelation.hpp>
 
 namespace compound { 
 namespace phase { 
@@ -16,6 +17,6 @@ namespace phase {
         relation::GasPropertyStateRelation<si::thermal_conductivity> thermal_conductivity;
         relation::GasPropertyStateRelation<si::dynamic_viscosity> dynamic_viscosity;
         field::CompletedStateField<si::density> density;
-        field::CompletedSpectralField<double> refractive_index;
+        relation::SplineRelation<si::wavenumber,float,0,1> refractive_index;
     };
 }}

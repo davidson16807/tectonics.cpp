@@ -13,6 +13,7 @@
 #include "PartlyKnownGas.hpp"
 
 #include "PartlyKnownGas_test_utils.hpp"
+#include "PartlyKnownGas_to_string.hpp"
 
 TEST_CASE( "PartlyKnownGas value_or() purity", "[phase]" ) {
 	SECTION("Calling a function twice with the same arguments must produce the same results")

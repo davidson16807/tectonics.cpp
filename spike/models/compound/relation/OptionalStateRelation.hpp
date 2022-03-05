@@ -79,6 +79,10 @@ namespace relation {
             return entry.has_value()? entry.value()(parameters.pressure, parameters.temperature) : std::optional<typename F1::value_type>();
         }
 
+        constexpr F1 value() const
+        {
+            return entry.value();
+        }
         constexpr F1 complete(const F1 fallback) const 
         {
             return entry.has_value()? entry.value() : fallback;
