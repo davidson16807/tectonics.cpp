@@ -31,6 +31,9 @@ namespace math {
     template<typename T, int Plo, int Phi>
     struct Spline {
         std::vector<Piecewise<T,Polynomial<T,Plo,Phi>>> pieces; 
+        Spline() : pieces() 
+        {
+        }
         Spline(const Spline<T,Plo,Phi>& p) : pieces(p.pieces) 
         {
         }
@@ -53,18 +56,20 @@ namespace math {
 
         Spline<T,Plo,Phi>& operator+=(const T k)
         {
-            for (std::size_t i=0; i<pieces.size(); i++)
-            {
-                pieces[i].f += k;
-            }
+            using F = Polynomial<T,Plo,Phi>;
+            using G = Piecewise<T,F>;
+            const T oo = std::numeric_limits<T>::max();
+            F f; f[0] = k;
+            pieces.push_back(G(-oo, oo, f));
             return *this;
         }
         Spline<T,Plo,Phi>& operator-=(const T k)
         {
-            for (std::size_t i=0; i<pieces.size(); i++)
-            {
-                pieces[i].f -= k;
-            }
+            using F = Polynomial<T,Plo,Phi>;
+            using G = Piecewise<T,F>;
+            const T oo = std::numeric_limits<T>::max();
+            F f; f[0] = -k;
+            pieces.push_back(G(-oo, oo, f));
             return *this;
         }
         Spline<T,Plo,Phi>& operator*=(const T k)
@@ -84,6 +89,25 @@ namespace math {
             return *this;
         }
 
+        Spline<T,Plo,Phi>& operator+=(const Polynomial<T,Plo,Phi>& p)
+        {
+            using F = Polynomial<T,Plo,Phi>;
+            using G = Piecewise<T,F>;
+            const T oo = std::numeric_limits<T>::max();
+            F f(p);
+            pieces.push_back(G(-oo, oo, p));
+            return *this;
+        }
+        Spline<T,Plo,Phi>& operator-=(const Polynomial<T,Plo,Phi>& p)
+        {
+            using F = Polynomial<T,Plo,Phi>;
+            using G = Piecewise<T,F>;
+            const T oo = std::numeric_limits<T>::max();
+            F f(p);
+            pieces.push_back(G(-oo, oo, p));
+            return *this;
+        }
+
         template<int Qlo, int Qhi>
         Spline<T,Plo,Phi>& operator+=(const Spline<T,Qlo,Qhi>& q)
         {
@@ -91,7 +115,7 @@ namespace math {
             using G = Piecewise<T,F>;
             for (std::size_t i=0; i<q.pieces.size(); i++)
             {
-                pieces[i].push_back(G(q.pieces[i].lo, q.pieces[i].hi, F(q.pieces[i])));
+                pieces.push_back(G(q.pieces[i].lo, q.pieces[i].hi, F(q.pieces[i].f)));
             }
             return *this;
         }
@@ -102,7 +126,7 @@ namespace math {
             using G = Piecewise<T,F>;
             for (std::size_t i=0; i<q.pieces.size(); i++)
             {
-                pieces[i].push_back(G(q.pieces[i].lo, q.pieces[i].hi, F(q.pieces[i])));
+                pieces.push_back(G(q.pieces[i].lo, q.pieces[i].hi, F(-q.pieces[i].f)));
             }
             return *this;
         }
@@ -114,8 +138,6 @@ namespace math {
         std::string output("\r\n");
         for (std::size_t i=0; i<s.pieces.size(); i++)
         {
-            output += std::to_string(i);
-            output += ": ";
             output += to_string(s.pieces[i]);
             output += "\r\n";
         }
@@ -124,36 +146,76 @@ namespace math {
 
 
     template<typename T, int Plo, int Phi>
-    constexpr auto operator+(const Spline<T,Plo,Phi>& f, const T k)
+    constexpr Spline<T,Plo,Phi> simplify(const Spline<T,Plo,Phi>& s)
     {
-        Spline<T,Plo,Phi> y(f);
+        // gather all boundaries for all pieces
+        std::vector<T> bounds;
+        for (std::size_t i=0; i<s.pieces.size(); i++)
+        {
+            bounds.push_back(s.pieces[i].lo);
+            bounds.push_back(s.pieces[i].hi);
+        }
+        std::sort(bounds.begin(), bounds.end());
+        auto last = std::unique(bounds.begin(), bounds.end());
+        bounds.erase(last, bounds.end());
+
+        using F = Polynomial<T,Plo,Phi>;
+        using G = Piecewise<T,F>;
+        std::vector<G> pieces;
+        for (std::size_t i=1; i<bounds.size(); i++)
+        {
+            F f;
+            // add together all pieces that intersect the region from bounds[i-1] to bounds[i]
+            for (std::size_t j=0; j<s.pieces.size(); j++)
+            {
+                if (std::max(s.pieces[j].lo, bounds[i-1]) < std::min(s.pieces[j].hi, bounds[i]))
+                {
+                    f += s.pieces[j].f;
+                }
+            }
+            pieces.push_back(G(bounds[i-1], bounds[i], f));
+        }
+        return Spline<T,Plo,Phi>(pieces);
+    }
+
+
+
+
+    template<typename T, int Plo, int Phi>
+    constexpr Spline<T,std::min(0,Plo),std::max(0,Phi)> operator+(const Spline<T,Plo,Phi>& f, const T k)
+    {
+        Spline<T,std::min(0,Plo),std::max(0,Phi)> y;
+        y += f;
         y += k;
-        return y;
+        return simplify(y);
     }
 
     template<typename T, int Plo, int Phi>
-    constexpr auto operator+(const T k, const Spline<T,Plo,Phi>& f)
+    constexpr Spline<T,std::min(0,Plo),std::max(0,Phi)> operator+(const T k, const Spline<T,Plo,Phi>& f)
     {
-        Spline<T,Plo,Phi> y(f);
+        Spline<T,std::min(0,Plo),std::max(0,Phi)> y;
+        y += f;
         y += k;
-        return y;
+        return simplify(y);
     }
 
 
     template<typename T, int Plo, int Phi>
-    constexpr auto operator-(const Spline<T,Plo,Phi>& f, const T k)
+    constexpr Spline<T,std::min(0,Plo),std::max(0,Phi)> operator-(const Spline<T,Plo,Phi>& f, const T k)
     {
-        Spline<T,Plo,Phi> y(f);
+        Spline<T,std::min(0,Plo),std::max(0,Phi)> y;
+        y += f;
         y -= k;
-        return y;
+        return simplify(y);
     }
 
     template<typename T, int Plo, int Phi>
-    constexpr auto operator-(const T k, const Spline<T,Plo,Phi>& f)
+    constexpr Spline<T,std::min(0,Plo),std::max(0,Phi)> operator-(const T k, const Spline<T,Plo,Phi>& f)
     {
-        Spline<T,Plo,Phi> y(f);
-        y -= k;
-        return y;
+        Spline<T,std::min(0,Plo),std::max(0,Phi)> y;
+        y -= f;
+        y += k;
+        return simplify(y);
     }
 
 
@@ -198,30 +260,21 @@ namespace math {
 
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto operator+(const Spline<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi> q)
+    constexpr Spline<T,std::min(Plo,Qlo),std::max(Phi,Qhi)> operator+(const Spline<T,Plo,Phi>& s, const Polynomial<T,Qlo,Qhi> p)
     {
-        using F = Polynomial<T,std::min(Plo,Qlo),std::max(Phi,Qhi)>;
-        using G = Piecewise<T,F>;
-
-        std::vector<G> pieces;
-        for (std::size_t i=0; i<p.pieces.size(); i++)
-        {
-            pieces.push_back(G(p.pieces[i].lo, p.pieces[i].hi, F(p.pieces[i].f+q)));
-        }
-        return Spline<T,std::min(Plo,Qlo),std::max(Phi,Qhi)>(pieces);
+        Spline<T,std::min(Plo,Qlo),std::max(Phi,Qhi)> y;
+        y += s;
+        y += p;
+        return y;
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto operator-(const Spline<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi> q)
+    constexpr Spline<T,std::min(Plo,Qlo),std::max(Phi,Qhi)> operator-(const Spline<T,Plo,Phi>& s, const Polynomial<T,Qlo,Qhi> p)
     {
-        using F = Polynomial<T,std::min(Plo,Qlo),std::max(Phi,Qhi)>;
-        using G = Piecewise<T,F>;
-        std::vector<G> pieces;
-        for (std::size_t i=0; i<p.pieces.size(); i++)
-        {
-            pieces.push_back(G(p.pieces[i].lo, p.pieces[i].hi, F(p.pieces[i].f-q)));
-        }
-        return Spline<T,std::min(Plo,Qlo),std::max(Phi,Qhi)>(pieces);
+        Spline<T,std::min(Plo,Qlo),std::max(Phi,Qhi)> y;
+        y += s;
+        y -= p;
+        return y;
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
@@ -259,40 +312,32 @@ namespace math {
 
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto operator+(const Polynomial<T,Qlo,Qhi> q, const Spline<T,Plo,Phi>& p)
+    constexpr Spline<T,std::min(Plo,Qlo),std::max(Phi,Qhi)> operator+(const Polynomial<T,Qlo,Qhi> p, const Spline<T,Plo,Phi>& s)
     {
-        using F = Polynomial<T,std::min(Plo,Qlo),std::max(Phi,Qhi)>;
-        using G = Piecewise<T,F>;
-        std::vector<G> pieces;
-        for (std::size_t i=0; i<p.pieces.size(); i++)
-        {
-            pieces.push_back(G(p.pieces[i].lo, p.pieces[i].hi, F(p.pieces[i].f+q)));
-        }
-        return Spline<T,std::min(Plo,Qlo),std::max(Phi,Qhi)>(pieces);
+        Spline<T,std::min(Plo,Qlo),std::max(Phi,Qhi)> y;
+        y += s;
+        y += p;
+        return y;
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto operator-(const Polynomial<T,Qlo,Qhi> q, const Spline<T,Plo,Phi>& p)
+    constexpr Spline<T,std::min(Plo,Qlo),std::max(Phi,Qhi)> operator-(const Polynomial<T,Qlo,Qhi> p, const Spline<T,Plo,Phi>& s)
     {
-        using F = Polynomial<T,std::min(Plo,Qlo),std::max(Phi,Qhi)>;
-        using G = Piecewise<T,F>;
-        std::vector<G> pieces;
-        for (std::size_t i=0; i<p.pieces.size(); i++)
-        {
-            pieces.push_back(G(p.pieces[i].lo, p.pieces[i].hi, F(p.pieces[i].f-q)));
-        }
-        return Spline<T,std::min(Plo,Qlo),std::max(Phi,Qhi)>(pieces);
+        Spline<T,std::min(Plo,Qlo),std::max(Phi,Qhi)> y;
+        y += p;
+        y -= s;
+        return y;
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto operator*(const Polynomial<T,Qlo,Qhi> q, const Spline<T,Plo,Phi>& p)
+    constexpr auto operator*(const Polynomial<T,Qlo,Qhi> p, const Spline<T,Plo,Phi>& s)
     {
         using F = Polynomial<T,Plo+Qlo,Phi+Qhi>;
         using G = Piecewise<T,F>;
         std::vector<G> pieces;
-        for (std::size_t i=0; i<p.pieces.size(); i++)
+        for (std::size_t i=0; i<s.pieces.size(); i++)
         {
-            pieces.push_back(G(p.pieces[i].lo, p.pieces[i].hi, F(p.pieces[i].f*q)));
+            pieces.push_back(G(s.pieces[i].lo, s.pieces[i].hi, F(s.pieces[i].f*p)));
         }
         return Spline<T,Plo+Qlo,Phi+Qhi>(pieces);
     }
@@ -317,7 +362,7 @@ namespace math {
         {
             pieces.push_back(G(q.pieces[i].lo, q.pieces[i].hi, F(q.pieces[i].f)));
         }
-        return Spline<T,std::min(Plo,Qlo),std::max(Phi,Qhi)>(pieces);
+        return simplify(Spline<T,std::min(Plo,Qlo),std::max(Phi,Qhi)>(pieces));
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
@@ -334,7 +379,7 @@ namespace math {
         {
             pieces.push_back(G(q.pieces[i].lo, q.pieces[i].hi, F(-q.pieces[i].f)));
         }
-        return Spline<T,std::min(Plo,Qlo),std::max(Phi,Qhi)>(pieces);
+        return simplify(Spline<T,std::min(Plo,Qlo),std::max(Phi,Qhi)>(pieces));
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
@@ -356,7 +401,7 @@ namespace math {
                 }
             }
         }
-        return Spline<T,Plo+Qlo,Phi+Qhi>(pieces);
+        return simplify(Spline<T,Plo+Qlo,Phi+Qhi>(pieces));
     }
 
 
@@ -586,20 +631,35 @@ namespace math {
         T I(0.0f);
         for (std::size_t i=0; i<p.pieces.size(); i++)
         {
-            I += integral(p.pieces[i].f, std::clamp(x, p.pieces[i].hi, p.pieces[i].hi));
-            I -= integral(p.pieces[i].f, p.pieces[i].lo);
+            if (p.pieces[i].lo < x)
+            {
+                I += integral(p.pieces[i].f, std::min(x, p.pieces[i].hi)) 
+                   - integral(p.pieces[i].f, p.pieces[i].lo);
+            }
         }
         return I;
     }
 
     template<typename T, int Plo, int Phi>
-    T integral(const Spline<T,Plo,Phi>& p, const T hi, const T lo)
+    T integral(const Spline<T,Plo,Phi>& p, const T lo, const T hi)
     {
         T I(0.0f);
         for (std::size_t i=0; i<p.pieces.size(); i++)
         {
-            I += integral(p.pieces[i].f, std::clamp(hi, p.pieces[i].hi, p.pieces[i].hi));
-            I -= integral(p.pieces[i].f, std::clamp(lo, p.pieces[i].hi, p.pieces[i].hi));
+            /*
+            Q: Why do we check for lo < p.pieces[i].hi?
+            A: If p.pieces[i].hi < lo, then p.pieces[i].hi < hi as well, 
+               so we know the difference in the integral between lo and hi is 0.
+               However the result of the integral may still be big,
+               so we could be trying to find a nonexistant difference between two big numbers.
+               To avoid destructive cancellation we do not calculate.
+               Similar statements could be made for p.pieces[i].lo < hi.
+            */
+            if (lo < p.pieces[i].hi && p.pieces[i].lo < hi)
+            {
+                I += integral(p.pieces[i].f, std::min(hi, p.pieces[i].hi)) 
+                   - integral(p.pieces[i].f, std::max(lo, p.pieces[i].lo));
+            }
         }
         return I;
     }
@@ -607,18 +667,19 @@ namespace math {
     template<typename T, int Plo, int Phi>
     constexpr Spline<T,Plo+1,Phi+1> integral(const Spline<T,Plo,Phi>& p)
     {
-        using PiecewisePolynomial = Piecewise<T,Polynomial<T,Plo+1,Phi+1>>;
-        std::vector<PiecewisePolynomial> pieces;
-        PiecewisePolynomial f;
+        using F = Polynomial<T,Plo+1,Phi+1>;
+        using G = Piecewise<T,F>;
+        const T oo = std::numeric_limits<T>::max();
+        std::vector<G> pieces;
+        G g, gmax;
         for (std::size_t i=0; i<p.pieces.size(); i++)
         {
-            f = PiecewisePolynomial(p.pieces[i].lo, p.pieces[i].hi, 
+            g = G(p.pieces[i].lo, p.pieces[i].hi, 
                     integral(p.pieces[i].f) - integral(p.pieces[i].f, p.pieces[i].lo));
-            pieces.push_back(f);
-            pieces.push_back(
-                PiecewisePolynomial( 
-                    f.hi, std::numeric_limits<T>::max(), Polynomial<T,Plo+1,Phi+1>( f.f( f.hi ) ) )
-            );
+            gmax = G(g.hi, oo, F() );
+            gmax.f[0] = g.f(g.hi);
+            pieces.push_back(g);
+            pieces.push_back(gmax);
         }
         return Spline(pieces);
     }
@@ -629,18 +690,17 @@ namespace math {
     template<typename T, int Plo, int Phi>
     constexpr Spline<T,Plo,Phi> restriction(const Spline<T,Plo,Phi>& p, const T lo, const T hi)
     {
-        std::vector<Piecewise<T,Polynomial<T,Plo,Phi>>> pieces;
+        using F = Polynomial<T,Plo,Phi>;
+        using G = Piecewise<T,F>;
+        std::vector<G> pieces;
+        const T oo = std::numeric_limits<T>::max();
         for (std::size_t i=0; i<p.pieces.size(); i++)
         {
             if (lo < p.pieces[i].lo || p.pieces[i].hi <= hi)
             {
                 if (pieces.size() < 1)
                 {
-                    pieces.push_back(
-                        Piecewise<T,Polynomial<T,Plo,Phi>>( 
-                            std::numeric_limits<T>::max(), p.pieces[i].lo, 
-                            Polynomial<T,Plo,Phi>( p.pieces[i].f(p.pieces[i].lo) ) 
-                        ));
+                    pieces.push_back( G(oo, p.pieces[i].lo, F( p.pieces[i].f(p.pieces[i].lo) ) ));
                 }
                 pieces.push_back(p.pieces[i]);
             }
@@ -654,6 +714,20 @@ namespace math {
 
     }
 
+
+    template<typename T, int Plo, int Phi>
+    constexpr Spline<T,Plo*2,Phi*2> square(const Spline<T,Plo,Phi>& p){
+        return p*p;
+        // Spline<T,Plo,Phi> q = simplify(p);
+        // using F = Polynomial<T,Plo*2,Phi*2>;
+        // using G = Piecewise<T,F>;
+        // std::vector<G> pieces;
+        // for (std::size_t i = 0; i < q.pieces.size(); ++i)
+        // {
+        //     pieces.push_back(G(q.pieces[i].lo, q.pieces[i].hi, q.pieces[i].f*q.pieces[i].f));
+        // }
+        // return Spline<T,Plo*2,Phi*2>(pieces);
+    }
 
     /*
     `distance` is the root of the integrated squared difference 
@@ -678,27 +752,27 @@ namespace math {
         const T hi
     ){
         const auto difference = p-q;
-        return std::sqrt(integral(difference*difference, lo, hi)) / (hi-lo);
+        return std::sqrt(std::max(T(0), integral(square(difference), lo, hi))) / (hi-lo);
     }
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     constexpr T distance(const Spline<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi> q, const T lo, const T hi)
     {
-        return std::sqrt(integral((p-q)*(p-q), lo, hi)) / (hi-lo);
+        return std::sqrt(std::max(T(0), integral(square(p-q), lo, hi))) / (hi-lo);
     }
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     constexpr T distance(const Polynomial<T,Plo,Phi> p, const Spline<T,Qlo,Qhi> q, const T lo, const T hi)
     {
-        return std::sqrt(integral((p-q)*(p-q), lo, hi)) / (hi-lo);
+        return std::sqrt(std::max(T(0), integral(square(p-q), lo, hi))) / (hi-lo);
     }
     template<typename T, int Plo, int Phi>
     constexpr T distance(const Spline<T,Plo,Phi>& p, const T k, const T lo, const T hi)
     {
-        return std::sqrt(integral((p-k)*(p-k), lo, hi)) / (hi-lo);
+        return std::sqrt(std::max(T(0), integral(square(p-k), lo, hi))) / (hi-lo);
     }
     template<typename T, int Plo, int Phi>
     constexpr T distance(const T k, const Spline<T,Plo, Phi> p, const T lo, const T hi)
     {
-        return std::sqrt(integral((p-k)*(p-k), lo, hi)) / (hi-lo);
+        return std::sqrt(std::max(T(0), integral(square(p-k), lo, hi))) / (hi-lo);
     }
 
     /*

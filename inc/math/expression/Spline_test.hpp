@@ -11,7 +11,7 @@
 
 
 TEST_CASE( "Spline arithmetic purity", "[math]" ) {
-    const double threshold = 1e-2;
+    const double threshold = 1e-4;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -57,7 +57,6 @@ TEST_CASE( "Spline arithmetic purity", "[math]" ) {
         Piece2(midlo, -1.0f, Poly2(p2)), 
         Piece2(1.0f, midhi, Poly2(p3)) 
     };
-
 
     SECTION("s0+s1 must be called repeatedly without changing the output"){
 
@@ -128,7 +127,7 @@ TEST_CASE( "Spline arithmetic purity", "[math]" ) {
 }
 
 TEST_CASE( "Spline arithmetic identity", "[math]" ) {
-    const double threshold = 1e-2;
+    const double threshold = 1e-4;
 
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
@@ -202,7 +201,7 @@ TEST_CASE( "Spline arithmetic identity", "[math]" ) {
 }
 
 TEST_CASE( "Spline arithmetic commutativity", "[math]" ) {
-    const double threshold = 1e-2;
+    const double threshold = 1e-4;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -285,7 +284,7 @@ TEST_CASE( "Spline arithmetic commutativity", "[math]" ) {
 }
 
 TEST_CASE( "Spline arithmetic associativity", "[math]" ) {
-    const double threshold = 1e-2;
+    const double threshold = 1e-4;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -350,7 +349,7 @@ TEST_CASE( "Spline arithmetic associativity", "[math]" ) {
 }
 
 TEST_CASE( "Spline arithmetic distributivity", "[math]" ) {
-    const double threshold = 1e-2;
+    const double threshold = 1e-4;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -424,7 +423,7 @@ TEST_CASE( "Spline arithmetic distributivity", "[math]" ) {
 
 
 TEST_CASE( "Spline/scalar arithmetic purity", "[math]" ) {
-    const double threshold = 1e-2;
+    const double threshold = 1e-4;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -547,7 +546,7 @@ TEST_CASE( "Spline/scalar arithmetic purity", "[math]" ) {
 }
 
 TEST_CASE( "Spline/scalar arithmetic identity", "[math]" ) {
-    const double threshold = 1e-2;
+    const double threshold = 1e-4;
 
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
@@ -624,7 +623,7 @@ TEST_CASE( "Spline/scalar arithmetic identity", "[math]" ) {
 }
 
 TEST_CASE( "Spline/scalar arithmetic commutativity", "[math]" ) {
-    const double threshold = 1e-2;
+    const double threshold = 1e-4;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -712,7 +711,7 @@ TEST_CASE( "Spline/scalar arithmetic commutativity", "[math]" ) {
 
 
 TEST_CASE( "Spline/scalar arithmetic associativity", "[math]" ) {
-    const double threshold = 1e-2;
+    const double threshold = 1e-4;
 
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
@@ -817,7 +816,7 @@ TEST_CASE( "Spline/scalar arithmetic associativity", "[math]" ) {
 
 
 TEST_CASE( "Spline/scalar arithmetic distributivity", "[math]" ) {
-    const double threshold = 1e-2;
+    const double threshold = 1e-4;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -928,7 +927,7 @@ TEST_CASE( "Spline/scalar arithmetic distributivity", "[math]" ) {
 
 
 TEST_CASE( "Spline/monomial arithmetic purity", "[math]" ) {
-    const double threshold = 1e-2;
+    const double threshold = 1e-4;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -1051,7 +1050,7 @@ TEST_CASE( "Spline/monomial arithmetic purity", "[math]" ) {
 }
 
 TEST_CASE( "Spline/monomial arithmetic identity", "[math]" ) {
-    const double threshold = 1e-2;
+    const double threshold = 1e-4;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -1127,7 +1126,7 @@ TEST_CASE( "Spline/monomial arithmetic identity", "[math]" ) {
 }
 
 TEST_CASE( "Spline/monomial arithmetic commutativity", "[math]" ) {
-    const double threshold = 1e-2;
+    const double threshold = 1e-4;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -1215,7 +1214,7 @@ TEST_CASE( "Spline/monomial arithmetic commutativity", "[math]" ) {
 
 
 TEST_CASE( "Spline/monomial arithmetic associativity", "[math]" ) {
-    const double threshold = 1e-2;
+    const double threshold = 1e-4;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -1319,7 +1318,7 @@ TEST_CASE( "Spline/monomial arithmetic associativity", "[math]" ) {
 
 
 TEST_CASE( "Spline/monomial arithmetic distributivity", "[math]" ) {
-    const double threshold = 1e-2;
+    const double threshold = 1e-4;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -1440,7 +1439,7 @@ TEST_CASE( "Spline/monomial arithmetic distributivity", "[math]" ) {
 
 
 TEST_CASE( "Spline/Shifting arithmetic purity", "[math]" ) {
-    const double threshold = 1e-2;
+    const double threshold = 1e-4;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -1562,75 +1561,8 @@ TEST_CASE( "Spline/Shifting arithmetic purity", "[math]" ) {
     // }
 }
 
-TEST_CASE( "Spline/Shifting arithmetic identity", "[math]" ) {
-    const double threshold = 1e-2;
-    // `lo*` variables are used as bounds to a square integral 
-    // that is used to calculate deviation from the correct output.
-    const double lo = -1e3;
-    const double hi =  1e3;
-    // `mid*` variables are used when the degree of a polynomial is so large 
-    // that a square integral of it will produce nans for all but the smallest input.
-    const double midlo = -1e2;
-    const double midhi =  1e2;
-    
-    using Poly0 = math::Polynomial<double,0,2>;
-    using Poly1 = math::Polynomial<double,-2,1>;
-    using Poly2 = math::Polynomial<double,-2,2>;
-
-    Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
-    Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
-    Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
-    Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
-
-    using Piece0 = math::Piecewise<double,Poly0>;
-    using Piece1 = math::Piecewise<double,Poly1>;
-    using Piece2 = math::Piecewise<double,Poly2>;
-
-    // standard polynomials, no overlap
-    math::Spline<double,0,2> s0 = math::Spline<double,0,2>{
-        Piece0(lo, -1.0f, p0), 
-        Piece0(1.0f, hi, p1) 
-    }; 
-    // standard polynomials, with overlap
-    math::Spline<double,0,2> s1 = math::Spline<double,0,2>{
-        Piece0(lo, midhi, p0), 
-        Piece0(midlo, hi, p1) 
-    }; 
-    // laurent polynomials
-    math::Spline<double,-2,1> s2 = math::Spline<double,-2,1>{ 
-        Piece1(midlo, -1.0f, p2), 
-        Piece1(1.0f, midhi, p3) 
-    }; 
-    // all polynomials
-    math::Spline<double,-2,2> s3 = math::Spline<double,-2,2>{ 
-        Piece2(lo, midlo, Poly2(p2)), 
-        Piece2(midhi, hi, Poly2(p3)), 
-        Piece2(midlo, -1.0f, Poly2(p2)), 
-        Piece2(1.0f, midhi, Poly2(p3)) 
-    };
-    math::Shifting<double> zero(0.0f);
-
-    SECTION("s0+I must equal s0"){
-        CHECK(math::distance(s0+zero, s0, lo, hi) < threshold);
-        CHECK(math::distance(s0-zero, s0, lo, hi) < threshold);
-        // CHECK(math::distance(s0-s0, zero, lo, hi) < threshold);
-
-        CHECK(math::distance(s1+zero, s1, lo, hi) < threshold);
-        CHECK(math::distance(s1-zero, s1, lo, hi) < threshold);
-        // CHECK(math::distance(s1-s1, zero, lo, hi) < threshold);
-
-        CHECK(math::distance(s2+zero, s2, lo, hi) < threshold);
-        CHECK(math::distance(s2-zero, s2, lo, hi) < threshold);
-        // CHECK(math::distance(s2-s2, zero, lo, hi) < threshold);
-
-        CHECK(math::distance(s3+zero, s3, lo, hi) < threshold);
-        CHECK(math::distance(s3-zero, s3, lo, hi) < threshold);
-        // CHECK(math::distance(s3-s3, zero, lo, hi) < threshold);
-    }
-}
-
 TEST_CASE( "Spline/Shifting arithmetic commutativity", "[math]" ) {
-    const double threshold = 1e-2;
+    const double threshold = 1e-4;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -1718,7 +1650,7 @@ TEST_CASE( "Spline/Shifting arithmetic commutativity", "[math]" ) {
 
 
 TEST_CASE( "Spline/Shifting arithmetic associativity", "[math]" ) {
-    const double threshold = 1e-2;
+    const double threshold = 1e-4;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -1822,7 +1754,7 @@ TEST_CASE( "Spline/Shifting arithmetic associativity", "[math]" ) {
 
 
 TEST_CASE( "Spline/Shifting arithmetic distributivity", "[math]" ) {
-    const double threshold = 1e-2;
+    const double threshold = 1e-4;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -1944,7 +1876,7 @@ TEST_CASE( "Spline/Shifting arithmetic distributivity", "[math]" ) {
 
 
 TEST_CASE( "Spline/Scaling arithmetic purity", "[math]" ) {
-    const double threshold = 1e-2;
+    const double threshold = 1e-4;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -2067,7 +1999,7 @@ TEST_CASE( "Spline/Scaling arithmetic purity", "[math]" ) {
 }
 
 TEST_CASE( "Spline/Scaling arithmetic identity", "[math]" ) {
-    const double threshold = 1e-2;
+    const double threshold = 1e-4;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -2112,7 +2044,7 @@ TEST_CASE( "Spline/Scaling arithmetic identity", "[math]" ) {
         Piece2(midlo, -1.0f, Poly2(p2)), 
         Piece2(1.0f, midhi, Poly2(p3)) 
     };
-    math::Shifting<double> zero(0.0f);
+    math::Scaling<double> zero(0.0f);
 
     SECTION("s0+I must equal s0"){
         CHECK(math::distance(s0+zero, s0, lo, hi) < threshold);
@@ -2134,7 +2066,7 @@ TEST_CASE( "Spline/Scaling arithmetic identity", "[math]" ) {
 }
 
 TEST_CASE( "Spline/Scaling arithmetic commutativity", "[math]" ) {
-    const double threshold = 1e-2;
+    const double threshold = 1e-4;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -2222,7 +2154,7 @@ TEST_CASE( "Spline/Scaling arithmetic commutativity", "[math]" ) {
 
 
 TEST_CASE( "Spline/Scaling arithmetic associativity", "[math]" ) {
-    const double threshold = 1e-2;
+    const double threshold = 1e-4;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -2326,7 +2258,7 @@ TEST_CASE( "Spline/Scaling arithmetic associativity", "[math]" ) {
 
 
 TEST_CASE( "Spline/Scaling arithmetic distributivity", "[math]" ) {
-    const double threshold = 1e-2;
+    const double threshold = 1e-4;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -2442,9 +2374,8 @@ TEST_CASE( "Spline/Scaling arithmetic distributivity", "[math]" ) {
 
 
 
-/*
 TEST_CASE( "Spline integral/derivative invertibility", "[math]" ) {
-    const double threshold = 1e-2;
+    const double threshold = 1e-4;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -2478,4 +2409,3 @@ TEST_CASE( "Spline integral/derivative invertibility", "[math]" ) {
         // CHECK(math::distance(s3, derivative(integral(s3)), lo, hi) < threshold);
     }
 }
-*/

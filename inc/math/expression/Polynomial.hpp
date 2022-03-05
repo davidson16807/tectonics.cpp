@@ -69,6 +69,11 @@ namespace math {
         template<typename TIterator>
         constexpr explicit Polynomial(TIterator first, TIterator last) : k(first, last)
         {}
+        constexpr Polynomial<T,Nlo,Nhi>& operator=(const Polynomial<T,Nlo,Nhi>& p)
+        {
+            std::copy(p.k.begin(), p.k.end(), k.begin());
+            return *this;
+        }
         constexpr T operator()(const T x) const
         {
             T y(0.0f);
@@ -766,23 +771,19 @@ namespace math {
     {
         T I(0.0f);
 
-        T xi = std::pow(x, Plo+1);
         for (int i = Plo; i < -1; ++i)
         {
             // exponents are calculated using pow(), 
             // rather than repeated multiplication, to avoid precision errors
-            I += p[i] * xi / (i+1);
-            xi *= x;
+            I += p[i] * std::pow(x, i+1) / (i+1);
         }
 
         I += p[-1] * (p[-1] != T(0.0f) && Plo < 0? 
             std::log(std::abs(x)) : T(0.0f));
 
-        xi  = x;
         for (int i = 0; i <= Phi; ++i)
         {
-            I += p[i] * xi / (i+1);
-            xi *= x;
+            I += p[i] * std::pow(x, i+1) / (i+1);
         }
         return I;
     }
@@ -799,27 +800,19 @@ namespace math {
     {
         T I(0.0f);
 
-        T hii  = std::pow(hi, Plo+1);
-        T loi  = std::pow(lo, Plo+1);
         for (int i = Plo; i < -1; ++i)
         {
-            I += p[i] * hii / (i+1) 
-               - p[i] * loi / (i+1);
-            hii *= hi;
-            loi *= lo;
+            I += p[i] *  (std::pow(hi, i+1) / (i+1) 
+                        - std::pow(lo, i+1) / (i+1));
         }
 
         I += p[-1] * (p[-1] != T(0.0f) && Plo < 0? 
             std::log(std::abs(hi)) - std::log(std::abs(lo)) : T(0.0f));
 
-        hii = hi;
-        loi = lo;
         for (int i = 0; i <= Phi; ++i)
         {
-            I += p[i] * hii / (i+1)
-               - p[i] * loi / (i+1);
-            hii *= hi;
-            loi *= lo;
+            I += p[i] *  (std::pow(hi, i+1) / (i+1) 
+                        - std::pow(lo, i+1) / (i+1));
         }
         return I;
     }

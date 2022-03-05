@@ -9,10 +9,11 @@ namespace math {
     template<typename T, typename F>
     constexpr std::string to_string(const Piecewise<T,F>& p)
     {
+        const T oo = std::numeric_limits<T>::max();
         std::string output;
-        output += std::to_string(p.lo);
+        output += p.lo == -oo? "-∞" : std::to_string(p.lo);
         output += " < x ≤ ";
-        output += std::to_string(p.hi);
+        output += p.hi ==  oo? "∞" : std::to_string(p.hi);
         output += ": ";
         output += to_string(p.f);
         return output;
