@@ -5,6 +5,8 @@
 #include <models/compound/field/spectral/OptionalSpectralField.hpp>
 #include <models/compound/field/constant/OptionalConstantField.hpp>
 
+#include <models/compound/relation/SplineRelation.hpp>
+
 namespace compound { 
 namespace phase { 
     struct PartlyKnownSolid

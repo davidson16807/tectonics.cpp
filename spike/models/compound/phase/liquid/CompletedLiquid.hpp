@@ -6,6 +6,8 @@
 #include <models/compound/field/state/CompletedStateField.hpp>
 #include <models/compound/field/spectral/CompletedSpectralField.hpp>
 
+#include <models/compound/relation/SplineRelation.hpp>
+
 namespace compound { 
 namespace phase { 
     struct CompletedLiquid
