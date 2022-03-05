@@ -31,21 +31,3 @@ compound::phase::CompletedGas known_dummy_gas  {
     /*density*/                           4.0 * si::kilogram/si::meter3,
     /*refractive_index*/                  compound::relation::spline_constant<si::wavenumber,float,0,1>(1.3 )// engineering toolbox
 };
-
-namespace compound {
-namespace phase {
-    bool operator==(const CompletedGas& first, const CompletedGas& second)
-    {
-        return 
-            first.isobaric_specific_heat_capacity == second.isobaric_specific_heat_capacity &&
-            first.thermal_conductivity            == second.thermal_conductivity            &&
-            first.dynamic_viscosity               == second.dynamic_viscosity               &&
-            first.density                         == second.density                         &&
-            compound::relation::distance(first.refractive_index, second.refractive_index, 
-                1.0/si::centimeter, 100e3/si::centimeter) < 1e-4;
-    }
-    bool operator!=(const CompletedGas& first, const CompletedGas& second)
-    {
-        return !(first==second);
-    }
-}}

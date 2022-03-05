@@ -57,25 +57,3 @@ int PartlyKnownGas_attribute_known_count(const compound::phase::PartlyKnownGas& 
         liquid.density                         .has_value() +
         liquid.refractive_index                .has_value();
 }
-
-namespace compound{
-namespace phase{
-    bool operator==(const PartlyKnownGas& first, const PartlyKnownGas& second)
-    {
-        return 
-            first.isobaric_specific_heat_capacity == second.isobaric_specific_heat_capacity &&
-            first.thermal_conductivity            == second.thermal_conductivity            &&
-            first.dynamic_viscosity               == second.dynamic_viscosity               &&
-            first.density                         == second.density                         &&
-            first.refractive_index.has_value() == second.refractive_index.has_value() ||
-                compound::relation::distance(
-                    first.refractive_index.value(), 
-                    second.refractive_index.value(), 
-                    1.0/si::centimeter, 
-                    100e3/si::centimeter) < 1e-4;
-    }
-    bool operator!=(const PartlyKnownGas& first, const PartlyKnownGas& second)
-    {
-        return !(first==second);
-    }
-}}

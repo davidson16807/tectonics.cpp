@@ -203,7 +203,7 @@ namespace relation {
 
 
     template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
-    bool distance(
+    float distance(
         const relation::SplineRelation<Tx,Ty,Plo,Phi>& a, 
         const relation::SplineRelation<Tx,Ty,Qlo,Qhi>& b, 
         const Tx xlo, 

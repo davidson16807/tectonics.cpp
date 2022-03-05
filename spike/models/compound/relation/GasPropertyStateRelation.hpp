@@ -816,5 +816,34 @@ namespace relation {
         result *= scalar;
         return result;
     }
+
+    /*
+    `distance` is a distance metric that is designed to test whether two objects are equal 
+    up to some threshold that the user defines to reflect the precision of underlying types.
+    GasPropertyStateRelation does not have a convenient closed form distance metric,
+    so equality is determined pragmatically by sampling at given pressures/temperatures
+    */
+    template<typename T1>
+    float distance(
+        const GasPropertyStateRelation<T1>& first, 
+        const GasPropertyStateRelation<T1>& second,
+        const field::StateParameters lo, 
+        const field::StateParameters hi
+    ){
+        float result(0.0f);
+        si::pressure lop = lo.pressure;
+        si::temperature loT = lo.temperature;
+        si::pressure hip = hi.pressure;
+        si::temperature hiT = hi.temperature;
+        for(si::pressure p = lop; p<hip; p*=3.0)
+        {
+            for(si::temperature T = loT; T<hiT; T*=3.0)
+            {
+                result = std::max(result, 
+                    float(std::abs((first(p, T) - second(p, T)) / T1(1))));
+            }
+        }
+        return result;
+    }
 }}
 

@@ -18,43 +18,60 @@
 TEST_CASE( "PartlyKnownGas value_or() purity", "[phase]" ) {
 	SECTION("Calling a function twice with the same arguments must produce the same results")
 	{
-    	CHECK(unknown_gas.value_or(unknown_gas) == unknown_gas.value_or(unknown_gas));
-        CHECK(nitrogen_gas.value_or(nitrogen_gas) == nitrogen_gas.value_or(nitrogen_gas));
-        CHECK(steam.value_or(steam) == steam.value_or(steam));
-    	CHECK(dummy_gas.value_or(dummy_gas) == dummy_gas.value_or(dummy_gas));
-    }
+    const float float_precision(1e-7);
+  	CHECK(compound::phase::distance(unknown_gas.value_or(unknown_gas), unknown_gas.value_or(unknown_gas))
+            < float_precision);
+    CHECK(compound::phase::distance(nitrogen_gas.value_or(nitrogen_gas), nitrogen_gas.value_or(nitrogen_gas))
+            < float_precision);
+    CHECK(compound::phase::distance(steam.value_or(steam), steam.value_or(steam))
+            < float_precision);
+  	CHECK(compound::phase::distance(dummy_gas.value_or(dummy_gas), dummy_gas.value_or(dummy_gas))
+            < float_precision);
+  }
 }
 TEST_CASE( "PartlyKnownGas value_or() identity", "[phase]" ) {
 	SECTION("There exists a value that when applied to a function returns the original value")
 	{
-    	CHECK(unknown_gas.value_or(unknown_gas) == unknown_gas);
-        CHECK(nitrogen_gas.value_or(unknown_gas) == nitrogen_gas);
-        CHECK(steam.value_or(unknown_gas) == steam);
-    	CHECK(dummy_gas.value_or(unknown_gas) == dummy_gas);
-    }
+    const float float_precision(1e-7);
+  	CHECK(compound::phase::distance(unknown_gas.value_or(unknown_gas), unknown_gas)
+            < float_precision);
+    CHECK(compound::phase::distance(nitrogen_gas.value_or(unknown_gas), nitrogen_gas)
+            < float_precision);
+    CHECK(compound::phase::distance(steam.value_or(unknown_gas), steam)
+            < float_precision);
+  	CHECK(compound::phase::distance(dummy_gas.value_or(unknown_gas), dummy_gas)
+            < float_precision);
+  }
 }
 
 TEST_CASE( "PartlyKnownGas value_or() associativity", "[phase]" ) {
 	SECTION("Functions can be applied in any order and still produce the same results")
 	{
-        CHECK(nitrogen_gas.value_or(steam.value_or(dummy_gas)) == 
-              nitrogen_gas.value_or(steam).value_or(dummy_gas));
+    const float float_precision(1e-7);
+    CHECK(compound::phase::distance(nitrogen_gas.value_or(steam.value_or(dummy_gas)), 
+                                        nitrogen_gas.value_or(steam).value_or(dummy_gas))
+            < float_precision);
 
-        CHECK(nitrogen_gas.value_or(dummy_gas.value_or(steam)) == 
-              nitrogen_gas.value_or(dummy_gas).value_or(steam));
+    CHECK(compound::phase::distance(nitrogen_gas.value_or(dummy_gas.value_or(steam)), 
+                                        nitrogen_gas.value_or(dummy_gas).value_or(steam))
+            < float_precision);
 
-        
-        CHECK(steam.value_or(nitrogen_gas.value_or(dummy_gas)) == 
-              steam.value_or(nitrogen_gas).value_or(dummy_gas));
+    
+    CHECK(compound::phase::distance(steam.value_or(nitrogen_gas.value_or(dummy_gas)), 
+                                        steam.value_or(nitrogen_gas).value_or(dummy_gas))
+            < float_precision);
 
-        CHECK(steam.value_or(dummy_gas.value_or(nitrogen_gas)) == 
-              steam.value_or(dummy_gas).value_or(nitrogen_gas));
+    CHECK(compound::phase::distance(steam.value_or(dummy_gas.value_or(nitrogen_gas)), 
+                                        steam.value_or(dummy_gas).value_or(nitrogen_gas))
+            < float_precision);
 
-        
-        CHECK(dummy_gas.value_or(nitrogen_gas.value_or(dummy_gas)) == 
-              dummy_gas.value_or(nitrogen_gas).value_or(dummy_gas));
+    
+    CHECK(compound::phase::distance(dummy_gas.value_or(nitrogen_gas.value_or(dummy_gas)), 
+                                        dummy_gas.value_or(nitrogen_gas).value_or(dummy_gas))
+            < float_precision);
 
-        CHECK(dummy_gas.value_or(dummy_gas.value_or(nitrogen_gas)) == 
-              dummy_gas.value_or(dummy_gas).value_or(nitrogen_gas));
-    }
+    CHECK(compound::phase::distance(dummy_gas.value_or(dummy_gas.value_or(nitrogen_gas)), 
+                                          dummy_gas.value_or(dummy_gas).value_or(nitrogen_gas))
+            < float_precision);
+  }
 }

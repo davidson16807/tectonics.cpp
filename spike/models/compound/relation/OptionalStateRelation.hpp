@@ -331,4 +331,40 @@ namespace relation {
         result *= -1.0f;
         return result;
     }
+
+    /*
+    `distance` is a distance metric that is designed to test whether two objects are equal 
+    up to some threshold that the user defines to reflect the precision of underlying types.
+    It calculates a distance metric for each attribute separately, 
+    casting booleans and integers as floats, and returns the maximum distance calculated.
+    */
+    template<typename T1, typename F1>
+    float distance(
+        const OptionalStateRelation<F1>& first, 
+        const OptionalStateRelation<F1>& second,
+        const T1 lo, 
+        const T1 hi
+    ){
+        return std::max(
+            std::abs(float(first.has_value()) - float(second.has_value())),
+            first.has_value() && second.has_value()? 
+                  float(distance(first.value(), second.value(), lo, hi)) 
+                : 0.0f
+        );
+    }
+    /*
+    Overload for the above, but presumes the upper and lower bounds 
+    are defined for the underlying type, F1.
+    */
+    template<typename F1>
+    float distance(
+        const OptionalStateRelation<F1>& first, 
+        const OptionalStateRelation<F1>& second
+    ){
+        return std::max(
+            std::abs(float(first.has_value()) - float(second.has_value())),
+            first.has_value() && second.has_value()? 
+                  float(distance(first.value(), second.value())) : 0.0f
+        );
+    }
 }}

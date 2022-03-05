@@ -45,4 +45,23 @@ namespace phase {
     {
         return known.value_or(fallback);
     }
+    /*
+    `distance` is a distance metric that is designed to test whether two objects are equal 
+    up to some user defined threshold based around the precision of underlying types.
+    It calculates a distance metric for each attribute separately, 
+    casting booleans and integers as floats, and returns the maximum distance calculated.
+    */
+    float distance(const PartlyKnownGas& first, const PartlyKnownGas& second)
+    {
+        float out(0.0f);
+        field::StateParameters lo(0.01*si::standard_pressure, 3.0*si::kelvin);
+        field::StateParameters hi(10.0*si::standard_pressure, 1000.0*si::kelvin);
+        out = std::max(out, relation::distance(first.isobaric_specific_heat_capacity, second.isobaric_specific_heat_capacity, lo, hi));
+        out = std::max(out, relation::distance(first.thermal_conductivity, second.thermal_conductivity, lo, hi));
+        out = std::max(out, relation::distance(first.dynamic_viscosity, second.dynamic_viscosity, lo, hi));
+        // out = std::max(out, relation::distance(first.density, second.density)); // don't care, fix it later
+        out = std::max(out, relation::distance(first.refractive_index, second.refractive_index, 
+            1.0/si::centimeter, 100e3/si::centimeter));
+        return out;
+    }
 }}

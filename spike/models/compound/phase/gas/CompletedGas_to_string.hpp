@@ -6,6 +6,7 @@
 #include <models/compound/field/spectral/CompletedSpectralField_to_string.hpp>
 
 #include <models/compound/relation/GasPropertyStateRelation_to_string.hpp>
+#include <models/compound/relation/SplineRelation_to_string.hpp>
 
 #include <models/compound/phase/gas/CompletedGas.hpp>
 
@@ -20,7 +21,6 @@ namespace phase {
 		out += "Dynamic Viscosity                    " + relation::to_string(gas.dynamic_viscosity,               state)    + "\n";
 		out += "Density                              " + field::to_string(gas.density,                            state)    + "\n";
 		out += "Refractive Index                     " + relation::to_string(gas.refractive_index, (spectrum.nlo+spectrum.nhi)/2.0f) + "\n";
-        out += "distance: " + std::to_string(compound::relation::distance(gas.refractive_index, gas.refractive_index, 1.0/si::centimeter, 100e3/si::centimeter));
         out += "\n";
 
 		return out;
