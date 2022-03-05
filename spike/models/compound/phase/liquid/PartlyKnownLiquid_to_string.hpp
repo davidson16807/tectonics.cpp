@@ -6,6 +6,9 @@
 #include <models/compound/field/state/OptionalStateField_to_string.hpp>
 #include <models/compound/field/spectral/OptionalSpectralField_to_string.hpp>
 
+#include <models/compound/relation/OptionalStateRelation_to_string.hpp>
+#include <models/compound/relation/SplineRelation_to_string.hpp>
+
 #include <models/compound/phase/liquid/PartlyKnownLiquid.hpp>
 
 namespace compound {
@@ -20,8 +23,8 @@ namespace phase {
 		out += "Density                              " + field::to_string(liquid.density,                         state)    + "\n";
 		out += "Vapor Pressure                       " + field::to_string(liquid.vapor_pressure,                  state)    + "\n";
 		out += "Surface Tension                      " + field::to_string(liquid.surface_tension,                 state)    + "\n";
-		out += "Refractive Index                     " + field::to_string(liquid.refractive_index,                spectrum) + "\n";
-		out += "Extinction Coefficient               " + field::to_string(liquid.extinction_coefficient,          spectrum) + "\n";
+		out += "Refractive Index                     " + relation::to_string(liquid.refractive_index,       (spectrum.nlo+spectrum.nhi)/2.0f) + "\n";
+		out += "Extinction Coefficient               " + relation::to_string(liquid.extinction_coefficient, (spectrum.nlo+spectrum.nhi)/2.0f) + "\n";
         out += "\n";
 		return out;
 	}

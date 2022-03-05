@@ -5,6 +5,7 @@
 #include <models/compound/field/spectral/OptionalSpectralField.hpp>
 #include <models/compound/field/constant/OptionalConstantField.hpp>
 
+#include <models/compound/relation/OptionalStateRelation.hpp>
 #include <models/compound/relation/SplineRelation.hpp>
 
 namespace compound { 
@@ -17,8 +18,8 @@ namespace phase {
         field::OptionalStateField<si::density> density;
         field::OptionalStateField<si::pressure> vapor_pressure;
         field::OptionalStateField<si::surface_energy> surface_tension;
-        field::OptionalSpectralField<double> refractive_index;
-        field::OptionalSpectralField<double> extinction_coefficient;
+        relation::OptionalStateRelation<relation::SplineRelation<si::wavenumber,float,0,1>> refractive_index;
+        relation::OptionalStateRelation<relation::SplineRelation<si::wavenumber,float,0,1>> extinction_coefficient;
 
         /*
         Return a `PartlyKnownLiquid` that has the properties of `known` where present, otherwise substitute with properties of `base`

@@ -24,7 +24,7 @@ TEST_CASE( "CompletedLiquid to_string() appreciable difference preservation", "[
 	compound::phase::CompletedLiquid nudge_density                           = known_dummy_liquid; nudge_density                           .density                           = 1.01 * nudge_density                           .density                           (compound::field::StateParameters());
 	compound::phase::CompletedLiquid nudge_vapor_pressure                    = known_dummy_liquid; nudge_vapor_pressure                    .vapor_pressure                    = 1.01 * nudge_vapor_pressure                    .vapor_pressure                    (compound::field::StateParameters());
 	compound::phase::CompletedLiquid nudge_surface_tension                   = known_dummy_liquid; nudge_surface_tension                   .surface_tension                   = 1.01 * nudge_surface_tension                   .surface_tension                   (compound::field::StateParameters());
-	compound::phase::CompletedLiquid nudge_refractive_index                  = known_dummy_liquid; nudge_refractive_index                  .refractive_index                  = 1.01 * nudge_refractive_index                  .refractive_index                  (compound::field::SpectralParameters());
+	compound::phase::CompletedLiquid nudge_refractive_index                  = known_dummy_liquid; nudge_refractive_index                  .refractive_index                  = 1.01 * nudge_refractive_index                  .refractive_index;
 	
 	SECTION("Appreciable differences in input are preserved within output")
 	{
