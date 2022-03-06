@@ -6,6 +6,9 @@
 #include <models/compound/field/state/OptionalStateField_to_string.hpp>
 #include <models/compound/field/spectral/OptionalSpectralField_to_string.hpp>
 
+#include <models/compound/relation/OptionalStateRelation_to_string.hpp>
+#include <models/compound/relation/SplineRelation_to_string.hpp>
+
 #include <models/compound/phase/solid/PartlyKnownSolid.hpp>
 
 namespace compound {
@@ -19,9 +22,9 @@ namespace phase {
 		out += "Dynamic Viscosity                    " + field::to_string(solid.dynamic_viscosity,                state)     + "\n";
 		out += "Density                              " + field::to_string(solid.density,                          state)     + "\n";
 		out += "Vapor Pressure                       " + field::to_string(solid.vapor_pressure,                   state)     + "\n";
-		out += "Refractive Index                     " + field::to_string(solid.refractive_index,                 spectrum)  + "\n";
-		out += "Extinction Coefficient               " + field::to_string(solid.extinction_coefficient,           spectrum)  + "\n";
-		out += "Absorption Coefficient               " + field::to_string(solid.absorption_coefficient,           spectrum)  + "\n";
+		out += "Refractive Index                     " + relation::to_string(solid.refractive_index,       (spectrum.nlo+spectrum.nhi)/2.0f)  + "\n";
+		out += "Extinction Coefficient               " + relation::to_string(solid.extinction_coefficient, (spectrum.nlo+spectrum.nhi)/2.0f)  + "\n";
+		out += "Absorption Coefficient               " + relation::to_string(solid.absorption_coefficient, (spectrum.nlo+spectrum.nhi)/2.0f)  + "\n";
 		out += "Bulk Modulus                         " + field::to_string(solid.bulk_modulus,                     state)     + "\n";
 		out += "Tensile Modulus                      " + field::to_string(solid.tensile_modulus,                  state)     + "\n";
 		out += "Shear Modulus                        " + field::to_string(solid.shear_modulus,                    state)     + "\n";

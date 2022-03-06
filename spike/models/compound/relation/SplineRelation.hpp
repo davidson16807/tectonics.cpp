@@ -4,7 +4,6 @@
 #include <math/expression/Scaling.hpp>
 #include <math/expression/Spline.hpp>
 #include <math/expression/Clamped.hpp>
-#include <math/expression/Cast.hpp>
 
 namespace compound {
 namespace relation {
@@ -210,8 +209,8 @@ namespace relation {
         const Tx xhi
     ){
         return math::distance(
-            compose(a.spline/a.yunits, math::Scaling(float(Tx(1.0f)/a.xunits))),
-            compose(b.spline/b.yunits, math::Scaling(float(Tx(1.0f)/b.xunits))),
+            compose(a.spline*float(Ty(1.0)/a.yunits), math::Scaling<float>(float(Tx(1.0)/a.xunits))),
+            compose(b.spline*float(Ty(1.0)/b.yunits), math::Scaling<float>(float(Tx(1.0)/b.xunits))),
             float(xlo/Tx(1.0f)), 
             float(xhi/Tx(1.0f))
         );

@@ -36,14 +36,14 @@ compound::phase::PartlyKnownSolid unknown_solid {
     /*chemical_susceptibility_estimate*/  std::monostate()
 };
 compound::phase::PartlyKnownSolid ice {
-    /*isobaric_specific_heat_capacity*/            2.05 * si::joule / (si::gram * si::kelvin), // wikipedia
+    /*isobaric_specific_heat_capacity*/   2.05 * si::joule / (si::gram * si::kelvin), // wikipedia
     /*thermal_conductivity*/              2.09 * si::watt / (si::meter * si::kelvin), // wikipedia
     /*dynamic_viscosity*/                 1e13 * si::poise, // reference by Carey (1953)
     /*density*/                           0916.9 * si::kilogram/si::meter3,
     /*vapor_pressure*/                    138.268 * si::megapascal,
-    /*refractive_index*/                  1.3098,
-    /*extinction_coefficient*/            0.03,
-    /*absorption_coefficient*/            25.0 / si::centimeter,
+    /*refractive_index*/                  compound::relation::spline_constant<si::wavenumber,float,0,1>(1.3098),
+    /*extinction_coefficient*/            compound::relation::spline_constant<si::wavenumber,float,0,1>(0.03),
+    /*absorption_coefficient*/            compound::relation::spline_constant<si::wavenumber,si::attenuation,0,1>(25.0 / si::centimeter),
 
     /*bulk_modulus*/                      8.899 * si::gigapascal, // gammon (1983)
     /*tensile_modulus*/                   9.332 * si::gigapascal, // gammon (1983)
@@ -62,14 +62,14 @@ compound::phase::PartlyKnownSolid ice {
     /*chemical_susceptibility_estimate*/  false
 };
 compound::phase::PartlyKnownSolid quartz {
-    /*isobaric_specific_heat_capacity*/            0.703 * si::joule / (si::gram * si::kelvin), // Cermak (1988), wikipedia, for vitreous silica
+    /*isobaric_specific_heat_capacity*/   0.703 * si::joule / (si::gram * si::kelvin), // Cermak (1988), wikipedia, for vitreous silica
     /*thermal_conductivity*/              1.36 * si::watt / (si::centimeter * si::kelvin), // Cermak (1988), wikipedia, for vitreous silica
     /*dynamic_viscosity*/                 std::monostate(),
     /*density*/                           2650.0 * si::kilogram/si::meter3, // alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
     /*vapor_pressure*/                    std::monostate(),
-    /*refractive_index*/                  1.4585,  // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
-    /*extinction_coefficient*/            0.00014657, 
-    /*absorption_coefficient*/            1.0 / si::centimeter,
+    /*refractive_index*/                  compound::relation::spline_constant<si::wavenumber,float,0,1>(1.4585),
+    /*extinction_coefficient*/            compound::relation::spline_constant<si::wavenumber,float,0,1>(0.00014657), 
+    /*absorption_coefficient*/            compound::relation::spline_constant<si::wavenumber,si::attenuation,0,1>(1.0 / si::centimeter),
 
     /*bulk_modulus*/                      37.0 * si::gigapascal, // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
     /*tensile_modulus*/                   72.0 * si::gigapascal, // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
@@ -90,19 +90,13 @@ compound::phase::PartlyKnownSolid quartz {
 
 compound::phase::PartlyKnownSolid copper{
 
-    /*isobaric_specific_heat_capacity*/            0.385 * si::joule / (si::gram * si::kelvin), // wikipedia
+    /*isobaric_specific_heat_capacity*/   0.385 * si::joule / (si::gram * si::kelvin), // wikipedia
     /*thermal_conductivity*/              401.0 * si::watt / (si::meter * si::kelvin), // wikipedia
     /*dynamic_viscosity*/                 std::monostate(),
     /*density*/                           8960.0 * si::kilogram/si::meter3,
     /*vapor_pressure*/                    std::monostate(),
-    /*refractive_index*/                  
-        compound::field::SpectralFunction<double>([](const si::wavenumber nhi, const si::wavenumber nlo, const si::pressure p, const si::temperature T) {
-            auto l = 2.0 / (nhi+nlo);
-            constexpr double n = 0.059513; 
-            constexpr auto dndl = 13.100 / si::micrometer;
-            return n + (dndl * l);
-        }), 
-    /*extinction_coefficient*/            13.430, 
+    /*refractive_index*/                  compound::relation::spline_constant<si::wavenumber,float,0,1>(1.01),
+    /*extinction_coefficient*/            compound::relation::spline_constant<si::wavenumber,float,0,1>(13.430), 
     /*absorption_coefficient*/            std::monostate(),
 
     /*bulk_modulus*/                      130.0 * si::gigapascal,
@@ -122,14 +116,14 @@ compound::phase::PartlyKnownSolid copper{
     /*chemical_susceptibility_estimate*/  std::monostate(),
 }; 
 compound::phase::PartlyKnownSolid dummy_solid {
-    /*isobaric_specific_heat_capacity*/            1.0 * si::joule / (si::gram * si::kelvin), 
+    /*isobaric_specific_heat_capacity*/   1.0 * si::joule / (si::gram * si::kelvin), 
     /*thermal_conductivity*/              2.0 * si::watt / (si::meter * si::kelvin), 
     /*dynamic_viscosity*/                 3.0 * si::poise, 
     /*density*/                           4.0 * si::kilogram/si::meter3,
     /*vapor_pressure*/                    5.0 * si::megapascal,
-    /*refractive_index*/                  1.3,
-    /*extinction_coefficient*/            0.03, 
-    /*absorption_coefficient*/            1.0 / si::centimeter,
+    /*refractive_index*/                  compound::relation::spline_constant<si::wavenumber,float,0,1>(1.3),
+    /*extinction_coefficient*/            compound::relation::spline_constant<si::wavenumber,float,0,1>(0.03), 
+    /*absorption_coefficient*/            compound::relation::spline_constant<si::wavenumber,si::attenuation,0,1>(1.0 / si::centimeter),
 
     /*bulk_modulus*/                      6.0 * si::gigapascal, 
     /*tensile_modulus*/                   7.0 * si::gigapascal, 
@@ -148,38 +142,10 @@ compound::phase::PartlyKnownSolid dummy_solid {
     /*chemical_susceptibility_estimate*/  false
 };
 
-int PartlyKnownSolid_attribute_index_sum(const compound::phase::PartlyKnownSolid& solid)
-{
-    return
-        solid.isobaric_specific_heat_capacity          .index() +
-        solid.thermal_conductivity            .index() +
-        solid.dynamic_viscosity               .index() +
-        solid.density                         .index() +
-        solid.vapor_pressure                  .index() +
-        solid.refractive_index                .index() +
-        solid.extinction_coefficient          .index() +
-        solid.absorption_coefficient          .index() +
-
-        solid.bulk_modulus                    .index() +
-        solid.tensile_modulus                 .index() +
-        solid.shear_modulus                   .index() +
-        solid.pwave_modulus                   .index() +
-        solid.lame_parameter                  .index() +
-        solid.poisson_ratio                   .index() +
-
-        solid.compressive_fracture_strength   .index() +
-        solid.tensile_fracture_strength       .index() +
-        solid.shear_fracture_strength         .index() +
-        solid.compressive_yield_strength      .index() +
-        solid.tensile_yield_strength          .index() +
-        solid.shear_yield_strength            .index() +
-
-        solid.chemical_susceptibility_estimate.index();
-}
 int PartlyKnownSolid_attribute_known_count(const compound::phase::PartlyKnownSolid& solid)
 {
     return
-        solid.isobaric_specific_heat_capacity          .has_value() +
+        solid.isobaric_specific_heat_capacity .has_value() +
         solid.thermal_conductivity            .has_value() +
         solid.dynamic_viscosity               .has_value() +
         solid.density                         .has_value() +
@@ -216,9 +182,9 @@ namespace phase {
             first.thermal_conductivity            == second.thermal_conductivity            &&
             first.dynamic_viscosity               == second.dynamic_viscosity               &&
             first.density                         == second.density                         &&
-            first.refractive_index                == second.refractive_index                &&
-            first.extinction_coefficient          == second.extinction_coefficient          &&
-            first.absorption_coefficient          == second.absorption_coefficient          &&
+            relation::distance(first.refractive_index, second.refractive_index, 1.0f/si::centimeter, 100e3f/si::centimeter) < 1e-4 && 
+            relation::distance(first.extinction_coefficient, second.extinction_coefficient, 1.0f/si::centimeter, 100e3f/si::centimeter) < 1e-4 && 
+            relation::distance(first.absorption_coefficient, second.absorption_coefficient, 1.0f/si::centimeter, 100e3f/si::centimeter) < 1e-4 && 
 
             first.bulk_modulus           == second.bulk_modulus           &&
             first.tensile_modulus        == second.tensile_modulus        &&

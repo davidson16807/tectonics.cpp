@@ -21,9 +21,9 @@ namespace phase {
             field::complete(known.dynamic_viscosity,                fallback.dynamic_viscosity                ),
             field::complete(known.density,                          fallback.density                          ),
             field::complete(known.vapor_pressure,                   fallback.vapor_pressure                   ),
-            field::complete(known.refractive_index,                 fallback.refractive_index                 ),
-            field::complete(known.extinction_coefficient,           fallback.extinction_coefficient           ),
-            field::complete(known.absorption_coefficient,           fallback.absorption_coefficient           ),
+            known.refractive_index       .complete(fallback.refractive_index      ),
+            known.extinction_coefficient .complete(fallback.extinction_coefficient),
+            known.absorption_coefficient .complete(fallback.absorption_coefficient),
 
             field::complete(known.bulk_modulus,                     fallback.bulk_modulus                     ),
             field::complete(known.tensile_modulus,                  fallback.tensile_modulus                  ),

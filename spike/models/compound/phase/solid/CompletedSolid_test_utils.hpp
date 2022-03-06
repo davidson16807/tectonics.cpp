@@ -14,9 +14,9 @@ compound::phase::CompletedSolid known_ice {
     /*dynamic_viscosity*/                 1e13 * si::poise, // reference by Carey (1953)
     /*density*/                           0916.9 * si::kilogram/si::meter3,
     /*vapor_pressure*/                    138.268 * si::megapascal,
-    /*refractive_index*/                  1.4607,
-    /*extinction_coefficient*/            0.029000,
-    /*absorption_coefficient*/            25.0 / si::centimeter,
+    /*refractive_index*/                  compound::relation::spline_constant<si::wavenumber,float,0,1>(1.4607),
+    /*extinction_coefficient*/            compound::relation::spline_constant<si::wavenumber,float,0,1>(0.029000),
+    /*absorption_coefficient*/            compound::relation::spline_constant<si::wavenumber,si::attenuation,0,1>(25.0 / si::centimeter),
 
     /*bulk_modulus*/                      8.899 * si::gigapascal, // gammon (1983)
     /*tensile_modulus*/                   9.332 * si::gigapascal, // gammon (1983)
@@ -40,9 +40,9 @@ compound::phase::CompletedSolid known_dummy_solid {
     /*dynamic_viscosity*/                 3.0 * si::poise, 
     /*density*/                           4.0 * si::kilogram/si::meter3,
     /*vapor_pressure*/                    5.0 * si::megapascal,
-    /*refractive_index*/                  1.3,
-    /*extinction_coefficient*/            0.03,
-    /*absorption_coefficient*/            1.0 / si::centimeter,
+    /*refractive_index*/                  compound::relation::spline_constant<si::wavenumber,float,0,1>(1.3),
+    /*extinction_coefficient*/            compound::relation::spline_constant<si::wavenumber,float,0,1>(0.03),
+    /*absorption_coefficient*/            compound::relation::spline_constant<si::wavenumber,si::attenuation,0,1>(1.0 / si::centimeter),
 
     /*bulk_modulus*/                      6.0 * si::gigapascal, 
     /*tensile_modulus*/                   7.0 * si::gigapascal, 
@@ -72,9 +72,9 @@ namespace phase {
             first.thermal_conductivity            == second.thermal_conductivity            &&
             first.dynamic_viscosity               == second.dynamic_viscosity               &&
             first.density                         == second.density                         &&
-            first.refractive_index                == second.refractive_index                &&
-            first.extinction_coefficient          == second.extinction_coefficient          &&
-            first.absorption_coefficient          == second.absorption_coefficient          &&
+            relation::distance(first.refractive_index,       second.refractive_index, 1.0/si::centimeter, 100e3/si::centimeter) < 1e-4f       &&
+            relation::distance(first.extinction_coefficient, second.extinction_coefficient, 1.0/si::centimeter, 100e3/si::centimeter) < 1e-4f &&
+            relation::distance(first.absorption_coefficient, second.absorption_coefficient, 1.0/si::centimeter, 100e3/si::centimeter) < 1e-4 &&
 
             first.bulk_modulus           == second.bulk_modulus           &&
             first.tensile_modulus        == second.tensile_modulus        &&

@@ -5,6 +5,7 @@
 #include <models/compound/field/spectral/OptionalSpectralField.hpp>
 #include <models/compound/field/constant/OptionalConstantField.hpp>
 
+#include <models/compound/relation/OptionalStateRelation.hpp>
 #include <models/compound/relation/SplineRelation.hpp>
 
 namespace compound { 
@@ -16,9 +17,9 @@ namespace phase {
         field::OptionalStateField<si::dynamic_viscosity> dynamic_viscosity;
         field::OptionalStateField<si::density> density;
         field::OptionalStateField<si::pressure> vapor_pressure;
-        field::OptionalSpectralField<double> refractive_index;
-        field::OptionalSpectralField<double> extinction_coefficient;
-        field::OptionalSpectralField<si::attenuation> absorption_coefficient;
+        relation::OptionalStateRelation<relation::SplineRelation<si::wavenumber,float,0,1>> refractive_index;
+        relation::OptionalStateRelation<relation::SplineRelation<si::wavenumber,float,0,1>> extinction_coefficient;
+        relation::OptionalStateRelation<relation::SplineRelation<si::wavenumber,si::attenuation,0,1>> absorption_coefficient;
 
         field::OptionalStateField<si::pressure> bulk_modulus;     // K   bulk modulus
         field::OptionalStateField<si::pressure> tensile_modulus;  // E   tensile Modulus, Young's modulus, modulus of elasticity

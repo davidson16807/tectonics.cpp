@@ -61,28 +61,28 @@ TEST_CASE( "PartlyKnownSolid value_or() increasing", "[phase]" ) {
     SECTION("An attribute of a function's return value either increases or remains the same when compared to the same attribute of the input value")
     {
 
-        CHECK(PartlyKnownSolid_attribute_index_sum(unknown_solid.value_or(unknown_solid)) >= PartlyKnownSolid_attribute_index_sum(unknown_solid));
-        CHECK(PartlyKnownSolid_attribute_index_sum(unknown_solid.value_or(ice)) >= PartlyKnownSolid_attribute_index_sum(unknown_solid));
-        CHECK(PartlyKnownSolid_attribute_index_sum(unknown_solid.value_or(copper)) >= PartlyKnownSolid_attribute_index_sum(unknown_solid));
-        CHECK(PartlyKnownSolid_attribute_index_sum(unknown_solid.value_or(dummy_solid)) >= PartlyKnownSolid_attribute_index_sum(unknown_solid));
+        CHECK(PartlyKnownSolid_attribute_known_count(unknown_solid.value_or(unknown_solid)) >= PartlyKnownSolid_attribute_known_count(unknown_solid));
+        CHECK(PartlyKnownSolid_attribute_known_count(unknown_solid.value_or(ice)) >= PartlyKnownSolid_attribute_known_count(unknown_solid));
+        CHECK(PartlyKnownSolid_attribute_known_count(unknown_solid.value_or(copper)) >= PartlyKnownSolid_attribute_known_count(unknown_solid));
+        CHECK(PartlyKnownSolid_attribute_known_count(unknown_solid.value_or(dummy_solid)) >= PartlyKnownSolid_attribute_known_count(unknown_solid));
 
 
-        CHECK(PartlyKnownSolid_attribute_index_sum(ice.value_or(unknown_solid)) >= PartlyKnownSolid_attribute_index_sum(ice));
-        CHECK(PartlyKnownSolid_attribute_index_sum(ice.value_or(ice)) >= PartlyKnownSolid_attribute_index_sum(ice));
-        CHECK(PartlyKnownSolid_attribute_index_sum(ice.value_or(copper)) >= PartlyKnownSolid_attribute_index_sum(ice));
-        CHECK(PartlyKnownSolid_attribute_index_sum(ice.value_or(dummy_solid)) >= PartlyKnownSolid_attribute_index_sum(ice));
+        CHECK(PartlyKnownSolid_attribute_known_count(ice.value_or(unknown_solid)) >= PartlyKnownSolid_attribute_known_count(ice));
+        CHECK(PartlyKnownSolid_attribute_known_count(ice.value_or(ice)) >= PartlyKnownSolid_attribute_known_count(ice));
+        CHECK(PartlyKnownSolid_attribute_known_count(ice.value_or(copper)) >= PartlyKnownSolid_attribute_known_count(ice));
+        CHECK(PartlyKnownSolid_attribute_known_count(ice.value_or(dummy_solid)) >= PartlyKnownSolid_attribute_known_count(ice));
 
 
-        CHECK(PartlyKnownSolid_attribute_index_sum(copper.value_or(unknown_solid)) >= PartlyKnownSolid_attribute_index_sum(copper));
-        CHECK(PartlyKnownSolid_attribute_index_sum(copper.value_or(ice)) >= PartlyKnownSolid_attribute_index_sum(copper));
-        CHECK(PartlyKnownSolid_attribute_index_sum(copper.value_or(copper)) >= PartlyKnownSolid_attribute_index_sum(copper));
-        CHECK(PartlyKnownSolid_attribute_index_sum(copper.value_or(dummy_solid)) >= PartlyKnownSolid_attribute_index_sum(copper));
+        CHECK(PartlyKnownSolid_attribute_known_count(copper.value_or(unknown_solid)) >= PartlyKnownSolid_attribute_known_count(copper));
+        CHECK(PartlyKnownSolid_attribute_known_count(copper.value_or(ice)) >= PartlyKnownSolid_attribute_known_count(copper));
+        CHECK(PartlyKnownSolid_attribute_known_count(copper.value_or(copper)) >= PartlyKnownSolid_attribute_known_count(copper));
+        CHECK(PartlyKnownSolid_attribute_known_count(copper.value_or(dummy_solid)) >= PartlyKnownSolid_attribute_known_count(copper));
 
 
-        CHECK(PartlyKnownSolid_attribute_index_sum(dummy_solid.value_or(unknown_solid)) >= PartlyKnownSolid_attribute_index_sum(dummy_solid));
-        CHECK(PartlyKnownSolid_attribute_index_sum(dummy_solid.value_or(ice)) >= PartlyKnownSolid_attribute_index_sum(dummy_solid));
-        CHECK(PartlyKnownSolid_attribute_index_sum(dummy_solid.value_or(copper)) >= PartlyKnownSolid_attribute_index_sum(dummy_solid));
-        CHECK(PartlyKnownSolid_attribute_index_sum(dummy_solid.value_or(dummy_solid)) >= PartlyKnownSolid_attribute_index_sum(dummy_solid));
+        CHECK(PartlyKnownSolid_attribute_known_count(dummy_solid.value_or(unknown_solid)) >= PartlyKnownSolid_attribute_known_count(dummy_solid));
+        CHECK(PartlyKnownSolid_attribute_known_count(dummy_solid.value_or(ice)) >= PartlyKnownSolid_attribute_known_count(dummy_solid));
+        CHECK(PartlyKnownSolid_attribute_known_count(dummy_solid.value_or(copper)) >= PartlyKnownSolid_attribute_known_count(dummy_solid));
+        CHECK(PartlyKnownSolid_attribute_known_count(dummy_solid.value_or(dummy_solid)) >= PartlyKnownSolid_attribute_known_count(dummy_solid));
 
     }
 }
