@@ -3,7 +3,7 @@
 // in-house libraries
 #include <math/expression/Scaling.hpp>
 #include <math/expression/Spline.hpp>
-#include <math/expression/Clamped.hpp>
+#include <math/expression/Spline_library.hpp>
 
 namespace compound {
 namespace relation {
@@ -228,6 +228,80 @@ namespace relation {
             }, Tx(1.0f), Ty(1.0f)
         );
     }
+
+    template<typename Tx, typename Ty, int Plo, int Phi>
+    SplineRelation<si::wavenumber,Ty,0,1> spectral_constant(const Ty k)
+    {
+        return spline_constant<si::wavenumber,Ty,0,1>(k);
+    }
+
+    // TODO: rename `spectral_linear_spline`
+    template<typename Ty>
+    SplineRelation<si::wavenumber,Ty,0,1> get_spectral_linear_interpolation_function_of_wavelength(
+        const si::length lunits, const Ty yunits,
+        const std::vector<double> ls, 
+        const std::vector<double> lys
+    ){
+        assert(ls.size() == lys.size());
+        const si::wavenumber nunits = 1.0/lunits;
+        std::vector<double> ns;
+        std::vector<double> ys;
+        for (std::size_t i=0; i<lys.size(); i++){
+            ns.push_back(1.0/(ls[i]));
+            ys.push_back(lys[i]);
+        }
+        std::reverse(ns.begin(), ns.end());
+        std::reverse(ys.begin(), ys.end());
+        return SplineRelation<si::wavenumber,Ty,0,1>(math::spline::linear_spline(ns, ys), nunits, yunits);
+    }
+
+    template<typename Ty>
+    SplineRelation<si::wavenumber,Ty,0,1> get_spectral_linear_interpolation_function_of_wavenumber(
+        const si::wavenumber nunits, const Ty yunits,
+        const std::vector<double> ns, 
+        const std::vector<double> ys
+    ){
+        assert(ns.size() == ys.size());
+        return SplineRelation<si::wavenumber,Ty,0,1>(math::spline::linear_spline(ns, ys), nunits, yunits);
+    }
+
+    template<typename Ty>
+    SplineRelation<si::wavenumber,Ty,0,1> get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output(
+        const si::wavenumber nunits, const Ty yunits,
+        const std::vector<double>      ns, 
+        const std::vector<double> log10ys
+    ){
+        assert(ns.size() == log10ys.size());
+        std::vector<double> ys;
+        for (std::size_t i=0; i<ys.size(); i++){
+            ys.push_back(pow(10.0, log10ys[i]));
+        }
+        return SplineRelation<si::wavenumber,Ty,0,1> (math::spline::linear_spline(ns, ys), nunits, yunits);
+    }
+
+    template<typename Ty>
+    SplineRelation<si::wavenumber,Ty,0,1> get_spectral_linear_interpolation_function_of_wavelength_for_log10_sample_output(
+        const si::length lunits, const Ty yunits,
+        const std::vector<double>      ls, 
+        const std::vector<double>log10lys
+    ){
+        assert(ls.size() == log10lys.size());
+        const si::wavenumber nunits = 1.0/lunits;
+        std::vector<double> ns;
+        std::vector<double> log10ys;
+        for (std::size_t i=0; i<log10lys.size(); i++){
+            ns.push_back(1.0/(ls[i]));
+            log10ys.push_back(log10lys[i]);
+        }
+        std::reverse(ns.begin(), ns.end());
+        std::reverse(log10ys.begin(), log10ys.end());
+        std::vector<double> ys;
+        for (std::size_t i=0; i<ys.size(); i++){
+            ys.push_back(pow(10.0, log10ys[i]));
+        }
+        return SplineRelation<si::wavenumber,Ty,0,1> (math::spline::linear_spline(ns, ys), nunits, yunits);
+    }
+
 
 }}
 
