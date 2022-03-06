@@ -8,8 +8,6 @@
 
 #include <models/compound/relation/SplineRelation.hpp>
 
-#include <models/compound/relation/OptionalStateRelation_test_utils.hpp>
-
 #include "PartlyKnownGas.hpp"
 
 compound::phase::PartlyKnownGas unknown_gas  {
