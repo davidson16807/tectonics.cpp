@@ -11,7 +11,6 @@ namespace math {
     constexpr std::string to_string(const Polynomial<T,Plo,Phi>& p)
     {
         // const std::string exponents("⁰¹²³⁴⁵⁶⁷⁸⁹");
-        std::string exponent;
         std::string output;
         for (int i = Plo; i <= Phi; ++i)
         {
