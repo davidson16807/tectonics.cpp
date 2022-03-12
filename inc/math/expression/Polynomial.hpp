@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>       // array
 #include <algorithm>   // clamp, min_element, fill, copy
 #include <complex>     // complex
 #include <type_traits> // enable_if_t
@@ -51,9 +52,8 @@ namespace math {
             k[0-Nlo] = f.offset;
             k[1-Nlo] = T(1.0);
         }
-        constexpr explicit Polynomial(const std::array<T,Nhi+1-Nlo> k2): k()
+        constexpr explicit Polynomial(const std::array<T,Nhi+1-Nlo> k2): k(k2)
         {
-            std::copy(k2.begin(), k2.end(), k.begin());
         }
         template <int Qlo, int Qhi> 
         constexpr Polynomial(const Polynomial<T,Qlo,Qhi>& p): k()

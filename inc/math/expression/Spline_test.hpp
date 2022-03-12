@@ -30,9 +30,9 @@ TEST_CASE( "Spline arithmetic purity", "[math]" ) {
     Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
     Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
 
-    using Piece0 = math::Piecewise<double,Poly0>;
-    using Piece1 = math::Piecewise<double,Poly1>;
-    using Piece2 = math::Piecewise<double,Poly2>;
+    using Piece0 = math::Boxed<double,Poly0>;
+    using Piece1 = math::Boxed<double,Poly1>;
+    using Piece2 = math::Boxed<double,Poly2>;
 
     // standard polynomials, no overlap
     math::Spline<double,0,2> s0 = math::Spline<double,0,2>{
@@ -147,9 +147,9 @@ TEST_CASE( "Spline arithmetic identity", "[math]" ) {
     Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
     Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
 
-    using Piece0 = math::Piecewise<double,Poly0>;
-    using Piece1 = math::Piecewise<double,Poly1>;
-    using Piece2 = math::Piecewise<double,Poly2>;
+    using Piece0 = math::Boxed<double,Poly0>;
+    using Piece1 = math::Boxed<double,Poly1>;
+    using Piece2 = math::Boxed<double,Poly2>;
 
     // standard polynomials, no overlap
     math::Spline<double,0,2> s0 = math::Spline<double,0,2>{
@@ -220,9 +220,9 @@ TEST_CASE( "Spline arithmetic commutativity", "[math]" ) {
     Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
     Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
 
-    using Piece0 = math::Piecewise<double,Poly0>;
-    using Piece1 = math::Piecewise<double,Poly1>;
-    using Piece2 = math::Piecewise<double,Poly2>;
+    using Piece0 = math::Boxed<double,Poly0>;
+    using Piece1 = math::Boxed<double,Poly1>;
+    using Piece2 = math::Boxed<double,Poly2>;
 
     // standard polynomials, no overlap
     math::Spline<double,0,2> s0 = math::Spline<double,0,2>{
@@ -303,9 +303,9 @@ TEST_CASE( "Spline arithmetic associativity", "[math]" ) {
     Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
     Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
 
-    using Piece0 = math::Piecewise<double,Poly0>;
-    using Piece1 = math::Piecewise<double,Poly1>;
-    using Piece2 = math::Piecewise<double,Poly2>;
+    using Piece0 = math::Boxed<double,Poly0>;
+    using Piece1 = math::Boxed<double,Poly1>;
+    using Piece2 = math::Boxed<double,Poly2>;
 
     // standard polynomials, no overlap
     math::Spline<double,0,2> s0 = math::Spline<double,0,2>{
@@ -368,9 +368,9 @@ TEST_CASE( "Spline arithmetic distributivity", "[math]" ) {
     Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
     Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
 
-    using Piece0 = math::Piecewise<double,Poly0>;
-    using Piece1 = math::Piecewise<double,Poly1>;
-    using Piece2 = math::Piecewise<double,Poly2>;
+    using Piece0 = math::Boxed<double,Poly0>;
+    using Piece1 = math::Boxed<double,Poly1>;
+    using Piece2 = math::Boxed<double,Poly2>;
 
     // standard polynomials, no overlap
     math::Spline<double,0,2> s0 = math::Spline<double,0,2>{
@@ -442,9 +442,9 @@ TEST_CASE( "Spline/scalar arithmetic purity", "[math]" ) {
     Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
     Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
 
-    using Piece0 = math::Piecewise<double,Poly0>;
-    using Piece1 = math::Piecewise<double,Poly1>;
-    using Piece2 = math::Piecewise<double,Poly2>;
+    using Piece0 = math::Boxed<double,Poly0>;
+    using Piece1 = math::Boxed<double,Poly1>;
+    using Piece2 = math::Boxed<double,Poly2>;
 
     // standard polynomials, no overlap
     math::Spline<double,0,2> s0 = math::Spline<double,0,2>{
@@ -566,9 +566,9 @@ TEST_CASE( "Spline/scalar arithmetic identity", "[math]" ) {
     Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
     Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
 
-    using Piece0 = math::Piecewise<double,Poly0>;
-    using Piece1 = math::Piecewise<double,Poly1>;
-    using Piece2 = math::Piecewise<double,Poly2>;
+    using Piece0 = math::Boxed<double,Poly0>;
+    using Piece1 = math::Boxed<double,Poly1>;
+    using Piece2 = math::Boxed<double,Poly2>;
 
     // standard polynomials, no overlap
     math::Spline<double,0,2> s0 = math::Spline<double,0,2>{
@@ -642,9 +642,9 @@ TEST_CASE( "Spline/scalar arithmetic commutativity", "[math]" ) {
     Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
     Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
 
-    using Piece0 = math::Piecewise<double,Poly0>;
-    using Piece1 = math::Piecewise<double,Poly1>;
-    using Piece2 = math::Piecewise<double,Poly2>;
+    using Piece0 = math::Boxed<double,Poly0>;
+    using Piece1 = math::Boxed<double,Poly1>;
+    using Piece2 = math::Boxed<double,Poly2>;
 
     // standard polynomials, no overlap
     math::Spline<double,0,2> s0 = math::Spline<double,0,2>{
@@ -731,9 +731,9 @@ TEST_CASE( "Spline/scalar arithmetic associativity", "[math]" ) {
     Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
     Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
 
-    using Piece0 = math::Piecewise<double,Poly0>;
-    using Piece1 = math::Piecewise<double,Poly1>;
-    using Piece2 = math::Piecewise<double,Poly2>;
+    using Piece0 = math::Boxed<double,Poly0>;
+    using Piece1 = math::Boxed<double,Poly1>;
+    using Piece2 = math::Boxed<double,Poly2>;
 
     // standard polynomials, no overlap
     math::Spline<double,0,2> s0 = math::Spline<double,0,2>{
@@ -835,9 +835,9 @@ TEST_CASE( "Spline/scalar arithmetic distributivity", "[math]" ) {
     Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
     Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
 
-    using Piece0 = math::Piecewise<double,Poly0>;
-    using Piece1 = math::Piecewise<double,Poly1>;
-    using Piece2 = math::Piecewise<double,Poly2>;
+    using Piece0 = math::Boxed<double,Poly0>;
+    using Piece1 = math::Boxed<double,Poly1>;
+    using Piece2 = math::Boxed<double,Poly2>;
 
     // standard polynomials, no overlap
     math::Spline<double,0,2> s0 = math::Spline<double,0,2>{
@@ -946,9 +946,9 @@ TEST_CASE( "Spline/monomial arithmetic purity", "[math]" ) {
     Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
     Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
 
-    using Piece0 = math::Piecewise<double,Poly0>;
-    using Piece1 = math::Piecewise<double,Poly1>;
-    using Piece2 = math::Piecewise<double,Poly2>;
+    using Piece0 = math::Boxed<double,Poly0>;
+    using Piece1 = math::Boxed<double,Poly1>;
+    using Piece2 = math::Boxed<double,Poly2>;
 
     // standard polynomials, no overlap
     math::Spline<double,0,2> s0 = math::Spline<double,0,2>{
@@ -1069,9 +1069,9 @@ TEST_CASE( "Spline/monomial arithmetic identity", "[math]" ) {
     Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
     Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
 
-    using Piece0 = math::Piecewise<double,Poly0>;
-    using Piece1 = math::Piecewise<double,Poly1>;
-    using Piece2 = math::Piecewise<double,Poly2>;
+    using Piece0 = math::Boxed<double,Poly0>;
+    using Piece1 = math::Boxed<double,Poly1>;
+    using Piece2 = math::Boxed<double,Poly2>;
 
     // standard polynomials, no overlap
     math::Spline<double,0,2> s0 = math::Spline<double,0,2>{
@@ -1145,9 +1145,9 @@ TEST_CASE( "Spline/monomial arithmetic commutativity", "[math]" ) {
     Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
     Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
 
-    using Piece0 = math::Piecewise<double,Poly0>;
-    using Piece1 = math::Piecewise<double,Poly1>;
-    using Piece2 = math::Piecewise<double,Poly2>;
+    using Piece0 = math::Boxed<double,Poly0>;
+    using Piece1 = math::Boxed<double,Poly1>;
+    using Piece2 = math::Boxed<double,Poly2>;
 
     // standard polynomials, no overlap
     math::Spline<double,0,2> s0 = math::Spline<double,0,2>{
@@ -1233,9 +1233,9 @@ TEST_CASE( "Spline/monomial arithmetic associativity", "[math]" ) {
     Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
     Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
 
-    using Piece0 = math::Piecewise<double,Poly0>;
-    using Piece1 = math::Piecewise<double,Poly1>;
-    using Piece2 = math::Piecewise<double,Poly2>;
+    using Piece0 = math::Boxed<double,Poly0>;
+    using Piece1 = math::Boxed<double,Poly1>;
+    using Piece2 = math::Boxed<double,Poly2>;
 
     // standard polynomials, no overlap
     math::Spline<double,0,2> s0 = math::Spline<double,0,2>{
@@ -1337,9 +1337,9 @@ TEST_CASE( "Spline/monomial arithmetic distributivity", "[math]" ) {
     Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
     Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
 
-    using Piece0 = math::Piecewise<double,Poly0>;
-    using Piece1 = math::Piecewise<double,Poly1>;
-    using Piece2 = math::Piecewise<double,Poly2>;
+    using Piece0 = math::Boxed<double,Poly0>;
+    using Piece1 = math::Boxed<double,Poly1>;
+    using Piece2 = math::Boxed<double,Poly2>;
 
     // standard polynomials, no overlap
     math::Spline<double,0,2> s0 = math::Spline<double,0,2>{
@@ -1458,9 +1458,9 @@ TEST_CASE( "Spline/Shifting arithmetic purity", "[math]" ) {
     Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
     Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
 
-    using Piece0 = math::Piecewise<double,Poly0>;
-    using Piece1 = math::Piecewise<double,Poly1>;
-    using Piece2 = math::Piecewise<double,Poly2>;
+    using Piece0 = math::Boxed<double,Poly0>;
+    using Piece1 = math::Boxed<double,Poly1>;
+    using Piece2 = math::Boxed<double,Poly2>;
 
     // standard polynomials, no overlap
     math::Spline<double,0,2> s0 = math::Spline<double,0,2>{
@@ -1581,9 +1581,9 @@ TEST_CASE( "Spline/Shifting arithmetic commutativity", "[math]" ) {
     Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
     Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
 
-    using Piece0 = math::Piecewise<double,Poly0>;
-    using Piece1 = math::Piecewise<double,Poly1>;
-    using Piece2 = math::Piecewise<double,Poly2>;
+    using Piece0 = math::Boxed<double,Poly0>;
+    using Piece1 = math::Boxed<double,Poly1>;
+    using Piece2 = math::Boxed<double,Poly2>;
 
     // standard polynomials, no overlap
     math::Spline<double,0,2> s0 = math::Spline<double,0,2>{
@@ -1669,9 +1669,9 @@ TEST_CASE( "Spline/Shifting arithmetic associativity", "[math]" ) {
     Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
     Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
 
-    using Piece0 = math::Piecewise<double,Poly0>;
-    using Piece1 = math::Piecewise<double,Poly1>;
-    using Piece2 = math::Piecewise<double,Poly2>;
+    using Piece0 = math::Boxed<double,Poly0>;
+    using Piece1 = math::Boxed<double,Poly1>;
+    using Piece2 = math::Boxed<double,Poly2>;
 
     // standard polynomials, no overlap
     math::Spline<double,0,2> s0 = math::Spline<double,0,2>{
@@ -1773,9 +1773,9 @@ TEST_CASE( "Spline/Shifting arithmetic distributivity", "[math]" ) {
     Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
     Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
 
-    using Piece0 = math::Piecewise<double,Poly0>;
-    using Piece1 = math::Piecewise<double,Poly1>;
-    using Piece2 = math::Piecewise<double,Poly2>;
+    using Piece0 = math::Boxed<double,Poly0>;
+    using Piece1 = math::Boxed<double,Poly1>;
+    using Piece2 = math::Boxed<double,Poly2>;
 
     // standard polynomials, no overlap
     math::Spline<double,0,2> s0 = math::Spline<double,0,2>{
@@ -1895,9 +1895,9 @@ TEST_CASE( "Spline/Scaling arithmetic purity", "[math]" ) {
     Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
     Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
 
-    using Piece0 = math::Piecewise<double,Poly0>;
-    using Piece1 = math::Piecewise<double,Poly1>;
-    using Piece2 = math::Piecewise<double,Poly2>;
+    using Piece0 = math::Boxed<double,Poly0>;
+    using Piece1 = math::Boxed<double,Poly1>;
+    using Piece2 = math::Boxed<double,Poly2>;
 
     // standard polynomials, no overlap
     math::Spline<double,0,2> s0 = math::Spline<double,0,2>{
@@ -2018,9 +2018,9 @@ TEST_CASE( "Spline/Scaling arithmetic identity", "[math]" ) {
     Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
     Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
 
-    using Piece0 = math::Piecewise<double,Poly0>;
-    using Piece1 = math::Piecewise<double,Poly1>;
-    using Piece2 = math::Piecewise<double,Poly2>;
+    using Piece0 = math::Boxed<double,Poly0>;
+    using Piece1 = math::Boxed<double,Poly1>;
+    using Piece2 = math::Boxed<double,Poly2>;
 
     // standard polynomials, no overlap
     math::Spline<double,0,2> s0 = math::Spline<double,0,2>{
@@ -2085,9 +2085,9 @@ TEST_CASE( "Spline/Scaling arithmetic commutativity", "[math]" ) {
     Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
     Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
 
-    using Piece0 = math::Piecewise<double,Poly0>;
-    using Piece1 = math::Piecewise<double,Poly1>;
-    using Piece2 = math::Piecewise<double,Poly2>;
+    using Piece0 = math::Boxed<double,Poly0>;
+    using Piece1 = math::Boxed<double,Poly1>;
+    using Piece2 = math::Boxed<double,Poly2>;
 
     // standard polynomials, no overlap
     math::Spline<double,0,2> s0 = math::Spline<double,0,2>{
@@ -2173,9 +2173,9 @@ TEST_CASE( "Spline/Scaling arithmetic associativity", "[math]" ) {
     Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
     Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
 
-    using Piece0 = math::Piecewise<double,Poly0>;
-    using Piece1 = math::Piecewise<double,Poly1>;
-    using Piece2 = math::Piecewise<double,Poly2>;
+    using Piece0 = math::Boxed<double,Poly0>;
+    using Piece1 = math::Boxed<double,Poly1>;
+    using Piece2 = math::Boxed<double,Poly2>;
 
     // standard polynomials, no overlap
     math::Spline<double,0,2> s0 = math::Spline<double,0,2>{
@@ -2277,9 +2277,9 @@ TEST_CASE( "Spline/Scaling arithmetic distributivity", "[math]" ) {
     Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
     Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
 
-    using Piece0 = math::Piecewise<double,Poly0>;
-    using Piece1 = math::Piecewise<double,Poly1>;
-    using Piece2 = math::Piecewise<double,Poly2>;
+    using Piece0 = math::Boxed<double,Poly0>;
+    using Piece1 = math::Boxed<double,Poly1>;
+    using Piece2 = math::Boxed<double,Poly2>;
 
     // standard polynomials, no overlap
     math::Spline<double,0,2> s0 = math::Spline<double,0,2>{
@@ -2390,7 +2390,7 @@ TEST_CASE( "Spline integral/derivative invertibility", "[math]" ) {
     Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
     Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
 
-    using Piece0 = math::Piecewise<double,Poly0>;
+    using Piece0 = math::Boxed<double,Poly0>;
 
     // standard polynomials, no overlap
     math::Spline<double,0,2> s0 = math::Spline<double,0,2>{

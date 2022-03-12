@@ -33,6 +33,13 @@ namespace math {
             p(r.p), 
             q(r.q)
         {}
+        constexpr explicit Rational(const T k): 
+            p(), 
+            q()
+        {
+            p[0] = k;
+            q[0] = 1.0f;
+        }
         constexpr explicit Rational(const Identity<T> e): 
             p(e), 
             q()
@@ -116,7 +123,7 @@ namespace math {
         return (r.p*s.q)/(r.q*s.p);
     }
 
-    template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi, int Q2lo, int Q2hi>
+    template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi>
     constexpr auto operator-(const Rational<T,P1lo,P1hi,Q1lo,Q1hi>& r)
     {
         return -r.p/r.q;
@@ -460,7 +467,7 @@ namespace math {
         d'(p/q,r/s) = 0
     So we equate the two:
         d'(p/q,r/s) = d(ps,rq)
-    Under this definition, we immediately see that the distance for rationals inherits 
+    Under this definition, we see that the distance for rationals inherits 
     most of the properties that are guaranteed by the distance for polynomials:
         d'(p/q,r/s) ∈ ℝ⁺ 
         d'(p/q,r/s) = d'(r/s,p/q)
