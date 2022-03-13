@@ -15,7 +15,7 @@ namespace math {
 
     /* 
     `ArbitraryDegreePolynomial` is a class template that represents functions of the form f(x)=Σᵢaᵢxᵇⁱ where bᵢ∈ℤ.
-    Unlike `Polynomial<T,Nlo,Nhi>`, it represents a polynomial whose exponents are not known at compile time.
+    Unlike `Polynomial<T,Plo,Phi>`, it represents a polynomial whose exponents are not known at compile time.
     This situation crops up occasionally when dealing with polynomials.
     As a motivating example, calculating the `distance()` between two `RationalSpline<T,Plo,Phi,Qlo,Qhi>` objects
     requires cross multiplying all `Rational` segments that shared an intersection, 
@@ -33,22 +33,25 @@ namespace math {
         constexpr ArbitraryDegreePolynomial(const ArbitraryDegreePolynomial& p): k(p.k)
         {
         }
-        constexpr explicit ArbitraryDegreePolynomial(const Identity<T> e): k{{I(1),T(1)}}
+        constexpr explicit ArbitraryDegreePolynomial(const std::map<I,T> k2): k(k2)
         {
         }
-        constexpr explicit ArbitraryDegreePolynomial(const Scaling<T> f): k{{I(1),f.factor}}
+        constexpr explicit ArbitraryDegreePolynomial(const T k2): k{{I(0),k2}}
         {
         }
         constexpr explicit ArbitraryDegreePolynomial(const Shifting<T> f): k{{I(0),f.offset}, {I(1),T(1)}}
         {
         }
-        constexpr explicit ArbitraryDegreePolynomial(const std::map<I,T> k2): k(k2)
+        constexpr explicit ArbitraryDegreePolynomial(const Scaling<T> f): k{{I(1),f.factor}}
         {
         }
-        template<int Nlo, int Nhi>
-        constexpr ArbitraryDegreePolynomial(const Polynomial<T,Nlo,Nhi>& p): k()
+        constexpr explicit ArbitraryDegreePolynomial(const Identity<T> e): k{{I(1),T(1)}}
         {
-            for (int i = Nlo; i <= Nhi; ++i)
+        }
+        template<int Plo, int Phi>
+        constexpr ArbitraryDegreePolynomial(const Polynomial<T,Plo,Phi>& p): k()
+        {
+            for (int i = Plo; i <= Phi; ++i)
             {
                 k[I(i)] = p[i];
             }
@@ -61,20 +64,23 @@ namespace math {
         {}
         constexpr ArbitraryDegreePolynomial& operator=(const ArbitraryDegreePolynomial& p)
         {
-            std::copy(p.k.begin(), p.k.end(), k.begin());
+            for (auto pair = p.k.cbegin(); pair != p.k.cend(); ++pair)
+            {
+                k[pair->first] = pair->second;
+            }
             return *this;
         }
-        template<int Nlo, int Nhi>
-        constexpr ArbitraryDegreePolynomial& operator=(const Polynomial<T,Nlo,Nhi>& p)
+        template<int Plo, int Phi>
+        constexpr ArbitraryDegreePolynomial& operator=(const Polynomial<T,Plo,Phi>& p)
         {
             return *this;
         }
         constexpr T operator()(const T x) const
         {
             T y(0);
-            for (auto pair : k)
+            for (auto pair = k.cbegin(); pair != k.cend(); ++pair)
             {
-                y += pair.second * std::pow(x, pair.first);
+                y += pair->second * std::pow(x, pair->first);
             }
             return y;
         }
@@ -92,21 +98,41 @@ namespace math {
         constexpr T operator[](const I2 i) const
         {
             auto found = k.find(I(i));
-            return found != k.end()? found->second : T(0);
+            return found != k.cend()? found->second : T(0);
         }
         constexpr ArbitraryDegreePolynomial& operator+=(const ArbitraryDegreePolynomial<T,I>& p)
         {
-            for (auto pair : p.k)
+            for (auto pair = p.k.cbegin(); pair != p.k.cend(); ++pair)
             {
-                k[pair.first] = k[pair.first] + pair.second;
+                k[pair->first] = k[pair->first] + pair->second;
             }
             return *this;
         }
         constexpr ArbitraryDegreePolynomial& operator-=(const ArbitraryDegreePolynomial<T,I>& p)
         {
-            for (auto pair : p.k)
+            for (auto pair = p.k.cbegin(); pair != p.k.cend(); ++pair)
             {
-                k[pair.first] = k[pair.first] - pair.second;
+                k[pair->first] = k[pair->first] - pair->second;
+            }
+            return *this;
+        }
+        template<int Plo, int Phi>
+        constexpr ArbitraryDegreePolynomial& operator+=(const Polynomial<T,Plo,Phi> p)
+        {
+            for (int i=Plo; i<=Phi; i++)
+            {
+                I i2(i);
+                k[i2] = k.find(i2) != k.cend()? k[i2] + p.k[i] : p.k[i];
+            }
+            return *this;
+        }
+        template<int Plo, int Phi>
+        constexpr ArbitraryDegreePolynomial& operator-=(const Polynomial<T,Plo,Phi> p)
+        {
+            for (int i=Plo; i<=Phi; i++)
+            {
+                I i2(i);
+                k[i2] = k.find(i2) != k.cend()? k[i2] - p.k[i] : p.k[i];
             }
             return *this;
         }
@@ -122,17 +148,17 @@ namespace math {
         }
         constexpr ArbitraryDegreePolynomial& operator*=(const T k2)
         {
-            for (auto pair : k)
+            for (auto pair = k.begin(); pair != k.cend(); ++pair)
             {
-                k[pair.first] *= k2;
+                k[pair->first] *= k2;
             }
             return *this;
         }
         constexpr ArbitraryDegreePolynomial& operator/=(const T k2)
         {
-            for (auto pair : k)
+            for (auto pair = k.begin(); pair != k.cend(); ++pair)
             {
-                k[pair.first] /= k2;
+                k[pair->first] /= k2;
             }
             return *this;
         }
@@ -227,12 +253,12 @@ namespace math {
     constexpr ArbitraryDegreePolynomial<T,I> operator*(const ArbitraryDegreePolynomial<T,I>& p, const ArbitraryDegreePolynomial<T,I>& q)
     {
         ArbitraryDegreePolynomial<T,I> y;
-        for (auto pair1 : p.k)
+        for (auto pair1 = p.k.cbegin(); pair1 != p.k.cend(); ++pair1)
         {
-            I i = pair1.first;
-            for (auto pair2 : q.k)
+            I i = pair1->first;
+            for (auto pair2 = q.k.cbegin(); pair2 != q.k.cend(); ++pair2)
             {
-                I j = pair2.first;
+                I j = pair2->first;
                 y[i+j] += p[i]*q[j];
             }
         }
@@ -242,32 +268,32 @@ namespace math {
 
 
     template<typename T, typename I, int Plo, int Phi>
-    constexpr auto operator+(const ArbitraryDegreePolynomial<T,I>& p, const Polynomial<T,Plo,Phi> q)
+    constexpr auto operator+(const ArbitraryDegreePolynomial<T,I>& p, const Polynomial<T,Plo,Phi>& q)
     {
         return p + ArbitraryDegreePolynomial<T,I>(q);
     }
     template<typename T, typename I, int Plo, int Phi>
-    constexpr auto operator+(const Polynomial<T,Plo,Phi> q, const ArbitraryDegreePolynomial<T,I>& p)
+    constexpr auto operator+(const Polynomial<T,Plo,Phi>& q, const ArbitraryDegreePolynomial<T,I>& p)
     {
         return ArbitraryDegreePolynomial<T,I>(q) + p;
     }
     template<typename T, typename I, int Plo, int Phi>
-    constexpr auto operator-(const ArbitraryDegreePolynomial<T,I>& p, const Polynomial<T,Plo,Phi> q)
+    constexpr auto operator-(const ArbitraryDegreePolynomial<T,I>& p, const Polynomial<T,Plo,Phi>& q)
     {
         return p - ArbitraryDegreePolynomial<T,I>(q);
     }
     template<typename T, typename I, int Plo, int Phi>
-    constexpr auto operator-(const Polynomial<T,Plo,Phi> q, const ArbitraryDegreePolynomial<T,I>& p)
+    constexpr auto operator-(const Polynomial<T,Plo,Phi>& q, const ArbitraryDegreePolynomial<T,I>& p)
     {
         return ArbitraryDegreePolynomial<T,I>(q) - p;
     }
     template<typename T, typename I, int Plo, int Phi>
-    constexpr auto operator*(const ArbitraryDegreePolynomial<T,I>& p, const Polynomial<T,Plo,Phi> q)
+    constexpr auto operator*(const ArbitraryDegreePolynomial<T,I>& p, const Polynomial<T,Plo,Phi>& q)
     {
         return p * ArbitraryDegreePolynomial<T,I>(q);
     }
     template<typename T, typename I, int Plo, int Phi>
-    constexpr auto operator*(const Polynomial<T,Plo,Phi> q, const ArbitraryDegreePolynomial<T,I>& p)
+    constexpr auto operator*(const Polynomial<T,Plo,Phi>& q, const ArbitraryDegreePolynomial<T,I>& p)
     {
         return ArbitraryDegreePolynomial<T,I>(q) * p;
     }
@@ -275,9 +301,9 @@ namespace math {
     constexpr auto operator/(const ArbitraryDegreePolynomial<T,I>& p, const Polynomial<T,P,P> q)
     {
         ArbitraryDegreePolynomial<T,I> y;
-        for (auto pair1 : p.k)
+        for (auto pair1 = p.k.cbegin(); pair1 != p.k.cend(); ++pair1)
         {
-            I i = pair1.first;
+            I i = pair1->first;
             y[i-P] = p[i];
         }
         return y;
@@ -424,9 +450,9 @@ namespace math {
     ArbitraryDegreePolynomial<T,I> derivative(const ArbitraryDegreePolynomial<T,I>& p)
     {
         ArbitraryDegreePolynomial<T,I> dpdx;
-        for (auto pair : p.k)
+        for (auto pair = p.k.cbegin(); pair != p.k.cend(); ++pair)
         {
-            I i = pair.first;
+            I i = pair->first;
             dpdx[i-1] = i!=I(1)? i*p[i] : T(0);
         }
         return dpdx;
@@ -440,9 +466,9 @@ namespace math {
     T derivative(const ArbitraryDegreePolynomial<T,I>& p, const T x)
     {
         T dydx(0);
-        for (auto pair : p.k)
+        for (auto pair = p.k.cbegin(); pair != p.k.cend(); ++pair)
         {
-            I i = pair.first;
+            I i = pair->first;
             dydx += p[i] * std::pow(x, i-1) * i;
         }
         return dydx;
@@ -455,9 +481,9 @@ namespace math {
     ArbitraryDegreePolynomial<T,I> integral(const ArbitraryDegreePolynomial<T,I>& p)
     {
         ArbitraryDegreePolynomial<T,I> dpdx;
-        for (auto pair : p.k)
+        for (auto pair = p.k.cbegin(); pair != p.k.cend(); ++pair)
         {
-            I i = pair.first;
+            I i = pair->first;
             dpdx[i+1] = p[i]/(i+1);
         }
         return dpdx;
@@ -474,9 +500,9 @@ namespace math {
     T integral(const ArbitraryDegreePolynomial<T,I>& p, const T x)
     {
         T integral(0);
-        for (auto pair : p.k)
+        for (auto pair = p.k.cbegin(); pair != p.k.cend(); ++pair)
         {
-            I i = pair.first;
+            I i = pair->first;
             // exponents are calculated using pow(), 
             // rather than repeated multiplication, to avoid precision errors
             integral += i != -1? 
@@ -498,9 +524,9 @@ namespace math {
     {
         T integral(0);
 
-        for (auto pair : p.k)
+        for (auto pair = p.k.cbegin(); pair != p.k.cend(); ++pair)
         {
-            I i = pair.first;
+            I i = pair->first;
             // exponents are calculated using pow(), 
             // rather than repeated multiplication, to avoid precision errors
             integral += i != -1? 
@@ -560,9 +586,9 @@ namespace math {
     constexpr ArbitraryDegreePolynomial<T,I> compose(const ArbitraryDegreePolynomial<T,I>& p, const Scaling<T> g)
     {
         ArbitraryDegreePolynomial<T,I> pq = p;
-        for (auto pair : p.k)
+        for (auto pair = p.k.cbegin(); pair != p.k.cend(); ++pair)
         {
-            I i = pair.first;
+            I i = pair->first;
             pq[i] *= std::pow(g.factor, T(i));
         }
         return pq;
@@ -572,12 +598,12 @@ namespace math {
     constexpr ArbitraryDegreePolynomial<T,I> compose(const ArbitraryDegreePolynomial<T,I>& p, const Shifting<T> g)
     {
         ArbitraryDegreePolynomial<T,I> pq;
-        for (auto pair1 : p.k)
+        for (auto pair1 = p.k.cbegin(); pair1 != p.k.cend(); ++pair1)
         {
-            I i = pair1.first;
-            for (auto pair2 : p.k)
+            I i = pair1->first;
+            for (auto pair2 = p.k.cbegin(); pair2 != p.k.cend(); ++pair2)
             {
-                I j = pair2.first;
+                I j = pair2->first;
                 pq[i] += p[j]*combination(j,j-i)*std::pow(g.offset, j-i);
             }
         }
