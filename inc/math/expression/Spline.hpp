@@ -9,8 +9,8 @@
 #include "Identity.hpp"
 #include "Scaling.hpp"
 #include "Shifting.hpp"
-#include "Boxed.hpp"
-#include "Boxed_to_string.hpp"
+#include "Railcar.hpp"
+#include "Railcar_to_string.hpp"
 #include "Polynomial.hpp"
 #include "Polynomial_to_string.hpp"
 
@@ -21,7 +21,7 @@ namespace math {
     The above definition for a spline is broader than most. Unlike Ahlberg (1967),
     it does not place restrictions on the degree of the polynomial, 
     the continuity of its derivatives, or even the continuity of the function itself,
-    and it allows instances to be represented by the sum of overlapping boxed polynomials.
+    and it allows instances to be represented by the sum of overlapping Railcar polynomials.
     We adopt this definition over others since we value closure - 
     a spline defined as such is closed under addition, subtraction, multiplication, derivation, and integration,
     making it a very attractive structure to implement on a computer.
@@ -30,17 +30,17 @@ namespace math {
     */
     template<typename T, int Plo, int Phi>
     struct Spline {
-        std::vector<Boxed<T,Polynomial<T,Plo,Phi>>> boxes; 
+        std::vector<Railcar<T,Polynomial<T,Plo,Phi>>> boxes; 
         Spline() : boxes() 
         {
         }
         Spline(const Spline<T,Plo,Phi>& p) : boxes(p.boxes) 
         {
         }
-        explicit Spline(const std::vector<Boxed<T,Polynomial<T,Plo,Phi>>> pieces_) : boxes(pieces_) 
+        explicit Spline(const std::vector<Railcar<T,Polynomial<T,Plo,Phi>>> pieces_) : boxes(pieces_) 
         {
         }
-        explicit Spline(std::initializer_list<Boxed<T,Polynomial<T,Plo,Phi>>> ts)
+        explicit Spline(std::initializer_list<Railcar<T,Polynomial<T,Plo,Phi>>> ts)
         {
             std::copy(ts.begin(), ts.end(), std::back_inserter(boxes));
         }
@@ -54,10 +54,25 @@ namespace math {
             return y;
         }
 
+        constexpr std::vector<T> knots() const
+        {
+            // gather all boundaries for all boxes
+            std::vector<T> bounds;
+            for (std::size_t i=0; i<boxes.size(); i++)
+            {
+                bounds.push_back(boxes[i].lo);
+                bounds.push_back(boxes[i].hi);
+            }
+            std::sort(bounds.begin(), bounds.end());
+            auto last = std::unique(bounds.begin(), bounds.end());
+            bounds.erase(last, bounds.end());
+            return bounds;
+        }
+
         Spline<T,Plo,Phi>& operator+=(const T k)
         {
             using F = Polynomial<T,Plo,Phi>;
-            using G = Boxed<T,F>;
+            using G = Railcar<T,F>;
             const T oo = std::numeric_limits<T>::max();
             F f; f[0] = k;
             boxes.push_back(G(-oo, oo, f));
@@ -66,7 +81,7 @@ namespace math {
         Spline<T,Plo,Phi>& operator-=(const T k)
         {
             using F = Polynomial<T,Plo,Phi>;
-            using G = Boxed<T,F>;
+            using G = Railcar<T,F>;
             const T oo = std::numeric_limits<T>::max();
             F f; f[0] = -k;
             boxes.push_back(G(-oo, oo, f));
@@ -92,7 +107,7 @@ namespace math {
         Spline<T,Plo,Phi>& operator+=(const Polynomial<T,Plo,Phi>& p)
         {
             using F = Polynomial<T,Plo,Phi>;
-            using G = Boxed<T,F>;
+            using G = Railcar<T,F>;
             const T oo = std::numeric_limits<T>::max();
             F f(p);
             boxes.push_back(G(-oo, oo, p));
@@ -101,7 +116,7 @@ namespace math {
         Spline<T,Plo,Phi>& operator-=(const Polynomial<T,Plo,Phi>& p)
         {
             using F = Polynomial<T,Plo,Phi>;
-            using G = Boxed<T,F>;
+            using G = Railcar<T,F>;
             const T oo = std::numeric_limits<T>::max();
             F f(p);
             boxes.push_back(G(-oo, oo, p));
@@ -112,7 +127,7 @@ namespace math {
         Spline<T,Plo,Phi>& operator+=(const Spline<T,Qlo,Qhi>& q)
         {
             using F = Polynomial<T,Plo,Phi>;
-            using G = Boxed<T,F>;
+            using G = Railcar<T,F>;
             for (std::size_t i=0; i<q.boxes.size(); i++)
             {
                 boxes.push_back(G(q.boxes[i].lo, q.boxes[i].hi, F(q.boxes[i].f)));
@@ -123,7 +138,7 @@ namespace math {
         Spline<T,Plo,Phi>& operator-=(const Spline<T,Qlo,Qhi>& q)
         {
             using F = Polynomial<T,Plo,Phi>;
-            using G = Boxed<T,F>;
+            using G = Railcar<T,F>;
             for (std::size_t i=0; i<q.boxes.size(); i++)
             {
                 boxes.push_back(G(q.boxes[i].lo, q.boxes[i].hi, F(-q.boxes[i].f)));
@@ -144,36 +159,25 @@ namespace math {
         return output;
     }
 
-
     template<typename T, int Plo, int Phi>
     constexpr Spline<T,Plo,Phi> simplify(const Spline<T,Plo,Phi>& s)
     {
-        // gather all boundaries for all boxes
-        std::vector<T> bounds;
-        for (std::size_t i=0; i<s.boxes.size(); i++)
-        {
-            bounds.push_back(s.boxes[i].lo);
-            bounds.push_back(s.boxes[i].hi);
-        }
-        std::sort(bounds.begin(), bounds.end());
-        auto last = std::unique(bounds.begin(), bounds.end());
-        bounds.erase(last, bounds.end());
-
+        std::vector<T> knots = s.knots();
         using F = Polynomial<T,Plo,Phi>;
-        using G = Boxed<T,F>;
+        using G = Railcar<T,F>;
         std::vector<G> boxes;
-        for (std::size_t i=1; i<bounds.size(); i++)
+        for (std::size_t i=1; i<knots.size(); i++)
         {
             F f;
-            // add together all boxes that intersect the region from bounds[i-1] to bounds[i]
+            // add together all boxes that intersect the region from knots[i-1] to knots[i]
             for (std::size_t j=0; j<s.boxes.size(); j++)
             {
-                if (std::max(s.boxes[j].lo, bounds[i-1]) < std::min(s.boxes[j].hi, bounds[i]))
+                if (std::max(s.boxes[j].lo, knots[i-1]) < std::min(s.boxes[j].hi, knots[i]))
                 {
                     f += s.boxes[j].f;
                 }
             }
-            boxes.push_back(G(bounds[i-1], bounds[i], f));
+            boxes.push_back(G(knots[i-1], knots[i], f));
         }
         return Spline<T,Plo,Phi>(boxes);
     }
@@ -281,7 +285,7 @@ namespace math {
     constexpr auto operator*(const Spline<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi> q)
     {
         using F = Polynomial<T,Plo+Qlo,Phi+Qhi>;
-        using G = Boxed<T,F>;
+        using G = Railcar<T,F>;
         std::vector<G> boxes;
         for (std::size_t i=0; i<p.boxes.size(); i++)
         {
@@ -294,7 +298,7 @@ namespace math {
     constexpr auto operator/(const Spline<T,Plo,Phi>& p, const Polynomial<T,Q,Q> q)
     {
         using F = Polynomial<T,Plo-Q,Phi-Q>;
-        using G = Boxed<T,F>;
+        using G = Railcar<T,F>;
         std::vector<G> boxes;
         for (std::size_t i=0; i<p.boxes.size(); i++)
         {
@@ -333,7 +337,7 @@ namespace math {
     constexpr auto operator*(const Polynomial<T,Qlo,Qhi> p, const Spline<T,Plo,Phi>& s)
     {
         using F = Polynomial<T,Plo+Qlo,Phi+Qhi>;
-        using G = Boxed<T,F>;
+        using G = Railcar<T,F>;
         std::vector<G> boxes;
         for (std::size_t i=0; i<s.boxes.size(); i++)
         {
@@ -352,7 +356,7 @@ namespace math {
     constexpr auto operator+(const Spline<T,Plo,Phi>& p, const Spline<T,Qlo,Qhi>& q)
     {
         using F = Polynomial<T,std::min(Plo,Qlo),std::max(Phi,Qhi)>;
-        using G = Boxed<T,F>;
+        using G = Railcar<T,F>;
         std::vector<G> boxes;
         for (std::size_t i=0; i<p.boxes.size(); i++)
         {
@@ -369,7 +373,7 @@ namespace math {
     constexpr auto operator-(const Spline<T,Plo,Phi>& p, const Spline<T,Qlo,Qhi>& q)
     {
         using F = Polynomial<T,std::min(Plo,Qlo),std::max(Phi,Qhi)>;
-        using G = Boxed<T,F>;
+        using G = Railcar<T,F>;
         std::vector<G> boxes;
         for (std::size_t i=0; i<p.boxes.size(); i++)
         {
@@ -386,7 +390,7 @@ namespace math {
     constexpr auto operator*(const Spline<T,Plo,Phi>& p, const Spline<T,Qlo,Qhi>& q)
     {
         using F = Polynomial<T,Plo+Qlo,Phi+Qhi>;
-        using G = Boxed<T,F>;
+        using G = Railcar<T,F>;
         std::vector<G> boxes;
         T lo, hi;
         for (std::size_t i=0; i<p.boxes.size(); i++)
@@ -554,7 +558,7 @@ namespace math {
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     constexpr Spline<T,std::min(Plo*Qlo,Phi*Qhi),std::max(Plo*Qlo,Phi*Qhi)> compose(const Spline<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi> q)
     {
-        using PiecewisePolynomial = Boxed<T,Polynomial<T,std::min(Plo*Qlo,Phi*Qhi),std::max(Plo*Qlo,Phi*Qhi)>>;
+        using PiecewisePolynomial = Railcar<T,Polynomial<T,std::min(Plo*Qlo,Phi*Qhi),std::max(Plo*Qlo,Phi*Qhi)>>;
         std::vector<PiecewisePolynomial> boxes;
         for (std::size_t i=0; i<p.boxes.size(); i++)
         {
@@ -565,7 +569,7 @@ namespace math {
     template<typename T, int Plo, int Phi>
     constexpr Spline<T,Plo,Phi> compose(const Spline<T,Plo,Phi>& p, const Scaling<T> g)
     {
-        using PiecewisePolynomial = Boxed<T,Polynomial<T,Plo,Phi>>;
+        using PiecewisePolynomial = Railcar<T,Polynomial<T,Plo,Phi>>;
         std::vector<PiecewisePolynomial> boxes;
         for (std::size_t i=0; i<p.boxes.size(); i++)
         {
@@ -576,7 +580,7 @@ namespace math {
     template<typename T, int Plo, int Phi>
     constexpr Spline<T,Plo,Phi> compose(const Spline<T,Plo,Phi>& p, const Shifting<T> g)
     {
-        using PiecewisePolynomial = Boxed<T,Polynomial<T,Plo,Phi>>;
+        using PiecewisePolynomial = Railcar<T,Polynomial<T,Plo,Phi>>;
         std::vector<PiecewisePolynomial> boxes;
         for (std::size_t i=0; i<p.boxes.size(); i++)
         {
@@ -594,7 +598,7 @@ namespace math {
     template<typename T, int Plo, int Phi>
     constexpr Spline<T,Plo-1,Phi-1> derivative(const Spline<T,Plo,Phi>& p)
     {
-        using PiecewisePolynomial = Boxed<T,Polynomial<T,Plo-1,Phi-1>>;
+        using PiecewisePolynomial = Railcar<T,Polynomial<T,Plo-1,Phi-1>>;
         std::vector<PiecewisePolynomial> boxes;
         for (std::size_t i=0; i<p.boxes.size(); i++)
         {
@@ -668,7 +672,7 @@ namespace math {
     constexpr Spline<T,Plo+1,Phi+1> integral(const Spline<T,Plo,Phi>& p)
     {
         using F = Polynomial<T,Plo+1,Phi+1>;
-        using G = Boxed<T,F>;
+        using G = Railcar<T,F>;
         const T oo = std::numeric_limits<T>::max();
         std::vector<G> boxes;
         G g, gmax;
@@ -691,7 +695,7 @@ namespace math {
     constexpr Spline<T,Plo,Phi> restriction(const Spline<T,Plo,Phi>& p, const T lo, const T hi)
     {
         using F = Polynomial<T,Plo,Phi>;
-        using G = Boxed<T,F>;
+        using G = Railcar<T,F>;
         std::vector<G> boxes;
         const T oo = std::numeric_limits<T>::max();
         for (std::size_t i=0; i<p.boxes.size(); i++)
@@ -706,7 +710,7 @@ namespace math {
             }
         }
         boxes.push_back(
-            Boxed<T,Polynomial<T,Plo,Phi>>( 
+            Railcar<T,Polynomial<T,Plo,Phi>>( 
                 boxes[boxes.size()-1].hi, std::numeric_limits<T>::max(), 
                 Polynomial<T,Plo,Phi>( boxes[boxes.size()-1].f( boxes[boxes.size()-1].hi ) )
             ));
@@ -720,7 +724,7 @@ namespace math {
         return p*p;
         // Spline<T,Plo,Phi> q = simplify(p);
         // using F = Polynomial<T,Plo*2,Phi*2>;
-        // using G = Boxed<T,F>;
+        // using G = Railcar<T,F>;
         // std::vector<G> boxes;
         // for (std::size_t i = 0; i < q.boxes.size(); ++i)
         // {
