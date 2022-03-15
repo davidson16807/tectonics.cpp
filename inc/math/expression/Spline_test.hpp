@@ -25,10 +25,10 @@ TEST_CASE( "Spline arithmetic purity", "[math]" ) {
     using Poly1 = math::Polynomial<double,-2,1>;
     using Poly2 = math::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
-    Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
-    Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
-    Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
+    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
+    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
+    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
+    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
 
     using Piece0 = math::Railcar<double,Poly0>;
     using Piece1 = math::Railcar<double,Poly1>;
@@ -142,10 +142,10 @@ TEST_CASE( "Spline arithmetic identity", "[math]" ) {
     using Poly1 = math::Polynomial<double,-2,1>;
     using Poly2 = math::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
-    Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
-    Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
-    Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
+    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
+    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
+    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
+    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
 
     using Piece0 = math::Railcar<double,Poly0>;
     using Piece1 = math::Railcar<double,Poly1>;
@@ -215,10 +215,10 @@ TEST_CASE( "Spline arithmetic commutativity", "[math]" ) {
     using Poly1 = math::Polynomial<double,-2,1>;
     using Poly2 = math::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
-    Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
-    Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
-    Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
+    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
+    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
+    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
+    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
 
     using Piece0 = math::Railcar<double,Poly0>;
     using Piece1 = math::Railcar<double,Poly1>;
@@ -298,10 +298,10 @@ TEST_CASE( "Spline arithmetic associativity", "[math]" ) {
     using Poly1 = math::Polynomial<double,-2,1>;
     using Poly2 = math::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
-    Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
-    Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
-    Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
+    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
+    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
+    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
+    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
 
     using Piece0 = math::Railcar<double,Poly0>;
     using Piece1 = math::Railcar<double,Poly1>;
@@ -363,10 +363,10 @@ TEST_CASE( "Spline arithmetic distributivity", "[math]" ) {
     using Poly1 = math::Polynomial<double,-2,1>;
     using Poly2 = math::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
-    Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
-    Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
-    Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
+    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
+    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
+    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
+    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
 
     using Piece0 = math::Railcar<double,Poly0>;
     using Piece1 = math::Railcar<double,Poly1>;
@@ -437,10 +437,10 @@ TEST_CASE( "Spline/scalar arithmetic purity", "[math]" ) {
     using Poly1 = math::Polynomial<double,-2,1>;
     using Poly2 = math::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
-    Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
-    Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
-    Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
+    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
+    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
+    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
+    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
 
     using Piece0 = math::Railcar<double,Poly0>;
     using Piece1 = math::Railcar<double,Poly1>;
@@ -561,10 +561,10 @@ TEST_CASE( "Spline/scalar arithmetic identity", "[math]" ) {
     using Poly1 = math::Polynomial<double,-2,1>;
     using Poly2 = math::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
-    Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
-    Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
-    Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
+    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
+    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
+    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
+    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
 
     using Piece0 = math::Railcar<double,Poly0>;
     using Piece1 = math::Railcar<double,Poly1>;
@@ -637,10 +637,10 @@ TEST_CASE( "Spline/scalar arithmetic commutativity", "[math]" ) {
     using Poly1 = math::Polynomial<double,-2,1>;
     using Poly2 = math::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
-    Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
-    Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
-    Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
+    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
+    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
+    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
+    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
 
     using Piece0 = math::Railcar<double,Poly0>;
     using Piece1 = math::Railcar<double,Poly1>;
@@ -726,10 +726,10 @@ TEST_CASE( "Spline/scalar arithmetic associativity", "[math]" ) {
     using Poly1 = math::Polynomial<double,-2,1>;
     using Poly2 = math::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
-    Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
-    Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
-    Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
+    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
+    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
+    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
+    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
 
     using Piece0 = math::Railcar<double,Poly0>;
     using Piece1 = math::Railcar<double,Poly1>;
@@ -830,10 +830,10 @@ TEST_CASE( "Spline/scalar arithmetic distributivity", "[math]" ) {
     using Poly1 = math::Polynomial<double,-2,1>;
     using Poly2 = math::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
-    Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
-    Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
-    Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
+    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
+    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
+    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
+    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
 
     using Piece0 = math::Railcar<double,Poly0>;
     using Piece1 = math::Railcar<double,Poly1>;
@@ -941,10 +941,10 @@ TEST_CASE( "Spline/monomial arithmetic purity", "[math]" ) {
     using Poly1 = math::Polynomial<double,-2,1>;
     using Poly2 = math::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
-    Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
-    Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
-    Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
+    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
+    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
+    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
+    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
 
     using Piece0 = math::Railcar<double,Poly0>;
     using Piece1 = math::Railcar<double,Poly1>;
@@ -972,9 +972,9 @@ TEST_CASE( "Spline/monomial arithmetic purity", "[math]" ) {
         Piece2(midlo, -1.0f, Poly2(p2)), 
         Piece2(1.0f, midhi, Poly2(p3)) 
     };
-    math::Polynomial<double,0,0> m0{2.0f};
-    math::Polynomial<double,2,2> m1{2.0f};
-    math::Polynomial<double,-2,-2> m2{2.0f};
+    math::Polynomial<double,0,0> m0(std::array<double,1>{2.0});
+    math::Polynomial<double,2,2> m1(std::array<double,1>{2.0});
+    math::Polynomial<double,-2,-2> m2(std::array<double,1>{2.0});
 
     SECTION("s0+m1 must be called repeatedly without changing the output"){
         CHECK(math::distance(s0+m0, s0+m0, lo, hi) < threshold);
@@ -1064,10 +1064,10 @@ TEST_CASE( "Spline/monomial arithmetic identity", "[math]" ) {
     using Poly1 = math::Polynomial<double,-2,1>;
     using Poly2 = math::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
-    Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
-    Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
-    Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
+    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
+    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
+    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
+    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
 
     using Piece0 = math::Railcar<double,Poly0>;
     using Piece1 = math::Railcar<double,Poly1>;
@@ -1140,10 +1140,10 @@ TEST_CASE( "Spline/monomial arithmetic commutativity", "[math]" ) {
     using Poly1 = math::Polynomial<double,-2,1>;
     using Poly2 = math::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
-    Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
-    Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
-    Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
+    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
+    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
+    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
+    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
 
     using Piece0 = math::Railcar<double,Poly0>;
     using Piece1 = math::Railcar<double,Poly1>;
@@ -1171,9 +1171,9 @@ TEST_CASE( "Spline/monomial arithmetic commutativity", "[math]" ) {
         Piece2(midlo, -1.0f, Poly2(p2)), 
         Piece2(1.0f, midhi, Poly2(p3)) 
     };
-    math::Polynomial<double,0,0> m0{2.0f};
-    math::Polynomial<double,2,2> m1{2.0f};
-    math::Polynomial<double,-2,-2> m2{-2.0f};
+    math::Polynomial<double,0,0> m0(std::array<double,1>{2.0});
+    math::Polynomial<double,2,2> m1(std::array<double,1>{2.0});
+    math::Polynomial<double,-2,-2> m2(std::array<double,1>{-2.0f});
 
     SECTION("s0+k must equal k+s0"){
         CHECK(math::distance(s0+m0, m0+s0, lo, hi) < threshold);
@@ -1228,10 +1228,10 @@ TEST_CASE( "Spline/monomial arithmetic associativity", "[math]" ) {
     using Poly1 = math::Polynomial<double,-2,1>;
     using Poly2 = math::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
-    Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
-    Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
-    Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
+    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
+    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
+    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
+    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
 
     using Piece0 = math::Railcar<double,Poly0>;
     using Piece1 = math::Railcar<double,Poly1>;
@@ -1259,9 +1259,9 @@ TEST_CASE( "Spline/monomial arithmetic associativity", "[math]" ) {
         Piece2(midlo, -1.0f, Poly2(p2)), 
         Piece2(1.0f, midhi, Poly2(p3)) 
     };
-    math::Polynomial<double,0,0> m0{2.0f};
-    math::Polynomial<double,2,2> m1{2.0f};
-    math::Polynomial<double,-2,-2> m2{-2.0f};
+    math::Polynomial<double,0,0> m0(std::array<double,1>{2.0});
+    math::Polynomial<double,2,2> m1(std::array<double,1>{2.0});
+    math::Polynomial<double,-2,-2> m2(std::array<double,1>{-2.0f});
 
     SECTION("(s0+s1)+s2 must equal s0+(s1+s2)"){
         CHECK(math::distance((s0+s1)+m0, s0+(s1+m0), lo, hi) < threshold);
@@ -1332,10 +1332,10 @@ TEST_CASE( "Spline/monomial arithmetic distributivity", "[math]" ) {
     using Poly1 = math::Polynomial<double,-2,1>;
     using Poly2 = math::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
-    Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
-    Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
-    Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
+    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
+    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
+    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
+    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
 
     using Piece0 = math::Railcar<double,Poly0>;
     using Piece1 = math::Railcar<double,Poly1>;
@@ -1363,9 +1363,9 @@ TEST_CASE( "Spline/monomial arithmetic distributivity", "[math]" ) {
         Piece2(midlo, -1.0f, Poly2(p2)), 
         Piece2(1.0f, midhi, Poly2(p3)) 
     };
-    math::Polynomial<double,0,0> m0{2.0f};
-    math::Polynomial<double,2,2> m1{2.0f};
-    math::Polynomial<double,-2,-2> m2{-2.0f};
+    math::Polynomial<double,0,0> m0(std::array<double,1>{2.0});
+    math::Polynomial<double,2,2> m1(std::array<double,1>{2.0});
+    math::Polynomial<double,-2,-2> m2(std::array<double,1>{-2.0f});
 
     SECTION("(s0+s1)*k must equal s0*k + s1*k"){
         CHECK(math::distance((s0+s1)*m0, (s0*m0+s1*m0), midlo, midhi) < threshold);
@@ -1453,10 +1453,10 @@ TEST_CASE( "Spline/Shifting arithmetic purity", "[math]" ) {
     using Poly1 = math::Polynomial<double,-2,1>;
     using Poly2 = math::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
-    Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
-    Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
-    Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
+    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
+    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
+    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
+    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
 
     using Piece0 = math::Railcar<double,Poly0>;
     using Piece1 = math::Railcar<double,Poly1>;
@@ -1576,10 +1576,10 @@ TEST_CASE( "Spline/Shifting arithmetic commutativity", "[math]" ) {
     using Poly1 = math::Polynomial<double,-2,1>;
     using Poly2 = math::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
-    Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
-    Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
-    Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
+    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
+    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
+    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
+    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
 
     using Piece0 = math::Railcar<double,Poly0>;
     using Piece1 = math::Railcar<double,Poly1>;
@@ -1664,10 +1664,10 @@ TEST_CASE( "Spline/Shifting arithmetic associativity", "[math]" ) {
     using Poly1 = math::Polynomial<double,-2,1>;
     using Poly2 = math::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
-    Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
-    Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
-    Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
+    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
+    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
+    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
+    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
 
     using Piece0 = math::Railcar<double,Poly0>;
     using Piece1 = math::Railcar<double,Poly1>;
@@ -1768,10 +1768,10 @@ TEST_CASE( "Spline/Shifting arithmetic distributivity", "[math]" ) {
     using Poly1 = math::Polynomial<double,-2,1>;
     using Poly2 = math::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
-    Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
-    Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
-    Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
+    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
+    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
+    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
+    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
 
     using Piece0 = math::Railcar<double,Poly0>;
     using Piece1 = math::Railcar<double,Poly1>;
@@ -1890,10 +1890,10 @@ TEST_CASE( "Spline/Scaling arithmetic purity", "[math]" ) {
     using Poly1 = math::Polynomial<double,-2,1>;
     using Poly2 = math::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
-    Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
-    Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
-    Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
+    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
+    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
+    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
+    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
 
     using Piece0 = math::Railcar<double,Poly0>;
     using Piece1 = math::Railcar<double,Poly1>;
@@ -2013,10 +2013,10 @@ TEST_CASE( "Spline/Scaling arithmetic identity", "[math]" ) {
     using Poly1 = math::Polynomial<double,-2,1>;
     using Poly2 = math::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
-    Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
-    Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
-    Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
+    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
+    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
+    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
+    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
 
     using Piece0 = math::Railcar<double,Poly0>;
     using Piece1 = math::Railcar<double,Poly1>;
@@ -2080,10 +2080,10 @@ TEST_CASE( "Spline/Scaling arithmetic commutativity", "[math]" ) {
     using Poly1 = math::Polynomial<double,-2,1>;
     using Poly2 = math::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
-    Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
-    Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
-    Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
+    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
+    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
+    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
+    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
 
     using Piece0 = math::Railcar<double,Poly0>;
     using Piece1 = math::Railcar<double,Poly1>;
@@ -2168,10 +2168,10 @@ TEST_CASE( "Spline/Scaling arithmetic associativity", "[math]" ) {
     using Poly1 = math::Polynomial<double,-2,1>;
     using Poly2 = math::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
-    Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
-    Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
-    Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
+    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
+    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
+    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
+    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
 
     using Piece0 = math::Railcar<double,Poly0>;
     using Piece1 = math::Railcar<double,Poly1>;
@@ -2272,10 +2272,10 @@ TEST_CASE( "Spline/Scaling arithmetic distributivity", "[math]" ) {
     using Poly1 = math::Polynomial<double,-2,1>;
     using Poly2 = math::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
-    Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
-    Poly1 p2 = Poly1{4.0f,3.0f,2.0f,1.0f};
-    Poly1 p3 = Poly1{-1.0f,1.0f,-2.0f,2.0f};
+    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
+    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
+    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
+    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
 
     using Piece0 = math::Railcar<double,Poly0>;
     using Piece1 = math::Railcar<double,Poly1>;
@@ -2387,8 +2387,8 @@ TEST_CASE( "Spline integral/derivative invertibility", "[math]" ) {
     
     using Poly0 = math::Polynomial<double,0,2>;
 
-    Poly0 p0 = Poly0{3.0f,2.0f,1.0f};
-    Poly0 p1 = Poly0{-1.0f,0.0f,1.0f};
+    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
+    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
 
     using Piece0 = math::Railcar<double,Poly0>;
 

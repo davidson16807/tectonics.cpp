@@ -17,10 +17,10 @@ TEST_CASE( "Rational arithmetic purity", "[math]" ) {
     const double midlo = -100.0f;
     const double midhi =  100.0f;
 
-    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>{-1.0,0.0,1.0,2.0,3.0};
-    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>{-1.0,1.0,-2.0,2.0,3.0};
+    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
     auto r = p0/q0;
     auto s = p1/q0;
@@ -100,10 +100,10 @@ TEST_CASE( "Rational arithmetic identity", "[math]" ) {
     const double lo = -1000.0f;
     const double hi =  1000.0f;
 
-    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>{-1.0,0.0,1.0,2.0,3.0};
-    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>{-1.0,1.0,-2.0,2.0,3.0};
+    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
     auto r = p0/q0;
     auto s = p1/q0;
@@ -144,10 +144,10 @@ TEST_CASE( "Rational arithmetic commutativity", "[math]" ) {
     const double midlo = -100.0f;
     const double midhi =  100.0f;
 
-    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>{-1.0,0.0,1.0,2.0,3.0};
-    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>{-1.0,1.0,-2.0,2.0,3.0};
+    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
     auto r = p0/q0;
     auto s = p1/q0;
@@ -198,10 +198,10 @@ TEST_CASE( "Rational arithmetic associativity", "[math]" ) {
     const double midlo = -3.0f;
     const double midhi =  3.0f;
 
-    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>{-1.0,0.0,1.0,2.0,3.0};
-    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>{-1.0,1.0,-2.0,2.0,3.0};
+    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
     auto r = p0/q0;
     auto s = p1/q0;
@@ -234,10 +234,10 @@ TEST_CASE( "Rational arithmetic distributivity", "[math]" ) {
     const double midlo = -3.0f;
     const double midhi =  3.0f;
 
-    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>{-1.0,0.0,1.0,2.0,3.0};
-    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>{-1.0,1.0,-2.0,2.0,3.0};
+    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
     auto r = p0/q0;
     auto s = p1/q0;
@@ -279,10 +279,10 @@ TEST_CASE( "Rational/scalar arithmetic purity", "[math]" ) {
     const double lo = -30.0f;
     const double hi =  30.0f;
     
-    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>{-1.0,0.0,1.0,2.0,3.0};
-    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>{-1.0,1.0,-2.0,2.0,3.0};
+    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
     auto r = p0/q0;
     auto s = p1/q0;
@@ -371,10 +371,10 @@ TEST_CASE( "Rational/scalar arithmetic identity", "[math]" ) {
     const double lo = -1000.0f;
     const double hi =  1000.0f;
     
-    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>{-1.0,0.0,1.0,2.0,3.0};
-    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>{-1.0,1.0,-2.0,2.0,3.0};
+    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
     auto r = p0/q0;
     auto s = p1/q0;
@@ -422,10 +422,10 @@ TEST_CASE( "Rational/scalar arithmetic commutativity", "[math]" ) {
     const double midlo = -100.0f;
     const double midhi =  100.0f;
 
-    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>{-1.0,0.0,1.0,2.0,3.0};
-    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>{-1.0,1.0,-2.0,2.0,3.0};
+    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
     auto r = p0/q0;
     auto s = p1/q0;
@@ -479,10 +479,10 @@ TEST_CASE( "Rational/scalar arithmetic associativity", "[math]" ) {
     const double midlo = -100.0f;
     const double midhi =  100.0f;
     
-    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>{-1.0,0.0,1.0,2.0,3.0};
-    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>{-1.0,1.0,-2.0,2.0,3.0};
+    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
     auto r = p0/q0;
     auto s = p1/q0;
@@ -554,10 +554,10 @@ TEST_CASE( "Rational/scalar arithmetic distributivity", "[math]" ) {
     const double midlo = -100.0f;
     const double midhi =  100.0f;
 
-    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>{-1.0,0.0,1.0,2.0,3.0};
-    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>{-1.0,1.0,-2.0,2.0,3.0};
+    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
     auto r = p0/q0;
     auto s = p1/q0;
@@ -636,19 +636,19 @@ TEST_CASE( "Rational/monomial arithmetic purity", "[math]" ) {
     const double lo = -30.0f;
     const double hi =  30.0f;
     
-    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>{-1.0,0.0,1.0,2.0,3.0};
-    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>{-1.0,1.0,-2.0,2.0,3.0};
+    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
     auto r = p0/q0;
     auto s = p1/q0;
     auto t = p0/q1;
     auto u = p1/q1;
 
-    math::Polynomial<double,0,0> m0{2.0f};
-    math::Polynomial<double,2,2> m1{2.0f};
-    math::Polynomial<double,-2,-2> m2{2.0f};
+    math::Polynomial<double,0,0> m0(std::array<double,1>{2.0f});
+    math::Polynomial<double,2,2> m1(std::array<double,1>{2.0f});
+    math::Polynomial<double,-2,-2> m2(std::array<double,1>{2.0f});
 
     SECTION("r+m1 must be called repeatedly without changing the output"){
         CHECK(math::distance(r+m0, r+m0, lo, hi) < threshold);
@@ -728,10 +728,10 @@ TEST_CASE( "Rational/monomial arithmetic identity", "[math]" ) {
     const double lo = -1000.0f;
     const double hi =  1000.0f;
     
-    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>{-1.0,0.0,1.0,2.0,3.0};
-    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>{-1.0,1.0,-2.0,2.0,3.0};
+    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
     auto r = p0/q0;
     auto s = p1/q0;
@@ -775,19 +775,19 @@ TEST_CASE( "Rational/monomial arithmetic commutativity", "[math]" ) {
     const double midlo = -100.0f;
     const double midhi =  100.0f;
     
-    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>{-1.0,0.0,1.0,2.0,3.0};
-    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>{-1.0,1.0,-2.0,2.0,3.0};
+    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
     auto r = p0/q0;
     auto s = p1/q0;
     auto t = p0/q1;
     auto u = p1/q1;
 
-    math::Polynomial<double,0,0> m0{2.0f};
-    math::Polynomial<double,2,2> m1{2.0f};
-    math::Polynomial<double,-2,-2> m2{-2.0f};
+    math::Polynomial<double,0,0> m0(std::array<double,1>{2.0f});
+    math::Polynomial<double,2,2> m1(std::array<double,1>{2.0f});
+    math::Polynomial<double,-2,-2> m2(std::array<double,1>{-2.0f});
 
     SECTION("r+k must equal k+r"){
         CHECK(math::distance(r+m0, m0+r, midlo, midhi) < threshold);
@@ -832,19 +832,19 @@ TEST_CASE( "Rational/monomial arithmetic associativity", "[math]" ) {
     const double midlo = -100.0f;
     const double midhi =  100.0f;
     
-    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>{-1.0,0.0,1.0,2.0,3.0};
-    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>{-1.0,1.0,-2.0,2.0,3.0};
+    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
     auto r = p0/q0;
     auto s = p1/q0;
     auto t = p0/q1;
     auto u = p1/q1;
 
-    math::Polynomial<double,0,0> m0{2.0f};
-    math::Polynomial<double,2,2> m1{2.0f};
-    math::Polynomial<double,-2,-2> m2{-2.0f};
+    math::Polynomial<double,0,0> m0(std::array<double,1>{2.0f});
+    math::Polynomial<double,2,2> m1(std::array<double,1>{2.0f});
+    math::Polynomial<double,-2,-2> m2(std::array<double,1>{-2.0f});
 
     SECTION("(r+s)+t must equal r+(s+t)"){
         CHECK(math::distance((r+s)+m0, r+(s+m0), midlo, midhi) < threshold);
@@ -907,19 +907,19 @@ TEST_CASE( "Rational/monomial arithmetic distributivity", "[math]" ) {
     const double midlo = -3.0f;
     const double midhi =  3.0f;
     
-    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>{-1.0,0.0,1.0,2.0,3.0};
-    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>{-1.0,1.0,-2.0,2.0,3.0};
+    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
     auto r = p0/q0;
     auto s = p1/q0;
     auto t = p0/q1;
     auto u = p1/q1;
 
-    math::Polynomial<double,0,0> m0{2.0f};
-    math::Polynomial<double,2,2> m1{2.0f};
-    math::Polynomial<double,-2,-2> m2{-2.0f};
+    math::Polynomial<double,0,0> m0(std::array<double,1>{2.0f});
+    math::Polynomial<double,2,2> m1(std::array<double,1>{2.0f});
+    math::Polynomial<double,-2,-2> m2(std::array<double,1>{-2.0f});
 
     SECTION("(r+s)*k must equal r*k + s*k"){
         CHECK(math::distance((r+s)*m0, (r*m0+s*m0), midlo, midhi) < threshold);
@@ -1003,10 +1003,10 @@ TEST_CASE( "Rational/Shifting arithmetic purity", "[math]" ) {
     const double midlo = -100.0f;
     const double midhi =  100.0f;
     
-    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>{-1.0,0.0,1.0,2.0,3.0};
-    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>{-1.0,1.0,-2.0,2.0,3.0};
+    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
     auto r = p0/q0;
     auto s = p1/q0;
@@ -1101,10 +1101,10 @@ TEST_CASE( "Rational/Shifting arithmetic commutativity", "[math]" ) {
     const double midlo = -100.0f;
     const double midhi =  100.0f;
     
-    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>{-1.0,0.0,1.0,2.0,3.0};
-    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>{-1.0,1.0,-2.0,2.0,3.0};
+    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
     auto r = p0/q0;
     auto s = p1/q0;
@@ -1158,10 +1158,10 @@ TEST_CASE( "Rational/Shifting arithmetic associativity", "[math]" ) {
     const double midlo = -100.0f;
     const double midhi =  100.0f;
     
-    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>{-1.0,0.0,1.0,2.0,3.0};
-    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>{-1.0,1.0,-2.0,2.0,3.0};
+    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
     auto r = p0/q0;
     auto s = p1/q0;
@@ -1233,10 +1233,10 @@ TEST_CASE( "Rational/Shifting arithmetic distributivity", "[math]" ) {
     const double midlo = -100.0f;
     const double midhi =  100.0f;
     
-    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>{-1.0,0.0,1.0,2.0,3.0};
-    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>{-1.0,1.0,-2.0,2.0,3.0};
+    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
     auto r = p0/q0;
     auto s = p1/q0;
@@ -1330,10 +1330,10 @@ TEST_CASE( "Rational/Scaling arithmetic purity", "[math]" ) {
     const double midlo = -100.0f;
     const double midhi =  100.0f;
     
-    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>{-1.0,0.0,1.0,2.0,3.0};
-    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>{-1.0,1.0,-2.0,2.0,3.0};
+    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
     auto r = p0/q0;
     auto s = p1/q0;
@@ -1422,10 +1422,10 @@ TEST_CASE( "Rational/Scaling arithmetic identity", "[math]" ) {
     const double lo = -1000.0f;
     const double hi =  1000.0f;
     
-    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>{-1.0,0.0,1.0,2.0,3.0};
-    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>{-1.0,1.0,-2.0,2.0,3.0};
+    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
     auto r = p0/q0;
     auto s = p1/q0;
@@ -1464,10 +1464,10 @@ TEST_CASE( "Rational/Scaling arithmetic commutativity", "[math]" ) {
     const double midlo = -100.0f;
     const double midhi =  100.0f;
     
-    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>{-1.0,0.0,1.0,2.0,3.0};
-    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>{-1.0,1.0,-2.0,2.0,3.0};
+    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
     auto r = p0/q0;
     auto s = p1/q0;
@@ -1521,10 +1521,10 @@ TEST_CASE( "Rational/Scaling arithmetic associativity", "[math]" ) {
     const double midlo = -100.0f;
     const double midhi =  100.0f;
     
-    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>{-1.0,0.0,1.0,2.0,3.0};
-    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>{-1.0,1.0,-2.0,2.0,3.0};
+    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
     auto r = p0/q0;
     auto s = p1/q0;
@@ -1596,10 +1596,10 @@ TEST_CASE( "Rational/Scaling arithmetic distributivity", "[math]" ) {
     const double midlo = -100.0f;
     const double midhi =  100.0f;
     
-    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>{-1.0,0.0,1.0,2.0,3.0};
-    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>{1.0,2.0,3.0,4.0,5.0};
-    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>{-1.0,1.0,-2.0,2.0,3.0};
+    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
     auto r = p0/q0;
     auto s = p1/q0;

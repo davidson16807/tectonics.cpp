@@ -1,27 +1,34 @@
 #pragma once
 
+#include "Boxcar.hpp"
+
 namespace math {
 
     /* 
     `Railcar<T,F>` is a trivial class that represents a function f(x) of type F multiplied 
-    by the well-known "boxcar" function, which we define here as boxcar(x)=1 for lo<x≤hi and boxcar(x)=0 otherwise.*
-    This gives a function whose discontinuities resemble the front and back of a boxcar, 
-    but whose plotted shape does not strictly resemble a box (hence "railcar").
+    by what is commonly called the "boxcar" function, 
+    which we define here as boxcar(x)=1 for lo<x≤hi and boxcar(x)=0 otherwise.*
+    The discontinuities of a railcar resemble the front and back of a boxcar, 
+    but the plotted shape of the railcar does not strictly resemble a box (hence "railcar").
 
-    Therefore, railcar(x)=f(x) if lo<x≤hi and railcar(x)=0 otherwise, given a function f(x) of type F. 
-    In this case, the railcar is said to be a "railcar of F", or an "F railcar", that "contains" f(x).
+    An equivalent definition is to say railcar(x)=f(x) if lo<x≤hi and railcar(x)=0 otherwise, 
+    for some function f(x) of type F. 
+    The railcar here is said to be a "railcar of F", or an "F railcar", that "contains" f(x), 
+    such that f(x) is "inside" the railcar, or f(x) is its "contents", and so forth.
     By this definition, a boxcar is a railcar of unity.
 
     The intent in introducing "railcar" is to represent piecewise functions as sums of railcars,
-    its name providing an extended metaphor to resolve ambiguities in such cases.
+    thereby providing an easy way to close sums under common operations for some kinds of underlying functions.
+    The name "railcar" is chosen to provide an extended metaphor to resolve ambiguities during usage, see below.
+
     A sum of railcars is either a "train" (if no overlaps or gaps exist between railcars)
-    or a "railyard" (if overlaps or gaps are permitted).
-    These are each distinct from a "spline", which is commonly understood as a train of polynomials 
-    that imposes continuity restrictions on adjacent railcars and their derivatives.
+    or a "railyard" (if overlaps and gaps are permitted).
+    These are each distinct from a "spline", whose common definition can be interpreted as a train of polynomials 
+    for which continuity restrictions are imposed on adjacent railcars and their derivatives.
     Railyards can be useful since they are easily closed under arithmetic operations, derivatives, and integrals,
-    presuming certain closure properties also apply to their function types.
-    Mapping a railyard to a train can be useful if it reduces the number of terms that need to calculated.
-    This could potentially improve performance, but may come with added risk for some underlying function types. 
+    just as long as certain closure properties also apply to their function types.
+    Trains can be useful since they minimize the number of terms that need to calculated.
+    This potentially improves performance, but only under certain circumstances.
     As an example, rationals are closed under addition, but rational addition requires cross multiplication,
     which increases the degree of the numerator and its number of terms.
     Increasing the degree of the numerator is especially troublesome, since it increases the likelihood 
@@ -29,33 +36,242 @@ namespace math {
     Therefore, casting a railyard of rationals as a train of rationals may reduce the number of railcars
     but increase the number of terms in the function contained by railcar, and may introduce precision errors.
 
-    * The choice of range ("lo<x≤hi") is mostly arbitrary and exists 
-    only because a choice was needed that would allow the creation of continuous piecewise functions.
+    * The choice of range inclusivity ("lo<x≤hi") is mostly arbitrary and exists 
+    only because a choice was needed that would allow the representation of continuous piecewise functions.
     */
+
     template<typename T, typename F>
     struct Railcar {
-        F f;
+
+        F content;
         T lo;
         T hi;
-        constexpr explicit Railcar<T,F>(const T lo, const T hi, const F f):
-            f(f),
+
+        // the zero railcar
+        constexpr Railcar<T,F>():
+            content(),
+            lo(std::numeric_limits<T>::min()),
+            hi(std::numeric_limits<T>::max())
+        {}
+
+        // copy constructor
+        constexpr Railcar<T,F>(const Railcar<T,F>& car):
+            content(car.content),
+            lo(car.lo),
+            hi(car.hi)
+        {}
+
+        constexpr explicit Railcar<T,F>(const T lo, const T hi, const F& content):
+            content(content),
             lo(lo),
             hi(hi)
         {}
-        constexpr Railcar<T,F>(const Railcar<T,F>& piece):
-            f(piece.f),
-            lo(piece.lo),
-            hi(piece.hi)
+
+        template<typename G>
+        constexpr explicit Railcar<T,F>(const Railcar<T,G>& car):
+            content(car.content),
+            lo(car.lo),
+            hi(car.hi)
         {}
-        constexpr Railcar<T,F>():
-            f(),
-            lo(),
-            hi()
-        {}
+
+        constexpr explicit Railcar<T,F>(const T k) :
+            content(k),
+            lo(std::numeric_limits<T>::min()),
+            hi(std::numeric_limits<T>::max())
+        {
+        }
+
+        constexpr explicit Railcar<T,F>(const F& content) : 
+            content(content),
+            lo(std::numeric_limits<T>::min()),
+            hi(std::numeric_limits<T>::max())
+        {
+        }
+
         constexpr T operator()(const T x) const
         {
-            return lo<x && x<=hi? f(x) : T(0.0);
+            return T(lo<x && x<=hi) * content(x);
         }
+
+        Railcar<T,F>& operator=(const T k)
+        {
+            lo = std::numeric_limits<T>::min();
+            hi = std::numeric_limits<T>::max();
+            content = k;
+            return *this;
+        }
+
+        Railcar<T,F>& operator*=(const T k)
+        {
+            content *= k;
+            return *this;
+        }
+
+        Railcar<T,F>& operator/=(const T k)
+        {
+            content /= k;
+            return *this;
+        }
+
+        template<typename G>
+        Railcar<T,F>& operator=(const Railcar<T,G>& car)
+        {
+            lo = car.lo;
+            hi = car.hi;
+            content = car.content;
+            return *this;
+        }
+
     };
 
+
+    // operations of other types that produce railcars
+    template<typename T, typename F>
+    constexpr auto operator*(const F& content, const Boxcar<T> b)
+    {
+        return Railcar<T,F>(b.lo, b.hi, content);
+    }
+
+    template<typename T, typename F>
+    constexpr auto operator*(const Boxcar<T> b, const F& content)
+    {
+        return Railcar<T,F>(b.lo, b.hi, content);
+    }
+
+    /*
+    NOTE: we cannot support addition between railcars and other types.
+    This is because the railcar cannot represent the entire codomain of resulting function objects in the general case.
+    */ 
+
+    // operations that are closed under railcars
+    template<typename T, typename F>
+    constexpr auto operator-(const Railcar<T,F>& car)
+    {
+        return Railcar<T,F>(car.lo, car.hi, -car.content);
+    }
+
+
+
+
+
+    template<typename T, typename F>
+    constexpr auto operator*(const Railcar<T,F>& car, const T k)
+    {
+        return Railcar<T,F>(car.lo, car.hi, car.content*k);
+    }
+
+    template<typename T, typename F>
+    constexpr auto operator*(const T k, const Railcar<T,F>& car)
+    {
+        return Railcar<T,F>(car.lo, car.hi, k*car.content);
+    }
+
+    template<typename T, typename F>
+    constexpr auto operator/(const Railcar<T,F>& car, const T k)
+    {
+        return Railcar<T,F>(car.lo, car.hi, car.content/k);
+    }
+
+    template<typename T, typename F>
+    constexpr auto operator/(const T k, const Railcar<T,F>& car)
+    {
+        return Railcar(car.lo, car.hi, k/car.content);
+    }
+
+
+
+
+    template<typename T, typename F>
+    constexpr auto operator*(const Railcar<T,F>& car, const F& k)
+    {
+        return Railcar(car.lo, car.hi, car.content*k);
+    }
+
+    template<typename T, typename F>
+    constexpr auto operator*(const F& k, const Railcar<T,F>& car)
+    {
+        return Railcar(car.lo, car.hi, k*car.content);
+    }
+
+    template<typename T, typename F>
+    constexpr auto operator/(const Railcar<T,F>& car, const F& k)
+    {
+        return Railcar(car.lo, car.hi, car.content/k);
+    }
+
+    template<typename T, typename F>
+    constexpr auto operator/(const F& k, const Railcar<T,F>& car)
+    {
+        return Railcar(car.lo, car.hi, k/car.content);
+    }
+
+
+
+
+
+    template<typename T, typename F>
+    constexpr Railcar<T,F> compose(const Railcar<T,F>& car, const Identity<T> e)
+    {
+        return car;
+    }
+
+
+
+
+
+
+    /*
+    `derivative` returns a function object for the derivative of a polynomial.
+    */
+    template<typename T, typename F>
+    auto derivative(const Railcar<T,F>& car)
+    {
+        return Railcar(car.lo, car.hi, derivative(car.content));
+    }
+
+    /*
+    `derivative` returns the derivative of a polynomial at a point.
+    It is meant to compliment the method signature for integral(p, lo, hi)
+    */
+    template<typename T, typename F>
+    T derivative(const Railcar<T,F>& car, const T x)
+    {
+        return (car.lo < x && x < car.hi)?
+            derivative(car.content, x) : T(0);
+    }
+
+    /*
+    `integral` returns the definite integral of a polynomial 
+    without representing the integral as its own function object.
+    This is meant to be used as a fallback in the event the function is a 
+    Laurent polynomial with a coefficient of degree -1, 
+    since the integral for such a function includes a logarithmic term.
+    */
+    template<typename T, typename F>
+    T integral(const Railcar<T,F>& car, const T x)
+    {
+        return (car.lo < x)?
+            integral(car.content, std::min(x, car.hi)) 
+          - integral(car.content, car.lo) : T(0);
+    }
+
+    template<typename T, typename F>
+    T integral(const Railcar<T,F>& car, const T lo, const T hi)
+    {
+        /*
+        Q: Why do we check for lo < car.hi?
+        A: If car.hi < lo, then car.hi < hi as well, 
+           so we know the difference in the integral between lo and hi is 0.
+           However the result of the integral may still be big,
+           so we could be trying to find a nonexistant difference between two big numbers.
+           To avoid destructive cancellation we do not calculate.
+           Similar statements could be made for car.lo < hi.
+        */
+        return (lo < car.hi && car.lo < hi)?
+            integral(car.content, std::min(hi, car.hi)) 
+          - integral(car.content, std::max(lo, car.lo)) : T(0);
+    }
+
 }
+
+

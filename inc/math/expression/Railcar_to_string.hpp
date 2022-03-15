@@ -9,11 +9,10 @@ namespace math {
     template<typename T, typename F>
     constexpr std::string to_string(const Railcar<T,F>& p)
     {
-        const T oo = std::numeric_limits<T>::max();
         std::string output;
-        output += p.lo == -oo? "-∞" : std::to_string(p.lo);
+        output += p.lo == std::numeric_limits<T>::min()? "-∞" : std::to_string(p.lo);
         output += " < x ≤ ";
-        output += p.hi ==  oo? "∞" : std::to_string(p.hi);
+        output += p.hi == std::numeric_limits<T>::max()? "∞" : std::to_string(p.hi);
         output += ": ";
         output += to_string(p.f);
         return output;

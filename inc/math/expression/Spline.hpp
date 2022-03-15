@@ -11,8 +11,6 @@
 #include "Shifting.hpp"
 #include "Railcar.hpp"
 #include "Railcar_to_string.hpp"
-#include "Polynomial.hpp"
-#include "Polynomial_to_string.hpp"
 
 namespace math {
 
@@ -91,7 +89,7 @@ namespace math {
         {
             for (std::size_t i=0; i<boxes.size(); i++)
             {
-                boxes[i].f *= k;
+                boxes[i].content *= k;
             }
             return *this;
         }
@@ -99,7 +97,7 @@ namespace math {
         {
             for (std::size_t i=0; i<boxes.size(); i++)
             {
-                boxes[i].f /= k;
+                boxes[i].content /= k;
             }
             return *this;
         }
@@ -130,7 +128,7 @@ namespace math {
             using G = Railcar<T,F>;
             for (std::size_t i=0; i<q.boxes.size(); i++)
             {
-                boxes.push_back(G(q.boxes[i].lo, q.boxes[i].hi, F(q.boxes[i].f)));
+                boxes.push_back(G(q.boxes[i].lo, q.boxes[i].hi, F(q.boxes[i].content)));
             }
             return *this;
         }
@@ -141,7 +139,7 @@ namespace math {
             using G = Railcar<T,F>;
             for (std::size_t i=0; i<q.boxes.size(); i++)
             {
-                boxes.push_back(G(q.boxes[i].lo, q.boxes[i].hi, F(-q.boxes[i].f)));
+                boxes.push_back(G(q.boxes[i].lo, q.boxes[i].hi, F(-q.boxes[i].content)));
             }
             return *this;
         }
@@ -174,7 +172,7 @@ namespace math {
             {
                 if (std::max(s.boxes[j].lo, knots[i-1]) < std::min(s.boxes[j].hi, knots[i]))
                 {
-                    f += s.boxes[j].f;
+                    f += s.boxes[j].content;
                 }
             }
             boxes.push_back(G(knots[i-1], knots[i], f));
@@ -289,7 +287,7 @@ namespace math {
         std::vector<G> boxes;
         for (std::size_t i=0; i<p.boxes.size(); i++)
         {
-            boxes.push_back(G(p.boxes[i].lo, p.boxes[i].hi, F(p.boxes[i].f*q)));
+            boxes.push_back(G(p.boxes[i].lo, p.boxes[i].hi, F(p.boxes[i].content*q)));
         }
         return Spline<T,Plo+Qlo,Phi+Qhi>(boxes);
     }
@@ -302,7 +300,7 @@ namespace math {
         std::vector<G> boxes;
         for (std::size_t i=0; i<p.boxes.size(); i++)
         {
-            boxes.push_back(G(p.boxes[i].lo, p.boxes[i].hi, F(p.boxes[i].f/q)));
+            boxes.push_back(G(p.boxes[i].lo, p.boxes[i].hi, F(p.boxes[i].content/q)));
         }
         return Spline<T,Plo-Q,Phi-Q>(boxes);
     }
@@ -341,7 +339,7 @@ namespace math {
         std::vector<G> boxes;
         for (std::size_t i=0; i<s.boxes.size(); i++)
         {
-            boxes.push_back(G(s.boxes[i].lo, s.boxes[i].hi, F(s.boxes[i].f*p)));
+            boxes.push_back(G(s.boxes[i].lo, s.boxes[i].hi, F(s.boxes[i].content*p)));
         }
         return Spline<T,Plo+Qlo,Phi+Qhi>(boxes);
     }
@@ -360,11 +358,11 @@ namespace math {
         std::vector<G> boxes;
         for (std::size_t i=0; i<p.boxes.size(); i++)
         {
-            boxes.push_back(G(p.boxes[i].lo, p.boxes[i].hi, F(p.boxes[i].f)));
+            boxes.push_back(G(p.boxes[i].lo, p.boxes[i].hi, F(p.boxes[i].content)));
         }
         for (std::size_t i=0; i<q.boxes.size(); i++)
         {
-            boxes.push_back(G(q.boxes[i].lo, q.boxes[i].hi, F(q.boxes[i].f)));
+            boxes.push_back(G(q.boxes[i].lo, q.boxes[i].hi, F(q.boxes[i].content)));
         }
         return simplify(Spline<T,std::min(Plo,Qlo),std::max(Phi,Qhi)>(boxes));
     }
@@ -377,11 +375,11 @@ namespace math {
         std::vector<G> boxes;
         for (std::size_t i=0; i<p.boxes.size(); i++)
         {
-            boxes.push_back(G(p.boxes[i].lo, p.boxes[i].hi, F(p.boxes[i].f)));
+            boxes.push_back(G(p.boxes[i].lo, p.boxes[i].hi, F(p.boxes[i].content)));
         }
         for (std::size_t i=0; i<q.boxes.size(); i++)
         {
-            boxes.push_back(G(q.boxes[i].lo, q.boxes[i].hi, F(-q.boxes[i].f)));
+            boxes.push_back(G(q.boxes[i].lo, q.boxes[i].hi, F(-q.boxes[i].content)));
         }
         return simplify(Spline<T,std::min(Plo,Qlo),std::max(Phi,Qhi)>(boxes));
     }
@@ -401,7 +399,7 @@ namespace math {
                 hi = std::min(p.boxes[i].hi, q.boxes[j].hi);
                 if (lo<hi)
                 {
-                    boxes.push_back(G(lo, hi, p.boxes[i].f * q.boxes[j].f));
+                    boxes.push_back(G(lo, hi, p.boxes[i].content * q.boxes[j].content));
                 }
             }
         }
@@ -562,7 +560,7 @@ namespace math {
         std::vector<PiecewisePolynomial> boxes;
         for (std::size_t i=0; i<p.boxes.size(); i++)
         {
-            boxes.push_back(PiecewisePolynomial(p.boxes[i].lo, p.boxes[i].hi, compose(p.boxes[i].f, q)));
+            boxes.push_back(PiecewisePolynomial(p.boxes[i].lo, p.boxes[i].hi, compose(p.boxes[i].content, q)));
         }
         return Spline(boxes);
     }
@@ -573,7 +571,7 @@ namespace math {
         std::vector<PiecewisePolynomial> boxes;
         for (std::size_t i=0; i<p.boxes.size(); i++)
         {
-            boxes.push_back(PiecewisePolynomial(p.boxes[i].lo, p.boxes[i].hi, compose(p.boxes[i].f, g)));
+            boxes.push_back(PiecewisePolynomial(p.boxes[i].lo, p.boxes[i].hi, compose(p.boxes[i].content, g)));
         }
         return Spline(boxes);
     }
@@ -584,7 +582,7 @@ namespace math {
         std::vector<PiecewisePolynomial> boxes;
         for (std::size_t i=0; i<p.boxes.size(); i++)
         {
-            boxes.push_back(PiecewisePolynomial(p.boxes[i].lo, p.boxes[i].hi, compose(p.boxes[i].f, g)));
+            boxes.push_back(PiecewisePolynomial(p.boxes[i].lo, p.boxes[i].hi, compose(p.boxes[i].content, g)));
         }
         return Spline(boxes);
     }
@@ -602,7 +600,7 @@ namespace math {
         std::vector<PiecewisePolynomial> boxes;
         for (std::size_t i=0; i<p.boxes.size(); i++)
         {
-            boxes.push_back(PiecewisePolynomial(p.boxes[i].lo, p.boxes[i].hi, derivative(p.boxes[i].f)));
+            boxes.push_back(PiecewisePolynomial(p.boxes[i].lo, p.boxes[i].hi, derivative(p.boxes[i].content)));
         }
         return Spline(boxes);
     }
@@ -637,8 +635,8 @@ namespace math {
         {
             if (p.boxes[i].lo < x)
             {
-                I += integral(p.boxes[i].f, std::min(x, p.boxes[i].hi)) 
-                   - integral(p.boxes[i].f, p.boxes[i].lo);
+                I += integral(p.boxes[i].content, std::min(x, p.boxes[i].hi)) 
+                   - integral(p.boxes[i].content, p.boxes[i].lo);
             }
         }
         return I;
@@ -661,8 +659,8 @@ namespace math {
             */
             if (lo < p.boxes[i].hi && p.boxes[i].lo < hi)
             {
-                I += integral(p.boxes[i].f, std::min(hi, p.boxes[i].hi)) 
-                   - integral(p.boxes[i].f, std::max(lo, p.boxes[i].lo));
+                I += integral(p.boxes[i].content, std::min(hi, p.boxes[i].hi)) 
+                   - integral(p.boxes[i].content, std::max(lo, p.boxes[i].lo));
             }
         }
         return I;
@@ -679,9 +677,9 @@ namespace math {
         for (std::size_t i=0; i<p.boxes.size(); i++)
         {
             g = G(p.boxes[i].lo, p.boxes[i].hi, 
-                    integral(p.boxes[i].f) - integral(p.boxes[i].f, p.boxes[i].lo));
+                    integral(p.boxes[i].content) - integral(p.boxes[i].content, p.boxes[i].lo));
             gmax = G(g.hi, oo, F() );
-            gmax.f[0] = g.f(g.hi);
+            gmax.content[0] = g.content(g.hi);
             boxes.push_back(g);
             boxes.push_back(gmax);
         }
@@ -704,7 +702,7 @@ namespace math {
             {
                 if (boxes.size() < 1)
                 {
-                    boxes.push_back( G(oo, p.boxes[i].lo, F( p.boxes[i].f(p.boxes[i].lo) ) ));
+                    boxes.push_back( G(oo, p.boxes[i].lo, F( p.boxes[i].content(p.boxes[i].lo) ) ));
                 }
                 boxes.push_back(p.boxes[i]);
             }
@@ -712,7 +710,7 @@ namespace math {
         boxes.push_back(
             Railcar<T,Polynomial<T,Plo,Phi>>( 
                 boxes[boxes.size()-1].hi, std::numeric_limits<T>::max(), 
-                Polynomial<T,Plo,Phi>( boxes[boxes.size()-1].f( boxes[boxes.size()-1].hi ) )
+                Polynomial<T,Plo,Phi>( boxes[boxes.size()-1].content( boxes[boxes.size()-1].hi ) )
             ));
         return Spline(boxes);
 
@@ -728,7 +726,7 @@ namespace math {
         // std::vector<G> boxes;
         // for (std::size_t i = 0; i < q.boxes.size(); ++i)
         // {
-        //     boxes.push_back(G(q.boxes[i].lo, q.boxes[i].hi, q.boxes[i].f*q.boxes[i].f));
+        //     boxes.push_back(G(q.boxes[i].lo, q.boxes[i].hi, q.boxes[i].content*q.boxes[i].content));
         // }
         // return Spline<T,Plo*2,Phi*2>(boxes);
     }

@@ -39,6 +39,10 @@ namespace math {
         {
             std::copy(p.k.begin(), p.k.end(), k.begin());
         }
+        constexpr explicit Polynomial(const T k2): k()
+        {
+            k[0-Nlo] = k2;
+        }
         constexpr explicit Polynomial(const Identity<T> e): k()
         {
             k[1-Nlo] = T(1.0);
@@ -63,9 +67,6 @@ namespace math {
                 k[i-Nlo] = p.k[i-Qlo];
             }
         }
-        template <typename... T2> 
-        constexpr explicit Polynomial(T2... ts) : k{ts...}
-        {}
         template<typename TIterator>
         constexpr explicit Polynomial(TIterator first, TIterator last) : k(first, last)
         {}
