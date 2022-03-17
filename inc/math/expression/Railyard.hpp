@@ -42,9 +42,9 @@ namespace math {
         template<typename G>
         explicit Railyard(const Railyard<T,G>& yard) : cars() 
         {
-            for (std::size_t i=0; i<yard.cars.size(); i++)
+            for (auto car : yard.cars)
             {
-                cars.push_back(Railcar<T,F>(yard.cars[i]));
+                cars.push_back(Railcar<T,F>(car));
             }
         }
 
@@ -77,10 +77,10 @@ namespace math {
         {
             // gather all boundaries for all cars
             std::vector<T> bounds;
-            for (std::size_t i=0; i<cars.size(); i++)
+            for (auto car : cars)
             {
-                bounds.push_back(cars[i].lo);
-                bounds.push_back(cars[i].hi);
+                bounds.push_back(car.lo);
+                bounds.push_back(car.hi);
             }
             std::sort(bounds.begin(), bounds.end());
             auto last = std::unique(bounds.begin(), bounds.end());
@@ -93,9 +93,9 @@ namespace math {
         T operator()(const T x) const
         {
             T y(0.0f);
-            for (std::size_t i=0; i<cars.size(); i++)
+            for (auto car : cars)
             {
-                y += cars[i](x);
+                y += car(x);
             }
             return y;
         }
@@ -186,7 +186,7 @@ namespace math {
 
         Railyard<T,F>& operator*=(const T k)
         {
-            for (auto car : cars)
+            for (auto& car : cars)
             {
                 car *= k;
             }
@@ -195,7 +195,7 @@ namespace math {
 
         Railyard<T,F>& operator/=(const T k)
         {
-            for (auto car : cars)
+            for (auto& car : cars)
             {
                 car /= k;
             }
@@ -223,7 +223,7 @@ namespace math {
     {
         Railyard<T,F> y(f);
         y += k;
-        return y;
+        return simplify(y);
     }
 
     template<typename T, typename F>
@@ -231,7 +231,7 @@ namespace math {
     {
         Railyard<T,F> y(f);
         y += k;
-        return y;
+        return simplify(y);
     }
 
     template<typename T, typename F>
@@ -239,7 +239,7 @@ namespace math {
     {
         Railyard<T,F> y(f);
         y -= k;
-        return y;
+        return simplify(y);
     }
 
     template<typename T, typename F>
@@ -248,7 +248,7 @@ namespace math {
         Railyard<T,F> y(f);
         y *= T(-1);
         y += k;
-        return y;
+        return simplify(y);
     }
 
     template<typename T, typename F>
@@ -256,7 +256,7 @@ namespace math {
     {
         Railyard<T,F> y(f);
         y *= k;
-        return y;
+        return simplify(y);
     }
 
     template<typename T, typename F>
@@ -264,7 +264,7 @@ namespace math {
     {
         Railyard<T,F> y(f);
         y *= k;
-        return y;
+        return simplify(y);
     }
 
     template<typename T, typename F>
@@ -272,7 +272,7 @@ namespace math {
     {
         Railyard<T,F> y(f);
         y /= k;
-        return y;
+        return simplify(y);
     }
 
 
@@ -440,9 +440,9 @@ namespace math {
     T integral(const Railyard<T,F>& yard, const T lo, const T hi)
     {
         T I(0.0f);
-        for (std::size_t i=0; i<yard.cars.size(); i++)
+        for (auto car : yard.cars)
         {
-            I += integral(yard, lo, hi);
+            I += integral(car, lo, hi);
         }
         return I;
     }
@@ -454,17 +454,16 @@ namespace math {
     constexpr Railyard<T,F> restriction(const Railyard<T,F>& yard, const T lo, const T hi)
     {
         std::vector<Railcar<T,F>> cars;
-        for (std::size_t i=0; i<yard.cars.size(); i++)
+        const T oo(std::numeric_limits<T>::max());
+        for (auto car: yard.cars)
         {
-            if (lo < yard.cars[i].lo || yard.cars[i].hi <= hi)
+            if (lo < car.lo || car.hi <= hi)
             {
                 if (cars.size() < 1)
                 {
-                    cars.push_back( Railcar<T,F>(
-                        std::numeric_limits<T>::min(), yard.cars[i].lo, 
-                        F( yard(yard.cars[i].lo) ) ));
+                    cars.push_back( Railcar<T,F>(-oo, car.lo, F( yard(car.lo) ) ));
                 }
-                cars.push_back(yard.cars[i]);
+                cars.push_back(car);
             }
         }
         cars.push_back( Railcar<T,F>( 
@@ -486,11 +485,11 @@ namespace math {
         {
             F f;
             // add together all cars that intersect the region from couplers[i-1] to couplers[i]
-            for (std::size_t j=0; j<yard.cars.size(); j++)
+            for (auto car: yard.cars)
             {
-                if (std::max(yard.cars[j].lo, couplers[i-1]) < std::min(yard.cars[j].hi, couplers[i]))
+                if (std::max(car.lo, couplers[i-1]) < std::min(car.hi, couplers[i]))
                 {
-                    f += yard.cars[j].content;
+                    f += car.content;
                 }
             }
             cars.push_back(Railcar<T,F>(couplers[i-1], couplers[i], f));

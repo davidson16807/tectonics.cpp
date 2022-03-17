@@ -41,18 +41,22 @@ namespace math {
         }
         constexpr explicit Polynomial(const T k2): k()
         {
+            std::fill(k.begin(), k.end(), T(0.0));
             k[0-Nlo] = k2;
         }
         constexpr explicit Polynomial(const Identity<T> e): k()
         {
+            std::fill(k.begin(), k.end(), T(0.0));
             k[1-Nlo] = T(1.0);
         }
         constexpr explicit Polynomial(const Scaling<T> f): k()
         {
+            std::fill(k.begin(), k.end(), T(0.0));
             k[1-Nlo] = f.factor;
         }
         constexpr explicit Polynomial(const Shifting<T> f): k()
         {
+            std::fill(k.begin(), k.end(), T(0.0));
             k[0-Nlo] = f.offset;
             k[1-Nlo] = T(1.0);
         }
@@ -62,6 +66,7 @@ namespace math {
         template <int Qlo, int Qhi> 
         constexpr Polynomial(const Polynomial<T,Qlo,Qhi>& p): k()
         {
+            std::fill(k.begin(), k.end(), T(0.0));
             for (int i = Qlo; i <= Qhi; ++i)
             {
                 k[i-Nlo] = p.k[i-Qlo];

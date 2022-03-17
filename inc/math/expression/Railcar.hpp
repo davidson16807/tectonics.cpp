@@ -50,7 +50,7 @@ namespace math {
         // the zero railcar
         constexpr Railcar<T,F>():
             content(),
-            lo(std::numeric_limits<T>::min()),
+            lo(-std::numeric_limits<T>::max()),
             hi(std::numeric_limits<T>::max())
         {}
 
@@ -76,14 +76,14 @@ namespace math {
 
         constexpr explicit Railcar<T,F>(const T k) :
             content(k),
-            lo(std::numeric_limits<T>::min()),
+            lo(-std::numeric_limits<T>::max()),
             hi(std::numeric_limits<T>::max())
         {
         }
 
         constexpr explicit Railcar<T,F>(const F& content) : 
             content(content),
-            lo(std::numeric_limits<T>::min()),
+            lo(-std::numeric_limits<T>::max()),
             hi(std::numeric_limits<T>::max())
         {
         }
@@ -95,7 +95,7 @@ namespace math {
 
         Railcar<T,F>& operator=(const T k)
         {
-            lo = std::numeric_limits<T>::min();
+            lo = -std::numeric_limits<T>::max();
             hi = std::numeric_limits<T>::max();
             content = k;
             return *this;

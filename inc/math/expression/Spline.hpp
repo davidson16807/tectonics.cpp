@@ -875,8 +875,8 @@ namespace math {
         Spline<T,std::min(Plo,Qlo),std::max(Phi,Qhi)> spline;
         for(int i=0; i<=solutions.size(); i++)
         {
-            lo = i<1?                 solutions[i-1] : std::numeric_limits<T>::min();
-            hi = i==solutions.size()? solutions[i]   : std::numeric_limits<T>::max();
+            lo = i<1?                 solutions[i-1] : -std::numeric_limits<T>::max();
+            hi = i==solutions.size()? solutions[i]   :  std::numeric_limits<T>::max();
             x = (lo+hi) / 2.0f;
             spline.push_back(G(lo, hi, p(x) > q(x)? p : q));
         }
@@ -895,8 +895,8 @@ namespace math {
         Spline<T,std::min(Plo,Qlo),std::max(Phi,Qhi)> spline;
         for(int i=0; i<=solutions.size(); i++)
         {
-            lo = i<1?                 solutions[i-1] : std::numeric_limits<T>::min();
-            hi = i==solutions.size()? solutions[i]   : std::numeric_limits<T>::max();
+            lo = i<1?                 solutions[i-1] : -std::numeric_limits<T>::max();
+            hi = i==solutions.size()? solutions[i]   :  std::numeric_limits<T>::max();
             x = (lo+hi) / T(2.0);
             spline.push_back(G(lo, hi, p(x) < q(x)? p : q));
         }
