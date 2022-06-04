@@ -147,7 +147,7 @@ namespace property {
 		// "E"
 		double get_eccentric_anomaly_from_true_anomaly(const double true_anomaly, const double eccentricity, const int iterations = 10) const
 		{
-	        const double pi = 3.1415926;
+	        const double pi = 3.1415926535897932;
 			return std::acos(-(std::cos(pi - true_anomaly) - eccentricity) / (1.0 - eccentricity * std::cos(pi - true_anomaly)));
 		}
 		// "ν₀"

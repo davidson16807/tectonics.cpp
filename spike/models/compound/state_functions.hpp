@@ -13,7 +13,7 @@
 #include "field/state/CompletedStateField.hpp"
 #include "field/spectral/CompletedSpectralField.hpp"
 
-#include "relation/state/GasPropertyStateRelation.hpp"
+#include "relation/GasPropertyStateRelation.hpp"
 
 namespace compound {
     using missing = std::monostate;

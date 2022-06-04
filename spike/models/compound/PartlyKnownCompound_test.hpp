@@ -65,28 +65,28 @@ TEST_CASE( "PartlyKnownCompound value_or() increasing", "[compound]" ) {
     SECTION("An attribute of a function's return value either increases or remains the same when compared to the same attribute of the input value")
     {
 
-        CHECK(PartlyKnownCompound_attribute_index_sum(compound::test_water.value_or(compound::test_water)) >= PartlyKnownCompound_attribute_index_sum(compound::test_water));
-        CHECK(PartlyKnownCompound_attribute_index_sum(compound::test_water.value_or(perflouromethane)) >= PartlyKnownCompound_attribute_index_sum(compound::test_water));
-        CHECK(PartlyKnownCompound_attribute_index_sum(compound::test_water.value_or(known_steam)) >= PartlyKnownCompound_attribute_index_sum(compound::test_water));
-        CHECK(PartlyKnownCompound_attribute_index_sum(compound::test_water.value_or(dummy_gas)) >= PartlyKnownCompound_attribute_index_sum(compound::test_water));
+        CHECK(PartlyKnownCompound_attribute_known_count(compound::test_water.value_or(compound::test_water)) >= PartlyKnownCompound_attribute_known_count(compound::test_water));
+        CHECK(PartlyKnownCompound_attribute_known_count(compound::test_water.value_or(perflouromethane)) >= PartlyKnownCompound_attribute_known_count(compound::test_water));
+        CHECK(PartlyKnownCompound_attribute_known_count(compound::test_water.value_or(known_steam)) >= PartlyKnownCompound_attribute_known_count(compound::test_water));
+        CHECK(PartlyKnownCompound_attribute_known_count(compound::test_water.value_or(dummy_gas)) >= PartlyKnownCompound_attribute_known_count(compound::test_water));
 
 
-        CHECK(PartlyKnownCompound_attribute_index_sum(perflouromethane.value_or(compound::test_water)) >= PartlyKnownCompound_attribute_index_sum(perflouromethane));
-        CHECK(PartlyKnownCompound_attribute_index_sum(perflouromethane.value_or(perflouromethane)) >= PartlyKnownCompound_attribute_index_sum(perflouromethane));
-        CHECK(PartlyKnownCompound_attribute_index_sum(perflouromethane.value_or(known_steam)) >= PartlyKnownCompound_attribute_index_sum(perflouromethane));
-        CHECK(PartlyKnownCompound_attribute_index_sum(perflouromethane.value_or(dummy_gas)) >= PartlyKnownCompound_attribute_index_sum(perflouromethane));
+        CHECK(PartlyKnownCompound_attribute_known_count(perflouromethane.value_or(compound::test_water)) >= PartlyKnownCompound_attribute_known_count(perflouromethane));
+        CHECK(PartlyKnownCompound_attribute_known_count(perflouromethane.value_or(perflouromethane)) >= PartlyKnownCompound_attribute_known_count(perflouromethane));
+        CHECK(PartlyKnownCompound_attribute_known_count(perflouromethane.value_or(known_steam)) >= PartlyKnownCompound_attribute_known_count(perflouromethane));
+        CHECK(PartlyKnownCompound_attribute_known_count(perflouromethane.value_or(dummy_gas)) >= PartlyKnownCompound_attribute_known_count(perflouromethane));
 
 
-        CHECK(PartlyKnownCompound_attribute_index_sum(known_steam.value_or(compound::test_water)) >= PartlyKnownCompound_attribute_index_sum(known_steam));
-        CHECK(PartlyKnownCompound_attribute_index_sum(known_steam.value_or(perflouromethane)) >= PartlyKnownCompound_attribute_index_sum(known_steam));
-        CHECK(PartlyKnownCompound_attribute_index_sum(known_steam.value_or(known_steam)) >= PartlyKnownCompound_attribute_index_sum(known_steam));
-        CHECK(PartlyKnownCompound_attribute_index_sum(known_steam.value_or(dummy_gas)) >= PartlyKnownCompound_attribute_index_sum(known_steam));
+        CHECK(PartlyKnownCompound_attribute_known_count(known_steam.value_or(compound::test_water)) >= PartlyKnownCompound_attribute_known_count(known_steam));
+        CHECK(PartlyKnownCompound_attribute_known_count(known_steam.value_or(perflouromethane)) >= PartlyKnownCompound_attribute_known_count(known_steam));
+        CHECK(PartlyKnownCompound_attribute_known_count(known_steam.value_or(known_steam)) >= PartlyKnownCompound_attribute_known_count(known_steam));
+        CHECK(PartlyKnownCompound_attribute_known_count(known_steam.value_or(dummy_gas)) >= PartlyKnownCompound_attribute_known_count(known_steam));
 
 
-        CHECK(PartlyKnownCompound_attribute_index_sum(dummy_gas.value_or(compound::test_water)) >= PartlyKnownCompound_attribute_index_sum(dummy_gas));
-        CHECK(PartlyKnownCompound_attribute_index_sum(dummy_gas.value_or(perflouromethane)) >= PartlyKnownCompound_attribute_index_sum(dummy_gas));
-        CHECK(PartlyKnownCompound_attribute_index_sum(dummy_gas.value_or(known_steam)) >= PartlyKnownCompound_attribute_index_sum(dummy_gas));
-        CHECK(PartlyKnownCompound_attribute_index_sum(dummy_gas.value_or(dummy_gas)) >= PartlyKnownCompound_attribute_index_sum(dummy_gas));
+        CHECK(PartlyKnownCompound_attribute_known_count(dummy_gas.value_or(compound::test_water)) >= PartlyKnownCompound_attribute_known_count(dummy_gas));
+        CHECK(PartlyKnownCompound_attribute_known_count(dummy_gas.value_or(perflouromethane)) >= PartlyKnownCompound_attribute_known_count(dummy_gas));
+        CHECK(PartlyKnownCompound_attribute_known_count(dummy_gas.value_or(known_steam)) >= PartlyKnownCompound_attribute_known_count(dummy_gas));
+        CHECK(PartlyKnownCompound_attribute_known_count(dummy_gas.value_or(dummy_gas)) >= PartlyKnownCompound_attribute_known_count(dummy_gas));
 
     }
 }

@@ -52,7 +52,7 @@ namespace compound
         field::CompletedStateField<int> phase;
 
         // generic 
-        field::CompletedSpectralField<si::area> molecular_absorption_cross_section;
+        relation::SplineRelation<si::wavenumber, si::area, 0, 1> molecular_absorption_cross_section;
 
         // PHASE PROPERTIES
         phase::CompletedGas gas;
@@ -80,7 +80,7 @@ namespace compound
             const si::pressure         boiling_point_sample_pressure,
             const si::temperature      boiling_point_sample_temperature,
             const field::CompletedStateField<int> phase,
-            const field::CompletedSpectralField<si::area> molecular_absorption_cross_section,
+            const relation::SplineRelation<si::wavenumber, si::area, 0, 1> molecular_absorption_cross_section,
             const phase::CompletedGas                     gas,
             const phase::CompletedLiquid                  liquid,
             const std::vector<phase::CompletedSolid>      solids

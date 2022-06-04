@@ -21,6 +21,7 @@
 
 namespace compound 
 {
+
     bool operator==(const CompletedCompound& first, const CompletedCompound& second)
     {
         if(
@@ -42,7 +43,7 @@ namespace compound
             first.boiling_point_sample_pressure      != second.boiling_point_sample_pressure      ||
             first.boiling_point_sample_temperature   != second.boiling_point_sample_temperature   ||
             first.phase                              != second.phase                              ||
-            first.molecular_absorption_cross_section != second.molecular_absorption_cross_section ||
+            relation::distance(first.molecular_absorption_cross_section, second.molecular_absorption_cross_section, 1.0/si::centimeter, 100e3/si::centimeter) < 1e-4 ||
             first.gas                                != second.gas                                ||
             first.liquid                             != second.liquid                             
         ) {
@@ -86,7 +87,7 @@ namespace compound
         /*boiling_point_sample_temperature*/  100.8 * si::celcius, 
 
         /*phase*/                             0,
-        /*molecular_absorption_cross_section*/ 1e-25 * si::meter2,
+        /*molecular_absorption_cross_section*/ spectral_constant(1e-25 * si::meter2),
 
         /*gas*/
         phase::CompletedGas {
@@ -94,7 +95,7 @@ namespace compound
             /*thermal_conductivity*/   (1.0 * si::watt / (si::meter * si::kelvin)),
             /*dynamic_viscosity*/      (1.0 * si::pascal * si::second),
             /*density*/                state_invariant(1.0 * si::kilogram/si::meter3),
-            /*refractive_index*/       1.1,
+            /*refractive_index*/       spectral_constant(1.1f),
         },
 
         /*liquid*/
@@ -105,8 +106,8 @@ namespace compound
             /*density*/                state_invariant(1.0 * si::kilogram/si::meter3),
             /*vapor_pressure*/         state_invariant(1.0 * si::pascal),
             /*surface_tension*/        state_invariant(1.0 * si::millinewton/si::meter),
-            /*refractive_index*/       spectral_invariant(1.1),
-            /*extinction_coefficient*/ spectral_invariant(0.9)
+            /*refractive_index*/       spectral_constant(1.1f),
+            /*extinction_coefficient*/ spectral_constant(0.9f)
         },
 
         /*solid*/ 
@@ -117,9 +118,9 @@ namespace compound
                 /*dynamic_viscosity*/                 state_invariant(1.0 * si::pascal*si::second),
                 /*density*/                           state_invariant(1.0 * si::kilogram/si::meter3),
                 /*vapor_pressure*/                    state_invariant(1.0 * si::pascal),
-                /*refractive_index*/                  spectral_invariant(1.1),
-                /*extinction_coefficient*/            spectral_invariant(0.9),
-                /*absorption_ceofficient*/            spectral_invariant(25.0 / si::centimeter),
+                /*refractive_index*/                  spectral_constant(1.1f),
+                /*extinction_coefficient*/            spectral_constant(0.9f),
+                /*absorption_ceofficient*/            spectral_constant(25.0 / si::centimeter),
                 /*bulk_modulus*/                      state_invariant(1.0 * si::gigapascal),
                 /*tensile_modulus*/                   state_invariant(1.0 * si::gigapascal),
                 /*shear_modulus*/                     state_invariant(1.0 * si::gigapascal),

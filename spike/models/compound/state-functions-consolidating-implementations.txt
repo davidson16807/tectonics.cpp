@@ -51,7 +51,7 @@ field::StateFunction<Ty> get_dippr_liquid_heat_capacity_temperature_function_114
 // thermal_conductivity
 field::StateFunction<Ty> get_dippr_quartic_temperature_function_100 ()
                 return (intercept + slope*t + square*t*t + cube*t*t*t + fourth*t*t*t*t)*yunits;
-// dynamic_viscosity
+// dynamic_viscosity  
 field::StateFunction<Ty> get_interpolated_inverse_temperature_function() // NOTE: in all invocations this is effectively used as a 1/t term with Tmax and Tmin
 field::StateFunction<Ty> get_interpolated_temperature_function() // NOTE: should we convert instances of this to equation 101?
 field::StateFunction<Ty> get_dippr_temperature_function_101 ()
@@ -128,3 +128,4 @@ field::StateFunction<Ty> get_interpolated_temperature_function()
 
 // chemical_susceptibility_estimate
 // 
+

@@ -6,7 +6,7 @@
 // in house libraries
 #include "CompletedCompound_to_string.hpp"
 #include "CompletedCompound_test_utils.hpp"
-#include "library.hpp"
+#include "CompletedCompound_library.hpp"
 
 TEST_CASE( "CompletedCompound to_string() purity", "[field]" ) {
 	SECTION("Calling a function twice with the same arguments must produce the same results")

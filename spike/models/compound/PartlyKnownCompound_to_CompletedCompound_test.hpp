@@ -12,7 +12,7 @@
 #include "PartlyKnownCompound_test_utils.hpp"
 #include "CompletedCompound_test_utils.hpp"
 
-#include "library.hpp"
+#include "CompletedCompound_library.hpp"
 
 #include "PartlyKnownCompound_operators.hpp"
 #include "PartlyKnownCompound_to_string.hpp"

@@ -41,7 +41,7 @@ namespace compound
             first.boiling_point_sample_pressure      != second.boiling_point_sample_pressure      ||
             first.boiling_point_sample_temperature   != second.boiling_point_sample_temperature   ||
             first.phase                              != second.phase                              ||
-            first.molecular_absorption_cross_section != second.molecular_absorption_cross_section ||
+            relation::distance(first.molecular_absorption_cross_section, second.molecular_absorption_cross_section, 1.0/si::centimeter, 100e3/si::centimeter) < 1e-4 ||
             first.gas                                != second.gas                                ||
             first.liquid                             != second.liquid                             
         ) {
@@ -60,30 +60,6 @@ namespace compound
     bool operator!=(const compound::PartlyKnownCompound& first, const compound::PartlyKnownCompound& second)
     {
         return !(first==second);
-    }
-
-    int PartlyKnownCompound_attribute_index_sum(const compound::PartlyKnownCompound& compound)
-    {
-        int sum = 
-            compound.molecular_degrees_of_freedom       .index() +
-            compound.acentric_factor                    .index() +
-            compound.latent_heat_of_vaporization        .index() +
-            compound.latent_heat_of_fusion              .index() +
-            compound.triple_point_pressure              .index() +
-            compound.triple_point_temperature           .index() +
-            compound.freezing_point_sample_pressure     .index() +
-            compound.freezing_point_sample_temperature  .index() +
-            compound.boiling_point_sample_pressure      .index() +
-            compound.boiling_point_sample_temperature   .index() +
-            compound.phase                              .index() +
-            compound.molecular_absorption_cross_section .index() +
-            PartlyKnownGas_attribute_known_count(compound.gas) +
-            PartlyKnownLiquid_attribute_index_sum(compound.liquid) ;
-        for (std::size_t i = 0; i < compound.solids.size(); ++i)
-        {
-            PartlyKnownSolid_attribute_index_sum(compound.solids[i]);
-        }
-        return sum;
     }
 
     int PartlyKnownCompound_attribute_known_count(const compound::PartlyKnownCompound& compound)
@@ -222,7 +198,7 @@ namespace compound
 
         /*phase*/                             0,
         /*molecular_absorption_cross_section*/ 
-        get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output
+        relation::get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output
             ( 1.0/si::meter, si::meter2,
               std::vector<double>{  9.73e1, 6.05e2, 7.37e3, 1.65e4, 2.98e4, 6.50e4, 9.73e4, 1.38e5, 1.62e5, 2.63e5, 3.35e5, 4.39e5, 5.15e5, 5.89e5, 6.93e5, 9.82e5, 1.25e6, 1.64e6, 2.08e6, 2.38e6, 2.41e6, 2.44e6, 2.47e6, 2.53e6, 2.59e6, 2.63e6, 2.73e6, 2.78e6, 2.93e6, 2.98e6, 3.05e6, 3.08e6, 5.11e6, 5.63e6, 6.04e6, 6.45e6, 6.86e6, 8.04e6, 9.68e6, 1.08e7, 1.24e7, 1.37e7, 2.37e7, 3.94e7, 6.98e7, 1.69e8 },
               std::vector<double>{  -24.98, -24.44, -23.93, -23.46, -23.46, -22.97, -23.70, -23.77, -23.11, -24.44, -22.46, -25.14, -24.47, -25.68, -25.10, -27.10, -28.15, -29.10, -30.25, -29.38, -29.28, -29.28, -29.47, -29.22, -29.47, -29.55, -29.28, -29.21, -29.27, -28.95, -28.71, -28.69, -25.41, -21.62, -21.41, -21.51, -21.76, -21.09, -20.98, -20.74, -20.82, -20.75, -20.83, -21.08, -21.54, -22.44 }),
@@ -248,7 +224,7 @@ namespace compound
                     300.0, 1273.2, 0.0, 10.0, 0.035), 
                     // water, mean error: 1.2%, max error: 3.5%, range: 300-1273.2K, 0-10MPa, stp estimate: 8.765
             /*density*/                0.6* si::kilogram/si::meter3,
-            /*refractive_index*/       1.000261                                                         // engineering toolbox
+            /*refractive_index*/       relation::spectral_constant(1.000261f)                                        // engineering toolbox
         },
 
         /*liquid*/
@@ -296,12 +272,12 @@ namespace compound
                      647.01, -0.1306, 2.471, 0.2151, 1.233, 0.0, 0.0,
                      233.22, 646.15), // Mulero (2012)
             /*refractive_index*/       //1.33336,
-                get_spectral_linear_interpolation_function_of_wavelength
+                relation::get_spectral_linear_interpolation_function_of_wavelength
                     (si::micrometer, 1.0,
                      std::vector<double>{0.2,   0.3,   0.425,  0.55, 0.675,   0.8, 0.925,   1.4,   2.4,   2.8,  3.05,  3.3,   5.6,   6.6,   7.6,  13.0,  15.5,  18.0,  21.0,  26.0,  32.0,  42.0,  60.0, 110.0, 160.0,200.0},
                      std::vector<double>{1.396, 1.349, 1.338, 1.333, 1.331, 1.329, 1.328, 1.321, 1.279, 1.142, 1.426, 1.45, 1.289, 1.334, 1.302, 1.146, 1.297, 1.423, 1.487, 1.539, 1.546, 1.522, 1.703, 1.966, 2.081, 2.13}),
             /*extinction_coefficient*/ 
-                get_spectral_linear_interpolation_function_of_wavelength
+                relation::get_spectral_linear_interpolation_function_of_wavelength
                     (si::micrometer, 1.0,
                      std::vector<double>{0.2,     0.3,     0.425,   0.55,     0.675,    0.8,      0.925,    1.4,      2.8,   3.0,   3.3,    3.6,     4.1,     4.6,    5.6,    6.1,      6.6,    9.2,   10.5,  13.0,  15.5,  18.0,  32.0,  60.0, 200.0},
                      std::vector<double>{1.1e-07, 1.6e-08, 1.3e-09, 1.96e-09, 2.23e-08, 1.25e-07, 1.06e-06, 0.000138, 0.115, 0.272, 0.0368, 0.00515, 0.00562, 0.0147, 0.0142, 0.131, 0.0356, 0.0415, 0.0662, 0.305, 0.414, 0.426, 0.324, 0.587, 0.504})
@@ -319,9 +295,9 @@ namespace compound
                         (si::celcius, si::millimeter_mercury,
                          std::vector<double>{-17.3,  11.2,   51.6,   100.0  }, 
                          std::vector<double>{1.0,    10.0,   100.0,  760.0  }), // Perry
-                /*refractive_index*/                  1.3098,
-                /*extinction_coefficient*/            0.3,
-                /*absorption_coefficient*/            25.0 / si::centimeter,
+                /*refractive_index*/                  relation::spectral_constant(1.3098f),
+                /*extinction_coefficient*/            relation::spectral_constant(0.3f),
+                /*absorption_coefficient*/            relation::spectral_constant(25.0 / si::centimeter),
 
                 /*bulk_modulus*/                      8.899 * si::gigapascal,                           // gammon (1983)
                 /*tensile_modulus*/                   9.332 * si::gigapascal,                           // gammon (1983)
@@ -364,7 +340,7 @@ namespace compound
         /*boiling_point_sample_temperature*/  100.8 * si::celcius, 
 
         /*phase*/                             -1,
-        /*molecular_absorption_cross_section*/ 1e-25 * si::meter2,
+        /*molecular_absorption_cross_section*/ relation::spectral_constant(1e-25 * si::meter2),
 
         /*gas*/
         phase::PartlyKnownGas {
@@ -372,7 +348,7 @@ namespace compound
             /*thermal_conductivity*/   (1.0 * si::watt / (si::meter * si::kelvin)),
             /*dynamic_viscosity*/      (1.0 * si::pascal * si::second),
             /*density*/                state_invariant(1.0 * si::kilogram/si::meter3),
-            /*refractive_index*/       spectral_invariant(1.1)
+            /*refractive_index*/       spectral_invariant(1.1f)
         },
 
         /*liquid*/
@@ -383,8 +359,8 @@ namespace compound
             /*density*/                state_invariant(1.0 * si::kilogram/si::meter3),
             /*vapor_pressure*/         state_invariant(1.0 * si::pascal),
             /*surface_tension*/        state_invariant(1.0 * si::millinewton/si::meter),
-            /*refractive_index*/       spectral_invariant(1.1),
-            /*extinction_coefficient*/ spectral_invariant(0.9)
+            /*refractive_index*/       spectral_invariant(1.1f),
+            /*extinction_coefficient*/ spectral_invariant(0.9f)
         },
 
         /*solid*/ 
@@ -395,8 +371,8 @@ namespace compound
                 /*dynamic_viscosity*/                 state_invariant(1.0 * si::pascal*si::second),
                 /*density*/                           state_invariant(1.0 * si::kilogram/si::meter3),
                 /*vapor_pressure*/                    state_invariant(1.0 * si::pascal),
-                /*refractive_index*/                  spectral_invariant(1.1),
-                /*extinction_coefficient*/            spectral_invariant(0.3),
+                /*refractive_index*/                  spectral_invariant(1.1f),
+                /*extinction_coefficient*/            spectral_invariant(0.3f),
                 /*absorption_coefficient*/            spectral_invariant(25.0 / si::centimeter),
                 /*bulk_modulus*/                      state_invariant(1.0 * si::gigapascal),
                 /*tensile_modulus*/                   state_invariant(1.0 * si::gigapascal),

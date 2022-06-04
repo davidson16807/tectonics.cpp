@@ -224,12 +224,12 @@ namespace relation {
         float oo = std::numeric_limits<float>::max();
         return SplineRelation<Tx,Ty,Plo,Phi>(
             math::Spline<float,Plo,Phi>{
-                math::Piecewise<float,F>(-oo, oo, f)
+                math::Railcar<float,F>(-oo, oo, f)
             }, Tx(1.0f), Ty(1.0f)
         );
     }
 
-    template<typename Tx, typename Ty, int Plo, int Phi>
+    template<typename Ty>
     SplineRelation<si::wavenumber,Ty,0,1> spectral_constant(const Ty k)
     {
         return spline_constant<si::wavenumber,Ty,0,1>(k);
@@ -239,13 +239,13 @@ namespace relation {
     template<typename Ty>
     SplineRelation<si::wavenumber,Ty,0,1> get_spectral_linear_interpolation_function_of_wavelength(
         const si::length lunits, const Ty yunits,
-        const std::vector<double> ls, 
-        const std::vector<double> lys
+        const std::vector<float> ls, 
+        const std::vector<float> lys
     ){
         assert(ls.size() == lys.size());
         const si::wavenumber nunits = 1.0/lunits;
-        std::vector<double> ns;
-        std::vector<double> ys;
+        std::vector<float> ns;
+        std::vector<float> ys;
         for (std::size_t i=0; i<lys.size(); i++){
             ns.push_back(1.0/(ls[i]));
             ys.push_back(lys[i]);
@@ -258,8 +258,8 @@ namespace relation {
     template<typename Ty>
     SplineRelation<si::wavenumber,Ty,0,1> get_spectral_linear_interpolation_function_of_wavenumber(
         const si::wavenumber nunits, const Ty yunits,
-        const std::vector<double> ns, 
-        const std::vector<double> ys
+        const std::vector<float> ns, 
+        const std::vector<float> ys
     ){
         assert(ns.size() == ys.size());
         return SplineRelation<si::wavenumber,Ty,0,1>(math::spline::linear_spline(ns, ys), nunits, yunits);
@@ -268,11 +268,11 @@ namespace relation {
     template<typename Ty>
     SplineRelation<si::wavenumber,Ty,0,1> get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output(
         const si::wavenumber nunits, const Ty yunits,
-        const std::vector<double>      ns, 
-        const std::vector<double> log10ys
+        const std::vector<float>      ns, 
+        const std::vector<float> log10ys
     ){
         assert(ns.size() == log10ys.size());
-        std::vector<double> ys;
+        std::vector<float> ys;
         for (std::size_t i=0; i<ys.size(); i++){
             ys.push_back(pow(10.0, log10ys[i]));
         }
@@ -282,24 +282,77 @@ namespace relation {
     template<typename Ty>
     SplineRelation<si::wavenumber,Ty,0,1> get_spectral_linear_interpolation_function_of_wavelength_for_log10_sample_output(
         const si::length lunits, const Ty yunits,
-        const std::vector<double>      ls, 
-        const std::vector<double>log10lys
+        const std::vector<float>      ls, 
+        const std::vector<float>log10lys
     ){
         assert(ls.size() == log10lys.size());
         const si::wavenumber nunits = 1.0/lunits;
-        std::vector<double> ns;
-        std::vector<double> log10ys;
+        std::vector<float> ns;
+        std::vector<float> log10ys;
         for (std::size_t i=0; i<log10lys.size(); i++){
             ns.push_back(1.0/(ls[i]));
             log10ys.push_back(log10lys[i]);
         }
         std::reverse(ns.begin(), ns.end());
         std::reverse(log10ys.begin(), log10ys.end());
-        std::vector<double> ys;
+        std::vector<float> ys;
         for (std::size_t i=0; i<ys.size(); i++){
             ys.push_back(pow(10.0, log10ys[i]));
         }
         return SplineRelation<si::wavenumber,Ty,0,1> (math::spline::linear_spline(ns, ys), nunits, yunits);
+    }
+
+    template<typename Ty>
+    SplineRelation<si::wavenumber,Ty,0,1> get_spectral_linear_interpolation_function_of_wavelength_for_log10_sample_input(
+        const si::length lunits, const Ty yunits,
+        const std::vector<double>log10ls, 
+        const std::vector<double>    lys
+    ){
+        assert(log10ls.size() == lys.size());
+        const si::wavenumber nunits = 1.0/lunits;
+        std::vector<double> ns;
+        std::vector<double> nys;
+        for (std::size_t i=0; i<log10ls.size(); i++){
+            ns.push_back(1.0/std::pow(10.0, log10ls[i]));
+            ys.push_back(lys[i]);
+        }
+        std::reverse(ns.begin(), ns.end());
+        std::reverse(ys.begin(), ys.end());
+        return SplineRelation<si::wavenumber,Ty,0,1> (math::spline::linear_spline(ns, ys), nunits, yunits);
+    }
+
+
+
+    SplineRelation<si::wavenumber,si::area,0,1> get_absorption_coefficient_function_from_reflectance_at_wavelengths(
+        const si::length lunits,
+        const si::length particle_diameter, 
+        const std::vector<double>wavelengths, 
+        const std::vector<double>reflectances
+    ){
+        std::vector<double> ns;
+        std::vector<double> Rs = reflectances;
+        for (std::size_t i=0; i<reflectances.size(); i++){
+            ns.push_back(1.0/wavelengths[i]);
+        }
+        std::reverse(ns.begin(), ns.end());
+        std::reverse(Rs.begin(), Rs.end());
+        Rofn = math::spline::linear_spline(ns, Rs);
+        4.0f * 
+
+        return field::SpectralFunction<si::attenuation>(
+            [lunits, wavenumbers, wavenumber_reflectances, particle_diameter]
+            (const si::wavenumber nlo, 
+             const si::wavenumber nhi, 
+             const si::pressure p, 
+             const si::temperature T)
+            {
+                double reflectance = math::integral_of_lerp(wavenumbers, wavenumber_reflectances, (nlo*lunits), (nhi*lunits)) 
+                    / (nhi*lunits - nlo*lunits);
+                double single_scatter_albedo = compound::property::approx_single_scatter_albedo_from_reflectance(reflectance);
+                double scattering_efficiency = single_scatter_albedo; // we assume extinction efficiency is close to 1, in which case the two are equal
+                return compound::property::approx_absorption_coefficient_from_scattering_efficiency(scattering_efficiency, particle_diameter);
+            }
+        );
     }
 
 

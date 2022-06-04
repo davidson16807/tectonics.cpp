@@ -1,0 +1,5 @@
+#include "./CollignonMesh/CollignonProjection_test.cpp"
+#include "./CollignonMesh/CollignonTesselation_test.cpp"
+#include "./CollignonMesh/CollignonMesh_test.cpp"
+#include "./HalfEdge2dGrid_test.cpp"
+#include "./Interleaving_test.cpp"
