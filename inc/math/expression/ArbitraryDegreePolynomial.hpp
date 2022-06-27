@@ -17,7 +17,7 @@ namespace math {
     `ArbitraryDegreePolynomial` is a class template that represents functions of the form f(x)=Σᵢaᵢxᵇⁱ where bᵢ∈ℤ.
     Unlike `Polynomial<T,Plo,Phi>`, it represents a polynomial whose exponents are not known at compile time.
     This situation crops up occasionally when dealing with polynomials.
-    As a motivating example, calculating the `distance()` between two `RationalSpline<T,Plo,Phi,Qlo,Qhi>` objects
+    As a motivating example, calculating the `distance()` between two `RationalRailyard<T,Plo,Phi,Qlo,Qhi>` objects
     requires cross multiplying all `Rational` segments that shared an intersection, 
     but since segments were stored in a `std::vector<T>`, 
     the number of intersecting segments could not be known at compile time,

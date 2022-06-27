@@ -7,6 +7,7 @@
 #include "Identity.hpp"
 #include "Scaling.hpp"
 #include "Shifting.hpp"
+#include "Polynomial.hpp"
 #include "Railcar.hpp"
 #include "Railyard.hpp"
 
@@ -61,26 +62,6 @@ namespace math {
 
 
     template<typename T, int Plo, int Phi>
-    constexpr auto operator+(const PolynomialRailcar<T,Plo,Phi>& p, const Shifting<T> f)
-    {
-        return p + Polynomial<T,0,1>(f);
-    }
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator+(const Shifting<T> f, const PolynomialRailcar<T,Plo,Phi>& p)
-    {
-        return Polynomial<T,0,1>(f) + p;
-    }
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator-(const PolynomialRailcar<T,Plo,Phi>& p, const Shifting<T> f)
-    {
-        return p - Polynomial<T,0,1>(f);
-    }
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator-(const Shifting<T> f, const PolynomialRailcar<T,Plo,Phi>& p)
-    {
-        return Polynomial<T,0,1>(f) - p;
-    }
-    template<typename T, int Plo, int Phi>
     constexpr auto operator*(const PolynomialRailcar<T,Plo,Phi>& p, const Shifting<T> f)
     {
         return p * Polynomial<T,0,1>(f);
@@ -93,26 +74,6 @@ namespace math {
 
 
 
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator+(const PolynomialRailcar<T,Plo,Phi>& p, const Scaling<T> f)
-    {
-        return p + Polynomial<T,1,1>(f);
-    }
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator+(const Scaling<T> f, const PolynomialRailcar<T,Plo,Phi>& p)
-    {
-        return Polynomial<T,1,1>(f) + p;
-    }
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator-(const PolynomialRailcar<T,Plo,Phi>& p, const Scaling<T> f)
-    {
-        return p - Polynomial<T,1,1>(f);
-    }
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator-(const Scaling<T> f, const PolynomialRailcar<T,Plo,Phi>& p)
-    {
-        return Polynomial<T,1,1>(f) - p;
-    }
     template<typename T, int Plo, int Phi>
     constexpr auto operator*(const PolynomialRailcar<T,Plo,Phi>& p, const Scaling<T> f)
     {
@@ -131,26 +92,6 @@ namespace math {
 
 
 
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator+(const PolynomialRailcar<T,Plo,Phi>& p, const Identity<T> e)
-    {
-        return p + Polynomial<T,1,1>(e);
-    }
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator+(const Identity<T> e, const PolynomialRailcar<T,Plo,Phi>& p)
-    {
-        return Polynomial<T,1,1>(e) + p;
-    }
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator-(const PolynomialRailcar<T,Plo,Phi>& p, const Identity<T> e)
-    {
-        return p - Polynomial<T,1,1>(e);
-    }
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator-(const Identity<T> e, const PolynomialRailcar<T,Plo,Phi>& p)
-    {
-        return Polynomial<T,1,1>(e) - p;
-    }
     template<typename T, int Plo, int Phi>
     constexpr auto operator*(const PolynomialRailcar<T,Plo,Phi>& p, const Identity<T> e)
     {
@@ -188,13 +129,13 @@ namespace math {
     constexpr auto compose(const PolynomialRailcar<T,Plo,Phi>& p, const Scaling<T> g)
     {
         using F = Polynomial<T,Plo,Phi>;
-        return Railcar<T,F>(p.lo, p.hi, compose(p.content, g));
+        return Railcar<T,F>(p.lo*g.factor, p.hi*g.factor, compose(p.content, g));
     }
     template<typename T, int Plo, int Phi>
     constexpr auto compose(const PolynomialRailcar<T,Plo,Phi>& p, const Shifting<T> g)
     {
         using F = Polynomial<T,std::min(0,Plo),Phi>;
-        return Railcar<T,F>(p.lo, p.hi, compose(p.content, g));
+        return Railcar<T,F>(p.lo+g.offset, p.hi+g.offset, compose(p.content, g));
     }
 
 

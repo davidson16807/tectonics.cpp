@@ -13,7 +13,7 @@ namespace spline {
     */
 
     template<typename T> 
-    Spline<T,0,1> linear_spline(
+    PolynomialRailyard<T,0,1> linear_spline(
         const std::vector<T> x,
         const std::vector<T> y
     ){
@@ -36,7 +36,7 @@ namespace spline {
                 )));
         }
         pieces.push_back(G(x[y.size()-1], oo, F{y[y.size()-1],0}));
-        return Spline<T,0,1>(pieces);
+        return PolynomialRailyard<T,0,1>(pieces);
     }
 
 
@@ -53,7 +53,7 @@ namespace spline {
     from https://www.alanzucconi.com/2017/07/15/improving-the-rainbow/
     */
     template<typename T> 
-    Spline<T,0,2> bump(
+    PolynomialRailyard<T,0,2> bump(
         const T edge0, 
         const T edge1, 
         const T height
@@ -63,7 +63,7 @@ namespace spline {
         auto offset  = Polynomial<T,0,1>{-center/width, 1.0f/width};
         using F = Polynomial<T,0,2>;
         using G = Railcar<T,F>;
-        return Spline<T,0,2>{ G(edge0, edge1, height * (1.0f - offset * offset)) };
+        return PolynomialRailyard<T,0,2>{ G(edge0, edge1, height * (1.0f - offset * offset)) };
     }
 
     /*
@@ -73,13 +73,13 @@ namespace spline {
     It guarantees that error will not exceed ±0.015 throughout the entire range of the function.
     */
     template<typename T> 
-    Spline<T,0,2> quadratic_3piece_gaussian(){
+    PolynomialRailyard<T,0,2> quadratic_3piece_gaussian(){
         const T a(0.670f);
         const T b(1.670f);
         const T c(2.167f);
         auto F = [](T x){ return std::exp(-x*x); };
         using PiecewisePolynomial = Railcar<T, Polynomial<T,0,2>>;
-        return Spline<T,0,2>{
+        return PolynomialRailyard<T,0,2>{
             PiecewisePolynomial(-c,-a, quadratic_newton_polynomial(-c, -b,  -a,  0.0f, F(-b),   F(-a))),
             PiecewisePolynomial(-a, a, quadratic_newton_polynomial(-a, 0.0f, a, F(-a), F(0.0f), F( a))),
             PiecewisePolynomial( a, c, quadratic_newton_polynomial( a,  b,   c, F( a), F( b),   0.0f ))
@@ -92,13 +92,13 @@ namespace spline {
     It guarantees that error will not exceed ±0.022 throughout the entire range of the function.
     */
     template<typename T> 
-    Spline<T,0,2> quadratic_4piece_erf(){
+    PolynomialRailyard<T,0,2> quadratic_4piece_erf(){
         const T  a(1.132f);
         const T  b(1.691f);
         const T oo(std::numeric_limits<T>::max()); // infinity
         auto F = [](T x){ return std::erf(x); };
         using PiecewisePolynomial = Railcar<T, Polynomial<T,0,2>>;
-        return Spline<T,0,2>{
+        return PolynomialRailyard<T,0,2>{
             PiecewisePolynomial(-oo,-b,   Polynomial<T,0,2>{-1.0f, 0.0f, 0.0f}),
             PiecewisePolynomial(-b, 0.0f, quadratic_newton_polynomial(-b,   -a, 0.0f, -1.0f,    F(-a),  F(0.0f) )),
             PiecewisePolynomial( 0.0f, b, quadratic_newton_polynomial( 0.0f, a, b,     F(0.0f), F(a),   1.0f    )),
@@ -112,13 +112,13 @@ namespace spline {
     It guarantees that error will not exceed ±0.04 throughout the entire range of the function.
     */
     template<typename T> 
-    Spline<T,0,2> quadratic_4piece_tanh(){
+    PolynomialRailyard<T,0,2> quadratic_4piece_tanh(){
         const T  a(1.260f);
         const T  b(2.052f);
         const T oo(std::numeric_limits<T>::max()); // infinity
         auto F = [](T x){ return std::tanh(x); };
         using PiecewisePolynomial = Railcar<T, Polynomial<T,0,2>>;
-        return Spline<T,0,2>{
+        return PolynomialRailyard<T,0,2>{
             PiecewisePolynomial(-oo,-b,   Polynomial<T,0,2>{-1.0f, 0.0f, 0.0f}),
             PiecewisePolynomial(-b, 0.0f, quadratic_newton_polynomial(-b,   -a, 0.0f, -1.0f,    F(-a),  F(0.0f) )),
             PiecewisePolynomial( 0.0f, b, quadratic_newton_polynomial( 0.0f, a, b,     F(0.0f), F(a),   1.0f    )),
@@ -133,13 +133,13 @@ namespace spline {
     It guarantees that error will not exceed ±0.03 throughout the entire range of the function.
     */
     template<typename T> 
-    Spline<T,0,2> quadratic_3piece_sech2(){
+    PolynomialRailyard<T,0,2> quadratic_3piece_sech2(){
         const T a(0.717f);
         const T b(1.766f);
         const T c(2.533f);
         auto F = [](T x){ return 1.0f/(std::cosh(x)*std::cosh(x)); };
         using PiecewisePolynomial = Railcar<T, Polynomial<T,0,2>>;
-        return Spline<T,0,2>{
+        return PolynomialRailyard<T,0,2>{
             PiecewisePolynomial(-c,-a, quadratic_newton_polynomial(-c, -b,  -a,  0.0f, F(-b),   F(-a))),
             PiecewisePolynomial(-a, a, quadratic_newton_polynomial(-a, 0.0f, a, F(-a), F(0.0f), F( a))),
             PiecewisePolynomial( a, c, quadratic_newton_polynomial( a,  b,   c, F( a), F( b),   0.0f ))
@@ -154,14 +154,14 @@ namespace spline {
     It guarantees that error will not exceed ±0.024 throughout the entire range of the function.
     */
     template<typename T> 
-    Spline<T,0,2> quadratic_4piece_ddxsech2(){
+    PolynomialRailyard<T,0,2> quadratic_4piece_ddxsech2(){
         const T  a(0.464f);
         const T  b(0.812f);
         const T  c(2.236f);
         const T  d(2.982f);
         auto F = [](T x){ return -2.0f*std::tanh(x)/(std::cosh(x)*std::cosh(x)); };
         using PiecewisePolynomial = Railcar<T, Polynomial<T,0,2>>;
-        return Spline<T,0,2>{
+        return PolynomialRailyard<T,0,2>{
             PiecewisePolynomial(-d, -b,   quadratic_newton_polynomial( 0.0f,-c,-b,     F(0.0f), F(-c), F(-b)   )),
             PiecewisePolynomial(-b, 0.0f, quadratic_newton_polynomial(-b,   -a, 0.0f,  F(-b),   F(-a), 0.0f    )),
             PiecewisePolynomial( 0.0f, b, quadratic_newton_polynomial( 0.0f, a, b,     0.0f,    F(a),  F(b)    )),
