@@ -6,7 +6,7 @@
 #include <models/compound/field/spectral/CompletedSpectralField_to_string.hpp>
 
 #include <models/compound/relation/GasPropertyStateRelation_to_string.hpp>
-#include <models/compound/relation/SplineRelation_to_string.hpp>
+#include <models/compound/relation/PolynomialRailyardRelation_to_string.hpp>
 
 #include <models/compound/phase/gas/CompletedGas.hpp>
 

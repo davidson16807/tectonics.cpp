@@ -5,7 +5,7 @@
 #include <models/compound/field/state/CompletedStateField_to_string.hpp>
 #include <models/compound/field/spectral/CompletedSpectralField_to_string.hpp>
 
-#include <models/compound/relation/SplineRelation_to_string.hpp>
+#include <models/compound/relation/PolynomialRailyardRelation_to_string.hpp>
 
 #include <models/compound/phase/liquid/CompletedLiquid.hpp>
 

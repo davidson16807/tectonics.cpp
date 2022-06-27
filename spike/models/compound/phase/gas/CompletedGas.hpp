@@ -7,7 +7,7 @@
 #include <models/compound/field/spectral/CompletedSpectralField.hpp>
 
 #include <models/compound/relation/GasPropertyStateRelation.hpp>
-#include <models/compound/relation/SplineRelation.hpp>
+#include <models/compound/relation/PolynomialRailyardRelation.hpp>
 
 namespace compound { 
 namespace phase { 
@@ -17,7 +17,7 @@ namespace phase {
         relation::GasPropertyStateRelation<si::thermal_conductivity> thermal_conductivity;
         relation::GasPropertyStateRelation<si::dynamic_viscosity> dynamic_viscosity;
         field::CompletedStateField<si::density> density;
-        relation::SplineRelation<si::wavenumber,float,0,1> refractive_index;
+        relation::PolynomialRailyardRelation<si::wavenumber,float,0,1> refractive_index;
     };
 
     /*

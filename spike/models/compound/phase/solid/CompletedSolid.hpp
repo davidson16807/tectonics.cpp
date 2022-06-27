@@ -6,7 +6,7 @@
 #include <models/compound/field/state/CompletedStateField.hpp>
 #include <models/compound/field/spectral/CompletedSpectralField.hpp>
 
-#include <models/compound/relation/SplineRelation.hpp>
+#include <models/compound/relation/PolynomialRailyardRelation.hpp>
 
 namespace compound { 
 namespace phase { 
@@ -17,9 +17,9 @@ namespace phase {
         field::CompletedStateField<si::dynamic_viscosity> dynamic_viscosity;
         field::CompletedStateField<si::density> density;
         field::CompletedStateField<si::pressure> vapor_pressure;
-        relation::SplineRelation<si::wavenumber,float,0,1> refractive_index;
-        relation::SplineRelation<si::wavenumber,float,0,1> extinction_coefficient;
-        relation::SplineRelation<si::wavenumber,si::attenuation,0,1> absorption_coefficient;
+        relation::PolynomialRailyardRelation<si::wavenumber,float,0,1> refractive_index;
+        relation::PolynomialRailyardRelation<si::wavenumber,float,0,1> extinction_coefficient;
+        relation::PolynomialRailyardRelation<si::wavenumber,si::attenuation,0,1> absorption_coefficient;
 
         field::CompletedStateField<si::pressure> bulk_modulus;     // K   bulk modulus
         field::CompletedStateField<si::pressure> tensile_modulus;  // E   tensile Modulus, Young's modulus, modulus of elasticity

@@ -7,7 +7,7 @@
 #include <models/compound/field/spectral/OptionalSpectralField_to_string.hpp>
 
 #include <models/compound/relation/OptionalStateRelation_to_string.hpp>
-#include <models/compound/relation/SplineRelation_to_string.hpp>
+#include <models/compound/relation/PolynomialRailyardRelation_to_string.hpp>
 
 #include <models/compound/phase/liquid/PartlyKnownLiquid.hpp>
 

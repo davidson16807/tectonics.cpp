@@ -6,7 +6,7 @@
 #include <models/compound/field/state/OptionalStateField_test_utils.hpp>
 #include <models/compound/field/spectral/OptionalSpectralField_test_utils.hpp>
 
-#include <models/compound/relation/SplineRelation.hpp>
+#include <models/compound/relation/PolynomialRailyardRelation.hpp>
 
 #include "PartlyKnownGas.hpp"
 
