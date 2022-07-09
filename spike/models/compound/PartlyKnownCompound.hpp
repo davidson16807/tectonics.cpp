@@ -100,7 +100,8 @@ namespace compound
         field::OptionalStateField<int> phase;
 
         // MISCELLANEOUS PROPERTIES
-        field::OptionalSpectralField<si::area> molecular_absorption_cross_section;
+        relation::OptionalStateRelation<relation::PolynomialRailyardRelation<si::wavenumber,si::area,0,1>> molecular_absorption_cross_section;
+        // field::OptionalSpectralField<si::area> molecular_absorption_cross_section;
 
         // PHASE PROPERTIES
         phase::PartlyKnownGas gas;
@@ -128,7 +129,7 @@ namespace compound
             const field::OptionalConstantField<si::pressure>      boiling_point_sample_pressure,
             const field::OptionalConstantField<si::temperature>   boiling_point_sample_temperature,
             const field::OptionalStateField<int>                  phase,
-            const field::OptionalSpectralField<si::area>          molecular_absorption_cross_section,
+            const relation::OptionalStateRelation<relation::PolynomialRailyardRelation<si::wavenumber,si::area,0,1>> molecular_absorption_cross_section,
             const phase::PartlyKnownGas                           gas,
             const phase::PartlyKnownLiquid                        liquid,
             const std::vector<phase::PartlyKnownSolid>            solids

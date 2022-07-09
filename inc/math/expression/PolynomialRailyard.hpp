@@ -489,4 +489,31 @@ namespace math {
     }
 
 
+    template<typename T, int Plo, int Phi>
+    constexpr T maximum(const PolynomialRailyard<T,Plo,Phi> p, const T lo, const T hi) 
+    {
+        auto p2 = simplify(p);
+        T result = p.cars[0];
+        T candidate;
+        for (auto pi : p.cars)
+        {
+            candidate = maximum(pi, lo, hi);
+            result = candidate > result? candidate : result;
+        }
+        return result;
+    }
+    template<typename T, int Plo, int Phi>
+    constexpr T minimum(const PolynomialRailyard<T,Plo,Phi> p, const T lo, const T hi) 
+    {
+        auto p2 = simplify(p);
+        T result = p.cars[0];
+        T candidate;
+        for (auto pi : p.cars)
+        {
+            candidate = minimum(pi, lo, hi);
+            result = candidate < result? candidate : result;
+        }
+        return result;
+    }
+
 }

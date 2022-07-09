@@ -43,7 +43,8 @@ namespace compound
 		out += "Boiling Point Sample Temperature:    " + field::to_string(compound.boiling_point_sample_temperature)  + "\n";
 		out += "Phase:                               " + field::to_string(compound.phase, field::StateParameters(stp.pressure, stp.temperature)) + "\n";
         out += "\n";
-		out += "Molecular Absorption Cross Section:  " + field::to_string(compound.molecular_absorption_cross_section, field::SpectralParameters(nlo, nhi, stp.pressure, stp.temperature)) + "\n";
+		out += "Molecular Absorption Cross Section:  " + relation::to_string(compound.molecular_absorption_cross_section, (nlo+nhi)/2.0f)  + "\n";
+		// out += "Molecular Absorption Cross Section:  " + field::to_string(compound.molecular_absorption_cross_section, field::SpectralParameters(nlo, nhi, stp.pressure, stp.temperature)) + "\n";
 		out += "Gas:"    + phase::to_string(compound.gas,    samples.gas,    gas_spectrum   );
 		out += "Liquid:" + phase::to_string(compound.liquid, samples.liquid, liquid_spectrum);
         for (std::size_t i = 0; i < compound.solids.size(); i++)

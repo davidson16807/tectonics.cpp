@@ -12,30 +12,30 @@ namespace spline {
     See "Spline_library.R" for the R script that generated these approximations.
     */
 
-    template<typename T> 
+    template<typename T, typename T2> 
     PolynomialRailyard<T,0,1> linear_spline(
-        const std::vector<T> x,
-        const std::vector<T> y
+        const std::vector<T2> x,
+        const std::vector<T2> y
     ){
         assert(x.size() == y.size());
         assert(x.size() >= 1);
-        T slope;
         using F = Polynomial<T,0,1>;
         using G = Railcar<T,F>;
         const T oo = std::numeric_limits<T>::max();
         std::vector<G> pieces;
-        pieces.push_back(G(-oo, x[0], F{y[0],0}));
-        for (int i=1; i<x.size(); i++)
+        pieces.push_back(G(-oo, T(x[0]), 
+            F(std::array<T,2>{T(y[0]),T(0)})));
+        for (std::size_t i=1; i<x.size(); i++)
         {
-            slope = (y[i]-y[i-1])/(x[i]-x[i-1]);
-            pieces.push_back(F(
-                x[i-1], x[i], 
+            pieces.push_back(G(
+                T(x[i-1]), T(x[i]), 
                 linear_newton_polynomial(
-                    x[i-1], y[i-1], 
-                    x[i],   y[i]    
+                    T(x[i-1]), T(x[i]),   
+                    T(y[i-1]), T(y[i])    
                 )));
         }
-        pieces.push_back(G(x[y.size()-1], oo, F{y[y.size()-1],0}));
+        pieces.push_back(G(T(x[y.size()-1]), oo, 
+            F(std::array<T,2>{T(y[y.size()-1]),T(0)})));
         return PolynomialRailyard<T,0,1>(pieces);
     }
 

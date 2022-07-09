@@ -41,9 +41,9 @@ compound::phase::PartlyKnownSolid ice {
     /*dynamic_viscosity*/                 1e13 * si::poise, // reference by Carey (1953)
     /*density*/                           0916.9 * si::kilogram/si::meter3,
     /*vapor_pressure*/                    138.268 * si::megapascal,
-    /*refractive_index*/                  compound::relation::spline_constant<si::wavenumber,float,0,1>(1.3098),
-    /*extinction_coefficient*/            compound::relation::spline_constant<si::wavenumber,float,0,1>(0.03),
-    /*absorption_coefficient*/            compound::relation::spline_constant<si::wavenumber,si::attenuation,0,1>(25.0 / si::centimeter),
+    /*refractive_index*/                  1.3098,
+    /*extinction_coefficient*/            0.03,
+    /*absorption_coefficient*/            25.0 / si::centimeter,
 
     /*bulk_modulus*/                      8.899 * si::gigapascal, // gammon (1983)
     /*tensile_modulus*/                   9.332 * si::gigapascal, // gammon (1983)
@@ -67,9 +67,9 @@ compound::phase::PartlyKnownSolid quartz {
     /*dynamic_viscosity*/                 std::monostate(),
     /*density*/                           2650.0 * si::kilogram/si::meter3, // alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
     /*vapor_pressure*/                    std::monostate(),
-    /*refractive_index*/                  compound::relation::spline_constant<si::wavenumber,float,0,1>(1.4585),
-    /*extinction_coefficient*/            compound::relation::spline_constant<si::wavenumber,float,0,1>(0.00014657), 
-    /*absorption_coefficient*/            compound::relation::spline_constant<si::wavenumber,si::attenuation,0,1>(1.0 / si::centimeter),
+    /*refractive_index*/                  1.4585,
+    /*extinction_coefficient*/            0.00014657, 
+    /*absorption_coefficient*/            1.0 / si::centimeter,
 
     /*bulk_modulus*/                      37.0 * si::gigapascal, // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
     /*tensile_modulus*/                   72.0 * si::gigapascal, // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
@@ -95,8 +95,8 @@ compound::phase::PartlyKnownSolid copper{
     /*dynamic_viscosity*/                 std::monostate(),
     /*density*/                           8960.0 * si::kilogram/si::meter3,
     /*vapor_pressure*/                    std::monostate(),
-    /*refractive_index*/                  compound::relation::spline_constant<si::wavenumber,float,0,1>(1.01),
-    /*extinction_coefficient*/            compound::relation::spline_constant<si::wavenumber,float,0,1>(13.430), 
+    /*refractive_index*/                  1.01,
+    /*extinction_coefficient*/            13.430, 
     /*absorption_coefficient*/            std::monostate(),
 
     /*bulk_modulus*/                      130.0 * si::gigapascal,
@@ -121,9 +121,9 @@ compound::phase::PartlyKnownSolid dummy_solid {
     /*dynamic_viscosity*/                 3.0 * si::poise, 
     /*density*/                           4.0 * si::kilogram/si::meter3,
     /*vapor_pressure*/                    5.0 * si::megapascal,
-    /*refractive_index*/                  compound::relation::spline_constant<si::wavenumber,float,0,1>(1.3),
-    /*extinction_coefficient*/            compound::relation::spline_constant<si::wavenumber,float,0,1>(0.03), 
-    /*absorption_coefficient*/            compound::relation::spline_constant<si::wavenumber,si::attenuation,0,1>(1.0 / si::centimeter),
+    /*refractive_index*/                  1.3,
+    /*extinction_coefficient*/            0.03, 
+    /*absorption_coefficient*/            1.0 / si::centimeter,
 
     /*bulk_modulus*/                      6.0 * si::gigapascal, 
     /*tensile_modulus*/                   7.0 * si::gigapascal, 

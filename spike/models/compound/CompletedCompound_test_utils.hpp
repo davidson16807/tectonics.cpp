@@ -42,9 +42,9 @@ namespace compound
             first.boiling_point_sample_pressure      != second.boiling_point_sample_pressure      ||
             first.boiling_point_sample_temperature   != second.boiling_point_sample_temperature   ||
             first.phase                              != second.phase                              ||
-            first.molecular_absorption_cross_section != second.molecular_absorption_cross_section ||
-            first.gas                                != second.gas                                ||
-            first.liquid                             != second.liquid                             
+            relation::distance(first.molecular_absorption_cross_section, second.molecular_absorption_cross_section, 1.0/si::centimeter, 100e3/si::centimeter) < 1e-4 ||
+            first.gas    != second.gas    ||
+            first.liquid != second.liquid
         ) {
             return false;
         }
@@ -105,8 +105,8 @@ namespace compound
             /*density*/                state_invariant(1.0 * si::kilogram/si::meter3),
             /*vapor_pressure*/         state_invariant(1.0 * si::pascal),
             /*surface_tension*/        state_invariant(1.0 * si::millinewton/si::meter),
-            /*refractive_index*/       spectral_invariant(1.1),
-            /*extinction_coefficient*/ spectral_invariant(0.9)
+            /*refractive_index*/       1.1,
+            /*extinction_coefficient*/ 0.9
         },
 
         /*solid*/ 
@@ -117,9 +117,9 @@ namespace compound
                 /*dynamic_viscosity*/                 state_invariant(1.0 * si::pascal*si::second),
                 /*density*/                           state_invariant(1.0 * si::kilogram/si::meter3),
                 /*vapor_pressure*/                    state_invariant(1.0 * si::pascal),
-                /*refractive_index*/                  spectral_invariant(1.1),
-                /*extinction_coefficient*/            spectral_invariant(0.9),
-                /*absorption_ceofficient*/            spectral_invariant(25.0 / si::centimeter),
+                /*refractive_index*/                  1.1,
+                /*extinction_coefficient*/            0.9,
+                /*absorption_ceofficient*/            25.0 / si::centimeter,
                 /*bulk_modulus*/                      state_invariant(1.0 * si::gigapascal),
                 /*tensile_modulus*/                   state_invariant(1.0 * si::gigapascal),
                 /*shear_modulus*/                     state_invariant(1.0 * si::gigapascal),

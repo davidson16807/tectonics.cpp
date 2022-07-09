@@ -18,7 +18,7 @@ namespace phase {
         field::CompletedStateField<si::density> density;
         field::CompletedStateField<si::pressure> vapor_pressure;
         field::CompletedStateField<si::surface_energy> surface_tension;
-        relation::PolynomialRailyardRelation<si::wavenumber,float,0,1> refractive_index;
-        relation::PolynomialRailyardRelation<si::wavenumber,float,0,1> extinction_coefficient;
+        relation::PolynomialRailyardRelation<si::wavenumber,double,0,1> refractive_index;
+        relation::PolynomialRailyardRelation<si::wavenumber,double,0,1> extinction_coefficient;
     };
 }}

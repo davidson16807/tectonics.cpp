@@ -38,9 +38,12 @@ miscellaneous math
 	orbit
 	involutivity
 	congruence
+	monotonicity
 	increasing
 	decreasing
 	adjoint
+	domination
+	subjugation
 	theorems for free
 	miscellaneous equivalence relations
 	range restrictions

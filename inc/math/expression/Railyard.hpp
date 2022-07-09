@@ -34,13 +34,19 @@ namespace math {
         {
         }
 
+        // constant constructor
+        explicit Railyard(const T k) : cars(1, Railcar<T,F>(k))
+        {
+        }
+
         // copy constructor
         Railyard(const Railyard<T,F>& yard) : cars(yard.cars) 
         {
         }
 
-        template<typename G>
-        explicit Railyard(const Railyard<T,G>& yard) : cars() 
+        // cast constructor
+        template<typename T2, typename F2>
+        explicit Railyard(const Railyard<T2,F2>& yard) : cars() 
         {
             for (auto car : yard.cars)
             {
@@ -55,10 +61,6 @@ namespace math {
         explicit Railyard(std::initializer_list<Railcar<T,F>> ts)
         {
             std::copy(ts.begin(), ts.end(), std::back_inserter(cars));
-        }
-
-        explicit Railyard(const T k) : cars(1, Railcar<T,F>(k))
-        {
         }
 
         explicit Railyard(const F& f) : cars(1, Railcar<T,F>(f))

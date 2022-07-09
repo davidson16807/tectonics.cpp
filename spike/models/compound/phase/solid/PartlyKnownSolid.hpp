@@ -17,8 +17,8 @@ namespace phase {
         field::OptionalStateField<si::dynamic_viscosity> dynamic_viscosity;
         field::OptionalStateField<si::density> density;
         field::OptionalStateField<si::pressure> vapor_pressure;
-        relation::OptionalStateRelation<relation::PolynomialRailyardRelation<si::wavenumber,float,0,1>> refractive_index;
-        relation::OptionalStateRelation<relation::PolynomialRailyardRelation<si::wavenumber,float,0,1>> extinction_coefficient;
+        relation::OptionalStateRelation<relation::PolynomialRailyardRelation<si::wavenumber,double,0,1>> refractive_index;
+        relation::OptionalStateRelation<relation::PolynomialRailyardRelation<si::wavenumber,double,0,1>> extinction_coefficient;
         relation::OptionalStateRelation<relation::PolynomialRailyardRelation<si::wavenumber,si::attenuation,0,1>> absorption_coefficient;
 
         field::OptionalStateField<si::pressure> bulk_modulus;     // K   bulk modulus

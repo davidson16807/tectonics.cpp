@@ -161,6 +161,16 @@ namespace math {
 
 
 
+    template<typename T, int Plo, int Phi>
+    constexpr T maximum(const PolynomialRailcar<T,Plo,Phi> p, const T lo, const T hi) 
+    {
+        return maximum(p, std::max(lo, p.lo), std::min(hi, p.hi));
+    }
+    template<typename T, int Plo, int Phi>
+    constexpr T minimum(const PolynomialRailcar<T,Plo,Phi> p, const T lo, const T hi) 
+    {
+        return minimum(p, std::max(lo, p.lo), std::min(hi, p.hi));
+    }
 
 }
 

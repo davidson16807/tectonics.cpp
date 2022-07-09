@@ -31,18 +31,31 @@ namespace math {
     struct Polynomial
     {
         std::array<T,Nhi+1-Nlo> k;
+        // the zero polynomial
         constexpr Polynomial(): k()
         {
             std::fill(k.begin(), k.end(), T(0.0));
         }
-        constexpr Polynomial(const Polynomial& p): k()
-        {
-            std::copy(p.k.begin(), p.k.end(), k.begin());
-        }
+        // constant constructor
         constexpr explicit Polynomial(const T k2): k()
         {
             std::fill(k.begin(), k.end(), T(0.0));
             k[0-Nlo] = k2;
+        }
+        // copy constructor
+        constexpr Polynomial(const Polynomial& p): k()
+        {
+            std::copy(p.k.begin(), p.k.end(), k.begin());
+        }
+        // cast constructor
+        template <typename T2, int Qlo, int Qhi> 
+        constexpr Polynomial(const Polynomial<T2,Qlo,Qhi>& p): k()
+        {
+            std::fill(k.begin(), k.end(), T(0.0));
+            for (int i = Qlo; i <= Qhi; ++i)
+            {
+                k[i-Nlo] = T(p.k[i-Qlo]);
+            }
         }
         constexpr explicit Polynomial(const Identity<T> e): k()
         {
@@ -62,15 +75,6 @@ namespace math {
         }
         constexpr explicit Polynomial(const std::array<T,Nhi+1-Nlo> k2): k(k2)
         {
-        }
-        template <int Qlo, int Qhi> 
-        constexpr Polynomial(const Polynomial<T,Qlo,Qhi>& p): k()
-        {
-            std::fill(k.begin(), k.end(), T(0.0));
-            for (int i = Qlo; i <= Qhi; ++i)
-            {
-                k[i-Nlo] = p.k[i-Qlo];
-            }
         }
         template<typename TIterator>
         constexpr explicit Polynomial(TIterator first, TIterator last) : k(first, last)
@@ -1091,7 +1095,7 @@ namespace math {
 
 
 
-    template<typename T, typename F>
+    template<typename T>
     constexpr Polynomial<T,0,1> linear_newton_polynomial(
         const T x1, 
         const T x2,
@@ -1122,7 +1126,7 @@ namespace math {
         );
     }
 
-    template<typename T, typename F>
+    template<typename T>
     constexpr Polynomial<T,0,2> quadratic_newton_polynomial(
         const T x1, 
         const T x2, 
@@ -1161,7 +1165,7 @@ namespace math {
         );
     }
 
-    template<typename T, typename F>
+    template<typename T>
     constexpr Polynomial<T,0,3> cubic_newton_polynomial(
         const T x1, 
         const T x2, 

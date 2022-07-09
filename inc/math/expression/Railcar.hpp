@@ -55,7 +55,23 @@ namespace math {
         {}
 
         // copy constructor
+        constexpr explicit Railcar<T,F>(const T k) :
+            content(k),
+            lo(-std::numeric_limits<T>::max()),
+            hi(std::numeric_limits<T>::max())
+        {
+        }
+
+        // copy constructor
         constexpr Railcar<T,F>(const Railcar<T,F>& car):
+            content(car.content),
+            lo(car.lo),
+            hi(car.hi)
+        {}
+
+        // cast constructor
+        template<typename T2, typename F2>
+        constexpr explicit Railcar<T,F>(const Railcar<T2,F2>& car):
             content(car.content),
             lo(car.lo),
             hi(car.hi)
@@ -66,20 +82,6 @@ namespace math {
             lo(lo),
             hi(hi)
         {}
-
-        template<typename G>
-        constexpr explicit Railcar<T,F>(const Railcar<T,G>& car):
-            content(car.content),
-            lo(car.lo),
-            hi(car.hi)
-        {}
-
-        constexpr explicit Railcar<T,F>(const T k) :
-            content(k),
-            lo(-std::numeric_limits<T>::max()),
-            hi(std::numeric_limits<T>::max())
-        {
-        }
 
         constexpr explicit Railcar<T,F>(const F& content) : 
             content(content),

@@ -90,9 +90,9 @@ namespace compound
                                 );
                             })
                         )),
-            field::complete(known.molecular_absorption_cross_section, fallback.molecular_absorption_cross_section ),
-            phase::complete(known.gas,                                fallback.gas    ),
-            phase::complete(known.liquid,                             fallback.liquid ),
+            known.molecular_absorption_cross_section.complete(fallback.molecular_absorption_cross_section),
+            phase::complete(known.gas,    fallback.gas    ),
+            phase::complete(known.liquid, fallback.liquid ),
             solids
         );
 
