@@ -356,29 +356,29 @@ namespace compound {
         // TODO: complete this
         CompletedCompound water = complete( speculate(infer(published::water)), fallback::water );
 
-        // CompletedCompound hydrogen = complete( speculate(infer(published::hydrogen)), fallback::water );
-        // CompletedCompound helium = complete( speculate(infer(published::helium)), hydrogen );
-        // CompletedCompound argon = complete( speculate(infer(published::argon)), helium );
+        CompletedCompound hydrogen = complete( speculate(infer(published::hydrogen)), fallback::water );
+        CompletedCompound helium = complete( speculate(infer(published::helium)), hydrogen );
+        CompletedCompound argon = complete( speculate(infer(published::argon)), helium );
 
         CompletedCompound nitrogen = complete( speculate(infer(published::nitrogen)), fallback::water );
-        // CompletedCompound oxygen = complete( speculate(infer(published::oxygen)), nitrogen );
-        // CompletedCompound ammonia = complete( speculate(infer(published::ammonia)), nitrogen );
-        // CompletedCompound ozone = complete( speculate(infer(published::ozone)), oxygen );
-        // CompletedCompound sulfur_dioxide = complete( speculate(infer(published::sulfur_dioxide)), nitrogen );
-        // CompletedCompound nitrous_oxide = complete( speculate(infer(published::nitrous_oxide)), nitrogen );
-        // CompletedCompound nitric_oxide = complete( speculate(infer(published::nitric_oxide)), nitrogen );
+        CompletedCompound oxygen = complete( speculate(infer(published::oxygen)), nitrogen );
+        CompletedCompound ammonia = complete( speculate(infer(published::ammonia)), nitrogen );
+        CompletedCompound ozone = complete( speculate(infer(published::ozone)), oxygen );
+        CompletedCompound sulfur_dioxide = complete( speculate(infer(published::sulfur_dioxide)), nitrogen );
+        CompletedCompound nitrous_oxide = complete( speculate(infer(published::nitrous_oxide)), nitrogen );
+        CompletedCompound nitric_oxide = complete( speculate(infer(published::nitric_oxide)), nitrogen );
 
-        // CompletedCompound carbon_dioxide = complete( speculate(infer(published::carbon_dioxide)), fallback::water );
-        // CompletedCompound carbon_monoxide = complete( speculate(infer(published::carbon_monoxide)), carbon_dioxide );
-        // CompletedCompound hydrogen_cyanide = complete( speculate(infer(published::hydrogen_cyanide)), carbon_dioxide );
-        // CompletedCompound methane = complete( speculate(infer(published::methane)), carbon_dioxide );
-        // CompletedCompound perflouromethane = complete( speculate(infer(published::perflouromethane)), methane );
-        // CompletedCompound formaldehyde = complete( speculate(infer(published::formaldehyde)), methane );
-        // CompletedCompound formic_acid = complete( speculate(infer(published::formic_acid)), formaldehyde );
-        // CompletedCompound benzene = complete( speculate(infer(published::benzene)), formaldehyde );
-        // CompletedCompound pyrimidine = complete( speculate(infer(published::pyrimidine)), benzene );
-        // CompletedCompound ethane = complete( speculate(infer(published::ethane)), methane );
-        // CompletedCompound ethanol = complete( speculate(infer(published::ethanol)), ethane );
+        CompletedCompound carbon_dioxide = complete( speculate(infer(published::carbon_dioxide)), fallback::water );
+        CompletedCompound carbon_monoxide = complete( speculate(infer(published::carbon_monoxide)), carbon_dioxide );
+        CompletedCompound hydrogen_cyanide = complete( speculate(infer(published::hydrogen_cyanide)), carbon_dioxide );
+        CompletedCompound methane = complete( speculate(infer(published::methane)), carbon_dioxide );
+        CompletedCompound perflouromethane = complete( speculate(infer(published::perflouromethane)), methane );
+        CompletedCompound formaldehyde = complete( speculate(infer(published::formaldehyde)), methane );
+        CompletedCompound formic_acid = complete( speculate(infer(published::formic_acid)), formaldehyde );
+        CompletedCompound benzene = complete( speculate(infer(published::benzene)), formaldehyde );
+        CompletedCompound pyrimidine = complete( speculate(infer(published::pyrimidine)), benzene );
+        CompletedCompound ethane = complete( speculate(infer(published::ethane)), methane );
+        CompletedCompound ethanol = complete( speculate(infer(published::ethanol)), ethane );
 
         // CompletedCompound quartz = complete( speculate(infer(published::quartz)), carbon_dioxide);
         // CompletedCompound corundum = complete( speculate(infer(published::corundum)), quartz);

@@ -20,11 +20,6 @@
 
 #define COMPLETED_COMPOUNDS_STP_VALID() \
     COMPLETED_COMPOUND_STP_VALID(compound::library::water           ); \
-    COMPLETED_COMPOUND_STP_VALID(compound::library::nitrogen        ); 
-
-/*
-#define COMPLETED_COMPOUNDS_STP_VALID() \
-    COMPLETED_COMPOUND_STP_VALID(compound::library::water           ); \
     COMPLETED_COMPOUND_STP_VALID(compound::library::hydrogen        ); \
     COMPLETED_COMPOUND_STP_VALID(compound::library::helium          ); \
     COMPLETED_COMPOUND_STP_VALID(compound::library::argon           ); \
@@ -45,7 +40,10 @@
     COMPLETED_COMPOUND_STP_VALID(compound::library::benzene         ); \
     COMPLETED_COMPOUND_STP_VALID(compound::library::pyrimidine      ); \
     COMPLETED_COMPOUND_STP_VALID(compound::library::ethane          ); \
-    COMPLETED_COMPOUND_STP_VALID(compound::library::ethanol         ); \
+    COMPLETED_COMPOUND_STP_VALID(compound::library::ethanol         ); 
+
+/*
+#define COMPLETED_COMPOUNDS_STP_VALID() \
     COMPLETED_COMPOUND_STP_VALID(compound::library::quartz          ); \
     COMPLETED_COMPOUND_STP_VALID(compound::library::corundum        ); \
     COMPLETED_COMPOUND_STP_VALID(compound::library::carbon          ); \
@@ -184,11 +182,7 @@
     /*
     */
 
-#define COMPLETED_PHASES_OF_COMPOUNDS_VALID(temperature, pressure) \
-    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::water,            temperature, pressure); \
-    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::nitrogen,         temperature, pressure);
 
-/*
 #define COMPLETED_PHASES_OF_COMPOUNDS_VALID(temperature, pressure) \
     COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::water,            temperature, pressure); \
     COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::hydrogen,         temperature, pressure); \
@@ -211,7 +205,11 @@
     COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::benzene,          temperature, pressure); \
     COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::pyrimidine,       temperature, pressure); \
     COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::ethane,           temperature, pressure); \
-    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::ethanol,          temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::ethanol,          temperature, pressure); 
+
+
+/*
+#define COMPLETED_PHASES_OF_COMPOUNDS_VALID(temperature, pressure) \
     COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::quartz,           temperature, pressure); \
     COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::corundum,         temperature, pressure); \
     COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::carbon,           temperature, pressure); \
@@ -235,10 +233,6 @@
 
 #define COMPLETED_COMPOUNDS_VALID() \
     COMPLETED_COMPOUND_VALID(compound::library::water           ); \
-    COMPLETED_COMPOUND_VALID(compound::library::nitrogen        ); 
-/*
-#define COMPLETED_COMPOUNDS_VALID() \
-    COMPLETED_COMPOUND_VALID(compound::library::water           ); \
     COMPLETED_COMPOUND_VALID(compound::library::hydrogen        ); \
     COMPLETED_COMPOUND_VALID(compound::library::helium          ); \
     COMPLETED_COMPOUND_VALID(compound::library::argon           ); \
@@ -259,7 +253,11 @@
     COMPLETED_COMPOUND_VALID(compound::library::benzene         ); \
     COMPLETED_COMPOUND_VALID(compound::library::pyrimidine      ); \
     COMPLETED_COMPOUND_VALID(compound::library::ethane          ); \
-    COMPLETED_COMPOUND_VALID(compound::library::ethanol         ); \
+    COMPLETED_COMPOUND_VALID(compound::library::ethanol         ); 
+
+
+/*
+#define COMPLETED_COMPOUNDS_VALID() \
     COMPLETED_COMPOUND_VALID(compound::library::quartz          ); \
     COMPLETED_COMPOUND_VALID(compound::library::corundum        ); \
     COMPLETED_COMPOUND_VALID(compound::library::carbon          ); \
