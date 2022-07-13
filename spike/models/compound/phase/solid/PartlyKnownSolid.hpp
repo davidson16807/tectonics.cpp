@@ -12,28 +12,28 @@ namespace compound {
 namespace phase { 
     struct PartlyKnownSolid
     {
-        field::OptionalStateField<si::specific_heat_capacity> isobaric_specific_heat_capacity;
-        field::OptionalStateField<si::thermal_conductivity> thermal_conductivity;
-        field::OptionalStateField<si::dynamic_viscosity> dynamic_viscosity;
-        field::OptionalStateField<si::density> density;
-        field::OptionalStateField<si::pressure> vapor_pressure;
-        relation::OptionalStateRelation<relation::PolynomialRailyardRelation<si::wavenumber,double,0,1>> refractive_index;
-        relation::OptionalStateRelation<relation::PolynomialRailyardRelation<si::wavenumber,double,0,1>> extinction_coefficient;
-        relation::OptionalStateRelation<relation::PolynomialRailyardRelation<si::wavenumber,si::attenuation,0,1>> absorption_coefficient;
+        field::OptionalStateField<si::specific_heat_capacity<double>> isobaric_specific_heat_capacity;
+        field::OptionalStateField<si::thermal_conductivity<double>> thermal_conductivity;
+        field::OptionalStateField<si::dynamic_viscosity<double>> dynamic_viscosity;
+        field::OptionalStateField<si::density<double>> density;
+        field::OptionalStateField<si::pressure<double>> vapor_pressure;
+        relation::OptionalStateRelation<relation::PolynomialRailyardRelation<si::wavenumber<double>,double,0,1>> refractive_index;
+        relation::OptionalStateRelation<relation::PolynomialRailyardRelation<si::wavenumber<double>,double,0,1>> extinction_coefficient;
+        relation::OptionalStateRelation<relation::PolynomialRailyardRelation<si::wavenumber<double>,si::attenuation<double>,0,3>> absorption_coefficient;
 
-        field::OptionalStateField<si::pressure> bulk_modulus;     // K   bulk modulus
-        field::OptionalStateField<si::pressure> tensile_modulus;  // E   tensile Modulus, Young's modulus, modulus of elasticity
-        field::OptionalStateField<si::pressure> shear_modulus;    // G,μ shear modulus, dynamic viscosity, or modulus of rigidity
-        field::OptionalStateField<si::pressure> pwave_modulus;    // M   P-wave modulus
-        field::OptionalStateField<si::pressure> lame_parameter;   // λ   Lamé's first parameter
+        field::OptionalStateField<si::pressure<double>> bulk_modulus;     // K   bulk modulus
+        field::OptionalStateField<si::pressure<double>> tensile_modulus;  // E   tensile Modulus, Young's modulus, modulus of elasticity
+        field::OptionalStateField<si::pressure<double>> shear_modulus;    // G,μ shear modulus, dynamic viscosity, or modulus of rigidity
+        field::OptionalStateField<si::pressure<double>> pwave_modulus;    // M   P-wave modulus
+        field::OptionalStateField<si::pressure<double>> lame_parameter;   // λ   Lamé's first parameter
         field::OptionalStateField<double> poisson_ratio;          // ν   Poisson's ratio
         
-        field::OptionalStateField<si::pressure> compressive_fracture_strength;
-        field::OptionalStateField<si::pressure> tensile_fracture_strength;
-        field::OptionalStateField<si::pressure> shear_fracture_strength;
-        field::OptionalStateField<si::pressure> compressive_yield_strength;
-        field::OptionalStateField<si::pressure> tensile_yield_strength;
-        field::OptionalStateField<si::pressure> shear_yield_strength;
+        field::OptionalStateField<si::pressure<double>> compressive_fracture_strength;
+        field::OptionalStateField<si::pressure<double>> tensile_fracture_strength;
+        field::OptionalStateField<si::pressure<double>> shear_fracture_strength;
+        field::OptionalStateField<si::pressure<double>> compressive_yield_strength;
+        field::OptionalStateField<si::pressure<double>> tensile_yield_strength;
+        field::OptionalStateField<si::pressure<double>> shear_yield_strength;
         
         field::OptionalConstantField<double> chemical_susceptibility_estimate;
 

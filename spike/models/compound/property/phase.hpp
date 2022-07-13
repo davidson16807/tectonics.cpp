@@ -53,16 +53,16 @@ namespace compound{
         and a linear relation for melting points.
         */
         constexpr int get_basic_phase(
-            si::pressure        p,  // current pressure
-            si::temperature     T,  // current temperature
-            si::pressure        p0, // triple point pressure
-            si::temperature     T0, // triple point temperature
-            si::pressure        pc, // critical point pressure
-            si::temperature     Tc, // critical point temperature
-            si::pressure        pf, // freezing point pressure
-            si::temperature     Tf, // freezing point temperature
-            si::specific_energy L,  // latent heat of vaporization at boiling point
-            si::molar_mass      M   // molar mass
+            si::pressure<double>        p,  // current pressure
+            si::temperature<double>     T,  // current temperature
+            si::pressure<double>        p0, // triple point pressure
+            si::temperature<double>     T0, // triple point temperature
+            si::pressure<double>        pc, // critical point pressure
+            si::temperature<double>     Tc, // critical point temperature
+            si::pressure<double>        pf, // freezing point pressure
+            si::temperature<double>     Tf, // freezing point temperature
+            si::specific_energy<double> L,  // latent heat of vaporization at boiling point
+            si::molar_mass<double>      M   // molar mass
         ){
             const auto Ru = si::universal_gas_constant;
             auto R = Ru/M;
@@ -94,16 +94,16 @@ namespace compound{
         and melting points using the empirical Simon-Glatzel equation.
         */
         constexpr int get_simon_glatzel_phase(
-            const si::pressure        p,  // current pressure
-            const si::temperature     T,  // current temperature
-            const si::pressure        p0, // triple point pressure
-            const si::temperature     T0, // triple point temperature
-            const si::pressure        pc, // critical point pressure
-            const si::temperature     Tc, // critical point temperature
-            const si::specific_energy L,  // latent heat of vaporization at boiling point
-            const si::molar_mass      M,  // molar mass
-            const si::pressure        a,  // simon glatzel slope
-            const si::pressure        b,  // simon glatzel intercept
+            const si::pressure<double>        p,  // current pressure
+            const si::temperature<double>     T,  // current temperature
+            const si::pressure<double>        p0, // triple point pressure
+            const si::temperature<double>     T0, // triple point temperature
+            const si::pressure<double>        pc, // critical point pressure
+            const si::temperature<double>     Tc, // critical point temperature
+            const si::specific_energy<double> L,  // latent heat of vaporization at boiling point
+            const si::molar_mass<double>      M,  // molar mass
+            const si::pressure<double>        a,  // simon glatzel slope
+            const si::pressure<double>        b,  // simon glatzel intercept
             const double              c   // simon glatzel exponent
         ){
             const auto Ru = si::universal_gas_constant;

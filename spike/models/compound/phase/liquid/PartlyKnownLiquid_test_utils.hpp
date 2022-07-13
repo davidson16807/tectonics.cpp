@@ -31,7 +31,7 @@ compound::phase::PartlyKnownLiquid liquid_nitrogen {
     /*dynamic_viscosity*/                 157.9 * si::kilogram / (si::meter * 1e6*si::second), // Timmerhaus (1989)
     /*density*/                           0807.0 * si::kilogram/si::meter3,
     /*vapor_pressure*/                    
-        compound::field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
+        compound::field::StateFunction<si::pressure<double>>([](si::pressure<double> p, si::temperature<double> T){ 
             return 3.720822*si::standard_pressure - (293.94358*si::kelvin/T + 10.31993/si::kelvin*T) * si::standard_pressure;
         }), // Friedman (1950)
     /*surface_tension*/                   11.8000 * si::millinewton / si::meter,

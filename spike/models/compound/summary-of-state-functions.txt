@@ -33,7 +33,7 @@ template<typename TT, typename Tp, typename Ty>
 field::StateFunction<Ty> get_sigmoid_exponent_pressure_temperature_function ()
 // 23 uses, all for heat capacity of solids
 template<typename Tx>
-field::StateFunction<si::specific_heat_capacity> get_perry_johnson_temperature_function ()
+field::StateFunction<si::specific_heat_capacity<double>> get_perry_johnson_temperature_function ()
 // 26 uses, for liquid thermal conductivity and heat capacity
 template<typename Tx, typename Ty>
 field::StateFunction<Ty> get_dippr_quartic_temperature_function_100 ()

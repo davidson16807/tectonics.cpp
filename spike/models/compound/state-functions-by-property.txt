@@ -42,7 +42,7 @@ field::StateFunction<Ty> get_linear_liquid_surface_tension_temperature_function 
 
 
 // isobaric_specific_heat_capacity
-field::StateFunction<si::specific_heat_capacity> get_perry_johnson_temperature_function ()
+field::StateFunction<si::specific_heat_capacity<double>> get_perry_johnson_temperature_function ()
 field::StateFunction<Ty> get_interpolated_temperature_function()
 // thermal_conductivity
 field::StateFunction<Ty> get_interpolated_pressure_function()

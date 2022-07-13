@@ -39,12 +39,12 @@ namespace compound{
             const double pi = 3.141592653589;
         }
 
-        si::attenuation get_attenuation_coefficient_from_cross_section(const si::area attenuation_cross_section, const si::number_density number_density)
+        si::attenuation<double> get_attenuation_coefficient_from_cross_section(const si::area<double> attenuation_cross_section, const si::number_density<double> number_density)
         {
             return attenuation_cross_section * number_density;
         }
 
-        si::area get_cross_section_from_attenuation_coefficient(const si::attenuation attenuation_coefficient, const si::number_density number_density)
+        si::area<double> get_cross_section_from_attenuation_coefficient(const si::attenuation<double> attenuation_coefficient, const si::number_density<double> number_density)
         {
             return attenuation_coefficient / number_density;
         }
@@ -55,7 +55,7 @@ namespace compound{
         to extinction coefficient (i.e., the imaginary index of refraction)
         See Clark (1999, eq. 1.3) for discussion surrounding it.
         */
-        float get_extinction_coefficient_from_absorption_coefficient(const si::attenuation absorption_coefficient, const si::length wavelength)
+        float get_extinction_coefficient_from_absorption_coefficient(const si::attenuation<double> absorption_coefficient, const si::length<double> wavelength)
         {
             const float _4pi = 4.0 * 3.1415926535;
             return absorption_coefficient * wavelength / _4pi;
@@ -66,7 +66,7 @@ namespace compound{
         to absorption coefficient (i.e., the coefficient used in Beer's law).
         See Clark (1999, eq. 1.3) for discussion surrounding it.
         */
-        si::attenuation get_absorption_coefficient_from_extinction_coefficient(const float extinction_coefficient, const si::length wavelength)
+        si::attenuation<double> get_absorption_coefficient_from_extinction_coefficient(const float extinction_coefficient, const si::length<double> wavelength)
         {
             const float _4pi = 4.0 * 3.1415926535;
             return _4pi * extinction_coefficient / wavelength;
@@ -91,10 +91,10 @@ namespace compound{
 
         // NOTE: these tests do not pass, but are nonessential to continue development
         double approx_reflectance_from_attenuation_coefficient_and_refractive_index(
-            const si::attenuation attenuation_coefficient, 
+            const si::attenuation<double> attenuation_coefficient, 
             const double refractive_index_of_material,
             const double refractive_index_of_medium,
-            const si::length wavelength
+            const si::length<double> wavelength
         ){
             const double delta_n = refractive_index_of_material - refractive_index_of_medium;
             const double sum_n = refractive_index_of_material + refractive_index_of_medium;
@@ -106,11 +106,11 @@ namespace compound{
         /*
         // For now, we will comment out solve_attenuation_coefficient_from_reflectance_and_refactive_index and the accompanying tests here
         // the following is a first order approximation from Vincent and Hunt (1968), copied from Eastes (1989)
-        si::attenuation solve_attenuation_coefficient_from_reflectance_and_refactive_index(
+        si::attenuation<double> solve_attenuation_coefficient_from_reflectance_and_refactive_index(
             const double reflectance, 
             const double refractive_index_of_material,
             const double refractive_index_of_medium,
-            const si::length wavelength,
+            const si::length<double> wavelength,
             const int iteration_count = 10
         ){
             const double delta_n = refractive_index_of_material - refractive_index_of_medium;
@@ -133,7 +133,7 @@ namespace compound{
             const auto intercept = si::sqrt(delta_n * delta_n / n1_lambda_over_4pi_squared);
             // std::cout << "intercept.to_string():                  " << intercept.to_string() << std::endl;
             // const auto asymptote = si::sqrt(sum_n * sum_n / n1_lambda_over_4pi_squared);
-            si::attenuation alpha = intercept;
+            si::attenuation<double> alpha = intercept;
             // std::cout << "alpha.to_string():                      " << alpha.to_string() << std::endl;
             double error(0.0);
             auto dF_dalpha(0.0 * si::meter);

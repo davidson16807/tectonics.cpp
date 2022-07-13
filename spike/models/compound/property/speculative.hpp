@@ -54,11 +54,11 @@ namespace compound{
         This is unfortunately the best we have to go on, but it's at least consistent with several compounds
         with wildly different temperature responses.
         */
-        si::dynamic_viscosity guess_viscosity_as_liquid_from_viscosity_as_solid(const si::dynamic_viscosity viscosity_as_solid)
+        si::dynamic_viscosity<double> guess_viscosity_as_liquid_from_viscosity_as_solid(const si::dynamic_viscosity<double> viscosity_as_solid)
         {
             return viscosity_as_solid / 1e17;
         }
-        si::dynamic_viscosity guess_viscosity_as_solid_from_viscosity_as_liquid(const si::dynamic_viscosity viscosity_as_liquid)
+        si::dynamic_viscosity<double> guess_viscosity_as_solid_from_viscosity_as_liquid(const si::dynamic_viscosity<double> viscosity_as_liquid)
         {
             return viscosity_as_liquid * 1e17;
         }
@@ -84,16 +84,16 @@ namespace compound{
         namespace 
         {
             const float liquid_solid_density_slope = 84.587f;
-            const si::density liquid_solid_density_intercept = 1.112 * si::kilogram/si::meter3;
-            constexpr si::density kilogram_per_meter3 = si::kilogram/si::meter3; 
+            const si::density<double> liquid_solid_density_intercept = 1.112 * si::kilogram/si::meter3;
+            constexpr si::density<double> kilogram_per_meter3 = si::kilogram/si::meter3; 
         }
 
-        si::density guess_density_as_solid_from_density_as_liquid(const si::density density_as_liquid)
+        si::density<double> guess_density_as_solid_from_density_as_liquid(const si::density<double> density_as_liquid)
         {
             return liquid_solid_density_slope * density_as_liquid + liquid_solid_density_intercept;
         }
 
-        si::density guess_density_as_liquid_from_density_as_solid(const si::density density_as_solid)
+        si::density<double> guess_density_as_liquid_from_density_as_solid(const si::density<double> density_as_solid)
         {
             return (density_as_solid - liquid_solid_density_intercept) / liquid_solid_density_slope;
         }

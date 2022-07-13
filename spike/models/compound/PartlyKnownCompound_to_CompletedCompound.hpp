@@ -76,7 +76,7 @@ namespace compound
                                 freezing_point_sample_temperature, 
                                 latent_heat_of_vaporization, 
                                 molar_mass
-                            ](const si::pressure p, const si::temperature T){
+                            ](const si::pressure<double> p, const si::temperature<double> T){
                                 return property::get_basic_phase(
                                     p, T, 
                                     triple_point_pressure,

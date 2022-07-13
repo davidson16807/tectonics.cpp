@@ -16,9 +16,9 @@ namespace mixture{
         which only holds if particles are larged compared to the wavelength.
         */
         constexpr float approx_single_scatter_albedo_of_mixture_from_scattering_efficiencies_and_densities(
-            const std::vector<si::density> bulk_densities, 
-            const std::vector<si::density> solid_densities, 
-            const std::vector<si::length> diameters,
+            const std::vector<si::density<double>> bulk_densities, 
+            const std::vector<si::density<double>> solid_densities, 
+            const std::vector<si::length<double>> diameters,
             const std::vector<float> scattering_efficiencies,
         ){
             float denominator = 0.0;
@@ -34,8 +34,8 @@ namespace mixture{
         given the extinction and scattering efficiencies for a mixture
         */
         constexpr float get_single_scatter_albedo_of_mixture_from_scattering_efficiencies_and_number_densities(
-            const std::vector<si::number_density> number_densities, 
-            const std::vector<si::area> cross_sections_of_component_particles, 
+            const std::vector<si::number_density<double>> number_densities, 
+            const std::vector<si::area<double>> cross_sections_of_component_particles, 
             const std::vector<float> scattering_efficiencies,
             const std::vector<float> extinction_efficiencies
         ){
@@ -52,8 +52,8 @@ namespace mixture{
         equivalent to the "S" function of Hapke (1981)
         */
         constexpr float get_scattering_efficiencies_of_mixture_from_number_density(
-            const std::vector<si::number_density> number_densities, 
-            const std::vector<si::area> cross_sections_of_component_particles, 
+            const std::vector<si::number_density<double>> number_densities, 
+            const std::vector<si::area<double>> cross_sections_of_component_particles, 
             const std::vector<float> scattering_efficiencies
         ){
             float scattering_efficiencies_of_mixture = 0.0;
@@ -67,7 +67,7 @@ namespace mixture{
         equivalent to the "E" function of Hapke (1981)
         */
         constexpr float get_extinction_efficiencies_of_mixture_from_number_density(
-            const std::vector<si::number_density> number_densities, 
+            const std::vector<si::number_density<double>> number_densities, 
             const std::vector<float> extinction_efficiencies
         ){
             float extinction_efficiencies_of_mixture = 0.0;
@@ -85,7 +85,7 @@ namespace mixture{
             pᵢ(g)   fractions_of_light_scattered_by_angle_in_components         equal to 1 for isotropic scatterers
         */
         constexpr float get_fraction_of_light_scattered_by_angle_in_mixture(
-            const std::vector<si::area> cross_sections_of_component_particles, 
+            const std::vector<si::area<double>> cross_sections_of_component_particles, 
             const std::vector<float> scattering_efficiencies_of_components, 
             const std::vector<float> fractions_of_light_scattered_by_angle_in_components
         ){

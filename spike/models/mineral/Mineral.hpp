@@ -42,7 +42,7 @@ namespace mineral
 
 	struct Mineral
 	{
-		si::mass mass; 
+		si::mass<double> mass; 
 		uint phase_id;
 		std::array<float, int(GrainType::count)> grain_type_relative_volume;
 
@@ -55,7 +55,7 @@ namespace mineral
 		{
 			grain_type_relative_volume.fill(1e-4);
 		}
-		Mineral(si::mass mass):
+		Mineral(si::mass<double> mass):
 			mass(mass)
 		{
 			grain_type_relative_volume.fill(1e-4);

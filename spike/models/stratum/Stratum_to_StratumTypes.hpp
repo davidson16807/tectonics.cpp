@@ -39,7 +39,7 @@ namespace stratum
     We also use this diagram as reason to set an equivalence of 900K = 20kb 
     for determining less well known forms of metamorphism and lithification.
     */
-    MetamorphicFacies get_metamorphic_facies(si::pressure p, si::temperature t)
+    MetamorphicFacies get_metamorphic_facies(si::pressure<double> p, si::temperature<double> t)
     {
         glm::vec2 pt_scaled = glm::vec2(p/si::pascal,t/si::kelvin) / glm::vec2(2e8, 100);
 
@@ -198,7 +198,7 @@ namespace stratum
     template<std::size_t M>
     IgneousCompositionTypes get_igneous_composition_types(const Stratum<M>& stratum)
     {
-        si::mass total_mass = stratum.mass();
+        si::mass<double> total_mass = stratum.mass();
         if (stratum.minerals[std::size_t(OxygenPlanetMineralTypes::olivine)].mass / total_mass > 0.3)
         {
             return IgneousCompositionTypes::ultramafic;
@@ -269,8 +269,8 @@ namespace stratum
     template<std::size_t M>
     MetamorphicGrades get_metamorphic_grades(const Stratum<M>& stratum)
     {
-        si::pressure p = stratum.max_pressure_received; // the lowest max pressure shared by all mass pools
-        si::temperature t = stratum.max_temperature_received; // the lowest max temperature shared by all mass pools
+        si::pressure<double> p = stratum.max_pressure_received; // the lowest max pressure shared by all mass pools
+        si::temperature<double> t = stratum.max_temperature_received; // the lowest max temperature shared by all mass pools
         glm::vec2 PT(p/si::pascal, std::max((t-si::standard_temperature)/si::kelvin, 0.0));
         glm::vec2 scale(2e8, 100);
         float distance = glm::length(PT/scale);
@@ -316,7 +316,7 @@ namespace stratum
     RockCompositionTypes get_rock_composition_types(const Stratum<M>& stratum)
     {
         RockCompositionTypes out;
-        si::mass total_mass = stratum.mass();
+        si::mass<double> total_mass = stratum.mass();
         out.partly_calcareous =  stratum.minerals[std::size_t(OxygenPlanetMineralTypes::calcite    )].mass  / total_mass > 0.5;
         out.calcareous        =  stratum.minerals[std::size_t(OxygenPlanetMineralTypes::calcite    )].mass  / total_mass > 0.75;
         out.silicaceous       =  stratum.minerals[std::size_t(OxygenPlanetMineralTypes::quartz     )].mass  / total_mass > 0.9;

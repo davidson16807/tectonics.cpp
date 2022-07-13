@@ -7,16 +7,16 @@ namespace field{
 
     struct SpectralParameters
     {
-        si::wavenumber nlo;
-        si::wavenumber nhi;
-        si::pressure pressure;
-        si::temperature temperature;
+        si::wavenumber<double> nlo;
+        si::wavenumber<double> nhi;
+        si::pressure<double> pressure;
+        si::temperature<double> temperature;
 
         constexpr SpectralParameters(
-            const si::wavenumber nlo,
-            const si::wavenumber nhi,
-            const si::pressure pressure, 
-            const si::temperature temperature
+            const si::wavenumber<double> nlo,
+            const si::wavenumber<double> nhi,
+            const si::pressure<double> pressure, 
+            const si::temperature<double> temperature
         ): 
             nlo(nlo),
             nhi(nhi),

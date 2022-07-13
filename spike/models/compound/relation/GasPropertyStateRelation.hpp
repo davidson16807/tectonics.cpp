@@ -266,8 +266,8 @@ namespace relation {
         std::vector<ClampedSigmoid>  Tsigmoids;
         std::vector<ClampedDippr102> Tdippr102s;
 
-        si::pressure    punits;
-        si::temperature Tunits;
+        si::pressure<double>    punits;
+        si::temperature<double> Tunits;
         Ty              yunits;
 
         float intercept;
@@ -283,8 +283,8 @@ namespace relation {
             const std::vector<ClampedSigmoid>  Tsigmoids,
             const std::vector<ClampedDippr102> Tdippr102s,
 
-            const si::pressure    punits,
-            const si::temperature Tunits,
+            const si::pressure<double>    punits,
+            const si::temperature<double> Tunits,
             const Ty              yunits,
 
             const float intercept,
@@ -336,7 +336,7 @@ namespace relation {
             return *this;
         }
 
-        Ty operator()(const si::pressure pressure, const si::temperature temperature) const
+        Ty operator()(const si::pressure<double> pressure, const si::temperature<double> temperature) const
         {
             const float p = float(pressure/punits);
             const float T = float(temperature/Tunits);
@@ -378,8 +378,8 @@ namespace relation {
         }
 
         GasPropertyStateRelation<Ty> restriction(
-            const si::pressure min_pressure, const si::pressure max_pressure,
-            const si::temperature min_temperature, const si::temperature max_temperature,
+            const si::pressure<double> min_pressure, const si::pressure<double> max_pressure,
+            const si::temperature<double> min_temperature, const si::temperature<double> max_temperature,
             const float known_max_fractional_error
         ) const
         {
@@ -567,7 +567,7 @@ namespace relation {
     // 36 uses, for dynamic_viscosity, isobaric_specific_heat_capacity, and thermal_conductivity of gases
     template<typename Ty>
     constexpr GasPropertyStateRelation<Ty> get_sigmoid_exponent_pressure_temperature_relation(
-        const si::temperature Tunits, const si::pressure punits, const Ty yunits,
+        const si::temperature<double> Tunits, const si::pressure<double> punits, const Ty yunits,
         const float pslope, const float pexponent,
         const float Tslope, const float Texponent,
         const float Tsigmoid_max, const float Tsigmoid_scale, const float Tsigmoid_center,
@@ -591,7 +591,7 @@ namespace relation {
 
     template<typename Ty>
     constexpr GasPropertyStateRelation<Ty> get_exponent_pressure_temperature_relation(
-        const si::temperature Tunits, const si::pressure punits, const Ty yunits,
+        const si::temperature<double> Tunits, const si::pressure<double> punits, const Ty yunits,
         const float pslope, const float pexponent,
         const float Tslope, const float Texponent,
         const float intercept,
@@ -616,7 +616,7 @@ namespace relation {
     // 9 uses, for viscosity and thermal conductivity of gas
     template<typename Ty>
     constexpr GasPropertyStateRelation<Ty> get_dippr_temperature_relation_102(
-        const si::temperature Tunits, const Ty yunits,
+        const si::temperature<double> Tunits, const Ty yunits,
         const float c1, const float c2, const float c3, const float c4,
         const float Tmin, const float Tmax
     ) {
@@ -626,7 +626,7 @@ namespace relation {
             std::vector<ClampedSigmoid>(0),
             std::vector<ClampedDippr102>{ClampedDippr102(Tmin, Tmax, Dippr102(c1, c2, c3, c4))},
 
-            si::pressure(1.0), Tunits, yunits,
+            si::pressure<double>(1.0), Tunits, yunits,
 
             0.0, // intercept
             0.0 // known_max_fractional_error
@@ -661,7 +661,7 @@ namespace relation {
     */
     template<typename Ty, typename F>
     constexpr GasPropertyStateRelation<Ty> approx_inferred_pressure_temperature_gas_relation(
-        const si::temperature Tunits, const si::pressure punits, const Ty yunits,
+        const si::temperature<double> Tunits, const si::pressure<double> punits, const Ty yunits,
         const F& f,
         const float Tmin, const float Tmax,
         const float pmin, const float pmax,
@@ -692,7 +692,7 @@ namespace relation {
             std::vector<ClampedSigmoid>(),
             std::vector<ClampedDippr102>(),
 
-            si::pressure(1.0), Tunits, yunits,
+            si::pressure<double>(1.0), Tunits, yunits,
 
             fT[0], 
             known_max_fractional_error
@@ -715,7 +715,7 @@ namespace relation {
     // 1 use, for heat capacity of nitric oxide
     template<typename Ty>
     constexpr GasPropertyStateRelation<Ty> get_perry_temperature_gas_relation(
-        const si::temperature Tunits, const Ty yunits,
+        const si::temperature<double> Tunits, const Ty yunits,
         const float intercept, const float linear, const float inverse_square, const float square,
         const float Tmin, const float Tmax
     ) {
@@ -729,7 +729,7 @@ namespace relation {
             std::vector<ClampedSigmoid>(),
             std::vector<ClampedDippr102>(),
 
-            si::pressure(1.0), Tunits, yunits,
+            si::pressure<double>(1.0), Tunits, yunits,
 
             intercept,
             0.0 // known_max_fractional_error
@@ -831,13 +831,13 @@ namespace relation {
         const field::StateParameters hi
     ){
         float result(0.0f);
-        si::pressure lop = lo.pressure;
-        si::temperature loT = lo.temperature;
-        si::pressure hip = hi.pressure;
-        si::temperature hiT = hi.temperature;
-        for(si::pressure p = lop; p<hip; p*=3.0)
+        si::pressure<double> lop = lo.pressure;
+        si::temperature<double> loT = lo.temperature;
+        si::pressure<double> hip = hi.pressure;
+        si::temperature<double> hiT = hi.temperature;
+        for(si::pressure<double> p = lop; p<hip; p*=3.0)
         {
-            for(si::temperature T = loT; T<hiT; T*=3.0)
+            for(si::temperature<double> T = loT; T<hiT; T*=3.0)
             {
                 result = std::max(result, 
                     float(std::abs((first(p, T) - second(p, T)) / T1(1))));

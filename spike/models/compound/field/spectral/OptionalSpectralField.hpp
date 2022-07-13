@@ -42,12 +42,12 @@ namespace field {
         template<typename Tout>
         class OptionalSpectralFieldValueVisitor
         {
-            si::wavenumber nlo;
-            si::wavenumber nhi;
-            si::pressure p;
-            si::temperature T;
+            si::wavenumber<double> nlo;
+            si::wavenumber<double> nhi;
+            si::pressure<double> p;
+            si::temperature<double> T;
         public:
-            OptionalSpectralFieldValueVisitor(const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T)
+            OptionalSpectralFieldValueVisitor(const si::wavenumber<double> nlo, const si::wavenumber<double> nhi, const si::pressure<double> p, const si::temperature<double> T)
             : nlo(nlo), nhi(nhi), p(p), T(T)
             {
 
@@ -62,18 +62,18 @@ namespace field {
         template<typename T2>
         class OptionalSpectralFieldMapToConstantVisitor
         {
-            si::wavenumber default_nlo;
-            si::wavenumber default_nhi;
-            si::pressure default_p;
-            si::temperature default_T;
-            std::function<T2(T1, si::wavenumber, si::wavenumber, si::pressure, si::temperature)> f;
+            si::wavenumber<double> default_nlo;
+            si::wavenumber<double> default_nhi;
+            si::pressure<double> default_p;
+            si::temperature<double> default_T;
+            std::function<T2(T1, si::wavenumber<double>, si::wavenumber<double>, si::pressure<double>, si::temperature<double>)> f;
         public:
             OptionalSpectralFieldMapToConstantVisitor(
-                const si::wavenumber default_nlo, 
-                const si::wavenumber default_nhi,
-                const si::pressure default_p, 
-                const si::temperature default_T,
-                const std::function<T2(const T1, const si::wavenumber, const si::wavenumber, const si::pressure, const si::temperature)> f
+                const si::wavenumber<double> default_nlo, 
+                const si::wavenumber<double> default_nhi,
+                const si::pressure<double> default_p, 
+                const si::temperature<double> default_T,
+                const std::function<T2(const T1, const si::wavenumber<double>, const si::wavenumber<double>, const si::pressure<double>, const si::temperature<double>)> f
             )
             : default_nlo(default_nlo), 
               default_nhi(default_nhi), 
@@ -151,7 +151,7 @@ namespace field {
                 // I haven't clarified the reason, but it seems likely related to accessing 
                 // the `f` attribute in a object that destructs after we exit out of the `map` function.
                 auto fcopy = f; 
-                return [fcopy, a](const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T){ return fcopy(a(nlo, nhi, p, T)); };
+                return [fcopy, a](const si::wavenumber<double> nlo, const si::wavenumber<double> nhi, const si::pressure<double> p, const si::temperature<double> T){ return fcopy(a(nlo, nhi, p, T)); };
             }
         };
         OptionalSpectralFieldVariant<T1> entry;
@@ -172,10 +172,10 @@ namespace field {
         {
             auto value2 = value;
             entry = SpectralFunction<T1>([value2](
-                const si::wavenumber nlo,
-                const si::wavenumber nhi,
-                const si::pressure p, 
-                const si::temperature T
+                const si::wavenumber<double> nlo,
+                const si::wavenumber<double> nhi,
+                const si::pressure<double> p, 
+                const si::temperature<double> T
               ){
                 return value2;
               });
@@ -195,10 +195,10 @@ namespace field {
         {
             auto value = other;
             entry = SpectralFunction<T1>([value](
-                const si::wavenumber nlo,
-                const si::wavenumber nhi,
-                const si::pressure p, 
-                const si::temperature T
+                const si::wavenumber<double> nlo,
+                const si::wavenumber<double> nhi,
+                const si::pressure<double> p, 
+                const si::temperature<double> T
               ){
                 return value;
               });
@@ -215,7 +215,7 @@ namespace field {
             return *this;
         }
 
-        constexpr std::optional<T1> operator()(const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T) const
+        constexpr std::optional<T1> operator()(const si::wavenumber<double> nlo, const si::wavenumber<double> nhi, const si::pressure<double> p, const si::temperature<double> T) const
         {
             return std::visit(OptionalSpectralFieldValueVisitor<T1>(nlo, nhi, p, T), entry);
         }
@@ -266,7 +266,7 @@ namespace field {
                 auto a2 = a;
                 return SpectralFunction<T1>(
                     [f2, a2]
-                    (const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T)
+                    (const si::wavenumber<double> nlo, const si::wavenumber<double> nhi, const si::pressure<double> p, const si::temperature<double> T)
                     { return f2(SpectralParameters(nlo,nhi,p,T), a2(nlo,nhi,p,T).value()); }
                 );
             }
@@ -295,7 +295,7 @@ namespace field {
                 auto b2 = b;
                 return SpectralFunction<T1>(
                     [f2, a2, b2]
-                    (const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T)
+                    (const si::wavenumber<double> nlo, const si::wavenumber<double> nhi, const si::pressure<double> p, const si::temperature<double> T)
                     { return f2(SpectralParameters(nlo,nhi,p,T), a2(nlo,nhi,p,T).value(), b2(nlo,nhi,p,T).value()); }
                 );
             }
@@ -327,7 +327,7 @@ namespace field {
                 auto c2 = c;
                 return SpectralFunction<T1>(
                     [f2, a2, b2, c2]
-                    (const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T)
+                    (const si::wavenumber<double> nlo, const si::wavenumber<double> nhi, const si::pressure<double> p, const si::temperature<double> T)
                     { return f2(SpectralParameters(nlo,nhi,p,T), a2(nlo,nhi,p,T).value(), b2(nlo,nhi,p,T).value(), c2(nlo,nhi,p,T).value()); }
                 );
             }

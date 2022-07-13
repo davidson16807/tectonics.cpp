@@ -20,10 +20,10 @@ namespace compound {
     ){
         return field::SpectralFunction<Ty>(
             [value]
-            (const si::wavenumber nlo, 
-             const si::wavenumber nhi, 
-             const si::pressure p, 
-             const si::temperature T)
+            (const si::wavenumber<double> nlo, 
+             const si::wavenumber<double> nhi, 
+             const si::pressure<double> p, 
+             const si::temperature<double> T)
             {
                 return value;
             }
@@ -32,17 +32,17 @@ namespace compound {
 
     template<typename Ty>
     field::SpectralFunction<Ty> get_spectral_linear_interpolation_function_of_wavenumber(
-        const si::wavenumber nunits, const Ty yunits,
+        const si::wavenumber<double> nunits, const Ty yunits,
         const std::vector<double> ls, 
         const std::vector<double> ys
     ){
         assert(ls.size() == ys.size());
         return field::SpectralFunction<Ty>(
             [nunits, yunits, ls, ys]
-            (const si::wavenumber nlo, 
-             const si::wavenumber nhi, 
-             const si::pressure p, 
-             const si::temperature T)
+            (const si::wavenumber<double> nlo, 
+             const si::wavenumber<double> nhi, 
+             const si::pressure<double> p, 
+             const si::temperature<double> T)
             {
                 return (math::integral_of_lerp(ls, ys, (nlo/nunits), (nhi/nunits)) 
                     / (nhi/nunits - nlo/nunits)) * yunits;
@@ -52,12 +52,12 @@ namespace compound {
 
     template<typename Ty>
     field::SpectralFunction<Ty> get_spectral_linear_interpolation_function_of_wavelength(
-        const si::length lunits, const Ty yunits,
+        const si::length<double> lunits, const Ty yunits,
         const std::vector<double> ls, 
         const std::vector<double> ys
     ){
         assert(ls.size() == ys.size());
-        const si::wavenumber nunits = 1.0/lunits;
+        const si::wavenumber<double> nunits = 1.0/lunits;
         std::vector<double> ns;
         std::vector<double> nys;
         for (std::size_t i=0; i<ys.size(); i++){
@@ -68,10 +68,10 @@ namespace compound {
         std::reverse(nys.begin(), nys.end());
         return field::SpectralFunction<Ty>(
             [nunits, yunits, ns, nys]
-            (const si::wavenumber nlo, 
-             const si::wavenumber nhi, 
-             const si::pressure p, 
-             const si::temperature T)
+            (const si::wavenumber<double> nlo, 
+             const si::wavenumber<double> nhi, 
+             const si::pressure<double> p, 
+             const si::temperature<double> T)
             {
                 return (math::integral_of_lerp(ns, nys, (nlo/nunits), (nhi/nunits)) 
                     / (nhi/nunits - nlo/nunits)) * yunits;
@@ -81,17 +81,17 @@ namespace compound {
 
     template<typename Ty>
     field::SpectralFunction<Ty> get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output(
-        const si::wavenumber lunits, const Ty yunits,
+        const si::wavenumber<double> lunits, const Ty yunits,
         const std::vector<double>     ls, 
         const std::vector<double>log10ys
     ){
         assert(ls.size() == log10ys.size());
         return field::SpectralFunction<Ty>(
             [lunits, yunits, ls, log10ys]
-            (const si::wavenumber nlo, 
-             const si::wavenumber nhi, 
-             const si::pressure p, 
-             const si::temperature T)
+            (const si::wavenumber<double> nlo, 
+             const si::wavenumber<double> nhi, 
+             const si::pressure<double> p, 
+             const si::temperature<double> T)
             {
                 return std::pow(10.0, math::integral_of_lerp(
                         ls, log10ys, 
@@ -104,12 +104,12 @@ namespace compound {
 
     template<typename Ty>
     field::SpectralFunction<Ty> get_spectral_linear_interpolation_function_of_wavelength_for_log10_sample_output(
-        const si::length lunits, const Ty yunits,
+        const si::length<double> lunits, const Ty yunits,
         const std::vector<double>     ls, 
         const std::vector<double>log10ys
     ){
         assert(ls.size() == log10ys.size());
-        const si::wavenumber nunits = 1.0/lunits;
+        const si::wavenumber<double> nunits = 1.0/lunits;
         std::vector<double> ns;
         std::vector<double> nlog10ys;
         for (std::size_t i=0; i<log10ys.size(); i++){
@@ -120,10 +120,10 @@ namespace compound {
         std::reverse(nlog10ys.begin(), nlog10ys.end());
         return field::SpectralFunction<Ty>(
             [nunits, yunits, ns, nlog10ys]
-            (const si::wavenumber nlo, 
-             const si::wavenumber nhi, 
-             const si::pressure p, 
-             const si::temperature T)
+            (const si::wavenumber<double> nlo, 
+             const si::wavenumber<double> nhi, 
+             const si::pressure<double> p, 
+             const si::temperature<double> T)
             {
                 return std::pow(10.0, math::integral_of_lerp(
                         ns, nlog10ys, 
@@ -136,12 +136,12 @@ namespace compound {
 
     template<typename Ty>
     field::SpectralFunction<Ty> get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_input(
-        const si::wavenumber lunits, const Ty yunits,
+        const si::wavenumber<double> lunits, const Ty yunits,
         const std::vector<double>log10ls, 
         const std::vector<double>     ys
     ){
         assert(log10ls.size() == ys.size());
-        const si::wavenumber nunits = 1.0/lunits;
+        const si::wavenumber<double> nunits = 1.0/lunits;
         std::vector<double> ns;
         std::vector<double> nys;
         for (std::size_t i=0; i<ys.size(); i++){
@@ -152,10 +152,10 @@ namespace compound {
         std::reverse(nys.begin(), nys.end());
         return field::SpectralFunction<Ty>(
             [lunits, yunits, ns, nys]
-            (const si::wavenumber nlo, 
-             const si::wavenumber nhi, 
-             const si::pressure p, 
-             const si::temperature T)
+            (const si::wavenumber<double> nlo, 
+             const si::wavenumber<double> nhi, 
+             const si::pressure<double> p, 
+             const si::temperature<double> T)
             {
                 return (math::integral_of_lerp(
                         ns, nys, 
@@ -168,12 +168,12 @@ namespace compound {
 
     template<typename Ty>
     field::SpectralFunction<Ty> get_spectral_linear_interpolation_function_of_wavelength_for_log10_sample_input(
-        const si::length lunits, const Ty yunits,
+        const si::length<double> lunits, const Ty yunits,
         const std::vector<double>log10ls, 
         const std::vector<double>     ys
     ){
         assert(log10ls.size() == ys.size());
-        const si::wavenumber nunits = 1.0/lunits;
+        const si::wavenumber<double> nunits = 1.0/lunits;
         std::vector<double> ns;
         std::vector<double> nys;
         for (std::size_t i=0; i<log10ls.size(); i++){
@@ -184,10 +184,10 @@ namespace compound {
         std::reverse(nys.begin(), nys.end());
         return field::SpectralFunction<Ty>(
             [nunits, yunits, ns, nys]
-            (const si::wavenumber nlo, 
-             const si::wavenumber nhi, 
-             const si::pressure p, 
-             const si::temperature T)
+            (const si::wavenumber<double> nlo, 
+             const si::wavenumber<double> nhi, 
+             const si::pressure<double> p, 
+             const si::temperature<double> T)
             {
                 return (math::integral_of_lerp(
                         ns, nys,
@@ -206,19 +206,19 @@ namespace compound {
     ){
         return field::SpectralFunction<Ty>(
             [xunits, yunits, a,b,c,d, Pmin, Pmax]
-            (const si::wavenumber nlo, 
-             const si::wavenumber nhi, 
-             const si::pressure p, 
-             const si::temperature T)
+            (const si::wavenumber<double> nlo, 
+             const si::wavenumber<double> nhi, 
+             const si::pressure<double> p, 
+             const si::temperature<double> T)
             {
                 return (a+b*std::pow(1.0+c*std::clamp(p/xunits, Pmin, Pmax), d)) * yunits;
             }
         );
     }
     
-    field::SpectralFunction<si::attenuation> get_absorption_coefficient_function_from_reflectance_at_wavelengths(
-        const si::length lunits,
-        const si::length particle_diameter, 
+    field::SpectralFunction<si::attenuation<double>> get_absorption_coefficient_function_from_reflectance_at_wavelengths(
+        const si::length<double> lunits,
+        const si::length<double> particle_diameter, 
         const std::vector<double>wavelengths, 
         const std::vector<double>reflectances
     ){
@@ -230,12 +230,12 @@ namespace compound {
         std::reverse(wavenumbers.begin(), wavenumbers.end());
         std::reverse(wavenumber_reflectances.begin(), wavenumber_reflectances.end());
 
-        return field::SpectralFunction<si::attenuation>(
+        return field::SpectralFunction<si::attenuation<double>>(
             [lunits, wavenumbers, wavenumber_reflectances, particle_diameter]
-            (const si::wavenumber nlo, 
-             const si::wavenumber nhi, 
-             const si::pressure p, 
-             const si::temperature T)
+            (const si::wavenumber<double> nlo, 
+             const si::wavenumber<double> nhi, 
+             const si::pressure<double> p, 
+             const si::temperature<double> T)
             {
                 double reflectance = math::integral_of_lerp(wavenumbers, wavenumber_reflectances, (nlo*lunits), (nhi*lunits)) 
                     / (nhi*lunits - nlo*lunits);
@@ -246,18 +246,18 @@ namespace compound {
         );
     }
 
-    field::SpectralFunction<si::attenuation> get_absorption_coefficient_function_from_reflectance_at_wavenumbers(
-        const si::wavenumber xunits,
-        const si::length particle_diameter, 
+    field::SpectralFunction<si::attenuation<double>> get_absorption_coefficient_function_from_reflectance_at_wavenumbers(
+        const si::wavenumber<double> xunits,
+        const si::length<double> particle_diameter, 
         const std::vector<double>wavenumbers, 
         const std::vector<double>reflectances
     ){
-        return field::SpectralFunction<si::attenuation>(
+        return field::SpectralFunction<si::attenuation<double>>(
             [xunits, wavenumbers, reflectances, particle_diameter]
-            (const si::wavenumber nlo, 
-             const si::wavenumber nhi, 
-             const si::pressure p, 
-             const si::temperature T)
+            (const si::wavenumber<double> nlo, 
+             const si::wavenumber<double> nhi, 
+             const si::pressure<double> p, 
+             const si::temperature<double> T)
             {
                 double reflectance = math::integral_of_lerp(wavenumbers, reflectances, (nlo/xunits), (nhi/xunits)) / (nhi/xunits - nlo/xunits);
                 double single_scatter_albedo = compound::property::approx_single_scatter_albedo_from_reflectance(reflectance);

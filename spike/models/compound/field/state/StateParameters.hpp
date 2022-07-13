@@ -7,12 +7,12 @@ namespace field{
 
     struct StateParameters
     {
-        si::pressure pressure;
-        si::temperature temperature;
+        si::pressure<double> pressure;
+        si::temperature<double> temperature;
 
         constexpr StateParameters(
-            const si::pressure pressure, 
-            const si::temperature temperature
+            const si::pressure<double> pressure, 
+            const si::temperature<double> temperature
         ): 
             pressure(pressure), 
             temperature(temperature) 

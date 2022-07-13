@@ -31,9 +31,9 @@ namespace stratum
         Particle size is primarily used to indicate distinctions between things like boulders vs. pebbles vs sand vs. clay
         */
         std::array<mineral::Mineral, M>  minerals;
-        si::temperature max_temperature_received;
-        si::pressure max_pressure_received;
-        si::time age_of_world_when_deposited;
+        si::temperature<double> max_temperature_received;
+        si::pressure<double> max_pressure_received;
+        si::time<double> age_of_world_when_deposited;
 
         Stratum():
             max_temperature_received(0*si::kelvin),
@@ -44,9 +44,9 @@ namespace stratum
         }
 
         Stratum(
-            const si::temperature max_temperature_received,
-            const si::pressure max_pressure_received,
-            const si::time age_of_world_when_deposited
+            const si::temperature<double> max_temperature_received,
+            const si::pressure<double> max_pressure_received,
+            const si::time<double> age_of_world_when_deposited
         ):
             max_temperature_received(max_temperature_received),
             max_pressure_received(max_pressure_received),
@@ -56,9 +56,9 @@ namespace stratum
         }
 
         Stratum(
-            const si::temperature max_temperature_received,
-            const si::pressure max_pressure_received,
-            const si::time age_of_world_when_deposited,
+            const si::temperature<double> max_temperature_received,
+            const si::pressure<double> max_pressure_received,
+            const si::time<double> age_of_world_when_deposited,
             const std::initializer_list<mineral::Mineral>& vector
         ): 
             max_temperature_received(max_temperature_received),
@@ -75,41 +75,41 @@ namespace stratum
         }
 
         // DERIVED ATTRIBUTES, regular functions of the form: Stratum -> T
-        si::mass mass() const 
+        si::mass<double> mass() const 
         {
-            si::mass total_mass(0.0);
+            si::mass<double> total_mass(0.0);
             for (std::size_t i=0; i<M; i++)
             {
                 total_mass += minerals[i].mass;
             }
             return total_mass;
         }
-        si::time age(const si::time age_of_world) const
+        si::time<double> age(const si::time<double> age_of_world) const
         {
             return age_of_world - age_of_world_when_deposited;
         }
-        si::volume volume(const si::time age_of_world, const std::array<si::density, M>& mineral_densities) const 
+        si::volume<double> volume(const si::time<double> age_of_world, const std::array<si::density<double>, M>& mineral_densities) const 
         {
-            si::volume total_volume(0.0);
+            si::volume<double> total_volume(0.0);
             for (std::size_t i=0; i<M; i++)
             {
                 total_volume += minerals[i].mass / mineral_densities[i];
             }
             return total_volume;
         }
-        si::density density(const si::time age_of_world, const std::array<si::density, M>& mineral_densities) const 
+        si::density<double> density(const si::time<double> age_of_world, const std::array<si::density<double>, M>& mineral_densities) const 
         {
             return mass() / volume(age_of_world, mineral_densities);
         }
-        // si::thermal_conductivity thermal_conductivity(
-        //     si::time age_of_world,
-        //     const std::array<si::density, M>& mineral_densities,
-        //     const std::array<si::thermal_conductivity, M>& mineral_thermal_conductivities
+        // si::thermal_conductivity<double> thermal_conductivity(
+        //     si::time<double> age_of_world,
+        //     const std::array<si::density<double>, M>& mineral_densities,
+        //     const std::array<si::thermal_conductivity<double>, M>& mineral_thermal_conductivities
         // ) const 
         // {
         //     // geometric mean weighted by fractional volume, see work by Fuchs (2013)
         //     float logK(0.0);
-        //     si::volume total_volume(volume(mineral_densities));
+        //     si::volume<double> total_volume(volume(mineral_densities));
         //     float fractional_volume(0);
         //     for (std::size_t i=0; i<M; i++)
         //     {

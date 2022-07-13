@@ -7,6 +7,6 @@ namespace compound {
 namespace field {
 	template<typename T1>
     using StateFunction = std::function<T1(
-    	const si::pressure p, 
-    	const si::temperature T)>;
+    	const si::pressure<double> p, 
+    	const si::temperature<double> T)>;
 }}

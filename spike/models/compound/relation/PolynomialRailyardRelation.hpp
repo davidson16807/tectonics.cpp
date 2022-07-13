@@ -34,6 +34,29 @@ namespace relation {
         {
         }
 
+        template<typename T, int Qlo, int Qhi>
+        explicit constexpr PolynomialRailyardRelation(
+            const math::PolynomialRailyard<T, Qlo, Qhi> spline,
+            const Tx xunits,
+            const Ty yunits
+        ):
+            spline(spline),
+            xunits(xunits),
+            yunits(yunits)
+        {
+        }
+
+        // copy constructor
+        template<int Qlo, int Qhi>
+        constexpr PolynomialRailyardRelation(
+            const PolynomialRailyardRelation<Tx, Ty, Qlo, Qhi>& other
+        ):
+            spline(other.spline),
+            xunits(other.xunits),
+            yunits(other.yunits)
+        {
+        }
+
         constexpr PolynomialRailyardRelation(const Ty& other):
             spline(other/Ty(1.0)),
             xunits(1.0),
@@ -234,13 +257,13 @@ namespace relation {
 
     // TODO: rename `spectral_linear_spline`
     template<typename Ty>
-    PolynomialRailyardRelation<si::wavenumber,Ty,0,1> get_spectral_linear_interpolation_function_of_wavelength(
-        const si::length lunits, const Ty yunits,
+    PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavelength(
+        const si::length<double> lunits, const Ty yunits,
         const std::vector<double> ls, 
         const std::vector<double> lys
     ){
         assert(ls.size() == lys.size());
-        const si::wavenumber nunits = 1.0/lunits;
+        const si::wavenumber<double> nunits = 1.0/lunits;
         std::vector<double> ns;
         std::vector<double> ys;
         for (std::size_t i=0; i<lys.size(); i++){
@@ -249,22 +272,22 @@ namespace relation {
         }
         std::reverse(ns.begin(), ns.end());
         std::reverse(ys.begin(), ys.end());
-        return PolynomialRailyardRelation<si::wavenumber,Ty,0,1>(math::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1>(math::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
     template<typename Ty>
-    PolynomialRailyardRelation<si::wavenumber,Ty,0,1> get_spectral_linear_interpolation_function_of_wavenumber(
-        const si::wavenumber nunits, const Ty yunits,
+    PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavenumber(
+        const si::wavenumber<double> nunits, const Ty yunits,
         const std::vector<double> ns, 
         const std::vector<double> ys
     ){
         assert(ns.size() == ys.size());
-        return PolynomialRailyardRelation<si::wavenumber,Ty,0,1>(math::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1>(math::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
     template<typename Ty>
-    PolynomialRailyardRelation<si::wavenumber,Ty,0,1> get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output(
-        const si::wavenumber nunits, const Ty yunits,
+    PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output(
+        const si::wavenumber<double> nunits, const Ty yunits,
         const std::vector<double>      ns, 
         const std::vector<double> log10ys
     ){
@@ -273,17 +296,31 @@ namespace relation {
         for (std::size_t i=0; i<log10ys.size(); i++){
             ys.push_back(pow(10.0, log10ys[i]));
         }
-        return PolynomialRailyardRelation<si::wavenumber,Ty,0,1> (math::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> (math::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
     template<typename Ty>
-    PolynomialRailyardRelation<si::wavenumber,Ty,0,1> get_spectral_linear_interpolation_function_of_wavelength_for_log10_sample_output(
-        const si::length lunits, const Ty yunits,
+    PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,3> get_spectral_cubic_interpolation_function_of_wavenumber_for_log10_sample_output(
+        const si::wavenumber<double> nunits, const Ty yunits,
+        const std::vector<double>      ns, 
+        const std::vector<double> log10ys
+    ){
+        assert(ns.size() == log10ys.size());
+        std::vector<double> ys;
+        for (std::size_t i=0; i<log10ys.size(); i++){
+            ys.push_back(pow(10.0, log10ys[i]));
+        }
+        return PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,3> (math::spline::linear_spline<double>(ns, ys), nunits, yunits);
+    }
+
+    template<typename Ty>
+    PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavelength_for_log10_sample_output(
+        const si::length<double> lunits, const Ty yunits,
         const std::vector<double>      ls, 
         const std::vector<double>log10lys
     ){
         assert(ls.size() == log10lys.size());
-        const si::wavenumber nunits = 1.0/lunits;
+        const si::wavenumber<double> nunits = 1.0/lunits;
         std::vector<double> ns;
         std::vector<double> log10ys;
         for (std::size_t i=0; i<log10lys.size(); i++){
@@ -296,13 +333,13 @@ namespace relation {
         for (std::size_t i=0; i<log10ys.size(); i++){
             ys.push_back(pow(10.0, log10ys[i]));
         }
-        return PolynomialRailyardRelation<si::wavenumber,Ty,0,1> (math::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> (math::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
 
     template<typename Ty>
-    PolynomialRailyardRelation<si::wavenumber,Ty,0,1> get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_input(
-        const si::wavenumber nunits, const Ty yunits,
+    PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_input(
+        const si::wavenumber<double> nunits, const Ty yunits,
         const std::vector<double> log10ns, 
         const std::vector<double>      ys
     ){
@@ -311,17 +348,17 @@ namespace relation {
         for (std::size_t i=0; i<log10ns.size(); i++){
             ns.push_back(pow(10.0, log10ns[i]));
         }
-        return PolynomialRailyardRelation<si::wavenumber,Ty,0,1> (math::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> (math::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
     template<typename Ty>
-    PolynomialRailyardRelation<si::wavenumber,Ty,0,1> get_spectral_linear_interpolation_function_of_wavelength_for_log10_sample_input(
-        const si::length lunits, const Ty yunits,
+    PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavelength_for_log10_sample_input(
+        const si::length<double> lunits, const Ty yunits,
         const std::vector<double> log10ls, 
         const std::vector<double>      lys
     ){
         assert(log10ls.size() == lys.size());
-        const si::wavenumber nunits = 1.0/lunits;
+        const si::wavenumber<double> nunits = 1.0/lunits;
         std::vector<double> ns;
         std::vector<double> ys;
         for (std::size_t i=0; i<lys.size(); i++){
@@ -330,9 +367,63 @@ namespace relation {
         }
         std::reverse(ns.begin(), ns.end());
         std::reverse(ys.begin(), ys.end());
-        return PolynomialRailyardRelation<si::wavenumber,Ty,0,1> (math::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> (math::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
+
+
+
+    PolynomialRailyardRelation<si::wavenumber<double>,si::attenuation<double>,0,3> get_absorption_coefficient_function_from_reflectance_at_wavelengths(
+        const si::length<double> lunits,
+        const si::length<double> particle_diameter, 
+        const std::vector<double>wavelengths, 
+        const std::vector<double>reflectances
+    ){
+        std::vector<double> wavenumbers;
+        std::vector<double> wavenumber_reflectances = reflectances;
+        for (std::size_t i=0; i<reflectances.size(); i++){
+            wavenumbers.push_back(1.0/wavelengths[i]);
+        }
+        std::reverse(wavenumbers.begin(), wavenumbers.end());
+        std::reverse(wavenumber_reflectances.begin(), wavenumber_reflectances.end());
+
+        /*
+        NOTE: we assume extinction efficiency is close to 1, in which case the 
+          single scattering albedo equals scattering efficiency
+        In this case:
+          absorption_coefficient = approx_single_scatter_albedo_from_reflectance ∘ approx_single_scatter_albedo_from_reflectance
+        This is equivalent to:
+          absorption_coefficient = max((reflectance + 1.0)*(reflectance + 1.0) / (4.0 * reflectance) - 1.0, 0.0) / De;
+        where:
+          De = 2*particle_diameter;
+        We leverage the fact that 0 ≤ reflectance ≤ 1 to create a segmented 
+          linear approximation of 1/reflectance that is suited for that range.
+          It has an maximum error of 12% over the targeted range.
+        We use a linear approximation since the result will be composed 
+          with another segmented linear approximation for reflectance,
+          and we don't want the degree of the resulting polynomial 
+          to be so high that it produces nans upon evaluation.
+        */
+
+        const float oo = std::numeric_limits<float>::max();
+
+        const math::PolynomialRailyard<float,0,1> inverse{
+            math::PolynomialRailcar<float,0,1>(0.0357, 0.0778, math::linear_newton_polynomial<float>(0.0357, 0.0778,  28.041, 11.458)),
+            math::PolynomialRailcar<float,0,1>(0.0778, 0.1938, math::linear_newton_polynomial<float>(0.0778, 0.1938,  11.458,  4.937)),
+            math::PolynomialRailcar<float,0,1>(0.1938, 0.4649, math::linear_newton_polynomial<float>(0.1938, 0.4649,   4.937,  1.881)),
+            math::PolynomialRailcar<float,0,1>(0.4649, 1.0000, math::linear_newton_polynomial<float>(0.4649, 1.0000,   1.881,  1.000)),
+            math::PolynomialRailcar<float,0,1>(1.0000,     oo, math::linear_newton_polynomial<float>(1.0000, 2.0000,   1.000,  1.000))
+        };
+
+        return PolynomialRailyardRelation<si::wavenumber<double>,si::attenuation<double>,0,3>(
+            compose(
+                (0.25f * math::Shifting(1.0f) * math::Shifting(1.0f) * inverse - 1.0f)/(2.0f*float(particle_diameter/si::length<double>(1.0))),
+                math::spline::linear_spline<float>(wavenumbers, wavenumber_reflectances)
+            ),
+            si::wavenumber<double>(1.0),
+            si::attenuation<double>(1.0)
+        );
+    }
 
 }}
 

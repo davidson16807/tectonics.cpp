@@ -16,7 +16,7 @@ TEST_CASE( "StrataValues getter/setter invertibility", "[strata]" ) {
 	Strata<L,M> original = get_random<L,M>(generator);
 	Strata<L,M> modified;
 
-	StrataValues<si::pressure, L> pressures;
+	StrataValues<si::pressure<double>, L> pressures;
 	get_max_pressures_received(original, pressures);
 	set_max_pressures_received(original, pressures, modified);
 
@@ -24,7 +24,7 @@ TEST_CASE( "StrataValues getter/setter invertibility", "[strata]" ) {
 		STRATA_EQUAL(original, modified);
 	}
 
-	StrataValues<si::pressure, L> temperatures;
+	StrataValues<si::pressure<double>, L> temperatures;
 	get_max_temperatures_received(original, temperatures);
 	set_max_temperatures_received(original, temperatures, modified);
 

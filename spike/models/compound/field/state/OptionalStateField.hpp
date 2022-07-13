@@ -24,10 +24,10 @@ namespace field {
         template<typename Tout>
         class OptionalStateFieldValueVisitor
         {
-            si::pressure p;
-            si::temperature T;
+            si::pressure<double> p;
+            si::temperature<double> T;
         public:
-            OptionalStateFieldValueVisitor(const si::pressure p, const si::temperature T)
+            OptionalStateFieldValueVisitor(const si::pressure<double> p, const si::temperature<double> T)
             : p(p), T(T)
             {
 
@@ -93,8 +93,8 @@ namespace field {
         {
             auto value2 = value;
             entry = StateFunction<T1>([value2](
-                const si::pressure p, 
-                const si::temperature T
+                const si::pressure<double> p, 
+                const si::temperature<double> T
               ){
                 return value2;
               });
@@ -119,8 +119,8 @@ namespace field {
         {
             auto value = other;
             entry = StateFunction<T1>([value](
-                const si::pressure p, 
-                const si::temperature T
+                const si::pressure<double> p, 
+                const si::temperature<double> T
               ){
                 return value;
               });
@@ -137,11 +137,11 @@ namespace field {
             return *this;
         }
 
-        constexpr std::optional<T1> operator()(const si::pressure p, const si::temperature T) const
+        constexpr std::optional<T1> operator()(const si::pressure<double> p, const si::temperature<double> T) const
         {
             return std::visit(OptionalStateFieldValueVisitor<T1>(p, T), entry);
         }
-        constexpr std::optional<T1> operator()(const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T) const
+        constexpr std::optional<T1> operator()(const si::wavenumber<double> nlo, const si::wavenumber<double> nhi, const si::pressure<double> p, const si::temperature<double> T) const
         {
             return std::visit(OptionalStateFieldValueVisitor<T1>(p, T), entry);
         }
@@ -153,8 +153,8 @@ namespace field {
         {
             auto fallback2 = fallback;
             StateFunction<T1> f = StateFunction<T1>([fallback2](
-                const si::pressure p, 
-                const si::temperature T
+                const si::pressure<double> p, 
+                const si::temperature<double> T
               ){
                 return fallback2;
               });
@@ -195,7 +195,7 @@ namespace field {
                 auto a2 = a;
                 return StateFunction<T1>(
                     [f2, a2]
-                    (const si::pressure p, const si::temperature T)
+                    (const si::pressure<double> p, const si::temperature<double> T)
                     { return f2(StateParameters(p,T), a2(p,T).value()); }
                 );
             }
@@ -224,7 +224,7 @@ namespace field {
                 auto b2 = b;
                 return StateFunction<T1>(
                     [f2, a2, b2]
-                    (const si::pressure p, const si::temperature T)
+                    (const si::pressure<double> p, const si::temperature<double> T)
                     { return f2(StateParameters(p,T), a2(p,T).value(), b2(p,T).value()); }
                 );
             }
@@ -255,7 +255,7 @@ namespace field {
                 auto c2 = c;
                 return StateFunction<T1>(
                     [f2, a2, b2, c2]
-                    (const si::pressure p, const si::temperature T)
+                    (const si::pressure<double> p, const si::temperature<double> T)
                     { return f2(StateParameters(p,T), a2(p,T).value(), b2(p,T).value(), c2(p,T).value()); }
                 );
             }
@@ -288,7 +288,7 @@ namespace field {
                 auto d2 = d;
                 return StateFunction<T1>(
                     [f2, a2, b2, c2, d2]
-                    (const si::pressure p, const si::temperature T)
+                    (const si::pressure<double> p, const si::temperature<double> T)
                     { return f2(StateParameters(p,T), a2(p,T).value(), b2(p,T).value(), c2(p,T).value(), d2(p,T).value()); }
                 );
             }

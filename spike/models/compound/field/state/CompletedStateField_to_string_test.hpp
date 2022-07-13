@@ -11,11 +11,11 @@
 #include "CompletedStateField_to_string.hpp"
 
 TEST_CASE( "CompletedStateField to_string() purity", "[field]" ) {
-	compound::field::CompletedStateField<double> unit  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 1.0; });;
-	compound::field::CompletedStateField<double> unit_nudged  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 1.01; });;
-	compound::field::CompletedStateField<si::mass> unit_mass  = compound::field::StateFunction<si::mass>([](const si::pressure p, const si::temperature T){ return 1.0 * si::kilogram; }); 
-	compound::field::CompletedStateField<si::length> unit_length  = compound::field::StateFunction<si::length>([](const si::pressure p, const si::temperature T){ return 1.0 * si::meter; }); 
-	compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
+	compound::field::CompletedStateField<double> unit  = compound::field::StateFunction<double>([](const si::pressure<double> p, const si::temperature<double> T){ return 1.0; });;
+	compound::field::CompletedStateField<double> unit_nudged  = compound::field::StateFunction<double>([](const si::pressure<double> p, const si::temperature<double> T){ return 1.01; });;
+	compound::field::CompletedStateField<si::mass<double>> unit_mass  = compound::field::StateFunction<si::mass<double>>([](const si::pressure<double> p, const si::temperature<double> T){ return 1.0 * si::kilogram; }); 
+	compound::field::CompletedStateField<si::length<double>> unit_length  = compound::field::StateFunction<si::length<double>>([](const si::pressure<double> p, const si::temperature<double> T){ return 1.0 * si::meter; }); 
+	compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure<double> p, const si::temperature<double> T){ return test_ideal_gas_law_completed(p,T); });
 
 	SECTION("Calling a function twice with the same arguments must produce the same results")
 	{
@@ -33,10 +33,10 @@ TEST_CASE( "CompletedStateField to_string() purity", "[field]" ) {
 }
 
 TEST_CASE( "CompletedStateField to_string() appreciable difference preservation", "[field]" ) {
-	compound::field::CompletedStateField<double> unit  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 1.0; });;
-	compound::field::CompletedStateField<double> unit_nudged  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 1.01; });;
-	compound::field::CompletedStateField<si::mass> unit_mass  = compound::field::StateFunction<si::mass>([](const si::pressure p, const si::temperature T){ return 1.0 * si::kilogram; }); 
-	compound::field::CompletedStateField<si::length> unit_length  = compound::field::StateFunction<si::length>([](const si::pressure p, const si::temperature T){ return 1.0 * si::meter; }); 
+	compound::field::CompletedStateField<double> unit  = compound::field::StateFunction<double>([](const si::pressure<double> p, const si::temperature<double> T){ return 1.0; });;
+	compound::field::CompletedStateField<double> unit_nudged  = compound::field::StateFunction<double>([](const si::pressure<double> p, const si::temperature<double> T){ return 1.01; });;
+	compound::field::CompletedStateField<si::mass<double>> unit_mass  = compound::field::StateFunction<si::mass<double>>([](const si::pressure<double> p, const si::temperature<double> T){ return 1.0 * si::kilogram; }); 
+	compound::field::CompletedStateField<si::length<double>> unit_length  = compound::field::StateFunction<si::length<double>>([](const si::pressure<double> p, const si::temperature<double> T){ return 1.0 * si::meter; }); 
 
 	SECTION("Appreciable differences in input are preserved within output")
 	{

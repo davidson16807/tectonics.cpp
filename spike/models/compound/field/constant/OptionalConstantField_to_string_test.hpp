@@ -14,8 +14,8 @@ TEST_CASE( "OptionalConstantField to_string() purity", "[field]" ) {
 	compound::field::OptionalConstantField<double> unknown  = std::monostate();
 	compound::field::OptionalConstantField<double> unit  = 1.0;
 	compound::field::OptionalConstantField<double> unit_nudged  = 1.01;
-	compound::field::OptionalConstantField<si::mass> unit_mass  = 1.0 * si::kilogram;
-	compound::field::OptionalConstantField<si::length> unit_length  = 1.0 * si::meter;
+	compound::field::OptionalConstantField<si::mass<double>> unit_mass  = 1.0 * si::kilogram;
+	compound::field::OptionalConstantField<si::length<double>> unit_length  = 1.0 * si::meter;
 	
 	SECTION("Calling a function twice with the same arguments must produce the same results")
 	{
@@ -36,8 +36,8 @@ TEST_CASE( "OptionalConstantField to_string() appreciable difference preservatio
 	compound::field::OptionalConstantField<double> unknown  = std::monostate();
 	compound::field::OptionalConstantField<double> unit  = 1.0;
 	compound::field::OptionalConstantField<double> unit_nudged  = 1.01;
-	compound::field::OptionalConstantField<si::mass> unit_mass  = 1.0 * si::kilogram;
-	compound::field::OptionalConstantField<si::length> unit_length  = 1.0 * si::meter;
+	compound::field::OptionalConstantField<si::mass<double>> unit_mass  = 1.0 * si::kilogram;
+	compound::field::OptionalConstantField<si::length<double>> unit_length  = 1.0 * si::meter;
 
 	SECTION("Appreciable differences in input are preserved within output")
 	{

@@ -116,11 +116,11 @@ namespace field {
         {
             return std::visit(OptionalConstantFieldValueVisitor(), entry);
         }
-        constexpr std::optional<T1> operator()(const si::pressure p, const si::temperature T) const
+        constexpr std::optional<T1> operator()(const si::pressure<double> p, const si::temperature<double> T) const
         {
             return std::visit(OptionalConstantFieldValueVisitor(), entry);
         }
-        constexpr std::optional<T1> operator()(const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T) const
+        constexpr std::optional<T1> operator()(const si::wavenumber<double> nlo, const si::wavenumber<double> nhi, const si::pressure<double> p, const si::temperature<double> T) const
         {
             return std::visit(OptionalConstantFieldValueVisitor(), entry);
         }

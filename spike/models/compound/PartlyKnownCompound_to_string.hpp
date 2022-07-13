@@ -15,7 +15,7 @@
 
 namespace compound
 {
-	std::string to_string(const PartlyKnownCompound& compound, const si::wavenumber nlo, const si::wavenumber nhi)
+	std::string to_string(const PartlyKnownCompound& compound, const si::wavenumber<double> nlo, const si::wavenumber<double> nhi)
 	{
 		std::string out("");
 		StateParameterSamples samples(compound);

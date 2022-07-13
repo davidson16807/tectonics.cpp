@@ -15,7 +15,7 @@
 
 namespace compound
 {
-	std::string to_string(const CompletedCompound& compound, const si::wavenumber nlo, const si::wavenumber nhi)
+	std::string to_string(const CompletedCompound& compound, const si::wavenumber<double> nlo, const si::wavenumber<double> nhi)
 	{
 		std::string out("");
 		field::StateParameters gas_sample(compound.boiling_point_sample_pressure, compound.boiling_point_sample_temperature);

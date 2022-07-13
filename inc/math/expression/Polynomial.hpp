@@ -77,8 +77,10 @@ namespace math {
         {
         }
         template<typename TIterator>
-        constexpr explicit Polynomial(TIterator first, TIterator last) : k(first, last)
-        {}
+        constexpr explicit Polynomial(TIterator first, TIterator last)
+        {
+            std::copy(first, last, k.begin());
+        }
         constexpr Polynomial<T,Nlo,Nhi>& operator=(const Polynomial<T,Nlo,Nhi>& p)
         {
             std::copy(p.k.begin(), p.k.end(), k.begin());
@@ -1076,7 +1078,7 @@ namespace math {
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi, 
-        typename = std::enable_if_t<(Plo >= 0 && Phi >= 0 && Qlo >= 0 && Qhi >= 0)> >
+        typename = std::enable_if_t<(Plo >= 0 && Phi >= 0 && Phi > Plo+1 && Qlo >= 0 && Qhi >= 0)> >
     constexpr Polynomial<T,std::min(Plo*Qlo,Phi*Qhi),std::max(Plo*Qlo,Phi*Qhi)> compose(const Polynomial<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi>& q)
     {
         /*
@@ -1088,7 +1090,10 @@ namespace math {
             p₀(u) = k₀+xu 
             pₙ₋₁(u) = k₁+(k₂+k₃u)u = k₁u⁰+k₂u¹+k₃u²
         */
-        return p[0]+Identity<T>()*compose(Polynomial<T,Plo,Phi-1>(p.k.begin()+1, p.k.end()), q);
+        return p[0]+Identity<T>()
+            *compose(
+                Polynomial<T,Plo,Phi-1>(std::next((p.k).begin()), (p.k).end()),
+                q);
     }
 
 

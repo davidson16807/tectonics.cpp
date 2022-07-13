@@ -40,7 +40,7 @@
     COMPLETED_COMPOUND_STP_VALID(compound::library::benzene         ); \
     COMPLETED_COMPOUND_STP_VALID(compound::library::pyrimidine      ); \
     COMPLETED_COMPOUND_STP_VALID(compound::library::ethane          ); \
-    COMPLETED_COMPOUND_STP_VALID(compound::library::ethanol         ); 
+    COMPLETED_COMPOUND_STP_VALID(compound::library::ethanol         ); ; 
 
 /*
 #define COMPLETED_COMPOUNDS_STP_VALID() \
@@ -205,7 +205,7 @@
     COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::benzene,          temperature, pressure); \
     COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::pyrimidine,       temperature, pressure); \
     COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::ethane,           temperature, pressure); \
-    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::ethanol,          temperature, pressure); 
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::ethanol,          temperature, pressure); ; 
 
 
 /*

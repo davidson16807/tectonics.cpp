@@ -22,8 +22,8 @@ namespace compound {
     ){
         return field::StateFunction<Ty>(
             [value]
-            (const si::pressure p, 
-             const si::temperature T)
+            (const si::pressure<double> p, 
+             const si::temperature<double> T)
             {
                 return value;
             }
@@ -33,20 +33,20 @@ namespace compound {
     // 7 uses
     
     field::StateFunction<int> get_simon_glatzel_phase_function( 
-        const si::pressure        p0, /*triple point pressure*/
-        const si::temperature     t0, /*triple point temperature*/
-        const si::pressure        pc, /*critical point pressure*/
-        const si::temperature     tc, /*critical point temperature*/
-        const si::specific_energy L,  /*latent heat of vaporization at boiling point*/
-        const si::molar_mass      M,  /*molar mass*/
-        const si::pressure        a,  /*simon glatzel slope*/
-        const si::pressure        b,  /*simon glatzel intercept*/
+        const si::pressure<double>        p0, /*triple point pressure*/
+        const si::temperature<double>     t0, /*triple point temperature*/
+        const si::pressure<double>        pc, /*critical point pressure*/
+        const si::temperature<double>     tc, /*critical point temperature*/
+        const si::specific_energy<double> L,  /*latent heat of vaporization at boiling point*/
+        const si::molar_mass<double>      M,  /*molar mass*/
+        const si::pressure<double>        a,  /*simon glatzel slope*/
+        const si::pressure<double>        b,  /*simon glatzel intercept*/
         const float               c   /*simon glatzel exponent*/
     ){
         return field::StateFunction<int>(
             [p0, t0, pc, tc, L,  M, a, b, c]
-            (const si::pressure p, 
-             const si::temperature T)
+            (const si::pressure<double> p, 
+             const si::temperature<double> T)
             {
                 return property::get_simon_glatzel_phase(p, T, p0, t0, pc, tc, L,  M, a, b, c);
             }
@@ -62,7 +62,7 @@ namespace compound {
     ){
         return field::StateFunction<Ty>(
             [xunits, yunits, xs, ys]
-            (const si::pressure p, const si::temperature T)
+            (const si::pressure<double> p, const si::temperature<double> T)
             {
                 return math::lerp(xs, ys, T/xunits) * yunits;
             }
@@ -78,7 +78,7 @@ namespace compound {
     ){
         return field::StateFunction<Ty>(
             [xunits, yunits, xs, ys]
-            (const si::pressure p, const si::temperature T)
+            (const si::pressure<double> p, const si::temperature<double> T)
             {
                 return math::lerp(xs, ys, p/xunits) * yunits;
             }
@@ -94,7 +94,7 @@ namespace compound {
     ){
         return field::StateFunction<Ty>(
             [xunits, yunits, xs, ys]
-            (const si::pressure p, const si::temperature T)
+            (const si::pressure<double> p, const si::temperature<double> T)
             {
                 return math::lerp(xs, ys, 1.0/(T/xunits)) * yunits;
             }
@@ -107,20 +107,20 @@ namespace compound {
     */
     // 23 uses, all for heat capacity of solids
     template<typename Tx>
-    field::StateFunction<si::specific_heat_capacity> get_perry_johnson_temperature_function( 
+    field::StateFunction<si::specific_heat_capacity<double>> get_perry_johnson_temperature_function( 
         const Tx Tunits, 
-        const si::specific_heat_capacity y_units_johnson, 
+        const si::specific_heat_capacity<double> y_units_johnson, 
         const double linear_johnson, const double cube_johnson, 
         const double T_max_johnson,
-        const si::specific_heat_capacity y_units_perry,
+        const si::specific_heat_capacity<double> y_units_perry,
         const double intercept_perry, const double linear_perry, const double inverse_square_perry, const double square_perry, 
         const double T_min_perry, const double T_max_perry
     ){
-        return field::StateFunction<si::specific_heat_capacity>(
+        return field::StateFunction<si::specific_heat_capacity<double>>(
             [Tunits, 
              y_units_johnson, linear_johnson, cube_johnson, T_max_johnson,
              y_units_perry, intercept_perry, linear_perry, inverse_square_perry, square_perry, T_min_perry, T_max_perry]
-            (const si::pressure p, const si::temperature T)
+            (const si::pressure<double> p, const si::temperature<double> T)
             {
                 double tj = std::clamp(T/Tunits, 0.0, T_max_johnson);
                 auto y_johnson = (linear_johnson*tj + cube_johnson*tj*tj*tj) * y_units_johnson;
@@ -145,7 +145,7 @@ namespace compound {
     ){
         return field::StateFunction<Ty>(
             [Tunits, yunits, Tmin, Tmax, intercept, slope, square, cube, fourth]
-            (const si::pressure p, const si::temperature T)
+            (const si::pressure<double> p, const si::temperature<double> T)
             {
                 double t = std::clamp(T/Tunits, Tmin, Tmax);
                 return (intercept + slope*t + square*t*t + cube*t*t*t + fourth*t*t*t*t)*yunits;
@@ -162,7 +162,7 @@ namespace compound {
     ){
         return field::StateFunction<Ty>(
             [Tunits, yunits, log_intercept, log_slope, log_log, log_exponentiated, exponent, Tmin, Tmax]
-            (const si::pressure p, const si::temperature T)
+            (const si::pressure<double> p, const si::temperature<double> T)
             {
                 double t = std::clamp(T/Tunits, Tmin, Tmax);
                 return std::exp(log_intercept + log_slope/t + log_log*std::log(t) + log_exponentiated*std::pow(t,exponent))*yunits;
@@ -179,7 +179,7 @@ namespace compound {
     ){
         return field::StateFunction<Ty>(
             [Tunits, yunits, c1, c2, c3, c4, Tmin, Tmax]
-            (const si::pressure p, const si::temperature T)
+            (const si::pressure<double> p, const si::temperature<double> T)
             {
                 double t = std::clamp(T/Tunits, Tmin, Tmax);
                 return (c1 / std::pow(c2, 1+std::pow(1.0-(t/c3), c4)))*yunits;
@@ -196,7 +196,7 @@ namespace compound {
     ){
         return field::StateFunction<Ty>(
             [Tc, yunits, Tmin, Tmax, c1, c2, c3, c4, c5]
-            (const si::pressure p, const si::temperature T)
+            (const si::pressure<double> p, const si::temperature<double> T)
             {
                 double Tr = std::clamp(T, Tmin, Tmax)/Tc;
                 double tau = 1.0-Tr;
@@ -218,7 +218,7 @@ namespace compound {
     ){
         return field::StateFunction<Ty>(
             [Tunits, yunits, Tc, sigma0, n0, sigma1, n1, sigma2, n2, Tmin, Tmax]
-            (const si::pressure p, const si::temperature T)
+            (const si::pressure<double> p, const si::temperature<double> T)
             {
                 double Tr = std::clamp(T/Tunits, Tmin, Tmax)/Tc;
                 return ( sigma0*std::pow(1.0 - Tr, n0) + sigma1*std::pow(1.0 - Tr, n1) + sigma2*std::pow(1.0 - Tr, n2) )*yunits;
@@ -235,7 +235,7 @@ namespace compound {
     ){
         return field::StateFunction<Ty>(
             [Punits, yunits, intercept, linear, square]
-            (const si::pressure p, const si::temperature T)
+            (const si::pressure<double> p, const si::temperature<double> T)
             {
                 double P = p/Punits;
                 return (intercept + linear*P + square*P*P)*yunits;
@@ -251,7 +251,7 @@ namespace compound {
     ){
         return field::StateFunction<Ty>(
             [Tunits, yunits, TL, gammaTL, dgamma_dT]
-            (const si::pressure p, const si::temperature T)
+            (const si::pressure<double> p, const si::temperature<double> T)
             {
                 double t = T/Tunits;
                 return ( gammaTL + dgamma_dT * (t-TL) )*yunits;

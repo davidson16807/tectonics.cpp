@@ -41,8 +41,8 @@ namespace compound {
 
             /*phase*/
             field::StateFunction<int>([]
-                    (const si::pressure pressure, 
-                     const si::temperature temperature)
+                    (const si::pressure<double> pressure, 
+                     const si::temperature<double> temperature)
                     {
                         const int supercritical = -3;
                         const int gas = -2;
@@ -203,7 +203,7 @@ namespace compound {
                          -52.843, 3703.6, 5.866, -5.879e-29, 10.0,
                           273.16, 646.15), // 273.16-646.15K
                 /*density*/                // 997.0 * si::kilogram/si::meter3,                                
-                    field::StateFunction<si::density>([](const si::pressure p, const si::temperature T) {
+                    field::StateFunction<si::density<double>>([](const si::pressure<double> p, const si::temperature<double> T) {
                         // Perry equation 119, specialized for water
                         // valid for 273.16-647.096K
                         double Tc = 647.096;
@@ -226,7 +226,7 @@ namespace compound {
                     //     (si::kelvin, si::pascal,
                     //      73.649, -7258.2, -7.3037, 4.1653e-6,
                     //      273.16, 647.1),//273.16-647.1K
-                    field::StateFunction<si::pressure>([](const si::pressure p, const si::temperature T) {
+                    field::StateFunction<si::pressure<double>>([](const si::pressure<double> p, const si::temperature<double> T) {
                         // Buck equation
                         double C = T/si::celcius;
                         return 0.61121*exp((18.678-C/234.5) * (C/(257.14+C))) * si::kilopascal; 

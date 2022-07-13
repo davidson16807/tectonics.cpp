@@ -15,11 +15,11 @@ namespace compound {
 namespace phase { 
     struct PartlyKnownGas
     {
-        relation::OptionalStateRelation<relation::GasPropertyStateRelation<si::specific_heat_capacity>> isobaric_specific_heat_capacity;
-        relation::OptionalStateRelation<relation::GasPropertyStateRelation<si::thermal_conductivity>> thermal_conductivity;
-        relation::OptionalStateRelation<relation::GasPropertyStateRelation<si::dynamic_viscosity>> dynamic_viscosity;
-        field::OptionalStateField<si::density> density;
-        relation::OptionalStateRelation<relation::PolynomialRailyardRelation<si::wavenumber,double,0,1>> refractive_index;
+        relation::OptionalStateRelation<relation::GasPropertyStateRelation<si::specific_heat_capacity<double>>> isobaric_specific_heat_capacity;
+        relation::OptionalStateRelation<relation::GasPropertyStateRelation<si::thermal_conductivity<double>>> thermal_conductivity;
+        relation::OptionalStateRelation<relation::GasPropertyStateRelation<si::dynamic_viscosity<double>>> dynamic_viscosity;
+        field::OptionalStateField<si::density<double>> density;
+        relation::OptionalStateRelation<relation::PolynomialRailyardRelation<si::wavenumber<double>,double,0,1>> refractive_index;
 
         /*
         Return a `PartlyKnownGas` that has the properties of `known` where present, otherwise substitute with properties of `base`

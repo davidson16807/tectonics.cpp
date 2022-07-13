@@ -74,7 +74,7 @@ namespace si{
     * The library should minimize the amount of explicit unit conversion that occurs when reporting measurements.
       This applies for both unit conversion in the developer's head as well as in the developer's code.
       So in contrast to the `si::units` class template, which is as simple as possible, 
-      the list of built-in measures (e.g. `si::length`) and units of measure (e.g. `si::kilometer`) 
+      the list of built-in measures (e.g. `si::length<double>`) and units of measure (e.g. `si::kilometer`) 
       should be deliberately made as *extensive* as possible.
       Combined with readability constraints mentioned above, this means the library should include all combinations 
       of officially recognized SI prefixes and units of measure as unique variables
@@ -85,13 +85,13 @@ namespace si{
       or variants that could be written using operators instead (e.g. not `si::kilometer_per_second` or `si::kmps`)
     We settle upon including all common units of time, units from the CGS, and astronomical units from the IAU standard.
 
-    * The library should provide default measurement types (e.g. `si::length`) 
+    * The library should provide default measurement types (e.g. `si::length<double>`) 
       that allow work over the same range and precision afforded by the underlying system of measurements. 
       Since SI is designed to express measurements over a very wide range in orders of magnitude,
       some extremes cannot be expressed using floats (e.g. cubic yottameters)
-    so all built-in measures (e.g. `si::length`) should handle doubles by default.
+    so all built-in measures (e.g. `si::length<double>`) should handle doubles by default.
       However, template aliases should be provided for all built in measures 
-      to allow easily specifying other underlying types (e.g. `si::length_type<float>`)
+      to allow easily specifying other underlying types (e.g. `si::length<float>`)
   */
 
   template<int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1=double>
@@ -395,117 +395,60 @@ namespace si{
 
 
 
-                                                         //           m kg  s  K mol A Cd
-  template <typename T> using length_type                    = units< 1, 0, 0, 0, 0, 0, 0, T>;
-  template <typename T> using mass_type                      = units< 0, 1, 0, 0, 0, 0, 0, T>;
-  template <typename T> using time_type                      = units< 0, 0, 1, 0, 0, 0, 0, T>;
-  template <typename T> using temperature_type               = units< 0, 0, 0, 1, 0, 0, 0, T>;
-  template <typename T> using amount_type                    = units< 0, 0, 0, 0, 1, 0, 0, T>;
-  template <typename T> using current_type                   = units< 0, 0, 0, 0, 0, 1, 0, T>;
-  template <typename T> using luminous_intensity_type        = units< 0, 0, 0, 0, 0, 0, 1, T>;
-  template <typename T> using area_type                      = units< 2, 0, 0, 0, 0, 0, 0, T>;
-  template <typename T> using volume_type                    = units< 3, 0, 0, 0, 0, 0, 0, T>;
-  template <typename T> using volumetric_flow_type           = units< 3, 0,-1, 0, 0, 0, 0, T>;
-  template <typename T> using area_density_type              = units<-2, 1, 0, 0, 0, 0, 0, T>;
-  template <typename T> using density_type                   = units<-3, 1, 0, 0, 0, 0, 0, T>;
-  template <typename T> using number_density_type            = units<-3, 0, 0, 0, 0, 0, 0, T>;
-  template <typename T> using molar_density_type             = units<-3, 0, 0, 0, 1, 0, 0, T>;
-  template <typename T> using frequency_type                 = units< 0, 0,-1, 0, 0, 0, 0, T>;
-  template <typename T> using speed_type                     = units< 1, 0,-1, 0, 0, 0, 0, T>;
-  template <typename T> using acceleration_type              = units< 1, 0,-2, 0, 0, 0, 0, T>;
-  template <typename T> using momentum_type                  = units< 1, 1,-1, 0, 0, 0, 0, T>;
-  template <typename T> using force_type                     = units< 1, 1,-2, 0, 0, 0, 0, T>;
-  template <typename T> using angular_velocity_type          = units< 0, 0,-1, 0, 0, 0, 0, T>;
-  template <typename T> using angular_acceleration_type      = units< 0, 0,-2, 0, 0, 0, 0, T>;
-  template <typename T> using angular_momentum_type          = units< 2, 1,-1, 0, 0, 0, 0, T>;
-  template <typename T> using torque_type                    = units< 2, 1,-2, 0, 0, 0, 0, T>;
-  template <typename T> using pressure_type                  = units<-1, 1,-2, 0, 0, 0, 0, T>;
-  template <typename T> using kinematic_viscosity_type       = units< 2, 0,-1, 0, 0, 0, 0, T>;
-  template <typename T> using dynamic_viscosity_type         = units<-1, 1,-1, 0, 0, 0, 0, T>;
-  template <typename T> using energy_type                    = units< 2, 1,-2, 0, 0, 0, 0, T>;
-  template <typename T> using surface_energy_type            = units< 0, 1,-2, 0, 0, 0, 0, T>;
-  template <typename T> using power_type                     = units< 2, 1,-3, 0, 0, 0, 0, T>;
-  template <typename T> using intensity_type                 = units< 0, 1,-3, 0, 0, 0, 0, T>;
-  template <typename T> using molar_mass_type                = units< 0, 1, 0, 0,-1, 0, 0, T>;
-  template <typename T> using molar_volume_type              = units< 3, 0, 0, 0,-1, 0, 0, T>;
-  template <typename T> using molar_heat_capacity_type       = units< 2, 1,-2,-1,-1, 0, 0, T>;
-  template <typename T> using specific_heat_capacity_type    = units< 2, 0,-2,-1, 0, 0, 0, T>;
-  template <typename T> using molar_energy_type              = units< 2, 1,-2, 0,-1, 0, 0, T>;
-  template <typename T> using specific_energy_type           = units< 2, 0,-2, 0, 0, 0, 0, T>;
-  template <typename T> using thermal_conductivity_type      = units< 1, 1,-3,-1, 0, 0, 0, T>;
-  template <typename T> using wavenumber_type                = units<-1, 0, 0, 0, 0, 0, 0, T>;
-  template <typename T> using attenuation_type               = units<-1, 0, 0, 0, 0, 0, 0, T>;
-  template <typename T> using voltage_type                   = units< 2, 1,-3, 0, 0,-1, 0, T>;
-  template <typename T> using electric_charge_type           = units< 0, 0, 1, 0, 0, 1, 0, T>;
-  template <typename T> using electric_capacitance_type      = units<-2,-1, 4, 0, 0, 2, 0, T>;
-  template <typename T> using electric_resistance_type       = units< 2, 1,-3, 0, 0,-2, 0, T>;
-  template <typename T> using electric_conductance_type      = units<-2,-1, 3, 0, 0, 2, 0, T>;
-  template <typename T> using electric_induction_type        = units< 2, 1,-2, 0, 0,-2, 0, T>;
-  template <typename T> using magnetic_flux_type             = units< 2, 1,-2, 0, 0,-2, 0, T>;
-  template <typename T> using magnetic_induction_type        = units< 0, 1,-2, 0, 0,-1, 0, T>;
-  template <typename T> using magnetic_flux_density_type     = units< 0, 1,-2, 0, 0,-1, 0, T>;
-  template <typename T> using luminous_flux_type             = units< 0, 0, 0, 0, 0, 0, 1, T>;
-  template <typename T> using illuminance_type               = units<-2, 0, 0, 0, 0, 0, 1, T>;
-  template <typename T> using catalytic_activity_type        = units< 0, 0,-1, 0, 1, 0, 0, T>;
-  template <typename T> using ionizing_radiation_dosage_type = units< 2, 0,-2, 0, 0, 0, 0, T>;
-  template <typename T> using radioactivity_type             = units< 0, 0,-1, 0, 0, 0, 0, T>;
-
-
-  //             m kg  s  K mol A Cd
-  typedef units< 1, 0, 0, 0, 0, 0, 0> length                       ;
-  typedef units< 0, 1, 0, 0, 0, 0, 0> mass                         ;
-  typedef units< 0, 0, 1, 0, 0, 0, 0> time                         ;
-  typedef units< 0, 0, 0, 1, 0, 0, 0> temperature                  ;
-  typedef units< 0, 0, 0, 0, 1, 0, 0> amount                       ;
-  typedef units< 0, 0, 0, 0, 0, 1, 0> current                      ;
-  typedef units< 0, 0, 0, 0, 0, 0, 1> luminous_intensity           ;
-  typedef units< 2, 0, 0, 0, 0, 0, 0> area                         ;
-  typedef units< 3, 0, 0, 0, 0, 0, 0> volume                       ;
-  typedef units< 3, 0,-1, 0, 0, 0, 0> volumetric_flow              ;
-  typedef units<-2, 1, 0, 0, 0, 0, 0> area_density                 ;
-  typedef units<-3, 1, 0, 0, 0, 0, 0> density                      ;
-  typedef units<-3, 0, 0, 0, 0, 0, 0> number_density               ;
-  typedef units<-3, 0, 0, 0, 1, 0, 0> molar_density                ;
-  typedef units< 0, 0,-1, 0, 0, 0, 0> frequency                    ;
-  typedef units< 1, 0,-1, 0, 0, 0, 0> speed                        ;
-  typedef units< 1, 0,-2, 0, 0, 0, 0> acceleration                 ;
-  typedef units< 1, 1,-1, 0, 0, 0, 0> momentum                     ;
-  typedef units< 1, 1,-2, 0, 0, 0, 0> force                        ;
-  typedef units< 0, 0,-1, 0, 0, 0, 0> angular_velocity             ;
-  typedef units< 0, 0,-2, 0, 0, 0, 0> angular_acceleration         ;
-  typedef units< 2, 1,-1, 0, 0, 0, 0> angular_momentum             ;
-  typedef units< 2, 1,-2, 0, 0, 0, 0> torque                       ;
-  typedef units<-1, 1,-2, 0, 0, 0, 0> pressure                     ;
-  typedef units< 2, 0,-1, 0, 0, 0, 0> kinematic_viscosity          ;
-  typedef units<-1, 1,-1, 0, 0, 0, 0> dynamic_viscosity            ;
-  typedef units< 2, 1,-2, 0, 0, 0, 0> energy                       ;
-  typedef units< 0, 1,-2, 0, 0, 0, 0> surface_energy               ;
-  typedef units< 2, 1,-3, 0, 0, 0, 0> power                        ;
-  typedef units< 0, 1,-3, 0, 0, 0, 0> intensity                    ;
-  typedef units< 0, 1, 0, 0,-1, 0, 0> molar_mass                   ;
-  typedef units< 3, 0, 0, 0,-1, 0, 0> molar_volume                 ;
-  typedef units< 2, 1,-2,-1,-1, 0, 0> molar_heat_capacity          ;
-  typedef units< 2, 0,-2,-1, 0, 0, 0> specific_heat_capacity       ;
-  typedef units< 2, 1,-2, 0,-1, 0, 0> molar_energy                 ;
-  typedef units< 2, 0,-2, 0, 0, 0, 0> specific_energy              ;
-  typedef units< 1, 1,-3,-1, 0, 0, 0> thermal_conductivity         ;
-  typedef units<-1, 0, 0, 0, 0, 0, 0> wavenumber                   ;
-  typedef units<-1, 0, 0, 0, 0, 0, 0> attenuation                  ;
-  typedef units< 2, 1,-3, 0, 0,-1, 0> voltage                      ;
-  typedef units< 0, 0, 1, 0, 0, 1, 0> electric_charge              ;
-  typedef units<-2,-1, 4, 0, 0, 2, 0> electric_capacitance         ;
-  typedef units< 2, 1,-3, 0, 0,-2, 0> electric_resistance          ;
-  typedef units<-2,-1, 3, 0, 0, 2, 0> electric_conductance         ;
-  typedef units< 2, 1,-2, 0, 0,-2, 0> electric_inductance          ;
-  typedef units< 2, 1,-2, 0, 0,-2, 0> magnetic_flux                ;
-  typedef units< 0, 1,-2, 0, 0,-1, 0> magnetic_induction           ;
-  typedef units< 0, 1,-2, 0, 0,-1, 0> magnetic_flux_density        ;
-  typedef units< 0, 0, 0, 0, 0, 0, 1> luminous_flux                ;
-  typedef units<-2, 0, 0, 0, 0, 0, 1> illuminance                  ;
-  typedef units< 0, 0,-1, 0, 1, 0, 0> catalytic_activity           ;
-  typedef units< 2, 0,-2, 0, 0, 0, 0> ionizing_radiation_dosage    ;
-  typedef units< 0, 0,-1, 0, 0, 0, 0> radioactivity                ;
-
+                                                           //           m kg  s  K mol A Cd
+  template <typename T> using length                    = units< 1, 0, 0, 0, 0, 0, 0, T>;
+  template <typename T> using mass                      = units< 0, 1, 0, 0, 0, 0, 0, T>;
+  template <typename T> using time                      = units< 0, 0, 1, 0, 0, 0, 0, T>;
+  template <typename T> using temperature               = units< 0, 0, 0, 1, 0, 0, 0, T>;
+  template <typename T> using amount                    = units< 0, 0, 0, 0, 1, 0, 0, T>;
+  template <typename T> using current                   = units< 0, 0, 0, 0, 0, 1, 0, T>;
+  template <typename T> using luminous_intensity        = units< 0, 0, 0, 0, 0, 0, 1, T>;
+  template <typename T> using area                      = units< 2, 0, 0, 0, 0, 0, 0, T>;
+  template <typename T> using volume                    = units< 3, 0, 0, 0, 0, 0, 0, T>;
+  template <typename T> using volumetric_flow           = units< 3, 0,-1, 0, 0, 0, 0, T>;
+  template <typename T> using area_density              = units<-2, 1, 0, 0, 0, 0, 0, T>;
+  template <typename T> using density                   = units<-3, 1, 0, 0, 0, 0, 0, T>;
+  template <typename T> using number_density            = units<-3, 0, 0, 0, 0, 0, 0, T>;
+  template <typename T> using molar_density             = units<-3, 0, 0, 0, 1, 0, 0, T>;
+  template <typename T> using frequency                 = units< 0, 0,-1, 0, 0, 0, 0, T>;
+  template <typename T> using speed                     = units< 1, 0,-1, 0, 0, 0, 0, T>;
+  template <typename T> using acceleration              = units< 1, 0,-2, 0, 0, 0, 0, T>;
+  template <typename T> using momentum                  = units< 1, 1,-1, 0, 0, 0, 0, T>;
+  template <typename T> using force                     = units< 1, 1,-2, 0, 0, 0, 0, T>;
+  template <typename T> using angular_velocity          = units< 0, 0,-1, 0, 0, 0, 0, T>;
+  template <typename T> using angular_acceleration      = units< 0, 0,-2, 0, 0, 0, 0, T>;
+  template <typename T> using angular_momentum          = units< 2, 1,-1, 0, 0, 0, 0, T>;
+  template <typename T> using torque                    = units< 2, 1,-2, 0, 0, 0, 0, T>;
+  template <typename T> using pressure                  = units<-1, 1,-2, 0, 0, 0, 0, T>;
+  template <typename T> using kinematic_viscosity       = units< 2, 0,-1, 0, 0, 0, 0, T>;
+  template <typename T> using dynamic_viscosity         = units<-1, 1,-1, 0, 0, 0, 0, T>;
+  template <typename T> using energy                    = units< 2, 1,-2, 0, 0, 0, 0, T>;
+  template <typename T> using surface_energy            = units< 0, 1,-2, 0, 0, 0, 0, T>;
+  template <typename T> using power                     = units< 2, 1,-3, 0, 0, 0, 0, T>;
+  template <typename T> using intensity                 = units< 0, 1,-3, 0, 0, 0, 0, T>;
+  template <typename T> using molar_mass                = units< 0, 1, 0, 0,-1, 0, 0, T>;
+  template <typename T> using molar_volume              = units< 3, 0, 0, 0,-1, 0, 0, T>;
+  template <typename T> using molar_heat_capacity       = units< 2, 1,-2,-1,-1, 0, 0, T>;
+  template <typename T> using specific_heat_capacity    = units< 2, 0,-2,-1, 0, 0, 0, T>;
+  template <typename T> using molar_energy              = units< 2, 1,-2, 0,-1, 0, 0, T>;
+  template <typename T> using specific_energy           = units< 2, 0,-2, 0, 0, 0, 0, T>;
+  template <typename T> using thermal_conductivity      = units< 1, 1,-3,-1, 0, 0, 0, T>;
+  template <typename T> using wavenumber                = units<-1, 0, 0, 0, 0, 0, 0, T>;
+  template <typename T> using attenuation               = units<-1, 0, 0, 0, 0, 0, 0, T>;
+  template <typename T> using voltage                   = units< 2, 1,-3, 0, 0,-1, 0, T>;
+  template <typename T> using electric_charge           = units< 0, 0, 1, 0, 0, 1, 0, T>;
+  template <typename T> using electric_capacitance      = units<-2,-1, 4, 0, 0, 2, 0, T>;
+  template <typename T> using electric_resistance       = units< 2, 1,-3, 0, 0,-2, 0, T>;
+  template <typename T> using electric_conductance      = units<-2,-1, 3, 0, 0, 2, 0, T>;
+  template <typename T> using electric_inductance       = units< 2, 1,-2, 0, 0,-2, 0, T>;
+  template <typename T> using magnetic_flux             = units< 2, 1,-2, 0, 0,-2, 0, T>;
+  template <typename T> using magnetic_induction        = units< 0, 1,-2, 0, 0,-1, 0, T>;
+  template <typename T> using magnetic_flux_density     = units< 0, 1,-2, 0, 0,-1, 0, T>;
+  template <typename T> using luminous_flux             = units< 0, 0, 0, 0, 0, 0, 1, T>;
+  template <typename T> using illuminance               = units<-2, 0, 0, 0, 0, 0, 1, T>;
+  template <typename T> using catalytic_activity        = units< 0, 0,-1, 0, 1, 0, 0, T>;
+  template <typename T> using ionizing_radiation_dosage = units< 2, 0,-2, 0, 0, 0, 0, T>;
+  template <typename T> using radioactivity             = units< 0, 0,-1, 0, 0, 0, 0, T>;
 
 
 
@@ -554,180 +497,180 @@ namespace si{
   constexpr quantity prefix ## zetta ## suffix (1e21  * prefix ## suffix); \
   constexpr quantity prefix ## yotta ## suffix (1e24  * prefix ## suffix); 
 
-  constexpr mass gram(1e-3);
-  SI_MODERN_PREFIXED_UNITS(mass, gram)
+  constexpr mass<double> gram(1e-3);
+  SI_MODERN_PREFIXED_UNITS(mass<double>, gram)
 
-  constexpr length  meter(1.0);
-  SI_MODERN_PREFIXED_UNITS(length, meter)
+  constexpr length<double>  meter(1.0);
+  SI_MODERN_PREFIXED_UNITS(length<double>, meter)
 
-  constexpr length  metre (1.0);
-  SI_MODERN_PREFIXED_UNITS(length, metre)
+  constexpr length<double>  metre (1.0);
+  SI_MODERN_PREFIXED_UNITS(length<double>, metre)
 
-  constexpr time  second (1.0);
-  SI_MODERN_PREFIXED_UNITS(time, second)
+  constexpr time<double>  second (1.0);
+  SI_MODERN_PREFIXED_UNITS(time<double>, second)
 
-  constexpr temperature  kelvin (1.0);
-  SI_MODERN_PREFIXED_UNITS(temperature, kelvin)
+  constexpr temperature<double>  kelvin (1.0);
+  SI_MODERN_PREFIXED_UNITS(temperature<double>, kelvin)
 
-  constexpr amount  mole (1.0);
-  SI_MODERN_PREFIXED_UNITS(amount, mole)
+  constexpr amount<double>  mole (1.0);
+  SI_MODERN_PREFIXED_UNITS(amount<double>, mole)
 
-  constexpr force  newton (1.0);
-  SI_MODERN_PREFIXED_UNITS(force, newton)
+  constexpr force<double>  newton (1.0);
+  SI_MODERN_PREFIXED_UNITS(force<double>, newton)
 
-  constexpr energy  joule (1.0);
-  SI_MODERN_PREFIXED_UNITS(energy, joule)
+  constexpr energy<double>  joule (1.0);
+  SI_MODERN_PREFIXED_UNITS(energy<double>, joule)
 
-  constexpr power  watt (1.0);
-  SI_MODERN_PREFIXED_UNITS(power, watt)
+  constexpr power<double>  watt (1.0);
+  SI_MODERN_PREFIXED_UNITS(power<double>, watt)
 
-  constexpr pressure  pascal (1.0);
-  SI_MODERN_PREFIXED_UNITS(pressure, pascal)
+  constexpr pressure<double>  pascal (1.0);
+  SI_MODERN_PREFIXED_UNITS(pressure<double>, pascal)
 
-  constexpr frequency  hertz (1.0);
-  SI_MODERN_PREFIXED_UNITS(frequency, hertz)
+  constexpr frequency<double>  hertz (1.0);
+  SI_MODERN_PREFIXED_UNITS(frequency<double>, hertz)
 
-  constexpr current  ampere (1.0);
-  SI_MODERN_PREFIXED_UNITS(current, ampere)
+  constexpr current<double>  ampere (1.0);
+  SI_MODERN_PREFIXED_UNITS(current<double>, ampere)
 
-  constexpr electric_charge  coulomb (1.0);
-  SI_MODERN_PREFIXED_UNITS(electric_charge, coulomb)
+  constexpr electric_charge<double>  coulomb (1.0);
+  SI_MODERN_PREFIXED_UNITS(electric_charge<double>, coulomb)
 
-  constexpr voltage  volt (1.0);
-  SI_MODERN_PREFIXED_UNITS(voltage, volt)
+  constexpr voltage<double>  volt (1.0);
+  SI_MODERN_PREFIXED_UNITS(voltage<double>, volt)
 
-  constexpr electric_capacitance farad (1.0);
-  SI_MODERN_PREFIXED_UNITS(electric_capacitance, farad)
+  constexpr electric_capacitance<double> farad (1.0);
+  SI_MODERN_PREFIXED_UNITS(electric_capacitance<double>, farad)
 
-  constexpr electric_resistance  ohm (1.0);
-  SI_MODERN_PREFIXED_UNITS(electric_resistance, ohm)
+  constexpr electric_resistance<double>  ohm (1.0);
+  SI_MODERN_PREFIXED_UNITS(electric_resistance<double>, ohm)
 
-  constexpr electric_conductance  siemens (1.0);
-  SI_MODERN_PREFIXED_UNITS(electric_conductance, siemens)
+  constexpr electric_conductance<double>  siemens (1.0);
+  SI_MODERN_PREFIXED_UNITS(electric_conductance<double>, siemens)
 
-  constexpr magnetic_flux  weber (1.0);
-  SI_MODERN_PREFIXED_UNITS(magnetic_flux, weber)
+  constexpr magnetic_flux<double>  weber (1.0);
+  SI_MODERN_PREFIXED_UNITS(magnetic_flux<double>, weber)
 
-  constexpr magnetic_induction  tesla (1.0);
-  SI_MODERN_PREFIXED_UNITS(magnetic_induction, tesla)
+  constexpr magnetic_induction<double>  tesla (1.0);
+  SI_MODERN_PREFIXED_UNITS(magnetic_induction<double>, tesla)
 
-  constexpr electric_inductance  henry (1.0);
-  SI_MODERN_PREFIXED_UNITS(electric_inductance, henry)
+  constexpr electric_inductance<double>  henry (1.0);
+  SI_MODERN_PREFIXED_UNITS(electric_inductance<double>, henry)
 
-  constexpr catalytic_activity  katal (1.0);
-  SI_MODERN_PREFIXED_UNITS(catalytic_activity, katal)
+  constexpr catalytic_activity<double>  katal (1.0);
+  SI_MODERN_PREFIXED_UNITS(catalytic_activity<double>, katal)
 
-  constexpr luminous_intensity  candela (1.0);
-  SI_MODERN_PREFIXED_UNITS(luminous_intensity, candela)
+  constexpr luminous_intensity<double>  candela (1.0);
+  SI_MODERN_PREFIXED_UNITS(luminous_intensity<double>, candela)
 
-  constexpr luminous_flux  lumen (1.0);
-  SI_MODERN_PREFIXED_UNITS(luminous_flux, lumen)
+  constexpr luminous_flux<double>  lumen (1.0);
+  SI_MODERN_PREFIXED_UNITS(luminous_flux<double>, lumen)
 
-  constexpr illuminance  lux (1.0);
-  SI_MODERN_PREFIXED_UNITS(illuminance, lux)
+  constexpr illuminance<double>  lux (1.0);
+  SI_MODERN_PREFIXED_UNITS(illuminance<double>, lux)
 
-  constexpr radioactivity  becquerel (1.0);
-  SI_MODERN_PREFIXED_UNITS(radioactivity, becquerel)
+  constexpr radioactivity<double>  becquerel (1.0);
+  SI_MODERN_PREFIXED_UNITS(radioactivity<double>, becquerel)
 
-  constexpr ionizing_radiation_dosage  gray (1.0);
-  SI_MODERN_PREFIXED_UNITS(ionizing_radiation_dosage, gray)
+  constexpr ionizing_radiation_dosage<double>  gray (1.0);
+  SI_MODERN_PREFIXED_UNITS(ionizing_radiation_dosage<double>, gray)
 
-  constexpr ionizing_radiation_dosage  sievert (1.0);
-  SI_MODERN_PREFIXED_UNITS(ionizing_radiation_dosage, sievert)
+  constexpr ionizing_radiation_dosage<double>  sievert (1.0);
+  SI_MODERN_PREFIXED_UNITS(ionizing_radiation_dosage<double>, sievert)
 
   /*
   special consideration is needed for exponents of base units, 
   whose values do not scale as described with SI_MODERN_PREFIXED_UNITS
   */
-  constexpr area       meter2 (1.0);
-  constexpr  area yoctometer2 (1e-48);
-  constexpr  area zeptometer2 (1e-42);
-  constexpr  area  attometer2 (1e-36);
-  constexpr  area femtometer2 (1e-30);
-  constexpr  area  picometer2 (1e-24);
-  constexpr  area  nanometer2 (1e-18);
-  constexpr  area micrometer2 (1e-12);
-  constexpr  area millimeter2 (1e-6 );
-  constexpr  area centimeter2 (1e-4 );
-  constexpr  area  decimeter2 (1e-2 );
-  constexpr  area  decameter2 (1e2  );
-  constexpr  area hectometer2 (1e4  );
-  constexpr  area  kilometer2 (1e6  );
-  constexpr  area  megameter2 (1e12 );
-  constexpr  area  gigameter2 (1e18 );
-  constexpr  area  terameter2 (1e24 );
-  constexpr  area  petameter2 (1e30 );
-  constexpr  area   exameter2 (1e36 );
-  constexpr  area zettameter2 (1e42 );
-  constexpr  area yottameter2 (1e48 );
+  constexpr area<double>      meter2 (1.0);
+  constexpr area<double> yoctometer2 (1e-48);
+  constexpr area<double> zeptometer2 (1e-42);
+  constexpr area<double>  attometer2 (1e-36);
+  constexpr area<double> femtometer2 (1e-30);
+  constexpr area<double>  picometer2 (1e-24);
+  constexpr area<double>  nanometer2 (1e-18);
+  constexpr area<double> micrometer2 (1e-12);
+  constexpr area<double> millimeter2 (1e-6 );
+  constexpr area<double> centimeter2 (1e-4 );
+  constexpr area<double>  decimeter2 (1e-2 );
+  constexpr area<double>  decameter2 (1e2  );
+  constexpr area<double> hectometer2 (1e4  );
+  constexpr area<double>  kilometer2 (1e6  );
+  constexpr area<double>  megameter2 (1e12 );
+  constexpr area<double>  gigameter2 (1e18 );
+  constexpr area<double>  terameter2 (1e24 );
+  constexpr area<double>  petameter2 (1e30 );
+  constexpr area<double>   exameter2 (1e36 );
+  constexpr area<double> zettameter2 (1e42 );
+  constexpr area<double> yottameter2 (1e48 );
 
-  constexpr volume      meter3 (1.0);
-  constexpr volume yoctometer3 (1e-72);
-  constexpr volume zeptometer3 (1e-63);
-  constexpr volume  attometer3 (1e-54);
-  constexpr volume femtometer3 (1e-45);
-  constexpr volume  picometer3 (1e-36);
-  constexpr volume  nanometer3 (1e-27);
-  constexpr volume micrometer3 (1e-18);
-  constexpr volume millimeter3 (1e-9 );
-  constexpr volume centimeter3 (1e-6 );
-  constexpr volume  decimeter3 (1e-3 );
-  constexpr volume  decameter3 (1e3  );
-  constexpr volume hectometer3 (1e6  );
-  constexpr volume  kilometer3 (1e9  );
-  constexpr volume  megameter3 (1e18 );
-  constexpr volume  gigameter3 (1e27 );
-  constexpr volume  terameter3 (1e36 );
-  constexpr volume  petameter3 (1e45 );
-  constexpr volume   exameter3 (1e54 );
-  constexpr volume zettameter3 (1e63 );
-  constexpr volume yottameter3 (1e72 );
+  constexpr volume<double>      meter3 (1.0);
+  constexpr volume<double> yoctometer3 (1e-72);
+  constexpr volume<double> zeptometer3 (1e-63);
+  constexpr volume<double>  attometer3 (1e-54);
+  constexpr volume<double> femtometer3 (1e-45);
+  constexpr volume<double>  picometer3 (1e-36);
+  constexpr volume<double>  nanometer3 (1e-27);
+  constexpr volume<double> micrometer3 (1e-18);
+  constexpr volume<double> millimeter3 (1e-9 );
+  constexpr volume<double> centimeter3 (1e-6 );
+  constexpr volume<double>  decimeter3 (1e-3 );
+  constexpr volume<double>  decameter3 (1e3  );
+  constexpr volume<double> hectometer3 (1e6  );
+  constexpr volume<double>  kilometer3 (1e9  );
+  constexpr volume<double>  megameter3 (1e18 );
+  constexpr volume<double>  gigameter3 (1e27 );
+  constexpr volume<double>  terameter3 (1e36 );
+  constexpr volume<double>  petameter3 (1e45 );
+  constexpr volume<double>   exameter3 (1e54 );
+  constexpr volume<double> zettameter3 (1e63 );
+  constexpr volume<double> yottameter3 (1e72 );
 
   constexpr units<0,0,2,0,0,0,0> second2  (1.0);
   constexpr units<4,0,0,0,0,0,0> kelvin4 (1.0);
-  constexpr amount molecule = mole/6.02214076e23;
+  constexpr amount<double> molecule = mole/6.02214076e23;
 
   // SI DEFINED PHYSICAL CONSTANTS
   // all values for constants taken from https://www.nist.gov/pml/special-publication-330/sp-330-section-2#2.1
 
-  constexpr electric_charge elementary_charge_constant (1.602176634e-19); // coulomb
-  constexpr units<0, 0, 0, 0,-1, 0, 0> avogadro_constant          (6.02214076e23);  // 1/mole
-  constexpr units<1, 0,-1, 0, 0, 0, 0> speed_of_light             (299792458.0);    // meter/second
-  constexpr units<2, 1,-2,-1, 0, 0, 0> boltzmann_constant         (1.380649e-23);   // joule/kelvin
-  constexpr units<2, 1,-2,-1,-1, 0, 0> universal_gas_constant     (8.314472);       // joule/kelvin/mole
-  constexpr units<0, 1,-3,-4, 0, 0, 0> stephan_boltzmann_constant (5.670373e-8);    // watt/(meter2*kelvin4)
-  constexpr units<2, 1,-1, 0, 0, 0, 0> planck_constant            (6.62607015e-34); // joule*second
-  constexpr units<3,-1,-2, 0, 0, 0, 0> gravitational_constant     (6.67428e-11);    // meter3/(kilogram*second2)
+  constexpr electric_charge<double> elementary_charge_constant (1.602176634e-19); // coulomb
+  constexpr units<0, 0, 0, 0,-1, 0, 0, double> avogadro_constant          (6.02214076e23);  // 1/mole
+  constexpr units<1, 0,-1, 0, 0, 0, 0, double> speed_of_light             (299792458.0);    // meter/second
+  constexpr units<2, 1,-2,-1, 0, 0, 0, double> boltzmann_constant         (1.380649e-23);   // joule/kelvin
+  constexpr units<2, 1,-2,-1,-1, 0, 0, double> universal_gas_constant     (8.314472);       // joule/kelvin/mole
+  constexpr units<0, 1,-3,-4, 0, 0, 0, double> stephan_boltzmann_constant (5.670373e-8);    // watt/(meter2*kelvin4)
+  constexpr units<2, 1,-1, 0, 0, 0, 0, double> planck_constant            (6.62607015e-34); // joule*second
+  constexpr units<3,-1,-2, 0, 0, 0, 0, double> gravitational_constant     (6.67428e-11);    // meter3/(kilogram*second2)
 
   // NON SI UNITS MENTIONED IN THE SI
   // see https://en.wikipedia.org/wiki/Non-SI_units_mentioned_in_the_SI
   // NOTE: the "astronomical unit" is defined under "IAU units for astronomy"
-  constexpr time minute    (second*60.0);
-  constexpr time hour      (minute*60.0);
-  constexpr time day       (hour*24.0);
+  constexpr time<double> minute    (second*60.0);
+  constexpr time<double> hour      (minute*60.0);
+  constexpr time<double> day       (hour*24.0);
   constexpr float radian   (1.0);
   constexpr float degree   (3.1415926535897932384626433 / 180.0);
   constexpr float arcminute(degree/60);
   constexpr float arcsecond(arcminute/60);
-  constexpr mass dalton    (1.660538921e-27);
+  constexpr mass<double> dalton    (1.660538921e-27);
 
-  constexpr area are (100.0);
-  SI_MODERN_PREFIXED_UNITS(area, are)
+  constexpr area<double> are (100.0);
+  SI_MODERN_PREFIXED_UNITS(area<double>, are)
 
-  constexpr volume  liter (0.001);
-  SI_MODERN_PREFIXED_UNITS(volume, liter)
+  constexpr volume<double>  liter (0.001);
+  SI_MODERN_PREFIXED_UNITS(volume<double>, liter)
 
-  constexpr volume  litre (0.001);
-  SI_MODERN_PREFIXED_UNITS(volume, litre)
+  constexpr volume<double>  litre (0.001);
+  SI_MODERN_PREFIXED_UNITS(volume<double>, litre)
 
-  constexpr mass  tonne (1e3);
-  SI_MODERN_PREFIXED_UNITS(mass, tonne)
+  constexpr mass<double>  tonne (1e3);
+  SI_MODERN_PREFIXED_UNITS(mass<double>, tonne)
 
-  constexpr mass  metric_ton (1e3);
-  SI_MODERN_DOUBLE_PREFIXED_UNITS(mass, metric_, ton)
+  constexpr mass<double>  metric_ton (1e3);
+  SI_MODERN_DOUBLE_PREFIXED_UNITS(mass<double>, metric_, ton)
 
-  constexpr energy  electronvolt (1e3* 1.602176634e-19);
-  SI_MODERN_PREFIXED_UNITS(energy, electronvolt)
+  constexpr energy<double>  electronvolt (1e3* 1.602176634e-19);
+  SI_MODERN_PREFIXED_UNITS(energy<double>, electronvolt)
 
   /*
   NON SI UNITS MENTIONED IN PAST VERSIONS OF THE SI
@@ -748,44 +691,44 @@ namespace si{
   constexpr quantity  mega ## suffix ( 1e6   * suffix );
 
   // see https://en.wikipedia.org/wiki/Non-SI_units_mentioned_in_the_SI
-  constexpr length   angstrom ( 1e-10 );
-  constexpr length   micron   ( 1e-6 );
-  constexpr length   nautical_mile ( 1852.0 );
-  constexpr speed    knots    ( speed(0.514444) );
+  constexpr length<double>   angstrom ( 1e-10 );
+  constexpr length<double>   micron   ( 1e-6 );
+  constexpr length<double>   nautical_mile ( 1852.0 );
+  constexpr speed<double>    knots    ( speed<double>(0.514444) );
 
-  constexpr area  barn (100.0 * femtometer2);
-  SI_MODERN_PREFIXED_UNITS(area, barn)
+  constexpr area<double>  barn (100.0 * femtometer2);
+  SI_MODERN_PREFIXED_UNITS(area<double>, barn)
 
-  constexpr pressure bar (1e5);
-  SI_MODERN_PREFIXED_UNITS(pressure,  bar)
+  constexpr pressure<double> bar (1e5);
+  SI_MODERN_PREFIXED_UNITS(pressure<double>,  bar)
 
-  constexpr pressure meter_mercury (1000.0 * 133.322387415);
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(pressure, meter_mercury)
+  constexpr pressure<double> meter_mercury (1000.0 * 133.322387415);
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(pressure<double>, meter_mercury)
 
-  constexpr pressure atmosphere ( 101325.0 );
+  constexpr pressure<double> atmosphere ( 101325.0 );
 
-  constexpr acceleration  gal (acceleration(0.1));
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(acceleration, gal)
+  constexpr acceleration<double>  gal (acceleration<double>(0.1));
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(acceleration<double>, gal)
 
-  constexpr force  dyne (1e-5);
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(force, dyne)
+  constexpr force<double>  dyne (1e-5);
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(force<double>, dyne)
 
-  constexpr energy erg (1e-7);
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(energy, erg)
+  constexpr energy<double> erg (1e-7);
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(energy<double>, erg)
 
-  constexpr pressure barye (1e-1);
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(pressure, barye)
+  constexpr pressure<double> barye (1e-1);
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(pressure<double>, barye)
 
   constexpr auto kayser (100.0 / meter);
   SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(auto, kayser)
 
-  constexpr kinematic_viscosity stokes (1e-4);
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(kinematic_viscosity, stokes)
+  constexpr kinematic_viscosity<double> stokes (1e-4);
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(kinematic_viscosity<double>, stokes)
 
-  constexpr dynamic_viscosity poise (0.1);
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(dynamic_viscosity, poise)
+  constexpr dynamic_viscosity<double> poise (0.1);
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(dynamic_viscosity<double>, poise)
 
-    constexpr units<-1, 0, 0, 0, 0, 1, 0> oersted (79.57747);
+    constexpr units<-1, 0, 0, 0, 0, 1, 0, double> oersted (79.57747);
   SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(auto, oersted)
 
   constexpr auto gauss (1e-4 * tesla);
@@ -797,7 +740,7 @@ namespace si{
   constexpr auto phot (1e4 * lux);
   SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(auto, phot)
 
-  constexpr units<-2, 0, 0,   0, 0,   0, 1> stlib (1e-4);  // 1 candela/centimeter2
+  constexpr units<-2, 0, 0,   0, 0,   0, 1, double> stlib (1e-4);  // 1 candela/centimeter2
   SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(auto, stlib)
 
   /*
@@ -812,17 +755,17 @@ namespace si{
   but does not include U.S. customary units since any publication that references those units is not meant for international consumption.
   */
 
-  constexpr pressure torr (133.32);
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(pressure, torr)
+  constexpr pressure<double> torr (133.32);
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(pressure<double>, torr)
 
-  constexpr volumetric_flow sverdrup (1e6);
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(volumetric_flow, sverdrup)
+  constexpr volumetric_flow<double> sverdrup (1e6);
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(volumetric_flow<double>, sverdrup)
 
-  constexpr force pond (9.806650*millinewton);
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(force, pond)
+  constexpr force<double> pond (9.806650*millinewton);
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(force<double>, pond)
 
-  constexpr power metric_horsepower (735.49875);
-  SI_MODERN_DOUBLE_PREFIXED_UNITS(power, metric_, horsepower)
+  constexpr power<double> metric_horsepower (735.49875);
+  SI_MODERN_DOUBLE_PREFIXED_UNITS(power<double>, metric_, horsepower)
 
   constexpr auto eotvos = units<0,0,-2, 0,0, 0,0>(1e-9);
   SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(auto, eotvos)
@@ -830,57 +773,57 @@ namespace si{
   constexpr auto jansky = units<0,1,-4, 0,0, 0,0>(1e-26);
   SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(auto, jansky)
 
-  constexpr voltage abvolt (1e-8);
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(voltage, abvolt)
+  constexpr voltage<double> abvolt (1e-8);
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(voltage<double>, abvolt)
 
-  constexpr current abampere (10.0);
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(current, abampere)
+  constexpr current<double> abampere (10.0);
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(current<double>, abampere)
 
-  constexpr electric_charge abcoulomb (10.0);
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(electric_charge, abcoulomb)
+  constexpr electric_charge<double> abcoulomb (10.0);
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(electric_charge<double>, abcoulomb)
 
-  constexpr electric_conductance absiemens (1e9);
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(electric_conductance, absiemens)
+  constexpr electric_conductance<double> absiemens (1e9);
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(electric_conductance<double>, absiemens)
 
-  constexpr electric_resistance abohm (1e-9);
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(electric_resistance, abohm)
+  constexpr electric_resistance<double> abohm (1e-9);
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(electric_resistance<double>, abohm)
 
   constexpr auto gilbert (1e-4);
   SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(auto, gilbert)
 
-  constexpr electric_capacitance abfarad (1e9);
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(electric_capacitance, abfarad)
+  constexpr electric_capacitance<double> abfarad (1e9);
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(electric_capacitance<double>, abfarad)
 
 
-  constexpr electric_charge statcoulomb (3.33564e-10 );
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(electric_charge, statcoulomb)
+  constexpr electric_charge<double> statcoulomb (3.33564e-10 );
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(electric_charge<double>, statcoulomb)
 
-  constexpr electric_conductance statsiemens (1.112650*picosiemens);
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(electric_conductance, statsiemens)
+  constexpr electric_conductance<double> statsiemens (1.112650*picosiemens);
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(electric_conductance<double>, statsiemens)
 
-  constexpr electric_resistance statohm (8.987551787e11);
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(electric_resistance, statohm)
+  constexpr electric_resistance<double> statohm (8.987551787e11);
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(electric_resistance<double>, statohm)
 
-  constexpr electric_capacitance statfarad (1.1126*picofarad);
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(electric_capacitance, statfarad)
+  constexpr electric_capacitance<double> statfarad (1.1126*picofarad);
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(electric_capacitance<double>, statfarad)
 
-  constexpr voltage statvolt (299.792458);
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(voltage, statvolt)
+  constexpr voltage<double> statvolt (299.792458);
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(voltage<double>, statvolt)
 
 
-  constexpr radioactivity curie (3.7e10);
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(radioactivity, curie)
+  constexpr radioactivity<double> curie (3.7e10);
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(radioactivity<double>, curie)
 
-  constexpr radioactivity rutherford (1e6);
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(radioactivity, rutherford)
+  constexpr radioactivity<double> rutherford (1e6);
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(radioactivity<double>, rutherford)
 
-  constexpr ionizing_radiation_dosage rad (0.010);
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(ionizing_radiation_dosage, rad)
+  constexpr ionizing_radiation_dosage<double> rad (0.010);
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(ionizing_radiation_dosage<double>, rad)
 
-  constexpr ionizing_radiation_dosage rem (0.010);
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(ionizing_radiation_dosage, rem)
+  constexpr ionizing_radiation_dosage<double> rem (0.010);
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(ionizing_radiation_dosage<double>, rem)
 
-  constexpr auto rontgen = units< 0,-1, 1, 0, 0, 1, 0>(2.58e-4);
+  constexpr auto rontgen = units< 0,-1, 1, 0, 0, 1, 0, double>(2.58e-4);
   SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(auto, rontgen)
 
 
@@ -895,11 +838,11 @@ namespace si{
     In English, the names of units start with a lower-case letter (even when the symbol for the unit begins with a capital letter), 
     except at the beginning of a sentence or in capitalized material such as a title. 
   */
-  constexpr energy      calorie (4.184);
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(energy, calorie)
+  constexpr energy<double>      calorie (4.184);
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(energy<double>, calorie)
 
-  constexpr energy      Calorie (4184.0);
-  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(energy, Calorie)
+  constexpr energy<double>      Calorie (4184.0);
+  SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(energy<double>, Calorie)
 
   /*
   COMMON UNITS OF TIME
@@ -907,18 +850,18 @@ namespace si{
   If a unit has a commonly accepted definition in everyday parlance then we adopt that definition as a shorthand but provide longhand alternatives for clarity to readers.
   If there is no commonly accepted definition for everyday parlance then we deliberately omit the shorthand.
   */
-  constexpr time week     (7.0*day);
+  constexpr time<double> week     (7.0*day);
 
   /*
     There are several definitions for a "month", but in everyday parlance it refers to the time it takes 
     for the moon to return to a phase for an observer on earth, i.e. the "synodic month".
   */
-  constexpr time synodic_month (29.53059 * day);
-  constexpr time sidereal_month (27.32166 * day);
-  constexpr time tropical_month (27.32158 * day);
-  constexpr time anomalistic_month (27.55455 * day);
-  constexpr time nodal_month (27.21222 * day);
-  constexpr time month (synodic_month);
+  constexpr time<double> synodic_month (29.53059 * day);
+  constexpr time<double> sidereal_month (27.32166 * day);
+  constexpr time<double> tropical_month (27.32158 * day);
+  constexpr time<double> anomalistic_month (27.55455 * day);
+  constexpr time<double> nodal_month (27.21222 * day);
+  constexpr time<double> month (synodic_month);
   /*
     A "year" has been referenced in scientific literature, predominantly geology, anthropology, and astronomy.
     It is commonly used in combination with modern metric prefixes, namely "gigayear".
@@ -928,63 +871,63 @@ namespace si{
   Both the IUPAC and the IUGS recommend adopting "annum" for clarity, which is 31556925.445 seconds or ~365.24219265 ephemeris days.
   */
 
-  constexpr time      annum (31556925.445 * second); // ~365.24219265 days
-  SI_MODERN_PREFIXED_UNITS(time, annum)
+  constexpr time<double>      annum (31556925.445 * second); // ~365.24219265 days
+  SI_MODERN_PREFIXED_UNITS(time<double>, annum)
 
-  constexpr time gregorian_year (365.2425 * day);
-  SI_MODERN_DOUBLE_PREFIXED_UNITS(time, gregorian_, year)
+  constexpr time<double> gregorian_year (365.2425 * day);
+  SI_MODERN_DOUBLE_PREFIXED_UNITS(time<double>, gregorian_, year)
 
-  constexpr time      julian_year (365.25 * day);
-  SI_MODERN_DOUBLE_PREFIXED_UNITS(time, julian_, year)
+  constexpr time<double>      julian_year (365.25 * day);
+  SI_MODERN_DOUBLE_PREFIXED_UNITS(time<double>, julian_, year)
 
-  constexpr time      j2000_sidereal_year (365.25 * day);
-  SI_MODERN_DOUBLE_PREFIXED_UNITS(time, j2000_sidereal_, year)
+  constexpr time<double>      j2000_sidereal_year (365.25 * day);
+  SI_MODERN_DOUBLE_PREFIXED_UNITS(time<double>, j2000_sidereal_, year)
 
-  constexpr time year      (gregorian_year);
-  constexpr time decade    (10.0 * year);
-  constexpr time century   (100.0* year);
-  constexpr time millenium (1e3  * year);
-  SI_MODERN_PREFIXED_UNITS(time, year)
+  constexpr time<double> year      (gregorian_year);
+  constexpr time<double> decade    (10.0 * year);
+  constexpr time<double> century   (100.0* year);
+  constexpr time<double> millenium (1e3  * year);
+  SI_MODERN_PREFIXED_UNITS(time<double>, year)
 
   /*
   IAU UNITS FOR ASTRONOMY AND CONSTANTS FOR EARTH
   */
-  constexpr time         earth_age            ( 4.54e9 * year );
-  constexpr mass         earth_mass           ( 5.972e24 );
-  constexpr length       earth_radius         ( 6.367e6 );
-  constexpr acceleration standard_gravity     ( 9.80665 );
-  constexpr temperature  standard_temperature ( 273.15 );
-  constexpr pressure     standard_pressure    ( 101325.0 );
-  constexpr molar_volume standard_molar_volume( 22.414);
-  constexpr length       astronomical_unit    ( 149597870700.0 );
-  constexpr intensity    global_solar_constant( 1361.0 );
+  constexpr time<double>         earth_age            ( 4.54e9 * year );
+  constexpr mass<double>         earth_mass           ( 5.972e24 );
+  constexpr length<double>       earth_radius         ( 6.367e6 );
+  constexpr acceleration<double> standard_gravity     ( 9.80665 );
+  constexpr temperature<double>  standard_temperature ( 273.15 );
+  constexpr pressure<double>     standard_pressure    ( 101325.0 );
+  constexpr molar_volume<double> standard_molar_volume( 22.414);
+  constexpr length<double>       astronomical_unit    ( 149597870700.0 );
+  constexpr intensity<double>    global_solar_constant( 1361.0 );
 
-  constexpr mass         jupiter_mass         ( 1.898e27 );
-  constexpr length       jupiter_radius       ( 71e6 ); 
+  constexpr mass<double>         jupiter_mass         ( 1.898e27 );
+  constexpr length<double>       jupiter_radius       ( 71e6 ); 
 
-  constexpr mass         solar_mass           ( 1.9891e30 );
-  constexpr length       solar_radius         ( 695.7e6 );
-  constexpr power        solar_luminosity     ( 3.828e26 );
-  constexpr temperature  solar_temperature    ( 5772.0 );
+  constexpr mass<double>         solar_mass           ( 1.9891e30 );
+  constexpr length<double>       solar_radius         ( 695.7e6 );
+  constexpr power<double>        solar_luminosity     ( 3.828e26 );
+  constexpr temperature<double>  solar_temperature    ( 5772.0 );
 
-  constexpr length       lightyear            ( 9460730472580800.0 );
-  constexpr length       parsec               ( 3.0857e16 );
+  constexpr length<double>       lightyear            ( 9460730472580800.0 );
+  constexpr length<double>       parsec               ( 3.0857e16 );
 
-  constexpr time         observable_universe_age          ( 13.787e9 * year );
-  constexpr length       observable_universe_radius       ( 4.4e26 );
-  constexpr mass         observable_universe_ordinary_mass( 1.5e53 );
-  constexpr volume       observable_universe_volume       ( 4e80 );
+  constexpr time<double>         observable_universe_age          ( 13.787e9 * year );
+  constexpr length<double>       observable_universe_radius       ( 4.4e26 );
+  constexpr mass<double>         observable_universe_ordinary_mass( 1.5e53 );
+  constexpr volume<double>       observable_universe_volume       ( 4e80 );
 
 
   struct celcius_type {};
   celcius_type celcius;
   template<typename T1>
-  constexpr temperature_type<T1> operator*(const T1 C, const celcius_type)
+  constexpr temperature<T1> operator*(const T1 C, const celcius_type)
   {
     return C*kelvin + standard_temperature;
   }
   template<typename T1>
-  constexpr T1 operator/(const temperature_type<T1> K, const celcius_type)
+  constexpr T1 operator/(const temperature<T1> K, const celcius_type)
   {
     return ((K - standard_temperature) / kelvin);
   }

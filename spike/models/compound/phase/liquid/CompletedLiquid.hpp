@@ -12,13 +12,13 @@ namespace compound {
 namespace phase { 
     struct CompletedLiquid
     {
-        field::CompletedStateField<si::specific_heat_capacity> isobaric_specific_heat_capacity;
-        field::CompletedStateField<si::thermal_conductivity> thermal_conductivity;
-        field::CompletedStateField<si::dynamic_viscosity> dynamic_viscosity;
-        field::CompletedStateField<si::density> density;
-        field::CompletedStateField<si::pressure> vapor_pressure;
-        field::CompletedStateField<si::surface_energy> surface_tension;
-        relation::PolynomialRailyardRelation<si::wavenumber,double,0,1> refractive_index;
-        relation::PolynomialRailyardRelation<si::wavenumber,double,0,1> extinction_coefficient;
+        field::CompletedStateField<si::specific_heat_capacity<double>> isobaric_specific_heat_capacity;
+        field::CompletedStateField<si::thermal_conductivity<double>> thermal_conductivity;
+        field::CompletedStateField<si::dynamic_viscosity<double>> dynamic_viscosity;
+        field::CompletedStateField<si::density<double>> density;
+        field::CompletedStateField<si::pressure<double>> vapor_pressure;
+        field::CompletedStateField<si::surface_energy<double>> surface_tension;
+        relation::PolynomialRailyardRelation<si::wavenumber<double>,double,0,1> refractive_index;
+        relation::PolynomialRailyardRelation<si::wavenumber<double>,double,0,1> extinction_coefficient;
     };
 }}

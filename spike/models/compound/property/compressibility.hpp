@@ -133,10 +133,10 @@ namespace compound{
           This should place runtime in the same class as the fastest approximations reviewed by Takacs (1989), namely Papay, Burnett
         */
         constexpr float estimate_compressibility_factor(
-            const si::pressure pressure,
-            const si::temperature temperature,
-            const si::pressure critical_pressure,
-            const si::temperature critical_temperature,
+            const si::pressure<double> pressure,
+            const si::temperature<double> temperature,
+            const si::pressure<double> critical_pressure,
+            const si::temperature<double> critical_temperature,
             const float critical_compressibility = 0.278f
         ){
             float reduced_pressure = (pressure/critical_pressure);
@@ -170,12 +170,12 @@ namespace compound{
             return math::lerp(Zc, Z, critical_compressibility);
         }
 
-        constexpr double get_compressibility_from_molar_volume(const si::pressure pressure, const si::temperature temperature, const si::molar_volume molar_volume)
+        constexpr double get_compressibility_from_molar_volume(const si::pressure<double> pressure, const si::temperature<double> temperature, const si::molar_volume<double> molar_volume)
         {
             return molar_volume * pressure / (si::universal_gas_constant * temperature);
         }
 
-        constexpr si::molar_volume get_molar_volume_from_compressibility(const si::pressure pressure, const si::temperature temperature, const double compressibility)
+        constexpr si::molar_volume<double> get_molar_volume_from_compressibility(const si::pressure<double> pressure, const si::temperature<double> temperature, const double compressibility)
         {
             return (compressibility * si::universal_gas_constant * temperature) / pressure;
         }

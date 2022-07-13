@@ -30,7 +30,7 @@ namespace math {
         std::vector<Railcar<T,F>> cars; 
 
         // the zero railyard
-        Railyard() : cars() 
+        Railyard() : cars()
         {
         }
 

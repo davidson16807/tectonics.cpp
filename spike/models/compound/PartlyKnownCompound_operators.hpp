@@ -26,11 +26,11 @@ namespace compound
     */
     PartlyKnownCompound infer(const PartlyKnownCompound& known){
         PartlyKnownCompound guess = known;
-        si::molar_mass M = known.molar_mass;
+        si::molar_mass<double> M = known.molar_mass;
         // int A = known.atoms_per_molecule;
-        si::length sigma = known.molecular_diameter;
-        si::temperature Tc = known.critical_point_temperature;
-        si::pressure pc = known.critical_point_pressure;
+        si::length<double> sigma = known.molecular_diameter;
+        si::temperature<double> Tc = known.critical_point_temperature;
+        si::pressure<double> pc = known.critical_point_pressure;
         // auto k = si::boltzmann_constant;
         double Zc = known.critical_point_compressibility;
 
@@ -60,7 +60,7 @@ namespace compound
             .complete(M / property::estimate_molar_volume_as_liquid_from_bird_steward_lightfoot_2(sigma));
 
         guess.gas.density = guess.gas.density
-            .complete([M,pc,Tc,Zc](si::pressure p, si::temperature T) { 
+            .complete([M,pc,Tc,Zc](si::pressure<double> p, si::temperature<double> T) { 
                 return M / property::estimate_molar_volume_as_gas(p, pc, T, Tc, Zc);
             });
 
@@ -84,7 +84,7 @@ namespace compound
         for (std::size_t i = 0; i < guess.solids.size(); i++)
         {
             guess.solids[i].density = guess.solids[i].density.value_or(
-                [M](field::StateParameters parameters, si::density density_as_liquid, si::temperature triple_point_temperature){ 
+                [M](field::StateParameters parameters, si::density<double> density_as_liquid, si::temperature<double> triple_point_temperature){ 
                     return M / property::estimate_molar_volume_as_solid_from_goodman(M / density_as_liquid, parameters.temperature, triple_point_temperature); 
                 },
                 guess.liquid.density,
@@ -95,7 +95,7 @@ namespace compound
         if (guess.solids.size() > 0)
         {
             guess.liquid.density = guess.liquid.density.value_or(
-                [M](field::StateParameters parameters, si::density density_as_solid, si::temperature triple_point_temperature){ 
+                [M](field::StateParameters parameters, si::density<double> density_as_solid, si::temperature<double> triple_point_temperature){ 
                     return M / property::estimate_molar_volume_as_liquid_from_goodman(M / density_as_solid, parameters.temperature, triple_point_temperature); 
                 },
                 guess.solids[0].density,
@@ -106,11 +106,11 @@ namespace compound
         if (guess.solids.size() > 0)
         {
             guess.triple_point_temperature = guess.triple_point_temperature.value_or(
-                [M](field::StateParameters parameters, si::density density_as_liquid, si::density density_as_solid){ 
+                [M](field::StateParameters parameters, si::density<double> density_as_liquid, si::density<double> density_as_solid){ 
                     auto estimate = property::estimate_triple_point_temperature_from_goodman(M / density_as_liquid, M / density_as_solid, parameters.temperature);
                     return estimate > 0.0 * si::kelvin? 
-                        field::OptionalConstantField<si::temperature>(estimate) : 
-                        field::OptionalConstantField<si::temperature>();
+                        field::OptionalConstantField<si::temperature<double>>(estimate) : 
+                        field::OptionalConstantField<si::temperature<double>>();
                 },
                 samples.liquid,
                 guess.liquid.density,
@@ -123,8 +123,8 @@ namespace compound
         {
             guess.solids[i].vapor_pressure = guess.solids[i].vapor_pressure.value_or( 
                 [M](field::StateParameters parameters, 
-                   si::specific_energy latent_heat_of_vaporization, si::specific_energy latent_heat_of_fusion, 
-                   si::pressure triple_point_pressure, si::temperature triple_point_temperature){
+                   si::specific_energy<double> latent_heat_of_vaporization, si::specific_energy<double> latent_heat_of_fusion, 
+                   si::pressure<double> triple_point_pressure, si::temperature<double> triple_point_temperature){
                     return property::estimate_vapor_pressure_as_solid_from_clapeyron(
                         latent_heat_of_vaporization + latent_heat_of_fusion,
                         M, 
@@ -143,19 +143,19 @@ namespace compound
         {
             guess.latent_heat_of_vaporization = guess.latent_heat_of_vaporization.value_or(
                 [M](field::StateParameters parameters,
-                    si::pressure vapor_pressure, 
-                    si::temperature triple_point_temperature, 
-                    si::pressure triple_point_pressure, 
-                    si::specific_energy latent_heat_of_fusion){
-                    si::specific_energy estimate = property::estimate_latent_heat_of_sublimation_from_clapeyron(
+                    si::pressure<double> vapor_pressure, 
+                    si::temperature<double> triple_point_temperature, 
+                    si::pressure<double> triple_point_pressure, 
+                    si::specific_energy<double> latent_heat_of_fusion){
+                    si::specific_energy<double> estimate = property::estimate_latent_heat_of_sublimation_from_clapeyron(
                         vapor_pressure,
                         M, 
                         parameters.temperature, 
                         triple_point_temperature, 
                         triple_point_pressure
                     ) - latent_heat_of_fusion;
-                    bool is_valid = si::specific_energy(0.0) < estimate && !std::isinf(estimate/si::specific_energy(1.0));
-                    return is_valid? field::OptionalConstantField<si::specific_energy>(estimate) : field::OptionalConstantField<si::specific_energy>();
+                    bool is_valid = si::specific_energy<double>(0.0) < estimate && !std::isinf(estimate/si::specific_energy<double>(1.0));
+                    return is_valid? field::OptionalConstantField<si::specific_energy<double>>(estimate) : field::OptionalConstantField<si::specific_energy<double>>();
                 },
                 samples.solid,
                 guess.solids[0].vapor_pressure,
@@ -169,19 +169,19 @@ namespace compound
         {
             guess.latent_heat_of_fusion = guess.latent_heat_of_fusion.value_or(
                 [M](field::StateParameters parameters, 
-                    si::pressure vapor_pressure, 
-                    si::temperature triple_point_temperature, 
-                    si::pressure triple_point_pressure, 
-                    si::specific_energy latent_heat_of_vaporization){ 
-                    si::specific_energy estimate = property::estimate_latent_heat_of_sublimation_from_clapeyron(
+                    si::pressure<double> vapor_pressure, 
+                    si::temperature<double> triple_point_temperature, 
+                    si::pressure<double> triple_point_pressure, 
+                    si::specific_energy<double> latent_heat_of_vaporization){ 
+                    si::specific_energy<double> estimate = property::estimate_latent_heat_of_sublimation_from_clapeyron(
                         vapor_pressure,
                         M, 
                         parameters.temperature, 
                         triple_point_temperature, 
                         triple_point_pressure
                     ) - latent_heat_of_vaporization;
-                    bool is_valid = si::specific_energy(0.0) < estimate && !std::isinf(estimate/si::specific_energy(1.0));
-                    return is_valid? field::OptionalConstantField<si::specific_energy>(estimate) : field::OptionalConstantField<si::specific_energy>();
+                    bool is_valid = si::specific_energy<double>(0.0) < estimate && !std::isinf(estimate/si::specific_energy<double>(1.0));
+                    return is_valid? field::OptionalConstantField<si::specific_energy<double>>(estimate) : field::OptionalConstantField<si::specific_energy<double>>();
                 },
                 samples.solid,
                 guess.solids[0].vapor_pressure,
@@ -193,7 +193,7 @@ namespace compound
 
         // CALCULATE ACENTRIC FACTOR
         guess.acentric_factor = guess.acentric_factor.value_or( 
-            [M, Tc](field::StateParameters parameters, si::specific_energy latent_heat_of_vaporization){ 
+            [M, Tc](field::StateParameters parameters, si::specific_energy<double> latent_heat_of_vaporization){ 
                 double estimate = property::estimate_accentric_factor_from_pitzer(
                         latent_heat_of_vaporization, M, 
                         parameters.temperature, Tc
@@ -205,7 +205,7 @@ namespace compound
             guess.latent_heat_of_vaporization
         );
         guess.acentric_factor = guess.acentric_factor.value_or( 
-            [M, pc, Tc](field::StateParameters parameters, si::dynamic_viscosity dynamic_viscosity_as_liquid){ 
+            [M, pc, Tc](field::StateParameters parameters, si::dynamic_viscosity<double> dynamic_viscosity_as_liquid){ 
                 double estimate = property::estimate_acentric_factor_from_letsou_stiel(
                     dynamic_viscosity_as_liquid,
                     M, parameters.temperature, Tc, pc
@@ -217,7 +217,7 @@ namespace compound
             guess.liquid.dynamic_viscosity
         );
         guess.acentric_factor = guess.acentric_factor.value_or( 
-            [pc, Tc](field::StateParameters parameters, si::pressure vapor_pressure_as_liquid){ 
+            [pc, Tc](field::StateParameters parameters, si::pressure<double> vapor_pressure_as_liquid){ 
                 double estimate = property::estimate_accentric_factor_from_lee_kesler(
                     vapor_pressure_as_liquid, 
                     parameters.temperature, Tc, pc
@@ -232,11 +232,11 @@ namespace compound
         // CALCULATE PROPERTIES THAT CAN BE DERIVED FROM ACENTRIC FACTOR
         guess.latent_heat_of_vaporization = guess.latent_heat_of_vaporization.value_or( 
             [M, Tc](field::StateParameters parameters, double acentric_factor){ 
-                si::specific_energy estimate = property::estimate_latent_heat_of_vaporization_from_pitzer(
+                si::specific_energy<double> estimate = property::estimate_latent_heat_of_vaporization_from_pitzer(
                     acentric_factor, M, parameters.temperature, Tc
                 );
-                bool is_valid = si::specific_energy(0.0) < estimate && !std::isinf(estimate/si::specific_energy(1.0));
-                return is_valid? field::OptionalConstantField<si::specific_energy>(estimate) : field::OptionalConstantField<si::specific_energy>();
+                bool is_valid = si::specific_energy<double>(0.0) < estimate && !std::isinf(estimate/si::specific_energy<double>(1.0));
+                return is_valid? field::OptionalConstantField<si::specific_energy<double>>(estimate) : field::OptionalConstantField<si::specific_energy<double>>();
             }, 
             samples.liquid,
             guess.acentric_factor
@@ -260,7 +260,7 @@ namespace compound
 
         // CALCULATE MISCELLANEOUS PROPERTIES
         guess.liquid.thermal_conductivity = guess.liquid.thermal_conductivity.value_or(
-            [M, Tc](field::StateParameters parameters, si::temperature boiling_point_sample_temperature){
+            [M, Tc](field::StateParameters parameters, si::temperature<double> boiling_point_sample_temperature){
                 return property::estimate_thermal_conductivity_as_liquid_from_sato_riedel(
                     M, parameters.temperature, boiling_point_sample_temperature, Tc
                 );
@@ -269,7 +269,7 @@ namespace compound
         );
 
         guess.liquid.thermal_conductivity = guess.liquid.thermal_conductivity.value_or(
-            [M](field::StateParameters parameters, si::temperature freezing_point_sample_temperature){
+            [M](field::StateParameters parameters, si::temperature<double> freezing_point_sample_temperature){
                 return property::estimate_thermal_conductivity_as_liquid_from_sheffy_johnson(
                     M, parameters.temperature, freezing_point_sample_temperature
                 );
@@ -279,12 +279,12 @@ namespace compound
 
         /*
         guess.gas.dynamic_viscosity = guess.gas.dynamic_viscosity.value_or(
-            [M](relation::GasPropertyStateRelation<si::specific_heat_capacity> heat_capacity_as_gas, 
-                relation::GasPropertyStateRelation<si::thermal_conductivity>   thermal_conductivity_as_gas
-            ) -> relation::GasPropertyStateRelation<si::dynamic_viscosity>{ 
+            [M](relation::GasPropertyStateRelation<si::specific_heat_capacity<double>> heat_capacity_as_gas, 
+                relation::GasPropertyStateRelation<si::thermal_conductivity<double>>   thermal_conductivity_as_gas
+            ) -> relation::GasPropertyStateRelation<si::dynamic_viscosity<double>>{ 
                 return relation::approx_inferred_pressure_temperature_gas_relation(
-                    si::kelvin, si::pascal, si::dynamic_viscosity(1.0),
-                    [=](si::pressure p, si::temperature T) -> si::dynamic_viscosity {
+                    si::kelvin, si::pascal, si::dynamic_viscosity<double>(1.0),
+                    [=](si::pressure<double> p, si::temperature<double> T) -> si::dynamic_viscosity<double> {
                         return property::estimate_viscosity_as_gas_from_eucken(
                             heat_capacity_as_gas(p,T), M, thermal_conductivity_as_gas(p,T));
                     },
@@ -301,13 +301,13 @@ namespace compound
         );
 
         guess.gas.thermal_conductivity = guess.gas.thermal_conductivity.value_or( 
-            [M](relation::GasPropertyStateRelation<si::dynamic_viscosity>      dynamic_viscosity_as_gas, 
-                relation::GasPropertyStateRelation<si::specific_heat_capacity> heat_capacity_as_gas
-            ) -> relation::GasPropertyStateRelation<si::thermal_conductivity> { 
-                relation::GasPropertyStateRelation<si::thermal_conductivity> result =
+            [M](relation::GasPropertyStateRelation<si::dynamic_viscosity<double>>      dynamic_viscosity_as_gas, 
+                relation::GasPropertyStateRelation<si::specific_heat_capacity<double>> heat_capacity_as_gas
+            ) -> relation::GasPropertyStateRelation<si::thermal_conductivity<double>> { 
+                relation::GasPropertyStateRelation<si::thermal_conductivity<double>> result =
                     relation::approx_inferred_pressure_temperature_gas_relation(
-                    si::kelvin, si::pascal, si::thermal_conductivity(1.0),
-                    [=](si::pressure p, si::temperature T) -> si::thermal_conductivity {
+                    si::kelvin, si::pascal, si::thermal_conductivity<double>(1.0),
+                    [=](si::pressure<double> p, si::temperature<double> T) -> si::thermal_conductivity<double> {
                         return property::estimate_thermal_conductivity_as_gas_from_eucken(
                             dynamic_viscosity_as_gas(p,T), M, heat_capacity_as_gas(p,T));
                     },
@@ -360,7 +360,7 @@ namespace compound
         for (std::size_t i = 0; i < guess.solids.size(); i++)
         {
             guess.solids[i].density = guess.solids[i].density.value_or( 
-                [](field::StateParameters parameters, si::density density_as_liquid){ 
+                [](field::StateParameters parameters, si::density<double> density_as_liquid){ 
                     return property::guess_density_as_solid_from_density_as_liquid(density_as_liquid); 
                 },
                 guess.liquid.density
@@ -370,7 +370,7 @@ namespace compound
         if (guess.solids.size() > 0)
         {
             guess.liquid.density = guess.liquid.density.value_or( 
-                [](field::StateParameters parameters, si::density density_as_solid){ 
+                [](field::StateParameters parameters, si::density<double> density_as_solid){ 
                     return property::guess_density_as_liquid_from_density_as_solid(density_as_solid); 
                 },
                 guess.solids[0].density
@@ -380,7 +380,7 @@ namespace compound
         for (std::size_t i = 0; i < guess.solids.size(); i++)
         {
             guess.solids[i].dynamic_viscosity = guess.solids[i].dynamic_viscosity.value_or( 
-                [](field::StateParameters parameters, si::dynamic_viscosity dynamic_viscosity_as_liquid){ 
+                [](field::StateParameters parameters, si::dynamic_viscosity<double> dynamic_viscosity_as_liquid){ 
                     return property::guess_viscosity_as_solid_from_viscosity_as_liquid(dynamic_viscosity_as_liquid);
                 },
                 guess.liquid.dynamic_viscosity 

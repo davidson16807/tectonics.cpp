@@ -29,31 +29,31 @@ namespace strata
         }
 
         // DERIVED ATTRIBUTES, regular functions of the form: Strata -> primitive
-        si::mass mass_pool(const std::size_t id) const {
-            si::mass total_mass(0.0);
+        si::mass<double> mass_pool(const std::size_t id) const {
+            si::mass<double> total_mass(0.0);
             for (std::size_t i=0; i<count; i++)
             {
                 total_mass += content[i].mass_pools[id].mass;
             }
             return total_mass;
         }
-        si::mass mass() const {
-            si::mass total_mass(0.0);
+        si::mass<double> mass() const {
+            si::mass<double> total_mass(0.0);
             for (std::size_t i=0; i<count; i++)
             {
                 total_mass += content[i].mass();
             }
             return total_mass;
         }
-        si::volume volume(const std::array<si::density, M>& mass_pool_densities) const {
-            si::volume total_volume(0.0);
+        si::volume<double> volume(const std::array<si::density<double>, M>& mass_pool_densities) const {
+            si::volume<double> total_volume(0.0);
             for (std::size_t i=0; i<count; i++)
             {
                 total_volume += content[i].volume(mass_pool_densities);
             }
             return total_volume;
         }
-        si::density density(const std::array<si::density, M>& mass_pool_densities) const {
+        si::density<double> density(const std::array<si::density<double>, M>& mass_pool_densities) const {
             return mass() / volume(mass_pool_densities);
         }
 

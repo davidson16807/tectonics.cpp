@@ -12,14 +12,14 @@ namespace compound {
 namespace phase { 
     struct PartlyKnownLiquid
     {
-        field::OptionalStateField<si::specific_heat_capacity> isobaric_specific_heat_capacity;
-        field::OptionalStateField<si::thermal_conductivity> thermal_conductivity;
-        field::OptionalStateField<si::dynamic_viscosity> dynamic_viscosity;
-        field::OptionalStateField<si::density> density;
-        field::OptionalStateField<si::pressure> vapor_pressure;
-        field::OptionalStateField<si::surface_energy> surface_tension;
-        relation::OptionalStateRelation<relation::PolynomialRailyardRelation<si::wavenumber,double,0,1>> refractive_index;
-        relation::OptionalStateRelation<relation::PolynomialRailyardRelation<si::wavenumber,double,0,1>> extinction_coefficient;
+        field::OptionalStateField<si::specific_heat_capacity<double>> isobaric_specific_heat_capacity;
+        field::OptionalStateField<si::thermal_conductivity<double>> thermal_conductivity;
+        field::OptionalStateField<si::dynamic_viscosity<double>> dynamic_viscosity;
+        field::OptionalStateField<si::density<double>> density;
+        field::OptionalStateField<si::pressure<double>> vapor_pressure;
+        field::OptionalStateField<si::surface_energy<double>> surface_tension;
+        relation::OptionalStateRelation<relation::PolynomialRailyardRelation<si::wavenumber<double>,double,0,1>> refractive_index;
+        relation::OptionalStateRelation<relation::PolynomialRailyardRelation<si::wavenumber<double>,double,0,1>> extinction_coefficient;
 
         /*
         Return a `PartlyKnownLiquid` that has the properties of `known` where present, otherwise substitute with properties of `base`

@@ -26,12 +26,12 @@
 
 
 TEST_CASE( "CompletedStateField map() purity", "[field]" ) {
-	compound::field::CompletedStateField<double> constant  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 1.0; });
-	compound::field::CompletedStateField<double> sample  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 2.0; });
-	compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
+	compound::field::CompletedStateField<double> constant  = compound::field::StateFunction<double>([](const si::pressure<double> p, const si::temperature<double> T){ return 1.0; });
+	compound::field::CompletedStateField<double> sample  = compound::field::StateFunction<double>([](const si::pressure<double> p, const si::temperature<double> T){ return 2.0; });
+	compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure<double> p, const si::temperature<double> T){ return test_ideal_gas_law_completed(p,T); });
 	std::function<double(const double)> f  = [](const double entry){ return 1.0 - 2.0*entry; };
-	si::pressure p = si::standard_pressure;
-	si::temperature T = si::standard_temperature;
+	si::pressure<double> p = si::standard_pressure;
+	si::temperature<double> T = si::standard_temperature;
 
 	SECTION("Calling a function twice with the same arguments must produce the same results")
 	{
@@ -42,12 +42,12 @@ TEST_CASE( "CompletedStateField map() purity", "[field]" ) {
 }
 
 TEST_CASE( "CompletedStateField map() identity", "[field]" ) {
-	compound::field::CompletedStateField<double> constant  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 1.0; });
-	compound::field::CompletedStateField<double> sample  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 2.0; });
-	compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
+	compound::field::CompletedStateField<double> constant  = compound::field::StateFunction<double>([](const si::pressure<double> p, const si::temperature<double> T){ return 1.0; });
+	compound::field::CompletedStateField<double> sample  = compound::field::StateFunction<double>([](const si::pressure<double> p, const si::temperature<double> T){ return 2.0; });
+	compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure<double> p, const si::temperature<double> T){ return test_ideal_gas_law_completed(p,T); });
 	std::function<double(const double)> I  = [](const double entry){ return entry; };
-	si::pressure p = si::standard_pressure;
-	si::temperature T = si::standard_temperature;
+	si::pressure<double> p = si::standard_pressure;
+	si::temperature<double> T = si::standard_temperature;
 
 	SECTION("There exists a entry that when applied to a function returns the original entry")
 	{
@@ -66,13 +66,13 @@ TEST_CASE( "CompletedStateField map() identity", "[field]" ) {
 
 
 TEST_CASE( "CompletedStateField map_to_constant() purity", "[field]" ) {
-	compound::field::CompletedStateField<double> constant  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 1.0; });
-	compound::field::CompletedStateField<double> sample  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 2.0; });
-	compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
-	std::function<double(const double, const si::pressure, const si::temperature)> f  = 
-		[](const double entry, const si::pressure p, const si::temperature T){ return 1.0 - 2.0*entry; };
-	si::pressure p = si::standard_pressure;
-	si::temperature T = si::standard_temperature;
+	compound::field::CompletedStateField<double> constant  = compound::field::StateFunction<double>([](const si::pressure<double> p, const si::temperature<double> T){ return 1.0; });
+	compound::field::CompletedStateField<double> sample  = compound::field::StateFunction<double>([](const si::pressure<double> p, const si::temperature<double> T){ return 2.0; });
+	compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure<double> p, const si::temperature<double> T){ return test_ideal_gas_law_completed(p,T); });
+	std::function<double(const double, const si::pressure<double>, const si::temperature<double>)> f  = 
+		[](const double entry, const si::pressure<double> p, const si::temperature<double> T){ return 1.0 - 2.0*entry; };
+	si::pressure<double> p = si::standard_pressure;
+	si::temperature<double> T = si::standard_temperature;
 
 	SECTION("Calling a function twice with the same arguments must produce the same results")
 	{
@@ -83,13 +83,13 @@ TEST_CASE( "CompletedStateField map_to_constant() purity", "[field]" ) {
 }
 
 TEST_CASE( "CompletedStateField map_to_constant() identity", "[field]" ) {
-    compound::field::CompletedStateField<double> constant  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 1.0; });
-    compound::field::CompletedStateField<double> sample  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 2.0; });
-    compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
-    std::function<double(const double, const si::pressure, const si::temperature)> I  = 
-        [](const double entry, const si::pressure p, const si::temperature T){ return entry; };
-    si::pressure p = si::standard_pressure;
-    si::temperature T = si::standard_temperature;
+    compound::field::CompletedStateField<double> constant  = compound::field::StateFunction<double>([](const si::pressure<double> p, const si::temperature<double> T){ return 1.0; });
+    compound::field::CompletedStateField<double> sample  = compound::field::StateFunction<double>([](const si::pressure<double> p, const si::temperature<double> T){ return 2.0; });
+    compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure<double> p, const si::temperature<double> T){ return test_ideal_gas_law_completed(p,T); });
+    std::function<double(const double, const si::pressure<double>, const si::temperature<double>)> I  = 
+        [](const double entry, const si::pressure<double> p, const si::temperature<double> T){ return entry; };
+    si::pressure<double> p = si::standard_pressure;
+    si::temperature<double> T = si::standard_temperature;
 
     SECTION("There exists a entry that when applied to a function returns the original entry")
     {
@@ -100,11 +100,11 @@ TEST_CASE( "CompletedStateField map_to_constant() identity", "[field]" ) {
 }
 
 TEST_CASE( "CompletedStateField function() consistency", "[field]" ) {
-    compound::field::CompletedStateField<double> constant  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 1.0; });
-    compound::field::CompletedStateField<double> sample  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return 2.0; });
-    compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_completed(p,T); });
-    si::pressure p = si::standard_pressure;
-    si::temperature T = si::standard_temperature;
+    compound::field::CompletedStateField<double> constant  = compound::field::StateFunction<double>([](const si::pressure<double> p, const si::temperature<double> T){ return 1.0; });
+    compound::field::CompletedStateField<double> sample  = compound::field::StateFunction<double>([](const si::pressure<double> p, const si::temperature<double> T){ return 2.0; });
+    compound::field::CompletedStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure<double> p, const si::temperature<double> T){ return test_ideal_gas_law_completed(p,T); });
+    si::pressure<double> p = si::standard_pressure;
+    si::temperature<double> T = si::standard_temperature;
 
     SECTION("field(p,T) should return the same result as field(p,T)")
     {

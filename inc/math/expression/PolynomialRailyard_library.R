@@ -62,9 +62,9 @@ SampleCosts = function(comparison){
 
 
 # linear Newton polynomial
-p2 = function(x1,x2,x3, y1,y2,y3){
-    dfdx  = (y2-y1) / (x2-x1)
-    function(x){ y1 + dfdx * (x-x1) }
+p1 = function(x1,x2, y1,y2){
+    y21 = (y2-y1) / (x2-x1)
+    function(x){ y1 + y21 * (x-x1) }
 }
 
 # quadratic Newton polynomial
@@ -87,6 +87,8 @@ p3 = function(x1,x2,x3,x4, y1,y2,y3,y4){
 	   y1 + y21*(x-x1) + y321*(x-x1)*(x-x2) + y4321*(x-x1)*(x-x2)*(x-x3)
     }
 }
+
+
 
 gauss = function(x){ exp(-x^2) }
 
@@ -300,4 +302,132 @@ parameters = optim(ddxsech24p2d$initialize(), costs$mxe)$par
 comparison$plot(ddxsech24p2d$initialize(), parameters)
 ddxsech24p2d$decode(parameters)
 costs$mxe(parameters)
+parameters
+
+
+inv = function(x) { 1/x }
+
+# 5 pieces of 1st degree
+inv5p1d = list(
+	initialize=function(){ c(0.03, 0.1, 0.2, 0.4, 0.8) },
+	decode=function(parameters) {
+		(parameters)
+	},
+	predict=function(parameters){
+		transformed = (parameters)
+		a = transformed[1]
+		b = transformed[2]
+		c = transformed[3]
+		d = transformed[4]
+		e = transformed[5]
+		function(xsigned) {
+			x = abs(xsigned)
+			sign(xsigned) * ifelse(x<b, p1(a,b, inv(a), inv(b))(x), 
+			                ifelse(x<c, p1(b,c, inv(b), inv(c))(x), 
+							ifelse(x<d, p1(c,d, inv(c), inv(d))(x), 
+							ifelse(x<e, p1(d,e, inv(d), inv(e))(x), 
+							ifelse(x<1, p1(e,1, inv(e),      1)(x), 
+									1)))))
+		}
+	}
+)
+
+comparison = SampledFunctionComparison(seq(0.03, 1, length.out=100), inv, inv5p1d$predict)
+costs = SampleCosts(comparison)
+parameters = optim(inv5p1d$initialize(), costs$mxpe)$par
+comparison$plot(inv5p1d$initialize(), parameters)
+inv5p1d$decode(inv5p1d$initialize())
+inv5p1d$decode(parameters)
+costs$mxpe(inv5p1d$initialize())
+costs$mxpe(parameters)
+parameters
+
+
+
+
+# 5 pieces of 1st degree
+inv5p1d = list(
+	initialize=function(){ c(0.03, 0.1, 0.2, 0.4, 0.8, 0,0,0,0) },
+	decode=function(parameters) {
+		(parameters)
+	},
+	predict=function(parameters){
+		transformed = (parameters)
+		a = transformed[1]
+		b = transformed[2]
+		c = transformed[3]
+		d = transformed[4]
+		e = transformed[5]
+		b1 = transformed[6]
+		c1 = transformed[7]
+		d1 = transformed[8]
+		e1 = transformed[9]
+		function(xsigned) {
+			x = abs(xsigned)
+			sign(xsigned) * ifelse(x<b, p1(a,b, inv(a),    inv(b)+b1)(x), 
+			                ifelse(x<c, p1(b,c, inv(b)+b1, inv(c)+c1)(x), 
+							ifelse(x<d, p1(c,d, inv(c)+c1, inv(d)+d1)(x), 
+							ifelse(x<e, p1(d,e, inv(d)+d1, inv(e)+e1)(x), 
+							ifelse(x<1, p1(e,1, inv(e)+e1,         1)(x), 
+									1)))))
+		}
+	}
+)
+
+comparison = SampledFunctionComparison(seq(0.03, 1, length.out=300), inv, inv5p1d$predict)
+costs = SampleCosts(comparison)
+parameters = optim(inv5p1d$initialize(), costs$mxpe)$par
+comparison$plot(inv5p1d$initialize(), parameters)
+inv5p1d$decode(inv5p1d$initialize())
+inv5p1d$decode(parameters)
+costs$mxpe(inv5p1d$initialize())
+costs$mxpe(parameters)
+parameters
+
+
+# 4 pieces of 1st degree
+inv4p1d = list(
+	initialize=function(){ c(0.03, 0.1, 0.2, 0.5, -1, -0.2, 0) },
+	decode=function(parameters) {
+		a = parameters[1]
+		b = parameters[2]
+		c = parameters[3]
+		d = parameters[4]
+		b1 = parameters[5]
+		c1 = parameters[6]
+		d1 = parameters[7]
+		c(
+			paste(a,'<x<',b,':',inv(a),    ',', inv(b)+b1),
+			paste(b,'<x<',c,':',inv(b)+b1, ',', inv(c)+c1),
+			paste(c,'<x<',d,':',inv(c)+c1, ',', inv(d)+d1),
+			paste(d,'<x<',1,':',inv(d)+d1, ',',         1)
+		)
+	},
+	predict=function(parameters){
+		a = parameters[1]
+		b = parameters[2]
+		c = parameters[3]
+		d = parameters[4]
+		b1 = parameters[5]
+		c1 = parameters[6]
+		d1 = parameters[7]
+		function(xsigned) {
+			x = abs(xsigned)
+			sign(xsigned) * ifelse(x<b, p1(a,b, inv(a),    inv(b)+b1)(x), 
+			                ifelse(x<c, p1(b,c, inv(b)+b1, inv(c)+c1)(x), 
+							ifelse(x<d, p1(c,d, inv(c)+c1, inv(d)+d1)(x), 
+							ifelse(x<1, p1(d,1, inv(d)+d1,         1)(x), 
+									1))))
+		}
+	}
+)
+
+comparison = SampledFunctionComparison(seq(0.03, 1, length.out=300), inv, inv4p1d$predict)
+costs = SampleCosts(comparison)
+parameters = optim(inv4p1d$initialize(), costs$mxpe)$par
+comparison$plot(inv4p1d$initialize(), parameters)
+inv4p1d$decode(inv4p1d$initialize())
+inv4p1d$decode(parameters)
+costs$mxpe(inv4p1d$initialize())
+costs$mxpe(parameters)
 parameters

@@ -81,8 +81,8 @@ PartlyKnownCompound water (
 
     /*phase*/
     field::StateFunction<int>([]
-            (const si::pressure pressure, 
-             const si::temperature temperature)
+            (const si::pressure<double> pressure, 
+             const si::temperature<double> temperature)
             {
                 const int supercritical = -3;
                 const int gas = -2;
@@ -243,7 +243,7 @@ PartlyKnownCompound water (
                  -52.843, 3703.6, 5.866, -5.879e-29, 10.0,
                   273.16, 646.15), // 273.16-646.15K
         /*density*/                
-            field::StateFunction<si::density>([](const si::pressure p, const si::temperature T) {
+            field::StateFunction<si::density<double>>([](const si::pressure<double> p, const si::temperature<double> T) {
                 // Perry equation 119, specialized for water
                 // valid for 273.16-647.096K
                 double Tc = 647.096;
@@ -266,7 +266,7 @@ PartlyKnownCompound water (
             //     (si::kelvin, si::pascal,
             //      73.649, -7258.2, -7.3037, 4.1653e-6,
             //      273.16, 647.1),//273.16-647.1K
-            field::StateFunction<si::pressure>([](const si::pressure p, const si::temperature T) {
+            field::StateFunction<si::pressure<double>>([](const si::pressure<double> p, const si::temperature<double> T) {
                 // Buck equation
                 double C = T/si::celcius;
                 return 0.61121*exp((18.678-C/234.5) * (C/(257.14+C))) * si::kilopascal; 
@@ -858,8 +858,8 @@ PartlyKnownCompound nitrogen (
 
     /*phase*/
     field::StateFunction<int>([]
-            (const si::pressure p, 
-             const si::temperature T)
+            (const si::pressure<double> p, 
+             const si::temperature<double> T)
             {
                 // const int supercritical = -3;
                 // const int gas = -2;
@@ -870,20 +870,20 @@ PartlyKnownCompound nitrogen (
 
                 // current pressure and temperature
                 // triple point between solid, liquid, and gas
-                const si::pressure        p0 = 12.463 * si::kilopascal;
-                const si::temperature     T0 = 63.15 * si::kelvin;
+                const si::pressure<double>        p0 = 12.463 * si::kilopascal;
+                const si::temperature<double>     T0 = 63.15 * si::kelvin;
                 // triple point between alpha, beta, and gamma solids
-                const si::pressure        pabg = 4650 * si::atmosphere;
-                const si::temperature     Tabg = 44.5 * si::kelvin;
+                const si::pressure<double>        pabg = 4650 * si::atmosphere;
+                const si::temperature<double>     Tabg = 44.5 * si::kelvin;
                 // critical point
-                const si::pressure        pc = 3.39 * si::megapascal;
-                const si::temperature     Tc = 126.21 * si::kelvin;
+                const si::pressure<double>        pc = 3.39 * si::megapascal;
+                const si::temperature<double>     Tc = 126.21 * si::kelvin;
                 // latent heat of vaporization and molar mass
-                const si::specific_energy L  = 198.8 * si::joule/si::gram;
-                const si::molar_mass      M  = 28.013  * si::gram/si::mole;
+                const si::specific_energy<double> L  = 198.8 * si::joule/si::gram;
+                const si::molar_mass<double>      M  = 28.013  * si::gram/si::mole;
                 // Simon-Glatzel constants, from Manzhelii (1997)
-                const si::pressure        a  = 0.9598 * si::bar;
-                const si::pressure        b  = -1592.0 * si::bar;
+                const si::pressure<double>        a  = 0.9598 * si::bar;
+                const si::pressure<double>        b  = -1592.0 * si::bar;
                 const double              c  = 1.7895;
                 const auto                dpdTab = (pabg-p0) / (Tabg-T0);
 
@@ -937,10 +937,10 @@ PartlyKnownCompound nitrogen (
         /*refractive_index*/       missing()
         // // TODO: reimplement this
         // field::SpectralFunction<double>([](
-        //     const si::wavenumber nlo, 
-        //     const si::wavenumber nhi, 
-        //     const si::pressure p, 
-        //     const si::temperature T
+        //     const si::wavenumber<double> nlo, 
+        //     const si::wavenumber<double> nhi, 
+        //     const si::pressure<double> p, 
+        //     const si::temperature<double> T
         // ) {
         //     double l = (2.0 / (nhi+nlo) / si::micrometer);
         //     double invl2 = 1.0/(l*l);
@@ -999,7 +999,7 @@ PartlyKnownCompound nitrogen (
                      std::vector<double>{ 45.0, 57.5}, 
                      std::vector<double>{ 2.21, 2.09}), // Manzhelii (1997)
             /*dynamic_viscosity*/                 missing(),
-                // field::StateFunction<si::dynamic_viscosity>([](si::pressure p, si::temperature T){ 
+                // field::StateFunction<si::dynamic_viscosity<double>>([](si::pressure<double> p, si::temperature<double> T){ 
                 //     return math::mix(2.5e9, 0.6e9, math::linearstep(45.0, 56.0, T/si::kelvin))*si::pascal*si::second;
                 // }), // Yamashita 2010
             /*density*/                           
@@ -1040,7 +1040,7 @@ PartlyKnownCompound nitrogen (
                      std::vector<double>{ 0.30,  0.29,  0.29,  0.29,  0.28,  0.28,  0.27}), // Prokhvatilov
 
             /*compressive_fracture_strength*/     
-                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
+                field::StateFunction<si::pressure<double>>([](si::pressure<double> p, si::temperature<double> T){ 
                     return math::mix(0.24, 6.00, math::linearstep(58.0, 5.0, T/si::kelvin))*si::megapascal;
                 }), // wikipedia, and Yamashita (2010)
             /*tensile_fracture_strength*/         
@@ -1072,7 +1072,7 @@ PartlyKnownCompound nitrogen (
                      std::vector<double>{  1.1,  1.5,  2.0,  3.3,   3.9,   4.5,   5.0,   6.0,   7.0,   8.0,   9.0,  14.0,  17.0,  24.0,  30.0,  34.0 }, 
                      std::vector<double>{17.08,40.27, 84.9,237.1, 238.5, 199.1, 156.3, 87.82, 50.56, 32.55, 22.73,  7.56,  5.26,  3.33,  2.81,  2.66 }), // Manzhelii (1997)
             /*dynamic_viscosity*/                 missing(),
-                // field::StateFunction<si::dynamic_viscosity>([](si::pressure p, si::temperature T){ 
+                // field::StateFunction<si::dynamic_viscosity<double>>([](si::pressure<double> p, si::temperature<double> T){ 
                 //     return math::mix(2.5e9, 0.6e9, math::linearstep(45.0, 56.0, T/si::kelvin))*si::pascal*si::second;
                 // }), // Yamashita 2010
             /*density*/                           
@@ -1113,7 +1113,7 @@ PartlyKnownCompound nitrogen (
                      std::vector<double>{ 0.34,  0.34,  0.34,  0.33,  0.33,  0.33,  0.33,  0.33,  0.33,  0.32}), // Prokhvatilov
 
             /*compressive_fracture_strength*/     
-                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
+                field::StateFunction<si::pressure<double>>([](si::pressure<double> p, si::temperature<double> T){ 
                     return math::mix(0.24, 6.00, math::linearstep(58.0, 5.0, T/si::kelvin))*si::megapascal;
                 }), // wikipedia, and Yamashita (2010)
             /*tensile_fracture_strength*/         
@@ -1192,8 +1192,8 @@ PartlyKnownCompound oxygen (
 
     /*phase*/
     field::StateFunction<int>([]
-            (const si::pressure p, 
-             const si::temperature T)
+            (const si::pressure<double> p, 
+             const si::temperature<double> T)
             {
                 // const int supercritical = -3;
                 // const int gas = -2;
@@ -1203,27 +1203,27 @@ PartlyKnownCompound oxygen (
                 const int gamma = 2;
 
                 // triple point between solid, liquid, and gas
-                const si::pressure        p0 = 0.14633 * si::kilopascal;
-                const si::temperature     T0 = 54.35 * si::kelvin;
+                const si::pressure<double>        p0 = 0.14633 * si::kilopascal;
+                const si::temperature<double>     T0 = 54.35 * si::kelvin;
                 // critical point
-                const si::pressure        pc = 5.043 * si::megapascal;
-                const si::temperature     Tc = 154.59 * si::kelvin;
+                const si::pressure<double>        pc = 5.043 * si::megapascal;
+                const si::temperature<double>     Tc = 154.59 * si::kelvin;
                 // latent heat of vaporization and molar mass
-                const si::specific_energy L  = 213.1 * si::joule/si::gram;
-                const si::molar_mass      M  = 31.9988 * si::gram/si::mole;
+                const si::specific_energy<double> L  = 213.1 * si::joule/si::gram;
+                const si::molar_mass<double>      M  = 31.9988 * si::gram/si::mole;
                 // Simon-Glatzel constants
-                const si::pressure        a  = 2733e5 * si::pascal;
-                const si::pressure        b  = 0.0 * si::pascal;
+                const si::pressure<double>        a  = 2733e5 * si::pascal;
+                const si::pressure<double>        b  = 0.0 * si::pascal;
                 const double              c  = 1.7425;
-                const si::pressure        pab0 = 0.0 * si::kilobar;
-                const si::temperature     Tab0 = 24.0 * si::kelvin;
-                const si::pressure        pab1 = 9.0 * si::kilobar;
-                const si::temperature     Tab1 = 52.0 * si::kelvin;
+                const si::pressure<double>        pab0 = 0.0 * si::kilobar;
+                const si::temperature<double>     Tab0 = 24.0 * si::kelvin;
+                const si::pressure<double>        pab1 = 9.0 * si::kilobar;
+                const si::temperature<double>     Tab1 = 52.0 * si::kelvin;
                 const auto                dpdTab = (pab1-pab0) / (Tab1-Tab0);
-                const si::pressure        pbg0 = 0.0 * si::kilobar;
-                const si::temperature     Tbg0 = 44.0 * si::kelvin;
-                const si::pressure        pbg1 = 2.0 * si::kilobar;
-                const si::temperature     Tbg1 = 55.0 * si::kelvin;
+                const si::pressure<double>        pbg0 = 0.0 * si::kilobar;
+                const si::temperature<double>     Tbg0 = 44.0 * si::kelvin;
+                const si::pressure<double>        pbg1 = 2.0 * si::kilobar;
+                const si::temperature<double>     Tbg1 = 55.0 * si::kelvin;
                 const auto                dpdTbg = (pbg1-pbg0) / (Tbg1-Tbg0);
 
                 const int basic_phase = property::get_simon_glatzel_phase(p, T, p0, T0, pc, Tc, L,  M, a, b, c);
@@ -1276,10 +1276,10 @@ PartlyKnownCompound oxygen (
         /*refractive_index*/       1.0002709,
         // // TODO: reimplement this
         // field::SpectralFunction<double>([](
-        //     const si::wavenumber nlo, 
-        //     const si::wavenumber nhi, 
-        //     const si::pressure p, 
-        //     const si::temperature T
+        //     const si::wavenumber<double> nlo, 
+        //     const si::wavenumber<double> nhi, 
+        //     const si::pressure<double> p, 
+        //     const si::temperature<double> T
         // ) {
         //     double l = (2.0 / (nhi+nlo) / si::micrometer);
         //     constexpr double n = 1.0002709f;
@@ -1306,7 +1306,7 @@ PartlyKnownCompound oxygen (
                  -4.1476, 94.04, -1.207, 0.0, 0.0,
                   54.36, 150), // 54.36-150K
         /*density*/                // 1.141 * si::gram/si::milliliter,
-            // field::StateSample<si::density>(0.6779*si::gram/si::centimeter3, si::atmosphere, 149.8*si::kelvin), // Johnson (1960)
+            // field::StateSample<si::density<double>>(0.6779*si::gram/si::centimeter3, si::atmosphere, 149.8*si::kelvin), // Johnson (1960)
             get_dippr_temperature_function_105
                 (si::kelvin, 31.9988 * si::gram/si::decimeter3,
                  3.9143, 0.28772, 154.58, 0.2924,
@@ -1431,7 +1431,7 @@ PartlyKnownCompound oxygen (
             /*compressive_fracture_strength*/     missing(),
             /*tensile_fracture_strength*/         missing(),
             /*shear_fracture_strength*/           
-                field::StateFunction<si::pressure>([](si::pressure p, si::temperature T){ 
+                field::StateFunction<si::pressure<double>>([](si::pressure<double> p, si::temperature<double> T){ 
                     return math::mix(1.4, 2.7, math::linearstep(40.0, 30.0, T/si::kelvin))*si::megapascal;
                 }), // Bates 1955
             /*compressive_yield_strength*/        missing(),
@@ -1572,10 +1572,10 @@ PartlyKnownCompound carbon_dioxide (
         /*refractive_index*/       1.0004493
         // // TODO: reimplement this
         // field::SpectralFunction<double>([](
-        //     const si::wavenumber nlo, 
-        //     const si::wavenumber nhi, 
-        //     const si::pressure p, 
-        //     const si::temperature T
+        //     const si::wavenumber<double> nlo, 
+        //     const si::wavenumber<double> nhi, 
+        //     const si::pressure<double> p, 
+        //     const si::temperature<double> T
         // ) {
         //     double l = (2.0 / (nhi+nlo) / si::micrometer);
         //     double invl2 = 1.0/(l*l);
@@ -1718,8 +1718,8 @@ PartlyKnownCompound methane (
     
     /*phase*/
     field::StateFunction<int>([]
-            (const si::pressure p, 
-             const si::temperature T)
+            (const si::pressure<double> p, 
+             const si::temperature<double> T)
             {
                 // const int supercritical = -3;
                 // const int gas = -2;
@@ -1728,17 +1728,17 @@ PartlyKnownCompound methane (
                 const int alpha = 1;
 
                 // triple point between solid, liquid, and gas
-                const si::pressure        p0 = 11.696 * si::kilopascal;
-                const si::temperature     T0 = 90.694 * si::kelvin;
+                const si::pressure<double>        p0 = 11.696 * si::kilopascal;
+                const si::temperature<double>     T0 = 90.694 * si::kelvin;
                 // critical point
-                const si::pressure        pc = 4.60 * si::megapascal;
-                const si::temperature     Tc = 190.56 * si::kelvin;
+                const si::pressure<double>        pc = 4.60 * si::megapascal;
+                const si::temperature<double>     Tc = 190.56 * si::kelvin;
                 // latent heat of vaporization and molar mass
-                const si::specific_energy L  = 510.83 * si::joule/si::gram;
-                const si::molar_mass      M  = 16.043 * si::gram/si::mole;
+                const si::specific_energy<double> L  = 510.83 * si::joule/si::gram;
+                const si::molar_mass<double>      M  = 16.043 * si::gram/si::mole;
                 // Simon-Glatzel constants
-                const si::pressure        a  = 2080e5 * si::pascal;
-                const si::pressure        b  = 0.0 * si::pascal;
+                const si::pressure<double>        a  = 2080e5 * si::pascal;
+                const si::pressure<double>        b  = 0.0 * si::pascal;
                 const double              c  = 1.698;
 
                 const int basic_phase = property::get_simon_glatzel_phase(p, T, p0, T0, pc, Tc, L,  M, a, b, c);
@@ -1857,7 +1857,7 @@ PartlyKnownCompound methane (
                      std::vector<double>{ 4017.56,  3126.23,  3042.81,  3012.07,  2994.51,  2959.38,  1365.53,  1321.62,  1299.67,  1282.10, 1251.37 },
                      std::vector<double>{   1.503,    1.503,    1.528,    1.672,    1.538,    1.503,    1.506,    1.522,    2.095,    1.519,    1.503 }),
             /*absorption_coefficient*/            
-                compound::relation::get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output
+                compound::relation::get_spectral_cubic_interpolation_function_of_wavenumber_for_log10_sample_output
                     (1.0/si::centimeter, 1.0/si::centimeter,
                      std::vector<double>{ 10653.5, 10534.7, 10445.5, 10297.0, 10217.8, 10108.9, 10059.4, 10029.7,  9960.4,  9871.3,  9792.1,  9752.5,  9673.3,  9623.8,  9554.5,  9435.6,  9376.2,  9148.5,  9039.6,  8990.1,  8901.0,  8851.5,  8802.0,  8703.0,  8594.1,  8455.4,  8396.0,  8346.5,  8306.9,  8257.4,  8227.7,  8128.7,  8089.1,  8069.3,  8039.6,  8009.9,  7950.5,  7861.4,  7811.9,  7623.8,  7495.0,  7415.8,  7356.4,  7277.2,  7237.6,  7217.8,  7148.5,  7128.7,  7059.4,  7009.9,  6960.4,  6871.3,  6792.1,  6732.7,  6703.0,  6643.6,  6584.2,  6524.8,  6287.1,  6059.4,  5980.2,  5940.6,  5881.2,  5782.2,  5742.6,  5673.3,  5554.5,  5514.9,  5465.3,  5376.2,  5277.2,  5168.3,  5108.9,  5039.6,  4811.9,  4594.1,  4524.8,  4475.2,  4356.4,  4316.8,  4247.5,  4207.9,  4148.5,  4079.2,  4039.6,  3920.8,  3851.5,  3772.3,  3475.2,  3188.1,  3029.7,  2940.6,  2841.6,  2752.5,  2623.8,  2505.0 },
                      std::vector<double>{  -2.134,  -1.866,  -1.966,  -0.978,  -1.514,  -0.642,  -1.078,  -0.844,  -1.346,  -0.693,  -1.698,  -1.430,  -1.564,  -1.950,  -2.218,  -2.084,  -2.101,  -1.749,  -1.045,  -1.246,  -0.173,  -0.391,   0.246,  -0.743,   0.547,  -0.994,  -0.190,  -0.860,  -0.542,  -1.263,  -1.749,  -2.050,  -1.447,  -1.749,  -1.581,  -2.117,  -2.335,  -2.067,  -2.134,  -1.179,   0.682,  -0.391,   0.330,   0.296,  -0.089,   0.145,  -0.039,   0.430,   0.313,  -0.609,  -0.927,  -0.609,  -1.279,  -0.324,  -1.849,  -2.034,  -1.782,  -2.168,  -1.028,   0.732,   1.335,   0.229,   0.078,   1.101,  -0.123,   0.061,   0.933,  -0.458,  -1.112,   0.011,  -1.715,  -0.642,  -0.911,  -1.615,  -0.642,   0.547,   1.419,   0.782,   1.419,   2.257,   1.134,   2.374,   0.430,   0.782,  -0.358,   0.464,   1.570,  -1.598,  -0.508,   1.369,   3.715,   1.268,   1.905,   0.196,   1.184,  -1.061 }),
@@ -1916,7 +1916,7 @@ PartlyKnownCompound methane (
                      std::vector<double>{ 4017.56,  3126.23,  3042.81,  3012.07,  2994.51,  2959.38,  1365.53,  1321.62,  1299.67,  1282.10, 1251.37 },
                      std::vector<double>{   1.503,    1.503,    1.528,    1.672,    1.538,    1.503,    1.506,    1.522,    2.095,    1.519,    1.503 }),
             /*absorption_coefficient*/            
-                compound::relation::get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output
+                compound::relation::get_spectral_cubic_interpolation_function_of_wavenumber_for_log10_sample_output
                     (1.0/si::centimeter, 1.0/si::centimeter,
                      std::vector<double>{ 10653.5, 10534.7, 10445.5, 10297.0, 10217.8, 10108.9, 10059.4, 10029.7,  9960.4,  9871.3,  9792.1,  9752.5,  9673.3,  9623.8,  9554.5,  9435.6,  9376.2,  9148.5,  9039.6,  8990.1,  8901.0,  8851.5,  8802.0,  8703.0,  8594.1,  8455.4,  8396.0,  8346.5,  8306.9,  8257.4,  8227.7,  8128.7,  8089.1,  8069.3,  8039.6,  8009.9,  7950.5,  7861.4,  7811.9,  7623.8,  7495.0,  7415.8,  7356.4,  7277.2,  7237.6,  7217.8,  7148.5,  7128.7,  7059.4,  7009.9,  6960.4,  6871.3,  6792.1,  6732.7,  6703.0,  6643.6,  6584.2,  6524.8,  6287.1,  6059.4,  5980.2,  5940.6,  5881.2,  5782.2,  5742.6,  5673.3,  5554.5,  5514.9,  5465.3,  5376.2,  5277.2,  5168.3,  5108.9,  5039.6,  4811.9,  4594.1,  4524.8,  4475.2,  4356.4,  4316.8,  4247.5,  4207.9,  4148.5,  4079.2,  4039.6,  3920.8,  3851.5,  3772.3,  3475.2,  3188.1,  3029.7,  2940.6,  2841.6,  2752.5,  2623.8,  2505.0 },
                      std::vector<double>{  -2.134,  -1.866,  -1.966,  -0.978,  -1.514,  -0.642,  -1.078,  -0.844,  -1.346,  -0.693,  -1.698,  -1.430,  -1.564,  -1.950,  -2.218,  -2.084,  -2.101,  -1.749,  -1.045,  -1.246,  -0.173,  -0.391,   0.246,  -0.743,   0.547,  -0.994,  -0.190,  -0.860,  -0.542,  -1.263,  -1.749,  -2.050,  -1.447,  -1.749,  -1.581,  -2.117,  -2.335,  -2.067,  -2.134,  -1.179,   0.682,  -0.391,   0.330,   0.296,  -0.089,   0.145,  -0.039,   0.430,   0.313,  -0.609,  -0.927,  -0.609,  -1.279,  -0.324,  -1.849,  -2.034,  -1.782,  -2.168,  -1.028,   0.732,   1.335,   0.229,   0.078,   1.101,  -0.123,   0.061,   0.933,  -0.458,  -1.112,   0.011,  -1.715,  -0.642,  -0.911,  -1.615,  -0.642,   0.547,   1.419,   0.782,   1.419,   2.257,   1.134,   2.374,   0.430,   0.782,  -0.358,   0.464,   1.570,  -1.598,  -0.508,   1.369,   3.715,   1.268,   1.905,   0.196,   1.184,  -1.061 }),
@@ -2029,10 +2029,10 @@ PartlyKnownCompound argon (
         /*refractive_index*/       1.000281
         // // TODO: reimplement this
         // field::SpectralFunction<double>([](
-        //     const si::wavenumber nlo, 
-        //     const si::wavenumber nhi, 
-        //     const si::pressure p, 
-        //     const si::temperature T
+        //     const si::wavenumber<double> nlo, 
+        //     const si::wavenumber<double> nhi, 
+        //     const si::pressure<double> p, 
+        //     const si::temperature<double> T
         // ) {
         //     double l = (2.0 / (nhi+nlo) / si::micrometer);
         //     double invl2 = 1.0/(l*l);
@@ -2178,8 +2178,8 @@ PartlyKnownCompound helium (
 
     /*phase*/
     field::StateFunction<int>([]
-            (const si::pressure p, 
-             const si::temperature T)
+            (const si::pressure<double> p, 
+             const si::temperature<double> T)
             {
                 // const int supercritical = -3;
                 // const int gas = -2;
@@ -2188,22 +2188,22 @@ PartlyKnownCompound helium (
                 const int fcc = 1;
 
                 // triple point between solid, liquid, and gas
-                const si::pressure        p0 = 5.048e3 * si::pascal;
-                const si::temperature     T0 = 2.1768 * si::kelvin;
+                const si::pressure<double>        p0 = 5.048e3 * si::pascal;
+                const si::temperature<double>     T0 = 2.1768 * si::kelvin;
                 // critical point
-                const si::pressure        pc = 0.227 * si::megapascal;
-                const si::temperature     Tc = 5.19 * si::kelvin;
+                const si::pressure<double>        pc = 0.227 * si::megapascal;
+                const si::temperature<double>     Tc = 5.19 * si::kelvin;
                 // latent heat of vaporization and molar mass
-                const si::specific_energy L  = 20.7 * si::joule / si::gram;
-                const si::molar_mass      M  = 4.0026 * si::gram/si::mole;
+                const si::specific_energy<double> L  = 20.7 * si::joule / si::gram;
+                const si::molar_mass<double>      M  = 4.0026 * si::gram/si::mole;
                 // Simon-Glatzel constants
-                const si::pressure        a  = 50.96e5 * si::pascal;
-                const si::pressure        b  = 0.0 * si::pascal;
+                const si::pressure<double>        a  = 50.96e5 * si::pascal;
+                const si::pressure<double>        b  = 0.0 * si::pascal;
                 const double              c  = 1.5602;
-                const si::pressure        pab0 = 1.1 * si::kilobar;
-                const si::temperature     Tab0 = 15.0 * si::kelvin;
-                const si::pressure        pab1 = 3.25 * si::kilobar;
-                const si::temperature     Tab1 = 20.0 * si::kelvin;
+                const si::pressure<double>        pab0 = 1.1 * si::kilobar;
+                const si::temperature<double>     Tab0 = 15.0 * si::kelvin;
+                const si::pressure<double>        pab1 = 3.25 * si::kilobar;
+                const si::temperature<double>     Tab1 = 20.0 * si::kelvin;
                 const auto                dpdTab = (pab1-pab0) / (Tab1-Tab0);
 
                 const int basic_phase = property::get_simon_glatzel_phase(p, T, p0, T0, pc, Tc, L,  M, a, b, c);
@@ -2247,10 +2247,10 @@ PartlyKnownCompound helium (
         /*refractive_index*/       1.000036
         // // TODO: reimplement this
         // field::SpectralFunction<double>([](
-        //     const si::wavenumber nlo, 
-        //     const si::wavenumber nhi, 
-        //     const si::pressure p, 
-        //     const si::temperature T
+        //     const si::wavenumber<double> nlo, 
+        //     const si::wavenumber<double> nhi, 
+        //     const si::pressure<double> p, 
+        //     const si::temperature<double> T
         // ) {
         //     double l = (2.0 / (nhi+nlo) / si::micrometer);
         //     double invl2 = 1.0/(l*l);
@@ -2418,10 +2418,10 @@ PartlyKnownCompound hydrogen (
         /*refractive_index*/       1.0001392
         // // TODO: reimplement this
         // field::SpectralFunction<double>([](
-        //     const si::wavenumber nlo, 
-        //     const si::wavenumber nhi, 
-        //     const si::pressure p, 
-        //     const si::temperature T
+        //     const si::wavenumber<double> nlo, 
+        //     const si::wavenumber<double> nhi, 
+        //     const si::pressure<double> p, 
+        //     const si::temperature<double> T
         // ) {
         //     double l = (2.0 / (nhi+nlo) / si::micrometer);
         //     return 1.0 + 0.0148956/(180.7-1.0/(l*l)) + 0.0049037/(92.0-1.0/(l*l));
@@ -2492,10 +2492,10 @@ PartlyKnownCompound hydrogen (
             /*refractive_index*/                  missing(),
             // // TODO: reimplement this
             // field::SpectralFunction<double>([](
-            //     const si::wavenumber nlo, 
-            //     const si::wavenumber nhi, 
-            //     const si::pressure p, 
-            //     const si::temperature T
+            //     const si::wavenumber<double> nlo, 
+            //     const si::wavenumber<double> nhi, 
+            //     const si::pressure<double> p, 
+            //     const si::temperature<double> T
             // ) {
             //     return 0.95+0.1144*std::pow(std::clamp(p/si::kilobar, 52.0, 350.0), 0.3368);
             // }), // Peck & Hung (1977)
@@ -2612,10 +2612,10 @@ PartlyKnownCompound ammonia (
         /*refractive_index*/       1.000376,
         // // TODO: reimplement this
         // field::SpectralFunction<double>([](
-        //     const si::wavenumber nlo, 
-        //     const si::wavenumber nhi, 
-        //     const si::pressure p, 
-        //     const si::temperature T
+        //     const si::wavenumber<double> nlo, 
+        //     const si::wavenumber<double> nhi, 
+        //     const si::pressure<double> p, 
+        //     const si::temperature<double> T
         // ) {
         //     double l = (2.0 / (nhi+nlo) / si::micrometer);
         //     double invl2 = 1.0/(l*l);
@@ -3100,7 +3100,7 @@ PartlyKnownCompound  sulfur_dioxide (
                      std::vector<double>{ 4032.02, 1483.46, 1381.00, 1361.79, 1336.18, 1323.37, 1321.24, 1299.89, 1171.82, 1163.29, 1150.48, 1135.54,  569.90,  552.83,  537.89,  525.08,  522.95,  508.00,  405.55,  405.55 },
                      std::vector<double>{   2.598,   2.598,   2.617,   2.653,   3.233,   3.190,   2.724,   2.604,   2.604,   3.043,   3.052,   2.607,   2.601,   2.623,   3.040,   3.052,   2.613,   2.595,   2.601,   2.601 }),
             /*absorption_coefficient*/            
-                compound::relation::get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output
+                compound::relation::get_spectral_cubic_interpolation_function_of_wavenumber_for_log10_sample_output
                     (1.0/si::centimeter, 1.0/si::centimeter,
                      std::vector<double>{  5097.2,  5028.0,  5008.2,  4968.7,  4948.9,  4731.5,  4691.9,  4672.2,  4553.5,  4533.8,  4514.0,  4108.7,  4089.0,  4059.3,  4019.8,  3990.1,  3920.9,  3911.0,  3881.4,  3871.5,  3841.8,  3812.2,  3752.9,  3743.0,  3713.3,  3644.2,  3614.5,  3575.0,  3525.5,  3495.9,  3456.3,  3416.8,  3397.0,  3357.5,  3327.8,  3308.1,  3041.2,  2981.9,  2942.3,  2843.5,  2823.7,  2774.3,  2734.8,  2665.6,  2616.1,  2566.7,  2537.1,  2477.8,  2448.1,  2359.1,  2309.7,  2280.1,  2240.5 },
                      std::vector<double>{  -2.262,  -0.619,  -2.227,  -1.878,  -2.227,  -2.210,  -0.759,  -2.210,  -2.227,  -1.843,  -2.227,  -2.245,  -1.493,  -2.157,  -1.895,  -1.196,   0.343,  -1.161,  -0.462,  -2.000,  -2.192,  -2.192,  -0.794,  -2.210,  -1.790,  -1.493,  -0.584,   1.199,  -0.741,  -1.528,  -1.790,   0.150,  -2.087,  -2.157,  -1.476,  -2.192,  -2.227,  -0.479,  -2.227,  -2.227,   0.010,  -0.899,  -0.706,   0.675,  -0.339,   0.517,   0.430,   2.685,   1.304,   0.045,   2.108,   0.395,   0.255 }),
@@ -3273,8 +3273,8 @@ PartlyKnownCompound carbon_monoxide (
 
     /*phase*/
     field::StateFunction<int>([]
-            (const si::pressure p, 
-             const si::temperature T)
+            (const si::pressure<double> p, 
+             const si::temperature<double> T)
             {
                 // const int supercritical = -3;
                 // const int gas = -2;
@@ -3283,23 +3283,23 @@ PartlyKnownCompound carbon_monoxide (
                 const int alpha = 1;
 
                 // triple point between solid, liquid, and gas
-                const si::pressure        p0 = 15.35 * si::kilopascal; // PubChem
-                const si::temperature     T0 = 68.15 * si::kelvin;     // PubChem
+                const si::pressure<double>        p0 = 15.35 * si::kilopascal; // PubChem
+                const si::temperature<double>     T0 = 68.15 * si::kelvin;     // PubChem
                 // sample point along alpha and beta line
-                const si::pressure        pab0 = 1.0 * si::atmosphere;
-                const si::temperature     Tab0 = 62.0 * si::kelvin;
+                const si::pressure<double>        pab0 = 1.0 * si::atmosphere;
+                const si::temperature<double>     Tab0 = 62.0 * si::kelvin;
                 // sample point along alpha and beta line
-                const si::pressure        pab1 = 3.5 * si::gigapascal;
-                const si::temperature     Tab1 = 150.0 * si::kelvin;
+                const si::pressure<double>        pab1 = 3.5 * si::gigapascal;
+                const si::temperature<double>     Tab1 = 150.0 * si::kelvin;
                 // critical point
-                const si::pressure        pc = 3.494 *  si::megapascal;
-                const si::temperature     Tc = 132.86 * si::kelvin;
+                const si::pressure<double>        pc = 3.494 *  si::megapascal;
+                const si::temperature<double>     Tc = 132.86 * si::kelvin;
                 // latent heat of vaporization and molar mass
-                const si::specific_energy L  = 6.04 * si::kilojoule/(28.010*si::gram);
-                const si::molar_mass      M  = 28.010 * si::gram/si::mole;
+                const si::specific_energy<double> L  = 6.04 * si::kilojoule/(28.010*si::gram);
+                const si::molar_mass<double>      M  = 28.010 * si::gram/si::mole;
                 // Simon-Glatzel constants, from Manzhelii (1997)
-                const si::pressure        a  = 1.4198e-2 * si::bar;// Manzhelii (1997)
-                const si::pressure        b  = -1240.0 * si::bar;  // Manzhelii (1997)
+                const si::pressure<double>        a  = 1.4198e-2 * si::bar;// Manzhelii (1997)
+                const si::pressure<double>        b  = -1240.0 * si::bar;  // Manzhelii (1997)
                 const double              c  = 2.695;              // Manzhelii (1997)
                 const auto                dpdTab = (pab1-pab0) / (Tab1-Tab0);
 
@@ -3350,10 +3350,10 @@ PartlyKnownCompound carbon_monoxide (
         /*refractive_index*/       1.00036320, //https://refractiveindex.info
         // // TODO: reimplement this
         // field::SpectralFunction<double>([](
-        //     const si::wavenumber nlo, 
-        //     const si::wavenumber nhi, 
-        //     const si::pressure p, 
-        //     const si::temperature T
+        //     const si::wavenumber<double> nlo, 
+        //     const si::wavenumber<double> nhi, 
+        //     const si::pressure<double> p, 
+        //     const si::temperature<double> T
         // ) {
         //     double l = (2.0 / (nhi+nlo) / si::micrometer);
         //     constexpr double n = 1.00036350f;
@@ -3431,7 +3431,7 @@ PartlyKnownCompound carbon_monoxide (
             /*refractive_index*/                  missing(),
             /*extinction_coefficient*/            missing(),
             /*absorption_coefficient*/            
-                compound::relation::get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output
+                compound::relation::get_spectral_cubic_interpolation_function_of_wavenumber_for_log10_sample_output
                     (1.0/si::centimeter, 1.0/si::centimeter,
                      std::vector<double>{  6439.7,  6390.1,  6350.4,  6320.7,  6300.8,  6211.6,  6191.7,  6152.1,  4486.0,  4466.1,  4366.9,  4327.3,  4287.6,  4257.9,  4238.0,  4208.3,  4178.5,  4158.7,  4138.8,  4079.3,  4059.5,  4029.8 },
                      std::vector<double>{  -2.678,  -1.542,  -2.661,   0.407,  -2.678,  -2.695,  -1.576,  -2.695,  -2.661,  -1.814,  -0.424,   0.373,   0.017,   2.780,  -0.983,  -0.576,  -1.576,   0.797,  -2.678,  -2.695,  -1.797,  -2.678 }),
@@ -3485,7 +3485,7 @@ PartlyKnownCompound carbon_monoxide (
             /*refractive_index*/                  missing(),
             /*extinction_coefficient*/            missing(),
             /*absorption_coefficient*/            
-                compound::relation::get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output
+                compound::relation::get_spectral_cubic_interpolation_function_of_wavenumber_for_log10_sample_output
                     (1.0/si::centimeter, 1.0/si::centimeter,
                      std::vector<double>{  6439.7,  6390.1,  6350.4,  6320.7,  6300.8,  6211.6,  6191.7,  6152.1,  4486.0,  4466.1,  4366.9,  4327.3,  4287.6,  4257.9,  4238.0,  4208.3,  4178.5,  4158.7,  4138.8,  4079.3,  4059.5,  4029.8 },
                      std::vector<double>{  -2.678,  -1.542,  -2.661,   0.407,  -2.678,  -2.695,  -1.576,  -2.695,  -2.661,  -1.814,  -0.424,   0.373,   0.017,   2.780,  -0.983,  -0.576,  -1.576,   0.797,  -2.678,  -2.695,  -1.797,  -2.678 }),
@@ -3584,10 +3584,10 @@ PartlyKnownCompound ethane (
         /*refractive_index*/       1.00075276,
         // // TODO: reimplement this
         // field::SpectralFunction<double>([](
-        //     const si::wavenumber nlo, 
-        //     const si::wavenumber nhi, 
-        //     const si::pressure p, 
-        //     const si::temperature T
+        //     const si::wavenumber<double> nlo, 
+        //     const si::wavenumber<double> nhi, 
+        //     const si::pressure<double> p, 
+        //     const si::temperature<double> T
         // ) {
         //     double l = (2.0 / (nhi+nlo) / si::micrometer);
         //     double invl2 = 1.0/(l*l);

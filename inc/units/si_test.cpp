@@ -7,25 +7,25 @@
 #include "si.hpp"
 #include "si_test_utils.hpp"
 
-si::molar_heat_capacity C1 = 2.0*si::joule/(si::kelvin*si::mole);
-si::molar_heat_capacity C2 = -3.0*si::joule/(si::kelvin*si::mole);
-si::molar_heat_capacity C3 = 4.0*si::joule/(si::kelvin*si::mole);
-si::luminous_intensity L1 = 3.0*si::candela;
-si::luminous_intensity L2 = -4.0*si::candela;
-si::luminous_intensity L3 = 5.0*si::candela;
-si::voltage V1 = -5.0*si::volt;
-si::voltage V2 = 6.0*si::volt;
-si::voltage V3 = -7.0*si::volt;
+si::molar_heat_capacity<double> C1 = 2.0*si::joule/(si::kelvin*si::mole);
+si::molar_heat_capacity<double> C2 = -3.0*si::joule/(si::kelvin*si::mole);
+si::molar_heat_capacity<double> C3 = 4.0*si::joule/(si::kelvin*si::mole);
+si::luminous_intensity<double> L1 = 3.0*si::candela;
+si::luminous_intensity<double> L2 = -4.0*si::candela;
+si::luminous_intensity<double> L3 = 5.0*si::candela;
+si::voltage<double> V1 = -5.0*si::volt;
+si::voltage<double> V2 = 6.0*si::volt;
+si::voltage<double> V3 = -7.0*si::volt;
 
-si::molar_heat_capacity C1copy = 2.0*si::joule/(si::kelvin*si::mole);
-si::molar_heat_capacity C2copy = -3.0*si::joule/(si::kelvin*si::mole);
-si::molar_heat_capacity C3copy = 4.0*si::joule/(si::kelvin*si::mole);
-si::luminous_intensity L1copy = 3.0*si::candela;
-si::luminous_intensity L2copy = -4.0*si::candela;
-si::luminous_intensity L3copy = 5.0*si::candela;
-si::voltage V1copy = -5.0*si::volt;
-si::voltage V2copy = 6.0*si::volt;
-si::voltage V3copy = -7.0*si::volt;
+si::molar_heat_capacity<double> C1copy = 2.0*si::joule/(si::kelvin*si::mole);
+si::molar_heat_capacity<double> C2copy = -3.0*si::joule/(si::kelvin*si::mole);
+si::molar_heat_capacity<double> C3copy = 4.0*si::joule/(si::kelvin*si::mole);
+si::luminous_intensity<double> L1copy = 3.0*si::candela;
+si::luminous_intensity<double> L2copy = -4.0*si::candela;
+si::luminous_intensity<double> L3copy = 5.0*si::candela;
+si::voltage<double> V1copy = -5.0*si::volt;
+si::voltage<double> V2copy = 6.0*si::volt;
+si::voltage<double> V3copy = -7.0*si::volt;
 
 TEST_CASE( "units multiplication purity", "[si]" ) {
   SECTION("Calling an operation twice with the same arguments must produce the same results")

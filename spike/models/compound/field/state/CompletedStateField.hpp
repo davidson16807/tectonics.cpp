@@ -22,10 +22,10 @@ namespace field {
 
         class CompletedStateFieldValueVisitor
         {
-            si::pressure p;
-            si::temperature T;
+            si::pressure<double> p;
+            si::temperature<double> T;
         public:
-            CompletedStateFieldValueVisitor(const si::pressure p, const si::temperature T)
+            CompletedStateFieldValueVisitor(const si::pressure<double> p, const si::temperature<double> T)
             : p(p), T(T)
             {
 
@@ -51,7 +51,7 @@ namespace field {
                 // I haven't clarified the reason, but it seems likely related to accessing 
                 // the `f` attribute in a object that destructs after we exit out of the `map` function.
                 auto fcopy = f; 
-                return [fcopy, a](const si::pressure p, const si::temperature T){ return fcopy(a(p, T)); };
+                return [fcopy, a](const si::pressure<double> p, const si::temperature<double> T){ return fcopy(a(p, T)); };
             }
         };
         class CompletedStateFieldFunctionVisitor
@@ -72,14 +72,14 @@ namespace field {
         template<typename T2>
         class CompletedStateFieldMapToConstantVisitor
         {
-            si::pressure default_p;
-            si::temperature default_T;
-            std::function<T2(T1, si::pressure, si::temperature)> f;
+            si::pressure<double> default_p;
+            si::temperature<double> default_T;
+            std::function<T2(T1, si::pressure<double>, si::temperature<double>)> f;
         public:
             CompletedStateFieldMapToConstantVisitor(
-                const si::pressure default_p, 
-                const si::temperature default_T,
-                const std::function<T2(const T1, const si::pressure, const si::temperature)> f
+                const si::pressure<double> default_p, 
+                const si::temperature<double> default_T,
+                const std::function<T2(const T1, const si::pressure<double>, const si::temperature<double>)> f
             )
             : default_p(default_p), 
               default_T(default_T),
@@ -103,8 +103,8 @@ namespace field {
         {
             auto value2 = value;
             entry = StateFunction<T1>([value2](
-                const si::pressure p, 
-                const si::temperature T
+                const si::pressure<double> p, 
+                const si::temperature<double> T
               ){
                 return value2;
               });
@@ -119,18 +119,18 @@ namespace field {
         {
             auto value = other;
             entry = StateFunction<T1>([value](
-                const si::pressure p, 
-                const si::temperature T
+                const si::pressure<double> p, 
+                const si::temperature<double> T
               ){
                 return value;
               });
         	return *this;
         }
-        constexpr T1 operator()(const si::pressure p, const si::temperature T) const
+        constexpr T1 operator()(const si::pressure<double> p, const si::temperature<double> T) const
         {
             return std::visit(CompletedStateFieldValueVisitor(p, T), entry);
         }
-        constexpr T1 operator()(const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T) const
+        constexpr T1 operator()(const si::wavenumber<double> nlo, const si::wavenumber<double> nhi, const si::pressure<double> p, const si::temperature<double> T) const
         {
             return std::visit(CompletedStateFieldValueVisitor(p, T), entry);
         }

@@ -78,11 +78,11 @@ namespace spline {
         const T b(1.670f);
         const T c(2.167f);
         auto F = [](T x){ return std::exp(-x*x); };
-        using PiecewisePolynomial = Railcar<T, Polynomial<T,0,2>>;
+        using G = Railcar<T, Polynomial<T,0,2>>;
         return PolynomialRailyard<T,0,2>{
-            PiecewisePolynomial(-c,-a, quadratic_newton_polynomial(-c, -b,  -a,  0.0f, F(-b),   F(-a))),
-            PiecewisePolynomial(-a, a, quadratic_newton_polynomial(-a, 0.0f, a, F(-a), F(0.0f), F( a))),
-            PiecewisePolynomial( a, c, quadratic_newton_polynomial( a,  b,   c, F( a), F( b),   0.0f ))
+            G(-c,-a, quadratic_newton_polynomial(-c, -b,  -a,  0.0f, F(-b),   F(-a))),
+            G(-a, a, quadratic_newton_polynomial(-a, 0.0f, a, F(-a), F(0.0f), F( a))),
+            G( a, c, quadratic_newton_polynomial( a,  b,   c, F( a), F( b),   0.0f ))
         };
     }
 
@@ -97,12 +97,12 @@ namespace spline {
         const T  b(1.691f);
         const T oo(std::numeric_limits<T>::max()); // infinity
         auto F = [](T x){ return std::erf(x); };
-        using PiecewisePolynomial = Railcar<T, Polynomial<T,0,2>>;
+        using G = Railcar<T, Polynomial<T,0,2>>;
         return PolynomialRailyard<T,0,2>{
-            PiecewisePolynomial(-oo,-b,   Polynomial<T,0,2>{-1.0f, 0.0f, 0.0f}),
-            PiecewisePolynomial(-b, 0.0f, quadratic_newton_polynomial(-b,   -a, 0.0f, -1.0f,    F(-a),  F(0.0f) )),
-            PiecewisePolynomial( 0.0f, b, quadratic_newton_polynomial( 0.0f, a, b,     F(0.0f), F(a),   1.0f    )),
-            PiecewisePolynomial( b, oo,   Polynomial<T,0,2>{1.0f, 0.0f, 0.0f})
+            G(-oo,-b,   Polynomial<T,0,2>{-1.0f, 0.0f, 0.0f}),
+            G(-b, 0.0f, quadratic_newton_polynomial(-b,   -a, 0.0f, -1.0f,    F(-a),  F(0.0f) )),
+            G( 0.0f, b, quadratic_newton_polynomial( 0.0f, a, b,     F(0.0f), F(a),   1.0f    )),
+            G( b, oo,   Polynomial<T,0,2>{1.0f, 0.0f, 0.0f})
         };
     }
 
@@ -117,12 +117,12 @@ namespace spline {
         const T  b(2.052f);
         const T oo(std::numeric_limits<T>::max()); // infinity
         auto F = [](T x){ return std::tanh(x); };
-        using PiecewisePolynomial = Railcar<T, Polynomial<T,0,2>>;
+        using G = Railcar<T, Polynomial<T,0,2>>;
         return PolynomialRailyard<T,0,2>{
-            PiecewisePolynomial(-oo,-b,   Polynomial<T,0,2>{-1.0f, 0.0f, 0.0f}),
-            PiecewisePolynomial(-b, 0.0f, quadratic_newton_polynomial(-b,   -a, 0.0f, -1.0f,    F(-a),  F(0.0f) )),
-            PiecewisePolynomial( 0.0f, b, quadratic_newton_polynomial( 0.0f, a, b,     F(0.0f), F(a),   1.0f    )),
-            PiecewisePolynomial( b, oo,   Polynomial<T,0,2>{1.0f, 0.0f, 0.0f})
+            G(-oo,-b,   Polynomial<T,0,2>{-1.0f, 0.0f, 0.0f}),
+            G(-b, 0.0f, quadratic_newton_polynomial(-b,   -a, 0.0f, -1.0f,    F(-a),  F(0.0f) )),
+            G( 0.0f, b, quadratic_newton_polynomial( 0.0f, a, b,     F(0.0f), F(a),   1.0f    )),
+            G( b, oo,   Polynomial<T,0,2>{1.0f, 0.0f, 0.0f})
         };
     }
 
@@ -138,11 +138,11 @@ namespace spline {
         const T b(1.766f);
         const T c(2.533f);
         auto F = [](T x){ return 1.0f/(std::cosh(x)*std::cosh(x)); };
-        using PiecewisePolynomial = Railcar<T, Polynomial<T,0,2>>;
+        using G = Railcar<T, Polynomial<T,0,2>>;
         return PolynomialRailyard<T,0,2>{
-            PiecewisePolynomial(-c,-a, quadratic_newton_polynomial(-c, -b,  -a,  0.0f, F(-b),   F(-a))),
-            PiecewisePolynomial(-a, a, quadratic_newton_polynomial(-a, 0.0f, a, F(-a), F(0.0f), F( a))),
-            PiecewisePolynomial( a, c, quadratic_newton_polynomial( a,  b,   c, F( a), F( b),   0.0f ))
+            G(-c,-a, quadratic_newton_polynomial(-c, -b,  -a,  0.0f, F(-b),   F(-a))),
+            G(-a, a, quadratic_newton_polynomial(-a, 0.0f, a, F(-a), F(0.0f), F( a))),
+            G( a, c, quadratic_newton_polynomial( a,  b,   c, F( a), F( b),   0.0f ))
         };
     }
 
@@ -160,12 +160,12 @@ namespace spline {
         const T  c(2.236f);
         const T  d(2.982f);
         auto F = [](T x){ return -2.0f*std::tanh(x)/(std::cosh(x)*std::cosh(x)); };
-        using PiecewisePolynomial = Railcar<T, Polynomial<T,0,2>>;
+        using G = Railcar<T, Polynomial<T,0,2>>;
         return PolynomialRailyard<T,0,2>{
-            PiecewisePolynomial(-d, -b,   quadratic_newton_polynomial( 0.0f,-c,-b,     F(0.0f), F(-c), F(-b)   )),
-            PiecewisePolynomial(-b, 0.0f, quadratic_newton_polynomial(-b,   -a, 0.0f,  F(-b),   F(-a), 0.0f    )),
-            PiecewisePolynomial( 0.0f, b, quadratic_newton_polynomial( 0.0f, a, b,     0.0f,    F(a),  F(b)    )),
-            PiecewisePolynomial( b,  d,   quadratic_newton_polynomial( b,    c, 0.0f,  F(b),    F(c),  0.0f    )),
+            G(-d, -b,   quadratic_newton_polynomial( 0.0f,-c,-b,     F(0.0f), F(-c), F(-b)   )),
+            G(-b, 0.0f, quadratic_newton_polynomial(-b,   -a, 0.0f,  F(-b),   F(-a), 0.0f    )),
+            G( 0.0f, b, quadratic_newton_polynomial( 0.0f, a, b,     0.0f,    F(a),  F(b)    )),
+            G( b,  d,   quadratic_newton_polynomial( b,    c, 0.0f,  F(b),    F(c),  0.0f    )),
         };
     }
 }}

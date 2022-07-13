@@ -69,9 +69,9 @@ namespace compound
     {
 
         // MOLECULAR PROPERTIES
-        si::molar_mass   molar_mass;
+        si::molar_mass<double>   molar_mass;
         int              atoms_per_molecule;
-        si::length       molecular_diameter;
+        si::length<double>       molecular_diameter;
         /* used to determine specific heat capacity 
         from http://hyperphysics.phy-astr.gsu.edu/hbase/Kinetic/shegas.html */
         field::OptionalConstantField<double> molecular_degrees_of_freedom;
@@ -80,28 +80,28 @@ namespace compound
 
         // CRITICAL PROPERTIES
         // derived by Klincewicz
-        si::pressure     critical_point_pressure;
-        si::molar_volume critical_point_volume;
+        si::pressure<double>     critical_point_pressure;
+        si::molar_volume<double> critical_point_volume;
         // derived by Klincewicz -> Ihmels
-        si::temperature  critical_point_temperature;
+        si::temperature<double>  critical_point_temperature;
         double           critical_point_compressibility;
 
         // PHASE TRANSITION PROPERTIES
         // derived by Klincewicz -> Ihmels -> Tee-Gotoh-Steward1 -> Tee-Gotoh-Steward2 -> Pitzer
-        field::OptionalConstantField<si::specific_energy> latent_heat_of_vaporization;
-        field::OptionalConstantField<si::specific_energy> latent_heat_of_fusion;
-        field::OptionalConstantField<si::pressure>        triple_point_pressure;
-        field::OptionalConstantField<si::temperature>     triple_point_temperature;
-        field::OptionalConstantField<si::pressure>        freezing_point_sample_pressure;
-        field::OptionalConstantField<si::temperature>     freezing_point_sample_temperature;
-        field::OptionalConstantField<si::pressure>        boiling_point_sample_pressure;
-        field::OptionalConstantField<si::temperature>     boiling_point_sample_temperature;
+        field::OptionalConstantField<si::specific_energy<double>> latent_heat_of_vaporization;
+        field::OptionalConstantField<si::specific_energy<double>> latent_heat_of_fusion;
+        field::OptionalConstantField<si::pressure<double>>        triple_point_pressure;
+        field::OptionalConstantField<si::temperature<double>>     triple_point_temperature;
+        field::OptionalConstantField<si::pressure<double>>        freezing_point_sample_pressure;
+        field::OptionalConstantField<si::temperature<double>>     freezing_point_sample_temperature;
+        field::OptionalConstantField<si::pressure<double>>        boiling_point_sample_pressure;
+        field::OptionalConstantField<si::temperature<double>>     boiling_point_sample_temperature;
 
         field::OptionalStateField<int> phase;
 
         // MISCELLANEOUS PROPERTIES
-        relation::OptionalStateRelation<relation::PolynomialRailyardRelation<si::wavenumber,si::area,0,1>> molecular_absorption_cross_section;
-        // field::OptionalSpectralField<si::area> molecular_absorption_cross_section;
+        relation::OptionalStateRelation<relation::PolynomialRailyardRelation<si::wavenumber<double>,si::area<double>,0,1>> molecular_absorption_cross_section;
+        // field::OptionalSpectralField<si::area<double>> molecular_absorption_cross_section;
 
         // PHASE PROPERTIES
         phase::PartlyKnownGas gas;
@@ -109,27 +109,27 @@ namespace compound
         std::vector<phase::PartlyKnownSolid> solids;
 
         PartlyKnownCompound(
-            const si::molar_mass molar_mass,
+            const si::molar_mass<double> molar_mass,
             const int            atoms_per_molecule,
-            const field::OptionalConstantField<si::length>        molecular_diameter,
+            const field::OptionalConstantField<si::length<double>>        molecular_diameter,
             const field::OptionalConstantField<double>            molecular_degrees_of_freedom,
             const field::OptionalConstantField<double>            acentric_factor,
 
-            const field::OptionalConstantField<si::pressure>      critical_point_pressure,
-            const field::OptionalConstantField<si::molar_volume>  critical_point_volume,
-            const field::OptionalConstantField<si::temperature>   critical_point_temperature,
+            const field::OptionalConstantField<si::pressure<double>>      critical_point_pressure,
+            const field::OptionalConstantField<si::molar_volume<double>>  critical_point_volume,
+            const field::OptionalConstantField<si::temperature<double>>   critical_point_temperature,
             const field::OptionalConstantField<double>            critical_point_compressibility,
 
-            const field::OptionalConstantField<si::specific_energy> latent_heat_of_vaporization,
-            const field::OptionalConstantField<si::specific_energy> latent_heat_of_fusion,
-            const field::OptionalConstantField<si::pressure>      triple_point_pressure,
-            const field::OptionalConstantField<si::temperature>   triple_point_temperature,
-            const field::OptionalConstantField<si::pressure>      freezing_point_sample_pressure,
-            const field::OptionalConstantField<si::temperature>   freezing_point_sample_temperature,
-            const field::OptionalConstantField<si::pressure>      boiling_point_sample_pressure,
-            const field::OptionalConstantField<si::temperature>   boiling_point_sample_temperature,
+            const field::OptionalConstantField<si::specific_energy<double>> latent_heat_of_vaporization,
+            const field::OptionalConstantField<si::specific_energy<double>> latent_heat_of_fusion,
+            const field::OptionalConstantField<si::pressure<double>>      triple_point_pressure,
+            const field::OptionalConstantField<si::temperature<double>>   triple_point_temperature,
+            const field::OptionalConstantField<si::pressure<double>>      freezing_point_sample_pressure,
+            const field::OptionalConstantField<si::temperature<double>>   freezing_point_sample_temperature,
+            const field::OptionalConstantField<si::pressure<double>>      boiling_point_sample_pressure,
+            const field::OptionalConstantField<si::temperature<double>>   boiling_point_sample_temperature,
             const field::OptionalStateField<int>                  phase,
-            const relation::OptionalStateRelation<relation::PolynomialRailyardRelation<si::wavenumber,si::area,0,1>> molecular_absorption_cross_section,
+            const relation::OptionalStateRelation<relation::PolynomialRailyardRelation<si::wavenumber<double>,si::area<double>,0,1>> molecular_absorption_cross_section,
             const phase::PartlyKnownGas                           gas,
             const phase::PartlyKnownLiquid                        liquid,
             const std::vector<phase::PartlyKnownSolid>            solids

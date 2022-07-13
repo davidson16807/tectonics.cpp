@@ -25,13 +25,13 @@ namespace field{
         {
             return false;
         }
-        for(si::pressure p = 0.01*si::pascal; p<2.0*si::standard_pressure; p+=(si::standard_pressure/2.0))
+        for(si::pressure<double> p = 0.01*si::pascal; p<2.0*si::standard_pressure; p+=(si::standard_pressure/2.0))
         {
-            for(si::temperature T = 0.01*si::kelvin; T<2.0*si::standard_temperature; T+=(si::standard_temperature/2.0))
+            for(si::temperature<double> T = 0.01*si::kelvin; T<2.0*si::standard_temperature; T+=(si::standard_temperature/2.0))
             {
-                for(si::length llo = 100.0*si::nanometer; llo<1000.0 * si::nanometer; llo+=200.0*si::nanometer)
+                for(si::length<double> llo = 100.0*si::nanometer; llo<1000.0 * si::nanometer; llo+=200.0*si::nanometer)
                 {
-                    for(si::length lhi = 100.0*si::nanometer; lhi<1000.0 * si::nanometer; lhi+=200.0*si::nanometer)
+                    for(si::length<double> lhi = 100.0*si::nanometer; lhi<1000.0 * si::nanometer; lhi+=200.0*si::nanometer)
                     {
                         auto difference = (first(1.0/lhi, 1.0/llo, p, T).value() - second(1.0/lhi, 1.0/llo, p, T).value()) / T1(1.0);
                         if( difference*difference > 1e-4 ){
@@ -55,10 +55,10 @@ namespace field{
     ){
         return field::SpectralFunction<Ty>(
             [value]
-            (const si::wavenumber nlo, 
-             const si::wavenumber nhi, 
-             const si::pressure p, 
-             const si::temperature T)
+            (const si::wavenumber<double> nlo, 
+             const si::wavenumber<double> nhi, 
+             const si::pressure<double> p, 
+             const si::temperature<double> T)
             {
                 return value;
             }
@@ -66,7 +66,7 @@ namespace field{
     }
 }}
 
-double test_OptionalSpectralField(const si::wavenumber nlo, const si::wavenumber nhi, si::pressure p, const si::temperature T)
+double test_OptionalSpectralField(const si::wavenumber<double> nlo, const si::wavenumber<double> nhi, si::pressure<double> p, const si::temperature<double> T)
 {
     return (si::mole*si::universal_gas_constant*T/p/si::liter);
 }

@@ -25,11 +25,11 @@ namespace field{
         {
             return false;
         }
-        si::pressure max_p = 2.0*si::standard_pressure;
-        si::temperature max_T = 2.0*si::standard_temperature;
-        for(si::pressure p = 0.01*si::pascal; p<max_p; p+=(max_p/3.0))
+        si::pressure<double> max_p = 2.0*si::standard_pressure;
+        si::temperature<double> max_T = 2.0*si::standard_temperature;
+        for(si::pressure<double> p = 0.01*si::pascal; p<max_p; p+=(max_p/3.0))
         {
-            for(si::temperature T = 0.01*si::kelvin; T<max_T; T+=(max_T/3.0))
+            for(si::temperature<double> T = 0.01*si::kelvin; T<max_T; T+=(max_T/3.0))
             {
                 auto difference = (first(p, T).value() - second(p, T).value()) / T1(1.0);
                 if( difference*difference > 1e-4 ){
@@ -46,7 +46,7 @@ namespace field{
     }
 }}
 
-double test_ideal_gas_law_optional(const si::pressure p, const si::temperature T)
+double test_ideal_gas_law_optional(const si::pressure<double> p, const si::temperature<double> T)
 {
 	return (si::mole*si::universal_gas_constant*T/p/si::liter);
 }

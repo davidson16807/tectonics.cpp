@@ -60,20 +60,20 @@ namespace stratum
         but exp2 is not constexpr and I can't set a variable as static unless it's constexpr,
         so I settle for using static methods instead.
         */
-        static si::temperature temperature_max ()
+        static si::temperature<double> temperature_max ()
         {
             return exp2(std::numeric_limits<std::uint16_t>::max()/log2_ref_temperature) * si::kelvin;
         } 
-        static si::pressure pressure_max    ()
+        static si::pressure<double> pressure_max    ()
         {
             return exp2(std::numeric_limits<std::uint16_t>::max()/log2_ref_pressure) * si::pascal;
         } 
 
-        static si::temperature temperature_min ()
+        static si::temperature<double> temperature_min ()
         {
             return exp2(0./log2_ref_temperature) * si::kelvin;
         } 
-        static si::pressure pressure_min    ()
+        static si::pressure<double> pressure_min    ()
         {
             return exp2(0./log2_ref_pressure) * si::pascal;
         } 

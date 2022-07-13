@@ -198,10 +198,10 @@ namespace compound{
         but only holds when extinction coefficient k<<1.
         */
         constexpr double approx_scattering_efficiency_from_absorption_coefficient(
-            const si::attenuation absorption_coefficient,
-            const si::length particle_diameter
+            const si::attenuation<double> absorption_coefficient,
+            const si::length<double> particle_diameter
         ){
-            const si::length De = 2.0*particle_diameter;
+            const si::length<double> De = 2.0*particle_diameter;
             return 1.0 / (1.0 + absorption_coefficient * De);
         }
         /*
@@ -211,8 +211,8 @@ namespace compound{
         constexpr double approx_scattering_efficiency_from_refractive_index(
             const double refractive_index,
             const double extinction_coefficient,
-            const si::length wavelength,
-            const si::length particle_diameter
+            const si::length<double> wavelength,
+            const si::length<double> particle_diameter
         ){
             const double _4pi = 4.0 * 3.14159265358979;
             const double n = refractive_index;
@@ -245,37 +245,38 @@ namespace compound{
         It makes it possible to estimate volumetric absorption coefficient based on laboratory measurements, 
         but only holds when extinction coefficient k<<1.
         */
-        constexpr si::attenuation approx_absorption_coefficient_from_scattering_efficiency(
+        constexpr si::attenuation<double> approx_absorption_coefficient_from_scattering_efficiency(
             const double scattering_efficiency,
-            const si::length particle_diameter
+            const si::length<double> particle_diameter
         ){
-            const si::length De = 2.0*particle_diameter;
+            const si::length<double> De = 2.0*particle_diameter;
             return std::max(1.0/scattering_efficiency - 1.0, 0.0) / De;
         }
+
         /*
         `get_absorption_coefficient_from_refractive_index() ` calculates "Qₛ" from Hapke (1981, eq. 33)
         given the complex index of refraction (i.e. refractive index "n" and extinction coefficient "k")
         */
-        constexpr si::attenuation get_absorption_coefficient_from_refractive_index(
+        constexpr si::attenuation<double> get_absorption_coefficient_from_refractive_index(
             const double refractive_index,
             const double extinction_coefficient,
-            const si::length wavelength
+            const si::length<double> wavelength
         ){
             const double _4pi = 4.0 * 3.14159265358979;
             return std::max(_4pi * refractive_index * extinction_coefficient, 0.0) / wavelength;
         }
         constexpr double get_refractive_index_from_absorption_coefficient(
-            const si::attenuation absorption_coefficient,
+            const si::attenuation<double> absorption_coefficient,
             const double extinction_coefficient,
-            const si::length wavelength
+            const si::length<double> wavelength
         ){
             const double _4pi = 4.0 * 3.14159265358979;
             return absorption_coefficient * wavelength / (_4pi*extinction_coefficient);
         }
         constexpr double get_extinction_coefficient_from_absorption_coefficient(
-            const si::attenuation absorption_coefficient,
+            const si::attenuation<double> absorption_coefficient,
             const double refractive_index,
-            const si::length wavelength
+            const si::length<double> wavelength
         ){
             const double _4pi = 4.0 * 3.14159265358979;
             return absorption_coefficient * wavelength / (_4pi*refractive_index);

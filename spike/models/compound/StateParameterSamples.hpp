@@ -27,8 +27,8 @@ namespace compound
             if (guess.freezing_point_sample_pressure == guess.boiling_point_sample_pressure)
             {
                 optional_liquid_sample = optional_liquid_sample.value_or(
-                    []( si::pressure freezing_point_sample_pressure, si::temperature freezing_point_sample_temperature, 
-                        si::pressure boiling_point_sample_pressure, si::temperature boiling_point_sample_temperature)
+                    []( si::pressure<double> freezing_point_sample_pressure, si::temperature<double> freezing_point_sample_temperature, 
+                        si::pressure<double> boiling_point_sample_pressure, si::temperature<double> boiling_point_sample_temperature)
                     {
                         if (freezing_point_sample_temperature < si::standard_temperature && 
                                                                 si::standard_temperature < boiling_point_sample_temperature)

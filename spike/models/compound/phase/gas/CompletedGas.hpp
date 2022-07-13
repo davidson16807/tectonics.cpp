@@ -13,11 +13,11 @@ namespace compound {
 namespace phase { 
     struct CompletedGas
     {
-        relation::GasPropertyStateRelation<si::specific_heat_capacity> isobaric_specific_heat_capacity;
-        relation::GasPropertyStateRelation<si::thermal_conductivity> thermal_conductivity;
-        relation::GasPropertyStateRelation<si::dynamic_viscosity> dynamic_viscosity;
-        field::CompletedStateField<si::density> density;
-        relation::PolynomialRailyardRelation<si::wavenumber,double,0,1> refractive_index;
+        relation::GasPropertyStateRelation<si::specific_heat_capacity<double>> isobaric_specific_heat_capacity;
+        relation::GasPropertyStateRelation<si::thermal_conductivity<double>> thermal_conductivity;
+        relation::GasPropertyStateRelation<si::dynamic_viscosity<double>> dynamic_viscosity;
+        field::CompletedStateField<si::density<double>> density;
+        relation::PolynomialRailyardRelation<si::wavenumber<double>,double,0,1> refractive_index;
     };
 
     /*

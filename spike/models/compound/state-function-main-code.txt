@@ -11,7 +11,7 @@
                       + Tslope*std::pow(Tclamped, Texponent)
                       + Tsigmoid_max * Tsigmoid_input / std::sqrt(1.0 + Tsigmoid_input*Tsigmoid_input)
                       + intercept) * yunits;
-    field::StateFunction<si::specific_heat_capacity> get_perry_johnson_temperature_function
+    field::StateFunction<si::specific_heat_capacity<double>> get_perry_johnson_temperature_function
                 double tj = std::clamp(T/Tunits, 0.0, T_max_johnson);
                 auto y_johnson = (linear_johnson*tj + cube_johnson*tj*tj*tj) * y_units_johnson;
                 double tp = std::clamp(T/Tunits, T_min_perry, T_max_perry);

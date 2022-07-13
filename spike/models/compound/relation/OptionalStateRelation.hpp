@@ -64,12 +64,12 @@ namespace relation {
             return *this;
         }
 
-        constexpr std::optional<typename F1::value_type> operator()(const si::pressure p, const si::temperature T) const
+        constexpr std::optional<typename F1::value_type> operator()(const si::pressure<double> p, const si::temperature<double> T) const
         {
             return entry.has_value()? entry.value()(p,T) : std::optional<typename F1::value_type>();
         }
 
-        constexpr std::optional<typename F1::value_type> operator()(const si::wavenumber nlo, const si::wavenumber nhi, const si::pressure p, const si::temperature T) const
+        constexpr std::optional<typename F1::value_type> operator()(const si::wavenumber<double> nlo, const si::wavenumber<double> nhi, const si::pressure<double> p, const si::temperature<double> T) const
         {
             return entry.has_value()? entry.value()(p,T) : std::optional<typename F1::value_type>();
         }

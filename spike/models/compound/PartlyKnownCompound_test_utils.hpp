@@ -240,10 +240,10 @@ namespace compound
                      -52.843, 3703.6, 5.866, -5.879e-29, 10.0, 
                      273.15, 646.15), // 273.16-646.15K
             /*density*/                // 997.0 * si::kilogram/si::meter3,                                
-                field::StateFunction<si::density>([](const si::pressure p, const si::temperature T) {
+                field::StateFunction<si::density<double>>([](const si::pressure<double> p, const si::temperature<double> T) {
                     // Perry equation 119, specialized for water
                     // valid for 273.16-647.096K
-                    si::temperature Tc = 647.096 * si::kelvin;
+                    si::temperature<double> Tc = 647.096 * si::kelvin;
                     double tau = 1.0 - (T/Tc);
                     double rho = 17.874 
                         + 35.618*pow(tau,0.33) 
@@ -261,7 +261,7 @@ namespace compound
                 // get_dippr_liquid_vapor_pressure_temperature_function
                 //     (si::kelvin, si::pascal,
                 //      73.649, -7258.2, -7.3037, 4.1653e-6),//273.16-647.1K
-                field::StateFunction<si::pressure>([](const si::pressure p, const si::temperature T) {
+                field::StateFunction<si::pressure<double>>([](const si::pressure<double> p, const si::temperature<double> T) {
                     // Buck equation
                     double C = T/si::celcius;
                     return 0.61121*exp((18.678-C/234.5) * (C/(257.14+C))) * si::kilopascal; 

@@ -372,6 +372,63 @@ namespace math {
 
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
+    constexpr auto compose(const PolynomialRailyard<T,Plo,Phi>& p, const PolynomialRailyard<T,Qlo,Qhi> q)
+    {
+        const auto p2(simplify(p));
+        const auto q2(simplify(q));
+
+        std::vector<T> p_couplers(p2.couplers());
+        std::vector<T> q_couplers(q2.couplers());
+        std::vector<T> pq_couplers;
+        pq_couplers.insert(pq_couplers.end(), p_couplers.begin(), p_couplers.end());
+        pq_couplers.insert(pq_couplers.end(), q_couplers.begin(), q_couplers.end());
+        std::sort(pq_couplers.begin(), pq_couplers.end());
+        auto last = std::unique(pq_couplers.begin(), pq_couplers.end());
+        pq_couplers.erase(last, pq_couplers.end());
+
+        using F = Polynomial<T,Plo,Phi>;
+        using G = Polynomial<T,Qlo,Qhi>;
+        using FG = Polynomial<T,std::min(Plo*Qlo,Phi*Qhi),std::max(Plo*Qlo,Phi*Qhi)>;
+        std::vector<Railcar<T,F>> cars;
+        for (std::size_t i=1; i<pq_couplers.size(); i++)
+        {
+            /*
+            Create running totals for cars in p and q,
+            add cars to their respective running total if they 
+            intersect the region from pq_couplers[i-1] to pq_couplers[i]
+            */
+            bool is_f_nonzero(false);
+            F f;
+            G g;
+            FG fg;
+            for (auto car: p2.cars)
+            {
+                if (std::max(car.lo, pq_couplers[i-1]) < std::min(car.hi, pq_couplers[i]))
+                {
+                    is_f_nonzero = true;
+                    f += car.content;
+                }
+            }
+            for (auto car: q2.cars)
+            {
+                if (std::max(car.lo, pq_couplers[i-1]) < std::min(car.hi, pq_couplers[i]))
+                {
+                    g += car.content;
+                }
+            }
+            /*
+            If any cars were added to the running total for p,
+            then add f∘g for the region [pq_couplers[i-1], pq_couplers[i]] 
+            to the list of cars in p∘q
+            */
+            if (is_f_nonzero) {
+                cars.push_back(Railcar<T,FG>(pq_couplers[i-1], pq_couplers[i], compose(f,g)));
+            }
+        }
+        return Railyard<T,FG>(cars);
+    }
+
+    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     constexpr auto compose(const PolynomialRailyard<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi> q)
     {
         using F = Polynomial<T,std::min(Plo*Qlo,Phi*Qhi),std::max(Plo*Qlo,Phi*Qhi)>;

@@ -15,9 +15,9 @@
 
 TEST_CASE( "OptionalStateField complete() purity", "[field]" ) {
 	// compound::field::OptionalStateField<double> unknown  = std::monostate();
-    compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
+    compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure<double> p, const si::temperature<double> T){ return test_ideal_gas_law_optional(p,T); });
 
-    compound::field::CompletedStateField<double> known_relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
+    compound::field::CompletedStateField<double> known_relation  = compound::field::StateFunction<double>([](const si::pressure<double> p, const si::temperature<double> T){ return test_ideal_gas_law_optional(p,T); });
 
 	SECTION("Calling a function twice with the same arguments must produce the same results")
 	{
@@ -28,9 +28,9 @@ TEST_CASE( "OptionalStateField complete() purity", "[field]" ) {
 
 TEST_CASE( "OptionalStateField complete() increasing", "[field]" ) {
 	compound::field::OptionalStateField<double> unknown  = std::monostate();
-	compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
+	compound::field::OptionalStateField<double> relation  = compound::field::StateFunction<double>([](const si::pressure<double> p, const si::temperature<double> T){ return test_ideal_gas_law_optional(p,T); });
 
-    compound::field::CompletedStateField<double> known_relation  = compound::field::StateFunction<double>([](const si::pressure p, const si::temperature T){ return test_ideal_gas_law_optional(p,T); });
+    compound::field::CompletedStateField<double> known_relation  = compound::field::StateFunction<double>([](const si::pressure<double> p, const si::temperature<double> T){ return test_ideal_gas_law_optional(p,T); });
 
 	SECTION("An attribute of a function's return entry either increases or remains the same when compared to the same attribute of the input entry")
 	{

@@ -152,10 +152,10 @@ PartlyKnownCompound ethanol (
         /*refractive_index*/       1.361,  // wikipedia data page
         // // TODO: reimplement this
         // field::SpectralFunction<double>([](
-        //     const si::wavenumber nlo, 
-        //     const si::wavenumber nhi, 
-        //     const si::pressure p, 
-        //     const si::temperature T
+        //     const si::wavenumber<double> nlo, 
+        //     const si::wavenumber<double> nhi, 
+        //     const si::pressure<double> p, 
+        //     const si::temperature<double> T
         // ) {
         //     double l = (2.0 / (nhi+nlo) / si::micrometer);
         //     double invl2 = 1.0/(l*l);
@@ -463,6 +463,7 @@ PartlyKnownCompound perflouromethane(
 
     /*phase*/                             missing(),
     /*molecular_absorption_cross_section*/missing(),
+    // // TODO: these numbers are erroneous, we need to revisit them
     // compound::relation::get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output
     //     ( 1.0/si::meter, si::meter2,
     //       std::vector<double>{  1.28e5, 1.28e5, 1.28e5, 1.28e5, 1.28e5, 1.28e5, 1.28e5, 1.28e5, 1.28e5, 7.99e6, 8.62e6, 9.25e6, 1.00e7, 1.05e7, 1.08e7, 1.13e7, 1.20e7, 1.28e7, 1.33e7, 1.79e7, 2.14e7, 3.37e7, 5.79e7, 1.71e8 },
@@ -648,10 +649,10 @@ PartlyKnownCompound benzene (
         /*refractive_index*/       1.5011,
         // // TODO: reimplement this
         // field::SpectralFunction<double>([](
-        //     const si::wavenumber nlo, 
-        //     const si::wavenumber nhi, 
-        //     const si::pressure p, 
-        //     const si::temperature T
+        //     const si::wavenumber<double> nlo, 
+        //     const si::wavenumber<double> nhi, 
+        //     const si::pressure<double> p, 
+        //     const si::temperature<double> T
         // ) {
         //     double l = (2.0 / (nhi+nlo) / si::micrometer);
         //     double l2 = l*l;

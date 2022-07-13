@@ -12,10 +12,10 @@
 TEST_CASE( "approx_reflectance_from_attenuation_coefficient_and_refractive_index()  purity", "[compound]" ) {
     SECTION("Calling a function twice with the same arguments must produce the same results")
     {
-        const si::attenuation attenuation_coefficient = 0.092 / si::meter; // from Perovich (1991)
+        const si::attenuation<double> attenuation_coefficient = 0.092 / si::meter; // from Perovich (1991)
         const double refractive_index_of_material = 1.3325;
         const double refractive_index_of_medium = 1.0;
-        const si::length wavelength = 400.0 * si::nanometer;
+        const si::length<double> wavelength = 400.0 * si::nanometer;
         CHECK(
             si::is_within_fraction(
                 compound::property::approx_reflectance_from_attenuation_coefficient_and_refractive_index(
@@ -39,10 +39,10 @@ TEST_CASE( "approx_reflectance_from_attenuation_coefficient_and_refractive_index
     SECTION("The function reproduces properties of known compounds")
     {
         const double reflectance = 0.02;
-        const si::attenuation attenuation_coefficient = 0.092 / si::meter; // from Perovich (1991)
+        const si::attenuation<double> attenuation_coefficient = 0.092 / si::meter; // from Perovich (1991)
         const double refractive_index_of_material = 1.3325;
         const double refractive_index_of_medium = 1.0;
-        const si::length wavelength = 400.0 * si::nanometer;
+        const si::length<double> wavelength = 400.0 * si::nanometer;
         CHECK(
             si::is_within_fraction(
                 compound::property::approx_reflectance_from_attenuation_coefficient_and_refractive_index(
@@ -67,7 +67,7 @@ TEST_CASE( "solve_attenuation_coefficient_from_reflectance_and_refactive_index()
         const double reflectance = 0.02;
         const double refractive_index_of_material = 1.3325;
         const double refractive_index_of_medium = 1.0;
-        const si::length wavelength = 400.0 * si::nanometer;
+        const si::length<double> wavelength = 400.0 * si::nanometer;
         CHECK(
             si::is_within_fraction(
                 compound::property::solve_attenuation_coefficient_from_reflectance_and_refactive_index(
@@ -90,10 +90,10 @@ TEST_CASE( "solve_attenuation_coefficient_from_reflectance_and_refactive_index()
 TEST_CASE( "solve_attenuation_coefficient_from_reflectance_and_refactive_index() / approx_reflectance_from_attenuation_coefficient_and_refractive_index() invertibility", "[compound]" ) {
     SECTION("There exists a function which undoes the operation of the other function")
     {
-        const si::attenuation attenuation_coefficient = 0.092 / si::meter; // from Perovich (1991)
+        const si::attenuation<double> attenuation_coefficient = 0.092 / si::meter; // from Perovich (1991)
         const double refractive_index_of_material = 1.3325;
         const double refractive_index_of_medium = 1.0;
-        const si::length wavelength = 400.0 * si::nanometer;
+        const si::length<double> wavelength = 400.0 * si::nanometer;
         CHECK(
             si::is_within_fraction(
                 compound::property::solve_attenuation_coefficient_from_reflectance_and_refactive_index(
@@ -117,10 +117,10 @@ TEST_CASE( "solve_attenuation_coefficient_from_reflectance_and_refactive_index p
     SECTION("The function reproduces properties of known compounds")
     {
         const double reflectance = 0.02;
-        const si::attenuation attenuation_coefficient = 0.092 / si::meter; // from Perovich (1991)
+        const si::attenuation<double> attenuation_coefficient = 0.092 / si::meter; // from Perovich (1991)
         const double refractive_index_of_material = 1.3325;
         const double refractive_index_of_medium = 1.0;
-        const si::length wavelength = 400.0 * si::nanometer;
+        const si::length<double> wavelength = 400.0 * si::nanometer;
         std::cout << compound::property::solve_attenuation_coefficient_from_reflectance_and_refactive_index(
                     reflectance,
                     refractive_index_of_material,
