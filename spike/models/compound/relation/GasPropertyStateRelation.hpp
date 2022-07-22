@@ -824,13 +824,13 @@ namespace relation {
     so equality is determined pragmatically by sampling at given pressures/temperatures
     */
     template<typename T1>
-    float distance(
+    double distance(
         const GasPropertyStateRelation<T1>& first, 
         const GasPropertyStateRelation<T1>& second,
         const field::StateParameters lo, 
         const field::StateParameters hi
     ){
-        float result(0.0f);
+        double result(0.0);
         si::pressure<double> lop = lo.pressure;
         si::temperature<double> loT = lo.temperature;
         si::pressure<double> hip = hi.pressure;
@@ -840,7 +840,7 @@ namespace relation {
             for(si::temperature<double> T = loT; T<hiT; T*=3.0)
             {
                 result = std::max(result, 
-                    float(std::abs((first(p, T) - second(p, T)) / T1(1))));
+                    double(std::abs((first(p, T) - second(p, T)) / T1(1))));
             }
         }
         return result;

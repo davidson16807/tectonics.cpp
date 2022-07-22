@@ -26,9 +26,9 @@ namespace phase {
     It calculates a distance metric for each attribute separately, 
     casting booleans and integers as floats, and returns the maximum distance calculated.
     */
-    float distance(const CompletedGas& first, const CompletedGas& second)
+    double distance(const CompletedGas& first, const CompletedGas& second)
     {
-        float out(0.0f);
+        double out(0.0);
         field::StateParameters lo(0.01*si::standard_pressure, 3.0*si::kelvin);
         field::StateParameters hi(10.0*si::standard_pressure, 1000.0*si::kelvin);
         out = std::max(out, relation::distance(first.isobaric_specific_heat_capacity, second.isobaric_specific_heat_capacity, lo, hi));

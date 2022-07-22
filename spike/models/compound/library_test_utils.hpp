@@ -16,6 +16,10 @@
         CHECK(compound.solids[i].thermal_conductivity(si::standard_pressure, si::standard_temperature) / (si::watt/(si::meter * si::kelvin)) < 3000.0); /*based on graphite*/ \
         CHECK(compound.solids[i].vapor_pressure(si::standard_pressure, si::standard_temperature) / si::pascal > 0.001); /*based on phenazine*/ \
         CHECK(compound.solids[i].isobaric_specific_heat_capacity(si::standard_pressure, si::standard_temperature) / (si::joule/(si::kilogram * si::kelvin)) > 116.0); /*based on uranium*/ \
+        CHECK(compound.solids[i].refractive_index(1.0/(500.0*si::nanometer)) < 4.1 ); /*based on germanium */\
+        CHECK(compound.solids[i].refractive_index(1.0/(500.0*si::nanometer)) > 0.2); /*based on silver*/\
+        CHECK(compound.solids[i].absorption_coefficient(1.0/(500.0*si::nanometer)) * si::centimeter < 1000000.0); /*based on water*/ \
+        CHECK(compound.solids[i].absorption_coefficient(1.0/(500.0*si::nanometer)) * si::centimeter >= 0.0); /*based on nitrogen*/ \
     }
 
 #define COMPLETED_COMPOUNDS_STP_VALID() \
@@ -40,11 +44,11 @@
     COMPLETED_COMPOUND_STP_VALID(compound::library::benzene         ); \
     COMPLETED_COMPOUND_STP_VALID(compound::library::pyrimidine      ); \
     COMPLETED_COMPOUND_STP_VALID(compound::library::ethane          ); \
-    COMPLETED_COMPOUND_STP_VALID(compound::library::ethanol         ); ; 
+    COMPLETED_COMPOUND_STP_VALID(compound::library::ethanol         ); \
+    COMPLETED_COMPOUND_STP_VALID(compound::library::quartz          ); 
 
 /*
 #define COMPLETED_COMPOUNDS_STP_VALID() \
-    COMPLETED_COMPOUND_STP_VALID(compound::library::quartz          ); \
     COMPLETED_COMPOUND_STP_VALID(compound::library::corundum        ); \
     COMPLETED_COMPOUND_STP_VALID(compound::library::carbon          ); \
     COMPLETED_COMPOUND_STP_VALID(compound::library::orthoclase      ); \
@@ -146,10 +150,6 @@
             CHECK(compound.solids[i].density(pressure, temperature) / (si::kilogram / si::meter3) > 1.5); /*based on aerogel*/ \
             CHECK(compound.solids[i].vapor_pressure(pressure, temperature) / si::kilopascal < 300.0); /*based on tetraflourosilane*/ \
             CHECK(compound.solids[i].vapor_pressure(pressure, temperature) / si::pascal >= 0.0); /*based on Claypeyron relation near 0K*/ \
-            CHECK(compound.solids[i].refractive_index(1.0/(500.0*si::nanometer)) < 4.1 ); /*based on germanium */\
-            CHECK(compound.solids[i].refractive_index(1.0/(500.0*si::nanometer)) > 0.2); /*based on silver*/\
-            CHECK(compound.solids[i].absorption_coefficient(1.0/(500.0*si::nanometer)) * si::centimeter < 1000000.0); /*based on water*/ \
-            CHECK(compound.solids[i].absorption_coefficient(1.0/(500.0*si::nanometer)) * si::centimeter >= 0.0); /*based on nitrogen*/ \
             CHECK(compound.solids[i].bulk_modulus(pressure, temperature) / si::gigapascal < 1000.0); /*based on diamond*/ \
             CHECK(compound.solids[i].bulk_modulus(pressure, temperature) / si::gigapascal > 0.003); /*based on helium*/ \
             CHECK(compound.solids[i].tensile_modulus(pressure, temperature) / si::gigapascal > 0.01); /*based on helium*/ \
@@ -205,12 +205,12 @@
     COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::benzene,          temperature, pressure); \
     COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::pyrimidine,       temperature, pressure); \
     COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::ethane,           temperature, pressure); \
-    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::ethanol,          temperature, pressure); ; 
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::ethanol,          temperature, pressure); \
+    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::quartz,           temperature, pressure); 
 
 
 /*
 #define COMPLETED_PHASES_OF_COMPOUNDS_VALID(temperature, pressure) \
-    COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::quartz,           temperature, pressure); \
     COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::corundum,         temperature, pressure); \
     COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::carbon,           temperature, pressure); \
     COMPLETED_PHASES_OF_COMPOUND_VALID(compound::library::orthoclase,       temperature, pressure); \
@@ -253,12 +253,12 @@
     COMPLETED_COMPOUND_VALID(compound::library::benzene         ); \
     COMPLETED_COMPOUND_VALID(compound::library::pyrimidine      ); \
     COMPLETED_COMPOUND_VALID(compound::library::ethane          ); \
-    COMPLETED_COMPOUND_VALID(compound::library::ethanol         ); 
+    COMPLETED_COMPOUND_VALID(compound::library::ethanol         ); \
+    COMPLETED_COMPOUND_VALID(compound::library::quartz          ); 
 
 
 /*
 #define COMPLETED_COMPOUNDS_VALID() \
-    COMPLETED_COMPOUND_VALID(compound::library::quartz          ); \
     COMPLETED_COMPOUND_VALID(compound::library::corundum        ); \
     COMPLETED_COMPOUND_VALID(compound::library::carbon          ); \
     COMPLETED_COMPOUND_VALID(compound::library::orthoclase      ); \

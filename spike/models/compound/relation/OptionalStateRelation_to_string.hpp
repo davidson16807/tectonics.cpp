@@ -12,16 +12,10 @@ namespace compound {
 namespace relation {
 
 
-	template <typename T1, typename T2>
-	std::string to_string(const OptionalStateRelation<T1>& known, const T2 parameters)
+	template <typename T1>
+	std::string to_string(const OptionalStateRelation<T1>& known)
 	{
-		return known.has_value()? to_string(known.value(), parameters) : "[missing]";
-	}
-
-	template <typename T>
-	std::string to_string(const OptionalStateRelation<T>& known)
-	{
-		return to_string(known, field::StateParameters());
+		return known.has_value()? to_string(known.value()) : "[missing]";
 	}
 
 } //namespace field

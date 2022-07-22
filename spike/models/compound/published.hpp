@@ -2,7 +2,7 @@
 
 #include "published_gases.hpp"
 #include "published_liquids.hpp"
-// #include "published_solids.hpp"
+#include "published_solids.hpp"
 
 /* 
 Hi, and welcome to Crazy Eddie's Chemical Properties Emporium, where WE'VE GONE CRAZY!

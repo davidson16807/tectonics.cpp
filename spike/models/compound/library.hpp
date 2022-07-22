@@ -380,7 +380,7 @@ namespace compound {
         CompletedCompound ethane = complete( speculate(infer(published::ethane)), methane );
         CompletedCompound ethanol = complete( speculate(infer(published::ethanol)), ethane );
 
-        // CompletedCompound quartz = complete( speculate(infer(published::quartz)), carbon_dioxide);
+        CompletedCompound quartz = complete( speculate(infer(published::quartz)), carbon_dioxide);
         // CompletedCompound corundum = complete( speculate(infer(published::corundum)), quartz);
         // CompletedCompound carbon = complete( speculate(infer(published::carbon)), quartz);
         // CompletedCompound orthoclase = complete( speculate(infer(published::orthoclase)), quartz);
