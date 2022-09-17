@@ -22,7 +22,7 @@ namespace compound
     {
         // MOLECULAR PROPERTIES
         si::molar_mass<double>   molar_mass;
-        int              atoms_per_molecule;
+        unsigned int              atoms_per_molecule;
         si::length<double>       molecular_diameter;
         /* used to determine specific heat capacity 
         from http://hyperphysics.phy-astr.gsu.edu/hbase/Kinetic/shegas.html */
@@ -62,7 +62,7 @@ namespace compound
 
         CompletedCompound(
             const si::molar_mass<double> molar_mass,
-            const int            atoms_per_molecule,
+            const unsigned int            atoms_per_molecule,
             const si::length<double>        molecular_diameter,
             const double            molecular_degrees_of_freedom,
             const double            acentric_factor,
