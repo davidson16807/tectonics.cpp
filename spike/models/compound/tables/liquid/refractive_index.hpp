@@ -12,7 +12,7 @@ namespace tables {
 
     std::map<int, relation::PolynomialRailyardRelation<si::wavenumber<double>,double,0,1>> refractive_index_as_liquid {
         { ids::water,       //1.33336,
-                compound::relation::get_spectral_linear_interpolation_function_of_wavelength
+                relation::get_spectral_linear_interpolation_function_of_wavelength
                     (si::micrometer, 1.0,
                      std::vector<double>{0.2,   0.3,   0.425,  0.55, 0.675,   0.8, 0.925,   1.4,   2.4,   2.8,  3.05,  3.3,   5.6,   6.6,   7.6,  13.0,  15.5,  18.0,  21.0,  26.0,  32.0,  42.0,  60.0, 110.0, 160.0,200.0},
                      std::vector<double>{1.396, 1.349, 1.338, 1.333, 1.331, 1.329, 1.328, 1.321, 1.279, 1.142, 1.426, 1.45, 1.289, 1.334, 1.302, 1.146, 1.297, 1.423, 1.487, 1.539, 1.546, 1.522, 1.703, 1.966, 2.081, 2.13}),

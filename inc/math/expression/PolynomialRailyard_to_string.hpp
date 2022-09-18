@@ -1,8 +1,10 @@
 #pragma once
 
+#include <math/expression/Polynomial_to_string.hpp>
+
 #include "PolynomialRailyard.hpp"
 
-#include "PolynomialRailcar_to_string.hpp"
+#include "Railcar_to_string.hpp"
 
 namespace math {
 

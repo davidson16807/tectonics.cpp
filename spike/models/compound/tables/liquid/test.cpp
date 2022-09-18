@@ -1,4 +1,8 @@
 #include "./refractive_index_test.cpp"
 #include "./isobaric_specific_heat_capacity_test.cpp"
+#include "./extinction_coefficient_test.cpp"
+#include "./vapor_pressure_test.cpp"
 #include "./dynamic_viscosity_test.cpp"
+#include "./surface_tension_test.cpp"
+#include "./density_test.cpp"
 #include "./thermal_conductivity_test.cpp"

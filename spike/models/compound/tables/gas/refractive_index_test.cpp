@@ -9,7 +9,7 @@
 TEST_CASE( "refractive_index order of magnitude", "[table]" ) {
     SECTION("Properties of compounds should not fall outside orders of magnitude for known values")
     {
-        for (si::length<double> l = 1.0*si::nanometer; l <= 1.0*si::millimeter; l*=1.78)
+        for (si::length<double> l = 10.0*si::nanometer; l <= 3.0*si::millimeter; l*=1.78)
         {
             for (int i = 0; i<compound::tables::ids::count; i++)
             {

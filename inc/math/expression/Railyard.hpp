@@ -94,7 +94,7 @@ namespace math {
 
         T operator()(const T x) const
         {
-            T y(0.0f);
+            T y(0.0);
             for (auto car : cars)
             {
                 y += car(x);

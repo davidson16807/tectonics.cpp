@@ -9,7 +9,6 @@
 
 #include "published.hpp"
 
-
 TEST_CASE( "Klincewicz method purity", "[properties]" ) {
 	// properties of acetone
 	si::molar_mass<double> M (58.080*si::gram/si::mole);

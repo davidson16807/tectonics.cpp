@@ -23,10 +23,10 @@ namespace spline {
         using G = Railcar<T,F>;
         const T oo = std::numeric_limits<T>::max();
         std::vector<G> pieces;
-        pieces.push_back(G(-oo, T(x[0]), 
-            F(std::array<T,2>{T(y[0]),T(0)})));
+        pieces.push_back(G(-oo, T(x[0]), F(T(y[0]))));
         for (std::size_t i=1; i<x.size(); i++)
         {
+            assert(x[i] > x[i-1]);
             pieces.push_back(G(
                 T(x[i-1]), T(x[i]), 
                 linear_newton_polynomial(
@@ -34,8 +34,8 @@ namespace spline {
                     T(y[i-1]), T(y[i])    
                 )));
         }
-        pieces.push_back(G(T(x[y.size()-1]), oo, 
-            F(std::array<T,2>{T(y[y.size()-1]),T(0)})));
+        std::size_t last = y.size()-1;
+        pieces.push_back(G(T(x[last]), oo, F(T(y[last]))));
         return PolynomialRailyard<T,0,1>(pieces);
     }
 
