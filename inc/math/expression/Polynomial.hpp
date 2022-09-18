@@ -97,7 +97,7 @@ namespace math {
             }
             int i0(std::max(Nlo,0));
             T xi(std::pow(x, i0));
-            for (int i = i0; i < Nhi; ++i)
+            for (int i = i0; i <= Nhi; ++i)
             {
                 y += k[i-Nlo] * xi;
                 xi*= x;
