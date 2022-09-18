@@ -10,7 +10,7 @@
 namespace compound { 
 namespace table { 
 
-    std::std::map<int, relation::StateFunction<si::thermal_conductivity<double>>> thermal_conductivity_as_liquid {
+    std::map<int, relation::StateFunction<si::thermal_conductivity<double>>> thermal_conductivity_as_liquid {
         { ids::water,   
                 get_dippr_quartic_temperature_function_100
                     (si::kelvin, si::watt / (si::meter * si::kelvin),

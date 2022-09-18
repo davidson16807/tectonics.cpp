@@ -10,7 +10,7 @@
 namespace compound { 
 namespace table { 
 
-    std::std::map<int, relation::StateFunction<si::specific_heat_capacity<double>>> isobaric_specific_heat_capacity_as_liquid {
+    std::map<int, relation::StateFunction<si::specific_heat_capacity<double>>> isobaric_specific_heat_capacity_as_liquid {
         { ids::water, 
                 get_dippr_quartic_temperature_function_100
                     (si::kelvin, si::joule / (18.01528 * si::kilogram * si::kelvin), 

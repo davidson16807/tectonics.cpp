@@ -10,7 +10,7 @@
 namespace compound { 
 namespace table { 
 
-    std::std::map<int, relation::StateFunction<si::thermal_conductivity<double>>> thermal_conductivity_as_solid {
+    std::map<int, relation::StateFunction<si::thermal_conductivity<double>>> thermal_conductivity_as_solid {
         { ids::water,              
                 get_interpolated_temperature_function
                     (si::kelvin, si::watt/(si::meter*si::kelvin),

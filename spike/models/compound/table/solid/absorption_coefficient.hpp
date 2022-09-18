@@ -10,7 +10,7 @@
 namespace compound { 
 namespace table { 
 
-    std::std::map<int, relation::StateFunction<si::wavenumber<double>,si::attenuation<double>,0,3>> absorption_coefficient_as_solid {
+    std::map<int, relation::StateFunction<si::wavenumber<double>,si::attenuation<double>,0,3>> absorption_coefficient_as_solid {
         // { ids::water,            },
         // { ids::nitrogen,         },
         // { ids::oxygen,           },

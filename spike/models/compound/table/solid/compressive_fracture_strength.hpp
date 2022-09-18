@@ -10,7 +10,7 @@
 namespace compound { 
 namespace table { 
 
-    std::std::map<int, relation::StateFunction<si::pressure<double>>> compressive_fracture_strength_as_solid {
+    std::map<int, relation::StateFunction<si::pressure<double>>> compressive_fracture_strength_as_solid {
         { ids::water,     state_invariant(6.0 * si::megapascal),                             //engineering toolbox
                                 },
         { ids::nitrogen,     

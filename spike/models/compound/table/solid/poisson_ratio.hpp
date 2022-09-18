@@ -10,7 +10,7 @@
 namespace compound { 
 namespace table { 
 
-    std::std::map<int, relation::StateFunction<double>> poisson_ratio_as_solid {
+    std::map<int, relation::StateFunction<double>> poisson_ratio_as_solid {
         { ids::water,                     state_invariant(0.3252),                                           // gammon (1983)
             },
         { ids::nitrogen,                     

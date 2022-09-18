@@ -10,7 +10,7 @@
 namespace compound { 
 namespace table { 
 
-    std::std::map<int, relation::StateFunction<si::density<double>>> density_as_solid {
+    std::map<int, relation::StateFunction<si::density<double>>> density_as_solid {
         { ids::water,                           
                 get_quadratic_pressure_function
                    (si::kilobar, si::gram/si::centimeter3,

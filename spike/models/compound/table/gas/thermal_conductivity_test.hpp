@@ -4,9 +4,9 @@
 #include <catch/catch.hpp>
 
 // in house libraries
-#include "dynamic_viscosity.hpp"
+#include "thermal_conductivity.hpp"
 
-TEST_CASE( "dynamic_viscosity order of magnitude", "[table]" ) {
+TEST_CASE( "thermal_conductivity order of magnitude", "[table]" ) {
     SECTION("Properties of compounds should not fall outside orders of magnitude for known values")
     {
         for (si::pressure<double> p = 1.0*si::pascal; p <= 100000000.0*si::pascal; p*=10.0)
@@ -15,10 +15,10 @@ TEST_CASE( "dynamic_viscosity order of magnitude", "[table]" ) {
             {
                 for (int i = 0; i<compound::table::ids::count; i++)
                 {
-                    if (compound::table::dynamic_viscosity_as_gas.count(i) > 0) {
-                        auto x = compound::table::dynamic_viscosity_as_gas[i](p,T);
-                        CHECK(x / (si::pascal * si::second) < 10e-5); /*based on argon at 500°C*/ 
-                        CHECK(x / (si::pascal * si::second) > 1e-6); /*based on steam*/ 
+                    if (compound::table::thermal_conductivity_as_gas.count(i) > 0) {
+                        auto x = compound::table::thermal_conductivity_as_gas[i](p,T);
+                        CHECK(x / (si::watt / (si::meter * si::kelvin)) > 0.003); /*based on xenon*/ 
+                        CHECK(x / (si::watt / (si::meter * si::kelvin)) < 1.0);   /*based on hydrogen*/ 
                     }
                 }
             }

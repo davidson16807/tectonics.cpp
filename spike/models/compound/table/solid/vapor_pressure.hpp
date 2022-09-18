@@ -10,7 +10,7 @@
 namespace compound { 
 namespace table { 
 
-    std::std::map<int, relation::StateFunction<si::pressure<double>>> vapor_pressure_as_solid {
+    std::map<int, relation::StateFunction<si::pressure<double>>> vapor_pressure_as_solid {
         { ids::water,                   
                 get_interpolated_temperature_function
                     (si::celcius, si::millimeter_mercury,

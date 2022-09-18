@@ -10,7 +10,7 @@
 namespace compound { 
 namespace table { 
 
-    std::std::map<int, relation::StateFunction<si::specific_heat_capacity<double>>> isobaric_specific_heat_capacity_as_solid {
+    std::map<int, relation::StateFunction<si::specific_heat_capacity<double>>> isobaric_specific_heat_capacity_as_solid {
         { ids::water,   
                 get_perry_johnson_temperature_function
                     (si::kelvin, 

@@ -4,11 +4,10 @@
 #include <math/expression/Scaling.hpp>
 #include <math/expression/PolynomialRailyard.hpp>
 #include <math/expression/PolynomialRailyard_library.hpp>
+#include <units/si.hpp>
 
 namespace compound {
 namespace relation {
-
-
 
     /*
     `PolynomialRailyardRelation` represents an arbitrary function that uses a spline to map quantities from one unit to another
@@ -21,6 +20,14 @@ namespace relation {
         Ty yunits;
         
         using value_type = Ty;
+
+        // zero constructor
+        constexpr PolynomialRailyardRelation():
+            spline(),
+            xunits(1.0),
+            yunits(1.0)
+        {
+        }
 
         template<typename T>
         constexpr PolynomialRailyardRelation(

@@ -10,7 +10,7 @@
 namespace compound { 
 namespace table { 
 
-    std::std::map<int, relation::StateFunction<si::surface_energy<double>>> surface_tension_as_liquid {
+    std::map<int, relation::StateFunction<si::surface_energy<double>>> surface_tension_as_liquid {
         { ids::water,            
                 get_refprop_liquid_surface_tension_temperature_function
                     (si::kelvin, si::newton/si::meter,

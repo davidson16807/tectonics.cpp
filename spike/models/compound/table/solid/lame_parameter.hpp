@@ -10,7 +10,7 @@
 namespace compound { 
 namespace table { 
 
-    std::std::map<int, relation::StateFunction<si::pressure<double>>> lame_parameter_as_solid {
+    std::map<int, relation::StateFunction<si::pressure<double>>> lame_parameter_as_solid {
         { ids::water,                    state_invariant(6.552 * si::gigapascal),                           // gammon (1983)
             },
         // { ids::nitrogen,         },

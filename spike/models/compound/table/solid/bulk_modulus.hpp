@@ -10,7 +10,7 @@
 namespace compound { 
 namespace table { 
 
-    std::std::map<int, relation::StateFunction<si::pressure<double>>> bulk_modulus_as_solid {
+    std::map<int, relation::StateFunction<si::pressure<double>>> bulk_modulus_as_solid {
         { ids::water,                      state_invariant(8.899 * si::gigapascal),                           // gammon (1983)
             },
         { ids::nitrogen,                      

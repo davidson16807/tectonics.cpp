@@ -10,7 +10,7 @@
 namespace compound { 
 namespace table { 
 
-    std::std::map<int, relation::PolynomialRailyardRelation<si::wavenumber<double>,double,0,1>> refractive_index_as_gas {
+    std::map<int, relation::PolynomialRailyardRelation<si::wavenumber<double>,double,0,1>> refractive_index_as_gas {
         {ids::water,         1.000261},
         // {ids::nitrogen,      
                 // // TODO: reimplement this
@@ -60,7 +60,7 @@ namespace table {
         {ids::methane,       // 1.000444,
                     compound::relation::get_spectral_linear_interpolation_function_of_wavelength_for_log10_sample_input
                         (si::micrometer, 1.0,
-                         std::vector<double>{    1.67,     2.70,     3.01,     3.66,     3.79,     4.46,     5.66,     6.51,     7.00,     8.38,     8.95,    10.09,    10.86,    11.54,    11.93,    12.37,    13.22,    13.63,    14.02,    14.83}
+                         std::vector<double>{    1.67,     2.70,     3.01,     3.66,     3.79,     4.46,     5.66,     6.51,     7.00,     8.38,     8.95,    10.09,    10.86,    11.54,    11.93,    12.37,    13.22,    13.63,    14.02,    14.83},
                          std::vector<double>{1.000430, 1.000425, 1.000417, 1.000440, 1.000437, 1.000431, 1.000427, 1.000419, 1.000402, 1.000466, 1.000451, 1.000445, 1.000442, 1.000443, 1.000440, 1.000441, 1.000440, 1.000439, 1.000444, 1.000439}),
             },
         {ids::argon,       1.000281

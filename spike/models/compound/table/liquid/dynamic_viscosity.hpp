@@ -10,7 +10,7 @@
 namespace compound { 
 namespace table { 
 
-    std::std::map<int, relation::StateFunction<si::dynamic_viscosity<double>> dynamic_viscosity_as_liquid {
+    std::map<int, relation::StateFunction<si::dynamic_viscosity<double>> dynamic_viscosity_as_liquid {
         { ids::water,      
                 get_dippr_temperature_function_101
                     (si::kelvin, si::pascal* si::second, 

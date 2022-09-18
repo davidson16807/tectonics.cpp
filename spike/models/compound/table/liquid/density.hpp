@@ -10,7 +10,7 @@
 namespace compound { 
 namespace table { 
 
-    std::std::map<int, relation::StateFunction<si::density<double>>> density_as_liquid {
+    std::map<int, relation::StateFunction<si::density<double>>> density_as_liquid {
         { ids::water,                
                 relation::StateFunction<si::density<double>>([](const si::pressure<double> p, const si::temperature<double> T) {
                     // Perry equation 119, specialized for water

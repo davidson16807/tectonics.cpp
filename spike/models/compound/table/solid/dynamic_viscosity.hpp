@@ -10,7 +10,7 @@
 namespace compound { 
 namespace table { 
 
-    std::std::map<int, relation::StateFunction<si::dynamic_viscosity<double>>> dynamic_viscosity_as_solid {
+    std::map<int, relation::StateFunction<si::dynamic_viscosity<double>>> dynamic_viscosity_as_solid {
         { ids::water,                 
                 state_invariant(1e13 * si::poise),                                 // reference by Carey (1953)
             },

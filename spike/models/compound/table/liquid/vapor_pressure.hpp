@@ -10,7 +10,7 @@
 namespace compound { 
 namespace table { 
 
-    std::std::map<int, relation::StateFunction<si::pressure<double>> vapor_pressure_as_liquid {
+    std::map<int, relation::StateFunction<si::pressure<double>> vapor_pressure_as_liquid {
         { ids::water,         
                 // get_antoine_vapor_pressure_function(
                 //     si::celcius, si::millimeter_mercury, 

@@ -10,7 +10,7 @@
 namespace compound { 
 namespace table { 
 
-    std::std::map<int, relation::PolynomialRailyardRelation<si::wavenumber<double>,double,0,1>> refractive_index_as_solid {
+    std::map<int, relation::PolynomialRailyardRelation<si::wavenumber<double>,double,0,1>> refractive_index_as_solid {
         { ids::water,       
                 compound::relation::get_spectral_linear_interpolation_function_of_wavelength
                     (si::micrometer, 1.0,

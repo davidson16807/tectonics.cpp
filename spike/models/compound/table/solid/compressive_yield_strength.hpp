@@ -10,7 +10,7 @@
 namespace compound { 
 namespace table { 
 
-    std::std::map<int, relation::StateFunction<si::pressure<double>>> compressive_yield_strength_as_solid {
+    std::map<int, relation::StateFunction<si::pressure<double>>> compressive_yield_strength_as_solid {
         { ids::water,        state_invariant(6.0 * si::megapascal),                             // brittle, effectively the same as fracture strength
             },
         // { ids::nitrogen,         },

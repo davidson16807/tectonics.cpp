@@ -10,7 +10,7 @@
 namespace compound { 
 namespace table { 
 
-    std::std::map<int, relation::GasPropertyStateRelation<si::thermal_conductivity<double>>> thermal_conductivity_as_gas {
+    std::map<int, relation::GasPropertyStateRelation<si::thermal_conductivity<double>>> thermal_conductivity_as_gas {
         {ids::water,   
                 relation::get_sigmoid_exponent_pressure_temperature_relation
                     (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),

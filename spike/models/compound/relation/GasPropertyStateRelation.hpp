@@ -276,6 +276,7 @@ namespace relation {
         float known_max_fractional_error;
         using value_type = Ty;
 
+        // zero constructor
         constexpr GasPropertyStateRelation():
             pexponents(),
             Texponents(),
@@ -286,7 +287,7 @@ namespace relation {
             Tunits(1.0),
             yunits(1.0),
 
-            intercept(1.3),
+            intercept(0.0),
             known_max_fractional_error(0.0)
         {
         }

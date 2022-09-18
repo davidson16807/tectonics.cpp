@@ -10,7 +10,7 @@
 namespace compound { 
 namespace table { 
 
-    std::std::map<int, relation::PolynomialRailyardRelation<si::wavenumber<double>,double,0,1>> extinction_coefficient_as_liquid {
+    std::map<int, relation::PolynomialRailyardRelation<si::wavenumber<double>,double,0,1>> extinction_coefficient_as_liquid {
 
         { ids::water, 
                     compound::relation::get_spectral_linear_interpolation_function_of_wavelength
