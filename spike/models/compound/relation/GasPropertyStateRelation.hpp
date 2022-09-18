@@ -275,7 +275,21 @@ namespace relation {
     public:
         float known_max_fractional_error;
         using value_type = Ty;
-        using parameter_type = field::StateParameters;
+
+        constexpr GasPropertyStateRelation():
+            pexponents(),
+            Texponents(),
+            Tsigmoids(),
+            Tdippr102s(),
+
+            punits(1.0),
+            Tunits(1.0),
+            yunits(1.0),
+
+            intercept(1.3),
+            known_max_fractional_error(0.0)
+        {
+        }
 
         constexpr GasPropertyStateRelation(
             const std::vector<ClampedExponent> pexponents,
@@ -370,11 +384,6 @@ namespace relation {
 
             // return intercept * yunits;
             return y * yunits;
-        }
-
-        Ty operator()(const field::StateParameters parameters) const
-        {
-            return (*this)(parameters.pressure, parameters.temperature);
         }
 
         GasPropertyStateRelation<Ty> restriction(
@@ -823,27 +832,27 @@ namespace relation {
     GasPropertyStateRelation does not have a convenient closed form distance metric,
     so equality is determined pragmatically by sampling at given pressures/temperatures
     */
-    template<typename T1>
-    float distance(
-        const GasPropertyStateRelation<T1>& first, 
-        const GasPropertyStateRelation<T1>& second,
-        const field::StateParameters lo, 
-        const field::StateParameters hi
-    ){
-        float result(0.0f);
-        si::pressure<double> lop = lo.pressure;
-        si::temperature<double> loT = lo.temperature;
-        si::pressure<double> hip = hi.pressure;
-        si::temperature<double> hiT = hi.temperature;
-        for(si::pressure<double> p = lop; p<hip; p*=3.0)
-        {
-            for(si::temperature<double> T = loT; T<hiT; T*=3.0)
-            {
-                result = std::max(result, 
-                    float(std::abs((first(p, T) - second(p, T)) / T1(1))));
-            }
-        }
-        return result;
-    }
+    // template<typename T1>
+    // float distance(
+    //     const GasPropertyStateRelation<T1>& first, 
+    //     const GasPropertyStateRelation<T1>& second,
+    //     const field::StateParameters lo, 
+    //     const field::StateParameters hi
+    // ){
+    //     float result(0.0f);
+    //     si::pressure<double> lop = lo.pressure;
+    //     si::temperature<double> loT = lo.temperature;
+    //     si::pressure<double> hip = hi.pressure;
+    //     si::temperature<double> hiT = hi.temperature;
+    //     for(si::pressure<double> p = lop; p<hip; p*=3.0)
+    //     {
+    //         for(si::temperature<double> T = loT; T<hiT; T*=3.0)
+    //         {
+    //             result = std::max(result, 
+    //                 float(std::abs((first(p, T) - second(p, T)) / T1(1))));
+    //         }
+    //     }
+    //     return result;
+    // }
 }}
 
