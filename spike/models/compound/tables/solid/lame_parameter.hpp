@@ -4,14 +4,14 @@
 #include <map>
 
 // in-house libraries
-#include <models/compound/relation/StateFunction.hpp>
+#include <models/compound/relation/PolynomialRailyardRelation.hpp>
 #include "../ids.hpp"
 
 namespace compound { 
 namespace tables { 
 
-    std::map<int, relation::StateFunction<si::pressure<double>>> lame_parameter_as_solid {
-        { ids::water,                    relation::state_invariant(6.552 * si::gigapascal),                           // gammon (1983)
+    std::map<int, relation::PolynomialRailyardRelation<si::temperature<double>,si::pressure<double>,0,1>> lame_parameter_as_solid {
+        { ids::water,               6.552 * si::gigapascal,                           // gammon (1983)
             },
         // { ids::nitrogen,         },
         // { ids::oxygen,           },

@@ -9,17 +9,16 @@
 TEST_CASE( "pwave_modulus order of magnitude", "[table]" ) {
     SECTION("Properties of compounds should not fall outside orders of magnitude for known values")
     {
-        // for (si::pressure<double> p = 1.0*si::pascal; p <= 100000000.0*si::pascal; p*=10.0)
-        // {
-        //     for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=3.0)
-        //     {
-        //         for (int i = 0; i<compound::tables::ids::count; i++)
-        //         {
-        //             if (compound::tables::pwave_modulus_as_solid.count(i) > 0) {
-        //                 auto x = compound::tables::pwave_modulus_as_solid[i](p,T);
-        //             }
-        //         }
-        //     }
-        // }
+        for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=3.0)
+        {
+            for (int i = 0; i<compound::tables::ids::count; i++)
+            {
+                if (compound::tables::pwave_modulus_as_solid.count(i) > 0) {
+                    auto x = compound::tables::pwave_modulus_as_solid[i](T);
+                    CHECK(x / si::gigapascal < 30.0); /*based on water*/ \
+                    CHECK(x / si::gigapascal > 10.0); /*based on water*/ \
+                }
+            }
+        }
     }
 }

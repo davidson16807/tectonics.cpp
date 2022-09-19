@@ -4,15 +4,14 @@
 #include <map>
 
 // in-house libraries
-#include <models/compound/relation/StateFunction.hpp>
+#include <models/compound/relation/PolynomialRailyardRelation.hpp>
 #include "../ids.hpp"
 
 namespace compound { 
 namespace tables { 
 
-    std::map<int, relation::StateFunction<si::dynamic_viscosity<double>>> dynamic_viscosity_as_solid {
-        { ids::water,                 
-                relation::state_invariant(1e13 * si::poise),                                 // reference by Carey (1953)
+    std::map<int, relation::PolynomialRailyardRelation<si::temperature<double>,si::dynamic_viscosity<double>,0,1>> dynamic_viscosity_as_solid {
+        { ids::water,               1e13 * si::poise,                                 // reference by Carey (1953)
             },
         // { ids::nitrogen,              
                 // relation::StateFunction<si::dynamic_viscosity<double>>([](si::pressure<double> p, si::temperature<double> T){ 
@@ -20,9 +19,9 @@ namespace tables {
                 // }), // Yamashita 2010
             // },
         // { ids::oxygen,           },
-        { ids::carbon_dioxide,      relation::state_invariant(1e14 * si::pascal*si::second), // Yamashita (1997) @1 bar, 180K
+        { ids::carbon_dioxide,      1e14 * si::pascal*si::second, // Yamashita (1997) @1 bar, 180K
             },
-        { ids::methane,             relation::state_invariant(1e11 * si::pascal*si::second), // Yamashita (1997), @ 0.1*si::megapascal, 77.0*si::kelvin
+        { ids::methane,             1e11 * si::pascal*si::second, // Yamashita (1997), @ 0.1*si::megapascal, 77.0*si::kelvin
             },
         // { ids::argon,            },
         // { ids::helium,           },
@@ -42,7 +41,7 @@ namespace tables {
         // { ids::benzene,          },
         // { ids::pyrimidine,       },
         // { ids::quartz,           },
-        { ids::halite,              relation::state_invariant(1e17 * si::poise), // various sources, Carey (1953) cites this number from Weinberg (1927), and Mukherjee (2010), provides a literature review and findings from salt diapirs. Science is weird.
+        { ids::halite,              1e17 * si::poise, // various sources, Carey (1953) cites this number from Weinberg (1927), and Mukherjee (2010), provides a literature review and findings from salt diapirs. Science is weird.
             },
         // { ids::corundum,         },
         // { ids::apatite,          },

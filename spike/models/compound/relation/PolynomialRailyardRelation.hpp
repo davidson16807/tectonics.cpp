@@ -263,6 +263,17 @@ namespace relation {
     }
 
     // TODO: rename `spectral_linear_spline`
+    template<typename Tx, typename Ty>
+    PolynomialRailyardRelation<Tx,Ty,0,1> get_linear_interpolation_function(
+        const Tx xunits, const Ty yunits,
+        const std::vector<double>xs, 
+        const std::vector<double>ys
+    ){
+        assert(xs.size() == ys.size());
+        return PolynomialRailyardRelation<Tx,Ty,0,1>(math::spline::linear_spline<double>(xs, ys), xunits, yunits);
+    }
+
+    // TODO: rename `spectral_linear_spline`
     template<typename Ty>
     PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavelength(
         const si::length<double> lunits, const Ty yunits,

@@ -4,14 +4,14 @@
 #include <map>
 
 // in-house libraries
-#include <models/compound/relation/StateFunction.hpp>
+#include <models/compound/relation/PolynomialRailyardRelation.hpp>
 #include "../ids.hpp"
 
 namespace compound { 
 namespace tables { 
 
-    std::map<int, relation::StateFunction<si::pressure<double>>> shear_yield_strength_as_solid {
-        { ids::water,              relation::state_invariant(1.1 * si::megapascal),                             // brittle, effectively the same as fracture strength
+    std::map<int, relation::PolynomialRailyardRelation<si::temperature<double>,si::pressure<double>,0,1>> shear_yield_strength_as_solid {
+        { ids::water,               1.1 * si::megapascal, // brittle, effectively the same as fracture strength
             },
         // { ids::nitrogen,         },
         // { ids::oxygen,           },

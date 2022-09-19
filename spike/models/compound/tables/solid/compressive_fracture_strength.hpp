@@ -4,29 +4,29 @@
 #include <map>
 
 // in-house libraries
-#include <models/compound/relation/StateFunction.hpp>
+#include <models/compound/relation/PolynomialRailyardRelation.hpp>
 #include "../ids.hpp"
 
 namespace compound { 
 namespace tables { 
 
-    std::map<int, relation::StateFunction<si::pressure<double>>> compressive_fracture_strength_as_solid {
-        { ids::water,               relation::state_invariant(6.0 * si::megapascal), //engineering toolbox
+    std::map<int, relation::PolynomialRailyardRelation<si::temperature<double>,si::pressure<double>,0,1>> compressive_fracture_strength_as_solid {
+        { ids::water,               6.0 * si::megapascal, //engineering toolbox
                                 },
-        { ids::nitrogen,     
-                                    relation::StateFunction<si::pressure<double>>([](si::pressure<double> p, si::temperature<double> T){ 
-                                        return math::mix(0.24, 6.00, math::linearstep(58.0, 5.0, T/si::kelvin))*si::megapascal;
-                                    }), // wikipedia, and Yamashita (2010)
-                                },
+        // { ids::nitrogen,     
+        //                             relation::StateFunction<si::pressure<double>>([](si::pressure<double> p, si::temperature<double> T){ 
+        //                                 return math::mix(0.24, 6.00, math::linearstep(58.0, 5.0, T/si::kelvin))*si::megapascal;
+        //                             }), // wikipedia, and Yamashita (2010)
+        //                         },
         // { ids::oxygen,           },
         // { ids::carbon_dioxide,   },
-        { ids::methane,             relation::state_invariant(8.0 * si::megapascal), // Yamashita (2010)
+        { ids::methane,             8.0 * si::megapascal, // Yamashita (2010)
                                 },
         // { ids::argon,            },
         // { ids::helium,           },
         // { ids::hydrogen,         },
         { ids::ammonia,     
-                                    relation::get_interpolated_temperature_function
+                                    relation::get_linear_interpolation_function
                                         (si::kelvin, si::standard_gravity * si::gram/si::millimeter2,
                                          std::vector<double>{ 77.0, 100.0, 120.0, 130.0, 140.0, 150.0, 160.0}, 
                                          std::vector<double>{580.0, 620.0, 540.0, 450.0, 360.0, 270.0, 190.0}), // Prokhvatilov
@@ -44,11 +44,11 @@ namespace tables {
         // { ids::perflouromethane, },
         // { ids::benzene,          },
         // { ids::pyrimidine,       },
-        { ids::quartz,           relation::state_invariant(1.1 * si::gigapascal), // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
+        { ids::quartz,              1.1 * si::gigapascal, // https://www.qsiquartz.com/mechanical-properties-of-fused-quartz/
                                  },
-        { ids::halite,           relation::state_invariant(20.0 * si::megapascal), // Bauer (2019)
+        { ids::halite,              20.0 * si::megapascal, // Bauer (2019)
                                  },
-        { ids::corundum,         relation::state_invariant(2265.0*si::megapascal), //azom.com/article.aspx?ArticleId=1948
+        { ids::corundum,            2265.0*si::megapascal, //azom.com/article.aspx?ArticleId=1948
                                  },
         // { ids::apatite,          },
         // { ids::carbon,           },

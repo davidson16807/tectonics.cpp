@@ -16,3 +16,4 @@
 #include "./absorption_coefficient_test.hpp"
 #include "./poisson_ratio_test.cpp"
 #include "./tensile_modulus_test.cpp"
+#include "./thermal_conductivity_test.cpp"
