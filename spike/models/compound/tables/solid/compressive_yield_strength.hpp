@@ -11,7 +11,7 @@ namespace compound {
 namespace tables { 
 
     std::map<int, relation::StateFunction<si::pressure<double>>> compressive_yield_strength_as_solid {
-        { ids::water,        state_invariant(6.0 * si::megapascal),                             // brittle, effectively the same as fracture strength
+        { ids::water,        relation::state_invariant(6.0 * si::megapascal),                             // brittle, effectively the same as fracture strength
             },
         // { ids::nitrogen,         },
         // { ids::oxygen,           },
@@ -21,7 +21,7 @@ namespace tables {
         // { ids::helium,           },
         // { ids::hydrogen,         },
         { ids::ammonia,        
-                get_interpolated_temperature_function
+                relation::get_interpolated_temperature_function
                     (si::kelvin, si::standard_gravity * si::gram/si::millimeter2,
                      std::vector<double>{ 77.0, 100.0, 120.0, 130.0, 140.0, 150.0}, 
                      std::vector<double>{580.0, 480.0, 230.0, 150.0, 110.0, 200.0}), // Prokhvatilov
@@ -40,7 +40,7 @@ namespace tables {
         // { ids::benzene,          },
         // { ids::pyrimidine,       },
         // { ids::quartz,           },
-        { ids::halite,        state_invariant(15.0 * si::megapascal), // Bauer (2019)
+        { ids::halite,        relation::state_invariant(15.0 * si::megapascal), // Bauer (2019)
             },
         // { ids::corundum,         },
         // { ids::apatite,          },

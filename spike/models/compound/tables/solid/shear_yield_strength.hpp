@@ -11,7 +11,7 @@ namespace compound {
 namespace tables { 
 
     std::map<int, relation::StateFunction<si::pressure<double>>> shear_yield_strength_as_solid {
-        { ids::water,              state_invariant(1.1 * si::megapascal),                             // brittle, effectively the same as fracture strength
+        { ids::water,              relation::state_invariant(1.1 * si::megapascal),                             // brittle, effectively the same as fracture strength
             },
         // { ids::nitrogen,         },
         // { ids::oxygen,           },
