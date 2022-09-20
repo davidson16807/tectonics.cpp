@@ -241,6 +241,7 @@ namespace si{
         std::pair<std::array<int,3>, std::string>{std::array<int,3>{ 2,1,-3}, "W"},
         std::pair<std::array<int,3>, std::string>{std::array<int,3>{ 1,1,-3}, "W/m"},
         std::pair<std::array<int,3>, std::string>{std::array<int,3>{ 0,1,-3}, "W/m2"},
+        std::pair<std::array<int,3>, std::string>{std::array<int,3>{ 0,1,-2}, "N/m"},
       };
       for(std::size_t i(0); i < named_mks.size(); ++i)
       {
@@ -395,7 +396,7 @@ namespace si{
 
 
 
-                                                           //           m kg  s  K mol A Cd
+                                                    //           m kg  s  K mol A Cd
   template <typename T> using length                    = units< 1, 0, 0, 0, 0, 0, 0, T>;
   template <typename T> using mass                      = units< 0, 1, 0, 0, 0, 0, 0, T>;
   template <typename T> using time                      = units< 0, 0, 1, 0, 0, 0, 0, T>;
@@ -919,15 +920,18 @@ namespace si{
   constexpr volume<double>       observable_universe_volume       ( 4e80 );
 
 
+  template<typename T>
   struct celcius_type {};
-  celcius_type celcius;
-  template<typename T1>
-  constexpr temperature<T1> operator*(const T1 C, const celcius_type)
+
+  constexpr celcius_type<double> celcius;
+
+  template<typename T1, typename T2>
+  constexpr temperature<T1> operator*(const T1 C, const celcius_type<T2>)
   {
     return C*kelvin + standard_temperature;
   }
-  template<typename T1>
-  constexpr T1 operator/(const temperature<T1> K, const celcius_type)
+  template<typename T1, typename T2>
+  constexpr T1 operator/(const temperature<T1> K, const celcius_type<T2>)
   {
     return ((K - standard_temperature) / kelvin);
   }

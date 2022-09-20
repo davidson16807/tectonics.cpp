@@ -18,48 +18,48 @@ namespace tables {
                      std::vector<double>{1.396, 1.349, 1.338, 1.333, 1.331, 1.329, 1.328, 1.321, 1.279, 1.142, 1.426, 1.45, 1.289, 1.334, 1.302, 1.146, 1.297, 1.423, 1.487, 1.539, 1.546, 1.522, 1.703, 1.966, 2.081, 2.13}),
                     // Hale (1973)
             },
-        { ids::nitrogen,                      1.19876,
+        { ids::nitrogen,          1.19876,
             },
-        { ids::oxygen,       1.2243,
+        { ids::oxygen,            1.2243,
             },
-        { ids::carbon_dioxide,       1.6630,
+        { ids::carbon_dioxide,    1.6630,
             },
-        { ids::methane,       1.2730, 
+        { ids::methane,           1.2730, 
             },
-        { ids::argon,       1.23,
+        { ids::argon,             1.23,
             },
-        { ids::helium,       1.02451,
+        { ids::helium,            1.02451,
             // get_dewaele2003_pressure_function
             //     (si::kilobar, 1.0, 0.8034, 0.20256, 1.0, 0.12763, 0.8, 115.0), // Dewaele (2003)
             },
-        { ids::hydrogen,       1.1096,
+        { ids::hydrogen,          1.1096,
             // TODO: reimplement this
             // get_dewaele2003_pressure_function
             //     (si::kilobar, 1.0, 0.949, 0.06829, 11.8, 0.2853, 3.0, 49.0), // Dewaele (2003)
             },
-        { ids::ammonia,        1.3944,
+        { ids::ammonia,           1.3944,
                 // get_interpolated_temperature_function
                 //     (si::celcius, 1.0,
                 //      std::vector<double>{ -20.0,  40.0}, 
                 //      std::vector<double>{1.3475, 1.321}), // Francis (1960)
             },
-        { ids::ozone,       1.2226,
+        { ids::ozone,             1.2226,
             },
-        { ids::nitrous_oxide,       1.238,
+        { ids::nitrous_oxide,     1.238,
             },
-        { ids::sulfur_dioxide,        1.3396,
+        { ids::sulfur_dioxide,    1.3396,
                 // get_interpolated_temperature_function
                 //     (si::celcius, 1.0,
                 //      std::vector<double>{-20.0, 40.0}, 
                 //      std::vector<double>{ 1.37, 1.33}), // Francis (1960)
             },
-        { ids::nitric_oxide,       1.330,
+        { ids::nitric_oxide,      1.330,
             },
         // { ids::carbon_monoxide,  },
         // { ids::ethane,           },
-        { ids::hydrogen_cyanide,       1.2614,
+        { ids::hydrogen_cyanide,  1.2614,
             },
-        { ids::ethanol,       1.361,  // wikipedia data page
+        { ids::ethanol,           1.361,  // wikipedia data page
             // // TODO: reimplement this
             // field::SpectralFunction<double>([](
             //     const si::wavenumber<double> nlo, 
@@ -74,7 +74,7 @@ namespace tables {
             //         + 0.00002 * invl2*invl2;
             // }),
             },
-        { ids::formaldehyde,       1.3714,  // wikipedia
+        { ids::formaldehyde,      1.3714,  // wikipedia
             },
         { ids::formic_acid,       1.3714,
             },

@@ -176,24 +176,6 @@ namespace relation {
         );
     }
 
-    // 15 uses, for liquid surface tension
-    template<typename Tx, typename Ty>
-    relation::StateFunction<Ty> get_refprop_liquid_surface_tension_temperature_function( 
-        const Tx Tunits, const Ty yunits,
-        const double Tc, const double sigma0, const double n0, const double sigma1, const double n1, const double sigma2, const double n2,
-        const double Tmin, const double Tmax
-    ){
-        return relation::StateFunction<Ty>(
-            [Tunits, yunits, Tc, sigma0, n0, sigma1, n1, sigma2, n2, Tmin, Tmax]
-            (const si::pressure<double> p, const si::temperature<double> T)
-            {
-                double Tr = std::clamp(T/Tunits, Tmin, Tmax)/Tc;
-                return ( sigma0*std::pow(1.0 - Tr, n0) + sigma1*std::pow(1.0 - Tr, n1) + sigma2*std::pow(1.0 - Tr, n2) )*yunits;
-            }
-        );
-    }
-    // from Mulero (2012)
-
     // 5 uses, for solid densities
     template<typename Tx, typename Ty>
     relation::StateFunction<Ty> get_quadratic_pressure_function( 
@@ -210,20 +192,5 @@ namespace relation {
         );
     }
 
-    // 3 uses, for liquid surface tension
-    template<typename Tx, typename Ty>
-    relation::StateFunction<Ty> get_linear_liquid_surface_tension_temperature_function( 
-        const Tx Tunits, const Ty yunits,
-        const double TL, const double gammaTL, const double dgamma_dT
-    ){
-        return relation::StateFunction<Ty>(
-            [Tunits, yunits, TL, gammaTL, dgamma_dT]
-            (const si::pressure<double> p, const si::temperature<double> T)
-            {
-                double t = T/Tunits;
-                return ( gammaTL + dgamma_dT * (t-TL) )*yunits;
-            }
-        );
-    }
 
 }}

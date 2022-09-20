@@ -263,14 +263,40 @@ namespace relation {
     }
 
     // TODO: rename `spectral_linear_spline`
-    template<typename Tx, typename Ty>
-    PolynomialRailyardRelation<Tx,Ty,0,1> get_linear_interpolation_function(
-        const Tx xunits, const Ty yunits,
+    template<typename T, typename Ty>
+    PolynomialRailyardRelation<si::temperature<T>,Ty,0,1> get_linear_interpolation_function(
+        const si::celcius_type<T> celcius, const Ty yunits,
         const std::vector<double>xs, 
         const std::vector<double>ys
     ){
         assert(xs.size() == ys.size());
-        return PolynomialRailyardRelation<Tx,Ty,0,1>(math::spline::linear_spline<double>(xs, ys), xunits, yunits);
+        return PolynomialRailyardRelation<si::temperature<T>,Ty,0,1>(
+                math::compose(
+                    math::spline::linear_spline<double>(xs, ys), 
+                    math::Shifting(si::standard_temperature/si::kelvin)), 
+                si::kelvin, yunits);
+    }
+
+    // TODO: rename `spectral_linear_spline`
+    template<typename T, typename Ty>
+    PolynomialRailyardRelation<si::temperature<T>,Ty,0,1> get_linear_interpolation_function(
+        const si::temperature<T> xunits, const Ty yunits,
+        const std::vector<double>xs, 
+        const std::vector<double>ys
+    ){
+        assert(xs.size() == ys.size());
+        return PolynomialRailyardRelation<si::temperature<T>,Ty,0,1>(math::spline::linear_spline<double>(xs, ys), xunits, yunits);
+    }
+
+    // TODO: rename `spectral_linear_spline`
+    template<typename T, typename Ty>
+    PolynomialRailyardRelation<si::pressure<T>,Ty,0,1> get_linear_interpolation_function(
+        const si::pressure<T> xunits, const Ty yunits,
+        const std::vector<double>xs, 
+        const std::vector<double>ys
+    ){
+        assert(xs.size() == ys.size());
+        return PolynomialRailyardRelation<si::pressure<T>,Ty,0,1>(math::spline::linear_spline<double>(xs, ys), xunits, yunits);
     }
     
     /*

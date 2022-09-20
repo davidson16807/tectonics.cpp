@@ -56,8 +56,8 @@ namespace math {
             assert(lo <= hi);
         }
 
-        // copy constructor
-        constexpr explicit Railcar<T,F>(const T k) :
+        // the constant railcar
+        constexpr Railcar<T,F>(const T k):
             content(k),
             lo(-std::numeric_limits<T>::max()),
             hi(std::numeric_limits<T>::max())

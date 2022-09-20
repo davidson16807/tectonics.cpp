@@ -31,10 +31,17 @@ namespace math {
             lo(fclamp.lo),
             hi(fclamp.hi)
         {}
+        // zero constructor
         constexpr Clamped<T,F>():
             f(),
             lo(),
             hi()
+        {}
+        // zero constructor
+        constexpr Clamped<T,F>(T k):
+            f(k),
+            lo(-std::numeric_limits<T>::max()),
+            hi( std::numeric_limits<T>::max())
         {}
         constexpr T operator()(const T x) const
         {
@@ -71,76 +78,75 @@ namespace math {
     constexpr Clamped<T,F> operator+(const Clamped<T,F>& f, const T k)
     {
         Clamped<T,F> y(f);
-        y.f += f;
+        y.f += k;
         return y;
     }
     template<typename T, typename F>
     constexpr Clamped<T,F> operator+(const T k, const Clamped<T,F>& f)
     {
         Clamped<T,F> y(f);
-        y.f += f;
+        y.f += k;
         return y;
     }
     template<typename T, typename F>
     constexpr Clamped<T,F> operator-(const Clamped<T,F>& f, const T k)
     {
         Clamped<T,F> y(f);
-        y.f -= f;
+        y.f -= k;
         return y;
     }
     template<typename T, typename F>
     constexpr Clamped<T,F> operator*(const Clamped<T,F>& f, const T k)
     {
         Clamped<T,F> y(f);
-        y.f *= f;
+        y.f *= k;
         return y;
     }
     template<typename T, typename F>
     constexpr Clamped<T,F> operator*(const T k, const Clamped<T,F>& f)
     {
         Clamped<T,F> y(f);
-        y.f *= f;
+        y.f *= k;
         return y;
     }
     template<typename T, typename F>
     constexpr Clamped<T,F> operator/(const Clamped<T,F>& f, const T k)
     {
         Clamped<T,F> y(f);
-        y.f /= f;
+        y.f /= k;
+        return y;
+    }
+    template<typename T, typename F>
+    constexpr Clamped<T,F> operator-(const Clamped<T,F>& f)
+    {
+        Clamped<T,F> y(f);
+        y.f *= -1;
         return y;
     }
 
     /*
     Given functions f∘clamp and g, return the composite function f∘clamp∘g.
-    If reclamp==true, adjust the bounds of clamp so that the range of possible input fed to f remains the same.
     */
     template<typename T, typename F>
-    constexpr Clamped<T,F> compose(const Clamped<T,F>& fclamp, const Shifting<T> g, const bool reclamp = true)
+    constexpr Clamped<T,F> compose(const Clamped<T,F>& fclamp, const Shifting<T> g)
     {
         Clamped<T,F> fclampg = fclamp;
         fclampg.f = compose(fclamp.f,g);
-        if (reclamp)
-        {
-            fclampg.lo += g.offset;
-            fclampg.hi += g.offset;
-        }
+        fclampg.lo -= g.offset;
+        fclampg.hi -= g.offset;
         return fclampg;
     }
 
     /*
     Given functions f∘clamp and g, return the composite function f∘clamp∘g.
-    If reclamp==true, adjust the bounds of clamp so that the range of possible input fed to f remains the same.
     */
     template<typename T, typename F>
-    constexpr Clamped<T,F> compose(const Clamped<T,F>& fclamp, const Scaling<T> g, const bool reclamp = true)
+    constexpr Clamped<T,F> compose(const Clamped<T,F>& fclamp, const Scaling<T> g)
     {
         Clamped<T,F> fclampg = fclamp;
         fclampg.f = compose(fclamp.f,g);
-        if (reclamp)
-        {
-            fclampg.lo *= g.factor;
-            fclampg.hi *= g.factor;
-        }
+        fclampg.lo /= g.factor;
+        fclampg.hi /= g.factor;
         return fclampg;
     }
 
