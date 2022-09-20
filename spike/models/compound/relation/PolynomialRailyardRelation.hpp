@@ -272,6 +272,29 @@ namespace relation {
         assert(xs.size() == ys.size());
         return PolynomialRailyardRelation<Tx,Ty,0,1>(math::spline::linear_spline<double>(xs, ys), xunits, yunits);
     }
+    
+    /*
+    `get_dippr_quartic_temperature_function_100()` is equivalent to dippr function 100,
+    for liquid thermal conductivity, heat capacity, and solid density
+    */
+    // 26 uses, for liquid thermal conductivity and heat capacity
+    template<typename Ty>
+    PolynomialRailyardRelation<si::temperature<double>, Ty, 0,4> get_dippr_quartic_temperature_relation_100( 
+        const si::temperature<double> Tunits, const Ty yunits,
+        const double intercept, const double slope, const double square, const double cube, const double fourth,
+        const double Tmin, double Tmax
+    ){
+        const double oo = std::numeric_limits<double>::max();
+        using P = math::Polynomial<double,0,4>;
+        using R = math::Railcar<double,P>;
+        math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>({intercept, slope, square, cube, fourth});
+        return PolynomialRailyardRelation<si::temperature<double>,Ty,0,4>(
+            math::PolynomialRailyard<double,0,4>({
+                R(-oo, Tmin, P(p(Tmin))), 
+                R(Tmin,Tmax, p),
+                R(Tmax, oo,  P(p(Tmax)))
+            }), Tunits, yunits);
+    }
 
     /*
     `get_perry_johnson_temperature_function()` uses Perry coefficients for high temperature,
@@ -290,8 +313,8 @@ namespace relation {
             const double oo = std::numeric_limits<double>::max();
             using P = math::Polynomial<double,-2,3>;
             using R = math::Railcar<double,P>;
-            math::Polynomial<double,1,3>  johnson    = math::Polynomial<double,1,3> (std::array<double,3>{linear_johnson, 0.0, cube_johnson});
-            math::Polynomial<double,-2,2> perry      = y_units_perry/y_units_johnson * math::Polynomial<double,-2,2>(std::array<double,5>{inverse_square_perry, 0.0, intercept_perry, linear_perry, square_perry});
+            math::Polynomial<double,1,3>  johnson    = math::Polynomial<double,1,3> ({linear_johnson, 0.0, cube_johnson});
+            math::Polynomial<double,-2,2> perry      = y_units_perry/y_units_johnson * math::Polynomial<double,-2,2>({inverse_square_perry, 0.0, intercept_perry, linear_perry, square_perry});
             math::Polynomial<double,0,1>  transition = math::linear_newton_polynomial(T_max_johnson, T_min_perry, johnson(T_max_johnson), perry(T_min_perry));
             return PolynomialRailyardRelation<si::temperature<double>,si::specific_heat_capacity<double>,0,1>(
                 math::PolynomialRailyard<double,-2,3>({
