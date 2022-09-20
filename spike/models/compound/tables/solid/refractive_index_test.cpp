@@ -11,7 +11,7 @@ TEST_CASE( "refractive_index order of magnitude", "[table]" ) {
     {
         for (int i = 0; i<compound::tables::ids::count; i++)
         {
-            for (si::length<double> l = 10.0*si::nanometer; l <= 3.0*si::micrometer; l*=1.78)
+            for (si::length<double> l = 10.0*si::nanometer; l <= 3.0*si::micrometer; l*=1.778)
             {
                 if (compound::tables::refractive_index_as_solid.count(i) > 0) {
                     auto x = compound::tables::refractive_index_as_solid[i](1.0/l);
@@ -19,7 +19,7 @@ TEST_CASE( "refractive_index order of magnitude", "[table]" ) {
                     CHECK(x > 0.2); /*based on silver*/\
                 }
             }
-            for (si::length<double> l = 3.0*si::micrometer; l <= 3.0*si::millimeter; l*=1.78)
+            for (si::length<double> l = 3.0*si::micrometer; l <= 3.0*si::millimeter; l*=1.778)
             {
                 if (compound::tables::refractive_index_as_solid.count(i) > 0) {
                     auto x = compound::tables::refractive_index_as_solid[i](1.0/l);
