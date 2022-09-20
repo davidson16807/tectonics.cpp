@@ -8,6 +8,7 @@
 #include <catch/catch.hpp>
 
 #include <math/expression/PolynomialRailyard.hpp>  
+#include <math/expression/PolynomialRailyard_to_string.hpp>  
 
 TEST_CASE( "PolynomialRailyard arithmetic purity", "[math]" ) {
     const double threshold = 1e-4;
@@ -913,17 +914,6 @@ TEST_CASE( "PolynomialRailyard/scalar arithmetic distributivity", "[math]" ) {
 
         CHECK(math::distance((s2+k0)*s3, (s2*s3+k0*s3), midlo, midhi) < threshold);
         CHECK(math::distance((s2+k1)*s3, (s2*s3+k1*s3), midlo, midhi) < threshold);
-
-
-
-        std::cout << "s2:" << math::to_string(s2) << std::endl;
-        std::cout << "s3:" << math::to_string(s3) << std::endl;
-        std::cout << "k2:" << math::to_string(math::PolynomialRailcar<double,-2,1>(math::Polynomial<double,0,1>(k2))) << std::endl;
-        std::cout << "(s2+k2):" << math::to_string((s2+k2)) << std::endl;
-        std::cout << "(s2+k2)*s3:" << math::to_string((s2+k2)*s3) << std::endl;
-        std::cout << "s2*s3:" << math::to_string(s2*s3) << std::endl;
-        std::cout << "k2*s3:" << math::to_string(k2*s3) << std::endl;
-        std::cout << "s2*s3+k2*s3:" << math::to_string(s2*s3+k2*s3) << std::endl;
 
         CHECK(math::distance((s2+k2)*s3, (s2*s3+k2*s3), midlo, midhi) < threshold);
 

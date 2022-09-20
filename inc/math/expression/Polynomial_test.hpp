@@ -1584,3 +1584,58 @@ TEST_CASE( "Polynomial integral/derivative invertibility", "[math]" ) {
         // CHECK(math::distance(s, derivative(integral(s)), lo, hi) < threshold);
     }
 }
+
+TEST_CASE( "Polynomial composition happy path", "[math]" ) {
+    const double threshold = 1e-6;
+    // `lo*` variables are used as bounds to s square integral 
+    // that is used to calculate deviation from the correct output.
+    const double lo = -1e3;
+    const double hi =  1e3;
+    
+
+    const double p =-1.0;
+    const double q = 2.0;
+    const double r = 3.0;
+    const double s = 1.78;
+    const double t = 3.16;
+
+    math::Identity<double> E;
+    math::Scaling<double>  F(s);
+    math::Shifting<double> G(s);
+    math::Polynomial<double,0,2> P  = math::Polynomial<double,0,2>(std::array<double,3>{p,q,r});
+    math::Polynomial<double,0,1> Q  = math::Polynomial<double,0,1>(std::array<double,2>{s,t});
+    /*
+    example:
+    P(x)   = p+qx+rx²
+    f(x)   = sx
+    P∘f(x) = p+q(sx)+r(sx)²
+    P∘f(x) = p+qsx+rs²x²
+    */
+    math::Polynomial<double,0,2> PF = math::Polynomial<double,0,2>(std::array<double,3>{p, q*s, r*s*s});
+    /*
+    example:
+    P(x)   = p+qx+rx²
+    g(x)   = s+x
+    P∘g(x) = p+q(s+x)+r(s+x)²
+    P∘g(x) = p+q(s+x)+r(s²+2sx+x²)
+    P∘g(x) = p+qs+qx+rs²+r2sx+rx²
+    P∘g(x) = p+rs²+qs + qx+r2sx + rx²
+    */
+    math::Polynomial<double,0,2> PG = math::Polynomial<double,0,2>(std::array<double,3>{p+r*s*s+q*s, q+r*2.0*s, r});
+    /*
+    P(x)   = p+qx+rx²
+    Q(x)   = s+tx
+    P∘Q(x) = p+q(s+tx)+r(s+tx)²
+    P∘Q(x) = p+qs+qtx+r(s²+2stx+t²x²)
+    P∘Q(x) = p+qs+qtx+rs²+r2stx+rt²x²
+    P∘Q(x) = p+qs+rs² + qtx+r2stx + rt²x²
+    */
+    math::Polynomial<double,0,2> PQ = math::Polynomial<double,0,2>(std::array<double,3>{p+q*s+r*s*s, q*t+r*2.0*s*t, r*t*t});
+
+    SECTION("the derivative of s function's integral must equal the original function"){
+        CHECK(math::distance(math::compose(P,E), P, lo, hi) < threshold);
+        CHECK(math::distance(math::compose(P,F), PF, lo, hi) < threshold);
+        CHECK(math::distance(math::compose(P,G), PG, lo, hi) < threshold);
+        CHECK(math::distance(math::compose(P,Q), PQ, lo, hi) < threshold);
+    }
+}

@@ -1114,16 +1114,23 @@ namespace math {
         return p[0];
     }
 
-    template<typename T, int Plo, int Qlo, int Qhi, 
-        typename = std::enable_if_t<(Plo >= 0 && Qlo >= 0 && Qhi >= 0)> >
-    constexpr Polynomial<T,Qlo,Qhi> compose(const Polynomial<T,Plo,Plo+1> p, const Polynomial<T,Qlo,Qhi>& q)
+    template<typename T, int Qlo, int Qhi, 
+        typename = std::enable_if_t<(Qlo >= 0 && Qhi >= 0)> >
+    constexpr Polynomial<T,Qlo,Qhi> compose(const Polynomial<T,0,1> p, const Polynomial<T,Qlo,Qhi>& q)
     {
-        return p[Plo] + p[Plo+1]*q;
+        return p[0] + p[1]*q;
     }
 
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi, 
-        typename = std::enable_if_t<(Plo >= 0 && Phi >= 0 && Phi > Plo+1 && Qlo >= 0 && Qhi >= 0)> >
-    constexpr Polynomial<T,std::min(Plo*Qlo,Phi*Qhi),std::max(Plo*Qlo,Phi*Qhi)> compose(const Polynomial<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi>& q)
+    // template<typename T, int Plo, int Qlo, int Qhi, 
+    //     typename = std::enable_if_t<(Plo > 0 && Qlo >= 0 && Qhi >= 0)> >
+    // constexpr Polynomial<T,std::min(Plo*Qlo,Phi*Qhi),std::max(Plo*Qlo,Phi*Qhi)> compose(const Polynomial<T,Plo,Plo+1> p, const Polynomial<T,Qlo,Qhi>& q)
+    // {
+    //     return q*compose(Polynomial<T,Plo-1,Plo>(std::next((p.k).begin()), (p.k).end()));
+    // }
+
+    template<typename T, int Phi, int Qlo, int Qhi, 
+        typename = std::enable_if_t<(Phi > 1 && Qlo >= 0 && Qhi >= 0)> >
+    constexpr Polynomial<T,std::min(0,Phi*Qhi),std::max(0,Phi*Qhi)> compose(const Polynomial<T,0,Phi>& p, const Polynomial<T,Qlo,Qhi>& q)
     {
         /*
         we rely on the fact that, e.g.
@@ -1134,10 +1141,7 @@ namespace math {
             p₀(u) = k₀+xu 
             pₙ₋₁(u) = k₁+(k₂+k₃u)u = k₁u⁰+k₂u¹+k₃u²
         */
-        return p[0]+Identity<T>()
-            *compose(
-                Polynomial<T,Plo,Phi-1>(std::next((p.k).begin()), (p.k).end()),
-                q);
+        return p[0]+q*compose(Polynomial<T,0,Phi-1>(std::next((p.k).begin()), (p.k).end()), q);
     }
 
 
