@@ -165,24 +165,24 @@ namespace tables {
         // { ids::goethite,         },
         // { ids::pyrite,           },
         // { ids::hematite,         },
-        // { ids::gold,        
-        //         relation::get_linear_liquid_surface_tension_temperature_function
-        //                 (si::kelvin, si::newton/si::meter, 
-        //                  1338.0, 1.162, -1.8e-4), // Egry(2010)
-        //                 // TODO: implement Tmax and Tmin for this function
-        //     },
-        // { ids::silver,        
-        //         relation::get_linear_liquid_surface_tension_temperature_function
-        //                 (si::kelvin, si::newton/si::meter, 
-        //                  1234.0, 0.914, -1.5e-4), // Egry(2010)
-        //                 // TODO: implement Tmax and Tmin for this function
-        //     },
-        // { ids::copper,        
-        //         relation::get_linear_liquid_surface_tension_temperature_function
-        //                 (si::kelvin, si::newton/si::meter, 
-        //                  1357.0, 1.339, -1.8e-4), // Egry(2010)
-        //                 // TODO: implement Tmax and Tmin for this function
-        //     },
+        { ids::gold,        
+                relation::get_linear_liquid_surface_tension_temperature_function
+                        (si::kelvin, si::newton/si::meter, 
+                         1338.0, 1.162, -1.8e-4), // Egry(2010)
+                        // TODO: implement Tmax and Tmin for this function
+            },
+        { ids::silver,        
+                relation::get_linear_liquid_surface_tension_temperature_function
+                        (si::kelvin, si::newton/si::meter, 
+                         1234.0, 0.914, -1.5e-4), // Egry(2010)
+                        // TODO: implement Tmax and Tmin for this function
+            },
+        { ids::copper,        
+                relation::get_linear_liquid_surface_tension_temperature_function
+                        (si::kelvin, si::newton/si::meter, 
+                         1357.0, 1.339, -1.8e-4), // Egry(2010)
+                        // TODO: implement Tmax and Tmin for this function
+            },
         // { ids::magnetite,        },
         // { ids::chalcocite,       },
         // { ids::chalcopyrite,     },

@@ -17,7 +17,7 @@ TEST_CASE( "surface_tension order of magnitude", "[table]" ) {
             {
                 if (compound::tables::surface_tension_as_liquid.count(i) > 0) {
                     auto x = compound::tables::surface_tension_as_liquid[i](T);
-                    CHECK(x / (si::millinewton/si::meter) < 10e3);   /*based on molten rock*/ \
+                    CHECK(x / (si::millinewton/si::meter) < 3e3);   /*based on copper*/ \
                     CHECK(x / (si::millinewton/si::meter) > 0.0003); /*based on liquid carbon dioxide (Quinn 1927) */ \
                 }
             }

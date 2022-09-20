@@ -281,8 +281,7 @@ namespace relation {
         const float oo = std::numeric_limits<float>::max();
         return LiquidSurfaceTensionTemperatureRelation({}, 
             math::PolynomialRailyard<float, 0, 2>({
-                    R(gammaTL - dgamma_dT*TL),
-                    R(-oo, oo, P({1.0f, dgamma_dT, 1.0f})),
+                    R(-oo, oo, P({gammaTL - dgamma_dT*TL, dgamma_dT, 0.0f})),
                 }), Tunits, yunits, 0.0);
         // NOTE: the above is equivalent to:
         // ( gammaTL + dgamma_dT * (T-TL) );
