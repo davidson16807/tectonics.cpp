@@ -98,38 +98,7 @@ namespace relation {
             }
         );
     }
-
-    /*
-    `get_perry_johnson_temperature_function()` uses Perry coefficients for high temperature,
-    and interpolated values from Johnson (1960) for low temperature.
-    */
-    // 23 uses, all for heat capacity of solids
-    template<typename Tx>
-    relation::StateFunction<si::specific_heat_capacity<double>> get_perry_johnson_temperature_function( 
-        const Tx Tunits, 
-        const si::specific_heat_capacity<double> y_units_johnson, 
-        const double linear_johnson, const double cube_johnson, 
-        const double T_max_johnson,
-        const si::specific_heat_capacity<double> y_units_perry,
-        const double intercept_perry, const double linear_perry, const double inverse_square_perry, const double square_perry, 
-        const double T_min_perry, const double T_max_perry
-    ){
-        return relation::StateFunction<si::specific_heat_capacity<double>>(
-            [Tunits, 
-             y_units_johnson, linear_johnson, cube_johnson, T_max_johnson,
-             y_units_perry, intercept_perry, linear_perry, inverse_square_perry, square_perry, T_min_perry, T_max_perry]
-            (const si::pressure<double> p, const si::temperature<double> T)
-            {
-                double tj = std::clamp(T/Tunits, 0.0, T_max_johnson);
-                auto y_johnson = (linear_johnson*tj + cube_johnson*tj*tj*tj) * y_units_johnson;
-                double tp = std::clamp(T/Tunits, T_min_perry, T_max_perry);
-                auto y_perry   = (intercept_perry + linear_perry*tp + inverse_square_perry/(tp*tp) + square_perry*tp*tp) * y_units_perry;
-                return math::lerp(
-                    std::vector<double>{T_max_johnson,             T_min_perry            },
-                    std::vector<double>{y_johnson/y_units_johnson, y_perry/y_units_johnson}, T/Tunits) * y_units_johnson;
-            }
-        );
-    }
+    
     /*
     `get_dippr_quartic_temperature_function_100()` is equivalent to dippr function 100,
     for liquid thermal conductivity, heat capacity, and solid density

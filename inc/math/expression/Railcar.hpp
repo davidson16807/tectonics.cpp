@@ -53,7 +53,7 @@ namespace math {
             lo(-std::numeric_limits<T>::max()),
             hi(std::numeric_limits<T>::max())
         {
-            assert(lo < hi);
+            assert(lo <= hi);
         }
 
         // copy constructor
@@ -62,7 +62,7 @@ namespace math {
             lo(-std::numeric_limits<T>::max()),
             hi(std::numeric_limits<T>::max())
         {
-            assert(lo < hi);
+            assert(lo <= hi);
         }
 
         // copy constructor
@@ -71,7 +71,7 @@ namespace math {
             lo(car.lo),
             hi(car.hi)
         {
-            assert(lo < hi);
+            assert(lo <= hi);
         }
 
         // cast constructor
@@ -81,7 +81,7 @@ namespace math {
             lo(car.lo),
             hi(car.hi)
         {
-            assert(lo < hi);
+            assert(lo <= hi);
         }
 
         constexpr explicit Railcar<T,F>(const T lo, const T hi, const F& content):
@@ -89,7 +89,7 @@ namespace math {
             lo(lo),
             hi(hi)
         {
-            assert(lo < hi);
+            assert(lo <= hi);
         }
 
         constexpr explicit Railcar<T,F>(const F& content) : 
@@ -97,7 +97,7 @@ namespace math {
             lo(-std::numeric_limits<T>::max()),
             hi(std::numeric_limits<T>::max())
         {
-            assert(lo < hi);
+            assert(lo <= hi);
         }
 
         constexpr T operator()(const T x) const

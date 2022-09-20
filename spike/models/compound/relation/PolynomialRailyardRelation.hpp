@@ -273,6 +273,35 @@ namespace relation {
         return PolynomialRailyardRelation<Tx,Ty,0,1>(math::spline::linear_spline<double>(xs, ys), xunits, yunits);
     }
 
+    /*
+    `get_perry_johnson_temperature_function()` uses Perry coefficients for high temperature,
+    and interpolated values from Johnson (1960) for low temperature.
+    */
+    // 23 uses, all for heat capacity of solids
+    PolynomialRailyardRelation<si::temperature<double>, si::specific_heat_capacity<double>,  -2,3> get_perry_johnson_temperature_function( 
+        const si::temperature<double> Tunits, 
+        const si::specific_heat_capacity<double> y_units_johnson, 
+        const double linear_johnson, const double cube_johnson, 
+        const double T_max_johnson,
+        const si::specific_heat_capacity<double> y_units_perry,
+        const double intercept_perry, const double linear_perry, const double inverse_square_perry, const double square_perry, 
+        const double T_min_perry, const double T_max_perry
+    ){
+            const double oo = std::numeric_limits<double>::max();
+            using P = math::Polynomial<double,-2,3>;
+            using R = math::Railcar<double,P>;
+            math::Polynomial<double,1,3>  johnson    = math::Polynomial<double,1,3> (std::array<double,3>{linear_johnson, 0.0, cube_johnson});
+            math::Polynomial<double,-2,2> perry      = y_units_perry/y_units_johnson * math::Polynomial<double,-2,2>(std::array<double,5>{inverse_square_perry, 0.0, intercept_perry, linear_perry, square_perry});
+            math::Polynomial<double,0,1>  transition = math::linear_newton_polynomial(T_max_johnson, T_min_perry, johnson(T_max_johnson), perry(T_min_perry));
+            return PolynomialRailyardRelation<si::temperature<double>,si::specific_heat_capacity<double>,0,1>(
+                math::PolynomialRailyard<double,-2,3>({
+                    R(0.0, T_max_johnson,         P(johnson)),            // johnson polynomial
+                    R(T_max_johnson, T_min_perry, P(transition)),         // linear perry/johnson interpolation
+                    R(T_min_perry, T_max_perry,   P(perry)),              // perry polynomial
+                    R(T_max_perry, oo,            P(perry(T_max_perry))), // perry polynomial
+                }), Tunits, y_units_johnson);
+    }
+
     // TODO: rename `spectral_linear_spline`
     template<typename Ty>
     PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavelength(
