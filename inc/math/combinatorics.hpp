@@ -7,7 +7,7 @@ namespace math {
     constexpr int factorial(const int n)
     {
         int y = 1;
-        for (int i = 1; i < n; ++i)
+        for (int i = 1; i <= n; ++i)
         {
             y *= i;
         }

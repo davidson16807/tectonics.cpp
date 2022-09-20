@@ -153,6 +153,12 @@ namespace math {
 
 
 
+    template<typename T>
+    constexpr Scaling<T> inverse(const T k) 
+    {
+        return Scaling<T>(T(1)/k);
+    }
+
 
     template<typename T>
     constexpr T derivative(const Scaling<T> f) 
@@ -163,7 +169,7 @@ namespace math {
     template<typename T>
     constexpr Scaling<T> integral(const T k) 
     {
-        return Scaling(k);
+        return Scaling<T>(k);
     }
 
 }

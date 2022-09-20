@@ -52,7 +52,7 @@ namespace math {
         return Shifting<T>(f.offset - k);
     }
 
-    // operators that produce Scaling relations when given other relations as input
+    // operators that produce Shifting relations when given other relations as input
     template<typename T>
     constexpr Shifting<T> operator+(const Identity<T> f, const T k)
     {
@@ -76,4 +76,19 @@ namespace math {
         return f.offset-g.offset;
     }
     
+
+
+    template<typename T>
+    constexpr Shifting<T> inverse(const T k) 
+    {
+        return Shifting<T>(-k);
+    }
+
+
+    
+    template<typename T>
+    constexpr T derivative(const Shifting<T> f) 
+    {
+        return T(1);
+    }
 }

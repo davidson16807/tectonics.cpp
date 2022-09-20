@@ -159,7 +159,7 @@ namespace math {
     };
 
 
-    // operators with reals that are closed under Polynomial<T,Plo,Phi> relationtypename T, int Plo, int Phi>
+    // operators with reals that are closed under Polynomial<T,Plo,Phi> 
     template<typename T, int Plo, int Phi>
     constexpr Polynomial<T,std::min(Plo,0),std::max(Phi,0)> operator+(const Polynomial<T,Plo,Phi>& p, const T& k)
     {
@@ -712,6 +712,22 @@ namespace math {
     // }
 
 
+    template<typename T>
+    constexpr Polynomial<T,0,1> inverse(const Polynomial<T,0,1> p) 
+    {
+        // we know:           y=a+bx
+        // therefore: -a/b+1/by=x
+        return Polynomial<T,0,1>(-p[0]/p[1], T(1)/p[1]);
+    }
+
+    template<typename T>
+    constexpr Polynomial<T,1,1> inverse(const Polynomial<T,1,1> p) 
+    {
+        // we know:           y=ax
+        // therefore:      1/ay=x
+        return Polynomial<T,1,1>(T(1)/p[1]);
+    }
+
 
     /* 
     NOTE: we avoid expressing derivatives and integrals as methods,
@@ -830,6 +846,17 @@ namespace math {
     }
 
 
+    template<typename T>
+    constexpr Polynomial<T,2,2> integral(const Scaling<T> f) 
+    {
+        return Polynomial<T,2,2>(std::array<T,1>{f.factor/2.0});
+    }
+
+    template<typename T>
+    constexpr Polynomial<T,1,2> integral(const Shifting<T> f) 
+    {
+        return Polynomial<T,1,2>(std::array<T,2>{f.offset, T(0.5)});
+    }
 
 
     /*
@@ -1041,26 +1068,43 @@ namespace math {
     template<typename T, int Plo, int Phi>
     constexpr Polynomial<T,Plo,Phi> compose(const Polynomial<T,Plo,Phi>& p, const Scaling<T> g)
     {
-        Polynomial<T,Plo,Phi> pq = p;
+        /*
+        example:
+        P(x)   = p+qx+rx²
+        F(x)   = sx
+        P∘F(x) = p+q(sx)+r(sx)²
+        P∘F(x) = p+qsx+rs²x²
+        */
+        Polynomial<T,Plo,Phi> pg = p;
         for (int i = Plo; i <= Phi; ++i)
         {
-            pq[i] *= std::pow(g.factor, T(i));
+            pg[i] *= std::pow(g.factor, T(i));
         }
-        return pq;
+        return pg;
     }
 
-    template<typename T, int Plo, int Phi>
+    template<typename T, int Plo, int Phi, 
+        typename = std::enable_if_t<(Plo >= 0 && Phi >= 0)> >
     constexpr Polynomial<T,Plo,Phi> compose(const Polynomial<T,Plo,Phi>& p, const Shifting<T> g)
     {
-        Polynomial<T,Plo,Phi> pq;
+        /*
+        example:
+        P(x)   = p+qx+rx²
+        G(x)   = s+x
+        P∘G(x) = p+q(s+x)+r(s+x)²
+        P∘G(x) = p+q(s+x)+r(s²+2sx+x²)
+        P∘G(x) = p+qs+qx+rs²+r2sx+rx²
+        P∘G(x) = p+rs²+qs + qx+r2sx + rx²
+        */
+        Polynomial<T,Plo,Phi> pg;
         for (int i = Plo; i <= Phi; ++i)
         {
-            for (int j = Plo; j<= Phi; ++j)
+            for (int j = 0; j<= i; ++j)
             {
-                pq[i] += p[j]*combination(j,j-i)*std::pow(g.offset, j-i);
+                pg[j] += p[i]*combination(i,j)*std::pow(g.offset, i-j);
             }
         }
-        return pq;
+        return pg;
     }
 
     template<typename T, int Qlo, int Qhi, 

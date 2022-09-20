@@ -1,1 +1,6 @@
+#include "./expression/ArbitraryDegreeRational_test.hpp"
+#include "./expression/Rational_test.hpp"
+#include "./expression/Polynomial_test.hpp"
+#include "./expression/ArbitraryDegreePolynomial_test.hpp"
+#include "./combinatorics_test.cpp"
 #include "./lerp_test.cpp"
