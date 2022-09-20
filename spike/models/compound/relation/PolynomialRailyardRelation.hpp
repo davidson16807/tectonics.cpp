@@ -273,7 +273,7 @@ namespace relation {
         return PolynomialRailyardRelation<si::temperature<T>,Ty,0,1>(
                 math::compose(
                     math::spline::linear_spline<double>(xs, ys), 
-                    math::Shifting(si::standard_temperature/si::kelvin)), 
+                    math::Shifting(-si::standard_temperature/si::kelvin)), 
                 si::kelvin, yunits);
     }
 
