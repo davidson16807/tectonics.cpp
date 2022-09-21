@@ -21,13 +21,13 @@ namespace tables {
         { ids::nitrogen,      // 157.9 * si::kilogram / (si::meter * 1e6*si::second),             // Timmerhaus (1989)
                 relation::get_dippr_temperature_relation_101<si::dynamic_viscosity<double>,-1,10>
                     (si::kelvin, si::pascal* si::second, 
-                     16.004, -181.61, -5.1551, 
+                     16.004, -181.61, -5.1551, 0.0, 0,
                       63.15, 124.0), // 63.15-124K
             },
         { ids::oxygen,      // 188.0 * si::kilogram / (si::meter * 1e6*si::second),             // Timmerhaus (1989)
                 relation::get_dippr_temperature_relation_101<si::dynamic_viscosity<double>,-1,10>
                     (si::kelvin, si::pascal* si::second, 
-                     -4.1476, 94.04, -1.207, 
+                     -4.1476, 94.04, -1.207, 0.0, 0,
                       54.36, 150.0), // 54.36-150K
             },
         { ids::carbon_dioxide,      // 0.0712 * si::millipascal*si::second,                             // wikipedia data page
@@ -69,19 +69,19 @@ namespace tables {
         { ids::ozone,      
                 relation::get_dippr_temperature_relation_101<si::dynamic_viscosity<double>,-1,10>
                     (si::kelvin, si::pascal* si::second, 
-                     -10.94, 415.96, 
+                     -10.94, 415.96, 0.0, 0.0, 0,
                       75.55, 208.8), // 75.55-208.8K
             },
         { ids::nitrous_oxide,      
                 relation::get_dippr_temperature_relation_101<si::dynamic_viscosity<double>,-1,10>
                     (si::kelvin, si::pascal* si::second, 
-                     19.329, -381.68, -4.8618, 
+                     19.329, -381.68, -4.8618, 0.0, 0,
                       210.0, 283.09), // 210-283.09K
             },
         { ids::sulfur_dioxide,      // 0.368 * si::millipascal*si::second, // pubchem
                 relation::get_dippr_temperature_relation_101<si::dynamic_viscosity<double>,-1,10>
                     (si::kelvin, si::pascal* si::second, 
-                     46.223, -1378.0, -8.7475, 
+                     46.223, -1378.0, -8.7475, 0.0, 0,
                       225.0, 400.0), // 225-400K
             },
         { ids::nitric_oxide,      
@@ -93,7 +93,7 @@ namespace tables {
         { ids::carbon_monoxide,      // 0.170 * si::millipascal * si::second, // Johnson (1960)
                 relation::get_dippr_temperature_relation_101<si::dynamic_viscosity<double>,-1,10>
                     (si::kelvin, si::pascal* si::second, 
-                     -4.9735, 97.67, -1.1088, 
+                     -4.9735, 97.67, -1.1088, 0.0, 0,
                       68.15, 131.37), // 68.15-131.37K
             },
         { ids::ethane,      
@@ -105,37 +105,37 @@ namespace tables {
         { ids::hydrogen_cyanide,      
                 relation::get_dippr_temperature_relation_101<si::dynamic_viscosity<double>,-1,10>
                     (si::kelvin, si::pascal* si::second, 
-                     -21.927, 1266.5, 1.5927, 
+                     -21.927, 1266.5, 1.5927, 0.0, 0,
                       259.83, 298.85), // 259.83-298.85K
             },
         { ids::ethanol,      
                 relation::get_dippr_temperature_relation_101<si::dynamic_viscosity<double>,-1,10>
                     (si::kelvin, si::pascal* si::second, 
-                     7.875, 781.98, -3.0418, 
+                     7.875, 781.98, -3.0418, 0.0, 0,
                       200.0, 440.0), // 200-440K
             },
         { ids::formaldehyde,      // 0.1421 * si::millipascal * si::second, //pubchem
                 relation::get_dippr_temperature_relation_101<si::dynamic_viscosity<double>,-1,10>
                     (si::kelvin, si::pascal* si::second, 
-                     -7.6591, 603.36, -0.53378, 
+                     -7.6591, 603.36, -0.53378, 0.0, 0,
                       155.15, 253.85), // 155.15-253.85K
             },
         { ids::formic_acid,      // 1.607 * si::millipascal*si::second,
                 relation::get_dippr_temperature_relation_101<si::dynamic_viscosity<double>,-1,10>
                     (si::kelvin, si::pascal* si::second, 
-                     -48.529, 3394.7, 5.3903, 
+                     -48.529, 3394.7, 5.3903, 0.0, 0,
                       281.45, 373.71), // 281.45-373.71K
             },
         { ids::perflouromethane,      
                 relation::get_dippr_temperature_relation_101<si::dynamic_viscosity<double>,-1,10>
                     (si::kelvin, si::pascal* si::second, 
-                     -9.9212, 300.5, 
+                     -9.9212, 300.5, 0.0, 0.0, 0,
                       89.56, 145.1), // 89.56-145.1K
             },
         { ids::benzene,      // 0.601 * si::millipascal * si::second, // engineering toolbox, at 300K
                 relation::get_dippr_temperature_relation_101<si::dynamic_viscosity<double>,-1,10>
                     (si::kelvin, si::pascal* si::second, 
-                     7.5117, 294.68, -2.794, 
+                     7.5117, 294.68, -2.794, 0.0, 0,
                       278.68, 545.0), // 278.68-545K
             },
         // { ids::pyrimidine,   },
@@ -150,7 +150,7 @@ namespace tables {
         { ids::corundum,      
                 relation::get_dippr_temperature_relation_101<si::dynamic_viscosity<double>,-1,10>
                     (si::kelvin, si::pascal* si::second, 
-                     -8.2734, 11448.0, 
+                     -8.2734, 11448.0, 0.0, 0.0, 0,
                       2400.0, 2750.0), // Blomquist (1978)
             },
         // { ids::apatite,      },

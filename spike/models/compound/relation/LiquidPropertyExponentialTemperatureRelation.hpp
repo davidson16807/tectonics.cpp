@@ -180,51 +180,6 @@ namespace relation {
     template<typename Ty, int Plo, int Phi>
     LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi> get_dippr_temperature_relation_101(
         const si::temperature<double> Tunits, const Ty yunits,
-        const double log_intercept, const double log_slope, 
-        const double Tmin, const double Tmax
-    ){
-        const double oo = std::numeric_limits<double>::max();
-        using P = math::Polynomial<double, Plo, Phi>;
-        using R = math::PolynomialRailcar<double, Plo, Phi>;
-        P p(log_intercept);
-        p[-1] = log_slope;
-        return relation::LiquidPropertyExponentialTemperatureRelation(
-            math::PolynomialRailyard<double, Plo, Phi>({
-                R(-oo,  Tmin, P(p(Tmin))),
-                R(Tmin, Tmax, p),
-                R(Tmax,   oo, P(p(Tmax))),
-            }), {}, 
-            Tunits, yunits, 0.0f);
-    }
-
-    // 42 uses, for viscosity and vapor pressures of liquids
-    template<typename Ty, int Plo, int Phi>
-    LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi> get_dippr_temperature_relation_101(
-        const si::temperature<double> Tunits, const Ty yunits,
-        const double log_intercept, const double log_slope, const double log_log,
-        const double Tmin, const double Tmax
-    ){
-        const double oo = std::numeric_limits<double>::max();
-        using P = math::Polynomial<double, Plo, Phi>;
-        using R = math::PolynomialRailcar<double, Plo, Phi>;
-        P p(log_intercept);
-        p[-1] = log_slope;
-        return relation::LiquidPropertyExponentialTemperatureRelation(
-            math::PolynomialRailyard<double, Plo, Phi>({
-                R(-oo,  Tmin, P(p(Tmin))),
-                R(Tmin, Tmax, p),
-                R(Tmax,   oo, P(p(Tmax))),
-            }), 
-            {
-                ClampedLogarithm(Tmin, Tmax, Logarithm(log_log))
-            }, 
-            Tunits, yunits, 0.0f);
-    }
-
-    // 42 uses, for viscosity and vapor pressures of liquids
-    template<typename Ty, int Plo, int Phi>
-    LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi> get_dippr_temperature_relation_101(
-        const si::temperature<double> Tunits, const Ty yunits,
         const double log_intercept, const double log_slope, const double log_log, const double log_exponentiated, const int exponent,
         const double Tmin, const double Tmax
     ){
@@ -233,7 +188,7 @@ namespace relation {
         using R = math::PolynomialRailcar<double, Plo, Phi>;
         P p(log_intercept);
         p[-1] = log_slope;
-        p[exponent] = log_exponentiated;
+        p[exponent] += log_exponentiated;
         return relation::LiquidPropertyExponentialTemperatureRelation(
             math::PolynomialRailyard<double, Plo, Phi>({
                 R(-oo,  Tmin, P(p(Tmin))),
