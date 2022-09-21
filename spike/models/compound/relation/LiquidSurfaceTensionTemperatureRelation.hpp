@@ -96,7 +96,7 @@ namespace relation {
     class LiquidSurfaceTensionTemperatureRelation
     {
         std::vector<ClampedScaledComplimentExponent> terms;
-        math::PolynomialRailyard<float, 0, 2> spline;
+        math::PolynomialRailyard<float, 0, 2> yard;
 
         si::temperature<double>    Tunits;
         si::surface_energy<double> yunits;
@@ -107,10 +107,10 @@ namespace relation {
         // zero constructor
         LiquidSurfaceTensionTemperatureRelation():
             terms(),
-            spline(),
+            yard(),
 
-            Tunits(si::standard_temperature),
-            yunits(si::surface_energy<double>(1.0)),
+            Tunits(1.0),
+            yunits(1.0),
 
             known_max_fractional_error(0.0)
         {
@@ -119,10 +119,10 @@ namespace relation {
         // constant constructor
         LiquidSurfaceTensionTemperatureRelation(const si::surface_energy<double> constant):
             terms(1, ClampedScaledComplimentExponent(constant/si::surface_energy<double>(1.0))),
-            spline(),
+            yard(),
 
-            Tunits(si::standard_temperature),
-            yunits(si::surface_energy<double>(1.0)),
+            Tunits(1.0),
+            yunits(1.0),
 
             known_max_fractional_error(0.0)
         {
@@ -130,7 +130,7 @@ namespace relation {
 
         LiquidSurfaceTensionTemperatureRelation(
             const std::vector<ClampedScaledComplimentExponent> terms,
-            const math::PolynomialRailyard<float, 0, 2> spline,
+            const math::PolynomialRailyard<float, 0, 2> yard,
 
             const si::temperature<double> Tunits,
             const si::surface_energy<double> yunits,
@@ -138,7 +138,7 @@ namespace relation {
             const float known_max_fractional_error
         ):
             terms(terms),
-            spline(spline),
+            yard(yard),
 
             Tunits(Tunits),
             yunits(yunits),
@@ -151,7 +151,7 @@ namespace relation {
             const relation::PolynomialRailyardRelation<si::temperature<double>, si::surface_energy<double>, 0, 1> relation
         ):
             terms(),
-            spline(relation.spline),
+            yard(relation.yard),
 
             Tunits(relation.xunits),
             yunits(relation.yunits),
@@ -164,7 +164,7 @@ namespace relation {
             const relation::PolynomialRailyardRelation<si::temperature<double>, si::surface_energy<double>, 0, 2> relation
         ):
             terms(),
-            spline(relation.spline),
+            yard(relation.yard),
 
             Tunits(relation.xunits),
             yunits(relation.yunits),
@@ -176,7 +176,7 @@ namespace relation {
         LiquidSurfaceTensionTemperatureRelation& operator=(const LiquidSurfaceTensionTemperatureRelation other)
         {
             terms = other.terms;
-            spline = other.spline;
+            yard = other.yard;
 
             Tunits = other.Tunits;
             yunits = other.yunits;
@@ -189,7 +189,7 @@ namespace relation {
         si::surface_energy<double> operator()(const si::temperature<double> temperature) const
         {
             const float T = float(temperature/Tunits);
-            float y = spline(T);
+            float y = yard(T);
             for (std::size_t i = 0; i < terms.size(); ++i)
             {
                 y += terms[i](T);
@@ -215,7 +215,7 @@ namespace relation {
             {
                 terms[i] *= scalar;
             }
-            spline *= scalar;
+            yard *= scalar;
             return *this;
         }
 
@@ -225,7 +225,7 @@ namespace relation {
             {
                 terms[i] /= scalar;
             }
-            spline /= scalar;
+            yard /= scalar;
             return *this;
         }
 
@@ -237,7 +237,7 @@ namespace relation {
             {
                 terms.push_back(yscale * compose(other.terms[i], math::Scaling<float>(Tscale)));
             }
-            spline += yscale * compose(other.spline, math::Scaling<float>(Tscale));
+            yard += yscale * compose(other.yard, math::Scaling<float>(Tscale));
             return *this;
         }
 
@@ -249,7 +249,7 @@ namespace relation {
             {
                 terms.push_back(-yscale * compose(other.terms[i], math::Scaling<float>(Tscale)));
             }
-            spline -= yscale * compose(other.spline, math::Scaling<float>(Tscale));
+            yard -= yscale * compose(other.yard, math::Scaling<float>(Tscale));
             return *this;
         }
 

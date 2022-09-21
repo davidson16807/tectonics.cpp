@@ -150,6 +150,16 @@ namespace math {
         return fclampg;
     }
 
+    /*
+    Given functions f∘clamp and h, return the composite function h∘f∘clamp.
+    */
+    template<typename T, typename F, typename H>
+    constexpr Clamped<T,F> compose(const H h, const Clamped<T,F>& fclamp)
+    {
+        return Clamped<T,F>(fclamp.lo, fclamp.hi, compose(h, fclamp.f));
+    }
+
+
     template<typename T, typename F>
     constexpr T maximum(const Clamped<T,F>& fclamp, const T lo, const T hi)
     {

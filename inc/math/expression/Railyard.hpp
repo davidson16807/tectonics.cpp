@@ -225,7 +225,7 @@ namespace math {
     {
         Railyard<T,F> y(f);
         y += k;
-        return simplify(y);
+        return (y);
     }
 
     template<typename T, typename F>
@@ -233,7 +233,7 @@ namespace math {
     {
         Railyard<T,F> y(f);
         y += k;
-        return simplify(y);
+        return (y);
     }
 
     template<typename T, typename F>
@@ -241,7 +241,7 @@ namespace math {
     {
         Railyard<T,F> y(f);
         y -= k;
-        return simplify(y);
+        return (y);
     }
 
     template<typename T, typename F>
@@ -250,7 +250,7 @@ namespace math {
         Railyard<T,F> y(f);
         y *= T(-1);
         y += k;
-        return simplify(y);
+        return (y);
     }
 
     template<typename T, typename F>
@@ -258,7 +258,7 @@ namespace math {
     {
         Railyard<T,F> y(f);
         y *= k;
-        return simplify(y);
+        return (y);
     }
 
     template<typename T, typename F>
@@ -266,7 +266,7 @@ namespace math {
     {
         Railyard<T,F> y(f);
         y *= k;
-        return simplify(y);
+        return (y);
     }
 
     template<typename T, typename F>
@@ -274,7 +274,7 @@ namespace math {
     {
         Railyard<T,F> y(f);
         y /= k;
-        return simplify(y);
+        return (y);
     }
 
 

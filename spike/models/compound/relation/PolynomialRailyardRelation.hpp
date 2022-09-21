@@ -10,12 +10,13 @@ namespace compound {
 namespace relation {
 
     /*
-    `PolynomialRailyardRelation` represents an arbitrary function that uses a spline to map quantities from one unit to another
+    `PolynomialRailyardRelation` represents an arbitrary function that uses a railyard to map quantities from one unit to another
+    See `math/expression/Railyard.hpp` for the definition and motivation of a "railyard".
     */
     template<typename Tx, typename Ty, int Plo, int Phi>
     struct PolynomialRailyardRelation
     {
-        math::PolynomialRailyard<float, Plo, Phi> spline;
+        math::PolynomialRailyard<float, Plo, Phi> yard;
         Tx xunits;
         Ty yunits;
         
@@ -23,7 +24,7 @@ namespace relation {
 
         // zero constructor
         constexpr PolynomialRailyardRelation():
-            spline(),
+            yard(),
             xunits(1.0),
             yunits(1.0)
         {
@@ -31,11 +32,11 @@ namespace relation {
 
         template<typename T>
         constexpr PolynomialRailyardRelation(
-            const math::PolynomialRailyard<T, Plo, Phi> spline,
+            const math::PolynomialRailyard<T, Plo, Phi> yard,
             const Tx xunits,
             const Ty yunits
         ):
-            spline(spline),
+            yard(yard),
             xunits(xunits),
             yunits(yunits)
         {
@@ -43,11 +44,11 @@ namespace relation {
 
         template<typename T, int Qlo, int Qhi>
         explicit constexpr PolynomialRailyardRelation(
-            const math::PolynomialRailyard<T, Qlo, Qhi> spline,
+            const math::PolynomialRailyard<T, Qlo, Qhi> yard,
             const Tx xunits,
             const Ty yunits
         ):
-            spline(spline),
+            yard(yard),
             xunits(xunits),
             yunits(yunits)
         {
@@ -58,14 +59,14 @@ namespace relation {
         constexpr PolynomialRailyardRelation(
             const PolynomialRailyardRelation<Tx, Ty, Qlo, Qhi>& other
         ):
-            spline(other.spline),
+            yard(other.yard),
             xunits(other.xunits),
             yunits(other.yunits)
         {
         }
 
         constexpr PolynomialRailyardRelation(const Ty& other):
-            spline(other/Ty(1.0)),
+            yard(other/Ty(1.0)),
             xunits(1.0),
             yunits(1.0)
         {
@@ -73,7 +74,7 @@ namespace relation {
 
         constexpr PolynomialRailyardRelation<Tx,Ty,Plo,Phi>& operator=(const PolynomialRailyardRelation<Tx,Ty,Plo,Phi>& other)
         {
-            spline = other.spline;
+            yard = other.yard;
             xunits = other.xunits;
             yunits = other.yunits;
             return *this;
@@ -81,7 +82,7 @@ namespace relation {
 
         constexpr PolynomialRailyardRelation<Tx,Ty,Plo,Phi>& operator=(const Ty& other)
         {
-            spline = other/Ty(1.0);
+            yard = other/Ty(1.0);
             xunits = Tx(1.0);
             yunits = Ty(1.0);
             return *this;
@@ -89,7 +90,7 @@ namespace relation {
 
         Ty operator()(const Tx x) const
         {
-            return spline(float(x/xunits)) * yunits;
+            return yard(float(x/xunits)) * yunits;
         }
 
         PolynomialRailyardRelation<Tx,Ty,Plo,Phi> restriction(
@@ -97,30 +98,30 @@ namespace relation {
             const float known_max_fractional_error
         ) const
         {
-            return PolynomialRailyardRelation<Tx,Ty,Plo,Phi>(restriction(spline, xlo/xunits, xhi/xunits), xunits, yunits);
+            return PolynomialRailyardRelation<Tx,Ty,Plo,Phi>(restriction(yard, xlo/xunits, xhi/xunits), xunits, yunits);
         }
 
         PolynomialRailyardRelation<Tx,Ty,Plo,Phi>& operator+=(const Ty offset)
         {
-            spline += offset/yunits;
+            yard += offset/yunits;
             return *this;
         }
 
         PolynomialRailyardRelation<Tx,Ty,Plo,Phi>& operator-=(const Ty offset)
         {
-            spline -= offset/yunits;
+            yard -= offset/yunits;
             return *this;
         }
 
         PolynomialRailyardRelation<Tx,Ty,Plo,Phi>& operator*=(const float scalar)
         {
-            spline *= scalar;
+            yard *= scalar;
             return *this;
         }
 
         PolynomialRailyardRelation<Tx,Ty,Plo,Phi> operator/=(const float scalar)
         {
-            spline *= scalar;
+            yard *= scalar;
             return *this;
         }
 
@@ -128,7 +129,7 @@ namespace relation {
         {
             const float Tscale = float(other.xunits / xunits);
             const float yscale = float(other.yunits / yunits);
-            spline += yscale * compose(other.spline, math::Scaling(Tscale));
+            yard += yscale * compose(other.yard, math::Scaling(Tscale));
             return *this;
         }
 
@@ -136,7 +137,7 @@ namespace relation {
         {
             const float Tscale = float(other.xunits / xunits);
             const float yscale = float(other.yunits / yunits);
-            spline += yscale * compose(other.spline, math::Scaling(Tscale));
+            yard += yscale * compose(other.yard, math::Scaling(Tscale));
             return *this;
         }
 
@@ -224,26 +225,26 @@ namespace relation {
     }
 
 
-    // // functions that cast input to the spline, or output from the spline
+    // // functions that cast input to the yard, or output from the yard
     // template<typename Tx, typename Ty, int Plo, int Phi>
     // PolynomialRailyardRelation<Tx,Ty,Plo,Phi> operator*(const PolynomialRailyardRelation<Tx,float,Plo,Phi>& relation, const Ty yunits2)
     // {
-    //     return PolynomialRailyardRelation<Tx,Ty,Plo,Phi>(relation.spline, relation.xunits, yunits2);
+    //     return PolynomialRailyardRelation<Tx,Ty,Plo,Phi>(relation.yard, relation.xunits, yunits2);
     // }
     // template<typename Tx, typename Ty, int Plo, int Phi>
     // PolynomialRailyardRelation<Tx,float,Plo,Phi> operator/(const PolynomialRailyardRelation<Tx,Ty,Plo,Phi>& relation, const Ty yunits2)
     // {
-    //     return PolynomialRailyardRelation<Tx,float,Plo,Phi>(relation.spline, relation.xunits, relation.yunits/yunits2);
+    //     return PolynomialRailyardRelation<Tx,float,Plo,Phi>(relation.yard, relation.xunits, relation.yunits/yunits2);
     // }
     // template<typename Tx, int Plo, int Phi>
     // math::PolynomialRailyard<float,Plo,Phi> compose(const PolynomialRailyardRelation<Tx,float,Plo,Phi>& relation, const math::Cast<float,Tx>& cast)
     // {
-    //     return relation.spline * (cast.yunits/Tx(1.0f))/cast.xunits;
+    //     return relation.yard * (cast.yunits/Tx(1.0f))/cast.xunits;
     // }
     // template<typename Tx, int Plo, int Phi>
-    // PolynomialRailyardRelation<Tx,float,Plo,Phi> compose(const math::PolynomialRailyard<float,Plo,Phi>& spline, const math::Cast<Tx,float>& cast)
+    // PolynomialRailyardRelation<Tx,float,Plo,Phi> compose(const math::PolynomialRailyard<float,Plo,Phi>& yard, const math::Cast<Tx,float>& cast)
     // {
-    //     return PolynomialRailyardRelation<Tx,float,Plo,Phi>(spline, 1.0f/cast.xunits, 1.0f);
+    //     return PolynomialRailyardRelation<Tx,float,Plo,Phi>(yard, 1.0f/cast.xunits, 1.0f);
     // }
 
 
@@ -255,14 +256,14 @@ namespace relation {
         const Tx xhi
     ){
         return math::distance(
-            compose(a.spline*float(Ty(1.0)/a.yunits), math::Scaling<float>(float(Tx(1.0)/a.xunits))),
-            compose(b.spline*float(Ty(1.0)/b.yunits), math::Scaling<float>(float(Tx(1.0)/b.xunits))),
+            compose(a.yard*float(Ty(1.0)/a.yunits), math::Scaling<float>(float(Tx(1.0)/a.xunits))),
+            compose(b.yard*float(Ty(1.0)/b.yunits), math::Scaling<float>(float(Tx(1.0)/b.xunits))),
             float(xlo/Tx(1.0f)), 
             float(xhi/Tx(1.0f))
         );
     }
 
-    // TODO: rename `spectral_linear_spline`
+    // TODO: rename `spectral_linear_yard`
     template<typename T, typename Ty>
     PolynomialRailyardRelation<si::temperature<T>,Ty,0,1> get_linear_interpolation_function(
         const si::celcius_type<T> celcius, const Ty yunits,
@@ -277,7 +278,7 @@ namespace relation {
                 si::kelvin, yunits);
     }
 
-    // TODO: rename `spectral_linear_spline`
+    // TODO: rename `spectral_linear_yard`
     template<typename T, typename Ty>
     PolynomialRailyardRelation<si::temperature<T>,Ty,0,1> get_linear_interpolation_function(
         const si::temperature<T> xunits, const Ty yunits,
@@ -288,7 +289,7 @@ namespace relation {
         return PolynomialRailyardRelation<si::temperature<T>,Ty,0,1>(math::spline::linear_spline<double>(xs, ys), xunits, yunits);
     }
 
-    // TODO: rename `spectral_linear_spline`
+    // TODO: rename `spectral_linear_yard`
     template<typename T, typename Ty>
     PolynomialRailyardRelation<si::pressure<T>,Ty,0,1> get_linear_interpolation_function(
         const si::pressure<T> xunits, const Ty yunits,
@@ -351,7 +352,7 @@ namespace relation {
                 }), Tunits, y_units_johnson);
     }
     
-    // TODO: rename `spectral_linear_spline`
+    // TODO: rename `spectral_linear_yard`
     template<typename Ty>
     PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavelength(
         const si::length<double> lunits, const Ty yunits,
