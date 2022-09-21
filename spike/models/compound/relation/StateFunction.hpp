@@ -122,23 +122,6 @@ namespace relation {
         );
     }
 
-    // 20 uses, for density of liquids
-    template<typename Tx, typename Ty>
-    relation::StateFunction<Ty> get_dippr_temperature_function_105( 
-        const Tx Tunits, const Ty yunits,
-        const double c1, const double c2, const double c3, const double c4,
-        const double Tmin, const double Tmax
-    ){
-        return relation::StateFunction<Ty>(
-            [Tunits, yunits, c1, c2, c3, c4, Tmin, Tmax]
-            (const si::pressure<double> p, const si::temperature<double> T)
-            {
-                double t = std::clamp(T/Tunits, Tmin, Tmax);
-                return (c1 / std::pow(c2, 1+std::pow(1.0-(t/c3), c4)))*yunits;
-            }
-        );
-    }
-
     // 5 uses, for heat capacities of liquids
     template<typename Tx, typename Ty>
     relation::StateFunction<Ty> get_dippr_liquid_heat_capacity_temperature_function_114( 
