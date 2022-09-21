@@ -6,7 +6,7 @@
 // in house libraries
 #include "refractive_index.hpp"
 
-TEST_CASE( "refractive_index order of magnitude", "[table]" ) {
+TEST_CASE( "liquid refractive_index order of magnitude", "[table]" ) {
     SECTION("Properties of compounds should not fall outside orders of magnitude for known values")
     {
         for (int i = 0; i<compound::tables::ids::count; i++)

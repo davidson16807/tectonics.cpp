@@ -6,7 +6,7 @@
 // in house libraries
 #include "poisson_ratio.hpp"
 
-TEST_CASE( "poisson_ratio order of magnitude", "[table]" ) {
+TEST_CASE( "solid poisson_ratio order of magnitude", "[table]" ) {
     SECTION("Properties of compounds should not fall outside orders of magnitude for known values")
     {
         for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=1.778)

@@ -6,7 +6,7 @@
 // in house libraries
 #include "refractive_index.hpp"
 
-TEST_CASE( "refractive_index order of magnitude", "[table]" ) {
+TEST_CASE( "gaseous refractive_index order of magnitude", "[table]" ) {
     SECTION("Properties of compounds should not fall outside orders of magnitude for known values")
     {
         for (si::length<double> l = 10.0*si::nanometer; l <= 3.0*si::millimeter; l*=1.78)

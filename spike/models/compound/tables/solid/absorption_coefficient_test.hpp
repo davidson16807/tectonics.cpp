@@ -6,7 +6,7 @@
 // in house libraries
 #include "absorption_coefficient.hpp"
 
-TEST_CASE( "absorption_coefficient order of magnitude", "[table]" ) {
+TEST_CASE( "solid absorption_coefficient order of magnitude", "[table]" ) {
     SECTION("Properties of compounds should not fall outside orders of magnitude for known values")
     {
         for (int i = 0; i<compound::tables::ids::count; i++)

@@ -8,7 +8,7 @@
 // in house libraries
 #include "vapor_pressure.hpp"
 
-TEST_CASE( "vapor_pressure order of magnitude", "[table]" ) {
+TEST_CASE( "liquid vapor_pressure order of magnitude", "[table]" ) {
     SECTION("Properties of compounds should not fall outside orders of magnitude for known values")
     {
         for (int i = 0; i<compound::tables::ids::count; i++)

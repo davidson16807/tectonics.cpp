@@ -8,7 +8,7 @@
 // in house libraries
 #include "thermal_conductivity.hpp"
 
-TEST_CASE( "thermal_conductivity order of magnitude", "[table]" ) {
+TEST_CASE( "liquid thermal_conductivity order of magnitude", "[table]" ) {
     SECTION("Properties of compounds should not fall outside orders of magnitude for known values")
     {
         for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=3.0)

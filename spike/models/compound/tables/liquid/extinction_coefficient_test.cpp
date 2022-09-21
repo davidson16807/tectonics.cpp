@@ -10,7 +10,7 @@
 #include "extinction_coefficient.hpp"
 #include <models/compound/relation/PolynomialRailyardRelation_to_string.hpp>
 
-TEST_CASE( "extinction_coefficient order of magnitude", "[table]" ) {
+TEST_CASE( "liquid extinction_coefficient order of magnitude", "[table]" ) {
     SECTION("Properties of compounds should not fall outside orders of magnitude for known values")
     {
         for (si::length<double> l = 10.0*si::nanometer; l <= 3.0*si::millimeter; l*=1.78)

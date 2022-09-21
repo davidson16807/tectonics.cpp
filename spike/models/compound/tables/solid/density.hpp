@@ -4,7 +4,7 @@
 #include <map>
 
 // in-house libraries
-#include <models/compound/relation/StateFunction.hpp>
+#include <models/compound/relation/PolynomialRailyardRelation.hpp>
 #include "../ids.hpp"
 
 namespace compound { 

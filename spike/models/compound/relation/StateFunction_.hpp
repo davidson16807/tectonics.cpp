@@ -9,11 +9,6 @@
 
 namespace compound { 
 namespace relation {
-	template<typename T1>
-    using StateFunction = std::function<T1(
-    	const si::pressure<double> p, 
-    	const si::temperature<double> T)>;
-
     // 7 uses
     relation::StateFunction<int> get_simon_glatzel_phase_function( 
         const si::pressure<double>        p0, /*triple point pressure*/

@@ -6,7 +6,7 @@
 // in house libraries
 #include "thermal_conductivity.hpp"
 
-TEST_CASE( "thermal_conductivity order of magnitude", "[table]" ) {
+TEST_CASE( "gaseous thermal_conductivity order of magnitude", "[table]" ) {
     SECTION("Properties of compounds should not fall outside orders of magnitude for known values")
     {
         for (si::pressure<double> p = 1.0*si::pascal; p <= 100000000.0*si::pascal; p*=10.0)

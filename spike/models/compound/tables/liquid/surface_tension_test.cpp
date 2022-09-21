@@ -8,7 +8,7 @@
 // in house libraries
 #include "surface_tension.hpp"
 
-TEST_CASE( "surface_tension order of magnitude", "[table]" ) {
+TEST_CASE( "liquid surface_tension order of magnitude", "[table]" ) {
     SECTION("Properties of compounds should not fall outside orders of magnitude for known values")
     {
         for (int i = 0; i<compound::tables::ids::count; i++)

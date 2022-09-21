@@ -6,7 +6,7 @@
 // in house libraries
 #include "isobaric_specific_heat_capacity.hpp"
 
-TEST_CASE( "isobaric_specific_heat_capacity order of magnitude", "[table]" ) {
+TEST_CASE( "gaseous isobaric_specific_heat_capacity order of magnitude", "[table]" ) {
     SECTION("Properties of compounds should not fall outside orders of magnitude for known values")
     {
         for (si::pressure<double> p = 1.0*si::pascal; p <= 100000000.0*si::pascal; p*=10.0)

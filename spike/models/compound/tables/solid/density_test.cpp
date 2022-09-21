@@ -8,7 +8,7 @@
 // in house libraries
 #include "density.hpp"
 
-TEST_CASE( "density order of magnitude", "[table]" ) {
+TEST_CASE( "solid density order of magnitude", "[table]" ) {
     SECTION("Properties of compounds should not fall outside orders of magnitude for known values")
     {
         for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=1.778)

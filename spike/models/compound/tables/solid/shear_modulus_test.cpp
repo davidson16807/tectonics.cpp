@@ -8,7 +8,7 @@
 // in house libraries
 #include "shear_modulus.hpp"
 
-TEST_CASE( "shear_modulus order of magnitude", "[table]" ) {
+TEST_CASE( "solid shear_modulus order of magnitude", "[table]" ) {
     SECTION("Properties of compounds should not fall outside orders of magnitude for known values")
     {
         for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=1.778)
