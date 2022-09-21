@@ -1,3 +1,4 @@
+#pragma once
 
 namespace compound {
 namespace term {
@@ -9,9 +10,15 @@ namespace term {
             weight(weight),
             exponent(exponent)
         {}
+        // zero constructor
         constexpr explicit Exponent():
             weight(0.0f),
             exponent(1.0f)
+        {}
+        // constant constructor
+        constexpr explicit Exponent(const float k):
+            weight(k),
+            exponent(0.0f)
         {}
         constexpr Exponent(const Exponent& f):
             weight(f.weight),

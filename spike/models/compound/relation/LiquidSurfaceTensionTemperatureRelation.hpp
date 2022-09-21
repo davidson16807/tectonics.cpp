@@ -10,86 +10,14 @@
 #include <math/inspection.hpp>
 #include <units/si.hpp>
 
+#include <models/compound/term/Exponent.hpp>
 #include <models/compound/term/ScaledComplement.hpp>
 
 namespace compound {
 namespace relation {
 
-    struct ScaledComplimentExponent {
-        float scale;
-        float weight;
-        float exponent;
-        constexpr explicit ScaledComplimentExponent(const float scale, const float weight, const float exponent):
-            scale(scale),
-            weight(weight),
-            exponent(exponent)
-        {}
-        // zero constructor
-        constexpr explicit ScaledComplimentExponent():
-            scale(0.0f),
-            weight(0.0f),
-            exponent(0.0f)
-        {}
-        // constant constructor
-        constexpr explicit ScaledComplimentExponent(float k):
-            scale(1.0f),
-            weight(k),
-            exponent(0.0f)
-        {}
-        constexpr ScaledComplimentExponent(const ScaledComplimentExponent& f):
-            scale(f.scale),
-            weight(f.weight),
-            exponent(f.exponent)
-        {}
-        constexpr float operator()(const float x) const
-        {
-            return weight*std::pow(1.0f-x/scale, exponent);
-        }
-        constexpr ScaledComplimentExponent& operator*=(const float k)
-        {
-            weight *= k;
-            return *this;
-        }
-        constexpr ScaledComplimentExponent& operator/=(const float k)
-        {
-            weight /= k;
-            return *this;
-        }
-    };
-
-    constexpr ScaledComplimentExponent operator-(const ScaledComplimentExponent f)
-    {
-        return ScaledComplimentExponent(f.scale, -f.weight, f.exponent);
-    }
-    constexpr ScaledComplimentExponent operator*(const ScaledComplimentExponent f, const float k)
-    {
-        return ScaledComplimentExponent(f.scale, f.weight*k, f.exponent);
-    }
-    constexpr ScaledComplimentExponent operator*(const float k, const ScaledComplimentExponent f)
-    {
-        return ScaledComplimentExponent(f.scale, f.weight*k, f.exponent);
-    }
-    constexpr ScaledComplimentExponent operator/(const ScaledComplimentExponent f, const float k)
-    {
-        return ScaledComplimentExponent(f.scale, f.weight/k, f.exponent);
-    }
-    constexpr ScaledComplimentExponent operator/(const float k, const ScaledComplimentExponent f)
-    {
-        return ScaledComplimentExponent(f.scale, k/f.weight, -f.exponent);
-    }
-
-    constexpr ScaledComplimentExponent compose(const ScaledComplimentExponent f, const math::Scaling<float> g)
-    {
-        return ScaledComplimentExponent(
-            f.scale/g.factor,
-            f.weight,
-            f.exponent
-        );
-    }
-
-
-    using ClampedScaledComplimentExponent = math::Clamped<float,ScaledComplimentExponent>;
-
+    using ScaledComplementExponent = term::ScaledComplement<float,term::Exponent>;
+    using ClampedScaledComplementExponent = math::Clamped<float,ScaledComplementExponent>;
 
     /*
     `LiquidSurfaceTensionTemperatureRelation` consolidates many kinds of expressions
@@ -97,7 +25,7 @@ namespace relation {
     */
     class LiquidSurfaceTensionTemperatureRelation
     {
-        std::vector<ClampedScaledComplimentExponent> terms;
+        std::vector<ClampedScaledComplementExponent> terms;
         math::PolynomialRailyard<float, 0, 2> yard;
 
         si::temperature<double>    Tunits;
@@ -120,7 +48,7 @@ namespace relation {
 
         // constant constructor
         LiquidSurfaceTensionTemperatureRelation(const si::surface_energy<double> constant):
-            terms(1, ClampedScaledComplimentExponent(constant/si::surface_energy<double>(1.0))),
+            terms(1, ClampedScaledComplementExponent(constant/si::surface_energy<double>(1.0))),
             yard(),
 
             Tunits(1.0),
@@ -131,7 +59,7 @@ namespace relation {
         }
 
         LiquidSurfaceTensionTemperatureRelation(
-            const std::vector<ClampedScaledComplimentExponent> terms,
+            const std::vector<ClampedScaledComplementExponent> terms,
             const math::PolynomialRailyard<float, 0, 2> yard,
 
             const si::temperature<double> Tunits,
@@ -201,13 +129,13 @@ namespace relation {
 
         LiquidSurfaceTensionTemperatureRelation& operator+=(const si::surface_energy<double> offset)
         {
-            terms.push_back(ClampedScaledComplimentExponent(offset/yunits));
+            terms.push_back(ClampedScaledComplementExponent(offset/yunits));
             return *this;
         }
 
         LiquidSurfaceTensionTemperatureRelation& operator-=(const si::surface_energy<double> offset)
         {
-            terms.push_back(ClampedScaledComplimentExponent(-offset/yunits));
+            terms.push_back(ClampedScaledComplementExponent(-offset/yunits));
             return *this;
         }
 
@@ -263,12 +191,13 @@ namespace relation {
         const float Tc, const float sigma0, const float n0, const float sigma1, const float n1, const float sigma2, const float n2,
         const float Tmin, const float Tmax
     ){
-        using F = ClampedScaledComplimentExponent;
-        using G = ScaledComplimentExponent;
+        using F = ClampedScaledComplementExponent;
+        using G = ScaledComplementExponent;
+        using H = term::Exponent;
         return LiquidSurfaceTensionTemperatureRelation({
-            F(Tmin, Tmax, G(Tc, sigma0, n0)),
-            F(Tmin, Tmax, G(Tc, sigma1, n1)),
-            F(Tmin, Tmax, G(Tc, sigma2, n2))
+            F(Tmin, Tmax, G(Tc, H(sigma0, n0))),
+            F(Tmin, Tmax, G(Tc, H(sigma1, n1))),
+            F(Tmin, Tmax, G(Tc, H(sigma2, n2)))
         }, math::PolynomialRailyard<float, 0, 2>(), Tunits, yunits, 0.0);
     }
     // from Mulero (2012)
