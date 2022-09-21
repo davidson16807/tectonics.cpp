@@ -1144,6 +1144,16 @@ namespace math {
         return p[0]+q*compose(Polynomial<T,0,Phi-1>(std::next((p.k).begin()), (p.k).end()), q);
     }
 
+    // template<typename T, int Plo, int Phi, int Q>
+    // constexpr Polynomial<T,std::min(Plo*Qlo,Phi*Qhi),std::max(Plo*Qlo,Phi*Qhi)> compose(const Polynomial<T,0,Phi>& p, const Polynomial<T,Qlo,Qhi>& q)
+    // {
+    //     if (Q<0)
+    //     {
+    //         std::reverse
+    //     }
+    //     return p[0]+q*compose(Polynomial<T,0,Phi-1>(std::next((p.k).begin()), (p.k).end()), q);
+    // }
+
 
 
 

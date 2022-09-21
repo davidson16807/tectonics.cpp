@@ -67,21 +67,6 @@ namespace relation {
         );
     }
 
-    // 3 uses: ice6 and ice7, for thermal conductivity and density
-    template<typename Tx, typename Ty>
-    relation::StateFunction<Ty> get_interpolated_pressure_function(
-        const Tx xunits, const Ty yunits,
-        const std::vector<double>xs, 
-        const std::vector<double>ys
-    ){
-        return relation::StateFunction<Ty>(
-            [xunits, yunits, xs, ys]
-            (const si::pressure<double> p, const si::temperature<double> T)
-            {
-                return math::lerp(xs, ys, p/xunits) * yunits;
-            }
-        );
-    }
 
     // 3 uses: gold, silver, and copper, for dynamic viscosity of liquids
     template<typename Tx, typename Ty>
