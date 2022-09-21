@@ -342,7 +342,7 @@ namespace relation {
             math::Polynomial<double,1,3>  johnson    = math::Polynomial<double,1,3> ({linear_johnson, 0.0, cube_johnson});
             math::Polynomial<double,-2,2> perry      = y_units_perry/y_units_johnson * math::Polynomial<double,-2,2>({inverse_square_perry, 0.0, intercept_perry, linear_perry, square_perry});
             math::Polynomial<double,0,1>  transition = math::linear_newton_polynomial(T_max_johnson, T_min_perry, johnson(T_max_johnson), perry(T_min_perry));
-            return PolynomialRailyardRelation<si::temperature<double>,si::specific_heat_capacity<double>,0,1>(
+            return PolynomialRailyardRelation<si::temperature<double>,si::specific_heat_capacity<double>,-2,3>(
                 math::PolynomialRailyard<double,-2,3>({
                     R(0.0, T_max_johnson,         P(johnson)),            // johnson polynomial
                     R(T_max_johnson, T_min_perry, P(transition)),         // linear perry/johnson interpolation
@@ -350,7 +350,7 @@ namespace relation {
                     R(T_max_perry, oo,            P(perry(T_max_perry))), // perry polynomial
                 }), Tunits, y_units_johnson);
     }
-
+    
     // TODO: rename `spectral_linear_spline`
     template<typename Ty>
     PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavelength(
