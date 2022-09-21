@@ -8,6 +8,7 @@
 #include "Identity.hpp"
 #include "Scaling.hpp"
 #include "Shifting.hpp"
+#include "Polynomial.hpp"
 #include "Railcar.hpp"
 #include "Railyard.hpp"
 #include "PolynomialRailcar.hpp"

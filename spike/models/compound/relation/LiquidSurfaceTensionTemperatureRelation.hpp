@@ -10,6 +10,8 @@
 #include <math/inspection.hpp>
 #include <units/si.hpp>
 
+#include <models/compound/term/ScaledComplement.hpp>
+
 namespace compound {
 namespace relation {
 

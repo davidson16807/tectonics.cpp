@@ -5,148 +5,14 @@
 
 // in-house libraries
 #include <math/expression/Scaling.hpp>
-#include <math/expression/Polynomial.hpp>
+#include <math/expression/PolynomialRailyard.hpp>
 #include <math/inspection.hpp>
 #include <units/si.hpp>
 
+#include <models/compound/term/ScaledComplement.hpp>
+
 namespace compound {
 namespace relation {
-
-    /* 
-    `ScaledComplement<T,F>` is a trivial class that represents the function f∘g(x)=f(1-x/k), 
-    where f is a template function object of type F.
-    `ScaledComplement<T,F>` was needed to provide a reoccuring pattern in chemistry 
-    when dealing with equations of reduced temperature and pressure.
-    */
-    template<typename T, typename F>
-    struct ScaledComplement {
-        F f;
-        T scale;
-        constexpr explicit ScaledComplement<T,F>(const T scale, const F f):
-            f(f),
-            scale(scale)
-        {}
-        constexpr ScaledComplement<T,F>(const ScaledComplement<T,F>& fg):
-            f(fg.f),
-            scale(fg.scale)
-        {}
-        // zero constructor
-        constexpr ScaledComplement<T,F>():
-            f(),
-            scale()
-        {}
-        // constant constructor
-        constexpr ScaledComplement<T,F>(T k):
-            f(k),
-            scale(T(1))
-        {}
-        constexpr T operator()(const T x) const
-        {
-            return f(T(1)-x/scale);
-        }
-
-        ScaledComplement<T,F>& operator+=(const T k)
-        {
-            f += k;
-            return *this;
-        }
-
-        ScaledComplement<T,F>& operator-=(const T k)
-        {
-            f -= k;
-            return *this;
-        }
-
-        ScaledComplement<T,F>& operator*=(const T k)
-        {
-            f *= k;
-            return *this;
-        }
-
-        ScaledComplement<T,F>& operator/=(const T k)
-        {
-            f /= k;
-            return *this;
-        }
-    };
-
-    // operators with reals that are closed under ScaledComplement<T,F> relations
-    template<typename T, typename F>
-    constexpr ScaledComplement<T,F> operator+(const ScaledComplement<T,F>& fg, const T k)
-    {
-        ScaledComplement<T,F> y(fg);
-        y.f += k;
-        return y;
-    }
-    template<typename T, typename F>
-    constexpr ScaledComplement<T,F> operator+(const T k, const ScaledComplement<T,F>& fg)
-    {
-        ScaledComplement<T,F> y(fg);
-        y.f += k;
-        return y;
-    }
-    template<typename T, typename F>
-    constexpr ScaledComplement<T,F> operator-(const ScaledComplement<T,F>& fg, const T k)
-    {
-        ScaledComplement<T,F> y(fg);
-        y.f -= k;
-        return y;
-    }
-    template<typename T, typename F>
-    constexpr ScaledComplement<T,F> operator*(const ScaledComplement<T,F>& fg, const T k)
-    {
-        ScaledComplement<T,F> y(fg);
-        y.f *= k;
-        return y;
-    }
-    template<typename T, typename F>
-    constexpr ScaledComplement<T,F> operator*(const T k, const ScaledComplement<T,F>& fg)
-    {
-        ScaledComplement<T,F> y(fg);
-        y.f *= k;
-        return y;
-    }
-    template<typename T, typename F>
-    constexpr ScaledComplement<T,F> operator/(const ScaledComplement<T,F>& fg, const T k)
-    {
-        ScaledComplement<T,F> y(fg);
-        y.f /= k;
-        return y;
-    }
-    template<typename T, typename F>
-    constexpr ScaledComplement<T,F> operator-(const ScaledComplement<T,F>& fg)
-    {
-        ScaledComplement<T,F> y(fg);
-        y.f *= -1;
-        return y;
-    }
-
-    /*
-    Given functions f and g, return the composite function f∘g.
-    */
-    template<typename T, typename F>
-    constexpr ScaledComplement<T,F> compose(const F f, const ScaledComplement<T,math::Identity<T>>& g)
-    {
-        return ScaledComplement<T,F>(g.scale, f);
-    }
-
-    /*
-    Given functions f∘g and h, return the composite function f∘g∘h.
-    */
-    template<typename T, typename F>
-    constexpr ScaledComplement<T,F> compose(const ScaledComplement<T,F>& fg, const math::Scaling<T> h)
-    {
-        return ScaledComplement<T,F>(fg.scale/h.factor, fg.f);
-    }
-
-    /*
-    Given functions f∘g and h, return the composite function h∘f∘g.
-    */
-    template<typename T, typename F, typename H>
-    constexpr ScaledComplement<T,F> compose(const H h, const ScaledComplement<T,F>& fg)
-    {
-        return ScaledComplement<T,F>(fg.scale, compose(h, fg.f));
-    }
 
     /*
     `LiquidHeatCapacityTemperatureRelation` consolidates many kinds of expressions
@@ -155,7 +21,7 @@ namespace relation {
     class LiquidHeatCapacityTemperatureRelation
     {
         math::Railyard<float, math::Polynomial<float, 0,4>> temperature_terms;
-        math::Railyard<float, ScaledComplement<float, math::Polynomial<float,-1,5>>> reduced_complement_terms;
+        math::Railyard<float, term::ScaledComplement<float, math::Polynomial<float,-1,5>>> reduced_complement_terms;
 
         si::temperature<double>  Tunits;
         si::specific_heat_capacity<double> yunits;
@@ -189,7 +55,7 @@ namespace relation {
 
         LiquidHeatCapacityTemperatureRelation(
             const math::Railyard<float, math::Polynomial<float, 0, 4>> temperature_terms,
-            const math::Railyard<float, ScaledComplement<float, math::Polynomial<float,-1,5>>> reduced_complement_terms,
+            const math::Railyard<float, term::ScaledComplement<float, math::Polynomial<float,-1,5>>> reduced_complement_terms,
 
             const si::temperature<double> Tunits,
             const si::specific_heat_capacity<double> yunits,
@@ -370,7 +236,7 @@ namespace relation {
     ){
         const float oo = std::numeric_limits<float>::max();
         using P = math::Polynomial<float,-1,5>;
-        using C = ScaledComplement<float, P>;
+        using C = term::ScaledComplement<float, P>;
         using R = math::Railcar<float, C>;
         C p = C(Tc/si::kelvin, P({c1*c1, c2, -2.0f*c1*c3, -c1*c4, -c3*c3/3.0f, -c3*c4/2.0f, -c4*c4/5.0f}));
         return LiquidHeatCapacityTemperatureRelation({}, 

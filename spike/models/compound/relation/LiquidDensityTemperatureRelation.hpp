@@ -10,169 +10,14 @@
 #include <math/inspection.hpp>
 #include <units/si.hpp>
 
+#include <models/compound/term/Dippr105.hpp>
+#include <models/compound/term/Dippr119.hpp>
+
 namespace compound {
 namespace relation {
 
-
-    struct Dippr105 {
-        float c1;
-        float c2;
-        float c3;
-        float c4;
-        // zero constructor
-        constexpr explicit Dippr105():
-            c1(0.0f),
-            c2(1.0f),
-            c3(0.0f),
-            c4(0.0f)
-        {}
-        // copy constructor
-        constexpr Dippr105(const Dippr105& f):
-            c1(f.c1),
-            c2(f.c2),
-            c3(f.c3),
-            c4(f.c4)
-        {}
-        constexpr explicit Dippr105(
-            const float c1,
-            const float c2,
-            const float c3,
-            const float c4
-        ):
-            c1(c1),
-            c2(c2),
-            c3(c3),
-            c4(c4)
-        {}
-        constexpr float operator()(const float x) const
-        {
-            return c1 / std::pow(c2, 1+std::pow(1.0-(x/c3), c4));
-        }
-        constexpr Dippr105& operator*=(const float scalar)
-        {
-            c1 *= scalar;
-            return *this;
-        }
-        constexpr Dippr105& operator/=(const float scalar)
-        {
-            c1 /= scalar;
-            return *this;
-        }
-    };
-    constexpr Dippr105 operator*(const Dippr105 relation, const float scalar)
-    {
-        Dippr105 result(relation);
-        result *= scalar;
-        return result;
-    }
-    constexpr Dippr105 operator*(const float scalar, const Dippr105 relation)
-    {
-        Dippr105 result(relation);
-        result *= scalar;
-        return result;
-    }
-    constexpr Dippr105 operator/(const Dippr105 relation, const float scalar)
-    {
-        Dippr105 result(relation);
-        result /= scalar;
-        return result;
-    }
-    constexpr Dippr105 operator-(const Dippr105 relation)
-    {
-        Dippr105 result(relation);
-        result *= -1.0f;
-        return result;
-    }
-
-
-    constexpr Dippr105 compose(Dippr105 f, const math::Scaling<float> g)
-    {
-        return Dippr105(
-            f.c1,
-            f.c2,
-            f.c3/g.factor,
-            f.c4
-        );
-    }
-
-
-    struct Dippr119 {
-        float c1;
-        float c2;
-        float c3;
-        // zero constructor
-        constexpr explicit Dippr119():
-            c1(0.0f),
-            c2(1.0f),
-            c3(0.0f)
-        {}
-        // copy constructor
-        constexpr Dippr119(const Dippr119& f):
-            c1(f.c1),
-            c2(f.c2),
-            c3(f.c3)
-        {}
-        constexpr explicit Dippr119(
-            const float c1,
-            const float c2,
-            const float c3
-        ):
-            c1(c1),
-            c2(c2),
-            c3(c3)
-        {}
-        constexpr float operator()(const float x) const
-        {
-            return c1*pow(1.0-(x/c2), c3);
-        }
-        constexpr Dippr119& operator*=(const float scalar)
-        {
-            c1 *= scalar;
-            return *this;
-        }
-        constexpr Dippr119& operator/=(const float scalar)
-        {
-            c1 /= scalar;
-            return *this;
-        }
-    };
-    constexpr Dippr119 operator*(const Dippr119 relation, const float scalar)
-    {
-        Dippr119 result(relation);
-        result *= scalar;
-        return result;
-    }
-    constexpr Dippr119 operator*(const float scalar, const Dippr119 relation)
-    {
-        Dippr119 result(relation);
-        result *= scalar;
-        return result;
-    }
-    constexpr Dippr119 operator/(const Dippr119 relation, const float scalar)
-    {
-        Dippr119 result(relation);
-        result /= scalar;
-        return result;
-    }
-    constexpr Dippr119 operator-(const Dippr119 relation)
-    {
-        Dippr119 result(relation);
-        result *= -1.0f;
-        return result;
-    }
-
-
-    constexpr Dippr119 compose(Dippr119 f, const math::Scaling<float> g)
-    {
-        return Dippr119(
-            f.c1,
-            f.c2/g.factor,
-            f.c3
-        );
-    }
-
-    using ClampedDippr105 = math::Clamped<float,Dippr105>;
-    using ClampedDippr119 = math::Clamped<float,Dippr119>;
+    using ClampedDippr105 = math::Clamped<float,term::Dippr105>;
+    using ClampedDippr119 = math::Clamped<float,term::Dippr119>;
 
     /*
     `LiquidDensityTemperatureRelation` consolidates many kinds of expressions
@@ -338,7 +183,7 @@ namespace relation {
         const float Tmin, const float Tmax
     ){
         return LiquidDensityTemperatureRelation(
-            {ClampedDippr105(Tmin, Tmax, Dippr105(c1, c2, c3, c4))}, {}, Tunits, yunits, 0.0f, 0.0f);
+            {ClampedDippr105(Tmin, Tmax, term::Dippr105(c1, c2, c3, c4))}, {}, Tunits, yunits, 0.0f, 0.0f);
     }
 
     LiquidDensityTemperatureRelation operator+(const LiquidDensityTemperatureRelation relation, const LiquidDensityTemperatureRelation other)

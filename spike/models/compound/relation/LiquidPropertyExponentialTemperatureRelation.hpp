@@ -10,51 +10,12 @@
 #include <math/inspection.hpp>
 #include <units/si.hpp>
 
+#include <models/compound/term/Logarithm.hpp>
+
 namespace compound {
 namespace relation {
 
-    struct Logarithm {
-        double weight;
-        constexpr explicit Logarithm(const double weight):
-            weight(weight)
-        {}
-        // zero constructor
-        constexpr explicit Logarithm():
-            weight(0.0f)
-        {}
-        constexpr Logarithm(const Logarithm& f):
-            weight(f.weight)
-        {}
-        constexpr double operator()(const double x) const
-        {
-            return weight*std::log(x);
-        }
-        constexpr Logarithm& operator*=(const double k)
-        {
-            weight *= k;
-            return *this;
-        }
-        constexpr Logarithm& operator/=(const double k)
-        {
-            weight /= k;
-            return *this;
-        }
-    };
-
-    constexpr Logarithm operator*(const Logarithm f, const double k)
-    {
-        return Logarithm(f.weight*k);
-    }
-    constexpr Logarithm operator*(const double k, const Logarithm f)
-    {
-        return Logarithm(f.weight*k);
-    }
-    constexpr Logarithm operator/(const Logarithm f, const double k)
-    {
-        return Logarithm(f.weight/k);
-    }
-
-    using ClampedLogarithm = math::Clamped<double,Logarithm>;
+    using ClampedLogarithm = math::Clamped<double,term::Logarithm>;
 
     /*
     `LiquidPropertyExponentialTemperatureRelation` consolidates many kinds of expressions
@@ -196,7 +157,7 @@ namespace relation {
                 R(Tmax,   oo, P(p(Tmax))),
             }), 
             {
-                ClampedLogarithm(Tmin, Tmax, Logarithm(log_log))
+                ClampedLogarithm(Tmin, Tmax, term::Logarithm(log_log))
             }, 
             Tunits, yunits, 0.0f);
     }
