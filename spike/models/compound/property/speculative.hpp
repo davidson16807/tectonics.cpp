@@ -82,9 +82,8 @@ namespace property {
     */
     namespace 
     {
-        const float liquid_solid_density_slope = 84.587f;
-        const si::density<double> liquid_solid_density_intercept = 1.112 * si::kilogram/si::meter3;
-        constexpr si::density<double> kilogram_per_meter3 = si::kilogram/si::meter3; 
+        const float liquid_solid_density_slope = 1.112f;
+        const si::density<double> liquid_solid_density_intercept = 84.587 * si::kilogram/si::meter3;
     }
 
     si::density<double> guess_density_as_solid_from_density_as_liquid(const si::density<double> density_as_liquid)

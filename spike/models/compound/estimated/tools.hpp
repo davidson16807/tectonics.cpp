@@ -46,9 +46,9 @@ namespace estimated {
         return y;
     }
 
-    // useful when deriving values using both vectors and maps as arguments, e.g. mapY = populate(f, mapA, map(vectorA), mapB)
+    // useful when deriving values using both vectors and maps as arguments, e.g. mapY = attempt(f, mapA, maybe(vectorA), mapB)
     template<typename T>
-    std::map<int,T> map(std::vector<T>& x)
+    std::map<int,T> maybe(std::vector<T>& x)
     {
         std::map<int,T> y;
         for (std::size_t i = 0; i < x.size(); ++i)

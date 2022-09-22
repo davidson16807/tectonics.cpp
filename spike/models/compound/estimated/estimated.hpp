@@ -85,7 +85,7 @@ namespace estimated{
         complete(
             attempt<point<double>>([](point<double> freezing, point<double> boiling){ 
                         return freezing.temperature < standard.temperature && standard.temperature < boiling.temperature? standard : (freezing + boiling)/2.0; }, 
-                    map(freezing_point_sample), published::boiling_point_sample),
+                    maybe(freezing_point_sample), published::boiling_point_sample),
             freezing_point_sample
         );
 
@@ -104,13 +104,26 @@ namespace estimated{
                     return relation::LiquidDensityTemperatureRelation(M / property::estimate_molar_volume_as_liquid_from_bird_steward_lightfoot_2(sigma));}, 
                 molar_mass, molecular_diameter));
 
-    // via Klincewicz -> Ihmels -> definition of compressibility -> observed relation
+    // via Klincewicz -> Ihmels -> definition of compressibility -> definition of compressibility
     std::vector<relation::GasDensityStateRelation> density_as_gas = 
         derive<relation::GasDensityStateRelation>([](si::molar_mass<double> M, si::pressure<double> pc, si::temperature<double> Tc, double Zc){
                 return relation::GasDensityStateRelation(M,pc,Tc,Zc);}, 
             molar_mass, critical_point_pressure, critical_point_temperature, critical_point_compressibility);
 
-
+    // via Klincewicz -> Ihmels -> Tee-Gotoh-Steward -> Bird-Steward-Lightfoot2 -> Goodman
+    using SolidDensityTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,si::density<double>,0,1>;
+    std::vector<SolidDensityTemperatureRelation> density_as_solid = 
+        complete(
+            first(std::vector<std::map<int, SolidDensityTemperatureRelation>>{
+                published::density_as_solid, 
+                attempt<SolidDensityTemperatureRelation>([](si::molar_mass<double> M, relation::LiquidDensityTemperatureRelation rhol, point<double> liquid, point<double> triple){
+                        return SolidDensityTemperatureRelation(M / property::estimate_molar_volume_as_solid_from_goodman(M / rhol(liquid.temperature), liquid.temperature, triple.temperature));}, 
+                    maybe(molar_mass), maybe(density_as_liquid), maybe(liquid_point_sample), published::triple_point),
+            }),
+            derive<SolidDensityTemperatureRelation>([](relation::LiquidDensityTemperatureRelation rhol, point<double> liquid){
+                    return property::guess_density_as_solid_from_density_as_liquid(rhol(liquid.temperature));}, 
+                density_as_liquid, liquid_point_sample) // WARNING: results are speculative
+        );
 
 }}
 
@@ -146,6 +159,7 @@ namespace estimated{
         {
             guess.solids[i] = guess.solids[i].value_or(guess.solids[0]);
         }
+
 
         for (std::size_t i = 0; i < guess.solids.size(); i++)
         {
