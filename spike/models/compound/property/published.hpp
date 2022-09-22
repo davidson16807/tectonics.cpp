@@ -50,7 +50,7 @@ namespace property {
         return temperature_in_kelvin * si::kelvin; 
     }
     // Klincewicz method (1982): https://en.wikipedia.org/wiki/Klincewicz_method
-    constexpr si::pressure<double> estimate_critical_pressure_from_klincewicz(const si::molar_mass<double> molar_mass, const int atom_count)
+    constexpr si::pressure<double> estimate_critical_pressure_from_klincewicz(const si::molar_mass<double> molar_mass, const unsigned int atom_count)
     {
         double molar_mass_in_grams = (molar_mass / (si::gram / si::mole));
         double Y = 0.335 + 0.009 * molar_mass_in_grams + 0.019 * atom_count;
@@ -58,7 +58,7 @@ namespace property {
         return critical_pressure_in_bars * si::bar;
     }
     // Klincewicz method (1982): https://en.wikipedia.org/wiki/Klincewicz_method
-    constexpr si::molar_volume<double> estimate_critical_molar_volume_from_klincewicz(const si::molar_mass<double> molar_mass, const int atom_count)
+    constexpr si::molar_volume<double> estimate_critical_molar_volume_from_klincewicz(const si::molar_mass<double> molar_mass, const unsigned int atom_count)
     {
         double molar_mass_in_grams = (molar_mass / (si::gram / si::mole));
         double critical_molar_volume_in_cm3 = 20.1 + 0.88 * molar_mass_in_grams + 13.4 * atom_count;
