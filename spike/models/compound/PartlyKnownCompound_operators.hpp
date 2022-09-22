@@ -55,6 +55,20 @@ namespace compound
         //   properties derived by acentric factor
         //   miscellaneous properties
 
+        // critical point temperature, compressibility, and molecular diameter are guaranteed to be known 
+
+        // derived by Klincewicz -> Ihmels
+        this->critical_point_temperature     = critical_point_temperature     
+            .complete(property::estimate_critical_temperature_from_ihmels(this->critical_point_pressure, this->critical_point_volume));
+
+        // derived by Klincewicz -> Ihmels, then by definition
+        this->critical_point_compressibility = critical_point_compressibility 
+            .complete(property::get_critical_compressibility(this->critical_point_pressure, this->critical_point_temperature, this->critical_point_volume));
+
+        // derived by Klincewicz -> Ihmels -> Tee-Gotoh-Steward1 
+        this->molecular_diameter = molecular_diameter
+            .complete(property::estimate_molecular_diameter_from_tee_gotoh_steward(this->critical_point_temperature, this->critical_point_pressure));
+
         // CALCULATE DENSITY
         guess.liquid.density = guess.liquid.density
             .complete(M / property::estimate_molar_volume_as_liquid_from_bird_steward_lightfoot_2(sigma));
