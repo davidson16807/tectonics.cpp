@@ -10,7 +10,8 @@
 namespace compound { 
 namespace published { 
 
-    std::map<int, relation::PolynomialRailyardRelation<si::temperature<double>,si::pressure<double>,0,1>> tensile_modulus_as_solid {
+    using SolidTensileModulusTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,si::pressure<double>,0,1>;
+    std::map<int, SolidTensileModulusTemperatureRelation> tensile_modulus_as_solid {
         { ids::water,               9.332 * si::gigapascal,                           // gammon (1983)
             },
         { ids::nitrogen,                   

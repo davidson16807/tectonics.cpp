@@ -11,7 +11,8 @@
 namespace compound { 
 namespace published { 
 
-    std::map<int, relation::LiquidPropertyExponentialTemperatureRelation<si::pressure<double>,-1,6>> vapor_pressure_as_liquid {
+    using LiquidVaporPressureTemperatureRelation = relation::LiquidPropertyExponentialTemperatureRelation<si::pressure<double>,-1,6>;
+    std::map<int, LiquidVaporPressureTemperatureRelation> vapor_pressure_as_liquid {
         { ids::water,         
                 // relation::get_antoine_vapor_pressure_function(
                 //     si::celcius, si::millimeter_mercury, 
@@ -147,27 +148,27 @@ namespace published {
                       278.68, 562.05f), // 278.68-562.05K
             },
         // { ids::pyrimidine,   },
-        // { ids::quartz,         
-        //         relation::get_exponential_interpolated_temperature_function
-        //             (si::celcius, si::pascal,
-        //              std::vector<double>{1966.0,     2149.0,     2368.0}, 
-        //              std::vector<double>{1.0 ,       10.0,       100.0 }),
-        //     },
-        // { ids::halite,         
-        //         relation::get_exponential_interpolated_temperature_function
-        //             (si::celcius, si::pascal,
-        //               std::vector<double>{835.0,     987.0,     1461.0}, 
-        //              std::vector<double>{100.0 ,     1e3,       100e3 }),
-        //     },
+        { ids::quartz,         
+                relation::get_exponential_interpolated_temperature_function<si::pressure<double>,-1,6>
+                    (si::celcius, si::pascal,
+                     std::vector<double>{1966.0,     2149.0,     2368.0}, 
+                     std::vector<double>{1.0 ,       10.0,       100.0 }),
+            },
+        { ids::halite,         
+                relation::get_exponential_interpolated_temperature_function<si::pressure<double>,-1,6>
+                    (si::celcius, si::pascal,
+                      std::vector<double>{835.0,     987.0,     1461.0}, 
+                     std::vector<double>{100.0 ,     1e3,       100e3 }),
+            },
         // { ids::corundum,     },
         // { ids::apatite,      },
-        // { ids::carbon,         
-        //         relation::get_exponential_interpolated_temperature_function
-        //             (si::celcius, si::pascal,
-        //              std::vector<double>{2566.0,     3016.0,     3635.0}, 
-        //              std::vector<double>{1.0 ,       1e3,        100e3 }),
-        //                                                                      // TOOD: autocomplete vapor pressure for solids/liquids if function is present for other phase
-        //     },
+        { ids::carbon,         
+                relation::get_exponential_interpolated_temperature_function<si::pressure<double>,-1,6>
+                    (si::celcius, si::pascal,
+                     std::vector<double>{2566.0,     3016.0,     3635.0}, 
+                     std::vector<double>{1.0 ,       1e3,        100e3 }),
+                                                                             // TOOD: autocomplete vapor pressure for solids/liquids if function is present for other phase
+            },
         // { ids::calcite,      },
         // { ids::orthoclase,   },
         // { ids::andesine,     },
@@ -176,24 +177,24 @@ namespace published {
         // { ids::goethite,     },
         // { ids::pyrite,       },
         // { ids::hematite,     },
-        // { ids::gold,         
-        //         relation::get_exponential_interpolated_temperature_function
-        //             (si::celcius, si::pascal,
-        //              std::vector<double>{1373.0,     2008.0,     2805.0}, 
-        //              std::vector<double>{1.0 ,       1e3,        100e3 }),
-        //     },
-        // { ids::silver,         
-        //         relation::get_exponential_interpolated_temperature_function
-        //             (si::celcius, si::pascal,
-        //              std::vector<double>{1010.0,     1509.0,     2160.0}, 
-        //              std::vector<double>{1.0 ,       1e3,        100e3 }),
-        //     },
-        // { ids::copper,         
-        //         relation::get_exponential_interpolated_temperature_function
-        //             (si::celcius, si::pascal,
-        //              std::vector<double>{1236.0,     1816.0,     2563.0}, 
-        //              std::vector<double>{1.0 ,       1e3,        100e3 }),
-        //     },
+        { ids::gold,         
+                relation::get_exponential_interpolated_temperature_function<si::pressure<double>,-1,6>
+                    (si::celcius, si::pascal,
+                     std::vector<double>{1373.0,     2008.0,     2805.0}, 
+                     std::vector<double>{1.0 ,       1e3,        100e3 }),
+            },
+        { ids::silver,         
+                relation::get_exponential_interpolated_temperature_function<si::pressure<double>,-1,6>
+                    (si::celcius, si::pascal,
+                     std::vector<double>{1010.0,     1509.0,     2160.0}, 
+                     std::vector<double>{1.0 ,       1e3,        100e3 }),
+            },
+        { ids::copper,         
+                relation::get_exponential_interpolated_temperature_function<si::pressure<double>,-1,6>
+                    (si::celcius, si::pascal,
+                     std::vector<double>{1236.0,     1816.0,     2563.0}, 
+                     std::vector<double>{1.0 ,       1e3,        100e3 }),
+            },
         // { ids::magnetite,    },
         // { ids::chalcocite,   },
         // { ids::chalcopyrite, },

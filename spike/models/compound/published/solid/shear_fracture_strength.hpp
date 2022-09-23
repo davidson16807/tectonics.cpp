@@ -10,7 +10,8 @@
 namespace compound { 
 namespace published { 
 
-    std::map<int, relation::PolynomialRailyardRelation<si::temperature<double>,si::pressure<double>,0,1>> shear_fracture_strength_as_solid {
+    using SolidShearFractureStrengthTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,si::pressure<double>,0,1>;
+    std::map<int, SolidShearFractureStrengthTemperatureRelation> shear_fracture_strength_as_solid {
         { ids::water,               1.1 * si::megapascal,                             // Frederking (1989)
             },
         // { ids::nitrogen,         },

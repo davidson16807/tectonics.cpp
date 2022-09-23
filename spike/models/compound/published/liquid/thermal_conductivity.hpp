@@ -11,7 +11,8 @@
 namespace compound { 
 namespace published { 
 
-    std::map<int, relation::PolynomialRailyardRelation<si::temperature<double>,si::thermal_conductivity<double>,0,4>> thermal_conductivity_as_liquid {
+    using LiquidThermalConductivityTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,si::thermal_conductivity<double>,0,4>;
+    std::map<int, LiquidThermalConductivityTemperatureRelation> thermal_conductivity_as_liquid {
         { ids::water,   
                 relation::get_dippr_quartic_temperature_relation_100
                     (si::kelvin, si::watt / (si::meter * si::kelvin),

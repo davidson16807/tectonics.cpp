@@ -11,7 +11,8 @@
 namespace compound { 
 namespace published { 
 
-    std::map<int, relation::LiquidPropertyExponentialTemperatureRelation<si::dynamic_viscosity<double>,-1,10>> dynamic_viscosity_as_liquid {
+    using LiquidDynamicViscosityTemperatureRelation = relation::LiquidPropertyExponentialTemperatureRelation<si::dynamic_viscosity<double>,-1,10>;
+    std::map<int, LiquidDynamicViscosityTemperatureRelation> dynamic_viscosity_as_liquid {
         { ids::water,      
                 relation::get_dippr_temperature_relation_101<si::dynamic_viscosity<double>,-1,10>
                     (si::kelvin, si::pascal* si::second, 

@@ -10,7 +10,8 @@
 namespace compound { 
 namespace published { 
 
-    std::map<int, relation::PolynomialRailyardRelation<si::temperature<double>,si::density<double>,0,1>> density_as_solid {
+    using SolidDensityTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,si::density<double>,0,1>;
+    std::map<int, SolidDensityTemperatureRelation> density_as_solid {
         { ids::water,                           
                 relation::get_linear_interpolation_function
                     (si::kelvin, si::kilogram/si::meter3,

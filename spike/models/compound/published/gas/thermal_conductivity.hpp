@@ -10,7 +10,8 @@
 namespace compound { 
 namespace published { 
 
-    std::map<int, relation::GasPropertyStateRelation<si::thermal_conductivity<double>>> thermal_conductivity_as_gas {
+    using GasThermalConductivityStateRelation = relation::GasPropertyStateRelation<si::thermal_conductivity<double>>;
+    std::map<int, GasThermalConductivityStateRelation> thermal_conductivity_as_gas {
         {ids::water,   
                 relation::get_sigmoid_exponent_pressure_temperature_relation
                     (si::kelvin, si::megapascal, si::watt/(si::meter * si::kelvin),

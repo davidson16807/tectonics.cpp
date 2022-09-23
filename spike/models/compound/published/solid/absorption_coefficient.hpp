@@ -10,7 +10,8 @@
 namespace compound {
 namespace published {
 
-    std::map<int, relation::PolynomialRailyardRelation<si::wavenumber<double>,si::attenuation<double>,0,1>> absorption_coefficient_as_solid {
+    using SolidAbsorptionCoefficientWavenumberRelation = relation::PolynomialRailyardRelation<si::wavenumber<double>,si::attenuation<double>,0,1>;
+    std::map<int, SolidAbsorptionCoefficientWavenumberRelation> absorption_coefficient_as_solid {
         // // { ids::water,            },
         // // { ids::nitrogen,         },
         // // { ids::oxygen,           },

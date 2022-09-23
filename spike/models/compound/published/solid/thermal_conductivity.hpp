@@ -10,7 +10,8 @@
 namespace compound { 
 namespace published { 
 
-    std::map<int, relation::PolynomialRailyardRelation<si::temperature<double>,si::thermal_conductivity<double>,0,1>> thermal_conductivity_as_solid {
+    using SolidThermalConductivityTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,si::thermal_conductivity<double>,0,1>;
+    std::map<int, SolidThermalConductivityTemperatureRelation> thermal_conductivity_as_solid {
         { ids::water,              
                 relation::get_linear_interpolation_function
                     (si::kelvin, si::watt/(si::meter*si::kelvin),

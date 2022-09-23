@@ -11,7 +11,8 @@
 namespace compound { 
 namespace published { 
 
-    std::map<int, relation::PolynomialRailyardRelation<si::wavenumber<double>,double,0,1>> extinction_coefficient_as_liquid {
+    using LiquidExtinctionCoefficientWavenumberRelation = relation::PolynomialRailyardRelation<si::wavenumber<double>,double,0,1>;
+    std::map<int, LiquidExtinctionCoefficientWavenumberRelation> extinction_coefficient_as_liquid {
 
         { ids::water, 
                     relation::get_spectral_linear_interpolation_function_of_wavelength

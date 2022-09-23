@@ -11,7 +11,8 @@
 namespace compound { 
 namespace published { 
 
-    std::map<int, relation::LiquidSurfaceTensionTemperatureRelation> surface_tension_as_liquid {
+    using LiquidSurfaceTensionTemperatureRelation = relation::LiquidSurfaceTensionTemperatureRelation;
+    std::map<int, LiquidSurfaceTensionTemperatureRelation> surface_tension_as_liquid {
         { ids::water,            
                 relation::get_refprop_liquid_surface_tension_temperature_function
                     (si::kelvin, si::newton/si::meter,

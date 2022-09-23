@@ -11,7 +11,8 @@
 namespace compound { 
 namespace published { 
 
-    std::map<int, relation::LiquidHeatCapacityTemperatureRelation> isobaric_specific_heat_capacity_as_liquid {
+    using LiquidHeatCapacityTemperatureRelation = relation::LiquidHeatCapacityTemperatureRelation;
+    std::map<int, LiquidHeatCapacityTemperatureRelation> isobaric_specific_heat_capacity_as_liquid {
         { ids::water, 
                 relation::get_dippr_quartic_temperature_relation_100
                     (si::kelvin, si::joule / (18.01528 * si::kilogram * si::kelvin), 

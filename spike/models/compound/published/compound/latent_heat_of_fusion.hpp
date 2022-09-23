@@ -18,7 +18,7 @@ namespace published {
         {ids::carbon_dioxide,   9.02*si::kilojoule/(44.01*si::gram)},
         {ids::methane,          0.94*si::kilojoule/(16.043*si::gram)},
         {ids::argon,            5.66*si::kilojoule/(39.948*si::gram)},
-        // {ids::helium,           },
+        {ids::helium,           0.0138*si::kilojoule/(4.0026  * si::gram/si::mole)}, // periodic-table.org
         {ids::hydrogen,         0.12*si::kilojoule/(2.016*si::gram)},
         {ids::ammonia,          5.66*si::kilojoule/(17.031*si::gram)},
         // {ids::ozone,            },

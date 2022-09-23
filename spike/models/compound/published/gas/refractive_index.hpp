@@ -10,7 +10,8 @@
 namespace compound { 
 namespace published { 
 
-    std::map<int, relation::PolynomialRailyardRelation<si::wavenumber<double>,double,0,1>> refractive_index_as_gas {
+    using GasRefractiveIndexWavenumberRelation = relation::PolynomialRailyardRelation<si::wavenumber<double>,double,0,1>;
+    std::map<int, GasRefractiveIndexWavenumberRelation> refractive_index_as_gas {
         {ids::water,         1.000261},
         // {ids::nitrogen,      
                 // // TODO: reimplement this

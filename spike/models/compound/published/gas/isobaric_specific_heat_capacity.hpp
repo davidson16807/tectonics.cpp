@@ -10,7 +10,8 @@
 namespace compound { 
 namespace published { 
 
-    std::map<int, relation::GasPropertyStateRelation<si::specific_heat_capacity<double>>> isobaric_specific_heat_capacity_as_gas {
+    using GasHeatCapacityStateRelation = relation::GasPropertyStateRelation<si::specific_heat_capacity<double>>;
+    std::map<int, GasHeatCapacityStateRelation> isobaric_specific_heat_capacity_as_gas {
         { ids::water, 
                 relation::get_exponent_pressure_temperature_relation
                     (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),

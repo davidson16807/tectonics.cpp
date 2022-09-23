@@ -12,7 +12,7 @@
 namespace compound { 
 namespace published { 
 
-    std::vector<point<double>> freezing_point_sample {
+    std::vector<point<double>> freezing_sample_point {
 
         /*water*/            point<double>(si::atmosphere,        si::standard_temperature ),
         /*nitrogen*/         point<double>(si::atmosphere,        -210.0*si::celcius       ),

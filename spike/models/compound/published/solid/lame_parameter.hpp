@@ -10,7 +10,8 @@
 namespace compound { 
 namespace published { 
 
-    std::map<int, relation::PolynomialRailyardRelation<si::temperature<double>,si::pressure<double>,0,1>> lame_parameter_as_solid {
+    using SolidLameParameterTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,si::pressure<double>,0,1>;
+    std::map<int, SolidLameParameterTemperatureRelation> lame_parameter_as_solid {
         { ids::water,               6.552 * si::gigapascal,                           // gammon (1983)
             },
         // { ids::nitrogen,         },

@@ -11,7 +11,8 @@
 namespace compound { 
 namespace published { 
 
-    std::map<int, relation::LiquidDensityTemperatureRelation> density_as_liquid {
+    using LiquidDensityTemperatureRelation = relation::LiquidDensityTemperatureRelation;
+    std::map<int, LiquidDensityTemperatureRelation> density_as_liquid {
         { ids::water,                
                 // Perry equation 119, specialized for water
                 relation::LiquidDensityTemperatureRelation({}, 

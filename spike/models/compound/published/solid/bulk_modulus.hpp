@@ -10,7 +10,8 @@
 namespace compound { 
 namespace published { 
 
-    std::map<int, relation::PolynomialRailyardRelation<si::temperature<double>,si::pressure<double>,0,1>> bulk_modulus_as_solid {
+    using SolidBulkModulusTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,si::pressure<double>,0,1>;
+    std::map<int, SolidBulkModulusTemperatureRelation> bulk_modulus_as_solid {
         { ids::water,              8.899 * si::gigapascal,                           // gammon (1983)
             },
         { ids::nitrogen,                      

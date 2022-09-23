@@ -10,7 +10,8 @@
 namespace compound { 
 namespace published { 
 
-    std::map<int, relation::PolynomialRailyardRelation<si::temperature<double>,double,0,1>> poisson_ratio_as_solid {
+    using SolidPoissonRatioTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,double,0,1>;
+    std::map<int, SolidPoissonRatioTemperatureRelation> poisson_ratio_as_solid {
         { ids::water,               0.3252,                                           // gammon (1983)
             },
         { ids::nitrogen,                     

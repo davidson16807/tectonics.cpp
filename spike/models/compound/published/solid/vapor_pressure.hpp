@@ -10,7 +10,8 @@
 namespace compound { 
 namespace published { 
 
-    std::map<int, relation::PolynomialRailyardRelation<si::temperature<double>,si::pressure<double>,0,1>> vapor_pressure_as_solid {
+    using SolidVaporPressureTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,si::pressure<double>,0,1>;
+    std::map<int, SolidVaporPressureTemperatureRelation> vapor_pressure_as_solid {
         { ids::water,                   
                 relation::get_linear_interpolation_function
                     (si::celcius, si::millimeter_mercury,

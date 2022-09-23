@@ -10,7 +10,8 @@
 namespace compound { 
 namespace published { 
 
-    std::map<int, relation::GasPropertyStateRelation<si::dynamic_viscosity<double>>> dynamic_viscosity_as_gas {
+    using GasDynamicViscosityStateRelation = relation::GasPropertyStateRelation<si::dynamic_viscosity<double>>;
+    std::map<int, GasDynamicViscosityStateRelation> dynamic_viscosity_as_gas {
         { ids::water,      
                 relation::get_exponent_pressure_temperature_relation
                     (si::kelvin, si::megapascal, si::micropascal*si::second, 

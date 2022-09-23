@@ -10,7 +10,8 @@
 namespace compound { 
 namespace published { 
 
-    std::map<int, relation::PolynomialRailyardRelation<si::temperature<double>,si::pressure<double>,0,1>> shear_yield_strength_as_solid {
+    using SolidShearYieldStrengthTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,si::pressure<double>,0,1>;
+    std::map<int, SolidShearYieldStrengthTemperatureRelation> shear_yield_strength_as_solid {
         { ids::water,               1.1 * si::megapascal, // brittle, effectively the same as fracture strength
             },
         // { ids::nitrogen,         },
