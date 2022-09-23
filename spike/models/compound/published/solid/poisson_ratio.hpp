@@ -5,15 +5,13 @@
 
 // in-house libraries
 #include <units/si.hpp>
-#include <math/expression/PolynomialRailyard.hpp>
-#include <models/compound/relation/Relation.hpp>
 #include <models/compound/relation/PolynomialRailyardRelation.hpp>
 #include <models/compound/ids.hpp>
 
 namespace compound { 
 namespace published { 
 
-    using SolidPoissonRatioTemperatureRelation = relation::Relation<si::temperature<double>,double, math::PolynomialRailyard<float,0,1>>;
+    using SolidPoissonRatioTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,double, 0,1>;
     std::map<int, SolidPoissonRatioTemperatureRelation> poisson_ratio_as_solid {
         { ids::water,               0.3252,                                           // gammon (1983)
             },

@@ -76,7 +76,7 @@ namespace relation {
         LiquidHeatCapacityTemperatureRelation(
             const relation::PolynomialRailyardRelation<si::temperature<double>, si::specific_heat_capacity<double>, Plo, Phi> relation
         ):
-            temperature_terms(relation.expression),
+            temperature_terms(relation.yard),
             reduced_complement_terms(),
 
             Tunits(relation.xunits),

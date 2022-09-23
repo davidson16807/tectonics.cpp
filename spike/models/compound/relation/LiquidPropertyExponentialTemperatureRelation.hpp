@@ -85,7 +85,7 @@ namespace relation {
         constexpr LiquidPropertyExponentialTemperatureRelation(
             const ExponentiatedPolynomialRailyardRelation<si::temperature<double>, Ty, Qlo,Qhi>& relation
         ):
-            terms(relation.expression.argument),
+            terms(relation.yard),
             logarithms(),
 
             Tunits(relation.xunits),

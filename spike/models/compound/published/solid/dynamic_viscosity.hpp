@@ -5,15 +5,13 @@
 
 // in-house libraries
 #include <units/si.hpp>
-#include <math/expression/PolynomialRailyard.hpp>
-#include <models/compound/relation/Relation.hpp>
 #include <models/compound/relation/PolynomialRailyardRelation.hpp>
 #include <models/compound/ids.hpp>
 
 namespace compound { 
 namespace published { 
 
-    using SolidDynamicViscosityTemperatureRelation = relation::Relation<si::temperature<double>,si::dynamic_viscosity<double>, math::Polynomial<float,0,0>>;
+    using SolidDynamicViscosityTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,si::dynamic_viscosity<double>, 0,1>;
     std::map<int, SolidDynamicViscosityTemperatureRelation> dynamic_viscosity_as_solid {
         { ids::water,               1e13 * si::poise,                                 // reference by Carey (1953)
             },
