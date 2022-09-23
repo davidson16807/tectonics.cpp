@@ -31,6 +31,7 @@
 #include "./solid/poisson_ratio.hpp"
 #include "./solid/tensile_modulus.hpp"
 #include "./solid/thermal_conductivity.hpp"
+#include "./solid/vapor_pressure.hpp"
 #include "./liquid/refractive_index.hpp"
 #include "./liquid/isobaric_specific_heat_capacity.hpp"
 #include "./liquid/extinction_coefficient.hpp"
