@@ -13,7 +13,7 @@
 namespace compound { 
 namespace published { 
 
-    using SolidDynamicViscosityTemperatureRelation = relation::Relation<si::temperature<double>,si::dynamic_viscosity<double>, math::PolynomialRailyard<float,0,1>>;
+    using SolidDynamicViscosityTemperatureRelation = relation::Relation<si::temperature<double>,si::dynamic_viscosity<double>, math::Polynomial<float,0,0>>;
     std::map<int, SolidDynamicViscosityTemperatureRelation> dynamic_viscosity_as_solid {
         { ids::water,               1e13 * si::poise,                                 // reference by Carey (1953)
             },
