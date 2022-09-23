@@ -7,6 +7,7 @@
 
 // in-house libraries
 #include "Identity.hpp"
+#include "Clamped.hpp"
 #include "Railcar.hpp"
 #include "Railcar_to_string.hpp"
 
@@ -52,6 +53,16 @@ namespace math {
             {
                 cars.push_back(Railcar<T,F>(car));
             }
+        }
+
+        // cast constructor
+        explicit Railyard(const Clamped<T,F>& clamped) : cars()
+        {
+            using R = Railcar<T,F>;
+            const T oo = std::numeric_limits<T>::max();
+            cars.push_back(R(       -oo, clamped.lo, F(clamped(clamped.lo))));
+            cars.push_back(R(clamped.lo, clamped.hi,   clamped));
+            cars.push_back(R(clamped.hi, oo,         F(clamped(clamped.hi))));
         }
 
         explicit Railyard(const std::vector<Railcar<T,F>> cars_) : cars(cars_) 
@@ -321,57 +332,165 @@ namespace math {
 
 
 
-    // template<typename T, typename F>
-    // constexpr auto operator+(const Railyard<T,F>& f, const Railcar<T,F>& g)
-    // {
-    //     Railyard<T,F> y(f);
-    //     y += g;
-    //     return y;
-    // }
-
-    // template<typename T, typename F>
-    // constexpr auto operator+(const Railcar<T,F>& g, const Railyard<T,F>& f)
-    // {
-    //     Railyard<T,F> y(f);
-    //     y += g;
-    //     return y;
-    // }
-
-    // template<typename T, typename F>
-    // constexpr auto operator-(const Railyard<T,F>& f, const Railcar<T,F>& g)
-    // {
-    //     Railyard<T,F> y(f);
-    //     y -= g;
-    //     return y;
-    // }
-
-    // template<typename T, typename F>
-    // constexpr auto operator-(const Railcar<T,F>& g, const Railyard<T,F>& f)
-    // {
-    //     Railyard<T,F> y(g);
-    //     y -= f;
-    //     return y;
-    // }
 
 
+    template<typename T, typename F>
+    constexpr auto operator+(const Clamped<T,F>& f, const Railcar<T,F>& g)
+    {
+        Railyard<T,F> y(f);
+        y += g;
+        return y;
+    }
+
+    template<typename T, typename F>
+    constexpr auto operator+(const Railcar<T,F>& g, const Clamped<T,F>& f)
+    {
+        Railyard<T,F> y(f);
+        y += g;
+        return y;
+    }
+
+    template<typename T, typename F>
+    constexpr auto operator-(const Clamped<T,F>& f, const Railcar<T,F>& g)
+    {
+        Railyard<T,F> y(f);
+        y -= g;
+        return y;
+    }
+
+    template<typename T, typename F>
+    constexpr auto operator-(const Railcar<T,F>& g, const Clamped<T,F>& f)
+    {
+        Railyard<T,F> y(g);
+        y -= Railyard<T,F>(f);
+        return y;
+    }
 
 
 
-    // template<typename T, typename F>
-    // constexpr auto operator+(const Railyard<T,F>& f, const Railyard<T,F>& g)
-    // {
-    //     Railyard<T,F> y(f);
-    //     y += g;
-    //     return y;
-    // }
 
-    // template<typename T, typename F>
-    // constexpr auto operator-(const Railyard<T,F>& f, const Railyard<T,F>& g)
-    // {
-    //     Railyard<T,F> y(f);
-    //     y -= g;
-    //     return y;
-    // }
+
+    template<typename T, typename F>
+    constexpr auto operator+(const Clamped<T,F>& f, const Railyard<T,F>& g)
+    {
+        Railyard<T,F> y(f);
+        y += g;
+        return y;
+    }
+
+    template<typename T, typename F>
+    constexpr auto operator+(const Railyard<T,F>& g, const Clamped<T,F>& f)
+    {
+        Railyard<T,F> y(f);
+        y += g;
+        return y;
+    }
+
+    template<typename T, typename F>
+    constexpr auto operator-(const Clamped<T,F>& f, const Railyard<T,F>& g)
+    {
+        Railyard<T,F> y(f);
+        y -= g;
+        return y;
+    }
+
+    template<typename T, typename F>
+    constexpr auto operator-(const Railyard<T,F>& g, const Clamped<T,F>& f)
+    {
+        Railyard<T,F> y(g);
+        y -= Railyard<T,F>(f);
+        return y;
+    }
+
+
+
+
+
+    template<typename T, typename F>
+    constexpr auto operator+(const Railyard<T,F>& f, const Railcar<T,F>& g)
+    {
+        Railyard<T,F> y(f);
+        y += g;
+        return y;
+    }
+
+    template<typename T, typename F>
+    constexpr auto operator+(const Railcar<T,F>& g, const Railyard<T,F>& f)
+    {
+        Railyard<T,F> y(f);
+        y += g;
+        return y;
+    }
+
+    template<typename T, typename F>
+    constexpr auto operator-(const Railyard<T,F>& f, const Railcar<T,F>& g)
+    {
+        Railyard<T,F> y(f);
+        y -= g;
+        return y;
+    }
+
+    template<typename T, typename F>
+    constexpr auto operator-(const Railcar<T,F>& g, const Railyard<T,F>& f)
+    {
+        Railyard<T,F> y(g);
+        y -= f;
+        return y;
+    }
+
+
+
+
+    template<typename T, typename F>
+    constexpr auto operator+(const Railcar<T,F>& f, const Railcar<T,F>& g)
+    {
+        Railyard<T,F> y(f);
+        y += Railyard<T,F>(g);
+        return y;
+    }
+
+    template<typename T, typename F>
+    constexpr auto operator-(const Railcar<T,F>& f, const Railcar<T,F>& g)
+    {
+        Railyard<T,F> y(f);
+        y -= Railyard<T,F>(g);
+        return y;
+    }
+
+
+    template<typename T, typename F>
+    constexpr auto operator+(const Clamped<T,F>& f, const Clamped<T,F>& g)
+    {
+        Railyard<T,F> y(f);
+        y += Railyard<T,F>(g);
+        return y;
+    }
+
+    template<typename T, typename F>
+    constexpr auto operator-(const Clamped<T,F>& f, const Clamped<T,F>& g)
+    {
+        Railyard<T,F> y(f);
+        y -= Railyard<T,F>(g);
+        return y;
+    }
+
+
+
+    template<typename T, typename F>
+    constexpr auto operator+(const Railyard<T,F>& f, const Railyard<T,F>& g)
+    {
+        Railyard<T,F> y(f);
+        y += g;
+        return y;
+    }
+
+    template<typename T, typename F>
+    constexpr auto operator-(const Railyard<T,F>& f, const Railyard<T,F>& g)
+    {
+        Railyard<T,F> y(f);
+        y -= g;
+        return y;
+    }
 
 
     /*

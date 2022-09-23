@@ -131,7 +131,6 @@ namespace estimated{
 
     // // CALCULATE POSSIBLE ROUTES TO ACENTRIC FACTOR
 
-    // vapor pressure, offers no bounds for validity and gives bad estimates at temperature extremes
     using SolidVaporPressureTemperatureRelation = published::SolidVaporPressureTemperatureRelation;
     std::map<int, SolidVaporPressureTemperatureRelation> vapor_pressure_as_solid = 
         first<SolidVaporPressureTemperatureRelation>({
@@ -143,13 +142,14 @@ namespace estimated{
                     float Tmax = triple.temperature/si::kelvin;
                     float oo = std::numeric_limits<float>::max();
                     using P = math::Polynomial<float,-1,1>;
+                    using R = math::Railcar<float,P>;
                     P p;
                     p[0]  = std::log(P3) + (k/T3);
                     p[-1] = -k;
                     return relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>,si::pressure<double>,-1,1>(
                         math::Railyard<float,P>({
-                            math::Railcar<float,P>(0.0f, Tmax, p),
-                            math::Railcar<float,P>(Tmax,   oo, P(p(Tmax)))
+                            R(0.0f, Tmax, p),
+                            R(Tmax,   oo, P(p(Tmax)))
                         }),
                         si::kelvin, si::pascal);
                 }, published::latent_heat_of_vaporization, published::latent_heat_of_fusion, maybe(molar_mass), published::triple_point)
@@ -169,27 +169,6 @@ namespace estimated{
         si::pressure<double> pc = known.critical_point_pressure;
         // auto k = si::boltzmann_constant;
         double Zc = known.critical_point_compressibility;
-
-
-        for (std::size_t i = 0; i < guess.solids.size(); i++)
-        {
-            guess.solids[i].vapor_pressure = guess.solids[i].vapor_pressure.value_or( 
-                [M](field::StateParameters parameters, 
-                   si::specific_energy<double> latent_heat_of_vaporization, si::specific_energy<double> latent_heat_of_fusion, 
-                   si::pressure<double> triple_point_pressure, si::temperature<double> triple_point_temperature){
-                    return property::estimate_vapor_pressure_as_solid_from_clapeyron(
-                        latent_heat_of_vaporization + latent_heat_of_fusion,
-                        M, 
-                        parameters.temperature, triple_point_temperature,
-                        triple_point_pressure
-                    );
-                },
-                guess.latent_heat_of_vaporization,
-                guess.latent_heat_of_fusion,
-                guess.triple_point_pressure,
-                guess.triple_point_temperature
-            );
-        }
 
         if (guess.solids.size() > 0)
         {

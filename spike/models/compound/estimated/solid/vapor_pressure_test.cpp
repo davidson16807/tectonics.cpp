@@ -17,9 +17,9 @@ TEST_CASE( "estimated solid vapor_pressure order of magnitude", "[table]" ) {
             {
                 if (compound::estimated::vapor_pressure_as_solid.count(i) > 0) {
                     auto x = compound::estimated::vapor_pressure_as_solid[i](T);
-                    std::cout << i << std::endl;
-                    std::cout << si::to_string(T) << std::endl;
-                    std::cout << si::to_string(x) << std::endl;
+                    // std::cout << i << std::endl;
+                    // std::cout << si::to_string(T) << std::endl;
+                    // std::cout << si::to_string(x) << std::endl;
                     CHECK(x / si::kilopascal < 300.0); /*based on tetraflourosilane*/ \
                     CHECK(x / si::pascal >= 0.0); /*based on Claypeyron relation near 0K*/ \
                 }
