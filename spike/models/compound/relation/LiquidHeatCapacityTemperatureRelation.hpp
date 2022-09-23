@@ -6,10 +6,10 @@
 // in-house libraries
 #include <math/expression/Scaling.hpp>
 #include <math/expression/PolynomialRailyard.hpp>
+#include <math/expression/ScaledComplement.hpp>
 #include <math/inspection.hpp>
 #include <units/si.hpp>
 
-#include <models/compound/term/ScaledComplement.hpp>
 
 namespace compound {
 namespace relation {
@@ -21,7 +21,7 @@ namespace relation {
     class LiquidHeatCapacityTemperatureRelation
     {
         math::Railyard<float, math::Polynomial<float, 0,4>> temperature_terms;
-        math::Railyard<float, term::ScaledComplement<float, math::Polynomial<float,-1,5>>> reduced_complement_terms;
+        math::Railyard<float, math::ScaledComplement<float, math::Polynomial<float,-1,5>>> reduced_complement_terms;
 
         si::temperature<double>  Tunits;
         si::specific_heat_capacity<double> yunits;
@@ -55,7 +55,7 @@ namespace relation {
 
         LiquidHeatCapacityTemperatureRelation(
             const math::Railyard<float, math::Polynomial<float, 0, 4>> temperature_terms,
-            const math::Railyard<float, term::ScaledComplement<float, math::Polynomial<float,-1,5>>> reduced_complement_terms,
+            const math::Railyard<float, math::ScaledComplement<float, math::Polynomial<float,-1,5>>> reduced_complement_terms,
 
             const si::temperature<double> Tunits,
             const si::specific_heat_capacity<double> yunits,
@@ -236,7 +236,7 @@ namespace relation {
     ){
         const float oo = std::numeric_limits<float>::max();
         using P = math::Polynomial<float,-1,5>;
-        using C = term::ScaledComplement<float, P>;
+        using C = math::ScaledComplement<float, P>;
         using R = math::Railcar<float, C>;
         C p = C(Tc/si::kelvin, P({c1*c1, c2, -2.0f*c1*c3, -c1*c4, -c3*c3/3.0f, -c3*c4/2.0f, -c4*c4/5.0f}));
         return LiquidHeatCapacityTemperatureRelation({}, 

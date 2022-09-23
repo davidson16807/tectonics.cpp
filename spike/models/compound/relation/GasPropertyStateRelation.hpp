@@ -6,20 +6,20 @@
 #include <math/expression/Scaling.hpp>
 #include <math/expression/Polynomial.hpp>
 #include <math/expression/Clamped.hpp>
+#include <math/expression/Exponent.hpp>
+#include <math/expression/Sigmoid.hpp>
 #include <math/inspection.hpp>
 #include <units/si.hpp>
 
-#include <models/compound/term/Exponent.hpp>
-#include <models/compound/term/Sigmoid.hpp>
-#include <models/compound/term/Dippr102.hpp>
+#include <models/compound/dippr/Dippr102.hpp>
 
 namespace compound {
 namespace relation {
 
 
-    using ClampedExponent = math::Clamped<float,term::Exponent>;
-    using ClampedSigmoid = math::Clamped<float,term::Sigmoid>;
-    using ClampedDippr102 = math::Clamped<float,term::Dippr102>;
+    using ClampedExponent = math::Clamped<float,math::Exponent>;
+    using ClampedSigmoid = math::Clamped<float,math::Sigmoid>;
+    using ClampedDippr102 = math::Clamped<float,dippr::Dippr102>;
 
     /*
     `GasPropertyStateRelation` consolidates many kinds of expressions
@@ -360,9 +360,9 @@ namespace relation {
         const float known_max_fractional_error
     ) {
         return GasPropertyStateRelation<Ty>(
-            std::vector<ClampedExponent>{ClampedExponent(pmin, pmax, term::Exponent(pslope, pexponent))},
-            std::vector<ClampedExponent>{ClampedExponent(Tmin, Tmax, term::Exponent(Tslope, Texponent))},
-            std::vector<ClampedSigmoid>{ClampedSigmoid(Tmin, Tmax, term::Sigmoid(1.0f/Tsigmoid_scale, -Tsigmoid_center/Tsigmoid_scale, Tsigmoid_max))},
+            std::vector<ClampedExponent>{ClampedExponent(pmin, pmax, math::Exponent(pslope, pexponent))},
+            std::vector<ClampedExponent>{ClampedExponent(Tmin, Tmax, math::Exponent(Tslope, Texponent))},
+            std::vector<ClampedSigmoid>{ClampedSigmoid(Tmin, Tmax, math::Sigmoid(1.0f/Tsigmoid_scale, -Tsigmoid_center/Tsigmoid_scale, Tsigmoid_max))},
             std::vector<ClampedDippr102>(),
 
             punits, Tunits, yunits,
@@ -383,8 +383,8 @@ namespace relation {
         const float known_max_fractional_error
     ) {
         return GasPropertyStateRelation<Ty>(
-            std::vector<ClampedExponent>{ClampedExponent(pmin, pmax, term::Exponent(pslope, pexponent))},
-            std::vector<ClampedExponent>{ClampedExponent(Tmin, Tmax, term::Exponent(Tslope, Texponent))},
+            std::vector<ClampedExponent>{ClampedExponent(pmin, pmax, math::Exponent(pslope, pexponent))},
+            std::vector<ClampedExponent>{ClampedExponent(Tmin, Tmax, math::Exponent(Tslope, Texponent))},
             std::vector<ClampedSigmoid>{},
             std::vector<ClampedDippr102>(),
 
@@ -407,7 +407,7 @@ namespace relation {
             std::vector<ClampedExponent>(0),
             std::vector<ClampedExponent>(0),
             std::vector<ClampedSigmoid>(0),
-            std::vector<ClampedDippr102>{ClampedDippr102(Tmin, Tmax, term::Dippr102(c1, c2, c3, c4))},
+            std::vector<ClampedDippr102>{ClampedDippr102(Tmin, Tmax, dippr::Dippr102(c1, c2, c3, c4))},
 
             si::pressure<double>(1.0), Tunits, yunits,
 
@@ -465,12 +465,12 @@ namespace relation {
             Tmax, f(pmin*punits,  Tmax*Tunits) / yunits);
         auto fhat = GasPropertyStateRelation<Ty>(
             std::vector<ClampedExponent>{
-                ClampedExponent(pmin, pmax, term::Exponent(fp[1], 1.0f)),
-                ClampedExponent(pmin, pmax, term::Exponent(fp[2], 2.0f))
+                ClampedExponent(pmin, pmax, math::Exponent(fp[1], 1.0f)),
+                ClampedExponent(pmin, pmax, math::Exponent(fp[2], 2.0f))
             },
             std::vector<ClampedExponent>{
-                ClampedExponent(Tmin, Tmax, term::Exponent(fT[1], 1.0f)),
-                ClampedExponent(Tmin, Tmax, term::Exponent(fT[2], 2.0f))
+                ClampedExponent(Tmin, Tmax, math::Exponent(fT[1], 1.0f)),
+                ClampedExponent(Tmin, Tmax, math::Exponent(fT[2], 2.0f))
             },
             std::vector<ClampedSigmoid>(),
             std::vector<ClampedDippr102>(),
@@ -505,9 +505,9 @@ namespace relation {
         return GasPropertyStateRelation<Ty>(
             std::vector<ClampedExponent>(),
             std::vector<ClampedExponent>{
-                ClampedExponent(Tmin, Tmax, term::Exponent(linear, 1.0f)),
-                ClampedExponent(Tmin, Tmax, term::Exponent(inverse_square, -2.0f)),
-                ClampedExponent(Tmin, Tmax, term::Exponent(square, 2.0f))
+                ClampedExponent(Tmin, Tmax, math::Exponent(linear, 1.0f)),
+                ClampedExponent(Tmin, Tmax, math::Exponent(inverse_square, -2.0f)),
+                ClampedExponent(Tmin, Tmax, math::Exponent(square, 2.0f))
             },
             std::vector<ClampedSigmoid>(),
             std::vector<ClampedDippr102>(),

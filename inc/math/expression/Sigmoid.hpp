@@ -1,7 +1,6 @@
 #pragma once
 
-namespace compound {
-namespace term {
+namespace math {
 
     struct Sigmoid {
         float xscale;
@@ -82,4 +81,4 @@ namespace term {
         );
     }
 
-}}
+}

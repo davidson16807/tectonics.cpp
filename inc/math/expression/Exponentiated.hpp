@@ -1,7 +1,6 @@
 #pragma once
 
-namespace compound {
-namespace term {
+namespace math {
 
     /* 
     `Exponentiated<T,F>` is a trivial class that represents the function f∘g(x)=argument(1-x/k), 
@@ -105,4 +104,4 @@ namespace term {
         return Exponentiated<T,F>(expf.argument + std::log(g.factor));
     }
 
-}}
+}

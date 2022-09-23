@@ -1,7 +1,7 @@
 #pragma once
 
 namespace compound {
-namespace term {
+namespace dippr {
 
     struct Dippr105 {
         float c1;

@@ -1,7 +1,6 @@
 #pragma once
 
-namespace compound {
-namespace term {
+namespace math {
 
     struct Logarithm {
         float weight;
@@ -44,4 +43,4 @@ namespace term {
         return Logarithm(f.weight/k);
     }
 
-}}
+}

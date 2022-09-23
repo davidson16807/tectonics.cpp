@@ -10,14 +10,14 @@
 #include <math/inspection.hpp>
 #include <units/si.hpp>
 
-#include <models/compound/term/Dippr105.hpp>
-#include <models/compound/term/Dippr119.hpp>
+#include <models/compound/dippr/Dippr105.hpp>
+#include <models/compound/dippr/Dippr119Term.hpp>
 
 namespace compound {
 namespace relation {
 
-    using ClampedDippr105 = math::Clamped<float,term::Dippr105>;
-    using ClampedDippr119 = math::Clamped<float,term::Dippr119>;
+    using ClampedDippr105 = math::Clamped<float,dippr::Dippr105>;
+    using ClampedDippr119 = math::Clamped<float,dippr::Dippr119Term>;
 
     /*
     `LiquidDensityTemperatureRelation` consolidates many kinds of expressions
@@ -183,7 +183,7 @@ namespace relation {
         const float Tmin, const float Tmax
     ){
         return LiquidDensityTemperatureRelation(
-            {ClampedDippr105(Tmin, Tmax, term::Dippr105(c1, c2, c3, c4))}, {}, Tunits, yunits, 0.0f, 0.0f);
+            {ClampedDippr105(Tmin, Tmax, dippr::Dippr105(c1, c2, c3, c4))}, {}, Tunits, yunits, 0.0f, 0.0f);
     }
 
     LiquidDensityTemperatureRelation operator+(const LiquidDensityTemperatureRelation relation, const LiquidDensityTemperatureRelation other)

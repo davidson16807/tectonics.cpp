@@ -1,7 +1,6 @@
 #pragma once
 
-namespace compound {
-namespace term {
+namespace math {
 
     struct Exponent {
         float weight;
@@ -89,4 +88,4 @@ namespace term {
         );
     }
 
-}}
+}

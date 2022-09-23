@@ -4,14 +4,14 @@
 #include <math/expression/Scaling.hpp>
 #include <math/expression/PolynomialRailyard.hpp>
 #include <math/expression/PolynomialRailyard_library.hpp>
-#include <models/compound/term/Exponentiated.hpp>
+#include <math/expression/Exponentiated.hpp>
 #include <units/si.hpp>
 
 namespace compound {
 namespace relation {
 
     template<typename Tx, typename Ty, int Plo, int Phi>
-    using ExponentiatedPolynomialRailyardRelation = Relation<Tx,Ty, term::Exponentiated<float, math::PolynomialRailyard<float,Plo,Phi>>>;
+    using ExponentiatedPolynomialRailyardRelation = Relation<Tx,Ty, math::Exponentiated<float, math::PolynomialRailyard<float,Plo,Phi>>>;
 
     // 175 uses
     template<typename Ty>

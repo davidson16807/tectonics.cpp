@@ -7,17 +7,16 @@
 #include <math/expression/Scaling.hpp>
 #include <math/expression/Polynomial.hpp>
 #include <math/expression/Clamped.hpp>
+#include <math/expression/Logarithm.hpp>
 #include <math/inspection.hpp>
 #include <units/si.hpp>
-
-#include <models/compound/term/Logarithm.hpp>
 
 #include "ExponentiatedPolynomialRailyardRelation.hpp"
 
 namespace compound {
 namespace relation {
 
-    using ClampedLogarithm = math::Clamped<double,term::Logarithm>;
+    using ClampedLogarithm = math::Clamped<double,math::Logarithm>;
 
     /*
     `LiquidPropertyExponentialTemperatureRelation` consolidates many kinds of expressions
@@ -174,7 +173,7 @@ namespace relation {
                 R(Tmax,   oo, P(p(Tmax))),
             }), 
             {
-                ClampedLogarithm(Tmin, Tmax, term::Logarithm(log_log))
+                ClampedLogarithm(Tmin, Tmax, math::Logarithm(log_log))
             }, 
             Tunits, yunits, 0.0);
     }

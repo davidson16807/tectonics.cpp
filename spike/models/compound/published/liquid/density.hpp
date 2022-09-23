@@ -17,12 +17,12 @@ namespace published {
                 // Perry equation 119, specialized for water
                 relation::LiquidDensityTemperatureRelation({}, 
                     {
-                        relation::ClampedDippr119(273.16f, 647.096f, term::Dippr119(+35.618f,     647.096f, 0.33f)),      
-                        relation::ClampedDippr119(273.16f, 647.096f, term::Dippr119(+19.655f,     647.096f, 0.66f)),     
-                        relation::ClampedDippr119(273.16f, 647.096f, term::Dippr119(-9.1306f,     647.096f, 5.0f/3.0f)),      
-                        relation::ClampedDippr119(273.16f, 647.096f, term::Dippr119(-31.367f,     647.096f, 16.0f/3.0f)),      
-                        relation::ClampedDippr119(273.16f, 647.096f, term::Dippr119(-813.56f,     647.096f, 43.0f/3.0f)),      
-                        relation::ClampedDippr119(273.16f, 647.096f, term::Dippr119(-17421000.0f, 647.096f, 110.0f/3.0f)),
+                        relation::ClampedDippr119(273.16f, 647.096f, dippr::Dippr119Term(+35.618f,     647.096f, 0.33f)),      
+                        relation::ClampedDippr119(273.16f, 647.096f, dippr::Dippr119Term(+19.655f,     647.096f, 0.66f)),     
+                        relation::ClampedDippr119(273.16f, 647.096f, dippr::Dippr119Term(-9.1306f,     647.096f, 5.0f/3.0f)),      
+                        relation::ClampedDippr119(273.16f, 647.096f, dippr::Dippr119Term(-31.367f,     647.096f, 16.0f/3.0f)),      
+                        relation::ClampedDippr119(273.16f, 647.096f, dippr::Dippr119Term(-813.56f,     647.096f, 43.0f/3.0f)),      
+                        relation::ClampedDippr119(273.16f, 647.096f, dippr::Dippr119Term(-17421000.0f, 647.096f, 110.0f/3.0f)),
                     }, si::kelvin, 18.015 * si::gram / si::decimeter3, 17.874f, 0.0f),
             },
         { ids::nitrogen,        // 0.4314*si::gram/si::centimeter3, // Johnson (1960), @ si::atmosphere, 125.01*si::kelvin

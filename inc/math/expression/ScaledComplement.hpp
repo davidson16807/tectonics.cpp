@@ -1,7 +1,6 @@
 #pragma once
 
-namespace compound {
-namespace term {
+namespace math {
 
     /* 
     `ScaledComplement<T,F>` is a trivial class that represents the function f∘g(x)=f(1-x/k), 
@@ -139,4 +138,4 @@ namespace term {
         return ScaledComplement<T,F>(fg.scale, compose(h, fg.f));
     }
 
-}}
+}

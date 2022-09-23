@@ -7,16 +7,16 @@
 #include <math/expression/Scaling.hpp>
 #include <math/expression/Polynomial.hpp>
 #include <math/expression/Clamped.hpp>
+#include <math/expression/Exponent.hpp>
+#include <math/expression/ScaledComplement.hpp>
 #include <math/inspection.hpp>
 #include <units/si.hpp>
 
-#include <models/compound/term/Exponent.hpp>
-#include <models/compound/term/ScaledComplement.hpp>
 
 namespace compound {
 namespace relation {
 
-    using ScaledComplementExponent = term::ScaledComplement<float,term::Exponent>;
+    using ScaledComplementExponent = math::ScaledComplement<float,math::Exponent>;
     using ClampedScaledComplementExponent = math::Clamped<float,ScaledComplementExponent>;
 
     /*
@@ -193,7 +193,7 @@ namespace relation {
     ){
         using F = ClampedScaledComplementExponent;
         using G = ScaledComplementExponent;
-        using H = term::Exponent;
+        using H = math::Exponent;
         return LiquidSurfaceTensionTemperatureRelation({
             F(Tmin, Tmax, G(Tc, H(sigma0, n0))),
             F(Tmin, Tmax, G(Tc, H(sigma1, n1))),
