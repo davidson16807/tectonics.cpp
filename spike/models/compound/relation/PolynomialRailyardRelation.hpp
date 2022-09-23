@@ -348,7 +348,7 @@ namespace relation {
                     R(0.0, T_max_johnson,         P(johnson)),            // johnson polynomial
                     R(T_max_johnson, T_min_perry, P(transition)),         // linear perry/johnson interpolation
                     R(T_min_perry, T_max_perry,   P(perry)),              // perry polynomial
-                    R(T_max_perry, oo,            P(perry(T_max_perry))), // perry polynomial
+                    R(T_max_perry, oo,            P(perry(T_max_perry))), // upper bound of perry
                 }), Tunits, y_units_johnson);
     }
     

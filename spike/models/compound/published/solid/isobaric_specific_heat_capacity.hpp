@@ -11,7 +11,7 @@
 namespace compound { 
 namespace published { 
 
-    using SolidHeatCapacityTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,si::specific_heat_capacity<double>, 0,1>;
+    using SolidHeatCapacityTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,si::specific_heat_capacity<double>, -2,3>;
     std::map<int, SolidHeatCapacityTemperatureRelation> isobaric_specific_heat_capacity_as_solid {
         { ids::water,   
                 relation::get_perry_johnson_temperature_function

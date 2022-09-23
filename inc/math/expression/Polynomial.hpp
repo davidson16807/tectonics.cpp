@@ -48,7 +48,8 @@ namespace math {
             std::copy(p.k.begin(), p.k.end(), k.begin());
         }
         // cast constructor
-        template <typename T2, int Qlo, int Qhi> 
+        template <typename T2, int Qlo, int Qhi, 
+            typename = std::enable_if_t<(Nlo <= Qlo&&Qhi <= Nhi)>> 
         constexpr Polynomial(const Polynomial<T2,Qlo,Qhi>& p): k()
         {
             std::fill(k.begin(), k.end(), T(0.0));
