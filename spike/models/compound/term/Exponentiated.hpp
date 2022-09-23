@@ -4,43 +4,42 @@ namespace compound {
 namespace term {
 
     /* 
-    `Exponentiated<T,F>` is a trivial class that represents the function f∘g(x)=f(1-x/k), 
-    where f is a template function object of type F.
+    `Exponentiated<T,F>` is a trivial class that represents the function f∘g(x)=argument(1-x/k), 
+    where argument is a template function object of type F.
     `Exponentiated<T,F>` was needed to provide a reoccuring pattern in chemistry 
     when dealing with equations of reduced temperature and pressure.
     */
     template<typename T, typename F>
     struct Exponentiated {
-        F f;
-        constexpr explicit Exponentiated<T,F>(const F f):
-            f(f),
-            scale(scale)
+        F argument;
+        constexpr explicit Exponentiated<T,F>(const F argument):
+            argument(argument)
         {}
         constexpr Exponentiated<T,F>(const Exponentiated<T,F>& expf):
-            f(expf.f)
+            argument(expf.argument)
         {}
         // zero constructor
         constexpr Exponentiated<T,F>():
-            f()
+            argument()
         {}
         // constant constructor
         constexpr Exponentiated<T,F>(T k):
-            f(std::log(k))
+            argument(std::log(k))
         {}
         constexpr T operator()(const T x) const
         {
-            return std::exp(f(x));
+            return std::exp(argument(x));
         }
 
         Exponentiated<T,F>& operator*=(const T k)
         {
-            f += k;
+            argument += k;
             return *this;
         }
 
         Exponentiated<T,F>& operator/=(const T k)
         {
-            f -= k;
+            argument -= k;
             return *this;
         }
     };
@@ -49,34 +48,34 @@ namespace term {
     template<typename T, typename F>
     constexpr Exponentiated<T,F> operator*(const Exponentiated<T,F>& expf, const T k)
     {
-        return Exponentiated<T,F>(expf.f+k);
+        return Exponentiated<T,F>(expf.argument+k);
     }
     template<typename T, typename F>
     constexpr Exponentiated<T,F> operator*(const T k, const Exponentiated<T,F>& expf)
     {
-        return Exponentiated<T,F>(k+expf.f);
+        return Exponentiated<T,F>(k+expf.argument);
     }
     template<typename T, typename F>
     constexpr Exponentiated<T,F> operator/(const Exponentiated<T,F>& expf, const T k)
     {
-        return Exponentiated<T,F>(expf.f-k);
+        return Exponentiated<T,F>(expf.argument-k);
     }
     template<typename T, typename F>
     constexpr Exponentiated<T,F> operator/(const T k, const Exponentiated<T,F>& expf)
     {
-        return Exponentiated<T,F>(k-expf.f);
+        return Exponentiated<T,F>(k-expf.argument);
     }
 
     // operators with reals that are closed under Exponentiated<T,F> relations
     template<typename T, typename F>
     constexpr Exponentiated<T,F> operator*(const Exponentiated<T,F>& expf, const Exponentiated<T,F>& expg)
     {
-        return Exponentiated<T,F>(expf.f+expg.f);
+        return Exponentiated<T,F>(expf.argument+expg.argument);
     }
     template<typename T, typename F>
     constexpr Exponentiated<T,F> operator/(const Exponentiated<T,F>& expf, const Exponentiated<T,F>& expg)
     {
-        return Exponentiated<T,F>(expf.f-expg.f);
+        return Exponentiated<T,F>(expf.argument-expg.argument);
     }
 
     /*
@@ -94,16 +93,16 @@ namespace term {
     template<typename T, typename F, typename G, typename FG>
     constexpr Exponentiated<T,FG> compose(const Exponentiated<T,F>& expf, const G g)
     {
-        return Exponentiated<T,FG>(compose(expf.f, g));
+        return Exponentiated<T,FG>(compose(expf.argument, g));
     }
 
     /*
     Given functions g and exp∘f, return the composite function g∘exp∘f.
     */
     template<typename T, typename F>
-    constexpr Exponentiated<T,F> compose(const Scaling<T> g, const Exponentiated<T,F>& expf)
+    constexpr Exponentiated<T,F> compose(const math::Scaling<T> g, const Exponentiated<T,F>& expf)
     {
-        return Exponentiated<T,F>(expf.f + std::log(g.factor));
+        return Exponentiated<T,F>(expf.argument + std::log(g.factor));
     }
 
 }}

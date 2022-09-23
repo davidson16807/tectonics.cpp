@@ -12,6 +12,8 @@
 
 #include <models/compound/term/Logarithm.hpp>
 
+#include "ExponentiatedPolynomialRailyardRelation.hpp"
+
 namespace compound {
 namespace relation {
 
@@ -80,6 +82,20 @@ namespace relation {
         {
         }
 
+        template<int Qlo, int Qhi>
+        constexpr LiquidPropertyExponentialTemperatureRelation(
+            const ExponentiatedPolynomialRailyardRelation<si::temperature<double>, Ty, Qlo,Qhi>& relation
+        ):
+            terms(relation.expression.argument),
+            logarithms(),
+
+            Tunits(relation.xunits),
+            yunits(relation.yunits),
+
+            known_max_fractional_error(0.0)
+        {
+        }
+
         constexpr LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi>& operator=(const LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi> other)
         {
             terms = other.terms;
@@ -139,7 +155,7 @@ namespace relation {
     };
 
     // 42 uses, for viscosity and vapor pressures of liquids
-    template<typename Ty, int Plo, int Phi>
+    template<int Plo, int Phi, typename Ty>
     LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi> get_dippr_temperature_relation_101(
         const si::temperature<double> Tunits, const Ty yunits,
         const double log_intercept, const double log_slope, const double log_log, const double log_exponentiated, const int exponent,
@@ -161,42 +177,6 @@ namespace relation {
                 ClampedLogarithm(Tmin, Tmax, term::Logarithm(log_log))
             }, 
             Tunits, yunits, 0.0);
-    }
-
-    // 175 uses
-    template<typename Ty, int Plo, int Phi>
-    LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi> get_exponential_interpolated_temperature_function(
-        const si::temperature<double> Tunits, const Ty yunits,
-        const std::vector<double>xs, 
-        const std::vector<double>ys
-    ){
-        assert(xs.size() == ys.size());
-        std::vector<double> logys;
-        for (std::size_t i=0; i<xs.size(); i++){
-            logys.push_back(std::log(ys[i]));
-        }
-        return relation::LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi>(
-            math::spline::linear_spline<double>(xs, logys), {},
-            Tunits, yunits, 0.0);
-    }
-
-    // 175 uses
-    template<typename Ty, int Plo, int Phi>
-    LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi> get_exponential_interpolated_temperature_function(
-        const si::celcius_type<double> Tunits, const Ty yunits,
-        const std::vector<double>xs, 
-        const std::vector<double>ys
-    ){
-        assert(xs.size() == ys.size());
-        std::vector<double> kelvins;
-        std::vector<double> logys;
-        for (std::size_t i=0; i<xs.size(); i++){
-            kelvins.push_back(xs[i]*Tunits/si::kelvin);
-            logys.push_back(std::log(ys[i]));
-        }
-        return relation::LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi>(
-            math::spline::linear_spline<double>(kelvins, logys), {},
-            si::kelvin, yunits, 0.0);
     }
 
     // // 175 uses

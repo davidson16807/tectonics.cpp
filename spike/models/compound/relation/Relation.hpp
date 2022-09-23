@@ -50,20 +50,10 @@ namespace relation {
         {
         }
 
-        // copy constructor
-        constexpr Relation(
-            const Relation<Tx, Ty, F>& other
-        ):
-            expression(other.expression),
-            xunits(other.xunits),
-            yunits(other.yunits)
-        {
-        }
-
-        // cast constructor
+        // cast expression constructor
         template<typename G>
         explicit constexpr Relation(
-            const G expression,
+            const G& expression,
             const Tx xunits,
             const Ty yunits
         ):
@@ -73,7 +63,17 @@ namespace relation {
         {
         }
 
-        // cast constructor
+        // copy relation constructor
+        constexpr Relation(
+            const Relation<Tx, Ty, F>& other
+        ):
+            expression(other.expression),
+            xunits(other.xunits),
+            yunits(other.yunits)
+        {
+        }
+
+        // cast relation constructor
         template<typename G>
         constexpr Relation(
             const Relation<Tx, Ty, G>& other
