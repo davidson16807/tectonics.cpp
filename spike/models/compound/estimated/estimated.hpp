@@ -132,23 +132,28 @@ namespace estimated{
     // // CALCULATE POSSIBLE ROUTES TO ACENTRIC FACTOR
 
     // vapor pressure, offers no bounds for validity and gives bad estimates at temperature extremes
-    // using SolidVaporPressureTemperatureRelation = published::SolidVaporPressureTemperatureRelation;
-    // std::map<int, SolidVaporPressureTemperatureRelation> vapor_pressure_as_solid = 
-    //     first<SolidVaporPressureTemperatureRelation>({
-    //         published::vapor_pressure_as_solid,
-    //         attempt<SolidVaporPressureTemperatureRelation>([](si::specific_energy<double> Hv, si::specific_energy<double> Hf, si::molar_mass<double> M, point<double> triple){
-    //                 double T3 = triple.temperature / si::kelvin;
-    //                 double P3 = triple.pressure / si::pascal;
-    //                 double k = ((Hv+Hf)*M / si::universal_gas_constant) * (1.0/si::kelvin);
-    //                 math::Polynomial<float,-1,1> p;
-    //                 p[0]  = std::log(P3) + (k/T3);
-    //                 p[-1] = -k;
-    //                 return relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>,si::pressure<double>,-1,1>(
-    //                     math::PolynomialRailyard<float,-1,1>(
-    //                         math::PolynomialRailcar<float,-1,1>(p)),
-    //                     si::kelvin, si::pascal);
-    //             }, published::latent_heat_of_vaporization, published::latent_heat_of_fusion, maybe(molar_mass), published::triple_point)
-    //     });
+    using SolidVaporPressureTemperatureRelation = published::SolidVaporPressureTemperatureRelation;
+    std::map<int, SolidVaporPressureTemperatureRelation> vapor_pressure_as_solid = 
+        first<SolidVaporPressureTemperatureRelation>({
+            published::vapor_pressure_as_solid,
+            attempt<SolidVaporPressureTemperatureRelation>([](si::specific_energy<double> Hv, si::specific_energy<double> Hf, si::molar_mass<double> M, point<double> triple){
+                    double T3 = triple.temperature / si::kelvin;
+                    double P3 = triple.pressure / si::pascal;
+                    double k = ((Hv+Hf)*M / si::universal_gas_constant) * (1.0/si::kelvin);
+                    float Tmax = triple.temperature/si::kelvin;
+                    float oo = std::numeric_limits<float>::max();
+                    using P = math::Polynomial<float,-1,1>;
+                    P p;
+                    p[0]  = std::log(P3) + (k/T3);
+                    p[-1] = -k;
+                    return relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>,si::pressure<double>,-1,1>(
+                        math::Railyard<float,P>({
+                            math::Railcar<float,P>(0.0f, Tmax, p),
+                            math::Railcar<float,P>(Tmax,   oo, P(p(Tmax)))
+                        }),
+                        si::kelvin, si::pascal);
+                }, published::latent_heat_of_vaporization, published::latent_heat_of_fusion, maybe(molar_mass), published::triple_point)
+        });
 
 }}
 

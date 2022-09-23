@@ -4,6 +4,7 @@
 #include "./solid/isobaric_specific_heat_capacity_test.cpp"
 #include "./solid/tensile_yield_strength_test.cpp"
 #include "./solid/extinction_coefficient_test.cpp"
+#include "./solid/vapor_pressure_test.cpp"
 #include "./solid/dynamic_viscosity_test.cpp"
 #include "./solid/tensile_fracture_strength_test.cpp"
 #include "./solid/shear_yield_strength_test.cpp"

@@ -202,7 +202,7 @@ namespace si{
 
     std::string to_string() const 
     {
-      std::array<std::string, 17> prefixes {"y","z","a","f","p","n","u","m","","k","M","G","T","P","E","Z","Y"};
+      std::array<std::string, 17> prefixes {"y","z","a","f","p","n","μ","m","","k","M","G","T","P","E","Z","Y"};
 
       // customize formatting for area and volume, which follow separate rules for prefix conversion
       if( M1 != 0 && (KG1|S1|K1|MOL1|A1|CD1) == 0)

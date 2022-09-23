@@ -140,6 +140,40 @@ namespace relation {
 
 
 
+    template<typename Ty>
+    ExponentiatedPolynomialRailyardRelation<si::temperature<double>,Ty,0,1> get_left_unbounded_exponential_interpolated_temperature_function(
+        const si::temperature<double> Tunits, const Ty yunits,
+        const std::vector<double>xs, 
+        const std::vector<double>ys
+    ){
+        assert(xs.size() == ys.size());
+        std::vector<double> logys;
+        for (std::size_t i=0; i<xs.size(); i++){
+            logys.push_back(std::log(ys[i]));
+        }
+        auto yard = math::spline::linear_spline<float>(xs, logys);
+        yard.cars[0].lo = 0.0f;
+        return relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>,Ty,0,1>(yard, Tunits, yunits);
+    }
+
+    // 175 uses
+    template<typename Ty>
+    ExponentiatedPolynomialRailyardRelation<si::temperature<double>,Ty,0,1> get_left_unbounded_exponential_interpolated_temperature_function(
+        const si::celcius_type<double> Tunits, const Ty yunits,
+        const std::vector<double>xs, 
+        const std::vector<double>ys
+    ){
+        assert(xs.size() == ys.size());
+        std::vector<double> kelvins;
+        std::vector<double> logys;
+        for (std::size_t i=0; i<xs.size(); i++){
+            kelvins.push_back(xs[i]*Tunits/si::kelvin);
+            logys.push_back(std::log(ys[i]));
+        }
+        auto yard = math::spline::linear_spline<float>(kelvins, logys);
+        yard.cars[0].lo = 0.0f;
+        return relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>,Ty,0,1>(yard, si::kelvin, yunits);
+    }
 
     // 175 uses
     template<typename Ty>
