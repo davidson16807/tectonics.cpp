@@ -5,13 +5,15 @@
 
 // in-house libraries
 #include <units/si.hpp>
+#include <math/expression/PolynomialRailyard.hpp>
+#include <models/compound/relation/Relation.hpp>
 #include <models/compound/relation/PolynomialRailyardRelation.hpp>
 #include <models/compound/ids.hpp>
 
 namespace compound { 
 namespace published { 
 
-    using LiquidExtinctionCoefficientWavenumberRelation = relation::PolynomialRailyardRelation<si::wavenumber<double>,double,0,1>;
+    using LiquidExtinctionCoefficientWavenumberRelation = relation::Relation<si::wavenumber<double>,double, math::PolynomialRailyard<float,0,1>>;
     std::map<int, LiquidExtinctionCoefficientWavenumberRelation> extinction_coefficient_as_liquid {
 
         { ids::water, 

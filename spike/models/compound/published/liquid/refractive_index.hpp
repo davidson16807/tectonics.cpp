@@ -4,13 +4,16 @@
 #include <map>
 
 // in-house libraries
+#include <units/si.hpp>
+#include <math/expression/PolynomialRailyard.hpp>
+#include <models/compound/relation/Relation.hpp>
 #include <models/compound/relation/PolynomialRailyardRelation.hpp>
 #include <models/compound/ids.hpp>
 
 namespace compound { 
 namespace published { 
 
-    using LiquidRefractiveIndexWavenumberRelation = relation::PolynomialRailyardRelation<si::wavenumber<double>,double,0,1>;
+    using LiquidRefractiveIndexWavenumberRelation = relation::Relation<si::wavenumber<double>,double, math::PolynomialRailyard<float,0,1>>;
     std::map<int, LiquidRefractiveIndexWavenumberRelation> refractive_index_as_liquid {
         { ids::water,       //1.33336,
                 relation::get_spectral_linear_interpolation_function_of_wavelength

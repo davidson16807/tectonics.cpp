@@ -6,12 +6,13 @@
 // in-house libraries
 #include <units/si.hpp>
 #include <models/compound/relation/PolynomialRailyardRelation.hpp>
+#include <models/compound/relation/PolynomialRailyardRelation.hpp>
 #include <models/compound/ids.hpp>
 
 namespace compound { 
 namespace published { 
 
-    using LiquidThermalConductivityTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,si::thermal_conductivity<double>,0,4>;
+    using LiquidThermalConductivityTemperatureRelation = relation::Relation<si::temperature<double>,si::thermal_conductivity<double>, math::PolynomialRailyard<float,0,4>>;
     std::map<int, LiquidThermalConductivityTemperatureRelation> thermal_conductivity_as_liquid {
         { ids::water,   
                 relation::get_dippr_quartic_temperature_relation_100

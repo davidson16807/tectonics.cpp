@@ -41,7 +41,7 @@ namespace estimated{
     auto formula = published::formula;
     
     auto atoms_per_molecule = published::atoms_per_molecule;
-    auto freezing_point_sample = published::freezing_point_sample;
+    auto freezing_sample_point = published::freezing_sample_point;
     auto molar_mass = published::molar_mass;
 
     // via Klincewicz
@@ -78,55 +78,65 @@ namespace estimated{
     std::vector<point<double>> critical_point = 
         derive<point<double>>([](si::pressure<double> p, si::temperature<double> T){ return point<double>(p,T); }, critical_point_pressure, critical_point_temperature);
 
-    std::vector<point<double>> solid_point_sample = 
-        derive<point<double>>([](point<double> freezing){ return freezing.temperature > standard.temperature? standard : freezing; }, freezing_point_sample);
+    std::vector<point<double>> solid_sample_point = 
+        derive<point<double>>([](point<double> freezing){ return freezing.temperature > standard.temperature? standard : freezing; }, freezing_sample_point);
 
-    std::vector<point<double>> liquid_point_sample = 
+    std::vector<point<double>> liquid_sample_point = 
         complete(
             attempt<point<double>>([](point<double> freezing, point<double> boiling){ 
                         return freezing.temperature < standard.temperature && standard.temperature < boiling.temperature? standard : (freezing + boiling)/2.0; }, 
-                    maybe(freezing_point_sample), published::boiling_point_sample),
-            freezing_point_sample
+                    maybe(freezing_sample_point), published::boiling_sample_point),
+            freezing_sample_point
         );
 
-    std::vector<point<double>> gas_point_sample = 
+    std::vector<point<double>> gas_sample_point = 
         complete(
-            attempt<point<double>>([](point<double> boiling){ return boiling.temperature < standard.temperature? standard : boiling; }, published::boiling_point_sample),
+            attempt<point<double>>([](point<double> boiling){ return boiling.temperature < standard.temperature? standard : boiling; }, published::boiling_sample_point),
             critical_point
         );
 
 
 
     // via Klincewicz -> Ihmels -> Tee-Gotoh-Steward -> Bird-Steward-Lightfoot2
-    std::vector<relation::LiquidDensityTemperatureRelation> density_as_liquid = 
+    using LiquidDensityTemperatureRelation = published::LiquidDensityTemperatureRelation;
+    std::vector<LiquidDensityTemperatureRelation> density_as_liquid = 
         complete(published::density_as_liquid, 
-            derive<relation::LiquidDensityTemperatureRelation>([](si::molar_mass<double> M, si::length<double> sigma){
-                    return relation::LiquidDensityTemperatureRelation(M / property::estimate_molar_volume_as_liquid_from_bird_steward_lightfoot_2(sigma));}, 
+            derive<LiquidDensityTemperatureRelation>([](si::molar_mass<double> M, si::length<double> sigma){
+                    return LiquidDensityTemperatureRelation(M / property::estimate_molar_volume_as_liquid_from_bird_steward_lightfoot_2(sigma));}, 
                 molar_mass, molecular_diameter));
 
     // via Klincewicz -> Ihmels -> definition of compressibility -> definition of compressibility
-    std::vector<relation::GasDensityStateRelation> density_as_gas = 
-        derive<relation::GasDensityStateRelation>([](si::molar_mass<double> M, si::pressure<double> pc, si::temperature<double> Tc, double Zc){
-                return relation::GasDensityStateRelation(M,pc,Tc,Zc);}, 
+    using GasDensityStateRelation = relation::GasDensityStateRelation;
+    std::vector<GasDensityStateRelation> density_as_gas = 
+        derive<GasDensityStateRelation>([](si::molar_mass<double> M, si::pressure<double> pc, si::temperature<double> Tc, double Zc){
+                return GasDensityStateRelation(M,pc,Tc,Zc);}, 
             molar_mass, critical_point_pressure, critical_point_temperature, critical_point_compressibility);
 
-    // via Klincewicz -> Ihmels -> Tee-Gotoh-Steward -> Bird-Steward-Lightfoot2 -> Goodman
-    using SolidDensityTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,si::density<double>,0,1>;
+    // via Klincewicz -> Ihmels -> Tee-Gotoh-Steward -> Bird-Steward-Lightfoot2 -> Goodman (with speculative fallback)
+    using SolidDensityTemperatureRelation = published::SolidDensityTemperatureRelation;
     std::vector<SolidDensityTemperatureRelation> density_as_solid = 
         complete(
-            first(std::vector<std::map<int, SolidDensityTemperatureRelation>>{
+            first<SolidDensityTemperatureRelation>({
                 published::density_as_solid, 
-                attempt<SolidDensityTemperatureRelation>([](si::molar_mass<double> M, relation::LiquidDensityTemperatureRelation rhol, point<double> liquid, point<double> triple){
+                attempt<SolidDensityTemperatureRelation>([](si::molar_mass<double> M, LiquidDensityTemperatureRelation rhol, point<double> liquid, point<double> triple){
                         return SolidDensityTemperatureRelation(M / property::estimate_molar_volume_as_solid_from_goodman(M / rhol(liquid.temperature), liquid.temperature, triple.temperature));}, 
-                    maybe(molar_mass), maybe(density_as_liquid), maybe(liquid_point_sample), published::triple_point),
+                    maybe(molar_mass), maybe(density_as_liquid), maybe(liquid_sample_point), published::triple_point),
             }),
-            derive<SolidDensityTemperatureRelation>([](relation::LiquidDensityTemperatureRelation rhol, point<double> liquid){
+            derive<SolidDensityTemperatureRelation>([](LiquidDensityTemperatureRelation rhol, point<double> liquid){
                     return property::guess_density_as_solid_from_density_as_liquid(rhol(liquid.temperature));}, 
-                density_as_liquid, liquid_point_sample) // WARNING: results are speculative
+                density_as_liquid, liquid_sample_point) // WARNING: results are speculative
         );
 
-}}
 
+
+    // // CALCULATE POSSIBLE ROUTES TO ACENTRIC FACTOR
+    // using SolidVaporPressureTemperatureRelation = published::SolidVaporPressureTemperatureRelation;
+    // std::vector<SolidVaporPressureTemperatureRelation> 
+
+
+
+
+}}
 
 
 
@@ -141,64 +151,7 @@ namespace estimated{
         // auto k = si::boltzmann_constant;
         double Zc = known.critical_point_compressibility;
 
-        StateParameterSamples samples(guess);
 
-        // CALCULATE DENSITY
-        
-        // Solids are ordered by some measure of relevance. 
-        // For instance, water.solids[0] is ice I, the form we are most familiar with. 
-        // For this reason, we treat the first solid in the array with priveleged status,
-        // and we infer its missing properties from other solid phases 
-        // before using it to infer properties for the rest of the solid.
-        // This save us from having to perform a O(N²) algorithm where everything is inferred from everything else.
-        for (std::size_t i = 1; i < guess.solids.size(); i++)
-        {
-            guess.solids[0] = guess.solids[0].value_or(guess.solids[i]);
-        }
-        for (std::size_t i = 1; i < guess.solids.size(); i++)
-        {
-            guess.solids[i] = guess.solids[i].value_or(guess.solids[0]);
-        }
-
-
-        for (std::size_t i = 0; i < guess.solids.size(); i++)
-        {
-            guess.solids[i].density = guess.solids[i].density.value_or(
-                [M](field::StateParameters parameters, si::density<double> density_as_liquid, si::temperature<double> triple_point_temperature){ 
-                    return M / property::estimate_molar_volume_as_solid_from_goodman(M / density_as_liquid, parameters.temperature, triple_point_temperature); 
-                },
-                guess.liquid.density,
-                guess.triple_point_temperature
-            );
-        }
-
-        // if (guess.solids.size() > 0)
-        // {
-        //     guess.liquid.density = guess.liquid.density.value_or(
-        //         [M](field::StateParameters parameters, si::density<double> density_as_solid, si::temperature<double> triple_point_temperature){ 
-        //             return M / property::estimate_molar_volume_as_liquid_from_goodman(M / density_as_solid, parameters.temperature, triple_point_temperature); 
-        //         },
-        //         guess.solids[0].density,
-        //         guess.triple_point_temperature
-        //     );
-        // }
-
-        if (guess.solids.size() > 0)
-        {
-            guess.triple_point_temperature = guess.triple_point_temperature.value_or(
-                [M](field::StateParameters parameters, si::density<double> density_as_liquid, si::density<double> density_as_solid){ 
-                    auto estimate = property::estimate_triple_point_temperature_from_goodman(M / density_as_liquid, M / density_as_solid, parameters.temperature);
-                    return estimate > 0.0 * si::kelvin? 
-                        field::OptionalConstantField<si::temperature<double>>(estimate) : 
-                        field::OptionalConstantField<si::temperature<double>>();
-                },
-                samples.liquid,
-                guess.liquid.density,
-                guess.solids[0].density
-            );
-        }
-
-        // CALCULATE POSSIBLE ROUTES TO ACENTRIC FACTOR
         for (std::size_t i = 0; i < guess.solids.size(); i++)
         {
             guess.solids[i].vapor_pressure = guess.solids[i].vapor_pressure.value_or( 
@@ -340,21 +293,21 @@ namespace estimated{
 
         // CALCULATE MISCELLANEOUS PROPERTIES
         guess.liquid.thermal_conductivity = guess.liquid.thermal_conductivity.value_or(
-            [M, Tc](field::StateParameters parameters, si::temperature<double> boiling_point_sample_temperature){
+            [M, Tc](field::StateParameters parameters, si::temperature<double> boiling_sample_point_temperature){
                 return property::estimate_thermal_conductivity_as_liquid_from_sato_riedel(
-                    M, parameters.temperature, boiling_point_sample_temperature, Tc
+                    M, parameters.temperature, boiling_sample_point_temperature, Tc
                 );
             },
-            guess.boiling_point_sample_temperature
+            guess.boiling_sample_point_temperature
         );
 
         guess.liquid.thermal_conductivity = guess.liquid.thermal_conductivity.value_or(
-            [M](field::StateParameters parameters, si::temperature<double> freezing_point_sample_temperature){
+            [M](field::StateParameters parameters, si::temperature<double> freezing_sample_point_temperature){
                 return property::estimate_thermal_conductivity_as_liquid_from_sheffy_johnson(
-                    M, parameters.temperature, freezing_point_sample_temperature
+                    M, parameters.temperature, freezing_sample_point_temperature
                 );
             },
-            guess.freezing_point_sample_temperature
+            guess.freezing_sample_point_temperature
         );
 
         guess.gas.dynamic_viscosity = guess.gas.dynamic_viscosity.value_or(
@@ -403,22 +356,6 @@ namespace estimated{
             guess.gas.isobaric_specific_heat_capacity
         );
 
-        for (std::size_t i = 0; i < guess.solids.size(); i++)
-        {
-            guess.solids[i] = compound::phase::infer(guess.solids[i]);
-        }
-        for (std::size_t i = 1; i < guess.solids.size(); i++)
-        {
-            guess.solids[0] = guess.solids[0].value_or(guess.solids[i]);
-        }
-        for (std::size_t i = 1; i < guess.solids.size(); i++)
-        {
-            guess.solids[i] = guess.solids[i].value_or(guess.solids[0]);
-        }
-        for (std::size_t i = 0; i < guess.solids.size(); i++)
-        {
-            guess.solids[i] = compound::phase::infer(guess.solids[i]);
-        }
 
         return guess;
     }
@@ -429,25 +366,6 @@ namespace estimated{
         PartlyKnownCompound guess = known;
         int A = known.atoms_per_molecule;
 
-        for (std::size_t i = 0; i < guess.solids.size(); i++)
-        {
-            guess.solids[i].density = guess.solids[i].density.value_or( 
-                [](field::StateParameters parameters, si::density<double> density_as_liquid){ 
-                    return property::guess_density_as_solid_from_density_as_liquid(density_as_liquid); 
-                },
-                guess.liquid.density
-            );
-        }
-
-        if (guess.solids.size() > 0)
-        {
-            guess.liquid.density = guess.liquid.density.value_or( 
-                [](field::StateParameters parameters, si::density<double> density_as_solid){ 
-                    return property::guess_density_as_liquid_from_density_as_solid(density_as_solid); 
-                },
-                guess.solids[0].density
-            );
-        }
 
         for (std::size_t i = 0; i < guess.solids.size(); i++)
         {

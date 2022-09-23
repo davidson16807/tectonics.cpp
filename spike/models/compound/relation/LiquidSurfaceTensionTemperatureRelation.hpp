@@ -81,7 +81,7 @@ namespace relation {
             const relation::PolynomialRailyardRelation<si::temperature<double>, si::surface_energy<double>, 0, 1> relation
         ):
             terms(),
-            yard(relation.yard),
+            yard(relation.expression),
 
             Tunits(relation.xunits),
             yunits(relation.yunits),
@@ -94,7 +94,7 @@ namespace relation {
             const relation::PolynomialRailyardRelation<si::temperature<double>, si::surface_energy<double>, 0, 2> relation
         ):
             terms(),
-            yard(relation.yard),
+            yard(relation.expression),
 
             Tunits(relation.xunits),
             yunits(relation.yunits),

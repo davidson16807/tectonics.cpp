@@ -4,13 +4,16 @@
 #include <map>
 
 // in-house libraries
+#include <units/si.hpp>
+#include <math/expression/PolynomialRailyard.hpp>
+#include <models/compound/relation/Relation.hpp>
 #include <models/compound/relation/PolynomialRailyardRelation.hpp>
 #include <models/compound/ids.hpp>
 
 namespace compound { 
 namespace published { 
 
-    using SolidVaporPressureTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,si::pressure<double>,0,1>;
+    using SolidVaporPressureTemperatureRelation = relation::Relation<si::temperature<double>,si::pressure<double>, math::PolynomialRailyard<float,0,1>>;
     std::map<int, SolidVaporPressureTemperatureRelation> vapor_pressure_as_solid {
         { ids::water,                   
                 relation::get_linear_interpolation_function

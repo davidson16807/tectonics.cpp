@@ -6,6 +6,7 @@
 // in-house libraries
 #include <units/si.hpp>
 #include <models/compound/relation/LiquidPropertyExponentialTemperatureRelation.hpp>
+#include <models/compound/relation/PolynomialRailyardRelation.hpp>
 #include <models/compound/ids.hpp>
 
 namespace compound { 
