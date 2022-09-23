@@ -19,15 +19,15 @@ namespace spline {
     ){
         assert(x.size() == y.size());
         assert(x.size() >= 1);
-        using F = Polynomial<T,0,1>;
-        using G = Railcar<T,F>;
+        using P = Polynomial<T,0,1>;
+        using R = Railcar<T,P>;
         const T oo = std::numeric_limits<T>::max();
-        std::vector<G> pieces;
-        pieces.push_back(G(-oo, T(x[0]), F(T(y[0]))));
+        std::vector<R> pieces;
+        pieces.push_back(R(-oo, T(x[0]), P(T(y[0]))));
         for (std::size_t i=1; i<x.size(); i++)
         {
             assert(x[i] > x[i-1]);
-            pieces.push_back(G(
+            pieces.push_back(R(
                 T(x[i-1]), T(x[i]), 
                 linear_newton_polynomial(
                     T(x[i-1]), T(x[i]),   
@@ -35,8 +35,37 @@ namespace spline {
                 )));
         }
         std::size_t last = y.size()-1;
-        pieces.push_back(G(T(x[last]), oo, F(T(y[last]))));
+        pieces.push_back(R(T(x[last]), oo, P(T(y[last]))));
         return PolynomialRailyard<T,0,1>(pieces);
+    }
+
+
+    template<typename T, typename T2> 
+    PolynomialRailyard<T,-1,0> inverse_linear_spline(
+        const std::vector<T2> x,
+        const std::vector<T2> y
+    ){
+        assert(x.size() == y.size());
+        assert(x.size() >= 1);
+        using P = Polynomial<T,-1,0>;
+        using R = Railcar<T,P>;
+        const T oo = std::numeric_limits<T>::max();
+        std::vector<R> pieces;
+        pieces.push_back(R(-oo, T(x[0]), P(T(y[0]))));
+        for (std::size_t i=1; i<x.size(); i++)
+        {
+            assert(x[i] > x[i-1]);
+            const T x1 = T(1)/T(x[i]);
+            const T x2 = T(1)/T(x[i-1]);
+            const T y1 = T(y[i]);
+            const T y2 = T(y[i-1]);
+            const T dfdx = (y2-y1) / (x2-x1);
+            auto p = y1 + dfdx / Identity<T>();
+            pieces.push_back(R(T(x[i-1]), T(x[i]), p));
+        }
+        std::size_t last = y.size()-1;
+        pieces.push_back(R(T(x[last]), oo, P(T(y[last]))));
+        return PolynomialRailyard<T,-1,0>(pieces);
     }
 
 

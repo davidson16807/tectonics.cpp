@@ -179,25 +179,6 @@ namespace relation {
             Tunits, yunits, 0.0);
     }
 
-    // // 175 uses
-    // template<typename Ty, int Plo, int Phi>
-    // LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi> get_exponential_interpolated_inverse_temperature_function(
-    //     const si::temperature<double> Tunits, const Ty yunits,
-    //     const std::vector<double>xs,
-    //     const std::vector<double>ys
-    // ){
-    //     assert(xs.size() == ys.size());
-    //     std::vector<double> invxs;
-    //     std::vector<double> logys;
-    //     for (std::size_t i=0; i<logys.size(); i++){
-    //         invxs.push_back(1.0f/xs[i]);
-    //         logys.push_back(std::log(ys[i]));
-    //     }
-    //     return relation::LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi>(
-    //         math::compose(math::spline::linear_spline<double>(invxs, logys), math::Polynomial<double,-1,-1>), {},
-    //         Tunits, yunits, 0.0f);
-    // }
-
     template<typename Ty, int Plo, int Phi>
     LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi> operator*(const LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi> relation, const LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi> other)
     {

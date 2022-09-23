@@ -47,5 +47,22 @@ namespace relation {
             math::spline::linear_spline<float>(kelvins, logys), si::kelvin, yunits);
     }
 
+
+    // 175 uses
+    template<typename Ty>
+    ExponentiatedPolynomialRailyardRelation<si::temperature<double>,Ty,-1,0> get_exponential_interpolated_inverse_temperature_function(
+        const si::temperature<double> Tunits, const Ty yunits,
+        const std::vector<double>xs,
+        const std::vector<double>ys
+    ){
+        assert(xs.size() == ys.size());
+        std::vector<double> logys;
+        for (std::size_t i=0; i<xs.size(); i++){
+            logys.push_back(std::log(ys[i]));
+        }
+        return relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>,Ty,-1,0>(
+            math::spline::inverse_linear_spline<float>(xs, logys), Tunits, yunits);
+    }
+
 }}
 

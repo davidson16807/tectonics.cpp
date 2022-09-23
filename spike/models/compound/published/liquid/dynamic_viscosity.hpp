@@ -173,24 +173,24 @@ namespace published {
         // { ids::goethite,     },
         // { ids::pyrite,       },
         // { ids::hematite,     },
-        // { ids::gold,      
-        //             relation::get_exponential_interpolated_inverse_temperature_function<-1,10>
-        //                 (si::kelvin, si::centipoise,
-        //                  std::vector<double>{0.6, 0.725}, 
-        //                  std::vector<double>{4.0, 5.3  }), // Chapman (1966)
-        //     },
-        // { ids::silver,      
-        //             relation::get_exponential_interpolated_inverse_temperature_function<-1,10>
-        //                 (si::kelvin, si::centipoise,
-        //                  std::vector<double>{0.6, 0.8}, 
-        //                  std::vector<double>{2.4, 4.0}), // Chapman (1966)
-        //     },
-        // { ids::copper,      
-        //             relation::get_exponential_interpolated_inverse_temperature_function<-1,10>
-        //                 (si::kelvin, si::centipoise,
-        //                  std::vector<double>{0.6, 0.725}, 
-        //                  std::vector<double>{2.4, 5.0  }), // Chapman (1966)
-        //     },
+        { ids::gold,      
+                relation::get_exponential_interpolated_inverse_temperature_function
+                    (si::kelvin, si::centipoise,
+                     std::vector<double>{0.6, 0.725}, 
+                     std::vector<double>{4.0, 5.3  }), // Chapman (1966)
+            },
+        { ids::silver,      
+                relation::get_exponential_interpolated_inverse_temperature_function
+                    (si::kelvin, si::centipoise,
+                     std::vector<double>{0.6, 0.8}, 
+                     std::vector<double>{2.4, 4.0}), // Chapman (1966)
+            },
+        { ids::copper,      
+                relation::get_exponential_interpolated_inverse_temperature_function
+                    (si::kelvin, si::centipoise,
+                     std::vector<double>{0.6, 0.725}, 
+                     std::vector<double>{2.4, 5.0  }), // Chapman (1966)
+            },
         // { ids::magnetite,    },
         // { ids::chalcocite,   },
         // { ids::chalcopyrite, },
