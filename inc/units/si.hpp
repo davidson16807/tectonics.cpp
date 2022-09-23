@@ -230,18 +230,20 @@ namespace si{
         return prefixed_value + " " + prefix + "K";
       }
 
+      using triple = std::array<int,3>;
+      using pair = std::pair<triple, std::string>;
       // customize formatting for common derived units for pretty printing
-      std::array<std::pair<std::array<int,3>, std::string>, 10> named_mks {
-        std::pair<std::array<int,3>, std::string>{std::array<int,3>{ 1,1,-2}, "N"},
-        std::pair<std::array<int,3>, std::string>{std::array<int,3>{ 2,1,-2}, "N*m"},
-        std::pair<std::array<int,3>, std::string>{std::array<int,3>{-1,1,-2}, "Pa"},
-        std::pair<std::array<int,3>, std::string>{std::array<int,3>{-1,1,-1}, "Pa*s"},
-        std::pair<std::array<int,3>, std::string>{std::array<int,3>{ 2,1,-2}, "J"},
-        std::pair<std::array<int,3>, std::string>{std::array<int,3>{ 2,0,-2}, "J/kg"},
-        std::pair<std::array<int,3>, std::string>{std::array<int,3>{ 2,1,-3}, "W"},
-        std::pair<std::array<int,3>, std::string>{std::array<int,3>{ 1,1,-3}, "W/m"},
-        std::pair<std::array<int,3>, std::string>{std::array<int,3>{ 0,1,-3}, "W/m2"},
-        std::pair<std::array<int,3>, std::string>{std::array<int,3>{ 0,1,-2}, "N/m"},
+      std::array<pair, 10> named_mks {
+        pair({ 1,1,-2}, "N"),
+        pair({ 2,1,-2}, "N*m"),
+        pair({-1,1,-2}, "Pa"),
+        pair({-1,1,-1}, "Pa*s"),
+        pair({ 2,1,-2}, "J"),
+        pair({ 2,0,-2}, "J/kg"),
+        pair({ 2,1,-3}, "W"),
+        pair({ 1,1,-3}, "W/m"),
+        pair({ 0,1,-3}, "W/m2"),
+        pair({ 0,1,-2}, "N/m"),
       };
       for(std::size_t i(0); i < named_mks.size(); ++i)
       {
