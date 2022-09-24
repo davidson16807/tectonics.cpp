@@ -247,6 +247,17 @@ namespace relation {
     //     return PolynomialRailyardRelation<Tx,float,Plo,Phi>(yard, 1.0f/cast.xunits, 1.0f);
     // }
 
+    template<typename Tx, typename Ty, int Plo, int Phi>
+    PolynomialRailyardRelation<Tx,Ty,Plo,Phi> linear_mix(const std::vector<PolynomialRailyardRelation<Tx,Ty,Plo,Phi>>& relations, const std::vector<float>& ratios)
+    {
+        PolynomialRailyardRelation<Tx,Ty,Plo,Phi> result;
+        for (std::size_t i=0; i<relations.size(); i++){
+            const float Tscale = float(relations[i].xunits / result.xunits);
+            const float yscale = float(relations[i].yunits / result.yunits);
+            result.yard += yscale * ratios[i] * compose(relations[i].yard, analytic::Scaling(Tscale));
+        }
+        return result;
+    }
 
     template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
     float distance(
