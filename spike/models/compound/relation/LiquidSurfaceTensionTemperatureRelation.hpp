@@ -16,7 +16,7 @@
 namespace compound {
 namespace relation {
 
-    using ScaledComplementExponent = math::ScaledComplement<float,math::Exponent>;
+    using ScaledComplementExponent = math::ScaledComplement<float,math::Exponent<float>>;
     using ClampedScaledComplementExponent = math::Clamped<float,ScaledComplementExponent>;
 
     /*
@@ -193,7 +193,7 @@ namespace relation {
     ){
         using F = ClampedScaledComplementExponent;
         using G = ScaledComplementExponent;
-        using H = math::Exponent;
+        using H = math::Exponent<float>;
         return LiquidSurfaceTensionTemperatureRelation({
             F(Tmin, Tmax, G(Tc, H(sigma0, n0))),
             F(Tmin, Tmax, G(Tc, H(sigma1, n1))),

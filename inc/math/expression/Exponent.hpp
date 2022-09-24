@@ -2,10 +2,11 @@
 
 namespace math {
 
+    template<typename T>
     struct Exponent {
-        float weight;
-        float exponent;
-        constexpr explicit Exponent(const float weight, const float exponent):
+        T weight;
+        T exponent;
+        constexpr explicit Exponent(const T weight, const T exponent):
             weight(weight),
             exponent(exponent)
         {}
@@ -15,62 +16,69 @@ namespace math {
             exponent(1.0f)
         {}
         // constant constructor
-        constexpr explicit Exponent(const float k):
+        constexpr explicit Exponent(const T k):
             weight(k),
             exponent(0.0f)
         {}
-        constexpr Exponent(const Exponent& f):
+        constexpr Exponent(const Exponent<T>& f):
             weight(f.weight),
             exponent(f.exponent)
         {}
-        constexpr float operator()(const float x) const
+        constexpr T operator()(const T x) const
         {
             return weight*std::pow(x, exponent);
         }
-        constexpr Exponent& operator*=(const float k)
+        constexpr Exponent<T>& operator*=(const T k)
         {
             weight *= k;
             return *this;
         }
-        constexpr Exponent& operator/=(const float k)
+        constexpr Exponent<T>& operator/=(const T k)
         {
             weight /= k;
             return *this;
         }
     };
 
-    constexpr Exponent operator*(const Exponent f, const float k)
+    template<typename T>
+    constexpr Exponent<T> operator*(const Exponent<T>& f, const T k)
     {
-        return Exponent(f.weight*k, f.exponent);
+        return Exponent<T>(f.weight*k, f.exponent);
     }
-    constexpr Exponent operator*(const float k, const Exponent f)
+    template<typename T>
+    constexpr Exponent<T> operator*(const T k, const Exponent<T>& f)
     {
-        return Exponent(f.weight*k, f.exponent);
+        return Exponent<T>(f.weight*k, f.exponent);
     }
-    constexpr Exponent operator/(const Exponent f, const float k)
+    template<typename T>
+    constexpr Exponent<T> operator/(const Exponent<T>& f, const T k)
     {
-        return Exponent(f.weight/k, f.exponent);
+        return Exponent<T>(f.weight/k, f.exponent);
     }
-    constexpr Exponent operator/(const float k, const Exponent f)
+    template<typename T>
+    constexpr Exponent<T> operator/(const T k, const Exponent<T>& f)
     {
-        return Exponent(k/f.weight, -f.exponent);
+        return Exponent<T>(k/f.weight, -f.exponent);
     }
 
-    constexpr Exponent compose(const Exponent f, const math::Scaling<float> g)
+    template<typename T>
+    constexpr Exponent<T> compose(const Exponent<T>& f, const math::Scaling<T> g)
     {
-        return Exponent(
+        return Exponent<T>(
             f.weight*std::pow(g.factor, f.exponent),
             f.exponent
         );
     }
 
-    constexpr float maximum(const Exponent& f, const float lo, const float hi)
+    template<typename T>
+    constexpr T maximum(const Exponent<T>& f, const T lo, const T hi)
     {
         // function is monotonic, so solution must be either lo or hi
         return f(hi) > f(lo)? hi : lo;
     }
 
-    constexpr float minimum(const Exponent& f, const float lo, const float hi) 
+    template<typename T>
+    constexpr T minimum(const Exponent<T>& f, const T lo, const T hi) 
     {
         // function is monotonic, so solution must be either lo or hi
         return f(hi) < f(lo)? hi : lo;
@@ -80,12 +88,19 @@ namespace math {
     `max_distance` measures the largest absolute difference between the output of two functions over the given range.
     This is useful when determining whether two functions should be consolidated when used in a larger equation.
     */
-    constexpr float max_distance(const Exponent relation1, const Exponent relation2, const float lo, const float hi)
+    template<typename T>
+    constexpr T max_distance(const Exponent<T>& relation1, const Exponent<T>& relation2, const T lo, const T hi)
     {
         return std::max(
             std::abs(relation1(hi)-relation2(hi)),
             std::abs(relation1(lo)-relation2(lo))
         );
+    }
+
+    template<typename T>
+    constexpr Exponent<T> pow(const Identity<T>& e, const T exponent)
+    {
+        return Exponent<T>(T(1), exponent);
     }
 
 }

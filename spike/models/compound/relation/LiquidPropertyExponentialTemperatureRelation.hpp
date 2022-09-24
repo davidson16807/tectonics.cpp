@@ -7,7 +7,7 @@
 #include <math/expression/Scaling.hpp>
 #include <math/expression/Polynomial.hpp>
 #include <math/expression/Clamped.hpp>
-#include <math/expression/Logarithm.hpp>
+#include <math/expression/NaturalLogarithm.hpp>
 #include <math/inspection.hpp>
 #include <units/si.hpp>
 
@@ -16,7 +16,7 @@
 namespace compound {
 namespace relation {
 
-    using ClampedLogarithm = math::Clamped<double,math::Logarithm>;
+    using ClampedLogarithm = math::Clamped<float,math::NaturalLogarithm<float>>;
 
     /*
     `LiquidPropertyExponentialTemperatureRelation` consolidates many kinds of expressions
@@ -173,7 +173,7 @@ namespace relation {
                 R(Tmax,   oo, P(p(Tmax))),
             }), 
             {
-                ClampedLogarithm(Tmin, Tmax, math::Logarithm(log_log))
+                ClampedLogarithm(Tmin, Tmax, math::NaturalLogarithm<float>(log_log))
             }, 
             Tunits, yunits, 0.0);
     }

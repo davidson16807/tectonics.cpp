@@ -104,4 +104,10 @@ namespace math {
         return Exponentiated<T,F>(expf.argument + std::log(g.factor));
     }
 
+
+    template<typename T, typename F>
+    constexpr Exponentiated<T,F> exp(const F& f)
+    {
+        return Exponentiated<T,F>(f);
+    }
 }
