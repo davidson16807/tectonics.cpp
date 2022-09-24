@@ -28,11 +28,15 @@ namespace math {
             p(p), 
             q(q)
         {}
-        template <int P2lo, int P2hi, int Q2lo, int Q2hi> 
-        constexpr Rational(const Rational<T,P2lo,P2hi,Q2lo,Q2hi>& r): 
-            p(r.p), 
-            q(r.q)
-        {}
+        // zero constructor
+        constexpr explicit Rational(): 
+            p(), 
+            q()
+        {
+            p[0] = k;
+            q[0] = 1.0f;
+        }
+        // constant constructor
         constexpr explicit Rational(const T k): 
             p(), 
             q()
@@ -40,6 +44,13 @@ namespace math {
             p[0] = k;
             q[0] = 1.0f;
         }
+        // copy constructor
+        template <int P2lo, int P2hi, int Q2lo, int Q2hi> 
+        constexpr Rational(const Rational<T,P2lo,P2hi,Q2lo,Q2hi>& r): 
+            p(r.p), 
+            q(r.q)
+        {}
+        // cast constructors...
         constexpr explicit Rational(const Identity<T> e): 
             p(e), 
             q()
