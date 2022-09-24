@@ -509,24 +509,13 @@ namespace analytic {
         return f;
     }
 
-    template<typename T, typename F>
-    constexpr Railyard<T,F> compose(const Railyard<T,F>& f, const Shifting<T> g)
+    template<typename T, typename F, typename G>
+    constexpr Railyard<T,F> compose(const Railyard<T,F>& f, const G& g)
     {
         std::vector<Railcar<T,F>> cars;
         for (auto car: f.cars)
         {
-            cars.push_back( Railcar<T,F>(car.lo - g.offset, car.hi - g.offset, compose(car.content, g) ));
-        }
-        return Railyard(cars);
-    }
-
-    template<typename T, typename F>
-    constexpr Railyard<T,F> compose(const Railyard<T,F>& f, const Scaling<T> g)
-    {
-        std::vector<Railcar<T,F>> cars;
-        for (auto car: f.cars)
-        {
-            cars.push_back( Railcar<T,F>(car.lo/g.factor, car.hi/g.factor, compose(car.content, g) ));
+            cars.push_back( compose(car, g) );
         }
         return Railyard(cars);
     }

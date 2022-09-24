@@ -154,9 +154,9 @@ namespace analytic {
 
 
     template<typename T>
-    constexpr Scaling<T> inverse(const T k) 
+    constexpr Scaling<T> inverse(const Scaling<T> f) 
     {
-        return Scaling<T>(T(1)/k);
+        return Scaling<T>(T(1)/f.factor);
     }
 
 

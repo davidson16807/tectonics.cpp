@@ -79,9 +79,9 @@ namespace analytic {
 
 
     template<typename T>
-    constexpr Shifting<T> inverse(const T k) 
+    constexpr Shifting<T> inverse(const Shifting<T> f) 
     {
-        return Shifting<T>(-k);
+        return Shifting<T>(-f.offset);
     }
 
 

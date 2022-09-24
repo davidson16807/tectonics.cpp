@@ -715,7 +715,7 @@ namespace analytic {
 
 
     template<typename T>
-    constexpr Polynomial<T,0,1> inverse(const Polynomial<T,0,1> p) 
+    constexpr Polynomial<T,0,1> inverse(const Polynomial<T,0,1>& p) 
     {
         // we know:           y=a+bx
         // therefore: -a/b+1/by=x
@@ -723,10 +723,10 @@ namespace analytic {
     }
 
     template<typename T>
-    constexpr Polynomial<T,1,1> inverse(const Polynomial<T,1,1> p) 
+    constexpr Polynomial<T,1,1> inverse(const Polynomial<T,1,0>& p) 
     {
-        // we know:           y=ax
-        // therefore:      1/ay=x
+        // we know:        y=ax
+        // therefore:      y/a=x
         return Polynomial<T,1,1>(T(1)/p[1]);
     }
 
