@@ -4,20 +4,19 @@
 #include <algorithm>
 
 // in-house libraries
-#include <math/expression/Scaling.hpp>
-#include <math/expression/Polynomial.hpp>
-#include <math/expression/Clamped.hpp>
-#include <math/expression/Exponent.hpp>
-#include <math/expression/ScaledComplement.hpp>
-#include <math/inspection.hpp>
+#include <math/analytic/Scaling.hpp>
+#include <math/analytic/Polynomial.hpp>
+#include <math/analytic/Clamped.hpp>
+#include <math/analytic/Exponent.hpp>
+#include <math/analytic/ScaledComplement.hpp>
 #include <units/si.hpp>
 
 
 namespace compound {
 namespace relation {
 
-    using ScaledComplementExponent = math::ScaledComplement<float,math::Exponent<float>>;
-    using ClampedScaledComplementExponent = math::Clamped<float,ScaledComplementExponent>;
+    using ScaledComplementExponent = analytic::ScaledComplement<float,analytic::Exponent<float>>;
+    using ClampedScaledComplementExponent = analytic::Clamped<float,ScaledComplementExponent>;
 
     /*
     `LiquidSurfaceTensionTemperatureRelation` consolidates many kinds of expressions
@@ -26,7 +25,7 @@ namespace relation {
     class LiquidSurfaceTensionTemperatureRelation
     {
         std::vector<ClampedScaledComplementExponent> terms;
-        math::PolynomialRailyard<float, 0, 2> yard;
+        analytic::PolynomialRailyard<float, 0, 2> yard;
 
         si::temperature<double>    Tunits;
         si::surface_energy<double> yunits;
@@ -60,7 +59,7 @@ namespace relation {
 
         LiquidSurfaceTensionTemperatureRelation(
             const std::vector<ClampedScaledComplementExponent> terms,
-            const math::PolynomialRailyard<float, 0, 2> yard,
+            const analytic::PolynomialRailyard<float, 0, 2> yard,
 
             const si::temperature<double> Tunits,
             const si::surface_energy<double> yunits,
@@ -165,9 +164,9 @@ namespace relation {
             const float yscale = float(other.yunits / yunits);
             for (std::size_t i = 0; i < other.terms.size(); ++i)
             {
-                terms.push_back(yscale * compose(other.terms[i], math::Scaling<float>(Tscale)));
+                terms.push_back(yscale * compose(other.terms[i], analytic::Scaling<float>(Tscale)));
             }
-            yard += yscale * compose(other.yard, math::Scaling<float>(Tscale));
+            yard += yscale * compose(other.yard, analytic::Scaling<float>(Tscale));
             return *this;
         }
 
@@ -177,9 +176,9 @@ namespace relation {
             const float yscale = float(other.yunits / yunits);
             for (std::size_t i = 0; i < other.terms.size(); ++i)
             {
-                terms.push_back(-yscale * compose(other.terms[i], math::Scaling<float>(Tscale)));
+                terms.push_back(-yscale * compose(other.terms[i], analytic::Scaling<float>(Tscale)));
             }
-            yard -= yscale * compose(other.yard, math::Scaling<float>(Tscale));
+            yard -= yscale * compose(other.yard, analytic::Scaling<float>(Tscale));
             return *this;
         }
 
@@ -193,12 +192,12 @@ namespace relation {
     ){
         using F = ClampedScaledComplementExponent;
         using G = ScaledComplementExponent;
-        using H = math::Exponent<float>;
+        using H = analytic::Exponent<float>;
         return LiquidSurfaceTensionTemperatureRelation({
             F(Tmin, Tmax, G(Tc, H(sigma0, n0))),
             F(Tmin, Tmax, G(Tc, H(sigma1, n1))),
             F(Tmin, Tmax, G(Tc, H(sigma2, n2)))
-        }, math::PolynomialRailyard<float, 0, 2>(), Tunits, yunits, 0.0);
+        }, analytic::PolynomialRailyard<float, 0, 2>(), Tunits, yunits, 0.0);
     }
     // from Mulero (2012)
 
@@ -207,11 +206,11 @@ namespace relation {
         const si::temperature<double> Tunits, const si::surface_energy<double> yunits,
         const float TL, const float gammaTL, const float dgamma_dT
     ){
-        using P = math::Polynomial<float, 0, 2>;
-        using R = math::PolynomialRailcar<float, 0, 2>;
+        using P = analytic::Polynomial<float, 0, 2>;
+        using R = analytic::PolynomialRailcar<float, 0, 2>;
         const float oo = std::numeric_limits<float>::max();
         return LiquidSurfaceTensionTemperatureRelation({}, 
-            math::PolynomialRailyard<float, 0, 2>({
+            analytic::PolynomialRailyard<float, 0, 2>({
                     R(-oo, oo, P({gammaTL - dgamma_dT*TL, dgamma_dT, 0.0f})),
                 }), Tunits, yunits, 0.0);
         // NOTE: the above is equivalent to:
@@ -227,10 +226,10 @@ namespace relation {
         const float intercept, const float slope, const float square, 
         const float Tmin, float Tmax
     ){
-        using P = math::Polynomial<float, 0, 2>;
-        using R = math::PolynomialRailcar<float, 0, 2>;
+        using P = analytic::Polynomial<float, 0, 2>;
+        using R = analytic::PolynomialRailcar<float, 0, 2>;
         return LiquidSurfaceTensionTemperatureRelation({}, 
-            math::PolynomialRailyard<float, 0, 2>({
+            analytic::PolynomialRailyard<float, 0, 2>({
                     R(Tmin, Tmax, P({intercept, slope, square})),
                 }), Tunits, yunits, 0.0);
     }
@@ -240,14 +239,14 @@ namespace relation {
         const float intercept, const float slope, const float square, 
         const float Tmin, float Tmax
     ){
-        using P = math::Polynomial<float, 0, 2>;
-        using R = math::PolynomialRailcar<float, 0, 2>;
+        using P = analytic::Polynomial<float, 0, 2>;
+        using R = analytic::PolynomialRailcar<float, 0, 2>;
         return LiquidSurfaceTensionTemperatureRelation({}, 
-            math::compose(
-                math::PolynomialRailyard<float, 0, 2>({ 
+            analytic::compose(
+                analytic::PolynomialRailyard<float, 0, 2>({ 
                     R(Tmin, Tmax, P({intercept, slope, square})) 
                 }), 
-                math::Shifting<float>(-si::standard_temperature/si::kelvin)
+                analytic::Shifting<float>(-si::standard_temperature/si::kelvin)
             ), si::kelvin, yunits, 0.0);
     }
 

@@ -4,10 +4,9 @@
 #include <algorithm>
 
 // in-house libraries
-#include <math/expression/Scaling.hpp>
-#include <math/expression/Polynomial.hpp>
-#include <math/expression/Clamped.hpp>
-#include <math/inspection.hpp>
+#include <math/analytic/Scaling.hpp>
+#include <math/analytic/Polynomial.hpp>
+#include <math/analytic/Clamped.hpp>
 #include <units/si.hpp>
 
 #include <models/compound/dippr/Dippr105.hpp>
@@ -16,8 +15,8 @@
 namespace compound {
 namespace relation {
 
-    using ClampedDippr105 = math::Clamped<float,dippr::Dippr105>;
-    using ClampedDippr119 = math::Clamped<float,dippr::Dippr119Term>;
+    using ClampedDippr105 = analytic::Clamped<float,dippr::Dippr105>;
+    using ClampedDippr119 = analytic::Clamped<float,dippr::Dippr119Term>;
 
     /*
     `LiquidDensityTemperatureRelation` consolidates many kinds of expressions
@@ -147,11 +146,11 @@ namespace relation {
             const float yscale = float(other.yunits / yunits);
             for (std::size_t i = 0; i < other.dippr105s.size(); ++i)
             {
-                dippr105s.push_back(yscale * compose(other.dippr105s[i], math::Scaling<float>(Tscale)));
+                dippr105s.push_back(yscale * compose(other.dippr105s[i], analytic::Scaling<float>(Tscale)));
             }
             for (std::size_t i = 0; i < other.dippr119s.size(); ++i)
             {
-                dippr119s.push_back(yscale * compose(other.dippr119s[i], math::Scaling<float>(Tscale)));
+                dippr119s.push_back(yscale * compose(other.dippr119s[i], analytic::Scaling<float>(Tscale)));
             }
             intercept += yscale * other.intercept;
             return *this;
@@ -163,11 +162,11 @@ namespace relation {
             const float yscale = -float(other.yunits / yunits);
             for (std::size_t i = 0; i < other.dippr105s.size(); ++i)
             {
-                dippr105s.push_back(yscale * compose(other.dippr105s[i], math::Scaling<float>(Tscale)));
+                dippr105s.push_back(yscale * compose(other.dippr105s[i], analytic::Scaling<float>(Tscale)));
             }
             for (std::size_t i = 0; i < other.dippr119s.size(); ++i)
             {
-                dippr119s.push_back(yscale * compose(other.dippr119s[i], math::Scaling<float>(Tscale)));
+                dippr119s.push_back(yscale * compose(other.dippr119s[i], analytic::Scaling<float>(Tscale)));
             }
             intercept += yscale * other.intercept;
             return *this;

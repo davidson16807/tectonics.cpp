@@ -1,9 +1,9 @@
 #pragma once
 
 // in-house libraries
-#include <math/expression/Scaling.hpp>
-#include <math/expression/PolynomialRailyard.hpp>
-#include <math/expression/PolynomialRailyard_library.hpp>
+#include <math/analytic/Scaling.hpp>
+#include <math/analytic/PolynomialRailyard.hpp>
+#include <math/analytic/PolynomialRailyard_library.hpp>
 #include <units/si.hpp>
 
 namespace compound {
@@ -153,7 +153,7 @@ namespace relation {
         {
             const float xscale = float(other.xunits / xunits);
             const float yscale = float(other.yunits / yunits);
-            expression += yscale * compose(other.expression, math::Scaling(xscale));
+            expression += yscale * compose(other.expression, analytic::Scaling(xscale));
             return *this;
         }
 
@@ -161,7 +161,7 @@ namespace relation {
         {
             const float xscale = float(other.xunits / xunits);
             const float yscale = float(other.yunits / yunits);
-            expression += yscale * compose(other.expression, math::Scaling(xscale));
+            expression += yscale * compose(other.expression, analytic::Scaling(xscale));
             return *this;
         }
 
@@ -261,12 +261,12 @@ namespace relation {
     //     return Relation<Tx,float,F>(relation.expression, relation.xunits, relation.yunits/yunits2);
     // }
     // template<typename Tx, typename F>
-    // math::PolynomialRailyard<float,F> compose(const Relation<Tx,float,F>& relation, const math::Cast<float,Tx>& cast)
+    // analytic::PolynomialRailyard<float,F> compose(const Relation<Tx,float,F>& relation, const math::Cast<float,Tx>& cast)
     // {
     //     return relation.expression * (cast.yunits/Tx(1.0f))/cast.xunits;
     // }
     // template<typename Tx, typename F>
-    // Relation<Tx,float,F> compose(const math::PolynomialRailyard<float,F>& expression, const math::Cast<Tx,float>& cast)
+    // Relation<Tx,float,F> compose(const analytic::PolynomialRailyard<float,F>& expression, const math::Cast<Tx,float>& cast)
     // {
     //     return Relation<Tx,float,F>(expression, 1.0f/cast.xunits, 1.0f);
     // }
@@ -279,9 +279,9 @@ namespace relation {
         const Tx xlo, 
         const Tx xhi
     ){
-        return math::distance(
-            compose(a.expression*float(Ty(1.0)/a.yunits), math::Scaling<float>(float(Tx(1.0)/a.xunits))),
-            compose(b.expression*float(Ty(1.0)/b.yunits), math::Scaling<float>(float(Tx(1.0)/b.xunits))),
+        return analytic::distance(
+            compose(a.expression*float(Ty(1.0)/a.yunits), analytic::Scaling<float>(float(Tx(1.0)/a.xunits))),
+            compose(b.expression*float(Ty(1.0)/b.yunits), analytic::Scaling<float>(float(Tx(1.0)/b.xunits))),
             float(xlo/Tx(1.0f)), 
             float(xhi/Tx(1.0f))
         );

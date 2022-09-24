@@ -3,12 +3,12 @@
 #include <algorithm>
 
 // in-house libraries
-#include <math/expression/Scaling.hpp>
-#include <math/expression/Polynomial.hpp>
-#include <math/expression/Clamped.hpp>
-#include <math/expression/Exponent.hpp>
-#include <math/expression/AlgebraicSigmoid.hpp>
-#include <math/inspection.hpp>
+#include <math/analytic/Scaling.hpp>
+#include <math/analytic/Polynomial.hpp>
+#include <math/analytic/Clamped.hpp>
+#include <math/analytic/Exponent.hpp>
+#include <math/analytic/AlgebraicSigmoid.hpp>
+#include <math/inspected/extremum.hpp>
 #include <units/si.hpp>
 
 #include <models/compound/dippr/Dippr102.hpp>
@@ -17,9 +17,9 @@ namespace compound {
 namespace relation {
 
 
-    using ClampedExponent = math::Clamped<float,math::Exponent<float>>;
-    using ClampedSigmoid = math::Clamped<float,math::AlgebraicSigmoid<float>>;
-    using ClampedDippr102 = math::Clamped<float,dippr::Dippr102>;
+    using ClampedExponent = analytic::Clamped<float,analytic::Exponent<float>>;
+    using ClampedSigmoid = analytic::Clamped<float,analytic::AlgebraicSigmoid<float>>;
+    using ClampedDippr102 = analytic::Clamped<float,dippr::Dippr102>;
 
     /*
     `GasPropertyStateRelation` consolidates many kinds of expressions
@@ -301,19 +301,19 @@ namespace relation {
             const float yscale = float(other.yunits / yunits);
             for (std::size_t i = 0; i < other.pexponents.size(); ++i)
             {
-                pexponents.push_back(yscale * compose(other.pexponents[i], math::Scaling<float>(pscale)));
+                pexponents.push_back(yscale * compose(other.pexponents[i], analytic::Scaling<float>(pscale)));
             }
             for (std::size_t i = 0; i < other.Texponents.size(); ++i)
             {
-                Texponents.push_back(yscale * compose(other.Texponents[i], math::Scaling<float>(Tscale)));
+                Texponents.push_back(yscale * compose(other.Texponents[i], analytic::Scaling<float>(Tscale)));
             }
             for (std::size_t i = 0; i < other.Tdippr102s.size(); ++i)
             {
-                Tdippr102s.push_back(yscale * compose(other.Tdippr102s[i], math::Scaling<float>(Tscale)));
+                Tdippr102s.push_back(yscale * compose(other.Tdippr102s[i], analytic::Scaling<float>(Tscale)));
             }
             for (std::size_t i = 0; i < other.Tsigmoids.size(); ++i)
             {
-                Tsigmoids.push_back(yscale * compose(other.Tsigmoids[i], math::Scaling<float>(Tscale)));
+                Tsigmoids.push_back(yscale * compose(other.Tsigmoids[i], analytic::Scaling<float>(Tscale)));
             }
             intercept += yscale * other.intercept;
             return *this;
@@ -326,19 +326,19 @@ namespace relation {
             const float yscale = -float(other.yunits / yunits);
             for (std::size_t i = 0; i < other.pexponents.size(); ++i)
             {
-                pexponents.push_back(yscale * compose(other.pexponents[i], math::Scaling<float>(pscale)));
+                pexponents.push_back(yscale * compose(other.pexponents[i], analytic::Scaling<float>(pscale)));
             }
             for (std::size_t i = 0; i < other.Texponents.size(); ++i)
             {
-                Texponents.push_back(yscale * compose(other.Texponents[i], math::Scaling<float>(Tscale)));
+                Texponents.push_back(yscale * compose(other.Texponents[i], analytic::Scaling<float>(Tscale)));
             }
             for (std::size_t i = 0; i < other.Tdippr102s.size(); ++i)
             {
-                Tdippr102s.push_back(yscale * compose(other.Tdippr102s[i], math::Scaling<float>(Tscale)));
+                Tdippr102s.push_back(yscale * compose(other.Tdippr102s[i], analytic::Scaling<float>(Tscale)));
             }
             for (std::size_t i = 0; i < other.Tsigmoids.size(); ++i)
             {
-                Tsigmoids.push_back(yscale * compose(other.Tsigmoids[i], math::Scaling<float>(Tscale)));
+                Tsigmoids.push_back(yscale * compose(other.Tsigmoids[i], analytic::Scaling<float>(Tscale)));
             }
             intercept += yscale * other.intercept;
             return *this;
@@ -360,9 +360,9 @@ namespace relation {
         const float known_max_fractional_error
     ) {
         return GasPropertyStateRelation<Ty>(
-            std::vector<ClampedExponent>{ClampedExponent(pmin, pmax, math::Exponent<float>(pslope, pexponent))},
-            std::vector<ClampedExponent>{ClampedExponent(Tmin, Tmax, math::Exponent<float>(Tslope, Texponent))},
-            std::vector<ClampedSigmoid>{ClampedSigmoid(Tmin, Tmax, math::AlgebraicSigmoid<float>(1.0f/Tsigmoid_scale, -Tsigmoid_center/Tsigmoid_scale, Tsigmoid_max))},
+            std::vector<ClampedExponent>{ClampedExponent(pmin, pmax, analytic::Exponent<float>(pslope, pexponent))},
+            std::vector<ClampedExponent>{ClampedExponent(Tmin, Tmax, analytic::Exponent<float>(Tslope, Texponent))},
+            std::vector<ClampedSigmoid>{ClampedSigmoid(Tmin, Tmax, analytic::AlgebraicSigmoid<float>(1.0f/Tsigmoid_scale, -Tsigmoid_center/Tsigmoid_scale, Tsigmoid_max))},
             std::vector<ClampedDippr102>(),
 
             punits, Tunits, yunits,
@@ -383,8 +383,8 @@ namespace relation {
         const float known_max_fractional_error
     ) {
         return GasPropertyStateRelation<Ty>(
-            std::vector<ClampedExponent>{ClampedExponent(pmin, pmax, math::Exponent<float>(pslope, pexponent))},
-            std::vector<ClampedExponent>{ClampedExponent(Tmin, Tmax, math::Exponent<float>(Tslope, Texponent))},
+            std::vector<ClampedExponent>{ClampedExponent(pmin, pmax, analytic::Exponent<float>(pslope, pexponent))},
+            std::vector<ClampedExponent>{ClampedExponent(Tmin, Tmax, analytic::Exponent<float>(Tslope, Texponent))},
             std::vector<ClampedSigmoid>{},
             std::vector<ClampedDippr102>(),
 
@@ -455,22 +455,22 @@ namespace relation {
             si::standard_temperature/Tunits : (Tmin+Tmax)/2.0f;
         const float pmid = pmin*punits < si::standard_pressure    && si::standard_pressure    < pmax*punits? 
             si::standard_pressure   /punits : (pmin+pmax)/2.0f;
-        auto fp   = math::quadratic_newton_polynomial(
+        auto fp   = analytic::quadratic_newton_polynomial(
             pmin, f(pmin*punits,  Tmid*Tunits) / yunits, 
             pmid, f(pmid*punits,  Tmid*Tunits) / yunits, 
             pmax, f(pmax*punits,  Tmid*Tunits) / yunits);
-        auto fT   = math::quadratic_newton_polynomial(
+        auto fT   = analytic::quadratic_newton_polynomial(
             Tmin, f(pmin*punits,  Tmin*Tunits) / yunits, 
             Tmid, f(pmin*punits,  Tmid*Tunits) / yunits, 
             Tmax, f(pmin*punits,  Tmax*Tunits) / yunits);
         auto fhat = GasPropertyStateRelation<Ty>(
             std::vector<ClampedExponent>{
-                ClampedExponent(pmin, pmax, math::Exponent<float>(fp[1], 1.0f)),
-                ClampedExponent(pmin, pmax, math::Exponent<float>(fp[2], 2.0f))
+                ClampedExponent(pmin, pmax, analytic::Exponent<float>(fp[1], 1.0f)),
+                ClampedExponent(pmin, pmax, analytic::Exponent<float>(fp[2], 2.0f))
             },
             std::vector<ClampedExponent>{
-                ClampedExponent(Tmin, Tmax, math::Exponent<float>(fT[1], 1.0f)),
-                ClampedExponent(Tmin, Tmax, math::Exponent<float>(fT[2], 2.0f))
+                ClampedExponent(Tmin, Tmax, analytic::Exponent<float>(fT[1], 1.0f)),
+                ClampedExponent(Tmin, Tmax, analytic::Exponent<float>(fT[2], 2.0f))
             },
             std::vector<ClampedSigmoid>(),
             std::vector<ClampedDippr102>(),
@@ -488,8 +488,8 @@ namespace relation {
             auto fpThat = f(p*punits,T*Tunits)/yunits;
             return std::abs(fpThat-fpT) / std::abs(fpT); 
         };
-        float Tworst = math::maximum([&](float T){ return fractional_error(pmid,T);   }, Tmin, Tmax, 10);
-        float pworst = math::maximum([&](float p){ return fractional_error(p,Tworst); }, pmin, pmax, 10);
+        float Tworst = inspected::maximum([&](float T){ return fractional_error(pmid,T);   }, Tmin, Tmax, 10);
+        float pworst = inspected::maximum([&](float p){ return fractional_error(p,Tworst); }, pmin, pmax, 10);
         fhat.known_max_fractional_error += fractional_error(pworst, Tworst);
         return fhat;
     }
@@ -505,9 +505,9 @@ namespace relation {
         return GasPropertyStateRelation<Ty>(
             std::vector<ClampedExponent>(),
             std::vector<ClampedExponent>{
-                ClampedExponent(Tmin, Tmax, math::Exponent<float>(linear, 1.0f)),
-                ClampedExponent(Tmin, Tmax, math::Exponent<float>(inverse_square, -2.0f)),
-                ClampedExponent(Tmin, Tmax, math::Exponent<float>(square, 2.0f))
+                ClampedExponent(Tmin, Tmax, analytic::Exponent<float>(linear, 1.0f)),
+                ClampedExponent(Tmin, Tmax, analytic::Exponent<float>(inverse_square, -2.0f)),
+                ClampedExponent(Tmin, Tmax, analytic::Exponent<float>(square, 2.0f))
             },
             std::vector<ClampedSigmoid>(),
             std::vector<ClampedDippr102>(),

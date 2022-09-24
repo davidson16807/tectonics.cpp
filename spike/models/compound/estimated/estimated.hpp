@@ -141,13 +141,13 @@ namespace estimated{
                     double k = ((Hv+Hf)*M / si::universal_gas_constant) * (1.0/si::kelvin);
                     float Tmax = triple.temperature/si::kelvin;
                     float oo = std::numeric_limits<float>::max();
-                    using P = math::Polynomial<float,-1,1>;
-                    using R = math::Railcar<float,P>;
+                    using P = analytic::Polynomial<float,-1,1>;
+                    using R = analytic::Railcar<float,P>;
                     P p;
                     p[0]  = std::log(P3) + (k/T3);
                     p[-1] = -k;
                     return relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>,si::pressure<double>,-1,1>(
-                        math::Railyard<float,P>({
+                        analytic::Railyard<float,P>({
                             R(0.0f, Tmax, p),
                             R(Tmax,   oo, P(p(Tmax)))
                         }),

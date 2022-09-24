@@ -1,9 +1,9 @@
 #pragma once
 
 // in-house libraries
-#include <math/expression/Scaling.hpp>
-#include <math/expression/PolynomialRailyard.hpp>
-#include <math/expression/PolynomialRailyard_library.hpp>
+#include <math/analytic/Scaling.hpp>
+#include <math/analytic/PolynomialRailyard.hpp>
+#include <math/analytic/PolynomialRailyard_library.hpp>
 #include <units/si.hpp>
 
 namespace compound {
@@ -16,7 +16,7 @@ namespace relation {
     template<typename Tx, typename Ty, int Plo, int Phi>
     struct PolynomialRailyardRelation
     {
-        math::PolynomialRailyard<float, Plo, Phi> yard;
+        analytic::PolynomialRailyard<float, Plo, Phi> yard;
         Tx xunits;
         Ty yunits;
         
@@ -32,7 +32,7 @@ namespace relation {
 
         template<typename T>
         constexpr PolynomialRailyardRelation(
-            const math::PolynomialRailyard<T, Plo, Phi> yard,
+            const analytic::PolynomialRailyard<T, Plo, Phi> yard,
             const Tx xunits,
             const Ty yunits
         ):
@@ -44,7 +44,7 @@ namespace relation {
 
         template<typename T, int Qlo, int Qhi>
         explicit constexpr PolynomialRailyardRelation(
-            const math::PolynomialRailyard<T, Qlo, Qhi> yard,
+            const analytic::PolynomialRailyard<T, Qlo, Qhi> yard,
             const Tx xunits,
             const Ty yunits
         ):
@@ -129,7 +129,7 @@ namespace relation {
         {
             const float Tscale = float(other.xunits / xunits);
             const float yscale = float(other.yunits / yunits);
-            yard += yscale * compose(other.yard, math::Scaling(Tscale));
+            yard += yscale * compose(other.yard, analytic::Scaling(Tscale));
             return *this;
         }
 
@@ -137,7 +137,7 @@ namespace relation {
         {
             const float Tscale = float(other.xunits / xunits);
             const float yscale = float(other.yunits / yunits);
-            yard += yscale * compose(other.yard, math::Scaling(Tscale));
+            yard += yscale * compose(other.yard, analytic::Scaling(Tscale));
             return *this;
         }
 
@@ -237,12 +237,12 @@ namespace relation {
     //     return PolynomialRailyardRelation<Tx,float,Plo,Phi>(relation.yard, relation.xunits, relation.yunits/yunits2);
     // }
     // template<typename Tx, int Plo, int Phi>
-    // math::PolynomialRailyard<float,Plo,Phi> compose(const PolynomialRailyardRelation<Tx,float,Plo,Phi>& relation, const math::Cast<float,Tx>& cast)
+    // analytic::PolynomialRailyard<float,Plo,Phi> compose(const PolynomialRailyardRelation<Tx,float,Plo,Phi>& relation, const math::Cast<float,Tx>& cast)
     // {
     //     return relation.yard * (cast.yunits/Tx(1.0f))/cast.xunits;
     // }
     // template<typename Tx, int Plo, int Phi>
-    // PolynomialRailyardRelation<Tx,float,Plo,Phi> compose(const math::PolynomialRailyard<float,Plo,Phi>& yard, const math::Cast<Tx,float>& cast)
+    // PolynomialRailyardRelation<Tx,float,Plo,Phi> compose(const analytic::PolynomialRailyard<float,Plo,Phi>& yard, const math::Cast<Tx,float>& cast)
     // {
     //     return PolynomialRailyardRelation<Tx,float,Plo,Phi>(yard, 1.0f/cast.xunits, 1.0f);
     // }
@@ -255,9 +255,9 @@ namespace relation {
         const Tx xlo, 
         const Tx xhi
     ){
-        return math::distance(
-            compose(a.yard*float(Ty(1.0)/a.yunits), math::Scaling<float>(float(Tx(1.0)/a.xunits))),
-            compose(b.yard*float(Ty(1.0)/b.yunits), math::Scaling<float>(float(Tx(1.0)/b.xunits))),
+        return analytic::distance(
+            compose(a.yard*float(Ty(1.0)/a.yunits), analytic::Scaling<float>(float(Tx(1.0)/a.xunits))),
+            compose(b.yard*float(Ty(1.0)/b.yunits), analytic::Scaling<float>(float(Tx(1.0)/b.xunits))),
             float(xlo/Tx(1.0f)), 
             float(xhi/Tx(1.0f))
         );
@@ -272,9 +272,9 @@ namespace relation {
     ){
         assert(xs.size() == ys.size());
         return PolynomialRailyardRelation<si::temperature<T>,Ty,0,1>(
-                math::compose(
-                    math::spline::linear_spline<double>(xs, ys), 
-                    math::Shifting(-si::standard_temperature/si::kelvin)), 
+                analytic::compose(
+                    analytic::spline::linear_spline<double>(xs, ys), 
+                    analytic::Shifting(-si::standard_temperature/si::kelvin)), 
                 si::kelvin, yunits);
     }
 
@@ -286,7 +286,7 @@ namespace relation {
         const std::vector<double>ys
     ){
         assert(xs.size() == ys.size());
-        return PolynomialRailyardRelation<si::temperature<T>,Ty,0,1>(math::spline::linear_spline<double>(xs, ys), xunits, yunits);
+        return PolynomialRailyardRelation<si::temperature<T>,Ty,0,1>(analytic::spline::linear_spline<double>(xs, ys), xunits, yunits);
     }
 
     // TODO: rename `spectral_linear_yard`
@@ -297,7 +297,7 @@ namespace relation {
         const std::vector<double>ys
     ){
         assert(xs.size() == ys.size());
-        return PolynomialRailyardRelation<si::pressure<T>,Ty,0,1>(math::spline::linear_spline<double>(xs, ys), xunits, yunits);
+        return PolynomialRailyardRelation<si::pressure<T>,Ty,0,1>(analytic::spline::linear_spline<double>(xs, ys), xunits, yunits);
     }
     
     /*
@@ -312,11 +312,11 @@ namespace relation {
         const double Tmin, double Tmax
     ){
         const double oo = std::numeric_limits<double>::max();
-        using P = math::Polynomial<double,0,4>;
-        using R = math::Railcar<double,P>;
-        math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>({intercept, slope, square, cube, fourth});
+        using P = analytic::Polynomial<double,0,4>;
+        using R = analytic::Railcar<double,P>;
+        analytic::Polynomial<double,0,4> p = analytic::Polynomial<double,0,4>({intercept, slope, square, cube, fourth});
         return PolynomialRailyardRelation<si::temperature<double>,Ty,0,4>(
-            math::PolynomialRailyard<double,0,4>({
+            analytic::PolynomialRailyard<double,0,4>({
                 R(-oo, Tmin, P(p(Tmin))), 
                 R(Tmin,Tmax, p),
                 R(Tmax, oo,  P(p(Tmax)))
@@ -338,13 +338,13 @@ namespace relation {
         const double T_min_perry, const double T_max_perry
     ){
             const double oo = std::numeric_limits<double>::max();
-            using P = math::Polynomial<double,-2,3>;
-            using R = math::Railcar<double,P>;
-            math::Polynomial<double,1,3>  johnson    = math::Polynomial<double,1,3> ({linear_johnson, 0.0, cube_johnson});
-            math::Polynomial<double,-2,2> perry      = y_units_perry/y_units_johnson * math::Polynomial<double,-2,2>({inverse_square_perry, 0.0, intercept_perry, linear_perry, square_perry});
-            math::Polynomial<double,0,1>  transition = math::linear_newton_polynomial(T_max_johnson, T_min_perry, johnson(T_max_johnson), perry(T_min_perry));
+            using P = analytic::Polynomial<double,-2,3>;
+            using R = analytic::Railcar<double,P>;
+            analytic::Polynomial<double,1,3>  johnson    = analytic::Polynomial<double,1,3> ({linear_johnson, 0.0, cube_johnson});
+            analytic::Polynomial<double,-2,2> perry      = y_units_perry/y_units_johnson * analytic::Polynomial<double,-2,2>({inverse_square_perry, 0.0, intercept_perry, linear_perry, square_perry});
+            analytic::Polynomial<double,0,1>  transition = analytic::linear_newton_polynomial(T_max_johnson, T_min_perry, johnson(T_max_johnson), perry(T_min_perry));
             return PolynomialRailyardRelation<si::temperature<double>,si::specific_heat_capacity<double>,-2,3>(
-                math::PolynomialRailyard<double,-2,3>({
+                analytic::PolynomialRailyard<double,-2,3>({
                     R(0.0, T_max_johnson,         P(johnson)),            // johnson polynomial
                     R(T_max_johnson, T_min_perry, P(transition)),         // linear perry/johnson interpolation
                     R(T_min_perry, T_max_perry,   P(perry)),              // perry polynomial
@@ -369,7 +369,7 @@ namespace relation {
         }
         std::reverse(ns.begin(), ns.end());
         std::reverse(ys.begin(), ys.end());
-        return PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1>(math::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1>(analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
     template<typename Ty>
@@ -379,7 +379,7 @@ namespace relation {
         const std::vector<double> ys
     ){
         assert(ns.size() == ys.size());
-        return PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1>(math::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1>(analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
     template<typename Ty>
@@ -393,7 +393,7 @@ namespace relation {
         for (std::size_t i=0; i<log10ys.size(); i++){
             ys.push_back(pow(10.0, log10ys[i]));
         }
-        return PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> (math::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> (analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
     template<typename Ty>
@@ -407,7 +407,7 @@ namespace relation {
         for (std::size_t i=0; i<log10ys.size(); i++){
             ys.push_back(pow(10.0, log10ys[i]));
         }
-        return PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,3> (math::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,3> (analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
     template<typename Ty>
@@ -430,7 +430,7 @@ namespace relation {
         for (std::size_t i=0; i<log10ys.size(); i++){
             ys.push_back(pow(10.0, log10ys[i]));
         }
-        return PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> (math::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> (analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
 
@@ -445,7 +445,7 @@ namespace relation {
         for (std::size_t i=0; i<log10ns.size(); i++){
             ns.push_back(pow(10.0, log10ns[i]));
         }
-        return PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> (math::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> (analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
     template<typename Ty>
@@ -464,7 +464,7 @@ namespace relation {
         }
         std::reverse(ns.begin(), ns.end());
         std::reverse(ys.begin(), ys.end());
-        return PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> (math::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> (analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
 
@@ -504,18 +504,18 @@ namespace relation {
 
         const float oo = std::numeric_limits<float>::max();
 
-        const math::PolynomialRailyard<float,0,1> inverse{
-            math::PolynomialRailcar<float,0,1>(0.0357, 0.0778, math::linear_newton_polynomial<float>(0.0357, 0.0778,  28.041, 11.458)),
-            math::PolynomialRailcar<float,0,1>(0.0778, 0.1938, math::linear_newton_polynomial<float>(0.0778, 0.1938,  11.458,  4.937)),
-            math::PolynomialRailcar<float,0,1>(0.1938, 0.4649, math::linear_newton_polynomial<float>(0.1938, 0.4649,   4.937,  1.881)),
-            math::PolynomialRailcar<float,0,1>(0.4649, 1.0000, math::linear_newton_polynomial<float>(0.4649, 1.0000,   1.881,  1.000)),
-            math::PolynomialRailcar<float,0,1>(1.0000,     oo, math::linear_newton_polynomial<float>(1.0000, 2.0000,   1.000,  1.000))
+        const analytic::PolynomialRailyard<float,0,1> inverse{
+            analytic::PolynomialRailcar<float,0,1>(0.0357, 0.0778, analytic::linear_newton_polynomial<float>(0.0357, 0.0778,  28.041, 11.458)),
+            analytic::PolynomialRailcar<float,0,1>(0.0778, 0.1938, analytic::linear_newton_polynomial<float>(0.0778, 0.1938,  11.458,  4.937)),
+            analytic::PolynomialRailcar<float,0,1>(0.1938, 0.4649, analytic::linear_newton_polynomial<float>(0.1938, 0.4649,   4.937,  1.881)),
+            analytic::PolynomialRailcar<float,0,1>(0.4649, 1.0000, analytic::linear_newton_polynomial<float>(0.4649, 1.0000,   1.881,  1.000)),
+            analytic::PolynomialRailcar<float,0,1>(1.0000,     oo, analytic::linear_newton_polynomial<float>(1.0000, 2.0000,   1.000,  1.000))
         };
 
         return PolynomialRailyardRelation<si::wavenumber<double>,si::attenuation<double>,0,3>(
             compose(
-                (0.25f * math::Shifting(1.0f) * math::Shifting(1.0f) * inverse - 1.0f)/(2.0f*float(particle_diameter/si::length<double>(1.0))),
-                math::spline::linear_spline<float>(wavenumbers, wavenumber_reflectances)
+                (0.25f * analytic::Shifting(1.0f) * analytic::Shifting(1.0f) * inverse - 1.0f)/(2.0f*float(particle_diameter/si::length<double>(1.0))),
+                analytic::spline::linear_spline<float>(wavenumbers, wavenumber_reflectances)
             ),
             si::wavenumber<double>(1.0),
             si::attenuation<double>(1.0)
