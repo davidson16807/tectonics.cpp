@@ -5,7 +5,8 @@
 
 // in-house libraries
 #include <math/analytic/Scaling.hpp>
-#include <math/analytic/Polynomial.hpp>
+#include <math/analytic/PolynomialRailyard.hpp>
+#include <math/analytic/Sum.hpp>
 #include <math/analytic/Clamped.hpp>
 #include <math/analytic/NaturalLogarithm.hpp>
 #include <units/si.hpp>
@@ -15,7 +16,7 @@
 namespace compound {
 namespace relation {
 
-    using ClampedLogarithm = analytic::Clamped<float,analytic::NaturalLogarithm<float>>;
+    using ClampedNaturalLogarithm = analytic::Clamped<float,analytic::NaturalLogarithm<float>>;
 
     /*
     `LiquidPropertyExponentialTemperatureRelation` consolidates many kinds of expressions
@@ -28,7 +29,7 @@ namespace relation {
     class LiquidPropertyExponentialTemperatureRelation
     {
         analytic::PolynomialRailyard<double, Plo, Phi> terms;
-        std::vector<ClampedLogarithm> logarithms;
+        analytic::Sum<float,ClampedNaturalLogarithm> logarithms;
 
         si::temperature<double> Tunits;
         Ty                      yunits;
@@ -63,7 +64,7 @@ namespace relation {
         template<int Qlo, int Qhi>
         constexpr LiquidPropertyExponentialTemperatureRelation(
             const analytic::PolynomialRailyard<double, Qlo, Qhi> terms,
-            const std::vector<ClampedLogarithm> logarithms,
+            const analytic::Sum<float,ClampedNaturalLogarithm> logarithms,
 
             const si::temperature<double> Tunits,
             const Ty yunits,
@@ -110,31 +111,20 @@ namespace relation {
         Ty operator()(const si::temperature<double> temperature) const
         {
             const double T = double(temperature/Tunits);
-            double logy = terms(T);
-            for (std::size_t i = 0; i < logarithms.size(); ++i)
-            {
-                logy += logarithms[i](T);
-            }
-            return std::exp(logy) * yunits;
+            return std::exp(terms(T) + logarithms(T)) * yunits;
         }
 
         LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi>& operator*=(const LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi>& other)
         {
             terms += other.terms;
-            for (std::size_t i = 0; i < other.logarithms.size(); ++i)
-            {
-                logarithms.push_back(other.logarithms[i]);
-            }
+            logarithms += other.logarithms;
             return *this;
         }
 
         LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi>& operator/=(const LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi>& other)
         {
             terms -= other.terms;
-            for (std::size_t i = 0; i < other.logarithms.size(); ++i)
-            {
-                logarithms.push_back(-other.logarithms[i]);
-            }
+            logarithms -= other.logarithms;
             return *this;
         }
 
@@ -151,31 +141,6 @@ namespace relation {
         }
 
     };
-
-    // 42 uses, for viscosity and vapor pressures of liquids
-    template<int Plo, int Phi, typename Ty>
-    LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi> get_dippr_temperature_relation_101(
-        const si::temperature<double> Tunits, const Ty yunits,
-        const double log_intercept, const double log_slope, const double log_log, const double log_exponentiated, const int exponent,
-        const double Tmin, const double Tmax
-    ){
-        const double oo = std::numeric_limits<double>::max();
-        using P = analytic::Polynomial<double, Plo, Phi>;
-        using R = analytic::PolynomialRailcar<double, Plo, Phi>;
-        P p(log_intercept);
-        p[-1] = log_slope;
-        p[exponent] += log_exponentiated;
-        return relation::LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi>(
-            analytic::PolynomialRailyard<double, Plo, Phi>({
-                R(-oo,  Tmin, P(p(Tmin))),
-                R(Tmin, Tmax, p),
-                R(Tmax,   oo, P(p(Tmax))),
-            }), 
-            {
-                ClampedLogarithm(Tmin, Tmax, analytic::NaturalLogarithm<float>(log_log))
-            }, 
-            Tunits, yunits, 0.0);
-    }
 
     template<typename Ty, int Plo, int Phi>
     LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi> operator*(const LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi> relation, const LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi> other)
@@ -223,5 +188,44 @@ namespace relation {
         return LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi>(scalar) / relation;
     }
 
+
+    template<typename Ty, int Plo, int Phi>
+    LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi> logarithmic_mix(const std::vector<LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi>>& relations, const std::vector<float>& ratios)
+    {
+        LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi> result;
+        for (std::size_t i=0; i<relations.size(); i++){
+            const float Tscale = float(relations[i].xunits / result.xunits);
+            const float yscale = float(relations[i].yunits / result.yunits);
+            result.terms      += yscale * ratios[i] * compose(relations[i].terms, analytic::Scaling(Tscale));
+            result.logarithms += yscale * ratios[i] * compose(relations[i].logarithms, analytic::Scaling(Tscale));
+        }
+        return result;
+    }
+
+
+    // 42 uses, for viscosity and vapor pressures of liquids
+    template<int Plo, int Phi, typename Ty>
+    LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi> get_dippr_temperature_relation_101(
+        const si::temperature<double> Tunits, const Ty yunits,
+        const double log_intercept, const double log_slope, const double log_log, const double log_exponentiated, const int exponent,
+        const double Tmin, const double Tmax
+    ){
+        const double oo = std::numeric_limits<double>::max();
+        using P = analytic::Polynomial<double, Plo, Phi>;
+        using R = analytic::PolynomialRailcar<double, Plo, Phi>;
+        P p(log_intercept);
+        p[-1] = log_slope;
+        p[exponent] += log_exponentiated;
+        return relation::LiquidPropertyExponentialTemperatureRelation<Ty,Plo,Phi>(
+            analytic::PolynomialRailyard<double, Plo, Phi>({
+                R(-oo,  Tmin, P(p(Tmin))),
+                R(Tmin, Tmax, p),
+                R(Tmax,   oo, P(p(Tmax))),
+            }), 
+            analytic::Sum<float,ClampedNaturalLogarithm>({
+                ClampedNaturalLogarithm(Tmin, Tmax, analytic::NaturalLogarithm<float>(log_log))
+            }), 
+            Tunits, yunits, 0.0);
+    }
 }}
 
