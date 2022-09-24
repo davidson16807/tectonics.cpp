@@ -215,7 +215,9 @@ namespace analytic {
     template<typename T, int N>
     constexpr Polynomial<T,-N,-N> operator/(const T k, const Polynomial<T,N,N>&  p)
     {
-        return Polynomial<T,-N,-N>(k/p[N]);
+        Polynomial<T,-N,-N> y;
+        y[-N] = k/p[N];
+        return y;
     }
     template<typename T, int Plo, int Phi>
     constexpr Polynomial<T,Plo,Phi> operator-(const Polynomial<T,Plo,Phi>& p)
