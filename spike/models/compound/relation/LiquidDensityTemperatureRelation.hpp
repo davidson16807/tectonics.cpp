@@ -7,6 +7,7 @@
 #include <math/analytic/Scaling.hpp>
 #include <math/analytic/Polynomial.hpp>
 #include <math/analytic/Clamped.hpp>
+#include <math/analytic/Sum.hpp>
 #include <units/si.hpp>
 
 #include <models/compound/dippr/Dippr105.hpp>
@@ -24,8 +25,8 @@ namespace relation {
     */
     class LiquidDensityTemperatureRelation
     {
-        std::vector<ClampedDippr105> dippr105s;
-        std::vector<ClampedDippr119> dippr119s;
+        analytic::Sum<float,ClampedDippr105> dippr105s;
+        analytic::Sum<float,ClampedDippr119> dippr119s;
 
         si::temperature<double> Tunits;
         si::density<double>     yunits;
@@ -61,8 +62,8 @@ namespace relation {
         }
 
         LiquidDensityTemperatureRelation(
-            const std::vector<ClampedDippr105> dippr105s,
-            const std::vector<ClampedDippr119> dippr119s,
+            const analytic::Sum<float,ClampedDippr105> dippr105s,
+            const analytic::Sum<float,ClampedDippr119> dippr119s,
 
             const si::temperature<double> Tunits,
             const si::density<double> yunits,
@@ -100,42 +101,22 @@ namespace relation {
             const float T = float(temperature/Tunits);
             ClampedDippr105 dippr105;
             ClampedDippr119 dippr119;
-            float y = intercept;
-            for (std::size_t i = 0; i < dippr105s.size(); ++i)
-            {
-                y += dippr105s[i](T);
-            }
-            for (std::size_t i = 0; i < dippr119s.size(); ++i)
-            {
-                y += dippr119s[i](T);
-            }
-            return y * yunits;
+            return (intercept + dippr105s(T) + dippr119s(T)) * yunits;
         }
 
         LiquidDensityTemperatureRelation& operator*=(const float scalar)
         {
-            for (std::size_t i = 0; i < dippr105s.size(); ++i)
-            {
-                dippr105s[i] *= scalar;
-            }
-            for (std::size_t i = 0; i < dippr119s.size(); ++i)
-            {
-                dippr119s[i] *= scalar;
-            }
+            dippr105s *= scalar;
+            dippr119s *= scalar;
             intercept *= scalar;
             return *this;
         }
 
         LiquidDensityTemperatureRelation operator/=(const float scalar)
         {
-            for (std::size_t i = 0; i < dippr105s.size(); ++i)
-            {
-                dippr105s[i] /= scalar;
-            }
-            for (std::size_t i = 0; i < dippr119s.size(); ++i)
-            {
-                dippr119s[i] /= scalar;
-            }
+            dippr105s /= scalar;
+            dippr119s /= scalar;
+            intercept /= scalar;
             intercept /= scalar;
             return *this;
         }
@@ -144,14 +125,8 @@ namespace relation {
         {
             const float Tscale = float(other.Tunits / Tunits);
             const float yscale = float(other.yunits / yunits);
-            for (std::size_t i = 0; i < other.dippr105s.size(); ++i)
-            {
-                dippr105s.push_back(yscale * compose(other.dippr105s[i], analytic::Scaling<float>(Tscale)));
-            }
-            for (std::size_t i = 0; i < other.dippr119s.size(); ++i)
-            {
-                dippr119s.push_back(yscale * compose(other.dippr119s[i], analytic::Scaling<float>(Tscale)));
-            }
+            dippr105s += yscale * compose(other.dippr105s, analytic::Scaling<float>(Tscale));
+            dippr119s += yscale * compose(other.dippr119s, analytic::Scaling<float>(Tscale));
             intercept += yscale * other.intercept;
             return *this;
         }
@@ -160,14 +135,8 @@ namespace relation {
         {
             const float Tscale =  float(other.Tunits / Tunits);
             const float yscale = -float(other.yunits / yunits);
-            for (std::size_t i = 0; i < other.dippr105s.size(); ++i)
-            {
-                dippr105s.push_back(yscale * compose(other.dippr105s[i], analytic::Scaling<float>(Tscale)));
-            }
-            for (std::size_t i = 0; i < other.dippr119s.size(); ++i)
-            {
-                dippr119s.push_back(yscale * compose(other.dippr119s[i], analytic::Scaling<float>(Tscale)));
-            }
+            dippr105s -= yscale * compose(other.dippr105s, analytic::Scaling<float>(Tscale));
+            dippr119s -= yscale * compose(other.dippr119s, analytic::Scaling<float>(Tscale));
             intercept += yscale * other.intercept;
             return *this;
         }

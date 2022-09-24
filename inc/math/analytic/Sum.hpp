@@ -46,11 +46,11 @@ namespace analytic {
             }
         }
 
-        explicit Sum(const std::vector<F> terms_) : terms(terms_) 
+        Sum(const std::vector<F> terms_) : terms(terms_) 
         {
         }
 
-        explicit Sum(std::initializer_list<F> ts)
+        Sum(std::initializer_list<F> ts)
         {
             std::copy(ts.begin(), ts.end(), std::back_inserter(terms));
         }
@@ -295,7 +295,7 @@ namespace analytic {
     template<typename T, typename F, typename G>
     constexpr Sum<T,F> compose(const Sum<T,F>& f, const G& g)
     {
-        std::vector<Railcar<T,F>> terms;
+        std::vector<F> terms;
         for (auto term: f.terms)
         {
             terms.push_back( compose(term, g) );

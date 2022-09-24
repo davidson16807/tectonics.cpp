@@ -65,11 +65,11 @@ namespace analytic {
             cars.push_back(R(clamped.hi, oo,         F(clamped(clamped.hi))));
         }
 
-        explicit Railyard(const std::vector<Railcar<T,F>> cars_) : cars(cars_) 
+        Railyard(const std::vector<Railcar<T,F>> cars_) : cars(cars_) 
         {
         }
 
-        explicit Railyard(std::initializer_list<Railcar<T,F>> ts)
+        Railyard(std::initializer_list<Railcar<T,F>> ts)
         {
             std::copy(ts.begin(), ts.end(), std::back_inserter(cars));
         }
