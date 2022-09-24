@@ -128,36 +128,28 @@ namespace analytic {
             return *this;
         }
 
-        // Sum<T,F>& operator*=(const T k)
-        // {
-        //     for (auto& term : terms)
-        //     {
-        //         term *= k;
-        //     }
-        //     return *this;
-        // }
+        Sum<T,F>& operator*=(const T k)
+        {
+            for (auto& term : terms)
+            {
+                term *= k;
+            }
+            return *this;
+        }
 
-        // Sum<T,F>& operator/=(const T k)
-        // {
-        //     for (auto& term : terms)
-        //     {
-        //         term /= k;
-        //     }
-        //     return *this;
-        // }
+        Sum<T,F>& operator/=(const T k)
+        {
+            for (auto& term : terms)
+            {
+                term /= k;
+            }
+            return *this;
+        }
 
     };
 
 
 
-
-    template<typename T, typename F>
-    constexpr auto operator-(const Sum<T,F>& f)
-    {
-        Sum<T,F> y(f);
-        y *= T(-1);
-        return y;
-    }
 
 
 
@@ -195,29 +187,37 @@ namespace analytic {
         return (y);
     }
 
-    // template<typename T, typename F>
-    // constexpr auto operator*(const Sum<T,F>& f, const T k)
-    // {
-    //     Sum<T,F> y(f);
-    //     y *= k;
-    //     return (y);
-    // }
+    template<typename T, typename F>
+    constexpr auto operator*(const Sum<T,F>& f, const T k)
+    {
+        Sum<T,F> y(f);
+        y *= k;
+        return (y);
+    }
 
-    // template<typename T, typename F>
-    // constexpr auto operator*(const T k, const Sum<T,F>& f)
-    // {
-    //     Sum<T,F> y(f);
-    //     y *= k;
-    //     return (y);
-    // }
+    template<typename T, typename F>
+    constexpr auto operator*(const T k, const Sum<T,F>& f)
+    {
+        Sum<T,F> y(f);
+        y *= k;
+        return (y);
+    }
 
-    // template<typename T, typename F>
-    // constexpr auto operator/(const Sum<T,F>& f, const T k)
-    // {
-    //     Sum<T,F> y(f);
-    //     y /= k;
-    //     return (y);
-    // }
+    template<typename T, typename F>
+    constexpr auto operator/(const Sum<T,F>& f, const T k)
+    {
+        Sum<T,F> y(f);
+        y /= k;
+        return (y);
+    }
+
+    template<typename T, typename F>
+    constexpr auto operator-(const Sum<T,F>& f)
+    {
+        Sum<T,F> y(f);
+        y *= T(-1);
+        return y;
+    }
 
 
 

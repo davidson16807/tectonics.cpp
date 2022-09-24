@@ -12,6 +12,7 @@ namespace analytic {
             xoffset(xoffset),
             ymax(ymax)
         {}
+        // zero constructor
         constexpr explicit AlgebraicSigmoid():
             xscale(0.0f),
             xoffset(0.0f),
