@@ -61,7 +61,7 @@ namespace analytic {
             using R = Railcar<T,F>;
             const T oo = std::numeric_limits<T>::max();
             cars.push_back(R(       -oo, clamped.lo, F(clamped(clamped.lo))));
-            cars.push_back(R(clamped.lo, clamped.hi,   clamped));
+            cars.push_back(R(clamped.lo, clamped.hi,   clamped.f));
             cars.push_back(R(clamped.hi, oo,         F(clamped(clamped.hi))));
         }
 

@@ -353,54 +353,6 @@ namespace analytic {
         return I;
     }
 
-
-    template<typename T, typename F>
-    constexpr Sum<T,F> restriction(const Sum<T,F>& sum, const T lo, const T hi)
-    {
-        std::vector<F> terms;
-        const T oo(std::numeric_limits<T>::max());
-        for (auto term: sum.terms)
-        {
-            if (lo < term.lo || term.hi <= hi)
-            {
-                if (terms.size() < 1)
-                {
-                    terms.push_back( F(-oo, term.lo, F( sum(term.lo) ) ));
-                }
-                terms.push_back(term);
-            }
-        }
-        terms.push_back( F( 
-            terms[terms.size()-1].hi, std::numeric_limits<T>::max(), 
-            F( sum( terms[terms.size()-1].hi ) ) ));
-
-        return Sum(terms);
-    }
-
-
-    // TODO: refactor to return Train<T,F> so that continuity is guaranteed downstream
-    template<typename T, typename F>
-    constexpr Sum<T,F> simplify(const Sum<T,F>& sum)
-    {
-        const std::vector<T> couplers(sum.couplers());
-        std::vector<F> terms;
-        for (std::size_t i=1; i<couplers.size(); i++)
-        {
-            F f;
-            // add together all terms that intersect the region from couplers[i-1] to couplers[i]
-            for (auto term: sum.terms)
-            {
-                if (std::max(term.lo, couplers[i-1]) < std::min(term.hi, couplers[i]))
-                {
-                    f += term.content;
-                }
-            }
-            terms.push_back(F(couplers[i-1], couplers[i], f));
-        }
-        return Sum<T,F>(terms);
-    }
-
-
     /*
     `dot` is the integral of the product between the output of two functions.
     It is analogous to the dot product of vectors
@@ -408,12 +360,12 @@ namespace analytic {
     */
     template<typename T, typename F>
     constexpr T dot(
-        const Sum<T,F>& yard1, 
-        const Sum<T,F>& yard2, 
+        const Sum<T,F>& sum1, 
+        const Sum<T,F>& sum2, 
         const T lo, 
         const T hi
     ){
-        return integral(yard1*yard2, lo, hi);
+        return integral(sum1*sum2, lo, hi);
     }
 
     /*

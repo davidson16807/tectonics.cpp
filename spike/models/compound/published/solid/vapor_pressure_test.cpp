@@ -16,7 +16,7 @@ TEST_CASE( "published solid vapor_pressure order of magnitude", "[table]" )
         {
             if (compound::published::vapor_pressure_as_solid.count(i) > 0)
             {
-                for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=3.0)
+                for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=1.778)
                 {
                     auto x = compound::published::vapor_pressure_as_solid[i](T);
                     // std::cout << i << std::endl;
@@ -39,7 +39,7 @@ TEST_CASE( "published solid vapor_pressure monotonically increase", "[table]" )
             {
                 si::temperature<double> T = 3.0*si::kelvin;
                 auto last = compound::published::vapor_pressure_as_solid[i](T);
-                for (; T <= si::solar_temperature; T*=3.0)
+                for (; T <= si::solar_temperature; T*=1.778)
                 {
                     auto next = compound::published::vapor_pressure_as_solid[i](T);
                     CHECK(next / si::pascal >= last / si::pascal);

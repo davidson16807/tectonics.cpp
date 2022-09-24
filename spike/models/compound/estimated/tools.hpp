@@ -159,7 +159,7 @@ namespace estimated {
     }
 
     template<typename Ty, typename F, typename Tx1, typename Tx2, typename Tx3>
-    std::map<int,Ty> attempt(const F f, const std::map<int,Tx1>& x1, const std::map<int,Tx2>& x2, const std::vector<Tx3>& x3)
+    std::map<int,Ty> attempt(const F f, const std::map<int,Tx1>& x1, const std::map<int,Tx2>& x2, const std::map<int,Tx3>& x3)
     {
         std::map<int,Ty> y;
         for (const auto& [i, x1i] : x1)

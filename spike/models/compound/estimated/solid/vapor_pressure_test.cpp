@@ -16,7 +16,7 @@ TEST_CASE( "estimated solid vapor_pressure order of magnitude", "[table]" )
         {
             if (compound::estimated::vapor_pressure_as_solid.count(i) > 0)
             {
-                for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=3.0)
+                for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=1.778)
                 {
                     auto x = compound::estimated::vapor_pressure_as_solid[i](T);
                     CHECK(x / si::kilopascal < 300.0); /*based on tetraflourosilane*/ \

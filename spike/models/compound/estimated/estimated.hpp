@@ -135,25 +135,27 @@ namespace estimated{
     std::map<int, SolidVaporPressureTemperatureRelation> vapor_pressure_as_solid = 
         first<SolidVaporPressureTemperatureRelation>({
             published::vapor_pressure_as_solid,
-            attempt<SolidVaporPressureTemperatureRelation>([](si::specific_energy<double> Hv, si::specific_energy<double> Hf, si::molar_mass<double> M, point<double> triple){
-                    double T3 = triple.temperature / si::kelvin;
-                    double P3 = triple.pressure / si::pascal;
-                    double k = ((Hv+Hf)*M / si::universal_gas_constant) * (1.0/si::kelvin);
+            attempt<SolidVaporPressureTemperatureRelation>([](si::specific_energy<double> Hf, si::molar_mass<double> M, point<double> triple){
+                    auto T = analytic::Identity<float>();
+                    auto R = si::universal_gas_constant;
+                    float T3 = triple.temperature / si::kelvin;
+                    float P3 = triple.pressure / si::pascal;
+                    float k = (Hf*M/R)/si::kelvin;
                     float Tmax = triple.temperature/si::kelvin;
-                    float oo = std::numeric_limits<float>::max();
-                    using P = analytic::Polynomial<float,-1,1>;
-                    using R = analytic::Railcar<float,P>;
-                    P p;
-                    p[0]  = std::log(P3) + (k/T3);
-                    p[-1] = -k;
-                    return relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>,si::pressure<double>,-1,1>(
-                        analytic::Railyard<float,P>({
-                            R(0.0f, Tmax, p),
-                            R(Tmax,   oo, P(p(Tmax)))
-                        }),
+                    using Polynomial = analytic::Polynomial<float,-1,1>;
+                    using Clamped = analytic::Clamped<float,Polynomial>;
+                    using Railyard = analytic::Railyard<float,Polynomial>;
+                    return P3 * relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>,si::pressure<double>,-1,1>(
+                        Railyard(Clamped(0.0f, Tmax, Polynomial(-k*(1.0f/T - 1.0f/T3)))),
                         si::kelvin, si::pascal);
-                }, published::latent_heat_of_vaporization, published::latent_heat_of_fusion, maybe(molar_mass), published::triple_point)
+                }, 
+                published::latent_heat_of_fusion, 
+                maybe(molar_mass), 
+                published::triple_point)
         });
+    // NOTE: the above is translated from property/published.hpp:
+    // return triple_point_pressure * exp(-((latent_heat_of_sublimation*molar_mass / si::universal_gas_constant) * (1.0/temperature - 1.0/triple_point_temperature)));
+
 
 }}
 

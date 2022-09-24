@@ -129,6 +129,14 @@ namespace relation {
     }
 
     template<typename Tx, typename Ty, int Plo, int Phi>
+    ExponentiatedPolynomialRailyardRelation<Tx,Ty,Plo,Phi> operator*(const float scalar, const ExponentiatedPolynomialRailyardRelation<Tx,Ty,Plo,Phi>& relation)
+    {
+        ExponentiatedPolynomialRailyardRelation<Tx,Ty,Plo,Phi> result = relation;
+        result *= scalar;
+        return result;
+    }
+
+    template<typename Tx, typename Ty, int Plo, int Phi>
     ExponentiatedPolynomialRailyardRelation<Tx,Ty,Plo,Phi> operator/(const ExponentiatedPolynomialRailyardRelation<Tx,Ty,Plo,Phi>& relation, const float scalar)
     {
         ExponentiatedPolynomialRailyardRelation<Tx,Ty,Plo,Phi> result = relation;
