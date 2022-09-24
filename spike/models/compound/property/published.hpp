@@ -409,16 +409,16 @@ namespace property {
 
     // Clapeyron: https://chemicals.readthedocs.io/chemicals.vapor_pressure.html#sublimation-pressure-estimation-correlations
     constexpr si::pressure<double> estimate_vapor_pressure_as_solid_from_clapeyron(
-        const si::specific_energy<double> latent_heat_of_sublimation,
+        const si::specific_energy<double> latent_heat_of_sublimation_at_triple_point,
         const si::molar_mass<double> molar_mass,
         const si::temperature<double> temperature,
         const si::temperature<double> triple_point_temperature,
         const si::pressure<double> triple_point_pressure
     ){
-        return triple_point_pressure * exp(-((latent_heat_of_sublimation*molar_mass / si::universal_gas_constant) * (1.0/temperature - 1.0/triple_point_temperature)));
+        return triple_point_pressure * exp(-((latent_heat_of_sublimation_at_triple_point*molar_mass / si::universal_gas_constant) * (1.0/temperature - 1.0/triple_point_temperature)));
     }
 
-    constexpr si::specific_energy<double> estimate_latent_heat_of_sublimation_from_clapeyron(
+    constexpr si::specific_energy<double> estimate_latent_heat_of_sublimation_at_triple_point_from_clapeyron(
         const si::pressure<double> vapor_pressure_as_solid,
         const si::molar_mass<double> molar_mass,
         const si::temperature<double> temperature,
@@ -426,6 +426,6 @@ namespace property {
         const si::pressure<double> triple_point_pressure
     ){
 
-        return -si::universal_gas_constant * (vapor_pressure_as_solid / triple_point_pressure) / (1.0/temperature - 1.0/triple_point_temperature) / molar_mass;
+        return -si::universal_gas_constant * log(vapor_pressure_as_solid / triple_point_pressure) / (1.0/temperature - 1.0/triple_point_temperature) / molar_mass;
     }
 }}

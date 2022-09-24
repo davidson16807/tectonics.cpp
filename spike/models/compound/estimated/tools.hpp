@@ -202,8 +202,8 @@ namespace estimated {
                 Tx2 x2i = x2.at(i);
                 Tx3 x3i = x3.at(i);
                 Tx4 x4i = x4.at(i);
-                Tx4 x5i = x5.at(i);
-                y.emplace(int(i), f(x1i,x2i,x3i,x4i));
+                Tx5 x5i = x5.at(i);
+                y.emplace(int(i), f(x1i,x2i,x3i,x4i,x5i));
             }
         }
         return y;

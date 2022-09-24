@@ -118,12 +118,12 @@ namespace estimated{
         complete(
             first<SolidDensityTemperatureRelation>({
                 published::density_as_solid, 
-                attempt<SolidDensityTemperatureRelation>([](si::molar_mass<double> M, LiquidDensityTemperatureRelation rhol, point<double> liquid, point<double> triple){
-                        return SolidDensityTemperatureRelation(M / property::estimate_molar_volume_as_solid_from_goodman(M / rhol(liquid.temperature), liquid.temperature, triple.temperature));}, 
+                attempt<SolidDensityTemperatureRelation>([](si::molar_mass<double> M, LiquidDensityTemperatureRelation rhoL, point<double> liquid, point<double> triple){
+                        return SolidDensityTemperatureRelation(M / property::estimate_molar_volume_as_solid_from_goodman(M / rhoL(liquid.temperature), liquid.temperature, triple.temperature));}, 
                     maybe(molar_mass), maybe(density_as_liquid), maybe(liquid_sample_point), published::triple_point),
             }),
-            derive<SolidDensityTemperatureRelation>([](LiquidDensityTemperatureRelation rhol, point<double> liquid){
-                    return property::guess_density_as_solid_from_density_as_liquid(rhol(liquid.temperature));}, 
+            derive<SolidDensityTemperatureRelation>([](LiquidDensityTemperatureRelation rhoL, point<double> liquid){
+                    return property::guess_density_as_solid_from_density_as_liquid(rhoL(liquid.temperature));}, 
                 density_as_liquid, liquid_sample_point) // WARNING: results are speculative
         );
 
@@ -135,27 +135,50 @@ namespace estimated{
     std::map<int, SolidVaporPressureTemperatureRelation> vapor_pressure_as_solid = 
         first<SolidVaporPressureTemperatureRelation>({
             published::vapor_pressure_as_solid,
-            attempt<SolidVaporPressureTemperatureRelation>([](si::specific_energy<double> Hf, si::molar_mass<double> M, point<double> triple){
-                    auto T = analytic::Identity<float>();
-                    auto R = si::universal_gas_constant;
-                    float T3 = triple.temperature / si::kelvin;
-                    float P3 = triple.pressure / si::pascal;
-                    float k = (Hf*M/R)/si::kelvin;
-                    float Tmax = triple.temperature/si::kelvin;
-                    using Polynomial = analytic::Polynomial<float,-1,1>;
-                    using Clamped = analytic::Clamped<float,Polynomial>;
-                    using Railyard = analytic::Railyard<float,Polynomial>;
-                    return P3 * relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>,si::pressure<double>,-1,1>(
-                        Railyard(Clamped(0.0f, Tmax, Polynomial(-k*(1.0f/T - 1.0f/T3)))),
-                        si::kelvin, si::pascal);
+            attempt<SolidVaporPressureTemperatureRelation>(
+                []( si::specific_energy<double> Hf, 
+                    si::molar_mass<double> M, 
+                    point<double> triple){
+                        auto T = analytic::Identity<float>();
+                        auto R = si::universal_gas_constant;
+                        float T3 = triple.temperature / si::kelvin;
+                        float P3 = triple.pressure / si::pascal;
+                        float k = (Hf*M/R)/si::kelvin;
+                        using Polynomial = analytic::Polynomial<float,-1,1>;
+                        using Clamped = analytic::Clamped<float,Polynomial>;
+                        using Railyard = analytic::Railyard<float,Polynomial>;
+                        return P3 * SolidVaporPressureTemperatureRelation(
+                            Railyard(Clamped(0.0f, T3, Polynomial(-k*(1.0f/T - 1.0f/T3)))),
+                            si::kelvin, si::pascal);
+                        // NOTE: the above is translated from property/published.hpp:
+                        // return triple_point_pressure * exp(-((latent_heat_of_sublimation*molar_mass / si::universal_gas_constant) * (1.0/temperature - 1.0/triple_point_temperature)));
                 }, 
-                published::latent_heat_of_fusion, 
+                published::latent_heat_of_fusion, // NOTE: this should be latent heat of fusion at the triple point, update this line if ever we convert latent_heat_of_fusion to a relation
                 maybe(molar_mass), 
                 published::triple_point)
         });
-    // NOTE: the above is translated from property/published.hpp:
-    // return triple_point_pressure * exp(-((latent_heat_of_sublimation*molar_mass / si::universal_gas_constant) * (1.0/temperature - 1.0/triple_point_temperature)));
 
+    std::map<int, si::specific_energy<double>> latent_heat_of_vaporization = 
+        first<si::specific_energy<double>>({
+            published::latent_heat_of_vaporization,
+            attempt<si::specific_energy<double>>(
+                []( point<double> triple, 
+                    point<double> critical, 
+                    point<double> solid, 
+                    si::molar_mass<double> M,
+                    SolidVaporPressureTemperatureRelation PvS
+                    ){
+                        auto T = solid.temperature;
+                        auto T3 = triple.temperature;
+                        auto P3 = triple.pressure;
+                        return property::estimate_latent_heat_of_sublimation_at_triple_point_from_clapeyron(PvS(T), M, T, T3, P3);
+                },
+                published::triple_point,
+                maybe(critical_point),
+                maybe(solid_sample_point),
+                maybe(molar_mass),
+                vapor_pressure_as_solid)
+        });
 
 }}
 

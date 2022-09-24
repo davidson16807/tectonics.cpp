@@ -99,6 +99,12 @@ namespace si{
   {
     T1 raw;
   public:
+    // zero constructor
+    constexpr explicit units(): raw(T1(0))
+    {
+
+    }
+
     constexpr explicit units(T1 raw): raw(raw)
     {
 
@@ -876,6 +882,12 @@ namespace si{
 
   constexpr time<double>      annum (31556925.445 * second); // ~365.24219265 days
   SI_MODERN_PREFIXED_UNITS(time<double>, annum)
+
+  constexpr time<double> tropical_year (365.24219265 * day);
+  SI_MODERN_DOUBLE_PREFIXED_UNITS(time<double>, tropical_, year)
+
+  constexpr time<double> solar_year (365.24219265 * day);
+  SI_MODERN_DOUBLE_PREFIXED_UNITS(time<double>, solar_, year)
 
   constexpr time<double> gregorian_year (365.2425 * day);
   SI_MODERN_DOUBLE_PREFIXED_UNITS(time<double>, gregorian_, year)
