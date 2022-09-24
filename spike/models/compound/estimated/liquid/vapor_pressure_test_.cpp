@@ -8,7 +8,8 @@
 // in house libraries
 #include <models/compound/estimated/estimated.hpp>
 
-TEST_CASE( "estimated liquid vapor_pressure order of magnitude", "[table]" ) {
+TEST_CASE( "estimated liquid vapor_pressure order of magnitude", "[table]" ) 
+{
     SECTION("Properties of compounds should not fall outside orders of magnitude for known values")
     {
         for (int i = 0; i<compound::ids::count; i++)
@@ -27,6 +28,26 @@ TEST_CASE( "estimated liquid vapor_pressure order of magnitude", "[table]" ) {
                     auto x = compound::estimated::vapor_pressure_as_liquid[i](T);
                     CHECK(x / si::pascal < 3e7); /*based on high temperature acetaldehyde*/ \
                     CHECK(x / si::pascal > 0.03); /*based on low temperature ethylene glycol*/ \
+                }
+            }
+        }
+    }
+}
+TEST_CASE( "estimated liquid vapor_pressure monotonically increasing", "[table]" ) 
+{
+    SECTION("Vapor pressure must monotonically increase with temperature")
+    {
+        for (int i = 0; i<compound::ids::count; i++)
+        {
+            if (compound::estimated::vapor_pressure_as_solid.count(i) > 0) 
+            {
+                si::temperature<double> T = 3.0*si::kelvin;
+                auto last = compound::estimated::vapor_pressure_as_solid[i](T);
+                for (; T <= si::solar_temperature; T*=3.0)
+                {
+                    auto next = compound::estimated::vapor_pressure_as_solid[i](T);
+                    CHECK(next / si::pascal >= last / si::pascal);
+                    last = next;
                 }
             }
         }

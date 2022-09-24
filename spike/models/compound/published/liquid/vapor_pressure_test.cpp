@@ -32,3 +32,23 @@ TEST_CASE( "published liquid vapor_pressure order of magnitude", "[table]" ) {
         }
     }
 }
+TEST_CASE( "published liquid vapor_pressure monotonically increasing", "[table]" ) 
+{
+    SECTION("Vapor pressure must monotonically increase with temperature")
+    {
+        for (int i = 0; i<compound::ids::count; i++)
+        {
+            if (compound::published::vapor_pressure_as_solid.count(i) > 0)
+            {
+                si::temperature<double> T = 3.0*si::kelvin;
+                auto last = compound::published::vapor_pressure_as_solid[i](T);
+                for (; T <= si::solar_temperature; T*=3.0)
+                {
+                    auto next = compound::published::vapor_pressure_as_solid[i](T);
+                    CHECK(next / si::pascal >= last / si::pascal);
+                    last = next;
+                }
+            }
+        }
+    }
+}

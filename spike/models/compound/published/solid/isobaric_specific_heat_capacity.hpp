@@ -25,26 +25,26 @@ namespace published {
         { ids::nitrogen,                   
                 relation::get_linear_interpolation_function
                     ( si::kelvin, si::joule/(28.013*si::gram * si::kelvin),
-                      std::vector<double>{ 39.0, 60.0, 62.5},
-                      std::vector<double>{37.39,45.64,46.97}), // Manzhelii (1997)
+                      std::vector<double>{0.0,  39.0, 60.0, 62.5},
+                      std::vector<double>{0.0, 37.39,45.64,46.97}), // Manzhelii (1997)
             },
         { ids::oxygen,   
                 relation::get_linear_interpolation_function
                     ( si::kelvin, si::calorie / (31.9988*si::gram * si::kelvin),
-                      std::vector<double>{45.90, 54.39},
-                      std::vector<double>{11.02, 11.06}), // Johnson (1960)
+                      std::vector<double>{0.0, 45.90, 54.39},
+                      std::vector<double>{0.0, 11.02, 11.06}), // Johnson (1960)
             },
         { ids::carbon_dioxide,            
                 relation::get_linear_interpolation_function
                     ( si::kelvin, si::joule/(28.013*si::gram * si::kelvin),
-                     std::vector<double>{0.0,   3.0,  10.0, 40.0, 70.0, 200.0, 215.0}, 
-                     std::vector<double>{0.0,0.0151,0.5883,19.64,33.38, 56.77, 61.90}), // Manzhelii (1997)
+                     std::vector<double>{0.0,    3.0,  10.0, 40.0, 70.0, 200.0, 215.0}, 
+                     std::vector<double>{0.0, 0.0151,0.5883,19.64,33.38, 56.77, 61.90}), // Manzhelii (1997)
             },
         { ids::methane, 
                 relation::get_linear_interpolation_function
                     ( si::kelvin, si::calorie / (16.043*si::gram * si::kelvin),
-                      std::vector<double>{21.35, 61.40, 87.20},
-                      std::vector<double>{4.325, 8.673, 10.19}), // Johnson (1960)
+                      std::vector<double>{0.0, 21.35, 61.40, 87.20},
+                      std::vector<double>{0.0, 4.325, 8.673, 10.19}), // Johnson (1960)
             },
         { ids::argon,   
                 relation::get_linear_interpolation_function
@@ -72,8 +72,8 @@ namespace published {
         { ids::carbon_monoxide,            
                 relation::get_linear_interpolation_function
                     (si::kelvin, si::joule/(28.010*si::gram*si::kelvin),
-                     std::vector<double>{ 63.0,  64.0,  65.0,  66.0,  67.0}, 
-                     std::vector<double>{50.10, 50.58, 51.08, 51.58, 52.29}), // Manzhelii (1997)
+                     std::vector<double>{0.0,  63.0,  64.0,  65.0,  66.0,  67.0}, 
+                     std::vector<double>{0.0, 50.10, 50.58, 51.08, 51.58, 52.29}), // Manzhelii (1997)
             },
         // { ids::ethane,           },
         // { ids::hydrogen_cyanide, },

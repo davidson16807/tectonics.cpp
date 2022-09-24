@@ -22,3 +22,16 @@ TEST_CASE( "estimated solid isobaric_specific_heat_capacity order of magnitude",
         }
     }
 }
+
+TEST_CASE( "estimated solid isobaric_specific_heat_capacity degeneracy", "[table]" ) {
+    SECTION("Specific heat capacity as a solid must be 0 when at absolute zero")
+    {
+        for (int i = 0; i<compound::ids::count; i++)
+        {
+            if (compound::estimated::isobaric_specific_heat_capacity_as_solid.count(i) > 0) {
+                auto x = compound::estimated::isobaric_specific_heat_capacity_as_solid[i](0*si::kelvin);
+                CHECK(x / (si::joule/(si::kilogram * si::kelvin)) == 0.0); 
+            }
+        }
+    }
+}

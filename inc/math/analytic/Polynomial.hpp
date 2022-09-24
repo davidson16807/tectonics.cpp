@@ -89,12 +89,13 @@ namespace analytic {
         }
         constexpr T operator()(const T x) const
         {
-            T y(0.0f);
+            T y(0);
             for (int i = Nlo; i <= -1; ++i)
             {
-                // exponents are calculated using pow(), 
+                // Exponents are calculated using pow(), 
                 // rather than repeated multiplication, to avoid precision errors
-                y += k[i-Nlo] * std::pow(x, i);
+                // We check for k[i-Nlo] == T(0) as a sensible prevention of nans when dividing by 0.
+                y += k[i-Nlo] == T(0)? T(0) : k[i-Nlo] * std::pow(x, i);
             }
             int i0(std::max(Nlo,0));
             T xi(std::pow(x, i0));
