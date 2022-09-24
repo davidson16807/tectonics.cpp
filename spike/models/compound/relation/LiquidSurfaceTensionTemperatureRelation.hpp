@@ -24,7 +24,7 @@ namespace relation {
     */
     class LiquidSurfaceTensionTemperatureRelation
     {
-        std::vector<ClampedScaledComplementExponent> terms;
+        analytic::Sum<float,ClampedScaledComplementExponent> terms;
         analytic::PolynomialRailyard<float, 0, 2> yard;
 
         si::temperature<double>    Tunits;
@@ -47,7 +47,7 @@ namespace relation {
 
         // constant constructor
         LiquidSurfaceTensionTemperatureRelation(const si::surface_energy<double> constant):
-            terms(1, ClampedScaledComplementExponent(constant/si::surface_energy<double>(1.0))),
+            terms(ClampedScaledComplementExponent(constant/si::surface_energy<double>(1.0))),
             yard(),
 
             Tunits(1.0),
@@ -58,7 +58,7 @@ namespace relation {
         }
 
         LiquidSurfaceTensionTemperatureRelation(
-            const std::vector<ClampedScaledComplementExponent> terms,
+            const analytic::Sum<float,ClampedScaledComplementExponent> terms,
             const analytic::PolynomialRailyard<float, 0, 2> yard,
 
             const si::temperature<double> Tunits,
@@ -118,42 +118,31 @@ namespace relation {
         si::surface_energy<double> operator()(const si::temperature<double> temperature) const
         {
             const float T = float(temperature/Tunits);
-            float y = yard(T);
-            for (std::size_t i = 0; i < terms.size(); ++i)
-            {
-                y += terms[i](T);
-            }
-            return y * yunits;
+            return (yard(T) + terms(T)) * yunits;
         }
 
         LiquidSurfaceTensionTemperatureRelation& operator+=(const si::surface_energy<double> offset)
         {
-            terms.push_back(ClampedScaledComplementExponent(offset/yunits));
+            terms += ClampedScaledComplementExponent(offset/yunits);
             return *this;
         }
 
         LiquidSurfaceTensionTemperatureRelation& operator-=(const si::surface_energy<double> offset)
         {
-            terms.push_back(ClampedScaledComplementExponent(-offset/yunits));
+            terms += ClampedScaledComplementExponent(-offset/yunits);
             return *this;
         }
 
         LiquidSurfaceTensionTemperatureRelation& operator*=(const float scalar)
         {
-            for (std::size_t i = 0; i < terms.size(); ++i)
-            {
-                terms[i] *= scalar;
-            }
+            terms *= scalar;
             yard *= scalar;
             return *this;
         }
 
         LiquidSurfaceTensionTemperatureRelation operator/=(const float scalar)
         {
-            for (std::size_t i = 0; i < terms.size(); ++i)
-            {
-                terms[i] /= scalar;
-            }
+            terms /= scalar;
             yard /= scalar;
             return *this;
         }
@@ -162,10 +151,7 @@ namespace relation {
         {
             const float Tscale = float(other.Tunits / Tunits);
             const float yscale = float(other.yunits / yunits);
-            for (std::size_t i = 0; i < other.terms.size(); ++i)
-            {
-                terms.push_back(yscale * compose(other.terms[i], analytic::Scaling<float>(Tscale)));
-            }
+            terms += yscale * compose(other.terms, analytic::Scaling<float>(Tscale));
             yard += yscale * compose(other.yard, analytic::Scaling<float>(Tscale));
             return *this;
         }
@@ -174,10 +160,7 @@ namespace relation {
         {
             const float Tscale = float(other.Tunits / Tunits);
             const float yscale = float(other.yunits / yunits);
-            for (std::size_t i = 0; i < other.terms.size(); ++i)
-            {
-                terms.push_back(-yscale * compose(other.terms[i], analytic::Scaling<float>(Tscale)));
-            }
+            terms -= yscale * compose(other.terms, analytic::Scaling<float>(Tscale));
             yard -= yscale * compose(other.yard, analytic::Scaling<float>(Tscale));
             return *this;
         }
