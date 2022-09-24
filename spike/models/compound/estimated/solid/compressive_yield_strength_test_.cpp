@@ -15,7 +15,7 @@ TEST_CASE( "estimated solid compressive_yield_strength order of magnitude", "[ta
         {
             for (int i = 0; i<compound::ids::count; i++)
             {
-                if (compound::estimated::compressive_yield_strength_as_solid.count(i) > 0) {
+                if (compound::estimated::compressive_yield_strength_as_solid.has(i)) {
                     auto x = compound::estimated::compressive_yield_strength_as_solid[i](T);
                     CHECK(x / si::megapascal < 3000.0); /*based on ceramics*/ \
                     CHECK(x / si::megapascal > 1.0); /*based on hydrogen*/ \

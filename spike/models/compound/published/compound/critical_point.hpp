@@ -1,17 +1,15 @@
 #pragma once
 
-// std libraries
-#include <map>
-
 // in-house libraries
 #include <units/si.hpp>
 
 #include <models/compound/ids.hpp>
+#include <models/compound/table/PartialTable.hpp>
 
 namespace compound { 
 namespace published { 
 
-    std::map<int, si::pressure<double>> critical_point_pressure {
+    table::PartialTable<si::pressure<double>> critical_point_pressure {
         {ids::water,            22.06 *  si::megapascal },
         {ids::nitrogen,         3.39 * si::megapascal   },
         {ids::oxygen,           5.043 * si::megapascal  },
@@ -55,7 +53,7 @@ namespace published {
         // {ids::chalcopyrite,     ,                       },
     };
 
-    std::map<int, si::temperature<double>> critical_point_temperature {
+    table::PartialTable<si::temperature<double>> critical_point_temperature {
         {ids::water,            647.01 * si::kelvin },
         {ids::nitrogen,         126.21 * si::kelvin },
         {ids::oxygen,           154.59 * si::kelvin },
@@ -99,7 +97,7 @@ namespace published {
         // {ids::chalcopyrite,     ,                                         },
     };
 
-    std::map<int, double> critical_point_compressibility {
+    table::PartialTable<double> critical_point_compressibility {
         {ids::water,            0.230},  // engineering toolbox
         // {ids::nitrogen,         },
         // {ids::oxygen,           },
@@ -143,7 +141,7 @@ namespace published {
         // {ids:: chalcopyrite,    },
     };
 
-    std::map<int, si::molar_volume<double>> critical_point_volume {
+    table::PartialTable<si::molar_volume<double>> critical_point_volume {
         {ids::water,            56.0 *  si::centimeter3/si::mole},
         {ids::nitrogen,         90.0 * si::centimeter3/si::mole},
         {ids::oxygen,           73.0 * si::centimeter3/si::mole},

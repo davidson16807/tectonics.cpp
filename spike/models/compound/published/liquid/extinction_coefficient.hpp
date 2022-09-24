@@ -1,18 +1,16 @@
 #pragma once
 
-// std libraries
-#include <map>
-
 // in-house libraries
 #include <units/si.hpp>
-#include <models/compound/relation/PolynomialRailyardRelation.hpp>
 #include <models/compound/ids.hpp>
+#include <models/compound/relation/PolynomialRailyardRelation.hpp>
+#include <models/compound/table/PartialTable.hpp>
 
 namespace compound { 
 namespace published { 
 
     using LiquidExtinctionCoefficientWavenumberRelation = relation::PolynomialRailyardRelation<si::wavenumber<double>,double, 0,1>;
-    std::map<int, LiquidExtinctionCoefficientWavenumberRelation> extinction_coefficient_as_liquid {
+    table::PartialTable<LiquidExtinctionCoefficientWavenumberRelation> extinction_coefficient_as_liquid {
 
         { ids::water, 
                     relation::get_spectral_linear_interpolation_function_of_wavelength

@@ -13,7 +13,7 @@ TEST_CASE( "estimated liquid isobaric_specific_heat_capacity order of magnitude"
     {
         for (int i = 0; i<compound::ids::count; i++)
         {
-            if (compound::estimated::isobaric_specific_heat_capacity_as_liquid.count(i) > 0) 
+            if (compound::estimated::isobaric_specific_heat_capacity_as_liquid.has(i)) 
             {
                 for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=3.0)
                 {

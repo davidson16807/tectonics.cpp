@@ -1,10 +1,8 @@
 #pragma once
 
-// std libraries
-#include <map>
-
 // in-house libraries
 #include <units/si.hpp>
+#include <models/compound/table/PartialTable.hpp>
 #include <models/compound/relation/PolynomialRailyardRelation.hpp>
 #include <models/compound/ids.hpp>
 
@@ -12,7 +10,7 @@ namespace compound {
 namespace published { 
 
     using SolidDynamicViscosityTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,si::dynamic_viscosity<double>, 0,1>;
-    std::map<int, SolidDynamicViscosityTemperatureRelation> dynamic_viscosity_as_solid {
+    table::PartialTable<SolidDynamicViscosityTemperatureRelation> dynamic_viscosity_as_solid {
         { ids::water,               1e13 * si::poise,                                 // reference by Carey (1953)
             },
         // { ids::nitrogen,              

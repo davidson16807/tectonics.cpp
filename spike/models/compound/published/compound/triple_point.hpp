@@ -1,18 +1,16 @@
 #pragma once
 
-// std libraries
-#include <map>
-
 // in-house libraries
 #include <units/si.hpp>
 
 #include <models/compound/ids.hpp>
 #include <models/compound/point.hpp>
+#include <models/compound/table/PartialTable.hpp>
 
 namespace compound { 
 namespace published { 
 
-    std::map<int, point<double>> triple_point {
+    table::PartialTable<point<double>> triple_point {
 
         {ids::water,            point<double>(0.6116e3*si::pascal,      273.15 * si::kelvin)},
         {ids::nitrogen,         point<double>(12.463 * si::kilopascal,  63.15 * si::kelvin)},

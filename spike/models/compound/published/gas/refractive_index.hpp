@@ -1,18 +1,16 @@
 #pragma once
 
-// std libraries
-#include <map>
-
 // in-house libraries
 #include <units/si.hpp>
-#include <models/compound/relation/PolynomialRailyardRelation.hpp>
 #include <models/compound/ids.hpp>
+#include <models/compound/relation/PolynomialRailyardRelation.hpp>
+#include <models/compound/table/PartialTable.hpp>
 
 namespace compound { 
 namespace published { 
 
     using GasRefractiveIndexWavenumberRelation = relation::PolynomialRailyardRelation<si::wavenumber<double>,double, 0,1>;
-    std::map<int, GasRefractiveIndexWavenumberRelation> refractive_index_as_gas {
+    table::PartialTable<GasRefractiveIndexWavenumberRelation> refractive_index_as_gas {
         {ids::water,         1.000261},
         // {ids::nitrogen,      
                 // // TODO: reimplement this

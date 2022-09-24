@@ -13,7 +13,7 @@ TEST_CASE( "estimated solid lame_parameter order of magnitude", "[table]" ) {
         {
             for (int i = 0; i<compound::ids::count; i++)
             {
-                if (compound::estimated::lame_parameter_as_solid.count(i) > 0) {
+                if (compound::estimated::lame_parameter_as_solid.has(i)) {
                     auto x = compound::estimated::lame_parameter_as_solid[i](T);
                     CHECK(x / si::gigapascal > 0.001); /*based on helium*/ \
                     CHECK(x / si::gigapascal < 1000.0); /*based on various rocks*/ \

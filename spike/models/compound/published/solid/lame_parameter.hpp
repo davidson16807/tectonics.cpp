@@ -1,10 +1,8 @@
 #pragma once
 
-// std libraries
-#include <map>
-
 // in-house libraries
 #include <units/si.hpp>
+#include <models/compound/table/PartialTable.hpp>
 #include <models/compound/relation/PolynomialRailyardRelation.hpp>
 #include <models/compound/ids.hpp>
 
@@ -12,7 +10,7 @@ namespace compound {
 namespace published { 
 
     using SolidLameParameterTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,si::pressure<double>, 0,1>;
-    std::map<int, SolidLameParameterTemperatureRelation> lame_parameter_as_solid {
+    table::PartialTable<SolidLameParameterTemperatureRelation> lame_parameter_as_solid {
         { ids::water,               6.552 * si::gigapascal,                           // gammon (1983)
             },
         // { ids::nitrogen,         },

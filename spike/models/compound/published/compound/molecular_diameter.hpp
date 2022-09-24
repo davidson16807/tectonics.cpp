@@ -1,17 +1,15 @@
 #pragma once
 
-// std libraries
-#include <map>
-
 // in-house libraries
 #include <units/si.hpp>
 
 #include <models/compound/ids.hpp>
+#include <models/compound/table/PartialTable.hpp>
 
 namespace compound { 
 namespace published { 
 
-    std::map<int, si::length<double>> molecular_diameter {
+    table::PartialTable<si::length<double>> molecular_diameter {
         {ids::water,            265.0 * si::picometer},                                    // wikipedia,  Ismail (2015)
         {ids::nitrogen,         357.8 * si::picometer},                                    // Mehio (2014)
         {ids::oxygen,           334.0 * si::picometer},                                    // Mehio (2014)

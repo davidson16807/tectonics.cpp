@@ -1,10 +1,8 @@
 #pragma once
 
-// std libraries
-#include <map>
-
 // in-house libraries
 #include <units/si.hpp>
+#include <models/compound/table/PartialTable.hpp>
 #include <models/compound/relation/PolynomialRailyardRelation.hpp>
 #include <models/compound/ids.hpp>
 
@@ -12,7 +10,7 @@ namespace compound {
 namespace published { 
 
     using SolidRefractiveIndexWavenumberRelation = relation::PolynomialRailyardRelation<si::wavenumber<double>,double, 0,1>;
-    std::map<int, SolidRefractiveIndexWavenumberRelation> refractive_index_as_solid {
+    table::PartialTable<SolidRefractiveIndexWavenumberRelation> refractive_index_as_solid {
         { ids::water,       
                 relation::get_spectral_linear_interpolation_function_of_wavelength
                     (si::micrometer, 1.0,

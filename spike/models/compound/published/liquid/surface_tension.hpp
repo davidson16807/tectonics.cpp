@@ -1,19 +1,17 @@
 #pragma once
 
-// std libraries
-#include <map>
-
 // in-house libraries
 #include <units/si.hpp>
+#include <models/compound/ids.hpp>
 #include <models/compound/relation/LiquidSurfaceTensionTemperatureRelation.hpp>
 #include <models/compound/relation/PolynomialRailyardRelation.hpp>
-#include <models/compound/ids.hpp>
+#include <models/compound/table/PartialTable.hpp>
 
 namespace compound { 
 namespace published { 
 
     using LiquidSurfaceTensionTemperatureRelation = relation::LiquidSurfaceTensionTemperatureRelation;
-    std::map<int, LiquidSurfaceTensionTemperatureRelation> surface_tension_as_liquid {
+    table::PartialTable<LiquidSurfaceTensionTemperatureRelation> surface_tension_as_liquid {
         { ids::water,            
                 relation::get_refprop_liquid_surface_tension_temperature_function
                     (si::kelvin, si::newton/si::meter,

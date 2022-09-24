@@ -1,13 +1,14 @@
 #pragma once
 
 // std libraries
-#include <vector>
 #include <string>
+
+#include <models/compound/table/FullTable.hpp>
 
 namespace compound { 
 namespace published { 
 
-    std::vector<std::string> formula {
+    table::FullTable<std::string> formula {
         /*water*/            "H₂O",
         /*nitrogen*/         "N₂",
         /*oxygen*/           "O₂",

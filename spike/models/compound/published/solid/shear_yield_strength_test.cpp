@@ -15,7 +15,7 @@ TEST_CASE( "published solid shear_yield_strength order of magnitude", "[table]" 
         {
             for (int i = 0; i<compound::ids::count; i++)
             {
-                if (compound::published::shear_yield_strength_as_solid.count(i) > 0) {
+                if (compound::published::shear_yield_strength_as_solid.has(i)) {
                     auto x = compound::published::shear_yield_strength_as_solid[i](T);
                     CHECK(x / si::megapascal < 10000.0); /*based on high performance steels*/ \
                     CHECK(x / si::megapascal > 0.003); /*based on hydrogen*/ \

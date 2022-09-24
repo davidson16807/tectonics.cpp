@@ -1,17 +1,15 @@
 #pragma once
 
-// std libraries
-#include <map>
-
 // in-house libraries
-#include <models/compound/relation/GasPropertyStateRelation.hpp>
 #include <models/compound/ids.hpp>
+#include <models/compound/relation/GasPropertyStateRelation.hpp>
+#include <models/compound/table/PartialTable.hpp>
 
 namespace compound { 
 namespace published { 
 
     using GasDynamicViscosityStateRelation = relation::GasPropertyStateRelation<si::dynamic_viscosity<double>>;
-    std::map<int, GasDynamicViscosityStateRelation> dynamic_viscosity_as_gas {
+    table::PartialTable<GasDynamicViscosityStateRelation> dynamic_viscosity_as_gas {
         { ids::water,      
                 relation::get_exponent_pressure_temperature_relation
                     (si::kelvin, si::megapascal, si::micropascal*si::second, 

@@ -1,17 +1,15 @@
 #pragma once
 
-// std libraries
-#include <map>
-
 // in-house libraries
 #include <units/si.hpp>
 
 #include <models/compound/ids.hpp>
+#include <models/compound/table/PartialTable.hpp>
 
 namespace compound { 
 namespace published { 
 
-    std::map<int, relation::PolynomialRailyardRelation<si::wavenumber<double>,si::area<double>,0,1>>  molecular_absorption_cross_section {
+    table::PartialTable<relation::PolynomialRailyardRelation<si::wavenumber<double>,si::area<double>,0,1>>  molecular_absorption_cross_section {
 
         {ids::water, 
                 compound::relation::get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output

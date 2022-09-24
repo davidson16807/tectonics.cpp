@@ -16,7 +16,7 @@ TEST_CASE( "published liquid extinction_coefficient order of magnitude", "[table
         {
             for (int i = 0; i<compound::ids::count; i++)
             {
-                if (compound::published::extinction_coefficient_as_liquid.count(i) > 0) {
+                if (compound::published::extinction_coefficient_as_liquid.has(i)) {
                     auto x = compound::published::extinction_coefficient_as_liquid[i](1.0/l);
                     CHECK(x > 1e-9 ); 
                     CHECK(x < 1.0 );  

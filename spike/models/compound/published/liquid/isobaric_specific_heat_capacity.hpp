@@ -1,18 +1,16 @@
 #pragma once
 
-// std libraries
-#include <map>
-
 // in-house libraries
 #include <units/si.hpp>
-#include <models/compound/relation/LiquidHeatCapacityTemperatureRelation.hpp>
 #include <models/compound/ids.hpp>
+#include <models/compound/relation/LiquidHeatCapacityTemperatureRelation.hpp>
+#include <models/compound/table/PartialTable.hpp>
 
 namespace compound { 
 namespace published { 
 
     using LiquidHeatCapacityTemperatureRelation = relation::LiquidHeatCapacityTemperatureRelation;
-    std::map<int, LiquidHeatCapacityTemperatureRelation> isobaric_specific_heat_capacity_as_liquid {
+    table::PartialTable<LiquidHeatCapacityTemperatureRelation> isobaric_specific_heat_capacity_as_liquid {
         { ids::water, 
                 relation::get_dippr_quartic_temperature_relation_100
                     (si::kelvin, si::joule / (18.01528 * si::kilogram * si::kelvin), 

@@ -15,7 +15,7 @@ TEST_CASE( "published solid thermal_conductivity order of magnitude", "[table]" 
         {
             for (int i = 0; i<compound::ids::count; i++)
             {
-                if (compound::published::thermal_conductivity_as_solid.count(i) > 0) {
+                if (compound::published::thermal_conductivity_as_solid.has(i)) {
                     auto x = compound::published::thermal_conductivity_as_solid[i](T);
                     CHECK(x / (si::watt/(si::meter * si::kelvin)) < 30000.0); /*based on silver at 10K*/ \
                     CHECK(x / (si::watt/(si::meter * si::kelvin)) > 0.01); /*based on aerogel*/ \

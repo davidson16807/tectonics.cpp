@@ -1,10 +1,8 @@
 #pragma once
 
-// std libraries
-#include <map>
-
 // in-house libraries
 #include <units/si.hpp>
+#include <models/compound/table/PartialTable.hpp>
 #include <models/compound/relation/PolynomialRailyardRelation.hpp>
 #include <models/compound/ids.hpp>
 
@@ -12,7 +10,7 @@ namespace compound {
 namespace published { 
 
     using SolidPoissonRatioTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,double, 0,1>;
-    std::map<int, SolidPoissonRatioTemperatureRelation> poisson_ratio_as_solid {
+    table::PartialTable<SolidPoissonRatioTemperatureRelation> poisson_ratio_as_solid {
         { ids::water,               0.3252,                                           // gammon (1983)
             },
         { ids::nitrogen,                     

@@ -15,7 +15,7 @@ TEST_CASE( "estimated gaseous dynamic_viscosity order of magnitude", "[table]" )
             {
                 for (int i = 0; i<compound::ids::count; i++)
                 {
-                    if (compound::estimated::dynamic_viscosity_as_gas.count(i) > 0) {
+                    if (compound::estimated::dynamic_viscosity_as_gas.has(i)) {
                         auto x = compound::estimated::dynamic_viscosity_as_gas[i](p,T);
                         CHECK(x / (si::pascal * si::second) < 10e-5); /*based on argon at 500°C*/ 
                         CHECK(x / (si::pascal * si::second) > 1e-6); /*based on steam*/ 

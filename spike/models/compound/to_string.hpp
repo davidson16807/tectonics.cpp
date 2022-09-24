@@ -42,7 +42,7 @@ namespace published {
     }
 
     template<typename T>
-    std::string to_string(const std::vector<std::string>& names, const std::map<int,T>& properties)
+    std::string to_string(const std::vector<std::string>& names, const table::PartialTable<T>& properties)
     {
         auto name_ptr = std::max_element(names.begin(), names.end(),
             [](const auto& a, const auto& b) {
@@ -63,7 +63,7 @@ namespace published {
     }
 
     template<typename T>
-    std::string to_string(const std::vector<std::string>& names, const std::map<int,T>& properties)
+    std::string to_string(const std::vector<std::string>& names, const table::PartialTable<T>& properties)
     {
         auto name_ptr = std::max_element(names.begin(), names.end(),
             [](const auto& a, const auto& b) {

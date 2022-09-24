@@ -1,18 +1,16 @@
 #pragma once
 
-// std libraries
-#include <map>
-
 // in-house libraries
 #include <units/si.hpp>
 
 #include <models/compound/ids.hpp>
 #include <models/compound/point.hpp>
+#include <models/compound/table/PartialTable.hpp>
 
 namespace compound { 
 namespace published { 
 
-    std::map<int, point<double>> boiling_sample_point {
+    table::PartialTable<point<double>> boiling_sample_point {
 
         {ids::water,             point<double>(si::atmosphere,  100.0*si::celcius)},
         {ids::nitrogen,          point<double>(si::atmosphere,  -195.8 * si::celcius)}, // Perry

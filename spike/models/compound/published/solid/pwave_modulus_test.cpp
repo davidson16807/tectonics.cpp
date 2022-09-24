@@ -13,7 +13,7 @@ TEST_CASE( "published solid pwave_modulus order of magnitude", "[table]" ) {
         {
             for (int i = 0; i<compound::ids::count; i++)
             {
-                if (compound::published::pwave_modulus_as_solid.count(i) > 0) {
+                if (compound::published::pwave_modulus_as_solid.has(i)) {
                     auto x = compound::published::pwave_modulus_as_solid[i](T);
                     CHECK(x / si::gigapascal < 30.0); /*based on water*/ \
                     CHECK(x / si::gigapascal > 10.0); /*based on water*/ \

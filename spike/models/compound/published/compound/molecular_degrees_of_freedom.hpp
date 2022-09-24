@@ -1,17 +1,15 @@
 #pragma once
 
-// std libraries
-#include <map>
-
 // in-house libraries
 #include <units/si.hpp>
 
 #include <models/compound/ids.hpp>
+#include <models/compound/table/PartialTable.hpp>
 
 namespace compound { 
 namespace published { 
 
-    std::map<int, double> molecular_degrees_of_freedom {
+    table::PartialTable<double> molecular_degrees_of_freedom {
         {ids::water,            6.8},
         {ids::nitrogen,         5.0},
         {ids::oxygen,           5.06},

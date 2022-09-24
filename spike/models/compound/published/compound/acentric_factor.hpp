@@ -1,17 +1,15 @@
 #pragma once
 
-// std libraries
-#include <map>
-
 // in-house libraries
 #include <units/si.hpp>
 
+#include <models/compound/table/PartialTable.hpp>
 #include <models/compound/ids.hpp>
 
 namespace compound { 
 namespace published { 
 
-    std::map<int, double> acentric_factor {
+    table::PartialTable<double> acentric_factor {
         {ids::water,            0.345},
         {ids::nitrogen,         0.040},
         {ids::oxygen,           0.022},

@@ -13,7 +13,7 @@ TEST_CASE( "published liquid refractive_index order of magnitude", "[table]" ) {
         {
             for (si::length<double> l = 10.0*si::nanometer; l <= 1.0*si::micrometer; l*=1.78)
             {
-                if (compound::published::refractive_index_as_liquid.count(i) > 0) {
+                if (compound::published::refractive_index_as_liquid.has(i)) {
                     auto x = compound::published::refractive_index_as_liquid[i](1.0/l);
                     CHECK(x > 1.02 ); /*based on liquid helium*/ \
                     CHECK(x < 1.8 ); /*based on Methylene iodine*/ \
@@ -21,7 +21,7 @@ TEST_CASE( "published liquid refractive_index order of magnitude", "[table]" ) {
             }
             for (si::length<double> l = 1.0*si::micrometer; l <= 3.0*si::millimeter; l*=1.78)
             {
-                if (compound::published::refractive_index_as_liquid.count(i) > 0) {
+                if (compound::published::refractive_index_as_liquid.has(i)) {
                     auto x = compound::published::refractive_index_as_liquid[i](1.0/l);
                     CHECK(x > 1.02 ); /*based on liquid helium*/ \
                     CHECK(x < 2.25 ); /*based on water*/ \

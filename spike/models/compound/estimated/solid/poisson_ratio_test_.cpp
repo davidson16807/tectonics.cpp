@@ -13,7 +13,7 @@ TEST_CASE( "estimated solid poisson_ratio order of magnitude", "[table]" ) {
         {
             for (int i = 0; i<compound::ids::count; i++)
             {
-                if (compound::estimated::poisson_ratio_as_solid.count(i) > 0) {
+                if (compound::estimated::poisson_ratio_as_solid.has(i)) {
                     auto x = compound::estimated::poisson_ratio_as_solid[i](T);
                     CHECK(x < 0.5); /*based on rubber*/ \
                     CHECK(x > 0.0); /*based on cork*/ \

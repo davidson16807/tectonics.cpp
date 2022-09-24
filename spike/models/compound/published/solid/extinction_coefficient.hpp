@@ -1,10 +1,8 @@
 #pragma once
 
-// std libraries
-#include <map>
-
 // in-house libraries
 #include <units/si.hpp>
+#include <models/compound/table/PartialTable.hpp>
 #include <models/compound/relation/PolynomialRailyardRelation.hpp>
 #include <models/compound/ids.hpp>
 
@@ -12,7 +10,7 @@ namespace compound {
 namespace published { 
 
     using SolidExtinctionCoefficientWavenumberRelation = relation::PolynomialRailyardRelation<si::wavenumber<double>,double, 0,1>;
-    std::map<int, SolidExtinctionCoefficientWavenumberRelation> extinction_coefficient_as_solid {
+    table::PartialTable<SolidExtinctionCoefficientWavenumberRelation> extinction_coefficient_as_solid {
         { ids::water, 
                 relation::get_spectral_linear_interpolation_function_of_wavelength
                     (si::micrometer, 1.0,

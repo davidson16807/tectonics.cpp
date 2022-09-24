@@ -1,18 +1,15 @@
 #pragma once
 
-// std libraries
-#include <vector>
-
 // in-house libraries
 #include <units/si.hpp>
 
-#include <models/compound/ids.hpp>
 #include <models/compound/point.hpp>
+#include <models/compound/table/FullTable.hpp>
 
 namespace compound { 
 namespace published { 
 
-    std::vector<point<double>> freezing_sample_point {
+    table::FullTable<point<double>> freezing_sample_point {
 
         /*water*/            point<double>(si::atmosphere,        si::standard_temperature ),
         /*nitrogen*/         point<double>(si::atmosphere,        -210.0*si::celcius       ),

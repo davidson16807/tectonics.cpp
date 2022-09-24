@@ -1,17 +1,14 @@
 #pragma once
 
-// std libraries
-#include <vector>
-
 // in-house libraries
 #include <units/si.hpp>
 
-#include <models/compound/ids.hpp>
+#include <models/compound/table/FullTable.hpp>
 
 namespace compound { 
 namespace published { 
 
-    std::vector<unsigned int> atoms_per_molecule {
+    table::FullTable<unsigned int> atoms_per_molecule {
         /*water*/            3u,
         /*nitrogen*/         2u,
         /*oxygen*/           2u,

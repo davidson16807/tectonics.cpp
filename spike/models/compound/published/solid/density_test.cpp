@@ -15,7 +15,7 @@ TEST_CASE( "published solid density order of magnitude", "[table]" ) {
         {
             for (int i = 0; i<compound::ids::count; i++)
             {
-                if (compound::published::density_as_solid.count(i) > 0) {
+                if (compound::published::density_as_solid.has(i)) {
                     auto x = compound::published::density_as_solid[i](T);
                     CHECK(x / (si::kilogram / si::meter3) < 30000.0); /*based on iridium*/ \
                     CHECK(x / (si::kilogram / si::meter3) > 1.5); /*based on aerogel*/ \

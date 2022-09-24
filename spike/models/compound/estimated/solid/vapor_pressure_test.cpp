@@ -14,7 +14,7 @@ TEST_CASE( "estimated solid vapor_pressure order of magnitude", "[table]" )
     {
         for (int i = 0; i<compound::ids::count; i++)
         {
-            if (compound::estimated::vapor_pressure_as_solid.count(i) > 0)
+            if (compound::estimated::vapor_pressure_as_solid.has(i))
             {
                 for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=1.778)
                 {
@@ -33,7 +33,7 @@ TEST_CASE( "estimated solid vapor_pressure monotonically increasing", "[table]" 
     {
         for (int i = 0; i<compound::ids::count; i++)
         {
-            if (compound::estimated::vapor_pressure_as_solid.count(i) > 0)
+            if (compound::estimated::vapor_pressure_as_solid.has(i))
             {
                 si::temperature<double> T = 3.0*si::kelvin;
                 auto last = compound::estimated::vapor_pressure_as_solid[i](T);

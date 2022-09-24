@@ -1,17 +1,15 @@
 #pragma once
 
-// std libraries
-#include <map>
-
 // in-house libraries
-#include <models/compound/relation/GasPropertyStateRelation.hpp>
 #include <models/compound/ids.hpp>
+#include <models/compound/relation/GasPropertyStateRelation.hpp>
+#include <models/compound/table/PartialTable.hpp>
 
 namespace compound { 
 namespace published { 
 
     using GasHeatCapacityStateRelation = relation::GasPropertyStateRelation<si::specific_heat_capacity<double>>;
-    std::map<int, GasHeatCapacityStateRelation> isobaric_specific_heat_capacity_as_gas {
+    table::PartialTable<GasHeatCapacityStateRelation> isobaric_specific_heat_capacity_as_gas {
         { ids::water, 
                 relation::get_exponent_pressure_temperature_relation
                     (si::kelvin, si::megapascal, si::joule/(si::gram * si::kelvin),

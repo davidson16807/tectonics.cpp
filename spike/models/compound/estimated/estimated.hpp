@@ -3,13 +3,13 @@
 // C libraries
 #include <cmath>
 
-// std libraries
-
+// in-house libraries
 #include <models/compound/published/published.hpp>
 #include <models/compound/property/published.hpp>
 #include <models/compound/property/speculative.hpp>
-#include <models/compound/estimated/tools.hpp>
 #include <models/compound/relation/GasDensityStateRelation.hpp>
+#include <models/compound/table/FullTable.hpp>
+#include <models/compound/table/PartialTable.hpp>
 
 namespace compound{
 namespace estimated{
@@ -19,7 +19,7 @@ namespace estimated{
     // After critical point properties, we want to get to acentric factor ("omega") as soon as possible, 
     // since that lets us calculate so many other things.
     // We want to make sure we have at least some route to estimate acentric factor,
-    // So we first try to estimate all the things that correlate with acentric factor but are derived by other means.
+    // So we table::first try to estimate all the things that correlate with acentric factor but are derived by other means.
     // This includes latent_heat_of_vaporization, vapor_pressure_as_liquid, 
     // dynamic_viscosity_as_liquid, and molar_volume_as_liquid.
     // Some of these properties can be found using triple point properties, 
@@ -27,7 +27,7 @@ namespace estimated{
     // and one property ("molar_volume_as_liquid") can be found using liquid or solid density.
     // 
     // So to summarize, the order we use to derive is: 
-    //   properties that are already completed by published values
+    //   properties that are already table::completed by published values
     //   critical point properties
     //   pressure/temperature samples
     //   triple_point_temperature and densities
@@ -45,53 +45,51 @@ namespace estimated{
     auto molar_mass = published::molar_mass;
 
     // via Klincewicz
-    std::vector<si::pressure<double>> critical_point_pressure = 
-        complete(published::critical_point_pressure, 
-            derive<si::pressure<double>>(property::estimate_critical_pressure_from_klincewicz, molar_mass, atoms_per_molecule));
+    table::FullTable<si::pressure<double>> critical_point_pressure = 
+        table::complete(published::critical_point_pressure, 
+            table::derive<si::pressure<double>>(property::estimate_critical_pressure_from_klincewicz, molar_mass, atoms_per_molecule));
 
     // via Klincewicz
-    std::vector<si::molar_volume<double>> critical_point_volume = 
-        complete(published::critical_point_volume, 
-            derive<si::molar_volume<double>>(property::estimate_critical_molar_volume_from_klincewicz, molar_mass, atoms_per_molecule));
+    table::FullTable<si::molar_volume<double>> critical_point_volume = 
+        table::complete(published::critical_point_volume, 
+            table::derive<si::molar_volume<double>>(property::estimate_critical_molar_volume_from_klincewicz, molar_mass, atoms_per_molecule));
 
     // via Klincewicz -> Ihmels
-    std::vector<si::temperature<double>> critical_point_temperature = 
-        complete(published::critical_point_temperature, 
-            derive<si::temperature<double>>(property::estimate_critical_temperature_from_ihmels, critical_point_pressure, critical_point_volume));
+    table::FullTable<si::temperature<double>> critical_point_temperature = 
+        table::complete(published::critical_point_temperature, 
+            table::derive<si::temperature<double>>(property::estimate_critical_temperature_from_ihmels, critical_point_pressure, critical_point_volume));
 
     // via Klincewicz -> Ihmels -> definition of compressibility
-    std::vector<double> critical_point_compressibility = 
-        complete(published::critical_point_compressibility, 
-            derive<double>(property::get_critical_compressibility, critical_point_pressure, critical_point_temperature, critical_point_volume));
+    table::FullTable<double> critical_point_compressibility = 
+        table::complete(published::critical_point_compressibility, 
+            table::derive<double>(property::get_critical_compressibility, critical_point_pressure, critical_point_temperature, critical_point_volume));
 
     // via Klincewicz -> Ihmels -> Tee-Gotoh-Steward
-    std::vector<si::length<double>> molecular_diameter = 
-        complete(published::molecular_diameter, 
-            derive<si::length<double>>(property::estimate_molecular_diameter_from_tee_gotoh_steward, critical_point_temperature, critical_point_pressure));
-
-
+    table::FullTable<si::length<double>> molecular_diameter = 
+        table::complete(published::molecular_diameter, 
+            table::derive<si::length<double>>(property::estimate_molecular_diameter_from_tee_gotoh_steward, critical_point_temperature, critical_point_pressure));
 
 
 
     point<double> standard = point<double>(si::standard_pressure, si::standard_temperature);
 
-    std::vector<point<double>> critical_point = 
-        derive<point<double>>([](si::pressure<double> p, si::temperature<double> T){ return point<double>(p,T); }, critical_point_pressure, critical_point_temperature);
+    table::FullTable<point<double>> critical_point = 
+        table::derive<point<double>>([](si::pressure<double> p, si::temperature<double> T){ return point<double>(p,T); }, critical_point_pressure, critical_point_temperature);
 
-    std::vector<point<double>> solid_sample_point = 
-        derive<point<double>>([](point<double> freezing){ return freezing.temperature > standard.temperature? standard : freezing; }, freezing_sample_point);
+    table::FullTable<point<double>> solid_sample_point = 
+        table::derive<point<double>>([](point<double> freezing){ return freezing.temperature > standard.temperature? standard : freezing; }, freezing_sample_point);
 
-    std::vector<point<double>> liquid_sample_point = 
-        complete(
-            attempt<point<double>>([](point<double> freezing, point<double> boiling){ 
+    table::FullTable<point<double>> liquid_sample_point = 
+        table::complete(
+            table::gather<point<double>>([](point<double> freezing, point<double> boiling){ 
                         return freezing.temperature < standard.temperature && standard.temperature < boiling.temperature? standard : (freezing + boiling)/2.0; }, 
-                    maybe(freezing_sample_point), published::boiling_sample_point),
+                    partial(freezing_sample_point), published::boiling_sample_point),
             freezing_sample_point
         );
 
-    std::vector<point<double>> gas_sample_point = 
-        complete(
-            attempt<point<double>>([](point<double> boiling){ return boiling.temperature < standard.temperature? standard : boiling; }, published::boiling_sample_point),
+    table::FullTable<point<double>> gas_sample_point = 
+        table::complete(
+            table::gather<point<double>>([](point<double> boiling){ return boiling.temperature < standard.temperature? standard : boiling; }, published::boiling_sample_point),
             critical_point
         );
 
@@ -99,30 +97,30 @@ namespace estimated{
 
     // via Klincewicz -> Ihmels -> Tee-Gotoh-Steward -> Bird-Steward-Lightfoot2
     using LiquidDensityTemperatureRelation = published::LiquidDensityTemperatureRelation;
-    std::vector<LiquidDensityTemperatureRelation> density_as_liquid = 
-        complete(published::density_as_liquid, 
-            derive<LiquidDensityTemperatureRelation>([](si::molar_mass<double> M, si::length<double> sigma){
+    table::FullTable<LiquidDensityTemperatureRelation> density_as_liquid = 
+        table::complete(published::density_as_liquid, 
+            table::derive<LiquidDensityTemperatureRelation>([](si::molar_mass<double> M, si::length<double> sigma){
                     return LiquidDensityTemperatureRelation(M / property::estimate_molar_volume_as_liquid_from_bird_steward_lightfoot_2(sigma));}, 
                 molar_mass, molecular_diameter));
 
     // via Klincewicz -> Ihmels -> definition of compressibility -> definition of compressibility
     using GasDensityStateRelation = relation::GasDensityStateRelation;
-    std::vector<GasDensityStateRelation> density_as_gas = 
-        derive<GasDensityStateRelation>([](si::molar_mass<double> M, si::pressure<double> pc, si::temperature<double> Tc, double Zc){
+    table::FullTable<GasDensityStateRelation> density_as_gas = 
+        table::derive<GasDensityStateRelation>([](si::molar_mass<double> M, si::pressure<double> pc, si::temperature<double> Tc, double Zc){
                 return GasDensityStateRelation(M,pc,Tc,Zc);}, 
             molar_mass, critical_point_pressure, critical_point_temperature, critical_point_compressibility);
 
     // via Klincewicz -> Ihmels -> Tee-Gotoh-Steward -> Bird-Steward-Lightfoot2 -> Goodman (with speculative fallback)
     using SolidDensityTemperatureRelation = published::SolidDensityTemperatureRelation;
-    std::vector<SolidDensityTemperatureRelation> density_as_solid = 
-        complete(
-            first<SolidDensityTemperatureRelation>({
+    table::FullTable<SolidDensityTemperatureRelation> density_as_solid = 
+        table::complete(
+            table::first<SolidDensityTemperatureRelation>({
                 published::density_as_solid, 
-                attempt<SolidDensityTemperatureRelation>([](si::molar_mass<double> M, LiquidDensityTemperatureRelation rhoL, point<double> liquid, point<double> triple){
+                table::gather<SolidDensityTemperatureRelation>([](si::molar_mass<double> M, LiquidDensityTemperatureRelation rhoL, point<double> liquid, point<double> triple){
                         return SolidDensityTemperatureRelation(M / property::estimate_molar_volume_as_solid_from_goodman(M / rhoL(liquid.temperature), liquid.temperature, triple.temperature));}, 
-                    maybe(molar_mass), maybe(density_as_liquid), maybe(liquid_sample_point), published::triple_point),
+                    partial(molar_mass), partial(density_as_liquid), partial(liquid_sample_point), published::triple_point),
             }),
-            derive<SolidDensityTemperatureRelation>([](LiquidDensityTemperatureRelation rhoL, point<double> liquid){
+            table::derive<SolidDensityTemperatureRelation>([](LiquidDensityTemperatureRelation rhoL, point<double> liquid){
                     return property::guess_density_as_solid_from_density_as_liquid(rhoL(liquid.temperature));}, 
                 density_as_liquid, liquid_sample_point) // WARNING: results are speculative
         );
@@ -132,10 +130,10 @@ namespace estimated{
     // // CALCULATE POSSIBLE ROUTES TO ACENTRIC FACTOR
 
     using SolidVaporPressureTemperatureRelation = published::SolidVaporPressureTemperatureRelation;
-    std::map<int, SolidVaporPressureTemperatureRelation> vapor_pressure_as_solid = 
-        first<SolidVaporPressureTemperatureRelation>({
+    table::PartialTable<SolidVaporPressureTemperatureRelation> vapor_pressure_as_solid = 
+        table::first<SolidVaporPressureTemperatureRelation>({
             published::vapor_pressure_as_solid,
-            attempt<SolidVaporPressureTemperatureRelation>(
+            table::gather<SolidVaporPressureTemperatureRelation>(
                 []( si::specific_energy<double> Hf, 
                     si::molar_mass<double> M, 
                     point<double> triple){
@@ -153,15 +151,15 @@ namespace estimated{
                         // NOTE: the above is translated from property/published.hpp:
                         // return triple_point_pressure * exp(-((latent_heat_of_sublimation*molar_mass / si::universal_gas_constant) * (1.0/temperature - 1.0/triple_point_temperature)));
                 }, 
-                published::latent_heat_of_fusion, // NOTE: this should be latent heat of fusion at the triple point, update this line if ever we convert latent_heat_of_fusion to a relation
-                maybe(molar_mass), 
+                published::latent_heat_of_sublimation, // NOTE: this should be latent heat of sublimation at the triple point, update this line if ever we convert latent_heat_of_fusion to a relation
+                partial(molar_mass), 
                 published::triple_point)
         });
 
-    std::map<int, si::specific_energy<double>> latent_heat_of_vaporization = 
-        first<si::specific_energy<double>>({
-            published::latent_heat_of_vaporization,
-            attempt<si::specific_energy<double>>(
+    table::PartialTable<si::specific_energy<double>> latent_heat_of_sublimation = 
+        table::first<si::specific_energy<double>>({
+            published::latent_heat_of_sublimation,
+            table::gather<si::specific_energy<double>>(
                 []( point<double> triple, 
                     point<double> critical, 
                     point<double> solid, 
@@ -174,11 +172,16 @@ namespace estimated{
                         return property::estimate_latent_heat_of_sublimation_at_triple_point_from_clapeyron(PvS(T), M, T, T3, P3);
                 },
                 published::triple_point,
-                maybe(critical_point),
-                maybe(solid_sample_point),
-                maybe(molar_mass),
+                partial(critical_point),
+                partial(solid_sample_point),
+                partial(molar_mass),
                 vapor_pressure_as_solid)
         });
+
+    table::PartialTable<si::specific_energy<double>> latent_heat_of_vaporization = latent_heat_of_sublimation - published::latent_heat_of_fusion;
+    table::PartialTable<si::specific_energy<double>> latent_heat_of_fusion       = latent_heat_of_sublimation - published::latent_heat_of_vaporization;
+
+
 
 }}
 
@@ -195,57 +198,7 @@ namespace estimated{
         // auto k = si::boltzmann_constant;
         double Zc = known.critical_point_compressibility;
 
-        if (guess.solids.size() > 0)
-        {
-            guess.latent_heat_of_vaporization = guess.latent_heat_of_vaporization.value_or(
-                [M](field::StateParameters parameters,
-                    si::pressure<double> vapor_pressure, 
-                    si::temperature<double> triple_point_temperature, 
-                    si::pressure<double> triple_point_pressure, 
-                    si::specific_energy<double> latent_heat_of_fusion){
-                    si::specific_energy<double> estimate = property::estimate_latent_heat_of_sublimation_from_clapeyron(
-                        vapor_pressure,
-                        M, 
-                        parameters.temperature, 
-                        triple_point_temperature, 
-                        triple_point_pressure
-                    ) - latent_heat_of_fusion;
-                    bool is_valid = si::specific_energy<double>(0.0) < estimate && !std::isinf(estimate/si::specific_energy<double>(1.0));
-                    return is_valid? field::OptionalConstantField<si::specific_energy<double>>(estimate) : field::OptionalConstantField<si::specific_energy<double>>();
-                },
-                samples.solid,
-                guess.solids[0].vapor_pressure,
-                guess.triple_point_temperature, 
-                guess.triple_point_pressure,
-                guess.latent_heat_of_fusion
-            );
-        }
 
-        if (guess.solids.size() > 0)
-        {
-            guess.latent_heat_of_fusion = guess.latent_heat_of_fusion.value_or(
-                [M](field::StateParameters parameters, 
-                    si::pressure<double> vapor_pressure, 
-                    si::temperature<double> triple_point_temperature, 
-                    si::pressure<double> triple_point_pressure, 
-                    si::specific_energy<double> latent_heat_of_vaporization){ 
-                    si::specific_energy<double> estimate = property::estimate_latent_heat_of_sublimation_from_clapeyron(
-                        vapor_pressure,
-                        M, 
-                        parameters.temperature, 
-                        triple_point_temperature, 
-                        triple_point_pressure
-                    ) - latent_heat_of_vaporization;
-                    bool is_valid = si::specific_energy<double>(0.0) < estimate && !std::isinf(estimate/si::specific_energy<double>(1.0));
-                    return is_valid? field::OptionalConstantField<si::specific_energy<double>>(estimate) : field::OptionalConstantField<si::specific_energy<double>>();
-                },
-                samples.solid,
-                guess.solids[0].vapor_pressure,
-                guess.triple_point_temperature, 
-                guess.triple_point_pressure,
-                guess.latent_heat_of_vaporization
-            );
-        }
 
         // CALCULATE ACENTRIC FACTOR
         guess.acentric_factor = guess.acentric_factor.value_or( 
@@ -412,7 +365,7 @@ namespace estimated{
         return guess;
     }
 
-        */
+    */
 
 
 

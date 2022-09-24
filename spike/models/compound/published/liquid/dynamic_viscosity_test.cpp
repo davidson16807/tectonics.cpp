@@ -15,7 +15,7 @@ TEST_CASE( "published liquid dynamic_viscosity order of magnitude", "[table]" ) 
         {
             for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=3.16)
             {
-                if (compound::published::dynamic_viscosity_as_liquid.count(i) > 0) {
+                if (compound::published::dynamic_viscosity_as_liquid.has(i)) {
                     auto x = compound::published::dynamic_viscosity_as_liquid[i](T);
                     CHECK(x / (si::pascal * si::second) < 1e9); /*based on pitch*/ \
                     CHECK(x / (si::pascal * si::second) >= 1e-6); /*based on helium*/ \

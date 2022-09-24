@@ -1,17 +1,15 @@
 #pragma once
 
-// std libraries
-#include <map>
-
 // in-house libraries
 #include <units/si.hpp>
 
 #include <models/compound/ids.hpp>
+#include <models/compound/table/PartialTable.hpp>
 
 namespace compound { 
 namespace published { 
 
-    std::map<int, si::specific_energy<double>> latent_heat_of_fusion {
+    table::PartialTable<si::specific_energy<double>> latent_heat_of_fusion {
         {ids::water,            6.01*si::kilojoule/(18.015*si::gram)},
         {ids::nitrogen,         0.71*si::kilojoule/(28.013*si::gram)},
         {ids::oxygen,           0.44*si::kilojoule/(31.9988*si::gram)},

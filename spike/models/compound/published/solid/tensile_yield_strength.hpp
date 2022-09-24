@@ -1,10 +1,8 @@
 #pragma once
 
-// std libraries
-#include <map>
-
 // in-house libraries
 #include <units/si.hpp>
+#include <models/compound/table/PartialTable.hpp>
 #include <models/compound/relation/PolynomialRailyardRelation.hpp>
 #include <models/compound/ids.hpp>
 
@@ -12,7 +10,7 @@ namespace compound {
 namespace published { 
 
     using SolidTensileYieldStrengthTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,si::pressure<double>, 0,1>;
-    std::map<int, SolidTensileYieldStrengthTemperatureRelation> tensile_yield_strength_as_solid {
+    table::PartialTable<SolidTensileYieldStrengthTemperatureRelation> tensile_yield_strength_as_solid {
         { ids::water,               1.0 * si::megapascal,                             // brittle, effectively the same as fracture strength
             },
         { ids::nitrogen,            

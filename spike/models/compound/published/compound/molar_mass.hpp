@@ -5,11 +5,12 @@
 
 // in-house libraries
 #include <units/si.hpp>
+#include <models/compound/table/FullTable.hpp>
 
 namespace compound { 
 namespace published { 
 
-    std::vector<si::molar_mass<double>> molar_mass {
+    table::FullTable<si::molar_mass<double>> molar_mass {
         /*water*/            18.015  * si::gram/si::mole,
         /*nitrogen*/         28.013  * si::gram/si::mole,
         /*oxygen*/           31.9988 * si::gram/si::mole,

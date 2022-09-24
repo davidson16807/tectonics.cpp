@@ -1,13 +1,11 @@
 
 #pragma once
 
-// std libraries
-#include <vector>
-
 // in-house libraries
 #include <units/si.hpp>
 
 #include <models/compound/ids.hpp>
+#include <models/compound/table/FullTable.hpp>
 
 namespace compound { 
 namespace published { 
@@ -61,7 +59,7 @@ namespace published {
 
     */
 
-    std::vector<int> similarity {
+    table::FullTable<int> similarity {
         /*water*/            ids::water,
         /*nitrogen*/         ids::water,
         /*oxygen*/           ids::nitrogen,

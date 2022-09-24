@@ -15,7 +15,7 @@ TEST_CASE( "estimated liquid surface_tension order of magnitude", "[table]" ) {
         {
             for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=1.78)
             {
-                if (compound::estimated::surface_tension_as_liquid.count(i) > 0) {
+                if (compound::estimated::surface_tension_as_liquid.has(i)) {
                     auto x = compound::estimated::surface_tension_as_liquid[i](T);
                     CHECK(x / (si::millinewton/si::meter) < 3e3);   /*based on copper*/ \
                     CHECK(x / (si::millinewton/si::meter) > 0.0003); /*based on liquid carbon dioxide (Quinn 1927) */ \

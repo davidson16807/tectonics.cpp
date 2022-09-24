@@ -15,7 +15,7 @@ TEST_CASE( "estimated gaseous isobaric_specific_heat_capacity order of magnitude
             {
                 for (int i = 0; i<compound::ids::count; i++)
                 {
-                    if (compound::estimated::isobaric_specific_heat_capacity_as_gas.count(i) > 0) {
+                    if (compound::estimated::isobaric_specific_heat_capacity_as_gas.has(i)) {
                         auto x = compound::estimated::isobaric_specific_heat_capacity_as_gas[i](p,T);
                         CHECK(x / (si::joule / (si::kilogram * si::kelvin)) > 3e2 ); /*based on argon*/ 
                         CHECK(x / (si::joule / (si::kilogram * si::kelvin)) < 1e5 ); /*based on hydrogen*/ 

@@ -1,10 +1,8 @@
 #pragma once
 
-// std libraries
-#include <map>
-
 // in-house libraries
 #include <units/si.hpp>
+#include <models/compound/table/PartialTable.hpp>
 #include <models/compound/relation/PolynomialRailyardRelation.hpp>
 #include <models/compound/ids.hpp>
 
@@ -12,7 +10,7 @@ namespace compound {
 namespace published { 
 
     using SolidDensityTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,si::density<double>, 0,1>;
-    std::map<int, SolidDensityTemperatureRelation> density_as_solid {
+    table::PartialTable<SolidDensityTemperatureRelation> density_as_solid {
         { ids::water,                           
                 relation::get_linear_interpolation_function
                     (si::kelvin, si::kilogram/si::meter3,

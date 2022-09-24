@@ -15,7 +15,7 @@ TEST_CASE( "estimated solid tensile_fracture_strength order of magnitude", "[tab
         {
             for (int i = 0; i<compound::ids::count; i++)
             {
-                if (compound::estimated::tensile_fracture_strength_as_solid.count(i) > 0) {
+                if (compound::estimated::tensile_fracture_strength_as_solid.has(i)) {
                     auto x = compound::estimated::tensile_fracture_strength_as_solid[i](T);
                     CHECK(x / si::megapascal < 3000.0); /*based on titanium*/ \
                     CHECK(x / si::megapascal > 0.03); /*based on hydrogen*/ \

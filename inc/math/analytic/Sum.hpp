@@ -3,7 +3,6 @@
 // std libraries
 #include <algorithm> // copy, back_inserter
 #include <initializer_list>
-#include <iostream>
 
 // in-house libraries
 #include "Identity.hpp"

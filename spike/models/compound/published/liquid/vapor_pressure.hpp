@@ -1,19 +1,17 @@
 #pragma once
 
-// std libraries
-#include <map>
-
 // in-house libraries
 #include <units/si.hpp>
+#include <models/compound/ids.hpp>
 #include <models/compound/relation/LiquidPropertyExponentialTemperatureRelation.hpp>
 #include <models/compound/relation/PolynomialRailyardRelation.hpp>
-#include <models/compound/ids.hpp>
+#include <models/compound/table/PartialTable.hpp>
 
 namespace compound { 
 namespace published { 
 
     using LiquidVaporPressureTemperatureRelation = relation::LiquidPropertyExponentialTemperatureRelation<si::pressure<double>,-1,6>;
-    std::map<int, LiquidVaporPressureTemperatureRelation> vapor_pressure_as_liquid {
+    table::PartialTable<LiquidVaporPressureTemperatureRelation> vapor_pressure_as_liquid {
         { ids::water,         
                 // relation::get_antoine_vapor_pressure_function(
                 //     si::celcius, si::millimeter_mercury, 

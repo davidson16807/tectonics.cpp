@@ -15,7 +15,7 @@ TEST_CASE( "estimated gaseous thermal_conductivity order of magnitude", "[table]
             {
                 for (int i = 0; i<compound::ids::count; i++)
                 {
-                    if (compound::estimated::thermal_conductivity_as_gas.count(i) > 0) {
+                    if (compound::estimated::thermal_conductivity_as_gas.has(i)) {
                         auto x = compound::estimated::thermal_conductivity_as_gas[i](p,T);
                         CHECK(x / (si::watt / (si::meter * si::kelvin)) > 0.003); /*based on xenon*/ 
                         CHECK(x / (si::watt / (si::meter * si::kelvin)) < 1.0);   /*based on hydrogen*/ 

@@ -15,7 +15,7 @@ TEST_CASE( "published liquid thermal_conductivity order of magnitude", "[table]"
         {
             for (int i = 0; i<compound::ids::count; i++)
             {
-                if (compound::published::thermal_conductivity_as_liquid.count(i) > 0) {
+                if (compound::published::thermal_conductivity_as_liquid.has(i)) {
                     auto x = compound::published::thermal_conductivity_as_liquid[i](T);
                     CHECK(x / (si::watt / (si::meter * si::kelvin)) < 1000.0); /*based on carbon*/ \
                     CHECK(x / (si::watt / (si::meter * si::kelvin)) > 0.01); /*based on helium*/ \

@@ -13,7 +13,7 @@ TEST_CASE( "published gaseous refractive_index order of magnitude", "[table]" ) 
         {
             for (int i = 0; i<compound::ids::count; i++)
             {
-                if (compound::published::refractive_index_as_gas.count(i) > 0) {
+                if (compound::published::refractive_index_as_gas.has(i)) {
                     auto x = compound::published::refractive_index_as_gas[i](1.0/l);
                     CHECK(x > 1.00003 ); // for helium
                     CHECK(x < 1.001 );   // for acetone

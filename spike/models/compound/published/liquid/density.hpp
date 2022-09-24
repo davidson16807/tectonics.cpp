@@ -1,18 +1,16 @@
 #pragma once
 
-// std libraries
-#include <map>
-
 // in-house libraries
 #include <units/si.hpp>
-#include <models/compound/relation/LiquidDensityTemperatureRelation.hpp>
 #include <models/compound/ids.hpp>
+#include <models/compound/relation/LiquidDensityTemperatureRelation.hpp>
+#include <models/compound/table/PartialTable.hpp>
 
 namespace compound { 
 namespace published { 
 
     using LiquidDensityTemperatureRelation = relation::LiquidDensityTemperatureRelation;
-    std::map<int, LiquidDensityTemperatureRelation> density_as_liquid {
+    table::PartialTable<LiquidDensityTemperatureRelation> density_as_liquid {
         { ids::water,                
                 // Perry equation 119, specialized for water
                 relation::LiquidDensityTemperatureRelation({}, 

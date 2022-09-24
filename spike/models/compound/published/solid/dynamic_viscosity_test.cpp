@@ -15,7 +15,7 @@ TEST_CASE( "published solid dynamic_viscosity order of magnitude", "[table]" ) {
         {
             for (int i = 0; i<compound::ids::count; i++)
             {
-                if (compound::published::dynamic_viscosity_as_solid.count(i) > 0) {
+                if (compound::published::dynamic_viscosity_as_solid.has(i)) {
                     auto x = compound::published::dynamic_viscosity_as_solid[i](T);
                     CHECK(x / (si::pascal * si::second) <= 1e24); /*based on granite*/ \
                     CHECK(x / (si::pascal * si::second) > 1e10); /*based on ice*/ \

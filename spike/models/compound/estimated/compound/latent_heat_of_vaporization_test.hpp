@@ -10,7 +10,7 @@ TEST_CASE( "estimated latent_heat_of_vaporization order of magnitude", "[table]"
     {
         for (int i = 0; i<compound::ids::count; i++)
         {
-            if (compound::estimated::latent_heat_of_vaporization.count(i) > 0) {
+            if (compound::estimated::latent_heat_of_vaporization.has(i)) {
                 auto x = compound::estimated::latent_heat_of_vaporization[i];
                 // std::cout << i << std::endl;
                 // std::cout << si::to_string(x) << std::endl;

@@ -1,10 +1,8 @@
 #pragma once
 
-// std libraries
-#include <map>
-
 // in-house libraries
 #include <units/si.hpp>
+#include <models/compound/table/PartialTable.hpp>
 #include <models/compound/relation/PolynomialRailyardRelation.hpp>
 #include <models/compound/ids.hpp>
 
@@ -12,7 +10,7 @@ namespace compound {
 namespace published { 
 
     using SolidHeatCapacityTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,si::specific_heat_capacity<double>, -2,3>;
-    std::map<int, SolidHeatCapacityTemperatureRelation> isobaric_specific_heat_capacity_as_solid {
+    table::PartialTable<SolidHeatCapacityTemperatureRelation> isobaric_specific_heat_capacity_as_solid {
         { ids::water,   
                 relation::get_perry_johnson_temperature_function
                     (si::kelvin, 

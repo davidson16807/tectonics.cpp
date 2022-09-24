@@ -1,18 +1,16 @@
 #pragma once
 
-// std libraries
-#include <map>
-
 // in-house libraries
 #include <units/si.hpp>
-#include <models/compound/relation/LiquidPropertyExponentialTemperatureRelation.hpp>
 #include <models/compound/ids.hpp>
+#include <models/compound/relation/LiquidPropertyExponentialTemperatureRelation.hpp>
+#include <models/compound/table/PartialTable.hpp>
 
 namespace compound { 
 namespace published { 
 
     using LiquidDynamicViscosityTemperatureRelation = relation::LiquidPropertyExponentialTemperatureRelation<si::dynamic_viscosity<double>,-1,10>;
-    std::map<int, LiquidDynamicViscosityTemperatureRelation> dynamic_viscosity_as_liquid {
+    table::PartialTable<LiquidDynamicViscosityTemperatureRelation> dynamic_viscosity_as_liquid {
         { ids::water,      
                 relation::get_dippr_temperature_relation_101<-1,10>
                     (si::kelvin, si::pascal* si::second, 
