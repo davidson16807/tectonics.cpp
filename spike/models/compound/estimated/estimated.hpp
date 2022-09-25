@@ -161,7 +161,6 @@ namespace estimated{
             published::latent_heat_of_sublimation,
             table::gather<si::specific_energy<double>>(
                 []( point<double> triple, 
-                    point<double> critical, 
                     point<double> solid, 
                     si::molar_mass<double> M,
                     SolidVaporPressureTemperatureRelation PvS
@@ -172,7 +171,6 @@ namespace estimated{
                         return property::estimate_latent_heat_of_sublimation_at_triple_point_from_clapeyron(PvS(T), M, T, T3, P3);
                 },
                 published::triple_point,
-                partial(critical_point),
                 partial(solid_sample_point),
                 partial(molar_mass),
                 vapor_pressure_as_solid)
@@ -180,6 +178,43 @@ namespace estimated{
 
     table::PartialTable<si::specific_energy<double>> latent_heat_of_vaporization = latent_heat_of_sublimation - published::latent_heat_of_fusion;
     table::PartialTable<si::specific_energy<double>> latent_heat_of_fusion       = latent_heat_of_sublimation - published::latent_heat_of_vaporization;
+
+
+    using LiquidDynamicViscosityTemperatureRelation = published::LiquidDynamicViscosityTemperatureRelation;
+    // CALCULATE ACENTRIC FACTOR
+    table::PartialTable<double> acentric_factor = 
+        table::first<double>({
+            published::acentric_factor,
+            table::gather<double>(
+                []( point<double> liquid,
+                    point<double> critical,
+                    si::molar_mass<double> M,
+                    si::specific_energy<double> Hv){
+                    auto T = liquid.temperature;
+                    auto Tc = critical.temperature;
+                    return std::clamp(property::estimate_accentric_factor_from_pitzer(Hv, M, T, Tc), -1.0, 1.0);
+                },
+                partial(liquid_sample_point),
+                partial(critical_point),
+                partial(molar_mass),
+                latent_heat_of_vaporization
+            ),
+            table::gather<double>(
+                []( point<double> liquid,
+                    point<double> critical,
+                    si::molar_mass<double> M,
+                    LiquidDynamicViscosityTemperatureRelation nuL){
+                    auto T = liquid.temperature;
+                    auto Tc = critical.temperature;
+                    auto pc = critical.pressure;
+                    return std::clamp(property::estimate_acentric_factor_from_letsou_stiel(nuL(T), M, T, Tc, pc), -1.0, 1.0);
+                },
+                partial(liquid_sample_point),
+                partial(critical_point),
+                partial(molar_mass),
+                published::dynamic_viscosity_as_liquid
+            ),
+        });
 
 
 
@@ -200,43 +235,6 @@ namespace estimated{
 
 
 
-        // CALCULATE ACENTRIC FACTOR
-        guess.acentric_factor = guess.acentric_factor.value_or( 
-            [M, Tc](field::StateParameters parameters, si::specific_energy<double> latent_heat_of_vaporization){ 
-                double estimate = property::estimate_accentric_factor_from_pitzer(
-                        latent_heat_of_vaporization, M, 
-                        parameters.temperature, Tc
-                    );
-                bool is_valid = -1.0 < estimate && estimate < 1.0;
-                return is_valid? field::OptionalConstantField<double>(estimate) : field::OptionalConstantField<double>();
-            },
-            samples.liquid,
-            guess.latent_heat_of_vaporization
-        );
-        guess.acentric_factor = guess.acentric_factor.value_or( 
-            [M, pc, Tc](field::StateParameters parameters, si::dynamic_viscosity<double> dynamic_viscosity_as_liquid){ 
-                double estimate = property::estimate_acentric_factor_from_letsou_stiel(
-                    dynamic_viscosity_as_liquid,
-                    M, parameters.temperature, Tc, pc
-                );
-                bool is_valid = -1.0 < estimate && estimate < 1.0;
-                return is_valid? field::OptionalConstantField<double>(estimate) : field::OptionalConstantField<double>();
-            },
-            samples.liquid,
-            guess.liquid.dynamic_viscosity
-        );
-        guess.acentric_factor = guess.acentric_factor.value_or( 
-            [pc, Tc](field::StateParameters parameters, si::pressure<double> vapor_pressure_as_liquid){ 
-                double estimate = property::estimate_accentric_factor_from_lee_kesler(
-                    vapor_pressure_as_liquid, 
-                    parameters.temperature, Tc, pc
-                );
-                bool is_valid = -1.0 < estimate && estimate < 1.0;
-                return is_valid? field::OptionalConstantField<double>(estimate) : field::OptionalConstantField<double>();
-            },
-            samples.boiling,
-            guess.liquid.vapor_pressure
-        );
 
         // CALCULATE PROPERTIES THAT CAN BE DERIVED FROM ACENTRIC FACTOR
         guess.latent_heat_of_vaporization = guess.latent_heat_of_vaporization.value_or( 

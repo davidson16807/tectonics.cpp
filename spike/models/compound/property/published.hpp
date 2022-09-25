@@ -180,6 +180,7 @@ namespace property {
         double reduced_temperature = (temperature / critical_temperature);
         return ((latent_heat_of_vaporization * molar_mass / (si::universal_gas_constant * critical_temperature)) - 7.08 * pow(1.0 - reduced_temperature, 0.354)) / (10.95 * pow(1.0 - reduced_temperature, 0.456));
     }
+
     // Pitzer model: https://chemicals.readthedocs.io/chemicals.phase_change.html#heat-of-vaporization-at-tb-correlations
     constexpr si::specific_energy<double> estimate_latent_heat_of_vaporization_from_pitzer(
         const double accentric_factor,
