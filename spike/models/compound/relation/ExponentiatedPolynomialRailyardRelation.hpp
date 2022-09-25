@@ -13,7 +13,6 @@
 namespace compound {
 namespace relation {
 
-
     /*
     `ExponentiatedPolynomialRailyardRelation` represents an arbitrary function that uses a railyard to map quantities from one unit to another
     See `math/expression/Railyard.hpp` for the definition and motivation of a "railyard".

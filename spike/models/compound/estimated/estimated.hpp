@@ -128,20 +128,21 @@ namespace estimated{
 
 
     // // CALCULATE POSSIBLE ROUTES TO ACENTRIC FACTOR
+    using LatentHeatTemperatureRelation = published::LatentHeatTemperatureRelation;
 
     using SolidVaporPressureTemperatureRelation = published::SolidVaporPressureTemperatureRelation;
     table::PartialTable<SolidVaporPressureTemperatureRelation> vapor_pressure_as_solid = 
         table::first<SolidVaporPressureTemperatureRelation>({
             published::vapor_pressure_as_solid,
             table::gather<SolidVaporPressureTemperatureRelation>(
-                []( si::specific_energy<double> Hf, 
+                []( LatentHeatTemperatureRelation Hs, 
                     si::molar_mass<double> M, 
                     point<double> triple){
                         auto T = analytic::Identity<float>();
                         auto R = si::universal_gas_constant;
                         float T3 = triple.temperature / si::kelvin;
                         float P3 = triple.pressure / si::pascal;
-                        float k = (Hf*M/R)/si::kelvin;
+                        float k = (Hs(triple.temperature)*M/R)/si::kelvin;
                         using Polynomial = analytic::Polynomial<float,-1,1>;
                         using Clamped = analytic::Clamped<float,Polynomial>;
                         using Railyard = analytic::Railyard<float,Polynomial>;
@@ -156,32 +157,36 @@ namespace estimated{
                 published::triple_point)
         });
 
-    table::PartialTable<si::specific_energy<double>> latent_heat_of_sublimation = 
-        table::first<si::specific_energy<double>>({
-            published::latent_heat_of_sublimation,
-            table::gather<si::specific_energy<double>>(
-                []( point<double> triple, 
-                    point<double> solid, 
-                    si::molar_mass<double> M,
-                    SolidVaporPressureTemperatureRelation PvS
-                    ){
-                        auto T = solid.temperature;
-                        auto T3 = triple.temperature;
-                        auto P3 = triple.pressure;
-                        return property::estimate_latent_heat_of_sublimation_at_triple_point_from_clapeyron(PvS(T), M, T, T3, P3);
-                },
-                published::triple_point,
-                partial(solid_sample_point),
-                partial(molar_mass),
-                vapor_pressure_as_solid)
-        });
+    namespace {
 
-    table::PartialTable<si::specific_energy<double>> latent_heat_of_vaporization = latent_heat_of_sublimation - published::latent_heat_of_fusion;
-    table::PartialTable<si::specific_energy<double>> latent_heat_of_fusion       = latent_heat_of_sublimation - published::latent_heat_of_vaporization;
+        table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_sublimation_temp = 
+            table::first<LatentHeatTemperatureRelation>({
+                published::latent_heat_of_sublimation,
+                table::gather<LatentHeatTemperatureRelation>(
+                    []( point<double> triple, 
+                        point<double> solid, 
+                        si::molar_mass<double> M,
+                        SolidVaporPressureTemperatureRelation PvS
+                        ){
+                            auto T = solid.temperature;
+                            auto T3 = triple.temperature;
+                            auto P3 = triple.pressure;
+                            return LatentHeatTemperatureRelation(
+                                property::estimate_latent_heat_of_sublimation_at_triple_point_from_clapeyron(PvS(T), M, T, T3, P3));
+                    },
+                    published::triple_point,
+                    partial(solid_sample_point),
+                    partial(molar_mass),
+                    vapor_pressure_as_solid)
+            });
 
+        table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_vaporization_temp = latent_heat_of_sublimation_temp - published::latent_heat_of_fusion;
+        table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_fusion_temp       = latent_heat_of_sublimation_temp - published::latent_heat_of_vaporization;
 
-    using LiquidDynamicViscosityTemperatureRelation = published::LiquidDynamicViscosityTemperatureRelation;
+    }
+
     // CALCULATE ACENTRIC FACTOR
+    using LiquidDynamicViscosityTemperatureRelation = published::LiquidDynamicViscosityTemperatureRelation;
     table::PartialTable<double> acentric_factor = 
         table::first<double>({
             published::acentric_factor,
@@ -189,15 +194,15 @@ namespace estimated{
                 []( point<double> liquid,
                     point<double> critical,
                     si::molar_mass<double> M,
-                    si::specific_energy<double> Hv){
-                    auto T = liquid.temperature;
+                    LatentHeatTemperatureRelation Hv){
+                    auto T = si::clamp(liquid.temperature, si::absolute_zero, critical.temperature);
                     auto Tc = critical.temperature;
-                    return std::clamp(property::estimate_accentric_factor_from_pitzer(Hv, M, T, Tc), -1.0, 1.0);
+                    return std::clamp(property::estimate_accentric_factor_from_pitzer(Hv(T), M, T, Tc), -1.0, 1.0);
                 },
                 partial(liquid_sample_point),
                 partial(critical_point),
                 partial(molar_mass),
-                latent_heat_of_vaporization
+                latent_heat_of_vaporization_temp
             ),
             table::gather<double>(
                 []( point<double> liquid,
@@ -216,7 +221,15 @@ namespace estimated{
             ),
         });
 
-
+    // CALCULATE PROPERTIES THAT CAN BE DERIVED FROM ACENTRIC FACTOR
+    table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_vaporization = 
+        table::first<LatentHeatTemperatureRelation>({
+            latent_heat_of_vaporization_temp,
+            // table::gather<LatentHeatTemperatureRelation>(
+            //     relation::get_pitzer_latent_heat_of_vaporization_temperature_relation,
+            //     partial(molar_mass), partial(critical_point_temperature), acentric_factor
+            // ),
+        });
 
 }}
 
@@ -236,18 +249,6 @@ namespace estimated{
 
 
 
-        // CALCULATE PROPERTIES THAT CAN BE DERIVED FROM ACENTRIC FACTOR
-        guess.latent_heat_of_vaporization = guess.latent_heat_of_vaporization.value_or( 
-            [M, Tc](field::StateParameters parameters, double acentric_factor){ 
-                si::specific_energy<double> estimate = property::estimate_latent_heat_of_vaporization_from_pitzer(
-                    acentric_factor, M, parameters.temperature, Tc
-                );
-                bool is_valid = si::specific_energy<double>(0.0) < estimate && !std::isinf(estimate/si::specific_energy<double>(1.0));
-                return is_valid? field::OptionalConstantField<si::specific_energy<double>>(estimate) : field::OptionalConstantField<si::specific_energy<double>>();
-            }, 
-            samples.liquid,
-            guess.acentric_factor
-        );
         guess.liquid.dynamic_viscosity = guess.liquid.dynamic_viscosity.value_or(    
             [M, Tc, pc](field::StateParameters parameters, double acentric_factor){ 
                 return property::estimate_viscosity_as_liquid_from_letsou_stiel(

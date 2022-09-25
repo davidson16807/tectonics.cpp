@@ -17,16 +17,19 @@ namespace compound {
 namespace relation {
 
     using ClampedDippr105 = analytic::Clamped<float,dippr::Dippr105>;
-    using ClampedDippr119 = analytic::Clamped<float,dippr::Dippr119Term>;
-
+    using ClampedDippr119Term = analytic::Clamped<float,dippr::Dippr119Term>;
+    using ClampedDippr105Sum = analytic::Sum<float,ClampedDippr105>;
+    using ClampedDippr105TermSum = analytic::Sum<float,ClampedDippr119Term>;
+    
     /*
     `LiquidDensityTemperatureRelation` consolidates many kinds of expressions
     that are commonly used to represent the relation between temperature and the density of liquids
     */
     class LiquidDensityTemperatureRelation
     {
-        analytic::Sum<float,ClampedDippr105> dippr105s;
-        analytic::Sum<float,ClampedDippr119> dippr119s;
+
+        ClampedDippr105Sum dippr105s;
+        ClampedDippr105TermSum dippr119s;
 
         si::temperature<double> Tunits;
         si::density<double>     yunits;
@@ -62,8 +65,8 @@ namespace relation {
         }
 
         LiquidDensityTemperatureRelation(
-            const analytic::Sum<float,ClampedDippr105> dippr105s,
-            const analytic::Sum<float,ClampedDippr119> dippr119s,
+            const ClampedDippr105Sum dippr105s,
+            const ClampedDippr105TermSum dippr119s,
 
             const si::temperature<double> Tunits,
             const si::density<double> yunits,
@@ -100,7 +103,7 @@ namespace relation {
         {
             const float T = float(temperature/Tunits);
             ClampedDippr105 dippr105;
-            ClampedDippr119 dippr119;
+            ClampedDippr119Term dippr119;
             return (intercept + dippr105s(T) + dippr119s(T)) * yunits;
         }
 

@@ -12,11 +12,11 @@
 #include <units/si.hpp>
 
 
+using ScaledComplementExponent = analytic::ScaledComplement<float,analytic::Exponent<float>>;
+using ClampedScaledComplementExponent = analytic::Clamped<float,ScaledComplementExponent>;
+
 namespace compound {
 namespace relation {
-
-    using ScaledComplementExponent = analytic::ScaledComplement<float,analytic::Exponent<float>>;
-    using ClampedScaledComplementExponent = analytic::Clamped<float,ScaledComplementExponent>;
 
     /*
     `LiquidSurfaceTensionTemperatureRelation` consolidates many kinds of expressions

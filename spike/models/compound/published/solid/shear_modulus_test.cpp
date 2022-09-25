@@ -17,8 +17,8 @@ TEST_CASE( "published solid shear_modulus order of magnitude", "[table]" ) {
             {
                 if (compound::published::shear_modulus_as_solid.has(i)) {
                     auto x = compound::published::shear_modulus_as_solid[i](T);
-                    CHECK(x / si::gigapascal > 0.01); /*based on helium*/ \
-                    CHECK(x / si::gigapascal < 1000.0); /*based on tungsten*/ \
+                    CHECK(x / si::gigapascal >= 0.01); /*based on helium*/ \
+                    CHECK(x / si::gigapascal <  1000.0); /*based on tungsten*/ \
                 }
             }
         }

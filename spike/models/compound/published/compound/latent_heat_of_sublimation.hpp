@@ -11,6 +11,6 @@
 namespace compound { 
 namespace published { 
 
-    table::PartialTable<si::specific_energy<double>> latent_heat_of_sublimation = latent_heat_of_fusion + latent_heat_of_vaporization;
+    table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_sublimation = latent_heat_of_fusion + latent_heat_of_vaporization;
 
 }}

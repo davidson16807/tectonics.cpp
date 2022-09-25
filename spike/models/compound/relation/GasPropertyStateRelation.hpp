@@ -20,7 +20,10 @@ namespace relation {
     using ClampedExponent = analytic::Clamped<float,analytic::Exponent<float>>;
     using ClampedSigmoid = analytic::Clamped<float,analytic::AlgebraicSigmoid<float>>;
     using ClampedDippr102 = analytic::Clamped<float,dippr::Dippr102>;
-
+    using ClampedExponentSum = analytic::Sum<float,ClampedExponent>;
+    using ClampedSigmoidSum = analytic::Sum<float,ClampedSigmoid>;
+    using ClampedDippr102Sum = analytic::Sum<float,ClampedDippr102>;
+    
     /*
     `GasPropertyStateRelation` consolidates many kinds of expressions
     that are commonly used to represent pressure/temperature relations for compounds in their gas phase.
@@ -34,10 +37,11 @@ namespace relation {
     template<typename Ty>
     class GasPropertyStateRelation
     {
-        analytic::Sum<float,ClampedExponent> pexponents;
-        analytic::Sum<float,ClampedExponent> Texponents;
-        analytic::Sum<float,ClampedSigmoid>  Tsigmoids;
-        analytic::Sum<float,ClampedDippr102> Tdippr102s;
+
+        ClampedExponentSum pexponents;
+        ClampedExponentSum Texponents;
+        ClampedSigmoidSum  Tsigmoids;
+        ClampedDippr102Sum Tdippr102s;
 
         si::pressure<double>    punits;
         si::temperature<double> Tunits;
@@ -66,10 +70,10 @@ namespace relation {
         }
 
         constexpr GasPropertyStateRelation(
-            const analytic::Sum<float,ClampedExponent> pexponents,
-            const analytic::Sum<float,ClampedExponent> Texponents,
-            const analytic::Sum<float,ClampedSigmoid>  Tsigmoids,
-            const analytic::Sum<float,ClampedDippr102> Tdippr102s,
+            const ClampedExponentSum pexponents,
+            const ClampedExponentSum Texponents,
+            const ClampedSigmoidSum  Tsigmoids,
+            const ClampedDippr102Sum Tdippr102s,
 
             const si::pressure<double>    punits,
             const si::temperature<double> Tunits,
@@ -286,10 +290,10 @@ namespace relation {
         const float known_max_fractional_error
     ) {
         return GasPropertyStateRelation<Ty>(
-            analytic::Sum<float,ClampedExponent>{ClampedExponent(pmin, pmax, analytic::Exponent<float>(pslope, pexponent))},
-            analytic::Sum<float,ClampedExponent>{ClampedExponent(Tmin, Tmax, analytic::Exponent<float>(Tslope, Texponent))},
-            analytic::Sum<float,ClampedSigmoid>{ClampedSigmoid(Tmin, Tmax, analytic::AlgebraicSigmoid<float>(1.0f/Tsigmoid_scale, -Tsigmoid_center/Tsigmoid_scale, Tsigmoid_max))},
-            analytic::Sum<float,ClampedDippr102>(),
+            ClampedExponentSum{ClampedExponent(pmin, pmax, analytic::Exponent<float>(pslope, pexponent))},
+            ClampedExponentSum{ClampedExponent(Tmin, Tmax, analytic::Exponent<float>(Tslope, Texponent))},
+            ClampedSigmoidSum{ClampedSigmoid(Tmin, Tmax, analytic::AlgebraicSigmoid<float>(1.0f/Tsigmoid_scale, -Tsigmoid_center/Tsigmoid_scale, Tsigmoid_max))},
+            ClampedDippr102Sum(),
 
             punits, Tunits, yunits,
 
@@ -309,10 +313,10 @@ namespace relation {
         const float known_max_fractional_error
     ) {
         return GasPropertyStateRelation<Ty>(
-            analytic::Sum<float,ClampedExponent>{ClampedExponent(pmin, pmax, analytic::Exponent<float>(pslope, pexponent))},
-            analytic::Sum<float,ClampedExponent>{ClampedExponent(Tmin, Tmax, analytic::Exponent<float>(Tslope, Texponent))},
-            analytic::Sum<float,ClampedSigmoid>{},
-            analytic::Sum<float,ClampedDippr102>(),
+            ClampedExponentSum{ClampedExponent(pmin, pmax, analytic::Exponent<float>(pslope, pexponent))},
+            ClampedExponentSum{ClampedExponent(Tmin, Tmax, analytic::Exponent<float>(Tslope, Texponent))},
+            ClampedSigmoidSum{},
+            ClampedDippr102Sum(),
 
             punits, Tunits, yunits,
 
@@ -330,10 +334,10 @@ namespace relation {
         const float Tmin, const float Tmax
     ) {
         return GasPropertyStateRelation<Ty>(
-            analytic::Sum<float,ClampedExponent>(),
-            analytic::Sum<float,ClampedExponent>(),
-            analytic::Sum<float,ClampedSigmoid>(),
-            analytic::Sum<float,ClampedDippr102>{ClampedDippr102(Tmin, Tmax, dippr::Dippr102(c1, c2, c3, c4))},
+            ClampedExponentSum(),
+            ClampedExponentSum(),
+            ClampedSigmoidSum(),
+            ClampedDippr102Sum{ClampedDippr102(Tmin, Tmax, dippr::Dippr102(c1, c2, c3, c4))},
 
             si::pressure<double>(1.0), Tunits, yunits,
 
@@ -398,8 +402,8 @@ namespace relation {
                 ClampedExponent(Tmin, Tmax, analytic::Exponent<float>(fT[1], 1.0f)),
                 ClampedExponent(Tmin, Tmax, analytic::Exponent<float>(fT[2], 2.0f))
             },
-            analytic::Sum<float,ClampedSigmoid>(),
-            analytic::Sum<float,ClampedDippr102>(),
+            ClampedSigmoidSum(),
+            ClampedDippr102Sum(),
 
             si::pressure<double>(1.0), Tunits, yunits,
 
@@ -435,8 +439,8 @@ namespace relation {
                 ClampedExponent(Tmin, Tmax, analytic::Exponent<float>(inverse_square, -2.0f)),
                 ClampedExponent(Tmin, Tmax, analytic::Exponent<float>(square, 2.0f))
             },
-            analytic::Sum<float,ClampedSigmoid>(),
-            analytic::Sum<float,ClampedDippr102>(),
+            ClampedSigmoidSum(),
+            ClampedDippr102Sum(),
 
             si::pressure<double>(1.0), Tunits, yunits,
 

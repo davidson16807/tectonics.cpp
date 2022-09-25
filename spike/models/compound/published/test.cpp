@@ -19,6 +19,7 @@
 #include "./solid/tensile_modulus_test.cpp"
 #include "./solid/thermal_conductivity_test.cpp"
 #include "./compound/latent_heat_of_vaporization_test.hpp"
+#include "./compound/acentric_factor_test.cpp"
 #include "./liquid/refractive_index_test.cpp"
 #include "./liquid/isobaric_specific_heat_capacity_test.cpp"
 #include "./liquid/extinction_coefficient_test.cpp"

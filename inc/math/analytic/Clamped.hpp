@@ -34,12 +34,18 @@ namespace analytic {
         // zero constructor
         constexpr Clamped<T,F>():
             f(),
-            lo(),
-            hi()
+            lo(-std::numeric_limits<T>::max()),
+            hi( std::numeric_limits<T>::max())
         {}
-        // zero constructor
-        constexpr Clamped<T,F>(T k):
+        // constant constructor
+        constexpr Clamped<T,F>(const T k):
             f(k),
+            lo(-std::numeric_limits<T>::max()),
+            hi( std::numeric_limits<T>::max())
+        {}
+        // unclamped constructor
+        constexpr Clamped<T,F>(const F& f):
+            f(f),
             lo(-std::numeric_limits<T>::max()),
             hi( std::numeric_limits<T>::max())
         {}

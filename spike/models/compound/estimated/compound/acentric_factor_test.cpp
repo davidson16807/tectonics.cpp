@@ -6,7 +6,7 @@
 #include <catch/catch.hpp>
 
 // in house libraries
-#include "acentric_factor.hpp"
+#include <models/compound/estimated/estimated.hpp>
 
 TEST_CASE( "estimated acentric_factor order of magnitude", "[table]" ) {
     SECTION("Properties of compounds should not fall outside orders of magnitude for known values")
@@ -17,8 +17,8 @@ TEST_CASE( "estimated acentric_factor order of magnitude", "[table]" ) {
                 auto x = compound::estimated::acentric_factor[i];
                 // std::cout << i << std::endl;
                 // std::cout << si::to_string(x) << std::endl;
-                CHECK(x / (si::joule/si::kilogram) <  1.0); /*based on quartz*/
-                CHECK(x / (si::joule/si::kilogram) > -1.0); /*based on helium*/
+                CHECK(x <=  1.0); /*based on quartz*/
+                CHECK(x >= -1.0); /*based on helium*/
             }
         }
     }

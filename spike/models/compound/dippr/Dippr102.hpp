@@ -33,8 +33,7 @@ namespace dippr {
         {}
         constexpr float operator()(const float x) const
         {
-            const float u = x;
-            return c1 * std::pow(u, c2) / (1.0f + c3/u + c4/(u*u));
+            return c1 * std::pow(x, c2) / (1.0f + c3/x + c4/(x*x));
         }
         constexpr Dippr102& operator*=(const float scalar)
         {

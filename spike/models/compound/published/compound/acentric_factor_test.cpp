@@ -17,8 +17,8 @@ TEST_CASE( "published acentric_factor order of magnitude", "[table]" ) {
                 auto x = compound::published::acentric_factor[i];
                 // std::cout << i << std::endl;
                 // std::cout << si::to_string(x) << std::endl;
-                CHECK(x / (si::joule/si::kilogram) <  1.0); /*based on quartz*/
-                CHECK(x / (si::joule/si::kilogram) > -1.0); /*based on helium*/
+                CHECK(x <=  1.0); /*based on quartz*/
+                CHECK(x >= -1.0); /*based on helium*/
             }
         }
     }
