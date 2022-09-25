@@ -105,42 +105,75 @@ namespace si{
 
     }
 
+    // constant constructor
     constexpr explicit units(T1 raw): raw(raw)
     {
 
     }
+    // cast constant constructor
     template<typename T2>
-    constexpr explicit units(T2 raw): raw(raw)
+    constexpr units(T2 raw): raw(raw)
     {
 
     }
-    // implicit cast is only allowed if two objects match signature but differ in type
+    // cast constructor: implicit cast is only allowed if two objects match signature but differ in type
     template<typename T2>
     constexpr units(units<M1,KG1,S1,K1,MOL1,A1,CD1,T2> raw): raw(raw)
     {
 
     }
 
+    constexpr units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> operator+(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
+    {
+      return units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(raw + other.raw);
+    }
+    constexpr units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> operator-(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
+    {
+      return units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(raw - other.raw);
+    }
+
+    constexpr T1 operator*(const units<-M1,-KG1,-S1,-K1,-MOL1,-A1,-CD1,T1> other) const
+    {
+      return raw * other.raw;
+    }
+    constexpr T1 operator/(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
+    {
+      return raw / other.raw;
+    }
     template <int M2, int KG2, int S2, int K2, int MOL2, int A2, int CD2>
-    constexpr units<M1+M2,  KG1+KG2,  S1+S2,  K1+K2,  MOL1+MOL2,  A1+A2,  CD1+CD2,  T1> 
-    multiply(const units<M2,KG2,S2,K2,MOL2,A2,CD2,T1> other) const
+    constexpr units<M1+M2,  KG1+KG2,  S1+S2,  K1+K2,  MOL1+MOL2,  A1+A2,  CD1+CD2,  T1> operator*(const units<M2,KG2,S2,K2,MOL2,A2,CD2,T1> other) const
     {
       return units<M1+M2,  KG1+KG2,  S1+S2,  K1+K2,  MOL1+MOL2,  A1+A2,  CD1+CD2,  T1>(raw * other.raw);
     }
-    constexpr units<-M1,-KG1,-S1,-K1,-MOL1,-A1,-CD1,T1>  invert() const
+    template <int M2, int KG2, int S2, int K2, int MOL2, int A2, int CD2>
+    constexpr units<M1-M2,  KG1-KG2,  S1-S2,  K1-K2,  MOL1-MOL2,  A1-A2,  CD1-CD2,  T1> operator/(const units<M2,KG2,S2,K2,MOL2,A2,CD2,T1> other) const
     {
-      return units<-M1,-KG1,-S1,-K1,-MOL1,-A1,-CD1,T1>(T1(1)/raw);
+      return units<M1-M2,  KG1-KG2,  S1-S2,  K1-K2,  MOL1-MOL2,  A1-A2,  CD1-CD2,  T1>(raw / other.raw);
     }
-    template<typename T2>
-    constexpr units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> multiply(const T2 scalar) const
+    constexpr units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> operator*(const T1 scalar) const
     {
-      return units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(raw*T1(scalar));
+      return units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(raw * scalar);
     }
-    constexpr units<M1/2,KG1/2,S1/2,K1/2,MOL1/2,A1/2,CD1/2,T1> sqrt() const
+    constexpr units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> operator/(const T1 scalar) const
     {
-      return units<M1/2,KG1/2,S1/2,K1/2,MOL1/2,A1/2,CD1/2,T1>(std::sqrt(raw));
+      return units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(raw / scalar);
     }
-    
+    constexpr units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> operator-() const
+    {
+      return units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(-raw);
+    }
+
+    template<int N>
+    constexpr units<M1*N,KG1*N,S1*N,K1*N,MOL1*N,A1*N,CD1*N,T1> pow() const
+    {
+      return units<M1*N,KG1*N,S1*N,K1*N,MOL1*N,A1*N,CD1*N,T1>(std::pow(raw, N));
+    }
+    template<int N>
+    constexpr units<M1/N,KG1/N,S1/N,K1/N,MOL1/N,A1/N,CD1/N,T1> root() const
+    {
+      return units<M1/N,KG1/N,S1/N,K1/N,MOL1/N,A1/N,CD1/N,T1>(std::pow(raw,1.0/double(N)));
+    }
+
 
     constexpr bool operator==(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
     {
@@ -168,19 +201,6 @@ namespace si{
       return raw <= other.raw;
     }
 
-    constexpr units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> operator+(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
-    {
-      return units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(raw + other.raw);
-    }
-    constexpr units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> operator-(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
-    {
-      return units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(raw - other.raw);
-    }
-    constexpr units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> operator-() const
-    {
-      return units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(-raw);
-    }
-
 
     units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>& operator+=(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) 
     {
@@ -206,161 +226,54 @@ namespace si{
       return *this;
     }
 
-    std::string to_string() const 
-    {
-      std::array<std::string, 17> prefixes {"y","z","a","f","p","n","μ","m","","k","M","G","T","P","E","Z","Y"};
-
-      // customize formatting for area and volume, which follow separate rules for prefix conversion
-      if( M1 != 0 && (KG1|S1|K1|MOL1|A1|CD1) == 0)
-      {
-        T1 prefix_id = std::floor(std::log10(raw)/3.0); prefix_id = std::abs(prefix_id) < 8? prefix_id : 0;
-        std::string prefixed_value = std::to_string(raw / std::pow(1000.0, M1*std::min(8.0, prefix_id)));
-        std::string prefix(prefixes[int(prefix_id)+8]);
-        return prefixed_value + " " + (M1<0? "1/":"") + prefix + "m" + (std::abs(M1)!=1? std::to_string(std::abs(M1)) : "");
-      }
-      // customize formatting for mass, which must be converted to grams
-      if( KG1 != 0 && (M1|S1|K1|MOL1|A1|CD1) == 0)
-      {
-        T1 prefix_id = std::floor(std::log10(raw)/3.0); prefix_id = std::abs(prefix_id) < 8? prefix_id : 0;
-        std::string prefixed_value = std::to_string(raw / std::pow(1000.0, KG1*std::min(8.0, prefix_id)));
-        std::string prefix(prefixes[int(prefix_id)+KG1+8]);
-        return prefixed_value + " " + (KG1<0? "1/":"") + prefix + "g" + (std::abs(KG1)!=1? std::to_string(std::abs(KG1)) : "");
-      }
-      // customize formatting for temperature, which conventionally avoids the "kilo" suffix
-      if( K1 == 1 && (M1|KG1|S1|MOL1|A1|CD1) == 0)
-      {
-        T1 prefix_id = std::floor(std::log10(raw)/3.0); prefix_id = std::abs(prefix_id) < 8? prefix_id : 0;
-        prefix_id = prefixes[int(prefix_id)+8] == "k"? prefix_id - 1 : prefix_id;
-        std::string prefixed_value =  std::to_string(raw / std::pow(1000.0, std::min(8.0, prefix_id)));
-        std::string prefix(prefixes[int(prefix_id)+8]);
-        return prefixed_value + " " + prefix + "K";
-      }
-
-      using triple = std::array<int,3>;
-      using pair = std::pair<triple, std::string>;
-      // customize formatting for common derived units for pretty printing
-      std::array<pair, 10> named_mks {
-        pair({ 1,1,-2}, "N"),
-        pair({ 2,1,-2}, "N*m"),
-        pair({-1,1,-2}, "Pa"),
-        pair({-1,1,-1}, "Pa*s"),
-        pair({ 2,1,-2}, "J"),
-        pair({ 2,0,-2}, "J/kg"),
-        pair({ 2,1,-3}, "W"),
-        pair({ 1,1,-3}, "W/m"),
-        pair({ 0,1,-3}, "W/m2"),
-        pair({ 0,1,-2}, "N/m"),
-      };
-      for(std::size_t i(0); i < named_mks.size(); ++i)
-      {
-        if(named_mks[i].first == std::array<int,3>{M1,KG1,S1})
-        {
-          T1 prefix_id = std::floor(std::log10(raw)/3.0); prefix_id = std::abs(prefix_id) < 8? prefix_id : 0;
-          std::string prefixed_value =  std::to_string(raw / std::pow(1000.0, std::min(8.0, prefix_id)));
-          std::string prefix(prefixes[int(prefix_id)+8]);
-          std::string result = prefixed_value + " " + prefix;
-          result += named_mks[i].second;
-          result +=   K1>0? "K"  + (std::abs(  K1)>1? std::to_string(std::abs(K1  )) : "") : ""; 
-          result += MOL1>0? "mol"+ (std::abs(MOL1)>1? std::to_string(std::abs(MOL1)) : "") : ""; 
-          result +=   A1>0? "A"  + (std::abs(  A1)>1? std::to_string(std::abs(  A1)) : "") : ""; 
-          result +=  CD1>0? "Cd" + (std::abs( CD1)>1? std::to_string(std::abs( CD1)) : "") : ""; 
-          result += K1<0 || MOL1<0 || A1<0 || CD1<0? "/" : "";
-          result +=   K1<0? "K"  + (std::abs(  K1)<1? std::to_string(std::abs(K1  )) : "") : ""; 
-          result += MOL1<0? "mol"+ (std::abs(MOL1)<1? std::to_string(std::abs(MOL1)) : "") : ""; 
-          result +=   A1<0? "A"  + (std::abs(  A1)<1? std::to_string(std::abs(  A1)) : "") : ""; 
-          result +=  CD1<0? "Cd" + (std::abs( CD1)<1? std::to_string(std::abs( CD1)) : "") : ""; 
-          return result;
-        }
-      }
-
-      // fall back on SI base units 
-      std::string result = std::to_string(raw) + " ";
-      result += M1<0 && KG1<0 && S1<0 && K1<0 && MOL1<0 && A1<0 && CD1<0? "1" : "";
-      result +=   M1>0? "m"  + (std::abs(  M1)>1? std::to_string(std::abs(M1  )) : "") : ""; 
-      result +=  KG1>0? "kg" + (std::abs( KG1)>1? std::to_string(std::abs(KG1 )) : "") : ""; 
-      result +=   S1>0? "s"  + (std::abs(  S1)>1? std::to_string(std::abs(S1  )) : "") : ""; 
-      result +=   K1>0? "K"  + (std::abs(  K1)>1? std::to_string(std::abs(K1  )) : "") : ""; 
-      result += MOL1>0? "mol"+ (std::abs(MOL1)>1? std::to_string(std::abs(MOL1)) : "") : ""; 
-      result +=   A1>0? "A"  + (std::abs(  A1)>1? std::to_string(std::abs(  A1)) : "") : ""; 
-      result +=  CD1>0? "Cd" + (std::abs( CD1)>1? std::to_string(std::abs( CD1)) : "") : ""; 
-      result += M1<0 || KG1<0 || S1<0 || K1<0 || MOL1<0 || A1<0 || CD1<0? "/" : "";
-      result +=   M1<0? "m"  + (std::abs(  M1)<1? std::to_string(std::abs(M1  )) : "") : ""; 
-      result +=  KG1<0? "kg" + (std::abs( KG1)<1? std::to_string(std::abs(KG1 )) : "") : ""; 
-      result +=   S1<0? "s"  + (std::abs(  S1)<1? std::to_string(std::abs(S1  )) : "") : ""; 
-      result +=   K1<0? "K"  + (std::abs(  K1)<1? std::to_string(std::abs(K1  )) : "") : ""; 
-      result += MOL1<0? "mol"+ (std::abs(MOL1)<1? std::to_string(std::abs(MOL1)) : "") : ""; 
-      result +=   A1<0? "A"  + (std::abs(  A1)<1? std::to_string(std::abs(  A1)) : "") : ""; 
-      result +=  CD1<0? "Cd" + (std::abs( CD1)<1? std::to_string(std::abs( CD1)) : "") : ""; 
-      return result;
-    }
 
     template <int M2, int KG2, int S2, int K2, int MOL2, int A2, int CD2, typename T2>
     friend class units;
-    template <typename T2>
-    friend constexpr T2 unitless(units<0,0,0,0,0,0,0,T2> a);
   };
 
-  template <typename T1>
-  constexpr T1 unitless(units<0,0,0,0,0,0,0,T1> a)
-  {
-    return a.raw;
-  }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
   constexpr auto sqrt(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
   {
-    return a.sqrt();
+    return a.template root<2>();
+  }
+  template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
+  constexpr auto cbrt(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
+  {
+    return a.template root<3>();
+  }
+  template <int N, int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
+  constexpr auto root(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
+  {
+    return a.template root<N>();
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1, typename T2>
   constexpr auto operator*(const T2 a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
   {
-    return b.multiply(a);
+    return b*T1(a);
   }
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1, typename T2>
   constexpr auto operator/(const T2 a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
   {
-    return b.invert().multiply(a);
+    return b.template pow<-1>()*T1(a);
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1, typename T2>
   constexpr auto operator*(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const T2 b)
   {
-    return a.multiply(b);
+    return a*T1(b);
   }
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1, typename T2>
   constexpr auto operator/(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const T2 b)
   {
-    return a.multiply(T1(1)/b);
-  }
-
-  template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1,  int M2, int KG2, int S2, int K2, int MOL2, int A2, int CD2, typename T1,
-    std::enable_if_t<M1!=-M2||KG1!=-KG2||S1!=-S2||K1!=-K2||MOL1!=-MOL2||A1!=-A2||CD1!=-CD2, int> = 0>
-  constexpr auto operator*(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<M2,KG2,S2,K2,MOL2,A2,CD2,T1> b)
-  {
-    return a.multiply(b);
-  }
-  template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1,  int M2, int KG2, int S2, int K2, int MOL2, int A2, int CD2, typename T1>
-  constexpr auto operator/(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<M2,KG2,S2,K2,MOL2,A2,CD2,T1> b)
-  {
-    return b.invert().multiply(a);
-  }
-
-  template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-  constexpr T1 operator*(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<-M1,-KG1,-S1,-K1,-MOL1,-A1,-CD1,T1> b)
-  {
-    return si::unitless(b.multiply(a));
-  }
-  template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-  constexpr T1 operator/(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
-  {
-    return si::unitless(b.invert().multiply(a));
+    return a/T1(b);
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
   constexpr auto abs(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
   {
-    return a > units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(0)? a : a.multiply(-1.0);
+    return a > units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(0)? a : -a;
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
@@ -384,10 +297,93 @@ namespace si{
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
   std::string to_string(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
   {
-    return a.to_string();
+    T1 raw = a / units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(1.0);
+
+    std::array<std::string, 17> prefixes {"y","z","a","f","p","n","μ","m","","k","M","G","T","P","E","Z","Y"};
+
+    // customize formatting for area and volume, which follow separate rules for prefix conversion
+    if( M1 != 0 && (KG1|S1|K1|MOL1|A1|CD1) == 0)
+    {
+      T1 prefix_id = std::floor(std::log10(raw)/3.0); prefix_id = std::abs(prefix_id) < 8? prefix_id : 0;
+      std::string prefixed_value = std::to_string(raw / std::pow(1000.0, M1*std::min(8.0, prefix_id)));
+      std::string prefix(prefixes[int(prefix_id)+8]);
+      return prefixed_value + " " + (M1<0? "1/":"") + prefix + "m" + (std::abs(M1)!=1? std::to_string(std::abs(M1)) : "");
+    }
+    // customize formatting for mass, which must be converted to grams
+    if( KG1 != 0 && (M1|S1|K1|MOL1|A1|CD1) == 0)
+    {
+      T1 prefix_id = std::floor(std::log10(raw)/3.0); prefix_id = std::abs(prefix_id) < 8? prefix_id : 0;
+      std::string prefixed_value = std::to_string(raw / std::pow(1000.0, KG1*std::min(8.0, prefix_id)));
+      std::string prefix(prefixes[int(prefix_id)+KG1+8]);
+      return prefixed_value + " " + (KG1<0? "1/":"") + prefix + "g" + (std::abs(KG1)!=1? std::to_string(std::abs(KG1)) : "");
+    }
+    // customize formatting for temperature, which conventionally avoids the "kilo" suffix
+    if( K1 == 1 && (M1|KG1|S1|MOL1|A1|CD1) == 0)
+    {
+      T1 prefix_id = std::floor(std::log10(raw)/3.0); prefix_id = std::abs(prefix_id) < 8? prefix_id : 0;
+      prefix_id = prefixes[int(prefix_id)+8] == "k"? prefix_id - 1 : prefix_id;
+      std::string prefixed_value =  std::to_string(raw / std::pow(1000.0, std::min(8.0, prefix_id)));
+      std::string prefix(prefixes[int(prefix_id)+8]);
+      return prefixed_value + " " + prefix + "K";
+    }
+
+    using mks = std::array<int,3>;
+    using pair = std::pair<mks, std::string>;
+    // customize formatting for common derived units for pretty printing
+    std::array<pair, 10> named_mks {
+      pair({ 1,1,-2}, "N"),
+      pair({ 2,1,-2}, "N*m"),
+      pair({-1,1,-2}, "Pa"),
+      pair({-1,1,-1}, "Pa*s"),
+      pair({ 2,1,-2}, "J"),
+      pair({ 2,0,-2}, "J/kg"),
+      pair({ 2,1,-3}, "W"),
+      pair({ 1,1,-3}, "W/m"),
+      pair({ 0,1,-3}, "W/m2"),
+      pair({ 0,1,-2}, "N/m"),
+    };
+    for(std::size_t i(0); i < named_mks.size(); ++i)
+    {
+      if(named_mks[i].first == std::array<int,3>{M1,KG1,S1})
+      {
+        T1 prefix_id = std::floor(std::log10(raw)/3.0); prefix_id = std::abs(prefix_id) < 8? prefix_id : 0;
+        std::string prefixed_value =  std::to_string(raw / std::pow(1000.0, std::min(8.0, prefix_id)));
+        std::string prefix(prefixes[int(prefix_id)+8]);
+        std::string result = prefixed_value + " " + prefix;
+        result += named_mks[i].second;
+        result +=   K1>0? "K"  + (std::abs(  K1)>1? std::to_string(std::abs(K1  )) : "") : ""; 
+        result += MOL1>0? "mol"+ (std::abs(MOL1)>1? std::to_string(std::abs(MOL1)) : "") : ""; 
+        result +=   A1>0? "A"  + (std::abs(  A1)>1? std::to_string(std::abs(  A1)) : "") : ""; 
+        result +=  CD1>0? "Cd" + (std::abs( CD1)>1? std::to_string(std::abs( CD1)) : "") : ""; 
+        result += K1<0 || MOL1<0 || A1<0 || CD1<0? "/" : "";
+        result +=   K1<0? "K"  + (std::abs(  K1)<1? std::to_string(std::abs(K1  )) : "") : ""; 
+        result += MOL1<0? "mol"+ (std::abs(MOL1)<1? std::to_string(std::abs(MOL1)) : "") : ""; 
+        result +=   A1<0? "A"  + (std::abs(  A1)<1? std::to_string(std::abs(  A1)) : "") : ""; 
+        result +=  CD1<0? "Cd" + (std::abs( CD1)<1? std::to_string(std::abs( CD1)) : "") : ""; 
+        return result;
+      }
+    }
+
+    // fall back on SI base units 
+    std::string result = std::to_string(raw) + " ";
+    result += M1<0 && KG1<0 && S1<0 && K1<0 && MOL1<0 && A1<0 && CD1<0? "1" : "";
+    result +=   M1>0? "m"  + (std::abs(  M1)>1? std::to_string(std::abs(M1  )) : "") : ""; 
+    result +=  KG1>0? "kg" + (std::abs( KG1)>1? std::to_string(std::abs(KG1 )) : "") : ""; 
+    result +=   S1>0? "s"  + (std::abs(  S1)>1? std::to_string(std::abs(S1  )) : "") : ""; 
+    result +=   K1>0? "K"  + (std::abs(  K1)>1? std::to_string(std::abs(K1  )) : "") : ""; 
+    result += MOL1>0? "mol"+ (std::abs(MOL1)>1? std::to_string(std::abs(MOL1)) : "") : ""; 
+    result +=   A1>0? "A"  + (std::abs(  A1)>1? std::to_string(std::abs(  A1)) : "") : ""; 
+    result +=  CD1>0? "Cd" + (std::abs( CD1)>1? std::to_string(std::abs( CD1)) : "") : ""; 
+    result += M1<0 || KG1<0 || S1<0 || K1<0 || MOL1<0 || A1<0 || CD1<0? "/" : "";
+    result +=   M1<0? "m"  + (std::abs(  M1)<1? std::to_string(std::abs(M1  )) : "") : ""; 
+    result +=  KG1<0? "kg" + (std::abs( KG1)<1? std::to_string(std::abs(KG1 )) : "") : ""; 
+    result +=   S1<0? "s"  + (std::abs(  S1)<1? std::to_string(std::abs(S1  )) : "") : ""; 
+    result +=   K1<0? "K"  + (std::abs(  K1)<1? std::to_string(std::abs(K1  )) : "") : ""; 
+    result += MOL1<0? "mol"+ (std::abs(MOL1)<1? std::to_string(std::abs(MOL1)) : "") : ""; 
+    result +=   A1<0? "A"  + (std::abs(  A1)<1? std::to_string(std::abs(  A1)) : "") : ""; 
+    result +=  CD1<0? "Cd" + (std::abs( CD1)<1? std::to_string(std::abs( CD1)) : "") : ""; 
+    return result;
   }
-
-
 
 
 
@@ -642,6 +638,7 @@ namespace si{
   // SI DEFINED PHYSICAL CONSTANTS
   // all values for constants taken from https://www.nist.gov/pml/special-publication-330/sp-330-section-2#2.1
 
+  constexpr temperature<double>  absolute_zero ( 0.0 );
   constexpr electric_charge<double> elementary_charge_constant (1.602176634e-19); // coulomb
   constexpr units<0, 0, 0, 0,-1, 0, 0, double> avogadro_constant          (6.02214076e23);  // 1/mole
   constexpr units<1, 0,-1, 0, 0, 0, 0, double> speed_of_light             (299792458.0);    // meter/second
@@ -650,6 +647,7 @@ namespace si{
   constexpr units<0, 1,-3,-4, 0, 0, 0, double> stephan_boltzmann_constant (5.670373e-8);    // watt/(meter2*kelvin4)
   constexpr units<2, 1,-1, 0, 0, 0, 0, double> planck_constant            (6.62607015e-34); // joule*second
   constexpr units<3,-1,-2, 0, 0, 0, 0, double> gravitational_constant     (6.67428e-11);    // meter3/(kilogram*second2)
+
 
   // NON SI UNITS MENTIONED IN THE SI
   // see https://en.wikipedia.org/wiki/Non-SI_units_mentioned_in_the_SI
