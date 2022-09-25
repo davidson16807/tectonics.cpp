@@ -6,6 +6,7 @@
 #include <catch/catch.hpp>
 
 // in house libraries
+#include <units/si_test_utils.hpp>
 #include "color.hpp"
 
 

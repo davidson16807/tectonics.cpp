@@ -277,6 +277,12 @@ namespace si{
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
+  constexpr auto distance(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
+  {
+    return abs(a-b);
+  }
+
+  template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
   constexpr auto min(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
   {
     return a < b? a : b;
@@ -385,7 +391,12 @@ namespace si{
     return result;
   }
 
-
+  template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1, typename T2>
+  constexpr auto operator<<(std::ostream& stream, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
+  {
+    stream << to_string(a);
+    return stream;
+  }
 
 
 
