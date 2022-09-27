@@ -46,11 +46,35 @@ namespace table {
 	        return rows[i];
 	    }
 
+	    FullTable<T> operator[](const FullTable<bool>& mask) const
+	    {
+	    	FullTable<T> y;
+		    for (std::size_t i = 0; i < mask.size(); ++i)
+		    {
+		    	if (mask[i])
+		    	{
+		    		y.rows.emplace(int(i), rows.at(i));
+		    	}
+		    }
+	        return rows;
+	    }
 	};
 
-	template<typename Ty, typename Tx1, typename F>
-	FullTable<Ty> derive(const F f, const FullTable<Tx1>& x1)
+	template<typename F, typename Tx, typename Ty>
+	FullTable<Ty> apply(const FullTable<F>& f, Tx x)
 	{
+	    FullTable<Ty> y;
+	    for (std::size_t i = 0; i < f.size(); ++i)
+	    {
+	        y.rows.emplace(int(i), f[i](x));
+	    }
+	    return y;
+	}
+
+	template<typename Ty, typename Tx1, typename F>
+	FullTable<Ty> derive(const F f, 
+		const FullTable<Tx1>& x1
+	){
 	    FullTable<Ty> y;
 	    for (std::size_t i = 0; i < x1.size(); ++i)
 	    {
@@ -60,8 +84,10 @@ namespace table {
 	}
 
 	template<typename Ty, typename Tx1, typename Tx2, typename F>
-	FullTable<Ty> derive(const F f, const FullTable<Tx1>& x1, const FullTable<Tx2>& x2)
-	{
+	FullTable<Ty> derive(const F f, 
+		const FullTable<Tx1>& x1, 
+		const FullTable<Tx2>& x2
+	){
 	    assert(x1.size() == x2.size());
 	    FullTable<Ty> y;
 	    for (std::size_t i = 0; i < x1.size(); ++i)
@@ -72,8 +98,11 @@ namespace table {
 	}
 
 	template<typename Ty, typename F, typename Tx1, typename Tx2, typename Tx3>
-	FullTable<Ty> derive(const F f, const FullTable<Tx1>& x1, const FullTable<Tx2>& x2, const FullTable<Tx3>& x3)
-	{
+	FullTable<Ty> derive(const F f, 
+		const FullTable<Tx1>& x1, 
+		const FullTable<Tx2>& x2, 
+		const FullTable<Tx3>& x3
+	){
 	    assert(x1.size() == x2.size() && x1.size() == x3.size());
 	    FullTable<Ty> y;
 	    for (std::size_t i = 0; i < x1.size(); ++i)
@@ -84,8 +113,12 @@ namespace table {
 	}
 
 	template<typename Ty, typename F, typename Tx1, typename Tx2, typename Tx3, typename Tx4>
-	FullTable<Ty> derive(const F f, const FullTable<Tx1>& x1, const FullTable<Tx2>& x2, const FullTable<Tx3>& x3, const FullTable<Tx4>& x4)
-	{
+	FullTable<Ty> derive(const F f, 
+		const FullTable<Tx1>& x1, 
+		const FullTable<Tx2>& x2, 
+		const FullTable<Tx3>& x3, 
+		const FullTable<Tx4>& x4
+	){
 	    assert(x1.size() == x2.size() && x1.size() == x3.size() && x1.size() == x4.size());
 	    FullTable<Ty> y;
 	    for (std::size_t i = 0; i < x1.size(); ++i)
@@ -96,13 +129,36 @@ namespace table {
 	}
 
 	template<typename Ty, typename F, typename Tx1, typename Tx2, typename Tx3, typename Tx4, typename Tx5>
-	FullTable<Ty> derive(const F f, const FullTable<Tx1>& x1, const FullTable<Tx2>& x2, const FullTable<Tx3>& x3, const FullTable<Tx4>& x4, const FullTable<Tx5>& x5)
-	{
+	FullTable<Ty> derive(const F f, 
+		const FullTable<Tx1>& x1, 
+		const FullTable<Tx2>& x2, 
+		const FullTable<Tx3>& x3, 
+		const FullTable<Tx4>& x4, 
+		const FullTable<Tx5>& x5
+	){
 	    assert(x1.size() == x2.size() && x1.size() == x3.size() && x1.size() == x4.size() && x1.size() == x5.size());
 	    FullTable<Ty> y;
 	    for (std::size_t i = 0; i < x1.size(); ++i)
 	    {
 	        y.rows.push_back(f(x1[i],x2[i],x3[i],x4[i],x5[i]));
+	    }
+	    return y;
+	}
+
+	template<typename Ty, typename F, typename Tx1, typename Tx2, typename Tx3, typename Tx4, typename Tx5, typename Tx6>
+	FullTable<Ty> derive(const F f, 
+		const FullTable<Tx1>& x1, 
+		const FullTable<Tx2>& x2, 
+		const FullTable<Tx3>& x3, 
+		const FullTable<Tx4>& x4, 
+		const FullTable<Tx5>& x5, 
+		const FullTable<Tx6>& x6
+	){
+	    assert(x1.size() == x2.size() && x1.size() == x3.size() && x1.size() == x4.size() && x1.size() == x5.size() && x1.size() == x6.size());
+	    FullTable<Ty> y;
+	    for (std::size_t i = 0; i < x1.size(); ++i)
+	    {
+	        y.rows.push_back(f(x1[i],x2[i],x3[i],x4[i],x5[i],x6[i]));
 	    }
 	    return y;
 	}

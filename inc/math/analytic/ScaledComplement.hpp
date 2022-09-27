@@ -124,7 +124,7 @@ namespace analytic {
     Given functions f∘g and h, return the composite function f∘g∘h.
     */
     template<typename T, typename F>
-    constexpr ScaledComplement<T,F> compose(const ScaledComplement<T,F>& fg, const analytic::Scaling<T> h)
+    constexpr ScaledComplement<T,F> compose(const ScaledComplement<T,F>& fg, const analytic::Scaling<T>& h)
     {
         return ScaledComplement<T,F>(fg.scale/h.factor, fg.f);
     }

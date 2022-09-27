@@ -227,16 +227,17 @@ namespace analytic {
         return f;
     }
 
-
-    template<typename T, typename F, typename G>
-    constexpr Railcar<T,F> compose(const Railcar<T,F>& f, const G& g)
+    template<typename T, typename F>
+    constexpr Railcar<T,F> compose(const Railcar<T,F>& f, const Shifting<T>& g)
     {
         return Railcar<T,F>(inverse(g)(f.lo), inverse(g)(f.lo), compose(f.content, g) );
     }
 
-
-
-
+    template<typename T, typename F>
+    constexpr Railcar<T,F> compose(const Railcar<T,F>& f, const Scaling<T>& g)
+    {
+        return Railcar<T,F>(inverse(g)(f.lo), inverse(g)(f.lo), compose(f.content, g) );
+    }
 
     /*
     `derivative` returns a function object for the derivative of a polynomial.

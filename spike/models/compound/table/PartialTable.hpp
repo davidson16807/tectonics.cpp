@@ -44,6 +44,32 @@ namespace table {
 	        return rows.at(i);
 	    }
 
+	    PartialTable<T> operator[](const FullTable<bool>& mask) const
+	    {
+	    	PartialTable<T> y;
+		    for (std::size_t i = 0; i < mask.size(); ++i)
+		    {
+		    	if (mask[i])
+		    	{
+		    		y.rows.emplace(int(i), rows.at(i));
+		    	}
+		    }
+	        return rows;
+	    }
+
+	    PartialTable<T> operator[](const PartialTable<bool>& mask) const
+	    {
+	    	PartialTable<T> y;
+	    	for (const auto& [i, x1i] : rows) 
+		    {
+		    	if (mask.has(i) && mask[i])
+		    	{
+		    		y.rows.emplace(int(i), rows.at(i));
+		    	}
+		    }
+	        return rows;
+	    }
+
 	    bool has(const int i) const
 	    {
 	        return rows.count(i) > 0;
@@ -101,6 +127,17 @@ namespace table {
 	    return y;
 	}
 
+	template<typename F, typename Tx, typename Ty>
+	PartialTable<Ty> apply(const PartialTable<F>& f, Tx x)
+	{
+	    PartialTable<Ty> y;
+	    for (const auto& [i, fi] : f.rows) 
+	    {
+	        y.rows.emplace(int(i), f[i](x));
+	    }
+	    return y;
+	}
+
 	template<typename Ty, typename Tx1, typename F>
 	PartialTable<Ty> gather(const F f, const PartialTable<Tx1>& x1)
 	{
@@ -113,8 +150,10 @@ namespace table {
 	}
 
 	template<typename Ty, typename Tx1, typename Tx2, typename F>
-	PartialTable<Ty> gather(const F f, const PartialTable<Tx1>& x1, const PartialTable<Tx2>& x2) 
-	{
+	PartialTable<Ty> gather(const F f, 
+		const PartialTable<Tx1>& x1, 
+		const PartialTable<Tx2>& x2
+	){
 	    PartialTable<Ty> y;
 	    for (const auto& [i, x1i] : x1.rows) 
 	    {
@@ -127,8 +166,11 @@ namespace table {
 	}
 
 	template<typename Ty, typename F, typename Tx1, typename Tx2, typename Tx3>
-	PartialTable<Ty> gather(const F f, const PartialTable<Tx1>& x1, const PartialTable<Tx2>& x2, const PartialTable<Tx3>& x3)
-	{
+	PartialTable<Ty> gather(const F f, 
+		const PartialTable<Tx1>& x1, 
+		const PartialTable<Tx2>& x2, 
+		const PartialTable<Tx3>& x3
+	){
 	    PartialTable<Ty> y;
 	    for (const auto& [i, x1i] : x1.rows)
 	    {
@@ -141,8 +183,12 @@ namespace table {
 	}
 
 	template<typename Ty, typename F, typename Tx1, typename Tx2, typename Tx3, typename Tx4>
-	PartialTable<Ty> gather(const F f, const PartialTable<Tx1>& x1, const PartialTable<Tx2>& x2, const PartialTable<Tx3>& x3, const PartialTable<Tx4>& x4)
-	{
+	PartialTable<Ty> gather(const F f, 
+		const PartialTable<Tx1>& x1, 
+		const PartialTable<Tx2>& x2, 
+		const PartialTable<Tx3>& x3, 
+		const PartialTable<Tx4>& x4
+	){
 	    PartialTable<Ty> y;
 	    for (const auto& [i, x1i] : x1.rows)
 	    {
@@ -155,14 +201,39 @@ namespace table {
 	}
 
 	template<typename Ty, typename F, typename Tx1, typename Tx2, typename Tx3, typename Tx4, typename Tx5>
-	PartialTable<Ty> gather(const F f, const PartialTable<Tx1>& x1, const PartialTable<Tx2>& x2, const PartialTable<Tx3>& x3, const PartialTable<Tx4>& x4, const PartialTable<Tx5>& x5)
-	{
+	PartialTable<Ty> gather(const F f, 
+		const PartialTable<Tx1>& x1, 
+		const PartialTable<Tx2>& x2, 
+		const PartialTable<Tx3>& x3, 
+		const PartialTable<Tx4>& x4, 
+		const PartialTable<Tx5>& x5
+	){
 	    PartialTable<Ty> y;
 	    for (const auto& [i, x1i] : x1.rows)
 	    {
 	        if (x1.has(i) && x2.has(i) && x3.has(i) && x4.has(i) && x5.has(i))
 	        {
 	            y.rows.emplace(int(i), f(x1[i],x2[i],x3[i],x4[i],x5[i]));
+	        }
+	    }
+	    return y;
+	}
+
+	template<typename Ty, typename F, typename Tx1, typename Tx2, typename Tx3, typename Tx4, typename Tx5, typename Tx6>
+	PartialTable<Ty> gather(const F f, 
+		const PartialTable<Tx1>& x1, 
+		const PartialTable<Tx2>& x2, 
+		const PartialTable<Tx3>& x3, 
+		const PartialTable<Tx4>& x4, 
+		const PartialTable<Tx5>& x5, 
+		const PartialTable<Tx6>& x6
+	){
+	    PartialTable<Ty> y;
+	    for (const auto& [i, x1i] : x1.rows)
+	    {
+	        if (x1.has(i) && x2.has(i) && x3.has(i) && x4.has(i) && x5.has(i) && x6.has(i))
+	        {
+	            y.rows.emplace(int(i), f(x1[i],x2[i],x3[i],x4[i],x5[i],x6[i]));
 	        }
 	    }
 	    return y;

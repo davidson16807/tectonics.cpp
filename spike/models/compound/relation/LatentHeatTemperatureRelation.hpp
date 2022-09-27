@@ -113,7 +113,6 @@ namespace relation {
             return *this;
         }
 
-
         LatentHeatTemperatureRelation& operator+=(const si::specific_energy<double> offset)
         {
             intercept += offset/yunits;
@@ -147,12 +146,14 @@ namespace relation {
         const auto yunits = si::specific_energy<double>(1.0);
         const auto Tunits = si::temperature<double>(1.0);
         const auto k = (si::universal_gas_constant * critical_temperature / molar_mass) / yunits;
-        const double w = acentric_factor;
-        const si::temperature<double> Tc = critical_temperature;
+        const double w = std::max(acentric_factor, 0.0);
+        const float Tc = float(critical_temperature / Tunits);
+        const float a = float(7.08*k);
+        const float b = std::max(float(10.95*w*k), a);
         return LatentHeatTemperatureRelation(
             ClampedDippr106Sum{
-                ClampedDippr106(dippr::Dippr106(float( 7.08  *k), 0.354f, 0.0f, 0.0f, float(Tc/Tunits))),
-                ClampedDippr106(dippr::Dippr106(float(10.95*w*k), 0.456f, 0.0f, 0.0f, float(Tc/Tunits))),
+                ClampedDippr106(0.0, Tc, dippr::Dippr106(a, 0.354f, 0.0f, 0.0f, Tc)),
+                ClampedDippr106(0.0, Tc, dippr::Dippr106(b, 0.456f, 0.0f, 0.0f, Tc)),
             }, Tunits, yunits, 0.0f, 0.0f);
     }
 

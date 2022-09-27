@@ -89,10 +89,42 @@ p3 = function(x1,x2,x3,x4, y1,y2,y3,y4){
 }
 
 
+# integral of a linear Newton polynomial of a function's derivative
+intp1 = function(x1,dydx1, x2,dydx2, m, C){
+    dydx21 = (dydx2-dydx1) / (x2-x1)
+    function(x){ C + m*dydx1*x + m*dydx21*(x-x1)*(x-x1)/2 }
+}
+
+
+
+# 1st order continuous, 2 pieces of 2nd degree
+xω = 2.0
+x = (0:(xω*100))/100
+xθ = xω/2
+exp1p1d = function(x) {
+	ifelse(x<xθ, 
+		p1(0,1,        xθ,exp(xθ))(x), 
+		p1(xθ,exp(xθ), xω,exp(xω))(x))
+}
+
+# 2nd order continuous, 2 pieces of 2nd degree
+exp1p2d = function(x) {
+	p1a = intp1(0,1,        xθ,exp(xθ), 1, 1)
+	p2a = intp1(xθ,exp(xθ), xω,exp(xω), 1, 0)
+	p2b = intp1(xθ,exp(xθ), xω,exp(xω), 1, p1a(xθ)-p2a(xθ))
+	m   = (exp(xω)-1)/(p2b(xω)-1)
+	p1c = intp1(0,1,        xθ,exp(xθ), m, 1)
+	p2c = intp1(xθ,exp(xθ), xω,exp(xω), m, (m*(p1a(xθ)-p2a(xθ)-1)+1))
+	ifelse(x<xθ, p1c(x), p2c(x))
+}
+
+plot(x, exp(x), type='l', col=1)
+lines(x, exp1p2d(x), col=2)
+max(abs(exp(x)-exp1p2d(x))/exp(x))
 
 gauss = function(x){ exp(-x^2) }
 
-# 3 pieces of 2nd degree
+# 1st order continuous, 3 pieces of 2nd degree
 gauss3p2d = list(
 	initialize=function(){ c(-0.4,0.0,-0.7) },
 	decode=function(parameters) {
@@ -121,7 +153,7 @@ parameters
 
 
 
-# 3 pieces of 3rd degree
+# 1st order continuous, 3 pieces of 3rd degree
 gauss2p3d = list(
 	initialize=function(){ c(-1.4, -1.0, -0.9, -0.4, -0.6) },
 	decode=function(parameters) {
@@ -156,7 +188,7 @@ parameters
 
 erf = function(x) { 2 * pnorm(x * sqrt(2)) - 1 }
 
-# 6 pieces of 2nd degree
+# 1st order continuous, 6 pieces of 2nd degree
 erf4p2d = list(
 	initialize=function(){ c(-0.85,-0.5,-0.7,-0.85) },
 	decode=function(parameters) {
@@ -187,7 +219,7 @@ parameters
 
 
 
-# 4 pieces of 2nd degree
+# 1st order continuous, 4 pieces of 2nd degree
 erf2p2d = list(
 	initialize=function(){ c(0.1,-0.6) },
 	decode=function(parameters) {
@@ -216,7 +248,7 @@ parameters
 
 
 
-# 4 pieces of 2nd degree
+# 1st order continuous, 4 pieces of 2nd degree
 tanh2p2d = list(
 	initialize=function(){ c(0.2,-0.2) },
 	decode=function(parameters) {
@@ -246,7 +278,7 @@ parameters
 
 sech2 = function(x){ 1/(cosh(x)*cosh(x)) }
 
-# 3 pieces of 2nd degree
+# 1st order continuous, 3 pieces of 2nd degree
 sech23p2d = list(
 	initialize=function(){ c(-0.3,0.05,-0.3) },
 	decode=function(parameters) {
@@ -307,7 +339,7 @@ parameters
 
 inv = function(x) { 1/x }
 
-# 5 pieces of 1st degree
+# 1st order continuous, 5 pieces of 1st degree
 inv5p1d = list(
 	initialize=function(){ c(0.03, 0.1, 0.2, 0.4, 0.8) },
 	decode=function(parameters) {
@@ -345,7 +377,7 @@ parameters
 
 
 
-# 5 pieces of 1st degree
+# 1st order continuous, 5 pieces of 1st degree
 inv5p1d = list(
 	initialize=function(){ c(0.03, 0.1, 0.2, 0.4, 0.8, 0,0,0,0) },
 	decode=function(parameters) {
@@ -385,7 +417,7 @@ costs$mxpe(parameters)
 parameters
 
 
-# 4 pieces of 1st degree
+# 1st order continuous, 4 pieces of 1st degree
 inv4p1d = list(
 	initialize=function(){ c(0.03, 0.1, 0.2, 0.5, -1, -0.2, 0) },
 	decode=function(parameters) {

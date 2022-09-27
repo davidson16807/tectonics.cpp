@@ -33,8 +33,8 @@ namespace analytic {
             p(), 
             q()
         {
-            p[0] = k;
-            q[0] = 1.0f;
+            p[0] = T(0);
+            q[0] = T(1);
         }
         // constant constructor
         constexpr explicit Rational(const T k): 
@@ -42,7 +42,7 @@ namespace analytic {
             q()
         {
             p[0] = k;
-            q[0] = 1.0f;
+            q[0] = T(1);
         }
         // copy constructor
         template <int P2lo, int P2hi, int Q2lo, int Q2hi> 
@@ -55,26 +55,26 @@ namespace analytic {
             p(e), 
             q()
         {
-            q[0] = 1.0f;
+            q[0] = T(1);
         }
         constexpr explicit Rational(const Scaling<T> f): 
             p(f), 
             q()
         {
-            q[0] = 1.0f;
+            q[0] = T(1);
         }
         constexpr explicit Rational(const Shifting<T> f): 
             p(f), 
             q()
         {
-            q[0] = 1.0f;
+            q[0] = T(1);
         }
         template<int Nlo, int Nhi>
         constexpr explicit Rational(const Polynomial<T,Nlo,Nhi> p): 
             p(p), 
             q()
         {
-            q[0] = 1.0f;
+            q[0] = T(1);
         }
         constexpr T operator()(const T x) const
         {
@@ -446,7 +446,7 @@ namespace analytic {
     template<typename T>
     constexpr T derivative(const Rational<T,1,1,0,0> r) 
     {
-        return 0.0f;
+        return T(0);
     }
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     auto derivative(const Rational<T,Plo,Phi,Qlo,Qhi>& r)

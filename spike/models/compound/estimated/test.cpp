@@ -1,5 +1,7 @@
 #include "./solid/vapor_pressure_test.cpp"
 #include "./solid/density_test.cpp"
 #include "./compound/latent_heat_of_vaporization_test.hpp"
+#include "./compound/latent_heat_of_sublimation_test.cpp"
+#include "./compound/latent_heat_of_fusion_test.cpp"
 #include "./compound/acentric_factor_test.cpp"
 #include "./liquid/density_test.cpp"

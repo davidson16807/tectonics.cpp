@@ -162,22 +162,22 @@ namespace estimated{
         table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_sublimation_temp = 
             table::first<LatentHeatTemperatureRelation>({
                 published::latent_heat_of_sublimation,
-                table::gather<LatentHeatTemperatureRelation>(
-                    []( point<double> triple, 
-                        point<double> solid, 
-                        si::molar_mass<double> M,
-                        SolidVaporPressureTemperatureRelation PvS
-                        ){
-                            auto T = solid.temperature;
-                            auto T3 = triple.temperature;
-                            auto P3 = triple.pressure;
-                            return LatentHeatTemperatureRelation(
-                                property::estimate_latent_heat_of_sublimation_at_triple_point_from_clapeyron(PvS(T), M, T, T3, P3));
-                    },
-                    published::triple_point,
-                    partial(solid_sample_point),
-                    partial(molar_mass),
-                    vapor_pressure_as_solid)
+                // table::gather<LatentHeatTemperatureRelation>(
+                //     []( point<double> triple, 
+                //         point<double> solid, 
+                //         si::molar_mass<double> M,
+                //         SolidVaporPressureTemperatureRelation PvS
+                //         ){
+                //             auto T = solid.temperature;
+                //             auto T3 = triple.temperature;
+                //             auto P3 = triple.pressure;
+                //             return LatentHeatTemperatureRelation(
+                //                 property::estimate_latent_heat_of_sublimation_at_triple_point_from_clapeyron(PvS(T), M, T, T3, P3));
+                //     },
+                //     published::triple_point,
+                //     partial(solid_sample_point),
+                //     partial(molar_mass),
+                //     vapor_pressure_as_solid)
             });
 
         table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_vaporization_temp = latent_heat_of_sublimation_temp - published::latent_heat_of_fusion;
@@ -225,12 +225,14 @@ namespace estimated{
     table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_vaporization = 
         table::first<LatentHeatTemperatureRelation>({
             latent_heat_of_vaporization_temp,
-            // table::gather<LatentHeatTemperatureRelation>(
-            //     relation::get_pitzer_latent_heat_of_vaporization_temperature_relation,
-            //     partial(molar_mass), partial(critical_point_temperature), acentric_factor
-            // ),
+            table::gather<LatentHeatTemperatureRelation>(
+                relation::get_pitzer_latent_heat_of_vaporization_temperature_relation,
+                partial(molar_mass), partial(critical_point_temperature), acentric_factor
+            ),
         });
 
+    table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_sublimation = latent_heat_of_vaporization     + latent_heat_of_fusion_temp;
+    table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_fusion      = latent_heat_of_sublimation_temp - latent_heat_of_vaporization;
 }}
 
 

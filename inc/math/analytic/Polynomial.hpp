@@ -949,21 +949,20 @@ namespace analytic {
 
     /*
     `reals()` is a convenience function that accepts iterators for a container of complex values 
-    and returns a vector containing only those values which are strictly real.
+    and returns an iterator containing only those values which are strictly real.
     This can be useful when condensing solutions to polynomial equations.
     */
     template<typename T, typename TInputIterator, typename TOutputIterator>
     void reals(
         const TInputIterator first, 
         const TInputIterator last, 
-        TOutputIterator result, 
-        const T imaginary_precision
+        TOutputIterator result
     ){
         std::complex<T> z;
-        while(first != last) 
+        while(first != last)
         {
             z = *first;
-            if (std::abs(z.imag()) > imaginary_precision)
+            if (std::abs(z.imag()) > T(0))
             {
                 *result = z.real();
                 ++result;
