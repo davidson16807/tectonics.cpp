@@ -537,42 +537,34 @@ namespace analytic {
         std::sort(couplers.begin(), couplers.end());
         std::vector<Railcar<T,FG>> cars;
         T lo, hi, mid, gmid;
-        cars.emplace_back(-oo,couplers[0],F(T(0)));
         for (std::size_t i=1; i<couplers.size(); i++)
         {
             lo = couplers[i-1];
             hi = couplers[i];
             mid = (lo + hi)/T(2);
             gmid = g(mid);
-            cars.emplace_back(lo, hi, 
-                f.lo < gmid && gmid < f.hi? compose(f.content,g.content) : T(0));
+            if(f.lo < gmid && gmid < f.hi){
+                cars.emplace_back(lo, hi, compose(f.content,g.content));
+            }
         }
-        cars.emplace_back(couplers[couplers.size()-1],oo,F(T(0)));
         return Railyard(cars);
     }
 
-    /*
     template<typename FG, typename T, typename F, typename G>
     constexpr Railyard<T,FG> compose(const Railyard<T,F>& f, const Railyard<T,G>& g)
     {
         auto f2 = simplify(f);
         auto g2 = simplify(g);
-        std::vector<Railcar<T,FG>> cars;
+        Railyard<T,FG> y;
         for (auto fi: f2.cars)
         {
             for (auto gi: g2.cars)
             {
-                auto lo = std::max(fi.lo, gi.lo);
-                auto hi = std::max(fi.hi, gi.hi);
-                if (lo < hi)
-                {
-                    cars.emplace_back(lo, hi, compose(fi, gi) );
-                }
+                y += compose(fi, gi);
             }
         }
-        return Railyard(cars);
+        return y;
     }
-    */
 
 
 
