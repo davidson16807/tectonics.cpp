@@ -157,19 +157,14 @@ namespace relation {
             }, Tunits, yunits, 0.0f, 0.0f);
     }
 
-    LatentHeatTemperatureRelation get_dippr106_latent_heat_of_vaporization_temperature_relation(
+    LatentHeatTemperatureRelation get_dippr_temperature_relation_106(
         const si::temperature<double> Tunits, const si::specific_energy<double> yunits,
         const float Tc, const float c1, const float c2, const float c3, const float c4,
         const float Tmin, const float Tmax
     ){
-        auto f = dippr::Dippr106(c1, c2, c3, c4, Tc);
-        float oo = std::numeric_limits<float>::max();
         return LatentHeatTemperatureRelation(
-            ClampedDippr106Sum{
-                ClampedDippr106( -oo, Tmin, dippr::Dippr106(f(Tmax))),
-                ClampedDippr106(Tmin, Tmax, f),
-                ClampedDippr106(Tmin,   oo, dippr::Dippr106(f(Tmax))),
-            }, Tunits, yunits, 0.0f, 0.0f);
+            ClampedDippr106Sum{ ClampedDippr106(Tmin, Tmax, dippr::Dippr106(c1, c2, c3, c4, Tc)) }, 
+            Tunits, yunits, 0.0f, 0.0f);
     }
 
     LatentHeatTemperatureRelation operator+(const LatentHeatTemperatureRelation relation, const LatentHeatTemperatureRelation other)

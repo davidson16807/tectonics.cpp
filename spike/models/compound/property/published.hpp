@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 // C libraries
 #include <math.h>       // log10 
 
@@ -171,7 +173,7 @@ namespace property {
     }
 
     // Pitzer model: https://chemicals.readthedocs.io/chemicals.phase_change.html#heat-of-vaporization-at-tb-correlations
-    constexpr double estimate_accentric_factor_from_pitzer(
+    double estimate_accentric_factor_from_pitzer(
         const si::specific_energy<double> latent_heat_of_vaporization,
         const si::molar_mass<double> molar_mass,  
         const si::temperature<double> temperature,

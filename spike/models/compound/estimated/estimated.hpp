@@ -206,7 +206,7 @@ namespace estimated{
     table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_sublimation = 
         table::first<LatentHeatTemperatureRelation>({
             published::latent_heat_of_sublimation,
-            latent_heat_of_vaporization + published::latent_heat_of_fusion,
+            // latent_heat_of_vaporization + published::latent_heat_of_fusion,
         });
 
     table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_fusion = 

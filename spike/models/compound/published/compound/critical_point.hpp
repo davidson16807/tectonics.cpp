@@ -70,7 +70,7 @@ namespace published {
         {ids::carbon_monoxide,  132.86 * si::kelvin },
         {ids::ethane,           305.36 * si::kelvin },
         {ids::hydrogen_cyanide, 456.65 * si::kelvin },
-        {ids::ethanol,          351.44 * si::kelvin },
+        {ids::ethanol,          513.9 * si::kelvin  },
         {ids::formaldehyde,     410.3 * si::kelvin  },
         {ids::formic_acid,      588.0 * si::kelvin  },
         {ids::perflouromethane, 227.54 * si::kelvin },
