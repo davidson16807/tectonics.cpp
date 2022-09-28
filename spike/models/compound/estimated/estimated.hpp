@@ -77,7 +77,7 @@ namespace estimated{
         table::derive<point<double>>([](si::pressure<double> p, si::temperature<double> T){ return point<double>(p,T); }, critical_point_pressure, critical_point_temperature);
 
     table::FullTable<point<double>> solid_sample_point = 
-        table::derive<point<double>>([](point<double> freezing){ return freezing.temperature > standard.temperature? standard : freezing; }, freezing_sample_point);
+        table::derive<point<double>>([](point<double> freezing){ return  standard.temperature < freezing.temperature? standard : freezing; }, freezing_sample_point);
 
     table::FullTable<point<double>> liquid_sample_point = 
         table::complete(
@@ -157,34 +157,6 @@ namespace estimated{
                 published::triple_point)
         });
 
-    namespace {
-
-        table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_sublimation_temp = 
-            table::first<LatentHeatTemperatureRelation>({
-                published::latent_heat_of_sublimation,
-                // table::gather<LatentHeatTemperatureRelation>(
-                //     []( point<double> triple, 
-                //         point<double> solid, 
-                //         si::molar_mass<double> M,
-                //         SolidVaporPressureTemperatureRelation PvS
-                //         ){
-                //             auto T = solid.temperature;
-                //             auto T3 = triple.temperature;
-                //             auto P3 = triple.pressure;
-                //             return LatentHeatTemperatureRelation(
-                //                 property::estimate_latent_heat_of_sublimation_at_triple_point_from_clapeyron(PvS(T), M, T, T3, P3));
-                //     },
-                //     published::triple_point,
-                //     partial(solid_sample_point),
-                //     partial(molar_mass),
-                //     vapor_pressure_as_solid)
-            });
-
-        table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_vaporization_temp = latent_heat_of_sublimation_temp - published::latent_heat_of_fusion;
-        table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_fusion_temp       = latent_heat_of_sublimation_temp - published::latent_heat_of_vaporization;
-
-    }
-
     // CALCULATE ACENTRIC FACTOR
     using LiquidDynamicViscosityTemperatureRelation = published::LiquidDynamicViscosityTemperatureRelation;
     table::PartialTable<double> acentric_factor = 
@@ -202,7 +174,7 @@ namespace estimated{
                 partial(liquid_sample_point),
                 partial(critical_point),
                 partial(molar_mass),
-                latent_heat_of_vaporization_temp
+                published::latent_heat_of_vaporization
             ),
             table::gather<double>(
                 []( point<double> liquid,
@@ -224,15 +196,25 @@ namespace estimated{
     // CALCULATE PROPERTIES THAT CAN BE DERIVED FROM ACENTRIC FACTOR
     table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_vaporization = 
         table::first<LatentHeatTemperatureRelation>({
-            latent_heat_of_vaporization_temp,
+            published::latent_heat_of_vaporization,
             table::gather<LatentHeatTemperatureRelation>(
                 relation::get_pitzer_latent_heat_of_vaporization_temperature_relation,
                 partial(molar_mass), partial(critical_point_temperature), acentric_factor
             ),
         });
 
-    table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_sublimation = latent_heat_of_vaporization     + latent_heat_of_fusion_temp;
-    table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_fusion      = latent_heat_of_sublimation_temp - latent_heat_of_vaporization;
+    table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_sublimation = 
+        table::first<LatentHeatTemperatureRelation>({
+            published::latent_heat_of_sublimation,
+            latent_heat_of_vaporization + published::latent_heat_of_fusion,
+        });
+
+    table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_fusion = 
+        table::first<LatentHeatTemperatureRelation>({
+            published::latent_heat_of_fusion,
+            published::latent_heat_of_sublimation - latent_heat_of_vaporization,
+        });
+
 }}
 
 

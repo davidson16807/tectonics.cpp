@@ -18,7 +18,7 @@ TEST_CASE( "estimated latent_heat_of_sublimation order of magnitude", "[table]" 
                 for (si::temperature<double> T = 3.0*si::kelvin; T <= si::standard_temperature; T*=1.778)
                 {
                     si::specific_energy<double> x = compound::estimated::latent_heat_of_sublimation[i](T);
-                    // std::cout << i << std::endl;
+                    // std::cout << compound::estimated::name[i] << std::endl;
                     // std::cout << si::to_string(x) << std::endl;
                     CHECK(x / (si::joule/si::kilogram) < 100e6); /*based on quartz*/
                     CHECK(x / (si::joule/si::kilogram) > 10.0); /*based on helium*/
