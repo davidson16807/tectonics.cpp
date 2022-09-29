@@ -215,6 +215,17 @@ namespace estimated{
             published::latent_heat_of_sublimation - latent_heat_of_vaporization,
         });
 
+    table::PartialTable<LiquidDynamicViscosityTemperatureRelation> dynamic_viscosity_as_liquid = 
+        table::first<LiquidDynamicViscosityTemperatureRelation>({
+            published::dynamic_viscosity_as_liquid,
+            table::gather<LiquidDynamicViscosityTemperatureRelation>(
+                relation::estimate_viscosity_as_liquid_from_letsou_stiel<si::dynamic_viscosity<double>,-1,10>,
+                acentric_factor,
+                partial(molar_mass),
+                partial(critical_point_temperature),
+                partial(critical_point_pressure)
+            ),
+        });
 }}
 
 
@@ -229,7 +240,6 @@ namespace estimated{
         si::pressure<double> pc = known.critical_point_pressure;
         // auto k = si::boltzmann_constant;
         double Zc = known.critical_point_compressibility;
-
 
 
 
