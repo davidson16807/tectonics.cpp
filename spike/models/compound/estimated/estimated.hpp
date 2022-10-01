@@ -261,8 +261,7 @@ namespace estimated{
                 relation::estimate_vapor_pressure_as_liquid_from_lee_kesler,
                 acentric_factor,
                 partial(critical_point_temperature),
-                partial(critical_point_pressure),
-                boiling_sample_point_temperature
+                partial(critical_point_pressure)
             ),
         });
 }}

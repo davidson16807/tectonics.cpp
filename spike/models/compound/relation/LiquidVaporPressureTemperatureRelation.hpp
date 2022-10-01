@@ -260,8 +260,7 @@ namespace relation {
     LiquidVaporPressureTemperatureRelation estimate_vapor_pressure_as_liquid_from_lee_kesler(
         const double acentric_factor, 
         const si::temperature<double> critical_temperature, 
-        const si::pressure<double> critical_pressure,
-        const si::temperature<double> boiling_point_sample_temperature
+        const si::pressure<double> critical_pressure
     ){
         using P = analytic::Polynomial<double,-1,6>;
         using SP = analytic::ScaledComplement<double,P>;
@@ -271,8 +270,12 @@ namespace relation {
         using CSL = analytic::Clamped<double,SL>;
         double pc = critical_pressure/si::pascal;
         double Tc = critical_temperature / si::kelvin;
-        double Tb = boiling_point_sample_temperature / si::kelvin;
-        double Tmax = std::min(Tb, 0.999*Tc); // Tmax must be at most a fraction of Tc so that nans are not generated from calculating log(0)
+        double pvmax = std::numeric_limits<double>::max();
+        double Tmax = 
+            std::min(
+                0.999*Tc,                // log(1-T/Tc) must not produce nans, so 1-T/Tc > 0
+                pow(log(pvmax), 1.0/6.0) // exp(T⁶) must not exceed the max value allowed for doubles
+            ); 
         double w = acentric_factor;
         analytic::Identity<double> Tr;
         auto f0linear = 5.92714 - 6.09648/Tr + 0.169347*Tr*Tr*Tr*Tr*Tr*Tr;
