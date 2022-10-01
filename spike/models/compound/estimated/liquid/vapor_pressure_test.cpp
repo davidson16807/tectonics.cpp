@@ -19,15 +19,21 @@ TEST_CASE( "estimated liquid vapor_pressure order of magnitude", "[table]" )
                 for (si::temperature<double> T = 3.0*si::kelvin; T <= 100.0*si::kelvin; T*=1.778)
                 {
                     auto x = compound::estimated::vapor_pressure_as_liquid[i](T);
-                    CHECK(x / si::pascal < 3e6); /*based on high temperature acetaldehyde*/ \
-                    CHECK(x / si::pascal > 0.03); /*based on low temperature ethylene glycol*/ \
+                    // std::cout << compound::estimated::name[i] << std::endl;
+                    // std::cout << T << std::endl;
+                    // std::cout << x << std::endl;
+                    CHECK(x / si::pascal < 1e7); /*based on high temperature acetaldehyde*/ \
+                    CHECK(x / si::pascal >= 0.0); /*based on theoretical value at absolute zero*/ \
 
                 }
                 for (si::temperature<double> T = 300.0*si::kelvin; T <= si::solar_temperature; T*=1.778)
                 {
                     auto x = compound::estimated::vapor_pressure_as_liquid[i](T);
+                    // std::cout << compound::estimated::name[i] << std::endl;
+                    // std::cout << T << std::endl;
+                    // std::cout << x << std::endl;
                     CHECK(x / si::pascal < 3e7); /*based on high temperature acetaldehyde*/ \
-                    CHECK(x / si::pascal > 0.03); /*based on low temperature ethylene glycol*/ \
+                    CHECK(x / si::pascal >= 0.0); /*based on theoretical value at absolute zero*/ \
                 }
             }
         }

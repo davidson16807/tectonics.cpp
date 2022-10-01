@@ -4,5 +4,6 @@
 #include "./compound/latent_heat_of_sublimation_test.cpp"
 #include "./compound/latent_heat_of_fusion_test.cpp"
 #include "./compound/acentric_factor_test.cpp"
+#include "./liquid/vapor_pressure_test.cpp"
 #include "./liquid/dynamic_viscosity_test.cpp"
 #include "./liquid/density_test.cpp"

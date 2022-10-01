@@ -21,7 +21,7 @@ TEST_CASE( "published latent_heat_of_vaporization order of magnitude", "[table]"
                     // std::cout << i << std::endl;
                     // std::cout << si::to_string(x) << std::endl;
                     CHECK(x / (si::joule/si::kilogram) < 100e6); /*based on quartz*/
-                    CHECK(x / (si::joule/si::kilogram) > 10.0); /*based on helium*/
+                    CHECK(x / (si::joule/si::kilogram) >= 0.0); /*based on helium*/
                 }
             }
         }

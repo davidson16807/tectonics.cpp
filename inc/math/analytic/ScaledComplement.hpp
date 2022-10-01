@@ -35,6 +35,18 @@ namespace analytic {
             return f(T(1)-x/scale);
         }
 
+        ScaledComplement<T,F>& operator+=(const ScaledComplement<T,F> g)
+        {
+            f += g.f;
+            return *this;
+        }
+
+        ScaledComplement<T,F>& operator-=(const ScaledComplement<T,F> g)
+        {
+            f -= g.f;
+            return *this;
+        }
+
         ScaledComplement<T,F>& operator+=(const T k)
         {
             f += k;
@@ -109,6 +121,18 @@ namespace analytic {
         ScaledComplement<T,F> y(fg);
         y.f *= -1;
         return y;
+    }
+
+    // operators with reals that are closed under ScaledComplement<T,F> relations
+    template<typename T, typename F>
+    constexpr ScaledComplement<T,F> operator+(const ScaledComplement<T,F>& f, const ScaledComplement<T,F> g)
+    {
+        return f.f+g.f;
+    }
+    template<typename T, typename F>
+    constexpr ScaledComplement<T,F> operator+(const ScaledComplement<T,F>& f, const ScaledComplement<T,F>& g)
+    {
+        return f.f+g.f;
     }
 
     /*

@@ -42,6 +42,7 @@ namespace estimated{
     
     auto atoms_per_molecule = published::atoms_per_molecule;
     auto freezing_sample_point = published::freezing_sample_point;
+    auto boiling_sample_point = published::boiling_sample_point;
     auto molar_mass = published::molar_mass;
 
     // via Klincewicz
@@ -69,21 +70,25 @@ namespace estimated{
         table::complete(published::molecular_diameter, 
             table::derive<si::length<double>>(property::estimate_molecular_diameter_from_tee_gotoh_steward, critical_point_temperature, critical_point_pressure));
 
-
-
     point<double> standard = point<double>(si::standard_pressure, si::standard_temperature);
 
     table::FullTable<point<double>> critical_point = 
-        table::derive<point<double>>([](si::pressure<double> p, si::temperature<double> T){ return point<double>(p,T); }, critical_point_pressure, critical_point_temperature);
+        table::derive<point<double>>(
+            [](si::pressure<double> p, si::temperature<double> T){ return point<double>(p,T); }, 
+            critical_point_pressure, critical_point_temperature);
 
     table::FullTable<point<double>> solid_sample_point = 
-        table::derive<point<double>>([](point<double> freezing){ return  standard.temperature < freezing.temperature? standard : freezing; }, freezing_sample_point);
+        table::derive<point<double>>(
+            [](point<double> freezing){ return  standard.temperature < freezing.temperature? standard : freezing; }, 
+            freezing_sample_point);
 
     table::FullTable<point<double>> liquid_sample_point = 
         table::complete(
-            table::gather<point<double>>([](point<double> freezing, point<double> boiling){ 
-                        return freezing.temperature < standard.temperature && standard.temperature < boiling.temperature? standard : (freezing + boiling)/2.0; }, 
-                    partial(freezing_sample_point), published::boiling_sample_point),
+            table::gather<point<double>>(
+                [](point<double> freezing, point<double> boiling){ 
+                    return freezing.temperature < standard.temperature && standard.temperature < boiling.temperature? 
+                        standard : (freezing + boiling)/2.0; }, 
+                partial(freezing_sample_point), boiling_sample_point),
             freezing_sample_point
         );
 
@@ -94,6 +99,26 @@ namespace estimated{
         );
 
 
+    table::PartialTable<si::temperature<double>> boiling_sample_point_temperature = 
+        table::gather<si::temperature<double>>(
+            [](point<double> pT){ return pT.temperature; }, 
+            boiling_sample_point);
+
+    table::PartialTable<si::pressure<double>> boiling_sample_point_pressure = 
+        table::gather<si::pressure<double>>(
+            [](point<double> pT){ return pT.pressure; }, 
+            boiling_sample_point);
+
+
+    table::FullTable<si::temperature<double>> freezing_sample_point_temperature = 
+        table::derive<si::temperature<double>>(
+            [](point<double> pT){ return pT.temperature; }, 
+            freezing_sample_point);
+
+    table::FullTable<si::pressure<double>> freezing_sample_point_pressure = 
+        table::derive<si::pressure<double>>(
+            [](point<double> pT){ return pT.pressure; }, 
+            freezing_sample_point);
 
     // via Klincewicz -> Ihmels -> Tee-Gotoh-Steward -> Bird-Steward-Lightfoot2
     using LiquidDensityTemperatureRelation = published::LiquidDensityTemperatureRelation;
@@ -215,15 +240,29 @@ namespace estimated{
             published::latent_heat_of_sublimation - latent_heat_of_vaporization,
         });
 
+    using LiquidDynamicViscosityTemperatureRelation = published::LiquidDynamicViscosityTemperatureRelation;
     table::PartialTable<LiquidDynamicViscosityTemperatureRelation> dynamic_viscosity_as_liquid = 
         table::first<LiquidDynamicViscosityTemperatureRelation>({
             published::dynamic_viscosity_as_liquid,
             table::gather<LiquidDynamicViscosityTemperatureRelation>(
-                relation::estimate_viscosity_as_liquid_from_letsou_stiel<si::dynamic_viscosity<double>,-1,10>,
+                relation::estimate_viscosity_as_liquid_from_letsou_stiel,
                 acentric_factor,
                 partial(molar_mass),
                 partial(critical_point_temperature),
                 partial(critical_point_pressure)
+            ),
+        });
+
+    using LiquidVaporPressureTemperatureRelation = published::LiquidVaporPressureTemperatureRelation;
+    table::PartialTable<LiquidVaporPressureTemperatureRelation> vapor_pressure_as_liquid = 
+        table::first<LiquidVaporPressureTemperatureRelation>({
+            published::vapor_pressure_as_liquid,
+            table::gather<LiquidVaporPressureTemperatureRelation>(
+                relation::estimate_vapor_pressure_as_liquid_from_lee_kesler,
+                acentric_factor,
+                partial(critical_point_temperature),
+                partial(critical_point_pressure),
+                boiling_sample_point_temperature
             ),
         });
 }}
@@ -231,103 +270,82 @@ namespace estimated{
 
 
     /*
-    PartlyKnownCompound infer(const PartlyKnownCompound& known){
-        PartlyKnownCompound guess = known;
-        si::molar_mass<double> M = known.molar_mass;
-        // int A = known.atoms_per_molecule;
-        si::length<double> sigma = known.molecular_diameter;
-        si::temperature<double> Tc = known.critical_point_temperature;
-        si::pressure<double> pc = known.critical_point_pressure;
-        // auto k = si::boltzmann_constant;
-        double Zc = known.critical_point_compressibility;
+
+    guess.liquid.vapor_pressure = guess.liquid.vapor_pressure.value_or( 
+        [Tc, pc](field::StateParameters parameters, double acentric_factor){ 
+            return property::estimate_vapor_pressure_as_liquid_from_lee_kesler(
+                acentric_factor, parameters.temperature, Tc, pc
+            );
+        }, 
+        guess.acentric_factor
+    );
+
+    // CALCULATE MISCELLANEOUS PROPERTIES
+    guess.liquid.thermal_conductivity = guess.liquid.thermal_conductivity.value_or(
+        [M, Tc](field::StateParameters parameters, si::temperature<double> boiling_sample_point_temperature){
+            return property::estimate_thermal_conductivity_as_liquid_from_sato_riedel(
+                M, parameters.temperature, boiling_sample_point_temperature, Tc
+            );
+        },
+        guess.boiling_sample_point_temperature
+    );
+
+    guess.liquid.thermal_conductivity = guess.liquid.thermal_conductivity.value_or(
+        [M](field::StateParameters parameters, si::temperature<double> freezing_sample_point_temperature){
+            return property::estimate_thermal_conductivity_as_liquid_from_sheffy_johnson(
+                M, parameters.temperature, freezing_sample_point_temperature
+            );
+        },
+        guess.freezing_sample_point_temperature
+    );
+
+    guess.gas.dynamic_viscosity = guess.gas.dynamic_viscosity.value_or(
+        [M](relation::GasPropertyStateRelation<si::specific_heat_capacity<double>> heat_capacity_as_gas, 
+            relation::GasPropertyStateRelation<si::thermal_conductivity<double>>   thermal_conductivity_as_gas
+        ) -> relation::GasPropertyStateRelation<si::dynamic_viscosity<double>>{ 
+            return relation::approx_inferred_pressure_temperature_gas_relation(
+                si::kelvin, si::pascal, si::dynamic_viscosity<double>(1.0),
+                [=](si::pressure<double> p, si::temperature<double> T) -> si::dynamic_viscosity<double> {
+                    return property::estimate_viscosity_as_gas_from_eucken(
+                        heat_capacity_as_gas(p,T), M, thermal_conductivity_as_gas(p,T));
+                },
+                // TODO: add logic to compose estimates for valid ranges from source relations
+                3.0,    // kelvin,
+                1000.0, // kelvin,
+                0.1,    // pascal
+                1e6,    // pascal
+                0.0     // known_max_fractional_error
+            );
+        },
+        guess.gas.isobaric_specific_heat_capacity, 
+        guess.gas.thermal_conductivity
+    );
+
+    guess.gas.thermal_conductivity = guess.gas.thermal_conductivity.value_or( 
+        [M](relation::GasPropertyStateRelation<si::dynamic_viscosity<double>>      dynamic_viscosity_as_gas, 
+            relation::GasPropertyStateRelation<si::specific_heat_capacity<double>> heat_capacity_as_gas
+        ) -> relation::GasPropertyStateRelation<si::thermal_conductivity<double>> { 
+            relation::GasPropertyStateRelation<si::thermal_conductivity<double>> result =
+                relation::approx_inferred_pressure_temperature_gas_relation(
+                si::kelvin, si::pascal, si::thermal_conductivity<double>(1.0),
+                [=](si::pressure<double> p, si::temperature<double> T) -> si::thermal_conductivity<double> {
+                    return property::estimate_thermal_conductivity_as_gas_from_eucken(
+                        dynamic_viscosity_as_gas(p,T), M, heat_capacity_as_gas(p,T));
+                },
+                // TODO: add logic to compose estimates for valid ranges from source relations
+                3.0,    // kelvin,
+                1000.0, // kelvin,
+                0.1,    // pascal
+                1e6,    // pascal
+                0.0     // known_max_fractional_error
+            );
+            return result;
+        },
+        guess.gas.dynamic_viscosity, 
+        guess.gas.isobaric_specific_heat_capacity
+    );
 
 
-
-        guess.liquid.dynamic_viscosity = guess.liquid.dynamic_viscosity.value_or(    
-            [M, Tc, pc](field::StateParameters parameters, double acentric_factor){ 
-                return property::estimate_viscosity_as_liquid_from_letsou_stiel(
-                    acentric_factor, M, parameters.temperature, Tc, pc
-                );
-            }, 
-            guess.acentric_factor
-        );
-        guess.liquid.vapor_pressure = guess.liquid.vapor_pressure.value_or( 
-            [Tc, pc](field::StateParameters parameters, double acentric_factor){ 
-                return property::estimate_vapor_pressure_as_liquid_from_lee_kesler(
-                    acentric_factor, parameters.temperature, Tc, pc
-                );
-            }, 
-            guess.acentric_factor
-        );
-
-        // CALCULATE MISCELLANEOUS PROPERTIES
-        guess.liquid.thermal_conductivity = guess.liquid.thermal_conductivity.value_or(
-            [M, Tc](field::StateParameters parameters, si::temperature<double> boiling_sample_point_temperature){
-                return property::estimate_thermal_conductivity_as_liquid_from_sato_riedel(
-                    M, parameters.temperature, boiling_sample_point_temperature, Tc
-                );
-            },
-            guess.boiling_sample_point_temperature
-        );
-
-        guess.liquid.thermal_conductivity = guess.liquid.thermal_conductivity.value_or(
-            [M](field::StateParameters parameters, si::temperature<double> freezing_sample_point_temperature){
-                return property::estimate_thermal_conductivity_as_liquid_from_sheffy_johnson(
-                    M, parameters.temperature, freezing_sample_point_temperature
-                );
-            },
-            guess.freezing_sample_point_temperature
-        );
-
-        guess.gas.dynamic_viscosity = guess.gas.dynamic_viscosity.value_or(
-            [M](relation::GasPropertyStateRelation<si::specific_heat_capacity<double>> heat_capacity_as_gas, 
-                relation::GasPropertyStateRelation<si::thermal_conductivity<double>>   thermal_conductivity_as_gas
-            ) -> relation::GasPropertyStateRelation<si::dynamic_viscosity<double>>{ 
-                return relation::approx_inferred_pressure_temperature_gas_relation(
-                    si::kelvin, si::pascal, si::dynamic_viscosity<double>(1.0),
-                    [=](si::pressure<double> p, si::temperature<double> T) -> si::dynamic_viscosity<double> {
-                        return property::estimate_viscosity_as_gas_from_eucken(
-                            heat_capacity_as_gas(p,T), M, thermal_conductivity_as_gas(p,T));
-                    },
-                    // TODO: add logic to compose estimates for valid ranges from source relations
-                    3.0,    // kelvin,
-                    1000.0, // kelvin,
-                    0.1,    // pascal
-                    1e6,    // pascal
-                    0.0     // known_max_fractional_error
-                );
-            },
-            guess.gas.isobaric_specific_heat_capacity, 
-            guess.gas.thermal_conductivity
-        );
-
-        guess.gas.thermal_conductivity = guess.gas.thermal_conductivity.value_or( 
-            [M](relation::GasPropertyStateRelation<si::dynamic_viscosity<double>>      dynamic_viscosity_as_gas, 
-                relation::GasPropertyStateRelation<si::specific_heat_capacity<double>> heat_capacity_as_gas
-            ) -> relation::GasPropertyStateRelation<si::thermal_conductivity<double>> { 
-                relation::GasPropertyStateRelation<si::thermal_conductivity<double>> result =
-                    relation::approx_inferred_pressure_temperature_gas_relation(
-                    si::kelvin, si::pascal, si::thermal_conductivity<double>(1.0),
-                    [=](si::pressure<double> p, si::temperature<double> T) -> si::thermal_conductivity<double> {
-                        return property::estimate_thermal_conductivity_as_gas_from_eucken(
-                            dynamic_viscosity_as_gas(p,T), M, heat_capacity_as_gas(p,T));
-                    },
-                    // TODO: add logic to compose estimates for valid ranges from source relations
-                    3.0,    // kelvin,
-                    1000.0, // kelvin,
-                    0.1,    // pascal
-                    1e6,    // pascal
-                    0.0     // known_max_fractional_error
-                );
-                return result;
-            },
-            guess.gas.dynamic_viscosity, 
-            guess.gas.isobaric_specific_heat_capacity
-        );
-
-
-        return guess;
-    }
     // Return a `PartlyKnownCompound` that has the properties of `known` where present, 
     // in addition to properties that can derived from the properties of `known`. The function is idempotent.
     // The function can be thought of as the traversal of the category defined within the `property` namespace.
