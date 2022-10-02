@@ -322,16 +322,32 @@ namespace relation {
         const double intercept, const double slope, const double square, const double cube, const double fourth,
         const double Tmin, double Tmax
     ){
-        const double oo = std::numeric_limits<double>::max();
         using P = analytic::Polynomial<double,0,4>;
-        using R = analytic::Railcar<double,P>;
+        using C = analytic::Clamped<double,P>;
+        using R = analytic::Railyard<double,P>;
         analytic::Polynomial<double,0,4> p = analytic::Polynomial<double,0,4>({intercept, slope, square, cube, fourth});
-        return PolynomialRailyardRelation<si::temperature<double>,Ty,0,4>(
-            analytic::PolynomialRailyard<double,0,4>({
-                R(-oo, Tmin, P(p(Tmin))), 
-                R(Tmin,Tmax, p),
-                R(Tmax, oo,  P(p(Tmax)))
-            }), Tunits, yunits);
+        return PolynomialRailyardRelation<si::temperature<double>,Ty,0,4>(R(C(Tmin,Tmax, p)), Tunits, yunits);
+    }
+
+    // Sheffy Johnson: https://chemicals.readthedocs.io/chemicals.thermal_conductivity.html#pure-low-pressure-liquid-correlations
+    PolynomialRailyardRelation<si::temperature<double>, si::thermal_conductivity<double>,0,1> estimate_thermal_conductivity_as_liquid_from_sheffy_johnson(
+        const si::molar_mass<double> molar_mass,
+        const si::temperature<double> normal_melting_point,
+        const si::temperature<double> critical_point_temperature
+    ){
+        double M = (molar_mass / (si::gram / si::mole));
+        double Tm = (normal_melting_point / si::kelvin);
+        double Tc = (critical_point_temperature / si::kelvin);
+        using P = analytic::Polynomial<double,0,1>;
+        using C = analytic::Clamped<double,P>;
+        using R = analytic::Railyard<double,P>;
+        auto T = analytic::Identity<double>();
+        P kl = 1.951 * (1.0 - 0.00126 * (T - Tm)) / (std::pow(Tm, 0.216)*std::pow(M, 0.3));
+        // Tmax is set either to give the lowest thermal conductivity ever observed, or Tc, whichever comes first
+        double Tmax = std::min(Tc, solve(kl,0.011)); 
+        return PolynomialRailyardRelation<si::temperature<double>, si::thermal_conductivity<double>,0,1>(
+            R(C(0.0, Tmax, kl)),
+            si::kelvin, si::watt / (si::meter*si::kelvin));
     }
 
     /*

@@ -264,22 +264,25 @@ namespace estimated{
                 partial(critical_point_pressure)
             ),
         });
+
+    // CALCULATE MISCELLANEOUS PROPERTIES
+    using LiquidThermalConductivityTemperatureRelation = published::LiquidThermalConductivityTemperatureRelation;
+    table::FullTable<LiquidThermalConductivityTemperatureRelation> thermal_conductivity_as_liquid = 
+        table::complete(
+            published::thermal_conductivity_as_liquid,
+            table::derive<LiquidThermalConductivityTemperatureRelation>(
+                relation::estimate_thermal_conductivity_as_liquid_from_sheffy_johnson,
+                molar_mass, 
+                freezing_sample_point_temperature,
+                critical_point_temperature
+            )
+        );
 }}
 
 
 
     /*
 
-    guess.liquid.vapor_pressure = guess.liquid.vapor_pressure.value_or( 
-        [Tc, pc](field::StateParameters parameters, double acentric_factor){ 
-            return property::estimate_vapor_pressure_as_liquid_from_lee_kesler(
-                acentric_factor, parameters.temperature, Tc, pc
-            );
-        }, 
-        guess.acentric_factor
-    );
-
-    // CALCULATE MISCELLANEOUS PROPERTIES
     guess.liquid.thermal_conductivity = guess.liquid.thermal_conductivity.value_or(
         [M, Tc](field::StateParameters parameters, si::temperature<double> boiling_sample_point_temperature){
             return property::estimate_thermal_conductivity_as_liquid_from_sato_riedel(

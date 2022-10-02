@@ -7,3 +7,4 @@
 #include "./liquid/vapor_pressure_test.cpp"
 #include "./liquid/dynamic_viscosity_test.cpp"
 #include "./liquid/density_test.cpp"
+#include "./liquid/thermal_conductivity_test.cpp"
