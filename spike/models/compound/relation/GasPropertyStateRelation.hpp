@@ -16,14 +16,13 @@
 namespace compound {
 namespace relation {
 
-
     using ClampedExponent = analytic::Clamped<float,analytic::Exponent<float>>;
     using ClampedSigmoid = analytic::Clamped<float,analytic::AlgebraicSigmoid<float>>;
     using ClampedDippr102 = analytic::Clamped<float,dippr::Dippr102>;
     using ClampedExponentSum = analytic::Sum<float,ClampedExponent>;
     using ClampedSigmoidSum = analytic::Sum<float,ClampedSigmoid>;
     using ClampedDippr102Sum = analytic::Sum<float,ClampedDippr102>;
-    
+
     /*
     `GasPropertyStateRelation` consolidates many kinds of expressions
     that are commonly used to represent pressure/temperature relations for compounds in their gas phase.
@@ -355,7 +354,7 @@ namespace relation {
     and is in fact desireable to err on the side of a conservative approximation
     that experiences no sudden changes throughout the relationship.
     For this reason, we encode the function as a bivariate quadratic Newton polynomial 
-    over the ranges defined by [pmin,pmax] and [Tmin,Tmax]. 
+    over the range defined by [pmin,pmax]×[Tmin,Tmax]. 
     Interaction terms within the polynomial (such as pT, pT², and p²T) are ignored,
     since GasPropertyStateRelation does not represent properties that exhibit strong pressure/temperature interaction.
     After fitting, the maximum error for the approximation is estimated using Newton's method.
@@ -386,13 +385,13 @@ namespace relation {
         const float pmid = pmin*punits < si::standard_pressure    && si::standard_pressure    < pmax*punits? 
             si::standard_pressure   /punits : (pmin+pmax)/2.0f;
         auto fp   = analytic::quadratic_newton_polynomial(
-            pmin, f(pmin*punits,  Tmid*Tunits) / yunits, 
-            pmid, f(pmid*punits,  Tmid*Tunits) / yunits, 
-            pmax, f(pmax*punits,  Tmid*Tunits) / yunits);
+            pmin, float(f(pmin*punits,  Tmid*Tunits) / yunits), 
+            pmid, float(f(pmid*punits,  Tmid*Tunits) / yunits), 
+            pmax, float(f(pmax*punits,  Tmid*Tunits) / yunits));
         auto fT   = analytic::quadratic_newton_polynomial(
-            Tmin, f(pmin*punits,  Tmin*Tunits) / yunits, 
-            Tmid, f(pmin*punits,  Tmid*Tunits) / yunits, 
-            Tmax, f(pmin*punits,  Tmax*Tunits) / yunits);
+            Tmin, float(f(pmin*punits,  Tmin*Tunits) / yunits), 
+            Tmid, float(f(pmin*punits,  Tmid*Tunits) / yunits), 
+            Tmax, float(f(pmin*punits,  Tmax*Tunits) / yunits));
         auto fhat = GasPropertyStateRelation<Ty>(
             analytic::Sum<float,ClampedExponent>{
                 ClampedExponent(pmin, pmax, analytic::Exponent<float>(fp[1], 1.0f)),

@@ -126,7 +126,7 @@ namespace property {
         return si::universal_gas_constant * temperature / pressure;
     }
 
-    constexpr si::specific_heat_capacity<double> get_constant_pressure_heat_capacity_as_gas(
+    constexpr si::specific_heat_capacity<double> get_isobaric_heat_capacity_as_gas(
         si::molar_mass<double> molar_mass,
         double degrees_of_freedom
     ){
@@ -134,41 +134,41 @@ namespace property {
     }
 
     // Rowlinson-Poling: https://chemicals.readthedocs.io/chemicals.heat_capacity.html?highlight=rowlinson#chemicals.heat_capacity.Rowlinson_Poling
-    constexpr si::molar_heat_capacity<double> estimate_constant_pressure_heat_capacity_as_liquid_from_rowlinson_poling(
+    constexpr si::molar_heat_capacity<double> estimate_isobaric_heat_capacity_as_liquid_from_rowlinson_poling(
         const si::temperature<double> critical_temperature,
         const si::temperature<double> temperature,
         const double accentric_factor,
-        const si::molar_heat_capacity<double> constant_pressure_heat_capacity_as_gas
+        const si::molar_heat_capacity<double> isobaric_heat_capacity_as_gas
     ){
         double reduced_temperature = (temperature / critical_temperature);
         double heat_capacity_phase_difference_versus_gas_constant = 1.586 + 
             0.49f/(1.0-reduced_temperature) + 
             accentric_factor * (4.2775 + 6.3f*pow(1.0 - reduced_temperature, 1.0/3.0)/reduced_temperature + 0.4355f/(1.0 - reduced_temperature));
-        return heat_capacity_phase_difference_versus_gas_constant * si::universal_gas_constant + constant_pressure_heat_capacity_as_gas;
+        return heat_capacity_phase_difference_versus_gas_constant * si::universal_gas_constant + isobaric_heat_capacity_as_gas;
     }
 
     // Rowlinson-Poling: https://chemicals.readthedocs.io/chemicals.heat_capacity.html?highlight=rowlinson#chemicals.heat_capacity.Rowlinson_Poling
-    constexpr si::molar_heat_capacity<double> estimate_constant_pressure_heat_capacity_as_gas_from_rowlinson_poling(
+    constexpr si::molar_heat_capacity<double> estimate_isobaric_heat_capacity_as_gas_from_rowlinson_poling(
         const si::temperature<double> critical_temperature,
         const si::temperature<double> temperature,
         const double accentric_factor,
-        const si::molar_heat_capacity<double> constant_pressure_heat_capacity_as_liquid
+        const si::molar_heat_capacity<double> isobaric_heat_capacity_as_liquid
     ){
         double reduced_temperature = (temperature / critical_temperature);
         double heat_capacity_phase_difference_versus_gas_constant = 1.586 + 
             0.49f/(1.0-reduced_temperature) + 
             accentric_factor * (4.2775 + 6.3f*pow(1.0 - reduced_temperature, 1.0/3.0)/reduced_temperature + 0.4355f/(1.0 - reduced_temperature));
-        return constant_pressure_heat_capacity_as_liquid - heat_capacity_phase_difference_versus_gas_constant * si::universal_gas_constant;
+        return isobaric_heat_capacity_as_liquid - heat_capacity_phase_difference_versus_gas_constant * si::universal_gas_constant;
     }
 
     constexpr double estimate_acentric_factor_from_rowlinson_poling(
         const si::temperature<double> critical_temperature,
         const si::temperature<double> temperature,
-        const si::molar_heat_capacity<double> constant_pressure_heat_capacity_as_liquid,
-        const si::molar_heat_capacity<double> constant_pressure_heat_capacity_as_gas
+        const si::molar_heat_capacity<double> isobaric_heat_capacity_as_liquid,
+        const si::molar_heat_capacity<double> isobaric_heat_capacity_as_gas
     ){
         double reduced_temperature = (temperature / critical_temperature);
-        double heat_capacity_phase_difference_versus_gas_constant = ((constant_pressure_heat_capacity_as_liquid - constant_pressure_heat_capacity_as_gas) / si::universal_gas_constant);
+        double heat_capacity_phase_difference_versus_gas_constant = ((isobaric_heat_capacity_as_liquid - isobaric_heat_capacity_as_gas) / si::universal_gas_constant);
         return (heat_capacity_phase_difference_versus_gas_constant - 1.586 - 0.49f/(1.0-reduced_temperature)) / (4.2775 + 6.3f*pow(1.0 - reduced_temperature, 1.0/3.0)/reduced_temperature + 0.4355f/(1.0 - reduced_temperature));
     }
 
@@ -393,21 +393,22 @@ namespace property {
     constexpr si::thermal_conductivity<double> estimate_thermal_conductivity_as_gas_from_eucken(
         const si::dynamic_viscosity<double> viscosity_as_gas,
         const si::molar_mass<double> molar_mass,
-        const si::specific_heat_capacity<double> constant_volume_specific_heat_capacity_as_gas
+        const si::specific_heat_capacity<double> isochoric_specific_heat_capacity_as_gas
     ){
-        si::molar_heat_capacity<double> constant_molar_volume_heat_capacity_as_gas = constant_volume_specific_heat_capacity_as_gas * molar_mass;
-        return (1.0 + (9.0/4.0) / (constant_molar_volume_heat_capacity_as_gas/si::universal_gas_constant))
-              * viscosity_as_gas * constant_molar_volume_heat_capacity_as_gas / molar_mass;
+        si::molar_heat_capacity<double> molar_isochoric_heat_capacity_as_gas = isochoric_specific_heat_capacity_as_gas * molar_mass;
+        return (1.0 + ((9.0/4.0) / (molar_isochoric_heat_capacity_as_gas/si::universal_gas_constant)))
+              * viscosity_as_gas * molar_isochoric_heat_capacity_as_gas / molar_mass;
     }
 
     // Eucken: https://chemicals.readthedocs.io/chemicals.thermal_conductivity.html#pure-low-pressure-liquid-correlations
     constexpr si::dynamic_viscosity<double> estimate_viscosity_as_gas_from_eucken(
-        const si::specific_heat_capacity<double> constant_volume_specific_heat_capacity_as_gas,
+        const si::specific_heat_capacity<double> isochoric_specific_heat_capacity_as_gas,
         const si::molar_mass<double> molar_mass,
         const si::thermal_conductivity<double> thermal_conductivity_as_gas
     ){
-        si::molar_heat_capacity<double> constant_molar_volume_heat_capacity_as_gas = constant_volume_specific_heat_capacity_as_gas * molar_mass;
-        return thermal_conductivity_as_gas *molar_mass / ((1.0 + (9.0/4.0) / (constant_molar_volume_heat_capacity_as_gas/si::universal_gas_constant))*constant_molar_volume_heat_capacity_as_gas);
+        si::molar_heat_capacity<double> molar_isochoric_heat_capacity_as_gas = isochoric_specific_heat_capacity_as_gas * molar_mass;
+        return thermal_conductivity_as_gas * molar_mass / 
+            ((1.0 + ((9.0/4.0) / (molar_isochoric_heat_capacity_as_gas/si::universal_gas_constant)))*molar_isochoric_heat_capacity_as_gas);
     }
 
     // Clapeyron: https://chemicals.readthedocs.io/chemicals.vapor_pressure.html#sublimation-pressure-estimation-correlations
