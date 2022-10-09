@@ -1271,6 +1271,45 @@ namespace analytic {
     }
 
     template<typename T, typename F>
+    constexpr Polynomial<T,0,3> cubic_spline(
+        const T x0, // lower bound of spline
+        const T x1, // upper bound of spline
+        const T y0, // value of y at x1
+        const T y1, // value of y at x1
+        const T d0, // derivative of y at x0
+        const T d1  // derivative of y at x1
+    ){
+        /*
+        First, we construct a new coordinate system based around (x0,y0) as the origin. 
+        In this coordinate system, the coordinates (x1,y1) are denoted (X,Y).
+        */
+        const T Y = y1-y0;
+        const T X = x1-x0;
+        /*
+        in the new coordinate system, we know that x0=0 and y0=0, 
+        so we can adopt a simpler system of equations:
+           Y =  aX² +  cX³
+          d1 = 2aX  + 3cX²
+        we divide Y and d1 by X² and X respectively to get:
+           Y =  a +  cX
+          d1 = 2a + 3cX
+        */
+        const T u = (Y-d0)/(X*X);
+        const T v = (d1-d0)/X;
+        /*
+        We then solve this system of equations, which results in the following code:
+        */
+        const Identity<T> x;
+        const auto x2 = x*x;
+        const auto x3 = x*x*x;
+        return y0 + 
+            compose(
+                d0*x + (T(3)*u-v)*x2 + ((v-T(2)*u)/X)*x3,
+                x-x0
+            )
+    }
+
+    template<typename T, typename F>
     constexpr Polynomial<T,0,3> cubic_taylor_series(const F f, const T x, const T dx)
     {
         const T dx2 = dx*dx;

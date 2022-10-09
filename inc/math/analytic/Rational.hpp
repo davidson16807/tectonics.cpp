@@ -480,11 +480,22 @@ namespace analytic {
         d'(p/q,r/s) = d(ps,rq)
     Under this definition, we see that the distance for rationals inherits 
     most of the properties that are guaranteed by the distance for polynomials:
-        d'(p/q,r/s) ∈ ℝ⁺ 
+        d'(p/q,r/s) ≥ 0
         d'(p/q,r/s) = d'(r/s,p/q)
-    Other properties of a metric are harder to demonstrate.
+        d'(p/q,r/s) = 0 iff p/q = r/s
+        d'(p/q,r/s) = 0 iff 2rs = r2s
+    The remaining property of a metric is harder to demonstrate.
     We'll provide unit tests to see if this definition upholds properties 
     of a metric for a small set of examples, but will forego formal proof.
+    We would need to demonstrate the triangle equality holds, which would imply:
+        d'(p/q,r/s) ≤ d'(p/q,t/u) + d'(t/u,r/s)
+    for all values p,q,r,s,t,u ∈ ℙ.
+    This would imply:
+        d(ps,rq)    ≤ d(pu,tq)    + d(ts,ru)  
+    so that:
+        ∫(ps-rq)²∂x ≤ ∫(pu-tq)²∂x + ∫(ts-ru)²∂x
+        ∫(ps-rq)²∂x ≤ ∫(pu-tq)²+(ts-ru)²∂x
+        ∫ p²s²-2psrq-r²q² ∂x ≤ ∫ p²u²-2putq-t²q² + t²s²-2tsru-r²u² ∂x
     */
     template<typename T, int Plo, int Phi, int Qlo, int Qhi, int Rlo, int Rhi, int Slo, int Shi>
     constexpr T distance(

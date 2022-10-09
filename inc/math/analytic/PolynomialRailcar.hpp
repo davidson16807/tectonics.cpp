@@ -172,5 +172,50 @@ namespace analytic {
         return minimum(p, std::max(lo, p.lo), std::min(hi, p.hi));
     }
 
+
+
+
+    template<typename T, typename F>
+    constexpr PolynomialRailcar<T,0,1> linear_newton_polynomial(const Railcar<T,F> f){
+        return PolynomialRailcar<T,0,2>(f.lo, f.hi,
+            linear_newton_polynomial(x1,x2, f.content(x1),f.content(x2))
+        );
+    }
+
+    template<typename T, typename F>
+    constexpr PolynomialRailcar<T,0,2> quadratic_newton_polynomial(const Railcar<T,F> f){
+        const T x1 = f.lo;
+        const T x3 = f.hi;
+        const T x2 = x1 + T(1.0/2.0)*(x3-x1);
+        return PolynomialRailcar<T,0,2>(f.lo, f.hi,
+            quadratic_newton_polynomial(x1,x2,x3, f.content(x1),f.content(x2),f.content(x3))
+        );
+    }
+
+    template<typename T, typename F>
+    constexpr PolynomialRailcar<T,0,3> cubic_newton_polynomial(const Railcar<T,F> f){
+        const T x1 = f.lo;
+        const T x4 = f.hi;
+        const T x2 = x1 + T(1.0/3.0)*(x4-x1);
+        const T x3 = x1 + T(2.0/3.0)*(x4-x1);
+        return PolynomialRailcar<T,0,3>(f.lo, f.hi,
+            cubic_newton_polynomial(x1,x2,x3,x4, f.content(x1),f.content(x2),f.content(x3),f.content(x4))
+        );
+    }
+
+
+    template<typename T, typename F>
+    constexpr PolynomialRailcar<T,0,3> cubic_spline(const Railcar<T,F> f){
+        const T x0 = f.lo;
+        const T x1 = f.hi;
+        return PolynomialRailcar<T,0,3>(f.lo, f.hi,
+            cubic_newton_polynomial(x0,x1, f.content(x0), f.content(x1), derivative(f,x0), derivative(f,x1))
+        );
+    }
+
+
+
+
+
 }
 

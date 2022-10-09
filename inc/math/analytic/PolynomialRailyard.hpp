@@ -30,7 +30,7 @@ namespace analytic {
         using F = Polynomial<T,std::min(Plo,Qlo),std::max(Phi,Qhi)>;
         Railyard<T,F> y(p);
         y += F(q);
-        return simplify(y);
+        return y;
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
@@ -39,7 +39,7 @@ namespace analytic {
         using F = Polynomial<T,std::min(Plo,Qlo),std::max(Phi,Qhi)>;
         Railyard<T,F> y(p);
         y += F(q);
-        return simplify(y);
+        return y;
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
@@ -48,7 +48,7 @@ namespace analytic {
         using F = Polynomial<T,std::min(Plo,Qlo),std::max(Phi,Qhi)>;
         Railyard<T,F> y(p);
         y += F(-q);
-        return simplify(y);
+        return y;
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
@@ -57,7 +57,7 @@ namespace analytic {
         using F = Polynomial<T,std::min(Plo,Qlo),std::max(Phi,Qhi)>;
         Railyard<T,F> y(q);
         y += F(-p);
-        return simplify(y);
+        return y;
     }
 
 
@@ -73,7 +73,7 @@ namespace analytic {
         using F = Polynomial<T,std::min(Plo,Qlo),std::max(Phi,Qhi)>;
         Railyard<T,F> y(p);
         y += Railcar<T,F>(q);
-        return simplify(y);
+        return y;
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
@@ -82,7 +82,7 @@ namespace analytic {
         using F = Polynomial<T,std::min(Plo,Qlo),std::max(Phi,Qhi)>;
         Railyard<T,F> y(p);
         y += Railcar<T,F>(q);
-        return simplify(y);
+        return y;
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
@@ -91,7 +91,7 @@ namespace analytic {
         using F = Polynomial<T,std::min(Plo,Qlo),std::max(Phi,Qhi)>;
         Railyard<T,F> y(p);
         y += Railcar<T,F>(-q);
-        return simplify(y);
+        return y;
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
@@ -100,7 +100,7 @@ namespace analytic {
         using F = Polynomial<T,std::min(Plo,Qlo),std::max(Phi,Qhi)>;
         Railyard<T,F> y(q);
         y += Railcar<T,F>(-p);
-        return simplify(y);
+        return y;
     }
 
 
@@ -113,7 +113,7 @@ namespace analytic {
         using F = Polynomial<T,std::min(Plo,Qlo),std::max(Phi,Qhi)>;
         Railyard<T,F> y(p);
         y += Railyard<T,F>(q);
-        return simplify(y);
+        return y;
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
@@ -122,7 +122,7 @@ namespace analytic {
         using F = Polynomial<T,std::min(Plo,Qlo),std::max(Phi,Qhi)>;
         Railyard<T,F> y(p);
         y -= Railyard<T,F>(q);
-        return simplify(y);
+        return y;
     }
 
 
@@ -141,7 +141,7 @@ namespace analytic {
         {
             y += pi*q;
         }
-        return simplify(y);
+        return y;
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
@@ -153,7 +153,7 @@ namespace analytic {
         {
             y += pi*q;
         }
-        return simplify(y);
+        return y;
     }
 
     template<typename T, int Plo, int Phi, int Q>
@@ -165,11 +165,11 @@ namespace analytic {
         {
             y += pi/q;
         }
-        return simplify(y);
+        return y;
     }
 
     /*
-    NOTE: we cannot support division by railyards.
+    NOTE: we cannot support division by railcars.
     This is because the resulting function object would produce a division by 0 for the vast majority of its range.
     We can only be reasonably confident this will not be the case for trains.
     */ 
@@ -183,16 +183,16 @@ namespace analytic {
     {
         using F = Polynomial<T,Plo+Qlo,Phi+Qhi>;
         Railyard<T,F> y;
-        Railcar<T,F> car;
+        Railcar<T,F> yi;
         for (auto pi : p.cars)
         {
-            car = pi*q;
-            if (car.lo < car.hi)
+            yi = pi*q;
+            if (yi.lo < yi.hi)
             {
-                y += car;
+                y += yi;
             }
         }
-        return simplify(y);
+        return y;
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
@@ -201,16 +201,16 @@ namespace analytic {
         using F = Polynomial<T,Plo+Qlo,Phi+Qhi>;
         std::vector<Railcar<T,F>> cars;
         Railyard<T,F> y;
-        Railcar<T,F> car;
+        Railcar<T,F> yi;
         for (auto pi : p.cars)
         {
-            car = q*pi;
-            if (car.lo < car.hi)
+            yi = q*pi;
+            if (yi.lo < yi.hi)
             {
-                y += car;
+                y += yi;
             }
         }
-        return simplify(y);
+        return y;
     }
 
 
@@ -223,19 +223,19 @@ namespace analytic {
         using F = Polynomial<T,Plo+Qlo,Phi+Qhi>;
         std::vector<Railcar<T,F>> cars;
         Railyard<T,F> y;
-        Railcar<T,F> car;
+        Railcar<T,F> yij;
         for (auto pi : p.cars)
         {
             for (auto qj : q.cars)
             {
-                car = (pi*qj);
-                if (car.lo < car.hi)
+                yij = (pi*qj);
+                if (yij.lo < yij.hi)
                 {
-                    y += car;
+                    y += yij;
                 }
             }
         }
-        return simplify(y);
+        return y;
     }
 
     /*
@@ -363,9 +363,8 @@ namespace analytic {
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     constexpr auto compose(const PolynomialRailyard<T,Plo,Phi>& p, const PolynomialRailyard<T,Qlo,Qhi> q)
     {
-        const auto p2(simplify(p));
-        const auto q2(simplify(q));
-
+        const auto p2(p);
+        const auto q2(q);
         std::vector<T> p_couplers(p2.couplers());
         std::vector<T> q_couplers(q2.couplers());
         std::vector<T> pq_couplers;
@@ -483,9 +482,12 @@ namespace analytic {
 
 
 
-    template<typename T, int Plo, int Phi>
-    constexpr PolynomialRailyard<T,Plo*2,Phi*2> square(const PolynomialRailyard<T,Plo,Phi>& p){
-        return p*p;
+    template<int N, typename T, int Plo, int Phi>
+    constexpr PolynomialRailyard<T,Plo*N,Phi*N> pow(const PolynomialRailyard<T,Plo,Phi>& p){
+        return N<0? T(1)/pow<N>(p)
+             : N==0? PolynomialRailyard<T,0,0>(T(1))
+             : N>1? p*pow<N-1>(p) 
+             : p;
     }
 
     /*
@@ -511,55 +513,79 @@ namespace analytic {
         const T hi
     ){
         const auto difference = p-q;
-        return std::sqrt(std::max(T(0), integral(square(difference), lo, hi))) / (hi-lo);
+        return std::sqrt(std::max(T(0), integral(pow<2>(difference), lo, hi))) / (hi-lo);
     }
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     constexpr T distance(const PolynomialRailyard<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi> q, const T lo, const T hi)
     {
-        return std::sqrt(std::max(T(0), integral(square(p-q), lo, hi))) / (hi-lo);
+        return std::sqrt(std::max(T(0), integral(pow<2>(p-q), lo, hi))) / (hi-lo);
     }
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     constexpr T distance(const Polynomial<T,Plo,Phi> p, const PolynomialRailyard<T,Qlo,Qhi> q, const T lo, const T hi)
     {
-        return std::sqrt(std::max(T(0), integral(square(p-q), lo, hi))) / (hi-lo);
+        return std::sqrt(std::max(T(0), integral(pow<2>(p-q), lo, hi))) / (hi-lo);
     }
     template<typename T, int Plo, int Phi>
     constexpr T distance(const PolynomialRailyard<T,Plo,Phi>& p, const T k, const T lo, const T hi)
     {
-        return std::sqrt(std::max(T(0), integral(square(p-k), lo, hi))) / (hi-lo);
+        return std::sqrt(std::max(T(0), integral(pow<2>(p-k), lo, hi))) / (hi-lo);
     }
     template<typename T, int Plo, int Phi>
     constexpr T distance(const T k, const PolynomialRailyard<T,Plo, Phi> p, const T lo, const T hi)
     {
-        return std::sqrt(std::max(T(0), integral(square(p-k), lo, hi))) / (hi-lo);
+        return std::sqrt(std::max(T(0), integral(pow<2>(p-k), lo, hi))) / (hi-lo);
     }
 
 
-    template<typename T, int Plo, int Phi>
-    constexpr T maximum(const PolynomialRailyard<T,Plo,Phi> p, const T lo, const T hi) 
-    {
-        auto p2 = simplify(p);
-        T result = p.cars[0];
-        T candidate;
-        for (auto pi : p.cars)
+
+
+    template<typename T, typename F>
+    PolynomialRailyard<T,0,1> linear_newton_polynomial(
+        const Railyard<T,F> yard
+    ){
+        PolynomialRailyard<T,0,1> y();
+        for (auto car : yard.cars)
         {
-            candidate = maximum(pi, lo, hi);
-            result = candidate > result? candidate : result;
+            y += linear_newton_polynomial(car);
         }
-        return result;
+        return y;
     }
-    template<typename T, int Plo, int Phi>
-    constexpr T minimum(const PolynomialRailyard<T,Plo,Phi> p, const T lo, const T hi) 
-    {
-        auto p2 = simplify(p);
-        T result = p.cars[0];
-        T candidate;
-        for (auto pi : p.cars)
+
+    template<typename T, typename F>
+    PolynomialRailyard<T,0,2> quadratic_newton_polynomial(
+        const Railyard<T,F> yard
+    ){
+        PolynomialRailyard<T,0,2> y();
+        for (auto car : yard.cars)
         {
-            candidate = minimum(pi, lo, hi);
-            result = candidate < result? candidate : result;
+            y += quadratic_newton_polynomial(car);
         }
-        return result;
+        return y;
     }
+
+    template<typename T, typename F>
+    PolynomialRailyard<T,0,3> cubic_newton_polynomial(
+        const Railyard<T,F> yard
+    ){
+        PolynomialRailyard<T,0,3> y();
+        for (auto car : yard.cars)
+        {
+            y += cubic_newton_polynomial(car);
+        }
+        return y;
+    }
+
+    template<typename T, typename F>
+    PolynomialRailyard<T,0,3> cubic_spline(
+        const Railyard<T,F> yard
+    ){
+        PolynomialRailyard<T,0,3> y();
+        for (auto car : yard.cars)
+        {
+            y += cubic_spline(car);
+        }
+        return y;
+    }
+
 
 }

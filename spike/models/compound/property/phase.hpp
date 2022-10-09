@@ -104,7 +104,7 @@ namespace property {
         const si::molar_mass<double>      M,  // molar mass
         const si::pressure<double>        a,  // simon glatzel slope
         const si::pressure<double>        b,  // simon glatzel intercept
-        const double              c   // simon glatzel exponent
+        const double                      c   // simon glatzel exponent
     ){
         const auto Ru = si::universal_gas_constant;
         auto R = Ru/M;

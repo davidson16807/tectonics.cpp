@@ -1,23 +1,4 @@
 
-#namespace
-SampleDatasetComparison = function(input, output, predict){
-	list(
-		pe = function(parameters){
-			(output-predict(parameters)(input))/output
-		},
-		e = function(parameters){
-			output-predict(parameters)(input)
-		},
-		plot = function(parameters, parameters2=NULL, type='p'){
-			plot(c(input,input), c(output, predict(parameters)(input)), col=0)
-			points(input, output, type=type)
-			points(input, predict(parameters)(input), type=type, col=2)
-			if(!is.null(parameters2)){
-				points(input, predict(parameters)(input), type=type, col=3)
-			}
-		}
-	)
-}
 
 #namespace
 SampledFunctionComparison = function(samples, truth, predict){
@@ -63,7 +44,7 @@ SampleCosts = function(comparison){
 
 
 # linear Newton polynomial of a function's derivative
-dpdx = function(x1,dydx1, x2,dydx2){
+pddx = function(x1,dydx1, x2,dydx2){
     dydx21 = (dydx2-dydx1) / (x2-x1)
     function(x){ dydx1 + dydx21 * (x-x1) }
 }
@@ -71,27 +52,28 @@ dpdx = function(x1,dydx1, x2,dydx2){
 # integral of a linear Newton polynomial of a function's derivative
 p = function(x1,dydx1, x2,dydx2, C){
     dydx21 = (dydx2-dydx1) / (x2-x1)
-    function(x){ C + dydx1*x + dydx21 * (x-x1)*(x-x1)/2 }
+    function(x){ C + (dydx1 - dydx21*x1)*x + dydx21*x*x/2 }
+    # function(x){ C + dydx1*(x-x1) + dydx21 * (x-x1)*(x-x1)/2 }
 }
-
 
 # 1 piece of 2nd degree
 xmax = 1.0
+X = (0:(xmax*100))/100
 exp1p1d = list(
 	initialize=function(){ c(exp(xmax/2),xmax/2) },
 	decode=function(parameters) {parameters},
 	predict=function(parameters){
-		dpdxθ = parameters[1]
+		pddxθ = parameters[1]
 		θ     = parameters[2]
 		function(x) {
 			ifelse(x<θ, 
-				dpdx(0,1,        θ,dpdxθ)(x), 
-				dpdx(θ,dpdxθ, xmax,exp(xmax))(x))
+				pddx(0,1,        θ,pddxθ)(x), 
+				pddx(θ,pddxθ, xmax,exp(xmax))(x))
 		}
 	}
 )
 
-comparison1 = SampledFunctionComparison((0:(xmax*100))/100, exp, exp1p1d$predict)
+comparison1 = SampledFunctionComparison(X, exp, exp1p1d$predict)
 costs = SampleCosts(comparison1)
 parameters1 = optim(exp1p1d$initialize(), costs$mxe)$par
 comparison1$plot(exp1p1d$initialize(), parameters1)
@@ -104,21 +86,203 @@ exp1p2d = list(
 	decode=function(parameters) {parameters},
 	predict=function(parameters){
 		C     = parameters[1]
-		dpdxθ = parameters1[1]
+		pddxθ = parameters1[1]
 		θ     = parameters1[2]
 		exp1p2d = function(x) {
-			p1 = p(0,1, θ,dpdxθ, C)
-			p2a = p(θ,dpdxθ, 1,exp(1), 0)
-			p2b = p(θ,dpdxθ, 1,exp(1), p1(θ)-p2a(θ))
+			p1 = p(0,1, θ,pddxθ, C)
+			p2a = p(θ,pddxθ, 1,exp(1), 0)
+			p2b = p(θ,pddxθ, 1,exp(1), p1(θ)-p2a(θ))
 			ifelse(x<θ, p1(x), p2b(x))
 		}
 	}
 )
 
 # 1 piece of 2nd degree
-comparison2 = SampledFunctionComparison((0:(xmax*100))/100, exp, exp1p2d$predict)
+comparison2 = SampledFunctionComparison(X, exp, exp1p2d$predict)
 costs = SampleCosts(comparison2)
 parameters2 = optim(exp1p2d$initialize(), costs$mxe)$par
 comparison2$plot(exp1p2d$initialize(), parameters2)
 costs$mxe(parameters2)
 parameters2
+
+
+
+rho = function(x) {exp(-sqrt(x))}
+rhoddx = function(x) {-exp(-sqrt(x))/(2*sqrt(x))}
+
+# 6 pieces of 2nd degree
+xmax = 16.0
+X = (0:(xmax*100))/100
+rho2 = list(
+	initialize=function(){ c(
+		      0.0014,
+		0.02, 0.055,
+		0.30, 0.48,
+		1.5,  1.8,
+		4.2,  4.8,
+		10.0, 12.0,
+		16.0, 16.0)},
+	decode=function(parameters) {
+		d0 = rhoddx(parameters[1])
+		θ1 =         parameters[2]
+		d1 = rhoddx(parameters[3])
+		θ2 =         parameters[4]
+		d2 = rhoddx(parameters[5])
+		θ3 =         parameters[6]
+		d3 = rhoddx(parameters[7])
+		θ4 =         parameters[8]
+		d4 = rhoddx(parameters[9])
+		θ5 =         parameters[10]
+		d5 = rhoddx(parameters[11])
+		θ6 =         parameters[12]
+		d6 = rhoddx(parameters[13])
+		return (c(d0,θ1,d1,θ2,d2,θ3,d3,θ4,d4,θ5,d5,θ6,d6))
+	},
+	predict=function(parameters){
+		function(x) {
+			d0 = rhoddx(parameters[1])
+			θ1 =        parameters[2]
+			d1 = rhoddx(parameters[3])
+			θ2 =        parameters[4]
+			d2 = rhoddx(parameters[5])
+			θ3 =        parameters[6]
+			d3 = rhoddx(parameters[7])
+			θ4 =        parameters[8]
+			d4 = rhoddx(parameters[9])
+			θ5 =        parameters[10]
+			d5 = rhoddx(parameters[11])
+			θ6 =        parameters[12]
+			d6 = rhoddx(parameters[13])
+			p0  = p(0,d0,θ1,d1,1)
+			p10 = p(θ1,d1,θ2,d2,0); p1 = p(θ1,d1,θ2,d2,p0(θ1)-p10(θ1))
+			p20 = p(θ2,d2,θ3,d3,0); p2 = p(θ2,d2,θ3,d3,p1(θ2)-p20(θ2))
+			p30 = p(θ3,d3,θ4,d4,0); p3 = p(θ3,d3,θ4,d4,p2(θ3)-p30(θ3))
+			p40 = p(θ4,d4,θ5,d5,0); p4 = p(θ4,d4,θ5,d5,p3(θ4)-p40(θ4))
+			p50 = p(θ5,d5,θ6,d6,0); p5 = p(θ5,d5,θ6,d6,p4(θ5)-p50(θ5))
+			return (
+				(     x<=θ1)*p0(x)+
+				(θ1<x&x<=θ2)*p1(x)+
+				(θ2<x&x<=θ3)*p2(x)+
+				(θ3<x&x<=θ4)*p3(x)+
+				(θ4<x&x<=θ5)*p4(x)+
+				(θ5<x      )*p5(x)
+			)
+		}
+	}
+)
+
+X = (0:(xmax*100))/100
+comparison1 = SampledFunctionComparison(X, rho, rho2$predict)
+costs = SampleCosts(comparison1)
+parameters1 = optim(rho2$initialize(), costs$mxe)$par
+comparison1$plot(rho2$initialize(), parameters1)
+costs$mxe(parameters1)
+rho2$decode(parameters1)
+
+
+
+
+
+
+
+
+sqrtddx = function(x) {1/(2*sqrt(x))}
+
+# 6 pieces of 2nd degree
+xmax = 16.0
+X = (0:(xmax*100))/100
+sqrt2 = list(
+	initialize=function(){ c(
+		      0.0019,
+		0.024,0.058,
+		0.30, 0.44,
+		1.5,  1.8,
+		4.5,  5.0,
+		11.5, 12.8,
+		16.0, 16.0,
+		32.0, 32.0,
+		64.0, 64.0,
+		128,  128,
+		256,  256,
+		512,  512,
+		1024, 1024)},
+	decode=function(parameters) {
+		d0 = sqrtddx(parameters[1])
+		θ1 =         parameters[2]
+		d1 = sqrtddx(parameters[3])
+		θ2 =         parameters[4]
+		d2 = sqrtddx(parameters[5])
+		θ3 =         parameters[6]
+		d3 = sqrtddx(parameters[7])
+		θ4 =         parameters[8]
+		d4 = sqrtddx(parameters[9])
+		θ5 =         parameters[10]
+		d5 = sqrtddx(parameters[11])
+		θ6 =         parameters[12]
+		d6 = sqrtddx(parameters[13])
+		θ7 =         parameters[14]
+		d7 = sqrtddx(parameters[15])
+		θ8 =         parameters[16]
+		d8 = sqrtddx(parameters[17])
+		θ9 =         parameters[18]
+		d9 = sqrtddx(parameters[19])
+		θ10=         parameters[20]
+		d10= sqrtddx(parameters[21])
+		θ11=         parameters[22]
+		d11= sqrtddx(parameters[23])
+		θ12=         parameters[24]
+		d12= sqrtddx(parameters[25])
+		return (c(d0,θ1,d1,θ2,d2,θ3,d3,θ4,d4,θ5,d5,θ6,d6,θ7,d7,θ8,d8,θ9,d9,θ10,d10,θ11,d11,θ12,d12))
+	},
+	predict=function(parameters){
+		function(x) {
+		d0 = sqrtddx(parameters[1])
+		θ1 =         parameters[2]
+		d1 = sqrtddx(parameters[3])
+		θ2 =         parameters[4]
+		d2 = sqrtddx(parameters[5])
+		θ3 =         parameters[6]
+		d3 = sqrtddx(parameters[7])
+		θ4 =         parameters[8]
+		d4 = sqrtddx(parameters[9])
+		θ5 =         parameters[10]
+		d5 = sqrtddx(parameters[11])
+		θ6 =         parameters[12]
+		d6 = sqrtddx(parameters[13])
+		θ7 =         parameters[14]
+		d7 = sqrtddx(parameters[15])
+		θ8 =         parameters[16]
+		d8 = sqrtddx(parameters[17])
+		θ9 =         parameters[18]
+		d9 = sqrtddx(parameters[19])
+		θ10=         parameters[20]
+		d10= sqrtddx(parameters[21])
+		θ11=         parameters[22]
+		d11= sqrtddx(parameters[23])
+		θ12=         parameters[24]
+		d12= sqrtddx(parameters[25])
+			p0  = p(0,d0,θ1,d1,0)
+			p10 = p(θ1,d1,θ2,d2,0); p1 = p(θ1,d1,θ2,d2,p0(θ1)-p10(θ1))
+			p20 = p(θ2,d2,θ3,d3,0); p2 = p(θ2,d2,θ3,d3,p1(θ2)-p20(θ2))
+			p30 = p(θ3,d3,θ4,d4,0); p3 = p(θ3,d3,θ4,d4,p2(θ3)-p30(θ3))
+			p40 = p(θ4,d4,θ5,d5,0); p4 = p(θ4,d4,θ5,d5,p3(θ4)-p40(θ4))
+			p50 = p(θ5,d5,θ6,d6,0); p5 = p(θ5,d5,θ6,d6,p4(θ5)-p50(θ5))
+			return (
+				(     x<=θ1)*p0(x)+
+				(θ1<x&x<=θ2)*p1(x)+
+				(θ2<x&x<=θ3)*p2(x)+
+				(θ3<x&x<=θ4)*p3(x)+
+				(θ4<x&x<=θ5)*p4(x)+
+				(θ5<x      )*p5(x)
+			)
+		}
+	}
+)
+
+X = (0:(xmax*100))/100
+comparison1 = SampledFunctionComparison(X, sqrt, sqrt2$predict)
+costs = SampleCosts(comparison1)
+parameters1 = optim(sqrt2$initialize(), costs$mxe)$par
+comparison1$plot(sqrt2$initialize(), parameters1)
+costs$mxe(parameters1)
+sqrt2$decode(parameters1)

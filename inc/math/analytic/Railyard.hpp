@@ -218,6 +218,19 @@ namespace analytic {
     };
 
 
+    // a convenience function that returns a sorted list of all couplers found within two railyards
+    template<typename T, typename F, typename G>
+    constexpr auto couplers(const Railyard<T,F>& p, const Railyard<T,G>& q)
+    {
+        std::vector<T> p_couplers(p.couplers());
+        std::vector<T> q_couplers(q.couplers());
+        std::vector<T> pq_couplers;
+        pq_couplers.insert(pq_couplers.end(), p_couplers.begin(), p_couplers.end());
+        pq_couplers.insert(pq_couplers.end(), q_couplers.begin(), q_couplers.end());
+        std::sort(pq_couplers.begin(), pq_couplers.end());
+        auto last = std::unique(pq_couplers.begin(), pq_couplers.end());
+        pq_couplers.erase(last, pq_couplers.end());
+    }
 
 
     template<typename T, typename F>
@@ -550,22 +563,6 @@ namespace analytic {
         return Railyard(cars);
     }
 
-    template<typename FG, typename T, typename F, typename G>
-    constexpr Railyard<T,FG> compose(const Railyard<T,F>& f, const Railyard<T,G>& g)
-    {
-        auto f2 = simplify(f);
-        auto g2 = simplify(g);
-        Railyard<T,FG> y;
-        for (auto fi: f2.cars)
-        {
-            for (auto gi: g2.cars)
-            {
-                y += compose(fi, gi);
-            }
-        }
-        return y;
-    }
-
 
 
 
@@ -652,27 +649,6 @@ namespace analytic {
 
 
 
-    // TODO: refactor to return Train<T,F> so that continuity is guaranteed downstream
-    template<typename T, typename F>
-    constexpr Railyard<T,F> simplify(const Railyard<T,F>& yard)
-    {
-        const std::vector<T> couplers(yard.couplers());
-        std::vector<Railcar<T,F>> cars;
-        for (std::size_t i=1; i<couplers.size(); i++)
-        {
-            F f;
-            // add together all cars that intersect the region from couplers[i-1] to couplers[i]
-            for (auto car: yard.cars)
-            {
-                if (std::max(car.lo, couplers[i-1]) < std::min(car.hi, couplers[i]))
-                {
-                    f += car.content;
-                }
-            }
-            cars.push_back(Railcar<T,F>(couplers[i-1], couplers[i], f));
-        }
-        return Railyard<T,F>(cars);
-    }
 
 
 
@@ -717,7 +693,8 @@ namespace analytic {
         const T lo, 
         const T hi
     ){
-        return dot(yard,q,lo,hi) / (length(yard,lo,hi)*length(q,lo,hi));
+        auto length_ = length(train,lo,hi);
+        return dot(train,q,lo,hi) / (length_*length_);
     }
 
 }
