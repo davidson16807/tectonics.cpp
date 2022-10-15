@@ -1,10 +1,10 @@
 #pragma once
 
 // in-house libraries
-#include "Identity.hpp"
-#include "Scaling.hpp"
-#include "Shifting.hpp"
-#include "Rational.hpp"
+#include "../Identity.hpp"
+#include "../Scaling.hpp"
+#include "../Shifting.hpp"
+#include "../Rational.hpp"
 
 namespace analytic {
 

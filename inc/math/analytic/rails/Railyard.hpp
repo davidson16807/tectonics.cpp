@@ -6,10 +6,10 @@
 #include <iostream>
 
 // in-house libraries
-#include "Identity.hpp"
-#include "Clamped.hpp"
+#include "../Identity.hpp"
+#include "../Clamped.hpp"
+
 #include "Railcar.hpp"
-#include "Railcar_to_string.hpp"
 
 namespace analytic {
 
@@ -217,6 +217,23 @@ namespace analytic {
 
     };
 
+    template<typename T, typename F>
+    constexpr std::string to_string(const Railyard<T,F>& yard)
+    {
+        std::string output("\r\n");
+        for (std::size_t i=0; i<yard.cars.size(); i++)
+        {
+            output += to_string(yard.cars[i]);
+            output += "\r\n";
+        }
+        return output;
+    }
+
+    template<typename T, typename F>
+    std::ostream& operator<<(std::ostream& os, const Railyard<T,F>& yard) { 
+        os << to_string(yard);
+        return os;
+    }
 
     // a convenience function that returns a sorted list of all couplers found within two railyards
     template<typename T, typename F, typename G>
@@ -489,21 +506,27 @@ namespace analytic {
 
 
 
-    template<typename T, typename F>
-    constexpr auto operator+(const Railyard<T,F>& f, const Railyard<T,F>& g)
-    {
-        Railyard<T,F> y(f);
-        y += g;
-        return y;
-    }
+    /*
+    NOTE: we cannot support multiplication between arbitrary railyards, even of the same type.
+    This is because we cannot determine the return type in the general case (particularly for Rationals), 
+    and specializations that can determine the return type will collide with templates for the general case
+    */ 
 
-    template<typename T, typename F>
-    constexpr auto operator-(const Railyard<T,F>& f, const Railyard<T,F>& g)
-    {
-        Railyard<T,F> y(f);
-        y -= g;
-        return y;
-    }
+    // template<typename T, typename F>
+    // constexpr auto operator+(const Railyard<T,F>& f, const Railyard<T,F>& g)
+    // {
+    //     Railyard<T,F> y(f);
+    //     y += g;
+    //     return y;
+    // }
+
+    // template<typename T, typename F>
+    // constexpr auto operator-(const Railyard<T,F>& f, const Railyard<T,F>& g)
+    // {
+    //     Railyard<T,F> y(f);
+    //     y -= g;
+    //     return y;
+    // }
 
 
     /*
@@ -693,8 +716,8 @@ namespace analytic {
         const T lo, 
         const T hi
     ){
-        auto length_ = length(train,lo,hi);
-        return dot(train,q,lo,hi) / (length_*length_);
+        auto length_ = length(yard,lo,hi);
+        return dot(yard,q,lo,hi) / (length_*length_);
     }
 
 }

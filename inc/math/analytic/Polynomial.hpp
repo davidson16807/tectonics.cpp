@@ -161,6 +161,27 @@ namespace analytic {
     };
 
 
+    template<typename T, int Plo, int Phi>
+    constexpr std::string to_string(const Polynomial<T,Plo,Phi>& p)
+    {
+        // const std::string exponents("⁰¹²³⁴⁵⁶⁷⁸⁹");
+        std::string output;
+        for (int i = Plo; i <= Phi; ++i)
+        {
+            output += std::to_string(p[i]);
+            output += i==0?       "" : "x";
+            output += 0<=i&&i<=1? "" : "^" + std::to_string(i);
+            output += i>=Phi?     "" : " + ";
+        }
+        return output;
+    }
+    
+    template<typename T, int Plo, int Phi>
+    std::ostream& operator<<(std::ostream& os, const Polynomial<T,Plo,Phi>& p) { 
+        os << to_string(p);
+        return os;
+    }
+    
     // operators with reals that are closed under Polynomial<T,Plo,Phi> 
     template<typename T, int Plo, int Phi>
     constexpr Polynomial<T,std::min(Plo,0),std::max(Phi,0)> operator+(const Polynomial<T,Plo,Phi>& p, const T& k)
@@ -869,59 +890,26 @@ namespace analytic {
 
 
     /*
-    `solve()` provides all possible solutions to a polynomial, complex or otherwise.
+    `solutions()` provides all possible solutions to a polynomial, complex or otherwise.
     The number of solutions under these conditions is always known at compile time,
     so the output is stored either as a T (for linear functions) 
     or as an array of complex numbers (for any other polynomial).
     This can be useful if performance takes precedence over ease of implementation.
     */
-    template<typename T, int Plo, 
-        typename = std::enable_if_t<(Plo>0)>>
-    constexpr std::vector<std::complex<T>> solve(const Polynomial<T,Plo,Plo+1> p, const T y) 
-    {
-        return solve(p/Identity<T>());
-    }
-    // template<typename T, int Plo, 
-    //     typename = std::enable_if_t<(Plo<0)>>
-    // constexpr T solve(const Polynomial<T,Plo,Plo+1> p, const T y) 
-    // {
-    //     return solve(p*Identity<T>());
-    // }
-
-    template<typename T, int Plo, 
-        typename = std::enable_if_t<(Plo>0)>>
-    constexpr std::vector<std::complex<T>> solve(const Polynomial<T,Plo,Plo+2> p, const T y) 
-    {
-        return solve(p/Identity<T>(),y);
-    }
-    // template<typename T, int Plo, 
-    //     typename = std::enable_if_t<(Plo<0)>>
-    // constexpr std::vector<std::complex<T>> solve(const Polynomial<T,Plo,Plo+2> p, const T y) 
-    // {
-    //     return solve(p*Identity<T>(),y);
-    // }
-
-    template<typename T, int Plo, 
-        typename = std::enable_if_t<(Plo>0)>>
-    constexpr std::vector<std::complex<T>> solve(const Polynomial<T,Plo,Plo+3> p, const T y) 
-    {
-        return solve(p/Identity<T>(),y);
-    }
-    // template<typename T, int Plo, 
-    //     typename = std::enable_if_t<(Plo<0)>>
-    // constexpr std::vector<std::complex<T>> solve(const Polynomial<T,Plo,Plo+3> p, const T y) 
-    // {
-    //     return solve(p*Identity<T>(),y);
-    // }
-
     template<typename T>
-    constexpr T solve(const Polynomial<T,0,1> p, const T y) 
+    constexpr T solution(const Polynomial<T,0,1> p, const T y) 
     {
         return (y-p[0]) / p[1];
     }
 
     template<typename T>
-    std::array<std::complex<T>, 2> solve(const Polynomial<T,0,2> p, const T y) 
+    std::array<std::complex<T>, 1> solutions(const Polynomial<T,0,1> p, const T y) 
+    {
+        return std::array<std::complex<T>, 1>{(y-p[0]) / p[1]};
+    }
+
+    template<typename T>
+    std::array<std::complex<T>, 2> solutions(const Polynomial<T,0,2> p, const T y) 
     {
         // the quadratic formula
         const std::complex<T> sqrt_argument = p[1]*p[1] - 4.0f*(p[0]-y)*p[2];
@@ -932,10 +920,9 @@ namespace analytic {
     }
 
     template<typename T>
-    std::array<std::complex<T>, 3> solve(const Polynomial<T,0,3> p, const T y) 
+    std::array<std::complex<T>, 3> solutions(const Polynomial<T,0,3> p, const T y) 
     {
         // the cubic formula
-
         const Polynomial<T,0,3> a = p/p[3]; // monic cubic polynomial
 
         const std::complex<T> q =  a[1]/3.0f - a[2]*a[2]/9.0f;
@@ -950,7 +937,6 @@ namespace analytic {
 
         return std::array<std::complex<T>, 3>{z1,z2,z3};
     }
-
 
     /*
     `reals()` is a convenience function that accepts iterators for a container of complex values 
@@ -977,10 +963,16 @@ namespace analytic {
         return result;
     }
 
-    template<typename T, int Plo, int Phi>
-    constexpr auto extremum(const Polynomial<T,Plo,Phi>& p) 
+    template<typename T, int Plo>
+    constexpr auto extremum(const Polynomial<T,Plo,2>& p) 
     {
-        return solve(derivative(p), 0.0f);
+        return solution(derivative(p), 0.0f);
+    }
+
+    template<typename T, int Plo, int Phi>
+    constexpr auto extrema(const Polynomial<T,Plo,Phi>& p) 
+    {
+        return solutions(derivative(p), 0.0f);
     }
 
     /*
@@ -1186,17 +1178,6 @@ namespace analytic {
         return linear_newton_polynomial(x1,x2, f(x1),f(x2));
     }
 
-    template<typename T, typename F>
-    constexpr Polynomial<T,0,1> linear_taylor_series(const F f, const T x, const T dx)
-    {
-        const T dx2 = dx*dx;
-        return compose(
-            Polynomial<T,0,1>(f(x), 
-                central_finite_difference(f, x, dx, 1) / dx),
-            Shifting<T>(-x)
-        );
-    }
-
     template<typename T>
     constexpr Polynomial<T,0,2> quadratic_newton_polynomial(
         const T x1, 
@@ -1222,18 +1203,6 @@ namespace analytic {
         const T x3
     ){
         return quadratic_newton_polynomial(x1,x2,x3, f(x1),f(x2),f(x3));
-    }
-
-    template<typename T, typename F>
-    constexpr Polynomial<T,0,2> quadratic_taylor_series(const F f, const T x, const T dx)
-    {
-        const T dx2 = dx*dx;
-        return compose(
-            Polynomial<T,0,2>{f(x), 
-                central_finite_difference(f, x, dx, 1) / dx, 
-                central_finite_difference(f, x, dx, 2) /(dx2*2.0f)},
-            Shifting<T>(-x)
-        );
     }
 
     template<typename T>
@@ -1271,7 +1240,52 @@ namespace analytic {
     }
 
     template<typename T, typename F>
-    constexpr Polynomial<T,0,3> cubic_spline(
+    constexpr Polynomial<T,0,1> linear_taylor_series(const F f, const T x, const T dx)
+    {
+        const T dx2 = dx*dx;
+        return compose(
+            Polynomial<T,0,1>(f(x), 
+                central_finite_difference(f, x, dx, 1) / dx),
+            Shifting<T>(-x)
+        );
+    }
+
+    template<typename T, typename F>
+    constexpr Polynomial<T,0,2> quadratic_taylor_series(const F f, const T x, const T dx)
+    {
+        const T dx2 = dx*dx;
+        return compose(
+            Polynomial<T,0,2>{f(x), 
+                central_finite_difference(f, x, dx, 1) / dx, 
+                central_finite_difference(f, x, dx, 2) /(dx2*2.0f)},
+            Shifting<T>(-x)
+        );
+    }
+
+    template<typename T, typename F>
+    constexpr Polynomial<T,0,3> cubic_taylor_series(const F f, const T x, const T dx)
+    {
+        const T dx2 = dx*dx;
+        const T dx3 = dx2*dx;
+        return 
+            compose(
+                Polynomial<T,0,3>(f(x), 
+                    central_finite_difference(f, x, dx, 1) / dx, 
+                    central_finite_difference(f, x, dx, 2) /(dx2*2.0f), 
+                    central_finite_difference(f, x, dx, 3) /(dx3*6.0f)),
+                Shifting<T>(-x)
+            );
+    }
+
+
+    /* 
+    NOTE: The following is an alternate implementation to "cubic_spline()".
+    It requires no familiarity with linear algebra, it places no dependency on the glm library,
+    and it provides a good way to verify other spline functions, 
+    however its implementation is more complex and cannot be easily adapted to higher order splines.
+    */
+    template<typename T, typename F>
+    constexpr Polynomial<T,0,3> cubic_algebraic_spline(
         const T x0, // lower bound of spline
         const T x1, // upper bound of spline
         const T y0, // value of y at x1
@@ -1297,7 +1311,7 @@ namespace analytic {
         const T u = (Y-d0)/(X*X);
         const T v = (d1-d0)/X;
         /*
-        We then solve this system of equations, which results in the following code:
+        We then solutions this system of equations, which results in the following code:
         */
         const Identity<T> x;
         const auto x2 = x*x;
@@ -1306,23 +1320,7 @@ namespace analytic {
             compose(
                 d0*x + (T(3)*u-v)*x2 + ((v-T(2)*u)/X)*x3,
                 x-x0
-            )
-    }
-
-    template<typename T, typename F>
-    constexpr Polynomial<T,0,3> cubic_taylor_series(const F f, const T x, const T dx)
-    {
-        const T dx2 = dx*dx;
-        const T dx3 = dx2*dx;
-        return 
-            compose(
-                Polynomial<T,0,3>(f(x), 
-                    central_finite_difference(f, x, dx, 1) / dx, 
-                    central_finite_difference(f, x, dx, 2) /(dx2*2.0f), 
-                    central_finite_difference(f, x, dx, 3) /(dx3*6.0f)),
-                Shifting<T>(-x)
             );
     }
-
 
 }

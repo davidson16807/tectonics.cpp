@@ -5,10 +5,11 @@
 #include <iostream> 
 
 // in-house libraries
-#include "Identity.hpp"
-#include "Scaling.hpp"
-#include "Shifting.hpp"
-#include "Polynomial.hpp"
+#include "../Identity.hpp"
+#include "../Scaling.hpp"
+#include "../Shifting.hpp"
+#include "../Polynomial.hpp"
+
 #include "Railcar.hpp"
 #include "Railyard.hpp"
 #include "PolynomialRailcar.hpp"
@@ -17,6 +18,7 @@ namespace analytic {
 
     template<typename T, int Plo, int Phi>
     using PolynomialRailyard = Railyard<T,Polynomial<T,Plo,Phi>>;
+
 
     // RAILYARDS
 
@@ -223,12 +225,11 @@ namespace analytic {
         using F = Polynomial<T,Plo+Qlo,Phi+Qhi>;
         std::vector<Railcar<T,F>> cars;
         Railyard<T,F> y;
-        Railcar<T,F> yij;
         for (auto pi : p.cars)
         {
             for (auto qj : q.cars)
             {
-                yij = (pi*qj);
+                Railcar<T,F> yij = (pi*qj);
                 if (yij.lo < yij.hi)
                 {
                     y += yij;
@@ -468,7 +469,7 @@ namespace analytic {
     template<typename T, int Plo, int Phi>
     constexpr auto integral(const PolynomialRailyard<T,Plo,Phi>& p)
     {
-        using F = Polynomial<T,Plo+1,Phi+1>;
+        using F = Polynomial<T,0,Phi+1>;
         // const T oo(std::numeric_limits<T>::max());
         Railyard<T,F> y;
         Railcar<T,F> g, gmax;
@@ -481,14 +482,18 @@ namespace analytic {
 
 
 
-
-    template<int N, typename T, int Plo, int Phi>
-    constexpr PolynomialRailyard<T,Plo*N,Phi*N> pow(const PolynomialRailyard<T,Plo,Phi>& p){
-        return N<0? T(1)/pow<N>(p)
-             : N==0? PolynomialRailyard<T,0,0>(T(1))
-             : N>1? p*pow<N-1>(p) 
-             : p;
+    template<int N, typename T, int Plo, int Phi, 
+        typename = std::enable_if_t<(N==0)>>
+    constexpr PolynomialRailyard<T,0,0> pow(const PolynomialRailyard<T,Plo,Phi>& p){
+        return PolynomialRailyard<T,0,0>(T(1));
     }
+
+    template<int N, typename T, int Plo, int Phi, 
+        typename = std::enable_if_t<(N>0)>>
+    constexpr PolynomialRailyard<T,Plo*N,Phi*N> pow(const PolynomialRailyard<T,Plo,Phi>& p){
+        return p*pow<N-1>(p);
+    }
+
 
     /*
     `distance` is the root of the integrated squared difference 
@@ -512,8 +517,7 @@ namespace analytic {
         const T lo, 
         const T hi
     ){
-        const auto difference = p-q;
-        return std::sqrt(std::max(T(0), integral(pow<2>(difference), lo, hi))) / (hi-lo);
+        return std::sqrt((std::max(T(0), integral(pow<2>(p-q), lo, hi))) / (hi-lo));
     }
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     constexpr T distance(const PolynomialRailyard<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi> q, const T lo, const T hi)
@@ -543,7 +547,7 @@ namespace analytic {
     PolynomialRailyard<T,0,1> linear_newton_polynomial(
         const Railyard<T,F> yard
     ){
-        PolynomialRailyard<T,0,1> y();
+        PolynomialRailyard<T,0,1> y;
         for (auto car : yard.cars)
         {
             y += linear_newton_polynomial(car);
@@ -555,7 +559,7 @@ namespace analytic {
     PolynomialRailyard<T,0,2> quadratic_newton_polynomial(
         const Railyard<T,F> yard
     ){
-        PolynomialRailyard<T,0,2> y();
+        PolynomialRailyard<T,0,2> y;
         for (auto car : yard.cars)
         {
             y += quadratic_newton_polynomial(car);
@@ -567,7 +571,7 @@ namespace analytic {
     PolynomialRailyard<T,0,3> cubic_newton_polynomial(
         const Railyard<T,F> yard
     ){
-        PolynomialRailyard<T,0,3> y();
+        PolynomialRailyard<T,0,3> y;
         for (auto car : yard.cars)
         {
             y += cubic_newton_polynomial(car);
@@ -579,7 +583,7 @@ namespace analytic {
     PolynomialRailyard<T,0,3> cubic_spline(
         const Railyard<T,F> yard
     ){
-        PolynomialRailyard<T,0,3> y();
+        PolynomialRailyard<T,0,3> y;
         for (auto car : yard.cars)
         {
             y += cubic_spline(car);

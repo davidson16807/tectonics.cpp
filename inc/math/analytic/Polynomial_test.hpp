@@ -8,8 +8,6 @@
 #include <catch/catch.hpp>
 
 #include <math/analytic/Polynomial.hpp>  
-#include <math/analytic/Polynomial_to_string.hpp>  
-
 
 TEST_CASE( "Polynomial arithmetic purity", "[math]" ) {
     const double threshold = 1e-7;

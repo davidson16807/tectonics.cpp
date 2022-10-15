@@ -4,10 +4,11 @@
 #include <algorithm> // copy, back_inserter
 
 // in-house libraries
-#include "Identity.hpp"
-#include "Scaling.hpp"
-#include "Shifting.hpp"
-#include "Polynomial.hpp"
+#include "../Identity.hpp"
+#include "../Scaling.hpp"
+#include "../Shifting.hpp"
+#include "../Polynomial.hpp"
+
 #include "Railcar.hpp"
 #include "Railyard.hpp"
 
@@ -150,7 +151,7 @@ namespace analytic {
     template<typename T, int Plo, int Phi>
     constexpr auto integral(const PolynomialRailcar<T,Plo,Phi>& p)
     {
-        using F = Polynomial<T,Plo+1,Phi+1>;
+        using F = Polynomial<T,0,Phi+1>;
         const T oo = std::numeric_limits<T>::max();
         Railcar<T,F> g, gmax;
         g = Railcar<T,F>(p.lo, p.hi, integral(p.content) - integral(p.content, p.lo));
@@ -177,6 +178,8 @@ namespace analytic {
 
     template<typename T, typename F>
     constexpr PolynomialRailcar<T,0,1> linear_newton_polynomial(const Railcar<T,F> f){
+        const T x1 = f.lo;
+        const T x2 = f.hi;
         return PolynomialRailcar<T,0,2>(f.lo, f.hi,
             linear_newton_polynomial(x1,x2, f.content(x1),f.content(x2))
         );

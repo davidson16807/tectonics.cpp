@@ -8,8 +8,6 @@
 #include <catch/catch.hpp>
 
 #include <math/analytic/ArbitraryDegreePolynomial.hpp>  
-#include <math/analytic/ArbitraryDegreePolynomial_to_string.hpp>  
-
 
 TEST_CASE( "ArbitraryDegreePolynomial arithmetic purity", "[math]" ) {
     const double threshold = 1e-7;

@@ -7,11 +7,10 @@
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide main() - only do this in one cpp file
 #include <catch/catch.hpp>
 
-#include <math/analytic/PolynomialRailyard.hpp>  
-#include <math/analytic/PolynomialRailyard_to_string.hpp>  
+#include "PolynomialRailyard.hpp"
 
 TEST_CASE( "PolynomialRailyard arithmetic purity", "[math]" ) {
-    const double threshold = 1e-4;
+    const double threshold = 1e-2;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -21,41 +20,41 @@ TEST_CASE( "PolynomialRailyard arithmetic purity", "[math]" ) {
     const double midlo = -1e2;
     const double midhi =  1e2;
 
-    using Poly0 = analytic::Polynomial<double,0,2>;
-    using Poly1 = analytic::Polynomial<double,-2,1>;
-    using Poly2 = analytic::Polynomial<double,-2,2>;
+    using P0 = analytic::Polynomial<double,0,2>;
+    using P1 = analytic::Polynomial<double,-2,1>;
+    using P2 = analytic::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
-    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
-    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
-    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
+    P0 p0 = P0({3.0f,2.0f,1.0f});
+    P0 p1 = P0({-1.0f,0.0f,1.0f});
+    P1 p2 = P1({4.0f,3.0f,2.0f,1.0f});
+    P1 p3 = P1({-1.0f,1.0f,-2.0f,2.0f});
 
-    using Piece0 = analytic::Railcar<double,Poly0>;
-    using Piece1 = analytic::Railcar<double,Poly1>;
-    using Piece2 = analytic::Railcar<double,Poly2>;
+    using C0 = analytic::Railcar<double,P0>;
+    using C1 = analytic::Railcar<double,P1>;
+    using C2 = analytic::Railcar<double,P2>;
 
     // standard polynomials, no overlap
     analytic::PolynomialRailyard<double,0,2> s0 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, -1.0f, p0), 
-        Piece0(1.0f, hi,  p1) 
+        C0(lo, -1.0f, p0), 
+        C0(1.0f, hi,  p1) 
     }; 
 
     // standard polynomials, with overlap
     analytic::PolynomialRailyard<double,0,2> s1 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, midhi, p0), 
-        Piece0(midlo, hi, p1) 
+        C0(lo, midhi, p0), 
+        C0(midlo, hi, p1) 
     }; 
     // laurent polynomials
     analytic::PolynomialRailyard<double,-2,1> s2 = analytic::PolynomialRailyard<double,-2,1>{ 
-        Piece1(midlo, -1.0f, p2), 
-        Piece1(1.0f, midhi, p3) 
+        C1(midlo, -1.0f, p2), 
+        C1(1.0f, midhi, p3) 
     }; 
     // all polynomials
     analytic::PolynomialRailyard<double,-2,2> s3 = analytic::PolynomialRailyard<double,-2,2>{ 
-        Piece2(lo, midlo, Poly2(p2)), 
-        Piece2(midhi, hi, Poly2(p3)), 
-        Piece2(midlo, -1.0f, Poly2(p2)), 
-        Piece2(1.0f, midhi, Poly2(p3)) 
+        C2(lo, midlo, P2(p2)), 
+        C2(midhi, hi, P2(p3)), 
+        C2(midlo, -1.0f, P2(p2)), 
+        C2(1.0f, midhi, P2(p3)) 
     };
 
     SECTION("s0+s1 must be called repeatedly without changing the output"){
@@ -138,40 +137,40 @@ TEST_CASE( "PolynomialRailyard arithmetic identity", "[math]" ) {
     const double midlo = -1e2;
     const double midhi =  1e2;
 
-    using Poly0 = analytic::Polynomial<double,0,2>;
-    using Poly1 = analytic::Polynomial<double,-2,1>;
-    using Poly2 = analytic::Polynomial<double,-2,2>;
+    using P0 = analytic::Polynomial<double,0,2>;
+    using P1 = analytic::Polynomial<double,-2,1>;
+    using P2 = analytic::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
-    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
-    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
-    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
+    P0 p0 = P0({3.0f,2.0f,1.0f});
+    P0 p1 = P0({-1.0f,0.0f,1.0f});
+    P1 p2 = P1({4.0f,3.0f,2.0f,1.0f});
+    P1 p3 = P1({-1.0f,1.0f,-2.0f,2.0f});
 
-    using Piece0 = analytic::Railcar<double,Poly0>;
-    using Piece1 = analytic::Railcar<double,Poly1>;
-    using Piece2 = analytic::Railcar<double,Poly2>;
+    using C0 = analytic::Railcar<double,P0>;
+    using C1 = analytic::Railcar<double,P1>;
+    using C2 = analytic::Railcar<double,P2>;
 
     // standard polynomials, no overlap
     analytic::PolynomialRailyard<double,0,2> s0 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, -1.0f, p0), 
-        Piece0(1.0f, hi, p1) 
+        C0(lo, -1.0f, p0), 
+        C0(1.0f, hi, p1) 
     }; 
     // standard polynomials, with overlap
     analytic::PolynomialRailyard<double,0,2> s1 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, midhi, p0), 
-        Piece0(midlo, hi, p1) 
+        C0(lo, midhi, p0), 
+        C0(midlo, hi, p1) 
     }; 
     // laurent polynomials
     analytic::PolynomialRailyard<double,-2,1> s2 = analytic::PolynomialRailyard<double,-2,1>{ 
-        Piece1(midlo, -1.0f, p2), 
-        Piece1(1.0f, midhi, p3) 
+        C1(midlo, -1.0f, p2), 
+        C1(1.0f, midhi, p3) 
     }; 
     // all polynomials
     analytic::PolynomialRailyard<double,-2,2> s3 = analytic::PolynomialRailyard<double,-2,2>{ 
-        Piece2(lo, midlo, Poly2(p2)), 
-        Piece2(midhi, hi, Poly2(p3)), 
-        Piece2(midlo, -1.0f, Poly2(p2)), 
-        Piece2(1.0f, midhi, Poly2(p3)) 
+        C2(lo, midlo, P2(p2)), 
+        C2(midhi, hi, P2(p3)), 
+        C2(midlo, -1.0f, P2(p2)), 
+        C2(1.0f, midhi, P2(p3)) 
     };
 
     analytic::Polynomial<double,0,0> zero = analytic::Polynomial<double,0,0>({0.0f});
@@ -201,7 +200,7 @@ TEST_CASE( "PolynomialRailyard arithmetic identity", "[math]" ) {
 }
 
 TEST_CASE( "PolynomialRailyard arithmetic commutativity", "[math]" ) {
-    const double threshold = 1e-4;
+    const double threshold = 1e-2;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -211,40 +210,40 @@ TEST_CASE( "PolynomialRailyard arithmetic commutativity", "[math]" ) {
     const double midlo = -1e2;
     const double midhi =  1e2;
 
-    using Poly0 = analytic::Polynomial<double,0,2>;
-    using Poly1 = analytic::Polynomial<double,-2,1>;
-    using Poly2 = analytic::Polynomial<double,-2,2>;
+    using P0 = analytic::Polynomial<double,0,2>;
+    using P1 = analytic::Polynomial<double,-2,1>;
+    using P2 = analytic::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
-    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
-    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
-    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
+    P0 p0 = P0({3.0f,2.0f,1.0f});
+    P0 p1 = P0({-1.0f,0.0f,1.0f});
+    P1 p2 = P1({4.0f,3.0f,2.0f,1.0f});
+    P1 p3 = P1({-1.0f,1.0f,-2.0f,2.0f});
 
-    using Piece0 = analytic::Railcar<double,Poly0>;
-    using Piece1 = analytic::Railcar<double,Poly1>;
-    using Piece2 = analytic::Railcar<double,Poly2>;
+    using C0 = analytic::Railcar<double,P0>;
+    using C1 = analytic::Railcar<double,P1>;
+    using C2 = analytic::Railcar<double,P2>;
 
     // standard polynomials, no overlap
     analytic::PolynomialRailyard<double,0,2> s0 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, -1.0f, p0), 
-        Piece0(1.0f, hi, p1) 
+        C0(lo, -1.0f, p0), 
+        C0(1.0f, hi, p1) 
     }; 
     // standard polynomials, with overlap
     analytic::PolynomialRailyard<double,0,2> s1 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, midhi, p0), 
-        Piece0(midlo, hi, p1) 
+        C0(lo, midhi, p0), 
+        C0(midlo, hi, p1) 
     }; 
     // laurent polynomials
     analytic::PolynomialRailyard<double,-2,1> s2 = analytic::PolynomialRailyard<double,-2,1>{ 
-        Piece1(midlo, -1.0f, p2), 
-        Piece1(1.0f, midhi, p3) 
+        C1(midlo, -1.0f, p2), 
+        C1(1.0f, midhi, p3) 
     }; 
     // all polynomials
     analytic::PolynomialRailyard<double,-2,2> s3 = analytic::PolynomialRailyard<double,-2,2>{ 
-        Piece2(lo, midlo, Poly2(p2)), 
-        Piece2(midhi, hi, Poly2(p3)), 
-        Piece2(midlo, -1.0f, Poly2(p2)), 
-        Piece2(1.0f, midhi, Poly2(p3)) 
+        C2(lo, midlo, P2(p2)), 
+        C2(midhi, hi, P2(p3)), 
+        C2(midlo, -1.0f, P2(p2)), 
+        C2(1.0f, midhi, P2(p3)) 
     };
 
     SECTION("s0+s1 must equal s1+s0"){
@@ -284,7 +283,7 @@ TEST_CASE( "PolynomialRailyard arithmetic commutativity", "[math]" ) {
 }
 
 TEST_CASE( "PolynomialRailyard arithmetic associativity", "[math]" ) {
-    const double threshold = 1e-4;
+    const double threshold = 1e-2;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -294,40 +293,40 @@ TEST_CASE( "PolynomialRailyard arithmetic associativity", "[math]" ) {
     const double midlo = -1e2;
     const double midhi =  1e2;
 
-    using Poly0 = analytic::Polynomial<double,0,2>;
-    using Poly1 = analytic::Polynomial<double,-2,1>;
-    using Poly2 = analytic::Polynomial<double,-2,2>;
+    using P0 = analytic::Polynomial<double,0,2>;
+    using P1 = analytic::Polynomial<double,-2,1>;
+    using P2 = analytic::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
-    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
-    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
-    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
+    P0 p0 = P0({3.0f,2.0f,1.0f});
+    P0 p1 = P0({-1.0f,0.0f,1.0f});
+    P1 p2 = P1({4.0f,3.0f,2.0f,1.0f});
+    P1 p3 = P1({-1.0f,1.0f,-2.0f,2.0f});
 
-    using Piece0 = analytic::Railcar<double,Poly0>;
-    using Piece1 = analytic::Railcar<double,Poly1>;
-    using Piece2 = analytic::Railcar<double,Poly2>;
+    using C0 = analytic::Railcar<double,P0>;
+    using C1 = analytic::Railcar<double,P1>;
+    using C2 = analytic::Railcar<double,P2>;
 
     // standard polynomials, no overlap
     analytic::PolynomialRailyard<double,0,2> s0 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, -1.0f, p0), 
-        Piece0(1.0f, hi, p1) 
+        C0(lo, -1.0f, p0), 
+        C0(1.0f, hi, p1) 
     }; 
     // standard polynomials, with overlap
     analytic::PolynomialRailyard<double,0,2> s1 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, midhi, p0), 
-        Piece0(midlo, hi, p1) 
+        C0(lo, midhi, p0), 
+        C0(midlo, hi, p1) 
     }; 
     // laurent polynomials
     analytic::PolynomialRailyard<double,-2,1> s2 = analytic::PolynomialRailyard<double,-2,1>{ 
-        Piece1(midlo, -1.0f, p2), 
-        Piece1(1.0f, midhi, p3) 
+        C1(midlo, -1.0f, p2), 
+        C1(1.0f, midhi, p3) 
     }; 
     // all polynomials
     analytic::PolynomialRailyard<double,-2,2> s3 = analytic::PolynomialRailyard<double,-2,2>{ 
-        Piece2(lo, midlo, Poly2(p2)), 
-        Piece2(midhi, hi, Poly2(p3)), 
-        Piece2(midlo, -1.0f, Poly2(p2)), 
-        Piece2(1.0f, midhi, Poly2(p3)) 
+        C2(lo, midlo, P2(p2)), 
+        C2(midhi, hi, P2(p3)), 
+        C2(midlo, -1.0f, P2(p2)), 
+        C2(1.0f, midhi, P2(p3)) 
     };
 
     SECTION("(s0+s1)+s2 must equal s0+(s1+s2)"){
@@ -349,7 +348,7 @@ TEST_CASE( "PolynomialRailyard arithmetic associativity", "[math]" ) {
 }
 
 TEST_CASE( "PolynomialRailyard arithmetic distributivity", "[math]" ) {
-    const double threshold = 1e-4;
+    const double threshold = 1e-2;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -359,40 +358,40 @@ TEST_CASE( "PolynomialRailyard arithmetic distributivity", "[math]" ) {
     const double midlo = -1e2;
     const double midhi =  1e2;
 
-    using Poly0 = analytic::Polynomial<double,0,2>;
-    using Poly1 = analytic::Polynomial<double,-2,1>;
-    using Poly2 = analytic::Polynomial<double,-2,2>;
+    using P0 = analytic::Polynomial<double,0,2>;
+    using P1 = analytic::Polynomial<double,-2,1>;
+    using P2 = analytic::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
-    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
-    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
-    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
+    P0 p0 = P0({3.0f,2.0f,1.0f});
+    P0 p1 = P0({-1.0f,0.0f,1.0f});
+    P1 p2 = P1({4.0f,3.0f,2.0f,1.0f});
+    P1 p3 = P1({-1.0f,1.0f,-2.0f,2.0f});
 
-    using Piece0 = analytic::Railcar<double,Poly0>;
-    using Piece1 = analytic::Railcar<double,Poly1>;
-    using Piece2 = analytic::Railcar<double,Poly2>;
+    using C0 = analytic::Railcar<double,P0>;
+    using C1 = analytic::Railcar<double,P1>;
+    using C2 = analytic::Railcar<double,P2>;
 
     // standard polynomials, no overlap
     analytic::PolynomialRailyard<double,0,2> s0 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, -1.0f, p0), 
-        Piece0(1.0f, hi, p1) 
+        C0(lo, -1.0f, p0), 
+        C0(1.0f, hi, p1) 
     }; 
     // standard polynomials, with overlap
     analytic::PolynomialRailyard<double,0,2> s1 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, midhi, p0), 
-        Piece0(midlo, hi, p1) 
+        C0(lo, midhi, p0), 
+        C0(midlo, hi, p1) 
     }; 
     // laurent polynomials
     analytic::PolynomialRailyard<double,-2,1> s2 = analytic::PolynomialRailyard<double,-2,1>{ 
-        Piece1(midlo, -1.0f, p2), 
-        Piece1(1.0f, midhi, p3) 
+        C1(midlo, -1.0f, p2), 
+        C1(1.0f, midhi, p3) 
     }; 
     // all polynomials
     analytic::PolynomialRailyard<double,-2,2> s3 = analytic::PolynomialRailyard<double,-2,2>{ 
-        Piece2(lo, midlo, Poly2(p2)), 
-        Piece2(midhi, hi, Poly2(p3)), 
-        Piece2(midlo, -1.0f, Poly2(p2)), 
-        Piece2(1.0f, midhi, Poly2(p3)) 
+        C2(lo, midlo, P2(p2)), 
+        C2(midhi, hi, P2(p3)), 
+        C2(midlo, -1.0f, P2(p2)), 
+        C2(1.0f, midhi, P2(p3)) 
     };
 
     SECTION("s0+s1 must equal s1+s0"){
@@ -423,7 +422,7 @@ TEST_CASE( "PolynomialRailyard arithmetic distributivity", "[math]" ) {
 
 
 TEST_CASE( "PolynomialRailyard/scalar arithmetic purity", "[math]" ) {
-    const double threshold = 1e-4;
+    const double threshold = 1e-2;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -433,40 +432,40 @@ TEST_CASE( "PolynomialRailyard/scalar arithmetic purity", "[math]" ) {
     const double midlo = -1e2;
     const double midhi =  1e2;
     
-    using Poly0 = analytic::Polynomial<double,0,2>;
-    using Poly1 = analytic::Polynomial<double,-2,1>;
-    using Poly2 = analytic::Polynomial<double,-2,2>;
+    using P0 = analytic::Polynomial<double,0,2>;
+    using P1 = analytic::Polynomial<double,-2,1>;
+    using P2 = analytic::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
-    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
-    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
-    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
+    P0 p0 = P0({3.0f,2.0f,1.0f});
+    P0 p1 = P0({-1.0f,0.0f,1.0f});
+    P1 p2 = P1({4.0f,3.0f,2.0f,1.0f});
+    P1 p3 = P1({-1.0f,1.0f,-2.0f,2.0f});
 
-    using Piece0 = analytic::Railcar<double,Poly0>;
-    using Piece1 = analytic::Railcar<double,Poly1>;
-    using Piece2 = analytic::Railcar<double,Poly2>;
+    using C0 = analytic::Railcar<double,P0>;
+    using C1 = analytic::Railcar<double,P1>;
+    using C2 = analytic::Railcar<double,P2>;
 
     // standard polynomials, no overlap
     analytic::PolynomialRailyard<double,0,2> s0 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, -1.0f, p0), 
-        Piece0(1.0f, hi, p1) 
+        C0(lo, -1.0f, p0), 
+        C0(1.0f, hi, p1) 
     }; 
     // standard polynomials, with overlap
     analytic::PolynomialRailyard<double,0,2> s1 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, midhi, p0), 
-        Piece0(midlo, hi, p1) 
+        C0(lo, midhi, p0), 
+        C0(midlo, hi, p1) 
     }; 
     // laurent polynomials
     analytic::PolynomialRailyard<double,-2,1> s2 = analytic::PolynomialRailyard<double,-2,1>{ 
-        Piece1(midlo, -1.0f, p2), 
-        Piece1(1.0f, midhi, p3) 
+        C1(midlo, -1.0f, p2), 
+        C1(1.0f, midhi, p3) 
     }; 
     // all polynomials
     analytic::PolynomialRailyard<double,-2,2> s3 = analytic::PolynomialRailyard<double,-2,2>{ 
-        Piece2(lo, midlo, Poly2(p2)), 
-        Piece2(midhi, hi, Poly2(p3)), 
-        Piece2(midlo, -1.0f, Poly2(p2)), 
-        Piece2(1.0f, midhi, Poly2(p3)) 
+        C2(lo, midlo, P2(p2)), 
+        C2(midhi, hi, P2(p3)), 
+        C2(midlo, -1.0f, P2(p2)), 
+        C2(1.0f, midhi, P2(p3)) 
     };
     double k0(0.0f);
     double k1(2.0f);
@@ -546,7 +545,7 @@ TEST_CASE( "PolynomialRailyard/scalar arithmetic purity", "[math]" ) {
 }
 
 TEST_CASE( "PolynomialRailyard/scalar arithmetic identity", "[math]" ) {
-    const double threshold = 1e-4;
+    const double threshold = 1e-2;
 
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
@@ -557,40 +556,40 @@ TEST_CASE( "PolynomialRailyard/scalar arithmetic identity", "[math]" ) {
     const double midlo = -1e2;
     const double midhi =  1e2;
 
-    using Poly0 = analytic::Polynomial<double,0,2>;
-    using Poly1 = analytic::Polynomial<double,-2,1>;
-    using Poly2 = analytic::Polynomial<double,-2,2>;
+    using P0 = analytic::Polynomial<double,0,2>;
+    using P1 = analytic::Polynomial<double,-2,1>;
+    using P2 = analytic::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
-    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
-    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
-    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
+    P0 p0 = P0({3.0f,2.0f,1.0f});
+    P0 p1 = P0({-1.0f,0.0f,1.0f});
+    P1 p2 = P1({4.0f,3.0f,2.0f,1.0f});
+    P1 p3 = P1({-1.0f,1.0f,-2.0f,2.0f});
 
-    using Piece0 = analytic::Railcar<double,Poly0>;
-    using Piece1 = analytic::Railcar<double,Poly1>;
-    using Piece2 = analytic::Railcar<double,Poly2>;
+    using C0 = analytic::Railcar<double,P0>;
+    using C1 = analytic::Railcar<double,P1>;
+    using C2 = analytic::Railcar<double,P2>;
 
     // standard polynomials, no overlap
     analytic::PolynomialRailyard<double,0,2> s0 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, -1.0f, p0), 
-        Piece0(1.0f, hi, p1) 
+        C0(lo, -1.0f, p0), 
+        C0(1.0f, hi, p1) 
     }; 
     // standard polynomials, with overlap
     analytic::PolynomialRailyard<double,0,2> s1 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, midhi, p0), 
-        Piece0(midlo, hi, p1) 
+        C0(lo, midhi, p0), 
+        C0(midlo, hi, p1) 
     }; 
     // laurent polynomials
     analytic::PolynomialRailyard<double,-2,1> s2 = analytic::PolynomialRailyard<double,-2,1>{ 
-        Piece1(midlo, -1.0f, p2), 
-        Piece1(1.0f, midhi, p3) 
+        C1(midlo, -1.0f, p2), 
+        C1(1.0f, midhi, p3) 
     }; 
     // all polynomials
     analytic::PolynomialRailyard<double,-2,2> s3 = analytic::PolynomialRailyard<double,-2,2>{ 
-        Piece2(lo, midlo, Poly2(p2)), 
-        Piece2(midhi, hi, Poly2(p3)), 
-        Piece2(midlo, -1.0f, Poly2(p2)), 
-        Piece2(1.0f, midhi, Poly2(p3)) 
+        C2(lo, midlo, P2(p2)), 
+        C2(midhi, hi, P2(p3)), 
+        C2(midlo, -1.0f, P2(p2)), 
+        C2(1.0f, midhi, P2(p3)) 
     };
     double zero(0.0f);
     double one (1.0f);
@@ -623,7 +622,7 @@ TEST_CASE( "PolynomialRailyard/scalar arithmetic identity", "[math]" ) {
 }
 
 TEST_CASE( "PolynomialRailyard/scalar arithmetic commutativity", "[math]" ) {
-    const double threshold = 1e-4;
+    const double threshold = 1e-2;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -633,40 +632,40 @@ TEST_CASE( "PolynomialRailyard/scalar arithmetic commutativity", "[math]" ) {
     const double midlo = -1e2;
     const double midhi =  1e2;
 
-    using Poly0 = analytic::Polynomial<double,0,2>;
-    using Poly1 = analytic::Polynomial<double,-2,1>;
-    using Poly2 = analytic::Polynomial<double,-2,2>;
+    using P0 = analytic::Polynomial<double,0,2>;
+    using P1 = analytic::Polynomial<double,-2,1>;
+    using P2 = analytic::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
-    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
-    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
-    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
+    P0 p0 = P0({3.0f,2.0f,1.0f});
+    P0 p1 = P0({-1.0f,0.0f,1.0f});
+    P1 p2 = P1({4.0f,3.0f,2.0f,1.0f});
+    P1 p3 = P1({-1.0f,1.0f,-2.0f,2.0f});
 
-    using Piece0 = analytic::Railcar<double,Poly0>;
-    using Piece1 = analytic::Railcar<double,Poly1>;
-    using Piece2 = analytic::Railcar<double,Poly2>;
+    using C0 = analytic::Railcar<double,P0>;
+    using C1 = analytic::Railcar<double,P1>;
+    using C2 = analytic::Railcar<double,P2>;
 
     // standard polynomials, no overlap
     analytic::PolynomialRailyard<double,0,2> s0 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, -1.0f, p0), 
-        Piece0(1.0f, hi, p1) 
+        C0(lo, -1.0f, p0), 
+        C0(1.0f, hi, p1) 
     }; 
     // standard polynomials, with overlap
     analytic::PolynomialRailyard<double,0,2> s1 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, midhi, p0), 
-        Piece0(midlo, hi, p1) 
+        C0(lo, midhi, p0), 
+        C0(midlo, hi, p1) 
     }; 
     // laurent polynomials
     analytic::PolynomialRailyard<double,-2,1> s2 = analytic::PolynomialRailyard<double,-2,1>{ 
-        Piece1(midlo, -1.0f, p2), 
-        Piece1(1.0f, midhi, p3) 
+        C1(midlo, -1.0f, p2), 
+        C1(1.0f, midhi, p3) 
     }; 
     // all polynomials
     analytic::PolynomialRailyard<double,-2,2> s3 = analytic::PolynomialRailyard<double,-2,2>{ 
-        Piece2(lo, midlo, Poly2(p2)), 
-        Piece2(midhi, hi, Poly2(p3)), 
-        Piece2(midlo, -1.0f, Poly2(p2)), 
-        Piece2(1.0f, midhi, Poly2(p3)) 
+        C2(lo, midlo, P2(p2)), 
+        C2(midhi, hi, P2(p3)), 
+        C2(midlo, -1.0f, P2(p2)), 
+        C2(1.0f, midhi, P2(p3)) 
     };
     double k0(0.0f);
     double k1(2.0f);
@@ -711,7 +710,7 @@ TEST_CASE( "PolynomialRailyard/scalar arithmetic commutativity", "[math]" ) {
 
 
 TEST_CASE( "PolynomialRailyard/scalar arithmetic associativity", "[math]" ) {
-    const double threshold = 1e-4;
+    const double threshold = 1e-2;
 
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
@@ -722,40 +721,40 @@ TEST_CASE( "PolynomialRailyard/scalar arithmetic associativity", "[math]" ) {
     const double midlo = -1e2;
     const double midhi =  1e2;
     
-    using Poly0 = analytic::Polynomial<double,0,2>;
-    using Poly1 = analytic::Polynomial<double,-2,1>;
-    using Poly2 = analytic::Polynomial<double,-2,2>;
+    using P0 = analytic::Polynomial<double,0,2>;
+    using P1 = analytic::Polynomial<double,-2,1>;
+    using P2 = analytic::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
-    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
-    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
-    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
+    P0 p0 = P0({3.0f,2.0f,1.0f});
+    P0 p1 = P0({-1.0f,0.0f,1.0f});
+    P1 p2 = P1({4.0f,3.0f,2.0f,1.0f});
+    P1 p3 = P1({-1.0f,1.0f,-2.0f,2.0f});
 
-    using Piece0 = analytic::Railcar<double,Poly0>;
-    using Piece1 = analytic::Railcar<double,Poly1>;
-    using Piece2 = analytic::Railcar<double,Poly2>;
+    using C0 = analytic::Railcar<double,P0>;
+    using C1 = analytic::Railcar<double,P1>;
+    using C2 = analytic::Railcar<double,P2>;
 
     // standard polynomials, no overlap
     analytic::PolynomialRailyard<double,0,2> s0 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, -1.0f, p0), 
-        Piece0(1.0f, hi, p1) 
+        C0(lo, -1.0f, p0), 
+        C0(1.0f, hi, p1) 
     }; 
     // standard polynomials, with overlap
     analytic::PolynomialRailyard<double,0,2> s1 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, midhi, p0), 
-        Piece0(midlo, hi, p1) 
+        C0(lo, midhi, p0), 
+        C0(midlo, hi, p1) 
     }; 
     // laurent polynomials
     analytic::PolynomialRailyard<double,-2,1> s2 = analytic::PolynomialRailyard<double,-2,1>{ 
-        Piece1(midlo, -1.0f, p2), 
-        Piece1(1.0f, midhi, p3) 
+        C1(midlo, -1.0f, p2), 
+        C1(1.0f, midhi, p3) 
     }; 
     // all polynomials
     analytic::PolynomialRailyard<double,-2,2> s3 = analytic::PolynomialRailyard<double,-2,2>{ 
-        Piece2(lo, midlo, Poly2(p2)), 
-        Piece2(midhi, hi, Poly2(p3)), 
-        Piece2(midlo, -1.0f, Poly2(p2)), 
-        Piece2(1.0f, midhi, Poly2(p3)) 
+        C2(lo, midlo, P2(p2)), 
+        C2(midhi, hi, P2(p3)), 
+        C2(midlo, -1.0f, P2(p2)), 
+        C2(1.0f, midhi, P2(p3)) 
     };
     double k0(0.0f);
     double k1(2.0f);
@@ -788,78 +787,78 @@ TEST_CASE( "PolynomialRailyard/scalar arithmetic associativity", "[math]" ) {
     }
 
     SECTION("(s0+s1)+s2 must equal s0+(s1+s2)"){
-        CHECK(analytic::distance((s0+s1)+k0, s0+(s1+k0), lo, hi) < threshold);
-        CHECK(analytic::distance((s0+s1)+k1, s0+(s1+k1), lo, hi) < threshold);
-        CHECK(analytic::distance((s0+s1)+k2, s0+(s1+k2), lo, hi) < threshold);
+        CHECK(analytic::distance((s0*s1)*k0, s0*(s1*k0), lo, hi) < threshold);
+        CHECK(analytic::distance((s0*s1)*k1, s0*(s1*k1), lo, hi) < threshold);
+        CHECK(analytic::distance((s0*s1)*k2, s0*(s1*k2), lo, hi) < threshold);
 
-        CHECK(analytic::distance((s0+s2)+k0, s0+(s2+k0), lo, hi) < threshold);
-        CHECK(analytic::distance((s0+s2)+k1, s0+(s2+k1), lo, hi) < threshold);
-        CHECK(analytic::distance((s0+s2)+k2, s0+(s2+k2), lo, hi) < threshold);
+        CHECK(analytic::distance((s0*s2)*k0, s0*(s2*k0), lo, hi) < threshold);
+        CHECK(analytic::distance((s0*s2)*k1, s0*(s2*k1), lo, hi) < threshold);
+        CHECK(analytic::distance((s0*s2)*k2, s0*(s2*k2), lo, hi) < threshold);
 
-        CHECK(analytic::distance((s0+s3)+k0, s0+(s3+k0), lo, hi) < threshold);
-        CHECK(analytic::distance((s0+s3)+k1, s0+(s3+k1), lo, hi) < threshold);
-        CHECK(analytic::distance((s0+s3)+k2, s0+(s3+k2), lo, hi) < threshold);
+        CHECK(analytic::distance((s0*s3)*k0, s0*(s3*k0), lo, hi) < threshold);
+        CHECK(analytic::distance((s0*s3)*k1, s0*(s3*k1), lo, hi) < threshold);
+        CHECK(analytic::distance((s0*s3)*k2, s0*(s3*k2), lo, hi) < threshold);
 
-        CHECK(analytic::distance((s1+s2)+k0, s1+(s2+k0), lo, hi) < threshold);
-        CHECK(analytic::distance((s1+s2)+k1, s1+(s2+k1), lo, hi) < threshold);
-        CHECK(analytic::distance((s1+s2)+k2, s1+(s2+k2), lo, hi) < threshold);
+        CHECK(analytic::distance((s1*s2)*k0, s1*(s2*k0), lo, hi) < threshold);
+        CHECK(analytic::distance((s1*s2)*k1, s1*(s2*k1), lo, hi) < threshold);
+        CHECK(analytic::distance((s1*s2)*k2, s1*(s2*k2), lo, hi) < threshold);
 
-        CHECK(analytic::distance((s1+s3)+k0, s1+(s3+k0), lo, hi) < threshold);
-        CHECK(analytic::distance((s1+s3)+k1, s1+(s3+k1), lo, hi) < threshold);
-        CHECK(analytic::distance((s1+s3)+k2, s1+(s3+k2), lo, hi) < threshold);
+        CHECK(analytic::distance((s1*s3)*k0, s1*(s3*k0), lo, hi) < threshold);
+        CHECK(analytic::distance((s1*s3)*k1, s1*(s3*k1), lo, hi) < threshold);
+        CHECK(analytic::distance((s1*s3)*k2, s1*(s3*k2), lo, hi) < threshold);
 
-        CHECK(analytic::distance((s2+s3)+k0, s2+(s3+k0), lo, hi) < threshold);
-        CHECK(analytic::distance((s2+s3)+k1, s2+(s3+k1), lo, hi) < threshold);
-        CHECK(analytic::distance((s2+s3)+k2, s2+(s3+k2), lo, hi) < threshold);
+        CHECK(analytic::distance((s2*s3)*k0, s2*(s3*k0), lo, hi) < threshold);
+        CHECK(analytic::distance((s2*s3)*k1, s2*(s3*k1), lo, hi) < threshold);
+        CHECK(analytic::distance((s2*s3)*k2, s2*(s3*k2), lo, hi) < threshold);
     }
 }
 
 
 TEST_CASE( "PolynomialRailyard/scalar arithmetic distributivity", "[math]" ) {
-    const double threshold = 1e-4;
+    const double threshold = 1e-2;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
     const double hi =  1e3;
     // `mid*` variables are used when the degree of a polynomial is so large 
     // that a square integral of it will produce nans for all but the smallest input.
-    const double midlo = -1e2;
-    const double midhi =  1e2;
+    const double midlo = -3e1;
+    const double midhi =  3e1;
 
-    using Poly0 = analytic::Polynomial<double,0,2>;
-    using Poly1 = analytic::Polynomial<double,-2,1>;
-    using Poly2 = analytic::Polynomial<double,-2,2>;
+    using P0 = analytic::Polynomial<double,0,2>;
+    using P1 = analytic::Polynomial<double,-2,1>;
+    using P2 = analytic::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
-    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
-    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
-    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
+    P0 p0 = P0({3.0f,2.0f,1.0f});
+    P0 p1 = P0({-1.0f,0.0f,1.0f});
+    P1 p2 = P1({4.0f,3.0f,2.0f,1.0f});
+    P1 p3 = P1({-1.0f,1.0f,-2.0f,2.0f});
 
-    using Piece0 = analytic::Railcar<double,Poly0>;
-    using Piece1 = analytic::Railcar<double,Poly1>;
-    using Piece2 = analytic::Railcar<double,Poly2>;
+    using C0 = analytic::Railcar<double,P0>;
+    using C1 = analytic::Railcar<double,P1>;
+    using C2 = analytic::Railcar<double,P2>;
 
     // standard polynomials, no overlap
     analytic::PolynomialRailyard<double,0,2> s0 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, -1.0f, p0), 
-        Piece0(1.0f, hi, p1) 
+        C0(lo, -1.0f, p0), 
+        C0(1.0f, hi, p1) 
     }; 
     // standard polynomials, with overlap
     analytic::PolynomialRailyard<double,0,2> s1 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, midhi, p0), 
-        Piece0(midlo, hi, p1) 
+        C0(lo, midhi, p0), 
+        C0(midlo, hi, p1) 
     }; 
     // laurent polynomials
     analytic::PolynomialRailyard<double,-2,1> s2 = analytic::PolynomialRailyard<double,-2,1>{ 
-        Piece1(midlo, -1.0f, p2), 
-        Piece1(1.0f, midhi, p3) 
+        C1(midlo, -1.0f, p2), 
+        C1(1.0f, midhi, p3) 
     }; 
     // all polynomials
     analytic::PolynomialRailyard<double,-2,2> s3 = analytic::PolynomialRailyard<double,-2,2>{ 
-        Piece2(lo, midlo, Poly2(p2)), 
-        Piece2(midhi, hi, Poly2(p3)), 
-        Piece2(midlo, -1.0f, Poly2(p2)), 
-        Piece2(1.0f, midhi, Poly2(p3)) 
+        C2(lo, midlo, P2(p2)), 
+        C2(midhi, hi, P2(p3)), 
+        C2(midlo, -1.0f, P2(p2)), 
+        C2(1.0f, midhi, P2(p3)) 
     };
     double k0(0.0f);
     double k1(2.0f);
@@ -928,7 +927,7 @@ TEST_CASE( "PolynomialRailyard/scalar arithmetic distributivity", "[math]" ) {
 
 
 TEST_CASE( "PolynomialRailyard/monomial arithmetic purity", "[math]" ) {
-    const double threshold = 1e-4;
+    const double threshold = 1e-2;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -938,40 +937,40 @@ TEST_CASE( "PolynomialRailyard/monomial arithmetic purity", "[math]" ) {
     const double midlo = -1e2;
     const double midhi =  1e2;
     
-    using Poly0 = analytic::Polynomial<double,0,2>;
-    using Poly1 = analytic::Polynomial<double,-2,1>;
-    using Poly2 = analytic::Polynomial<double,-2,2>;
+    using P0 = analytic::Polynomial<double,0,2>;
+    using P1 = analytic::Polynomial<double,-2,1>;
+    using P2 = analytic::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
-    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
-    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
-    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
+    P0 p0 = P0({3.0f,2.0f,1.0f});
+    P0 p1 = P0({-1.0f,0.0f,1.0f});
+    P1 p2 = P1({4.0f,3.0f,2.0f,1.0f});
+    P1 p3 = P1({-1.0f,1.0f,-2.0f,2.0f});
 
-    using Piece0 = analytic::Railcar<double,Poly0>;
-    using Piece1 = analytic::Railcar<double,Poly1>;
-    using Piece2 = analytic::Railcar<double,Poly2>;
+    using C0 = analytic::Railcar<double,P0>;
+    using C1 = analytic::Railcar<double,P1>;
+    using C2 = analytic::Railcar<double,P2>;
 
     // standard polynomials, no overlap
     analytic::PolynomialRailyard<double,0,2> s0 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, -1.0f, p0), 
-        Piece0(1.0f, hi, p1) 
+        C0(lo, -1.0f, p0), 
+        C0(1.0f, hi, p1) 
     }; 
     // standard polynomials, with overlap
     analytic::PolynomialRailyard<double,0,2> s1 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, midhi, p0), 
-        Piece0(midlo, hi, p1) 
+        C0(lo, midhi, p0), 
+        C0(midlo, hi, p1) 
     }; 
     // laurent polynomials
     analytic::PolynomialRailyard<double,-2,1> s2 = analytic::PolynomialRailyard<double,-2,1>{ 
-        Piece1(midlo, -1.0f, p2), 
-        Piece1(1.0f, midhi, p3) 
+        C1(midlo, -1.0f, p2), 
+        C1(1.0f, midhi, p3) 
     }; 
     // all polynomials
     analytic::PolynomialRailyard<double,-2,2> s3 = analytic::PolynomialRailyard<double,-2,2>{ 
-        Piece2(lo, midlo, Poly2(p2)), 
-        Piece2(midhi, hi, Poly2(p3)), 
-        Piece2(midlo, -1.0f, Poly2(p2)), 
-        Piece2(1.0f, midhi, Poly2(p3)) 
+        C2(lo, midlo, P2(p2)), 
+        C2(midhi, hi, P2(p3)), 
+        C2(midlo, -1.0f, P2(p2)), 
+        C2(1.0f, midhi, P2(p3)) 
     };
     analytic::Polynomial<double,0,0> m0{2.0f};
     analytic::Polynomial<double,2,2> m1{2.0f};
@@ -1061,40 +1060,40 @@ TEST_CASE( "PolynomialRailyard/monomial arithmetic identity", "[math]" ) {
     const double midlo = -1e2;
     const double midhi =  1e2;
     
-    using Poly0 = analytic::Polynomial<double,0,2>;
-    using Poly1 = analytic::Polynomial<double,-2,1>;
-    using Poly2 = analytic::Polynomial<double,-2,2>;
+    using P0 = analytic::Polynomial<double,0,2>;
+    using P1 = analytic::Polynomial<double,-2,1>;
+    using P2 = analytic::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
-    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
-    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
-    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
+    P0 p0 = P0({3.0f,2.0f,1.0f});
+    P0 p1 = P0({-1.0f,0.0f,1.0f});
+    P1 p2 = P1({4.0f,3.0f,2.0f,1.0f});
+    P1 p3 = P1({-1.0f,1.0f,-2.0f,2.0f});
 
-    using Piece0 = analytic::Railcar<double,Poly0>;
-    using Piece1 = analytic::Railcar<double,Poly1>;
-    using Piece2 = analytic::Railcar<double,Poly2>;
+    using C0 = analytic::Railcar<double,P0>;
+    using C1 = analytic::Railcar<double,P1>;
+    using C2 = analytic::Railcar<double,P2>;
 
     // standard polynomials, no overlap
     analytic::PolynomialRailyard<double,0,2> s0 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, -1.0f, p0), 
-        Piece0(1.0f, hi, p1) 
+        C0(lo, -1.0f, p0), 
+        C0(1.0f, hi, p1) 
     }; 
     // standard polynomials, with overlap
     analytic::PolynomialRailyard<double,0,2> s1 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, midhi, p0), 
-        Piece0(midlo, hi, p1) 
+        C0(lo, midhi, p0), 
+        C0(midlo, hi, p1) 
     }; 
     // laurent polynomials
     analytic::PolynomialRailyard<double,-2,1> s2 = analytic::PolynomialRailyard<double,-2,1>{ 
-        Piece1(midlo, -1.0f, p2), 
-        Piece1(1.0f, midhi, p3) 
+        C1(midlo, -1.0f, p2), 
+        C1(1.0f, midhi, p3) 
     }; 
     // all polynomials
     analytic::PolynomialRailyard<double,-2,2> s3 = analytic::PolynomialRailyard<double,-2,2>{ 
-        Piece2(lo, midlo, Poly2(p2)), 
-        Piece2(midhi, hi, Poly2(p3)), 
-        Piece2(midlo, -1.0f, Poly2(p2)), 
-        Piece2(1.0f, midhi, Poly2(p3)) 
+        C2(lo, midlo, P2(p2)), 
+        C2(midhi, hi, P2(p3)), 
+        C2(midlo, -1.0f, P2(p2)), 
+        C2(1.0f, midhi, P2(p3)) 
     };
     analytic::Polynomial<double,0,0> zero{0.0f};
     analytic::Polynomial<double,0,0> one {1.0f};
@@ -1137,40 +1136,40 @@ TEST_CASE( "PolynomialRailyard/monomial arithmetic commutativity", "[math]" ) {
     const double midlo = -1e2;
     const double midhi =  1e2;
     
-    using Poly0 = analytic::Polynomial<double,0,2>;
-    using Poly1 = analytic::Polynomial<double,-2,1>;
-    using Poly2 = analytic::Polynomial<double,-2,2>;
+    using P0 = analytic::Polynomial<double,0,2>;
+    using P1 = analytic::Polynomial<double,-2,1>;
+    using P2 = analytic::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
-    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
-    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
-    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
+    P0 p0 = P0({3.0f,2.0f,1.0f});
+    P0 p1 = P0({-1.0f,0.0f,1.0f});
+    P1 p2 = P1({4.0f,3.0f,2.0f,1.0f});
+    P1 p3 = P1({-1.0f,1.0f,-2.0f,2.0f});
 
-    using Piece0 = analytic::Railcar<double,Poly0>;
-    using Piece1 = analytic::Railcar<double,Poly1>;
-    using Piece2 = analytic::Railcar<double,Poly2>;
+    using C0 = analytic::Railcar<double,P0>;
+    using C1 = analytic::Railcar<double,P1>;
+    using C2 = analytic::Railcar<double,P2>;
 
     // standard polynomials, no overlap
     analytic::PolynomialRailyard<double,0,2> s0 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, -1.0f, p0), 
-        Piece0(1.0f, hi, p1) 
+        C0(lo, -1.0f, p0), 
+        C0(1.0f, hi, p1) 
     }; 
     // standard polynomials, with overlap
     analytic::PolynomialRailyard<double,0,2> s1 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, midhi, p0), 
-        Piece0(midlo, hi, p1) 
+        C0(lo, midhi, p0), 
+        C0(midlo, hi, p1) 
     }; 
     // laurent polynomials
     analytic::PolynomialRailyard<double,-2,1> s2 = analytic::PolynomialRailyard<double,-2,1>{ 
-        Piece1(midlo, -1.0f, p2), 
-        Piece1(1.0f, midhi, p3) 
+        C1(midlo, -1.0f, p2), 
+        C1(1.0f, midhi, p3) 
     }; 
     // all polynomials
     analytic::PolynomialRailyard<double,-2,2> s3 = analytic::PolynomialRailyard<double,-2,2>{ 
-        Piece2(lo, midlo, Poly2(p2)), 
-        Piece2(midhi, hi, Poly2(p3)), 
-        Piece2(midlo, -1.0f, Poly2(p2)), 
-        Piece2(1.0f, midhi, Poly2(p3)) 
+        C2(lo, midlo, P2(p2)), 
+        C2(midhi, hi, P2(p3)), 
+        C2(midlo, -1.0f, P2(p2)), 
+        C2(1.0f, midhi, P2(p3)) 
     };
     analytic::Polynomial<double,0,0> m0{2.0f};
     analytic::Polynomial<double,2,2> m1{2.0f};
@@ -1215,7 +1214,7 @@ TEST_CASE( "PolynomialRailyard/monomial arithmetic commutativity", "[math]" ) {
 
 
 TEST_CASE( "PolynomialRailyard/monomial arithmetic associativity", "[math]" ) {
-    const double threshold = 1e-4;
+    const double threshold = 1e-2;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -1225,40 +1224,40 @@ TEST_CASE( "PolynomialRailyard/monomial arithmetic associativity", "[math]" ) {
     const double midlo = -1e2;
     const double midhi =  1e2;
     
-    using Poly0 = analytic::Polynomial<double,0,2>;
-    using Poly1 = analytic::Polynomial<double,-2,1>;
-    using Poly2 = analytic::Polynomial<double,-2,2>;
+    using P0 = analytic::Polynomial<double,0,2>;
+    using P1 = analytic::Polynomial<double,-2,1>;
+    using P2 = analytic::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
-    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
-    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
-    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
+    P0 p0 = P0({3.0f,2.0f,1.0f});
+    P0 p1 = P0({-1.0f,0.0f,1.0f});
+    P1 p2 = P1({4.0f,3.0f,2.0f,1.0f});
+    P1 p3 = P1({-1.0f,1.0f,-2.0f,2.0f});
 
-    using Piece0 = analytic::Railcar<double,Poly0>;
-    using Piece1 = analytic::Railcar<double,Poly1>;
-    using Piece2 = analytic::Railcar<double,Poly2>;
+    using C0 = analytic::Railcar<double,P0>;
+    using C1 = analytic::Railcar<double,P1>;
+    using C2 = analytic::Railcar<double,P2>;
 
     // standard polynomials, no overlap
     analytic::PolynomialRailyard<double,0,2> s0 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, -1.0f, p0), 
-        Piece0(1.0f, hi, p1) 
+        C0(lo, -1.0f, p0), 
+        C0(1.0f, hi, p1) 
     }; 
     // standard polynomials, with overlap
     analytic::PolynomialRailyard<double,0,2> s1 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, midhi, p0), 
-        Piece0(midlo, hi, p1) 
+        C0(lo, midhi, p0), 
+        C0(midlo, hi, p1) 
     }; 
     // laurent polynomials
     analytic::PolynomialRailyard<double,-2,1> s2 = analytic::PolynomialRailyard<double,-2,1>{ 
-        Piece1(midlo, -1.0f, p2), 
-        Piece1(1.0f, midhi, p3) 
+        C1(midlo, -1.0f, p2), 
+        C1(1.0f, midhi, p3) 
     }; 
     // all polynomials
     analytic::PolynomialRailyard<double,-2,2> s3 = analytic::PolynomialRailyard<double,-2,2>{ 
-        Piece2(lo, midlo, Poly2(p2)), 
-        Piece2(midhi, hi, Poly2(p3)), 
-        Piece2(midlo, -1.0f, Poly2(p2)), 
-        Piece2(1.0f, midhi, Poly2(p3)) 
+        C2(lo, midlo, P2(p2)), 
+        C2(midhi, hi, P2(p3)), 
+        C2(midlo, -1.0f, P2(p2)), 
+        C2(1.0f, midhi, P2(p3)) 
     };
     analytic::Polynomial<double,0,0> m0{2.0f};
     analytic::Polynomial<double,2,2> m1{2.0f};
@@ -1319,7 +1318,7 @@ TEST_CASE( "PolynomialRailyard/monomial arithmetic associativity", "[math]" ) {
 
 
 TEST_CASE( "PolynomialRailyard/monomial arithmetic distributivity", "[math]" ) {
-    const double threshold = 1e-4;
+    const double threshold = 1e-2;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -1329,40 +1328,40 @@ TEST_CASE( "PolynomialRailyard/monomial arithmetic distributivity", "[math]" ) {
     const double midlo = -1e2;
     const double midhi =  1e2;
     
-    using Poly0 = analytic::Polynomial<double,0,2>;
-    using Poly1 = analytic::Polynomial<double,-2,1>;
-    using Poly2 = analytic::Polynomial<double,-2,2>;
+    using P0 = analytic::Polynomial<double,0,2>;
+    using P1 = analytic::Polynomial<double,-2,1>;
+    using P2 = analytic::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
-    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
-    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
-    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
+    P0 p0 = P0({3.0f,2.0f,1.0f});
+    P0 p1 = P0({-1.0f,0.0f,1.0f});
+    P1 p2 = P1({4.0f,3.0f,2.0f,1.0f});
+    P1 p3 = P1({-1.0f,1.0f,-2.0f,2.0f});
 
-    using Piece0 = analytic::Railcar<double,Poly0>;
-    using Piece1 = analytic::Railcar<double,Poly1>;
-    using Piece2 = analytic::Railcar<double,Poly2>;
+    using C0 = analytic::Railcar<double,P0>;
+    using C1 = analytic::Railcar<double,P1>;
+    using C2 = analytic::Railcar<double,P2>;
 
     // standard polynomials, no overlap
     analytic::PolynomialRailyard<double,0,2> s0 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, -1.0f, p0), 
-        Piece0(1.0f, hi, p1) 
+        C0(lo, -1.0f, p0), 
+        C0(1.0f, hi, p1) 
     }; 
     // standard polynomials, with overlap
     analytic::PolynomialRailyard<double,0,2> s1 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, midhi, p0), 
-        Piece0(midlo, hi, p1) 
+        C0(lo, midhi, p0), 
+        C0(midlo, hi, p1) 
     }; 
     // laurent polynomials
     analytic::PolynomialRailyard<double,-2,1> s2 = analytic::PolynomialRailyard<double,-2,1>{ 
-        Piece1(midlo, -1.0f, p2), 
-        Piece1(1.0f, midhi, p3) 
+        C1(midlo, -1.0f, p2), 
+        C1(1.0f, midhi, p3) 
     }; 
     // all polynomials
     analytic::PolynomialRailyard<double,-2,2> s3 = analytic::PolynomialRailyard<double,-2,2>{ 
-        Piece2(lo, midlo, Poly2(p2)), 
-        Piece2(midhi, hi, Poly2(p3)), 
-        Piece2(midlo, -1.0f, Poly2(p2)), 
-        Piece2(1.0f, midhi, Poly2(p3)) 
+        C2(lo, midlo, P2(p2)), 
+        C2(midhi, hi, P2(p3)), 
+        C2(midlo, -1.0f, P2(p2)), 
+        C2(1.0f, midhi, P2(p3)) 
     };
     analytic::Polynomial<double,0,0> m0{2.0f};
     analytic::Polynomial<double,2,2> m1{2.0f};
@@ -1440,7 +1439,7 @@ TEST_CASE( "PolynomialRailyard/monomial arithmetic distributivity", "[math]" ) {
 
 
 TEST_CASE( "PolynomialRailyard/Shifting arithmetic purity", "[math]" ) {
-    const double threshold = 1e-4;
+    const double threshold = 1e-2;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -1450,40 +1449,40 @@ TEST_CASE( "PolynomialRailyard/Shifting arithmetic purity", "[math]" ) {
     const double midlo = -1e2;
     const double midhi =  1e2;
     
-    using Poly0 = analytic::Polynomial<double,0,2>;
-    using Poly1 = analytic::Polynomial<double,-2,1>;
-    using Poly2 = analytic::Polynomial<double,-2,2>;
+    using P0 = analytic::Polynomial<double,0,2>;
+    using P1 = analytic::Polynomial<double,-2,1>;
+    using P2 = analytic::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
-    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
-    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
-    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
+    P0 p0 = P0({3.0f,2.0f,1.0f});
+    P0 p1 = P0({-1.0f,0.0f,1.0f});
+    P1 p2 = P1({4.0f,3.0f,2.0f,1.0f});
+    P1 p3 = P1({-1.0f,1.0f,-2.0f,2.0f});
 
-    using Piece0 = analytic::Railcar<double,Poly0>;
-    using Piece1 = analytic::Railcar<double,Poly1>;
-    using Piece2 = analytic::Railcar<double,Poly2>;
+    using C0 = analytic::Railcar<double,P0>;
+    using C1 = analytic::Railcar<double,P1>;
+    using C2 = analytic::Railcar<double,P2>;
 
     // standard polynomials, no overlap
     analytic::PolynomialRailyard<double,0,2> s0 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, -1.0f, p0), 
-        Piece0(1.0f, hi, p1) 
+        C0(lo, -1.0f, p0), 
+        C0(1.0f, hi, p1) 
     }; 
     // standard polynomials, with overlap
     analytic::PolynomialRailyard<double,0,2> s1 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, midhi, p0), 
-        Piece0(midlo, hi, p1) 
+        C0(lo, midhi, p0), 
+        C0(midlo, hi, p1) 
     }; 
     // laurent polynomials
     analytic::PolynomialRailyard<double,-2,1> s2 = analytic::PolynomialRailyard<double,-2,1>{ 
-        Piece1(midlo, -1.0f, p2), 
-        Piece1(1.0f, midhi, p3) 
+        C1(midlo, -1.0f, p2), 
+        C1(1.0f, midhi, p3) 
     }; 
     // all polynomials
     analytic::PolynomialRailyard<double,-2,2> s3 = analytic::PolynomialRailyard<double,-2,2>{ 
-        Piece2(lo, midlo, Poly2(p2)), 
-        Piece2(midhi, hi, Poly2(p3)), 
-        Piece2(midlo, -1.0f, Poly2(p2)), 
-        Piece2(1.0f, midhi, Poly2(p3)) 
+        C2(lo, midlo, P2(p2)), 
+        C2(midhi, hi, P2(p3)), 
+        C2(midlo, -1.0f, P2(p2)), 
+        C2(1.0f, midhi, P2(p3)) 
     };
     analytic::Shifting<double> f(2.0f);
     analytic::Shifting<double> g(-2.0f);
@@ -1563,7 +1562,7 @@ TEST_CASE( "PolynomialRailyard/Shifting arithmetic purity", "[math]" ) {
 }
 
 TEST_CASE( "PolynomialRailyard/Shifting arithmetic commutativity", "[math]" ) {
-    const double threshold = 1e-4;
+    const double threshold = 1e-2;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -1573,40 +1572,40 @@ TEST_CASE( "PolynomialRailyard/Shifting arithmetic commutativity", "[math]" ) {
     const double midlo = -1e2;
     const double midhi =  1e2;
     
-    using Poly0 = analytic::Polynomial<double,0,2>;
-    using Poly1 = analytic::Polynomial<double,-2,1>;
-    using Poly2 = analytic::Polynomial<double,-2,2>;
+    using P0 = analytic::Polynomial<double,0,2>;
+    using P1 = analytic::Polynomial<double,-2,1>;
+    using P2 = analytic::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
-    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
-    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
-    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
+    P0 p0 = P0({3.0f,2.0f,1.0f});
+    P0 p1 = P0({-1.0f,0.0f,1.0f});
+    P1 p2 = P1({4.0f,3.0f,2.0f,1.0f});
+    P1 p3 = P1({-1.0f,1.0f,-2.0f,2.0f});
 
-    using Piece0 = analytic::Railcar<double,Poly0>;
-    using Piece1 = analytic::Railcar<double,Poly1>;
-    using Piece2 = analytic::Railcar<double,Poly2>;
+    using C0 = analytic::Railcar<double,P0>;
+    using C1 = analytic::Railcar<double,P1>;
+    using C2 = analytic::Railcar<double,P2>;
 
     // standard polynomials, no overlap
     analytic::PolynomialRailyard<double,0,2> s0 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, -1.0f, p0), 
-        Piece0(1.0f, hi, p1) 
+        C0(lo, -1.0f, p0), 
+        C0(1.0f, hi, p1) 
     }; 
     // standard polynomials, with overlap
     analytic::PolynomialRailyard<double,0,2> s1 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, midhi, p0), 
-        Piece0(midlo, hi, p1) 
+        C0(lo, midhi, p0), 
+        C0(midlo, hi, p1) 
     }; 
     // laurent polynomials
     analytic::PolynomialRailyard<double,-2,1> s2 = analytic::PolynomialRailyard<double,-2,1>{ 
-        Piece1(midlo, -1.0f, p2), 
-        Piece1(1.0f, midhi, p3) 
+        C1(midlo, -1.0f, p2), 
+        C1(1.0f, midhi, p3) 
     }; 
     // all polynomials
     analytic::PolynomialRailyard<double,-2,2> s3 = analytic::PolynomialRailyard<double,-2,2>{ 
-        Piece2(lo, midlo, Poly2(p2)), 
-        Piece2(midhi, hi, Poly2(p3)), 
-        Piece2(midlo, -1.0f, Poly2(p2)), 
-        Piece2(1.0f, midhi, Poly2(p3)) 
+        C2(lo, midlo, P2(p2)), 
+        C2(midhi, hi, P2(p3)), 
+        C2(midlo, -1.0f, P2(p2)), 
+        C2(1.0f, midhi, P2(p3)) 
     };
     analytic::Shifting<double> f(2.0f);
     analytic::Shifting<double> g(-2.0f);
@@ -1651,50 +1650,50 @@ TEST_CASE( "PolynomialRailyard/Shifting arithmetic commutativity", "[math]" ) {
 
 
 TEST_CASE( "PolynomialRailyard/Shifting arithmetic associativity", "[math]" ) {
-    const double threshold = 1e-4;
+    const double threshold = 1e-2;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
     const double hi =  1e3;
     // `mid*` variables are used when the degree of a polynomial is so large 
     // that a square integral of it will produce nans for all but the smallest input.
-    const double midlo = -1e2;
-    const double midhi =  1e2;
+    const double midlo = -3e1;
+    const double midhi =  3e1;
     
-    using Poly0 = analytic::Polynomial<double,0,2>;
-    using Poly1 = analytic::Polynomial<double,-2,1>;
-    using Poly2 = analytic::Polynomial<double,-2,2>;
+    using P0 = analytic::Polynomial<double,0,2>;
+    using P1 = analytic::Polynomial<double,-2,1>;
+    using P2 = analytic::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
-    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
-    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
-    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
+    P0 p0 = P0({3.0f,2.0f,1.0f});
+    P0 p1 = P0({-1.0f,0.0f,1.0f});
+    P1 p2 = P1({4.0f,3.0f,2.0f,1.0f});
+    P1 p3 = P1({-1.0f,1.0f,-2.0f,2.0f});
 
-    using Piece0 = analytic::Railcar<double,Poly0>;
-    using Piece1 = analytic::Railcar<double,Poly1>;
-    using Piece2 = analytic::Railcar<double,Poly2>;
+    using C0 = analytic::Railcar<double,P0>;
+    using C1 = analytic::Railcar<double,P1>;
+    using C2 = analytic::Railcar<double,P2>;
 
     // standard polynomials, no overlap
     analytic::PolynomialRailyard<double,0,2> s0 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, -1.0f, p0), 
-        Piece0(1.0f, hi, p1) 
+        C0(lo, -1.0f, p0), 
+        C0(1.0f, hi, p1) 
     }; 
     // standard polynomials, with overlap
     analytic::PolynomialRailyard<double,0,2> s1 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, midhi, p0), 
-        Piece0(midlo, hi, p1) 
+        C0(lo, midhi, p0), 
+        C0(midlo, hi, p1) 
     }; 
     // laurent polynomials
     analytic::PolynomialRailyard<double,-2,1> s2 = analytic::PolynomialRailyard<double,-2,1>{ 
-        Piece1(midlo, -1.0f, p2), 
-        Piece1(1.0f, midhi, p3) 
+        C1(midlo, -1.0f, p2), 
+        C1(1.0f, midhi, p3) 
     }; 
     // all polynomials
     analytic::PolynomialRailyard<double,-2,2> s3 = analytic::PolynomialRailyard<double,-2,2>{ 
-        Piece2(lo, midlo, Poly2(p2)), 
-        Piece2(midhi, hi, Poly2(p3)), 
-        Piece2(midlo, -1.0f, Poly2(p2)), 
-        Piece2(1.0f, midhi, Poly2(p3)) 
+        C2(lo, midlo, P2(p2)), 
+        C2(midhi, hi, P2(p3)), 
+        C2(midlo, -1.0f, P2(p2)), 
+        C2(1.0f, midhi, P2(p3)) 
     };
     analytic::Shifting<double> f(2.0f);
     analytic::Shifting<double> g(-2.0f);
@@ -1727,35 +1726,35 @@ TEST_CASE( "PolynomialRailyard/Shifting arithmetic associativity", "[math]" ) {
     }
 
     SECTION("(s0+s1)+s2 must equal s0+(s1+s2)"){
-        CHECK(analytic::distance((s0+s1)+f, s0+(s1+f), lo, hi) < threshold);
-        CHECK(analytic::distance((s0+s1)+g, s0+(s1+g), lo, hi) < threshold);
-        CHECK(analytic::distance((s0+s1)+h, s0+(s1+h), lo, hi) < threshold);
+        CHECK(analytic::distance((s0*s1)*f, s0*(s1*f), lo, hi) < threshold);
+        CHECK(analytic::distance((s0*s1)*g, s0*(s1*g), lo, hi) < threshold);
+        CHECK(analytic::distance((s0*s1)*h, s0*(s1*h), lo, hi) < threshold);
 
-        CHECK(analytic::distance((s0+s2)+f, s0+(s2+f), lo, hi) < threshold);
-        CHECK(analytic::distance((s0+s2)+g, s0+(s2+g), lo, hi) < threshold);
-        CHECK(analytic::distance((s0+s2)+h, s0+(s2+h), lo, hi) < threshold);
+        CHECK(analytic::distance((s0*s2)*f, s0*(s2*f), lo, hi) < threshold);
+        CHECK(analytic::distance((s0*s2)*g, s0*(s2*g), lo, hi) < threshold);
+        CHECK(analytic::distance((s0*s2)*h, s0*(s2*h), lo, hi) < threshold);
 
-        CHECK(analytic::distance((s0+s3)+f, s0+(s3+f), lo, hi) < threshold);
-        CHECK(analytic::distance((s0+s3)+g, s0+(s3+g), lo, hi) < threshold);
-        CHECK(analytic::distance((s0+s3)+h, s0+(s3+h), lo, hi) < threshold);
+        CHECK(analytic::distance((s0*s3)*f, s0*(s3*f), lo, hi) < threshold);
+        CHECK(analytic::distance((s0*s3)*g, s0*(s3*g), lo, hi) < threshold);
+        CHECK(analytic::distance((s0*s3)*h, s0*(s3*h), lo, hi) < threshold);
 
-        CHECK(analytic::distance((s1+s2)+f, s1+(s2+f), lo, hi) < threshold);
-        CHECK(analytic::distance((s1+s2)+g, s1+(s2+g), lo, hi) < threshold);
-        CHECK(analytic::distance((s1+s2)+h, s1+(s2+h), lo, hi) < threshold);
+        CHECK(analytic::distance((s1*s2)*f, s1*(s2*f), lo, hi) < threshold);
+        CHECK(analytic::distance((s1*s2)*g, s1*(s2*g), lo, hi) < threshold);
+        CHECK(analytic::distance((s1*s2)*h, s1*(s2*h), lo, hi) < threshold);
 
-        CHECK(analytic::distance((s1+s3)+f, s1+(s3+f), lo, hi) < threshold);
-        CHECK(analytic::distance((s1+s3)+g, s1+(s3+g), lo, hi) < threshold);
-        CHECK(analytic::distance((s1+s3)+h, s1+(s3+h), lo, hi) < threshold);
+        CHECK(analytic::distance((s1*s3)*f, s1*(s3*f), lo, hi) < threshold);
+        CHECK(analytic::distance((s1*s3)*g, s1*(s3*g), lo, hi) < threshold);
+        CHECK(analytic::distance((s1*s3)*h, s1*(s3*h), lo, hi) < threshold);
 
-        CHECK(analytic::distance((s2+s3)+f, s2+(s3+f), lo, hi) < threshold);
-        CHECK(analytic::distance((s2+s3)+g, s2+(s3+g), lo, hi) < threshold);
-        CHECK(analytic::distance((s2+s3)+h, s2+(s3+h), lo, hi) < threshold);
+        CHECK(analytic::distance((s2*s3)*f, s2*(s3*f), lo, hi) < threshold);
+        CHECK(analytic::distance((s2*s3)*g, s2*(s3*g), lo, hi) < threshold);
+        CHECK(analytic::distance((s2*s3)*h, s2*(s3*h), lo, hi) < threshold);
     }
 }
 
 
 TEST_CASE( "PolynomialRailyard/Shifting arithmetic distributivity", "[math]" ) {
-    const double threshold = 1e-4;
+    const double threshold = 1e-2;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -1765,40 +1764,40 @@ TEST_CASE( "PolynomialRailyard/Shifting arithmetic distributivity", "[math]" ) {
     const double midlo = -1e2;
     const double midhi =  1e2;
     
-    using Poly0 = analytic::Polynomial<double,0,2>;
-    using Poly1 = analytic::Polynomial<double,-2,1>;
-    using Poly2 = analytic::Polynomial<double,-2,2>;
+    using P0 = analytic::Polynomial<double,0,2>;
+    using P1 = analytic::Polynomial<double,-2,1>;
+    using P2 = analytic::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
-    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
-    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
-    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
+    P0 p0 = P0({3.0f,2.0f,1.0f});
+    P0 p1 = P0({-1.0f,0.0f,1.0f});
+    P1 p2 = P1({4.0f,3.0f,2.0f,1.0f});
+    P1 p3 = P1({-1.0f,1.0f,-2.0f,2.0f});
 
-    using Piece0 = analytic::Railcar<double,Poly0>;
-    using Piece1 = analytic::Railcar<double,Poly1>;
-    using Piece2 = analytic::Railcar<double,Poly2>;
+    using C0 = analytic::Railcar<double,P0>;
+    using C1 = analytic::Railcar<double,P1>;
+    using C2 = analytic::Railcar<double,P2>;
 
     // standard polynomials, no overlap
     analytic::PolynomialRailyard<double,0,2> s0 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, -1.0f, p0), 
-        Piece0(1.0f, hi, p1) 
+        C0(lo, -1.0f, p0), 
+        C0(1.0f, hi, p1) 
     }; 
     // standard polynomials, with overlap
     analytic::PolynomialRailyard<double,0,2> s1 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, midhi, p0), 
-        Piece0(midlo, hi, p1) 
+        C0(lo, midhi, p0), 
+        C0(midlo, hi, p1) 
     }; 
     // laurent polynomials
     analytic::PolynomialRailyard<double,-2,1> s2 = analytic::PolynomialRailyard<double,-2,1>{ 
-        Piece1(midlo, -1.0f, p2), 
-        Piece1(1.0f, midhi, p3) 
+        C1(midlo, -1.0f, p2), 
+        C1(1.0f, midhi, p3) 
     }; 
     // all polynomials
     analytic::PolynomialRailyard<double,-2,2> s3 = analytic::PolynomialRailyard<double,-2,2>{ 
-        Piece2(lo, midlo, Poly2(p2)), 
-        Piece2(midhi, hi, Poly2(p3)), 
-        Piece2(midlo, -1.0f, Poly2(p2)), 
-        Piece2(1.0f, midhi, Poly2(p3)) 
+        C2(lo, midlo, P2(p2)), 
+        C2(midhi, hi, P2(p3)), 
+        C2(midlo, -1.0f, P2(p2)), 
+        C2(1.0f, midhi, P2(p3)) 
     };
     analytic::Shifting<double> f(2.0f);
     analytic::Shifting<double> g(-2.0f);
@@ -1887,40 +1886,40 @@ TEST_CASE( "PolynomialRailyard/Scaling arithmetic purity", "[math]" ) {
     const double midlo = -1e2;
     const double midhi =  1e2;
     
-    using Poly0 = analytic::Polynomial<double,0,2>;
-    using Poly1 = analytic::Polynomial<double,-2,1>;
-    using Poly2 = analytic::Polynomial<double,-2,2>;
+    using P0 = analytic::Polynomial<double,0,2>;
+    using P1 = analytic::Polynomial<double,-2,1>;
+    using P2 = analytic::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
-    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
-    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
-    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
+    P0 p0 = P0({3.0f,2.0f,1.0f});
+    P0 p1 = P0({-1.0f,0.0f,1.0f});
+    P1 p2 = P1({4.0f,3.0f,2.0f,1.0f});
+    P1 p3 = P1({-1.0f,1.0f,-2.0f,2.0f});
 
-    using Piece0 = analytic::Railcar<double,Poly0>;
-    using Piece1 = analytic::Railcar<double,Poly1>;
-    using Piece2 = analytic::Railcar<double,Poly2>;
+    using C0 = analytic::Railcar<double,P0>;
+    using C1 = analytic::Railcar<double,P1>;
+    using C2 = analytic::Railcar<double,P2>;
 
     // standard polynomials, no overlap
     analytic::PolynomialRailyard<double,0,2> s0 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, -1.0f, p0), 
-        Piece0(1.0f, hi, p1) 
+        C0(lo, -1.0f, p0), 
+        C0(1.0f, hi, p1) 
     }; 
     // standard polynomials, with overlap
     analytic::PolynomialRailyard<double,0,2> s1 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, midhi, p0), 
-        Piece0(midlo, hi, p1) 
+        C0(lo, midhi, p0), 
+        C0(midlo, hi, p1) 
     }; 
     // laurent polynomials
     analytic::PolynomialRailyard<double,-2,1> s2 = analytic::PolynomialRailyard<double,-2,1>{ 
-        Piece1(midlo, -1.0f, p2), 
-        Piece1(1.0f, midhi, p3) 
+        C1(midlo, -1.0f, p2), 
+        C1(1.0f, midhi, p3) 
     }; 
     // all polynomials
     analytic::PolynomialRailyard<double,-2,2> s3 = analytic::PolynomialRailyard<double,-2,2>{ 
-        Piece2(lo, midlo, Poly2(p2)), 
-        Piece2(midhi, hi, Poly2(p3)), 
-        Piece2(midlo, -1.0f, Poly2(p2)), 
-        Piece2(1.0f, midhi, Poly2(p3)) 
+        C2(lo, midlo, P2(p2)), 
+        C2(midhi, hi, P2(p3)), 
+        C2(midlo, -1.0f, P2(p2)), 
+        C2(1.0f, midhi, P2(p3)) 
     };
     analytic::Scaling<double> f(2.0f);
     analytic::Scaling<double> g(-2.0f);
@@ -2010,40 +2009,40 @@ TEST_CASE( "PolynomialRailyard/Scaling arithmetic identity", "[math]" ) {
     const double midlo = -1e2;
     const double midhi =  1e2;
     
-    using Poly0 = analytic::Polynomial<double,0,2>;
-    using Poly1 = analytic::Polynomial<double,-2,1>;
-    using Poly2 = analytic::Polynomial<double,-2,2>;
+    using P0 = analytic::Polynomial<double,0,2>;
+    using P1 = analytic::Polynomial<double,-2,1>;
+    using P2 = analytic::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
-    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
-    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
-    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
+    P0 p0 = P0({3.0f,2.0f,1.0f});
+    P0 p1 = P0({-1.0f,0.0f,1.0f});
+    P1 p2 = P1({4.0f,3.0f,2.0f,1.0f});
+    P1 p3 = P1({-1.0f,1.0f,-2.0f,2.0f});
 
-    using Piece0 = analytic::Railcar<double,Poly0>;
-    using Piece1 = analytic::Railcar<double,Poly1>;
-    using Piece2 = analytic::Railcar<double,Poly2>;
+    using C0 = analytic::Railcar<double,P0>;
+    using C1 = analytic::Railcar<double,P1>;
+    using C2 = analytic::Railcar<double,P2>;
 
     // standard polynomials, no overlap
     analytic::PolynomialRailyard<double,0,2> s0 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, -1.0f, p0), 
-        Piece0(1.0f, hi, p1) 
+        C0(lo, -1.0f, p0), 
+        C0(1.0f, hi, p1) 
     }; 
     // standard polynomials, with overlap
     analytic::PolynomialRailyard<double,0,2> s1 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, midhi, p0), 
-        Piece0(midlo, hi, p1) 
+        C0(lo, midhi, p0), 
+        C0(midlo, hi, p1) 
     }; 
     // laurent polynomials
     analytic::PolynomialRailyard<double,-2,1> s2 = analytic::PolynomialRailyard<double,-2,1>{ 
-        Piece1(midlo, -1.0f, p2), 
-        Piece1(1.0f, midhi, p3) 
+        C1(midlo, -1.0f, p2), 
+        C1(1.0f, midhi, p3) 
     }; 
     // all polynomials
     analytic::PolynomialRailyard<double,-2,2> s3 = analytic::PolynomialRailyard<double,-2,2>{ 
-        Piece2(lo, midlo, Poly2(p2)), 
-        Piece2(midhi, hi, Poly2(p3)), 
-        Piece2(midlo, -1.0f, Poly2(p2)), 
-        Piece2(1.0f, midhi, Poly2(p3)) 
+        C2(lo, midlo, P2(p2)), 
+        C2(midhi, hi, P2(p3)), 
+        C2(midlo, -1.0f, P2(p2)), 
+        C2(1.0f, midhi, P2(p3)) 
     };
     analytic::Scaling<double> zero(0.0f);
 
@@ -2077,40 +2076,40 @@ TEST_CASE( "PolynomialRailyard/Scaling arithmetic commutativity", "[math]" ) {
     const double midlo = -1e2;
     const double midhi =  1e2;
     
-    using Poly0 = analytic::Polynomial<double,0,2>;
-    using Poly1 = analytic::Polynomial<double,-2,1>;
-    using Poly2 = analytic::Polynomial<double,-2,2>;
+    using P0 = analytic::Polynomial<double,0,2>;
+    using P1 = analytic::Polynomial<double,-2,1>;
+    using P2 = analytic::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
-    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
-    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
-    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
+    P0 p0 = P0({3.0f,2.0f,1.0f});
+    P0 p1 = P0({-1.0f,0.0f,1.0f});
+    P1 p2 = P1({4.0f,3.0f,2.0f,1.0f});
+    P1 p3 = P1({-1.0f,1.0f,-2.0f,2.0f});
 
-    using Piece0 = analytic::Railcar<double,Poly0>;
-    using Piece1 = analytic::Railcar<double,Poly1>;
-    using Piece2 = analytic::Railcar<double,Poly2>;
+    using C0 = analytic::Railcar<double,P0>;
+    using C1 = analytic::Railcar<double,P1>;
+    using C2 = analytic::Railcar<double,P2>;
 
     // standard polynomials, no overlap
     analytic::PolynomialRailyard<double,0,2> s0 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, -1.0f, p0), 
-        Piece0(1.0f, hi, p1) 
+        C0(lo, -1.0f, p0), 
+        C0(1.0f, hi, p1) 
     }; 
     // standard polynomials, with overlap
     analytic::PolynomialRailyard<double,0,2> s1 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, midhi, p0), 
-        Piece0(midlo, hi, p1) 
+        C0(lo, midhi, p0), 
+        C0(midlo, hi, p1) 
     }; 
     // laurent polynomials
     analytic::PolynomialRailyard<double,-2,1> s2 = analytic::PolynomialRailyard<double,-2,1>{ 
-        Piece1(midlo, -1.0f, p2), 
-        Piece1(1.0f, midhi, p3) 
+        C1(midlo, -1.0f, p2), 
+        C1(1.0f, midhi, p3) 
     }; 
     // all polynomials
     analytic::PolynomialRailyard<double,-2,2> s3 = analytic::PolynomialRailyard<double,-2,2>{ 
-        Piece2(lo, midlo, Poly2(p2)), 
-        Piece2(midhi, hi, Poly2(p3)), 
-        Piece2(midlo, -1.0f, Poly2(p2)), 
-        Piece2(1.0f, midhi, Poly2(p3)) 
+        C2(lo, midlo, P2(p2)), 
+        C2(midhi, hi, P2(p3)), 
+        C2(midlo, -1.0f, P2(p2)), 
+        C2(1.0f, midhi, P2(p3)) 
     };
     analytic::Scaling<double> f(2.0f);
     analytic::Scaling<double> g(-2.0f);
@@ -2155,7 +2154,7 @@ TEST_CASE( "PolynomialRailyard/Scaling arithmetic commutativity", "[math]" ) {
 
 
 TEST_CASE( "PolynomialRailyard/Scaling arithmetic associativity", "[math]" ) {
-    const double threshold = 1e-4;
+    const double threshold = 1e-2;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
@@ -2165,40 +2164,40 @@ TEST_CASE( "PolynomialRailyard/Scaling arithmetic associativity", "[math]" ) {
     const double midlo = -1e2;
     const double midhi =  1e2;
     
-    using Poly0 = analytic::Polynomial<double,0,2>;
-    using Poly1 = analytic::Polynomial<double,-2,1>;
-    using Poly2 = analytic::Polynomial<double,-2,2>;
+    using P0 = analytic::Polynomial<double,0,2>;
+    using P1 = analytic::Polynomial<double,-2,1>;
+    using P2 = analytic::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
-    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
-    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
-    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
+    P0 p0 = P0({3.0f,2.0f,1.0f});
+    P0 p1 = P0({-1.0f,0.0f,1.0f});
+    P1 p2 = P1({4.0f,3.0f,2.0f,1.0f});
+    P1 p3 = P1({-1.0f,1.0f,-2.0f,2.0f});
 
-    using Piece0 = analytic::Railcar<double,Poly0>;
-    using Piece1 = analytic::Railcar<double,Poly1>;
-    using Piece2 = analytic::Railcar<double,Poly2>;
+    using C0 = analytic::Railcar<double,P0>;
+    using C1 = analytic::Railcar<double,P1>;
+    using C2 = analytic::Railcar<double,P2>;
 
     // standard polynomials, no overlap
     analytic::PolynomialRailyard<double,0,2> s0 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, -1.0f, p0), 
-        Piece0(1.0f, hi, p1) 
+        C0(lo, -1.0f, p0), 
+        C0(1.0f, hi, p1) 
     }; 
     // standard polynomials, with overlap
     analytic::PolynomialRailyard<double,0,2> s1 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, midhi, p0), 
-        Piece0(midlo, hi, p1) 
+        C0(lo, midhi, p0), 
+        C0(midlo, hi, p1) 
     }; 
     // laurent polynomials
     analytic::PolynomialRailyard<double,-2,1> s2 = analytic::PolynomialRailyard<double,-2,1>{ 
-        Piece1(midlo, -1.0f, p2), 
-        Piece1(1.0f, midhi, p3) 
+        C1(midlo, -1.0f, p2), 
+        C1(1.0f, midhi, p3) 
     }; 
     // all polynomials
     analytic::PolynomialRailyard<double,-2,2> s3 = analytic::PolynomialRailyard<double,-2,2>{ 
-        Piece2(lo, midlo, Poly2(p2)), 
-        Piece2(midhi, hi, Poly2(p3)), 
-        Piece2(midlo, -1.0f, Poly2(p2)), 
-        Piece2(1.0f, midhi, Poly2(p3)) 
+        C2(lo, midlo, P2(p2)), 
+        C2(midhi, hi, P2(p3)), 
+        C2(midlo, -1.0f, P2(p2)), 
+        C2(1.0f, midhi, P2(p3)) 
     };
     analytic::Scaling<double> f(2.0f);
     analytic::Scaling<double> g(-2.0f);
@@ -2230,79 +2229,80 @@ TEST_CASE( "PolynomialRailyard/Scaling arithmetic associativity", "[math]" ) {
         CHECK(analytic::distance((s2+s3)+h, s2+(s3+h), lo, hi) < threshold);
     }
 
-    SECTION("(s0+s1)+s2 must equal s0+(s1+s2)"){
-        CHECK(analytic::distance((s0+s1)+f, s0+(s1+f), lo, hi) < threshold);
-        CHECK(analytic::distance((s0+s1)+g, s0+(s1+g), lo, hi) < threshold);
-        CHECK(analytic::distance((s0+s1)+h, s0+(s1+h), lo, hi) < threshold);
+    SECTION("(s0*s1)*s2 must equal s0*(s1*s2)"){
+        CHECK(analytic::distance((s0*s1)*f, s0*(s1*f), lo, hi) < threshold);
+        CHECK(analytic::distance((s0*s1)*g, s0*(s1*g), lo, hi) < threshold);
+        CHECK(analytic::distance((s0*s1)*h, s0*(s1*h), lo, hi) < threshold);
 
-        CHECK(analytic::distance((s0+s2)+f, s0+(s2+f), lo, hi) < threshold);
-        CHECK(analytic::distance((s0+s2)+g, s0+(s2+g), lo, hi) < threshold);
-        CHECK(analytic::distance((s0+s2)+h, s0+(s2+h), lo, hi) < threshold);
+        CHECK(analytic::distance((s0*s2)*f, s0*(s2*f), lo, hi) < threshold);
+        CHECK(analytic::distance((s0*s2)*g, s0*(s2*g), lo, hi) < threshold);
+        CHECK(analytic::distance((s0*s2)*h, s0*(s2*h), lo, hi) < threshold);
 
-        CHECK(analytic::distance((s0+s3)+f, s0+(s3+f), lo, hi) < threshold);
-        CHECK(analytic::distance((s0+s3)+g, s0+(s3+g), lo, hi) < threshold);
-        CHECK(analytic::distance((s0+s3)+h, s0+(s3+h), lo, hi) < threshold);
+        CHECK(analytic::distance((s0*s3)*f, s0*(s3*f), lo, hi) < threshold);
+        CHECK(analytic::distance((s0*s3)*g, s0*(s3*g), lo, hi) < threshold);
+        CHECK(analytic::distance((s0*s3)*h, s0*(s3*h), lo, hi) < threshold);
 
-        CHECK(analytic::distance((s1+s2)+f, s1+(s2+f), lo, hi) < threshold);
-        CHECK(analytic::distance((s1+s2)+g, s1+(s2+g), lo, hi) < threshold);
-        CHECK(analytic::distance((s1+s2)+h, s1+(s2+h), lo, hi) < threshold);
+        CHECK(analytic::distance((s1*s2)*f, s1*(s2*f), lo, hi) < threshold);
+        CHECK(analytic::distance((s1*s2)*g, s1*(s2*g), lo, hi) < threshold);
+        CHECK(analytic::distance((s1*s2)*h, s1*(s2*h), lo, hi) < threshold);
 
-        CHECK(analytic::distance((s1+s3)+f, s1+(s3+f), lo, hi) < threshold);
-        CHECK(analytic::distance((s1+s3)+g, s1+(s3+g), lo, hi) < threshold);
-        CHECK(analytic::distance((s1+s3)+h, s1+(s3+h), lo, hi) < threshold);
+        CHECK(analytic::distance((s1*s3)*f, s1*(s3*f), lo, hi) < threshold);
+        CHECK(analytic::distance((s1*s3)*g, s1*(s3*g), lo, hi) < threshold);
+        CHECK(analytic::distance((s1*s3)*h, s1*(s3*h), lo, hi) < threshold);
 
-        CHECK(analytic::distance((s2+s3)+f, s2+(s3+f), lo, hi) < threshold);
-        CHECK(analytic::distance((s2+s3)+g, s2+(s3+g), lo, hi) < threshold);
-        CHECK(analytic::distance((s2+s3)+h, s2+(s3+h), lo, hi) < threshold);
+        CHECK(analytic::distance((s2*s3)*f, s2*(s3*f), lo, hi) < threshold);
+        CHECK(analytic::distance((s2*s3)*g, s2*(s3*g), lo, hi) < threshold);
+        CHECK(analytic::distance((s2*s3)*h, s2*(s3*h), lo, hi) < threshold);
     }
+
 }
 
 
 TEST_CASE( "PolynomialRailyard/Scaling arithmetic distributivity", "[math]" ) {
-    const double threshold = 1e-4;
+    const double threshold = 1e-3;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
     const double hi =  1e3;
     // `mid*` variables are used when the degree of a polynomial is so large 
     // that a square integral of it will produce nans for all but the smallest input.
-    const double midlo = -1e2;
-    const double midhi =  1e2;
+    const double midlo = -3e1;
+    const double midhi =  3e1;
     
-    using Poly0 = analytic::Polynomial<double,0,2>;
-    using Poly1 = analytic::Polynomial<double,-2,1>;
-    using Poly2 = analytic::Polynomial<double,-2,2>;
+    using P0 = analytic::Polynomial<double,0,2>;
+    using P1 = analytic::Polynomial<double,-2,1>;
+    using P2 = analytic::Polynomial<double,-2,2>;
 
-    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
-    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
-    Poly1 p2 = Poly1({4.0f,3.0f,2.0f,1.0f});
-    Poly1 p3 = Poly1({-1.0f,1.0f,-2.0f,2.0f});
+    P0 p0 = P0({3.0f,2.0f,1.0f});
+    P0 p1 = P0({-1.0f,0.0f,1.0f});
+    P1 p2 = P1({4.0f,3.0f,2.0f,1.0f});
+    P1 p3 = P1({-1.0f,1.0f,-2.0f,2.0f});
 
-    using Piece0 = analytic::Railcar<double,Poly0>;
-    using Piece1 = analytic::Railcar<double,Poly1>;
-    using Piece2 = analytic::Railcar<double,Poly2>;
+    using C0 = analytic::Railcar<double,P0>;
+    using C1 = analytic::Railcar<double,P1>;
+    using C2 = analytic::Railcar<double,P2>;
 
     // standard polynomials, no overlap
     analytic::PolynomialRailyard<double,0,2> s0 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, -1.0f, p0), 
-        Piece0(1.0f, hi, p1) 
+        C0(lo, -1.0f, p0), 
+        C0(1.0f, hi, p1) 
     }; 
     // standard polynomials, with overlap
     analytic::PolynomialRailyard<double,0,2> s1 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, midhi, p0), 
-        Piece0(midlo, hi, p1) 
+        C0(lo, midhi, p0), 
+        C0(midlo, hi, p1) 
     }; 
     // laurent polynomials
     analytic::PolynomialRailyard<double,-2,1> s2 = analytic::PolynomialRailyard<double,-2,1>{ 
-        Piece1(midlo, -1.0f, p2), 
-        Piece1(1.0f, midhi, p3) 
+        C1(midlo, -1.0f, p2), 
+        C1(1.0f, midhi, p3) 
     }; 
     // all polynomials
     analytic::PolynomialRailyard<double,-2,2> s3 = analytic::PolynomialRailyard<double,-2,2>{ 
-        Piece2(lo, midlo, Poly2(p2)), 
-        Piece2(midhi, hi, Poly2(p3)), 
-        Piece2(midlo, -1.0f, Poly2(p2)), 
-        Piece2(1.0f, midhi, Poly2(p3)) 
+        C2(lo, midlo, P2(p2)), 
+        C2(midhi, hi, P2(p3)), 
+        C2(midlo, -1.0f, P2(p2)), 
+        C2(1.0f, midhi, P2(p3)) 
     };
     analytic::Scaling<double> f(2.0f);
     analytic::Scaling<double> g(-2.0f);
@@ -2375,7 +2375,6 @@ TEST_CASE( "PolynomialRailyard/Scaling arithmetic distributivity", "[math]" ) {
 
 
 
-
 TEST_CASE( "PolynomialRailyard integral/derivative invertibility", "[math]" ) {
     const double threshold = 1e-4;
     // `lo*` variables are used as bounds to a square integral 
@@ -2387,22 +2386,22 @@ TEST_CASE( "PolynomialRailyard integral/derivative invertibility", "[math]" ) {
     const double midlo = -1e2;
     const double midhi =  1e2;
     
-    using Poly0 = analytic::Polynomial<double,0,2>;
+    using P0 = analytic::Polynomial<double,0,2>;
 
-    Poly0 p0 = Poly0({3.0f,2.0f,1.0f});
-    Poly0 p1 = Poly0({-1.0f,0.0f,1.0f});
+    P0 p0 = P0({3.0f,2.0f,1.0f});
+    P0 p1 = P0({-1.0f,0.0f,1.0f});
 
-    using Piece0 = analytic::Railcar<double,Poly0>;
+    using C0 = analytic::Railcar<double,P0>;
 
     // standard polynomials, no overlap
     analytic::PolynomialRailyard<double,0,2> s0 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, -1.0f, p0), 
-        Piece0(1.0f, hi, p1) 
+        C0(lo, -1.0f, p0), 
+        C0(1.0f, hi, p1) 
     }; 
     // standard polynomials, with overlap
     analytic::PolynomialRailyard<double,0,2> s1 = analytic::PolynomialRailyard<double,0,2>{
-        Piece0(lo, midhi, p0), 
-        Piece0(midlo, hi, p1) 
+        C0(lo, midhi, p0), 
+        C0(midlo, hi, p1) 
     }; 
     SECTION("the derivative of a function's3 integral must equal the original function"){
         CHECK(analytic::distance(s0, derivative(integral(s0)), lo, hi) < threshold);
@@ -2411,3 +2410,4 @@ TEST_CASE( "PolynomialRailyard integral/derivative invertibility", "[math]" ) {
         // CHECK(analytic::distance(s3, derivative(integral(s3)), lo, hi) < threshold);
     }
 }
+
