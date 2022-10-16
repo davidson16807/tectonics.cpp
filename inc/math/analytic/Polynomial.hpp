@@ -912,7 +912,7 @@ namespace analytic {
     std::array<std::complex<T>, 2> solutions(const Polynomial<T,0,2> p, const T y) 
     {
         // the quadratic formula
-        const std::complex<T> sqrt_argument = p[1]*p[1] - 4.0f*(p[0]-y)*p[2];
+        const std::complex<T> sqrt_argument = p[1]*p[1] - T(4)*(p[0]-y)*p[2];
         return std::array<std::complex<T>, 2>{
             -p[1]+std::sqrt(sqrt_argument) / p[2],
             -p[1]-std::sqrt(sqrt_argument) / p[2]
@@ -925,15 +925,15 @@ namespace analytic {
         // the cubic formula
         const Polynomial<T,0,3> a = p/p[3]; // monic cubic polynomial
 
-        const std::complex<T> q =  a[1]/3.0f - a[2]*a[2]/9.0f;
-        const std::complex<T> r = (a[1]*a[2] - 3.0f*a[0])/6.0f - a[2]*a[2]*a[2]/27.0f;
+        const std::complex<T> q =  a[1]/T(3) - a[2]*a[2]/T(9);
+        const std::complex<T> r = (a[1]*a[2] - T(3)*a[0])/T(6) - a[2]*a[2]*a[2]/T(27);
 
-        const std::complex<T> s1 = std::pow(r+std::sqrt(q*q*q+r*r), 1.0f/3.0f);
-        const std::complex<T> s2 = std::pow(r-std::sqrt(q*q*q+r*r), 1.0f/3.0f);
+        const std::complex<T> s1 = std::pow(r+std::sqrt(q*q*q+r*r), T(1)/T(3));
+        const std::complex<T> s2 = std::pow(r-std::sqrt(q*q*q+r*r), T(1)/T(3));
 
-        const std::complex<T> z1 =  (s1+s2) - a[2]/3.0f;
-        const std::complex<T> z2 = -(s1+s2)/2.0f - a[2]/3.0f + (s1-s2)*std::cbrt(3.0f)/2.0f; // *i
-        const std::complex<T> z3 = -(s1+s2)/2.0f - a[2]/3.0f - (s1-s2)*std::cbrt(3.0f)/2.0f; // *i
+        const std::complex<T> z1 =  (s1+s2) - a[2]/T(3);
+        const std::complex<T> z2 = -(s1+s2)/T(2) - a[2]/T(3) + (s1-s2)*std::cbrt(T(3))/T(2); // *i
+        const std::complex<T> z3 = -(s1+s2)/T(2) - a[2]/T(3) - (s1-s2)*std::cbrt(T(3))/T(2); // *i
 
         return std::array<std::complex<T>, 3>{z1,z2,z3};
     }
@@ -944,9 +944,9 @@ namespace analytic {
     This can be useful when condensing solutions to polynomial equations.
     */
     template<typename T, typename TInputIterator, typename TOutputIterator>
-    void reals(
-        const TInputIterator first, 
-        const TInputIterator last, 
+    TOutputIterator reals(
+        TInputIterator first, 
+        TInputIterator last, 
         TOutputIterator result
     ){
         std::complex<T> z;
@@ -1142,6 +1142,14 @@ namespace analytic {
             pₙ₋₁(u) = k₁+(k₂+k₃u)u = k₁u⁰+k₂u¹+k₃u²
         */
         return p[0]+q*compose(Polynomial<T,0,Phi-1>(std::next((p.k).begin()), (p.k).end()), q);
+    }
+
+    template<typename T, int Plo, int Phi, int Qlo, int Qhi, 
+        typename = std::enable_if_t<(Plo > 0 && Phi > 1 && Qlo >= 0 && Qhi >= 0)> >
+    constexpr Polynomial<T,std::min(Plo*Qlo,Phi*Qhi),std::max(Plo*Qlo,Phi*Qhi)> compose(const Polynomial<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi>& q)
+    {
+        const auto x = Identity<T>();
+        return q*compose(p/x, q);
     }
 
     // template<typename T, int Plo, int Phi, int Q>

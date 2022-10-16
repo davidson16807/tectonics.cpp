@@ -1557,12 +1557,6 @@ TEST_CASE( "Polynomial/Scaling arithmetic distributivity", "[math]" ) {
     }
 }
 
-
-
-
-
-
-
 TEST_CASE( "Polynomial integral/derivative invertibility", "[math]" ) {
     const double threshold = 1e-6;
     // `lo*` variables are used as bounds to a square integral 
@@ -1589,7 +1583,6 @@ TEST_CASE( "Polynomial composition happy path", "[math]" ) {
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
     const double hi =  1e3;
-    
 
     const double p =-1.0;
     const double q = 2.0;
@@ -1597,11 +1590,16 @@ TEST_CASE( "Polynomial composition happy path", "[math]" ) {
     const double s = 1.78;
     const double t = 3.16;
 
+    using P0 = analytic::Polynomial<double,0,2>;
+    // using P1 = analytic::Polynomial<double,-2,1>;
+    // using P2 = analytic::Polynomial<double,-2,2>;
+    using P3 = analytic::Polynomial<double,0,1>;
+
     analytic::Identity<double> E;
     analytic::Scaling<double>  F(s);
     analytic::Shifting<double> G(s);
-    analytic::Polynomial<double,0,2> P  = analytic::Polynomial<double,0,2>(std::array<double,3>{p,q,r});
-    analytic::Polynomial<double,0,1> Q  = analytic::Polynomial<double,0,1>(std::array<double,2>{s,t});
+    P0 P  = P0(std::array<double,3>{p,q,r});
+    P3 Q  = P3(std::array<double,2>{s,t});
     /*
     example:
     P(x)   = p+qx+rx²
@@ -1609,7 +1607,7 @@ TEST_CASE( "Polynomial composition happy path", "[math]" ) {
     P∘f(x) = p+q(sx)+r(sx)²
     P∘f(x) = p+qsx+rs²x²
     */
-    analytic::Polynomial<double,0,2> PF = analytic::Polynomial<double,0,2>(std::array<double,3>{p, q*s, r*s*s});
+    P0 PF = P0(std::array<double,3>{p, q*s, r*s*s});
     /*
     example:
     P(x)   = p+qx+rx²
@@ -1619,7 +1617,7 @@ TEST_CASE( "Polynomial composition happy path", "[math]" ) {
     P∘g(x) = p+qs+qx+rs²+r2sx+rx²
     P∘g(x) = p+rs²+qs + qx+r2sx + rx²
     */
-    analytic::Polynomial<double,0,2> PG = analytic::Polynomial<double,0,2>(std::array<double,3>{p+r*s*s+q*s, q+r*2.0*s, r});
+    P0 PG = P0(std::array<double,3>{p+r*s*s+q*s, q+r*2.0*s, r});
     /*
     P(x)   = p+qx+rx²
     Q(x)   = s+tx

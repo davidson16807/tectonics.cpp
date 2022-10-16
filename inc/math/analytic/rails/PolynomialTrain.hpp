@@ -434,47 +434,39 @@ namespace analytic {
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     constexpr auto compose(const PolynomialTrain<T,Plo,Phi>& p, const PolynomialTrain<T,Qlo,Qhi> q)
     {
-        std::vector<T> pq_couplers = couplers(p,q);
         using F = Polynomial<T,Plo,Phi>;
         using G = Polynomial<T,Qlo,Qhi>;
         using FG = Polynomial<T,std::min(Plo*Qlo,Phi*Qhi),std::max(Plo*Qlo,Phi*Qhi)>;
-        std::vector<Railcar<T,F>> contents;
-        for (std::size_t i=1; i<pq_couplers.size(); i++)
+        Railyard<T,FG> y;
+        for (std::size_t i=0; i<p.contents.size(); i++)
         {
-            /*
-            Create running totals for contents in p and q,
-            add contents to their respective running total if they 
-            intersect the region from pq_couplers[i-1] to pq_couplers[i]
-            */
-            bool is_f_nonzero(false);
-            F f;
-            G g;
-            FG fg;
-            for (auto car: p.contents)
+            for (std::size_t j=0; i<q.contents.size(); i++)
             {
-                if (std::max(car.lo, pq_couplers[i-1]) < std::min(car.hi, pq_couplers[i]))
-                {
-                    is_f_nonzero = true;
-                    f += car.content;
-                }
-            }
-            for (auto car: q.contents)
-            {
-                if (std::max(car.lo, pq_couplers[i-1]) < std::min(car.hi, pq_couplers[i]))
-                {
-                    g += car.content;
-                }
-            }
-            /*
-            If any contents were added to the running total for p,
-            then add f∘g for the region [pq_couplers[i-1], pq_couplers[i]] 
-            to the list of contents in p∘q
-            */
-            if (is_f_nonzero) {
-                contents.push_back(Railcar<T,FG>(pq_couplers[i-1], pq_couplers[i], compose(f,g)));
+                y += compose(
+                    Railcar<T,F>(p.couplers[i], p.couplers[i+1], p.contents[i]), 
+                    Railcar<T,G>(q.couplers[j], q.couplers[j+1], q.contents[j]));
             }
         }
-        return Railyard<T,FG>(contents);
+        return y;
+    }
+
+
+    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
+    constexpr auto compose(const PolynomialRailyard<T,Plo,Phi>& p, const PolynomialRailyard<T,Qlo,Qhi> q)
+    {
+        return compose(train(p), train(q));
+    }
+
+    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
+    constexpr auto compose(const PolynomialTrain<T,Plo,Phi>& p, const PolynomialRailyard<T,Qlo,Qhi> q)
+    {
+        return compose(p, train(q));
+    }
+
+    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
+    constexpr auto compose(const PolynomialRailyard<T,Plo,Phi>& p, const PolynomialTrain<T,Qlo,Qhi> q)
+    {
+        return compose(train(p), q);
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>

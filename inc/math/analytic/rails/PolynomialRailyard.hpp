@@ -358,60 +358,35 @@ namespace analytic {
         return p / Polynomial<T,1,1>(e);
     }
 
-
-
-
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto compose(const PolynomialRailyard<T,Plo,Phi>& p, const PolynomialRailyard<T,Qlo,Qhi> q)
+    constexpr Railyard<T,Polynomial<T,std::min(Plo*Qlo,Phi*Qhi),std::max(Plo*Qlo,Phi*Qhi)>> 
+        compose(const PolynomialRailcar<T,Plo,Phi>& f, const PolynomialRailcar<T,Qlo,Qhi> g)
     {
-        const auto p2(p);
-        const auto q2(q);
-        std::vector<T> p_couplers(p2.couplers());
-        std::vector<T> q_couplers(q2.couplers());
-        std::vector<T> pq_couplers;
-        pq_couplers.insert(pq_couplers.end(), p_couplers.begin(), p_couplers.end());
-        pq_couplers.insert(pq_couplers.end(), q_couplers.begin(), q_couplers.end());
-        std::sort(pq_couplers.begin(), pq_couplers.end());
-        auto last = std::unique(pq_couplers.begin(), pq_couplers.end());
-        pq_couplers.erase(last, pq_couplers.end());
-
-        using F = Polynomial<T,Plo,Phi>;
-        using G = Polynomial<T,Qlo,Qhi>;
+        // Each coupler in f needs an associated set of couplers for f∘g 
+        //  that each represent where the output for g crosses a coupler for f.
+        std::vector<T> couplers; 
+        auto lo_preimage = solutions(g.content, f.lo);
+        auto hi_preimage = solutions(g.content, f.hi);
+        reals<T>(lo_preimage.begin(), lo_preimage.end(), std::back_inserter(couplers));
+        reals<T>(hi_preimage.begin(), hi_preimage.end(), std::back_inserter(couplers));
+        auto removal_begin = std::remove_if(couplers.begin(), couplers.end(), 
+            [g](T coupler) { return !(g.lo < coupler && coupler < g.hi); });
+        couplers.erase(removal_begin, couplers.end());
+        std::sort(couplers.begin(), couplers.end());
         using FG = Polynomial<T,std::min(Plo*Qlo,Phi*Qhi),std::max(Plo*Qlo,Phi*Qhi)>;
-        std::vector<Railcar<T,F>> cars;
-        for (std::size_t i=1; i<pq_couplers.size(); i++)
+        std::vector<Railcar<T,FG>> cars;
+        T lo, hi, mid, gmid;
+        for (std::size_t i=1; i<couplers.size(); i++)
         {
-            /*
-            Create running totals for cars in p and q,
-            add cars to their respective running total if they 
-            intersect the region from pq_couplers[i-1] to pq_couplers[i]
-            */
-            bool is_f_nonzero(false);
-            F f;
-            G g;
-            FG fg;
-            for (auto car: p2.cars)
-            {
-                if (std::max(car.lo, pq_couplers[i-1]) < std::min(car.hi, pq_couplers[i]))
-                {
-                    is_f_nonzero = true;
-                    f += car.content;
-                }
-            }
-            for (auto car: q2.cars)
-            {
-                if (std::max(car.lo, pq_couplers[i-1]) < std::min(car.hi, pq_couplers[i]))
-                {
-                    g += car.content;
-                }
-            }
-            /*
-            If any cars were added to the running total for p,
-            then add f∘g for the region [pq_couplers[i-1], pq_couplers[i]] 
-            to the list of cars in p∘q
-            */
-            if (is_f_nonzero) {
-                cars.push_back(Railcar<T,FG>(pq_couplers[i-1], pq_couplers[i], compose(f,g)));
+            lo = couplers[i-1];
+            hi = couplers[i];
+            mid = (lo + hi)/T(2);
+            gmid = g(mid);
+            if(f.lo < gmid && gmid < f.hi){
+                cars.emplace_back(
+                    std::max(lo, g.lo), 
+                    std::min(hi, g.hi), 
+                    compose(f.content, g.content));
             }
         }
         return Railyard<T,FG>(cars);

@@ -545,48 +545,6 @@ namespace analytic {
         return f;
     }
 
-    template<typename T, typename F, typename G>
-    constexpr Railyard<T,F> compose(const Railyard<T,F>& f, const G& g)
-    {
-        std::vector<Railcar<T,F>> cars;
-        for (auto car: f.cars)
-        {
-            cars.push_back( compose(car, g) );
-        }
-        return Railyard(cars);
-    }
-
-    template<typename FG, typename T, typename F, typename G>
-    constexpr Railyard<T,FG> compose(const Railcar<T,F>& f, const Railcar<T,G>& g)
-    {
-        // Each coupler in f needs an associated set of couplers for f∘g 
-        //  that each represent where the output for g crosses a coupler for f.
-        const T oo = std::numeric_limits<T>::max();
-        std::vector<T> couplers; 
-        auto lo_preimage = solve(g, f.lo);
-        auto hi_preimage = solve(g, f.hi);
-        reals<T>(lo_preimage.begin(), lo_preimage.end(), std::back_inserter(couplers));
-        reals<T>(hi_preimage.begin(), hi_preimage.end(), std::back_inserter(couplers));
-        auto removal_begin = std::remove_if(couplers.begin(), couplers.end(), 
-            [g](T coupler) { return !(g.lo < coupler && coupler < g.hi); });
-        couplers.erase(removal_begin, couplers.end());
-        std::sort(couplers.begin(), couplers.end());
-        std::vector<Railcar<T,FG>> cars;
-        T lo, hi, mid, gmid;
-        for (std::size_t i=1; i<couplers.size(); i++)
-        {
-            lo = couplers[i-1];
-            hi = couplers[i];
-            mid = (lo + hi)/T(2);
-            gmid = g(mid);
-            if(f.lo < gmid && gmid < f.hi){
-                cars.emplace_back(lo, hi, compose(f.content,g.content));
-            }
-        }
-        return Railyard(cars);
-    }
-
-
 
 
 

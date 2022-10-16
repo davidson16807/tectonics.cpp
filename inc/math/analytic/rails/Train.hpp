@@ -499,32 +499,6 @@ namespace analytic {
         return f;
     }
 
-    template<typename T, typename F, typename G>
-    constexpr Train<T,F> compose(const Train<T,F>& f, const G& g)
-    {
-        std::vector<F> contents;
-        for (auto car: f.contents)
-        {
-            contents.push_back( compose(car, g) );
-        }
-        return Train(contents, f.couplers);
-    }
-
-    template<typename FG, typename T, typename F, typename G>
-    constexpr Railyard<T,FG> compose(const Train<T,F>& f, const Train<T,G>& g)
-    {
-        Railyard<T,FG> y;
-        for (auto fi: f.contents)
-        {
-            for (auto gi: g.contents)
-            {
-                y += compose(fi, gi);
-            }
-        }
-        return y;
-    }
-
-
 
 
 
