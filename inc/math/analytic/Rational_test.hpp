@@ -519,30 +519,30 @@ TEST_CASE( "Rational/scalar arithmetic associativity", "[math]" ) {
         CHECK(analytic::distance((t+u)+k2, t+(u+k2), midlo, midhi) < threshold);
     }
 
-    SECTION("(r+s)+t must equal r+(s+t)"){
-        CHECK(analytic::distance((r+s)+k0, r+(s+k0), midlo, midhi) < threshold);
-        CHECK(analytic::distance((r+s)+k1, r+(s+k1), midlo, midhi) < threshold);
-        CHECK(analytic::distance((r+s)+k2, r+(s+k2), midlo, midhi) < threshold);
+    SECTION("(r*s)*t must equal r*(s*t)"){
+        CHECK(analytic::distance((r*s)*k0, r*(s*k0), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*s)*k1, r*(s*k1), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*s)*k2, r*(s*k2), midlo, midhi) < threshold);
 
-        CHECK(analytic::distance((r+t)+k0, r+(t+k0), midlo, midhi) < threshold);
-        CHECK(analytic::distance((r+t)+k1, r+(t+k1), midlo, midhi) < threshold);
-        CHECK(analytic::distance((r+t)+k2, r+(t+k2), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*t)*k0, r*(t*k0), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*t)*k1, r*(t*k1), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*t)*k2, r*(t*k2), midlo, midhi) < threshold);
 
-        CHECK(analytic::distance((r+u)+k0, r+(u+k0), midlo, midhi) < threshold);
-        CHECK(analytic::distance((r+u)+k1, r+(u+k1), midlo, midhi) < threshold);
-        CHECK(analytic::distance((r+u)+k2, r+(u+k2), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*u)*k0, r*(u*k0), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*u)*k1, r*(u*k1), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*u)*k2, r*(u*k2), midlo, midhi) < threshold);
 
-        CHECK(analytic::distance((s+t)+k0, s+(t+k0), midlo, midhi) < threshold);
-        CHECK(analytic::distance((s+t)+k1, s+(t+k1), midlo, midhi) < threshold);
-        CHECK(analytic::distance((s+t)+k2, s+(t+k2), midlo, midhi) < threshold);
+        CHECK(analytic::distance((s*t)*k0, s*(t*k0), midlo, midhi) < threshold);
+        CHECK(analytic::distance((s*t)*k1, s*(t*k1), midlo, midhi) < threshold);
+        CHECK(analytic::distance((s*t)*k2, s*(t*k2), midlo, midhi) < threshold);
 
-        CHECK(analytic::distance((s+u)+k0, s+(u+k0), midlo, midhi) < threshold);
-        CHECK(analytic::distance((s+u)+k1, s+(u+k1), midlo, midhi) < threshold);
-        CHECK(analytic::distance((s+u)+k2, s+(u+k2), midlo, midhi) < threshold);
+        CHECK(analytic::distance((s*u)*k0, s*(u*k0), midlo, midhi) < threshold);
+        CHECK(analytic::distance((s*u)*k1, s*(u*k1), midlo, midhi) < threshold);
+        CHECK(analytic::distance((s*u)*k2, s*(u*k2), midlo, midhi) < threshold);
 
-        CHECK(analytic::distance((t+u)+k0, t+(u+k0), midlo, midhi) < threshold);
-        CHECK(analytic::distance((t+u)+k1, t+(u+k1), midlo, midhi) < threshold);
-        CHECK(analytic::distance((t+u)+k2, t+(u+k2), midlo, midhi) < threshold);
+        CHECK(analytic::distance((t*u)*k0, t*(u*k0), midlo, midhi) < threshold);
+        CHECK(analytic::distance((t*u)*k1, t*(u*k1), midlo, midhi) < threshold);
+        CHECK(analytic::distance((t*u)*k2, t*(u*k2), midlo, midhi) < threshold);
     }
 }
 
@@ -872,30 +872,30 @@ TEST_CASE( "Rational/monomial arithmetic associativity", "[math]" ) {
         CHECK(analytic::distance((t+u)+m2, t+(u+m2), midlo, midhi) < threshold);
     }
 
-    SECTION("(r+s)+t must equal r+(s+t)"){
-        CHECK(analytic::distance((r+s)+m0, r+(s+m0), midlo, midhi) < threshold);
-        CHECK(analytic::distance((r+s)+m1, r+(s+m1), midlo, midhi) < threshold);
-        CHECK(analytic::distance((r+s)+m2, r+(s+m2), midlo, midhi) < threshold);
+    SECTION("(r*s)*t must equal r*(s*t)"){
+        CHECK(analytic::distance((r*s)*m0, r*(s*m0), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*s)*m1, r*(s*m1), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*s)*m2, r*(s*m2), midlo, midhi) < threshold);
 
-        CHECK(analytic::distance((r+t)+m0, r+(t+m0), midlo, midhi) < threshold);
-        CHECK(analytic::distance((r+t)+m1, r+(t+m1), midlo, midhi) < threshold);
-        CHECK(analytic::distance((r+t)+m2, r+(t+m2), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*t)*m0, r*(t*m0), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*t)*m1, r*(t*m1), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*t)*m2, r*(t*m2), midlo, midhi) < threshold);
 
-        CHECK(analytic::distance((r+u)+m0, r+(u+m0), midlo, midhi) < threshold);
-        CHECK(analytic::distance((r+u)+m1, r+(u+m1), midlo, midhi) < threshold);
-        CHECK(analytic::distance((r+u)+m2, r+(u+m2), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*u)*m0, r*(u*m0), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*u)*m1, r*(u*m1), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*u)*m2, r*(u*m2), midlo, midhi) < threshold);
 
-        CHECK(analytic::distance((s+t)+m0, s+(t+m0), midlo, midhi) < threshold);
-        CHECK(analytic::distance((s+t)+m1, s+(t+m1), midlo, midhi) < threshold);
-        CHECK(analytic::distance((s+t)+m2, s+(t+m2), midlo, midhi) < threshold);
+        CHECK(analytic::distance((s*t)*m0, s*(t*m0), midlo, midhi) < threshold);
+        CHECK(analytic::distance((s*t)*m1, s*(t*m1), midlo, midhi) < threshold);
+        CHECK(analytic::distance((s*t)*m2, s*(t*m2), midlo, midhi) < threshold);
 
-        CHECK(analytic::distance((s+u)+m0, s+(u+m0), midlo, midhi) < threshold);
-        CHECK(analytic::distance((s+u)+m1, s+(u+m1), midlo, midhi) < threshold);
-        CHECK(analytic::distance((s+u)+m2, s+(u+m2), midlo, midhi) < threshold);
+        CHECK(analytic::distance((s*u)*m0, s*(u*m0), midlo, midhi) < threshold);
+        CHECK(analytic::distance((s*u)*m1, s*(u*m1), midlo, midhi) < threshold);
+        CHECK(analytic::distance((s*u)*m2, s*(u*m2), midlo, midhi) < threshold);
 
-        CHECK(analytic::distance((t+u)+m0, t+(u+m0), midlo, midhi) < threshold);
-        CHECK(analytic::distance((t+u)+m1, t+(u+m1), midlo, midhi) < threshold);
-        CHECK(analytic::distance((t+u)+m2, t+(u+m2), midlo, midhi) < threshold);
+        CHECK(analytic::distance((t*u)*m0, t*(u*m0), midlo, midhi) < threshold);
+        CHECK(analytic::distance((t*u)*m1, t*(u*m1), midlo, midhi) < threshold);
+        CHECK(analytic::distance((t*u)*m2, t*(u*m2), midlo, midhi) < threshold);
     }
 }
 
@@ -1198,30 +1198,30 @@ TEST_CASE( "Rational/Shifting arithmetic associativity", "[math]" ) {
         CHECK(analytic::distance((t+u)+h, t+(u+h), midlo, midhi) < threshold);
     }
 
-    SECTION("(r+s)+t must equal r+(s+t)"){
-        CHECK(analytic::distance((r+s)+f, r+(s+f), midlo, midhi) < threshold);
-        CHECK(analytic::distance((r+s)+g, r+(s+g), midlo, midhi) < threshold);
-        CHECK(analytic::distance((r+s)+h, r+(s+h), midlo, midhi) < threshold);
+    SECTION("(r*s)*t must equal r*(s*t)"){
+        CHECK(analytic::distance((r*s)*f, r*(s*f), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*s)*g, r*(s*g), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*s)*h, r*(s*h), midlo, midhi) < threshold);
 
-        CHECK(analytic::distance((r+t)+f, r+(t+f), midlo, midhi) < threshold);
-        CHECK(analytic::distance((r+t)+g, r+(t+g), midlo, midhi) < threshold);
-        CHECK(analytic::distance((r+t)+h, r+(t+h), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*t)*f, r*(t*f), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*t)*g, r*(t*g), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*t)*h, r*(t*h), midlo, midhi) < threshold);
 
-        CHECK(analytic::distance((r+u)+f, r+(u+f), midlo, midhi) < threshold);
-        CHECK(analytic::distance((r+u)+g, r+(u+g), midlo, midhi) < threshold);
-        CHECK(analytic::distance((r+u)+h, r+(u+h), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*u)*f, r*(u*f), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*u)*g, r*(u*g), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*u)*h, r*(u*h), midlo, midhi) < threshold);
 
-        CHECK(analytic::distance((s+t)+f, s+(t+f), midlo, midhi) < threshold);
-        CHECK(analytic::distance((s+t)+g, s+(t+g), midlo, midhi) < threshold);
-        CHECK(analytic::distance((s+t)+h, s+(t+h), midlo, midhi) < threshold);
+        CHECK(analytic::distance((s*t)*f, s*(t*f), midlo, midhi) < threshold);
+        CHECK(analytic::distance((s*t)*g, s*(t*g), midlo, midhi) < threshold);
+        CHECK(analytic::distance((s*t)*h, s*(t*h), midlo, midhi) < threshold);
 
-        CHECK(analytic::distance((s+u)+f, s+(u+f), midlo, midhi) < threshold);
-        CHECK(analytic::distance((s+u)+g, s+(u+g), midlo, midhi) < threshold);
-        CHECK(analytic::distance((s+u)+h, s+(u+h), midlo, midhi) < threshold);
+        CHECK(analytic::distance((s*u)*f, s*(u*f), midlo, midhi) < threshold);
+        CHECK(analytic::distance((s*u)*g, s*(u*g), midlo, midhi) < threshold);
+        CHECK(analytic::distance((s*u)*h, s*(u*h), midlo, midhi) < threshold);
 
-        CHECK(analytic::distance((t+u)+f, t+(u+f), midlo, midhi) < threshold);
-        CHECK(analytic::distance((t+u)+g, t+(u+g), midlo, midhi) < threshold);
-        CHECK(analytic::distance((t+u)+h, t+(u+h), midlo, midhi) < threshold);
+        CHECK(analytic::distance((t*u)*f, t*(u*f), midlo, midhi) < threshold);
+        CHECK(analytic::distance((t*u)*g, t*(u*g), midlo, midhi) < threshold);
+        CHECK(analytic::distance((t*u)*h, t*(u*h), midlo, midhi) < threshold);
     }
 }
 
@@ -1561,30 +1561,30 @@ TEST_CASE( "Rational/Scaling arithmetic associativity", "[math]" ) {
         CHECK(analytic::distance((t+u)+h, t+(u+h), midlo, midhi) < threshold);
     }
 
-    SECTION("(r+s)+t must equal r+(s+t)"){
-        CHECK(analytic::distance((r+s)+f, r+(s+f), midlo, midhi) < threshold);
-        CHECK(analytic::distance((r+s)+g, r+(s+g), midlo, midhi) < threshold);
-        CHECK(analytic::distance((r+s)+h, r+(s+h), midlo, midhi) < threshold);
+    SECTION("(r*s)*t must equal r*(s*t)"){
+        CHECK(analytic::distance((r*s)*f, r*(s*f), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*s)*g, r*(s*g), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*s)*h, r*(s*h), midlo, midhi) < threshold);
 
-        CHECK(analytic::distance((r+t)+f, r+(t+f), midlo, midhi) < threshold);
-        CHECK(analytic::distance((r+t)+g, r+(t+g), midlo, midhi) < threshold);
-        CHECK(analytic::distance((r+t)+h, r+(t+h), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*t)*f, r*(t*f), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*t)*g, r*(t*g), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*t)*h, r*(t*h), midlo, midhi) < threshold);
 
-        CHECK(analytic::distance((r+u)+f, r+(u+f), midlo, midhi) < threshold);
-        CHECK(analytic::distance((r+u)+g, r+(u+g), midlo, midhi) < threshold);
-        CHECK(analytic::distance((r+u)+h, r+(u+h), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*u)*f, r*(u*f), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*u)*g, r*(u*g), midlo, midhi) < threshold);
+        CHECK(analytic::distance((r*u)*h, r*(u*h), midlo, midhi) < threshold);
 
-        CHECK(analytic::distance((s+t)+f, s+(t+f), midlo, midhi) < threshold);
-        CHECK(analytic::distance((s+t)+g, s+(t+g), midlo, midhi) < threshold);
-        CHECK(analytic::distance((s+t)+h, s+(t+h), midlo, midhi) < threshold);
+        CHECK(analytic::distance((s*t)*f, s*(t*f), midlo, midhi) < threshold);
+        CHECK(analytic::distance((s*t)*g, s*(t*g), midlo, midhi) < threshold);
+        CHECK(analytic::distance((s*t)*h, s*(t*h), midlo, midhi) < threshold);
 
-        CHECK(analytic::distance((s+u)+f, s+(u+f), midlo, midhi) < threshold);
-        CHECK(analytic::distance((s+u)+g, s+(u+g), midlo, midhi) < threshold);
-        CHECK(analytic::distance((s+u)+h, s+(u+h), midlo, midhi) < threshold);
+        CHECK(analytic::distance((s*u)*f, s*(u*f), midlo, midhi) < threshold);
+        CHECK(analytic::distance((s*u)*g, s*(u*g), midlo, midhi) < threshold);
+        CHECK(analytic::distance((s*u)*h, s*(u*h), midlo, midhi) < threshold);
 
-        CHECK(analytic::distance((t+u)+f, t+(u+f), midlo, midhi) < threshold);
-        CHECK(analytic::distance((t+u)+g, t+(u+g), midlo, midhi) < threshold);
-        CHECK(analytic::distance((t+u)+h, t+(u+h), midlo, midhi) < threshold);
+        CHECK(analytic::distance((t*u)*f, t*(u*f), midlo, midhi) < threshold);
+        CHECK(analytic::distance((t*u)*g, t*(u*g), midlo, midhi) < threshold);
+        CHECK(analytic::distance((t*u)*h, t*(u*h), midlo, midhi) < threshold);
     }
 }
 

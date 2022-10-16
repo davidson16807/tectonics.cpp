@@ -482,30 +482,30 @@ TEST_CASE( "Polynomial/scalar arithmetic associativity", "[math]" ) {
         CHECK(analytic::distance((r+s)+k2, r+(s+k2), lo, hi) < threshold);
     }
 
-    SECTION("(p+q)+r must equal p+(q+r)"){
-        CHECK(analytic::distance((p+q)+k0, p+(q+k0), lo, hi) < threshold);
-        CHECK(analytic::distance((p+q)+k1, p+(q+k1), lo, hi) < threshold);
-        CHECK(analytic::distance((p+q)+k2, p+(q+k2), lo, hi) < threshold);
+    SECTION("(p*q)*r must equal p*(q*r)"){
+        CHECK(analytic::distance((p*q)*k0, p*(q*k0), lo, hi) < threshold);
+        CHECK(analytic::distance((p*q)*k1, p*(q*k1), lo, hi) < threshold);
+        CHECK(analytic::distance((p*q)*k2, p*(q*k2), lo, hi) < threshold);
 
-        CHECK(analytic::distance((p+r)+k0, p+(r+k0), lo, hi) < threshold);
-        CHECK(analytic::distance((p+r)+k1, p+(r+k1), lo, hi) < threshold);
-        CHECK(analytic::distance((p+r)+k2, p+(r+k2), lo, hi) < threshold);
+        CHECK(analytic::distance((p*r)*k0, p*(r*k0), lo, hi) < threshold);
+        CHECK(analytic::distance((p*r)*k1, p*(r*k1), lo, hi) < threshold);
+        CHECK(analytic::distance((p*r)*k2, p*(r*k2), lo, hi) < threshold);
 
-        CHECK(analytic::distance((p+s)+k0, p+(s+k0), lo, hi) < threshold);
-        CHECK(analytic::distance((p+s)+k1, p+(s+k1), lo, hi) < threshold);
-        CHECK(analytic::distance((p+s)+k2, p+(s+k2), lo, hi) < threshold);
+        CHECK(analytic::distance((p*s)*k0, p*(s*k0), lo, hi) < threshold);
+        CHECK(analytic::distance((p*s)*k1, p*(s*k1), lo, hi) < threshold);
+        CHECK(analytic::distance((p*s)*k2, p*(s*k2), lo, hi) < threshold);
 
-        CHECK(analytic::distance((q+r)+k0, q+(r+k0), lo, hi) < threshold);
-        CHECK(analytic::distance((q+r)+k1, q+(r+k1), lo, hi) < threshold);
-        CHECK(analytic::distance((q+r)+k2, q+(r+k2), lo, hi) < threshold);
+        CHECK(analytic::distance((q*r)*k0, q*(r*k0), lo, hi) < threshold);
+        CHECK(analytic::distance((q*r)*k1, q*(r*k1), lo, hi) < threshold);
+        CHECK(analytic::distance((q*r)*k2, q*(r*k2), lo, hi) < threshold);
 
-        CHECK(analytic::distance((q+s)+k0, q+(s+k0), lo, hi) < threshold);
-        CHECK(analytic::distance((q+s)+k1, q+(s+k1), lo, hi) < threshold);
-        CHECK(analytic::distance((q+s)+k2, q+(s+k2), lo, hi) < threshold);
+        CHECK(analytic::distance((q*s)*k0, q*(s*k0), lo, hi) < threshold);
+        CHECK(analytic::distance((q*s)*k1, q*(s*k1), lo, hi) < threshold);
+        CHECK(analytic::distance((q*s)*k2, q*(s*k2), lo, hi) < threshold);
 
-        CHECK(analytic::distance((r+s)+k0, r+(s+k0), lo, hi) < threshold);
-        CHECK(analytic::distance((r+s)+k1, r+(s+k1), lo, hi) < threshold);
-        CHECK(analytic::distance((r+s)+k2, r+(s+k2), lo, hi) < threshold);
+        CHECK(analytic::distance((r*s)*k0, r*(s*k0), lo, hi) < threshold);
+        CHECK(analytic::distance((r*s)*k1, r*(s*k1), lo, hi) < threshold);
+        CHECK(analytic::distance((r*s)*k2, r*(s*k2), lo, hi) < threshold);
     }
 }
 
@@ -817,30 +817,30 @@ TEST_CASE( "Polynomial/monomial arithmetic associativity", "[math]" ) {
         CHECK(analytic::distance((r+s)+m2, r+(s+m2), lo, hi) < threshold);
     }
 
-    SECTION("(p+q)+r must equal p+(q+r)"){
-        CHECK(analytic::distance((p+q)+m0, p+(q+m0), lo, hi) < threshold);
-        CHECK(analytic::distance((p+q)+m1, p+(q+m1), lo, hi) < threshold);
-        CHECK(analytic::distance((p+q)+m2, p+(q+m2), lo, hi) < threshold);
+    SECTION("(p*q)*r must equal p*(q*r)"){
+        CHECK(analytic::distance((p*q)*m0, p*(q*m0), lo, hi) < threshold);
+        CHECK(analytic::distance((p*q)*m1, p*(q*m1), lo, hi) < threshold);
+        CHECK(analytic::distance((p*q)*m2, p*(q*m2), lo, hi) < threshold);
 
-        CHECK(analytic::distance((p+r)+m0, p+(r+m0), lo, hi) < threshold);
-        CHECK(analytic::distance((p+r)+m1, p+(r+m1), lo, hi) < threshold);
-        CHECK(analytic::distance((p+r)+m2, p+(r+m2), lo, hi) < threshold);
+        CHECK(analytic::distance((p*r)*m0, p*(r*m0), lo, hi) < threshold);
+        CHECK(analytic::distance((p*r)*m1, p*(r*m1), lo, hi) < threshold);
+        CHECK(analytic::distance((p*r)*m2, p*(r*m2), lo, hi) < threshold);
 
-        CHECK(analytic::distance((p+s)+m0, p+(s+m0), lo, hi) < threshold);
-        CHECK(analytic::distance((p+s)+m1, p+(s+m1), lo, hi) < threshold);
-        CHECK(analytic::distance((p+s)+m2, p+(s+m2), lo, hi) < threshold);
+        CHECK(analytic::distance((p*s)*m0, p*(s*m0), lo, hi) < threshold);
+        CHECK(analytic::distance((p*s)*m1, p*(s*m1), lo, hi) < threshold);
+        CHECK(analytic::distance((p*s)*m2, p*(s*m2), lo, hi) < threshold);
 
-        CHECK(analytic::distance((q+r)+m0, q+(r+m0), lo, hi) < threshold);
-        CHECK(analytic::distance((q+r)+m1, q+(r+m1), lo, hi) < threshold);
-        CHECK(analytic::distance((q+r)+m2, q+(r+m2), lo, hi) < threshold);
+        CHECK(analytic::distance((q*r)*m0, q*(r*m0), lo, hi) < threshold);
+        CHECK(analytic::distance((q*r)*m1, q*(r*m1), lo, hi) < threshold);
+        CHECK(analytic::distance((q*r)*m2, q*(r*m2), lo, hi) < threshold);
 
-        CHECK(analytic::distance((q+s)+m0, q+(s+m0), lo, hi) < threshold);
-        CHECK(analytic::distance((q+s)+m1, q+(s+m1), lo, hi) < threshold);
-        CHECK(analytic::distance((q+s)+m2, q+(s+m2), lo, hi) < threshold);
+        CHECK(analytic::distance((q*s)*m0, q*(s*m0), lo, hi) < threshold);
+        CHECK(analytic::distance((q*s)*m1, q*(s*m1), lo, hi) < threshold);
+        CHECK(analytic::distance((q*s)*m2, q*(s*m2), lo, hi) < threshold);
 
-        CHECK(analytic::distance((r+s)+m0, r+(s+m0), lo, hi) < threshold);
-        CHECK(analytic::distance((r+s)+m1, r+(s+m1), lo, hi) < threshold);
-        CHECK(analytic::distance((r+s)+m2, r+(s+m2), lo, hi) < threshold);
+        CHECK(analytic::distance((r*s)*m0, r*(s*m0), lo, hi) < threshold);
+        CHECK(analytic::distance((r*s)*m1, r*(s*m1), lo, hi) < threshold);
+        CHECK(analytic::distance((r*s)*m2, r*(s*m2), lo, hi) < threshold);
     }
 }
 
@@ -1119,30 +1119,30 @@ TEST_CASE( "Polynomial/Shifting arithmetic associativity", "[math]" ) {
         CHECK(analytic::distance((r+s)+h, r+(s+h), lo, hi) < threshold);
     }
 
-    SECTION("(p+q)+r must equal p+(q+r)"){
-        CHECK(analytic::distance((p+q)+f, p+(q+f), lo, hi) < threshold);
-        CHECK(analytic::distance((p+q)+g, p+(q+g), lo, hi) < threshold);
-        CHECK(analytic::distance((p+q)+h, p+(q+h), lo, hi) < threshold);
+    SECTION("(p*q)*r must equal p*(q*r)"){
+        CHECK(analytic::distance((p*q)*f, p*(q*f), lo, hi) < threshold);
+        CHECK(analytic::distance((p*q)*g, p*(q*g), lo, hi) < threshold);
+        CHECK(analytic::distance((p*q)*h, p*(q*h), lo, hi) < threshold);
 
-        CHECK(analytic::distance((p+r)+f, p+(r+f), lo, hi) < threshold);
-        CHECK(analytic::distance((p+r)+g, p+(r+g), lo, hi) < threshold);
-        CHECK(analytic::distance((p+r)+h, p+(r+h), lo, hi) < threshold);
+        CHECK(analytic::distance((p*r)*f, p*(r*f), lo, hi) < threshold);
+        CHECK(analytic::distance((p*r)*g, p*(r*g), lo, hi) < threshold);
+        CHECK(analytic::distance((p*r)*h, p*(r*h), lo, hi) < threshold);
 
-        CHECK(analytic::distance((p+s)+f, p+(s+f), lo, hi) < threshold);
-        CHECK(analytic::distance((p+s)+g, p+(s+g), lo, hi) < threshold);
-        CHECK(analytic::distance((p+s)+h, p+(s+h), lo, hi) < threshold);
+        CHECK(analytic::distance((p*s)*f, p*(s*f), lo, hi) < threshold);
+        CHECK(analytic::distance((p*s)*g, p*(s*g), lo, hi) < threshold);
+        CHECK(analytic::distance((p*s)*h, p*(s*h), lo, hi) < threshold);
 
-        CHECK(analytic::distance((q+r)+f, q+(r+f), lo, hi) < threshold);
-        CHECK(analytic::distance((q+r)+g, q+(r+g), lo, hi) < threshold);
-        CHECK(analytic::distance((q+r)+h, q+(r+h), lo, hi) < threshold);
+        CHECK(analytic::distance((q*r)*f, q*(r*f), lo, hi) < threshold);
+        CHECK(analytic::distance((q*r)*g, q*(r*g), lo, hi) < threshold);
+        CHECK(analytic::distance((q*r)*h, q*(r*h), lo, hi) < threshold);
 
-        CHECK(analytic::distance((q+s)+f, q+(s+f), lo, hi) < threshold);
-        CHECK(analytic::distance((q+s)+g, q+(s+g), lo, hi) < threshold);
-        CHECK(analytic::distance((q+s)+h, q+(s+h), lo, hi) < threshold);
+        CHECK(analytic::distance((q*s)*f, q*(s*f), lo, hi) < threshold);
+        CHECK(analytic::distance((q*s)*g, q*(s*g), lo, hi) < threshold);
+        CHECK(analytic::distance((q*s)*h, q*(s*h), lo, hi) < threshold);
 
-        CHECK(analytic::distance((r+s)+f, r+(s+f), lo, hi) < threshold);
-        CHECK(analytic::distance((r+s)+g, r+(s+g), lo, hi) < threshold);
-        CHECK(analytic::distance((r+s)+h, r+(s+h), lo, hi) < threshold);
+        CHECK(analytic::distance((r*s)*f, r*(s*f), lo, hi) < threshold);
+        CHECK(analytic::distance((r*s)*g, r*(s*g), lo, hi) < threshold);
+        CHECK(analytic::distance((r*s)*h, r*(s*h), lo, hi) < threshold);
     }
 }
 
@@ -1452,30 +1452,30 @@ TEST_CASE( "Polynomial/Scaling arithmetic associativity", "[math]" ) {
         CHECK(analytic::distance((r+s)+h, r+(s+h), lo, hi) < threshold);
     }
 
-    SECTION("(p+q)+r must equal p+(q+r)"){
-        CHECK(analytic::distance((p+q)+f, p+(q+f), lo, hi) < threshold);
-        CHECK(analytic::distance((p+q)+g, p+(q+g), lo, hi) < threshold);
-        CHECK(analytic::distance((p+q)+h, p+(q+h), lo, hi) < threshold);
+    SECTION("(p*q)*r must equal p*(q*r)"){
+        CHECK(analytic::distance((p*q)*f, p*(q*f), lo, hi) < threshold);
+        CHECK(analytic::distance((p*q)*g, p*(q*g), lo, hi) < threshold);
+        CHECK(analytic::distance((p*q)*h, p*(q*h), lo, hi) < threshold);
 
-        CHECK(analytic::distance((p+r)+f, p+(r+f), lo, hi) < threshold);
-        CHECK(analytic::distance((p+r)+g, p+(r+g), lo, hi) < threshold);
-        CHECK(analytic::distance((p+r)+h, p+(r+h), lo, hi) < threshold);
+        CHECK(analytic::distance((p*r)*f, p*(r*f), lo, hi) < threshold);
+        CHECK(analytic::distance((p*r)*g, p*(r*g), lo, hi) < threshold);
+        CHECK(analytic::distance((p*r)*h, p*(r*h), lo, hi) < threshold);
 
-        CHECK(analytic::distance((p+s)+f, p+(s+f), lo, hi) < threshold);
-        CHECK(analytic::distance((p+s)+g, p+(s+g), lo, hi) < threshold);
-        CHECK(analytic::distance((p+s)+h, p+(s+h), lo, hi) < threshold);
+        CHECK(analytic::distance((p*s)*f, p*(s*f), lo, hi) < threshold);
+        CHECK(analytic::distance((p*s)*g, p*(s*g), lo, hi) < threshold);
+        CHECK(analytic::distance((p*s)*h, p*(s*h), lo, hi) < threshold);
 
-        CHECK(analytic::distance((q+r)+f, q+(r+f), lo, hi) < threshold);
-        CHECK(analytic::distance((q+r)+g, q+(r+g), lo, hi) < threshold);
-        CHECK(analytic::distance((q+r)+h, q+(r+h), lo, hi) < threshold);
+        CHECK(analytic::distance((q*r)*f, q*(r*f), lo, hi) < threshold);
+        CHECK(analytic::distance((q*r)*g, q*(r*g), lo, hi) < threshold);
+        CHECK(analytic::distance((q*r)*h, q*(r*h), lo, hi) < threshold);
 
-        CHECK(analytic::distance((q+s)+f, q+(s+f), lo, hi) < threshold);
-        CHECK(analytic::distance((q+s)+g, q+(s+g), lo, hi) < threshold);
-        CHECK(analytic::distance((q+s)+h, q+(s+h), lo, hi) < threshold);
+        CHECK(analytic::distance((q*s)*f, q*(s*f), lo, hi) < threshold);
+        CHECK(analytic::distance((q*s)*g, q*(s*g), lo, hi) < threshold);
+        CHECK(analytic::distance((q*s)*h, q*(s*h), lo, hi) < threshold);
 
-        CHECK(analytic::distance((r+s)+f, r+(s+f), lo, hi) < threshold);
-        CHECK(analytic::distance((r+s)+g, r+(s+g), lo, hi) < threshold);
-        CHECK(analytic::distance((r+s)+h, r+(s+h), lo, hi) < threshold);
+        CHECK(analytic::distance((r*s)*f, r*(s*f), lo, hi) < threshold);
+        CHECK(analytic::distance((r*s)*g, r*(s*g), lo, hi) < threshold);
+        CHECK(analytic::distance((r*s)*h, r*(s*h), lo, hi) < threshold);
     }
 }
 

@@ -6,10 +6,10 @@
 #include <iostream>
 
 // in-house libraries
-#include "Identity.hpp"
-#include "Clamped.hpp"
-#include "Railcar.hpp"
-#include "Railcar_to_string.hpp"
+#include "../Identity.hpp"
+#include "../Clamped.hpp"
+
+#include "Railyard.hpp"
 
 namespace analytic {
 
@@ -24,12 +24,19 @@ namespace analytic {
     template<typename T, typename F>
     struct Train {
 
-        std::vector<F> content; 
+        std::vector<F> contents; 
         std::vector<T> couplers; 
 
         // zero constructor
+        Train(const std::vector<F>& contents_, const std::vector<T> couplers_) : 
+            contents(contents_),
+            couplers(couplers_)
+        {
+        }
+
+        // zero constructor
         Train() : 
-            content(1, F(0)),
+            contents(1, F(0)),
             couplers()
         {
             const T oo = std::numeric_limits<T>::max();
@@ -39,7 +46,7 @@ namespace analytic {
 
         // constant constructor
         Train(const T k) : 
-            content(1, F(k)),
+            contents(1, F(k)),
             couplers()
         {
             const T oo = std::numeric_limits<T>::max();
@@ -49,7 +56,7 @@ namespace analytic {
 
         // copy constructor
         Train(const Train<T,F>& train) : 
-            content(train.content),
+            contents(train.contents),
             couplers(train.couplers)
         {
         }
@@ -57,33 +64,32 @@ namespace analytic {
         // cast constructor
         template<typename T2, typename F2>
         explicit Train(const Train<T2,F2>& train) : 
-            content(),
+            contents(),
             couplers()
         {
-            for (auto car : train.content)
+            for (auto car : train.contents)
             {
-                content.push_back(car);
+                contents.push_back(car);
             }
         }
 
         // cast constructor
         explicit Train(const Clamped<T,F>& clamped) : 
-            content(),
+            contents(),
             couplers()
         {
-            using R = Railcar<T,F>;
             const T oo = std::numeric_limits<T>::max();
             couplers.push_back(-oo);
-                                            content.push_back(clamped(clamped.lo));
+                                            contents.push_back(clamped(clamped.lo));
             couplers.push_back(clamped.lo);
-                                            content.push_back(clamped.f);
+                                            contents.push_back(clamped.f);
             couplers.push_back(clamped.hi);
-                                            content.push_back(clamped(clamped.hi));
+                                            contents.push_back(clamped(clamped.hi));
             couplers.push_back(oo);
         }
 
         explicit Train(const F& f) : 
-            content(1, Railcar<T,F>(f)),
+            contents(1, f),
             couplers()
         {
             const T oo = std::numeric_limits<T>::max();
@@ -94,11 +100,11 @@ namespace analytic {
         T operator()(const T x) const
         {
             T y(0.0);
-            for (std::size_t i=0; i<content.size(); i++)
+            for (std::size_t i=0; i<contents.size(); i++)
             {
                 if (couplers[i] < x&&x < couplers[i+1])
                 {
-                    return content[i](x);
+                    return contents[i](x);
                 }
             }
             return y;
@@ -106,36 +112,29 @@ namespace analytic {
 
         Train<T,F>& operator=(const T k)
         {
-            content.clear();
+            contents.clear();
             couplers.clear();
             const T oo = std::numeric_limits<T>::max();
             couplers.push_back(-oo);
-            content.emplace_back(F(k));
+            contents.emplace_back(F(k));
             couplers.push_back(oo);
             return *this;
         }
 
         Train<T,F>& operator=(const F& f)
         {
-            content.clear();
+            contents.clear();
             couplers.clear();
             const T oo = std::numeric_limits<T>::max();
             couplers.push_back(-oo);
-            content.emplace_back(f);
+            contents.emplace_back(f);
             couplers.push_back(oo);
-            return *this;
-        }
-
-        Train<T,F>& operator=(const Railcar<T,F>& car)
-        {
-            content.clear();
-            content.emplace_back(car);
             return *this;
         }
 
         Train<T,F>& operator=(const Train<T,F>& train)
         {
-            content = train.content;
+            contents = train.contents;
             couplers = train.couplers;
             return *this;
         }
@@ -144,7 +143,7 @@ namespace analytic {
 
         Train<T,F>& operator+=(const T k)
         {
-            for (auto& car : content)
+            for (auto& car : contents)
             {
                 car += k;
             }
@@ -153,7 +152,7 @@ namespace analytic {
 
         Train<T,F>& operator+=(const F& f)
         {
-            for (auto& car : content)
+            for (auto& car : contents)
             {
                 car += f;
             }
@@ -164,7 +163,7 @@ namespace analytic {
 
         Train<T,F>& operator-=(const T k)
         {
-            for (auto& car : content)
+            for (auto& car : contents)
             {
                 car -= k;
             }
@@ -173,7 +172,7 @@ namespace analytic {
 
         Train<T,F>& operator-=(const F& f)
         {
-            for (auto& car : content)
+            for (auto& car : contents)
             {
                 car -= f;
             }
@@ -184,7 +183,7 @@ namespace analytic {
 
         Train<T,F>& operator*=(const T k)
         {
-            for (auto& car : content)
+            for (auto& car : contents)
             {
                 car *= k;
             }
@@ -193,7 +192,7 @@ namespace analytic {
 
         Train<T,F>& operator/=(const T k)
         {
-            for (auto& car : content)
+            for (auto& car : contents)
             {
                 car /= k;
             }
@@ -203,15 +202,98 @@ namespace analytic {
     };
 
 
-
-
+    // a convenience function that converts a train to a railyard
     template<typename T, typename F>
-    constexpr auto operator-(const Train<T,F>& f)
+    constexpr Railyard<T,F> railyard(const Train<T,F>& train)
     {
-        Train<T,F> y(f);
-        y *= T(-1);
-        return y;
+        std::vector<Railcar<T,F>> cars;
+        for (std::size_t i=1; i<train.couplers.size(); i++)
+        {
+            cars.emplace_back(train.couplers[i-1], train.couplers[i], train.contents[i-1]);
+        }
+        return Railyard<T,F>(cars);
     }
+
+    // a convenience function that converts a railyard to a train
+    template<typename T, typename F>
+    constexpr Train<T,F> train(const Clamped<T,F>& clamped)
+    {
+        return Train<T,F>(clamped);
+    }
+
+    // a convenience function that converts a railyard to a train
+    template<typename T, typename F>
+    constexpr Train<T,F> train(const Railyard<T,F>& yard)
+    {
+        const std::vector<T> couplers(yard.couplers());
+        std::vector<F> contents;
+        for (std::size_t i=1; i<couplers.size(); i++)
+        {
+            F f;
+            // add together all cars that intersect the region from couplers[i-1] to couplers[i]
+            for (auto car: yard.cars)
+            {
+                if (std::max(car.lo, couplers[i-1]) < std::min(car.hi, couplers[i]))
+                {
+                    f += car.content;
+                }
+            }
+            contents.push_back(f);
+        }
+        return Train<T,F>(contents, couplers);
+    }
+
+    // a convenience function that returns a sorted list of all couplers found within two trains
+    template<typename T, typename F, typename G>
+    constexpr auto couplers(const Train<T,F>& f, const Train<T,G>& g)
+    {
+        std::vector<T> fg_couplers;
+        fg_couplers.insert(fg_couplers.end(), f.couplers.begin(), f.couplers.end());
+        fg_couplers.insert(fg_couplers.end(), g.couplers.begin(), g.couplers.end());
+        std::sort(fg_couplers.begin(), fg_couplers.end());
+        auto last = std::unique(fg_couplers.begin(), fg_couplers.end());
+        fg_couplers.erase(last, fg_couplers.end());
+    }
+
+    /*
+    Addition and subtraction between trains must in the general case return a railyard.
+    If the contents of a railyard is closed under addition (like a polynomial)
+    then it is trivial to cast the output as another Train, 
+    however not all contents has this property. 
+    As an example, the degree of a rational train's polynomials cannot be known 
+    at compile time if that train has been converted from a railyard.
+    We could choose to implement specializations for addition over
+    each train type where contents are closed under addition, 
+    however this vastly increases the number of overloads we need to support,
+    and it is easy enough for the user to simply call train(a+b) 
+    if they really want the output to be a train.
+    */
+
+    // template<typename T, typename F, typename G>
+    // constexpr auto operator+(const Train<T,F>& f, const Train<T,G>& g)
+    // {
+    //     return railyard(f) + railyard(g);
+    // }
+
+    // template<typename T, typename F>
+    // constexpr auto operator-(const Train<T,F>& f, const Train<T,F>& g)
+    // {
+    //     return railyard(f) - railyard(g);
+    // }
+
+
+    // template<typename T, typename F, typename G>
+    // constexpr auto operator+(const Railyard<T,F>& f, const Train<T,G>& g)
+    // {
+    //     return f + railyard(g);
+    // }
+
+    // template<typename T, typename F, typename G>
+    // constexpr auto operator-(const Train<T,F>& f, const Railyard<T,G>& g)
+    // {
+    //     return railyard(f) - g;
+    // }
+
 
 
 
@@ -273,20 +355,15 @@ namespace analytic {
         return (y);
     }
 
-
-
-
-    // a convenience function that returns a sorted list of all couplers found within two trains
-    template<typename T, typename F, typename G>
-    constexpr auto couplers(const Train<T,F>& f, const Train<T,G>& g)
+    template<typename T, typename F>
+    constexpr auto operator-(const Train<T,F>& f)
     {
-        std::vector<T> fg_couplers;
-        fg_couplers.insert(fg_couplers.end(), f.couplers.begin(), f.couplers.end());
-        fg_couplers.insert(fg_couplers.end(), g.couplers.begin(), g.couplers.end());
-        std::sort(fg_couplers.begin(), fg_couplers.end());
-        auto last = std::unique(fg_couplers.begin(), fg_couplers.end());
-        fg_couplers.erase(last, fg_couplers.end());
+        Train<T,F> y(f);
+        y *= T(-1);
+        return y;
     }
+
+
 
 
     template<typename T, typename F>
@@ -343,163 +420,67 @@ namespace analytic {
 
 
 
-    // template<typename T, typename F>
-    // constexpr auto operator+(const Clamped<T,F>& f, const Railcar<T,F>& g)
-    // {
-    //     Train<T,F> y(f);
-    //     y += g;
-    //     return y;
-    // }
 
-    // template<typename T, typename F>
-    // constexpr auto operator+(const Railcar<T,F>& g, const Clamped<T,F>& f)
-    // {
-    //     Train<T,F> y(f);
-    //     y += g;
-    //     return y;
-    // }
 
-    // template<typename T, typename F>
-    // constexpr auto operator-(const Clamped<T,F>& f, const Railcar<T,F>& g)
-    // {
-    //     Train<T,F> y(f);
-    //     y -= g;
-    //     return y;
-    // }
 
-    // template<typename T, typename F>
-    // constexpr auto operator-(const Railcar<T,F>& g, const Clamped<T,F>& f)
-    // {
-    //     Train<T,F> y(g);
-    //     y -= Train<T,F>(f);
-    //     return y;
-    // }
+
+    template<typename T, typename F>
+    constexpr auto operator+(const Clamped<T,F>& f, const Train<T,F>& g)
+    {
+        return f + train(g);
+    }
+
+    template<typename T, typename F>
+    constexpr auto operator+(const Train<T,F>& g, const Clamped<T,F>& f)
+    {
+        return train(g) + f;
+    }
+
+    template<typename T, typename F>
+    constexpr auto operator-(const Clamped<T,F>& f, const Train<T,F>& g)
+    {
+        return f - train(g);
+    }
+
+    template<typename T, typename F>
+    constexpr auto operator-(const Train<T,F>& g, const Clamped<T,F>& f)
+    {
+        return train(g) - f;
+    }
 
 
 
 
 
-    // template<typename T, typename F>
-    // constexpr auto operator+(const Clamped<T,F>& f, const Train<T,F>& g)
-    // {
-    //     Train<T,F> y(f);
-    //     y += g;
-    //     return y;
-    // }
+    template<typename T, typename F>
+    constexpr auto operator+(const Train<T,F>& f, const Railcar<T,F>& g)
+    {
+        return train(f) + g;
+    }
 
-    // template<typename T, typename F>
-    // constexpr auto operator+(const Train<T,F>& g, const Clamped<T,F>& f)
-    // {
-    //     Train<T,F> y(f);
-    //     y += g;
-    //     return y;
-    // }
+    template<typename T, typename F>
+    constexpr auto operator+(const Railcar<T,F>& g, const Train<T,F>& f)
+    {
+        return g + train(f);
+    }
 
-    // template<typename T, typename F>
-    // constexpr auto operator-(const Clamped<T,F>& f, const Train<T,F>& g)
-    // {
-    //     Train<T,F> y(f);
-    //     y -= g;
-    //     return y;
-    // }
+    template<typename T, typename F>
+    constexpr auto operator-(const Train<T,F>& f, const Railcar<T,F>& g)
+    {
+        return train(f) - g;
+    }
 
-    // template<typename T, typename F>
-    // constexpr auto operator-(const Train<T,F>& g, const Clamped<T,F>& f)
-    // {
-    //     Train<T,F> y(g);
-    //     y -= Train<T,F>(f);
-    //     return y;
-    // }
+    template<typename T, typename F>
+    constexpr auto operator-(const Railcar<T,F>& g, const Train<T,F>& f)
+    {
+        return g - train(f);
+    }
 
 
 
 
 
-    // template<typename T, typename F>
-    // constexpr auto operator+(const Train<T,F>& f, const Railcar<T,F>& g)
-    // {
-    //     Train<T,F> y(f);
-    //     y += g;
-    //     return y;
-    // }
 
-    // template<typename T, typename F>
-    // constexpr auto operator+(const Railcar<T,F>& g, const Train<T,F>& f)
-    // {
-    //     Train<T,F> y(f);
-    //     y += g;
-    //     return y;
-    // }
-
-    // template<typename T, typename F>
-    // constexpr auto operator-(const Train<T,F>& f, const Railcar<T,F>& g)
-    // {
-    //     Train<T,F> y(f);
-    //     y -= g;
-    //     return y;
-    // }
-
-    // template<typename T, typename F>
-    // constexpr auto operator-(const Railcar<T,F>& g, const Train<T,F>& f)
-    // {
-    //     Train<T,F> y(g);
-    //     y -= f;
-    //     return y;
-    // }
-
-
-
-
-    // template<typename T, typename F>
-    // constexpr auto operator+(const Railcar<T,F>& f, const Railcar<T,F>& g)
-    // {
-    //     Train<T,F> y(f);
-    //     y += Train<T,F>(g);
-    //     return y;
-    // }
-
-    // template<typename T, typename F>
-    // constexpr auto operator-(const Railcar<T,F>& f, const Railcar<T,F>& g)
-    // {
-    //     Train<T,F> y(f);
-    //     y -= Train<T,F>(g);
-    //     return y;
-    // }
-
-
-    // template<typename T, typename F>
-    // constexpr auto operator+(const Clamped<T,F>& f, const Clamped<T,F>& g)
-    // {
-    //     Train<T,F> y(f);
-    //     y += Train<T,F>(g);
-    //     return y;
-    // }
-
-    // template<typename T, typename F>
-    // constexpr auto operator-(const Clamped<T,F>& f, const Clamped<T,F>& g)
-    // {
-    //     Train<T,F> y(f);
-    //     y -= Train<T,F>(g);
-    //     return y;
-    // }
-
-
-
-    // template<typename T, typename F>
-    // constexpr auto operator+(const Train<T,F>& f, const Train<T,F>& g)
-    // {
-    //     Train<T,F> y(f);
-    //     y += g;
-    //     return y;
-    // }
-
-    // template<typename T, typename F>
-    // constexpr auto operator-(const Train<T,F>& f, const Train<T,F>& g)
-    // {
-    //     Train<T,F> y(f);
-    //     y -= g;
-    //     return y;
-    // }
 
 
     /*
@@ -521,21 +502,21 @@ namespace analytic {
     template<typename T, typename F, typename G>
     constexpr Train<T,F> compose(const Train<T,F>& f, const G& g)
     {
-        std::vector<F> content;
-        for (auto car: f.content)
+        std::vector<F> contents;
+        for (auto car: f.contents)
         {
-            content.push_back( compose(car, g) );
+            contents.push_back( compose(car, g) );
         }
-        return Train(content, f.couplers);
+        return Train(contents, f.couplers);
     }
 
     template<typename FG, typename T, typename F, typename G>
     constexpr Railyard<T,FG> compose(const Train<T,F>& f, const Train<T,G>& g)
     {
         Railyard<T,FG> y;
-        for (auto fi: f2.content)
+        for (auto fi: f.contents)
         {
-            for (auto gi: g2.content)
+            for (auto gi: g.contents)
             {
                 y += compose(fi, gi);
             }
@@ -559,11 +540,11 @@ namespace analytic {
     template<typename T, typename F>
     T derivative(const Train<T,F>& train, const T x)
     {
-        for (std::size_t i=0; i<content.size(); i++)
+        for (std::size_t i=0; i<train.contents.size(); i++)
         {
-            if (couplers[i] < x&&x < couplers[i+1])
+            if (train.couplers[i] < x&&x < train.couplers[i+1])
             {
-                return derivative(train.content[i], x);
+                return derivative(train.contents[i], x);
             }
         }
         return 0.0;
@@ -579,10 +560,10 @@ namespace analytic {
     T integral(const Train<T,F>& train, const T x)
     {
         T I(0.0f);
-        for (std::size_t i=0; i<content.size(); i++)
+        for (std::size_t i=0; i<train.contents.size(); i++)
         {
-            I += integral(train.content[i], std::min(x, train.couplers[i+1])); 
-            if (couplers[i] < x&&x < couplers[i+1])
+            I += integral(train.contents[i], std::min(x, train.couplers[i+1])); 
+            if (train.couplers[i] < x&&x < train.couplers[i+1])
             {
                 return I;
             } 
@@ -600,13 +581,13 @@ namespace analytic {
     T integral(const Train<T,F>& train, const T lo, const T hi)
     {
         T I(0.0f);
-        for (std::size_t i=0; i<content.size(); i++)
+        for (std::size_t i=0; i<train.contents.size(); i++)
         {
-            if (lo < couplers[i])
+            if (lo < train.couplers[i])
             {
-                I += integral(train.content[i], std::max(lo, train.couplers[i]), std::min(hi, train.couplers[i+1])); 
+                I += integral(train.contents[i], std::max(lo, train.couplers[i]), std::min(hi, train.couplers[i+1])); 
             }
-            if (couplers[i] < hi&&hi < couplers[i+1])
+            if (train.couplers[i] < hi&&hi < train.couplers[i+1])
             {
                 return I;
             }
@@ -620,48 +601,26 @@ namespace analytic {
     template<typename T, typename F>
     constexpr Train<T,F> restriction(const Train<T,F>& train, const T lo, const T hi)
     {
-        std::vector<F> content;
+        std::vector<F> contents;
         std::vector<T> couplers;
         const T oo(std::numeric_limits<T>::max());
-        for (std::size_t i=0; i<train.content.size(); i++)
+        for (std::size_t i=0; i<train.contents.size(); i++)
         {
             if (lo < train.couplers[i] || train.couplers[i+1] <= hi)
             {
-                if (content.size() < 1)
+                if (contents.size() < 1)
                 {
                     couplers.push_back(-oo);
-                    content.push_back(train.content[i](train.couplers[i]));
+                    contents.push_back(train.contents[i](train.couplers[i]));
                     couplers.push_back(train.couplers[i]);
                 }
-                content.push_back(train.content[i]);
+                contents.push_back(train.contents[i]);
                 couplers.push_back(train.couplers[i+1]);
             }
         }
-        content.push_back(train.content[train.content.size()-1](train.couplers[train.couplers.size()-1]));
+        contents.push_back(train.contents[train.contents.size()-1](train.couplers[train.couplers.size()-1]));
         couplers.push_back(oo);
-        return Train(content, couplers);
-    }
-
-    // TODO: refactor to return Train<T,F> so that continuity is guaranteed downstream
-    template<typename T, typename F>
-    constexpr Train<T,F> simplify(const Railyard<T,F>& yard)
-    {
-        const std::vector<T> couplers(yard.couplers());
-        std::vector<F> cars;
-        for (std::size_t i=1; i<couplers.size(); i++)
-        {
-            F f;
-            // add together all cars that intersect the region from couplers[i-1] to couplers[i]
-            for (auto car: yard.cars)
-            {
-                if (std::max(car.lo, couplers[i-1]) < std::min(car.hi, couplers[i]))
-                {
-                    f += car.content;
-                }
-            }
-            cars.push_back(f);
-        }
-        return Train<T,F>(contents, couplers);
+        return Train(contents, couplers);
     }
 
 
@@ -673,12 +632,12 @@ namespace analytic {
     */
     template<typename T, typename F>
     constexpr T dot(
-        const Train<T,F>& yard1, 
-        const Train<T,F>& yard2, 
+        const Train<T,F>& train1, 
+        const Train<T,F>& train2, 
         const T lo, 
         const T hi
     ){
-        return integral(yard1*yard2, lo, hi);
+        return integral(train1*train2, lo, hi);
     }
 
     /*
