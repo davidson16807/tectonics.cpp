@@ -30,19 +30,23 @@ namespace analytic {
             R1 ri;
             R2 si;
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=0; i<r.size(); j++)
+            for (std::size_t j=0; j<p.size(); j++)
             {
-                if (r.lo(j) <= sample && sample <= r.hi(j))
+                auto car = p[j];
+                if (car.lo <= sample && sample <= car.hi)
                 {
-                    ri = r.contents[j];
+                    pi = car.content;
+                    break;
                 }
             }
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=1; i<s.size(); j++)
+            for (std::size_t j=0; j<q.size(); j++)
             {
-                if (s.lo(j) <= sample && sample <= s.hi(j))
+                auto car = q[j];
+                if (car.lo <= sample && sample <= car.hi)
                 {
-                    si = s.contents[j];
+                    qi = car.content;
+                    break;
                 }
             }
             contents.push_back(ri+si);
@@ -66,19 +70,23 @@ namespace analytic {
             R1 ri;
             R2 si;
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=0; i<r.size(); j++)
+            for (std::size_t j=0; j<p.size(); j++)
             {
-                if (r.lo(j) <= sample && sample <= r.hi(j))
+                auto car = p[j];
+                if (car.lo <= sample && sample <= car.hi)
                 {
-                    ri = r.contents[j];
+                    pi = car.content;
+                    break;
                 }
             }
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=1; i<s.size(); j++)
+            for (std::size_t j=0; j<q.size(); j++)
             {
-                if (s.lo(j) <= sample && sample <= s.hi(j))
+                auto car = q[j];
+                if (car.lo <= sample && sample <= car.hi)
                 {
-                    si = s.contents[j];
+                    qi = car.content;
+                    break;
                 }
             }
             contents.push_back(ri-si);
@@ -102,19 +110,23 @@ namespace analytic {
             R1 ri;
             R2 si;
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=0; i<r.size(); j++)
+            for (std::size_t j=0; j<p.size(); j++)
             {
-                if (r.lo(j) <= sample && sample <= r.hi(j))
+                auto car = p[j];
+                if (car.lo <= sample && sample <= car.hi)
                 {
-                    ri = r.contents[j];
+                    pi = car.content;
+                    break;
                 }
             }
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=1; i<s.size(); j++)
+            for (std::size_t j=0; j<q.size(); j++)
             {
-                if (s.lo(j) <= sample && sample <= s.hi(j))
+                auto car = q[j];
+                if (car.lo <= sample && sample <= car.hi)
                 {
-                    si = s.contents[j];
+                    qi = car.content;
+                    break;
                 }
             }
             contents.push_back(ri*si);
@@ -138,19 +150,23 @@ namespace analytic {
             R1 ri;
             R2 si;
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=0; i<r.size(); j++)
+            for (std::size_t j=0; j<p.size(); j++)
             {
-                if (r.lo(j) <= sample && sample <= r.hi(j))
+                auto car = p[j];
+                if (car.lo <= sample && sample <= car.hi)
                 {
-                    ri = r.contents[j];
+                    pi = car.content;
+                    break;
                 }
             }
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=1; i<s.size(); j++)
+            for (std::size_t j=0; j<q.size(); j++)
             {
-                if (s.lo(j) <= sample && sample <= s.hi(j))
+                auto car = q[j];
+                if (car.lo <= sample && sample <= car.hi)
                 {
-                    si = s.contents[j];
+                    qi = car.content;
+                    break;
                 }
             }
             contents.push_back(ri/si);
@@ -175,19 +191,23 @@ namespace analytic {
             P pi;
             Q qi;
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=0; i<r.size(); j++)
+            for (std::size_t j=0; j<p.size(); j++)
             {
-                if (r.lo(j) <= sample && sample <= r.hi(j))
+                auto car = p[j];
+                if (car.lo <= sample && sample <= car.hi)
                 {
-                    ri = r.contents[j];
+                    pi = car.content;
+                    break;
                 }
             }
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=1; i<s.size(); j++)
+            for (std::size_t j=0; j<q.size(); j++)
             {
-                if (s.lo(j) <= sample && sample <= s.hi(j))
+                auto car = q[j];
+                if (car.lo <= sample && sample <= car.hi)
                 {
-                    si = s.contents[j];
+                    qi = car.content;
+                    break;
                 }
             }
             contents.push_back(pi/qi);

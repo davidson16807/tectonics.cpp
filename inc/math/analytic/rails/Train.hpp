@@ -110,32 +110,17 @@ namespace analytic {
             return y;
         }
 
-        F& operator[](const std::size_t i)
-        {
-            return contents[i];
-        }
-        F operator[](const std::size_t i) const
-        {
-            return 0<=i&&i<contents.size()? contents[i] : F(0);
-        }
-        T& lo(const std::size_t i)
-        {
-            return couplers[i];
-        }
-        T lo(const std::size_t i) const
+        Railcar<T,F> operator[](const std::size_t i) const
         {
             const T oo = std::numeric_limits<double>::max();
-            return i<0? -oo : i>=contents.size()? oo : couplers[i];
+            return i<0? 
+                    Railcar<T,F>(-oo,oo,F(0)) 
+              : i>=contents.size()? 
+                    Railcar<T,F>(oo,oo,F(0)) 
+              : 
+                    Railcar<T,F>(couplers[i], couplers[i+1], contents[i]);
         }
-        T& hi(const std::size_t i)
-        {
-            return couplers[i+1];
-        }
-        T hi(const std::size_t i) const
-        {
-            const T oo = std::numeric_limits<double>::max();
-            return i<0? -oo : i>=contents.size()? oo : couplers[i+1];
-        }
+
         std::size_t size() const
         {
             return contents.size();
@@ -239,9 +224,9 @@ namespace analytic {
         std::string output("\r\n");
         for (std::size_t i=0; i<train.size(); i++)
         {
-            output += train.lo(i) == -oo? "-∞" : std::to_string(train.lo(i));
+            output += train[i].lo == -oo? "-∞" : std::to_string(train[i].lo);
             output += " < x ≤ ";
-            output += train.hi(i) == oo? "∞" : std::to_string(train.hi(i));
+            output += train[i].hi == oo? "∞" : std::to_string(train[i].hi);
             output += ": ";
             output += to_string(train.contents[i]);
             output += "\r\n";
@@ -263,7 +248,7 @@ namespace analytic {
         std::vector<Railcar<T,F>> cars;
         for (std::size_t i=0; i<train.size(); i++)
         {
-            cars.emplace_back(train.lo(i), train.hi(i), train.contents[i]);
+            cars.emplace_back(train[i].lo, train[i].hi, train.contents[i]);
         }
         return Railyard<T,F>(cars);
     }
@@ -568,7 +553,7 @@ namespace analytic {
     {
         for (std::size_t i=0; i<train.size(); i++)
         {
-            if (train.lo(i) < x&&x < train.hi(i))
+            if (train[i].lo < x&&x < train[i].hi)
             {
                 return derivative(train.contents[i], x);
             }
@@ -588,8 +573,8 @@ namespace analytic {
         T I(0.0f);
         for (std::size_t i=0; i<train.size(); i++)
         {
-            I += integral(train.contents[i], std::min(x, train.hi(i))); 
-            if (train.lo(i) < x&&x < train.hi(i))
+            I += integral(train.contents[i], std::min(x, train[i].hi)); 
+            if (train[i].lo < x&&x < train[i].hi)
             {
                 return I;
             } 
@@ -609,11 +594,11 @@ namespace analytic {
         T I(0.0f);
         for (std::size_t i=0; i<train.size(); i++)
         {
-            if (lo < train.hi(i))
+            if (lo < train[i].hi)
             {
-                I += integral(train.contents[i], std::max(lo, train.lo(i)), std::min(hi, train.hi(i))); 
+                I += integral(train.contents[i], std::max(lo, train[i].lo), std::min(hi, train[i].hi)); 
             }
-            if (train.lo(i) < hi&&hi < train.hi(i))
+            if (train[i].lo < hi&&hi < train[i].hi)
             {
                 return I;
             }
@@ -632,16 +617,16 @@ namespace analytic {
         const T oo(std::numeric_limits<T>::max());
         for (std::size_t i=0; i<train.size(); i++)
         {
-            if (lo < train.lo(i) || train.hi(i) <= hi)
+            if (lo < train[i].lo || train[i].hi <= hi)
             {
                 if (contents.size() < 1)
                 {
                     couplers.push_back(-oo);
-                    contents.push_back(train.contents[i](train.lo(i)));
-                    couplers.push_back(train.lo(i));
+                    contents.push_back(train.contents[i](train[i].lo));
+                    couplers.push_back(train[i].lo);
                 }
                 contents.push_back(train.contents[i]);
-                couplers.push_back(train.hi(i));
+                couplers.push_back(train[i].hi);
             }
         }
         contents.push_back(train.contents[train.size()-1](train.hi(train.size()-1)));
