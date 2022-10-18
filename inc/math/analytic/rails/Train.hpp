@@ -109,6 +109,34 @@ namespace analytic {
             }
             return y;
         }
+        constexpr T& operator[](const int i)
+        {
+            return contents[i];
+        }
+        constexpr T operator[](const int i) const
+        {
+            return 0<=i&&i<contents.size()? contents[i] : F(0);
+        }
+        constexpr T& lo(const int i)
+        {
+            return couplers[i];
+        }
+        constexpr T lo(const int i) const
+        {
+            return 0<=i&&i<contents.size()? couplers[i] : T(0);
+        }
+        constexpr T& hi(const int i)
+        {
+            return couplers[i+1];
+        }
+        constexpr T hi(const int i) const
+        {
+            return 0<=i&&i<contents.size()? couplers[i+1] : T(0);
+        }
+        constexpr std::size_t size() const
+        {
+            return contents.size();
+        }
 
         Train<T,F>& operator=(const T k)
         {
@@ -201,6 +229,31 @@ namespace analytic {
 
     };
 
+    template<typename T, typename F>
+    constexpr std::string to_string(const Train<T,F>& train)
+    {
+        const T oo (std::numeric_limits<T>::max());
+        std::string output("\r\n");
+        for (std::size_t i=0; i<train.contents.size(); i++)
+        {
+            T lo = train.couplers[i];
+            T hi = train.couplers[i+1];
+            output += lo == -oo? "-∞" : std::to_string(lo);
+            output += " < x ≤ ";
+            output += hi == oo? "∞" : std::to_string(hi);
+            output += ": ";
+            output += to_string(train.contents[i]);
+            output += "\r\n";
+        }
+        return output;
+    }
+
+    template<typename T, typename F>
+    std::ostream& operator<<(std::ostream& os, const Train<T,F>& train) { 
+        os << to_string(train);
+        return os;
+    }
+
 
     // a convenience function that converts a train to a railyard
     template<typename T, typename F>
@@ -251,8 +304,8 @@ namespace analytic {
         fg_couplers.insert(fg_couplers.end(), f.couplers.begin(), f.couplers.end());
         fg_couplers.insert(fg_couplers.end(), g.couplers.begin(), g.couplers.end());
         std::sort(fg_couplers.begin(), fg_couplers.end());
-        auto last = std::unique(fg_couplers.begin(), fg_couplers.end());
-        fg_couplers.erase(last, fg_couplers.end());
+        fg_couplers.erase(std::unique(fg_couplers.begin(), fg_couplers.end()), fg_couplers.end());
+        return fg_couplers;
     }
 
     /*
@@ -557,7 +610,7 @@ namespace analytic {
         T I(0.0f);
         for (std::size_t i=0; i<train.contents.size(); i++)
         {
-            if (lo < train.couplers[i])
+            if (lo < train.couplers[i+1])
             {
                 I += integral(train.contents[i], std::max(lo, train.couplers[i]), std::min(hi, train.couplers[i+1])); 
             }

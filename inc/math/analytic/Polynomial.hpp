@@ -45,6 +45,7 @@ namespace analytic {
         // copy constructor
         constexpr Polynomial(const Polynomial& p): k()
         {
+            std::fill(k.begin(), k.end(), T(0.0));
             std::copy(p.k.begin(), p.k.end(), k.begin());
         }
         // cast constructor
@@ -74,16 +75,20 @@ namespace analytic {
             k[0-Nlo] = f.offset;
             k[1-Nlo] = T(1.0);
         }
-        constexpr explicit Polynomial(const std::array<T,Nhi+1-Nlo> k2): k(k2)
+        constexpr explicit Polynomial(const std::array<T,Nhi+1-Nlo> k2)
         {
+            std::fill(k.begin(), k.end(), T(0.0));
+            std::copy(k2.begin(), k2.end(), k.begin());
         }
         template<typename TIterator>
         constexpr explicit Polynomial(TIterator first, TIterator last)
         {
+            std::fill(k.begin(), k.end(), T(0.0));
             std::copy(first, last, k.begin());
         }
         constexpr Polynomial<T,Nlo,Nhi>& operator=(const Polynomial<T,Nlo,Nhi>& p)
         {
+            std::fill(k.begin(), k.end(), T(0.0));
             std::copy(p.k.begin(), p.k.end(), k.begin());
             return *this;
         }
@@ -888,6 +893,39 @@ namespace analytic {
         return Polynomial<T,1,2>(std::array<T,2>{f.offset, T(0.5)});
     }
 
+    template<int N, typename T, int Plo, int Phi, 
+        typename = std::enable_if_t<(N==0)>>
+    constexpr Polynomial<T,0,0> pow(const Polynomial<T,Plo,Phi>& p){
+        return Polynomial<T,0,0>(T(1));
+    }
+
+    template<int N, typename T, int Plo, int Phi, 
+        typename = std::enable_if_t<(N==1)>>
+    constexpr Polynomial<T,Plo,Phi> pow(const Polynomial<T,Plo,Phi>& p){
+        return p;
+    }
+
+    template<int N, typename T, int Plo, int Phi, 
+        typename = std::enable_if_t<(N>1)>>
+    constexpr Polynomial<T,Plo*N,Phi*N> pow(const Polynomial<T,Plo,Phi>& p){
+        return p*pow<N-1>(p);
+    }
+
+    template<int N, typename T, int P, 
+        typename = std::enable_if_t<(N<0)>>
+    constexpr Polynomial<T,P*N,P*N> pow(const Polynomial<T,P,P>& p){
+        return pow<-N>(1/p);
+    }
+
+    /*
+    `solution()` provides the single real valued solution to a function
+    where only one solution exists
+    */
+    template<typename T>
+    constexpr T solution(const Polynomial<T,0,1> p, const T y) 
+    {
+        return (y-p[0]) / p[1];
+    }
 
     /*
     `solutions()` provides all possible solutions to a polynomial, complex or otherwise.
@@ -896,12 +934,6 @@ namespace analytic {
     or as an array of complex numbers (for any other polynomial).
     This can be useful if performance takes precedence over ease of implementation.
     */
-    template<typename T>
-    constexpr T solution(const Polynomial<T,0,1> p, const T y) 
-    {
-        return (y-p[0]) / p[1];
-    }
-
     template<typename T>
     std::array<std::complex<T>, 1> solutions(const Polynomial<T,0,1> p, const T y) 
     {

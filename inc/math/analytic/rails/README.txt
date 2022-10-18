@@ -42,7 +42,8 @@ Railyards can be useful since they easily extend the properties of their content
  * for any class of function 𝔽, if 𝔽 is closed under subtraction, multiplication, 
    derivation, or integration, so to will the railyard of 𝔽.
 Trains can be useful since they minimize the number of terms that need to be calculated,
-and they allow certain operations to be performed that would not be allowed on railyards.
+The boxcars that underlie trains are disjoint, which permits trains to perform certain operations 
+that would not be allowed on railyards.
 As an example: 
  * rational trains are closed under division, however rational railyards are not
  * the degree of a rational train's polynomials cannot be known at compile time 

@@ -19,415 +19,497 @@ namespace analytic {
     template<typename T, int Plo, int Phi>
     using PolynomialTrain = Train<T,Polynomial<T,Plo,Phi>>;
 
-    // RAILYARDS
 
-    // ADDITION AND SUBTRACTION
 
-    // with polynomials
+    // operations that are closed under trains
 
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto operator+(const PolynomialTrain<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi>& q)
+    template<typename T, 
+        int P1lo, int P1hi,
+        int P2lo, int P2hi>
+    constexpr auto operator+(const PolynomialTrain<T,P1lo,P1hi>& p, const PolynomialTrain<T,P2lo,P2hi>& q)
     {
-        return railyard(p) + q;
-    }
-
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto operator+(const Polynomial<T,Qlo,Qhi>& q, const PolynomialTrain<T,Plo,Phi>& p)
-    {
-        return q + railyard(p);
-    }
-
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto operator-(const PolynomialTrain<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi>& q)
-    {
-        return railyard(p) - q;
-    }
-
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto operator-(const Polynomial<T,Qlo,Qhi>& q, const PolynomialTrain<T,Plo,Phi>& p)
-    {
-        return q - railyard(p);
-    }
-
-
-
-
-
-
-    // // with railcars
-
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto operator+(const PolynomialTrain<T,Plo,Phi>& p, const PolynomialRailcar<T,Qlo,Qhi>& q)
-    {
-        return railyard(p) + q;
-    }
-
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto operator+(const PolynomialRailcar<T,Qlo,Qhi>& q, const PolynomialTrain<T,Plo,Phi>& p)
-    {
-        return q + railyard(p);
-    }
-
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto operator-(const PolynomialTrain<T,Plo,Phi>& p, const PolynomialRailcar<T,Qlo,Qhi>& q)
-    {
-        return railyard(p) - q;
-    }
-
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto operator-(const PolynomialRailcar<T,Qlo,Qhi>& q, const PolynomialTrain<T,Plo,Phi>& p)
-    {
-        return q - railyard(p);
-    }
-
-    // // with railyards
-
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto operator+(const PolynomialTrain<T,Plo,Phi>& p, const PolynomialRailyard<T,Qlo,Qhi>& q)
-    {
-        return railyard(p) + q;
-    }
-
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto operator+(const PolynomialRailyard<T,Qlo,Qhi>& q, const PolynomialTrain<T,Plo,Phi>& p)
-    {
-        return q + railyard(p);
-    }
-
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto operator-(const PolynomialTrain<T,Plo,Phi>& p, const PolynomialRailyard<T,Qlo,Qhi>& q)
-    {
-        return railyard(p) - q;
-    }
-
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto operator-(const PolynomialRailyard<T,Qlo,Qhi>& q, const PolynomialTrain<T,Plo,Phi>& p)
-    {
-        return q - railyard(p);
-    }
-
-
-
-    // // with other trains
-
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto operator+(
-        const PolynomialTrain<T,Plo,Phi>& p, const PolynomialTrain<T,Qlo,Qhi>& q)
-    {
-        return railyard(p) + railyard(q);
-    }
-
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto operator-(
-        const PolynomialTrain<T,Plo,Phi>& p, const PolynomialTrain<T,Qlo,Qhi>& q)
-    {
-        return railyard(p) - railyard(q);
-    }
-
-
-
-
-    // // MULTIPLICATION
-
-    // // with polynomials
-
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto operator*(const PolynomialTrain<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi> q)
-    {
-        std::vector<Polynomial<T,Plo+Qlo,Phi+Qhi>> contents;
-        for (auto pi : p.contents)
+        using P1 = Polynomial<T,P1lo,P1hi>;
+        using P2 = Polynomial<T,P2lo,P2hi>;
+        using P = Polynomial<T,std::min(P1lo,P2lo),std::max(P1hi,P2hi)>;
+        const std::vector<T> couplers_ = couplers(p,q);
+        std::vector<P> contents;
+        for (std::size_t i=1; i<couplers_.size(); i++)
         {
-            contents.push_back(pi*q);
+            T sample = (couplers_[i-1] + couplers_[i]) / 2.0;
+            P1 pi(0);
+            P2 qi(0);
+            // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
+            for (std::size_t j=1; j<p.couplers.size(); j++)
+            {
+                if (p.couplers[j-1] <= sample && sample <= p.couplers[j])
+                {
+                    pi = p.contents[j-1];
+                    break;
+                }
+            }
+            // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
+            for (std::size_t j=1; j<q.couplers.size(); j++)
+            {
+                if (q.couplers[j-1] <= sample && sample <= q.couplers[j])
+                {
+                    qi = q.contents[j-1];
+                    break;
+                }
+            }
+            contents.push_back(P(pi+qi));
         }
-        return PolynomialTrain<T,Plo+Qlo,Phi+Qhi>(contents, p.couplers);
+        Train<T,P> result(contents, couplers_);
+        return result;
     }
 
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto operator*(const Polynomial<T,Qlo,Qhi> q, const PolynomialTrain<T,Plo,Phi>& p)
+    template<typename T, 
+        int P1lo, int P1hi,
+        int P2lo, int P2hi>
+    constexpr auto operator-(const PolynomialTrain<T,P1lo,P1hi>& p, const PolynomialTrain<T,P2lo,P2hi>& q)
     {
-        std::vector<Polynomial<T,Plo+Qlo,Phi+Qhi>> contents;
-        for (auto pi : p.contents)
+        using P1 = Polynomial<T,P1lo,P1hi>;
+        using P2 = Polynomial<T,P2lo,P2hi>;
+        using P = Polynomial<T,std::min(P1lo,P2lo),std::max(P1hi,P2hi)>;
+        const std::vector<T> couplers_ = couplers(p,q);
+        std::vector<P> contents;
+        for (std::size_t i=1; i<couplers_.size(); i++)
         {
-            contents.push_back(q*pi);
+            T sample = (couplers_[i-1] + couplers_[i]) / 2.0;
+            P1 pi(0);
+            P2 qi(0);
+            // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
+            for (std::size_t j=1; j<p.couplers.size(); j++)
+            {
+                if (p.couplers[j-1] <= sample && sample <= p.couplers[j])
+                {
+                    pi = p.contents[j-1];
+                    break;
+                }
+            }
+            // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
+            for (std::size_t j=1; j<q.couplers.size(); j++)
+            {
+                if (q.couplers[j-1] <= sample && sample <= q.couplers[j])
+                {
+                    qi = q.contents[j-1];
+                    break;
+                }
+            }
+            contents.push_back(P(pi-qi));
         }
-        return PolynomialTrain<T,Plo+Qlo,Phi+Qhi>(contents, p.couplers);
+        Train<T,P> result(contents, couplers_);
+        return result;
     }
 
-    template<typename T, int Plo, int Phi, int Q>
-    constexpr auto operator/(const PolynomialTrain<T,Plo,Phi>& p, const Polynomial<T,Q,Q> q)
+    template<typename T, 
+        int P1lo, int P1hi,
+        int P2lo, int P2hi>
+    constexpr auto operator*(const PolynomialTrain<T,P1lo,P1hi>& p, const PolynomialTrain<T,P2lo,P2hi>& q)
     {
-        std::vector<Polynomial<T,Plo-Q,Phi-Q>> contents;
-        for (auto pi : p.contents)
+        using P1 = Polynomial<T,P1lo,P1hi>;
+        using P2 = Polynomial<T,P2lo,P2hi>;
+        using P = Polynomial<T,P1lo+P2lo,P1hi+P2hi>;
+        const std::vector<T> couplers_ = couplers(p,q);
+        std::vector<P> contents;
+        for (std::size_t i=1; i<couplers_.size(); i++)
         {
-            contents.push_back(pi/q);
+            T sample = (couplers_[i-1] + couplers_[i]) / 2.0;
+            P1 pi(0);
+            P2 qi(0);
+            // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
+            for (std::size_t j=1; j<p.couplers.size(); j++)
+            {
+                if (p.couplers[j-1] <= sample && sample <= p.couplers[j])
+                {
+                    pi = p.contents[j-1];
+                    break;
+                }
+            }
+            // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
+            for (std::size_t j=1; j<q.couplers.size(); j++)
+            {
+                if (q.couplers[j-1] <= sample && sample <= q.couplers[j])
+                {
+                    qi = q.contents[j-1];
+                    break;
+                }
+            }
+            contents.push_back(P(pi*qi));
         }
-        return PolynomialTrain<T,Plo-Q,Phi-Q>(contents, p.couplers);
+        return Train<T,P>(contents, couplers_);
     }
 
-    // /*
-    // NOTE: we cannot support division by railcars.
-    // This is because the resulting function object would produce a division by 0 for the vast majority of its range.
-    // We can only be reasonably confident this will not be the case for trains.
-    // */ 
-
-
-
-    // // with railcars
-
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto operator*(const PolynomialTrain<T,Plo,Phi>& p, const PolynomialRailcar<T,Qlo,Qhi> q)
+    template<typename T, 
+        int P1lo, int P1hi, 
+        int P2x>
+    constexpr auto operator/(const PolynomialTrain<T,P1lo,P1hi>& p, const PolynomialTrain<T,P2x,P2x>& q)
     {
-        return railyard(p) * q;
-    }
-
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto operator*(const PolynomialRailcar<T,Qlo,Qhi> q, const PolynomialTrain<T,Plo,Phi>& p)
-    {
-        return q * railyard(p);
-    }
-
-    // // with railyards
-
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto operator*(const PolynomialTrain<T,Plo,Phi>& p, const PolynomialRailyard<T,Qlo,Qhi> q)
-    {
-        return railyard(p) * q;
-    }
-
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto operator*(const PolynomialRailyard<T,Qlo,Qhi> q, const PolynomialTrain<T,Plo,Phi>& p)
-    {
-        return q * railyard(p);
-    }
-
-
-
-    // // with other trains
-
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto operator*(const PolynomialTrain<T,Plo,Phi>& p, const PolynomialTrain<T,Qlo,Qhi>& q)
-    {
-        return railyard(p) * railyard(q);
-    }
-
-    // /*
-    // NOTE: we cannot support division by railyards.
-    // This is because the resulting function object would produce a division by 0 for the vast majority of its range.
-    // We can only be reasonably confident this will not be the case for trains.
-    // */ 
-
-
-
-
-
-
-
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator+(const PolynomialTrain<T,Plo,Phi>& p, const Shifting<T> f)
-    {
-        std::vector<Polynomial<T,std::min(Plo,0),std::max(1,Phi)>> contents;
-        for (auto pi : p.contents)
+        using P1 = Polynomial<T,P1lo,P1hi>;
+        using P2 = Polynomial<T,P2x,P2x>;
+        using P = Polynomial<T,P1lo-P2x,P1hi-P2x>;
+        const std::vector<T> couplers_ = couplers(p,q);
+        std::vector<P> contents;
+        for (std::size_t i=1; i<couplers_.size(); i++)
         {
-            contents.push_back(pi+f);
+            T sample = (couplers_[i-1] + couplers_[i]) / 2.0;
+            P1 pi(0);
+            P2 qi(0);
+            // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
+            for (std::size_t j=1; j<p.couplers.size(); j++)
+            {
+                if (p.couplers[j-1] <= sample && sample <= p.couplers[j])
+                {
+                    pi = p.contents[j-1];
+                    break;
+                }
+            }
+            // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
+            for (std::size_t j=1; j<q.couplers.size(); j++)
+            {
+                if (q.couplers[j-1] <= sample && sample <= q.couplers[j])
+                {
+                    qi = q.contents[j-1];
+                    break;
+                }
+            }
+            contents.push_back(P(pi/qi));
         }
-        return PolynomialTrain<T,std::min(Plo,0),std::max(1,Phi)>(contents, p.couplers);
-    }
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator+(const Shifting<T> f, const PolynomialTrain<T,Plo,Phi>& p)
-    {
-        std::vector<Polynomial<T,std::min(Plo,0),std::max(1,Phi)>> contents;
-        for (auto pi : p.contents)
-        {
-            contents.push_back(f+pi);
-        }
-        return PolynomialTrain<T,std::min(Plo,0),std::max(1,Phi)>(contents, p.couplers);
-    }
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator-(const PolynomialTrain<T,Plo,Phi>& p, const Shifting<T> f)
-    {
-        std::vector<Polynomial<T,std::min(Plo,0),std::max(1,Phi)>> contents;
-        for (auto pi : p.contents)
-        {
-            contents.push_back(pi-f);
-        }
-        return PolynomialTrain<T,std::min(Plo,0),std::max(1,Phi)>(contents, p.couplers);
-    }
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator-(const Shifting<T> f, const PolynomialTrain<T,Plo,Phi>& p)
-    {
-        std::vector<Polynomial<T,std::min(Plo,0),std::max(1,Phi)>> contents;
-        for (auto pi : p.contents)
-        {
-            contents.push_back(f-pi);
-        }
-        return PolynomialTrain<T,std::min(Plo,0),std::max(1,Phi)>(contents, p.couplers);
-    }
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator*(const PolynomialTrain<T,Plo,Phi>& p, const Shifting<T> f)
-    {
-        std::vector<Polynomial<T,Plo+0,Phi+1>> contents;
-        for (auto pi : p.contents)
-        {
-            contents.push_back(pi*f);
-        }
-        return PolynomialTrain<T,Plo+0,Phi+1>(contents, p.couplers);
-    }
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator*(const Shifting<T> f, const PolynomialTrain<T,Plo,Phi>& p)
-    {
-        std::vector<Polynomial<T,Plo+0,Phi+1>> contents;
-        for (auto pi : p.contents)
-        {
-            contents.push_back(f*pi);
-        }
-        return PolynomialTrain<T,Plo+0,Phi+1>(contents, p.couplers);
+        return Train<T,P>(contents, couplers_);
     }
 
 
 
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator+(const PolynomialTrain<T,Plo,Phi>& p, const Scaling<T> f)
+
+
+
+
+
+
+    // OPERATIONS WITH POLYNOMIAL YARDS
+    template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
+    constexpr auto operator+(const PolynomialTrain<T,P1lo,P1hi>& p, const PolynomialRailyard<T,P2lo,P2hi> q)
     {
-        std::vector<Polynomial<T,std::min(Plo,1),std::max(1,Phi)>> contents;
-        for (auto pi : p.contents)
-        {
-            contents.push_back(pi+f);
-        }
-        return PolynomialTrain<T,std::min(Plo,1),std::max(1,Phi)>(contents, p.couplers);
+        return p + train(q);
     }
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator+(const Scaling<T> f, const PolynomialTrain<T,Plo,Phi>& p)
+    template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
+    constexpr auto operator-(const PolynomialTrain<T,P1lo,P1hi>& p, const PolynomialRailyard<T,P2lo,P2hi> q)
     {
-        std::vector<Polynomial<T,std::min(Plo,1),std::max(1,Phi)>> contents;
-        for (auto pi : p.contents)
-        {
-            contents.push_back(f+pi);
-        }
-        return PolynomialTrain<T,std::min(Plo,1),std::max(1,Phi)>(contents, p.couplers);
+        return p - train(q);
     }
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator-(const PolynomialTrain<T,Plo,Phi>& p, const Scaling<T> f)
+    template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
+    constexpr auto operator*(const PolynomialTrain<T,P1lo,P1hi>& p, const PolynomialRailyard<T,P2lo,P2hi> q)
     {
-        std::vector<Polynomial<T,std::min(Plo,1),std::max(1,Phi)>> contents;
-        for (auto pi : p.contents)
-        {
-            contents.push_back(pi-f);
-        }
-        return PolynomialTrain<T,std::min(Plo,1),std::max(1,Phi)>(contents, p.couplers);
+        return p * train(q);
     }
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator-(const Scaling<T> f, const PolynomialTrain<T,Plo,Phi>& p)
+    // template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
+    // constexpr auto operator/(const PolynomialTrain<T,P1lo,P1hi>& p, const PolynomialRailyard<T,P2lo,P2hi> q)
+    // {
+    //     return p / train(q);
+    // }
+
+    template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
+    constexpr auto operator+(const PolynomialRailyard<T,P2lo,P2hi> q, const PolynomialTrain<T,P1lo,P1hi>& p)
     {
-        std::vector<Polynomial<T,std::min(Plo,1),std::max(1,Phi)>> contents;
-        for (auto pi : p.contents)
-        {
-            contents.push_back(f-pi);
-        }
-        return PolynomialTrain<T,std::min(Plo,1),std::max(1,Phi)>(contents, p.couplers);
+        return train(q) + p;
     }
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator*(const PolynomialTrain<T,Plo,Phi>& p, const Scaling<T> f)
+    template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
+    constexpr auto operator-(const PolynomialRailyard<T,P2lo,P2hi> q, const PolynomialTrain<T,P1lo,P1hi>& p)
     {
-        std::vector<Polynomial<T,Plo+1,Phi+1>> contents;
-        for (auto pi : p.contents)
-        {
-            contents.push_back(pi*f);
-        }
-        return PolynomialTrain<T,Plo+1,Phi+1>(contents, p.couplers);
+        return train(q) - p;
     }
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator*(const Scaling<T> f, const PolynomialTrain<T,Plo,Phi>& p)
+    template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
+    constexpr auto operator*(const PolynomialRailyard<T,P2lo,P2hi> q, const PolynomialTrain<T,P1lo,P1hi>& p)
     {
-        std::vector<Polynomial<T,Plo+1,Phi+1>> contents;
-        for (auto pi : p.contents)
-        {
-            contents.push_back(f*pi);
-        }
-        return PolynomialTrain<T,Plo+1,Phi+1>(contents, p.couplers);
+        return train(q) * p;
     }
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator/(const PolynomialTrain<T,Plo,Phi>& p, const Scaling<T> f)
+    template<typename T, int P1, int P2lo, int P2hi>
+    constexpr auto operator/(const PolynomialRailyard<T,P2lo,P2hi> q, const PolynomialTrain<T,P1,P1>& p)
     {
-        std::vector<Polynomial<T,Plo-1,Phi-1>> contents;
-        for (auto pi : p.contents)
-        {
-            contents.push_back(pi/f);
-        }
-        return PolynomialTrain<T,Plo-1,Phi-1>(contents, p.couplers);
+        return train(q) / p;
     }
 
 
 
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator+(const PolynomialTrain<T,Plo,Phi>& p, const Identity<T> e)
+
+
+
+    // OPERATIONS WITH POLYNOMIAL CARS
+    template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
+    constexpr auto operator+(const PolynomialTrain<T,P1lo,P1hi>& p, const PolynomialRailcar<T,P2lo,P2hi> q)
     {
-        std::vector<Polynomial<T,Plo+1,Phi+1>> contents;
-        for (auto pi : p.contents)
-        {
-            contents.push_back(pi+e);
-        }
-        return PolynomialTrain<T,std::min(Plo,1),std::max(1,Phi)>(contents, p.couplers);
+        return p + PolynomialTrain<T,P2lo,P2hi>(q);
     }
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator+(const Identity<T> e, const PolynomialTrain<T,Plo,Phi>& p)
+    template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
+    constexpr auto operator-(const PolynomialTrain<T,P1lo,P1hi>& p, const PolynomialRailcar<T,P2lo,P2hi> q)
     {
-        std::vector<Polynomial<T,Plo+1,Phi+1>> contents;
-        for (auto pi : p.contents)
-        {
-            contents.push_back(e+pi);
-        }
-        return PolynomialTrain<T,std::min(Plo,1),std::max(1,Phi)>(contents, p.couplers);
+        return p - PolynomialTrain<T,P2lo,P2hi>(q);
     }
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator-(const PolynomialTrain<T,Plo,Phi>& p, const Identity<T> e)
+    template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
+    constexpr auto operator*(const PolynomialTrain<T,P1lo,P1hi>& p, const PolynomialRailcar<T,P2lo,P2hi> q)
     {
-        std::vector<Polynomial<T,Plo+1,Phi+1>> contents;
-        for (auto pi : p.contents)
-        {
-            contents.push_back(pi-e);
-        }
-        return PolynomialTrain<T,std::min(Plo,1),std::max(1,Phi)>(contents, p.couplers);
+        return p * PolynomialTrain<T,P2lo,P2hi>(q);
     }
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator-(const Identity<T> e, const PolynomialTrain<T,Plo,Phi>& p)
+    // template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
+    // constexpr auto operator/(const PolynomialTrain<T,P1lo,P1hi>& p, const PolynomialRailcar<T,P2lo,P2hi> q)
+    // {
+    //     return p / PolynomialTrain<T,P2lo,P2hi>(q);
+    // }
+    /*
+    NOTE: we cannot support division by railcars of any kind.
+    This is because the resulting function object would produce a division by 0 for the vast majority of its range.
+    */ 
+
+    template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
+    constexpr auto operator+(const PolynomialRailcar<T,P2lo,P2hi> q, const PolynomialTrain<T,P1lo,P1hi>& p)
     {
-        std::vector<Polynomial<T,Plo+1,Phi+1>> contents;
-        for (auto pi : p.contents)
-        {
-            contents.push_back(e-pi);
-        }
-        return PolynomialTrain<T,std::min(Plo,1),std::max(1,Phi)>(contents, p.couplers);
+        return PolynomialTrain<T,P2lo,P2hi>(q) + p;
     }
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator*(const PolynomialTrain<T,Plo,Phi>& p, const Identity<T> e)
+    template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
+    constexpr auto operator-(const PolynomialRailcar<T,P2lo,P2hi> q, const PolynomialTrain<T,P1lo,P1hi>& p)
     {
-        std::vector<Polynomial<T,Plo+1,Phi+1>> contents;
-        for (auto pi : p.contents)
-        {
-            contents.push_back(pi*e);
-        }
-        return PolynomialTrain<T,Plo+1,Phi+1>(contents, p.couplers);
+        return PolynomialTrain<T,P2lo,P2hi>(q) - p;
     }
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator*(const Identity<T> e, const PolynomialTrain<T,Plo,Phi>& p)
+    template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
+    constexpr auto operator*(const PolynomialRailcar<T,P2lo,P2hi> q, const PolynomialTrain<T,P1lo,P1hi>& p)
     {
-        std::vector<Polynomial<T,Plo+1,Phi+1>> contents;
-        for (auto pi : p.contents)
-        {
-            contents.push_back(pi*e);
-        }
-        return PolynomialTrain<T,Plo+1,Phi+1>(contents, p.couplers);
+        return PolynomialTrain<T,P2lo,P2hi>(q) * p;
     }
-    template<typename T, int Plo, int Phi>
-    constexpr auto operator/(const PolynomialTrain<T,Plo,Phi>& p, const Identity<T> e)
+    template<typename T, int P1, int P2lo, int P2hi>
+    constexpr auto operator/(const PolynomialRailcar<T,P2lo,P2hi> q, const PolynomialTrain<T,P1,P1>& p)
     {
-        std::vector<Polynomial<T,Plo-1,Phi-1>> contents;
-        for (auto pi : p.contents)
-        {
-            contents.push_back(pi/e);
-        }
-        return PolynomialTrain<T,Plo+1,Phi+1>(contents, p.couplers);
+        return PolynomialTrain<T,P2lo,P2hi>(q) / p;
     }
+
+
+
+
+
+    // OPERATIONS WITH POLYNOMIALS
+    template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
+    constexpr auto operator+(const PolynomialTrain<T,P1lo,P1hi>& p, const Polynomial<T,P2lo,P2hi> q)
+    {
+        return p + PolynomialTrain<T,P2lo,P2hi>(q);
+    }
+    template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
+    constexpr auto operator-(const PolynomialTrain<T,P1lo,P1hi>& p, const Polynomial<T,P2lo,P2hi> q)
+    {
+        return p - PolynomialTrain<T,P2lo,P2hi>(q);
+    }
+    template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
+    constexpr auto operator*(const PolynomialTrain<T,P1lo,P1hi>& p, const Polynomial<T,P2lo,P2hi> q)
+    {
+        return p * PolynomialTrain<T,P2lo,P2hi>(q);
+    }
+    template<typename T, int P1lo, int P1hi, int P2>
+    constexpr auto operator/(const PolynomialTrain<T,P1lo,P1hi>& p, const Polynomial<T,P2,P2> q)
+    {
+        return p / PolynomialTrain<T,P2,P2>(q);
+    }
+
+    template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
+    constexpr auto operator+(const Polynomial<T,P2lo,P2hi> q, const PolynomialTrain<T,P1lo,P1hi>& p)
+    {
+        return PolynomialTrain<T,P2lo,P2hi>(q) + p;
+    }
+    template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
+    constexpr auto operator-(const Polynomial<T,P2lo,P2hi> q, const PolynomialTrain<T,P1lo,P1hi>& p)
+    {
+        return PolynomialTrain<T,P2lo,P2hi>(q) - p;
+    }
+    template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
+    constexpr auto operator*(const Polynomial<T,P2lo,P2hi> q, const PolynomialTrain<T,P1lo,P1hi>& p)
+    {
+        return PolynomialTrain<T,P2lo,P2hi>(q) * p;
+    }
+    template<typename T, int P1, int P2lo, int P2hi>
+    constexpr auto operator/(const Polynomial<T,P2lo,P2hi> q, const PolynomialTrain<T,P1,P1>& p)
+    {
+        return PolynomialTrain<T,P2lo,P2hi>(q) / p;
+    }
+
+
+    // OPERATIONS WITH SCALINGS
+    template<typename T, int P1lo, int P1hi>
+    constexpr auto operator+(const PolynomialTrain<T,P1lo,P1hi>& p, const Scaling<T> f)
+    {
+        return p + Polynomial<T,1,1>(f);
+    }
+    template<typename T, int P1lo, int P1hi>
+    constexpr auto operator-(const PolynomialTrain<T,P1lo,P1hi>& p, const Scaling<T> f)
+    {
+        return p - Polynomial<T,1,1>(f);
+    }
+    template<typename T, int P1lo, int P1hi>
+    constexpr auto operator*(const PolynomialTrain<T,P1lo,P1hi>& p, const Scaling<T> f)
+    {
+        return p * Polynomial<T,1,1>(f);
+    }
+    template<typename T, int P1lo, int P1hi>
+    constexpr auto operator/(const PolynomialTrain<T,P1lo,P1hi>& p, const Scaling<T> f)
+    {
+        return p / Polynomial<T,1,1>(f);
+    }
+
+    template<typename T, int P1lo, int P1hi>
+    constexpr auto operator+(const Scaling<T> f, const PolynomialTrain<T,P1lo,P1hi>& p)
+    {
+        return Polynomial<T,1,1>(f) + p;
+    }
+    template<typename T, int P1lo, int P1hi>
+    constexpr auto operator-(const Scaling<T> f, const PolynomialTrain<T,P1lo,P1hi>& p)
+    {
+        return Polynomial<T,1,1>(f) - p;
+    }
+    template<typename T, int P1lo, int P1hi>
+    constexpr auto operator*(const Scaling<T> f, const PolynomialTrain<T,P1lo,P1hi>& p)
+    {
+        return Polynomial<T,1,1>(f) * p;
+    }
+    // template<typename T, int P1lo, int P1hi>
+    // constexpr auto operator/(const Scaling<T> f, const PolynomialTrain<T,P1lo,P1hi>& p)
+    // {
+    //     return Polynomial<T,1,1>(f) / p;
+    // }
+
+
+    // OPERATIONS WITH SHIFTINGS
+    template<typename T, int P1lo, int P1hi>
+    constexpr auto operator+(const PolynomialTrain<T,P1lo,P1hi>& p, const Shifting<T> f)
+    {
+        return p + Polynomial<T,0,1>(f);
+    }
+    template<typename T, int P1lo, int P1hi>
+    constexpr auto operator-(const PolynomialTrain<T,P1lo,P1hi>& p, const Shifting<T> f)
+    {
+        return p - Polynomial<T,0,1>(f);
+    }
+    template<typename T, int P1lo, int P1hi>
+    constexpr auto operator*(const PolynomialTrain<T,P1lo,P1hi>& p, const Shifting<T> f)
+    {
+        return p * Polynomial<T,0,1>(f);
+    }
+    // template<typename T, int P1lo, int P1hi>
+    // constexpr auto operator/(const PolynomialTrain<T,P1lo,P1hi>& p, const Shifting<T> f)
+    // {
+    //     return p / Polynomial<T,0,1>(f);
+    // }
+
+    template<typename T, int P1lo, int P1hi>
+    constexpr auto operator+(const Shifting<T> f, const PolynomialTrain<T,P1lo,P1hi>& p)
+    {
+        return Polynomial<T,0,1>(f) + p;
+    }
+    template<typename T, int P1lo, int P1hi>
+    constexpr auto operator-(const Shifting<T> f, const PolynomialTrain<T,P1lo,P1hi>& p)
+    {
+        return Polynomial<T,0,1>(f) - p;
+    }
+    template<typename T, int P1lo, int P1hi>
+    constexpr auto operator*(const Shifting<T> f, const PolynomialTrain<T,P1lo,P1hi>& p)
+    {
+        return Polynomial<T,0,1>(f) * p;
+    }
+    // template<typename T, int P1lo, int P1hi>
+    // constexpr auto operator/(const Shifting<T> f, const PolynomialTrain<T,P1lo,P1hi>& p)
+    // {
+    //     return Polynomial<T,0,1>(f) / p;
+    // }
+
+
+
+    // OPERATIONS WITH IDENTITY
+    template<typename T, int P1lo, int P1hi>
+    constexpr auto operator+(const PolynomialTrain<T,P1lo,P1hi>& p, const Identity<T> e)
+    {
+        return p + Polynomial<T,1,1>(e);
+    }
+    template<typename T, int P1lo, int P1hi>
+    constexpr auto operator-(const PolynomialTrain<T,P1lo,P1hi>& p, const Identity<T> e)
+    {
+        return p - Polynomial<T,1,1>(e);
+    }
+    template<typename T, int P1lo, int P1hi>
+    constexpr auto operator*(const PolynomialTrain<T,P1lo,P1hi>& p, const Identity<T> e)
+    {
+        return p * Polynomial<T,1,1>(e);
+    }
+    template<typename T, int P1lo, int P1hi>
+    constexpr auto operator/(const PolynomialTrain<T,P1lo,P1hi>& p, const Identity<T> e)
+    {
+        return p / Polynomial<T,1,1>(e);
+    }
+
+    template<typename T, int P1lo, int P1hi>
+    constexpr auto operator+(const Identity<T> e, const PolynomialTrain<T,P1lo,P1hi>& p)
+    {
+        return Polynomial<T,1,1>(e) + p;
+    }
+    template<typename T, int P1lo, int P1hi>
+    constexpr auto operator-(const Identity<T> e, const PolynomialTrain<T,P1lo,P1hi>& p)
+    {
+        return Polynomial<T,1,1>(e) - p;
+    }
+    template<typename T, int P1lo, int P1hi>
+    constexpr auto operator*(const Identity<T> e, const PolynomialTrain<T,P1lo,P1hi>& p)
+    {
+        return Polynomial<T,1,1>(e) * p;
+    }
+    // template<typename T, int P1lo, int P1hi>
+    // constexpr auto operator/(const Identity<T> e, const PolynomialTrain<T,P1lo,P1hi>& p)
+    // {
+    //     return Polynomial<T,1,1>(e) / p;
+    // }
+
+
+    // NOTE: already implemented in generic case for Trains
+
+    // // OPERATIONS WITH SCALARS
+    // template<typename T, int P1lo, int P1hi>
+    // constexpr auto operator+(const PolynomialTrain<T,P1lo,P1hi>& p, const T k)
+    // {
+    //     return p + Polynomial<T,0,0>(k);
+    // }
+    // template<typename T, int P1lo, int P1hi>
+    // constexpr auto operator-(const PolynomialTrain<T,P1lo,P1hi>& p, const T k)
+    // {
+    //     return p - Polynomial<T,0,0>(k);
+    // }
+    // template<typename T, int P1lo, int P1hi>
+    // constexpr auto operator*(const PolynomialTrain<T,P1lo,P1hi>& p, const T k)
+    // {
+    //     return p * Polynomial<T,0,0>(k);
+    // }
+    // template<typename T, int P1lo, int P1hi>
+    // constexpr auto operator/(const PolynomialTrain<T,P1lo,P1hi>& p, const T k)
+    // {
+    //     return p / Polynomial<T,0,0>(k);
+    // }
+
+    // template<typename T, int P1lo, int P1hi>
+    // constexpr auto operator+(const T k, const PolynomialTrain<T,P1lo,P1hi>& p)
+    // {
+    //     return Polynomial<T,0,0>(k) + p;
+    // }
+    // template<typename T, int P1lo, int P1hi>
+    // constexpr auto operator-(const T k, const PolynomialTrain<T,P1lo,P1hi>& p)
+    // {
+    //     return Polynomial<T,0,0>(k) - p;
+    // }
+    // template<typename T, int P1lo, int P1hi>
+    // constexpr auto operator*(const T k, const PolynomialTrain<T,P1lo,P1hi>& p)
+    // {
+    //     return Polynomial<T,0,0>(k) * p;
+    // }
+    // // template<typename T, int P1lo, int P1hi>
+    // // constexpr auto operator/(const T k, const PolynomialTrain<T,P1lo,P1hi>& p)
+    // // {
+    // //     return Polynomial<T,0,0>(k) / p;
+    // // }
+
+
+
+
+
 
 
 
@@ -517,33 +599,32 @@ namespace analytic {
         return Train<T,F>(contents, p.couplers);
     }
 
-    template<typename T, int Plo, int Phi>
-    constexpr auto integral(const PolynomialTrain<T,Plo,Phi>& p)
-    {
-        using F = Polynomial<T,Plo+1,Phi+1>;
-        // const T oo(std::numeric_limits<T>::max());
-        std::vector<F> contents;
-        Railcar<T,F> g, gmax;
+    /*
+    NOTE: 
+    Definite integration of trains can be handled generically, so it is implemented in Train.hpp.
+    Indefinite integration does not exist on trains of any kind - 
+    since trains do not permit gaps between railcars,
+    there must be a railcar that stretches from -∞ to some lower bound, 
+    so unless some bound is indicated for the integral, 
+    the lower bound must be the lower bound that can be represented by the data type T,
+    and before integration even reaches the lower bound 
+    the value for the integral will likely become too large to be represented by the data type T.
+    */
+
+
+
+    template<int N, typename T, int Plo, int Phi>
+    constexpr PolynomialTrain<T,Plo*N,Phi*N> pow(const PolynomialTrain<T,Plo,Phi>& p){
+        using P = Polynomial<T,Plo*N,Phi*N>;
+        std::vector<P> contents;
         for (auto pi : p.contents)
         {
-            contents.push_back(integral(pi));
+            contents.push_back(pow<N>(pi));
         }
-        return Train<T,F>(contents, p.couplers);
+        Train<T,P> result(contents, p.couplers);
+        return result;
     }
 
-
-
-    template<int N, typename T, int Plo, int Phi, 
-        typename = std::enable_if_t<(N==0)>>
-    constexpr PolynomialTrain<T,0,0> pow(const PolynomialTrain<T,Plo,Phi>& p){
-        return PolynomialTrain<T,0,0>(T(1));
-    }
-
-    template<int N, typename T, int Plo, int Phi, 
-        typename = std::enable_if_t<(N>0)>>
-    constexpr PolynomialTrain<T,Plo*N,Phi*N> pow(const PolynomialTrain<T,Plo,Phi>& p){
-        return p*pow<N-1>(p);
-    }
 
 
     /*
@@ -568,8 +649,7 @@ namespace analytic {
         const T lo, 
         const T hi
     ){
-        const auto difference = p-q;
-        return std::sqrt(std::max(T(0), integral(pow<2>(difference), lo, hi))) / (hi-lo);
+        return std::sqrt(std::max(T(0), integral(pow<2>(p-q), lo, hi))) / (hi-lo);
     }
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     constexpr T distance(const PolynomialTrain<T,Plo,Phi>& p, const PolynomialRailyard<T,Qlo,Qhi> q, const T lo, const T hi)
