@@ -113,6 +113,38 @@ namespace analytic {
             return y;
         }
 
+
+        F& operator[](const std::size_t i)
+        {
+            return cars[i];
+        }
+        F operator[](const std::size_t i) const
+        {
+            return 0<=i&&i<cars.size()? cars[i] : F(0);
+        }
+        T& lo(const std::size_t i)
+        {
+            return cars[i].lo;
+        }
+        T lo(const std::size_t i) const
+        {
+            const T oo = std::numeric_limits<double>::max();
+            return i<0? -oo : i>=cars.size()? oo : cars[i].lo;
+        }
+        T& hi(const std::size_t i)
+        {
+            return cars[i].hi;
+        }
+        T hi(const std::size_t i) const
+        {
+            const T oo = std::numeric_limits<double>::max();
+            return i<0? -oo : i>=cars.size()? oo : cars[i].hi;
+        }
+        std::size_t size() const
+        {
+            return cars.size();
+        }
+
         Railyard<T,F>& operator=(const T k)
         {
             cars.clear();

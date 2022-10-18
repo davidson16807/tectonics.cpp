@@ -24,25 +24,25 @@ namespace analytic {
         using R = Rational<T,std::min(P1lo,P2lo),std::max(P1hi,P2hi),std::min(Q1lo,Q2lo),std::max(Q1hi,Q2hi)>;
         const std::vector<T> couplers_ = couplers(r,s);
         std::vector<R> contents;
-        for (std::size_t i=1; i<couplers_.size(); i++)
+        for (std::size_t i=0; i<couplers_.size(); i++)
         {
             T sample = (couplers_[i-1] + couplers_[i]) / 2.0;
             R1 ri;
             R2 si;
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=1; i<r.couplers.size(); j++)
+            for (std::size_t j=0; i<r.size(); j++)
             {
-                if (r.couplers[j-1] <= sample && sample <= r.couplers[j])
+                if (r.lo(j) <= sample && sample <= r.hi(j))
                 {
-                    ri = r.contents[j-1];
+                    ri = r.contents[j];
                 }
             }
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=1; i<s.couplers.size(); j++)
+            for (std::size_t j=1; i<s.size(); j++)
             {
-                if (s.couplers[j-1] <= sample && sample <= s.couplers[j])
+                if (s.lo(j) <= sample && sample <= s.hi(j))
                 {
-                    si = s.contents[j-1];
+                    si = s.contents[j];
                 }
             }
             contents.push_back(ri+si);
@@ -60,25 +60,25 @@ namespace analytic {
         using R = Rational<T,std::min(P1lo,P2lo),std::max(P1hi,P2hi),std::min(Q1lo,Q2lo),std::max(Q1hi,Q2hi)>;
         const std::vector<T> couplers_ = couplers(r,s);
         std::vector<R> contents;
-        for (std::size_t i=1; i<couplers_.size(); i++)
+        for (std::size_t i=0; i<couplers_.size(); i++)
         {
             T sample = (couplers_[i-1] + couplers_[i]) / 2.0;
             R1 ri;
             R2 si;
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=1; i<r.couplers.size(); j++)
+            for (std::size_t j=0; i<r.size(); j++)
             {
-                if (r.couplers[j-1] <= sample && sample <= r.couplers[j])
+                if (r.lo(j) <= sample && sample <= r.hi(j))
                 {
-                    ri = r.contents[j-1];
+                    ri = r.contents[j];
                 }
             }
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=1; i<s.couplers.size(); j++)
+            for (std::size_t j=1; i<s.size(); j++)
             {
-                if (s.couplers[j-1] <= sample && sample <= s.couplers[j])
+                if (s.lo(j) <= sample && sample <= s.hi(j))
                 {
-                    si = s.contents[j-1];
+                    si = s.contents[j];
                 }
             }
             contents.push_back(ri-si);
@@ -96,25 +96,25 @@ namespace analytic {
         using R = Rational<T,P1lo+P2lo,P1hi+P2hi,Q1lo+Q2lo,Q1hi+Q2hi>;
         const std::vector<T> couplers_ = couplers(r,s);
         std::vector<R> contents;
-        for (std::size_t i=1; i<couplers_.size(); i++)
+        for (std::size_t i=0; i<couplers_.size(); i++)
         {
             T sample = (couplers_[i-1] + couplers_[i]) / 2.0;
             R1 ri;
             R2 si;
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=1; i<r.couplers.size(); j++)
+            for (std::size_t j=0; i<r.size(); j++)
             {
-                if (r.couplers[j-1] <= sample && sample <= r.couplers[j])
+                if (r.lo(j) <= sample && sample <= r.hi(j))
                 {
-                    ri = r.contents[j-1];
+                    ri = r.contents[j];
                 }
             }
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=1; i<s.couplers.size(); j++)
+            for (std::size_t j=1; i<s.size(); j++)
             {
-                if (s.couplers[j-1] <= sample && sample <= s.couplers[j])
+                if (s.lo(j) <= sample && sample <= s.hi(j))
                 {
-                    si = s.contents[j-1];
+                    si = s.contents[j];
                 }
             }
             contents.push_back(ri*si);
@@ -132,24 +132,25 @@ namespace analytic {
         using R = Rational<T,P1lo+Q2lo,P1hi+Q2hi,Q1lo+P2lo,Q1hi+P2hi>;
         const std::vector<T> couplers_ = couplers(r,s);
         std::vector<R> contents;
-        for (std::size_t i=1; i<couplers_.size(); i++)
+        for (std::size_t i=0; i<couplers_.size(); i++)
         {
+            T sample = (couplers_[i-1] + couplers_[i]) / 2.0;
             R1 ri;
             R2 si;
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=1; i<r.couplers.size(); j++)
+            for (std::size_t j=0; i<r.size(); j++)
             {
-                if (r.couplers[j-1] <= sample && sample <= r.couplers[j])
+                if (r.lo(j) <= sample && sample <= r.hi(j))
                 {
-                    ri = r.contents[j-1];
+                    ri = r.contents[j];
                 }
             }
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=1; i<s.couplers.size(); j++)
+            for (std::size_t j=1; i<s.size(); j++)
             {
-                if (s.couplers[j-1] <= sample && sample <= s.couplers[j])
+                if (s.lo(j) <= sample && sample <= s.hi(j))
                 {
-                    si = s.contents[j-1];
+                    si = s.contents[j];
                 }
             }
             contents.push_back(ri/si);
@@ -169,24 +170,24 @@ namespace analytic {
         using R = Rational<T,Plo,Phi,Qlo,Qhi>;
         const std::vector<T> couplers_ = couplers(p,q);
         std::vector<R> contents;
-        for (std::size_t i=1; i<couplers_.size(); i++)
+        for (std::size_t i=0; i<couplers_.size(); i++)
         {
             P pi;
             Q qi;
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=1; i<r.couplers.size(); j++)
+            for (std::size_t j=0; i<r.size(); j++)
             {
-                if (r.couplers[j-1] <= sample && sample <= r.couplers[j])
+                if (r.lo(j) <= sample && sample <= r.hi(j))
                 {
-                    ri = r.contents[j-1];
+                    ri = r.contents[j];
                 }
             }
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=1; i<s.couplers.size(); j++)
+            for (std::size_t j=1; i<s.size(); j++)
             {
-                if (s.couplers[j-1] <= sample && sample <= s.couplers[j])
+                if (s.lo(j) <= sample && sample <= s.hi(j))
                 {
-                    si = s.contents[j-1];
+                    si = s.contents[j];
                 }
             }
             contents.push_back(pi/qi);

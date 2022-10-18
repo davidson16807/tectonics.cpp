@@ -33,26 +33,26 @@ namespace analytic {
         using P = Polynomial<T,std::min(P1lo,P2lo),std::max(P1hi,P2hi)>;
         const std::vector<T> couplers_ = couplers(p,q);
         std::vector<P> contents;
-        for (std::size_t i=1; i<couplers_.size(); i++)
+        for (std::size_t i=0; i<=couplers_.size(); i++)
         {
-            T sample = (couplers_[i-1] + couplers_[i]) / 2.0;
+            T sample = (couplers_[i] + couplers_[i+1]) / 2.0;
             P1 pi(0);
             P2 qi(0);
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=1; j<p.couplers.size(); j++)
+            for (std::size_t j=0; j<p.size(); j++)
             {
-                if (p.couplers[j-1] <= sample && sample <= p.couplers[j])
+                if (p.lo(j) <= sample && sample <= p.hi(j))
                 {
-                    pi = p.contents[j-1];
+                    pi = p.contents[j];
                     break;
                 }
             }
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=1; j<q.couplers.size(); j++)
+            for (std::size_t j=0; j<q.size(); j++)
             {
-                if (q.couplers[j-1] <= sample && sample <= q.couplers[j])
+                if (q.lo(j) <= sample && sample <= q.hi(j))
                 {
-                    qi = q.contents[j-1];
+                    qi = q.contents[j];
                     break;
                 }
             }
@@ -72,26 +72,26 @@ namespace analytic {
         using P = Polynomial<T,std::min(P1lo,P2lo),std::max(P1hi,P2hi)>;
         const std::vector<T> couplers_ = couplers(p,q);
         std::vector<P> contents;
-        for (std::size_t i=1; i<couplers_.size(); i++)
+        for (std::size_t i=0; i<=couplers_.size(); i++)
         {
-            T sample = (couplers_[i-1] + couplers_[i]) / 2.0;
+            T sample = (couplers_[i] + couplers_[i+1]) / 2.0;
             P1 pi(0);
             P2 qi(0);
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=1; j<p.couplers.size(); j++)
+            for (std::size_t j=0; j<p.size(); j++)
             {
-                if (p.couplers[j-1] <= sample && sample <= p.couplers[j])
+                if (p.lo(j) <= sample && sample <= p.hi(j))
                 {
-                    pi = p.contents[j-1];
+                    pi = p.contents[j];
                     break;
                 }
             }
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=1; j<q.couplers.size(); j++)
+            for (std::size_t j=0; j<q.size(); j++)
             {
-                if (q.couplers[j-1] <= sample && sample <= q.couplers[j])
+                if (q.lo(j) <= sample && sample <= q.hi(j))
                 {
-                    qi = q.contents[j-1];
+                    qi = q.contents[j];
                     break;
                 }
             }
@@ -111,26 +111,26 @@ namespace analytic {
         using P = Polynomial<T,P1lo+P2lo,P1hi+P2hi>;
         const std::vector<T> couplers_ = couplers(p,q);
         std::vector<P> contents;
-        for (std::size_t i=1; i<couplers_.size(); i++)
+        for (std::size_t i=0; i<=couplers_.size(); i++)
         {
-            T sample = (couplers_[i-1] + couplers_[i]) / 2.0;
+            T sample = (couplers_[i] + couplers_[i+1]) / 2.0;
             P1 pi(0);
             P2 qi(0);
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=1; j<p.couplers.size(); j++)
+            for (std::size_t j=0; j<p.size(); j++)
             {
-                if (p.couplers[j-1] <= sample && sample <= p.couplers[j])
+                if (p.lo(j) <= sample && sample <= p.hi(j))
                 {
-                    pi = p.contents[j-1];
+                    pi = p.contents[j];
                     break;
                 }
             }
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=1; j<q.couplers.size(); j++)
+            for (std::size_t j=0; j<q.size(); j++)
             {
-                if (q.couplers[j-1] <= sample && sample <= q.couplers[j])
+                if (q.lo(j) <= sample && sample <= q.hi(j))
                 {
-                    qi = q.contents[j-1];
+                    qi = q.contents[j];
                     break;
                 }
             }
@@ -149,26 +149,26 @@ namespace analytic {
         using P = Polynomial<T,P1lo-P2x,P1hi-P2x>;
         const std::vector<T> couplers_ = couplers(p,q);
         std::vector<P> contents;
-        for (std::size_t i=1; i<couplers_.size(); i++)
+        for (std::size_t i=0; i<=couplers_.size(); i++)
         {
-            T sample = (couplers_[i-1] + couplers_[i]) / 2.0;
+            T sample = (couplers_[i] + couplers_[i+1]) / 2.0;
             P1 pi(0);
             P2 qi(0);
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=1; j<p.couplers.size(); j++)
+            for (std::size_t j=0; j<p.size(); j++)
             {
-                if (p.couplers[j-1] <= sample && sample <= p.couplers[j])
+                if (p.lo(j) <= sample && sample <= p.hi(j))
                 {
-                    pi = p.contents[j-1];
+                    pi = p.contents[j];
                     break;
                 }
             }
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=1; j<q.couplers.size(); j++)
+            for (std::size_t j=0; j<q.size(); j++)
             {
-                if (q.couplers[j-1] <= sample && sample <= q.couplers[j])
+                if (q.lo(j) <= sample && sample <= q.hi(j))
                 {
-                    qi = q.contents[j-1];
+                    qi = q.contents[j];
                     break;
                 }
             }
@@ -525,8 +525,8 @@ namespace analytic {
             for (std::size_t j=0; i<q.contents.size(); i++)
             {
                 y += compose(
-                    Railcar<T,F>(p.couplers[i], p.couplers[i+1], p.contents[i]), 
-                    Railcar<T,G>(q.couplers[j], q.couplers[j+1], q.contents[j]));
+                    Railcar<T,F>(p.lo(i), p.hi(i), p.contents[i]), 
+                    Railcar<T,G>(q.lo(j), q.hi(j), q.contents[j]));
             }
         }
         return y;

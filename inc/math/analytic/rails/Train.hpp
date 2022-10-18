@@ -109,31 +109,34 @@ namespace analytic {
             }
             return y;
         }
-        constexpr T& operator[](const int i)
+
+        F& operator[](const std::size_t i)
         {
             return contents[i];
         }
-        constexpr T operator[](const int i) const
+        F operator[](const std::size_t i) const
         {
             return 0<=i&&i<contents.size()? contents[i] : F(0);
         }
-        constexpr T& lo(const int i)
+        T& lo(const std::size_t i)
         {
             return couplers[i];
         }
-        constexpr T lo(const int i) const
+        T lo(const std::size_t i) const
         {
-            return 0<=i&&i<contents.size()? couplers[i] : T(0);
+            const T oo = std::numeric_limits<double>::max();
+            return i<0? -oo : i>=contents.size()? oo : couplers[i];
         }
-        constexpr T& hi(const int i)
+        T& hi(const std::size_t i)
         {
             return couplers[i+1];
         }
-        constexpr T hi(const int i) const
+        T hi(const std::size_t i) const
         {
-            return 0<=i&&i<contents.size()? couplers[i+1] : T(0);
+            const T oo = std::numeric_limits<double>::max();
+            return i<0? -oo : i>=contents.size()? oo : couplers[i+1];
         }
-        constexpr std::size_t size() const
+        std::size_t size() const
         {
             return contents.size();
         }
@@ -234,13 +237,11 @@ namespace analytic {
     {
         const T oo (std::numeric_limits<T>::max());
         std::string output("\r\n");
-        for (std::size_t i=0; i<train.contents.size(); i++)
+        for (std::size_t i=0; i<train.size(); i++)
         {
-            T lo = train.couplers[i];
-            T hi = train.couplers[i+1];
-            output += lo == -oo? "-∞" : std::to_string(lo);
+            output += train.lo(i) == -oo? "-∞" : std::to_string(train.lo(i));
             output += " < x ≤ ";
-            output += hi == oo? "∞" : std::to_string(hi);
+            output += train.hi(i) == oo? "∞" : std::to_string(train.hi(i));
             output += ": ";
             output += to_string(train.contents[i]);
             output += "\r\n";
@@ -260,9 +261,9 @@ namespace analytic {
     constexpr Railyard<T,F> railyard(const Train<T,F>& train)
     {
         std::vector<Railcar<T,F>> cars;
-        for (std::size_t i=1; i<train.couplers.size(); i++)
+        for (std::size_t i=0; i<train.size(); i++)
         {
-            cars.emplace_back(train.couplers[i-1], train.couplers[i], train.contents[i-1]);
+            cars.emplace_back(train.lo(i), train.hi(i), train.contents[i]);
         }
         return Railyard<T,F>(cars);
     }
@@ -480,53 +481,51 @@ namespace analytic {
     template<typename T, typename F>
     constexpr auto operator+(const Clamped<T,F>& f, const Train<T,F>& g)
     {
-        return f + train(g);
-    }
-
-    template<typename T, typename F>
-    constexpr auto operator+(const Train<T,F>& g, const Clamped<T,F>& f)
-    {
-        return train(g) + f;
-    }
-
-    template<typename T, typename F>
-    constexpr auto operator-(const Clamped<T,F>& f, const Train<T,F>& g)
-    {
-        return f - train(g);
-    }
-
-    template<typename T, typename F>
-    constexpr auto operator-(const Train<T,F>& g, const Clamped<T,F>& f)
-    {
-        return train(g) - f;
-    }
-
-
-
-
-
-    template<typename T, typename F>
-    constexpr auto operator+(const Train<T,F>& f, const Railcar<T,F>& g)
-    {
         return train(f) + g;
     }
-
     template<typename T, typename F>
-    constexpr auto operator+(const Railcar<T,F>& g, const Train<T,F>& f)
-    {
-        return g + train(f);
-    }
-
-    template<typename T, typename F>
-    constexpr auto operator-(const Train<T,F>& f, const Railcar<T,F>& g)
+    constexpr auto operator-(const Clamped<T,F>& f, const Train<T,F>& g)
     {
         return train(f) - g;
     }
 
     template<typename T, typename F>
-    constexpr auto operator-(const Railcar<T,F>& g, const Train<T,F>& f)
+    constexpr auto operator+(const Train<T,F>& g, const Clamped<T,F>& f)
+    {
+        return g + train(f);
+    }
+    template<typename T, typename F>
+    constexpr auto operator-(const Train<T,F>& g, const Clamped<T,F>& f)
     {
         return g - train(f);
+    }
+
+
+
+
+
+    template<typename T, typename F>
+    constexpr auto operator+(const Railcar<T,F>& g, const Train<T,F>& f)
+    {
+        return train(g) + f;
+    }
+
+    template<typename T, typename F>
+    constexpr auto operator-(const Railcar<T,F>& g, const Train<T,F>& f)
+    {
+        return train(g) - f;
+    }
+
+    template<typename T, typename F>
+    constexpr auto operator+(const Train<T,F>& f, const Railcar<T,F>& g)
+    {
+        return f + train(g);
+    }
+
+    template<typename T, typename F>
+    constexpr auto operator-(const Train<T,F>& f, const Railcar<T,F>& g)
+    {
+        return f - train(g);
     }
 
 
@@ -567,9 +566,9 @@ namespace analytic {
     template<typename T, typename F>
     T derivative(const Train<T,F>& train, const T x)
     {
-        for (std::size_t i=0; i<train.contents.size(); i++)
+        for (std::size_t i=0; i<train.size(); i++)
         {
-            if (train.couplers[i] < x&&x < train.couplers[i+1])
+            if (train.lo(i) < x&&x < train.hi(i))
             {
                 return derivative(train.contents[i], x);
             }
@@ -587,10 +586,10 @@ namespace analytic {
     T integral(const Train<T,F>& train, const T x)
     {
         T I(0.0f);
-        for (std::size_t i=0; i<train.contents.size(); i++)
+        for (std::size_t i=0; i<train.size(); i++)
         {
-            I += integral(train.contents[i], std::min(x, train.couplers[i+1])); 
-            if (train.couplers[i] < x&&x < train.couplers[i+1])
+            I += integral(train.contents[i], std::min(x, train.hi(i))); 
+            if (train.lo(i) < x&&x < train.hi(i))
             {
                 return I;
             } 
@@ -608,13 +607,13 @@ namespace analytic {
     T integral(const Train<T,F>& train, const T lo, const T hi)
     {
         T I(0.0f);
-        for (std::size_t i=0; i<train.contents.size(); i++)
+        for (std::size_t i=0; i<train.size(); i++)
         {
-            if (lo < train.couplers[i+1])
+            if (lo < train.hi(i))
             {
-                I += integral(train.contents[i], std::max(lo, train.couplers[i]), std::min(hi, train.couplers[i+1])); 
+                I += integral(train.contents[i], std::max(lo, train.lo(i)), std::min(hi, train.hi(i))); 
             }
-            if (train.couplers[i] < hi&&hi < train.couplers[i+1])
+            if (train.lo(i) < hi&&hi < train.hi(i))
             {
                 return I;
             }
@@ -631,21 +630,21 @@ namespace analytic {
         std::vector<F> contents;
         std::vector<T> couplers;
         const T oo(std::numeric_limits<T>::max());
-        for (std::size_t i=0; i<train.contents.size(); i++)
+        for (std::size_t i=0; i<train.size(); i++)
         {
-            if (lo < train.couplers[i] || train.couplers[i+1] <= hi)
+            if (lo < train.lo(i) || train.hi(i) <= hi)
             {
                 if (contents.size() < 1)
                 {
                     couplers.push_back(-oo);
-                    contents.push_back(train.contents[i](train.couplers[i]));
-                    couplers.push_back(train.couplers[i]);
+                    contents.push_back(train.contents[i](train.lo(i)));
+                    couplers.push_back(train.lo(i));
                 }
                 contents.push_back(train.contents[i]);
-                couplers.push_back(train.couplers[i+1]);
+                couplers.push_back(train.hi(i));
             }
         }
-        contents.push_back(train.contents[train.contents.size()-1](train.couplers[train.couplers.size()-1]));
+        contents.push_back(train.contents[train.size()-1](train.hi(train.size()-1)));
         couplers.push_back(oo);
         return Train(contents, couplers);
     }
