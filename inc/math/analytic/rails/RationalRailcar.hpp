@@ -16,7 +16,7 @@
 namespace analytic {
 
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi>
-    using RationalRailcar = Railcar<T,Polynomial<T,Plo,Phi>>;
+    using RationalRailcar = Railcar<T,Rational<T,P1lo,P1hi,Q1lo,Q1hi>>;
 
 
 
@@ -26,12 +26,12 @@ namespace analytic {
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi, int Q2lo, int Q2hi>
     constexpr auto operator*(const RationalRailcar<T,P1lo,P1hi,Q1lo,Q1hi>& p, const RationalRailcar<T,P2lo,P2hi,Q2lo,Q2hi>& q)
     {
-        using F = Polynomial<T,P1lo+P2lo,P1hi+P2hi,Q1lo+Q2lo,Q1hi+Q2hi>;
+        using F = Rational<T,P1lo+P2lo,P1hi+P2hi,Q1lo+Q2lo,Q1hi+Q2hi>;
         return Railcar<T,F>(std::max(p.lo, q.lo), std::min(p.hi, q.hi), p.content*q.content);
     }
     // constexpr auto operator/(const RationalRailcar<T,P1lo,P1hi,Q1lo,Q1hi>& p, const RationalRailcar<T,P2lo,P2hi,Q2lo,Q2hi>& q)
     // {
-    //     using F = Polynomial<T,P1lo+Q2lo,P1hi+Q2hi,Q1lo+P2lo,Q1hi+P2hi>;
+    //     using F = Rational<T,P1lo+Q2lo,P1hi+Q2hi,Q1lo+P2lo,Q1hi+P2hi>;
     //     return Railcar<T,F>(std::max(p.lo, q.lo), std::min(p.hi, q.hi), p.content/q.content);
     // }
     /*

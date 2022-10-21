@@ -34,19 +34,15 @@ namespace analytic {
         {}
         // zero constructor
         constexpr explicit Rational(): 
-            p(), 
-            q()
+            p(0.0), 
+            q(1.0)
         {
-            p[0] = T(0);
-            q[0] = T(1);
         }
         // constant constructor
         constexpr explicit Rational(const T k): 
-            p(), 
-            q()
+            p(k), 
+            q(1.0)
         {
-            p[0] = k;
-            q[0] = T(1);
         }
         // copy constructor
         template <int P2lo, int P2hi, int Q2lo, int Q2hi> 
@@ -57,28 +53,24 @@ namespace analytic {
         // cast constructors...
         constexpr explicit Rational(const Identity<T> e): 
             p(e), 
-            q()
+            q(1.0)
         {
-            q[0] = T(1);
         }
         constexpr explicit Rational(const Scaling<T> f): 
             p(f), 
-            q()
+            q(1.0)
         {
-            q[0] = T(1);
         }
         constexpr explicit Rational(const Shifting<T> f): 
             p(f), 
-            q()
+            q(1.0)
         {
-            q[0] = T(1);
         }
         template<int Nlo, int Nhi>
         constexpr explicit Rational(const Polynomial<T,Nlo,Nhi> p): 
             p(p), 
-            q()
+            q(1.0)
         {
-            q[0] = T(1);
         }
         constexpr T operator()(const T x) const
         {
@@ -172,18 +164,21 @@ namespace analytic {
 
 
     // Operations that produce Rationals when given other relations as input
-    // Operations with monomials,
-    // implemented separately from polynomials to exploit reductions in memory footprint of output.
-    template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2>
-    constexpr auto operator*(const Rational<T,P1lo,P1hi,Q1lo,Q1hi>& r, const Polynomial<T,P2,P2> p)
-    {
-        return (r.p*p)/r.q;
-    }
-    template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2>
-    constexpr auto operator/(const Rational<T,P1lo,P1hi,Q1lo,Q1hi>& r, const Polynomial<T,P2,P2> p)
-    {
-        return (r.p/p)/r.q;
-    }
+    // Operations with monomials
+    /*
+    NOTE: We tried to implement division by monomials since such a thing could be used to reduce the degree of the numerator in the result.
+    However, doing so also creates a Laurent polynomial if the degree of the monomial exceeds the smallest exponent of the polynomial.
+    If this is the case, the result is no longer amenable to integration, so we lose capability.
+    It is not known in the general case whether the user wants to integrate the result or work with a result of smaller degree,
+    so we simply treat monomial division as if it were any other monomial division, 
+    since it ensures the most functionality to be performed in the general case, 
+    even though it may require switching to higher precision numeric types if the degree of the polynomial is too large.
+    */
+    // template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2>
+    // constexpr auto operator/(const Rational<T,P1lo,P1hi,Q1lo,Q1hi>& r, const Polynomial<T,P2,P2> p)
+    // {
+    //     return (r.p/p)/r.q;
+    // }
 
     // Operations with polynomials
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi>
@@ -459,6 +454,17 @@ namespace analytic {
 
 
 
+    template<int N, typename T, int Plo, int Phi, int Qlo, int Qhi,
+        typename = std::enable_if_t<(N>=0)>>
+    constexpr Rational<T,Plo*N,Phi*N,Qlo*N,Qhi*N> pow(const Rational<T,Plo,Phi,Qlo,Qhi>& r){
+        return pow<N>(r.p)/pow<N>(r.q);
+    }
+
+    template<int N, typename T, int Plo, int Phi, int Qlo, int Qhi,
+        typename = std::enable_if_t<(N<0)>>
+    constexpr Rational<T,Qlo*N,Qhi*N,Plo*N,Phi*N> pow(const Rational<T,Plo,Phi,Qlo,Qhi>& r){
+        return pow<N>(r.q)/pow<N>(r.p);
+    }
 
 
 

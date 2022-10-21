@@ -526,10 +526,6 @@ namespace analytic {
     and specializations that can determine the return type will collide with templates for the general case
     */ 
 
-
-
-
-
     template<typename T, typename F>
     constexpr Train<T,F> compose(const Train<T,F>& f, const Identity<T> e)
     {

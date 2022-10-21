@@ -665,7 +665,7 @@ namespace analytic {
         return distance((p), train(q), lo, hi);
     }
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr T distance(const PolynomialRailyard<T,Plo,Phi> p, const PolynomialTrain<T,Qlo,Qhi> q, const T lo, const T hi)
+    constexpr T distance(const PolynomialRailyard<T,Plo,Phi>& p, const PolynomialTrain<T,Qlo,Qhi>& q, const T lo, const T hi)
     {
         return distance(train(p), (q), lo, hi);
     }
@@ -675,7 +675,7 @@ namespace analytic {
         return std::sqrt(std::max(T(0), integral(pow<2>(p-q), lo, hi))) / (hi-lo);
     }
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr T distance(const Polynomial<T,Plo,Phi> p, const PolynomialTrain<T,Qlo,Qhi> q, const T lo, const T hi)
+    constexpr T distance(const Polynomial<T,Plo,Phi> p, const PolynomialTrain<T,Qlo,Qhi>& q, const T lo, const T hi)
     {
         return std::sqrt(std::max(T(0), integral(pow<2>(p-q), lo, hi))) / (hi-lo);
     }
@@ -685,7 +685,7 @@ namespace analytic {
         return std::sqrt(std::max(T(0), integral(pow<2>(p-k), lo, hi))) / (hi-lo);
     }
     template<typename T, int Plo, int Phi>
-    constexpr T distance(const T k, const PolynomialTrain<T,Plo, Phi> p, const T lo, const T hi)
+    constexpr T distance(const T k, const PolynomialTrain<T,Plo, Phi>& p, const T lo, const T hi)
     {
         return std::sqrt(std::max(T(0), integral(pow<2>(p-k), lo, hi))) / (hi-lo);
     }

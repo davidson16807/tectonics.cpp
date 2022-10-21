@@ -17,23 +17,25 @@ TEST_CASE( "RationalTrain arithmetic purity", "[math]" ) {
     const double midlo = -100.0f;
     const double midhi =  100.0f;
 
+    const double oo = std::numeric_limits<double>::max();
+
     using P0 = analytic::Polynomial<double,0,2>;
     using P1 = analytic::Polynomial<double,-2,1>;
     using P2 = analytic::Polynomial<double,-2,2>;
 
     P0 p0 = P0({3.0,2.0,1.0});
     P0 p1 = P0({1.0,0.0,4.0});
-    P1 p2 = P1({4.0,-1.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
+    P2 p2 = P1({4.0,-1.0,2.0,1.0});
+    P2 p3 = P1({-1.0,1.0,-2.0,2.0});
 
     // standard polynomials, no overlap
     analytic::PolynomialTrain<double,0,2> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
     // standard polynomials, with overlap
     analytic::PolynomialTrain<double,0,2> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
     // laurent polynomials
-    analytic::PolynomialTrain<double,-2,1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
+    analytic::PolynomialTrain<double,-2,2> t2 = analytic::Train<double,P2>(std::vector<P2>{p2,P2(p1),p3},std::vector<double>{-oo,-2.0,2.0,oo});
     // all polynomials
-    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
+    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,P2(p0),p1},std::vector<double>{-oo,-3.0,3.0,oo});
 
     auto r = t0/t1;
     auto s = t1/t0;
@@ -113,23 +115,25 @@ TEST_CASE( "RationalTrain arithmetic identity", "[math]" ) {
     const double lo = -1000.0f;
     const double hi =  1000.0f;
 
+    const double oo = std::numeric_limits<double>::max();
+
     using P0 = analytic::Polynomial<double,0,2>;
     using P1 = analytic::Polynomial<double,-2,1>;
     using P2 = analytic::Polynomial<double,-2,2>;
 
     P0 p0 = P0({3.0,2.0,1.0});
     P0 p1 = P0({1.0,0.0,4.0});
-    P1 p2 = P1({4.0,-1.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
+    P2 p2 = P1({4.0,-1.0,2.0,1.0});
+    P2 p3 = P1({-1.0,1.0,-2.0,2.0});
 
     // standard polynomials, no overlap
     analytic::PolynomialTrain<double,0,2> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
     // standard polynomials, with overlap
     analytic::PolynomialTrain<double,0,2> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
     // laurent polynomials
-    analytic::PolynomialTrain<double,-2,1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
+    analytic::PolynomialTrain<double,-2,2> t2 = analytic::Train<double,P2>(std::vector<P2>{p2,P2(p1),p3},std::vector<double>{-oo,-2.0,2.0,oo});
     // all polynomials
-    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
+    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,P2(p0),p1},std::vector<double>{-oo,-3.0,3.0,oo});
 
     auto r = t0/t1;
     auto s = t1/t0;
@@ -170,23 +174,25 @@ TEST_CASE( "RationalTrain arithmetic commutativity", "[math]" ) {
     const double midlo = -100.0f;
     const double midhi =  100.0f;
 
+    const double oo = std::numeric_limits<double>::max();
+
     using P0 = analytic::Polynomial<double,0,2>;
     using P1 = analytic::Polynomial<double,-2,1>;
     using P2 = analytic::Polynomial<double,-2,2>;
 
     P0 p0 = P0({3.0,2.0,1.0});
     P0 p1 = P0({1.0,0.0,4.0});
-    P1 p2 = P1({4.0,-1.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
+    P2 p2 = P1({4.0,-1.0,2.0,1.0});
+    P2 p3 = P1({-1.0,1.0,-2.0,2.0});
 
     // standard polynomials, no overlap
     analytic::PolynomialTrain<double,0,2> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
     // standard polynomials, with overlap
     analytic::PolynomialTrain<double,0,2> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
     // laurent polynomials
-    analytic::PolynomialTrain<double,-2,1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
+    analytic::PolynomialTrain<double,-2,2> t2 = analytic::Train<double,P2>(std::vector<P2>{p2,P2(p1),p3},std::vector<double>{-oo,-2.0,2.0,oo});
     // all polynomials
-    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
+    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,P2(p0),p1},std::vector<double>{-oo,-3.0,3.0,oo});
 
     auto r = t0/t1;
     auto s = t1/t0;
@@ -237,23 +243,25 @@ TEST_CASE( "RationalTrain arithmetic associativity", "[math]" ) {
     const double midlo = -3.0f;
     const double midhi =  3.0f;
 
+    const double oo = std::numeric_limits<double>::max();
+
     using P0 = analytic::Polynomial<double,0,2>;
     using P1 = analytic::Polynomial<double,-2,1>;
     using P2 = analytic::Polynomial<double,-2,2>;
 
     P0 p0 = P0({3.0,2.0,1.0});
     P0 p1 = P0({1.0,0.0,4.0});
-    P1 p2 = P1({4.0,-1.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
+    P2 p2 = P1({4.0,-1.0,2.0,1.0});
+    P2 p3 = P1({-1.0,1.0,-2.0,2.0});
 
     // standard polynomials, no overlap
     analytic::PolynomialTrain<double,0,2> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
     // standard polynomials, with overlap
     analytic::PolynomialTrain<double,0,2> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
     // laurent polynomials
-    analytic::PolynomialTrain<double,-2,1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
+    analytic::PolynomialTrain<double,-2,2> t2 = analytic::Train<double,P2>(std::vector<P2>{p2,P2(p1),p3},std::vector<double>{-oo,-2.0,2.0,oo});
     // all polynomials
-    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
+    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,P2(p0),p1},std::vector<double>{-oo,-3.0,3.0,oo});
 
     auto r = t0/t1;
     auto s = t1/t0;
@@ -286,23 +294,25 @@ TEST_CASE( "RationalTrain arithmetic distributivity", "[math]" ) {
     const double midlo = -3.0f;
     const double midhi =  3.0f;
 
+    const double oo = std::numeric_limits<double>::max();
+
     using P0 = analytic::Polynomial<double,0,2>;
     using P1 = analytic::Polynomial<double,-2,1>;
     using P2 = analytic::Polynomial<double,-2,2>;
 
     P0 p0 = P0({3.0,2.0,1.0});
     P0 p1 = P0({1.0,0.0,4.0});
-    P1 p2 = P1({4.0,-1.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
+    P2 p2 = P1({4.0,-1.0,2.0,1.0});
+    P2 p3 = P1({-1.0,1.0,-2.0,2.0});
 
     // standard polynomials, no overlap
     analytic::PolynomialTrain<double,0,2> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
     // standard polynomials, with overlap
     analytic::PolynomialTrain<double,0,2> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
     // laurent polynomials
-    analytic::PolynomialTrain<double,-2,1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
+    analytic::PolynomialTrain<double,-2,2> t2 = analytic::Train<double,P2>(std::vector<P2>{p2,P2(p1),p3},std::vector<double>{-oo,-2.0,2.0,oo});
     // all polynomials
-    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
+    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,P2(p0),p1},std::vector<double>{-oo,-3.0,3.0,oo});
 
     auto r = t0/t1;
     auto s = t1/t0;
@@ -343,6 +353,8 @@ TEST_CASE( "RationalTrain/scalar arithmetic purity", "[math]" ) {
     // that is used to calculate deviation from the correct output.
     const double lo = -30.0f;
     const double hi =  30.0f;
+
+    const double oo = std::numeric_limits<double>::max();
     
     using P0 = analytic::Polynomial<double,0,2>;
     using P1 = analytic::Polynomial<double,-2,1>;
@@ -350,17 +362,17 @@ TEST_CASE( "RationalTrain/scalar arithmetic purity", "[math]" ) {
 
     P0 p0 = P0({3.0,2.0,1.0});
     P0 p1 = P0({1.0,0.0,4.0});
-    P1 p2 = P1({4.0,-1.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
+    P2 p2 = P1({4.0,-1.0,2.0,1.0});
+    P2 p3 = P1({-1.0,1.0,-2.0,2.0});
 
     // standard polynomials, no overlap
     analytic::PolynomialTrain<double,0,2> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
     // standard polynomials, with overlap
     analytic::PolynomialTrain<double,0,2> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
     // laurent polynomials
-    analytic::PolynomialTrain<double,-2,1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
+    analytic::PolynomialTrain<double,-2,2> t2 = analytic::Train<double,P2>(std::vector<P2>{p2,P2(p1),p3},std::vector<double>{-oo,-2.0,2.0,oo});
     // all polynomials
-    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
+    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,P2(p0),p1},std::vector<double>{-oo,-3.0,3.0,oo});
 
     auto r = t0/t1;
     auto s = t1/t0;
@@ -448,6 +460,8 @@ TEST_CASE( "RationalTrain/scalar arithmetic identity", "[math]" ) {
     const double threshold = std::numeric_limits<double>::epsilon();
     const double lo = -1000.0f;
     const double hi =  1000.0f;
+
+    const double oo = std::numeric_limits<double>::max();
     
     using P0 = analytic::Polynomial<double,0,2>;
     using P1 = analytic::Polynomial<double,-2,1>;
@@ -455,17 +469,17 @@ TEST_CASE( "RationalTrain/scalar arithmetic identity", "[math]" ) {
 
     P0 p0 = P0({3.0,2.0,1.0});
     P0 p1 = P0({1.0,0.0,4.0});
-    P1 p2 = P1({4.0,-1.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
+    P2 p2 = P1({4.0,-1.0,2.0,1.0});
+    P2 p3 = P1({-1.0,1.0,-2.0,2.0});
 
     // standard polynomials, no overlap
     analytic::PolynomialTrain<double,0,2> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
     // standard polynomials, with overlap
     analytic::PolynomialTrain<double,0,2> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
     // laurent polynomials
-    analytic::PolynomialTrain<double,-2,1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
+    analytic::PolynomialTrain<double,-2,2> t2 = analytic::Train<double,P2>(std::vector<P2>{p2,P2(p1),p3},std::vector<double>{-oo,-2.0,2.0,oo});
     // all polynomials
-    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
+    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,P2(p0),p1},std::vector<double>{-oo,-3.0,3.0,oo});
 
     auto r = t0/t1;
     auto s = t1/t0;
@@ -513,23 +527,25 @@ TEST_CASE( "RationalTrain/scalar arithmetic commutativity", "[math]" ) {
     const double midlo = -100.0f;
     const double midhi =  100.0f;
 
+    const double oo = std::numeric_limits<double>::max();
+
     using P0 = analytic::Polynomial<double,0,2>;
     using P1 = analytic::Polynomial<double,-2,1>;
     using P2 = analytic::Polynomial<double,-2,2>;
 
     P0 p0 = P0({3.0,2.0,1.0});
     P0 p1 = P0({1.0,0.0,4.0});
-    P1 p2 = P1({4.0,-1.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
+    P2 p2 = P1({4.0,-1.0,2.0,1.0});
+    P2 p3 = P1({-1.0,1.0,-2.0,2.0});
 
     // standard polynomials, no overlap
     analytic::PolynomialTrain<double,0,2> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
     // standard polynomials, with overlap
     analytic::PolynomialTrain<double,0,2> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
     // laurent polynomials
-    analytic::PolynomialTrain<double,-2,1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
+    analytic::PolynomialTrain<double,-2,2> t2 = analytic::Train<double,P2>(std::vector<P2>{p2,P2(p1),p3},std::vector<double>{-oo,-2.0,2.0,oo});
     // all polynomials
-    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
+    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,P2(p0),p1},std::vector<double>{-oo,-3.0,3.0,oo});
 
     auto r = t0/t1;
     auto s = t1/t0;
@@ -582,6 +598,8 @@ TEST_CASE( "RationalTrain/scalar arithmetic associativity", "[math]" ) {
     const double threshold = std::numeric_limits<double>::epsilon();
     const double midlo = -100.0f;
     const double midhi =  100.0f;
+
+    const double oo = std::numeric_limits<double>::max();
     
     using P0 = analytic::Polynomial<double,0,2>;
     using P1 = analytic::Polynomial<double,-2,1>;
@@ -589,17 +607,17 @@ TEST_CASE( "RationalTrain/scalar arithmetic associativity", "[math]" ) {
 
     P0 p0 = P0({3.0,2.0,1.0});
     P0 p1 = P0({1.0,0.0,4.0});
-    P1 p2 = P1({4.0,-1.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
+    P2 p2 = P1({4.0,-1.0,2.0,1.0});
+    P2 p3 = P1({-1.0,1.0,-2.0,2.0});
 
     // standard polynomials, no overlap
     analytic::PolynomialTrain<double,0,2> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
     // standard polynomials, with overlap
     analytic::PolynomialTrain<double,0,2> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
     // laurent polynomials
-    analytic::PolynomialTrain<double,-2,1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
+    analytic::PolynomialTrain<double,-2,2> t2 = analytic::Train<double,P2>(std::vector<P2>{p2,P2(p1),p3},std::vector<double>{-oo,-2.0,2.0,oo});
     // all polynomials
-    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
+    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,P2(p0),p1},std::vector<double>{-oo,-3.0,3.0,oo});
 
     auto r = t0/t1;
     auto s = t1/t0;
@@ -671,23 +689,25 @@ TEST_CASE( "RationalTrain/scalar arithmetic distributivity", "[math]" ) {
     const double midlo = -100.0f;
     const double midhi =  100.0f;
 
+    const double oo = std::numeric_limits<double>::max();
+
     using P0 = analytic::Polynomial<double,0,2>;
     using P1 = analytic::Polynomial<double,-2,1>;
     using P2 = analytic::Polynomial<double,-2,2>;
 
     P0 p0 = P0({3.0,2.0,1.0});
     P0 p1 = P0({1.0,0.0,4.0});
-    P1 p2 = P1({4.0,-1.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
+    P2 p2 = P1({4.0,-1.0,2.0,1.0});
+    P2 p3 = P1({-1.0,1.0,-2.0,2.0});
 
     // standard polynomials, no overlap
     analytic::PolynomialTrain<double,0,2> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
     // standard polynomials, with overlap
     analytic::PolynomialTrain<double,0,2> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
     // laurent polynomials
-    analytic::PolynomialTrain<double,-2,1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
+    analytic::PolynomialTrain<double,-2,2> t2 = analytic::Train<double,P2>(std::vector<P2>{p2,P2(p1),p3},std::vector<double>{-oo,-2.0,2.0,oo});
     // all polynomials
-    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
+    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,P2(p0),p1},std::vector<double>{-oo,-3.0,3.0,oo});
 
     auto r = t0/t1;
     auto s = t1/t0;
@@ -765,6 +785,8 @@ TEST_CASE( "RationalTrain/monomial arithmetic purity", "[math]" ) {
     // that a square integral of it will produce nans for all but the smallest input.
     const double lo = -30.0f;
     const double hi =  30.0f;
+
+    const double oo = std::numeric_limits<double>::max();
     
     using P0 = analytic::Polynomial<double,0,2>;
     using P1 = analytic::Polynomial<double,-2,1>;
@@ -772,17 +794,17 @@ TEST_CASE( "RationalTrain/monomial arithmetic purity", "[math]" ) {
 
     P0 p0 = P0({3.0,2.0,1.0});
     P0 p1 = P0({1.0,0.0,4.0});
-    P1 p2 = P1({4.0,-1.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
+    P2 p2 = P1({4.0,-1.0,2.0,1.0});
+    P2 p3 = P1({-1.0,1.0,-2.0,2.0});
 
     // standard polynomials, no overlap
     analytic::PolynomialTrain<double,0,2> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
     // standard polynomials, with overlap
     analytic::PolynomialTrain<double,0,2> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
     // laurent polynomials
-    analytic::PolynomialTrain<double,-2,1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
+    analytic::PolynomialTrain<double,-2,2> t2 = analytic::Train<double,P2>(std::vector<P2>{p2,P2(p1),p3},std::vector<double>{-oo,-2.0,2.0,oo});
     // all polynomials
-    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
+    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,P2(p0),p1},std::vector<double>{-oo,-3.0,3.0,oo});
 
     auto r = t0/t1;
     auto s = t1/t0;
@@ -870,6 +892,8 @@ TEST_CASE( "RationalTrain/monomial arithmetic identity", "[math]" ) {
     const double threshold = std::numeric_limits<double>::epsilon();
     const double lo = -1000.0f;
     const double hi =  1000.0f;
+
+    const double oo = std::numeric_limits<double>::max();
     
     using P0 = analytic::Polynomial<double,0,2>;
     using P1 = analytic::Polynomial<double,-2,1>;
@@ -877,25 +901,25 @@ TEST_CASE( "RationalTrain/monomial arithmetic identity", "[math]" ) {
 
     P0 p0 = P0({3.0,2.0,1.0});
     P0 p1 = P0({1.0,0.0,4.0});
-    P1 p2 = P1({4.0,-1.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
+    P2 p2 = P1({4.0,-1.0,2.0,1.0});
+    P2 p3 = P1({-1.0,1.0,-2.0,2.0});
 
     // standard polynomials, no overlap
     analytic::PolynomialTrain<double,0,2> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
     // standard polynomials, with overlap
     analytic::PolynomialTrain<double,0,2> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
     // laurent polynomials
-    analytic::PolynomialTrain<double,-2,1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
+    analytic::PolynomialTrain<double,-2,2> t2 = analytic::Train<double,P2>(std::vector<P2>{p2,P2(p1),p3},std::vector<double>{-oo,-2.0,3.0,oo});
     // all polynomials
-    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
+    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,P2(p0),p1},std::vector<double>{-oo,-3.0,2.0,oo});
 
     auto r = t0/t1;
     auto s = t1/t0;
     auto t = t2/t0;
     auto u = t3/t1;
 
-    analytic::Polynomial<double,0,0> zero{0.0f};
-    analytic::Polynomial<double,0,0> one {1.0};
+    analytic::Rational<double,0,0,0,0> zero(0.0);
+    analytic::Rational<double,0,0,0,0> one (1.0);
 
     SECTION("r+I must equal r"){
         CHECK(analytic::distance(r+zero, r, lo, hi) < threshold);
@@ -930,6 +954,8 @@ TEST_CASE( "RationalTrain/monomial arithmetic commutativity", "[math]" ) {
     // that a square integral of it will produce nans for all but the smallest input.
     const double midlo = -100.0f;
     const double midhi =  100.0f;
+
+    const double oo = std::numeric_limits<double>::max();
     
     using P0 = analytic::Polynomial<double,0,2>;
     using P1 = analytic::Polynomial<double,-2,1>;
@@ -937,17 +963,17 @@ TEST_CASE( "RationalTrain/monomial arithmetic commutativity", "[math]" ) {
 
     P0 p0 = P0({3.0,2.0,1.0});
     P0 p1 = P0({1.0,0.0,4.0});
-    P1 p2 = P1({4.0,-1.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
+    P2 p2 = P1({4.0,-1.0,2.0,1.0});
+    P2 p3 = P1({-1.0,1.0,-2.0,2.0});
 
     // standard polynomials, no overlap
     analytic::PolynomialTrain<double,0,2> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
     // standard polynomials, with overlap
     analytic::PolynomialTrain<double,0,2> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
     // laurent polynomials
-    analytic::PolynomialTrain<double,-2,1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
+    analytic::PolynomialTrain<double,-2,2> t2 = analytic::Train<double,P2>(std::vector<P2>{p2,P2(p1),p3},std::vector<double>{-oo,-2.0,2.0,oo});
     // all polynomials
-    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
+    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,P2(p0),p1},std::vector<double>{-oo,-3.0,3.0,oo});
 
     auto r = t0/t1;
     auto s = t1/t0;
@@ -1000,6 +1026,8 @@ TEST_CASE( "RationalTrain/monomial arithmetic associativity", "[math]" ) {
     const double threshold = std::numeric_limits<double>::epsilon();
     const double midlo = -100.0f;
     const double midhi =  100.0f;
+
+    const double oo = std::numeric_limits<double>::max();
     
     using P0 = analytic::Polynomial<double,0,2>;
     using P1 = analytic::Polynomial<double,-2,1>;
@@ -1007,17 +1035,17 @@ TEST_CASE( "RationalTrain/monomial arithmetic associativity", "[math]" ) {
 
     P0 p0 = P0({3.0,2.0,1.0});
     P0 p1 = P0({1.0,0.0,4.0});
-    P1 p2 = P1({4.0,-1.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
+    P2 p2 = P1({4.0,-1.0,2.0,1.0});
+    P2 p3 = P1({-1.0,1.0,-2.0,2.0});
 
     // standard polynomials, no overlap
     analytic::PolynomialTrain<double,0,2> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
     // standard polynomials, with overlap
     analytic::PolynomialTrain<double,0,2> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
     // laurent polynomials
-    analytic::PolynomialTrain<double,-2,1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
+    analytic::PolynomialTrain<double,-2,2> t2 = analytic::Train<double,P2>(std::vector<P2>{p2,P2(p1),p3},std::vector<double>{-oo,-2.0,2.0,oo});
     // all polynomials
-    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
+    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,P2(p0),p1},std::vector<double>{-oo,-3.0,3.0,oo});
 
     auto r = t0/t1;
     auto s = t1/t0;
@@ -1088,6 +1116,8 @@ TEST_CASE( "RationalTrain/monomial arithmetic distributivity", "[math]" ) {
     // that a square integral of it will produce nans for all but the smallest input.
     const double midlo = -3.0f;
     const double midhi =  3.0f;
+
+    const double oo = std::numeric_limits<double>::max();
     
     using P0 = analytic::Polynomial<double,0,2>;
     using P1 = analytic::Polynomial<double,-2,1>;
@@ -1095,17 +1125,17 @@ TEST_CASE( "RationalTrain/monomial arithmetic distributivity", "[math]" ) {
 
     P0 p0 = P0({3.0,2.0,1.0});
     P0 p1 = P0({1.0,0.0,4.0});
-    P1 p2 = P1({4.0,-1.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
+    P2 p2 = P1({4.0,-1.0,2.0,1.0});
+    P2 p3 = P1({-1.0,1.0,-2.0,2.0});
 
     // standard polynomials, no overlap
     analytic::PolynomialTrain<double,0,2> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
     // standard polynomials, with overlap
     analytic::PolynomialTrain<double,0,2> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
     // laurent polynomials
-    analytic::PolynomialTrain<double,-2,1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
+    analytic::PolynomialTrain<double,-2,2> t2 = analytic::Train<double,P2>(std::vector<P2>{p2,P2(p1),p3},std::vector<double>{-oo,-2.0,2.0,oo});
     // all polynomials
-    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
+    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,P2(p0),p1},std::vector<double>{-oo,-3.0,3.0,oo});
 
     auto r = t0/t1;
     auto s = t1/t0;
@@ -1197,6 +1227,8 @@ TEST_CASE( "RationalTrain/Shifting arithmetic purity", "[math]" ) {
     // that a square integral of it will produce nans for all but the smallest input.
     const double midlo = -100.0f;
     const double midhi =  100.0f;
+
+    const double oo = std::numeric_limits<double>::max();
     
     using P0 = analytic::Polynomial<double,0,2>;
     using P1 = analytic::Polynomial<double,-2,1>;
@@ -1204,17 +1236,17 @@ TEST_CASE( "RationalTrain/Shifting arithmetic purity", "[math]" ) {
 
     P0 p0 = P0({3.0,2.0,1.0});
     P0 p1 = P0({1.0,0.0,4.0});
-    P1 p2 = P1({4.0,-1.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
+    P2 p2 = P1({4.0,-1.0,2.0,1.0});
+    P2 p3 = P1({-1.0,1.0,-2.0,2.0});
 
     // standard polynomials, no overlap
     analytic::PolynomialTrain<double,0,2> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
     // standard polynomials, with overlap
     analytic::PolynomialTrain<double,0,2> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
     // laurent polynomials
-    analytic::PolynomialTrain<double,-2,1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
+    analytic::PolynomialTrain<double,-2,2> t2 = analytic::Train<double,P2>(std::vector<P2>{p2,P2(p1),p3},std::vector<double>{-oo,-2.0,2.0,oo});
     // all polynomials
-    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
+    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,P2(p0),p1},std::vector<double>{-oo,-3.0,3.0,oo});
 
     auto r = t0/t1;
     auto s = t1/t0;
@@ -1308,6 +1340,8 @@ TEST_CASE( "RationalTrain/Shifting arithmetic commutativity", "[math]" ) {
     // that a square integral of it will produce nans for all but the smallest input.
     const double midlo = -100.0f;
     const double midhi =  100.0f;
+
+    const double oo = std::numeric_limits<double>::max();
     
     using P0 = analytic::Polynomial<double,0,2>;
     using P1 = analytic::Polynomial<double,-2,1>;
@@ -1315,17 +1349,17 @@ TEST_CASE( "RationalTrain/Shifting arithmetic commutativity", "[math]" ) {
 
     P0 p0 = P0({3.0,2.0,1.0});
     P0 p1 = P0({1.0,0.0,4.0});
-    P1 p2 = P1({4.0,-1.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
+    P2 p2 = P1({4.0,-1.0,2.0,1.0});
+    P2 p3 = P1({-1.0,1.0,-2.0,2.0});
 
     // standard polynomials, no overlap
     analytic::PolynomialTrain<double,0,2> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
     // standard polynomials, with overlap
     analytic::PolynomialTrain<double,0,2> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
     // laurent polynomials
-    analytic::PolynomialTrain<double,-2,1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
+    analytic::PolynomialTrain<double,-2,2> t2 = analytic::Train<double,P2>(std::vector<P2>{p2,P2(p1),p3},std::vector<double>{-oo,-2.0,2.0,oo});
     // all polynomials
-    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
+    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,P2(p0),p1},std::vector<double>{-oo,-3.0,3.0,oo});
 
     auto r = t0/t1;
     auto s = t1/t0;
@@ -1378,6 +1412,8 @@ TEST_CASE( "RationalTrain/Shifting arithmetic associativity", "[math]" ) {
     const double threshold = std::numeric_limits<double>::epsilon();
     const double midlo = -100.0f;
     const double midhi =  100.0f;
+
+    const double oo = std::numeric_limits<double>::max();
     
     using P0 = analytic::Polynomial<double,0,2>;
     using P1 = analytic::Polynomial<double,-2,1>;
@@ -1385,17 +1421,17 @@ TEST_CASE( "RationalTrain/Shifting arithmetic associativity", "[math]" ) {
 
     P0 p0 = P0({3.0,2.0,1.0});
     P0 p1 = P0({1.0,0.0,4.0});
-    P1 p2 = P1({4.0,-1.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
+    P2 p2 = P1({4.0,-1.0,2.0,1.0});
+    P2 p3 = P1({-1.0,1.0,-2.0,2.0});
 
     // standard polynomials, no overlap
     analytic::PolynomialTrain<double,0,2> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
     // standard polynomials, with overlap
     analytic::PolynomialTrain<double,0,2> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
     // laurent polynomials
-    analytic::PolynomialTrain<double,-2,1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
+    analytic::PolynomialTrain<double,-2,2> t2 = analytic::Train<double,P2>(std::vector<P2>{p2,P2(p1),p3},std::vector<double>{-oo,-2.0,2.0,oo});
     // all polynomials
-    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
+    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,P2(p0),p1},std::vector<double>{-oo,-3.0,3.0,oo});
 
     auto r = t0/t1;
     auto s = t1/t0;
@@ -1466,6 +1502,8 @@ TEST_CASE( "RationalTrain/Shifting arithmetic distributivity", "[math]" ) {
     // that a square integral of it will produce nans for all but the smallest input.
     const double midlo = -100.0f;
     const double midhi =  100.0f;
+
+    const double oo = std::numeric_limits<double>::max();
     
     using P0 = analytic::Polynomial<double,0,2>;
     using P1 = analytic::Polynomial<double,-2,1>;
@@ -1473,17 +1511,17 @@ TEST_CASE( "RationalTrain/Shifting arithmetic distributivity", "[math]" ) {
 
     P0 p0 = P0({3.0,2.0,1.0});
     P0 p1 = P0({1.0,0.0,4.0});
-    P1 p2 = P1({4.0,-1.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
+    P2 p2 = P1({4.0,-1.0,2.0,1.0});
+    P2 p3 = P1({-1.0,1.0,-2.0,2.0});
 
     // standard polynomials, no overlap
     analytic::PolynomialTrain<double,0,2> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
     // standard polynomials, with overlap
     analytic::PolynomialTrain<double,0,2> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
     // laurent polynomials
-    analytic::PolynomialTrain<double,-2,1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
+    analytic::PolynomialTrain<double,-2,2> t2 = analytic::Train<double,P2>(std::vector<P2>{p2,P2(p1),p3},std::vector<double>{-oo,-2.0,2.0,oo});
     // all polynomials
-    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
+    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,P2(p0),p1},std::vector<double>{-oo,-3.0,3.0,oo});
 
     auto r = t0/t1;
     auto s = t1/t0;
@@ -1576,6 +1614,8 @@ TEST_CASE( "RationalTrain/Scaling arithmetic purity", "[math]" ) {
     // that a square integral of it will produce nans for all but the smallest input.
     const double midlo = -100.0f;
     const double midhi =  100.0f;
+
+    const double oo = std::numeric_limits<double>::max();
     
     using P0 = analytic::Polynomial<double,0,2>;
     using P1 = analytic::Polynomial<double,-2,1>;
@@ -1583,17 +1623,17 @@ TEST_CASE( "RationalTrain/Scaling arithmetic purity", "[math]" ) {
 
     P0 p0 = P0({3.0,2.0,1.0});
     P0 p1 = P0({1.0,0.0,4.0});
-    P1 p2 = P1({4.0,-1.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
+    P2 p2 = P1({4.0,-1.0,2.0,1.0});
+    P2 p3 = P1({-1.0,1.0,-2.0,2.0});
 
     // standard polynomials, no overlap
     analytic::PolynomialTrain<double,0,2> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
     // standard polynomials, with overlap
     analytic::PolynomialTrain<double,0,2> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
     // laurent polynomials
-    analytic::PolynomialTrain<double,-2,1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
+    analytic::PolynomialTrain<double,-2,2> t2 = analytic::Train<double,P2>(std::vector<P2>{p2,P2(p1),p3},std::vector<double>{-oo,-2.0,2.0,oo});
     // all polynomials
-    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
+    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,P2(p0),p1},std::vector<double>{-oo,-3.0,3.0,oo});
 
     auto r = t0/t1;
     auto s = t1/t0;
@@ -1681,6 +1721,8 @@ TEST_CASE( "RationalTrain/Scaling arithmetic identity", "[math]" ) {
     const double threshold = std::numeric_limits<double>::epsilon();
     const double lo = -1000.0f;
     const double hi =  1000.0f;
+
+    const double oo = std::numeric_limits<double>::max();
     
     using P0 = analytic::Polynomial<double,0,2>;
     using P1 = analytic::Polynomial<double,-2,1>;
@@ -1688,17 +1730,17 @@ TEST_CASE( "RationalTrain/Scaling arithmetic identity", "[math]" ) {
 
     P0 p0 = P0({3.0,2.0,1.0});
     P0 p1 = P0({1.0,0.0,4.0});
-    P1 p2 = P1({4.0,-1.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
+    P2 p2 = P1({4.0,-1.0,2.0,1.0});
+    P2 p3 = P1({-1.0,1.0,-2.0,2.0});
 
     // standard polynomials, no overlap
     analytic::PolynomialTrain<double,0,2> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
     // standard polynomials, with overlap
     analytic::PolynomialTrain<double,0,2> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
     // laurent polynomials
-    analytic::PolynomialTrain<double,-2,1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
+    analytic::PolynomialTrain<double,-2,2> t2 = analytic::Train<double,P2>(std::vector<P2>{p2,P2(p1),p3},std::vector<double>{-oo,-2.0,2.0,oo});
     // all polynomials
-    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
+    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,P2(p0),p1},std::vector<double>{-oo,-3.0,3.0,oo});
 
     auto r = t0/t1;
     auto s = t1/t0;
@@ -1736,6 +1778,8 @@ TEST_CASE( "RationalTrain/Scaling arithmetic commutativity", "[math]" ) {
     // that a square integral of it will produce nans for all but the smallest input.
     const double midlo = -100.0f;
     const double midhi =  100.0f;
+
+    const double oo = std::numeric_limits<double>::max();
     
     using P0 = analytic::Polynomial<double,0,2>;
     using P1 = analytic::Polynomial<double,-2,1>;
@@ -1743,17 +1787,17 @@ TEST_CASE( "RationalTrain/Scaling arithmetic commutativity", "[math]" ) {
 
     P0 p0 = P0({3.0,2.0,1.0});
     P0 p1 = P0({1.0,0.0,4.0});
-    P1 p2 = P1({4.0,-1.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
+    P2 p2 = P1({4.0,-1.0,2.0,1.0});
+    P2 p3 = P1({-1.0,1.0,-2.0,2.0});
 
     // standard polynomials, no overlap
     analytic::PolynomialTrain<double,0,2> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
     // standard polynomials, with overlap
     analytic::PolynomialTrain<double,0,2> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
     // laurent polynomials
-    analytic::PolynomialTrain<double,-2,1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
+    analytic::PolynomialTrain<double,-2,2> t2 = analytic::Train<double,P2>(std::vector<P2>{p2,P2(p1),p3},std::vector<double>{-oo,-2.0,2.0,oo});
     // all polynomials
-    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
+    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,P2(p0),p1},std::vector<double>{-oo,-3.0,3.0,oo});
 
     auto r = t0/t1;
     auto s = t1/t0;
@@ -1806,6 +1850,8 @@ TEST_CASE( "RationalTrain/Scaling arithmetic associativity", "[math]" ) {
     const double threshold = std::numeric_limits<double>::epsilon();
     const double midlo = -100.0f;
     const double midhi =  100.0f;
+
+    const double oo = std::numeric_limits<double>::max();
     
     using P0 = analytic::Polynomial<double,0,2>;
     using P1 = analytic::Polynomial<double,-2,1>;
@@ -1813,17 +1859,17 @@ TEST_CASE( "RationalTrain/Scaling arithmetic associativity", "[math]" ) {
 
     P0 p0 = P0({3.0,2.0,1.0});
     P0 p1 = P0({1.0,0.0,4.0});
-    P1 p2 = P1({4.0,-1.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
+    P2 p2 = P1({4.0,-1.0,2.0,1.0});
+    P2 p3 = P1({-1.0,1.0,-2.0,2.0});
 
     // standard polynomials, no overlap
     analytic::PolynomialTrain<double,0,2> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
     // standard polynomials, with overlap
     analytic::PolynomialTrain<double,0,2> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
     // laurent polynomials
-    analytic::PolynomialTrain<double,-2,1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
+    analytic::PolynomialTrain<double,-2,2> t2 = analytic::Train<double,P2>(std::vector<P2>{p2,P2(p1),p3},std::vector<double>{-oo,-2.0,2.0,oo});
     // all polynomials
-    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
+    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,P2(p0),p1},std::vector<double>{-oo,-3.0,3.0,oo});
 
     auto r = t0/t1;
     auto s = t1/t0;
@@ -1894,6 +1940,8 @@ TEST_CASE( "RationalTrain/Scaling arithmetic distributivity", "[math]" ) {
     // that a square integral of it will produce nans for all but the smallest input.
     const double midlo = -100.0f;
     const double midhi =  100.0f;
+
+    const double oo = std::numeric_limits<double>::max();
     
     using P0 = analytic::Polynomial<double,0,2>;
     using P1 = analytic::Polynomial<double,-2,1>;
@@ -1901,17 +1949,17 @@ TEST_CASE( "RationalTrain/Scaling arithmetic distributivity", "[math]" ) {
 
     P0 p0 = P0({3.0,2.0,1.0});
     P0 p1 = P0({1.0,0.0,4.0});
-    P1 p2 = P1({4.0,-1.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
+    P2 p2 = P1({4.0,-1.0,2.0,1.0});
+    P2 p3 = P1({-1.0,1.0,-2.0,2.0});
 
     // standard polynomials, no overlap
     analytic::PolynomialTrain<double,0,2> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
     // standard polynomials, with overlap
     analytic::PolynomialTrain<double,0,2> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
     // laurent polynomials
-    analytic::PolynomialTrain<double,-2,1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
+    analytic::PolynomialTrain<double,-2,2> t2 = analytic::Train<double,P2>(std::vector<P2>{p2,P2(p1),p3},std::vector<double>{-oo,-2.0,2.0,oo});
     // all polynomials
-    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
+    analytic::PolynomialTrain<double,-2,2> t3 = analytic::Train<double,P2>(std::vector<P2>{p3,P2(p0),p1},std::vector<double>{-oo,-3.0,3.0,oo});
 
     auto r = t0/t1;
     auto s = t1/t0;

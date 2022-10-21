@@ -6,10 +6,14 @@
 #include "../Shifting.hpp"
 #include "../Rational.hpp"
 
+#include "Railcar.hpp"
+#include "Train.hpp"
+#include "RationalRailyard.hpp"
+
 namespace analytic {
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    using RationalRailyard = Railyard<T,Rational<T,Plo,Phi,Qlo,Qhi>>;
+    using RationalTrain = Train<T,Rational<T,Plo,Phi,Qlo,Qhi>>;
 
 
     // operations that are closed under trains
@@ -21,31 +25,35 @@ namespace analytic {
     {
         using R1 = Rational<T,P1lo,P1hi,Q1lo,Q1hi>;
         using R2 = Rational<T,P2lo,P2hi,Q2lo,Q2hi>;
-        using R = Rational<T,std::min(P1lo,P2lo),std::max(P1hi,P2hi),std::min(Q1lo,Q2lo),std::max(Q1hi,Q2hi)>;
+        using R = Rational<T,
+            std::min(P1lo+Q2lo,P2lo+Q1lo),
+            std::max(P1hi+Q2hi,P2hi+Q1hi),
+            Q1lo+Q2lo,
+            Q1hi+Q2hi>;
         const std::vector<T> couplers_ = couplers(r,s);
         std::vector<R> contents;
-        for (std::size_t i=0; i<couplers_.size(); i++)
+        for (std::size_t i=1; i<couplers_.size(); i++)
         {
             T sample = (couplers_[i-1] + couplers_[i]) / 2.0;
             R1 ri;
             R2 si;
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=0; j<p.size(); j++)
+            for (std::size_t j=0; j<r.size(); j++)
             {
-                auto car = p[j];
+                auto car = r[j];
                 if (car.lo <= sample && sample <= car.hi)
                 {
-                    pi = car.content;
+                    ri = car.content;
                     break;
                 }
             }
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=0; j<q.size(); j++)
+            for (std::size_t j=0; j<s.size(); j++)
             {
-                auto car = q[j];
+                auto car = s[j];
                 if (car.lo <= sample && sample <= car.hi)
                 {
-                    qi = car.content;
+                    si = car.content;
                     break;
                 }
             }
@@ -61,31 +69,35 @@ namespace analytic {
     {
         using R1 = Rational<T,P1lo,P1hi,Q1lo,Q1hi>;
         using R2 = Rational<T,P2lo,P2hi,Q2lo,Q2hi>;
-        using R = Rational<T,std::min(P1lo,P2lo),std::max(P1hi,P2hi),std::min(Q1lo,Q2lo),std::max(Q1hi,Q2hi)>;
+        using R = Rational<T,
+            std::min(P1lo+Q2lo,P2lo+Q1lo),
+            std::max(P1hi+Q2hi,P2hi+Q1hi),
+            Q1lo+Q2lo,
+            Q1hi+Q2hi>;
         const std::vector<T> couplers_ = couplers(r,s);
         std::vector<R> contents;
-        for (std::size_t i=0; i<couplers_.size(); i++)
+        for (std::size_t i=1; i<couplers_.size(); i++)
         {
             T sample = (couplers_[i-1] + couplers_[i]) / 2.0;
             R1 ri;
             R2 si;
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=0; j<p.size(); j++)
+            for (std::size_t j=0; j<r.size(); j++)
             {
-                auto car = p[j];
+                auto car = r[j];
                 if (car.lo <= sample && sample <= car.hi)
                 {
-                    pi = car.content;
+                    ri = car.content;
                     break;
                 }
             }
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=0; j<q.size(); j++)
+            for (std::size_t j=0; j<s.size(); j++)
             {
-                auto car = q[j];
+                auto car = s[j];
                 if (car.lo <= sample && sample <= car.hi)
                 {
-                    qi = car.content;
+                    si = car.content;
                     break;
                 }
             }
@@ -104,28 +116,28 @@ namespace analytic {
         using R = Rational<T,P1lo+P2lo,P1hi+P2hi,Q1lo+Q2lo,Q1hi+Q2hi>;
         const std::vector<T> couplers_ = couplers(r,s);
         std::vector<R> contents;
-        for (std::size_t i=0; i<couplers_.size(); i++)
+        for (std::size_t i=1; i<couplers_.size(); i++)
         {
             T sample = (couplers_[i-1] + couplers_[i]) / 2.0;
             R1 ri;
             R2 si;
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=0; j<p.size(); j++)
+            for (std::size_t j=0; j<r.size(); j++)
             {
-                auto car = p[j];
+                auto car = r[j];
                 if (car.lo <= sample && sample <= car.hi)
                 {
-                    pi = car.content;
+                    ri = car.content;
                     break;
                 }
             }
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=0; j<q.size(); j++)
+            for (std::size_t j=0; j<s.size(); j++)
             {
-                auto car = q[j];
+                auto car = s[j];
                 if (car.lo <= sample && sample <= car.hi)
                 {
-                    qi = car.content;
+                    si = car.content;
                     break;
                 }
             }
@@ -144,32 +156,32 @@ namespace analytic {
         using R = Rational<T,P1lo+Q2lo,P1hi+Q2hi,Q1lo+P2lo,Q1hi+P2hi>;
         const std::vector<T> couplers_ = couplers(r,s);
         std::vector<R> contents;
-        for (std::size_t i=0; i<couplers_.size(); i++)
+        for (std::size_t i=1; i<couplers_.size(); i++)
         {
             T sample = (couplers_[i-1] + couplers_[i]) / 2.0;
             R1 ri;
             R2 si;
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=0; j<p.size(); j++)
+            for (std::size_t j=0; j<r.size(); j++)
             {
-                auto car = p[j];
+                auto car = r[j];
                 if (car.lo <= sample && sample <= car.hi)
                 {
-                    pi = car.content;
+                    ri = car.content;
                     break;
                 }
             }
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
-            for (std::size_t j=0; j<q.size(); j++)
+            for (std::size_t j=0; j<s.size(); j++)
             {
-                auto car = q[j];
+                auto car = s[j];
                 if (car.lo <= sample && sample <= car.hi)
                 {
-                    qi = car.content;
+                    si = car.content;
                     break;
                 }
             }
-            contents.push_back(ri/si);
+            contents.emplace_back(ri/si);
         }
         return Train<T,R>(contents, couplers_);
     }
@@ -186,8 +198,9 @@ namespace analytic {
         using R = Rational<T,Plo,Phi,Qlo,Qhi>;
         const std::vector<T> couplers_ = couplers(p,q);
         std::vector<R> contents;
-        for (std::size_t i=0; i<couplers_.size(); i++)
+        for (std::size_t i=1; i<couplers_.size(); i++)
         {
+            T sample = (couplers_[i-1] + couplers_[i]) / 2.0;
             P pi;
             Q qi;
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
@@ -384,24 +397,24 @@ namespace analytic {
 
     // OPERATIONS WITH POLYNOMIAL YARDS
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi>
-    constexpr auto operator+(const RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>& r, const PolynomialRailcar<T,P2lo,P2hi> p)
+    constexpr auto operator+(const RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>& r, const PolynomialRailyard<T,P2lo,P2hi> p)
     {
-        return r + RationalRailcar<T,P2lo,P2hi,0,0>(p);
+        return r + RationalTrain<T,P2lo,P2hi,0,0>(p);
     }
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi>
-    constexpr auto operator-(const RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>& r, const PolynomialRailcar<T,P2lo,P2hi> p)
+    constexpr auto operator-(const RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>& r, const PolynomialRailyard<T,P2lo,P2hi> p)
     {
-        return r - RationalRailcar<T,P2lo,P2hi,0,0>(p);
+        return r - RationalTrain<T,P2lo,P2hi,0,0>(p);
     }
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi>
-    constexpr auto operator*(const RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>& r, const PolynomialRailcar<T,P2lo,P2hi> p)
+    constexpr auto operator*(const RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>& r, const PolynomialRailyard<T,P2lo,P2hi> p)
     {
-        return r * RationalRailcar<T,P2lo,P2hi,0,0>(p);
+        return r * RationalTrain<T,P2lo,P2hi,0,0>(p);
     }
     // template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi>
-    // constexpr auto operator/(const RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>& r, const PolynomialRailcar<T,P2lo,P2hi> p)
+    // constexpr auto operator/(const RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>& r, const PolynomialRailyard<T,P2lo,P2hi> p)
     // {
-    //     return r * RationalRailcar<T,P2lo,P2hi,0,0>(p);
+    //     return r * RationalTrain<T,P2lo,P2hi,0,0>(p);
     // }
     /*
     NOTE: we cannot support division by rational railyards.
@@ -412,24 +425,24 @@ namespace analytic {
     */ 
 
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi>
-    constexpr auto operator+(const PolynomialRailcar<T,P2lo,P2hi> p, const RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>& r)
+    constexpr auto operator+(const PolynomialRailyard<T,P2lo,P2hi> p, const RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>& r)
     {
-        return RationalRailcar<T,P2lo,P2hi,0,0>(p) + r;
+        return RationalTrain<T,P2lo,P2hi,0,0>(p) + r;
     }
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi>
-    constexpr auto operator-(const PolynomialRailcar<T,P2lo,P2hi> p, const RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>& r)
+    constexpr auto operator-(const PolynomialRailyard<T,P2lo,P2hi> p, const RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>& r)
     {
-        return RationalRailcar<T,P2lo,P2hi,0,0>(p) - r;
+        return RationalTrain<T,P2lo,P2hi,0,0>(p) - r;
     }
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi>
-    constexpr auto operator*(const PolynomialRailcar<T,P2lo,P2hi> p, const RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>& r)
+    constexpr auto operator*(const PolynomialRailyard<T,P2lo,P2hi> p, const RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>& r)
     {
-        return RationalRailcar<T,P2lo,P2hi,0,0>(p) * r;
+        return RationalTrain<T,P2lo,P2hi,0,0>(p) * r;
     }
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi>
-    constexpr auto operator/(const PolynomialRailcar<T,P2lo,P2hi> p, const RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>& r)
+    constexpr auto operator/(const PolynomialRailyard<T,P2lo,P2hi> p, const RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>& r)
     {
-        return RationalRailcar<T,P2lo,P2hi,0,0>(p) / r;
+        return RationalTrain<T,P2lo,P2hi,0,0>(p) / r;
     }
 
 
@@ -551,7 +564,7 @@ namespace analytic {
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi, int Q2lo, int Q2hi>
     constexpr auto operator/(const RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>& r, const Rational<T,P2lo,P2hi,Q2lo,Q2hi> s)
     {
-        return s / RationalTrain<T,P2lo,P2hi,Q2lo,Q2hi>(s);
+        return r / RationalTrain<T,P2lo,P2hi,Q2lo,Q2hi>(s);
     }
 
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi, int Q2lo, int Q2hi>
@@ -802,9 +815,17 @@ namespace analytic {
 
 
 
-
-
-
+    template<int N, typename T, int Plo, int Phi, int Qlo, int Qhi>
+    constexpr auto pow(const RationalTrain<T,Plo,Phi,Qlo,Qhi>& r){
+        using R = Rational<T,Plo*N,Phi*N,Qlo*N,Qhi*N>;
+        std::vector<R> contents;
+        for (auto ri : r.contents)
+        {
+            contents.push_back(pow<N>(ri));
+        }
+        Train<T,R> result(contents, r.couplers);
+        return result;
+    }
 
 
 
@@ -831,24 +852,22 @@ namespace analytic {
 
 
 
-
-
     template<typename T, int Plo, int Phi, int Qlo, int Qhi, typename F>
-    constexpr Rational<T,Plo,Phi,Qlo,Qhi> compose(const Rational<T,Plo,Phi,Qlo,Qhi>& r, const Identity<T> e)
+    constexpr RationalTrain<T,Plo,Phi,Qlo,Qhi> compose(const RationalTrain<T,Plo,Phi,Qlo,Qhi>& r, const Identity<T> e)
     {
         return r;
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi, typename F>
-    constexpr Rational<T,Plo,Phi,Qlo,Qhi> compose(const Identity<T> e, const Rational<T,Plo,Phi,Qlo,Qhi>& r)
+    constexpr RationalTrain<T,Plo,Phi,Qlo,Qhi> compose(const Identity<T> e, const RationalTrain<T,Plo,Phi,Qlo,Qhi>& r)
     {
         return r;
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi, typename F>
-    constexpr Rational<T,Plo,Phi,Qlo,Qhi> compose(const Rational<T,Plo,Phi,Qlo,Qhi>& r, const Shifting<T> f)
+    constexpr RationalTrain<T,Plo,Phi,Qlo,Qhi> compose(const RationalTrain<T,Plo,Phi,Qlo,Qhi>& r, const Shifting<T> f)
     {
-        using R = Rational<T,0,Phi,0,Qhi>;
+        using R = RationalTrain<T,0,Phi,0,Qhi>;
         Railyard<T,R> y;
         for (auto ri: r.cars)
         {
@@ -858,9 +877,9 @@ namespace analytic {
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi, typename F>
-    constexpr Rational<T,Plo,Phi,Qlo,Qhi> compose(const Rational<T,Plo,Phi,Qlo,Qhi>& r, const Scaling<T> f)
+    constexpr RationalTrain<T,Plo,Phi,Qlo,Qhi> compose(const RationalTrain<T,Plo,Phi,Qlo,Qhi>& r, const Scaling<T> f)
     {
-        using R = Rational<T,Plo,Phi,Qlo,Qhi>;
+        using R = RationalTrain<T,Plo,Phi,Qlo,Qhi>;
         Railyard<T,R> y;
         for (auto ri: r.cars)
         {
@@ -870,9 +889,9 @@ namespace analytic {
     }
 
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi>
-    constexpr Rational<T,P1lo,P1hi,Q1lo,Q1hi> compose(const Rational<T,P1lo,P1hi,Q1lo,Q1hi>& r, const Polynomial<T,P2lo,P2hi> p)
+    constexpr RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi> compose(const RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>& r, const Polynomial<T,P2lo,P2hi> p)
     {
-        using R = Rational<T,P1lo*P2lo,P1hi*P2hi,Q1lo+P2lo,Q1hi+P2hi>;
+        using R = RationalTrain<T,P1lo*P2lo,P1hi*P2hi,Q1lo+P2lo,Q1hi+P2hi>;
         Railyard<T,R> y;
         for (auto ri: r.cars)
         {
@@ -882,15 +901,112 @@ namespace analytic {
     }
 
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi, int Q2lo, int Q2hi>
-    constexpr Rational<T,P1lo,P1hi,Q1lo,Q1hi> compose(const Rational<T,P1lo,P1hi,Q1lo,Q1hi>& r, const Rational<T,P2lo,P2hi,Q2lo,Q2hi> s)
+    constexpr RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi> compose(const RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>& r, const RationalTrain<T,P2lo,P2hi,Q2lo,Q2hi> s)
     {
-        using R = Rational<T,P1lo*P2lo,P1hi*P2hi,Q1lo*Q2lo,Q1hi*Q2hi>;
+        using R = RationalTrain<T,P1lo*P2lo,P1hi*P2hi,Q1lo*Q2lo,Q1hi*Q2hi>;
         Railyard<T,R> y;
         for (auto ri: r.cars)
         {
             y += compose(ri,s);
         }
         return y;
+    }
+
+
+
+    /*
+    `distance` is the root of the integrated squared difference 
+    between two polynomials over a given range divided by the range.
+    It provides a metric that expresses the extent to which two polynomials differ 
+    using the same units as the output of the polynomial. 
+    It is analogous to the standard deviation of a dataset in statistics,
+    and it satisfies all criteria needed to be considered a metric:
+    * d(a,b) ∈ ℝ⁺ 
+    * d(a,b) = 0 ⟺ a=b
+    * d(a,b) = d(b,a)
+    * d(a,b) ≤ d(a,c)+d(c,b)
+    We do not presume that this metric serves more naturally as a distance metric compared to others,
+    however we address this function as `distance` since the alternative names
+    are either unwieldy (`root_mean_square_difference`) or nonobvious (`rmsd`).
+    */
+    template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi, int Q2lo, int Q2hi>
+    constexpr T distance(
+        const RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>& r, 
+        const RationalTrain<T,P2lo,P2hi,Q2lo,Q2hi>& s, 
+        const T lo, 
+        const T hi
+    ){
+        using R1 = Rational<T,P1lo,P1hi,Q1lo,Q1hi>;
+        using R2 = Rational<T,P2lo,P2hi,Q2lo,Q2hi>;
+        using R = Rational<T,std::min(P1lo,P2lo),std::max(P1hi,P2hi),std::min(Q1lo,Q2lo),std::max(Q1hi,Q2hi)>;
+        const std::vector<T> couplers_ = couplers(r,s);
+        std::vector<R> contents;
+        T result(0);
+        for (std::size_t i=1; i<couplers_.size(); i++)
+        {
+            if (std::max(lo,couplers_[i-1]) < std::min(hi,couplers_[i]))
+            {
+                T sample = (couplers_[i-1] + couplers_[i]) / 2.0;
+                Railcar<T,R1> ri;
+                Railcar<T,R2> si;
+                // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
+                for (std::size_t j=0; j<r.size(); j++)
+                {
+                    auto car = r[j];
+                    if (car.lo <= sample && sample <= car.hi)
+                    {
+                        ri = car;
+                        break;
+                    }
+                }
+                // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
+                for (std::size_t j=0; j<s.size(); j++)
+                {
+                    auto car = s[j];
+                    if (car.lo <= sample && sample <= car.hi)
+                    {
+                        si = car;
+                        break;
+                    }
+                }
+                auto increment = distance(ri.content, si.content, std::max(lo,couplers_[i-1]), std::min(hi,couplers_[i]));
+                result += increment;
+            }
+        }
+        return result;
+    }
+
+
+
+    template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi, int Q2lo, int Q2hi>
+    constexpr T distance(const RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>& p, const RationalRailyard<T,P2lo,P2hi,Q2lo,Q2hi> q, const T lo, const T hi)
+    {
+        return distance((p), train(q), lo, hi);
+    }
+    template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi, int Q2lo, int Q2hi>
+    constexpr T distance(const RationalRailyard<T,P1lo,P1hi,Q1lo,Q1hi>& p, const RationalTrain<T,P2lo,P2hi,Q2lo,Q2hi>& q, const T lo, const T hi)
+    {
+        return distance(train(p), q, lo, hi);
+    }
+    template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi, int Q2lo, int Q2hi>
+    constexpr T distance(const RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>& p, const Rational<T,P2lo,P2hi,Q2lo,Q2hi> q, const T lo, const T hi)
+    {
+        return distance(p, RationalTrain<T,P2lo,P2hi,Q2lo,Q2hi>(q), lo, hi);
+    }
+    template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi, int Q2lo, int Q2hi>
+    constexpr T distance(const Rational<T,P1lo,P1hi,Q1lo,Q1hi> p, const RationalTrain<T,P2lo,P2hi,Q2lo,Q2hi>& q, const T lo, const T hi)
+    {
+        return distance(Rational<T,P1lo,P1hi,Q1lo,Q1hi>(p), q, lo, hi);
+    }
+    template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi>
+    constexpr T distance(const RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>& p, const T k, const T lo, const T hi)
+    {
+        return distance(p, Rational<T,0,0,0,0>(k), lo, hi);
+    }
+    template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi>
+    constexpr T distance(const T k, const RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>& p, const T lo, const T hi)
+    {
+        return distance(RationalTrain<T,0,0,0,0>(k), p, lo, hi);
     }
 
 }

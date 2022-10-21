@@ -6,8 +6,9 @@
 #include "../Shifting.hpp"
 #include "../Rational.hpp"
 
-#include "../Railyard.hpp"
-
+#include "Railcar.hpp"
+#include "Railyard.hpp"
+#include "RationalRailcar.hpp"
 
 namespace analytic {
 
@@ -17,7 +18,7 @@ namespace analytic {
 
     // operations that are closed under Rationals
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi, int Q2lo, int Q2hi>
-    constexpr auto operator*(const RationalRailyard<T,P1lo,P1hi,Q1lo,Q1hi>& r, const RationalRailyard<T,P2lo,P2hi,Q2lo,Q2hi>& s)
+    constexpr auto operator+(const RationalRailyard<T,P1lo,P1hi,Q1lo,Q1hi>& r, const RationalRailyard<T,P2lo,P2hi,Q2lo,Q2hi>& s)
     {
         using R = Rational<T,std::min(P1lo,P2lo),std::max(P1hi,P2hi),std::min(Q1lo,Q2lo),std::max(Q1hi,Q2hi)>;
         using C = Railcar<T,R>;
@@ -584,21 +585,21 @@ namespace analytic {
 
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi, typename F>
-    constexpr Rational<T,Plo,Phi,Qlo,Qhi> compose(const Rational<T,Plo,Phi,Qlo,Qhi>& r, const Identity<T> e)
+    constexpr RationalRailyard<T,Plo,Phi,Qlo,Qhi> compose(const RationalRailyard<T,Plo,Phi,Qlo,Qhi>& r, const Identity<T> e)
     {
         return r;
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi, typename F>
-    constexpr Rational<T,Plo,Phi,Qlo,Qhi> compose(const Identity<T> e, const Rational<T,Plo,Phi,Qlo,Qhi>& r)
+    constexpr RationalRailyard<T,Plo,Phi,Qlo,Qhi> compose(const Identity<T> e, const RationalRailyard<T,Plo,Phi,Qlo,Qhi>& r)
     {
         return r;
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi, typename F>
-    constexpr Rational<T,Plo,Phi,Qlo,Qhi> compose(const Rational<T,Plo,Phi,Qlo,Qhi>& r, const Shifting<T> f)
+    constexpr RationalRailyard<T,Plo,Phi,Qlo,Qhi> compose(const RationalRailyard<T,Plo,Phi,Qlo,Qhi>& r, const Shifting<T> f)
     {
-        using R = Rational<T,0,Phi,0,Qhi>;
+        using R = RationalRailyard<T,0,Phi,0,Qhi>;
         Railyard<T,R> y;
         for (auto ri: r.cars)
         {
@@ -608,9 +609,9 @@ namespace analytic {
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi, typename F>
-    constexpr Rational<T,Plo,Phi,Qlo,Qhi> compose(const Rational<T,Plo,Phi,Qlo,Qhi>& r, const Scaling<T> f)
+    constexpr RationalRailyard<T,Plo,Phi,Qlo,Qhi> compose(const RationalRailyard<T,Plo,Phi,Qlo,Qhi>& r, const Scaling<T> f)
     {
-        using R = Rational<T,Plo,Phi,Qlo,Qhi>;
+        using R = RationalRailyard<T,Plo,Phi,Qlo,Qhi>;
         Railyard<T,R> y;
         for (auto ri: r.cars)
         {
@@ -620,9 +621,9 @@ namespace analytic {
     }
 
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi>
-    constexpr Rational<T,P1lo,P1hi,Q1lo,Q1hi> compose(const Rational<T,P1lo,P1hi,Q1lo,Q1hi>& r, const Polynomial<T,P2lo,P2hi> p)
+    constexpr RationalRailyard<T,P1lo,P1hi,Q1lo,Q1hi> compose(const RationalRailyard<T,P1lo,P1hi,Q1lo,Q1hi>& r, const Polynomial<T,P2lo,P2hi> p)
     {
-        using R = Rational<T,P1lo*P2lo,P1hi*P2hi,Q1lo+P2lo,Q1hi+P2hi>;
+        using R = RationalRailyard<T,P1lo*P2lo,P1hi*P2hi,Q1lo+P2lo,Q1hi+P2hi>;
         Railyard<T,R> y;
         for (auto ri: r.cars)
         {
@@ -632,7 +633,7 @@ namespace analytic {
     }
 
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi, int Q2lo, int Q2hi>
-    constexpr Rational<T,P1lo,P1hi,Q1lo,Q1hi> compose(const Rational<T,P1lo,P1hi,Q1lo,Q1hi>& r, const Rational<T,P2lo,P2hi,Q2lo,Q2hi> s)
+    constexpr RationalRailyard<T,P1lo,P1hi,Q1lo,Q1hi> compose(const RationalRailyard<T,P1lo,P1hi,Q1lo,Q1hi>& r, const Rational<T,P2lo,P2hi,Q2lo,Q2hi> s)
     {
         using R = Rational<T,P1lo*P2lo,P1hi*P2hi,Q1lo*Q2lo,Q1hi*Q2hi>;
         Railyard<T,R> y;
