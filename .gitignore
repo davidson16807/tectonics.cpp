@@ -32,3 +32,5 @@
 *.app
 
 *.log
+
+inc/math/analytic/output.txt

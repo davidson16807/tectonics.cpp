@@ -2,6 +2,7 @@
 #include "./Rational_test.hpp"
 #include "./rails/PolynomialRailyard_algebraic_test.hpp"
 #include "./rails/PolynomialRailyard_composition_test.cpp"
+#include "./rails/RationalRailyard_test.hpp"
 #include "./rails/PolynomialTrain_algebraic_test.cpp"
 #include "./rails/RationalTrain_test.cpp"
 #include "./Polynomial_test.hpp"
