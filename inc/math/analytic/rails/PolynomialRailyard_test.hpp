@@ -2411,3 +2411,81 @@ TEST_CASE( "PolynomialRailyard integral/derivative invertibility", "[math]" ) {
     }
 }
 
+
+/*
+TEST_CASE( "PolynomialRailyard composition commutativity", "[math]" ) {
+    // `threshold` is the tolerance towards error in the result
+    const double threshold = 1e-4;
+    // `max` and `min` are the largest absolute value to be tested 
+    const double min = 1e-1;
+    const double max =  1e4;
+    // `hi` and `lo` variables indicate thresholds that are reused when constructing railyards 
+    const double lo = -1e3;
+    const double hi =  1e3;
+    const double midlo = -1e1;
+    const double midhi =  1e1;
+    // `multiple` is the multiple by which tests are incremented
+    const double multiple = -std::pow(10.0, 0.5);
+
+    using P0 = analytic::Polynomial<double,0,2>;
+    using P1 = analytic::Polynomial<double,0,3>;
+    // using P2 = analytic::Polynomial<double,0,3>;
+
+    P0 p0 = P0({3.0f,2.0f,1.0f});
+    P0 p1 = P0({-1.0f,0.0f,1.0f});
+    P1 p2 = P1({4.0f,3.0f,2.0f,1.0f});
+    P1 p3 = P1({-1.0f,1.0f,-2.0f,2.0f});
+
+    using C0 = analytic::Railcar<double,P0>;
+    using C1 = analytic::Railcar<double,P1>;
+    // using C2 = analytic::Railcar<double,P2>;
+
+    analytic::Railyard<double,P0> s0 = analytic::Railyard<double,P0>{
+        C0(lo, -1.0f, p0), 
+        C0(1.0f, hi,  p1) 
+    }; 
+
+    analytic::Railyard<double,P0> s1 = analytic::Railyard<double,P0>{
+        C0(lo, midhi, p0), 
+        C0(midlo, hi, p1) 
+    }; 
+    analytic::Railyard<double,P1> s2 = analytic::Railyard<double,P1>{ 
+        C1(midlo, -1.0f, p2), 
+        C1(1.0f, midhi, p3) 
+    }; 
+    analytic::Railyard<double,P1> s3 = analytic::Railyard<double,P1>{ 
+        C1(lo, midlo, P1(p2)), 
+        C1(midhi, hi, P1(p3)), 
+        C1(midlo, -1.0f, P1(p2)), 
+        C1(1.0f, midhi, P1(p3)) 
+    };
+
+    SECTION("si(x)+sj(x) must be equivalent to (si+sj)(x)"){
+        auto s0s1 = compose(s0, s1);
+        std::cout << s0s1 << std::endl;
+        for (int x = min; std::abs(x) < max; x*=multiple)
+        {
+            std::cout << x << std::endl;
+            // CHECK(Approx(compose(s0, s0)(x)).epsilon(threshold) == s0(s0(x)));
+            CHECK(Approx(s0s1(x)).epsilon(threshold) == s0(s1(x)));
+            // CHECK(Approx(compose(s0, s2)(x)).epsilon(threshold) == s0(s2(x)));
+            // CHECK(Approx(compose(s0, s3)(x)).epsilon(threshold) == s0(s3(x)));
+
+            // CHECK(Approx(compose(s1, s0)(x)).epsilon(threshold) == s1(s0(x)));
+            // CHECK(Approx(compose(s1, s1)(x)).epsilon(threshold) == s1(s1(x)));
+            // CHECK(Approx(compose(s1, s2)(x)).epsilon(threshold) == s1(s2(x)));
+            // CHECK(Approx(compose(s1, s3)(x)).epsilon(threshold) == s1(s3(x)));
+
+            // CHECK(Approx(compose(s2, s0)(x)).epsilon(threshold) == s2(s0(x)));
+            // CHECK(Approx(compose(s2, s1)(x)).epsilon(threshold) == s2(s1(x)));
+            // CHECK(Approx(compose(s2, s2)(x)).epsilon(threshold) == s2(s2(x)));
+            // CHECK(Approx(compose(s2, s3)(x)).epsilon(threshold) == s2(s3(x)));
+
+            // CHECK(Approx(compose(s3, s0)(x)).epsilon(threshold) == s3(s0(x)));
+            // CHECK(Approx(compose(s3, s1)(x)).epsilon(threshold) == s3(s1(x)));
+            // CHECK(Approx(compose(s3, s2)(x)).epsilon(threshold) == s3(s2(x)));
+            // CHECK(Approx(compose(s3, s3)(x)).epsilon(threshold) == s3(s3(x)));
+        }
+    }
+}
+*/
