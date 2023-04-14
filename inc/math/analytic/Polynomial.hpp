@@ -9,6 +9,7 @@
 #include "Identity.hpp"
 #include "Scaling.hpp"
 #include "Shifting.hpp"
+#include "ScaledComplement.hpp"
 
 #include <math/inspected/calculus.hpp>
 #include <math/combinatorics.hpp>
@@ -74,6 +75,11 @@ namespace analytic {
             std::fill(k.begin(), k.end(), T(0.0));
             k[0-Nlo] = f.offset;
             k[1-Nlo] = T(1.0);
+        }
+        constexpr explicit Polynomial(const ScaledComplement<T,Identity<T>> f): k()
+        {
+            k[0-Nlo] = T(1.0);
+            k[1-Nlo] = T(-1.0/f.scale);
         }
         constexpr explicit Polynomial(const std::array<T,Nhi+1-Nlo> k2)
         {
@@ -916,6 +922,32 @@ namespace analytic {
     constexpr Polynomial<T,P*N,P*N> pow(const Polynomial<T,P,P>& p){
         return pow<-N>(1/p);
     }
+
+
+    template<int N, typename T,
+        typename = std::enable_if_t<(N>=0)>>
+    constexpr auto pow(const Identity<T>& e){
+        return pow<N>(Polynomial<T,1,1>(e));
+    }
+
+    template<int N, typename T,
+        typename = std::enable_if_t<(N>=0)>>
+    constexpr auto pow(const Shifting<T>& f){
+        return pow<N>(Polynomial<T,0,1>(f));
+    }
+
+    template<int N, typename T,
+        typename = std::enable_if_t<(N>=0)>>
+    constexpr auto pow(const Scaling<T>& f){
+        return pow<N>(Polynomial<T,1,1>(f));
+    }
+
+    template<int N, typename T,
+        typename = std::enable_if_t<(N>=0)>>
+    constexpr auto pow(const ScaledComplement<T,Identity<T>>& f){
+        return pow<N>(Polynomial<T,0,1>(f));
+    }
+
 
     /*
     `solution()` provides the single real valued solution to a function

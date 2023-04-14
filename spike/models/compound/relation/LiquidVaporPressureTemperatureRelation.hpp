@@ -5,7 +5,7 @@
 
 // in-house libraries
 #include <math/analytic/Scaling.hpp>
-#include <math/analytic/PolynomialRailyard.hpp>
+#include <math/analytic/rails/PolynomialRailyard.hpp>
 #include <math/analytic/Sum.hpp>
 #include <math/analytic/Clamped.hpp>
 #include <math/analytic/NaturalLogarithm.hpp>
@@ -30,9 +30,8 @@ namespace relation {
         using ScaledComplementNaturalLogarithm = analytic::ScaledComplement<double,analytic::NaturalLogarithm<double>>;
         using ClampedScaledComplementNaturalLogarithm = analytic::Clamped<double,ScaledComplementNaturalLogarithm>;
 
-        analytic::Railyard<double,analytic::Polynomial<double,-1,6>> exponentiated_terms;
+        analytic::Railyard<double,analytic::Rational<double,0,7,0,1>> exponentiated_terms;
         analytic::Sum<double,ClampedNaturalLogarithm> exponentiated_logarithms;
-        analytic::Railyard<double, analytic::ScaledComplement<double, analytic::Polynomial<double,-1,6>>> reduced_exponentiated_terms;
         analytic::Sum<double,analytic::Clamped<double,ScaledComplementNaturalLogarithm>> reduced_exponentiated_logarithms;
 
         si::temperature<double> Tunits;
@@ -44,7 +43,6 @@ namespace relation {
         LiquidVaporPressureTemperatureRelation():
             exponentiated_terms(),
             exponentiated_logarithms(),
-            reduced_exponentiated_terms(),
             reduced_exponentiated_logarithms(),
 
             Tunits(1.0),
@@ -58,7 +56,6 @@ namespace relation {
         LiquidVaporPressureTemperatureRelation(const si::pressure<double> k):
             exponentiated_terms(std::log(k/si::pressure<double>(1.0))),
             exponentiated_logarithms(),
-            reduced_exponentiated_terms(),
             reduced_exponentiated_logarithms(),
 
             Tunits(1.0),
@@ -69,7 +66,7 @@ namespace relation {
         }
 
         LiquidVaporPressureTemperatureRelation(
-            const analytic::Railyard<double,analytic::Polynomial<double,-1,6>> exponentiated_terms,
+            const analytic::Railyard<double,analytic::Rational<double,0,7,0,1>> exponentiated_terms,
             const analytic::Sum<double,ClampedNaturalLogarithm> exponentiated_logarithms,
 
             const si::temperature<double> Tunits,
@@ -79,7 +76,6 @@ namespace relation {
         ):
             exponentiated_terms(exponentiated_terms),
             exponentiated_logarithms(exponentiated_logarithms),
-            reduced_exponentiated_terms(),
             reduced_exponentiated_logarithms(),
 
             Tunits(Tunits),
@@ -90,7 +86,6 @@ namespace relation {
         }
 
         LiquidVaporPressureTemperatureRelation(
-            const analytic::Railyard<double, analytic::ScaledComplement<double, analytic::Polynomial<double,-1,6>>> reduced_exponentiated_terms,
             const analytic::Sum<double,ClampedScaledComplementNaturalLogarithm> reduced_exponentiated_logarithms,
 
             const si::temperature<double> Tunits,
@@ -100,7 +95,6 @@ namespace relation {
         ):
             exponentiated_terms(),
             exponentiated_logarithms(),
-            reduced_exponentiated_terms(reduced_exponentiated_terms),
             reduced_exponentiated_logarithms(reduced_exponentiated_logarithms),
 
             Tunits(Tunits),
@@ -116,7 +110,6 @@ namespace relation {
         ):
             exponentiated_terms(relation.yard),
             exponentiated_logarithms(),
-            reduced_exponentiated_terms(),
             reduced_exponentiated_logarithms(),
 
             Tunits(relation.xunits),
@@ -130,7 +123,6 @@ namespace relation {
         {
             exponentiated_terms = other.exponentiated_terms;
             exponentiated_logarithms = other.exponentiated_logarithms;
-            reduced_exponentiated_terms = other.reduced_exponentiated_terms;
             reduced_exponentiated_logarithms = other.reduced_exponentiated_logarithms;
 
             Tunits = other.Tunits;
@@ -145,15 +137,13 @@ namespace relation {
         {
             const double T = double(temperature/Tunits);
             return std::exp(
-                exponentiated_terms(T) + exponentiated_logarithms(T) + 
-                reduced_exponentiated_terms(T) + reduced_exponentiated_logarithms(T)) * yunits;
+                exponentiated_terms(T) + exponentiated_logarithms(T) + reduced_exponentiated_logarithms(T)) * yunits;
         }
 
         LiquidVaporPressureTemperatureRelation& operator*=(const LiquidVaporPressureTemperatureRelation& other)
         {
             exponentiated_terms += other.exponentiated_terms;
             exponentiated_logarithms += other.exponentiated_logarithms;
-            reduced_exponentiated_terms += other.reduced_exponentiated_terms;
             reduced_exponentiated_logarithms += other.reduced_exponentiated_logarithms;
             return *this;
         }
@@ -162,20 +152,19 @@ namespace relation {
         {
             exponentiated_terms -= other.exponentiated_terms;
             exponentiated_logarithms -= other.exponentiated_logarithms;
-            reduced_exponentiated_terms -= other.reduced_exponentiated_terms;
             reduced_exponentiated_logarithms -= other.reduced_exponentiated_logarithms;
             return *this;
         }
 
         LiquidVaporPressureTemperatureRelation& operator*=(const double scalar)
         {
-            reduced_exponentiated_terms += std::log(scalar);
+            exponentiated_terms += std::log(scalar);
             return *this;
         }
 
         LiquidVaporPressureTemperatureRelation operator/=(const double scalar)
         {
-            reduced_exponentiated_terms -= std::log(scalar);
+            exponentiated_terms -= std::log(scalar);
             return *this;
         }
 
@@ -230,11 +219,11 @@ namespace relation {
             const double yscale = double(relations[i].yunits / result.yunits);
             result.exponentiated_terms              += yscale * ratios[i] * compose(relations[i].exponentiated_terms, analytic::Scaling(Tscale));
             result.exponentiated_logarithms         += yscale * ratios[i] * compose(relations[i].exponentiated_logarithms, analytic::Scaling(Tscale));
-            result.reduced_exponentiated_terms      += yscale * ratios[i] * compose(relations[i].reduced_exponentiated_terms, analytic::Scaling(Tscale));
             result.reduced_exponentiated_logarithms += yscale * ratios[i] * compose(relations[i].reduced_exponentiated_logarithms, analytic::Scaling(Tscale));
         }
         return result;
     }
+
 
 
     // 42 uses, for viscosity and vapor pressures of liquids

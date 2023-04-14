@@ -1,0 +1,12 @@
+atmospheric approximation:
+ * continuity makes a huge difference
+ * accuracy of integration is secondary
+
+noise functions in raymarch approximation:
+ * continuity makes a huge difference
+ * no need to integrate any particular function, can be chosen based on integrability
+
+compounds library:
+ * continuity makes no difference at all
+ * accuracy of approximation is important
+

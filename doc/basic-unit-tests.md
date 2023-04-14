@@ -33,6 +33,11 @@ geometric algebra
 	idempotence
 	antisymmetry
 
+lie algebra
+	nilpotence
+	antisymmetry
+	jacobi identity
+
 miscellaneous math
 	idempotence
 	orbit
