@@ -5,7 +5,7 @@
 
 // in-house libraries
 #include <math/analytic/Scaling.hpp>
-#include <math/analytic/PolynomialRailyard.hpp>
+#include <math/analytic/rails/PolynomialRailyard.hpp>
 #include <math/analytic/Sum.hpp>
 #include <math/analytic/Clamped.hpp>
 #include <math/analytic/NaturalLogarithm.hpp>

@@ -5,9 +5,9 @@
 
 // in-house libraries
 #include <math/analytic/Scaling.hpp>
-#include <math/analytic/PolynomialRailyard.hpp>
-#include <math/analytic/PolynomialRailyard_library.hpp>
 #include <math/analytic/Exponentiated.hpp>
+#include <math/analytic/rails/PolynomialRailyard.hpp>
+#include <math/analytic/rails/PolynomialRailyard_library.hpp>
 #include <units/si.hpp>
 
 namespace compound {

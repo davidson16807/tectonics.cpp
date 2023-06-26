@@ -5,8 +5,8 @@
 
 // in-house libraries
 #include <math/analytic/Scaling.hpp>
-#include <math/analytic/PolynomialRailyard.hpp>
 #include <math/analytic/ScaledComplement.hpp>
+#include <math/analytic/rails/PolynomialRailyard.hpp>
 #include <units/si.hpp>
 
 
