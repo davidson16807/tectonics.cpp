@@ -9,6 +9,7 @@
 #include "Scaling.hpp"
 #include "Shifting.hpp"
 #include "Polynomial.hpp"
+#include "ScaledComplement.hpp"
 
 namespace analytic {
 
@@ -70,6 +71,12 @@ namespace analytic {
         constexpr explicit Rational(const Polynomial<T,Nlo,Nhi> p): 
             p(p), 
             q(1.0)
+        {
+        }
+        template<int Nhi>
+        constexpr explicit Rational(const ScaledComplement<T,Polynomial<T,-1,Nhi>> f): 
+            p(compose(f.f*Identity<T>(), T(1)-Scaling<T>(T(1)/f.scale))), 
+            q(T(1)-Scaling<T>(T(1)/f.scale))
         {
         }
         constexpr T operator()(const T x) const
@@ -467,6 +474,24 @@ namespace analytic {
     }
 
 
+    template<int N, typename T, int Plo, int Phi, 
+        typename = std::enable_if_t<(N<0 && Plo != Phi)>>
+    constexpr Rational<T,0,0,Plo*-N,Phi*-N> pow(const Polynomial<T,Plo,Phi>& p){
+        return T(1)/pow<-N>(p);
+    }
+
+    template<int N, typename T,
+        typename = std::enable_if_t<(N<0)>>
+    constexpr Rational<T,0,0,0,-N> pow(const Shifting<T>& f){
+        return T(1)/pow<-N>(f);
+    }
+
+    template<int N, typename T,
+        typename = std::enable_if_t<(N<0)>>
+    constexpr Rational<T,0,0,0,-N> pow(const ScaledComplement<T,Identity<T>>& f){
+        return T(1)/pow<-N>(f);
+    }
+
 
 
     /* 
@@ -498,6 +523,20 @@ namespace analytic {
     constexpr Rational<T,Plo,Phi,Qlo,Qhi> compose(const Rational<T,Plo,Phi,Qlo,Qhi>& r, const F& f)
     {
         return compose(r.p, f) / compose(r.q, f);
+    }
+
+    template<typename T, int Plo, int Phi, int Qlo, int Qhi, 
+        typename = std::enable_if_t<(Plo<0 && 0<Phi && Qlo < Qhi)>>
+    constexpr auto compose(const Polynomial<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi>& q)
+    {
+        return compose(p*pow(Identity<T>(), -Plo), q) / q;
+    }
+
+    template<typename T, int Plo, int Phi, 
+        typename = std::enable_if_t<(Plo<0 && 0<Phi)>>
+    constexpr auto compose(const Polynomial<T,Plo,Phi>& p, const ScaledComplement<T,Identity<T>>& q)
+    {
+        return compose(p, Polynomial<T,0,1>(q));
     }
 
 
