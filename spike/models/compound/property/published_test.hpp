@@ -166,11 +166,11 @@ TEST_CASE( "Rowlinson-Poling method purity", "[properties]" ) {
 	double omega(0.304);
 
 	SECTION("Calling a function twiced with the same arguments must produce the same results"){
-    	CHECK(compound::property::estimate_constant_pressure_heat_capacity_as_liquid_from_rowlinson_poling(Tc,T,omega,C_G) == compound::property::estimate_constant_pressure_heat_capacity_as_liquid_from_rowlinson_poling(Tc,T,omega,C_G));
+    	CHECK(compound::property::estimate_isobaric_heat_capacity_as_liquid_from_rowlinson_poling(Tc,T,omega,C_G) == compound::property::estimate_isobaric_heat_capacity_as_liquid_from_rowlinson_poling(Tc,T,omega,C_G));
     }
 
 	SECTION("Calling a function twiced with the same arguments must produce the same results"){
-    	CHECK(compound::property::estimate_constant_pressure_heat_capacity_as_gas_from_rowlinson_poling(Tc,T,omega,C_L) == compound::property::estimate_constant_pressure_heat_capacity_as_gas_from_rowlinson_poling(Tc,T,omega,C_L));
+    	CHECK(compound::property::estimate_isobaric_heat_capacity_as_gas_from_rowlinson_poling(Tc,T,omega,C_L) == compound::property::estimate_isobaric_heat_capacity_as_gas_from_rowlinson_poling(Tc,T,omega,C_L));
     }
 
 	SECTION("Calling a function twiced with the same arguments must produce the same results"){
@@ -187,11 +187,11 @@ TEST_CASE( "Rowlinson-Poling method accuracy", "[properties]" ) {
 	double omega(0.304);
 
 	SECTION("Rowlinson-Poling method must agree on predictions to within 30%"){
-    	CHECK(si::is_within_fraction(C_L, compound::property::estimate_constant_pressure_heat_capacity_as_liquid_from_rowlinson_poling(Tc,T,omega,C_G), 0.3));
+    	CHECK(si::is_within_fraction(C_L, compound::property::estimate_isobaric_heat_capacity_as_liquid_from_rowlinson_poling(Tc,T,omega,C_G), 0.3));
     }
 
 	SECTION("Rowlinson-Poling method must agree on predictions to within 30%"){
-    	CHECK(si::is_within_fraction(C_G, compound::property::estimate_constant_pressure_heat_capacity_as_gas_from_rowlinson_poling(Tc,T,omega,C_L), 0.3));
+    	CHECK(si::is_within_fraction(C_G, compound::property::estimate_isobaric_heat_capacity_as_gas_from_rowlinson_poling(Tc,T,omega,C_L), 0.3));
     }
 
 	SECTION("Rowlinson-Poling method must agree on predictions to within 30%"){
@@ -208,10 +208,10 @@ TEST_CASE( "Rowlinson-Poling consistency", "[properties]" ) {
 	double omega(0.304);
 
     SECTION("Rowlinson-Poling method must be invertible"){
-    	CHECK(si::is_within_fraction(C_L, compound::property::estimate_constant_pressure_heat_capacity_as_liquid_from_rowlinson_poling(Tc,T,compound::property::estimate_acentric_factor_from_rowlinson_poling(Tc,T,C_L,C_G),C_G), 1e-4));
-    	CHECK(si::is_within_fraction(C_G, compound::property::estimate_constant_pressure_heat_capacity_as_gas_from_rowlinson_poling(Tc,T,compound::property::estimate_acentric_factor_from_rowlinson_poling(Tc,T,C_L,C_G),C_L), 1e-4));
-    	CHECK(si::is_within_fraction(omega, compound::property::estimate_acentric_factor_from_rowlinson_poling(Tc,T,compound::property::estimate_constant_pressure_heat_capacity_as_liquid_from_rowlinson_poling(Tc,T,omega,C_G),C_G), 1e-4));
-    	CHECK(si::is_within_fraction(omega, compound::property::estimate_acentric_factor_from_rowlinson_poling(Tc,T,C_L,compound::property::estimate_constant_pressure_heat_capacity_as_gas_from_rowlinson_poling(Tc,T,omega,C_L)), 1e-4));
+    	CHECK(si::is_within_fraction(C_L, compound::property::estimate_isobaric_heat_capacity_as_liquid_from_rowlinson_poling(Tc,T,compound::property::estimate_acentric_factor_from_rowlinson_poling(Tc,T,C_L,C_G),C_G), 1e-4));
+    	CHECK(si::is_within_fraction(C_G, compound::property::estimate_isobaric_heat_capacity_as_gas_from_rowlinson_poling(Tc,T,compound::property::estimate_acentric_factor_from_rowlinson_poling(Tc,T,C_L,C_G),C_L), 1e-4));
+    	CHECK(si::is_within_fraction(omega, compound::property::estimate_acentric_factor_from_rowlinson_poling(Tc,T,compound::property::estimate_isobaric_heat_capacity_as_liquid_from_rowlinson_poling(Tc,T,omega,C_G),C_G), 1e-4));
+    	CHECK(si::is_within_fraction(omega, compound::property::estimate_acentric_factor_from_rowlinson_poling(Tc,T,C_L,compound::property::estimate_isobaric_heat_capacity_as_gas_from_rowlinson_poling(Tc,T,omega,C_L)), 1e-4));
     }
 }
 
