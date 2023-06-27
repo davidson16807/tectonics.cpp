@@ -5,8 +5,11 @@
 
 // in-house libraries
 #include <math/analytic/Scaling.hpp>
+#include <math/analytic/Rational.hpp>
+#include <math/analytic/rails/PolynomialRailyard.hpp>
 #include <math/analytic/ScaledComplement.hpp>
 #include <math/analytic/rails/PolynomialRailyard.hpp>
+#include <math/analytic/rails/RationalRailyard.hpp>
 #include <units/si.hpp>
 
 
@@ -19,8 +22,7 @@ namespace relation {
     */
     class LiquidHeatCapacityTemperatureRelation
     {
-        analytic::Railyard<float, analytic::Polynomial<float, 0,4>> temperature_terms;
-        analytic::Railyard<float, analytic::ScaledComplement<float, analytic::Polynomial<float,-1,5>>> reduced_complement_terms;
+        analytic::Railyard<float, analytic::Rational<float, 0,6,0,1>> temperature_terms;
 
         si::temperature<double>  Tunits;
         si::specific_heat_capacity<double> yunits;
@@ -31,7 +33,6 @@ namespace relation {
         // zero constructor
         LiquidHeatCapacityTemperatureRelation():
             temperature_terms(),
-            reduced_complement_terms(),
 
             Tunits(1.0),
             yunits(1.0),
@@ -43,7 +44,6 @@ namespace relation {
         // constant constructor
         LiquidHeatCapacityTemperatureRelation(const si::specific_heat_capacity<double> constant):
             temperature_terms(constant/si::specific_heat_capacity<double>(1.0)),
-            reduced_complement_terms(),
 
             Tunits(1.0),
             yunits(1.0),
@@ -52,31 +52,12 @@ namespace relation {
         {
         }
 
-        LiquidHeatCapacityTemperatureRelation(
-            const analytic::Railyard<float, analytic::Polynomial<float, 0, 4>> temperature_terms,
-            const analytic::Railyard<float, analytic::ScaledComplement<float, analytic::Polynomial<float,-1,5>>> reduced_complement_terms,
-
-            const si::temperature<double> Tunits,
-            const si::specific_heat_capacity<double> yunits,
-
-            const float known_max_fractional_error
-        ):
-            temperature_terms(temperature_terms),
-            reduced_complement_terms(reduced_complement_terms),
-
-            Tunits(Tunits),
-            yunits(yunits),
-
-            known_max_fractional_error(known_max_fractional_error)
-        {
-        }
-
+        // copy constructor
         template<int Plo, int Phi>
         LiquidHeatCapacityTemperatureRelation(
             const relation::PolynomialRailyardRelation<si::temperature<double>, si::specific_heat_capacity<double>, Plo, Phi> relation
         ):
             temperature_terms(relation.yard),
-            reduced_complement_terms(),
 
             Tunits(relation.xunits),
             yunits(relation.yunits),
@@ -85,10 +66,26 @@ namespace relation {
         {
         }
 
+        LiquidHeatCapacityTemperatureRelation(
+            const analytic::Railyard<float, analytic::Rational<float, 0, 6, 0, 1>> temperature_terms,
+
+            const si::temperature<double> Tunits,
+            const si::specific_heat_capacity<double> yunits,
+
+            const float known_max_fractional_error
+        ):
+            temperature_terms(temperature_terms),
+
+            Tunits(Tunits),
+            yunits(yunits),
+
+            known_max_fractional_error(known_max_fractional_error)
+        {
+        }
+
         LiquidHeatCapacityTemperatureRelation& operator=(const LiquidHeatCapacityTemperatureRelation other)
         {
             temperature_terms = other.temperature_terms;
-            reduced_complement_terms = other.reduced_complement_terms;
 
             Tunits = other.Tunits;
             yunits = other.yunits;
@@ -101,36 +98,34 @@ namespace relation {
         si::specific_heat_capacity<double> operator()(const si::temperature<double> temperature) const
         {
             const float T = float(temperature/Tunits);
-            return (temperature_terms(T)+reduced_complement_terms(T)) * yunits;
+            return (temperature_terms(T)) * yunits;
         }
 
         LiquidHeatCapacityTemperatureRelation& operator+=(const si::specific_heat_capacity<double> offset)
         {
-            using P = analytic::Polynomial<float, 0, 4>;
-            using R = analytic::Railcar<float, P>;
-            temperature_terms.cars.push_back(R(offset/yunits));
+            using R = analytic::Rational<float, 0, 6, 0, 1>;
+            using RC = analytic::Railcar<float, R>;
+            temperature_terms.cars.push_back(RC(offset/yunits));
             return *this;
         }
 
         LiquidHeatCapacityTemperatureRelation& operator-=(const si::specific_heat_capacity<double> offset)
         {
-            using P = analytic::Polynomial<float, 0, 4>;
-            using R = analytic::Railcar<float, P>;
-            temperature_terms.cars.push_back(R(-offset/yunits));
+            using R = analytic::Rational<float, 0, 6, 0, 1>;
+            using RC = analytic::Railcar<float, R>;
+            temperature_terms.cars.push_back(RC(-offset/yunits));
             return *this;
         }
 
         LiquidHeatCapacityTemperatureRelation& operator*=(const float scalar)
         {
             temperature_terms *= scalar;
-            reduced_complement_terms *= scalar;
             return *this;
         }
 
         LiquidHeatCapacityTemperatureRelation operator/=(const float scalar)
         {
             temperature_terms /= scalar;
-            reduced_complement_terms /= scalar;
             return *this;
         }
 
@@ -139,7 +134,6 @@ namespace relation {
             const float Tscale = float(other.Tunits / Tunits);
             const float yscale = float(other.yunits / yunits);
             temperature_terms += yscale * compose(other.temperature_terms, analytic::Scaling<float>(Tscale));
-            reduced_complement_terms += yscale * compose(other.reduced_complement_terms, analytic::Scaling<float>(Tscale));
             return *this;
         }
 
@@ -148,7 +142,6 @@ namespace relation {
             const float Tscale = float(other.Tunits / Tunits);
             const float yscale = float(other.yunits / yunits);
             temperature_terms -= yscale * compose(other.temperature_terms, analytic::Scaling<float>(Tscale));
-            reduced_complement_terms -= yscale * compose(other.reduced_complement_terms, analytic::Scaling<float>(Tscale));
             return *this;
         }
 
@@ -235,14 +228,17 @@ namespace relation {
     ){
         const float oo = std::numeric_limits<float>::max();
         using P = analytic::Polynomial<float,-1,5>;
-        using C = analytic::ScaledComplement<float, P>;
-        using R = analytic::Railcar<float, C>;
-        C p = C(Tc/si::kelvin, P({c1*c1, c2, -2.0f*c1*c3, -c1*c4, -c3*c3/3.0f, -c3*c4/2.0f, -c4*c4/5.0f}));
-        return LiquidHeatCapacityTemperatureRelation({}, 
-            analytic::Railyard<float, C>({
-                R(-oo,  Tmin, C(p(Tmin))),
-                R(Tmin, Tmax, p),
-                R(Tmax, oo,   C(p(Tmin))),
+        using R = analytic::Rational<float, 0,6,0,1>;
+        using RC = analytic::Railcar<float, R>;
+        analytic::Identity<float> T;
+        R r = analytic::compose(
+            P({c1*c1, c2, -2.0f*c1*c3, -c1*c4, -c3*c3/3.0f, -c3*c4/2.0f, -c4*c4/5.0f}), 
+            1.0f-T/float(Tc/si::kelvin));
+        return LiquidHeatCapacityTemperatureRelation(
+            analytic::Railyard<float, R>({
+                RC(-oo,  Tmin, R(r(Tmin))),
+                RC(Tmin, Tmax, r),
+                RC(Tmax, oo,   R(r(Tmin))),
             }), si::kelvin, yunits, 0.0f);
     }
 

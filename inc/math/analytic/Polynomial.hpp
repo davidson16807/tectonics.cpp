@@ -920,7 +920,7 @@ namespace analytic {
     template<int N, typename T, int P, 
         typename = std::enable_if_t<(N<0)>>
     constexpr Polynomial<T,P*N,P*N> pow(const Polynomial<T,P,P>& p){
-        return pow<-N>(1/p);
+        return pow<N>(1/p);
     }
 
 

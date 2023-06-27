@@ -52,7 +52,7 @@ namespace analytic {
             q(r.q)
         {}
         // cast constructors...
-        constexpr explicit Rational(const Identity<T> e): 
+        constexpr explicit Rational(const Identity<T> e):
             p(e), 
             q(1.0)
         {
@@ -68,9 +68,9 @@ namespace analytic {
         {
         }
         template<int Nlo, int Nhi>
-        constexpr explicit Rational(const Polynomial<T,Nlo,Nhi> p): 
-            p(p), 
-            q(1.0)
+        constexpr explicit Rational(const Polynomial<T2,Nlo,Nhi> p): 
+            p(Nlo<Plo? p*pow<Plo-Nlo>(Identity<T>()) : p), 
+            q(Nlo<Plo? pow<Plo-Nlo>(Identity<T>()) : 1.0)
         {
         }
         template<int Nhi>
@@ -477,20 +477,28 @@ namespace analytic {
     template<int N, typename T, int Plo, int Phi, 
         typename = std::enable_if_t<(N<0 && Plo != Phi)>>
     constexpr Rational<T,0,0,Plo*-N,Phi*-N> pow(const Polynomial<T,Plo,Phi>& p){
-        return T(1)/pow<-N>(p);
+        return T(1)/pow<N>(p);
     }
 
     template<int N, typename T,
         typename = std::enable_if_t<(N<0)>>
     constexpr Rational<T,0,0,0,-N> pow(const Shifting<T>& f){
-        return T(1)/pow<-N>(f);
+        return T(1)/pow<N>(f);
     }
 
     template<int N, typename T,
         typename = std::enable_if_t<(N<0)>>
     constexpr Rational<T,0,0,0,-N> pow(const ScaledComplement<T,Identity<T>>& f){
-        return T(1)/pow<-N>(f);
+        return T(1)/pow<N>(f);
     }
+
+    template<typename T, int N, 
+        typename = std::enable_if_t<(N<0)> >
+    constexpr T pow(const Identity<T>& e)
+    {
+        return T(1)/pow<N>(e);
+    }
+
 
 
 
@@ -529,7 +537,7 @@ namespace analytic {
         typename = std::enable_if_t<(Plo<0 && 0<Phi && Qlo < Qhi)>>
     constexpr auto compose(const Polynomial<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi>& q)
     {
-        return compose(p*pow(Identity<T>(), -Plo), q) / q;
+        return compose(p*pow<-Plo>(Identity<T>()), q) / q;
     }
 
     template<typename T, int Plo, int Phi, 

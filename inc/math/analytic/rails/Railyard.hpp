@@ -615,13 +615,12 @@ namespace analytic {
     T integral(const Railyard<T,F>& yard, const T lo, const T hi)
     {
         T I(0.0f);
-        for (auto car : yard.cars)
+        for (std::size_t i=0; i<yard.cars.size(); i++)
         {
-            I += integral(car, lo, hi);
+            I += integral(yard.cars[i], lo, hi);
         }
         return I;
     }
-
 
 
 

@@ -584,22 +584,22 @@ namespace analytic {
 
 
 
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi, typename F>
+    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     constexpr RationalRailyard<T,Plo,Phi,Qlo,Qhi> compose(const RationalRailyard<T,Plo,Phi,Qlo,Qhi>& r, const Identity<T> e)
     {
         return r;
     }
 
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi, typename F>
+    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     constexpr RationalRailyard<T,Plo,Phi,Qlo,Qhi> compose(const Identity<T> e, const RationalRailyard<T,Plo,Phi,Qlo,Qhi>& r)
     {
         return r;
     }
 
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi, typename F>
+    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     constexpr RationalRailyard<T,Plo,Phi,Qlo,Qhi> compose(const RationalRailyard<T,Plo,Phi,Qlo,Qhi>& r, const Shifting<T> f)
     {
-        using R = RationalRailyard<T,0,Phi,0,Qhi>;
+        using R = Rational<T,0,Phi,0,Qhi>;
         Railyard<T,R> y;
         for (auto ri: r.cars)
         {
@@ -608,10 +608,10 @@ namespace analytic {
         return y;
     }
 
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi, typename F>
+    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     constexpr RationalRailyard<T,Plo,Phi,Qlo,Qhi> compose(const RationalRailyard<T,Plo,Phi,Qlo,Qhi>& r, const Scaling<T> f)
     {
-        using R = RationalRailyard<T,Plo,Phi,Qlo,Qhi>;
+        using R = Rational<T,Plo,Phi,Qlo,Qhi>;
         Railyard<T,R> y;
         for (auto ri: r.cars)
         {
@@ -623,7 +623,7 @@ namespace analytic {
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi>
     constexpr RationalRailyard<T,P1lo,P1hi,Q1lo,Q1hi> compose(const RationalRailyard<T,P1lo,P1hi,Q1lo,Q1hi>& r, const Polynomial<T,P2lo,P2hi> p)
     {
-        using R = RationalRailyard<T,P1lo*P2lo,P1hi*P2hi,Q1lo+P2lo,Q1hi+P2hi>;
+        using R = Rational<T,P1lo*P2lo,P1hi*P2hi,Q1lo+P2lo,Q1hi+P2hi>;
         Railyard<T,R> y;
         for (auto ri: r.cars)
         {
