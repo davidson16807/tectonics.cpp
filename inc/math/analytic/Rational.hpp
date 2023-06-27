@@ -67,10 +67,16 @@ namespace analytic {
             q(1.0)
         {
         }
+        // template<int Nlo, int Nhi>
+        // constexpr explicit Rational(const Polynomial<T,Nlo,Nhi> p): 
+        //     p(Nlo<Plo? p*pow<Plo-Nlo>(Identity<T>()) : p), 
+        //     q(Nlo<Plo? pow<Plo-Nlo>(Identity<T>()) : 1.0)
+        // {
+        // }
         template<int Nlo, int Nhi>
-        constexpr explicit Rational(const Polynomial<T2,Nlo,Nhi> p): 
-            p(Nlo<Plo? p*pow<Plo-Nlo>(Identity<T>()) : p), 
-            q(Nlo<Plo? pow<Plo-Nlo>(Identity<T>()) : 1.0)
+        constexpr explicit Rational(const Polynomial<T,Nlo,Nhi> p): 
+            p(p), 
+            q(1.0)
         {
         }
         template<int Nhi>

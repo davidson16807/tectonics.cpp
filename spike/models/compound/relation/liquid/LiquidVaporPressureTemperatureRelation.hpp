@@ -12,7 +12,7 @@
 #include <math/analytic/rails/PolynomialRailyard.hpp>
 #include <units/si.hpp>
 
-#include "ExponentiatedPolynomialRailyardRelation.hpp"
+#include "../ExponentiatedPolynomialRailyardRelation.hpp"
 
 namespace compound {
 namespace relation {

@@ -3,7 +3,7 @@
 // in-house libraries
 #include <units/si.hpp>
 #include <models/compound/ids.hpp>
-#include <models/compound/relation/LiquidHeatCapacityTemperatureRelation.hpp>
+#include <models/compound/relation/liquid/LiquidHeatCapacityTemperatureRelation.hpp>
 #include <models/compound/table/PartialTable.hpp>
 
 namespace compound { 

@@ -11,7 +11,7 @@
 #include <math/analytic/NaturalLogarithm.hpp>
 #include <units/si.hpp>
 
-#include "ExponentiatedPolynomialRailyardRelation.hpp"
+#include "../ExponentiatedPolynomialRailyardRelation.hpp"
 
 namespace compound {
 namespace relation {

@@ -2,7 +2,7 @@
 
 // in-house libraries
 #include <models/compound/ids.hpp>
-#include <models/compound/relation/GasPropertyStateRelation.hpp>
+#include <models/compound/relation/gas/GasPropertyStateRelation.hpp>
 #include <models/compound/table/PartialTable.hpp>
 
 namespace compound { 
