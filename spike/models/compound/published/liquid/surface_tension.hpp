@@ -10,8 +10,7 @@
 namespace compound { 
 namespace published { 
 
-    using LiquidSurfaceTensionTemperatureRelation = relation::LiquidSurfaceTensionTemperatureRelation;
-    table::PartialTable<LiquidSurfaceTensionTemperatureRelation> surface_tension_as_liquid {
+    table::PartialTable<relation::LiquidSurfaceTensionTemperatureRelation> surface_tension_as_liquid {
         { ids::water,            
                 relation::get_refprop_liquid_surface_tension_temperature_function
                     (si::kelvin, si::newton/si::meter,

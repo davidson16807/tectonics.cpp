@@ -45,13 +45,13 @@ TEST_CASE( "estimated liquid vapor_pressure monotonically increasing", "[table]"
     {
         for (int i = 0; i<compound::ids::count; i++)
         {
-            if (compound::estimated::vapor_pressure_as_solid.has(i)) 
+            if (compound::estimated::vapor_pressure_as_liquid.has(i)) 
             {
                 si::temperature<double> T = 3.0*si::kelvin;
-                auto last = compound::estimated::vapor_pressure_as_solid[i](T);
+                auto last = compound::estimated::vapor_pressure_as_liquid[i](T);
                 for (; T <= si::solar_temperature; T*=1.778)
                 {
-                    auto next = compound::estimated::vapor_pressure_as_solid[i](T);
+                    auto next = compound::estimated::vapor_pressure_as_liquid[i](T);
                     CHECK(next / si::pascal >= last / si::pascal);
                     last = next;
                 }

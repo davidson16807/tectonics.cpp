@@ -258,11 +258,11 @@ namespace estimated{
             ),
         });
 
-    using LiquidVaporPressureTemperatureRelation = published::LiquidVaporPressureTemperatureRelation;
-    table::PartialTable<LiquidVaporPressureTemperatureRelation> vapor_pressure_as_liquid = 
-        table::first<LiquidVaporPressureTemperatureRelation>({
+    using AnonymousTemperatureRelation = published::AnonymousTemperatureRelation;
+    table::PartialTable<AnonymousTemperatureRelation> vapor_pressure_as_liquid = 
+        table::first<AnonymousTemperatureRelation>({
             published::vapor_pressure_as_liquid,
-            table::gather<LiquidVaporPressureTemperatureRelation>(
+            table::gather<AnonymousTemperatureRelation>(
                 relation::estimate_vapor_pressure_as_liquid_from_lee_kesler,
                 acentric_factor,
                 table::partial(critical_point_temperature),

@@ -220,7 +220,7 @@ namespace relation {
     }
 
     // 42 uses, for viscosity and vapor pressures of liquids
-    LiquidDynamicViscosityTemperatureRelation get_dippr_dynamic_viscosity_temperature_relation_101(
+    LiquidDynamicViscosityTemperatureRelation get_dippr_liquid_temperature_relation_101(
         const si::temperature<double> Tunits, const si::dynamic_viscosity<double> yunits,
         const double log_intercept, const double log_slope, const double log_log, const double log_exponentiated, const int exponent,
         const double Tmin, const double Tmax
