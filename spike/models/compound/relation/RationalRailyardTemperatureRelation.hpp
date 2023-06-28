@@ -17,10 +17,10 @@ namespace compound {
 namespace relation {
 
     /*
-    `LiquidHeatCapacityTemperatureRelation` consolidates many kinds of expressions
-    that are commonly used to represent the relation between temperature and the density of liquids
+    `RationalRailyardTemperatureRelation` consolidates many kinds of expressions
+    that are commonly used to represent the relation between temperature and the heat capacity of liquids
     */
-    class LiquidHeatCapacityTemperatureRelation
+    class RationalRailyardTemperatureRelation
     {
         analytic::Railyard<float, analytic::Rational<float, 0,6,0,1>> temperature_terms;
 
@@ -31,7 +31,7 @@ namespace relation {
         float known_max_fractional_error;
 
         // zero constructor
-        LiquidHeatCapacityTemperatureRelation():
+        RationalRailyardTemperatureRelation():
             temperature_terms(),
 
             Tunits(1.0),
@@ -42,7 +42,7 @@ namespace relation {
         }
 
         // constant constructor
-        LiquidHeatCapacityTemperatureRelation(const si::specific_heat_capacity<double> constant):
+        RationalRailyardTemperatureRelation(const si::specific_heat_capacity<double> constant):
             temperature_terms(constant/si::specific_heat_capacity<double>(1.0)),
 
             Tunits(1.0),
@@ -54,7 +54,7 @@ namespace relation {
 
         // copy constructor
         template<int Plo, int Phi>
-        LiquidHeatCapacityTemperatureRelation(
+        RationalRailyardTemperatureRelation(
             const relation::PolynomialRailyardRelation<si::temperature<double>, si::specific_heat_capacity<double>, Plo, Phi> relation
         ):
             temperature_terms(relation.yard),
@@ -66,7 +66,7 @@ namespace relation {
         {
         }
 
-        LiquidHeatCapacityTemperatureRelation(
+        RationalRailyardTemperatureRelation(
             const analytic::Railyard<float, analytic::Rational<float, 0, 6, 0, 1>> temperature_terms,
 
             const si::temperature<double> Tunits,
@@ -83,7 +83,7 @@ namespace relation {
         {
         }
 
-        LiquidHeatCapacityTemperatureRelation& operator=(const LiquidHeatCapacityTemperatureRelation other)
+        RationalRailyardTemperatureRelation& operator=(const RationalRailyardTemperatureRelation other)
         {
             temperature_terms = other.temperature_terms;
 
@@ -101,7 +101,7 @@ namespace relation {
             return (temperature_terms(T)) * yunits;
         }
 
-        LiquidHeatCapacityTemperatureRelation& operator+=(const si::specific_heat_capacity<double> offset)
+        RationalRailyardTemperatureRelation& operator+=(const si::specific_heat_capacity<double> offset)
         {
             using R = analytic::Rational<float, 0, 6, 0, 1>;
             using RC = analytic::Railcar<float, R>;
@@ -109,7 +109,7 @@ namespace relation {
             return *this;
         }
 
-        LiquidHeatCapacityTemperatureRelation& operator-=(const si::specific_heat_capacity<double> offset)
+        RationalRailyardTemperatureRelation& operator-=(const si::specific_heat_capacity<double> offset)
         {
             using R = analytic::Rational<float, 0, 6, 0, 1>;
             using RC = analytic::Railcar<float, R>;
@@ -117,19 +117,19 @@ namespace relation {
             return *this;
         }
 
-        LiquidHeatCapacityTemperatureRelation& operator*=(const float scalar)
+        RationalRailyardTemperatureRelation& operator*=(const float scalar)
         {
             temperature_terms *= scalar;
             return *this;
         }
 
-        LiquidHeatCapacityTemperatureRelation operator/=(const float scalar)
+        RationalRailyardTemperatureRelation operator/=(const float scalar)
         {
             temperature_terms /= scalar;
             return *this;
         }
 
-        LiquidHeatCapacityTemperatureRelation& operator+=(const LiquidHeatCapacityTemperatureRelation other)
+        RationalRailyardTemperatureRelation& operator+=(const RationalRailyardTemperatureRelation other)
         {
             const float Tscale = float(other.Tunits / Tunits);
             const float yscale = float(other.yunits / yunits);
@@ -137,7 +137,7 @@ namespace relation {
             return *this;
         }
 
-        LiquidHeatCapacityTemperatureRelation& operator-=(const LiquidHeatCapacityTemperatureRelation other)
+        RationalRailyardTemperatureRelation& operator-=(const RationalRailyardTemperatureRelation other)
         {
             const float Tscale = float(other.Tunits / Tunits);
             const float yscale = float(other.yunits / yunits);
@@ -148,80 +148,80 @@ namespace relation {
     };
 
 
-    LiquidHeatCapacityTemperatureRelation operator+(const LiquidHeatCapacityTemperatureRelation relation, const LiquidHeatCapacityTemperatureRelation other)
+    RationalRailyardTemperatureRelation operator+(const RationalRailyardTemperatureRelation relation, const RationalRailyardTemperatureRelation other)
     {
-        LiquidHeatCapacityTemperatureRelation result = relation;
+        RationalRailyardTemperatureRelation result = relation;
         result += other;
         return result;
     }
 
-    LiquidHeatCapacityTemperatureRelation operator-(const LiquidHeatCapacityTemperatureRelation relation, const LiquidHeatCapacityTemperatureRelation other)
+    RationalRailyardTemperatureRelation operator-(const RationalRailyardTemperatureRelation relation, const RationalRailyardTemperatureRelation other)
     {
-        LiquidHeatCapacityTemperatureRelation result = relation;
+        RationalRailyardTemperatureRelation result = relation;
         result -= other;
         return result;
     }
 
-    LiquidHeatCapacityTemperatureRelation operator+(const LiquidHeatCapacityTemperatureRelation relation, const si::specific_heat_capacity<double> offset)
+    RationalRailyardTemperatureRelation operator+(const RationalRailyardTemperatureRelation relation, const si::specific_heat_capacity<double> offset)
     {
-        LiquidHeatCapacityTemperatureRelation result = relation;
+        RationalRailyardTemperatureRelation result = relation;
         result += offset;
         return result;
     }
 
-    LiquidHeatCapacityTemperatureRelation operator-(const LiquidHeatCapacityTemperatureRelation relation, const si::specific_heat_capacity<double> offset)
+    RationalRailyardTemperatureRelation operator-(const RationalRailyardTemperatureRelation relation, const si::specific_heat_capacity<double> offset)
     {
-        LiquidHeatCapacityTemperatureRelation result = relation;
+        RationalRailyardTemperatureRelation result = relation;
         result -= offset;
         return result;
     }
 
-    LiquidHeatCapacityTemperatureRelation operator*(const LiquidHeatCapacityTemperatureRelation relation, const float scalar)
+    RationalRailyardTemperatureRelation operator*(const RationalRailyardTemperatureRelation relation, const float scalar)
     {
-        LiquidHeatCapacityTemperatureRelation result = relation;
+        RationalRailyardTemperatureRelation result = relation;
         result *= scalar;
         return result;
     }
 
-    LiquidHeatCapacityTemperatureRelation operator/(const LiquidHeatCapacityTemperatureRelation relation, const float scalar)
+    RationalRailyardTemperatureRelation operator/(const RationalRailyardTemperatureRelation relation, const float scalar)
     {
-        LiquidHeatCapacityTemperatureRelation result = relation;
+        RationalRailyardTemperatureRelation result = relation;
         result /= scalar;
         return result;
     }
 
-    LiquidHeatCapacityTemperatureRelation operator+(const si::specific_heat_capacity<double> offset, const LiquidHeatCapacityTemperatureRelation relation)
+    RationalRailyardTemperatureRelation operator+(const si::specific_heat_capacity<double> offset, const RationalRailyardTemperatureRelation relation)
     {
-        LiquidHeatCapacityTemperatureRelation result = relation;
+        RationalRailyardTemperatureRelation result = relation;
         result += offset;
         return result;
     }
 
-    LiquidHeatCapacityTemperatureRelation operator-(const si::specific_heat_capacity<double> offset, const LiquidHeatCapacityTemperatureRelation relation)
+    RationalRailyardTemperatureRelation operator-(const si::specific_heat_capacity<double> offset, const RationalRailyardTemperatureRelation relation)
     {
-        LiquidHeatCapacityTemperatureRelation result = relation;
+        RationalRailyardTemperatureRelation result = relation;
         result *= 1.0f;
         result += offset;
         return result;
     }
 
-    LiquidHeatCapacityTemperatureRelation operator-(const LiquidHeatCapacityTemperatureRelation relation)
+    RationalRailyardTemperatureRelation operator-(const RationalRailyardTemperatureRelation relation)
     {
-        LiquidHeatCapacityTemperatureRelation result = relation;
+        RationalRailyardTemperatureRelation result = relation;
         result *= -1.0f;
         return result;
     }
 
-    LiquidHeatCapacityTemperatureRelation operator*(const float scalar, const LiquidHeatCapacityTemperatureRelation relation)
+    RationalRailyardTemperatureRelation operator*(const float scalar, const RationalRailyardTemperatureRelation relation)
     {
-        LiquidHeatCapacityTemperatureRelation result = relation;
+        RationalRailyardTemperatureRelation result = relation;
         result *= scalar;
         return result;
     }
 
 
     // 5 uses, for heat capacities of liquids
-    LiquidHeatCapacityTemperatureRelation get_dippr_liquid_heat_capacity_temperature_relation_114( 
+    RationalRailyardTemperatureRelation get_dippr_liquid_heat_capacity_temperature_relation_114( 
         const si::temperature<double> Tc, const si::specific_heat_capacity<double> yunits,
         const float c1, const float c2, const float c3, const float c4, const float c5,
         const float Tmin, float Tmax
@@ -234,7 +234,7 @@ namespace relation {
         R r = analytic::compose(
             P({c1*c1, c2, -2.0f*c1*c3, -c1*c4, -c3*c3/3.0f, -c3*c4/2.0f, -c4*c4/5.0f}), 
             1.0f-T/float(Tc/si::kelvin));
-        return LiquidHeatCapacityTemperatureRelation(
+        return RationalRailyardTemperatureRelation(
             analytic::Railyard<float, R>({
                 RC(-oo,  Tmin, R(r(Tmin))),
                 RC(Tmin, Tmax, r),

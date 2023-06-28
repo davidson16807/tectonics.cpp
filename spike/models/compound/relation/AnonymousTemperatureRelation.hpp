@@ -19,9 +19,9 @@ namespace relation {
     `AnonymousTemperatureRelation` represents an arbitrary relation 
     that uses an arbitrary anonymous function to map quantities from one unit to another
     This class is incapable of introspection and is expected to have poor data locality, 
-    however it is useful when creating high fidelity representations of relations that resist other attempts of description.
+    however it is useful when representing relations with high fidelity when those relations resist other attempts of description.
     It is expected that instances of this relation will be mapped to lower fidelity approximations before use,
-    such as PolynomialRailyardRelation or GriddedSplineRelation (once it is implemented).
+    such as PolynomialRailyardRelation or (if implemented) some kind of GriddedSplineRelation.
     */
     template<typename Ty>
     struct AnonymousTemperatureRelation

@@ -283,7 +283,7 @@ namespace estimated{
             )
         );
 
-    using LiquidHeatCapacityTemperatureRelation = published::LiquidHeatCapacityTemperatureRelation;
+    using RationalRailyardTemperatureRelation = published::RationalRailyardTemperatureRelation;
     auto isobaric_specific_heat_capacity_as_liquid = published::isobaric_specific_heat_capacity_as_liquid;
 
     using GasDynamicViscosityStateRelation = published::GasDynamicViscosityStateRelation;
