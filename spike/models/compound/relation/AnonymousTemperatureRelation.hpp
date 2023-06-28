@@ -11,6 +11,7 @@
 #include <math/analytic/rails/PolynomialRailyard.hpp>
 #include <math/analytic/rails/PolynomialRailyard_library.hpp>
 #include <units/si.hpp>
+#include <models/compound/property/published.hpp>
 
 namespace compound {
 namespace relation {
@@ -281,46 +282,81 @@ namespace relation {
         return result;
     }
 
-    // // 21 uses, for viscosity of liquids
-    // template<typename Tx>
-    // AnonymousTemperatureRelation<si::dynamic_viscosity<double>> get_dippr_liquid_dynamic_viscosity_temperature_relation_101(
-    //     const Tx Tunits, const si::dynamic_viscosity<double> yunits,
-    //     const double log_intercept, const double log_slope, const double log_log, const double log_exponentiated, const int exponent,
-    //     const double Tmin, const double Tmax
-    // ){
-    //     return AnonymousTemperatureRelation<si::dynamic_viscosity<double>>(
-    //         [=](const si::temperature<double> T)
-    //         {
-    //             double t = std::clamp(T/Tunits, Tmin, Tmax);
-    //             return std::exp(log_intercept + log_slope/t + log_log*std::log(t) + log_exponentiated*std::pow(t,exponent))*yunits;
-    //         }, Tmin*Tunits, Tmax*Tunits
-    //     );
-    // }
+    // 21 uses, for viscosity of liquids
+    template<typename Tx>
+    AnonymousTemperatureRelation<si::dynamic_viscosity<double>> get_dippr_liquid_dynamic_viscosity_temperature_relation_101(
+        const Tx Tunits, const si::dynamic_viscosity<double> yunits,
+        const double log_intercept, const double log_slope, const double log_log, const double log_exponentiated, const int exponent,
+        const double Tmin, const double Tmax
+    ){
+        return AnonymousTemperatureRelation<si::dynamic_viscosity<double>>(
+            [=](const si::temperature<double> T)
+            {
+                double t = std::clamp(T/Tunits, Tmin, Tmax);
+                return std::exp(log_intercept + log_slope/t + log_log*std::log(t) + log_exponentiated*std::pow(t,exponent))*yunits;
+            }, Tmin*Tunits, Tmax*Tunits
+        );
+    }
+
+    // 1 use, for viscosity of liquids
+    template<typename Ty>
+    AnonymousTemperatureRelation<si::dynamic_viscosity<double>> get_exponential_linear_dynamic_viscosity_temperature_relation(
+        const si::temperature<double> Tunits, const Ty yunits,
+        const double x0, const double x1,
+        const double y0, const double y1
+    ){
+        std::vector<double> xs    {x0,           x1          };
+        std::vector<double> logys {std::log(y0), std::log(y1)};
+        return AnonymousTemperatureRelation<si::dynamic_viscosity<double>>(
+            relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>,Ty,0,1>(
+                analytic::spline::linear_spline<float>(xs, logys), Tunits, yunits),
+            x0*Tunits, x1*Tunits);
+    }
+
+    // Letsou-Stiel method: https://chemicals.readthedocs.io/chemicals.viscosity.html?highlight=letsou%20stiel#chemicals.viscosity.Letsou_Stiel
+    AnonymousTemperatureRelation<si::dynamic_viscosity<double>> estimate_viscosity_as_liquid_from_letsou_stiel(
+        const double acentric_factor,
+        const si::molar_mass<double> molar_mass, 
+        const si::temperature<double> critical_temperature, 
+        const si::pressure<double> critical_pressure
+    ){
+        return AnonymousTemperatureRelation<si::dynamic_viscosity<double>>(
+            [=](si::temperature<double> temperature){
+                return property::estimate_viscosity_as_liquid_from_letsou_stiel(
+                    acentric_factor,
+                    molar_mass,  
+                    temperature, 
+                    critical_temperature, 
+                    critical_pressure
+                );
+            }, 
+            0.76*critical_temperature, 
+            0.98*critical_temperature
+        );
+    }
 
 
-
-
-    // // 5 uses, for heat capacities of liquids
-    // template<typename Tx>
-    // AnonymousTemperatureRelation<si::specific_heat_capacity<double>> get_dippr_liquid_heat_capacity_temperature_function_114( 
-    //     const Tx Tc, const si::specific_heat_capacity<double> yunits,
-    //     const double c1, const double c2, const double c3, const double c4, const double c5,
-    //     const Tx Tmin, Tx Tmax
-    // ){
-    //     return AnonymousTemperatureRelation<si::specific_heat_capacity<double>>(
-    //         [Tc, yunits, Tmin, Tmax, c1, c2, c3, c4, c5]
-    //         (const si::pressure<double> p, const si::temperature<double> T)
-    //         {
-    //             double Tr = std::clamp(T, Tmin, Tmax)/Tc;
-    //             double tau = 1.0-Tr;
-    //             double tau2 = tau*tau;
-    //             double tau3 = tau2*tau;
-    //             double tau4 = tau3*tau;
-    //             double tau5 = tau4*tau;
-    //             return (c1*c1/tau + c2 - 2.0*c1*c3*tau - c1*c4*tau2 - c3*c3*tau3/3.0 - c3*c4*tau4/2.0 - c4*c4*tau5/5.0)*yunits;
-    //         }, Tmin, Tmax
-    //     );
-    // }
+    // 5 uses, for heat capacities of liquids
+    template<typename Tx>
+    AnonymousTemperatureRelation<si::specific_heat_capacity<double>> get_dippr_liquid_heat_capacity_temperature_function_114( 
+        const Tx Tc, const si::specific_heat_capacity<double> yunits,
+        const double c1, const double c2, const double c3, const double c4, const double c5,
+        const Tx Tmin, Tx Tmax
+    ){
+        return AnonymousTemperatureRelation<si::specific_heat_capacity<double>>(
+            [Tc, yunits, Tmin, Tmax, c1, c2, c3, c4, c5]
+            (const si::pressure<double> p, const si::temperature<double> T)
+            {
+                double Tr = std::clamp(T, Tmin, Tmax)/Tc;
+                double tau = 1.0-Tr;
+                double tau2 = tau*tau;
+                double tau3 = tau2*tau;
+                double tau4 = tau3*tau;
+                double tau5 = tau4*tau;
+                return (c1*c1/tau + c2 - 2.0*c1*c3*tau - c1*c4*tau2 - c3*c3*tau3/3.0 - c3*c4*tau4/2.0 - c4*c4*tau5/5.0)*yunits;
+            }, Tmin, Tmax
+        );
+    }
 
 
     // 21 uses, for vapor pressures of liquids

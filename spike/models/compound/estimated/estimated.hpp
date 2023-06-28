@@ -186,7 +186,7 @@ namespace estimated{
         });
 
     // CALCULATE ACENTRIC FACTOR
-    using LiquidDynamicViscosityTemperatureRelation = published::LiquidDynamicViscosityTemperatureRelation;
+    using AnonymousTemperatureRelation<si::dynamic_viscosity<double>> = published::AnonymousTemperatureRelation<si::dynamic_viscosity<double>>;
     table::PartialTable<double> acentric_factor = 
         table::first<double>({
             published::acentric_factor,
@@ -208,7 +208,7 @@ namespace estimated{
                 []( point<double> liquid,
                     point<double> critical,
                     si::molar_mass<double> M,
-                    LiquidDynamicViscosityTemperatureRelation nuL){
+                    AnonymousTemperatureRelation<si::dynamic_viscosity<double>> nuL){
                     auto T = liquid.temperature;
                     auto Tc = critical.temperature;
                     auto pc = critical.pressure;
@@ -245,11 +245,11 @@ namespace estimated{
             published::latent_heat_of_sublimation - latent_heat_of_vaporization,
         });
 
-    using LiquidDynamicViscosityTemperatureRelation = published::LiquidDynamicViscosityTemperatureRelation;
-    table::PartialTable<LiquidDynamicViscosityTemperatureRelation> dynamic_viscosity_as_liquid = 
-        table::first<LiquidDynamicViscosityTemperatureRelation>({
+    using AnonymousTemperatureRelation<si::dynamic_viscosity<double>> = published::AnonymousTemperatureRelation<si::dynamic_viscosity<double>>;
+    table::PartialTable<AnonymousTemperatureRelation<si::dynamic_viscosity<double>>> dynamic_viscosity_as_liquid = 
+        table::first<AnonymousTemperatureRelation<si::dynamic_viscosity<double>>>({
             published::dynamic_viscosity_as_liquid,
-            table::gather<LiquidDynamicViscosityTemperatureRelation>(
+            table::gather<AnonymousTemperatureRelation<si::dynamic_viscosity<double>>>(
                 relation::estimate_viscosity_as_liquid_from_letsou_stiel,
                 acentric_factor,
                 table::partial(molar_mass),
@@ -300,7 +300,7 @@ namespace estimated{
         table::first<SolidDynamicViscosityTemperatureRelation>({
             published::dynamic_viscosity_as_solid,
             table::gather<SolidDynamicViscosityTemperatureRelation>(
-                []( LiquidDynamicViscosityTemperatureRelation nuL,
+                []( AnonymousTemperatureRelation<si::dynamic_viscosity<double>> nuL,
                     point<double> liquid){
                     return SolidDynamicViscosityTemperatureRelation(
                         property::guess_viscosity_as_solid_from_viscosity_as_liquid(nuL(liquid.temperature)));
