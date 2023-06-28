@@ -345,7 +345,7 @@ namespace relation {
     ){
         return AnonymousTemperatureRelation<si::specific_heat_capacity<double>>(
             [Tc, yunits, Tmin, Tmax, c1, c2, c3, c4, c5]
-            (const si::pressure<double> p, const si::temperature<double> T)
+            (const si::temperature<double> T)
             {
                 double Tr = std::clamp(T, Tmin, Tmax)/Tc;
                 double tau = 1.0-Tr;
@@ -416,65 +416,68 @@ namespace relation {
             Tmin, Tmax);
     }
 
+    // 3 uses, for liquid surface tension
+    template<typename Ty>
+    AnonymousTemperatureRelation<Ty> get_linear_interpolation_anonymous_temperature_relation( 
+        const si::temperature<double> Tunits, const Ty yunits,
+        const std::vector<double>xs, 
+        const std::vector<double>ys,
+        const double Tmin,
+        const double Tmax
+    ){
+        return AnonymousTemperatureRelation<si::surface_energy<double>>(
+                PolynomialRailyardRelation<si::temperature<double>,Ty,0,1>(analytic::spline::linear_spline<double>(xs, ys), Tunits, yunits),
+                Tmin*Tunits, Tmax*Tunits);
+    }
 
+    // 3 uses, for liquid surface tension
+    template<typename Ty>
+    AnonymousTemperatureRelation<Ty> get_linear_interpolation_anonymous_temperature_relation( 
+        const si::celcius_type<double> Tunits, const Ty yunits,
+        const std::vector<double>xs, 
+        const std::vector<double>ys,
+        const double Tmin,
+        const double Tmax
+    ){
+        const auto f = analytic::spline::linear_spline<double>(xs, ys);
+        return AnonymousTemperatureRelation<si::surface_energy<double>>(
+                [=](const si::temperature<double> T) {return f(T/Tunits)*yunits;},
+                Tmin*Tunits, Tmax*Tunits);
+    }
 
+    // 15 uses, for liquid surface tension
+    AnonymousTemperatureRelation<si::surface_energy<double>> get_refprop_liquid_surface_tension_temperature_relation( 
+        const si::temperature<double> Tunits, const si::surface_energy<double> yunits,
+        const double Tc, const double sigma0, const double n0, const double sigma1, const double n1, const double sigma2, const double n2,
+        const double Tmin, const double Tmax
+    ){
+        return AnonymousTemperatureRelation<si::surface_energy<double>>(
+            [Tunits, yunits, Tc, sigma0, n0, sigma1, n1, sigma2, n2, Tmin, Tmax]
+            (const si::temperature<double> T)
+            {
+                double Tr = std::clamp(T/Tunits, Tmin, Tmax)/Tc;
+                return ( sigma0*std::pow(1.0 - Tr, n0) + sigma1*std::pow(1.0 - Tr, n1) + sigma2*std::pow(1.0 - Tr, n2) )*yunits;
+            }, Tmin*Tunits, Tmax*Tunits
+        );
+    }
+    // from Mulero (2012)
 
-
-    // // 15 uses, for liquid surface tension
-    // template<typename Tx>
-    // AnonymousTemperatureRelation<si::surface_energy<double>> get_refprop_liquid_surface_tension_temperature_function( 
-    //     const Tx Tunits, const si::surface_energy<double> yunits,
-    //     const double Tc, const double sigma0, const double n0, const double sigma1, const double n1, const double sigma2, const double n2,
-    //     const double Tmin, const double Tmax
-    // ){
-    //     return AnonymousTemperatureRelation<si::surface_energy<double>>(
-    //         [Tunits, yunits, Tc, sigma0, n0, sigma1, n1, sigma2, n2, Tmin, Tmax]
-    //         (const si::pressure<double> p, const si::temperature<double> T)
-    //         {
-    //             double Tr = std::clamp(T/Tunits, Tmin, Tmax)/Tc;
-    //             return ( sigma0*std::pow(1.0 - Tr, n0) + sigma1*std::pow(1.0 - Tr, n1) + sigma2*std::pow(1.0 - Tr, n2) )*yunits;
-    //         }, Tmin*Tunits, Tmax*Tunits
-    //     );
-    // }
-    // // from Mulero (2012)
-
-    // // 3 uses, for liquid surface tension
-    // template<typename Tx>
-    // AnonymousTemperatureRelation<si::surface_energy<double>> get_linear_liquid_surface_tension_temperature_function( 
-    //     const Tx Tunits, const si::surface_energy<double> yunits,
-    //     const double TL, const double gammaTL, const double dgamma_dT,
-    //     const double Tmin, const double Tmax
-    // ){
-    //     return AnonymousTemperatureRelation<si::surface_energy<double>>(
-    //         [Tunits, yunits, TL, gammaTL, dgamma_dT]
-    //         (const si::pressure<double> p, const si::temperature<double> T)
-    //         {
-    //             double t = T/Tunits;
-    //             return ( gammaTL + dgamma_dT * (t-TL) )*yunits;
-    //         }, Tmin*Tunits, Tmax*Tunits
-    //     );
-    // }
-
-    // /*
-    // `get_dippr_quartic_temperature_function_100()` is equivalent to dippr function 100,
-    // for liquid thermal conductivity, heat capacity, and solid density
-    // */
-    // template<typename Tx>
-    // AnonymousTemperatureRelation<si::surface_energy<double>> get_quadratic_liquid_surface_tension_temperature_function( 
-    //     const Tx Tunits, const si::surface_energy<double> yunits,
-    //     const double intercept, const double slope, const double square, const double cube, const double fourth,
-    //     const double Tmin, double Tmax
-    // ){
-    //     return AnonymousTemperatureRelation<si::surface_energy<double>>(
-    //         [Tunits, yunits, Tmin, Tmax, intercept, slope, square, cube, fourth]
-    //         (const si::pressure<double> p, const si::temperature<double> T)
-    //         {
-    //             double t = std::clamp(T/Tunits, Tmin, Tmax);
-    //             return (intercept + slope*t + square*t*t + cube*t*t*t + fourth*t*t*t*t)*yunits;
-    //         }, Tmin*Tunits, Tmax*Tunits
-    //     );
-    // }
-
+    // 3 uses, for liquid surface tension
+    template<typename Tx>
+    AnonymousTemperatureRelation<si::surface_energy<double>> get_linear_liquid_surface_tension_temperature_function(
+        const Tx Tunits, const si::surface_energy<double> yunits,
+        const double TL, const double gammaTL, const double dgamma_dT,
+        const double Tmin, const double Tmax
+    ){
+        return AnonymousTemperatureRelation<si::surface_energy<double>>(
+            [Tunits, yunits, TL, gammaTL, dgamma_dT]
+            (const si::temperature<double> T)
+            {
+                double t = T/Tunits;
+                return ( gammaTL + dgamma_dT * (t-TL) )*yunits;
+            }, Tmin*Tunits, Tmax*Tunits
+        );
+    }
 
 
 
