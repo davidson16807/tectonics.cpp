@@ -3,14 +3,15 @@
 // in-house libraries
 #include <units/si.hpp>
 #include <models/compound/ids.hpp>
-#include <models/compound/relation/AnonymousTemperatureRelation.hpp>
+#include <models/compound/relation/AnonymousRelation.hpp>
 #include <models/compound/relation/PolynomialRailyardRelation.hpp>
 #include <models/compound/table/PartialTable.hpp>
 
 namespace compound { 
 namespace published { 
 
-    table::PartialTable<relation::AnonymousTemperatureRelation<si::pressure<double>>> vapor_pressure_as_liquid {
+    using LiquidVaporPressureTemperatureRelation = relation::AnonymousRelation<si::temperature<double>,si::pressure<double>>;
+    table::PartialTable<LiquidVaporPressureTemperatureRelation> vapor_pressure_as_liquid {
         { ids::water,         
                 // relation::get_antoine_vapor_pressure_function(
                 //     si::celcius, si::millimeter_mercury, 

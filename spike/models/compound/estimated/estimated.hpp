@@ -8,7 +8,6 @@
 #include <models/compound/property/published.hpp>
 #include <models/compound/property/speculative.hpp>
 #include <models/compound/relation/gas/GasDensityStateRelation.hpp>
-#include <models/compound/relation/AnonymousTemperatureRelation.hpp>
 #include <models/compound/table/FullTable.hpp>
 #include <models/compound/table/PartialTable.hpp>
 
@@ -187,7 +186,7 @@ namespace estimated{
         });
 
     // CALCULATE ACENTRIC FACTOR
-    using LiquidDynamicViscosityTemperatureRelation = relation::AnonymousTemperatureRelation<si::dynamic_viscosity<double>>;
+    using LiquidDynamicViscosityTemperatureRelation = published::LiquidDynamicViscosityTemperatureRelation;
     table::PartialTable<double> acentric_factor = 
         table::first<double>({
             published::acentric_factor,
@@ -246,7 +245,7 @@ namespace estimated{
             published::latent_heat_of_sublimation - latent_heat_of_vaporization,
         });
 
-    using LiquidDynamicViscosityTemperatureRelation = relation::AnonymousTemperatureRelation<si::dynamic_viscosity<double>>;
+    using LiquidDynamicViscosityTemperatureRelation = published::LiquidDynamicViscosityTemperatureRelation;
     table::PartialTable<LiquidDynamicViscosityTemperatureRelation> dynamic_viscosity_as_liquid = 
         table::first<LiquidDynamicViscosityTemperatureRelation>({
             published::dynamic_viscosity_as_liquid,
@@ -259,7 +258,7 @@ namespace estimated{
             ),
         });
 
-    using LiquidVaporPressureTemperatureRelation = relation::AnonymousTemperatureRelation<si::pressure<double>>;
+    using LiquidVaporPressureTemperatureRelation = published::LiquidVaporPressureTemperatureRelation;
     table::PartialTable<LiquidVaporPressureTemperatureRelation> vapor_pressure_as_liquid = 
         table::first<LiquidVaporPressureTemperatureRelation>({
             published::vapor_pressure_as_liquid,
