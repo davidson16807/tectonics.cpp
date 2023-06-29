@@ -4,7 +4,7 @@
 #include <units/si.hpp>
 
 #include <models/compound/ids.hpp>
-#include <models/compound/relation/LatentHeatTemperatureRelation.hpp>
+#include <models/compound/relation/compound/LatentHeatTemperatureRelation.hpp>
 #include <models/compound/table/PartialTable.hpp>
 
 namespace compound { 
