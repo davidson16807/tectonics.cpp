@@ -7,7 +7,8 @@
 #include <models/compound/published/published.hpp>
 #include <models/compound/property/published.hpp>
 #include <models/compound/property/speculative.hpp>
-#include <models/compound/relation/GasDensityStateRelation.hpp>
+#include <models/compound/relation/gas/GasDensityStateRelation.hpp>
+#include <models/compound/relation/AnonymousTemperatureRelation.hpp>
 #include <models/compound/table/FullTable.hpp>
 #include <models/compound/table/PartialTable.hpp>
 
@@ -19,7 +20,7 @@ namespace estimated{
     // After critical point properties, we want to get to acentric factor ("omega") as soon as possible, 
     // since that lets us calculate so many other things.
     // We want to make sure we have at least some route to estimate acentric factor,
-    // So we table::first try to estimate all the things that correlate with acentric factor but are derived by other means.
+    // So we first try to estimate all the things that correlate with acentric factor but are derived by other means.
     // This includes latent_heat_of_vaporization, vapor_pressure_as_liquid, 
     // dynamic_viscosity_as_liquid, and molar_volume_as_liquid.
     // Some of these properties can be found using triple point properties, 
@@ -186,7 +187,7 @@ namespace estimated{
         });
 
     // CALCULATE ACENTRIC FACTOR
-    using AnonymousTemperatureRelation<si::dynamic_viscosity<double>> = published::AnonymousTemperatureRelation<si::dynamic_viscosity<double>>;
+    using LiquidDynamicViscosityTemperatureRelation = relation::AnonymousTemperatureRelation<si::dynamic_viscosity<double>>;
     table::PartialTable<double> acentric_factor = 
         table::first<double>({
             published::acentric_factor,
@@ -208,7 +209,7 @@ namespace estimated{
                 []( point<double> liquid,
                     point<double> critical,
                     si::molar_mass<double> M,
-                    AnonymousTemperatureRelation<si::dynamic_viscosity<double>> nuL){
+                    LiquidDynamicViscosityTemperatureRelation nuL){
                     auto T = liquid.temperature;
                     auto Tc = critical.temperature;
                     auto pc = critical.pressure;
@@ -245,11 +246,11 @@ namespace estimated{
             published::latent_heat_of_sublimation - latent_heat_of_vaporization,
         });
 
-    using AnonymousTemperatureRelation<si::dynamic_viscosity<double>> = published::AnonymousTemperatureRelation<si::dynamic_viscosity<double>>;
-    table::PartialTable<AnonymousTemperatureRelation<si::dynamic_viscosity<double>>> dynamic_viscosity_as_liquid = 
-        table::first<AnonymousTemperatureRelation<si::dynamic_viscosity<double>>>({
+    using LiquidDynamicViscosityTemperatureRelation = relation::AnonymousTemperatureRelation<si::dynamic_viscosity<double>>;
+    table::PartialTable<LiquidDynamicViscosityTemperatureRelation> dynamic_viscosity_as_liquid = 
+        table::first<LiquidDynamicViscosityTemperatureRelation>({
             published::dynamic_viscosity_as_liquid,
-            table::gather<AnonymousTemperatureRelation<si::dynamic_viscosity<double>>>(
+            table::gather<LiquidDynamicViscosityTemperatureRelation>(
                 relation::estimate_viscosity_as_liquid_from_letsou_stiel,
                 acentric_factor,
                 table::partial(molar_mass),
@@ -258,16 +259,16 @@ namespace estimated{
             ),
         });
 
-    using AnonymousTemperatureRelation = published::AnonymousTemperatureRelation;
-    table::PartialTable<AnonymousTemperatureRelation> vapor_pressure_as_liquid = 
-        table::first<AnonymousTemperatureRelation>({
+    using LiquidVaporPressureTemperatureRelation = relation::AnonymousTemperatureRelation<si::pressure<double>>;
+    table::PartialTable<LiquidVaporPressureTemperatureRelation> vapor_pressure_as_liquid = 
+        table::first<LiquidVaporPressureTemperatureRelation>({
             published::vapor_pressure_as_liquid,
-            table::gather<AnonymousTemperatureRelation>(
-                relation::estimate_vapor_pressure_as_liquid_from_lee_kesler,
-                acentric_factor,
-                table::partial(critical_point_temperature),
-                table::partial(critical_point_pressure)
-            ),
+            // table::gather<LiquidVaporPressureTemperatureRelation>(
+            //     relation::estimate_vapor_pressure_as_liquid_from_lee_kesler,
+            //     acentric_factor,
+            //     table::partial(critical_point_temperature),
+            //     table::partial(critical_point_pressure)
+            // ),
         });
 
     // CALCULATE MISCELLANEOUS PROPERTIES
@@ -299,17 +300,17 @@ namespace estimated{
     table::PartialTable<SolidDynamicViscosityTemperatureRelation> dynamic_viscosity_as_solid = 
         table::first<SolidDynamicViscosityTemperatureRelation>({
             published::dynamic_viscosity_as_solid,
-            table::gather<SolidDynamicViscosityTemperatureRelation>(
-                []( AnonymousTemperatureRelation<si::dynamic_viscosity<double>> nuL,
-                    point<double> liquid){
-                    return SolidDynamicViscosityTemperatureRelation(
-                        property::guess_viscosity_as_solid_from_viscosity_as_liquid(nuL(liquid.temperature)));
-                    // WARNING: results above are speculative, 
-                    // see property/speculative.hpp for reasoning and justification
-                },
-                dynamic_viscosity_as_liquid,
-                table::partial(liquid_sample_point)
-            )
+            // table::gather<SolidDynamicViscosityTemperatureRelation>(
+            //     []( SolidDynamicViscosityTemperatureRelation nuL,
+            //         point<double> liquid){
+            //         return SolidDynamicViscosityTemperatureRelation(
+            //             property::guess_viscosity_as_solid_from_viscosity_as_liquid(nuL(liquid.temperature)));
+            //         // WARNING: results above are speculative, 
+            //         // see property/speculative.hpp for reasoning and justification
+            //     },
+            //     dynamic_viscosity_as_liquid,
+            //     table::partial(liquid_sample_point)
+            // )
         });
 
     table::FullTable<double> molecular_degrees_of_freedom = 

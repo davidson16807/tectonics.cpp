@@ -416,6 +416,25 @@ namespace relation {
             Tmin, Tmax);
     }
 
+    // Lee Kesler method: https://en.wikipedia.org/wiki/Lee%E2%80%93Kesler_method
+    AnonymousTemperatureRelation<si::pressure<double>> estimate_vapor_pressure_as_liquid_from_lee_kesler(
+        const double acentric_factor, 
+        const si::temperature<double> critical_temperature, 
+        const si::pressure<double> critical_pressure
+    ){
+        return AnonymousTemperatureRelation<si::pressure<double>>(
+            [=](const si::temperature<double> temperature){
+                return property::estimate_vapor_pressure_as_liquid_from_lee_kesler(
+                    acentric_factor, 
+                    temperature, 
+                    critical_temperature, 
+                    critical_pressure
+                );
+            },
+            0.0*si::kelvin, critical_temperature
+        );
+    }
+
     // 3 uses, for liquid surface tension
     template<typename Ty>
     AnonymousTemperatureRelation<Ty> get_linear_interpolation_anonymous_temperature_relation( 
