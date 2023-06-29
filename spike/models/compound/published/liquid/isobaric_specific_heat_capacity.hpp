@@ -9,7 +9,7 @@
 namespace compound { 
 namespace published { 
 
-    using LiquidHeatCapacityTemperatureRelation = relation::RationalRailyardTemperatureRelation<si::specific_heat_capacity<double>>;
+    using LiquidHeatCapacityTemperatureRelation = relation::RationalRailyardTemperatureRelation<si::specific_heat_capacity<double>, 0,6,0,1>;
     table::PartialTable<LiquidHeatCapacityTemperatureRelation> isobaric_specific_heat_capacity_as_liquid {
         { ids::water, 
                 relation::get_dippr_quartic_temperature_relation_100
