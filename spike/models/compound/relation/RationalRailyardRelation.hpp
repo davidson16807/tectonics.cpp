@@ -17,22 +17,22 @@ namespace compound {
 namespace relation {
 
     /*
-    `RationalRailyardTemperatureRelation` consolidates many kinds of expressions
+    `RationalRailyardRelation` consolidates many kinds of expressions
     that are commonly used to represent the relation between temperature and the heat capacity of liquids
     */
-    template<typename Ty, int Plo, int Phi, int Qlo, int Qhi>
-    class RationalRailyardTemperatureRelation
+    template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
+    class RationalRailyardRelation
     {
         analytic::Railyard<float, analytic::Rational<float, Plo,Phi,Qlo,Qhi>> temperature_terms;
 
-        si::temperature<double>  Tunits;
+        Tx Tunits;
         Ty yunits;
 
     public:
         float known_max_fractional_error;
 
         // zero constructor
-        RationalRailyardTemperatureRelation():
+        RationalRailyardRelation():
             temperature_terms(),
 
             Tunits(1.0),
@@ -43,7 +43,7 @@ namespace relation {
         }
 
         // constant constructor
-        RationalRailyardTemperatureRelation(const Ty constant):
+        RationalRailyardRelation(const Ty constant):
             temperature_terms(constant/Ty(1.0)),
 
             Tunits(1.0),
@@ -55,8 +55,8 @@ namespace relation {
 
         // copy constructor
         template<int Nlo, int Nhi>
-        RationalRailyardTemperatureRelation(
-            const relation::PolynomialRailyardRelation<si::temperature<double>, Ty, Nlo, Nhi> relation
+        RationalRailyardRelation(
+            const relation::PolynomialRailyardRelation<Tx, Ty, Nlo, Nhi> relation
         ):
             temperature_terms(relation.yard),
 
@@ -67,10 +67,10 @@ namespace relation {
         {
         }
 
-        RationalRailyardTemperatureRelation(
+        RationalRailyardRelation(
             const analytic::Railyard<float, analytic::Rational<float, Plo, Phi, Qlo, Qhi>> temperature_terms,
 
-            const si::temperature<double> Tunits,
+            const Tx Tunits,
             const Ty yunits,
 
             const float known_max_fractional_error
@@ -84,7 +84,7 @@ namespace relation {
         {
         }
 
-        RationalRailyardTemperatureRelation& operator=(const RationalRailyardTemperatureRelation other)
+        RationalRailyardRelation& operator=(const RationalRailyardRelation other)
         {
             temperature_terms = other.temperature_terms;
 
@@ -96,13 +96,13 @@ namespace relation {
             return *this;
         }
 
-        Ty operator()(const si::temperature<double> temperature) const
+        Ty operator()(const Tx temperature) const
         {
             const float T = float(temperature/Tunits);
             return (temperature_terms(T)) * yunits;
         }
 
-        RationalRailyardTemperatureRelation& operator+=(const Ty offset)
+        RationalRailyardRelation& operator+=(const Ty offset)
         {
             using R = analytic::Rational<float, Plo, Phi, Qlo, Qhi>;
             using RC = analytic::Railcar<float, R>;
@@ -110,7 +110,7 @@ namespace relation {
             return *this;
         }
 
-        RationalRailyardTemperatureRelation& operator-=(const Ty offset)
+        RationalRailyardRelation& operator-=(const Ty offset)
         {
             using R = analytic::Rational<float, Plo, Phi, Qlo, Qhi>;
             using RC = analytic::Railcar<float, R>;
@@ -118,19 +118,19 @@ namespace relation {
             return *this;
         }
 
-        RationalRailyardTemperatureRelation& operator*=(const float scalar)
+        RationalRailyardRelation& operator*=(const float scalar)
         {
             temperature_terms *= scalar;
             return *this;
         }
 
-        RationalRailyardTemperatureRelation operator/=(const float scalar)
+        RationalRailyardRelation operator/=(const float scalar)
         {
             temperature_terms /= scalar;
             return *this;
         }
 
-        RationalRailyardTemperatureRelation& operator+=(const RationalRailyardTemperatureRelation other)
+        RationalRailyardRelation& operator+=(const RationalRailyardRelation other)
         {
             const float Tscale = float(other.Tunits / Tunits);
             const float yscale = float(other.yunits / yunits);
@@ -138,7 +138,7 @@ namespace relation {
             return *this;
         }
 
-        RationalRailyardTemperatureRelation& operator-=(const RationalRailyardTemperatureRelation other)
+        RationalRailyardRelation& operator-=(const RationalRailyardRelation other)
         {
             const float Tscale = float(other.Tunits / Tunits);
             const float yscale = float(other.yunits / yunits);
@@ -149,90 +149,90 @@ namespace relation {
     };
 
 
-    template<typename Ty, int Plo, int Phi, int Qlo, int Qhi>
-    RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> operator+(const RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> relation, const RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> other)
+    template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
+    RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> operator+(const RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> relation, const RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> other)
     {
-        RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> result = relation;
+        RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> result = relation;
         result += other;
         return result;
     }
 
-    template<typename Ty, int Plo, int Phi, int Qlo, int Qhi>
-    RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> operator-(const RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> relation, const RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> other)
+    template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
+    RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> operator-(const RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> relation, const RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> other)
     {
-        RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> result = relation;
+        RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> result = relation;
         result -= other;
         return result;
     }
 
-    template<typename Ty, int Plo, int Phi, int Qlo, int Qhi>
-    RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> operator+(const RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> relation, const Ty offset)
+    template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
+    RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> operator+(const RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> relation, const Ty offset)
     {
-        RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> result = relation;
+        RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> result = relation;
         result += offset;
         return result;
     }
 
-    template<typename Ty, int Plo, int Phi, int Qlo, int Qhi>
-    RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> operator-(const RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> relation, const Ty offset)
+    template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
+    RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> operator-(const RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> relation, const Ty offset)
     {
-        RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> result = relation;
+        RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> result = relation;
         result -= offset;
         return result;
     }
 
-    template<typename Ty, int Plo, int Phi, int Qlo, int Qhi>
-    RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> operator*(const RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> relation, const float scalar)
+    template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
+    RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> operator*(const RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> relation, const float scalar)
     {
-        RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> result = relation;
+        RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> result = relation;
         result *= scalar;
         return result;
     }
 
-    template<typename Ty, int Plo, int Phi, int Qlo, int Qhi>
-    RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> operator/(const RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> relation, const float scalar)
+    template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
+    RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> operator/(const RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> relation, const float scalar)
     {
-        RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> result = relation;
+        RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> result = relation;
         result /= scalar;
         return result;
     }
 
-    template<typename Ty, int Plo, int Phi, int Qlo, int Qhi>
-    RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> operator+(const Ty offset, const RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> relation)
+    template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
+    RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> operator+(const Ty offset, const RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> relation)
     {
-        RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> result = relation;
+        RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> result = relation;
         result += offset;
         return result;
     }
 
-    template<typename Ty, int Plo, int Phi, int Qlo, int Qhi>
-    RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> operator-(const Ty offset, const RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> relation)
+    template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
+    RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> operator-(const Ty offset, const RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> relation)
     {
-        RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> result = relation;
+        RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> result = relation;
         result *= 1.0f;
         result += offset;
         return result;
     }
 
-    template<typename Ty, int Plo, int Phi, int Qlo, int Qhi>
-    RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> operator-(const RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> relation)
+    template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
+    RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> operator-(const RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> relation)
     {
-        RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> result = relation;
+        RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> result = relation;
         result *= -1.0f;
         return result;
     }
 
-    template<typename Ty, int Plo, int Phi, int Qlo, int Qhi>
-    RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> operator*(const float scalar, const RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> relation)
+    template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
+    RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> operator*(const float scalar, const RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> relation)
     {
-        RationalRailyardTemperatureRelation<Ty,Plo,Phi,Qlo,Qhi> result = relation;
+        RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> result = relation;
         result *= scalar;
         return result;
     }
 
 
     // 5 uses, for heat capacities of liquids
-    RationalRailyardTemperatureRelation<si::specific_heat_capacity<double>, 0,6,0,1> get_dippr_liquid_heat_capacity_temperature_relation_114( 
+    RationalRailyardRelation<si::temperature<double>, si::specific_heat_capacity<double>, 0,6,0,1> get_dippr_liquid_heat_capacity_temperature_relation_114( 
         const si::temperature<double> Tc, const si::specific_heat_capacity<double> yunits,
         const float c1, const float c2, const float c3, const float c4, const float c5,
         const float Tmin, float Tmax
@@ -245,7 +245,7 @@ namespace relation {
         R r = analytic::compose(
             P({c1*c1, c2, -2.0f*c1*c3, -c1*c4, -c3*c3/3.0f, -c3*c4/2.0f, -c4*c4/5.0f}), 
             1.0f-T/float(Tc/si::kelvin));
-        return RationalRailyardTemperatureRelation<si::specific_heat_capacity<double>, 0,6,0,1>(
+        return RationalRailyardRelation<si::temperature<double>, si::specific_heat_capacity<double>, 0,6,0,1>(
             analytic::Railyard<float, R>({
                 RC(-oo,  Tmin, R(r(Tmin))),
                 RC(Tmin, Tmax, r),

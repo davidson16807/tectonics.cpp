@@ -3,13 +3,13 @@
 // in-house libraries
 #include <units/si.hpp>
 #include <models/compound/ids.hpp>
-#include <models/compound/relation/RationalRailyardTemperatureRelation.hpp>
+#include <models/compound/relation/RationalRailyardRelation.hpp>
 #include <models/compound/table/PartialTable.hpp>
 
 namespace compound { 
 namespace published { 
 
-    using LiquidHeatCapacityTemperatureRelation = relation::RationalRailyardTemperatureRelation<si::specific_heat_capacity<double>, 0,6,0,1>;
+    using LiquidHeatCapacityTemperatureRelation = relation::RationalRailyardRelation<si::temperature<double>, si::specific_heat_capacity<double>, 0,6,0,1>;
     table::PartialTable<LiquidHeatCapacityTemperatureRelation> isobaric_specific_heat_capacity_as_liquid {
         { ids::water, 
                 relation::get_dippr_quartic_temperature_relation_100
