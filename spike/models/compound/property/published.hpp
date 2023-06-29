@@ -250,10 +250,12 @@ namespace property {
         this namespace describes subfunctions of the Lee-Kesler method: https://en.wikipedia.org/wiki/Lee%E2%80%93Kesler_method
         */
         constexpr double f0(const double reduced_temperature) {
-            return 5.92714 - 6.09648f/reduced_temperature - 1.28862f*log(reduced_temperature) + 0.169347f*reduced_temperature*reduced_temperature*reduced_temperature*reduced_temperature*reduced_temperature*reduced_temperature;
+            const double Tr = reduced_temperature;
+            return 5.92714 - 6.09648f/Tr - 1.28862f*log(Tr) + 0.169347f*Tr*Tr*Tr*Tr*Tr*Tr;
         }
         constexpr double f1(const double reduced_temperature) {
-            return 15.2518 - 15.6875f/reduced_temperature - 13.4721f*log(reduced_temperature) + 0.43577 *reduced_temperature*reduced_temperature*reduced_temperature*reduced_temperature*reduced_temperature*reduced_temperature;
+            const double Tr = reduced_temperature;
+            return 15.2518 - 15.6875f/Tr - 13.4721f*log(Tr) + 0.43577 *Tr*Tr*Tr*Tr*Tr*Tr;
         }
     }
 

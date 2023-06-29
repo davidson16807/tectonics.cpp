@@ -405,7 +405,7 @@ TEST_CASE( "Lee-Kesler consistency", "[properties]" ) {
 	si::pressure<double> pvL = 9.639 * si::kilopascal;
 	double omega(0.304);
 
-    SECTION("Letsou-Stiel method must be invertible"){
+    SECTION("Lee-Kesler method must be invertible"){
     	CHECK(si::is_within_fraction(pvL, compound::property::estimate_vapor_pressure_as_liquid_from_lee_kesler(compound::property::estimate_accentric_factor_from_lee_kesler(pvL, T, Tc, pc), T, Tc, pc), 1e-4));
     	CHECK(si::is_within_fraction(omega, compound::property::estimate_accentric_factor_from_lee_kesler(compound::property::estimate_vapor_pressure_as_liquid_from_lee_kesler(omega, T, Tc, pc), T, Tc, pc), 1e-4));
     }

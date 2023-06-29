@@ -300,17 +300,17 @@ namespace estimated{
     table::PartialTable<SolidDynamicViscosityTemperatureRelation> dynamic_viscosity_as_solid = 
         table::first<SolidDynamicViscosityTemperatureRelation>({
             published::dynamic_viscosity_as_solid,
-            // table::gather<SolidDynamicViscosityTemperatureRelation>(
-            //     []( SolidDynamicViscosityTemperatureRelation nuL,
-            //         point<double> liquid){
-            //         return SolidDynamicViscosityTemperatureRelation(
-            //             property::guess_viscosity_as_solid_from_viscosity_as_liquid(nuL(liquid.temperature)));
-            //         // WARNING: results above are speculative, 
-            //         // see property/speculative.hpp for reasoning and justification
-            //     },
-            //     dynamic_viscosity_as_liquid,
-            //     table::partial(liquid_sample_point)
-            // )
+            table::gather<SolidDynamicViscosityTemperatureRelation>(
+                []( LiquidDynamicViscosityTemperatureRelation nuL,
+                    point<double> liquid){
+                    return SolidDynamicViscosityTemperatureRelation(
+                        property::guess_viscosity_as_solid_from_viscosity_as_liquid(nuL(liquid.temperature)));
+                    // WARNING: results above are speculative, 
+                    // see property/speculative.hpp for reasoning and justification
+                },
+                dynamic_viscosity_as_liquid,
+                table::partial(liquid_sample_point)
+            )
         });
 
     table::FullTable<double> molecular_degrees_of_freedom = 
