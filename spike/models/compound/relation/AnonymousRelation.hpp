@@ -11,7 +11,7 @@
 #include <math/analytic/rails/PolynomialRailyard.hpp>
 #include <math/analytic/rails/PolynomialRailyard_library.hpp>
 #include <units/si.hpp>
-#include <models/compound/property/published.hpp>
+#include <models/compound/correlation/published.hpp>
 
 namespace compound {
 namespace relation {
@@ -258,7 +258,7 @@ namespace relation {
     ){
         return AnonymousRelation<si::temperature<double>, si::dynamic_viscosity<double>>(
             [=](si::temperature<double> temperature){
-                return property::estimate_viscosity_as_liquid_from_letsou_stiel(
+                return correlation::estimate_viscosity_as_liquid_from_letsou_stiel(
                     acentric_factor,
                     molar_mass,  
                     temperature, 
@@ -359,7 +359,7 @@ namespace relation {
     ){
         return AnonymousRelation<si::temperature<double>, si::pressure<double>>(
             [=](const si::temperature<double> temperature){
-                return property::estimate_vapor_pressure_as_liquid_from_lee_kesler(
+                return correlation::estimate_vapor_pressure_as_liquid_from_lee_kesler(
                     acentric_factor, 
                     temperature, 
                     critical_temperature, 

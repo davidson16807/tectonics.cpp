@@ -42,8 +42,8 @@ namespace relation {
 
         si::density<double> operator()(const si::pressure<double> pressure, const si::temperature<double> temperature) const
         {
-            return molar_mass / property::get_molar_volume_from_compressibility(pressure, temperature,
-                    property::estimate_compressibility_factor(pressure, temperature, critical_pressure, critical_temperature, critical_compressibility));
+            return molar_mass / correlation::get_molar_volume_from_compressibility(pressure, temperature,
+                    correlation::estimate_compressibility_factor(pressure, temperature, critical_pressure, critical_temperature, critical_compressibility));
         }
 
     };

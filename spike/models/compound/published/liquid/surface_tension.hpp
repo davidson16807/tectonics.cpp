@@ -4,7 +4,6 @@
 #include <units/si.hpp>
 #include <models/compound/ids.hpp>
 #include <models/compound/relation/AnonymousRelation.hpp>
-#include <models/compound/relation/PolynomialRailyardRelation.hpp>
 #include <models/compound/table/PartialTable.hpp>
 
 namespace compound { 

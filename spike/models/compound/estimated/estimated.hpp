@@ -5,8 +5,8 @@
 
 // in-house libraries
 #include <models/compound/published/published.hpp>
-#include <models/compound/property/published.hpp>
-#include <models/compound/property/speculative.hpp>
+#include <models/compound/correlation/published.hpp>
+#include <models/compound/correlation/speculative.hpp>
 #include <models/compound/relation/gas/GasDensityStateRelation.hpp>
 #include <models/compound/table/FullTable.hpp>
 #include <models/compound/table/PartialTable.hpp>
@@ -48,27 +48,27 @@ namespace estimated{
     // via Klincewicz
     table::FullTable<si::pressure<double>> critical_point_pressure = 
         table::complete(published::critical_point_pressure, 
-            table::derive<si::pressure<double>>(property::estimate_critical_pressure_from_klincewicz, molar_mass, atoms_per_molecule));
+            table::derive<si::pressure<double>>(correlation::estimate_critical_pressure_from_klincewicz, molar_mass, atoms_per_molecule));
 
     // via Klincewicz
     table::FullTable<si::molar_volume<double>> critical_point_volume = 
         table::complete(published::critical_point_volume, 
-            table::derive<si::molar_volume<double>>(property::estimate_critical_molar_volume_from_klincewicz, molar_mass, atoms_per_molecule));
+            table::derive<si::molar_volume<double>>(correlation::estimate_critical_molar_volume_from_klincewicz, molar_mass, atoms_per_molecule));
 
     // via Klincewicz -> Ihmels
     table::FullTable<si::temperature<double>> critical_point_temperature = 
         table::complete(published::critical_point_temperature, 
-            table::derive<si::temperature<double>>(property::estimate_critical_temperature_from_ihmels, critical_point_pressure, critical_point_volume));
+            table::derive<si::temperature<double>>(correlation::estimate_critical_temperature_from_ihmels, critical_point_pressure, critical_point_volume));
 
     // via Klincewicz -> Ihmels -> definition of compressibility
     table::FullTable<double> critical_point_compressibility = 
         table::complete(published::critical_point_compressibility, 
-            table::derive<double>(property::get_critical_compressibility, critical_point_pressure, critical_point_temperature, critical_point_volume));
+            table::derive<double>(correlation::get_critical_compressibility, critical_point_pressure, critical_point_temperature, critical_point_volume));
 
     // via Klincewicz -> Ihmels -> Tee-Gotoh-Steward
     table::FullTable<si::length<double>> molecular_diameter = 
         table::complete(published::molecular_diameter, 
-            table::derive<si::length<double>>(property::estimate_molecular_diameter_from_tee_gotoh_steward, critical_point_temperature, critical_point_pressure));
+            table::derive<si::length<double>>(correlation::estimate_molecular_diameter_from_tee_gotoh_steward, critical_point_temperature, critical_point_pressure));
 
     point<double> standard = point<double>(si::standard_pressure, si::standard_temperature);
 
@@ -125,7 +125,7 @@ namespace estimated{
     table::FullTable<LiquidDensityTemperatureRelation> density_as_liquid = 
         table::complete(published::density_as_liquid, 
             table::derive<LiquidDensityTemperatureRelation>([](si::molar_mass<double> M, si::length<double> sigma){
-                    return LiquidDensityTemperatureRelation(M / property::estimate_molar_volume_as_liquid_from_bird_steward_lightfoot_2(sigma));}, 
+                    return LiquidDensityTemperatureRelation(M / correlation::estimate_molar_volume_as_liquid_from_bird_steward_lightfoot_2(sigma));}, 
                 molar_mass, molecular_diameter));
 
     // via Klincewicz -> Ihmels -> definition of compressibility -> definition of compressibility
@@ -142,14 +142,14 @@ namespace estimated{
             table::first<SolidDensityTemperatureRelation>({
                 published::density_as_solid, 
                 table::gather<SolidDensityTemperatureRelation>([](si::molar_mass<double> M, LiquidDensityTemperatureRelation rhoL, point<double> liquid, point<double> triple){
-                        return SolidDensityTemperatureRelation(M / property::estimate_molar_volume_as_solid_from_goodman(M / rhoL(liquid.temperature), liquid.temperature, triple.temperature));}, 
+                        return SolidDensityTemperatureRelation(M / correlation::estimate_molar_volume_as_solid_from_goodman(M / rhoL(liquid.temperature), liquid.temperature, triple.temperature));}, 
                     table::partial(molar_mass), 
                     table::partial(density_as_liquid), 
                     table::partial(liquid_sample_point), 
                     published::triple_point),
             }),
             table::derive<SolidDensityTemperatureRelation>([](LiquidDensityTemperatureRelation rhoL, point<double> liquid){
-                    return property::guess_density_as_solid_from_density_as_liquid(rhoL(liquid.temperature));}, 
+                    return correlation::guess_density_as_solid_from_density_as_liquid(rhoL(liquid.temperature));}, 
                 density_as_liquid, liquid_sample_point) // WARNING: results are speculative
         );
 
@@ -197,7 +197,7 @@ namespace estimated{
                     LatentHeatTemperatureRelation Hv){
                     auto T = si::clamp(liquid.temperature, si::absolute_zero, critical.temperature);
                     auto Tc = critical.temperature;
-                    return std::clamp(property::estimate_accentric_factor_from_pitzer(Hv(T), M, T, Tc), -1.0, 1.0);
+                    return std::clamp(correlation::estimate_accentric_factor_from_pitzer(Hv(T), M, T, Tc), -1.0, 1.0);
                 },
                 table::partial(liquid_sample_point),
                 table::partial(critical_point),
@@ -212,7 +212,7 @@ namespace estimated{
                     auto T = liquid.temperature;
                     auto Tc = critical.temperature;
                     auto pc = critical.pressure;
-                    return std::clamp(property::estimate_acentric_factor_from_letsou_stiel(nuL(T), M, T, Tc, pc), -1.0, 1.0);
+                    return std::clamp(correlation::estimate_acentric_factor_from_letsou_stiel(nuL(T), M, T, Tc, pc), -1.0, 1.0);
                 },
                 table::partial(liquid_sample_point),
                 table::partial(critical_point),
@@ -303,7 +303,7 @@ namespace estimated{
                 []( LiquidDynamicViscosityTemperatureRelation nuL,
                     point<double> liquid){
                     return SolidDynamicViscosityTemperatureRelation(
-                        property::guess_viscosity_as_solid_from_viscosity_as_liquid(nuL(liquid.temperature)));
+                        correlation::guess_viscosity_as_solid_from_viscosity_as_liquid(nuL(liquid.temperature)));
                     // WARNING: results above are speculative, 
                     // see property/speculative.hpp for reasoning and justification
                 },
@@ -317,7 +317,7 @@ namespace estimated{
             table::first<double>({
                 published::molecular_degrees_of_freedom,
                 table::gather<double>(
-                    property::guess_molecular_degrees_of_freedom,
+                    correlation::guess_molecular_degrees_of_freedom,
                     acentric_factor,
                     table::partial(atoms_per_molecule)
                 )
@@ -340,9 +340,9 @@ namespace estimated{
 
 // in-house libraries
 
-#include <models/compound/property/elasticity.hpp>
-#include <models/compound/property/strength.hpp>
-#include <models/compound/property/reflectance.hpp>
+#include <models/compound/correlation/elasticity.hpp>
+#include <models/compound/correlation/strength.hpp>
+#include <models/compound/correlation/reflectance.hpp>
 
 #include <models/compound/field/spectral/SpectralFunction.hpp>
 
@@ -364,7 +364,7 @@ namespace phase{
         //             [](const field::SpectralParameters spectral_parameters, const double n, const double k)
         //             {
         //                 // TODO: remove assumption that representative wavelength is the middle value
-        //                 return compound::property::get_absorption_coefficient_from_refractive_index(n, k, 2.0/(spectral_parameters.nlo+spectral_parameters.nhi));
+        //                 return compound::correlation::get_absorption_coefficient_from_refractive_index(n, k, 2.0/(spectral_parameters.nlo+spectral_parameters.nhi));
         //             }
         //         ),
         //         known.refractive_index,
@@ -376,7 +376,7 @@ namespace phase{
         //             [](const field::SpectralParameters spectral_parameters, const si::attenuation<double> alpha, const double k)
         //             {
         //                 // TODO: remove assumption that representative wavelength is the middle value
-        //                 return compound::property::get_refractive_index_from_absorption_coefficient(alpha, k, 2.0/(spectral_parameters.nlo+spectral_parameters.nhi));
+        //                 return compound::correlation::get_refractive_index_from_absorption_coefficient(alpha, k, 2.0/(spectral_parameters.nlo+spectral_parameters.nhi));
         //             }
         //         ),
         //         known.absorption_coefficient,
@@ -388,7 +388,7 @@ namespace phase{
         //             [](const field::SpectralParameters spectral_parameters, const si::attenuation<double> alpha, const double n)
         //             {
         //                 // TODO: remove assumption that representative wavelength is the middle value
-        //                 return compound::property::get_extinction_coefficient_from_absorption_coefficient(alpha, n, 2.0/(spectral_parameters.nlo+spectral_parameters.nhi));
+        //                 return compound::correlation::get_extinction_coefficient_from_absorption_coefficient(alpha, n, 2.0/(spectral_parameters.nlo+spectral_parameters.nhi));
         //             }
         //         ),
         //         known.absorption_coefficient,
@@ -412,11 +412,11 @@ namespace phase{
         typedef std::function<double(field::StateParameters, si::pressure<double>,si::pressure<double>)> Dpp;
 
         guess.shear_yield_strength = known.shear_yield_strength
-            .value_or(Pp([](field::StateParameters, si::pressure<double> E){ return property::get_shear_yield_strength_from_tensile_yield_strength(E); }), 
+            .value_or(Pp([](field::StateParameters, si::pressure<double> E){ return correlation::get_shear_yield_strength_from_tensile_yield_strength(E); }), 
                 known.tensile_yield_strength
             );
         guess.tensile_yield_strength = known.tensile_yield_strength
-            .value_or(Pp([](field::StateParameters, si::pressure<double> G){ return property::get_tensile_yield_strength_from_shear_yield_strength(G); }), 
+            .value_or(Pp([](field::StateParameters, si::pressure<double> G){ return correlation::get_tensile_yield_strength_from_shear_yield_strength(G); }), 
                 known.shear_yield_strength
             );
 
@@ -444,40 +444,40 @@ namespace phase{
         auto M = known.pwave_modulus;
 
         guess.tensile_modulus = guess.tensile_modulus
-            .value_or(Ppp([](field::StateParameters params, si::pressure<double> K, si::pressure<double> G) { return property::get_tensile_from_bulk_and_shear(K, G); }), K, G )
-            .value_or(Ppd([](field::StateParameters params, si::pressure<double> K, double nu)      { return property::get_tensile_from_bulk_and_poisson(K, nu); }), K, nu )
-            .value_or(Ppp([](field::StateParameters params, si::pressure<double> K, si::pressure<double> M) { return property::get_tensile_from_bulk_and_pwave(K, M); }), K, M )
-            .value_or(Ppp([](field::StateParameters params, si::pressure<double> l, si::pressure<double> G) { return property::get_tensile_from_lame_and_shear(l, G); }), l, G )
-            .value_or(Ppd([](field::StateParameters params, si::pressure<double> l, double nu)      { return property::get_tensile_from_lame_and_poisson(l, nu); }), l, nu )
-            .value_or(Ppp([](field::StateParameters params, si::pressure<double> l, si::pressure<double> M) { return property::get_tensile_from_lame_and_pwave(l, M); }), l, M )
-            .value_or(Ppd([](field::StateParameters params, si::pressure<double> G, double nu)      { return property::get_tensile_from_shear_and_poisson(G, nu); }), G, nu )
-            .value_or(Ppp([](field::StateParameters params, si::pressure<double> G, si::pressure<double> M) { return property::get_tensile_from_shear_and_pwave(G, M); }), G, M )
-            .value_or(Pdp([](field::StateParameters params, double nu,      si::pressure<double> M) { return property::get_tensile_from_poisson_and_pwave(nu, M); }), nu, M )
+            .value_or(Ppp([](field::StateParameters params, si::pressure<double> K, si::pressure<double> G) { return correlation::get_tensile_from_bulk_and_shear(K, G); }), K, G )
+            .value_or(Ppd([](field::StateParameters params, si::pressure<double> K, double nu)      { return correlation::get_tensile_from_bulk_and_poisson(K, nu); }), K, nu )
+            .value_or(Ppp([](field::StateParameters params, si::pressure<double> K, si::pressure<double> M) { return correlation::get_tensile_from_bulk_and_pwave(K, M); }), K, M )
+            .value_or(Ppp([](field::StateParameters params, si::pressure<double> l, si::pressure<double> G) { return correlation::get_tensile_from_lame_and_shear(l, G); }), l, G )
+            .value_or(Ppd([](field::StateParameters params, si::pressure<double> l, double nu)      { return correlation::get_tensile_from_lame_and_poisson(l, nu); }), l, nu )
+            .value_or(Ppp([](field::StateParameters params, si::pressure<double> l, si::pressure<double> M) { return correlation::get_tensile_from_lame_and_pwave(l, M); }), l, M )
+            .value_or(Ppd([](field::StateParameters params, si::pressure<double> G, double nu)      { return correlation::get_tensile_from_shear_and_poisson(G, nu); }), G, nu )
+            .value_or(Ppp([](field::StateParameters params, si::pressure<double> G, si::pressure<double> M) { return correlation::get_tensile_from_shear_and_pwave(G, M); }), G, M )
+            .value_or(Pdp([](field::StateParameters params, double nu,      si::pressure<double> M) { return correlation::get_tensile_from_poisson_and_pwave(nu, M); }), nu, M )
             ;
 
         guess.bulk_modulus = guess.bulk_modulus
-            .value_or(Ppp([](field::StateParameters params, si::pressure<double> E, si::pressure<double> l) { return property::get_bulk_from_tensile_and_lame(E, l); }), E, l)
-            .value_or(Ppp([](field::StateParameters params, si::pressure<double> E, si::pressure<double> G) { return property::get_bulk_from_tensile_and_shear(E, G); }), E, G)
-            .value_or(Ppd([](field::StateParameters params, si::pressure<double> E, double nu)      { return property::get_bulk_from_tensile_and_poisson(E, nu); }), E, nu)
-            .value_or(Ppp([](field::StateParameters params, si::pressure<double> l, si::pressure<double> G) { return property::get_bulk_from_lame_and_shear(l, G); }), l, G)
-            .value_or(Ppd([](field::StateParameters params, si::pressure<double> l, double nu)      { return property::get_bulk_from_lame_and_poisson(l, nu); }), l, nu)
-            .value_or(Ppp([](field::StateParameters params, si::pressure<double> l, si::pressure<double> M) { return property::get_bulk_from_lame_and_pwave(l, M); }), l, M)
-            .value_or(Ppd([](field::StateParameters params, si::pressure<double> G, double nu)      { return property::get_bulk_from_shear_and_poisson(G, nu); }), G, nu)
-            .value_or(Ppp([](field::StateParameters params, si::pressure<double> G, si::pressure<double> M) { return property::get_bulk_from_shear_and_pwave(G, M); }), G, M)
-            .value_or(Pdp([](field::StateParameters params, double nu,      si::pressure<double> M) { return property::get_bulk_from_poisson_and_pwave(nu, M); }), nu, M)
+            .value_or(Ppp([](field::StateParameters params, si::pressure<double> E, si::pressure<double> l) { return correlation::get_bulk_from_tensile_and_lame(E, l); }), E, l)
+            .value_or(Ppp([](field::StateParameters params, si::pressure<double> E, si::pressure<double> G) { return correlation::get_bulk_from_tensile_and_shear(E, G); }), E, G)
+            .value_or(Ppd([](field::StateParameters params, si::pressure<double> E, double nu)      { return correlation::get_bulk_from_tensile_and_poisson(E, nu); }), E, nu)
+            .value_or(Ppp([](field::StateParameters params, si::pressure<double> l, si::pressure<double> G) { return correlation::get_bulk_from_lame_and_shear(l, G); }), l, G)
+            .value_or(Ppd([](field::StateParameters params, si::pressure<double> l, double nu)      { return correlation::get_bulk_from_lame_and_poisson(l, nu); }), l, nu)
+            .value_or(Ppp([](field::StateParameters params, si::pressure<double> l, si::pressure<double> M) { return correlation::get_bulk_from_lame_and_pwave(l, M); }), l, M)
+            .value_or(Ppd([](field::StateParameters params, si::pressure<double> G, double nu)      { return correlation::get_bulk_from_shear_and_poisson(G, nu); }), G, nu)
+            .value_or(Ppp([](field::StateParameters params, si::pressure<double> G, si::pressure<double> M) { return correlation::get_bulk_from_shear_and_pwave(G, M); }), G, M)
+            .value_or(Pdp([](field::StateParameters params, double nu,      si::pressure<double> M) { return correlation::get_bulk_from_poisson_and_pwave(nu, M); }), nu, M)
             ;
 
         K = guess.bulk_modulus;
         E = guess.tensile_modulus;
 
         guess.lame_parameter = guess.lame_parameter
-            .value_or(Ppp([](field::StateParameters params, si::pressure<double> K, si::pressure<double> E){ return property::get_lame_from_bulk_and_tensile(K,E); }), K, E );
+            .value_or(Ppp([](field::StateParameters params, si::pressure<double> K, si::pressure<double> E){ return correlation::get_lame_from_bulk_and_tensile(K,E); }), K, E );
         guess.shear_modulus = guess.shear_modulus
-            .value_or(Ppp([](field::StateParameters params, si::pressure<double> K, si::pressure<double> E){ return property::get_shear_from_bulk_and_tensile(K,E); }), K, E );
+            .value_or(Ppp([](field::StateParameters params, si::pressure<double> K, si::pressure<double> E){ return correlation::get_shear_from_bulk_and_tensile(K,E); }), K, E );
         guess.poisson_ratio = guess.poisson_ratio
-            .value_or(Dpp([](field::StateParameters params, si::pressure<double> K, si::pressure<double> E){ return property::get_poisson_from_bulk_and_tensile(K,E); }), K, E );
+            .value_or(Dpp([](field::StateParameters params, si::pressure<double> K, si::pressure<double> E){ return correlation::get_poisson_from_bulk_and_tensile(K,E); }), K, E );
         guess.pwave_modulus = guess.pwave_modulus
-            .value_or(Ppp([](field::StateParameters params, si::pressure<double> K, si::pressure<double> E){ return property::get_pwave_from_bulk_and_tensile(K,E); }), K, E );
+            .value_or(Ppp([](field::StateParameters params, si::pressure<double> K, si::pressure<double> E){ return correlation::get_pwave_from_bulk_and_tensile(K,E); }), K, E );
 
         return guess;
 

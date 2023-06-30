@@ -5,7 +5,7 @@
 #include <units/si.hpp> 
 
 namespace compound {
-namespace property {
+namespace correlation {
 /*
 NOTE: 
 The namespace here serves as a "category of primitives" where objects are variables of primitive types.

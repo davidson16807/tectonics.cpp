@@ -8,11 +8,11 @@
 #include <math/lerp.hpp> // lerp
 
 namespace compound {
-namespace property {
+namespace correlation {
 
     /*
     NOTE: 
-    `compound::property` serves as a "category of primitives" where objects are variables of primitive types.
+    `compound::correlation` serves as a "category of primitives" where objects are variables of primitive types.
     More information about this category can be found under `published.hpp`.
     `speculative.hpp` contains only mappings within this category which are not peer reviewed.
     We mostly create these correlations out of desperation when no other peer reviewed derivations exist.

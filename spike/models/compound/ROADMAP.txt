@@ -51,13 +51,26 @@ REQUIRED:
 mixture laws:
 	pseudocritical temperature: kays rule
 	pseudocritical pressure: prausnitz-gunn
-	acentric factor
-	molar volume: amagat's law
+	molar volume: 		amagat's law
+	gases:
+		viscosity: 		wilke, herning zipperer (chemicals)
+		thermal conductivity: wassiljewa-herning-zipperer (chemicals)
+	liquids:
+		vapor pressure: Raoult's Law, has no effect on structure of approximations
+		heat capacity: 	mass weighted arithmetic mean (chemicals)
+		thermal conductivity: dippr9 (chemicals)
+		surface tension: weinaug-katz, winterfeld-scriven-davis, diguilio-teja (chemicals)
+		density: costald (chemicals)
+	solids:
+		vapor pressure: Raoult's Law, has no effect on structure of approximations
+		strengths: 		Rule of mixtures (see wikipedia)
+		moduli: 		Rule of mixtures (see wikipedia)
+		thermal conductivity: Rule of mixtures (see wikipedia)
 
 
 EXTRA CREDIT:
-	consolidate state and spectral functions
-	compile bibliography
+x	consolidate state and spectral functions
+x	compile bibliography
 	new compounds:
 		iron 
 		nickel

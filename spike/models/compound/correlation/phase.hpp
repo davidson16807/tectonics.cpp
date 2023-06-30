@@ -4,7 +4,7 @@
 #include <units/si.hpp>
 
 namespace compound {
-namespace property {
+namespace correlation {
     /*
     "BasicPhases" tracks phase ids for phases that commonly occur in compounds.
 

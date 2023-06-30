@@ -1,4 +1,4 @@
-`compound::property` serves as a "category of primitives" where objects are variables of primitive types.
+`compound::correlation` serves as a "category of primitives" where objects are variables of primitive types.
 This namespace maps to and from properties of pure compounds, mostly using corresponding states method. 
 However, it excludes mappings that use group contribution methods. 
 

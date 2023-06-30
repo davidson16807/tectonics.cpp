@@ -3,7 +3,7 @@
 // 3rd party libraries
 
 namespace compound {
-namespace property {
+namespace correlation {
     /*
     NOTE: 
     The namespace here each serves as a "category of primitives" where objects are variables of primitive types.

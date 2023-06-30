@@ -19,13 +19,13 @@ TEST_CASE( "approx_reflectance_from_attenuation_coefficient_and_refractive_index
         const si::length<double> wavelength = 400.0 * si::nanometer;
         CHECK(
             si::is_within_fraction(
-                compound::property::approx_reflectance_from_attenuation_coefficient_and_refractive_index(
+                compound::correlation::approx_reflectance_from_attenuation_coefficient_and_refractive_index(
                         attenuation_coefficient, 
                         refractive_index_of_material,
                         refractive_index_of_medium,
                         wavelength
                     ),
-                compound::property::approx_reflectance_from_attenuation_coefficient_and_refractive_index(
+                compound::correlation::approx_reflectance_from_attenuation_coefficient_and_refractive_index(
                         attenuation_coefficient, 
                         refractive_index_of_material,
                         refractive_index_of_medium,
@@ -46,7 +46,7 @@ TEST_CASE( "approx_reflectance_from_attenuation_coefficient_and_refractive_index
         const si::length<double> wavelength = 400.0 * si::nanometer;
         CHECK(
             si::is_within_fraction(
-                compound::property::approx_reflectance_from_attenuation_coefficient_and_refractive_index(
+                compound::correlation::approx_reflectance_from_attenuation_coefficient_and_refractive_index(
                     attenuation_coefficient,
                     refractive_index_of_material,
                     refractive_index_of_medium,
@@ -71,13 +71,13 @@ TEST_CASE( "solve_attenuation_coefficient_from_reflectance_and_refactive_index()
         const si::length<double> wavelength = 400.0 * si::nanometer;
         CHECK(
             si::is_within_fraction(
-                compound::property::solve_attenuation_coefficient_from_reflectance_and_refactive_index(
+                compound::correlation::solve_attenuation_coefficient_from_reflectance_and_refactive_index(
                         reflectance, 
                         refractive_index_of_material,
                         refractive_index_of_medium,
                         wavelength
                     ),
-                compound::property::solve_attenuation_coefficient_from_reflectance_and_refactive_index(
+                compound::correlation::solve_attenuation_coefficient_from_reflectance_and_refactive_index(
                         reflectance, 
                         refractive_index_of_material,
                         refractive_index_of_medium,
@@ -97,8 +97,8 @@ TEST_CASE( "solve_attenuation_coefficient_from_reflectance_and_refactive_index()
         const si::length<double> wavelength = 400.0 * si::nanometer;
         CHECK(
             si::is_within_fraction(
-                compound::property::solve_attenuation_coefficient_from_reflectance_and_refactive_index(
-                    compound::property::approx_reflectance_from_attenuation_coefficient_and_refractive_index(
+                compound::correlation::solve_attenuation_coefficient_from_reflectance_and_refactive_index(
+                    compound::correlation::approx_reflectance_from_attenuation_coefficient_and_refractive_index(
                         attenuation_coefficient, 
                         refractive_index_of_material,
                         refractive_index_of_medium,
@@ -122,7 +122,7 @@ TEST_CASE( "solve_attenuation_coefficient_from_reflectance_and_refactive_index p
         const double refractive_index_of_material = 1.3325;
         const double refractive_index_of_medium = 1.0;
         const si::length<double> wavelength = 400.0 * si::nanometer;
-        std::cout << compound::property::solve_attenuation_coefficient_from_reflectance_and_refactive_index(
+        std::cout << compound::correlation::solve_attenuation_coefficient_from_reflectance_and_refactive_index(
                     reflectance,
                     refractive_index_of_material,
                     refractive_index_of_medium,
@@ -130,7 +130,7 @@ TEST_CASE( "solve_attenuation_coefficient_from_reflectance_and_refactive_index p
                 ).to_string() << std::endl;
         CHECK(
             si::is_within_fraction(
-                compound::property::solve_attenuation_coefficient_from_reflectance_and_refactive_index(
+                compound::correlation::solve_attenuation_coefficient_from_reflectance_and_refactive_index(
                     reflectance,
                     refractive_index_of_material,
                     refractive_index_of_medium,

@@ -936,7 +936,7 @@ PartlyKnownCompound nitrogen (
                 const double              c  = 1.7895;
                 const auto                dpdTab = (pabg-p0) / (Tabg-T0);
 
-                const int basic_phase = property::get_simon_glatzel_phase(p, T, p0, T0, pc, Tc, L,  M, a, b, c);
+                const int basic_phase = correlation::get_simon_glatzel_phase(p, T, p0, T0, pc, Tc, L,  M, a, b, c);
                 if (basic_phase < 0)
                 {
                     return basic_phase;
@@ -1275,7 +1275,7 @@ PartlyKnownCompound oxygen (
                 const si::temperature<double>     Tbg1 = 55.0 * si::kelvin;
                 const auto                dpdTbg = (pbg1-pbg0) / (Tbg1-Tbg0);
 
-                const int basic_phase = property::get_simon_glatzel_phase(p, T, p0, T0, pc, Tc, L,  M, a, b, c);
+                const int basic_phase = correlation::get_simon_glatzel_phase(p, T, p0, T0, pc, Tc, L,  M, a, b, c);
                 if (basic_phase < 0)
                 {
                     return basic_phase;
@@ -1790,7 +1790,7 @@ PartlyKnownCompound methane (
                 const si::pressure<double>        b  = 0.0 * si::pascal;
                 const double              c  = 1.698;
 
-                const int basic_phase = property::get_simon_glatzel_phase(p, T, p0, T0, pc, Tc, L,  M, a, b, c);
+                const int basic_phase = correlation::get_simon_glatzel_phase(p, T, p0, T0, pc, Tc, L,  M, a, b, c);
                 if (basic_phase < 0)
                 {
                     return basic_phase;
@@ -2255,7 +2255,7 @@ PartlyKnownCompound helium (
                 const si::temperature<double>     Tab1 = 20.0 * si::kelvin;
                 const auto                dpdTab = (pab1-pab0) / (Tab1-Tab0);
 
-                const int basic_phase = property::get_simon_glatzel_phase(p, T, p0, T0, pc, Tc, L,  M, a, b, c);
+                const int basic_phase = correlation::get_simon_glatzel_phase(p, T, p0, T0, pc, Tc, L,  M, a, b, c);
                 if (basic_phase < 0)
                 {
                     return basic_phase;
@@ -3352,7 +3352,7 @@ PartlyKnownCompound carbon_monoxide (
                 const double              c  = 2.695;              // Manzhelii (1997)
                 const auto                dpdTab = (pab1-pab0) / (Tab1-Tab0);
 
-                const int basic_phase = property::get_simon_glatzel_phase(p, T, p0, T0, pc, Tc, L, M, a, b, c);
+                const int basic_phase = correlation::get_simon_glatzel_phase(p, T, p0, T0, pc, Tc, L, M, a, b, c);
                 if (basic_phase < 0)
                 {
                     return basic_phase;
@@ -4799,7 +4799,7 @@ PartlyKnownCompound  quartz (
                 const si::specific_energy<double> L  = 11770e3 * si::joule / si::kilogram;
                 const si::molar_mass<double>      M  = 60.08 * si::gram/si::mole;
 
-                const int basic_phase = property::get_basic_phase(p,T,p0,T0,pc,Tc,pf,Tf,L,M);
+                const int basic_phase = correlation::get_basic_phase(p,T,p0,T0,pc,Tc,pf,Tf,L,M);
                 if (basic_phase < 0)
                 {
                     return basic_phase;

@@ -11,7 +11,7 @@
 #include "compressibility.hpp"  // estimate_compressibility_factor
 
 namespace compound {
-namespace property {
+namespace correlation {
 
     /*
     NOTE: 
