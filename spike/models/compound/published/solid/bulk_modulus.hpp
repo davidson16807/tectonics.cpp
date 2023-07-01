@@ -3,13 +3,13 @@
 // in-house libraries
 #include <units/si.hpp>
 #include <models/compound/table/PartialTable.hpp>
-#include <models/compound/relation/PolynomialRailyardRelation.hpp>
+#include <models/compound/relation/GenericRelation.hpp>
 #include <models/compound/ids.hpp>
 
 namespace compound { 
 namespace published { 
 
-    using SolidBulkModulusTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,si::pressure<double>, 0,1>;
+    using SolidBulkModulusTemperatureRelation = relation::GenericRelation<si::temperature<double>,si::pressure<double>>;
     table::PartialTable<SolidBulkModulusTemperatureRelation> bulk_modulus_as_solid {
         { ids::water,              8.899 * si::gigapascal,                           // gammon (1983)
             },

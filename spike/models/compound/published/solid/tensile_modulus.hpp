@@ -4,12 +4,13 @@
 #include <units/si.hpp>
 #include <models/compound/table/PartialTable.hpp>
 #include <models/compound/relation/PolynomialRailyardRelation.hpp>
+#include <models/compound/relation/GenericRelation.hpp>
 #include <models/compound/ids.hpp>
 
 namespace compound { 
 namespace published { 
 
-    using SolidTensileModulusTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,si::pressure<double>, 0,1>;
+    using SolidTensileModulusTemperatureRelation = relation::GenericRelation<si::temperature<double>,si::pressure<double>>;
     table::PartialTable<SolidTensileModulusTemperatureRelation> tensile_modulus_as_solid {
         { ids::water,               9.332 * si::gigapascal,                           // gammon (1983)
             },
