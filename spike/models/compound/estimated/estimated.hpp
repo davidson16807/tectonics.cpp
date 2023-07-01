@@ -316,19 +316,47 @@ namespace estimated{
     using SolidRefractiveIndexWavenumberRelation = published::SolidRefractiveIndexWavenumberRelation;
     using SolidExtinctionCoefficientWavenumberRelation = published::SolidExtinctionCoefficientWavenumberRelation;
     using SolidAbsorptionCoefficientWavenumberRelation = published::SolidAbsorptionCoefficientWavenumberRelation;
-    // table::PartialTable<SolidAbsorptionCoefficientWavenumberRelation> absorption_coefficient_as_solid = 
-    //     table::first<SolidAbsorptionCoefficientWavenumberRelation>({
-    //         published::absorption_coefficient_as_solid,
-    //         table::gather<SolidAbsorptionCoefficientWavenumberRelation>(
-    //             []( published::SolidRefractiveIndexWavenumberRelation n,
-    //                 published::SolidExtinctionCoefficientWavenumberRelation k){
-    //                 return SolidAbsorptionCoefficientWavenumberRelation(
-    //                     [n,k](si::wavenumber<double> w){return correlation::get_absorption_coefficient_from_refractive_index(n(w), k(w), 1.0/w);});
-    //             },
-    //             published::refractive_index_as_solid,
-    //             published::extinction_coefficient_as_solid
-    //         )
-    //     });
+    table::PartialTable<SolidAbsorptionCoefficientWavenumberRelation> absorption_coefficient_as_solid = 
+        table::first<SolidAbsorptionCoefficientWavenumberRelation>({
+            published::absorption_coefficient_as_solid,
+            table::gather<SolidAbsorptionCoefficientWavenumberRelation>(
+                []( published::SolidRefractiveIndexWavenumberRelation n,
+                    published::SolidExtinctionCoefficientWavenumberRelation k){
+                    return SolidAbsorptionCoefficientWavenumberRelation(
+                        [=](si::wavenumber<double> w){return correlation::get_absorption_coefficient_from_refractive_index(n(w), k(w), 1.0/w);});
+                },
+                published::refractive_index_as_solid,
+                published::extinction_coefficient_as_solid
+            )
+        });
+
+    table::PartialTable<SolidRefractiveIndexWavenumberRelation> refractive_index_as_solid = 
+        table::first<SolidRefractiveIndexWavenumberRelation>({
+            published::refractive_index_as_solid,
+            table::gather<SolidRefractiveIndexWavenumberRelation>(
+                []( published::SolidExtinctionCoefficientWavenumberRelation k,
+                    published::SolidAbsorptionCoefficientWavenumberRelation alpha){
+                    return SolidRefractiveIndexWavenumberRelation(
+                        [=](si::wavenumber<double> w){return correlation::get_refractive_index_from_absorption_coefficient(alpha(w), k(w), 1.0/w);});
+                },
+                published::extinction_coefficient_as_solid,
+                absorption_coefficient_as_solid
+            )
+        });
+
+    table::PartialTable<SolidRefractiveIndexWavenumberRelation> extinction_coefficient_as_solid = 
+        table::first<SolidRefractiveIndexWavenumberRelation>({
+            published::refractive_index_as_solid,
+            table::gather<SolidRefractiveIndexWavenumberRelation>(
+                []( published::SolidExtinctionCoefficientWavenumberRelation n,
+                    published::SolidAbsorptionCoefficientWavenumberRelation alpha){
+                    return SolidRefractiveIndexWavenumberRelation(
+                        [=](si::wavenumber<double> w){return correlation::get_extinction_coefficient_from_absorption_coefficient(alpha(w), n(w), 1.0/w);});
+                },
+                published::refractive_index_as_solid,
+                absorption_coefficient_as_solid
+            )
+        });
 
     table::FullTable<double> molecular_degrees_of_freedom = 
         table::complete(
@@ -376,32 +404,6 @@ namespace phase{
         // copy what you do know
         PartlyKnownSolid guess = known;
 
-
-        // guess.refractive_index = known.refractive_index.value_or(
-        //         std::function<double(field::SpectralParameters, si::attenuation<double>, double)>(
-        //             [](const field::SpectralParameters spectral_parameters, const si::attenuation<double> alpha, const double k)
-        //             {
-        //                 // TODO: remove assumption that representative wavelength is the middle value
-        //                 return compound::correlation::get_refractive_index_from_absorption_coefficient(alpha, k, 2.0/(spectral_parameters.nlo+spectral_parameters.nhi));
-        //             }
-        //         ),
-        //         known.absorption_coefficient,
-        //         known.refractive_index
-        //     );
-
-        // guess.extinction_coefficient = known.extinction_coefficient.value_or(
-        //         std::function<double(field::SpectralParameters, si::attenuation<double>, double)>(
-        //             [](const field::SpectralParameters spectral_parameters, const si::attenuation<double> alpha, const double n)
-        //             {
-        //                 // TODO: remove assumption that representative wavelength is the middle value
-        //                 return compound::correlation::get_extinction_coefficient_from_absorption_coefficient(alpha, n, 2.0/(spectral_parameters.nlo+spectral_parameters.nhi));
-        //             }
-        //         ),
-        //         known.absorption_coefficient,
-        //         known.extinction_coefficient
-        //     );
-
-        
         // We can correlate tensile and shear yield strengths using the Von Misces Theorem.
 
         // If none of the yield strengths are known, the most common explanation 
