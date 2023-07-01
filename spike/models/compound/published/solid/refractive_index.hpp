@@ -103,8 +103,7 @@ namespace published {
                                 + 0.96464345 * l*l / (l*l - 1.94325203)
                                 + 1.82831454 * l*l / (l*l - 120.0)
                             );
-                }, 
-                1.0/(0.204*si::micrometer), 1.0/(2.150*si::micrometer)),
+                }),
             },
         { ids::orthoclase,              1.527,
             },

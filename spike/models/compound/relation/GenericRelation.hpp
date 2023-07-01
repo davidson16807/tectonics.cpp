@@ -9,6 +9,7 @@
 #include <math/analytic/rails/PolynomialRailyard_library.hpp>
 #include <math/analytic/Exponentiated.hpp>
 #include <units/si.hpp>
+#include <models/compound/relation/PolynomialRailyardRelation.hpp>
 #include <models/compound/relation/ExponentiatedPolynomialRailyardRelation.hpp>
 #include <models/compound/correlation/published.hpp>
 
@@ -27,24 +28,18 @@ namespace relation {
     struct GenericRelation
     {
         std::function<Ty(Tx)> f;
-        Tx xmin;
-        Tx xmax;
         
         using value_type = Ty;
 
         // zero constructor
         constexpr GenericRelation():
-            f([](Tx x){ return Ty(0); }),
-            xmin(-std::numeric_limits<double>::max()),
-            xmax(std::numeric_limits<double>::max())
+            f([](Tx x){ return Ty(0); })
         {
         }
 
         // constant constructor
         constexpr GenericRelation(const Ty& constant):
-            f([constant](Tx x){ return constant; }),
-            xmin(-std::numeric_limits<double>::max()),
-            xmax(std::numeric_limits<double>::max())
+            f([constant](Tx x){ return constant; })
         {
         }
 
@@ -52,40 +47,28 @@ namespace relation {
         constexpr GenericRelation(
             const GenericRelation<Tx,Ty>& other
         ):
-            f(other.f),
-            xmin(other.xmin),
-            xmax(other.xmax)
+            f(other.f)
         {
         }
 
         constexpr GenericRelation(
-            const std::function<Ty(Tx)> f, 
-            const Tx xmin, 
-            const Tx xmax
+            const std::function<Ty(Tx)> f
         ):
-            f(f),
-            xmin(xmin),
-            xmax(xmax)
+            f(f)
         {
         }
 
         template<typename F>
         constexpr GenericRelation(
-            const F& other, 
-            const Tx xmin, 
-            const Tx xmax
+            const F& other
         ):
-            f([other](Tx x){return other(x);}),
-            xmin(xmin),
-            xmax(xmax)
+            f([other](Tx x){return other(x);})
         {
         }
 
         constexpr GenericRelation<Tx,Ty>& operator=(const GenericRelation<Tx,Ty>& other)
         {
             f = other.f;
-            xmin = other.xmin;
-            xmax = other.xmax;
             return *this;
         }
 
@@ -93,16 +76,12 @@ namespace relation {
         constexpr GenericRelation<Tx,Ty>& operator=(const F& other)
         {
             f = [other](Tx x){ return other(x); };
-            xmin = other.xmin;
-            xmax = other.xmax;
             return *this;
         }
 
         constexpr GenericRelation<Tx,Ty>& operator=(const Ty& other)
         {
             f = [other](Tx x){return Ty(other); };
-            xmin = -std::numeric_limits<double>::max();
-            xmax = std::numeric_limits<double>::max();
             return *this;
         }
 
@@ -147,8 +126,6 @@ namespace relation {
         GenericRelation<Tx,Ty>& operator+=(const F relation)
         {
             f = [=](Tx x){return f(x)+relation(x);};
-            xmin = si::max(xmin, relation.xmin);
-            xmax = si::min(xmax, relation.xmax);
             return *this;
         }
 
@@ -156,8 +133,6 @@ namespace relation {
         GenericRelation<Tx,Ty>& operator-=(const F relation)
         {
             f = [=](Tx x){return f(x)-relation(x);};
-            xmin = si::max(xmin, relation.xmin);
-            xmax = si::min(xmax, relation.xmax);
             return *this;
         }
 
@@ -229,8 +204,7 @@ namespace relation {
             {
                 double t = std::clamp(x/Tunits, xmin, xmax);
                 return std::exp(log_intercept + log_slope/t + log_log*std::log(t) + log_exponentiated*std::pow(t,exponent))*yunits;
-            }, xmin*Tunits, xmax*Tunits
-        );
+            });
     }
 
     // 1 use, for viscosity of liquids
@@ -244,8 +218,7 @@ namespace relation {
         std::vector<double> logys {std::log(y0), std::log(y1)};
         return GenericRelation<si::temperature<double>, si::dynamic_viscosity<double>>(
             relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>,Ty,0,1>(
-                analytic::spline::linear_spline<float>(xs, logys), Tunits, yunits),
-            x0*Tunits, x1*Tunits);
+                analytic::spline::linear_spline<float>(xs, logys), Tunits, yunits));
     }
 
     // Letsou-Stiel method: https://chemicals.readthedocs.io/chemicals.viscosity.html?highlight=letsou%20stiel#chemicals.viscosity.Letsou_Stiel
@@ -264,9 +237,7 @@ namespace relation {
                     critical_temperature, 
                     critical_pressure
                 );
-            }, 
-            0.76*critical_temperature, 
-            0.98*critical_temperature
+            }
         );
     }
 
@@ -288,7 +259,7 @@ namespace relation {
                 double tau4 = tau3*tau;
                 double tau5 = tau4*tau;
                 return (c1*c1/tau + c2 - 2.0*c1*c3*tau - c1*c4*tau2 - c3*c3*tau3/3.0 - c3*c4*tau4/2.0 - c4*c4*tau5/5.0)*yunits;
-            }, xmin, xmax
+            }
         );
     }
 
@@ -305,7 +276,7 @@ namespace relation {
             {
                 double t = std::clamp(x/Tunits, xmin, xmax);
                 return std::exp(log_intercept + log_slope/t + log_log*std::log(t) + log_exponentiated*std::pow(t,exponent))*yunits;
-            }, xmin*Tunits, xmax*Tunits
+            }
         );
     }
 
@@ -324,8 +295,7 @@ namespace relation {
         }
         return GenericRelation<si::temperature<double>, si::pressure<double>>(
                 relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>,si::pressure<double>,0,1>(
-                    analytic::spline::linear_spline<float>(xs, logys), Tunits, yunits), 
-            xmin, xmax);
+                    analytic::spline::linear_spline<float>(xs, logys), Tunits, yunits));
     }
 
     // 175 uses
@@ -345,8 +315,7 @@ namespace relation {
             logys.push_back(std::log(ys[i]));
         }
         return GenericRelation<si::temperature<double>, si::pressure<double>>(relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>,Ty,0,1>(
-                    analytic::spline::linear_spline<float>(kelvins, logys), si::kelvin, yunits), 
-            xmin, xmax);
+                    analytic::spline::linear_spline<float>(kelvins, logys), si::kelvin, yunits));
     }
 
     // Lee Kesler method: https://en.wikipedia.org/wiki/Lee%E2%80%93Kesler_method
@@ -363,9 +332,7 @@ namespace relation {
                     critical_temperature, 
                     critical_pressure
                 );
-            },
-            0.0*si::kelvin, critical_temperature
-        );
+            });
     }
 
     // 3 uses, for liquid surface tension
@@ -378,8 +345,7 @@ namespace relation {
         const double xmax
     ){
         return GenericRelation<si::temperature<double>, si::surface_energy<double>>(
-                PolynomialRailyardRelation<si::temperature<double>,Ty,0,1>(analytic::spline::linear_spline<double>(xs, ys), Tunits, yunits),
-                xmin*Tunits, xmax*Tunits);
+                PolynomialRailyardRelation<si::temperature<double>,Ty,0,1>(analytic::spline::linear_spline<double>(xs, ys), Tunits, yunits));
     }
 
     // 3 uses, for liquid surface tension
@@ -393,8 +359,7 @@ namespace relation {
     ){
         const auto f = analytic::spline::linear_spline<double>(xs, ys);
         return GenericRelation<si::temperature<double>, si::surface_energy<double>>(
-                [=](const si::temperature<double> x) {return f(x/Tunits)*yunits;},
-                xmin*Tunits, xmax*Tunits);
+                [=](const si::temperature<double> x) {return f(x/Tunits)*yunits;});
     }
 
     // 15 uses, for liquid surface tension
@@ -409,8 +374,7 @@ namespace relation {
             {
                 double Tr = std::clamp(x/Tunits, xmin, xmax)/Tc;
                 return ( sigma0*std::pow(1.0 - Tr, n0) + sigma1*std::pow(1.0 - Tr, n1) + sigma2*std::pow(1.0 - Tr, n2) )*yunits;
-            }, xmin*Tunits, xmax*Tunits
-        );
+            });
     }
     // from Mulero (2012)
 
@@ -427,8 +391,7 @@ namespace relation {
             {
                 double t = x/Tunits;
                 return ( gammaTL + dgamma_dT * (t-TL) )*yunits;
-            }, xmin*Tunits, xmax*Tunits
-        );
+            });
     }
 
     GenericRelation<si::wavenumber<double>,si::attenuation<double>> get_generic_spectral_function_from_reflectance_at_wavelengths(
@@ -459,9 +422,7 @@ namespace relation {
             [=](si::wavenumber<double> n){
                 auto R = reflectance_relation((1.0/n)/lunits);
                 return std::max((R+1.0)*(R+1.0) / (4.0*R) - 1.0, 0.0) / (2.0*particle_diameter);
-            },
-            (1.0/wavelengths.back())/lunits, (1.0/wavelengths.front())/lunits
-        );
+            });
     }
 
     GenericRelation<si::wavenumber<double>,si::attenuation<double>> get_generic_spectral_cubic_interpolation_of_wavenumber_for_log10_sample_output(
@@ -479,9 +440,7 @@ namespace relation {
         std::reverse(ys.begin(), ys.end());
         return GenericRelation<si::wavenumber<double>, si::attenuation<double>>(
             PolynomialRailyardRelation<si::wavenumber<double>,si::attenuation<double>,0,3> (
-                analytic::spline::linear_spline<double>(ns2, ys), nunits, yunits),
-            ns2.front(), ns2.back()
-        );
+                analytic::spline::linear_spline<double>(ns2, ys), nunits, yunits));
     }
 
     template<typename Ty>
@@ -495,8 +454,7 @@ namespace relation {
         return GenericRelation<si::wavenumber<double>,Ty>(
             [=](si::wavenumber<double> n){ 
                 return relation((1.0/n)/lunits)*yunits;
-            },
-            1.0/ls.back(), 1.0/ls.front());
+            });
     }
 
     template<typename Ty>
@@ -510,8 +468,7 @@ namespace relation {
         return GenericRelation<si::wavenumber<double>,Ty>(
             [=](si::wavenumber<double> n){ 
                 return relation(n/nunits)*yunits;
-            },
-            ns.front(), ns.back());
+            });
     }
 
 
