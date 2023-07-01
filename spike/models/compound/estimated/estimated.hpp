@@ -360,6 +360,14 @@ namespace estimated{
 
     using SolidShearYieldStrengthTemperatureRelation = published::SolidShearYieldStrengthTemperatureRelation;
     using SolidTensileYieldStrengthTemperatureRelation = published::SolidTensileYieldStrengthTemperatureRelation;
+    using SolidCompressiveYieldStrengthTemperatureRelation = published::SolidCompressiveYieldStrengthTemperatureRelation;
+
+    // We can correlate tensile and shear yield strengths using the Von Misces Theorem.
+    // If none of the yield strengths are known, the most common explanation 
+    // is that the material is too brittle for yield strength to be measured.
+    // So in this case we assume yield strength equal to the fracture strength equivalent
+
+    // We reuse abbreviations for modulii to represent yield strengths
 
     table::PartialTable<SolidShearYieldStrengthTemperatureRelation> shear_yield_strength_as_solid = 
         table::first<SolidShearYieldStrengthTemperatureRelation>({
@@ -369,7 +377,8 @@ namespace estimated{
                     return E / sqrt(3.0);
                 },
                 published::tensile_yield_strength_as_solid
-            )
+            ),
+            published::shear_fracture_strength_as_solid
         });
 
     table::PartialTable<SolidTensileYieldStrengthTemperatureRelation> tensile_yield_strength_as_solid = 
@@ -380,8 +389,17 @@ namespace estimated{
                     return G * sqrt(3.0);
                 },
                 published::shear_yield_strength_as_solid
-            )
+            ),
+            published::tensile_fracture_strength_as_solid
         });
+
+    table::PartialTable<SolidCompressiveYieldStrengthTemperatureRelation> compressive_yield_strength_as_solid = 
+        table::first<SolidCompressiveYieldStrengthTemperatureRelation>({
+            published::compressive_yield_strength_as_solid, 
+            published::compressive_fracture_strength_as_solid
+        });
+
+
 
     table::FullTable<double> molecular_degrees_of_freedom = 
         table::complete(
@@ -403,56 +421,11 @@ namespace estimated{
 
 
 /*
-#pragma once
-
-// C libraries
-#include "math.h"
-
-// in-house libraries
-
-#include <models/compound/correlation/elasticity.hpp>
-#include <models/compound/correlation/strength.hpp>
-#include <models/compound/correlation/reflectance.hpp>
-
-#include <models/compound/field/spectral/SpectralFunction.hpp>
-
-namespace compound{
-namespace phase{
-    
-    
-    
-    // Return a `PartlyKnownSolid` that has the properties of `known` where present, 
-    // in addition to properties that can derived from the properties of `known`. The function is idempotent.
-    // The function can be thought of as the traversal of the category defined within the `property` namespace.
-    
-    PartlyKnownSolid infer(const PartlyKnownSolid& known){
-        // copy what you do know
-        PartlyKnownSolid guess = known;
-
-        // We can correlate tensile and shear yield strengths using the Von Misces Theorem.
-
-        // If none of the yield strengths are known, the most common explanation 
-        // is that the material is too brittle for yield strength to be measured.
-        // So in this case we assume yield strength equal to the ultimate strength equivalent
-
-        // We reuse abbreviations for modulii to represent yield strengths:
-        
-
         typedef std::function<si::pressure<double>(field::StateParameters, si::pressure<double>)> Pp;
         typedef std::function<si::pressure<double>(field::StateParameters, si::pressure<double>,si::pressure<double>)> Ppp;
         typedef std::function<si::pressure<double>(field::StateParameters, si::pressure<double>,double)> Ppd;
         typedef std::function<si::pressure<double>(field::StateParameters, double,si::pressure<double>)> Pdp;
         typedef std::function<double(field::StateParameters, si::pressure<double>,si::pressure<double>)> Dpp;
-
-        if (!known.tensile_yield_strength.has_value() && 
-            !known.shear_yield_strength.has_value() && 
-            !known.compressive_yield_strength.has_value())
-        {
-            guess.tensile_yield_strength = guess.tensile_yield_strength.value_or(guess.tensile_fracture_strength);
-            guess.compressive_yield_strength = guess.compressive_yield_strength.value_or(guess.compressive_fracture_strength);
-            guess.shear_yield_strength = guess.shear_yield_strength.value_or(guess.shear_fracture_strength);
-        }
-
         
         // Standardize on bulk and tensile modulus since they seem to be reported most often,
         // then use those two to calculate the remaining modulii.
