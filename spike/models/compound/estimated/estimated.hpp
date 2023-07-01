@@ -358,6 +358,31 @@ namespace estimated{
             )
         });
 
+    using SolidShearYieldStrengthTemperatureRelation = published::SolidShearYieldStrengthTemperatureRelation;
+    using SolidTensileYieldStrengthTemperatureRelation = published::SolidTensileYieldStrengthTemperatureRelation;
+
+    table::PartialTable<SolidShearYieldStrengthTemperatureRelation> shear_yield_strength_as_solid = 
+        table::first<SolidShearYieldStrengthTemperatureRelation>({
+            published::shear_yield_strength_as_solid,
+            table::gather<SolidShearYieldStrengthTemperatureRelation>(
+                []( published::SolidTensileYieldStrengthTemperatureRelation E){
+                    return E / sqrt(3.0);
+                },
+                published::tensile_yield_strength_as_solid
+            )
+        });
+
+    table::PartialTable<SolidTensileYieldStrengthTemperatureRelation> tensile_yield_strength_as_solid = 
+        table::first<SolidTensileYieldStrengthTemperatureRelation>({
+            published::shear_yield_strength_as_solid,
+            table::gather<SolidTensileYieldStrengthTemperatureRelation>(
+                []( published::SolidShearYieldStrengthTemperatureRelation G){
+                    return G * sqrt(3.0);
+                },
+                published::shear_yield_strength_as_solid
+            )
+        });
+
     table::FullTable<double> molecular_degrees_of_freedom = 
         table::complete(
             table::first<double>({
@@ -418,15 +443,6 @@ namespace phase{
         typedef std::function<si::pressure<double>(field::StateParameters, si::pressure<double>,double)> Ppd;
         typedef std::function<si::pressure<double>(field::StateParameters, double,si::pressure<double>)> Pdp;
         typedef std::function<double(field::StateParameters, si::pressure<double>,si::pressure<double>)> Dpp;
-
-        guess.shear_yield_strength = known.shear_yield_strength
-            .value_or(Pp([](field::StateParameters, si::pressure<double> E){ return correlation::get_shear_yield_strength_from_tensile_yield_strength(E); }), 
-                known.tensile_yield_strength
-            );
-        guess.tensile_yield_strength = known.tensile_yield_strength
-            .value_or(Pp([](field::StateParameters, si::pressure<double> G){ return correlation::get_tensile_yield_strength_from_shear_yield_strength(G); }), 
-                known.shear_yield_strength
-            );
 
         if (!known.tensile_yield_strength.has_value() && 
             !known.shear_yield_strength.has_value() && 
