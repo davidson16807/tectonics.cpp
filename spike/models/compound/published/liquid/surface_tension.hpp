@@ -3,13 +3,13 @@
 // in-house libraries
 #include <units/si.hpp>
 #include <models/compound/ids.hpp>
-#include <models/compound/relation/AnonymousRelation.hpp>
+#include <models/compound/relation/GenericRelation.hpp>
 #include <models/compound/table/PartialTable.hpp>
 
 namespace compound { 
 namespace published { 
 
-    using LiquidSurfaceTensionTemperatureRelation = relation::AnonymousRelation<si::temperature<double>,si::surface_energy<double>>;
+    using LiquidSurfaceTensionTemperatureRelation = relation::GenericRelation<si::temperature<double>,si::surface_energy<double>>;
     table::PartialTable<LiquidSurfaceTensionTemperatureRelation> surface_tension_as_liquid {
         { ids::water,            
                 relation::get_refprop_liquid_surface_tension_temperature_relation

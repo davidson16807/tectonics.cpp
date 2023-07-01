@@ -3,13 +3,13 @@
 // in-house libraries
 #include <units/si.hpp>
 #include <models/compound/ids.hpp>
-#include <models/compound/relation/AnonymousRelation.hpp>
+#include <models/compound/relation/GenericRelation.hpp>
 #include <models/compound/table/PartialTable.hpp>
 
 namespace compound { 
 namespace published { 
 
-    using LiquidDynamicViscosityTemperatureRelation = relation::AnonymousRelation<si::temperature<double>,si::dynamic_viscosity<double>>;
+    using LiquidDynamicViscosityTemperatureRelation = relation::GenericRelation<si::temperature<double>,si::dynamic_viscosity<double>>;
     table::PartialTable<LiquidDynamicViscosityTemperatureRelation> dynamic_viscosity_as_liquid {
         { ids::water,      
                 relation::get_dippr_liquid_dynamic_viscosity_temperature_relation_101

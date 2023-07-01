@@ -3,13 +3,13 @@
 // in-house libraries
 #include <units/si.hpp>
 #include <models/compound/ids.hpp>
-#include <models/compound/relation/AnonymousRelation.hpp>
+#include <models/compound/relation/GenericRelation.hpp>
 #include <models/compound/table/PartialTable.hpp>
 
 namespace compound { 
 namespace published { 
 
-    using LiquidVaporPressureTemperatureRelation = relation::AnonymousRelation<si::temperature<double>,si::pressure<double>>;
+    using LiquidVaporPressureTemperatureRelation = relation::GenericRelation<si::temperature<double>,si::pressure<double>>;
     table::PartialTable<LiquidVaporPressureTemperatureRelation> vapor_pressure_as_liquid {
         { ids::water,         
                 // relation::get_antoine_vapor_pressure_function(
