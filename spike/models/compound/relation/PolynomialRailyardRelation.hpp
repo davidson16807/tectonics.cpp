@@ -30,6 +30,25 @@ namespace relation {
         {
         }
 
+        // constant constructor
+        constexpr PolynomialRailyardRelation(const Ty& other):
+            yard(other/Ty(1.0)),
+            xunits(1.0),
+            yunits(1.0)
+        {
+        }
+
+        // copy constructor
+        template<int Qlo, int Qhi>
+        constexpr PolynomialRailyardRelation(
+            const PolynomialRailyardRelation<Tx, Ty, Qlo, Qhi>& other
+        ):
+            yard(other.yard),
+            xunits(other.xunits),
+            yunits(other.yunits)
+        {
+        }
+
         template<typename T>
         constexpr PolynomialRailyardRelation(
             const analytic::PolynomialRailyard<T, Plo, Phi> yard,
@@ -51,24 +70,6 @@ namespace relation {
             yard(yard),
             xunits(xunits),
             yunits(yunits)
-        {
-        }
-
-        // copy constructor
-        template<int Qlo, int Qhi>
-        constexpr PolynomialRailyardRelation(
-            const PolynomialRailyardRelation<Tx, Ty, Qlo, Qhi>& other
-        ):
-            yard(other.yard),
-            xunits(other.xunits),
-            yunits(other.yunits)
-        {
-        }
-
-        constexpr PolynomialRailyardRelation(const Ty& other):
-            yard(other/Ty(1.0)),
-            xunits(1.0),
-            yunits(1.0)
         {
         }
 
@@ -379,7 +380,6 @@ namespace relation {
                 }), Tunits, y_units_johnson);
     }
     
-    // TODO: rename `spectral_linear_yard`
     template<typename Ty>
     PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavelength(
         const si::length<double> lunits, const Ty yunits,

@@ -35,7 +35,15 @@ namespace relation {
         // zero constructor
         constexpr AnonymousRelation():
             f([](Tx x){ return Ty(0); }),
-            xmin(0*si::kelvin),
+            xmin(-std::numeric_limits<double>::max()),
+            xmax(std::numeric_limits<double>::max())
+        {
+        }
+
+        // constant constructor
+        constexpr AnonymousRelation(const Ty& constant):
+            f([constant](Tx x){ return constant; }),
+            xmin(-std::numeric_limits<double>::max()),
             xmax(std::numeric_limits<double>::max())
         {
         }
@@ -58,13 +66,6 @@ namespace relation {
             f(f),
             xmin(xmin),
             xmax(xmax)
-        {
-        }
-
-        constexpr AnonymousRelation(const Ty& other):
-            f([other](Tx x){return other;}),
-            xmin(0),
-            xmax(std::numeric_limits<double>::max())
         {
         }
 
@@ -100,7 +101,7 @@ namespace relation {
         constexpr AnonymousRelation<Tx,Ty>& operator=(const Ty& other)
         {
             f = [other](Tx x){return Ty(other); };
-            xmin = 0*si::kelvin;
+            xmin = -std::numeric_limits<double>::max();
             xmax = std::numeric_limits<double>::max();
             return *this;
         }
@@ -278,8 +279,7 @@ namespace relation {
         const Tx xmin, Tx xmax
     ){
         return AnonymousRelation<si::temperature<double>, si::specific_heat_capacity<double>>(
-            [Tc, yunits, xmin, xmax, c1, c2, c3, c4, c5]
-            (const si::temperature<double> x)
+            [=](const si::temperature<double> x)
             {
                 double Tr = std::clamp(x, xmin, xmax)/Tc;
                 double tau = 1.0-Tr;
@@ -404,7 +404,7 @@ namespace relation {
         const double xmin, const double xmax
     ){
         return AnonymousRelation<si::temperature<double>, si::surface_energy<double>>(
-            [Tunits, yunits, Tc, sigma0, n0, sigma1, n1, sigma2, n2, xmin, xmax]
+            [=]
             (const si::temperature<double> x)
             {
                 double Tr = std::clamp(x/Tunits, xmin, xmax)/Tc;
@@ -422,7 +422,7 @@ namespace relation {
         const double xmin, const double xmax
     ){
         return AnonymousRelation<si::temperature<double>, si::surface_energy<double>>(
-            [Tunits, yunits, TL, gammaTL, dgamma_dT]
+            [=]
             (const si::temperature<double> x)
             {
                 double t = x/Tunits;
@@ -431,27 +431,7 @@ namespace relation {
         );
     }
 
-    AnonymousRelation<si::wavenumber<double>,si::attenuation<double>> get_absorption_coefficient_cubic_interpolation_of_wavenumber_for_log10_sample_output(
-        const si::wavenumber<double> nunits, const si::attenuation<double> yunits,
-        const std::vector<double>      ns, 
-        const std::vector<double> log10ys
-    ){
-        assert(ns.size() == log10ys.size());
-        std::vector<double> ns2(ns);
-        std::vector<double> ys;
-        for (std::size_t i=0; i<log10ys.size(); i++){
-            ys.push_back(pow(10.0, log10ys[i]));
-        }
-        std::reverse(ns2.begin(), ns2.end());
-        std::reverse(ys.begin(), ys.end());
-        return AnonymousRelation<si::wavenumber<double>, si::attenuation<double>>(
-            PolynomialRailyardRelation<si::wavenumber<double>,si::attenuation<double>,0,3> (
-                analytic::spline::linear_spline<double>(ns2, ys), nunits, yunits),
-            ns2.front(), ns2.back()
-        );
-    }
-
-    AnonymousRelation<si::wavenumber<double>,si::attenuation<double>> get_absorption_coefficient_function_from_reflectance_at_wavelengths(
+    AnonymousRelation<si::wavenumber<double>,si::attenuation<double>> get_anonymous_spectral_function_from_reflectance_at_wavelengths(
         const si::length<double> lunits,
         const si::length<double> particle_diameter, 
         const std::vector<double>wavelengths, 
@@ -476,7 +456,7 @@ namespace relation {
         */
         auto reflectance_relation = analytic::spline::linear_spline<float>(wavelengths, reflectances);
         return AnonymousRelation<si::wavenumber<double>, si::attenuation<double>>(
-            [reflectance_relation, lunits, particle_diameter](si::wavenumber<double> n){
+            [=](si::wavenumber<double> n){
                 auto R = reflectance_relation((1.0/n)/lunits);
                 return std::max((R+1.0)*(R+1.0) / (4.0*R) - 1.0, 0.0) / (2.0*particle_diameter);
             },
@@ -484,7 +464,55 @@ namespace relation {
         );
     }
 
+    AnonymousRelation<si::wavenumber<double>,si::attenuation<double>> get_anonymous_spectral_cubic_interpolation_of_wavenumber_for_log10_sample_output(
+        const si::wavenumber<double> nunits, const si::attenuation<double> yunits,
+        const std::vector<double>      ns, 
+        const std::vector<double> log10ys
+    ){
+        assert(ns.size() == log10ys.size());
+        std::vector<double> ns2(ns);
+        std::vector<double> ys;
+        for (std::size_t i=0; i<log10ys.size(); i++){
+            ys.push_back(pow(10.0, log10ys[i]));
+        }
+        std::reverse(ns2.begin(), ns2.end());
+        std::reverse(ys.begin(), ys.end());
+        return AnonymousRelation<si::wavenumber<double>, si::attenuation<double>>(
+            PolynomialRailyardRelation<si::wavenumber<double>,si::attenuation<double>,0,3> (
+                analytic::spline::linear_spline<double>(ns2, ys), nunits, yunits),
+            ns2.front(), ns2.back()
+        );
+    }
 
+    template<typename Ty>
+    AnonymousRelation<si::wavenumber<double>,Ty> get_anonymous_spectral_linear_interpolation_function_of_wavelength(
+        const si::length<double> lunits, const Ty yunits,
+        const std::vector<double> ls, 
+        const std::vector<double> ys
+    ){
+        assert(ls.size() == ys.size());
+        auto relation = analytic::spline::linear_spline<double>(ls, ys);
+        return AnonymousRelation<si::wavenumber<double>,Ty>(
+            [=](si::wavenumber<double> n){ 
+                return relation((1.0/n)/lunits)*yunits;
+            },
+            1.0/ls.back(), 1.0/ls.front());
+    }
+
+    template<typename Ty>
+    AnonymousRelation<si::wavenumber<double>,Ty> get_anonymous_spectral_linear_interpolation_function_of_wavenumber(
+        const si::wavenumber<double> nunits, const Ty yunits,
+        const std::vector<double> ns, 
+        const std::vector<double> ys
+    ){
+        assert(ns.size() == ys.size());
+        auto relation = analytic::spline::linear_spline<double>(ns, ys);
+        return AnonymousRelation<si::wavenumber<double>,Ty>(
+            [=](si::wavenumber<double> n){ 
+                return relation(n/nunits)*yunits;
+            },
+            ns.front(), ns.back());
+    }
 
 
 
