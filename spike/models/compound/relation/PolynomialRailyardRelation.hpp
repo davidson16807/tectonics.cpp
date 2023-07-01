@@ -496,58 +496,5 @@ namespace relation {
 
 
 
-
-    // PolynomialRailyardRelation<si::wavenumber<double>,si::attenuation<double>,0,3> get_absorption_coefficient_function_from_reflectance_at_wavelengths(
-    //     const si::length<double> lunits,
-    //     const si::length<double> particle_diameter, 
-    //     const std::vector<double>wavelengths, 
-    //     const std::vector<double>reflectances
-    // ){
-    //     std::vector<double> wavenumbers;
-    //     std::vector<double> wavenumber_reflectances = reflectances;
-    //     for (std::size_t i=0; i<reflectances.size(); i++){
-    //         wavenumbers.push_back(1.0/wavelengths[i]);
-    //     }
-    //     std::reverse(wavenumbers.begin(), wavenumbers.end());
-    //     std::reverse(wavenumber_reflectances.begin(), wavenumber_reflectances.end());
-
-    //     /*
-    //     NOTE: we assume extinction efficiency is close to 1, in which case the 
-    //       single scattering albedo equals scattering efficiency
-    //     In this case:
-    //       absorption_coefficient = approx_single_scatter_albedo_from_reflectance ∘ approx_single_scatter_albedo_from_reflectance
-    //     This is equivalent to:
-    //       absorption_coefficient = max((reflectance + 1.0)*(reflectance + 1.0) / (4.0 * reflectance) - 1.0, 0.0) / De;
-    //     where:
-    //       De = 2*particle_diameter;
-    //     We leverage the fact that 0 ≤ reflectance ≤ 1 to create a segmented 
-    //       linear approximation of 1/reflectance that is suited for that range.
-    //       It has an maximum error of 12% over the targeted range.
-    //     We use a linear approximation since the result will be composed 
-    //       with another segmented linear approximation for reflectance,
-    //       and we don't want the degree of the resulting polynomial 
-    //       to be so high that it produces nans upon evaluation.
-    //     */
-
-    //     const float oo = std::numeric_limits<float>::max();
-
-    //     const analytic::PolynomialRailyard<float,0,1> inverse{
-    //         analytic::PolynomialRailcar<float,0,1>(0.0357, 0.0778, analytic::linear_newton_polynomial<float>(0.0357, 0.0778,  28.041, 11.458)),
-    //         analytic::PolynomialRailcar<float,0,1>(0.0778, 0.1938, analytic::linear_newton_polynomial<float>(0.0778, 0.1938,  11.458,  4.937)),
-    //         analytic::PolynomialRailcar<float,0,1>(0.1938, 0.4649, analytic::linear_newton_polynomial<float>(0.1938, 0.4649,   4.937,  1.881)),
-    //         analytic::PolynomialRailcar<float,0,1>(0.4649, 1.0000, analytic::linear_newton_polynomial<float>(0.4649, 1.0000,   1.881,  1.000)),
-    //         analytic::PolynomialRailcar<float,0,1>(1.0000,     oo, analytic::linear_newton_polynomial<float>(1.0000, 2.0000,   1.000,  1.000))
-    //     };
-
-    //     return PolynomialRailyardRelation<si::wavenumber<double>,si::attenuation<double>,0,3>(
-    //         analytic::compose(
-    //             (0.25f * analytic::Shifting(1.0f) * analytic::Shifting(1.0f) * inverse - 1.0f)/(2.0f*float(particle_diameter/si::length<double>(1.0))),
-    //             analytic::spline::linear_spline<float>(wavenumbers, wavenumber_reflectances)
-    //         ),
-    //         si::wavenumber<double>(1.0),
-    //         si::attenuation<double>(1.0)
-    //     );
-    // }
-
 }}
 

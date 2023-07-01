@@ -7,6 +7,7 @@
 #include <models/compound/published/published.hpp>
 #include <models/compound/correlation/published.hpp>
 #include <models/compound/correlation/speculative.hpp>
+#include <models/compound/correlation/reflectance.hpp>
 #include <models/compound/relation/gas/GasDensityStateRelation.hpp>
 #include <models/compound/table/FullTable.hpp>
 #include <models/compound/table/PartialTable.hpp>
@@ -312,6 +313,23 @@ namespace estimated{
             )
         });
 
+    using SolidRefractiveIndexWavenumberRelation = published::SolidRefractiveIndexWavenumberRelation;
+    using SolidExtinctionCoefficientWavenumberRelation = published::SolidExtinctionCoefficientWavenumberRelation;
+    using SolidAbsorptionCoefficientWavenumberRelation = published::SolidAbsorptionCoefficientWavenumberRelation;
+    // table::PartialTable<SolidAbsorptionCoefficientWavenumberRelation> absorption_coefficient_as_solid = 
+    //     table::first<SolidAbsorptionCoefficientWavenumberRelation>({
+    //         published::absorption_coefficient_as_solid,
+    //         table::gather<SolidAbsorptionCoefficientWavenumberRelation>(
+    //             []( published::SolidRefractiveIndexWavenumberRelation n,
+    //                 published::SolidExtinctionCoefficientWavenumberRelation k){
+    //                 return SolidAbsorptionCoefficientWavenumberRelation(
+    //                     [n,k](si::wavenumber<double> w){return correlation::get_absorption_coefficient_from_refractive_index(n(w), k(w), 1.0/w);});
+    //             },
+    //             published::refractive_index_as_solid,
+    //             published::extinction_coefficient_as_solid
+    //         )
+    //     });
+
     table::FullTable<double> molecular_degrees_of_freedom = 
         table::complete(
             table::first<double>({
@@ -328,7 +346,6 @@ namespace estimated{
 
 
 }}
-
 
 
 
@@ -359,17 +376,6 @@ namespace phase{
         // copy what you do know
         PartlyKnownSolid guess = known;
 
-        // guess.absorption_coefficient = known.absorption_coefficient.value_or(
-        //         std::function<si::attenuation<double>(field::SpectralParameters, double, double)>(
-        //             [](const field::SpectralParameters spectral_parameters, const double n, const double k)
-        //             {
-        //                 // TODO: remove assumption that representative wavelength is the middle value
-        //                 return compound::correlation::get_absorption_coefficient_from_refractive_index(n, k, 2.0/(spectral_parameters.nlo+spectral_parameters.nhi));
-        //             }
-        //         ),
-        //         known.refractive_index,
-        //         known.extinction_coefficient
-        //     );
 
         // guess.refractive_index = known.refractive_index.value_or(
         //         std::function<double(field::SpectralParameters, si::attenuation<double>, double)>(

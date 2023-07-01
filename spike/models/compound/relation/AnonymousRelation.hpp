@@ -8,9 +8,8 @@
 #include <math/analytic/rails/PolynomialRailyard.hpp>
 #include <math/analytic/rails/PolynomialRailyard_library.hpp>
 #include <math/analytic/Exponentiated.hpp>
-#include <math/analytic/rails/PolynomialRailyard.hpp>
-#include <math/analytic/rails/PolynomialRailyard_library.hpp>
 #include <units/si.hpp>
+#include <models/compound/relation/ExponentiatedPolynomialRailyardRelation.hpp>
 #include <models/compound/correlation/published.hpp>
 
 namespace compound {
@@ -42,7 +41,6 @@ namespace relation {
         }
 
         // copy constructor
-        template<int Qlo, int Qhi>
         constexpr AnonymousRelation(
             const AnonymousRelation<Tx,Ty>& other
         ):
@@ -64,7 +62,7 @@ namespace relation {
         }
 
         constexpr AnonymousRelation(const Ty& other):
-            f([other](Tx x){return Ty(other);}),
+            f([other](Tx x){return other;}),
             xmin(0),
             xmax(std::numeric_limits<double>::max())
         {
@@ -433,8 +431,58 @@ namespace relation {
         );
     }
 
+    AnonymousRelation<si::wavenumber<double>,si::attenuation<double>> get_absorption_coefficient_cubic_interpolation_of_wavenumber_for_log10_sample_output(
+        const si::wavenumber<double> nunits, const si::attenuation<double> yunits,
+        const std::vector<double>      ns, 
+        const std::vector<double> log10ys
+    ){
+        assert(ns.size() == log10ys.size());
+        std::vector<double> ns2(ns);
+        std::vector<double> ys;
+        for (std::size_t i=0; i<log10ys.size(); i++){
+            ys.push_back(pow(10.0, log10ys[i]));
+        }
+        std::reverse(ns2.begin(), ns2.end());
+        std::reverse(ys.begin(), ys.end());
+        return AnonymousRelation<si::wavenumber<double>, si::attenuation<double>>(
+            PolynomialRailyardRelation<si::wavenumber<double>,si::attenuation<double>,0,3> (
+                analytic::spline::linear_spline<double>(ns2, ys), nunits, yunits),
+            ns2.front(), ns2.back()
+        );
+    }
 
-
+    AnonymousRelation<si::wavenumber<double>,si::attenuation<double>> get_absorption_coefficient_function_from_reflectance_at_wavelengths(
+        const si::length<double> lunits,
+        const si::length<double> particle_diameter, 
+        const std::vector<double>wavelengths, 
+        const std::vector<double>reflectances
+    ){
+        /*
+        NOTE: we assume extinction efficiency is close to 1, in which case the 
+          single scattering albedo equals scattering efficiency
+        In this case:
+          absorption_coefficient = approx_single_scatter_albedo_from_reflectance ∘ approx_single_scatter_albedo_from_reflectance
+        This is equivalent to:
+          absorption_coefficient = max((reflectance + 1.0)*(reflectance + 1.0) / (4.0 * reflectance) - 1.0, 0.0) / De;
+        where:
+          De = 2*particle_diameter;
+        We leverage the fact that 0 ≤ reflectance ≤ 1 to create a segmented 
+          linear approximation of 1/reflectance that is suited for that range.
+          It has an maximum error of 12% over the targeted range.
+        We use a linear approximation since the result will be composed 
+          with another segmented linear approximation for reflectance,
+          and we don't want the degree of the resulting polynomial 
+          to be so high that it produces nans upon evaluation.
+        */
+        auto reflectance_relation = analytic::spline::linear_spline<float>(wavelengths, reflectances);
+        return AnonymousRelation<si::wavenumber<double>, si::attenuation<double>>(
+            [reflectance_relation, lunits, particle_diameter](si::wavenumber<double> n){
+                auto R = reflectance_relation((1.0/n)/lunits);
+                return std::max((R+1.0)*(R+1.0) / (4.0*R) - 1.0, 0.0) / (2.0*particle_diameter);
+            },
+            (1.0/wavelengths.back())/lunits, (1.0/wavelengths.front())/lunits
+        );
+    }
 
 
 

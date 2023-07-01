@@ -232,7 +232,6 @@ namespace correlation {
 
 
 
-
     // VOLUMETRIC ABSORPTION COEFFICIENTS
     // The volumetric absorption coefficient of a mixture "α" can be thought of as a measure for reflectance that is independant of grain size.
     // The reflectance of a compound reduces significantly if the sample being measured is broken into smaller grains,
