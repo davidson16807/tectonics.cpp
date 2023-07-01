@@ -93,18 +93,18 @@ namespace published {
                      std::vector<double>{0.84, 0.962, 1.045, 1.162, 1.49, 1.591, 1.646, 1.679, 3.747, 3.844, 4.141, 4.173, 4.192, 4.237, 4.693, 4.713, 4.764, 4.78, 5.113, 5.26, 5.458, 5.458, 5.572, 5.571, 5.616, 5.677, 5.877, 5.935, 5.971, 5.972, 5.996, 6.042, 6.438, 6.46, 6.511, 6.582, 6.686, 6.95, 7.247, 7.469, 7.602, 7.709, 7.83, 8.035, 8.224, 8.425, 8.682, 8.969, 9.225, 9.586, 9.984, 10.214, 10.813, 10.952, 11.266, 11.898, 12.39, 13.618, 14.474}),
                     // Querry (1985)
             },
-        { ids::calcite,                  
-                SolidRefractiveIndexWavenumberRelation([](
-                    const si::wavenumber<double> n
-                ) {
-                    double l = (1.0 / n) / si::micrometer;
-                    return sqrt(
-                                1.73358749
-                                + 0.96464345 * l*l / (l*l - 1.94325203)
-                                + 1.82831454 * l*l / (l*l - 120.0)
-                            );
-                }),
-            },
+        // { ids::calcite,                  
+        //         SolidRefractiveIndexWavenumberRelation([](
+        //             const si::wavenumber<double> n
+        //         ) {
+        //             double l = (1.0 / n) / si::micrometer;
+        //             return sqrt(
+        //                         1.73358749
+        //                         + 0.96464345 * l*l / (l*l - 1.94325203)
+        //                         + 1.82831454 * l*l / (l*l - 120.0)
+        //                     );
+        //         }),
+        //     },
         { ids::orthoclase,              1.527,
             },
         { ids::andesine,                1.553,

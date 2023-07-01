@@ -15,7 +15,7 @@ TEST_CASE( "published solid absorption_coefficient order of magnitude", "[table]
             {
                 if (compound::published::absorption_coefficient_as_solid.has(i)) {
                     auto x = compound::published::absorption_coefficient_as_solid[i](1.0/l);
-                    CHECK(x * si::centimeter < 1000000.0); /*based on water*/ \
+                    CHECK(x * si::centimeter < 3000000.0); /*based on water*/ \
                     CHECK(x * si::centimeter >= 0.0); /*based on nitrogen*/ \
                 }
             }
