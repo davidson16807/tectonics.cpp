@@ -106,8 +106,8 @@ namespace table {
 	PartialTable<T> imitate(const PartialTable<T>& x, const FullTable<int>& imitated)
 	{
 	    PartialTable<T> y;
-	    std::size_t j;
-	    for (std::size_t i = 0; i < imitated.size(); ++i)
+	    int j;
+	    for (int i = 0; i < int(imitated.size()); ++i)
 	    {
 	    	j = i;
 	    	while(!x.has(j) && imitated[j]!=j){

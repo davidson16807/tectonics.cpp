@@ -16,6 +16,50 @@
 namespace compound{
 namespace estimated{
 
+    using LatentHeatTemperatureRelation = published::LatentHeatTemperatureRelation;
+
+    using GasRefractiveIndexWavenumberRelation = published::GasRefractiveIndexWavenumberRelation;
+    // using GasExtinctionCoefficientWavenumberRelation = published::GasExtinctionCoefficientWavenumberRelation;
+    // using GasAbsorptionCoefficientWavenumberRelation = published::GasAbsorptionCoefficientWavenumberRelation;
+
+    using GasDensityStateRelation = relation::GasDensityStateRelation;
+    using GasDynamicViscosityStateRelation = published::GasDynamicViscosityStateRelation;
+    using GasThermalConductivityStateRelation = published::GasThermalConductivityStateRelation;
+    using GasHeatCapacityStateRelation = published::GasHeatCapacityStateRelation;
+
+    using LiquidRefractiveIndexWavenumberRelation = published::LiquidRefractiveIndexWavenumberRelation;
+    // using LiquidExtinctionCoefficientWavenumberRelation = published::LiquidExtinctionCoefficientWavenumberRelation;
+    // using LiquidAbsorptionCoefficientWavenumberRelation = published::LiquidAbsorptionCoefficientWavenumberRelation;
+
+    using LiquidDensityTemperatureRelation = published::LiquidDensityTemperatureRelation;
+    using LiquidDynamicViscosityTemperatureRelation = published::LiquidDynamicViscosityTemperatureRelation;
+    using LiquidVaporPressureTemperatureRelation = published::LiquidVaporPressureTemperatureRelation;
+    using LiquidThermalConductivityTemperatureRelation = published::LiquidThermalConductivityTemperatureRelation;
+    using LiquidHeatCapacityTemperatureRelation = published::LiquidHeatCapacityTemperatureRelation;
+
+    using SolidRefractiveIndexWavenumberRelation = published::SolidRefractiveIndexWavenumberRelation;
+    using SolidExtinctionCoefficientWavenumberRelation = published::SolidExtinctionCoefficientWavenumberRelation;
+    using SolidAbsorptionCoefficientWavenumberRelation = published::SolidAbsorptionCoefficientWavenumberRelation;
+
+    using SolidDensityTemperatureRelation = published::SolidDensityTemperatureRelation;
+    using SolidVaporPressureTemperatureRelation = published::SolidVaporPressureTemperatureRelation;
+    using SolidDynamicViscosityTemperatureRelation = published::SolidDynamicViscosityTemperatureRelation;
+
+    using SolidShearYieldStrengthTemperatureRelation = published::SolidShearYieldStrengthTemperatureRelation;
+    using SolidTensileYieldStrengthTemperatureRelation = published::SolidTensileYieldStrengthTemperatureRelation;
+    using SolidCompressiveYieldStrengthTemperatureRelation = published::SolidCompressiveYieldStrengthTemperatureRelation;
+
+    using SolidShearFractureStrengthTemperatureRelation = published::SolidShearFractureStrengthTemperatureRelation;
+    using SolidTensileFractureStrengthTemperatureRelation = published::SolidTensileFractureStrengthTemperatureRelation;
+    using SolidCompressiveFractureStrengthTemperatureRelation = published::SolidCompressiveFractureStrengthTemperatureRelation;
+
+    using SolidBulkModulusTemperatureRelation = published::SolidBulkModulusTemperatureRelation;
+    using SolidTensileModulusTemperatureRelation = published::SolidTensileModulusTemperatureRelation;
+    using SolidLameParameterTemperatureRelation = published::SolidLameParameterTemperatureRelation;
+    using SolidShearModulusTemperatureRelation = published::SolidShearModulusTemperatureRelation;
+    using SolidPoissonRatioTemperatureRelation = published::SolidPoissonRatioTemperatureRelation;
+    using SolidPwaveModulusTemperatureRelation = published::SolidPwaveModulusTemperatureRelation;
+
     // Refer to property/published.png to see the category that we are traversing here.
     // Critical point properties and molecular diameter are guaranteed to be inferrable, so start there.
     // After critical point properties, we want to get to acentric factor ("omega") as soon as possible, 
@@ -57,17 +101,17 @@ namespace estimated{
         table::complete(published::critical_point_volume, 
             table::derive<si::molar_volume<double>>(correlation::estimate_critical_molar_volume_from_klincewicz, molar_mass, atoms_per_molecule));
 
-    // via Klincewicz -> Ihmels
+    // via Klincewicz ⟶ Ihmels
     table::FullTable<si::temperature<double>> critical_point_temperature = 
         table::complete(published::critical_point_temperature, 
             table::derive<si::temperature<double>>(correlation::estimate_critical_temperature_from_ihmels, critical_point_pressure, critical_point_volume));
 
-    // via Klincewicz -> Ihmels -> definition of compressibility
+    // via Klincewicz ⟶ Ihmels ⟶ definition of compressibility
     table::FullTable<double> critical_point_compressibility = 
         table::complete(published::critical_point_compressibility, 
             table::derive<double>(correlation::get_critical_compressibility, critical_point_pressure, critical_point_temperature, critical_point_volume));
 
-    // via Klincewicz -> Ihmels -> Tee-Gotoh-Steward
+    // via Klincewicz ⟶ Ihmels ⟶ Tee-Gotoh-Steward
     table::FullTable<si::length<double>> molecular_diameter = 
         table::complete(published::molecular_diameter, 
             table::derive<si::length<double>>(correlation::estimate_molecular_diameter_from_tee_gotoh_steward, critical_point_temperature, critical_point_pressure));
@@ -122,23 +166,20 @@ namespace estimated{
             [](point<double> pT){ return pT.pressure; }, 
             freezing_sample_point);
 
-    // via Klincewicz -> Ihmels -> Tee-Gotoh-Steward -> Bird-Steward-Lightfoot2
-    using LiquidDensityTemperatureRelation = published::LiquidDensityTemperatureRelation;
+    // via Klincewicz ⟶ Ihmels ⟶ Tee-Gotoh-Steward ⟶ Bird-Steward-Lightfoot2
     table::FullTable<LiquidDensityTemperatureRelation> density_as_liquid = 
         table::complete(published::density_as_liquid, 
             table::derive<LiquidDensityTemperatureRelation>([](si::molar_mass<double> M, si::length<double> sigma){
                     return LiquidDensityTemperatureRelation(M / correlation::estimate_molar_volume_as_liquid_from_bird_steward_lightfoot_2(sigma));}, 
                 molar_mass, molecular_diameter));
 
-    // via Klincewicz -> Ihmels -> definition of compressibility -> definition of compressibility
-    using GasDensityStateRelation = relation::GasDensityStateRelation;
+    // via Klincewicz ⟶ Ihmels ⟶ definition of compressibility ⟶ definition of compressibility
     table::FullTable<GasDensityStateRelation> density_as_gas = 
         table::derive<GasDensityStateRelation>([](si::molar_mass<double> M, si::pressure<double> pc, si::temperature<double> Tc, double Zc){
                 return GasDensityStateRelation(M,pc,Tc,Zc);}, 
             molar_mass, critical_point_pressure, critical_point_temperature, critical_point_compressibility);
 
-    // via Klincewicz -> Ihmels -> Tee-Gotoh-Steward -> Bird-Steward-Lightfoot2 -> Goodman (with speculative fallback)
-    using SolidDensityTemperatureRelation = published::SolidDensityTemperatureRelation;
+    // via Klincewicz ⟶ Ihmels ⟶ Tee-Gotoh-Steward ⟶ Bird-Steward-Lightfoot2 ⟶ Goodman (with speculative fallback)
     table::FullTable<SolidDensityTemperatureRelation> density_as_solid = 
         table::complete(
             table::first<SolidDensityTemperatureRelation>({
@@ -158,9 +199,7 @@ namespace estimated{
 
 
     // // CALCULATE POSSIBLE ROUTES TO ACENTRIC FACTOR
-    using LatentHeatTemperatureRelation = published::LatentHeatTemperatureRelation;
 
-    using SolidVaporPressureTemperatureRelation = published::SolidVaporPressureTemperatureRelation;
     table::PartialTable<SolidVaporPressureTemperatureRelation> vapor_pressure_as_solid = 
         table::first<SolidVaporPressureTemperatureRelation>({
             published::vapor_pressure_as_solid,
@@ -188,7 +227,6 @@ namespace estimated{
         });
 
     // CALCULATE ACENTRIC FACTOR
-    using LiquidDynamicViscosityTemperatureRelation = published::LiquidDynamicViscosityTemperatureRelation;
     table::PartialTable<double> acentric_factor = 
         table::first<double>({
             published::acentric_factor,
@@ -247,7 +285,6 @@ namespace estimated{
             published::latent_heat_of_sublimation - latent_heat_of_vaporization,
         });
 
-    using LiquidDynamicViscosityTemperatureRelation = published::LiquidDynamicViscosityTemperatureRelation;
     table::PartialTable<LiquidDynamicViscosityTemperatureRelation> dynamic_viscosity_as_liquid = 
         table::first<LiquidDynamicViscosityTemperatureRelation>({
             published::dynamic_viscosity_as_liquid,
@@ -260,7 +297,6 @@ namespace estimated{
             ),
         });
 
-    using LiquidVaporPressureTemperatureRelation = published::LiquidVaporPressureTemperatureRelation;
     table::PartialTable<LiquidVaporPressureTemperatureRelation> vapor_pressure_as_liquid = 
         table::first<LiquidVaporPressureTemperatureRelation>({
             published::vapor_pressure_as_liquid,
@@ -273,7 +309,6 @@ namespace estimated{
         });
 
     // CALCULATE MISCELLANEOUS PROPERTIES
-    using LiquidThermalConductivityTemperatureRelation = published::LiquidThermalConductivityTemperatureRelation;
     table::FullTable<LiquidThermalConductivityTemperatureRelation> thermal_conductivity_as_liquid = 
         table::complete(
             published::thermal_conductivity_as_liquid,
@@ -285,19 +320,14 @@ namespace estimated{
             )
         );
 
-    using LiquidHeatCapacityTemperatureRelation = published::LiquidHeatCapacityTemperatureRelation;
     auto isobaric_specific_heat_capacity_as_liquid = published::isobaric_specific_heat_capacity_as_liquid;
 
-    using GasDynamicViscosityStateRelation = published::GasDynamicViscosityStateRelation;
     auto dynamic_viscosity_as_gas = published::dynamic_viscosity_as_gas;
 
-    using GasThermalConductivityStateRelation = published::GasThermalConductivityStateRelation;
     auto thermal_conductivity_as_gas = published::thermal_conductivity_as_gas;
 
-    using GasHeatCapacityStateRelation = published::GasHeatCapacityStateRelation;
     auto isobaric_specific_heat_capacity_as_gas = published::isobaric_specific_heat_capacity_as_gas;
 
-    using SolidDynamicViscosityTemperatureRelation = published::SolidDynamicViscosityTemperatureRelation;
     table::PartialTable<SolidDynamicViscosityTemperatureRelation> dynamic_viscosity_as_solid = 
         table::first<SolidDynamicViscosityTemperatureRelation>({
             published::dynamic_viscosity_as_solid,
@@ -314,9 +344,15 @@ namespace estimated{
             )
         });
 
-    using SolidRefractiveIndexWavenumberRelation = published::SolidRefractiveIndexWavenumberRelation;
-    using SolidExtinctionCoefficientWavenumberRelation = published::SolidExtinctionCoefficientWavenumberRelation;
-    using SolidAbsorptionCoefficientWavenumberRelation = published::SolidAbsorptionCoefficientWavenumberRelation;
+
+    struct SpectralHandbook
+    {
+        table::FullTable<SolidRefractiveIndexWavenumberRelation> refractive_index;
+        table::FullTable<SolidExtinctionCoefficientWavenumberRelation> extinction_coefficient;
+        table::FullTable<SolidAbsorptionCoefficientWavenumberRelation> absorption_coefficient;
+    };
+
+
     table::PartialTable<SolidAbsorptionCoefficientWavenumberRelation> absorption_coefficient_as_solid = 
         table::first<SolidAbsorptionCoefficientWavenumberRelation>({
             published::absorption_coefficient_as_solid,
@@ -359,9 +395,20 @@ namespace estimated{
             )
         });
 
-    using SolidShearYieldStrengthTemperatureRelation = published::SolidShearYieldStrengthTemperatureRelation;
-    using SolidTensileYieldStrengthTemperatureRelation = published::SolidTensileYieldStrengthTemperatureRelation;
-    using SolidCompressiveYieldStrengthTemperatureRelation = published::SolidCompressiveYieldStrengthTemperatureRelation;
+
+
+
+    struct StrengthsHandbook
+    {
+        table::FullTable<SolidShearYieldStrengthTemperatureRelation> shear_yield_strength;
+        table::FullTable<SolidTensileYieldStrengthTemperatureRelation> tensile_yield_strength;
+        table::FullTable<SolidCompressiveYieldStrengthTemperatureRelation> compressive_yield_strength;
+        table::FullTable<SolidShearFractureStrengthTemperatureRelation> shear_fracture_strength;
+        table::FullTable<SolidTensileFractureStrengthTemperatureRelation> tensile_fracture_strength;
+        table::FullTable<SolidCompressiveFractureStrengthTemperatureRelation> compressive_fracture_strength;
+    };
+
+
 
     // We can correlate tensile and shear yield strengths using the Von Misces Theorem.
     // If none of the yield strengths are known, the most common explanation 
@@ -400,61 +447,83 @@ namespace estimated{
             published::compressive_fracture_strength_as_solid
         });
 
-    // Standardize on bulk and tensile modulus since they seem to be reported most often,
-    // then use those two to calculate the remaining modulii.
 
-    auto K = published::bulk_modulus_as_solid;
-    auto E = published::tensile_modulus_as_solid;
-    auto l = published::lame_parameter_as_solid;
-    auto G = published::shear_modulus_as_solid;
-    auto nu = published::poisson_ratio_as_solid;
-    auto M = published::pwave_modulus_as_solid;
 
-    using SolidBulkModulusTemperatureRelation = published::SolidBulkModulusTemperatureRelation;
-    using SolidTensileModulusTemperatureRelation = published::SolidTensileModulusTemperatureRelation;
-    using SolidLameParameterTemperatureRelation = published::SolidLameParameterTemperatureRelation;
-    using SolidShearModulusTemperatureRelation = published::SolidShearModulusTemperatureRelation;
-    using SolidPoissonRatioTemperatureRelation = published::SolidPoissonRatioTemperatureRelation;
-    using SolidPwaveModulusTemperatureRelation = published::SolidPwaveModulusTemperatureRelation;
+    struct ElasticitiesHandbook
+    {
+        table::FullTable<SolidBulkModulusTemperatureRelation> bulk_modulus;
+        table::FullTable<SolidTensileModulusTemperatureRelation> tensile_modulus;
+        table::FullTable<SolidLameParameterTemperatureRelation> lame_parameter;
+        table::FullTable<SolidShearModulusTemperatureRelation> shear_modulus;
+        table::FullTable<SolidPoissonRatioTemperatureRelation> poisson_ratio;
+        table::FullTable<SolidPwaveModulusTemperatureRelation> pwave_modulus;
 
-    using Modulus = relation::GenericRelation<si::temperature<double>,si::pressure<double>>;
-    using Poisson = relation::GenericRelation<si::temperature<double>,double>;
+        ElasticitiesHandbook(
+            const table::PartialTable<SolidBulkModulusTemperatureRelation> K,
+            const table::PartialTable<SolidTensileModulusTemperatureRelation> E,
+            const table::PartialTable<SolidLameParameterTemperatureRelation> l,
+            const table::PartialTable<SolidShearModulusTemperatureRelation> G,
+            const table::PartialTable<SolidPoissonRatioTemperatureRelation> nu,
+            const table::PartialTable<SolidPwaveModulusTemperatureRelation> M,
+            const table::FullTable<int> similarity,
+            const int fallback_id
+        ){
 
-    table::PartialTable<Modulus> tensile_modulus_as_solid = 
-        table::first<Modulus>({
-            published::tensile_modulus_as_solid,
-            table::gather<Modulus>([](auto K,  auto G ) { return Modulus([=](auto T){ return correlation::get_tensile_from_bulk_and_shear   (K(T), G(T)); }); }, K, G ),
-            table::gather<Modulus>([](auto K,  auto nu) { return Modulus([=](auto T){ return correlation::get_tensile_from_bulk_and_poisson (K(T), nu(T));}); }, K, nu),
-            table::gather<Modulus>([](auto K,  auto M ) { return Modulus([=](auto T){ return correlation::get_tensile_from_bulk_and_pwave   (K(T), M(T)); }); }, K, M ),
-            table::gather<Modulus>([](auto l,  auto G ) { return Modulus([=](auto T){ return correlation::get_tensile_from_lame_and_shear   (l(T), G(T)); }); }, l, G ),
-            table::gather<Modulus>([](auto l,  auto nu) { return Modulus([=](auto T){ return correlation::get_tensile_from_lame_and_poisson (l(T), nu(T));}); }, l, nu),
-            table::gather<Modulus>([](auto l,  auto M ) { return Modulus([=](auto T){ return correlation::get_tensile_from_lame_and_pwave   (l(T), M(T)); }); }, l, M ),
-            table::gather<Modulus>([](auto G,  auto nu) { return Modulus([=](auto T){ return correlation::get_tensile_from_shear_and_poisson(G(T), nu(T));}); }, G, nu),
-            table::gather<Modulus>([](auto G,  auto M ) { return Modulus([=](auto T){ return correlation::get_tensile_from_shear_and_pwave  (G(T), M(T)); }); }, G, M ),
-            table::gather<Modulus>([](auto nu, auto M ) { return Modulus([=](auto T){ return correlation::get_tensile_from_poisson_and_pwave(nu(T),M(T)); }); }, nu,M ),
-        });
+            // Standardize on bulk and tensile modulus since they seem to be reported most often,
+            // then use those two to calculate the remaining modulii.
 
-    table::PartialTable<Modulus> bulk_modulus_as_solid = 
-        table::first<Modulus>({
-            published::bulk_modulus_as_solid,
-            table::gather<Modulus>([](auto E,  auto l ) { return Modulus([=](auto T){ return correlation::get_bulk_from_tensile_and_lame   (E(T), l(T) ); }); }, E,  l ),
-            table::gather<Modulus>([](auto E,  auto G ) { return Modulus([=](auto T){ return correlation::get_bulk_from_tensile_and_shear  (E(T), G(T) ); }); }, E,  G ),
-            table::gather<Modulus>([](auto E,  auto nu) { return Modulus([=](auto T){ return correlation::get_bulk_from_tensile_and_poisson(E(T), nu(T)); }); }, E,  nu),
-            table::gather<Modulus>([](auto l,  auto G ) { return Modulus([=](auto T){ return correlation::get_bulk_from_lame_and_shear     (l(T), G(T) ); }); }, l,  G ),
-            table::gather<Modulus>([](auto l,  auto nu) { return Modulus([=](auto T){ return correlation::get_bulk_from_lame_and_poisson   (l(T), nu(T)); }); }, l,  nu),
-            table::gather<Modulus>([](auto l,  auto M ) { return Modulus([=](auto T){ return correlation::get_bulk_from_lame_and_pwave     (l(T), M(T) ); }); }, l,  M ),
-            table::gather<Modulus>([](auto G,  auto nu) { return Modulus([=](auto T){ return correlation::get_bulk_from_shear_and_poisson  (G(T), nu(T)); }); }, G,  nu),
-            table::gather<Modulus>([](auto G,  auto M ) { return Modulus([=](auto T){ return correlation::get_bulk_from_shear_and_pwave    (G(T), M(T) ); }); }, G,  M ),
-            table::gather<Modulus>([](auto nu, auto M ) { return Modulus([=](auto T){ return correlation::get_bulk_from_poisson_and_pwave  (nu(T), M(T)); }); }, nu, M ),
-        });
+            using Modulus = relation::GenericRelation<si::temperature<double>,si::pressure<double>>;
+            using Poisson = relation::GenericRelation<si::temperature<double>,double>;
 
-    auto K2 = bulk_modulus_as_solid;
-    auto E2 = tensile_modulus_as_solid;
+            auto E2 = table::first<Modulus>({ E,
+                table::gather<Modulus>([](auto K,  auto G ) { return Modulus([=](auto T){ return correlation::get_tensile_from_bulk_and_shear   (K(T), G(T)); }); }, K, G ),
+                table::gather<Modulus>([](auto K,  auto nu) { return Modulus([=](auto T){ return correlation::get_tensile_from_bulk_and_poisson (K(T), nu(T));}); }, K, nu),
+                table::gather<Modulus>([](auto K,  auto M ) { return Modulus([=](auto T){ return correlation::get_tensile_from_bulk_and_pwave   (K(T), M(T)); }); }, K, M ),
+                table::gather<Modulus>([](auto l,  auto G ) { return Modulus([=](auto T){ return correlation::get_tensile_from_lame_and_shear   (l(T), G(T)); }); }, l, G ),
+                table::gather<Modulus>([](auto l,  auto nu) { return Modulus([=](auto T){ return correlation::get_tensile_from_lame_and_poisson (l(T), nu(T));}); }, l, nu),
+                table::gather<Modulus>([](auto l,  auto M ) { return Modulus([=](auto T){ return correlation::get_tensile_from_lame_and_pwave   (l(T), M(T)); }); }, l, M ),
+                table::gather<Modulus>([](auto G,  auto nu) { return Modulus([=](auto T){ return correlation::get_tensile_from_shear_and_poisson(G(T), nu(T));}); }, G, nu),
+                table::gather<Modulus>([](auto G,  auto M ) { return Modulus([=](auto T){ return correlation::get_tensile_from_shear_and_pwave  (G(T), M(T)); }); }, G, M ),
+                table::gather<Modulus>([](auto nu, auto M ) { return Modulus([=](auto T){ return correlation::get_tensile_from_poisson_and_pwave(nu(T),M(T)); }); }, nu,M ),
+            });
 
-    auto lame_parameter_as_solid = table::first<Modulus>({ l,  table::gather<Modulus>([](auto K, auto E) { return Modulus([=](auto T){ return correlation::get_lame_from_bulk_and_tensile    (K(T),E(T)); }); }, K2, E2), });
-    auto shear_modulus_as_solid  = table::first<Modulus>({ G,  table::gather<Modulus>([](auto K, auto E) { return Modulus([=](auto T){ return correlation::get_shear_from_bulk_and_tensile   (K(T),E(T)); }); }, K2, E2), });
-    auto poisson_ratio_as_solid  = table::first<Poisson>({ nu, table::gather<Poisson>([](auto K, auto E) { return Poisson([=](auto T){ return correlation::get_poisson_from_bulk_and_tensile (K(T),E(T)); }); }, K2, E2), });
-    auto pwave_modulus_as_solid  = table::first<Modulus>({ M,  table::gather<Modulus>([](auto K, auto E) { return Modulus([=](auto T){ return correlation::get_pwave_from_bulk_and_tensile   (K(T),E(T)); }); }, K2, E2), });
+            auto K2 = table::first<Modulus>({ K,
+                table::gather<Modulus>([](auto E,  auto l ) { return Modulus([=](auto T){ return correlation::get_bulk_from_tensile_and_lame   (E(T), l(T) ); }); }, E,  l ),
+                table::gather<Modulus>([](auto E,  auto G ) { return Modulus([=](auto T){ return correlation::get_bulk_from_tensile_and_shear  (E(T), G(T) ); }); }, E,  G ),
+                table::gather<Modulus>([](auto E,  auto nu) { return Modulus([=](auto T){ return correlation::get_bulk_from_tensile_and_poisson(E(T), nu(T)); }); }, E,  nu),
+                table::gather<Modulus>([](auto l,  auto G ) { return Modulus([=](auto T){ return correlation::get_bulk_from_lame_and_shear     (l(T), G(T) ); }); }, l,  G ),
+                table::gather<Modulus>([](auto l,  auto nu) { return Modulus([=](auto T){ return correlation::get_bulk_from_lame_and_poisson   (l(T), nu(T)); }); }, l,  nu),
+                table::gather<Modulus>([](auto l,  auto M ) { return Modulus([=](auto T){ return correlation::get_bulk_from_lame_and_pwave     (l(T), M(T) ); }); }, l,  M ),
+                table::gather<Modulus>([](auto G,  auto nu) { return Modulus([=](auto T){ return correlation::get_bulk_from_shear_and_poisson  (G(T), nu(T)); }); }, G,  nu),
+                table::gather<Modulus>([](auto G,  auto M ) { return Modulus([=](auto T){ return correlation::get_bulk_from_shear_and_pwave    (G(T), M(T) ); }); }, G,  M ),
+                table::gather<Modulus>([](auto nu, auto M ) { return Modulus([=](auto T){ return correlation::get_bulk_from_poisson_and_pwave  (nu(T), M(T)); }); }, nu, M ),
+            });
+
+            auto l2  = table::first<Modulus>({ l,  table::gather<Modulus>([](auto K, auto E) { return Modulus([=](auto T){ return correlation::get_lame_from_bulk_and_tensile    (K(T),E(T)); }); }, K2, E2), });
+            auto G2  = table::first<Modulus>({ G,  table::gather<Modulus>([](auto K, auto E) { return Modulus([=](auto T){ return correlation::get_shear_from_bulk_and_tensile   (K(T),E(T)); }); }, K2, E2), });
+            auto nu2 = table::first<Poisson>({ nu, table::gather<Poisson>([](auto K, auto E) { return Poisson([=](auto T){ return correlation::get_poisson_from_bulk_and_tensile (K(T),E(T)); }); }, K2, E2), });
+            auto M2  = table::first<Modulus>({ M,  table::gather<Modulus>([](auto K, auto E) { return Modulus([=](auto T){ return correlation::get_pwave_from_bulk_and_tensile   (K(T),E(T)); }); }, K2, E2), });
+
+            bulk_modulus    = table::complete(table::imitate(K2,  similarity), K2 [fallback_id], similarity.size());
+            tensile_modulus = table::complete(table::imitate(E2,  similarity), E2 [fallback_id], similarity.size());
+            lame_parameter  = table::complete(table::imitate(l2,  similarity), l2 [fallback_id], similarity.size());
+            shear_modulus   = table::complete(table::imitate(G2,  similarity), G2 [fallback_id], similarity.size());
+            poisson_ratio   = table::complete(table::imitate(nu2, similarity), nu2[fallback_id], similarity.size());
+            pwave_modulus   = table::complete(table::imitate(M2,  similarity), M2 [fallback_id], similarity.size());
+
+        }
+    };
+
+    ElasticitiesHandbook elasticities(
+        published::bulk_modulus_as_solid,
+        published::tensile_modulus_as_solid,
+        published::lame_parameter_as_solid,
+        published::shear_modulus_as_solid,
+        published::poisson_ratio_as_solid,
+        published::pwave_modulus_as_solid,
+        published::similarity,
+        ids::water
+    );
 
     table::FullTable<double> molecular_degrees_of_freedom = 
         table::complete(
