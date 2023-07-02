@@ -365,50 +365,65 @@ namespace estimated{
         table::FullTable<SolidRefractiveIndexWavenumberRelation> refractive_index;
         table::FullTable<SolidExtinctionCoefficientWavenumberRelation> extinction_coefficient;
         table::FullTable<SolidAbsorptionCoefficientWavenumberRelation> absorption_coefficient;
+
+        SpectralHandbook(
+            const table::PartialTable<SolidRefractiveIndexWavenumberRelation> n,
+            const table::PartialTable<SolidExtinctionCoefficientWavenumberRelation> k,
+            const table::PartialTable<SolidAbsorptionCoefficientWavenumberRelation> alpha,
+            const table::FullTable<int> similarity,
+            const int fallback_id
+        ){
+
+            using Absorption = SolidAbsorptionCoefficientWavenumberRelation;
+            using Index = SolidRefractiveIndexWavenumberRelation;
+
+            table::PartialTable<Absorption> alpha2 = 
+                table::first<Absorption>({ alpha,
+                    table::gather<Absorption>(
+                        []( Index n,
+                            Index k){
+                            return Absorption(
+                                [=](si::wavenumber<double> w){return correlation::get_absorption_coefficient_from_refractive_index(n(w), k(w), 1.0/w);});
+                            },
+                        n,
+                        k
+                    )
+                });
+
+            table::PartialTable<Index> n2 = 
+                table::first<Index>({ n,
+                    table::gather<Index>(
+                        []( Index k,
+                            Absorption alpha){
+                            return Index(
+                                [=](si::wavenumber<double> w){return correlation::get_refractive_index_from_absorption_coefficient(alpha(w), k(w), 1.0/w);});
+                            },
+                        k,
+                        alpha
+                    )
+                });
+
+            table::PartialTable<Index> k2 = 
+                table::first<Index>({ n,
+                    table::gather<Index>(
+                        []( Index n,
+                            Absorption alpha){
+                            return Index(
+                                [=](si::wavenumber<double> w){return correlation::get_extinction_coefficient_from_absorption_coefficient(alpha(w), n(w), 1.0/w);});
+                            },
+                        n,
+                        alpha
+                    )
+                });
+
+            refractive_index       = table::complete(table::imitate(n2,     similarity), n2     [fallback_id], similarity.size());
+            extinction_coefficient = table::complete(table::imitate(k2,     similarity), k2     [fallback_id], similarity.size());
+            absorption_coefficient = table::complete(table::imitate(alpha2, similarity), alpha2 [fallback_id], similarity.size());
+
+        }
     };
 
 
-    table::PartialTable<SolidAbsorptionCoefficientWavenumberRelation> absorption_coefficient_as_solid = 
-        table::first<SolidAbsorptionCoefficientWavenumberRelation>({
-            published::absorption_coefficient_as_solid,
-            table::gather<SolidAbsorptionCoefficientWavenumberRelation>(
-                []( published::SolidRefractiveIndexWavenumberRelation n,
-                    published::SolidExtinctionCoefficientWavenumberRelation k){
-                    return SolidAbsorptionCoefficientWavenumberRelation(
-                        [=](si::wavenumber<double> w){return correlation::get_absorption_coefficient_from_refractive_index(n(w), k(w), 1.0/w);});
-                },
-                published::refractive_index_as_solid,
-                published::extinction_coefficient_as_solid
-            )
-        });
-
-    table::PartialTable<SolidRefractiveIndexWavenumberRelation> refractive_index_as_solid = 
-        table::first<SolidRefractiveIndexWavenumberRelation>({
-            published::refractive_index_as_solid,
-            table::gather<SolidRefractiveIndexWavenumberRelation>(
-                []( published::SolidExtinctionCoefficientWavenumberRelation k,
-                    published::SolidAbsorptionCoefficientWavenumberRelation alpha){
-                    return SolidRefractiveIndexWavenumberRelation(
-                        [=](si::wavenumber<double> w){return correlation::get_refractive_index_from_absorption_coefficient(alpha(w), k(w), 1.0/w);});
-                },
-                published::extinction_coefficient_as_solid,
-                absorption_coefficient_as_solid
-            )
-        });
-
-    table::PartialTable<SolidRefractiveIndexWavenumberRelation> extinction_coefficient_as_solid = 
-        table::first<SolidRefractiveIndexWavenumberRelation>({
-            published::refractive_index_as_solid,
-            table::gather<SolidRefractiveIndexWavenumberRelation>(
-                []( published::SolidExtinctionCoefficientWavenumberRelation n,
-                    published::SolidAbsorptionCoefficientWavenumberRelation alpha){
-                    return SolidRefractiveIndexWavenumberRelation(
-                        [=](si::wavenumber<double> w){return correlation::get_extinction_coefficient_from_absorption_coefficient(alpha(w), n(w), 1.0/w);});
-                },
-                published::refractive_index_as_solid,
-                absorption_coefficient_as_solid
-            )
-        });
 
 
 
@@ -442,31 +457,30 @@ namespace estimated{
 
             // We reuse abbreviations for modulii to represent yield strengths
 
-            table::PartialTable<SolidShearYieldStrengthTemperatureRelation> Gyield2 = 
-                table::first<SolidShearYieldStrengthTemperatureRelation>({
-                    Gyield,
-                    table::gather<SolidShearYieldStrengthTemperatureRelation>(
-                        []( SolidTensileYieldStrengthTemperatureRelation E){ return E / sqrt(3.0); },
-                        Eyield
-                    ),
-                    Gfracture
-                });
+            using Strength = relation::PolynomialRailyardRelation<si::temperature<double>, si::pressure<double>, 0,1>;
 
-            table::PartialTable<SolidTensileYieldStrengthTemperatureRelation> Eyield2 = 
-                table::first<SolidTensileYieldStrengthTemperatureRelation>({
-                    Eyield,
-                    table::gather<SolidTensileYieldStrengthTemperatureRelation>(
-                        []( SolidShearYieldStrengthTemperatureRelation G){ return G * sqrt(3.0); },
-                        Gyield
-                    ),
-                    Efracture
-                });
+            auto Gyield2 = table::first<Strength>({
+                Gyield,
+                table::gather<Strength>(
+                    []( Strength E){ return E / sqrt(3.0); },
+                    Eyield
+                ),
+                Gfracture
+            });
 
-            table::PartialTable<SolidCompressiveYieldStrengthTemperatureRelation> Cyield2 = 
-                table::first<SolidCompressiveYieldStrengthTemperatureRelation>({
-                    Cyield, 
-                    Cfracture
-                });
+            auto Eyield2 = table::first<Strength>({
+                Eyield,
+                table::gather<Strength>(
+                    []( Strength G){ return G * sqrt(3.0); },
+                    Gyield
+                ),
+                Efracture
+            });
+
+            auto Cyield2 = table::first<Strength>({
+                Cyield, 
+                Cfracture
+            });
 
             shear_yield_strength          = table::complete(table::imitate(Gyield2,   similarity), Gyield2   [fallback_id], similarity.size());
             tensile_yield_strength        = table::complete(table::imitate(Eyield2,   similarity), Eyield2   [fallback_id], similarity.size());
@@ -546,6 +560,14 @@ namespace estimated{
 
         }
     };
+
+    SpectralHandbook spectrums(
+        published::refractive_index_as_solid,
+        published::extinction_coefficient_as_solid,
+        published::absorption_coefficient_as_solid,
+        published::similarity,
+        ids::water
+    );
 
     StrengthsHandbook strengths(
         published::shear_yield_strength_as_solid,
