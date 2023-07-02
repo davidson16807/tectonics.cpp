@@ -1,5 +1,8 @@
+#include "./solid/refractive_index_test.cpp"
+#include "./solid/extinction_coefficient_test.cpp"
 #include "./solid/vapor_pressure_test.cpp"
 #include "./solid/density_test.cpp"
+#include "./solid/absorption_coefficient_test.hpp"
 #include "./compound/latent_heat_of_vaporization_test.hpp"
 #include "./compound/latent_heat_of_sublimation_test.cpp"
 #include "./compound/latent_heat_of_fusion_test.cpp"
