@@ -400,14 +400,8 @@ namespace estimated{
             published::compressive_fracture_strength_as_solid
         });
 
-
-
-
     // Standardize on bulk and tensile modulus since they seem to be reported most often,
     // then use those two to calculate the remaining modulii.
-    // To reduce the number of cases, consider only scenarios where bulk, tensile, shear, and lame are present, 
-    // since again, those are reported often.
-    
 
     auto K = published::bulk_modulus_as_solid;
     auto E = published::tensile_modulus_as_solid;
@@ -417,37 +411,50 @@ namespace estimated{
     auto M = published::pwave_modulus_as_solid;
 
     using SolidBulkModulusTemperatureRelation = published::SolidBulkModulusTemperatureRelation;
+    using SolidTensileModulusTemperatureRelation = published::SolidTensileModulusTemperatureRelation;
+    using SolidLameParameterTemperatureRelation = published::SolidLameParameterTemperatureRelation;
+    using SolidShearModulusTemperatureRelation = published::SolidShearModulusTemperatureRelation;
+    using SolidPoissonRatioTemperatureRelation = published::SolidPoissonRatioTemperatureRelation;
+    using SolidPwaveModulusTemperatureRelation = published::SolidPwaveModulusTemperatureRelation;
 
     using Modulus = relation::GenericRelation<si::temperature<double>,si::pressure<double>>;
+    using Poisson = relation::GenericRelation<si::temperature<double>,double>;
 
     table::PartialTable<Modulus> tensile_modulus_as_solid = 
         table::first<Modulus>({
             published::tensile_modulus_as_solid,
-            table::gather<Modulus>([](auto K,  auto G ) { return Modulus([=](si::temperature<double> T){ return correlation::get_tensile_from_bulk_and_shear   (K(T), G(T)); }); }, K, G ),
-            table::gather<Modulus>([](auto K,  auto nu) { return Modulus([=](si::temperature<double> T){ return correlation::get_tensile_from_bulk_and_poisson (K(T), nu(T));}); }, K, nu),
-            table::gather<Modulus>([](auto K,  auto M ) { return Modulus([=](si::temperature<double> T){ return correlation::get_tensile_from_bulk_and_pwave   (K(T), M(T)); }); }, K, M ),
-            table::gather<Modulus>([](auto l,  auto G ) { return Modulus([=](si::temperature<double> T){ return correlation::get_tensile_from_lame_and_shear   (l(T), G(T)); }); }, l, G ),
-            table::gather<Modulus>([](auto l,  auto nu) { return Modulus([=](si::temperature<double> T){ return correlation::get_tensile_from_lame_and_poisson (l(T), nu(T));}); }, l, nu),
-            table::gather<Modulus>([](auto l,  auto M ) { return Modulus([=](si::temperature<double> T){ return correlation::get_tensile_from_lame_and_pwave   (l(T), M(T)); }); }, l, M ),
-            table::gather<Modulus>([](auto G,  auto nu) { return Modulus([=](si::temperature<double> T){ return correlation::get_tensile_from_shear_and_poisson(G(T), nu(T));}); }, G, nu),
-            table::gather<Modulus>([](auto G,  auto M ) { return Modulus([=](si::temperature<double> T){ return correlation::get_tensile_from_shear_and_pwave  (G(T), M(T)); }); }, G, M ),
-            table::gather<Modulus>([](auto nu, auto M ) { return Modulus([=](si::temperature<double> T){ return correlation::get_tensile_from_poisson_and_pwave(nu(T),M(T)); }); }, nu,M ),
+            table::gather<Modulus>([](auto K,  auto G ) { return Modulus([=](auto T){ return correlation::get_tensile_from_bulk_and_shear   (K(T), G(T)); }); }, K, G ),
+            table::gather<Modulus>([](auto K,  auto nu) { return Modulus([=](auto T){ return correlation::get_tensile_from_bulk_and_poisson (K(T), nu(T));}); }, K, nu),
+            table::gather<Modulus>([](auto K,  auto M ) { return Modulus([=](auto T){ return correlation::get_tensile_from_bulk_and_pwave   (K(T), M(T)); }); }, K, M ),
+            table::gather<Modulus>([](auto l,  auto G ) { return Modulus([=](auto T){ return correlation::get_tensile_from_lame_and_shear   (l(T), G(T)); }); }, l, G ),
+            table::gather<Modulus>([](auto l,  auto nu) { return Modulus([=](auto T){ return correlation::get_tensile_from_lame_and_poisson (l(T), nu(T));}); }, l, nu),
+            table::gather<Modulus>([](auto l,  auto M ) { return Modulus([=](auto T){ return correlation::get_tensile_from_lame_and_pwave   (l(T), M(T)); }); }, l, M ),
+            table::gather<Modulus>([](auto G,  auto nu) { return Modulus([=](auto T){ return correlation::get_tensile_from_shear_and_poisson(G(T), nu(T));}); }, G, nu),
+            table::gather<Modulus>([](auto G,  auto M ) { return Modulus([=](auto T){ return correlation::get_tensile_from_shear_and_pwave  (G(T), M(T)); }); }, G, M ),
+            table::gather<Modulus>([](auto nu, auto M ) { return Modulus([=](auto T){ return correlation::get_tensile_from_poisson_and_pwave(nu(T),M(T)); }); }, nu,M ),
         });
 
     table::PartialTable<Modulus> bulk_modulus_as_solid = 
         table::first<Modulus>({
             published::bulk_modulus_as_solid,
-            table::gather<Modulus>([](auto E,  auto l ) { return Modulus([=](si::temperature<double> T){ return correlation::get_bulk_from_tensile_and_lame   (E(T), l(T) ); }); }, E,  l ),
-            table::gather<Modulus>([](auto E,  auto G ) { return Modulus([=](si::temperature<double> T){ return correlation::get_bulk_from_tensile_and_shear  (E(T), G(T) ); }); }, E,  G ),
-            table::gather<Modulus>([](auto E,  auto nu) { return Modulus([=](si::temperature<double> T){ return correlation::get_bulk_from_tensile_and_poisson(E(T), nu(T)); }); }, E,  nu),
-            table::gather<Modulus>([](auto l,  auto G ) { return Modulus([=](si::temperature<double> T){ return correlation::get_bulk_from_lame_and_shear     (l(T), G(T) ); }); }, l,  G ),
-            table::gather<Modulus>([](auto l,  auto nu) { return Modulus([=](si::temperature<double> T){ return correlation::get_bulk_from_lame_and_poisson   (l(T), nu(T)); }); }, l,  nu),
-            table::gather<Modulus>([](auto l,  auto M ) { return Modulus([=](si::temperature<double> T){ return correlation::get_bulk_from_lame_and_pwave     (l(T), M(T) ); }); }, l,  M ),
-            table::gather<Modulus>([](auto G,  auto nu) { return Modulus([=](si::temperature<double> T){ return correlation::get_bulk_from_shear_and_poisson  (G(T), nu(T)); }); }, G,  nu),
-            table::gather<Modulus>([](auto G,  auto M ) { return Modulus([=](si::temperature<double> T){ return correlation::get_bulk_from_shear_and_pwave    (G(T), M(T) ); }); }, G,  M ),
-            table::gather<Modulus>([](auto nu, auto M ) { return Modulus([=](si::temperature<double> T){ return correlation::get_bulk_from_poisson_and_pwave  (nu(T), M(T)); }); }, nu, M ),
+            table::gather<Modulus>([](auto E,  auto l ) { return Modulus([=](auto T){ return correlation::get_bulk_from_tensile_and_lame   (E(T), l(T) ); }); }, E,  l ),
+            table::gather<Modulus>([](auto E,  auto G ) { return Modulus([=](auto T){ return correlation::get_bulk_from_tensile_and_shear  (E(T), G(T) ); }); }, E,  G ),
+            table::gather<Modulus>([](auto E,  auto nu) { return Modulus([=](auto T){ return correlation::get_bulk_from_tensile_and_poisson(E(T), nu(T)); }); }, E,  nu),
+            table::gather<Modulus>([](auto l,  auto G ) { return Modulus([=](auto T){ return correlation::get_bulk_from_lame_and_shear     (l(T), G(T) ); }); }, l,  G ),
+            table::gather<Modulus>([](auto l,  auto nu) { return Modulus([=](auto T){ return correlation::get_bulk_from_lame_and_poisson   (l(T), nu(T)); }); }, l,  nu),
+            table::gather<Modulus>([](auto l,  auto M ) { return Modulus([=](auto T){ return correlation::get_bulk_from_lame_and_pwave     (l(T), M(T) ); }); }, l,  M ),
+            table::gather<Modulus>([](auto G,  auto nu) { return Modulus([=](auto T){ return correlation::get_bulk_from_shear_and_poisson  (G(T), nu(T)); }); }, G,  nu),
+            table::gather<Modulus>([](auto G,  auto M ) { return Modulus([=](auto T){ return correlation::get_bulk_from_shear_and_pwave    (G(T), M(T) ); }); }, G,  M ),
+            table::gather<Modulus>([](auto nu, auto M ) { return Modulus([=](auto T){ return correlation::get_bulk_from_poisson_and_pwave  (nu(T), M(T)); }); }, nu, M ),
         });
 
+    auto K2 = bulk_modulus_as_solid;
+    auto E2 = tensile_modulus_as_solid;
+
+    auto lame_parameter_as_solid = table::first<Modulus>({ l,  table::gather<Modulus>([](auto K, auto E) { return Modulus([=](auto T){ return correlation::get_lame_from_bulk_and_tensile    (K(T),E(T)); }); }, K2, E2), });
+    auto shear_modulus_as_solid  = table::first<Modulus>({ G,  table::gather<Modulus>([](auto K, auto E) { return Modulus([=](auto T){ return correlation::get_shear_from_bulk_and_tensile   (K(T),E(T)); }); }, K2, E2), });
+    auto poisson_ratio_as_solid  = table::first<Poisson>({ nu, table::gather<Poisson>([](auto K, auto E) { return Poisson([=](auto T){ return correlation::get_poisson_from_bulk_and_tensile (K(T),E(T)); }); }, K2, E2), });
+    auto pwave_modulus_as_solid  = table::first<Modulus>({ M,  table::gather<Modulus>([](auto K, auto E) { return Modulus([=](auto T){ return correlation::get_pwave_from_bulk_and_tensile   (K(T),E(T)); }); }, K2, E2), });
 
     table::FullTable<double> molecular_degrees_of_freedom = 
         table::complete(
@@ -465,31 +472,3 @@ namespace estimated{
 
 }}
 
-
-
-/*
-        typedef std::function<si::pressure<double>(field::StateParameters, si::pressure<double>)> Pp;
-        typedef std::function<si::pressure<double>(field::StateParameters, si::pressure<double>,si::pressure<double>)> Ppp;
-        typedef std::function<si::pressure<double>(field::StateParameters, si::pressure<double>,double)> Ppd;
-        typedef std::function<si::pressure<double>(field::StateParameters, double,si::pressure<double>)> Pdp;
-        typedef std::function<double(field::StateParameters, si::pressure<double>,si::pressure<double>)> Dpp;
-        
-        K = guess.bulk_modulus;
-        E = guess.tensile_modulus;
-
-        guess.lame_parameter = guess.lame_parameter
-            .value_or(Ppp([](field::StateParameters params, si::pressure<double> K, si::pressure<double> E){ return correlation::get_lame_from_bulk_and_tensile(K,E); }), K, E );
-        guess.shear_modulus = guess.shear_modulus
-            .value_or(Ppp([](field::StateParameters params, si::pressure<double> K, si::pressure<double> E){ return correlation::get_shear_from_bulk_and_tensile(K,E); }), K, E );
-        guess.poisson_ratio = guess.poisson_ratio
-            .value_or(Dpp([](field::StateParameters params, si::pressure<double> K, si::pressure<double> E){ return correlation::get_poisson_from_bulk_and_tensile(K,E); }), K, E );
-        guess.pwave_modulus = guess.pwave_modulus
-            .value_or(Ppp([](field::StateParameters params, si::pressure<double> K, si::pressure<double> E){ return correlation::get_pwave_from_bulk_and_tensile(K,E); }), K, E );
-
-        return guess;
-
-    }
-
-}}
-
-*/
