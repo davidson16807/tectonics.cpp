@@ -126,7 +126,7 @@ namespace correlation {
         return si::universal_gas_constant * temperature / pressure;
     }
 
-    constexpr si::specific_heat_capacity<double> get_isobaric_heat_capacity_as_gas(
+    constexpr si::specific_heat_capacity<double> get_isobaric_heat_capacity_as_ideal_gas(
         si::molar_mass<double> molar_mass,
         double degrees_of_freedom
     ){

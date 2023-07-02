@@ -160,7 +160,13 @@ namespace published {
                      std::vector<double>{100.0 ,     1e3,       100e3 },
                      835.0*si::celcius, 1461.0*si::celcius),
             },
-        // { ids::corundum,     },
+        { ids::corundum,     
+                relation::get_vapor_pressure_exponential_interpolated_temperature_function
+                    (si::celcius, si::millimeter_mercury,
+                     std::vector<double>{2360.0,    2490.0,     2580.0}, 
+                     std::vector<double>{   6.0,      22.0,       53.0},
+                     2360.0*si::celcius, 2580.0*si::celcius),
+            }, // Ruff & Konshak, from Pavlushkin (1963)
         // { ids::apatite,      },
         { ids::carbon,         
                 relation::get_vapor_pressure_exponential_interpolated_temperature_function
@@ -168,8 +174,7 @@ namespace published {
                      std::vector<double>{2566.0,     3016.0,     3635.0}, 
                      std::vector<double>{1.0 ,       1e3,        100e3 },
                      2566.0*si::celcius, 3635.0*si::celcius),
-                                                                             // TOOD: autocomplete vapor pressure for solids/liquids if function is present for other phase
-            },
+            }, // TOOD: autocomplete vapor pressure for solids/liquids if function is present for other phase
         // { ids::calcite,      },
         // { ids::orthoclase,   },
         // { ids::andesine,     },

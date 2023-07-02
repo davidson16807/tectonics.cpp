@@ -145,6 +145,8 @@ namespace estimated{
         );
 
 
+    // NOTE: boiling point is not guaranteed to exist for all compounds, since some compounds decompose before the boiling point is reached
+
     table::PartialTable<si::temperature<double>> boiling_sample_point_temperature = 
         table::gather<si::temperature<double>>(
             [](point<double> pT){ return pT.temperature; }, 
@@ -169,13 +171,15 @@ namespace estimated{
     // via Klincewicz ⟶ Ihmels ⟶ Tee-Gotoh-Steward ⟶ Bird-Steward-Lightfoot2
     table::FullTable<LiquidDensityTemperatureRelation> density_as_liquid = 
         table::complete(published::density_as_liquid, 
-            table::derive<LiquidDensityTemperatureRelation>([](si::molar_mass<double> M, si::length<double> sigma){
+            table::derive<LiquidDensityTemperatureRelation>(
+                [](si::molar_mass<double> M, si::length<double> sigma){
                     return LiquidDensityTemperatureRelation(M / correlation::estimate_molar_volume_as_liquid_from_bird_steward_lightfoot_2(sigma));}, 
                 molar_mass, molecular_diameter));
 
     // via Klincewicz ⟶ Ihmels ⟶ definition of compressibility ⟶ definition of compressibility
     table::FullTable<GasDensityStateRelation> density_as_gas = 
-        table::derive<GasDensityStateRelation>([](si::molar_mass<double> M, si::pressure<double> pc, si::temperature<double> Tc, double Zc){
+        table::derive<GasDensityStateRelation>(
+            [](si::molar_mass<double> M, si::pressure<double> pc, si::temperature<double> Tc, double Zc){
                 return GasDensityStateRelation(M,pc,Tc,Zc);}, 
             molar_mass, critical_point_pressure, critical_point_temperature, critical_point_compressibility);
 
@@ -191,7 +195,8 @@ namespace estimated{
                     table::partial(liquid_sample_point), 
                     published::triple_point),
             }),
-            table::derive<SolidDensityTemperatureRelation>([](LiquidDensityTemperatureRelation rhoL, point<double> liquid){
+            table::derive<SolidDensityTemperatureRelation>(
+                [](LiquidDensityTemperatureRelation rhoL, point<double> liquid){
                     return correlation::guess_density_as_solid_from_density_as_liquid(rhoL(liquid.temperature));}, 
                 density_as_liquid, liquid_sample_point) // WARNING: results are speculative
         );
@@ -259,6 +264,19 @@ namespace estimated{
                 table::partial(molar_mass),
                 published::dynamic_viscosity_as_liquid
             ),
+            table::gather<double>(
+                []( point<double> liquid,
+                    point<double> critical,
+                    LiquidVaporPressureTemperatureRelation Pv){
+                    auto T = liquid.temperature;
+                    auto Tc = critical.temperature;
+                    auto pc = critical.pressure;
+                    return std::clamp(correlation::estimate_accentric_factor_from_lee_kesler(Pv(T), T, Tc, pc), -1.0, 1.0);
+                },
+                table::partial(liquid_sample_point),
+                table::partial(critical_point),
+                published::vapor_pressure_as_liquid
+            ),
         });
 
     // CALCULATE PROPERTIES THAT CAN BE DERIVED FROM ACENTRIC FACTOR
@@ -274,7 +292,21 @@ namespace estimated{
                 )
             }),
             6.0,
-            ids::count
+            atoms_per_molecule.size()
+        );
+
+    /* 
+    TODO: adapt correlation::estimate_isobaric_heat_capacity_as_gas_from_rowlinson_poling
+     for use with GasPropertyStateRelations using Dippr119Terms, then invoke results here
+    */
+    table::FullTable<GasHeatCapacityStateRelation> isobaric_specific_heat_capacity_as_gas = 
+        table::complete(
+            published::isobaric_specific_heat_capacity_as_gas,
+            table::derive<GasHeatCapacityStateRelation>(
+                correlation::get_isobaric_heat_capacity_as_ideal_gas,
+                molar_mass,
+                molecular_degrees_of_freedom
+            )
         );
 
     table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_vaporization = 
@@ -291,7 +323,7 @@ namespace estimated{
     table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_sublimation = 
         table::first<LatentHeatTemperatureRelation>({
             published::latent_heat_of_sublimation,
-            // latent_heat_of_vaporization + published::latent_heat_of_fusion,
+            latent_heat_of_vaporization + published::latent_heat_of_fusion,
         });
 
     table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_fusion = 
@@ -341,8 +373,6 @@ namespace estimated{
 
     auto thermal_conductivity_as_gas = published::thermal_conductivity_as_gas;
 
-    auto isobaric_specific_heat_capacity_as_gas = published::isobaric_specific_heat_capacity_as_gas;
-
     table::PartialTable<SolidDynamicViscosityTemperatureRelation> dynamic_viscosity_as_solid = 
         table::first<SolidDynamicViscosityTemperatureRelation>({
             published::dynamic_viscosity_as_solid,
@@ -377,44 +407,35 @@ namespace estimated{
             using Absorption = SolidAbsorptionCoefficientWavenumberRelation;
             using Index = SolidRefractiveIndexWavenumberRelation;
 
-            table::PartialTable<Absorption> alpha2 = 
-                table::first<Absorption>({ alpha,
+            auto alpha2 = table::first<Absorption>({ alpha,
                     table::gather<Absorption>(
                         []( Index n,
                             Index k){
                             return Absorption(
                                 [=](si::wavenumber<double> w){return correlation::get_absorption_coefficient_from_refractive_index(n(w), k(w), 1.0/w);});
                             },
-                        n,
-                        k
-                    )
-                });
+                        n, k ) 
+                    });
 
-            table::PartialTable<Index> n2 = 
-                table::first<Index>({ n,
+            auto n2 = table::first<Index>({ n,
                     table::gather<Index>(
                         []( Index k,
                             Absorption alpha){
                             return Index(
                                 [=](si::wavenumber<double> w){return correlation::get_refractive_index_from_absorption_coefficient(alpha(w), k(w), 1.0/w);});
                             },
-                        k,
-                        alpha
-                    )
-                });
+                        k, alpha ) 
+                    });
 
-            table::PartialTable<Index> k2 = 
-                table::first<Index>({ n,
+            auto k2 = table::first<Index>({ n,
                     table::gather<Index>(
                         []( Index n,
                             Absorption alpha){
                             return Index(
                                 [=](si::wavenumber<double> w){return correlation::get_extinction_coefficient_from_absorption_coefficient(alpha(w), n(w), 1.0/w);});
                             },
-                        n,
-                        alpha
-                    )
-                });
+                        n, alpha ) 
+                    });
 
             refractive_index       = table::complete(table::imitate(n2,     similarity), n2     [fallback_id], similarity.size());
             extinction_coefficient = table::complete(table::imitate(k2,     similarity), k2     [fallback_id], similarity.size());

@@ -45,7 +45,7 @@ namespace compound {
         int chalcocite = 39;
         int chalcopyrite = 40;
 
-        int count = 40;
+        int count = 41;
     }
 
 }

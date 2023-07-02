@@ -38,7 +38,7 @@ namespace published {
                 perflouromethane
             quartz
                 corundum
-                carbon
+                    carbon
                 orthoclase
                 andesine
                 augite
@@ -82,12 +82,12 @@ namespace published {
         /*perflouromethane*/ ids::methane,
         /*benzene*/          ids::formaldehyde,
         /*pyrimidine*/       ids::benzene,
-        /*quartz*/           ids::water,
-        /*halite*/           ids::quartz,
+        /*quartz*/           ids::halite,
+        /*halite*/           ids::water,
         /*corundum*/         ids::quartz,
-        /*apatite*/          ids::quartz,
-        /*carbon*/           ids::quartz,
-        /*calcite*/          ids::quartz,
+        /*apatite*/          ids::halite,
+        /*carbon*/           ids::corundum,
+        /*calcite*/          ids::halite,
         /*orthoclase*/       ids::quartz,
         /*andesine*/         ids::quartz,
         /*augite*/           ids::quartz,

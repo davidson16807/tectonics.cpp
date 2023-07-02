@@ -120,7 +120,7 @@ namespace published {
         {ids::pyrimidine,       49.79*79 * si::kilojoule / (80.088*si::gram)},
         {ids::quartz,           11770e3 * si::joule / si::kilogram},
         {ids::halite,           40810.0 * si::calorie/(80.088 * si::gram)}, // Perry
-        // {ids::corundum,         },
+        {ids::corundum,         115.7 * si::kilocalorie/(101.96  * si::gram)}, // Ruff & Konshak, from Pavlushkin (1963)
         // {ids::apatite,          },
         {ids::carbon,           355.8*si::kilojoule/(12.011*si::gram)},
         // {ids::calcite,          },
