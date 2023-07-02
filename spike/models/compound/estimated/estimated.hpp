@@ -262,6 +262,21 @@ namespace estimated{
         });
 
     // CALCULATE PROPERTIES THAT CAN BE DERIVED FROM ACENTRIC FACTOR
+
+    table::FullTable<double> molecular_degrees_of_freedom = 
+        table::complete(
+            table::first<double>({
+                published::molecular_degrees_of_freedom,
+                table::gather<double>(
+                    correlation::guess_molecular_degrees_of_freedom,
+                    acentric_factor,
+                    table::partial(atoms_per_molecule)
+                )
+            }),
+            6.0,
+            ids::count
+        );
+
     table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_vaporization = 
         table::first<LatentHeatTemperatureRelation>({
             published::latent_heat_of_vaporization,
@@ -397,7 +412,6 @@ namespace estimated{
 
 
 
-
     struct StrengthsHandbook
     {
         table::FullTable<SolidShearYieldStrengthTemperatureRelation> shear_yield_strength;
@@ -406,46 +420,65 @@ namespace estimated{
         table::FullTable<SolidShearFractureStrengthTemperatureRelation> shear_fracture_strength;
         table::FullTable<SolidTensileFractureStrengthTemperatureRelation> tensile_fracture_strength;
         table::FullTable<SolidCompressiveFractureStrengthTemperatureRelation> compressive_fracture_strength;
+
+        StrengthsHandbook(
+            const table::PartialTable<SolidShearYieldStrengthTemperatureRelation> Gyield,
+            const table::PartialTable<SolidTensileYieldStrengthTemperatureRelation> Eyield,
+            const table::PartialTable<SolidCompressiveYieldStrengthTemperatureRelation> Cyield,
+            const table::PartialTable<SolidShearFractureStrengthTemperatureRelation> Gfracture,
+            const table::PartialTable<SolidTensileFractureStrengthTemperatureRelation> Efracture,
+            const table::PartialTable<SolidCompressiveFractureStrengthTemperatureRelation> Cfracture,
+            const table::FullTable<int> similarity,
+            const int fallback_id
+        ){
+
+            // We can correlate tensile and shear yield strengths using the Von Misces Theorem.
+            // If none of the yield strengths are known and cannot be derived, the most common explanation 
+            // is that the material is too brittle for a distinct yield strength to be measured,
+            // If this is the case then yield strength is equal to the fracture strength equivalent,
+            // so this is what we assume as our fallback value.
+            // Even if this assumption does not hold, the fracture strength 
+            // is still the most plausible estimate given no other information
+
+            // We reuse abbreviations for modulii to represent yield strengths
+
+            table::PartialTable<SolidShearYieldStrengthTemperatureRelation> Gyield2 = 
+                table::first<SolidShearYieldStrengthTemperatureRelation>({
+                    Gyield,
+                    table::gather<SolidShearYieldStrengthTemperatureRelation>(
+                        []( SolidTensileYieldStrengthTemperatureRelation E){ return E / sqrt(3.0); },
+                        Eyield
+                    ),
+                    Gfracture
+                });
+
+            table::PartialTable<SolidTensileYieldStrengthTemperatureRelation> Eyield2 = 
+                table::first<SolidTensileYieldStrengthTemperatureRelation>({
+                    Eyield,
+                    table::gather<SolidTensileYieldStrengthTemperatureRelation>(
+                        []( SolidShearYieldStrengthTemperatureRelation G){ return G * sqrt(3.0); },
+                        Gyield
+                    ),
+                    Efracture
+                });
+
+            table::PartialTable<SolidCompressiveYieldStrengthTemperatureRelation> Cyield2 = 
+                table::first<SolidCompressiveYieldStrengthTemperatureRelation>({
+                    Cyield, 
+                    Cfracture
+                });
+
+            shear_yield_strength          = table::complete(table::imitate(Gyield2,   similarity), Gyield2   [fallback_id], similarity.size());
+            tensile_yield_strength        = table::complete(table::imitate(Eyield2,   similarity), Eyield2   [fallback_id], similarity.size());
+            compressive_yield_strength    = table::complete(table::imitate(Cyield2,   similarity), Cyield2   [fallback_id], similarity.size());
+            shear_fracture_strength       = table::complete(table::imitate(Gfracture, similarity), Gfracture [fallback_id], similarity.size());
+            tensile_fracture_strength     = table::complete(table::imitate(Efracture, similarity), Efracture [fallback_id], similarity.size());
+            compressive_fracture_strength = table::complete(table::imitate(Cfracture, similarity), Cfracture [fallback_id], similarity.size());
+
+        }
     };
 
 
-
-    // We can correlate tensile and shear yield strengths using the Von Misces Theorem.
-    // If none of the yield strengths are known, the most common explanation 
-    // is that the material is too brittle for yield strength to be measured.
-    // So in this case we assume yield strength equal to the fracture strength equivalent
-
-    // We reuse abbreviations for modulii to represent yield strengths
-
-    table::PartialTable<SolidShearYieldStrengthTemperatureRelation> shear_yield_strength_as_solid = 
-        table::first<SolidShearYieldStrengthTemperatureRelation>({
-            published::shear_yield_strength_as_solid,
-            table::gather<SolidShearYieldStrengthTemperatureRelation>(
-                []( published::SolidTensileYieldStrengthTemperatureRelation E){
-                    return E / sqrt(3.0);
-                },
-                published::tensile_yield_strength_as_solid
-            ),
-            published::shear_fracture_strength_as_solid
-        });
-
-    table::PartialTable<SolidTensileYieldStrengthTemperatureRelation> tensile_yield_strength_as_solid = 
-        table::first<SolidTensileYieldStrengthTemperatureRelation>({
-            published::shear_yield_strength_as_solid,
-            table::gather<SolidTensileYieldStrengthTemperatureRelation>(
-                []( published::SolidShearYieldStrengthTemperatureRelation G){
-                    return G * sqrt(3.0);
-                },
-                published::shear_yield_strength_as_solid
-            ),
-            published::tensile_fracture_strength_as_solid
-        });
-
-    table::PartialTable<SolidCompressiveYieldStrengthTemperatureRelation> compressive_yield_strength_as_solid = 
-        table::first<SolidCompressiveYieldStrengthTemperatureRelation>({
-            published::compressive_yield_strength_as_solid, 
-            published::compressive_fracture_strength_as_solid
-        });
 
 
 
@@ -514,6 +547,17 @@ namespace estimated{
         }
     };
 
+    StrengthsHandbook strengths(
+        published::shear_yield_strength_as_solid,
+        published::tensile_yield_strength_as_solid,
+        published::compressive_yield_strength_as_solid,
+        published::shear_fracture_strength_as_solid,
+        published::tensile_fracture_strength_as_solid,
+        published::compressive_fracture_strength_as_solid,
+        published::similarity,
+        ids::water
+    );
+
     ElasticitiesHandbook elasticities(
         published::bulk_modulus_as_solid,
         published::tensile_modulus_as_solid,
@@ -524,20 +568,6 @@ namespace estimated{
         published::similarity,
         ids::water
     );
-
-    table::FullTable<double> molecular_degrees_of_freedom = 
-        table::complete(
-            table::first<double>({
-                published::molecular_degrees_of_freedom,
-                table::gather<double>(
-                    correlation::guess_molecular_degrees_of_freedom,
-                    acentric_factor,
-                    table::partial(atoms_per_molecule)
-                )
-            }),
-            6.0,
-            ids::count
-        );
 
 }}
 
