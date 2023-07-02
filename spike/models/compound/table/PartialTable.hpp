@@ -77,7 +77,7 @@ namespace table {
 
 	};
 
-	// allows creating x1 vector from x1 map, fills in missing values with x1 constant as x1 fallback
+	// allows creating a FullTable from a PartialTable, filling in missing values with a constant as a fallback
 	template<typename T>
 	FullTable<T> complete(const PartialTable<T>& x, const T fallback, const std::size_t size)
 	{
@@ -89,7 +89,7 @@ namespace table {
 	    return y;
 	}
 
-	// allows creating x1 vector from x1 map, fills in missing values with fallback values from x1 vector
+	// allows creating a FullTable from a PartialTable, filling in missing values with fallback values from a FullTable
 	template<typename T>
 	FullTable<T> complete(const PartialTable<T>& x, const FullTable<T>& fallback)
 	{
@@ -97,6 +97,25 @@ namespace table {
 	    for (std::size_t i = 0; i < fallback.size(); ++i)
 	    {
 	        y.rows.push_back(x.has(i)? x[i] : fallback[i]);
+	    }
+	    return y;
+	}
+
+	// attempts to populate a PartialTable, filling in missing values with other values in the table as determined by the ids in `imitated`
+	template<typename T>
+	PartialTable<T> imitate(const PartialTable<T>& x, const FullTable<int>& imitated)
+	{
+	    PartialTable<T> y;
+	    std::size_t j;
+	    for (std::size_t i = 0; i < imitated.size(); ++i)
+	    {
+	    	j = i;
+	    	while(!x.has(j) && imitated[j]!=j){
+	    		j = imitated[j];
+	    	}
+	    	if (x.has(j)) {
+	            y.rows.emplace(int(j),x[j]);
+	    	}
 	    }
 	    return y;
 	}
