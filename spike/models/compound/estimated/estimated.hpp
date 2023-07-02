@@ -429,12 +429,12 @@ namespace estimated{
 
     struct StrengthsHandbook
     {
-        table::FullTable<SolidShearYieldStrengthTemperatureRelation> shear_yield_strength;
-        table::FullTable<SolidTensileYieldStrengthTemperatureRelation> tensile_yield_strength;
-        table::FullTable<SolidCompressiveYieldStrengthTemperatureRelation> compressive_yield_strength;
-        table::FullTable<SolidShearFractureStrengthTemperatureRelation> shear_fracture_strength;
-        table::FullTable<SolidTensileFractureStrengthTemperatureRelation> tensile_fracture_strength;
-        table::FullTable<SolidCompressiveFractureStrengthTemperatureRelation> compressive_fracture_strength;
+        table::FullTable<SolidShearYieldStrengthTemperatureRelation> shear_yield;
+        table::FullTable<SolidTensileYieldStrengthTemperatureRelation> tensile_yield;
+        table::FullTable<SolidCompressiveYieldStrengthTemperatureRelation> compressive_yield;
+        table::FullTable<SolidShearFractureStrengthTemperatureRelation> shear_fracture;
+        table::FullTable<SolidTensileFractureStrengthTemperatureRelation> tensile_fracture;
+        table::FullTable<SolidCompressiveFractureStrengthTemperatureRelation> compressive_fracture;
 
         StrengthsHandbook(
             const table::PartialTable<SolidShearYieldStrengthTemperatureRelation> Gyield,
@@ -482,12 +482,12 @@ namespace estimated{
                 Cfracture
             });
 
-            shear_yield_strength          = table::complete(table::imitate(Gyield2,   similarity), Gyield2   [fallback_id], similarity.size());
-            tensile_yield_strength        = table::complete(table::imitate(Eyield2,   similarity), Eyield2   [fallback_id], similarity.size());
-            compressive_yield_strength    = table::complete(table::imitate(Cyield2,   similarity), Cyield2   [fallback_id], similarity.size());
-            shear_fracture_strength       = table::complete(table::imitate(Gfracture, similarity), Gfracture [fallback_id], similarity.size());
-            tensile_fracture_strength     = table::complete(table::imitate(Efracture, similarity), Efracture [fallback_id], similarity.size());
-            compressive_fracture_strength = table::complete(table::imitate(Cfracture, similarity), Cfracture [fallback_id], similarity.size());
+            shear_yield          = table::complete(table::imitate(Gyield2,   similarity), Gyield2   [fallback_id], similarity.size());
+            tensile_yield        = table::complete(table::imitate(Eyield2,   similarity), Eyield2   [fallback_id], similarity.size());
+            compressive_yield    = table::complete(table::imitate(Cyield2,   similarity), Cyield2   [fallback_id], similarity.size());
+            shear_fracture       = table::complete(table::imitate(Gfracture, similarity), Gfracture [fallback_id], similarity.size());
+            tensile_fracture     = table::complete(table::imitate(Efracture, similarity), Efracture [fallback_id], similarity.size());
+            compressive_fracture = table::complete(table::imitate(Cfracture, similarity), Cfracture [fallback_id], similarity.size());
 
         }
     };
