@@ -15,11 +15,9 @@ TEST_CASE( "estimated solid bulk_modulus order of magnitude", "[table]" ) {
         {
             for (int i = 0; i<compound::ids::count; i++)
             {
-                if (compound::estimated::bulk_modulus_as_solid.has(i)) {
-                    auto x = compound::estimated::bulk_modulus_as_solid[i](T);
-                    CHECK(x / si::gigapascal < 1000.0); /*based on diamond*/ \
-                    CHECK(x / si::gigapascal > 0.003);  /*based on helium*/ \
-                }
+                auto x = compound::estimated::elasticities.bulk_modulus[i](T);
+                CHECK(x / si::gigapascal < 1000.0); /*based on diamond*/
+                CHECK(x / si::gigapascal > 0.003);  /*based on helium*/
             }
         }
     }
