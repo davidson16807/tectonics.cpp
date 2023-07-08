@@ -7,7 +7,7 @@
 #include <string>
 
 // in-house libraries
-#include <models/compound/published/published.hpp>
+#include <models/compound/table/published/published.hpp>
 #include <models/compound/correlation/published.hpp>
 #include <models/compound/correlation/speculative.hpp>
 #include <models/compound/correlation/reflectance.hpp>
