@@ -15,7 +15,7 @@ TEST_CASE( "estimated liquid thermal_conductivity order of magnitude", "[table]"
         {
             for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=3.0)
             {
-                auto x = compound::estimated::thermal_conductivity_as_liquid[i](T);
+                auto x = compound::estimated::thermodynamics.thermal_conductivity_as_liquid[i](T);
                 // std::cout << compound::estimated::name[i] << std::endl;
                 // std::cout << T << std::endl;
                 // std::cout << x << std::endl;

@@ -70,7 +70,7 @@ namespace correlation {
 
     We assume a linear relation between solid and liquid density.
     We derive the parameters for the relation from a correlation we find 
-    between known the examples in our standard `CompoundTable`. 
+    between known the examples in our table of published values. 
     The following R code was used to generate it:
     ```
     liquid.density=c(0807.0,1141.0,1101.0,0422.4,1401.0,124.901,0070.8,0681.97,1349.0,1022.0,2180.0,2180.0,2180.0,2800.0,17310.0,9320.0,8020.0)

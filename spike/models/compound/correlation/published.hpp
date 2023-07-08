@@ -40,16 +40,35 @@ namespace correlation {
     // from definition of the acentric factor: https://en.wikipedia.org/wiki/Acentric_factor
     constexpr double get_acentric_factor(const si::pressure<double> liquid_saturated_vapor_pressure_at_reduced_temperature_of_0_7, const si::pressure<double> critical_pressure)
     {
-        return -log10((liquid_saturated_vapor_pressure_at_reduced_temperature_of_0_7/critical_pressure)) - 1.0;
+        return std::clamp(-log10((liquid_saturated_vapor_pressure_at_reduced_temperature_of_0_7/critical_pressure)) - 1.0, -1.0, 1.0);
+        // return -log10((liquid_saturated_vapor_pressure_at_reduced_temperature_of_0_7/critical_pressure)) - 1.0;
     }
+
+    constexpr double estimate_acentric_factor_from_edmister(
+        const si::temperature<double> normal_boiling_point, 
+        const si::temperature<double> critical_temperature, 
+        const si::pressure<double> critical_pressure
+    ){
+        double Tbr = normal_boiling_point / critical_temperature;
+        return std::clamp((3.0/7.0) * (Tbr/(1.0-Tbr)) * log10(critical_pressure/si::atmosphere) - 1.0, -1.0, 1.0);
+        // return (3.0/7.0) * (Tbr/(1.0-Tbr)) * log10(critical_pressure/si::atmosphere) - 1.0;
+    }
+
 
     // Klincewicz method (1982): https://en.wikipedia.org/wiki/Klincewicz_method
     constexpr si::temperature<double> estimate_critical_temperature_from_klincewicz(const si::molar_mass<double> molar_mass, const si::temperature<double> normal_boiling_point)
     {
         double molar_mass_in_grams = (molar_mass / (si::gram/si::mole));
         double normal_boiling_point_in_kelvin = (normal_boiling_point / si::kelvin);
-        double temperature_in_kelvin = 50.2 - 0.16 * molar_mass_in_grams + 1.41 * normal_boiling_point_in_kelvin;
-        return temperature_in_kelvin * si::kelvin; 
+        double critical_temperature_in_kelvin = 50.2 - 0.16 * molar_mass_in_grams + 1.41 * normal_boiling_point_in_kelvin;
+        return critical_temperature_in_kelvin * si::kelvin; 
+    }
+    constexpr si::temperature<double> estimate_normal_boiling_point_from_klincewicz(const si::molar_mass<double> molar_mass, const si::temperature<double> critical_temperature)
+    {
+        double molar_mass_in_grams = (molar_mass / (si::gram/si::mole));
+        double critical_temperature_in_kelvin = (critical_temperature / si::kelvin);
+        double normal_boiling_point_in_kelvin = (critical_temperature_in_kelvin - 50.2 + 0.16 * molar_mass_in_grams) / 1.41;
+        return normal_boiling_point_in_kelvin * si::kelvin; 
     }
     // Klincewicz method (1982): https://en.wikipedia.org/wiki/Klincewicz_method
     constexpr si::pressure<double> estimate_critical_pressure_from_klincewicz(const si::molar_mass<double> molar_mass, const unsigned int atom_count)
@@ -126,7 +145,7 @@ namespace correlation {
         return si::universal_gas_constant * temperature / pressure;
     }
 
-    constexpr si::specific_heat_capacity<double> get_isobaric_heat_capacity_as_ideal_gas(
+    constexpr si::specific_heat_capacity<double> get_isobaric_heat_capacity_as_gas(
         si::molar_mass<double> molar_mass,
         double degrees_of_freedom
     ){
@@ -137,13 +156,13 @@ namespace correlation {
     constexpr si::molar_heat_capacity<double> estimate_isobaric_heat_capacity_as_liquid_from_rowlinson_poling(
         const si::temperature<double> critical_temperature,
         const si::temperature<double> temperature,
-        const double accentric_factor,
+        const double acentric_factor,
         const si::molar_heat_capacity<double> isobaric_heat_capacity_as_gas
     ){
         double reduced_temperature = (temperature / critical_temperature);
         double heat_capacity_phase_difference_versus_gas_constant = 1.586 + 
             0.49f/(1.0-reduced_temperature) + 
-            accentric_factor * (4.2775 + 6.3f*pow(1.0 - reduced_temperature, 1.0/3.0)/reduced_temperature + 0.4355f/(1.0 - reduced_temperature));
+            acentric_factor * (4.2775 + 6.3f*pow(1.0 - reduced_temperature, 1.0/3.0)/reduced_temperature + 0.4355f/(1.0 - reduced_temperature));
         return heat_capacity_phase_difference_versus_gas_constant * si::universal_gas_constant + isobaric_heat_capacity_as_gas;
     }
 
@@ -151,13 +170,13 @@ namespace correlation {
     constexpr si::molar_heat_capacity<double> estimate_isobaric_heat_capacity_as_gas_from_rowlinson_poling(
         const si::temperature<double> critical_temperature,
         const si::temperature<double> temperature,
-        const double accentric_factor,
+        const double acentric_factor,
         const si::molar_heat_capacity<double> isobaric_heat_capacity_as_liquid
     ){
         double reduced_temperature = (temperature / critical_temperature);
         double heat_capacity_phase_difference_versus_gas_constant = 1.586 + 
             0.49f/(1.0-reduced_temperature) + 
-            accentric_factor * (4.2775 + 6.3f*pow(1.0 - reduced_temperature, 1.0/3.0)/reduced_temperature + 0.4355f/(1.0 - reduced_temperature));
+            acentric_factor * (4.2775 + 6.3f*pow(1.0 - reduced_temperature, 1.0/3.0)/reduced_temperature + 0.4355f/(1.0 - reduced_temperature));
         return isobaric_heat_capacity_as_liquid - heat_capacity_phase_difference_versus_gas_constant * si::universal_gas_constant;
     }
 
@@ -173,7 +192,7 @@ namespace correlation {
     }
 
     // Pitzer model: https://chemicals.readthedocs.io/chemicals.phase_change.html#heat-of-vaporization-at-tb-correlations
-    double estimate_accentric_factor_from_pitzer(
+    double estimate_acentric_factor_from_pitzer(
         const si::specific_energy<double> latent_heat_of_vaporization,
         const si::molar_mass<double> molar_mass,  
         const si::temperature<double> temperature,
@@ -185,13 +204,13 @@ namespace correlation {
 
     // Pitzer model: https://chemicals.readthedocs.io/chemicals.phase_change.html#heat-of-vaporization-at-tb-correlations
     constexpr si::specific_energy<double> estimate_latent_heat_of_vaporization_from_pitzer(
-        const double accentric_factor,
+        const double acentric_factor,
         const si::molar_mass<double> molar_mass,  
         const si::temperature<double> temperature,
         const si::temperature<double> critical_temperature
     ){
         double reduced_temperature = (temperature / critical_temperature);
-        return (7.08 * pow(1.0 - reduced_temperature, 0.354) + 10.95 * accentric_factor * pow(1.0 - reduced_temperature, 0.456)) * si::universal_gas_constant * critical_temperature / molar_mass;
+        return (7.08 * pow(1.0 - reduced_temperature, 0.354) + 10.95 * acentric_factor * pow(1.0 - reduced_temperature, 0.456)) * si::universal_gas_constant * critical_temperature / molar_mass;
     }
 
     // Letsou-Stiel method: https://chemicals.readthedocs.io/chemicals.viscosity.html?highlight=letsou%20stiel#chemicals.viscosity.Letsou_Stiel
@@ -259,29 +278,6 @@ namespace correlation {
         }
     }
 
-    // Lee Kesler method (1975): https://chemicals.readthedocs.io/chemicals.acentric.html
-    constexpr double estimate_accentric_factor_from_lee_kesler(
-        const si::pressure<double> liquid_saturated_vapor_pressure, 
-        const si::temperature<double> normal_melting_point_temperature, 
-        const si::temperature<double> critical_temperature,
-        const si::temperature<double> temperature, 
-        const si::pressure<double> critical_pressure
-    ){
-        double reduced_pressure    = (liquid_saturated_vapor_pressure / critical_pressure);
-        double reduced_temperature = (temperature / critical_temperature);
-        return (log(reduced_pressure) - f0(reduced_temperature)) / f1(reduced_temperature);
-    }
-    // Lee Kesler method (1975): https://en.wikipedia.org/wiki/Lee%E2%80%93Kesler_method
-    constexpr double estimate_accentric_factor_from_lee_kesler(
-        const si::pressure<double> liquid_saturated_vapor_pressure, 
-        const si::temperature<double> temperature, 
-        const si::temperature<double> critical_temperature,
-        const si::pressure<double> critical_pressure
-    ){
-        double reduced_pressure    = (liquid_saturated_vapor_pressure / critical_pressure);
-        double reduced_temperature = (temperature / critical_temperature);
-        return (log(reduced_pressure) - f0(reduced_temperature)) / f1(reduced_temperature);
-    }
     // Lee Kesler method: https://en.wikipedia.org/wiki/Lee%E2%80%93Kesler_method
     constexpr si::pressure<double> estimate_vapor_pressure_as_liquid_from_lee_kesler(
         const double acentric_factor, 
@@ -423,6 +419,17 @@ namespace correlation {
         const si::pressure<double> triple_point_pressure
     ){
         return triple_point_pressure * exp(-((latent_heat_of_sublimation_at_triple_point*molar_mass / si::universal_gas_constant) * (1.0/temperature - 1.0/triple_point_temperature)));
+    }
+
+    // Clapeyron: https://chemicals.readthedocs.io/chemicals.vapor_pressure.html#sublimation-pressure-estimation-correlations
+    constexpr si::pressure<double> estimate_triple_point_pressure_from_clapeyron(
+        const si::specific_energy<double> latent_heat_of_sublimation_at_triple_point,
+        const si::molar_mass<double> molar_mass,
+        const si::temperature<double> temperature,
+        const si::temperature<double> triple_point_temperature,
+        const si::pressure<double> vapor_pressure_as_solid
+    ){
+        return vapor_pressure_as_solid / exp(-((latent_heat_of_sublimation_at_triple_point*molar_mass / si::universal_gas_constant) * (1.0/temperature - 1.0/triple_point_temperature)));
     }
 
 }}

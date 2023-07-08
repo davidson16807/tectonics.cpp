@@ -13,11 +13,9 @@ TEST_CASE( "estimated solid isobaric_specific_heat_capacity order of magnitude",
         {
             for (int i = 0; i<compound::ids::count; i++)
             {
-                if (compound::estimated::isobaric_specific_heat_capacity_as_solid.has(i)) {
-                    auto x = compound::estimated::isobaric_specific_heat_capacity_as_solid[i](T);
+                    auto x = compound::estimated::thermodynamics.isobaric_specific_heat_capacity_as_solid[i](T);
                     CHECK(x / (si::joule/(si::kilogram * si::kelvin)) < 30000.0); /*based on hydrogen*/ \
                     CHECK(x / (si::joule/(si::kilogram * si::kelvin)) >= 0.0); /*based on predicted behavior at 0K*/ \
-                }
             }
         }
     }
@@ -28,10 +26,8 @@ TEST_CASE( "estimated solid isobaric_specific_heat_capacity degeneracy", "[table
     {
         for (int i = 0; i<compound::ids::count; i++)
         {
-            if (compound::estimated::isobaric_specific_heat_capacity_as_solid.has(i)) {
-                auto x = compound::estimated::isobaric_specific_heat_capacity_as_solid[i](0*si::kelvin);
+                auto x = compound::estimated::thermodynamics.isobaric_specific_heat_capacity_as_solid[i](0*si::kelvin);
                 CHECK(x / (si::joule/(si::kilogram * si::kelvin)) == 0.0); 
-            }
         }
     }
 }

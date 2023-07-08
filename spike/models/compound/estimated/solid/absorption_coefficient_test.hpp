@@ -13,7 +13,7 @@ TEST_CASE( "estimated solid absorption_coefficient order of magnitude", "[table]
         {
             for (si::length<double> l = 10.0*si::nanometer; l <= 3.0*si::millimeter; l*=1.78)
             {
-                auto x = compound::estimated::spectrums.absorption_coefficient[i](1.0/l);
+                auto x = compound::estimated::spectra_as_solid.absorption_coefficient[i](1.0/l);
                 CHECK(x * si::centimeter < 300000000.0); /*based on water*/ 
                 // CHECK(x * si::centimeter < 1000000.0); /*based on water*/ 
                 CHECK(x * si::centimeter >= 0.0); /*based on nitrogen*/ 

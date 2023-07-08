@@ -13,15 +13,12 @@ TEST_CASE( "estimated liquid isobaric_specific_heat_capacity order of magnitude"
     {
         for (int i = 0; i<compound::ids::count; i++)
         {
-            if (compound::estimated::isobaric_specific_heat_capacity_as_liquid.has(i)) 
-            {
                 for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=3.0)
                 {
-                    auto x = compound::estimated::isobaric_specific_heat_capacity_as_liquid[i](T);
+                    auto x = compound::estimated::thermodynamics.isobaric_specific_heat_capacity_as_liquid[i](T);
                     CHECK(x / (si::joule/(si::gram*si::kelvin)) < 100.0); /*based on hydrogen*/ \
                     CHECK(x / (si::joule/(si::gram*si::kelvin)) > 0.1); /*based on gold*/ \
                 }
-            }
         }
     }
 }

@@ -15,7 +15,7 @@ TEST_CASE( "estimated gaseous isobaric_specific_heat_capacity order of magnitude
             {
                 for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=3.0)
                 {
-                    auto x = compound::estimated::isobaric_specific_heat_capacity_as_gas[i](p,T);
+                    auto x = compound::estimated::thermodynamics.isobaric_specific_heat_capacity_as_gas[i](p,T);
                     // std::cout << compound::estimated::name[i] << std::endl;
                     // std::cout << T << std::endl;
                     // std::cout << p << std::endl;

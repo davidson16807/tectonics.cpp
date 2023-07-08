@@ -140,7 +140,8 @@ namespace published {
             },
         // { ids::pyrimidine,   },
         // { ids::quartz,       },
-        // { ids::halite,       },
+        { ids::halite,          0.45 * si::watt / (si::meter * si::kelvin)  // Passerini (2010)
+            },
         // { ids::corundum,     // dynamic_viscosity = 0.035 * si::pascal * si::second, // Blomquist (1978)
             // },
         // { ids::apatite,      },

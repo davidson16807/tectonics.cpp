@@ -3,6 +3,9 @@
 // C libraries
 #include <cmath>
 
+// std libraries
+#include <string>
+
 // in-house libraries
 #include <models/compound/published/published.hpp>
 #include <models/compound/correlation/published.hpp>
@@ -44,6 +47,8 @@ namespace estimated{
     using SolidDensityTemperatureRelation = published::SolidDensityTemperatureRelation;
     using SolidVaporPressureTemperatureRelation = published::SolidVaporPressureTemperatureRelation;
     using SolidDynamicViscosityTemperatureRelation = published::SolidDynamicViscosityTemperatureRelation;
+    using SolidHeatCapacityTemperatureRelation = published::SolidHeatCapacityTemperatureRelation;
+    using SolidThermalConductivityTemperatureRelation = published::SolidThermalConductivityTemperatureRelation;
 
     using SolidShearYieldStrengthTemperatureRelation = published::SolidShearYieldStrengthTemperatureRelation;
     using SolidTensileYieldStrengthTemperatureRelation = published::SolidTensileYieldStrengthTemperatureRelation;
@@ -82,312 +87,545 @@ namespace estimated{
     //   properties derived by acentric factor
     //   miscellaneous properties
 
-
-    auto name = published::name;
-    auto formula = published::formula;
-    
-    auto atoms_per_molecule = published::atoms_per_molecule;
-    auto freezing_sample_point = published::freezing_sample_point;
-    auto boiling_sample_point = published::boiling_sample_point;
-    auto molar_mass = published::molar_mass;
-
-    // via Klincewicz
-    table::FullTable<si::pressure<double>> critical_point_pressure = 
-        table::complete(published::critical_point_pressure, 
-            table::derive<si::pressure<double>>(correlation::estimate_critical_pressure_from_klincewicz, molar_mass, atoms_per_molecule));
-
-    // via Klincewicz
-    table::FullTable<si::molar_volume<double>> critical_point_volume = 
-        table::complete(published::critical_point_volume, 
-            table::derive<si::molar_volume<double>>(correlation::estimate_critical_molar_volume_from_klincewicz, molar_mass, atoms_per_molecule));
-
-    // via Klincewicz ⟶ Ihmels
-    table::FullTable<si::temperature<double>> critical_point_temperature = 
-        table::complete(published::critical_point_temperature, 
-            table::derive<si::temperature<double>>(correlation::estimate_critical_temperature_from_ihmels, critical_point_pressure, critical_point_volume));
-
-    // via Klincewicz ⟶ Ihmels ⟶ definition of compressibility
-    table::FullTable<double> critical_point_compressibility = 
-        table::complete(published::critical_point_compressibility, 
-            table::derive<double>(correlation::get_critical_compressibility, critical_point_pressure, critical_point_temperature, critical_point_volume));
-
-    // via Klincewicz ⟶ Ihmels ⟶ Tee-Gotoh-Steward
-    table::FullTable<si::length<double>> molecular_diameter = 
-        table::complete(published::molecular_diameter, 
-            table::derive<si::length<double>>(correlation::estimate_molecular_diameter_from_tee_gotoh_steward, critical_point_temperature, critical_point_pressure));
-
-    point<double> standard = point<double>(si::standard_pressure, si::standard_temperature);
-
-    table::FullTable<point<double>> critical_point = 
-        table::derive<point<double>>(
-            [](si::pressure<double> p, si::temperature<double> T){ return point<double>(p,T); }, 
-            critical_point_pressure, critical_point_temperature);
-
-    table::FullTable<point<double>> solid_sample_point = 
-        table::derive<point<double>>(
-            [](point<double> freezing){ return  standard.temperature < freezing.temperature? standard : freezing; }, 
-            freezing_sample_point);
-
-    table::FullTable<point<double>> liquid_sample_point = 
-        table::complete(
-            table::gather<point<double>>(
-                [](point<double> freezing, point<double> boiling){ 
-                    return freezing.temperature < standard.temperature && standard.temperature < boiling.temperature? 
-                        standard : (freezing + boiling)/2.0; }, 
-                table::partial(freezing_sample_point), boiling_sample_point),
-            freezing_sample_point
-        );
-
-    table::FullTable<point<double>> gas_sample_point = 
-        table::complete(
-            table::gather<point<double>>([](point<double> boiling){ return boiling.temperature < standard.temperature? standard : boiling; }, published::boiling_sample_point),
-            critical_point
-        );
-
-
-    // NOTE: boiling point is not guaranteed to exist for all compounds, since some compounds decompose before the boiling point is reached
-
-    table::PartialTable<si::temperature<double>> boiling_sample_point_temperature = 
-        table::gather<si::temperature<double>>(
-            [](point<double> pT){ return pT.temperature; }, 
-            boiling_sample_point);
-
-    table::PartialTable<si::pressure<double>> boiling_sample_point_pressure = 
-        table::gather<si::pressure<double>>(
-            [](point<double> pT){ return pT.pressure; }, 
-            boiling_sample_point);
-
-
-    table::FullTable<si::temperature<double>> freezing_sample_point_temperature = 
-        table::derive<si::temperature<double>>(
-            [](point<double> pT){ return pT.temperature; }, 
-            freezing_sample_point);
-
-    table::FullTable<si::pressure<double>> freezing_sample_point_pressure = 
-        table::derive<si::pressure<double>>(
-            [](point<double> pT){ return pT.pressure; }, 
-            freezing_sample_point);
-
-    // via Klincewicz ⟶ Ihmels ⟶ Tee-Gotoh-Steward ⟶ Bird-Steward-Lightfoot2
-    table::FullTable<LiquidDensityTemperatureRelation> density_as_liquid = 
-        table::complete(published::density_as_liquid, 
-            table::derive<LiquidDensityTemperatureRelation>(
-                [](si::molar_mass<double> M, si::length<double> sigma){
-                    return LiquidDensityTemperatureRelation(M / correlation::estimate_molar_volume_as_liquid_from_bird_steward_lightfoot_2(sigma));}, 
-                molar_mass, molecular_diameter));
-
-    // via Klincewicz ⟶ Ihmels ⟶ definition of compressibility ⟶ definition of compressibility
-    table::FullTable<GasDensityStateRelation> density_as_gas = 
-        table::derive<GasDensityStateRelation>(
-            [](si::molar_mass<double> M, si::pressure<double> pc, si::temperature<double> Tc, double Zc){
-                return GasDensityStateRelation(M,pc,Tc,Zc);}, 
-            molar_mass, critical_point_pressure, critical_point_temperature, critical_point_compressibility);
-
-    // via Klincewicz ⟶ Ihmels ⟶ Tee-Gotoh-Steward ⟶ Bird-Steward-Lightfoot2 ⟶ Goodman (with speculative fallback)
-    table::FullTable<SolidDensityTemperatureRelation> density_as_solid = 
-        table::complete(
-            table::first<SolidDensityTemperatureRelation>({
-                published::density_as_solid, 
-                table::gather<SolidDensityTemperatureRelation>([](si::molar_mass<double> M, LiquidDensityTemperatureRelation rhoL, point<double> liquid, point<double> triple){
-                        return SolidDensityTemperatureRelation(M / correlation::estimate_molar_volume_as_solid_from_goodman(M / rhoL(liquid.temperature), liquid.temperature, triple.temperature));}, 
-                    table::partial(molar_mass), 
-                    table::partial(density_as_liquid), 
-                    table::partial(liquid_sample_point), 
-                    published::triple_point),
-            }),
-            table::derive<SolidDensityTemperatureRelation>(
-                [](LiquidDensityTemperatureRelation rhoL, point<double> liquid){
-                    return correlation::guess_density_as_solid_from_density_as_liquid(rhoL(liquid.temperature));}, 
-                density_as_liquid, liquid_sample_point) // WARNING: results are speculative
-        );
-
-
-
-    // // CALCULATE POSSIBLE ROUTES TO ACENTRIC FACTOR
-
-    table::PartialTable<SolidVaporPressureTemperatureRelation> vapor_pressure_as_solid = 
-        table::first<SolidVaporPressureTemperatureRelation>({
-            published::vapor_pressure_as_solid,
-            table::gather<SolidVaporPressureTemperatureRelation>(
-                []( LatentHeatTemperatureRelation Hs, 
-                    si::molar_mass<double> M, 
-                    point<double> triple){
-                        auto T = analytic::Identity<float>();
-                        auto R = si::universal_gas_constant;
-                        float T3 = triple.temperature / si::kelvin;
-                        float P3 = triple.pressure / si::pascal;
-                        float k = (Hs(triple.temperature)*M/R)/si::kelvin;
-                        using Polynomial = analytic::Polynomial<float,-1,1>;
-                        using Clamped = analytic::Clamped<float,Polynomial>;
-                        using Railyard = analytic::Railyard<float,Polynomial>;
-                        return P3 * SolidVaporPressureTemperatureRelation(
-                            Railyard(Clamped(0.0f, T3, Polynomial(-k*(1.0f/T - 1.0f/T3)))),
-                            si::kelvin, si::pascal);
-                        // NOTE: the above is translated from property/published.hpp:
-                        // return triple_point_pressure * exp(-((latent_heat_of_sublimation*molar_mass / si::universal_gas_constant) * (1.0/temperature - 1.0/triple_point_temperature)));
-                }, 
-                published::latent_heat_of_sublimation, // NOTE: this should be latent heat of sublimation at the triple point, update this line if ever we convert latent_heat_of_fusion to a relation
-                table::partial(molar_mass), 
-                published::triple_point)
-        });
-
-    // CALCULATE ACENTRIC FACTOR
-    table::PartialTable<double> acentric_factor = 
-        table::first<double>({
-            published::acentric_factor,
-            table::gather<double>(
-                []( point<double> liquid,
-                    point<double> critical,
-                    si::molar_mass<double> M,
-                    LatentHeatTemperatureRelation Hv){
-                    auto T = si::clamp(liquid.temperature, si::absolute_zero, critical.temperature);
-                    auto Tc = critical.temperature;
-                    return std::clamp(correlation::estimate_accentric_factor_from_pitzer(Hv(T), M, T, Tc), -1.0, 1.0);
-                },
-                table::partial(liquid_sample_point),
-                table::partial(critical_point),
-                table::partial(molar_mass),
-                published::latent_heat_of_vaporization
-            ),
-            table::gather<double>(
-                []( point<double> liquid,
-                    point<double> critical,
-                    si::molar_mass<double> M,
-                    LiquidDynamicViscosityTemperatureRelation nuL){
-                    auto T = liquid.temperature;
-                    auto Tc = critical.temperature;
-                    auto pc = critical.pressure;
-                    return std::clamp(correlation::estimate_acentric_factor_from_letsou_stiel(nuL(T), M, T, Tc, pc), -1.0, 1.0);
-                },
-                table::partial(liquid_sample_point),
-                table::partial(critical_point),
-                table::partial(molar_mass),
-                published::dynamic_viscosity_as_liquid
-            ),
-            table::gather<double>(
-                []( point<double> liquid,
-                    point<double> critical,
-                    LiquidVaporPressureTemperatureRelation Pv){
-                    auto T = liquid.temperature;
-                    auto Tc = critical.temperature;
-                    auto pc = critical.pressure;
-                    return std::clamp(correlation::estimate_accentric_factor_from_lee_kesler(Pv(T), T, Tc, pc), -1.0, 1.0);
-                },
-                table::partial(liquid_sample_point),
-                table::partial(critical_point),
-                published::vapor_pressure_as_liquid
-            ),
-        });
-
-    // CALCULATE PROPERTIES THAT CAN BE DERIVED FROM ACENTRIC FACTOR
-
-    table::FullTable<double> molecular_degrees_of_freedom = 
-        table::complete(
-            table::first<double>({
-                published::molecular_degrees_of_freedom,
-                table::gather<double>(
-                    correlation::guess_molecular_degrees_of_freedom,
-                    acentric_factor,
-                    table::partial(atoms_per_molecule)
-                )
-            }),
-            6.0,
-            atoms_per_molecule.size()
-        );
-
-    /* 
-    TODO: adapt correlation::estimate_isobaric_heat_capacity_as_gas_from_rowlinson_poling
-     for use with GasPropertyStateRelations using Dippr119Terms, then invoke results here
+    /*
+    `BasicHandbook` serves the role of a chemical handbook 
+    that contains "basic" properties that are guaranteed to be known for any chemical compound
     */
-    table::FullTable<GasHeatCapacityStateRelation> isobaric_specific_heat_capacity_as_gas = 
-        table::complete(
-            published::isobaric_specific_heat_capacity_as_gas,
-            table::derive<GasHeatCapacityStateRelation>(
-                correlation::get_isobaric_heat_capacity_as_ideal_gas,
-                molar_mass,
-                molecular_degrees_of_freedom
-            )
-        );
+    struct BasicHandbook
+    {
+        table::FullTable<std::string> name;
+        table::FullTable<std::string> formula;
+        table::FullTable<unsigned int> atoms_per_molecule;
+        table::FullTable<si::molar_mass<double>> molar_mass;
+        table::FullTable<int> similarity;
+        BasicHandbook(
+            const table::FullTable<std::string> name,
+            const table::FullTable<std::string> formula,
+            const table::FullTable<unsigned int> atoms_per_molecule,
+            const table::FullTable<si::molar_mass<double>> molar_mass,
+            const table::FullTable<int> similarity
+        ):
+            name(name),
+            formula(formula),
+            atoms_per_molecule(atoms_per_molecule),
+            molar_mass(molar_mass),
+            similarity(similarity)
+        {
 
-    table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_vaporization = 
-        table::first<LatentHeatTemperatureRelation>({
-            published::latent_heat_of_vaporization,
-            table::gather<LatentHeatTemperatureRelation>(
-                relation::get_pitzer_latent_heat_of_vaporization_temperature_relation,
-                table::partial(molar_mass), 
-                table::partial(critical_point_temperature), 
-                acentric_factor
-            ),
-        });
+        }
+    };
 
-    table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_sublimation = 
-        table::first<LatentHeatTemperatureRelation>({
-            published::latent_heat_of_sublimation,
-            latent_heat_of_vaporization + published::latent_heat_of_fusion,
-        });
+    /*
+    `CriticalPropertiesHandbook` serves the role of a chemical handbook 
+    that contains the critical properties of chemical compounds
+    */
+    struct CriticalPropertiesHandbook
+    {
+        table::FullTable<si::pressure<double>> pressure;
+        table::FullTable<si::molar_volume<double>> volume;
+        table::FullTable<si::temperature<double>> temperature;
+        table::FullTable<double> compressibility;
+        table::FullTable<point<double>> point_;
 
-    table::PartialTable<LatentHeatTemperatureRelation> latent_heat_of_fusion = 
-        table::first<LatentHeatTemperatureRelation>({
-            published::latent_heat_of_fusion,
-            published::latent_heat_of_sublimation - latent_heat_of_vaporization,
-        });
+        CriticalPropertiesHandbook(
+            const table::PartialTable<si::pressure<double>> Pc, // critical pressure
+            const table::PartialTable<si::molar_volume<double>> Vc, // critical volume
+            const table::PartialTable<si::temperature<double>> Tc, // critical temperature
+            const table::PartialTable<double> Zc, // critical compressibility
+            const table::FullTable<unsigned int> A, // atoms per molecule
+            const table::FullTable<si::molar_mass<double>> M // molar mass
+        ){
 
-    table::PartialTable<LiquidDynamicViscosityTemperatureRelation> dynamic_viscosity_as_liquid = 
-        table::first<LiquidDynamicViscosityTemperatureRelation>({
-            published::dynamic_viscosity_as_liquid,
-            table::gather<LiquidDynamicViscosityTemperatureRelation>(
-                relation::estimate_viscosity_as_liquid_from_letsou_stiel,
-                acentric_factor,
-                table::partial(molar_mass),
-                table::partial(critical_point_temperature),
-                table::partial(critical_point_pressure)
-            ),
-        });
+            // via Klincewicz
+            pressure = table::complete(Pc, 
+                table::derive<si::pressure<double>>(correlation::estimate_critical_pressure_from_klincewicz, M, A));
 
-    table::PartialTable<LiquidVaporPressureTemperatureRelation> vapor_pressure_as_liquid = 
-        table::first<LiquidVaporPressureTemperatureRelation>({
-            published::vapor_pressure_as_liquid,
-            // table::gather<LiquidVaporPressureTemperatureRelation>(
-            //     relation::estimate_vapor_pressure_as_liquid_from_lee_kesler,
-            //     acentric_factor,
-            //     table::partial(critical_point_temperature),
-            //     table::partial(critical_point_pressure)
-            // ),
-        });
+            // via Klincewicz
+            volume = table::complete(Vc, 
+                table::derive<si::molar_volume<double>>(correlation::estimate_critical_molar_volume_from_klincewicz, M, A));
 
-    // CALCULATE MISCELLANEOUS PROPERTIES
-    table::FullTable<LiquidThermalConductivityTemperatureRelation> thermal_conductivity_as_liquid = 
-        table::complete(
-            published::thermal_conductivity_as_liquid,
-            table::derive<LiquidThermalConductivityTemperatureRelation>(
-                relation::estimate_thermal_conductivity_as_liquid_from_sheffy_johnson,
-                molar_mass, 
-                freezing_sample_point_temperature,
-                critical_point_temperature
-            )
-        );
+            // via Klincewicz ⟶ Ihmels
+            temperature = table::complete(Tc, 
+                table::derive<si::temperature<double>>(correlation::estimate_critical_temperature_from_ihmels, pressure, volume)); 
 
-    auto isobaric_specific_heat_capacity_as_liquid = published::isobaric_specific_heat_capacity_as_liquid;
+            // via Klincewicz ⟶ Ihmels ⟶ definition of compressibility
+            compressibility = table::complete(Zc, 
+                table::derive<double>(correlation::get_critical_compressibility, pressure, temperature, volume));
 
-    auto dynamic_viscosity_as_gas = published::dynamic_viscosity_as_gas;
+            point_ = table::derive<point<double>>(
+                [](si::pressure<double> p, si::temperature<double> T){ return point<double>(p,T); }, 
+                pressure, temperature);
 
-    auto thermal_conductivity_as_gas = published::thermal_conductivity_as_gas;
+        }
+    };
 
-    table::PartialTable<SolidDynamicViscosityTemperatureRelation> dynamic_viscosity_as_solid = 
-        table::first<SolidDynamicViscosityTemperatureRelation>({
-            published::dynamic_viscosity_as_solid,
-            table::gather<SolidDynamicViscosityTemperatureRelation>(
-                []( LiquidDynamicViscosityTemperatureRelation nuL,
-                    point<double> liquid){
-                    return SolidDynamicViscosityTemperatureRelation(
-                        correlation::guess_viscosity_as_solid_from_viscosity_as_liquid(nuL(liquid.temperature)));
-                    // WARNING: results above are speculative, 
-                    // see property/speculative.hpp for reasoning and justification
-                },
-                dynamic_viscosity_as_liquid,
-                table::partial(liquid_sample_point)
-            )
-        });
+    /*
+    `SamplePointHandbook` serves the role of a chemical handbook 
+    that contains properties regarding the molecules of compounds 
+    that must be inferred from other properties
+    */
+    struct SamplePointHandbook
+    {
+        table::FullTable<point<double>> solid_point;
+        table::FullTable<point<double>> liquid_point;
+        table::FullTable<point<double>> gas_point;
+        table::FullTable<point<double>> freezing_point;
+        table::FullTable<point<double>> boiling_point;
+        table::FullTable<si::temperature<double>> freezing_point_temperature;
+        table::FullTable<si::pressure<double>> freezing_point_pressure;
+        table::FullTable<si::temperature<double>> boiling_point_temperature;
+        table::FullTable<si::pressure<double>> boiling_point_pressure;
+
+        SamplePointHandbook(
+            const table::FullTable<point<double>>& freezing_point0,
+            const table::PartialTable<point<double>>& boiling_point0,
+            const CriticalPropertiesHandbook& critical,
+            const BasicHandbook& basic
+        ): 
+            freezing_point(freezing_point0)
+        {
+
+            freezing_point_temperature = 
+                table::derive<si::temperature<double>>(
+                    [](point<double> pT){ return pT.temperature; }, 
+                    freezing_point);
+
+            freezing_point_pressure = 
+                table::derive<si::pressure<double>>(
+                    [](point<double> pT){ return pT.pressure; }, 
+                    freezing_point);
+
+            boiling_point = 
+                table::complete(
+                    boiling_point0,
+                    table::derive<point<double>>(
+                        [](si::molar_mass<double> M, si::temperature<double> Tc, si::temperature<double> Tf){ 
+                            return point<double>(si::atmosphere, si::clamp(correlation::estimate_normal_boiling_point_from_klincewicz(M,Tc), Tf, Tc));
+                        }, 
+                        basic.molar_mass,
+                        critical.temperature,
+                        freezing_point_temperature
+                    )
+                );
+
+            boiling_point_temperature = 
+                table::derive<si::temperature<double>>(
+                    [](point<double> pT){ return pT.temperature; }, 
+                    boiling_point);
+
+            boiling_point_pressure = 
+                table::derive<si::pressure<double>>(
+                    [](point<double> pT){ return pT.pressure; }, 
+                    boiling_point);
+
+            point<double> standard = point<double>(si::standard_pressure, si::standard_temperature);
+
+            solid_point = 
+                table::derive<point<double>>(
+                    [standard](point<double> freezing){ return  standard.temperature < freezing.temperature? standard : freezing; }, 
+                    freezing_point);
+
+            liquid_point = 
+                table::derive<point<double>>(
+                    [standard](point<double> freezing, point<double> boiling){ 
+                        return freezing.temperature < standard.temperature && standard.temperature < boiling.temperature? 
+                            standard : (freezing + boiling)/2.0; }, 
+                    freezing_point, 
+                    boiling_point);
+
+            gas_point = 
+                table::derive<point<double>>(
+                    [standard](point<double> boiling){ return boiling.temperature < standard.temperature? standard : boiling; }, 
+                    boiling_point);
+
+        }
+    };
+
+
+
+
+    /*
+    `MolecularPropertiesHandbook` serves the role of a chemical handbook that contain 
+    phase based properties and other properties that are relevant to thermodynamic behavior
+    */
+    struct MolecularPropertiesHandbook
+    {
+        table::FullTable<si::length<double>> diameter;
+        table::FullTable<double> degrees_of_freedom;
+        table::FullTable<double> acentric_factor;
+
+        MolecularPropertiesHandbook(
+            const table::PartialTable<si::length<double>>& diameter0,
+            const table::PartialTable<double>& degrees_of_freedom0,
+            const table::PartialTable<double>& acentric_factor0,
+            const table::PartialTable<published::LiquidDynamicViscosityTemperatureRelation>& dynamic_viscosity_as_liquid0,
+            const table::PartialTable<published::LatentHeatTemperatureRelation>& latent_heat_of_vaporization0,
+            const table::PartialTable<published::LiquidVaporPressureTemperatureRelation>& vapor_pressure_as_liquid0,
+            const CriticalPropertiesHandbook& critical,
+            const SamplePointHandbook& sample,
+            const BasicHandbook& basic
+        ){
+
+            // via Klincewicz ⟶ Ihmels ⟶ Tee-Gotoh-Steward
+            diameter = 
+                table::complete(diameter0,
+                    table::derive<si::length<double>>(
+                        [](si::temperature<double> T, si::pressure<double> P){ return correlation::estimate_molecular_diameter_from_tee_gotoh_steward(T,P); }, 
+                        critical.temperature, 
+                        critical.pressure));
+
+            // CALCULATE ACENTRIC FACTOR
+
+            acentric_factor = 
+                table::complete(
+                    table::first<double>({
+                        acentric_factor0,
+                        table::gather<double>(
+                            []( point<double> critical,
+                                LiquidVaporPressureTemperatureRelation Pv){
+                                auto Tc = critical.temperature;
+                                auto Pc = critical.pressure;
+                                return correlation::get_acentric_factor(Pv(0.7*Tc), Pc);
+                            },
+                            table::partial(critical.point_),
+                            vapor_pressure_as_liquid0
+                        ),
+                        table::gather<double>(
+                            []( point<double> liquid,
+                                point<double> critical,
+                                si::molar_mass<double> M,
+                                LatentHeatTemperatureRelation Hv){
+                                auto T = si::clamp(liquid.temperature, si::absolute_zero, critical.temperature);
+                                auto Tc = critical.temperature;
+                                return std::clamp(correlation::estimate_acentric_factor_from_pitzer(Hv(T), M, T, Tc), -1.0, 1.0);
+                            },
+                            table::partial(sample.liquid_point),
+                            table::partial(critical.point_),
+                            table::partial(basic.molar_mass),
+                            latent_heat_of_vaporization0
+                        ),
+                        table::gather<double>(
+                            []( point<double> liquid,
+                                point<double> critical,
+                                si::molar_mass<double> M,
+                                LiquidDynamicViscosityTemperatureRelation nuL){
+                                auto T = liquid.temperature;
+                                auto Tc = critical.temperature;
+                                auto pc = critical.pressure;
+                                return std::clamp(correlation::estimate_acentric_factor_from_letsou_stiel(nuL(T), M, T, Tc, pc), -1.0, 1.0);
+                            },
+                            table::partial(sample.liquid_point),
+                            table::partial(critical.point_),
+                            table::partial(basic.molar_mass),
+                            dynamic_viscosity_as_liquid0
+                        ),
+                    }),
+                    table::derive<double>(
+                        correlation::estimate_acentric_factor_from_edmister,
+                        sample.boiling_point_temperature,
+                        critical.temperature,
+                        critical.pressure
+                    )
+                );
+
+            // CALCULATE PROPERTIES THAT CAN BE DERIVED FROM ACENTRIC FACTOR
+
+            degrees_of_freedom = 
+                table::complete(
+                    degrees_of_freedom0,
+                    table::derive<double>(
+                        correlation::guess_molecular_degrees_of_freedom,
+                        acentric_factor,
+                        basic.atoms_per_molecule
+                    )
+                );
+
+        }
+    };
+
+
+
+
+
+    /*
+    `ThermodynamicsHandbook` serves the role of a chemical handbook that contain 
+    phase based properties and other properties that are relevant to thermodynamic behavior
+    */
+    struct ThermodynamicsHandbook
+    {
+        table::FullTable<LiquidDensityTemperatureRelation> density_as_liquid;
+        table::FullTable<GasDensityStateRelation> density_as_gas;
+        table::FullTable<SolidDensityTemperatureRelation> density_as_solid;
+
+        table::FullTable<si::temperature<double>> triple_point_temperature;
+        table::FullTable<si::pressure<double>> triple_point_pressure;
+        table::FullTable<point<double>> triple_point;
+
+        table::FullTable<LatentHeatTemperatureRelation> latent_heat_of_vaporization;
+        table::FullTable<LatentHeatTemperatureRelation> latent_heat_of_sublimation;
+        table::FullTable<LatentHeatTemperatureRelation> latent_heat_of_fusion;
+
+        table::FullTable<SolidHeatCapacityTemperatureRelation> isobaric_specific_heat_capacity_as_solid;
+        table::FullTable<LiquidHeatCapacityTemperatureRelation> isobaric_specific_heat_capacity_as_liquid;
+        table::FullTable<GasHeatCapacityStateRelation> isobaric_specific_heat_capacity_as_gas;
+
+        table::FullTable<SolidDynamicViscosityTemperatureRelation> dynamic_viscosity_as_solid;
+        table::FullTable<LiquidDynamicViscosityTemperatureRelation> dynamic_viscosity_as_liquid;
+        table::FullTable<GasDynamicViscosityStateRelation> dynamic_viscosity_as_gas;
+
+        table::FullTable<SolidVaporPressureTemperatureRelation> vapor_pressure_as_solid;
+        table::FullTable<LiquidVaporPressureTemperatureRelation> vapor_pressure_as_liquid;
+
+        table::FullTable<SolidThermalConductivityTemperatureRelation> thermal_conductivity_as_solid;
+        table::FullTable<LiquidThermalConductivityTemperatureRelation> thermal_conductivity_as_liquid;
+        table::FullTable<GasThermalConductivityStateRelation> thermal_conductivity_as_gas;
+
+        ThermodynamicsHandbook(
+            const table::PartialTable<point<double>>& triple_point0,
+            const table::PartialTable<published::LatentHeatTemperatureRelation>& latent_heat_of_sublimation0,
+            const table::PartialTable<published::LatentHeatTemperatureRelation>& latent_heat_of_fusion0,
+            const table::PartialTable<published::LatentHeatTemperatureRelation>& latent_heat_of_vaporization0,
+            const table::PartialTable<published::SolidDensityTemperatureRelation>&  density_as_solid0,
+            const table::PartialTable<published::LiquidDensityTemperatureRelation>&  density_as_liquid0,
+            // const table::PartialTable<published::GasDensityStateRelation>& density_as_gas0, // NOTE: density_of_gas is never stored, since it can always be derived
+            const table::PartialTable<published::SolidHeatCapacityTemperatureRelation>& isobaric_specific_heat_capacity_as_solid0,
+            const table::PartialTable<published::LiquidHeatCapacityTemperatureRelation>& isobaric_specific_heat_capacity_as_liquid0,
+            const table::PartialTable<published::GasHeatCapacityStateRelation>& isobaric_specific_heat_capacity_as_gas0,
+            const table::PartialTable<published::SolidDynamicViscosityTemperatureRelation>& dynamic_viscosity_as_solid0,
+            const table::PartialTable<published::LiquidDynamicViscosityTemperatureRelation>& dynamic_viscosity_as_liquid0,
+            const table::PartialTable<published::GasDynamicViscosityStateRelation>& dynamic_viscosity_as_gas0,
+            const table::PartialTable<published::SolidVaporPressureTemperatureRelation>& vapor_pressure_as_solid0,
+            const table::PartialTable<published::LiquidVaporPressureTemperatureRelation>& vapor_pressure_as_liquid0,
+            const table::PartialTable<published::SolidThermalConductivityTemperatureRelation>& thermal_conductivity_as_solid0,
+            const table::PartialTable<published::LiquidThermalConductivityTemperatureRelation>& thermal_conductivity_as_liquid0,
+            const table::PartialTable<published::GasThermalConductivityStateRelation>& thermal_conductivity_as_gas0,
+            const table::PartialTable<published::LiquidSurfaceTensionTemperatureRelation>& surface_tension_as_liquid0,
+            const MolecularPropertiesHandbook& molecular,
+            const CriticalPropertiesHandbook& critical,
+            const SamplePointHandbook& sample,
+            const BasicHandbook& basic,
+            const int fallback_id
+        ){
+
+            // via Klincewicz ⟶ Ihmels ⟶ Tee-Gotoh-Steward ⟶ Bird-Steward-Lightfoot2
+            density_as_liquid = 
+                table::complete(density_as_liquid0, 
+                    table::derive<LiquidDensityTemperatureRelation>(
+                        [](si::molar_mass<double> M, si::length<double> sigma){
+                            return LiquidDensityTemperatureRelation(M / correlation::estimate_molar_volume_as_liquid_from_bird_steward_lightfoot_2(sigma));}, 
+                        basic.molar_mass, molecular.diameter));
+
+            // via Klincewicz ⟶ Ihmels ⟶ definition of compressibility ⟶ definition of compressibility
+            density_as_gas = 
+                table::derive<GasDensityStateRelation>(
+                    [](si::molar_mass<double> M, si::pressure<double> pc, si::temperature<double> Tc, double Zc){
+                        return GasDensityStateRelation(M,pc,Tc,Zc);}, 
+                    basic.molar_mass, 
+                    critical.pressure, 
+                    critical.temperature, 
+                    critical.compressibility);
+
+            // via Klincewicz ⟶ Ihmels ⟶ Tee-Gotoh-Steward ⟶ Bird-Steward-Lightfoot2 ⟶ Goodman (with speculative fallback)
+            density_as_solid = 
+                table::complete(
+                    table::first<SolidDensityTemperatureRelation>({
+                        density_as_solid0, 
+                        table::gather<SolidDensityTemperatureRelation>([](si::molar_mass<double> M, LiquidDensityTemperatureRelation rhoL, point<double> liquid, point<double> triple){
+                                return SolidDensityTemperatureRelation(M / correlation::estimate_molar_volume_as_solid_from_goodman(M / rhoL(liquid.temperature), liquid.temperature, triple.temperature));}, 
+                            table::partial(basic.molar_mass), 
+                            table::partial(density_as_liquid), 
+                            table::partial(sample.liquid_point), 
+                            triple_point0),
+                    }),
+                    table::derive<SolidDensityTemperatureRelation>(
+                        [](LiquidDensityTemperatureRelation rhoL, point<double> liquid){
+                            return correlation::guess_density_as_solid_from_density_as_liquid(rhoL(liquid.temperature));}, 
+                        density_as_liquid, 
+                        sample.liquid_point) // WARNING: results are speculative
+                );
+
+            triple_point_temperature = 
+                table::complete(
+                    table::gather<si::temperature<double>>([](point<double> triple_point){ return triple_point.temperature; },
+                        triple_point0),
+                    table::derive<si::temperature<double>>([](
+                            si::molar_mass<double> M, 
+                            LiquidDensityTemperatureRelation rhoL, 
+                            SolidDensityTemperatureRelation rhoS, 
+                            point<double> liquid
+                        ){
+                            si::temperature<double> T = liquid.temperature;
+                            return si::temperature<double>(correlation::estimate_triple_point_temperature_from_goodman(M / rhoL(T), M / rhoS(T), T));
+                        },
+                        basic.molar_mass,
+                        density_as_liquid,
+                        density_as_solid,
+                        sample.liquid_point)
+                );
+
+            auto triple_point_pressure1 = 
+                table::first<si::pressure<double>>({
+                        table::gather<si::pressure<double>>([](point<double> triple_point){ return triple_point.pressure; },
+                            triple_point0),
+                        table::gather<si::pressure<double>>([](
+                                LatentHeatTemperatureRelation Hs, 
+                                si::molar_mass<double> M, 
+                                point<double> solid, 
+                                si::temperature<double> Tt,
+                                SolidVaporPressureTemperatureRelation PvS
+                            ){
+                                si::temperature<double> Ts = solid.temperature;
+                                return correlation::estimate_triple_point_pressure_from_clapeyron(Hs(Ts), M, Ts, Tt, PvS(Ts));
+                            },
+                            latent_heat_of_sublimation0,
+                            table::partial(basic.molar_mass),
+                            table::partial(sample.solid_point),
+                            table::partial(triple_point_temperature),
+                            vapor_pressure_as_solid0)
+                    });
+
+            auto triple_point1 =
+                table::gather<point<double>>([](
+                        si::pressure<double> Pt,
+                        si::temperature<double> Tt
+                    ){
+                        return point<double>(Pt, Tt);
+                    },
+                    triple_point_pressure1,
+                    table::partial(triple_point_temperature)
+                );
+
+            // CALCULATE PROPERTIES THAT CAN BE DERIVED FROM ACENTRIC FACTOR
+
+            isobaric_specific_heat_capacity_as_gas = 
+                table::complete(
+                    isobaric_specific_heat_capacity_as_gas0,
+                    table::derive<GasHeatCapacityStateRelation>(
+                        correlation::get_isobaric_heat_capacity_as_gas,
+                        basic.molar_mass,
+                        molecular.degrees_of_freedom
+                    )
+                );
+
+            /* 
+            TODO: adapt correlation::estimate_isobaric_heat_capacity_as_gas_from_rowlinson_poling
+             for use with GasPropertyStateRelations using Dippr119Terms, then invoke results here
+            */
+
+            latent_heat_of_vaporization = 
+                table::complete(
+                    latent_heat_of_vaporization0,
+                    table::derive<LatentHeatTemperatureRelation>(
+                        relation::get_pitzer_latent_heat_of_vaporization_temperature_relation,
+                        basic.molar_mass, 
+                        critical.temperature, 
+                        molecular.acentric_factor
+                    )
+                );
+
+            auto latent_heat_of_sublimation1 = 
+                table::first<LatentHeatTemperatureRelation>({
+                    latent_heat_of_sublimation0,
+                    table::partial(latent_heat_of_vaporization) + latent_heat_of_fusion0
+                });
+
+            dynamic_viscosity_as_liquid = 
+                table::complete(
+                    dynamic_viscosity_as_liquid0,
+                    table::derive<LiquidDynamicViscosityTemperatureRelation>(
+                        relation::estimate_viscosity_as_liquid_from_letsou_stiel,
+                        molecular.acentric_factor,
+                        basic.molar_mass,
+                        critical.temperature,
+                        critical.pressure
+                    )
+                );
+
+            auto vapor_pressure_as_liquid1 = 
+                table::first<LiquidVaporPressureTemperatureRelation>({
+                    vapor_pressure_as_liquid0,
+                    // table::gather<LiquidVaporPressureTemperatureRelation>(
+                    //     relation::estimate_vapor_pressure_as_liquid_from_lee_kesler,
+                    //     table::partial(molecular.acentric_factor),
+                    //     table::partial(critical.temperature),
+                    //     table::partial(critical.pressure)
+                    // ),
+                });
+
+            auto vapor_pressure_as_solid1 = 
+                table::first<SolidVaporPressureTemperatureRelation>({
+                    vapor_pressure_as_solid0,
+                    table::gather<SolidVaporPressureTemperatureRelation>(
+                        []( LatentHeatTemperatureRelation Hs, 
+                            si::molar_mass<double> M, 
+                            point<double> triple){
+                                auto T = analytic::Identity<float>();
+                                auto R = si::universal_gas_constant;
+                                float T3 = triple.temperature / si::kelvin;
+                                float P3 = triple.pressure / si::pascal;
+                                float k = (Hs(triple.temperature)*M/R)/si::kelvin;
+                                using Polynomial = analytic::Polynomial<float,-1,1>;
+                                using Clamped = analytic::Clamped<float,Polynomial>;
+                                using Railyard = analytic::Railyard<float,Polynomial>;
+                                return P3 * SolidVaporPressureTemperatureRelation(
+                                    Railyard(Clamped(0.0f, T3, Polynomial(-k*(1.0f/T - 1.0f/T3)))),
+                                    si::kelvin, si::pascal);
+                                // NOTE: the above is translated from property/published.hpp:
+                                // return triple_point_pressure * exp(-((latent_heat_of_sublimation*molar_mass / si::universal_gas_constant) * (1.0/temperature - 1.0/triple_point_temperature)));
+                        }, 
+                        latent_heat_of_sublimation1, // NOTE: this should be latent heat of sublimation at the triple point, update this line if ever we convert latent_heat_of_fusion to a relation
+                        table::partial(basic.molar_mass), 
+                        triple_point1)
+                });
+
+            // CALCULATE MISCELLANEOUS PROPERTIES
+            thermal_conductivity_as_liquid = 
+                table::complete(
+                    thermal_conductivity_as_liquid0,
+                    table::derive<LiquidThermalConductivityTemperatureRelation>(
+                        relation::estimate_thermal_conductivity_as_liquid_from_sheffy_johnson,
+                        basic.molar_mass, 
+                        sample.freezing_point_temperature,
+                        critical.temperature
+                    )
+                );
+
+            auto thermal_conductivity_as_solid = thermal_conductivity_as_solid0;
+
+            auto surface_tension_as_liquid = surface_tension_as_liquid0;
+
+            dynamic_viscosity_as_solid = 
+                table::complete(
+                    dynamic_viscosity_as_solid0,
+                    table::derive<SolidDynamicViscosityTemperatureRelation>(
+                        []( LiquidDynamicViscosityTemperatureRelation nuL,
+                            point<double> liquid){
+                            return SolidDynamicViscosityTemperatureRelation(
+                                correlation::guess_viscosity_as_solid_from_viscosity_as_liquid(nuL(liquid.temperature)));
+                            // WARNING: results above are speculative, 
+                            // see property/speculative.hpp for reasoning and justification
+                        },
+                        dynamic_viscosity_as_liquid,
+                        sample.liquid_point
+                    )
+                );
+
+            triple_point_pressure                     = table::complete(table::imitate(triple_point_pressure1,                     basic.similarity), triple_point_pressure1                     [fallback_id], basic.similarity.size());
+            triple_point                              = table::complete(table::imitate(triple_point1,                              basic.similarity), triple_point1                              [fallback_id], basic.similarity.size());
+            latent_heat_of_sublimation                = table::complete(table::imitate(latent_heat_of_sublimation1,                basic.similarity), latent_heat_of_sublimation1                [fallback_id], basic.similarity.size());
+            latent_heat_of_fusion                     = table::complete(table::imitate(latent_heat_of_fusion0,                     basic.similarity), latent_heat_of_fusion0                     [fallback_id], basic.similarity.size());
+            isobaric_specific_heat_capacity_as_solid  = table::complete(table::imitate(isobaric_specific_heat_capacity_as_solid0,  basic.similarity), isobaric_specific_heat_capacity_as_solid0  [fallback_id], basic.similarity.size());
+            isobaric_specific_heat_capacity_as_liquid = table::complete(table::imitate(isobaric_specific_heat_capacity_as_liquid0, basic.similarity), isobaric_specific_heat_capacity_as_liquid0 [fallback_id], basic.similarity.size());
+            dynamic_viscosity_as_gas                  = table::complete(table::imitate(dynamic_viscosity_as_gas0,                  basic.similarity), dynamic_viscosity_as_gas0                  [fallback_id], basic.similarity.size());
+            vapor_pressure_as_solid                   = table::complete(table::imitate(vapor_pressure_as_solid1,                   basic.similarity), vapor_pressure_as_solid1                   [fallback_id], basic.similarity.size());
+            vapor_pressure_as_liquid                  = table::complete(table::imitate(vapor_pressure_as_liquid1,                  basic.similarity), vapor_pressure_as_liquid1                  [fallback_id], basic.similarity.size());
+            thermal_conductivity_as_gas               = table::complete(table::imitate(thermal_conductivity_as_gas0,               basic.similarity), thermal_conductivity_as_gas0               [fallback_id], basic.similarity.size());
+
+        }
+    };
+
+
+
 
 
     struct SpectralHandbook
@@ -582,7 +820,69 @@ namespace estimated{
         }
     };
 
-    SpectralHandbook spectrums(
+    BasicHandbook basic(
+        published::name,
+        published::formula,
+        published::atoms_per_molecule,
+        published::molar_mass,
+        published::similarity
+    );
+
+    CriticalPropertiesHandbook critical(
+        published::critical_point_pressure,
+        published::critical_point_volume,
+        published::critical_point_temperature,
+        published::critical_point_compressibility,
+        published::atoms_per_molecule,
+        published::molar_mass
+    );
+
+    SamplePointHandbook sample(
+        published::freezing_sample_point,
+        published::boiling_sample_point,
+        critical,
+        basic
+    );
+
+    MolecularPropertiesHandbook molecular(
+        published::molecular_diameter,
+        published::molecular_degrees_of_freedom,
+        published::acentric_factor,
+        published::dynamic_viscosity_as_liquid,
+        published::latent_heat_of_vaporization,
+        published::vapor_pressure_as_liquid,
+        critical,
+        sample,
+        basic
+    );
+
+    ThermodynamicsHandbook thermodynamics(
+        published::triple_point,
+        published::latent_heat_of_sublimation,
+        published::latent_heat_of_fusion,
+        published::latent_heat_of_vaporization,
+        published::density_as_solid,
+        published::density_as_liquid,
+        published::isobaric_specific_heat_capacity_as_solid,
+        published::isobaric_specific_heat_capacity_as_liquid,
+        published::isobaric_specific_heat_capacity_as_gas,
+        published::dynamic_viscosity_as_solid,
+        published::dynamic_viscosity_as_liquid,
+        published::dynamic_viscosity_as_gas,
+        published::vapor_pressure_as_solid,
+        published::vapor_pressure_as_liquid,
+        published::thermal_conductivity_as_solid,
+        published::thermal_conductivity_as_liquid,
+        published::thermal_conductivity_as_gas,
+        published::surface_tension_as_liquid,
+        molecular,
+        critical,
+        sample,
+        basic,
+        ids::water
+    );
+
+    SpectralHandbook spectra_as_solid(
         published::refractive_index_as_solid,
         published::extinction_coefficient_as_solid,
         published::absorption_coefficient_as_solid,

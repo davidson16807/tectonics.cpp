@@ -229,7 +229,7 @@ TEST_CASE( "Pitzer method purity", "[properties]" ) {
     }
 
 	SECTION("Calling a function twiced with the same arguments must produce the same results"){
-    	CHECK(compound::correlation::estimate_accentric_factor_from_pitzer(H_v, M, T, Tc) == compound::correlation::estimate_accentric_factor_from_pitzer(H_v, M, T, Tc));
+    	CHECK(compound::correlation::estimate_acentric_factor_from_pitzer(H_v, M, T, Tc) == compound::correlation::estimate_acentric_factor_from_pitzer(H_v, M, T, Tc));
     }
 }
 
@@ -242,14 +242,14 @@ TEST_CASE( "Pitzer method accuracy", "[properties]" ) {
 	double omega(0.304);
 
 	// std::cout << compound::correlation::estimate_latent_heat_of_vaporization_from_pitzer(omega, M, T, Tc).to_string() << "  " << H_v.to_string() << std::endl;
-	// std::cout << compound::correlation::estimate_accentric_factor_from_pitzer(H_v, M, T, Tc) << "  " << omega << std::endl;
+	// std::cout << compound::correlation::estimate_acentric_factor_from_pitzer(H_v, M, T, Tc) << "  " << omega << std::endl;
 
 	SECTION("Pitzer method must agree on predictions to within 30%"){
     	CHECK(si::is_within_fraction(H_v, compound::correlation::estimate_latent_heat_of_vaporization_from_pitzer(omega, M, T, Tc), 0.3));
     }
 
 	SECTION("Pitzer method must agree on predictions to within 40%"){
-    	CHECK(si::is_within_fraction(omega, compound::correlation::estimate_accentric_factor_from_pitzer(H_v, M, T, Tc), 0.4));
+    	CHECK(si::is_within_fraction(omega, compound::correlation::estimate_acentric_factor_from_pitzer(H_v, M, T, Tc), 0.4));
     }
 }
 
@@ -262,8 +262,8 @@ TEST_CASE( "Pitzer consistency", "[properties]" ) {
 	double omega(0.304);
 
     SECTION("Pitzer method must be invertible"){
-    	CHECK(si::is_within_fraction(H_v, compound::correlation::estimate_latent_heat_of_vaporization_from_pitzer(compound::correlation::estimate_accentric_factor_from_pitzer(H_v, M, T, Tc), M, T, Tc), 1e-4));
-    	CHECK(si::is_within_fraction(omega, compound::correlation::estimate_accentric_factor_from_pitzer(compound::correlation::estimate_latent_heat_of_vaporization_from_pitzer(omega, M, T, Tc), M, T, Tc), 1e-4));
+    	CHECK(si::is_within_fraction(H_v, compound::correlation::estimate_latent_heat_of_vaporization_from_pitzer(compound::correlation::estimate_acentric_factor_from_pitzer(H_v, M, T, Tc), M, T, Tc), 1e-4));
+    	CHECK(si::is_within_fraction(omega, compound::correlation::estimate_acentric_factor_from_pitzer(compound::correlation::estimate_latent_heat_of_vaporization_from_pitzer(omega, M, T, Tc), M, T, Tc), 1e-4));
     }
 }
 
@@ -373,7 +373,7 @@ TEST_CASE( "Lee-Kesler method purity", "[properties]" ) {
     }
 
 	SECTION("Calling a function twiced with the same arguments must produce the same results"){
-    	CHECK(compound::correlation::estimate_accentric_factor_from_lee_kesler(pvL, T, Tc, pc) == compound::correlation::estimate_accentric_factor_from_lee_kesler(pvL, T, Tc, pc));
+    	CHECK(compound::correlation::estimate_acentric_factor_from_lee_kesler(pvL, T, Tc, pc) == compound::correlation::estimate_acentric_factor_from_lee_kesler(pvL, T, Tc, pc));
     }
 }
 
@@ -386,14 +386,14 @@ TEST_CASE( "Lee-Kesler method accuracy", "[properties]" ) {
 	double omega(0.304);
 
 	// std::cout << compound::correlation::estimate_vapor_pressure_as_liquid_from_lee_kesler(omega, T, Tc, pc).to_string() << "  " << pvL.to_string() << std::endl;
-	// std::cout << compound::correlation::estimate_accentric_factor_from_lee_kesler(pvL, T, Tc, pc) << "  " << omega << std::endl;
+	// std::cout << compound::correlation::estimate_acentric_factor_from_lee_kesler(pvL, T, Tc, pc) << "  " << omega << std::endl;
 
 	SECTION("Lee-Kesler method must agree on predictions to within 30%"){
     	CHECK(si::is_within_fraction(pvL, compound::correlation::estimate_vapor_pressure_as_liquid_from_lee_kesler(omega, T, Tc, pc), 0.3));
     }
 
 	SECTION("Lee-Kesler method must agree on predictions to within 30%"){
-    	CHECK(si::is_within_fraction(omega, compound::correlation::estimate_accentric_factor_from_lee_kesler(pvL, T, Tc, pc), 0.3));
+    	CHECK(si::is_within_fraction(omega, compound::correlation::estimate_acentric_factor_from_lee_kesler(pvL, T, Tc, pc), 0.3));
     }
 }
 
@@ -406,8 +406,8 @@ TEST_CASE( "Lee-Kesler consistency", "[properties]" ) {
 	double omega(0.304);
 
     SECTION("Lee-Kesler method must be invertible"){
-    	CHECK(si::is_within_fraction(pvL, compound::correlation::estimate_vapor_pressure_as_liquid_from_lee_kesler(compound::correlation::estimate_accentric_factor_from_lee_kesler(pvL, T, Tc, pc), T, Tc, pc), 1e-4));
-    	CHECK(si::is_within_fraction(omega, compound::correlation::estimate_accentric_factor_from_lee_kesler(compound::correlation::estimate_vapor_pressure_as_liquid_from_lee_kesler(omega, T, Tc, pc), T, Tc, pc), 1e-4));
+    	CHECK(si::is_within_fraction(pvL, compound::correlation::estimate_vapor_pressure_as_liquid_from_lee_kesler(compound::correlation::estimate_acentric_factor_from_lee_kesler(pvL, T, Tc, pc), T, Tc, pc), 1e-4));
+    	CHECK(si::is_within_fraction(omega, compound::correlation::estimate_acentric_factor_from_lee_kesler(compound::correlation::estimate_vapor_pressure_as_liquid_from_lee_kesler(omega, T, Tc, pc), T, Tc, pc), 1e-4));
     }
 }
 

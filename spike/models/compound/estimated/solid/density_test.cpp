@@ -15,7 +15,7 @@ TEST_CASE( "estimated solid density order of magnitude", "[table]" ) {
         {
             for (int i = 0; i<compound::ids::count; i++)
             {
-                auto x = compound::estimated::density_as_solid[i](T);
+                auto x = compound::estimated::thermodynamics.density_as_solid[i](T);
                 CHECK(x / (si::kilogram / si::meter3) < 30000.0); /*based on iridium*/ \
                 CHECK(x / (si::kilogram / si::meter3) > 1.5); /*based on aerogel*/ \
             }
