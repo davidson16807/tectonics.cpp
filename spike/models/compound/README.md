@@ -61,3 +61,4 @@ The category above uses two types, which are defined as follows:
 The
 `speculate` and `infer` both have the increasing property with respect to the number of known compounds
 `speculate` and `infer` both have an identity element, which is a `PartlyKnownCompound` where no chemical properties are known
+

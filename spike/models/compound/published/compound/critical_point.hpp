@@ -25,7 +25,7 @@ namespace published {
         {ids::nitric_oxide,     6.48 *  si::megapascal  },
         {ids::carbon_monoxide,  3.494 *  si::megapascal },
         {ids::ethane,           4.88 * si::megapascal   },
-        {ids::hydrogen_cyanide, 5.4 * si::megapascal    },
+        {ids::hydrogen_cyanide, 5.39 * si::megapascal   }, // Lange
         {ids::ethanol,          6.25 * si::megapascal   },
         {ids::formaldehyde,     6.788 * si::megapascal  },
         // {ids::formic_acid,      ,                       },
@@ -69,7 +69,7 @@ namespace published {
         {ids::nitric_oxide,     180.0 * si::kelvin  },
         {ids::carbon_monoxide,  132.86 * si::kelvin },
         {ids::ethane,           305.36 * si::kelvin },
-        {ids::hydrogen_cyanide, 456.65 * si::kelvin },
+        {ids::hydrogen_cyanide, 183.5 * si::kelvin  }, // Lange
         {ids::ethanol,          513.9 * si::kelvin  },
         {ids::formaldehyde,     410.3 * si::kelvin  },
         {ids::formic_acid,      588.0 * si::kelvin  },

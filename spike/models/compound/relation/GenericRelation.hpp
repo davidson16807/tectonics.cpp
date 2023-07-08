@@ -182,16 +182,6 @@ namespace relation {
 
 
 
-    template<typename Tx, typename Ty>
-    GenericRelation<Tx,Ty> logarithmic_mix(const std::vector<GenericRelation<Tx,Ty>>& relations, const std::vector<double>& ratios)
-    {
-        GenericRelation<Tx,Ty> result;
-        for (std::size_t i=0; i<relations.size(); i++){
-            result += exp(ratios[i] * ln(relations[i]));
-        }
-        return result;
-    }
-
     // 21 uses, for viscosity of liquids
     template<typename Tx>
     GenericRelation<si::temperature<double>, si::dynamic_viscosity<double>> get_dippr_liquid_dynamic_viscosity_temperature_relation_101(

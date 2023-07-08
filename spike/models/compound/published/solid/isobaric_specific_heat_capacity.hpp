@@ -9,6 +9,7 @@
 namespace compound { 
 namespace published { 
 
+    using SolidMolarHeatCapacityTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,si::molar_heat_capacity<double>, -2,3>;
     using SolidHeatCapacityTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,si::specific_heat_capacity<double>, -2,3>;
     table::PartialTable<SolidHeatCapacityTemperatureRelation> isobaric_specific_heat_capacity_as_solid {
         { ids::water,   

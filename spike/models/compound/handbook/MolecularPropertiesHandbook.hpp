@@ -24,9 +24,9 @@ namespace estimated{
             const table::PartialTable<si::length<double>>& diameter0,
             const table::PartialTable<double>& degrees_of_freedom0,
             const table::PartialTable<double>& acentric_factor0,
-            const table::PartialTable<published::LiquidDynamicViscosityTemperatureRelation>& dynamic_viscosity_as_liquid0,
-            const table::PartialTable<published::LatentHeatTemperatureRelation>& latent_heat_of_vaporization0,
-            const table::PartialTable<published::LiquidVaporPressureTemperatureRelation>& vapor_pressure_as_liquid0,
+            const table::PartialTable<published::LiquidDynamicViscosityTemperatureRelation>& dynamic_viscosity_as_liquid,
+            const table::PartialTable<published::LatentHeatTemperatureRelation>& latent_heat_of_vaporization,
+            const table::PartialTable<published::LiquidVaporPressureTemperatureRelation>& vapor_pressure_as_liquid,
             const CriticalPropertiesHandbook& critical,
             const SamplePointHandbook& sample,
             const BasicHandbook& basic
@@ -54,7 +54,7 @@ namespace estimated{
                                 return correlation::get_acentric_factor(Pv(0.7*Tc), Pc);
                             },
                             table::partial(critical.point_),
-                            vapor_pressure_as_liquid0
+                            vapor_pressure_as_liquid
                         ),
                         table::gather<double>(
                             []( point<double> liquid,
@@ -68,7 +68,7 @@ namespace estimated{
                             table::partial(sample.liquid_point),
                             table::partial(critical.point_),
                             table::partial(basic.molar_mass),
-                            latent_heat_of_vaporization0
+                            latent_heat_of_vaporization
                         ),
                         table::gather<double>(
                             []( point<double> liquid,
@@ -83,7 +83,7 @@ namespace estimated{
                             table::partial(sample.liquid_point),
                             table::partial(critical.point_),
                             table::partial(basic.molar_mass),
-                            dynamic_viscosity_as_liquid0
+                            dynamic_viscosity_as_liquid
                         ),
                     }),
                     table::derive<double>(
