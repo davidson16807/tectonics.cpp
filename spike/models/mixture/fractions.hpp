@@ -64,18 +64,6 @@ namespace mixture{
         return result;
     }
 
-    std::vector<double> molar_fractions(const std::vector<double>& numbers){
-        double sum(0);
-        for (std::size_t i=0; i<numbers.size(); i++) {
-            sum += numbers[i];
-        }
-        std::vector<double> result;
-        for (std::size_t i=0; i<numbers.size(); i++) {
-            result.emplace_back(numbers[i]/sum);
-        }
-        return result;
-    }
-
     std::vector<double> molar_fractions(const std::vector<si::number_density<double>>& number_densities){
         si::number_density<double> sum(0);
         for (std::size_t i=0; i<number_densities.size(); i++) {
@@ -87,6 +75,18 @@ namespace mixture{
         }
         return result;
     }
+
+    // std::vector<double> molar_fractions(const std::vector<double>& numbers){
+    //     double sum(0);
+    //     for (std::size_t i=0; i<numbers.size(); i++) {
+    //         sum += numbers[i];
+    //     }
+    //     std::vector<double> result;
+    //     for (std::size_t i=0; i<numbers.size(); i++) {
+    //         result.emplace_back(numbers[i]/sum);
+    //     }
+    //     return result;
+    // }
 
     std::vector<double> mass_fractions(const std::vector<double>& molar_fractions, const std::vector<si::molar_mass<double>>& molar_masses){
         std::vector<double> result;
