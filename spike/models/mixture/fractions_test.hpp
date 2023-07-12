@@ -19,8 +19,8 @@ TEST_CASE( "volume_fractions purity", "[mixture]" ) {
     }
   }
 }
-TEST_CASE( "volume_fractions identity", "[mixture]" ) {
-  SECTION("There exists a entry that when applied to a function returns the original entry")
+TEST_CASE( "volume_fractions codomain", "[mixture]" ) {
+  SECTION("Output must fall within a known range")
   {
     for (int i = 0; i<3; i++) {
       for (int j = 0; j<3; j++) {
@@ -42,6 +42,56 @@ TEST_CASE( "volume_fractions commutativity", "[mixture]" ) {
         if (i+j>0){
           CHECK(mixture::volume_fractions({i*si::meter3, j*si::meter3})[0] == mixture::volume_fractions({j*si::meter3, i*si::meter3})[1]);
           CHECK(mixture::volume_fractions({i*si::meter3, j*si::meter3})[1] == mixture::volume_fractions({j*si::meter3, i*si::meter3})[0]);
+        }
+      }
+    }
+  }
+}
+
+TEST_CASE( "mass_fractions purity", "[mixture]" ) {
+  SECTION("Calling an operation twice with the same arguments must produce the same results")
+  {
+    for (int i = 0; i<3; i++) {
+      for (int j = 0; j<3; j++) {
+        if (i+j>0)
+        {
+          CHECK(mixture::mass_fractions(std::vector<si::mass<double>>{i*si::kilogram, j*si::kilogram}) == mixture::mass_fractions(std::vector<si::mass<double>>{i*si::kilogram, j*si::kilogram}));
+
+          CHECK(mixture::mass_fractions(std::vector<si::density<double>>{i*si::kilogram/si::meter3, j*si::kilogram/si::meter3}) == mixture::mass_fractions(std::vector<si::density<double>>{i*si::kilogram/si::meter3, j*si::kilogram/si::meter3}));
+        }
+      }
+    }
+  }
+}
+TEST_CASE( "mass_fractions codomain", "[mixture]" ) {
+  SECTION("Output must fall within a known range")
+  {
+    for (int i = 0; i<3; i++) {
+      for (int j = 0; j<3; j++) {
+        if (i+j>0){
+          for (int k = 0; k<2; k++) {
+            CHECK(mixture::mass_fractions(std::vector<si::mass<double>>{i*si::kilogram, j*si::kilogram})[k] <= 1.0);
+            CHECK(0.0 <= mixture::mass_fractions(std::vector<si::mass<double>>{i*si::kilogram, j*si::kilogram})[k]);
+
+            CHECK(mixture::mass_fractions(std::vector<si::density<double>>{i*si::kilogram/si::meter3, j*si::kilogram/si::meter3})[k] <= 1.0);
+            CHECK(0.0 <= mixture::mass_fractions(std::vector<si::density<double>>{i*si::kilogram/si::meter3, j*si::kilogram/si::meter3})[k]);
+          }
+        }
+      }
+    }
+  }
+}
+TEST_CASE( "mass_fractions commutativity", "[mixture]" ) {
+  SECTION("Arguments can be applied in any order and still produce the same results")
+  {
+    for (int i = 0; i<3; i++) {
+      for (int j = 0; j<3; j++) {
+        if (i+j>0){
+          CHECK(mixture::mass_fractions(std::vector<si::mass<double>>{i*si::kilogram, j*si::kilogram})[0] == mixture::mass_fractions(std::vector<si::mass<double>>{j*si::kilogram, i*si::kilogram})[1]);
+          CHECK(mixture::mass_fractions(std::vector<si::mass<double>>{i*si::kilogram, j*si::kilogram})[1] == mixture::mass_fractions(std::vector<si::mass<double>>{j*si::kilogram, i*si::kilogram})[0]);
+
+          CHECK(mixture::mass_fractions(std::vector<si::density<double>>{i*si::kilogram/si::meter3, j*si::kilogram/si::meter3})[0] == mixture::mass_fractions(std::vector<si::density<double>>{j*si::kilogram/si::meter3, i*si::kilogram/si::meter3})[1]);
+          CHECK(mixture::mass_fractions(std::vector<si::density<double>>{i*si::kilogram/si::meter3, j*si::kilogram/si::meter3})[1] == mixture::mass_fractions(std::vector<si::density<double>>{j*si::kilogram/si::meter3, i*si::kilogram/si::meter3})[0]);
         }
       }
     }
