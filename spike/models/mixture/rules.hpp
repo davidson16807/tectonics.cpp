@@ -5,6 +5,15 @@
 
 namespace mixture{
 
+    double linear_rule(const std::vector<double>& relations, const std::vector<double>& fractions)
+    {
+        double result(0);
+        for (std::size_t i=0; i<relations.size(); i++){
+            result += fractions[i] * relations[i];
+        }
+        return result;
+    }
+
     template<typename Tx, typename Ty, int Plo, int Phi>
     compound::relation::PolynomialRailyardRelation<Tx,Ty,Plo,Phi> linear_rule(const std::vector<compound::relation::PolynomialRailyardRelation<Tx,Ty,Plo,Phi>>& relations, const std::vector<double>& fractions)
     {
@@ -67,15 +76,6 @@ namespace mixture{
     si::units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> linear_rule(const std::vector<si::units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>>& relations, const std::vector<double>& fractions)
     {
         si::units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> result;
-        for (std::size_t i=0; i<relations.size(); i++){
-            result += fractions[i] * relations[i];
-        }
-        return result;
-    }
-
-    double linear_rule(const std::vector<double>& relations, const std::vector<double>& fractions)
-    {
-        double result;
         for (std::size_t i=0; i<relations.size(); i++){
             result += fractions[i] * relations[i];
         }
