@@ -41,26 +41,26 @@ namespace analytic {
     };
 
     template<typename T>
-    constexpr AlgebraicSigmoid<T>& operator*(const AlgebraicSigmoid<T>& relation, const T scalar)
+    constexpr AlgebraicSigmoid<T> operator*(const AlgebraicSigmoid<T>& relation, const T scalar)
     {
         return AlgebraicSigmoid(relation.xscale, relation.xoffset, relation.ymax*scalar);
     }
 
     template<typename T>
-    constexpr AlgebraicSigmoid<T>& operator*(const T scalar, const AlgebraicSigmoid<T>& relation)
+    constexpr AlgebraicSigmoid<T> operator*(const T scalar, const AlgebraicSigmoid<T>& relation)
     {
         return AlgebraicSigmoid(relation.xscale, relation.xoffset, relation.ymax*scalar);
     }
 
     template<typename T>
-    constexpr AlgebraicSigmoid<T>& operator/(const AlgebraicSigmoid<T>& relation, const T scalar)
+    constexpr AlgebraicSigmoid<T> operator/(const AlgebraicSigmoid<T>& relation, const T scalar)
     {
         return AlgebraicSigmoid(relation.xscale, relation.xoffset, relation.ymax/scalar);
     }
 
 
     template<typename T>
-    constexpr AlgebraicSigmoid<T>& compose(const AlgebraicSigmoid<T>& f, const analytic::Scaling<T> g)
+    constexpr AlgebraicSigmoid<T> compose(const AlgebraicSigmoid<T>& f, const analytic::Scaling<T> g)
     {
         return AlgebraicSigmoid(
             f.xscale * g.factor,

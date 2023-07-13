@@ -11,6 +11,7 @@
 #include <math/inspected/extremum.hpp>
 #include <units/si.hpp>
 
+#include <models/compound/point.hpp>
 #include <models/compound/dippr/Dippr102.hpp>
 
 namespace compound {
@@ -131,6 +132,26 @@ namespace relation {
         {
             const float p = float(pressure/punits);
             const float T = float(temperature/Tunits);
+            ClampedExponent exponent;
+            ClampedSigmoid sigmoid;
+            ClampedDippr102 dippr102;
+            return (intercept + pexponents(p) + Texponents(T) + Tsigmoids(T) + Tdippr102s(T)) * yunits;
+        }
+
+        Ty operator()(const si::temperature<double> temperature, const si::pressure<double> pressure) const
+        {
+            const float p = float(pressure/punits);
+            const float T = float(temperature/Tunits);
+            ClampedExponent exponent;
+            ClampedSigmoid sigmoid;
+            ClampedDippr102 dippr102;
+            return (intercept + pexponents(p) + Texponents(T) + Tsigmoids(T) + Tdippr102s(T)) * yunits;
+        }
+
+        Ty operator()(const point<double> point) const
+        {
+            const float p = float(point.pressure/punits);
+            const float T = float(point.temperature/Tunits);
             ClampedExponent exponent;
             ClampedSigmoid sigmoid;
             ClampedDippr102 dippr102;

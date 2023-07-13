@@ -215,3 +215,56 @@ TEST_CASE( "linear_rule commutativity for RationalRailyardRelation", "[mixture]"
     }
   }
 }
+
+
+TEST_CASE( "linear_rule purity for GasPropertyStateRelation", "[mixture]" ) {
+  SECTION("Calling an operation twice with the same arguments must produce the same results")
+  {
+    using GasPropertyStateRelation = compound::relation::GasPropertyStateRelation<si::pressure<double>>;
+    std::vector<GasPropertyStateRelation> relations {
+        GasPropertyStateRelation(2.0*si::pascal),
+        GasPropertyStateRelation(3.0*si::pascal)
+    };
+    for (double i = 0; i<1.0; i+=0.2) {
+        double j = 1.0 - i;
+        CHECK(mixture::linear_rule(relations, {i, j})(si::standard_temperature, si::standard_pressure) == 
+              mixture::linear_rule(relations, {i, j})(si::standard_temperature, si::standard_pressure) );
+    }
+  }
+}
+
+TEST_CASE( "linear_rule codomain for GasPropertyStateRelation", "[mixture]" ) {
+  SECTION("Output must fall within a known range")
+  {
+    using GasPropertyStateRelation = compound::relation::GasPropertyStateRelation<si::pressure<double>>;
+    std::vector<GasPropertyStateRelation> relations {
+        GasPropertyStateRelation(2.0*si::pascal),
+        GasPropertyStateRelation(3.0*si::pascal)
+    };
+    for (double i = 0; i<1.0; i+=0.2) {
+        double j = 1.0 - i;
+        CHECK(2.0*si::pascal <= mixture::linear_rule(relations, {i, j})(si::standard_temperature, si::standard_pressure));
+        CHECK(mixture::linear_rule(relations, {i, j})(si::standard_temperature, si::standard_pressure) <= 3.0*si::pascal);
+    }
+  }
+}
+
+TEST_CASE( "linear_rule commutativity for GasPropertyStateRelation", "[mixture]" ) {
+  SECTION("Arguments can be consistently rearranged in any order and still produce the same results")
+  {
+    using GasPropertyStateRelation = compound::relation::GasPropertyStateRelation<si::pressure<double>>;
+    std::vector<GasPropertyStateRelation> ab {
+        GasPropertyStateRelation(2.0*si::pascal),
+        GasPropertyStateRelation(3.0*si::pascal)
+    };
+    std::vector<GasPropertyStateRelation> ba {
+        GasPropertyStateRelation(3.0*si::pascal),
+        GasPropertyStateRelation(2.0*si::pascal)
+    };
+    for (double i = 0; i<1.0; i+=0.2) {
+        double j = 1.0 - i;
+        CHECK(mixture::linear_rule(ab, {i, j})(si::standard_temperature, si::standard_pressure) == 
+              mixture::linear_rule(ba, {j, i})(si::standard_temperature, si::standard_pressure));
+    }
+  }
+}
