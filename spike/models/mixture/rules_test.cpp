@@ -57,6 +57,58 @@ TEST_CASE( "linear_rule commutativity for doubles", "[mixture]" ) {
 }
 
 
+
+TEST_CASE( "linear_rule purity for si units", "[mixture]" ) {
+  SECTION("Calling an operation twice with the same arguments must produce the same results")
+  {
+    std::vector<si::pressure<double>> relations {
+        2.0*si::pascal,
+        3.0*si::pascal
+    };
+    for (double i = 0; i<1.0; i+=0.2) {
+        double j = 1.0 - i;
+        CHECK(mixture::linear_rule(relations, {i, j}) == 
+              mixture::linear_rule(relations, {i, j}) );
+    }
+  }
+}
+
+TEST_CASE( "linear_rule codomain for si units", "[mixture]" ) {
+  SECTION("Output must fall within a known range")
+  {
+    std::vector<si::pressure<double>> relations {
+        2.0*si::pascal,
+        3.0*si::pascal
+    };
+    for (double i = 0; i<1.0; i+=0.2) {
+        double j = 1.0 - i;
+        CHECK(2.0*si::pascal <= mixture::linear_rule(relations, {i, j}));
+        CHECK(mixture::linear_rule(relations, {i, j}) <= 3.0*si::pascal);
+    }
+  }
+}
+
+TEST_CASE( "linear_rule commutativity for si units", "[mixture]" ) {
+  SECTION("Arguments can be consistently rearranged in any order and still produce the same results")
+  {
+    std::vector<si::pressure<double>> ab {
+        2.0*si::pascal,
+        3.0*si::pascal
+    };
+    std::vector<si::pressure<double>> ba {
+        3.0*si::pascal,
+        2.0*si::pascal
+    };
+    for (double i = 0; i<1.0; i+=0.2) {
+        double j = 1.0 - i;
+        CHECK(mixture::linear_rule(ab, {i, j}) == 
+              mixture::linear_rule(ba, {j, i}));
+    }
+  }
+}
+
+
+
 TEST_CASE( "linear_rule purity for PolynomialRailyardRelation", "[mixture]" ) {
   SECTION("Calling an operation twice with the same arguments must produce the same results")
   {
@@ -322,3 +374,4 @@ TEST_CASE( "linear_rule commutativity for GenericRelation", "[mixture]" ) {
     }
   }
 }
+
