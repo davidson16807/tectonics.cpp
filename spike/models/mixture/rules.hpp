@@ -86,40 +86,14 @@ namespace mixture{
         return result;
     }
 
-    // template<typename Tx, typename Ty, int Plo, int Phi>
-    // compound::relation::ExponentiatedPolynomialRailyardRelation<Tx,Ty,Plo,Phi> logarithmic_rule(const std::vector<compound::relation::ExponentiatedPolynomialRailyardRelation<Tx,Ty,Plo,Phi>>& relations, const std::vector<double>& fractions)
-    // {
-    //     compound::relation::ExponentiatedPolynomialRailyardRelation<Tx,Ty,Plo,Phi> result;
-    //     for (std::size_t i=0; i<relations.size(); i++){
-    //         const float Tscale = float(relations[i].xunits / result.xunits);
-    //         const float yscale = float(relations[i].yunits / result.yunits);
-    //         result.yard += std::log(yscale) * fractions[i] * compose(relations[i].yard, analytic::Scaling(Tscale));
-    //     }
-    //     return result;
-    // }
-
-    template<typename Tx, typename Ty, int Plo, int Phi>
-    compound::relation::GenericRelation<Tx,Ty> logarithmic_rule(const std::vector<compound::relation::GenericRelation<Tx,Ty>>& relations, const std::vector<double>& fractions)
-    {
-        return compound::relation::GenericRelation<Tx, Ty>(
-            [=](Tx x){
-                auto result = exp(fractions[0]) * ln(relations[0](x));
-                for (std::size_t i=1; i<fractions.size(); i++) {
-                    result += exp(fractions[i]) * ln(relations[i](x));
-                }
-                return result;
-            }
-        );
-    }
-
     template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-    si::units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> logarithmic_rule(const std::vector<si::units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>>& relations, const std::vector<double>& fractions)
+    si::units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> parallel_rule(const std::vector<si::units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>>& relations, const std::vector<double>& fractions)
     {
-        auto result = exp(fractions[0]) * ln(relations[0]);
-        for (std::size_t i=1; i<fractions.size(); i++) {
-            result += exp(fractions[i]) * ln(relations[i]);
+        si::units<-M1,-KG1,-S1,-K1,-MOL1,-A1,-CD1,T1> result;
+        for (std::size_t i=0; i<relations.size(); i++){
+            result += fractions[i] / relations[i];
         }
-        return result;
+        return 1.0 / result;
     }
 
     // volume weighted parallel mean
@@ -136,15 +110,6 @@ namespace mixture{
         );
     }
 
-    template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-    si::units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> parallel_rule(const std::vector<si::units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>>& relations, const std::vector<double>& fractions)
-    {
-        auto result = fractions[0] * relations[0];
-        for (std::size_t i=1; i<fractions.size(); i++) {
-            result += fractions[i] / relations[i];
-        }
-        return 1.0 / result;
-    }
-
 
 }
+

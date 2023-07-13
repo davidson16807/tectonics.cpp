@@ -1,8 +1,18 @@
 #pragma once
 
+#include <cmath>
+
 #include <units/si.hpp>
 
 namespace mixture{
+
+    std::vector<double> log(const std::vector<double>& fractions){
+        std::vector<double> result;
+        for (std::size_t i=0; i<fractions.size(); i++) {
+            result.emplace_back(std::log(fractions[i]));
+        }
+        return result;
+    }
 
     std::vector<double> volume_fractions(const std::vector<si::volume<double>>& volumes){
         si::volume<double> sum(0);
@@ -75,18 +85,6 @@ namespace mixture{
         }
         return result;
     }
-
-    // std::vector<double> molar_fractions(const std::vector<double>& numbers){
-    //     double sum(0);
-    //     for (std::size_t i=0; i<numbers.size(); i++) {
-    //         sum += numbers[i];
-    //     }
-    //     std::vector<double> result;
-    //     for (std::size_t i=0; i<numbers.size(); i++) {
-    //         result.emplace_back(numbers[i]/sum);
-    //     }
-    //     return result;
-    // }
 
     std::vector<double> mass_fractions(const std::vector<double>& molar_fractions, const std::vector<si::molar_mass<double>>& molar_masses){
         std::vector<double> result;
