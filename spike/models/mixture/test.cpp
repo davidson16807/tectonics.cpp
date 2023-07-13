@@ -1,1 +1,2 @@
-#include "./fractions_test.hpp"
+#include "./rules_test.cpp"
+#include "./fractions_test.cpp"

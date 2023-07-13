@@ -768,7 +768,7 @@ namespace si{
   Providing other measurement systems allows developers to report measurements from as many published sources 
   as possible without requiring conversion or subnamespaces.
   So we do include units of measure from other measurement systems,
-  however they must have precedence within existing in scientific literature 
+  however they must have precedence within existing scientific literature 
   that was targeted for international consumption sometime in the past century (that is, after 1920). 
   This includes calories, units of time, and units from the IAU standard, 
   but does not include U.S. customary units since any publication that references those units is not meant for international consumption.
@@ -881,6 +881,7 @@ namespace si{
   constexpr time<double> anomalistic_month (27.55455 * day);
   constexpr time<double> nodal_month (27.21222 * day);
   constexpr time<double> month (synodic_month);
+
   /*
     A "year" has been referenced in scientific literature, predominantly geology, anthropology, and astronomy.
     It is commonly used in combination with modern metric prefixes, namely "gigayear".
