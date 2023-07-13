@@ -425,3 +425,57 @@ TEST_CASE( "parallel_rule commutativity for si units", "[mixture]" ) {
     }
   }
 }
+
+
+
+TEST_CASE( "parallel_rule purity for GenericRelation", "[mixture]" ) {
+  SECTION("Calling an operation twice with the same arguments must produce the same results")
+  {
+    using GenericRelation = compound::relation::GenericRelation<si::temperature<double>, si::pressure<double>>;
+    std::vector<GenericRelation> relations {
+        GenericRelation(2.0*si::pascal),
+        GenericRelation(3.0*si::pascal)
+    };
+    for (double i = 0; i<1.0; i+=0.2) {
+        double j = 1.0 - i;
+        CHECK(mixture::parallel_rule(relations, {i, j})(si::standard_temperature) == 
+              mixture::parallel_rule(relations, {i, j})(si::standard_temperature) );
+    }
+  }
+}
+
+TEST_CASE( "parallel_rule codomain for GenericRelation", "[mixture]" ) {
+  SECTION("Output must fall within a known range")
+  {
+    using GenericRelation = compound::relation::GenericRelation<si::temperature<double>, si::pressure<double>>;
+    std::vector<GenericRelation> relations {
+        GenericRelation(2.0*si::pascal),
+        GenericRelation(3.0*si::pascal)
+    };
+    for (double i = 0; i<1.0; i+=0.2) {
+        double j = 1.0 - i;
+        CHECK(2.0*si::pascal <= mixture::parallel_rule(relations, {i, j})(si::standard_temperature));
+        CHECK(mixture::parallel_rule(relations, {i, j})(si::standard_temperature) <= 3.0*si::pascal);
+    }
+  }
+}
+
+TEST_CASE( "parallel_rule commutativity for GenericRelation", "[mixture]" ) {
+  SECTION("Arguments can be consistently rearranged in any order and still produce the same results")
+  {
+    using GenericRelation = compound::relation::GenericRelation<si::temperature<double>, si::pressure<double>>;
+    std::vector<GenericRelation> ab {
+        GenericRelation(2.0*si::pascal),
+        GenericRelation(3.0*si::pascal)
+    };
+    std::vector<GenericRelation> ba {
+        GenericRelation(3.0*si::pascal),
+        GenericRelation(2.0*si::pascal)
+    };
+    for (double i = 0; i<1.0; i+=0.2) {
+        double j = 1.0 - i;
+        CHECK(mixture::parallel_rule(ab, {i, j})(si::standard_temperature) == 
+              mixture::parallel_rule(ba, {j, i})(si::standard_temperature));
+    }
+  }
+}

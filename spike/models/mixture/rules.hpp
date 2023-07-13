@@ -97,11 +97,11 @@ namespace mixture{
     }
 
     // volume weighted parallel mean
-    template<typename TRelation, typename Tx, typename Ty>
-    compound::relation::GenericRelation<Tx, Ty> parallel_rule(const std::vector<TRelation>& relations, const std::vector<double>& fractions){
+    template<typename Tx, typename Ty>
+    compound::relation::GenericRelation<Tx, Ty> parallel_rule(const std::vector<compound::relation::GenericRelation<Tx, Ty>>& relations, const std::vector<double>& fractions){
         return compound::relation::GenericRelation<Tx, Ty>(
             [=](Tx x){
-                auto result = fractions[0] * relations[0](x);
+                auto result = fractions[0] / relations[0](x);
                 for (std::size_t i=1; i<fractions.size(); i++) {
                     result += fractions[i] / relations[i](x);
                 }
@@ -109,7 +109,6 @@ namespace mixture{
             }
         );
     }
-
 
 }
 
