@@ -36,6 +36,14 @@ namespace relation {
         {
         }
 
+        // constant constructor
+        constexpr ExponentiatedPolynomialRailyardRelation(const Ty& other):
+            yard(std::log(other/Ty(1.0))),
+            xunits(1.0),
+            yunits(1.0)
+        {
+        }
+
         template<typename T>
         constexpr ExponentiatedPolynomialRailyardRelation(
             const analytic::PolynomialRailyard<T, Plo, Phi> yard,
@@ -68,13 +76,6 @@ namespace relation {
             yard(other.yard),
             xunits(other.xunits),
             yunits(other.yunits)
-        {
-        }
-
-        constexpr ExponentiatedPolynomialRailyardRelation(const Ty& other):
-            yard(other/Ty(1.0)),
-            xunits(1.0),
-            yunits(1.0)
         {
         }
 
