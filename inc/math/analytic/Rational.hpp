@@ -29,7 +29,7 @@ namespace analytic {
         Polynomial<T,Plo,Phi> p;
         Polynomial<T,Qlo,Qhi> q;
         template <int P2lo, int P2hi, int Q2lo, int Q2hi> 
-        constexpr explicit Rational(const Polynomial<T,P2lo,P2hi> p, const Polynomial<T,Q2lo,Q2hi> q): 
+        constexpr explicit Rational(const Polynomial<T,P2lo,P2hi> p, const Polynomial<T,Q2lo,Q2hi> q):
             p(p), 
             q(q)
         {}
@@ -385,12 +385,14 @@ namespace analytic {
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi>
     constexpr auto operator*(const Rational<T,P1lo,P1hi,Q1lo,Q1hi>& r, const T k)
     {
-        return r * Polynomial<T,0,0>(k);
+        return (r.p*k) / r.q;
+        // return r * Polynomial<T,0,0>(k);
     }
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi>
     constexpr auto operator/(const Rational<T,P1lo,P1hi,Q1lo,Q1hi>& r, const T k)
     {
-        return r / Polynomial<T,0,0>(k);
+        return r.p / (r.q*k);
+        // return r / Polynomial<T,0,0>(k);
     }
 
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi>
@@ -406,7 +408,8 @@ namespace analytic {
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi>
     constexpr auto operator*(const T k, const Rational<T,P1lo,P1hi,Q1lo,Q1hi>& r)
     {
-        return Polynomial<T,0,0>(k) * r;
+        return (r.p*k) / r.q;
+        // return Polynomial<T,0,0>(k) * r;
     }
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi>
     constexpr auto operator/(const T k, const Rational<T,P1lo,P1hi,Q1lo,Q1hi>& r)

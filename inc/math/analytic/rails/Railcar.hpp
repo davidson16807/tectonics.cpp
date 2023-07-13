@@ -224,13 +224,13 @@ namespace analytic {
     template<typename T, typename F>
     constexpr Railcar<T,F> compose(const Railcar<T,F>& f, const Shifting<T>& g)
     {
-        return Railcar<T,F>(inverse(g)(f.lo), inverse(g)(f.lo), compose(f.content, g) );
+        return Railcar<T,F>(inverse(g)(f.lo), inverse(g)(f.hi), compose(f.content, g) );
     }
 
     template<typename T, typename F>
     constexpr Railcar<T,F> compose(const Railcar<T,F>& f, const Scaling<T>& g)
     {
-        return Railcar<T,F>(inverse(g)(f.lo), inverse(g)(f.lo), compose(f.content, g) );
+        return Railcar<T,F>(inverse(g)(f.lo), inverse(g)(f.hi), compose(f.content, g) );
     }
 
     /*

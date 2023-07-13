@@ -23,7 +23,7 @@ namespace relation {
     template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
     class RationalRailyardRelation
     {
-        analytic::Railyard<float, analytic::Rational<float, Plo,Phi,Qlo,Qhi>> temperature_terms;
+        analytic::Railyard<float, analytic::Rational<float, Plo,Phi,Qlo,Qhi>> yard;
 
         Tx Tunits;
         Ty yunits;
@@ -33,7 +33,7 @@ namespace relation {
 
         // zero constructor
         RationalRailyardRelation():
-            temperature_terms(),
+            yard(),
 
             Tunits(1.0),
             yunits(1.0),
@@ -44,7 +44,7 @@ namespace relation {
 
         // constant constructor
         RationalRailyardRelation(const Ty constant):
-            temperature_terms(constant/Ty(1.0)),
+            yard(constant/Ty(1.0)),
 
             Tunits(1.0),
             yunits(1.0),
@@ -58,7 +58,7 @@ namespace relation {
         RationalRailyardRelation(
             const relation::PolynomialRailyardRelation<Tx, Ty, Nlo, Nhi> relation
         ):
-            temperature_terms(relation.yard),
+            yard(relation.yard),
 
             Tunits(relation.xunits),
             yunits(relation.yunits),
@@ -68,14 +68,14 @@ namespace relation {
         }
 
         RationalRailyardRelation(
-            const analytic::Railyard<float, analytic::Rational<float, Plo, Phi, Qlo, Qhi>> temperature_terms,
+            const analytic::Railyard<float, analytic::Rational<float, Plo, Phi, Qlo, Qhi>> yard,
 
             const Tx Tunits,
             const Ty yunits,
 
             const float known_max_fractional_error
         ):
-            temperature_terms(temperature_terms),
+            yard(yard),
 
             Tunits(Tunits),
             yunits(yunits),
@@ -86,7 +86,7 @@ namespace relation {
 
         RationalRailyardRelation& operator=(const RationalRailyardRelation other)
         {
-            temperature_terms = other.temperature_terms;
+            yard = other.yard;
 
             Tunits = other.Tunits;
             yunits = other.yunits;
@@ -98,15 +98,14 @@ namespace relation {
 
         Ty operator()(const Tx temperature) const
         {
-            const float T = float(temperature/Tunits);
-            return (temperature_terms(T)) * yunits;
+            return (yard(temperature/Tunits)) * yunits;
         }
 
         RationalRailyardRelation& operator+=(const Ty offset)
         {
             using R = analytic::Rational<float, Plo, Phi, Qlo, Qhi>;
             using RC = analytic::Railcar<float, R>;
-            temperature_terms.cars.push_back(RC(offset/yunits));
+            yard.cars.push_back(RC(offset/yunits));
             return *this;
         }
 
@@ -114,19 +113,19 @@ namespace relation {
         {
             using R = analytic::Rational<float, Plo, Phi, Qlo, Qhi>;
             using RC = analytic::Railcar<float, R>;
-            temperature_terms.cars.push_back(RC(-offset/yunits));
+            yard.cars.push_back(RC(-offset/yunits));
             return *this;
         }
 
         RationalRailyardRelation& operator*=(const float scalar)
         {
-            temperature_terms *= scalar;
+            yard *= scalar;
             return *this;
         }
 
         RationalRailyardRelation operator/=(const float scalar)
         {
-            temperature_terms /= scalar;
+            yard /= scalar;
             return *this;
         }
 
@@ -134,7 +133,7 @@ namespace relation {
         {
             const float Tscale = float(other.Tunits / Tunits);
             const float yscale = float(other.yunits / yunits);
-            temperature_terms += yscale * compose(other.temperature_terms, analytic::Scaling<float>(Tscale));
+            yard += yscale * compose(other.yard, analytic::Scaling<float>(Tscale));
             return *this;
         }
 
@@ -142,7 +141,7 @@ namespace relation {
         {
             const float Tscale = float(other.Tunits / Tunits);
             const float yscale = float(other.yunits / yunits);
-            temperature_terms -= yscale * compose(other.temperature_terms, analytic::Scaling<float>(Tscale));
+            yard -= yscale * compose(other.yard, analytic::Scaling<float>(Tscale));
             return *this;
         }
 

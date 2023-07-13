@@ -25,8 +25,10 @@ namespace mixture{
     }
 
     template<typename Tx, typename Ty, int Plo, int Phi>
-    compound::relation::GenericRelation<Tx, Ty> linear_rule(const std::vector<compound::relation::ExponentiatedPolynomialRailyardRelation<Tx,Ty,Plo,Phi>>& relations, const std::vector<double>& fractions)
-    {
+    compound::relation::GenericRelation<Tx, Ty> linear_rule(
+        const std::vector<compound::relation::ExponentiatedPolynomialRailyardRelation<Tx,Ty,Plo,Phi>>& relations, 
+        const std::vector<double>& fractions
+    ){
         return compound::relation::GenericRelation<Tx, Ty>(
             [=](Tx x){
                 auto result = fractions[0] * relations[0](x);
@@ -39,11 +41,13 @@ namespace mixture{
     }
 
     template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
-    compound::relation::RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> linear_rule(const std::vector<compound::relation::RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi>>& relations, const std::vector<double>& fractions)
-    {
-        compound::relation::RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> result;
+    compound::relation::RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> linear_rule(
+        const std::vector<compound::relation::RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi>>& relations, 
+        const std::vector<double>& fractions
+    ){
+        compound::relation::RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> result(0);
         for (std::size_t i=0; i<relations.size(); i++){
-            result += fractions[i] * relations[i];
+            result = result + fractions[i] * relations[i];
         }
         return result;
     }
