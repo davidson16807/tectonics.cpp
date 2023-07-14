@@ -12,7 +12,7 @@ TEST_CASE( "estimated solid vapor_pressure order of magnitude", "[table]" )
 {
     SECTION("Properties of compounds should not fall outside orders of magnitude for known values")
     {
-        for (int i = 0; i<compound::ids::count; i++)
+        for (int i = 0; i<compound::compounds::count; i++)
         {
                 for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=1.778)
                 {
@@ -28,7 +28,7 @@ TEST_CASE( "estimated solid vapor_pressure monotonically increasing", "[table]" 
 {
     SECTION("Vapor pressure must monotonically increase with temperature")
     {
-        for (int i = 0; i<compound::ids::count; i++)
+        for (int i = 0; i<compound::compounds::count; i++)
         {
                 si::temperature<double> T = 3.0*si::kelvin;
                 auto last = compound::estimated::thermodynamics.vapor_pressure_as_solid[i](T);

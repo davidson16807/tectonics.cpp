@@ -11,7 +11,7 @@
 TEST_CASE( "published acentric_factor order of magnitude", "[table]" ) {
     SECTION("Properties of compounds should not fall outside orders of magnitude for known values")
     {
-        for (int i = 0; i<compound::ids::count; i++)
+        for (int i = 0; i<compound::compounds::count; i++)
         {
             if (compound::published::acentric_factor.has(i)) {
                 auto x = compound::published::acentric_factor[i];

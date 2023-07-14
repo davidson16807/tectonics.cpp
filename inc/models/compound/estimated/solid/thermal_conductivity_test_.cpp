@@ -13,7 +13,7 @@ TEST_CASE( "estimated solid thermal_conductivity order of magnitude", "[table]" 
     {
         for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=3.0)
         {
-            for (int i = 0; i<compound::ids::count; i++)
+            for (int i = 0; i<compound::compounds::count; i++)
             {
                     auto x = compound::estimated::thermodynamics.thermal_conductivity_as_solid[i](T);
                     CHECK(x / (si::watt/(si::meter * si::kelvin)) < 30000.0); /*based on silver at 10K*/ \

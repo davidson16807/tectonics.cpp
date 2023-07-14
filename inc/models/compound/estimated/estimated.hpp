@@ -95,7 +95,7 @@ namespace estimated{
         critical,
         sample,
         basic,
-        ids::water
+        compounds::water
     );
 
     SpectralHandbook spectra_as_solid(
@@ -103,7 +103,7 @@ namespace estimated{
         published::extinction_coefficient_as_solid,
         published::absorption_coefficient_as_solid,
         published::similarity,
-        ids::water
+        compounds::water
     );
 
     StrengthsHandbook strengths(
@@ -114,7 +114,7 @@ namespace estimated{
         published::tensile_fracture_strength_as_solid,
         published::compressive_fracture_strength_as_solid,
         published::similarity,
-        ids::water
+        compounds::water
     );
 
     ElasticitiesHandbook elasticities(
@@ -125,7 +125,7 @@ namespace estimated{
         published::poisson_ratio_as_solid,
         published::pwave_modulus_as_solid,
         published::similarity,
-        ids::water
+        compounds::water
     );
 
 }}

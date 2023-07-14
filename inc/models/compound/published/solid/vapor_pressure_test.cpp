@@ -12,7 +12,7 @@ TEST_CASE( "published solid vapor_pressure order of magnitude", "[table]" )
 {
     SECTION("Properties of compounds should not fall outside orders of magnitude for known values")
     {
-        for (int i = 0; i<compound::ids::count; i++)
+        for (int i = 0; i<compound::compounds::count; i++)
         {
             if (compound::published::vapor_pressure_as_solid.has(i))
             {
@@ -33,7 +33,7 @@ TEST_CASE( "published solid vapor_pressure monotonically increase", "[table]" )
 {
     SECTION("Vapor pressure must monotonically increase with temperature")
     {
-        for (int i = 0; i<compound::ids::count; i++)
+        for (int i = 0; i<compound::compounds::count; i++)
         {
             if (compound::published::vapor_pressure_as_solid.has(i))
             {

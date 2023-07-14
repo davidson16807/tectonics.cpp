@@ -11,7 +11,7 @@
 TEST_CASE( "published latent_heat_of_vaporization order of magnitude", "[table]" ) {
     SECTION("Properties of compounds should not fall outside orders of magnitude for known values")
     {
-        for (int i = 0; i<compound::ids::count; i++)
+        for (int i = 0; i<compound::compounds::count; i++)
         {
             if (compound::published::latent_heat_of_vaporization.has(i)) 
             {

@@ -13,7 +13,7 @@ TEST_CASE( "estimated solid bulk_modulus order of magnitude", "[table]" ) {
     {
         for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=3.0)
         {
-            for (int i = 0; i<compound::ids::count; i++)
+            for (int i = 0; i<compound::compounds::count; i++)
             {
                 auto x = compound::estimated::elasticities.bulk_modulus[i](T);
                 CHECK(x / si::gigapascal < 1000.0); /*based on diamond*/

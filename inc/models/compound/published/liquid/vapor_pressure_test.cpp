@@ -11,7 +11,7 @@
 TEST_CASE( "published liquid vapor_pressure order of magnitude", "[table]" ) {
     SECTION("Properties of compounds should not fall outside orders of magnitude for known values")
     {
-        for (int i = 0; i<compound::ids::count; i++)
+        for (int i = 0; i<compound::compounds::count; i++)
         {
             if (compound::published::vapor_pressure_as_liquid.has(i)) 
             {
@@ -36,7 +36,7 @@ TEST_CASE( "published liquid vapor_pressure monotonically increasing", "[table]"
 {
     SECTION("Vapor pressure must monotonically increase with temperature")
     {
-        for (int i = 0; i<compound::ids::count; i++)
+        for (int i = 0; i<compound::compounds::count; i++)
         {
             if (compound::published::vapor_pressure_as_liquid.has(i))
             {

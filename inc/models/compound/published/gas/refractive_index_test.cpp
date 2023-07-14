@@ -11,7 +11,7 @@ TEST_CASE( "published gaseous refractive_index order of magnitude", "[table]" ) 
     {
         for (si::length<double> l = 10.0*si::nanometer; l <= 3.0*si::millimeter; l*=1.78)
         {
-            for (int i = 0; i<compound::ids::count; i++)
+            for (int i = 0; i<compound::compounds::count; i++)
             {
                 if (compound::published::refractive_index_as_gas.has(i)) {
                     auto x = compound::published::refractive_index_as_gas[i](1.0/l);

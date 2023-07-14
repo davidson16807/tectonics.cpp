@@ -11,7 +11,7 @@ TEST_CASE( "published solid lame_parameter order of magnitude", "[table]" ) {
     {
         for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=1.778)
         {
-            for (int i = 0; i<compound::ids::count; i++)
+            for (int i = 0; i<compound::compounds::count; i++)
             {
                 if (compound::published::lame_parameter_as_solid.has(i)) {
                     auto x = compound::published::lame_parameter_as_solid[i](T);

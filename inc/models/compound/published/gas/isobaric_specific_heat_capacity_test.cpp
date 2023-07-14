@@ -13,7 +13,7 @@ TEST_CASE( "published gaseous isobaric_specific_heat_capacity order of magnitude
         {
             for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=3.0)
             {
-                for (int i = 0; i<compound::ids::count; i++)
+                for (int i = 0; i<compound::compounds::count; i++)
                 {
                     if (compound::published::isobaric_specific_heat_capacity_as_gas.has(i)) {
                         auto x = compound::published::isobaric_specific_heat_capacity_as_gas[i](p,T);

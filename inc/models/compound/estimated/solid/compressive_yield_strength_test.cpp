@@ -13,7 +13,7 @@ TEST_CASE( "estimated solid compressive_yield_strength order of magnitude", "[ta
     {
         for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=1.778)
         {
-            for (int i = 0; i<compound::ids::count; i++)
+            for (int i = 0; i<compound::compounds::count; i++)
             {
                 auto x = compound::estimated::strengths.compressive_yield[i](T);
                 CHECK(x / si::megapascal < 3000.0); /*based on ceramics*/ 

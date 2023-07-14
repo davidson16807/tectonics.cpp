@@ -13,7 +13,7 @@ TEST_CASE( "published liquid thermal_conductivity order of magnitude", "[table]"
     {
         for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=3.0)
         {
-            for (int i = 0; i<compound::ids::count; i++)
+            for (int i = 0; i<compound::compounds::count; i++)
             {
                 if (compound::published::thermal_conductivity_as_liquid.has(i)) {
                     auto x = compound::published::thermal_conductivity_as_liquid[i](T);

@@ -11,7 +11,7 @@
 TEST_CASE( "estimated acentric_factor order of magnitude", "[table]" ) {
     SECTION("Properties of compounds should not fall outside orders of magnitude for known values")
     {
-        for (int i = 0; i<compound::ids::count; i++)
+        for (int i = 0; i<compound::compounds::count; i++)
         {
                 auto x = compound::estimated::molecular.acentric_factor[i];
                 // std::cout << compound::estimated::basic.name[i] << std::endl;

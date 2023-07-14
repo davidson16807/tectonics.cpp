@@ -10,7 +10,7 @@ namespace compound {
 namespace published {
 
 table::PartialTable<PhaseDiagram> phase{
-    {ids::water, 
+    {compounds::water, 
         [](){
             const int supercritical = -3;
             const int gas = -2;
@@ -87,7 +87,7 @@ table::PartialTable<PhaseDiagram> phase{
             );
         }()},
 
-    {ids::nitrogen, 
+    {compounds::nitrogen, 
         [](){
             const int beta = 0;
             const int alpha = 1;
@@ -121,7 +121,7 @@ table::PartialTable<PhaseDiagram> phase{
         }()},
 
 
-    {ids::oxygen, 
+    {compounds::oxygen, 
         [](){
             const int beta = 0;
             const int alpha = 1;
@@ -164,7 +164,7 @@ table::PartialTable<PhaseDiagram> phase{
             );
         }()},
 
-    {ids::methane, 
+    {compounds::methane, 
         [](){
             const int beta = 0;
             const int alpha = 1;
@@ -191,7 +191,7 @@ table::PartialTable<PhaseDiagram> phase{
         }()},
 
     
-    {ids::helium, 
+    {compounds::helium, 
         [](){
             // const int supercritical = -3;
             // const int gas = -2;
@@ -226,7 +226,7 @@ table::PartialTable<PhaseDiagram> phase{
     
 
 
-    {ids::carbon, 
+    {compounds::carbon, 
         [](){
             // const int supercritical = -3;
             // const int gas = -2;
@@ -257,7 +257,7 @@ table::PartialTable<PhaseDiagram> phase{
 
 
 
-    {ids::quartz, 
+    {compounds::quartz, 
         [](){
             // const int supercritical = -3;
             // const int gas = -2;
@@ -330,7 +330,7 @@ table::PartialTable<PhaseDiagram> phase{
             );
         }()},
 
-    {ids::carbon, 
+    {compounds::carbon, 
         [](){
             const double supercritical = -3;
             const double vapor = -2;
