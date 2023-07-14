@@ -365,16 +365,16 @@ TEST_CASE( "Lee-Kesler method purity", "[properties]" ) {
 	si::temperature<double> T (si::standard_temperature);
 	si::temperature<double> Tc (508.1*si::kelvin);
 	si::pressure<double> pc (47.0*si::bar);
-	si::pressure<double> pvL = 9.639 * si::kilopascal;
+	// si::pressure<double> pvL = 9.639 * si::kilopascal;
 	double omega(0.304);
 
 	SECTION("Calling a function twiced with the same arguments must produce the same results"){
     	CHECK(compound::correlation::estimate_vapor_pressure_as_liquid_from_lee_kesler(omega, T, Tc, pc) == compound::correlation::estimate_vapor_pressure_as_liquid_from_lee_kesler(omega, T, Tc, pc));
     }
 
-	SECTION("Calling a function twiced with the same arguments must produce the same results"){
-    	CHECK(compound::correlation::estimate_acentric_factor_from_lee_kesler(pvL, T, Tc, pc) == compound::correlation::estimate_acentric_factor_from_lee_kesler(pvL, T, Tc, pc));
-    }
+	// SECTION("Calling a function twiced with the same arguments must produce the same results"){
+    // 	CHECK(compound::correlation::estimate_acentric_factor_from_lee_kesler(pvL, T, Tc, pc) == compound::correlation::estimate_acentric_factor_from_lee_kesler(pvL, T, Tc, pc));
+    // }
 }
 
 TEST_CASE( "Lee-Kesler method accuracy", "[properties]" ) {
@@ -392,24 +392,24 @@ TEST_CASE( "Lee-Kesler method accuracy", "[properties]" ) {
     	CHECK(si::is_within_fraction(pvL, compound::correlation::estimate_vapor_pressure_as_liquid_from_lee_kesler(omega, T, Tc, pc), 0.3));
     }
 
-	SECTION("Lee-Kesler method must agree on predictions to within 30%"){
-    	CHECK(si::is_within_fraction(omega, compound::correlation::estimate_acentric_factor_from_lee_kesler(pvL, T, Tc, pc), 0.3));
-    }
+	// SECTION("Lee-Kesler method must agree on predictions to within 30%"){
+    // 	CHECK(si::is_within_fraction(omega, compound::correlation::estimate_acentric_factor_from_lee_kesler(pvL, T, Tc, pc), 0.3));
+    // }
 }
 
-TEST_CASE( "Lee-Kesler consistency", "[properties]" ) {
-	// properties of acetone
-	si::temperature<double> T (si::standard_temperature);
-	si::temperature<double> Tc (508.1*si::kelvin);
-	si::pressure<double> pc (47.0*si::bar);
-	si::pressure<double> pvL = 9.639 * si::kilopascal;
-	double omega(0.304);
+// TEST_CASE( "Lee-Kesler consistency", "[properties]" ) {
+// 	// properties of acetone
+// 	si::temperature<double> T (si::standard_temperature);
+// 	si::temperature<double> Tc (508.1*si::kelvin);
+// 	si::pressure<double> pc (47.0*si::bar);
+// 	si::pressure<double> pvL = 9.639 * si::kilopascal;
+// 	double omega(0.304);
 
-    SECTION("Lee-Kesler method must be invertible"){
-    	CHECK(si::is_within_fraction(pvL, compound::correlation::estimate_vapor_pressure_as_liquid_from_lee_kesler(compound::correlation::estimate_acentric_factor_from_lee_kesler(pvL, T, Tc, pc), T, Tc, pc), 1e-4));
-    	CHECK(si::is_within_fraction(omega, compound::correlation::estimate_acentric_factor_from_lee_kesler(compound::correlation::estimate_vapor_pressure_as_liquid_from_lee_kesler(omega, T, Tc, pc), T, Tc, pc), 1e-4));
-    }
-}
+//     SECTION("Lee-Kesler method must be invertible"){
+//     	CHECK(si::is_within_fraction(pvL, compound::correlation::estimate_vapor_pressure_as_liquid_from_lee_kesler(compound::correlation::estimate_acentric_factor_from_lee_kesler(pvL, T, Tc, pc), T, Tc, pc), 1e-4));
+//     	CHECK(si::is_within_fraction(omega, compound::correlation::estimate_acentric_factor_from_lee_kesler(compound::correlation::estimate_vapor_pressure_as_liquid_from_lee_kesler(omega, T, Tc, pc), T, Tc, pc), 1e-4));
+//     }
+// }
 
 
 

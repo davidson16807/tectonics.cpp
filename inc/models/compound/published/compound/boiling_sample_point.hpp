@@ -15,7 +15,7 @@ namespace published {
         {ids::water,             point<double>(si::atmosphere,  100.0*si::celcius)},
         {ids::nitrogen,          point<double>(si::atmosphere,  -195.8 * si::celcius)}, // Perry
         {ids::oxygen,            point<double>(si::atmosphere,  -183.0 * si::celcius)}, // Perry
-        {ids::carbon_dioxide     point<double>(si::atmosphere,  -56.56 * si::celcius)}, // sublimates, equivalent to freezing point
+        {ids::carbon_dioxide,    point<double>(si::atmosphere,  -56.56 * si::celcius)}, // sublimates, equivalent to freezing point
         {ids::methane,           point<double>(si::atmosphere,  -161.4 * si::celcius)}, // Perry
         {ids::argon,             point<double>(si::atmosphere,  -185.7*si::celcius)},
         {ids::helium,            point<double>(si::atmosphere,  -268.9 * si::celcius)}, // Perry
