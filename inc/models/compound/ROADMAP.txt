@@ -1,9 +1,10 @@
 REQUIRED:
+	add test to ensure phase function returns value within acceptable arrange
+	reimplement polymorphs of solids to work with tables
 	write unit tests for spectral properties
 	refactor state and spectral functions to provide variants that operate on vectors
 	redo absorption coefficients for cryogenic solids so that visible spectrum is covered
 	redo refractive indices for solid methane phases
-	add test to ensure phase function returns value within acceptable arrange, while also account for number of polymorphs
 							n 	k 	α
 		water 				x 	x
 		nitrogen	 		
@@ -48,25 +49,6 @@ REQUIRED:
 		chalcopyrite 		 	 	x
 
 
-mixture laws:
-	pseudocritical temperature: kays rule
-	pseudocritical pressure: prausnitz-gunn
-	molar volume: 		amagat's law
-	gases:
-		viscosity: 		wilke, herning zipperer (chemicals)
-		thermal conductivity: wassiljewa-herning-zipperer (chemicals)
-	liquids:
-		vapor pressure: Raoult's Law, has no effect on structure of approximations
-		heat capacity: 	mass weighted arithmetic mean (chemicals)
-		thermal conductivity: dippr9 (chemicals)
-		surface tension: weinaug-katz, winterfeld-scriven-davis, diguilio-teja (chemicals)
-		density: costald (chemicals)
-	solids:
-		vapor pressure: Raoult's Law, has no effect on structure of approximations
-		strengths: 		Rule of mixtures (see wikipedia)
-		moduli: 		Rule of mixtures (see wikipedia)
-		thermal conductivity: Rule of mixtures (see wikipedia)
-
 
 EXTRA CREDIT:
 x	consolidate state and spectral functions
@@ -79,7 +61,6 @@ x	compile bibliography
 		silicon carbide
 		calcium carbide
 		aluminum carbide
-	run through "The properties of gases and liquids" on internet archive and identify missing correlations (e.g. surface tension)
 	write unit tests for triple points of phases and polymorphs
 
 missing:
@@ -90,6 +71,7 @@ missing:
 
 
 ACCOMPLISHED:
+	mixtures
 	extinction coefficients
 	plasticity and elasticity of cryocrystals
 	spectral reflectivity of solids
@@ -103,6 +85,7 @@ ACCOMPLISHED:
 	ensure inference of absorption from refraction indices
 	redo refractive index and extinction coefficient for carbon dioxide
 	ensure celcius conversion does not produce garbage estimates
+	run through "The properties of gases and liquids" on internet archive and identify missing correlations (e.g. surface tension)
 	complex phase diagrams for:
 		water
 		nitrogen
