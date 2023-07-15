@@ -13,79 +13,83 @@ namespace compound {
 
     namespace polymorphs {
 
-        int water_ice_1h =0;
-        int water_ice_1c =1;
-        int water_ice_2 =2;
-        int water_ice_3 =3;
-        int water_ice_4 =4;
-        int water_ice_5 =5;
-        int water_ice_6 =6;
-        int water_ice_7 =7;
-        int water_ice_8 =8;
-        int water_ice_9 =9;
-        int water_ice_10 = 10;
-        int water_ice_11h = 11;
-        int water_ice_11o = 12;
-        int water_ice_12 = 13;
-        int water_ice_13 = 14;
-        int water_ice_14 = 15;
-        int water_ice_15 = 16;
-        int water_ice_16 = 17;
-        int water_ice_17 = 18;
-        int water_ice_18 = 19;
-        int water_ice_19 = 20;
-        int nitrogen_ice_beta = 21;
-        int nitrogen_ice_alpha = 22;
-        int nitrogen_ice_gamma = 23;
-        int oxygen_ice_gamma = 24;
-        int oxygen_ice_beta = 25;
-        int oxygen_ice_alpha = 26;
-        int carbon_dioxide_ice = 27;
-        int methane_ice_alpha = 28;
-        int methane_ice_beta = 29;
-        int argon_ice = 30;
-        int helium_ice = 31;
-        int hydrogen_ice = 32;
-        int ammonia_ice = 33;
-        int ozone_ice = 34;
-        int nitrous_oxide_ice = 35;
-        int sulfur_dioxide_ice = 36;
-        int nitric_oxide_ice = 37;
-        int carbon_monoxide_ice_beta = 38;
-        int carbon_monoxide_ice_alpha = 39;
-        int ethane_ice = 40;
-        int hydrogen_cyanide_ice = 41;
-        int ethanol_ice = 42;
-        int formaldehyde_ice = 43;
-        int formic_acid_ice = 44;
-        int perflouromethane_ice = 45;
-        int benzene_ice = 46;
-        int pyrimidine_ice = 47;
-        int quartz_alpha = 48;
-        int quartz_beta = 49;
-        int crystoballite_alpha = 50;
-        int crystoballite_beta = 51;
-        int halite = 52;
-        int corundum = 53;
-        int apatite = 54;
-        int graphite = 55;
-        int diamond = 56;
-        int calcite = 57;
-        int aragonite = 58;
-        int orthoclase = 59;
-        int andesine = 60;
-        int augite = 61;
-        int forsterite = 62;
-        int goethite = 63;
-        int pyrite = 64;
-        int hematite = 65;
-        int gold = 66;
-        int silver = 67;
-        int copper = 68;
-        int magnetite = 69;
-        int chalcocite_alpha = 70;
-        int chalcocite_beta = 71;
-        int chalcopyrite = 72;
+        enum enumeration{
+
+            water_ice_1h,
+            water_ice_1c,
+            water_ice_2,
+            water_ice_3,
+            water_ice_4,
+            water_ice_5,
+            water_ice_6,
+            water_ice_7,
+            water_ice_8,
+            water_ice_9,
+            water_ice_10,
+            water_ice_11h,
+            water_ice_11o,
+            water_ice_12,
+            water_ice_13,
+            water_ice_14,
+            water_ice_15,
+            water_ice_16,
+            water_ice_17,
+            water_ice_18,
+            water_ice_19,
+            nitrogen_ice_beta,
+            nitrogen_ice_alpha,
+            nitrogen_ice_gamma,
+            oxygen_ice_gamma,
+            oxygen_ice_beta,
+            oxygen_ice_alpha,
+            carbon_dioxide_ice,
+            methane_ice_alpha,
+            methane_ice_beta,
+            argon_ice,
+            helium_ice,
+            hydrogen_ice,
+            ammonia_ice,
+            ozone_ice,
+            nitrous_oxide_ice,
+            sulfur_dioxide_ice,
+            nitric_oxide_ice,
+            carbon_monoxide_ice_beta,
+            carbon_monoxide_ice_alpha,
+            ethane_ice,
+            hydrogen_cyanide_ice,
+            ethanol_ice,
+            formaldehyde_ice,
+            formic_acid_ice,
+            perflouromethane_ice,
+            benzene_ice,
+            pyrimidine_ice,
+            quartz_alpha,
+            quartz_beta,
+            crystoballite_alpha,
+            crystoballite_beta,
+            halite,
+            corundum,
+            apatite,
+            graphite,
+            diamond,
+            calcite,
+            aragonite,
+            orthoclase,
+            andesine,
+            augite,
+            forsterite,
+            goethite,
+            pyrite,
+            hematite,
+            gold,
+            silver,
+            copper,
+            magnetite,
+            chalcocite_alpha,
+            chalcocite_beta,
+            chalcopyrite
+
+        };
 
         int count = 73;
     };
