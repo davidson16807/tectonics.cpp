@@ -46,6 +46,16 @@ namespace table {
 	        return rows[i];
 	    }
 
+	    FullTable<T> operator[](const FullTable<int>& ids) const
+	    {
+	    	FullTable<T> y;
+		    for (std::size_t i = 0; i < ids.size(); ++i)
+		    {
+	    		y.rows.push_back(rows[ids[i]]);
+		    }
+	        return y;
+	    }
+
 	    FullTable<T> operator[](const FullTable<bool>& mask) const
 	    {
 	    	FullTable<T> y;
@@ -53,10 +63,10 @@ namespace table {
 		    {
 		    	if (mask[i])
 		    	{
-		    		y.rows.emplace(int(i), rows.at(i));
+		    		y.rows.push_back(rows[i]);
 		    	}
 		    }
-	        return rows;
+	        return y;
 	    }
 	};
 
@@ -66,7 +76,7 @@ namespace table {
 	    FullTable<Ty> y;
 	    for (std::size_t i = 0; i < f.size(); ++i)
 	    {
-	        y.rows.emplace(int(i), f[i](x));
+	        y.rows.push_back(f[i](x));
 	    }
 	    return y;
 	}

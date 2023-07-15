@@ -40,8 +40,7 @@ namespace estimated{
         published::name,
         published::formula,
         published::atoms_per_molecule,
-        published::molar_mass,
-        published::similarity
+        published::molar_mass
     );
 
     CriticalPropertiesHandbook critical(
@@ -95,6 +94,10 @@ namespace estimated{
         critical,
         sample,
         basic,
+        canonical_polymorph,
+        polymorph_compound,
+        compound_similarity,
+        polymorph_similarity,
         compounds::water
     );
 
@@ -102,7 +105,7 @@ namespace estimated{
         published::refractive_index_as_solid,
         published::extinction_coefficient_as_solid,
         published::absorption_coefficient_as_solid,
-        published::similarity,
+        polymorph_similarity,
         compounds::water
     );
 
@@ -113,7 +116,7 @@ namespace estimated{
         published::shear_fracture_strength_as_solid,
         published::tensile_fracture_strength_as_solid,
         published::compressive_fracture_strength_as_solid,
-        published::similarity,
+        polymorph_similarity,
         compounds::water
     );
 
@@ -124,7 +127,7 @@ namespace estimated{
         published::shear_modulus_as_solid,
         published::poisson_ratio_as_solid,
         published::pwave_modulus_as_solid,
-        published::similarity,
+        polymorph_similarity,
         compounds::water
     );
 

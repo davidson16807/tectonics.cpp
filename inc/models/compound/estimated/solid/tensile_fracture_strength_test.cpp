@@ -13,7 +13,7 @@ TEST_CASE( "estimated solid tensile_fracture_strength order of magnitude", "[tab
     {
         for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=1.778)
         {
-            for (int i = 0; i<compound::compounds::count; i++)
+            for (int i = 0; i<compound::polymorphs::count; i++)
             {
                 auto x = compound::estimated::strengths.tensile_fracture[i](T);
                 CHECK(x / si::megapascal < 3000.0); /*based on titanium*/ 

@@ -6,13 +6,16 @@
 #include <models/compound/relation/PolynomialRailyardRelation.hpp>
 #include <models/compound/ids.hpp>
 
+#include "polymorphs.hpp"
+
 namespace compound { 
 namespace published { 
 
     using SolidShearFractureStrengthTemperatureRelation = relation::PolynomialRailyardRelation<si::temperature<double>,si::pressure<double>, 0,1>;
     table::PartialTable<SolidShearFractureStrengthTemperatureRelation> shear_fracture_strength_as_solid {
 
-        // { polymorphs::water_ice_1h,              },
+        { polymorphs::water_ice_1h,              1.1 * si::megapascal,                             // Frederking (1989)
+            },
         // { polymorphs::water_ice_1c,              },
         // { polymorphs::water_ice_2,               },
         // { polymorphs::water_ice_3,               },
@@ -36,7 +39,8 @@ namespace published {
         // { polymorphs::nitrogen_ice_beta,         },
         // { polymorphs::nitrogen_ice_alpha,        },
         // { polymorphs::nitrogen_ice_gamma,        },
-        // { polymorphs::oxygen_ice_gamma,          },
+        { polymorphs::oxygen_ice_gamma,          0.31 * si::megapascal, // Bates 1955, @ 1atm, 45.0K
+            },
         // { polymorphs::oxygen_ice_beta,           },
         // { polymorphs::oxygen_ice_alpha,          },
         // { polymorphs::carbon_dioxide_ice,        },
@@ -86,49 +90,6 @@ namespace published {
         // { polymorphs::chalcocite_beta,           },
         // { polymorphs::chalcopyrite,              },
 
-        { compounds::water,               1.1 * si::megapascal,                             // Frederking (1989)
-            },
-        // { compounds::nitrogen,         },
-        { compounds::oxygen,              0.31 * si::megapascal, // Bates 1955, @ 1atm, 45.0K
-            },
-        // { compounds::carbon_dioxide,   },
-        // { compounds::methane,          },
-        // { compounds::argon,            },
-        // { compounds::helium,           },
-        // { compounds::hydrogen,         },
-        // { compounds::ammonia,          },
-        // { compounds::ozone,            },
-        // { compounds::nitrous_oxide,    },
-        // { compounds::sulfur_dioxide,   },
-        // { compounds::nitric_oxide,     },
-        // { compounds::carbon_monoxide,  },
-        // { compounds::ethane,           },
-        // { compounds::hydrogen_cyanide, },
-        // { compounds::ethanol,          },
-        // { compounds::formaldehyde,     },
-        // { compounds::formic_acid,      },
-        // { compounds::perflouromethane, },
-        // { compounds::benzene,          },
-        // { compounds::pyrimidine,       },
-        // { compounds::quartz,           },
-        // { compounds::halite,           },
-        // { compounds::corundum,         },
-        // { compounds::apatite,          },
-        // { compounds::carbon,           },
-        // { compounds::calcite,          },
-        // { compounds::orthoclase,       },
-        // { compounds::andesine,         },
-        // { compounds::augite,           },
-        // { compounds::forsterite,       },
-        // { compounds::goethite,         },
-        // { compounds::pyrite,           },
-        // { compounds::hematite,         },
-        // { compounds::gold,             },
-        // { compounds::silver,           },
-        // { compounds::copper,           },
-        // { compounds::magnetite,        },
-        // { compounds::chalcocite,       },
-        // { compounds::chalcopyrite,     },
     };
 
 }}

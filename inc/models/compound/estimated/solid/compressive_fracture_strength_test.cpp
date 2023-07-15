@@ -13,7 +13,7 @@ TEST_CASE( "estimated solid compressive_fracture_strength order of magnitude", "
     {
         for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=1.778)
         {
-            for (int i = 0; i<compound::compounds::count; i++)
+            for (int i = 0; i<compound::polymorphs::count; i++)
             {
                 auto x = compound::estimated::strengths.compressive_fracture[i](T);
                 CHECK(x / si::megapascal < 10000.0); /*based on ceramics*/

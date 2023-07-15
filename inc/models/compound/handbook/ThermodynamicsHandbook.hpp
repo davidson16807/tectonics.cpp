@@ -63,6 +63,8 @@ namespace estimated{
         table::FullTable<LiquidThermalConductivityTemperatureRelation> thermal_conductivity_as_liquid;
         table::FullTable<GasThermalConductivityStateRelation> thermal_conductivity_as_gas;
 
+        table::FullTable<published::LiquidSurfaceTensionTemperatureRelation> surface_tension_as_liquid;
+
         ThermodynamicsHandbook(
             const table::PartialTable<point<double>>& triple_point0,
             const table::PartialTable<published::LatentHeatTemperatureRelation>& latent_heat_of_sublimation0,
@@ -86,6 +88,10 @@ namespace estimated{
             const CriticalPropertiesHandbook& critical,
             const SamplePointHandbook& sample,
             const BasicHandbook& basic,
+            const table::FullTable<int>& canonical_polymorph,
+            const table::FullTable<int>& polymorph_compound,
+            const table::FullTable<int>& compound_similarity,
+            const table::FullTable<int>& polymorph_similarity,
             const int fallback_id
         ){
 
@@ -124,7 +130,7 @@ namespace estimated{
                             return correlation::guess_density_as_solid_from_density_as_liquid(rhoL(liquid.temperature));}, 
                         density_as_liquid, 
                         sample.liquid_point) // WARNING: results are speculative
-                );
+                )[polymorph_compound];
 
             triple_point_temperature = 
                 table::complete(
@@ -141,7 +147,7 @@ namespace estimated{
                         },
                         basic.molar_mass,
                         density_as_liquid,
-                        density_as_solid,
+                        density_as_solid[canonical_polymorph],
                         sample.liquid_point)
                 );
 
@@ -163,7 +169,7 @@ namespace estimated{
                             table::partial(basic.molar_mass),
                             table::partial(sample.solid_point),
                             table::partial(triple_point_temperature),
-                            vapor_pressure_as_solid0)
+                            vapor_pressure_as_solid0[canonical_polymorph])
                     });
 
             auto triple_point1 =
@@ -237,27 +243,27 @@ namespace estimated{
             auto vapor_pressure_as_solid1 = 
                 table::first<SolidVaporPressureTemperatureRelation>({
                     vapor_pressure_as_solid0,
-                    table::gather<SolidVaporPressureTemperatureRelation>(
-                        []( LatentHeatTemperatureRelation Hs, 
-                            si::molar_mass<double> M, 
-                            point<double> triple){
-                                auto T = analytic::Identity<float>();
-                                auto R = si::universal_gas_constant;
-                                float T3 = triple.temperature / si::kelvin;
-                                float P3 = triple.pressure / si::pascal;
-                                float k = (Hs(triple.temperature)*M/R)/si::kelvin;
-                                using Polynomial = analytic::Polynomial<float,-1,1>;
-                                using Clamped = analytic::Clamped<float,Polynomial>;
-                                using Railyard = analytic::Railyard<float,Polynomial>;
-                                return P3 * SolidVaporPressureTemperatureRelation(
-                                    Railyard(Clamped(0.0f, T3, Polynomial(-k*(1.0f/T - 1.0f/T3)))),
-                                    si::kelvin, si::pascal);
-                                // NOTE: the above is translated from property/published.hpp:
-                                // return triple_point_pressure * exp(-((latent_heat_of_sublimation*molar_mass / si::universal_gas_constant) * (1.0/temperature - 1.0/triple_point_temperature)));
-                        }, 
-                        latent_heat_of_sublimation1, // NOTE: this should be latent heat of sublimation at the triple point, update this line if ever we convert latent_heat_of_fusion to a relation
-                        table::partial(basic.molar_mass), 
-                        triple_point1)
+                    // table::gather<SolidVaporPressureTemperatureRelation>(
+                    //     []( LatentHeatTemperatureRelation Hs, 
+                    //         si::molar_mass<double> M, 
+                    //         point<double> triple){
+                    //             auto T = analytic::Identity<float>();
+                    //             auto R = si::universal_gas_constant;
+                    //             float T3 = triple.temperature / si::kelvin;
+                    //             float P3 = triple.pressure / si::pascal;
+                    //             float k = (Hs(triple.temperature)*M/R)/si::kelvin;
+                    //             using Polynomial = analytic::Polynomial<float,-1,1>;
+                    //             using Clamped = analytic::Clamped<float,Polynomial>;
+                    //             using Railyard = analytic::Railyard<float,Polynomial>;
+                    //             return P3 * SolidVaporPressureTemperatureRelation(
+                    //                 Railyard(Clamped(0.0f, T3, Polynomial(-k*(1.0f/T - 1.0f/T3)))),
+                    //                 si::kelvin, si::pascal);
+                    //             // NOTE: the above is translated from property/published.hpp:
+                    //             // return triple_point_pressure * exp(-((latent_heat_of_sublimation*molar_mass / si::universal_gas_constant) * (1.0/temperature - 1.0/triple_point_temperature)));
+                    //     }, 
+                    //     latent_heat_of_sublimation1, // NOTE: this should be latent heat of sublimation at the triple point, update this line if ever we convert latent_heat_of_fusion to a relation
+                    //     table::partial(basic.molar_mass), 
+                    //     triple_point1)[polymorph_compound]
                 });
 
             // CALCULATE MISCELLANEOUS PROPERTIES
@@ -272,10 +278,6 @@ namespace estimated{
                     )
                 );
 
-            auto thermal_conductivity_as_solid = thermal_conductivity_as_solid0;
-
-            auto surface_tension_as_liquid = surface_tension_as_liquid0;
-
             dynamic_viscosity_as_solid = 
                 table::complete(
                     dynamic_viscosity_as_solid0,
@@ -289,19 +291,22 @@ namespace estimated{
                         },
                         dynamic_viscosity_as_liquid,
                         sample.liquid_point
-                    )
+                    )[polymorph_compound]
                 );
 
-            triple_point_pressure                     = table::complete(table::imitate(triple_point_pressure1,                     basic.similarity), triple_point_pressure1                     [fallback_id], basic.similarity.size());
-            triple_point                              = table::complete(table::imitate(triple_point1,                              basic.similarity), triple_point1                              [fallback_id], basic.similarity.size());
-            latent_heat_of_sublimation                = table::complete(table::imitate(latent_heat_of_sublimation1,                basic.similarity), latent_heat_of_sublimation1                [fallback_id], basic.similarity.size());
-            latent_heat_of_fusion                     = table::complete(table::imitate(latent_heat_of_fusion0,                     basic.similarity), latent_heat_of_fusion0                     [fallback_id], basic.similarity.size());
-            isobaric_specific_heat_capacity_as_solid  = table::complete(table::imitate(isobaric_specific_heat_capacity_as_solid0,  basic.similarity), isobaric_specific_heat_capacity_as_solid0  [fallback_id], basic.similarity.size());
-            isobaric_specific_heat_capacity_as_liquid = table::complete(table::imitate(isobaric_specific_heat_capacity_as_liquid0, basic.similarity), isobaric_specific_heat_capacity_as_liquid0 [fallback_id], basic.similarity.size());
-            dynamic_viscosity_as_gas                  = table::complete(table::imitate(dynamic_viscosity_as_gas0,                  basic.similarity), dynamic_viscosity_as_gas0                  [fallback_id], basic.similarity.size());
-            vapor_pressure_as_solid                   = table::complete(table::imitate(vapor_pressure_as_solid1,                   basic.similarity), vapor_pressure_as_solid1                   [fallback_id], basic.similarity.size());
-            vapor_pressure_as_liquid                  = table::complete(table::imitate(vapor_pressure_as_liquid1,                  basic.similarity), vapor_pressure_as_liquid1                  [fallback_id], basic.similarity.size());
-            thermal_conductivity_as_gas               = table::complete(table::imitate(thermal_conductivity_as_gas0,               basic.similarity), thermal_conductivity_as_gas0               [fallback_id], basic.similarity.size());
+            surface_tension_as_liquid                 = table::complete(table::imitate(surface_tension_as_liquid0,                  compound_similarity), surface_tension_as_liquid0                 [fallback_id],  compound_similarity.size());
+            triple_point_pressure                     = table::complete(table::imitate(triple_point_pressure1,                      compound_similarity), triple_point_pressure1                     [fallback_id],  compound_similarity.size());
+            triple_point                              = table::complete(table::imitate(triple_point1,                               compound_similarity), triple_point1                              [fallback_id],  compound_similarity.size());
+            latent_heat_of_sublimation                = table::complete(table::imitate(latent_heat_of_sublimation1,                 compound_similarity), latent_heat_of_sublimation1                [fallback_id],  compound_similarity.size());
+            latent_heat_of_fusion                     = table::complete(table::imitate(latent_heat_of_fusion0,                      compound_similarity), latent_heat_of_fusion0                     [fallback_id],  compound_similarity.size());
+            isobaric_specific_heat_capacity_as_liquid = table::complete(table::imitate(isobaric_specific_heat_capacity_as_liquid0,  compound_similarity), isobaric_specific_heat_capacity_as_liquid0 [fallback_id],  compound_similarity.size());
+            dynamic_viscosity_as_gas                  = table::complete(table::imitate(dynamic_viscosity_as_gas0,                   compound_similarity), dynamic_viscosity_as_gas0                  [fallback_id],  compound_similarity.size());
+            vapor_pressure_as_liquid                  = table::complete(table::imitate(vapor_pressure_as_liquid1,                   compound_similarity), vapor_pressure_as_liquid1                  [fallback_id],  compound_similarity.size());
+            thermal_conductivity_as_gas               = table::complete(table::imitate(thermal_conductivity_as_gas0,                compound_similarity), thermal_conductivity_as_gas0               [fallback_id],  compound_similarity.size());
+
+            thermal_conductivity_as_solid             = table::complete(table::imitate(thermal_conductivity_as_solid0,             polymorph_similarity), thermal_conductivity_as_solid0             [fallback_id], polymorph_similarity.size());
+            isobaric_specific_heat_capacity_as_solid  = table::complete(table::imitate(isobaric_specific_heat_capacity_as_solid0,  polymorph_similarity), isobaric_specific_heat_capacity_as_solid0  [fallback_id], polymorph_similarity.size());
+            vapor_pressure_as_solid                   = table::complete(table::imitate(vapor_pressure_as_solid1,                   polymorph_similarity), vapor_pressure_as_solid1                   [fallback_id], polymorph_similarity.size());
 
         }
     };

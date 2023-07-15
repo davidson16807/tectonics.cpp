@@ -14,6 +14,7 @@
 #include "./compound/molecular_diameter.hpp"
 #include "./compound/similarity.hpp"
 #include "./compound/triple_point.hpp"
+#include "./solid/polymorphs.hpp"
 #include "./solid/pwave_modulus.hpp"
 #include "./solid/refractive_index.hpp"
 #include "./solid/compressive_fracture_strength.hpp"

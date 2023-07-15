@@ -8,7 +8,6 @@
 #include <models/compound/table/FullTable.hpp>
 
 namespace compound { 
-namespace published { 
 
     /*
     water
@@ -59,7 +58,7 @@ namespace published {
 
     */
 
-    table::FullTable<int> similarity {
+    table::FullTable<int> compound_similarity {
         /*water*/            compounds::water,
         /*nitrogen*/         compounds::water,
         /*oxygen*/           compounds::nitrogen,
@@ -103,4 +102,4 @@ namespace published {
         /*chalcopyrite*/     compounds::pyrite,
     };
 
-}}
+}

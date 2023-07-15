@@ -44,6 +44,19 @@ namespace table {
 	        return rows.at(i);
 	    }
 
+	    PartialTable<T> operator[](const FullTable<int>& ids) const
+	    {
+	    	PartialTable<T> y;
+		    for (std::size_t i = 0; i < ids.size(); ++i)
+		    {
+		    	if (has(ids[i]))
+		    	{
+		    		y.rows.emplace(int(ids[i]), rows.at(ids[i]));
+		    	}
+		    }
+	        return y;
+	    }
+
 	    PartialTable<T> operator[](const FullTable<bool>& mask) const
 	    {
 	    	PartialTable<T> y;
@@ -54,7 +67,7 @@ namespace table {
 		    		y.rows.emplace(int(i), rows.at(i));
 		    	}
 		    }
-	        return rows;
+	        return y;
 	    }
 
 	    PartialTable<T> operator[](const PartialTable<bool>& mask) const
@@ -67,7 +80,7 @@ namespace table {
 		    		y.rows.emplace(int(i), rows.at(i));
 		    	}
 		    }
-	        return rows;
+	        return y;
 	    }
 
 	    bool has(const int i) const

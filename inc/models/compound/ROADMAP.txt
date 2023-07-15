@@ -1,5 +1,6 @@
 REQUIRED:
 	confirm mixtures for refractive indices
+	
 	add test to ensure phase function returns value within acceptable arrange
 	reimplement polymorphs of solids to work with tables
 	write unit tests for spectral properties

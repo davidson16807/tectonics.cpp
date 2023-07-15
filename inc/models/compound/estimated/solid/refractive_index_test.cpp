@@ -9,7 +9,7 @@
 TEST_CASE( "estimated solid refractive_index order of magnitude", "[table]" ) {
     SECTION("Properties of compounds should not fall outside orders of magnitude for known values")
     {
-        for (int i = 0; i<compound::compounds::count; i++)
+        for (int i = 0; i<compound::polymorphs::count; i++)
         {
             for (si::length<double> l = 10.0*si::nanometer; l <= 3.0*si::micrometer; l*=1.778)
             {

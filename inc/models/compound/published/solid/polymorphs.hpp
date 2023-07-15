@@ -1,5 +1,7 @@
-
 #pragma once
+
+// std libraries
+#include <string>
 
 // in-house libraries
 #include <units/si.hpp>
@@ -8,84 +10,160 @@
 #include <models/compound/table/FullTable.hpp>
 
 namespace compound {
-namespace published {
 
     namespace polymorphs {
-        int water_ice_1h = 0
-        int water_ice_1c = 1
-        int water_ice_2 = 2
-        int water_ice_3 = 3
-        int water_ice_4 = 4
-        int water_ice_5 = 5
-        int water_ice_6 = 6
-        int water_ice_7 = 7
-        int water_ice_8 = 8
-        int water_ice_9 = 9
-        int water_ice_10 = 10,
-        int water_ice_11h = 11,
-        int water_ice_11o = 12,
-        int water_ice_12 = 13,
-        int water_ice_13 = 14,
-        int water_ice_14 = 15,
-        int water_ice_15 = 16,
-        int water_ice_16 = 17,
-        int water_ice_17 = 18,
-        int water_ice_18 = 19,
-        int water_ice_19 = 20,
-        int nitrogen_ice_beta = 21,
-        int nitrogen_ice_alpha = 22,
-        int nitrogen_ice_gamma = 23,
-        int oxygen_ice_gamma = 24,
-        int oxygen_ice_beta = 25,
-        int oxygen_ice_alpha = 26,
-        int carbon_dioxide_ice = 27,
-        int methane_ice_alpha = 28,
-        int methane_ice_beta = 29,
-        int methane_ice_beta = 30,
-        int argon_ice = 31,
-        int helium_ice = 32,
-        int hydrogen_ice = 33,
-        int ammonia_ice = 34,
-        int ozone_ice = 35,
-        int nitrous_oxide_ice = 36,
-        int sulfur_dioxide_ice = 37,
-        int nitric_oxide_ice = 38,
-        int carbon_monoxide_ice_beta = 39,
-        int carbon_monoxide_ice_alpha = 40,
-        int ethane_ice = 41,
-        int hydrogen_cyanide_ice = 42,
-        int ethanol_ice = 43,
-        int formaldehyde_ice = 44,
-        int formic_acid_ice = 45,
-        int perflouromethane_ice = 46,
-        int benzene_ice = 47,
-        int pyrimidine_ice = 48,
-        int quartz_alpha = 49,
-        int quartz_beta = 50,
-        int crystoballite_alpha = 51,
-        int crystoballite_beta = 52,
-        int halite = 53,
-        int corundum = 54,
-        int apatite = 55,
-        int graphite = 56,
-        int diamond = 57,
-        int calcite = 58,
-        int aragonite = 59,
-        int orthoclase = 60,
-        int andesine = 61,
-        int augite = 62,
-        int goethite = 63,
-        int pyrite = 64,
-        int hematite = 65,
-        int gold = 66,
-        int silver = 67,
-        int copper = 68,
-        int magnetite = 69,
-        int chalcocite_alpha = 70,
-        int chalcocite_beta = 71,
-        int chalcopyrite = 72,
+        int water_ice_1h = 0;
+        int water_ice_1c = 1;
+        int water_ice_2 = 2;
+        int water_ice_3 = 3;
+        int water_ice_4 = 4;
+        int water_ice_5 = 5;
+        int water_ice_6 = 6;
+        int water_ice_7 = 7;
+        int water_ice_8 = 8;
+        int water_ice_9 = 9;
+        int water_ice_10 = 10;
+        int water_ice_11h = 11;
+        int water_ice_11o = 12;
+        int water_ice_12 = 13;
+        int water_ice_13 = 14;
+        int water_ice_14 = 15;
+        int water_ice_15 = 16;
+        int water_ice_16 = 17;
+        int water_ice_17 = 18;
+        int water_ice_18 = 19;
+        int water_ice_19 = 20;
+        int nitrogen_ice_beta = 21;
+        int nitrogen_ice_alpha = 22;
+        int nitrogen_ice_gamma = 23;
+        int oxygen_ice_gamma = 24;
+        int oxygen_ice_beta = 25;
+        int oxygen_ice_alpha = 26;
+        int carbon_dioxide_ice = 27;
+        int methane_ice_alpha = 28;
+        int methane_ice_beta = 29;
+        int argon_ice = 31;
+        int helium_ice = 32;
+        int hydrogen_ice = 33;
+        int ammonia_ice = 34;
+        int ozone_ice = 35;
+        int nitrous_oxide_ice = 36;
+        int sulfur_dioxide_ice = 37;
+        int nitric_oxide_ice = 38;
+        int carbon_monoxide_ice_beta = 39;
+        int carbon_monoxide_ice_alpha = 40;
+        int ethane_ice = 41;
+        int hydrogen_cyanide_ice = 42;
+        int ethanol_ice = 43;
+        int formaldehyde_ice = 44;
+        int formic_acid_ice = 45;
+        int perflouromethane_ice = 46;
+        int benzene_ice = 47;
+        int pyrimidine_ice = 48;
+        int quartz_alpha = 49;
+        int quartz_beta = 50;
+        int crystoballite_alpha = 51;
+        int crystoballite_beta = 52;
+        int halite = 53;
+        int corundum = 54;
+        int apatite = 55;
+        int graphite = 56;
+        int diamond = 57;
+        int calcite = 58;
+        int aragonite = 59;
+        int orthoclase = 60;
+        int andesine = 61;
+        int augite = 62;
+        int forsterite = 63;
+        int goethite = 64;
+        int pyrite = 65;
+        int hematite = 66;
+        int gold = 67;
+        int silver = 68;
+        int copper = 69;
+        int magnetite = 70;
+        int chalcocite_alpha = 71;
+        int chalcocite_beta = 72;
+        int chalcopyrite = 73;
 
-        int count = 73
+        int count = 74;
+    };
+
+    table::FullTable<std::string> polymorph_name {
+        /*water_ice_1h*/              "water ice 1h",
+        /*water_ice_1c*/              "water ice 1c",
+        /*water_ice_2*/               "water ice 2",
+        /*water_ice_3*/               "water ice 3",
+        /*water_ice_4*/               "water ice 4",
+        /*water_ice_5*/               "water ice 5",
+        /*water_ice_6*/               "water ice 6",
+        /*water_ice_7*/               "water ice 7",
+        /*water_ice_8*/               "water ice 8",
+        /*water_ice_9*/               "water ice 9",
+        /*water_ice_10*/              "water ice 10",
+        /*water_ice_11h*/             "water ice 11h",
+        /*water_ice_11o*/             "water ice 11o",
+        /*water_ice_12*/              "water ice 12",
+        /*water_ice_13*/              "water ice 13",
+        /*water_ice_14*/              "water ice 14",
+        /*water_ice_15*/              "water ice 15",
+        /*water_ice_16*/              "water ice 16",
+        /*water_ice_17*/              "water ice 17",
+        /*water_ice_18*/              "water ice 18",
+        /*water_ice_19*/              "water ice 19",
+        /*nitrogen_ice_beta*/         "nitrogen ice beta",
+        /*nitrogen_ice_alpha*/        "nitrogen ice alpha",
+        /*nitrogen_ice_gamma*/        "nitrogen ice gamma",
+        /*oxygen_ice_gamma*/          "oxygen ice gamma",
+        /*oxygen_ice_beta*/           "oxygen ice beta",
+        /*oxygen_ice_alpha*/          "oxygen ice alpha",
+        /*carbon_dioxide_ice*/        "carbon dioxide ice",
+        /*methane_ice_alpha*/         "methane ice alpha",
+        /*methane_ice_beta*/          "methane ice beta",
+        /*methane_ice_beta*/          "methane ice beta",
+        /*argon_ice*/                 "argon ice",
+        /*helium_ice*/                "helium ice",
+        /*hydrogen_ice*/              "hydrogen ice",
+        /*ammonia_ice*/               "ammonia ice",
+        /*ozone_ice*/                 "ozone ice",
+        /*nitrous_oxide_ice*/         "nitrous oxide ice",
+        /*sulfur_dioxide_ice*/        "sulfur dioxide ice",
+        /*nitric_oxide_ice*/          "nitric oxide ice",
+        /*carbon_monoxide_ice_beta*/  "carbon monoxide ice beta",
+        /*carbon_monoxide_ice_alpha*/ "carbon monoxide ice alpha",
+        /*ethane_ice*/                "ethane ice",
+        /*hydrogen_cyanide_ice*/      "hydrogen cyanide ice",
+        /*ethanol_ice*/               "ethanol ice",
+        /*formaldehyde_ice*/          "formaldehyde ice",
+        /*formic_acid_ice*/           "formic acid ice",
+        /*perflouromethane_ice*/      "perflouromethane ice",
+        /*benzene_ice*/               "benzene ice",
+        /*pyrimidine_ice*/            "pyrimidine ice",
+        /*quartz_alpha*/              "quartz alpha",
+        /*quartz_beta*/               "quartz beta",
+        /*crystoballite_alpha*/       "crystoballite alpha",
+        /*crystoballite_beta*/        "crystoballite beta",
+        /*halite*/                    "halite",
+        /*corundum*/                  "corundum",
+        /*apatite*/                   "apatite",
+        /*graphite*/                  "graphite",
+        /*diamond*/                   "diamond",
+        /*calcite*/                   "calcite",
+        /*aragonite*/                 "aragonite",
+        /*orthoclase*/                "orthoclase",
+        /*andesine*/                  "andesine",
+        /*augite*/                    "augite",
+        /*forsterite*/                "forsterite",
+        /*goethite*/                  "goethite",
+        /*pyrite*/                    "pyrite",
+        /*hematite*/                  "hematite",
+        /*gold*/                      "gold",
+        /*silver*/                    "silver",
+        /*copper*/                    "copper",
+        /*magnetite*/                 "magnetite",
+        /*chalcocite_alpha*/          "chalcocite alpha",
+        /*chalcocite_beta*/           "chalcocite beta",
+        /*chalcopyrite*/              "chalcopyrite"
     };
 
     table::FullTable<int> polymorph_similarity {
@@ -152,6 +230,7 @@ namespace published {
         /*orthoclase*/                polymorphs::quartz_alpha,
         /*andesine*/                  polymorphs::quartz_alpha,
         /*augite*/                    polymorphs::quartz_alpha,
+        /*forsterite*/                polymorphs::quartz_alpha,
         /*goethite*/                  polymorphs::quartz_alpha,
         /*pyrite*/                    polymorphs::quartz_alpha,
         /*hematite*/                  polymorphs::hematite,
@@ -191,7 +270,7 @@ namespace published {
         /*halite*/           polymorphs::halite,
         /*corundum*/         polymorphs::corundum,
         /*apatite*/          polymorphs::apatite,
-        /*carbon*/           polymorphs::carbon,
+        /*carbon*/           polymorphs::graphite,
         /*calcite*/          polymorphs::calcite,
         /*orthoclase*/       polymorphs::orthoclase,
         /*andesine*/         polymorphs::andesine,
@@ -204,7 +283,7 @@ namespace published {
         /*silver*/           polymorphs::silver,
         /*copper*/           polymorphs::copper,
         /*magnetite*/        polymorphs::magnetite,
-        /*chalcocite*/       polymorphs::chalcocite,
+        /*chalcocite*/       polymorphs::chalcocite_alpha,
         /*chalcopyrite*/     polymorphs::chalcopyrite
     };
 
@@ -272,6 +351,7 @@ namespace published {
         /*orthoclase*/                compounds::orthoclase,
         /*andesine*/                  compounds::andesine,
         /*augite*/                    compounds::augite,
+        /*forsterite*/                compounds::forsterite,
         /*goethite*/                  compounds::goethite,
         /*pyrite*/                    compounds::pyrite,
         /*hematite*/                  compounds::hematite,
@@ -284,4 +364,4 @@ namespace published {
         /*chalcopyrite*/              compounds::chalcopyrite
     };
 
-}}
+}

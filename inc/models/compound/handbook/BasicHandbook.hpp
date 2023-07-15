@@ -22,19 +22,16 @@ namespace estimated{
         table::FullTable<std::string> formula;
         table::FullTable<unsigned int> atoms_per_molecule;
         table::FullTable<si::molar_mass<double>> molar_mass;
-        table::FullTable<int> similarity;
         BasicHandbook(
             const table::FullTable<std::string> name,
             const table::FullTable<std::string> formula,
             const table::FullTable<unsigned int> atoms_per_molecule,
-            const table::FullTable<si::molar_mass<double>> molar_mass,
-            const table::FullTable<int> similarity
+            const table::FullTable<si::molar_mass<double>> molar_mass
         ):
             name(name),
             formula(formula),
             atoms_per_molecule(atoms_per_molecule),
-            molar_mass(molar_mass),
-            similarity(similarity)
+            molar_mass(molar_mass)
         {
 
         }
