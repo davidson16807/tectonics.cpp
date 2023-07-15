@@ -98,6 +98,7 @@ namespace estimated{
         polymorph_compound,
         compound_similarity,
         polymorph_similarity,
+        polymorph_compound_similarity,
         compounds::water
     );
 

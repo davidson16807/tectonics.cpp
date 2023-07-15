@@ -3,6 +3,7 @@
 namespace compound { 
 
     namespace compounds{
+
         int water = 0;
         int nitrogen = 1;
         int oxygen = 2;

@@ -17,7 +17,7 @@ TEST_CASE( "estimated solid vapor_pressure order of magnitude", "[table]" )
                 for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=1.778)
                 {
                     auto x = compound::estimated::thermodynamics.vapor_pressure_as_solid[i](T);
-                    std::cout << compound::polymorph_name[i] << " " << T << " " << x << std::endl;
+                    // std::cout << compound::polymorph_name[i] << " " << T << " " << x << std::endl;
                     CHECK(x / si::kilopascal < 300.0); /*based on tetraflourosilane*/ \
                     CHECK(x / si::pascal >= 0.0); /*based on Claypeyron relation near 0K*/ \
                 }

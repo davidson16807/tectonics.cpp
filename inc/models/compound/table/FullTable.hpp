@@ -56,18 +56,6 @@ namespace table {
 	        return y;
 	    }
 
-	    FullTable<T> operator[](const FullTable<bool>& mask) const
-	    {
-	    	FullTable<T> y;
-		    for (std::size_t i = 0; i < mask.size(); ++i)
-		    {
-		    	if (mask[i])
-		    	{
-		    		y.rows.push_back(rows[i]);
-		    	}
-		    }
-	        return y;
-	    }
 	};
 
 	template<typename F, typename Tx, typename Ty>

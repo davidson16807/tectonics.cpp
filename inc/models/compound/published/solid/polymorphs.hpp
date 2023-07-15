@@ -12,16 +12,17 @@
 namespace compound {
 
     namespace polymorphs {
-        int water_ice_1h = 0;
-        int water_ice_1c = 1;
-        int water_ice_2 = 2;
-        int water_ice_3 = 3;
-        int water_ice_4 = 4;
-        int water_ice_5 = 5;
-        int water_ice_6 = 6;
-        int water_ice_7 = 7;
-        int water_ice_8 = 8;
-        int water_ice_9 = 9;
+
+        int water_ice_1h =0;
+        int water_ice_1c =1;
+        int water_ice_2 =2;
+        int water_ice_3 =3;
+        int water_ice_4 =4;
+        int water_ice_5 =5;
+        int water_ice_6 =6;
+        int water_ice_7 =7;
+        int water_ice_8 =8;
+        int water_ice_9 =9;
         int water_ice_10 = 10;
         int water_ice_11h = 11;
         int water_ice_11o = 12;
@@ -42,51 +43,51 @@ namespace compound {
         int carbon_dioxide_ice = 27;
         int methane_ice_alpha = 28;
         int methane_ice_beta = 29;
-        int argon_ice = 31;
-        int helium_ice = 32;
-        int hydrogen_ice = 33;
-        int ammonia_ice = 34;
-        int ozone_ice = 35;
-        int nitrous_oxide_ice = 36;
-        int sulfur_dioxide_ice = 37;
-        int nitric_oxide_ice = 38;
-        int carbon_monoxide_ice_beta = 39;
-        int carbon_monoxide_ice_alpha = 40;
-        int ethane_ice = 41;
-        int hydrogen_cyanide_ice = 42;
-        int ethanol_ice = 43;
-        int formaldehyde_ice = 44;
-        int formic_acid_ice = 45;
-        int perflouromethane_ice = 46;
-        int benzene_ice = 47;
-        int pyrimidine_ice = 48;
-        int quartz_alpha = 49;
-        int quartz_beta = 50;
-        int crystoballite_alpha = 51;
-        int crystoballite_beta = 52;
-        int halite = 53;
-        int corundum = 54;
-        int apatite = 55;
-        int graphite = 56;
-        int diamond = 57;
-        int calcite = 58;
-        int aragonite = 59;
-        int orthoclase = 60;
-        int andesine = 61;
-        int augite = 62;
-        int forsterite = 63;
-        int goethite = 64;
-        int pyrite = 65;
-        int hematite = 66;
-        int gold = 67;
-        int silver = 68;
-        int copper = 69;
-        int magnetite = 70;
-        int chalcocite_alpha = 71;
-        int chalcocite_beta = 72;
-        int chalcopyrite = 73;
+        int argon_ice = 30;
+        int helium_ice = 31;
+        int hydrogen_ice = 32;
+        int ammonia_ice = 33;
+        int ozone_ice = 34;
+        int nitrous_oxide_ice = 35;
+        int sulfur_dioxide_ice = 36;
+        int nitric_oxide_ice = 37;
+        int carbon_monoxide_ice_beta = 38;
+        int carbon_monoxide_ice_alpha = 39;
+        int ethane_ice = 40;
+        int hydrogen_cyanide_ice = 41;
+        int ethanol_ice = 42;
+        int formaldehyde_ice = 43;
+        int formic_acid_ice = 44;
+        int perflouromethane_ice = 45;
+        int benzene_ice = 46;
+        int pyrimidine_ice = 47;
+        int quartz_alpha = 48;
+        int quartz_beta = 49;
+        int crystoballite_alpha = 50;
+        int crystoballite_beta = 51;
+        int halite = 52;
+        int corundum = 53;
+        int apatite = 54;
+        int graphite = 55;
+        int diamond = 56;
+        int calcite = 57;
+        int aragonite = 58;
+        int orthoclase = 59;
+        int andesine = 60;
+        int augite = 61;
+        int forsterite = 62;
+        int goethite = 63;
+        int pyrite = 64;
+        int hematite = 65;
+        int gold = 66;
+        int silver = 67;
+        int copper = 68;
+        int magnetite = 69;
+        int chalcocite_alpha = 70;
+        int chalcocite_beta = 71;
+        int chalcopyrite = 72;
 
-        int count = 74;
+        int count = 73;
     };
 
     table::FullTable<std::string> polymorph_name {
@@ -119,7 +120,6 @@ namespace compound {
         /*oxygen_ice_alpha*/          "oxygen ice alpha",
         /*carbon_dioxide_ice*/        "carbon dioxide ice",
         /*methane_ice_alpha*/         "methane ice alpha",
-        /*methane_ice_beta*/          "methane ice beta",
         /*methane_ice_beta*/          "methane ice beta",
         /*argon_ice*/                 "argon ice",
         /*helium_ice*/                "helium ice",
@@ -188,6 +188,82 @@ namespace compound {
         /*water_ice_17*/              polymorphs::water_ice_1h,
         /*water_ice_18*/              polymorphs::water_ice_1h,
         /*water_ice_19*/              polymorphs::water_ice_1h,
+        /*nitrogen_ice_beta*/         polymorphs::nitrogen_ice_beta,
+        /*nitrogen_ice_alpha*/        polymorphs::nitrogen_ice_beta,
+        /*nitrogen_ice_gamma*/        polymorphs::nitrogen_ice_beta,
+        /*oxygen_ice_gamma*/          polymorphs::oxygen_ice_gamma,
+        /*oxygen_ice_beta*/           polymorphs::oxygen_ice_gamma,
+        /*oxygen_ice_alpha*/          polymorphs::oxygen_ice_gamma,
+        /*carbon_dioxide_ice*/        polymorphs::carbon_dioxide_ice,
+        /*methane_ice_alpha*/         polymorphs::methane_ice_alpha,
+        /*methane_ice_beta*/          polymorphs::methane_ice_alpha,
+        /*argon_ice*/                 polymorphs::argon_ice,
+        /*helium_ice*/                polymorphs::helium_ice,
+        /*hydrogen_ice*/              polymorphs::hydrogen_ice,
+        /*ammonia_ice*/               polymorphs::ammonia_ice,
+        /*ozone_ice*/                 polymorphs::ozone_ice,
+        /*nitrous_oxide_ice*/         polymorphs::nitrous_oxide_ice,
+        /*sulfur_dioxide_ice*/        polymorphs::sulfur_dioxide_ice,
+        /*nitric_oxide_ice*/          polymorphs::nitric_oxide_ice,
+        /*carbon_monoxide_ice_beta*/  polymorphs::carbon_monoxide_ice_beta,
+        /*carbon_monoxide_ice_alpha*/ polymorphs::carbon_monoxide_ice_beta,
+        /*ethane_ice*/                polymorphs::ethane_ice,
+        /*hydrogen_cyanide_ice*/      polymorphs::hydrogen_cyanide_ice,
+        /*ethanol_ice*/               polymorphs::ethanol_ice,
+        /*formaldehyde_ice*/          polymorphs::formaldehyde_ice,
+        /*formic_acid_ice*/           polymorphs::formic_acid_ice,
+        /*perflouromethane_ice*/      polymorphs::perflouromethane_ice,
+        /*benzene_ice*/               polymorphs::benzene_ice,
+        /*pyrimidine_ice*/            polymorphs::pyrimidine_ice,
+        /*quartz_alpha*/              polymorphs::quartz_alpha,
+        /*quartz_beta*/               polymorphs::quartz_alpha,
+        /*crystoballite_alpha*/       polymorphs::crystoballite_alpha,
+        /*crystoballite_beta*/        polymorphs::crystoballite_alpha,
+        /*halite*/                    polymorphs::halite,
+        /*corundum*/                  polymorphs::corundum,
+        /*apatite*/                   polymorphs::apatite,
+        /*graphite*/                  polymorphs::graphite,
+        /*diamond*/                   polymorphs::graphite,
+        /*calcite*/                   polymorphs::calcite,
+        /*aragonite*/                 polymorphs::calcite,
+        /*orthoclase*/                polymorphs::orthoclase,
+        /*andesine*/                  polymorphs::andesine,
+        /*augite*/                    polymorphs::augite,
+        /*forsterite*/                polymorphs::forsterite,
+        /*goethite*/                  polymorphs::goethite,
+        /*pyrite*/                    polymorphs::pyrite,
+        /*hematite*/                  polymorphs::hematite,
+        /*gold*/                      polymorphs::gold,
+        /*silver*/                    polymorphs::silver,
+        /*copper*/                    polymorphs::copper,
+        /*magnetite*/                 polymorphs::magnetite,
+        /*chalcocite_alpha*/          polymorphs::chalcocite_alpha,
+        /*chalcocite_beta*/           polymorphs::chalcocite_alpha,
+        /*chalcopyrite*/              polymorphs::chalcopyrite
+    };
+
+    table::FullTable<int> polymorph_compound_similarity {
+        /*water_ice_1h*/              polymorphs::water_ice_1h,
+        /*water_ice_1c*/              polymorphs::water_ice_1h,
+        /*water_ice_2*/               polymorphs::water_ice_1h,
+        /*water_ice_3*/               polymorphs::water_ice_1h,
+        /*water_ice_4*/               polymorphs::water_ice_1h,
+        /*water_ice_5*/               polymorphs::water_ice_1h,
+        /*water_ice_6*/               polymorphs::water_ice_1h,
+        /*water_ice_7*/               polymorphs::water_ice_1h,
+        /*water_ice_8*/               polymorphs::water_ice_1h,
+        /*water_ice_9*/               polymorphs::water_ice_1h,
+        /*water_ice_10*/              polymorphs::water_ice_1h,
+        /*water_ice_11h*/             polymorphs::water_ice_1h,
+        /*water_ice_11o*/             polymorphs::water_ice_1h,
+        /*water_ice_12*/              polymorphs::water_ice_1h,
+        /*water_ice_13*/              polymorphs::water_ice_1h,
+        /*water_ice_14*/              polymorphs::water_ice_1h,
+        /*water_ice_15*/              polymorphs::water_ice_1h,
+        /*water_ice_16*/              polymorphs::water_ice_1h,
+        /*water_ice_17*/              polymorphs::water_ice_1h,
+        /*water_ice_18*/              polymorphs::water_ice_1h,
+        /*water_ice_19*/              polymorphs::water_ice_1h,
         /*nitrogen_ice_beta*/         polymorphs::water_ice_1h,
         /*nitrogen_ice_alpha*/        polymorphs::nitrogen_ice_beta,
         /*nitrogen_ice_gamma*/        polymorphs::nitrogen_ice_beta,
@@ -196,7 +272,6 @@ namespace compound {
         /*oxygen_ice_alpha*/          polymorphs::oxygen_ice_gamma,
         /*carbon_dioxide_ice*/        polymorphs::water_ice_1h,
         /*methane_ice_alpha*/         polymorphs::carbon_dioxide_ice,
-        /*methane_ice_beta*/          polymorphs::methane_ice_alpha,
         /*methane_ice_beta*/          polymorphs::methane_ice_alpha,
         /*argon_ice*/                 polymorphs::helium_ice,
         /*helium_ice*/                polymorphs::hydrogen_ice,
@@ -233,7 +308,7 @@ namespace compound {
         /*forsterite*/                polymorphs::quartz_alpha,
         /*goethite*/                  polymorphs::quartz_alpha,
         /*pyrite*/                    polymorphs::quartz_alpha,
-        /*hematite*/                  polymorphs::hematite,
+        /*hematite*/                  polymorphs::quartz_alpha,
         /*gold*/                      polymorphs::copper,
         /*silver*/                    polymorphs::copper,
         /*copper*/                    polymorphs::chalcopyrite,
@@ -317,7 +392,6 @@ namespace compound {
         /*oxygen_ice_alpha*/          compounds::oxygen,
         /*carbon_dioxide_ice*/        compounds::carbon_dioxide,
         /*methane_ice_alpha*/         compounds::methane,
-        /*methane_ice_beta*/          compounds::methane,
         /*methane_ice_beta*/          compounds::methane,
         /*argon_ice*/                 compounds::argon,
         /*helium_ice*/                compounds::helium,

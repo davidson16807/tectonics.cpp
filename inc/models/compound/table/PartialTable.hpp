@@ -51,33 +51,7 @@ namespace table {
 		    {
 		    	if (has(ids[i]))
 		    	{
-		    		y.rows.emplace(int(ids[i]), rows.at(ids[i]));
-		    	}
-		    }
-	        return y;
-	    }
-
-	    PartialTable<T> operator[](const FullTable<bool>& mask) const
-	    {
-	    	PartialTable<T> y;
-		    for (std::size_t i = 0; i < mask.size(); ++i)
-		    {
-		    	if (mask[i])
-		    	{
-		    		y.rows.emplace(int(i), rows.at(i));
-		    	}
-		    }
-	        return y;
-	    }
-
-	    PartialTable<T> operator[](const PartialTable<bool>& mask) const
-	    {
-	    	PartialTable<T> y;
-	    	for (const auto& [i, x1i] : rows) 
-		    {
-		    	if (mask.has(i) && mask[i])
-		    	{
-		    		y.rows.emplace(int(i), rows.at(i));
+		    		y.rows.emplace(int(i), rows.at(ids[i]));
 		    	}
 		    }
 	        return y;
@@ -119,15 +93,14 @@ namespace table {
 	PartialTable<T> imitate(const PartialTable<T>& x, const FullTable<int>& imitated)
 	{
 	    PartialTable<T> y;
-	    int j;
 	    for (int i = 0; i < int(imitated.size()); ++i)
 	    {
-	    	j = i;
+	    	int j(i);
 	    	while(!x.has(j) && imitated[j]!=j){
 	    		j = imitated[j];
 	    	}
 	    	if (x.has(j)) {
-	            y.rows.emplace(int(j),x[j]);
+	            y.rows.emplace(int(i),x[j]);
 	    	}
 	    }
 	    return y;
