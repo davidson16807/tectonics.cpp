@@ -47,8 +47,8 @@ namespace data
 		}
 
 		template<typename T2>
-		inline bool compatible(const T2& v) const {
-			return true;
+		inline std::size_t size(const T2& v) const {
+			return v.size();
 		}
 
 		template<typename T2>
@@ -196,13 +196,33 @@ namespace data
 		}
 
 		template<typename T2>
-		inline bool compatible(const Uniform<T2>& u) const {
-			return true;
+		inline std::size_t size(const Uniform<T2>& u) const {
+			return values.size();
 		}
 
 		template<typename T2>
-		inline bool compatible(const Series<T2>& r) const {
-			return true;
+		inline std::size_t size(const Series<T2>& r) const {
+			assert(values.size() == r.size());
+			return values.size();
+		}
+
+		template<typename T2, typename T3>
+		inline std::size_t size(const Uniform<T2>& u, const Series<T3>& r) const {
+			assert(values.size() == r.size());
+			return values.size();
+		}
+
+		template<typename T2, typename T3>
+		inline std::size_t size(const Series<T2>& r, const Uniform<T3>& u) const {
+			assert(values.size() == r.size());
+			return values.size();
+		}
+
+		template<typename T2, typename T3>
+		inline std::size_t size(const Series<T2>& r, const Series<T3>& s) const {
+			assert(values.size() == r.size());
+			assert(values.size() == s.size());
+			return values.size();
 		}
 
 		template<typename T2>
@@ -393,14 +413,41 @@ namespace data
 			}
 		}
 
+
+
 		template<typename T2>
-		inline bool compatible(const Uniform<T2>& u) const {
-			return true;
+		inline std::size_t size(const Uniform<T2>& u) const {
+			return values.size();
 		}
 
 		template<typename T2>
-		inline bool compatible(const Raster<T2,Tgrid,Tmap>& r) const {
-			return grid == r.grid;
+		inline std::size_t size(const Raster<T2,Tgrid,Tmap>& r) const {
+			assert(grid == r.grid);
+			assert(values.size() == r.size());
+			return values.size();
+		}
+
+		template<typename T2, typename T3>
+		inline std::size_t size(const Uniform<T2>& u, const Raster<T3,Tgrid,Tmap>& r) const {
+			assert(grid == r.grid);
+			assert(values.size() == r.size());
+			return values.size();
+		}
+
+		template<typename T2, typename T3>
+		inline std::size_t size(const Raster<T2,Tgrid,Tmap>& r, const Uniform<T3>& u) const {
+			assert(grid == r.grid);
+			assert(values.size() == r.size());
+			return values.size();
+		}
+
+		template<typename T2, typename T3>
+		inline std::size_t size(const Raster<T2,Tgrid,Tmap>& r, const Raster<T3,Tgrid,Tmap>& s) const {
+			assert(grid == r.grid);
+			assert(grid == s.grid);
+			assert(values.size() == r.size());
+			assert(values.size() == s.size());
+			return values.size();
 		}
 
 		template<typename T2>
@@ -444,9 +491,8 @@ namespace data
 	template <typename T1, typename T2, typename Tout>
 	void add(const T1& a, const T2& b, Tout& out)
 	{
-		assert(out.compatible(a));
-		assert(out.compatible(b));
-		for (std::size_t i = 0; i < a.size(); ++i)
+		auto size = out.size(a, b);
+		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = a[i] + b[i];
 		}
@@ -455,9 +501,8 @@ namespace data
 	template <typename T1, typename T2, typename Tout>
 	void sub(const T1& a, const T2& b, Tout& out)
 	{
-		assert(out.compatible(a));
-		assert(out.compatible(b));
-		for (std::size_t i = 0; i < a.size(); ++i)
+		auto size = out.size(a, b);
+		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = a[i] - b[i];
 		}
@@ -466,9 +511,8 @@ namespace data
 	template <typename T1, typename T2, typename Tout>
 	void mult(const T1& a, const T2& b, Tout& out)
 	{
-		assert(out.compatible(a));
-		assert(out.compatible(b));
-		for (std::size_t i = 0; i < a.size(); ++i)
+		auto size = out.size(a, b);
+		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = a[i] * b[i];
 		}
@@ -477,9 +521,8 @@ namespace data
 	template <typename T1, typename T2, typename Tout>
 	void div(const T1& a, const T2& b, Tout& out)
 	{
-		assert(out.compatible(a));
-		assert(out.compatible(b));
-		for (std::size_t i = 0; i < a.size(); ++i)
+		auto size = out.size(a, b);
+		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = a[i] / b[i];
 		}
@@ -503,9 +546,9 @@ namespace data
 	template <typename T1, typename T2>
 	float distance(const T1& a, const T2& b)
 	{
-		assert(a.compatible(b));
 		float out(0);
-		for (std::size_t i = 0; i < a.size(); ++i)
+		auto size = a.size(b);
+		for (std::size_t i = 0; i < size; ++i)
 		{
 			out += distance(a[i] - b[i]);
 		}
@@ -515,8 +558,8 @@ namespace data
 	template <typename T1, typename T2>
 	bool equal(const T1& a, const T2& b)
 	{
-		assert(a.compatible(b));
-		for (std::size_t i = 0; i < a.size(); ++i)
+		auto size = a.size(b);
+		for (std::size_t i = 0; i < size; ++i)
 		{
 			if (a[i] != b[i]){
 				return false;
@@ -528,7 +571,6 @@ namespace data
 	template <typename T1, typename T2>
 	bool equal(const T1& a, const T2& b, const float threshold)
 	{
-		assert(a.compatible(b));
 		return distance(a,b) < threshold;
 	}
 
