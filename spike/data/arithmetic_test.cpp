@@ -5,6 +5,7 @@
 #include "Series.hpp"
 #include "arithmetic.hpp"
 #include "relational.hpp"
+#include "common.hpp"
 
 TEST_CASE( "Series<T> arithmetic purity", "[many]" ) {
     auto a = data::series({1,2,3,4,5});
