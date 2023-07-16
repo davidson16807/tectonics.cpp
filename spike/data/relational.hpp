@@ -10,6 +10,8 @@
 #include <vector>           // std::vector
 #include <memory>
 
+#include "metric.hpp"
+
 namespace data
 {
 
