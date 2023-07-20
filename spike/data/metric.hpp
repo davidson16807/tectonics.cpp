@@ -37,7 +37,8 @@ namespace data
 	double distance(const T1& a, const T2& b)
 	{
 		double out(0);
-		auto size = a.size(b);
+		// assert(compatible(a,b));
+		auto size = a.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			out += distance(a[i], b[i]);

@@ -11,6 +11,7 @@
 #include <memory>
 
 #include "metric.hpp"
+#include "compatibility.hpp"
 
 namespace data
 {
@@ -24,7 +25,7 @@ namespace data
 	template <typename T1, typename T2>
 	bool equal(const T1& a, const T2& b)
 	{
-		auto size = a.size(b);
+		auto size = a.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			if (a[i] != b[i]){
@@ -37,7 +38,7 @@ namespace data
 	template <typename T1, typename T2>
 	bool notEqual(const T1& a, const T2& b)
 	{
-		auto size = a.size(b);
+		auto size = a.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			if (a[i] == b[i]){
@@ -50,7 +51,7 @@ namespace data
 	template <typename T1, typename T2>
 	bool greaterThan(const T1& a, const T2& b)
 	{
-		auto size = a.size(b);
+		auto size = a.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			if (a[i] <= b[i]){
@@ -63,7 +64,7 @@ namespace data
 	template <typename T1, typename T2>
 	bool lessThan(const T1& a, const T2& b)
 	{
-		auto size = a.size(b);
+		auto size = a.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			if (a[i] >= b[i]){
@@ -76,7 +77,7 @@ namespace data
 	template <typename T1, typename T2>
 	bool greaterThanEqual(const T1& a, const T2& b)
 	{
-		auto size = a.size(b);
+		auto size = a.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			if (a[i] <= b[i]){
@@ -89,7 +90,7 @@ namespace data
 	template <typename T1, typename T2>
 	bool lessThanEqual(const T1& a, const T2& b)
 	{
-		auto size = a.size(b);
+		auto size = a.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			if (a[i] >= b[i]){

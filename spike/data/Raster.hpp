@@ -27,10 +27,20 @@ namespace data
 	};
 
 	/*
-	`Raster` operates much like `Series` with the additional constraint
-	that values correspond to points on a user specified grid.
-	`Raster` guarantees that it will only operate on other data structures
-	that are compatible with its grid. 
+	A `Raster` behaves as a `Series` where values have additional structure that is imposed by a "grid".
+	The grid carries additional information that permits operations to be done on the `Raster` 
+	that could not otherwise be done on the `Series`, such as anything that requires spatial awareness.
+	The additional information that is provided by the grid could be passed 
+	to such operations as separate parameters, but doing so increases the complexity of the call 
+	and reduces type safety by permitting rasters to be erroneously reinterpreted as being part of other grids.
+
+	For any nonspatial operation, a `Raster` behaves exactly as a `Series`, so the type system places no constraints 
+	on what kinds of grids are required for two rasters to participate in the same operation.
+	This approach permits some invalid behavior such as performing operations on rasters of incompatible grid types,
+	however it also permits more complex behavior that we anticipate will be necessary, 
+	such as operating on Rasters whose grids are of different resolution or layer count.
+	In practice, we find that the type safety issues that arise from incompatible grid types do not occur often, 
+	and ignoring such issues vastly reduces the complexity of the implementation.
 	*/
 	template<typename T, typename Tgrid, mapping Tmap = mapping::cell>
 	struct Raster
@@ -38,21 +48,30 @@ namespace data
 		
 	protected:
 		std::vector<T> values;
+		Tgrid grid;
+		std::size_t copies_per_value;
 
 	public:
+		// copy constructor
+		Raster(const Raster<T,Tgrid,Tmap>& a)  : 
+			values(a.values),
+			grid(a.grid),
+			copies_per_value(1)
+		{}
 
-		Tgrid grid;
 		explicit Raster(const Tgrid& grid):
-			values(grid.cell_count(Tmap)),
-			grid(grid) 
+			values(grid.feature_count(Tmap)),
+			grid(grid),
+			copies_per_value(1)
 		{
 		}
 
 		// std container style constructor
 		template<typename TIterator>
 		explicit Raster(const Tgrid& grid, TIterator first, TIterator last) : 
-			values(grid.cell_count(Tmap)),
-			grid(grid)
+			values(grid.feature_count(Tmap)),
+			grid(grid),
+			copies_per_value(1)
 		{
 			assert(std::distance(first, last) == this->size());
 			std::size_t id = 0;
@@ -64,16 +83,12 @@ namespace data
 			}
 		}
 
-		// copy constructor
-		Raster(const Raster<T,Tgrid,Tmap>& a)  : 
-			values(a.values),
-			grid(a.grid)
-		{}
 
 		// convenience constructor for vectors
 		explicit Raster(const Tgrid& grid, const std::initializer_list<T>& vector) : 
-			values(grid.cell_count(Tmap)),
-			grid(grid)
+			values(grid.feature_count(Tmap)),
+			grid(grid),
+			copies_per_value(1)
 		{
 			assert(vector.size() == this->size());
 			std::copy(vector.begin(), vector.end(), this->begin());
@@ -82,7 +97,56 @@ namespace data
 		template <typename T2>
 		explicit Raster(const Raster<T2,Tgrid>& a)  : 
 			values(a.values),
-			grid(a.grid) 
+			grid(a.grid,) 
+			copies_per_value(1)
+		{
+			for (std::size_t i = 0; i < a.size(); ++i)
+			{
+				this->values[i] = a[i];
+			}
+		}
+
+
+
+		explicit Raster(const std::size_t copies_per_value, const Tgrid& grid):
+			values(grid.feature_count(Tmap)),
+			grid(grid) ,
+			copies_per_value(copies_per_value)
+		{
+		}
+
+		// std container style constructor
+		template<typename TIterator>
+		explicit Raster(const std::size_t copies_per_value, const Tgrid& grid, TIterator first, TIterator last) : 
+			values(grid.feature_count(Tmap)),
+			grid(grid),
+			copies_per_value(copies_per_value)
+		{
+			assert(std::distance(first, last) == this->size());
+			std::size_t id = 0;
+			while (first!=last) 
+			{
+				this->values[id] = *first;
+				++first;
+				++id;
+			}
+		}
+
+		// convenience constructor for vectors
+		explicit Raster(const std::size_t copies_per_value, const Tgrid& grid, const std::initializer_list<T>& vector) : 
+			values(grid.feature_count(Tmap)),
+			grid(grid),
+			copies_per_value(copies_per_value)
+		{
+			assert(vector.size() == this->size());
+			std::copy(vector.begin(), vector.end(), this->begin());
+		}
+
+		template <typename T2>
+		explicit Raster(const std::size_t copies_per_value, const Raster<T2,Tgrid>& a)  : 
+			values(a.values),
+			grid(a.grid) ,
+			copies_per_value(copies_per_value)
 		{
 			for (std::size_t i = 0; i < a.size(); ++i)
 			{
@@ -91,9 +155,9 @@ namespace data
 		}
 
 		// NOTE: all wrapper functions should to be marked inline 
-		inline std::size_t size() const                               { return values.size();  }
-		inline std::size_t max_size() const                           { return values.size();  }
-		inline std::size_t capacity() const                           { return values.capacity(); }
+		inline std::size_t size() const                               { return values.size() * copies_per_value;  }
+		inline std::size_t max_size() const                           { return values.max_size() * copies_per_value;  }
+		inline std::size_t capacity() const                           { return values.capacity() * copies_per_value; }
 		inline std::size_t empty() const                              { return values.empty(); }
         inline typename std::vector<T>::reference front()             { return values.front(); }
         inline typename std::vector<T>::const_reference front() const { return values.front(); }
@@ -106,44 +170,16 @@ namespace data
 	    using size_type = std::size_t;
 		using value_type = T;
 
-		inline typename std::vector<T>::const_reference operator[](const std::size_t id ) const
+		inline typename std::vector<T>::const_reference operator[](const std::size_t memory_id ) const
 		{
-		   return values.operator[](id);
-		}
-		inline typename std::vector<T>::reference operator[](const std::size_t id )
-		{
-		   return values[id]; // reference return 
+		   return values.operator[]((memory_id / copies_per_value) % values.size());
 		}
 
-		template<typename Tid>
-		inline Raster<T,Tgrid,Tmap> operator[](const Series<Tid>& ids )
+		inline typename std::vector<T>::reference operator[](const std::size_t memory_id )
 		{
-			Raster<T,Tgrid,Tmap> out = Raster<T,Tgrid,Tmap>(ids.size());
-			get(*this, ids, out);
-			return out;
+		   return values[(memory_id / copies_per_value) % values.size()]; // reference return 
 		}
 
-		inline Raster<T,Tgrid,Tmap> operator[](const Series<bool>& mask )
-		{
-			Raster<T,Tgrid,Tmap> out = Raster<T,Tgrid,Tmap>(mask.size());
-			get(*this, mask, out);
-			return out;
-		}
-
-		template<typename Tid>
-		inline Raster<T,Tgrid,Tmap> operator[](const Raster<Tid,Tgrid,Tmap>& ids )
-		{
-			Raster<T,Tgrid,Tmap> out = Raster<T,Tgrid,Tmap>(ids.size());
-			get(*this, ids, out);
-			return out;
-		}
-
-		inline Raster<T,Tgrid,Tmap> operator[](const Raster<bool,Tgrid,Tmap>& mask )
-		{
-			Raster<T,Tgrid,Tmap> out = Raster<T,Tgrid,Tmap>(mask.size());
-			get(*this, mask, out);
-			return out;
-		}
 
 		inline Raster<T,Tgrid,Tmap>& operator=(const Raster<T,Tgrid,Tmap>& other )
 		{
@@ -172,42 +208,6 @@ namespace data
 			}
 		}
 
-
-
-		template<typename T2>
-		inline std::size_t size(const Uniform<T2>& u) const {
-			return values.size();
-		}
-
-		template<typename T2>
-		inline std::size_t size(const Raster<T2,Tgrid,Tmap>& r) const {
-			assert(grid == r.grid);
-			assert(values.size() == r.size());
-			return values.size();
-		}
-
-		template<typename T2, typename T3>
-		inline std::size_t size(const Uniform<T2>& u, const Raster<T3,Tgrid,Tmap>& r) const {
-			assert(grid == r.grid);
-			assert(values.size() == r.size());
-			return values.size();
-		}
-
-		template<typename T2, typename T3>
-		inline std::size_t size(const Raster<T2,Tgrid,Tmap>& r, const Uniform<T3>& u) const {
-			assert(grid == r.grid);
-			assert(values.size() == r.size());
-			return values.size();
-		}
-
-		template<typename T2, typename T3>
-		inline std::size_t size(const Raster<T2,Tgrid,Tmap>& r, const Raster<T3,Tgrid,Tmap>& s) const {
-			assert(grid == r.grid);
-			assert(grid == s.grid);
-			assert(values.size() == r.size());
-			assert(values.size() == s.size());
-			return values.size();
-		}
 
 		template<typename T2>
 		inline Raster<T,Tgrid,Tmap> footprint(const Uniform<T2>& u) const {
@@ -244,6 +244,16 @@ namespace data
 	Raster<T,Tgrid,Tmap> raster(const Tgrid& grid, TIterator first, TIterator last)
 	{
 		return Raster<T,Tgrid,Tmap>(grid, first, last);
+	}
+
+	template<typename T, typename Tgrid, mapping Tmap>
+	inline Raster<T,Tgrid,Tmap> reshape(const Raster<T,Tgrid,Tmap>& a, const std::size_t copies_per_value, Raster<T,Tgrid,Tmap>& out)
+	{
+		if (out.front() != a.front())
+		{
+			std::copy(a.begin(), a.end(), a.begin());
+		}
+		out.copies_per_value = copies_per_value;
 	}
 
 }

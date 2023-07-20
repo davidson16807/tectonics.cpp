@@ -45,7 +45,7 @@ TEST_CASE( "Series<T> string cast representation", "[data]" ) {
             CHECK(stra != strb);
         }
     }
-    SECTION("to_string() must capture appreciable differences in the content of Series<T>"){
+    SECTION("to_string() must capture appreciable differences in the length of Series<T>"){
         auto c = data::series({1,2,3,4,5,6,7});
         std::string stra = data::to_string(a);
         std::string strc = data::to_string(c);

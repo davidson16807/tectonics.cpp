@@ -25,34 +25,34 @@ namespace data
 	struct Uniform
 	{
 		T value;
-		explicit Uniform(const T& value) :
+		constexpr inline explicit Uniform(const T& value) :
 			value(value) 
 		{
 		}
 
 		// copy constructor
-		Uniform(const Uniform& a) :
+		constexpr inline Uniform(const Uniform& a) :
 			value(a.value)
 		{}
 
-		inline T operator[](const std::size_t id ) const
+		constexpr inline std::size_t size() const                               { return 1; }
+		constexpr inline std::size_t max_size() const                           { return 1; }
+		constexpr inline std::size_t capacity() const                           { return 1; }
+		constexpr inline std::size_t empty() const                              { return false; }
+
+		constexpr inline T operator[](const std::size_t memory_id ) const
 		{
 		   return value;
 		}
 
 		template <typename T2>
-		inline void fill(const T2 a )
+		constexpr inline void fill(const T2 a )
 		{
 			value = a;
 		}
 
 		template<typename T2>
-		inline std::size_t size(const T2& v) const {
-			return v.size();
-		}
-
-		template<typename T2>
-		inline T2 footprint(const T& v) const {
+		constexpr inline T2 footprint(const T& v) const {
 			return v;
 		}
 
@@ -67,7 +67,7 @@ namespace data
 	but we also wish to avoid creating implicit casts.
 	*/
 	template<typename T>
-	Uniform<T> uniform(const T& value)
+	constexpr inline Uniform<T> uniform(const T& value)
 	{
 		return Uniform<T>(value);
 	}

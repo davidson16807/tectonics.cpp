@@ -1,6 +1,10 @@
 #pragma once
 
+// C libraries
 #include <cmath>
+
+// in-house libraries
+#include "compatibility.hpp"
 
 namespace data
 {
@@ -13,7 +17,8 @@ namespace data
 	template <typename T, typename Tout>
 	void abs(const T& a, Tout& out)
 	{
-		auto size = out.size(a);
+		assert(compatible(a,out));
+		auto size = out.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = abs(a[i]);
@@ -29,7 +34,8 @@ namespace data
 	template <typename T, typename Tout>
 	void sign(const T& a, Tout& out)
 	{
-		auto size = out.size(a);
+		assert(compatible(a,out));
+		auto size = out.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = sign(a[i]);
@@ -45,7 +51,8 @@ namespace data
 	template <typename T, typename Tout>
 	void floor(const T& a, Tout& out)
 	{
-		auto size = out.size(a);
+		assert(compatible(a,out));
+		auto size = out.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = floor(a[i]);
@@ -62,7 +69,8 @@ namespace data
 	template <typename T, typename Tout>
 	void trunc(const T& a, Tout& out)
 	{
-		auto size = out.size(a);
+		assert(compatible(a,out));
+		auto size = out.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = trunc(a[i]);
@@ -82,7 +90,8 @@ namespace data
 	template <typename T, typename Tout>
 	void round(const T& a, Tout& out)
 	{
-		auto size = out.size(a);
+		assert(compatible(a,out));
+		auto size = out.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = round(a[i]);
@@ -99,7 +108,8 @@ namespace data
 	template <typename T, typename Tout>
 	void ceil(const T& a, Tout& out)
 	{
-		auto size = out.size(a);
+		assert(compatible(a,out));
+		auto size = out.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = ceil(a[i]);
@@ -115,7 +125,8 @@ namespace data
 	template <typename T, typename Tout>
 	void fract(const T& a, Tout& out)
 	{
-		auto size = out.size(a);
+		assert(compatible(a,out));
+		auto size = out.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = fract(a[i]);
@@ -132,7 +143,8 @@ namespace data
 	template <typename T1, typename T2, typename Tout>
 	void mod(const T1& a, const T2& b, Tout& out)
 	{
-		auto size = out.size(a, b);
+		assert(compatible(a,out));
+		auto size = out.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = mod(a[i], b[i]);
@@ -147,7 +159,7 @@ namespace data
 	void modf(const T& a, Tint& intout, Tout& fractout)
 	{
 		floor(a, fractout);
-		auto size = fractout.size(a, intout);
+		auto size = fractout.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			intout[i] = int(a[i]);
@@ -163,7 +175,8 @@ namespace data
 	template <typename T1, typename T2, typename Tout>
 	void min(const T1& a, const T2& b, Tout& out)
 	{
-		auto size = out.size(a, b);
+		assert(compatible(a,b,out));
+		auto size = out.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = min(a[i], b[i]);
@@ -205,7 +218,8 @@ namespace data
 	template <typename T1, typename T2, typename Tout>
 	void max(const T1& a, const T2& b, Tout& out)
 	{
-		auto size = out.size(a, b);
+		assert(compatible(a,b,out));
+		auto size = out.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = max(a[i], b[i]);
@@ -216,6 +230,7 @@ namespace data
 	template <typename T>
 	typename T::value_type max(const T& a, const bool no_nan = true, const bool no_inf = true)
 	{
+		auto size = a.size();
 		typedef typename T::value_type Ti;
 		typedef typename T::size_type Tsize;
 		if (a.size() < 1)
@@ -223,7 +238,7 @@ namespace data
 			throw std::out_of_range("cannot find the minimum value of an empty composite");
 		}
 		Ti out = a[0];
-		for (Tsize i(0); i < a.size(); ++i)
+		for (Tsize i(0); i < size; ++i)
 		{
 			if (no_nan && std::isnan(a[i]))
 			{
@@ -277,7 +292,8 @@ namespace data
 	template <typename T1, typename T2, typename T3, typename Tout>
 	void mix(const T1& x, const T2& y, const T3& a, Tout& out)
 	{
-		auto size = out.size(x, y, a);
+		assert(compatible(x,y,a,out));
+		auto size = out.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = mix(x[i], y[i], a[i]);
@@ -293,7 +309,8 @@ namespace data
 	template <typename T1, typename T2, typename Tout>
 	void step(const T1& edge, const T2&  x, Tout& out)
 	{
-		auto size = out.size(edge, x);
+		assert(compatible(edge,x,out));
+		auto size = out.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = step(edge[i], x[i]);
@@ -318,7 +335,8 @@ namespace data
 	template <typename T1, typename T2, typename T3, typename Tout>
 	void smoothstep(const T1& lo, const T2& hi, const T3& x, Tout& out)
 	{
-		auto size = out.size(lo, hi, x);
+		assert(compatible(lo,hi,x,out));
+		auto size = out.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = smoothstep(lo[i], hi[i], x[i]);
@@ -343,7 +361,8 @@ namespace data
 	template <typename T1, typename T2, typename T3, typename Tout>
 	void linearstep(const T1& lo, const T2& hi, const T3& x, Tout& out)
 	{
-		auto size = out.size(lo, hi, x);
+		assert(compatible(lo,hi,x,out));
+		auto size = out.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = linearstep(lo[i], hi[i], x[i]);
@@ -363,7 +382,8 @@ namespace data
 	template <typename T, typename Tout>
 	void isnan(const T&  x, Tout& out)
 	{
-		auto size = out.size(x);
+		assert(compatible(x,out));
+		auto size = out.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = isnan(x[i]);
@@ -383,7 +403,8 @@ namespace data
 	template <typename T, typename Tout>
 	void isinf(const T&  x, Tout& out)
 	{
-		auto size = out.size(x);
+		assert(compatible(x,out));
+		auto size = out.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = isinf(x[i]);
@@ -394,7 +415,8 @@ namespace data
 	template <typename T1, typename T2, typename T3, typename Tout>
 	void fma(const T1& a, const T2& b, const T3& c, Tout& out)
 	{
-		auto size = out.size(a, b, c);
+		assert(compatible(a,b,c,out));
+		auto size = out.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = a[i]* b[i];

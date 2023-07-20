@@ -15,9 +15,13 @@ namespace data
 {
 
 	/*
-	`Series` represents a statically-sized contiguous block of heap memory that is occupied by primitive data of the same arbitrary type.
-	It is a thin wrapper for a std::vector and shares most of the same method signatures.
-	It is intended as a base class for other data structures that may be subject to operations similar to the operations of their elements.
+	`Series` is a thin wrapper for a std::vector that permits interleaving.
+	Interleaving is accomplished using a map: "lookup_id ⟶ memory_id",
+	that allows multiple sequential lookup_ids to map to the same memory_id,
+	and allows value_ids to be repeatedly looped over as the modulo of vector size.
+	The number of sequential lookup_ids that correspond to a single memory_id is given by `copies_per_value`.
+	The number of times that value_ids may be looped over is indefinite.
+	See the `operator[]()` overload for more details.
 	*/
 	template <typename T>
 	struct Series
@@ -25,44 +29,98 @@ namespace data
 		
 	protected:
 		std::vector<T> values;
+		std::size_t copies_per_value;
 
 	public:
 
+		// copy constructor
+		Series(const Series<T>& a)  : 
+			values(a),
+			copies_per_value(copies_per_value)
+		{}
+
 		// initializer list constructor
 		template <typename T2>
-		Series(std::initializer_list<T2> list) : 
-			values(list)
+		explicit Series(std::initializer_list<T2> list) : 
+			values(list),
+			copies_per_value(1)
 		{
 		}
+
 		// std container style constructor
 		template<typename TIterator>
 		explicit Series(TIterator first, TIterator last) : 
-			values(first, last)
+			values(first, last),
+			copies_per_value(1)
 		{
 		}
-
-		// copy constructor
-		Series(const Series<T>& a)  : 
-			values(a)
-		{}
 
 		// convenience constructor for vectors
-		explicit Series(std::vector<T> vector) : 
-			values(vector)
+		explicit Series(std::vector<T>& vector) : 
+			values(vector),
+			copies_per_value(1)
 		{
 		}
 
-		explicit Series(const std::size_t N) : 
-			values(N)
+		constexpr explicit Series(const std::size_t N) : 
+			values(N),
+			copies_per_value(1)
 		{}
 
-		explicit Series(const std::size_t N, const T a)  : 
-			values(N, a)
+		constexpr explicit Series(const std::size_t N, const T a)  : 
+			values(N, a),
+			copies_per_value(1)
 		{}
 
 		template <typename T2>
 		explicit Series(const Series<T2>& a) : 
-			values(a.values)
+			values(a.values),
+			copies_per_value(1)
+		{
+			for (std::size_t i = 0; i < a.size(); ++i)
+			{
+				values[i] = a[i];
+			}
+		}
+
+
+
+		// initializer list constructor
+		template <typename T2>
+		explicit Series(const std::size_t copies_per_value, std::initializer_list<T2> list) : 
+			values(list),
+			copies_per_value(copies_per_value)
+		{
+		}
+		// std container style constructor
+		template<typename TIterator>
+		explicit Series(const std::size_t copies_per_value, TIterator first, TIterator last) : 
+			values(first, last),
+			copies_per_value(copies_per_value)
+		{
+		}
+
+		// convenience constructor for vectors
+		explicit Series(const std::size_t copies_per_value, std::vector<T>& vector) : 
+			values(vector),
+			copies_per_value(copies_per_value)
+		{
+		}
+
+		constexpr explicit Series(const std::size_t copies_per_value, const std::size_t N) : 
+			values(N),
+			copies_per_value(copies_per_value)
+		{}
+
+		constexpr explicit Series(const std::size_t copies_per_value, const std::size_t N, const T a)  : 
+			values(N, a),
+			copies_per_value(copies_per_value)
+		{}
+
+		template <typename T2>
+		explicit Series(const std::size_t copies_per_value, const Series<T2>& a) : 
+			values(a.values),
+			copies_per_value(copies_per_value)
 		{
 			for (std::size_t i = 0; i < a.size(); ++i)
 			{
@@ -71,9 +129,9 @@ namespace data
 		}
 
 		// NOTE: all wrapper functions should to be marked inline 
-		inline std::size_t size() const                               { return values.size();  }
-		inline std::size_t max_size() const                           { return values.size();  }
-		inline std::size_t capacity() const                           { return values.capacity(); }
+		inline std::size_t size() const                               { return values.size() * copies_per_value;  }
+		inline std::size_t max_size() const                           { return values.size() * copies_per_value;  }
+		inline std::size_t capacity() const                           { return values.capacity() * copies_per_value; }
 		inline std::size_t empty() const                              { return values.empty(); }
         inline typename std::vector<T>::reference front()             { return values.front(); }
         inline typename std::vector<T>::const_reference front() const { return values.front(); }
@@ -86,13 +144,14 @@ namespace data
 	    using size_type = std::size_t;
 		using value_type = T;
 
-		inline typename std::vector<T>::const_reference operator[](const std::size_t id ) const
+		inline typename std::vector<T>::const_reference operator[](const std::size_t lookup_id ) const
 		{
-		   return values.operator[](id);
+		   return values.operator[]((lookup_id / copies_per_value) % values.size());
 		}
-		inline typename std::vector<T>::reference operator[](const std::size_t id )
+
+		inline typename std::vector<T>::reference operator[](const std::size_t lookup_id )
 		{
-		   return values[id]; // reference return 
+		   return values[(lookup_id / copies_per_value) % values.size()]; // reference return 
 		}
 
 		template<typename Tid>
@@ -100,13 +159,6 @@ namespace data
 		{
 			Series<T> out = Series<T>(ids.size());
 			get(*this, ids, out);
-			return out;
-		}
-
-		inline Series<T> operator[](const Series<bool>& mask )
-		{
-			Series<T> out = Series<T>(mask.size());
-			get(*this, mask, out);
 			return out;
 		}
 
@@ -138,36 +190,6 @@ namespace data
 		}
 
 		template<typename T2>
-		inline std::size_t size(const Uniform<T2>& u) const {
-			return values.size();
-		}
-
-		template<typename T2>
-		inline std::size_t size(const Series<T2>& r) const {
-			assert(values.size() == r.size());
-			return values.size();
-		}
-
-		template<typename T2, typename T3>
-		inline std::size_t size(const Uniform<T2>& u, const Series<T3>& r) const {
-			assert(values.size() == r.size());
-			return values.size();
-		}
-
-		template<typename T2, typename T3>
-		inline std::size_t size(const Series<T2>& r, const Uniform<T3>& u) const {
-			assert(values.size() == r.size());
-			return values.size();
-		}
-
-		template<typename T2, typename T3>
-		inline std::size_t size(const Series<T2>& r, const Series<T3>& s) const {
-			assert(values.size() == r.size());
-			assert(values.size() == s.size());
-			return values.size();
-		}
-
-		template<typename T2>
 		inline Series<T> footprint(const Uniform<T2>& u) const {
 			return Series<T>(this->size());
 		}
@@ -194,11 +216,26 @@ namespace data
 		return Series<T>(vector);
 	}
 	template<typename T>		// convenience constructor for vectors
+	inline Series<T> series(const Series<T> vector)
+	{
+		return Series<T>(vector);
+	}
+	template<typename T>		// convenience constructor for vectors
 	inline Series<T> series(const std::initializer_list<T>& list)
 	{
 		return Series<T>(list);
 	}
 
+
+	template<typename T>		
+	inline Series<T> reshape(const Series<T>& a, const std::size_t copies_per_value, Series<T>& out)
+	{
+		if (out.front() != a.front())
+		{
+			std::copy(a.begin(), a.end(), a.begin());
+		}
+		out.copies_per_value = copies_per_value;
+	}
 
 }
 

@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+#include "compatibility.hpp"
+
 namespace data
 {
 
@@ -22,7 +24,8 @@ namespace data
 	template <typename T1, typename T2, typename Tout>
 	inline void pow(const T1& base, const T2& exponent, Tout& out)
 	{
-		auto size = out.size(base, exponent);
+		assert(compatible(base,out));
+		auto size = out.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = pow(base[i], exponent[i]);
@@ -39,10 +42,11 @@ namespace data
 		return std::exp(ai);
 	}
 
-	template <typename T1, typename T2>
-	inline void exp(const T1& a, T2& out)
+	template <typename T1, typename Tout>
+	inline void exp(const T1& a, Tout& out)
 	{
-		auto size = out.size(a);
+		assert(compatible(a,out));
+		auto size = out.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = exp(a[i]);
@@ -61,10 +65,11 @@ namespace data
 		return std::log(ai);
 	}
 
-	template <typename T>
-	inline void log(const T& a, T& out)
+	template <typename T1, typename Tout>
+	inline void log(const T1& a, Tout& out)
 	{
-		auto size = out.size(a);
+		assert(compatible(a,out));
+		auto size = out.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = log(a[i]);
@@ -81,10 +86,11 @@ namespace data
 		return std::exp2(ai);
 	}
 
-	template <typename T>
-	inline void exp2(const T& a, T& out)
+	template <typename T1, typename Tout>
+	inline void exp2(const T1& a, Tout& out)
 	{
-		auto size = out.size(a);
+		assert(compatible(a,out));
+		auto size = out.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = exp2(a[i]);
@@ -112,20 +118,22 @@ namespace data
 	/// Returns the positive square root of a.
 	///
 	/// @param a sqrt function is defined for input values of a defined in the range [0, inf+) in the limit of the type qualifier.
-	template <typename T>
-	inline auto log2(const T& a, T& out)
+	template <typename T1, typename Tout>
+	inline void log2(const T1& a, Tout& out)
 	{
-		auto size = out.size(a);
+		assert(compatible(a,out));
+		auto size = out.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = log2(a[i]);
 		}
 	}
 
-	template <typename T>
-	inline void sqrt(const T& a, T& out)
+	template <typename T1, typename Tout>
+	inline void sqrt(const T1& a, Tout& out)
 	{
-		auto size = out.size(a);
+		assert(compatible(a,out));
+		auto size = out.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = sqrt(a[i]);
@@ -142,10 +150,11 @@ namespace data
 		return T(1)/std::sqrt(ai);
 	}
 
-	template <typename T1, typename T2>
-	inline void inversesqrt(const T1& a, T2& out)
+	template <typename T1, typename Tout>
+	inline void inversesqrt(const T1& a, Tout& out)
 	{
-		auto size = out.size(a);
+		assert(compatible(a,out));
+		auto size = out.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			out[i] = 1.0/sqrt(a[i]);
