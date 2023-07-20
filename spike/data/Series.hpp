@@ -26,7 +26,7 @@ namespace data
 	template <typename T>
 	struct Series
 	{
-		
+
 	protected:
 		std::vector<T> values;
 		std::size_t copies_per_value;
@@ -35,8 +35,8 @@ namespace data
 
 		// copy constructor
 		Series(const Series<T>& a)  : 
-			values(a),
-			copies_per_value(copies_per_value)
+			values(a.values),
+			copies_per_value(1)
 		{}
 
 		// initializer list constructor

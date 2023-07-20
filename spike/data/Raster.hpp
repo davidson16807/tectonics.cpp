@@ -45,7 +45,7 @@ namespace data
 	template<typename T, typename Tgrid, mapping Tmap = mapping::cell>
 	struct Raster
 	{
-		
+
 	protected:
 		std::vector<T> values;
 		Tgrid grid;
