@@ -12,7 +12,7 @@
 #include "Railcar.hpp"
 #include "Railyard.hpp"
 
-namespace analytic {
+namespace math {
 
     template<typename T, int P1lo, int P1hi>
     using PolynomialRailcar = Railcar<T,Polynomial<T,P1lo,P1hi>>;

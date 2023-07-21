@@ -1,6 +1,6 @@
 #pragma once
 
-namespace analytic {
+namespace math {
 
     template<typename T>
     struct NaturalLogarithm {

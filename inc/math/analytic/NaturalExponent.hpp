@@ -1,6 +1,6 @@
 #pragma once
 
-namespace analytic {
+namespace math {
 
     template<typename T>
     struct NaturalExponent {
@@ -58,7 +58,7 @@ namespace analytic {
     }
 
     template<typename T>
-    constexpr NaturalExponent<T> compose(const NaturalExponent<T>& f, const analytic::Scaling<T> g)
+    constexpr NaturalExponent<T> compose(const NaturalExponent<T>& f, const math::Scaling<T> g)
     {
         return NaturalExponent<T>(f.weight*std::exp(g.factor));
     }

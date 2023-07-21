@@ -11,7 +11,7 @@
 #include "Polynomial.hpp"
 #include "ScaledComplement.hpp"
 
-namespace analytic {
+namespace math {
 
     /* 
     `Rational<T,Plo,Phi,Qlo,Qhi>` is a class template that represents functions of the form f(x)=p/q,

@@ -69,7 +69,7 @@ namespace dippr {
     }
 
 
-    constexpr Dippr119Term compose(Dippr119Term f, const analytic::Scaling<float> g)
+    constexpr Dippr119Term compose(Dippr119Term f, const math::Scaling<float> g)
     {
         return Dippr119Term(
             f.c1,

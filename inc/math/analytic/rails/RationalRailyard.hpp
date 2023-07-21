@@ -10,7 +10,7 @@
 #include "Railyard.hpp"
 #include "RationalRailcar.hpp"
 
-namespace analytic {
+namespace math {
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     using RationalRailyard = Railyard<T,Rational<T,Plo,Phi,Qlo,Qhi>>;

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace analytic {
+namespace math {
 
     template <typename T>
     struct AlgebraicSigmoid{
@@ -60,7 +60,7 @@ namespace analytic {
 
 
     template<typename T>
-    constexpr AlgebraicSigmoid<T> compose(const AlgebraicSigmoid<T>& f, const analytic::Scaling<T> g)
+    constexpr AlgebraicSigmoid<T> compose(const AlgebraicSigmoid<T>& f, const math::Scaling<T> g)
     {
         return AlgebraicSigmoid(
             f.xscale * g.factor,

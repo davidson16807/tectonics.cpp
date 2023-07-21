@@ -1,6 +1,6 @@
 #pragma once
 
-namespace analytic {
+namespace math {
 
     /* 
     `Exponentiated<T,F>` is a trivial class that represents the function f∘g(x)=argument(1-x/k), 
@@ -81,7 +81,7 @@ namespace analytic {
     Given functions exp and f, return the composite function exp∘f.
     */
     template<typename T, typename F>
-    constexpr Exponentiated<T,F> compose(const Exponentiated<T,analytic::Identity<T>>& g, const F f)
+    constexpr Exponentiated<T,F> compose(const Exponentiated<T,math::Identity<T>>& g, const F f)
     {
         return Exponentiated<T,F>(f);
     }
@@ -99,7 +99,7 @@ namespace analytic {
     Given functions g and exp∘f, return the composite function g∘exp∘f.
     */
     template<typename T, typename F>
-    constexpr Exponentiated<T,F> compose(const analytic::Scaling<T> g, const Exponentiated<T,F>& expf)
+    constexpr Exponentiated<T,F> compose(const math::Scaling<T> g, const Exponentiated<T,F>& expf)
     {
         return Exponentiated<T,F>(expf.argument + std::log(g.factor));
     }

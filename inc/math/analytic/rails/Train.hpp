@@ -11,7 +11,7 @@
 
 #include "Railyard.hpp"
 
-namespace analytic {
+namespace math {
 
     /*
     A `Train` is a sum of railcar functions where no overlaps exist.

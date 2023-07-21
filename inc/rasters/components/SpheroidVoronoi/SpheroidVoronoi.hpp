@@ -39,7 +39,7 @@ namespace rasters
 		float cell_width;
 		std::vector<T> cells;
 
-		int cell_count() const {
+		int feature_count() const {
 			return OCTAHEDRON_SIDE_COUNT * dimensions.x * dimensions.y;
 		}
 		int get_memory_id(const int xi2d, const int yi2d, const int side_id) const {
@@ -95,7 +95,7 @@ namespace rasters
 			)),
 			dimensions((int)std::ceil(2./cell_width)+1),
 			cell_width(cell_width),
-			cells(cell_count(), default_value)
+			cells(feature_count(), default_value)
 		{
 		}
 		explicit SpheroidLookup(

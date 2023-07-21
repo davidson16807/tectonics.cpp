@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-namespace analytic {
+namespace math {
 namespace spline {
     /*
     The `spline` namespace provides piecewise polynomial approximations for functions such as erf.

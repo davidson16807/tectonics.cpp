@@ -11,7 +11,7 @@
 #include <math/combinatorics.hpp>
 #include <math/inspected/calculus.hpp>
 
-namespace analytic {
+namespace math {
 
     /* 
     `ArbitraryDegreePolynomial` is a class template that represents functions of the form f(x)=Σᵢaᵢxᵇⁱ where bᵢ∈ℤ.

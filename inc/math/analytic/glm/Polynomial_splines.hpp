@@ -11,7 +11,7 @@
 // in-house libraries
 #include "Polynomial.hpp"
 
-namespace analytic {
+namespace math {
 
     namespace {
 

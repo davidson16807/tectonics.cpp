@@ -13,7 +13,7 @@
 #include "Railcar.hpp"
 #include "Railyard.hpp"
 
-namespace analytic {
+namespace math {
 
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi>
     using RationalRailcar = Railcar<T,Rational<T,P1lo,P1hi,Q1lo,Q1hi>>;

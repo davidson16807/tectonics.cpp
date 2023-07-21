@@ -14,7 +14,7 @@
 #include "Train.hpp"
 #include "PolynomialRailyard.hpp"
 
-namespace analytic {
+namespace math {
 
     template<typename T, int Plo, int Phi>
     using PolynomialTrain = Train<T,Polynomial<T,Plo,Phi>>;

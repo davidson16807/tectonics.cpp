@@ -22,7 +22,7 @@ namespace relation {
     template<typename Tx, typename Ty, int Plo, int Phi>
     struct ExponentiatedPolynomialRailyardRelation
     {
-        analytic::PolynomialRailyard<float, Plo, Phi> yard;
+        math::PolynomialRailyard<float, Plo, Phi> yard;
         Tx xunits;
         Ty yunits;
         
@@ -46,7 +46,7 @@ namespace relation {
 
         template<typename T>
         constexpr ExponentiatedPolynomialRailyardRelation(
-            const analytic::PolynomialRailyard<T, Plo, Phi> yard,
+            const math::PolynomialRailyard<T, Plo, Phi> yard,
             const Tx xunits,
             const Ty yunits
         ):
@@ -58,7 +58,7 @@ namespace relation {
 
         template<typename T, int Qlo, int Qhi>
         explicit constexpr ExponentiatedPolynomialRailyardRelation(
-            const analytic::PolynomialRailyard<T, Qlo, Qhi> yard,
+            const math::PolynomialRailyard<T, Qlo, Qhi> yard,
             const Tx xunits,
             const Ty yunits
         ):
@@ -163,7 +163,7 @@ namespace relation {
         for (std::size_t i=0; i<xs.size(); i++){
             logys.push_back(std::log(ys[i]));
         }
-        auto yard = analytic::spline::linear_spline<float>(xs, logys);
+        auto yard = math::spline::linear_spline<float>(xs, logys);
         yard.cars[0].lo = 0.0f;
         return relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>,Ty,0,1>(yard, Tunits, yunits);
     }
@@ -182,7 +182,7 @@ namespace relation {
             kelvins.push_back(xs[i]*Tunits/si::kelvin);
             logys.push_back(std::log(ys[i]));
         }
-        auto yard = analytic::spline::linear_spline<float>(kelvins, logys);
+        auto yard = math::spline::linear_spline<float>(kelvins, logys);
         yard.cars[0].lo = 0.0f;
         return relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>,Ty,0,1>(yard, si::kelvin, yunits);
     }
@@ -200,7 +200,7 @@ namespace relation {
             logys.push_back(std::log(ys[i]));
         }
         return relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>,Ty,0,1>(
-            analytic::spline::linear_spline<float>(xs, logys), Tunits, yunits);
+            math::spline::linear_spline<float>(xs, logys), Tunits, yunits);
     }
 
     // 175 uses
@@ -218,7 +218,7 @@ namespace relation {
             logys.push_back(std::log(ys[i]));
         }
         return relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>,Ty,0,1>(
-            analytic::spline::linear_spline<float>(kelvins, logys), si::kelvin, yunits);
+            math::spline::linear_spline<float>(kelvins, logys), si::kelvin, yunits);
     }
 
 
@@ -235,7 +235,7 @@ namespace relation {
             logys.push_back(std::log(ys[i]));
         }
         return relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>,Ty,-1,0>(
-            analytic::spline::inverse_linear_spline<float>(xs, logys), Tunits, yunits);
+            math::spline::inverse_linear_spline<float>(xs, logys), Tunits, yunits);
     }
 
 }}

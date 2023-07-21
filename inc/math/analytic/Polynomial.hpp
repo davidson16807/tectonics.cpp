@@ -14,7 +14,7 @@
 #include <math/inspected/calculus.hpp>
 #include <math/combinatorics.hpp>
 
-namespace analytic {
+namespace math {
 
     /* 
     `Polynomial<T,Nlo,Nhi>` is a class template that represents functions of the form f(x)=Σᵢaᵢxᵇⁱ where bᵢ∈ℤ.
