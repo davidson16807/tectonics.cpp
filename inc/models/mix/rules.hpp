@@ -3,7 +3,7 @@
 // in house libraries
 #include <models/compound/relation/relation.hpp>
 
-namespace mixture{
+namespace mix{
 
     double linear_rule(const std::vector<double>& relations, const std::vector<double>& fractions)
     {

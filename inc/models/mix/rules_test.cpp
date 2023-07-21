@@ -7,7 +7,7 @@
 #include "rules.hpp"
 
 
-TEST_CASE( "linear_rule purity for doubles", "[mixture]" ) {
+TEST_CASE( "linear_rule purity for doubles", "[mix]" ) {
   SECTION("Calling an operation twice with the same arguments must produce the same results")
   {
     std::vector<double> relations {
@@ -16,13 +16,13 @@ TEST_CASE( "linear_rule purity for doubles", "[mixture]" ) {
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(mixture::linear_rule(relations, {i, j}) == 
-              mixture::linear_rule(relations, {i, j}) );
+        CHECK(mix::linear_rule(relations, {i, j}) == 
+              mix::linear_rule(relations, {i, j}) );
     }
   }
 }
 
-TEST_CASE( "linear_rule codomain for doubles", "[mixture]" ) {
+TEST_CASE( "linear_rule codomain for doubles", "[mix]" ) {
   SECTION("Output must fall within a known range")
   {
     std::vector<double> relations {
@@ -31,13 +31,13 @@ TEST_CASE( "linear_rule codomain for doubles", "[mixture]" ) {
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(2.0 <= mixture::linear_rule(relations, {i, j}));
-        CHECK(mixture::linear_rule(relations, {i, j}) <= 3.0);
+        CHECK(2.0 <= mix::linear_rule(relations, {i, j}));
+        CHECK(mix::linear_rule(relations, {i, j}) <= 3.0);
     }
   }
 }
 
-TEST_CASE( "linear_rule commutativity for doubles", "[mixture]" ) {
+TEST_CASE( "linear_rule commutativity for doubles", "[mix]" ) {
   SECTION("Arguments can be consistently rearranged in any order and still produce the same results")
   {
     std::vector<double> ab {
@@ -50,15 +50,15 @@ TEST_CASE( "linear_rule commutativity for doubles", "[mixture]" ) {
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(mixture::linear_rule(ab, {i, j}) == 
-              mixture::linear_rule(ba, {j, i}));
+        CHECK(mix::linear_rule(ab, {i, j}) == 
+              mix::linear_rule(ba, {j, i}));
     }
   }
 }
 
 
 
-TEST_CASE( "linear_rule purity for si units", "[mixture]" ) {
+TEST_CASE( "linear_rule purity for si units", "[mix]" ) {
   SECTION("Calling an operation twice with the same arguments must produce the same results")
   {
     std::vector<si::pressure<double>> relations {
@@ -67,13 +67,13 @@ TEST_CASE( "linear_rule purity for si units", "[mixture]" ) {
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(mixture::linear_rule(relations, {i, j}) == 
-              mixture::linear_rule(relations, {i, j}) );
+        CHECK(mix::linear_rule(relations, {i, j}) == 
+              mix::linear_rule(relations, {i, j}) );
     }
   }
 }
 
-TEST_CASE( "linear_rule codomain for si units", "[mixture]" ) {
+TEST_CASE( "linear_rule codomain for si units", "[mix]" ) {
   SECTION("Output must fall within a known range")
   {
     std::vector<si::pressure<double>> relations {
@@ -82,13 +82,13 @@ TEST_CASE( "linear_rule codomain for si units", "[mixture]" ) {
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(2.0*si::pascal <= mixture::linear_rule(relations, {i, j}));
-        CHECK(mixture::linear_rule(relations, {i, j}) <= 3.0*si::pascal);
+        CHECK(2.0*si::pascal <= mix::linear_rule(relations, {i, j}));
+        CHECK(mix::linear_rule(relations, {i, j}) <= 3.0*si::pascal);
     }
   }
 }
 
-TEST_CASE( "linear_rule commutativity for si units", "[mixture]" ) {
+TEST_CASE( "linear_rule commutativity for si units", "[mix]" ) {
   SECTION("Arguments can be consistently rearranged in any order and still produce the same results")
   {
     std::vector<si::pressure<double>> ab {
@@ -101,15 +101,15 @@ TEST_CASE( "linear_rule commutativity for si units", "[mixture]" ) {
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(mixture::linear_rule(ab, {i, j}) == 
-              mixture::linear_rule(ba, {j, i}));
+        CHECK(mix::linear_rule(ab, {i, j}) == 
+              mix::linear_rule(ba, {j, i}));
     }
   }
 }
 
 
 
-TEST_CASE( "linear_rule purity for PolynomialRailyardRelation", "[mixture]" ) {
+TEST_CASE( "linear_rule purity for PolynomialRailyardRelation", "[mix]" ) {
   SECTION("Calling an operation twice with the same arguments must produce the same results")
   {
     using PolynomialRailyardRelation = compound::relation::PolynomialRailyardRelation<si::temperature<double>, si::pressure<double>, 0, 1>;
@@ -119,13 +119,13 @@ TEST_CASE( "linear_rule purity for PolynomialRailyardRelation", "[mixture]" ) {
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(mixture::linear_rule(relations, {i, j})(si::standard_temperature) == 
-              mixture::linear_rule(relations, {i, j})(si::standard_temperature) );
+        CHECK(mix::linear_rule(relations, {i, j})(si::standard_temperature) == 
+              mix::linear_rule(relations, {i, j})(si::standard_temperature) );
     }
   }
 }
 
-TEST_CASE( "linear_rule codomain for PolynomialRailyardRelation", "[mixture]" ) {
+TEST_CASE( "linear_rule codomain for PolynomialRailyardRelation", "[mix]" ) {
   SECTION("Output must fall within a known range")
   {
     using PolynomialRailyardRelation = compound::relation::PolynomialRailyardRelation<si::temperature<double>, si::pressure<double>, 0, 1>;
@@ -135,13 +135,13 @@ TEST_CASE( "linear_rule codomain for PolynomialRailyardRelation", "[mixture]" ) 
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(2.0*si::pascal <= mixture::linear_rule(relations, {i, j})(si::standard_temperature));
-        CHECK(mixture::linear_rule(relations, {i, j})(si::standard_temperature) <= 3.0*si::pascal);
+        CHECK(2.0*si::pascal <= mix::linear_rule(relations, {i, j})(si::standard_temperature));
+        CHECK(mix::linear_rule(relations, {i, j})(si::standard_temperature) <= 3.0*si::pascal);
     }
   }
 }
 
-TEST_CASE( "linear_rule commutativity for PolynomialRailyardRelation", "[mixture]" ) {
+TEST_CASE( "linear_rule commutativity for PolynomialRailyardRelation", "[mix]" ) {
   SECTION("Arguments can be consistently rearranged in any order and still produce the same results")
   {
     using PolynomialRailyardRelation = compound::relation::PolynomialRailyardRelation<si::temperature<double>, si::pressure<double>, 0, 1>;
@@ -155,14 +155,14 @@ TEST_CASE( "linear_rule commutativity for PolynomialRailyardRelation", "[mixture
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(mixture::linear_rule(ab, {i, j})(si::standard_temperature) == 
-              mixture::linear_rule(ba, {j, i})(si::standard_temperature));
+        CHECK(mix::linear_rule(ab, {i, j})(si::standard_temperature) == 
+              mix::linear_rule(ba, {j, i})(si::standard_temperature));
     }
   }
 }
 
 
-TEST_CASE( "linear_rule purity for ExponentiatedPolynomialRailyardRelation", "[mixture]" ) {
+TEST_CASE( "linear_rule purity for ExponentiatedPolynomialRailyardRelation", "[mix]" ) {
   SECTION("Calling an operation twice with the same arguments must produce the same results")
   {
     using ExponentiatedPolynomialRailyardRelation = compound::relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>, si::pressure<double>, 0, 1>;
@@ -172,13 +172,13 @@ TEST_CASE( "linear_rule purity for ExponentiatedPolynomialRailyardRelation", "[m
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(mixture::linear_rule(relations, {i, j})(si::standard_temperature) == 
-              mixture::linear_rule(relations, {i, j})(si::standard_temperature) );
+        CHECK(mix::linear_rule(relations, {i, j})(si::standard_temperature) == 
+              mix::linear_rule(relations, {i, j})(si::standard_temperature) );
     }
   }
 }
 
-TEST_CASE( "linear_rule codomain for ExponentiatedPolynomialRailyardRelation", "[mixture]" ) {
+TEST_CASE( "linear_rule codomain for ExponentiatedPolynomialRailyardRelation", "[mix]" ) {
   SECTION("Output must fall within a known range")
   {
     using ExponentiatedPolynomialRailyardRelation = compound::relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>, si::pressure<double>, 0, 1>;
@@ -188,13 +188,13 @@ TEST_CASE( "linear_rule codomain for ExponentiatedPolynomialRailyardRelation", "
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(2.0*si::pascal <= mixture::linear_rule(relations, {i, j})(si::standard_temperature));
-        CHECK(mixture::linear_rule(relations, {i, j})(si::standard_temperature) <= 3.0*si::pascal);
+        CHECK(2.0*si::pascal <= mix::linear_rule(relations, {i, j})(si::standard_temperature));
+        CHECK(mix::linear_rule(relations, {i, j})(si::standard_temperature) <= 3.0*si::pascal);
     }
   }
 }
 
-TEST_CASE( "linear_rule commutativity for ExponentiatedPolynomialRailyardRelation", "[mixture]" ) {
+TEST_CASE( "linear_rule commutativity for ExponentiatedPolynomialRailyardRelation", "[mix]" ) {
   SECTION("Arguments can be consistently rearranged in any order and still produce the same results")
   {
     using ExponentiatedPolynomialRailyardRelation = compound::relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>, si::pressure<double>, 0, 1>;
@@ -208,15 +208,15 @@ TEST_CASE( "linear_rule commutativity for ExponentiatedPolynomialRailyardRelatio
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(mixture::linear_rule(ab, {i, j})(si::standard_temperature) == 
-              mixture::linear_rule(ba, {j, i})(si::standard_temperature));
+        CHECK(mix::linear_rule(ab, {i, j})(si::standard_temperature) == 
+              mix::linear_rule(ba, {j, i})(si::standard_temperature));
     }
   }
 }
 
 
 
-TEST_CASE( "linear_rule purity for RationalRailyardRelation", "[mixture]" ) {
+TEST_CASE( "linear_rule purity for RationalRailyardRelation", "[mix]" ) {
   SECTION("Calling an operation twice with the same arguments must produce the same results")
   {
     using RationalRailyardRelation = compound::relation::RationalRailyardRelation<si::temperature<double>, si::pressure<double>, 0, 1, 0, 1>;
@@ -226,13 +226,13 @@ TEST_CASE( "linear_rule purity for RationalRailyardRelation", "[mixture]" ) {
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(mixture::linear_rule(relations, {i, j})(si::standard_temperature) == 
-              mixture::linear_rule(relations, {i, j})(si::standard_temperature) );
+        CHECK(mix::linear_rule(relations, {i, j})(si::standard_temperature) == 
+              mix::linear_rule(relations, {i, j})(si::standard_temperature) );
     }
   }
 }
 
-TEST_CASE( "linear_rule codomain for RationalRailyardRelation", "[mixture]" ) {
+TEST_CASE( "linear_rule codomain for RationalRailyardRelation", "[mix]" ) {
   SECTION("Output must fall within a known range")
   {
     using RationalRailyardRelation = compound::relation::RationalRailyardRelation<si::temperature<double>, si::pressure<double>, 0, 1, 0, 1>;
@@ -242,13 +242,13 @@ TEST_CASE( "linear_rule codomain for RationalRailyardRelation", "[mixture]" ) {
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(2.0*si::pascal <= mixture::linear_rule(relations, {i, j})(si::standard_temperature));
-        CHECK(mixture::linear_rule(relations, {i, j})(si::standard_temperature) <= 3.0*si::pascal);
+        CHECK(2.0*si::pascal <= mix::linear_rule(relations, {i, j})(si::standard_temperature));
+        CHECK(mix::linear_rule(relations, {i, j})(si::standard_temperature) <= 3.0*si::pascal);
     }
   }
 }
 
-TEST_CASE( "linear_rule commutativity for RationalRailyardRelation", "[mixture]" ) {
+TEST_CASE( "linear_rule commutativity for RationalRailyardRelation", "[mix]" ) {
   SECTION("Arguments can be consistently rearranged in any order and still produce the same results")
   {
     using RationalRailyardRelation = compound::relation::RationalRailyardRelation<si::temperature<double>, si::pressure<double>, 0, 1, 0, 1>;
@@ -262,14 +262,14 @@ TEST_CASE( "linear_rule commutativity for RationalRailyardRelation", "[mixture]"
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(mixture::linear_rule(ab, {i, j})(si::standard_temperature) == 
-              mixture::linear_rule(ba, {j, i})(si::standard_temperature));
+        CHECK(mix::linear_rule(ab, {i, j})(si::standard_temperature) == 
+              mix::linear_rule(ba, {j, i})(si::standard_temperature));
     }
   }
 }
 
 
-TEST_CASE( "linear_rule purity for GasPropertyStateRelation", "[mixture]" ) {
+TEST_CASE( "linear_rule purity for GasPropertyStateRelation", "[mix]" ) {
   SECTION("Calling an operation twice with the same arguments must produce the same results")
   {
     using GasPropertyStateRelation = compound::relation::GasPropertyStateRelation<si::pressure<double>>;
@@ -279,13 +279,13 @@ TEST_CASE( "linear_rule purity for GasPropertyStateRelation", "[mixture]" ) {
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(mixture::linear_rule(relations, {i, j})(si::standard_temperature, si::standard_pressure) == 
-              mixture::linear_rule(relations, {i, j})(si::standard_temperature, si::standard_pressure) );
+        CHECK(mix::linear_rule(relations, {i, j})(si::standard_temperature, si::standard_pressure) == 
+              mix::linear_rule(relations, {i, j})(si::standard_temperature, si::standard_pressure) );
     }
   }
 }
 
-TEST_CASE( "linear_rule codomain for GasPropertyStateRelation", "[mixture]" ) {
+TEST_CASE( "linear_rule codomain for GasPropertyStateRelation", "[mix]" ) {
   SECTION("Output must fall within a known range")
   {
     using GasPropertyStateRelation = compound::relation::GasPropertyStateRelation<si::pressure<double>>;
@@ -295,13 +295,13 @@ TEST_CASE( "linear_rule codomain for GasPropertyStateRelation", "[mixture]" ) {
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(2.0*si::pascal <= mixture::linear_rule(relations, {i, j})(si::standard_temperature, si::standard_pressure));
-        CHECK(mixture::linear_rule(relations, {i, j})(si::standard_temperature, si::standard_pressure) <= 3.0*si::pascal);
+        CHECK(2.0*si::pascal <= mix::linear_rule(relations, {i, j})(si::standard_temperature, si::standard_pressure));
+        CHECK(mix::linear_rule(relations, {i, j})(si::standard_temperature, si::standard_pressure) <= 3.0*si::pascal);
     }
   }
 }
 
-TEST_CASE( "linear_rule commutativity for GasPropertyStateRelation", "[mixture]" ) {
+TEST_CASE( "linear_rule commutativity for GasPropertyStateRelation", "[mix]" ) {
   SECTION("Arguments can be consistently rearranged in any order and still produce the same results")
   {
     using GasPropertyStateRelation = compound::relation::GasPropertyStateRelation<si::pressure<double>>;
@@ -315,15 +315,15 @@ TEST_CASE( "linear_rule commutativity for GasPropertyStateRelation", "[mixture]"
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(mixture::linear_rule(ab, {i, j})(si::standard_temperature, si::standard_pressure) == 
-              mixture::linear_rule(ba, {j, i})(si::standard_temperature, si::standard_pressure));
+        CHECK(mix::linear_rule(ab, {i, j})(si::standard_temperature, si::standard_pressure) == 
+              mix::linear_rule(ba, {j, i})(si::standard_temperature, si::standard_pressure));
     }
   }
 }
 
 
 
-TEST_CASE( "linear_rule purity for GenericRelation", "[mixture]" ) {
+TEST_CASE( "linear_rule purity for GenericRelation", "[mix]" ) {
   SECTION("Calling an operation twice with the same arguments must produce the same results")
   {
     using GenericRelation = compound::relation::GenericRelation<si::temperature<double>, si::pressure<double>>;
@@ -333,13 +333,13 @@ TEST_CASE( "linear_rule purity for GenericRelation", "[mixture]" ) {
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(mixture::linear_rule(relations, {i, j})(si::standard_temperature) == 
-              mixture::linear_rule(relations, {i, j})(si::standard_temperature) );
+        CHECK(mix::linear_rule(relations, {i, j})(si::standard_temperature) == 
+              mix::linear_rule(relations, {i, j})(si::standard_temperature) );
     }
   }
 }
 
-TEST_CASE( "linear_rule codomain for GenericRelation", "[mixture]" ) {
+TEST_CASE( "linear_rule codomain for GenericRelation", "[mix]" ) {
   SECTION("Output must fall within a known range")
   {
     using GenericRelation = compound::relation::GenericRelation<si::temperature<double>, si::pressure<double>>;
@@ -349,13 +349,13 @@ TEST_CASE( "linear_rule codomain for GenericRelation", "[mixture]" ) {
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(2.0*si::pascal <= mixture::linear_rule(relations, {i, j})(si::standard_temperature));
-        CHECK(mixture::linear_rule(relations, {i, j})(si::standard_temperature) <= 3.0*si::pascal);
+        CHECK(2.0*si::pascal <= mix::linear_rule(relations, {i, j})(si::standard_temperature));
+        CHECK(mix::linear_rule(relations, {i, j})(si::standard_temperature) <= 3.0*si::pascal);
     }
   }
 }
 
-TEST_CASE( "linear_rule commutativity for GenericRelation", "[mixture]" ) {
+TEST_CASE( "linear_rule commutativity for GenericRelation", "[mix]" ) {
   SECTION("Arguments can be consistently rearranged in any order and still produce the same results")
   {
     using GenericRelation = compound::relation::GenericRelation<si::temperature<double>, si::pressure<double>>;
@@ -369,15 +369,15 @@ TEST_CASE( "linear_rule commutativity for GenericRelation", "[mixture]" ) {
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(mixture::linear_rule(ab, {i, j})(si::standard_temperature) == 
-              mixture::linear_rule(ba, {j, i})(si::standard_temperature));
+        CHECK(mix::linear_rule(ab, {i, j})(si::standard_temperature) == 
+              mix::linear_rule(ba, {j, i})(si::standard_temperature));
     }
   }
 }
 
 
 
-TEST_CASE( "parallel_rule purity for si units", "[mixture]" ) {
+TEST_CASE( "parallel_rule purity for si units", "[mix]" ) {
   SECTION("Calling an operation twice with the same arguments must produce the same results")
   {
     std::vector<si::pressure<double>> relations {
@@ -386,13 +386,13 @@ TEST_CASE( "parallel_rule purity for si units", "[mixture]" ) {
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(mixture::parallel_rule(relations, {i, j}) == 
-              mixture::parallel_rule(relations, {i, j}) );
+        CHECK(mix::parallel_rule(relations, {i, j}) == 
+              mix::parallel_rule(relations, {i, j}) );
     }
   }
 }
 
-TEST_CASE( "parallel_rule codomain for si units", "[mixture]" ) {
+TEST_CASE( "parallel_rule codomain for si units", "[mix]" ) {
   SECTION("Output must fall within a known range")
   {
     std::vector<si::pressure<double>> relations {
@@ -401,13 +401,13 @@ TEST_CASE( "parallel_rule codomain for si units", "[mixture]" ) {
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(2.0*si::pascal <= mixture::parallel_rule(relations, {i, j}));
-        CHECK(mixture::parallel_rule(relations, {i, j}) <= 3.0*si::pascal);
+        CHECK(2.0*si::pascal <= mix::parallel_rule(relations, {i, j}));
+        CHECK(mix::parallel_rule(relations, {i, j}) <= 3.0*si::pascal);
     }
   }
 }
 
-TEST_CASE( "parallel_rule commutativity for si units", "[mixture]" ) {
+TEST_CASE( "parallel_rule commutativity for si units", "[mix]" ) {
   SECTION("Arguments can be consistently rearranged in any order and still produce the same results")
   {
     std::vector<si::pressure<double>> ab {
@@ -420,15 +420,15 @@ TEST_CASE( "parallel_rule commutativity for si units", "[mixture]" ) {
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(mixture::parallel_rule(ab, {i, j}) == 
-              mixture::parallel_rule(ba, {j, i}));
+        CHECK(mix::parallel_rule(ab, {i, j}) == 
+              mix::parallel_rule(ba, {j, i}));
     }
   }
 }
 
 
 
-TEST_CASE( "parallel_rule purity for GenericRelation", "[mixture]" ) {
+TEST_CASE( "parallel_rule purity for GenericRelation", "[mix]" ) {
   SECTION("Calling an operation twice with the same arguments must produce the same results")
   {
     using GenericRelation = compound::relation::GenericRelation<si::temperature<double>, si::pressure<double>>;
@@ -438,13 +438,13 @@ TEST_CASE( "parallel_rule purity for GenericRelation", "[mixture]" ) {
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(mixture::parallel_rule(relations, {i, j})(si::standard_temperature) == 
-              mixture::parallel_rule(relations, {i, j})(si::standard_temperature) );
+        CHECK(mix::parallel_rule(relations, {i, j})(si::standard_temperature) == 
+              mix::parallel_rule(relations, {i, j})(si::standard_temperature) );
     }
   }
 }
 
-TEST_CASE( "parallel_rule codomain for GenericRelation", "[mixture]" ) {
+TEST_CASE( "parallel_rule codomain for GenericRelation", "[mix]" ) {
   SECTION("Output must fall within a known range")
   {
     using GenericRelation = compound::relation::GenericRelation<si::temperature<double>, si::pressure<double>>;
@@ -454,13 +454,13 @@ TEST_CASE( "parallel_rule codomain for GenericRelation", "[mixture]" ) {
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(2.0*si::pascal <= mixture::parallel_rule(relations, {i, j})(si::standard_temperature));
-        CHECK(mixture::parallel_rule(relations, {i, j})(si::standard_temperature) <= 3.0*si::pascal);
+        CHECK(2.0*si::pascal <= mix::parallel_rule(relations, {i, j})(si::standard_temperature));
+        CHECK(mix::parallel_rule(relations, {i, j})(si::standard_temperature) <= 3.0*si::pascal);
     }
   }
 }
 
-TEST_CASE( "parallel_rule commutativity for GenericRelation", "[mixture]" ) {
+TEST_CASE( "parallel_rule commutativity for GenericRelation", "[mix]" ) {
   SECTION("Arguments can be consistently rearranged in any order and still produce the same results")
   {
     using GenericRelation = compound::relation::GenericRelation<si::temperature<double>, si::pressure<double>>;
@@ -474,8 +474,8 @@ TEST_CASE( "parallel_rule commutativity for GenericRelation", "[mixture]" ) {
     };
     for (double i = 0; i<1.0; i+=0.2) {
         double j = 1.0 - i;
-        CHECK(mixture::parallel_rule(ab, {i, j})(si::standard_temperature) == 
-              mixture::parallel_rule(ba, {j, i})(si::standard_temperature));
+        CHECK(mix::parallel_rule(ab, {i, j})(si::standard_temperature) == 
+              mix::parallel_rule(ba, {j, i})(si::standard_temperature));
     }
   }
 }

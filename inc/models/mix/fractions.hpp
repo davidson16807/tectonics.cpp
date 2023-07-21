@@ -4,7 +4,7 @@
 
 #include <units/si.hpp>
 
-namespace mixture{
+namespace mix{
 
     std::vector<double> log(const std::vector<double>& fractions){
         std::vector<double> result;

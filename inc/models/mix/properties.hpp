@@ -4,7 +4,7 @@
 #include "rules.hpp"
 #include "fractions.hpp"
 
-namespace mixture{
+namespace mix{
 
 
     template<typename TProperty>
