@@ -46,5 +46,16 @@ namespace data
 		return out;
 	}
 
+	template <typename T1, typename T2, typename Tout>
+	void distance(const T1& a, const T2& b, Tout& out)
+	{
+		assert(compatible(a,b,out));
+		auto size = out.size();
+		for (std::size_t i = 0; i < size; ++i)
+		{
+			out[i] = distance(a[i], b[i]);
+		}
+	}
+
 }
 

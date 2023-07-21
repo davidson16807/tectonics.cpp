@@ -13,8 +13,36 @@
 #include "metric.hpp"
 #include "compatibility.hpp"
 
+
 namespace data
 {
+
+
+	template <typename T1, typename T2>
+	bool all(const T1& a)
+	{
+		auto size = a.size();
+		for (std::size_t i = 0; i < size; ++i)
+		{
+			if (!a[i]){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	template <typename T1, typename T2>
+	bool any(const T1& a)
+	{
+		auto size = a.size();
+		for (std::size_t i = 0; i < size; ++i)
+		{
+			if (a[i]){
+				return false;
+			}
+		}
+		return true;
+	}
 
 	template <typename T1, typename T2>
 	bool equal(const T1& a, const T2& b, const float threshold)
@@ -25,6 +53,9 @@ namespace data
 	template <typename T1, typename T2>
 	bool equal(const T1& a, const T2& b)
 	{
+		if (!compatible(a,b)){
+			return false;
+		}
 		auto size = a.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
@@ -38,14 +69,17 @@ namespace data
 	template <typename T1, typename T2>
 	bool notEqual(const T1& a, const T2& b)
 	{
+		if (!compatible(a,b)){
+			return true;
+		}
 		auto size = a.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
-			if (a[i] == b[i]){
-				return false;
+			if (a[i] != b[i]){
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
 	template <typename T1, typename T2>
@@ -100,30 +134,81 @@ namespace data
 		return true;
 	}
 
-	template <typename T1, typename T2>
-	bool all(const T1& a)
+	template <typename T1, typename T2, typename Tout>
+	void equal(const T1& a, const T2& b, Tout& out, const float threshold)
 	{
+		assert(compatible(a,b,out));
 		auto size = a.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
-			if (!a[i]){
-				return false;
-			}
+			out[i] = distance(a[i], b[i]) < threshold;
 		}
-		return true;
 	}
 
-	template <typename T1, typename T2>
-	bool any(const T1& a)
+	template <typename T1, typename T2, typename Tout>
+	void equal(const T1& a, const T2& b, Tout& out)
 	{
+		assert(compatible(a,b,out));
 		auto size = a.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
-			if (a[i]){
-				return false;
-			}
+			out[i] = a[i] == b[i];
 		}
-		return true;
+	}
+
+	template <typename T1, typename T2, typename Tout>
+	void notEqual(const T1& a, const T2& b, Tout& out)
+	{
+		assert(compatible(a,b,out));
+		auto size = a.size();
+		for (std::size_t i = 0; i < size; ++i)
+		{
+			out[i] = a[i] != b[i];
+		}
+	}
+
+	template <typename T1, typename T2, typename Tout>
+	void greaterThan(const T1& a, const T2& b, Tout& out)
+	{
+		assert(compatible(a,b,out));
+		auto size = a.size();
+		for (std::size_t i = 0; i < size; ++i)
+		{
+			out[i] = a[i] > b[i];
+		}
+	}
+
+	template <typename T1, typename T2, typename Tout>
+	void lessThan(const T1& a, const T2& b, Tout& out)
+	{
+		assert(compatible(a,b,out));
+		auto size = a.size();
+		for (std::size_t i = 0; i < size; ++i)
+		{
+			out[i] = a[i] < b[i];
+		}
+	}
+
+	template <typename T1, typename T2, typename Tout>
+	void greaterThanEqual(const T1& a, const T2& b, Tout& out)
+	{
+		assert(compatible(a,b,out));
+		auto size = a.size();
+		for (std::size_t i = 0; i < size; ++i)
+		{
+			out[i] = a[i] >= b[i];
+		}
+	}
+
+	template <typename T1, typename T2, typename Tout>
+	void lessThanEqual(const T1& a, const T2& b, Tout& out)
+	{
+		assert(compatible(a,b,out));
+		auto size = a.size();
+		for (std::size_t i = 0; i < size; ++i)
+		{
+			out[i] = a[i] <= b[i];
+		}
 	}
 
 }
