@@ -88,7 +88,7 @@ namespace stratum
         {
             return age_of_world - age_of_world_when_deposited;
         }
-        si::volume<double> volume(const si::time<double> age_of_world, const std::array<si::density<double>, M>& mineral_densities) const 
+        si::volume<double> volume(const std::array<si::density<double>, M>& mineral_densities) const 
         {
             si::volume<double> total_volume(0.0);
             for (std::size_t i=0; i<M; i++)
@@ -97,7 +97,7 @@ namespace stratum
             }
             return total_volume;
         }
-        si::density<double> density(const si::time<double> age_of_world, const std::array<si::density<double>, M>& mineral_densities) const 
+        si::density<double> density(const std::array<si::density<double>, M>& mineral_densities) const 
         {
             return mass() / volume(age_of_world, mineral_densities);
         }
