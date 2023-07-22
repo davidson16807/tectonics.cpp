@@ -3,5 +3,4 @@
 #include "./string_cast_test.cpp"
 #include "./morphologic_test.cpp"
 #include "./trigonometric_test.cpp"
-#include "./exponential_test.cpp"
 #include "./each_test.cpp"

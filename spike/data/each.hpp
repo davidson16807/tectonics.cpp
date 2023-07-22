@@ -76,6 +76,15 @@ namespace data
 	template <typename T1> inline auto fract(const T1 a) { return a-floor(a); }
 	template <typename T1> inline auto isnan(const T1 a) { return std::isnan(a); }
 	template <typename T1> inline auto isinf(const T1 a) { return std::isinf(a); }
+	template <typename T1> inline auto exp(const T1 a) { return std::exp(a); }
+	template <typename T1> inline auto exp2(const T1 a) { return std::exp2(a); }
+	template <typename T1> inline auto exp10(const T1 a) { return std::pow(a,T1(10)); }
+	template <typename T1> inline auto log(const T1 a) { return std::log(a); }
+	template <typename T1> inline auto log2(const T1 a) { return std::log2(a); }
+	template <typename T1> inline auto log10(const T1 a) { return std::log10(a); }
+	template <typename T1> inline auto sqrt(const T1 a) { return std::sqrt(a); }
+	template <typename T1> inline auto inversesqrt(const T1 a) { return T1(1)/std::sqrt(a); }
+	template <typename T1, int N> inline auto pow(const T1 a) { return std::pow(a,N); }
 	EACH_UNARY_FUNCTION(abs)   
 	EACH_UNARY_FUNCTION(floor) 
 	EACH_UNARY_FUNCTION(sign)  
@@ -85,6 +94,14 @@ namespace data
 	EACH_UNARY_FUNCTION(fract) 
 	EACH_UNARY_FUNCTION(isnan) 
 	EACH_UNARY_FUNCTION(isinf) 
+	EACH_UNARY_FUNCTION(exp) 
+	EACH_UNARY_FUNCTION(exp2) 
+	EACH_UNARY_FUNCTION(exp10) 
+	EACH_UNARY_FUNCTION(log) 
+	EACH_UNARY_FUNCTION(log2) 
+	EACH_UNARY_FUNCTION(log10) 
+	EACH_UNARY_FUNCTION(sqrt) 
+	EACH_UNARY_FUNCTION(inversesqrt) 
 	#undef EACH_UNARY_FUNCTION
 
 
@@ -102,9 +119,11 @@ namespace data
 	template <typename T1, typename T2> inline auto mod(const T1 a, const T2 b){return a-b*floor(a/b);}
 	template <typename T1, typename T2> inline auto min(const T1 a, const T2 b){return std::min(a,b);}
 	template <typename T1, typename T2> inline auto max(const T1 a, const T2 b){return std::max(a,b);}
+	template <typename T1, typename T2> inline auto pow(const T1 a, const T2 b){return std::pow(a,b);}
 	EACH_BINARY_FUNCTION(mod)  
 	EACH_BINARY_FUNCTION(min)  
 	EACH_BINARY_FUNCTION(max)  
+	EACH_BINARY_FUNCTION(pow)  
 	#undef EACH_BINARY_FUNCTION
 
 
