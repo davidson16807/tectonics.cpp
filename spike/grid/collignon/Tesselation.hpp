@@ -37,16 +37,16 @@ namespace collignon
 	that define an isomorphism between points on a sphere and such a tesselation.
 	*/
 
-    template<typename Tfloat=float>
+    template<typename scalar=double>
 	class Tesselation
 	{
-        using vec2 = glm::vec<2,Tfloat,glm::defaultp>;
-        using vec3 = glm::vec<3,Tfloat,glm::defaultp>;
+        using vec2 = glm::vec<2,scalar,glm::defaultp>;
+        using vec3 = glm::vec<3,scalar,glm::defaultp>;
 
-		static constexpr Tfloat pi = 3.141592652653589793f;
-		static constexpr Tfloat tile_length_world_count = 2.0f;
-		static constexpr Tfloat quadrant_area = pi;
-		static constexpr Tfloat quadrant_projection_length = std::sqrt(quadrant_area);
+		static constexpr scalar pi = 3.141592652653589793f;
+		static constexpr scalar tile_length_world_count = 2.0f;
+		static constexpr scalar quadrant_area = pi;
+		static constexpr scalar quadrant_projection_length = std::sqrt(quadrant_area);
 
 		// NOTE: we need a dedicated sign function to simplify code such that an input of 0 returns a nonzero number.
 		// Whether it returns 1 or -1 doesn't matter, it just needs to pick a side from which all further decisions can be made
@@ -65,21 +65,21 @@ namespace collignon
 			);
 		}
 
-		const Projection<Tfloat> projection;
+		const Projection<scalar> projection;
 		
 	public:
 
 		~Tesselation()
 		{
 		}
-		explicit Tesselation(Projection<Tfloat> projection) : projection(projection)
+		explicit Tesselation(Projection<scalar> projection) : projection(projection)
 		{
 		}
 
 		constexpr vec2 standardize(const vec2 grid_position) const 
 		{
 			const vec2 tile_id = glm::round(grid_position/tile_length_world_count);
-			const Tfloat negative_if_tesselation_is_inverted = std::cos(pi*(tile_id.x+tile_id.y));
+			const scalar negative_if_tesselation_is_inverted = std::cos(pi*(tile_id.x+tile_id.y));
 			const vec2 standardized = 
 				(grid_position - tile_id * tile_length_world_count) * negative_if_tesselation_is_inverted;
 			return standardized;
@@ -89,7 +89,7 @@ namespace collignon
 			// `octant_id` is the canonical octant on which all subsequent operations concerning octant are based.
 			// it is used to prevent edge case errors in which different operations assume different octants due to float imprecision.
 			const vec3 octant_id = get_octant_id(sphere_position);
-			const Tfloat center_longitude = octant_id.z > 0.0f? 0.0f : pi;
+			const scalar center_longitude = octant_id.z > 0.0f? 0.0f : pi;
 			const vec2 projected = projection.hemisphere_to_collignon(sphere_position, center_longitude) / quadrant_projection_length;
 			const vec2 rotated = vec2(projected.y, -projected.x) * -octant_id.x * octant_id.y;
 			const vec2 translated = rotated + vec2(octant_id.x, octant_id.y); 
