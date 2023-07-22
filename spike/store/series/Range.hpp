@@ -15,13 +15,13 @@ namespace series
 	struct Range
 	{
 
-		constexpr inline std::size_t size() const { return 1; }
 	    using size_type = std::size_t;
 		using value_type = T;
 		using const_reference = const T&;
 		using reference = T&;
+		constexpr inline size_type size() const { return 1; }
 
-		constexpr inline T operator[](const std::size_t memory_id ) const
+		constexpr inline T operator[](const size_type memory_id ) const
 		{
 			return T(memory_id);
 		}

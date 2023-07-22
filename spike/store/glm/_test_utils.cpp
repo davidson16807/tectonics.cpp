@@ -2,6 +2,7 @@
 
 // std libraries
 #include <random>
+#include <vector>
 
 // in-house libraries
 #include "../series/Interleave.hpp"
@@ -20,9 +21,9 @@ namespace each
     */
 
     template<typename Tgenerator, typename Tdistribution>
-    series::Interleave<glm::vec3> get_random_vec3s(std::size_t size, Tdistribution& distribution, Tgenerator& generator)
+    auto get_random_vec3s(std::size_t size, Tdistribution& distribution, Tgenerator& generator)
     {
-        series::Interleave<glm::vec3> output(size);
+        auto output = series::interleave(size, glm::vec3());
         for (std::size_t j = 0; j < size; ++j)
         {
             output[j].x = distribution(generator);
@@ -32,7 +33,7 @@ namespace each
         return output;
     }
     template<typename Tgenerator>
-    series::Interleave<glm::vec3> get_random_vec3s(std::size_t size, Tgenerator& generator)
+    auto get_random_vec3s(std::size_t size, Tgenerator& generator)
     {
         std::uniform_real_distribution<double> distribution(-5.0,5.0);
         return get_random_vec3s(size, distribution, generator);
@@ -40,10 +41,10 @@ namespace each
 
 
     template<typename Tgenerator>
-    series::Interleave<glm::bvec3> get_random_bvec3s(std::size_t size, Tgenerator& generator)
+    auto get_random_bvec3s(std::size_t size, Tgenerator& generator)
     {
-        series::Interleave<glm::bvec3> output(size);
-        series::Interleave<glm::vec3> temp = get_random_vec3s(size, generator);
+        auto output = series::interleave(size, glm::bvec3());
+        series::Interleave<std::vector<glm::vec3>> temp = get_random_vec3s(size, generator);
         each::greaterThan(temp, series::uniform(glm::vec3(0.5f)), output);
         return output;
     }

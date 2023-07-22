@@ -294,8 +294,8 @@ namespace each
 	void clamp(const T1& a, const T2& lo, const T3& hi, Tout& out)
 	{
 		assert(compatible(a,lo,hi,out));
-		min(a, hi, out);
-		max(out, lo, out);
+		each::min(a, hi, out);
+		each::max(out, lo, out);
 	}
 
 	template <typename T, typename Tint, typename Tout>

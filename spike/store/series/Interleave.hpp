@@ -13,7 +13,7 @@ namespace series
 {
 
 	/*
-	`Interleave` is a thin wrapper for a std::vector that permits interleaving.
+	`Interleave` is a thin wrapper for a container of type T that permits interleaving.
 	Interleaving is accomplished using a map: "lookup_id ⟶ memory_id",
 	that allows multiple sequential lookup_ids to map to the same memory_id,
 	and allows value_ids to be repeatedly looped over as the modulo of vector size.
@@ -26,7 +26,7 @@ namespace series
 	{
 
 	protected:
-		std::vector<T> values;
+		T values;
 		std::size_t copies_per_value;
 
 	public:
@@ -53,32 +53,10 @@ namespace series
 		{
 		}
 
-		// convenience constructor for vectors
-		explicit Interleave(std::vector<T>& vector) : 
+		explicit Interleave(const T& vector) : 
 			values(vector),
 			copies_per_value(1)
 		{
-		}
-
-		constexpr explicit Interleave(const std::size_t N) : 
-			values(N),
-			copies_per_value(1)
-		{}
-
-		constexpr explicit Interleave(const std::size_t N, const T a)  : 
-			values(N, a),
-			copies_per_value(1)
-		{}
-
-		template <typename T2>
-		explicit Interleave(const Interleave<T2>& a) : 
-			values(a.values),
-			copies_per_value(1)
-		{
-			for (std::size_t i = 0; i < a.size(); ++i)
-			{
-				values[i] = a[i];
-			}
 		}
 
 
@@ -98,45 +76,24 @@ namespace series
 		{
 		}
 
-		// convenience constructor for vectors
-		explicit Interleave(const std::size_t copies_per_value, std::vector<T>& vector) : 
+		explicit Interleave(const std::size_t copies_per_value, T& vector) : 
 			values(vector),
 			copies_per_value(copies_per_value)
 		{
 		}
 
-		constexpr explicit Interleave(const std::size_t copies_per_value, const std::size_t N) : 
-			values(N),
-			copies_per_value(copies_per_value)
-		{}
-
-		constexpr explicit Interleave(const std::size_t copies_per_value, const std::size_t N, const T a)  : 
-			values(N, a),
-			copies_per_value(copies_per_value)
-		{}
-
-		template <typename T2>
-		explicit Interleave(const std::size_t copies_per_value, const Interleave<T2>& a) : 
-			values(a.values),
-			copies_per_value(copies_per_value)
-		{
-			for (std::size_t i = 0; i < a.size(); ++i)
-			{
-				values[i] = a[i];
-			}
-		}
 
 		// NOTE: all wrapper functions should to be marked inline 
-		inline std::size_t size() const     { return values.size() * copies_per_value;  }
-		inline std::size_t max_size() const { return values.size() * copies_per_value;  }
-		inline std::size_t capacity() const { return values.capacity() * copies_per_value; }
-		inline std::size_t empty() const    { return values.empty(); }
 	    using size_type = std::size_t;
-		using value_type = typename std::vector<T>::value_type;
+		using value_type = typename T::value_type;
 		using const_reference = const value_type&;
 		using reference = value_type&;
-		using const_iterator = typename std::vector<T>::const_iterator;
-		using iterator = typename std::vector<T>::iterator;
+		using const_iterator = typename T::const_iterator;
+		using iterator = typename T::iterator;
+		inline size_type size() const     { return values.size() * copies_per_value;  }
+		inline size_type max_size() const { return values.size() * copies_per_value;  }
+		inline size_type capacity() const { return values.capacity() * copies_per_value; }
+		inline size_type empty() const    { return values.empty(); }
         inline typename Interleave<T>::reference front()             { return values.front(); }
         inline typename Interleave<T>::const_reference front() const { return values.front(); }
         inline typename Interleave<T>::reference back()              { return values.back();  }
@@ -146,12 +103,12 @@ namespace series
 	    inline typename Interleave<T>::iterator begin()              { return values.begin(); }
 	    inline typename Interleave<T>::iterator end()                { return values.end();   }
 
-		inline const_reference operator[](const std::size_t lookup_id ) const
+		inline const_reference operator[](const size_type lookup_id ) const
 		{
 		   return values.operator[]((lookup_id / copies_per_value) % values.size());
 		}
 
-		inline reference operator[](const std::size_t lookup_id )
+		inline reference operator[](const size_type lookup_id )
 		{
 		   return values[(lookup_id / copies_per_value) % values.size()]; // reference return 
 		}
@@ -274,11 +231,6 @@ namespace series
 		}
 
 
-		inline std::vector<T>& vector()
-		{
-			return values;
-		}
-
 		template <typename T2>
 		void fill(const T2 a)
 		{
@@ -300,25 +252,21 @@ namespace series
 	but we also wish to avoid creating implicit casts.
 	*/
 
-	template<typename T>		// convenience constructor for vectors
-	inline Interleave<T> interleave(const std::vector<T> vector)
+	template<typename T>
+	inline Interleave<T> interleave(const T vector)
 	{
 		return Interleave<T>(vector);
 	}
-	template<typename T>		// convenience constructor for vectors
-	inline Interleave<T> interleave(const Interleave<T> vector)
+	template<typename T>
+	inline Interleave<std::vector<T>> interleave(const std::initializer_list<T>& list)
 	{
-		return Interleave<T>(vector);
+		const std::vector<T> v(list);
+		return Interleave<std::vector<T>>(v);
 	}
 	template<typename T>		// convenience constructor for vectors
-	inline Interleave<T> interleave(const std::initializer_list<T>& list)
+	inline Interleave<std::vector<T>> interleave(const std::size_t N, const T a)
 	{
-		return Interleave<T>(list);
-	}
-	template<typename T>		// convenience constructor for vectors
-	inline Interleave<T> interleave(const std::size_t N, const T a)
-	{
-		return Interleave<T>(N, a);
+		return Interleave<std::vector<T>>(std::vector<T>(N, a));
 	}
 
 
