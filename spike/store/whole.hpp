@@ -5,11 +5,21 @@
 #include <assert.h>  /* assert */
 
 // in-house libraries
-#include "compatibility.hpp"
 #include "each.hpp"
 
 namespace whole
 {
+
+	template <typename T1, typename T2>
+	bool compatible(const T1& a, T2& b)
+	{
+		auto hi = std::max(a.size(), b.size());
+		auto lo = std::min(a.size(), b.size());
+		return 
+			hi % a.size() == 0 &&
+			hi % b.size() == 0 &&
+			lo > 0;
+	}
 
 	template <typename T>
 	typename T::value_type min(const T& a, const bool no_nan = true, const bool no_inf = true)
@@ -68,7 +78,7 @@ namespace whole
 	double distance(const T1& a, const T2& b)
 	{
 		double out(0);
-		// assert(each::compatible(a,b));
+		assert(compatible(a,b));
 		auto size = a.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
@@ -114,7 +124,7 @@ namespace whole
 	template <typename T1, typename T2>
 	bool equal(const T1& a, const T2& b)
 	{
-		if (!each::compatible(a,b)){
+		if (a.size() != b.size()){
 			return false;
 		}
 		auto size = a.size();
@@ -130,7 +140,7 @@ namespace whole
 	template <typename T1, typename T2>
 	bool notEqual(const T1& a, const T2& b)
 	{
-		if (!each::compatible(a,b)){
+		if (a.size() != b.size()){
 			return true;
 		}
 		auto size = a.size();

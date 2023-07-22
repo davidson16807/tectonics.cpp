@@ -174,8 +174,17 @@ namespace series
 		}
 
         template<typename T2>
+		constexpr bool compatible(const T2& a) const
+		{
+        	return
+        		size() >= a.size()&&a.size() > 0 &&
+        		size() % a.size() == 0;
+		}
+
+        template<typename T2>
         constexpr Interleave<T>& operator+=(const T2& a)
         {
+        	assert(compatible(a));
 			for (std::size_t i = 0; i < values.size(); ++i)
 			{
 				values[i] += a[i];
@@ -186,6 +195,7 @@ namespace series
         template<typename T2>
 		constexpr Interleave<T>& operator-=(const T2& a)
 		{
+			assert(compatible(a));
 			for (std::size_t i = 0; i < values.size(); ++i)
 			{
 				values[i] -= a[i];
@@ -196,6 +206,7 @@ namespace series
 		template<typename T2>
 		constexpr Interleave<T>& operator*=(const T2& a)
 		{
+			assert(compatible(a));
 			for (std::size_t i = 0; i < values.size(); ++i)
 			{
 				values[i] *= a[i];
@@ -206,6 +217,7 @@ namespace series
 		template<typename T2>
 		constexpr Interleave<T>& operator/=(const T2& a)
 		{
+			assert(compatible(a));
 			for (std::size_t i = 0; i < values.size(); ++i)
 			{
 				values[i] /= a[i];
@@ -216,6 +228,7 @@ namespace series
 		template<typename T2>
 		constexpr Interleave<T>& operator%=(const T2& a)
 		{
+			assert(compatible(a));
 			for (std::size_t i = 0; i < values.size(); ++i)
 			{
 				values[i] %= a[i];
@@ -226,6 +239,7 @@ namespace series
 		template<typename T2>
 		constexpr Interleave<T>& operator&=(const T2& a)
 		{
+			assert(compatible(a));
 			for (std::size_t i = 0; i < values.size(); ++i)
 			{
 				values[i] &= a[i];
@@ -236,6 +250,7 @@ namespace series
 		template<typename T2>
 		constexpr Interleave<T>& operator|=(const T2& a)
 		{
+			assert(compatible(a));
 			for (std::size_t i = 0; i < values.size(); ++i)
 			{
 				values[i] |= a[i];
@@ -246,6 +261,7 @@ namespace series
 		template<typename T2>
 		constexpr Interleave<T>& operator^=(const T2& a)
 		{
+			assert(compatible(a));
 			for (std::size_t i = 0; i < values.size(); ++i)
 			{
 				values[i] ^= a[i];
@@ -272,7 +288,7 @@ namespace series
 	};
 
 	/*
-	NOTE: constructing rasters can be annoying due to the number of template parameters involved, 
+	NOTE: constructing series objects can be annoying due to the number of template parameters involved, 
 	so we use convenience methods for generating rasters that are compatible for a given grid.
 	Typical C++ conventions might append these with `make_*`,
 	however we forego this convention for brevity since 

@@ -82,7 +82,7 @@ namespace each {
 	template <typename T1, typename Tout>\
 	void NAME(const T1& a, Tout& out)\
 	{\
-		assert(compatible(a,out));\
+		assert(each::compatible(a,out));\
 		auto size = out.size();\
 		for (std::size_t i = 0; i < size; ++i)\
 		{\
@@ -100,7 +100,7 @@ namespace each {
 	template <typename T1, typename T2, typename Tout>\
 	void NAME(const T1& a, const T2& b, Tout& out)\
 	{\
-		assert(compatible(a,b,out));\
+		assert(each::compatible(a,b,out));\
 		auto size = out.size();\
 		for (std::size_t i = 0; i < size; ++i)\
 		{\

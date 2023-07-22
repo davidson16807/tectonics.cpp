@@ -25,10 +25,10 @@ namespace series
 	struct Uniform
 	{
 		T value;
-		constexpr inline explicit Uniform(const T& value) :
+
+		constexpr inline explicit Uniform(const T& value) : 
 			value(value) 
-		{
-		}
+		{}
 
 		// copy constructor
 		constexpr inline Uniform(const Uniform& a) :
@@ -36,9 +36,6 @@ namespace series
 		{}
 
 		constexpr inline std::size_t size() const                               { return 1; }
-		constexpr inline std::size_t max_size() const                           { return 1; }
-		constexpr inline std::size_t capacity() const                           { return 1; }
-		constexpr inline std::size_t empty() const                              { return false; }
 
 		constexpr inline T operator[](const std::size_t memory_id ) const
 		{
@@ -51,15 +48,10 @@ namespace series
 			value = a;
 		}
 
-		template<typename T2>
-		constexpr inline T2 footprint(const T& v) const {
-			return v;
-		}
-
 	};
 
 	/*
-	NOTE: constructing rasters can be annoying due to the number of template parameters involved, 
+	NOTE: constructing series objects can be annoying due to the number of template parameters involved, 
 	so we use convenience methods for generating rasters that are compatible for a given grid.
 	Typical C++ conventions might append these with `make_*`,
 	however we forego this convention for brevity since 

@@ -10,10 +10,10 @@
 #include <vector>           // std::vector
 #include <memory>
 
+#include "../compatibility.hpp"
 #include "Uniform.hpp"
-#include "mapping.hpp"
 
-namespace each
+namespace series
 {
 
 	/*
@@ -194,10 +194,18 @@ namespace each
 			return *this;
 		}
 
+        template<typename T2>
+		constexpr bool compatible(const T2& a) const
+		{
+        	return
+        		size() >= a.size()&&a.size() > 0 &&
+        		size() % a.size() == 0;
+		}
 
         template<typename T2>
         constexpr Series<T>& operator+=(const T2& a)
         {
+			assert(compatible(a));
 			for (std::size_t i = 0; i < values.size(); ++i)
 			{
 				values[i] += a[i];
@@ -208,6 +216,7 @@ namespace each
         template<typename T2>
 		constexpr Series<T>& operator-=(const T2& a)
 		{
+			assert(compatible(a));
 			for (std::size_t i = 0; i < values.size(); ++i)
 			{
 				values[i] -= a[i];
@@ -218,6 +227,7 @@ namespace each
 		template<typename T2>
 		constexpr Series<T>& operator*=(const T2& a)
 		{
+			assert(compatible(a));
 			for (std::size_t i = 0; i < values.size(); ++i)
 			{
 				values[i] *= a[i];
@@ -228,6 +238,7 @@ namespace each
 		template<typename T2>
 		constexpr Series<T>& operator/=(const T2& a)
 		{
+			assert(compatible(a));
 			for (std::size_t i = 0; i < values.size(); ++i)
 			{
 				values[i] /= a[i];
@@ -238,6 +249,7 @@ namespace each
 		template<typename T2>
 		constexpr Series<T>& operator%=(const T2& a)
 		{
+			assert(compatible(a));
 			for (std::size_t i = 0; i < values.size(); ++i)
 			{
 				values[i] %= a[i];
@@ -248,6 +260,7 @@ namespace each
 		template<typename T2>
 		constexpr Series<T>& operator&=(const T2& a)
 		{
+			assert(compatible(a));
 			for (std::size_t i = 0; i < values.size(); ++i)
 			{
 				values[i] &= a[i];
@@ -258,6 +271,7 @@ namespace each
 		template<typename T2>
 		constexpr Series<T>& operator|=(const T2& a)
 		{
+			assert(compatible(a));
 			for (std::size_t i = 0; i < values.size(); ++i)
 			{
 				values[i] |= a[i];
@@ -268,6 +282,7 @@ namespace each
 		template<typename T2>
 		constexpr Series<T>& operator^=(const T2& a)
 		{
+			assert(compatible(a));
 			for (std::size_t i = 0; i < values.size(); ++i)
 			{
 				values[i] ^= a[i];
@@ -278,15 +293,6 @@ namespace each
 		inline std::vector<T>& vector()
 		{
 			return values;
-		}
-
-		template <typename T2>
-		inline void fill(const T2 a)
-		{
-			for (std::size_t i = 0; i < values.size(); ++i)
-			{
-				values[i] = a;
-			}
 		}
 
 
