@@ -40,23 +40,25 @@ namespace collignon
     template<typename Tfloat=float>
 	class Tesselation
 	{
+        using vec2 = glm::vec<2,Tfloat,glm::defaultp>;
+        using vec3 = glm::vec<3,Tfloat,glm::defaultp>;
+
 		static constexpr Tfloat pi = 3.141592652653589793f;
 		static constexpr Tfloat tile_length_world_count = 2.0f;
 		static constexpr Tfloat quadrant_area = pi;
 		static constexpr Tfloat quadrant_projection_length = std::sqrt(quadrant_area);
 
-
 		// NOTE: we need a dedicated sign function to simplify code such that an input of 0 returns a nonzero number.
 		// Whether it returns 1 or -1 doesn't matter, it just needs to pick a side from which all further decisions can be made
-		inline constexpr glm::vec<3,Tfloat,glm::defaultp> get_octant_id(const glm::vec<3,Tfloat,glm::defaultp> v) const {
-			return glm::vec<3,Tfloat,glm::defaultp>(
+		inline constexpr vec3 get_octant_id(const vec3 v) const {
+			return vec3(
 				v.x >= 0.0f? 1.0f : -1.0f, 
 				v.y >= 0.0f? 1.0f : -1.0f,
 				v.z >= 0.0f? 1.0f : -1.0f
 			);
 		}
-		inline constexpr glm::vec<3,Tfloat,glm::defaultp> get_octant_id(const glm::vec<2,Tfloat,glm::defaultp> v) const {
-			return glm::vec<3,Tfloat,glm::defaultp>(
+		inline constexpr vec3 get_octant_id(const vec2 v) const {
+			return vec3(
 				v.x >= 0.0f? 1.0f : -1.0f, 
 				v.y >= 0.0f? 1.0f : -1.0f,
 				std::abs(v.x) + std::abs(v.y) <= 1.0f? 1.0f : -1.0f
@@ -74,36 +76,36 @@ namespace collignon
 		{
 		}
 
-		constexpr glm::vec<2,Tfloat,glm::defaultp> standardize(const glm::vec<2,Tfloat,glm::defaultp> grid_position) const 
+		constexpr vec2 standardize(const vec2 grid_position) const 
 		{
-			const glm::vec<2,Tfloat,glm::defaultp> tile_id = glm::round(grid_position/tile_length_world_count);
+			const vec2 tile_id = glm::round(grid_position/tile_length_world_count);
 			const Tfloat negative_if_tesselation_is_inverted = std::cos(pi*(tile_id.x+tile_id.y));
-			const glm::vec<2,Tfloat,glm::defaultp> standardized = 
+			const vec2 standardized = 
 				(grid_position - tile_id * tile_length_world_count) * negative_if_tesselation_is_inverted;
 			return standardized;
 		}
 
-		constexpr glm::vec<2,Tfloat,glm::defaultp> sphere_to_tesselation(const glm::vec<3,Tfloat,glm::defaultp> sphere_position) const {
+		constexpr vec2 sphere_to_tesselation(const vec3 sphere_position) const {
 			// `octant_id` is the canonical octant on which all subsequent operations concerning octant are based.
 			// it is used to prevent edge case errors in which different operations assume different octants due to float imprecision.
-			const glm::vec<3,Tfloat,glm::defaultp> octant_id = get_octant_id(sphere_position);
+			const vec3 octant_id = get_octant_id(sphere_position);
 			const Tfloat center_longitude = octant_id.z > 0.0f? 0.0f : pi;
-			const glm::vec<2,Tfloat,glm::defaultp> projected = projection.hemisphere_to_collignon(sphere_position, center_longitude) / quadrant_projection_length;
-			const glm::vec<2,Tfloat,glm::defaultp> rotated = glm::vec<2,Tfloat,glm::defaultp>(projected.y, -projected.x) * -octant_id.x * octant_id.y;
-			const glm::vec<2,Tfloat,glm::defaultp> translated = rotated + glm::vec<2,Tfloat,glm::defaultp>(octant_id.x, octant_id.y); 
+			const vec2 projected = projection.hemisphere_to_collignon(sphere_position, center_longitude) / quadrant_projection_length;
+			const vec2 rotated = vec2(projected.y, -projected.x) * -octant_id.x * octant_id.y;
+			const vec2 translated = rotated + vec2(octant_id.x, octant_id.y); 
 			return octant_id.z > 0.0f? projected : translated; 
 		}
 
-		constexpr glm::vec<3,Tfloat,glm::defaultp> tesselation_to_sphere(const glm::vec<2,Tfloat,glm::defaultp> grid_position) const {
+		constexpr vec3 tesselation_to_sphere(const vec2 grid_position) const {
 			// `standardize` is the canonical grid position on which all subsequent calculations occur.
 			// it is what allows Tesselation to preserve closeness, even between points that go over the edge of a tile in the tesselation.
-			const glm::vec<2,Tfloat,glm::defaultp> standardized = standardize(grid_position);
+			const vec2 standardized = standardize(grid_position);
 			// `octant_id` is the canonical octant on which all subsequent operations concerning octant are based.
 			// it is used to prevent edge case errors in which different operations assume different octants due to float imprecision.
-			const glm::vec<3,Tfloat,glm::defaultp> octant_id = get_octant_id(standardized);
-			const glm::vec<2,Tfloat,glm::defaultp> detranslated = standardized - glm::vec<2,Tfloat,glm::defaultp>(octant_id.x, octant_id.y);
-			const glm::vec<2,Tfloat,glm::defaultp> derotated = glm::vec<2,Tfloat,glm::defaultp>(detranslated.y, -detranslated.x) * octant_id.x * octant_id.y;
-			const glm::vec<3,Tfloat,glm::defaultp> sphere_position = octant_id.z > 0.0? 
+			const vec3 octant_id = get_octant_id(standardized);
+			const vec2 detranslated = standardized - vec2(octant_id.x, octant_id.y);
+			const vec2 derotated = vec2(detranslated.y, -detranslated.x) * octant_id.x * octant_id.y;
+			const vec3 sphere_position = octant_id.z > 0.0? 
 				projection.collignon_to_hemisphere(quadrant_projection_length * standardized, 0.0f) 
 			  : projection.collignon_to_hemisphere(quadrant_projection_length * derotated, pi);
 			return sphere_position;

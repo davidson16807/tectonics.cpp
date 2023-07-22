@@ -25,6 +25,9 @@ namespace collignon
     template<typename Tfloat=float>
 	class Projection
 	{
+        using vec2 = glm::vec<2,Tfloat,glm::defaultp>;
+        using vec3 = glm::vec<3,Tfloat,glm::defaultp>;
+
 		static constexpr Tfloat pi = 3.141592652653589793f;
 		static constexpr Tfloat quadrant_area = pi;
 		static constexpr Tfloat hemisphere_area = 2.0f * pi;
@@ -49,13 +52,13 @@ namespace collignon
 		Each ordinate is scaled to the range [-1,1], and x=0 on the 2d grid represents a `center_longitude` along the sphere.
 		`center_longitude` is described as an angle around the y axis in radians, where 0 indicates the vector [0,0,1].
 		*/
-		constexpr glm::vec<2,Tfloat,glm::defaultp> hemisphere_to_collignon(const glm::vec<3,Tfloat,glm::defaultp> hemisphere_position, const Tfloat center_longitude) const {
-			const glm::vec<3,Tfloat,glm::defaultp> normalized = glm::normalize(hemisphere_position);
+		constexpr vec2 hemisphere_to_collignon(const vec3 hemisphere_position, const Tfloat center_longitude) const {
+			const vec3 normalized = glm::normalize(hemisphere_position);
 			const Tfloat scale_factor = std::sqrt(1.0f - std::abs(normalized.y));
 			const Tfloat longitude = std::atan2(normalized.x * sign(normalized.z), std::abs(normalized.z));
 			const Tfloat hemiwedge_area = hemisphere_area * longitude / circumference;
 			const Tfloat hemiwedge_projection_width = 2.0f * hemiwedge_area / quadrant_projection_length;
-			const glm::vec<2,Tfloat,glm::defaultp> collignon = glm::vec<2,Tfloat,glm::defaultp>(
+			const vec2 collignon = vec2(
 				hemiwedge_projection_width * scale_factor,
 				quadrant_projection_length * (1.0f-scale_factor) * sign(normalized.y)
 			);
@@ -64,7 +67,7 @@ namespace collignon
 
 		/*
 		*/
-		constexpr glm::vec<3,Tfloat,glm::defaultp> collignon_to_hemisphere(const glm::vec<2,Tfloat,glm::defaultp> collignon, const Tfloat center_longitude) const {
+		constexpr vec3 collignon_to_hemisphere(const vec2 collignon, const Tfloat center_longitude) const {
 			const Tfloat scale_factor = 1.0f - std::abs(collignon.y) / quadrant_projection_length;
 			const Tfloat hemiwedge_projection_width = scale_factor == 0.0f? 0.0f : (collignon.x / scale_factor);
 			const Tfloat hemiwedge_area = hemiwedge_projection_width * quadrant_projection_length / 2.0f;
@@ -72,7 +75,7 @@ namespace collignon
 
 			const Tfloat y = sign(collignon.y) * (1.0f - scale_factor * scale_factor);
 			const Tfloat rxz = 1.0 - y*y <= 0.0f? 0.0f : std::sqrt(1.0 - y*y);
-			const glm::vec<3,Tfloat,glm::defaultp> hemisphere_position = glm::vec<3,Tfloat,glm::defaultp>(
+			const vec3 hemisphere_position = vec3(
 				std::sin(longitude) * rxz,
 				y,
 				std::cos(longitude) * rxz
