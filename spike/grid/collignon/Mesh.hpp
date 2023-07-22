@@ -105,23 +105,23 @@ namespace collignon
         }
 
 
-        inline constexpr vec3 sphere_position(const ivec2 grid_id) const
+        inline constexpr vec3 unit_sphere_position(const ivec2 grid_id) const
         {
             return tesselation.tesselation_to_sphere((vec2(grid_id) + half_cell) / vertex_count_per_half_meridian_float);
         }
-        inline constexpr vec3 sphere_position(const vec2 grid_position) const
+        inline constexpr vec3 unit_sphere_position(const vec2 grid_position) const
         {
             return tesselation.tesselation_to_sphere((grid_position + half_cell) / vertex_count_per_half_meridian_float);
         }
 
 
-        inline constexpr vec3 physical_position(const ivec2 grid_id) const
+        inline constexpr vec3 sphere_position(const ivec2 grid_id) const
         {
-            return sphere_position(grid_id) * radius;
+            return unit_sphere_position(grid_id) * radius;
         }
-        inline constexpr vec3 physical_position(const vec2 grid_position) const
+        inline constexpr vec3 sphere_position(const vec2 grid_position) const
         {
-            return sphere_position(grid_position) * radius;
+            return unit_sphere_position(grid_position) * radius;
         }
 
     };
