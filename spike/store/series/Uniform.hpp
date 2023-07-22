@@ -1,14 +1,8 @@
 #pragma once
 
 // C libraries
-#include <cmath>     /* assert */
-#include <assert.h>  /* assert */
 
 // std libraries
-#include <initializer_list>	// initializer_list
-#include <iterator>			// std::distance
-#include <vector>           // std::vector
-#include <memory>
 
 namespace series
 {
@@ -35,15 +29,14 @@ namespace series
 			value(a.value)
 		{}
 
-		constexpr inline std::size_t size() const                               { return 1; }
+		constexpr inline std::size_t size() const { return 1; }
 
 		constexpr inline T operator[](const std::size_t memory_id ) const
 		{
 		   return value;
 		}
 
-		template <typename T2>
-		constexpr inline void fill(const T2 a )
+		constexpr inline void fill(const T a )
 		{
 			value = a;
 		}
@@ -51,12 +44,10 @@ namespace series
 	};
 
 	/*
-	NOTE: constructing series objects can be annoying due to the number of template parameters involved, 
+	NOTE: constructing `series::` objects can be annoying due to the number of template parameters involved, 
 	so we use convenience methods for generating rasters that are compatible for a given grid.
-	Typical C++ conventions might append these with `make_*`,
-	however we forego this convention for brevity since 
-	our library must implement template functions that support many combinations of type,
-	but we also wish to avoid creating implicit casts.
+	Typical C++ conventions might append these with `make_*`, but we forego this convention for brevity.
+	For consistency, we create one such function for Uniform here.
 	*/
 	template<typename T>
 	constexpr inline Uniform<T> uniform(const T& value)
