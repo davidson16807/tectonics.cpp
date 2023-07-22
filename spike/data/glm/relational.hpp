@@ -4,10 +4,9 @@
 #include <glm/vector_relational.hpp>
 
 // in-house libraries
-#include "../relational.hpp"
+#include "../each.hpp"
 
-namespace data {
-namespace vec {
+namespace whole {
 
 	// template<glm::length_t L, typename T, glm::qualifier Q>
 	// bool operator==(const glm::vec<L,T,Q>& a, const glm::vec<L,T,Q> b)
@@ -112,4 +111,4 @@ namespace vec {
 		}
 	}
 
-}}
+}

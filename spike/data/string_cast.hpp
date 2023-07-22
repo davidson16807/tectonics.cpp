@@ -59,7 +59,7 @@ namespace data
 	template <typename T>
 	std::string to_string(const T& a, const int line_char_width = 80)
 	{
-		return to_string(a, min(a), max(a), line_char_width);
+		return to_string(a, whole::min(a), whole::max(a), line_char_width);
 	}
 
 }//namespace series

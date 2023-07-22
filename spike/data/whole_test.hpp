@@ -9,7 +9,6 @@
 
 #include "Series.hpp"
 #include "each.hpp"
-#include "relational.hpp"
 #include "whole.hpp"
 #include "statistic.hpp"
 
@@ -20,7 +19,7 @@ TEST_CASE( "Series<T> abs purity", "[many]" ) {
     SECTION("abs(a) must generate the same output when called repeatedly"){
         data::abs(a, out1);
         data::abs(a, out2);
-        CHECK(data::equal(out1, out2));
+        CHECK(whole::equal(out1, out2));
     }
 }
 TEST_CASE( "Series<T> sign purity", "[many]" ) {
@@ -30,7 +29,7 @@ TEST_CASE( "Series<T> sign purity", "[many]" ) {
     SECTION("sign(a) must generate the same output when called repeatedly"){
         data::sign(a, out1);
         data::sign(a, out2);
-        CHECK(data::equal(out1, out2));
+        CHECK(whole::equal(out1, out2));
     }
 }
 TEST_CASE( "Series<T> abs/sign consistency", "[many]" ) {
@@ -42,7 +41,7 @@ TEST_CASE( "Series<T> abs/sign consistency", "[many]" ) {
         data::abs(a, abs_a);
         data::sign(a, sign_a);
         data::mult(sign_a, abs_a, a2);
-        CHECK(data::equal(a2, a));
+        CHECK(whole::equal(a2, a));
     }
 }
 TEST_CASE( "Series<T> floor purity", "[many]" ) {
@@ -52,7 +51,7 @@ TEST_CASE( "Series<T> floor purity", "[many]" ) {
     SECTION("floor(a) must generate the same output when called repeatedly"){
         data::floor(a, out1);
         data::floor(a, out2);
-        CHECK(data::equal(out1, out2));
+        CHECK(whole::equal(out1, out2));
     }
 }
 TEST_CASE( "Series<T> fract purity", "[many]" ) {
@@ -62,7 +61,7 @@ TEST_CASE( "Series<T> fract purity", "[many]" ) {
     SECTION("fract(a) must generate the same output when called repeatedly"){
         data::fract(a, out1);
         data::fract(a, out2);
-        CHECK(data::equal(out1, out2));
+        CHECK(whole::equal(out1, out2));
     }
 }
 TEST_CASE( "Series<T> floor/fract consistency", "[many]" ) {
@@ -74,7 +73,7 @@ TEST_CASE( "Series<T> floor/fract consistency", "[many]" ) {
         data::floor(a, floor_a);
         data::fract(a, fract_a);
         data::add(floor_a, fract_a, a2);
-        CHECK(data::equal(a2, a));
+        CHECK(whole::equal(a2, a));
     }
 }
 
@@ -86,7 +85,7 @@ TEST_CASE( "Series<T> mod purity", "[many]" ) {
     SECTION("mod(a,b) must generate the same output when called repeatedly"){
         data::mod(a,b, out1);
         data::mod(a,b, out2);
-        CHECK(data::equal(out1, out2));
+        CHECK(whole::equal(out1, out2));
     }
 }
 TEST_CASE( "Series<T> mod/fract consistency", "[many]" ) {
@@ -97,12 +96,12 @@ TEST_CASE( "Series<T> mod/fract consistency", "[many]" ) {
     SECTION("mod(a,1) must generate the same output as fract(a) for positive numbers"){
         data::mod(a, data::uniform(1), out1);
         data::fract(a, out2);
-        CHECK(data::equal(out1, out2));
+        CHECK(whole::equal(out1, out2));
     }
     SECTION("mod(a,ones) must generate the same output as fract(a) for positive numbers"){
         data::mod(a,ones, out1);
         data::fract(a, out2);
-        CHECK(data::equal(out1, out2));
+        CHECK(whole::equal(out1, out2));
     }
 }
 TEST_CASE( "Series<T> min purity", "[many]" ) {
@@ -113,7 +112,7 @@ TEST_CASE( "Series<T> min purity", "[many]" ) {
     SECTION("min(a,b) must generate the same output when called repeatedly"){
         data::min(a,b, out1);
         data::min(a,b, out2);
-        CHECK(data::equal(out1, out2));
+        CHECK(whole::equal(out1, out2));
     }
 }
 TEST_CASE( "Series<T> min decreasing", "[many]" ) {
@@ -136,7 +135,7 @@ TEST_CASE( "Series<T> min idempotence", "[many]" ) {
     SECTION("subsequent calls to min(*,b) must return the same value"){
         data::min(a,b, ab);
         data::min(ab,b, abb);
-        CHECK(data::equal(ab, abb));
+        CHECK(whole::equal(ab, abb));
     }
 }
 
@@ -148,7 +147,7 @@ TEST_CASE( "Series<T> max purity", "[many]" ) {
     SECTION("max(a,b) must generate the same output when called repeatedly"){
         data::max(a,b, out1);
         data::max(a,b, out2);
-        CHECK(data::equal(out1, out2));
+        CHECK(whole::equal(out1, out2));
     }
 }
 TEST_CASE( "Series<T> max decreasing", "[many]" ) {
@@ -171,7 +170,7 @@ TEST_CASE( "Series<T> max idempotence", "[many]" ) {
     SECTION("subsequent calls to max(*,b) must return the same value"){
         data::max(a,b, ab);
         data::max(ab,b, abb);
-        CHECK(data::equal(ab, abb));
+        CHECK(whole::equal(ab, abb));
     }
 }
 
@@ -186,7 +185,7 @@ TEST_CASE( "Series<T> min/max/clamp consistency", "[many]" ) {
         data::max(a,lo, alo);
         data::min(alo,hi, alohi1);
         data::clamp(a,lo,hi, alohi2);
-        CHECK(data::equal(alohi1, alohi2));
+        CHECK(whole::equal(alohi1, alohi2));
     }
 }
 

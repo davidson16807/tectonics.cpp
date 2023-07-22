@@ -3,7 +3,7 @@
 #include <catch/catch.hpp>
 
 #include "Series.hpp"
-#include "relational.hpp"
+#include "each.hpp"
 #include "morphologic.hpp"
 
 TEST_CASE( "Series<T> morphologic purity", "[many]" ) {
@@ -15,25 +15,25 @@ TEST_CASE( "Series<T> morphologic purity", "[many]" ) {
     SECTION("a∩b must be called repeatedly without changing the output"){
         data::intersect(a,b,c1);
         data::intersect(a,b,c2);
-        CHECK(data::equal(c1, c2));
+        CHECK(whole::equal(c1, c2));
     }
 
     SECTION("a∪b must be called repeatedly without changing the output"){
         data::unite(a,b,c1);
         data::unite(a,b,c2);
-        CHECK(data::equal(c1, c2));
+        CHECK(whole::equal(c1, c2));
     }
 
     SECTION("a-b must be called repeatedly without changing the output"){
         data::differ(a,b,c1);
         data::differ(a,b,c2);
-        CHECK(data::equal(c1, c2));
+        CHECK(whole::equal(c1, c2));
     }
 
     SECTION("-b must be called repeatedly without changing the output"){
         data::negate(a,c1);
         data::negate(a,c2);
-        CHECK(data::equal(c1, c2));
+        CHECK(whole::equal(c1, c2));
     }
 }
 
@@ -45,15 +45,15 @@ TEST_CASE( "Series<T> morphologic identity", "[many]" ) {
 
     SECTION("a∪∅ must equal a"){
         data::unite(a,zeros, c);
-        CHECK(data::equal(c, a));
+        CHECK(whole::equal(c, a));
     }
     SECTION("a∩1 must equal a"){
         data::intersect(a,ones, c);
-        CHECK(data::equal(c, a));
+        CHECK(whole::equal(c, a));
     }
     SECTION("a-∅ must equal a"){
         data::differ(a,zeros, c);
-        CHECK(data::equal(c, a));
+        CHECK(whole::equal(c, a));
     }
 }
 
@@ -66,13 +66,13 @@ TEST_CASE( "Series<T> morphologic commutativity", "[many]" ) {
     SECTION("a∪b must equal b∪a"){
         data::unite(a, b, ab);
         data::unite(b, a, ba);
-        CHECK(data::equal(ab, ba));
+        CHECK(whole::equal(ab, ba));
     }
 
     SECTION("a∩b must equal b∩a"){
         data::intersect(a, b, ab);
         data::intersect(b, a, ba);
-        CHECK(data::equal(ab, ba));
+        CHECK(whole::equal(ab, ba));
     }
 
 }
@@ -84,7 +84,7 @@ TEST_CASE( "Series<T> negation involutivity", "[many]" ) {
     SECTION("--a must equal a"){
         data::negate(a, c);
         data::negate(c, c);
-        CHECK(data::equal(c, a));
+        CHECK(whole::equal(c, a));
     }
 
 }
@@ -102,14 +102,14 @@ TEST_CASE( "Series<T> morphologic associativity", "[many]" ) {
         data::unite(ab_c,c, ab_c);
         data::unite(b,c,    a_bc);
         data::unite(a,a_bc, a_bc);
-        CHECK(data::equal(ab_c, a_bc));
+        CHECK(whole::equal(ab_c, a_bc));
     }
     SECTION("(a∩b)∩c must equal a∩(b∩c)"){
         data::intersect(a,b,    ab_c);
         data::intersect(ab_c,c, ab_c);
         data::intersect(b,c,    a_bc);
         data::intersect(a,a_bc, a_bc);
-        CHECK(data::equal(ab_c, a_bc));
+        CHECK(whole::equal(ab_c, a_bc));
     }
 }
 
@@ -128,7 +128,7 @@ TEST_CASE( "Series<T> morphologic distributivity", "[many]" ) {
         data::intersect(a,c,    ac);
         data::intersect(b,c,    bc);
         data::unite(ac,bc,  ac_bc);
-        CHECK(data::equal(ab_c, ac_bc));
+        CHECK(whole::equal(ab_c, ac_bc));
     }
 }
 

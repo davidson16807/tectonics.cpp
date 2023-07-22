@@ -18,15 +18,14 @@ namespace data
 		auto size = out.size();\
 		for (std::size_t i = 0; i < size; ++i)\
 		{\
-			out[i] = a[i] SYMBOL b[i];\
+			out[i] = (a[i] SYMBOL b[i]);\
 		}\
 	}
-	EACH_BINARY_OPERATION(+, add)
-	EACH_BINARY_OPERATION(-, sub)
-	EACH_BINARY_OPERATION(*, mult)
-	EACH_BINARY_OPERATION(/, div)
+	EACH_BINARY_OPERATION(+,  add)
+	EACH_BINARY_OPERATION(-,  sub)
+	EACH_BINARY_OPERATION(*,  mult)
+	EACH_BINARY_OPERATION(/,  div)
 	#undef EACH_BINARY_OPERATION
-
 
 	#define EACH_UNARY_PREFIX_OPERATION(SYMBOL, NAME) \
 	template <typename T1, typename Tout>\
@@ -120,10 +119,24 @@ namespace data
 	template <typename T1, typename T2> inline auto min(const T1 a, const T2 b){return std::min(a,b);}
 	template <typename T1, typename T2> inline auto max(const T1 a, const T2 b){return std::max(a,b);}
 	template <typename T1, typename T2> inline auto pow(const T1 a, const T2 b){return std::pow(a,b);}
+	template <typename T1, typename T2> inline auto distance(const T1 a, const T2 b){return std::abs(a-b);}
+	template <typename T1, typename T2> inline auto equal(const T1 a, const T2 b){return a == b;}
+	template <typename T1, typename T2> inline auto notEqual(const T1 a, const T2 b){return a != b;}
+	template <typename T1, typename T2> inline auto greaterThan(const T1 a, const T2 b){return a > b;}
+	template <typename T1, typename T2> inline auto lessThan(const T1 a, const T2 b){return a < b;}
+	template <typename T1, typename T2> inline auto greaterThanEqual(const T1 a, const T2 b){return a >= b;}
+	template <typename T1, typename T2> inline auto lessThanEqual(const T1 a, const T2 b){return a <= b;}
 	EACH_BINARY_FUNCTION(mod)  
 	EACH_BINARY_FUNCTION(min)  
 	EACH_BINARY_FUNCTION(max)  
 	EACH_BINARY_FUNCTION(pow)  
+	EACH_BINARY_FUNCTION(distance)  
+	EACH_BINARY_FUNCTION(equal)
+	EACH_BINARY_FUNCTION(notEqual)
+	EACH_BINARY_FUNCTION(greaterThan)
+	EACH_BINARY_FUNCTION(lessThan)
+	EACH_BINARY_FUNCTION(greaterThanEqual)
+	EACH_BINARY_FUNCTION(lessThanEqual)
 	#undef EACH_BINARY_FUNCTION
 
 
@@ -159,6 +172,18 @@ namespace data
 
 
 	// SPECIAL FUNCTIONS THAT MUST BE DEFINED WITHOUT MACROS
+
+	template <typename T1, typename T2, typename Tout>
+	void equal(const T1& a, const T2& b, Tout& out, const float threshold)
+	{
+		assert(compatible(a,b,out));
+		auto size = a.size();
+		for (std::size_t i = 0; i < size; ++i)
+		{
+			out[i] = distance(a[i], b[i]) < threshold;
+		}
+	}
+
 	template <typename T1, typename T2, typename T3, typename Tout>
 	void clamp(const T1& a, const T2& lo, const T3& hi, Tout& out)
 	{
@@ -187,5 +212,5 @@ namespace data
 		add (out, c, out);
 	}
 
-}
 
+}

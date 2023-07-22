@@ -44,7 +44,7 @@ namespace data
     {
         data::Series<glm::bvec3> output(size);
         data::Series<glm::vec3> temp = get_random_vec3s(size, generator);
-        data::vec::greaterThan(temp, data::uniform(glm::vec3(0.5f)), output);
+        data::greaterThan(temp, data::uniform(glm::vec3(0.5f)), output);
         return output;
     }
 }

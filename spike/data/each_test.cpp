@@ -4,7 +4,7 @@
 
 #include "Series.hpp"
 #include "each.hpp"
-#include "relational.hpp"
+#include "each.hpp"
 #include "whole.hpp"
 
 TEST_CASE( "Series<T> arithmetic purity", "[many]" ) {
@@ -16,25 +16,25 @@ TEST_CASE( "Series<T> arithmetic purity", "[many]" ) {
     SECTION("a+b must be called repeatedly without changing the output"){
         data::add(a,b,c1);
         data::add(a,b,c2);
-        CHECK(data::equal(c1, c2));
+        CHECK(whole::equal(c1, c2));
     }
 
     SECTION("a*b must be called repeatedly without changing the output"){
         data::mult(a,b,c1);
         data::mult(a,b,c2);
-        CHECK(data::equal(c1, c2));
+        CHECK(whole::equal(c1, c2));
     }
 
     SECTION("a-b must be called repeatedly without changing the output"){
         data::sub(a,b,c1);
         data::sub(a,b,c2);
-        CHECK(data::equal(c1, c2));
+        CHECK(whole::equal(c1, c2));
     }
 
     SECTION("a/b must be called repeatedly without changing the output"){
         data::div(a,b,c1);
         data::div(a,b,c2);
-        CHECK(data::equal(c1, c2));
+        CHECK(whole::equal(c1, c2));
     }
 }
 
@@ -46,17 +46,17 @@ TEST_CASE( "Series<T> arithmetic identity", "[many]" ) {
 
     SECTION("a+I must equal a"){
         data::add(a,zeros, c);
-        CHECK(data::equal(c, a));
+        CHECK(whole::equal(c, a));
         data::sub(a,zeros, c);
-        CHECK(data::equal(c, a));
+        CHECK(whole::equal(c, a));
         data::mult(a,ones, c);
-        CHECK(data::equal(c, a));
+        CHECK(whole::equal(c, a));
         data::div(a,ones, c);
-        CHECK(data::equal(c, a));
+        CHECK(whole::equal(c, a));
         data::sub(a,a, c);
-        CHECK(data::equal(c, zeros));
+        CHECK(whole::equal(c, zeros));
         data::div(a,a, c);
-        CHECK(data::equal(c, ones ));
+        CHECK(whole::equal(c, ones ));
     }
 }
 
@@ -69,12 +69,12 @@ TEST_CASE( "Series<T> arithmetic commutativity", "[many]" ) {
     SECTION("a+b must equal b+a"){
         data::add(a, b, ab);
         data::add(b, a, ba);
-        CHECK(data::equal(ab, ba));
+        CHECK(whole::equal(ab, ba));
     }
     SECTION("a*b must equal b*a"){
         data::mult(a, b, ab);
         data::mult(b, a, ba);
-        CHECK(data::equal(ab, ba));
+        CHECK(whole::equal(ab, ba));
     }
 }
 
@@ -90,14 +90,14 @@ TEST_CASE( "Series<T> arithmetic associativity", "[many]" ) {
         data::add(ab_c,c, ab_c);
         data::add(b,c,    a_bc);
         data::add(a,a_bc, a_bc);
-        CHECK(data::equal(ab_c, a_bc));
+        CHECK(whole::equal(ab_c, a_bc));
     }
     SECTION("(a*b)*c must equal a*(b*c)"){
         data::mult(a,b,    ab_c);
         data::mult(ab_c,c, ab_c);
         data::mult(b,c,    a_bc);
         data::mult(a,a_bc, a_bc);
-        CHECK(data::equal(ab_c, a_bc));
+        CHECK(whole::equal(ab_c, a_bc));
     }
 }
 
@@ -116,7 +116,7 @@ TEST_CASE( "Series<T> arithmetic distributivity", "[many]" ) {
         data::mult(a,c,    ac);
         data::mult(b,c,    bc);
         data::add(ac,bc,  ac_bc);
-        CHECK(data::equal(ab_c, ac_bc));
+        CHECK(whole::equal(ab_c, ac_bc));
     }
     SECTION("a+b/c must equal a/c+b/c"){
         data::add(a,b,    ab_c);
@@ -124,7 +124,7 @@ TEST_CASE( "Series<T> arithmetic distributivity", "[many]" ) {
         data::div(a,c,    ac);
         data::div(b,c,    bc);
         data::add(ac,bc,  ac_bc);
-        CHECK(data::equal(ab_c, ac_bc));
+        CHECK(whole::equal(ab_c, ac_bc));
     }
 }
 
@@ -146,25 +146,25 @@ TEST_CASE( "Series<T>/Uniform<T> arithmetic purity", "[many]" ) {
     SECTION("a+b must be called repeatedly without changing the output"){
         data::add(a,b,c1);
         data::add(a,b,c2);
-        CHECK(data::equal(c1, c2));
+        CHECK(whole::equal(c1, c2));
     }
 
     SECTION("a*b must be called repeatedly without changing the output"){
         data::mult(a,b,c1);
         data::mult(a,b,c2);
-        CHECK(data::equal(c1, c2));
+        CHECK(whole::equal(c1, c2));
     }
 
     SECTION("a-b must be called repeatedly without changing the output"){
         data::sub(a,b,c1);
         data::sub(a,b,c2);
-        CHECK(data::equal(c1, c2));
+        CHECK(whole::equal(c1, c2));
     }
 
     SECTION("a/b must be called repeatedly without changing the output"){
         data::div(a,b,c1);
         data::div(a,b,c2);
-        CHECK(data::equal(c1, c2));
+        CHECK(whole::equal(c1, c2));
     }
 }
 
@@ -176,17 +176,17 @@ TEST_CASE( "Series<T>/Uniform<T> arithmetic identity", "[many]" ) {
 
     SECTION("a+I must equal a"){
         data::add(a,zeros, c);
-        CHECK(data::equal(c, a));
+        CHECK(whole::equal(c, a));
         data::sub(a,zeros, c);
-        CHECK(data::equal(c, a));
+        CHECK(whole::equal(c, a));
         data::mult(a,ones, c);
-        CHECK(data::equal(c, a));
+        CHECK(whole::equal(c, a));
         data::div(a,ones, c);
-        CHECK(data::equal(c, a));
+        CHECK(whole::equal(c, a));
         data::sub(a,a, c);
-        CHECK(data::equal(c, zeros, 1e-7));
+        CHECK(whole::equal(c, zeros, 1e-7));
         data::div(a,a, c);
-        CHECK(data::equal(c, ones,  1e-7 ));
+        CHECK(whole::equal(c, ones,  1e-7 ));
     }
 }
 
@@ -199,12 +199,12 @@ TEST_CASE( "Series<T>/Uniform<T> arithmetic commutativity", "[many]" ) {
     SECTION("a+b must equal b+a"){
         data::add(a, b, ab);
         data::add(b, a, ba);
-        CHECK(data::equal(ab, ba));
+        CHECK(whole::equal(ab, ba));
     }
     SECTION("a*b must equal b*a"){
         data::mult(a, b, ab);
         data::mult(b, a, ba);
-        CHECK(data::equal(ab, ba));
+        CHECK(whole::equal(ab, ba));
     }
 }
 
@@ -220,14 +220,14 @@ TEST_CASE( "Series<T>/Uniform<T> arithmetic associativity", "[many]" ) {
         data::add(ab_c,c, ab_c);
         data::add(b,c,    a_bc);
         data::add(a,a_bc, a_bc);
-        CHECK(data::equal(ab_c, a_bc));
+        CHECK(whole::equal(ab_c, a_bc));
     }
     SECTION("(a*b)*c must equal a*(b*c)"){
         data::mult(a,b,    ab_c);
         data::mult(ab_c,c, ab_c);
         data::mult(b,c,    a_bc);
         data::mult(a,a_bc, a_bc);
-        CHECK(data::equal(ab_c, a_bc));
+        CHECK(whole::equal(ab_c, a_bc));
     }
 }
 
@@ -246,7 +246,7 @@ TEST_CASE( "Series<T>/Uniform<T> arithmetic distributivity", "[many]" ) {
         data::mult(a,c,    ac);
         data::mult(b,c,    bc);
         data::add(ac,bc,  ac_bc);
-        CHECK(data::equal(ab_c, ac_bc));
+        CHECK(whole::equal(ab_c, ac_bc));
     }
     SECTION("a+b/c must equal a/c+b/c"){
         data::add(a,b,    ab_c);
@@ -254,7 +254,7 @@ TEST_CASE( "Series<T>/Uniform<T> arithmetic distributivity", "[many]" ) {
         data::div(a,c,    ac);
         data::div(b,c,    bc);
         data::add(ac,bc,  ac_bc);
-        CHECK(data::equal(ab_c, ac_bc));
+        CHECK(whole::equal(ab_c, ac_bc));
     }
 }
 
@@ -271,7 +271,7 @@ TEST_CASE( "Series<T> sqrt purity", "[data]" ) {
     SECTION("sqrt(a) must be called repeatedly without changing the output"){
         data::sqrt(a,c1);
         data::sqrt(a,c2);
-        CHECK(data::equal(c1,c2, 1e-7));
+        CHECK(whole::equal(c1,c2, 1e-7));
     }
 }
 TEST_CASE( "Series<T> sqrt consistency", "[data]" ) {
@@ -285,11 +285,11 @@ TEST_CASE( "Series<T> sqrt consistency", "[data]" ) {
     SECTION("sqrt(a) must equal pow(a,1/2)"){
         data::sqrt(a,    sqrt1);
         data::pow (a,data::uniform(0.5f),sqrt2);
-        CHECK(data::equal(sqrt1 , sqrt2, 1e-7));
+        CHECK(whole::equal(sqrt1 , sqrt2, 1e-7));
 
         data::sqrt(b,    sqrt1);
         data::pow (b,data::uniform(0.5f),sqrt2);
-        CHECK(data::equal(sqrt1 , sqrt2, 1e-7));
+        CHECK(whole::equal(sqrt1 , sqrt2, 1e-7));
     }
 
 }
@@ -303,7 +303,7 @@ TEST_CASE( "Series<T> log consistency", "[data]" ) {
         data::log2(a, log1_);
         data::log (a, log2_);
         data::div (log2_, data::uniform(std::log(2.f)), log2_);
-        CHECK(data::equal(log1_ , log2_, 1e-7));
+        CHECK(whole::equal(log1_ , log2_, 1e-7));
     }
 }
 TEST_CASE( "Series<T> log/exp consistency", "[data]" ) {
@@ -322,7 +322,7 @@ TEST_CASE( "Series<T> log/exp consistency", "[data]" ) {
         data::add(loga, logb, lalb);
         data::exp(lalb, elalb);
         data::mult(a, b, ab);
-        CHECK(data::equal(elalb, ab, 1e-7));
+        CHECK(whole::equal(elalb, ab, 1e-7));
     }
 }
 TEST_CASE( "Series<T> log/exp invertibility", "[data]" ) {
@@ -333,12 +333,12 @@ TEST_CASE( "Series<T> log/exp invertibility", "[data]" ) {
     SECTION("log(exp(a)) must equal a"){
         data::log (a,   out);
         data::exp (out, out);
-        CHECK(data::equal(a, out, 1e-7));
+        CHECK(whole::equal(a, out, 1e-7));
     }
     SECTION("log2(exp2(a)) must equal a"){
         data::log2(a,   out);
         data::exp2(out, out);
-        CHECK(data::equal(a, out, 1e-7));
+        CHECK(whole::equal(a, out, 1e-7));
     }
 }
 
@@ -357,7 +357,7 @@ TEST_CASE( "Series<T> log2/exp2 consistency", "[data]" ) {
         data::add(loga, logb, lalb);
         data::exp2(lalb, out);
         data::mult(a, b, ab);
-        CHECK(data::equal(out, ab, 1e-7));
+        CHECK(whole::equal(out, ab, 1e-7));
     }
 }
 TEST_CASE( "Series<T> log2/exp2 invertibility", "[data]" ) {
@@ -368,12 +368,12 @@ TEST_CASE( "Series<T> log2/exp2 invertibility", "[data]" ) {
     SECTION("log2(exp2(a)) must equal a"){
         data::log2 (a,   out);
         data::exp2 (out, out);
-        CHECK(data::equal(a, out, 1e-7));
+        CHECK(whole::equal(a, out, 1e-7));
     }
     SECTION("log2(exp2(a)) must equal a"){
         data::log2(a,   out);
         data::exp2(out, out);
-        CHECK(data::equal(a, out, 1e-7));
+        CHECK(whole::equal(a, out, 1e-7));
     }
 }
 
