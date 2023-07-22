@@ -5,7 +5,7 @@
 
 // in-house libraries
 #include "../Series.hpp"
-#include "relational.hpp"
+#include "each.hpp"
 
 namespace each
 {
