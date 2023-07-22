@@ -127,27 +127,31 @@ namespace series
 		}
 
 		// NOTE: all wrapper functions should to be marked inline 
-		inline std::size_t size() const                               { return values.size() * copies_per_value;  }
-		inline std::size_t max_size() const                           { return values.size() * copies_per_value;  }
-		inline std::size_t capacity() const                           { return values.capacity() * copies_per_value; }
-		inline std::size_t empty() const                              { return values.empty(); }
-        inline typename std::vector<T>::reference front()             { return values.front(); }
-        inline typename std::vector<T>::const_reference front() const { return values.front(); }
-        inline typename std::vector<T>::reference back()              { return values.back();  }
-        inline typename std::vector<T>::const_reference back() const  { return values.back();  }
-	    inline typename std::vector<T>::const_iterator begin() const  { return values.begin(); }
-	    inline typename std::vector<T>::const_iterator end()   const  { return values.end();   }
-	    inline typename std::vector<T>::iterator begin()              { return values.begin(); }
-	    inline typename std::vector<T>::iterator end()                { return values.end();   }
+		inline std::size_t size() const     { return values.size() * copies_per_value;  }
+		inline std::size_t max_size() const { return values.size() * copies_per_value;  }
+		inline std::size_t capacity() const { return values.capacity() * copies_per_value; }
+		inline std::size_t empty() const    { return values.empty(); }
 	    using size_type = std::size_t;
-		using value_type = T;
+		using value_type = typename std::vector<T>::value_type;
+		using const_reference = const value_type&;
+		using reference = value_type&;
+		using const_iterator = typename std::vector<T>::const_iterator;
+		using iterator = typename std::vector<T>::iterator;
+        inline typename Interleave<T>::reference front()             { return values.front(); }
+        inline typename Interleave<T>::const_reference front() const { return values.front(); }
+        inline typename Interleave<T>::reference back()              { return values.back();  }
+        inline typename Interleave<T>::const_reference back() const  { return values.back();  }
+	    inline typename Interleave<T>::const_iterator begin() const  { return values.begin(); }
+	    inline typename Interleave<T>::const_iterator end()   const  { return values.end();   }
+	    inline typename Interleave<T>::iterator begin()              { return values.begin(); }
+	    inline typename Interleave<T>::iterator end()                { return values.end();   }
 
-		inline typename std::vector<T>::const_reference operator[](const std::size_t lookup_id ) const
+		inline const_reference operator[](const std::size_t lookup_id ) const
 		{
 		   return values.operator[]((lookup_id / copies_per_value) % values.size());
 		}
 
-		inline typename std::vector<T>::reference operator[](const std::size_t lookup_id )
+		inline reference operator[](const std::size_t lookup_id )
 		{
 		   return values[(lookup_id / copies_per_value) % values.size()]; // reference return 
 		}
