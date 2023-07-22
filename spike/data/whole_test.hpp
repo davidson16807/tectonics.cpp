@@ -10,7 +10,6 @@
 #include "Series.hpp"
 #include "each.hpp"
 #include "whole.hpp"
-#include "statistic.hpp"
 
 TEST_CASE( "Series<T> abs purity", "[many]" ) {
     auto a = data::series({-1,1,-2,2,3});
@@ -124,7 +123,7 @@ TEST_CASE( "Series<T> min decreasing", "[many]" ) {
     SECTION("sum(min(a,b)) must always return a value less than or equal to the starting value"){
         data::min(a,b, ab);
         data::min(ab,c, abc);
-        CHECK(data::sum(ab) >= data::sum(abc));
+        CHECK(whole::sum(ab) >= whole::sum(abc));
     }
 }
 TEST_CASE( "Series<T> min idempotence", "[many]" ) {
@@ -159,7 +158,7 @@ TEST_CASE( "Series<T> max decreasing", "[many]" ) {
     SECTION("sum(max(a,b)) must always return a value greater than or equal to the starting value"){
         data::max(a,b, ab);
         data::max(ab,c, abc);
-        CHECK(data::sum(ab) <= data::sum(abc));
+        CHECK(whole::sum(ab) <= whole::sum(abc));
     }
 }
 TEST_CASE( "Series<T> max idempotence", "[many]" ) {
@@ -189,3 +188,54 @@ TEST_CASE( "Series<T> min/max/clamp consistency", "[many]" ) {
     }
 }
 
+
+
+
+
+TEST_CASE( "Series<T> string cast purity", "[data]" ) {
+    auto a = data::series({1,2,3,4,5});
+    SECTION("to_string(a) must be called repeatedly without changing the output"){
+        CHECK(whole::to_string(a) == whole::to_string(a));
+    }
+}
+
+TEST_CASE( "Series<T> string cast correctness", "[data]" ) {
+    auto a = data::series({1,2,3,4,5,6});
+    auto b = data::series({1,1,2,3,5,8});
+    auto c = data::series<float>({4,8,3,8,2,4,5,9,8,2,3,5,2,1,3,3,3,1,6,1,
+                           4,2,5,INFINITY,9,4,6,2,8,1,5,3,7,5,8,5,6,6,7,6,
+                           1,2,4,1,4,9,9,8,1,3,7,2,5,5,1,8,9,4,7,6,
+                           4,4,4,5,3,1,3,5,8,3,4,1,3,7,5,6,2,9,7,5,
+                           4,8,3,8,2,4,5,9,8,2,3,5,2,1,3,3,3,1,6,1,
+                           4,2,5,9,9,9,9,9,9,9,9,9,9,9,8,5,6,6,7,6,
+                           1,2,4,1,4,9,9,8,1,3,7,2,5,5,1,8,9,4,7,6,
+                           4,4,4,5,3,1,3,5,8,3,4,1,3,7,5,6,2,9,7});
+    std::string stra = whole::to_string(a);
+    std::string strb = whole::to_string(b);
+    std::string strc = whole::to_string(c);
+    SECTION("to_string() must render correct representation"){
+        REQUIRE_THAT(stra, Catch::Contains("█"));
+        REQUIRE_THAT(strb, Catch::Contains("█"));
+        REQUIRE_THAT(whole::to_string(data::series({INFINITY})), Catch::Contains("∞"));
+        REQUIRE_THAT(whole::to_string(data::series({std::sqrt(-1)})), Catch::Contains("N"));
+    }
+}
+
+TEST_CASE( "Series<T> string cast representation", "[data]" ) {
+    auto a = data::series({1,2,3,4,5,6});
+    SECTION("to_string() must capture appreciable differences in the content of Series<T>"){
+        for(std::size_t i=0; i<a.size(); ++i){
+            auto b = data::series({1,2,3,4,5,6});
+            b[i] = -1;
+            std::string stra = whole::to_string(a);
+            std::string strb = whole::to_string(b);
+            CHECK(stra != strb);
+        }
+    }
+    SECTION("to_string() must capture appreciable differences in the length of Series<T>"){
+        auto c = data::series({1,2,3,4,5,6,7});
+        std::string stra = whole::to_string(a);
+        std::string strc = whole::to_string(c);
+        CHECK(stra != strc);
+    }
+}
