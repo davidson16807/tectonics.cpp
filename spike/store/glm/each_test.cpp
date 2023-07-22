@@ -327,3 +327,135 @@ TEST_CASE( "vec3s max idempotence", "[each]" ) {
 //         CHECK(alohi1 == alohi2);
 //     }
 // }
+
+
+
+
+
+
+
+
+
+
+TEST_CASE( "Series<vec3> sqrt purity", "[each]" ) {
+    std::mt19937 generator(2);
+    std::uniform_real_distribution<float> distribution(0.1,5.0);
+    auto a = each::get_random_vec3s(5, distribution, generator);
+    auto c1 = each::get_random_vec3s(5, distribution, generator);
+    auto c2 = each::get_random_vec3s(5, distribution, generator);
+    SECTION("sqrt(a) must be called repeatedly without changing the output"){
+        each::sqrt(a,c1);
+        each::sqrt(a,c2);
+        CHECK(whole::equal(c1,c2));
+    }
+}
+// TEST_CASE( "Series<vec3> sqrt consistency", "[each]" ) {
+//     std::mt19937 generator(2);
+//     std::uniform_real_distribution<float> distribution(0.1,5.0);
+//  auto a     = each::get_random_vec3s(5, distribution, generator);
+//  auto b     = each::get_random_vec3s(5, distribution, generator);
+//  auto sqrt1 = each::get_random_vec3s(5, distribution, generator);
+//  auto sqrt2 = each::get_random_vec3s(5, distribution, generator);
+//  auto log1_ = each::get_random_vec3s(5, distribution, generator);
+//  auto log2_ = each::get_random_vec3s(5, distribution, generator);
+
+//     SECTION("sqrt(a) must equal pow(a,1/2)"){
+//         each::sqrt(a,    sqrt1);
+//         each::pow (a,0.5f,sqrt2);
+//         CHECK(whole::equal(sqrt1 , sqrt2));
+//     }
+
+// }
+TEST_CASE( "Series<vec3> log consistency", "[each]" ) {
+    std::mt19937 generator(2);
+    std::uniform_real_distribution<float> distribution(0.1,5.0);
+    auto a     = each::get_random_vec3s(5, distribution, generator);
+    auto b     = each::get_random_vec3s(5, distribution, generator);
+    auto log1_ = each::get_random_vec3s(5, distribution, generator);
+    auto log2_ = each::get_random_vec3s(5, distribution, generator);
+
+    SECTION("log2(a) must equal log(a)/log(2)"){
+        each::log2(a, log1_);
+        each::log (a, log2_);
+        each::div (log2_, each::uniform(std::log(2.f)), log2_);
+        CHECK(whole::equal(log1_ , log2_, 1e-5));
+    }
+}
+TEST_CASE( "Series<vec3> log/exp consistency", "[each]" ) {
+    std::mt19937 generator(2);
+    std::uniform_real_distribution<float> distribution(0.1,5.0);
+    auto a     = each::get_random_vec3s(5, distribution, generator);
+    auto b     = each::get_random_vec3s(5, distribution, generator);
+    auto ab    = each::get_random_vec3s(5, distribution, generator);
+    auto loga  = each::get_random_vec3s(5, distribution, generator);
+    auto logb  = each::get_random_vec3s(5, distribution, generator);
+    auto loga_logb = each::get_random_vec3s(5, distribution, generator);
+    auto out   = each::get_random_vec3s(5, distribution, generator);
+
+    SECTION("exp(log(a)+log(b)) must equal a*b"){
+        each::log(a, loga);
+        each::log(b, logb);
+        each::add(loga, logb, loga_logb);
+        each::exp(loga_logb, out);
+        each::mult(a, b, ab);
+        CHECK(whole::equal(out, ab, 1e-5));
+    }
+}
+TEST_CASE( "Series<vec3> log/exp invertibility", "[each]" ) {
+    std::mt19937 generator(2);
+    std::uniform_real_distribution<float> distribution(0.1,5.0);
+    auto a   = each::get_random_vec3s(5, distribution, generator);
+    auto b   = each::get_random_vec3s(5, distribution, generator);
+    auto out = each::get_random_vec3s(5, distribution, generator);
+
+    SECTION("log(exp(a)) must equal a"){
+        each::log (a,   out);
+        each::exp (out, out);
+        CHECK(whole::equal(a, out, 1e-5));
+    }
+    SECTION("log2(exp2(a)) must equal a"){
+        each::log2(a,   out);
+        each::exp2(out, out);
+        CHECK(whole::equal(a, out, 1e-5));
+    }
+}
+
+TEST_CASE( "Series<vec3> log2/exp2 consistency", "[each]" ) {
+    std::mt19937 generator(2);
+    std::uniform_real_distribution<float> distribution(0.1,5.0);
+    auto a     = each::get_random_vec3s(5, distribution, generator);
+    auto b     = each::get_random_vec3s(5, distribution, generator);
+    auto ab    = each::get_random_vec3s(5, distribution, generator);
+    auto loga  = each::get_random_vec3s(5, distribution, generator);
+    auto logb  = each::get_random_vec3s(5, distribution, generator);
+    auto loga_logb = each::get_random_vec3s(5, distribution, generator);
+    auto out   = each::get_random_vec3s(5, distribution, generator);
+
+    SECTION("exp2(log2(a)+log2(b)) must equal a*b"){
+        each::log2(a, loga);
+        each::log2(b, logb);
+        each::add(loga, logb, loga_logb);
+        each::exp2(loga_logb, out);
+        each::mult(a, b, ab);
+        CHECK(whole::equal(out, ab, 1e-5));
+    }
+}
+TEST_CASE( "Series<vec3> log2/exp2 invertibility", "[each]" ) {
+    std::mt19937 generator(2);
+    std::uniform_real_distribution<float> distribution(0.1,5.0);
+    auto a   = each::get_random_vec3s(5, distribution, generator);
+    auto b   = each::get_random_vec3s(5, distribution, generator);
+    auto out = each::get_random_vec3s(5, distribution, generator);
+
+    SECTION("log2(exp2(a)) must equal a"){
+        each::log2 (a,   out);
+        each::exp2 (out, out);
+        CHECK(whole::equal(a, out, 1e-5));
+    }
+    SECTION("log2(exp2(a)) must equal a"){
+        each::log2(a,   out);
+        each::exp2(out, out);
+        CHECK(whole::equal(a, out, 1e-5));
+    }
+}
+
