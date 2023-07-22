@@ -470,49 +470,49 @@ namespace si{
 
 
 
-  #define SI_MODERN_PREFIXED_UNITS(quantity, suffix) \
-  constexpr quantity yocto ## suffix (1e-24 * suffix); \
-  constexpr quantity zepto ## suffix (1e-21 * suffix); \
-  constexpr quantity  atto ## suffix (1e-18 * suffix); \
-  constexpr quantity femto ## suffix (1e-15 * suffix); \
-  constexpr quantity  pico ## suffix (1e-12 * suffix); \
-  constexpr quantity  nano ## suffix (1e-9  * suffix); \
-  constexpr quantity micro ## suffix (1e-6  * suffix); \
-  constexpr quantity milli ## suffix (1e-3  * suffix); \
-  constexpr quantity centi ## suffix (1e-2  * suffix); \
-  constexpr quantity  deci ## suffix (1e-1  * suffix); \
-  constexpr quantity  deca ## suffix (1e1   * suffix); \
-  constexpr quantity hecto ## suffix (1e2   * suffix); \
-  constexpr quantity  kilo ## suffix (1e3   * suffix); \
-  constexpr quantity  mega ## suffix (1e6   * suffix); \
-  constexpr quantity  giga ## suffix (1e9   * suffix); \
-  constexpr quantity  tera ## suffix (1e12  * suffix); \
-  constexpr quantity  peta ## suffix (1e15  * suffix); \
-  constexpr quantity   exa ## suffix (1e18  * suffix); \
-  constexpr quantity zetta ## suffix (1e21  * suffix); \
-  constexpr quantity yotta ## suffix (1e24  * suffix); 
+  #define SI_MODERN_PREFIXED_UNITS(QUANTITY, SUFFIX) \
+  constexpr QUANTITY yocto ## SUFFIX (1e-24 * SUFFIX); \
+  constexpr QUANTITY zepto ## SUFFIX (1e-21 * SUFFIX); \
+  constexpr QUANTITY  atto ## SUFFIX (1e-18 * SUFFIX); \
+  constexpr QUANTITY femto ## SUFFIX (1e-15 * SUFFIX); \
+  constexpr QUANTITY  pico ## SUFFIX (1e-12 * SUFFIX); \
+  constexpr QUANTITY  nano ## SUFFIX (1e-9  * SUFFIX); \
+  constexpr QUANTITY micro ## SUFFIX (1e-6  * SUFFIX); \
+  constexpr QUANTITY milli ## SUFFIX (1e-3  * SUFFIX); \
+  constexpr QUANTITY centi ## SUFFIX (1e-2  * SUFFIX); \
+  constexpr QUANTITY  deci ## SUFFIX (1e-1  * SUFFIX); \
+  constexpr QUANTITY  deca ## SUFFIX (1e1   * SUFFIX); \
+  constexpr QUANTITY hecto ## SUFFIX (1e2   * SUFFIX); \
+  constexpr QUANTITY  kilo ## SUFFIX (1e3   * SUFFIX); \
+  constexpr QUANTITY  mega ## SUFFIX (1e6   * SUFFIX); \
+  constexpr QUANTITY  giga ## SUFFIX (1e9   * SUFFIX); \
+  constexpr QUANTITY  tera ## SUFFIX (1e12  * SUFFIX); \
+  constexpr QUANTITY  peta ## SUFFIX (1e15  * SUFFIX); \
+  constexpr QUANTITY   exa ## SUFFIX (1e18  * SUFFIX); \
+  constexpr QUANTITY zetta ## SUFFIX (1e21  * SUFFIX); \
+  constexpr QUANTITY yotta ## SUFFIX (1e24  * SUFFIX); 
 
-  #define SI_MODERN_DOUBLE_PREFIXED_UNITS(quantity, prefix, suffix) \
-  constexpr quantity prefix ## yocto ## suffix (1e-24 * prefix ## suffix); \
-  constexpr quantity prefix ## zepto ## suffix (1e-21 * prefix ## suffix); \
-  constexpr quantity prefix ##  atto ## suffix (1e-18 * prefix ## suffix); \
-  constexpr quantity prefix ## femto ## suffix (1e-15 * prefix ## suffix); \
-  constexpr quantity prefix ##  pico ## suffix (1e-12 * prefix ## suffix); \
-  constexpr quantity prefix ##  nano ## suffix (1e-9  * prefix ## suffix); \
-  constexpr quantity prefix ## micro ## suffix (1e-6  * prefix ## suffix); \
-  constexpr quantity prefix ## milli ## suffix (1e-3  * prefix ## suffix); \
-  constexpr quantity prefix ## centi ## suffix (1e-2  * prefix ## suffix); \
-  constexpr quantity prefix ##  deci ## suffix (1e-1  * prefix ## suffix); \
-  constexpr quantity prefix ##  deca ## suffix (1e1   * prefix ## suffix); \
-  constexpr quantity prefix ## hecto ## suffix (1e2   * prefix ## suffix); \
-  constexpr quantity prefix ##  kilo ## suffix (1e3   * prefix ## suffix); \
-  constexpr quantity prefix ##  mega ## suffix (1e6   * prefix ## suffix); \
-  constexpr quantity prefix ##  giga ## suffix (1e9   * prefix ## suffix); \
-  constexpr quantity prefix ##  tera ## suffix (1e12  * prefix ## suffix); \
-  constexpr quantity prefix ##  peta ## suffix (1e15  * prefix ## suffix); \
-  constexpr quantity prefix ##   exa ## suffix (1e18  * prefix ## suffix); \
-  constexpr quantity prefix ## zetta ## suffix (1e21  * prefix ## suffix); \
-  constexpr quantity prefix ## yotta ## suffix (1e24  * prefix ## suffix); 
+  #define SI_MODERN_DOUBLE_PREFIXED_UNITS(QUANTITY, PREFIX, SUFFIX) \
+  constexpr QUANTITY PREFIX ## yocto ## SUFFIX (1e-24 * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ## zepto ## SUFFIX (1e-21 * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ##  atto ## SUFFIX (1e-18 * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ## femto ## SUFFIX (1e-15 * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ##  pico ## SUFFIX (1e-12 * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ##  nano ## SUFFIX (1e-9  * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ## micro ## SUFFIX (1e-6  * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ## milli ## SUFFIX (1e-3  * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ## centi ## SUFFIX (1e-2  * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ##  deci ## SUFFIX (1e-1  * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ##  deca ## SUFFIX (1e1   * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ## hecto ## SUFFIX (1e2   * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ##  kilo ## SUFFIX (1e3   * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ##  mega ## SUFFIX (1e6   * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ##  giga ## SUFFIX (1e9   * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ##  tera ## SUFFIX (1e12  * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ##  peta ## SUFFIX (1e15  * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ##   exa ## SUFFIX (1e18  * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ## zetta ## SUFFIX (1e21  * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ## yotta ## SUFFIX (1e24  * PREFIX ## SUFFIX); 
 
   constexpr mass<double> gram(1e-3);
   SI_MODERN_PREFIXED_UNITS(mass<double>, gram)
@@ -699,15 +699,15 @@ namespace si{
   so no historical literature exists that could have used CGS with these prefixes.
   Use of these prefixes with CGS might indicate an error and should not be permitted by introducing these units.
   */
-  #define SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(quantity, suffix) \
-  constexpr quantity micro ## suffix ( 1e-6  * suffix ); \
-  constexpr quantity milli ## suffix ( 1e-3  * suffix ); \
-  constexpr quantity centi ## suffix ( 1e-2  * suffix ); \
-  constexpr quantity  deci ## suffix ( 1e-1  * suffix ); \
-  constexpr quantity  deca ## suffix ( 1e1   * suffix ); \
-  constexpr quantity hecto ## suffix ( 1e2   * suffix ); \
-  constexpr quantity  kilo ## suffix ( 1e3   * suffix ); \
-  constexpr quantity  mega ## suffix ( 1e6   * suffix );
+  #define SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(QUANTITY, SUFFIX) \
+  constexpr QUANTITY micro ## SUFFIX ( 1e-6  * SUFFIX ); \
+  constexpr QUANTITY milli ## SUFFIX ( 1e-3  * SUFFIX ); \
+  constexpr QUANTITY centi ## SUFFIX ( 1e-2  * SUFFIX ); \
+  constexpr QUANTITY  deci ## SUFFIX ( 1e-1  * SUFFIX ); \
+  constexpr QUANTITY  deca ## SUFFIX ( 1e1   * SUFFIX ); \
+  constexpr QUANTITY hecto ## SUFFIX ( 1e2   * SUFFIX ); \
+  constexpr QUANTITY  kilo ## SUFFIX ( 1e3   * SUFFIX ); \
+  constexpr QUANTITY  mega ## SUFFIX ( 1e6   * SUFFIX );
 
   // see https://en.wikipedia.org/wiki/Non-SI_units_mentioned_in_the_SI
   constexpr length<double>   angstrom ( 1e-10 );
@@ -960,4 +960,9 @@ namespace si{
   {
     return ((K - standard_temperature) / kelvin);
   }
+
+  #undef SI_MODERN_PREFIXED_UNITS
+  #undef SI_MODERN_DOUBLE_PREFIXED_UNITS
+  #undef SI_DEPRECATED_PRE_1960_PREFIXED_UNITS
+
 }
