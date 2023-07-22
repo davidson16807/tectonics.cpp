@@ -124,3 +124,4 @@ TEST_CASE( "units addition commutativity", "[si]" ) {
     CHECK(V1+V2 == V2+V1);
   }
 }
+
