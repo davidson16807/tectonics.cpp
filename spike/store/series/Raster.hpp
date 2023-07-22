@@ -49,20 +49,17 @@ namespace series
 	protected:
 		std::vector<T> values;
 		Tgrid grid;
-		std::size_t copies_per_value;
 
 	public:
 		// copy constructor
 		Raster(const Raster<T,Tgrid,Tmap>& a)  : 
 			values(a.values),
-			grid(a.grid),
-			copies_per_value(1)
+			grid(a.grid)
 		{}
 
 		explicit Raster(const Tgrid& grid):
 			values(grid.feature_count(Tmap)),
-			grid(grid),
-			copies_per_value(1)
+			grid(grid)
 		{
 		}
 
@@ -70,8 +67,7 @@ namespace series
 		template<typename TIterator>
 		explicit Raster(const Tgrid& grid, TIterator first, TIterator last) : 
 			values(grid.feature_count(Tmap)),
-			grid(grid),
-			copies_per_value(1)
+			grid(grid)
 		{
 			assert(std::distance(first, last) == this->size());
 			std::size_t id = 0;
@@ -87,8 +83,7 @@ namespace series
 		// convenience constructor for vectors
 		explicit Raster(const Tgrid& grid, const std::initializer_list<T>& vector) : 
 			values(grid.feature_count(Tmap)),
-			grid(grid),
-			copies_per_value(1)
+			grid(grid)
 		{
 			assert(vector.size() == this->size());
 			std::copy(vector.begin(), vector.end(), this->begin());
@@ -97,8 +92,7 @@ namespace series
 		template <typename T2>
 		explicit Raster(const Raster<T2,Tgrid>& a)  : 
 			values(a.values),
-			grid(a.grid,) 
-			copies_per_value(1)
+			grid(a.grid,)
 		{
 			for (std::size_t i = 0; i < a.size(); ++i)
 			{
@@ -107,54 +101,14 @@ namespace series
 		}
 
 
-
-		explicit Raster(const std::size_t copies_per_value, const Tgrid& grid):
-			values(grid.feature_count(Tmap)),
-			grid(grid) ,
-			copies_per_value(copies_per_value)
-		{
-		}
-
-		// std container style constructor
-		template<typename TIterator>
-		explicit Raster(const std::size_t copies_per_value, const Tgrid& grid, TIterator first, TIterator last) : 
-			values(grid.feature_count(Tmap)),
-			grid(grid),
-			copies_per_value(copies_per_value)
-		{
-			assert(std::distance(first, last) == this->size());
-			std::size_t id = 0;
-			while (first!=last) 
-			{
-				this->values[id] = *first;
-				++first;
-				++id;
-			}
-		}
-
-		// convenience constructor for vectors
-		explicit Raster(const std::size_t copies_per_value, const Tgrid& grid, const std::initializer_list<T>& vector) : 
-			values(grid.feature_count(Tmap)),
-			grid(grid),
-			copies_per_value(copies_per_value)
-		{
-			assert(vector.size() == this->size());
-			std::copy(vector.begin(), vector.end(), this->begin());
-		}
-
-		template <typename T2>
-		explicit Raster(const std::size_t copies_per_value, const Raster<T2,Tgrid>& a)  : 
-			values(a.values),
-			grid(a.grid) ,
-			copies_per_value(copies_per_value)
-		{
-			for (std::size_t i = 0; i < a.size(); ++i)
-			{
-				this->values[i] = a[i];
-			}
-		}
 
 		// NOTE: all wrapper functions should to be marked inline 
+	    using size_type = std::size_t;
+		using value_type = typename T;
+		using const_reference = const value_type&;
+		using reference = value_type&;
+		using const_iterator = typename std::vector<T>::const_iterator;
+		using iterator = typename std::vector<T>::iterator;
 		inline std::size_t size() const                               { return values.size() * copies_per_value;  }
 		inline std::size_t max_size() const                           { return values.max_size() * copies_per_value;  }
 		inline std::size_t capacity() const                           { return values.capacity() * copies_per_value; }
@@ -167,8 +121,6 @@ namespace series
 	    inline typename std::vector<T>::const_iterator end()   const  { return values.end();   }
 	    inline typename std::vector<T>::iterator begin()              { return values.begin(); }
 	    inline typename std::vector<T>::iterator end()                { return values.end();   }
-	    using size_type = std::size_t;
-		using value_type = T;
 
 		inline typename std::vector<T>::const_reference operator[](const std::size_t memory_id ) const
 		{
