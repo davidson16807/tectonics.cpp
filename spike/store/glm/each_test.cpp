@@ -459,3 +459,564 @@ TEST_CASE( "Series<vec3> log2/exp2 invertibility", "[each]" ) {
     }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+TEST_CASE( "Series<T> dot() purity", "[each]" ) {
+    std::mt19937 generator(2);
+    auto a = each::get_random_vec3s(5, generator);
+    auto b = each::get_random_vec3s(5, generator);
+    auto c1 = each::series(5, 0.0f);
+    auto c2 = each::series(5, 0.0f);
+
+    SECTION("dot() must be called repeatedly without changing the output"){
+        each::dot(a, b, c1);
+        each::dot(a, b, c2);
+        CHECK(whole::equal(c1, c2, 1e-5));
+    }
+}
+
+// TEST_CASE( "Series<T> dot() identity", "[each]" ) {
+//     std::mt19937 generator(2);
+//     auto a = each::get_random_vec3s(5, generator);
+//     auto b = each::get_random_vec3s(5, generator);
+//     auto ab = each::get_random_vec3s(5, generator);
+//     auto ba = each::get_random_vec3s(5, generator);
+//
+//     SECTION("a+I must equal a"){
+//         CHECK(whole::equa, 1e-5l(a+zeros, a));
+//         CHECK(whole::equa, 1e-5l(a-zeros, a));
+//         CHECK(whole::equa, 1e-5l(a*ones , a));
+//         CHECK(whole::equa, 1e-5l(a/ones , a));
+//         CHECK(whole::equa, 1e-5l(a-a, zeros));
+//         CHECK(whole::equa, 1e-5l(a/a, ones ));
+//     }
+// }
+
+TEST_CASE( "Series<T> dot() commutativity", "[each]" ) {
+    std::mt19937 generator(2);
+    auto a = each::get_random_vec3s(5, generator);
+    auto b = each::get_random_vec3s(5, generator);
+    auto ab = each::series(5, 0.0f);
+    auto ba = each::series(5, 0.0f);
+
+    SECTION("dot(a,b) must equal dot(b,a)"){
+        each::dot(a, b, ab);
+        each::dot(a, b, ba);
+        CHECK(whole::equal(ab, ba, 1e-5));
+    }
+}
+
+TEST_CASE( "Series<T> dot() associativity", "[each]" ) {
+    std::mt19937 generator(2);
+    auto a = each::get_random_vec3s(5, generator);
+    auto b = each::get_random_vec3s(5, generator);
+    auto c = each::series({0.0f,1.0f,2.0f,3.0f,4.0f});
+    auto bc = each::get_random_vec3s(5, generator);
+    auto ab_c = each::series(5, 0.0f);
+    auto a_bc = each::series(5, 0.0f);
+
+    SECTION("dot(dot(a,b),c) must equal dot(a,dot(b,c))"){
+        each::dot(a, b, ab_c);
+        each::mult(ab_c, c, ab_c);
+        each::mult(b, c, bc);
+        each::dot(a, bc, a_bc);
+        CHECK(whole::equal(ab_c, a_bc, 1e-5));
+    }
+}
+
+TEST_CASE( "Series<T> dot() distributivity", "[each]" ) {
+    std::mt19937 generator(2);
+    auto a = each::get_random_vec3s(5, generator);
+    auto b = each::get_random_vec3s(5, generator);
+    auto c = each::get_random_vec3s(5, generator);
+    auto ab = each::get_random_vec3s(5, generator);
+    auto ac = each::series(5, 0.0f);
+    auto bc = each::series(5, 0.0f);
+    auto ab_c = each::series(5, 0.0f);
+    auto ac_bc = each::series(5, 0.0f);
+
+    SECTION("a+b must equal b+a"){
+        each::add(a, b, ab);
+        each::dot(ab, c, ab_c);
+        each::dot(a, c, ac);
+        each::dot(b, c, bc);
+        each::add(ac, bc, ac_bc);
+        CHECK(whole::equal(ab_c, ac_bc, 1e-5));
+    }
+}
+
+
+
+
+
+
+TEST_CASE( "Series<T>/singleton dot() purity", "[each]" ) {
+    std::mt19937 generator(2);
+    auto a = each::get_random_vec3s(5, generator);
+    auto b = each::uniform(glm::vec3(-1,0.5,2));
+    auto c1 = each::series(5, 0.0f);
+    auto c2 = each::series(5, 0.0f);
+
+    SECTION("dot() must be called repeatedly without changing the output"){
+        each::dot(a, b, c1);
+        each::dot(a, b, c2);
+        CHECK(whole::equal(c1, c2, 1e-5));
+    }
+}
+
+// TEST_CASE( "Series<T>/singleton dot() identity", "[each]" ) {
+//     std::mt19937 generator(2);
+//     auto a = each::get_random_vec3s(5, generator);
+//     auto b = each::uniform(glm::vec3(-1,0.5,2));
+//     auto ab = each::get_random_vec3s(5, generator);
+//     auto ba = each::get_random_vec3s(5, generator);
+//
+//     SECTION("a+I must equal a"){
+//         CHECK(whole::equa, 1e-5l(a+zeros, a));
+//         CHECK(whole::equa, 1e-5l(a-zeros, a));
+//         CHECK(whole::equa, 1e-5l(a*ones , a));
+//         CHECK(whole::equa, 1e-5l(a/ones , a));
+//         CHECK(whole::equa, 1e-5l(a-a, zeros));
+//         CHECK(whole::equa, 1e-5l(a/a, ones ));
+//     }
+// }
+
+TEST_CASE( "Series<T>/singleton dot() commutativity", "[each]" ) {
+    std::mt19937 generator(2);
+    auto a = each::get_random_vec3s(5, generator);
+    auto b = each::uniform(glm::vec3(-1,0.5,2));
+    auto ab = each::series(5, 0.0f);
+    auto ba = each::series(5, 0.0f);
+
+    SECTION("dot(a,b) must equal dot(b,a)"){
+        each::dot(a, b, ab);
+        each::dot(a, b, ba);
+        CHECK(whole::equal(ab, ba, 1e-5));
+    }
+}
+
+TEST_CASE( "Series<T>/singleton dot() associativity", "[each]" ) {
+    std::mt19937 generator(2);
+    auto a = each::get_random_vec3s(5, generator);
+    auto b = each::uniform(glm::vec3(-1,0.5,2));
+    auto c = each::series({0.0f,1.0f,2.0f,3.0f,4.0f});
+    auto bc = each::get_random_vec3s(5, generator);
+    auto ab_c = each::series(5, 0.0f);
+    auto a_bc = each::series(5, 0.0f);
+
+    SECTION("dot(dot(a,b),c) must equal dot(a,dot(b,c))"){
+        each::dot(a, b, ab_c);
+        each::mult(ab_c, c, ab_c);
+        each::mult(b, c, bc);
+        each::dot(a, bc, a_bc);
+        CHECK(whole::equal(ab_c, a_bc, 1e-5));
+    }
+}
+
+TEST_CASE( "Series<T>/singleton dot() distributivity", "[each]" ) {
+    std::mt19937 generator(2);
+    auto a = each::get_random_vec3s(5, generator);
+    auto b = each::uniform(glm::vec3(-1,0.5,2));
+    auto c = each::get_random_vec3s(5, generator);
+    auto ab = each::get_random_vec3s(5, generator);
+    auto ac = each::series(5, 0.0f);
+    auto bc = each::series(5, 0.0f);
+    auto ab_c = each::series(5, 0.0f);
+    auto ac_bc = each::series(5, 0.0f);
+
+    SECTION("a+b must equal b+a"){
+        each::add(a, b, ab);
+        each::dot(ab, c, ab_c);
+        each::dot(a, c, ac);
+        each::dot(b, c, bc);
+        each::add(ac, bc, ac_bc);
+        CHECK(whole::equal(ab_c, ac_bc, 1e-5));
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TEST_CASE( "Series<T> cross() purity", "[each]" ) {
+    std::mt19937 generator(2);
+    auto a = each::get_random_vec3s(5, generator);
+    auto b = each::get_random_vec3s(5, generator);
+    auto c1 = each::get_random_vec3s(5, generator);
+    auto c2 = each::get_random_vec3s(5, generator);
+
+    SECTION("cross() must be called repeatedly without changing the output"){
+        each::cross(a, b, c1);
+        each::cross(a, b, c2);
+        CHECK(whole::equal(c1, c2, 1e-5));
+    }
+}
+
+// TEST_CASE( "Series<T> cross() identity", "[each]" ) {
+//     std::mt19937 generator(2);
+//     auto a = each::get_random_vec3s(5, generator);
+//     auto b = each::get_random_vec3s(5, generator);
+//     auto ab = each::get_random_vec3s(5, generator);
+//     auto ba = each::get_random_vec3s(5, generator);
+//
+//     SECTION("a+I must equal a"){
+//         CHECK(whole::equa, 1e-5l(a+zeros, a));
+//         CHECK(whole::equa, 1e-5l(a-zeros, a));
+//         CHECK(whole::equa, 1e-5l(a*ones , a));
+//         CHECK(whole::equa, 1e-5l(a/ones , a));
+//         CHECK(whole::equa, 1e-5l(a-a, zeros));
+//         CHECK(whole::equa, 1e-5l(a/a, ones ));
+//     }
+// }
+
+TEST_CASE( "Series<T> cross() anticommutativity", "[each]" ) {
+    std::mt19937 generator(2);
+    auto a = each::get_random_vec3s(5, generator);
+    auto b = each::get_random_vec3s(5, generator);
+    auto ab = each::get_random_vec3s(5, generator);
+    auto ba = each::get_random_vec3s(5, generator);
+    auto n_ba = each::get_random_vec3s(5, generator);
+
+    SECTION("cross(a,b) must equal -cross(b,a)"){
+        each::cross(a, b, ab);
+        each::cross(b, a, ba);
+        each::mult(ba, each::uniform(-1.0f), n_ba);
+        CHECK(whole::equal(ab, n_ba, 1e-5));
+    }
+}
+
+
+TEST_CASE( "Series<T> cross() distributivity", "[each]" ) {
+    std::mt19937 generator(2);
+    auto a = each::get_random_vec3s(5, generator);
+    auto b = each::get_random_vec3s(5, generator);
+    auto c = each::get_random_vec3s(5, generator);
+    auto ab = each::get_random_vec3s(5, generator);
+    auto ac = each::get_random_vec3s(5, generator);
+    auto bc = each::get_random_vec3s(5, generator);
+    auto ab_c = each::get_random_vec3s(5, generator);
+    auto ac_bc = each::get_random_vec3s(5, generator);
+
+    SECTION("a+b must equal b+a"){
+        each::add(a, b, ab);
+        each::cross(ab, c, ab_c);
+        each::cross(a, c, ac);
+        each::cross(b, c, bc);
+        each::add(ac, bc, ac_bc);
+        CHECK(whole::equal(ab_c, ac_bc, 1e-5));
+    }
+}
+
+
+
+
+
+
+TEST_CASE( "Series<T>/singleton cross() purity", "[each]" ) {
+    std::mt19937 generator(2);
+    auto a = each::get_random_vec3s(5, generator);
+    auto b = each::uniform(glm::vec3(-1,0.5,2));
+    auto c1 = each::get_random_vec3s(5, generator);
+    auto c2 = each::get_random_vec3s(5, generator);
+
+    SECTION("cross() must be called repeatedly without changing the output"){
+        each::cross(a, b, c1);
+        each::cross(a, b, c2);
+        CHECK(whole::equal(c1, c2, 1e-5));
+    }
+}
+
+// TEST_CASE( "Series<T>/singleton cross() identity", "[each]" ) {
+//     std::mt19937 generator(2);
+//     auto a = each::get_random_vec3s(5, generator);
+//     auto b = each::uniform(glm::vec3(-1,0.5,2));
+//     auto ab = each::get_random_vec3s(5, generator);
+//     auto ba = each::get_random_vec3s(5, generator);
+//
+//     SECTION("a+I must equal a"){
+//         CHECK(whole::equa, 1e-5l(a+zeros, a));
+//         CHECK(whole::equa, 1e-5l(a-zeros, a));
+//         CHECK(whole::equa, 1e-5l(a*ones , a));
+//         CHECK(whole::equa, 1e-5l(a/ones , a));
+//         CHECK(whole::equa, 1e-5l(a-a, zeros));
+//         CHECK(whole::equa, 1e-5l(a/a, ones ));
+//     }
+// }
+
+TEST_CASE( "Series<T>/singleton cross() anticommutativity", "[each]" ) {
+    std::mt19937 generator(2);
+    auto a = each::get_random_vec3s(5, generator);
+    auto b = each::uniform(glm::vec3(-1,0.5,2));
+    auto ab = each::get_random_vec3s(5, generator);
+    auto ba = each::get_random_vec3s(5, generator);
+    auto n_ba = each::get_random_vec3s(5, generator);
+
+    SECTION("cross(a,b) must equal -cross(b,a)"){
+        each::cross(a, b, ab);
+        each::cross(b, a, ba);
+        each::mult(ba, each::uniform(-1.0f), n_ba);
+        CHECK(whole::equal(ab, n_ba, 1e-5));
+    }
+}
+
+TEST_CASE( "Series<T>/singleton cross() distributivity", "[each]" ) {
+    std::mt19937 generator(2);
+    auto a = each::get_random_vec3s(5, generator);
+    auto b = each::uniform(glm::vec3(-1,0.5,2));
+    auto c = each::get_random_vec3s(5, generator);
+    auto ab = each::get_random_vec3s(5, generator);
+    auto ac = each::get_random_vec3s(5, generator);
+    auto bc = each::get_random_vec3s(5, generator);
+    auto ab_c = each::get_random_vec3s(5, generator);
+    auto ac_bc = each::get_random_vec3s(5, generator);
+
+    SECTION("a+b must equal b+a"){
+        each::add(a, b, ab);
+        each::cross(ab, c, ab_c);
+        each::cross(a, c, ac);
+        each::cross(b, c, bc);
+        each::add(ac, bc, ac_bc);
+        CHECK(whole::equal(ab_c, ac_bc, 1e-5));
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TEST_CASE( "Series<T> distance() purity", "[each]" ) {
+    std::mt19937 generator(2);
+    auto a = each::get_random_vec3s(5, generator);
+    auto b = each::get_random_vec3s(5, generator);
+    auto c1 = each::series(5, 0.0f);
+    auto c2 = each::series(5, 0.0f);
+
+    SECTION("distance() must be called repeatedly without changing the output"){
+        each::distance(a, b, c1);
+        each::distance(a, b, c2);
+        CHECK(whole::equal(c1, c2, 1e-5));
+    }
+}
+
+// TEST_CASE( "Series<T> distance() identity", "[each]" ) {
+//     std::mt19937 generator(2);
+//     auto a = each::get_random_vec3s(5, generator);
+//     auto b = each::get_random_vec3s(5, generator);
+//     auto ab = each::get_random_vec3s(5, generator);
+//     auto ba = each::get_random_vec3s(5, generator);
+//
+//     SECTION("a+I must equal a"){
+//         CHECK(whole::equal(, 1e-5a+zeros, a));
+//         CHECK(whole::equal(, 1e-5a-zeros, a));
+//         CHECK(whole::equal(, 1e-5a*ones , a));
+//         CHECK(whole::equal(, 1e-5a/ones , a));
+//         CHECK(whole::equal(, 1e-5a-a, zeros));
+//         CHECK(whole::equal(, 1e-5a/a, ones ));
+//     }
+// }
+
+TEST_CASE( "Series<T> distance() commutativity", "[each]" ) {
+    std::mt19937 generator(2);
+    auto a = each::get_random_vec3s(5, generator);
+    auto b = each::get_random_vec3s(5, generator);
+    auto ab = each::series(5, 0.0f);
+    auto ba = each::series(5, 0.0f);
+
+    SECTION("distance(a,b) must equal distance(b,a)"){
+        each::distance(a, b, ab);
+        each::distance(a, b, ba);
+        CHECK(whole::equal(ab, ba, 1e-5));
+    }
+}
+
+// TEST_CASE( "Series<T> distance() associativity", "[each]" ) {
+//     std::mt19937 generator(2);
+//     auto a = each::get_random_vec3s(5, generator);
+//     auto b = each::get_random_vec3s(5, generator);
+//     auto c = each::series({0.0f,1.0f,2.0f,3.0f,4.0f});
+//     auto bc = each::get_random_vec3s(5, generator);
+//     auto ab_c = each::series(5, 0.0f);
+//     auto a_bc = each::series(5, 0.0f);
+
+//     SECTION("distance(distance(a,b),c) must equal distance(a,distance(b,c))"){
+//         each::distance(a, b, ab_c);
+//         each::mult(ab_c, c, ab_c);
+//         each::mult(b, c, bc);
+//         each::distance(a, bc, a_bc);
+//         CHECK(whole::equal(, 1e-5ab_c, a_bc));
+//     }
+// }
+
+TEST_CASE( "Series<T> distance() translational invariance", "[each]" ) {
+    std::mt19937 generator(2);
+    auto a = each::get_random_vec3s(5, generator);
+    auto b = each::get_random_vec3s(5, generator);
+    auto c = each::get_random_vec3s(5, generator);
+    auto ac = each::get_random_vec3s(5, generator);
+    auto bc = each::get_random_vec3s(5, generator);
+    auto ab = each::series(5, 0.0f);
+    auto ac_bc = each::series(5, 0.0f);
+
+    SECTION("a+b must equal b+a"){
+        each::add(a, c, ac);
+        each::add(b, c, bc);
+        each::distance(ac, bc, ac_bc);
+        each::distance(a, b, ab);
+        CHECK(whole::equal(ac_bc, ab, 1e-5));
+    }
+}
+
+
+
+
+
+
+TEST_CASE( "Series<T>/singleton distance() purity", "[each]" ) {
+    std::mt19937 generator(2);
+    auto a = each::get_random_vec3s(5, generator);
+    auto b = each::uniform(glm::vec3(-1,0.5,2));
+    auto c1 = each::series(5, 0.0f);
+    auto c2 = each::series(5, 0.0f);
+
+    SECTION("distance() must be called repeatedly without changing the output"){
+        each::distance(a, b, c1);
+        each::distance(a, b, c2);
+        CHECK(whole::equal(c1, c2, 1e-5));
+    }
+}
+
+// TEST_CASE( "Series<T>/singleton distance() identity", "[each]" ) {
+//     std::mt19937 generator(2);
+//     auto a = each::get_random_vec3s(5, generator);
+//     auto b = each::uniform(glm::vec3(-1,0.5,2));
+//     auto ab = each::get_random_vec3s(5, generator);
+//     auto ba = each::get_random_vec3s(5, generator);
+//
+//     SECTION("a+I must equal a"){
+//         CHECK(whole::equal(, 1e-5each::add (a,zeros), a));
+//         CHECK(whole::equal(, 1e-5each::sub (a,zeros), a));
+//         CHECK(whole::equal(, 1e-5each::mult(a,ones ), a));
+//         CHECK(whole::equal(, 1e-5each::div (a,ones ), a));
+//         CHECK(whole::equal(, 1e-5each::sub (a,a), zeros));
+//         CHECK(whole::equal(, 1e-5each::div (a,a), ones ));
+//     }
+// }
+
+TEST_CASE( "Series<T>/singleton distance() commutativity", "[each]" ) {
+    std::mt19937 generator(2);
+    auto a = each::get_random_vec3s(5, generator);
+    auto b = each::uniform(glm::vec3(-1,0.5,2));
+    auto ab = each::series(5, 0.0f);
+    auto ba = each::series(5, 0.0f);
+
+    SECTION("distance(a,b) must equal distance(b,a)"){
+        each::distance(a, b, ab);
+        each::distance(a, b, ba);
+        CHECK(whole::equal(ab, ba, 1e-5));
+    }
+}
+
+// TEST_CASE( "Series<T>/singleton distance() associativity", "[each]" ) {
+//     std::mt19937 generator(2);
+//     auto a = each::get_random_vec3s(5, generator);
+//     auto b = each::uniform(glm::vec3(-1,0.5,2));
+//     auto c = each::series({0.0f,1.0f,2.0f,3.0f,4.0f});
+//     auto bc = each::get_random_vec3s(5, generator);
+//     auto ab_c = each::series(5, 0.0f);
+//     auto a_bc = each::series(5, 0.0f);
+
+//     SECTION("distance(distance(a,b),c) must equal distance(a,distance(b,c))"){
+//         each::distance(a, b, ab_c);
+//         each::mult(ab_c, c, ab_c);
+//         each::mult(b, c, bc);
+//         each::distance(a, bc, a_bc);
+//         CHECK(whole::equal(, 1e-5ab_c, a_bc));
+//     }
+// }
+
+TEST_CASE( "Series<T>/singleton distance() translational invariance", "[each]" ) {
+    std::mt19937 generator(2);
+    auto a = each::get_random_vec3s(5, generator);
+    auto b = each::uniform(glm::vec3(-1,0.5,2));
+    auto c = each::get_random_vec3s(5, generator);
+    auto ac = each::get_random_vec3s(5, generator);
+    auto bc = each::get_random_vec3s(5, generator);
+    auto ab = each::series(5, 0.0f);
+    auto ac_bc = each::series(5, 0.0f);
+
+    SECTION("a+b must equal b+a"){
+        each::add(a, c, ac);
+        each::add(b, c, bc);
+        each::distance(ac, bc, ac_bc);
+        each::distance(a, b, ab);
+        CHECK(whole::equal(ac_bc, ab, 1e-5));
+    }
+}
+
+
+
+
+
+
+
+// TEST_CASE( "Series<T> length() scale invariance", "[each]" ) {
+//     std::mt19937 generator(2);
+//     auto a = each::get_random_vec3s(5, generator);
+//     auto a5 = each::get_random_vec3s(5, generator);
+//     auto l_a5 = each::series(5, 0.0f);
+//     auto la_5 = each::series(5, 0.0f);
+
+//     SECTION("length(a*b) must equal length(a)*b for b>=0"){
+//         each::mult(a, each::uniform(5.0f), a5);
+//         each::length(a5, l_a5);
+//         each::length(a, la_5);
+//         each::mult(la_5, each::uniform(5.0f), la_5);
+//         CHECK(whole::equal(la_5, l_a5, 1e-5));
+//     }
+// }
+

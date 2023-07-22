@@ -78,8 +78,51 @@ namespace each {
 	EACH_BINARY_GLM_WRAPPER(greaterThanEqual)
 	EACH_BINARY_GLM_WRAPPER(lessThanEqual)
 
+	#define EACH_UNARY_FUNCTION(NAME) \
+	template <typename T1, typename Tout>\
+	void NAME(const T1& a, Tout& out)\
+	{\
+		assert(compatible(a,out));\
+		auto size = out.size();\
+		for (std::size_t i = 0; i < size; ++i)\
+		{\
+			out[i] = NAME(a[i]);\
+		}\
+	}
+
+	EACH_UNARY_GLM_WRAPPER(length)  
+	EACH_UNARY_GLM_WRAPPER(normalize)  
+
+	EACH_UNARY_FUNCTION(length)
+	EACH_UNARY_FUNCTION(normalize)
+
+	#define EACH_BINARY_FUNCTION(NAME) \
+	template <typename T1, typename T2, typename Tout>\
+	void NAME(const T1& a, const T2& b, Tout& out)\
+	{\
+		assert(compatible(a,b,out));\
+		auto size = out.size();\
+		for (std::size_t i = 0; i < size; ++i)\
+		{\
+			out[i] = NAME(a[i], b[i]);\
+		}\
+	}
+
+	EACH_BINARY_GLM_WRAPPER(dot)  
+	EACH_BINARY_GLM_WRAPPER(cross)  
+	EACH_BINARY_GLM_WRAPPER(reflect)  
+	EACH_BINARY_GLM_WRAPPER(refract)
+
+	EACH_BINARY_FUNCTION(dot)
+	EACH_BINARY_FUNCTION(cross)
+	EACH_BINARY_FUNCTION(reflect)
+	EACH_BINARY_FUNCTION(refract)
+
 	#undef EACH_UNARY_GLM_WRAPPER
+	#undef EACH_UNARY_FUNCTION
+
 	#undef EACH_BINARY_GLM_WRAPPER
+	#undef EACH_BINARY_FUNCTION
 
 }
 

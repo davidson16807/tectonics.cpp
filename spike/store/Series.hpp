@@ -225,6 +225,11 @@ namespace each
 	{
 		return Series<T>(list);
 	}
+	template<typename T>		// convenience constructor for vectors
+	inline Series<T> series(const std::size_t N, const T a)
+	{
+		return Series<T>(N, a);
+	}
 
 
 	template<typename T>		
