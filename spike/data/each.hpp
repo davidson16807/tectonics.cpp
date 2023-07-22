@@ -84,6 +84,7 @@ namespace data
 	template <typename T1> inline auto sqrt(const T1 a) { return std::sqrt(a); }
 	template <typename T1> inline auto inversesqrt(const T1 a) { return T1(1)/std::sqrt(a); }
 	template <typename T1, int N> inline auto pow(const T1 a) { return std::pow(a,N); }
+	template <typename T1> inline auto negate(const T1 a) { return !a; }
 	EACH_UNARY_FUNCTION(abs)   
 	EACH_UNARY_FUNCTION(floor) 
 	EACH_UNARY_FUNCTION(sign)  
@@ -101,6 +102,7 @@ namespace data
 	EACH_UNARY_FUNCTION(log10) 
 	EACH_UNARY_FUNCTION(sqrt) 
 	EACH_UNARY_FUNCTION(inversesqrt) 
+	EACH_UNARY_FUNCTION(negate) 
 	#undef EACH_UNARY_FUNCTION
 
 
@@ -126,6 +128,9 @@ namespace data
 	template <typename T1, typename T2> inline auto lessThan(const T1 a, const T2 b){return a < b;}
 	template <typename T1, typename T2> inline auto greaterThanEqual(const T1 a, const T2 b){return a >= b;}
 	template <typename T1, typename T2> inline auto lessThanEqual(const T1 a, const T2 b){return a <= b;}
+	template <typename T1, typename T2> inline auto unite(const T1 a, const T2 b){return a || b;}
+	template <typename T1, typename T2> inline auto intersect(const T1 a, const T2 b){return a && b;}
+	template <typename T1, typename T2> inline auto differ(const T1 a, const T2 b){return a && !b;}
 	EACH_BINARY_FUNCTION(mod)  
 	EACH_BINARY_FUNCTION(min)  
 	EACH_BINARY_FUNCTION(max)  
@@ -137,6 +142,9 @@ namespace data
 	EACH_BINARY_FUNCTION(lessThan)
 	EACH_BINARY_FUNCTION(greaterThanEqual)
 	EACH_BINARY_FUNCTION(lessThanEqual)
+	EACH_BINARY_FUNCTION(unite)
+	EACH_BINARY_FUNCTION(intersect)
+	EACH_BINARY_FUNCTION(differ)
 	#undef EACH_BINARY_FUNCTION
 
 
