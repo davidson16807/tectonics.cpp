@@ -7,6 +7,7 @@
 #include "glm/each.hpp"
 
 #include "series/Interleave.hpp"
+#include "series/Uniform.hpp"
 #include "each.hpp"
 #include "whole.hpp"
 
@@ -142,7 +143,7 @@ TEST_CASE( "Series<T> arithmetic distributivity", "[each]" ) {
 
 TEST_CASE( "Series<T>/Uniform<T> arithmetic purity", "[each]" ) {
     auto a = series::interleave({1,2,3,4,5});
-    auto b = each::uniform(-2);
+    auto b = series::uniform(-2);
     auto c1 = series::interleave({0,0,0,0,0});
     auto c2 = series::interleave({0,0,0,0,0});
 
@@ -173,8 +174,8 @@ TEST_CASE( "Series<T>/Uniform<T> arithmetic purity", "[each]" ) {
 
 TEST_CASE( "Series<T>/Uniform<T> arithmetic identity", "[each]" ) {
     auto a = series::interleave({1,2,3,4,5});
-    auto zeros = each::uniform(0);
-    auto ones  = each::uniform(1);
+    auto zeros = series::uniform(0);
+    auto ones  = series::uniform(1);
     auto c = series::interleave({0,0,0,0,0});
 
     SECTION("a+I must equal a"){
@@ -195,7 +196,7 @@ TEST_CASE( "Series<T>/Uniform<T> arithmetic identity", "[each]" ) {
 
 TEST_CASE( "Series<T>/Uniform<T> arithmetic commutativity", "[each]" ) {
     auto a = series::interleave({1,2,3,4,5});
-    auto b = each::uniform(-2);
+    auto b = series::uniform(-2);
     auto ab = series::interleave({0,0,0,0,0});
     auto ba = series::interleave({0,0,0,0,0});
 
@@ -213,7 +214,7 @@ TEST_CASE( "Series<T>/Uniform<T> arithmetic commutativity", "[each]" ) {
 
 TEST_CASE( "Series<T>/Uniform<T> arithmetic associativity", "[each]" ) {
     auto a = series::interleave({1,2,3,4,5});
-    auto b = each::uniform(-2);
+    auto b = series::uniform(-2);
     auto c = series::interleave({1,1,2,3,5});
     auto ab_c = series::interleave({0,0,0,0,0});
     auto a_bc = series::interleave({0,0,0,0,0});
@@ -236,7 +237,7 @@ TEST_CASE( "Series<T>/Uniform<T> arithmetic associativity", "[each]" ) {
 
 TEST_CASE( "Series<T>/Uniform<T> arithmetic distributivity", "[each]" ) {
     auto a = series::interleave({1,2,3,4,5});
-    auto b = each::uniform(-2);
+    auto b = series::uniform(-2);
     auto c = series::interleave({1.0,1.0,2.0,3.0,5.0});
     auto ab_c  = series::interleave({0.0,0.0,0.0,0.0,0.0});
     auto ac_bc = series::interleave({0.0,0.0,0.0,0.0,0.0});
@@ -287,11 +288,11 @@ TEST_CASE( "Series<T> sqrt consistency", "[each]" ) {
 
     SECTION("sqrt(a) must equal pow(a,1/2)"){
         each::sqrt(a,    sqrt1);
-        each::pow (a,each::uniform(0.5f),sqrt2);
+        each::pow (a,series::uniform(0.5f),sqrt2);
         CHECK(whole::equal(sqrt1 , sqrt2, 1e-7));
 
         each::sqrt(b,    sqrt1);
-        each::pow (b,each::uniform(0.5f),sqrt2);
+        each::pow (b,series::uniform(0.5f),sqrt2);
         CHECK(whole::equal(sqrt1 , sqrt2, 1e-7));
     }
 
@@ -305,7 +306,7 @@ TEST_CASE( "Series<T> log consistency", "[each]" ) {
     SECTION("log2(a) must equal log(a)/log(2)"){
         each::log2(a, log1_);
         each::log (a, log2_);
-        each::div (log2_, each::uniform(std::log(2.f)), log2_);
+        each::div (log2_, series::uniform(std::log(2.f)), log2_);
         CHECK(whole::equal(log1_ , log2_, 1e-7));
     }
 }
@@ -555,21 +556,21 @@ TEST_CASE( "Series<T> trigonometric cofunctions", "[each]" ) {
     auto c2 = series::interleave({0.0,0.0,0.0,0.0,0.0});
 
     SECTION("sin must equal cos for input that is rotated by π/2"){
-        each::sub(each::uniform(pi/2.0), a, c1);
+        each::sub(series::uniform(pi/2.0), a, c1);
         each::cos(c1,c1);
         each::sin(a,c2);
         CHECK(whole::equal(c1, c2, 1e-7));
-        each::sub(each::uniform(pi/2.0), b, c1);
+        each::sub(series::uniform(pi/2.0), b, c1);
         each::cos(c1,c1);
         each::sin(b,c2);
         CHECK(whole::equal(c1, c2, 1e-7));
     }
     SECTION("tan must equal cot for input that is rotated by π/2"){
-        each::sub(each::uniform(pi/2.0), a, c1);
+        each::sub(series::uniform(pi/2.0), a, c1);
         each::cot(c1,c1);
         each::tan(a,c2);
         CHECK(whole::equal(c1, c2, 1e-7));
-        each::sub(each::uniform(pi/2.0), b, c1);
+        each::sub(series::uniform(pi/2.0), b, c1);
         each::cot(c1,c1);
         each::tan(b,c2);
         CHECK(whole::equal(c1, c2, 1e-7));
@@ -585,76 +586,76 @@ TEST_CASE( "Series<T> trigonometric negative angle identities", "[each]" ) {
     auto c2 = series::interleave({0.0,0.0,0.0,0.0,0.0});
 
     SECTION("negated sin must equal sin for negated input"){
-        each::mult(each::uniform(-1.0), a, c1);
+        each::mult(series::uniform(-1.0), a, c1);
         each::sin(c1,c1);
         each::sin(a,c2);
-        each::mult(each::uniform(-1.0),c2,c2);
+        each::mult(series::uniform(-1.0),c2,c2);
         CHECK(whole::equal(c1, c2, 1e-7));
-        each::mult(each::uniform(-1.0), b, c1);
+        each::mult(series::uniform(-1.0), b, c1);
         each::sin(c1,c1);
         each::sin(b,c2);
-        each::mult(each::uniform(-1.0),c2,c2);
+        each::mult(series::uniform(-1.0),c2,c2);
         CHECK(whole::equal(c1, c2, 1e-7));
     }
 
     SECTION("negated cos must equal cos for negated input"){
-        each::mult(each::uniform(-1.0), a, c1);
+        each::mult(series::uniform(-1.0), a, c1);
         each::cos(c1,c1);
         each::cos(a,c2);
         CHECK(whole::equal(c1, c2, 1e-7));
-        each::mult(each::uniform(-1.0), b, c1);
+        each::mult(series::uniform(-1.0), b, c1);
         each::cos(c1,c1);
         each::cos(b,c2);
         CHECK(whole::equal(c1, c2, 1e-7));
     }
 
     SECTION("negated tan must equal tan for negated input"){
-        each::mult(each::uniform(-1.0), a, c1);
+        each::mult(series::uniform(-1.0), a, c1);
         each::tan(c1,c1);
         each::tan(a,c2);
-        each::mult(each::uniform(-1.0),c2,c2);
+        each::mult(series::uniform(-1.0),c2,c2);
         CHECK(whole::equal(c1, c2, 1e-7));
-        each::mult(each::uniform(-1.0), b, c1);
+        each::mult(series::uniform(-1.0), b, c1);
         each::tan(c1,c1);
         each::tan(b,c2);
-        each::mult(each::uniform(-1.0),c2,c2);
+        each::mult(series::uniform(-1.0),c2,c2);
         CHECK(whole::equal(c1, c2, 1e-7));
     }
 
     SECTION("negated csc must equal csc for negated input"){
-        each::mult(each::uniform(-1.0), a, c1);
+        each::mult(series::uniform(-1.0), a, c1);
         each::csc(c1,c1);
         each::csc(a,c2);
-        each::mult(each::uniform(-1.0),c2,c2);
+        each::mult(series::uniform(-1.0),c2,c2);
         CHECK(whole::equal(c1, c2, 1e-7));
-        each::mult(each::uniform(-1.0), b, c1);
+        each::mult(series::uniform(-1.0), b, c1);
         each::csc(c1,c1);
         each::csc(b,c2);
-        each::mult(each::uniform(-1.0),c2,c2);
+        each::mult(series::uniform(-1.0),c2,c2);
         CHECK(whole::equal(c1, c2, 1e-7));
     }
 
     SECTION("negated sec must equal sec for negated input"){
-        each::mult(each::uniform(-1.0), a, c1);
+        each::mult(series::uniform(-1.0), a, c1);
         each::sec(c1,c1);
         each::sec(a,c2);
         CHECK(whole::equal(c1, c2, 1e-7));
-        each::mult(each::uniform(-1.0), b, c1);
+        each::mult(series::uniform(-1.0), b, c1);
         each::sec(c1,c1);
         each::sec(b,c2);
         CHECK(whole::equal(c1, c2, 1e-7));
     }
 
     SECTION("negated cot must equal cot for negated input"){
-        each::mult(each::uniform(-1.0), a, c1);
+        each::mult(series::uniform(-1.0), a, c1);
         each::cot(c1,c1);
         each::cot(a,c2);
-        each::mult(each::uniform(-1.0),c2,c2);
+        each::mult(series::uniform(-1.0),c2,c2);
         CHECK(whole::equal(c1, c2, 1e-7));
-        each::mult(each::uniform(-1.0), b, c1);
+        each::mult(series::uniform(-1.0), b, c1);
         each::cot(c1,c1);
         each::cot(b,c2);
-        each::mult(each::uniform(-1.0),c2,c2);
+        each::mult(series::uniform(-1.0),c2,c2);
         CHECK(whole::equal(c1, c2, 1e-7));
     }
 }

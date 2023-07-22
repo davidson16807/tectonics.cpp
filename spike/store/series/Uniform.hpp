@@ -10,7 +10,7 @@
 #include <vector>           // std::vector
 #include <memory>
 
-namespace each
+namespace series
 {
 
 

@@ -11,6 +11,7 @@
 #include "glm/each.hpp"
 
 #include "series/Interleave.hpp"
+#include "series/Uniform.hpp"
 #include "each.hpp"
 #include "whole.hpp"
 
@@ -96,7 +97,7 @@ TEST_CASE( "Series<T> mod/fract consistency", "[whole]" ) {
     auto out1 = series::interleave({0,0,0,0,0});
     auto out2 = series::interleave({0,0,0,0,0});
     SECTION("mod(a,1) must generate the same output as fract(a) for positive numbers"){
-        each::mod(a, each::uniform(1), out1);
+        each::mod(a, series::uniform(1), out1);
         each::fract(a, out2);
         CHECK(whole::equal(out1, out2));
     }

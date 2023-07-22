@@ -9,8 +9,6 @@
 #include <vector>           // std::vector
 #include <memory>
 
-#include "Uniform.hpp"
-
 namespace series
 {
 

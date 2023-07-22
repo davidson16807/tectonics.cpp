@@ -44,7 +44,7 @@ namespace each
     {
         series::Interleave<glm::bvec3> output(size);
         series::Interleave<glm::vec3> temp = get_random_vec3s(size, generator);
-        each::greaterThan(temp, each::uniform(glm::vec3(0.5f)), output);
+        each::greaterThan(temp, series::uniform(glm::vec3(0.5f)), output);
         return output;
     }
 }
