@@ -2,12 +2,15 @@
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include <catch/catch.hpp>
 
+// HACK: order of tests is arbitrary and glm each must be loaded first to permit template specialization
+// so we include it here despite not necessarily needing it.
+#include "glm/each.hpp"
+
 #include "Series.hpp"
-#include "each.hpp"
 #include "each.hpp"
 #include "whole.hpp"
 
-TEST_CASE( "Series<T> arithmetic purity", "[many]" ) {
+TEST_CASE( "Series<T> arithmetic purity", "[each]" ) {
     auto a = each::series({1,2,3,4,5});
     auto b = each::series({-1,1,-2,2,3});
     auto c1 = each::series({0,0,0,0,0});
@@ -38,7 +41,7 @@ TEST_CASE( "Series<T> arithmetic purity", "[many]" ) {
     }
 }
 
-TEST_CASE( "Series<T> arithmetic identity", "[many]" ) {
+TEST_CASE( "Series<T> arithmetic identity", "[each]" ) {
     auto a = each::series({1,2,3,4,5});
     auto zeros = each::series({0,0,0,0,0});
     auto ones  = each::series({1,1,1,1,1});
@@ -60,7 +63,7 @@ TEST_CASE( "Series<T> arithmetic identity", "[many]" ) {
     }
 }
 
-TEST_CASE( "Series<T> arithmetic commutativity", "[many]" ) {
+TEST_CASE( "Series<T> arithmetic commutativity", "[each]" ) {
     auto a = each::series({1,2,3,4,5});
     auto b = each::series({-1,1,-2,2,3});
     auto ab = each::series({0,0,0,0,0});
@@ -78,7 +81,7 @@ TEST_CASE( "Series<T> arithmetic commutativity", "[many]" ) {
     }
 }
 
-TEST_CASE( "Series<T> arithmetic associativity", "[many]" ) {
+TEST_CASE( "Series<T> arithmetic associativity", "[each]" ) {
     auto a = each::series({1,2,3,4,5});
     auto b = each::series({-1,1,-2,2,3});
     auto c = each::series({1,1,2,3,5});
@@ -101,7 +104,7 @@ TEST_CASE( "Series<T> arithmetic associativity", "[many]" ) {
     }
 }
 
-TEST_CASE( "Series<T> arithmetic distributivity", "[many]" ) {
+TEST_CASE( "Series<T> arithmetic distributivity", "[each]" ) {
     auto a = each::series({1,2,3,4,5});
     auto b = each::series({-1,1,-2,2,3});
     auto c = each::series({1.0,1.0,2.0,3.0,5.0});
@@ -137,7 +140,7 @@ TEST_CASE( "Series<T> arithmetic distributivity", "[many]" ) {
 
 
 
-TEST_CASE( "Series<T>/Uniform<T> arithmetic purity", "[many]" ) {
+TEST_CASE( "Series<T>/Uniform<T> arithmetic purity", "[each]" ) {
     auto a = each::series({1,2,3,4,5});
     auto b = each::uniform(-2);
     auto c1 = each::series({0,0,0,0,0});
@@ -168,7 +171,7 @@ TEST_CASE( "Series<T>/Uniform<T> arithmetic purity", "[many]" ) {
     }
 }
 
-TEST_CASE( "Series<T>/Uniform<T> arithmetic identity", "[many]" ) {
+TEST_CASE( "Series<T>/Uniform<T> arithmetic identity", "[each]" ) {
     auto a = each::series({1,2,3,4,5});
     auto zeros = each::uniform(0);
     auto ones  = each::uniform(1);
@@ -190,7 +193,7 @@ TEST_CASE( "Series<T>/Uniform<T> arithmetic identity", "[many]" ) {
     }
 }
 
-TEST_CASE( "Series<T>/Uniform<T> arithmetic commutativity", "[many]" ) {
+TEST_CASE( "Series<T>/Uniform<T> arithmetic commutativity", "[each]" ) {
     auto a = each::series({1,2,3,4,5});
     auto b = each::uniform(-2);
     auto ab = each::series({0,0,0,0,0});
@@ -208,7 +211,7 @@ TEST_CASE( "Series<T>/Uniform<T> arithmetic commutativity", "[many]" ) {
     }
 }
 
-TEST_CASE( "Series<T>/Uniform<T> arithmetic associativity", "[many]" ) {
+TEST_CASE( "Series<T>/Uniform<T> arithmetic associativity", "[each]" ) {
     auto a = each::series({1,2,3,4,5});
     auto b = each::uniform(-2);
     auto c = each::series({1,1,2,3,5});
@@ -231,7 +234,7 @@ TEST_CASE( "Series<T>/Uniform<T> arithmetic associativity", "[many]" ) {
     }
 }
 
-TEST_CASE( "Series<T>/Uniform<T> arithmetic distributivity", "[many]" ) {
+TEST_CASE( "Series<T>/Uniform<T> arithmetic distributivity", "[each]" ) {
     auto a = each::series({1,2,3,4,5});
     auto b = each::uniform(-2);
     auto c = each::series({1.0,1.0,2.0,3.0,5.0});
@@ -264,7 +267,7 @@ TEST_CASE( "Series<T>/Uniform<T> arithmetic distributivity", "[many]" ) {
 
 
 
-TEST_CASE( "Series<T> sqrt purity", "[data]" ) {
+TEST_CASE( "Series<T> sqrt purity", "[each]" ) {
     auto a  = each::series({1.0,2.0,3.0,4.0,5.0});
     auto c1 = each::series({0.0,0.0,0.0,0.0,0.0});
     auto c2 = each::series({0.0,0.0,0.0,0.0,0.0});
@@ -274,7 +277,7 @@ TEST_CASE( "Series<T> sqrt purity", "[data]" ) {
         CHECK(whole::equal(c1,c2, 1e-7));
     }
 }
-TEST_CASE( "Series<T> sqrt consistency", "[data]" ) {
+TEST_CASE( "Series<T> sqrt consistency", "[each]" ) {
     auto a     = each::series({1.0,2.0,3.0,4.0,5.0});
     auto b     = each::series({1.0,1.0,2.0,3.0,5.0});
     auto sqrt1 = each::series({0.0,0.0,0.0,0.0,0.0});
@@ -293,7 +296,7 @@ TEST_CASE( "Series<T> sqrt consistency", "[data]" ) {
     }
 
 }
-TEST_CASE( "Series<T> log consistency", "[data]" ) {
+TEST_CASE( "Series<T> log consistency", "[each]" ) {
     auto a     = each::series({1.0,2.0,3.0,4.0,5.0});
     auto b     = each::series({1.0,1.0,2.0,3.0,5.0});
     auto log1_ = each::series({0.0,0.0,0.0,0.0,0.0});
@@ -306,7 +309,7 @@ TEST_CASE( "Series<T> log consistency", "[data]" ) {
         CHECK(whole::equal(log1_ , log2_, 1e-7));
     }
 }
-TEST_CASE( "Series<T> log/exp consistency", "[data]" ) {
+TEST_CASE( "Series<T> log/exp consistency", "[each]" ) {
     auto a     = each::series({1.0,2.0,3.0,4.0,5.0});
     auto b     = each::series({1.0,1.0,2.0,3.0,5.0});
     auto loga  = each::series({0.0,0.0,0.0,0.0,0.0});
@@ -325,7 +328,7 @@ TEST_CASE( "Series<T> log/exp consistency", "[data]" ) {
         CHECK(whole::equal(elalb, ab, 1e-7));
     }
 }
-TEST_CASE( "Series<T> log/exp invertibility", "[data]" ) {
+TEST_CASE( "Series<T> log/exp invertibility", "[each]" ) {
     auto a   = each::series({1.0,2.0,3.0,4.0,5.0});
     auto b   = each::series({1.0,1.0,2.0,3.0,5.0});
     auto out = each::series({0.0,0.0,0.0,0.0,0.0});
@@ -342,7 +345,7 @@ TEST_CASE( "Series<T> log/exp invertibility", "[data]" ) {
     }
 }
 
-TEST_CASE( "Series<T> log2/exp2 consistency", "[data]" ) {
+TEST_CASE( "Series<T> log2/exp2 consistency", "[each]" ) {
     auto a     = each::series({1.0,2.0,3.0,4.0,5.0});
     auto b     = each::series({1.0,1.0,2.0,3.0,5.0});
     auto loga  = each::series({0.0,0.0,0.0,0.0,0.0});
@@ -360,7 +363,7 @@ TEST_CASE( "Series<T> log2/exp2 consistency", "[data]" ) {
         CHECK(whole::equal(out, ab, 1e-7));
     }
 }
-TEST_CASE( "Series<T> log2/exp2 invertibility", "[data]" ) {
+TEST_CASE( "Series<T> log2/exp2 invertibility", "[each]" ) {
     auto a   = each::series({1.0,2.0,3.0,4.0,5.0});
     auto b   = each::series({1.0,1.0,2.0,3.0,5.0});
     auto out = each::series({0.0,0.0,0.0,0.0,0.0});
@@ -382,7 +385,7 @@ TEST_CASE( "Series<T> log2/exp2 invertibility", "[data]" ) {
 
 
 
-TEST_CASE( "Series<T> morphologic purity", "[many]" ) {
+TEST_CASE( "Series<T> morphologic purity", "[each]" ) {
     auto a = each::series({1,0,0,1,0});
     auto b = each::series({0,1,0,1,0});
     auto c1 = each::series({0,0,0,0,0});
@@ -413,7 +416,7 @@ TEST_CASE( "Series<T> morphologic purity", "[many]" ) {
     }
 }
 
-TEST_CASE( "Series<T> morphologic identity", "[many]" ) {
+TEST_CASE( "Series<T> morphologic identity", "[each]" ) {
     auto a = each::series({1,0,0,1,0});
     auto zeros = each::series({0,0,0,0,0});
     auto ones  = each::series({1,1,1,1,1});
@@ -433,7 +436,7 @@ TEST_CASE( "Series<T> morphologic identity", "[many]" ) {
     }
 }
 
-TEST_CASE( "Series<T> morphologic commutativity", "[many]" ) {
+TEST_CASE( "Series<T> morphologic commutativity", "[each]" ) {
     auto a = each::series({1,0,0,1,0});
     auto b = each::series({0,1,0,1,0});
     auto ab = each::series({0,0,0,0,0});
@@ -453,7 +456,7 @@ TEST_CASE( "Series<T> morphologic commutativity", "[many]" ) {
 
 }
 
-TEST_CASE( "Series<T> negation involutivity", "[many]" ) {
+TEST_CASE( "Series<T> negation involutivity", "[each]" ) {
     auto a = each::series({1,0,0,1,0});
     auto c = each::series({1,1,2,3,5});
 
@@ -465,7 +468,7 @@ TEST_CASE( "Series<T> negation involutivity", "[many]" ) {
 
 }
 
-TEST_CASE( "Series<T> morphologic associativity", "[many]" ) {
+TEST_CASE( "Series<T> morphologic associativity", "[each]" ) {
 
     auto a = each::series({1,0,0,1,0});
     auto b = each::series({0,1,0,1,0});
@@ -489,7 +492,7 @@ TEST_CASE( "Series<T> morphologic associativity", "[many]" ) {
     }
 }
 
-TEST_CASE( "Series<T> morphologic distributivity", "[many]" ) {
+TEST_CASE( "Series<T> morphologic distributivity", "[each]" ) {
     auto a = each::series({1,0,0,1,0});
     auto b = each::series({0,1,0,1,0});
     auto c = each::series({1.0,1.0,2.0,3.0,5.0});
@@ -509,7 +512,7 @@ TEST_CASE( "Series<T> morphologic distributivity", "[many]" ) {
 }
 
 
-TEST_CASE( "Series<T> trigonometric purity", "[many]" ) {
+TEST_CASE( "Series<T> trigonometric purity", "[each]" ) {
     auto a = each::series({1.0,2.0,3.0,4.0,5.0});
     auto b = each::series({-1.0,1.0,-2.0,2.0,3.0});
     auto c1 = each::series({0.0,0.0,0.0,0.0,0.0});
@@ -544,7 +547,7 @@ TEST_CASE( "Series<T> trigonometric purity", "[many]" ) {
 
 }
 
-TEST_CASE( "Series<T> trigonometric cofunctions", "[many]" ) {
+TEST_CASE( "Series<T> trigonometric cofunctions", "[each]" ) {
     const double pi = 3.14159265358979;
     auto a = each::series({1.0,2.0,3.0,4.0,5.0});
     auto b = each::series({-1.0,1.0,-2.0,2.0,3.0});
@@ -575,7 +578,7 @@ TEST_CASE( "Series<T> trigonometric cofunctions", "[many]" ) {
 
 
 
-TEST_CASE( "Series<T> trigonometric negative angle identities", "[many]" ) {
+TEST_CASE( "Series<T> trigonometric negative angle identities", "[each]" ) {
     auto a = each::series({1.0,2.0,3.0,4.0,5.0});
     auto b = each::series({-1.0,1.0,-2.0,2.0,3.0});
     auto c1 = each::series({0.0,0.0,0.0,0.0,0.0});

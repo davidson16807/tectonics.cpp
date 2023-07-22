@@ -11,7 +11,6 @@
 namespace whole
 {
 
-
 	template <typename T>
 	typename T::value_type min(const T& a, const bool no_nan = true, const bool no_inf = true)
 	{

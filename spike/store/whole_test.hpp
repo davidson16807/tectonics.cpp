@@ -6,12 +6,15 @@
 #define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
 #include <glm/vec3.hpp>               // *vec3
 
+// HACK: order of tests is arbitrary and glm each must be loaded first to permit template specialization
+// so we include it here despite not necessarily needing it.
+#include "glm/each.hpp"
 
 #include "Series.hpp"
 #include "each.hpp"
 #include "whole.hpp"
 
-TEST_CASE( "Series<T> abs purity", "[many]" ) {
+TEST_CASE( "Series<T> abs purity", "[whole]" ) {
     auto a = each::series({-1,1,-2,2,3});
     auto out1 = each::series({0,0,0,0,0});
     auto out2 = each::series({0,0,0,0,0});
@@ -21,7 +24,7 @@ TEST_CASE( "Series<T> abs purity", "[many]" ) {
         CHECK(whole::equal(out1, out2));
     }
 }
-TEST_CASE( "Series<T> sign purity", "[many]" ) {
+TEST_CASE( "Series<T> sign purity", "[whole]" ) {
     auto a = each::series({-1,1,-2,2,3});
     auto out1 = each::series({0,0,0,0,0});
     auto out2 = each::series({0,0,0,0,0});
@@ -31,7 +34,7 @@ TEST_CASE( "Series<T> sign purity", "[many]" ) {
         CHECK(whole::equal(out1, out2));
     }
 }
-TEST_CASE( "Series<T> abs/sign consistency", "[many]" ) {
+TEST_CASE( "Series<T> abs/sign consistency", "[whole]" ) {
     auto a = each::series({-1,1,-2,2,3});
     auto abs_a = each::series({0,0,0,0,0});
     auto sign_a = each::series({0,0,0,0,0});
@@ -43,7 +46,7 @@ TEST_CASE( "Series<T> abs/sign consistency", "[many]" ) {
         CHECK(whole::equal(a2, a));
     }
 }
-TEST_CASE( "Series<T> floor purity", "[many]" ) {
+TEST_CASE( "Series<T> floor purity", "[whole]" ) {
     auto a = each::series({-1,1,-2,2,3});
     auto out1 = each::series({0,0,0,0,0});
     auto out2 = each::series({0,0,0,0,0});
@@ -53,7 +56,7 @@ TEST_CASE( "Series<T> floor purity", "[many]" ) {
         CHECK(whole::equal(out1, out2));
     }
 }
-TEST_CASE( "Series<T> fract purity", "[many]" ) {
+TEST_CASE( "Series<T> fract purity", "[whole]" ) {
     auto a = each::series({-1,1,-2,2,3});
     auto out1 = each::series({0,0,0,0,0});
     auto out2 = each::series({0,0,0,0,0});
@@ -63,7 +66,7 @@ TEST_CASE( "Series<T> fract purity", "[many]" ) {
         CHECK(whole::equal(out1, out2));
     }
 }
-TEST_CASE( "Series<T> floor/fract consistency", "[many]" ) {
+TEST_CASE( "Series<T> floor/fract consistency", "[whole]" ) {
     auto a = each::series({-1,1,-2,2,3});
     auto floor_a = each::series({0,0,0,0,0});
     auto fract_a = each::series({0,0,0,0,0});
@@ -76,7 +79,7 @@ TEST_CASE( "Series<T> floor/fract consistency", "[many]" ) {
     }
 }
 
-TEST_CASE( "Series<T> mod purity", "[many]" ) {
+TEST_CASE( "Series<T> mod purity", "[whole]" ) {
     auto a = each::series({-1,1,-2,2,3});
     auto b = each::series({1,2,3,4,5});
     auto out1 = each::series({0,0,0,0,0});
@@ -87,7 +90,7 @@ TEST_CASE( "Series<T> mod purity", "[many]" ) {
         CHECK(whole::equal(out1, out2));
     }
 }
-TEST_CASE( "Series<T> mod/fract consistency", "[many]" ) {
+TEST_CASE( "Series<T> mod/fract consistency", "[whole]" ) {
     auto a = each::series({1.0,2.1,3.1,4.2,5.3});
     auto ones = each::series({1,1,1,1,1});
     auto out1 = each::series({0,0,0,0,0});
@@ -103,7 +106,7 @@ TEST_CASE( "Series<T> mod/fract consistency", "[many]" ) {
         CHECK(whole::equal(out1, out2));
     }
 }
-TEST_CASE( "Series<T> min purity", "[many]" ) {
+TEST_CASE( "Series<T> min purity", "[whole]" ) {
     auto a = each::series({3,2,-2,1,-1});
     auto b = each::series({1,2,3,4,5});
     auto out1 = each::series({0,0,0,0,0});
@@ -114,7 +117,7 @@ TEST_CASE( "Series<T> min purity", "[many]" ) {
         CHECK(whole::equal(out1, out2));
     }
 }
-TEST_CASE( "Series<T> min decreasing", "[many]" ) {
+TEST_CASE( "Series<T> min decreasing", "[whole]" ) {
     auto a = each::series({3,2,-2,1,-1});
     auto b = each::series({1,2,3,4,5});
     auto c = each::series({10,0,0,0,-10});
@@ -126,7 +129,7 @@ TEST_CASE( "Series<T> min decreasing", "[many]" ) {
         CHECK(whole::sum(ab) >= whole::sum(abc));
     }
 }
-TEST_CASE( "Series<T> min idempotence", "[many]" ) {
+TEST_CASE( "Series<T> min idempotence", "[whole]" ) {
     auto a = each::series({3,2,-2,1,-1});
     auto b = each::series({1,2,3,4,5});
     auto ab = each::series({0,0,0,0,0});
@@ -138,7 +141,7 @@ TEST_CASE( "Series<T> min idempotence", "[many]" ) {
     }
 }
 
-TEST_CASE( "Series<T> max purity", "[many]" ) {
+TEST_CASE( "Series<T> max purity", "[whole]" ) {
     auto a = each::series({3,2,-2,1,-1});
     auto b = each::series({1,2,3,4,5});
     auto out1 = each::series({0,0,0,0,0});
@@ -149,7 +152,7 @@ TEST_CASE( "Series<T> max purity", "[many]" ) {
         CHECK(whole::equal(out1, out2));
     }
 }
-TEST_CASE( "Series<T> max decreasing", "[many]" ) {
+TEST_CASE( "Series<T> max decreasing", "[whole]" ) {
     auto a = each::series({3,2,-2,1,-1});
     auto b = each::series({1,2,3,4,5});
     auto c = each::series({10,0,0,0,-10});
@@ -161,7 +164,7 @@ TEST_CASE( "Series<T> max decreasing", "[many]" ) {
         CHECK(whole::sum(ab) <= whole::sum(abc));
     }
 }
-TEST_CASE( "Series<T> max idempotence", "[many]" ) {
+TEST_CASE( "Series<T> max idempotence", "[whole]" ) {
     auto a = each::series({3,2,-2,1,-1});
     auto b = each::series({1,2,3,4,5});
     auto ab = each::series({0,0,0,0,0});
@@ -173,7 +176,7 @@ TEST_CASE( "Series<T> max idempotence", "[many]" ) {
     }
 }
 
-TEST_CASE( "Series<T> min/max/clamp consistency", "[many]" ) {
+TEST_CASE( "Series<T> min/max/clamp consistency", "[whole]" ) {
     auto a = each::series({1,2,3,4,5});
     auto lo = each::series({-1,1,-2,2,3});
     auto hi = each::series({7,6,5,4,3});
@@ -192,14 +195,14 @@ TEST_CASE( "Series<T> min/max/clamp consistency", "[many]" ) {
 
 
 
-TEST_CASE( "Series<T> string cast purity", "[data]" ) {
+TEST_CASE( "Series<T> string cast purity", "[whole]" ) {
     auto a = each::series({1,2,3,4,5});
     SECTION("to_string(a) must be called repeatedly without changing the output"){
         CHECK(whole::to_string(a) == whole::to_string(a));
     }
 }
 
-TEST_CASE( "Series<T> string cast correctness", "[data]" ) {
+TEST_CASE( "Series<T> string cast correctness", "[whole]" ) {
     auto a = each::series({1,2,3,4,5,6});
     auto b = each::series({1,1,2,3,5,8});
     auto c = each::series<float>({4,8,3,8,2,4,5,9,8,2,3,5,2,1,3,3,3,1,6,1,
@@ -221,7 +224,7 @@ TEST_CASE( "Series<T> string cast correctness", "[data]" ) {
     }
 }
 
-TEST_CASE( "Series<T> string cast representation", "[data]" ) {
+TEST_CASE( "Series<T> string cast representation", "[whole]" ) {
     auto a = each::series({1,2,3,4,5,6});
     SECTION("to_string() must capture appreciable differences in the content of Series<T>"){
         for(std::size_t i=0; i<a.size(); ++i){

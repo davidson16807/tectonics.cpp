@@ -2,6 +2,8 @@
 
 // 3rd party libraries
 #include <glm/common.hpp>
+#include <glm/exponential.hpp>
+#include <glm/geometric.hpp>
 #include <glm/trigonometric.hpp>
 #include <glm/vector_relational.hpp>
 
@@ -75,6 +77,9 @@ namespace each {
 	EACH_BINARY_GLM_WRAPPER(lessThan)
 	EACH_BINARY_GLM_WRAPPER(greaterThanEqual)
 	EACH_BINARY_GLM_WRAPPER(lessThanEqual)
+
+	#undef EACH_UNARY_GLM_WRAPPER
+	#undef EACH_BINARY_GLM_WRAPPER
 
 }
 
