@@ -32,7 +32,7 @@ namespace collignon
 		static constexpr Tfloat quadrant_projection_length = std::sqrt(quadrant_area);
 
 		// NOTE: we need a dedicated sign function to simplify code such that an input of 0 returns a nonzero number.
-		Tfloat sign(const Tfloat x) const {
+		inline constexpr Tfloat sign(const Tfloat x) const {
 			return x >= 0.0f? 1.0 : -1.0;
 		}
 
@@ -40,7 +40,7 @@ namespace collignon
 		~Projection()
 		{
 		}
-		explicit Projection()
+		constexpr explicit Projection()
 		{
 		}
 
@@ -49,7 +49,7 @@ namespace collignon
 		Each ordinate is scaled to the range [-1,1], and x=0 on the 2d grid represents a `center_longitude` along the sphere.
 		`center_longitude` is described as an angle around the y axis in radians, where 0 indicates the vector [0,0,1].
 		*/
-		glm::vec<2,Tfloat,glm::defaultp> hemisphere_to_collignon(const glm::vec<3,Tfloat,glm::defaultp> hemisphere_position, const Tfloat center_longitude) const {
+		constexpr glm::vec<2,Tfloat,glm::defaultp> hemisphere_to_collignon(const glm::vec<3,Tfloat,glm::defaultp> hemisphere_position, const Tfloat center_longitude) const {
 			const glm::vec<3,Tfloat,glm::defaultp> normalized = glm::normalize(hemisphere_position);
 			const Tfloat scale_factor = std::sqrt(1.0f - std::abs(normalized.y));
 			const Tfloat longitude = std::atan2(normalized.x * sign(normalized.z), std::abs(normalized.z));
@@ -64,7 +64,7 @@ namespace collignon
 
 		/*
 		*/
-		glm::vec<3,Tfloat,glm::defaultp> collignon_to_hemisphere(const glm::vec<2,Tfloat,glm::defaultp> collignon, const Tfloat center_longitude) const {
+		constexpr glm::vec<3,Tfloat,glm::defaultp> collignon_to_hemisphere(const glm::vec<2,Tfloat,glm::defaultp> collignon, const Tfloat center_longitude) const {
 			const Tfloat scale_factor = 1.0f - std::abs(collignon.y) / quadrant_projection_length;
 			const Tfloat hemiwedge_projection_width = scale_factor == 0.0f? 0.0f : (collignon.x / scale_factor);
 			const Tfloat hemiwedge_area = hemiwedge_projection_width * quadrant_projection_length / 2.0f;

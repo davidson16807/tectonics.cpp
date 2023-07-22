@@ -4,7 +4,9 @@
 #include <glm/vec2.hpp>             // *vec2
 #include <glm/vec3.hpp>             // *vec3
 
+
 // in-house libraries
+#include <units/si.hpp>             // si::units
 #include "Tesselation.hpp"
 #include "Interleaving.hpp"
 
@@ -19,8 +21,8 @@ namespace collignon
     class Mesh
     {
     private:
-        Tesselation<Tfloat> tesselation;
-        Interleaving<Tid> interleaving;
+        const Tesselation<Tfloat> tesselation;
+        const Interleaving<Tid> interleaving;
         const Tfloat epsilon_for_integer_cast = 0.1; // ensures that integer casts do not produce numbers that are one value lower than expected
 
     public:
@@ -35,7 +37,7 @@ namespace collignon
         {
 
         }
-        Mesh(const Tfloat radius, const Tid vertex_count_per_half_meridian) : 
+        constexpr Mesh(const Tfloat radius, const Tid vertex_count_per_half_meridian) : 
             tesselation(Projection<Tfloat>()),
             interleaving(2*vertex_count_per_half_meridian),
             vertex_count_per_half_meridian(vertex_count_per_half_meridian),
@@ -46,7 +48,7 @@ namespace collignon
         {
         }
 
-        Tid memory_id(const glm::vec<2,Tid,glm::defaultp> grid_id) const {
+        constexpr Tid memory_id(const glm::vec<2,Tid,glm::defaultp> grid_id) const {
             const glm::vec<2,Tfloat,glm::defaultp> world_position = (grid_position + half_cell) / vertex_count_per_half_meridian_float;
             const glm::vec<2,Tfloat,glm::defaultp> standardized_world_position = tesselation.standardize(world_position);
             const glm::vec<2,Tfloat,glm::defaultp> standard_grid_position = standardized_world_position * vertex_count_per_half_meridian_float - half_cell;
@@ -58,7 +60,7 @@ namespace collignon
             );
             return memory_id;
         }
-        Tid memory_id(const glm::vec<2,Tfloat,glm::defaultp> grid_position) const {
+        constexpr Tid memory_id(const glm::vec<2,Tfloat,glm::defaultp> grid_position) const {
             const glm::vec<2,Tfloat,glm::defaultp> world_position = (grid_position + half_cell) / vertex_count_per_half_meridian_float;
             const glm::vec<2,Tfloat,glm::defaultp> standardized_world_position = tesselation.standardize(world_position);
             const glm::vec<2,Tfloat,glm::defaultp> standard_grid_position = standardized_world_position * vertex_count_per_half_meridian_float - half_cell;
@@ -71,43 +73,53 @@ namespace collignon
             return memory_id;
         }
 
-        glm::vec<2,Tid,glm::defaultp> grid_id(const Tid memory_id) const {
+        inline constexpr glm::vec<2,Tid,glm::defaultp> grid_id(const Tid memory_id) const {
             return glm::vec<2,Tid,glm::defaultp> (interleaving.element_id(memory_id), interleaving.block_id(memory_id)) - vertex_count_per_half_meridian;
         }
 
 
-        glm::vec<2,Tid,glm::defaultp> grid_id(const glm::vec<2,Tfloat,glm::defaultp> grid_position) const
+        inline constexpr glm::vec<2,Tid,glm::defaultp> grid_id(const glm::vec<2,Tfloat,glm::defaultp> grid_position) const
         {
             return grid_position;
         }
-        glm::vec<2,Tid,glm::defaultp> grid_id(const glm::vec<3,Tfloat,glm::defaultp> sphere_position) const
+        inline constexpr glm::vec<2,Tid,glm::defaultp> grid_id(const glm::vec<3,Tfloat,glm::defaultp> sphere_position) const
         {
             return glm::round(tesselation.sphere_to_tesselation(glm::normalize(sphere_position)) * vertex_count_per_half_meridian_float - half_cell) + epsilon_for_integer_cast;
         }
 
 
 
-        glm::vec<2,Tfloat,glm::defaultp> grid_position(const Tid memory_id) const {
+        inline constexpr glm::vec<2,Tfloat,glm::defaultp> grid_position(const Tid memory_id) const {
             return glm::vec<2,Tfloat,glm::defaultp> (interleaving.element_id(memory_id), interleaving.block_id(memory_id)) - vertex_count_per_half_meridian_float;
         }
-        glm::vec<2,Tfloat,glm::defaultp> grid_position(const glm::vec<2,Tid,glm::defaultp> grid_id) const
+        inline constexpr glm::vec<2,Tfloat,glm::defaultp> grid_position(const glm::vec<2,Tid,glm::defaultp> grid_id) const
         {
             return grid_id;
         }
-        glm::vec<2,Tfloat,glm::defaultp> grid_position(const glm::vec<3,Tfloat,glm::defaultp> sphere_position) const
+        inline constexpr glm::vec<2,Tfloat,glm::defaultp> grid_position(const glm::vec<3,Tfloat,glm::defaultp> sphere_position) const
         {
             return tesselation.sphere_to_tesselation(glm::normalize(sphere_position)) * vertex_count_per_half_meridian_float - half_cell;
         }
 
 
-        glm::vec<3,Tfloat,glm::defaultp> sphere_position(const glm::vec<2,Tid,glm::defaultp> grid_id) const
+        inline constexpr glm::vec<3,Tfloat,glm::defaultp> sphere_position(const glm::vec<2,Tid,glm::defaultp> grid_id) const
         {
             return tesselation.tesselation_to_sphere((glm::vec<2,Tfloat,glm::defaultp>(grid_id) + half_cell) / vertex_count_per_half_meridian_float) * radius;
         }
-        glm::vec<3,Tfloat,glm::defaultp> sphere_position(const glm::vec<2,Tfloat,glm::defaultp> grid_position) const
+        inline constexpr glm::vec<3,Tfloat,glm::defaultp> sphere_position(const glm::vec<2,Tfloat,glm::defaultp> grid_position) const
         {
             return tesselation.tesselation_to_sphere((grid_position + half_cell) / vertex_count_per_half_meridian_float) * radius;
         }
+
+
+        // inline constexpr si::length<glm::vec<3,Tfloat,glm::defaultp>> physical_position(const glm::vec<2,Tid,glm::defaultp> grid_id) const
+        // {
+        //     return tesselation.tesselation_to_physical((glm::vec<2,Tfloat,glm::defaultp>(grid_id) + half_cell) / vertex_count_per_half_meridian_float) * radius;
+        // }
+        // inline constexpr si::length<glm::vec<3,Tfloat,glm::defaultp>> physical_position(const glm::vec<2,Tfloat,glm::defaultp> grid_position) const
+        // {
+        //     return tesselation.tesselation_to_physical((grid_position + half_cell) / vertex_count_per_half_meridian_float) * radius;
+        // }
 
     };
 }

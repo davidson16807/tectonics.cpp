@@ -41,21 +41,21 @@ namespace collignon
 	class Tesselation
 	{
 		static constexpr Tfloat pi = 3.141592652653589793f;
+		static constexpr Tfloat tile_length_world_count = 2.0f;
 		static constexpr Tfloat quadrant_area = pi;
 		static constexpr Tfloat quadrant_projection_length = std::sqrt(quadrant_area);
-		static constexpr Tfloat tile_length_world_count = 2.0f;
 
 
 		// NOTE: we need a dedicated sign function to simplify code such that an input of 0 returns a nonzero number.
 		// Whether it returns 1 or -1 doesn't matter, it just needs to pick a side from which all further decisions can be made
-		glm::vec<3,Tfloat,glm::defaultp> get_octant_id(const glm::vec<3,Tfloat,glm::defaultp> v) const {
+		inline constexpr glm::vec<3,Tfloat,glm::defaultp> get_octant_id(const glm::vec<3,Tfloat,glm::defaultp> v) const {
 			return glm::vec<3,Tfloat,glm::defaultp>(
 				v.x >= 0.0f? 1.0f : -1.0f, 
 				v.y >= 0.0f? 1.0f : -1.0f,
 				v.z >= 0.0f? 1.0f : -1.0f
 			);
 		}
-		glm::vec<3,Tfloat,glm::defaultp> get_octant_id(const glm::vec<2,Tfloat,glm::defaultp> v) const {
+		inline constexpr glm::vec<3,Tfloat,glm::defaultp> get_octant_id(const glm::vec<2,Tfloat,glm::defaultp> v) const {
 			return glm::vec<3,Tfloat,glm::defaultp>(
 				v.x >= 0.0f? 1.0f : -1.0f, 
 				v.y >= 0.0f? 1.0f : -1.0f,
@@ -74,7 +74,7 @@ namespace collignon
 		{
 		}
 
-		glm::vec<2,Tfloat,glm::defaultp> standardize(const glm::vec<2,Tfloat,glm::defaultp> grid_position) const 
+		constexpr glm::vec<2,Tfloat,glm::defaultp> standardize(const glm::vec<2,Tfloat,glm::defaultp> grid_position) const 
 		{
 			const glm::vec<2,Tfloat,glm::defaultp> tile_id = glm::round(grid_position/tile_length_world_count);
 			const Tfloat negative_if_tesselation_is_inverted = std::cos(pi*(tile_id.x+tile_id.y));
@@ -83,7 +83,7 @@ namespace collignon
 			return standardized;
 		}
 
-		glm::vec<2,Tfloat,glm::defaultp> sphere_to_tesselation(const glm::vec<3,Tfloat,glm::defaultp> sphere_position) const {
+		constexpr glm::vec<2,Tfloat,glm::defaultp> sphere_to_tesselation(const glm::vec<3,Tfloat,glm::defaultp> sphere_position) const {
 			// `octant_id` is the canonical octant on which all subsequent operations concerning octant are based.
 			// it is used to prevent edge case errors in which different operations assume different octants due to float imprecision.
 			const glm::vec<3,Tfloat,glm::defaultp> octant_id = get_octant_id(sphere_position);
@@ -94,7 +94,7 @@ namespace collignon
 			return octant_id.z > 0.0f? projected : translated; 
 		}
 
-		glm::vec<3,Tfloat,glm::defaultp> tesselation_to_sphere(const glm::vec<2,Tfloat,glm::defaultp> grid_position) const {
+		constexpr glm::vec<3,Tfloat,glm::defaultp> tesselation_to_sphere(const glm::vec<2,Tfloat,glm::defaultp> grid_position) const {
 			// `standardize` is the canonical grid position on which all subsequent calculations occur.
 			// it is what allows Tesselation to preserve closeness, even between points that go over the edge of a tile in the tesselation.
 			const glm::vec<2,Tfloat,glm::defaultp> standardized = standardize(grid_position);
