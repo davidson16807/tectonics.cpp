@@ -13,7 +13,7 @@
 #include "Uniform.hpp"
 #include "mapping.hpp"
 
-namespace data
+namespace each
 {
 
 	/*

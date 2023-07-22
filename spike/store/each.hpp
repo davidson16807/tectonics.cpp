@@ -7,7 +7,7 @@
 // in-house libraries
 #include "compatibility.hpp"
 
-namespace data
+namespace each
 {
 
 	#define EACH_BINARY_OPERATION(SYMBOL, NAME) \

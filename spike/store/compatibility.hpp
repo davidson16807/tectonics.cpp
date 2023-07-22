@@ -1,6 +1,6 @@
 #pragma once
 
-namespace data
+namespace each
 {
 
 	template <typename T1, typename Tout>

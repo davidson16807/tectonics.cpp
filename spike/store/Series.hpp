@@ -11,7 +11,7 @@
 
 #include "Uniform.hpp"
 
-namespace data
+namespace each
 {
 
 	/*

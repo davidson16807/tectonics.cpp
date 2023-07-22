@@ -7,7 +7,7 @@
 #include "../Series.hpp"
 #include "relational.hpp"
 
-namespace data
+namespace each
 {
     /*
     NOTE: 
@@ -20,9 +20,9 @@ namespace data
     */
 
     template<typename Tgenerator, typename Tdistribution>
-    data::Series<glm::vec3> get_random_vec3s(std::size_t size, Tdistribution& distribution, Tgenerator& generator)
+    each::Series<glm::vec3> get_random_vec3s(std::size_t size, Tdistribution& distribution, Tgenerator& generator)
     {
-        data::Series<glm::vec3> output(size);
+        each::Series<glm::vec3> output(size);
         for (std::size_t j = 0; j < size; ++j)
         {
             output[j].x = distribution(generator);
@@ -32,7 +32,7 @@ namespace data
         return output;
     }
     template<typename Tgenerator>
-    data::Series<glm::vec3> get_random_vec3s(std::size_t size, Tgenerator& generator)
+    each::Series<glm::vec3> get_random_vec3s(std::size_t size, Tgenerator& generator)
     {
         std::uniform_real_distribution<double> distribution(-5.0,5.0);
         return get_random_vec3s(size, distribution, generator);
@@ -40,11 +40,11 @@ namespace data
 
 
     template<typename Tgenerator>
-    data::Series<glm::bvec3> get_random_bvec3s(std::size_t size, Tgenerator& generator)
+    each::Series<glm::bvec3> get_random_bvec3s(std::size_t size, Tgenerator& generator)
     {
-        data::Series<glm::bvec3> output(size);
-        data::Series<glm::vec3> temp = get_random_vec3s(size, generator);
-        data::greaterThan(temp, data::uniform(glm::vec3(0.5f)), output);
+        each::Series<glm::bvec3> output(size);
+        each::Series<glm::vec3> temp = get_random_vec3s(size, generator);
+        each::greaterThan(temp, each::uniform(glm::vec3(0.5f)), output);
         return output;
     }
 }

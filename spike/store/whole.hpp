@@ -73,7 +73,7 @@ namespace whole
 		auto size = a.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
-			out += data::distance(a[i], b[i]);
+			out += each::distance(a[i], b[i]);
 		}
 		return out;
 	}
@@ -378,7 +378,7 @@ namespace whole
 			}
 			else 
 			{
-				float shade_fraction = data::linearstep(lo, hi, a[i]);
+				float shade_fraction = each::linearstep(lo, hi, a[i]);
 				int shade_id = int(std::min(float(shades.size()-1), (shades.size() * shade_fraction) ));
 			    out += shades[shade_id];
 			}
@@ -388,7 +388,7 @@ namespace whole
 		{
 			out += shades[i];
 			out += " ≥ ";
-			out += std::to_string(data::mix(float(lo), float(hi), float(i)/float(shades.size())));
+			out += std::to_string(each::mix(float(lo), float(hi), float(i)/float(shades.size())));
 			out += "\n";
 			// out += ", ";
 		}
