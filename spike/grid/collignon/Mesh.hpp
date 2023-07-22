@@ -5,21 +5,21 @@
 #include <glm/vec3.hpp>             // *vec3
 
 // in-house libraries
-#include <rasters/components/CollignonMesh/CollignonTesselation.hpp>
-#include <rasters/components/Interleaving.hpp>
+#include "Tesselation.hpp"
+#include "Interleaving.hpp"
 
-namespace rasters 
+namespace collignon 
 {
 
     /*
-    `CollignonMesh` is a wrapper around a `CollignonTesselation` 
+    `Mesh` is a wrapper around a `Tesselation` 
     that introduces the concepts of sphere radius, vertex count, and boundary alignment. That is all.
     */
     template<typename Tid, typename Tfloat>
-    class CollignonMesh
+    class Mesh
     {
     private:
-        CollignonTesselation<Tfloat> tesselation;
+        Tesselation<Tfloat> tesselation;
         Interleaving<Tid> interleaving;
         const Tfloat epsilon_for_integer_cast = 0.1; // ensures that integer casts do not produce numbers that are one value lower than expected
 
@@ -31,12 +31,12 @@ namespace rasters
         const Tfloat half_cell = 0.5;
         const Tfloat radius;
 
-        ~CollignonMesh()
+        ~Mesh()
         {
 
         }
-        CollignonMesh(const Tfloat radius, const Tid vertex_count_per_half_meridian) : 
-            tesselation(CollignonProjection<Tfloat>()),
+        Mesh(const Tfloat radius, const Tid vertex_count_per_half_meridian) : 
+            tesselation(Projection<Tfloat>()),
             interleaving(2*vertex_count_per_half_meridian),
             vertex_count_per_half_meridian(vertex_count_per_half_meridian),
             vertex_count_per_meridian(2*vertex_count_per_half_meridian),

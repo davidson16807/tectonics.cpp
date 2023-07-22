@@ -15,66 +15,66 @@
 #include <series/glm/glm.hpp>         // *vec*s
 #include <series/glm/convenience.hpp> //  operators, etc.
 
-#include "CollignonProjection.hpp"
+#include "Projection.hpp"
 
-rasters::CollignonProjection projection;
+collignon::Projection projection;
 
-TEST_CASE( "CollignonProjection.collignon_to_hemisphere() purity", "[rasters]" ) {
-    SECTION("CollignonProjection.collignon_to_hemisphere() must be called repeatedly without changing the output"){
+TEST_CASE( "Projection.collignon_to_hemisphere() purity", "[rasters]" ) {
+    SECTION("Projection.collignon_to_hemisphere() must be called repeatedly without changing the output"){
         const float quadrant(std::sqrt(3.14159265f)); // length of a quadrant when projected
         for(float x = -quadrant; x < quadrant; x+=0.1){
         for(float y = -quadrant; y < quadrant; y+=0.1){
             if (std::abs(x)+std::abs(y) < 0.95 * quadrant)
             {
-                CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(x,y), 0.0f) == 
-                      rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(x,y), 0.0f));
+                CHECK(collignon::Projection().collignon_to_hemisphere(glm::vec2(x,y), 0.0f) == 
+                      collignon::Projection().collignon_to_hemisphere(glm::vec2(x,y), 0.0f));
             }
         }}
     }
 }
-TEST_CASE( "CollignonProjection collignon_to_hemisphere() limiting cases", "[rasters]" ) {
-    SECTION("CollignonProjection.collignon_to_hemisphere() must reproduce results for limiting cases"){
+TEST_CASE( "Projection collignon_to_hemisphere() limiting cases", "[rasters]" ) {
+    SECTION("Projection.collignon_to_hemisphere() must reproduce results for limiting cases"){
         const float margin(1e-4f);
         const float pi(3.14159);
         const float quadrant(std::sqrt(pi)); // length of a quadrant when projected
 
-        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,0), 0.0f).x == Approx(0).margin(margin) );
-        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,0), 0.0f).y == Approx(0).margin(margin) );
-        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,0), 0.0f).z == Approx(1).margin(margin) );
+        CHECK(collignon::Projection().collignon_to_hemisphere(glm::vec2(0,0), 0.0f).x == Approx(0).margin(margin) );
+        CHECK(collignon::Projection().collignon_to_hemisphere(glm::vec2(0,0), 0.0f).y == Approx(0).margin(margin) );
+        CHECK(collignon::Projection().collignon_to_hemisphere(glm::vec2(0,0), 0.0f).z == Approx(1).margin(margin) );
 
-        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,0), pi).x == Approx(0).margin(margin) );
-        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,0), pi).y == Approx(0).margin(margin) );
-        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,0), pi).z == Approx(-1).margin(margin) );
+        CHECK(collignon::Projection().collignon_to_hemisphere(glm::vec2(0,0), pi).x == Approx(0).margin(margin) );
+        CHECK(collignon::Projection().collignon_to_hemisphere(glm::vec2(0,0), pi).y == Approx(0).margin(margin) );
+        CHECK(collignon::Projection().collignon_to_hemisphere(glm::vec2(0,0), pi).z == Approx(-1).margin(margin) );
 
-        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,quadrant), 0.0f).x == Approx(0).margin(margin) );
-        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,quadrant), 0.0f).y == Approx(1).margin(margin) );
-        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,quadrant), 0.0f).z == Approx(0).margin(margin) );
+        CHECK(collignon::Projection().collignon_to_hemisphere(glm::vec2(0,quadrant), 0.0f).x == Approx(0).margin(margin) );
+        CHECK(collignon::Projection().collignon_to_hemisphere(glm::vec2(0,quadrant), 0.0f).y == Approx(1).margin(margin) );
+        CHECK(collignon::Projection().collignon_to_hemisphere(glm::vec2(0,quadrant), 0.0f).z == Approx(0).margin(margin) );
 
-        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,-quadrant), 0.0f).x == Approx(0).margin(margin) );
-        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,-quadrant), 0.0f).y == Approx(-1).margin(margin) );
-        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,-quadrant), 0.0f).z == Approx(0).margin(margin) );
+        CHECK(collignon::Projection().collignon_to_hemisphere(glm::vec2(0,-quadrant), 0.0f).x == Approx(0).margin(margin) );
+        CHECK(collignon::Projection().collignon_to_hemisphere(glm::vec2(0,-quadrant), 0.0f).y == Approx(-1).margin(margin) );
+        CHECK(collignon::Projection().collignon_to_hemisphere(glm::vec2(0,-quadrant), 0.0f).z == Approx(0).margin(margin) );
 
-        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(quadrant,0), 0.0f).x == Approx(1).margin(margin) );
-        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(quadrant,0), 0.0f).y == Approx(0).margin(margin) );
-        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(quadrant,0), 0.0f).z == Approx(0).margin(margin) );
+        CHECK(collignon::Projection().collignon_to_hemisphere(glm::vec2(quadrant,0), 0.0f).x == Approx(1).margin(margin) );
+        CHECK(collignon::Projection().collignon_to_hemisphere(glm::vec2(quadrant,0), 0.0f).y == Approx(0).margin(margin) );
+        CHECK(collignon::Projection().collignon_to_hemisphere(glm::vec2(quadrant,0), 0.0f).z == Approx(0).margin(margin) );
 
-        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(-quadrant,0), 0.0f).x == Approx(-1).margin(margin) );
-        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(-quadrant,0), 0.0f).y == Approx(0).margin(margin) );
-        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(-quadrant,0), 0.0f).z == Approx(0).margin(margin) );
+        CHECK(collignon::Projection().collignon_to_hemisphere(glm::vec2(-quadrant,0), 0.0f).x == Approx(-1).margin(margin) );
+        CHECK(collignon::Projection().collignon_to_hemisphere(glm::vec2(-quadrant,0), 0.0f).y == Approx(0).margin(margin) );
+        CHECK(collignon::Projection().collignon_to_hemisphere(glm::vec2(-quadrant,0), 0.0f).z == Approx(0).margin(margin) );
 
 
 
-        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,quadrant), pi).x == Approx(0).margin(margin) );
-        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,quadrant), pi).y == Approx(1).margin(margin) );
-        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,quadrant), pi).z == Approx(0).margin(margin) );
+        CHECK(collignon::Projection().collignon_to_hemisphere(glm::vec2(0,quadrant), pi).x == Approx(0).margin(margin) );
+        CHECK(collignon::Projection().collignon_to_hemisphere(glm::vec2(0,quadrant), pi).y == Approx(1).margin(margin) );
+        CHECK(collignon::Projection().collignon_to_hemisphere(glm::vec2(0,quadrant), pi).z == Approx(0).margin(margin) );
 
-        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,-quadrant), pi).x == Approx(0).margin(margin) );
-        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,-quadrant), pi).y == Approx(-1).margin(margin) );
-        CHECK(rasters::CollignonProjection().collignon_to_hemisphere(glm::vec2(0,-quadrant), pi).z == Approx(0).margin(margin) );
+        CHECK(collignon::Projection().collignon_to_hemisphere(glm::vec2(0,-quadrant), pi).x == Approx(0).margin(margin) );
+        CHECK(collignon::Projection().collignon_to_hemisphere(glm::vec2(0,-quadrant), pi).y == Approx(-1).margin(margin) );
+        CHECK(collignon::Projection().collignon_to_hemisphere(glm::vec2(0,-quadrant), pi).z == Approx(0).margin(margin) );
 
     }
 }
-TEST_CASE( "CollignonProjection collignon_to_hemisphere() closeness preservation", "[rasters]" ) {
+TEST_CASE( "Projection collignon_to_hemisphere() closeness preservation", "[rasters]" ) {
     SECTION("changes in collignon_to_hemisphere must not result in changes that exceed a reasonable multiple"){
         const float quadrant(std::sqrt(3.14159265f)); // length of a quadrant when projected
         const float factor(2.0f);
@@ -93,8 +93,8 @@ TEST_CASE( "CollignonProjection collignon_to_hemisphere() closeness preservation
         }}
     }
 }
-TEST_CASE( "CollignonProjection.collignon_to_hemisphere() area preservation", "[rasters]" ) {
-    SECTION("CollignonProjection.collignon_to_hemisphere() must not result in changes to areas that exceed a reasonable multiple"){
+TEST_CASE( "Projection.collignon_to_hemisphere() area preservation", "[rasters]" ) {
+    SECTION("Projection.collignon_to_hemisphere() must not result in changes to areas that exceed a reasonable multiple"){
         const float quadrant(std::sqrt(3.14159265f)); // length of a quadrant when projected
         const float epsilon(0.003);
         const float area(0.03*0.03);
@@ -112,7 +112,7 @@ TEST_CASE( "CollignonProjection.collignon_to_hemisphere() area preservation", "[
         }}
     }
 }
-// TEST_CASE( "CollignonProjection collignon_to_hemisphere() congruence", "[rasters]" ) {
+// TEST_CASE( "Projection collignon_to_hemisphere() congruence", "[rasters]" ) {
 //     SECTION("a modulo can be applied to input which results in the same output"){
 //         const float epsilon(1e-4f);
 //         const glm::vec2 nx(4.0, 0);
@@ -131,49 +131,49 @@ TEST_CASE( "CollignonProjection.collignon_to_hemisphere() area preservation", "[
 
 
 
-TEST_CASE( "CollignonProjection.hemisphere_to_collignon() purity", "[rasters]" ) {
-    SECTION("CollignonProjection.hemisphere_to_collignon() must be called repeatedly without changing the output"){
+TEST_CASE( "Projection.hemisphere_to_collignon() purity", "[rasters]" ) {
+    SECTION("Projection.hemisphere_to_collignon() must be called repeatedly without changing the output"){
         const float z(1.0f);
         for(float x = -1.0; x < 1.0; x+=0.1f){
         for(float y = -1.0; y < 1.0; y+=0.1f){
             glm::vec3 v(x,y,z);
-            CHECK(rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(x,y,z), 0.0f) == 
-                  rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(x,y,z), 0.0f));
+            CHECK(collignon::Projection().hemisphere_to_collignon(glm::vec3(x,y,z), 0.0f) == 
+                  collignon::Projection().hemisphere_to_collignon(glm::vec3(x,y,z), 0.0f));
         }}
     }
 }
 
-TEST_CASE( "CollignonProjection.hemisphere_to_collignon() limiting cases", "[rasters]" ) {
-    SECTION("CollignonProjection.hemisphere_to_collignon() must reproduce results for limiting cases"){
+TEST_CASE( "Projection.hemisphere_to_collignon() limiting cases", "[rasters]" ) {
+    SECTION("Projection.hemisphere_to_collignon() must reproduce results for limiting cases"){
         const float margin(1e-4f);
         const float pi(3.14159);
         const float quadrant(std::sqrt(pi)); // length of a quadrant when projected
 
-        CHECK(rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(0,1,0), 0.0f).x == Approx(0).margin(margin) );
-        CHECK(rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(0,1,0), 0.0f).y == Approx(quadrant).margin(margin) );
+        CHECK(collignon::Projection().hemisphere_to_collignon(glm::vec3(0,1,0), 0.0f).x == Approx(0).margin(margin) );
+        CHECK(collignon::Projection().hemisphere_to_collignon(glm::vec3(0,1,0), 0.0f).y == Approx(quadrant).margin(margin) );
 
-        CHECK(rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(0,-1,0), 0.0f).x == Approx(0).margin(margin) );
-        CHECK(rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(0,-1,0), 0.0f).y == Approx(-quadrant).margin(margin) );
-
-
-        CHECK(rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(1,0,0), 0.0f).x == Approx(quadrant).margin(margin) );
-        CHECK(rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(1,0,0), 0.0f).y == Approx(0).margin(margin) );
-
-        CHECK(rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(-1,0,0), 0.0f).x == Approx(-quadrant).margin(margin) );
-        CHECK(rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(-1,0,0), 0.0f).y == Approx(0).margin(margin) );
+        CHECK(collignon::Projection().hemisphere_to_collignon(glm::vec3(0,-1,0), 0.0f).x == Approx(0).margin(margin) );
+        CHECK(collignon::Projection().hemisphere_to_collignon(glm::vec3(0,-1,0), 0.0f).y == Approx(-quadrant).margin(margin) );
 
 
-        CHECK(rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(0,0,1), 0.0f).x == Approx(0).margin(margin) );
-        CHECK(rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(0,0,1), 0.0f).y == Approx(0).margin(margin) );
+        CHECK(collignon::Projection().hemisphere_to_collignon(glm::vec3(1,0,0), 0.0f).x == Approx(quadrant).margin(margin) );
+        CHECK(collignon::Projection().hemisphere_to_collignon(glm::vec3(1,0,0), 0.0f).y == Approx(0).margin(margin) );
 
-        CHECK(rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(0,0,-1), 0.0f).x == Approx(0).margin(margin) );
-        CHECK(rasters::CollignonProjection().hemisphere_to_collignon(glm::vec3(0,0,-1), 0.0f).y == Approx(0).margin(margin) );
+        CHECK(collignon::Projection().hemisphere_to_collignon(glm::vec3(-1,0,0), 0.0f).x == Approx(-quadrant).margin(margin) );
+        CHECK(collignon::Projection().hemisphere_to_collignon(glm::vec3(-1,0,0), 0.0f).y == Approx(0).margin(margin) );
+
+
+        CHECK(collignon::Projection().hemisphere_to_collignon(glm::vec3(0,0,1), 0.0f).x == Approx(0).margin(margin) );
+        CHECK(collignon::Projection().hemisphere_to_collignon(glm::vec3(0,0,1), 0.0f).y == Approx(0).margin(margin) );
+
+        CHECK(collignon::Projection().hemisphere_to_collignon(glm::vec3(0,0,-1), 0.0f).x == Approx(0).margin(margin) );
+        CHECK(collignon::Projection().hemisphere_to_collignon(glm::vec3(0,0,-1), 0.0f).y == Approx(0).margin(margin) );
 
     }
 }
 
-TEST_CASE( "CollignonProjection.hemisphere_to_collignon() closeness preservation", "[rasters]" ) {
-    SECTION("CollignonProjection.hemisphere_to_collignon() must not result in changes that exceed a reasonable multiple"){
+TEST_CASE( "Projection.hemisphere_to_collignon() closeness preservation", "[rasters]" ) {
+    SECTION("Projection.hemisphere_to_collignon() must not result in changes that exceed a reasonable multiple"){
         const float pi(3.141592653589f);
         const float factor(2.0f);
         const glm::vec3 dx(0.1, 0.0, 0.0);
@@ -207,8 +207,8 @@ TEST_CASE( "CollignonProjection.hemisphere_to_collignon() closeness preservation
         }}
     }
 }
-TEST_CASE( "CollignonProjection.hemisphere_to_collignon() area preservation", "[rasters]" ) {
-    SECTION("CollignonProjection.hemisphere_to_collignon() must not result in changes to areas that exceed a reasonable multiple"){
+TEST_CASE( "Projection.hemisphere_to_collignon() area preservation", "[rasters]" ) {
+    SECTION("Projection.hemisphere_to_collignon() must not result in changes to areas that exceed a reasonable multiple"){
         const float epsilon(1.0);
         const float area(0.03*0.03);
         const glm::vec3 dx(0.03, 0.0, 0.0);
@@ -226,8 +226,8 @@ TEST_CASE( "CollignonProjection.hemisphere_to_collignon() area preservation", "[
         }}
     }
 }
-TEST_CASE( "CollignonProjection.hemisphere_to_collignon() / collignon_to_hemisphere() invertibility", "[rasters]" ) {
-    SECTION("CollignonProjection.collignon_to_hemisphere() must reconstruct input passed to hemisphere_to_collignon() for any unit vector"){
+TEST_CASE( "Projection.hemisphere_to_collignon() / collignon_to_hemisphere() invertibility", "[rasters]" ) {
+    SECTION("Projection.collignon_to_hemisphere() must reconstruct input passed to hemisphere_to_collignon() for any unit vector"){
         const float pi(3.141592653589f);
         const float epsilon(1e-4f);
         for(float x = -1.0f; x < 1.0f; x+=0.1f){

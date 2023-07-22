@@ -14,16 +14,16 @@
 #include <glm/vec3.hpp>       	 // *vec3
 #include <glm/mat3x3.hpp>        // *mat3
 
-namespace rasters
+namespace collignon
 {
 	/*
-	An `CollignonProjection` is a representation of the classic "Collignon" projection for a unit sphere.
+	An `Projection` is a representation of the classic "" projection for a unit sphere.
 
-	`CollignonProjection` exclusively represents data structures and functions that define an isomorphism between points on a hemisphere and a collignon projection.
+	`Projection` exclusively represents data structures and functions that define an isomorphism between points on a hemisphere and a collignon projection.
 	*/
 
     template<typename Tfloat=float>
-	class CollignonProjection
+	class Projection
 	{
 		static constexpr Tfloat pi = 3.141592652653589793f;
 		static constexpr Tfloat quadrant_area = pi;
@@ -37,10 +37,10 @@ namespace rasters
 		}
 
 	public:
-		~CollignonProjection()
+		~Projection()
 		{
 		}
-		explicit CollignonProjection()
+		explicit Projection()
 		{
 		}
 

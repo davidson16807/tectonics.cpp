@@ -15,13 +15,13 @@
 #include <glm/mat3x3.hpp>        // *mat3
 
 // in-house libraries
-#include <rasters/components/CollignonMesh/CollignonProjection.hpp>
+#include "Projection.hpp"
 
-namespace rasters
+namespace collignon
 {
 
 	/*
-	An `CollignonTesselation` is a tesselation of tiles based around the "Collignon" projection of a unit sphere.
+	An `Tesselation` is a tesselation of tiles based around the "" projection of a unit sphere.
 	This tesselation has the interesting property that it preserves the topological concept of "closeness":
 	points that are close together on the tesselation correspond to points that are also close together on a sphere.
 	This property, coupled with the equal area and isolatitude properties of of the collignon projection, 
@@ -33,12 +33,12 @@ namespace rasters
 	* equal area
 	* isolatitude
 
-	The `CollignonTesselation` class exclusively represents data structures and functions 
+	The `Tesselation` class exclusively represents data structures and functions 
 	that define an isomorphism between points on a sphere and such a tesselation.
 	*/
 
     template<typename Tfloat=float>
-	class CollignonTesselation
+	class Tesselation
 	{
 		static constexpr Tfloat pi = 3.141592652653589793f;
 		static constexpr Tfloat quadrant_area = pi;
@@ -63,14 +63,14 @@ namespace rasters
 			);
 		}
 
-		const CollignonProjection<Tfloat> projection;
+		const Projection<Tfloat> projection;
 		
 	public:
 
-		~CollignonTesselation()
+		~Tesselation()
 		{
 		}
-		explicit CollignonTesselation(CollignonProjection<Tfloat> projection) : projection(projection)
+		explicit Tesselation(Projection<Tfloat> projection) : projection(projection)
 		{
 		}
 
@@ -96,7 +96,7 @@ namespace rasters
 
 		glm::vec<3,Tfloat,glm::defaultp> tesselation_to_sphere(const glm::vec<2,Tfloat,glm::defaultp> grid_position) const {
 			// `standardize` is the canonical grid position on which all subsequent calculations occur.
-			// it is what allows CollignonTesselation to preserve closeness, even between points that go over the edge of a tile in the tesselation.
+			// it is what allows Tesselation to preserve closeness, even between points that go over the edge of a tile in the tesselation.
 			const glm::vec<2,Tfloat,glm::defaultp> standardized = standardize(grid_position);
 			// `octant_id` is the canonical octant on which all subsequent operations concerning octant are based.
 			// it is used to prevent edge case errors in which different operations assume different octants due to float imprecision.
