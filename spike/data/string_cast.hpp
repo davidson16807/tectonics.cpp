@@ -4,7 +4,7 @@
 #include <string>
 
 #include "Series.hpp" 
-#include "common.hpp"
+#include "whole.hpp"
 
 namespace data
 {

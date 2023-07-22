@@ -7,8 +7,7 @@ namespace data
 	bool compatible(const T1& a, Tout& out)
 	{
 		return 
-			out.size() >= a.size() &&
-			out.size() % a.size() == 0;
+			out.size() == a.size();
 	}
 
 	template <typename T1, typename T2, typename Tout>

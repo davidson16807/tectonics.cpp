@@ -8,9 +8,9 @@
 
 
 #include "Series.hpp"
-#include "arithmetic.hpp"
+#include "each.hpp"
 #include "relational.hpp"
-#include "common.hpp"
+#include "whole.hpp"
 #include "statistic.hpp"
 
 TEST_CASE( "Series<T> abs purity", "[many]" ) {
@@ -189,3 +189,4 @@ TEST_CASE( "Series<T> min/max/clamp consistency", "[many]" ) {
         CHECK(data::equal(alohi1, alohi2));
     }
 }
+

@@ -5,7 +5,7 @@
 
 
 #include "Series.hpp"
-#include "arithmetic.hpp"
+#include "each.hpp"
 #include "relational.hpp"
 #include "exponential.hpp"
 

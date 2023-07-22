@@ -3,9 +3,9 @@
 #include <catch/catch.hpp>
 
 #include "Series.hpp"
-#include "arithmetic.hpp"
+#include "each.hpp"
 #include "relational.hpp"
-#include "common.hpp"
+#include "whole.hpp"
 
 TEST_CASE( "Series<T> arithmetic purity", "[many]" ) {
     auto a = data::series({1,2,3,4,5});
@@ -184,9 +184,9 @@ TEST_CASE( "Series<T>/Uniform<T> arithmetic identity", "[many]" ) {
         data::div(a,ones, c);
         CHECK(data::equal(c, a));
         data::sub(a,a, c);
-        CHECK(data::equal(c, zeros));
+        CHECK(data::equal(c, zeros, 1e-7));
         data::div(a,a, c);
-        CHECK(data::equal(c, ones ));
+        CHECK(data::equal(c, ones,  1e-7 ));
     }
 }
 

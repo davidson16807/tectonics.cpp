@@ -3,10 +3,10 @@
 #include <catch/catch.hpp>
 
 #include "Series.hpp"
-#include "arithmetic.hpp"
+#include "each.hpp"
 #include "trigonometric.hpp"
 #include "relational.hpp"
-#include "common.hpp"
+#include "whole.hpp"
 
 TEST_CASE( "Series<T> trigonometric purity", "[many]" ) {
     auto a = data::series({1.0,2.0,3.0,4.0,5.0});
