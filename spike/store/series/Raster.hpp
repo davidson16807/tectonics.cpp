@@ -194,6 +194,87 @@ namespace each
 			return *this;
 		}
 
+
+        template<typename T2>
+        constexpr Series<T>& operator+=(const T2& a)
+        {
+			for (std::size_t i = 0; i < values.size(); ++i)
+			{
+				values[i] += a[i];
+			}
+            return *this;
+        }
+
+        template<typename T2>
+		constexpr Series<T>& operator-=(const T2& a)
+		{
+			for (std::size_t i = 0; i < values.size(); ++i)
+			{
+				values[i] -= a[i];
+			}
+			return *this;
+		}
+
+		template<typename T2>
+		constexpr Series<T>& operator*=(const T2& a)
+		{
+			for (std::size_t i = 0; i < values.size(); ++i)
+			{
+				values[i] *= a[i];
+			}
+			return *this;
+		}
+
+		template<typename T2>
+		constexpr Series<T>& operator/=(const T2& a)
+		{
+			for (std::size_t i = 0; i < values.size(); ++i)
+			{
+				values[i] /= a[i];
+			}
+			return *this;
+		}
+
+		template<typename T2>
+		constexpr Series<T>& operator%=(const T2& a)
+		{
+			for (std::size_t i = 0; i < values.size(); ++i)
+			{
+				values[i] %= a[i];
+			}
+			return *this;
+		}
+
+		template<typename T2>
+		constexpr Series<T>& operator&=(const T2& a)
+		{
+			for (std::size_t i = 0; i < values.size(); ++i)
+			{
+				values[i] &= a[i];
+			}
+			return *this;
+		}
+
+		template<typename T2>
+		constexpr Series<T>& operator|=(const T2& a)
+		{
+			for (std::size_t i = 0; i < values.size(); ++i)
+			{
+				values[i] |= a[i];
+			}
+			return *this;
+		}
+
+		template<typename T2>
+		constexpr Series<T>& operator^=(const T2& a)
+		{
+			for (std::size_t i = 0; i < values.size(); ++i)
+			{
+				values[i] ^= a[i];
+			}
+			return *this;
+		}
+
 		inline std::vector<T>& vector()
 		{
 			return values;
@@ -208,16 +289,6 @@ namespace each
 			}
 		}
 
-
-		template<typename T2>
-		inline Raster<T,Tgrid,Tmap> footprint(const Uniform<T2>& u) const {
-			return Raster<T,Tgrid,Tmap>(this->grid);
-		}
-
-		template<typename T2>
-		inline Raster<T,Tgrid,Tmap> footprint(const Raster<T,Tgrid,Tmap>& r) const {
-			return Raster<T,Tgrid,Tmap>(this->grid);
-		}
 
 	};
 

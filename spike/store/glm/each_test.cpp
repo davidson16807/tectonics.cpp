@@ -8,16 +8,16 @@
 
 #include "each.hpp" 
 
-#include "../Series.hpp" 
+#include "../series/Interleave.hpp" 
 #include "../whole.hpp" 
 #include "_test_utils.cpp"
 
 
-TEST_CASE( "Must be able to test each::series equivalence for boolean vectors using the catch framework", "[each]" ) {
+TEST_CASE( "Must be able to test series::interleave equivalence for boolean vectors using the catch framework", "[each]" ) {
     std::mt19937 generator(2);
     auto ref       = each::get_random_vec3s(4, generator);
-    auto ref_copy  = each::series(ref);
-    auto ref_tweak = each::series(ref); ref_tweak[1].z = 1.0f;
+    auto ref_copy  = series::interleave(ref);
+    auto ref_tweak = series::interleave(ref); ref_tweak[1].z = 1.0f;
     auto ref_fewer = each::get_random_vec3s(3, generator); ref_fewer[0]=ref[0]; ref_fewer[1]=ref[1]; ref_fewer[2]=ref[2];
 
     SECTION("Must be able to equate object with itself"){
@@ -34,11 +34,11 @@ TEST_CASE( "Must be able to test each::series equivalence for boolean vectors us
     }
 }
 
-TEST_CASE( "Must be able to test each::series equivalence for vectors using the catch framework", "[each]" ) {
+TEST_CASE( "Must be able to test series::interleave equivalence for vectors using the catch framework", "[each]" ) {
     std::mt19937 generator(2);
     auto ref       = each::get_random_bvec3s(4, generator);
-    auto ref_tweak = each::series(ref); ref_tweak[1].z = true; ref[1].z = false;
-    auto ref_copy  = each::series(ref);
+    auto ref_tweak = series::interleave(ref); ref_tweak[1].z = true; ref[1].z = false;
+    auto ref_copy  = series::interleave(ref);
     auto ref_fewer = each::get_random_bvec3s(3, generator); ref_fewer[0]=ref[0]; ref_fewer[1]=ref[1]; ref_fewer[2]=ref[2];
 
     SECTION("Must be able to equate object with itself"){
@@ -269,7 +269,7 @@ TEST_CASE( "vec3s min idempotence", "[each]" ) {
     auto abb = each::get_random_vec3s(5, generator);
     SECTION("subsequent calls to min(*,b) must return the same value"){
         each::min(a,b, ab);
-        min(ab,b, abb);
+        each::min(ab,b, abb);
         CHECK(whole::equal(ab, abb));
     }
 }
@@ -295,7 +295,7 @@ TEST_CASE( "vec3s max purity", "[each]" ) {
 //  auto abc = each::get_random_vec3s(5, generator);
 //     SECTION("sum(each::max(a,b)) must always return a value greater than or equal to the starting value"){
 //         each::max(a,b, ab);
-//         max(ab,c, abc);
+//         each::max(ab,c, abc);
 //         CHECK(sum(ab) <= sum(abc));
 //     }
 // }
@@ -307,7 +307,7 @@ TEST_CASE( "vec3s max idempotence", "[each]" ) {
     auto abb = each::get_random_vec3s(5, generator);
     SECTION("subsequent calls to max(*,b) must return the same value"){
         each::max(a,b, ab);
-        max(ab,b, abb);
+        each::max(ab,b, abb);
         CHECK(whole::equal(ab, abb));
     }
 }
@@ -476,8 +476,8 @@ TEST_CASE( "Series<T> dot() purity", "[each]" ) {
     std::mt19937 generator(2);
     auto a = each::get_random_vec3s(5, generator);
     auto b = each::get_random_vec3s(5, generator);
-    auto c1 = each::series(5, 0.0f);
-    auto c2 = each::series(5, 0.0f);
+    auto c1 = series::interleave(5, 0.0f);
+    auto c2 = series::interleave(5, 0.0f);
 
     SECTION("dot() must be called repeatedly without changing the output"){
         each::dot(a, b, c1);
@@ -507,8 +507,8 @@ TEST_CASE( "Series<T> dot() commutativity", "[each]" ) {
     std::mt19937 generator(2);
     auto a = each::get_random_vec3s(5, generator);
     auto b = each::get_random_vec3s(5, generator);
-    auto ab = each::series(5, 0.0f);
-    auto ba = each::series(5, 0.0f);
+    auto ab = series::interleave(5, 0.0f);
+    auto ba = series::interleave(5, 0.0f);
 
     SECTION("dot(a,b) must equal dot(b,a)"){
         each::dot(a, b, ab);
@@ -521,10 +521,10 @@ TEST_CASE( "Series<T> dot() associativity", "[each]" ) {
     std::mt19937 generator(2);
     auto a = each::get_random_vec3s(5, generator);
     auto b = each::get_random_vec3s(5, generator);
-    auto c = each::series({0.0f,1.0f,2.0f,3.0f,4.0f});
+    auto c = series::interleave({0.0f,1.0f,2.0f,3.0f,4.0f});
     auto bc = each::get_random_vec3s(5, generator);
-    auto ab_c = each::series(5, 0.0f);
-    auto a_bc = each::series(5, 0.0f);
+    auto ab_c = series::interleave(5, 0.0f);
+    auto a_bc = series::interleave(5, 0.0f);
 
     SECTION("dot(dot(a,b),c) must equal dot(a,dot(b,c))"){
         each::dot(a, b, ab_c);
@@ -541,10 +541,10 @@ TEST_CASE( "Series<T> dot() distributivity", "[each]" ) {
     auto b = each::get_random_vec3s(5, generator);
     auto c = each::get_random_vec3s(5, generator);
     auto ab = each::get_random_vec3s(5, generator);
-    auto ac = each::series(5, 0.0f);
-    auto bc = each::series(5, 0.0f);
-    auto ab_c = each::series(5, 0.0f);
-    auto ac_bc = each::series(5, 0.0f);
+    auto ac = series::interleave(5, 0.0f);
+    auto bc = series::interleave(5, 0.0f);
+    auto ab_c = series::interleave(5, 0.0f);
+    auto ac_bc = series::interleave(5, 0.0f);
 
     SECTION("a+b must equal b+a"){
         each::add(a, b, ab);
@@ -565,8 +565,8 @@ TEST_CASE( "Series<T>/singleton dot() purity", "[each]" ) {
     std::mt19937 generator(2);
     auto a = each::get_random_vec3s(5, generator);
     auto b = each::uniform(glm::vec3(-1,0.5,2));
-    auto c1 = each::series(5, 0.0f);
-    auto c2 = each::series(5, 0.0f);
+    auto c1 = series::interleave(5, 0.0f);
+    auto c2 = series::interleave(5, 0.0f);
 
     SECTION("dot() must be called repeatedly without changing the output"){
         each::dot(a, b, c1);
@@ -596,8 +596,8 @@ TEST_CASE( "Series<T>/singleton dot() commutativity", "[each]" ) {
     std::mt19937 generator(2);
     auto a = each::get_random_vec3s(5, generator);
     auto b = each::uniform(glm::vec3(-1,0.5,2));
-    auto ab = each::series(5, 0.0f);
-    auto ba = each::series(5, 0.0f);
+    auto ab = series::interleave(5, 0.0f);
+    auto ba = series::interleave(5, 0.0f);
 
     SECTION("dot(a,b) must equal dot(b,a)"){
         each::dot(a, b, ab);
@@ -610,10 +610,10 @@ TEST_CASE( "Series<T>/singleton dot() associativity", "[each]" ) {
     std::mt19937 generator(2);
     auto a = each::get_random_vec3s(5, generator);
     auto b = each::uniform(glm::vec3(-1,0.5,2));
-    auto c = each::series({0.0f,1.0f,2.0f,3.0f,4.0f});
+    auto c = series::interleave({0.0f,1.0f,2.0f,3.0f,4.0f});
     auto bc = each::get_random_vec3s(5, generator);
-    auto ab_c = each::series(5, 0.0f);
-    auto a_bc = each::series(5, 0.0f);
+    auto ab_c = series::interleave(5, 0.0f);
+    auto a_bc = series::interleave(5, 0.0f);
 
     SECTION("dot(dot(a,b),c) must equal dot(a,dot(b,c))"){
         each::dot(a, b, ab_c);
@@ -630,10 +630,10 @@ TEST_CASE( "Series<T>/singleton dot() distributivity", "[each]" ) {
     auto b = each::uniform(glm::vec3(-1,0.5,2));
     auto c = each::get_random_vec3s(5, generator);
     auto ab = each::get_random_vec3s(5, generator);
-    auto ac = each::series(5, 0.0f);
-    auto bc = each::series(5, 0.0f);
-    auto ab_c = each::series(5, 0.0f);
-    auto ac_bc = each::series(5, 0.0f);
+    auto ac = series::interleave(5, 0.0f);
+    auto bc = series::interleave(5, 0.0f);
+    auto ab_c = series::interleave(5, 0.0f);
+    auto ac_bc = series::interleave(5, 0.0f);
 
     SECTION("a+b must equal b+a"){
         each::add(a, b, ab);
@@ -833,8 +833,8 @@ TEST_CASE( "Series<T> distance() purity", "[each]" ) {
     std::mt19937 generator(2);
     auto a = each::get_random_vec3s(5, generator);
     auto b = each::get_random_vec3s(5, generator);
-    auto c1 = each::series(5, 0.0f);
-    auto c2 = each::series(5, 0.0f);
+    auto c1 = series::interleave(5, 0.0f);
+    auto c2 = series::interleave(5, 0.0f);
 
     SECTION("distance() must be called repeatedly without changing the output"){
         each::distance(a, b, c1);
@@ -864,8 +864,8 @@ TEST_CASE( "Series<T> distance() commutativity", "[each]" ) {
     std::mt19937 generator(2);
     auto a = each::get_random_vec3s(5, generator);
     auto b = each::get_random_vec3s(5, generator);
-    auto ab = each::series(5, 0.0f);
-    auto ba = each::series(5, 0.0f);
+    auto ab = series::interleave(5, 0.0f);
+    auto ba = series::interleave(5, 0.0f);
 
     SECTION("distance(a,b) must equal distance(b,a)"){
         each::distance(a, b, ab);
@@ -878,10 +878,10 @@ TEST_CASE( "Series<T> distance() commutativity", "[each]" ) {
 //     std::mt19937 generator(2);
 //     auto a = each::get_random_vec3s(5, generator);
 //     auto b = each::get_random_vec3s(5, generator);
-//     auto c = each::series({0.0f,1.0f,2.0f,3.0f,4.0f});
+//     auto c = series::interleave({0.0f,1.0f,2.0f,3.0f,4.0f});
 //     auto bc = each::get_random_vec3s(5, generator);
-//     auto ab_c = each::series(5, 0.0f);
-//     auto a_bc = each::series(5, 0.0f);
+//     auto ab_c = series::interleave(5, 0.0f);
+//     auto a_bc = series::interleave(5, 0.0f);
 
 //     SECTION("distance(distance(a,b),c) must equal distance(a,distance(b,c))"){
 //         each::distance(a, b, ab_c);
@@ -899,8 +899,8 @@ TEST_CASE( "Series<T> distance() translational invariance", "[each]" ) {
     auto c = each::get_random_vec3s(5, generator);
     auto ac = each::get_random_vec3s(5, generator);
     auto bc = each::get_random_vec3s(5, generator);
-    auto ab = each::series(5, 0.0f);
-    auto ac_bc = each::series(5, 0.0f);
+    auto ab = series::interleave(5, 0.0f);
+    auto ac_bc = series::interleave(5, 0.0f);
 
     SECTION("a+b must equal b+a"){
         each::add(a, c, ac);
@@ -920,8 +920,8 @@ TEST_CASE( "Series<T>/singleton distance() purity", "[each]" ) {
     std::mt19937 generator(2);
     auto a = each::get_random_vec3s(5, generator);
     auto b = each::uniform(glm::vec3(-1,0.5,2));
-    auto c1 = each::series(5, 0.0f);
-    auto c2 = each::series(5, 0.0f);
+    auto c1 = series::interleave(5, 0.0f);
+    auto c2 = series::interleave(5, 0.0f);
 
     SECTION("distance() must be called repeatedly without changing the output"){
         each::distance(a, b, c1);
@@ -951,8 +951,8 @@ TEST_CASE( "Series<T>/singleton distance() commutativity", "[each]" ) {
     std::mt19937 generator(2);
     auto a = each::get_random_vec3s(5, generator);
     auto b = each::uniform(glm::vec3(-1,0.5,2));
-    auto ab = each::series(5, 0.0f);
-    auto ba = each::series(5, 0.0f);
+    auto ab = series::interleave(5, 0.0f);
+    auto ba = series::interleave(5, 0.0f);
 
     SECTION("distance(a,b) must equal distance(b,a)"){
         each::distance(a, b, ab);
@@ -965,10 +965,10 @@ TEST_CASE( "Series<T>/singleton distance() commutativity", "[each]" ) {
 //     std::mt19937 generator(2);
 //     auto a = each::get_random_vec3s(5, generator);
 //     auto b = each::uniform(glm::vec3(-1,0.5,2));
-//     auto c = each::series({0.0f,1.0f,2.0f,3.0f,4.0f});
+//     auto c = series::interleave({0.0f,1.0f,2.0f,3.0f,4.0f});
 //     auto bc = each::get_random_vec3s(5, generator);
-//     auto ab_c = each::series(5, 0.0f);
-//     auto a_bc = each::series(5, 0.0f);
+//     auto ab_c = series::interleave(5, 0.0f);
+//     auto a_bc = series::interleave(5, 0.0f);
 
 //     SECTION("distance(distance(a,b),c) must equal distance(a,distance(b,c))"){
 //         each::distance(a, b, ab_c);
@@ -986,8 +986,8 @@ TEST_CASE( "Series<T>/singleton distance() translational invariance", "[each]" )
     auto c = each::get_random_vec3s(5, generator);
     auto ac = each::get_random_vec3s(5, generator);
     auto bc = each::get_random_vec3s(5, generator);
-    auto ab = each::series(5, 0.0f);
-    auto ac_bc = each::series(5, 0.0f);
+    auto ab = series::interleave(5, 0.0f);
+    auto ac_bc = series::interleave(5, 0.0f);
 
     SECTION("a+b must equal b+a"){
         each::add(a, c, ac);
@@ -1008,8 +1008,8 @@ TEST_CASE( "Series<T>/singleton distance() translational invariance", "[each]" )
 //     std::mt19937 generator(2);
 //     auto a = each::get_random_vec3s(5, generator);
 //     auto a5 = each::get_random_vec3s(5, generator);
-//     auto l_a5 = each::series(5, 0.0f);
-//     auto la_5 = each::series(5, 0.0f);
+//     auto l_a5 = series::interleave(5, 0.0f);
+//     auto la_5 = series::interleave(5, 0.0f);
 
 //     SECTION("length(a*b) must equal length(a)*b for b>=0"){
 //         each::mult(a, each::uniform(5.0f), a5);

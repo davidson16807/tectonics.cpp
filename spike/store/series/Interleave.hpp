@@ -11,11 +11,11 @@
 
 #include "Uniform.hpp"
 
-namespace each
+namespace series
 {
 
 	/*
-	`Series` is a thin wrapper for a std::vector that permits interleaving.
+	`Interleave` is a thin wrapper for a std::vector that permits interleaving.
 	Interleaving is accomplished using a map: "lookup_id ⟶ memory_id",
 	that allows multiple sequential lookup_ids to map to the same memory_id,
 	and allows value_ids to be repeatedly looped over as the modulo of vector size.
@@ -24,7 +24,7 @@ namespace each
 	See the `operator[]()` overload for more details.
 	*/
 	template <typename T>
-	struct Series
+	struct Interleave
 	{
 
 	protected:
@@ -34,14 +34,14 @@ namespace each
 	public:
 
 		// copy constructor
-		Series(const Series<T>& a)  : 
+		Interleave(const Interleave<T>& a)  : 
 			values(a.values),
 			copies_per_value(1)
 		{}
 
 		// initializer list constructor
 		template <typename T2>
-		explicit Series(std::initializer_list<T2> list) : 
+		explicit Interleave(std::initializer_list<T2> list) : 
 			values(list),
 			copies_per_value(1)
 		{
@@ -49,31 +49,31 @@ namespace each
 
 		// std container style constructor
 		template<typename TIterator>
-		explicit Series(TIterator first, TIterator last) : 
+		explicit Interleave(TIterator first, TIterator last) : 
 			values(first, last),
 			copies_per_value(1)
 		{
 		}
 
 		// convenience constructor for vectors
-		explicit Series(std::vector<T>& vector) : 
+		explicit Interleave(std::vector<T>& vector) : 
 			values(vector),
 			copies_per_value(1)
 		{
 		}
 
-		constexpr explicit Series(const std::size_t N) : 
+		constexpr explicit Interleave(const std::size_t N) : 
 			values(N),
 			copies_per_value(1)
 		{}
 
-		constexpr explicit Series(const std::size_t N, const T a)  : 
+		constexpr explicit Interleave(const std::size_t N, const T a)  : 
 			values(N, a),
 			copies_per_value(1)
 		{}
 
 		template <typename T2>
-		explicit Series(const Series<T2>& a) : 
+		explicit Interleave(const Interleave<T2>& a) : 
 			values(a.values),
 			copies_per_value(1)
 		{
@@ -87,38 +87,38 @@ namespace each
 
 		// initializer list constructor
 		template <typename T2>
-		explicit Series(const std::size_t copies_per_value, std::initializer_list<T2> list) : 
+		explicit Interleave(const std::size_t copies_per_value, std::initializer_list<T2> list) : 
 			values(list),
 			copies_per_value(copies_per_value)
 		{
 		}
 		// std container style constructor
 		template<typename TIterator>
-		explicit Series(const std::size_t copies_per_value, TIterator first, TIterator last) : 
+		explicit Interleave(const std::size_t copies_per_value, TIterator first, TIterator last) : 
 			values(first, last),
 			copies_per_value(copies_per_value)
 		{
 		}
 
 		// convenience constructor for vectors
-		explicit Series(const std::size_t copies_per_value, std::vector<T>& vector) : 
+		explicit Interleave(const std::size_t copies_per_value, std::vector<T>& vector) : 
 			values(vector),
 			copies_per_value(copies_per_value)
 		{
 		}
 
-		constexpr explicit Series(const std::size_t copies_per_value, const std::size_t N) : 
+		constexpr explicit Interleave(const std::size_t copies_per_value, const std::size_t N) : 
 			values(N),
 			copies_per_value(copies_per_value)
 		{}
 
-		constexpr explicit Series(const std::size_t copies_per_value, const std::size_t N, const T a)  : 
+		constexpr explicit Interleave(const std::size_t copies_per_value, const std::size_t N, const T a)  : 
 			values(N, a),
 			copies_per_value(copies_per_value)
 		{}
 
 		template <typename T2>
-		explicit Series(const std::size_t copies_per_value, const Series<T2>& a) : 
+		explicit Interleave(const std::size_t copies_per_value, const Interleave<T2>& a) : 
 			values(a.values),
 			copies_per_value(copies_per_value)
 		{
@@ -155,25 +155,106 @@ namespace each
 		}
 
 		template<typename Tid>
-		inline Series<T> operator[](const Series<Tid>& ids )
+		inline Interleave<T> operator[](const Interleave<Tid>& ids )
 		{
-			Series<T> out = Series<T>(ids.size());
+			Interleave<T> out = Interleave<T>(ids.size());
 			get(*this, ids, out);
 			return out;
 		}
 
-		inline Series<T>& operator=(const Series<T>& other )
+		inline Interleave<T>& operator=(const Interleave<T>& other )
 		{
 			values.resize(other.size());
 			copy(*this, other);
 			return *this;
 		}
-		inline Series<T>& operator=(const T& other )
+		inline Interleave<T>& operator=(const T& other )
 		{
 			values.resize(other.size());
 			fill(*this, other);
 			return *this;
 		}
+
+        template<typename T2>
+        constexpr Interleave<T>& operator+=(const T2& a)
+        {
+			for (std::size_t i = 0; i < values.size(); ++i)
+			{
+				values[i] += a[i];
+			}
+            return *this;
+        }
+
+        template<typename T2>
+		constexpr Interleave<T>& operator-=(const T2& a)
+		{
+			for (std::size_t i = 0; i < values.size(); ++i)
+			{
+				values[i] -= a[i];
+			}
+            return *this;
+		}
+
+		template<typename T2>
+		constexpr Interleave<T>& operator*=(const T2& a)
+		{
+			for (std::size_t i = 0; i < values.size(); ++i)
+			{
+				values[i] *= a[i];
+			}
+            return *this;
+		}
+
+		template<typename T2>
+		constexpr Interleave<T>& operator/=(const T2& a)
+		{
+			for (std::size_t i = 0; i < values.size(); ++i)
+			{
+				values[i] /= a[i];
+			}
+            return *this;
+		}
+
+		template<typename T2>
+		constexpr Interleave<T>& operator%=(const T2& a)
+		{
+			for (std::size_t i = 0; i < values.size(); ++i)
+			{
+				values[i] %= a[i];
+			}
+            return *this;
+		}
+
+		template<typename T2>
+		constexpr Interleave<T>& operator&=(const T2& a)
+		{
+			for (std::size_t i = 0; i < values.size(); ++i)
+			{
+				values[i] &= a[i];
+			}
+            return *this;
+		}
+
+		template<typename T2>
+		constexpr Interleave<T>& operator|=(const T2& a)
+		{
+			for (std::size_t i = 0; i < values.size(); ++i)
+			{
+				values[i] |= a[i];
+			}
+            return *this;
+		}
+
+		template<typename T2>
+		constexpr Interleave<T>& operator^=(const T2& a)
+		{
+			for (std::size_t i = 0; i < values.size(); ++i)
+			{
+				values[i] ^= a[i];
+			}
+            return *this;
+		}
+
 
 		inline std::vector<T>& vector()
 		{
@@ -189,15 +270,6 @@ namespace each
 			}
 		}
 
-		template<typename T2>
-		inline Series<T> footprint(const Uniform<T2>& u) const {
-			return Series<T>(this->size());
-		}
-
-		template<typename T2>
-		inline Series<T> footprint(const Series<T2>& r) const {
-			return Series<T>(this->size());
-		}
 
 	};
 
@@ -211,29 +283,29 @@ namespace each
 	*/
 
 	template<typename T>		// convenience constructor for vectors
-	inline Series<T> series(const std::vector<T> vector)
+	inline Interleave<T> interleave(const std::vector<T> vector)
 	{
-		return Series<T>(vector);
+		return Interleave<T>(vector);
 	}
 	template<typename T>		// convenience constructor for vectors
-	inline Series<T> series(const Series<T> vector)
+	inline Interleave<T> interleave(const Interleave<T> vector)
 	{
-		return Series<T>(vector);
+		return Interleave<T>(vector);
 	}
 	template<typename T>		// convenience constructor for vectors
-	inline Series<T> series(const std::initializer_list<T>& list)
+	inline Interleave<T> interleave(const std::initializer_list<T>& list)
 	{
-		return Series<T>(list);
+		return Interleave<T>(list);
 	}
 	template<typename T>		// convenience constructor for vectors
-	inline Series<T> series(const std::size_t N, const T a)
+	inline Interleave<T> interleave(const std::size_t N, const T a)
 	{
-		return Series<T>(N, a);
+		return Interleave<T>(N, a);
 	}
 
 
 	template<typename T>		
-	inline Series<T> reshape(const Series<T>& a, const std::size_t copies_per_value, Series<T>& out)
+	inline Interleave<T> reshape(const Interleave<T>& a, const std::size_t copies_per_value, Interleave<T>& out)
 	{
 		if (out.front() != a.front())
 		{

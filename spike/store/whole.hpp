@@ -68,7 +68,7 @@ namespace whole
 	double distance(const T1& a, const T2& b)
 	{
 		double out(0);
-		// assert(compatible(a,b));
+		// assert(each::compatible(a,b));
 		auto size = a.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
@@ -114,7 +114,7 @@ namespace whole
 	template <typename T1, typename T2>
 	bool equal(const T1& a, const T2& b)
 	{
-		if (!compatible(a,b)){
+		if (!each::compatible(a,b)){
 			return false;
 		}
 		auto size = a.size();
@@ -130,7 +130,7 @@ namespace whole
 	template <typename T1, typename T2>
 	bool notEqual(const T1& a, const T2& b)
 	{
-		if (!compatible(a,b)){
+		if (!each::compatible(a,b)){
 			return true;
 		}
 		auto size = a.size();
