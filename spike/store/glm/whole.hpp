@@ -9,6 +9,31 @@
 
 namespace series
 {
+
+	// Converts from vec3s to flattened floats
+	template <glm::length_t L, typename T, glm::qualifier Q>
+	void flatten (Series<glm::vec<L,T,Q>>& a, Series<T>& output) {
+		assert(a.size()*L == output.size());
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			output[3*i+0] = a[i].x;
+			output[3*i+1] = a[i].y;
+			output[3*i+2] = a[i].z;
+		}
+	}
+	// Converts from flattened floats to vec3s
+	template <glm::length_t L, typename T, glm::qualifier Q>
+	void unflatten (Series<T>& a, Series<glm::vec<L,T,Q>>& output) {
+		assert(output.size()*L == a.size());
+	    for (unsigned int i = 0; i < output.size(); ++i)
+		{
+			output[i].x = a[3*i+0];
+			output[i].y = a[3*i+1];
+			output[i].z = a[3*i+2];
+		}
+	}
+
+
 	namespace 
 	{
 		#if defined(__clang__)

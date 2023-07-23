@@ -33,45 +33,47 @@ namespace rasters
     These additional attributes are derived from vertices and faces. 
     In this way, a grid could be thought of as a "mesh cache"
     */
-    template<typename Tid = std::uint16_t>
+    template<typename id = std::uint16_t>
     struct Structure
     {
+        using ivec3 = glm::vec<3,id,glm::defaultp>;
+        using ivec2 = glm::vec<2,id,glm::defaultp>;
+
         /*
         Flattened version of `face_vertex_ids`,
         This is often used to map vertex aligned data to a format that can be ingested by OpenGL programs,
         so it pays to have a precomputed version.
         */
-        series::Series<Tid>                              flattened_face_vertex_ids;
+        series::Series<id>    flattened_face_vertex_ids;
 
-        //ivecNs                                         vertex_neighbor_ids;
-        const std::size_t                                vertex_count;
-        series::Series<Tid>                              vertex_neighbor_counts;
+        //ivecNs              vertex_neighbor_ids;
+        const std::size_t     vertex_count;
+        series::Series<id>    vertex_neighbor_counts;
 
-        const std::size_t                                face_count;
-        series::Series<glm::vec<3,Tid,glm::defaultp>>    face_vertex_ids;
-        series::Series<Tid>                              face_vertex_id_a;
-        series::Series<Tid>                              face_vertex_id_b;
-        series::Series<Tid>                              face_vertex_id_c;
-        //series::Series<Tid>                            face_edge_id_a;
-        //series::Series<Tid>                            face_edge_id_b;
-        //series::Series<Tid>                            face_edge_id_c;
+        const std::size_t     face_count;
+        series::Series<ivec3> face_vertex_ids;
+        series::Series<id>    face_vertex_id_a;
+        series::Series<id>    face_vertex_id_b;
+        series::Series<id>    face_vertex_id_c;
+        //series::Series<id>  face_edge_id_a;
+        //series::Series<id>  face_edge_id_b;
+        //series::Series<id>  face_edge_id_c;
 
-        std::size_t                                      edge_count;
-        series::Series<glm::vec<2,Tid,glm::defaultp>>    edge_vertex_ids;
-        series::Series<Tid>                              edge_vertex_id_a;
-        series::Series<Tid>                              edge_vertex_id_b;
-        series::Series<glm::vec<2,Tid,glm::defaultp>>    edge_face_ids;
-        series::Series<Tid>                              edge_face_id_a;
-        series::Series<Tid>                              edge_face_id_b;
+        std::size_t           edge_count;
+        series::Series<ivec2> edge_vertex_ids;
+        series::Series<id>    edge_vertex_id_a;
+        series::Series<id>    edge_vertex_id_b;
+        series::Series<ivec2> edge_face_ids;
+        series::Series<id>    edge_face_id_a;
+        series::Series<id>    edge_face_id_b;
         
-        std::size_t                                      arrow_count;
-        series::Series<glm::vec<2,Tid,glm::defaultp>>    arrow_vertex_ids;
-        series::Series<Tid>                              arrow_vertex_id_from;
-        series::Series<Tid>                              arrow_vertex_id_to;
-        series::Series<glm::vec<2,Tid,glm::defaultp>>    arrow_face_ids;
-        series::Series<Tid>                              arrow_face_id_a;
-        series::Series<Tid>                              arrow_face_id_b;
-
+        std::size_t           arrow_count;
+        series::Series<ivec2> arrow_vertex_ids;
+        series::Series<id>    arrow_vertex_id_from;
+        series::Series<id>    arrow_vertex_id_to;
+        series::Series<ivec2> arrow_face_ids;
+        series::Series<id>    arrow_face_id_a;
+        series::Series<id>    arrow_face_id_b;
 
         ~Structure()
         {
@@ -117,7 +119,7 @@ namespace rasters
         }
 
     public:
-        explicit Structure(const std::size_t vertex_count, const series::Series<glm::vec<3,Tid, glm::defaultp>>& faces):
+        explicit Structure(const std::size_t vertex_count, const series::Series<glm::vec<3,id, glm::defaultp>>& faces):
             Structure(vertex_count, faces.size(), 0)
         {
             copy(face_vertex_ids,  faces);
@@ -129,24 +131,24 @@ namespace rasters
             get_z   (face_vertex_ids,                       face_vertex_id_c);
 
             // Step 1: generate arrows from faces
-            std::unordered_set<glm::vec<2,Tid,glm::defaultp>> arrow_vertex_ids_set;
-            std::unordered_map<glm::vec<2,Tid,glm::defaultp>, std::unordered_set<Tid>> arrow_face_ids_map;
+            std::unordered_set<ivec2> arrow_vertex_ids_set;
+            std::unordered_map<ivec2, std::unordered_set<id>> arrow_face_ids_map;
             for (std::size_t i=0; i<face_vertex_ids.size(); i++)
             {
-                arrow_vertex_ids_set.insert(glm::vec<2,Tid,glm::defaultp>(face_vertex_ids[i].x, face_vertex_ids[i].y));
-                arrow_vertex_ids_set.insert(glm::vec<2,Tid,glm::defaultp>(face_vertex_ids[i].y, face_vertex_ids[i].x));
-                arrow_face_ids_map.emplace(glm::vec<2,Tid,glm::defaultp>(face_vertex_ids[i].x, face_vertex_ids[i].y), std::unordered_set<Tid>()).first->second.insert(i);
-                arrow_face_ids_map.emplace(glm::vec<2,Tid,glm::defaultp>(face_vertex_ids[i].y, face_vertex_ids[i].x), std::unordered_set<Tid>()).first->second.insert(i);
+                arrow_vertex_ids_set.insert(ivec2(face_vertex_ids[i].x, face_vertex_ids[i].y));
+                arrow_vertex_ids_set.insert(ivec2(face_vertex_ids[i].y, face_vertex_ids[i].x));
+                arrow_face_ids_map.emplace(ivec2(face_vertex_ids[i].x, face_vertex_ids[i].y), std::unordered_set<id>()).first->second.insert(i);
+                arrow_face_ids_map.emplace(ivec2(face_vertex_ids[i].y, face_vertex_ids[i].x), std::unordered_set<id>()).first->second.insert(i);
 
-                arrow_vertex_ids_set.insert(glm::vec<2,Tid,glm::defaultp>(face_vertex_ids[i].x, face_vertex_ids[i].z));
-                arrow_vertex_ids_set.insert(glm::vec<2,Tid,glm::defaultp>(face_vertex_ids[i].z, face_vertex_ids[i].x));
-                arrow_face_ids_map.emplace(glm::vec<2,Tid,glm::defaultp>(face_vertex_ids[i].x, face_vertex_ids[i].z), std::unordered_set<Tid>()).first->second.insert(i);
-                arrow_face_ids_map.emplace(glm::vec<2,Tid,glm::defaultp>(face_vertex_ids[i].z, face_vertex_ids[i].x), std::unordered_set<Tid>()).first->second.insert(i);
+                arrow_vertex_ids_set.insert(ivec2(face_vertex_ids[i].x, face_vertex_ids[i].z));
+                arrow_vertex_ids_set.insert(ivec2(face_vertex_ids[i].z, face_vertex_ids[i].x));
+                arrow_face_ids_map.emplace(ivec2(face_vertex_ids[i].x, face_vertex_ids[i].z), std::unordered_set<id>()).first->second.insert(i);
+                arrow_face_ids_map.emplace(ivec2(face_vertex_ids[i].z, face_vertex_ids[i].x), std::unordered_set<id>()).first->second.insert(i);
 
-                arrow_vertex_ids_set.insert(glm::vec<2,Tid,glm::defaultp>(face_vertex_ids[i].y, face_vertex_ids[i].z));
-                arrow_vertex_ids_set.insert(glm::vec<2,Tid,glm::defaultp>(face_vertex_ids[i].z, face_vertex_ids[i].y));
-                arrow_face_ids_map.emplace(glm::vec<2,Tid,glm::defaultp>(face_vertex_ids[i].y, face_vertex_ids[i].z), std::unordered_set<Tid>()).first->second.insert(i);
-                arrow_face_ids_map.emplace(glm::vec<2,Tid,glm::defaultp>(face_vertex_ids[i].z, face_vertex_ids[i].y), std::unordered_set<Tid>()).first->second.insert(i);
+                arrow_vertex_ids_set.insert(ivec2(face_vertex_ids[i].y, face_vertex_ids[i].z));
+                arrow_vertex_ids_set.insert(ivec2(face_vertex_ids[i].z, face_vertex_ids[i].y));
+                arrow_face_ids_map.emplace(ivec2(face_vertex_ids[i].y, face_vertex_ids[i].z), std::unordered_set<id>()).first->second.insert(i);
+                arrow_face_ids_map.emplace(ivec2(face_vertex_ids[i].z, face_vertex_ids[i].y), std::unordered_set<id>()).first->second.insert(i);
             }
             // sort arrows using a vector to avoid cache misses when retrieving indices
             std::copy(
@@ -157,7 +159,7 @@ namespace rasters
             std::sort(
                 arrow_vertex_ids.begin(), 
                 arrow_vertex_ids.end(), 
-                [](glm::vec<2,Tid,glm::defaultp> a, glm::vec<2,Tid,glm::defaultp> b) 
+                [](ivec2 a, ivec2 b) 
                 { 
                     return std::min(a.x,a.y)  < std::min(b.x,b.y) || 
                           (std::min(a.x,a.y) == std::min(b.x,b.y) && std::max(a.x,a.y) < std::max(b.x,b.y)); 
@@ -170,7 +172,7 @@ namespace rasters
                 arrow_vertex_ids.begin(), 
                 arrow_vertex_ids.end(), 
                 std::back_inserter(edge_vertex_ids.vector()), 
-                [](glm::vec<2,Tid,glm::defaultp> a){return a.y > a.x;}
+                [](ivec2 a){return a.y > a.x;}
             );
 
             edge_count = edge_vertex_ids.size();
@@ -191,13 +193,13 @@ namespace rasters
 
 
             // generate arrow_face_ids and edge_face_ids
-            std::unordered_set<Tid> face_ids_set;
+            std::unordered_set<id> face_ids_set;
             for (std::size_t i=0; i<edge_vertex_ids.size(); i++)
             {
                 face_ids_set = arrow_face_ids_map[edge_vertex_ids[i]];
                 if (face_ids_set.size() == 2)
                 {
-                    edge_face_ids[i] = glm::vec<2,Tid,glm::defaultp>(*(face_ids_set.begin()), *std::next(face_ids_set.begin()));
+                    edge_face_ids[i] = ivec2(*(face_ids_set.begin()), *std::next(face_ids_set.begin()));
                 }
             }
             for (std::size_t i=0; i<arrow_vertex_ids.size(); i++)
@@ -205,7 +207,7 @@ namespace rasters
                 face_ids_set = arrow_face_ids_map[arrow_vertex_ids[i]];
                 if (face_ids_set.size() == 2)
                 {
-                    arrow_face_ids[i] = glm::vec<2,Tid,glm::defaultp>(*(face_ids_set.begin()), *std::next(face_ids_set.begin()));
+                    arrow_face_ids[i] = ivec2(*(face_ids_set.begin()), *std::next(face_ids_set.begin()));
                 }
             }
 
@@ -219,8 +221,8 @@ namespace rasters
             get_x   (arrow_face_ids,                          arrow_face_id_a    );
             get_y   (arrow_face_ids,                          arrow_face_id_b    );
 
-            fill    (vertex_neighbor_counts, Tid(0));
-            aggregate_into(arrow_vertex_id_from, [](Tid a){ return a+1; }, vertex_neighbor_counts);
+            fill    (vertex_neighbor_counts, id(0));
+            aggregate_into(arrow_vertex_id_from, [](id a){ return a+1; }, vertex_neighbor_counts);
         }
     };
 }

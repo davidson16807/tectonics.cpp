@@ -19,7 +19,7 @@
 
 collignon::Projection projection;
 
-TEST_CASE( "Projection.collignon_to_hemisphere() purity", "[rasters]" ) {
+TEST_CASE( "Projection.collignon_to_hemisphere() purity", "[collignon]" ) {
     SECTION("Projection.collignon_to_hemisphere() must be called repeatedly without changing the output"){
         const float quadrant(std::sqrt(3.14159265f)); // length of a quadrant when projected
         for(float x = -quadrant; x < quadrant; x+=0.1){
@@ -32,7 +32,7 @@ TEST_CASE( "Projection.collignon_to_hemisphere() purity", "[rasters]" ) {
         }}
     }
 }
-TEST_CASE( "Projection collignon_to_hemisphere() limiting cases", "[rasters]" ) {
+TEST_CASE( "Projection collignon_to_hemisphere() limiting cases", "[collignon]" ) {
     SECTION("Projection.collignon_to_hemisphere() must reproduce results for limiting cases"){
         const float margin(1e-4f);
         const float pi(3.14159);
@@ -74,7 +74,7 @@ TEST_CASE( "Projection collignon_to_hemisphere() limiting cases", "[rasters]" ) 
 
     }
 }
-TEST_CASE( "Projection collignon_to_hemisphere() closeness preservation", "[rasters]" ) {
+TEST_CASE( "Projection collignon_to_hemisphere() closeness preservation", "[collignon]" ) {
     SECTION("changes in collignon_to_hemisphere must not result in changes that exceed a reasonable multiple"){
         const float quadrant(std::sqrt(3.14159265f)); // length of a quadrant when projected
         const float factor(2.0f);
@@ -93,7 +93,7 @@ TEST_CASE( "Projection collignon_to_hemisphere() closeness preservation", "[rast
         }}
     }
 }
-TEST_CASE( "Projection.collignon_to_hemisphere() area preservation", "[rasters]" ) {
+TEST_CASE( "Projection.collignon_to_hemisphere() area preservation", "[collignon]" ) {
     SECTION("Projection.collignon_to_hemisphere() must not result in changes to areas that exceed a reasonable multiple"){
         const float quadrant(std::sqrt(3.14159265f)); // length of a quadrant when projected
         const float epsilon(0.003);
@@ -112,7 +112,7 @@ TEST_CASE( "Projection.collignon_to_hemisphere() area preservation", "[rasters]"
         }}
     }
 }
-// TEST_CASE( "Projection collignon_to_hemisphere() congruence", "[rasters]" ) {
+// TEST_CASE( "Projection collignon_to_hemisphere() congruence", "[collignon]" ) {
 //     SECTION("a modulo can be applied to input which results in the same output"){
 //         const float epsilon(1e-4f);
 //         const glm::vec2 nx(4.0, 0);
@@ -131,7 +131,7 @@ TEST_CASE( "Projection.collignon_to_hemisphere() area preservation", "[rasters]"
 
 
 
-TEST_CASE( "Projection.hemisphere_to_collignon() purity", "[rasters]" ) {
+TEST_CASE( "Projection.hemisphere_to_collignon() purity", "[collignon]" ) {
     SECTION("Projection.hemisphere_to_collignon() must be called repeatedly without changing the output"){
         const float z(1.0f);
         for(float x = -1.0; x < 1.0; x+=0.1f){
@@ -143,7 +143,7 @@ TEST_CASE( "Projection.hemisphere_to_collignon() purity", "[rasters]" ) {
     }
 }
 
-TEST_CASE( "Projection.hemisphere_to_collignon() limiting cases", "[rasters]" ) {
+TEST_CASE( "Projection.hemisphere_to_collignon() limiting cases", "[collignon]" ) {
     SECTION("Projection.hemisphere_to_collignon() must reproduce results for limiting cases"){
         const float margin(1e-4f);
         const float pi(3.14159);
@@ -172,7 +172,7 @@ TEST_CASE( "Projection.hemisphere_to_collignon() limiting cases", "[rasters]" ) 
     }
 }
 
-TEST_CASE( "Projection.hemisphere_to_collignon() closeness preservation", "[rasters]" ) {
+TEST_CASE( "Projection.hemisphere_to_collignon() closeness preservation", "[collignon]" ) {
     SECTION("Projection.hemisphere_to_collignon() must not result in changes that exceed a reasonable multiple"){
         const float pi(3.141592653589f);
         const float factor(2.0f);
@@ -207,7 +207,7 @@ TEST_CASE( "Projection.hemisphere_to_collignon() closeness preservation", "[rast
         }}
     }
 }
-TEST_CASE( "Projection.hemisphere_to_collignon() area preservation", "[rasters]" ) {
+TEST_CASE( "Projection.hemisphere_to_collignon() area preservation", "[collignon]" ) {
     SECTION("Projection.hemisphere_to_collignon() must not result in changes to areas that exceed a reasonable multiple"){
         const float epsilon(1.0);
         const float area(0.03*0.03);
@@ -226,7 +226,7 @@ TEST_CASE( "Projection.hemisphere_to_collignon() area preservation", "[rasters]"
         }}
     }
 }
-TEST_CASE( "Projection.hemisphere_to_collignon() / collignon_to_hemisphere() invertibility", "[rasters]" ) {
+TEST_CASE( "Projection.hemisphere_to_collignon() / collignon_to_hemisphere() invertibility", "[collignon]" ) {
     SECTION("Projection.collignon_to_hemisphere() must reconstruct input passed to hemisphere_to_collignon() for any unit vector"){
         const float pi(3.141592653589f);
         const float epsilon(1e-4f);

@@ -118,6 +118,19 @@ namespace each {
 	EACH_BINARY_FUNCTION(reflect)
 	EACH_BINARY_FUNCTION(refract)
 
+
+	template <glm::length_t L, typename T1, glm::qualifier Q> \
+		inline auto x(const glm::vec<L,T1,Q> a){ return a.x; }
+	template <glm::length_t L, typename T1, glm::qualifier Q> \
+		inline auto y(const glm::vec<L,T1,Q> a){ return a.y; }
+	template <glm::length_t L, typename T1, glm::qualifier Q> \
+		inline auto z(const glm::vec<L,T1,Q> a){ return a.z; }
+
+	EACH_UNARY_FUNCTION(x)
+	EACH_UNARY_FUNCTION(y)
+	EACH_UNARY_FUNCTION(z)
+
+
 	#undef EACH_UNARY_GLM_WRAPPER
 	#undef EACH_UNARY_FUNCTION
 

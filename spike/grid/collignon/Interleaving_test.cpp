@@ -1,6 +1,6 @@
 #include "Interleaving.hpp"
 
-TEST_CASE( "Interleaving.interleaved_id() purity", "[rasters]" ) {
+TEST_CASE( "Interleaving.interleaved_id() purity", "[collignon]" ) {
     SECTION("Interleaving.interleaved_id() must be called repeatedly without changing the output"){
         for(int x = 0; x < 10; x+=1){
         for(int y = 0; y < 10; y+=1){
@@ -9,7 +9,7 @@ TEST_CASE( "Interleaving.interleaved_id() purity", "[rasters]" ) {
         }}
     }
 }
-TEST_CASE( "Interleaving block_id() / element_id() / interleaved_id() invertibility", "[rasters]" ) {
+TEST_CASE( "Interleaving block_id() / element_id() / interleaved_id() invertibility", "[collignon]" ) {
     SECTION("block_id() / element_id() must reconstruct input passed to interleaved_id() for any input"){
         collignon::Interleaving interleaving(10);
         for(int block_id = 0; block_id < 10; block_id+=1){
@@ -26,7 +26,7 @@ TEST_CASE( "Interleaving block_id() / element_id() / interleaved_id() invertibil
         }
     }
 }
-TEST_CASE( "Interleaving block_id() / element_id() / interleaved_id() range restrictions", "[rasters]" ) {
+TEST_CASE( "Interleaving block_id() / element_id() / interleaved_id() range restrictions", "[collignon]" ) {
     SECTION("interleaved_id() must not produce results outside expected range"){
         collignon::Interleaving interleaving(10);
         for(int block_id = 0; block_id < 10; block_id+=1){

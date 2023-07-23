@@ -20,22 +20,17 @@ namespace series
 	{
 		T value;
 
-		constexpr inline explicit Uniform(const T& value) : 
-			value(value) 
-		{}
-
-		// copy constructor
-		constexpr inline Uniform(const Uniform& a) :
-			value(a.value)
-		{}
+		constexpr inline explicit Uniform(const T& value) : value(value) {}
+		constexpr inline Uniform(const Uniform& a) : value(a.value) {} // copy constructor
 
 	    using size_type = std::size_t;
 		using value_type = T;
 		using const_reference = const T&;
 		using reference = T&;
+
 		constexpr inline std::size_t size() const { return 1; }
 
-		constexpr inline T operator[](const size_type memory_id ) const
+		constexpr inline const_reference operator[](const size_type memory_id ) const
 		{
 		   return value;
 		}

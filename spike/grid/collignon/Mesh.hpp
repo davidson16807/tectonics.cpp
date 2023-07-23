@@ -76,11 +76,11 @@ namespace collignon
             return memory_id;
         }
 
+
+
         inline constexpr ivec2 grid_id(const id memory_id) const {
             return ivec2 (interleaving.element_id(memory_id), interleaving.block_id(memory_id)) - vertex_count_per_half_meridian;
         }
-
-
         inline constexpr ivec2 grid_id(const vec2 grid_position) const
         {
             return grid_position;
@@ -105,6 +105,11 @@ namespace collignon
         }
 
 
+
+        inline constexpr vec3 unit_sphere_position(const id memory_id) const
+        {
+            return unit_sphere_position(grid_id(memory_id));
+        }
         inline constexpr vec3 unit_sphere_position(const ivec2 grid_id) const
         {
             return tesselation.tesselation_to_sphere((vec2(grid_id) + half_cell) / vertex_count_per_half_meridian_float);
@@ -115,6 +120,11 @@ namespace collignon
         }
 
 
+
+        inline constexpr vec3 sphere_position(const id memory_id) const
+        {
+            return unit_sphere_position(memory_id) * radius;
+        }
         inline constexpr vec3 sphere_position(const ivec2 grid_id) const
         {
             return unit_sphere_position(grid_id) * radius;

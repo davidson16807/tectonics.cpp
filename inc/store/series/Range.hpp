@@ -21,7 +21,7 @@ namespace series
 		using reference = T&;
 		constexpr inline size_type size() const { return 1; }
 
-		constexpr inline T operator[](const size_type memory_id ) const
+		constexpr inline const_reference operator[](const size_type memory_id ) const
 		{
 			return T(memory_id);
 		}

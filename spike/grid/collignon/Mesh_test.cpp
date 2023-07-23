@@ -12,7 +12,7 @@
 #include "Mesh.hpp"
 
 
-TEST_CASE( "Mesh.sphere_position() purity", "[rasters]" ) {
+TEST_CASE( "Mesh.sphere_position() purity", "[collignon]" ) {
     SECTION("Mesh.sphere_position() must be called repeatedly without changing the output"){
         for(int x = -10; x < 10; x+=1){
         for(int y = -10; y < 10; y+=1){
@@ -21,7 +21,7 @@ TEST_CASE( "Mesh.sphere_position() purity", "[rasters]" ) {
         }}
     }
 }
-TEST_CASE( "Mesh sphere_position() closeness preservation", "[rasters]" ) {
+TEST_CASE( "Mesh sphere_position() closeness preservation", "[collignon]" ) {
     SECTION("changes in grid_position must not result in changes to sphere_position that exceed a reasonable multiple"){
         collignon::Mesh mesh(2.0f, 10);
         const float factor(3.0*2.0/10.0);
@@ -38,7 +38,7 @@ TEST_CASE( "Mesh sphere_position() closeness preservation", "[rasters]" ) {
     }
 }
 
-TEST_CASE( "Mesh sphere_position() congruence", "[rasters]" ) {
+TEST_CASE( "Mesh sphere_position() congruence", "[collignon]" ) {
     SECTION("a modulo can be applied to input which results in the same output"){
         collignon::Mesh mesh(2.0f, 10);
         const float epsilon(1e-4f);
@@ -56,7 +56,7 @@ TEST_CASE( "Mesh sphere_position() congruence", "[rasters]" ) {
 }
 
 
-TEST_CASE( "Mesh grid_position() / sphere_position() invertibility", "[rasters]" ) {
+TEST_CASE( "Mesh grid_position() / sphere_position() invertibility", "[collignon]" ) {
     SECTION("Mesh.sphere_position() must reconstruct input passed to grid_position() for any unit vector"){
         const float radius = 2.0f;
         collignon::Mesh mesh(radius, 10);
@@ -80,7 +80,7 @@ TEST_CASE( "Mesh grid_position() / sphere_position() invertibility", "[rasters]"
 
 
 
-TEST_CASE( "Mesh.unit_sphere_position() purity", "[rasters]" ) {
+TEST_CASE( "Mesh.unit_sphere_position() purity", "[collignon]" ) {
     SECTION("Mesh.unit_sphere_position() must be called repeatedly without changing the output"){
         for(int x = -10; x < 10; x+=1){
         for(int y = -10; y < 10; y+=1){
@@ -89,7 +89,7 @@ TEST_CASE( "Mesh.unit_sphere_position() purity", "[rasters]" ) {
         }}
     }
 }
-TEST_CASE( "Mesh unit_sphere_position() closeness preservation", "[rasters]" ) {
+TEST_CASE( "Mesh unit_sphere_position() closeness preservation", "[collignon]" ) {
     SECTION("changes in grid_position must not result in changes to unit_sphere_position that exceed a reasonable multiple"){
         collignon::Mesh mesh(2.0f, 10);
         const float factor(3.0*2.0/10.0);
@@ -106,7 +106,7 @@ TEST_CASE( "Mesh unit_sphere_position() closeness preservation", "[rasters]" ) {
     }
 }
 
-TEST_CASE( "Mesh unit_sphere_position() congruence", "[rasters]" ) {
+TEST_CASE( "Mesh unit_sphere_position() congruence", "[collignon]" ) {
     SECTION("a modulo can be applied to input which results in the same output"){
         collignon::Mesh mesh(2.0f, 10);
         const float epsilon(1e-4f);
@@ -124,7 +124,7 @@ TEST_CASE( "Mesh unit_sphere_position() congruence", "[rasters]" ) {
 }
 
 
-TEST_CASE( "Mesh grid_position() / unit_sphere_position() invertibility", "[rasters]" ) {
+TEST_CASE( "Mesh grid_position() / unit_sphere_position() invertibility", "[collignon]" ) {
     SECTION("Mesh.unit_sphere_position() must reconstruct input passed to grid_position() for any unit vector"){
         collignon::Mesh mesh(2.0f, 10);
         const float epsilon(1e-4f);
@@ -145,7 +145,7 @@ TEST_CASE( "Mesh grid_position() / unit_sphere_position() invertibility", "[rast
 
 
 
-TEST_CASE( "Mesh.grid_position() purity", "[rasters]" ) {
+TEST_CASE( "Mesh.grid_position() purity", "[collignon]" ) {
     SECTION("Mesh.grid_position() must be called repeatedly without changing the output"){
         collignon::Mesh mesh(2.0f, 10);
         const float epsilon(1e-4f);
@@ -165,7 +165,7 @@ TEST_CASE( "Mesh.grid_position() purity", "[rasters]" ) {
 
 
 
-TEST_CASE( "Mesh memory_id() / grid_position() invertibility", "[rasters]" ) {
+TEST_CASE( "Mesh memory_id() / grid_position() invertibility", "[collignon]" ) {
     SECTION("Mesh.grid_position() must reconstruct input passed to memory_id() for any unit vector"){
         collignon::Mesh mesh(2.0f, 10);
         for(int i = 0; i < mesh.vertex_count; i++){
@@ -173,7 +173,7 @@ TEST_CASE( "Mesh memory_id() / grid_position() invertibility", "[rasters]" ) {
         }
     }
 }
-TEST_CASE( "Mesh memory_id() congruence", "[rasters]" ) {
+TEST_CASE( "Mesh memory_id() congruence", "[collignon]" ) {
     SECTION("an modulo can be applied to input which results in the same output"){
         collignon::Mesh mesh(2.0f, 10);
         const glm::vec2 nx(40, 0);
@@ -188,7 +188,7 @@ TEST_CASE( "Mesh memory_id() congruence", "[rasters]" ) {
         }}
     }
 }
-TEST_CASE( "Mesh memory_id() range restrictions", "[rasters]" ) {
+TEST_CASE( "Mesh memory_id() range restrictions", "[collignon]" ) {
     SECTION("Mesh.memory_id() must not produce results outside valid range"){
         collignon::Mesh mesh(2.0f, 10);
         for(int x = -10; x < 10; x+=1){

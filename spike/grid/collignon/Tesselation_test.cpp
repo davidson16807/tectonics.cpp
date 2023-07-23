@@ -20,7 +20,7 @@
 
 
 
-TEST_CASE( "Tesselation.tesselation_to_sphere() purity", "[rasters]" ) {
+TEST_CASE( "Tesselation.tesselation_to_sphere() purity", "[collignon]" ) {
     SECTION("Tesselation.tesselation_to_sphere() must be called repeatedly without changing the output"){
         collignon::Projection projection;
         collignon::Tesselation tesselation(projection);
@@ -31,7 +31,7 @@ TEST_CASE( "Tesselation.tesselation_to_sphere() purity", "[rasters]" ) {
         }}
     }
 }
-TEST_CASE( "Tesselation tesselation_to_sphere() closeness preservation", "[rasters]" ) {
+TEST_CASE( "Tesselation tesselation_to_sphere() closeness preservation", "[collignon]" ) {
     SECTION("changes in sphere_to_tesselation must not result in changes to tesselation_to_sphere that exceed a reasonable multiple"){
         collignon::Projection projection;
         collignon::Tesselation tesselation(projection);
@@ -49,7 +49,7 @@ TEST_CASE( "Tesselation tesselation_to_sphere() closeness preservation", "[raste
     }
 }
 
-TEST_CASE( "Tesselation tesselation_to_sphere() congruence", "[rasters]" ) {
+TEST_CASE( "Tesselation tesselation_to_sphere() congruence", "[collignon]" ) {
     SECTION("a modulo can be applied to input which results in the same output"){
         collignon::Projection projection;
         collignon::Tesselation tesselation(projection);
@@ -67,7 +67,7 @@ TEST_CASE( "Tesselation tesselation_to_sphere() congruence", "[rasters]" ) {
     }
 }
 
-TEST_CASE( "Tesselation.sphere_to_tesselation() purity", "[rasters]" ) {
+TEST_CASE( "Tesselation.sphere_to_tesselation() purity", "[collignon]" ) {
     SECTION("Tesselation.sphere_to_tesselation() must be called repeatedly without changing the output"){
         collignon::Projection projection;
         collignon::Tesselation tesselation(projection);
@@ -84,7 +84,7 @@ TEST_CASE( "Tesselation.sphere_to_tesselation() purity", "[rasters]" ) {
     }
 }
 
-TEST_CASE( "Tesselation sphere_to_tesselation() / tesselation_to_sphere() invertibility", "[rasters]" ) {
+TEST_CASE( "Tesselation sphere_to_tesselation() / tesselation_to_sphere() invertibility", "[collignon]" ) {
     SECTION("Tesselation.tesselation_to_sphere() must reconstruct input passed to sphere_to_tesselation() for any unit vector"){
         collignon::Projection projection;
         collignon::Tesselation tesselation(projection);
@@ -108,7 +108,7 @@ TEST_CASE( "Tesselation sphere_to_tesselation() / tesselation_to_sphere() invert
 
 
 
-// TEST_CASE( "Tesselation memory_id() congruence", "[rasters]" ) {
+// TEST_CASE( "Tesselation memory_id() congruence", "[collignon]" ) {
 //     SECTION("an modulo can be applied to input which results in the same output"){
 //         const glm::vec2 nx(2, 0);
 //         const glm::vec2 ny(0, 2);
@@ -123,14 +123,14 @@ TEST_CASE( "Tesselation sphere_to_tesselation() / tesselation_to_sphere() invert
 //     }
 // }
 
-// TEST_CASE( "Tesselation memory_id() / sphere_to_tesselation() invertibility", "[rasters]" ) {
+// TEST_CASE( "Tesselation memory_id() / sphere_to_tesselation() invertibility", "[collignon]" ) {
 //     SECTION("Tesselation.sphere_to_tesselation() must reconstruct input passed to memory_id() for any unit vector"){
 //         for(int i = 0; i < tesselation.tesselation_cell_count; i++){
 //             CHECK( i == tesselation.memory_id(tesselation.sphere_to_tesselation(i)) );
 //         }
 //     }
 // }
-// TEST_CASE( "Tesselation memory_id() range restrictions", "[rasters]" ) {
+// TEST_CASE( "Tesselation memory_id() range restrictions", "[collignon]" ) {
 //     SECTION("Tesselation.memory_id() must not produce results outside valid range"){
 //         for(float x = -2.0f; x < 2.0f; x+=0.1f){
 //         for(float y = -2.0f; y < 2.0f; y+=0.1f){
