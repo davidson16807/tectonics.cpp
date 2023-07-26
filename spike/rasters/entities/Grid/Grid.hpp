@@ -71,8 +71,8 @@ namespace rasters
         using value_type = Tfloat;
         
 		Grid(
-			const series::Series<glm::vec<3,Tfloat,glm::defaultp>>& vertices, 
-			const series::Series<glm::vec<3,Tid, glm::defaultp>>& faces
+			const each::Series<glm::vec<3,Tfloat,glm::defaultp>>& vertices, 
+			const each::Series<glm::vec<3,Tid, glm::defaultp>>& faces
 		):
 			structure(std::make_shared<Structure<Tid>>(vertices.size(), faces)),
 			metrics(std::make_shared<Metrics<Tid,Tfloat>>(vertices, *structure))
@@ -81,7 +81,7 @@ namespace rasters
 			structure(grid.structure),
 			metrics(grid.metrics)
 		{}
-		const std::size_t cell_count(mapping mapping_type) const
+		const std::size_t raster_size(mapping mapping_type) const
 		{
 			return mapping_type == mapping::cell? this->structure->vertex_count : this->structure->arrow_count;
 		}

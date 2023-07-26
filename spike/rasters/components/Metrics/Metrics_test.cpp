@@ -60,30 +60,30 @@ TEST_CASE( "Metrics correctness", "[Metrics]" ) {
 TEST_CASE( "Metrics nontriviality", "[Metrics]" ) {
     SECTION("Metrics attributes must contain nonzero elements"){
 
-        CHECK(series::sum(series::abs(series::get_x(tetrahedron_metrics.vertex_positions))) > 0.01f);
-        CHECK(series::sum(series::abs(series::get_x(tetrahedron_metrics.vertex_normals))) > 0.01f);
-        CHECK(series::sum(series::abs(tetrahedron_metrics.vertex_areas)) > 0.01f);
+        CHECK(whole::sum(series::abs(series::get_x(tetrahedron_metrics.vertex_positions))) > 0.01f);
+        CHECK(whole::sum(series::abs(series::get_x(tetrahedron_metrics.vertex_normals))) > 0.01f);
+        CHECK(whole::sum(series::abs(tetrahedron_metrics.vertex_areas)) > 0.01f);
 
-        CHECK(series::sum(series::abs(series::get_x(tetrahedron_metrics.face_endpoint_a))) > 0.01f);
-        CHECK(series::sum(series::abs(series::get_x(tetrahedron_metrics.face_endpoint_b))) > 0.01f);
-        CHECK(series::sum(series::abs(series::get_y(tetrahedron_metrics.face_endpoint_c))) > 0.01f);
-        CHECK(series::sum(series::abs(series::get_x(tetrahedron_metrics.face_midpoints))) > 0.01f);
-        CHECK(series::sum(series::abs(series::get_x(tetrahedron_metrics.face_normals))) > 0.01f);
-        CHECK(series::sum(series::abs(tetrahedron_metrics.face_areas)) > 0.01f);
+        CHECK(whole::sum(series::abs(series::get_x(tetrahedron_metrics.face_endpoint_a))) > 0.01f);
+        CHECK(whole::sum(series::abs(series::get_x(tetrahedron_metrics.face_endpoint_b))) > 0.01f);
+        CHECK(whole::sum(series::abs(series::get_y(tetrahedron_metrics.face_endpoint_c))) > 0.01f);
+        CHECK(whole::sum(series::abs(series::get_x(tetrahedron_metrics.face_midpoints))) > 0.01f);
+        CHECK(whole::sum(series::abs(series::get_x(tetrahedron_metrics.face_normals))) > 0.01f);
+        CHECK(whole::sum(series::abs(tetrahedron_metrics.face_areas)) > 0.01f);
 
-        CHECK(series::sum(series::abs(series::get_x(tetrahedron_metrics.edge_endpoint_a))) > 0.01f);
-        CHECK(series::sum(series::abs(series::get_x(tetrahedron_metrics.edge_endpoint_b))) > 0.01f);
-        CHECK(series::sum(series::abs(series::get_x(tetrahedron_metrics.edge_midpoints))) > 0.01f);
-        CHECK(series::sum(series::abs(tetrahedron_metrics.edge_lengths)) > 0.01f);
-        CHECK(series::sum(series::abs(series::get_x(tetrahedron_metrics.edge_normals))) > 0.01f);
-        // CHECK(series::sum(series::abs(tetrahedron_metrics.edge_areas)) > 0.01f);
+        CHECK(whole::sum(series::abs(series::get_x(tetrahedron_metrics.edge_endpoint_a))) > 0.01f);
+        CHECK(whole::sum(series::abs(series::get_x(tetrahedron_metrics.edge_endpoint_b))) > 0.01f);
+        CHECK(whole::sum(series::abs(series::get_x(tetrahedron_metrics.edge_midpoints))) > 0.01f);
+        CHECK(whole::sum(series::abs(tetrahedron_metrics.edge_lengths)) > 0.01f);
+        CHECK(whole::sum(series::abs(series::get_x(tetrahedron_metrics.edge_normals))) > 0.01f);
+        // CHECK(whole::sum(series::abs(tetrahedron_metrics.edge_areas)) > 0.01f);
         
-        CHECK(series::sum(series::abs(series::get_x(tetrahedron_metrics.arrow_endpoint_from))) > 0.01f);
-        CHECK(series::sum(series::abs(series::get_x(tetrahedron_metrics.arrow_endpoint_to))) > 0.01f);
-        CHECK(series::sum(series::abs(series::get_x(tetrahedron_metrics.arrow_midpoints))) > 0.01f);
-        CHECK(series::sum(series::abs(series::get_x(tetrahedron_metrics.arrow_offsets))) > 0.01f);
-        CHECK(series::sum(series::abs(tetrahedron_metrics.arrow_lengths)) > 0.01f);
-        CHECK(series::sum(series::abs(series::get_x(tetrahedron_metrics.arrow_normals))) > 0.01f);
+        CHECK(whole::sum(series::abs(series::get_x(tetrahedron_metrics.arrow_endpoint_from))) > 0.01f);
+        CHECK(whole::sum(series::abs(series::get_x(tetrahedron_metrics.arrow_endpoint_to))) > 0.01f);
+        CHECK(whole::sum(series::abs(series::get_x(tetrahedron_metrics.arrow_midpoints))) > 0.01f);
+        CHECK(whole::sum(series::abs(series::get_x(tetrahedron_metrics.arrow_offsets))) > 0.01f);
+        CHECK(whole::sum(series::abs(tetrahedron_metrics.arrow_lengths)) > 0.01f);
+        CHECK(whole::sum(series::abs(series::get_x(tetrahedron_metrics.arrow_normals))) > 0.01f);
         // CHECK(tetrahedron_metrics.arrow_areas[2] > 0.01f);
 
     }

@@ -28,8 +28,8 @@ using namespace rasters;
 
 TEST_CASE( "Layered Grid predictability", "[rasters]" ) {
     SECTION("Layered Grid must consist of mutually consistent container attributes"){
-        CHECK(layered_tetrahedron_grid.cell_count(mapping::cell) == 4*layered_tetrahedron_grid.layering->layer_count);
-        CHECK(layered_tetrahedron_grid.cell_count(mapping::arrow) == 12*layered_tetrahedron_grid.layering->layer_count);
+        CHECK(layered_tetrahedron_grid.raster_size(mapping::cell) == 4*layered_tetrahedron_grid.layering->layer_count);
+        CHECK(layered_tetrahedron_grid.raster_size(mapping::arrow) == 12*layered_tetrahedron_grid.layering->layer_count);
     }
 }
 
@@ -44,7 +44,7 @@ TEST_CASE( "Layered Grid consistency", "[rasters]" ) {
 
 TEST_CASE( "Layered Grid nontriviality", "[rasters]" ) {
     SECTION("Layered Grid attributes must contain nonzero elements"){
-        CHECK(series::sum(series::abs(layered_tetrahedron_grid.metrics->vertex_areas)) > 0.01f);
-        CHECK(series::sum(series::abs(series::get_x(layered_tetrahedron_grid.metrics->vertex_positions))) > 0.01f);
+        CHECK(whole::sum(series::abs(layered_tetrahedron_grid.metrics->vertex_areas)) > 0.01f);
+        CHECK(whole::sum(series::abs(series::get_x(layered_tetrahedron_grid.metrics->vertex_positions))) > 0.01f);
     }
 }

@@ -36,7 +36,7 @@ TEST_CASE( "SpheroidGrid nearest_neighbor_interpolation purity", "[many]" ) {
 
         // populate rasters
         std::mt19937 generator(2);
-        series::get_elias_noise(icosahedron_grid.metrics->vertex_positions, generator, raster1);
+        each::get_elias_noise(icosahedron_grid.metrics->vertex_positions, generator, raster1);
         rasters::nearest_neighbor_interpolation(raster1, raster2);
         rasters::nearest_neighbor_interpolation(raster1, raster3);
 
@@ -52,7 +52,7 @@ TEST_CASE( "SpheroidGrid nearest_neighbor_interpolation identity", "[many]" ) {
 
         // populate rasters
         std::mt19937 generator(2);
-        series::get_elias_noise(icosahedron_grid.metrics->vertex_positions, generator, raster1);
+        each::get_elias_noise(icosahedron_grid.metrics->vertex_positions, generator, raster1);
         rasters::nearest_neighbor_interpolation(raster1, raster2);
 
         CHECK(raster1 == raster2);
@@ -78,7 +78,7 @@ TEST_CASE( "SpheroidGrid nearest_neighbor_interpolation invertibility", "[many]"
 
         // populate rasters
         std::mt19937 generator(2);
-        series::get_elias_noise(icosahedron_grid.metrics->vertex_positions, generator, raster1);
+        each::get_elias_noise(icosahedron_grid.metrics->vertex_positions, generator, raster1);
         rasters::nearest_neighbor_interpolation(raster1, raster2);
         rasters::nearest_neighbor_interpolation(raster2, raster3);
 

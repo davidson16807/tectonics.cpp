@@ -36,7 +36,7 @@ namespace rasters
 		{
 			assert(this->layering->layer_count < this->structure->vertex_count);
 		}
-		const std::size_t cell_count(mapping mapping_type) const
+		const std::size_t raster_size(mapping mapping_type) const
 		{
 			return this->layering->layer_count * (mapping_type == mapping::cell? this->structure->vertex_count : this->structure->arrow_count);
 		}

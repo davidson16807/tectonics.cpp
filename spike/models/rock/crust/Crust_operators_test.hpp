@@ -98,7 +98,7 @@ TEST_CASE( "Crust overlap() mass conservation", "[crust]" ) {
     auto b_mass = rasters::make_Raster<float>(icosahedron_grid); get_mass(b, b_mass);
 
     SECTION("the result of passing two valid auto objects = make_Crust<L,M>(icosahedron_grid) to overlap() must produce a Crust<L,M> of equivalent mass"){
-      CHECK(series::sum(ab_mass) == Approx(series::sum(a_mass) + series::sum(b_mass)).epsilon(1e-4));
+      CHECK(whole::sum(ab_mass) == Approx(whole::sum(a_mass) + whole::sum(b_mass)).epsilon(1e-4));
     }
 }
 
@@ -137,6 +137,6 @@ TEST_CASE( "Crust simplify() mass conservation", "[crust]" ) {
     auto a_mass = rasters::make_Raster<float>(icosahedron_grid);  get_mass(a,  a_mass );
 
     SECTION("the result of passing a valid Crust object to simplify() must itself produce a Crust object of equivalent mass"){
-      CHECK(series::sum(fa_mass) == Approx(series::sum(a_mass)).epsilon(1e-4));
+      CHECK(whole::sum(fa_mass) == Approx(whole::sum(a_mass)).epsilon(1e-4));
     }
 }

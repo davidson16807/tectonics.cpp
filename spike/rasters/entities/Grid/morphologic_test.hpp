@@ -58,7 +58,7 @@ TEST_CASE( "Raster dilation identity", "[rasters]" ) {
     auto out1       =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("dilate(grid, top_only, 0) must provide output equivalent to input"){
         dilate(top_only, out1, 0);
-        CHECK(series::equal(top_only, out1));
+        CHECK(each::equal(top_only, out1));
     }
 }
 TEST_CASE( "Raster dilation associative", "[rasters]" ) {
@@ -162,7 +162,7 @@ TEST_CASE( "Raster erosion identity", "[rasters]" ) {
     auto out1       =  make_Raster(diamond_grid, {false, false, false, false, false });
     SECTION("erode(grid, lower_half, 0) must provide output equivalent to input"){
         erode(lower_half, out1, 0);
-        CHECK(series::equal(lower_half, out1));
+        CHECK(each::equal(lower_half, out1));
     }
 }
 TEST_CASE( "Raster erosion distributive over intersection", "[rasters]" ) {

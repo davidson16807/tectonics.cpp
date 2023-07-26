@@ -24,15 +24,15 @@ namespace rasters
 	Violation of this guarantee is a bug.
 	*/
 	template<typename T, typename Tgrid, rasters::mapping Tmap = rasters::mapping::cell>
-	struct Raster: public series::Series<T>
+	struct Raster: public each::Series<T>
 	{
 		/*
 		NOTE: Grids are composed exclusively from shared pointers, 
 		so there is little performance penalty in copying them.
 
-		We compose rasters from grid but inherit from series::Series<T>.
-		Inheriting from series::Series<T> allows us to inherit all the functionality 
-		that makes it easy to work with series::Series<T> (e.g. stl container behavior and operator overloads)
+		We compose rasters from grid but inherit from each::Series<T>.
+		Inheriting from each::Series<T> allows us to inherit all the functionality 
+		that makes it easy to work with each::Series<T> (e.g. stl container behavior and operator overloads)
 
 		However, composing from grid allows us to use templates to implement a single Raster class for all grid classes.
 		Template functions can make use of grid class attributes without having to introduce a complex class hierarchy.
@@ -41,14 +41,14 @@ namespace rasters
 		*/
 		Tgrid grid;
 		Raster(const Tgrid& grid):
-			series::Series<T>(grid.cell_count(Tmap)),
+			each::Series<T>(grid.raster_size(Tmap)),
 			grid(grid) 
 		{
 		}
 		// std container style constructor
 		template<typename TIterator>
 		Raster(const Tgrid& grid, TIterator first, TIterator last) : 
-			series::Series<T>(grid.cell_count(Tmap)),
+			each::Series<T>(grid.raster_size(Tmap)),
 			grid(grid)
 		{
 			assert(std::distance(first, last) == this->size());
@@ -63,13 +63,13 @@ namespace rasters
 
 		// copy constructor
 		Raster(const Raster<T,Tgrid,Tmap>& a)  : 
-			series::Series<T>(a),
+			each::Series<T>(a),
 			grid(a.grid)
 		{}
 
 		// convenience constructor for vectors
 		explicit Raster(const Tgrid& grid, const std::initializer_list<T>& vector) : 
-			series::Series<T>(grid.cell_count(Tmap)),
+			each::Series<T>(grid.raster_size(Tmap)),
 			grid(grid)
 		{
 			assert(vector.size() == this->size());
@@ -77,7 +77,7 @@ namespace rasters
 		}
 		template <typename T2>
 		explicit Raster(const Raster<T2,Tgrid>& a)  : 
-			series::Series<T>(a),
+			each::Series<T>(a),
 			grid(a.grid) 
 		{
 			for (unsigned int i = 0; i < a.size(); ++i)

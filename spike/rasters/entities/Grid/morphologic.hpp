@@ -4,6 +4,11 @@
 
 namespace rasters
 {
+	/*
+	properties used:
+		structure->arrow_vertex_id_from
+		structure->arrow_vertex_id_to
+	*/
 
 	template <typename Tgrid>
 	void dilate(const Raster<bool,Tgrid>& a, Raster<bool,Tgrid>& out)

@@ -32,53 +32,55 @@ namespace rasters
     These additional attributes are derived from vertices and faces. 
     In this way, a grid could be thought of as a "mesh cache"
     */
-    template<typename Tid=std::uint16_t, typename Tfloat=float>
+    template<typename scalar=float>
     struct Metrics
     {
+        using vec3 = glm::vec<3,scalar,glm::defaultp>;
+
         /*
         This stores the content of `vertex_positions` in a format that can be accepted by OpenGL
         This is used every frame to map vertex aligned data to a format that can be ingested by OpenGL programs,
         so it pays to have a precomputed version.
         */
-        series::Series<Tfloat>                           flattened_face_vertex_coordinates;
+        series::Series<scalar>                           flattened_face_vertex_coordinates;
 
-        series::Series<glm::vec<3,Tfloat,glm::defaultp>> vertex_positions;
-        series::Series<glm::vec<3,Tfloat,glm::defaultp>> vertex_normals;
-        series::Series<Tfloat>                           vertex_areas;
-        Tfloat                                           vertex_average_area;
+        series::Series<vec3>     vertex_positions;
+        series::Series<vec3>     vertex_normals;
+        series::Series<scalar>   vertex_areas;
+        scalar                   vertex_average_area;
 
-        series::Series<glm::vec<3,Tfloat,glm::defaultp>> face_endpoint_a;
-        series::Series<glm::vec<3,Tfloat,glm::defaultp>> face_endpoint_b;
-        series::Series<glm::vec<3,Tfloat,glm::defaultp>> face_endpoint_c;
-        series::Series<glm::vec<3,Tfloat,glm::defaultp>> face_midpoints;
-        series::Series<glm::vec<3,Tfloat,glm::defaultp>> face_normals;
-        series::Series<Tfloat>                           face_areas;
-        Tfloat                                           face_average_area;
+        series::Series<vec3>     face_endpoint_a;
+        series::Series<vec3>     face_endpoint_b;
+        series::Series<vec3>     face_endpoint_c;
+        series::Series<vec3>     face_midpoints;
+        series::Series<vec3>     face_normals;
+        series::Series<scalar>   face_areas;
+        scalar                   face_average_area;
 
-        series::Series<glm::vec<3,Tfloat,glm::defaultp>> edge_endpoint_a;
-        series::Series<glm::vec<3,Tfloat,glm::defaultp>> edge_endpoint_b;
-        series::Series<glm::vec<3,Tfloat,glm::defaultp>> edge_midpoints;
-        series::Series<Tfloat>                           edge_lengths;
-        series::Series<glm::vec<3,Tfloat,glm::defaultp>> edge_normals;
-        //series::Series<Tfloat>                         edge_areas;
-        Tfloat                                           edge_average_length;
+        series::Series<vec3>     edge_endpoint_a;
+        series::Series<vec3>     edge_endpoint_b;
+        series::Series<vec3>     edge_midpoints;
+        series::Series<scalar>   edge_lengths;
+        series::Series<vec3>     edge_normals;
+        //series::Series<scalar> edge_areas;
+        scalar                   edge_average_length;
         
-        series::Series<glm::vec<3,Tfloat,glm::defaultp>> arrow_endpoint_from;
-        series::Series<glm::vec<3,Tfloat,glm::defaultp>> arrow_endpoint_to;
-        series::Series<glm::vec<3,Tfloat,glm::defaultp>> arrow_midpoints;
-        series::Series<glm::vec<3,Tfloat,glm::defaultp>> arrow_offsets;
-        series::Series<Tfloat>                           arrow_lengths;
-        series::Series<glm::vec<3,Tfloat,glm::defaultp>> arrow_normals;
-        //series::Series<Tfloat>                         arrow_areas;
-        Tfloat                                           arrow_average_length;
+        series::Series<vec3>     arrow_endpoint_from;
+        series::Series<vec3>     arrow_endpoint_to;
+        series::Series<vec3>     arrow_midpoints;
+        series::Series<vec3>     arrow_offsets;
+        series::Series<scalar>   arrow_lengths;
+        series::Series<vec3>     arrow_normals;
+        //series::Series<scalar> arrow_areas;
+        scalar                   arrow_average_length;
 
-        series::Series<Tfloat>                           vertex_dual_areas;
-        series::Series<glm::vec<3,Tfloat,glm::defaultp>> arrow_dual_endpoint_a;
-        series::Series<glm::vec<3,Tfloat,glm::defaultp>> arrow_dual_endpoint_b;
-        series::Series<Tfloat>                           arrow_dual_lengths;
-        series::Series<glm::vec<3,Tfloat,glm::defaultp>> arrow_dual_normals;
+        series::Series<scalar>   vertex_dual_areas;
+        series::Series<vec3>     arrow_dual_endpoint_a;
+        series::Series<vec3>     arrow_dual_endpoint_b;
+        series::Series<scalar>   arrow_dual_lengths;
+        series::Series<vec3>     arrow_dual_normals;
 
-        Tfloat                                           total_area;
+        scalar                   total_area;
 
 
         ~Metrics()
@@ -132,24 +134,25 @@ namespace rasters
         }
 
     public:
+        template<typename id=std::uint16_t>
         explicit Metrics(
-            const series::Series<glm::vec<3,Tfloat,glm::defaultp>>& vertices, 
-            const Structure<Tid>& structure
+            const series::Series<vec3>& vertices, 
+            const Structure<id>& structure
         ):
             Metrics(structure.vertex_count, structure.face_count, structure.edge_count)
         {
             copy(vertex_positions, vertices);
             
-            series::Series<glm::vec<3,Tfloat,glm::defaultp>>      flattened_face_vertex_positions(3*structure.face_count);
+            series::Series<vec3>      flattened_face_vertex_positions(3*structure.face_count);
             get     (vertex_positions, structure.flattened_face_vertex_ids, flattened_face_vertex_positions   );
             flatten (flattened_face_vertex_positions,                       flattened_face_vertex_coordinates );
 
             get     (vertex_positions, structure.face_vertex_id_a,    face_endpoint_a);
             get     (vertex_positions, structure.face_vertex_id_b,    face_endpoint_b);
             get     (vertex_positions, structure.face_vertex_id_c,    face_endpoint_c);
-            face_midpoints = (face_endpoint_a + face_endpoint_b + face_endpoint_c) / Tfloat(3);
+            face_midpoints = (face_endpoint_a + face_endpoint_b + face_endpoint_c) / scalar(3);
 
-            face_areas     = length   (cross(face_endpoint_c - face_endpoint_b, face_endpoint_a - face_endpoint_b)) / Tfloat(2); 
+            face_areas     = length   (cross(face_endpoint_c - face_endpoint_b, face_endpoint_a - face_endpoint_b)) / scalar(2); 
             // ^^^ NOTE: the magnitude of cross product is the area of a parallelogram, so half that is the area of a triangle
             face_average_area = mean(face_areas);
             total_area = sum(face_areas);
@@ -160,19 +163,19 @@ namespace rasters
             // This way, the face normals will be somewhat standardized to face outward.
             // This will hold for most well centered convex shapes. 
 
-            series::Series<Tfloat> face_vertex_areas_a = length(cross((face_endpoint_c - face_endpoint_a)/Tfloat(2), (face_endpoint_b - face_endpoint_a)/Tfloat(2))) / Tfloat(2); 
-            series::Series<Tfloat> face_vertex_areas_b = length(cross((face_endpoint_a - face_endpoint_b)/Tfloat(2), (face_endpoint_c - face_endpoint_b)/Tfloat(2))) / Tfloat(2); 
-            series::Series<Tfloat> face_vertex_areas_c = length(cross((face_endpoint_b - face_endpoint_c)/Tfloat(2), (face_endpoint_a - face_endpoint_c)/Tfloat(2))) / Tfloat(2); 
+            series::Series<scalar> face_vertex_areas_a = length(cross((face_endpoint_c - face_endpoint_a)/scalar(2), (face_endpoint_b - face_endpoint_a)/scalar(2))) / scalar(2); 
+            series::Series<scalar> face_vertex_areas_b = length(cross((face_endpoint_a - face_endpoint_b)/scalar(2), (face_endpoint_c - face_endpoint_b)/scalar(2))) / scalar(2); 
+            series::Series<scalar> face_vertex_areas_c = length(cross((face_endpoint_b - face_endpoint_c)/scalar(2), (face_endpoint_a - face_endpoint_c)/scalar(2))) / scalar(2); 
             // ^^^ NOTE: these 3 represent the surface area of the face that lies within a vertex's region of influence
-            aggregate_into(face_vertex_areas_a, structure.face_vertex_id_a, [](Tfloat a, Tfloat b){ return a+b; }, vertex_areas);
-            aggregate_into(face_vertex_areas_b, structure.face_vertex_id_b, [](Tfloat a, Tfloat b){ return a+b; }, vertex_areas);
-            aggregate_into(face_vertex_areas_c, structure.face_vertex_id_c, [](Tfloat a, Tfloat b){ return a+b; }, vertex_areas);
+            aggregate_into(face_vertex_areas_a, structure.face_vertex_id_a, [](scalar a, scalar b){ return a+b; }, vertex_areas);
+            aggregate_into(face_vertex_areas_b, structure.face_vertex_id_b, [](scalar a, scalar b){ return a+b; }, vertex_areas);
+            aggregate_into(face_vertex_areas_c, structure.face_vertex_id_c, [](scalar a, scalar b){ return a+b; }, vertex_areas);
             vertex_average_area = mean(vertex_areas);
 
-            series::Series<glm::vec<3,Tfloat,glm::defaultp>> face_area_weighted_normals = face_normals * face_areas;
-            aggregate_into(face_area_weighted_normals, structure.face_vertex_id_a, [](glm::vec<3,Tfloat,glm::defaultp> a, glm::vec<3,Tfloat,glm::defaultp> b){ return a+b; }, vertex_normals);
-            aggregate_into(face_area_weighted_normals, structure.face_vertex_id_b, [](glm::vec<3,Tfloat,glm::defaultp> a, glm::vec<3,Tfloat,glm::defaultp> b){ return a+b; }, vertex_normals);
-            aggregate_into(face_area_weighted_normals, structure.face_vertex_id_c, [](glm::vec<3,Tfloat,glm::defaultp> a, glm::vec<3,Tfloat,glm::defaultp> b){ return a+b; }, vertex_normals);
+            series::Series<vec3> face_area_weighted_normals = face_normals * face_areas;
+            aggregate_into(face_area_weighted_normals, structure.face_vertex_id_a, [](vec3 a, vec3 b){ return a+b; }, vertex_normals);
+            aggregate_into(face_area_weighted_normals, structure.face_vertex_id_b, [](vec3 a, vec3 b){ return a+b; }, vertex_normals);
+            aggregate_into(face_area_weighted_normals, structure.face_vertex_id_c, [](vec3 a, vec3 b){ return a+b; }, vertex_normals);
             normalize(vertex_normals, vertex_normals);
 
             //  edge_average_length  = 0.0f;
@@ -182,7 +185,7 @@ namespace rasters
             get     (vertex_positions,   structure.edge_vertex_id_b, edge_endpoint_b );
             distance(edge_endpoint_a,    edge_endpoint_b,            edge_lengths    );
             add     (edge_endpoint_a,    edge_endpoint_b,            edge_midpoints  ); 
-            div     (edge_midpoints,     Tfloat(2),                  edge_midpoints  );
+            div     (edge_midpoints,     scalar(2),                  edge_midpoints  );
             add     (get(vertex_normals, structure.edge_vertex_id_b), 
                      get(vertex_normals, structure.edge_vertex_id_a), 
                                                            edge_normals    ); 
@@ -194,18 +197,18 @@ namespace rasters
             distance(arrow_endpoint_from,arrow_endpoint_to,   arrow_lengths      );
             sub     (arrow_endpoint_to,  arrow_endpoint_from, arrow_offsets      );
             add     (arrow_endpoint_to,  arrow_endpoint_from, arrow_midpoints    );
-            div     (arrow_midpoints,    Tfloat(2),           arrow_midpoints    );
+            div     (arrow_midpoints,    scalar(2),           arrow_midpoints    );
             add     (get(vertex_normals, structure.arrow_vertex_id_from), 
                      get(vertex_normals, structure.arrow_vertex_id_to), 
                                                               arrow_normals      ); 
             normalize(arrow_normals,                          arrow_normals      );
             arrow_average_length = mean(arrow_lengths);
 
-            series::Series<glm::vec<3,Tfloat,glm::defaultp>>  arrow_dual_offset_a    (2*structure.edge_count);
-            series::Series<glm::vec<3,Tfloat,glm::defaultp>>  arrow_dual_offset_b    (2*structure.edge_count);
-            series::Series<glm::vec<3,Tfloat,glm::defaultp>>  arrow_dual_offset_cross(2*structure.edge_count);
-            series::Series<glm::vec<3,Tfloat,glm::defaultp>>  arrow_dual_offset_ab   (2*structure.edge_count);
-            series::Series<Tfloat>                            arrow_dual_areas       (2*structure.edge_count);
+            series::Series<vec3>  arrow_dual_offset_a    (2*structure.edge_count);
+            series::Series<vec3>  arrow_dual_offset_b    (2*structure.edge_count);
+            series::Series<vec3>  arrow_dual_offset_cross(2*structure.edge_count);
+            series::Series<vec3>  arrow_dual_offset_ab   (2*structure.edge_count);
+            series::Series<scalar>                            arrow_dual_areas       (2*structure.edge_count);
 
             get     (face_midpoints,         structure.arrow_face_id_a,       arrow_dual_endpoint_a   );
             get     (face_midpoints,         structure.arrow_face_id_b,       arrow_dual_endpoint_b   );
@@ -214,24 +217,24 @@ namespace rasters
             sub     (arrow_dual_endpoint_b,  arrow_endpoint_from,   arrow_dual_offset_b     );
             cross   (arrow_dual_offset_a,    arrow_dual_offset_b,   arrow_dual_offset_cross );
             length  (arrow_dual_offset_cross,                       arrow_dual_areas        );
-            div     (arrow_dual_areas,       Tfloat(2),             arrow_dual_areas        );
+            div     (arrow_dual_areas,       scalar(2),             arrow_dual_areas        );
             sub     (arrow_dual_endpoint_b,  arrow_dual_endpoint_a, arrow_dual_offset_ab    );
 
             cross   (arrow_dual_offset_ab,   arrow_normals,         arrow_dual_normals      );
             normalize(arrow_dual_normals,                           arrow_dual_normals      );
             arrow_dual_normals *= sign(dot(arrow_dual_normals, arrow_offsets));
             
-            fill    (vertex_dual_areas,      Tfloat(0));
-            aggregate_into(arrow_dual_areas, structure.arrow_vertex_id_from, [](Tfloat a, Tfloat b) -> Tfloat { return a+b; }, vertex_dual_areas);
+            fill    (vertex_dual_areas,      scalar(0));
+            aggregate_into(arrow_dual_areas, structure.arrow_vertex_id_from, [](scalar a, scalar b) -> scalar { return a+b; }, vertex_dual_areas);
 
         }
     };
 
-    template<typename Tfloat>
-    void scale(const Metrics<Tfloat>& input, const Tfloat length_factor, Metrics<Tfloat>& output){
+    template<typename scalar>
+    void scale(const Metrics<scalar>& input, const scalar length_factor, Metrics<scalar>& output){
 
-        const Tfloat invariant_factor = Tfloat(1.0);
-        const Tfloat area_factor = length_factor * length_factor;
+        const scalar invariant_factor = scalar(1.0);
+        const scalar area_factor = length_factor * length_factor;
 
         mult(input.flattened_face_vertex_coordinates, length_factor, output.flattened_face_vertex_coordinates);
 

@@ -57,30 +57,30 @@ TEST_CASE( "Structure correctness", "[Structure]" ) {
 
 TEST_CASE( "Structure nontriviality", "[Structure]" ) {
     SECTION("Structure attributes must contain nonzero elements"){
-        CHECK(series::sum(series::abs(tetrahedron_structure.flattened_face_vertex_ids)) > 0.01f);
+        CHECK(whole::sum(series::abs(tetrahedron_structure.flattened_face_vertex_ids)) > 0.01f);
 
-        // CHECK(series::sum(series::abs(tetrahedron_structure.vertex_neighbor_ids)) > 0.01f);
-        CHECK(series::sum(series::abs(tetrahedron_structure.vertex_neighbor_counts)) > 0.01f);
+        // CHECK(whole::sum(series::abs(tetrahedron_structure.vertex_neighbor_ids)) > 0.01f);
+        CHECK(whole::sum(series::abs(tetrahedron_structure.vertex_neighbor_counts)) > 0.01f);
 
-        CHECK(series::sum(series::abs(series::get_x(tetrahedron_structure.face_vertex_ids))) > 0.01f);
-        CHECK(series::sum(series::abs(tetrahedron_structure.face_vertex_id_a)) > 0.01f);
-        CHECK(series::sum(series::abs(tetrahedron_structure.face_vertex_id_b)) > 0.01f);
-        CHECK(series::sum(series::abs(tetrahedron_structure.face_vertex_id_c)) > 0.01f);
-        // CHECK(series::sum(series::abs(tetrahedron_structure.face_edge_id_a)) > 0.01f);
-        // CHECK(series::sum(series::abs(tetrahedron_structure.face_edge_id_b)) > 0.01f);
-        // CHECK(series::sum(series::abs(tetrahedron_structure.face_edge_id_c)) > 0.01f);
+        CHECK(whole::sum(series::abs(series::get_x(tetrahedron_structure.face_vertex_ids))) > 0.01f);
+        CHECK(whole::sum(series::abs(tetrahedron_structure.face_vertex_id_a)) > 0.01f);
+        CHECK(whole::sum(series::abs(tetrahedron_structure.face_vertex_id_b)) > 0.01f);
+        CHECK(whole::sum(series::abs(tetrahedron_structure.face_vertex_id_c)) > 0.01f);
+        // CHECK(whole::sum(series::abs(tetrahedron_structure.face_edge_id_a)) > 0.01f);
+        // CHECK(whole::sum(series::abs(tetrahedron_structure.face_edge_id_b)) > 0.01f);
+        // CHECK(whole::sum(series::abs(tetrahedron_structure.face_edge_id_c)) > 0.01f);
 
-        CHECK(series::sum(series::abs(series::get_x(tetrahedron_structure.edge_vertex_ids))) > 0.01f);
-        CHECK(series::sum(series::abs(tetrahedron_structure.edge_vertex_id_a)) > 0.01f);
-        CHECK(series::sum(series::abs(tetrahedron_structure.edge_vertex_id_b)) > 0.01f);
-        // CHECK(series::sum(series::abs(tetrahedron_structure.edge_face_id_a)) > 0.01f);
-        // CHECK(series::sum(series::abs(tetrahedron_structure.edge_face_id_b)) > 0.01f);
+        CHECK(whole::sum(series::abs(series::get_x(tetrahedron_structure.edge_vertex_ids))) > 0.01f);
+        CHECK(whole::sum(series::abs(tetrahedron_structure.edge_vertex_id_a)) > 0.01f);
+        CHECK(whole::sum(series::abs(tetrahedron_structure.edge_vertex_id_b)) > 0.01f);
+        // CHECK(whole::sum(series::abs(tetrahedron_structure.edge_face_id_a)) > 0.01f);
+        // CHECK(whole::sum(series::abs(tetrahedron_structure.edge_face_id_b)) > 0.01f);
         
-        CHECK(series::sum(series::abs(series::get_x(tetrahedron_structure.arrow_vertex_ids))) > 0.01f);
-        CHECK(series::sum(series::abs(tetrahedron_structure.arrow_vertex_id_from)) > 0.01f);
-        CHECK(series::sum(series::abs(tetrahedron_structure.arrow_vertex_id_to)) > 0.01f);
-        // CHECK(series::sum(series::abs(tetrahedron_structure.arrow_face_id_a)) > 0.01f);
-        // CHECK(series::sum(series::abs(tetrahedron_structure.arrow_face_id_b)) > 0.01f);
+        CHECK(whole::sum(series::abs(series::get_x(tetrahedron_structure.arrow_vertex_ids))) > 0.01f);
+        CHECK(whole::sum(series::abs(tetrahedron_structure.arrow_vertex_id_from)) > 0.01f);
+        CHECK(whole::sum(series::abs(tetrahedron_structure.arrow_vertex_id_to)) > 0.01f);
+        // CHECK(whole::sum(series::abs(tetrahedron_structure.arrow_face_id_a)) > 0.01f);
+        // CHECK(whole::sum(series::abs(tetrahedron_structure.arrow_face_id_b)) > 0.01f);
 
     }
 }

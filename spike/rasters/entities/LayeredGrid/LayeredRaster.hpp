@@ -43,7 +43,7 @@ namespace rasters
 			Raster<T,Tgrid,Tmap>(grid)
 		{
 			assert(this->grid.layering->layer_count < this->grid.structure->vertex_count);
-			assert(this->values.size() == this->grid.cell_count(Tmap));
+			assert(this->values.size() == this->grid.raster_size(Tmap));
 		}
 		// std container style constructor
 		template<typename TIterator>
@@ -51,7 +51,7 @@ namespace rasters
 			LayeredRaster(grid)
 		{
 			assert(this->grid.layering->layer_count < this->grid.structure->vertex_count);
-			assert(this->values.size() == this->grid.cell_count(Tmap));
+			assert(this->values.size() == this->grid.raster_size(Tmap));
 			assert(std::distance(first, last) == this->size());
 			unsigned int id = 0;
 			while (first!=last) 
@@ -67,7 +67,7 @@ namespace rasters
 			LayeredRaster(a.grid)
 		{
 			assert(this->grid.layering->layer_count < this->grid.structure->vertex_count);
-			assert(this->values.size() == this->grid.cell_count(Tmap));
+			assert(this->values.size() == this->grid.raster_size(Tmap));
 		}
 
 		// convenience constructor for vectors
@@ -75,7 +75,7 @@ namespace rasters
 			LayeredRaster(grid)
 		{
 			assert(this->grid.layering->layer_count < this->grid.structure->vertex_count);
-			assert(this->values.size() == this->grid.cell_count(Tmap));
+			assert(this->values.size() == this->grid.raster_size(Tmap));
 			assert(vector.size() == this->values.size());
 			std::copy(vector.begin(), vector.end(), this->begin());
 		}
@@ -84,7 +84,7 @@ namespace rasters
 			LayeredRaster(a.grid)
 		{
 			assert(this->grid.layering->layer_count < this->grid.structure->vertex_count);
-			assert(this->values.size() == this->grid.cell_count(Tmap));
+			assert(this->values.size() == this->grid.raster_size(Tmap));
 			for (unsigned int i = 0; i < a.size(); ++i)
 			{
 				this->values[i] = a[i];
@@ -107,7 +107,7 @@ namespace rasters
 		{
 			std::size_t L = this->grid.layering->layer_count;
 			std::size_t V = this->grid.column_count(Tmap);
-			assert(this->values.size() == this->grid.cell_count(Tmap));
+			assert(this->values.size() == this->grid.raster_size(Tmap));
 
 			std::size_t La = this->values.size() / a.size();
 			assert(this->values.size() % a.size() == 0 && (La == V || La == L || La == 1));
@@ -135,7 +135,7 @@ namespace rasters
 		{
 			std::size_t L = this->grid.layering->layer_count;
 			std::size_t V = this->grid.column_count(Tmap);
-			assert(this->values.size() == this->grid.cell_count(Tmap));
+			assert(this->values.size() == this->grid.raster_size(Tmap));
 
 			std::size_t La = this->values.size() / a.size();
 			assert(this->values.size() % a.size() == 0 && (La == V || La == L || La == 1));
@@ -178,7 +178,7 @@ namespace rasters
 		{
 			std::size_t L = this->grid.layering->layer_count;
 			std::size_t V = this->grid.column_count(Tmap);
-			assert(this->values.size() == this->grid.cell_count(Tmap));
+			assert(this->values.size() == this->grid.raster_size(Tmap));
 
 			std::size_t La = this->values.size() / a.size();
 			assert(this->values.size() % a.size() == 0 && (La == V || La == L || La == 1));
@@ -204,7 +204,7 @@ namespace rasters
 		{
 			std::size_t L = this->grid.layering->layer_count;
 			std::size_t V = this->grid.column_count(Tmap);
-			assert(this->values.size() == this->grid.cell_count(Tmap));
+			assert(this->values.size() == this->grid.raster_size(Tmap));
 
 			std::size_t Lb = this->values.size() / b.size();
 			assert(this->values.size() % b.size() == 0 && (Lb == V || Lb == L || Lb == 1));

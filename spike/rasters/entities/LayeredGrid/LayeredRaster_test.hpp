@@ -31,7 +31,7 @@ TEST_CASE( "LayeredRaster consistency", "[rasters]" ) {
     auto a = make_Raster<float>(layered_tetrahedron_grid);
     auto b = make_Raster<float, mapping::arrow>(layered_tetrahedron_grid);
     SECTION("Elements of Raster of layered grid must consist of mutually consistent container attributes"){
-        CHECK(a.size() == a.grid.cell_count(mapping::cell) );
-        CHECK(b.size() == b.grid.cell_count(mapping::arrow) );
+        CHECK(a.size() == a.grid.raster_size(mapping::cell) );
+        CHECK(b.size() == b.grid.raster_size(mapping::arrow) );
     }
 }

@@ -23,8 +23,8 @@ using namespace rasters;
 
 TEST_CASE( "Grid predictability", "[rasters]" ) {
     SECTION("Grid must consist of mutually consistent container attributes"){
-        CHECK(tetrahedron_grid.cell_count(rasters::mapping::cell) == 4);
-        CHECK(tetrahedron_grid.cell_count(rasters::mapping::arrow) == 12);
+        CHECK(tetrahedron_grid.raster_size(rasters::mapping::cell) == 4);
+        CHECK(tetrahedron_grid.raster_size(rasters::mapping::arrow) == 12);
     }
 }
 
@@ -39,7 +39,7 @@ TEST_CASE( "Grid consistency", "[rasters]" ) {
 
 TEST_CASE( "Grid nontriviality", "[rasters]" ) {
     SECTION("Grid attributes must contain nonzero elements"){
-        CHECK(series::sum(series::abs(tetrahedron_grid.metrics->vertex_areas)) > 0.01f);
-        CHECK(series::sum(series::abs(series::get_x(tetrahedron_grid.metrics->vertex_positions))) > 0.01f);
+        CHECK(whole::sum(series::abs(tetrahedron_grid.metrics->vertex_areas)) > 0.01f);
+        CHECK(whole::sum(series::abs(series::get_x(tetrahedron_grid.metrics->vertex_positions))) > 0.01f);
     }
 }

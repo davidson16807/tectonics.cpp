@@ -39,8 +39,8 @@ TEST_CASE( "LayeredSpheroidGrid consistency", "[rasters]" ) {
 TEST_CASE( "LayeredSpheroidGrid nontriviality", "[rasters]" ) {
     Grid tetrahedron_grid(meshes::tetrahedron.vertices, meshes::tetrahedron.faces);
     SECTION("LayeredSpheroidGrid attributes must contain nonzero elements"){
-        CHECK(series::sum(series::abs(tetrahedron_grid.metrics->vertex_areas)) > 0.01f);
-        CHECK(series::sum(series::abs(series::get_x(tetrahedron_grid.metrics->vertex_positions))) > 0.01f);
+        CHECK(whole::sum(series::abs(tetrahedron_grid.metrics->vertex_areas)) > 0.01f);
+        CHECK(whole::sum(series::abs(series::get_x(tetrahedron_grid.metrics->vertex_positions))) > 0.01f);
     }
 }
 
@@ -48,6 +48,6 @@ TEST_CASE( "LayeredSpheroidGrid Raster consistency", "[rasters]" ) {
     Grid tetrahedron_grid(meshes::tetrahedron.vertices, meshes::tetrahedron.faces);
     auto a = make_Raster<float>(tetrahedron_grid);
     SECTION("Elements of a LayeredSpheroidGrid Raster must consist of mutually consistent container attributes"){
-        CHECK(a.size() == a.grid.cell_count(rasters::mapping::cell) );
+        CHECK(a.size() == a.grid.raster_size(rasters::mapping::cell) );
     }
 }

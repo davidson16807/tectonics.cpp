@@ -83,7 +83,7 @@ TEST_CASE( "many get_elias_noise generation nontriviality", "[many]" ) {
     SECTION("get_elias_noise(positions, generator) must generate nontrivial output"){
         std::mt19937 generator(2);
         series::get_elias_noise(positions, generator, a);
-        CHECK(series::sum(a) > 0.f);
+        CHECK(whole::sum(a) > 0.f);
     }
 }
 
@@ -116,7 +116,7 @@ TEST_CASE( "many get_perlin_noise generation nontriviality", "[many]" ) {
         });
     SECTION("get_perlin_noise(positions) must generate nontrivial output"){
         get_perlin_noise(positions, a);
-        CHECK(series::sum(a) > 0.f);
+        CHECK(whole::sum(a) > 0.f);
     }
 }
 
@@ -149,6 +149,6 @@ TEST_CASE( "many get_worley_noise generation nontriviality", "[many]" ) {
         });
     SECTION("get_worley_noise(positions) must generate nontrivial output"){
         get_worley_noise(positions, a);
-        CHECK(series::sum(a) > 0.f);
+        CHECK(whole::sum(a) > 0.f);
     }
 }
