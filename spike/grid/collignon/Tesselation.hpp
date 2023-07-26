@@ -48,8 +48,6 @@ namespace collignon
 		static constexpr scalar quadrant_area = pi;
 		static constexpr scalar quadrant_projection_length = std::sqrt(quadrant_area);
 
-		// NOTE: we need a dedicated sign function to simplify code such that an input of 0 returns a nonzero number.
-		// Whether it returns 1 or -1 doesn't matter, it just needs to pick a side from which all further decisions can be made
 		inline constexpr vec3 get_octant_id(const vec3 v) const {
 			return vec3(
 				v.x >= 0.0f? 1.0f : -1.0f, 

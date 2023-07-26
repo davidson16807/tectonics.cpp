@@ -10,9 +10,6 @@
 #include <vector>           // std::vector
 #include <memory>
 
-#include "../compatibility.hpp"
-#include "Uniform.hpp"
-
 namespace series
 {
 
@@ -42,31 +39,31 @@ namespace series
 	In practice, we find that the type safety issues that arise from incompatible grid types do not occur often, 
 	and ignoring such issues vastly reduces the complexity of the implementation.
 	*/
-	template<typename T, typename Tgrid, mapping Tmap = mapping::cell>
+	template<typename T, typename Grid, mapping Map = mapping::cell>
 	struct Raster
 	{
 
 	protected:
 		std::vector<T> values;
-		Tgrid grid;
+		Grid grid;
 
 	public:
 		// copy constructor
-		Raster(const Raster<T,Tgrid,Tmap>& a)  : 
+		Raster(const Raster<T,Grid,Map>& a)  : 
 			values(a.values),
 			grid(a.grid)
 		{}
 
-		explicit Raster(const Tgrid& grid):
-			values(grid.feature_count(Tmap)),
+		explicit Raster(const Grid& grid):
+			values(Map==mapping::cell? grid.vertex_count(Map) : grid.arrow_count()),
 			grid(grid)
 		{
 		}
 
 		// std container style constructor
 		template<typename TIterator>
-		explicit Raster(const Tgrid& grid, TIterator first, TIterator last) : 
-			values(grid.feature_count(Tmap)),
+		explicit Raster(const Grid& grid, TIterator first, TIterator last) : 
+			values(Map==mapping::cell? grid.vertex_count(Map) : grid.arrow_count()),
 			grid(grid)
 		{
 			assert(std::distance(first, last) == this->size());
@@ -81,8 +78,8 @@ namespace series
 
 
 		// convenience constructor for vectors
-		explicit Raster(const Tgrid& grid, const std::initializer_list<T>& vector) : 
-			values(grid.feature_count(Tmap)),
+		explicit Raster(const Grid& grid, const std::initializer_list<T>& vector) : 
+			values(Map==mapping::cell? grid.vertex_count(Map) : grid.arrow_count()),
 			grid(grid)
 		{
 			assert(vector.size() == this->size());
@@ -90,7 +87,7 @@ namespace series
 		}
 
 		template <typename T2>
-		explicit Raster(const Raster<T2,Tgrid>& a)  : 
+		explicit Raster(const Raster<T2,Grid>& a)  : 
 			values(a.values),
 			grid(a.grid,)
 		{
@@ -104,7 +101,7 @@ namespace series
 
 		// NOTE: all wrapper functions should to be marked inline 
 	    using size_type = std::size_t;
-		using value_type = typename T;
+		using value_type = T;
 		using const_reference = const value_type&;
 		using reference = value_type&;
 		using const_iterator = typename std::vector<T>::const_iterator;
@@ -133,13 +130,13 @@ namespace series
 		}
 
 
-		inline Raster<T,Tgrid,Tmap>& operator=(const Raster<T,Tgrid,Tmap>& other )
+		inline Raster<T,Grid,Map>& operator=(const Raster<T,Grid,Map>& other )
 		{
 			values.resize(other.size());
 			copy(*this, other);
 			return *this;
 		}
-		inline Raster<T,Tgrid,Tmap>& operator=(const T& other )
+		inline Raster<T,Grid,Map>& operator=(const T& other )
 		{
 			values.resize(other.size());
 			fill(*this, other);
@@ -259,24 +256,24 @@ namespace series
 	we have found the typical convention is far too verbose.
 	*/
 
-	template<typename T, mapping Tmap = mapping::cell, typename Tgrid>
-	Raster<T,Tgrid,Tmap> raster(const Tgrid& grid)
+	template<typename T, mapping Map = mapping::cell, typename Grid>
+	Raster<T,Grid,Map> raster(const Grid& grid)
 	{
-		return Raster<T,Tgrid,Tmap>(grid);
+		return Raster<T,Grid,Map>(grid);
 	}
-	template<typename T, mapping Tmap=mapping::cell, typename Tgrid>
-	Raster<T,Tgrid,Tmap> raster(const Tgrid& grid, const std::initializer_list<T>& vector)
+	template<typename T, mapping Map=mapping::cell, typename Grid>
+	Raster<T,Grid,Map> raster(const Grid& grid, const std::initializer_list<T>& vector)
 	{
-		return Raster<T,Tgrid,Tmap>(grid, vector);
+		return Raster<T,Grid,Map>(grid, vector);
 	}
-	template<typename T, typename TIterator, mapping Tmap=mapping::cell, typename Tgrid>
-	Raster<T,Tgrid,Tmap> raster(const Tgrid& grid, TIterator first, TIterator last)
+	template<typename T, typename TIterator, mapping Map=mapping::cell, typename Grid>
+	Raster<T,Grid,Map> raster(const Grid& grid, TIterator first, TIterator last)
 	{
-		return Raster<T,Tgrid,Tmap>(grid, first, last);
+		return Raster<T,Grid,Map>(grid, first, last);
 	}
 
-	template<typename T, typename Tgrid, mapping Tmap>
-	inline Raster<T,Tgrid,Tmap> reshape(const Raster<T,Tgrid,Tmap>& a, const std::size_t copies_per_value, Raster<T,Tgrid,Tmap>& out)
+	template<typename T, typename Grid, mapping Map>
+	inline Raster<T,Grid,Map> reshape(const Raster<T,Grid,Map>& a, const std::size_t copies_per_value, Raster<T,Grid,Map>& out)
 	{
 		if (out.front() != a.front())
 		{

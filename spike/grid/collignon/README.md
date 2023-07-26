@@ -1,6 +1,6 @@
 # What is it?
 
-**`collignon::Mesh` is a spheroid mesh that offers all the same guarantees as the HEALpix grid system, in addition to offering O(1) lookups for nearest neighbors, faces, and edges, allowing for dramatic performance improvement. This implementation the `glm` vector math library as its only dependency.**
+**`collignon::Voronoi` can be thought of as a voronoi diagram of a spheroid mesh. The mesh offers all the same guarantees as the HEALpix grid system, in addition to offering O(1) lookups for nearest neighbors, faces, and edges, allowing for dramatic performance improvement. This implementation the `glm` vector math library as its only dependency.**
 
 # How does it work?
 
@@ -35,7 +35,7 @@ but each pair of neighboring points on this projection correspond to neighboring
 The `Tesselation` class exclusively represents data structures and functions 
 that define an isomorphism between points on a sphere and points on this tesselation.
 
-## Mesh
+## Voronoi
 
 The properties of `collignon::Tesselation` allow the construction of a mesh that provides a superset of the guarantees offered by HEALPix:
 
@@ -46,11 +46,12 @@ The properties of `collignon::Tesselation` allow the construction of a mesh that
 * isolatitude
 
 We arrive at this construction by coupling a `collignon::Tesselation` with a bounded 2d Cartesian grid, 
-represented by `collignon::Indexing`. We call this construction `collignon::Mesh`.
+represented by `collignon::Indexing`. We call this construction `collignon::Voronoi`.
+`Voronoi` is a wrapper around a `Tesselation` that introduces the concepts of sphere radius, vertex count, and boundary alignment. 
 
-In addition to mapping memory ids to points on the surface of the sphere,
-the `collignon::Mesh` class also derives properties for a given memory id or set of points.
-It tracks properties for:
+## Grid
+`collignon::Grid` wraps `collignon::Voronoi` to introduce additional concepts regarding the neighbors of vertices. 
+In principle these concepts include the following:
 * vertices
 * edges
 * faces
@@ -61,14 +62,15 @@ It tracks properties for:
 Most of these are self explanatory, but "arrows" and "duals" require some explanation.
 An "arrow" is a unidirectional edge. There are two arrows for each edge in a mesh. 
 Storing arrows separately tends to simplify logic for some operations where direction matters, such as in vector calculus.
-A "dual" refers to the dual of a graph, where the "graph" here is the `Mesh`. 
-Vertices become faces, and "arrow duals" mark the boundaries of these new faces.
+A "dual" refers to the dual of a graph, where the "graph" here is the `Voronoi`. 
+The dual of a vertex is a set of edges, and each element of this set is the dual of an arrow.
 
-Where applicable, `collignon::Mesh` provides functions to calculate the following properties when given points on the sphere:
+Where applicable, `collignon::Voronoi` provides functions to calculate the following properties when given points on the sphere:
 
 * normals
 * areas
 * lengths
 * midpoints
-* dual areas
-* dual lengths
+
+Currently, `collignon::Voronoi` only contains information regarding vertices, arrows, and their duals, 
+however this may change if there is a need for other concepts in the future.

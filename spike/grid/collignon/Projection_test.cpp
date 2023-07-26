@@ -9,11 +9,6 @@
 #include <glm/gtx/string_cast.hpp>  // to_string
 
 // in-house libraries
-#include <series/types.hpp>
-#include <series/common.hpp>
-#include <series/convenience.hpp>  
-#include <series/glm/glm.hpp>         // *vec*s
-#include <series/glm/convenience.hpp> //  operators, etc.
 
 #include "Projection.hpp"
 
