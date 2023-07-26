@@ -56,6 +56,26 @@ namespace collignon
 				* 	((arrow_offset_memory_id & 1)? ivec2(0,1) : ivec2(1,0));
 		}
 
+		inline constexpr scalar total_radius() const 
+		{
+			return voronoi.radius;
+		}
+
+		inline constexpr scalar total_diameter() const 
+		{
+			return voronoi.radius;
+		}
+
+		inline constexpr scalar total_area() const 
+		{
+			return 4.0 * pi * voronoi.radius * voronoi.radius;
+		}
+
+		inline constexpr scalar total_circumference() const 
+		{
+			return 2.0 * pi * voronoi.radius;
+		}
+
 		inline constexpr id vertex_count() const 
 		{
 			return voronoi.vertex_count;
@@ -119,10 +139,10 @@ namespace collignon
 			const vec3 offsetBC(voronoi.sphere_position(idO+vec2( 0.5,-0.5)) - pointO);
 			const vec3 offsetCD(voronoi.sphere_position(idO+vec2(-0.5,-0.5)) - pointO);
 			const vec3 offsetDA(voronoi.sphere_position(idO+vec2(-0.5, 0.5)) - pointO);
-			return 	glm::length(glm::cross(offsetAB, offsetBC))/2.0
-				+ 	glm::length(glm::cross(offsetBC, offsetCD))/2.0
-				+ 	glm::length(glm::cross(offsetCD, offsetDA))/2.0
-				+ 	glm::length(glm::cross(offsetDA, offsetAB))/2.0;
+			return (glm::length(glm::cross(offsetAB, offsetBC))
+				+ 	glm::length(glm::cross(offsetBC, offsetCD))
+				+ 	glm::length(glm::cross(offsetCD, offsetDA))
+				+ 	glm::length(glm::cross(offsetDA, offsetAB)))/2.0;
 		}
 
 	};
