@@ -15,10 +15,10 @@ namespace series
 	template<typename T>
 	struct Noise
 	{
-		float a;
-		float b;
+		T a;
+		T b;
 
-		constexpr inline explicit Noise(const float a = 10.f, const float b=10000.f) : 
+		constexpr inline explicit Noise(const T a = T(10), const T b=T(10000)) : 
 			a(a),
 			b(b)
 		{}
@@ -35,8 +35,8 @@ namespace series
 
 		constexpr inline value_type operator[](const size_type memory_id ) const
 		{
-			auto c = std::sin(memory_id*a)*b;
-		    return c - std::floor(c);
+			auto c = sin(T(memory_id)*a)*b;
+		    return c - floor(c);
 		}
 
 	};

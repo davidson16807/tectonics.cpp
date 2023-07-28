@@ -20,16 +20,16 @@ namespace collignon
     NOTE: SEE VECTOR CALCULUS MD FOR MORE EXPLANATION!
     */
 
-    template<typename id, typename scalar, typename Tin, typename Tout>
-    void gradient(const Grid<id, scalar>& grid, const Tin& field, Tout& out) {
+    template<typename id, typename scalar, typename In, typename Out>
+    void gradient(const Grid<id, scalar>& grid, const In& field, Out& out) {
     	// assert(compatible(field, out));
     	// assert(grid.compatible(field));
     	id i, j;
     	const id N = grid.arrows_per_vertex;
-        typename Tin::value_type source_value;
+        typename In::value_type source_value;
         for (i = 0; i < grid.vertex_count(); ++i)
         {
-            out[i] = typename Tout::value_type(0);
+            out[i] = typename Out::value_type(0);
         	source_value = field[i];
         	for (j = 0; j < N; ++j)
         	{
@@ -41,16 +41,16 @@ namespace collignon
     }
 
 
-    template<typename id, typename scalar, typename Tin, typename Tout>
-    void divergence(const Grid<id,scalar>& grid, const Tin& field, Tout& out) {
+    template<typename id, typename scalar, typename In, typename Out>
+    void divergence(const Grid<id,scalar>& grid, const In& field, Out& out) {
     	// assert(compatible(field, out));
     	// assert(grid.compatible(field));
     	id i, j;
     	const id N = grid.arrows_per_vertex;
-        typename Tin::value_type source_value;
+        typename In::value_type source_value;
         for (i = 0; i < grid.vertex_count(); ++i)
         {
-            out[i] = typename Tout::value_type(0);
+            out[i] = typename Out::value_type(0);
         	source_value = field[i];
         	for (j = 0; j < N; ++j)
         	{
@@ -62,16 +62,16 @@ namespace collignon
     }
 
 
-    template<typename id, typename scalar, typename Tin, typename Tout>
-    void curl(const Grid<id,scalar>& grid, const Tin& field, Tout& out) {
+    template<typename id, typename scalar, typename In, typename Out>
+    void curl(const Grid<id,scalar>& grid, const In& field, Out& out) {
     	// assert(compatible(field, out));
     	// assert(grid.compatible(field));
     	id i, j;
     	const id N = grid.arrows_per_vertex;
-        typename Tin::value_type source_value;
+        typename In::value_type source_value;
         for (i = 0; i < grid.vertex_count(); ++i)
         {
-            out[i] = typename Tout::value_type(0);
+            out[i] = typename Out::value_type(0);
         	source_value = field[i];
         	for (j = 0; j < N; ++j)
         	{
@@ -83,16 +83,16 @@ namespace collignon
     }
 
 
-    template<typename id, typename scalar, typename Tin, typename Tout>
-    void laplacian(const Grid<id,scalar>& grid, const Tin& field, Tout& out) {
+    template<typename id, typename scalar, typename In, typename Out>
+    void laplacian(const Grid<id,scalar>& grid, const In& field, Out& out) {
     	// assert(compatible(field, out));
     	// assert(grid.compatible(field));
     	id i, j;
     	const id N = grid.arrows_per_vertex;
-        typename Tin::value_type source_value;
+        typename In::value_type source_value;
         for (i = 0; i < grid.vertex_count(); ++i)
         {
-            out[i] = typename Tout::value_type(0);
+            out[i] = typename Out::value_type(0);
         	source_value = field[i];
         	for (j = 0; j < N; ++j)
         	{
