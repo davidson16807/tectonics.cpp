@@ -10,8 +10,8 @@
 namespace whole
 {
 
-	template <typename T1, typename T2>
-	bool compatible(const T1& a, T2& b)
+	template <typename In1, typename In2>
+	bool compatible(const In1& a, In2& b)
 	{
 		auto hi = std::max(a.size(), b.size());
 		auto lo = std::min(a.size(), b.size());
@@ -74,8 +74,8 @@ namespace whole
 
 
 
-	template <typename T1, typename T2>
-	double distance(const T1& a, const T2& b)
+	template <typename In1, typename In2>
+	double distance(const In1& a, const In2& b)
 	{
 		double out(0);
 		assert(compatible(a,b));
@@ -89,8 +89,8 @@ namespace whole
 
 
 
-	template <typename T1, typename T2>
-	bool all(const T1& a)
+	template <typename In1, typename In2>
+	bool all(const In1& a)
 	{
 		auto size = a.size();
 		for (std::size_t i = 0; i < size; ++i)
@@ -102,8 +102,8 @@ namespace whole
 		return true;
 	}
 
-	template <typename T1, typename T2>
-	bool any(const T1& a)
+	template <typename In1, typename In2>
+	bool any(const In1& a)
 	{
 		auto size = a.size();
 		for (std::size_t i = 0; i < size; ++i)
@@ -115,14 +115,14 @@ namespace whole
 		return true;
 	}
 
-	template <typename T1, typename T2>
-	bool equal(const T1& a, const T2& b, const float threshold)
+	template <typename In1, typename In2>
+	bool equal(const In1& a, const In2& b, const float threshold)
 	{
 		return whole::distance(a,b) < threshold;
 	}
 
-	template <typename T1, typename T2>
-	bool equal(const T1& a, const T2& b)
+	template <typename In1, typename In2>
+	bool equal(const In1& a, const In2& b)
 	{
 		if (a.size() != b.size()){
 			return false;
@@ -137,8 +137,8 @@ namespace whole
 		return true;
 	}
 
-	template <typename T1, typename T2>
-	bool notEqual(const T1& a, const T2& b)
+	template <typename In1, typename In2>
+	bool notEqual(const In1& a, const In2& b)
 	{
 		if (a.size() != b.size()){
 			return true;
@@ -153,8 +153,8 @@ namespace whole
 		return false;
 	}
 
-	template <typename T1, typename T2>
-	bool greaterThan(const T1& a, const T2& b)
+	template <typename In1, typename In2>
+	bool greaterThan(const In1& a, const In2& b)
 	{
 		auto size = a.size();
 		for (std::size_t i = 0; i < size; ++i)
@@ -166,8 +166,8 @@ namespace whole
 		return true;
 	}
 
-	template <typename T1, typename T2>
-	bool lessThan(const T1& a, const T2& b)
+	template <typename In1, typename In2>
+	bool lessThan(const In1& a, const In2& b)
 	{
 		auto size = a.size();
 		for (std::size_t i = 0; i < size; ++i)
@@ -179,8 +179,8 @@ namespace whole
 		return true;
 	}
 
-	template <typename T1, typename T2>
-	bool greaterThanEqual(const T1& a, const T2& b)
+	template <typename In1, typename In2>
+	bool greaterThanEqual(const In1& a, const In2& b)
 	{
 		auto size = a.size();
 		for (std::size_t i = 0; i < size; ++i)
@@ -192,8 +192,8 @@ namespace whole
 		return true;
 	}
 
-	template <typename T1, typename T2>
-	bool lessThanEqual(const T1& a, const T2& b)
+	template <typename In1, typename In2>
+	bool lessThanEqual(const In1& a, const In2& b)
 	{
 		auto size = a.size();
 		for (std::size_t i = 0; i < size; ++i)

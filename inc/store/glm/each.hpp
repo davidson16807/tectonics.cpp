@@ -79,8 +79,8 @@ namespace each {
 	EACH_BINARY_GLM_WRAPPER(lessThanEqual)
 
 	#define EACH_UNARY_FUNCTION(NAME) \
-	template <typename T1, typename Tout>\
-	void NAME(const T1& a, Tout& out)\
+	template <typename In1, typename Out>\
+	void NAME(const In1& a, Out& out)\
 	{\
 		assert(each::compatible(a,out));\
 		auto size = out.size();\
@@ -97,8 +97,8 @@ namespace each {
 	EACH_UNARY_FUNCTION(normalize)
 
 	#define EACH_BINARY_FUNCTION(NAME) \
-	template <typename T1, typename T2, typename Tout>\
-	void NAME(const T1& a, const T2& b, Tout& out)\
+	template <typename In1, typename In2, typename Out>\
+	void NAME(const In1& a, const In2& b, Out& out)\
 	{\
 		assert(each::compatible(a,b,out));\
 		auto size = out.size();\
@@ -120,11 +120,11 @@ namespace each {
 
 
 	template <glm::length_t L, typename T1, glm::qualifier Q> \
-		inline auto x(const glm::vec<L,T1,Q> a){ return a.x; }
+	inline auto x(const glm::vec<L,T1,Q> a){ return a.x; }
 	template <glm::length_t L, typename T1, glm::qualifier Q> \
-		inline auto y(const glm::vec<L,T1,Q> a){ return a.y; }
+	inline auto y(const glm::vec<L,T1,Q> a){ return a.y; }
 	template <glm::length_t L, typename T1, glm::qualifier Q> \
-		inline auto z(const glm::vec<L,T1,Q> a){ return a.z; }
+	inline auto z(const glm::vec<L,T1,Q> a){ return a.z; }
 
 	EACH_UNARY_FUNCTION(x)
 	EACH_UNARY_FUNCTION(y)

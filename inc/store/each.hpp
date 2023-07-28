@@ -9,15 +9,15 @@
 namespace each
 {
 
-	template <typename T1, typename Tout>
-	bool compatible(const T1& a, Tout& out)
+	template <typename In1, typename Out>
+	bool compatible(const In1& a, Out& out)
 	{
 		return 
 			out.size() == a.size();
 	}
 
-	template <typename T1, typename T2, typename Tout>
-	bool compatible(const T1& a, const T2& b, Tout& out)
+	template <typename In1, typename In2, typename Out>
+	bool compatible(const In1& a, const In2& b, Out& out)
 	{
 		return 
 			out.size() >= a.size() &&
@@ -28,8 +28,8 @@ namespace each
 			b.size() > 0;
 	}
 
-	template <typename T1, typename T2, typename T3, typename Tout>
-	bool compatible(const T1& a, const T2& b, const T3& c, Tout& out)
+	template <typename In1, typename In2, typename In3, typename Out>
+	bool compatible(const In1& a, const In2& b, const In3& c, Out& out)
 	{
 		return 
 			out.size() >= a.size() &&
@@ -44,8 +44,8 @@ namespace each
 	}
 
 	#define EACH_BINARY_OPERATION(SYMBOL, NAME) \
-	template <typename T1, typename T2, typename Tout>\
-	void NAME (const T1& a, const T2& b, Tout& out)\
+	template <typename In1, typename In2, typename Out>\
+	void NAME (const In1& a, const In2& b, Out& out)\
 	{\
 		assert(compatible(a,b,out));\
 		auto size = out.size();\
@@ -63,8 +63,8 @@ namespace each
 	#undef EACH_BINARY_OPERATION
 
 	#define EACH_UNARY_PREFIX_OPERATION(SYMBOL, NAME) \
-	template <typename T1, typename Tout>\
-	void NAME (const T1& a, Tout& out)\
+	template <typename In1, typename Out>\
+	void NAME (const In1& a, Out& out)\
 	{\
 		assert(compatible(a,out));\
 		auto size = out.size();\
@@ -77,8 +77,8 @@ namespace each
 
 
 	#define EACH_UNARY_POSTFIX_OPERATION(SYMBOL, NAME) \
-	template <typename T1, typename Tout>\
-	void NAME (const T1& a, Tout& out)\
+	template <typename In1, typename Out>\
+	void NAME (const In1& a, Out& out)\
 	{\
 		assert(compatible(a,out));\
 		auto size = out.size();\
@@ -89,11 +89,11 @@ namespace each
 	}
 	#undef EACH_UNARY_POSTFIX_OPERATION
 
-	#define EACH_UNARY_STD_WRAPPER(NAME) template <typename T1> inline auto NAME (const T1 a) { return std::NAME(a); }
+	#define EACH_UNARY_STD_WRAPPER(NAME) template <typename In1> inline auto NAME (const In1 a) { return std::NAME(a); }
 
 	#define EACH_UNARY_FUNCTION(NAME) \
-	template <typename T1, typename Tout>\
-	void NAME(const T1& a, Tout& out)\
+	template <typename In1, typename Out>\
+	void NAME(const In1& a, Out& out)\
 	{\
 		assert(compatible(a,out));\
 		auto size = out.size();\
@@ -149,28 +149,28 @@ namespace each
 	EACH_UNARY_FUNCTION(atanh)
 
 
-	template <typename T1, int N> inline auto pow(const T1 a) { return std::pow(a,N); }
-	template <typename T1> inline auto sign (const T1 a)	{ return (T1(0) < a) - (a < T1(0)); }
-	template <typename T1> inline auto fract(const T1 a) { return a-floor(a); }
-	template <typename T1> inline auto inversesqrt(const T1 a) { return T1(1)/std::sqrt(a); }
-	template <typename T1> inline auto negate(const T1 a) { return !a; }
-	template <typename T1> inline auto exp10(const T1 a) { return std::pow(a,T1(10)); }
-	template <typename T1> inline auto sec(const T1 a){ return T1(1)/std::cos(a);}
-	template <typename T1> inline auto csc(const T1 a){ return T1(1)/std::sin(a);}
-	template <typename T1> inline auto cot(const T1 a){ return T1(1)/std::tan(a);}
-	// template <typename T1> inline auto asec(const T1 a){ return std::asec(a);}
-	// template <typename T1> inline auto acsc(const T1 a){ return std::acsc(a);}
-	// template <typename T1> inline auto acot(const T1 a){ return std::acot(a);}
-	// template <typename T1> inline auto sinh(const T1 a){ return std::sinh(a);}
-	// template <typename T1> inline auto cosh(const T1 a){ return std::cosh(a);}
-	// template <typename T1> inline auto tanh(const T1 a){ return std::tanh(a);}
-	// template <typename T1> inline auto asech(const T1 a){ return std::asech(a);}
-	// template <typename T1> inline auto acsch(const T1 a){ return std::acsch(a);}
-	// template <typename T1> inline auto acoth(const T1 a){ return std::acoth(a);}
-	template <typename T1> inline auto radians(const T1 a){ return T1(M_PI/180.) * a;}
-	template <typename T1> inline auto degrees(const T1 a){ return T1(180./M_PI) * a;}
+	template <typename In1, int N> inline auto pow(const In1 a) { return std::pow(a,N); }
+	template <typename In1> inline auto sign (const In1 a)	{ return (In1(0) < a) - (a < In1(0)); }
+	template <typename In1> inline auto fract(const In1 a) { return a-floor(a); }
+	template <typename In1> inline auto inversesqrt(const In1 a) { return In1(1)/std::sqrt(a); }
+	template <typename In1> inline auto negate(const In1 a) { return !a; }
+	template <typename In1> inline auto exp10(const In1 a) { return std::pow(a,In1(10)); }
+	template <typename In1> inline auto sec(const In1 a){ return In1(1)/std::cos(a);}
+	template <typename In1> inline auto csc(const In1 a){ return In1(1)/std::sin(a);}
+	template <typename In1> inline auto cot(const In1 a){ return In1(1)/std::tan(a);}
+	// template <typename In1> inline auto asec(const In1 a){ return std::asec(a);}
+	// template <typename In1> inline auto acsc(const In1 a){ return std::acsc(a);}
+	// template <typename In1> inline auto acot(const In1 a){ return std::acot(a);}
+	// template <typename In1> inline auto sinh(const In1 a){ return std::sinh(a);}
+	// template <typename In1> inline auto cosh(const In1 a){ return std::cosh(a);}
+	// template <typename In1> inline auto tanh(const In1 a){ return std::tanh(a);}
+	// template <typename In1> inline auto asech(const In1 a){ return std::asech(a);}
+	// template <typename In1> inline auto acsch(const In1 a){ return std::acsch(a);}
+	// template <typename In1> inline auto acoth(const In1 a){ return std::acoth(a);}
+	template <typename In1> inline auto radians(const In1 a){ return In1(M_PI/180.) * a;}
+	template <typename In1> inline auto degrees(const In1 a){ return In1(180./M_PI) * a;}
 
-	EACH_UNARY_FUNCTION(pow)
+	// EACH_UNARY_FUNCTION(pow)
 	EACH_UNARY_FUNCTION(sign)
 	EACH_UNARY_FUNCTION(fract)
 	EACH_UNARY_FUNCTION(inversesqrt)
@@ -194,11 +194,12 @@ namespace each
 	#undef EACH_UNARY_FUNCTION
 	#undef EACH_UNARY_STD_WRAPPER
 
-	#define EACH_BINARY_STD_WRAPPER(NAME) template <typename T1, typename T2> inline auto NAME(const T1 a, const T2 b){return std::NAME(a,b);}
+	#define EACH_BINARY_STD_WRAPPER(NAME) \
+	template <typename In1, typename In2> inline auto NAME(const In1 a, const In2 b){return std::NAME(a,b);}
 
 	#define EACH_BINARY_FUNCTION(NAME) \
-	template <typename T1, typename T2, typename Tout>\
-	void NAME(const T1& a, const T2& b, Tout& out)\
+	template <typename In1, typename In2, typename Out>\
+	void NAME(const In1& a, const In2& b, Out& out)\
 	{\
 		assert(compatible(a,b,out));\
 		auto size = out.size();\
@@ -218,17 +219,17 @@ namespace each
 	EACH_BINARY_FUNCTION(pow)  
 	EACH_BINARY_FUNCTION(atan2)
 
-	template <typename T1, typename T2> inline auto mod(const T1 a, const T2 b){return a-b*floor(a/b);}
-	template <typename T1, typename T2> inline auto distance(const T1 a, const T2 b){return std::abs(a-b);}
-	template <typename T1, typename T2> inline auto equal(const T1 a, const T2 b){return a == b;}
-	template <typename T1, typename T2> inline auto notEqual(const T1 a, const T2 b){return a != b;}
-	template <typename T1, typename T2> inline auto greaterThan(const T1 a, const T2 b){return a > b;}
-	template <typename T1, typename T2> inline auto lessThan(const T1 a, const T2 b){return a < b;}
-	template <typename T1, typename T2> inline auto greaterThanEqual(const T1 a, const T2 b){return a >= b;}
-	template <typename T1, typename T2> inline auto lessThanEqual(const T1 a, const T2 b){return a <= b;}
-	template <typename T1, typename T2> inline auto unite(const T1 a, const T2 b){return a || b;}
-	template <typename T1, typename T2> inline auto intersect(const T1 a, const T2 b){return a && b;}
-	template <typename T1, typename T2> inline auto differ(const T1 a, const T2 b){return a && !b;}
+	template <typename In1, typename In2> inline auto mod(const In1 a, const In2 b){return a-b*floor(a/b);}
+	template <typename In1, typename In2> inline auto distance(const In1 a, const In2 b){return std::abs(a-b);}
+	template <typename In1, typename In2> inline auto equal(const In1 a, const In2 b){return a == b;}
+	template <typename In1, typename In2> inline auto notEqual(const In1 a, const In2 b){return a != b;}
+	template <typename In1, typename In2> inline auto greaterThan(const In1 a, const In2 b){return a > b;}
+	template <typename In1, typename In2> inline auto lessThan(const In1 a, const In2 b){return a < b;}
+	template <typename In1, typename In2> inline auto greaterThanEqual(const In1 a, const In2 b){return a >= b;}
+	template <typename In1, typename In2> inline auto lessThanEqual(const In1 a, const In2 b){return a <= b;}
+	template <typename In1, typename In2> inline auto unite(const In1 a, const In2 b){return a || b;}
+	template <typename In1, typename In2> inline auto intersect(const In1 a, const In2 b){return a && b;}
+	template <typename In1, typename In2> inline auto differ(const In1 a, const In2 b){return a && !b;}
 
 	EACH_BINARY_FUNCTION(mod)  
 	EACH_BINARY_FUNCTION(distance)  
@@ -247,8 +248,8 @@ namespace each
 
 
 	#define EACH_TRINARY_FUNCTION(NAME) \
-	template <typename T1, typename T2, typename T3, typename Tout>\
-	void NAME(const T1& a, const T2& b, const T3& c, Tout& out)\
+	template <typename In1, typename In2, typename In3, typename Out>\
+	void NAME(const In1& a, const In2& b, const In3& c, Out& out)\
 	{\
 		assert(compatible(a,b,c,out));\
 		auto size = out.size();\
@@ -279,8 +280,8 @@ namespace each
 
 	// SPECIAL FUNCTIONS THAT MUST BE DEFINED WITHOUT MACROS
 
-	template <typename T1, typename T2, typename Tout>
-	void equal(const T1& a, const T2& b, Tout& out, const float threshold)
+	template <typename In1, typename In2, typename Out>
+	void equal(const In1& a, const In2& b, Out& out, const float threshold)
 	{
 		assert(compatible(a,b,out));
 		auto size = a.size();
@@ -290,16 +291,16 @@ namespace each
 		}
 	}
 
-	template <typename T1, typename T2, typename T3, typename Tout>
-	void clamp(const T1& a, const T2& lo, const T3& hi, Tout& out)
+	template <typename In1, typename In2, typename In3, typename Out>
+	void clamp(const In1& a, const In2& lo, const In3& hi, Out& out)
 	{
 		assert(compatible(a,lo,hi,out));
 		each::min(a, hi, out);
 		each::max(out, lo, out);
 	}
 
-	template <typename T, typename Tint, typename Tout>
-	void modf(const T& a, Tint& intout, Tout& fractout)
+	template <typename T, typename Tint, typename Out>
+	void modf(const T& a, Tint& intout, Out& fractout)
 	{
 		floor(a, fractout);
 		auto size = fractout.size();
@@ -310,13 +311,24 @@ namespace each
 	}
 
 	/// Computes and returns a * b + c.
-	template <typename T1, typename T2, typename T3, typename Tout>
-	void fma(const T1& a, const T2& b, const T3& c, Tout& out)
+	template <typename In1, typename In2, typename In3, typename Out>
+	void fma(const In1& a, const In2& b, const In3& c, Out& out)
 	{
 		assert(compatible(a,b,c,out));
 		mult(a,   b, out);
 		add (out, c, out);
 	}
 
+
+	template <typename T, typename Tint, typename Out>
+	void modf(const T& a, Tint& intout, Out& fractout)
+	{
+		floor(a, fractout);
+		auto size = fractout.size();
+		for (std::size_t i = 0; i < size; ++i)
+		{
+			intout[i] = int(a[i]);
+		}
+	}
 
 }
