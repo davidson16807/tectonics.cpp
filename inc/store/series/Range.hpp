@@ -17,11 +17,9 @@ namespace series
 
 	    using size_type = std::size_t;
 		using value_type = T;
-		using const_reference = const T&;
-		using reference = T&;
 		constexpr inline size_type size() const { return 1; }
 
-		constexpr inline const_reference operator[](const size_type memory_id ) const
+		constexpr inline value_type operator[](const size_type memory_id ) const
 		{
 			return T(memory_id);
 		}

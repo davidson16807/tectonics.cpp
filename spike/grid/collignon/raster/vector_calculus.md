@@ -1,6 +1,7 @@
 
-The naive implementation is to estimate gradient/divergence/etc. based on each individual neighbors,
- then take the average between the estimates.
+# CALCULATING DIVERGENCE
+The naive implementation is to estimate gradient/divergence/etc. 
+ based on each individual neighbors, then take the average between the estimates.
 This is wrong! If dx is very small, such as where dy is big,
  then the gradient estimate along that dimension will be very big.
 This will result in very strange behavior.
@@ -25,7 +26,7 @@ In other words, flow scales linearly with volume at small scales.
 
 TODO: 
 explain how to figure out the flow across an edge
-explain how gradient times surface normal equals the difference between two points in space
+explain how gradient times surface normal equals the difference between the values for two points in space
 
 The above explanation can be restated mathematically by the Gauss-Green theorem: 
   ∫∫∫ᵥ ∇ϕ ∂V = ∫∫ₛ ϕn̂ ∂s
@@ -51,12 +52,13 @@ Each vertex has a vector mapped to it, analogous to the flow of dust across a pu
 Each vertex also has a region around it that's analogous to the puzzle piece, 
 known as a "dual" in tectonics.cpp, since it is analogous to the dual of a graph in graph theory. 
 The vertices of the dual are set to the midpoints of the faces that connect the original vertices.
-The duel of a vertex is a boundary, and as such it has its own surface normal.
+The duel of a vertex is a boundary of a 2d area, and as such it has its own surface normal.
 We want to find the divergence, which is a single floating point value 
 that's positive when the vectors are pointing away from a region.
 To find this, we need to consider both the vertex itself and the vertices surrounding it. 
 We take the difference in vectors across each neighboring pair of vertices
-then 
+then dot them with the surface normal of the boundary, that is, the duel.
+dividing by the area of the dual gives us the divergence.
 
 Imagine a vertex with several neighors surrounding it. 
 The vertex is known as a "centroid".
@@ -86,3 +88,25 @@ If the neighbors are not spaced equally apart from the centroid,
  so create a polygon from the midpoints of the faces surrounding the centroid
  then calculate the area and perimeter lengths from the polygon.
 This polygon is part of the "dual" of the graph that's formed from the centroid and its neighbors.
+
+
+# CALCULATING LAPLACIAN
+
+By the Gauss-Green theorem:
+  ∫∫∫ᵥ ∇²ϕ ∂V = ∫∫∫ᵥ ∇⋅∇ϕ ∂V = ∫∫ₛ n̂⋅∇ϕ ∂s
+for infinitesimal volumes, we can assume that contents are uniform, so results scale with volume, and:
+  ∇²ϕ = 1/V ∫∫ₛ n̂⋅∇ϕ ∂s
+Now consider a vertex surrounded by neighbors.
+For each vertex pair, indicated by i, 
+there is a change in ϕ from one vertex to another, Δϕᵢ.
+This occurs over a set distance, |Δxᵢ|,
+and across a boundary of given length, ΔSᵢ. 
+We know n̂⋅∇ϕ indicates the slope of ϕ in the direction n̂, since n̂⋅∇ϕ = xₙ∂/∂x + yₙ∂/∂x + zₙ∂/∂z. 
+So if we wanted to estimate n̂⋅∇ϕ for the region covered by a single vertex pair, we'd say it was Δϕᵢ/|Δxᵢ|. 
+And if we want to estimate ∇²ϕ for the entire vertex neighborhood, then:
+  ∇²ϕ = 1/V Σᵢ Δϕᵢ/|Δxᵢ| ΔSᵢ
+And Bob's your uncle! 
+So the laplacian on an unstructured mesh is a weighted average of slope between neighbors, 
+weighted by the sections of the boundary shared between those neighbors, 
+and divided by the area that's enclosed by the boundary. 
+

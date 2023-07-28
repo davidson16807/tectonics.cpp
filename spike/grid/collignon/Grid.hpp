@@ -1,3 +1,4 @@
+#pragma once
 
 // 3rd party libraries
 #include <glm/geometric.hpp>
@@ -122,7 +123,7 @@ namespace collignon
 		}
 
 		// length of the arrow's dual
-		inline constexpr scalar arrow_dual_length(const id source_id, const id offset_id) const
+		constexpr scalar arrow_dual_length(const id source_id, const id offset_id) const
 		{
 			const vec2 midpointOB(vec2(voronoi.grid_id(source_id)) + scalar(0.5) * vec2(arrow_offset_grid_position(offset_id)));
 			return glm::distance(
@@ -131,7 +132,7 @@ namespace collignon
 				);
 		}
 
-		inline constexpr scalar vertex_dual_area(const id vertex_id) const 
+		constexpr scalar vertex_dual_area(const id vertex_id) const 
 		{
 			const vec2 idO(voronoi.grid_id(vertex_id));
 			const vec3 pointO(voronoi.sphere_position(idO));
