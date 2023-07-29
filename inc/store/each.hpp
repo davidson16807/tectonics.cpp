@@ -320,15 +320,5 @@ namespace each
 	}
 
 
-	template <typename T, typename Tint, typename Out>
-	void modf(const T& a, Tint& intout, Out& fractout)
-	{
-		floor(a, fractout);
-		auto size = fractout.size();
-		for (std::size_t i = 0; i < size; ++i)
-		{
-			intout[i] = int(a[i]);
-		}
-	}
-
 }
+
