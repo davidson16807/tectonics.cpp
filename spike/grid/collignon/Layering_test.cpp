@@ -1,3 +1,4 @@
+#pragma once
 
 // 3rd party libraries
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
@@ -5,15 +6,18 @@
 
 // in-house libraries
 
+#include <test/harness.hpp>
+#include <test/tools.hpp>
 #include "Layering.hpp"
 
 
 TEST_CASE( "Layering.height_to_layer() purity", "[collignon]" ) {
     SECTION("Layering.height_to_layer() must be called repeatedly without changing the output"){
-        for(float x = -1; x < 6.0; x+=0.5){
-            CHECK(collignon::Layering(0.0f, 5.0f, 7).height_to_layer(x) == 
-                  collignon::Layering(0.0f, 5.0f, 7).height_to_layer(x));
-        }
+        REQUIRE(test::determinism(
+                    test::OperatorHarness(), 
+                    [=](auto x){ return collignon::Layering(0.0f, 5.0f, 7).height_to_layer(x); }, 
+                    std::vector<float>{-1.0f, 0.0f, 1.0f, 4.0f, 5.0f, 6.0f}
+                ));
     }
 }
 
