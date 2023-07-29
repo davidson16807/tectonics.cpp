@@ -7,17 +7,25 @@
 // in-house libraries
 
 #include <test/harness.hpp>
-#include <test/tools.hpp>
+#include <test/properties.hpp>
 #include "Layering.hpp"
 
 
 TEST_CASE( "Layering.height_to_layer() purity", "[collignon]" ) {
     SECTION("Layering.height_to_layer() must be called repeatedly without changing the output"){
-        REQUIRE(test::determinism(
-                    test::OperatorHarness(), 
-                    [=](auto x){ return collignon::Layering(0.0f, 5.0f, 7).height_to_layer(x); }, 
-                    std::vector<float>{-1.0f, 0.0f, 1.0f, 4.0f, 5.0f, 6.0f}
-                ));
+        REQUIRE(
+            test::determinism(
+                test::OperatorHarness(), 
+                [=](auto x){ return collignon::Layering(0.0f, 5.0f, 7).height_to_layer(x); }, 
+                std::vector<float>{-1.0f, 0.0f, 1.0f, 4.0f, 5.0f, 6.0f}
+            ));
+        int id = 0;
+        REQUIRE(
+            test::determinism(
+                test::OperatorHarness(), 
+                [&](auto x){ return ++id; }, 
+                std::vector<float>{-1.0f, 0.0f, 1.0f, 4.0f, 5.0f, 6.0f}
+            ));
     }
 }
 

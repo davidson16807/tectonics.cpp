@@ -1,7 +1,6 @@
 #pragma once
 
 // std libraries
-#include <iostream>
 #include <sstream>
 #include <string>
 
@@ -35,7 +34,7 @@ namespace test {
         template<typename T>
         std::string print(const T& a) const {
             std::ostringstream os;
-            os << a << std::endl;
+            os << a;
             return os.str();
         }
 
