@@ -3,6 +3,7 @@
 // std libraries
 #include <iostream>
 #include <string>
+#include <regex>
 
 namespace test {
 
@@ -16,10 +17,14 @@ namespace test {
             auto rhs_value = rhs(a[i]);
             bool pass = harness.equal(lhs_value, rhs_value);
             if (!pass) {
-                std::cout << "Test failed for " << property << ":" << std::endl;
-                std::cout << "    a[" << i << "]:  " << harness.print(a[i]) << std::endl;
-                std::cout << "    " << lhs_name << " :  " << harness.print(lhs_value) << std::endl;
-                std::cout << "    " << rhs_name << " :  " << harness.print(rhs_value) << std::endl;
+                std::cout << std::endl;
+                std::cout << "Test failed: " << std::endl << std::endl;
+                std::cout << "  " << property << std::endl;
+                std::cout << "  such that:" << std::endl << std::endl;
+                std::cout << "    " << std::regex_replace(lhs_name, std::regex(" +$"), "") << " = " << rhs_name << std::endl << std::endl;
+                std::cout << "  " << lhs_name << " :  " << harness.print(lhs_value) << std::endl;
+                std::cout << "  " << rhs_name << " :  " << harness.print(rhs_value) << std::endl;
+                std::cout << "  a :  " << harness.print(a[i]) << " [from index "<< i <<"]" << std::endl;
                 return false; 
             }
         }
@@ -37,11 +42,15 @@ namespace test {
             auto rhs_value = rhs(a[i], b[j]);
             bool pass = harness.equal(lhs_value, rhs_value);
             if (!pass) {
-                std::cout << "Test failed for " << property << ":" << std::endl;
-                std::cout << "    a[" << i << "]:  " << harness.print(a[i]) << std::endl;
-                std::cout << "    b[" << j << "]:  " << harness.print(b[j]) << std::endl;
-                std::cout << "    " << lhs_name << " :  " << harness.print(lhs_value) << std::endl;
-                std::cout << "    " << rhs_name << " :  " << harness.print(rhs_value) << std::endl;
+                std::cout << std::endl;
+                std::cout << "Test failed: " << std::endl << std::endl;
+                std::cout << "  " << property << std::endl;
+                std::cout << "  such that:" << std::endl << std::endl;
+                std::cout << "    " << std::regex_replace(lhs_name, std::regex(" +$"), "") << " = " << rhs_name << std::endl << std::endl;
+                std::cout << "  " << lhs_name << " :  " << harness.print(lhs_value) << std::endl;
+                std::cout << "  " << rhs_name << " :  " << harness.print(rhs_value) << std::endl;
+                std::cout << "  a :  " << harness.print(a[i]) << " [from index "<< i <<"]" << std::endl;
+                std::cout << "  b :  " << harness.print(b[j]) << " [from index "<< j <<"]" << std::endl;
                 return false; 
             }
         }}
@@ -60,17 +69,26 @@ namespace test {
             auto rhs_value = rhs(a[i], b[j], c[k]);
             bool pass = harness.equal(lhs_value, rhs_value);
             if (!pass) {
-                std::cout << "Test failed for " << property << ":" << std::endl;
-                std::cout << "    a[" << i << "]:  " << harness.print(a[i]) << std::endl;
-                std::cout << "    b[" << j << "]:  " << harness.print(b[j]) << std::endl;
-                std::cout << "    c[" << k << "]:  " << harness.print(c[k]) << std::endl;
-                std::cout << "    " << lhs_name << " :  " << harness.print(lhs_value) << std::endl;
-                std::cout << "    " << rhs_name << " :  " << harness.print(rhs_value) << std::endl;
+                std::cout << std::endl;
+                std::cout << "Test failed: " << std::endl;
+                std::cout << "  " << property << std::endl;
+                std::cout << "  such that:" << std::regex_replace(lhs_name, std::regex(" +$"), "") << " = " << rhs_name << std::endl;
+                std::cout << "  " << lhs_name << " :  " << harness.print(lhs_value) << std::endl;
+                std::cout << "  " << rhs_name << " :  " << harness.print(rhs_value) << std::endl;
+                std::cout << "  a :  " << harness.print(a[i]) << " [from index "<< i <<"]" << std::endl;
+                std::cout << "  b :  " << harness.print(b[j]) << " [from index "<< j <<"]" << std::endl;
+                std::cout << "  c :  " << harness.print(c[k]) << " [from index "<< k <<"]" << std::endl;
                 return false; 
             }
         }}}
         return true;
     }
+
+
+
+
+
+
 
 }
 

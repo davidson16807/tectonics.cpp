@@ -6,67 +6,74 @@
 
 // in-house libraries
 
-#include <test/harness.hpp>
+#include <test/adapter.hpp>
 #include <test/properties.hpp>
 #include "Layering.hpp"
 
 
-TEST_CASE( "Layering.height_to_layer() purity", "[collignon]" ) {
-    SECTION("Layering.height_to_layer() must be called repeatedly without changing the output"){
-        REQUIRE(
-            test::determinism(
-                test::OperatorHarness(), 
-                [=](auto x){ return collignon::Layering(0.0f, 5.0f, 7).height_to_layer(x); }, 
-                std::vector<float>{-1.0f, 0.0f, 1.0f, 4.0f, 5.0f, 6.0f}
-            ));
-        int id = 0;
-        REQUIRE(
-            test::determinism(
-                test::OperatorHarness(), 
-                [&](auto x){ return ++id; }, 
-                std::vector<float>{-1.0f, 0.0f, 1.0f, 4.0f, 5.0f, 6.0f}
-            ));
-    }
+TEST_CASE( "Layering.layer_to_height() / Layering.height_to_layer()", "[collignon]" ) {
+    test::OperatorAdapter exact;
+    test::StandardAdapter inexact(1e-7f);
+    std::vector<float> floats {-1.0f, 0.0f, 1.0f, 4.0f, 5.0f, 6.0f};
+    std::vector<float> heights{0.0f, 1.0f, 4.0f, 5.0f};
+    std::vector<int>   ints   {-1, 0, 1, 5, 6, 7, 8};
+    std::vector<int>   layers {0, 1, 5, 6};
+    collignon::Layering<int, float> layering(0.0f, 5.0f, 7);
+
+    REQUIRE(test::determinism(exact,
+        "Layering.height_to_layer(…)", 
+        [=](auto x){ 
+            return collignon::Layering(0.0f, 5.0f, 7).height_to_layer(x); }, 
+        heights
+    ));
+
+    REQUIRE(test::determinism(exact,
+        "Layering.layer_to_height(…)", 
+        [=](auto x){ 
+            return collignon::Layering(0.0f, 5.0f, 7).layer_to_height(x); }, 
+        ints
+    ));
+
+    REQUIRE(test::left_invertibility(exact,
+        "Layering.height_to_layer(…)", 
+        [=](float x)->int{ 
+            return layering.height_to_layer(x); }, 
+        "Layering.layer_to_height(…) when restricted to indexed layers", 
+        [=](int x)->float{ 
+            return layering.layer_to_height(x); }, 
+        layers
+    ));
+
+    REQUIRE(test::preservation(
+        test::PrimitiveAdapter(1),
+        "closeness to within a single index", 
+        [=](float x)->float{
+            return x+layering.layer_height * 0.001; },
+        "Layering.height_to_layer(…) when restricted to indexed heights", 
+        [=](int x)->float{ 
+            return layering.height_to_layer(x); }, 
+        heights
+    ));
+
+    REQUIRE(test::preservation(
+        test::PrimitiveAdapter(layering.layer_height*1.001),
+        "closeness to within a reasonable multiple of layer_height", 
+        [=](float x)->float{
+            return x+1; },
+        "Layering.layer_to_height(…) when restricted to indexed heights", 
+        [=](int x)->float{ 
+            return layering.layer_to_height(x); }, 
+        heights
+    ));
+
+
+    // int id = 0;
+    // REQUIRE(
+    //     test::determinism(exact, 
+    //         "Layering.height_to_layer(…)", [&](auto x){ 
+    //             return ++id; }, 
+    //         ints
+    //     ));
+
 }
-
-
-TEST_CASE( "Layering height_to_layer() closeness preservation", "[collignon]" ) {
-    SECTION("changes in height_to_layer must not result in changes that exceed a reasonable multiple"){
-        collignon::Layering<int, float> layering(0.0f, 5.0f, 7);
-        for(int i = -1; i < 8; ++i){
-            CHECK(std::abs(layering.layer_to_height(i+1) - layering.layer_to_height(i)) <= layering.layer_height * 1.01);
-        }
-    }
-}
-
-
-TEST_CASE( "Layering.layer_to_height() purity", "[collignon]" ) {
-    SECTION("Layering.layer_to_height() must be called repeatedly without changing the output"){
-        for(int i = -1; i < 8; ++i){
-            CHECK(collignon::Layering(0.0f, 5.0f, 7).layer_to_height(i) == 
-                  collignon::Layering(0.0f, 5.0f, 7).layer_to_height(i));
-        }
-    }
-}
-
-
-TEST_CASE( "Layering layer_to_height() closeness preservation", "[collignon]" ) {
-    SECTION("changes in layer_to_height must not result in changes that exceed a reasonable multiple"){
-        collignon::Layering<int, float> layering(0.0f, 5.0f, 7);
-        for(float x = -1; x < 6.0; x+=0.5){
-            CHECK(std::abs(layering.layer_to_height(x+layering.layer_height*0.1) - layering.layer_to_height(x)) <= 1);
-        }
-    }
-}
-
-
-TEST_CASE( "Layering.layer_to_height() / height_to_layer() invertibility", "[collignon]" ) {
-    SECTION("Layering.height_to_layer() must reconstruct input passed to layer_to_height() when restricted to a [bottom_height, top_height]"){
-        collignon::Layering<int, float> layering(0.0f, 5.0f, 7);
-        for(int i = 0; i < 7; ++i){
-            CHECK( layering.height_to_layer( layering.layer_to_height(i) ) == i );
-        }
-    }
-}
-
 
