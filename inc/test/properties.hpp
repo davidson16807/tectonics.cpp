@@ -455,13 +455,14 @@ namespace test {
 
 
 
-    template<typename Harness, typename Valid, typename F, typename A, typename B, typename C>
+    template<typename Harness, typename Valid, typename F, typename A>
     bool codomain(const Harness& harness, 
-            const Valid& valid, const F& f, 
+            const std::string validity_name, const Valid& valid, 
+            const std::string f_name, const F& f, 
             const many<A>& as) {
         return predicate(
             harness,
-            "codomain", 
+            f_name + " must only produce output " + validity_name,
             [=](A a){ 
                 return valid(
                     f(a)
@@ -469,13 +470,14 @@ namespace test {
             }, as);
     }
 
-    template<typename Harness, typename Valid, typename F, typename A, typename B, typename C>
+    template<typename Harness, typename Valid, typename F, typename A, typename B>
     bool codomain(const Harness& harness, 
-            const Valid& valid, const F& f, 
+            const std::string validity_name, const Valid& valid, 
+            const std::string f_name, const F& f, 
             const many<A>& as, const many<B>& bs) {
         return predicate(
             harness,
-            "codomain", 
+            f_name + " must only produce output " + validity_name, 
             [=](A a, B b){ 
                 return valid(
                     f(a, b)
@@ -485,11 +487,12 @@ namespace test {
 
     template<typename Harness, typename Valid, typename F, typename A, typename B, typename C>
     bool codomain(const Harness& harness, 
-            const Valid& valid, const F& f, 
+            const std::string validity_name, const Valid& valid, 
+            const std::string f_name, const F& f, 
             const many<A>& as, const many<B>& bs, const many<C>& cs) {
         return predicate(
             harness,
-            "codomain", 
+            f_name + " must only produce output " + validity_name, 
             [=](A a, B b, C c){ 
                 return valid(
                     f(a, b, c)
