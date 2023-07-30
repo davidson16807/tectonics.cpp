@@ -16,7 +16,7 @@
 
 #include "test_tools.hpp"
 
-TEST_CASE( "Rationals are a commutative field", "[math]" ) {
+TEST_CASE( "Rationals are a field", "[math]" ) {
 
     ExpressionAdapter<double> broad (1e-6, -1e3, 1e3);
     ExpressionAdapter<double> narrow(1e-6, -1e2, 1e2);
@@ -26,9 +26,8 @@ TEST_CASE( "Rationals are a commutative field", "[math]" ) {
     math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
     math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
-    std::vector<math::Polynomial<double,0,4>> nonlaurents { p0, q0 };
-
-    std::vector<math::Polynomial<double,-2,2>> laurents { p1, q1 };
+    std::vector<math::Polynomial<double,0,4>> polynomials1  { p0,q0 };
+    std::vector<math::Polynomial<double,-2,2>> polynomials2 { p1,q1 };
 
     std::vector<math::Rational<double,0,4,0,4>>   rationals1 { p0/q0 };
     std::vector<math::Rational<double,-2,2,0,4>>  rationals2 { p1/q0 };
@@ -59,7 +58,7 @@ TEST_CASE( "Rationals are a commutative field", "[math]" ) {
         math::Scaling<double>(0.0)
     };
 
-    std::vector<double> scalars { -2.0, 0.0, 2.0 };
+    std::vector<double> scalars { -2.0, 2.0 }; // NOTE: we exclude zero since division by zero is not defined
 
     math::Polynomial<double,0,0> zero = math::Polynomial<double,0,0>({0.0f});
     math::Polynomial<double,0,0> one  = math::Polynomial<double,0,0>({1.0f});
@@ -81,19 +80,82 @@ TEST_CASE( "Rationals are a commutative field", "[math]" ) {
     REQUIRE(field.valid(broad, rationals4));
 
     // BINARY TESTS
-    REQUIRE(field.valid(broad, rationals1, rationals2));
-    REQUIRE(field.valid(broad, rationals1, rationals3));
-    REQUIRE(field.valid(broad, rationals1, rationals4));
-    REQUIRE(field.valid(broad, rationals2, rationals3));
-    REQUIRE(field.valid(broad, rationals2, rationals4));
-    REQUIRE(field.valid(broad, rationals3, rationals4));
+    REQUIRE(field.valid(broad, rationals1, rationals2  ));
+    REQUIRE(field.valid(broad, rationals1, rationals3  ));
+    REQUIRE(field.valid(broad, rationals1, rationals4  ));
+    REQUIRE(field.valid(broad, rationals1, polynomials1));
+    REQUIRE(field.valid(broad, rationals1, polynomials2));
+    REQUIRE(field.valid(broad, rationals1, monomials1  ));
+    REQUIRE(field.valid(broad, rationals1, monomials2  ));
+    REQUIRE(field.valid(broad, rationals1, monomials3  ));
+    REQUIRE(field.valid(broad, rationals1, scalars     ));
+    // REQUIRE(field.valid(broad, rationals1, shiftings   ));
+    // REQUIRE(field.valid(broad, rationals1, scalings    ));
+    REQUIRE(field.valid(broad, rationals2, rationals3  ));
+    REQUIRE(field.valid(broad, rationals2, rationals4  ));
+    REQUIRE(field.valid(broad, rationals2, polynomials1));
+    REQUIRE(field.valid(broad, rationals2, polynomials2));
+    REQUIRE(field.valid(broad, rationals2, monomials1  ));
+    REQUIRE(field.valid(broad, rationals2, monomials2  ));
+    REQUIRE(field.valid(broad, rationals2, monomials3  ));
+    REQUIRE(field.valid(broad, rationals2, scalars     ));
+    // REQUIRE(field.valid(broad, rationals2, shiftings   ));
+    // REQUIRE(field.valid(broad, rationals2, scalings    ));
+    REQUIRE(field.valid(broad, rationals3, rationals4  ));
+    REQUIRE(field.valid(broad, rationals3, polynomials1));
+    REQUIRE(field.valid(broad, rationals3, polynomials2));
+    REQUIRE(field.valid(broad, rationals3, monomials1  ));
+    REQUIRE(field.valid(broad, rationals3, monomials2  ));
+    REQUIRE(field.valid(broad, rationals3, monomials3  ));
+    REQUIRE(field.valid(broad, rationals3, scalars     ));
+    // REQUIRE(field.valid(broad, rationals3, shiftings   ));
+    // REQUIRE(field.valid(broad, rationals3, scalings    ));
+    REQUIRE(field.valid(broad, rationals4, polynomials1));
+    REQUIRE(field.valid(broad, rationals4, polynomials2));
+    REQUIRE(field.valid(broad, rationals4, monomials1  ));
+    REQUIRE(field.valid(broad, rationals4, monomials2  ));
+    REQUIRE(field.valid(broad, rationals4, monomials3  ));
+    REQUIRE(field.valid(broad, rationals4, scalars     ));
+    // REQUIRE(field.valid(broad, rationals4, shiftings   ));
+    // REQUIRE(field.valid(broad, rationals4, scalings    ));
 
     // TRINARY TESTS
-    REQUIRE(field.valid(broad, rationals1, rationals2, rationals3));
-    REQUIRE(field.valid(broad, rationals1, rationals2, rationals4));
-    REQUIRE(field.valid(broad, rationals1, rationals3, rationals4));
-    REQUIRE(field.valid(broad, rationals1, rationals4, rationals3));
-    REQUIRE(field.valid(broad, rationals2, rationals3, rationals4));
+    REQUIRE(field.valid(broad, rationals1, rationals2, rationals3  ));
+    REQUIRE(field.valid(broad, rationals1, rationals2, rationals4  ));
+    REQUIRE(field.valid(broad, rationals1, rationals2, polynomials1));
+    REQUIRE(field.valid(broad, rationals1, rationals2, polynomials2));
+    REQUIRE(field.valid(broad, rationals1, rationals2, monomials1  ));
+    REQUIRE(field.valid(broad, rationals1, rationals2, monomials2  ));
+    REQUIRE(field.valid(broad, rationals1, rationals2, monomials3  ));
+    REQUIRE(field.valid(broad, rationals1, rationals2, scalars     ));
+    // REQUIRE(field.valid(broad, rationals1, rationals2, shiftings   ));
+    // REQUIRE(field.valid(broad, rationals1, rationals2, scalings    ));
+    REQUIRE(field.valid(broad, rationals1, rationals3, rationals4  ));
+    REQUIRE(field.valid(broad, rationals1, rationals3, polynomials1));
+    REQUIRE(field.valid(broad, rationals1, rationals3, polynomials2));
+    REQUIRE(field.valid(broad, rationals1, rationals3, monomials1  ));
+    REQUIRE(field.valid(broad, rationals1, rationals3, monomials2  ));
+    REQUIRE(field.valid(broad, rationals1, rationals3, monomials3  ));
+    REQUIRE(field.valid(broad, rationals1, rationals3, scalars     ));
+    // REQUIRE(field.valid(broad, rationals1, rationals3, shiftings   ));
+    // REQUIRE(field.valid(broad, rationals1, rationals3, scalings    ));
+    REQUIRE(field.valid(broad, rationals2, rationals3, rationals4  ));
+    REQUIRE(field.valid(broad, rationals2, rationals3, polynomials1));
+    REQUIRE(field.valid(broad, rationals2, rationals3, polynomials2));
+    REQUIRE(field.valid(broad, rationals2, rationals3, monomials1  ));
+    REQUIRE(field.valid(broad, rationals2, rationals3, monomials2  ));
+    REQUIRE(field.valid(broad, rationals2, rationals3, monomials3  ));
+    REQUIRE(field.valid(broad, rationals2, rationals3, scalars     ));
+    // REQUIRE(field.valid(broad, rationals2, rationals3, shiftings   ));
+    // REQUIRE(field.valid(broad, rationals2, rationals3, scalings    ));
+    REQUIRE(field.valid(broad, rationals3, rationals4, polynomials1));
+    REQUIRE(field.valid(broad, rationals3, rationals4, polynomials2));
+    REQUIRE(field.valid(broad, rationals3, rationals4, monomials1  ));
+    REQUIRE(field.valid(broad, rationals3, rationals4, monomials2  ));
+    REQUIRE(field.valid(broad, rationals3, rationals4, monomials3  ));
+    REQUIRE(field.valid(broad, rationals3, rationals4, scalars     ));
+    // REQUIRE(field.valid(broad, rationals3, rationals4, shiftings   ));
+    // REQUIRE(field.valid(broad, rationals3, rationals4, scalings    ));
 
 }
 
