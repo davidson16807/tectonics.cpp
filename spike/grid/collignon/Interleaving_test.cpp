@@ -1,47 +1,39 @@
+#pragma once
+
+#include <test/macros.hpp>
 #include "Interleaving.hpp"
 
 TEST_CASE( "Interleaving.interleaved_id()", "[collignon]" ) {
     collignon::Interleaving interleaving(10);
     test::OperatorAdapter exact;
     std::vector<int> ordinates {0, 1, 2, 3, 4, 5, 6, 7, 8 , 9};
-    std::vector<int> indices   {0, 1, 8, 9, 10, 11, 20, 30, 40, 50, 60, 70, 80, 90, 99};
+    std::vector<int> indices   {-1, 0, 1, 2, 8, 9, 10, 11, 20, 30, 40, 50, 60, 70, 80, 90, 99, 100};
 
     REQUIRE(test::determinism(exact,
-        "Interleaving.interleaved_id(…)", 
-        [=](auto x, auto y){ 
-            return collignon::Interleaving(10).interleaved_id(y,x); }, 
+        "Interleaving.interleaved_id(…)", TEST_BINARY(collignon::Interleaving(10).interleaved_id), 
         ordinates, ordinates
     ));
 
     REQUIRE(test::determinism(exact,
-        "Interleaving.interleaved_id(…)", 
-        [=](auto x, auto y){ 
-            return collignon::Interleaving(10).interleaved_id(y,x); }, 
+        "Interleaving.interleaved_id(…)", TEST_BINARY(collignon::Interleaving(10).interleaved_id),
         ordinates, ordinates
     ));
 
     REQUIRE(test::codomain(exact,
-        "within expected range",
-        [=](auto x){ return 0 <= x&&x < 100; },
-        "Interleaving.interleaved_id(…)", 
-        [=](auto x, auto y){ 
-            return interleaving.interleaved_id(y,x); }, 
+        "within expected range",          TEST_RANGE(0, 100),
+        "Interleaving.interleaved_id(…)", TEST_BINARY(interleaving.interleaved_id),
         ordinates, ordinates
     ));
 
     REQUIRE(test::codomain(exact,
-        "within expected range",
-        [=](auto x){ return 0 <= x&&x < 10; },
-        "Interleaving.block_id(…)", 
-        [=](auto x){ return interleaving.block_id(x); }, 
+        "within expected range",          TEST_RANGE(0, 10),
+        "Interleaving.block_id(…)",       TEST_UNARY(interleaving.block_id), 
         ordinates
     ));
 
     REQUIRE(test::codomain(exact,
-        "within expected range",
-        [=](auto x){ return 0 <= x&&x < 10; },
-        "Interleaving.element_id(…)", 
-        [=](auto x){ return interleaving.element_id(x); }, 
+        "within expected range",          TEST_RANGE(0, 10),
+        "Interleaving.element_id(…)",     TEST_UNARY(interleaving.element_id),
         ordinates
     ));
 
