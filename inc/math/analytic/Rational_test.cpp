@@ -55,7 +55,7 @@ TEST_CASE( "Rationals are a field", "[math]" ) {
     std::vector<math::Scaling<double>> scalings {
         math::Scaling<double>(2.0),
         math::Scaling<double>(-2.0),
-        math::Scaling<double>(0.0)
+        // math::Scaling<double>(0.0)  // NOTE: we exclude zero since division by zero is not defined
     };
 
     std::vector<double> scalars { -2.0, 2.0 }; // NOTE: we exclude zero since division by zero is not defined
@@ -89,8 +89,8 @@ TEST_CASE( "Rationals are a field", "[math]" ) {
     REQUIRE(field.valid(broad, rationals1, monomials2  ));
     REQUIRE(field.valid(broad, rationals1, monomials3  ));
     REQUIRE(field.valid(broad, rationals1, scalars     ));
-    // REQUIRE(field.valid(broad, rationals1, shiftings   ));
-    // REQUIRE(field.valid(broad, rationals1, scalings    ));
+    REQUIRE(field.valid(broad, rationals1, shiftings   ));
+    REQUIRE(field.valid(broad, rationals1, scalings    ));
     REQUIRE(field.valid(broad, rationals2, rationals3  ));
     REQUIRE(field.valid(broad, rationals2, rationals4  ));
     REQUIRE(field.valid(broad, rationals2, polynomials1));
@@ -99,8 +99,8 @@ TEST_CASE( "Rationals are a field", "[math]" ) {
     REQUIRE(field.valid(broad, rationals2, monomials2  ));
     REQUIRE(field.valid(broad, rationals2, monomials3  ));
     REQUIRE(field.valid(broad, rationals2, scalars     ));
-    // REQUIRE(field.valid(broad, rationals2, shiftings   ));
-    // REQUIRE(field.valid(broad, rationals2, scalings    ));
+    REQUIRE(field.valid(broad, rationals2, shiftings   ));
+    REQUIRE(field.valid(broad, rationals2, scalings    ));
     REQUIRE(field.valid(broad, rationals3, rationals4  ));
     REQUIRE(field.valid(broad, rationals3, polynomials1));
     REQUIRE(field.valid(broad, rationals3, polynomials2));
@@ -108,16 +108,16 @@ TEST_CASE( "Rationals are a field", "[math]" ) {
     REQUIRE(field.valid(broad, rationals3, monomials2  ));
     REQUIRE(field.valid(broad, rationals3, monomials3  ));
     REQUIRE(field.valid(broad, rationals3, scalars     ));
-    // REQUIRE(field.valid(broad, rationals3, shiftings   ));
-    // REQUIRE(field.valid(broad, rationals3, scalings    ));
+    REQUIRE(field.valid(broad, rationals3, shiftings   ));
+    REQUIRE(field.valid(broad, rationals3, scalings    ));
     REQUIRE(field.valid(broad, rationals4, polynomials1));
     REQUIRE(field.valid(broad, rationals4, polynomials2));
     REQUIRE(field.valid(broad, rationals4, monomials1  ));
     REQUIRE(field.valid(broad, rationals4, monomials2  ));
     REQUIRE(field.valid(broad, rationals4, monomials3  ));
     REQUIRE(field.valid(broad, rationals4, scalars     ));
-    // REQUIRE(field.valid(broad, rationals4, shiftings   ));
-    // REQUIRE(field.valid(broad, rationals4, scalings    ));
+    REQUIRE(field.valid(broad, rationals4, shiftings   ));
+    REQUIRE(field.valid(broad, rationals4, scalings    ));
 
     // TRINARY TESTS
     REQUIRE(field.valid(broad, rationals1, rationals2, rationals3  ));
@@ -128,8 +128,8 @@ TEST_CASE( "Rationals are a field", "[math]" ) {
     REQUIRE(field.valid(broad, rationals1, rationals2, monomials2  ));
     REQUIRE(field.valid(broad, rationals1, rationals2, monomials3  ));
     REQUIRE(field.valid(broad, rationals1, rationals2, scalars     ));
-    // REQUIRE(field.valid(broad, rationals1, rationals2, shiftings   ));
-    // REQUIRE(field.valid(broad, rationals1, rationals2, scalings    ));
+    REQUIRE(field.valid(broad, rationals1, rationals2, shiftings   ));
+    REQUIRE(field.valid(broad, rationals1, rationals2, scalings    ));
     REQUIRE(field.valid(broad, rationals1, rationals3, rationals4  ));
     REQUIRE(field.valid(broad, rationals1, rationals3, polynomials1));
     REQUIRE(field.valid(broad, rationals1, rationals3, polynomials2));
@@ -137,8 +137,8 @@ TEST_CASE( "Rationals are a field", "[math]" ) {
     REQUIRE(field.valid(broad, rationals1, rationals3, monomials2  ));
     REQUIRE(field.valid(broad, rationals1, rationals3, monomials3  ));
     REQUIRE(field.valid(broad, rationals1, rationals3, scalars     ));
-    // REQUIRE(field.valid(broad, rationals1, rationals3, shiftings   ));
-    // REQUIRE(field.valid(broad, rationals1, rationals3, scalings    ));
+    REQUIRE(field.valid(broad, rationals1, rationals3, shiftings   ));
+    REQUIRE(field.valid(broad, rationals1, rationals3, scalings    ));
     REQUIRE(field.valid(broad, rationals2, rationals3, rationals4  ));
     REQUIRE(field.valid(broad, rationals2, rationals3, polynomials1));
     REQUIRE(field.valid(broad, rationals2, rationals3, polynomials2));
@@ -146,16 +146,16 @@ TEST_CASE( "Rationals are a field", "[math]" ) {
     REQUIRE(field.valid(broad, rationals2, rationals3, monomials2  ));
     REQUIRE(field.valid(broad, rationals2, rationals3, monomials3  ));
     REQUIRE(field.valid(broad, rationals2, rationals3, scalars     ));
-    // REQUIRE(field.valid(broad, rationals2, rationals3, shiftings   ));
-    // REQUIRE(field.valid(broad, rationals2, rationals3, scalings    ));
+    REQUIRE(field.valid(broad, rationals2, rationals3, shiftings   ));
+    REQUIRE(field.valid(broad, rationals2, rationals3, scalings    ));
     REQUIRE(field.valid(broad, rationals3, rationals4, polynomials1));
     REQUIRE(field.valid(broad, rationals3, rationals4, polynomials2));
     REQUIRE(field.valid(broad, rationals3, rationals4, monomials1  ));
     REQUIRE(field.valid(broad, rationals3, rationals4, monomials2  ));
     REQUIRE(field.valid(broad, rationals3, rationals4, monomials3  ));
     REQUIRE(field.valid(broad, rationals3, rationals4, scalars     ));
-    // REQUIRE(field.valid(broad, rationals3, rationals4, shiftings   ));
-    // REQUIRE(field.valid(broad, rationals3, rationals4, scalings    ));
+    REQUIRE(field.valid(broad, rationals3, rationals4, shiftings   ));
+    REQUIRE(field.valid(broad, rationals3, rationals4, scalings    ));
 
 }
 

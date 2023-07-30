@@ -22,12 +22,12 @@ TEST_CASE( "Polynomials are a commutative ring", "[math]" ) {
     ExpressionAdapter<double> broad (1e-6, -1e3, 1e3);
     ExpressionAdapter<double> narrow(1e-6, -1e2, 1e2);
 
-    std::vector<math::Polynomial<double,0,4>> nonlaurents {
+    std::vector<math::Polynomial<double,0,4>> polynomials1 {
         math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0}),
         math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0})
     };
 
-    std::vector<math::Polynomial<double,-2,2>> laurents {
+    std::vector<math::Polynomial<double,-2,2>> polynomials2 {
         math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0}),
         math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0})
     };
@@ -70,8 +70,8 @@ TEST_CASE( "Polynomials are a commutative ring", "[math]" ) {
     );
 
     // UNARY TESTS
-    REQUIRE(commutative_ring.valid(broad, nonlaurents));
-    REQUIRE(commutative_ring.valid(broad, laurents));
+    REQUIRE(commutative_ring.valid(broad, polynomials1));
+    REQUIRE(commutative_ring.valid(broad, polynomials2));
     REQUIRE(commutative_ring.valid(broad, monomials1));
     REQUIRE(commutative_ring.valid(broad, monomials2));
     REQUIRE(commutative_ring.valid(broad, monomials3));
@@ -81,30 +81,30 @@ TEST_CASE( "Polynomials are a commutative ring", "[math]" ) {
 
 
     // BINARY TESTS
-    REQUIRE(commutative_ring.valid(broad, nonlaurents, laurents));
-    REQUIRE(commutative_ring.valid(broad, nonlaurents, scalars));
-    REQUIRE(commutative_ring.valid(broad, laurents, scalars));
+    REQUIRE(commutative_ring.valid(broad, polynomials1, polynomials2));
+    REQUIRE(commutative_ring.valid(broad, polynomials1, scalars));
+    REQUIRE(commutative_ring.valid(broad, polynomials2, scalars));
 
-    REQUIRE(commutative_ring.valid(broad, nonlaurents, monomials1));
-    REQUIRE(commutative_ring.valid(broad, laurents, monomials1));
+    REQUIRE(commutative_ring.valid(broad, polynomials1, monomials1));
+    REQUIRE(commutative_ring.valid(broad, polynomials2, monomials1));
     REQUIRE(commutative_ring.valid(broad, scalars, monomials1));
 
-    REQUIRE(commutative_ring.valid(broad, nonlaurents, monomials2));
-    REQUIRE(commutative_ring.valid(broad, laurents, monomials2));
+    REQUIRE(commutative_ring.valid(broad, polynomials1, monomials2));
+    REQUIRE(commutative_ring.valid(broad, polynomials2, monomials2));
     REQUIRE(commutative_ring.valid(broad, scalars, monomials2));
 
-    REQUIRE(commutative_ring.valid(broad, nonlaurents, monomials3));
-    REQUIRE(commutative_ring.valid(broad, laurents, monomials3));
+    REQUIRE(commutative_ring.valid(broad, polynomials1, monomials3));
+    REQUIRE(commutative_ring.valid(broad, polynomials2, monomials3));
     REQUIRE(commutative_ring.valid(broad, scalars, monomials3));
 
 
-    // REQUIRE(commutative_ring.valid(broad, nonlaurents, shiftings));
-    // REQUIRE(commutative_ring.valid(broad, laurents, shiftings));
+    // REQUIRE(commutative_ring.valid(broad, polynomials1, shiftings));
+    // REQUIRE(commutative_ring.valid(broad, polynomials2, shiftings));
     // REQUIRE(commutative_ring.valid(broad, scalings, shiftings));
 
 
-    // REQUIRE(commutative_ring.valid(broad, nonlaurents, scalings));
-    // REQUIRE(commutative_ring.valid(broad, laurents, scalings));
+    // REQUIRE(commutative_ring.valid(broad, polynomials1, scalings));
+    // REQUIRE(commutative_ring.valid(broad, polynomials2, scalings));
     // REQUIRE(commutative_ring.valid(broad, shiftings, scalings));
 
 
@@ -123,12 +123,12 @@ TEST_CASE( "Polynomials are a commutative ring", "[math]" ) {
     // REQUIRE(commutative_ring.valid(broad, monomials3, scalings));
 
 
-    REQUIRE(commutative_ring.valid(broad, nonlaurents, laurents, scalars));
-    REQUIRE(commutative_ring.valid(broad, nonlaurents, laurents, monomials1));
-    REQUIRE(commutative_ring.valid(broad, nonlaurents, laurents, monomials2));
-    REQUIRE(commutative_ring.valid(broad, nonlaurents, laurents, monomials3));
-    REQUIRE(commutative_ring.valid(broad, nonlaurents, laurents, shiftings));
-    REQUIRE(commutative_ring.valid(broad, nonlaurents, laurents, scalings));
+    REQUIRE(commutative_ring.valid(broad, polynomials1, polynomials2, scalars));
+    REQUIRE(commutative_ring.valid(broad, polynomials1, polynomials2, monomials1));
+    REQUIRE(commutative_ring.valid(broad, polynomials1, polynomials2, monomials2));
+    REQUIRE(commutative_ring.valid(broad, polynomials1, polynomials2, monomials3));
+    REQUIRE(commutative_ring.valid(broad, polynomials1, polynomials2, shiftings));
+    REQUIRE(commutative_ring.valid(broad, polynomials1, polynomials2, scalings));
 
 }
 

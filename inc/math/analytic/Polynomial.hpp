@@ -487,7 +487,7 @@ namespace math {
 
 
 
-    template<typename T, int N>
+    template<typename T>
     constexpr auto operator-(const Shifting<T> f)
     {
         return -Polynomial<T,0,1>(f);
@@ -733,23 +733,23 @@ namespace math {
 
 
 
-    template<typename T, int N>
-    constexpr auto operator+(const Scaling<T> f, const Scaling<T> g)
-    {
-        return Polynomial<T,1,1>(f) + Polynomial<T,1,1>(g);
-    }
-
-    template<typename T, int N>
-    constexpr auto operator-(const Scaling<T> f, const Scaling<T> g)
-    {
-        return Polynomial<T,1,1>(f) - Polynomial<T,1,1>(g);
-    }
-    // template<typename T, int N>
-    // constexpr auto operator*(const Scaling<T> f, const Scaling<T> g)
+    // template<typename T>
+    // constexpr auto operator+(const Scaling<T> f, const Scaling<T> g)
     // {
-    //     return Polynomial<T,1,1>(f) * Polynomial<T,1,1>(g);
+    //     return Polynomial<T,1,1>(f) + Polynomial<T,1,1>(g);
     // }
-    // template<typename T, int N>
+
+    // template<typename T>
+    // constexpr auto operator-(const Scaling<T> f, const Scaling<T> g)
+    // {
+    //     return Polynomial<T,1,1>(f) - Polynomial<T,1,1>(g);
+    // }
+    template<typename T>
+    constexpr auto operator*(const Scaling<T> f, const Scaling<T> g)
+    {
+        return Polynomial<T,1,1>(f) * Polynomial<T,1,1>(g);
+    }
+    // template<typename T>
     // constexpr auto operator/(const Scaling<T> f, const Scaling<T> g)
     // {
     //     return Polynomial<T,1,1>(f) / Polynomial<T,1,1>(g);
@@ -757,23 +757,23 @@ namespace math {
 
 
 
-    // template<typename T, int N>
-    // constexpr auto operator+(const Shifting<T> f, const Shifting<T> g)
-    // {
-    //     return Polynomial<T,0,1>(f) + Polynomial<T,0,1>(g);
-    // }
-    // template<typename T, int N>
-    // constexpr auto operator-(const Shifting<T> f, const Shifting<T> g)
-    // {
-    //     return Polynomial<T,0,1>(f) - Polynomial<T,0,1>(g);
-    // }
+    template<typename T>
+    constexpr auto operator+(const Shifting<T> f, const Shifting<T> g)
+    {
+        return Polynomial<T,0,1>(f) + Polynomial<T,0,1>(g);
+    }
+    template<typename T>
+    constexpr auto operator-(const Shifting<T> f, const Shifting<T> g)
+    {
+        return Polynomial<T,0,1>(f) - Polynomial<T,0,1>(g);
+    }
 
-    template<typename T, int N>
+    template<typename T>
     constexpr auto operator*(const Shifting<T> f, const Shifting<T> g)
     {
         return Polynomial<T,0,1>(f) * Polynomial<T,0,1>(g);
     }
-    // template<typename T, int N>
+    // template<typename T>
     // constexpr auto operator/(const Shifting<T> f, const Shifting<T> g)
     // {
     //     return Polynomial<T,0,1>(f) / Polynomial<T,0,1>(g);
@@ -781,23 +781,23 @@ namespace math {
 
 
 
-    // template<typename T, int N>
+    // template<typename T>
     // constexpr auto operator+(const Identity<T> e1, const Identity<T> e2)
     // {
     //     return Polynomial<T,1,1>(e) + Polynomial<T,1,1>(e);
     // }
-    // template<typename T, int N>
+    // template<typename T>
     // constexpr auto operator-(const Identity<T> e1, const Identity<T> e2)
     // {
     //     return Polynomial<T,1,1>(e) - Polynomial<T,1,1>(e);
     // }
 
-    template<typename T, int N>
+    template<typename T>
     constexpr auto operator*(const Identity<T> e1, const Identity<T> e2)
     {
         return Polynomial<T,1,1>(e1) * Polynomial<T,1,1>(e2);
     }
-    // template<typename T, int N>
+    // template<typename T>
     // constexpr auto operator/(const Identity<T> e1, const Identity<T> e2)
     // {
     //     return Polynomial<T,1,1>(e1) / Polynomial<T,1,1>(e2);
