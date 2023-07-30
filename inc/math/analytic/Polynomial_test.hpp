@@ -61,351 +61,74 @@ TEST_CASE( "Polynomials are a commutative ring", "[math]" ) {
     math::Polynomial<double,0,0> zero = math::Polynomial<double,0,0>({0.0f});
     math::Polynomial<double,0,0> one  = math::Polynomial<double,0,0>({1.0f});
 
-
+    test::CommutativeRing commutative_ring(
+        "0", zero, 
+        "1", one, 
+        "polynomial addition",       TEST_SYMBOL(+),
+        "polynomial subtraction",    TEST_SYMBOL(-),
+        "polynomial multiplication", TEST_SYMBOL(*)
+    );
 
     // UNARY TESTS
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "polynomial addition",       TEST_SYMBOL(+),
-        "polynomial subtraction",    TEST_SYMBOL(-),
-        "polynomial multiplication", TEST_SYMBOL(*),
-        nonlaurents));
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "polynomial addition",       TEST_SYMBOL(+),
-        "polynomial subtraction",    TEST_SYMBOL(-),
-        "polynomial multiplication", TEST_SYMBOL(*),
-        laurents));
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "polynomial addition",       TEST_SYMBOL(+),
-        "polynomial subtraction",    TEST_SYMBOL(-),
-        "polynomial multiplication", TEST_SYMBOL(*),
-        monomials1));
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "polynomial addition",       TEST_SYMBOL(+),
-        "polynomial subtraction",    TEST_SYMBOL(-),
-        "polynomial multiplication", TEST_SYMBOL(*),
-        monomials2));
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "polynomial addition",       TEST_SYMBOL(+),
-        "polynomial subtraction",    TEST_SYMBOL(-),
-        "polynomial multiplication", TEST_SYMBOL(*),
-        monomials3));
-
-    // REQUIRE(test::commutative_ring(broad,
-    //     "0", zero, 
-    //     "1", one, 
-    //     "polynomial addition",       TEST_SYMBOL(+),
-    //     "polynomial subtraction",    TEST_SYMBOL(-),
-    //     "polynomial multiplication", TEST_SYMBOL(*),
-    //     shiftings));
-
-    // REQUIRE(test::commutative_ring(broad,
-    //     "0", zero, 
-    //     "1", one, 
-    //     "polynomial addition",       TEST_SYMBOL(+),
-    //     "polynomial subtraction",    TEST_SYMBOL(-),
-    //     "polynomial multiplication", TEST_SYMBOL(*),
-    //     scalings));
+    REQUIRE(commutative_ring.valid(broad, nonlaurents));
+    REQUIRE(commutative_ring.valid(broad, laurents));
+    REQUIRE(commutative_ring.valid(broad, monomials1));
+    REQUIRE(commutative_ring.valid(broad, monomials2));
+    REQUIRE(commutative_ring.valid(broad, monomials3));
+    // REQUIRE(commutative_ring.valid(broad, shiftings));
+    // REQUIRE(commutative_ring.valid(broad, scalings));
 
 
 
     // BINARY TESTS
+    REQUIRE(commutative_ring.valid(broad, nonlaurents, laurents));
+    REQUIRE(commutative_ring.valid(broad, nonlaurents, scalars));
+    REQUIRE(commutative_ring.valid(broad, laurents, scalars));
 
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "polynomial addition",       TEST_SYMBOL(+),
-        "polynomial subtraction",    TEST_SYMBOL(-),
-        "polynomial multiplication", TEST_SYMBOL(*),
-        nonlaurents, laurents));
+    REQUIRE(commutative_ring.valid(broad, nonlaurents, monomials1));
+    REQUIRE(commutative_ring.valid(broad, laurents, monomials1));
+    REQUIRE(commutative_ring.valid(broad, scalars, monomials1));
 
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "polynomial addition",       TEST_SYMBOL(+),
-        "polynomial subtraction",    TEST_SYMBOL(-),
-        "polynomial multiplication", TEST_SYMBOL(*),
-        nonlaurents, scalars));
+    REQUIRE(commutative_ring.valid(broad, nonlaurents, monomials2));
+    REQUIRE(commutative_ring.valid(broad, laurents, monomials2));
+    REQUIRE(commutative_ring.valid(broad, scalars, monomials2));
 
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "polynomial addition",       TEST_SYMBOL(+),
-        "polynomial subtraction",    TEST_SYMBOL(-),
-        "polynomial multiplication", TEST_SYMBOL(*),
-        laurents, scalars));
+    REQUIRE(commutative_ring.valid(broad, nonlaurents, monomials3));
+    REQUIRE(commutative_ring.valid(broad, laurents, monomials3));
+    REQUIRE(commutative_ring.valid(broad, scalars, monomials3));
 
 
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "polynomial addition",       TEST_SYMBOL(+),
-        "polynomial subtraction",    TEST_SYMBOL(-),
-        "polynomial multiplication", TEST_SYMBOL(*),
-        nonlaurents, monomials1));
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "polynomial addition",       TEST_SYMBOL(+),
-        "polynomial subtraction",    TEST_SYMBOL(-),
-        "polynomial multiplication", TEST_SYMBOL(*),
-        laurents, monomials1));
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "polynomial addition",       TEST_SYMBOL(+),
-        "polynomial subtraction",    TEST_SYMBOL(-),
-        "polynomial multiplication", TEST_SYMBOL(*),
-        scalars, monomials1));
+    // REQUIRE(commutative_ring.valid(broad, nonlaurents, shiftings));
+    // REQUIRE(commutative_ring.valid(broad, laurents, shiftings));
+    // REQUIRE(commutative_ring.valid(broad, scalings, shiftings));
 
 
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "polynomial addition",       TEST_SYMBOL(+),
-        "polynomial subtraction",    TEST_SYMBOL(-),
-        "polynomial multiplication", TEST_SYMBOL(*),
-        nonlaurents, monomials2));
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "polynomial addition",       TEST_SYMBOL(+),
-        "polynomial subtraction",    TEST_SYMBOL(-),
-        "polynomial multiplication", TEST_SYMBOL(*),
-        laurents, monomials2));
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "polynomial addition",       TEST_SYMBOL(+),
-        "polynomial subtraction",    TEST_SYMBOL(-),
-        "polynomial multiplication", TEST_SYMBOL(*),
-        scalars, monomials2));
+    // REQUIRE(commutative_ring.valid(broad, nonlaurents, scalings));
+    // REQUIRE(commutative_ring.valid(broad, laurents, scalings));
+    // REQUIRE(commutative_ring.valid(broad, shiftings, scalings));
 
 
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "polynomial addition",       TEST_SYMBOL(+),
-        "polynomial subtraction",    TEST_SYMBOL(-),
-        "polynomial multiplication", TEST_SYMBOL(*),
-        nonlaurents, monomials3));
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "polynomial addition",       TEST_SYMBOL(+),
-        "polynomial subtraction",    TEST_SYMBOL(-),
-        "polynomial multiplication", TEST_SYMBOL(*),
-        laurents, monomials3));
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "polynomial addition",       TEST_SYMBOL(+),
-        "polynomial subtraction",    TEST_SYMBOL(-),
-        "polynomial multiplication", TEST_SYMBOL(*),
-        scalars, monomials3));
+    REQUIRE(commutative_ring.valid(broad, monomials1, monomials2));
+    REQUIRE(commutative_ring.valid(broad, monomials1, monomials3));
+    REQUIRE(commutative_ring.valid(broad, monomials2, monomials3));
+    // REQUIRE(commutative_ring.valid(broad, monomials1, shiftings));
+    // REQUIRE(commutative_ring.valid(broad, monomials1, scalings));
 
 
-
-    // REQUIRE(test::commutative_ring(broad,
-    //     "0", zero, 
-    //     "1", one, 
-    //     "polynomial addition",       TEST_SYMBOL(+),
-    //     "polynomial subtraction",    TEST_SYMBOL(-),
-    //     "polynomial multiplication", TEST_SYMBOL(*),
-    //     nonlaurents, shiftings));
-
-    // REQUIRE(test::commutative_ring(broad,
-    //     "0", zero, 
-    //     "1", one, 
-    //     "polynomial addition",       TEST_SYMBOL(+),
-    //     "polynomial subtraction",    TEST_SYMBOL(-),
-    //     "polynomial multiplication", TEST_SYMBOL(*),
-    //     laurents, shiftings));
-
-    // REQUIRE(test::commutative_ring(broad,
-    //     "0", zero, 
-    //     "1", one, 
-    //     "polynomial addition",       TEST_SYMBOL(+),
-    //     "polynomial subtraction",    TEST_SYMBOL(-),
-    //     "polynomial multiplication", TEST_SYMBOL(*),
-    //     scalings, shiftings));
+    // REQUIRE(commutative_ring.valid(broad, monomials2, shiftings));
+    // REQUIRE(commutative_ring.valid(broad, monomials2, scalings));
 
 
-
-    // REQUIRE(test::commutative_ring(broad,
-    //     "0", zero, 
-    //     "1", one, 
-    //     "polynomial addition",       TEST_SYMBOL(+),
-    //     "polynomial subtraction",    TEST_SYMBOL(-),
-    //     "polynomial multiplication", TEST_SYMBOL(*),
-    //     nonlaurents, scalings));
-
-    // REQUIRE(test::commutative_ring(broad,
-    //     "0", zero, 
-    //     "1", one, 
-    //     "polynomial addition",       TEST_SYMBOL(+),
-    //     "polynomial subtraction",    TEST_SYMBOL(-),
-    //     "polynomial multiplication", TEST_SYMBOL(*),
-    //     laurents, scalings));
-
-    // REQUIRE(test::commutative_ring(broad,
-    //     "0", zero, 
-    //     "1", one, 
-    //     "polynomial addition",       TEST_SYMBOL(+),
-    //     "polynomial subtraction",    TEST_SYMBOL(-),
-    //     "polynomial multiplication", TEST_SYMBOL(*),
-    //     shiftings, scalings));
+    // REQUIRE(commutative_ring.valid(broad, monomials3, shiftings));
+    // REQUIRE(commutative_ring.valid(broad, monomials3, scalings));
 
 
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "polynomial addition",       TEST_SYMBOL(+),
-        "polynomial subtraction",    TEST_SYMBOL(-),
-        "polynomial multiplication", TEST_SYMBOL(*),
-        monomials1, monomials2));
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "polynomial addition",       TEST_SYMBOL(+),
-        "polynomial subtraction",    TEST_SYMBOL(-),
-        "polynomial multiplication", TEST_SYMBOL(*),
-        monomials1, monomials3));
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "polynomial addition",       TEST_SYMBOL(+),
-        "polynomial subtraction",    TEST_SYMBOL(-),
-        "polynomial multiplication", TEST_SYMBOL(*),
-        monomials2, monomials3));
-
-    // REQUIRE(test::commutative_ring(broad,
-    //     "0", zero, 
-    //     "1", one, 
-    //     "polynomial addition",       TEST_SYMBOL(+),
-    //     "polynomial subtraction",    TEST_SYMBOL(-),
-    //     "polynomial multiplication", TEST_SYMBOL(*),
-    //     monomials1, shiftings));
-
-    // REQUIRE(test::commutative_ring(broad,
-    //     "0", zero, 
-    //     "1", one, 
-    //     "polynomial addition",       TEST_SYMBOL(+),
-    //     "polynomial subtraction",    TEST_SYMBOL(-),
-    //     "polynomial multiplication", TEST_SYMBOL(*),
-    //     monomials1, scalings));
-
-
-
-    // REQUIRE(test::commutative_ring(broad,
-    //     "0", zero, 
-    //     "1", one, 
-    //     "polynomial addition",       TEST_SYMBOL(+),
-    //     "polynomial subtraction",    TEST_SYMBOL(-),
-    //     "polynomial multiplication", TEST_SYMBOL(*),
-    //     monomials2, shiftings));
-
-    // REQUIRE(test::commutative_ring(broad,
-    //     "0", zero, 
-    //     "1", one, 
-    //     "polynomial addition",       TEST_SYMBOL(+),
-    //     "polynomial subtraction",    TEST_SYMBOL(-),
-    //     "polynomial multiplication", TEST_SYMBOL(*),
-    //     monomials2, scalings));
-
-
-
-    // REQUIRE(test::commutative_ring(broad,
-    //     "0", zero, 
-    //     "1", one, 
-    //     "polynomial addition",       TEST_SYMBOL(+),
-    //     "polynomial subtraction",    TEST_SYMBOL(-),
-    //     "polynomial multiplication", TEST_SYMBOL(*),
-    //     monomials3, shiftings));
-
-    // REQUIRE(test::commutative_ring(broad,
-    //     "0", zero, 
-    //     "1", one, 
-    //     "polynomial addition",       TEST_SYMBOL(+),
-    //     "polynomial subtraction",    TEST_SYMBOL(-),
-    //     "polynomial multiplication", TEST_SYMBOL(*),
-    //     monomials3, scalings));
-
-
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "polynomial addition",       TEST_SYMBOL(+),
-        "polynomial subtraction",    TEST_SYMBOL(-),
-        "polynomial multiplication", TEST_SYMBOL(*),
-        nonlaurents, laurents, scalars));
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "polynomial addition",       TEST_SYMBOL(+),
-        "polynomial subtraction",    TEST_SYMBOL(-),
-        "polynomial multiplication", TEST_SYMBOL(*),
-        nonlaurents, laurents, monomials1));
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "polynomial addition",       TEST_SYMBOL(+),
-        "polynomial subtraction",    TEST_SYMBOL(-),
-        "polynomial multiplication", TEST_SYMBOL(*),
-        nonlaurents, laurents, monomials2));
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "polynomial addition",       TEST_SYMBOL(+),
-        "polynomial subtraction",    TEST_SYMBOL(-),
-        "polynomial multiplication", TEST_SYMBOL(*),
-        nonlaurents, laurents, monomials3));
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "polynomial addition",       TEST_SYMBOL(+),
-        "polynomial subtraction",    TEST_SYMBOL(-),
-        "polynomial multiplication", TEST_SYMBOL(*),
-        nonlaurents, laurents, shiftings));
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "polynomial addition",       TEST_SYMBOL(+),
-        "polynomial subtraction",    TEST_SYMBOL(-),
-        "polynomial multiplication", TEST_SYMBOL(*),
-        nonlaurents, laurents, scalings));
+    REQUIRE(commutative_ring.valid(broad, nonlaurents, laurents, scalars));
+    REQUIRE(commutative_ring.valid(broad, nonlaurents, laurents, monomials1));
+    REQUIRE(commutative_ring.valid(broad, nonlaurents, laurents, monomials2));
+    REQUIRE(commutative_ring.valid(broad, nonlaurents, laurents, monomials3));
+    REQUIRE(commutative_ring.valid(broad, nonlaurents, laurents, shiftings));
+    REQUIRE(commutative_ring.valid(broad, nonlaurents, laurents, scalings));
 
 }
 

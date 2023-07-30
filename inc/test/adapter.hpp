@@ -15,6 +15,7 @@ and this is what `test::*Adapter` provide.
 It is important to note that the list of `*Adapter` classes here is not comprehensive.
 The definition of `*Adapter` classes is kept deliberately simple to make it easy for 
 developers to define their own `*Adapter` classes to suite their needs.
+All that is needed to define an `*Adapter` are an equality relation and a way to display quantites as a string.
 The `*Adapter` classes here are provided only as a convenience to suite the most common use cases.
 */
 

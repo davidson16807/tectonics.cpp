@@ -2,7 +2,7 @@
 
 // std libraries
 #include <iostream>
-#include <string>
+#include <string>   // std::string
 #include <regex>
 
 namespace test {
