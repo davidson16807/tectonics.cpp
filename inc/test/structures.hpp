@@ -255,5 +255,77 @@ namespace test {
         }
     };
 
+
+    template<typename Zero, typename One, typename Add, typename Sub, typename Mult, typename Div>
+    struct Field{
+        const CommutativeGroup  <Zero, Add, Sub>  addition;
+        const CommutativeGroup  <One,  Mult,Div>  multiplication;
+        const std::string zero_name; const Zero zero;   
+        const std::string one_name;  const One  one;   
+        const std::string add_name;  const Add  add;   
+        const std::string sub_name;  const Sub  sub;   
+        const std::string mult_name; const Mult mult;
+        const std::string div_name;  const Div  div;
+        Field(
+            const std::string zero_name, const Zero& zero, 
+            const std::string one_name,  const One&  one, 
+            const std::string add_name,  const Add&  add, 
+            const std::string sub_name,  const Sub&  sub, 
+            const std::string mult_name, const Mult& mult,
+            const std::string div_name,  const Div&  div
+        ): 
+            addition      (zero_name, zero, add_name,  add, sub_name, sub),
+            multiplication(one_name,  one,  mult_name, mult,div_name, div),
+            zero_name (zero_name), zero (zero), 
+            one_name  (one_name),  one  (one), 
+            add_name  (add_name),  add  (add), 
+            sub_name  (sub_name),  sub  (sub), 
+            mult_name (mult_name), mult (mult),
+            div_name  (div_name),  div  (div)
+        {}
+        template<typename Harness, typename A>
+        bool valid(const Harness& harness, const many<A>& as) const {
+            return 
+
+            addition      .valid(harness, as) &&
+            multiplication.valid(harness, as) &&
+            distributivity(harness, mult_name, mult, add_name, add, as, as, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Harness, typename A, typename B>
+        bool valid(const Harness& harness, const many<A>& as, const many<B>& bs) const {
+            return 
+
+            addition      .valid(harness, as, bs) &&
+            multiplication.valid(harness, as, bs) &&
+
+            distributivity(harness, mult_name, mult, add_name, add, as, as, bs) &&
+            distributivity(harness, mult_name, mult, add_name, add, as, bs, as) &&
+            distributivity(harness, mult_name, mult, add_name, add, as, bs, bs) &&
+            distributivity(harness, mult_name, mult, add_name, add, bs, as, as) &&
+            distributivity(harness, mult_name, mult, add_name, add, bs, as, bs) &&
+            distributivity(harness, mult_name, mult, add_name, add, bs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Harness, typename A, typename B, typename C>
+        bool valid(const Harness& harness, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+            return 
+
+            addition      .valid(harness, as, bs, cs) &&
+            multiplication.valid(harness, as, bs, cs) &&
+
+            distributivity(harness, mult_name, mult, add_name, add, as, bs, cs) &&
+            distributivity(harness, mult_name, mult, add_name, add, as, cs, bs) &&
+            distributivity(harness, mult_name, mult, add_name, add, bs, as, cs) &&
+            distributivity(harness, mult_name, mult, add_name, add, bs, cs, as) &&
+            distributivity(harness, mult_name, mult, add_name, add, cs, as, bs) &&
+            distributivity(harness, mult_name, mult, add_name, add, cs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+    };
+
 }
 

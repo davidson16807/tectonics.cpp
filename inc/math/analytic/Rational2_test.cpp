@@ -65,94 +65,35 @@ TEST_CASE( "Rationals are a commutative field", "[math]" ) {
     math::Polynomial<double,0,0> one  = math::Polynomial<double,0,0>({1.0f});
 
 
+    test::Field field(
+        "0", zero, 
+        "1", one, 
+        "rational addition",       TEST_SYMBOL(+),
+        "rational subtraction",    TEST_SYMBOL(-),
+        "rational multiplication", TEST_SYMBOL(*),
+        "rational division",       TEST_SYMBOL(/)
+    );
 
     // UNARY TESTS
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "rational addition",       TEST_SYMBOL(+),
-        "rational subtraction",    TEST_SYMBOL(-),
-        "rational multiplication", TEST_SYMBOL(*),
-        rationals1));
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "rational addition",       TEST_SYMBOL(+),
-        "rational subtraction",    TEST_SYMBOL(-),
-        "rational multiplication", TEST_SYMBOL(*),
-        rationals2));
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "rational addition",       TEST_SYMBOL(+),
-        "rational subtraction",    TEST_SYMBOL(-),
-        "rational multiplication", TEST_SYMBOL(*),
-        rationals3));
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "rational addition",       TEST_SYMBOL(+),
-        "rational subtraction",    TEST_SYMBOL(-),
-        "rational multiplication", TEST_SYMBOL(*),
-        rationals4));
-
-
+    REQUIRE(field.valid(broad, rationals1));
+    REQUIRE(field.valid(broad, rationals2));
+    REQUIRE(field.valid(broad, rationals3));
+    REQUIRE(field.valid(broad, rationals4));
 
     // BINARY TESTS
+    REQUIRE(field.valid(broad, rationals1, rationals2));
+    REQUIRE(field.valid(broad, rationals1, rationals3));
+    REQUIRE(field.valid(broad, rationals1, rationals4));
+    REQUIRE(field.valid(broad, rationals2, rationals3));
+    REQUIRE(field.valid(broad, rationals2, rationals4));
+    REQUIRE(field.valid(broad, rationals3, rationals4));
 
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "rational addition",       TEST_SYMBOL(+),
-        "rational subtraction",    TEST_SYMBOL(-),
-        "rational multiplication", TEST_SYMBOL(*),
-        rationals1, rationals2));
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "rational addition",       TEST_SYMBOL(+),
-        "rational subtraction",    TEST_SYMBOL(-),
-        "rational multiplication", TEST_SYMBOL(*),
-        rationals1, rationals3));
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "rational addition",       TEST_SYMBOL(+),
-        "rational subtraction",    TEST_SYMBOL(-),
-        "rational multiplication", TEST_SYMBOL(*),
-        rationals1, rationals4));
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "rational addition",       TEST_SYMBOL(+),
-        "rational subtraction",    TEST_SYMBOL(-),
-        "rational multiplication", TEST_SYMBOL(*),
-        rationals2, rationals3));
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "rational addition",       TEST_SYMBOL(+),
-        "rational subtraction",    TEST_SYMBOL(-),
-        "rational multiplication", TEST_SYMBOL(*),
-        rationals2, rationals4));
-
-    REQUIRE(test::commutative_ring(broad,
-        "0", zero, 
-        "1", one, 
-        "rational addition",       TEST_SYMBOL(+),
-        "rational subtraction",    TEST_SYMBOL(-),
-        "rational multiplication", TEST_SYMBOL(*),
-        rationals3, rationals4));
-
-
+    // TRINARY TESTS
+    REQUIRE(field.valid(broad, rationals1, rationals2, rationals3));
+    REQUIRE(field.valid(broad, rationals1, rationals2, rationals4));
+    REQUIRE(field.valid(broad, rationals1, rationals3, rationals4));
+    REQUIRE(field.valid(broad, rationals1, rationals4, rationals3));
+    REQUIRE(field.valid(broad, rationals2, rationals3, rationals4));
 
 }
 
