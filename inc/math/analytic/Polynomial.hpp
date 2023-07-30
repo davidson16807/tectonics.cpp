@@ -1187,6 +1187,42 @@ namespace math {
     }
 
     template<typename T, int Plo, int Phi>
+    constexpr T distance(const Polynomial<T,Plo,Phi> p, const Scaling<T> f, const T lo, const T hi)
+    {
+        return distance(p, Polynomial<T,1,1>(f), lo, hi);
+    }
+
+    template<typename T, int Plo, int Phi>
+    constexpr T distance(const Scaling<T> f, const Polynomial<T,Plo, Phi> p, const T lo, const T hi)
+    {
+        return distance(Polynomial<T,1,1>(f), p, lo, hi);
+    }
+
+    template<typename T>
+    constexpr T distance(const Scaling<T> f, const Scaling<T> g, const T lo, const T hi)
+    {
+        return distance(Polynomial<T,1,1>(f), Polynomial<T,1,1>(g), lo, hi);
+    }
+
+    template<typename T, int Plo, int Phi>
+    constexpr T distance(const Polynomial<T,Plo,Phi> p, const Shifting<T> f, const T lo, const T hi)
+    {
+        return distance(p, Polynomial<T,0,1>(f), lo, hi);
+    }
+
+    template<typename T, int Plo, int Phi>
+    constexpr T distance(const Shifting<T> f, const Polynomial<T,Plo, Phi> p, const T lo, const T hi)
+    {
+        return distance(Polynomial<T,0,1>(f), p, lo, hi);
+    }
+
+    template<typename T>
+    constexpr T distance(const Shifting<T> f, const Shifting<T> g, const T lo, const T hi)
+    {
+        return distance(Polynomial<T,0,1>(f), Polynomial<T,0,1>(g), lo, hi);
+    }
+
+    template<typename T, int Plo, int Phi>
     constexpr Polynomial<T,Plo,Phi> compose(const Polynomial<T,Plo,Phi>& p, const Identity<T> e)
     {
         return p;

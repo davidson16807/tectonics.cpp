@@ -1,6 +1,5 @@
 #include "./ArbitraryDegreeRational_test.hpp"
-#include "./Rational_test.hpp"
-#include "./Rational2_test.cpp"
+#include "./Rational_test.cpp"
 #include "./rails/PolynomialTrain_test.cpp"
 #include "./rails/RationalTrain_test.cpp"
 #include "./rails/PolynomialRailyard_test.hpp"
