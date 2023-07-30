@@ -2,7 +2,6 @@
 
 // std libraries
 #include <vector> // std::vector
-#include <string> // std::string
 
 // in-house libraries
 #include "equality.hpp"
@@ -15,70 +14,52 @@ namespace test {
 
     template<typename Harness, typename F, typename A>
     bool determinism(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const many<A>& as) {
+        const std::string f_name, const F& f, 
+        const many<A>& as
+    ) {
         return equality(
             harness,
             f_name + " must be able to be called repeatedly without changing the output", 
-            "[the first call] ", [=](A a){ return f(a); },
-            "[the second call]", [=](A a){ return f(a); },
+            "[the first call] ", f,
+            "[the second call]", f,
             as);
     }
 
     template<typename Harness, typename F, typename A, typename B>
     bool determinism(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const many<A>& as, const many<B>& bs) {
+        const std::string f_name, const F& f, 
+        const many<A>& as, const many<B>& bs
+    ) {
         return equality(
             harness,
             f_name + " must be able to be called repeatedly without changing the output", 
-            "[the first call] ", [=](A a, B b){ return f(a,b); },
-            "[the second call]", [=](A a, B b){ return f(a,b); },
+            "[the first call] ", f,
+            "[the second call]", f,
             as, bs);
     }
 
     template<typename Harness, typename F, typename A, typename B, typename C>
     bool determinism(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const many<A>& as, const many<B>& bs, const many<C>& cs) {
+        const std::string f_name, const F& f, 
+        const many<A>& as, const many<B>& bs, const many<C>& cs
+    ) {
         return equality(
             harness,
             f_name + " must be able to be called repeatedly without changing the output", 
-            "[the first call] ",[=](A a, B b, C c){ return f(a,b,c); },
-            "[the second call]",[=](A a, B b, C c){ return f(a,b,c); },
+            "[the first call] ",f,
+            "[the second call]",f,
             as, bs, cs);
     }
 
     template<typename Harness, typename F, typename E, typename A>
-    bool identity(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const std::string e_name, const E& e, 
-            const many<A>& as) {
-        return 
-            left_identity (harness, f_name, f, e_name, e, as) &&
-            right_identity(harness, f_name, f, e_name, e, as);
-    }
-
-    template<typename Harness, typename F, typename E, typename A>
-    bool identity(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const std::string e_name, const E& e) {
-        return equality(
-            harness,
-            f_name + " [denoted \"f\"] must have an \"identity\" value, " + e_name + "[denoted \"e\"], that when passed will always return itself", 
-            "f(e,a)",[=](A a){ return f(e, a); },
-            "a     ",[=](A a){ return a; },
-            std::vector<E>{e});
-    }
-
-    template<typename Harness, typename F, typename E, typename A>
     bool left_identity(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const std::string e_name, const E& e, 
-            const many<A>& as) {
+        const std::string e_name, const E& e, 
+        const std::string f_name, const F& f, 
+        const many<A>& as
+    ) {
         return equality(
             harness,
-            f_name + " [denoted \"f\"] must have an \"identity\" value, " + e_name + "[denoted \"e\"], that when passed on the left will always return the other value", 
+            f_name + " [denoted \"f\"] must have an \"identity\" value, " + e_name + " [denoted \"e\"], that when passed on the left will always return the other value", 
             "f(e,a)",[=](A a){ return f(e, a); },
             "a     ",[=](A a){ return a; },
             as);
@@ -86,32 +67,48 @@ namespace test {
 
     template<typename Harness, typename F, typename E, typename A>
     bool right_identity(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const std::string e_name, const E& e, 
-            const many<A>& as) {
+        const std::string e_name, const E& e, 
+        const std::string f_name, const F& f, 
+        const many<A>& as
+    ) {
         return equality(
             harness,
-            f_name + " [denoted \"f\"] must have an \"identity\" value, " + e_name + "[denoted \"e\"], that when passed on the right will always return the other value", 
+            f_name + " [denoted \"f\"] must have an \"identity\" value, " + e_name + " [denoted \"e\"], that when passed on the right will always return the other value", 
             "f(a,e)", [=](A a){ return f(a, e); },
             "f(a)  ", [=](A a){ return a; },
             as);
     }
 
-    template<typename Harness, typename F, typename A, typename N>
-    bool dominance(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const std::string n_name, const N& n, 
-            const many<A>& as) {
+    template<typename Harness, typename F, typename E, typename A>
+    bool identity(const Harness& harness, 
+        const std::string e_name, const E& e, 
+        const std::string f_name, const F& f, 
+        const many<A>& as
+    ) {
         return 
-            left_dominance (harness, f_name, f, n_name, n, as) &&
-            right_dominance(harness, f_name, f, n_name, n, as);
+            left_identity (harness, e_name, e, f_name, f, as) &&
+            right_identity(harness, e_name, e, f_name, f, as);
     }
+
+    // template<typename Harness, typename F, typename E, typename A>
+    // bool identity(const Harness& harness, 
+    //     const std::string e_name, const E& e,
+    //     const std::string f_name, const F& f 
+    // ) {
+    //     return equality(
+    //         harness,
+    //         f_name + " [denoted \"f\"] must have an \"identity\" value, " + e_name + "[denoted \"e\"], that when passed will always return itself", 
+    //         "f(e,a)",[=](A a){ return f(e, a); },
+    //         "a     ",[=](A a){ return a; },
+    //         std::vector<E>{e});
+    // }
 
     template<typename Harness, typename F, typename A, typename N>
     bool left_dominance(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const std::string n_name, const N& n, 
-            const many<A>& as) {
+        const std::string n_name, const N& n, 
+        const std::string f_name, const F& f, 
+        const many<A>& as
+    ) {
         return equality(
             harness,
             f_name + " [denoted \"f\"] must have a \"dominant\" value, " + n_name + " [denoted \"n\"], that when passed on the left will always return itself", 
@@ -122,9 +119,10 @@ namespace test {
 
     template<typename Harness, typename F, typename A, typename N>
     bool right_dominance(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const std::string n_name, const N& n, 
-            const many<A>& as) {
+        const std::string n_name, const N& n, 
+        const std::string f_name, const F& f, 
+        const many<A>& as
+    ) {
         return equality(
             harness,
             f_name + " [denoted \"f\"] must have a \"dominant\" value, " + n_name + " [denoted \"n\"], that when passed on the right will always return itself", 
@@ -133,33 +131,89 @@ namespace test {
             as);
     }
 
+    template<typename Harness, typename F, typename A, typename N>
+    bool dominance(const Harness& harness, 
+        const std::string n_name, const N& n, 
+        const std::string f_name, const F& f, 
+        const many<A>& as
+    ) {
+        return 
+            left_dominance (harness, n_name, n, f_name, f, as) &&
+            right_dominance(harness, n_name, n, f_name, f, as);
+    }
+
+    template<typename Harness, typename F, typename Finv, typename A>
+    bool left_invertibility(const Harness& harness, 
+        const std::string finv_name, const Finv& finv, 
+        const std::string f_name, const F& f, 
+        const many<A>& as
+    ) {
+        return equality(
+            harness,
+            f_name + " [denoted \"f\"] must permit input to be reconstructed by an \"inverse\" function, " + finv_name + " [denoted \"f⁻¹\"]", 
+            "f⁻¹(f(a))", [=](A a){ return finv(f(a)); },
+            "a        ", [=](A a){ return a; },
+            as);
+    }
+
     template<typename Harness, typename F, typename G, typename A>
     bool invertibility(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const std::string g_name, const G& g, 
-            const many<A>& as) {
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const many<A>& as
+    ) {
         return 
             left_invertibility(harness, f_name, f, f_name, g, as) &&
             left_invertibility(harness, g_name, g, g_name, f, as);
     }
 
-    template<typename Harness, typename F, typename Finv, typename A>
+    template<typename Harness, typename E, typename Finv, typename F, typename A>
     bool left_invertibility(const Harness& harness, 
-            const std::string finv_name, const Finv& finv, 
-            const std::string f_name, const F& f, 
-            const many<A>& as) {
+        const std::string e_name,    const E& e, 
+        const std::string finv_name, const Finv& finv, 
+        const std::string f_name,    const F& f, 
+        const many<A>& as
+    ) {
         return equality(
             harness,
             f_name + " [denoted \"f\"] must permit input to be reconstructed by an \"inverse\" function, " + finv_name + " [denoted \"f⁻¹\"]", 
-            "f⁻¹(f(a))", [=](A a)->A{  return finv(f(a)); },
-            "a        ", [=](A a)->A{  return a; },
+            "f(f⁻¹(e,a),a)", [=](A a){ return f(finv(e,a), a); },
+            "e            ", [=](A a){ return e; },
             as);
+    }
+
+    template<typename Harness, typename E, typename Finv, typename F, typename A>
+    bool right_invertibility(const Harness& harness, 
+        const std::string e_name,    const E& e, 
+        const std::string finv_name, const Finv& finv, 
+        const std::string f_name,    const F& f, 
+        const many<A>& as
+    ) {
+        return equality(
+            harness,
+            f_name + " [denoted \"f\"] must permit input to be reconstructed by an \"inverse\" function, " + finv_name + " [denoted \"f⁻¹\"]", 
+            "f(a, f⁻¹(e,a))", [=](A a){ return f(a, finv(e,a)); },
+            "e             ", [=](A a){ return e; },
+            as);
+    }
+
+    template<typename Harness, typename E, typename Finv, typename F, typename A>
+    bool invertibility(const Harness& harness, 
+        const std::string e_name,    const E& e, 
+        const std::string finv_name, const Finv& finv, 
+        const std::string f_name, const F& f, 
+        const many<A>& as
+    ) {
+        return 
+            left_invertibility (harness, e_name, e, finv_name, finv, f_name, f, as) &&
+            right_invertibility(harness, e_name, e, finv_name, finv, f_name, f, as);
     }
 
     template<typename Harness, typename F, typename A, typename B, typename C>
     bool associativity(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const many<A>& as, const many<B>& bs, const many<C>& cs) {
+        const std::string f_name, const F& f, 
+        const many<A>& as, const many<B>& bs, const many<C>& cs
+    ) {
         return equality(
             harness,
             f_name + " [denoted \"f\"] must allow invocations to be calculated in any order without changing results", 
@@ -170,9 +224,10 @@ namespace test {
 
     template<typename Harness, typename F2, typename F3, typename A, typename B, typename C>
     bool left_associativity(const Harness& harness, 
-            const std::string f2_name, const F2& f2, 
-            const std::string f3_name, const F3& f3, 
-            const many<A>& as, const many<B>& bs, const many<C>& cs) {
+        const std::string f2_name, const F2& f2, 
+        const std::string f3_name, const F3& f3, 
+        const many<A>& as, const many<B>& bs, const many<C>& cs
+    ) {
         return equality(
             harness,
             f3_name + " [denoted \"f\"] must calculate starting from the leftmost parameters", 
@@ -183,9 +238,10 @@ namespace test {
 
     template<typename Harness, typename F2, typename F3, typename A, typename B, typename C>
     bool right_associativity(const Harness& harness, 
-            const std::string f2_name, const F2& f2, 
-            const std::string f3_name, const F3& f3, 
-            const many<A>& as, const many<B>& bs, const many<C>& cs) {
+        const std::string f2_name, const F2& f2, 
+        const std::string f3_name, const F3& f3, 
+        const many<A>& as, const many<B>& bs, const many<C>& cs
+    ) {
         return equality(
             harness,
             f3_name + " [denoted \"f\"] must calculate starting from the rightmost parameters", 
@@ -194,10 +250,11 @@ namespace test {
             as, bs, cs);
     }
 
-    template<typename Harness, typename F, typename A, typename B, typename C>
+    template<typename Harness, typename F, typename A>
     bool power_associativity(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const many<A>& as) {
+        const std::string f_name, const F& f, 
+        const many<A>& as
+    ) {
         return equality(
             harness,
             f_name + " [denoted \"f\"] must allow invocations with a single parameter to be calculated in any order without changing results", 
@@ -207,18 +264,10 @@ namespace test {
     }
 
     template<typename Harness, typename F, typename A, typename B>
-    bool alternativity(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const many<A>& as, const many<B>& bs) {
-        return 
-            left_alternativity (harness, f_name, f, as, bs) &&
-            right_alternativity(harness, f_name, f, as, bs);
-    }
-
-    template<typename Harness, typename F, typename A, typename B, typename C>
     bool left_alternativity(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const many<A>& as, const many<B>& bs) {
+        const std::string f_name, const F& f, 
+        const many<A>& as, const many<B>& bs
+    ) {
         return equality(
             harness,
             f_name + " [denoted \"f\"] must under certain conditions allow invocations to be calculated in any order without changing results", 
@@ -227,10 +276,11 @@ namespace test {
             as, bs);
     }
 
-    template<typename Harness, typename F, typename A, typename B, typename C>
+    template<typename Harness, typename F, typename A, typename B>
     bool right_alternativity(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const many<A>& as, const many<B>& bs) {
+        const std::string f_name, const F& f, 
+        const many<A>& as, const many<B>& bs
+    ) {
         return equality(
             harness,
             f_name + " [denoted \"f\"] must under certain conditions allow invocations to be calculated in any order without changing results", 
@@ -240,9 +290,20 @@ namespace test {
     }
 
     template<typename Harness, typename F, typename A, typename B>
+    bool alternativity(const Harness& harness, 
+        const std::string f_name, const F& f, 
+        const many<A>& as, const many<B>& bs
+    ) {
+        return 
+            left_alternativity (harness, f_name, f, as, bs) &&
+            right_alternativity(harness, f_name, f, as, bs);
+    }
+
+    template<typename Harness, typename F, typename A, typename B>
     bool flexibility(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const many<A>& as, const many<B>& bs) {
+        const std::string f_name, const F& f, 
+        const many<A>& as, const many<B>& bs
+    ) {
         return equality(
             harness,
             f_name + " [denoted \"f\"] must under certain conditions allow invocations to be calculated in any order without changing results", 
@@ -253,8 +314,9 @@ namespace test {
 
     template<typename Harness, typename F, typename A, typename B>
     bool commutativity(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const many<A>& as, const many<B>& bs) {
+        const std::string f_name, const F& f, 
+        const many<A>& as, const many<B>& bs
+    ) {
         return equality(
             harness,
             f_name + " [denoted \"f\"] must allow arguments to be passed in any order without changing results", 
@@ -265,9 +327,10 @@ namespace test {
 
     template<typename Harness, typename Invert, typename F, typename A, typename B>
     bool anticommutativity(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const std::string inv_name, const Invert& inv, 
-            const many<A>& as, const many<B>& bs) {
+        const std::string f_name, const F& f, 
+        const std::string inv_name, const Invert& inv, 
+        const many<A>& as, const many<B>& bs
+    ) {
         return equality(
             harness,
             f_name + " [denoted \"f\"] must return the opposite value if its arguments are flipped, where opposite is determined by "+inv_name+" [denoted \"-\"]", 
@@ -277,20 +340,11 @@ namespace test {
     }
 
     template<typename Harness, typename F, typename G, typename A, typename B, typename C>
-    bool distributivity(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const std::string g_name, const G& g, 
-            const many<A>& as, const many<B>& bs, const many<C>& cs) {
-        return 
-            left_distributivity (harness, f_name, f, g_name, g, as, bs, cs) &&
-            right_distributivity(harness, f_name, f, g_name, g, as, bs, cs);
-    }
-
-    template<typename Harness, typename F, typename G, typename A, typename B, typename C>
     bool right_distributivity(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const std::string g_name, const G& g, 
-            const many<A>& as, const many<B>& bs, const many<C>& cs) {
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const many<A>& as, const many<B>& bs, const many<C>& cs
+    ) {
         return equality(
             harness,
             f_name + " [denoted \"f\"] must distribute over another function [denoted \"g\"] and produce the same results", 
@@ -301,9 +355,10 @@ namespace test {
 
     template<typename Harness, typename F, typename G, typename A, typename B, typename C>
     bool left_distributivity(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const std::string g_name, const G& g, 
-            const many<A>& as, const many<B>& bs, const many<C>& cs) {
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const many<A>& as, const many<B>& bs, const many<C>& cs
+    ) {
         return equality(
             harness,
             f_name + " [denoted \"f\"] must distribute over another function [denoted \"g\"] and produce the same results", 
@@ -312,10 +367,22 @@ namespace test {
             as, bs, cs);
     }
 
+    template<typename Harness, typename F, typename G, typename A, typename B, typename C>
+    bool distributivity(const Harness& harness, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const many<A>& as, const many<B>& bs, const many<C>& cs
+    ) {
+        return 
+            left_distributivity (harness, f_name, f, g_name, g, as, bs, cs) &&
+            right_distributivity(harness, f_name, f, g_name, g, as, bs, cs);
+    }
+
     template<typename Harness, typename F, typename A>
     bool idempotence(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const many<A>& as) {
+        const std::string f_name, const F& f, 
+        const many<A>& as
+    ) {
         return equality(
             harness,
             f_name + " [denoted \"f\"] must return input if both parameters are the same", 
@@ -326,9 +393,10 @@ namespace test {
 
     template<typename Harness, typename F, typename E, typename A>
     bool idempotence(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const std::string e_name, const E& e, 
-            const many<A>& as) {
+        const std::string e_name, const E& e, 
+        const std::string f_name, const F& f, 
+        const many<A>& as
+    ) {
         return equality(
             harness,
             f_name + " [denoted \"f\"] must return the identity "+ e_name +" [denoted \"e\"] if both parameters are the same", 
@@ -339,9 +407,10 @@ namespace test {
 
     template<typename Harness, typename F, typename N, typename A>
     bool nilpotence(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const std::string n_name, const N& n, 
-            const many<A>& as) {
+        const std::string n_name, const N& n, 
+        const std::string f_name, const F& f, 
+        const many<A>& as
+    ) {
         return equality(
             harness,
             f_name + " [denoted \"f\"] must return the index "+ n_name +" [denoted \"n\"] if both parameters are the same", 
@@ -352,8 +421,9 @@ namespace test {
 
     template<typename Harness, typename F, typename A, typename B>
     bool involutivity(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const many<A>& as) {
+        const std::string f_name, const F& f, 
+        const many<A>& as
+    ) {
         return equality(
             harness,
             "left involutivity", 
@@ -363,19 +433,11 @@ namespace test {
             as);
     }
 
-    template<typename Harness, typename F, typename G, typename A, typename B, typename C>
-    bool involutivity(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const many<A>& as, const many<B>& bs) {
-        return 
-            left_involutivity (harness, f_name, f, as, bs) &&
-            right_involutivity(harness, f_name, f, as, bs);
-    }
-
     template<typename Harness, typename F, typename A, typename B>
     bool left_involutivity(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const many<A>& as, const many<B>& bs) {
+        const std::string f_name, const F& f, 
+        const many<A>& as, const many<B>& bs
+    ) {
         return equality(
             harness,
             "left involutivity", 
@@ -387,8 +449,9 @@ namespace test {
 
     template<typename Harness, typename F, typename A, typename B>
     bool right_involutivity(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const many<A>& as, const many<B>& bs) {
+        const std::string f_name, const F& f, 
+        const many<A>& as, const many<B>& bs
+    ) {
         return equality(
             harness,
             f_name + " [denoted \"f\"] must return the original input if invoked a second time with the same right parameter", 
@@ -397,13 +460,24 @@ namespace test {
             as, bs);
     }
 
+    template<typename Harness, typename F, typename G, typename A, typename B>
+    bool involutivity(const Harness& harness, 
+        const std::string f_name, const F& f, 
+        const many<A>& as, const many<B>& bs
+    ) {
+        return 
+            left_involutivity (harness, f_name, f, as, bs) &&
+            right_involutivity(harness, f_name, f, as, bs);
+    }
+
     template<typename Harness, typename Cross, typename Add, typename N, typename A, typename B, typename C>
     bool jacobi_identity(
-            const Harness& harness, 
-            const std::string cross_name, const Cross& cross, 
-            const std::string add_name, const Add& add, 
-            const std::string n_name, const N& n,
-            const many<A>& as, const many<B>& bs, const many<C>& cs) {
+        const Harness& harness, 
+        const std::string n_name, const N& n,
+        const std::string cross_name, const Cross& cross, 
+        const std::string add_name, const Add& add, 
+        const many<A>& as, const many<B>& bs, const many<C>& cs
+    ) {
         return equality(
             harness,
             cross_name + " [denoted \"×\"] and "+ add_name +" [denoted \"+\"] must satisfy the jacobi identity for index "+ n_name+ " [denoted \"n\"]", 
@@ -414,9 +488,10 @@ namespace test {
 
     template<typename Harness, typename F, typename G, typename A>
     bool invariance(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const std::string g_name, const G& g, 
-            const many<A>& as) {
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const many<A>& as
+    ) {
         return equality(
             harness,
             f_name + " [denoted \"f\"] must be invariant to " + g_name + " [denoted \"g\"]", 
@@ -427,9 +502,10 @@ namespace test {
 
     template<typename Harness, typename F, typename G, typename A>
     bool conservation(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const std::string g_name, const G& g, 
-            const many<A>& as) {
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const many<A>& as
+    ) {
         return equality(
             harness,
             f_name + " [denoted \"f\"] must conserve " + g_name + " [denoted \"g\"]", 
@@ -440,9 +516,10 @@ namespace test {
 
     template<typename Harness, typename F, typename G, typename A>
     bool preservation(const Harness& harness, 
-            const std::string f_name, const F& f, 
-            const std::string g_name, const G& g, 
-            const many<A>& as) {
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const many<A>& as
+    ) {
         return equality(
             harness,
             f_name + " [denoted \"f\"] must preserve " + g_name + " [denoted \"g\"]", 
@@ -457,12 +534,13 @@ namespace test {
 
     template<typename Harness, typename Valid, typename F, typename A>
     bool codomain(const Harness& harness, 
-            const std::string validity_name, const Valid& valid, 
-            const std::string f_name, const F& f, 
-            const many<A>& as) {
+        const std::string validity_name, const Valid& valid, 
+        const std::string f_name, const F& f, 
+        const many<A>& as
+    ) {
         return predicate(
             harness,
-            f_name + " must only produce output " + validity_name,
+            f_name + " must only produce output that is " + validity_name,
             [=](A a){ 
                 return valid(
                     f(a)
@@ -472,12 +550,13 @@ namespace test {
 
     template<typename Harness, typename Valid, typename F, typename A, typename B>
     bool codomain(const Harness& harness, 
-            const std::string validity_name, const Valid& valid, 
-            const std::string f_name, const F& f, 
-            const many<A>& as, const many<B>& bs) {
+        const std::string validity_name, const Valid& valid, 
+        const std::string f_name, const F& f, 
+        const many<A>& as, const many<B>& bs
+    ) {
         return predicate(
             harness,
-            f_name + " must only produce output " + validity_name, 
+            f_name + " must only produce output that is " + validity_name, 
             [=](A a, B b){ 
                 return valid(
                     f(a, b)
@@ -487,12 +566,13 @@ namespace test {
 
     template<typename Harness, typename Valid, typename F, typename A, typename B, typename C>
     bool codomain(const Harness& harness, 
-            const std::string validity_name, const Valid& valid, 
-            const std::string f_name, const F& f, 
-            const many<A>& as, const many<B>& bs, const many<C>& cs) {
+        const std::string validity_name, const Valid& valid, 
+        const std::string f_name, const F& f, 
+        const many<A>& as, const many<B>& bs, const many<C>& cs
+    ) {
         return predicate(
             harness,
-            f_name + " must only produce output " + validity_name, 
+            f_name + " must only produce output that is " + validity_name, 
             [=](A a, B b, C c){ 
                 return valid(
                     f(a, b, c)
@@ -502,8 +582,9 @@ namespace test {
 
     template<typename Harness, typename LT, typename Add, typename Distance, typename A, typename B, typename C>
     bool triangle_inequality(const Harness& harness, 
-            const LT& lt, const Add& add, const Distance& distance, 
-            const many<A>& as, const many<B>& bs, const many<C>& cs) {
+        const LT& lt, const Add& add, const Distance& distance, 
+        const many<A>& as, const many<B>& bs, const many<C>& cs
+    ) {
         return predicate(
             harness,
             "triangle inequality", 
@@ -515,8 +596,9 @@ namespace test {
 
     template<typename Harness, typename Distance, typename A, typename B, typename C>
     bool triangle_inequality(const Harness& harness, 
-            const Distance& distance, 
-            const many<A>& as, const many<B>& bs, const many<C>& cs) {
+        const Distance& distance, 
+        const many<A>& as, const many<B>& bs, const many<C>& cs
+    ) {
         return predicate(
             harness,
             "triangle inequality", 
@@ -531,8 +613,9 @@ namespace test {
 
     template<typename Harness, typename R, typename A, typename B>
     bool reflexivity(const Harness& harness, 
-            const std::string r_name, const R& r, 
-            const many<A>& as) {
+        const std::string r_name, const R& r, 
+        const many<A>& as
+    ) {
         return predicate(
             harness,
             "reflexivity", 
@@ -543,8 +626,9 @@ namespace test {
 
     template<typename Harness, typename R, typename A, typename B>
     bool irreflexivity(const Harness& harness, 
-            const std::string r_name, const R& r, 
-            const many<A>& as) {
+        const std::string r_name, const R& r, 
+        const many<A>& as
+    ) {
         return predicate(
             harness,
             "irreflexivity", 
@@ -555,8 +639,9 @@ namespace test {
 
     template<typename Harness, typename R, typename A, typename B>
     bool symmetry(const Harness& harness, 
-            const std::string r_name, const R& r, 
-            const many<A>& as, const many<B>& bs) {
+        const std::string r_name, const R& r, 
+        const many<A>& as, const many<B>& bs
+    ) {
         return predicate(
             harness,
             "symmetry", 
@@ -570,7 +655,8 @@ namespace test {
     template<typename Harness, typename R, typename A, typename B>
     bool antisymmetry(const Harness& harness, 
             std::string r_name, const R& r, 
-            const many<A>& as, const many<B>& bs) {
+        const many<A>& as, const many<B>& bs
+    ) {
         return predicate(
             harness,
             "antisymmetry", 
@@ -584,7 +670,8 @@ namespace test {
     template<typename Harness, typename R, typename A, typename B, typename C>
     bool transitivity(const Harness& harness, 
             std::string r_name, const R& r, 
-            const many<A>& as, const many<B>& bs, const many<C>& cs) {
+        const many<A>& as, const many<B>& bs, const many<C>& cs
+    ) {
         return predicate(
             harness,
             "transitivity", 
@@ -596,7 +683,8 @@ namespace test {
     template<typename Harness, typename R, typename A, typename B, typename C>
     bool antitransitivity(const Harness& harness, 
             std::string r_name, const R& r, 
-            const many<A>& as, const many<B>& bs, const many<C>& cs) {
+        const many<A>& as, const many<B>& bs, const many<C>& cs
+    ) {
         return predicate(
             harness,
             "antitransitivity", 
@@ -608,7 +696,8 @@ namespace test {
     template<typename Harness, typename R, typename A, typename B>
     bool totality(const Harness& harness, 
             std::string r_name, const R& r, 
-            const many<A>& as, const many<B>& bs) {
+        const many<A>& as, const many<B>& bs
+    ) {
         return predicate(
             harness,
             "totality", 
@@ -620,7 +709,8 @@ namespace test {
     template<typename Harness, typename R, typename A, typename B>
     bool strict_totality(const Harness& harness, 
             std::string r_name, const R& r, 
-            const many<A>& as, const many<B>& bs) {
+        const many<A>& as, const many<B>& bs
+    ) {
         return predicate(
             harness,
             "strict totality", 

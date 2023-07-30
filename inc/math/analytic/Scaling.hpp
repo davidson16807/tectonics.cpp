@@ -52,6 +52,19 @@ namespace math {
 
     };
 
+    template<typename T>
+    constexpr std::string to_string(const Scaling<T>& f)
+    {
+        // const std::string exponents("⁰¹²³⁴⁵⁶⁷⁸⁹");
+        return std::to_string(f.factor) + "x";
+    }
+
+    template<typename T>
+    std::ostream& operator<<(std::ostream& os, const Scaling<T>& f) { 
+        os << to_string(f);
+        return os;
+    }
+
     // operators that are closed under Scaling relations
     template<typename T>
     constexpr Scaling<T> operator+(const Scaling<T> f, const Scaling<T> g)

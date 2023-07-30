@@ -35,6 +35,19 @@ namespace math {
         }
     };
 
+    template<typename T>
+    constexpr std::string to_string(const Shifting<T>& f)
+    {
+        // const std::string exponents("⁰¹²³⁴⁵⁶⁷⁸⁹");
+        return "x"+std::to_string(f.offset);
+    }
+
+    template<typename T>
+    std::ostream& operator<<(std::ostream& os, const Shifting<T>& f) { 
+        os << to_string(f);
+        return os;
+    }
+
     // operators with reals that are closed under Shifting relations
     template<typename T>
     constexpr Shifting<T> operator+(const Shifting<T> f, const T k)

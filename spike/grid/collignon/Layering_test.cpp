@@ -10,7 +10,6 @@
 #include <test/properties.hpp>
 #include "Layering.hpp"
 
-
 TEST_CASE( "Layering.layer_to_height() / Layering.height_to_layer()", "[collignon]" ) {
     test::OperatorAdapter exact;
     test::StandardAdapter inexact(1e-7f);
