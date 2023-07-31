@@ -59,7 +59,7 @@ namespace test {
     ) {
         return equality(
             adapter,
-            f_name + " [denoted \"f\"] must have an \"identity\" value, " + e_name + " [denoted \"e\"], that when passed on the left will always return the other value", 
+            f_name + " [denoted \"f\"] must have a \"left identity\" value, " + e_name + " [denoted \"e\"], that when passed on the left will always return the other value", 
             "f(e,a)",[=](A a){ return f(e, a); },
             "a     ",[=](A a){ return a; },
             as);
@@ -73,7 +73,7 @@ namespace test {
     ) {
         return equality(
             adapter,
-            f_name + " [denoted \"f\"] must have an \"identity\" value, " + e_name + " [denoted \"e\"], that when passed on the right will always return the other value", 
+            f_name + " [denoted \"f\"] must have a \"right identity\" value, " + e_name + " [denoted \"e\"], that when passed on the right will always return the other value", 
             "f(a,e)", [=](A a){ return f(a, e); },
             "f(a)  ", [=](A a){ return a; },
             as);
@@ -103,43 +103,43 @@ namespace test {
     //         std::vector<E>{e});
     // }
 
-    template<typename Adapter, typename F, typename A, typename N>
-    bool left_dominance(const Adapter& adapter, 
-        const std::string n_name, const N& n, 
+    template<typename Adapter, typename F, typename A, typename Z>
+    bool left_annihilation(const Adapter& adapter, 
+        const std::string z_name, const Z& z, 
         const std::string f_name, const F& f, 
         const many<A>& as
     ) {
         return equality(
             adapter,
-            f_name + " [denoted \"f\"] must have a \"dominant\" value, " + n_name + " [denoted \"n\"], that when passed on the left will always return itself", 
-            "f(n,a)", [=](A a){ return f(n, a); },
-            "n     ", [=](A a){ return n; },
+            f_name + " [denoted \"f\"] must have a \"left annihilator\", " + z_name + " [denoted \"z\"], that when passed on the left will always return itself", 
+            "f(z,a)", [=](A a){ return f(z, a); },
+            "z     ", [=](A a){ return z; },
             as);
     }
 
-    template<typename Adapter, typename F, typename A, typename N>
-    bool right_dominance(const Adapter& adapter, 
-        const std::string n_name, const N& n, 
+    template<typename Adapter, typename F, typename A, typename Z>
+    bool right_annihilation(const Adapter& adapter, 
+        const std::string z_name, const Z& z, 
         const std::string f_name, const F& f, 
         const many<A>& as
     ) {
         return equality(
             adapter,
-            f_name + " [denoted \"f\"] must have a \"dominant\" value, " + n_name + " [denoted \"n\"], that when passed on the right will always return itself", 
-            "f(a,n)", [=](A a){ return f(a, n);  },
-            "n     ", [=](A a){ return n; },
+            f_name + " [denoted \"f\"] must have an \"right annihilator\", " + z_name + " [denoted \"z\"], that when passed on the right will always return itself", 
+            "f(a,z)", [=](A a){ return f(a, z);  },
+            "z     ", [=](A a){ return z; },
             as);
     }
 
-    template<typename Adapter, typename F, typename A, typename N>
-    bool dominance(const Adapter& adapter, 
-        const std::string n_name, const N& n, 
+    template<typename Adapter, typename F, typename A, typename Z>
+    bool annihilation(const Adapter& adapter, 
+        const std::string z_name, const Z& z, 
         const std::string f_name, const F& f, 
         const many<A>& as
     ) {
         return 
-            left_dominance (adapter, n_name, n, f_name, f, as) &&
-            right_dominance(adapter, n_name, n, f_name, f, as);
+            left_annihilation (adapter, z_name, z, f_name, f, as) &&
+            right_annihilation(adapter, z_name, z, f_name, f, as);
     }
 
     template<typename Adapter, typename F, typename Finv, typename A>
@@ -150,7 +150,7 @@ namespace test {
     ) {
         return equality(
             adapter,
-            f_name + " [denoted \"f\"] must permit input to be reconstructed by an \"inverse\" function, " + finv_name + " [denoted \"f⁻¹\"]", 
+            f_name + " [denoted \"f\"] must permit input to be reconstructed by a \"left inverse\" function, " + finv_name + " [denoted \"f⁻¹\"]", 
             "f⁻¹(f(a))", [=](A a){ return finv(f(a)); },
             "a        ", [=](A a){ return a; },
             as);
@@ -176,7 +176,7 @@ namespace test {
     ) {
         return equality(
             adapter,
-            f_name + " [denoted \"f\"] must permit input to be reconstructed by an \"inverse\" function, " + finv_name + " [denoted \"f⁻¹\"]", 
+            f_name + " [denoted \"f\"] must permit input to be reconstructed by a \"left inverse\" function, " + finv_name + " [denoted \"f⁻¹\"]", 
             "f(f⁻¹(e,a),a)", [=](A a){ return f(finv(e,a), a); },
             "e            ", [=](A a){ return e; },
             as);
@@ -191,7 +191,7 @@ namespace test {
     ) {
         return equality(
             adapter,
-            f_name + " [denoted \"f\"] must permit input to be reconstructed by an \"inverse\" function, " + finv_name + " [denoted \"f⁻¹\"]", 
+            f_name + " [denoted \"f\"] must permit input to be reconstructed by a \"right inverse\" function, " + finv_name + " [denoted \"f⁻¹\"]", 
             "f(a, f⁻¹(e,a))", [=](A a){ return f(a, finv(e,a)); },
             "e             ", [=](A a){ return e; },
             as);
@@ -340,20 +340,6 @@ namespace test {
     }
 
     template<typename Adapter, typename F, typename G, typename A, typename B, typename C>
-    bool right_distributivity(const Adapter& adapter, 
-        const std::string f_name, const F& f, 
-        const std::string g_name, const G& g, 
-        const many<A>& as, const many<B>& bs, const many<C>& cs
-    ) {
-        return equality(
-            adapter,
-            f_name + " [denoted \"f\"] must distribute over another function [denoted \"g\"] and produce the same results", 
-            "f(g(a,b), c)     ", [=](A a, B b, C c){ return f(g(a, b), c);       },
-            "g(f(a,c), f(b,c))", [=](A a, B b, C c){ return g(f(a, c), f(b, c)); },
-            as, bs, cs);
-    }
-
-    template<typename Adapter, typename F, typename G, typename A, typename B, typename C>
     bool left_distributivity(const Adapter& adapter, 
         const std::string f_name, const F& f, 
         const std::string g_name, const G& g, 
@@ -361,9 +347,23 @@ namespace test {
     ) {
         return equality(
             adapter,
-            f_name + " [denoted \"f\"] must distribute over another function [denoted \"g\"] and produce the same results", 
+            f_name + " [denoted \"f\"] must allow left parameters to distribute over another function [denoted \"g\"] while still producing the same results", 
             "f(c, g(a, b))    ", [=](A a, B b, C c){ return f(c, g(a, b));       },
             "g(f(c,a), f(c,b))", [=](A a, B b, C c){ return g(f(c, a), f(c, b)); },
+            as, bs, cs);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A, typename B, typename C>
+    bool right_distributivity(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const many<A>& as, const many<B>& bs, const many<C>& cs
+    ) {
+        return equality(
+            adapter,
+            f_name + " [denoted \"f\"] must allow right parameters to distribute over another function [denoted \"g\"] while still producing the same results", 
+            "f(g(a,b), c)     ", [=](A a, B b, C c){ return f(g(a, b), c);       },
+            "g(f(a,c), f(b,c))", [=](A a, B b, C c){ return g(f(a, c), f(b, c)); },
             as, bs, cs);
     }
 

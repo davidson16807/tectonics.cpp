@@ -24,12 +24,12 @@ namespace test {
             e_name(e_name), e(e),
             f_name(f_name), f(f)
         {}
-        template<typename Harness, typename A, typename B, typename C>
-        bool valid(const Harness& harness, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+        template<typename Adapter, typename A, typename B, typename C>
+        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
             return 
 
-            associativity(harness,            f_name, f, as, bs, cs) &&
-            identity     (harness, e_name, e, f_name, f, as)         &&
+            associativity(adapter,            f_name, f, as, bs, cs) &&
+            identity     (adapter, e_name, e, f_name, f, as)         &&
 
             true; // added so lines above can be easily swapped
         }
@@ -49,13 +49,13 @@ namespace test {
             f_name(f_name),       f(f),
             finv_name(finv_name), finv(finv)
         {}
-        template<typename Harness, typename A, typename B, typename C>
-        bool valid(const Harness& harness, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+        template<typename Adapter, typename A, typename B, typename C>
+        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
             return 
 
-            associativity(harness,                             f_name, f, as, bs, cs) &&
-            identity     (harness, e_name, e,                  f_name, f, as)         &&
-            invertibility(harness, e_name, e, finv_name, finv, f_name, f, as)         &&
+            associativity(adapter,                             f_name, f, as, bs, cs) &&
+            identity     (adapter, e_name, e,                  f_name, f, as)         &&
+            invertibility(adapter, e_name, e, finv_name, finv, f_name, f, as)         &&
 
             true; // added so lines above can be easily swapped
         }
@@ -84,44 +84,44 @@ namespace test {
             e_name(e_name), e(e),
             f_name(f_name), f(f)
         {}
-        template<typename Harness, typename A>
-        bool valid(const Harness& harness, const many<A>& as) const {
+        template<typename Adapter, typename A>
+        bool valid(const Adapter& adapter, const many<A>& as) const {
             return 
 
-            determinism  (harness,            f_name, f, as, as)     &&
-            associativity(harness,            f_name, f, as, as, as) &&
-            identity     (harness, e_name, e, f_name, f, as)         &&
-            commutativity(harness,            f_name, f, as, as)     &&
+            determinism  (adapter,            f_name, f, as, as)     &&
+            associativity(adapter,            f_name, f, as, as, as) &&
+            identity     (adapter, e_name, e, f_name, f, as)         &&
+            commutativity(adapter,            f_name, f, as, as)     &&
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Harness, typename A, typename B>
-        bool valid(const Harness& harness, const many<A>& as, const many<B>& bs) const {
+        template<typename Adapter, typename A, typename B>
+        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
             return 
 
-            determinism  (harness, f_name, f, as, bs)     &&
-            determinism  (harness, f_name, f, bs, as)     &&
-            associativity(harness, f_name, f, as, as, bs) &&
-            associativity(harness, f_name, f, as, bs, as) &&
-            associativity(harness, f_name, f, as, bs, bs) &&
-            associativity(harness, f_name, f, bs, as, as) &&
-            associativity(harness, f_name, f, bs, as, bs) &&
-            associativity(harness, f_name, f, bs, bs, as) &&
-            commutativity(harness, f_name, f, as, bs)     &&
-            commutativity(harness, f_name, f, bs, as)     &&
+            determinism  (adapter, f_name, f, as, bs)     &&
+            determinism  (adapter, f_name, f, bs, as)     &&
+            associativity(adapter, f_name, f, as, as, bs) &&
+            associativity(adapter, f_name, f, as, bs, as) &&
+            associativity(adapter, f_name, f, as, bs, bs) &&
+            associativity(adapter, f_name, f, bs, as, as) &&
+            associativity(adapter, f_name, f, bs, as, bs) &&
+            associativity(adapter, f_name, f, bs, bs, as) &&
+            commutativity(adapter, f_name, f, as, bs)     &&
+            commutativity(adapter, f_name, f, bs, as)     &&
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Harness, typename A, typename B, typename C>
-        bool valid(const Harness& harness, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+        template<typename Adapter, typename A, typename B, typename C>
+        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
             return 
 
-            associativity(harness, f_name, f, as, bs, cs) &&
-            associativity(harness, f_name, f, as, cs, bs) &&
-            associativity(harness, f_name, f, bs, as, cs) &&
-            associativity(harness, f_name, f, bs, cs, as) &&
-            associativity(harness, f_name, f, cs, as, bs) &&
-            associativity(harness, f_name, f, cs, bs, as) &&
+            associativity(adapter, f_name, f, as, bs, cs) &&
+            associativity(adapter, f_name, f, as, cs, bs) &&
+            associativity(adapter, f_name, f, bs, as, cs) &&
+            associativity(adapter, f_name, f, bs, cs, as) &&
+            associativity(adapter, f_name, f, cs, as, bs) &&
+            associativity(adapter, f_name, f, cs, bs, as) &&
 
             true; // added so lines above can be easily swapped
         }
@@ -141,47 +141,47 @@ namespace test {
             f_name(f_name),       f(f),
             finv_name(finv_name), finv(finv)
         {}
-        template<typename Harness, typename A>
-        bool valid(const Harness& harness, const many<A>& as) const {
+        template<typename Adapter, typename A>
+        bool valid(const Adapter& adapter, const many<A>& as) const {
             return 
 
-            determinism  (harness,            f_name, f, as, as)     &&
-            associativity(harness,            f_name, f, as, as, as) &&
-            identity     (harness, e_name, e, f_name, f, as)         &&
-            commutativity(harness,            f_name, f, as, as)     &&
-            invertibility(harness, e_name, e, finv_name, finv, f_name, f, as) &&
+            determinism  (adapter,            f_name, f, as, as)     &&
+            associativity(adapter,            f_name, f, as, as, as) &&
+            identity     (adapter, e_name, e, f_name, f, as)         &&
+            commutativity(adapter,            f_name, f, as, as)     &&
+            invertibility(adapter, e_name, e, finv_name, finv, f_name, f, as) &&
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Harness, typename A, typename B>
-        bool valid(const Harness& harness, const many<A>& as, const many<B>& bs) const {
+        template<typename Adapter, typename A, typename B>
+        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
             return 
 
-            determinism  (harness, f_name, f, as, bs)     &&
-            determinism  (harness, f_name, f, bs, as)     &&
-            associativity(harness, f_name, f, as, as, bs) &&
-            associativity(harness, f_name, f, as, bs, as) &&
-            associativity(harness, f_name, f, as, bs, bs) &&
-            associativity(harness, f_name, f, bs, as, as) &&
-            associativity(harness, f_name, f, bs, as, bs) &&
-            associativity(harness, f_name, f, bs, bs, as) &&
-            commutativity(harness, f_name, f, as, bs)     &&
-            commutativity(harness, f_name, f, bs, as)     &&
-            invertibility(harness, e_name, e, finv_name, finv, f_name, f, as) &&
-            invertibility(harness, e_name, e, finv_name, finv, f_name, f, bs) &&
+            determinism  (adapter, f_name, f, as, bs)     &&
+            determinism  (adapter, f_name, f, bs, as)     &&
+            associativity(adapter, f_name, f, as, as, bs) &&
+            associativity(adapter, f_name, f, as, bs, as) &&
+            associativity(adapter, f_name, f, as, bs, bs) &&
+            associativity(adapter, f_name, f, bs, as, as) &&
+            associativity(adapter, f_name, f, bs, as, bs) &&
+            associativity(adapter, f_name, f, bs, bs, as) &&
+            commutativity(adapter, f_name, f, as, bs)     &&
+            commutativity(adapter, f_name, f, bs, as)     &&
+            invertibility(adapter, e_name, e, finv_name, finv, f_name, f, as) &&
+            invertibility(adapter, e_name, e, finv_name, finv, f_name, f, bs) &&
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Harness, typename A, typename B, typename C>
-        bool valid(const Harness& harness, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+        template<typename Adapter, typename A, typename B, typename C>
+        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
             return 
 
-            associativity(harness, f_name, f, as, bs, cs) &&
-            associativity(harness, f_name, f, as, cs, bs) &&
-            associativity(harness, f_name, f, bs, as, cs) &&
-            associativity(harness, f_name, f, bs, cs, as) &&
-            associativity(harness, f_name, f, cs, as, bs) &&
-            associativity(harness, f_name, f, cs, bs, as) &&
+            associativity(adapter, f_name, f, as, bs, cs) &&
+            associativity(adapter, f_name, f, as, cs, bs) &&
+            associativity(adapter, f_name, f, bs, as, cs) &&
+            associativity(adapter, f_name, f, bs, cs, as) &&
+            associativity(adapter, f_name, f, cs, as, bs) &&
+            associativity(adapter, f_name, f, cs, bs, as) &&
 
             true; // added so lines above can be easily swapped
         }
@@ -211,45 +211,45 @@ namespace test {
             sub_name  (sub_name),  sub  (sub), 
             mult_name (mult_name), mult (mult)
         {}
-        template<typename Harness, typename A>
-        bool valid(const Harness& harness, const many<A>& as) const {
+        template<typename Adapter, typename A>
+        bool valid(const Adapter& adapter, const many<A>& as) const {
             return 
 
-            addition      .valid(harness, as) &&
-            multiplication.valid(harness, as) &&
-            distributivity(harness, mult_name, mult, add_name, add, as, as, as) &&
+            addition      .valid(adapter, as) &&
+            multiplication.valid(adapter, as) &&
+            distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Harness, typename A, typename B>
-        bool valid(const Harness& harness, const many<A>& as, const many<B>& bs) const {
+        template<typename Adapter, typename A, typename B>
+        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
             return 
 
-            addition      .valid(harness, as, bs) &&
-            multiplication.valid(harness, as, bs) &&
+            addition      .valid(adapter, as, bs) &&
+            multiplication.valid(adapter, as, bs) &&
 
-            distributivity(harness, mult_name, mult, add_name, add, as, as, bs) &&
-            distributivity(harness, mult_name, mult, add_name, add, as, bs, as) &&
-            distributivity(harness, mult_name, mult, add_name, add, as, bs, bs) &&
-            distributivity(harness, mult_name, mult, add_name, add, bs, as, as) &&
-            distributivity(harness, mult_name, mult, add_name, add, bs, as, bs) &&
-            distributivity(harness, mult_name, mult, add_name, add, bs, bs, as) &&
+            distributivity(adapter, mult_name, mult, add_name, add, as, as, bs) &&
+            distributivity(adapter, mult_name, mult, add_name, add, as, bs, as) &&
+            distributivity(adapter, mult_name, mult, add_name, add, as, bs, bs) &&
+            distributivity(adapter, mult_name, mult, add_name, add, bs, as, as) &&
+            distributivity(adapter, mult_name, mult, add_name, add, bs, as, bs) &&
+            distributivity(adapter, mult_name, mult, add_name, add, bs, bs, as) &&
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Harness, typename A, typename B, typename C>
-        bool valid(const Harness& harness, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+        template<typename Adapter, typename A, typename B, typename C>
+        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
             return 
 
-            addition      .valid(harness, as, bs, cs) &&
-            multiplication.valid(harness, as, bs, cs) &&
+            addition      .valid(adapter, as, bs, cs) &&
+            multiplication.valid(adapter, as, bs, cs) &&
 
-            distributivity(harness, mult_name, mult, add_name, add, as, bs, cs) &&
-            distributivity(harness, mult_name, mult, add_name, add, as, cs, bs) &&
-            distributivity(harness, mult_name, mult, add_name, add, bs, as, cs) &&
-            distributivity(harness, mult_name, mult, add_name, add, bs, cs, as) &&
-            distributivity(harness, mult_name, mult, add_name, add, cs, as, bs) &&
-            distributivity(harness, mult_name, mult, add_name, add, cs, bs, as) &&
+            distributivity(adapter, mult_name, mult, add_name, add, as, bs, cs) &&
+            distributivity(adapter, mult_name, mult, add_name, add, as, cs, bs) &&
+            distributivity(adapter, mult_name, mult, add_name, add, bs, as, cs) &&
+            distributivity(adapter, mult_name, mult, add_name, add, bs, cs, as) &&
+            distributivity(adapter, mult_name, mult, add_name, add, cs, as, bs) &&
+            distributivity(adapter, mult_name, mult, add_name, add, cs, bs, as) &&
 
             true; // added so lines above can be easily swapped
         }
@@ -283,45 +283,45 @@ namespace test {
             mult_name (mult_name), mult (mult),
             div_name  (div_name),  div  (div)
         {}
-        template<typename Harness, typename A>
-        bool valid(const Harness& harness, const many<A>& as) const {
+        template<typename Adapter, typename A>
+        bool valid(const Adapter& adapter, const many<A>& as) const {
             return 
 
-            addition      .valid(harness, as) &&
-            multiplication.valid(harness, as) &&
-            distributivity(harness, mult_name, mult, add_name, add, as, as, as) &&
+            addition      .valid(adapter, as) &&
+            multiplication.valid(adapter, as) &&
+            distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Harness, typename A, typename B>
-        bool valid(const Harness& harness, const many<A>& as, const many<B>& bs) const {
+        template<typename Adapter, typename A, typename B>
+        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
             return 
 
-            addition      .valid(harness, as, bs) &&
-            multiplication.valid(harness, as, bs) &&
+            addition      .valid(adapter, as, bs) &&
+            multiplication.valid(adapter, as, bs) &&
 
-            distributivity(harness, mult_name, mult, add_name, add, as, as, bs) &&
-            distributivity(harness, mult_name, mult, add_name, add, as, bs, as) &&
-            distributivity(harness, mult_name, mult, add_name, add, as, bs, bs) &&
-            distributivity(harness, mult_name, mult, add_name, add, bs, as, as) &&
-            distributivity(harness, mult_name, mult, add_name, add, bs, as, bs) &&
-            distributivity(harness, mult_name, mult, add_name, add, bs, bs, as) &&
+            distributivity(adapter, mult_name, mult, add_name, add, as, as, bs) &&
+            distributivity(adapter, mult_name, mult, add_name, add, as, bs, as) &&
+            distributivity(adapter, mult_name, mult, add_name, add, as, bs, bs) &&
+            distributivity(adapter, mult_name, mult, add_name, add, bs, as, as) &&
+            distributivity(adapter, mult_name, mult, add_name, add, bs, as, bs) &&
+            distributivity(adapter, mult_name, mult, add_name, add, bs, bs, as) &&
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Harness, typename A, typename B, typename C>
-        bool valid(const Harness& harness, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+        template<typename Adapter, typename A, typename B, typename C>
+        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
             return 
 
-            addition      .valid(harness, as, bs, cs) &&
-            multiplication.valid(harness, as, bs, cs) &&
+            addition      .valid(adapter, as, bs, cs) &&
+            multiplication.valid(adapter, as, bs, cs) &&
 
-            distributivity(harness, mult_name, mult, add_name, add, as, bs, cs) &&
-            distributivity(harness, mult_name, mult, add_name, add, as, cs, bs) &&
-            distributivity(harness, mult_name, mult, add_name, add, bs, as, cs) &&
-            distributivity(harness, mult_name, mult, add_name, add, bs, cs, as) &&
-            distributivity(harness, mult_name, mult, add_name, add, cs, as, bs) &&
-            distributivity(harness, mult_name, mult, add_name, add, cs, bs, as) &&
+            distributivity(adapter, mult_name, mult, add_name, add, as, bs, cs) &&
+            distributivity(adapter, mult_name, mult, add_name, add, as, cs, bs) &&
+            distributivity(adapter, mult_name, mult, add_name, add, bs, as, cs) &&
+            distributivity(adapter, mult_name, mult, add_name, add, bs, cs, as) &&
+            distributivity(adapter, mult_name, mult, add_name, add, cs, as, bs) &&
+            distributivity(adapter, mult_name, mult, add_name, add, cs, bs, as) &&
 
             true; // added so lines above can be easily swapped
         }

@@ -1,127 +1,145 @@
+#pragma once
 
-// 3rd party libraries
-#define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
+// std libraries
+#include <cmath>
+#include <limits>
+
+#define CATCH_CONFIG_MAIN  // This tells Catch to provide r main() - only do this in one cpp file
 #include <catch/catch.hpp>
 
-// in house libraries
+// in-house libraries
 #include "si.hpp"
-#include "si_test_utils.hpp"
 
-si::molar_heat_capacity<double> C1 = 2.0*si::joule/(si::kelvin*si::mole);
-si::molar_heat_capacity<double> C2 = -3.0*si::joule/(si::kelvin*si::mole);
-si::molar_heat_capacity<double> C3 = 4.0*si::joule/(si::kelvin*si::mole);
-si::luminous_intensity<double> L1 = 3.0*si::candela;
-si::luminous_intensity<double> L2 = -4.0*si::candela;
-si::luminous_intensity<double> L3 = 5.0*si::candela;
-si::voltage<double> V1 = -5.0*si::volt;
-si::voltage<double> V2 = 6.0*si::volt;
-si::voltage<double> V3 = -7.0*si::volt;
+#include <test/macros.hpp>
+#include <test/adapter.hpp>
+#include <test/structures.hpp>
 
-si::molar_heat_capacity<double> C1copy = 2.0*si::joule/(si::kelvin*si::mole);
-si::molar_heat_capacity<double> C2copy = -3.0*si::joule/(si::kelvin*si::mole);
-si::molar_heat_capacity<double> C3copy = 4.0*si::joule/(si::kelvin*si::mole);
-si::luminous_intensity<double> L1copy = 3.0*si::candela;
-si::luminous_intensity<double> L2copy = -4.0*si::candela;
-si::luminous_intensity<double> L3copy = 5.0*si::candela;
-si::voltage<double> V1copy = -5.0*si::volt;
-si::voltage<double> V2copy = 6.0*si::volt;
-si::voltage<double> V3copy = -7.0*si::volt;
-
-TEST_CASE( "units multiplication purity", "[si]" ) {
-  SECTION("Calling an operation twice with the same arguments must produce the same results")
-  {
-    CHECK(C1*C2*L1*L2*V1*V2 == C1copy*C2copy*L1copy*L2copy*V1copy*V2copy);
-  }
-}
-TEST_CASE( "units multiplication identity", "[si]" ) {
-  SECTION("There exists a entry that when applied to a function returns the original entry")
-  {
-    CHECK(C1*1.0 == C1);
-    CHECK(L1*1.0 == L1);
-    CHECK(V1*1.0 == V1);
-  }
-}
-
-TEST_CASE( "units multiplication associativity", "[si]" ) {
-  SECTION("Functions can be applied in any order and still produce the same results")
-  {
-    CHECK(C1*(L1*V1) == (C1*L1)*V1);
-  }
-}
-TEST_CASE( "units multiplication invertibility", "[si]" ) {
-  SECTION("For every function there exists another function that negates its effect")
-  {
-    CHECK(C1*L1/L1 == C1);
-    CHECK(L1*V1/V1 == L1);
-    CHECK(V1*C1/C1 == V1);
-
-    CHECK(C1*L1 * 1.0/L1 == C1);
-    CHECK(L1*V1 * 1.0/V1 == L1);
-    CHECK(V1*C1 * 1.0/C1 == V1);
-  }
-}
-TEST_CASE( "units multiplication commutativity", "[si]" ) {
-  SECTION("Functions can be applied in any order and still produce the same results")
-  {
-    CHECK(C1*L1 == L1*C1);
-    CHECK(L1*V1 == V1*L1);
-    CHECK(V1*C1 == C1*V1);
-  }
-}
-TEST_CASE( "units multiplication distributivity over addition", "[si]" ) {
-  SECTION("Functions can be applied in any order and still produce the same results")
-  {
-    CHECK(C1*(L1+L2) == C1*L1 + C1*L2);
-    CHECK(L1*(V1+V2) == L1*V1 + L1*V2);
-    CHECK(V1*(C1+C2) == V1*C1 + V1*C2);
-  }
-}
+// #include "test_tools.hpp"
 
 
+/*
+`UnitAdapter` leverages standardized function names
+to compare and display its variables
+*/
+template<typename T>
+struct UnitAdapter{
+    const T threshold;
+
+    UnitAdapter(T threshold):
+        threshold(threshold)
+    {}
+
+    template<typename T2>
+    bool equal(const T2& a, const T2& b) const {
+        const T2 denominator(si::abs(a)+si::abs(b));
+        return denominator == 0.0*denominator || 2 * si::distance(a, b) / denominator < threshold;
+    }
+    bool equal(const double a, const double b) const {
+        const double denominator(std::abs(a)+std::abs(b));
+        return denominator == 0.0*denominator || 2 * std::abs(a-b) / denominator < threshold;
+    }
+
+    template<typename T2>
+    std::string print(const T2& a) const {
+        return si::to_string(a);
+    }
+    std::string print(const double& a) const {
+        return std::to_string(a);
+    }
+
+};
 
 
-TEST_CASE( "units addition purity", "[si]" ) {
-  SECTION("Calling an operation twice with the same arguments must produce the same results")
-  {
-    CHECK(C1+C2 == C1copy+C2copy);
-    CHECK(L1+L2 == L1copy+L2copy);
-    CHECK(V1+V2 == V1copy+V2copy);
-  }
-}
-TEST_CASE( "units addition identity", "[si]" ) {
-  SECTION("There exists a entry that when applied to a function returns the original entry")
-  {
-    CHECK(C1+0.0*C2 == C1);
-    CHECK(L1+0.0*L2 == L1);
-    CHECK(V1+0.0*V2 == V1);
-  }
-}
-TEST_CASE( "units addition associativity", "[si]" ) {
-  SECTION("Functions can be applied in any order and still produce the same results")
-  {
-    CHECK(C1+(C2+C3) == (C1+C2)+C3);
-    CHECK(L1+(L2+L3) == (L1+L2)+L3);
-    CHECK(V1+(V2+V3) == (V1+V2)+V3);
-  }
-}
-TEST_CASE( "units addition invertibility", "[si]" ) {
-  SECTION("For every operation there exists another operation that negates its effect")
-  {
-    CHECK(C1+C2-C2 == C1+C2-C2);
-    CHECK(L1+L2-L2 == L1+L2-L2);
-    CHECK(V1+V2-V2 == V1+V2-V2);
+TEST_CASE( "SI dimensions are individually modules and are collectively a commutative group over multiplication", "[math]" ) {
 
-    CHECK(C1+C2 + -C2 == C1+C2 + -C2);
-    CHECK(L1+L2 + -L2 == L1+L2 + -L2);
-    CHECK(V1+V2 + -V2 == V1+V2 + -V2);
-  }
+    UnitAdapter<double> adapter(1e-2);
+
+    std::vector<double> scalars { -2.0, 2.0 }; // NOTE: we exclude zero since division by zero is not defined
+
+    std::vector<si::molar_heat_capacity<double>> heat_capacities {
+        2.0*si::joule/(si::kelvin*si::mole),
+        -3.0*si::joule/(si::kelvin*si::mole),
+        4.0*si::joule/(si::kelvin*si::mole)
+    };
+
+    std::vector<si::luminous_intensity<double>> luminous_intensities {
+        3.0*si::candela,
+        -4.0*si::candela,
+        5.0*si::candela
+    };
+
+    std::vector<si::voltage<double>> voltages {
+        -5.0*si::volt,
+        6.0*si::volt,
+        -7.0*si::volt
+    };
+
+    test::Field heat_capacity_addition(
+        "0", 0.0*si::joule/(si::kelvin*si::mole), 
+        "1", 1.0,  
+        "SI unit addition",       TEST_SYMBOL(+),
+        "SI unit subtraction",    TEST_SYMBOL(-),
+        "SI unit multiplication", TEST_SYMBOL(*),
+        "SI unit division",       TEST_SYMBOL(/)
+    );
+
+    test::Field luminous_intensity_addition(
+        "0", 0.0*si::candela, 
+        "1", 1.0,  
+        "SI unit addition",       TEST_SYMBOL(+),
+        "SI unit subtraction",    TEST_SYMBOL(-),
+        "SI unit multiplication", TEST_SYMBOL(*),
+        "SI unit division",       TEST_SYMBOL(/)
+    );
+
+    test::Field voltage_addition(
+        "0", 0.0*si::volt, 
+        "1", 1.0,  
+        "SI unit addition",       TEST_SYMBOL(+),
+        "SI unit subtraction",    TEST_SYMBOL(-),
+        "SI unit multiplication", TEST_SYMBOL(*),
+        "SI unit division",       TEST_SYMBOL(/)
+    );
+
+    test::CommutativeGroup multiplication(
+        "1", 1.0,  
+        "SI unit multiplication", TEST_SYMBOL(*),
+        "SI unit division",       TEST_SYMBOL(/)
+    );
+
+    // UNARY TESTS
+    REQUIRE(heat_capacity_addition      .valid(adapter, heat_capacities     ));
+    REQUIRE(luminous_intensity_addition .valid(adapter, luminous_intensities));
+    REQUIRE(voltage_addition            .valid(adapter, voltages            ));
+
+    REQUIRE(multiplication.valid(adapter, heat_capacities     ));
+    REQUIRE(multiplication.valid(adapter, luminous_intensities));
+    REQUIRE(multiplication.valid(adapter, voltages            ));
+
+    // BINARY TESTS
+    REQUIRE(multiplication.valid(adapter, luminous_intensities, luminous_intensities));
+    REQUIRE(multiplication.valid(adapter, luminous_intensities, heat_capacities     ));
+    REQUIRE(multiplication.valid(adapter, luminous_intensities, voltages            ));
+    REQUIRE(multiplication.valid(adapter, luminous_intensities, scalars             ));
+    REQUIRE(multiplication.valid(adapter, heat_capacities,      luminous_intensities));
+    REQUIRE(multiplication.valid(adapter, heat_capacities,      heat_capacities     ));
+    REQUIRE(multiplication.valid(adapter, heat_capacities,      voltages            ));
+    REQUIRE(multiplication.valid(adapter, heat_capacities,      scalars             ));
+    REQUIRE(multiplication.valid(adapter, voltages,             luminous_intensities));
+    REQUIRE(multiplication.valid(adapter, voltages,             heat_capacities     ));
+    REQUIRE(multiplication.valid(adapter, voltages,             voltages            ));
+    REQUIRE(multiplication.valid(adapter, voltages,             scalars             ));
+
+    // TRINARY TESTS
+    REQUIRE(multiplication.valid(adapter, luminous_intensities, heat_capacities, voltages ));
+    REQUIRE(multiplication.valid(adapter, luminous_intensities, heat_capacities, scalars  ));
+    REQUIRE(multiplication.valid(adapter, luminous_intensities, voltages,        scalars  ));
+    REQUIRE(multiplication.valid(adapter, heat_capacities,      voltages,        scalars  ));
+
 }
-TEST_CASE( "units addition commutativity", "[si]" ) {
-  SECTION("Functions can be applied in any order and still produce the same results")
-  {
-    CHECK(C1+C2 == C2+C1);
-    CHECK(L1+L2 == L2+L1);
-    CHECK(V1+V2 == V2+V1);
-  }
-}
+
+
+
+
+
 
