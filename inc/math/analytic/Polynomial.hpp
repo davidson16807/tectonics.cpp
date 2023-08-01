@@ -834,13 +834,13 @@ namespace math {
     template<typename T>
     constexpr T derivative(const Polynomial<T,0,1> p) 
     {
-        return p[0];
+        return p[1];
     }
 
     template<typename T>
     constexpr T derivative(const Polynomial<T,1,1> p) 
     {
-        return 0.0f;
+        return p[1];
     }
 
     template<typename T, int Plo, int Phi>
@@ -1277,14 +1277,15 @@ namespace math {
     }
 
 
-    template<typename T, typename Expression> constexpr T compose(const Polynomial<T,0,0>& p, const Expression& f)        { return p[0]; }
-    template<typename T>                      constexpr T compose(const Polynomial<T,0,0>& p, const int f)                { return p[0]; }
-    template<typename T>                      constexpr T compose(const Polynomial<T,0,0>& p, const float f)              { return p[0]; }
-    template<typename T>                      constexpr T compose(const Polynomial<T,0,0>& p, const double f)             { return p[0]; }
-    template<typename T>                      constexpr T compose(const Polynomial<T,0,0>& p, const Identity<T>& f)       { return p[0]; }
-    template<typename T>                      constexpr T compose(const Polynomial<T,0,0>& p, const Scaling<T>& f)        { return p[0]; }
-    template<typename T>                      constexpr T compose(const Polynomial<T,0,0>& p, const Shifting<T>& f)       { return p[0]; }
-    template<typename T>                      constexpr T compose(const Polynomial<T,0,0>& p, const Polynomial<T,0,0>& q) { return p[0]; }
+    template<typename T, 
+        typename Expression> constexpr T compose(const Polynomial<T,0,0>& p, const Expression& f)        { return p[0]; }
+    template<typename T>     constexpr T compose(const Polynomial<T,0,0>& p, const int f)                { return p[0]; }
+    template<typename T>     constexpr T compose(const Polynomial<T,0,0>& p, const float f)              { return p[0]; }
+    template<typename T>     constexpr T compose(const Polynomial<T,0,0>& p, const double f)             { return p[0]; }
+    template<typename T>     constexpr T compose(const Polynomial<T,0,0>& p, const Identity<T>& f)       { return p[0]; }
+    template<typename T>     constexpr T compose(const Polynomial<T,0,0>& p, const Scaling<T>& f)        { return p[0]; }
+    template<typename T>     constexpr T compose(const Polynomial<T,0,0>& p, const Shifting<T>& f)       { return p[0]; }
+    template<typename T>     constexpr T compose(const Polynomial<T,0,0>& p, const Polynomial<T,0,0>& q) { return p[0]; }
 
     template<typename T, int Qlo, int Qhi, 
         typename = std::enable_if_t<(Qlo >= 0 && Qhi >= 0)> >

@@ -167,23 +167,80 @@ TEST_CASE( "Polynomials are a commutative ring", "[math]" ) {
 
 
 TEST_CASE( "Polynomial integral/derivative invertibility", "[math]" ) {
-    const double threshold = 1e-6;
-    // `lo*` variables are used as bounds to a square integral 
-    // that is used to calculate deviation from the correct output.
-    const double lo = -1e3;
-    const double hi =  1e3;
-    
-    math::Polynomial<double,0,4> p = math::Polynomial<double,0,4>({1.0f,2.0f,3.0f,4.0f,5.0f});
-    math::Polynomial<double,0,4> q = math::Polynomial<double,0,4>({-1.0f,0.0f,1.0f,2.0f,3.0f});
-    // math::Polynomial<double,-2,2> r = math::Polynomial<double,-2,2>({1.0f,2.0f,3.0f,4.0f,5.0f});
-    // math::Polynomial<double,-2,2> s = math::Polynomial<double,-2,2>({-1.0f,1.0f,-2.0f,2.0f,3.0f});
 
-    SECTION("the derivative of a function's integral must equal the original function"){
-        CHECK(math::distance(p, derivative(integral(p)), lo, hi) < threshold);
-        CHECK(math::distance(q, derivative(integral(q)), lo, hi) < threshold);
-        // CHECK(math::distance(r, derivative(integral(r)), lo, hi) < threshold);
-        // CHECK(math::distance(s, derivative(integral(s)), lo, hi) < threshold);
-    }
+    ExpressionAdapter<double> broad (1e-6, -1e3, 1e3);
+
+    std::vector<math::Polynomial<double,0,4>> polynomials1 {
+        math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0}),
+        math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0})
+    };
+
+    std::vector<math::Polynomial<double,-2,2>> polynomials2 {
+        math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0}),
+        math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0})
+    };
+
+    std::vector<math::Polynomial<double,0,0>> monomials1 {
+        math::Polynomial<double,0,0> (std::array<double,1>{2.0}),
+    };
+
+    std::vector<math::Polynomial<double,2,2>> monomials2 {
+        math::Polynomial<double,2,2> (std::array<double,1>{2.0}),
+    };
+
+    std::vector<math::Polynomial<double,-2,2>> monomials3 {
+        math::Polynomial<double,-2,-2> (std::array<double,1>{2.0})
+    };
+
+    std::vector<math::Shifting<double>> shiftings {
+        math::Shifting<double>(2.0),
+        math::Shifting<double>(-2.0),
+        math::Shifting<double>(0.0)
+    };
+
+    std::vector<math::Scaling<double>> scalings {
+        math::Scaling<double>(2.0),
+        math::Scaling<double>(-2.0),
+        math::Scaling<double>(0.0)
+    };
+
+    // std::vector<double> scalars { -2.0, 0.0, 2.0 };
+
+    REQUIRE(test::left_invertibility(broad, 
+        "polynomial derivatives", TEST_UNARY(derivative),
+        "polynomial integration", TEST_UNARY(integral),
+        polynomials1));
+
+    REQUIRE(test::left_invertibility(broad, 
+        "polynomial derivatives", TEST_UNARY(derivative),
+        "polynomial integration", TEST_UNARY(integral),
+        polynomials2));
+
+    REQUIRE(test::left_invertibility(broad, 
+        "polynomial derivatives", TEST_UNARY(derivative),
+        "polynomial integration", TEST_UNARY(integral),
+        monomials1));
+
+    REQUIRE(test::left_invertibility(broad, 
+        "polynomial derivatives", TEST_UNARY(derivative),
+        "polynomial integration", TEST_UNARY(integral),
+        monomials2));
+
+    REQUIRE(test::left_invertibility(broad, 
+        "polynomial derivatives", TEST_UNARY(derivative),
+        "polynomial integration", TEST_UNARY(integral),
+        monomials3));
+
+    // test::left_invertibility(broad, 
+    //     "polynomial derivatives", TEST_UNARY(derivative),
+    //     "polynomial integration", TEST_UNARY(integral),
+    //     shiftings);
+
+    // test::left_invertibility(broad, 
+    //     "polynomial derivatives", TEST_UNARY(derivative),
+    //     "polynomial integration", TEST_UNARY(integral),
+    //     scalings);
+
 }
 
 TEST_CASE( "Polynomial composition happy path", "[math]" ) {
