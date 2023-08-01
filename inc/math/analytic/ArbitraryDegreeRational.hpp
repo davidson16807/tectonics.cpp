@@ -60,9 +60,9 @@ namespace math {
         {
         }
         template<int Plo, int Phi, int Qlo, int Qhi>
-        constexpr explicit ArbitraryDegreeRational(const Rational<T,Plo,Phi,Qlo,Qhi> p): 
-            p(p), 
-            q(1)
+        constexpr explicit ArbitraryDegreeRational(const Rational<T,Plo,Phi,Qlo,Qhi> r): 
+            p(r.p), 
+            q(r.q)
         {
         }
         constexpr T operator()(const T x) const
@@ -203,6 +203,31 @@ namespace math {
 
     };
 
+    template<typename T, typename I>
+    constexpr std::string to_string(const ArbitraryDegreeRational<T,I>& r)
+    {
+        std::string numerator   = to_string(r.p);
+        std::string denominator = to_string(r.q);
+        std::size_t line_length = std::max(numerator.size(), denominator.size());
+        std::string output;
+        output += "\r\n";
+        output += numerator;
+        output += "\r\n";
+        for (std::size_t i = 0; i < line_length; ++i)
+        {
+            output += "-";
+        }
+        output += "\r\n";
+        output += denominator;
+        output += "\r\n";
+        return output;
+    }
+
+    template<typename T, typename I>
+    std::ostream& operator<<(std::ostream& os, const ArbitraryDegreeRational<T,I>& p) { 
+        os << to_string(p);
+        return os;
+    }
 
     // an operation that defines ArbitraryDegreeRationals, 
     // implemented first to simplify implementation of other operations that are closed under ArbitraryDegreeRationals
@@ -264,6 +289,71 @@ namespace math {
 
 
 
+
+
+    template<typename T, typename I, int Plo, int Phi, int Qlo, int Qhi>
+    constexpr auto operator+(const Rational<T,Plo,Phi,Qlo,Qhi>& r, const ArbitraryDegreePolynomial<T,I>& p)
+    {
+        ArbitraryDegreeRational<T,I> y(r);
+        y += p;
+        return y;
+    }
+    template<typename T, typename I, int Plo, int Phi, int Qlo, int Qhi>
+    constexpr auto operator-(const Rational<T,Plo,Phi,Qlo,Qhi>& r, const ArbitraryDegreePolynomial<T,I>& p)
+    {
+        ArbitraryDegreeRational<T,I> y(r);
+        y -= p;
+        return y;
+    }
+    template<typename T, typename I, int Plo, int Phi, int Qlo, int Qhi>
+    constexpr auto operator*(const Rational<T,Plo,Phi,Qlo,Qhi>& r, const ArbitraryDegreePolynomial<T,I>& p)
+    {
+        ArbitraryDegreeRational<T,I> y(r);
+        y *= p;
+        return y;
+    }
+    template<typename T, typename I, int Plo, int Phi, int Qlo, int Qhi>
+    constexpr auto operator/(const Rational<T,Plo,Phi,Qlo,Qhi>& r, const ArbitraryDegreePolynomial<T,I>& p)
+    {
+        ArbitraryDegreeRational<T,I> y(r);
+        y /= p;
+        return y;
+    }
+
+
+
+    template<typename T, typename I, int Plo, int Phi, int Qlo, int Qhi>
+    constexpr auto operator+(const ArbitraryDegreePolynomial<T,I>& p, const Rational<T,Plo,Phi,Qlo,Qhi>& r)
+    {
+        ArbitraryDegreeRational<T,I> y(r);
+        y += p;
+        return y;
+    }
+    template<typename T, typename I, int Plo, int Phi, int Qlo, int Qhi>
+    constexpr auto operator-(const ArbitraryDegreePolynomial<T,I>& p, const Rational<T,Plo,Phi,Qlo,Qhi>& r)
+    {
+        ArbitraryDegreeRational<T,I> y(r);
+        y *= T(-1);
+        y += p;
+        return y;
+    }
+    template<typename T, typename I, int Plo, int Phi, int Qlo, int Qhi>
+    constexpr auto operator*(const ArbitraryDegreePolynomial<T,I>& p, const Rational<T,Plo,Phi,Qlo,Qhi>& r)
+    {
+        ArbitraryDegreeRational<T,I> y(r);
+        y *= p;
+        return y;
+    }
+    template<typename T, typename I, int Plo, int Phi, int Qlo, int Qhi>
+    constexpr auto operator/(const ArbitraryDegreePolynomial<T,I>& p, const Rational<T,Plo,Phi,Qlo,Qhi>& r)
+    {
+        return (p*r.q)/r.p;
+    }
+
+
+
+
+
     template<typename T, typename I, int Plo, int Phi>
     constexpr auto operator+(const ArbitraryDegreeRational<T,I>& r, const Polynomial<T,Plo,Phi>& p)
     {
@@ -320,7 +410,7 @@ namespace math {
     template<typename T, typename I, int Plo, int Phi>
     constexpr auto operator/(const Polynomial<T,Plo,Phi>& p, const ArbitraryDegreeRational<T,I>& r)
     {
-        return r.q/(r.p*p);
+        return (p*r.q)/r.p;
     }
 
 
@@ -416,7 +506,7 @@ namespace math {
     template<typename T, typename I>
     constexpr auto operator/(const ArbitraryDegreePolynomial<T,I>& p, const ArbitraryDegreeRational<T,I>& r)
     {
-        return r.q/(r.p*p);
+        return (p*r.q)/r.p;
     }
 
 
