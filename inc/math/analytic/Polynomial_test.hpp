@@ -12,15 +12,75 @@
 #include <math/analytic/Polynomial.hpp>
 
 #include <test/macros.hpp>
-#include <test/adapter.hpp>
 #include <test/structures.hpp>
 
 #include "test_tools.hpp"
 
+TEST_CASE( "Nonlaurent polynomials are a monoid under composition", "[math]" ) {
+
+    ExpressionAdapter<double> broad (1e-6, -1e3, 1e3);
+    ExpressionAdapter<double> narrow(1e-5, -1e2, 1e2);
+
+    /*
+    NOTE: we work with lower order polynomials since associativity tests 
+    for larger orders will cause false positives due to precision issues.
+    */
+    std::vector<math::Polynomial<double,0,3>> polynomials1 {
+        math::Polynomial<double,0,3>({1.0,2.0,3.0,4.0}),
+        math::Polynomial<double,0,3>({-1.0,0.0,1.0,2.0})
+    };
+
+    std::vector<math::Polynomial<double,0,0>> monomials1 {
+        math::Polynomial<double,0,0> (std::array<double,1>{2.0}),
+    };
+
+    std::vector<math::Polynomial<double,2,2>> monomials2 {
+        math::Polynomial<double,2,2> (std::array<double,1>{2.0}),
+    };
+
+    std::vector<math::Shifting<double>> shiftings {
+        math::Shifting<double>(2.0),
+        math::Shifting<double>(-2.0),
+        math::Shifting<double>(0.0)
+    };
+
+    std::vector<math::Scaling<double>> scalings {
+        math::Scaling<double>(2.0),
+        math::Scaling<double>(-2.0),
+        math::Scaling<double>(0.0)
+    };
+
+    test::Monoid monoid(
+        "the identity function", math::Identity<double>(),
+        "composition",           TEST_BINARY(math::compose)
+    );
+
+    // UNARY TESTS
+    REQUIRE(monoid.valid(narrow, polynomials1));
+    REQUIRE(monoid.valid(broad, monomials1));
+    REQUIRE(monoid.valid(broad, monomials2));
+    REQUIRE(monoid.valid(broad, shiftings));
+    REQUIRE(monoid.valid(broad, scalings));
+
+    // BINARY TESTS
+    REQUIRE(monoid.valid(broad, polynomials1, monomials1  ));
+    REQUIRE(monoid.valid(broad, polynomials1, monomials2  ));
+    REQUIRE(monoid.valid(broad, polynomials1, shiftings   ));
+    REQUIRE(monoid.valid(broad, polynomials1, scalings    ));
+    REQUIRE(monoid.valid(broad, shiftings,    scalings    ));
+
+    // REQUIRE(monoid.valid(broad, polynomials1, monomials1, monomials2));
+    // REQUIRE(monoid.valid(broad, polynomials1, monomials1, shiftings));
+    // REQUIRE(monoid.valid(broad, polynomials1, monomials1, scalings));
+    // REQUIRE(monoid.valid(broad, polynomials1, monomials2, shiftings));
+    // REQUIRE(monoid.valid(broad, polynomials1, monomials2, scalings));
+    REQUIRE(monoid.valid(broad, polynomials1, shiftings,  scalings));
+
+}
+
 TEST_CASE( "Polynomials are a commutative ring", "[math]" ) {
 
     ExpressionAdapter<double> broad (1e-6, -1e3, 1e3);
-    ExpressionAdapter<double> narrow(1e-6, -1e2, 1e2);
 
     std::vector<math::Polynomial<double,0,4>> polynomials1 {
         math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0}),
@@ -77,6 +137,7 @@ TEST_CASE( "Polynomials are a commutative ring", "[math]" ) {
     REQUIRE(commutative_ring.valid(broad, monomials3));
     REQUIRE(commutative_ring.valid(broad, shiftings));
     REQUIRE(commutative_ring.valid(broad, scalings));
+    REQUIRE(commutative_ring.valid(broad, scalars));
 
     // BINARY TESTS
     REQUIRE(commutative_ring.valid(broad, polynomials1, polynomials2));
@@ -92,6 +153,7 @@ TEST_CASE( "Polynomials are a commutative ring", "[math]" ) {
     REQUIRE(commutative_ring.valid(broad, polynomials2, shiftings   ));
     REQUIRE(commutative_ring.valid(broad, polynomials2, scalings    ));
     REQUIRE(commutative_ring.valid(broad, polynomials2, scalars     ));
+    REQUIRE(commutative_ring.valid(broad, shiftings,    scalings    ));
 
     REQUIRE(commutative_ring.valid(broad, polynomials1, polynomials2, monomials1));
     REQUIRE(commutative_ring.valid(broad, polynomials1, polynomials2, monomials2));

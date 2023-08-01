@@ -11,7 +11,6 @@
 #include <math/analytic/ArbitraryDegreePolynomial.hpp>  
 
 #include <test/macros.hpp>
-#include <test/adapter.hpp>
 #include <test/structures.hpp>
 
 #include "test_tools.hpp"

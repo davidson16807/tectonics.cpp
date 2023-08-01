@@ -91,17 +91,31 @@ namespace math {
     
 
 
+    template<typename T, typename Expression>
+    constexpr auto compose(const Shifting<T> f, const Expression& g)
+    {
+        return g+f.offset;
+    }
+    template<typename T>
+    constexpr auto compose(const Shifting<T> f, const Identity<T>& g)
+    {
+        return g+f.offset;
+    }
+
+    template<typename T> constexpr T compose(const Shifting<T>& f, const int k)    { return f(k); }
+    template<typename T> constexpr T compose(const Shifting<T>& f, const float k)  { return f(k); }
+    template<typename T> constexpr T compose(const Shifting<T>& f, const double k) { return f(k); }
+
     template<typename T>
     constexpr Shifting<T> inverse(const Shifting<T> f) 
     {
         return Shifting<T>(-f.offset);
     }
 
-
-    
     template<typename T>
     constexpr T derivative(const Shifting<T> f) 
     {
         return T(1);
     }
+
 }

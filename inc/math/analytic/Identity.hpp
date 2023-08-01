@@ -26,7 +26,17 @@ namespace math {
     template<typename T>
     constexpr T operator/(const Identity<T> e1, const Identity<T> e2)
     {
-        return T(0.0);
+        return T(1.0);
     }
+
+
+    template<typename T, typename Expression> constexpr Expression compose(const Identity<T> e, const Expression& f) { return f;    }
+    template<typename T, typename Expression> constexpr Expression compose(const Expression& f, const Identity<T> e) { return f;    }
+    template<typename Expression>             constexpr double compose(const double k, const Expression& f)          { return k;    }
+    template<typename Expression>             constexpr auto   compose(const Expression& f, const double k)          { return f(k); }
+    template<typename Expression>             constexpr double compose(const float k, const Expression& f)           { return k;    }
+    template<typename Expression>             constexpr auto   compose(const Expression& f, const float k)           { return f(k); }
+    template<typename Expression>             constexpr double compose(const int k, const Expression& f)             { return k;    }
+    template<typename Expression>             constexpr auto   compose(const Expression& f, const int k)             { return f(k); }
 
 }
