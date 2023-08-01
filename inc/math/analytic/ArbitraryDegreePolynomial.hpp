@@ -170,13 +170,15 @@ namespace math {
     {
         // const std::string exponents("⁰¹²³⁴⁵⁶⁷⁸⁹");
         std::string output;
-        for (auto pair1 : p.k)
+        bool first = true;
+        for (const auto pair1 : p.k)
         {
             I i = pair1.first;
+            output += first? "" : " + ";
             output += std::to_string(p[i]);
             output += i==0?             "" : "x";
             output += 0<=i&&i<=1?       "" : "^" + std::to_string(i);
-            output += pair1!=p.k.end()? "" : " + ";
+            first = false;
         }
         return output;
     }
