@@ -16,7 +16,66 @@
 
 #include "test_tools.hpp"
 
-TEST_CASE( "Nonlaurent polynomials are a monoid under composition", "[math]" ) {
+TEST_CASE( "The distance between Nonlaurent polynomials is a metric", "[math]" ) {
+
+    ExpressionAdapter<double> broad (1e-6, -1e3, 1e3);
+    ExpressionAdapter<double> narrow(1e-5, -1e2, 1e2);
+
+    /*
+    NOTE: we work with lower order polynomials since associativity tests 
+    for larger orders will cause false positives due to precision issues.
+    */
+    std::vector<math::Polynomial<double,0,3>> polynomials1 {
+        math::Polynomial<double,0,3>({1.0,2.0,3.0,4.0}),
+        math::Polynomial<double,0,3>({-1.0,0.0,1.0,2.0})
+    };
+
+    std::vector<math::Polynomial<double,0,0>> monomials1 {
+        math::Polynomial<double,0,0> (std::array<double,1>{2.0}),
+    };
+
+    std::vector<math::Polynomial<double,2,2>> monomials2 {
+        math::Polynomial<double,2,2> (std::array<double,1>{2.0}),
+    };
+
+    std::vector<math::Shifting<double>> shiftings {
+        math::Shifting<double>(2.0),
+        math::Shifting<double>(-2.0),
+        math::Shifting<double>(0.0)
+    };
+
+    std::vector<math::Scaling<double>> scalings {
+        math::Scaling<double>(2.0),
+        math::Scaling<double>(-2.0),
+        math::Scaling<double>(0.0)
+    };
+
+    test::Metric metric("polynomial distance", [=](auto x, auto y) { return math::distance(x,y,-1e3, 1e3); } );
+
+    // UNARY TESTS
+    REQUIRE(metric.valid(narrow, polynomials1));
+    REQUIRE(metric.valid(broad, monomials1));
+    REQUIRE(metric.valid(broad, monomials2));
+    REQUIRE(metric.valid(broad, shiftings));
+    REQUIRE(metric.valid(broad, scalings));
+
+    // BINARY TESTS
+    REQUIRE(metric.valid(broad, polynomials1, monomials1  ));
+    REQUIRE(metric.valid(broad, polynomials1, monomials2  ));
+    REQUIRE(metric.valid(broad, polynomials1, shiftings   ));
+    REQUIRE(metric.valid(broad, polynomials1, scalings    ));
+    // REQUIRE(metric.valid(broad, shiftings,    scalings    ));
+
+    // REQUIRE(metric.valid(broad, polynomials1, monomials1, monomials2));
+    // REQUIRE(metric.valid(broad, polynomials1, monomials1, shiftings));
+    // REQUIRE(metric.valid(broad, polynomials1, monomials1, scalings));
+    // REQUIRE(metric.valid(broad, polynomials1, monomials2, shiftings));
+    // REQUIRE(metric.valid(broad, polynomials1, monomials2, scalings));
+    // REQUIRE(metric.valid(broad, polynomials1, shiftings,  scalings));
+
+}
+
+TEST_CASE( "Nonlaurent polynomial composition is a monoid", "[math]" ) {
 
     ExpressionAdapter<double> broad (1e-6, -1e3, 1e3);
     ExpressionAdapter<double> narrow(1e-5, -1e2, 1e2);
@@ -78,7 +137,7 @@ TEST_CASE( "Nonlaurent polynomials are a monoid under composition", "[math]" ) {
 
 }
 
-TEST_CASE( "Polynomials are a commutative ring", "[math]" ) {
+TEST_CASE( "Polynomial arithmetic is a commutative ring", "[math]" ) {
 
     ExpressionAdapter<double> broad (1e-6, -1e3, 1e3);
 
@@ -166,7 +225,7 @@ TEST_CASE( "Polynomials are a commutative ring", "[math]" ) {
 
 
 
-TEST_CASE( "Polynomial integral/derivative invertibility", "[math]" ) {
+TEST_CASE( "Nonlaurent Polynomial calculus is left invertible", "[math]" ) {
 
     ExpressionAdapter<double> broad (1e-6, -1e3, 1e3);
 

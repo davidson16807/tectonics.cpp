@@ -6,11 +6,12 @@ that are defined for convenience to simplify specification
 of lambdas that follow very regular formats.
 
 Macros are used since some language constructs such as 
-class methods and operators cannot be passed directly as parameters,
-and defining lambdas that wraps these constructs 
-would make it harder to read and write unit tests.
+class methods and operators cannot be passed directly as parameters
 
-Since the intended use case is restricted to a test environment,
+Defining lambdas that wraps these constructs 
+would make it harder to read and write unit tests.
+Macros get around this. Macros carry disadvantages,
+but since the intended use case is restricted to a test environment,
 the risks associated with macros are reduced 
 to the point where ease of use is preferred.
 */

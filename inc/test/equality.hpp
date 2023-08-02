@@ -72,7 +72,8 @@ namespace test {
                 std::cout << std::endl;
                 std::cout << "Test failed: " << std::endl;
                 std::cout << "  " << property << std::endl;
-                std::cout << "  such that:" << std::regex_replace(lhs_name, std::regex(" +$"), "") << " = " << rhs_name << std::endl;
+                std::cout << "  such that:" << std::endl << std::endl;
+                std::cout << "    " << std::regex_replace(lhs_name, std::regex(" +$"), "") << " = " << rhs_name << std::endl << std::endl;
                 std::cout << "  " << lhs_name << " :  " << adapter.print(lhs_value) << std::endl;
                 std::cout << "  " << rhs_name << " :  " << adapter.print(rhs_value) << std::endl;
                 std::cout << "  a :  " << adapter.print(a[i]) << " [from index "<< i <<"]" << std::endl;

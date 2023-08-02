@@ -541,11 +541,8 @@ namespace test {
         return predicate(
             adapter,
             f_name + " must only produce output that is " + validity_name,
-            [=](A a){ 
-                return valid(
-                    f(a)
-                );
-            }, as);
+            [=](A a){ return valid( f(a) ); }, 
+            as);
     }
 
     template<typename Adapter, typename Valid, typename F, typename A, typename B>
@@ -557,11 +554,8 @@ namespace test {
         return predicate(
             adapter,
             f_name + " must only produce output that is " + validity_name, 
-            [=](A a, B b){ 
-                return valid(
-                    f(a, b)
-                );
-            }, as, bs);
+            [=](A a, B b){  return valid( f(a, b) ); }, 
+            as, bs);
     }
 
     template<typename Adapter, typename Valid, typename F, typename A, typename B, typename C>
@@ -573,41 +567,63 @@ namespace test {
         return predicate(
             adapter,
             f_name + " must only produce output that is " + validity_name, 
-            [=](A a, B b, C c){ 
-                return valid(
-                    f(a, b, c)
-                );
-            }, as, bs, cs);
+            [=](A a, B b, C c){  return valid( f(a, b, c) ); }, 
+            as, bs, cs);
     }
 
-    template<typename Adapter, typename LT, typename Add, typename Distance, typename A, typename B, typename C>
+    template<typename Adapter, typename LessThanEqual, typename Add, typename F, typename A, typename B, typename C>
     bool triangle_inequality(const Adapter& adapter, 
-        const LT& lt, const Add& add, const Distance& distance, 
+        const LessThanEqual& leq, const Add& add, 
+        const std::string f_name, const F& f, 
         const many<A>& as, const many<B>& bs, const many<C>& cs
     ) {
         return predicate(
             adapter,
-            "triangle inequality", 
-            [=](A a, B b, C c){
-                return lt(distance(a, c), add(distance(a, b), distance(b, c)));
-            }, as, bs, cs);
+            f_name + " must satisfy the triangle inequality, so for any set of arguments the smallest sum of invocations using those arguments is a single invocation", 
+            [=](A a, B b, C c){ return leq(f(a, c), add(f(a, b), f(b, c))); }, 
+            as, bs, cs);
     }
 
 
-    template<typename Adapter, typename Distance, typename A, typename B, typename C>
-    bool triangle_inequality(const Adapter& adapter, 
-        const Distance& distance, 
+
+
+
+    template<typename Adapter, typename Finv, typename F, typename A, typename B, typename C>
+    bool left_cancellative(const Adapter& adapter, 
+        const std::string finv_name, const Finv& finv, 
+        const std::string f_name,    const F& f, 
         const many<A>& as, const many<B>& bs, const many<C>& cs
     ) {
         return predicate(
             adapter,
-            "triangle inequality", 
-            [=](A a, B b, C c){
-                return distance(a, c) < distance(a, b) + distance(b, c);
-            }, as, bs, cs);
+            f_name + " [denoted \"f\"] must imply that two arguments are equal if invoking them both on the left with with the same right argument produces the same result", 
+            [=](A a, B b, C c){ return adapter.equal(f(a,b), f(a,c))? adapter.equal(b,c) : true; }, 
+            as, bs, cs);
     }
 
+    template<typename Adapter, typename Finv, typename F, typename A, typename B, typename C>
+    bool right_cancellative(const Adapter& adapter, 
+        const std::string finv_name, const Finv& finv, 
+        const std::string f_name,    const F& f, 
+        const many<A>& as, const many<B>& bs, const many<C>& cs
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must imply that two arguments are equal if invoking them both on the right with with the same left argument produces the same result", 
+            [=](A a, B b, C c){ return adapter.equal(f(b,a), f(c,a))? adapter.equal(b,c) : true; }, 
+            as, bs, cs);
+    }
 
+    template<typename Adapter, typename Finv, typename F, typename A, typename B, typename C>
+    bool cancellative(const Adapter& adapter, 
+        const std::string finv_name, const Finv& finv, 
+        const std::string f_name, const F& f, 
+        const many<A>& as, const many<B>& bs, const many<C>& cs
+    ) {
+        return 
+            left_cancellative (adapter, finv_name, finv, f_name, f, as) &&
+            right_cancellative(adapter, finv_name, finv, f_name, f, as);
+    }
 
 
 
@@ -619,9 +635,7 @@ namespace test {
         return predicate(
             adapter,
             "reflexivity", 
-            [=](A a){ 
-                return r(a, a);
-            }, as);
+            [=](A a){ return r(a, a); }, as);
     }
 
     template<typename Adapter, typename R, typename A, typename B>
@@ -632,9 +646,7 @@ namespace test {
         return predicate(
             adapter,
             "irreflexivity", 
-            [=](A a){ 
-                return !r(a, a);
-            }, as);
+            [=](A a){ return !r(a, a); }, as);
     }
 
     template<typename Adapter, typename R, typename A, typename B>
