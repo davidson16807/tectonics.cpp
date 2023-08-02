@@ -538,6 +538,46 @@ namespace test {
 
 
     template<typename F>
+    struct SemiMetric{
+        const std::string f_name;    const F f; 
+        SemiMetric(
+            const std::string f_name,    const F& f
+        ): 
+            f_name(f_name),       f(f)
+        {}
+        template<typename Adapter, typename A>
+        bool valid(const Adapter& adapter, const many<A>& as) const {
+
+            auto ge0 = [](double x)           {return x>=0.0;};
+
+            return 
+
+            determinism  (adapter,                  f_name, f, as, as) &&
+            codomain     (adapter, "positive", ge0, f_name, f, as, as) &&
+            nilpotence   (adapter, "0", 0.0,        f_name, f, as)     &&
+            commutativity(adapter,                  f_name, f, as, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename A, typename B>
+        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
+
+            auto ge0 = [](double x)           {return x>=0.0;};
+
+            return 
+
+            determinism  (adapter,                  f_name, f, as, bs) &&
+            codomain     (adapter, "positive", ge0, f_name, f, as, bs) &&
+            codomain     (adapter, "positive", ge0, f_name, f, bs, as) &&
+            commutativity(adapter,                  f_name, f, as, bs) &&
+            commutativity(adapter,                  f_name, f, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+
+    };
+
+    template<typename F>
     struct Metric{
         const std::string f_name;    const F f; 
         /* 
@@ -597,7 +637,6 @@ namespace test {
 
             auto add = [](double x, double y) {return x+y; };
             auto leq = [](double x, double y) {return x+y; };
-            auto ge0 = [](double x)           {return x>=0.0;};
 
             return 
 

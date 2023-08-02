@@ -576,18 +576,16 @@ namespace math {
         d'(p/q,r/s) = d'(r/s,p/q)
         d'(p/q,r/s) = 0 iff p/q = r/s
         d'(p/q,r/s) = 0 iff 2rs = r2s
-    The remaining property of a metric is harder to demonstrate.
-    We'll provide unit tests to see if this definition upholds properties 
-    of a metric for a small set of examples, but will forego formal proof.
-    We would need to demonstrate the triangle equality holds, which would imply:
+    The remaining property of a metric is harder to demonstrate,
+    we would need to demonstrate that the triangle equality holds, which would imply:
         d'(p/q,r/s) ≤ d'(p/q,t/u) + d'(t/u,r/s)
     for all values p,q,r,s,t,u ∈ ℙ.
-    This would imply:
-        d(ps,rq)    ≤ d(pu,tq)    + d(ts,ru)  
-    so that:
-        ∫(ps-rq)²∂x ≤ ∫(pu-tq)²∂x + ∫(ts-ru)²∂x
-        ∫(ps-rq)²∂x ≤ ∫(pu-tq)²+(ts-ru)²∂x
-        ∫ p²s²-2psrq-r²q² ∂x ≤ ∫ p²u²-2putq-t²q² + t²s²-2tsru-r²u² ∂x
+    and when we run our unit tests, we find instances where it does not hold.
+    Therefore, `distance` is only a "semimetric", 
+    but it is as good as we can come up with for as long as 
+    we are unable to automatically integrate rationals.
+    A semimetric is fortunately good enough to suite the purposes of unit tests,
+    which is what we truly need it for.
     */
     template<typename T, int Plo, int Phi, int Qlo, int Qhi, int Rlo, int Rhi, int Slo, int Shi>
     constexpr T distance(

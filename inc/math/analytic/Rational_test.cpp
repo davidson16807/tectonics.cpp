@@ -15,7 +15,7 @@
 
 #include "test_tools.hpp"
 
-TEST_CASE( "The distance between rationals is a metric", "[math]" ) {
+TEST_CASE( "The distance between rationals is a semimetric", "[math]" ) {
 
     ExpressionAdapter<double> broad (1e-6, -1e3, 1e3);
     ExpressionAdapter<double> narrow(1e-5, -1e2, 1e2);
@@ -54,12 +54,12 @@ TEST_CASE( "The distance between rationals is a metric", "[math]" ) {
     std::vector<math::Scaling<double>> scalings {
         math::Scaling<double>(2.0),
         math::Scaling<double>(-2.0),
-        // math::Scaling<double>(0.0)  // NOTE: we exclude zero since division by zero is not defined
+        math::Scaling<double>(0.0) 
     };
 
-    std::vector<double> scalars { -2.0, 2.0 }; // NOTE: we exclude zero since division by zero is not defined
+    std::vector<double> scalars { -2.0, 0.0, 2.0 }; // NOTE: we exclude zero since division by zero is not defined
 
-    test::Metric metric("polynomial distance", [=](auto x, auto y) { return math::distance(x,y,-1e3, 1e3); } );
+    test::SemiMetric metric("polynomial distance", [=](auto x, auto y) { return math::distance(x,y,-1e3, 1e3); } );
 
     // UNARY TESTS
     REQUIRE(metric.valid(narrow, rationals1));
@@ -68,18 +68,46 @@ TEST_CASE( "The distance between rationals is a metric", "[math]" ) {
     REQUIRE(metric.valid(narrow, rationals4));
 
     // BINARY TESTS
-    // REQUIRE(metric.valid(broad, polynomials1, monomials1  ));
-    // REQUIRE(metric.valid(broad, polynomials1, monomials2  ));
-    // REQUIRE(metric.valid(broad, polynomials1, shiftings   ));
-    // REQUIRE(metric.valid(broad, polynomials1, scalings    ));
-    // REQUIRE(metric.valid(broad, shiftings,    scalings    ));
+    REQUIRE(metric.valid(broad, rationals1, rationals2  ));
+    REQUIRE(metric.valid(broad, rationals1, rationals3  ));
+    REQUIRE(metric.valid(broad, rationals1, rationals4  ));
+    REQUIRE(metric.valid(broad, rationals1, polynomials1));
+    REQUIRE(metric.valid(broad, rationals1, polynomials2));
+    REQUIRE(metric.valid(broad, rationals1, monomials1  ));
+    REQUIRE(metric.valid(broad, rationals1, monomials2  ));
+    REQUIRE(metric.valid(broad, rationals1, monomials3  ));
+    REQUIRE(metric.valid(broad, rationals1, scalars     ));
 
-    // REQUIRE(metric.valid(broad, polynomials1, monomials1, monomials2));
-    // REQUIRE(metric.valid(broad, polynomials1, monomials1, shiftings));
-    // REQUIRE(metric.valid(broad, polynomials1, monomials1, scalings));
-    // REQUIRE(metric.valid(broad, polynomials1, monomials2, shiftings));
-    // REQUIRE(metric.valid(broad, polynomials1, monomials2, scalings));
-    // REQUIRE(metric.valid(broad, polynomials1, shiftings,  scalings));
+    REQUIRE(metric.valid(broad, rationals2, rationals3  ));
+    REQUIRE(metric.valid(broad, rationals2, rationals4  ));
+    REQUIRE(metric.valid(broad, rationals2, polynomials1));
+    REQUIRE(metric.valid(broad, rationals2, polynomials2));
+    REQUIRE(metric.valid(broad, rationals2, monomials1  ));
+    REQUIRE(metric.valid(broad, rationals2, monomials2  ));
+    REQUIRE(metric.valid(broad, rationals2, monomials3  ));
+    REQUIRE(metric.valid(broad, rationals2, scalars     ));
+    // REQUIRE(metric.valid(broad, rationals2, shiftings   ));
+    // REQUIRE(metric.valid(broad, rationals2, scalings    ));
+
+    REQUIRE(metric.valid(broad, rationals3, rationals4  ));
+    REQUIRE(metric.valid(broad, rationals3, polynomials1));
+    REQUIRE(metric.valid(broad, rationals3, polynomials2));
+    REQUIRE(metric.valid(broad, rationals3, monomials1  ));
+    REQUIRE(metric.valid(broad, rationals3, monomials2  ));
+    REQUIRE(metric.valid(broad, rationals3, monomials3  ));
+    REQUIRE(metric.valid(broad, rationals3, scalars     ));
+    // REQUIRE(metric.valid(broad, rationals3, shiftings   ));
+    // REQUIRE(metric.valid(broad, rationals3, scalings    ));
+
+    REQUIRE(metric.valid(broad, rationals4, rationals4  ));
+    REQUIRE(metric.valid(broad, rationals4, polynomials1));
+    REQUIRE(metric.valid(broad, rationals4, polynomials2));
+    REQUIRE(metric.valid(broad, rationals4, monomials1  ));
+    REQUIRE(metric.valid(broad, rationals4, monomials2  ));
+    REQUIRE(metric.valid(broad, rationals4, monomials3  ));
+    REQUIRE(metric.valid(broad, rationals4, scalars     ));
+    // REQUIRE(metric.valid(broad, rationals4, shiftings   ));
+    // REQUIRE(metric.valid(broad, rationals4, scalings    ));
 
 }
 

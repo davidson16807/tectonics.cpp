@@ -39,4 +39,11 @@ namespace math {
     template<typename Expression>             constexpr double compose(const int k, const Expression& f)             { return k;    }
     template<typename Expression>             constexpr auto   compose(const Expression& f, const int k)             { return f(k); }
 
+    template<typename T>
+    constexpr T distance(const Identity<T> a, const Identity<T> b, const double lo, const double hi){ return T(0); }
+    
+    template<typename T>
+    constexpr T distance(const T a, const T b, const T lo, const T hi){ return std::abs(a-b); }
+
+
 }
