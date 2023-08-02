@@ -15,6 +15,74 @@
 
 #include "test_tools.hpp"
 
+TEST_CASE( "The distance between rationals is a metric", "[math]" ) {
+
+    ExpressionAdapter<double> broad (1e-6, -1e3, 1e3);
+    ExpressionAdapter<double> narrow(1e-5, -1e2, 1e2);
+
+    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
+
+    std::vector<math::Polynomial<double,0,4>> polynomials1  { p0,q0 };
+    std::vector<math::Polynomial<double,-2,2>> polynomials2 { p1,q1 };
+
+    std::vector<math::Rational<double,0,4,0,4>>   rationals1 { p0/q0 };
+    std::vector<math::Rational<double,-2,2,0,4>>  rationals2 { p1/q0 };
+    std::vector<math::Rational<double,0,4,-2,2>>  rationals3 { p0/q1 };
+    std::vector<math::Rational<double,-2,2,-2,2>> rationals4 { p1/q1 };
+
+    std::vector<math::Polynomial<double,0,0>> monomials1 {
+        math::Polynomial<double,0,0> (std::array<double,1>{2.0}),
+    };
+
+    std::vector<math::Polynomial<double,2,2>> monomials2 {
+        math::Polynomial<double,2,2> (std::array<double,1>{2.0}),
+    };
+
+    std::vector<math::Polynomial<double,-2,2>> monomials3 {
+        math::Polynomial<double,-2,-2> (std::array<double,1>{2.0})
+    };
+
+    std::vector<math::Shifting<double>> shiftings {
+        math::Shifting<double>(2.0),
+        math::Shifting<double>(-2.0),
+        math::Shifting<double>(0.0)
+    };
+
+    std::vector<math::Scaling<double>> scalings {
+        math::Scaling<double>(2.0),
+        math::Scaling<double>(-2.0),
+        // math::Scaling<double>(0.0)  // NOTE: we exclude zero since division by zero is not defined
+    };
+
+    std::vector<double> scalars { -2.0, 2.0 }; // NOTE: we exclude zero since division by zero is not defined
+
+    test::Metric metric("polynomial distance", [=](auto x, auto y) { return math::distance(x,y,-1e3, 1e3); } );
+
+    // UNARY TESTS
+    REQUIRE(metric.valid(narrow, rationals1));
+    REQUIRE(metric.valid(narrow, rationals2));
+    REQUIRE(metric.valid(narrow, rationals3));
+    REQUIRE(metric.valid(narrow, rationals4));
+
+    // BINARY TESTS
+    // REQUIRE(metric.valid(broad, polynomials1, monomials1  ));
+    // REQUIRE(metric.valid(broad, polynomials1, monomials2  ));
+    // REQUIRE(metric.valid(broad, polynomials1, shiftings   ));
+    // REQUIRE(metric.valid(broad, polynomials1, scalings    ));
+    // REQUIRE(metric.valid(broad, shiftings,    scalings    ));
+
+    // REQUIRE(metric.valid(broad, polynomials1, monomials1, monomials2));
+    // REQUIRE(metric.valid(broad, polynomials1, monomials1, shiftings));
+    // REQUIRE(metric.valid(broad, polynomials1, monomials1, scalings));
+    // REQUIRE(metric.valid(broad, polynomials1, monomials2, shiftings));
+    // REQUIRE(metric.valid(broad, polynomials1, monomials2, scalings));
+    // REQUIRE(metric.valid(broad, polynomials1, shiftings,  scalings));
+
+}
+
 TEST_CASE( "Rationals are a field", "[math]" ) {
 
     ExpressionAdapter<double> broad (1e-6, -1e3, 1e3);
