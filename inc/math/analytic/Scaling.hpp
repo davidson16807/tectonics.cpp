@@ -56,7 +56,7 @@ namespace math {
     constexpr std::string to_string(const Scaling<T>& f)
     {
         // const std::string exponents("⁰¹²³⁴⁵⁶⁷⁸⁹");
-        return std::to_string(f.factor) + "x";
+        return std::to_string(f.factor) + "*x";
     }
 
     template<typename T>

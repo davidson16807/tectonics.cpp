@@ -39,7 +39,7 @@ namespace math {
     constexpr std::string to_string(const Shifting<T>& f)
     {
         // const std::string exponents("⁰¹²³⁴⁵⁶⁷⁸⁹");
-        return "x"+std::to_string(f.offset);
+        return std::string("x") + (f.offset>=0?"+":"") + std::to_string(f.offset);
     }
 
     template<typename T>

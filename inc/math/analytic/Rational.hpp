@@ -536,10 +536,22 @@ namespace math {
 
 
 
-    template<typename T, int Plo, int Phi, int Qlo, int Qhi, typename F>
-    constexpr Rational<T,Plo,Phi,Qlo,Qhi> compose(const Rational<T,Plo,Phi,Qlo,Qhi>& r, const F& f)
+    template<typename T, int Plo, int Phi, int Qlo, int Qhi, int Nlo, int Nhi>
+    constexpr Rational<T,Plo,Phi,Qlo,Qhi> compose(const Rational<T,Plo,Phi,Qlo,Qhi>& r, const Polynomial<T,Nlo,Nhi>& p)
     {
-        return compose(r.p, f) / compose(r.q, f);
+        return compose(r.p, p) / compose(r.q, p);
+    }
+
+    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
+    constexpr Rational<T,Plo,Phi,Qlo,Qhi> compose(const Rational<T,Plo,Phi,Qlo,Qhi>& r, const Shifting<T>& p)
+    {
+        return compose(r.p, p) / compose(r.q, p);
+    }
+
+    template<typename T, int Plo, int Phi, int Qlo, int Qhi>
+    constexpr Rational<T,Plo,Phi,Qlo,Qhi> compose(const Rational<T,Plo,Phi,Qlo,Qhi>& r, const Scaling<T>& p)
+    {
+        return compose(r.p, p) / compose(r.q, p);
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi, 
