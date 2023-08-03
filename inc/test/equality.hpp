@@ -7,6 +7,16 @@
 
 namespace test {
 
+    std::string trim(const std::string text)
+    {
+        return std::regex_replace(text, std::regex("  +"), "");
+    }
+
+    std::string indent(const std::string text, const std::string tab)
+    {
+        return std::regex_replace(text, std::regex("\n"), "\n"+tab);
+    }
+
     template<typename Adapter, typename LHS, typename RHS, typename A>
     bool equality( const Adapter& adapter, const std::string& property, 
                 const std::string& lhs_name, const LHS& lhs, 
@@ -17,13 +27,14 @@ namespace test {
             auto rhs_value = rhs(a[i]);
             bool pass = adapter.equal(lhs_value, rhs_value);
             if (!pass) {
+                const std::string lhs_trimmed = trim(lhs_name);
                 std::cout << std::endl;
                 std::cout << "Test failed: " << std::endl << std::endl;
                 std::cout << "  " << property << std::endl;
                 std::cout << "  such that:" << std::endl << std::endl;
-                std::cout << "    " << std::regex_replace(lhs_name, std::regex(" +$"), "") << " = " << rhs_name << std::endl << std::endl;
-                std::cout << "  " << lhs_name << " :  " << adapter.print(lhs_value) << std::endl;
-                std::cout << "  " << rhs_name << " :  " << adapter.print(rhs_value) << std::endl;
+                std::cout << "    " << lhs_trimmed << " = " << rhs_name << std::endl << std::endl;
+                std::cout << "  " << lhs_name << " :  " << indent(adapter.print(lhs_value), "  ") << std::endl;
+                std::cout << "  " << rhs_name << " :  " << indent(adapter.print(rhs_value), "  ") << std::endl;
                 std::cout << "  a :  " << adapter.print(a[i]) << " [from index "<< i <<"]" << std::endl;
                 return false; 
             }
@@ -42,13 +53,14 @@ namespace test {
             auto rhs_value = rhs(a[i], b[j]);
             bool pass = adapter.equal(lhs_value, rhs_value);
             if (!pass) {
+                const std::string lhs_trimmed = trim(lhs_name);
                 std::cout << std::endl;
                 std::cout << "Test failed: " << std::endl << std::endl;
                 std::cout << "  " << property << std::endl;
                 std::cout << "  such that:" << std::endl << std::endl;
-                std::cout << "    " << std::regex_replace(lhs_name, std::regex(" +$"), "") << " = " << rhs_name << std::endl << std::endl;
-                std::cout << "  " << lhs_name << " :  " << adapter.print(lhs_value) << std::endl;
-                std::cout << "  " << rhs_name << " :  " << adapter.print(rhs_value) << std::endl;
+                std::cout << "    " << lhs_trimmed << " = " << rhs_name << std::endl << std::endl;
+                std::cout << "  " << lhs_name << " :  " << indent(adapter.print(lhs_value), "  ") << std::endl;
+                std::cout << "  " << rhs_name << " :  " << indent(adapter.print(rhs_value), "  ") << std::endl;
                 std::cout << "  a :  " << adapter.print(a[i]) << " [from index "<< i <<"]" << std::endl;
                 std::cout << "  b :  " << adapter.print(b[j]) << " [from index "<< j <<"]" << std::endl;
                 return false; 
@@ -69,13 +81,14 @@ namespace test {
             auto rhs_value = rhs(a[i], b[j], c[k]);
             bool pass = adapter.equal(lhs_value, rhs_value);
             if (!pass) {
+                const std::string lhs_trimmed = trim(lhs_name);
                 std::cout << std::endl;
                 std::cout << "Test failed: " << std::endl;
                 std::cout << "  " << property << std::endl;
                 std::cout << "  such that:" << std::endl << std::endl;
-                std::cout << "    " << std::regex_replace(lhs_name, std::regex(" +$"), "") << " = " << rhs_name << std::endl << std::endl;
-                std::cout << "  " << lhs_name << " :  " << adapter.print(lhs_value) << std::endl;
-                std::cout << "  " << rhs_name << " :  " << adapter.print(rhs_value) << std::endl;
+                std::cout << "    " << lhs_trimmed << " = " << rhs_name << std::endl << std::endl;
+                std::cout << "  " << lhs_name << " :  " << indent(adapter.print(lhs_value), "  ") << std::endl;
+                std::cout << "  " << rhs_name << " :  " << indent(adapter.print(rhs_value), "  ") << std::endl;
                 std::cout << "  a :  " << adapter.print(a[i]) << " [from index "<< i <<"]" << std::endl;
                 std::cout << "  b :  " << adapter.print(b[j]) << " [from index "<< j <<"]" << std::endl;
                 std::cout << "  c :  " << adapter.print(c[k]) << " [from index "<< k <<"]" << std::endl;

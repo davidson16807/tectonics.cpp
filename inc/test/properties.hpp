@@ -59,7 +59,8 @@ namespace test {
     ) {
         return equality(
             adapter,
-            f_name + " [denoted \"f\"] must have a \"left identity\" value, " + e_name + " [denoted \"e\"], that when passed on the left will always return the other value", 
+            f_name + " [denoted \"f\"] must have a \"left identity\" value, " + e_name + 
+                " [denoted \"e\"], that when passed on the left will always return the other value", 
             "f(e,a)",[=](A a){ return f(e, a); },
             "a     ",[=](A a){ return a; },
             as);
@@ -73,7 +74,8 @@ namespace test {
     ) {
         return equality(
             adapter,
-            f_name + " [denoted \"f\"] must have a \"right identity\" value, " + e_name + " [denoted \"e\"], that when passed on the right will always return the other value", 
+            f_name + " [denoted \"f\"] must have a \"right identity\" value, " + e_name + 
+                " [denoted \"e\"], that when passed on the right will always return the other value", 
             "f(a,e)", [=](A a){ return f(a, e); },
             "f(a)  ", [=](A a){ return a; },
             as);
