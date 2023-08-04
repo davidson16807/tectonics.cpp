@@ -57,7 +57,7 @@ namespace test {
         const many<A>& as
     ) {
         return predicate(adapter, 
-            f_name + " [denoted \"f\"] must have a \"left identity\", " + e_name + 
+            f_name + " [denoted \"f\"] must have a \"left identity\", " + e_name + " [denoted \"e\"], that when passed on the left always returns the right argument" +
             "\nsuch that: \n  f(e,a) = a\n",
             [=](auto a){
                 auto fea = f(e,a);
@@ -74,7 +74,7 @@ namespace test {
         const many<A>& as
     ) {
         return predicate(adapter, 
-            f_name + " [denoted \"f\"] must have a \"left identity\", " + e_name + 
+            f_name + " [denoted \"f\"] must have a \"left identity\", " + e_name + " [denoted \"e\"], that when passed on the right always returns the left argument" +
             "\nsuch that: \n  f(a,e) = a\n",
             [=](auto a){
                 auto fae = f(a,e);
@@ -114,12 +114,15 @@ namespace test {
         const std::string f_name, const F& f, 
         const many<A>& as
     ) {
-        return equality(
-            adapter,
-            f_name + " [denoted \"f\"] must have a \"left annihilator\", " + z_name + " [denoted \"z\"], that when passed on the left will always return itself", 
-            "f(z,a)", [=](A a){ return f(z, a); },
-            "z     ", [=](A a){ return z; },
-            as);
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must have a \"left annihilator\", " + z_name + " [denoted \"z\"], that when passed on the left will always return itself" + 
+            "\nsuch that: \n  f(a,z) = a\n",
+            [=](auto a){
+                auto fza = f(z,a);
+                return Results(adapter.equal(fza, a),
+                    "f(a,z) : " + indent(adapter.print(fza), "  ")+"\n" +
+                    "z : " + indent(adapter.print(z), "  "));
+            }, as);
     }
 
     template<typename Adapter, typename F, typename A, typename Z>
@@ -128,12 +131,15 @@ namespace test {
         const std::string f_name, const F& f, 
         const many<A>& as
     ) {
-        return equality(
-            adapter,
+        return predicate(adapter, 
             f_name + " [denoted \"f\"] must have an \"right annihilator\", " + z_name + " [denoted \"z\"], that when passed on the right will always return itself", 
-            "f(a,z)", [=](A a){ return f(a, z);  },
-            "z     ", [=](A a){ return z; },
-            as);
+            "\nsuch that: \n  f(a,z) = a\n",
+            [=](auto a){
+                auto faz = f(a,z);
+                return Results(adapter.equal(faz, a),
+                    "f(a,z) : " + indent(adapter.print(faz), "  ")+"\n" +
+                    "z : " + indent(adapter.print(z), "  "));
+            }, as);
     }
 
     template<typename Adapter, typename F, typename A, typename Z>
@@ -153,12 +159,15 @@ namespace test {
         const std::string f_name, const F& f, 
         const many<A>& as
     ) {
-        return equality(
-            adapter,
-            f_name + " [denoted \"f\"] must permit input to be reconstructed by a \"left inverse\" function, " + finv_name + " [denoted \"f⁻¹\"]", 
-            "f⁻¹(f(a))", [=](A a){ return finv(f(a)); },
-            "a        ", [=](A a){ return a; },
-            as);
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must permit input to be reconstructed by a \"left inverse\" function, " + finv_name + " [denoted \"f⁻¹\"]" +
+            "\nsuch that: \n  f⁻¹(f(a)) = a\n",
+            [=](auto a){
+                auto finvfa = finv(f(a));
+                return Results(adapter.equal(finvfa, a),
+                    "f⁻¹(f(a)) : " + indent(adapter.print(finvfa), "  ")+"\n" +
+                    "a : " + indent(adapter.print(a), "  "));
+            }, as);
     }
 
     template<typename Adapter, typename F, typename G, typename A>
@@ -179,12 +188,17 @@ namespace test {
         const std::string f_name,    const F& f, 
         const many<A>& as
     ) {
-        return equality(
-            adapter,
-            f_name + " [denoted \"f\"] must permit input to be reconstructed by a \"left inverse\" function, " + finv_name + " [denoted \"f⁻¹\"]", 
-            "f(f⁻¹(e,a),a)", [=](A a){ return f(finv(e,a), a); },
-            "e            ", [=](A a){ return e; },
-            as);
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must permit input to be reconstructed by a \"left inverse\" function, " + finv_name + " [denoted \"f⁻¹\"]" +
+            "\nsuch that: \n  f(f⁻¹(e,a), a) = e\n",
+            [=](auto a){
+                auto finvea = finv(e,a);
+                auto ffinveaa = f(finvea, a);
+                return Results(adapter.equal(ffinveaa, e),
+                    "f(f⁻¹(e,a),a) : " + indent(adapter.print(ffinveaa), "  ")+"\n" +
+                    "f⁻¹(e,a) : " + indent(adapter.print(finvea), "  ")+"\n" +
+                    "e : " + indent(adapter.print(e), "  "));
+            }, as);
     }
 
     template<typename Adapter, typename E, typename Finv, typename F, typename A>
@@ -194,12 +208,17 @@ namespace test {
         const std::string f_name,    const F& f, 
         const many<A>& as
     ) {
-        return equality(
-            adapter,
-            f_name + " [denoted \"f\"] must permit input to be reconstructed by a \"right inverse\" function, " + finv_name + " [denoted \"f⁻¹\"]", 
-            "f(a, f⁻¹(e,a))", [=](A a){ return f(a, finv(e,a)); },
-            "e             ", [=](A a){ return e; },
-            as);
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must permit input to be reconstructed by a \"right inverse\" function, " + finv_name + " [denoted \"f⁻¹\"]" +
+            "\nsuch that: \n  f(a, f⁻¹(e,a)) = e\n",
+            [=](auto a){
+                auto finvea = finv(e,a);
+                auto fafinvea = f(a, finvea);
+                return Results(adapter.equal(fafinvea, e),
+                    "f(a,f⁻¹(e,a)) : " + indent(adapter.print(fafinvea), "  ")+"\n" +
+                    "f⁻¹(e,a) : " + indent(adapter.print(finvea), "  ")+"\n" +
+                    "e : " + indent(adapter.print(e), "  "));
+            }, as);
     }
 
     template<typename Adapter, typename E, typename Finv, typename F, typename A>
@@ -219,12 +238,20 @@ namespace test {
         const std::string f_name, const F& f, 
         const many<A>& as, const many<B>& bs, const many<C>& cs
     ) {
-        return equality(
-            adapter,
-            f_name + " [denoted \"f\"] must allow invocations to be calculated in any order without changing results", 
-            "f(f(a,b), c)", [=](A a, B b, C c){ return f(f(a,b), c); },
-            "f(a, f(b,c))", [=](A a, B b, C c){ return f(a, f(b,c)); },
-            as, bs, cs);
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must allow invocations to be calculated in any order without changing results"+
+            "\nsuch that: \n  f(f(a,b), c) = f(a, f(b,c))\n",
+            [=](auto a, auto b, auto c){
+                auto fab = f(a,b);
+                auto fbc = f(b,c);
+                auto ffab_c = f(f(a,b), c);
+                auto fa_fbc = f(a, f(b,c));
+                return Results(adapter.equal(ffab_c, fa_fbc),
+                    "f(f(a,b), c) : " + indent(adapter.print(ffab_c), "  ") + "\n" +
+                    "f(a, f(b,c)) : " + indent(adapter.print(fa_fbc), "  ") + "\n" +
+                    "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n" +
+                    "f(b,c) : " + indent(adapter.print(fbc), "  ") + "\n");
+            }, as, bs, cs);
     }
 
     template<typename Adapter, typename F2, typename F3, typename A, typename B, typename C>
@@ -233,12 +260,19 @@ namespace test {
         const std::string f3_name, const F3& f3, 
         const many<A>& as, const many<B>& bs, const many<C>& cs
     ) {
-        return equality(
-            adapter,
-            f3_name + " [denoted \"f\"] must calculate starting from the leftmost parameters", 
-            "f(f(a,b), c)", [=](A a, B b, C c){ return f2(f2(a, b), c); },
-            "f(  a,b,  c)", [=](A a, B b, C c){ return f3(   a, b,  c); },
-            as, bs, cs);
+        return predicate(adapter, 
+            f3_name + " [denoted \"f\"] must calculate starting from the leftmost parameters using "+f2_name+ 
+            "\nsuch that: \n  f(f(a,b), c) = f(a,b,c)\n",
+            [=](auto a, auto b, auto c){
+                auto fab = f2(a,b);
+                auto ffab_c = f2(fab, c);
+                auto fabc = f3(a,b,c);
+                return Results(adapter.equal(ffab_c, fabc),
+                    "f(a, b, c) : " + indent(adapter.print(fabc), "  ") + "\n" +
+                    "f(f(a,b), c) : " + indent(adapter.print(ffab_c), "  ") + "\n" +
+                    "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n"
+                );
+            }, as, bs, cs);
     }
 
     template<typename Adapter, typename F2, typename F3, typename A, typename B, typename C>
@@ -247,12 +281,19 @@ namespace test {
         const std::string f3_name, const F3& f3, 
         const many<A>& as, const many<B>& bs, const many<C>& cs
     ) {
-        return equality(
-            adapter,
-            f3_name + " [denoted \"f\"] must calculate starting from the rightmost parameters", 
-            "f(a, f(b,c))", [=](A a, B b, C c){ return f2(a, f2(b, c)); },
-            "f(a,   b,c)",  [=](A a, B b, C c){ return f3(a,    b, c);  },
-            as, bs, cs);
+        return predicate(adapter, 
+            f3_name + " [denoted \"f\"] must calculate starting from the rightmost parameters using "+f2_name+ 
+            "\nsuch that: \n  f(a,f(b,c)) = f(a,b,c)\n",
+            [=](auto a, auto b, auto c){
+                auto fbc = f2(b,c);
+                auto fa_fbc = f2(a, fbc);
+                auto fabc = f3(a,b,c);
+                return Results(adapter.equal(fa_fbc, fabc),
+                    "f(a, b, c) : " + indent(adapter.print(fabc), "  ") + "\n" +
+                    "f(a,f(b,c)) : " + indent(adapter.print(fa_fbc), "  ") + "\n" +
+                    "f(b,c) : " + indent(adapter.print(fbc), "  ") + "\n"
+                );
+            }, as, bs, cs);
     }
 
     template<typename Adapter, typename F, typename A>
