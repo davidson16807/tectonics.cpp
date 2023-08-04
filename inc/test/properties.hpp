@@ -56,13 +56,15 @@ namespace test {
         const std::string f_name, const F& f, 
         const many<A>& as
     ) {
-        return equality(
-            adapter,
+        return predicate(adapter, 
             f_name + " [denoted \"f\"] must have a \"left identity\", " + e_name + 
-                " [denoted \"e\"], that when passed on the left will always return the other value", 
-            "f(e,a)",[=](A a){ return f(e, a); },
-            "a     ",[=](A a){ return a; },
-            as);
+            "\nsuch that: \n  f(e,a) = a\n",
+            [=](auto a){
+                auto fea = f(e,a);
+                return Results(adapter.equal(fea, a),
+                    "f(e,a) : " + indent(adapter.print(fea), "  ")+"\n" +
+                    "e : " + indent(adapter.print(e), "  "));
+            }, as);
     }
 
     template<typename Adapter, typename F, typename E, typename A>
@@ -71,13 +73,15 @@ namespace test {
         const std::string f_name, const F& f, 
         const many<A>& as
     ) {
-        return equality(
-            adapter,
-            f_name + " [denoted \"f\"] must have a \"right identity\", " + e_name + 
-                " [denoted \"e\"], that when passed on the right will always return the other value", 
-            "f(a,e)", [=](A a){ return f(a, e); },
-            "f(a)  ", [=](A a){ return a; },
-            as);
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must have a \"left identity\", " + e_name + 
+            "\nsuch that: \n  f(a,e) = a\n",
+            [=](auto a){
+                auto fae = f(a,e);
+                return Results(adapter.equal(fae, a),
+                    "f(a,e) : " + indent(adapter.print(fae), "  ")+"\n" +
+                    "e : " + indent(adapter.print(e), "  "));
+            }, as);
     }
 
     template<typename Adapter, typename F, typename E, typename A>

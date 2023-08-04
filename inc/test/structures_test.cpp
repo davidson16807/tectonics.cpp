@@ -57,18 +57,18 @@ TEST_CASE( "Scalar arithmetic is a field", "[math]" ) {
     REQUIRE(structure.valid(adapter, scalars));
 }
 
-// TEST_CASE( "Scalar arithmetic is a commutative ring", "[math]" ) {
-//     test::PrimitiveAdapter<double> adapter(1e-6);
-//     std::vector<double> scalars {-2.0, 0.0, 1.0, 2.0};
-//     test::CommutativeRing structure(
-//         "0", 0.0, 
-//         "1", 1.0, 
-//         "scalar addition",       TEST_SYMBOL(+),
-//         "scalar subtraction",    TEST_SYMBOL(-),
-//         "scalar multiplication", TEST_SYMBOL(*)
-//     );
-//     REQUIRE(structure.valid(adapter, scalars));
-// }
+TEST_CASE( "Scalar arithmetic is a commutative ring", "[math]" ) {
+    test::PrimitiveAdapter<double> adapter(1e-6);
+    std::vector<double> scalars {-2.0, 0.0, 1.0, 2.0};
+    test::CommutativeRing structure(
+        "0", 0.0, 
+        "1", 1.0, 
+        "scalar addition",       TEST_SYMBOL(+),
+        "scalar subtraction",    TEST_SYMBOL(-),
+        "scalar multiplication", TEST_SYMBOL(*)
+    );
+    REQUIRE(structure.valid(adapter, scalars));
+}
 
 TEST_CASE( "Scalar addition is a commutative group", "[math]" ) {
     test::PrimitiveAdapter<double> adapter(1e-6);

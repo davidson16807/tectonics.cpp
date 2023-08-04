@@ -32,7 +32,7 @@ namespace test {
 
     template<typename Finv, typename F>
     struct Quasigroup{
-        const std::string f_name;    const F& f; 
+        const std::string f_name;    const F f; 
         Quasigroup(
             const std::string f_name,    const F& f
         ): 
@@ -81,7 +81,7 @@ namespace test {
 
     template<typename F>
     struct Semigroup{
-        const std::string f_name; const F& f; 
+        const std::string f_name; const F f; 
         Semigroup(
             const std::string f_name, const F& f
         ): 
@@ -130,8 +130,8 @@ namespace test {
 
     template<typename E, typename F>
     struct Monoid{
-        const std::string e_name; const E& e; 
-        const std::string f_name; const F& f; 
+        const std::string e_name; const E e; 
+        const std::string f_name; const F f; 
         Monoid(
             const std::string e_name, const E& e, 
             const std::string f_name, const F& f
@@ -283,8 +283,8 @@ namespace test {
 
     template<typename E, typename F>
     struct CommutativeMonoid{
-        const std::string e_name; const E& e; 
-        const std::string f_name; const F& f; 
+        const std::string e_name; const E e; 
+        const std::string f_name; const F f; 
         CommutativeMonoid(
             const std::string e_name, const E& e, 
             const std::string f_name, const F& f
