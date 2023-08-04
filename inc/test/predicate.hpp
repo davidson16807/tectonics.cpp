@@ -2,52 +2,89 @@
 
 // std libraries
 #include <iostream>
-#include <string>
+#include <string>   // std::string
+#include <regex>
+
+// in-house libraries
+#include "predicate.hpp"
 
 namespace test {
 
-    template<typename Harness, typename Predicate, typename A>
-    bool predicate(const Harness& harness, const std::string& property, const Predicate& predicate, const std::vector<A>& a) {
+    std::string trim(const std::string text)
+    {
+        return std::regex_replace(text, std::regex("  +"), "");
+    }
+
+    std::string indent(const std::string text, const std::string tab)
+    {
+        return std::regex_replace(text, std::regex("\n"), "\n" +tab);
+    }
+
+    struct Results{
+        const bool pass;
+        const std::string diagnostics;
+        Results(
+            const bool pass, 
+            const std::string diagnostics):
+            pass(pass),
+            diagnostics(diagnostics)
+        {}
+    };
+
+    template<typename Adapter, typename Predicate, typename A>
+    bool predicate(const Adapter& adapter, 
+            const std::string& predicate_name, const Predicate& predicate, 
+            const std::vector<A>& a) {
         for (std::size_t i = 0; i < a.size(); ++i) {
-            bool pass = predicate(a[i]);
-            if (!pass) {
+            Results results = predicate(a[i]);
+            if (!results.pass) {
                 std::cout << std::endl;
-                std::cout << "Test failed for " << property << ":" << std::endl;
-                std::cout << "    a[" << i << "]:  " << harness.print(a[i]) << std::endl;
+                std::cout << "Test failed:" << std::endl;
+                std::cout << "  " << predicate_name << std::endl;
+                std::cout <<  indent(results.diagnostics, "  ") << std::endl;
+                std::cout << "  a : " << adapter.print(a[i]) << " [from index "<< i <<"]" << std::endl;
                 return false; 
             }
         }
         return true;
     }
 
-    template<typename Harness, typename Predicate, typename A, typename B>
-    bool predicate(const Harness& harness, const std::string& property, const Predicate& predicate, const std::vector<A>& a, const std::vector<B>& b) {
+    template<typename Adapter, typename Predicate, typename A, typename B>
+    bool predicate(const Adapter& adapter, 
+            const std::string& predicate_name, const Predicate& predicate, 
+            const std::vector<A>& a, const std::vector<B>& b) {
         for (std::size_t i = 0; i < a.size(); ++i) {
         for (std::size_t j = 0; j < b.size(); ++j) {
-            bool pass = predicate(a[i], b[j]);
-            if (!pass) {
+            Results results = predicate(a[i], b[j]);
+            if (!results.pass) {
                 std::cout << std::endl;
-                std::cout << "Test failed for " << property << ":" << std::endl;
-                std::cout << "    a[" << i << "]:  " << harness.print(a[i]) << std::endl;
-                std::cout << "    b[" << j << "]:  " << harness.print(b[j]) << std::endl;
+                std::cout << "Test failed:" << std::endl;
+                std::cout << "  " << predicate_name << std::endl;
+                std::cout <<  indent(results.diagnostics, "  ") << std::endl;
+                std::cout << "  a : " << adapter.print(a[i]) << " [from index "<< i <<"]" << std::endl;
+                std::cout << "  b : " << adapter.print(b[j]) << " [from index "<< j <<"]" << std::endl;
                 return false; 
             }
         }}
         return true;
     }
 
-    template<typename Harness, typename Predicate, typename A, typename B, typename C>
-    bool predicate(const Harness& harness, const std::string& property, const Predicate& predicate, const std::vector<A>& a, const std::vector<B>& b, const std::vector<C>& c) {
+    template<typename Adapter, typename Predicate, typename A, typename B, typename C>
+    bool predicate(const Adapter& adapter, 
+            const std::string& predicate_name, const Predicate& predicate, 
+            const std::vector<A>& a, const std::vector<B>& b, const std::vector<C>& c) {
         for (std::size_t i = 0; i < a.size(); ++i) {
         for (std::size_t j = 0; j < b.size(); ++j) {
         for (std::size_t k = 0; k < c.size(); ++k) {
-            bool pass = predicate(a[i], b[j], c[k]);
-            if (!pass) {
+            Results results = predicate(a[i], b[j], c[k]);
+            if (!results.pass) {
                 std::cout << std::endl;
-                std::cout << "Test failed for " << property << ":" << std::endl;
-                std::cout << "    a[" << i << "]:  " << harness.print(a[i]) << std::endl;
-                std::cout << "    b[" << j << "]:  " << harness.print(b[j]) << std::endl;
-                std::cout << "    c[" << k << "]:  " << harness.print(c[k]) << std::endl;
+                std::cout << "Test failed:" << std::endl;
+                std::cout << "  " << predicate_name << std::endl;
+                std::cout <<  indent(results.diagnostics, "  ") << std::endl;
+                std::cout << "  a : " << adapter.print(a[i]) << " [from index "<< i <<"]" << std::endl;
+                std::cout << "  b : " << adapter.print(b[j]) << " [from index "<< j <<"]" << std::endl;
+                std::cout << "  c : " << adapter.print(c[k]) << " [from index "<< k <<"]" << std::endl;
                 return false; 
             }
         }}}
@@ -55,4 +92,3 @@ namespace test {
     }
 
 }
-

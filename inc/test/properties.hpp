@@ -5,7 +5,6 @@
 
 // in-house libraries
 #include "equality.hpp"
-#include "predicate.hpp"
 
 namespace test {
 
@@ -59,7 +58,7 @@ namespace test {
     ) {
         return equality(
             adapter,
-            f_name + " [denoted \"f\"] must have a \"left identity\" value, " + e_name + 
+            f_name + " [denoted \"f\"] must have a \"left identity\", " + e_name + 
                 " [denoted \"e\"], that when passed on the left will always return the other value", 
             "f(e,a)",[=](A a){ return f(e, a); },
             "a     ",[=](A a){ return a; },
@@ -74,7 +73,7 @@ namespace test {
     ) {
         return equality(
             adapter,
-            f_name + " [denoted \"f\"] must have a \"right identity\" value, " + e_name + 
+            f_name + " [denoted \"f\"] must have a \"right identity\", " + e_name + 
                 " [denoted \"e\"], that when passed on the right will always return the other value", 
             "f(a,e)", [=](A a){ return f(a, e); },
             "f(a)  ", [=](A a){ return a; },
@@ -99,7 +98,7 @@ namespace test {
     // ) {
     //     return equality(
     //         adapter,
-    //         f_name + " [denoted \"f\"] must have an \"identity\" value, " + e_name + "[denoted \"e\"], that when passed will always return itself", 
+    //         f_name + " [denoted \"f\"] must have an \"identity\", " + e_name + "[denoted \"e\"], that when passed will always return itself", 
     //         "f(e,a)",[=](A a){ return f(e, a); },
     //         "a     ",[=](A a){ return a; },
     //         std::vector<E>{e});
@@ -543,7 +542,10 @@ namespace test {
         return predicate(
             adapter,
             f_name + " must only produce output that is " + validity_name,
-            [=](A a){ return valid( f(a) ); }, 
+            [=](A a){
+                auto fa = f(a);
+                std::string diagnostics = "f(a) : " + fa;
+                return Results(valid(fa), diagnostics); }, 
             as);
     }
 
@@ -556,7 +558,10 @@ namespace test {
         return predicate(
             adapter,
             f_name + " must only produce output that is " + validity_name, 
-            [=](A a, B b){  return valid( f(a, b) ); }, 
+            [=](A a, B b){
+                auto fab = f(a,b);
+                std::string diagnostics = "f(a,b) : " + adapter.print(fab);
+                return Results(valid(fab), diagnostics); }, 
             as, bs);
     }
 
@@ -569,7 +574,10 @@ namespace test {
         return predicate(
             adapter,
             f_name + " must only produce output that is " + validity_name, 
-            [=](A a, B b, C c){  return valid( f(a, b, c) ); }, 
+            [=](A a, B b, C c){
+                auto fabc = f(a,b,c);
+                std::string diagnostics = "f(a,b,c) : " + adapter.print(fabc);
+                return Results(valid(fabc), diagnostics); }, 
             as, bs, cs);
     }
 
@@ -582,7 +590,19 @@ namespace test {
         return predicate(
             adapter,
             f_name + " must satisfy the triangle inequality, so for any set of arguments the smallest sum of invocations using those arguments is a single invocation", 
-            [=](A a, B b, C c){ return leq(f(a, c), add(f(a, b), f(b, c))); }, 
+            [=](A a, B b, C c){
+                auto fac = f(a,c);
+                auto fab = f(a,b);
+                auto fbc = f(b,c);
+                auto fab_fac = add(fab, fac);
+                std::string diagnostics;
+                diagnostics += "such that: \n  f(a,c) ≤ f(a,b)+f(a,c)\n";
+                diagnostics += "f(a,c) : " + adapter.print(fac) + "\n";
+                diagnostics += "f(a,b)+f(a,c) : " + adapter.print(fab_fac) + "\n";
+                diagnostics += "f(a,b) : " + adapter.print(fab) + "\n";
+                diagnostics += "f(b,c) : " + adapter.print(fbc) + "\n";
+                return Results(leq(fac, fab_fac), diagnostics); 
+            }, 
             as, bs, cs);
     }
 
@@ -599,7 +619,15 @@ namespace test {
         return predicate(
             adapter,
             f_name + " [denoted \"f\"] must imply that two arguments are equal if invoking them both on the left with with the same right argument produces the same result", 
-            [=](A a, B b, C c){ return adapter.equal(f(a,b), f(a,c))? adapter.equal(b,c) : true; }, 
+            [=](A a, B b, C c){
+                auto fac = f(a,c);
+                auto fab = f(a,b);
+                std::string diagnostics;
+                diagnostics += "such that: \n  f(a,b)=f(a,c) implies b=c \n";
+                diagnostics += "f(a,c) : " + adapter.print(fac) + "\n";
+                diagnostics += "f(a,b) : " + adapter.print(fab) + "\n";
+                return Results(adapter.equal(f(a,b), f(a,c))? adapter.equal(b,c) : true, diagnostics); 
+            }, 
             as, bs, cs);
     }
 
@@ -612,7 +640,15 @@ namespace test {
         return predicate(
             adapter,
             f_name + " [denoted \"f\"] must imply that two arguments are equal if invoking them both on the right with with the same left argument produces the same result", 
-            [=](A a, B b, C c){ return adapter.equal(f(b,a), f(c,a))? adapter.equal(b,c) : true; }, 
+            [=](A a, B b, C c){
+                auto fca = f(c,a);
+                auto fba = f(b,a);
+                std::string diagnostics;
+                diagnostics += "such that: \n  f(b,a)=f(c,a) implies b=c \n";
+                diagnostics += "f(c,a) : " + adapter.print(fca) + "\n";
+                diagnostics += "f(b,a) : " + adapter.print(fba) + "\n";
+                return Results(adapter.equal(f(a,b), f(a,c))? adapter.equal(b,c) : true, diagnostics); 
+            }, 
             as, bs, cs);
     }
 
@@ -637,7 +673,9 @@ namespace test {
         return predicate(
             adapter,
             "reflexivity", 
-            [=](A a){ return r(a, a); }, as);
+            [=](A a){
+                return Results(r(a, a), "such that: \n  r(a,a) for each a \n"); 
+            }, as);
     }
 
     template<typename Adapter, typename R, typename A, typename B>
@@ -648,7 +686,9 @@ namespace test {
         return predicate(
             adapter,
             "irreflexivity", 
-            [=](A a){ return !r(a, a); }, as);
+            [=](A a){
+                return Results(!r(a, a), "such that: \n  r(a,a) for each a \n");
+            }, as);
     }
 
     template<typename Adapter, typename R, typename A, typename B>
@@ -659,10 +699,14 @@ namespace test {
         return predicate(
             adapter,
             "symmetry", 
-            [=](A a, B b){ 
-                return 
-                    r(a, b) == 
-                    r(b, a);
+            [=](A a, B b){
+                auto rab = r(a, b);
+                auto rba = r(b, a);
+                std::string diagnostics;
+                diagnostics += "such that: \n  r(a,b) = r(b,a)\n";
+                diagnostics += "r(a,b) : " + adapter.print(rab) + "\n";
+                diagnostics += "r(b,a) : " + adapter.print(rba) + "\n";
+                return Results(rab==rba, diagnostics);
             }, as, bs);
     }
 
@@ -674,10 +718,14 @@ namespace test {
         return predicate(
             adapter,
             "antisymmetry", 
-            [=](A a, B b){ 
-                return 
-                    r(a, b) != 
-                    r(b, a);
+            [=](A a, B b){
+                auto rab = r(a, b);
+                auto rba = r(b, a);
+                std::string diagnostics;
+                diagnostics += "such that: \n  r(a,b) = r(b,a)\n";
+                diagnostics += "r(a,b) : " + adapter.print(rab) + "\n";
+                diagnostics += "r(b,a) : " + adapter.print(rba) + "\n";
+                return Results(rab!=rba, diagnostics);
             }, as, bs);
     }
 
@@ -689,8 +737,16 @@ namespace test {
         return predicate(
             adapter,
             "transitivity", 
-            [=](A a, B b, C c){ 
-                return r(a, b) && r(b, c)? r(a, c) : true;
+            [=](A a, B b, C c){
+                auto rab = r(a, b);
+                auto rba = r(b, a);
+                auto rbc = r(b, c);
+                auto rac = r(a, c);
+                std::string diagnostics;
+                diagnostics += "such that: \n  r(a,b) ∧ r(b,a) implies r(a,c)\n";
+                diagnostics += "r(a,b) : " + adapter.print(rab) + "\n";
+                diagnostics += "r(b,a) : " + adapter.print(rba) + "\n";
+                return Results(rab&&rbc?rac:true, diagnostics); 
             }, as, bs, cs);
     }
 
@@ -702,8 +758,16 @@ namespace test {
         return predicate(
             adapter,
             "antitransitivity", 
-            [=](A a, B b, C c){ 
-                return r(a, b) && r(b, c)? !r(a, c) : true;
+            [=](A a, B b, C c){
+                auto rab = r(a, b);
+                auto rbc = r(b, c);
+                auto rac = r(a, c);
+                std::string diagnostics;
+                diagnostics += "such that: \n  r(a,b) ∧ r(b,c) implies ¬r(a,c)\n";
+                diagnostics += "r(a,b) : " + adapter.print(rab) + "\n";
+                diagnostics += "r(b,c) : " + adapter.print(rbc) + "\n";
+                diagnostics += "r(a,c) : " + adapter.print(rbc) + "\n";
+                return Results(rab&&rbc?!rac:true, diagnostics); 
             }, as, bs, cs);
     }
 
@@ -715,8 +779,14 @@ namespace test {
         return predicate(
             adapter,
             "totality", 
-            [=](A a, B b){ 
-                return r(a, b) || r(b, a);
+            [=](A a, B b){
+                auto rab = r(a, b);
+                auto rba = r(b, a);
+                std::string diagnostics;
+                diagnostics += "such that: \n  r(a,b) = r(b,a)\n";
+                diagnostics += "r(a,b) : " + adapter.print(rab) + "\n";
+                diagnostics += "r(b,a) : " + adapter.print(rba) + "\n";
+                return Results(rab||rba, diagnostics); 
             }, as, bs);
     }
 
@@ -728,15 +798,15 @@ namespace test {
         return predicate(
             adapter,
             "strict totality", 
-            [=](A a, B b){ 
-                return r(a, b) ^ r(b, a);
+            [=](A a, B b){
+                auto rab = r(a, b);
+                auto rba = r(b, a);
+                std::string diagnostics;
+                diagnostics += "such that: \n  r(a,b) iff ¬r(b,a)\n";
+                diagnostics += "r(a,b) : " + adapter.print(rab) + "\n";
+                diagnostics += "r(b,a) : " + adapter.print(rba) + "\n";
+                return Results(rab^rba, diagnostics); 
             }, as, bs);
     }
 
-
-
-
-
-
 }
-
