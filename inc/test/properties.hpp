@@ -62,8 +62,9 @@ namespace test {
             [=](auto a){
                 auto fea = f(e,a);
                 return Results(adapter.equal(fea, a),
-                    "f(e,a) : " + indent(adapter.print(fea), "  ")+"\n" +
-                    "e : " + indent(adapter.print(e), "  "));
+                    "f(e,a) : " + adapter.print(fea)+"\n" +
+                    "e : " + adapter.print(e)
+                );
             }, as);
     }
 
@@ -79,8 +80,9 @@ namespace test {
             [=](auto a){
                 auto fae = f(a,e);
                 return Results(adapter.equal(fae, a),
-                    "f(a,e) : " + indent(adapter.print(fae), "  ")+"\n" +
-                    "e : " + indent(adapter.print(e), "  "));
+                    "f(a,e) : " + adapter.print(fae)+"\n" +
+                    "e : " + adapter.print(e)
+                );
             }, as);
     }
 
@@ -120,8 +122,9 @@ namespace test {
             [=](auto a){
                 auto fza = f(z,a);
                 return Results(adapter.equal(fza, a),
-                    "f(a,z) : " + indent(adapter.print(fza), "  ")+"\n" +
-                    "z : " + indent(adapter.print(z), "  "));
+                    "f(a,z) : " + adapter.print(fza)+"\n" +
+                    "z : " + adapter.print(z)
+                );
             }, as);
     }
 
@@ -137,8 +140,9 @@ namespace test {
             [=](auto a){
                 auto faz = f(a,z);
                 return Results(adapter.equal(faz, a),
-                    "f(a,z) : " + indent(adapter.print(faz), "  ")+"\n" +
-                    "z : " + indent(adapter.print(z), "  "));
+                    "f(a,z) : " + adapter.print(faz)+"\n" +
+                    "z : " + adapter.print(z)
+                );
             }, as);
     }
 
@@ -165,8 +169,9 @@ namespace test {
             [=](auto a){
                 auto finvfa = finv(f(a));
                 return Results(adapter.equal(finvfa, a),
-                    "f⁻¹(f(a)) : " + indent(adapter.print(finvfa), "  ")+"\n" +
-                    "a : " + indent(adapter.print(a), "  "));
+                    "f⁻¹(f(a)) : " + adapter.print(finvfa)+"\n" +
+                    "a : " + adapter.print(a)
+                );
             }, as);
     }
 
@@ -195,9 +200,10 @@ namespace test {
                 auto finvea = finv(e,a);
                 auto ffinveaa = f(finvea, a);
                 return Results(adapter.equal(ffinveaa, e),
-                    "f(f⁻¹(e,a),a) : " + indent(adapter.print(ffinveaa), "  ")+"\n" +
-                    "f⁻¹(e,a) : " + indent(adapter.print(finvea), "  ")+"\n" +
-                    "e : " + indent(adapter.print(e), "  "));
+                    "f(f⁻¹(e,a),a) : " + adapter.print(ffinveaa)+"\n" +
+                    "f⁻¹(e,a) : " + adapter.print(finvea)+"\n" +
+                    "e : " + adapter.print(e)
+                );
             }, as);
     }
 
@@ -215,9 +221,10 @@ namespace test {
                 auto finvea = finv(e,a);
                 auto fafinvea = f(a, finvea);
                 return Results(adapter.equal(fafinvea, e),
-                    "f(a,f⁻¹(e,a)) : " + indent(adapter.print(fafinvea), "  ")+"\n" +
-                    "f⁻¹(e,a) : " + indent(adapter.print(finvea), "  ")+"\n" +
-                    "e : " + indent(adapter.print(e), "  "));
+                    "f(a,f⁻¹(e,a)) : " + adapter.print(fafinvea)+"\n" +
+                    "f⁻¹(e,a) : " + adapter.print(finvea)+"\n" +
+                    "e : " + adapter.print(e)
+                );
             }, as);
     }
 
@@ -247,10 +254,10 @@ namespace test {
                 auto ffab_c = f(f(a,b), c);
                 auto fa_fbc = f(a, f(b,c));
                 return Results(adapter.equal(ffab_c, fa_fbc),
-                    "f(f(a,b), c) : " + indent(adapter.print(ffab_c), "  ") + "\n" +
-                    "f(a, f(b,c)) : " + indent(adapter.print(fa_fbc), "  ") + "\n" +
-                    "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n" +
-                    "f(b,c) : " + indent(adapter.print(fbc), "  ") + "\n");
+                    "f(f(a,b), c) : " + adapter.print(ffab_c) + "\n" +
+                    "f(a, f(b,c)) : " + adapter.print(fa_fbc) + "\n" +
+                    "f(a,b) : " + adapter.print(fab) + "\n" +
+                    "f(b,c) : " + adapter.print(fbc) + "\n");
             }, as, bs, cs);
     }
 
@@ -268,9 +275,9 @@ namespace test {
                 auto ffab_c = f2(fab, c);
                 auto fabc = f3(a,b,c);
                 return Results(adapter.equal(ffab_c, fabc),
-                    "f(a, b, c) : " + indent(adapter.print(fabc), "  ") + "\n" +
-                    "f(f(a,b), c) : " + indent(adapter.print(ffab_c), "  ") + "\n" +
-                    "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n"
+                    "f(a, b, c) : " + adapter.print(fabc) + "\n" +
+                    "f(f(a,b), c) : " + adapter.print(ffab_c) + "\n" +
+                    "f(a,b) : " + adapter.print(fab) + "\n"
                 );
             }, as, bs, cs);
     }
@@ -289,9 +296,9 @@ namespace test {
                 auto fa_fbc = f2(a, fbc);
                 auto fabc = f3(a,b,c);
                 return Results(adapter.equal(fa_fbc, fabc),
-                    "f(a, b, c) : " + indent(adapter.print(fabc), "  ") + "\n" +
-                    "f(a,f(b,c)) : " + indent(adapter.print(fa_fbc), "  ") + "\n" +
-                    "f(b,c) : " + indent(adapter.print(fbc), "  ") + "\n"
+                    "f(a, b, c) : " + adapter.print(fabc) + "\n" +
+                    "f(a,f(b,c)) : " + adapter.print(fa_fbc) + "\n" +
+                    "f(b,c) : " + adapter.print(fbc) + "\n"
                 );
             }, as, bs, cs);
     }
@@ -301,12 +308,19 @@ namespace test {
         const std::string f_name, const F& f, 
         const many<A>& as
     ) {
-        return equality(
-            adapter,
+        return predicate(adapter, 
             f_name + " [denoted \"f\"] must allow invocations with a single parameter to be calculated in any order without changing results", 
-            "f(f(a,a), a)", [=](A a){ return f(f(a,a), a); },
-            "f(a, f(a,a))", [=](A a){ return f(a, f(a,a)); },
-            as);
+            "\nsuch that: \n  f(f(a,a), a) = f(a, f(a,a))\n",
+            [=](auto a){
+                auto faa = f(a,a);
+                auto fa_faa = f(a, faa);
+                auto ffaa_a = f(f(a,a),a);
+                return Results(adapter.equal(fa_faa, ffaa_a),
+                    "f(a, f(a,a)) : " + adapter.print(fa_faa) + "\n" +
+                    "f(f(a,a), a) : " + adapter.print(ffaa_a) + "\n" +
+                    "f(a,a) : " + adapter.print(faa) + "\n"
+                );
+            }, as);
     }
 
     template<typename Adapter, typename F, typename A, typename B>
@@ -314,12 +328,21 @@ namespace test {
         const std::string f_name, const F& f, 
         const many<A>& as, const many<B>& bs
     ) {
-        return equality(
-            adapter,
+        return predicate(adapter, 
             f_name + " [denoted \"f\"] must under certain conditions allow invocations to be calculated in any order without changing results", 
-            "f(f(a,a), b)", [=](A a, B b){ return f(f(a,a), b); },
-            "f(a, f(a,b))", [=](A a, B b){ return f(a, f(a,b)); },
-            as, bs);
+            "\nsuch that: \n  f(f(a,a), b) = f(a, f(a,b))\n",
+            [=](auto a, auto b, auto c){
+                auto fab = f(a,b);
+                auto faa = f(a,a);
+                auto fa_fab = f(a, fab);
+                auto ffaa_b = f(faa,b);
+                return Results(adapter.equal(fa_fab, ffaa_b),
+                    "f(a, f(a,b)) : " + adapter.print(fa_fab) + "\n" +
+                    "f(f(a,a), b) : " + adapter.print(ffaa_b) + "\n" +
+                    "f(a,a) : " + adapter.print(faa) + "\n"
+                    "f(a,b) : " + adapter.print(fab) + "\n"
+                );
+            }, as, bs);
     }
 
     template<typename Adapter, typename F, typename A, typename B>
@@ -327,12 +350,21 @@ namespace test {
         const std::string f_name, const F& f, 
         const many<A>& as, const many<B>& bs
     ) {
-        return equality(
-            adapter,
+        return predicate(adapter, 
             f_name + " [denoted \"f\"] must under certain conditions allow invocations to be calculated in any order without changing results", 
-            "f(f(a,b), b)", [=](A a, B b){ return f(f(a,b), b); },
-            "f(a, f(b,b))", [=](A a, B b){ return f(a, f(b,b)); },
-            as, bs);
+            "\nsuch that: \n  f(f(a,b), b) = f(a, f(b,b))\n",
+            [=](auto a, auto b){
+                auto fab = f(a,b);
+                auto fbb = f(b,b);
+                auto fa_fbb = f(a, fbb);
+                auto ffab_b = f(fab,b);
+                return Results(adapter.equal(fa_fbb, ffab_b),
+                    "f(a, f(b,b)) : " + adapter.print(fa_fbb) + "\n" +
+                    "f(f(a,b), b) : " + adapter.print(ffab_b) + "\n" +
+                    "f(a,b) : " + adapter.print(fab) + "\n"
+                    "f(b,b) : " + adapter.print(fbb) + "\n"
+                );
+            }, as, bs);
     }
 
     template<typename Adapter, typename F, typename A, typename B>
@@ -350,12 +382,21 @@ namespace test {
         const std::string f_name, const F& f, 
         const many<A>& as, const many<B>& bs
     ) {
-        return equality(
-            adapter,
+        return predicate(adapter, 
             f_name + " [denoted \"f\"] must under certain conditions allow invocations to be calculated in any order without changing results", 
-            "f(f(a,b), a)", [=](A a, B b){ return f(f(a,b), a); },
-            "f(a,f(b, a))", [=](A a, B b){ return f(a,f(b, a)); },
-            as, bs);
+            "\nsuch that: \n  f(f(a,b), a) = f(a, f(b,a))\n",
+            [=](auto a, auto b){
+                auto fab = f(a,b);
+                auto fba = f(b,a);
+                auto fa_fba = f(a, fba);
+                auto ffab_a = f(fab,a);
+                return Results(adapter.equal(fa_fba, ffab_a),
+                    "f(a, f(b,a)) : " + adapter.print(fa_fba) + "\n" +
+                    "f(f(a,b), a) : " + adapter.print(ffab_a) + "\n" +
+                    "f(a,b) : " + adapter.print(fab) + "\n" +
+                    "f(b,a) : " + adapter.print(fba) + "\n"
+                );
+            }, as, bs);
     }
 
     template<typename Adapter, typename F, typename A, typename B>
