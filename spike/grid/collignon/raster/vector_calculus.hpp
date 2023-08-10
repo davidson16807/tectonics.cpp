@@ -22,7 +22,6 @@ namespace collignon
 
     template<typename id, typename scalar, typename In, typename Out>
     void gradient(const Grid<id, scalar>& grid, const In& field, Out& out) {
-    	// assert(compatible(field, out));
     	// assert(grid.compatible(field));
     	id i, j;
     	const id N = grid.arrows_per_vertex;
@@ -43,7 +42,6 @@ namespace collignon
 
     template<typename id, typename scalar, typename In, typename Out>
     void divergence(const Grid<id,scalar>& grid, const In& field, Out& out) {
-    	// assert(compatible(field, out));
     	// assert(grid.compatible(field));
     	id i, j;
     	const id N = grid.arrows_per_vertex;

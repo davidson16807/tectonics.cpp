@@ -8,16 +8,25 @@ namespace series
 {
 
 	/*
-	`Range` represents an indexible object that can particlate in functions under `each::` and `store::`.
+	`Range` is a map: ℕ→ℕ.
+	It represents an indexible object that can particlate in functions under `each::` and `store::`.
 	The value at each index is the index itself.
 	*/
-	template<typename T>
+	template<typename T=std::size_t>
 	struct Range
 	{
-
 	    using size_type = std::size_t;
 		using value_type = T;
-		constexpr inline size_type size() const { return 1; }
+
+		size_type reported_size;
+		Range(const Range<T>& range): reported_size(range.reported_size)
+		{}
+		explicit Range(): reported_size(1)
+		{}
+		explicit Range(const size_type reported_size): reported_size(reported_size)
+		{}
+
+		constexpr inline size_type size() const { return reported_size; }
 
 		constexpr inline value_type operator[](const size_type memory_id ) const
 		{

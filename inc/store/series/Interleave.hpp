@@ -13,7 +13,7 @@ namespace series
 {
 
 	/*
-	`Interleave` is a thin wrapper for a container of type T that permits interleaving.
+	`Interleave` is a thin wrapper for a container of type Series that permits interleaving.
 	Interleaving is accomplished using a map: "lookup_id ⟶ memory_id",
 	that allows multiple sequential lookup_ids to map to the same memory_id,
 	and allows value_ids to be repeatedly looped over as the modulo of vector size.
@@ -21,18 +21,18 @@ namespace series
 	The number of times that value_ids may be looped over is indefinite.
 	See the `operator[]()` overload for more details.
 	*/
-	template <typename T>
+	template <typename Series>
 	struct Interleave
 	{
 
 	protected:
-		T values;
+		Series values;
 		std::size_t copies_per_value;
 
 	public:
 
 		// copy constructor
-		Interleave(const Interleave<T>& a)  : 
+		Interleave(const Interleave<Series>& a)  : 
 			values(a.values),
 			copies_per_value(1)
 		{}
@@ -53,7 +53,7 @@ namespace series
 		{
 		}
 
-		explicit Interleave(const T& vector) : 
+		explicit Interleave(const Series& vector) : 
 			values(vector),
 			copies_per_value(1)
 		{
@@ -76,7 +76,7 @@ namespace series
 		{
 		}
 
-		explicit Interleave(const std::size_t copies_per_value, T& vector) : 
+		explicit Interleave(const std::size_t copies_per_value, Series& vector) : 
 			values(vector),
 			copies_per_value(copies_per_value)
 		{
@@ -85,23 +85,23 @@ namespace series
 
 		// NOTE: all wrapper functions should to be marked inline 
 	    using size_type = std::size_t;
-		using value_type = typename T::value_type;
+		using value_type = typename Series::value_type;
 		using const_reference = const value_type&;
 		using reference = value_type&;
-		using const_iterator = typename T::const_iterator;
-		using iterator = typename T::iterator;
+		using const_iterator = typename Series::const_iterator;
+		using iterator = typename Series::iterator;
 		inline size_type size() const     { return values.size() * copies_per_value;  }
 		inline size_type max_size() const { return values.size() * copies_per_value;  }
 		inline size_type capacity() const { return values.capacity() * copies_per_value; }
 		inline size_type empty() const    { return values.empty(); }
-        inline typename Interleave<T>::reference front()             { return values.front(); }
-        inline typename Interleave<T>::const_reference front() const { return values.front(); }
-        inline typename Interleave<T>::reference back()              { return values.back();  }
-        inline typename Interleave<T>::const_reference back() const  { return values.back();  }
-	    inline typename Interleave<T>::const_iterator begin() const  { return values.begin(); }
-	    inline typename Interleave<T>::const_iterator end()   const  { return values.end();   }
-	    inline typename Interleave<T>::iterator begin()              { return values.begin(); }
-	    inline typename Interleave<T>::iterator end()                { return values.end();   }
+        inline typename Interleave<Series>::reference front()             { return values.front(); }
+        inline typename Interleave<Series>::const_reference front() const { return values.front(); }
+        inline typename Interleave<Series>::reference back()              { return values.back();  }
+        inline typename Interleave<Series>::const_reference back() const  { return values.back();  }
+	    inline typename Interleave<Series>::const_iterator begin() const  { return values.begin(); }
+	    inline typename Interleave<Series>::const_iterator end()   const  { return values.end();   }
+	    inline typename Interleave<Series>::iterator begin()              { return values.begin(); }
+	    inline typename Interleave<Series>::iterator end()                { return values.end();   }
 
 		inline const_reference operator[](const size_type lookup_id ) const
 		{
@@ -114,20 +114,20 @@ namespace series
 		}
 
 		template<typename Tid>
-		inline Interleave<T> operator[](const Interleave<Tid>& ids )
+		inline Interleave<Series> operator[](const Interleave<Tid>& ids )
 		{
-			Interleave<T> out = Interleave<T>(ids.size());
+			Interleave<Series> out = Interleave<Series>(ids.size());
 			get(*this, ids, out);
 			return out;
 		}
 
-		inline Interleave<T>& operator=(const Interleave<T>& other )
+		inline Interleave<Series>& operator=(const Interleave<Series>& other )
 		{
 			values.resize(other.size());
 			copy(*this, other);
 			return *this;
 		}
-		inline Interleave<T>& operator=(const T& other )
+		inline Interleave<Series>& operator=(const Series& other )
 		{
 			values.resize(other.size());
 			fill(*this, other);
@@ -143,7 +143,7 @@ namespace series
 		}
 
         template<typename T2>
-        constexpr Interleave<T>& operator+=(const T2& a)
+        constexpr Interleave<Series>& operator+=(const T2& a)
         {
         	assert(compatible(a));
 			for (std::size_t i = 0; i < values.size(); ++i)
@@ -154,7 +154,7 @@ namespace series
         }
 
         template<typename T2>
-		constexpr Interleave<T>& operator-=(const T2& a)
+		constexpr Interleave<Series>& operator-=(const T2& a)
 		{
 			assert(compatible(a));
 			for (std::size_t i = 0; i < values.size(); ++i)
@@ -165,7 +165,7 @@ namespace series
 		}
 
 		template<typename T2>
-		constexpr Interleave<T>& operator*=(const T2& a)
+		constexpr Interleave<Series>& operator*=(const T2& a)
 		{
 			assert(compatible(a));
 			for (std::size_t i = 0; i < values.size(); ++i)
@@ -176,7 +176,7 @@ namespace series
 		}
 
 		template<typename T2>
-		constexpr Interleave<T>& operator/=(const T2& a)
+		constexpr Interleave<Series>& operator/=(const T2& a)
 		{
 			assert(compatible(a));
 			for (std::size_t i = 0; i < values.size(); ++i)
@@ -187,7 +187,7 @@ namespace series
 		}
 
 		template<typename T2>
-		constexpr Interleave<T>& operator%=(const T2& a)
+		constexpr Interleave<Series>& operator%=(const T2& a)
 		{
 			assert(compatible(a));
 			for (std::size_t i = 0; i < values.size(); ++i)
@@ -198,7 +198,7 @@ namespace series
 		}
 
 		template<typename T2>
-		constexpr Interleave<T>& operator&=(const T2& a)
+		constexpr Interleave<Series>& operator&=(const T2& a)
 		{
 			assert(compatible(a));
 			for (std::size_t i = 0; i < values.size(); ++i)
@@ -209,7 +209,7 @@ namespace series
 		}
 
 		template<typename T2>
-		constexpr Interleave<T>& operator|=(const T2& a)
+		constexpr Interleave<Series>& operator|=(const T2& a)
 		{
 			assert(compatible(a));
 			for (std::size_t i = 0; i < values.size(); ++i)
@@ -220,7 +220,7 @@ namespace series
 		}
 
 		template<typename T2>
-		constexpr Interleave<T>& operator^=(const T2& a)
+		constexpr Interleave<Series>& operator^=(const T2& a)
 		{
 			assert(compatible(a));
 			for (std::size_t i = 0; i < values.size(); ++i)
@@ -252,26 +252,26 @@ namespace series
 	but we also wish to avoid creating implicit casts.
 	*/
 
-	template<typename T>
-	inline Interleave<T> interleave(const T vector)
+	template<typename Series>
+	inline Interleave<Series> interleave(const Series vector)
 	{
-		return Interleave<T>(vector);
+		return Interleave<Series>(vector);
 	}
-	template<typename T>
-	inline Interleave<std::vector<T>> interleave(const std::initializer_list<T>& list)
+	template<typename Series>
+	inline Interleave<std::vector<Series>> interleave(const std::initializer_list<Series>& list)
 	{
-		const std::vector<T> v(list);
-		return Interleave<std::vector<T>>(v);
+		const std::vector<Series> v(list);
+		return Interleave<std::vector<Series>>(v);
 	}
-	template<typename T>		// convenience constructor for vectors
-	inline Interleave<std::vector<T>> interleave(const std::size_t N, const T a)
+	template<typename Series>		// convenience constructor for vectors
+	inline Interleave<std::vector<Series>> interleave(const std::size_t N, const Series a)
 	{
-		return Interleave<std::vector<T>>(std::vector<T>(N, a));
+		return Interleave<std::vector<Series>>(std::vector<Series>(N, a));
 	}
 
 
-	template<typename T>		
-	inline Interleave<T> reshape(const Interleave<T>& a, const std::size_t copies_per_value, Interleave<T>& out)
+	template<typename Series>		
+	inline Interleave<Series> reshape(const Interleave<Series>& a, const std::size_t copies_per_value, Interleave<Series>& out)
 	{
 		if (out.front() != a.front())
 		{

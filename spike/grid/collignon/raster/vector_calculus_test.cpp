@@ -25,7 +25,7 @@ TEST_CASE( "Raster gradient determinism", "[rasters]" ) {
     float radius(2.0f);
     int vertex_count_per_half_meridian(10);
     collignon::Grid grid(radius, vertex_count_per_half_meridian);
-    auto a = series::Noise<float>();
+    auto a = series::UnitIntervalNoise<float>();
     auto out1 = std::vector<glm::vec3>(grid.vertex_count());
     auto out2 = std::vector<glm::vec3>(grid.vertex_count());
     SECTION("gradient(grid, a) must generate the same output when called repeatedly"){
@@ -39,8 +39,8 @@ TEST_CASE( "Raster gradient distributive over addition", "[rasters]" ) {
     float radius(2.0f);
     int vertex_count_per_half_meridian(10);
     collignon::Grid grid(radius, vertex_count_per_half_meridian);
-    auto a = series::Noise<float>(11.0f, 11000.0f);
-    auto b = series::Noise<float>(12.0f, 12000.0f);
+    auto a = series::UnitIntervalNoise<float>(11.0f, 11000.0f);
+    auto b = series::UnitIntervalNoise<float>(12.0f, 12000.0f);
     auto ab = std::vector<float>(grid.vertex_count());
     auto grad_a = std::vector<glm::vec3>(grid.vertex_count());
     auto grad_b = std::vector<glm::vec3>(grid.vertex_count());
@@ -62,8 +62,8 @@ TEST_CASE( "Raster gradient distributive over addition", "[rasters]" ) {
 //     float radius(2.0f);
 //     int vertex_count_per_half_meridian(10);
 //     collignon::Grid grid(radius, vertex_count_per_half_meridian);
-//     auto a = series::Noise<float>(11.0f, 11000.0f);
-//     auto b = series::Noise<float>(12.0f, 12000.0f);
+//     auto a = series::UnitIntervalNoise<float>(11.0f, 11000.0f);
+//     auto b = series::UnitIntervalNoise<float>(12.0f, 12000.0f);
 //     auto ab = std::vector<float>(grid.vertex_count());
 //     auto grad_ab = std::vector<glm::vec3>(grid.vertex_count());
 //     auto grad_a = std::vector<glm::vec3>(grid.vertex_count());
@@ -161,7 +161,7 @@ TEST_CASE( "Raster divergence determinism", "[rasters]" ) {
     float radius(2.0f);
     int vertex_count_per_half_meridian(10);
     collignon::Grid grid(radius, vertex_count_per_half_meridian);
-    auto a = series::Noise<glm::vec3>(glm::vec3(10,11,12), glm::vec3(10000,11000,12000));
+    auto a = series::UnitIntervalNoise<glm::vec3>(glm::vec3(10,11,12), glm::vec3(10000,11000,12000));
     auto div_a1 = std::vector<float>(grid.vertex_count());
     auto div_a2 = std::vector<float>(grid.vertex_count());
     SECTION("divergence(grid, a) must generate the same output when called repeatedly"){
@@ -176,8 +176,8 @@ TEST_CASE( "Raster divergence distributive over addition", "[rasters]" ) {
     float radius(2.0f);
     int vertex_count_per_half_meridian(10);
     collignon::Grid grid(radius, vertex_count_per_half_meridian);
-    auto a = series::Noise<glm::vec3>(glm::vec3(10,11,12), glm::vec3(10000,11000,12000));
-    auto b = series::Noise<glm::vec3>(glm::vec3(13,14,15), glm::vec3(13000,14000,15000));
+    auto a = series::UnitIntervalNoise<glm::vec3>(glm::vec3(10,11,12), glm::vec3(10000,11000,12000));
+    auto b = series::UnitIntervalNoise<glm::vec3>(glm::vec3(13,14,15), glm::vec3(13000,14000,15000));
     auto ab = std::vector<glm::vec3>(grid.vertex_count());
     auto div_a = std::vector<float>(grid.vertex_count());
     auto div_b = std::vector<float>(grid.vertex_count());
@@ -322,7 +322,7 @@ TEST_CASE( "Raster curl determinism", "[rasters]" ) {
     float radius(2.0f);
     int vertex_count_per_half_meridian(10);
     collignon::Grid grid(radius, vertex_count_per_half_meridian);
-    auto a = series::Noise<glm::vec3>(glm::vec3(10,11,12), glm::vec3(10000,11000,12000));
+    auto a = series::UnitIntervalNoise<glm::vec3>(glm::vec3(10,11,12), glm::vec3(10000,11000,12000));
     auto curl_a1 = std::vector<glm::vec3>(grid.vertex_count());
     auto curl_a2 = std::vector<glm::vec3>(grid.vertex_count());
     SECTION("curl(grid, a) must generate the same output when called repeatedly"){
@@ -336,8 +336,8 @@ TEST_CASE( "Raster curl distributive over addition", "[rasters]" ) {
     float radius(2.0f);
     int vertex_count_per_half_meridian(10);
     collignon::Grid grid(radius, vertex_count_per_half_meridian);
-    auto a = series::Noise<glm::vec3>(glm::vec3(10,11,12), glm::vec3(10000,11000,12000));
-    auto b = series::Noise<glm::vec3>(glm::vec3(13,14,15), glm::vec3(13000,14000,15000));
+    auto a = series::UnitIntervalNoise<glm::vec3>(glm::vec3(10,11,12), glm::vec3(10000,11000,12000));
+    auto b = series::UnitIntervalNoise<glm::vec3>(glm::vec3(13,14,15), glm::vec3(13000,14000,15000));
     auto ab = std::vector<glm::vec3>(grid.vertex_count());
     auto curl_a = std::vector<glm::vec3>(grid.vertex_count());
     auto curl_b = std::vector<glm::vec3>(grid.vertex_count());
@@ -404,7 +404,7 @@ TEST_CASE( "Raster laplacian determinism", "[rasters]" ) {
     float radius(2.0f);
     int vertex_count_per_half_meridian(10);
     collignon::Grid grid(radius, vertex_count_per_half_meridian);
-    auto a = series::Noise<float>();
+    auto a = series::UnitIntervalNoise<float>();
     auto laplacian_a1 = std::vector<float>(grid.vertex_count());
     auto laplacian_a2 = std::vector<float>(grid.vertex_count());
     SECTION("laplacian(grid, a) must generate the same output when called repeatedly"){

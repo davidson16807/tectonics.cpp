@@ -25,7 +25,8 @@ namespace each
 			out.size() % a.size() == 0 &&
 			out.size() % b.size() == 0 &&
 			a.size() > 0 &&
-			b.size() > 0;
+			b.size() > 0 &&
+		true;
 	}
 
 	template <typename In1, typename In2, typename In3, typename Out>
@@ -40,7 +41,8 @@ namespace each
 			out.size() % c.size() == 0 &&
 			a.size() > 0 &&
 			b.size() > 0 &&
-			c.size() > 0;
+			c.size() > 0 &&
+		true;
 	}
 
 	#define EACH_BINARY_OPERATION(SYMBOL, NAME) \
@@ -319,6 +321,30 @@ namespace each
 		add (out, c, out);
 	}
 
+
+	/// Computes and returns f(a).
+	template <typename In1, typename F, typename Out>
+	void map(const F& f, const In1& a, Out& out)
+	{
+		assert(compatible(a,out));
+		auto size = out.size();
+		for (std::size_t i = 0; i < size; ++i)
+		{
+			out[i] = f(a[i]);
+		}
+	}
+
+	/// Computes and returns f(a).
+	template <typename In1, typename F, typename Out>
+	void get(const F& f, const In1& a, Out& out)
+	{
+		assert(compatible(a,f,out));
+		auto size = out.size();
+		for (std::size_t i = 0; i < size; ++i)
+		{
+			out[i] = f[a[i]];
+		}
+	}
 
 }
 

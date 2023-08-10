@@ -75,7 +75,8 @@ namespace test {
             return distance(a, b) <= threshold;
         }
 
-        std::string print(const T& a) const {
+        template<typename T2>
+        std::string print(const T2& a) const {
             return to_string(a);
         }
 
@@ -99,7 +100,9 @@ namespace test {
             return abs(a - b) <= threshold;
         }
 
-        std::string print(const T& a) const {
+        template<typename T2>
+        std::string print(const T2& a) const {
+            // return to_string(a);
             std::ostringstream os;
             os << a;
             return os.str();

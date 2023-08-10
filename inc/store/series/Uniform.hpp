@@ -9,7 +9,8 @@ namespace series
 
 
 	/*
-	`Uniform` packages a single value of arbitrary data type so that
+	`Uniform` is a map: ℕ→𝕋.
+	It packages a single value of arbitrary data type so that
 	it may operate as an indexible data type similar to `Series` and `Raster`.
 	For any index given, its indexing operation will always return a single value.
 	`Uniform` is used to reduce the number of function overloads that must be implemented 
@@ -18,15 +19,20 @@ namespace series
 	template<typename T>
 	struct Uniform
 	{
-		T value;
-
-		constexpr inline explicit Uniform(const T& value) : value(value) {}
-		constexpr inline Uniform(const Uniform& a) : value(a.value) {} // copy constructor
-
 	    using size_type = std::size_t;
 		using value_type = T;
 		using const_reference = const T&;
 		using reference = T&;
+
+		size_type reported_size;
+		T value;
+
+		constexpr inline Uniform(const Uniform<T>& uniform): reported_size(uniform.reported_size)
+		{}
+		constexpr inline explicit Uniform(): reported_size(1)
+		{}
+		constexpr inline explicit Uniform(const size_type reported_size): reported_size(reported_size)
+		{}
 
 		constexpr inline std::size_t size() const { return 1; }
 

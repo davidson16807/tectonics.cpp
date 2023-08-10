@@ -20,6 +20,7 @@ to the point where ease of use is preferred.
 #define TEST_LOWER(LO)     [=](auto x){ return (LO) <= x; }
 #define TEST_UPPER(HI)     [=](auto x){ return x <= HI; }
 #define TEST_RANGE(LO,HI)  [=](auto x){ return LO <= x&&x <= HI; }
+#define TEST_INDEX(F)      [=](auto x){ return (F[x]); }
 #define TEST_UNARY(F)      [=](auto x){ return (F(x)); }
 #define TEST_BINARY(F)     [=](auto x, auto y){ return (F(x,y)); }
 #define TEST_TRINARY(F)    [=](auto x, auto y, auto z){ return (F(x,y,z)); }
