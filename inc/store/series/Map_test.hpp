@@ -17,7 +17,7 @@
 #include <store/each.hpp>  
 #include <store/whole.hpp>  
 #include <store/series/Range.hpp>
-#include <store/series/UnitIntervalNoise.hpp>
+#include <store/series/noise/UnitIntervalNoise.hpp>
 #include <store/series/Map.hpp>
 
 #include <test/structures.hpp>  

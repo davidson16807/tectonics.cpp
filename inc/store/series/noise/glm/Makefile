@@ -12,7 +12,7 @@ all: $(TEST) ./Makefile
 	rm -f test.cpp && \
 	find ./ -type f -name '*_test.*pp' -exec echo "#include \"{}\"" >> test.cpp \; && \
 	$(CPP) -std=c++17 -o test.out test.cpp  $(FLAGS) \
-	-I $(ROOT)/lib/ -I $(ROOT)/inc/ && \
+	-I $(ROOT)/lib/ -I $(ROOT)/inc/ -I $(ROOT)/spike/ && \
 	chmod a+x test.out && \
 	./test.out
 

@@ -1,12 +1,47 @@
 #pragma once
 
-#include <array>
+#include <cmath>
 
-/*
-"math" provides interpolation functionality that goes beyond that which is provided by glm
-*/
-namespace math
-{
+namespace math{
+
+	template <typename T>
+	constexpr T sign(const T x) {
+		return std::signbit(x)? T(1):T(-1);
+	}
+
+	/*
+	"erf" provides an approximation for the "error function": erf(x) = ∫ˣ exp(-t²)dt
+	It is accurate to within 0.02% over the range [0,10].
+	*/
+	template <typename T>
+	constexpr auto erf(const T x) {
+		const T a(0.1);
+		const T b(1.1295);
+	    return std::tanh(a*x*x*x + b*x);
+	}
+
+	/*
+	"erfinv" provides an approximation for the "inverse error function": erf⁻¹(erf(x)) = x
+	It is accurate to within 0.2% over its entire range. From Winitzki (2008).
+	*/
+	template <typename T>
+	constexpr T erfinv(const T x) {
+		T a(0.147);
+		T f(std::log(T(1)-x*x));
+		T g(T(2)/(M_PI*a) + f/T(2));
+		return sign(x) * std::sqrt( std::sqrt(g*g - f/a) - g );
+	}
+
+	/*
+	"probit" is the "quantile" of the normal distribution, 
+	i.e. the inverse cumulative distribution function of the normal distribution.
+	It returns the value that's associated for a given quantile of the normal distribution.
+	*/
+	template <typename T>
+	constexpr auto probit(const T p) {
+		return std::sqrt(T(2)) * erfinv(T(2)*p-1);
+	}
+
     /*
     "mix" duplicates glm::mix so that we don't have to require glm just to use it.
     */

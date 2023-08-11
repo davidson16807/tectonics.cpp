@@ -18,14 +18,15 @@
 #include <store/whole.hpp>  
 #include <store/series/Range.hpp>
 #include <store/series/Get.hpp>
+#include <store/series/noise/UnitIntervalNoise.hpp>
 
 #include <test/properties.hpp>  
 #include <test/macros.hpp>  
 #include <test/glm/adapter.hpp>  
 
-#include "UnitVectorInterleave.hpp"
+#include "UnitVectorNoise.hpp"
 
-TEST_CASE( "UnitVector3Interleave()", "[series]" ) {
+TEST_CASE( "UnitVectorNoise<4>()", "[series]" ) {
     std::vector<int> indices   {
         -1, 0, 1, 2, 3, 
         std::numeric_limits<int>::max(), 
@@ -34,27 +35,44 @@ TEST_CASE( "UnitVector3Interleave()", "[series]" ) {
     test::GlmAdapter<int,double> adapter(1e-7);
 
     REQUIRE(test::determinism(adapter,
-        "UnitVector3Interleave(…)", 
-        TEST_INDEX(
-            series::UnitVector3Interleave(
-                series::UnitIntervalNoise<double>())),
+        "UnitVectorNoise(…)", 
+        TEST_INDEX((series::unit_vector_noise<4,double>())),
+        indices
+    ));
+
+    auto vec4s = series::get(
+        series::unit_vector_noise<4,double>(), 
+        series::Range(1000));
+    std::vector<double> lengths(vec4s.size());
+    each::length(vec4s, lengths);
+    CHECK(std::abs(whole::max(lengths)-1.0) < 1e-7);
+    CHECK(std::abs(whole::min(lengths)-1.0) < 1e-7);
+}
+
+TEST_CASE( "UnitVectorNoise<3>()", "[series]" ) {
+    std::vector<int> indices   {
+        -1, 0, 1, 2, 3, 
+        std::numeric_limits<int>::max(), 
+        std::numeric_limits<int>::min()
+    };
+    test::GlmAdapter<int,double> adapter(1e-7);
+
+    REQUIRE(test::determinism(adapter,
+        "UnitVectorNoise(…)", 
+        TEST_INDEX((series::unit_vector_noise<3,double>())),
         indices
     ));
 
     auto vec3s = series::get(
-        series::UnitVector3Interleave(
-            series::UnitIntervalNoise<double>()), 
+        series::unit_vector_noise<3,double>(), 
         series::Range(1000));
     std::vector<double> lengths(vec3s.size());
     each::length(vec3s, lengths);
-    CHECK(whole::max(lengths) <= 1.0);
-    CHECK(whole::max(lengths) >  1.0-1e-7);
-    CHECK(whole::min(lengths) <= 1.0);
-    CHECK(whole::min(lengths) >  1.0-1e-7);
+    CHECK(std::abs(whole::max(lengths)-1.0) < 1e-7);
+    CHECK(std::abs(whole::min(lengths)-1.0) < 1e-7);
 }
 
-
-TEST_CASE( "UnitVector2Interleave()", "[series]" ) {
+TEST_CASE( "UnitVectorNoise<2>()", "[series]" ) {
     std::vector<int> indices   {
         -1, 0, 1, 2, 3, 
         std::numeric_limits<int>::max(), 
@@ -63,22 +81,17 @@ TEST_CASE( "UnitVector2Interleave()", "[series]" ) {
     test::GlmAdapter<int,double> adapter(1e-7);
 
     REQUIRE(test::determinism(adapter,
-        "UnitVector2Interleave(…)", 
-        TEST_INDEX(
-            series::UnitVector2Interleave(
-                series::UnitIntervalNoise<double>())),
+        "UnitVectorNoise(…)", 
+        TEST_INDEX((series::unit_vector_noise<2,double>())),
         indices
     ));
 
     auto vec2s = series::get(
-        series::UnitVector2Interleave(
-            series::UnitIntervalNoise<double>()), 
+        series::unit_vector_noise<2,double>(), 
         series::Range(1000));
     std::vector<double> lengths(vec2s.size());
     each::length(vec2s, lengths);
-    CHECK(whole::max(lengths) <= 1.0);
-    CHECK(whole::max(lengths) >  1.0-1e-7);
-    CHECK(whole::min(lengths) <= 1.0);
-    CHECK(whole::min(lengths) >  1.0-1e-7);
+    CHECK(std::abs(whole::max(lengths)-1.0) < 1e-7);
+    CHECK(std::abs(whole::min(lengths)-1.0) < 1e-7);
 }
 

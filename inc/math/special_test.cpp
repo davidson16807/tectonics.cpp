@@ -4,7 +4,7 @@
 #include <catch/catch.hpp>
 
 // in-house libraries
-#include "lerp.hpp"
+#include "special.hpp"
 
 const float a = 1.6180;
 const float b = 3.1415;

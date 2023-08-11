@@ -15,7 +15,6 @@
 // in-house libraries
 #include <store/each.hpp>  
 #include <store/whole.hpp>  
-#include <store/series/UnitIntervalNoise.hpp>
 #include <store/series/Range.hpp>
 #include <store/series/Get.hpp>
 
@@ -23,10 +22,10 @@
 #include <test/macros.hpp>  
 #include <test/adapter.hpp>  
 
-#include "UnitIntervalNoise.hpp"
+#include "GaussianNoise.hpp"
 
-TEST_CASE( "UnitIntervalNoise()", "[series]" ) {
-    series::UnitIntervalNoise noise(0.1);
+TEST_CASE( "GaussianNoise()", "[series]" ) {
+    auto noise = series::gaussian<double>();
     test::OperatorAdapter exact;
     std::vector<int> indices   {
         -1, 0, 1, 2, 3, 
@@ -35,22 +34,12 @@ TEST_CASE( "UnitIntervalNoise()", "[series]" ) {
     };
 
     REQUIRE(test::determinism(exact,
-        "UnitIntervalNoise(…)", TEST_INDEX(series::UnitIntervalNoise(0.1f)), 
+        "GaussianNoise(…)", TEST_INDEX(series::gaussian<double>()), 
         indices
     ));
 
-    REQUIRE(test::codomain(exact,
-        "within expected range", TEST_RANGE(0.0, 1.0),
-        "UnitIntervalNoise(…)",  TEST_INDEX(noise), 
-        indices
-    ));
-
-    auto out = series::get(noise, series::Range(1000));
-    CHECK(whole::max(out) <= 1.0);
-    CHECK(whole::max(out) >  0.95);
-    CHECK(whole::min(out) >= 0.0);
-    CHECK(whole::min(out) <  0.05);
-    CHECK(std::abs(whole::mean(out)-0.5) < 0.01);
-    CHECK(std::abs(whole::standard_deviation(out)-std::sqrt(1.0/12)) < 0.01);
+    auto out = series::get(noise, series::Range(3000));
+    CHECK(std::abs(whole::mean(out)-0.0) < 0.05);
+    CHECK(std::abs(whole::standard_deviation(out)-1.0) < 0.01);
 }
 

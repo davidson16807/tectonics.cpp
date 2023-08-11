@@ -18,6 +18,7 @@
 #include <store/whole.hpp>  
 #include <store/series/Range.hpp>
 #include <store/series/Get.hpp>
+#include <store/series/noise/UnitIntervalNoise.hpp>
 
 #include <test/properties.hpp>  
 #include <test/macros.hpp>  

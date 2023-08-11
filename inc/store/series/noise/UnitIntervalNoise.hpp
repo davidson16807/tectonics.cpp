@@ -10,7 +10,7 @@ namespace series
 
 	/*
 	`UnitIntervalNoise` is a map: ℕ→[0,1].
-	It. represents an indexible object that can participate in functions under `each::` and `store::`.
+	It represents an indexible object that can participate in functions under `each::` and `store::`.
 	The value at each index is in the range [0,1], it is not correlated with the value at contiguous indices,
 	and it is completely determined by the index together with a user defined `seed`.
 	*/
@@ -51,9 +51,9 @@ namespace series
 	For consistency, we create one such function for `UnitIntervalNoise` here.
 	*/
 	template<typename T>
-	constexpr inline UnitIntervalNoise<T> noise(const T& seed)
+	constexpr inline UnitIntervalNoise<T> noise(const T a = T(10), const T b=T(10000))
 	{
-		return UnitIntervalNoise<T>(seed);
+		return UnitIntervalNoise<T>(a,b);
 	}
 
 

@@ -4,7 +4,7 @@
 #include "math.h" // fmax
 
 // in-house libraries
-#include <math/lerp.hpp> // lerp()
+#include <math/special.hpp> // lerp()
 #include <units/si.hpp> // pressure, temperature, unitless
 
 namespace compound{
