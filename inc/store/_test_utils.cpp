@@ -25,6 +25,8 @@ struct SeriesAdapter{
         return whole::to_string(a);
     }
 
+    // the functions below are required for some tests for series::Map
+
     template<int Plo, int Phi>
     std::string print(const math::Polynomial<T,Plo,Phi>& p) const {
         return math::to_string(p);

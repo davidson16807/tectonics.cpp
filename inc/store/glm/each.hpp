@@ -90,9 +90,6 @@ namespace each {
 		}\
 	}
 
-	EACH_UNARY_GLM_WRAPPER(length)  
-	EACH_UNARY_GLM_WRAPPER(normalize)  
-
 	EACH_UNARY_FUNCTION(length)
 	EACH_UNARY_FUNCTION(normalize)
 
@@ -108,28 +105,33 @@ namespace each {
 		}\
 	}
 
-	EACH_BINARY_GLM_WRAPPER(dot)  
-	EACH_BINARY_GLM_WRAPPER(cross)  
-	EACH_BINARY_GLM_WRAPPER(reflect)  
-	EACH_BINARY_GLM_WRAPPER(refract)
-
 	EACH_BINARY_FUNCTION(dot)
 	EACH_BINARY_FUNCTION(cross)
 	EACH_BINARY_FUNCTION(reflect)
 	EACH_BINARY_FUNCTION(refract)
 
 
-	template <glm::length_t L, typename T1, glm::qualifier Q> \
+	template <glm::length_t L, typename T1, glm::qualifier Q>
 	inline auto x(const glm::vec<L,T1,Q> a){ return a.x; }
-	template <glm::length_t L, typename T1, glm::qualifier Q> \
+	template <glm::length_t L, typename T1, glm::qualifier Q>
 	inline auto y(const glm::vec<L,T1,Q> a){ return a.y; }
-	template <glm::length_t L, typename T1, glm::qualifier Q> \
+	template <glm::length_t L, typename T1, glm::qualifier Q>
 	inline auto z(const glm::vec<L,T1,Q> a){ return a.z; }
 
 	EACH_UNARY_FUNCTION(x)
 	EACH_UNARY_FUNCTION(y)
 	EACH_UNARY_FUNCTION(z)
 
+	template <glm::length_t L, typename T1, glm::qualifier Q>
+	inline auto x(const glm::vec<L,T1,Q> a, const T1 value){ auto out=a; out.x=value; return out; }
+	template <glm::length_t L, typename T1, glm::qualifier Q>
+	inline auto y(const glm::vec<L,T1,Q> a, const T1 value){ auto out=a; out.y=value; return out; }
+	template <glm::length_t L, typename T1, glm::qualifier Q>
+	inline auto z(const glm::vec<L,T1,Q> a, const T1 value){ auto out=a; out.z=value; return out; }
+
+	EACH_BINARY_FUNCTION(x)
+	EACH_BINARY_FUNCTION(y)
+	EACH_BINARY_FUNCTION(z)
 
 	#undef EACH_UNARY_GLM_WRAPPER
 	#undef EACH_UNARY_FUNCTION

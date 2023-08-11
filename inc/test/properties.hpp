@@ -167,10 +167,11 @@ namespace test {
             f_name + " [denoted \"f\"] must permit input to be reconstructed by a \"left inverse\" function, " + finv_name + " [denoted \"f⁻¹\"]" +
             "\nsuch that: \n  f⁻¹(f(a)) = a\n",
             [=](auto a){
-                auto finvfa = finv(f(a));
+                auto fa = f(a);
+                auto finvfa = finv(fa);
                 return Results(adapter.equal(finvfa, a),
                     "f⁻¹(f(a)) : " + adapter.print(finvfa)+"\n" +
-                    "a : " + adapter.print(a)
+                    "f(a) : " + adapter.print(fa)
                 );
             }, as);
     }
@@ -630,7 +631,7 @@ namespace test {
             f_name + " must only produce output that is " + validity_name,
             [=](A a){
                 auto fa = f(a);
-                std::string diagnostics = "f(a) : " + fa;
+                std::string diagnostics = "f(a) : " + adapter.print(fa);
                 return Results(valid(fa), diagnostics); }, 
             as);
     }
@@ -666,6 +667,9 @@ namespace test {
                 return Results(valid(fabc), diagnostics); }, 
             as, bs, cs);
     }
+
+
+
 
     template<typename Adapter, typename LessThanEqual, typename Add, typename F, typename A, typename B, typename C>
     bool triangle_inequality(const Adapter& adapter, 
