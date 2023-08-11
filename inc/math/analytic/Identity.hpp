@@ -9,6 +9,8 @@ namespace math {
     */
     template<typename T>
     struct Identity {
+        using value_type = T;
+
         constexpr explicit Identity()
         {}
         constexpr T operator()(const T x) const
@@ -17,6 +19,18 @@ namespace math {
         }
     };
     
+    template<typename T>
+    constexpr std::string to_string(const Identity<T>& p)
+    {
+        return "x";
+    }
+
+    template<typename T>
+    std::ostream& operator<<(std::ostream& os, const Identity<T>& p) { 
+        os << to_string(p);
+        return os;
+    }
+
     // operators that cause cancelation
     template<typename T>
     constexpr T operator-(const Identity<T> e1, const Identity<T> e2)

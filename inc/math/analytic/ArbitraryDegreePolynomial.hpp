@@ -26,6 +26,8 @@ namespace math {
     template<typename T, typename I=std::int8_t>
     struct ArbitraryDegreePolynomial
     {
+        using value_type = T;
+
         std::map<I,T> k;
         constexpr ArbitraryDegreePolynomial(): k()
         {

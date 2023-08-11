@@ -14,6 +14,8 @@ namespace math {
     */
     template<typename T>
     struct Scaling {
+        using value_type = T;
+
         T factor;
         constexpr explicit Scaling(const T factor):
             factor(factor)

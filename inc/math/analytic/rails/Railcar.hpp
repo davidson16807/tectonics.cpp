@@ -17,6 +17,7 @@ namespace math {
 
     template<typename T, typename F>
     struct Railcar {
+        using value_type = T;
 
         F content;
         T lo;

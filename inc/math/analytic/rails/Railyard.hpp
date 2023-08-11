@@ -27,6 +27,7 @@ namespace math {
 
     template<typename T, typename F>
     struct Railyard {
+        using value_type = T;
 
         std::vector<Railcar<T,F>> cars; 
 

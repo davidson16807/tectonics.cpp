@@ -1,1 +1,5 @@
 #include "./UnitIntervalNoise_test.cpp"
+#include "./Map_test.hpp"
+#include "./Range_test.cpp"
+#include "./Uniform_test.cpp"
+#include "./Get_test.cpp"

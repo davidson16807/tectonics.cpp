@@ -10,6 +10,8 @@ namespace math {
     */
     template<typename T>
     struct Boxcar {
+        using value_type = T;
+
         T lo;
         T hi;
         constexpr explicit Boxcar<T>(const T lo, const T hi):

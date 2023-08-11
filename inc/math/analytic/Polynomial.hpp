@@ -31,6 +31,8 @@ namespace math {
     template<typename T, int Nlo, int Nhi>
     struct Polynomial
     {
+        using value_type = T;
+
         std::array<T,Nhi+1-Nlo> k;
         // the zero polynomial
         constexpr Polynomial(): k()

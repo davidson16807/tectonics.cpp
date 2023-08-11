@@ -4,6 +4,8 @@ namespace math {
 
     template <typename T>
     struct AlgebraicSigmoid{
+        using value_type = T;
+
         T xscale;
         T xoffset;
         T ymax;

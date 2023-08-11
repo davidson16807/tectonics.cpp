@@ -18,6 +18,8 @@ namespace math {
     template<typename T, typename I>
     struct ArbitraryDegreeRational
     {
+        using value_type = T;
+
         ArbitraryDegreePolynomial<T,I> p;
         ArbitraryDegreePolynomial<T,I> q;
         constexpr explicit ArbitraryDegreeRational(const ArbitraryDegreePolynomial<T,I>& p, const ArbitraryDegreePolynomial<T,I>& q): 

@@ -23,6 +23,7 @@ namespace math {
 
     template<typename T, typename F>
     struct Train {
+        using value_type = T;
 
         std::vector<F> contents; 
         std::vector<T> couplers; 

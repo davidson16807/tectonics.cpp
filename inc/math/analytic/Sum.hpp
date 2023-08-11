@@ -17,6 +17,7 @@ namespace math {
     */
     template<typename T, typename F>
     struct Sum {
+        using value_type = T;
 
         std::vector<F> terms; 
 

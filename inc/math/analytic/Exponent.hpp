@@ -4,6 +4,8 @@ namespace math {
 
     template<typename T>
     struct Exponent {
+        using value_type = T;
+
         T weight;
         T exponent;
         constexpr explicit Exponent(const T weight, const T exponent):

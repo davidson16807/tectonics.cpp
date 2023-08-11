@@ -24,14 +24,20 @@ namespace series
 		using const_reference = const T&;
 		using reference = T&;
 
-		size_type reported_size;
 		T value;
+		size_type reported_size;
 
-		constexpr inline Uniform(const Uniform<T>& uniform): reported_size(uniform.reported_size)
+		constexpr inline Uniform(const Uniform<T>& uniform): 
+			value(uniform.value),
+			reported_size(uniform.reported_size)
 		{}
-		constexpr inline explicit Uniform(): reported_size(1)
+		constexpr inline explicit Uniform(const T value): 
+			value(value),
+			reported_size(1)
 		{}
-		constexpr inline explicit Uniform(const size_type reported_size): reported_size(reported_size)
+		constexpr inline explicit Uniform(const T value, const size_type reported_size): 
+			value(value),
+			reported_size(reported_size)
 		{}
 
 		constexpr inline std::size_t size() const { return 1; }

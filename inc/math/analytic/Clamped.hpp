@@ -18,6 +18,8 @@ namespace math {
     */
     template<typename T, typename F>
     struct Clamped {
+        using value_type = T;
+
         F f;
         T lo;
         T hi;

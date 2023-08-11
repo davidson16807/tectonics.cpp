@@ -26,6 +26,8 @@ namespace math {
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     struct Rational
     {
+        using value_type = T;
+
         Polynomial<T,Plo,Phi> p;
         Polynomial<T,Qlo,Qhi> q;
         template <int P2lo, int P2hi, int Q2lo, int Q2hi> 

@@ -13,6 +13,8 @@ namespace math {
     */
     template<typename T>
     struct Shifting {
+        using value_type = T;
+
         T offset;
         constexpr explicit Shifting(const T offset):
             offset(offset)

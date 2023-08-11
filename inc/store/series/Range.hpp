@@ -18,19 +18,32 @@ namespace series
 	    using size_type = std::size_t;
 		using value_type = T;
 
-		size_type reported_size;
-		Range(const Range<T>& range): reported_size(range.reported_size)
+		T start_value;
+		T reported_size;
+		constexpr explicit Range(): 
+			start_value(0),
+			reported_size(1)
 		{}
-		explicit Range(): reported_size(1)
+		constexpr explicit Range(const T reported_size): 
+			start_value(0),
+			reported_size(reported_size)
 		{}
-		explicit Range(const size_type reported_size): reported_size(reported_size)
+		constexpr explicit Range(const T start_value, const T end_value): 
+			start_value(start_value),
+			reported_size(end_value-start_value)
 		{}
+		Range(const Range<T>& range): 
+			start_value(0),
+			reported_size(range.reported_size)
+		{}
+
+		constexpr inline bool includes(T i) const { return start_value < i && i < start_value+reported_size; }
 
 		constexpr inline size_type size() const { return reported_size; }
 
 		constexpr inline value_type operator[](const size_type memory_id ) const
 		{
-			return T(memory_id);
+			return T(memory_id+start_value);
 		}
 
 	};
@@ -41,10 +54,19 @@ namespace series
 	Typical C++ conventions might append these with `make_*`, but we forego this convention for brevity.
 	For consistency, we create one such function for `Range` here.
 	*/
-	template<typename T>
-	constexpr inline Range<T> range()
+	constexpr inline Range<std::size_t> range()
 	{
-		return Range<T>();
+		return Range();
+	}
+	template<typename T>
+	constexpr inline Range<T> range(const T reported_size)
+	{
+		return Range<T>(reported_size);
+	}
+	template<typename T>
+	constexpr inline Range<T> range(const T start_value, const T end_value)
+	{
+		return Range<T>(start_value, end_value);
 	}
 
 
