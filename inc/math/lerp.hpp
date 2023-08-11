@@ -44,48 +44,4 @@ namespace math
         return result;
     }
 
-    /*
-    "integral_of_lerp" finds the integral of the lerp() function from a to b
-    */
-    template <typename T>
-    constexpr typename T::value_type integral_of_lerp(
-        const T control_points_x, 
-        const T control_points_y, 
-        const typename T::value_type a, 
-        const typename T::value_type b
-    ) {
-        std::size_t li = control_points_x.size();
-        typename T::value_type fa, fb, ya, yb, dydf, dxdf;
-        typename T::value_type I  = (a < control_points_x[0]?    std::min(control_points_x[0] - a,    b-a) * control_points_y[0]    : 0)
-             + (b > control_points_x[li-1]? std::min(b - control_points_x[li-1], b-a) * control_points_y[li-1] : 0);
-        for (std::size_t i = 1; i < li; i++) 
-        {
-            // "f*" is fraction through the control point for a or b
-            fa = linearstep(control_points_x[i-1], control_points_x[i], a);
-            fb = linearstep(control_points_x[i-1], control_points_x[i], b);
-            dydf = control_points_y[i] - control_points_y[i-1];
-            dxdf = control_points_x[i] - control_points_x[i-1];
-            yb = dydf * fb * fb / 2.0f + fb * control_points_y[i-1];
-            ya = dydf * fa * fa / 2.0f + fa * control_points_y[i-1];
-            I += (yb - ya) * dxdf;
-        }
-        return I;
-    }
-
-    /*
-    "derivative_of_lerp" finds the derivative of the lerp() function for a value a
-    */
-    template <typename T>
-    constexpr typename T::value_type derivative_of_lerp(
-        const T control_points_x, 
-        const T control_points_y, 
-        const typename T::value_type x 
-    ) {
-        typename T::value_type result = T(0);
-        for (std::size_t i = 1; i < control_points_x.size(); i++) 
-        {
-            result = x < control_points_x[i-1]? result : (control_points_y[i]-control_points_y[i-1])/(control_points_x[i]-control_points_x[i-1]);
-        }
-        return x < control_points_x[control_points_x.size()-1]? result : T(0);
-    }
 }

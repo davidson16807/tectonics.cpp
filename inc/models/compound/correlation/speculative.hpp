@@ -5,7 +5,6 @@
 
 // in-house libraries
 #include <units/si.hpp>  // 
-#include <math/lerp.hpp> // lerp
 
 namespace compound {
 namespace correlation {
