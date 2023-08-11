@@ -1,5 +1,7 @@
 #include "./UnitIntervalNoise_test.cpp"
 #include "./Map_test.hpp"
+#include "./glm/VectorZip_test.cpp"
+#include "./glm/VectorInterleave_test.cpp"
 #include "./glm/UnitVectorInterleave_test.cpp"
 #include "./Interleave_test.cpp"
 #include "./Range_test.cpp"
