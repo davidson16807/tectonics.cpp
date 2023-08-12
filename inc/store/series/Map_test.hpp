@@ -28,7 +28,7 @@
 #include <math/analytic/Identity.hpp>  
 
 #include "Map.hpp"
-#include "../test_tools.cpp"
+#include "test_tools.cpp"
 
 TEST_CASE( "Map", "[series]" ) {
     series::SeriesAdapter adapter(1e-7);

@@ -18,7 +18,7 @@ struct SeriesAdapter{
 
     template<typename Series1, typename Series2>
     bool equal(const Series1& a, const Series2& b) const {
-        return whole::distance(a,b) < threshold;
+        return whole::distance(a,b) <= threshold;
     }
 
     template<typename Series>
@@ -35,30 +35,6 @@ struct SeriesAdapter{
 
     std::string print(const math::Identity<T>& e) const {
         return math::to_string(e);
-    }
-
-};
-
-template<typename T>
-struct KnownAdapter{
-    T threshold;
-    std::size_t test_size;
-
-    KnownAdapter(const T threshold, const std::size_t test_size):
-        threshold(threshold),
-        test_size(test_size)
-    {}
-
-    template<typename Series1, typename Series2>
-    bool equal(const Series1& a, const Series2& b) const {
-        return whole::distance(
-            map(a,range(test_size)),
-            map(b,range(test_size))) < threshold;
-    }
-
-    template<typename Series>
-    std::string print(const Series& a) const {
-        return whole::to_string(a);
     }
 
 };

@@ -1,266 +1,204 @@
+#pragma once
 
-#define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
+// std libraries
+#include <cmath>
+#include <limits>
+
+// 3rd party libraries
+#define CATCH_CONFIG_MAIN  // This tells Catch to provide p main() - only do this in one cpp file
 #include <catch/catch.hpp>
 
 // HACK: order of tests is arbitrary and glm each must be loaded first to permit template specialization
 // so we include it here despite not necessarily needing it.
 #include "glm/each.hpp"
 
-#include "series/Interleave.hpp"
-#include "series/Uniform.hpp"
+// in-house libraries
+#include <store/known.hpp>
+#include <store/series/Range.hpp>
+#include <store/series/Uniform.hpp>
+#include <store/series/noise/UnitIntervalNoise.hpp>
+
 #include "each.hpp"
 #include "whole.hpp"
 
-TEST_CASE( "Series<T> arithmetic purity", "[each]" ) {
-    auto a = std::vector({1,2,3,4,5});
-    auto b = std::vector({-1,1,-2,2,3});
-    auto c1 = std::vector({0,0,0,0,0});
-    auto c2 = std::vector({0,0,0,0,0});
+#include <test/macros.hpp>
+#include <test/structures.hpp>
 
-    SECTION("a+b must be called repeatedly without changing the output"){
-        each::add(a,b,c1);
-        each::add(a,b,c2);
-        CHECK(whole::equal(c1, c2));
-    }
+namespace each {
 
-    SECTION("a*b must be called repeatedly without changing the output"){
-        each::mult(a,b,c1);
-        each::mult(a,b,c2);
-        CHECK(whole::equal(c1, c2));
-    }
+    template<typename T>
+    struct EachAdapter{
+        T threshold;
 
-    SECTION("a-b must be called repeatedly without changing the output"){
-        each::sub(a,b,c1);
-        each::sub(a,b,c2);
-        CHECK(whole::equal(c1, c2));
-    }
+        EachAdapter(const T threshold):
+            threshold(threshold)
+        {}
 
-    SECTION("a/b must be called repeatedly without changing the output"){
-        each::div(a,b,c1);
-        each::div(a,b,c2);
-        CHECK(whole::equal(c1, c2));
-    }
+        template<typename Series1, typename Series2>
+        bool equal(const Series1& a, const Series2& b) const {
+            return whole::distance(a,b) <= threshold;
+        }
+
+        template<typename Series>
+        std::string print(const Series& a) const {
+            return whole::to_string(a);
+        }
+
+    };
+
 }
 
-TEST_CASE( "Series<T> arithmetic identity", "[each]" ) {
-    auto a = std::vector({1,2,3,4,5});
-    auto zeros = std::vector({0,0,0,0,0});
-    auto ones  = std::vector({1,1,1,1,1});
-    auto c = std::vector({0,0,0,0,0});
+#define EACH_UNARY_OUT_PARAMETER(TYPE,SIZE,F)   [=](auto x){ std::vector<TYPE> out(SIZE); (F(x,out)); return out; }
+#define EACH_TEST_BINARY_OUT_PARAMETER(TYPE,SIZE,F)  [=](auto x, auto y){ std::vector<TYPE> out(SIZE); (F(x,y,out)); return out; }
+#define EACH_TRINARY_OUT_PARAMETER(TYPE,SIZE,F) [=](auto x, auto y, auto z){ std::vector<TYPE> out(SIZE); (F(x,y,z,out)); return out; }
 
-    SECTION("a+I must equal a"){
-        each::add(a,zeros, c);
-        CHECK(whole::equal(c, a));
-        each::sub(a,zeros, c);
-        CHECK(whole::equal(c, a));
-        each::mult(a,ones, c);
-        CHECK(whole::equal(c, a));
-        each::div(a,ones, c);
-        CHECK(whole::equal(c, a));
-        each::sub(a,a, c);
-        CHECK(whole::equal(c, zeros));
-        each::div(a,a, c);
-        CHECK(whole::equal(c, ones ));
-    }
+
+TEST_CASE( "arithmetic on each nonzero of a series is a field", "[each]" ) {
+
+    each::EachAdapter<double> broad (1e-6);
+    each::EachAdapter<double> narrow(1e-6);
+
+    std::vector<series::UnitIntervalNoise<double>> noises {
+        series::UnitIntervalNoise<double>(10.0, 1e4),
+        series::UnitIntervalNoise<double>(20.0, 2e4),
+        series::UnitIntervalNoise<double>(30.0, 3e4),
+        series::UnitIntervalNoise<double>(40.0, 4e4)
+    };
+
+    std::vector<series::Range<double>> nonzero_ranges {
+        series::Range<double>(1.0,101.0),
+        series::Range<double>(-101.0,-1.0)
+    };
+
+    std::vector<series::Uniform<double>> nonzero_uniforms {
+        series::Uniform<double>(-2.0),
+        series::Uniform<double>(1.0),
+        series::Uniform<double>(2.0),
+    };
+
+    test::Field field(
+        "0", series::uniform(0.0), 
+        "1", series::uniform(1.0), 
+        "each::add",  EACH_TEST_BINARY_OUT_PARAMETER(double, 100, each::add),
+        "each::sub",  EACH_TEST_BINARY_OUT_PARAMETER(double, 100, each::sub),
+        "each::mult", EACH_TEST_BINARY_OUT_PARAMETER(double, 100, each::mult),
+        "each::div",  EACH_TEST_BINARY_OUT_PARAMETER(double, 100, each::div)
+    );
+
+    // UNARY TESTS
+    // REQUIRE(field.valid(broad, noises));
+    REQUIRE(field.valid(broad, nonzero_ranges));
+    REQUIRE(field.valid(broad, nonzero_uniforms));
+
 }
 
-TEST_CASE( "Series<T> arithmetic commutativity", "[each]" ) {
-    auto a = std::vector({1,2,3,4,5});
-    auto b = std::vector({-1,1,-2,2,3});
-    auto ab = std::vector({0,0,0,0,0});
-    auto ba = std::vector({0,0,0,0,0});
 
-    SECTION("a+b must equal b+a"){
-        each::add(a, b, ab);
-        each::add(b, a, ba);
-        CHECK(whole::equal(ab, ba));
-    }
-    SECTION("a*b must equal b*a"){
-        each::mult(a, b, ab);
-        each::mult(b, a, ba);
-        CHECK(whole::equal(ab, ba));
-    }
+TEST_CASE( "arithmetic on each nonzero of a series is a commutative ring", "[each]" ) {
+
+    each::EachAdapter<double> broad (1e-6);
+    each::EachAdapter<double> narrow(1e-6);
+
+    std::vector<series::UnitIntervalNoise<double>> noises {
+        series::UnitIntervalNoise<double>(10.0, 1e4),
+        series::UnitIntervalNoise<double>(20.0, 2e4),
+        series::UnitIntervalNoise<double>(30.0, 3e4),
+        series::UnitIntervalNoise<double>(40.0, 4e4)
+    };
+
+    std::vector<series::Range<double>> ranges {
+        series::Range<double>(),
+        series::Range<double>(-50,50)
+    };
+
+    std::vector<series::Uniform<double>> uniforms {
+        series::Uniform<double>(-2.0),
+        series::Uniform<double>(0.0),
+        series::Uniform<double>(1.0),
+        series::Uniform<double>(2.0),
+    };
+
+    test::CommutativeRing ring(
+        "0", series::uniform(0.0), 
+        "1", series::uniform(1.0), 
+        "each::add",  EACH_TEST_BINARY_OUT_PARAMETER(double, 100, each::add),
+        "each::sub",  EACH_TEST_BINARY_OUT_PARAMETER(double, 100, each::sub),
+        "each::mult", EACH_TEST_BINARY_OUT_PARAMETER(double, 100, each::mult)
+    );
+
+    // UNARY TESTS
+    REQUIRE(ring.valid(broad, noises));
+    REQUIRE(ring.valid(broad, ranges));
+    REQUIRE(ring.valid(broad, uniforms));
+
+    // BINARY TESTS
+    REQUIRE(ring.valid(broad, noises, ranges));
+    REQUIRE(ring.valid(broad, noises, uniforms));
+    REQUIRE(ring.valid(broad, ranges, uniforms));
+
 }
 
-TEST_CASE( "Series<T> arithmetic associativity", "[each]" ) {
-    auto a = std::vector({1,2,3,4,5});
-    auto b = std::vector({-1,1,-2,2,3});
+
+
+
+
+
+TEST_CASE( "morphology on each of a series is a commutative monoid", "[each]" ) {
+
+    each::EachAdapter<bool> exact (0);
+
+    std::vector<std::vector<bool>> vectors {
+        std::vector<bool>({1,0,0,1,0}),
+        std::vector<bool>({0,1,0,1,0}),
+    };
+
+    test::CommutativeMonoid unite(
+        "0", series::uniform(0), 
+        "each::unite", EACH_TEST_BINARY_OUT_PARAMETER(bool, 5, each::unite)
+    );
+    REQUIRE(unite.valid(exact, vectors));
+
+    test::CommutativeMonoid intersect(
+        "1", series::uniform(1), 
+        "each::intersect", EACH_TEST_BINARY_OUT_PARAMETER(bool, 5, each::intersect)
+    );
+    REQUIRE(intersect.valid(exact, vectors));
+
+}
+
+
+TEST_CASE( "Series<T> negation involutivity", "[each]" ) {
+    auto a = std::vector({1,0,0,1,0});
     auto c = std::vector({1,1,2,3,5});
-    auto ab_c = std::vector({0,0,0,0,0});
-    auto a_bc = std::vector({0,0,0,0,0});
 
-    SECTION("(a+b)+c must equal a+(b+c)"){
-        each::add(a,b,    ab_c);
-        each::add(ab_c,c, ab_c);
-        each::add(b,c,    a_bc);
-        each::add(a,a_bc, a_bc);
-        CHECK(whole::equal(ab_c, a_bc));
+    SECTION("--a must equal a"){
+        each::negate(a, c);
+        each::negate(c, c);
+        CHECK(whole::equal(c, a));
     }
-    SECTION("(a*b)*c must equal a*(b*c)"){
-        each::mult(a,b,    ab_c);
-        each::mult(ab_c,c, ab_c);
-        each::mult(b,c,    a_bc);
-        each::mult(a,a_bc, a_bc);
-        CHECK(whole::equal(ab_c, a_bc));
-    }
+
 }
 
-TEST_CASE( "Series<T> arithmetic distributivity", "[each]" ) {
-    auto a = std::vector({1,2,3,4,5});
-    auto b = std::vector({-1,1,-2,2,3});
-    auto c = std::vector({1.0,1.0,2.0,3.0,5.0});
-    auto ab_c  = std::vector({0.0,0.0,0.0,0.0,0.0});
-    auto ac_bc = std::vector({0.0,0.0,0.0,0.0,0.0});
-    auto ac = std::vector({0.0,0.0,0.0,0.0,0.0});
-    auto bc = std::vector({0.0,0.0,0.0,0.0,0.0});
+TEST_CASE( "Series<T> morphologic distributivity", "[each]" ) {
+    auto a = std::vector({1,0,0,1,0});
+    auto b = std::vector({0,1,0,1,0});
+    auto c = std::vector({1,1,0,0,1});
+    auto ab_c  = std::vector({0,0,0,0,0});
+    auto ac_bc = std::vector({0,0,0,0,0});
+    auto ac = std::vector({0,0,0,0,0});
+    auto bc = std::vector({0,0,0,0,0});
 
     SECTION("a+b*c must equal a*c+b*c"){
-        each::add(a,b,    ab_c);
-        each::mult(ab_c,c, ab_c);
-        each::mult(a,c,    ac);
-        each::mult(b,c,    bc);
-        each::add(ac,bc,  ac_bc);
-        CHECK(whole::equal(ab_c, ac_bc));
-    }
-    SECTION("a+b/c must equal a/c+b/c"){
-        each::add(a,b,    ab_c);
-        each::div(ab_c,c, ab_c);
-        each::div(a,c,    ac);
-        each::div(b,c,    bc);
-        each::add(ac,bc,  ac_bc);
+        each::unite(a,b,    ab_c);
+        each::intersect(ab_c,c, ab_c);
+        each::intersect(a,c,    ac);
+        each::intersect(b,c,    bc);
+        each::unite(ac,bc,  ac_bc);
         CHECK(whole::equal(ab_c, ac_bc));
     }
 }
 
 
 
-
-
-
-
-
-
-
-TEST_CASE( "Series<T>/Uniform<T> arithmetic purity", "[each]" ) {
-    auto a = std::vector({1,2,3,4,5});
-    auto b = series::uniform(-2);
-    auto c1 = std::vector({0,0,0,0,0});
-    auto c2 = std::vector({0,0,0,0,0});
-
-    SECTION("a+b must be called repeatedly without changing the output"){
-        each::add(a,b,c1);
-        each::add(a,b,c2);
-        CHECK(whole::equal(c1, c2));
-    }
-
-    SECTION("a*b must be called repeatedly without changing the output"){
-        each::mult(a,b,c1);
-        each::mult(a,b,c2);
-        CHECK(whole::equal(c1, c2));
-    }
-
-    SECTION("a-b must be called repeatedly without changing the output"){
-        each::sub(a,b,c1);
-        each::sub(a,b,c2);
-        CHECK(whole::equal(c1, c2));
-    }
-
-    SECTION("a/b must be called repeatedly without changing the output"){
-        each::div(a,b,c1);
-        each::div(a,b,c2);
-        CHECK(whole::equal(c1, c2));
-    }
-}
-
-TEST_CASE( "Series<T>/Uniform<T> arithmetic identity", "[each]" ) {
-    auto a = std::vector({1,2,3,4,5});
-    auto zeros = series::uniform(0);
-    auto ones  = series::uniform(1);
-    auto c = std::vector({0,0,0,0,0});
-
-    SECTION("a+I must equal a"){
-        each::add(a,zeros, c);
-        CHECK(whole::equal(c, a));
-        each::sub(a,zeros, c);
-        CHECK(whole::equal(c, a));
-        each::mult(a,ones, c);
-        CHECK(whole::equal(c, a));
-        each::div(a,ones, c);
-        CHECK(whole::equal(c, a));
-        each::sub(a,a, c);
-        CHECK(whole::equal(c, zeros, 1e-7));
-        each::div(a,a, c);
-        CHECK(whole::equal(c, ones,  1e-7 ));
-    }
-}
-
-TEST_CASE( "Series<T>/Uniform<T> arithmetic commutativity", "[each]" ) {
-    auto a = std::vector({1,2,3,4,5});
-    auto b = series::uniform(-2);
-    auto ab = std::vector({0,0,0,0,0});
-    auto ba = std::vector({0,0,0,0,0});
-
-    SECTION("a+b must equal b+a"){
-        each::add(a, b, ab);
-        each::add(b, a, ba);
-        CHECK(whole::equal(ab, ba));
-    }
-    SECTION("a*b must equal b*a"){
-        each::mult(a, b, ab);
-        each::mult(b, a, ba);
-        CHECK(whole::equal(ab, ba));
-    }
-}
-
-TEST_CASE( "Series<T>/Uniform<T> arithmetic associativity", "[each]" ) {
-    auto a = std::vector({1,2,3,4,5});
-    auto b = series::uniform(-2);
-    auto c = std::vector({1,1,2,3,5});
-    auto ab_c = std::vector({0,0,0,0,0});
-    auto a_bc = std::vector({0,0,0,0,0});
-
-    SECTION("(a+b)+c must equal a+(b+c)"){
-        each::add(a,b,    ab_c);
-        each::add(ab_c,c, ab_c);
-        each::add(b,c,    a_bc);
-        each::add(a,a_bc, a_bc);
-        CHECK(whole::equal(ab_c, a_bc));
-    }
-    SECTION("(a*b)*c must equal a*(b*c)"){
-        each::mult(a,b,    ab_c);
-        each::mult(ab_c,c, ab_c);
-        each::mult(b,c,    a_bc);
-        each::mult(a,a_bc, a_bc);
-        CHECK(whole::equal(ab_c, a_bc));
-    }
-}
-
-TEST_CASE( "Series<T>/Uniform<T> arithmetic distributivity", "[each]" ) {
-    auto a = std::vector({1,2,3,4,5});
-    auto b = series::uniform(-2);
-    auto c = std::vector({1.0,1.0,2.0,3.0,5.0});
-    auto ab_c  = std::vector({0.0,0.0,0.0,0.0,0.0});
-    auto ac_bc = std::vector({0.0,0.0,0.0,0.0,0.0});
-    auto ac = std::vector({0.0,0.0,0.0,0.0,0.0});
-    auto bc = std::vector({0.0,0.0,0.0,0.0,0.0});
-
-    SECTION("a+b*c must equal a*c+b*c"){
-        each::add(a,b,    ab_c);
-        each::mult(ab_c,c, ab_c);
-        each::mult(a,c,    ac);
-        each::mult(b,c,    bc);
-        each::add(ac,bc,  ac_bc);
-        CHECK(whole::equal(ab_c, ac_bc));
-    }
-    SECTION("a+b/c must equal a/c+b/c"){
-        each::add(a,b,    ab_c);
-        each::div(ab_c,c, ab_c);
-        each::div(a,c,    ac);
-        each::div(b,c,    bc);
-        each::add(ac,bc,  ac_bc);
-        CHECK(whole::equal(ab_c, ac_bc));
-    }
-}
 
 
 
@@ -385,132 +323,6 @@ TEST_CASE( "Series<T> log2/exp2 invertibility", "[each]" ) {
 
 
 
-
-TEST_CASE( "Series<T> morphologic purity", "[each]" ) {
-    auto a = std::vector({1,0,0,1,0});
-    auto b = std::vector({0,1,0,1,0});
-    auto c1 = std::vector({0,0,0,0,0});
-    auto c2 = std::vector({0,0,0,0,0});
-
-    SECTION("a∩b must be called repeatedly without changing the output"){
-        each::intersect(a,b,c1);
-        each::intersect(a,b,c2);
-        CHECK(whole::equal(c1, c2));
-    }
-
-    SECTION("a∪b must be called repeatedly without changing the output"){
-        each::unite(a,b,c1);
-        each::unite(a,b,c2);
-        CHECK(whole::equal(c1, c2));
-    }
-
-    SECTION("a-b must be called repeatedly without changing the output"){
-        each::differ(a,b,c1);
-        each::differ(a,b,c2);
-        CHECK(whole::equal(c1, c2));
-    }
-
-    SECTION("-b must be called repeatedly without changing the output"){
-        each::negate(a,c1);
-        each::negate(a,c2);
-        CHECK(whole::equal(c1, c2));
-    }
-}
-
-TEST_CASE( "Series<T> morphologic identity", "[each]" ) {
-    auto a = std::vector({1,0,0,1,0});
-    auto zeros = std::vector({0,0,0,0,0});
-    auto ones  = std::vector({1,1,1,1,1});
-    auto c = std::vector({0,0,0,0,0});
-
-    SECTION("a∪∅ must equal a"){
-        each::unite(a,zeros, c);
-        CHECK(whole::equal(c, a));
-    }
-    SECTION("a∩1 must equal a"){
-        each::intersect(a,ones, c);
-        CHECK(whole::equal(c, a));
-    }
-    SECTION("a-∅ must equal a"){
-        each::differ(a,zeros, c);
-        CHECK(whole::equal(c, a));
-    }
-}
-
-TEST_CASE( "Series<T> morphologic commutativity", "[each]" ) {
-    auto a = std::vector({1,0,0,1,0});
-    auto b = std::vector({0,1,0,1,0});
-    auto ab = std::vector({0,0,0,0,0});
-    auto ba = std::vector({0,0,0,0,0});
-
-    SECTION("a∪b must equal b∪a"){
-        each::unite(a, b, ab);
-        each::unite(b, a, ba);
-        CHECK(whole::equal(ab, ba));
-    }
-
-    SECTION("a∩b must equal b∩a"){
-        each::intersect(a, b, ab);
-        each::intersect(b, a, ba);
-        CHECK(whole::equal(ab, ba));
-    }
-
-}
-
-TEST_CASE( "Series<T> negation involutivity", "[each]" ) {
-    auto a = std::vector({1,0,0,1,0});
-    auto c = std::vector({1,1,2,3,5});
-
-    SECTION("--a must equal a"){
-        each::negate(a, c);
-        each::negate(c, c);
-        CHECK(whole::equal(c, a));
-    }
-
-}
-
-TEST_CASE( "Series<T> morphologic associativity", "[each]" ) {
-
-    auto a = std::vector({1,0,0,1,0});
-    auto b = std::vector({0,1,0,1,0});
-    auto c = std::vector({1,1,2,3,5});
-    auto ab_c = std::vector({0,0,0,0,0});
-    auto a_bc = std::vector({0,0,0,0,0});
-
-    SECTION("(a∪b)∪c must equal a∪(b∪c)"){
-        each::unite(a,b,    ab_c);
-        each::unite(ab_c,c, ab_c);
-        each::unite(b,c,    a_bc);
-        each::unite(a,a_bc, a_bc);
-        CHECK(whole::equal(ab_c, a_bc));
-    }
-    SECTION("(a∩b)∩c must equal a∩(b∩c)"){
-        each::intersect(a,b,    ab_c);
-        each::intersect(ab_c,c, ab_c);
-        each::intersect(b,c,    a_bc);
-        each::intersect(a,a_bc, a_bc);
-        CHECK(whole::equal(ab_c, a_bc));
-    }
-}
-
-TEST_CASE( "Series<T> morphologic distributivity", "[each]" ) {
-    auto a = std::vector({1,0,0,1,0});
-    auto b = std::vector({0,1,0,1,0});
-    auto c = std::vector({1.0,1.0,2.0,3.0,5.0});
-    auto ab_c  = std::vector({0.0,0.0,0.0,0.0,0.0});
-    auto ac_bc = std::vector({0.0,0.0,0.0,0.0,0.0});
-    auto ac = std::vector({0.0,0.0,0.0,0.0,0.0});
-    auto bc = std::vector({0.0,0.0,0.0,0.0,0.0});
-
-    SECTION("a+b*c must equal a*c+b*c"){
-        each::unite(a,b,    ab_c);
-        each::intersect(ab_c,c, ab_c);
-        each::intersect(a,c,    ac);
-        each::intersect(b,c,    bc);
-        each::unite(ac,bc,  ac_bc);
-        CHECK(whole::equal(ab_c, ac_bc));
-    }
-}
 
 
 TEST_CASE( "Series<T> trigonometric purity", "[each]" ) {

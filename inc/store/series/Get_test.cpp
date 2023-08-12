@@ -24,7 +24,7 @@
 #include <test/adapter.hpp>  
 
 #include "Get.hpp"
-#include "../test_tools.cpp"
+#include "test_tools.cpp"
 
 TEST_CASE( "Get is a monoid", "[series]" ) {
     series::SeriesAdapter adapter(1e-7);

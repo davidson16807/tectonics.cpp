@@ -10,6 +10,7 @@
 
 // in-house libraries
 #include <store/known.hpp>
+#include <store/whole.hpp>
 #include <store/series/Range.hpp>
 #include <store/series/Uniform.hpp>
 #include <store/series/noise/UnitIntervalNoise.hpp>
@@ -17,12 +18,38 @@
 #include <test/macros.hpp>
 #include <test/structures.hpp>
 
-#include "test_tools.cpp"
+namespace known {
+
+    template<typename T>
+    struct KnownAdapter{
+        T threshold;
+        std::size_t test_size;
+
+        KnownAdapter(const T threshold, const std::size_t test_size):
+            threshold(threshold),
+            test_size(test_size)
+        {}
+
+        template<typename Series1, typename Series2>
+        bool equal(const Series1& a, const Series2& b) const {
+            return whole::distance(
+                map(a,series::range(test_size)),
+                map(b,series::range(test_size))) <= threshold;
+        }
+
+        template<typename Series>
+        std::string print(const Series& a) const {
+            return whole::to_string(a);
+        }
+
+    };
+
+}
 
 TEST_CASE( "arithmetic on nonzero knowns are a field", "[known]" ) {
 
-    series::KnownAdapter<double> broad (1e-6, 100);
-    series::KnownAdapter<double> narrow(1e-6, 100);
+    known::KnownAdapter<double> broad (1e-6, 100);
+    known::KnownAdapter<double> narrow(1e-6, 100);
 
     std::vector<series::UnitIntervalNoise<double>> noises {
         series::UnitIntervalNoise<double>(10.0, 1e4),
@@ -45,10 +72,10 @@ TEST_CASE( "arithmetic on nonzero knowns are a field", "[known]" ) {
     test::Field field(
         "0", series::uniform(0.0), 
         "1", series::uniform(1.0), 
-        "rational addition",       TEST_BINARY(known::add),
-        "rational subtraction",    TEST_BINARY(known::sub),
-        "rational multiplication", TEST_BINARY(known::mult),
-        "rational division",       TEST_BINARY(known::div)
+        "known::add",  TEST_BINARY(known::add),
+        "known::sub",  TEST_BINARY(known::sub),
+        "known::mult", TEST_BINARY(known::mult),
+        "known::div",  TEST_BINARY(known::div)
     );
 
     // UNARY TESTS
@@ -61,8 +88,8 @@ TEST_CASE( "arithmetic on nonzero knowns are a field", "[known]" ) {
 
 TEST_CASE( "arithmetic on any known is a commutative ring", "[known]" ) {
 
-    series::KnownAdapter<double> broad (1e-6, 100);
-    series::KnownAdapter<double> narrow(1e-6, 100);
+    known::KnownAdapter<double> broad (1e-6, 100);
+    known::KnownAdapter<double> narrow(1e-6, 100);
 
     std::vector<series::UnitIntervalNoise<double>> noises {
         series::UnitIntervalNoise<double>(10.0, 1e4),
@@ -86,9 +113,9 @@ TEST_CASE( "arithmetic on any known is a commutative ring", "[known]" ) {
     test::CommutativeRing ring(
         "0", series::uniform(0.0), 
         "1", series::uniform(1.0), 
-        "rational addition",       TEST_BINARY(known::add),
-        "rational subtraction",    TEST_BINARY(known::sub),
-        "rational multiplication", TEST_BINARY(known::mult)
+        "known::add",  TEST_BINARY(known::add),
+        "known::sub",  TEST_BINARY(known::sub),
+        "known::mult", TEST_BINARY(known::mult)
     );
 
     // UNARY TESTS
