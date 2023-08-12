@@ -22,7 +22,7 @@
 #include "whole.hpp"
 
 #include <test/macros.hpp>
-#include <test/structures.hpp>
+#include <test/ringlike.hpp>
 
 namespace each {
 
@@ -136,6 +136,8 @@ TEST_CASE( "arithmetic on each nonzero of a series is a commutative ring", "[eac
     REQUIRE(ring.valid(broad, ranges, uniforms));
 
 }
+
+
 
 
 

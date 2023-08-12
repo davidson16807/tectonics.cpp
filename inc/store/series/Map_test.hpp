@@ -20,7 +20,7 @@
 #include <store/series/noise/UnitIntervalNoise.hpp>
 #include <store/series/Map.hpp>
 
-#include <test/structures.hpp>  
+#include <test/properties.hpp>  
 #include <test/macros.hpp>  
 #include <test/adapter.hpp>  
 

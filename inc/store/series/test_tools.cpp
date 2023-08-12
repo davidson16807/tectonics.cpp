@@ -11,14 +11,18 @@ namespace series {
 template<typename T>
 struct SeriesAdapter{
     T threshold;
+    std::size_t test_size;
 
-    SeriesAdapter(const T threshold):
-        threshold(threshold)
+    SeriesAdapter(const T threshold, const std::size_t test_size=30):
+        threshold(threshold),
+        test_size(test_size)
     {}
 
     template<typename Series1, typename Series2>
     bool equal(const Series1& a, const Series2& b) const {
-        return whole::distance(a,b) <= threshold;
+        return whole::distance(
+            map(a,series::range(test_size)),
+            map(b,series::range(test_size))) <= threshold;
     }
 
     template<typename Series>

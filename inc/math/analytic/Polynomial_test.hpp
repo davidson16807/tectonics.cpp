@@ -12,7 +12,8 @@
 #include <math/analytic/Polynomial.hpp>
 
 #include <test/macros.hpp>
-#include <test/structures.hpp>
+#include <test/ringlike.hpp>
+#include <test/metriclike.hpp>
 
 #include "test_tools.hpp"
 

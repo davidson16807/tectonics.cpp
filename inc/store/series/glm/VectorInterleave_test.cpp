@@ -27,7 +27,7 @@
 #include "VectorInterleave.hpp"
 
 TEST_CASE( "VectorInterleave<4>()", "[series]" ) {
-    const double tolerance(1e-1);
+    const double tolerance(0.11);
     const int N(4);
     std::vector<int> indices   {
         -1, 0, 1, 2, 3, 

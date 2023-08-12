@@ -19,23 +19,23 @@
 #include <store/series/noise/UnitIntervalNoise.hpp>
 #include <store/series/Get.hpp>
 
-#include <test/structures.hpp>  
+#include <test/grouplike.hpp>  
 #include <test/macros.hpp>  
 #include <test/adapter.hpp>  
 
 #include "Get.hpp"
 #include "test_tools.cpp"
 
-TEST_CASE( "Get is a monoid", "[series]" ) {
+TEST_CASE( "Get is a monoid under ranges", "[series]" ) {
     series::SeriesAdapter adapter(1e-7);
-    std::vector<series::UnitIntervalNoise<double>> noises {
-        series::UnitIntervalNoise(10.0, 1.0e4),
-        series::UnitIntervalNoise(11.0, 1.1e4),
-        series::UnitIntervalNoise(12.0, 1.2e4)
+    std::vector<series::Range<int>> ranges {
+        series::Range<int>(),
+        series::Range<int>(1,100),
+        series::Range<int>(-50,50)
     };
     test::Monoid monoid(
-        "series::range", series::range(), 
+        "series::range", series::Range<int>(), 
         "series::get",   TEST_BINARY(series::get)
     );
-    REQUIRE(monoid.valid(adapter, noises));
+    REQUIRE(monoid.valid(adapter, ranges));
 }

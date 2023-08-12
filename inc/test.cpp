@@ -90,5 +90,7 @@
 #include "./models/compound/estimated/gas/thermal_conductivity_test.cpp"
 #include "./models/mix/rules_test.cpp"
 #include "./models/mix/fractions_test.cpp"
-#include "./test/structures_test.cpp"
+#include "./test/metriclike_test.cpp"
+#include "./test/grouplike_test.cpp"
+#include "./test/ringlike_test.cpp"
 #include "./units/si_test.cpp"

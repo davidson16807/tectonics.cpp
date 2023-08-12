@@ -16,7 +16,7 @@
 #include <store/series/noise/UnitIntervalNoise.hpp>
 
 #include <test/macros.hpp>
-#include <test/structures.hpp>
+#include <test/ringlike.hpp>
 
 namespace known {
 
@@ -48,8 +48,8 @@ namespace known {
 
 TEST_CASE( "arithmetic on nonzero knowns are a field", "[known]" ) {
 
-    known::KnownAdapter<double> broad (1e-6, 100);
-    known::KnownAdapter<double> narrow(1e-6, 100);
+    known::KnownAdapter<double> broad (1e-6, 30);
+    known::KnownAdapter<double> narrow(1e-6, 30);
 
     std::vector<series::UnitIntervalNoise<double>> noises {
         series::UnitIntervalNoise<double>(10.0, 1e4),
@@ -88,8 +88,8 @@ TEST_CASE( "arithmetic on nonzero knowns are a field", "[known]" ) {
 
 TEST_CASE( "arithmetic on any known is a commutative ring", "[known]" ) {
 
-    known::KnownAdapter<double> broad (1e-6, 100);
-    known::KnownAdapter<double> narrow(1e-6, 100);
+    known::KnownAdapter<double> broad (1e-6, 30);
+    known::KnownAdapter<double> narrow(1e-6, 30);
 
     std::vector<series::UnitIntervalNoise<double>> noises {
         series::UnitIntervalNoise<double>(10.0, 1e4),

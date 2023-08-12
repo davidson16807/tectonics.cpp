@@ -11,7 +11,7 @@
 #include <math/analytic/ArbitraryDegreeRational.hpp>  
 
 #include <test/macros.hpp>
-#include <test/structures.hpp>
+#include <test/grouplike.hpp>
 
 #include "test_tools.hpp"
 

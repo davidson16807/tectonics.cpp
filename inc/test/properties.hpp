@@ -11,6 +11,24 @@ namespace test {
     template<typename T>
     using many = std::vector<T>;
 
+    template<typename Adapter, typename A>
+    bool discernability(const Adapter& adapter, 
+        const many<A>& a
+    ) {
+        for (std::size_t i = 0; i < a.size(); ++i) {
+        for (std::size_t j = 0; j < i; ++j) {
+            if (adapter.equal(a[i],a[j])) {
+                std::cout << std::endl;
+                std::cout << "Test failed:" << std::endl;
+                std::cout << "  sample values should each be unique and adapter must be able to be discern between unique sample values" << std::endl;
+                std::cout << "  a₁ : " << indent(adapter.print(a[i]), "  ") << " [from index "<< i <<"]" << std::endl;
+                std::cout << "  a₂ : " << indent(adapter.print(a[j]), "  ") << " [from index "<< j <<"]" << std::endl;
+                return false; 
+            }
+        }}
+        return true;
+    }
+
     template<typename Adapter, typename F, typename A>
     bool determinism(const Adapter& adapter, 
         const std::string f_name, const F& f, 
