@@ -4,7 +4,8 @@
 #include <math.h>       // log10 
 
 // in-house libraries
-#include <units/si.hpp>  // 
+#include <math/special.hpp>
+#include <units/si.hpp>
 
 namespace compound {
 namespace correlation {
