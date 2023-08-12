@@ -36,6 +36,12 @@ TEST_CASE( "arithmetic on nonzero knowns are a field", "[known]" ) {
         series::Range<double>(-101.0,-1.0)
     };
 
+    std::vector<series::Uniform<double>> nonzero_uniforms {
+        series::Uniform<double>(-2.0),
+        series::Uniform<double>(1.0),
+        series::Uniform<double>(2.0),
+    };
+
     test::Field field(
         "0", series::uniform(0.0), 
         "1", series::uniform(1.0), 
@@ -48,15 +54,7 @@ TEST_CASE( "arithmetic on nonzero knowns are a field", "[known]" ) {
     // UNARY TESTS
     // REQUIRE(field.valid(broad, noises));
     REQUIRE(field.valid(broad, nonzero_ranges));
-    // REQUIRE(field.valid(broad, vectors));
-
-    // BINARY TESTS
-    // REQUIRE(field.valid(broad, noises, nonzero_ranges  ));
-    // REQUIRE(field.valid(broad, noises, vectors ));
-    // REQUIRE(field.valid(broad, range,  vectors ));
-
-    // TRINARY TESTS
-    // REQUIRE(field.valid(broad, noises, ranges, vectors  ));
+    REQUIRE(field.valid(broad, nonzero_uniforms));
 
 }
 
@@ -78,6 +76,13 @@ TEST_CASE( "arithmetic on any known is a commutative ring", "[known]" ) {
         series::Range<double>(-30,30)
     };
 
+    std::vector<series::Uniform<double>> uniforms {
+        series::Uniform<double>(-2.0),
+        series::Uniform<double>(0.0),
+        series::Uniform<double>(1.0),
+        series::Uniform<double>(2.0),
+    };
+
     test::CommutativeRing ring(
         "0", series::uniform(0.0), 
         "1", series::uniform(1.0), 
@@ -87,17 +92,14 @@ TEST_CASE( "arithmetic on any known is a commutative ring", "[known]" ) {
     );
 
     // UNARY TESTS
-    // REQUIRE(ring.valid(broad, noises));
+    REQUIRE(ring.valid(broad, noises));
     REQUIRE(ring.valid(broad, ranges));
-    // REQUIRE(ring.valid(broad, vectors));
+    REQUIRE(ring.valid(broad, uniforms));
 
     // BINARY TESTS
-    // REQUIRE(ring.valid(broad, noises, ranges  ));
-    // REQUIRE(ring.valid(broad, noises, vectors ));
-    // REQUIRE(ring.valid(broad, range,  vectors ));
-
-    // TRINARY TESTS
-    // REQUIRE(ring.valid(broad, noises, ranges, vectors  ));
+    REQUIRE(ring.valid(broad, noises, ranges));
+    REQUIRE(ring.valid(broad, noises, uniforms));
+    REQUIRE(ring.valid(broad, ranges, uniforms));
 
 }
 
