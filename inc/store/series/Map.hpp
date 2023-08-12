@@ -24,6 +24,10 @@ namespace series
 	    using size_type = typename G::size_type;
 		using value_type = typename F::value_type;
 		constexpr inline size_type size() const { return g.size(); }
+		constexpr inline auto operator()(const size_type i ) const
+		{
+			return f(g[i]);
+		}
 		constexpr inline auto operator[](const size_type i ) const
 		{
 			return f(g[i]);

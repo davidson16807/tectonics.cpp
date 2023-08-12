@@ -56,6 +56,11 @@ namespace series
 		inline size_type capacity() const { return values.capacity() * copies_per_value; }
 		inline size_type empty() const    { return values.empty(); }
 
+		inline auto operator()(const size_type lookup_id ) const
+		{
+		   return values[(lookup_id / copies_per_value) % values.size()];
+		}
+
 		inline auto operator[](const size_type lookup_id ) const
 		{
 		   return values[(lookup_id / copies_per_value) % values.size()];

@@ -17,14 +17,18 @@ namespace series
 	{
 		F f;
 		G g;
-		explicit Get(const F& f, const G& g):
+		constexpr explicit Get(const F& f, const G& g):
 			f(f),
 			g(g)
 		{}
 	    using size_type = typename G::size_type;
 		using value_type = typename F::value_type;
 		constexpr inline size_type size() const { return g.size(); }
-		constexpr inline value_type operator[](const size_type i ) const
+		constexpr inline auto operator()(const size_type i ) const
+		{
+			return f[g[i]];
+		}
+		constexpr inline auto operator[](const size_type i ) const
 		{
 			return f[g[i]];
 		}

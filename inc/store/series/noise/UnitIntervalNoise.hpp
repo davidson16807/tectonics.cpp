@@ -36,6 +36,11 @@ namespace series
 
 		constexpr inline size_type size() const { return 1; }
 
+		constexpr inline T operator()(const size_type memory_id ) const
+		{
+			auto c = sin(T(memory_id)*a)*b;
+		    return c - floor(c);
+		}
 		constexpr inline T operator[](const size_type memory_id ) const
 		{
 			auto c = sin(T(memory_id)*a)*b;

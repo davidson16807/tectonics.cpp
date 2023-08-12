@@ -11,7 +11,7 @@
 #include "../series/Interleave.hpp" 
 #include "../series/Uniform.hpp"
 #include "../whole.hpp" 
-#include "_test_utils.cpp"
+#include "../test_tools.cpp"
 
 
 TEST_CASE( "Must be able to test series::interleave equivalence for boolean vectors using the catch framework", "[each]" ) {

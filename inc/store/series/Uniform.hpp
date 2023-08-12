@@ -42,6 +42,11 @@ namespace series
 
 		constexpr inline std::size_t size() const { return 1; }
 
+		constexpr inline const_reference operator()(const size_type memory_id ) const
+		{
+		   return value;
+		}
+
 		constexpr inline const_reference operator[](const size_type memory_id ) const
 		{
 		   return value;

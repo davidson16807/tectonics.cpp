@@ -33,17 +33,22 @@ namespace series
 			reported_size(end_value-start_value)
 		{}
 		Range(const Range<T>& range): 
-			start_value(0),
+			start_value(range.start_value),
 			reported_size(range.reported_size)
 		{}
 
-		constexpr inline bool includes(T i) const { return start_value < i && i < start_value+reported_size; }
+		constexpr inline bool includes(T i) const { return start_value <= i && i < start_value+reported_size; }
 
 		constexpr inline size_type size() const { return reported_size; }
 
+		constexpr inline value_type operator()(const size_type memory_id ) const
+		{
+			return T(memory_id)+start_value;
+		}
+
 		constexpr inline value_type operator[](const size_type memory_id ) const
 		{
-			return T(memory_id+start_value);
+			return T(memory_id)+start_value;
 		}
 
 	};

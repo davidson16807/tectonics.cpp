@@ -28,7 +28,7 @@
 #include <math/analytic/Identity.hpp>  
 
 #include "Map.hpp"
-#include "../_test_utils.cpp"
+#include "../test_tools.cpp"
 
 TEST_CASE( "Map", "[series]" ) {
     series::SeriesAdapter adapter(1e-7);
@@ -41,8 +41,9 @@ TEST_CASE( "Map", "[series]" ) {
         series::UnitIntervalNoise(11.0, 1.1e4),
         series::UnitIntervalNoise(12.0, 1.2e4)
     };
-    REQUIRE(test::determinism(adapter, 
-        "series::map", TEST_BINARY(series::map), polynomials, noises));
+    REQUIRE(test::determinism(adapter, "series::map", TEST_BINARY(series::map), noises, noises));
+    REQUIRE(test::determinism(adapter, "series::map", TEST_BINARY(series::map), polynomials, noises));
+    // REQUIRE(test::associativity(adapter, "series::map", TEST_BINARY(series::map), polynomials, polynomials, noises));
     REQUIRE(test::left_identity(adapter, 
         "id", math::Identity<double>(), 
         "series::map", TEST_BINARY(series::map), 

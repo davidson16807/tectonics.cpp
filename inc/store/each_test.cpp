@@ -12,10 +12,10 @@
 #include "whole.hpp"
 
 TEST_CASE( "Series<T> arithmetic purity", "[each]" ) {
-    auto a = series::interleave({1,2,3,4,5});
-    auto b = series::interleave({-1,1,-2,2,3});
-    auto c1 = series::interleave({0,0,0,0,0});
-    auto c2 = series::interleave({0,0,0,0,0});
+    auto a = std::vector({1,2,3,4,5});
+    auto b = std::vector({-1,1,-2,2,3});
+    auto c1 = std::vector({0,0,0,0,0});
+    auto c2 = std::vector({0,0,0,0,0});
 
     SECTION("a+b must be called repeatedly without changing the output"){
         each::add(a,b,c1);
@@ -43,10 +43,10 @@ TEST_CASE( "Series<T> arithmetic purity", "[each]" ) {
 }
 
 TEST_CASE( "Series<T> arithmetic identity", "[each]" ) {
-    auto a = series::interleave({1,2,3,4,5});
-    auto zeros = series::interleave({0,0,0,0,0});
-    auto ones  = series::interleave({1,1,1,1,1});
-    auto c = series::interleave({0,0,0,0,0});
+    auto a = std::vector({1,2,3,4,5});
+    auto zeros = std::vector({0,0,0,0,0});
+    auto ones  = std::vector({1,1,1,1,1});
+    auto c = std::vector({0,0,0,0,0});
 
     SECTION("a+I must equal a"){
         each::add(a,zeros, c);
@@ -65,10 +65,10 @@ TEST_CASE( "Series<T> arithmetic identity", "[each]" ) {
 }
 
 TEST_CASE( "Series<T> arithmetic commutativity", "[each]" ) {
-    auto a = series::interleave({1,2,3,4,5});
-    auto b = series::interleave({-1,1,-2,2,3});
-    auto ab = series::interleave({0,0,0,0,0});
-    auto ba = series::interleave({0,0,0,0,0});
+    auto a = std::vector({1,2,3,4,5});
+    auto b = std::vector({-1,1,-2,2,3});
+    auto ab = std::vector({0,0,0,0,0});
+    auto ba = std::vector({0,0,0,0,0});
 
     SECTION("a+b must equal b+a"){
         each::add(a, b, ab);
@@ -83,11 +83,11 @@ TEST_CASE( "Series<T> arithmetic commutativity", "[each]" ) {
 }
 
 TEST_CASE( "Series<T> arithmetic associativity", "[each]" ) {
-    auto a = series::interleave({1,2,3,4,5});
-    auto b = series::interleave({-1,1,-2,2,3});
-    auto c = series::interleave({1,1,2,3,5});
-    auto ab_c = series::interleave({0,0,0,0,0});
-    auto a_bc = series::interleave({0,0,0,0,0});
+    auto a = std::vector({1,2,3,4,5});
+    auto b = std::vector({-1,1,-2,2,3});
+    auto c = std::vector({1,1,2,3,5});
+    auto ab_c = std::vector({0,0,0,0,0});
+    auto a_bc = std::vector({0,0,0,0,0});
 
     SECTION("(a+b)+c must equal a+(b+c)"){
         each::add(a,b,    ab_c);
@@ -106,13 +106,13 @@ TEST_CASE( "Series<T> arithmetic associativity", "[each]" ) {
 }
 
 TEST_CASE( "Series<T> arithmetic distributivity", "[each]" ) {
-    auto a = series::interleave({1,2,3,4,5});
-    auto b = series::interleave({-1,1,-2,2,3});
-    auto c = series::interleave({1.0,1.0,2.0,3.0,5.0});
-    auto ab_c  = series::interleave({0.0,0.0,0.0,0.0,0.0});
-    auto ac_bc = series::interleave({0.0,0.0,0.0,0.0,0.0});
-    auto ac = series::interleave({0.0,0.0,0.0,0.0,0.0});
-    auto bc = series::interleave({0.0,0.0,0.0,0.0,0.0});
+    auto a = std::vector({1,2,3,4,5});
+    auto b = std::vector({-1,1,-2,2,3});
+    auto c = std::vector({1.0,1.0,2.0,3.0,5.0});
+    auto ab_c  = std::vector({0.0,0.0,0.0,0.0,0.0});
+    auto ac_bc = std::vector({0.0,0.0,0.0,0.0,0.0});
+    auto ac = std::vector({0.0,0.0,0.0,0.0,0.0});
+    auto bc = std::vector({0.0,0.0,0.0,0.0,0.0});
 
     SECTION("a+b*c must equal a*c+b*c"){
         each::add(a,b,    ab_c);
@@ -142,10 +142,10 @@ TEST_CASE( "Series<T> arithmetic distributivity", "[each]" ) {
 
 
 TEST_CASE( "Series<T>/Uniform<T> arithmetic purity", "[each]" ) {
-    auto a = series::interleave({1,2,3,4,5});
+    auto a = std::vector({1,2,3,4,5});
     auto b = series::uniform(-2);
-    auto c1 = series::interleave({0,0,0,0,0});
-    auto c2 = series::interleave({0,0,0,0,0});
+    auto c1 = std::vector({0,0,0,0,0});
+    auto c2 = std::vector({0,0,0,0,0});
 
     SECTION("a+b must be called repeatedly without changing the output"){
         each::add(a,b,c1);
@@ -173,10 +173,10 @@ TEST_CASE( "Series<T>/Uniform<T> arithmetic purity", "[each]" ) {
 }
 
 TEST_CASE( "Series<T>/Uniform<T> arithmetic identity", "[each]" ) {
-    auto a = series::interleave({1,2,3,4,5});
+    auto a = std::vector({1,2,3,4,5});
     auto zeros = series::uniform(0);
     auto ones  = series::uniform(1);
-    auto c = series::interleave({0,0,0,0,0});
+    auto c = std::vector({0,0,0,0,0});
 
     SECTION("a+I must equal a"){
         each::add(a,zeros, c);
@@ -195,10 +195,10 @@ TEST_CASE( "Series<T>/Uniform<T> arithmetic identity", "[each]" ) {
 }
 
 TEST_CASE( "Series<T>/Uniform<T> arithmetic commutativity", "[each]" ) {
-    auto a = series::interleave({1,2,3,4,5});
+    auto a = std::vector({1,2,3,4,5});
     auto b = series::uniform(-2);
-    auto ab = series::interleave({0,0,0,0,0});
-    auto ba = series::interleave({0,0,0,0,0});
+    auto ab = std::vector({0,0,0,0,0});
+    auto ba = std::vector({0,0,0,0,0});
 
     SECTION("a+b must equal b+a"){
         each::add(a, b, ab);
@@ -213,11 +213,11 @@ TEST_CASE( "Series<T>/Uniform<T> arithmetic commutativity", "[each]" ) {
 }
 
 TEST_CASE( "Series<T>/Uniform<T> arithmetic associativity", "[each]" ) {
-    auto a = series::interleave({1,2,3,4,5});
+    auto a = std::vector({1,2,3,4,5});
     auto b = series::uniform(-2);
-    auto c = series::interleave({1,1,2,3,5});
-    auto ab_c = series::interleave({0,0,0,0,0});
-    auto a_bc = series::interleave({0,0,0,0,0});
+    auto c = std::vector({1,1,2,3,5});
+    auto ab_c = std::vector({0,0,0,0,0});
+    auto a_bc = std::vector({0,0,0,0,0});
 
     SECTION("(a+b)+c must equal a+(b+c)"){
         each::add(a,b,    ab_c);
@@ -236,13 +236,13 @@ TEST_CASE( "Series<T>/Uniform<T> arithmetic associativity", "[each]" ) {
 }
 
 TEST_CASE( "Series<T>/Uniform<T> arithmetic distributivity", "[each]" ) {
-    auto a = series::interleave({1,2,3,4,5});
+    auto a = std::vector({1,2,3,4,5});
     auto b = series::uniform(-2);
-    auto c = series::interleave({1.0,1.0,2.0,3.0,5.0});
-    auto ab_c  = series::interleave({0.0,0.0,0.0,0.0,0.0});
-    auto ac_bc = series::interleave({0.0,0.0,0.0,0.0,0.0});
-    auto ac = series::interleave({0.0,0.0,0.0,0.0,0.0});
-    auto bc = series::interleave({0.0,0.0,0.0,0.0,0.0});
+    auto c = std::vector({1.0,1.0,2.0,3.0,5.0});
+    auto ab_c  = std::vector({0.0,0.0,0.0,0.0,0.0});
+    auto ac_bc = std::vector({0.0,0.0,0.0,0.0,0.0});
+    auto ac = std::vector({0.0,0.0,0.0,0.0,0.0});
+    auto bc = std::vector({0.0,0.0,0.0,0.0,0.0});
 
     SECTION("a+b*c must equal a*c+b*c"){
         each::add(a,b,    ab_c);
@@ -269,9 +269,9 @@ TEST_CASE( "Series<T>/Uniform<T> arithmetic distributivity", "[each]" ) {
 
 
 TEST_CASE( "Series<T> sqrt purity", "[each]" ) {
-    auto a  = series::interleave({1.0,2.0,3.0,4.0,5.0});
-    auto c1 = series::interleave({0.0,0.0,0.0,0.0,0.0});
-    auto c2 = series::interleave({0.0,0.0,0.0,0.0,0.0});
+    auto a  = std::vector({1.0,2.0,3.0,4.0,5.0});
+    auto c1 = std::vector({0.0,0.0,0.0,0.0,0.0});
+    auto c2 = std::vector({0.0,0.0,0.0,0.0,0.0});
     SECTION("sqrt(a) must be called repeatedly without changing the output"){
         each::sqrt(a,c1);
         each::sqrt(a,c2);
@@ -279,12 +279,12 @@ TEST_CASE( "Series<T> sqrt purity", "[each]" ) {
     }
 }
 TEST_CASE( "Series<T> sqrt consistency", "[each]" ) {
-    auto a     = series::interleave({1.0,2.0,3.0,4.0,5.0});
-    auto b     = series::interleave({1.0,1.0,2.0,3.0,5.0});
-    auto sqrt1 = series::interleave({0.0,0.0,0.0,0.0,0.0});
-    auto sqrt2 = series::interleave({0.0,0.0,0.0,0.0,0.0});
-    auto log1_ = series::interleave({0.0,0.0,0.0,0.0,0.0});
-    auto log2_ = series::interleave({0.0,0.0,0.0,0.0,0.0});
+    auto a     = std::vector({1.0,2.0,3.0,4.0,5.0});
+    auto b     = std::vector({1.0,1.0,2.0,3.0,5.0});
+    auto sqrt1 = std::vector({0.0,0.0,0.0,0.0,0.0});
+    auto sqrt2 = std::vector({0.0,0.0,0.0,0.0,0.0});
+    auto log1_ = std::vector({0.0,0.0,0.0,0.0,0.0});
+    auto log2_ = std::vector({0.0,0.0,0.0,0.0,0.0});
 
     SECTION("sqrt(a) must equal pow(a,1/2)"){
         each::sqrt(a,    sqrt1);
@@ -298,10 +298,10 @@ TEST_CASE( "Series<T> sqrt consistency", "[each]" ) {
 
 }
 TEST_CASE( "Series<T> log consistency", "[each]" ) {
-    auto a     = series::interleave({1.0,2.0,3.0,4.0,5.0});
-    auto b     = series::interleave({1.0,1.0,2.0,3.0,5.0});
-    auto log1_ = series::interleave({0.0,0.0,0.0,0.0,0.0});
-    auto log2_ = series::interleave({0.0,0.0,0.0,0.0,0.0});
+    auto a     = std::vector({1.0,2.0,3.0,4.0,5.0});
+    auto b     = std::vector({1.0,1.0,2.0,3.0,5.0});
+    auto log1_ = std::vector({0.0,0.0,0.0,0.0,0.0});
+    auto log2_ = std::vector({0.0,0.0,0.0,0.0,0.0});
 
     SECTION("log2(a) must equal log(a)/log(2)"){
         each::log2(a, log1_);
@@ -311,14 +311,14 @@ TEST_CASE( "Series<T> log consistency", "[each]" ) {
     }
 }
 TEST_CASE( "Series<T> log/exp consistency", "[each]" ) {
-    auto a     = series::interleave({1.0,2.0,3.0,4.0,5.0});
-    auto b     = series::interleave({1.0,1.0,2.0,3.0,5.0});
-    auto loga  = series::interleave({0.0,0.0,0.0,0.0,0.0});
-    auto logb  = series::interleave({0.0,0.0,0.0,0.0,0.0});
-    auto lalb  = series::interleave({0.0,0.0,0.0,0.0,0.0});
-    auto elalb = series::interleave({0.0,0.0,0.0,0.0,0.0});
-    auto ab    = series::interleave({0.0,0.0,0.0,0.0,0.0});
-    auto out   = series::interleave({0.0,0.0,0.0,0.0,0.0});
+    auto a     = std::vector({1.0,2.0,3.0,4.0,5.0});
+    auto b     = std::vector({1.0,1.0,2.0,3.0,5.0});
+    auto loga  = std::vector({0.0,0.0,0.0,0.0,0.0});
+    auto logb  = std::vector({0.0,0.0,0.0,0.0,0.0});
+    auto lalb  = std::vector({0.0,0.0,0.0,0.0,0.0});
+    auto elalb = std::vector({0.0,0.0,0.0,0.0,0.0});
+    auto ab    = std::vector({0.0,0.0,0.0,0.0,0.0});
+    auto out   = std::vector({0.0,0.0,0.0,0.0,0.0});
 
     SECTION("exp(log(a)+log(b)) must equal a*b"){
         each::log(a, loga);
@@ -330,9 +330,9 @@ TEST_CASE( "Series<T> log/exp consistency", "[each]" ) {
     }
 }
 TEST_CASE( "Series<T> log/exp invertibility", "[each]" ) {
-    auto a   = series::interleave({1.0,2.0,3.0,4.0,5.0});
-    auto b   = series::interleave({1.0,1.0,2.0,3.0,5.0});
-    auto out = series::interleave({0.0,0.0,0.0,0.0,0.0});
+    auto a   = std::vector({1.0,2.0,3.0,4.0,5.0});
+    auto b   = std::vector({1.0,1.0,2.0,3.0,5.0});
+    auto out = std::vector({0.0,0.0,0.0,0.0,0.0});
 
     SECTION("log(exp(a)) must equal a"){
         each::log (a,   out);
@@ -347,13 +347,13 @@ TEST_CASE( "Series<T> log/exp invertibility", "[each]" ) {
 }
 
 TEST_CASE( "Series<T> log2/exp2 consistency", "[each]" ) {
-    auto a     = series::interleave({1.0,2.0,3.0,4.0,5.0});
-    auto b     = series::interleave({1.0,1.0,2.0,3.0,5.0});
-    auto loga  = series::interleave({0.0,0.0,0.0,0.0,0.0});
-    auto logb  = series::interleave({0.0,0.0,0.0,0.0,0.0});
-    auto lalb  = series::interleave({0.0,0.0,0.0,0.0,0.0});
-    auto ab    = series::interleave({0.0,0.0,0.0,0.0,0.0});
-    auto out   = series::interleave({0.0,0.0,0.0,0.0,0.0});
+    auto a     = std::vector({1.0,2.0,3.0,4.0,5.0});
+    auto b     = std::vector({1.0,1.0,2.0,3.0,5.0});
+    auto loga  = std::vector({0.0,0.0,0.0,0.0,0.0});
+    auto logb  = std::vector({0.0,0.0,0.0,0.0,0.0});
+    auto lalb  = std::vector({0.0,0.0,0.0,0.0,0.0});
+    auto ab    = std::vector({0.0,0.0,0.0,0.0,0.0});
+    auto out   = std::vector({0.0,0.0,0.0,0.0,0.0});
 
     SECTION("exp2(log2(a)+log2(b)) must equal a*b"){
         each::log2(a, loga);
@@ -365,9 +365,9 @@ TEST_CASE( "Series<T> log2/exp2 consistency", "[each]" ) {
     }
 }
 TEST_CASE( "Series<T> log2/exp2 invertibility", "[each]" ) {
-    auto a   = series::interleave({1.0,2.0,3.0,4.0,5.0});
-    auto b   = series::interleave({1.0,1.0,2.0,3.0,5.0});
-    auto out = series::interleave({0.0,0.0,0.0,0.0,0.0});
+    auto a   = std::vector({1.0,2.0,3.0,4.0,5.0});
+    auto b   = std::vector({1.0,1.0,2.0,3.0,5.0});
+    auto out = std::vector({0.0,0.0,0.0,0.0,0.0});
 
     SECTION("log2(exp2(a)) must equal a"){
         each::log2 (a,   out);
@@ -387,10 +387,10 @@ TEST_CASE( "Series<T> log2/exp2 invertibility", "[each]" ) {
 
 
 TEST_CASE( "Series<T> morphologic purity", "[each]" ) {
-    auto a = series::interleave({1,0,0,1,0});
-    auto b = series::interleave({0,1,0,1,0});
-    auto c1 = series::interleave({0,0,0,0,0});
-    auto c2 = series::interleave({0,0,0,0,0});
+    auto a = std::vector({1,0,0,1,0});
+    auto b = std::vector({0,1,0,1,0});
+    auto c1 = std::vector({0,0,0,0,0});
+    auto c2 = std::vector({0,0,0,0,0});
 
     SECTION("a∩b must be called repeatedly without changing the output"){
         each::intersect(a,b,c1);
@@ -418,10 +418,10 @@ TEST_CASE( "Series<T> morphologic purity", "[each]" ) {
 }
 
 TEST_CASE( "Series<T> morphologic identity", "[each]" ) {
-    auto a = series::interleave({1,0,0,1,0});
-    auto zeros = series::interleave({0,0,0,0,0});
-    auto ones  = series::interleave({1,1,1,1,1});
-    auto c = series::interleave({0,0,0,0,0});
+    auto a = std::vector({1,0,0,1,0});
+    auto zeros = std::vector({0,0,0,0,0});
+    auto ones  = std::vector({1,1,1,1,1});
+    auto c = std::vector({0,0,0,0,0});
 
     SECTION("a∪∅ must equal a"){
         each::unite(a,zeros, c);
@@ -438,10 +438,10 @@ TEST_CASE( "Series<T> morphologic identity", "[each]" ) {
 }
 
 TEST_CASE( "Series<T> morphologic commutativity", "[each]" ) {
-    auto a = series::interleave({1,0,0,1,0});
-    auto b = series::interleave({0,1,0,1,0});
-    auto ab = series::interleave({0,0,0,0,0});
-    auto ba = series::interleave({0,0,0,0,0});
+    auto a = std::vector({1,0,0,1,0});
+    auto b = std::vector({0,1,0,1,0});
+    auto ab = std::vector({0,0,0,0,0});
+    auto ba = std::vector({0,0,0,0,0});
 
     SECTION("a∪b must equal b∪a"){
         each::unite(a, b, ab);
@@ -458,8 +458,8 @@ TEST_CASE( "Series<T> morphologic commutativity", "[each]" ) {
 }
 
 TEST_CASE( "Series<T> negation involutivity", "[each]" ) {
-    auto a = series::interleave({1,0,0,1,0});
-    auto c = series::interleave({1,1,2,3,5});
+    auto a = std::vector({1,0,0,1,0});
+    auto c = std::vector({1,1,2,3,5});
 
     SECTION("--a must equal a"){
         each::negate(a, c);
@@ -471,11 +471,11 @@ TEST_CASE( "Series<T> negation involutivity", "[each]" ) {
 
 TEST_CASE( "Series<T> morphologic associativity", "[each]" ) {
 
-    auto a = series::interleave({1,0,0,1,0});
-    auto b = series::interleave({0,1,0,1,0});
-    auto c = series::interleave({1,1,2,3,5});
-    auto ab_c = series::interleave({0,0,0,0,0});
-    auto a_bc = series::interleave({0,0,0,0,0});
+    auto a = std::vector({1,0,0,1,0});
+    auto b = std::vector({0,1,0,1,0});
+    auto c = std::vector({1,1,2,3,5});
+    auto ab_c = std::vector({0,0,0,0,0});
+    auto a_bc = std::vector({0,0,0,0,0});
 
     SECTION("(a∪b)∪c must equal a∪(b∪c)"){
         each::unite(a,b,    ab_c);
@@ -494,13 +494,13 @@ TEST_CASE( "Series<T> morphologic associativity", "[each]" ) {
 }
 
 TEST_CASE( "Series<T> morphologic distributivity", "[each]" ) {
-    auto a = series::interleave({1,0,0,1,0});
-    auto b = series::interleave({0,1,0,1,0});
-    auto c = series::interleave({1.0,1.0,2.0,3.0,5.0});
-    auto ab_c  = series::interleave({0.0,0.0,0.0,0.0,0.0});
-    auto ac_bc = series::interleave({0.0,0.0,0.0,0.0,0.0});
-    auto ac = series::interleave({0.0,0.0,0.0,0.0,0.0});
-    auto bc = series::interleave({0.0,0.0,0.0,0.0,0.0});
+    auto a = std::vector({1,0,0,1,0});
+    auto b = std::vector({0,1,0,1,0});
+    auto c = std::vector({1.0,1.0,2.0,3.0,5.0});
+    auto ab_c  = std::vector({0.0,0.0,0.0,0.0,0.0});
+    auto ac_bc = std::vector({0.0,0.0,0.0,0.0,0.0});
+    auto ac = std::vector({0.0,0.0,0.0,0.0,0.0});
+    auto bc = std::vector({0.0,0.0,0.0,0.0,0.0});
 
     SECTION("a+b*c must equal a*c+b*c"){
         each::unite(a,b,    ab_c);
@@ -514,10 +514,10 @@ TEST_CASE( "Series<T> morphologic distributivity", "[each]" ) {
 
 
 TEST_CASE( "Series<T> trigonometric purity", "[each]" ) {
-    auto a = series::interleave({1.0,2.0,3.0,4.0,5.0});
-    auto b = series::interleave({-1.0,1.0,-2.0,2.0,3.0});
-    auto c1 = series::interleave({0.0,0.0,0.0,0.0,0.0});
-    auto c2 = series::interleave({0.0,0.0,0.0,0.0,0.0});
+    auto a = std::vector({1.0,2.0,3.0,4.0,5.0});
+    auto b = std::vector({-1.0,1.0,-2.0,2.0,3.0});
+    auto c1 = std::vector({0.0,0.0,0.0,0.0,0.0});
+    auto c2 = std::vector({0.0,0.0,0.0,0.0,0.0});
 
     SECTION("sin must be called repeatedly without changing the output"){
         each::sin(a,c1);
@@ -550,10 +550,10 @@ TEST_CASE( "Series<T> trigonometric purity", "[each]" ) {
 
 TEST_CASE( "Series<T> trigonometric cofunctions", "[each]" ) {
     const double pi = 3.14159265358979;
-    auto a = series::interleave({1.0,2.0,3.0,4.0,5.0});
-    auto b = series::interleave({-1.0,1.0,-2.0,2.0,3.0});
-    auto c1 = series::interleave({0.0,0.0,0.0,0.0,0.0});
-    auto c2 = series::interleave({0.0,0.0,0.0,0.0,0.0});
+    auto a = std::vector({1.0,2.0,3.0,4.0,5.0});
+    auto b = std::vector({-1.0,1.0,-2.0,2.0,3.0});
+    auto c1 = std::vector({0.0,0.0,0.0,0.0,0.0});
+    auto c2 = std::vector({0.0,0.0,0.0,0.0,0.0});
 
     SECTION("sin must equal cos for input that is rotated by π/2"){
         each::sub(series::uniform(pi/2.0), a, c1);
@@ -580,10 +580,10 @@ TEST_CASE( "Series<T> trigonometric cofunctions", "[each]" ) {
 
 
 TEST_CASE( "Series<T> trigonometric negative angle identities", "[each]" ) {
-    auto a = series::interleave({1.0,2.0,3.0,4.0,5.0});
-    auto b = series::interleave({-1.0,1.0,-2.0,2.0,3.0});
-    auto c1 = series::interleave({0.0,0.0,0.0,0.0,0.0});
-    auto c2 = series::interleave({0.0,0.0,0.0,0.0,0.0});
+    auto a = std::vector({1.0,2.0,3.0,4.0,5.0});
+    auto b = std::vector({-1.0,1.0,-2.0,2.0,3.0});
+    auto c1 = std::vector({0.0,0.0,0.0,0.0,0.0});
+    auto c2 = std::vector({0.0,0.0,0.0,0.0,0.0});
 
     SECTION("negated sin must equal sin for negated input"){
         each::mult(series::uniform(-1.0), a, c1);
