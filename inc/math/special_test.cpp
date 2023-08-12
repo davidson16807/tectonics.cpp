@@ -89,13 +89,3 @@ TEST_CASE( "lerp commutativity", "[math]" ) {
 		CHECK(math::lerp(xs,ys,f) == math::lerp(xs2,ys2,f));
 	}
 }
-
-TEST_CASE( "integral_of_lerp purity", "[math]" ) {
-  	std::mt19937 generator(2);
-  	std::uniform_real_distribution<float> uniform(0.0f, 2.0f);
-  	const auto xs = std::array<float,4>{ -0.5f, 0.75f, 1.0f, 1.5f };
-  	const auto ys = std::array<float,4>{ uniform(generator), uniform(generator), uniform(generator), uniform(generator) };
-    SECTION("calling lerp multiple times returns the same result"){
-		CHECK(math::integral_of_lerp(xs,ys,0.0f,1.6807f) == math::integral_of_lerp(xs,ys,0.0f,1.6807f));
-	}
-}

@@ -270,10 +270,11 @@ TEST_CASE( "Nonlaurent Polynomial calculus is left invertible", "[math]" ) {
         "polynomial integration", TEST_UNARY(integral),
         polynomials1));
 
-    REQUIRE(test::left_invertibility(broad, 
-        "polynomial derivatives", TEST_UNARY(derivative),
-        "polynomial integration", TEST_UNARY(integral),
-        polynomials2));
+    // NOTE: integrals are not closed under laurent polynomials
+    // REQUIRE(test::left_invertibility(broad, 
+    //     "polynomial derivatives", TEST_UNARY(derivative),
+    //     "polynomial integration", TEST_UNARY(integral),
+    //     polynomials2));
 
     REQUIRE(test::left_invertibility(broad, 
         "polynomial derivatives", TEST_UNARY(derivative),
@@ -285,10 +286,11 @@ TEST_CASE( "Nonlaurent Polynomial calculus is left invertible", "[math]" ) {
         "polynomial integration", TEST_UNARY(integral),
         monomials2));
 
-    REQUIRE(test::left_invertibility(broad, 
-        "polynomial derivatives", TEST_UNARY(derivative),
-        "polynomial integration", TEST_UNARY(integral),
-        monomials3));
+    // NOTE: integrals are not closed under laurent polynomials
+    // REQUIRE(test::left_invertibility(broad, 
+    //     "polynomial derivatives", TEST_UNARY(derivative),
+    //     "polynomial integration", TEST_UNARY(integral),
+    //     monomials3));
 
     // test::left_invertibility(broad, 
     //     "polynomial derivatives", TEST_UNARY(derivative),
