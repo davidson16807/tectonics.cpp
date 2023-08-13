@@ -24,12 +24,13 @@
 #include <store/series/noise/glm/UnitVectorNoise.hpp>
 
 #include "SquareNoise.hpp"
+#include "ValueNoise.hpp"
 
 #include <test/properties.hpp>  
 #include <test/macros.hpp>  
 #include <test/glm/adapter.hpp>
 
-TEST_CASE( "SquareNoise()", "[field]" ) {
+TEST_CASE( "ValueNoise()", "[series]" ) {
     test::GlmAdapter<int, double> adapter(1e-5);
 
     auto positions = known::mult(
@@ -41,21 +42,23 @@ TEST_CASE( "SquareNoise()", "[field]" ) {
     );
 
     REQUIRE(test::determinism(adapter,
-        "SquareNoise(…)", 
+        "ValueNoise(…)", 
         TEST_UNARY(
-            field::square_noise(
-                series::gaussian(11.0, 1.1e4))),
+            field::value_noise3(
+                field::square_noise(
+                    series::gaussian(11.0, 1.1e4)))),
         positions
     ));
 
-    auto noise = field::square_noise(
-        series::gaussian(11.0, 1.1e4));
+    auto noise = field::value_noise3(
+                    field::square_noise(
+                        series::gaussian(11.0, 1.1e4)));
 
-    // REQUIRE(test::continuity(adapter,
-    //     "SquareNoise(…)", TEST_UNARY(noise),
-    //     "continuity",    TEST_NUDGE(glm::dvec3(1e-6,1e-6,1e-6)),
-    //     positions
-    // ));
+    REQUIRE(test::continuity(adapter,
+        "ValueNoise(…)", TEST_UNARY(noise),
+        "continuity",    TEST_NUDGE(glm::dvec3(1e-6,1e-6,1e-6)),
+        positions
+    ));
 
     auto out = series::map(noise, positions);
     CHECK(std::abs(whole::mean(out)) < 0.05);

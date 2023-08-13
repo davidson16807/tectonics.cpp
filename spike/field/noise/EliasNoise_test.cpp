@@ -27,7 +27,7 @@
 #include <test/macros.hpp>  
 #include <test/glm/adapter.hpp>
 
-TEST_CASE( "EliasNoise()", "[series]" ) {
+TEST_CASE( "EliasNoise()", "[field]" ) {
     test::GlmAdapter<int, double> adapter(1e-5);
 
     auto positions = series::get(
