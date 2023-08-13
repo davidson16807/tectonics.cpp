@@ -6,9 +6,6 @@
 #define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
 #include <glm/vec3.hpp>               // *vec3
 
-// HACK: order of tests is arbitrary and glm each must be loaded first to permit template specialization
-// so we include it here despite not necessarily needing it.
-#include "glm/each.hpp"
 
 #include "series/Interleave.hpp"
 #include "series/Uniform.hpp"

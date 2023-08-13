@@ -1,5 +1,8 @@
+#include "./store/glm/each_specialization.hpp"
+#include "./store/glm/whole_specialization.hpp"
 #include "./store/known_test.cpp"
 #include "./store/whole_test.hpp"
+#include "./store/glm/each_test.cpp"
 #include "./store/series/Map_test.hpp"
 #include "./store/series/glm/VectorZip_test.cpp"
 #include "./store/series/glm/VectorInterleave_test.cpp"

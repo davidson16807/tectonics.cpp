@@ -21,11 +21,11 @@
 namespace known {
 
     template<typename T>
-    struct KnownAdapter{
+    struct Adapter{
         T threshold;
         std::size_t test_size;
 
-        KnownAdapter(const T threshold, const std::size_t test_size):
+        Adapter(const T threshold, const std::size_t test_size):
             threshold(threshold),
             test_size(test_size)
         {}
@@ -48,8 +48,8 @@ namespace known {
 
 TEST_CASE( "arithmetic on nonzero knowns are a field", "[known]" ) {
 
-    known::KnownAdapter<double> broad (1e-6, 30);
-    known::KnownAdapter<double> narrow(1e-6, 30);
+    known::Adapter<double> broad (1e-6, 30);
+    known::Adapter<double> narrow(1e-6, 30);
 
     std::vector<series::UnitIntervalNoise<double>> noises {
         series::UnitIntervalNoise<double>(10.0, 1e4),
@@ -88,8 +88,8 @@ TEST_CASE( "arithmetic on nonzero knowns are a field", "[known]" ) {
 
 TEST_CASE( "arithmetic on any known is a commutative ring", "[known]" ) {
 
-    known::KnownAdapter<double> broad (1e-6, 30);
-    known::KnownAdapter<double> narrow(1e-6, 30);
+    known::Adapter<double> broad (1e-6, 30);
+    known::Adapter<double> narrow(1e-6, 30);
 
     std::vector<series::UnitIntervalNoise<double>> noises {
         series::UnitIntervalNoise<double>(10.0, 1e4),

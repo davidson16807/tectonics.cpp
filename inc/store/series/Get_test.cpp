@@ -27,7 +27,7 @@
 #include "test_tools.cpp"
 
 TEST_CASE( "Get is a monoid under ranges", "[series]" ) {
-    series::SeriesAdapter adapter(1e-7);
+    series::Adapter adapter(1e-7);
     std::vector<series::Range<int>> ranges {
         series::Range<int>(),
         series::Range<int>(1,100),

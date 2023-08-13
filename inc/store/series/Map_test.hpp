@@ -31,7 +31,7 @@
 #include "test_tools.cpp"
 
 TEST_CASE( "Map", "[series]" ) {
-    series::SeriesAdapter adapter(1e-7);
+    series::Adapter adapter(1e-7);
     std::vector<math::Polynomial<double,0,3>> polynomials {
         math::Polynomial<double,0,3>({1.0,2.0,3.0,4.0}),
         math::Polynomial<double,0,3>({-1.0,0.0,1.0,2.0})

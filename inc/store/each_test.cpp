@@ -8,10 +8,6 @@
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide p main() - only do this in one cpp file
 #include <catch/catch.hpp>
 
-// HACK: order of tests is arbitrary and glm each must be loaded first to permit template specialization
-// so we include it here despite not necessarily needing it.
-#include "glm/each.hpp"
-
 // in-house libraries
 #include <store/known.hpp>
 #include <store/series/Range.hpp>
@@ -27,10 +23,10 @@
 namespace each {
 
     template<typename T>
-    struct EachAdapter{
+    struct Adapter{
         T threshold;
 
-        EachAdapter(const T threshold):
+        Adapter(const T threshold):
             threshold(threshold)
         {}
 
@@ -48,15 +44,15 @@ namespace each {
 
 }
 
-#define EACH_UNARY_OUT_PARAMETER(TYPE,SIZE,F)   [=](auto x){ std::vector<TYPE> out(SIZE); (F(x,out)); return out; }
+#define EACH_TEST_UNARY_OUT_PARAMETER(TYPE,SIZE,F)   [=](auto x){ std::vector<TYPE> out(SIZE); (F(x,out)); return out; }
 #define EACH_TEST_BINARY_OUT_PARAMETER(TYPE,SIZE,F)  [=](auto x, auto y){ std::vector<TYPE> out(SIZE); (F(x,y,out)); return out; }
-#define EACH_TRINARY_OUT_PARAMETER(TYPE,SIZE,F) [=](auto x, auto y, auto z){ std::vector<TYPE> out(SIZE); (F(x,y,z,out)); return out; }
+#define EACH_TEST_TRINARY_OUT_PARAMETER(TYPE,SIZE,F) [=](auto x, auto y, auto z){ std::vector<TYPE> out(SIZE); (F(x,y,z,out)); return out; }
 
 
 TEST_CASE( "arithmetic on each nonzero of a series is a field", "[each]" ) {
 
-    each::EachAdapter<double> broad (1e-6);
-    each::EachAdapter<double> narrow(1e-6);
+    each::Adapter<double> broad (1e-6);
+    each::Adapter<double> narrow(1e-6);
 
     std::vector<series::UnitIntervalNoise<double>> noises {
         series::UnitIntervalNoise<double>(10.0, 1e4),
@@ -95,8 +91,8 @@ TEST_CASE( "arithmetic on each nonzero of a series is a field", "[each]" ) {
 
 TEST_CASE( "arithmetic on each nonzero of a series is a commutative ring", "[each]" ) {
 
-    each::EachAdapter<double> broad (1e-6);
-    each::EachAdapter<double> narrow(1e-6);
+    each::Adapter<double> broad (1e-6);
+    each::Adapter<double> narrow(1e-6);
 
     std::vector<series::UnitIntervalNoise<double>> noises {
         series::UnitIntervalNoise<double>(10.0, 1e4),
@@ -146,7 +142,7 @@ TEST_CASE( "arithmetic on each nonzero of a series is a commutative ring", "[eac
 
 TEST_CASE( "morphology on each of a series is a commutative monoid", "[each]" ) {
 
-    each::EachAdapter<bool> exact (0);
+    each::Adapter<bool> exact (0);
 
     std::vector<std::vector<bool>> vectors {
         std::vector<bool>({1,0,0,1,0}),

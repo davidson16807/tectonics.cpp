@@ -13,7 +13,10 @@ namespace each
 	bool compatible(const In1& a, Out& out)
 	{
 		return 
-			out.size() == a.size();
+			out.size() >= a.size() &&
+			out.size() % a.size() == 0 &&
+			a.size() > 0 &&
+		true;
 	}
 
 	template <typename In1, typename In2, typename Out>
@@ -155,7 +158,7 @@ namespace each
 	template <typename In1> inline auto sign (const In1 a)	{ return (In1(0) < a) - (a < In1(0)); }
 	template <typename In1> inline auto fract(const In1 a) { return a-floor(a); }
 	template <typename In1> inline auto inversesqrt(const In1 a) { return In1(1)/std::sqrt(a); }
-	template <typename In1> inline auto negate(const In1 a) { return !a; }
+	template <typename In1> inline auto negate(const In1 a) { return -a; }
 	template <typename In1> inline auto exp10(const In1 a) { return std::pow(a,In1(10)); }
 	template <typename In1> inline auto sec(const In1 a){ return In1(1)/std::cos(a);}
 	template <typename In1> inline auto csc(const In1 a){ return In1(1)/std::sin(a);}

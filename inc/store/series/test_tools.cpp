@@ -9,11 +9,11 @@
 namespace series {
 
 template<typename T>
-struct SeriesAdapter{
+struct Adapter{
     T threshold;
     std::size_t test_size;
 
-    SeriesAdapter(const T threshold, const std::size_t test_size=30):
+    Adapter(const T threshold, const std::size_t test_size=30):
         threshold(threshold),
         test_size(test_size)
     {}

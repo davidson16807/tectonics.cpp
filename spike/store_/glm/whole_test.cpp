@@ -170,3 +170,4 @@ TEST_CASE( "LayeredSpheroidRaster string cast correctness", "[rasters]" ) {
                 );
     }
 }
+

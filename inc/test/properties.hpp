@@ -440,7 +440,7 @@ namespace test {
         return equality(
             adapter,
             f_name + " [denoted \"f\"] must return the opposite value if its arguments are flipped, where opposite is determined by "+inv_name+" [denoted \"-\"]", 
-            "-f(a,b)", [=](A a, B b){ return invert(f(a, b)); },
+            "-f(a,b)", [=](A a, B b){ return inv(f(a, b)); },
             " f(b,a)", [=](A a, B b){ return f(b, a); },
             as, bs);
     }

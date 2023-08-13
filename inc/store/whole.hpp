@@ -364,10 +364,55 @@ namespace whole
 			const std::array<const std::string, 6>
 		#endif
 		shades {" ", "░", "▒", "▓", "█" };
+
+		inline bool magnitude(const bool a){
+			return a;
+		}
+		inline int magnitude(const int a){
+			return a;
+		}
+		inline float magnitude(const float a){
+			return a;
+		}
+		inline double magnitude(const double a){
+			return a;
+		}
+		template<typename T>
+		inline std::string character(const T a, const T lo, const T hi){
+			if (std::isnan(a))
+			{
+				return "N";
+			}
+			else if (std::isinf(a))
+			{
+				return "∞";
+			}
+			else 
+			{
+				float shade_fraction = each::linearstep(lo, hi, a);
+				int shade_id = int(std::min(float(shades.size()-1), (shades.size() * shade_fraction) ));
+			    return shades[shade_id];
+			}
+		}
+		template<typename T>
+		inline std::string legend(T sample, const T lo, const T hi){
+			std::string out("");
+			for (unsigned int i = 0; i < shades.size(); ++i)
+			{
+				auto bound = each::mix(float(lo), float(hi), float(i)/float(shades.size()));
+				out += shades[i];
+				out += " ≥ ";
+				out += std::to_string(bound);
+				out += "\n";
+			}
+			return out;
+		}
+
 	} 
 
-	template <typename T>
-	std::string to_string(const T& a, const typename T::value_type lo, const typename T::value_type hi, const int line_char_width = 80)
+
+	template <typename Series, typename T>
+	std::string to_string(const Series& a, const T lo, const T hi, const int line_char_width = 80)
 	{
 		std::string out("");
 		for (unsigned int i = 0; i < a.size(); ++i)
@@ -376,38 +421,24 @@ namespace whole
 		    {
 		    	out += "\n";
 		    }
-		    
-			if (std::isnan(a[i]))
-			{
-				out += "N";
-			}
-			else if (std::isinf(a[i]))
-			{
-				out += "∞";
-			}
-			else 
-			{
-				float shade_fraction = each::linearstep(lo, hi, a[i]);
-				int shade_id = int(std::min(float(shades.size()-1), (shades.size() * shade_fraction) ));
-			    out += shades[shade_id];
-			}
+		    out += character(a[i],lo,hi);
 		}
 		out += "\n";
-		for (unsigned int i = 0; i < shades.size(); ++i)
-		{
-			out += shades[i];
-			out += " ≥ ";
-			out += std::to_string(each::mix(float(lo), float(hi), float(i)/float(shades.size())));
-			out += "\n";
-			// out += ", ";
-		}
+		out += legend(a[0], lo, hi);
 		return out;
 	}
 
-	template <typename T>
-	std::string to_string(const T& a, const int line_char_width = 80)
+	template <typename Series>
+	std::string to_string(const Series& a, const int line_char_width = 80)
 	{
-		return to_string(a, whole::min(a), whole::max(a), line_char_width);
+		auto hi(magnitude(a[0]));
+		auto lo(magnitude(a[0]));
+		for (unsigned int i = 0; i < a.size(); ++i)
+		{
+			hi = std::max(hi, magnitude(a[i]));
+			lo = std::min(lo, magnitude(a[i]));
+		}
+		return to_string(a, lo, hi, line_char_width);
 	}
 
 

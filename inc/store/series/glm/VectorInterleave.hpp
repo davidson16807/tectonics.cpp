@@ -27,7 +27,7 @@ namespace series
 			values(a.values)
 		{}
 
-		constexpr inline size_type size() const { return std::max(1,values.size()/L); }
+		constexpr inline size_type size() const { return std::max(size_type(1),values.size()/L); }
 
 		constexpr value_type operator[](const size_type memory_id ) const
 		{
