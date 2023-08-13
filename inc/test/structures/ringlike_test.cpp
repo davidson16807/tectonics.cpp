@@ -13,7 +13,7 @@
 
 #include <test/macros.hpp>
 #include <test/adapter.hpp>
-#include <test/ringlike.hpp>
+#include <test/structures/ringlike.hpp>
 
 TEST_CASE( "Scalar arithmetic is a field", "[math]" ) {
     test::PrimitiveAdapter<double> adapter(1e-6);

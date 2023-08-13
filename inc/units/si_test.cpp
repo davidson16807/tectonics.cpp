@@ -12,7 +12,7 @@
 
 #include <test/macros.hpp>
 #include <test/adapter.hpp>
-#include <test/ringlike.hpp>
+#include <test/structures/ringlike.hpp>
 
 #include "test_tools.cpp"
 

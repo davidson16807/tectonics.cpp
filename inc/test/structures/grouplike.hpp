@@ -3,7 +3,7 @@
 // std libraries
 
 // in-house libraries
-#include "properties.hpp"
+#include "../properties.hpp"
 
 namespace test {
 

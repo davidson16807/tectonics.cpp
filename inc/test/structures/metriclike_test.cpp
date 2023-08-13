@@ -13,7 +13,7 @@
 
 #include <test/macros.hpp>
 #include <test/adapter.hpp>
-#include <test/metriclike.hpp>
+#include <test/structures/metriclike.hpp>
 
 TEST_CASE( "The distance between scalars is a metric", "[math]" ) {
     test::PrimitiveAdapter<double> adapter (1e-6);

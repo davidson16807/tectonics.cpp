@@ -16,7 +16,7 @@
 #include <store/series/noise/UnitIntervalNoise.hpp>
 
 #include <test/macros.hpp>
-#include <test/ringlike.hpp>
+#include <test/structures/ringlike.hpp>
 
 namespace known {
 

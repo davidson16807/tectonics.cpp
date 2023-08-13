@@ -18,7 +18,7 @@
 #include "whole.hpp"
 
 #include <test/macros.hpp>
-#include <test/ringlike.hpp>
+#include <test/structures/ringlike.hpp>
 
 namespace each {
 

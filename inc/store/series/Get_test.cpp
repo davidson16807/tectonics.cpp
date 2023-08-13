@@ -19,7 +19,7 @@
 #include <store/series/noise/UnitIntervalNoise.hpp>
 #include <store/series/Get.hpp>
 
-#include <test/grouplike.hpp>  
+#include <test/structures/grouplike.hpp>  
 #include <test/macros.hpp>  
 #include <test/adapter.hpp>  
 

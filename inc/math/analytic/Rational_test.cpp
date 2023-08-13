@@ -11,8 +11,8 @@
 #include <math/analytic/Rational.hpp>  
 
 #include <test/macros.hpp>
-#include <test/grouplike.hpp>
-#include <test/metriclike.hpp>
+#include <test/structures/grouplike.hpp>
+#include <test/structures/metriclike.hpp>
 
 #include "test_tools.hpp"
 
