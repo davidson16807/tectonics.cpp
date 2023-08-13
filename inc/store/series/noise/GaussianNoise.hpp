@@ -40,6 +40,10 @@ namespace series
 
 		constexpr inline size_type size() const { return 1; }
 
+		constexpr inline T operator()(const size_type memory_id ) const
+		{
+			return math::probit(std::clamp(quantile[memory_id], epsilon, T(1)-epsilon));
+		}
 		constexpr inline T operator[](const size_type memory_id ) const
 		{
 			return math::probit(std::clamp(quantile[memory_id], epsilon, T(1)-epsilon));

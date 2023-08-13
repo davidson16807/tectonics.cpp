@@ -14,6 +14,8 @@
 // in-house libraries
 #include <store/each.hpp>  
 #include <store/whole.hpp>  
+#include <store/known.hpp>  
+#include <store/series/Uniform.hpp>
 #include <store/series/Get.hpp>
 #include <store/series/Map.hpp>
 #include <store/series/Range.hpp>
@@ -21,42 +23,43 @@
 #include <store/series/noise/GaussianNoise.hpp>
 #include <store/series/noise/glm/UnitVectorNoise.hpp>
 
-#include "EliasNoise.hpp"
+#include "SquareNoise.hpp"
 
 #include <test/properties.hpp>  
 #include <test/macros.hpp>  
 #include <test/glm/adapter.hpp>
 
-TEST_CASE( "EliasNoise()", "[series]" ) {
+TEST_CASE( "ValueNoise()", "[series]" ) {
     test::GlmAdapter<int, double> adapter(1e-5);
 
-    auto positions = series::get(
-        series::vector_interleave<3>(
-            series::UnitIntervalNoise<double>()), 
-        series::Range(6000));
+    auto positions = known::mult(
+        series::get(
+            series::vector_interleave<3>(
+                series::UnitIntervalNoise<double>()), 
+            series::Range(10000)),
+        series::uniform(10.0)
+    );
 
     REQUIRE(test::determinism(adapter,
-        "EliasNoise(…)", 
+        "ValueNoise(…)", 
         TEST_UNARY(
-            field::elias_noise<double>(
-                series::unit_vector_noise<3>(10.0, 1e4), 
-                series::gaussian(11.0, 1.1e4), 
-                100)),
+            field::square_noise(
+                series::gaussian(11.0, 1.1e4))),
         positions
     ));
 
-    auto noise = field::elias_noise<double>(
-        series::unit_vector_noise<3>(10.0, 1e4), 
-        series::gaussian(11.0, 1.1e4), 
-        100);
+    auto noise = field::square_noise(
+        series::gaussian(11.0, 1.1e4));
 
     REQUIRE(test::continuity(adapter,
-        "EliasNoise(…)", TEST_UNARY(noise),
+        "ValueNoise(…)", TEST_UNARY(noise),
         "continuity",    TEST_NUDGE(glm::dvec3(1e-6,1e-6,1e-6)),
         positions
     ));
 
     auto out = series::map(noise, positions);
-    CHECK(whole::standard_deviation(out) > 4.0);
+    CHECK(std::abs(whole::mean(out)) < 0.05);
+    CHECK(whole::standard_deviation(out) > 0.95);
+    CHECK(whole::standard_deviation(out) < 1.0);
 }
 
