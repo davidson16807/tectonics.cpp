@@ -34,7 +34,7 @@ namespace test {
     template<typename Adapter, typename Predicate, typename A>
     bool predicate(const Adapter& adapter, 
             const std::string& predicate_name, const Predicate& predicate, 
-            const std::vector<A>& a) {
+            const A& a) {
         for (std::size_t i = 0; i < a.size(); ++i) {
             Results results = predicate(a[i]);
             if (!results.pass) {
@@ -52,7 +52,7 @@ namespace test {
     template<typename Adapter, typename Predicate, typename A, typename B>
     bool predicate(const Adapter& adapter, 
             const std::string& predicate_name, const Predicate& predicate, 
-            const std::vector<A>& a, const std::vector<B>& b) {
+            const A& a, const B& b) {
         for (std::size_t i = 0; i < a.size(); ++i) {
         for (std::size_t j = 0; j < b.size(); ++j) {
             Results results = predicate(a[i], b[j]);
@@ -72,7 +72,7 @@ namespace test {
     template<typename Adapter, typename Predicate, typename A, typename B, typename C>
     bool predicate(const Adapter& adapter, 
             const std::string& predicate_name, const Predicate& predicate, 
-            const std::vector<A>& a, const std::vector<B>& b, const std::vector<C>& c) {
+            const A& a, const B& b, const C& c) {
         for (std::size_t i = 0; i < a.size(); ++i) {
         for (std::size_t j = 0; j < b.size(); ++j) {
         for (std::size_t k = 0; k < c.size(); ++k) {

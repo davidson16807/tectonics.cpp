@@ -13,7 +13,7 @@ namespace test {
 
     template<typename Adapter, typename A>
     bool discernability(const Adapter& adapter, 
-        const many<A>& a
+        const A& a
     ) {
         for (std::size_t i = 0; i < a.size(); ++i) {
         for (std::size_t j = 0; j < i; ++j) {
@@ -40,7 +40,7 @@ namespace test {
     template<typename Adapter, typename F, typename A>
     bool determinism(const Adapter& adapter, 
         const std::string f_name, const F& f, 
-        const many<A>& as
+        const A& as
     ) {
         return equality(
             adapter,
@@ -53,7 +53,7 @@ namespace test {
     template<typename Adapter, typename F, typename A, typename B>
     bool determinism(const Adapter& adapter, 
         const std::string f_name, const F& f, 
-        const many<A>& as, const many<B>& bs
+        const A& as, const B& bs
     ) {
         return equality(
             adapter,
@@ -66,7 +66,7 @@ namespace test {
     template<typename Adapter, typename F, typename A, typename B, typename C>
     bool determinism(const Adapter& adapter, 
         const std::string f_name, const F& f, 
-        const many<A>& as, const many<B>& bs, const many<C>& cs
+        const A& as, const B& bs, const C& cs
     ) {
         return equality(
             adapter,
@@ -80,7 +80,7 @@ namespace test {
     bool left_identity(const Adapter& adapter, 
         const std::string e_name, const E& e, 
         const std::string f_name, const F& f, 
-        const many<A>& as
+        const A& as
     ) {
         return predicate(adapter, 
             f_name + " [denoted \"f\"] must have a \"left identity\", " + e_name + " [denoted \"e\"], that when passed on the left always returns the right argument" +
@@ -98,7 +98,7 @@ namespace test {
     bool right_identity(const Adapter& adapter, 
         const std::string e_name, const E& e, 
         const std::string f_name, const F& f, 
-        const many<A>& as
+        const A& as
     ) {
         return predicate(adapter, 
             f_name + " [denoted \"f\"] must have a \"left identity\", " + e_name + " [denoted \"e\"], that when passed on the right always returns the left argument" +
@@ -116,7 +116,7 @@ namespace test {
     bool identity(const Adapter& adapter, 
         const std::string e_name, const E& e, 
         const std::string f_name, const F& f, 
-        const many<A>& as
+        const A& as
     ) {
         return 
             left_identity (adapter, e_name, e, f_name, f, as) &&
@@ -131,8 +131,8 @@ namespace test {
     //     return equality(
     //         adapter,
     //         f_name + " [denoted \"f\"] must have an \"identity\", " + e_name + "[denoted \"e\"], that when passed will always return itself", 
-    //         "f(e,a)",[=](A a){ return f(e, a); },
-    //         "a     ",[=](A a){ return a; },
+    //         "f(e,a)",[=](auto a){ return f(e, a); },
+    //         "a     ",[=](auto a){ return a; },
     //         std::vector<E>{e});
     // }
 
@@ -140,7 +140,7 @@ namespace test {
     bool left_annihilation(const Adapter& adapter, 
         const std::string z_name, const Z& z, 
         const std::string f_name, const F& f, 
-        const many<A>& as
+        const A& as
     ) {
         return predicate(adapter, 
             f_name + " [denoted \"f\"] must have a \"left annihilator\", " + z_name + " [denoted \"z\"], that when passed on the left will always return itself" + 
@@ -158,7 +158,7 @@ namespace test {
     bool right_annihilation(const Adapter& adapter, 
         const std::string z_name, const Z& z, 
         const std::string f_name, const F& f, 
-        const many<A>& as
+        const A& as
     ) {
         return predicate(adapter, 
             f_name + " [denoted \"f\"] must have an \"right annihilator\", " + z_name + " [denoted \"z\"], that when passed on the right will always return itself", 
@@ -176,7 +176,7 @@ namespace test {
     bool annihilation(const Adapter& adapter, 
         const std::string z_name, const Z& z, 
         const std::string f_name, const F& f, 
-        const many<A>& as
+        const A& as
     ) {
         return 
             left_annihilation (adapter, z_name, z, f_name, f, as) &&
@@ -187,7 +187,7 @@ namespace test {
     bool left_invertibility(const Adapter& adapter, 
         const std::string finv_name, const Finv& finv, 
         const std::string f_name, const F& f, 
-        const many<A>& as
+        const A& as
     ) {
         return predicate(adapter, 
             f_name + " [denoted \"f\"] must permit input to be reconstructed by a \"left inverse\" function, " + finv_name + " [denoted \"f⁻¹\"]" +
@@ -206,7 +206,7 @@ namespace test {
     bool invertibility(const Adapter& adapter, 
         const std::string f_name, const F& f, 
         const std::string g_name, const G& g, 
-        const many<A>& as
+        const A& as
     ) {
         return 
             left_invertibility(adapter, f_name, f, f_name, g, as) &&
@@ -218,7 +218,7 @@ namespace test {
         const std::string e_name,    const E& e, 
         const std::string finv_name, const Finv& finv, 
         const std::string f_name,    const F& f, 
-        const many<A>& as
+        const A& as
     ) {
         return predicate(adapter, 
             f_name + " [denoted \"f\"] must permit input to be reconstructed by a \"left inverse\" function, " + finv_name + " [denoted \"f⁻¹\"]" +
@@ -239,7 +239,7 @@ namespace test {
         const std::string e_name,    const E& e, 
         const std::string finv_name, const Finv& finv, 
         const std::string f_name,    const F& f, 
-        const many<A>& as
+        const A& as
     ) {
         return predicate(adapter, 
             f_name + " [denoted \"f\"] must permit input to be reconstructed by a \"right inverse\" function, " + finv_name + " [denoted \"f⁻¹\"]" +
@@ -260,7 +260,7 @@ namespace test {
         const std::string e_name,    const E& e, 
         const std::string finv_name, const Finv& finv, 
         const std::string f_name, const F& f, 
-        const many<A>& as
+        const A& as
     ) {
         return 
             left_invertibility (adapter, e_name, e, finv_name, finv, f_name, f, as) &&
@@ -270,7 +270,7 @@ namespace test {
     template<typename Adapter, typename F, typename A, typename B, typename C>
     bool associativity(const Adapter& adapter, 
         const std::string f_name, const F& f, 
-        const many<A>& as, const many<B>& bs, const many<C>& cs
+        const A& as, const B& bs, const C& cs
     ) {
         return predicate(adapter, 
             f_name + " [denoted \"f\"] must allow invocations to be calculated in any order without changing results"+
@@ -292,7 +292,7 @@ namespace test {
     bool left_associativity(const Adapter& adapter, 
         const std::string f2_name, const F2& f2, 
         const std::string f3_name, const F3& f3, 
-        const many<A>& as, const many<B>& bs, const many<C>& cs
+        const A& as, const B& bs, const C& cs
     ) {
         return predicate(adapter, 
             f3_name + " [denoted \"f\"] must calculate starting from the leftmost parameters using "+f2_name+ 
@@ -313,7 +313,7 @@ namespace test {
     bool right_associativity(const Adapter& adapter, 
         const std::string f2_name, const F2& f2, 
         const std::string f3_name, const F3& f3, 
-        const many<A>& as, const many<B>& bs, const many<C>& cs
+        const A& as, const B& bs, const C& cs
     ) {
         return predicate(adapter, 
             f3_name + " [denoted \"f\"] must calculate starting from the rightmost parameters using "+f2_name+ 
@@ -333,7 +333,7 @@ namespace test {
     template<typename Adapter, typename F, typename A>
     bool power_associativity(const Adapter& adapter, 
         const std::string f_name, const F& f, 
-        const many<A>& as
+        const A& as
     ) {
         return predicate(adapter, 
             f_name + " [denoted \"f\"] must allow invocations with a single parameter to be calculated in any order without changing results", 
@@ -353,7 +353,7 @@ namespace test {
     template<typename Adapter, typename F, typename A, typename B>
     bool left_alternativity(const Adapter& adapter, 
         const std::string f_name, const F& f, 
-        const many<A>& as, const many<B>& bs
+        const A& as, const B& bs
     ) {
         return predicate(adapter, 
             f_name + " [denoted \"f\"] must under certain conditions allow invocations to be calculated in any order without changing results", 
@@ -375,7 +375,7 @@ namespace test {
     template<typename Adapter, typename F, typename A, typename B>
     bool right_alternativity(const Adapter& adapter, 
         const std::string f_name, const F& f, 
-        const many<A>& as, const many<B>& bs
+        const A& as, const B& bs
     ) {
         return predicate(adapter, 
             f_name + " [denoted \"f\"] must under certain conditions allow invocations to be calculated in any order without changing results", 
@@ -397,7 +397,7 @@ namespace test {
     template<typename Adapter, typename F, typename A, typename B>
     bool alternativity(const Adapter& adapter, 
         const std::string f_name, const F& f, 
-        const many<A>& as, const many<B>& bs
+        const A& as, const B& bs
     ) {
         return 
             left_alternativity (adapter, f_name, f, as, bs) &&
@@ -407,7 +407,7 @@ namespace test {
     template<typename Adapter, typename F, typename A, typename B>
     bool flexibility(const Adapter& adapter, 
         const std::string f_name, const F& f, 
-        const many<A>& as, const many<B>& bs
+        const A& as, const B& bs
     ) {
         return predicate(adapter, 
             f_name + " [denoted \"f\"] must under certain conditions allow invocations to be calculated in any order without changing results", 
@@ -429,13 +429,13 @@ namespace test {
     template<typename Adapter, typename F, typename A, typename B>
     bool commutativity(const Adapter& adapter, 
         const std::string f_name, const F& f, 
-        const many<A>& as, const many<B>& bs
+        const A& as, const B& bs
     ) {
         return equality(
             adapter,
             f_name + " [denoted \"f\"] must allow arguments to be passed in any order without changing results", 
-            "f(a,b)", [=](A a, B b){ return f(a, b); },
-            "f(b,a)", [=](A a, B b){ return f(b, a); },
+            "f(a,b)", [=](auto a, auto b){ return f(a, b); },
+            "f(b,a)", [=](auto a, auto b){ return f(b, a); },
             as, bs);
     }
 
@@ -443,13 +443,13 @@ namespace test {
     bool anticommutativity(const Adapter& adapter, 
         const std::string f_name, const F& f, 
         const std::string inv_name, const Invert& inv, 
-        const many<A>& as, const many<B>& bs
+        const A& as, const B& bs
     ) {
         return equality(
             adapter,
             f_name + " [denoted \"f\"] must return the opposite value if its arguments are flipped, where opposite is determined by "+inv_name+" [denoted \"-\"]", 
-            "-f(a,b)", [=](A a, B b){ return inv(f(a, b)); },
-            " f(b,a)", [=](A a, B b){ return f(b, a); },
+            "-f(a,b)", [=](auto a, auto b){ return inv(f(a, b)); },
+            " f(b,a)", [=](auto a, auto b){ return f(b, a); },
             as, bs);
     }
 
@@ -457,13 +457,13 @@ namespace test {
     bool left_distributivity(const Adapter& adapter, 
         const std::string f_name, const F& f, 
         const std::string g_name, const G& g, 
-        const many<A>& as, const many<B>& bs, const many<C>& cs
+        const A& as, const B& bs, const C& cs
     ) {
         return equality(
             adapter,
             f_name + " [denoted \"f\"] must allow left parameters to distribute over another function [denoted \"g\"] while still producing the same results", 
-            "f(c, g(a, b))    ", [=](A a, B b, C c){ return f(c, g(a, b));       },
-            "g(f(c,a), f(c,b))", [=](A a, B b, C c){ return g(f(c, a), f(c, b)); },
+            "f(c, g(a, b))    ", [=](auto a, auto b, auto c){ return f(c, g(a, b));       },
+            "g(f(c,a), f(c,b))", [=](auto a, auto b, auto c){ return g(f(c, a), f(c, b)); },
             as, bs, cs);
     }
 
@@ -471,13 +471,13 @@ namespace test {
     bool right_distributivity(const Adapter& adapter, 
         const std::string f_name, const F& f, 
         const std::string g_name, const G& g, 
-        const many<A>& as, const many<B>& bs, const many<C>& cs
+        const A& as, const B& bs, const C& cs
     ) {
         return equality(
             adapter,
             f_name + " [denoted \"f\"] must allow right parameters to distribute over another function [denoted \"g\"] while still producing the same results", 
-            "f(g(a,b), c)     ", [=](A a, B b, C c){ return f(g(a, b), c);       },
-            "g(f(a,c), f(b,c))", [=](A a, B b, C c){ return g(f(a, c), f(b, c)); },
+            "f(g(a,b), c)     ", [=](auto a, auto b, auto c){ return f(g(a, b), c);       },
+            "g(f(a,c), f(b,c))", [=](auto a, auto b, auto c){ return g(f(a, c), f(b, c)); },
             as, bs, cs);
     }
 
@@ -485,7 +485,7 @@ namespace test {
     bool distributivity(const Adapter& adapter, 
         const std::string f_name, const F& f, 
         const std::string g_name, const G& g, 
-        const many<A>& as, const many<B>& bs, const many<C>& cs
+        const A& as, const B& bs, const C& cs
     ) {
         return 
             left_distributivity (adapter, f_name, f, g_name, g, as, bs, cs) &&
@@ -495,13 +495,13 @@ namespace test {
     template<typename Adapter, typename F, typename A>
     bool idempotence(const Adapter& adapter, 
         const std::string f_name, const F& f, 
-        const many<A>& as
+        const A& as
     ) {
         return equality(
             adapter,
             f_name + " [denoted \"f\"] must return input if both parameters are the same", 
-            "f(a,a)", [=](A a){ return f(a, a); },
-            "a     ", [=](A a){ return a; },
+            "f(a,a)", [=](auto a){ return f(a, a); },
+            "a     ", [=](auto a){ return a; },
             as);
     }
 
@@ -509,13 +509,13 @@ namespace test {
     bool idempotence(const Adapter& adapter, 
         const std::string e_name, const E& e, 
         const std::string f_name, const F& f, 
-        const many<A>& as
+        const A& as
     ) {
         return equality(
             adapter,
             f_name + " [denoted \"f\"] must return the identity "+ e_name +" [denoted \"e\"] if both parameters are the same", 
-            "f(a,a)", [=](A a){ return f(a,a);  },
-            "e     ", [=](A a){ return e; },
+            "f(a,a)", [=](auto a){ return f(a,a);  },
+            "e     ", [=](auto a){ return e; },
             as);
     }
 
@@ -523,61 +523,61 @@ namespace test {
     bool nilpotence(const Adapter& adapter, 
         const std::string n_name, const N& n, 
         const std::string f_name, const F& f, 
-        const many<A>& as
+        const A& as
     ) {
         return equality(
             adapter,
             f_name + " [denoted \"f\"] must return the index "+ n_name +" [denoted \"n\"] if both parameters are the same", 
-            "f(a,a)", [=](A a){ return f(a, a);  },
-            "n     ", [=](A a){ return n; },
+            "f(a,a)", [=](auto a){ return f(a, a);  },
+            "n     ", [=](auto a){ return n; },
             as);
     }
 
     template<typename Adapter, typename F, typename A, typename B>
     bool involutivity(const Adapter& adapter, 
         const std::string f_name, const F& f, 
-        const many<A>& as
+        const A& as
     ) {
         return equality(
             adapter,
             "left involutivity", 
             f_name + " [denoted \"f\"] must return the original input if invoked a second time", 
-            "f(f(a))", [=](A a){ return f(f(a)); },
-            "a      ", [=](A a){ return a; },
+            "f(f(a))", [=](auto a){ return f(f(a)); },
+            "a      ", [=](auto a){ return a; },
             as);
     }
 
     template<typename Adapter, typename F, typename A, typename B>
     bool left_involutivity(const Adapter& adapter, 
         const std::string f_name, const F& f, 
-        const many<A>& as, const many<B>& bs
+        const A& as, const B& bs
     ) {
         return equality(
             adapter,
             "left involutivity", 
             f_name + " [denoted \"f\"] must return the original input if invoked a second time with the same left parameter", 
-            "f(a, f(a,b))", [=](A a, B b){ return f(a, f(a, b)); },
-            "b           ", [=](A a, B b){ return b; },
+            "f(a, f(a,b))", [=](auto a, auto b){ return f(a, f(a, b)); },
+            "b           ", [=](auto a, auto b){ return b; },
             as, bs);
     }
 
     template<typename Adapter, typename F, typename A, typename B>
     bool right_involutivity(const Adapter& adapter, 
         const std::string f_name, const F& f, 
-        const many<A>& as, const many<B>& bs
+        const A& as, const B& bs
     ) {
         return equality(
             adapter,
             f_name + " [denoted \"f\"] must return the original input if invoked a second time with the same right parameter", 
-            "f(f(a,b), b)", [=](A a, B b){ return f(f(a, b), b); },
-            "a           ", [=](A a, B b){ return a; },
+            "f(f(a,b), b)", [=](auto a, auto b){ return f(f(a, b), b); },
+            "a           ", [=](auto a, auto b){ return a; },
             as, bs);
     }
 
     template<typename Adapter, typename F, typename G, typename A, typename B>
     bool involutivity(const Adapter& adapter, 
         const std::string f_name, const F& f, 
-        const many<A>& as, const many<B>& bs
+        const A& as, const B& bs
     ) {
         return 
             left_involutivity (adapter, f_name, f, as, bs) &&
@@ -590,27 +590,47 @@ namespace test {
         const std::string n_name, const N& n,
         const std::string cross_name, const Cross& cross, 
         const std::string add_name, const Add& add, 
-        const many<A>& as, const many<B>& bs, const many<C>& cs
+        const A& as, const B& bs, const C& cs
     ) {
         return equality(
             adapter,
             cross_name + " [denoted \"×\"] and "+ add_name +" [denoted \"+\"] must satisfy the jacobi identity for index "+ n_name+ " [denoted \"n\"]", 
-            "a×(b×c) + b×(c×a) + c×(a×b)", [=](A a, B b, C c){ return add( cross(a, cross(b, c)), cross(b, cross(c, a)), cross(c, cross(a, b))); },
-            "n                          ", [=](A a, B b, C c){ return n; },
+            "a×(b×c) + b×(c×a) + c×(a×b)", [=](auto a, auto b, auto c){ return add( cross(a, cross(b, c)), cross(b, cross(c, a)), cross(c, cross(a, b))); },
+            "n                          ", [=](auto a, auto b, auto c){ return n; },
             as, bs, cs);
     }
+
+    /* 
+    NOTE: the following functions (invariance, continuity, conservation, preservation) effectively test for the same thing,
+    however some differ in how they are invoked, and others are treated historically as different concepts,
+    so in either case we implement different functions that vary only in how they present information to the user.
+    */
 
     template<typename Adapter, typename F, typename G, typename A>
     bool invariance(const Adapter& adapter, 
         const std::string f_name, const F& f, 
         const std::string g_name, const G& g, 
-        const many<A>& as
+        const A& as
     ) {
         return equality(
             adapter,
             f_name + " [denoted \"f\"] must be invariant to " + g_name + " [denoted \"g\"]", 
-            "f(g(a))", [=](A a){ return f(g(a)); },
-            "f(a)   ", [=](A a){ return f(a); },
+            "f(g(a))", [=](auto a){ return f(g(a)); },
+            "f(a)   ", [=](auto a){ return f(a); },
+            as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A>
+    bool continuity(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as
+    ) {
+        return equality(
+            adapter,
+            f_name + " [denoted \"f\"] must be continuous so that imperceptible changes to input [denoted \"g\"] will produce imperceptible changes to output", 
+            "f(g(a))", [=](auto a){ return f(g(a)); },
+            "f(a)   ", [=](auto a){ return f(a); },
             as);
     }
 
@@ -618,13 +638,13 @@ namespace test {
     bool conservation(const Adapter& adapter, 
         const std::string f_name, const F& f, 
         const std::string g_name, const G& g, 
-        const many<A>& as
+        const A& as
     ) {
         return equality(
             adapter,
             f_name + " [denoted \"f\"] must conserve " + g_name + " [denoted \"g\"]", 
-            "g(f(a))", [=](A a){ return g(f(a)); },
-            "g(a)   ", [=](A a){ return g(a); },
+            "g(f(a))", [=](auto a){ return g(f(a)); },
+            "g(a)   ", [=](auto a){ return g(a); },
             as);
     }
 
@@ -632,13 +652,13 @@ namespace test {
     bool preservation(const Adapter& adapter, 
         const std::string f_name, const F& f, 
         const std::string g_name, const G& g, 
-        const many<A>& as
+        const A& as
     ) {
         return equality(
             adapter,
             f_name + " [denoted \"f\"] must preserve " + g_name + " [denoted \"g\"]", 
-            "g(f(a))", [=](A a){ return g(f(a)); },
-            "g(a)   ", [=](A a){ return g(a); },
+            "g(f(a))", [=](auto a){ return g(f(a)); },
+            "g(a)   ", [=](auto a){ return g(a); },
             as);
     }
 
@@ -650,12 +670,12 @@ namespace test {
     bool codomain(const Adapter& adapter, 
         const std::string validity_name, const Valid& valid, 
         const std::string f_name, const F& f, 
-        const many<A>& as
+        const A& as
     ) {
         return predicate(
             adapter,
             f_name + " must only produce output that is " + validity_name,
-            [=](A a){
+            [=](auto a){
                 auto fa = f(a);
                 std::string diagnostics = "f(a) : " + adapter.print(fa);
                 return Results(valid(fa), diagnostics); }, 
@@ -666,12 +686,12 @@ namespace test {
     bool codomain(const Adapter& adapter, 
         const std::string validity_name, const Valid& valid, 
         const std::string f_name, const F& f, 
-        const many<A>& as, const many<B>& bs
+        const A& as, const B& bs
     ) {
         return predicate(
             adapter,
             f_name + " must only produce output that is " + validity_name, 
-            [=](A a, B b){
+            [=](auto a, auto b){
                 auto fab = f(a,b);
                 std::string diagnostics = "f(a,b) : " + adapter.print(fab);
                 return Results(valid(fab), diagnostics); }, 
@@ -682,12 +702,12 @@ namespace test {
     bool codomain(const Adapter& adapter, 
         const std::string validity_name, const Valid& valid, 
         const std::string f_name, const F& f, 
-        const many<A>& as, const many<B>& bs, const many<C>& cs
+        const A& as, const B& bs, const C& cs
     ) {
         return predicate(
             adapter,
             f_name + " must only produce output that is " + validity_name, 
-            [=](A a, B b, C c){
+            [=](auto a, auto b, auto c){
                 auto fabc = f(a,b,c);
                 std::string diagnostics = "f(a,b,c) : " + adapter.print(fabc);
                 return Results(valid(fabc), diagnostics); }, 
@@ -701,12 +721,12 @@ namespace test {
     bool triangle_inequality(const Adapter& adapter, 
         const LessThanEqual& leq, const Add& add, 
         const std::string f_name, const F& f, 
-        const many<A>& as, const many<B>& bs, const many<C>& cs
+        const A& as, const B& bs, const C& cs
     ) {
         return predicate(
             adapter,
             f_name + " must satisfy the triangle inequality, so for any set of arguments the smallest sum of invocations using those arguments is a single invocation", 
-            [=](A a, B b, C c){
+            [=](auto a, auto b, auto c){
                 auto fac = f(a,c);
                 auto fab = f(a,b);
                 auto fbc = f(b,c);
@@ -730,12 +750,12 @@ namespace test {
     bool left_cancellative(const Adapter& adapter, 
         const std::string finv_name, const Finv& finv, 
         const std::string f_name,    const F& f, 
-        const many<A>& as, const many<B>& bs, const many<C>& cs
+        const A& as, const B& bs, const C& cs
     ) {
         return predicate(
             adapter,
             f_name + " [denoted \"f\"] must imply that two arguments are equal if invoking them both on the left with with the same right argument produces the same result", 
-            [=](A a, B b, C c){
+            [=](auto a, auto b, auto c){
                 auto fac = f(a,c);
                 auto fab = f(a,b);
                 std::string diagnostics;
@@ -751,12 +771,12 @@ namespace test {
     bool right_cancellative(const Adapter& adapter, 
         const std::string finv_name, const Finv& finv, 
         const std::string f_name,    const F& f, 
-        const many<A>& as, const many<B>& bs, const many<C>& cs
+        const A& as, const B& bs, const C& cs
     ) {
         return predicate(
             adapter,
             f_name + " [denoted \"f\"] must imply that two arguments are equal if invoking them both on the right with with the same left argument produces the same result", 
-            [=](A a, B b, C c){
+            [=](auto a, auto b, auto c){
                 auto fca = f(c,a);
                 auto fba = f(b,a);
                 std::string diagnostics;
@@ -772,7 +792,7 @@ namespace test {
     bool cancellative(const Adapter& adapter, 
         const std::string finv_name, const Finv& finv, 
         const std::string f_name, const F& f, 
-        const many<A>& as, const many<B>& bs, const many<C>& cs
+        const A& as, const B& bs, const C& cs
     ) {
         return 
             left_cancellative (adapter, finv_name, finv, f_name, f, as) &&
@@ -784,12 +804,12 @@ namespace test {
     template<typename Adapter, typename R, typename A, typename B>
     bool reflexivity(const Adapter& adapter, 
         const std::string r_name, const R& r, 
-        const many<A>& as
+        const A& as
     ) {
         return predicate(
             adapter,
             "reflexivity", 
-            [=](A a){
+            [=](auto a){
                 return Results(r(a, a), "such that: \n  r(a,a) for each a \n"); 
             }, as);
     }
@@ -797,12 +817,12 @@ namespace test {
     template<typename Adapter, typename R, typename A, typename B>
     bool irreflexivity(const Adapter& adapter, 
         const std::string r_name, const R& r, 
-        const many<A>& as
+        const A& as
     ) {
         return predicate(
             adapter,
             "irreflexivity", 
-            [=](A a){
+            [=](auto a){
                 return Results(!r(a, a), "such that: \n  r(a,a) for each a \n");
             }, as);
     }
@@ -810,12 +830,12 @@ namespace test {
     template<typename Adapter, typename R, typename A, typename B>
     bool symmetry(const Adapter& adapter, 
         const std::string r_name, const R& r, 
-        const many<A>& as, const many<B>& bs
+        const A& as, const B& bs
     ) {
         return predicate(
             adapter,
             "symmetry", 
-            [=](A a, B b){
+            [=](auto a, auto b){
                 auto rab = r(a, b);
                 auto rba = r(b, a);
                 std::string diagnostics;
@@ -829,12 +849,12 @@ namespace test {
     template<typename Adapter, typename R, typename A, typename B>
     bool antisymmetry(const Adapter& adapter, 
             std::string r_name, const R& r, 
-        const many<A>& as, const many<B>& bs
+        const A& as, const B& bs
     ) {
         return predicate(
             adapter,
             "antisymmetry", 
-            [=](A a, B b){
+            [=](auto a, auto b){
                 auto rab = r(a, b);
                 auto rba = r(b, a);
                 std::string diagnostics;
@@ -848,12 +868,12 @@ namespace test {
     template<typename Adapter, typename R, typename A, typename B, typename C>
     bool transitivity(const Adapter& adapter, 
             std::string r_name, const R& r, 
-        const many<A>& as, const many<B>& bs, const many<C>& cs
+        const A& as, const B& bs, const C& cs
     ) {
         return predicate(
             adapter,
             "transitivity", 
-            [=](A a, B b, C c){
+            [=](auto a, auto b, auto c){
                 auto rab = r(a, b);
                 auto rba = r(b, a);
                 auto rbc = r(b, c);
@@ -869,12 +889,12 @@ namespace test {
     template<typename Adapter, typename R, typename A, typename B, typename C>
     bool antitransitivity(const Adapter& adapter, 
             std::string r_name, const R& r, 
-        const many<A>& as, const many<B>& bs, const many<C>& cs
+        const A& as, const B& bs, const C& cs
     ) {
         return predicate(
             adapter,
             "antitransitivity", 
-            [=](A a, B b, C c){
+            [=](auto a, auto b, auto c){
                 auto rab = r(a, b);
                 auto rbc = r(b, c);
                 auto rac = r(a, c);
@@ -890,12 +910,12 @@ namespace test {
     template<typename Adapter, typename R, typename A, typename B>
     bool totality(const Adapter& adapter, 
             std::string r_name, const R& r, 
-        const many<A>& as, const many<B>& bs
+        const A& as, const B& bs
     ) {
         return predicate(
             adapter,
             "totality", 
-            [=](A a, B b){
+            [=](auto a, auto b){
                 auto rab = r(a, b);
                 auto rba = r(b, a);
                 std::string diagnostics;
@@ -909,12 +929,12 @@ namespace test {
     template<typename Adapter, typename R, typename A, typename B>
     bool strict_totality(const Adapter& adapter, 
             std::string r_name, const R& r, 
-        const many<A>& as, const many<B>& bs
+        const A& as, const B& bs
     ) {
         return predicate(
             adapter,
             "strict totality", 
-            [=](A a, B b){
+            [=](auto a, auto b){
                 auto rab = r(a, b);
                 auto rba = r(b, a);
                 std::string diagnostics;

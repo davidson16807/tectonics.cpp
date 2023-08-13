@@ -14,7 +14,7 @@ namespace test {
     bool equality( const Adapter& adapter, const std::string& property, 
                 const std::string& lhs_name, const LHS& lhs, 
                 const std::string& rhs_name, const RHS& rhs, 
-                const std::vector<A>& as) {
+                const A& as) {
         return predicate(adapter, property, 
             [=](auto a){
                 auto lhs_value = lhs(a);
@@ -30,7 +30,7 @@ namespace test {
     bool equality( const Adapter& adapter, const std::string& property, 
                 const std::string& lhs_name, const LHS& lhs, 
                 const std::string& rhs_name, const RHS& rhs, 
-                const std::vector<A>& as, const std::vector<B>& bs) {
+                const A& as, const B& bs) {
         return predicate(adapter, property, 
             [=](auto a, auto b){
                 auto lhs_value = lhs(a, b);
@@ -46,7 +46,7 @@ namespace test {
     bool equality( const Adapter& adapter, const std::string& property, 
                 const std::string& lhs_name, const LHS& lhs, 
                 const std::string& rhs_name, const RHS& rhs, 
-                const std::vector<A>& as, const std::vector<B>& bs, const std::vector<C>& cs) {
+                const A& as, const B& bs, const C& cs) {
         return predicate(adapter, property, 
             [=](auto a, auto b, auto c){
                 auto lhs_value = lhs(a, b, c);
