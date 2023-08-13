@@ -394,6 +394,10 @@ namespace whole
 			    return shades[shade_id];
 			}
 		}
+		template<>
+		inline std::string character(const bool a, const bool lo, const bool hi){
+			return a? "T":"F";
+		}
 		template<typename T>
 		inline std::string legend(T sample, const T lo, const T hi){
 			std::string out("");
@@ -406,6 +410,10 @@ namespace whole
 				out += "\n";
 			}
 			return out;
+		}
+		template<>
+		inline std::string legend(bool sample, const bool lo, const bool hi){
+			return std::string("");
 		}
 
 	} 
