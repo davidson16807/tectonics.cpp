@@ -391,7 +391,7 @@ TEST_CASE( "vec3s max idempotence", "[each]" ) {
 
 TEST_CASE( "vector series sqrt purity", "[each]" ) {
     each::Adapter<double> adapter (1e-5);
-    auto a = series::vector_interleave<3>(series::noise(10.0,1.0e4));
+    auto a = series::vector_interleave<3>(series::unit_interval_noise(10.0,1.0e4));
     auto c1 = std::vector<glm::dvec3>(30);
     auto c2 = std::vector<glm::dvec3>(30);
     SECTION("sqrt(a) must be called repeatedly without changing the output"){
@@ -420,7 +420,7 @@ TEST_CASE( "vector series sqrt purity", "[each]" ) {
 
 TEST_CASE( "vector series log consistency", "[each]" ) {
     each::Adapter<double> adapter (1e-5);
-    auto a     = series::vector_interleave<3>(series::noise(10.0,1.0e4));
+    auto a     = series::vector_interleave<3>(series::unit_interval_noise(10.0,1.0e4));
     auto log1_ = std::vector<glm::dvec3>(30);
     auto log2_ = std::vector<glm::dvec3>(30);
 
@@ -436,9 +436,9 @@ TEST_CASE( "vector series log/exp properties", "[each]" ) {
     each::Adapter<double> adapter (1e-5);
 
     auto positive_vectors = std::vector{
-        series::vector_interleave<3>(series::noise(10.0,1.0e4)),
-        series::vector_interleave<3>(series::noise(11.0,1.1e4)),
-        series::vector_interleave<3>(series::noise(12.0,1.2e4))
+        series::vector_interleave<3>(series::unit_interval_noise(10.0,1.0e4)),
+        series::vector_interleave<3>(series::unit_interval_noise(11.0,1.1e4)),
+        series::vector_interleave<3>(series::unit_interval_noise(12.0,1.2e4))
     };
 
     REQUIRE(test::determinism(adapter,
@@ -460,8 +460,8 @@ TEST_CASE( "vector series log/exp properties", "[each]" ) {
 
 TEST_CASE( "vector series log/exp consistency", "[each]" ) {
     each::Adapter<double> adapter (1e-5);
-    auto a     = series::vector_interleave<3>(series::noise(10.0,1.0e4));
-    auto b     = series::vector_interleave<3>(series::noise(10.0,1.0e4));
+    auto a     = series::vector_interleave<3>(series::unit_interval_noise(10.0,1.0e4));
+    auto b     = series::vector_interleave<3>(series::unit_interval_noise(10.0,1.0e4));
     auto ab    = std::vector<glm::dvec3>(30);
     auto loga  = std::vector<glm::dvec3>(30);
     auto logb  = std::vector<glm::dvec3>(30);
@@ -482,9 +482,9 @@ TEST_CASE( "vector series log2/exp2 properties", "[each]" ) {
     each::Adapter<double> adapter (1e-5);
 
     auto positive_vectors = std::vector{
-        series::vector_interleave<3>(series::noise(10.0,1.0e4)),
-        series::vector_interleave<3>(series::noise(11.0,1.1e4)),
-        series::vector_interleave<3>(series::noise(12.0,1.2e4))
+        series::vector_interleave<3>(series::unit_interval_noise(10.0,1.0e4)),
+        series::vector_interleave<3>(series::unit_interval_noise(11.0,1.1e4)),
+        series::vector_interleave<3>(series::unit_interval_noise(12.0,1.2e4))
     };
 
     REQUIRE(test::determinism(adapter,
@@ -506,8 +506,8 @@ TEST_CASE( "vector series log2/exp2 properties", "[each]" ) {
 
 TEST_CASE( "vector series log2/exp2 consistency", "[each]" ) {
     each::Adapter<double> adapter (1e-5);
-    auto a     = series::vector_interleave<3>(series::noise(10.0,1.0e4));
-    auto b     = series::vector_interleave<3>(series::noise(10.0,1.0e4));
+    auto a     = series::vector_interleave<3>(series::unit_interval_noise(10.0,1.0e4));
+    auto b     = series::vector_interleave<3>(series::unit_interval_noise(10.0,1.0e4));
     auto ab    = std::vector<glm::dvec3>(30);
     auto loga  = std::vector<glm::dvec3>(30);
     auto logb  = std::vector<glm::dvec3>(30);

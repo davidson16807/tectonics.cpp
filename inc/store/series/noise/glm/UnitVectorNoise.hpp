@@ -63,7 +63,7 @@ namespace series
 	template<int L, typename T, glm::qualifier Q=glm::highp>
 	constexpr inline auto unit_vector_noise(const T a = T(10), const T b=T(10000))
 	{
-		return unit_vector_interleave<L>(noise(a,b));
+		return unit_vector_interleave<L>(unit_interval_noise(a,b));
 	}
 
 }

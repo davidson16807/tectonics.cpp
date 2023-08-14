@@ -56,7 +56,7 @@ namespace series
 	For consistency, we create one such function for `UnitIntervalNoise` here.
 	*/
 	template<typename T>
-	constexpr inline UnitIntervalNoise<T> noise(const T a = T(10), const T b=T(10000))
+	constexpr inline UnitIntervalNoise<T> unit_interval_noise(const T a = T(10), const T b=T(10000))
 	{
 		return UnitIntervalNoise<T>(a,b);
 	}
