@@ -45,7 +45,12 @@ namespace known
 		constexpr inline auto size() const { return a.size(); }\
 		constexpr inline auto operator()(const size_type i ) const { return SYMBOL a[i]; }\
 		constexpr inline auto operator[](const size_type i ) const { return SYMBOL a[i]; }\
-	};
+	};\
+	template<typename A>\
+	constexpr inline TITLE<A> LOWER(const A a)\
+	{\
+		return TITLE<A>(a);\
+	}
 	// KNOWN_BINARY_OPERATION(++,  increment)
 	// KNOWN_BINARY_OPERATION(--,  decrement)
 	// KNOWN_BINARY_OPERATION(-,   negate)
@@ -62,7 +67,12 @@ namespace known
 		constexpr inline auto size() const { return a.size(); }\
 		constexpr inline auto operator()(const size_type i ) const { return a[i] SYMBOL; }\
 		constexpr inline auto operator[](const size_type i ) const { return a[i] SYMBOL; }\
-	};
+	};\
+	template<typename A>\
+	constexpr inline TITLE<A> LOWER(const A a)\
+	{\
+		return TITLE<A>(a);\
+	}
 	#undef KNOWN_UNARY_POSTFIX_OPERATION
 
 	#define KNOWN_UNARY_STD_WRAPPER(TITLE, LOWER)\
@@ -76,7 +86,12 @@ namespace known
 		constexpr inline auto size() const { return a.size(); }\
 		constexpr inline auto operator()(const size_type i ) const { return std::LOWER(a[i]); }\
 		constexpr inline auto operator[](const size_type i ) const { return std::LOWER(a[i]); }\
-	};
+	};\
+	template<typename A>\
+	constexpr inline TITLE<A> LOWER(const A a)\
+	{\
+		return TITLE<A>(a);\
+	}
 
 	#define KNOWN_UNARY_FUNCTION(TITLE, LOWER)\
 	template<typename A>\
@@ -89,7 +104,12 @@ namespace known
 		constexpr inline auto size() const { return a.size(); }\
 		constexpr inline auto operator()(const size_type i ) const { return LOWER(a[i]); }\
 		constexpr inline auto operator[](const size_type i ) const { return LOWER(a[i]); }\
-	};
+	};\
+	template<typename A>\
+	constexpr inline TITLE<A> LOWER(const A a)\
+	{\
+		return TITLE<A>(a);\
+	}
 
 
 	KNOWN_UNARY_STD_WRAPPER(Abs,   abs)

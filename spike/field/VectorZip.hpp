@@ -3,7 +3,7 @@
 // 3rd party libraries
 #include <glm/vec3.hpp>
 
-namespace series
+namespace field
 {
 
 	/*
@@ -38,13 +38,9 @@ namespace series
 
 		constexpr inline size_type size() const { return 1; }
 
-		constexpr value_type operator()(const size_type i ) const
+		constexpr value_type operator()(const glm::vec<4,R,Q> V ) const
 		{
-			return glm::vec<4,R,Q>(x[i], y[i], z[i], w[i]);
-		}
-		constexpr value_type operator[](const size_type i ) const
-		{
-			return glm::vec<4,R,Q>(x[i], y[i], z[i], w[i]);
+			return glm::vec<4,R,Q>(x(V), y(V), z(V), w(V));
 		}
 
 	};
@@ -78,13 +74,9 @@ namespace series
 
 		constexpr inline size_type size() const { return 1; }
 
-		constexpr value_type operator()(const size_type i ) const
+		constexpr value_type operator()(const glm::vec<3,R,Q> V ) const
 		{
-			return glm::vec<3,R,Q>(x[i], y[i], z[i]);
-		}
-		constexpr value_type operator[](const size_type i ) const
-		{
-			return glm::vec<3,R,Q>(x[i], y[i], z[i]);
+			return glm::vec<3,R,Q>(x(V), y(V), z(V));
 		}
 
 	};
@@ -115,13 +107,9 @@ namespace series
 
 		constexpr inline size_type size() const { return 1; }
 
-		constexpr value_type operator()(const size_type i ) const
+		constexpr value_type operator()(const glm::vec<2,R,Q> V ) const
 		{
-			return glm::vec<2,R,Q>(x[i], y[i]);
-		}
-		constexpr value_type operator[](const size_type i ) const
-		{
-			return glm::vec<2,R,Q>(x[i], y[i]);
+			return glm::vec<2,R,Q>(x(V), y(V));
 		}
 
 	};

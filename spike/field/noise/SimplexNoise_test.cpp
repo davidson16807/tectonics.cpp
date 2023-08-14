@@ -30,7 +30,7 @@
 #include <test/macros.hpp>  
 #include <test/glm/adapter.hpp>
 
-TEST_CASE( "SimplexNoise()", "[series]" ) {
+TEST_CASE( "SimplexNoise()", "[field]" ) {
     test::GlmAdapter<int, double> adapter(1e-5);
 
     auto positions = known::mult(
