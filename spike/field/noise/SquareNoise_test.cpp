@@ -51,6 +51,7 @@ TEST_CASE( "SquareNoise()", "[field]" ) {
     auto noise = field::square_noise(
         series::gaussian(11.0, 1.1e4));
 
+    // NOTE: unlike other noises, continuity for SquareNoise is not guaranteed
     // REQUIRE(test::continuity(adapter,
     //     "SquareNoise(…)", TEST_UNARY(noise),
     //     "continuity",    TEST_NUDGE(glm::dvec3(1e-6,1e-6,1e-6)),

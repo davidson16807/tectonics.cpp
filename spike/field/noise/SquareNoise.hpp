@@ -32,15 +32,14 @@ namespace field
 		int hash(glm::vec<3,int,Q> V){
 			using ivec2 = glm::vec<2,int,Q>;
 			return hash(ivec2(
-					hash(ivec2(V.x,V.y)), V.z));
+					hash(V.xy()), V.z));
 		}
 
 		template<glm::qualifier Q>
 		int hash(glm::vec<4,int,Q> V){
 			using ivec2 = glm::vec<2,int,Q>;
-			using ivec3 = glm::vec<3,int,Q>;
 			return hash(ivec2(
-					hash(ivec3(V.x,V.y,V.z)), V.w));
+					hash(V.xyx()), V.w));
 		}
 
 	}

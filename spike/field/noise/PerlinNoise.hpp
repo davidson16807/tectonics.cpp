@@ -13,23 +13,24 @@ namespace field
 {
 
 	/*
-	Given a `SquareNoise`: ℕ→ℝ⁴, `PerlinNoise4` maps ℝ⁴→ℝ. 
+	Given a `SquareVectorNoise`: ℕ→ℝ⁴, `PerlinNoise4` maps ℝ⁴→ℝ. 
 	For each point, `PerlinNoise` returns the distance to the closest point 
-	of a set of procedurally generated points, given by `SquareNoise`.
+	of a set of procedurally generated points, given by `SquareVectorNoise`.
 	*/
-	template<typename SquareNoise>
+	template<typename SquareVectorNoise>
 	struct PerlinNoise4
 	{
-		SquareNoise noise;
+		SquareVectorNoise noise;
 
 		/*
 		`region_transition_width` is the width of the transition zone for a region
 		`region_count` is the number of regions where we increment grid cell values
 		*/
-		explicit PerlinNoise4(const SquareNoise& noise): noise(noise) {}
+		explicit PerlinNoise4(const SquareVectorNoise& noise): noise(noise) {}
 		PerlinNoise4(const PerlinNoise4& perlin): noise(perlin.noise) {}
 
-		using value_type = typename SquareNoise::value_type;
+		using vector_type = typename SquareVectorNoise::value_type;
+		using value_type = typename vector_type::value_type;
 
 		template<typename T, glm::qualifier Q>
 		value_type operator()(const glm::vec<4,T,Q> position) const {
@@ -52,7 +53,7 @@ namespace field
 		                    O = vec(i,j,k,l);
 		                    J = I + O;
 		                    G = glm::mix(vec(1)-F, F, O);
-		                    a += glm::dot(glm::normalize(noise(J)-vec(0.5)), V-J) * G.x * G.y * G.z * G.w;
+		                    a += glm::dot(glm::normalize(noise(J)), V-J) * G.x * G.y * G.z * G.w;
 		                }
 		            }
 		        }
@@ -61,30 +62,31 @@ namespace field
 		}
 	};
 
-	template<typename SquareNoise>
-	constexpr inline auto perlin_noise4(const SquareNoise noise)
+	template<typename SquareVectorNoise>
+	constexpr inline auto perlin_noise4(const SquareVectorNoise noise)
 	{
-		return PerlinNoise4<SquareNoise>(noise);
+		return PerlinNoise4<SquareVectorNoise>(noise);
 	}
 
 	/*
-	Given a `SquareNoise`: ℕ→ℝ³, `PerlinNoise3` maps ℝ³→ℝ. 
+	Given a `SquareVectorNoise`: ℕ→ℝ³, `PerlinNoise3` maps ℝ³→ℝ. 
 	For each point, `PerlinNoise` returns the distance to the closest point 
-	of a set of procedurally generated points, given by `SquareNoise`.
+	of a set of procedurally generated points, given by `SquareVectorNoise`.
 	*/
-	template<typename SquareNoise>
+	template<typename SquareVectorNoise>
 	struct PerlinNoise3
 	{
-		SquareNoise noise;
+		SquareVectorNoise noise;
 
 		/*
 		`region_transition_width` is the width of the transition zone for a region
 		`region_count` is the number of regions where we increment grid cell values
 		*/
-		explicit PerlinNoise3(const SquareNoise& noise): noise(noise) {}
+		explicit PerlinNoise3(const SquareVectorNoise& noise): noise(noise) {}
 		PerlinNoise3(const PerlinNoise3& perlin): noise(perlin.noise) {}
 
-		using value_type = typename SquareNoise::value_type;
+		using vector_type = typename SquareVectorNoise::value_type;
+		using value_type = typename vector_type::value_type;
 
 		template<typename T, glm::qualifier Q>
 		value_type operator()(const glm::vec<3,T,Q> position) const {
@@ -105,7 +107,7 @@ namespace field
 	                    O = vec(i,j,k);
 	                    J = I + O;
 	                    G = glm::mix(vec(1)-F, F, O);
-	                    a += glm::dot(glm::normalize(noise(J)-vec(0.5)), V-J) * G.x * G.y * G.z;
+	                    a += glm::dot(glm::normalize(noise(J)), V-J) * G.x * G.y * G.z;
 		            }
 		        }
 		    }
@@ -113,30 +115,31 @@ namespace field
 		}
 	};
 
-	template<typename SquareNoise>
-	constexpr inline auto perlin_noise3(const SquareNoise noise)
+	template<typename SquareVectorNoise>
+	constexpr inline auto perlin_noise3(const SquareVectorNoise noise)
 	{
-		return PerlinNoise3<SquareNoise>(noise);
+		return PerlinNoise3<SquareVectorNoise>(noise);
 	}
 
 	/*
-	Given a `SquareNoise`: ℕ→ℝ², `PerlinNoise2` maps ℝ²→ℝ. 
+	Given a `SquareVectorNoise`: ℕ→ℝ², `PerlinNoise2` maps ℝ²→ℝ. 
 	For each point, `PerlinNoise` returns the distance to the closest point 
-	of a set of procedurally generated points, given by `SquareNoise`.
+	of a set of procedurally generated points, given by `SquareVectorNoise`.
 	*/
-	template<typename SquareNoise>
+	template<typename SquareVectorNoise>
 	struct PerlinNoise2
 	{
-		SquareNoise noise;
+		SquareVectorNoise noise;
 
 		/*
 		`region_transition_width` is the width of the transition zone for a region
 		`region_count` is the number of regions where we increment grid cell values
 		*/
-		explicit PerlinNoise2(const SquareNoise& noise): noise(noise) {}
+		explicit PerlinNoise2(const SquareVectorNoise& noise): noise(noise) {}
 		PerlinNoise2(const PerlinNoise2& perlin): noise(perlin.noise) {}
 
-		using value_type = typename SquareNoise::value_type;
+		using vector_type = typename SquareVectorNoise::value_type;
+		using value_type = typename vector_type::value_type;
 
 		template<typename T, glm::qualifier Q>
 		value_type operator()(const glm::vec<2,T,Q> position) const {
@@ -155,17 +158,17 @@ namespace field
                     O = vec(i,j);
                     J = I + O;
                     G = glm::mix(vec(1)-F, F, O);
-                    a += glm::dot(glm::normalize(noise(J)-vec(0.5)), V-J) * G.x * G.y;
+                    a += glm::dot(glm::normalize(noise(J)), V-J) * G.x * G.y;
 		        }
 		    }
 		    return a;
 		}
 	};
 
-	template<typename SquareNoise>
-	constexpr inline auto perlin_noise2(const SquareNoise noise)
+	template<typename SquareVectorNoise>
+	constexpr inline auto perlin_noise2(const SquareVectorNoise noise)
 	{
-		return PerlinNoise2<SquareNoise>(noise);
+		return PerlinNoise2<SquareVectorNoise>(noise);
 	}
 
 }
