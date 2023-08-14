@@ -161,7 +161,7 @@ namespace test {
         const A& as
     ) {
         return predicate(adapter, 
-            f_name + " [denoted \"f\"] must have an \"right annihilator\", " + z_name + " [denoted \"z\"], that when passed on the right will always return itself", 
+            f_name + " [denoted \"f\"] must have an \"right annihilator\", " + z_name + " [denoted \"z\"], that when passed on the right will always return itself" + 
             "\nsuch that: \n  f(a,z) = a\n",
             [=](auto a){
                 auto faz = f(a,z);
@@ -336,7 +336,7 @@ namespace test {
         const A& as
     ) {
         return predicate(adapter, 
-            f_name + " [denoted \"f\"] must allow invocations with a single parameter to be calculated in any order without changing results", 
+            f_name + " [denoted \"f\"] must allow invocations with a single parameter to be calculated in any order without changing results" + 
             "\nsuch that: \n  f(f(a,a), a) = f(a, f(a,a))\n",
             [=](auto a){
                 auto faa = f(a,a);
@@ -356,7 +356,7 @@ namespace test {
         const A& as, const B& bs
     ) {
         return predicate(adapter, 
-            f_name + " [denoted \"f\"] must under certain conditions allow invocations to be calculated in any order without changing results", 
+            f_name + " [denoted \"f\"] must under certain conditions allow invocations to be calculated in any order without changing results" + 
             "\nsuch that: \n  f(f(a,a), b) = f(a, f(a,b))\n",
             [=](auto a, auto b, auto c){
                 auto fab = f(a,b);
@@ -378,7 +378,7 @@ namespace test {
         const A& as, const B& bs
     ) {
         return predicate(adapter, 
-            f_name + " [denoted \"f\"] must under certain conditions allow invocations to be calculated in any order without changing results", 
+            f_name + " [denoted \"f\"] must under certain conditions allow invocations to be calculated in any order without changing results" + 
             "\nsuch that: \n  f(f(a,b), b) = f(a, f(b,b))\n",
             [=](auto a, auto b){
                 auto fab = f(a,b);
@@ -410,7 +410,7 @@ namespace test {
         const A& as, const B& bs
     ) {
         return predicate(adapter, 
-            f_name + " [denoted \"f\"] must under certain conditions allow invocations to be calculated in any order without changing results", 
+            f_name + " [denoted \"f\"] must under certain conditions allow invocations to be calculated in any order without changing results" + 
             "\nsuch that: \n  f(f(a,b), a) = f(a, f(b,a))\n",
             [=](auto a, auto b){
                 auto fab = f(a,b);
@@ -459,12 +459,23 @@ namespace test {
         const std::string g_name, const G& g, 
         const A& as, const B& bs, const C& cs
     ) {
-        return equality(
-            adapter,
-            f_name + " [denoted \"f\"] must allow left parameters to distribute over another function [denoted \"g\"] while still producing the same results", 
-            "f(c, g(a, b))    ", [=](auto a, auto b, auto c){ return f(c, g(a, b));       },
-            "g(f(c,a), f(c,b))", [=](auto a, auto b, auto c){ return g(f(c, a), f(c, b)); },
-            as, bs, cs);
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must allow left parameters to distribute over another function [denoted \"g\"] while still producing the same results" + 
+            "\nsuch that: \n  f(c, g(a, b)) = g(f(c,a), f(c,b))\n",
+            [=](auto a, auto b, auto c){
+                auto gab = g(a,b);
+                auto fca = f(c,a);
+                auto fcb = f(c,b);
+                auto f_c_gab = f(c, gab);
+                auto g_fca_fcb = g(fca,fcb);
+                return Results(adapter.equal(f_c_gab, g_fca_fcb),
+                    "f(c, g(a, b))     : " + adapter.print(f_c_gab) + "\n" +
+                    "g(f(c,a), f(c,b)) : " + adapter.print(g_fca_fcb) + "\n" +
+                    "g(a,b) : " + adapter.print(gab) + "\n" +
+                    "f(c,a) : " + adapter.print(fca) + "\n" +
+                    "f(c,b) : " + adapter.print(fcb) + "\n"
+                );
+            }, as, bs, cs);
     }
 
     template<typename Adapter, typename F, typename G, typename A, typename B, typename C>
@@ -473,12 +484,23 @@ namespace test {
         const std::string g_name, const G& g, 
         const A& as, const B& bs, const C& cs
     ) {
-        return equality(
-            adapter,
-            f_name + " [denoted \"f\"] must allow right parameters to distribute over another function [denoted \"g\"] while still producing the same results", 
-            "f(g(a,b), c)     ", [=](auto a, auto b, auto c){ return f(g(a, b), c);       },
-            "g(f(a,c), f(b,c))", [=](auto a, auto b, auto c){ return g(f(a, c), f(b, c)); },
-            as, bs, cs);
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must allow right parameters to distribute over another function [denoted \"g\"] while still producing the same results" + 
+            "\nsuch that: \n  f(g(a,b), c) = g(f(a,c), f(b,c))\n",
+            [=](auto a, auto b, auto c){
+                auto gab = g(a,b);
+                auto fac = f(a,c);
+                auto fbc = f(b,c);
+                auto f_gab_c = f(c, gab);
+                auto g_fac_fbc = g(fac,fbc);
+                return Results(adapter.equal(f_gab_c, g_fac_fbc),
+                    "f(g(a,b), c)     : " + adapter.print(f_gab_c) + "\n" +
+                    "g(f(a,c), f(b,c)) : " + adapter.print(g_fac_fbc) + "\n" +
+                    "g(a,b) : " + adapter.print(gab) + "\n" +
+                    "f(a,c) : " + adapter.print(fac) + "\n" +
+                    "f(b,c) : " + adapter.print(fbc) + "\n"
+                );
+            }, as, bs, cs);
     }
 
     template<typename Adapter, typename F, typename G, typename A, typename B, typename C>
@@ -538,13 +560,17 @@ namespace test {
         const std::string f_name, const F& f, 
         const A& as
     ) {
-        return equality(
-            adapter,
-            "left involutivity", 
-            f_name + " [denoted \"f\"] must return the original input if invoked a second time", 
-            "f(f(a))", [=](auto a){ return f(f(a)); },
-            "a      ", [=](auto a){ return a; },
-            as);
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must return the original input if invoked a second time" + 
+            "\nsuch that: \n  f(f(a)) = a\n",
+            [=](auto a){
+                auto fa = f(a);
+                auto ffa = f(fa);
+                return Results(adapter.equal(ffa, a),
+                    "f(a)  : " + adapter.print(fa) + "\n" +
+                    "f(f(a)) : " + adapter.print(ffa) + "\n"
+                );
+            }, as);
     }
 
     template<typename Adapter, typename F, typename A, typename B>
@@ -552,13 +578,17 @@ namespace test {
         const std::string f_name, const F& f, 
         const A& as, const B& bs
     ) {
-        return equality(
-            adapter,
-            "left involutivity", 
-            f_name + " [denoted \"f\"] must return the original input if invoked a second time with the same left parameter", 
-            "f(a, f(a,b))", [=](auto a, auto b){ return f(a, f(a, b)); },
-            "b           ", [=](auto a, auto b){ return b; },
-            as, bs);
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must return the original input if invoked a second time with the same left parameter" + 
+            "\nsuch that: \n  f(a, f(a,b)) = b\n",
+            [=](auto a, auto b){
+                auto fab = f(a,b);
+                auto fafab = f(a,fab);
+                return Results(adapter.equal(fafab, b),
+                    "f(a,b)  : " + adapter.print(fab) + "\n" +
+                    "f(a, f(a,b)) : " + adapter.print(fafab) + "\n"
+                );
+            }, as, bs);
     }
 
     template<typename Adapter, typename F, typename A, typename B>
@@ -566,12 +596,17 @@ namespace test {
         const std::string f_name, const F& f, 
         const A& as, const B& bs
     ) {
-        return equality(
-            adapter,
-            f_name + " [denoted \"f\"] must return the original input if invoked a second time with the same right parameter", 
-            "f(f(a,b), b)", [=](auto a, auto b){ return f(f(a, b), b); },
-            "a           ", [=](auto a, auto b){ return a; },
-            as, bs);
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must return the original input if invoked a second time with the same left parameter" + 
+            "\nsuch that: \n  f(f(a,b), b) = a\n",
+            [=](auto a, auto b){
+                auto fab = f(a,b);
+                auto ffabb = f(a,fab);
+                return Results(adapter.equal(ffabb, b),
+                    "f(a,b)  : " + adapter.print(fab) + "\n" +
+                    "f(f(a,b), b) : " + adapter.print(ffabb) + "\n"
+                );
+            }, as, bs);
     }
 
     template<typename Adapter, typename F, typename G, typename A, typename B>
@@ -592,12 +627,30 @@ namespace test {
         const std::string add_name, const Add& add, 
         const A& as, const B& bs, const C& cs
     ) {
-        return equality(
-            adapter,
-            cross_name + " [denoted \"×\"] and "+ add_name +" [denoted \"+\"] must satisfy the jacobi identity for index "+ n_name+ " [denoted \"n\"]", 
-            "a×(b×c) + b×(c×a) + c×(a×b)", [=](auto a, auto b, auto c){ return add( cross(a, cross(b, c)), cross(b, cross(c, a)), cross(c, cross(a, b))); },
-            "n                          ", [=](auto a, auto b, auto c){ return n; },
-            as, bs, cs);
+        return predicate(adapter, 
+            cross_name + " [denoted \"×\"] and "+ add_name +" [denoted \"+\"] must satisfy the jacobi identity for index "+ n_name+ " [denoted \"n\"]" + 
+            "\nsuch that: \n  a×(b×c) + b×(c×a) + c×(a×b) = n\n",
+            [=](auto a, auto b, auto c){
+                auto ab = cross(a,b);
+                auto bc = cross(b,c);
+                auto ca = cross(c,a);
+                auto a_bc = cross(a,bc);
+                auto b_ca = cross(b,ca);
+                auto c_ab = cross(c,ab);
+                auto abc_bca = add(a_bc,b_ca);
+                auto abc_bca_cab = add(abc_bca, c_ab);
+                return Results(adapter.equal(abc_bca_cab, n),
+                    "a×b:                     " + adapter.print(ab) + "\n" +
+                    "b×c:                     " + adapter.print(bc) + "\n" +
+                    "c×a:                     " + adapter.print(ca) + "\n" +
+                    "a×(b×c):                 " + adapter.print(a_bc) + "\n" +
+                    "b×(c×a):                 " + adapter.print(b_ca) + "\n" +
+                    "c×(a×b):                 " + adapter.print(c_ab) + "\n" +
+                    "a×(b×c)+b×(c×a):         " + adapter.print(abc_bca) + "\n" +
+                    "a×(b×c)+b×(c×a)+c×(a×b): " + adapter.print(abc_bca_cab) + "\n" +
+                    "n:           " + adapter.print(n) + "\n"
+                );
+            }, as, bs, cs);
     }
 
     /* 
@@ -612,12 +665,19 @@ namespace test {
         const std::string g_name, const G& g, 
         const A& as
     ) {
-        return equality(
-            adapter,
-            f_name + " [denoted \"f\"] must be invariant to " + g_name + " [denoted \"g\"]", 
-            "f(g(a))", [=](auto a){ return f(g(a)); },
-            "f(a)   ", [=](auto a){ return f(a); },
-            as);
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must be invariant to " + g_name + " [denoted \"g\"]" + 
+            "\nsuch that: \n  f(g(a)) = f(a)\n",
+            [=](auto a){
+                auto fa = f(a);
+                auto ga = g(a);
+                auto fga = f(ga);
+                return Results(adapter.equal(fga, fa),
+                    "f(a)  : " + adapter.print(fa) + "\n" +
+                    "g(a)  : " + adapter.print(ga) + "\n" +
+                    "f(g(a)) : " + adapter.print(fga) + "\n"
+                );
+            }, as);
     }
 
     template<typename Adapter, typename F, typename G, typename A>
@@ -626,12 +686,19 @@ namespace test {
         const std::string g_name, const G& g, 
         const A& as
     ) {
-        return equality(
-            adapter,
-            f_name + " [denoted \"f\"] must be continuous so that imperceptible changes to input [denoted \"g\"] will produce imperceptible changes to output", 
-            "f(g(a))", [=](auto a){ return f(g(a)); },
-            "f(a)   ", [=](auto a){ return f(a); },
-            as);
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must be continuous so that imperceptible changes to input [denoted \"g\"] will produce imperceptible changes to output" + 
+            "\nsuch that: \n  f(g(a)) = f(a)\n",
+            [=](auto a){
+                auto fa = f(a);
+                auto ga = g(a);
+                auto fga = f(ga);
+                return Results(adapter.equal(fga, fa),
+                    "f(a)  : " + adapter.print(fa) + "\n" +
+                    "g(a)  : " + adapter.print(ga) + "\n" +
+                    "f(g(a)) : " + adapter.print(fga) + "\n"
+                );
+            }, as);
     }
 
     template<typename Adapter, typename F, typename G, typename A>
@@ -640,12 +707,19 @@ namespace test {
         const std::string g_name, const G& g, 
         const A& as
     ) {
-        return equality(
-            adapter,
-            f_name + " [denoted \"f\"] must conserve " + g_name + " [denoted \"g\"]", 
-            "g(f(a))", [=](auto a){ return g(f(a)); },
-            "g(a)   ", [=](auto a){ return g(a); },
-            as);
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must conserve " + g_name + " [denoted \"g\"]" + 
+            "\nsuch that: \n  f(g(a)) = f(a)\n",
+            [=](auto a){
+                auto fa = f(a);
+                auto ga = g(a);
+                auto fga = f(ga);
+                return Results(adapter.equal(fga, fa),
+                    "f(a)  : " + adapter.print(fa) + "\n" +
+                    "g(a)  : " + adapter.print(ga) + "\n" +
+                    "f(g(a)) : " + adapter.print(fga) + "\n"
+                );
+            }, as);
     }
 
     template<typename Adapter, typename F, typename G, typename A>
@@ -654,12 +728,19 @@ namespace test {
         const std::string g_name, const G& g, 
         const A& as
     ) {
-        return equality(
-            adapter,
-            f_name + " [denoted \"f\"] must preserve " + g_name + " [denoted \"g\"]", 
-            "g(f(a))", [=](auto a){ return g(f(a)); },
-            "g(a)   ", [=](auto a){ return g(a); },
-            as);
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must preserve " + g_name + " [denoted \"g\"]" + 
+            "\nsuch that: \n  f(g(a)) = f(a)\n",
+            [=](auto a){
+                auto fa = f(a);
+                auto ga = g(a);
+                auto fga = f(ga);
+                return Results(adapter.equal(fga, fa),
+                    "f(a)  : " + adapter.print(fa) + "\n" +
+                    "g(a)  : " + adapter.print(ga) + "\n" +
+                    "f(g(a)) : " + adapter.print(fga) + "\n"
+                );
+            }, as);
     }
 
 
@@ -725,7 +806,7 @@ namespace test {
     ) {
         return predicate(
             adapter,
-            f_name + " must satisfy the triangle inequality, so for any set of arguments the smallest sum of invocations using those arguments is a single invocation", 
+            f_name + " must satisfy the triangle inequality, so for any pair of arguments the smallest sum of invocations that use those arguments is a single invocation", 
             [=](auto a, auto b, auto c){
                 auto fac = f(a,c);
                 auto fab = f(a,b);
