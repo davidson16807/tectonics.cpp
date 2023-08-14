@@ -1,1 +1,0 @@
-#define GLM_FORCE_SWIZZLE
