@@ -1,5 +1,11 @@
 #pragma once
 
+// 3rd party libraries
+#define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
+#include "catch/catch.hpp"
+
+#include <test/adapter.hpp>
+#include <test/properties.hpp>
 #include <test/macros.hpp>
 #include "Interleaving.hpp"
 

@@ -132,6 +132,16 @@ namespace collignon
 				);
 		}
 
+		constexpr scalar vertex_normal(const id vertex_id) const 
+		{
+			return voronoi.unit_sphere_position(vertex_id);
+		}
+
+		constexpr vec3 vertex_position(const id vertex_id) const 
+		{
+			return voronoi.sphere_position(vertex_id);
+		}
+
 		constexpr scalar vertex_dual_area(const id vertex_id) const 
 		{
 			const vec2 idO(voronoi.grid_id(vertex_id));

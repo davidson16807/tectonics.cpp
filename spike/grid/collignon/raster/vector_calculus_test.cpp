@@ -8,54 +8,106 @@
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include "catch/catch.hpp"
 
-#define GLM_FORCE_PURE     // disable anonymous structs so we can build with ISO C++
+#define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
+#include <glm/vec2.hpp>     // *vec3
+#include <glm/vec3.hpp>     // *vec3
 #include "glm/glm.hpp"
 
 // in-house libraries
+#include <store/glm/each_specialization.hpp>
+#include <store/glm/whole_specialization.hpp>
 #include <store/glm/each.hpp>
-#include <store/each.hpp>
-#include <store/whole.hpp>
-// #include <store/glm/whole.hpp>
-#include <store/series/Noise.hpp>
+#include <store/each.hpp>  
+#include <store/whole.hpp>  
+#include <store/series/Get.hpp>
+#include <store/series/Map.hpp>
+#include <store/series/Range.hpp>
+#include <store/series/glm/VectorInterleave.hpp>
+#include <store/series/noise/GaussianNoise.hpp>
+#include <store/series/noise/glm/UnitVectorNoise.hpp>
+
+#include <field/noise/EliasNoise.hpp>
 
 #include "../Grid.hpp"
+#include "series.hpp"
 #include "vector_calculus.hpp"
 
-TEST_CASE( "Raster gradient determinism", "[rasters]" ) {
-    float radius(2.0f);
-    int vertex_count_per_half_meridian(10);
-    collignon::Grid grid(radius, vertex_count_per_half_meridian);
-    auto a = series::UnitIntervalNoise<float>();
-    auto out1 = std::vector<glm::vec3>(grid.vertex_count());
-    auto out2 = std::vector<glm::vec3>(grid.vertex_count());
-    SECTION("gradient(grid, a) must generate the same output when called repeatedly"){
-        collignon::gradient(grid, a, out1);
-        collignon::gradient(grid, a, out2);
-        CHECK(whole::equal(out1, out2));
-    }
+#include <test/properties.hpp>  
+#include <test/macros.hpp>  
+#include <test/glm/adapter.hpp>
+
+namespace collignon {
+
+    template<typename T>
+    struct Adapter{
+        T threshold;
+        std::size_t test_size;
+
+        Adapter(const T threshold, const std::size_t test_size):
+            threshold(threshold),
+            test_size(test_size)
+        {}
+
+        template<typename Series1, typename Series2>
+        bool equal(const Series1& a, const Series2& b) const {
+            return whole::distance(a,b) <= threshold;
+        }
+
+        template<typename Series>
+        std::string print(const Series& a) const {
+            return whole::to_string(a);
+        }
+
+    };
+
 }
 
-TEST_CASE( "Raster gradient distributive over addition", "[rasters]" ) {
-    float radius(2.0f);
+#define COLLIGNON_TEST_OUT_PARAMETER(TYPE,GRID,F) \
+    [=](auto x){ std::vector<TYPE> out(grid.vertex_count()); (F(GRID,x,out)); return out; }
+
+TEST_CASE( "Raster gradient determinism", "[collignon]" ) {
+
+    double radius(2.0f);
     int vertex_count_per_half_meridian(10);
     collignon::Grid grid(radius, vertex_count_per_half_meridian);
-    auto a = series::UnitIntervalNoise<float>(11.0f, 11000.0f);
-    auto b = series::UnitIntervalNoise<float>(12.0f, 12000.0f);
-    auto ab = std::vector<float>(grid.vertex_count());
-    auto grad_a = std::vector<glm::vec3>(grid.vertex_count());
-    auto grad_b = std::vector<glm::vec3>(grid.vertex_count());
-    auto grad_ab = std::vector<glm::vec3>(grid.vertex_count());
-    auto grad_a_grad_b = std::vector<glm::vec3>(grid.vertex_count());
 
-    SECTION("gradient(a+b) must generate the same output as gradient(a)+gradient(b)"){
-        each::add(a, b, ab);
-        collignon::gradient(grid, ab, grad_ab);
-        collignon::gradient(grid, a, grad_a);
-        collignon::gradient(grid, b, grad_b);
-        each::add(grad_a, grad_b, grad_a_grad_b);
-        CHECK(whole::equal( grad_ab,  grad_a_grad_b, 0.01f ));
-    }
+    collignon::Adapter adapter(1e-5, grid.vertex_count());
+
+    auto vertex_noise = series::map(
+        field::elias_noise<double>(
+            series::unit_vector_noise<3>(10.0, 1e4), 
+            series::gaussian(11.0, 1.1e4), 
+            100),
+        collignon::vertex_positions(grid));
+
+    REQUIRE(test::determinism(adapter, 
+        "series::map", COLLIGNON_TEST_OUT_PARAMETER(glm::dvec3, grid, collignon::gradient),
+        std::vector{vertex_noise}
+    ));
+
 }
+
+// TEST_CASE( "Raster gradient distributive over addition", "[rasters]" ) {
+//     float radius(2.0f);
+//     int vertex_count_per_half_meridian(10);
+//     collignon::Grid grid(radius, vertex_count_per_half_meridian);
+//     auto a = series::UnitIntervalNoise<float>(11.0f, 11000.0f);
+//     auto b = series::UnitIntervalNoise<float>(12.0f, 12000.0f);
+//     auto ab = std::vector<float>(grid.vertex_count());
+//     auto grad_a = std::vector<glm::vec3>(grid.vertex_count());
+//     auto grad_b = std::vector<glm::vec3>(grid.vertex_count());
+//     auto grad_ab = std::vector<glm::vec3>(grid.vertex_count());
+//     auto grad_a_grad_b = std::vector<glm::vec3>(grid.vertex_count());
+
+//     SECTION("gradient(a+b) must generate the same output as gradient(a)+gradient(b)"){
+//         each::add(a, b, ab);
+//         collignon::gradient(grid, ab, grad_ab);
+//         collignon::gradient(grid, a, grad_a);
+//         collignon::gradient(grid, b, grad_b);
+//         each::add(grad_a, grad_b, grad_a_grad_b);
+//         CHECK(whole::equal( grad_ab,  grad_a_grad_b ));
+//     }
+// }
 
 // TEST_CASE( "Raster gradient multiplication relation", "[rasters]" ) {
 

@@ -423,7 +423,8 @@ namespace whole
 	std::string to_string(const Series& a, const T lo, const T hi, const int line_char_width = 80)
 	{
 		std::string out("");
-		for (unsigned int i = 0; i < a.size(); ++i)
+		using id = typename Series::size_type;
+		for (id i = 0; i < a.size(); ++i)
 		{
 		    if (i % line_char_width == 0)
 		    {
@@ -441,7 +442,8 @@ namespace whole
 	{
 		auto hi(magnitude(a[0]));
 		auto lo(magnitude(a[0]));
-		for (unsigned int i = 0; i < a.size(); ++i)
+		using id = typename Series::size_type;
+		for (id i = 0; i < a.size(); ++i)
 		{
 			hi = std::max(hi, magnitude(a[i]));
 			lo = std::min(lo, magnitude(a[i]));
