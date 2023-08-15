@@ -514,6 +514,60 @@ namespace test {
             right_distributivity(adapter, f_name, f, g_name, g, as, bs, cs);
     }
 
+
+
+    template<typename Adapter, typename F, typename Add1, typename Add2, typename A, typename B>
+    bool additivity(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string add1_name, const Add1& add1, 
+        const std::string add2_name, const Add2& add2, 
+        const A& as, const B& bs
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must allow the output of a sum, using \""+add1_name+"\" to be used in place of the the sum of the output, using \"" + add2_name + "\"" +
+            "\nsuch that: \n  f(a+b) = f(a)+f(b)\n",
+            [=](auto a, auto b){
+                auto ab = add1(a,b);
+                auto fab = f(ab);
+                auto fa = f(a);
+                auto fb = f(b);
+                auto fa_fb = add2(fa,fb);
+                return Results(adapter.equal(fab, fa_fb),
+                    "f(a+b)    : " + adapter.print(fab) + "\n" +
+                    "f(a)+f(b) : " + adapter.print(fa_fb) + "\n" +
+                    "a+b  : " + adapter.print(ab) + "\n" +
+                    "f(a) : " + adapter.print(fa) + "\n" +
+                    "f(b) : " + adapter.print(fb) + "\n"
+                );
+            }, as, bs);
+    }
+
+    template<typename Adapter, typename F, typename Mult1, typename Mult2, typename A, typename B>
+    bool homogeneity(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string mult1_name, const Mult1& mult1, 
+        const std::string mult2_name, const Mult2& mult2, 
+        const A& as, const B& bs
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must allow the output of a sum (using "+mult1_name+") to be used in place of the the sum of the output (using " + mult2_name + ")" +
+            "\nsuch that: \n  f(a*b) = a*f(b)\n",
+            [=](auto a, auto b){
+                auto ab = mult1(a,b);
+                auto fab = f(ab);
+                auto fb = f(b);
+                auto afb = mult2(a,fb);
+                return Results(adapter.equal(fab, afb),
+                    "f(a*b) : " + adapter.print(fab) + "\n" +
+                    "a*f(b) : " + adapter.print(afb) + "\n" +
+                    "a*b  : " + adapter.print(ab) + "\n" +
+                    "f(b) : " + adapter.print(fb) + "\n"
+                );
+            }, as, bs);
+    }
+
+
+
     template<typename Adapter, typename F, typename A>
     bool idempotence(const Adapter& adapter, 
         const std::string f_name, const F& f, 

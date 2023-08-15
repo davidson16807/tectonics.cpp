@@ -54,7 +54,8 @@ namespace each
 	{\
 		assert(compatible(a,b,out));\
 		auto size = out.size();\
-		for (std::size_t i = 0; i < size; ++i)\
+		using size_type = typename Out::size_type;\
+		for (size_type i = 0; i < size; ++i)\
 		{\
 			out[i] = (a[i] SYMBOL b[i]);\
 		}\
@@ -73,7 +74,8 @@ namespace each
 	{\
 		assert(compatible(a,out));\
 		auto size = out.size();\
-		for (std::size_t i = 0; i < size; ++i)\
+		using size_type = typename Out::size_type;\
+		for (size_type i = 0; i < size; ++i)\
 		{\
 			out[i] = SYMBOL a[i];\
 		}\
@@ -87,7 +89,8 @@ namespace each
 	{\
 		assert(compatible(a,out));\
 		auto size = out.size();\
-		for (std::size_t i = 0; i < size; ++i)\
+		using size_type = typename Out::size_type;\
+		for (size_type i = 0; i < size; ++i)\
 		{\
 			out[i] =a[i] SYMBOL;\
 		}\
@@ -102,7 +105,8 @@ namespace each
 	{\
 		assert(compatible(a,out));\
 		auto size = out.size();\
-		for (std::size_t i = 0; i < size; ++i)\
+		using size_type = typename Out::size_type;\
+		for (size_type i = 0; i < size; ++i)\
 		{\
 			out[i] = NAME(a[i]);\
 		}\
@@ -208,7 +212,8 @@ namespace each
 	{\
 		assert(compatible(a,b,out));\
 		auto size = out.size();\
-		for (std::size_t i = 0; i < size; ++i)\
+		using size_type = typename Out::size_type;\
+		for (size_type i = 0; i < size; ++i)\
 		{\
 			out[i] = NAME(a[i], b[i]);\
 		}\
@@ -258,7 +263,8 @@ namespace each
 	{\
 		assert(compatible(a,b,c,out));\
 		auto size = out.size();\
-		for (std::size_t i = 0; i < size; ++i)\
+		using size_type = typename Out::size_type;\
+		for (size_type i = 0; i < size; ++i)\
 		{\
 			out[i] = NAME(a[i], b[i], c[i]);\
 		}\
@@ -290,7 +296,8 @@ namespace each
 	{
 		assert(compatible(a,b,out));
 		auto size = a.size();
-		for (std::size_t i = 0; i < size; ++i)
+		using size_type = typename Out::size_type;\
+		for (size_type i = 0; i < size; ++i)
 		{
 			out[i] = distance(a[i], b[i]) < threshold;
 		}
@@ -309,7 +316,8 @@ namespace each
 	{
 		floor(a, fractout);
 		auto size = fractout.size();
-		for (std::size_t i = 0; i < size; ++i)
+		using size_type = typename Out::size_type;\
+		for (size_type i = 0; i < size; ++i)
 		{
 			intout[i] = int(a[i]);
 		}
@@ -331,7 +339,8 @@ namespace each
 	{
 		assert(compatible(a,out));
 		auto size = out.size();
-		for (std::size_t i = 0; i < size; ++i)
+		using size_type = typename Out::size_type;\
+		for (size_type i = 0; i < size; ++i)
 		{
 			out[i] = f(a[i]);
 		}
@@ -343,7 +352,8 @@ namespace each
 	{
 		assert(compatible(a,f,out));
 		auto size = out.size();
-		for (std::size_t i = 0; i < size; ++i)
+		using size_type = typename Out::size_type;\
+		for (size_type i = 0; i < size; ++i)
 		{
 			out[i] = f[a[i]];
 		}

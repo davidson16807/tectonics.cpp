@@ -35,7 +35,8 @@ namespace test {
     bool predicate(const Adapter& adapter, 
             const std::string& predicate_name, const Predicate& predicate, 
             const A& a) {
-        for (std::size_t i = 0; i < a.size(); ++i) {
+        using size_type = typename A::size_type;
+        for (size_type i = 0; i < a.size(); ++i) {
             Results results = predicate(a[i]);
             if (!results.pass) {
                 std::cout << std::endl;
@@ -53,8 +54,9 @@ namespace test {
     bool predicate(const Adapter& adapter, 
             const std::string& predicate_name, const Predicate& predicate, 
             const A& a, const B& b) {
-        for (std::size_t i = 0; i < a.size(); ++i) {
-        for (std::size_t j = 0; j < b.size(); ++j) {
+        using size_type = typename A::size_type;
+        for (size_type i = 0; i < a.size(); ++i) {
+        for (size_type j = 0; j < b.size(); ++j) {
             Results results = predicate(a[i], b[j]);
             if (!results.pass) {
                 std::cout << std::endl;
@@ -73,9 +75,10 @@ namespace test {
     bool predicate(const Adapter& adapter, 
             const std::string& predicate_name, const Predicate& predicate, 
             const A& a, const B& b, const C& c) {
-        for (std::size_t i = 0; i < a.size(); ++i) {
-        for (std::size_t j = 0; j < b.size(); ++j) {
-        for (std::size_t k = 0; k < c.size(); ++k) {
+        using size_type = typename A::size_type;
+        for (size_type i = 0; i < a.size(); ++i) {
+        for (size_type j = 0; j < b.size(); ++j) {
+        for (size_type k = 0; k < c.size(); ++k) {
             Results results = predicate(a[i], b[j], c[k]);
             if (!results.pass) {
                 std::cout << std::endl;

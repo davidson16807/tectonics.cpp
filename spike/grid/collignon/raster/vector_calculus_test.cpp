@@ -27,6 +27,7 @@
 #include <store/series/noise/glm/UnitVectorNoise.hpp>
 
 #include <field/noise/EliasNoise.hpp>
+#include <field/VectorZip.hpp>
 
 #include "../Grid.hpp"
 #include "series.hpp"
@@ -62,52 +63,216 @@ namespace collignon {
 
 }
 
-#define COLLIGNON_TEST_OUT_PARAMETER(TYPE,GRID,F) \
-    [=](auto x){ std::vector<TYPE> out(grid.vertex_count()); (F(GRID,x,out)); return out; }
+#define COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(TYPE,GRID,F) \
+    [=](auto x){ std::vector<TYPE> out(GRID.vertex_count()); (F(GRID,x,out)); return out; }
 
-TEST_CASE( "Raster gradient determinism", "[collignon]" ) {
+#define COLLIGNON_TEST_UNARY_OUT_PARAMETER(TYPE,GRID,F)   \
+    [=](auto x){ std::vector<TYPE> out(GRID.vertex_count()); (F(x,out)); return out; }
+#define COLLIGNON_TEST_BINARY_OUT_PARAMETER(TYPE,GRID,F)  \
+    [=](auto x, auto y){ std::vector<TYPE> out(GRID.vertex_count()); (F(x,y,out)); return out; }
+#define COLLIGNON_TEST_TRINARY_OUT_PARAMETER(TYPE,GRID,F) \
+    [=](auto x, auto y, auto z){ std::vector<TYPE> out(GRID.vertex_count()); (F(x,y,z,out)); return out; }
+
+TEST_CASE( "Raster gradient", "[collignon]" ) {
 
     double radius(2.0f);
-    int vertex_count_per_half_meridian(10);
+    int vertex_count_per_half_meridian(30);
     collignon::Grid grid(radius, vertex_count_per_half_meridian);
 
     collignon::Adapter adapter(1e-5, grid.vertex_count());
 
-    auto vertex_noise = series::map(
-        field::elias_noise<double>(
-            series::unit_vector_noise<3>(10.0, 1e4), 
-            series::gaussian(11.0, 1.1e4), 
-            100),
-        collignon::vertex_positions(grid));
+    std::vector noises{
+        series::map(
+            field::elias_noise<double>(
+                series::unit_vector_noise<3>(10.0, 1.0e4), 
+                series::gaussian(11.0, 1.1e4), 
+                100),
+            collignon::vertex_positions(grid)),
+        series::map(
+            field::elias_noise<double>(
+                series::unit_vector_noise<3>(11.0, 1.1e4), 
+                series::gaussian(11.0, 1.1e4), 
+                100),
+            collignon::vertex_positions(grid)),
+        series::map(
+            field::elias_noise<double>(
+                series::unit_vector_noise<3>(12.0, 1.2e4), 
+                series::gaussian(11.0, 1.1e4), 
+                100),
+            collignon::vertex_positions(grid))
+    };
 
     REQUIRE(test::determinism(adapter, 
-        "series::map", COLLIGNON_TEST_OUT_PARAMETER(glm::dvec3, grid, collignon::gradient),
-        std::vector{vertex_noise}
+        "collignon::gradient", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::gradient),
+        noises
+    ));
+
+    REQUIRE(test::additivity(adapter, 
+        "collignon::gradient", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::gradient),
+        "each::add          ", COLLIGNON_TEST_BINARY_OUT_PARAMETER (double,     grid, each::add),
+        "each::add          ", COLLIGNON_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+        noises, noises
     ));
 
 }
 
-// TEST_CASE( "Raster gradient distributive over addition", "[rasters]" ) {
-//     float radius(2.0f);
-//     int vertex_count_per_half_meridian(10);
-//     collignon::Grid grid(radius, vertex_count_per_half_meridian);
-//     auto a = series::UnitIntervalNoise<float>(11.0f, 11000.0f);
-//     auto b = series::UnitIntervalNoise<float>(12.0f, 12000.0f);
-//     auto ab = std::vector<float>(grid.vertex_count());
-//     auto grad_a = std::vector<glm::vec3>(grid.vertex_count());
-//     auto grad_b = std::vector<glm::vec3>(grid.vertex_count());
-//     auto grad_ab = std::vector<glm::vec3>(grid.vertex_count());
-//     auto grad_a_grad_b = std::vector<glm::vec3>(grid.vertex_count());
 
-//     SECTION("gradient(a+b) must generate the same output as gradient(a)+gradient(b)"){
-//         each::add(a, b, ab);
-//         collignon::gradient(grid, ab, grad_ab);
-//         collignon::gradient(grid, a, grad_a);
-//         collignon::gradient(grid, b, grad_b);
-//         each::add(grad_a, grad_b, grad_a_grad_b);
-//         CHECK(whole::equal( grad_ab,  grad_a_grad_b ));
-//     }
-// }
+
+TEST_CASE( "Raster divergence", "[collignon]" ) {
+
+    double radius(2.0f);
+    int vertex_count_per_half_meridian(30);
+    collignon::Grid grid(radius, vertex_count_per_half_meridian);
+
+    collignon::Adapter adapter(1e-5, grid.vertex_count());
+
+    std::vector noises{
+        series::map(
+            field::vector3_zip(
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(10.0, 1.0e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100),
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(11.0, 1.1e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100),
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(12.0, 1.2e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100)
+            ),
+            collignon::vertex_positions(grid)
+        ),
+        series::map(
+            field::vector3_zip(
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(13.0, 1.3e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100),
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(14.0, 1.4e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100),
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(15.0, 1.5e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100)
+            ),
+            collignon::vertex_positions(grid)
+        ),
+        series::map(
+            field::vector3_zip(
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(16.0, 1.6e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100),
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(17.0, 1.7e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100),
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(18.0, 1.8e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100)
+            ),
+            collignon::vertex_positions(grid)
+        ),
+    };
+
+    REQUIRE(test::determinism(adapter, 
+        "collignon::divergence", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(double,     grid, collignon::divergence),
+        noises
+    ));
+
+    REQUIRE(test::additivity(adapter, 
+        "collignon::divergence", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(double,     grid, collignon::divergence),
+        "each::add          ",   COLLIGNON_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+        "each::add          ",   COLLIGNON_TEST_BINARY_OUT_PARAMETER (double,     grid, each::add),
+        noises, noises
+    ));
+
+}
+
+
+
+TEST_CASE( "Raster curl", "[collignon]" ) {
+
+    double radius(2.0f);
+    int vertex_count_per_half_meridian(30);
+    collignon::Grid grid(radius, vertex_count_per_half_meridian);
+
+    collignon::Adapter adapter(1e-5, grid.vertex_count());
+
+    std::vector noises{
+        series::map(
+            field::vector3_zip(
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(10.0, 1.0e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100),
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(11.0, 1.1e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100),
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(12.0, 1.2e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100)
+            ),
+            collignon::vertex_positions(grid)
+        ),
+        series::map(
+            field::vector3_zip(
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(13.0, 1.3e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100),
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(14.0, 1.4e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100),
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(15.0, 1.5e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100)
+            ),
+            collignon::vertex_positions(grid)
+        ),
+        series::map(
+            field::vector3_zip(
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(16.0, 1.6e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100),
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(17.0, 1.7e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100),
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(18.0, 1.8e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100)
+            ),
+            collignon::vertex_positions(grid)
+        ),
+    };
+
+    REQUIRE(test::determinism(adapter, 
+        "collignon::curl",       COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::curl),
+        noises
+    ));
+
+    REQUIRE(test::additivity(adapter, 
+        "collignon::curl",       COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::curl),
+        "each::add          ",   COLLIGNON_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+        "each::add          ",   COLLIGNON_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+        noises, noises
+    ));
+
+}
+
+
 
 // TEST_CASE( "Raster gradient multiplication relation", "[rasters]" ) {
 
@@ -208,43 +373,6 @@ TEST_CASE( "Raster gradient determinism", "[collignon]" ) {
 //     }
 // }
 
-
-TEST_CASE( "Raster divergence determinism", "[rasters]" ) {
-    float radius(2.0f);
-    int vertex_count_per_half_meridian(10);
-    collignon::Grid grid(radius, vertex_count_per_half_meridian);
-    auto a = series::UnitIntervalNoise<glm::vec3>(glm::vec3(10,11,12), glm::vec3(10000,11000,12000));
-    auto div_a1 = std::vector<float>(grid.vertex_count());
-    auto div_a2 = std::vector<float>(grid.vertex_count());
-    SECTION("divergence(grid, a) must generate the same output when called repeatedly"){
-        collignon::divergence(grid, a, div_a1);
-        collignon::divergence(grid, a, div_a2);
-        CHECK(whole::equal(div_a1, div_a2));
-    }
-}
-
-
-TEST_CASE( "Raster divergence distributive over addition", "[rasters]" ) {
-    float radius(2.0f);
-    int vertex_count_per_half_meridian(10);
-    collignon::Grid grid(radius, vertex_count_per_half_meridian);
-    auto a = series::UnitIntervalNoise<glm::vec3>(glm::vec3(10,11,12), glm::vec3(10000,11000,12000));
-    auto b = series::UnitIntervalNoise<glm::vec3>(glm::vec3(13,14,15), glm::vec3(13000,14000,15000));
-    auto ab = std::vector<glm::vec3>(grid.vertex_count());
-    auto div_a = std::vector<float>(grid.vertex_count());
-    auto div_b = std::vector<float>(grid.vertex_count());
-    auto div_ab = std::vector<float>(grid.vertex_count());
-    auto div_a_div_b = std::vector<float>(grid.vertex_count());
-
-    SECTION("divergence(a+b) must generate the same output as divergence(a)+divergence(b)"){
-        each::add(a, b, ab);
-        collignon::divergence(grid, ab, div_ab);
-        collignon::divergence(grid, a, div_a);
-        collignon::divergence(grid, b, div_b);
-        each::add(div_a, div_b, div_a_div_b);
-        CHECK(whole::equal( div_ab,  div_a_div_b, 0.01f ));
-    }
-}
 
 
 // TEST_CASE( "divergence translation invariance", "[rasters]" ) {
@@ -369,43 +497,6 @@ TEST_CASE( "Raster divergence distributive over addition", "[rasters]" ) {
 //         CHECK(whole::equal(curl(a),curl(a), 0.1f));
 //     }
 // }
-
-TEST_CASE( "Raster curl determinism", "[rasters]" ) {
-    float radius(2.0f);
-    int vertex_count_per_half_meridian(10);
-    collignon::Grid grid(radius, vertex_count_per_half_meridian);
-    auto a = series::UnitIntervalNoise<glm::vec3>(glm::vec3(10,11,12), glm::vec3(10000,11000,12000));
-    auto curl_a1 = std::vector<glm::vec3>(grid.vertex_count());
-    auto curl_a2 = std::vector<glm::vec3>(grid.vertex_count());
-    SECTION("curl(grid, a) must generate the same output when called repeatedly"){
-        collignon::curl(grid, a, curl_a1);
-        collignon::curl(grid, a, curl_a2);
-        CHECK(whole::equal(curl_a1, curl_a2));
-    }
-}
-
-TEST_CASE( "Raster curl distributive over addition", "[rasters]" ) {
-    float radius(2.0f);
-    int vertex_count_per_half_meridian(10);
-    collignon::Grid grid(radius, vertex_count_per_half_meridian);
-    auto a = series::UnitIntervalNoise<glm::vec3>(glm::vec3(10,11,12), glm::vec3(10000,11000,12000));
-    auto b = series::UnitIntervalNoise<glm::vec3>(glm::vec3(13,14,15), glm::vec3(13000,14000,15000));
-    auto ab = std::vector<glm::vec3>(grid.vertex_count());
-    auto curl_a = std::vector<glm::vec3>(grid.vertex_count());
-    auto curl_b = std::vector<glm::vec3>(grid.vertex_count());
-    auto curl_ab = std::vector<glm::vec3>(grid.vertex_count());
-    auto curl_a_curl_b = std::vector<glm::vec3>(grid.vertex_count());
-
-    SECTION("curl(a+b) must generate the same output as curl(a)+curl(b)"){
-        each::add(a, b, ab);
-        collignon::curl(grid, ab, curl_ab);
-        collignon::curl(grid, a, curl_a);
-        collignon::curl(grid, b, curl_b);
-        each::add(curl_a, curl_b, curl_a_curl_b);
-        CHECK(whole::equal( curl_ab,  curl_a_curl_b, 0.01f ));
-    }
-}
-
 
 
 // TEST_CASE( "curl of gradient is zero", "[rasters]" ) {
