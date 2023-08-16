@@ -259,14 +259,133 @@ TEST_CASE( "Raster curl", "[collignon]" ) {
     };
 
     REQUIRE(test::determinism(adapter, 
-        "collignon::curl",       COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::curl),
+        "collignon::curl",   COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::curl),
         noises
     ));
 
     REQUIRE(test::additivity(adapter, 
-        "collignon::curl",       COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::curl),
-        "each::add          ",   COLLIGNON_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
-        "each::add          ",   COLLIGNON_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+        "collignon::curl",   COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::curl),
+        "each::add      ",   COLLIGNON_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+        "each::add      ",   COLLIGNON_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+        noises, noises
+    ));
+
+}
+
+TEST_CASE( "Scalar Raster laplacian", "[collignon]" ) {
+
+    double radius(2.0f);
+    int vertex_count_per_half_meridian(30);
+    collignon::Grid grid(radius, vertex_count_per_half_meridian);
+
+    collignon::Adapter adapter(1e-5, grid.vertex_count());
+
+    std::vector noises{
+        series::map(
+            field::elias_noise<double>(
+                series::unit_vector_noise<3>(10.0, 1.0e4), 
+                series::gaussian(11.0, 1.1e4), 
+                100),
+            collignon::vertex_positions(grid)),
+        series::map(
+            field::elias_noise<double>(
+                series::unit_vector_noise<3>(11.0, 1.1e4), 
+                series::gaussian(11.0, 1.1e4), 
+                100),
+            collignon::vertex_positions(grid)),
+        series::map(
+            field::elias_noise<double>(
+                series::unit_vector_noise<3>(12.0, 1.2e4), 
+                series::gaussian(11.0, 1.1e4), 
+                100),
+            collignon::vertex_positions(grid))
+    };
+
+    REQUIRE(test::determinism(adapter, 
+        "collignon::laplacian", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::laplacian),
+        noises
+    ));
+
+    REQUIRE(test::additivity(adapter, 
+        "collignon::laplacian", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(double, grid, collignon::laplacian),
+        "each::add           ", COLLIGNON_TEST_BINARY_OUT_PARAMETER (double, grid, each::add),
+        "each::add           ", COLLIGNON_TEST_BINARY_OUT_PARAMETER (double, grid, each::add),
+        noises, noises
+    ));
+
+}
+
+TEST_CASE( "Vector Raster laplacian", "[collignon]" ) {
+
+    double radius(2.0f);
+    int vertex_count_per_half_meridian(30);
+    collignon::Grid grid(radius, vertex_count_per_half_meridian);
+
+    collignon::Adapter adapter(1e-5, grid.vertex_count());
+
+    std::vector noises{
+        series::map(
+            field::vector3_zip(
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(10.0, 1.0e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100),
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(11.0, 1.1e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100),
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(12.0, 1.2e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100)
+            ),
+            collignon::vertex_positions(grid)
+        ),
+        series::map(
+            field::vector3_zip(
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(13.0, 1.3e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100),
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(14.0, 1.4e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100),
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(15.0, 1.5e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100)
+            ),
+            collignon::vertex_positions(grid)
+        ),
+        series::map(
+            field::vector3_zip(
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(16.0, 1.6e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100),
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(17.0, 1.7e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100),
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(18.0, 1.8e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        100)
+            ),
+            collignon::vertex_positions(grid)
+        ),
+    };
+
+    REQUIRE(test::determinism(adapter, 
+        "collignon::laplacian", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::laplacian),
+        noises
+    ));
+
+    REQUIRE(test::additivity(adapter, 
+        "collignon::laplacian", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::laplacian),
+        "each::add           ", COLLIGNON_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+        "each::add           ", COLLIGNON_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
         noises, noises
     ));
 
@@ -302,45 +421,6 @@ TEST_CASE( "Raster curl", "[collignon]" ) {
 // }
 
 
-// TEST_CASE( "gradient translation invariance", "[rasters]" ) {
-//     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
-//     icosphere_mesh = meshes::subdivide(icosphere_mesh); each::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-//     icosphere_mesh = meshes::subdivide(icosphere_mesh); each::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-//     icosphere_mesh = meshes::subdivide(icosphere_mesh); each::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-//     icosphere_mesh = meshes::subdivide(icosphere_mesh); each::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-//     icosphere_mesh = meshes::subdivide(icosphere_mesh); each::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-
-
-//     auto a           = raster<float>(icosphere_grid);
-//     auto A_ids       = raster<uint>(icosphere_grid);
-//     auto Ai_ids      = raster<uint>(icosphere_grid);
-//     auto A_pos       = raster<glm::vec3>(icosphere_grid);
-//     auto Ai_pos      = raster<glm::vec3>(icosphere_grid);
-//     auto A_a         = raster<float>(icosphere_grid);
-//     auto grad_A_a    = raster<glm::vec3>(icosphere_grid);
-//     auto Ai_grad_A_a = raster<glm::vec3>(icosphere_grid);
-//     auto grad_a      = raster<glm::vec3>(icosphere_grid);
-
-//     std::mt19937 generator(2);
-//     each::get_elias_noise(icosphere_grid.metrics->vertex_positions, generator, a);
-
-//     mat4   A      = glm::rotate(mat4(1.f), 3.14f/3.f, glm::glm::vec3(1,1,1));
-//     mult(A,  icosphere.vertex_positions, A_pos);
-//     icosphere.get_ids(A_pos,  A_ids);
-
-//     mat4   Ai     = glm::inverse(A);
-//     mult(Ai, icosphere.vertex_positions, Ai_pos);
-//     icosphere.get_ids(Ai_pos, Ai_ids);
-
-//     SECTION("gradient(a) must generate the same output as unshift(gradient(shift(a)))"){
-//         grid.gradient ( a,      grad_a         );
-//         grid.get      ( a,         A_ids,  A_a            );
-//         grid.gradient ( A_a,    grad_A_a       );
-//         grid.get      ( grad_A_a,  Ai_ids, Ai_grad_A_a    );
-//         CHECK(whole::equal(grad_a, Ai_grad_A_a, 0.7f, 0.1f));
-//     }
-// }
-
 // TEST_CASE( "gradient resolution invariance", "[rasters]" ) {
 //     meshes::mesh icosphere_mesh1(meshes::icosahedron.vertices, meshes::icosahedron.faces);
 //     icosphere_mesh1 = meshes::subdivide(icosphere_mesh1); each::normalize(icosphere_mesh1.vertices, icosphere_mesh1.vertices);
@@ -374,47 +454,6 @@ TEST_CASE( "Raster curl", "[collignon]" ) {
 // }
 
 
-
-// TEST_CASE( "divergence translation invariance", "[rasters]" ) {
-//     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
-//     icosphere_mesh = meshes::subdivide(icosphere_mesh); each::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-//     icosphere_mesh = meshes::subdivide(icosphere_mesh); each::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-//     icosphere_mesh = meshes::subdivide(icosphere_mesh); each::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-//     icosphere_mesh = meshes::subdivide(icosphere_mesh); each::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-//     icosphere_mesh = meshes::subdivide(icosphere_mesh); each::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-
-
-//     auto scalar      = raster<float>(icosphere_grid);
-//     auto a           = raster<glm::vec3>(icosphere_grid);
-//     auto A_ids       = raster<uint>(icosphere_grid);
-//     auto Ai_ids      = raster<uint>(icosphere_grid);
-//     auto A_pos       = raster<glm::vec3>(icosphere_grid);
-//     auto Ai_pos      = raster<glm::vec3>(icosphere_grid);
-//     auto A_a         = raster<glm::vec3>(icosphere_grid);
-//     auto div_A_a     = raster<float>(icosphere_grid);
-//     auto Ai_div_A_a  = raster<float>(icosphere_grid);
-//     auto div_a       = raster<float>(icosphere_grid);
-
-//     std::mt19937 generator(2);
-//     each::get_elias_noise  ( generator, scalar   );
-//     a = grid.gradient( scalar);
-
-//     mat4   A      = glm::rotate(mat4(1.f), 3.14f/3.f, glm::glm::vec3(1,1,1));
-//     mult(A,  icosphere.vertex_positions, A_pos);
-//     icosphere.get_ids(A_pos,  A_ids);
-
-//     mat4   Ai     = glm::inverse(A);
-//     mult(Ai, icosphere.vertex_positions, Ai_pos);
-//     icosphere.get_ids(Ai_pos, Ai_ids);
-
-//     SECTION("divergence(a) must generate the same output as unshift(divergence(shift(a)))"){
-//         divergence ( a,      div_a      );
-//         get        ( a,         A_ids,  A_a        );
-//         divergence ( A_a,    div_A_a    );
-//         get        ( div_A_a,   Ai_ids, Ai_div_A_a );
-//         CHECK(whole::equal(div_a, Ai_div_A_a, 1e-0f));
-//     }
-// }
 
 // TEST_CASE( "divergence resolution invariance", "[rasters]" ) {
 //     meshes::mesh icosphere_mesh1(meshes::icosahedron.vertices, meshes::icosahedron.faces);
@@ -541,22 +580,6 @@ TEST_CASE( "Raster curl", "[collignon]" ) {
 //         // CHECK(whole::equal(div_curl_a, zeros));
 //     }
 // }
-
-
-TEST_CASE( "Raster laplacian determinism", "[rasters]" ) {
-    float radius(2.0f);
-    int vertex_count_per_half_meridian(10);
-    collignon::Grid grid(radius, vertex_count_per_half_meridian);
-    auto a = series::UnitIntervalNoise<float>();
-    auto laplacian_a1 = std::vector<float>(grid.vertex_count());
-    auto laplacian_a2 = std::vector<float>(grid.vertex_count());
-    SECTION("laplacian(grid, a) must generate the same output when called repeatedly"){
-        collignon::laplacian(grid, a, laplacian_a1);
-        collignon::laplacian(grid, a, laplacian_a2);
-        CHECK(whole::equal(laplacian_a1, laplacian_a2));
-    }
-}
-
 
 // TEST_CASE( "laplacian is divergence of gradient", "[rasters]" ) {
 //     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
