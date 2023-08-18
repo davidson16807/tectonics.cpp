@@ -22,11 +22,6 @@ namespace series
 			values(values)
 		{}
 
-		// copy constructor
-		constexpr inline VectorInterleave(const VectorInterleave& a):
-			values(a.values)
-		{}
-
 		constexpr inline size_type size() const { return std::max(size_type(1),values.size()/L); }
 
 		constexpr value_type operator()(const size_type memory_id ) const

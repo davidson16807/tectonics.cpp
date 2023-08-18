@@ -47,7 +47,7 @@ namespace math {
             q(1.0)
         {
         }
-        // copy constructor
+        // cast constructor
         template <int P2lo, int P2hi, int Q2lo, int Q2hi> 
         constexpr Rational(const Rational<T,P2lo,P2hi,Q2lo,Q2hi>& r): 
             p(r.p), 

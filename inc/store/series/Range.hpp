@@ -32,10 +32,6 @@ namespace series
 			start_value(start_value),
 			reported_size(end_value-start_value)
 		{}
-		Range(const Range<T>& range): 
-			start_value(range.start_value),
-			reported_size(range.reported_size)
-		{}
 
 		constexpr inline bool includes(T i) const { return start_value <= i && i < start_value+reported_size; }
 

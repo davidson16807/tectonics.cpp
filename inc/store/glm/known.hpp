@@ -16,7 +16,6 @@ namespace known
 		using value_type = T;\
 		A a; \
 		constexpr explicit TITLE(const A& a):       a(a) {}\
-		constexpr          TITLE(const TITLE<T,A>& f): a(f.a) {}\
 		constexpr inline auto size() const { return a.size(); }\
 		constexpr inline auto operator()(const size_type i ) const { return glm::LOWER(a[i]); }\
 		constexpr inline auto operator[](const size_type i ) const { return glm::LOWER(a[i]); }\
@@ -34,7 +33,6 @@ namespace known
 		using value_type = typename A::value_type;\
 		A a; \
 		constexpr explicit TITLE(const A& a):       a(a) {}\
-		constexpr          TITLE(const TITLE<A>& f): a(f.a) {}\
 		constexpr inline auto size() const { return a.size(); }\
 		constexpr inline auto operator()(const size_type i ) const { return glm::LOWER(a[i]); }\
 		constexpr inline auto operator[](const size_type i ) const { return glm::LOWER(a[i]); }\
@@ -58,7 +56,6 @@ namespace known
 		using value_type = T;\
 		A a; B b;\
 		constexpr explicit TITLE(const A& a, const B& b): a(a), b(b) {}\
-		constexpr          TITLE(const TITLE<T,A,B>& f):     a(f.a), b(f.b) {}\
 		constexpr inline auto size() const { return std::max(a.size(), b.size()); }\
 		constexpr inline auto operator()(const size_type i ) const { return glm::LOWER(a(i),b(i)); }\
 		constexpr inline auto operator[](const size_type i ) const { return glm::LOWER(a(i),b(i)); }\
@@ -76,7 +73,6 @@ namespace known
 		using value_type = typename A::value_type;\
 		A a; B b;\
 		constexpr explicit TITLE(const A& a, const B& b): a(a), b(b) {}\
-		constexpr          TITLE(const TITLE<A,B>& f):     a(f.a), b(f.b) {}\
 		constexpr inline auto size() const { return std::max(a.size(), b.size()); }\
 		constexpr inline auto operator()(const size_type i ) const { return glm::LOWER(a(i),b(i)); }\
 		constexpr inline auto operator[](const size_type i ) const { return glm::LOWER(a(i),b(i)); }\

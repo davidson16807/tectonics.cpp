@@ -20,11 +20,6 @@ namespace math {
             xoffset(0.0f),
             ymax(0.0f)
         {}
-        constexpr AlgebraicSigmoid(const AlgebraicSigmoid<T>& f):
-            xscale(f.xscale),
-            xoffset(f.xoffset),
-            ymax(f.ymax)
-        {}
         constexpr T operator()(const T x) const
         {
             T u = xscale * x + xoffset;

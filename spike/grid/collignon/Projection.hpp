@@ -40,12 +40,6 @@ namespace collignon
 		}
 
 	public:
-		~Projection()
-		{
-		}
-		constexpr explicit Projection()
-		{
-		}
 
 		/*
 		`collignon` maps a 3d unit vector to an equal area 2d coordinate system for one of two hemispheres. 

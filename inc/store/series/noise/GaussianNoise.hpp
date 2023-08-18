@@ -32,12 +32,6 @@ namespace series
 			epsilon(1e-7)
 		{}
 
-		// copy constructor
-		constexpr inline GaussianNoise(const GaussianNoise& a) :
-			quantile(a.quantile),
-			epsilon(1e-7)
-		{}
-
 		constexpr inline size_type size() const { return 1; }
 
 		constexpr inline T operator()(const size_type memory_id ) const

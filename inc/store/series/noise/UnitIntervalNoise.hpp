@@ -28,12 +28,6 @@ namespace series
 			b(b)
 		{}
 
-		// copy constructor
-		constexpr inline UnitIntervalNoise(const UnitIntervalNoise& a) :
-			a(a.a),
-			b(a.b)
-		{}
-
 		constexpr inline size_type size() const { return 1; }
 
 		constexpr inline T operator()(const size_type memory_id ) const

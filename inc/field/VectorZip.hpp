@@ -28,14 +28,6 @@ namespace field
 			w(w)
 		{}
 
-		// copy constructor
-		constexpr inline Vector4Zip(const Vector4Zip& a):
-			x(a.x),
-			y(a.y),
-			z(a.z),
-			w(a.w)
-		{}
-
 		constexpr inline size_type size() const { return 1; }
 
 		constexpr value_type operator()(const glm::vec<4,R,Q> V ) const
@@ -65,13 +57,6 @@ namespace field
 			z(z)
 		{}
 
-		// copy constructor
-		constexpr inline Vector3Zip(const Vector3Zip& a):
-			x(a.x),
-			y(a.y),
-			z(a.z)
-		{}
-
 		constexpr inline size_type size() const { return 1; }
 
 		constexpr value_type operator()(const glm::vec<3,R,Q> V ) const
@@ -97,12 +82,6 @@ namespace field
 		constexpr inline explicit Vector2Zip(const X& x, const Y& y) : 
 			x(x),
 			y(y)
-		{}
-
-		// copy constructor
-		constexpr inline Vector2Zip(const Vector2Zip& a):
-			x(a.x),
-			y(a.y)
 		{}
 
 		constexpr inline size_type size() const { return 1; }

@@ -1,6 +1,8 @@
 #pragma once
 
 // 3rd party libraries
+#include <glm/vec3.hpp>
+#include <glm/mat3x3.hpp>
 #include <glm/geometric.hpp>
 
 // in-house libraries
@@ -25,25 +27,27 @@ namespace collignon
     that introduces the concepts of vertex neighbors, 
     and therefore the concepts of faces, edges, and arrows.
     */
-    template<typename id, typename scalar>
+    template<typename id, typename scalar, glm::qualifier Q=glm::defaultp>
 	class Grid{
-        using ivec2 = glm::vec<2,id,glm::defaultp>;\
-        using vec2 = glm::vec<2,scalar,glm::defaultp>;\
-        using vec3 = glm::vec<3,scalar,glm::defaultp>;\
+        using ivec2 = glm::vec<2,id,Q>;
+        using vec2 = glm::vec<2,scalar,Q>;
+        using vec3 = glm::vec<3,scalar,Q>;
+        using mat3 = glm::mat<3,3,scalar,Q>;
 
 		static constexpr scalar pi = 3.141592652653589793f;
 
-		const Voronoi<id,scalar> voronoi;
 
 	public:
+		const Voronoi<id,scalar> voronoi;
+
+		using size_type = id;
+		using value_type = scalar;
 
 		static constexpr id arrows_per_vertex = 4;
 
         inline constexpr explicit Grid(const scalar radius, const id vertex_count_per_half_meridian) : 
         	voronoi(radius, vertex_count_per_half_meridian)
     	{}
-
-        inline constexpr Grid(const Grid& grid) : voronoi(grid.voronoi) {} // copy constructor
 
 		constexpr id arrow_offset_memory_id(const ivec2 arrow_offset_grid_position) const
 		{
@@ -75,6 +79,11 @@ namespace collignon
 		inline constexpr scalar total_circumference() const 
 		{
 			return 2.0 * pi * voronoi.radius;
+		}
+
+		inline constexpr id vertex_count_per_half_meridian() const
+		{
+			return voronoi.vertex_count_per_half_meridian;
 		}
 
 		inline constexpr id vertex_count() const 
@@ -132,14 +141,32 @@ namespace collignon
 				);
 		}
 
-		constexpr scalar vertex_normal(const id vertex_id) const 
+		inline constexpr vec3 vertex_position(const id vertex_id) const 
+		{
+			return voronoi.sphere_position(vertex_id);
+		}
+
+		inline constexpr vec3 vertex_normal(const id vertex_id) const 
 		{
 			return voronoi.unit_sphere_position(vertex_id);
 		}
 
-		constexpr vec3 vertex_position(const id vertex_id) const 
+		inline constexpr vec3 vertex_east(const vec3 vertex_normal, const vec3 north_pole) const 
 		{
-			return voronoi.sphere_position(vertex_id);
+			return glm::normalize(glm::cross(vertex_normal, north_pole));
+		}
+
+		inline constexpr vec3 vertex_north(const vec3 vertex_east, const vec3 vertex_normal) const 
+		{
+			return glm::normalize(glm::cross(vertex_east, vertex_normal));
+		}
+
+		inline constexpr mat3 vertex_frame(const id vertex_id, const vec3 north_pole) const 
+		{
+			const vec3 up(vertex_normal(vertex_id));
+			const vec3 east(vertex_east(up, north_pole));
+			const vec3 north(vertex_north(east, up));
+			return glm::transpose(mat3(east, north, up));
 		}
 
 		constexpr scalar vertex_dual_area(const id vertex_id) const 

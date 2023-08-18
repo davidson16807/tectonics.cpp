@@ -31,11 +31,6 @@ namespace math {
         {
         }
 
-        // copy constructor
-        Sum(const Sum<T,F>& sum) : terms(sum.terms) 
-        {
-        }
-
         // cast constructor
         template<typename T2, typename F2>
         explicit Sum(const Sum<T2,F2>& sum) : terms() 

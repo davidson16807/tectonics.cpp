@@ -41,15 +41,6 @@ namespace math {
             // assert(lo <= hi);
         }
 
-        // copy constructor
-        constexpr Railcar<T,F>(const Railcar<T,F>& car):
-            content(car.content),
-            lo(car.lo),
-            hi(car.hi)
-        {
-            // assert(lo <= hi);
-        }
-
         // cast constructor
         template<typename T2, typename F2>
         constexpr explicit Railcar<T,F>(const Railcar<T2,F2>& car):

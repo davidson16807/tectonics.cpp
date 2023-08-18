@@ -18,10 +18,6 @@ namespace math {
             lo(lo),
             hi(hi)
         {}
-        constexpr Boxcar<T>(const Boxcar<T>& piece):
-            lo(piece.lo),
-            hi(piece.hi)
-        {}
         constexpr T operator()(const T x) const
         {
             return T(lo<x && x<=hi);

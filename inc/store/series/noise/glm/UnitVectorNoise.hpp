@@ -34,12 +34,6 @@ namespace series
 			epsilon(1e-7)
 		{}
 
-		// copy constructor
-		constexpr inline UnitVectorNoise(const UnitVectorNoise<L,UnitInterval,Q>& a):
-			quantile(a.quantile),
-			epsilon(1e-7)
-		{}
-
 		constexpr inline size_type size() const { return std::max(size_type(1),quantile.size()/L); }
 
 		constexpr value_type operator[](const size_type memory_id ) const

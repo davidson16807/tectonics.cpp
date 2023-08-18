@@ -13,9 +13,6 @@ namespace collignon
         const Tid elements_per_block;
 
 	public:
-		~Interleaving()
-		{
-		}
 		explicit Interleaving(const Tid elements_per_block):
             elements_per_block(elements_per_block)
         {

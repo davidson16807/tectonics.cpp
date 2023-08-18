@@ -28,14 +28,6 @@ namespace series
 			w(w)
 		{}
 
-		// copy constructor
-		constexpr inline Vector4Zip(const Vector4Zip& a):
-			x(a.x),
-			y(a.y),
-			z(a.z),
-			w(a.w)
-		{}
-
 		constexpr inline size_type size() const { return 1; }
 
 		constexpr value_type operator()(const size_type i ) const

@@ -27,10 +27,6 @@ namespace series
 		T value;
 		size_type reported_size;
 
-		constexpr inline Uniform(const Uniform<T>& uniform): 
-			value(uniform.value),
-			reported_size(uniform.reported_size)
-		{}
 		constexpr inline explicit Uniform(const T value): 
 			value(value),
 			reported_size(1)

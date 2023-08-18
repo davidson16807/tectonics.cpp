@@ -31,12 +31,6 @@ namespace series
 		Series values;
 		std::size_t copies_per_value;
 
-		// copy constructor
-		Interleave(const Interleave<Series>& a)  : 
-			values(a.values),
-			copies_per_value(a.copies_per_value)
-		{}
-
 		explicit Interleave(const Series& series) : 
 			values(series),
 			copies_per_value(1)

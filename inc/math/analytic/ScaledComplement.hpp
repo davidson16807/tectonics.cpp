@@ -16,10 +16,6 @@ namespace math {
             f(f),
             scale(scale)
         {}
-        constexpr ScaledComplement<T,F>(const ScaledComplement<T,F>& fg):
-            f(fg.f),
-            scale(fg.scale)
-        {}
         // zero constructor
         constexpr ScaledComplement<T,F>():
             f(),
