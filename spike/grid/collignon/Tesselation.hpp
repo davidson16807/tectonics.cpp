@@ -67,9 +67,6 @@ namespace collignon
 		
 	public:
 
-		~Tesselation()
-		{
-		}
 		explicit Tesselation(Projection<scalar> projection) : projection(projection)
 		{
 		}

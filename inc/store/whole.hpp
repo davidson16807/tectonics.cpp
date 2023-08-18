@@ -356,67 +356,65 @@ namespace whole
 
 
 
-	namespace 
-	{
-		#if defined(__clang__)
-			const std::vector<const std::string> 
-		#else
-			const std::array<const std::string, 6>
-		#endif
-		shades {" ", "░", "▒", "▓", "█" };
+	#if defined(__clang__)
+		const std::vector<const std::string> 
+	#else
+		const std::array<const std::string, 6>
+	#endif
+	shades {" ", "░", "▒", "▓", "█" };
 
-		inline bool magnitude(const bool a){
-			return a;
-		}
-		inline int magnitude(const int a){
-			return a;
-		}
-		inline float magnitude(const float a){
-			return a;
-		}
-		inline double magnitude(const double a){
-			return a;
-		}
-		template<typename T>
-		inline std::string character(const T a, const T lo, const T hi){
-			if (std::isnan(a))
-			{
-				return "N";
-			}
-			else if (std::isinf(a))
-			{
-				return "∞";
-			}
-			else 
-			{
-				float shade_fraction = each::linearstep(lo, hi, a);
-				int shade_id = int(std::min(float(shades.size()-1), (shades.size() * shade_fraction) ));
-			    return shades[shade_id];
-			}
-		}
-		template<>
-		inline std::string character(const bool a, const bool lo, const bool hi){
-			return a? "T":"F";
-		}
-		template<typename T>
-		inline std::string legend(T sample, const T lo, const T hi){
-			std::string out("");
-			for (unsigned int i = 0; i < shades.size(); ++i)
-			{
-				auto bound = each::mix(float(lo), float(hi), float(i)/float(shades.size()));
-				out += shades[i];
-				out += " ≥ ";
-				out += std::to_string(bound);
-				out += "\n";
-			}
-			return out;
-		}
-		template<>
-		inline std::string legend(bool sample, const bool lo, const bool hi){
-			return std::string("");
-		}
+	inline bool magnitude(const bool a){
+		return a;
+	}
+	inline int magnitude(const int a){
+		return a;
+	}
+	inline float magnitude(const float a){
+		return a;
+	}
+	inline double magnitude(const double a){
+		return a;
+	}
 
-	} 
+	template<typename T>
+	inline std::string character(const T a, const T lo, const T hi){
+		if (std::isnan(a))
+		{
+			return "N";
+		}
+		else if (std::isinf(a))
+		{
+			return "∞";
+		}
+		else 
+		{
+			float shade_fraction = each::linearstep(lo, hi, a);
+			int shade_id = int(std::min(float(shades.size()-1), (shades.size() * shade_fraction) ));
+		    return shades[shade_id];
+		}
+	}
+	template<>
+	inline std::string character(const bool a, const bool lo, const bool hi){
+		return a? "T":"F";
+	}
+
+	template<typename T>
+	inline std::string legend(T sample, const T lo, const T hi){
+		std::string out("");
+		for (unsigned int i = 0; i < shades.size(); ++i)
+		{
+			auto bound = each::mix(float(lo), float(hi), float(i)/float(shades.size()));
+			out += shades[i];
+			out += " ≥ ";
+			out += std::to_string(bound);
+			out += "\n";
+		}
+		return out;
+	}
+	template<>
+	inline std::string legend(bool sample, const bool lo, const bool hi){
+		return std::string("");
+	}
 
 
 	template <typename Series, typename T>

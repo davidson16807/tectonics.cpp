@@ -329,5 +329,18 @@ namespace known
 
 	// SPECIAL FUNCTIONS THAT MUST BE DEFINED WITHOUT MACROS
 
+	/// returns a vector that stores a
+	template <typename A, typename I>
+	auto store(const I size, const A& a)
+	{
+		using T = typename A::value_type;
+		std::vector<T> out(size);
+		for (I i = 0; i < size; ++i)
+		{
+			out[i] = a[i];
+		}
+		return out;
+	}
+
 }
 

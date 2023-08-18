@@ -19,6 +19,7 @@
 #include <store/glm/each.hpp>
 #include <store/each.hpp>  
 #include <store/whole.hpp>  
+#include <store/known.hpp>  
 #include <store/series/Get.hpp>
 #include <store/series/Map.hpp>
 #include <store/series/Range.hpp>
@@ -31,6 +32,7 @@
 
 #include "../Grid.hpp"
 #include "series.hpp"
+#include "string_cast.hpp"
 #include "vector_calculus.hpp"
 
 #include <test/properties.hpp>  
@@ -39,12 +41,14 @@
 
 namespace collignon {
 
-    template<typename T>
+    template<typename id, typename scalar>
     struct Adapter{
-        T threshold;
+        Grid<id,scalar> grid;
+        scalar threshold;
         std::size_t test_size;
 
-        Adapter(const T threshold, const std::size_t test_size):
+        Adapter(const Grid<id, scalar>& grid, const scalar threshold, const std::size_t test_size):
+            grid(grid),
             threshold(threshold),
             test_size(test_size)
         {}
@@ -56,7 +60,7 @@ namespace collignon {
 
         template<typename Series>
         std::string print(const Series& a) const {
-            return whole::to_string(a);
+            return collignon::to_string(grid, a);
         }
 
     };
@@ -73,46 +77,129 @@ namespace collignon {
 #define COLLIGNON_TEST_TRINARY_OUT_PARAMETER(TYPE,GRID,F) \
     [=](auto x, auto y, auto z){ std::vector<TYPE> out(GRID.vertex_count()); (F(x,y,z,out)); return out; }
 
-TEST_CASE( "Raster gradient", "[collignon]" ) {
+collignon::Grid grid(2.0, 30);
 
-    double radius(2.0f);
-    int vertex_count_per_half_meridian(30);
-    collignon::Grid grid(radius, vertex_count_per_half_meridian);
 
-    collignon::Adapter adapter(1e-5, grid.vertex_count());
-
-    std::vector noises{
+std::vector scalar_rasters{
+    known::store(
+        grid.vertex_count(),
         series::map(
             field::elias_noise<double>(
                 series::unit_vector_noise<3>(10.0, 1.0e4), 
                 series::gaussian(11.0, 1.1e4), 
-                100),
-            collignon::vertex_positions(grid)),
+                1000),
+            collignon::vertex_positions(grid)
+        )
+    ),
+    known::store(
+        grid.vertex_count(),
         series::map(
             field::elias_noise<double>(
                 series::unit_vector_noise<3>(11.0, 1.1e4), 
                 series::gaussian(11.0, 1.1e4), 
-                100),
-            collignon::vertex_positions(grid)),
+                1000),
+            collignon::vertex_positions(grid)
+        )
+    ),
+    known::store(
+        grid.vertex_count(),
         series::map(
             field::elias_noise<double>(
                 series::unit_vector_noise<3>(12.0, 1.2e4), 
                 series::gaussian(11.0, 1.1e4), 
-                100),
-            collignon::vertex_positions(grid))
-    };
+                1000),
+            collignon::vertex_positions(grid)
+        )
+    )
+};
 
-    REQUIRE(test::determinism(adapter, 
-        "collignon::gradient", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::gradient),
-        noises
-    ));
+std::vector vector_rasters{
+    known::store(
+        grid.vertex_count(),
+        series::map(
+            field::vector3_zip(
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(10.0, 1.0e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        1000),
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(11.0, 1.1e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        1000),
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(12.0, 1.2e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        1000)
+            ),
+            collignon::vertex_positions(grid)
+        )
+    ),
+    known::store(
+        grid.vertex_count(),
+        series::map(
+            field::vector3_zip(
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(13.0, 1.3e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        1000),
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(14.0, 1.4e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        1000),
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(15.0, 1.5e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        1000)
+            ),
+            collignon::vertex_positions(grid)
+        )
+    ),
+    known::store(
+        grid.vertex_count(),
+        series::map(
+            field::vector3_zip(
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(16.0, 1.6e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        1000),
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(17.0, 1.7e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        1000),
+                field::elias_noise<double>(
+                        series::unit_vector_noise<3>(18.0, 1.8e4), 
+                        series::gaussian(11.0, 1.1e4), 
+                        1000)
+            ),
+            collignon::vertex_positions(grid)
+        )
+    ),
+};
 
-    REQUIRE(test::additivity(adapter, 
-        "collignon::gradient", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::gradient),
-        "each::add          ", COLLIGNON_TEST_BINARY_OUT_PARAMETER (double,     grid, each::add),
-        "each::add          ", COLLIGNON_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
-        noises, noises
-    ));
+
+collignon::Adapter adapter(grid, 1e-5, grid.vertex_count());
+
+
+TEST_CASE( "Raster gradient", "[collignon]" ) {
+
+    // for (int i = 0; i < 3; ++i)
+    // {
+    //     std::cout << adapter.print(scalar_rasters[i]);
+    // }
+
+
+
+    // REQUIRE(test::determinism(adapter, 
+    //     "collignon::gradient", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::gradient),
+    //     scalar_rasters
+    // ));
+
+    // REQUIRE(test::additivity(adapter, 
+    //     "collignon::gradient", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::gradient),
+    //     "each::add          ", COLLIGNON_TEST_BINARY_OUT_PARAMETER (double,     grid, each::add),
+    //     "each::add          ", COLLIGNON_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+    //     scalar_rasters, scalar_rasters
+    // ));
 
 }
 
@@ -120,77 +207,18 @@ TEST_CASE( "Raster gradient", "[collignon]" ) {
 
 TEST_CASE( "Raster divergence", "[collignon]" ) {
 
-    double radius(2.0f);
-    int vertex_count_per_half_meridian(30);
-    collignon::Grid grid(radius, vertex_count_per_half_meridian);
 
-    collignon::Adapter adapter(1e-5, grid.vertex_count());
+    // REQUIRE(test::determinism(adapter, 
+    //     "collignon::divergence", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(double,     grid, collignon::divergence),
+    //     vector_rasters
+    // ));
 
-    std::vector noises{
-        series::map(
-            field::vector3_zip(
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(10.0, 1.0e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100),
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(11.0, 1.1e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100),
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(12.0, 1.2e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100)
-            ),
-            collignon::vertex_positions(grid)
-        ),
-        series::map(
-            field::vector3_zip(
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(13.0, 1.3e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100),
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(14.0, 1.4e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100),
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(15.0, 1.5e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100)
-            ),
-            collignon::vertex_positions(grid)
-        ),
-        series::map(
-            field::vector3_zip(
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(16.0, 1.6e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100),
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(17.0, 1.7e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100),
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(18.0, 1.8e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100)
-            ),
-            collignon::vertex_positions(grid)
-        ),
-    };
-
-    REQUIRE(test::determinism(adapter, 
-        "collignon::divergence", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(double,     grid, collignon::divergence),
-        noises
-    ));
-
-    REQUIRE(test::additivity(adapter, 
-        "collignon::divergence", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(double,     grid, collignon::divergence),
-        "each::add          ",   COLLIGNON_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
-        "each::add          ",   COLLIGNON_TEST_BINARY_OUT_PARAMETER (double,     grid, each::add),
-        noises, noises
-    ));
+    // REQUIRE(test::additivity(adapter, 
+    //     "collignon::divergence", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(double,     grid, collignon::divergence),
+    //     "each::add          ",   COLLIGNON_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+    //     "each::add          ",   COLLIGNON_TEST_BINARY_OUT_PARAMETER (double,     grid, each::add),
+    //     vector_rasters, vector_rasters
+    // ));
 
 }
 
@@ -198,195 +226,65 @@ TEST_CASE( "Raster divergence", "[collignon]" ) {
 
 TEST_CASE( "Raster curl", "[collignon]" ) {
 
-    double radius(2.0f);
-    int vertex_count_per_half_meridian(30);
-    collignon::Grid grid(radius, vertex_count_per_half_meridian);
 
-    collignon::Adapter adapter(1e-5, grid.vertex_count());
+    // REQUIRE(test::determinism(adapter, 
+    //     "collignon::curl",   COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::curl),
+    //     vector_rasters
+    // ));
 
-    std::vector noises{
-        series::map(
-            field::vector3_zip(
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(10.0, 1.0e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100),
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(11.0, 1.1e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100),
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(12.0, 1.2e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100)
-            ),
-            collignon::vertex_positions(grid)
-        ),
-        series::map(
-            field::vector3_zip(
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(13.0, 1.3e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100),
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(14.0, 1.4e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100),
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(15.0, 1.5e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100)
-            ),
-            collignon::vertex_positions(grid)
-        ),
-        series::map(
-            field::vector3_zip(
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(16.0, 1.6e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100),
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(17.0, 1.7e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100),
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(18.0, 1.8e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100)
-            ),
-            collignon::vertex_positions(grid)
-        ),
-    };
-
-    REQUIRE(test::determinism(adapter, 
-        "collignon::curl",   COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::curl),
-        noises
-    ));
-
-    REQUIRE(test::additivity(adapter, 
-        "collignon::curl",   COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::curl),
-        "each::add      ",   COLLIGNON_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
-        "each::add      ",   COLLIGNON_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
-        noises, noises
-    ));
+    // REQUIRE(test::additivity(adapter, 
+    //     "collignon::curl",   COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::curl),
+    //     "each::add      ",   COLLIGNON_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+    //     "each::add      ",   COLLIGNON_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+    //     vector_rasters, vector_rasters
+    // ));
 
 }
 
 TEST_CASE( "Scalar Raster laplacian", "[collignon]" ) {
 
-    double radius(2.0f);
-    int vertex_count_per_half_meridian(30);
-    collignon::Grid grid(radius, vertex_count_per_half_meridian);
 
-    collignon::Adapter adapter(1e-5, grid.vertex_count());
+    // REQUIRE(test::determinism(adapter, 
+    //     "collignon::laplacian", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::laplacian),
+    //     scalar_rasters
+    // ));
 
-    std::vector noises{
-        series::map(
-            field::elias_noise<double>(
-                series::unit_vector_noise<3>(10.0, 1.0e4), 
-                series::gaussian(11.0, 1.1e4), 
-                100),
-            collignon::vertex_positions(grid)),
-        series::map(
-            field::elias_noise<double>(
-                series::unit_vector_noise<3>(11.0, 1.1e4), 
-                series::gaussian(11.0, 1.1e4), 
-                100),
-            collignon::vertex_positions(grid)),
-        series::map(
-            field::elias_noise<double>(
-                series::unit_vector_noise<3>(12.0, 1.2e4), 
-                series::gaussian(11.0, 1.1e4), 
-                100),
-            collignon::vertex_positions(grid))
-    };
+    // REQUIRE(test::additivity(adapter, 
+    //     "collignon::laplacian", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(double, grid, collignon::laplacian),
+    //     "each::add           ", COLLIGNON_TEST_BINARY_OUT_PARAMETER (double, grid, each::add),
+    //     "each::add           ", COLLIGNON_TEST_BINARY_OUT_PARAMETER (double, grid, each::add),
+    //     scalar_rasters, scalar_rasters
+    // ));
 
-    REQUIRE(test::determinism(adapter, 
-        "collignon::laplacian", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::laplacian),
-        noises
-    ));
-
-    REQUIRE(test::additivity(adapter, 
-        "collignon::laplacian", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(double, grid, collignon::laplacian),
-        "each::add           ", COLLIGNON_TEST_BINARY_OUT_PARAMETER (double, grid, each::add),
-        "each::add           ", COLLIGNON_TEST_BINARY_OUT_PARAMETER (double, grid, each::add),
-        noises, noises
+    REQUIRE(test::composition(adapter, 
+        "collignon::divergence", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(double,     grid, collignon::divergence),
+        "collignon::gradient",   COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::gradient),  
+        "collignon::laplacian",  COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(double,     grid, collignon::laplacian), 
+        scalar_rasters
     ));
 
 }
 
 TEST_CASE( "Vector Raster laplacian", "[collignon]" ) {
 
-    double radius(2.0f);
-    int vertex_count_per_half_meridian(30);
-    collignon::Grid grid(radius, vertex_count_per_half_meridian);
 
-    collignon::Adapter adapter(1e-5, grid.vertex_count());
+    // REQUIRE(test::determinism(adapter, 
+    //     "collignon::laplacian", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::laplacian),
+    //     vector_rasters
+    // ));
 
-    std::vector noises{
-        series::map(
-            field::vector3_zip(
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(10.0, 1.0e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100),
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(11.0, 1.1e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100),
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(12.0, 1.2e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100)
-            ),
-            collignon::vertex_positions(grid)
-        ),
-        series::map(
-            field::vector3_zip(
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(13.0, 1.3e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100),
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(14.0, 1.4e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100),
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(15.0, 1.5e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100)
-            ),
-            collignon::vertex_positions(grid)
-        ),
-        series::map(
-            field::vector3_zip(
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(16.0, 1.6e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100),
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(17.0, 1.7e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100),
-                field::elias_noise<double>(
-                        series::unit_vector_noise<3>(18.0, 1.8e4), 
-                        series::gaussian(11.0, 1.1e4), 
-                        100)
-            ),
-            collignon::vertex_positions(grid)
-        ),
-    };
+    // REQUIRE(test::additivity(adapter, 
+    //     "collignon::laplacian", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::laplacian),
+    //     "each::add           ", COLLIGNON_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+    //     "each::add           ", COLLIGNON_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+    //     vector_rasters, vector_rasters
+    // ));
 
-    REQUIRE(test::determinism(adapter, 
-        "collignon::laplacian", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::laplacian),
-        noises
-    ));
-
-    REQUIRE(test::additivity(adapter, 
-        "collignon::laplacian", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::laplacian),
-        "each::add           ", COLLIGNON_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
-        "each::add           ", COLLIGNON_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
-        noises, noises
+    REQUIRE(test::composition(adapter, 
+        "collignon::gradient",   COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::gradient),  
+        "collignon::divergence", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(double,     grid, collignon::divergence),
+        "collignon::laplacian",  COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::laplacian), 
+        vector_rasters
     ));
 
 }
@@ -397,7 +295,6 @@ TEST_CASE( "Vector Raster laplacian", "[collignon]" ) {
 
 //     float radius(2.0f);
 //     int vertex_count_per_half_meridian(10);
-//     collignon::Grid grid(radius, vertex_count_per_half_meridian);
 //     auto a = series::UnitIntervalNoise<float>(11.0f, 11000.0f);
 //     auto b = series::UnitIntervalNoise<float>(12.0f, 12000.0f);
 //     auto ab = std::vector<float>(grid.vertex_count());

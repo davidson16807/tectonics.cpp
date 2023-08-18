@@ -567,6 +567,29 @@ namespace test {
     }
 
 
+    template<typename Adapter, typename F, typename G, typename FG, typename A>
+    bool composition(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const std::string fg_name, const FG& fg, 
+        const A& as
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] after "+g_name+" [denoted \"g\"] must be equivalent to " + fg_name + "[denoted \"fg\"]"
+            "\nsuch that: \n  f(g(a)) = fg(a)\n",
+            [=](auto a){
+                auto ga = g(a);
+                auto f_ga = f(ga);
+                auto fg_a = fg(a);
+                return Results(adapter.equal(f_ga, fg_a),
+                    "f(g(a)) : " + adapter.print(f_ga) + "\n" +
+                    "fg(a) : " + adapter.print(fg_a) + "\n" +
+                    "g(a) : " + adapter.print(ga) + "\n"
+                );
+            }, as);
+    }
+
+
 
     template<typename Adapter, typename F, typename A>
     bool idempotence(const Adapter& adapter, 

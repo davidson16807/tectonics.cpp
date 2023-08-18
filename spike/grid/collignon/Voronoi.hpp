@@ -37,11 +37,6 @@ namespace collignon
         const scalar half_cell = 0.5;
         const scalar radius;
 
-        ~Voronoi()
-        {
-
-        }
-
         constexpr Voronoi(const scalar radius, const id vertex_count_per_half_meridian) : 
             tesselation(Projection<scalar>()),
             interleaving(2*vertex_count_per_half_meridian),
@@ -67,6 +62,10 @@ namespace collignon
                 std::clamp(standard_grid_uid.x, 0, vertex_count_per_meridian-1)
             );
             return memory_id;
+        }
+
+        inline constexpr id memory_id(const vec3 sphere_position) const {
+            return memory_id(grid_position(sphere_position));
         }
 
 
