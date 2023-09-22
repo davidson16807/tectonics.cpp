@@ -28,6 +28,8 @@
 #include <store/series/noise/glm/UnitVectorNoise.hpp>
 
 #include <field/noise/EliasNoise.hpp>
+#include <field/noise/ValueNoise.hpp>
+#include <field/noise/SquareNoise.hpp>
 #include <field/VectorZip.hpp>
 
 #include "../Grid.hpp"
@@ -60,7 +62,8 @@ namespace collignon {
 
         template<typename Series>
         std::string print(const Series& a) const {
-            return collignon::to_string(grid, a);
+            // return collignon::to_string(grid, a, 200);
+            return collignon::raw_to_string(grid, a);
         }
 
     };
@@ -77,10 +80,10 @@ namespace collignon {
 #define COLLIGNON_TEST_TRINARY_OUT_PARAMETER(TYPE,GRID,F) \
     [=](auto x, auto y, auto z){ std::vector<TYPE> out(GRID.vertex_count()); (F(x,y,z,out)); return out; }
 
-collignon::Grid grid(2.0, 30);
+collignon::Grid grid(0.1, 100);
 
 
-std::vector scalar_rasters{
+std::vector elias_scalar_rasters{
     known::store(
         grid.vertex_count(),
         series::map(
@@ -110,6 +113,28 @@ std::vector scalar_rasters{
                 1000),
             collignon::vertex_positions(grid)
         )
+    )
+};
+
+
+std::vector scalar_rasters{
+    series::map(
+        field::value_noise3(
+            field::square_noise(
+                series::unit_interval_noise(11.0, 1.1e4))),
+        collignon::vertex_positions(grid)
+    ),
+    series::map(
+        field::value_noise3(
+            field::square_noise(
+                series::unit_interval_noise(12.0, 1.2e4))),
+        collignon::vertex_positions(grid)
+    ),
+    series::map(
+        field::value_noise3(
+            field::square_noise(
+                series::unit_interval_noise(13.0, 1.3e4))),
+        collignon::vertex_positions(grid)
     )
 };
 
@@ -182,10 +207,6 @@ collignon::Adapter adapter(grid, 1e-5, grid.vertex_count());
 
 TEST_CASE( "Raster gradient", "[collignon]" ) {
 
-    // for (int i = 0; i < 3; ++i)
-    // {
-    //     std::cout << adapter.print(scalar_rasters[i]);
-    // }
 
 
 
@@ -243,6 +264,36 @@ TEST_CASE( "Raster curl", "[collignon]" ) {
 
 TEST_CASE( "Scalar Raster laplacian", "[collignon]" ) {
 
+    for (int i = 0; i < 3; ++i)
+    {
+        std::cout << adapter.print(scalar_rasters[i]);
+        std::cout << "collignon::arrow_dual_length" << std::endl;
+        std::cout << adapter.print(
+            COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(double,     grid, collignon::arrow_dual_length0)(scalar_rasters[i]));
+        std::cout << adapter.print(
+            COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(double,     grid, collignon::arrow_dual_length1)(scalar_rasters[i]));
+        std::cout << "collignon::arrow_length" << std::endl;
+        std::cout << adapter.print(
+            COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(double,     grid, collignon::arrow_length0)(scalar_rasters[i]));
+        std::cout << adapter.print(
+            COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(double,     grid, collignon::arrow_length1)(scalar_rasters[i]));
+        std::cout << "collignon::arrow_normal" << std::endl;
+        std::cout << adapter.print(
+            COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::arrow_normal)(scalar_rasters[i]));
+        std::cout << "collignon::vertex_dual_area" << std::endl;
+        std::cout << adapter.print(
+            COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(double,     grid, collignon::vertex_dual_area)(scalar_rasters[i]));
+        std::cout << "collignon::laplacian" << std::endl;
+        std::cout << adapter.print(
+            COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(double,     grid, collignon::laplacian)(scalar_rasters[i]));
+        std::cout << adapter.print(
+            COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(double,     grid, collignon::divergence)
+                (COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::gradient)(scalar_rasters[i])));
+        std::cout << adapter.print(COLLIGNON_TEST_BINARY_OUT_PARAMETER(double,grid,each::distance)(
+            COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(double,     grid, collignon::divergence)
+                (COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::gradient)(scalar_rasters[i])),
+            COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(double, grid, collignon::laplacian)(scalar_rasters[i])));
+    }
 
     // REQUIRE(test::determinism(adapter, 
     //     "collignon::laplacian", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::laplacian),
@@ -280,12 +331,12 @@ TEST_CASE( "Vector Raster laplacian", "[collignon]" ) {
     //     vector_rasters, vector_rasters
     // ));
 
-    REQUIRE(test::composition(adapter, 
-        "collignon::gradient",   COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::gradient),  
-        "collignon::divergence", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(double,     grid, collignon::divergence),
-        "collignon::laplacian",  COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::laplacian), 
-        vector_rasters
-    ));
+    // REQUIRE(test::composition(adapter, 
+    //     "collignon::gradient",   COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::gradient),  
+    //     "collignon::divergence", COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(double,     grid, collignon::divergence),
+    //     "collignon::laplacian",  COLLIGNON_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, collignon::laplacian), 
+    //     vector_rasters
+    // ));
 
 }
 

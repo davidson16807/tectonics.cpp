@@ -97,11 +97,6 @@ namespace collignon
 			return arrows_per_vertex * voronoi.vertex_count;
 		}
 
-		inline constexpr id arrow_memory_id(const id source_id, const id offset_id) const
-		{
-			return arrows_per_vertex * source_id + offset_id;
-		}
-
 		inline constexpr ivec2 arrow_target_grid_id(const id source_id, const id offset_id) const
 		{
 			return voronoi.grid_id(source_id) + arrow_offset_grid_position(offset_id);
@@ -168,6 +163,17 @@ namespace collignon
 			const vec3 north(vertex_north(east, up));
 			return glm::transpose(mat3(east, north, up));
 		}
+
+		// inline constexpr scalar vertex_dual_area(const id vertex_id) const 
+		// {
+		// 	/*
+		// 	area in the projection is allocated equally to vertices,
+		// 	and the projection preserves area on the sphere,
+		// 	therefore all vertex duals take up the same area on the sphere,
+		// 	and this area is the total area divided by the number of vertices.
+		// 	*/
+		// 	return total_area() / voronoi.vertex_count;
+		// }
 
 		constexpr scalar vertex_dual_area(const id vertex_id) const 
 		{

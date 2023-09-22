@@ -388,9 +388,7 @@ namespace whole
 		}
 		else 
 		{
-			float shade_fraction = each::linearstep(lo, hi, a);
-			int shade_id = int(std::min(float(shades.size()-1), (shades.size() * shade_fraction) ));
-		    return shades[shade_id];
+		    return shades[int((shades.size()-1) * each::linearstep(lo, hi, a))];
 		}
 	}
 	template<>

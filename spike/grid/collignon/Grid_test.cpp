@@ -39,8 +39,6 @@ TEST_CASE( "Grid arrow_target/source_memory/grid_id() purity", "[collignon]" ) {
         collignon::Grid grid(radius, vertex_count_per_half_meridian);
         for(int i = 0; i < grid.vertex_count(); ++i){
         for(int j = 0; j < grid.arrows_per_vertex; ++j){
-            CHECK(grid.arrow_memory_id(i,j) == 
-                  grid.arrow_memory_id(i,j));
             CHECK(grid.arrow_target_grid_id(i,j) == 
                   grid.arrow_target_grid_id(i,j));
             CHECK(grid.arrow_target_memory_id(i,j) == 

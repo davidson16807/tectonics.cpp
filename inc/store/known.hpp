@@ -223,8 +223,8 @@ namespace known
 		A a; B b;\
 		constexpr explicit TITLE(const A& a, const B& b): a(a), b(b) {}\
 		constexpr inline auto size() const { return std::max(a.size(), b.size()); }\
-		constexpr inline auto operator()(const size_type i ) const { return LOWER(a(i),b(i)); }\
-		constexpr inline auto operator[](const size_type i ) const { return LOWER(a(i),b(i)); }\
+		constexpr inline auto operator()(const size_type i ) const { return each::LOWER(a(i),b(i)); }\
+		constexpr inline auto operator[](const size_type i ) const { return each::LOWER(a(i),b(i)); }\
 	};\
 	template<typename A, typename B>\
 	constexpr inline TITLE<A,B> LOWER(const A a, const B b)\
@@ -242,17 +242,17 @@ namespace known
 	// KNOWN_BINARY_FUNCTION(Pow,   pow)  
 	// KNOWN_BINARY_FUNCTION(Atan2, atan2)
 
-	template <typename In1, typename In2> inline auto mod(const In1 a, const In2 b){return a-b*floor(a/b);}
-	template <typename In1, typename In2> inline auto distance(const In1 a, const In2 b){return std::abs(a-b);}
-	template <typename In1, typename In2> inline auto equal(const In1 a, const In2 b){return a == b;}
-	template <typename In1, typename In2> inline auto notEqual(const In1 a, const In2 b){return a != b;}
-	template <typename In1, typename In2> inline auto greaterThan(const In1 a, const In2 b){return a > b;}
-	template <typename In1, typename In2> inline auto lessThan(const In1 a, const In2 b){return a < b;}
-	template <typename In1, typename In2> inline auto greaterThanEqual(const In1 a, const In2 b){return a >= b;}
-	template <typename In1, typename In2> inline auto lessThanEqual(const In1 a, const In2 b){return a <= b;}
-	template <typename In1, typename In2> inline auto unite(const In1 a, const In2 b){return a || b;}
-	template <typename In1, typename In2> inline auto intersect(const In1 a, const In2 b){return a && b;}
-	template <typename In1, typename In2> inline auto differ(const In1 a, const In2 b){return a && !b;}
+	// template <typename In1, typename In2> inline auto mod(const In1 a, const In2 b){return a-b*floor(a/b);}
+	// template <typename In1, typename In2> inline auto distance(const In1 a, const In2 b){return std::abs(a-b);}
+	// template <typename In1, typename In2> inline auto equal(const In1 a, const In2 b){return a == b;}
+	// template <typename In1, typename In2> inline auto notEqual(const In1 a, const In2 b){return a != b;}
+	// template <typename In1, typename In2> inline auto greaterThan(const In1 a, const In2 b){return a > b;}
+	// template <typename In1, typename In2> inline auto lessThan(const In1 a, const In2 b){return a < b;}
+	// template <typename In1, typename In2> inline auto greaterThanEqual(const In1 a, const In2 b){return a >= b;}
+	// template <typename In1, typename In2> inline auto lessThanEqual(const In1 a, const In2 b){return a <= b;}
+	// template <typename In1, typename In2> inline auto unite(const In1 a, const In2 b){return a || b;}
+	// template <typename In1, typename In2> inline auto intersect(const In1 a, const In2 b){return a && b;}
+	// template <typename In1, typename In2> inline auto differ(const In1 a, const In2 b){return a && !b;}
 
 	KNOWN_BINARY_FUNCTION(Mod,              mod)  
 	KNOWN_BINARY_FUNCTION(Distance,         distance)  

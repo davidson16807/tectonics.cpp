@@ -14,7 +14,7 @@ namespace collignon
 	such as those under vector_calculus.hpp or morphology.hpp
 	*/
 
-	#define COLLIGNON_SERIES(TYPE, TITLE, LOWER, SINGULAR) \
+	#define COLLIGNON_SERIES(TYPE, TITLE, LOWER, METHOD) \
 	template<typename id, typename scalar> \
 	struct TITLE \
 	{ \
@@ -26,8 +26,8 @@ namespace collignon
 	    using size_type = std::size_t; \
 		using value_type = TYPE; \
 		constexpr inline size_type size() const { return 1; } \
-		constexpr inline value_type operator()(const size_type memory_id ) const { return grid.SINGULAR(memory_id); } \
-		constexpr inline value_type operator[](const size_type memory_id ) const { return grid.SINGULAR(memory_id); } \
+		constexpr inline value_type operator()(const size_type memory_id ) const { return METHOD(memory_id); } \
+		constexpr inline value_type operator[](const size_type memory_id ) const { return METHOD(memory_id); } \
 	};\
 	template<typename id, typename scalar>\
 	constexpr inline TITLE<id,scalar> LOWER(const Grid<id,scalar> grid)\
@@ -35,14 +35,15 @@ namespace collignon
 		return TITLE<id,scalar>(grid);\
 	}
 
-	COLLIGNON_SERIES(vec3,   VertexPositions, vertex_positions,  vertex_position)
-	COLLIGNON_SERIES(vec3,   VertexNormals,   vertex_normals,    vertex_normal)
-	COLLIGNON_SERIES(vec3,   VertexEast,      vertex_east,       vertex_east)
-	COLLIGNON_SERIES(vec3,   VertexNorth,     vertex_north,      vertex_north)
-	COLLIGNON_SERIES(mat3,   VertexFrame,     vertex_frame,      vertex_frame)
-	COLLIGNON_SERIES(scalar, VertexDualAreas, vertex_dual_areas, vertex_dual_area)
+	COLLIGNON_SERIES(vec3,   VertexPositions, vertex_positions,  grid.vertex_position)
+	COLLIGNON_SERIES(vec3,   VertexNormals,   vertex_normals,    grid.vertex_normal)
+	COLLIGNON_SERIES(vec3,   VertexEast,      vertex_east,       grid.vertex_east)
+	COLLIGNON_SERIES(vec3,   VertexNorth,     vertex_north,      grid.vertex_north)
+	COLLIGNON_SERIES(mat3,   VertexFrame,     vertex_frame,      grid.vertex_frame)
+	COLLIGNON_SERIES(scalar, VertexDualAreas, vertex_dual_areas, grid.vertex_dual_area)
 
 	#undef COLLIGNON_SERIES
+
 
 }
 
