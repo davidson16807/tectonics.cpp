@@ -4,8 +4,6 @@
 #include <catch/catch.hpp>
 
 // in-house libraries
-#include <models/strata/StrataValues_test_utils.cpp>
-
 #include "CrustValues.hpp"
 
 namespace crust
@@ -20,18 +18,23 @@ namespace crust
     Our chief concern here is to simplify writing unit tests and interpreting their output.
     */
     
-    #define CRUST_VALUES_EQUAL(crust1, crust2)                \
-        CHECK(crust1.size() == crust2.size());                                    \
-        for (std::size_t strata_i = 0; strata_i < crust1.size(); ++strata_i)      \
-        {                                                                         \
-            STRATA_VALUES_EQUAL(crust1[strata_i], crust2[strata_i]) \
-        }
-
     #define CRUST_VALUES_LAYER_INTERPOLATION_EQUAL(crust1, crust2)                \
         CHECK(crust1.size() == crust2.size());                                    \
         for (std::size_t strata_i = 0; strata_i < crust1.size(); ++strata_i)      \
         {                                                                         \
-            STRATA_VALUES_LAYER_INTERPOLATION_EQUAL(crust1[strata_i], crust2[strata_i]) \
+            CHECK(crust1[strata_i].count == crust2[strata_i].count);                                    \
+            for (std::size_t stratum_i = 0; stratum_i < crust1[strata_i].count && stratum_i < crust2[strata_i].count; ++stratum_i)  \
+            {                                                                     \
+                bool is_equal = (crust1[strata_i].values[stratum_i] - crust2[strata_i].values[stratum_i] < 0.1) || \
+                                (stratum_i > 0                      && crust1[strata_i].values[stratum_i-1] - crust2[strata_i].values[stratum_i]) < 0.1 || \
+                                (stratum_i < crust1[strata_i].count && crust1[strata_i].values[stratum_i+1] - crust2[strata_i].values[stratum_i]) < 0.1; \
+                if (is_equal) \
+                {\
+                    CHECK( crust1[strata_i].values[stratum_i] == Approx(crust2[strata_i].values[stratum_i]).margin(0.001) );    \
+                    if(strata_i > 0){CHECK( crust1[strata_i-1].values[stratum_i] == Approx(crust2[strata_i].values[stratum_i]).margin(0.001) );}    \
+                    if(strata_i > crust1[strata_i].count){CHECK( crust1[strata_i+1].values[stratum_i] == Approx(crust2[strata_i].values[stratum_i]).margin(0.001) );}    \
+                } \
+            } \
         }
     
     #define CRUST_VALUES_VALID(crust1)                                       \
