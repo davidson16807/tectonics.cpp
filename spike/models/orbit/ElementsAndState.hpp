@@ -6,8 +6,6 @@
 #include <glm/mat3x3.hpp>     // *mat3
 
 // in-house libraries
-#include <math/lerp.hpp>
-
 #include "property/Properties.hpp"
 
 #include "Elements.hpp"
