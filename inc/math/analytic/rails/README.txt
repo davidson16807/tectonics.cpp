@@ -24,7 +24,7 @@ By this definition, a boxcar is a railcar of the identity function.
 The intent in introducing the concept of a "railcar" is to represent piecewise functions as sums of railcars,
 thereby providing an easy way to close sums under common operations for some kinds of underlying functions.
 The name "railcar" is chosen partly because it leverages the existing concept of a "boxcar" function,
-but also because it provide a rich and intuitive metaphor that resolves ambiguities regarding implementation in software, see below.
+but also because it provides a rich and intuitive metaphor that resolves ambiguities regarding implementation in software, see below.
 
 Two railcars, A and B, are said to "overlap" if max(A.lo,B.lo) < min(A.hi,B.hi).
 In contrast, A and B are said to have a "gap" if max(A.lo,B.lo) > min(A.hi,B.hi),

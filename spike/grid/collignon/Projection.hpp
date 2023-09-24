@@ -17,7 +17,7 @@
 namespace collignon
 {
 	/*
-	An `Projection` is a representation of the classic "" projection for a unit sphere.
+	A `collignon::Projection` is a representation of the classic "collignon" projection for a unit sphere.
 
 	`Projection` exclusively represents data structures and functions that define an isomorphism between points on a hemisphere and a collignon projection.
 	*/
