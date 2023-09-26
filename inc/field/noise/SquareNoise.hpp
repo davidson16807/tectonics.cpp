@@ -45,7 +45,9 @@ namespace field
 	}
 
 	/*
-	Given a `Noise` instance: ℕ→ℝ, `SquareNoise` maps ℝᴺ→ℤᴺ→ℕ→ℝ. 
+	Given a `Noise` instance: ℕ→ℝ, `SquareNoise` maps ℝᴺ→ℤᴺ→ℕ→ℝ,
+	`SquareNoise` represents what is known as "square noise" or "mosaic noise"
+	where a space is broken down into cells, and all points within a cell assume a unique random value.
 	*/
 	template<typename Noise>
 	class SquareNoise

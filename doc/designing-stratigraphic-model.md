@@ -12,7 +12,7 @@ The highest precision solution per layer is to store each mass pool as floats. W
 * plagioclase
 * pyroxene
 * olivine
-* ice
+* water ice
 * co2 ice
 * oxygen ice
 * nitrogen ice
