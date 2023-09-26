@@ -56,13 +56,13 @@ class Subgrid:
 		polyhedron_projection = sphere_position * side_distance
 		basis = glm.mat3(E-O,W-O,O) if is_inverted else glm.mat3(W-O,E-O,O)
 		triangle_position = glm.inverse(basis) * polyhedron_projection
-		return 1-triangle_position if is_inverted else triangle_position
+		return triangle_position.xy if is_inverted else 1-triangle_position.xy
 
 	def unit_sphere_position(self, subgrid_id, subgrid_position):
 		i = subgrid_id
-		is_inverted = subgrid_position.x+subgrid_position.y > 1
+		is_inverted = subgrid_position.x+subgrid_position.y < 1
 		is_polar = is_inverted == i%2
-		triangle_position = 1-subgrid_position if is_inverted else subgrid_position
+		triangle_position = subgrid_position if is_inverted else 1-subgrid_position
 		subgrid_polarity = (-1)**i
 		V2 = triangle_position
 		Wid = i     # west   longitude id
@@ -75,7 +75,26 @@ class Subgrid:
 		return glm.normalize(basis * glm.vec3(V2.x,V2.y,1))
 
 	def standardize(self, subgrid_id, subgrid_position):
-		pass
+		i = subgrid_id
+		subgrid_polarity = (-1)**i
+		is_inverted = subgrid_position.x+subgrid_position.y < 1
+		is_polar = is_inverted == i%2
+		V2 = subgrid_position
+		clampedV2 = glm.clamp(V2, 0, 1)
+		are_local = glm.equal(V2, clampedV2)
+		are_nonlocal = glm.notEqual(V2, clampedV2)
+		deviation = V2 - clampedV2
+		are_flipped = glm.equal(glm.sign(deviation), glm.vec2(subgrid_polarity))
+		is_nonlocal = are_nonlocal.x or are_nonlocal.y
+		is_flipped = are_flipped.x or are_flipped.y
+		inverted_nonlocal = (
+			glm.vec2(are_local)*V2 + glm.vec2(are_nonlocal)*(1-V2) 
+			if is_flipped else V2)
+		modded = inverted_nonlocal%1
+		flipped = modded.yx if is_flipped else modded.xy
+		deviation_sign = glm.dot(glm.vec2(1,-1), glm.sign(deviation))
+		subgrid_id_offset = 2 * deviation_sign * is_flipped + deviation_sign * (is_nonlocal and not is_flipped)
+		return ((subgrid_id+subgrid_id_offset)%subgrid_count, flipped)
 
 
 subgrid = Subgrid()
@@ -102,6 +121,22 @@ reconstructed = [
 	subgrid.unit_sphere_position(i, V2)
 	for V2,i in zip(subgrid_position,subgrid_id)]
 
+standardize = [
+	subgrid.standardize(i, V2 + glm.vec2(0.1,0))
+	for i,V2 in zip(subgrid_id, subgrid_position)]
+
+# debug_scalar = [
+# 	subgrid.debug_scalar(i, V2 + glm.vec2(0.1,0))
+# 	for i,V2 in zip(subgrid_id, subgrid_position)]
+
+# debug_vector = [
+# 	subgrid.debug_vector(i, V2 + glm.vec2(0.1,0))
+# 	for i,V2 in zip(subgrid_id, subgrid_position)]
+
+standardize_sphere_position = [
+	subgrid.unit_sphere_position(*iV2)
+	for iV2 in standardize]
+
 def vector_aoa(vector_aos):
 	return [
 		[V.x for V in vector_aos],
@@ -112,18 +147,22 @@ def vector_aoa(vector_aos):
 subgrid_x = [V2.x for V2 in subgrid_position]
 subgrid_y = [V2.y for V2 in subgrid_position]
 
+standardize_i = [i    for i,V2 in standardize]
+standardize_x = [V2.x for i,V2 in standardize]
+standardize_y = [V2.y for i,V2 in standardize]
+
 offset     = [V-N for V,N in zip(reconstructed, unit_sphere_position)]
 distance   = [glm.length(o) for o in offset]
 similarity = [glm.dot(V,N)/(glm.length(V)*glm.length(N)) 
 	for V,N in zip(reconstructed, unit_sphere_position)]
-offset_normal = [glm.dot(O, N)
-	for O,N in zip(offset, unit_sphere_position)]
+
+standardize_offset = [V-N for V,N in zip(standardize_sphere_position, unit_sphere_position)]
 
 domain = dict(zip('xyz', vector_aoa(unit_sphere_position)))
 
-px.scatter_3d(**domain,color=subgrid_id).show()
-px.scatter_3d(**domain,color=subgrid_x).show()
-px.scatter_3d(**domain,color=subgrid_y).show()
+# px.scatter_3d(**domain,color=subgrid_id).show()
+# px.scatter_3d(**domain,color=subgrid_x).show()
+# px.scatter_3d(**domain,color=subgrid_y).show()
 
 # px.scatter_3d(**domain,color=Nx).show()
 # px.scatter_3d(**domain,color=roundtrip_x).show()
@@ -135,5 +174,15 @@ px.scatter_3d(**domain,color=subgrid_y).show()
 # go.Figure(data=go.Cone(**domain, **dict(zip('uvw', vector_aoa(reconstructed))))).show()
 # go.Figure(data=go.Cone(**domain, **dict(zip('uvw', vector_aoa(offset))), sizeref=0.03)).show()
 # px.scatter_3d(**domain,color=distance).show()
-# px.scatter_3d(**domain,color=offset_normal).show()
 # px.scatter_3d(**domain,color=similarity).show()
+go.Figure(data=go.Cone(**domain, **dict(zip('uvw', vector_aoa(standardize_offset))), sizeref=2)).show()
+px.scatter_3d(**domain,color=standardize_i).show()
+px.scatter_3d(**domain,color=standardize_x).show()
+px.scatter_3d(**domain,color=standardize_y).show()
+
+# debug_vector_x = [V2.x for V2 in debug_vector]
+# debug_vector_y = [V2.y for V2 in debug_vector]
+# px.scatter_3d(**domain,color=debug_vector_x).show()
+# px.scatter_3d(**domain,color=debug_vector_y).show()
+
+# px.scatter_3d(**domain,color=debug_scalar).show()
