@@ -19,7 +19,7 @@ namespace field
     The algorithm was originally designed for terrain generation on a sphere,
      but it works for any scalar field on the surface of a spheroid. 
     It does this by iteratively incrementing values on grid cells that fall within a random region on a unit sphere.
-    Regions are defined by whether consine similarity to a random point on a unit sphere falls within a random threshold.
+    Regions are defined by whether cosine similarity to a random point on a unit sphere falls within a random threshold.
     Regions may have smooth boundaries, depending on a "region_transition_width" parameter that defines
      the width of a region's transition zone. 
     `RegionThreshold` and `RegionCenters` may be any container that contains scalars and vectors (respectively),

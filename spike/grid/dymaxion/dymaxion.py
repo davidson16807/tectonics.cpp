@@ -29,7 +29,7 @@ GUIDE TO VARIABLE NAMES:
 * `i`: subgrid id
 '''
 
-class Subprojection:
+class Square:
 	def __init__(self):
 		pass
 
@@ -73,8 +73,8 @@ class Subprojection:
 		return V3 * glm.dot(N, origin) / glm.dot(N, V3)
 
 class Projection:
-	def __init__(self, sugbrids):
-		self.sugbrids = sugbrids
+	def __init__(self, square):
+		self.square = square
 
 	def subgrid_position(self, sphere_position):
 		V3 = sphere_position
@@ -83,48 +83,48 @@ class Projection:
 		Nid = 2*round(EWid/2)       # Nid: northernmost edge vertex id
 		Sid = 2*round((EWid-1)/2)+1 # Sid: southernmost edge vertex id
 		Wid = min(Nid,Sid)          # Wid: westernmost  edge vertex id
-		N = self.sugbrids.corner(Nid,  0.5)
-		S = self.sugbrids.corner(Sid, -0.5)
-		i = (Wid-1 + self.sugbrids.is_eastern_sphere_position(V3,N,S)) % subgrid_count
-		subgrid_polarity = self.sugbrids.subgrid_polarity(i)
+		N = self.square.corner(Nid,  0.5)
+		S = self.square.corner(Sid, -0.5)
+		i = (Wid-1 + self.square.is_eastern_sphere_position(V3,N,S)) % subgrid_count
+		subgrid_polarity = self.square.subgrid_polarity(i)
 		Wid = i     # west   longitude id
 		Oid = i + 1 # origin longitude id
 		Eid = i + 2 # east   longitude id
-		W = self.sugbrids.corner(Wid, self.sugbrids.z(Wid)) # W: westernmost triangle vertex
-		E = self.sugbrids.corner(Eid, self.sugbrids.z(Eid)) # E: easternmost triangle vertex
-		is_polar = self.sugbrids.is_polar_sphere_position(V3, subgrid_polarity, W,E)
-		is_inverted = self.sugbrids.is_inverted_subgrid_id(i, is_polar)
-		O = self.sugbrids.corner(Oid, self.sugbrids.origin_z(subgrid_polarity, is_polar))
-		basis = self.sugbrids.basis(W,E,O, is_inverted)
+		W = self.square.corner(Wid, self.square.z(Wid)) # W: westernmost triangle vertex
+		E = self.square.corner(Eid, self.square.z(Eid)) # E: easternmost triangle vertex
+		is_polar = self.square.is_polar_sphere_position(V3, subgrid_polarity, W,E)
+		is_inverted = self.square.is_inverted_subgrid_id(i, is_polar)
+		O = self.square.corner(Oid, self.square.origin_z(subgrid_polarity, is_polar))
+		basis = self.square.basis(W,E,O, is_inverted)
 		N = glm.cross(basis[0], basis[1])
-		triangle_position = glm.inverse(basis) * self.sugbrids.plane_project(V3,N,O)
+		triangle_position = glm.inverse(basis) * self.square.plane_project(V3,N,O)
 		V2 = triangle_position.xy if is_inverted else 1-triangle_position.xy
 		return i, V2
 
 	def unit_sphere_position(self, subgrid_position):
 		i,V2 = subgrid_position
-		is_inverted = self.sugbrids.is_inverted_subgrid_position(V2)
-		is_polar = self.sugbrids.is_polar_subgrid_id(i, is_inverted)
+		is_inverted = self.square.is_inverted_subgrid_position(V2)
+		is_polar = self.square.is_polar_subgrid_id(i, is_inverted)
 		triangle_position = V2 if is_inverted else 1-V2
 		U2 = triangle_position
 		Wid = i     # west   longitude id
 		Oid = i + 1 # origin longitude id
 		Eid = i + 2 # east   longitude id
-		W = self.sugbrids.corner(Wid, self.sugbrids.z(Wid)) # W: westernmost triangle vertex
-		E = self.sugbrids.corner(Eid, self.sugbrids.z(Eid)) # E: easternmost triangle vertex
-		O = self.sugbrids.corner(Oid, self.sugbrids.origin_z(self.sugbrids.subgrid_polarity(i), is_polar))
-		basis = self.sugbrids.basis(W,E,O, is_inverted)
-		return self.sugbrids.sphere_project(basis * glm.vec3(U2.x,U2.y,1))
+		W = self.square.corner(Wid, self.square.z(Wid)) # W: westernmost triangle vertex
+		E = self.square.corner(Eid, self.square.z(Eid)) # E: easternmost triangle vertex
+		O = self.square.corner(Oid, self.square.origin_z(self.square.subgrid_polarity(i), is_polar))
+		basis = self.square.basis(W,E,O, is_inverted)
+		return self.square.sphere_project(basis * glm.vec3(U2.x,U2.y,1))
 
 	def standardize(self, subgrid_position):
 		i,V2 = subgrid_position
-		is_inverted = self.sugbrids.is_inverted_subgrid_position(V2)
-		is_polar = self.sugbrids.is_polar_subgrid_id(i, is_inverted)
+		is_inverted = self.square.is_inverted_subgrid_position(V2)
+		is_polar = self.square.is_polar_subgrid_id(i, is_inverted)
 		clampedV2 = glm.clamp(V2, 0, 1)
 		are_local = glm.equal(V2, clampedV2)
 		are_nonlocal = glm.notEqual(V2, clampedV2)
 		deviation = V2 - clampedV2
-		are_flipped = glm.equal(glm.sign(deviation), glm.vec2(self.sugbrids.subgrid_polarity(i)))
+		are_flipped = glm.equal(glm.sign(deviation), glm.vec2(self.square.subgrid_polarity(i)))
 		is_nonlocal = are_nonlocal.x or are_nonlocal.y
 		is_flipped = are_flipped.x or are_flipped.y
 		inverted_nonlocal = (
@@ -137,7 +137,7 @@ class Projection:
 		return ((i+di)%subgrid_count, flipped)
 
 
-grids = Projection(Subprojection())
+grids = Projection(Square())
 samplecount = 10000
 golden_ratio = 1.618033
 golden_angle = turn/golden_ratio
