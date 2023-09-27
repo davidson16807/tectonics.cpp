@@ -21,7 +21,7 @@ namespace collignon
 {
 
 	/*
-	An `Tesselation` is a tesselation of tiles based around the "" projection of a unit sphere.
+	A `Tesselation` is a tesselation of tiles based around the "" projection of a unit sphere.
 	This tesselation has the interesting property that it preserves the topological concept of "closeness":
 	points that are close together on the tesselation correspond to points that are also close together on a sphere.
 	This property, coupled with the equal area and isolatitude properties of of the collignon projection, 

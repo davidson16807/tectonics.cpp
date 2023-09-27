@@ -1,11 +1,16 @@
-	many
+	store
 x		reference output functions
 x		return output functions
 x		operators
 x		to_string
-x		angular noise
-x		perlin noise
-x		worley noise
+	field
+		noise
+x			angular/elias noise
+x			value noise
+x			perlin noise
+x			simplex noise
+x			worley noise
+x			curl noise
 		scalar transport
 			is nonnegative quantity
 			is conserved quantity delta
@@ -15,42 +20,46 @@ x		worley noise
 			fix nonnegative quantity delta
 			fix nonnegative conserved quantity delta
 			advection
-x	SpheroidVoronoi
-x	Grid rasters
-x		to_string
-		vector calculus
-x			gradient
-x			divergence
-x			laplacian
-x			curl
-		morphology
-x			dilate
-x			erode
-x			opening
-x			closing
-x			black_hat
-x			white_hat
-x			padding
-x			margin
-		image segmentation
-	LayeredSpheroidVoronoi
-	LayeredSpheroidGrid
-x		to_string
-		vector calculus
-x			gradient
-x			divergence
-x			laplacian
-x			curl
-		morphology
-			dilate
-			erode
-			opening
-			closing
-			black_hat
-			white_hat
-			padding
-			margin
-		image segmentation
+	grid
+x		mesh
+			to_string
+			morphology
+				dilate
+				erode
+				opening
+				closing
+				black_hat
+				white_hat
+				padding
+				margin
+x		collignon
+x			to_string
+			morphology
+				dilate
+				erode
+				opening
+				closing
+				black_hat
+				white_hat
+				padding
+				margin
+		dymaxion
+			to_string
+			vector calculus
+				gradient
+				divergence
+				laplacian
+				curl
+			morphology
+				dilate
+				erode
+				opening
+				closing
+				black_hat
+				white_hat
+				padding
+				margin
+			image segmentation
 	academics
 x		constants
 x		units
@@ -70,8 +79,8 @@ x			plane, constant density
 			plane, exponential dropoff
 			sphere, constant density
 x			sphere, exponential dropoff
-			ring, gaussian dropoff
-			centrifuge, exponential dropoff
+x			ring, gaussian dropoff
+x			centrifuge, exponential dropoff
 		orbital mechanics
 
 	mass pool models
@@ -88,10 +97,8 @@ x			sphere, exponential dropoff
 		spectrum
 	phase diagrams
 
-
 	orrery
 		CelestialSystem
-
 
 shader programs
 	star fields
