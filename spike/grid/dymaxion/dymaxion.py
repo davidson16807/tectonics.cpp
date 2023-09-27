@@ -16,50 +16,63 @@ def cartesian_from_zlon(z,lon):
 		r*math.sin(lon),
 		z)
 
-class Subgrids:
+'''
+GUIDE TO VARIABLE NAMES:
+* `is_*` prefix: booleans
+* lowercase: scalars
+* UPPERCASE: vectors
+* `N/S/E/W`: cardinal direction
+* `V3`: 3d position
+* `V2`: 2d position
+* `N`: normal
+* `O`: origin
+* `i`: subgrid id
+'''
+
+class Subprojection:
 	def __init__(self):
 		pass
 
-	def z(self, longitude_id):
-		return 0.5-longitude_id%2
+	def z(self, i):
+		return 0.5-i%2
 
 	def origin_z(self, subgrid_polarity, is_polar):
 		return subgrid_polarity*[-0.5,1][is_polar]
 
-	def corner(self, longitude_id, z):
-		longitude = longitude_id*half_subgrid_longitude_arc_length
+	def corner(self, i, z):
+		longitude = i*half_subgrid_longitude_arc_length
 		return cartesian_from_zlon(z,longitude)
 
-	def is_inverted_subgrid_id(self, subgrid_id, is_polar):
-		return is_polar == subgrid_id%2
+	def is_inverted_subgrid_id(self, i, is_polar):
+		return is_polar == i%2
 
-	def is_polar_subgrid_id(self, subgrid_id, is_inverted):
-		return is_inverted == subgrid_id%2
+	def is_polar_subgrid_id(self, i, is_inverted):
+		return is_inverted == i%2
 
-	def is_inverted_subgrid_position(self, subgrid_position):
-		return subgrid_position.x+subgrid_position.y < 1
+	def is_inverted_subgrid_position(self, V2):
+		return V2.x+V2.y < 1
 
-	def is_polar_sphere_position(self, sphere_position, subgrid_polarity, west, east):
+	def is_polar_sphere_position(self, V3, subgrid_polarity, W, E):
 		# V3⋅(W×E)>0 indicates whether V3 occupies a polar triangle
-		return glm.dot(sphere_position, subgrid_polarity * glm.cross(west, east)) > 0
+		return glm.dot(V3, subgrid_polarity * glm.cross(W, E)) > 0
 
-	def is_eastern_sphere_position(self, sphere_position, north, south):
+	def is_eastern_sphere_position(self, V3, N, S):
 		# V3⋅(N×S)>0 indicates that V3 occupies the grid indicated by Eid
-		return glm.dot(sphere_position, glm.cross(north,south)) > 0
+		return glm.dot(V3, glm.cross(N,S)) > 0
 
-	def subgrid_polarity(self, subgrid_id):
-		return (-1)**subgrid_id
+	def subgrid_polarity(self, i):
+		return (-1)**i
 
 	def basis(self, W,E,O, is_inverted):
 		return glm.mat3(E-O,W-O,O) if is_inverted else glm.mat3(W-O,E-O,O)
 
-	def sphere_project(self, position):
-		return glm.normalize(position)
+	def sphere_project(self, V3):
+		return glm.normalize(V3)
 
-	def plane_project(self, position, normal, origin):
-		return position * glm.dot(normal, origin) / glm.dot(normal, position)
+	def plane_project(self, V3, N, origin):
+		return V3 * glm.dot(N, origin) / glm.dot(N, V3)
 
-class Grids:
+class Projection:
 	def __init__(self, sugbrids):
 		self.sugbrids = sugbrids
 
@@ -69,10 +82,9 @@ class Grids:
 		EWid = longitude/half_subgrid_longitude_arc_length
 		Nid = 2*round(EWid/2)       # Nid: northernmost edge vertex id
 		Sid = 2*round((EWid-1)/2)+1 # Sid: southernmost edge vertex id
-		Wid = min(Nid,Sid)                  # Wid: westernmost  edge vertex id
+		Wid = min(Nid,Sid)          # Wid: westernmost  edge vertex id
 		N = self.sugbrids.corner(Nid,  0.5)
 		S = self.sugbrids.corner(Sid, -0.5)
-		# "i": subgrid id
 		i = (Wid-1 + self.sugbrids.is_eastern_sphere_position(V3,N,S)) % subgrid_count
 		subgrid_polarity = self.sugbrids.subgrid_polarity(i)
 		Wid = i     # west   longitude id
@@ -125,7 +137,7 @@ class Grids:
 		return ((i+di)%subgrid_count, flipped)
 
 
-grids = Grids(Subgrids())
+grids = Projection(Subprojection())
 samplecount = 10000
 golden_ratio = 1.618033
 golden_angle = turn/golden_ratio
