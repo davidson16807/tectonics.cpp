@@ -89,12 +89,12 @@ class Grids:
 		V2 = triangle_position.xy if is_inverted else 1-triangle_position.xy
 		return i, V2
 
-	def unit_sphere_position(self, subgrid_id, subgrid_position):
-		i = subgrid_id
-		is_inverted = self.sugbrids.is_inverted_subgrid_position(subgrid_position)
+	def unit_sphere_position(self, subgrid_position):
+		i,V2 = subgrid_position
+		is_inverted = self.sugbrids.is_inverted_subgrid_position(V2)
 		is_polar = self.sugbrids.is_polar_subgrid_id(i, is_inverted)
-		triangle_position = subgrid_position if is_inverted else 1-subgrid_position
-		V2 = triangle_position
+		triangle_position = V2 if is_inverted else 1-V2
+		U2 = triangle_position
 		Wid = i     # west   longitude id
 		Oid = i + 1 # origin longitude id
 		Eid = i + 2 # east   longitude id
@@ -102,12 +102,11 @@ class Grids:
 		E = self.sugbrids.corner(Eid, self.sugbrids.z(Eid)) # E: easternmost triangle vertex
 		O = self.sugbrids.corner(Oid, self.sugbrids.origin_z(self.sugbrids.subgrid_polarity(i), is_polar))
 		basis = self.sugbrids.basis(W,E,O, is_inverted)
-		return self.sugbrids.sphere_project(basis * glm.vec3(V2.x,V2.y,1))
+		return self.sugbrids.sphere_project(basis * glm.vec3(U2.x,U2.y,1))
 
-	def standardize(self, subgrid_id, subgrid_position):
-		i = subgrid_id
-		V2 = subgrid_position
-		is_inverted = self.sugbrids.is_inverted_subgrid_position(subgrid_position)
+	def standardize(self, subgrid_position):
+		i,V2 = subgrid_position
+		is_inverted = self.sugbrids.is_inverted_subgrid_position(V2)
 		is_polar = self.sugbrids.is_polar_subgrid_id(i, is_inverted)
 		clampedV2 = glm.clamp(V2, 0, 1)
 		are_local = glm.equal(V2, clampedV2)
@@ -122,11 +121,11 @@ class Grids:
 		modded = inverted_nonlocal%1
 		flipped = modded.yx if is_flipped else modded.xy
 		deviation_sign = glm.dot(glm.vec2(1,-1), glm.sign(deviation))
-		subgrid_id_offset = 2 * deviation_sign * is_flipped + deviation_sign * (is_nonlocal and not is_flipped)
-		return ((subgrid_id+subgrid_id_offset)%subgrid_count, flipped)
+		di = 2 * deviation_sign * is_flipped + deviation_sign * (is_nonlocal and not is_flipped)
+		return ((i+di)%subgrid_count, flipped)
 
 
-subgrids = Grids(Subgrids())
+grids = Grids(Subgrids())
 samplecount = 10000
 golden_ratio = 1.618033
 golden_angle = turn/golden_ratio
@@ -139,20 +138,20 @@ unit_sphere_position = [
 	for z,lon in zip(z,lon)]
 
 subgrid_position = [
-	subgrids.subgrid_position(V3)
+	grids.subgrid_position(V3)
 	for V3 in unit_sphere_position]
 
 reconstructed = [
-	subgrids.unit_sphere_position(i, V2)
-	for i,V2 in subgrid_position]
+	grids.unit_sphere_position(iV2)
+	for iV2 in subgrid_position]
 
 standardize = [
-	# subgrids.standardize(i, V2 + glm.vec2(-0.1,0))
-	subgrids.standardize(i, V2 + glm.vec2(0,-0.1))
+	# grids.standardize(i, V2 + glm.vec2(-0.1,0))
+	grids.standardize((i, V2 + glm.vec2(0,-0.1)))
 	for i,V2 in subgrid_position]
 
 standardize_sphere_position = [
-	subgrids.unit_sphere_position(*iV2)
+	grids.unit_sphere_position(iV2)
 	for iV2 in standardize]
 
 def vector_aoa(vector_aos):
