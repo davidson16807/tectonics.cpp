@@ -84,19 +84,22 @@ class Projection:
 	def standardize(self, grid_id):
 		i,V2 = grid_id
 		modded = V2%1
-		square_polarity = self.squares.polarity(i)
-		are_local     = glm.equal(V2, modded)
+		square_polarity = glm.vec2(self.squares.polarity(i))
 		are_nonlocal  = glm.notEqual(V2, modded)
 		nonlocal_sign = glm.sign(V2 - 0.5) * glm.vec2(are_nonlocal)
-		are_polar     = glm.equal(nonlocal_sign, glm.vec2(square_polarity))
-		are_nonpolar  = glm.notEqual(nonlocal_sign, glm.vec2(square_polarity))
-		is_nonlocal   = are_nonlocal.x or are_nonlocal.y
-		is_corner     = are_nonlocal.x and are_nonlocal.y
-		is_polar      = are_polar.x or are_polar.y
+		are_polar     = glm.equal(nonlocal_sign, square_polarity)
+		are_nonpolar  = glm.notEqual(nonlocal_sign, square_polarity)
+		is_nonlocal   = glm.any(are_nonlocal)
+		is_corner     = glm.all(are_nonlocal)
+		is_polar      = glm.any(are_polar)
 		inverted      = glm.vec2(are_nonpolar)*modded + glm.vec2(are_polar)*((1-modded))
 		flipped       = inverted.yx if is_polar else inverted
 		nonlocal_id   = glm.dot(glm.vec2(1,-1), nonlocal_sign)
 		di = 2 * nonlocal_id * is_polar + nonlocal_id * (is_nonlocal and not is_polar)
+		# NOTE: there is more than one possible solution if both x>1 and y>1, 
+		# and these solution are not representationally equal.
+		# However the case where x=1 and y=1 is still valid and must be supported.
+		# Therefore, we declare that standardize() is identity if both x≥1 and y≥1.
 		standardized  = grid_id if is_corner else ((i+di)%square_count, flipped)
 		return standardized
 
