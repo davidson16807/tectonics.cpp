@@ -632,7 +632,7 @@ namespace test {
             as);
     }
 
-    template<typename Adapter, typename F, typename A, typename B>
+    template<typename Adapter, typename F, typename A>
     bool involutivity(const Adapter& adapter, 
         const std::string f_name, const F& f, 
         const A& as
@@ -807,6 +807,27 @@ namespace test {
     ) {
         return predicate(adapter, 
             f_name + " [denoted \"f\"] must preserve " + g_name + " [denoted \"g\"]" + 
+            "\nsuch that: \n  f(g(a)) = f(a)\n",
+            [=](auto a){
+                auto fa = f(a);
+                auto ga = g(a);
+                auto fga = f(ga);
+                return Results(adapter.equal(fga, fa),
+                    "f(a)  : " + adapter.print(fa) + "\n" +
+                    "g(a)  : " + adapter.print(ga) + "\n" +
+                    "f(g(a)) : " + adapter.print(fga) + "\n"
+                );
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A>
+    bool congruence(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must be congruent over " + g_name + " [denoted \"g\"]" + 
             "\nsuch that: \n  f(g(a)) = f(a)\n",
             [=](auto a){
                 auto fa = f(a);
