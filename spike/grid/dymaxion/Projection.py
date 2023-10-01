@@ -83,24 +83,24 @@ class Projection:
 
 	def standardize(self, grid_id):
 		i,V2 = grid_id
-		clampedV2 = glm.clamp(V2, 0, 1)
-		are_local = glm.equal(V2, clampedV2)
-		are_nonlocal = glm.notEqual(V2, clampedV2)
-		deviation_sign = glm.sign(V2 - clampedV2)
+		clamped = glm.clamp(V2, 0, 1)
+		modded = V2%1
+		are_local = glm.equal(V2, clamped)
+		are_nonlocal = glm.notEqual(V2, clamped)
+		deviation_sign = glm.sign(V2 - clamped)
 		are_flipped = glm.equal(deviation_sign, glm.vec2(self.squares.polarity(i)))
 		are_modded = glm.notEqual(deviation_sign, glm.vec2(self.squares.polarity(i)))
 		is_nonlocal = are_nonlocal.x or are_nonlocal.y
 		is_flipped = are_flipped.x or are_flipped.y
 		is_modded = are_modded.x or are_modded.y
-		modded = (
-			glm.vec2(are_local)*(V2) + glm.vec2(are_nonlocal)*((1-V2))
-			if is_flipped else V2)%1
-		# modded = modded%1
-		flipped = modded.yx if is_flipped else modded
+		inverted = (
+			glm.vec2(are_local)*(modded) + glm.vec2(are_nonlocal)*((1-modded))
+			if is_flipped else modded)
+		# inverted = inverted%1
+		flipped = inverted.yx if is_flipped else inverted
 		deviation_id = glm.dot(glm.vec2(1,-1), deviation_sign)
 		di = 2 * deviation_id * is_flipped + deviation_id * (is_nonlocal and not is_flipped)
 		standardized = ((i+di)%square_count, flipped)
-		breakpoint()
 		return standardized
 
 	def grid_id(self, sphere_position):
