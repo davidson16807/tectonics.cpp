@@ -590,9 +590,26 @@ namespace test {
     }
 
 
+    template<typename Adapter, typename F, typename A>
+    bool unary_idempotence(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const A& as
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must return the same output if invoked a second time" + 
+            "\nsuch that: \n  f(f(a)) = f(a)\n",
+            [=](auto a){
+                auto fa = f(a);
+                auto ffa = f(fa);
+                return Results(adapter.equal(ffa, fa),
+                    "f(a)  : " + adapter.print(fa) + "\n" +
+                    "f(f(a)) : " + adapter.print(ffa) + "\n"
+                );
+            }, as);
+    }
 
     template<typename Adapter, typename F, typename A>
-    bool idempotence(const Adapter& adapter, 
+    bool binary_idempotence(const Adapter& adapter, 
         const std::string f_name, const F& f, 
         const A& as
     ) {
@@ -605,7 +622,7 @@ namespace test {
     }
 
     template<typename Adapter, typename F, typename E, typename A>
-    bool idempotence(const Adapter& adapter, 
+    bool binary_idempotence(const Adapter& adapter, 
         const std::string e_name, const E& e, 
         const std::string f_name, const F& f, 
         const A& as
@@ -731,8 +748,8 @@ namespace test {
     }
 
     /* 
-    NOTE: the following functions (invariance, continuity, conservation, preservation) effectively test for the same thing,
-    however some differ in how they are invoked, and others are treated historically as different concepts,
+    NOTE: the following functions (invariance, continuity, conservation, preservation, congruence) effectively test for the same thing,
+    however some differ in how they are invoked, and some differ in how they should most effectively communicate the concept to the user,
     so in either case we implement different functions that vary only in how they present information to the user.
     */
 

@@ -50,6 +50,7 @@ namespace dymaxion
 		static constexpr scalar pi = 3.141592652653589793f;
 		static constexpr id square_count = 10;
 		static constexpr scalar half_subgrid_longitude_arc_length = 2*pi/square_count;
+		static constexpr scalar epsilon = 1e-7;
 		static constexpr scalar s0 = 0;
 		static constexpr scalar s1 = 1;
 		static constexpr scalar s2 = 2;
@@ -69,21 +70,31 @@ namespace dymaxion
 		constexpr Point standardize(const Point grid_id) const 
 		{
 			id    i  (grid_id.square_id);
+			// id    i  (0);
 			vec2  V2 (grid_id.square_position);
-			vec2  clampedV2        (glm::clamp(V2,s0,s1));
-			bvec2 are_local        (glm::equal(V2,clampedV2));
-			bvec2 are_nonlocal     (glm::notEqual(V2,clampedV2));
-			vec2  deviation_sign   (glm::sign(V2-clampedV2));
-			bvec2 are_flipped      (glm::equal(deviation_sign, vec2(squares.polarity(i))));
-			bool  is_nonlocal      (are_nonlocal.x || are_nonlocal.y);
-			bool  is_flipped       (are_flipped.x || are_flipped.y);
-			vec2  inverted_nonlocal(
-				is_flipped? vec2(are_local)*V2 + vec2(are_nonlocal)*(s1-V2) : V2);
-			vec2  modded           (math::mod(inverted_nonlocal, vec2(s1)));
-			vec2  flipped          (is_flipped? modded.yx() : modded);
-			id    deviation_id     (glm::dot(vec2(s1,-s1), deviation_sign));
-			id    di(i2*deviation_id*is_flipped + deviation_id*(is_nonlocal && !is_flipped));
-			return Point(math::mod(i+di,square_count), flipped);
+			// vec2  V2 (0,0);
+			vec2  square_polarity (squares.polarity(i));
+			vec2  modded        (math::mod(V2, vec2(s1)));
+			// std::cout << glm::to_string(glm::abs(V2-modded)) << std::endl;
+			bvec2 are_nonlocal  (glm::greaterThan(glm::abs(V2-modded), vec2(epsilon)));
+			// std::cout << glm::to_string(are_nonlocal) << std::endl;
+			vec2  nonlocal_sign (glm::sign(V2-0.5) * vec2(are_nonlocal));
+			bvec2 are_polar     (glm::equal(nonlocal_sign, square_polarity));
+			bvec2 are_nonpolar  (glm::notEqual(nonlocal_sign, square_polarity));
+			bool  is_nonlocal   (glm::any(are_nonlocal));
+			bool  is_corner     (glm::all(are_nonlocal));
+			bool  is_polar      (glm::any(are_polar));
+			vec2  inverted      (vec2(are_nonpolar)*modded + vec2(are_polar)*(s1-modded));
+			vec2  flipped       (is_polar? inverted.yx() : inverted);
+			id    nonlocal_id   (glm::dot(vec2(s1,-s1), nonlocal_sign));
+			id    di (i2*nonlocal_id*is_polar + nonlocal_id*(is_nonlocal && !is_polar));
+			/* NOTE: there is more than one possible solution if both x>1 and y>1, 
+		    and these solutions do not represent the same point in space.
+		    However the case where x=1 and y=1 is still valid and must be supported.
+		    Therefore, we declare that standardize() is identity if both x≥1 and y≥1.*/
+			Point standardized  (is_corner? grid_id : Point(math::mod(i+di,square_count), flipped));
+			// raise(SIGTRAP);
+			return standardized;
 		}
 
 		constexpr Point grid_id(const vec3 sphere_position) const 

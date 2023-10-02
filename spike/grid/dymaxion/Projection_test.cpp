@@ -1,0 +1,228 @@
+
+// 3rd party libraries
+#define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
+#include "catch/catch.hpp"
+
+#define GLM_FORCE_PURE              // disable anonymous structs so we can build with ISO C++
+#define GLM_ENABLE_EXPERIMENTAL     // disable anonymous structs so we can build with ISO C++
+#include <glm/vec3.hpp>             // *vec3
+#include <glm/gtx/string_cast.hpp>  // to_string
+
+// in-house libraries
+#include <test/macros.hpp>
+#include <test/adapter.hpp>
+#include <test/properties.hpp>
+#include "Projection.hpp"
+#pragma once
+
+// NOTE: no natural distance function exists on a Point 
+// that does not require the implementation of the very things we are testing.
+// This is why we implement a custom adapter.
+struct DymaxionAdapter{
+
+    DymaxionAdapter() {}
+
+    template<typename id, typename scalar>
+    bool equal(const dymaxion::Point<id,scalar>& a, const dymaxion::Point<id,scalar>& b) const {
+        return 
+            a.square_id == b.square_id && 
+            glm::distance(a.square_position, b.square_position) < 1e-4; 
+    }
+
+    template<int L, typename T, glm::qualifier Q>
+    bool equal(const glm::vec<L,T,Q>& a, const glm::vec<L,T,Q>& b) const {
+        return glm::distance(a, b) < 1e-4; 
+    }
+
+    template<typename id, typename scalar>
+    std::string print(const dymaxion::Point<id,scalar>& a) const {
+        return dymaxion::to_string(a);
+    }
+
+    template<int L, typename T, glm::qualifier Q>
+    std::string print(const glm::vec<L,T,Q>& v) const {
+        return glm::to_string(v);
+    }
+
+};
+
+TEST_CASE( "Projection.sphere_position() / Projection.grid_id()", "[dymaxion]" ) {
+    DymaxionAdapter adapter;
+
+    const float epsilon(1e-4f);
+    dymaxion::Projection projection;
+
+    std::vector<glm::dvec3> sphere_positions{};
+    for(float x = -1.0f; x <= 1.0f; x+=0.5f){
+    for(float y = -1.0f; y <= 1.0f; y+=0.5f){
+    for(float z = -1.0f; z <= 1.0f; z+=0.5f){
+        glm::vec3 v(x,y,z);
+        if(glm::length(v) > epsilon){
+            sphere_positions.push_back(glm::normalize(v));
+        }
+    }}}
+
+    std::vector<dymaxion::Point<int,double>> grid_ids {};
+    for(int    i = 0; i < 10; i++){
+    for(double x = 0.0; x <= 1.0; x+=0.1){
+    for(double y = 0.0; y <= 1.0; y+=0.1){
+        grid_ids.push_back(dymaxion::Point(i,glm::dvec2(x,y)));
+    }}}
+
+    std::vector<dymaxion::Point<int,double>> nonedge_grid_ids {};
+    for(int    i = 0; i < 10; i++){
+    for(double x = 0.01; x < 1.0; x+=0.1){
+    for(double y = 0.01; y < 1.0; y+=0.1){
+        grid_ids.push_back(dymaxion::Point(i,glm::dvec2(x,y)));
+    }}}
+
+    REQUIRE(test::determinism(adapter,
+        "Projection.grid_id(…)", TEST_UNARY(dymaxion::Projection().grid_id),
+        sphere_positions
+    ));
+
+    REQUIRE(test::determinism(adapter,
+        "Projection.sphere_position(…)", TEST_UNARY(dymaxion::Projection().sphere_position),
+        grid_ids
+    ));
+
+    REQUIRE(test::codomain(adapter,
+        "within expected range", [](auto iV2){
+            auto i = iV2.square_id;
+            auto V2 = iV2.square_position;
+            return 
+                0<=i&&i<10 && 
+                0<=V2.x&&V2.x<1+1e-4 && 
+                0<=V2.y&&V2.y<1+1e-4;
+        },
+        "Projection.grid_id(…)", TEST_UNARY(projection.grid_id),
+        sphere_positions
+    ));
+
+    REQUIRE(test::codomain(adapter,
+        "within expected range", [](auto V3){
+            auto length = glm::length(V3);
+            return std::abs(length-1) < 1e-4;
+        },
+        "Projection.sphere_position(…)", TEST_UNARY(projection.sphere_position),
+        grid_ids
+    ));
+
+    REQUIRE(test::left_invertibility(adapter,
+        "Projection.sphere_position(…) when restricted to indexed grid_ids", TEST_UNARY(projection.sphere_position),
+        "Projection.grid_id(…)",                                             TEST_UNARY(projection.grid_id),
+        sphere_positions
+    ));
+    // NOTE: right invertibility cannot be tested, 
+    // since the equivalence of grid ids cannot be determined without using the very code that we are testing
+
+    REQUIRE(test::congruence(adapter,
+        "Projection.sphere_position(…) when restricted to indexed sphere_positions", TEST_UNARY(projection.sphere_position),
+        "offsets to square_id equal to square_count", [](dymaxion::Point<int,double> p){return dymaxion::Point<int,double>(p.square_id+10, p.square_position);},
+        grid_ids
+    ));
+
+    REQUIRE(test::unary_idempotence(adapter,
+        "Projection.standardize(…) when restricted to xs and ys of (0,1)", TEST_UNARY(dymaxion::Projection().standardize),
+        nonedge_grid_ids
+    ));
+}
+
+/*
+
+
+
+TEST_CASE( "Projection sphere_position() closeness preservation", "[dymaxion]" ) {
+    SECTION("changes in grid_id must not result in changes to sphere_position that exceed a reasonable multiple"){
+        dymaxion::Projection projection;
+        dymaxion::Projection projection(projection);
+        const float factor(3.0);
+        const glm::vec2 dx(0.01, 0.0);
+        const glm::vec2 dy(0.0, 0.01);
+        for(float x = -2.0f; x < 2.0f; x+=0.1f){
+        for(float y = -2.0f; y < 2.0f; y+=0.1f){
+            glm::vec2 v = glm::vec2(x,y);
+            CHECK( glm::distance(projection.sphere_position(v), projection.sphere_position(v+dx)) < factor * glm::length(dx) );
+            CHECK( glm::distance(projection.sphere_position(v), projection.sphere_position(v-dx)) < factor * glm::length(dx) );
+            CHECK( glm::distance(projection.sphere_position(v), projection.sphere_position(v+dy)) < factor * glm::length(dy) );
+            CHECK( glm::distance(projection.sphere_position(v), projection.sphere_position(v-dy)) < factor * glm::length(dy) );
+        }}
+    }
+}
+
+
+TEST_CASE( "Projection.grid_id() purity", "[dymaxion]" ) {
+    SECTION("Projection.grid_id() must be called repeatedly without changing the output"){
+        dymaxion::Projection projection;
+        dymaxion::Projection projection(projection);
+        const float epsilon(1e-4f);
+        for(float x = -1.0f; x < 1.0f; x+=0.5f){
+        for(float y = -1.0f; y < 1.0f; y+=0.5f){
+        for(float z = -1.0f; z < 1.0f; z+=0.5f){
+            glm::vec3 v(x,y,z);
+            if(glm::length(v) > epsilon){
+                CHECK(dymaxion::Projection(projection).grid_id(glm::vec3(x,y,z)) == 
+                      dymaxion::Projection(projection).grid_id(glm::vec3(x,y,z)));
+            }
+        }}}
+    }
+}
+
+TEST_CASE( "Projection grid_id() / sphere_position() invertibility", "[dymaxion]" ) {
+    SECTION("Projection.sphere_position() must reconstruct input passed to grid_id() for any unit vector"){
+        dymaxion::Projection projection;
+        dymaxion::Projection projection(projection);
+        const float epsilon(1e-4f);
+        for(float x = -1.0f; x < 1.0f; x+=0.5f){
+        for(float y = -1.0f; y < 1.0f; y+=0.5f){
+        for(float z = -1.0f; z < 1.0f; z+=0.5f){
+            if(glm::length(glm::vec3(x,y,z)) > epsilon){
+                glm::vec3 v = glm::normalize(glm::vec3(x,y,z));
+                glm::vec2 u = projection.grid_id(v);
+                glm::vec3 v2 = projection.sphere_position( u );
+                CHECK( v2.x == Approx(v.x).margin(epsilon) );
+                CHECK( v2.y == Approx(v.y).margin(epsilon) );
+                CHECK( v2.z == Approx(v.z).margin(epsilon) );
+            }
+        }}}
+    }
+}
+
+
+
+
+
+// TEST_CASE( "Projection memory_id() congruence", "[dymaxion]" ) {
+//     SECTION("an modulo can be applied to input which results in the same output"){
+//         const glm::vec2 nx(2, 0);
+//         const glm::vec2 ny(0, 2);
+//         for(float x = -2.0f; x < 2.0f; x+=0.1f){
+//         for(float y = -2.0f; y < 2.0f; y+=0.1f){
+//             glm::vec2 v = glm::vec2(x,y);
+//             CHECK( projection.memory_id(v) == projection.memory_id(v+nx));
+//             CHECK( projection.memory_id(v) == projection.memory_id(v-nx));
+//             CHECK( projection.memory_id(v) == projection.memory_id(v+ny));
+//             CHECK( projection.memory_id(v) == projection.memory_id(v-ny));
+//         }}
+//     }
+// }
+
+// TEST_CASE( "Projection memory_id() / grid_id() invertibility", "[dymaxion]" ) {
+//     SECTION("Projection.grid_id() must reconstruct input passed to memory_id() for any unit vector"){
+//         for(int i = 0; i < projection.tesselation_cell_count; i++){
+//             CHECK( i == projection.memory_id(projection.grid_id(i)) );
+//         }
+//     }
+// }
+// TEST_CASE( "Projection memory_id() range restrictions", "[dymaxion]" ) {
+//     SECTION("Projection.memory_id() must not produce results outside valid range"){
+//         for(float x = -2.0f; x < 2.0f; x+=0.1f){
+//         for(float y = -2.0f; y < 2.0f; y+=0.1f){
+//             int i = projection.memory_id(glm::vec2(x,y));
+//             CHECK( 0 <= i );
+//             CHECK( i < projection.tesselation_cell_count );
+//         }}
+//     }
+// }
+
+*/

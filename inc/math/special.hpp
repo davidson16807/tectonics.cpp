@@ -4,6 +4,18 @@
 
 namespace math{
 
+	template<typename T>
+	constexpr T rem(const T& a, const T& b)
+	{
+	    return a - b * floor(a / b);
+	}
+
+	template<typename T>
+	constexpr T mod(const T& a, const T& b)
+	{
+	    return rem(rem(a,b) + b, b);
+	}
+
 	template <typename T>
 	constexpr T sign(const T x) {
 		return std::signbit(x)? T(1):T(-1);
