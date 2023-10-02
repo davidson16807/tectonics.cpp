@@ -71,8 +71,8 @@ TEST_CASE( "Projection.sphere_position() / Projection.grid_id()", "[dymaxion]" )
 
     std::vector<dymaxion::Point<int,double>> nonedge_grid_ids {};
     for(int    i = 0; i < 10; i++){
-    for(double x = 0.01; x < 1.0; x+=0.1){
-    for(double y = 0.01; y < 1.0; y+=0.1){
+    for(double x = -0.05; x <= 1.05; x+=0.1){
+    for(double y = -0.05; y <= 1.05; y+=0.1){
         grid_ids.push_back(dymaxion::Point(i,glm::dvec2(x,y)));
     }}}
 
@@ -129,67 +129,6 @@ TEST_CASE( "Projection.sphere_position() / Projection.grid_id()", "[dymaxion]" )
 }
 
 /*
-
-
-
-TEST_CASE( "Projection sphere_position() closeness preservation", "[dymaxion]" ) {
-    SECTION("changes in grid_id must not result in changes to sphere_position that exceed a reasonable multiple"){
-        dymaxion::Projection projection;
-        dymaxion::Projection projection(projection);
-        const float factor(3.0);
-        const glm::vec2 dx(0.01, 0.0);
-        const glm::vec2 dy(0.0, 0.01);
-        for(float x = -2.0f; x < 2.0f; x+=0.1f){
-        for(float y = -2.0f; y < 2.0f; y+=0.1f){
-            glm::vec2 v = glm::vec2(x,y);
-            CHECK( glm::distance(projection.sphere_position(v), projection.sphere_position(v+dx)) < factor * glm::length(dx) );
-            CHECK( glm::distance(projection.sphere_position(v), projection.sphere_position(v-dx)) < factor * glm::length(dx) );
-            CHECK( glm::distance(projection.sphere_position(v), projection.sphere_position(v+dy)) < factor * glm::length(dy) );
-            CHECK( glm::distance(projection.sphere_position(v), projection.sphere_position(v-dy)) < factor * glm::length(dy) );
-        }}
-    }
-}
-
-
-TEST_CASE( "Projection.grid_id() purity", "[dymaxion]" ) {
-    SECTION("Projection.grid_id() must be called repeatedly without changing the output"){
-        dymaxion::Projection projection;
-        dymaxion::Projection projection(projection);
-        const float epsilon(1e-4f);
-        for(float x = -1.0f; x < 1.0f; x+=0.5f){
-        for(float y = -1.0f; y < 1.0f; y+=0.5f){
-        for(float z = -1.0f; z < 1.0f; z+=0.5f){
-            glm::vec3 v(x,y,z);
-            if(glm::length(v) > epsilon){
-                CHECK(dymaxion::Projection(projection).grid_id(glm::vec3(x,y,z)) == 
-                      dymaxion::Projection(projection).grid_id(glm::vec3(x,y,z)));
-            }
-        }}}
-    }
-}
-
-TEST_CASE( "Projection grid_id() / sphere_position() invertibility", "[dymaxion]" ) {
-    SECTION("Projection.sphere_position() must reconstruct input passed to grid_id() for any unit vector"){
-        dymaxion::Projection projection;
-        dymaxion::Projection projection(projection);
-        const float epsilon(1e-4f);
-        for(float x = -1.0f; x < 1.0f; x+=0.5f){
-        for(float y = -1.0f; y < 1.0f; y+=0.5f){
-        for(float z = -1.0f; z < 1.0f; z+=0.5f){
-            if(glm::length(glm::vec3(x,y,z)) > epsilon){
-                glm::vec3 v = glm::normalize(glm::vec3(x,y,z));
-                glm::vec2 u = projection.grid_id(v);
-                glm::vec3 v2 = projection.sphere_position( u );
-                CHECK( v2.x == Approx(v.x).margin(epsilon) );
-                CHECK( v2.y == Approx(v.y).margin(epsilon) );
-                CHECK( v2.z == Approx(v.z).margin(epsilon) );
-            }
-        }}}
-    }
-}
-
-
-
 
 
 // TEST_CASE( "Projection memory_id() congruence", "[dymaxion]" ) {
