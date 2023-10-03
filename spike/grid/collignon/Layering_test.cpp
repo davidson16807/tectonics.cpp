@@ -49,15 +49,15 @@ TEST_CASE( "Layering.layer_to_height() / Layering.height_to_layer()", "[colligno
 
     REQUIRE(test::preservation(
         test::PrimitiveAdapter(1), 
-        "closeness to within a single index",                             TEST_NUDGE(layering.layer_height * 0.001),
         "Layering.height_to_layer(…) when restricted to indexed heights", TEST_UNARY(layering.height_to_layer),
+        "closeness to within a single index",                             TEST_NUDGE(layering.layer_height * 0.001),
         heights
     ));
 
     REQUIRE(test::preservation(
         test::PrimitiveAdapter(layering.layer_height*1.001),
-        "closeness to within a reasonable multiple of layer_height",      TEST_NUDGE(1),
         "Layering.layer_to_height(…) when restricted to indexed heights", TEST_UNARY(layering.layer_to_height),
+        "closeness to within a reasonable multiple of layer_height",      TEST_NUDGE(1),
         heights
     ));
 

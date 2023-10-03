@@ -796,13 +796,13 @@ namespace test {
     }
 
     template<typename Adapter, typename F, typename G, typename A>
-    bool conservation(const Adapter& adapter, 
+    bool congruence(const Adapter& adapter, 
         const std::string f_name, const F& f, 
         const std::string g_name, const G& g, 
         const A& as
     ) {
         return predicate(adapter, 
-            f_name + " [denoted \"f\"] must conserve " + g_name + " [denoted \"g\"]" + 
+            f_name + " [denoted \"f\"] must be congruent over " + g_name + " [denoted \"g\"]" + 
             "\nsuch that: \n  f(g(a)) = f(a)\n",
             [=](auto a){
                 auto fa = f(a);
@@ -838,22 +838,22 @@ namespace test {
     }
 
     template<typename Adapter, typename F, typename G, typename A>
-    bool congruence(const Adapter& adapter, 
+    bool conservation(const Adapter& adapter, 
         const std::string f_name, const F& f, 
         const std::string g_name, const G& g, 
         const A& as
     ) {
         return predicate(adapter, 
-            f_name + " [denoted \"f\"] must be congruent over " + g_name + " [denoted \"g\"]" + 
-            "\nsuch that: \n  f(g(a)) = f(a)\n",
+            f_name + " [denoted \"f\"] must conserve " + g_name + " [denoted \"g\"]" + 
+            "\nsuch that: \n  g(f(a)) = g(a)\n",
             [=](auto a){
-                auto fa = f(a);
                 auto ga = g(a);
-                auto fga = f(ga);
-                return Results(adapter.equal(fga, fa),
-                    "f(a)  : " + adapter.print(fa) + "\n" +
+                auto fa = f(a);
+                auto gfa = g(fa);
+                return Results(adapter.equal(gfa, ga),
                     "g(a)  : " + adapter.print(ga) + "\n" +
-                    "f(g(a)) : " + adapter.print(fga) + "\n"
+                    "f(a)  : " + adapter.print(fa) + "\n" +
+                    "g(f(a)) : " + adapter.print(gfa) + "\n"
                 );
             }, as);
     }
