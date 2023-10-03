@@ -8,7 +8,7 @@
 // in-house libraries
 #include <units/si.hpp>             // si::units
 #include "Tesselation.hpp"
-#include "Interleaving.hpp"
+#include "../Interleaving.hpp"
 
 namespace collignon 
 {
@@ -27,7 +27,6 @@ namespace collignon
 
         const Tesselation<scalar> tesselation;
         const Interleaving<id> interleaving;
-        const scalar epsilon_for_integer_cast = 0.1; // ensures that integer casts do not produce numbers that are one value lower than expected
 
     public:
         const id vertex_count_per_half_meridian;
@@ -79,7 +78,7 @@ namespace collignon
         }
         inline constexpr ivec2 grid_id(const vec3 sphere_position) const
         {
-            return glm::round(tesselation.sphere_to_tesselation(glm::normalize(sphere_position)) * vertex_count_per_half_meridian_scalar - half_cell) + epsilon_for_integer_cast;
+            return glm::round(tesselation.sphere_to_tesselation(glm::normalize(sphere_position)) * vertex_count_per_half_meridian_scalar - half_cell);
         }
 
 
