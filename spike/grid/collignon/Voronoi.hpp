@@ -26,7 +26,7 @@ namespace collignon
         using vec3 = glm::vec<3,scalar,glm::defaultp>;
 
         const Tesselation<scalar> tesselation;
-        const Interleaving<id> interleaving;
+        const grid::Interleaving<id> interleaving;
 
     public:
         const id vertex_count_per_half_meridian;

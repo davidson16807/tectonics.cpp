@@ -1,6 +1,6 @@
 #pragma once
 
-namespace collignon
+namespace grid
 {
 
 	/*
@@ -13,6 +13,7 @@ namespace collignon
         const Tid elements_per_block;
 
 	public:
+
 		explicit Interleaving(const Tid elements_per_block):
             elements_per_block(elements_per_block)
         {
@@ -26,6 +27,7 @@ namespace collignon
 		Tid block_id(const Tid interleaved_id) const {
 			return interleaved_id / elements_per_block;
 		}
+
 		Tid element_id(const Tid interleaved_id) const {
 			return interleaved_id % elements_per_block;
 		}

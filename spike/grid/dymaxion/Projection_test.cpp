@@ -13,38 +13,8 @@
 #include <test/adapter.hpp>
 #include <test/properties.hpp>
 #include "Projection.hpp"
-#pragma once
 
-// NOTE: no natural distance function exists on a Point 
-// that does not require the implementation of the very things we are testing.
-// This is why we implement a custom adapter.
-struct DymaxionAdapter{
-
-    DymaxionAdapter() {}
-
-    template<typename id, typename scalar>
-    bool equal(const dymaxion::Point<id,scalar>& a, const dymaxion::Point<id,scalar>& b) const {
-        return 
-            a.square_id == b.square_id && 
-            glm::distance(a.square_position, b.square_position) < 1e-4; 
-    }
-
-    template<int L, typename T, glm::qualifier Q>
-    bool equal(const glm::vec<L,T,Q>& a, const glm::vec<L,T,Q>& b) const {
-        return glm::distance(a, b) < 1e-4; 
-    }
-
-    template<typename id, typename scalar>
-    std::string print(const dymaxion::Point<id,scalar>& a) const {
-        return dymaxion::to_string(a);
-    }
-
-    template<int L, typename T, glm::qualifier Q>
-    std::string print(const glm::vec<L,T,Q>& v) const {
-        return glm::to_string(v);
-    }
-
-};
+#include "test_tools.cpp"
 
 TEST_CASE( "Projection.sphere_position() / Projection.grid_id()", "[dymaxion]" ) {
     DymaxionAdapter adapter;
@@ -75,6 +45,9 @@ TEST_CASE( "Projection.sphere_position() / Projection.grid_id()", "[dymaxion]" )
     for(double y = -0.05; y <= 1.05; y+=0.1){
         grid_ids.push_back(dymaxion::Point(i,glm::dvec2(x,y)));
     }}}
+
+    // NOTE: right invertibility and closeness cannot be tested, 
+    // since the equivalence of grid ids cannot be determined without using the very code that we are testing
 
     REQUIRE(test::determinism(adapter,
         "Projection.grid_id(…)", TEST_UNARY(dymaxion::Projection().grid_id),
@@ -113,8 +86,6 @@ TEST_CASE( "Projection.sphere_position() / Projection.grid_id()", "[dymaxion]" )
         "Projection.grid_id(…)",                                             TEST_UNARY(projection.grid_id),
         sphere_positions
     ));
-    // NOTE: right invertibility cannot be tested, 
-    // since the equivalence of grid ids cannot be determined without using the very code that we are testing
 
     REQUIRE(test::congruence(adapter,
         "Projection.sphere_position(…) when restricted to indexed sphere_positions", TEST_UNARY(projection.sphere_position),

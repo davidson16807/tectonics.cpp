@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-namespace collignon 
+namespace grid 
 {
 
 	/*
