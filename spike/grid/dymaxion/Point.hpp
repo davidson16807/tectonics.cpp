@@ -155,4 +155,34 @@ namespace dymaxion
         return Point<id,scalar,Q>(p.square_id, glm::round(p.square_position));
     }
 
+    template<typename id, typename scalar, glm::qualifier Q>
+    constexpr Point<id,scalar,Q> floor(const Point<id,scalar,Q>& p)
+    {
+        return Point<id,scalar,Q>(p.square_id, glm::floor(p.square_position));
+    }
+
+    template<typename id, typename scalar, glm::qualifier Q>
+    constexpr Point<id,scalar,Q> ceil(const Point<id,scalar,Q>& p)
+    {
+        return Point<id,scalar,Q>(p.square_id, glm::ceil(p.square_position));
+    }
+
+    template<typename id, typename scalar, glm::qualifier Q>
+    constexpr Point<id,scalar,Q> min(const Point<id,scalar,Q>& p, const scalar k)
+    {
+        return Point<id,scalar,Q>(p.square_id, glm::min(p.square_position, k));
+    }
+
+    template<typename id, typename scalar, glm::qualifier Q>
+    constexpr Point<id,scalar,Q> max(const Point<id,scalar,Q>& p, const scalar k)
+    {
+        return Point<id,scalar,Q>(p.square_id, glm::max(p.square_position, k));
+    }
+
+    template<typename id, typename scalar, glm::qualifier Q>
+    constexpr Point<id,scalar,Q> clamp(const Point<id,scalar,Q>& p, const scalar lo, const scalar hi)
+    {
+        return Point<id,scalar,Q>(p.square_id, glm::clamp(p.square_position, lo, hi));
+    }
+
 }

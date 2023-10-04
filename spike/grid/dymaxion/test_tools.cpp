@@ -5,7 +5,11 @@
 // This is why we implement a custom adapter.
 struct DymaxionAdapter{
 
-    DymaxionAdapter() {}
+    const double threshold;
+
+    DymaxionAdapter(double threshold=1e-4):
+        threshold(threshold)
+    {}
 
     template<typename id, typename scalar>
     bool equal(const dymaxion::Point<id,scalar>& a, const dymaxion::Point<id,scalar>& b) const {
@@ -16,7 +20,7 @@ struct DymaxionAdapter{
 
     template<int L, typename T, glm::qualifier Q>
     bool equal(const glm::vec<L,T,Q>& a, const glm::vec<L,T,Q>& b) const {
-        return glm::distance(a, b) < 1e-4; 
+        return glm::distance(a, b) < threshold; 
     }
 
     template<typename id, typename scalar>

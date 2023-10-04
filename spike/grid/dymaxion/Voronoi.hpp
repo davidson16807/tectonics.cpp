@@ -35,28 +35,30 @@ namespace dymaxion
 
     public:
 
-        const id vertex_count_per_meridian;
-        const id vertex_count_per_half_triangle_leg;
-        const id vertex_count_per_triangle_leg;
-        const id vertex_count_per_square;
+        const id vertices_per_meridian;
+        const id vertices_per_half_triangle_leg;
+        const id vertices_per_triangle_leg;
+        const id vertices_per_square;
         const id vertex_count;
-        const scalar vertex_count_per_half_triangle_leg_scalar;
-        const scalar vertex_count_per_triangle_leg_scalar;
+        const scalar vertices_per_half_triangle_leg_scalar;
+        const scalar vertices_per_triangle_leg_scalar;
         const grid::Interleaving<id> row_interleave;
         const grid::Interleaving<id> square_interleave;
         const scalar radius;
 
-        constexpr Voronoi(const scalar radius, const id vertex_count_per_meridian) : 
+        static constexpr id subgrid_count = 10;
+
+        constexpr Voronoi(const scalar radius, const id vertices_per_meridian) : 
             // the boundary of two polar squares consists of cells for those boundaries plus the diagonal of a square, hence the 1+√2 factors
             projection(Projection<id,scalar,Q>()),
-            vertex_count_per_meridian(vertex_count_per_meridian),
-            vertex_count_per_half_triangle_leg(vertex_count_per_meridian/(s2*(s1+std::sqrt(s2)))), 
-            vertex_count_per_triangle_leg(2*vertex_count_per_half_triangle_leg),
-            vertex_count_per_square(vertex_count_per_triangle_leg*vertex_count_per_triangle_leg),
-            vertex_count(10*vertex_count_per_square),
-            vertex_count_per_half_triangle_leg_scalar(vertex_count_per_half_triangle_leg),
-            vertex_count_per_triangle_leg_scalar(vertex_count_per_triangle_leg),
-            row_interleave(vertex_count_per_triangle_leg),
+            vertices_per_meridian(vertices_per_meridian),
+            vertices_per_half_triangle_leg(vertices_per_meridian/(s2*(s1+std::sqrt(s2)))), 
+            vertices_per_triangle_leg(2*vertices_per_half_triangle_leg),
+            vertices_per_square(vertices_per_triangle_leg*vertices_per_triangle_leg),
+            vertex_count(10*vertices_per_square),
+            vertices_per_half_triangle_leg_scalar(vertices_per_half_triangle_leg),
+            vertices_per_triangle_leg_scalar(vertices_per_triangle_leg),
+            row_interleave(vertices_per_triangle_leg),
             square_interleave(vertex_count),
             radius(radius)
         {
@@ -67,16 +69,16 @@ namespace dymaxion
         }
 
         constexpr id memory_id(const ScalarPoint grid_position) const {
-            const ScalarPoint world_position((grid_position + half_cell) / vertex_count_per_triangle_leg_scalar);
+            const ScalarPoint world_position((grid_position + half_cell) / vertices_per_triangle_leg_scalar);
             const ScalarPoint standardized_world_position(projection.standardize(world_position));
-            const ScalarPoint standard_grid_position(standardized_world_position * vertex_count_per_triangle_leg_scalar - half_cell);
+            const ScalarPoint standard_grid_position(standardized_world_position * vertices_per_triangle_leg_scalar - half_cell);
             const IdPoint standard_grid_uid = IdPoint(round(standard_grid_position));
             const id memory_id = 
                 square_interleave.interleaved_id(
                     standard_grid_uid.square_id,
                     row_interleave.interleaved_id(
-                        std::clamp(standard_grid_uid.square_position.y, 0, vertex_count_per_triangle_leg-1),
-                        std::clamp(standard_grid_uid.square_position.x, 0, vertex_count_per_triangle_leg-1)
+                        std::clamp(standard_grid_uid.square_position.y, 0, vertices_per_triangle_leg-1),
+                        std::clamp(standard_grid_uid.square_position.x, 0, vertices_per_triangle_leg-1)
                     )
                 );
             return memory_id;
@@ -101,7 +103,7 @@ namespace dymaxion
         }
         inline constexpr IdPoint grid_id(const vec3 sphere_position) const
         {
-            return IdPoint(round(ScalarPoint(projection.grid_id(glm::normalize(sphere_position))) * vertex_count_per_triangle_leg_scalar - half_cell));
+            return min(IdPoint(grid_position(sphere_position)), vertices_per_triangle_leg-1);
         }
 
 
@@ -111,7 +113,7 @@ namespace dymaxion
             return ScalarPoint(
                 square_interleave.block_id(memory_id), 
                 vec2(row_interleave.element_id(square_element_id), row_interleave.block_id(square_element_id))
-            ) - vertex_count_per_triangle_leg_scalar;
+            ) - vertices_per_triangle_leg_scalar;
         }
         inline constexpr ScalarPoint grid_position(const IdPoint grid_id) const
         {
@@ -119,8 +121,7 @@ namespace dymaxion
         }
         inline constexpr ScalarPoint grid_position(const vec3 sphere_position) const
         {
-            ScalarPoint grid_id(projection.grid_id(glm::normalize(sphere_position)));
-            return grid_id * vertex_count_per_triangle_leg_scalar - half_cell;
+            return ScalarPoint(projection.grid_id(glm::normalize(sphere_position)) * vertices_per_triangle_leg_scalar);
         }
 
 
@@ -132,11 +133,11 @@ namespace dymaxion
         inline constexpr vec3 unit_sphere_position(const IdPoint grid_id) const
         {
             ScalarPoint scalable(grid_id);
-            return projection.sphere_position((scalable+half_cell)/vertex_count_per_triangle_leg_scalar);
+            return projection.sphere_position((scalable+half_cell)/vertices_per_triangle_leg_scalar);
         }
         inline constexpr vec3 unit_sphere_position(const ScalarPoint grid_position) const
         {
-            return projection.sphere_position((grid_position+half_cell)/vertex_count_per_triangle_leg_scalar);
+            return projection.sphere_position(grid_position/vertices_per_triangle_leg_scalar);
         }
 
 
