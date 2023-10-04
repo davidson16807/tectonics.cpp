@@ -12,6 +12,9 @@
 #include <test/macros.hpp>
 #include <test/adapter.hpp>
 #include <test/properties.hpp>
+
+#include <store/series/Range.hpp>
+
 #include "Voronoi.hpp"
 
 #include "test_tools.cpp"
@@ -47,8 +50,15 @@ TEST_CASE( "Voronoi grid_position() / sphere_position() invertibility", "[collig
         grid_ids.push_back(dymaxion::Point(i,glm::ivec2(x,y)));
     }}}
 
+    series::Range memory_ids(voronoi.vertex_count);
+
     // NOTE: right invertibility and closeness cannot be tested, 
     // since the equivalence of grid ids cannot be determined without using the very code that we are testing
+
+    REQUIRE(test::determinism(precise,
+        "Voronoi.memory_id(…)", TEST_UNARY(voronoi.memory_id),
+        grid_ids
+    ));
 
     REQUIRE(test::determinism(precise,
         "Voronoi.grid_id(…)", TEST_UNARY(voronoi.grid_id),
@@ -68,6 +78,28 @@ TEST_CASE( "Voronoi grid_position() / sphere_position() invertibility", "[collig
     REQUIRE(test::determinism(precise,
         "Voronoi.unit_sphere_position(…)", TEST_UNARY(voronoi.unit_sphere_position),
         grid_ids
+    ));
+
+    REQUIRE(test::codomain(precise,
+        "between 0 and " + std::to_string(voronoi.vertex_count), 
+        [=](auto memory_id){
+            return 0<=memory_id&&memory_id<voronoi.vertex_count;
+        },
+        "Voronoi.memory_id(…)", TEST_UNARY(voronoi.memory_id),
+        grid_ids
+    ));
+
+    REQUIRE(test::codomain(precise,
+        "within expected range", [=](auto iV2){
+            auto i = iV2.square_id;
+            auto V2 = iV2.square_position;
+            return 
+                0<=i&&i<voronoi.subgrid_count && 
+                0<=V2.x&&V2.x<voronoi.vertices_per_triangle_leg && 
+                0<=V2.y&&V2.y<voronoi.vertices_per_triangle_leg;
+        },
+        "Voronoi.grid_id(…)", TEST_UNARY(voronoi.grid_id),
+        memory_ids
     ));
 
     REQUIRE(test::codomain(precise,
@@ -114,6 +146,18 @@ TEST_CASE( "Voronoi grid_position() / sphere_position() invertibility", "[collig
         grid_ids
     ));
 
+    REQUIRE(test::left_invertibility(precise,
+        "Voronoi.grid_id(…) when restricted to indexed grid_ids", TEST_UNARY(voronoi.grid_id),
+        "Voronoi.memory_id(…)",                                   TEST_UNARY(voronoi.memory_id),
+        grid_ids
+    ));
+
+    REQUIRE(test::left_invertibility(precise,
+        "Voronoi.memory_id(…)",                                   TEST_UNARY(voronoi.memory_id),
+        "Voronoi.grid_id(…) when restricted to indexed grid_ids", TEST_UNARY(voronoi.grid_id),
+        memory_ids
+    ));
+
     REQUIRE(test::left_invertibility(imprecise,
         "Voronoi.sphere_position(…) when restricted to indexed grid_ids", TEST_UNARY(voronoi.sphere_position),
         "Voronoi.grid_id(…)",                                             TEST_UNARY(voronoi.grid_id),
@@ -153,43 +197,4 @@ TEST_CASE( "Voronoi grid_position() / sphere_position() invertibility", "[collig
 }
 
 /*
-
-
-TEST_CASE( "Voronoi memory_id() / grid_position() invertibility", "[collignon]" ) {
-    SECTION("Voronoi.grid_position() must reconstruct input passed to memory_id() for any unit vector"){
-        collignon::Voronoi voronoi(2.0f, 10);
-        for(int i = 0; i < voronoi.vertex_count; i++){
-            CHECK( i == voronoi.memory_id(voronoi.grid_position(i)) );
-        }
-    }
-}
-
-TEST_CASE( "Voronoi memory_id() congruence", "[collignon]" ) {
-    SECTION("an modulo can be applied to input which results in the same output"){
-        collignon::Voronoi voronoi(2.0f, 10);
-        const glm::vec2 nx(40, 0);
-        const glm::vec2 ny(0, 40);
-        for(int x = -10; x < 10; x+=1){
-        for(int y = -10; y < 10; y+=1){
-            glm::vec2 v = glm::vec2(x,y);
-            CHECK( voronoi.memory_id(v) == voronoi.memory_id(v+nx));
-            CHECK( voronoi.memory_id(v) == voronoi.memory_id(v-nx));
-            CHECK( voronoi.memory_id(v) == voronoi.memory_id(v+ny));
-            CHECK( voronoi.memory_id(v) == voronoi.memory_id(v-ny));
-        }}
-    }
-}
-
-TEST_CASE( "Voronoi memory_id() range restrictions", "[collignon]" ) {
-    SECTION("Voronoi.memory_id() must not produce results outside valid range"){
-        collignon::Voronoi voronoi(2.0f, 10);
-        for(int x = -10; x < 10; x+=1){
-        for(int y = -10; y < 10; y+=1){
-            int i = voronoi.memory_id(glm::vec2(x,y));
-            CHECK( 0 <= i );
-            CHECK( i < voronoi.vertex_count );
-        }}
-    }
-}
-
 */

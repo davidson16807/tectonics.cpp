@@ -1,9 +1,11 @@
 #pragma once
 
+// std libraries
+#include <limits>
+
 // 3rd party libraries
 #include <glm/vec2.hpp>             // *vec2
 #include <glm/vec3.hpp>             // *vec3
-
 
 // in-house libraries
 #include <units/si.hpp>             // si::units
@@ -59,7 +61,7 @@ namespace dymaxion
             vertices_per_half_triangle_leg_scalar(vertices_per_half_triangle_leg),
             vertices_per_triangle_leg_scalar(vertices_per_triangle_leg),
             row_interleave(vertices_per_triangle_leg),
-            square_interleave(vertex_count),
+            square_interleave(vertices_per_square),
             radius(radius)
         {
         }
@@ -69,19 +71,17 @@ namespace dymaxion
         }
 
         constexpr id memory_id(const ScalarPoint grid_position) const {
-            const ScalarPoint world_position((grid_position + half_cell) / vertices_per_triangle_leg_scalar);
-            const ScalarPoint standardized_world_position(projection.standardize(world_position));
-            const ScalarPoint standard_grid_position(standardized_world_position * vertices_per_triangle_leg_scalar - half_cell);
-            const IdPoint standard_grid_uid = IdPoint(round(standard_grid_position));
-            const id memory_id = 
-                square_interleave.interleaved_id(
-                    standard_grid_uid.square_id,
-                    row_interleave.interleaved_id(
-                        std::clamp(standard_grid_uid.square_position.y, 0, vertices_per_triangle_leg-1),
-                        std::clamp(standard_grid_uid.square_position.x, 0, vertices_per_triangle_leg-1)
-                    )
+            const ScalarPoint standardized(
+                    (projection.standardize(grid_position / vertices_per_triangle_leg_scalar)
+                        // apply epsilon while in the [0,1] domain so that the cast to `id` is correct
+                        + vec2(std::numeric_limits<scalar>::epsilon()))
+                    * vertices_per_triangle_leg_scalar
+            );
+            const IdPoint clamped(clamp(IdPoint(standardized), 0, vertices_per_triangle_leg-1));
+            return square_interleave.interleaved_id(
+                    clamped.square_id, 
+                    row_interleave.interleaved_id(clamped.square_position.y, clamped.square_position.x)
                 );
-            return memory_id;
         }
 
         inline constexpr id memory_id(const vec3 sphere_position) const {
@@ -99,7 +99,7 @@ namespace dymaxion
         }
         inline constexpr IdPoint grid_id(const ScalarPoint grid_position) const
         {
-            return grid_position;
+            return min(IdPoint(grid_position), vertices_per_triangle_leg-1);
         }
         inline constexpr IdPoint grid_id(const vec3 sphere_position) const
         {
