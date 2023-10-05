@@ -23,13 +23,13 @@ TEST_CASE( "Voronoi grid_position() / sphere_position() invertibility", "[collig
 
     const double pi(3.1415926535);
     const double radius(2);
-    const int vertices_per_meridian(100);
+    const int vertex_count_per_meridian(100);
     const float epsilon(1e-4f);
 
     DymaxionAdapter precise(1e-4);
-    DymaxionAdapter imprecise(2*pi/double(vertices_per_meridian));
+    DymaxionAdapter imprecise(2*pi/double(vertex_count_per_meridian));
 
-    dymaxion::Voronoi voronoi(radius, vertices_per_meridian);
+    dymaxion::Voronoi voronoi(radius, vertex_count_per_meridian);
 
     std::vector<glm::dvec3> sphere_positions{};
     std::vector<glm::dvec3> unit_sphere_positions{};
@@ -45,8 +45,8 @@ TEST_CASE( "Voronoi grid_position() / sphere_position() invertibility", "[collig
 
     std::vector<dymaxion::Point<int,int>> grid_ids {};
     for(int i = 0; i < 10; i++){
-    for(int x = 0; x < voronoi.vertices_per_triangle_leg; x+=10){
-    for(int y = 0; y < voronoi.vertices_per_triangle_leg; y+=10){
+    for(int x = 0; x < voronoi.vertex_count_per_triangle_leg; x+=10){
+    for(int y = 0; y < voronoi.vertex_count_per_triangle_leg; y+=10){
         grid_ids.push_back(dymaxion::Point(i,glm::ivec2(x,y)));
     }}}
 
@@ -90,46 +90,50 @@ TEST_CASE( "Voronoi grid_position() / sphere_position() invertibility", "[collig
     ));
 
     REQUIRE(test::codomain(precise,
-        "within expected range", [=](auto iV2){
+        "within expected range", 
+        [=](auto iV2){
             auto i = iV2.square_id;
             auto V2 = iV2.square_position;
             return 
                 0<=i&&i<voronoi.subgrid_count && 
-                0<=V2.x&&V2.x<voronoi.vertices_per_triangle_leg && 
-                0<=V2.y&&V2.y<voronoi.vertices_per_triangle_leg;
+                0<=V2.x&&V2.x<voronoi.vertex_count_per_triangle_leg && 
+                0<=V2.y&&V2.y<voronoi.vertex_count_per_triangle_leg;
         },
         "Voronoi.grid_id(…)", TEST_UNARY(voronoi.grid_id),
         memory_ids
     ));
 
     REQUIRE(test::codomain(precise,
-        "within expected range", [=](auto iV2){
+        "within expected range", 
+        [=](auto iV2){
             auto i = iV2.square_id;
             auto V2 = iV2.square_position;
             return 
                 0<=i&&i<voronoi.subgrid_count && 
-                0<=V2.x&&V2.x<voronoi.vertices_per_triangle_leg && 
-                0<=V2.y&&V2.y<voronoi.vertices_per_triangle_leg;
+                0<=V2.x&&V2.x<voronoi.vertex_count_per_triangle_leg && 
+                0<=V2.y&&V2.y<voronoi.vertex_count_per_triangle_leg;
         },
         "Voronoi.grid_id(…)", TEST_UNARY(voronoi.grid_id),
         sphere_positions
     ));
 
     REQUIRE(test::codomain(precise,
-        "within expected range", [=](auto iV2){
+        "within expected range", 
+        [=](auto iV2){
             auto i = iV2.square_id;
             auto V2 = iV2.square_position;
             return 
                 0<=i&&i<voronoi.subgrid_count && 
-                0<=V2.x&&V2.x<=voronoi.vertices_per_triangle_leg && 
-                0<=V2.y&&V2.y<=voronoi.vertices_per_triangle_leg;
+                0<=V2.x&&V2.x<=voronoi.vertex_count_per_triangle_leg && 
+                0<=V2.y&&V2.y<=voronoi.vertex_count_per_triangle_leg;
         },
         "Voronoi.grid_position(…)", TEST_UNARY(voronoi.grid_position),
         sphere_positions
     ));
 
     REQUIRE(test::codomain(precise,
-        "within expected range", [=](auto V3){
+        "within expected range", 
+        [=](auto V3){
             auto length = glm::length(V3);
             return std::abs(length-radius) < 1e-4;
         },
@@ -138,7 +142,8 @@ TEST_CASE( "Voronoi grid_position() / sphere_position() invertibility", "[collig
     ));
 
     REQUIRE(test::codomain(precise,
-        "within expected range", [=](auto V3){
+        "within expected range", 
+        [=](auto V3){
             auto length = glm::length(V3);
             return std::abs(length-1.0) < 1e-4;
         },
