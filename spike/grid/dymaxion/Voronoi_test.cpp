@@ -19,7 +19,7 @@
 
 #include "test_tools.cpp"
 
-TEST_CASE( "Voronoi grid_position() / sphere_position() invertibility", "[collignon]" ) {
+TEST_CASE( "Voronoi grid_position() / sphere_position()", "[dymaxion]" ) {
 
     const double pi(3.1415926535);
     const double radius(2);
