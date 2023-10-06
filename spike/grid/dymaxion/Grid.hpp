@@ -33,8 +33,19 @@ namespace dymaxion
         using vec2 = glm::vec<2,scalar,Q>;
         using vec3 = glm::vec<3,scalar,Q>;
         using mat3 = glm::mat<3,3,scalar,Q>;
+        using IdPoint = Point<id,id>;
+        using ScalarPoint = Point<id,scalar>;
 
 		static constexpr scalar pi = 3.141592652653589793f;
+
+		// arrow_target_grid_id must be private, 
+		// since dymaxion::Grid and collignon::Grid are meant to share similar interfaces,
+		// however dymaxion::Grid and collignon::Grid must differ in their representations of grid ids,
+		// and for this reason we do not wish to expose grid ids to classes that are using *Grids
+		inline constexpr IdPoint arrow_target_grid_id(const id source_id, const id offset_id) const
+		{
+			return voronoi.grid_id(source_id) + arrow_offset_grid_position(offset_id);
+		}
 
 	public:
 
@@ -97,11 +108,6 @@ namespace dymaxion
 			return arrows_per_vertex * voronoi.vertex_count;
 		}
 
-		inline constexpr ivec2 arrow_target_grid_id(const id source_id, const id offset_id) const
-		{
-			return voronoi.grid_id(source_id) + arrow_offset_grid_position(offset_id);
-		}
-
 		inline constexpr id arrow_target_memory_id(const id source_id, const id offset_id) const
 		{
 			return voronoi.memory_id(arrow_target_grid_id(source_id, offset_id));
@@ -129,7 +135,7 @@ namespace dymaxion
 		// length of the arrow's dual
 		constexpr scalar arrow_dual_length(const id source_id, const id offset_id) const
 		{
-			const vec2 midpointOB(vec2(voronoi.grid_id(source_id)) + scalar(0.5) * vec2(arrow_offset_grid_position(offset_id)));
+			const ScalarPoint midpointOB(ScalarPoint(voronoi.grid_id(source_id)) + vec2(0.5) * vec2(arrow_offset_grid_position(offset_id)));
 			return glm::distance(
 					voronoi.sphere_position( midpointOB + scalar(0.5)*vec2(arrow_offset_grid_position((offset_id+1)%arrows_per_vertex)) ),
 				 	voronoi.sphere_position( midpointOB + scalar(0.5)*vec2(arrow_offset_grid_position((offset_id-1)%arrows_per_vertex)) )
@@ -177,7 +183,7 @@ namespace dymaxion
 
 		constexpr scalar vertex_dual_area(const id vertex_id) const 
 		{
-			const vec2 idO(voronoi.grid_id(vertex_id));
+			const ScalarPoint idO(voronoi.grid_id(vertex_id));
 			const vec3 pointO(voronoi.sphere_position(idO));
 			const vec3 offsetAB(voronoi.sphere_position(idO+vec2( 0.5, 0.5)) - pointO);
 			const vec3 offsetBC(voronoi.sphere_position(idO+vec2( 0.5,-0.5)) - pointO);
