@@ -164,29 +164,15 @@ namespace collignon
 			return glm::transpose(mat3(east, north, up));
 		}
 
-		// inline constexpr scalar vertex_dual_area(const id vertex_id) const 
-		// {
-		// 	/*
-		// 	area in the projection is allocated equally to vertices,
-		// 	and the projection preserves area on the sphere,
-		// 	therefore all vertex duals take up the same area on the sphere,
-		// 	and this area is the total area divided by the number of vertices.
-		// 	*/
-		// 	return total_area() / voronoi.vertex_count;
-		// }
-
-		constexpr scalar vertex_dual_area(const id vertex_id) const 
+		inline constexpr scalar vertex_dual_area(const id vertex_id) const 
 		{
-			const vec2 idO(voronoi.grid_id(vertex_id));
-			const vec3 pointO(voronoi.sphere_position(idO));
-			const vec3 offsetAB(voronoi.sphere_position(idO+vec2( 0.5, 0.5)) - pointO);
-			const vec3 offsetBC(voronoi.sphere_position(idO+vec2( 0.5,-0.5)) - pointO);
-			const vec3 offsetCD(voronoi.sphere_position(idO+vec2(-0.5,-0.5)) - pointO);
-			const vec3 offsetDA(voronoi.sphere_position(idO+vec2(-0.5, 0.5)) - pointO);
-			return (glm::length(glm::cross(offsetAB, offsetBC))
-				+ 	glm::length(glm::cross(offsetBC, offsetCD))
-				+ 	glm::length(glm::cross(offsetCD, offsetDA))
-				+ 	glm::length(glm::cross(offsetDA, offsetAB)))/2.0;
+			/*
+			area in the projection is allocated equally to vertices,
+			and the projection preserves area on the sphere,
+			therefore all vertex duals take up the same area on the sphere,
+			and this area is the total area divided by the number of vertices.
+			*/
+			return total_area() / voronoi.vertex_count;
 		}
 
 	};

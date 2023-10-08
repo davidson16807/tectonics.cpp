@@ -9,7 +9,7 @@
 
 // in-house libraries
 #include <units/si.hpp>             // si::units
-#include "../Interleaving.hpp"
+#include <grid/bijective/Interleaving.hpp>
 #include "Projection.hpp"
 
 namespace dymaxion
@@ -51,8 +51,8 @@ namespace dymaxion
         const id vertex_count;
         const scalar vertex_count_per_half_triangle_leg_scalar;
         const scalar vertex_count_per_triangle_leg_scalar;
-        const grid::Interleaving<id> row_interleave;
-        const grid::Interleaving<id> square_interleave;
+        const bijective::Interleaving<id> row_interleave;
+        const bijective::Interleaving<id> square_interleave;
         const scalar radius;
 
         static constexpr id subgrid_count = 10;
@@ -73,17 +73,24 @@ namespace dymaxion
         {
         }
 
+        constexpr ScalarPoint standardize(const ScalarPoint grid_position) const {
+            return 
+                (projection.standardize(grid_position / vertex_count_per_triangle_leg_scalar)
+                    // apply epsilon while in the [0,1] domain so that the cast to `id` is correct
+                    + vec2(std::numeric_limits<scalar>::epsilon()))
+                * vertex_count_per_triangle_leg_scalar;
+        }
+
+        constexpr IdPoint standardize(const IdPoint grid_id) const {
+            return IdPoint(standardized(ScalarPoint(grid_id)));
+        }
+
         inline constexpr id memory_id(const IdPoint grid_id) const {
             return memory_id(ScalarPoint(grid_id));
         }
 
         constexpr id memory_id(const ScalarPoint grid_position) const {
-            const ScalarPoint standardized(
-                    (projection.standardize(grid_position / vertex_count_per_triangle_leg_scalar)
-                        // apply epsilon while in the [0,1] domain so that the cast to `id` is correct
-                        + vec2(std::numeric_limits<scalar>::epsilon()))
-                    * vertex_count_per_triangle_leg_scalar
-            );
+            const ScalarPoint standardized(standardize(grid_position));
             const IdPoint clamped(clamp(IdPoint(standardized), 0, vertex_count_per_triangle_leg-1));
             return square_interleave.interleaved_id(
                     clamped.square_id, 

@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-namespace grid 
+namespace bijective
 {
 
 	/*

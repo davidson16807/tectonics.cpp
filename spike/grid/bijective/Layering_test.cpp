@@ -10,22 +10,22 @@
 #include <test/properties.hpp>
 #include "Layering.hpp"
 
-TEST_CASE( "Layering.layer_to_height() / Layering.height_to_layer()", "[collignon]" ) {
+TEST_CASE( "Layering.layer_to_height() / Layering.height_to_layer()", "[bijective]" ) {
     test::OperatorAdapter exact;
     test::StandardAdapter inexact(1e-7f);
     std::vector<float> floats {-1.0f, 0.0f, 1.0f, 4.0f, 5.0f, 6.0f};
     std::vector<float> heights{0.0f, 1.0f, 4.0f, 5.0f};
     std::vector<int>   ints   {-1, 0, 1, 5, 6, 7, 8};
     std::vector<int>   layers {0, 1, 5, 6};
-    collignon::Layering<int, float> layering(0.0f, 5.0f, 7);
+    bijective::Layering<int, float> layering(0.0f, 5.0f, 7);
 
     REQUIRE(test::determinism(exact,
-        "Layering.height_to_layer(…)", TEST_UNARY(collignon::Layering(0.0f, 5.0f, 7).height_to_layer),
+        "Layering.height_to_layer(…)", TEST_UNARY(bijective::Layering(0.0f, 5.0f, 7).height_to_layer),
         heights
     ));
 
     REQUIRE(test::determinism(exact,
-        "Layering.layer_to_height(…)", TEST_UNARY(collignon::Layering(0.0f, 5.0f, 7).layer_to_height),
+        "Layering.layer_to_height(…)", TEST_UNARY(bijective::Layering(0.0f, 5.0f, 7).layer_to_height),
         ints
     ));
 

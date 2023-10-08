@@ -60,6 +60,12 @@ namespace dymaxion
         	voronoi(radius, vertex_count_per_meridian)
     	{}
 
+    	// NOTE: this method is for debugging, only
+		constexpr id square_id(const id vertex_id) const
+		{
+			return voronoi.grid_id(vertex_id).square_id;
+		}
+
 		constexpr id arrow_offset_memory_id(const ivec2 arrow_offset_grid_position) const
 		{
 			return 	((arrow_offset_grid_position.x + arrow_offset_grid_position.y < 0) << 1)
@@ -170,20 +176,16 @@ namespace dymaxion
 			return glm::transpose(mat3(east, north, up));
 		}
 
-		// inline constexpr scalar vertex_dual_area(const id vertex_id) const 
-		// {
-		// 	/*
-		// 	area in the projection is allocated equally to vertices,
-		// 	and the projection preserves area on the sphere,
-		// 	therefore all vertex duals take up the same area on the sphere,
-		// 	and this area is the total area divided by the number of vertices.
-		// 	*/
-		// 	return total_area() / voronoi.vertex_count;
-		// }
-
 		constexpr scalar vertex_dual_area(const id vertex_id) const 
 		{
 			const ScalarPoint idO(voronoi.grid_id(vertex_id));
+			const bool is_boundary = 
+				idO.square_id != voronoi.standardize(idO+vec2( 0,-1)).square_id ||
+				idO.square_id != voronoi.standardize(idO+vec2(-1,-0)).square_id;
+			if (is_boundary && idO.square_id > 2 && idO.square_position.x > 2)
+			{
+				// raise(SIGTRAP);
+			}
 			const vec3 pointO(voronoi.sphere_position(idO));
 			const vec3 offsetAB(voronoi.sphere_position(idO+vec2( 0.5, 0.5)) - pointO);
 			const vec3 offsetBC(voronoi.sphere_position(idO+vec2( 0.5,-0.5)) - pointO);

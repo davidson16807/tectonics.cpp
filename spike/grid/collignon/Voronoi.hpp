@@ -7,8 +7,8 @@
 
 // in-house libraries
 #include <units/si.hpp>             // si::units
+#include <grid/bijective/Interleaving.hpp>
 #include "Tesselation.hpp"
-#include "../Interleaving.hpp"
 
 namespace collignon 
 {
@@ -26,7 +26,7 @@ namespace collignon
         using vec3 = glm::vec<3,scalar,glm::defaultp>;
 
         const Tesselation<scalar> tesselation;
-        const grid::Interleaving<id> interleaving;
+        const bijective::Interleaving<id> interleaving;
 
     public:
         const id vertex_count_per_half_meridian;
