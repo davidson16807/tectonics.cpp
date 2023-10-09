@@ -79,6 +79,15 @@ namespace dymaxion
 			return V2.x + V2.y < scalar(1);
 		}
 
+		inline constexpr bool is_polar_point(
+			const Point<id,scalar> point
+		) const {
+			return is_polar_square_id(
+				point.square_id,
+				is_inverted_grid_position(point.square_position)
+			);
+		}
+
 		inline constexpr bool is_polar_sphere_position(
 			const scalar square_polarity, 
 			const vec3 V3, 

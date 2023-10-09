@@ -82,7 +82,7 @@ namespace dymaxion
         }
 
         constexpr IdPoint standardize(const IdPoint grid_id) const {
-            return IdPoint(standardized(ScalarPoint(grid_id)));
+            return IdPoint(standardize(ScalarPoint(grid_id)));
         }
 
         inline constexpr id memory_id(const IdPoint grid_id) const {
@@ -127,7 +127,7 @@ namespace dymaxion
             return ScalarPoint(
                 square_interleave.block_id(memory_id), 
                 vec2(row_interleave.element_id(square_element_id), row_interleave.block_id(square_element_id))
-            ) - vertex_count_per_triangle_leg_scalar;
+            );
         }
         inline constexpr ScalarPoint grid_position(const IdPoint grid_id) const
         {

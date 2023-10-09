@@ -50,6 +50,7 @@ namespace dymaxion
 	public:
 
 		const Voronoi<id,scalar> voronoi;
+		const Triangles<id,scalar> triangles;
 
 		using size_type = id;
 		using value_type = scalar;
@@ -57,7 +58,8 @@ namespace dymaxion
 		static constexpr id arrows_per_vertex = 4;
 
         inline constexpr explicit Grid(const scalar radius, const id vertex_count_per_meridian) : 
-        	voronoi(radius, vertex_count_per_meridian)
+        	voronoi  (radius, vertex_count_per_meridian),
+        	triangles()
     	{}
 
     	// NOTE: this method is for debugging, only
@@ -132,10 +134,27 @@ namespace dymaxion
 			return glm::normalize(arrow_offset(source_id, offset_id));
 		}
 
-		// normal of the arrow
+		// length of the arrow
 		inline constexpr scalar arrow_length(const id source_id, const id offset_id) const
 		{
 			return glm::length(arrow_offset(source_id, offset_id));
+		}
+
+		// `is_arrow_irregular()` indicates whether an arrow is irregular,
+		// and could cause artifacts if certain sensitive operations are applied
+		// (like divergence or laplacian) unless the arrow is ignored. 
+		// In the context of `dymaxion::Grid`s, 
+		// this occurs strictly when an arrow spans multiple polar squares.
+		inline constexpr bool is_arrow_irregular(const id source_id, const id offset_id) const 
+		{
+			const ScalarPoint id0 (voronoi.grid_position(source_id));
+			const ScalarPoint id1 (voronoi.standardize(id0 + vec2(arrow_offset_grid_position(offset_id))));
+			const bool is_boundary(id0.square_id != id1.square_id);
+			const bool is_polar(
+				triangles.is_polar_point(id0 / voronoi.vertex_count_per_triangle_leg_scalar) && 
+				triangles.is_polar_point(id1 / voronoi.vertex_count_per_triangle_leg_scalar)
+			);
+			return is_boundary && is_polar;
 		}
 
 		// length of the arrow's dual
