@@ -5,25 +5,30 @@
 namespace math{
 
 	template<typename T>
-	constexpr T rem(const T& a, const T& b)
+	inline constexpr T rem(const T& a, const T& b)
 	{
 	    return a - b * floor(a / b);
 	}
 
 	template<typename T>
-	constexpr T mod(const T& a, const T& b)
+	inline constexpr T mod(const T& a, const T& b)
 	{
 	    return rem(rem(a,b) + b, b);
 	}
 
 	template <typename T>
-	constexpr T sign(const T x) {
+	inline constexpr T sign(const T x) {
 		return std::signbit(x)? T(1):T(-1);
+	}
+
+	template <typename In1, typename In2> 
+	inline auto distance(const In1 a, const In2 b){
+		return std::abs(a-b);
 	}
 
 	/*
 	"erf" provides an approximation for the "error function": erf(x) = ∫ˣ exp(-t²)dt
-	It is accurate to within 0.02% over the range [0,10].
+	It is accurate to within 0.02% over the range [-10,10].
 	*/
 	template <typename T>
 	constexpr auto erf(const T x) {

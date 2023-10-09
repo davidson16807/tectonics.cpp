@@ -5,6 +5,8 @@
 #include <assert.h>  /* assert */
 
 // in-house libraries
+#include <math/special.hpp>
+
 #include "each.hpp"
 
 namespace whole
@@ -82,7 +84,7 @@ namespace whole
 		auto size = a.size();
 		for (std::size_t i = 0; i < size; ++i)
 		{
-			out += each::distance(a[i], b[i]);
+			out += math::distance(a[i], b[i]);
 		}
 		return out;
 	}
@@ -359,7 +361,7 @@ namespace whole
 	#if defined(__clang__)
 		const std::vector<const std::string> 
 	#else
-		const std::array<const std::string, 6>
+		const std::array<const std::string, 5>
 	#endif
 	shades {" ", "░", "▒", "▓", "█" };
 
@@ -388,7 +390,10 @@ namespace whole
 		}
 		else 
 		{
-		    return shades[int((shades.size()-1) * each::linearstep(lo, hi, a))];
+		    return shades[
+		    	std::clamp(int((shades.size()) * math::linearstep(lo, hi, a)), 
+		    				0, int(shades.size()-1))
+	    	];
 		}
 	}
 	template<>
@@ -401,7 +406,7 @@ namespace whole
 		std::string out("");
 		for (unsigned int i = 0; i < shades.size(); ++i)
 		{
-			auto bound = each::mix(float(lo), float(hi), float(i)/float(shades.size()));
+			auto bound = math::mix(float(lo), float(hi), float(i)/float(shades.size()));
 			out += shades[i];
 			out += " ≥ ";
 			out += std::to_string(bound);

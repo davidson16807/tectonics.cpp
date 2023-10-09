@@ -50,11 +50,10 @@ namespace dymaxion
 						std::cos(pi/2.0-dlat*i)*std::sin(dlon*j),
 						std::sin(pi/2.0-dlat*i)
 					));
-				auto foo = character(
+				out += character(
 			    	grid.vertex_frame(vertex_id, north_pole),
 			    	a[vertex_id],
 			    	lo,hi);
-				out += foo.size() > 0? foo : std::to_string(foo.size());
 			}
 			out += "\n";
 		}
