@@ -20,29 +20,6 @@ namespace dymaxion
     NOTE: SEE VECTOR CALCULUS MD FOR MORE EXPLANATION!
     */
 
-    template<typename id, typename scalar, typename In, typename Out>
-    void gradient(const Grid<id, scalar>& grid, const In& field, Out& out) {
-        // assert(grid.compatible(field));
-        id i, j;
-        const id N = grid.arrows_per_vertex;
-        typename In::value_type source_value;
-        typename In::value_type target_value;
-        scalar vertex_dual_area;
-        for (i = 0; i < grid.vertex_count(); ++i)
-        {
-            out[i] = typename Out::value_type(0);
-            vertex_dual_area = grid.vertex_dual_area(i);
-            // std::cout << vertex_dual_area << std::endl;
-            source_value = field[i];
-            for (j = 0; j < N; ++j)
-            {
-                target_value = field[grid.arrow_target_memory_id(i,j)];
-                out[i] += (target_value - source_value)
-                        * grid.arrow_dual_length(i,j) * grid.arrow_normal(i,j);
-            }
-            out[i] /= vertex_dual_area;
-        }
-    }
 
     template<typename id, typename scalar, typename In, typename Out>
     void square_id(const Grid<id, scalar>& grid, const In& field, Out& out) {
@@ -279,6 +256,29 @@ namespace dymaxion
         }
     }
 
+    template<typename id, typename scalar, typename In, typename Out>
+    void gradient(const Grid<id, scalar>& grid, const In& field, Out& out) {
+        bool is_irregular;
+        id i, j, offset_id;
+        const id N = grid.arrows_per_vertex;
+        typename In::value_type source_value;
+        scalar vertex_dual_area;
+        for (i = 0; i < grid.vertex_count(); ++i)
+        {
+            out[i] = typename Out::value_type(0);
+            vertex_dual_area = grid.vertex_dual_area(i);
+            // std::cout << vertex_dual_area << std::endl;
+            source_value = field[i];
+            for (j = 0; j < N; ++j)
+            {
+                is_irregular = grid.is_arrow_irregular(i,j);
+                offset_id = is_irregular? (j+N/2)%4 : j;
+                out[i] += (scalar(1-2*is_irregular) * (field[grid.arrow_target_memory_id(i,offset_id)] - source_value))
+                        * grid.arrow_dual_length(i,j) * grid.arrow_normal(i,j);
+            }
+            out[i] /= vertex_dual_area;
+        }
+    }
 
     template<typename id, typename scalar, typename In, typename Out>
     void divergence(const Grid<id,scalar>& grid, const In& field, Out& out) {
@@ -296,7 +296,7 @@ namespace dymaxion
             for (j = 0; j < N; ++j)
             {
                 is_irregular = grid.is_arrow_irregular(i,j);
-                offset_id = is_irregular? j+N/2 : j;
+                offset_id = is_irregular? (j+N/2)%4 : j;
                 out[i] += glm::dot(scalar(1-2*is_irregular) * (field[grid.arrow_target_memory_id(i,offset_id)] - source_value),
                               grid.arrow_dual_length(i,j) * grid.arrow_normal(i,j));
             }
@@ -320,7 +320,7 @@ namespace dymaxion
             for (j = 0; j < N; ++j)
             {
                 is_irregular = grid.is_arrow_irregular(i,j);
-                offset_id = is_irregular? j+N/2 : j;
+                offset_id = is_irregular? (j+N/2)%4 : j;
                 out[i] += glm::cross(scalar(1-2*is_irregular) * (field[grid.arrow_target_memory_id(i,offset_id)] - source_value),
                               grid.arrow_dual_length(i,j) * grid.arrow_normal(i,j));
             }
@@ -342,7 +342,7 @@ namespace dymaxion
             for (j = 0; j < N; ++j)
             {
                 is_irregular = grid.is_arrow_irregular(i,j);
-                offset_id = is_irregular? j+N/2 : j;
+                offset_id = is_irregular? (j+N/2)%4 : j;
                 out[i] += scalar(1-2*is_irregular) * (field[grid.arrow_target_memory_id(i,offset_id)] - source_value)
                         *  grid.arrow_dual_length(i,j) / grid.arrow_length(i,j);
             }
