@@ -50,7 +50,6 @@ namespace dymaxion
 	public:
 
 		const Voronoi<id,scalar> voronoi;
-		const Triangles<id,scalar> triangles;
 
 		using size_type = id;
 		using value_type = scalar;
@@ -58,8 +57,7 @@ namespace dymaxion
 		static constexpr id arrows_per_vertex = 4;
 
         inline constexpr explicit Grid(const scalar radius, const id vertex_count_per_meridian) : 
-        	voronoi  (radius, vertex_count_per_meridian),
-        	triangles()
+        	voronoi  (radius, vertex_count_per_meridian)
     	{}
 
     	// NOTE: this method is for debugging, only
@@ -149,12 +147,7 @@ namespace dymaxion
 		{
 			const ScalarPoint id0 (voronoi.grid_position(source_id));
 			const ScalarPoint id1 (voronoi.standardize(id0 + vec2(arrow_offset_grid_position(offset_id))));
-			const bool is_boundary(id0.square_id != id1.square_id);
-			const bool is_polar(
-				triangles.is_polar_point(id0 / voronoi.vertex_count_per_triangle_leg_scalar) && 
-				triangles.is_polar_point(id1 / voronoi.vertex_count_per_triangle_leg_scalar)
-			);
-			return is_boundary && is_polar;
+			return id0.square_id != id1.square_id;
 		}
 
 		// length of the arrow's dual

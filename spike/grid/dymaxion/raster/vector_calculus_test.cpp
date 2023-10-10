@@ -333,13 +333,13 @@ TEST_CASE( "Scalar Raster laplacian", "[dymaxion]" ) {
         std::cout << "is_arrow_irregular3" << std::endl;
         std::cout << adapter.print(
             DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, dymaxion::is_arrow_irregular3)(scalar_rasters[i]));
-        std::cout << "∇²:" << std::endl;
-        std::cout << adapter.print(
-            DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, dymaxion::laplacian)(scalar_rasters[i]));
         std::cout << "∇⋅∇:" << std::endl;
         std::cout << adapter.print(
             DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, dymaxion::divergence)
                 (DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::gradient)(scalar_rasters[i])));
+        std::cout << "∇²:" << std::endl;
+        std::cout << adapter.print(
+            DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, dymaxion::laplacian)(scalar_rasters[i]));
         std::cout << "error:" << std::endl;
         std::cout << adapter.print(DYMAXION_TEST_BINARY_OUT_PARAMETER(double,grid,each::distance)(
             DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, dymaxion::divergence)
