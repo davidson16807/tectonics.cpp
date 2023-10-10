@@ -138,18 +138,6 @@ namespace dymaxion
 			return glm::length(arrow_offset(source_id, offset_id));
 		}
 
-		// `is_arrow_irregular()` indicates whether an arrow is irregular,
-		// and could cause artifacts if certain sensitive operations are applied
-		// (like divergence or laplacian) unless the arrow is ignored. 
-		// In the context of `dymaxion::Grid`s, 
-		// this occurs strictly when an arrow spans multiple polar squares.
-		inline constexpr bool is_arrow_irregular(const id source_id, const id offset_id) const 
-		{
-			const ScalarPoint id0 (voronoi.grid_position(source_id));
-			const ScalarPoint id1 (voronoi.standardize(id0 + vec2(arrow_offset_grid_position(offset_id))));
-			return id0.square_id != id1.square_id;
-		}
-
 		// length of the arrow's dual
 		constexpr scalar arrow_dual_length(const id source_id, const id offset_id) const
 		{
@@ -158,6 +146,15 @@ namespace dymaxion
 					voronoi.sphere_position( midpointOB + scalar(0.5)*vec2(arrow_offset_grid_position((offset_id+1)%arrows_per_vertex)) ),
 				 	voronoi.sphere_position( midpointOB + scalar(0.5)*vec2(arrow_offset_grid_position((offset_id-1)%arrows_per_vertex)) )
 				);
+		}
+
+		// `vertex_representative()` returns the memory id of a vertex
+		// whose associated arrows should not cause artifacts during certain sensitive operations
+		// (like divergence or laplacian) while also being physically near the vertex of the specified `vertex_id`,
+		// thereby providing an adequate representation for the vertex with irregular edges.
+		inline constexpr id vertex_representative(const id vertex_id) const 
+		{
+			return voronoi.memory_id(clamp(voronoi.grid_id(vertex_id), 1, voronoi.vertex_count_per_triangle_leg-2));
 		}
 
 		inline constexpr vec3 vertex_position(const id vertex_id) const 
@@ -191,13 +188,6 @@ namespace dymaxion
 		constexpr scalar vertex_dual_area(const id vertex_id) const 
 		{
 			const ScalarPoint idO(voronoi.grid_id(vertex_id));
-			const bool is_boundary = 
-				idO.square_id != voronoi.standardize(idO+vec2( 0,-1)).square_id ||
-				idO.square_id != voronoi.standardize(idO+vec2(-1,-0)).square_id;
-			if (is_boundary && idO.square_id > 2 && idO.square_position.x > 2)
-			{
-				// raise(SIGTRAP);
-			}
 			const vec3 pointO(voronoi.sphere_position(idO));
 			const vec3 offsetAB(voronoi.sphere_position(idO+vec2( 0.5, 0.5)) - pointO);
 			const vec3 offsetBC(voronoi.sphere_position(idO+vec2( 0.5,-0.5)) - pointO);
