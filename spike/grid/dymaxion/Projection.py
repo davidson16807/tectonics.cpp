@@ -82,7 +82,6 @@ class Projection:
 		self.triangles = triangle
 
 	def standardize(self, grid_id):
-		grid_id = (0,glm.vec2(0,0.2))
 		i,V2 = grid_id
 		modded = V2%1
 		square_polarity = glm.vec2(self.squares.polarity(i))
@@ -102,9 +101,6 @@ class Projection:
 		# However the case where x=1 and y=1 is still valid and must be supported.
 		# Therefore, we declare that standardize() is identity if both x≥1 and y≥1.
 		standardized  = grid_id if is_corner else ((i+di)%square_count, flipped)
-		print(grid_id)
-		print(standardized)
-		breakpoint()
 		return standardized
 
 	def grid_id(self, sphere_position):
