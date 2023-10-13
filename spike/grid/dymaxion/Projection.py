@@ -123,10 +123,13 @@ class Projection:
 		is_polar = self.triangles.is_polar_sphere_position(square_polarity, V3, W,E)
 		is_inverted = self.triangles.is_inverted_square_id(i, is_polar)
 		O = self.triangles.origin(Oid, square_polarity, is_polar)
-		basis = self.triangles.basis(is_inverted,W,E, O)
-		Nhat = glm.cross(basis[0], basis[1])
-		triangle_position = glm.inverse(basis) * self.triangles.plane_project(V3,Nhat,O)
-		V2 = triangle_position.xy if is_inverted else 1-triangle_position.xy
+		IW, JW = glm.normalize(W+O), glm.normalize(glm.cross(W,O))
+		IE, JE = glm.normalize(O+E), glm.normalize(glm.cross(O,E))
+		IX, JX = (IE,JE) if is_inverted else (IW,JW)
+		IY, JY = (IW,JW) if is_inverted else (IE,JE)
+		x = (math.atan2(glm.dot(V3,JX), glm.dot(V3,IX)))%1
+		y = (math.atan2(glm.dot(V3,JY), glm.dot(V3,IY)))%1
+		V2 = glm.vec2(x,y) # if is_inverted else 1-glm.vec2(x,y)
 		return i, V2
 
 	def position(self, grid_id):
@@ -206,28 +209,15 @@ standardize_offset = [V-N for V,N in zip(standardize_sphere_position, position)]
 domain = dict(zip('xyz', vector_aoa(position)))
 
 # px.scatter_3d(**domain,color=square_id).show()
-# px.scatter_3d(**domain,color=square_x).show()
-# px.scatter_3d(**domain,color=square_y).show()
+px.scatter_3d(**domain,color=square_x).show()
+px.scatter_3d(**domain,color=square_y).show()
+print(min(square_x))
+print(min(square_y))
+print(max(square_x))
+print(max(square_y))
 
-# px.scatter_3d(**domain,color=Nx).show()
-# px.scatter_3d(**domain,color=roundtrip_x).show()
-# px.scatter_3d(**domain,color=Ny).show()
-# px.scatter_3d(**domain,color=roundtrip_y).show()
-# px.scatter_3d(**domain,color=Nz).show()
-# px.scatter_3d(**domain,color=roundtrip_z).show()
-
-# go.Figure(data=go.Cone(**domain, **dict(zip('uvw', vector_aoa(reconstructed))))).show()
-# # go.Figure(data=go.Cone(**domain, **dict(zip('uvw', vector_aoa(offset))), sizeref=0.03)).show()
+# go.Figure(data=go.Cone(**domain, **dict(zip('uvw', vector_aoa(offset))), sizeref=0.03)).show()
 # px.scatter_3d(**domain,color=distance).show()
-# px.scatter_3d(**domain,color=similarity).show()
-go.Figure(data=go.Cone(**domain, **dict(zip('uvw', vector_aoa(standardize_offset))), sizeref=2)).show()
-# px.scatter_3d(**domain,color=standardize_i).show()
-# px.scatter_3d(**domain,color=standardize_x).show()
-# px.scatter_3d(**domain,color=standardize_y).show()
+# # px.scatter_3d(**domain,color=similarity).show()
+# go.Figure(data=go.Cone(**domain, **dict(zip('uvw', vector_aoa(standardize_offset))), sizeref=2)).show()
 
-# debug_vector_x = [V2.x for V2 in debug_vector]
-# debug_vector_y = [V2.y for V2 in debug_vector]
-# px.scatter_3d(**domain,color=debug_vector_x).show()
-# px.scatter_3d(**domain,color=debug_vector_y).show()
-
-# px.scatter_3d(**domain,color=debug_scalar).show()
