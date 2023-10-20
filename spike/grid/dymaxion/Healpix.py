@@ -53,13 +53,15 @@ class Collignon:
 		dlongitude = math.remainder(self.turn+longitude-self.longitude0, self.turn)
 		legscale = math.sqrt(1-abs(V3.z))
 		return glm.vec2(
-			legscale*2*dlongitude/self.leglength,
-			(1-legscale)*self.leglength)
+			legscale*2*dlongitude/self.leglength, 
+			glm.sign(V3.z)*(1-legscale)*self.leglength)
 
 	def position(self, grid_id):
-		dlongitude,y = grid_id.x, grid_id.y
+		x,y = grid_id.x, grid_id.y
+		legscale = 1-abs(y/self.leglength)
+		z = glm.sign(y) * (1-legscale**2)
+		dlongitude = x*self.leglength/(legscale*2)
 		longitude = self.longitude0 + dlongitude
-		z = 1-y**2
 		r = math.sqrt(1-z**2)
 		return glm.vec3(
 			r*math.cos(longitude),
@@ -79,11 +81,12 @@ class Lambert:
 			V3.z)
 
 	def position(self, grid_id):
-		lon,z = grid_id.x, grid_id.y
+		dlongitude,z = grid_id.x, grid_id.y
+		longitude = self.longitude0 + dlongitude
 		r = math.sqrt(1-z**2)
 		return glm.vec3(
-			r*math.cos(lon),
-			r*math.sin(lon),
+			r*math.cos(longitude),
+			r*math.sin(longitude),
 			z)
 
 class Triangle:
@@ -124,6 +127,9 @@ class Projection:
 	def __init__(self, square, triangle):
 		self.squares = square
 		self.triangles = triangle
+		self.total_area = 4*math.pi
+		self.square_count = 20
+		self.area_per_square = self.total_area/self.square_count
 
 	def standardize(self, grid_id):
 		i,V2 = grid_id
@@ -162,12 +168,11 @@ class Projection:
 		Eid = i + 2 # east   longitude id
 		W = self.squares.westmost(Wid) # W: westernmost triangle vertex
 		E = self.squares.westmost(Eid) # E: easternmost triangle vertex
-		square_polarity = self.squares.polarity(i)
 		is_polar = self.triangles.is_polar_sphere_position(V3)
 		is_inverted = self.triangles.is_inverted_square_id(i, is_polar)
-		O = self.triangles.origin(Oid, square_polarity, is_polar)
+		O = self.triangles.origin(Oid, self.squares.polarity(i), is_polar)
 		projection = (
-			Collignon(4*math.pi/20, Oid*id_length) if is_polar else 
+			Collignon(self.area_per_square, Oid*id_length) if is_polar else 
 			Lambert(Oid*id_length))
 		basis = self.triangles.basis(
 			is_inverted,
@@ -175,25 +180,41 @@ class Projection:
 			projection.grid_id(E),
 			projection.grid_id(O)
 		)
-		triangle_position = glm.inverse(basis) * (projection.grid_id(V3)-projection.grid_id(O))
-		V2 = triangle_position if is_inverted else 1-triangle_position
+		# W2: position on a triangle in projected coordinates
+		W2 = projection.grid_id(V3)-projection.grid_id(O)
+		# U2: position on a triangle in stored coordinates
+		U2 = glm.inverse(basis) * W2
+		# V2: position on a square
+		V2 = U2 if is_inverted else 1-U2
 		return self.standardize((i, V2))
 
 	def position(self, grid_id):
+		id_length = half_square_longitude_arc_length
+		# V2: position on a square
 		i,V2 = (grid_id)
 		# i,V2 = self.standardize(grid_id)
 		is_inverted = self.triangles.is_inverted_grid_id(V2)
 		is_polar = self.triangles.is_polar_square_id(i, is_inverted)
-		triangle_position = V2 if is_inverted else 1-V2
+		# U2: position on a triangle in stored coordinates
+		U2 = V2 if is_inverted else 1-V2
 		Wid = i     # west   longitude id
 		Oid = i + 1 # origin longitude id
 		Eid = i + 2 # east   longitude id
+		projection = (
+			Collignon(self.area_per_square, Oid*id_length) if is_polar else 
+			Lambert(Oid*id_length))
 		W = self.squares.westmost(Wid) # W: westernmost triangle vertex
 		E = self.squares.westmost(Eid) # E: easternmost triangle vertex
 		O = self.triangles.origin(Oid, self.squares.polarity(i), is_polar)
-		basis = self.triangles.basis(is_inverted,W,E, O)
-		U2 = triangle_position
-		return self.triangles.sphere_project(basis * glm.vec3(U2.x,U2.y,1))
+		basis = self.triangles.basis(
+			is_inverted,
+			projection.grid_id(W),
+			projection.grid_id(E),
+			projection.grid_id(O)
+		)
+		# W2: position on a triangle in projected coordinates
+		W2 = basis * U2
+		return projection.position(W2+projection.grid_id(O))
 
 
 projection = Projection(Square(), Triangle())
@@ -218,9 +239,9 @@ grid_id = [
 	projection.grid_id(V3)
 	for V3 in position]
 
-# reconstructed = [
-# 	projection.position(iV2)
-# 	for iV2 in grid_id]
+reconstructed = [
+	projection.position(iV2)
+	for iV2 in grid_id]
 
 standardize = [
 	# projection.standardize(i, V2 + glm.vec2(-0.1,0))
@@ -249,10 +270,10 @@ standardize_i = [i    for i,V2 in standardize]
 standardize_x = [V2.x for i,V2 in standardize]
 standardize_y = [V2.y for i,V2 in standardize]
 
-# offset     = [V-N for V,N in zip(reconstructed, position)]
-# distance   = [glm.length(o) for o in offset]
-# similarity = [glm.dot(V,N)/(glm.length(V)*glm.length(N)) 
-# 	for V,N in zip(reconstructed, position)]
+offset     = [V-N for V,N in zip(reconstructed, position)]
+distance   = [glm.length(o) for o in offset]
+similarity = [glm.dot(V,N)/(glm.length(V)*glm.length(N)) 
+	for V,N in zip(reconstructed, position)]
 
 # standardize_offset = [V-N for V,N in zip(standardize_sphere_position, position)]
 
@@ -262,7 +283,8 @@ px.scatter_3d(**domain,color=square_id).show()
 px.scatter_3d(**domain,color=square_x).show()
 px.scatter_3d(**domain,color=square_y).show()
 
-# # go.Figure(data=go.Cone(**domain, **dict(zip('uvw', vector_aoa(offset))), sizeref=0.03)).show()
-# px.scatter_3d(**domain,color=distance).show()
+# go.Figure(data=go.Cone(**domain, **dict(zip('uvw', vector_aoa(offset))), sizeref=0.03)).show()
+px.scatter_3d(**domain,color=distance).show()
 # px.scatter_3d(**domain,color=similarity).show()
+
 # go.Figure(data=go.Cone(**domain, **dict(zip('uvw', vector_aoa(standardize_offset))), sizeref=2)).show()
