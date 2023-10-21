@@ -245,12 +245,12 @@ reconstructed = [
 
 standardize = [
 	# projection.standardize(i, V2 + glm.vec2(-0.1,0))
-	projection.standardize((i, V2 + glm.vec2(0,-0.1)))
+	projection.standardize((i, V2 + glm.vec2(0,0.1)))
 	for i,V2 in grid_id]
 
-# standardize_sphere_position = [
-# 	projection.position(iV2)
-# 	for iV2 in standardize]
+standardize_sphere_position = [
+	projection.position(iV2)
+	for iV2 in standardize]
 
 def vector_aoa(vector_aos):
 	return [
@@ -275,7 +275,7 @@ distance   = [glm.length(o) for o in offset]
 similarity = [glm.dot(V,N)/(glm.length(V)*glm.length(N)) 
 	for V,N in zip(reconstructed, position)]
 
-# standardize_offset = [V-N for V,N in zip(standardize_sphere_position, position)]
+standardize_offset = [V-N for V,N in zip(standardize_sphere_position, position)]
 
 domain = dict(zip('xyz', vector_aoa(position)))
 
@@ -287,4 +287,4 @@ px.scatter_3d(**domain,color=square_y).show()
 px.scatter_3d(**domain,color=distance).show()
 # px.scatter_3d(**domain,color=similarity).show()
 
-# go.Figure(data=go.Cone(**domain, **dict(zip('uvw', vector_aoa(standardize_offset))), sizeref=2)).show()
+go.Figure(data=go.Cone(**domain, **dict(zip('uvw', vector_aoa(standardize_offset))), sizeref=2)).show()
