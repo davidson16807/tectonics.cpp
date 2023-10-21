@@ -19,8 +19,8 @@ prototype?
 x	x		ignoring irregular arrows
 x	x		regularizing irregular vertices
 		methods:
-			system of equations
 			curvilinear method
+			weighted multilinear
 		polyhedron:
 			pentakis dodecahedron
 			fibonacci grid
