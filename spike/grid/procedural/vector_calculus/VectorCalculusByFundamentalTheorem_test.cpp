@@ -35,7 +35,8 @@
 #include <grid/dymaxion/Grid.hpp>
 #include <grid/dymaxion/series.hpp>
 
-#include "../string_cast.hpp"
+#include <grid/spheroidal/string_cast.hpp>
+
 #include "VectorCalculusByFundamentalTheorem.hpp"
 
 #include <test/properties.hpp>  
@@ -64,7 +65,7 @@ namespace dymaxion {
         template<typename Series>
         std::string print(const Series& a) const {
             // return dymaxion::to_string(grid, a, 200);
-            return raster::to_string(grid, a);
+            return spheroidal::to_string(grid, a);
         }
 
     };
@@ -261,7 +262,7 @@ TEST_CASE( "Raster curl", "[dymaxion]" ) {
 }
 
 TEST_CASE( "Scalar Raster laplacian", "[dymaxion]" ) {
-    raster::VectorCalculusByFundamentalTheorem operators;
+    procedural::VectorCalculusByFundamentalTheorem operators;
     for (int i = 0; i < 1; ++i)
     {
         std::cout << adapter.print(scalar_rasters[i]);

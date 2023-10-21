@@ -1,7 +1,7 @@
 
 #include "Grid.hpp"
 
-namespace collignon 
+namespace procedural 
 {
 
     /*

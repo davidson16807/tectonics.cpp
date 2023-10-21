@@ -1,6 +1,8 @@
 #pragma once
 
-namespace raster 
+#include "../Grid.hpp"
+
+namespace procedural 
 {
 
     /*

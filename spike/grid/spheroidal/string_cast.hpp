@@ -1,5 +1,5 @@
 
-namespace raster 
+namespace spheroidal 
 {
 
 	template<int L, typename T, glm::qualifier Q>
