@@ -29,6 +29,6 @@ x	x		gnomonic (already effectively done, but required work to realize this)
 x			healpix equal-area
 			snyder equal-area
 		other:
-			move vector calculus to classes (necessary to attempt alternate methods)
+x	x		move vector calculus to classes (necessary to attempt alternate methods)
 			collignon with regularized vertices (easy, more out of curiosity)
 

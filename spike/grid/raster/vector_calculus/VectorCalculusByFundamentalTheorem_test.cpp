@@ -32,10 +32,11 @@
 #include <field/noise/SquareNoise.hpp>
 #include <field/VectorZip.hpp>
 
-#include "../Grid.hpp"
-#include "series.hpp"
-#include "string_cast.hpp"
-#include "FundamentalTheoremOperators.hpp"
+#include <grid/dymaxion/Grid.hpp>
+#include <grid/dymaxion/series.hpp>
+
+#include "../string_cast.hpp"
+#include "VectorCalculusByFundamentalTheorem.hpp"
 
 #include <test/properties.hpp>  
 #include <test/macros.hpp>  
@@ -63,7 +64,7 @@ namespace dymaxion {
         template<typename Series>
         std::string print(const Series& a) const {
             // return dymaxion::to_string(grid, a, 200);
-            return dymaxion::to_string(grid, a);
+            return raster::to_string(grid, a);
         }
 
     };
@@ -207,9 +208,6 @@ dymaxion::Adapter adapter(grid, 1e-5, grid.vertex_count());
 
 TEST_CASE( "Raster gradient", "[dymaxion]" ) {
 
-
-
-
     // REQUIRE(test::determinism(adapter, 
     //     "dymaxion::gradient", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::gradient),
     //     scalar_rasters
@@ -263,7 +261,7 @@ TEST_CASE( "Raster curl", "[dymaxion]" ) {
 }
 
 TEST_CASE( "Scalar Raster laplacian", "[dymaxion]" ) {
-    rasters::FundamentalTheoremOperators operators;
+    raster::VectorCalculusByFundamentalTheorem operators;
     for (int i = 0; i < 1; ++i)
     {
         std::cout << adapter.print(scalar_rasters[i]);

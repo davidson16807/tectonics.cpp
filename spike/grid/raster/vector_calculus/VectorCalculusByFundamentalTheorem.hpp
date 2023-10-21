@@ -1,8 +1,6 @@
 #pragma once
 
-#include "../Grid.hpp"
-
-namespace rasters 
+namespace raster 
 {
 
     /*
@@ -16,11 +14,11 @@ namespace rasters
         arrow_source_vertex_id
     */
 
-    struct FundamentalTheoremOperators
+    struct VectorCalculusByFundamentalTheorem
     {
 
         /*
-        NOTE: See FundamentalTheoremOperators.md for more explanation!
+        NOTE: See VectorCalculusByFundamentalTheorem.md for more explanation!
         */
 
         template<typename Grid, typename In, typename Out>
