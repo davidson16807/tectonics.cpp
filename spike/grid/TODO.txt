@@ -1,0 +1,34 @@
+∇⋅f = Tr(∇⊗f)
+∇×f = Eᵢⱼₖ∇ⁱfʲ
+
+∇ₓf = J⁻¹∇ₐf
+∇ₓ⋅f = Tr(J⁻¹∇ₐ⊗f)
+∇ₓ×f = Eᵢⱼₖ(J⁻¹∇ₐ)ⁱfʲ
+
+∇ₓ⋅∇ₓf=Tr(J⁻¹∇ₐ⊗(J⁻¹∇ₐf))
+
+∇ₓ⋅∇ₓf=(J⁻¹∇ₐ⊗(J⁻¹∇ₐf))ⁱⁱ
+
+
+
+
+
+prototype?
+	production?
+		mitigations:
+x	x		ignoring irregular arrows
+x	x		regularizing irregular vertices
+		methods:
+			system of equations
+			curvilinear method
+		polyhedron:
+			pentakis dodecahedron
+			fibonacci grid
+		projections:
+x	x		gnomonic (already effectively done, but required work to realize this)
+x			healpix equal-area
+			snyder equal-area
+		other:
+			move vector calculus to classes (necessary to attempt alternate methods)
+			collignon with regularized vertices (easy, more out of curiosity)
+
