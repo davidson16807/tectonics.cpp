@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-namespace bijective
+namespace layered
 {
 
 	/*

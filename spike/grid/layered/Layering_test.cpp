@@ -17,15 +17,15 @@ TEST_CASE( "Layering.layer_to_height() / Layering.height_to_layer()", "[bijectiv
     std::vector<float> heights{0.0f, 1.0f, 4.0f, 5.0f};
     std::vector<int>   ints   {-1, 0, 1, 5, 6, 7, 8};
     std::vector<int>   layers {0, 1, 5, 6};
-    bijective::Layering<int, float> layering(0.0f, 5.0f, 7);
+    layered::Layering<int, float> layering(0.0f, 5.0f, 7);
 
     REQUIRE(test::determinism(exact,
-        "Layering.height_to_layer(…)", TEST_UNARY(bijective::Layering(0.0f, 5.0f, 7).height_to_layer),
+        "Layering.height_to_layer(…)", TEST_UNARY(layered::Layering(0.0f, 5.0f, 7).height_to_layer),
         heights
     ));
 
     REQUIRE(test::determinism(exact,
-        "Layering.layer_to_height(…)", TEST_UNARY(bijective::Layering(0.0f, 5.0f, 7).layer_to_height),
+        "Layering.layer_to_height(…)", TEST_UNARY(layered::Layering(0.0f, 5.0f, 7).layer_to_height),
         ints
     ));
 
