@@ -63,14 +63,14 @@ namespace dymaxion
 			const id i,
 			const bool is_polar
 		) const {
-			return is_polar == math::mod(i,2);
+			return is_polar == math::modulus(i,2);
 		}
 
 		inline constexpr bool is_polar_square_id(
 			const id i,
 			const bool is_inverted
 		) const {
-			return is_inverted == math::mod(i,2);
+			return is_inverted == math::modulus(i,2);
 		}
 
 		inline constexpr bool is_inverted_grid_position(

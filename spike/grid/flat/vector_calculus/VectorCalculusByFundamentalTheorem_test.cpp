@@ -83,6 +83,7 @@ namespace dymaxion {
     [=](auto x, auto y, auto z){ std::vector<TYPE> out(GRID.vertex_count()); (F(x,y,z,out)); return out; }
 
 
+dymaxion::Grid grid(0.1, 50);
 
 std::vector elias_scalar_rasters{
     known::store(
@@ -261,7 +262,6 @@ TEST_CASE( "Raster curl", "[dymaxion]" ) {
 }
 
 TEST_CASE( "Scalar Raster laplacian", "[dymaxion]" ) {
-    dymaxion::Grid grid(0.1, 100);
     procedural::VectorCalculusByFundamentalTheorem operators;
     for (int i = 0; i < 1; ++i)
     {

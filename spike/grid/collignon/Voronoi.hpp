@@ -6,7 +6,6 @@
 
 
 // in-house libraries
-#include <units/si.hpp>             // si::units
 #include <grid/bijective/Interleaving.hpp>
 #include "Tesselation.hpp"
 

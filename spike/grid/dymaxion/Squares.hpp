@@ -47,7 +47,7 @@ namespace dymaxion
 		}
 
 		inline constexpr vec3 westmost(const id i) const {
-			scalar z         (scalar(0.5) - scalar(math::mod(i,id(2))));
+			scalar z         (scalar(0.5) - scalar(math::modulus(i,id(2))));
 			scalar longitude (i*half_subgrid_longitude_arc_length);
 			return cartesian_from_zlon(z, longitude);
 		}

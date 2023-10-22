@@ -5,6 +5,7 @@
 #include <assert.h>  /* assert */
 
 // in-house libraries
+#include <math/special.hpp>
 
 namespace known
 {
@@ -170,8 +171,8 @@ namespace known
 	// template <typename In1> inline auto asech(const In1 a){ return std::asech(a);}
 	// template <typename In1> inline auto acsch(const In1 a){ return std::acsch(a);}
 	// template <typename In1> inline auto acoth(const In1 a){ return std::acoth(a);}
-	template <typename In1> inline auto radians(const In1 a){ return In1(M_PI/180.) * a;}
-	template <typename In1> inline auto degrees(const In1 a){ return In1(180./M_PI) * a;}
+	template <typename In1> inline auto radians(const In1 a){ return In1(math::pi/180.) * a;}
+	template <typename In1> inline auto degrees(const In1 a){ return In1(180./math::pi) * a;}
 
 	// KNOWN_UNARY_FUNCTION(Pow,         pow)
 	KNOWN_UNARY_FUNCTION(Sign,        sign)

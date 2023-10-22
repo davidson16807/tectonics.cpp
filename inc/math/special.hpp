@@ -4,16 +4,18 @@
 
 namespace math{
 
+	const double pi = 3.141592653589793238462643383279502884197169399;
+
 	template<typename T>
-	inline constexpr T rem(const T& a, const T& b)
+	inline constexpr T remainder(const T& a, const T& b)
 	{
 	    return a - b * floor(a / b);
 	}
 
 	template<typename T>
-	inline constexpr T mod(const T& a, const T& b)
+	inline constexpr T modulus(const T& a, const T& b)
 	{
-	    return rem(rem(a,b) + b, b);
+	    return remainder(remainder(a,b) + b, b);
 	}
 
 	template <typename T>
@@ -45,7 +47,7 @@ namespace math{
 	constexpr T erfinv(const T x) {
 		T a(0.147);
 		T f(std::log(T(1)-x*x));
-		T g(T(2)/(M_PI*a) + f/T(2));
+		T g(T(2)/(pi*a) + f/T(2));
 		return sign(x) * std::sqrt( std::sqrt(g*g - f/a) - g );
 	}
 

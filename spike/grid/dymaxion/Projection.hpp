@@ -74,7 +74,7 @@ namespace dymaxion
 			vec2  V2 (grid_id.square_position);
 			// vec2  V2 (0,0);
 			vec2  square_polarity (squares.polarity(i));
-			vec2  modded        (math::mod(V2, vec2(s1)));
+			vec2  modded        (math::modulus(V2, vec2(s1)));
 			// std::cout << glm::to_string(glm::abs(V2-modded)) << std::endl;
 			bvec2 are_nonlocal  (glm::greaterThan(glm::abs(V2-modded), vec2(epsilon)));
 			// std::cout << glm::to_string(are_nonlocal) << std::endl;
@@ -92,7 +92,7 @@ namespace dymaxion
 		    and these solutions do not represent the same point in space.
 		    However the case where x=1 and y=1 is still valid and must be supported.
 		    Therefore, we declare that standardize() is identity if both x≥1 and y≥1.*/
-			Point standardized  (is_corner? grid_id : Point(math::mod(i+di,square_count), flipped));
+			Point standardized  (is_corner? grid_id : Point(math::modulus(i+di,square_count), flipped));
 			// raise(SIGTRAP);
 			return standardized;
 		}
@@ -106,7 +106,7 @@ namespace dymaxion
 			id     Sid (i2*std::round((EWid-s1)/s2)+i1);
 			vec3   N   (squares.westmost(Nid)); // wrong
 			vec3   S   (squares.westmost(Sid));
-			id     i   (math::mod(
+			id     i   (math::modulus(
 						std::min(Nid,Sid)-i1 + id(triangles.is_eastern_sphere_position(V3,N,S)),  
 						square_count));
 			id     Wid (i);

@@ -1,4 +1,6 @@
 
+#include <math/special.hpp>
+
 namespace spheroidal 
 {
 
@@ -36,17 +38,16 @@ namespace spheroidal
 	{
 		std::string out("\n");
 		int aspect_ratio(4);
-		double pi(M_PI);
-		double dlon(2.0*pi/line_char_width);
-		double dlat(pi/(line_char_width/aspect_ratio));
+		double dlon(2.0*math::pi/line_char_width);
+		double dlat(math::pi/(line_char_width/aspect_ratio));
 		using vec3 = glm::vec<3,scalar,glm::defaultp>;
 		for (id i = 0; i < line_char_width/aspect_ratio; ++i){
 			for (id j = 0; j < line_char_width; ++j){
 				id vertex_id = grid.voronoi.memory_id(
 					vec3(
-						std::cos(pi/2.0-dlat*i)*std::cos(dlon*j),
-						std::cos(pi/2.0-dlat*i)*std::sin(dlon*j),
-						std::sin(pi/2.0-dlat*i)
+						std::cos(math::pi/2.0-dlat*i)*std::cos(dlon*j),
+						std::cos(math::pi/2.0-dlat*i)*std::sin(dlon*j),
+						std::sin(math::pi/2.0-dlat*i)
 					));
 				out += character(
 			    	grid.vertex_frame(vertex_id, north_pole),

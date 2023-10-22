@@ -8,6 +8,8 @@
 #define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
 #include <glm/common.hpp>	// all the GLSL common functions: abs, floor, etc.
 
+#include <math/special.hpp>
+
 #include "each.hpp"
 
 namespace whole {
@@ -52,13 +54,13 @@ namespace whole {
 		}
 		else if (glm::length(V) < hi * T(2./3.))
 		{
-			T turn = (std::atan2(V.y, V.x)+M_PI)/(2.*M_PI);
+			T turn = (std::atan2(V.y, V.x)+math::pi)/(2.*math::pi);
 			int i  = std::clamp(int(weak.size()*turn), 0, int(weak.size()-1));
 			return weak[i];
 		}
 		else
 		{
-			T turn = (std::atan2(V.y, V.x)+M_PI)/(2.*M_PI);
+			T turn = (std::atan2(V.y, V.x)+math::pi)/(2.*math::pi);
 			int i  = std::clamp(int(strong.size()*turn), 0, int(strong.size()-1));
 			return strong[i];
 		}
