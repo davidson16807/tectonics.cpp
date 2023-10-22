@@ -50,8 +50,8 @@ TEST_CASE( "LayeredRaster gradient determinism", "[rasters]" ) {
 
 
 //     auto a           = make_LayeredRaster<float>(icosphere_grid);
-//     auto A_ids       = make_LayeredRaster<uint>(icosphere_grid);
-//     auto Ai_ids      = make_LayeredRaster<uint>(icosphere_grid);
+//     auto A_ids       = make_LayeredRaster<unsigned int>(icosphere_grid);
+//     auto Ai_ids      = make_LayeredRaster<unsigned int>(icosphere_grid);
 //     auto A_pos       = make_LayeredRaster<glm::vec3>(icosphere_grid);
 //     auto Ai_pos      = make_LayeredRaster<glm::vec3>(icosphere_grid);
 //     auto A_a         = make_LayeredRaster<float>(icosphere_grid);
@@ -89,8 +89,8 @@ TEST_CASE( "LayeredRaster gradient determinism", "[rasters]" ) {
 //     MeshCache icosphere2(icosphere_mesh2.vertices, icosphere_mesh2.faces);
 
 //     auto a           = make_LayeredRaster<float>(icosphere1.vertex_count);
-//     auto A_ids       = make_LayeredRaster<uint>(icosphere2.vertex_count);
-//     auto Ai_ids      = make_LayeredRaster<uint>(icosphere1.vertex_count);
+//     auto A_ids       = make_LayeredRaster<unsigned int>(icosphere2.vertex_count);
+//     auto Ai_ids      = make_LayeredRaster<unsigned int>(icosphere1.vertex_count);
 //     auto A_a         = make_LayeredRaster<float>(icosphere2.vertex_count);
 //     auto grad_A_a    = make_LayeredRaster<glm::vec3>(icosphere2.vertex_count);
 //     auto Ai_grad_A_a = make_LayeredRaster<glm::vec3>(icosphere1.vertex_count);
@@ -116,8 +116,8 @@ TEST_CASE( "LayeredRaster gradient distributive over addition", "[rasters]" ) {
 
     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
     icosphere_mesh = meshes::subdivide(icosphere_mesh); series::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-    rasters::Grid<uint,float> icosphere_grid(icosphere_mesh.vertices, icosphere_mesh.faces);
-    rasters::LayeredGrid<uint,float> layered_icosphere_grid(icosphere_grid, 1.0f, 0.0f, 3u);
+    rasters::Grid<unsigned int,float> icosphere_grid(icosphere_mesh.vertices, icosphere_mesh.faces);
+    rasters::LayeredGrid<unsigned int,float> layered_icosphere_grid(icosphere_grid, 1.0f, 0.0f, 3u);
 
     std::mt19937 generator(2);
 
@@ -133,8 +133,8 @@ TEST_CASE( "LayeredRaster gradient multiplication relation", "[rasters]" ) {
 
     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
     icosphere_mesh = meshes::subdivide(icosphere_mesh); series::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-    rasters::Grid<uint,float> icosphere_grid(icosphere_mesh.vertices, icosphere_mesh.faces);
-    rasters::LayeredGrid<uint,float> layered_icosphere_grid(icosphere_grid, 1.0f, 0.0f, 3u);
+    rasters::Grid<unsigned int,float> icosphere_grid(icosphere_mesh.vertices, icosphere_mesh.faces);
+    rasters::LayeredGrid<unsigned int,float> layered_icosphere_grid(icosphere_grid, 1.0f, 0.0f, 3u);
 
     std::mt19937 generator(2);
 
@@ -154,8 +154,8 @@ TEST_CASE( "LayeredRaster gradient multiplication relation", "[rasters]" ) {
 TEST_CASE( "LayeredRaster divergence determinism", "[rasters]" ) {
     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
     icosphere_mesh = meshes::subdivide(icosphere_mesh); series::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-    rasters::Grid<uint,float> icosphere_grid(icosphere_mesh.vertices, icosphere_mesh.faces);
-    rasters::LayeredGrid<uint, float> layered_icosphere_grid(icosphere_grid, 1.0f, 0.0f, 2u);
+    rasters::Grid<unsigned int,float> icosphere_grid(icosphere_mesh.vertices, icosphere_mesh.faces);
+    rasters::LayeredGrid<unsigned int, float> layered_icosphere_grid(icosphere_grid, 1.0f, 0.0f, 2u);
 
     std::mt19937 generator(2);
 
@@ -176,8 +176,8 @@ TEST_CASE( "LayeredRaster divergence determinism", "[rasters]" ) {
 
 //     auto scalar      = make_LayeredRaster<float>(icosphere_grid);
 //     auto a           = make_LayeredRaster<glm::vec3>(icosphere_grid);
-//     auto A_ids       = make_LayeredRaster<uint>(icosphere_grid);
-//     auto Ai_ids      = make_LayeredRaster<uint>(icosphere_grid);
+//     auto A_ids       = make_LayeredRaster<unsigned int>(icosphere_grid);
+//     auto Ai_ids      = make_LayeredRaster<unsigned int>(icosphere_grid);
 //     auto A_pos       = make_LayeredRaster<glm::vec3>(icosphere_grid);
 //     auto Ai_pos      = make_LayeredRaster<glm::vec3>(icosphere_grid);
 //     auto A_a         = make_LayeredRaster<glm::vec3>(icosphere_grid);
@@ -217,8 +217,8 @@ TEST_CASE( "LayeredRaster divergence determinism", "[rasters]" ) {
 
 //     auto scalar     = make_LayeredRaster<float>(icosphere1.vertex_count);
 //     auto a          = make_LayeredRaster<glm::vec3>(icosphere1.vertex_count);
-//     auto A_ids      = make_LayeredRaster<uint>(icosphere2.vertex_count);
-//     auto Ai_ids     = make_LayeredRaster<uint>(icosphere1.vertex_count);
+//     auto A_ids      = make_LayeredRaster<unsigned int>(icosphere2.vertex_count);
+//     auto Ai_ids     = make_LayeredRaster<unsigned int>(icosphere1.vertex_count);
 //     auto A_a        = make_LayeredRaster<glm::vec3>(icosphere2.vertex_count);
 //     auto div_A_a    = make_LayeredRaster<float>(icosphere2.vertex_count);
 //     auto Ai_div_A_a = make_LayeredRaster<float>(icosphere1.vertex_count);
@@ -244,8 +244,8 @@ TEST_CASE( "LayeredRaster divergence determinism", "[rasters]" ) {
 TEST_CASE( "LayeredRaster divergence distributive over addition", "[rasters]" ) {
     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
     icosphere_mesh = meshes::subdivide(icosphere_mesh); series::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-    rasters::Grid<uint,float> icosphere_grid(icosphere_mesh.vertices, icosphere_mesh.faces);
-    rasters::LayeredGrid<uint, float> layered_icosphere_grid(icosphere_grid, 1.0f, 0.0f, 2u);
+    rasters::Grid<unsigned int,float> icosphere_grid(icosphere_mesh.vertices, icosphere_mesh.faces);
+    rasters::LayeredGrid<unsigned int, float> layered_icosphere_grid(icosphere_grid, 1.0f, 0.0f, 2u);
 
     std::mt19937 generator(2);
 
@@ -283,8 +283,8 @@ TEST_CASE( "LayeredRaster divergence distributive over addition", "[rasters]" ) 
 TEST_CASE( "LayeredRaster curl determinism", "[rasters]" ) {
     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
     icosphere_mesh = meshes::subdivide(icosphere_mesh); series::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-    rasters::Grid<uint,float> icosphere_grid(icosphere_mesh.vertices, icosphere_mesh.faces);
-    rasters::LayeredGrid<uint, float> layered_icosphere_grid(icosphere_grid, 1.0f, 0.0f, 2u);
+    rasters::Grid<unsigned int,float> icosphere_grid(icosphere_mesh.vertices, icosphere_mesh.faces);
+    rasters::LayeredGrid<unsigned int, float> layered_icosphere_grid(icosphere_grid, 1.0f, 0.0f, 2u);
 
     std::mt19937 generator(2);
 
@@ -298,8 +298,8 @@ TEST_CASE( "LayeredRaster curl determinism", "[rasters]" ) {
 TEST_CASE( "LayeredRaster curl distributive over addition", "[rasters]" ) {
     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
     icosphere_mesh = meshes::subdivide(icosphere_mesh); series::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-    rasters::Grid<uint,float> icosphere_grid(icosphere_mesh.vertices, icosphere_mesh.faces);
-    rasters::LayeredGrid<uint, float> layered_icosphere_grid(icosphere_grid, 1.0f, 0.0f, 2u);
+    rasters::Grid<unsigned int,float> icosphere_grid(icosphere_mesh.vertices, icosphere_mesh.faces);
+    rasters::LayeredGrid<unsigned int, float> layered_icosphere_grid(icosphere_grid, 1.0f, 0.0f, 2u);
 
     std::mt19937 generator(2);
 

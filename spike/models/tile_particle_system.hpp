@@ -22,7 +22,7 @@ struct particle_system
 	vec3s 		positions;
 	vec3s 		velocities;
 
-	explicit particle_system(const uint particle_count)
+	explicit particle_system(const unsigned int particle_count)
 		: 
 			positions	(particle_count),
 			velocities	(particle_count)
@@ -50,7 +50,7 @@ struct tiled_particle_system
 	vec3s 		velocities;
 	const float width;
 
-	explicit tiled_particle_system(const uint particle_count, const float width)
+	explicit tiled_particle_system(const unsigned int particle_count, const float width)
 		: 
 			positions	(particle_count),
 			velocities	(particle_count),
@@ -81,7 +81,7 @@ struct spring_system
 	floats      spring_resting_lengths;
 	floats      spring_stiffness;
 
-	explicit spring_system(const uint particle_count, const uint spring_count)
+	explicit spring_system(const unsigned int particle_count, const unsigned int spring_count)
 		: 
 			positions				(particle_count),
 			velocities				(particle_count),
@@ -136,7 +136,7 @@ struct deformable_spring_system
 	float       spring_tensile_post_yield_stiffness;
 	float       spring_tensile_ultimate_strength;
 
-	explicit spring_system(const uint particle_count, const uint spring_count)
+	explicit spring_system(const unsigned int particle_count, const unsigned int spring_count)
 		: 
 			positions				(particle_count),
 			velocities				(particle_count),

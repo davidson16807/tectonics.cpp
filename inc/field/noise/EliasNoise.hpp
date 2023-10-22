@@ -32,7 +32,7 @@ namespace field
 		RegionCenter region_center;
 		RegionThreshold region_threshold;
 		T region_transition_width;
-		uint region_count;
+		unsigned int region_count;
 
 		/*
 		`region_transition_width` is the width of the transition zone for a region
@@ -41,7 +41,7 @@ namespace field
 		explicit EliasNoise(
 			const RegionCenter& region_center,
 			const RegionThreshold& region_threshold,
-			const uint region_count, 
+			const unsigned int region_count, 
 			const T region_transition_width=T(0.03)
 		):
 			region_center(region_center),
@@ -58,7 +58,7 @@ namespace field
 			T region_mod(0);
 			T out(0);
 			T region_threshold_i;
-			for (uint i = 0; i < region_count; ++i)
+			for (unsigned int i = 0; i < region_count; ++i)
 			{
 				region_mod = glm::dot(normalized, region_center[i]);
 				region_threshold_i = region_threshold[i];
@@ -76,7 +76,7 @@ namespace field
 	constexpr inline auto elias_noise(
 		const RegionCenter& region_center,
 		const RegionThreshold& region_threshold,
-		const uint region_count, 
+		const unsigned int region_count, 
 		const T region_transition_width=T(0.03))
 	{
 		return EliasNoise<T, RegionThreshold,RegionCenter>(region_center, region_threshold, region_count, region_transition_width);

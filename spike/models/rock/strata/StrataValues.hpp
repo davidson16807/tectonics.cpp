@@ -8,7 +8,7 @@ namespace strata
     struct StrataValues
     {
         std::array<T, L> values;
-        uint count;
+        unsigned int count;
         ~StrataValues(){}
         StrataValues(): values(), count(0){}
         StrataValues(std::initializer_list<T> list): 

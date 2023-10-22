@@ -21,13 +21,13 @@
 
 #include <rasters/entities/Grid/Grid_test_utils.hpp>
 
-rasters::LayeredGrid<uint,float> layered_diamond_grid(diamond_grid, 1.0f, 0.0f, 2u);
+rasters::LayeredGrid<unsigned int,float> layered_diamond_grid(diamond_grid, 1.0f, 0.0f, 2u);
 
-rasters::LayeredGrid<uint,float> layered_tetrahedron_grid(tetrahedron_grid, 1.0f, 0.0f, 2u);
+rasters::LayeredGrid<unsigned int,float> layered_tetrahedron_grid(tetrahedron_grid, 1.0f, 0.0f, 2u);
 
-rasters::LayeredGrid<uint,float> layered_nonspheroid_octahedron_grid(nonspheroid_octahedron_grid, 1.0f, 0.0f, 2u);
+rasters::LayeredGrid<unsigned int,float> layered_nonspheroid_octahedron_grid(nonspheroid_octahedron_grid, 1.0f, 0.0f, 2u);
 
-rasters::LayeredGrid<uint,float> layered_nonspheroid_icosahedron_grid(nonspheroid_icosahedron_grid, 1.0f, 0.0f, 2u);
+rasters::LayeredGrid<unsigned int,float> layered_nonspheroid_icosahedron_grid(nonspheroid_icosahedron_grid, 1.0f, 0.0f, 2u);
 
 template <typename Tid, typename Tgrid, typename Tgenerator>
 rasters::LayeredRaster<float,rasters::LayeredGrid<Tid,Tgrid>> get_random_LayeredRaster(rasters::LayeredGrid<Tid,Tgrid> layered_grid, Tgenerator generator){

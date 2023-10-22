@@ -205,9 +205,9 @@ standardize_offset = [V-N for V,N in zip(standardize_sphere_position, position)]
 
 domain = dict(zip('xyz', vector_aoa(position)))
 
-# px.scatter_3d(**domain,color=square_id).show()
-# px.scatter_3d(**domain,color=square_x).show()
-# px.scatter_3d(**domain,color=square_y).show()
+px.scatter_3d(**domain,color=square_id).show()
+px.scatter_3d(**domain,color=square_x).show()
+px.scatter_3d(**domain,color=square_y).show()
 
 # px.scatter_3d(**domain,color=Nx).show()
 # px.scatter_3d(**domain,color=roundtrip_x).show()

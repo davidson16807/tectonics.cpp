@@ -161,7 +161,7 @@ namespace crust
     ){
         assert( vertex_height.size()  == grid.vertex_count );
         assert( arrow_height   .size()  == grid.arrow_count  );
-        uint from, to;
+        unsigned int from, to;
         for (int i = 0; i < grid.arrow_count; ++i)
         {
             from = grid.arrow_vertex_ids[i].x;
@@ -180,7 +180,7 @@ namespace crust
         assert( vertex_precipitation.size()  == grid.vertex_count );
         assert( arrow_slope         .size()  == grid.arrow_count  );
         assert( arrow_discharge     .size()  == grid.arrow_count  );
-        uint from;
+        unsigned int from;
         const int iteration_count = 3;
         fill(vertex_slope_sum, 0.0f);
         for (int i = 0; i < grid.arrow_count; ++i)

@@ -255,7 +255,7 @@ namespace rasters
 		LayeredRaster<glm::vec<L,T,Q>,Tgrid>& layer_scratch
 	) {
 		series::fill (arrow_scratch, glm::vec<L,T,Q>(0.f));
-		uint Li = vector_field.grid.layering->layer_count;
+		unsigned int Li = vector_field.grid.layering->layer_count;
 		glm::uvec2 arrow;
 		for (std::size_t i = 0; i < vector_field.grid.structure->arrow_count; ++i)
 		{

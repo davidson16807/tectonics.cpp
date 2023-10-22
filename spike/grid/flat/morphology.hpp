@@ -48,7 +48,7 @@ namespace procedural
 			}
 		}
 
-		void dilate(const Raster<bool,Grid>& a, Raster<bool,Grid>& out, uint radius)
+		void dilate(const Raster<bool,Grid>& a, Raster<bool,Grid>& out, unsigned int radius)
 		{
 			Raster<bool,Grid>* temp_in  = &out;
 			Raster<bool,Grid>* temp_out = &scratch1;
@@ -61,7 +61,7 @@ namespace procedural
 			else 
 			{
 				each::copy(*temp_in, a);
-				for (uint i = 0; i < radius; ++i)
+				for (unsigned int i = 0; i < radius; ++i)
 				{
 					temp_swap = temp_out;
 					temp_out  = temp_in;
@@ -88,7 +88,7 @@ namespace procedural
 			}
 		}
 
-		void erode(const Raster<bool,Grid>& a, Raster<bool,Grid>& out, uint radius)
+		void erode(const Raster<bool,Grid>& a, Raster<bool,Grid>& out, unsigned int radius)
 		{
 			Raster<bool,Grid>* temp_in  = &out;
 			Raster<bool,Grid>* temp_out = &scratch1;
@@ -101,7 +101,7 @@ namespace procedural
 			else 
 			{
 				each::copy(*temp_in, a);
-				for (uint i = 0; i < radius; ++i)
+				for (unsigned int i = 0; i < radius; ++i)
 				{
 					temp_swap = temp_out;
 					temp_out  = temp_in;
@@ -122,7 +122,7 @@ namespace procedural
 			dilate( scratch1, out      );
 		}
 
-		void opening(const Raster<bool,Grid>& a, Raster<bool,Grid>& out, uint radius )
+		void opening(const Raster<bool,Grid>& a, Raster<bool,Grid>& out, unsigned int radius )
 		{
 			erode ( a,        scratch1, radius, scratch2 );
 			dilate( scratch1, out,      radius, scratch2 );
@@ -134,7 +134,7 @@ namespace procedural
 			erode ( scratch1, out      );
 		}
 
-		void closing(const Raster<bool,Grid>& a, Raster<bool,Grid>& out, uint radius )
+		void closing(const Raster<bool,Grid>& a, Raster<bool,Grid>& out, unsigned int radius )
 		{
 			dilate( a,        scratch1, radius, scratch2 );
 			erode ( scratch1, out,      radius, scratch2 );
@@ -146,7 +146,7 @@ namespace procedural
 			differ ( out,  a, out );
 		}
 
-		void white_top_hat(const Raster<bool,Grid>& a, Raster<bool,Grid>& out, uint radius)
+		void white_top_hat(const Raster<bool,Grid>& a, Raster<bool,Grid>& out, unsigned int radius)
 		{
 			closing( a, out, radius, scratch1, scratch2 );
 			differ ( out,  a, out                             );
@@ -158,7 +158,7 @@ namespace procedural
 			differ ( a,  out, out );
 		}
 
-		void black_top_hat(const Raster<bool,Grid>& a, Raster<bool,Grid>& out, uint radius)
+		void black_top_hat(const Raster<bool,Grid>& a, Raster<bool,Grid>& out, unsigned int radius)
 		{
 			opening( a, out, radius, scratch1, scratch2 );
 			differ ( a,  out, out );
@@ -174,7 +174,7 @@ namespace procedural
 			differ( out,  a, out );
 		}
 
-		void margin(const Raster<bool,Grid>& a, Raster<bool,Grid>& out, uint radius)
+		void margin(const Raster<bool,Grid>& a, Raster<bool,Grid>& out, unsigned int radius)
 		{
 			dilate( a, out, radius, scratch1 );
 			differ( out,  a, out );
@@ -188,7 +188,7 @@ namespace procedural
 			erode  ( a, out );
 			differ ( a,  out, out );
 		}
-		void padding(const Raster<bool,Grid>& a, Raster<bool,Grid>& out, uint radius)
+		void padding(const Raster<bool,Grid>& a, Raster<bool,Grid>& out, unsigned int radius)
 		{
 			erode  ( a, out, radius, scratch1 );
 			differ ( a,  out, out );

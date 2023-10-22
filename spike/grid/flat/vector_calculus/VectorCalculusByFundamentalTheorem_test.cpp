@@ -82,7 +82,6 @@ namespace dymaxion {
 #define DYMAXION_TEST_TRINARY_OUT_PARAMETER(TYPE,GRID,F) \
     [=](auto x, auto y, auto z){ std::vector<TYPE> out(GRID.vertex_count()); (F(x,y,z,out)); return out; }
 
-dymaxion::Grid grid(0.1, 100);
 
 
 std::vector elias_scalar_rasters{
@@ -262,6 +261,7 @@ TEST_CASE( "Raster curl", "[dymaxion]" ) {
 }
 
 TEST_CASE( "Scalar Raster laplacian", "[dymaxion]" ) {
+    dymaxion::Grid grid(0.1, 100);
     procedural::VectorCalculusByFundamentalTheorem operators;
     for (int i = 0; i < 1; ++i)
     {
@@ -418,8 +418,8 @@ TEST_CASE( "Vector Raster laplacian", "[dymaxion]" ) {
 //     MeshCache icosphere2(icosphere_mesh2.vertices, icosphere_mesh2.faces);
 
 //     auto a           = raster<float>(icosphere1.vertex_count);
-//     auto A_ids       = raster<uint>(icosphere2.vertex_count);
-//     auto Ai_ids      = raster<uint>(icosphere1.vertex_count);
+//     auto A_ids       = raster<unsigned int>(icosphere2.vertex_count);
+//     auto Ai_ids      = raster<unsigned int>(icosphere1.vertex_count);
 //     auto A_a         = raster<float>(icosphere2.vertex_count);
 //     auto grad_A_a    = raster<glm::vec3>(icosphere2.vertex_count);
 //     auto Ai_grad_A_a = raster<glm::vec3>(icosphere1.vertex_count);
@@ -453,8 +453,8 @@ TEST_CASE( "Vector Raster laplacian", "[dymaxion]" ) {
 
 //     auto scalar     = raster<float>(icosphere1.vertex_count);
 //     auto a          = raster<glm::vec3>(icosphere1.vertex_count);
-//     auto A_ids      = raster<uint>(icosphere2.vertex_count);
-//     auto Ai_ids     = raster<uint>(icosphere1.vertex_count);
+//     auto A_ids      = raster<unsigned int>(icosphere2.vertex_count);
+//     auto Ai_ids     = raster<unsigned int>(icosphere1.vertex_count);
 //     auto A_a        = raster<glm::vec3>(icosphere2.vertex_count);
 //     auto div_A_a    = raster<float>(icosphere2.vertex_count);
 //     auto Ai_div_A_a = raster<float>(icosphere1.vertex_count);
