@@ -32,8 +32,8 @@
 #include <field/noise/SquareNoise.hpp>
 #include <field/VectorZip.hpp>
 
-#include <grid/dymaxion/Grid.hpp>
-#include <grid/dymaxion/series.hpp>
+#include <grid/healpix/Grid.hpp>
+#include <grid/healpix/series.hpp>
 
 #include <grid/spheroidal/string_cast.hpp>
 
@@ -43,7 +43,7 @@
 #include <test/macros.hpp>  
 #include <test/glm/adapter.hpp>
 
-namespace dymaxion {
+namespace healpix {
 
     template<typename id, typename scalar>
     struct Adapter{
@@ -64,7 +64,7 @@ namespace dymaxion {
 
         template<typename Series>
         std::string print(const Series& a) const {
-            // return dymaxion::to_string(grid, a, 200);
+            // return healpix::to_string(grid, a, 200);
             return spheroidal::to_string(grid, a);
         }
 
@@ -83,7 +83,7 @@ namespace dymaxion {
     [=](auto x, auto y, auto z){ std::vector<TYPE> out(GRID.vertex_count()); (F(x,y,z,out)); return out; }
 
 
-dymaxion::Grid grid(0.1, 50);
+healpix::Grid grid(0.1, 50);
 
 std::vector elias_scalar_rasters{
     known::store(
@@ -93,7 +93,7 @@ std::vector elias_scalar_rasters{
                 series::unit_vector_noise<3>(10.0, 1.0e4), 
                 series::gaussian(11.0, 1.1e4), 
                 1000),
-            dymaxion::vertex_positions(grid)
+            healpix::vertex_positions(grid)
         )
     ),
     known::store(
@@ -103,7 +103,7 @@ std::vector elias_scalar_rasters{
                 series::unit_vector_noise<3>(11.0, 1.1e4), 
                 series::gaussian(11.0, 1.1e4), 
                 1000),
-            dymaxion::vertex_positions(grid)
+            healpix::vertex_positions(grid)
         )
     ),
     known::store(
@@ -113,7 +113,7 @@ std::vector elias_scalar_rasters{
                 series::unit_vector_noise<3>(12.0, 1.2e4), 
                 series::gaussian(11.0, 1.1e4), 
                 1000),
-            dymaxion::vertex_positions(grid)
+            healpix::vertex_positions(grid)
         )
     )
 };
@@ -124,19 +124,19 @@ std::vector scalar_rasters{
         field::value_noise3(
             field::square_noise(
                 series::unit_interval_noise(11.0, 1.1e4))),
-        dymaxion::vertex_positions(grid)
+        healpix::vertex_positions(grid)
     ),
     series::map(
         field::value_noise3(
             field::square_noise(
                 series::unit_interval_noise(12.0, 1.2e4))),
-        dymaxion::vertex_positions(grid)
+        healpix::vertex_positions(grid)
     ),
     series::map(
         field::value_noise3(
             field::square_noise(
                 series::unit_interval_noise(13.0, 1.3e4))),
-        dymaxion::vertex_positions(grid)
+        healpix::vertex_positions(grid)
     )
 };
 
@@ -158,7 +158,7 @@ std::vector vector_rasters{
                         series::gaussian(11.0, 1.1e4), 
                         1000)
             ),
-            dymaxion::vertex_positions(grid)
+            healpix::vertex_positions(grid)
         )
     ),
     known::store(
@@ -178,7 +178,7 @@ std::vector vector_rasters{
                         series::gaussian(11.0, 1.1e4), 
                         1000)
             ),
-            dymaxion::vertex_positions(grid)
+            healpix::vertex_positions(grid)
         )
     ),
     known::store(
@@ -198,24 +198,24 @@ std::vector vector_rasters{
                         series::gaussian(11.0, 1.1e4), 
                         1000)
             ),
-            dymaxion::vertex_positions(grid)
+            healpix::vertex_positions(grid)
         )
     ),
 };
 
 
-dymaxion::Adapter adapter(grid, 1e-5, grid.vertex_count());
+healpix::Adapter adapter(grid, 1e-5, grid.vertex_count());
 
 
-TEST_CASE( "Raster gradient", "[dymaxion]" ) {
+TEST_CASE( "Raster gradient", "[healpix]" ) {
 
     // REQUIRE(test::determinism(adapter, 
-    //     "dymaxion::gradient", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::gradient),
+    //     "healpix::gradient", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, healpix::gradient),
     //     scalar_rasters
     // ));
 
     // REQUIRE(test::additivity(adapter, 
-    //     "dymaxion::gradient", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::gradient),
+    //     "healpix::gradient", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, healpix::gradient),
     //     "each::add          ", DYMAXION_TEST_BINARY_OUT_PARAMETER (double,     grid, each::add),
     //     "each::add          ", DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
     //     scalar_rasters, scalar_rasters
@@ -225,16 +225,16 @@ TEST_CASE( "Raster gradient", "[dymaxion]" ) {
 
 
 
-TEST_CASE( "Raster divergence", "[dymaxion]" ) {
+TEST_CASE( "Raster divergence", "[healpix]" ) {
 
 
     // REQUIRE(test::determinism(adapter, 
-    //     "dymaxion::divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, dymaxion::divergence),
+    //     "healpix::divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, healpix::divergence),
     //     vector_rasters
     // ));
 
     // REQUIRE(test::additivity(adapter, 
-    //     "dymaxion::divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, dymaxion::divergence),
+    //     "healpix::divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, healpix::divergence),
     //     "each::add          ",   DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
     //     "each::add          ",   DYMAXION_TEST_BINARY_OUT_PARAMETER (double,     grid, each::add),
     //     vector_rasters, vector_rasters
@@ -244,16 +244,16 @@ TEST_CASE( "Raster divergence", "[dymaxion]" ) {
 
 
 
-TEST_CASE( "Raster curl", "[dymaxion]" ) {
+TEST_CASE( "Raster curl", "[healpix]" ) {
 
 
     // REQUIRE(test::determinism(adapter, 
-    //     "dymaxion::curl",   DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::curl),
+    //     "healpix::curl",   DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, healpix::curl),
     //     vector_rasters
     // ));
 
     // REQUIRE(test::additivity(adapter, 
-    //     "dymaxion::curl",   DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::curl),
+    //     "healpix::curl",   DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, healpix::curl),
     //     "each::add      ",   DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
     //     "each::add      ",   DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
     //     vector_rasters, vector_rasters
@@ -261,7 +261,7 @@ TEST_CASE( "Raster curl", "[dymaxion]" ) {
 
 }
 
-TEST_CASE( "Scalar Raster laplacian", "[dymaxion]" ) {
+TEST_CASE( "Scalar Raster laplacian", "[healpix]" ) {
     procedural::VectorCalculusByFundamentalTheorem operators;
     for (int i = 0; i < 1; ++i)
     {
@@ -335,12 +335,12 @@ TEST_CASE( "Scalar Raster laplacian", "[dymaxion]" ) {
     }
 
     // REQUIRE(test::determinism(adapter, 
-    //     "dymaxion::laplacian", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::laplacian),
+    //     "healpix::laplacian", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, healpix::laplacian),
     //     scalar_rasters
     // ));
 
     // REQUIRE(test::additivity(adapter, 
-    //     "dymaxion::laplacian", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double, grid, dymaxion::laplacian),
+    //     "healpix::laplacian", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double, grid, healpix::laplacian),
     //     "each::add           ", DYMAXION_TEST_BINARY_OUT_PARAMETER (double, grid, each::add),
     //     "each::add           ", DYMAXION_TEST_BINARY_OUT_PARAMETER (double, grid, each::add),
     //     scalar_rasters, scalar_rasters
@@ -355,25 +355,25 @@ TEST_CASE( "Scalar Raster laplacian", "[dymaxion]" ) {
 
 }
 
-TEST_CASE( "Vector Raster laplacian", "[dymaxion]" ) {
+TEST_CASE( "Vector Raster laplacian", "[healpix]" ) {
 
 
     // REQUIRE(test::determinism(adapter, 
-    //     "dymaxion::laplacian", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::laplacian),
+    //     "healpix::laplacian", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, healpix::laplacian),
     //     vector_rasters
     // ));
 
     // REQUIRE(test::additivity(adapter, 
-    //     "dymaxion::laplacian", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::laplacian),
+    //     "healpix::laplacian", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, healpix::laplacian),
     //     "each::add           ", DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
     //     "each::add           ", DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
     //     vector_rasters, vector_rasters
     // ));
 
     // REQUIRE(test::composition(adapter, 
-    //     "dymaxion::gradient",   DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::gradient),  
-    //     "dymaxion::divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, dymaxion::divergence),
-    //     "dymaxion::laplacian",  DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::laplacian), 
+    //     "healpix::gradient",   DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, healpix::gradient),  
+    //     "healpix::divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, healpix::divergence),
+    //     "healpix::laplacian",  DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, healpix::laplacian), 
     //     vector_rasters
     // ));
 
@@ -397,9 +397,9 @@ TEST_CASE( "Vector Raster laplacian", "[dymaxion]" ) {
 
 //     SECTION("gradient(a*b) must generate the same output as a*gradient(b) + b*gradient(a)"){
 //         each::mult(a, b, ab);
-//         dymaxion::gradient(grid, ab, grad_ab);
-//         dymaxion::gradient(grid, a, grad_a);
-//         dymaxion::gradient(grid, b, grad_b);
+//         healpix::gradient(grid, ab, grad_ab);
+//         healpix::gradient(grid, a, grad_a);
+//         healpix::gradient(grid, b, grad_b);
 //         each::mult(a, grad_b, a_grad_b);
 //         each::mult(b, grad_a, b_grad_a);
 //         each::add(a_grad_b, b_grad_a, a_grad_b_b_grad_a);

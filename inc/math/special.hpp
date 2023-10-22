@@ -4,7 +4,7 @@
 
 namespace math{
 
-	const double pi = 3.141592653589793238462643383279502884197169399;
+	constexpr double pi = 3.141592653589793238462643383279502884197169399;
 
 	template<typename T>
 	inline constexpr T remainder(const T& a, const T& b)

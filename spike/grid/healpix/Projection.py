@@ -60,7 +60,7 @@ class Collignon:
 		x,y = grid_id.x, grid_id.y
 		legscale = 1-abs(y/self.leglength)
 		z = glm.sign(y) * (1-legscale**2)
-		dlongitude = x*self.leglength/(legscale*2)
+		dlongitude = x*self.leglength/(2*legscale)
 		longitude = self.longitude0 + dlongitude
 		r = math.sqrt(1-z**2)
 		return glm.vec3(
@@ -128,8 +128,10 @@ class Projection:
 		self.squares = square
 		self.triangles = triangle
 		self.total_area = 4*math.pi
-		self.square_count = 20
+		self.square_count = 10
+		self.triangle_count = 20
 		self.area_per_square = self.total_area/self.square_count
+		self.area_per_triangle = self.total_area/self.triangle_count
 
 	def standardize(self, grid_id):
 		i,V2 = grid_id
@@ -172,7 +174,7 @@ class Projection:
 		is_inverted = self.triangles.is_inverted_square_id(i, is_polar)
 		O = self.triangles.origin(Oid, self.squares.polarity(i), is_polar)
 		projection = (
-			Collignon(self.area_per_square, Oid*id_length) if is_polar else 
+			Collignon(self.area_per_triangle, Oid*id_length) if is_polar else 
 			Lambert(Oid*id_length))
 		basis = self.triangles.basis(
 			is_inverted,
@@ -201,7 +203,7 @@ class Projection:
 		Oid = i + 1 # origin longitude id
 		Eid = i + 2 # east   longitude id
 		projection = (
-			Collignon(self.area_per_square, Oid*id_length) if is_polar else 
+			Collignon(self.area_per_triangle, Oid*id_length) if is_polar else 
 			Lambert(Oid*id_length))
 		W = self.squares.westmost(Wid) # W: westernmost triangle vertex
 		E = self.squares.westmost(Eid) # E: easternmost triangle vertex
