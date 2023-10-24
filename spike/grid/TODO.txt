@@ -20,7 +20,7 @@ x	x		ignoring irregular arrows
 x	x		regularizing irregular vertices
 		methods:
 			curvilinear method
-			weighted multilinear
+			weighted linear
 		polyhedron:
 			pentakis dodecahedron
 			fibonacci grid

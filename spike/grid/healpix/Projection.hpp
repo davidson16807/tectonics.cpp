@@ -56,8 +56,8 @@ namespace healpix
         using vec3  = glm::vec<3,scalar,Q>;
 
 		static constexpr scalar pi = 3.141592652653589793f;
-		static constexpr scalar s1 = 1.0f;
-		static constexpr scalar s2 = 2.0f;
+		static constexpr scalar s1 = 1.0;
+		static constexpr scalar s2 = 2.0;
         static constexpr scalar turn = 2*math::pi;
 
         const scalar leglength;
@@ -105,7 +105,7 @@ namespace healpix
         using vec3  = glm::vec<3,scalar,Q>;
 
 		static constexpr scalar pi = 3.141592652653589793f;
-		static constexpr scalar s1 = 1.0f;
+		static constexpr scalar s1 = 1.0;
         static constexpr scalar turn = 2*pi;
 
         const scalar longitude0;

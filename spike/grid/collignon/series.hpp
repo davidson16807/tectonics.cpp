@@ -5,11 +5,11 @@
 
 // std libraries
 
-namespace dymaxion
+namespace collignon
 {
 
 	/*
-	series.hpp contains classes of indexible objects that wrap the methods of a dymaxion::Grid.
+	series.hpp contains classes of indexible objects that wrap the methods of a collignon::Grid.
 	with the intent of performantly participating in functions that require out-of-order memory access, 
 	such as those under vector_calculus.hpp or morphology.hpp
 	*/
@@ -43,7 +43,6 @@ namespace dymaxion
 	COLLIGNON_SERIES(scalar, VertexDualAreas, vertex_dual_areas, grid.vertex_dual_area)
 
 	#undef COLLIGNON_SERIES
-
 
 }
 

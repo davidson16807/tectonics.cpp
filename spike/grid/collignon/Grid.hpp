@@ -36,7 +36,6 @@ namespace collignon
 
 		static constexpr scalar pi = 3.141592652653589793f;
 
-
 	public:
 		const Voronoi<id,scalar> voronoi;
 
@@ -134,6 +133,15 @@ namespace collignon
 					voronoi.sphere_position( midpointOB + scalar(0.5)*vec2(arrow_offset_grid_position((offset_id+1)%arrows_per_vertex)) ),
 				 	voronoi.sphere_position( midpointOB + scalar(0.5)*vec2(arrow_offset_grid_position((offset_id-1)%arrows_per_vertex)) )
 				);
+		}
+
+		// `vertex_representative()` returns the memory id of a vertex
+		// whose associated arrows should not cause artifacts during certain sensitive operations
+		// (like divergence or laplacian) while also being physically near the vertex of the specified `vertex_id`,
+		// thereby providing an adequate representation for the vertex with irregular edges.
+		inline constexpr id vertex_representative(const id vertex_id) const 
+		{
+			return vertex_id;
 		}
 
 		inline constexpr vec3 vertex_position(const id vertex_id) const 
