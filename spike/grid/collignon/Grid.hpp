@@ -141,7 +141,10 @@ namespace collignon
 		// thereby providing an adequate representation for the vertex with irregular edges.
 		inline constexpr id vertex_representative(const id vertex_id) const 
 		{
-			return vertex_id;
+			ivec2 V2 = voronoi.grid_id(vertex_id);
+			return voronoi.memory_id(
+				std::abs(V2.x) + std::abs(V2.y) == voronoi.vertex_count_per_half_meridian? 
+					V2+ivec2(0,1) : V2);
 		}
 
 		inline constexpr vec3 vertex_position(const id vertex_id) const 
