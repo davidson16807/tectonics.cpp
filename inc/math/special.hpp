@@ -20,7 +20,12 @@ namespace math{
 
 	template <typename T>
 	inline constexpr T sign(const T x) {
-		return std::signbit(x)? T(1):T(-1);
+		return x==T(0)? T(0) : x>T(0)? T(1) : T(-1);
+	}
+
+	template <typename T>
+	inline constexpr T bitsign(const T x) {
+		return std::signbit(x)? T(-1):T(1);
 	}
 
 	template <typename In1, typename In2> 
