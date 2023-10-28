@@ -108,9 +108,9 @@ namespace healpix
 
 		inline constexpr mat2 basis(
 			const bool is_inverted,
-			const vec3 W,
-			const vec3 E,
-			const vec3 O
+			const vec2 W,
+			const vec2 E,
+			const vec2 O
 		) const {
 			return is_inverted? mat2(E-O,W-O) : mat2(W-O,E-O);
 		}

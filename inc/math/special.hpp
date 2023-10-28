@@ -6,6 +6,12 @@ namespace math{
 
 	constexpr double pi = 3.141592653589793238462643383279502884197169399;
 
+	constexpr double right_angle = pi/2.0;
+
+	constexpr double turn = 2.0*pi;
+	constexpr double half_turn = pi;
+	constexpr double fourth_turn = pi/2.0;
+
 	template<typename T>
 	inline constexpr T remainder(const T& a, const T& b)
 	{
