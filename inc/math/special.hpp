@@ -5,15 +5,16 @@
 namespace math{
 
 	constexpr double pi = 3.141592653589793238462643383279502884197169399;
-
 	constexpr double right_angle = pi/2.0;
-
-	constexpr double turn = 2.0*pi;
-	constexpr double half_turn = pi;
-	constexpr double fourth_turn = pi/2.0;
 
 	template<typename T>
 	inline constexpr T remainder(const T& a, const T& b)
+	{
+	    return a - b * round(a / b);
+	}
+
+	template<typename T>
+	inline constexpr T residue(const T& a, const T& b)
 	{
 	    return a - b * floor(a / b);
 	}
@@ -21,7 +22,7 @@ namespace math{
 	template<typename T>
 	inline constexpr T modulus(const T& a, const T& b)
 	{
-	    return remainder(remainder(a,b) + b, b);
+	    return residue(residue(a,b) + b, b);
 	}
 
 	template <typename T>

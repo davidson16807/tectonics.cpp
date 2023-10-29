@@ -83,11 +83,11 @@ TEST_CASE( "Projection.sphere_position() / Projection.grid_id()", "[healpix]" ) 
         grid_ids
     ));
 
-    // REQUIRE(test::left_invertibility(adapter,
-    //     "Projection.sphere_position(…) when restricted to indexed grid_ids", TEST_UNARY(projection.sphere_position),
-    //     "Projection.grid_id(…)",                                             TEST_UNARY(projection.grid_id),
-    //     sphere_positions
-    // ));
+    REQUIRE(test::left_invertibility(adapter,
+        "Projection.sphere_position(…) when restricted to indexed grid_ids", TEST_UNARY(projection.sphere_position),
+        "Projection.grid_id(…)",                                             TEST_UNARY(projection.grid_id),
+        sphere_positions
+    ));
 
     REQUIRE(test::congruence(adapter,
         "Projection.sphere_position(…) when restricted to indexed sphere_positions", TEST_UNARY(projection.sphere_position),

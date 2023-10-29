@@ -29,11 +29,6 @@ GUIDE TO VARIABLE NAMES:
 * `i`: square id
 '''
 
-def angle(radians):
-	pi = 3.1415926535
-	turn = 2*pi
-	return math.remainder(turn+radians, turn)
-
 class Square:
 	def __init__(self):
 		pass
@@ -50,17 +45,19 @@ class Collignon:
 	def __init__(self, triangle_area, longitude0, debug=False):
 		self.turn = 2*math.pi
 		self.leglength = math.sqrt(2*triangle_area)
-		self.longitude0 = angle(longitude0)
+		self.longitude0 = longitude0
 		self.debug = debug
 
 	def grid_id(self, sphere_position):
 		V3 = sphere_position
 		longitude = math.atan2(V3.y,V3.x)
-		dlongitude = angle(angle(longitude)-self.longitude0)
+		dlongitude = math.remainder(self.turn+longitude-self.longitude0, self.turn)
 		legscale = math.sqrt(1-abs(V3.z))
 		V2 = glm.vec2(
 			legscale*2*dlongitude/self.leglength, 
 			glm.sign(V3.z)*(1-legscale)*self.leglength)
+		# if self.debug:
+		# 	breakpoint()
 		return V2
 
 	def position(self, grid_id):
@@ -76,25 +73,28 @@ class Collignon:
 			z)
 
 class Lambert:
-	def __init__(self, longitude0):
+	def __init__(self, longitude0, debug=False):
 		self.turn = 2*math.pi
-		self.longitude0 = angle(longitude0)
+		self.longitude0 = longitude0
+		self.debug = debug
 
 	def grid_id(self, sphere_position):
 		V3 = sphere_position
 		longitude = math.atan2(V3.y,V3.x)
-		return glm.vec2(
-			angle(angle(longitude)-self.longitude0), 
-			V3.z)
+		dlongitude = math.remainder(self.turn+longitude-self.longitude0, self.turn)
+		return glm.vec2(dlongitude, V3.z)
 
 	def position(self, grid_id):
 		dlongitude,z = grid_id.x, grid_id.y
 		longitude = self.longitude0 + dlongitude
 		r = math.sqrt(1-z**2)
-		return glm.vec3(
+		V3 = glm.vec3(
 			r*math.cos(longitude),
 			r*math.sin(longitude),
 			z)
+		# if self.debug:
+		# 	breakpoint()
+		return V3
 
 class Triangle:
 	def __init__(self):
@@ -180,7 +180,7 @@ class Projection:
 		is_polar = self.triangles.is_polar_sphere_position(V3)
 		is_inverted = self.triangles.is_inverted_square_id(i, is_polar)
 		O = self.triangles.origin(Oid, self.squares.polarity(i), is_polar)
-		debug = V3.x < -0.55 and V3.y< -0.55 and V3.z < -0.55
+		# debug = (glm.distance(V3,glm.vec3(-0.666,-0.666,-0.333)) < 0.03)
 		projection = (
 			Collignon(self.area_per_triangle, Oid*idlength) if is_polar else 
 			Lambert(Oid*idlength))
@@ -196,6 +196,7 @@ class Projection:
 		U2 = glm.inverse(basis) * W2
 		# V2: position on a square
 		V2 = U2 if is_inverted else 1-U2
+		# if debug: breakpoint()
 		return self.standardize((i, V2))
 
 	def position(self, grid_id):
@@ -210,9 +211,10 @@ class Projection:
 		Wid = i     # west   longitude id
 		Oid = i + 1 # origin longitude id
 		Eid = i + 2 # east   longitude id
+		debug = (glm.distance(V2,glm.vec2(0.708,0.458)) < 0.03 and i==5)
 		projection = (
 			Collignon(self.area_per_triangle, Oid*idlength) if is_polar else 
-			Lambert(Oid*idlength))
+			Lambert(Oid*idlength,debug))
 		W = self.squares.westmost(Wid) # W: westernmost triangle vertex
 		E = self.squares.westmost(Eid) # E: easternmost triangle vertex
 		O = self.triangles.origin(Oid, self.squares.polarity(i), is_polar)
@@ -224,7 +226,9 @@ class Projection:
 		)
 		# W2: position on a triangle in projected coordinates
 		W2 = basis * U2
-		return projection.position(W2+projection.grid_id(O))
+		V3 = projection.position(W2+projection.grid_id(O))
+		if debug: breakpoint()
+		return V3
 
 
 projection = Projection(Square(), Triangle())

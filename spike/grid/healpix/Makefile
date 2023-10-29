@@ -15,7 +15,7 @@ all: $(TEST) ./Makefile
 	$(CPP) -std=c++17 -o test.out test.cpp  $(FLAGS) \
 	-I $(ROOT)/lib/ -I $(ROOT)/inc/ -I $(ROOT)/spike/ && \
 	chmod a+x test.out && \
-	 ./test.out
+	./test.out
 
 clean:
 	rm -f test.cpp test.out
