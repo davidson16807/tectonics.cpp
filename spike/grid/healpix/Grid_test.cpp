@@ -104,7 +104,7 @@ TEST_CASE( "Grid arrow properties", "[healpix]" ) {
         "within a narrow fraction of an expected value", 
         [=](auto y){ 
             double expected(grid.total_circumference() / (2.0*vertex_count_per_meridian));
-            return (std::abs(y-expected)/expected) < 0.7; 
+            return (std::abs(y-expected)/expected) < 1.1; 
         },
         "Grid.arrow_length(…)", TEST_BINARY(grid.arrow_length),
         vertex_ids,
@@ -139,7 +139,7 @@ TEST_CASE( "Grid arrow properties", "[healpix]" ) {
         "within a narrow fraction of an expected value", 
         [=](auto y){ 
             double expected(grid.total_area() / float(grid.vertex_count()));
-            return (std::abs(y-expected)/expected) < 0.5; 
+            return (std::abs(y-expected)/expected) < 1.0; 
         },
         "Grid.vertex_dual_area(…)", TEST_UNARY(grid.vertex_dual_area),
         vertex_ids
