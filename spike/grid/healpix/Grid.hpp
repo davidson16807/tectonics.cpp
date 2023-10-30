@@ -154,6 +154,7 @@ namespace healpix
 		// thereby providing an adequate representation for the vertex with irregular edges.
 		inline constexpr id vertex_representative(const id vertex_id) const 
 		{
+			// return vertex_id;
 			return voronoi.memory_id(clamp(voronoi.grid_id(vertex_id), 1, voronoi.vertex_count_per_triangle_leg-2));
 		}
 

@@ -26,7 +26,7 @@ prototype?
 			fibonacci grid
 		projections:
 x	x		gnomonic (already effectively done, but required work to realize this)
-x			healpix equal-area
+x	x		healpix equal-area
 			snyder equal-area
 		other:
 	x		move vector calculus to classes (necessary to attempt alternate methods)
