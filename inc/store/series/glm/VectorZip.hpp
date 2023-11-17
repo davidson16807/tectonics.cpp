@@ -28,7 +28,7 @@ namespace series
 			w(w)
 		{}
 
-		constexpr inline size_type size() const { return 1; }
+		constexpr inline size_type size() const { return x.size(); }
 
 		constexpr value_type operator()(const size_type i ) const
 		{
@@ -68,7 +68,7 @@ namespace series
 			z(a.z)
 		{}
 
-		constexpr inline size_type size() const { return 1; }
+		constexpr inline size_type size() const { return x.size(); }
 
 		constexpr value_type operator()(const size_type i ) const
 		{
@@ -105,7 +105,7 @@ namespace series
 			y(a.y)
 		{}
 
-		constexpr inline size_type size() const { return 1; }
+		constexpr inline size_type size() const { return x.size(); }
 
 		constexpr value_type operator()(const size_type i ) const
 		{

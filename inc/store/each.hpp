@@ -334,7 +334,7 @@ namespace each
 	}
 
 
-	/// Computes and returns f(a).
+	/// Computes and returns f(a[i]).
 	template <typename In1, typename F, typename Out>
 	void map(const F& f, const In1& a, Out& out)
 	{
@@ -347,7 +347,7 @@ namespace each
 		}
 	}
 
-	/// Computes and returns f(a).
+	/// Computes and returns f[a[i]].
 	template <typename In1, typename F, typename Out>
 	void get(const F& f, const In1& a, Out& out)
 	{

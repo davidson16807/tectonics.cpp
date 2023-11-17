@@ -3,6 +3,8 @@
 // C libraries
 #include <cmath>     /* std math */
 #include <assert.h>  /* assert */
+#include <array>     /* std::array */
+#include <algorithm> /* std::clamp */
 
 // in-house libraries
 #include <math/special.hpp>
