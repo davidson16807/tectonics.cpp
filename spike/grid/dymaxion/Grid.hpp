@@ -203,18 +203,23 @@ namespace dymaxion
 				+ 	glm::length(glm::cross(offsetDA, offsetAB)))/2.0;
 		}
 
-		inline constexpr id face_vertex_count() const
+		inline constexpr id buffer_size() const
 		{
 			return face_vertex_per_vertex*vertex_count();
 		}
 
-		inline constexpr id face_vertex_id(const id face_vertex_id) const
+		inline constexpr id buffer_vertex_id(const id buffer_id) const
 		{
-			id Oid                  (face_vertex_id/face_vertex_per_vertex);
-			id face_vertex_offset_id(face_vertex_id%face_vertex_per_vertex);
+			id Oid                  (buffer_id/face_vertex_per_vertex);
+			id face_vertex_offset_id(buffer_id%face_vertex_per_vertex);
 			return id(0)<face_vertex_offset_id&&face_vertex_offset_id<id(5)? 
 				arrow_target_memory_id(Oid, face_vertex_offset_id-1) 
 			  : Oid;
+		}
+
+		inline constexpr id buffer_component_id(const id buffer_id) const
+		{
+			return buffer_vertex_id(buffer_id/3)+(buffer_id%3);
 		}
 
 	};

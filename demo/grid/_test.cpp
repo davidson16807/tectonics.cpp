@@ -22,7 +22,7 @@
 #include <field/noise/SquareNoise.hpp>              // SquareNoise
 
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
-#include <grid/dymaxion/series.hpp>                 // dymaxion::FaceVertexIds
+#include <grid/dymaxion/series.hpp>                 // dymaxion::BufferVertexIds
 
 #include <update/OrbitalControlState.hpp>           // OrbitalControlState
 #include <update/OrbitalControlUpdater.hpp>         // OrbitalControlUpdater
@@ -74,7 +74,8 @@ int main() {
   int vertex_count_per_meridian(40);
   dymaxion::Grid grid(radius, vertex_count_per_meridian);
   dymaxion::VertexPositions vertex_positions(grid);
-  dymaxion::FaceVertexIds face_vertex_ids(grid);
+  dymaxion::BufferVertexIds buffer_vertex_id(grid);
+  dymaxion::BufferComponentIds buffer_component_ids(grid);
 
   auto vertex_colored_scalars = series::map(
       field::value_noise3(
@@ -91,12 +92,12 @@ int main() {
   );
 
   // flatten raster for WebGL
-  std::vector<float> face_vertex_color_values(grid.face_vertex_count());
-  std::vector<float> face_vertex_displacements(grid.face_vertex_count());
-  std::vector<float> face_vertex_positions(3*grid.face_vertex_count());
-  each::get(vertex_colored_scalars, face_vertex_ids, face_vertex_color_values);
-  each::get(vertex_displacements,   face_vertex_ids, face_vertex_displacements);
-  each::get(series::vector_deinterleave<3>(vertex_positions), face_vertex_ids, face_vertex_positions);
+  std::vector<float> buffer_color_values(grid.buffer_size());
+  std::vector<float> buffer_displacements(grid.buffer_size());
+  std::vector<float> buffer_positions(3*grid.buffer_size());
+  each::get(vertex_colored_scalars, buffer_vertex_id, buffer_color_values);
+  each::get(vertex_displacements,   buffer_vertex_id, buffer_displacements);
+  each::get(series::vector_deinterleave<3>(vertex_positions), buffer_component_ids, buffer_positions);
 
   // initialize control state
   update::OrbitalControlState control_state;
@@ -116,8 +117,8 @@ int main() {
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);
   view::ColorscaleSurfacesViewState<float> colorscale_state;
-  colorscale_state.max_value = whole::max(face_vertex_color_values);
-  colorscale_state.sealevel = whole::mean(face_vertex_displacements);
+  colorscale_state.max_value = whole::max(buffer_color_values);
+  colorscale_state.sealevel = whole::mean(buffer_displacements);
 
   // initialize shader program
   view::ColorscaleSurfacesShaderProgram colorscale_program;  
@@ -143,9 +144,9 @@ int main() {
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       colorscale_program.draw(
-        face_vertex_positions, 
-        face_vertex_color_values, 
-        face_vertex_displacements,
+        buffer_positions, 
+        buffer_color_values, 
+        buffer_displacements,
         // points,
         // colors,
         // colors,

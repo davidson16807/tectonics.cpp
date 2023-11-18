@@ -35,14 +35,14 @@ namespace dymaxion
 		return TITLE<id,scalar>(grid);\
 	}
 
-	DYMAXION_SERIES(vec3,   VertexPositions, vertex_positions,  grid.vertex_position)
-	DYMAXION_SERIES(vec3,   VertexNormals,   vertex_normals,    grid.vertex_normal)
-	DYMAXION_SERIES(vec3,   VertexEast,      vertex_east,       grid.vertex_east)
-	DYMAXION_SERIES(vec3,   VertexNorth,     vertex_north,      grid.vertex_north)
-	DYMAXION_SERIES(mat3,   VertexFrame,     vertex_frame,      grid.vertex_frame)
-	DYMAXION_SERIES(scalar, VertexDualAreas, vertex_dual_areas, grid.vertex_dual_area)
-	DYMAXION_SERIES(id,     FaceVertexIds,   face_vertex_ids,   grid.face_vertex_id)
-
+	DYMAXION_SERIES(vec3,   VertexPositions,    vertex_positions,     grid.vertex_position)
+	DYMAXION_SERIES(vec3,   VertexNormals,      vertex_normals,       grid.vertex_normal)
+	DYMAXION_SERIES(vec3,   VertexEast,         vertex_east,          grid.vertex_east)
+	DYMAXION_SERIES(vec3,   VertexNorth,        vertex_north,         grid.vertex_north)
+	DYMAXION_SERIES(mat3,   VertexFrame,        vertex_frame,         grid.vertex_frame)
+	DYMAXION_SERIES(scalar, VertexDualAreas,    vertex_dual_areas,    grid.vertex_dual_area)
+	DYMAXION_SERIES(id,     BufferVertexIds,    buffer_vertex_ids,    grid.buffer_vertex_id)
+	DYMAXION_SERIES(id,     BufferComponentIds, buffer_component_ids, grid.buffer_component_id)
 	#undef DYMAXION_SERIES
 
 }
