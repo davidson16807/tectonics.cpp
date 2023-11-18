@@ -41,7 +41,7 @@ namespace update
 			log2_height(log2_height)
 		{}
 
-		// DERIVED ATTRIBUTES, functions of the form: OrbitalControlState -> T
+		// DERIVED ATTRIBUTES, functions of the form: OrbitalControlState → T
 		glm::mat4 get_view_matrix()
 		{
 			glm::mat4 I   = glm::mat4(1.0f);

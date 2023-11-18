@@ -72,7 +72,7 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
   double radius(2.0);
-  int vertex_count_per_meridian(5);
+  int vertex_count_per_meridian(20);
   dymaxion::Grid grid(radius, vertex_count_per_meridian);
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::BufferVertexIds buffer_vertex_id(grid);
