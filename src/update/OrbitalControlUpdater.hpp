@@ -20,7 +20,7 @@ namespace update
       const messages::MouseMotionMessage message,
       OrbitalControlState& state_out
     ) { 
-      std::cout << message.offset.x << " " << message.offset.x << std::endl;
+      // std::cout << message.offset.x << " " << message.offset.x << std::endl;
       if(&state_in != &state_out) {
         state_out = state_in;
       }

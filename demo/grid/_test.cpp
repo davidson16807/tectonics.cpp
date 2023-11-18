@@ -13,6 +13,7 @@
 
 // in house libraries
 #include <store/series/Map.hpp>
+#include <store/series/Uniform.hpp>
 #include <store/series/glm/VectorDeinterleave.hpp>
 #include <store/each.hpp>                           // get
 #include <store/whole.hpp>                          // max, mean
@@ -42,7 +43,7 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // we don't want the old OpenGL
 
   // open a window
-  GLFWwindow* window = glfwCreateWindow(640, 480, "Hello Triangle", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Triangle", NULL, NULL);
   if (!window) {
     std::cout << stderr << " ERROR: could not open window with GLFW3" << std::endl;
     glfwTerminate();
@@ -71,38 +72,40 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
   double radius(2.0);
-  int vertex_count_per_meridian(40);
+  int vertex_count_per_meridian(5);
   dymaxion::Grid grid(radius, vertex_count_per_meridian);
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::BufferVertexIds buffer_vertex_id(grid);
   dymaxion::BufferComponentIds buffer_component_ids(grid);
 
-  auto vertex_colored_scalars = series::map(
-      field::value_noise3(
-          field::square_noise(
-              series::unit_interval_noise(11.0f, 1.1e4f))),
-      vertex_positions
-  );
+  // auto vertex_colored_scalars = series::map(
+  //     field::value_noise3(
+  //         field::square_noise(
+  //             series::unit_interval_noise(11.0f, 1.1e4f))),
+  //     vertex_positions
+  // );
 
-  auto vertex_displacements = series::map(
-      field::value_noise3(
-          field::square_noise(
-              series::unit_interval_noise(12.0f, 1.2e4f))),
-      vertex_positions
-  );
+  auto vertex_displacements = series::uniform(0.0f);
+  // auto vertex_displacements = series::map(
+  //     field::value_noise3(
+  //         field::square_noise(
+  //             series::unit_interval_noise(12.0f, 1.2e4f))),
+  //     vertex_positions
+  // );
 
   // flatten raster for WebGL
   std::vector<float> buffer_color_values(grid.buffer_size());
   std::vector<float> buffer_displacements(grid.buffer_size());
   std::vector<float> buffer_positions(3*grid.buffer_size());
-  each::get(vertex_colored_scalars, buffer_vertex_id, buffer_color_values);
+  std::cout << grid.vertex_count() << std::endl;
+  each::get(dymaxion::square_ids(grid), buffer_vertex_id, buffer_color_values);
   each::get(vertex_displacements,   buffer_vertex_id, buffer_displacements);
   each::get(series::vector_deinterleave<3>(vertex_positions), buffer_component_ids, buffer_positions);
 
   // initialize control state
   update::OrbitalControlState control_state;
   control_state.min_zoom_distance = 1.0f;
-  control_state.log2_height = 2.0f;
+  control_state.log2_height = 2.5f;
   control_state.angular_position = glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f;
   
   // initialize view state

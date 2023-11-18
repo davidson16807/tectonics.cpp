@@ -219,10 +219,9 @@ namespace dymaxion
 
 		inline constexpr id buffer_component_id(const id buffer_id) const
 		{
-			return buffer_vertex_id(buffer_id/3)+(buffer_id%3);
+			return buffer_vertex_id(buffer_id/3)*3+id(buffer_id%3);
 		}
 
 	};
 
 }
-
