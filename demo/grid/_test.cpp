@@ -12,16 +12,22 @@
 #define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
 
 // in house libraries
-#include <series/types.hpp>                            // floats
-#include <series/common.hpp>                           // max
-#include <series/statistic.hpp>                        // mean
-#include <series/glm/random.hpp>                       // get_elias_noise
-#include <meshes/mesh.hpp>                           // subdivide
-#include <grids/SpheroidGrid/string_cast.hpp>        // to_string
-#include <update/OrbitalControlState.hpp>            // OrbitalControlState
-#include <update/OrbitalControlUpdater.hpp>          // OrbitalControlUpdater
-#include <view/ColorscaleSurfacesShaderProgram.hpp>  // ColorscaleSurfacesShaderProgram
+#include <store/series/Map.hpp>
+#include <store/series/glm/VectorDeinterleave.hpp>
+#include <store/each.hpp>                           // get
+#include <store/whole.hpp>                          // max, mean
+#include <store/series/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
 
+#include <field/noise/ValueNoise.hpp>               // ValueNoise
+#include <field/noise/SquareNoise.hpp>              // SquareNoise
+
+#include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
+#include <grid/dymaxion/series.hpp>                 // dymaxion::FaceVertexIds
+
+#include <update/OrbitalControlState.hpp>           // OrbitalControlState
+#include <update/OrbitalControlUpdater.hpp>         // OrbitalControlUpdater
+
+#include <view/ColorscaleSurfacesShaderProgram.hpp> // ColorscaleSurfacesShaderProgram
 
 int main() {
   // initialize GLFW
@@ -63,31 +69,34 @@ int main() {
   glEnable(GL_DEPTH_TEST); // enable depth-testing
   glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
-  /* OTHER STUFF GOES HERE NEXT */
-  // generate mesh
-  meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
-  for (int i = 0; i < 5; ++i)
-  {
-    icosphere_mesh = meshes::subdivide(icosphere_mesh); series::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-  }
+  /* OUR STUFF GOES HERE NEXT */
+  double radius(2.0);
+  int vertex_count_per_meridian(40);
+  dymaxion::Grid grid(radius, vertex_count_per_meridian);
+  dymaxion::VertexPositions vertex_positions(grid);
+  dymaxion::FaceVertexIds face_vertex_ids(grid);
 
-  // initialize grid from mesh
-  rasters::SpheroidGrid icosphere_grid(icosphere_mesh.vertices, icosphere_mesh.faces);
+  auto vertex_colored_scalars = series::map(
+      field::value_noise3(
+          field::square_noise(
+              series::unit_interval_noise(11.0f, 1.1e4f))),
+      vertex_positions
+  );
 
-  // generate random raster over grid
-  std::mt19937 generator(2);
-  series::floats vertex_color_values = series::floats(icosphere_grid.vertex_count);
-  series::floats vertex_displacements = series::floats(icosphere_grid.vertex_count);
-  series::get_elias_noise(icosphere_grid.vertex_positions, generator, vertex_color_values, 100, 0.0001f);
-  series::get_elias_noise(icosphere_grid.vertex_positions, generator, vertex_displacements, 100, 0.0001f);
-  std::string str_raster = to_string(icosphere_grid, vertex_color_values);
-  std::cout << str_raster << std::endl;
+  auto vertex_displacements = series::map(
+      field::value_noise3(
+          field::square_noise(
+              series::unit_interval_noise(12.0f, 1.2e4f))),
+      vertex_positions
+  );
 
   // flatten raster for WebGL
-  series::floats flattened_face_vertex_color_values(icosphere_grid.flattened_face_vertex_ids.size());
-  series::floats flattened_face_vertex_displacements(icosphere_grid.flattened_face_vertex_ids.size());
-  series::get(vertex_color_values,  icosphere_grid.flattened_face_vertex_ids, flattened_face_vertex_color_values);
-  series::get(vertex_displacements, icosphere_grid.flattened_face_vertex_ids, flattened_face_vertex_displacements);
+  std::vector<float> face_vertex_color_values(grid.face_vertex_count());
+  std::vector<float> face_vertex_displacements(grid.face_vertex_count());
+  std::vector<float> face_vertex_positions(3*grid.face_vertex_count());
+  each::get(vertex_colored_scalars, face_vertex_ids, face_vertex_color_values);
+  each::get(vertex_displacements,   face_vertex_ids, face_vertex_displacements);
+  each::get(series::vector_deinterleave<3>(vertex_positions), face_vertex_ids, face_vertex_positions);
 
   // initialize control state
   update::OrbitalControlState control_state;
@@ -107,20 +116,20 @@ int main() {
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);
   view::ColorscaleSurfacesViewState<float> colorscale_state;
-  colorscale_state.max_value = series::max(flattened_face_vertex_color_values);
-  colorscale_state.sealevel = series::mean(flattened_face_vertex_displacements);
+  colorscale_state.max_value = whole::max(face_vertex_color_values);
+  colorscale_state.sealevel = whole::mean(face_vertex_displacements);
 
   // initialize shader program
   view::ColorscaleSurfacesShaderProgram colorscale_program;  
 
   // initialize data for shader program
-  series::floats points = {
+  std::vector<float> points = {
    0.0f,  0.5f,  0.0f,
    0.5f, -0.5f,  0.0f,
   -0.5f, -0.5f,  0.0f
   };
 
-  series::floats colors = {
+  std::vector<float> colors = {
    1.0f,  
    0.0f,  
    0.0f
@@ -134,12 +143,12 @@ int main() {
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       colorscale_program.draw(
-        icosphere_grid.flattened_face_vertex_coordinates.vector(), 
-        flattened_face_vertex_color_values.vector(), 
-        flattened_face_vertex_displacements.vector(),
-        // points.vector(),
-        // colors.vector(),
-        // colors.vector(),
+        face_vertex_positions, 
+        face_vertex_color_values, 
+        face_vertex_displacements,
+        // points,
+        // colors,
+        // colors,
         colorscale_state,
         view_state
       );

@@ -47,6 +47,10 @@ namespace dymaxion
 			return voronoi.grid_id(source_id) + arrow_offset_grid_position(offset_id);
 		}
 
+		static constexpr id vertices_per_face = 3;
+		static constexpr id faces_per_vertex  = 2;
+		static constexpr id face_vertex_per_vertex = vertices_per_face*faces_per_vertex;
+
 	public:
 
 		const Voronoi<id,scalar> voronoi;
@@ -197,6 +201,20 @@ namespace dymaxion
 				+ 	glm::length(glm::cross(offsetBC, offsetCD))
 				+ 	glm::length(glm::cross(offsetCD, offsetDA))
 				+ 	glm::length(glm::cross(offsetDA, offsetAB)))/2.0;
+		}
+
+		inline constexpr id face_vertex_count() const
+		{
+			return face_vertex_per_vertex*vertex_count();
+		}
+
+		inline constexpr id face_vertex_id(const id face_vertex_id) const
+		{
+			id Oid                  (face_vertex_id/face_vertex_per_vertex);
+			id face_vertex_offset_id(face_vertex_id%face_vertex_per_vertex);
+			return id(0)<face_vertex_offset_id&&face_vertex_offset_id<id(5)? 
+				arrow_target_memory_id(Oid, face_vertex_offset_id-1) 
+			  : Oid;
 		}
 
 	};

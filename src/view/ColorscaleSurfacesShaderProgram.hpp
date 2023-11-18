@@ -10,7 +10,6 @@
 #include <glm/gtc/type_ptr.hpp>// *vec4
 
 // in house libraries
-#include <series/types.hpp>     // floats
 #include <view/ViewState.hpp> // ViewState
 
 namespace view 
@@ -323,7 +322,7 @@ namespace view
 		*/
 		template <typename T>
 		void draw(
-			const std::vector<float>& flattened_face_vertex_coordinates, 
+			const std::vector<float>& flattened_face_vertex_positions, 
 			const std::vector<T>& flattened_face_vertex_color_values, 
 			const std::vector<float>& flattened_face_vertex_displacements, 
 			const ColorscaleSurfacesViewState<T>& colorscale_state, 
@@ -338,7 +337,7 @@ namespace view
 				return; 
 			}
 
-			assert(flattened_face_vertex_coordinates.size()/3 == flattened_face_vertex_color_values.size());
+			assert(flattened_face_vertex_positions.size()/3 == flattened_face_vertex_color_values.size());
 			assert(flattened_face_vertex_color_values.size() == flattened_face_vertex_displacements.size());
 
 			glUseProgram(shaderProgramId);
@@ -346,7 +345,7 @@ namespace view
 
 			//ATTRIBUTES
 			glBindBuffer(GL_ARRAY_BUFFER, positionBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*flattened_face_vertex_coordinates.size(), &flattened_face_vertex_coordinates.front(), GL_DYNAMIC_DRAW);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*flattened_face_vertex_positions.size(), &flattened_face_vertex_positions.front(), GL_DYNAMIC_DRAW);
 		    glEnableVertexAttribArray(positionLocation);
             glVertexAttribPointer(positionLocation, 3, GL_FLOAT, normalize, stride, offset);
 

@@ -33,9 +33,3 @@ test-layered-rasters: test/test_layered_rasters.cpp
 # profile: get it working fast
 profile-rasters: profile/profile_rasters.cpp
 	$(CPP) -std=c++17 -o bin/profile.out profile/profile_rasters.cpp $(DEVFLAGS) -I lib/ -I inc/ && chmod a+x bin/profile.out && ./bin/profile.out
-
-# demo: get it working in 3d
-demo-gl: demo/demo_gl.cpp
-	$(CPP) -std=c++17 -o bin/demo.out demo/demo_gl.cpp $(DEVFLAGS) -I lib/ -I inc/ -lglfw -lGL -lGLEW && chmod a+x bin/demo.out && ./bin/demo.out
-demo-rasters: demo/demo_rasters.cpp
-	$(CPP) -std=c++17 -o bin/demo.out demo/demo_rasters.cpp $(DEVFLAGS) -I lib/ -I inc/ -I src/ -lglfw -lGL -lGLEW && chmod a+x bin/demo.out && ./bin/demo.out
