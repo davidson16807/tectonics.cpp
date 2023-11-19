@@ -210,11 +210,16 @@ namespace dymaxion
 
 		inline constexpr id buffer_vertex_id(const id buffer_id) const
 		{
-			id Oid                  (buffer_id/face_vertex_per_vertex);
-			id face_vertex_offset_id(buffer_id%face_vertex_per_vertex);
-			return id(0)<face_vertex_offset_id&&face_vertex_offset_id<id(5)? 
-				arrow_target_memory_id(Oid, face_vertex_offset_id-1) 
-			  : Oid;
+			id Oid(buffer_id/face_vertex_per_vertex);
+			id vid(buffer_id%face_vertex_per_vertex);
+			id uid(vid%3);
+			id dx(uid/2);
+			id dy(uid%2);
+			return voronoi.memory_id(
+				voronoi.grid_id(Oid) + 
+					((vid/3)? 
+					    ivec2(0) + ivec2(dy,dx)
+					  : ivec2(1) - ivec2(dx,dy)));
 		}
 
 		inline constexpr id buffer_component_id(const id buffer_id) const

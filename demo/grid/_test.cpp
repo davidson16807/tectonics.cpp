@@ -43,7 +43,7 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // we don't want the old OpenGL
 
   // open a window
-  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Triangle", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello World", NULL, NULL);
   if (!window) {
     std::cout << stderr << " ERROR: could not open window with GLFW3" << std::endl;
     glfwTerminate();
@@ -72,7 +72,7 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
   double radius(2.0);
-  int vertex_count_per_meridian(20);
+  int vertex_count_per_meridian(10);
   dymaxion::Grid grid(radius, vertex_count_per_meridian);
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::BufferVertexIds buffer_vertex_id(grid);
@@ -112,7 +112,7 @@ int main() {
   view::ViewState view_state;
   view_state.projection_matrix = glm::perspective(
     3.14159f*45.0f/180.0f, 
-    640.0f/480.0f, 
+    850.0f/640.0f, 
     1e-3f, 1e16f
   );
   view_state.view_matrix = control_state.get_view_matrix();
