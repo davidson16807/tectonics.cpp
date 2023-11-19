@@ -7,6 +7,7 @@
 
 // in-house libraries
 #include "Voronoi.hpp"
+#include "Indexing.hpp"
 
 namespace dymaxion 
 {
@@ -54,7 +55,8 @@ namespace dymaxion
 	public:
 
 		const Voronoi<id,scalar> voronoi;
-		const Voronoi<id,scalar> buffer;
+		const Indexing<id,scalar> memory;
+		const Indexing<id,scalar> buffer;
 
 		using size_type = id;
 		using value_type = scalar;
@@ -63,7 +65,8 @@ namespace dymaxion
 
         inline constexpr explicit Grid(const scalar radius, const id vertex_count_per_square_side) : 
         	voronoi(radius, vertex_count_per_square_side),
-        	buffer (radius, vertex_count_per_square_side+2)
+        	memory (vertex_count_per_square_side),
+        	buffer (vertex_count_per_square_side+2)
     	{}
 
     	// NOTE: this method is for debugging, only
@@ -127,7 +130,7 @@ namespace dymaxion
 
 		inline constexpr id arrow_target_memory_id(const id source_id, const id offset_id) const
 		{
-			return voronoi.memory_id(arrow_target_grid_id(source_id, offset_id));
+			return memory.memory_id(arrow_target_grid_id(source_id, offset_id));
 		}
 
 		// offset of the arrow
@@ -165,17 +168,17 @@ namespace dymaxion
 		// thereby providing an adequate representation for the vertex with irregular edges.
 		inline constexpr id vertex_representative(const id vertex_id) const 
 		{
-			return voronoi.memory_id(clamp(voronoi.grid_id(vertex_id), 1, voronoi.vertex_count_per_triangle_leg-2));
+			return memory.memory_id(clamp(voronoi.grid_id(vertex_id), 1, voronoi.vertex_count_per_triangle_leg-2));
 		}
 
 		inline constexpr vec3 vertex_position(const id vertex_id) const 
 		{
-			return voronoi.sphere_position(vertex_id);
+			return voronoi.sphere_position(memory.grid_id(vertex_id));
 		}
 
 		inline constexpr vec3 vertex_normal(const id vertex_id) const 
 		{
-			return voronoi.unit_sphere_position(vertex_id);
+			return voronoi.unit_sphere_position(memory.grid_id(vertex_id));
 		}
 
 		inline constexpr vec3 vertex_east(const vec3 vertex_normal, const vec3 north_pole) const 
@@ -222,7 +225,7 @@ namespace dymaxion
 			id uid(offset_id%3);
 			id dx(uid/2);
 			id dy(uid%2);
-			return voronoi.memory_id(
+			return memory.memory_id(
 				buffer.grid_id(source_id) - ivec2(1) +
 					((offset_id/3)? 
 					    ivec2(0) + ivec2(dy,dx)
