@@ -351,7 +351,7 @@ namespace each
 	template <typename In1, typename F, typename Out>
 	void get(const F& f, const In1& a, Out& out)
 	{
-		assert(compatible(a,f,out));
+		assert(compatible(a,out));
 		auto size = out.size();
 		using size_type = typename Out::size_type;\
 		for (size_type i = 0; i < size; ++i)
