@@ -72,27 +72,32 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
   double radius(2.0);
-  int vertex_count_per_meridian(200);
-  dymaxion::Grid grid(radius, vertex_count_per_meridian);
+  int vertex_count_per_square_side(2);
+  dymaxion::Grid grid(radius, vertex_count_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::BufferVertexIds buffer_vertex_id(grid);
   dymaxion::BufferComponentIds buffer_component_ids(grid);
 
   // auto vertex_colored_scalars = dymaxion::square_ids(grid);
-  auto vertex_colored_scalars = series::map(
-      field::value_noise3(
-          field::square_noise(
-              series::unit_interval_noise(11.0f, 1.1e4f))),
-      vertex_positions
-  );
+  std::vector<double> vertex_colored_scalars(grid.vertex_count());
+  for (int i = 0; i < grid.vertex_count(); ++i)
+  {
+    vertex_colored_scalars[i] = grid.vertex_position(i).z;
+  }
+  // auto vertex_colored_scalars = series::map(
+  //     field::value_noise3(
+  //         field::square_noise(
+  //             series::unit_interval_noise(11.0f, 1.1e4f))),
+  //     vertex_positions
+  // );
 
-  // auto vertex_displacements = series::uniform(0.0f);
-  auto vertex_displacements = series::map(
-      field::value_noise3(
-          field::square_noise(
-              series::unit_interval_noise(12.0f, 1.2e4f))),
-      vertex_positions
-  );
+  auto vertex_displacements = series::uniform(0.0f);
+  // auto vertex_displacements = series::map(
+  //     field::value_noise3(
+  //         field::square_noise(
+  //             series::unit_interval_noise(12.0f, 1.2e4f))),
+  //     vertex_positions
+  // );
 
   // flatten raster for WebGL
   std::vector<float> buffer_color_values(grid.buffer_size());

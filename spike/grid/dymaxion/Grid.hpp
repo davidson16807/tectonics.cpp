@@ -60,8 +60,8 @@ namespace dymaxion
 
 		static constexpr id arrows_per_vertex = 4;
 
-        inline constexpr explicit Grid(const scalar radius, const id vertex_count_per_meridian) : 
-        	voronoi  (radius, vertex_count_per_meridian)
+        inline constexpr explicit Grid(const scalar radius, const id vertex_count_per_square_side) : 
+        	voronoi  (radius, vertex_count_per_square_side)
     	{}
 
     	// NOTE: this method is for debugging, only
@@ -100,6 +100,11 @@ namespace dymaxion
 		inline constexpr scalar total_circumference() const 
 		{
 			return 2.0 * pi * voronoi.radius;
+		}
+
+		inline constexpr id vertex_count_per_square_side() const
+		{
+			return voronoi.vertex_count_per_square_side;
 		}
 
 		inline constexpr id vertex_count_per_meridian() const

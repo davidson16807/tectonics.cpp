@@ -43,30 +43,26 @@ namespace dymaxion
 
     public:
 
-        const id vertex_count_per_meridian;
-        const id vertex_count_per_half_triangle_leg;
-        const id vertex_count_per_triangle_leg;
+        const id vertex_count_per_square_side;
+        const scalar vertex_count_per_square_side_scalar;
+        const scalar vertex_count_per_meridian;
         const id vertex_count_per_square;
         const id vertex_count;
-        const scalar vertex_count_per_half_triangle_leg_scalar;
-        const scalar vertex_count_per_triangle_leg_scalar;
         const bijective::Interleaving<id> row_interleave;
         const bijective::Interleaving<id> square_interleave;
         const scalar radius;
 
-        static constexpr id subgrid_count = 10;
+        static constexpr scalar square_side_to_meridian_vertex_ratio = s2*(s1+std::sqrt(s2));
+        static constexpr id square_count = 10;
 
-        constexpr Voronoi(const scalar radius, const id vertex_count_per_meridian) : 
-            // the boundary of two polar squares consists of cells for those boundaries plus the diagonal of a square, hence the 1+√2 factors
+        constexpr Voronoi(const scalar radius, const id vertex_count_per_square_side) : 
             projection(Projection<id,scalar,Q>()),
-            vertex_count_per_meridian(vertex_count_per_meridian),
-            vertex_count_per_half_triangle_leg(vertex_count_per_meridian/(s2*(s1+std::sqrt(s2)))), 
-            vertex_count_per_triangle_leg(2*vertex_count_per_half_triangle_leg),
-            vertex_count_per_square(vertex_count_per_triangle_leg*vertex_count_per_triangle_leg),
-            vertex_count(10*vertex_count_per_square),
-            vertex_count_per_half_triangle_leg_scalar(vertex_count_per_half_triangle_leg),
-            vertex_count_per_triangle_leg_scalar(vertex_count_per_triangle_leg),
-            row_interleave(vertex_count_per_triangle_leg),
+            vertex_count_per_square_side(vertex_count_per_square_side),
+            vertex_count_per_square_side_scalar(vertex_count_per_square_side),
+            vertex_count_per_meridian(vertex_count_per_square_side * square_side_to_meridian_vertex_ratio),
+            vertex_count_per_square(vertex_count_per_square_side * vertex_count_per_square_side),
+            vertex_count(square_count*vertex_count_per_square),
+            row_interleave(vertex_count_per_square_side),
             square_interleave(vertex_count_per_square),
             radius(radius)
         {
@@ -74,10 +70,10 @@ namespace dymaxion
 
         constexpr ScalarPoint standardize(const ScalarPoint grid_position) const {
             return 
-                (projection.standardize(grid_position / vertex_count_per_triangle_leg_scalar)
+                (projection.standardize(grid_position / vertex_count_per_square_side_scalar)
                     // apply epsilon while in the [0,1] domain so that the cast to `id` is correct
                     + vec2(std::numeric_limits<scalar>::epsilon()))
-                * vertex_count_per_triangle_leg_scalar;
+                * vertex_count_per_square_side_scalar;
         }
 
         constexpr IdPoint standardize(const IdPoint grid_id) const {
@@ -90,7 +86,7 @@ namespace dymaxion
 
         constexpr id memory_id(const ScalarPoint grid_position) const {
             const ScalarPoint standardized(standardize(grid_position));
-            const IdPoint clamped(clamp(IdPoint(standardized), 0, vertex_count_per_triangle_leg-1));
+            const IdPoint clamped(clamp(IdPoint(standardized), 0, vertex_count_per_square_side-1));
             return square_interleave.interleaved_id(
                     clamped.square_id, 
                     row_interleave.interleaved_id(clamped.square_position.y, clamped.square_position.x)
@@ -112,11 +108,11 @@ namespace dymaxion
         }
         inline constexpr IdPoint grid_id(const ScalarPoint grid_position) const
         {
-            return min(IdPoint(grid_position), vertex_count_per_triangle_leg-1);
+            return min(IdPoint(grid_position), vertex_count_per_square_side-1);
         }
         inline constexpr IdPoint grid_id(const vec3 sphere_position) const
         {
-            return min(IdPoint(grid_position(sphere_position)), vertex_count_per_triangle_leg-1);
+            return min(IdPoint(grid_position(sphere_position)), vertex_count_per_square_side-1);
         }
 
 
@@ -134,7 +130,7 @@ namespace dymaxion
         }
         inline constexpr ScalarPoint grid_position(const vec3 sphere_position) const
         {
-            return ScalarPoint(projection.grid_id(glm::normalize(sphere_position)) * vertex_count_per_triangle_leg_scalar);
+            return ScalarPoint(projection.grid_id(glm::normalize(sphere_position)) * vertex_count_per_square_side_scalar);
         }
 
 
@@ -146,11 +142,11 @@ namespace dymaxion
         inline constexpr vec3 unit_sphere_position(const IdPoint grid_id) const
         {
             ScalarPoint scalable(grid_id);
-            return projection.sphere_position((scalable+half_cell)/vertex_count_per_triangle_leg_scalar);
+            return projection.sphere_position((scalable+half_cell)/vertex_count_per_square_side_scalar);
         }
         inline constexpr vec3 unit_sphere_position(const ScalarPoint grid_position) const
         {
-            return projection.sphere_position(grid_position/vertex_count_per_triangle_leg_scalar);
+            return projection.sphere_position(grid_position/vertex_count_per_square_side_scalar);
         }
 
 
@@ -169,4 +165,11 @@ namespace dymaxion
         }
 
     };
+
+    template<typename id=int, typename scalar=double, glm::qualifier Q=glm::defaultp>
+    Voronoi<id,scalar,Q> voronoi_from_vertex_count_per_meridian(const scalar radius, const id vertex_count_per_meridian)
+    {
+        // the boundary of two polar squares consists of cells for those boundaries plus the diagonal of a square, hence the 1+√2 factors
+        scalar vertex_count_per_square_side(vertex_count_per_meridian / Voronoi<id,scalar,Q>::square_side_to_meridian_vertex_ratio);
+    }
 }
