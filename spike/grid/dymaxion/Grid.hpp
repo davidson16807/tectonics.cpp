@@ -54,6 +54,7 @@ namespace dymaxion
 	public:
 
 		const Voronoi<id,scalar> voronoi;
+		const Voronoi<id,scalar> buffer;
 
 		using size_type = id;
 		using value_type = scalar;
@@ -61,7 +62,8 @@ namespace dymaxion
 		static constexpr id arrows_per_vertex = 4;
 
         inline constexpr explicit Grid(const scalar radius, const id vertex_count_per_square_side) : 
-        	voronoi  (radius, vertex_count_per_square_side)
+        	voronoi(radius, vertex_count_per_square_side),
+        	buffer (radius, vertex_count_per_square_side+2)
     	{}
 
     	// NOTE: this method is for debugging, only
@@ -210,19 +212,19 @@ namespace dymaxion
 
 		inline constexpr id buffer_size() const
 		{
-			return face_vertex_per_vertex*vertex_count();
+			return face_vertex_per_vertex * buffer.vertex_count;
 		}
 
 		inline constexpr id buffer_vertex_id(const id buffer_id) const
 		{
-			id Oid(buffer_id/face_vertex_per_vertex);
-			id vid(buffer_id%face_vertex_per_vertex);
-			id uid(vid%3);
+			id source_id(buffer_id/face_vertex_per_vertex);
+			id offset_id(buffer_id%face_vertex_per_vertex);
+			id uid(offset_id%3);
 			id dx(uid/2);
 			id dy(uid%2);
 			return voronoi.memory_id(
-				voronoi.grid_id(Oid) + 
-					((vid/3)? 
+				buffer.grid_id(source_id) - ivec2(1) +
+					((offset_id/3)? 
 					    ivec2(0) + ivec2(dy,dx)
 					  : ivec2(1) - ivec2(dx,dy)));
 		}
