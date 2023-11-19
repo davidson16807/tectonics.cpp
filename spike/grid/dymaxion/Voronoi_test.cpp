@@ -50,15 +50,8 @@ TEST_CASE( "Voronoi grid_position() / sphere_position()", "[dymaxion]" ) {
         grid_ids.push_back(dymaxion::Point(i,glm::ivec2(x,y)));
     }}}
 
-    series::Range memory_ids(voronoi.vertex_count);
-
     // NOTE: right invertibility and closeness cannot be tested, 
     // since the equivalence of grid ids cannot be determined without using the very code that we are testing
-
-    REQUIRE(test::determinism(precise,
-        "Voronoi.memory_id(…)", TEST_UNARY(voronoi.memory_id),
-        grid_ids
-    ));
 
     REQUIRE(test::determinism(precise,
         "Voronoi.grid_id(…)", TEST_UNARY(voronoi.grid_id),
@@ -78,29 +71,6 @@ TEST_CASE( "Voronoi grid_position() / sphere_position()", "[dymaxion]" ) {
     REQUIRE(test::determinism(precise,
         "Voronoi.unit_sphere_position(…)", TEST_UNARY(voronoi.unit_sphere_position),
         grid_ids
-    ));
-
-    REQUIRE(test::codomain(precise,
-        "between 0 and " + std::to_string(voronoi.vertex_count), 
-        [=](auto memory_id){
-            return 0<=memory_id&&memory_id<voronoi.vertex_count;
-        },
-        "Voronoi.memory_id(…)", TEST_UNARY(voronoi.memory_id),
-        grid_ids
-    ));
-
-    REQUIRE(test::codomain(precise,
-        "within expected range", 
-        [=](auto iV2){
-            auto i = iV2.square_id;
-            auto V2 = iV2.square_position;
-            return 
-                0<=i&&i<voronoi.square_count && 
-                0<=V2.x&&V2.x<voronoi.vertex_count_per_square_side && 
-                0<=V2.y&&V2.y<voronoi.vertex_count_per_square_side;
-        },
-        "Voronoi.grid_id(…)", TEST_UNARY(voronoi.grid_id),
-        memory_ids
     ));
 
     REQUIRE(test::codomain(precise,
@@ -149,18 +119,6 @@ TEST_CASE( "Voronoi grid_position() / sphere_position()", "[dymaxion]" ) {
         },
         "Voronoi.unit_sphere_position(…)", TEST_UNARY(voronoi.unit_sphere_position),
         grid_ids
-    ));
-
-    REQUIRE(test::left_invertibility(precise,
-        "Voronoi.grid_id(…) when restricted to indexed grid_ids", TEST_UNARY(voronoi.grid_id),
-        "Voronoi.memory_id(…)",                                   TEST_UNARY(voronoi.memory_id),
-        grid_ids
-    ));
-
-    REQUIRE(test::left_invertibility(precise,
-        "Voronoi.memory_id(…)",                                   TEST_UNARY(voronoi.memory_id),
-        "Voronoi.grid_id(…) when restricted to indexed grid_ids", TEST_UNARY(voronoi.grid_id),
-        memory_ids
     ));
 
     REQUIRE(test::left_invertibility(imprecise,

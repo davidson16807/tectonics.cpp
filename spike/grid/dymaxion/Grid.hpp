@@ -45,7 +45,7 @@ namespace dymaxion
 		// and for this reason we do not wish to expose grid ids to classes that are using *Grids
 		inline constexpr IdPoint arrow_target_grid_id(const id source_id, const id offset_id) const
 		{
-			return voronoi.grid_id(source_id) + arrow_offset_grid_position(offset_id);
+			return memory.grid_id(source_id) + arrow_offset_grid_position(offset_id);
 		}
 
 		static constexpr id vertices_per_face = 3;
@@ -72,7 +72,7 @@ namespace dymaxion
     	// NOTE: this method is for debugging, only
 		constexpr id square_id(const id vertex_id) const
 		{
-			return voronoi.grid_id(vertex_id).square_id;
+			return memory.grid_id(vertex_id).square_id;
 		}
 
 		constexpr id arrow_offset_memory_id(const ivec2 arrow_offset_grid_position) const
@@ -136,8 +136,8 @@ namespace dymaxion
 		// offset of the arrow
 		inline constexpr vec3 arrow_offset(const id source_id, const id offset_id) const
 		{
-			return 	voronoi.sphere_position( arrow_target_memory_id(source_id, offset_id) )
-				- 	voronoi.sphere_position( source_id );
+			return 	voronoi.sphere_position( arrow_target_grid_id(source_id, offset_id) )
+				- 	voronoi.sphere_position( memory.grid_id(source_id) );
 		}
 
 		// normal of the arrow
@@ -155,7 +155,7 @@ namespace dymaxion
 		// length of the arrow's dual
 		constexpr scalar arrow_dual_length(const id source_id, const id offset_id) const
 		{
-			const ScalarPoint midpointOB(ScalarPoint(voronoi.grid_id(source_id)) + vec2(0.5) * vec2(arrow_offset_grid_position(offset_id)));
+			const ScalarPoint midpointOB(ScalarPoint(memory.grid_id(source_id)) + vec2(0.5) * vec2(arrow_offset_grid_position(offset_id)));
 			return glm::distance(
 					voronoi.sphere_position( midpointOB + scalar(0.5)*vec2(arrow_offset_grid_position((offset_id+1)%arrows_per_vertex)) ),
 				 	voronoi.sphere_position( midpointOB + scalar(0.5)*vec2(arrow_offset_grid_position((offset_id-1)%arrows_per_vertex)) )
@@ -168,7 +168,7 @@ namespace dymaxion
 		// thereby providing an adequate representation for the vertex with irregular edges.
 		inline constexpr id vertex_representative(const id vertex_id) const 
 		{
-			return memory.memory_id(clamp(voronoi.grid_id(vertex_id), 1, voronoi.vertex_count_per_triangle_leg-2));
+			return memory.memory_id(clamp(memory.grid_id(vertex_id), 1, voronoi.vertex_count_per_triangle_leg-2));
 		}
 
 		inline constexpr vec3 vertex_position(const id vertex_id) const 
@@ -201,7 +201,7 @@ namespace dymaxion
 
 		constexpr scalar vertex_dual_area(const id vertex_id) const 
 		{
-			const ScalarPoint idO(voronoi.grid_id(vertex_id));
+			const ScalarPoint idO(memory.grid_id(vertex_id));
 			const vec3 pointO(voronoi.sphere_position(idO));
 			const vec3 offsetAB(voronoi.sphere_position(idO+vec2( 0.5, 0.5)) - pointO);
 			const vec3 offsetBC(voronoi.sphere_position(idO+vec2( 0.5,-0.5)) - pointO);
