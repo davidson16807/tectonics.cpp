@@ -7,7 +7,7 @@
 
 // in-house libraries
 #include "Voronoi.hpp"
-#include "Indexing.hpp"
+#include "PointIndexing.hpp"
 
 namespace dymaxion 
 {
@@ -24,9 +24,9 @@ namespace dymaxion
     */
 
     /*
-    `Grid` is a wrapper around a `Voronoi` 
-    that introduces the concepts of vertex neighbors, 
-    and therefore the concepts of faces, edges, and arrows.
+    `Grid` builds upon `Voronoi` and `PointIndexing` to introduce concepts 
+    that are necessary for spatially aware operations such as those in vector calculus or binary morphology.
+    These concepts include vertex neighbors, faces, edges, and arrows, and the duals of such concepts.
     */
     template<typename id, typename scalar, glm::qualifier Q=glm::defaultp>
 	class Grid{
@@ -55,8 +55,8 @@ namespace dymaxion
 	public:
 
 		const Voronoi<id,scalar> voronoi;
-		const Indexing<id,scalar> memory;
-		const Indexing<id,scalar> buffer;
+		const PointIndexing<id,scalar> memory;
+		const PointIndexing<id,scalar> buffer;
 
 		using size_type = id;
 		using value_type = scalar;

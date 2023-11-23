@@ -15,14 +15,14 @@ namespace dymaxion
 {
 
     /*
-    A `Indexing` class represents a bijection
+    A `PointIndexing` class represents a bijection
     between points in space ("points") and integers ("memory id"):
 
         point ↔ memory_id
 
     */
     template<typename id=int, typename scalar=double, glm::qualifier Q=glm::defaultp>
-    class Indexing
+    class PointIndexing
     {
 
         using ivec2 = glm::vec<2,id,glm::defaultp>;
@@ -30,7 +30,6 @@ namespace dymaxion
         using IdPoint = Point<id,id>;
         using ScalarPoint = Point<id,scalar>;
 
-        static constexpr vec2 half_cell = vec2(0.5);
         static constexpr scalar s1 = 1;
         static constexpr scalar s2 = 2;
 
@@ -49,7 +48,7 @@ namespace dymaxion
     public:
         static constexpr id square_count = 10;
 
-        constexpr Indexing(const id vertex_count_per_square_side) : 
+        constexpr PointIndexing(const id vertex_count_per_square_side) : 
             projection(Projection<id,scalar,Q>()),
             vertex_count_per_square_side(vertex_count_per_square_side),
             vertex_count_per_square_side_scalar(vertex_count_per_square_side),
