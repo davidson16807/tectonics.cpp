@@ -72,18 +72,18 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
   double radius(2.0);
-  int vertex_count_per_square_side(2);
+  int vertex_count_per_square_side(20);
   dymaxion::Grid grid(radius, vertex_count_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::BufferVertexIds buffer_vertex_id(grid);
   dymaxion::BufferComponentIds buffer_component_ids(grid);
 
-  // auto vertex_colored_scalars = dymaxion::square_ids(grid);
-  std::vector<double> vertex_colored_scalars(grid.vertex_count());
-  for (int i = 0; i < grid.vertex_count(); ++i)
-  {
-    vertex_colored_scalars[i] = grid.vertex_position(i).z;
-  }
+  auto vertex_colored_scalars = dymaxion::square_ids(grid);
+  // std::vector<double> vertex_colored_scalars(grid.vertex_count());
+  // for (int i = 0; i < grid.vertex_count(); ++i)
+  // {
+  //   vertex_colored_scalars[i] = grid.vertex_position(i).z;
+  // }
   // auto vertex_colored_scalars = series::map(
   //     field::value_noise3(
   //         field::square_noise(
