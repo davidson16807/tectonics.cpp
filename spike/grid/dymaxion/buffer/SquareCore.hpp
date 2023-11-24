@@ -39,7 +39,7 @@ namespace buffer {
         const Vector2Indexing<id> buffers;
 		constexpr inline explicit SquareCore(const id vertex_count_per_square_side): 
 			vertices(vertex_count_per_square_side),
-			buffers (vertex_count_per_square_side-1)
+			buffers (vertex_count_per_square_side)
 		{}
 
 		constexpr inline id point_size(const float value) const
@@ -79,7 +79,8 @@ namespace buffer {
 		template<typename Series>
 		constexpr inline id triangles_size(const Series& input) const
 		{
-			return quad_count() * vertices_per_triangle_quad * point_size(input[0]);
+			return quad_count() * vertices_per_triangle_quad * point_size(input[0]) +
+				buffers.vertex_count_per_side * vertices_per_triangle_quad * point_size(input[0]);
 		}
 
 		template<typename Series, typename Buffer>
@@ -91,7 +92,7 @@ namespace buffer {
 			ivec2 grid_id;
 			for (id quad_id = 0; quad_id < quad_count(); ++quad_id)
 			{
-				grid_id = buffers.grid_id(quad_id);
+				grid_id = buffers.grid_id(quad_id)+ivec2(0,-1);
 				S = input[vertices.memory_id(IdPoint(square_id, grid_id             ))];
 				E = input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(1,0)))];
 				W = input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(0,1)))];
@@ -122,7 +123,7 @@ namespace buffer {
 		{
 			/*
 			NOTE:
-			The first and the last entries in each strip are always repeated so that multiple strips can share the same output.
+			The first and the last entries in each strip are always repeated so that multiple strips can share the same buffer.
 			For illustration, see https://stackoverflow.com/questions/5775105/problem-with-degenerate-triangles-and-gl-triangle-strip
 			*/
 			id buffer_id = buffer_start_id;

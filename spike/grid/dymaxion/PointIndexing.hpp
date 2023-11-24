@@ -59,21 +59,18 @@ namespace dymaxion
         {
         }
 
-        constexpr ScalarPoint standardize(const ScalarPoint grid_position) const {
-            return 
-                (projection.standardize(grid_position / vertex_count_per_square_side_scalar)
-                    // apply epsilon while in the [0,1] domain so that the cast to `id` is correct
-                    + vec2(std::numeric_limits<scalar>::epsilon()))
-                * vertex_count_per_square_side_scalar;
-        }
-
         constexpr IdPoint standardize(const IdPoint grid_id) const {
-            return IdPoint(standardize(ScalarPoint(grid_id)));
+            ScalarPoint standardized =
+                (projection.standardize((ScalarPoint(grid_id)+vec2(0.5)) / vertex_count_per_square_side_scalar)
+                    // apply epsilon while in the [0,1] domain so that the cast to `id` is correct
+                    + vec2(std::numeric_limits<scalar>::epsilon())
+                ) * vertex_count_per_square_side_scalar;
+            return IdPoint(standardized);
         }
 
         constexpr id memory_id(const IdPoint grid_id) const {
-            const ScalarPoint standardized(standardize(grid_id));
-            const IdPoint clamped(clamp(IdPoint(standardized), 0, vertex_count_per_square_side-1));
+            const IdPoint standardized(standardize(grid_id));
+            const IdPoint clamped(clamp(standardized, 0, vertex_count_per_square_side-1));
             return square_interleave.interleaved_id(
                     clamped.square_id, 
                     row_interleave.interleaved_id(clamped.square_position.y, clamped.square_position.x)

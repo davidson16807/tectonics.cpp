@@ -73,7 +73,7 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
   double radius(2.0);
-  int vertex_count_per_square_side(30);
+  int vertex_count_per_square_side(3);
   dymaxion::Grid grid(radius, vertex_count_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::BufferVertexIds buffer_vertex_id(grid);
@@ -106,11 +106,10 @@ int main() {
   std::vector<float> buffer_displacements(10*square_core.triangles_size(vertex_displacements));
   std::vector<float> buffer_positions(10*square_core.triangles_size(vertex_positions));
   int buffer_id;
-  buffer_id=0; for (int i=0; i<10; i++){ buffer_id = square_core.triangles(i, vertex_colored_scalars, buffer_color_values, buffer_id); std::cout<<buffer_id<<" "; } std::cout << std::endl;
-  buffer_id=0; for (int i=0; i<10; i++){ buffer_id = square_core.triangles(i, vertex_displacements, buffer_displacements, buffer_id); std::cout<<buffer_id<<" "; } std::cout << std::endl;
-  buffer_id=0; for (int i=0; i<10; i++){ buffer_id = square_core.triangles(i, vertex_positions, buffer_positions, buffer_id); std::cout<<buffer_id<<" "; } std::cout << std::endl;
-  std::cout << buffer_positions.size() << std::endl;
-  std::cout << whole::to_string(buffer_positions) << std::endl;
+  buffer_id=0; for (int i=0; i<10; i++){ buffer_id = square_core.triangles(i, vertex_colored_scalars, buffer_color_values, buffer_id); }
+  buffer_id=0; for (int i=0; i<10; i++){ buffer_id = square_core.triangles(i, vertex_displacements, buffer_displacements, buffer_id); }
+  buffer_id=0; for (int i=0; i<10; i++){ buffer_id = square_core.triangles(i, vertex_positions, buffer_positions, buffer_id); }
+  // std::cout << buffer_positions.size() << std::endl;
 
   // initialize control state
   update::OrbitalControlState control_state;
