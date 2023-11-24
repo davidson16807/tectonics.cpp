@@ -25,7 +25,7 @@
 
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
 #include <grid/dymaxion/series.hpp>                 // dymaxion::BufferVertexIds
-#include <grid/dymaxion/buffer/SquareCore.hpp>      // dymaxion::buffer::SquareCore
+#include <grid/dymaxion/buffer/Square.hpp>      // dymaxion::buffer::Square
 
 #include <update/OrbitalControlState.hpp>           // OrbitalControlState
 #include <update/OrbitalControlUpdater.hpp>         // OrbitalControlUpdater
@@ -74,7 +74,7 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
   double radius(2.0);
-  int vertex_count_per_square_side(2);
+  int vertex_count_per_square_side(4);
   dymaxion::Grid grid(radius, vertex_count_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::BufferVertexIds buffer_vertex_id(grid);
@@ -103,7 +103,7 @@ int main() {
   // );
 
   // flatten raster for WebGL
-  dymaxion::buffer::SquareCore square_core(vertex_count_per_square_side);
+  dymaxion::buffer::Square square_core(vertex_count_per_square_side);
   std::vector<float> buffer_color_values(10*square_core.triangles_size(vertex_colored_scalars));
   std::vector<float> buffer_displacements(10*square_core.triangles_size(vertex_displacements));
   std::vector<float> buffer_positions(10*square_core.triangles_size(vertex_positions));

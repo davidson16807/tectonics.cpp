@@ -12,7 +12,7 @@ namespace dymaxion {
 namespace buffer {
 
 	/*
-	`dymaxion::buffer::SquareCore` contains a method, `store`,
+	`dymaxion::buffer::Square` contains a method, `store`,
 	that stores a representation of a "square core" to a graphics library buffer.
 	A "square core" indicates the parts of a `dymaxion::Square`
 	that do not border other squares on the `dymaxion::Grid`.
@@ -22,7 +22,7 @@ namespace buffer {
 	*/
 
 	template<typename id, glm::qualifier Q=glm::defaultp>
-	class SquareCore
+	class Square
 	{
 
         using ivec2 = glm::vec<2,id,Q>;
@@ -37,7 +37,7 @@ namespace buffer {
 	public:
         const PointIndexing<id> vertices;
         const Vector2Indexing<id> buffers;
-		constexpr inline explicit SquareCore(const id vertex_count_per_square_side): 
+		constexpr inline explicit Square(const id vertex_count_per_square_side): 
 			vertices(vertex_count_per_square_side),
 			buffers (vertex_count_per_square_side)
 		{}
