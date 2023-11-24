@@ -18,6 +18,7 @@
 #include <store/each.hpp>                           // get
 #include <store/whole.hpp>                          // max, mean
 #include <store/series/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
+#include <store/series/Range.hpp>                   // Range
 
 #include <field/noise/ValueNoise.hpp>               // ValueNoise
 #include <field/noise/SquareNoise.hpp>              // SquareNoise
@@ -79,7 +80,8 @@ int main() {
   dymaxion::BufferVertexIds buffer_vertex_id(grid);
   dymaxion::BufferComponentIds buffer_component_ids(grid);
 
-  auto vertex_colored_scalars = dymaxion::square_ids(grid);
+  // auto vertex_colored_scalars = dymaxion::square_ids(grid);
+  auto vertex_colored_scalars = series::range();
   // std::vector<double> vertex_colored_scalars(grid.vertex_count());
   // for (int i = 0; i < grid.vertex_count(); ++i)
   // {
