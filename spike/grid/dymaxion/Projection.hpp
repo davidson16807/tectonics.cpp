@@ -83,7 +83,7 @@ namespace dymaxion
 			vec2  inverted       (vec2(are_nonpolar)*modded + vec2(are_polar)*(s1-modded));
 			vec2  flipped        (is_polar? inverted.yx() : inverted);
 			ivec2 dis(ivec2(i1,-i1) * (ivec2(are_nonlocal)+ivec2(are_polar)) * nonlocal_sign);
-			id    di (dis.x+dis.y);
+			id    di (abs(dis.x)>abs(dis.y)? dis.x : dis.y);
 			/* NOTE: there is more than one possible solution if both |x|>1 and |y|>1, 
 		    and these solutions do not represent the same point in space.
 		    However the case where x=1 and y=1 is still valid and must be supported.
