@@ -25,6 +25,12 @@ namespace math{
 	    return residue(residue(a,b) + b, b);
 	}
 
+	template<typename T>
+	inline constexpr T maxabs(const T& a, const T& b)
+	{
+	    return max(-min(a,b), max(a,b));
+	}
+
 	template <typename T>
 	inline constexpr T sign(const T x) {
 		return x==T(0)? T(0) : x>T(0)? T(1) : T(-1);

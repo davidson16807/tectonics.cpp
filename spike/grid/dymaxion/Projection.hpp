@@ -16,6 +16,7 @@
 
 // in-house libraries
 #include <math/special.hpp>
+#include <math/glm/special.hpp>
 
 #include "Point.hpp"
 #include "Triangles.hpp"
@@ -79,16 +80,19 @@ namespace dymaxion
 			bvec2 are_polar      (glm::equal(nonlocal_sign, square_polarity));
 			bvec2 are_nonpolar   (glm::notEqual(nonlocal_sign, square_polarity));
 			bool  is_polar       (glm::any(are_polar));
+			bool  is_pole        (glm::all(are_polar));
 			bool  is_corner      (glm::all(are_nonlocal));
-			vec2  inverted       (vec2(are_nonpolar)*modded + vec2(are_polar)*(s1-modded));
-			vec2  flipped        (is_polar? inverted.yx() : inverted);
+			vec2  inverted       (is_corner? modded : vec2(are_nonpolar)*modded + vec2(are_polar)*(s1-modded));
+			vec2  flipped        (is_polar && !is_corner? inverted.yx() : inverted);
 			ivec2 dis(ivec2(i1,-i1) * (ivec2(are_nonlocal)+ivec2(are_polar)) * nonlocal_sign);
-			id    di (abs(dis.x)>abs(dis.y)? dis.x : dis.y);
-			/* NOTE: there is more than one possible solution if both |x|>1 and |y|>1, 
+			id    di (math::compMaxAbs(dis));
+			/* NOTE: there is more than one possible solution if `is_pole`, 
 		    and these solutions do not represent the same point in space.
-		    However the case where x=1 and y=1 is still valid and must be supported.
-		    Therefore, we declare that standardize() is identity if both x≥1 and y≥1.*/
-			Point standardized   (is_corner? grid_id : Point(math::modulus(i+di, square_count), flipped));
+		    However the case where `is_pole` is still valid and must be supported.
+		    Therefore, we declare that standardize() is identity if both x≥1 and y≥1.
+		    This has advantages in spatial transport and 3d rendering 
+		    since triangles and edges naturally degenerate if `is_pole` is true for any vertex.*/
+			Point standardized   (is_pole? grid_id : Point(math::modulus(i+di, square_count), flipped));
 			return standardized;
 		}
 

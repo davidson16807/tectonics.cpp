@@ -7,9 +7,10 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
-#include <glm/mat2.hpp>
-#include <glm/mat3.hpp>
-#include <glm/mat4.hpp>
+#include <glm/mat2x2.hpp>
+#include <glm/mat3x3.hpp>
+#include <glm/mat4x4.hpp>
+#include <glm/gtx/component_wise.hpp>
 
 namespace math{
 
@@ -30,6 +31,8 @@ namespace math{
 	{
 	    return A[0][0] + A[1][1] + A[2][2] + A[3][3];
 	}
+
+	// "permutation" (aka "levi-cevita") functions
 
 	template<typename T, glm::qualifier Q>
 	inline constexpr T permutation(const glm::mat<2,2,T,Q> A)
@@ -54,6 +57,12 @@ namespace math{
 		    	glm::mat<3,3,T,Q>(0,-1,0,1,0,0,0,0,0) * A
 		    )
     	);
+	}
+
+	template<int L, typename T, glm::qualifier Q>
+	inline constexpr T compMaxAbs(glm::vec<L,T,Q> V)
+	{
+	    return std::max(-glm::compMin(V), glm::compMax(V));
 	}
 
 }
