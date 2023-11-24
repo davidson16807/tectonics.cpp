@@ -48,15 +48,10 @@ namespace dymaxion
 			return memory.grid_id(source_id) + arrow_offset_grid_position(offset_id);
 		}
 
-		static constexpr id vertices_per_face = 3;
-		static constexpr id faces_per_vertex  = 2;
-		static constexpr id face_vertex_per_vertex = vertices_per_face*faces_per_vertex;
-
 	public:
 
 		const Voronoi<id,scalar> voronoi;
 		const PointIndexing<id,scalar> memory;
-		const PointIndexing<id,scalar> buffer;
 
 		using size_type = id;
 		using value_type = scalar;
@@ -65,8 +60,7 @@ namespace dymaxion
 
         inline constexpr explicit Grid(const scalar radius, const id vertex_count_per_square_side) : 
         	voronoi(radius, vertex_count_per_square_side),
-        	memory (vertex_count_per_square_side),
-        	buffer (vertex_count_per_square_side+2)
+        	memory (vertex_count_per_square_side)
     	{}
 
     	// NOTE: this method is for debugging, only
@@ -211,30 +205,6 @@ namespace dymaxion
 				+ 	glm::length(glm::cross(offsetBC, offsetCD))
 				+ 	glm::length(glm::cross(offsetCD, offsetDA))
 				+ 	glm::length(glm::cross(offsetDA, offsetAB)))/2.0;
-		}
-
-		inline constexpr id buffer_size() const
-		{
-			return face_vertex_per_vertex * buffer.vertex_count;
-		}
-
-		inline constexpr id buffer_vertex_id(const id buffer_id) const
-		{
-			id source_id(buffer_id/face_vertex_per_vertex);
-			id offset_id(buffer_id%face_vertex_per_vertex);
-			id uid(offset_id%3);
-			id dx(uid/2);
-			id dy(uid%2);
-			return memory.memory_id(
-				buffer.grid_id(source_id) - ivec2(1) +
-					((offset_id/3)? 
-					    ivec2(0) + ivec2(dy,dx)
-					  : ivec2(1) - ivec2(dx,dy)));
-		}
-
-		inline constexpr id buffer_component_id(const id buffer_id) const
-		{
-			return buffer_vertex_id(buffer_id/3)*3+id(buffer_id%3);
 		}
 
 	};

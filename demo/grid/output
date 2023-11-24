@@ -1,0 +1,25 @@
+rm -f test.cpp && \
+find ./ -type f -name '*_specialization.*pp' -exec echo "#include \"{}\"" >> test.cpp \; && \
+find ./ -type f -name '*_test.*pp' -exec echo "#include \"{}\"" >> test.cpp \; && \
+g++ -std=c++17 -o test.out test.cpp  -Wall -Werror -pedantic-errors -rdynamic -g -D GLM_FORCE_SWIZZLE \
+-I /home/carl/code/tectonics.cpp/lib/ -I /home/carl/code/tectonics.cpp/inc/ -I /home/carl/code/tectonics.cpp/src/ -I /home/carl/code/tectonics.cpp/spike/ \
+-lglfw -lGL -lGLEW && \
+chmod a+x test.out && \
+./test.out
+In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/buffer/SquareCore.hpp:9,
+                 from ./_test.cpp:27,
+                 from test.cpp:1:
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/buffer/../VectorIndexing.hpp: In instantiation of ‘constexpr dymaxion::Vector2Indexing<id, Q>::Vector2Indexing(id) [with id = int; glm::qualifier Q = glm::packed_highp]’:
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/buffer/SquareCore.hpp:42:4:   required from ‘constexpr dymaxion::buffer::SquareCore<id, Q>::SquareCore(id) [with id = int; glm::qualifier Q = glm::packed_highp]’
+./_test.cpp:104:72:   required from here
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/buffer/../VectorIndexing.hpp:37:18: error: ‘dymaxion::Vector2Indexing<int, glm::packed_highp>::vertex_count’ will be initialized after [-Werror=reorder]
+   37 |         const id vertex_count;
+      |                  ^~~~~~~~~~~~
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/buffer/../VectorIndexing.hpp:33:43: error:   ‘const bijective::Interleaving<int> dymaxion::Vector2Indexing<int, glm::packed_highp>::interleave’ [-Werror=reorder]
+   33 |         const bijective::Interleaving<id> interleave;
+      |                                           ^~~~~~~~~~
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/buffer/../VectorIndexing.hpp:39:19: error:   when initialized here [-Werror=reorder]
+   39 |         constexpr Vector2Indexing(const id vertex_count_per_side) :
+      |                   ^~~~~~~~~~~~~~~
+cc1plus: all warnings being treated as errors
+make: *** [Makefile:12: all] Error 1

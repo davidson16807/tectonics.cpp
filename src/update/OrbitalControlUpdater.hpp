@@ -1,7 +1,6 @@
 #pragma once
 
 // std libraries
-#include <variant>   // *vec2
 
 // glm libraries
 #include <glm/vec2.hpp>   // *vec2

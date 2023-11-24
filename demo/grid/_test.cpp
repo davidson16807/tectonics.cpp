@@ -24,6 +24,7 @@
 
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
 #include <grid/dymaxion/series.hpp>                 // dymaxion::BufferVertexIds
+#include <grid/dymaxion/buffer/SquareCore.hpp>      // dymaxion::buffer::SquareCore
 
 #include <update/OrbitalControlState.hpp>           // OrbitalControlState
 #include <update/OrbitalControlUpdater.hpp>         // OrbitalControlUpdater
@@ -72,7 +73,7 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
   double radius(2.0);
-  int vertex_count_per_square_side(20);
+  int vertex_count_per_square_side(30);
   dymaxion::Grid grid(radius, vertex_count_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::BufferVertexIds buffer_vertex_id(grid);
@@ -100,13 +101,16 @@ int main() {
   // );
 
   // flatten raster for WebGL
-  std::vector<float> buffer_color_values(grid.buffer_size());
-  std::vector<float> buffer_displacements(grid.buffer_size());
-  std::vector<float> buffer_positions(3*grid.buffer_size());
-  std::cout << grid.vertex_count() << std::endl;
-  each::get(vertex_colored_scalars, buffer_vertex_id, buffer_color_values);
-  each::get(vertex_displacements,   buffer_vertex_id, buffer_displacements);
-  each::get(series::vector_deinterleave<3>(vertex_positions), buffer_component_ids, buffer_positions);
+  dymaxion::buffer::SquareCore square_core(vertex_count_per_square_side);
+  std::vector<float> buffer_color_values(10*square_core.triangles_size(vertex_colored_scalars));
+  std::vector<float> buffer_displacements(10*square_core.triangles_size(vertex_displacements));
+  std::vector<float> buffer_positions(10*square_core.triangles_size(vertex_positions));
+  int buffer_id;
+  buffer_id=0; for (int i=0; i<10; i++){ buffer_id = square_core.triangles(i, vertex_colored_scalars, buffer_color_values, buffer_id); std::cout<<buffer_id<<" "; } std::cout << std::endl;
+  buffer_id=0; for (int i=0; i<10; i++){ buffer_id = square_core.triangles(i, vertex_displacements, buffer_displacements, buffer_id); std::cout<<buffer_id<<" "; } std::cout << std::endl;
+  buffer_id=0; for (int i=0; i<10; i++){ buffer_id = square_core.triangles(i, vertex_positions, buffer_positions, buffer_id); std::cout<<buffer_id<<" "; } std::cout << std::endl;
+  std::cout << buffer_positions.size() << std::endl;
+  std::cout << whole::to_string(buffer_positions) << std::endl;
 
   // initialize control state
   update::OrbitalControlState control_state;
