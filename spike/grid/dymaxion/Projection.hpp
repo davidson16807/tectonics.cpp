@@ -71,23 +71,19 @@ namespace dymaxion
 		constexpr Point standardize(const Point grid_id) const 
 		{
 			id    i  (grid_id.square_id);
-			// id    i  (0);
 			vec2  V2 (grid_id.square_position);
-			// vec2  V2 (0,0);
 			ivec2 square_polarity(squares.polarity(i));
 			vec2  modded         (math::modulus(V2, vec2(s1)));
 			bvec2 are_nonlocal   (glm::greaterThan(glm::abs(V2-modded), vec2(epsilon)));
 			ivec2 nonlocal_sign  (glm::sign(V2-0.5) * vec2(are_nonlocal));
 			bvec2 are_polar      (glm::equal(nonlocal_sign, square_polarity));
 			bvec2 are_nonpolar   (glm::notEqual(nonlocal_sign, square_polarity));
-			bool  is_nonlocal    (glm::any(are_nonlocal));
 			bool  is_polar       (glm::any(are_polar));
 			bool  is_corner      (glm::all(are_nonlocal));
 			vec2  inverted       (vec2(are_nonpolar)*modded + vec2(are_polar)*(s1-modded));
-			vec2  flipped        (is_polar && !is_corner? inverted.yx() : inverted);
-			ivec2 nonlocal_ids   (ivec2(i1,-i1) * nonlocal_sign);
-			id    nonlocal_id    (nonlocal_ids.x+nonlocal_ids.y);
-			id    di             (is_polar? i2*nonlocal_id : nonlocal_id*is_nonlocal);
+			vec2  flipped        (is_polar? inverted.yx() : inverted);
+			ivec2 dis(ivec2(i1,-i1) * (ivec2(are_nonlocal)+ivec2(are_polar)) * nonlocal_sign);
+			id    di (dis.x+dis.y);
 			/* NOTE: there is more than one possible solution if both |x|>1 and |y|>1, 
 		    and these solutions do not represent the same point in space.
 		    However the case where x=1 and y=1 is still valid and must be supported.
