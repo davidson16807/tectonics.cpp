@@ -84,8 +84,7 @@ namespace dymaxion
 			bool  is_corner      (glm::all(are_nonlocal));
 			vec2  inverted       (is_corner? modded : vec2(are_nonpolar)*modded + vec2(are_polar)*(s1-modded));
 			vec2  flipped        (is_polar && !is_corner? inverted.yx() : inverted);
-			ivec2 dis(ivec2(i1,-i1) * (ivec2(are_nonlocal)+ivec2(are_polar)) * nonlocal_sign);
-			id    di (math::compMaxAbs(dis));
+			id    di (math::compMaxAbs(ivec2(i1,-i1) * (ivec2(are_nonlocal)+ivec2(are_polar)) * nonlocal_sign));
 			/* NOTE: there is more than one possible solution if `is_pole`, 
 		    and these solutions do not represent the same point in space.
 		    However the case where `is_pole` is still valid and must be supported.

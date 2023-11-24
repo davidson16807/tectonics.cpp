@@ -6,18 +6,18 @@
 // std libraries
 
 // in-house libraries
-#include "../VectorIndexing.hpp"
+#include "../PointIndexing.hpp"
 
 namespace dymaxion {
 namespace buffer {
 
 	/*
-	`dymaxion::buffer::Square` contains a method, `store`,
-	that stores a representation of a "square core" to a graphics library buffer.
-	A "square core" indicates the parts of a `dymaxion::Square`
-	that do not border other squares on the `dymaxion::Grid`.
+	`dymaxion::buffer::Square` contains methods 
+	that store representations of a `dymaxion::Square` to a graphics library buffer.
 	Decomposing the `dymaxion::Grid` in this way is done to 
-	simplify testing, debugging, and implementation.
+	simplify testing, debugging, and implementation,
+	as well as to permit partial renders of the sphere at high LOD,
+	such as when on the surface of a planet.
 	See README.md for general discussion on design.
 	*/
 
@@ -30,16 +30,16 @@ namespace buffer {
 
 		static constexpr id vertices_per_triangle = 3;
 		static constexpr id triangles_per_quad  = 2;
-		static constexpr id vertices_per_triangle_quad = triangles_per_quad * vertices_per_triangle;
-		static constexpr id vertices_per_triangle_strip_quad = 4;
+		static constexpr id vertices_per_quad = triangles_per_quad * vertices_per_triangle;
+		static constexpr id vertices_per_strip_quad = 4;
 
+        const PointIndexing<id> vertices;
+        const id vertices_per_square_side;
 
 	public:
-        const PointIndexing<id> vertices;
-        const Vector2Indexing<id> buffers;
-		constexpr inline explicit Square(const id vertex_count_per_square_side): 
-			vertices(vertex_count_per_square_side),
-			buffers (vertex_count_per_square_side)
+		constexpr inline explicit Square(const id vertices_per_square_side): 
+			vertices(vertices_per_square_side),
+			vertices_per_square_side(vertices_per_square_side)
 		{}
 
 		constexpr inline id point_size(const float value) const
@@ -73,14 +73,14 @@ namespace buffer {
 
 		constexpr inline id quad_count() const
 		{
-			return buffers.vertex_count;
+			return vertices_per_square_side * vertices_per_square_side;
 		}
 
 		template<typename Series>
 		constexpr inline id triangles_size(const Series& input) const
 		{
-			return quad_count() * vertices_per_triangle_quad * point_size(input[0]) +
-				buffers.vertex_count_per_side * vertices_per_triangle_quad * point_size(input[0]);
+			return quad_count() * vertices_per_quad * point_size(input[0]) +
+				vertices_per_square_side * vertices_per_quad * point_size(input[0]);
 		}
 
 		template<typename Series, typename Buffer>
@@ -90,19 +90,20 @@ namespace buffer {
 			element N,S,E,W;
 			id buffer_id = buffer_start_id;
 			ivec2 grid_id;
-			for (id quad_id = 0; quad_id < quad_count(); ++quad_id)
-			{
-				grid_id = buffers.grid_id(quad_id)+ivec2(0,-1);
-				S = input[vertices.memory_id(IdPoint(square_id, grid_id             ))];
-				E = input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(1,0)))];
-				W = input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(0,1)))];
-				N = input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(1,1)))];
-				buffer_id = point(S, output, buffer_id);
-				buffer_id = point(E, output, buffer_id);
-				buffer_id = point(W, output, buffer_id);
-				buffer_id = point(W, output, buffer_id);
-				buffer_id = point(E, output, buffer_id);
-				buffer_id = point(N, output, buffer_id);
+			for (int j = 0; j < vertices_per_square_side; ++j) {
+				for (int i = 0; i < vertices_per_square_side; ++i) {
+					grid_id = ivec2(i,j)+ivec2(0,-1);
+					S = input[vertices.memory_id(IdPoint(square_id, grid_id             ))];
+					E = input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(1,0)))];
+					W = input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(0,1)))];
+					N = input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(1,1)))];
+					buffer_id = point(S, output, buffer_id);
+					buffer_id = point(E, output, buffer_id);
+					buffer_id = point(W, output, buffer_id);
+					buffer_id = point(W, output, buffer_id);
+					buffer_id = point(E, output, buffer_id);
+					buffer_id = point(N, output, buffer_id);
+				}
 			}
 			return buffer_id;
 		}
@@ -115,7 +116,7 @@ namespace buffer {
 			The first and the last entries in the output are always repeated so that multiple strips can share the same buffer.
 			For illustration, see https://stackoverflow.com/questions/5775105/problem-with-degenerate-triangles-and-gl-triangle-strip
 			*/
-			return (buffers.vertex_count_per_side+2) * buffers.vertex_count_per_side * vertices_per_triangle_strip_quad * point_size(input[0]);
+			return (vertices_per_square_side+2) * vertices_per_square_side * vertices_per_strip_quad * point_size(input[0]);
 		}
 
 		template<typename Series, typename Buffer>
@@ -128,10 +129,10 @@ namespace buffer {
 			*/
 			id buffer_id = buffer_start_id;
 			ivec2 grid_id;
-			for (int j = 0; j < buffers.vertex_count_per_side; ++j) {
+			for (int j = 0; j < vertices_per_square_side; ++j) {
 				grid_id = ivec2(j,0);
 				buffer_id = point(input[vertices.memory_id(IdPoint(square_id, grid_id))], output, buffer_id); // S
-				for (int i = 0; i < buffers.vertex_count_per_side; ++i) {
+				for (int i = 0; i < vertices_per_square_side; ++i) {
 					grid_id = ivec2(j,i);
 					buffer_id = point(input[vertices.memory_id(IdPoint(square_id, grid_id             ))], output, buffer_id); // S
 					buffer_id = point(input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(1,0)))], output, buffer_id); // E
