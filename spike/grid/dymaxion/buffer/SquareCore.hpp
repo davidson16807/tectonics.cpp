@@ -104,6 +104,18 @@ namespace buffer {
 				buffer_id = point(E, output, buffer_id);
 				buffer_id = point(N, output, buffer_id);
 			}
+			// eastern corner requires special handling
+			grid_id = ivec2(buffers.vertex_count_per_side-1,0);
+			W = input[vertices.memory_id(IdPoint(square_id, grid_id              ))];
+			N = input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(1, 0)))];
+			S = input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(0,-1)))];
+			E = input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(1, 1)))];
+			buffer_id = point(S, output, buffer_id);
+			buffer_id = point(N, output, buffer_id);
+			buffer_id = point(W, output, buffer_id);
+			buffer_id = point(S, output, buffer_id);
+			buffer_id = point(E, output, buffer_id);
+			buffer_id = point(N, output, buffer_id);
 			return buffer_id;
 		}
 
