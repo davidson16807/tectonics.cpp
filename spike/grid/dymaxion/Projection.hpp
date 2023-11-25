@@ -71,7 +71,7 @@ namespace dymaxion
 
 		constexpr Point standardize(const Point grid_id) const 
 		{
-			id    i  (grid_id.square_id);
+			id    i  (math::modulus(grid_id.square_id, square_count));
 			vec2  V2 (grid_id.square_position);
 			ivec2 square_polarity(squares.polarity(i));
 			vec2  modded         (math::modulus(V2, vec2(s1)));

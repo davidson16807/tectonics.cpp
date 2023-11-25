@@ -25,7 +25,8 @@
 
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
 #include <grid/dymaxion/series.hpp>                 // dymaxion::BufferVertexIds
-#include <grid/dymaxion/buffer/Square.hpp>      // dymaxion::buffer::Square
+#include <grid/dymaxion/buffer/Square.hpp>          // dymaxion::buffer::Square
+#include <grid/dymaxion/buffer/Pole.hpp>            // dymaxion::buffer::Pole
 
 #include <update/OrbitalControlState.hpp>           // OrbitalControlState
 #include <update/OrbitalControlUpdater.hpp>         // OrbitalControlUpdater
@@ -74,7 +75,7 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
   double radius(2.0);
-  int vertex_count_per_square_side(4);
+  int vertex_count_per_square_side(2);
   dymaxion::Grid grid(radius, vertex_count_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::BufferVertexIds buffer_vertex_id(grid);
@@ -103,14 +104,24 @@ int main() {
   // );
 
   // flatten raster for WebGL
-  dymaxion::buffer::Square square_core(vertex_count_per_square_side);
-  std::vector<float> buffer_color_values(10*square_core.triangles_size(vertex_colored_scalars));
-  std::vector<float> buffer_displacements(10*square_core.triangles_size(vertex_displacements));
-  std::vector<float> buffer_positions(10*square_core.triangles_size(vertex_positions));
-  int buffer_id;
-  buffer_id=0; for (int i=0; i<10; i++){ buffer_id = square_core.triangles(i, vertex_colored_scalars, buffer_color_values, buffer_id); }
-  buffer_id=0; for (int i=0; i<10; i++){ buffer_id = square_core.triangles(i, vertex_displacements, buffer_displacements, buffer_id); }
-  buffer_id=0; for (int i=0; i<10; i++){ buffer_id = square_core.triangles(i, vertex_positions, buffer_positions, buffer_id); }
+  dymaxion::buffer::Square squares(vertex_count_per_square_side);
+  dymaxion::buffer::Pole poles(vertex_count_per_square_side);
+  std::vector<float> buffer_color_values(10*squares.triangles_size(vertex_colored_scalars) + poles.triangles_size(vertex_colored_scalars));
+  std::vector<float> buffer_displacements(10*squares.triangles_size(vertex_displacements) + poles.triangles_size(vertex_displacements));
+  std::vector<float> buffer_positions(10*squares.triangles_size(vertex_positions) + poles.triangles_size(vertex_positions));
+  int buffer_id=0;
+  buffer_id = poles.triangles(0, vertex_colored_scalars, buffer_color_values, buffer_id);
+  buffer_id = poles.triangles(1, vertex_colored_scalars, buffer_color_values, buffer_id);
+  for (int i=0; i<10; i++){ buffer_id = squares.triangles(i, vertex_colored_scalars, buffer_color_values, buffer_id); }
+  buffer_id=0; 
+  buffer_id = poles.triangles(0, vertex_displacements, buffer_displacements, buffer_id);
+  buffer_id = poles.triangles(1, vertex_displacements, buffer_displacements, buffer_id);
+  for (int i=0; i<10; i++){ buffer_id = squares.triangles(i, vertex_displacements, buffer_displacements, buffer_id); }
+  buffer_id=0; 
+  buffer_id = poles.triangles(0, vertex_positions, buffer_positions, buffer_id);
+  buffer_id = poles.triangles(1, vertex_positions, buffer_positions, buffer_id);
+  for (int i=0; i<10; i++){ buffer_id = squares.triangles(i, vertex_positions, buffer_positions, buffer_id); }
+  buffer_id=0; 
   // std::cout << buffer_positions.size() << std::endl;
 
   // initialize control state
