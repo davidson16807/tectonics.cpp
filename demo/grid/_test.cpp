@@ -25,8 +25,7 @@
 
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
 #include <grid/dymaxion/series.hpp>                 // dymaxion::BufferVertexIds
-#include <grid/dymaxion/buffer/SquareBuffers.hpp>          // dymaxion::Square
-#include <grid/dymaxion/buffer/PoleBuffers.hpp>            // dymaxion::Pole
+#include <grid/dymaxion/buffer/WholeGridBuffers.hpp>// dymaxion::WholeGridBuffers
 
 #include <update/OrbitalControlState.hpp>           // OrbitalControlState
 #include <update/OrbitalControlUpdater.hpp>         // OrbitalControlUpdater
@@ -75,7 +74,7 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
   double radius(2.0);
-  int vertices_per_square_side(1);
+  int vertices_per_square_side(2);
   dymaxion::Grid grid(radius, vertices_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::BufferVertexIds buffer_vertex_id(grid);
@@ -104,25 +103,14 @@ int main() {
   // );
 
   // flatten raster for WebGL
-  dymaxion::SquareBuffers squares(vertices_per_square_side);
-  dymaxion::PoleBuffers poles(vertices_per_square_side);
-  std::vector<float> buffer_color_values(10*squares.triangles_size(vertex_colored_scalars) + poles.triangles_size(vertex_colored_scalars));
-  std::vector<float> buffer_displacements(10*squares.triangles_size(vertex_displacements) + poles.triangles_size(vertex_displacements));
-  std::vector<float> buffer_positions(10*squares.triangles_size(vertex_positions) + poles.triangles_size(vertex_positions));
-  int buffer_id=0;
-  buffer_id = poles.storeTriangles(0, vertex_colored_scalars, buffer_color_values, buffer_id);
-  buffer_id = poles.storeTriangles(1, vertex_colored_scalars, buffer_color_values, buffer_id);
-  for (int i=0; i<10; i++){ buffer_id = squares.storeTriangles(i, vertex_colored_scalars, buffer_color_values, buffer_id); }
-  buffer_id=0; 
-  buffer_id = poles.storeTriangles(0, vertex_displacements, buffer_displacements, buffer_id);
-  buffer_id = poles.storeTriangles(1, vertex_displacements, buffer_displacements, buffer_id);
-  for (int i=0; i<10; i++){ buffer_id = squares.storeTriangles(i, vertex_displacements, buffer_displacements, buffer_id); }
-  buffer_id=0; 
-  buffer_id = poles.storeTriangles(0, vertex_positions, buffer_positions, buffer_id);
-  buffer_id = poles.storeTriangles(1, vertex_positions, buffer_positions, buffer_id);
-  for (int i=0; i<10; i++){ buffer_id = squares.storeTriangles(i, vertex_positions, buffer_positions, buffer_id); }
-  buffer_id=0; 
-  // std::cout << buffer_positions.size() << std::endl;
+  dymaxion::WholeGridBuffers grids(vertices_per_square_side);
+  std::vector<float> buffer_color_values(grids.triangles_size(vertex_colored_scalars));
+  std::vector<float> buffer_displacements(grids.triangles_size(vertex_displacements));
+  std::vector<float> buffer_positions(grids.triangles_size(vertex_positions));
+  std::cout << buffer_positions.size() << " " << buffer_positions.size() << std::endl;
+  grids.storeTriangles(vertex_colored_scalars, buffer_color_values);
+  grids.storeTriangles(vertex_displacements, buffer_displacements);
+  grids.storeTriangles(vertex_positions, buffer_positions);
 
   // initialize control state
   update::OrbitalControlState control_state;

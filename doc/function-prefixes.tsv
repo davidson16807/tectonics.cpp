@@ -2,4 +2,4 @@
 `approx` 	function uses an approximation that at least derives from a reputable published source
 `fast`  	function uses an approximation for the purpose of performance, may or may not be published
 `guess` 	function describes a model or approximation that is unpublished and either speculative or representative, typically due to a lack of better options
-`get`   	function is strictly pure (i.e. not just "conceptually pure", see `doc/GLOSSARY.md`)
+`get`   	function is strictly pure (i.e. not just "regular" or "conceptually pure", see `doc/GLOSSARY.md`)
