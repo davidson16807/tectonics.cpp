@@ -13,8 +13,8 @@ namespace field
 
 	/*
 	`EliasNoise` implements the terrain generation algorithm discussed by
-    Hugo Elias here: http://freespace.virgin.net/hugo.elias/models/m_landsp.htm
-    and archived here: https://web.archive.org/web/20160418004150/http://freespace.virgin.net/hugo.elias/models/m_landsp.htm
+    Hugo Elias here: http://freespace.virgin.net/hugo.elias/model/m_landsp.htm
+    and archived here: https://web.archive.org/web/20160418004150/http://freespace.virgin.net/hugo.elias/model/m_landsp.htm
 	It maps ℝ³→𝕊→[0,1] where 𝕊 indicates the unit spherical domain.
     The algorithm was originally designed for terrain generation on a sphere,
      but it works for any scalar field on the surface of a spheroid. 
