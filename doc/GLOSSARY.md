@@ -16,14 +16,20 @@
 
 **class category** A category whose arrows are represented by conceptually pure methods within a class. This can be useful if a category is implemented using methods or functions from another category, forming a dependency hierarchy. If this is the case, the constructor of the dependant class may require an instance of the dependancy, forming a category of categories. This is similar in practice to dependency injection in traditional object oriented programming, but with a much stronger mathematical underpinning.
 
-**class homset** A homset within a category where arrows are implemented as conceptually pure methods within a class. This can be useful as it provides tha advantages of both class categories and namespace categories, minimizing the number of imports that are needed to make use of functionality while still allowing dependencies to be modeled using constructors. s
-
-**namespace category** A category whose arrows are represented by conceptually pure functions within a namespace. This can be useful to minimize the number imports that are needed to make use of functionality. In this case, each homset within the category can be represented by a single file, so the requirements for each file are minimized to that of the two objects being mapped, and the contents of each file are maximized to provide as much functionality as can be created by introducing its requirement.
-
 **field** A field is an abstract concept that can be thought of as a map that has a value for every point in space. It can be approximated using a **raster**. The values stored may be numbers ("scalar field"), vectors ("vector field") or something else. 
 
-**grid** A grid is a collection of interconnected grid cells that are intended to store values in a **raster**. It may be represented by an underlying **mesh** in which grid cells are represented by vertices, or there may be a more complex relationship, where a vertex in a mesh corresponds to several grid cells (see `LayeredGrid` for an example). A grid caches additional attributes that may be used when performing operations on rasters. These additional attributes are derived from vertices and faces. Another term for it may be a "mesh cache"
+**grid** A grid is a collection of interconnected entities (**vertices**, **cells**, etc.) together with a manner of indexing that maps ids for those entities to their positions in a 1d array. These positions can then be used to associate those entities to values in a **raster**. 
 
-**mesh** A mesh is a collection of interconnected vertices. It is a tuple of vertices and faces. Vertices are stored as vec3s representing positions in a 3d cartesian coordinate system. Faces are stored as uvec3s representing the indices of vertices that are interconnected as a face within the mesh. A mesh is a simple data structure. It does not contain any additional attributes that are derived from vertices and faces. This is a job for **grid**
+**raster** A raster is a collection of values that maps entities on a **grid**. It is an approximation of a mathematical **field**. A raster is stored using a simple std::vector wrapped in a `series` object. This is done to promote code reuse by avoiding unecessary data type conversion, and also to achieve polymorphism when using the Grid class. The values stored in the rasters may be numbers ("scalar raster"), vectors ("vector raster") or something else. 
 
-**raster** A raster is a collection of values that map to cells on a **grid**. It is an approximation of a mathematical **field**. A raster is stored using a simple std::vector wrapped in a `series` object. This is done to promote code reuse by avoiding unecessary data type conversion, and also to achieve polymorphism when using the Grid class. The values stored in the rasters may be numbers ("scalar raster"), vectors ("vector raster") or something else. 
+**vertex** An entity on a **grid** that is associated with a single point in space.
+
+**edge** A pair of vertices for which order doesn't matter.
+
+**arrow** A tuple of two vertices, such that order matters.
+
+**face** A collection of three vertices. Order typically does not matter, unless it is in a **buffer**, in which case it indicates a counter-clockwise motion around the surface normal when viewed from the front side of the face (reflecting the industry-standard "winding order").
+
+**buffer** An **index**, usually a `std::vector<T>`, that is explicitly formatted for use with a graphics library such as OpenGL
+
+**index** Any data structure or class that has a `operator[]` method, either one that refers to a location in memory or one that generates values procedurally

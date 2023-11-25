@@ -1,7 +1,22 @@
-This folder contains subcomponents of the "tectonics.cpp" suite:
-* `series` for manipulating arrays of arithmetic values (optionally leverages `glm`)
-* `rasters` for storing maps of values on the surface of 3d meshes (requires `series` and `glm`)
-* `academics` for side-effect-free utility functions expressing simple mathematic and scientific relationships ported from glsl (optionally leverages `glm` and `rasters`)
-* `components` for loosely coupled, unopinionated data structures for deriving properties of celestial bodies from simple state variables like mass pools (requires `academics`, optionally leverages `glm` and `rasters`)
+The `inc/` folder stores mature subcomponents of the "tectonics.cpp" suite. 
+Maturity is defined by the following criteria:
+* code is unit tested as thoroughly as can be done to test for mathematical properties as outlined in `doc/basic-unit-tests.md`
+* code is ready to be relied upon (if not already relied upon) by code elsewhere, such as in `spike/`, `src/`,  `demo/`, `inc/` itself, or even other projects.
 
-See `lib` for 3rd party libraries.
+Code within `inc/` is typically less subject to change, however this is not a strict requirement for inclusion.
+
+inc/ includes the following subfolders:
+* `test/` for simplifying the writing of unit tests that adhere to our test philosophy, see `doc/basic-unit-tests.md`
+* `math/` for functions and structures/classes with `operator()` methods that map ℝ→𝕋 (`glm` is optional)
+* `index/` for structures/classes with `operator[]` methods that map ℕ→𝕋 (`glm` is optional)
+* `field/` for functions and structures/classes with `operator()` methods that map ℝ²→𝕋 and ℝ³→𝕋, usually representing a function over a physical space (`glm` is required)
+* `grid/` for data structures, methods, and `index`es that involve the properties of graph-like structures (`buffer` is optional, `glm` is required)
+* `raster/` for spatially-aware operators that act on `raster`s, which are `index`es where elements are associated with entities in `grid`s like vertices, edges, etc. (`grid` is required)
+* `buffer/` for methods that transfer the contents of `raster`s into `buffer`s, which are `index`es that are formatted for consumption by graphics libraries
+* `units/` for classes that represent systems of measurement and enforce type-safe dimensionality
+* `model/` for data structures that represent concepts in science, while also including their operators and the maps that exist between them (requirements depend on the model, see there for details)
+
+the following shorthands are used above:
+* ℝ indicates floating point values
+* ℕ indicates positive integers
+* 𝕋 indicates some arbitrary type
