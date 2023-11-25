@@ -4,13 +4,13 @@
 
 **conceptually pure method** a method that can be interpreted as a conceptually pure function
 
-**operator** A conceptually pure function of the form T×T×⋯×T→T.
+**operator** A conceptually pure function of the form 𝕋×𝕋×⋯×𝕋→𝕋.
 
-**transformation** An operator of the form T→T.
+**transformation** An operator of the form 𝕋→𝕋.
 
-**predicate** A conceptually pure function of the form T→bool.
+**predicate** A conceptually pure function of the form 𝕋→𝟚.
 
-**derived attribute** A nonisomorphic conceptually pure function of the form T→S.
+**derived attribute** A nonisomorphic conceptually pure function of the form 𝕋→S.
 
 **category** A mathematical category. In the context of the application, most categories are small categories (that is to say, they can be depicted using weakly connected graphs, where all nodes are reachable from another if arrow direction is ignored). These categories are typically represented by a namespace or class for which methods or functions are conceptually pure and map between objects. 
 
