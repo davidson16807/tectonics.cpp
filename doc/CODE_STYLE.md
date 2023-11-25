@@ -1,14 +1,21 @@
 Code style
 
-names in general    use whole words unless otherwise indicated
-namespaces          singular, single lower case short words, e.g. `crust` or `genes`, usually implying a genitive case, adjective, or determiner
-directories         singular, single lower case short words, e.g. `index` or `test`
-classes             `PascalCase` , err toward verbosity
-data structures     `snake_case` and brief to encourage treating the structure like a primitive, 
-                    `PascalCase` and verbose otherwise
-"class categories"  `PascalCase`, do not suffix with `*er`, `*tor`, etc.¹, consider suffixing with `*ing`, `*tion`, etc. 
-                    same goes for classes representing curried functions
-Macros              `SCREAMING_CASE`, err toward verbosity
+names in general    use whole words unless otherwise indicated, 
+                    do not use acronyms or abbreviation unless it is used by layman (e.g. `id`, `si`, `gui`, `lod`, etc.),
+                    or already adopted by a standard or 3rd party library (e.g. `std`, `bvec3`, `mat2`, etc.)
+namespaces          single lower case short words, e.g. `crust` or `gene`, 
+                    singular, usually implying a genitive case, adjective, or determiner,
+                    avoid using `nested::name::spaces` unless strictly needed for disambiguation
+directories         singular, single lower case short words, e.g. `index` or `test`,
+                    prefer using `nested/sub/folders/` to group related functionality (e.g. `index/series/`, `field/noise/`)
+                    or to bring attention to requirements for extended functionality (e.g. `math/glm/`, `index/si/`)
+classes             `PascalCase` , err toward verbosity, use `Titlecase` for acronyms e.g. `Id`, `Si`, `Gui`, `Lod`
+data structures     `snake_case` if trying to encourage treating the structure like a primitive, if so brevity is allowed,
+                    `PascalCase` for all other circumstances, and err toward verbosity
+"class categories"  `PascalCase`, do not suffix with `*er`, `*tor`, etc.¹, consider using the plural, or suffixing with `*ing`, `*tion`, etc. 
+"curry classes"     `PascalCase`, do not suffix with `*er`, `*tor`, etc.¹, consider using the plural, or suffixing with `*ing`, `*tion`, etc. 
+"make_* functions"  `snake_case`, copy the name of the class/structure being made, do not prefix with `make_*`
+macros              `SCREAMING_CASE`, err toward verbosity
 global variables    `SCREAMING_CASE`, err toward verbosity
 impure methods      `camelCase`², multiple words, brevity is allowed³
 impure functions    `camelCase`², multiple words, err toward verbosity
@@ -20,12 +27,13 @@ local variables     `snake_case`, brevity is allowed³
 booleans            `snake_case`, prefix with `is_*`, `has_*`, `can_*`, etc.
 boolean vectors     `snake_case`, prefix with `are_*`, `have_*`, `can_*`, etc. 
 rasters             same rules as if it were the underlying `value_type`
+ids                 single lowercase letters if brevity or abstraction demands it⁵, otherwise determined by rules above
 scalars             single lowercase letters if brevity or abstraction demands it⁵, otherwise determined by rules above
 vectors             single uppercase letters if brevity or abstraction demands it⁵, otherwise determined by rules above
 matrices            single uppercase letters if brevity or abstraction demands it⁵, otherwise determined by rules above
 products            concatenated names, if brevity or abstraction demands it⁵, otherwise determined by rules above
 other operators     underscore delimited names, if brevity or abstraction demands it⁵, otherwise determined by rules above
-template parameters single uppercase letters if brevity or abstraction demands it⁵, or to conform with `glm`, 
+template parameters single uppercase letters if brevity or abstraction demands it⁵, or to conform with 3rd party libraries like `glm`, 
                     otherwise same rules as for data structures, do not prefix with `T` if so⁴
 constants           determined by rules above⁶
 
@@ -37,25 +45,26 @@ NOTES:
   The idea is that we need some way to draw attention to dangerous things⁷.
   Most of the object oriented code that's out in the wild is already rife with side effects, 
   so sticking with `camelCase` conventions will allow 3rd party code to remain consistent with our own conventions,
-  while still allowing us to warn ourselves or others that the code they're calling has not been checked for purity. 
-³ Methods already have a lot of context built up from the name of their owners,
-  and it's typically worthwhile to remember things like intercomposability relationships between methods of the same class.
+  while still allowing us to warn ourselves or others that the code they're calling may not be pure. 
+³ Methods already have a lot of context built up from the fact that their classes are being used,
+  and following our design approach typically results in sparse classes with methods that reinforce each other,
+  so some familiarity with methods and their names should be expected.
   Aside from methods, most things that face an API user must be verbose, like parameters or function names.
   Private variables are still used in a scope that's broad enough to be treated just like anything else.
   Local variables are used frequently and are the only thing whose scope is limited enough to permit brevity.
 ⁴ This was recommend in a C++ lightning talk, whose title I can no longer remember.
   Template parameters behave just like regular parameters so they are low risk,
-  and we only draw attention to things that are dangerous⁷.
-  Dropping the prefix has resulted in some dramatic improvements to readability without sacrafices to understanding,
-  see various grid classes like `dymaxion::Grid.hpp` for examples of this.
+  and we want to reduce noise, so we only draw attention to things that are dangerous⁷.
+  Dropping the prefix has resulted in some dramatic improvements to readability without sacraficing understanding,
+  see various grid classes like `dymaxion::Grid.hpp` for examples of how this works well.
 ⁵ There absolutely are times where this is needed. For examples where brevity is needed, see `units/si.hpp`,
   or the code that's responsible for atmospheric scattering in tectonics.js.
   For examples where abstraction is needed, see code for geometric intersections in tectonics.glsl.
   A lookup table should be provided in comments if abbreviation is done for brevity.
-  Subscripting is okay (e.g. `Tout`) but not multiletter abbreviation (e.g. `tempout`).
+  Subscripting is okay (e.g. `Tout` for output temperature) but not multiletter abbreviation (e.g. `tempout`).
   Multiletter abbreviation is a holdout from the days of FORTRAN and global variables,
   when there were more variables in a local scope than letters to describe them.
-  If you really need abbreviation that badly, then commit to it.
+  If you really need abbreviation that badly, then go all the way.
 ⁶ Constants have no particular convention, their case is determined by other properties. 
   Constants place a strict compile-time guarantee that a variable will not be modified during runtime.
   We can rely on these guarantees to reason with code, so they are helpful.

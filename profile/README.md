@@ -1,1 +1,0 @@
-This folder contains code for measuring runtime performance. 
