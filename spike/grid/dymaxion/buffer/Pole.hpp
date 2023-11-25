@@ -31,7 +31,7 @@ namespace buffer {
 		static constexpr id triangle_count = 3;
 
 	public:
-        const PointIndexing<id> vertices;
+        const Indexing<id> vertices;
         const int vertices_per_side;
 		constexpr inline explicit Pole(const id vertices_per_side): 
 			vertices(vertices_per_side),

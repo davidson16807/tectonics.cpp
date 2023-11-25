@@ -9,16 +9,16 @@ chmod a+x test.out && \
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp: In member function ‘constexpr dymaxion::PointIndexing<id, scalar, Q>::ScalarPoint dymaxion::PointIndexing<id, scalar, Q>::standardize(dymaxion::PointIndexing<id, scalar, Q>::ScalarPoint) const’:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:68:13: error: expected ‘;’ before ‘standardized’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp: In member function ‘constexpr dymaxion::Indexing<id, scalar, Q>::ScalarPoint dymaxion::Indexing<id, scalar, Q>::standardize(dymaxion::Indexing<id, scalar, Q>::ScalarPoint) const’:
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:68:13: error: expected ‘;’ before ‘standardized’
    68 |             standardized *= vertices_per_square_side_scalar
       |             ^~~~~~~~~~~~
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp: In instantiation of ‘constexpr dymaxion::PointIndexing<id, scalar, Q>::ScalarPoint dymaxion::PointIndexing<id, scalar, Q>::standardize(dymaxion::PointIndexing<id, scalar, Q>::ScalarPoint) const [with id = int; scalar = double; glm::qualifier Q = glm::packed_highp; dymaxion::PointIndexing<id, scalar, Q>::ScalarPoint = dymaxion::Point<int, double, glm::packed_highp>]’:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:77:39:   required from ‘constexpr dymaxion::PointIndexing<id, scalar, Q>::IdPoint dymaxion::PointIndexing<id, scalar, Q>::standardize(dymaxion::PointIndexing<id, scalar, Q>::IdPoint) const [with id = int; scalar = double; glm::qualifier Q = glm::packed_highp; dymaxion::PointIndexing<id, scalar, Q>::IdPoint = dymaxion::Point<int, int, glm::packed_highp>]’
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:81:55:   required from ‘constexpr id dymaxion::PointIndexing<id, scalar, Q>::memory_id(dymaxion::PointIndexing<id, scalar, Q>::IdPoint) const [with id = int; scalar = double; glm::qualifier Q = glm::packed_highp; dymaxion::PointIndexing<id, scalar, Q>::IdPoint = dymaxion::Point<int, int, glm::packed_highp>]’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp: In instantiation of ‘constexpr dymaxion::Indexing<id, scalar, Q>::ScalarPoint dymaxion::Indexing<id, scalar, Q>::standardize(dymaxion::Indexing<id, scalar, Q>::ScalarPoint) const [with id = int; scalar = double; glm::qualifier Q = glm::packed_highp; dymaxion::Indexing<id, scalar, Q>::ScalarPoint = dymaxion::Point<int, double, glm::packed_highp>]’:
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:77:39:   required from ‘constexpr dymaxion::Indexing<id, scalar, Q>::IdPoint dymaxion::Indexing<id, scalar, Q>::standardize(dymaxion::Indexing<id, scalar, Q>::IdPoint) const [with id = int; scalar = double; glm::qualifier Q = glm::packed_highp; dymaxion::Indexing<id, scalar, Q>::IdPoint = dymaxion::Point<int, int, glm::packed_highp>]’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:81:55:   required from ‘constexpr id dymaxion::Indexing<id, scalar, Q>::memory_id(dymaxion::Indexing<id, scalar, Q>::IdPoint) const [with id = int; scalar = double; glm::qualifier Q = glm::packed_highp; dymaxion::Indexing<id, scalar, Q>::IdPoint = dymaxion::Point<int, int, glm::packed_highp>]’
 /home/carl/code/tectonics.cpp/spike/grid/dymaxion/buffer/SquareCore.hpp:96:33:   required from ‘constexpr id dymaxion::buffer::SquareCore<id, Q>::triangles(id, const Series&, Buffer&, id) const [with Series = dymaxion::SquareId<int, double>; Buffer = std::vector<float>; id = int; glm::qualifier Q = glm::packed_highp]’
 ./_test.cpp:109:75:   required from here
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: error: no match for ‘operator*’ (operand types are ‘dymaxion::Point<int, double, glm::packed_highp>’ and ‘dymaxion::PointIndexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’})
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: error: no match for ‘operator*’ (operand types are ‘dymaxion::Point<int, double, glm::packed_highp>’ and ‘dymaxion::Indexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’})
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Projection.hpp:20,
@@ -33,7 +33,7 @@ In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Projecti
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   deduced conflicting types for parameter ‘scalar’ (‘double’ and ‘glm::vec<2, double, glm::packed_highp>’)
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   deduced conflicting types for parameter ‘scalar’ (‘double’ and ‘glm::vec<2, double, glm::packed_highp>’)
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Projection.hpp:20,
@@ -48,7 +48,7 @@ In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Projecti
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::PointIndexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const dymaxion::Point<id, scalar>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Indexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const dymaxion::Point<id, scalar>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type_vec3.hpp:404,
@@ -64,7 +64,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<3, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<3, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type_vec3.hpp:404,
@@ -80,7 +80,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<3, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<3, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type_vec3.hpp:404,
@@ -96,7 +96,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   template argument ‘2’ does not match ‘3’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   template argument ‘2’ does not match ‘3’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type_vec3.hpp:404,
@@ -112,7 +112,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<1, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<1, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type_vec3.hpp:404,
@@ -128,7 +128,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<3, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<3, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/detail/type_vec2.hpp:374,
@@ -144,7 +144,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/detail/type_vec2.hpp
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<2, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<2, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/detail/type_vec2.hpp:374,
@@ -160,7 +160,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/detail/type_vec2.hpp
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<2, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<2, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/detail/type_vec2.hpp:374,
@@ -176,7 +176,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/detail/type_vec2.hpp
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   deduced conflicting types for parameter ‘T’ (‘dymaxion::Point<int, double, glm::packed_highp>’ and ‘double’)
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   deduced conflicting types for parameter ‘T’ (‘dymaxion::Point<int, double, glm::packed_highp>’ and ‘double’)
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/detail/type_vec2.hpp:374,
@@ -192,7 +192,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/detail/type_vec2.hpp
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<1, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<1, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/detail/type_vec2.hpp:374,
@@ -208,7 +208,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/detail/type_vec2.hpp
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<2, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<2, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/detail/type_vec4.hpp:479,
@@ -224,7 +224,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/detail/type_vec4.hpp
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<4, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<4, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/detail/type_vec4.hpp:479,
@@ -240,7 +240,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/detail/type_vec4.hpp
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<4, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<4, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/detail/type_vec4.hpp:479,
@@ -256,7 +256,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/detail/type_vec4.hpp
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   template argument ‘2’ does not match ‘4’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   template argument ‘2’ does not match ‘4’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/detail/type_vec4.hpp:479,
@@ -272,7 +272,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/detail/type_vec4.hpp
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<1, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<1, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/detail/type_vec4.hpp:479,
@@ -288,7 +288,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/detail/type_vec4.hpp
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<4, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<4, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/detail/../detail/type_vec1.hpp:283,
@@ -305,7 +305,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/detail/../detail/typ
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<1, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<1, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/detail/../detail/type_vec1.hpp:283,
@@ -322,7 +322,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/detail/../detail/typ
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   template argument ‘2’ does not match ‘1’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   template argument ‘2’ does not match ‘1’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/detail/../detail/type_vec1.hpp:283,
@@ -339,7 +339,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/detail/../detail/typ
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<1, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<1, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type_mat3x3.hpp:183,
@@ -355,7 +355,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 3, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 3, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type_mat3x3.hpp:183,
@@ -371,7 +371,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::PointIndexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<3, 3, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Indexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<3, 3, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type_mat3x3.hpp:183,
@@ -387,7 +387,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 3, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 3, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type_mat3x3.hpp:183,
@@ -403,7 +403,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::PointIndexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<3, 3, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Indexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<3, 3, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type_mat3x3.hpp:183,
@@ -419,7 +419,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 3, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 3, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type_mat3x3.hpp:183,
@@ -435,7 +435,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 3, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 3, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type_mat3x3.hpp:183,
@@ -451,7 +451,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 3, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 3, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat2x2.hpp:176,
@@ -472,7 +472,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 2, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 2, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat2x2.hpp:176,
@@ -493,7 +493,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::PointIndexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<2, 2, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Indexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<2, 2, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat2x2.hpp:176,
@@ -514,7 +514,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 2, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 2, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat2x2.hpp:176,
@@ -535,7 +535,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::PointIndexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<2, 2, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Indexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<2, 2, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat2x2.hpp:176,
@@ -556,7 +556,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 2, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 2, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat2x2.hpp:176,
@@ -577,7 +577,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 2, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 2, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat2x2.hpp:176,
@@ -598,7 +598,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 2, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 2, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat2x3.hpp:158,
@@ -619,7 +619,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 3, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 3, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat2x3.hpp:158,
@@ -640,7 +640,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::PointIndexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<2, 3, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Indexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<2, 3, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat2x3.hpp:158,
@@ -661,7 +661,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 3, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 3, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat2x3.hpp:158,
@@ -682,7 +682,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::PointIndexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<2, 3, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Indexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<2, 3, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat2x3.hpp:158,
@@ -703,7 +703,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 3, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 3, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat2x3.hpp:158,
@@ -724,7 +724,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 3, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 3, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat2x3.hpp:158,
@@ -745,7 +745,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 3, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 3, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat2x4.hpp:160,
@@ -766,7 +766,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 4, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 4, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat2x4.hpp:160,
@@ -787,7 +787,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::PointIndexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<2, 4, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Indexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<2, 4, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat2x4.hpp:160,
@@ -808,7 +808,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 4, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 4, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat2x4.hpp:160,
@@ -829,7 +829,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::PointIndexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<2, 4, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Indexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<2, 4, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat2x4.hpp:160,
@@ -850,7 +850,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 4, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 4, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat2x4.hpp:160,
@@ -871,7 +871,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 4, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 4, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat2x4.hpp:160,
@@ -892,7 +892,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 4, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<2, 4, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat3x2.hpp:166,
@@ -913,7 +913,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 2, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 2, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat3x2.hpp:166,
@@ -934,7 +934,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::PointIndexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<3, 2, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Indexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<3, 2, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat3x2.hpp:166,
@@ -955,7 +955,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 2, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 2, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat3x2.hpp:166,
@@ -976,7 +976,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::PointIndexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<3, 2, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Indexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<3, 2, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat3x2.hpp:166,
@@ -997,7 +997,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 2, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 2, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat3x2.hpp:166,
@@ -1018,7 +1018,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 2, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 2, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat3x2.hpp:166,
@@ -1039,7 +1039,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 2, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 2, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat3x4.hpp:165,
@@ -1060,7 +1060,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 4, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 4, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat3x4.hpp:165,
@@ -1081,7 +1081,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::PointIndexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<3, 4, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Indexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<3, 4, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat3x4.hpp:165,
@@ -1102,7 +1102,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 4, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 4, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat3x4.hpp:165,
@@ -1123,7 +1123,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::PointIndexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<3, 4, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Indexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<3, 4, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat3x4.hpp:165,
@@ -1144,7 +1144,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 4, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 4, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat3x4.hpp:165,
@@ -1165,7 +1165,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 4, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 4, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat3x4.hpp:165,
@@ -1186,7 +1186,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 4, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<3, 4, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat4x2.hpp:170,
@@ -1207,7 +1207,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 2, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 2, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat4x2.hpp:170,
@@ -1228,7 +1228,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::PointIndexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<4, 2, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Indexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<4, 2, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat4x2.hpp:170,
@@ -1249,7 +1249,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 2, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 2, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat4x2.hpp:170,
@@ -1270,7 +1270,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::PointIndexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<4, 2, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Indexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<4, 2, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat4x2.hpp:170,
@@ -1291,7 +1291,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 2, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 2, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat4x2.hpp:170,
@@ -1312,7 +1312,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 2, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 2, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat4x2.hpp:170,
@@ -1333,7 +1333,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 2, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 2, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat4x3.hpp:170,
@@ -1354,7 +1354,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 3, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 3, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat4x3.hpp:170,
@@ -1375,7 +1375,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::PointIndexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<4, 3, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Indexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<4, 3, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat4x3.hpp:170,
@@ -1396,7 +1396,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 3, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 3, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat4x3.hpp:170,
@@ -1417,7 +1417,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::PointIndexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<4, 3, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Indexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<4, 3, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat4x3.hpp:170,
@@ -1438,7 +1438,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 3, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 3, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat4x3.hpp:170,
@@ -1459,7 +1459,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 3, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 3, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat4x3.hpp:170,
@@ -1480,7 +1480,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 3, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 3, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat4x4.hpp:188,
@@ -1501,7 +1501,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 4, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 4, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat4x4.hpp:188,
@@ -1522,7 +1522,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::PointIndexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<4, 4, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Indexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<4, 4, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat4x4.hpp:188,
@@ -1543,7 +1543,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 4, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 4, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat4x4.hpp:188,
@@ -1564,7 +1564,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::PointIndexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<4, 4, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Indexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::mat<4, 4, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat4x4.hpp:188,
@@ -1585,7 +1585,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 4, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 4, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat4x4.hpp:188,
@@ -1606,7 +1606,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 4, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 4, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/.././ext/../detail/type_mat4x4.hpp:188,
@@ -1627,7 +1627,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/../.
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 4, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::mat<4, 4, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtc/../gtc/../ext/../detail/type_quat.hpp:166,
@@ -1647,7 +1647,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtc/../gtc/..
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::qua<T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::qua<T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtc/../gtc/../ext/../detail/type_quat.hpp:166,
@@ -1667,7 +1667,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtc/../gtc/..
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::qua<T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::qua<T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtc/../gtc/../ext/../detail/type_quat.hpp:166,
@@ -1687,7 +1687,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtc/../gtc/..
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<3, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<3, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtc/../gtc/../ext/../detail/type_quat.hpp:166,
@@ -1707,7 +1707,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtc/../gtc/..
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::qua<T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::qua<T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtc/../gtc/../ext/../detail/type_quat.hpp:166,
@@ -1727,7 +1727,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtc/../gtc/..
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<4, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<4, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtc/../gtc/../ext/../detail/type_quat.hpp:166,
@@ -1747,7 +1747,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtc/../gtc/..
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::qua<T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::qua<T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtc/../gtc/../ext/../detail/type_quat.hpp:166,
@@ -1767,7 +1767,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtc/../gtc/..
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::PointIndexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::qua<T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Indexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::qua<T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtx/dual_quaternion.hpp:274,
@@ -1784,7 +1784,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtx/dual_quat
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::tdualquat<T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::tdualquat<T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtx/dual_quaternion.hpp:274,
@@ -1801,7 +1801,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtx/dual_quat
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::tdualquat<T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::tdualquat<T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtx/dual_quaternion.hpp:274,
@@ -1818,7 +1818,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtx/dual_quat
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<3, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<3, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtx/dual_quaternion.hpp:274,
@@ -1835,7 +1835,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtx/dual_quat
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::tdualquat<T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::tdualquat<T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtx/dual_quaternion.hpp:274,
@@ -1852,7 +1852,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtx/dual_quat
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<4, T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::vec<4, T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtx/dual_quaternion.hpp:274,
@@ -1869,7 +1869,7 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtx/dual_quat
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::tdualquat<T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Point<int, double, glm::packed_highp>’ is not derived from ‘const glm::tdualquat<T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtx/dual_quaternion.hpp:274,
@@ -1886,16 +1886,16 @@ In file included from /home/carl/code/tectonics.cpp/lib/glm/gtx/../gtx/dual_quat
 In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp:10,
                  from ./_test.cpp:25,
                  from test.cpp:1:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:57: note:   ‘dymaxion::PointIndexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::tdualquat<T, Q>’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Indexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::tdualquat<T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /home/carl/code/tectonics.cpp/inc/store/each.hpp:8,
                  from ./_test.cpp:18,
                  from test.cpp:1:
 /home/carl/code/tectonics.cpp/inc/math/special.hpp: In instantiation of ‘constexpr T math::bitsign(T) [with T = dymaxion::Point<int, double, glm::packed_highp>]’:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:42:   required from ‘constexpr dymaxion::PointIndexing<id, scalar, Q>::ScalarPoint dymaxion::PointIndexing<id, scalar, Q>::standardize(dymaxion::PointIndexing<id, scalar, Q>::ScalarPoint) const [with id = int; scalar = double; glm::qualifier Q = glm::packed_highp; dymaxion::PointIndexing<id, scalar, Q>::ScalarPoint = dymaxion::Point<int, double, glm::packed_highp>]’
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:77:39:   required from ‘constexpr dymaxion::PointIndexing<id, scalar, Q>::IdPoint dymaxion::PointIndexing<id, scalar, Q>::standardize(dymaxion::PointIndexing<id, scalar, Q>::IdPoint) const [with id = int; scalar = double; glm::qualifier Q = glm::packed_highp; dymaxion::PointIndexing<id, scalar, Q>::IdPoint = dymaxion::Point<int, int, glm::packed_highp>]’
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:81:55:   required from ‘constexpr id dymaxion::PointIndexing<id, scalar, Q>::memory_id(dymaxion::PointIndexing<id, scalar, Q>::IdPoint) const [with id = int; scalar = double; glm::qualifier Q = glm::packed_highp; dymaxion::PointIndexing<id, scalar, Q>::IdPoint = dymaxion::Point<int, int, glm::packed_highp>]’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:42:   required from ‘constexpr dymaxion::Indexing<id, scalar, Q>::ScalarPoint dymaxion::Indexing<id, scalar, Q>::standardize(dymaxion::Indexing<id, scalar, Q>::ScalarPoint) const [with id = int; scalar = double; glm::qualifier Q = glm::packed_highp; dymaxion::Indexing<id, scalar, Q>::ScalarPoint = dymaxion::Point<int, double, glm::packed_highp>]’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:77:39:   required from ‘constexpr dymaxion::Indexing<id, scalar, Q>::IdPoint dymaxion::Indexing<id, scalar, Q>::standardize(dymaxion::Indexing<id, scalar, Q>::IdPoint) const [with id = int; scalar = double; glm::qualifier Q = glm::packed_highp; dymaxion::Indexing<id, scalar, Q>::IdPoint = dymaxion::Point<int, int, glm::packed_highp>]’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:81:55:   required from ‘constexpr id dymaxion::Indexing<id, scalar, Q>::memory_id(dymaxion::Indexing<id, scalar, Q>::IdPoint) const [with id = int; scalar = double; glm::qualifier Q = glm::packed_highp; dymaxion::Indexing<id, scalar, Q>::IdPoint = dymaxion::Point<int, int, glm::packed_highp>]’
 /home/carl/code/tectonics.cpp/spike/grid/dymaxion/buffer/SquareCore.hpp:96:33:   required from ‘constexpr id dymaxion::buffer::SquareCore<id, Q>::triangles(id, const Series&, Buffer&, id) const [with Series = dymaxion::SquareId<int, double>; Buffer = std::vector<float>; id = int; glm::qualifier Q = glm::packed_highp]’
 ./_test.cpp:109:75:   required from here
 /home/carl/code/tectonics.cpp/inc/math/special.hpp:35:36: error: no matching function for call to ‘signbit(const dymaxion::Point<int, double, glm::packed_highp>&)’
@@ -1910,16 +1910,16 @@ In file included from /usr/include/c++/11/random:38,
 /usr/include/c++/11/cmath:677:5: note:   template argument deduction/substitution failed:
 /usr/include/c++/11/cmath: In substitution of ‘template<class _Tp> constexpr typename __gnu_cxx::__enable_if<std::__is_integer<_Tp>::__value, bool>::__type std::signbit(_Tp) [with _Tp = dymaxion::Point<int, double, glm::packed_highp>]’:
 /home/carl/code/tectonics.cpp/inc/math/special.hpp:35:22:   required from ‘constexpr T math::bitsign(T) [with T = dymaxion::Point<int, double, glm::packed_highp>]’
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:42:   required from ‘constexpr dymaxion::PointIndexing<id, scalar, Q>::ScalarPoint dymaxion::PointIndexing<id, scalar, Q>::standardize(dymaxion::PointIndexing<id, scalar, Q>::ScalarPoint) const [with id = int; scalar = double; glm::qualifier Q = glm::packed_highp; dymaxion::PointIndexing<id, scalar, Q>::ScalarPoint = dymaxion::Point<int, double, glm::packed_highp>]’
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:77:39:   required from ‘constexpr dymaxion::PointIndexing<id, scalar, Q>::IdPoint dymaxion::PointIndexing<id, scalar, Q>::standardize(dymaxion::PointIndexing<id, scalar, Q>::IdPoint) const [with id = int; scalar = double; glm::qualifier Q = glm::packed_highp; dymaxion::PointIndexing<id, scalar, Q>::IdPoint = dymaxion::Point<int, int, glm::packed_highp>]’
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:81:55:   required from ‘constexpr id dymaxion::PointIndexing<id, scalar, Q>::memory_id(dymaxion::PointIndexing<id, scalar, Q>::IdPoint) const [with id = int; scalar = double; glm::qualifier Q = glm::packed_highp; dymaxion::PointIndexing<id, scalar, Q>::IdPoint = dymaxion::Point<int, int, glm::packed_highp>]’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:42:   required from ‘constexpr dymaxion::Indexing<id, scalar, Q>::ScalarPoint dymaxion::Indexing<id, scalar, Q>::standardize(dymaxion::Indexing<id, scalar, Q>::ScalarPoint) const [with id = int; scalar = double; glm::qualifier Q = glm::packed_highp; dymaxion::Indexing<id, scalar, Q>::ScalarPoint = dymaxion::Point<int, double, glm::packed_highp>]’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:77:39:   required from ‘constexpr dymaxion::Indexing<id, scalar, Q>::IdPoint dymaxion::Indexing<id, scalar, Q>::standardize(dymaxion::Indexing<id, scalar, Q>::IdPoint) const [with id = int; scalar = double; glm::qualifier Q = glm::packed_highp; dymaxion::Indexing<id, scalar, Q>::IdPoint = dymaxion::Point<int, int, glm::packed_highp>]’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:81:55:   required from ‘constexpr id dymaxion::Indexing<id, scalar, Q>::memory_id(dymaxion::Indexing<id, scalar, Q>::IdPoint) const [with id = int; scalar = double; glm::qualifier Q = glm::packed_highp; dymaxion::Indexing<id, scalar, Q>::IdPoint = dymaxion::Point<int, int, glm::packed_highp>]’
 /home/carl/code/tectonics.cpp/spike/grid/dymaxion/buffer/SquareCore.hpp:96:33:   required from ‘constexpr id dymaxion::buffer::SquareCore<id, Q>::triangles(id, const Series&, Buffer&, id) const [with Series = dymaxion::SquareId<int, double>; Buffer = std::vector<float>; id = int; glm::qualifier Q = glm::packed_highp]’
 ./_test.cpp:109:75:   required from here
 /usr/include/c++/11/cmath:677:5: error: no type named ‘__type’ in ‘struct __gnu_cxx::__enable_if<false, bool>’
 /home/carl/code/tectonics.cpp/inc/math/special.hpp: In instantiation of ‘constexpr T math::bitsign(T) [with T = dymaxion::Point<int, double, glm::packed_highp>]’:
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:67:42:   required from ‘constexpr dymaxion::PointIndexing<id, scalar, Q>::ScalarPoint dymaxion::PointIndexing<id, scalar, Q>::standardize(dymaxion::PointIndexing<id, scalar, Q>::ScalarPoint) const [with id = int; scalar = double; glm::qualifier Q = glm::packed_highp; dymaxion::PointIndexing<id, scalar, Q>::ScalarPoint = dymaxion::Point<int, double, glm::packed_highp>]’
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:77:39:   required from ‘constexpr dymaxion::PointIndexing<id, scalar, Q>::IdPoint dymaxion::PointIndexing<id, scalar, Q>::standardize(dymaxion::PointIndexing<id, scalar, Q>::IdPoint) const [with id = int; scalar = double; glm::qualifier Q = glm::packed_highp; dymaxion::PointIndexing<id, scalar, Q>::IdPoint = dymaxion::Point<int, int, glm::packed_highp>]’
-/home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:81:55:   required from ‘constexpr id dymaxion::PointIndexing<id, scalar, Q>::memory_id(dymaxion::PointIndexing<id, scalar, Q>::IdPoint) const [with id = int; scalar = double; glm::qualifier Q = glm::packed_highp; dymaxion::PointIndexing<id, scalar, Q>::IdPoint = dymaxion::Point<int, int, glm::packed_highp>]’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:42:   required from ‘constexpr dymaxion::Indexing<id, scalar, Q>::ScalarPoint dymaxion::Indexing<id, scalar, Q>::standardize(dymaxion::Indexing<id, scalar, Q>::ScalarPoint) const [with id = int; scalar = double; glm::qualifier Q = glm::packed_highp; dymaxion::Indexing<id, scalar, Q>::ScalarPoint = dymaxion::Point<int, double, glm::packed_highp>]’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:77:39:   required from ‘constexpr dymaxion::Indexing<id, scalar, Q>::IdPoint dymaxion::Indexing<id, scalar, Q>::standardize(dymaxion::Indexing<id, scalar, Q>::IdPoint) const [with id = int; scalar = double; glm::qualifier Q = glm::packed_highp; dymaxion::Indexing<id, scalar, Q>::IdPoint = dymaxion::Point<int, int, glm::packed_highp>]’
+/home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:81:55:   required from ‘constexpr id dymaxion::Indexing<id, scalar, Q>::memory_id(dymaxion::Indexing<id, scalar, Q>::IdPoint) const [with id = int; scalar = double; glm::qualifier Q = glm::packed_highp; dymaxion::Indexing<id, scalar, Q>::IdPoint = dymaxion::Point<int, int, glm::packed_highp>]’
 /home/carl/code/tectonics.cpp/spike/grid/dymaxion/buffer/SquareCore.hpp:96:33:   required from ‘constexpr id dymaxion::buffer::SquareCore<id, Q>::triangles(id, const Series&, Buffer&, id) const [with Series = dymaxion::SquareId<int, double>; Buffer = std::vector<float>; id = int; glm::qualifier Q = glm::packed_highp]’
 ./_test.cpp:109:75:   required from here
 /usr/include/c++/11/cmath:661:3: note: candidate: ‘constexpr bool std::signbit(float)’

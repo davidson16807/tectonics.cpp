@@ -6,7 +6,7 @@
 // std libraries
 
 // in-house libraries
-#include "../PointIndexing.hpp"
+#include "../Indexing.hpp"
 
 namespace dymaxion {
 namespace buffer {
@@ -33,7 +33,7 @@ namespace buffer {
 		static constexpr id vertices_per_quad = triangles_per_quad * vertices_per_triangle;
 		static constexpr id vertices_per_strip_quad = 4;
 
-        const PointIndexing<id> vertices;
+        const Indexing<id> vertices;
         const id vertices_per_square_side;
 
 	public:

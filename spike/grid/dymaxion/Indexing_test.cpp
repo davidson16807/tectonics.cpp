@@ -15,11 +15,11 @@
 
 #include <store/series/Range.hpp>
 
-#include "PointIndexing.hpp"
+#include "Indexing.hpp"
 
 #include "test_tools.cpp"
 
-TEST_CASE( "PointIndexing grid_id() / memory_id()", "[dymaxion]" ) {
+TEST_CASE( "Indexing grid_id() / memory_id()", "[dymaxion]" ) {
 
     const double pi(3.1415926535);
     const int vertices_per_meridian(100);
@@ -27,7 +27,7 @@ TEST_CASE( "PointIndexing grid_id() / memory_id()", "[dymaxion]" ) {
     DymaxionAdapter precise(1e-4);
     DymaxionAdapter imprecise(2*pi/double(vertices_per_meridian));
 
-    dymaxion::PointIndexing indexing(vertices_per_meridian);
+    dymaxion::Indexing indexing(vertices_per_meridian);
 
     std::vector<dymaxion::Point<int,int>> grid_ids {};
     for(int i = 0; i < 10; i++){
@@ -42,7 +42,7 @@ TEST_CASE( "PointIndexing grid_id() / memory_id()", "[dymaxion]" ) {
     // since the equivalence of grid ids cannot be determined without using the very code that we are testing
 
     REQUIRE(test::determinism(precise,
-        "PointIndexing.memory_id(…)", TEST_UNARY(indexing.memory_id),
+        "Indexing.memory_id(…)", TEST_UNARY(indexing.memory_id),
         grid_ids
     ));
 
@@ -51,7 +51,7 @@ TEST_CASE( "PointIndexing grid_id() / memory_id()", "[dymaxion]" ) {
         [=](auto memory_id){
             return 0<=memory_id&&memory_id<indexing.vertex_count;
         },
-        "PointIndexing.memory_id(…)", TEST_UNARY(indexing.memory_id),
+        "Indexing.memory_id(…)", TEST_UNARY(indexing.memory_id),
         grid_ids
     ));
 
@@ -65,19 +65,19 @@ TEST_CASE( "PointIndexing grid_id() / memory_id()", "[dymaxion]" ) {
                 0<=V2.x&&V2.x<indexing.vertices_per_square_side && 
                 0<=V2.y&&V2.y<indexing.vertices_per_square_side;
         },
-        "PointIndexing.grid_id(…)", TEST_UNARY(indexing.grid_id),
+        "Indexing.grid_id(…)", TEST_UNARY(indexing.grid_id),
         memory_ids
     ));
 
     REQUIRE(test::left_invertibility(precise,
-        "PointIndexing.grid_id(…) when restricted to indexed grid_ids", TEST_UNARY(indexing.grid_id),
-        "PointIndexing.memory_id(…)",                                   TEST_UNARY(indexing.memory_id),
+        "Indexing.grid_id(…) when restricted to indexed grid_ids", TEST_UNARY(indexing.grid_id),
+        "Indexing.memory_id(…)",                                   TEST_UNARY(indexing.memory_id),
         grid_ids
     ));
 
     REQUIRE(test::left_invertibility(precise,
-        "PointIndexing.memory_id(…)",                                   TEST_UNARY(indexing.memory_id),
-        "PointIndexing.grid_id(…) when restricted to indexed grid_ids", TEST_UNARY(indexing.grid_id),
+        "Indexing.memory_id(…)",                                   TEST_UNARY(indexing.memory_id),
+        "Indexing.grid_id(…) when restricted to indexed grid_ids", TEST_UNARY(indexing.grid_id),
         memory_ids
     ));
 

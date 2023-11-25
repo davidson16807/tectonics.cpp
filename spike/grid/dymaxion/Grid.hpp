@@ -7,7 +7,7 @@
 
 // in-house libraries
 #include "Voronoi.hpp"
-#include "PointIndexing.hpp"
+#include "Indexing.hpp"
 
 namespace dymaxion 
 {
@@ -24,7 +24,7 @@ namespace dymaxion
     */
 
     /*
-    `Grid` builds upon `Voronoi` and `PointIndexing` to introduce concepts 
+    `Grid` builds upon `Voronoi` and `Indexing` to introduce concepts 
     that are necessary for spatially aware operations such as those in vector calculus or binary morphology.
     These concepts include vertex neighbors, faces, edges, and arrows, and the duals of such concepts.
     */
@@ -51,7 +51,7 @@ namespace dymaxion
 	public:
 
 		const Voronoi<id,scalar> voronoi;
-		const PointIndexing<id,scalar> memory;
+		const Indexing<id,scalar> memory;
 
 		using size_type = id;
 		using value_type = scalar;
