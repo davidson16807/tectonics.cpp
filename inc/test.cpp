@@ -103,4 +103,4 @@
 #include "./test/structures/metriclike_test.cpp"
 #include "./test/structures/grouplike_test.cpp"
 #include "./test/structures/ringlike_test.cpp"
-#include "./units/si_test.cpp"
+#include "./unit/si_test.cpp"

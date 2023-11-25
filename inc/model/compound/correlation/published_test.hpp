@@ -4,8 +4,8 @@
 #include <catch/catch.hpp>
 
 // in house libraries
-#include <units/si.hpp>
-#include "units/test_tools.cpp"
+#include <unit/si.hpp>
+#include "unit/test_tools.cpp"
 
 #include "published.hpp"
 

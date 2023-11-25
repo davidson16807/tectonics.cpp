@@ -6,7 +6,7 @@
 #include <catch/catch.hpp>
 
 // in house libraries
-#include <units/si.hpp>
+#include <unit/si.hpp>
 #include <model/compound/estimated/estimated.hpp>
 
 TEST_CASE( "estimated solid extinction_coefficient order of magnitude", "[table]" ) {

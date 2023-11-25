@@ -4,7 +4,7 @@
 #include <string>
 
 // in-house libraries
-#include <units/si.hpp>
+#include <unit/si.hpp>
 
 #include <model/compound/ids.hpp>
 #include <model/compound/table/FullTable.hpp>

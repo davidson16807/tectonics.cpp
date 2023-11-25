@@ -5,7 +5,7 @@
 
 // in-house libraries
 #include <math/special.hpp>
-#include <units/si.hpp>
+#include <unit/si.hpp>
 
 namespace compound {
 namespace correlation {

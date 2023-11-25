@@ -7,7 +7,7 @@
 #include <catch/catch.hpp>
 
 // in-house libraries
-#include <units/si.hpp>
+#include <unit/si.hpp>
 #include <model/mineral/Mineral_test_utils.hpp>
 #include "Stratum.hpp"
 

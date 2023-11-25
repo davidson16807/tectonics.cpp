@@ -9,7 +9,7 @@
 #include <math/analytic/Exponent.hpp>
 #include <math/analytic/AlgebraicSigmoid.hpp>
 #include <math/inspected/extremum.hpp>
-#include <units/si.hpp>
+#include <unit/si.hpp>
 
 #include <model/compound/point.hpp>
 #include <model/compound/dippr/Dippr102.hpp>

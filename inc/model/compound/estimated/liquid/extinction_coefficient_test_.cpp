@@ -6,7 +6,7 @@
 #include <catch/catch.hpp>
 
 // in house libraries
-#include <units/si.hpp>
+#include <unit/si.hpp>
 #include <model/compound/estimated/estimated.hpp>
 #include <model/compound/relation/PolynomialRailyardRelation_to_string.hpp>
 

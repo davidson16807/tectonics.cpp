@@ -1,7 +1,7 @@
 #pragma once
 
 // in-house libraries
-#include <units/si.hpp>
+#include <unit/si.hpp>
 #include <model/compound/table/PartialTable.hpp>
 #include <model/compound/relation/GenericRelation.hpp>
 #include <model/compound/ids.hpp>

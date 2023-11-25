@@ -1,7 +1,7 @@
 #pragma once
 
 // in-house libraries
-#include <units/si.hpp>
+#include <unit/si.hpp>
 
 #include <model/compound/point.hpp>
 #include <model/compound/table/FullTable.hpp>

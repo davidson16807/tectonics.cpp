@@ -6,7 +6,7 @@
 #include <catch/catch.hpp>
 
 // in house libraries
-#include <units/si.hpp>
+#include <unit/si.hpp>
 #include "extinction_coefficient.hpp"
 
 TEST_CASE( "published liquid extinction_coefficient order of magnitude", "[table]" ) {

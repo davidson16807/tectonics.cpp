@@ -6,8 +6,8 @@ names in general    use whole words unless otherwise indicated,
 namespaces          single lower case short words, e.g. `crust` or `gene`, 
                     singular, usually implying a genitive case, adjective, or determiner,
                     avoid using `nested::name::spaces` unless strictly needed for disambiguation
-directories         singular, single lower case short words, e.g. `index` or `test`,
-                    prefer using `nested/sub/folders/` to group related functionality (e.g. `index/series/`, `field/noise/`)
+directories         single lower case short words, e.g. `index` or `test`,
+                    singular, prefer using `nested/sub/folders/` to group related functionality (e.g. `index/series/`, `field/noise/`)
                     or to bring attention to requirements for extended functionality (e.g. `math/glm/`, `index/si/`)
 file names          If the file pertains to a specific class or namespace, then use the name for that class/namespace, otherwise use 
                     `SCREAM_CASE` for standard or high level documentation (e.g. `README.md`, `GLOSSARY.tsv`, `CATEGORY.png`),
@@ -68,7 +68,7 @@ constants           determined by rules above⁶
   Dropping the prefix has resulted in some dramatic improvements to readability without sacraficing understanding,
   see various grid classes like `dymaxion::Grid.hpp` for examples of how this works well.
 
-⁵ There absolutely are times where this is needed. For examples where brevity is needed, see `units/si.hpp`,
+⁵ There absolutely are times where this is needed. For examples where brevity is needed, see `unit/si.hpp`,
   or the code that's responsible for atmospheric scattering in tectonics.js.
   For examples where abstraction is needed, see code for geometric intersections in tectonics.glsl.
   A lookup table should be provided in comments if abbreviation is done for brevity.
