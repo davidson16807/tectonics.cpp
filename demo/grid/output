@@ -54,7 +54,7 @@ In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type_vec3.hpp:404,
                  from /home/carl/code/tectonics.cpp/lib/glm/./ext/vector_bool3.hpp:5,
                  from /home/carl/code/tectonics.cpp/lib/glm/vec3.hpp:5,
-                 from /home/carl/code/tectonics.cpp/inc/store/series/glm/VectorDeinterleave.hpp:4,
+                 from /home/carl/code/tectonics.cpp/inc/index/series/glm/VectorDeinterleave.hpp:4,
                  from ./_test.cpp:17,
                  from test.cpp:1:
 /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type_vec3.inl:670:55: note: candidate: ‘template<class T, glm::qualifier Q> constexpr glm::vec<3, T, Q> glm::operator*(const glm::vec<3, T, Q>&, T)’
@@ -70,7 +70,7 @@ In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type_vec3.hpp:404,
                  from /home/carl/code/tectonics.cpp/lib/glm/./ext/vector_bool3.hpp:5,
                  from /home/carl/code/tectonics.cpp/lib/glm/vec3.hpp:5,
-                 from /home/carl/code/tectonics.cpp/inc/store/series/glm/VectorDeinterleave.hpp:4,
+                 from /home/carl/code/tectonics.cpp/inc/index/series/glm/VectorDeinterleave.hpp:4,
                  from ./_test.cpp:17,
                  from test.cpp:1:
 /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type_vec3.inl:679:55: note: candidate: ‘template<class T, glm::qualifier Q> constexpr glm::vec<3, T, Q> glm::operator*(const glm::vec<3, T, Q>&, const glm::vec<1, T, Q>&)’
@@ -86,7 +86,7 @@ In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type_vec3.hpp:404,
                  from /home/carl/code/tectonics.cpp/lib/glm/./ext/vector_bool3.hpp:5,
                  from /home/carl/code/tectonics.cpp/lib/glm/vec3.hpp:5,
-                 from /home/carl/code/tectonics.cpp/inc/store/series/glm/VectorDeinterleave.hpp:4,
+                 from /home/carl/code/tectonics.cpp/inc/index/series/glm/VectorDeinterleave.hpp:4,
                  from ./_test.cpp:17,
                  from test.cpp:1:
 /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type_vec3.inl:688:55: note: candidate: ‘template<class T, glm::qualifier Q> constexpr glm::vec<3, T, Q> glm::operator*(T, const glm::vec<3, T, Q>&)’
@@ -102,7 +102,7 @@ In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type_vec3.hpp:404,
                  from /home/carl/code/tectonics.cpp/lib/glm/./ext/vector_bool3.hpp:5,
                  from /home/carl/code/tectonics.cpp/lib/glm/vec3.hpp:5,
-                 from /home/carl/code/tectonics.cpp/inc/store/series/glm/VectorDeinterleave.hpp:4,
+                 from /home/carl/code/tectonics.cpp/inc/index/series/glm/VectorDeinterleave.hpp:4,
                  from ./_test.cpp:17,
                  from test.cpp:1:
 /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type_vec3.inl:697:55: note: candidate: ‘template<class T, glm::qualifier Q> constexpr glm::vec<3, T, Q> glm::operator*(const glm::vec<1, T, Q>&, const glm::vec<3, T, Q>&)’
@@ -118,7 +118,7 @@ In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp
 In file included from /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type_vec3.hpp:404,
                  from /home/carl/code/tectonics.cpp/lib/glm/./ext/vector_bool3.hpp:5,
                  from /home/carl/code/tectonics.cpp/lib/glm/vec3.hpp:5,
-                 from /home/carl/code/tectonics.cpp/inc/store/series/glm/VectorDeinterleave.hpp:4,
+                 from /home/carl/code/tectonics.cpp/inc/index/series/glm/VectorDeinterleave.hpp:4,
                  from ./_test.cpp:17,
                  from test.cpp:1:
 /home/carl/code/tectonics.cpp/lib/glm/./ext/../detail/type_vec3.inl:706:55: note: candidate: ‘template<class T, glm::qualifier Q> constexpr glm::vec<3, T, Q> glm::operator*(const glm::vec<3, T, Q>&, const glm::vec<3, T, Q>&)’
@@ -1889,7 +1889,7 @@ In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp
 /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Indexing.hpp:67:57: note:   ‘dymaxion::Indexing<int, double, glm::packed_highp>::vec2’ {aka ‘glm::vec<2, double, glm::packed_highp>’} is not derived from ‘const glm::tdualquat<T, Q>’
    67 |             standardized += math::bitsign(standardized) * vec2(std::numeric_limits<scalar>::epsilon())
       |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-In file included from /home/carl/code/tectonics.cpp/inc/store/each.hpp:8,
+In file included from /home/carl/code/tectonics.cpp/inc/index/each.hpp:8,
                  from ./_test.cpp:18,
                  from test.cpp:1:
 /home/carl/code/tectonics.cpp/inc/math/special.hpp: In instantiation of ‘constexpr T math::bitsign(T) [with T = dymaxion::Point<int, double, glm::packed_highp>]’:
@@ -1940,7 +1940,7 @@ In file included from /usr/include/c++/11/random:38,
 /usr/include/c++/11/cmath:669:23: note:   no known conversion for argument 1 from ‘const dymaxion::Point<int, double, glm::packed_highp>’ to ‘long double’
   669 |   signbit(long double __x)
       |           ~~~~~~~~~~~~^~~
-In file included from /home/carl/code/tectonics.cpp/inc/store/each.hpp:8,
+In file included from /home/carl/code/tectonics.cpp/inc/index/each.hpp:8,
                  from ./_test.cpp:18,
                  from test.cpp:1:
 /home/carl/code/tectonics.cpp/inc/math/special.hpp:35:41: error: no matching function for call to ‘dymaxion::Point<int, double, glm::packed_highp>::Point(int)’
@@ -1955,7 +1955,7 @@ In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Projecti
    45 |                 explicit Point(Point<id2,scalar2,Q2> p):
       |                          ^~~~~
 /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Point.hpp:45:26: note:   template argument deduction/substitution failed:
-In file included from /home/carl/code/tectonics.cpp/inc/store/each.hpp:8,
+In file included from /home/carl/code/tectonics.cpp/inc/index/each.hpp:8,
                  from ./_test.cpp:18,
                  from test.cpp:1:
 /home/carl/code/tectonics.cpp/inc/math/special.hpp:35:41: note:   mismatched types ‘dymaxion::Point<id, scalar, Q>’ and ‘int’
@@ -1976,7 +1976,7 @@ In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Projecti
 /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Point.hpp:32:16: note:   no known conversion for argument 1 from ‘int’ to ‘const dymaxion::Point<int, double, glm::packed_highp>&’
 /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Point.hpp:32:16: note: candidate: ‘constexpr dymaxion::Point<int, double, glm::packed_highp>::Point(dymaxion::Point<int, double, glm::packed_highp>&&)’
 /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Point.hpp:32:16: note:   no known conversion for argument 1 from ‘int’ to ‘dymaxion::Point<int, double, glm::packed_highp>&&’
-In file included from /home/carl/code/tectonics.cpp/inc/store/each.hpp:8,
+In file included from /home/carl/code/tectonics.cpp/inc/index/each.hpp:8,
                  from ./_test.cpp:18,
                  from test.cpp:1:
 /home/carl/code/tectonics.cpp/inc/math/special.hpp:35:47: error: no matching function for call to ‘dymaxion::Point<int, double, glm::packed_highp>::Point(int)’
@@ -1991,7 +1991,7 @@ In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Projecti
    45 |                 explicit Point(Point<id2,scalar2,Q2> p):
       |                          ^~~~~
 /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Point.hpp:45:26: note:   template argument deduction/substitution failed:
-In file included from /home/carl/code/tectonics.cpp/inc/store/each.hpp:8,
+In file included from /home/carl/code/tectonics.cpp/inc/index/each.hpp:8,
                  from ./_test.cpp:18,
                  from test.cpp:1:
 /home/carl/code/tectonics.cpp/inc/math/special.hpp:35:47: note:   mismatched types ‘dymaxion::Point<id, scalar, Q>’ and ‘int’

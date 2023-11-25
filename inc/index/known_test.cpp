@@ -9,11 +9,11 @@
 #include <catch/catch.hpp>
 
 // in-house libraries
-#include <store/known.hpp>
-#include <store/whole.hpp>
-#include <store/series/Range.hpp>
-#include <store/series/Uniform.hpp>
-#include <store/series/noise/UnitIntervalNoise.hpp>
+#include <index/known.hpp>
+#include <index/whole.hpp>
+#include <index/series/Range.hpp>
+#include <index/series/Uniform.hpp>
+#include <index/series/noise/UnitIntervalNoise.hpp>
 
 #include <test/macros.hpp>
 #include <test/structures/ringlike.hpp>

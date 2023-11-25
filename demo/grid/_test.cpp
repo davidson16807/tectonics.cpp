@@ -12,13 +12,13 @@
 #define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
 
 // in house libraries
-#include <store/series/Map.hpp>
-#include <store/series/Uniform.hpp>
-#include <store/series/glm/VectorDeinterleave.hpp>
-#include <store/each.hpp>                           // get
-#include <store/whole.hpp>                          // max, mean
-#include <store/series/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
-#include <store/series/Range.hpp>                   // Range
+#include <index/series/Map.hpp>
+#include <index/series/Uniform.hpp>
+#include <index/series/glm/VectorDeinterleave.hpp>
+#include <index/each.hpp>                           // get
+#include <index/whole.hpp>                          // max, mean
+#include <index/series/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
+#include <index/series/Range.hpp>                   // Range
 
 #include <field/noise/ValueNoise.hpp>               // ValueNoise
 #include <field/noise/SquareNoise.hpp>              // SquareNoise

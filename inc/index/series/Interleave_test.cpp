@@ -13,19 +13,18 @@
 #include <glm/vec3.hpp>     // *vec3
 
 // in-house libraries
-#include <store/each.hpp>  
-#include <store/whole.hpp>  
-#include <store/series/Range.hpp>
-#include <store/series/Get.hpp>
+#include <index/each.hpp>  
+#include <index/whole.hpp>  
+#include <index/series/Interleave.hpp>
+#include <index/series/Get.hpp>
 
 #include <test/properties.hpp>  
 #include <test/macros.hpp>  
 #include <test/adapter.hpp>  
 
-#include "Range.hpp"
+#include "Interleave.hpp"
 
-TEST_CASE( "Range()", "[series]" ) {
-    series::Range noise(0.1);
+TEST_CASE( "Interleave()", "[series]" ) {
     test::OperatorAdapter exact;
     std::vector<int> indices   {
         -1, 0, 1, 2, 3, 
@@ -34,12 +33,13 @@ TEST_CASE( "Range()", "[series]" ) {
     };
 
     REQUIRE(test::determinism(exact,
-        "Range(…)", TEST_INDEX(series::Range(0.1f)), 
+        "Interleave(…)", TEST_INDEX(series::interleave(2, series::UnitIntervalNoise(10.0))), 
         indices
     ));
 
-    series::Range range(100);
-    CHECK(whole::max(range) == 99);
-    CHECK(whole::min(range) == 0);
+    auto range_interleave = series::interleave(10, series::range(10));
+    CHECK(range_interleave.size() == 100);
+    CHECK(whole::max(range_interleave) == 9);
+    CHECK(whole::min(range_interleave) == 0);
 }
 

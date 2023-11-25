@@ -14,18 +14,18 @@
 #include "glm/glm.hpp"
 
 // in-house libraries
-#include <store/glm/each_specialization.hpp>
-#include <store/glm/whole_specialization.hpp>
-#include <store/glm/each.hpp>
-#include <store/each.hpp>  
-#include <store/whole.hpp>  
-#include <store/known.hpp>  
-#include <store/series/Get.hpp>
-#include <store/series/Map.hpp>
-#include <store/series/Range.hpp>
-#include <store/series/glm/VectorInterleave.hpp>
-#include <store/series/noise/GaussianNoise.hpp>
-#include <store/series/noise/glm/UnitVectorNoise.hpp>
+#include <index/glm/each_specialization.hpp>
+#include <index/glm/whole_specialization.hpp>
+#include <index/glm/each.hpp>
+#include <index/each.hpp>  
+#include <index/whole.hpp>  
+#include <index/known.hpp>  
+#include <index/series/Get.hpp>
+#include <index/series/Map.hpp>
+#include <index/series/Range.hpp>
+#include <index/series/glm/VectorInterleave.hpp>
+#include <index/series/noise/GaussianNoise.hpp>
+#include <index/series/noise/glm/UnitVectorNoise.hpp>
 
 #include <field/noise/EliasNoise.hpp>
 #include <field/noise/ValueNoise.hpp>

@@ -9,10 +9,10 @@
 #include <catch/catch.hpp>
 
 // in-house libraries
-#include <store/known.hpp>
-#include <store/series/Range.hpp>
-#include <store/series/Uniform.hpp>
-#include <store/series/noise/UnitIntervalNoise.hpp>
+#include <index/known.hpp>
+#include <index/series/Range.hpp>
+#include <index/series/Uniform.hpp>
+#include <index/series/noise/UnitIntervalNoise.hpp>
 
 #include "each.hpp"
 #include "whole.hpp"

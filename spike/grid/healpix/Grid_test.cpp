@@ -5,7 +5,7 @@
 #include <test/adapter.hpp>
 #include <test/glm/adapter.hpp>
 
-#include <store/series/Range.hpp>
+#include <index/series/Range.hpp>
 
 #include "Grid.hpp"
 

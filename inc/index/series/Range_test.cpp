@@ -13,19 +13,19 @@
 #include <glm/vec3.hpp>     // *vec3
 
 // in-house libraries
-#include <store/each.hpp>  
-#include <store/whole.hpp>  
-#include <store/series/Range.hpp>
-#include <store/series/Get.hpp>
+#include <index/each.hpp>  
+#include <index/whole.hpp>  
+#include <index/series/Range.hpp>
+#include <index/series/Get.hpp>
 
 #include <test/properties.hpp>  
 #include <test/macros.hpp>  
 #include <test/adapter.hpp>  
 
-#include "GaussianNoise.hpp"
+#include "Range.hpp"
 
-TEST_CASE( "GaussianNoise()", "[series]" ) {
-    auto noise = series::gaussian<double>();
+TEST_CASE( "Range()", "[series]" ) {
+    series::Range noise(0.1);
     test::OperatorAdapter exact;
     std::vector<int> indices   {
         -1, 0, 1, 2, 3, 
@@ -34,12 +34,12 @@ TEST_CASE( "GaussianNoise()", "[series]" ) {
     };
 
     REQUIRE(test::determinism(exact,
-        "GaussianNoise(…)", TEST_INDEX(series::gaussian<double>()), 
+        "Range(…)", TEST_INDEX(series::Range(0.1f)), 
         indices
     ));
 
-    auto out = series::get(noise, series::Range(3000));
-    CHECK(std::abs(whole::mean(out)-0.0) < 0.05);
-    CHECK(std::abs(whole::standard_deviation(out)-1.0) < 0.01);
+    series::Range range(100);
+    CHECK(whole::max(range) == 99);
+    CHECK(whole::min(range) == 0);
 }
 

@@ -13,11 +13,11 @@
 #include <glm/vec3.hpp>     // *vec3
 
 // in-house libraries
-#include <store/each.hpp>  
-#include <store/whole.hpp>  
-#include <store/series/Range.hpp>
-#include <store/series/noise/UnitIntervalNoise.hpp>
-#include <store/series/Get.hpp>
+#include <index/each.hpp>  
+#include <index/whole.hpp>  
+#include <index/series/Range.hpp>
+#include <index/series/noise/UnitIntervalNoise.hpp>
+#include <index/series/Get.hpp>
 
 #include <test/structures/grouplike.hpp>  
 #include <test/macros.hpp>  

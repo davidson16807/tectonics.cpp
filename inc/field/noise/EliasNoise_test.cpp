@@ -12,14 +12,14 @@
 #include <glm/vec3.hpp>     // *vec3
 
 // in-house libraries
-#include <store/each.hpp>  
-#include <store/whole.hpp>  
-#include <store/series/Get.hpp>
-#include <store/series/Map.hpp>
-#include <store/series/Range.hpp>
-#include <store/series/glm/VectorInterleave.hpp>
-#include <store/series/noise/GaussianNoise.hpp>
-#include <store/series/noise/glm/UnitVectorNoise.hpp>
+#include <index/each.hpp>  
+#include <index/whole.hpp>  
+#include <index/series/Get.hpp>
+#include <index/series/Map.hpp>
+#include <index/series/Range.hpp>
+#include <index/series/glm/VectorInterleave.hpp>
+#include <index/series/noise/GaussianNoise.hpp>
+#include <index/series/noise/glm/UnitVectorNoise.hpp>
 
 #include "EliasNoise.hpp"
 

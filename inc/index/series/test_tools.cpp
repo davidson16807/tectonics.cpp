@@ -3,8 +3,8 @@
 #include <math/analytic/Polynomial.hpp>
 #include <math/analytic/Identity.hpp>
 
-#include <store/whole.hpp>
-#include <store/series/Range.hpp>
+#include <index/whole.hpp>
+#include <index/series/Range.hpp>
 
 namespace series {
 

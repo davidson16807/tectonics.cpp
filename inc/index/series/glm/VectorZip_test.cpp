@@ -13,21 +13,21 @@
 #include <glm/vec3.hpp>     // *vec3
 
 // in-house libraries
-#include <store/each.hpp>  
-#include <store/glm/each.hpp>  
-#include <store/whole.hpp>  
-#include <store/series/Range.hpp>
-#include <store/series/Get.hpp>
-#include <store/series/noise/UnitIntervalNoise.hpp>
+#include <index/each.hpp>  
+#include <index/glm/each.hpp>  
+#include <index/whole.hpp>  
+#include <index/series/Range.hpp>
+#include <index/series/Get.hpp>
+#include <index/series/noise/UnitIntervalNoise.hpp>
 
 #include <test/properties.hpp>  
 #include <test/macros.hpp>  
 #include <test/glm/adapter.hpp>  
 
-#include "VectorInterleave.hpp"
+#include "VectorZip.hpp"
 
-TEST_CASE( "VectorInterleave<4>()", "[series]" ) {
-    const double tolerance(0.11);
+TEST_CASE( "Vector4Zip()", "[series]" ) {
+    const double tolerance(1e-1);
     const int N(4);
     std::vector<int> indices   {
         -1, 0, 1, 2, 3, 
@@ -37,16 +37,22 @@ TEST_CASE( "VectorInterleave<4>()", "[series]" ) {
     test::GlmAdapter<int,double> adapter(1e-7);
 
     REQUIRE(test::determinism(adapter,
-        "VectorInterleave(…)", 
+        "Vector4Zip(…)", 
         TEST_INDEX(
-            series::vector_interleave<N>(
-                series::UnitIntervalNoise<double>())),
+            series::vector4_zip(
+                series::UnitIntervalNoise<double>(10.0, 1e4),
+                series::UnitIntervalNoise<double>(20.0, 2e4),
+                series::UnitIntervalNoise<double>(30.0, 3e4),
+                series::UnitIntervalNoise<double>(40.0, 4e4))),
         indices
     ));
 
     auto vec4s = series::get(
-        series::vector_interleave<N>(
-            series::UnitIntervalNoise<double>()), 
+        series::vector4_zip(
+            series::UnitIntervalNoise<double>(10.0, 1e4),
+            series::UnitIntervalNoise<double>(20.0, 2e4),
+            series::UnitIntervalNoise<double>(30.0, 3e4),
+            series::UnitIntervalNoise<double>(40.0, 4e4)), 
         series::Range(6000));
     std::vector<double> lengths(vec4s.size());
     each::length(vec4s, lengths);
@@ -54,7 +60,7 @@ TEST_CASE( "VectorInterleave<4>()", "[series]" ) {
     CHECK(whole::max(lengths) >  sqrt(N)-tolerance);
 }
 
-TEST_CASE( "VectorInterleave<3>()", "[series]" ) {
+TEST_CASE( "Vector3Zip()", "[series]" ) {
     const double tolerance(1e-1);
     const int N(3);
     std::vector<int> indices   {
@@ -65,16 +71,20 @@ TEST_CASE( "VectorInterleave<3>()", "[series]" ) {
     test::GlmAdapter<int,double> adapter(1e-7);
 
     REQUIRE(test::determinism(adapter,
-        "VectorInterleave(…)", 
+        "Vector3Zip(…)", 
         TEST_INDEX(
-            series::vector_interleave<N>(
-                series::UnitIntervalNoise<double>())),
+            series::vector3_zip(
+                series::UnitIntervalNoise<double>(10.0, 1e4),
+                series::UnitIntervalNoise<double>(20.0, 2e4),
+                series::UnitIntervalNoise<double>(30.0, 3e4))),
         indices
     ));
 
     auto vec3s = series::get(
-        series::vector_interleave<N>(
-            series::UnitIntervalNoise<double>()), 
+        series::vector3_zip(
+                series::UnitIntervalNoise<double>(10.0, 1e4),
+                series::UnitIntervalNoise<double>(20.0, 2e4),
+                series::UnitIntervalNoise<double>(30.0, 3e4)), 
         series::Range(6000));
     std::vector<double> lengths(vec3s.size());
     each::length(vec3s, lengths);
@@ -82,7 +92,7 @@ TEST_CASE( "VectorInterleave<3>()", "[series]" ) {
     CHECK(whole::max(lengths) >  sqrt(N)-tolerance);
 }
 
-TEST_CASE( "VectorInterleave<2>()", "[series]" ) {
+TEST_CASE( "Vector2Zip()", "[series]" ) {
     const double tolerance(1e-1);
     const int N(2);
     std::vector<int> indices   {
@@ -93,16 +103,18 @@ TEST_CASE( "VectorInterleave<2>()", "[series]" ) {
     test::GlmAdapter<int,double> adapter(1e-7);
 
     REQUIRE(test::determinism(adapter,
-        "VectorInterleave(…)", 
+        "Vector2Zip(…)", 
         TEST_INDEX(
-            series::vector_interleave<N>(
-                series::UnitIntervalNoise<double>())),
+            series::vector2_zip(
+                series::UnitIntervalNoise<double>(10.0, 1e4),
+                series::UnitIntervalNoise<double>(20.0, 2e4))),
         indices
     ));
 
     auto vec2s = series::get(
-        series::vector_interleave<N>(
-            series::UnitIntervalNoise<double>()), 
+        series::vector2_zip(
+                series::UnitIntervalNoise<double>(10.0, 1e4),
+                series::UnitIntervalNoise<double>(20.0, 2e4)), 
         series::Range(6000));
     std::vector<double> lengths(vec2s.size());
     each::length(vec2s, lengths);

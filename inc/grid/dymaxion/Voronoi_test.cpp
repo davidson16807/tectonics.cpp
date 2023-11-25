@@ -13,7 +13,7 @@
 #include <test/adapter.hpp>
 #include <test/properties.hpp>
 
-#include <store/series/Range.hpp>
+#include <index/series/Range.hpp>
 
 #include "Voronoi.hpp"
 
