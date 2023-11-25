@@ -384,7 +384,7 @@ TEST_CASE( "Vector Raster laplacian", "[healpix]" ) {
 // TEST_CASE( "Raster gradient multiplication relation", "[rasters]" ) {
 
 //     float radius(2.0f);
-//     int vertex_count_per_half_meridian(10);
+//     int vertices_per_half_meridian(10);
 //     auto a = series::UnitIntervalNoise<float>(11.0f, 11000.0f);
 //     auto b = series::UnitIntervalNoise<float>(12.0f, 12000.0f);
 //     auto ab = std::vector<float>(grid.vertex_count());

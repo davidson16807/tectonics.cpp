@@ -10,7 +10,7 @@
 #include <test/properties.hpp>
 #include "Layering.hpp"
 
-TEST_CASE( "Layering.layer_to_height() / Layering.height_to_layer()", "[bijective]" ) {
+TEST_CASE( "Layering.layer_to_height() / Layering.height_to_layer()", "[cartesian]" ) {
     test::OperatorAdapter exact;
     test::StandardAdapter inexact(1e-7f);
     std::vector<float> floats {-1.0f, 0.0f, 1.0f, 4.0f, 5.0f, 6.0f};

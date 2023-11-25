@@ -44,8 +44,8 @@ namespace collignon
 
 		static constexpr id arrows_per_vertex = 4;
 
-        inline constexpr explicit Grid(const scalar radius, const id vertex_count_per_half_meridian) : 
-        	voronoi(radius, vertex_count_per_half_meridian)
+        inline constexpr explicit Grid(const scalar radius, const id vertices_per_half_meridian) : 
+        	voronoi(radius, vertices_per_half_meridian)
     	{}
 
 		constexpr id arrow_offset_memory_id(const ivec2 arrow_offset_grid_position) const
@@ -80,9 +80,9 @@ namespace collignon
 			return 2.0 * pi * voronoi.radius;
 		}
 
-		inline constexpr id vertex_count_per_half_meridian() const
+		inline constexpr id vertices_per_half_meridian() const
 		{
-			return voronoi.vertex_count_per_half_meridian;
+			return voronoi.vertices_per_half_meridian;
 		}
 
 		inline constexpr id vertex_count() const 
@@ -143,7 +143,7 @@ namespace collignon
 		{
 			ivec2 V2 = voronoi.grid_id(vertex_id);
 			return voronoi.memory_id(
-				std::abs(V2.x) + std::abs(V2.y) == voronoi.vertex_count_per_half_meridian? 
+				std::abs(V2.x) + std::abs(V2.y) == voronoi.vertices_per_half_meridian? 
 					V2+ivec2(0,1) : V2);
 		}
 

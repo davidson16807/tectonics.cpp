@@ -8,7 +8,7 @@
 #include <glm/vec3.hpp>             // *vec3
 
 // in-house libraries
-#include <grid/bijective/Interleaving.hpp>
+#include <grid/cartesian/Interleaving.hpp>
 #include "Projection.hpp"
 
 namespace dymaxion
@@ -36,41 +36,41 @@ namespace dymaxion
         const Projection<id,scalar,Q> projection;
 
     public:
-        const id vertex_count_per_square_side;
-        const scalar vertex_count_per_square_side_scalar;
-        const id vertex_count_per_square;
+        const id vertices_per_square_side;
+        const scalar vertices_per_square_side_scalar;
+        const id vertices_per_square;
         const id vertex_count;
 
     private:
-        const bijective::Interleaving<id> row_interleave;
-        const bijective::Interleaving<id> square_interleave;
+        const cartesian::Interleaving<id> row_interleave;
+        const cartesian::Interleaving<id> square_interleave;
 
     public:
         static constexpr id square_count = 10;
 
-        constexpr PointIndexing(const id vertex_count_per_square_side) : 
+        constexpr PointIndexing(const id vertices_per_square_side) : 
             projection(Projection<id,scalar,Q>()),
-            vertex_count_per_square_side(vertex_count_per_square_side),
-            vertex_count_per_square_side_scalar(vertex_count_per_square_side),
-            vertex_count_per_square(vertex_count_per_square_side * vertex_count_per_square_side),
-            vertex_count(square_count*vertex_count_per_square),
-            row_interleave(vertex_count_per_square_side),
-            square_interleave(vertex_count_per_square)
+            vertices_per_square_side(vertices_per_square_side),
+            vertices_per_square_side_scalar(vertices_per_square_side),
+            vertices_per_square(vertices_per_square_side * vertices_per_square_side),
+            vertex_count(square_count*vertices_per_square),
+            row_interleave(vertices_per_square_side),
+            square_interleave(vertices_per_square)
         {
         }
 
         constexpr IdPoint standardize(const IdPoint grid_id) const {
             ScalarPoint standardized =
-                (projection.standardize((ScalarPoint(grid_id)+vec2(0.5)) / vertex_count_per_square_side_scalar)
+                (projection.standardize((ScalarPoint(grid_id)+vec2(0.5)) / vertices_per_square_side_scalar)
                     // apply epsilon while in the [0,1] domain so that the cast to `id` is correct
                     + vec2(std::numeric_limits<scalar>::epsilon())
-                ) * vertex_count_per_square_side_scalar;
+                ) * vertices_per_square_side_scalar;
             return IdPoint(standardized);
         }
 
         constexpr id memory_id(const IdPoint grid_id) const {
             const IdPoint standardized(standardize(grid_id));
-            const IdPoint clamped(clamp(standardized, 0, vertex_count_per_square_side-1));
+            const IdPoint clamped(clamp(standardized, 0, vertices_per_square_side-1));
             return square_interleave.interleaved_id(
                     clamped.square_id, 
                     row_interleave.interleaved_id(clamped.square_position.y, clamped.square_position.x)

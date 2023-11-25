@@ -11,21 +11,21 @@
 #include <grid/cartesian/Interleaving.hpp>
 #include "Projection.hpp"
 
-namespace dymaxion
+namespace cartesian
 {
 
     /*
-    `Vector2Indexing` represents a bijection
+    `Indexing` represents a bijection
     between vectors on a square grid and integers ("memory id"):
 
         grid_id ↔ memory_id
 
-    `Vector2Indexing` builds on top of `Interleaving` 
+    `Indexing` builds on top of `Interleaving` 
     to introduce the concepts of vectors and to make decisions on data locality.
-    As such, `Vector2Indexing` must be made specific to `dymaxion::`.
+    As such, `Indexing` must be made specific to `cartesian::`.
     */
     template<typename id=int, glm::qualifier Q=glm::defaultp>
-    class Vector2Indexing
+    class Indexing
     {
         using ivec2 = glm::vec<2,id,glm::defaultp>;
 
@@ -35,7 +35,7 @@ namespace dymaxion
         const id vertices_per_side;
         const id vertex_count;
 
-        constexpr Vector2Indexing(const id vertices_per_side) : 
+        constexpr Indexing(const id vertices_per_side) : 
             interleave(vertices_per_side),
             vertices_per_side(vertices_per_side),
             vertex_count(vertices_per_side*vertices_per_side)

@@ -12,7 +12,7 @@
 TEST_CASE( "Grid arrow_offset_memory_id() / arrow_offset_grid_position()", "[dymaxion]" ) {
 
     double radius(2.0);
-    int vertex_count_per_square_side(40);
+    int vertices_per_square_side(40);
 
     test::GlmAdapter<int,double> precise(1e-7);
     test::GlmAdapter<int,double> imprecise(1e-4);
@@ -31,7 +31,7 @@ TEST_CASE( "Grid arrow_offset_memory_id() / arrow_offset_grid_position()", "[dym
 
     series::Range arrow_offset_ids(4);
 
-    dymaxion::Grid grid(radius, vertex_count_per_square_side);
+    dymaxion::Grid grid(radius, vertices_per_square_side);
 
     REQUIRE(test::determinism(precise,
         "Grid.arrow_offset_memory_id(…)", TEST_UNARY(grid.arrow_offset_memory_id),
@@ -60,12 +60,12 @@ TEST_CASE( "Grid arrow_offset_memory_id() / arrow_offset_grid_position()", "[dym
 TEST_CASE( "Grid arrow properties", "[dymaxion]" ) {
 
     double radius(2.0);
-    int vertex_count_per_square_side(40);
+    int vertices_per_square_side(40);
 
     test::GlmAdapter<int,double> precise(1e-7);
     test::GlmAdapter<int,double> imprecise(1e-4);
 
-    dymaxion::Grid grid(radius, vertex_count_per_square_side);
+    dymaxion::Grid grid(radius, vertices_per_square_side);
 
     series::Range vertex_ids(grid.vertex_count());
     series::Range arrow_offset_ids(4);
@@ -103,7 +103,7 @@ TEST_CASE( "Grid arrow properties", "[dymaxion]" ) {
     REQUIRE(test::codomain(precise,
         "within a narrow fraction of an expected value", 
         [=](auto y){ 
-            double expected(grid.total_circumference() / (2.0*grid.vertex_count_per_meridian()));
+            double expected(grid.total_circumference() / (2.0*grid.vertices_per_meridian()));
             return (std::abs(y-expected)/expected) < 2.5; 
         },
         "Grid.arrow_length(…)", TEST_BINARY(grid.arrow_length),
@@ -121,7 +121,7 @@ TEST_CASE( "Grid arrow properties", "[dymaxion]" ) {
     REQUIRE(test::codomain(precise,
         "within a narrow fraction of an expected value", 
         [=](auto y){ 
-            double expected(grid.total_circumference() / (2.0*grid.vertex_count_per_meridian()));
+            double expected(grid.total_circumference() / (2.0*grid.vertices_per_meridian()));
             return (std::abs(y-expected)/expected) < 2.5; 
         },
         "Grid.arrow_dual_length(…)", TEST_BINARY(grid.arrow_dual_length),

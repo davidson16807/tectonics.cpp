@@ -75,8 +75,8 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
   double radius(2.0);
-  int vertex_count_per_square_side(2);
-  dymaxion::Grid grid(radius, vertex_count_per_square_side);
+  int vertices_per_square_side(2);
+  dymaxion::Grid grid(radius, vertices_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::BufferVertexIds buffer_vertex_id(grid);
   dymaxion::BufferComponentIds buffer_component_ids(grid);
@@ -104,8 +104,8 @@ int main() {
   // );
 
   // flatten raster for WebGL
-  dymaxion::buffer::Square squares(vertex_count_per_square_side);
-  dymaxion::buffer::Pole poles(vertex_count_per_square_side);
+  dymaxion::buffer::Square squares(vertices_per_square_side);
+  dymaxion::buffer::Pole poles(vertices_per_square_side);
   std::vector<float> buffer_color_values(10*squares.triangles_size(vertex_colored_scalars) + poles.triangles_size(vertex_colored_scalars));
   std::vector<float> buffer_displacements(10*squares.triangles_size(vertex_displacements) + poles.triangles_size(vertex_displacements));
   std::vector<float> buffer_positions(10*squares.triangles_size(vertex_positions) + poles.triangles_size(vertex_positions));

@@ -11,7 +11,7 @@ In file included from /home/carl/code/tectonics.cpp/spike/grid/dymaxion/Grid.hpp
                  from test.cpp:1:
 /home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp: In member function ‘constexpr dymaxion::PointIndexing<id, scalar, Q>::ScalarPoint dymaxion::PointIndexing<id, scalar, Q>::standardize(dymaxion::PointIndexing<id, scalar, Q>::ScalarPoint) const’:
 /home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:68:13: error: expected ‘;’ before ‘standardized’
-   68 |             standardized *= vertex_count_per_square_side_scalar
+   68 |             standardized *= vertices_per_square_side_scalar
       |             ^~~~~~~~~~~~
 /home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp: In instantiation of ‘constexpr dymaxion::PointIndexing<id, scalar, Q>::ScalarPoint dymaxion::PointIndexing<id, scalar, Q>::standardize(dymaxion::PointIndexing<id, scalar, Q>::ScalarPoint) const [with id = int; scalar = double; glm::qualifier Q = glm::packed_highp; dymaxion::PointIndexing<id, scalar, Q>::ScalarPoint = dymaxion::Point<int, double, glm::packed_highp>]’:
 /home/carl/code/tectonics.cpp/spike/grid/dymaxion/PointIndexing.hpp:77:39:   required from ‘constexpr dymaxion::PointIndexing<id, scalar, Q>::IdPoint dymaxion::PointIndexing<id, scalar, Q>::standardize(dymaxion::PointIndexing<id, scalar, Q>::IdPoint) const [with id = int; scalar = double; glm::qualifier Q = glm::packed_highp; dymaxion::PointIndexing<id, scalar, Q>::IdPoint = dymaxion::Point<int, int, glm::packed_highp>]’

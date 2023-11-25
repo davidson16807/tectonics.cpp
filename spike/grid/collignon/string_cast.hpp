@@ -12,7 +12,7 @@ namespace collignon
 	{
 		std::string out("\n");
 		using ivec2 = glm::vec<2,id,glm::defaultp>;
-		double ratio = grid.voronoi.vertex_count_per_meridian / double(line_char_width);
+		double ratio = grid.voronoi.vertices_per_meridian / double(line_char_width);
 		for (id i = 0; i < line_char_width/2; ++i){
 			for (id j = 0; j < line_char_width; ++j){
 				id vertex_id = grid.voronoi.memory_id(ivec2(2*ratio*i,ratio*j));

@@ -22,17 +22,17 @@
 TEST_CASE( "PointIndexing grid_id() / memory_id()", "[dymaxion]" ) {
 
     const double pi(3.1415926535);
-    const int vertex_count_per_meridian(100);
+    const int vertices_per_meridian(100);
 
     DymaxionAdapter precise(1e-4);
-    DymaxionAdapter imprecise(2*pi/double(vertex_count_per_meridian));
+    DymaxionAdapter imprecise(2*pi/double(vertices_per_meridian));
 
-    dymaxion::PointIndexing indexing(vertex_count_per_meridian);
+    dymaxion::PointIndexing indexing(vertices_per_meridian);
 
     std::vector<dymaxion::Point<int,int>> grid_ids {};
     for(int i = 0; i < 10; i++){
-    for(int x = 0; x < indexing.vertex_count_per_square_side; x+=10){
-    for(int y = 0; y < indexing.vertex_count_per_square_side; y+=10){
+    for(int x = 0; x < indexing.vertices_per_square_side; x+=10){
+    for(int y = 0; y < indexing.vertices_per_square_side; y+=10){
         grid_ids.push_back(dymaxion::Point(i,glm::ivec2(x,y)));
     }}}
 
@@ -62,8 +62,8 @@ TEST_CASE( "PointIndexing grid_id() / memory_id()", "[dymaxion]" ) {
             auto V2 = iV2.square_position;
             return 
                 0<=i&&i<indexing.square_count && 
-                0<=V2.x&&V2.x<indexing.vertex_count_per_square_side && 
-                0<=V2.y&&V2.y<indexing.vertex_count_per_square_side;
+                0<=V2.x&&V2.x<indexing.vertices_per_square_side && 
+                0<=V2.y&&V2.y<indexing.vertices_per_square_side;
         },
         "PointIndexing.grid_id(…)", TEST_UNARY(indexing.grid_id),
         memory_ids

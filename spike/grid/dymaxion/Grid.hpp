@@ -58,9 +58,9 @@ namespace dymaxion
 
 		static constexpr id arrows_per_vertex = 4;
 
-        inline constexpr explicit Grid(const scalar radius, const id vertex_count_per_square_side) : 
-        	voronoi(radius, vertex_count_per_square_side),
-        	memory (vertex_count_per_square_side)
+        inline constexpr explicit Grid(const scalar radius, const id vertices_per_square_side) : 
+        	voronoi(radius, vertices_per_square_side),
+        	memory (vertices_per_square_side)
     	{}
 
     	// NOTE: this method is for debugging, only
@@ -101,14 +101,14 @@ namespace dymaxion
 			return 2.0 * pi * voronoi.radius;
 		}
 
-		inline constexpr id vertex_count_per_square_side() const
+		inline constexpr id vertices_per_square_side() const
 		{
-			return voronoi.vertex_count_per_square_side;
+			return voronoi.vertices_per_square_side;
 		}
 
-		inline constexpr id vertex_count_per_meridian() const
+		inline constexpr id vertices_per_meridian() const
 		{
-			return voronoi.vertex_count_per_meridian;
+			return voronoi.vertices_per_meridian;
 		}
 
 		inline constexpr id vertex_count() const 
@@ -162,7 +162,7 @@ namespace dymaxion
 		// thereby providing an adequate representation for the vertex with irregular edges.
 		inline constexpr id vertex_representative(const id vertex_id) const 
 		{
-			return memory.memory_id(clamp(memory.grid_id(vertex_id), 1, voronoi.vertex_count_per_triangle_leg-2));
+			return memory.memory_id(clamp(memory.grid_id(vertex_id), 1, voronoi.vertices_per_triangle_leg-2));
 		}
 
 		inline constexpr vec3 vertex_position(const id vertex_id) const 

@@ -6,7 +6,6 @@
 // std libraries
 
 // in-house libraries
-#include "../VectorIndexing.hpp"
 
 namespace dymaxion {
 namespace buffer {
@@ -33,10 +32,10 @@ namespace buffer {
 
 	public:
         const PointIndexing<id> vertices;
-        const int vertex_count_per_side;
-		constexpr inline explicit Pole(const id vertex_count_per_side): 
-			vertices(vertex_count_per_side),
-			vertex_count_per_side(vertex_count_per_side)
+        const int vertices_per_side;
+		constexpr inline explicit Pole(const id vertices_per_side): 
+			vertices(vertices_per_side),
+			vertices_per_side(vertices_per_side)
 		{}
 
 		constexpr inline id point_size(const float value) const
@@ -79,7 +78,7 @@ namespace buffer {
 		{
 			using element = typename Series::value_type;
 			id buffer_id = buffer_start_id;
-			ivec2 grid_id(square_id%2? 0 : vertex_count_per_side-1);
+			ivec2 grid_id(square_id%2? 0 : vertices_per_side-1);
 			element W2 = input[vertices.memory_id(IdPoint(square_id-4, grid_id))];
 			element W1 = input[vertices.memory_id(IdPoint(square_id-2, grid_id))];
 			element O  = input[vertices.memory_id(IdPoint(square_id+0, grid_id))];

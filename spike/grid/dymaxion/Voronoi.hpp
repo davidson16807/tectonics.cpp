@@ -8,7 +8,7 @@
 #include <glm/vec3.hpp>             // *vec3
 
 // in-house libraries
-#include <grid/bijective/Interleaving.hpp>
+#include <grid/cartesian/Interleaving.hpp>
 #include "Projection.hpp"
 
 namespace dymaxion
@@ -39,23 +39,23 @@ namespace dymaxion
 
     public:
 
-        const id vertex_count_per_square_side;
-        const scalar vertex_count_per_square_side_scalar;
-        const scalar vertex_count_per_meridian;
-        const id vertex_count_per_square;
+        const id vertices_per_square_side;
+        const scalar vertices_per_square_side_scalar;
+        const scalar vertices_per_meridian;
+        const id vertices_per_square;
         const id vertex_count;
         const scalar radius;
 
         static constexpr scalar square_side_to_meridian_vertex_ratio = s2*(s1+std::sqrt(s2));
         static constexpr id square_count = 10;
 
-        constexpr Voronoi(const scalar radius, const id vertex_count_per_square_side) : 
+        constexpr Voronoi(const scalar radius, const id vertices_per_square_side) : 
             projection(Projection<id,scalar,Q>()),
-            vertex_count_per_square_side(vertex_count_per_square_side),
-            vertex_count_per_square_side_scalar(vertex_count_per_square_side),
-            vertex_count_per_meridian(vertex_count_per_square_side * square_side_to_meridian_vertex_ratio),
-            vertex_count_per_square(vertex_count_per_square_side * vertex_count_per_square_side),
-            vertex_count(square_count*vertex_count_per_square),
+            vertices_per_square_side(vertices_per_square_side),
+            vertices_per_square_side_scalar(vertices_per_square_side),
+            vertices_per_meridian(vertices_per_square_side * square_side_to_meridian_vertex_ratio),
+            vertices_per_square(vertices_per_square_side * vertices_per_square_side),
+            vertex_count(square_count*vertices_per_square),
             radius(radius)
         {
         }
@@ -63,11 +63,11 @@ namespace dymaxion
 
         inline constexpr IdPoint grid_id(const ScalarPoint grid_position) const
         {
-            return min(IdPoint(grid_position), vertex_count_per_square_side-1);
+            return min(IdPoint(grid_position), vertices_per_square_side-1);
         }
         inline constexpr IdPoint grid_id(const vec3 sphere_position) const
         {
-            return min(IdPoint(grid_position(sphere_position)), vertex_count_per_square_side-1);
+            return min(IdPoint(grid_position(sphere_position)), vertices_per_square_side-1);
         }
 
 
@@ -78,7 +78,7 @@ namespace dymaxion
         }
         inline constexpr ScalarPoint grid_position(const vec3 sphere_position) const
         {
-            return ScalarPoint(projection.grid_id(glm::normalize(sphere_position)) * vertex_count_per_square_side_scalar);
+            return ScalarPoint(projection.grid_id(glm::normalize(sphere_position)) * vertices_per_square_side_scalar);
         }
 
 
@@ -86,11 +86,11 @@ namespace dymaxion
         inline constexpr vec3 unit_sphere_position(const IdPoint grid_id) const
         {
             ScalarPoint scalable(grid_id);
-            return projection.sphere_position((scalable+half_cell)/vertex_count_per_square_side_scalar);
+            return projection.sphere_position((scalable+half_cell)/vertices_per_square_side_scalar);
         }
         inline constexpr vec3 unit_sphere_position(const ScalarPoint grid_position) const
         {
-            return projection.sphere_position(grid_position/vertex_count_per_square_side_scalar);
+            return projection.sphere_position(grid_position/vertices_per_square_side_scalar);
         }
 
 
@@ -107,9 +107,9 @@ namespace dymaxion
     };
 
     template<typename id=int, typename scalar=double, glm::qualifier Q=glm::defaultp>
-    Voronoi<id,scalar,Q> voronoi_from_vertex_count_per_meridian(const scalar radius, const id vertex_count_per_meridian)
+    Voronoi<id,scalar,Q> voronoi_from_vertices_per_meridian(const scalar radius, const id vertices_per_meridian)
     {
         // the boundary of two polar squares consists of cells for those boundaries plus the diagonal of a square, hence the 1+√2 factors
-        scalar vertex_count_per_square_side(vertex_count_per_meridian / Voronoi<id,scalar,Q>::square_side_to_meridian_vertex_ratio);
+        scalar vertices_per_square_side(vertices_per_meridian / Voronoi<id,scalar,Q>::square_side_to_meridian_vertex_ratio);
     }
 }

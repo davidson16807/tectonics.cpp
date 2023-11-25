@@ -1,6 +1,6 @@
 #pragma once
 
-namespace bijective
+namespace cartesian
 {
 
 	/*
