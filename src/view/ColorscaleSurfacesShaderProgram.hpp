@@ -343,6 +343,9 @@ namespace view
 
 			glUseProgram(shaderProgramId);
 			glBindVertexArray(attributeId);
+			glEnable(GL_CULL_FACE);  
+			glCullFace(GL_FRONT);
+			// glFrontFace(GL_CCW);  
 
 			//ATTRIBUTES
 			glBindBuffer(GL_ARRAY_BUFFER, positionBufferId);

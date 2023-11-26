@@ -107,8 +107,9 @@ int main() {
   std::vector<float> buffer_color_values(grids.triangle_strips_size(vertex_colored_scalars));
   std::vector<float> buffer_displacements(grids.triangle_strips_size(vertex_displacements));
   std::vector<float> buffer_positions(grids.triangle_strips_size(vertex_positions));
-  std::cout << "vertex count:       " << grid.vertex_count() << std::endl;
-  std::cout << "scalar buffer size: " << buffer_displacements.size() << std::endl;
+  std::cout << "vertex count:        " << grid.vertex_count() << std::endl;
+  std::cout << "vertices per meridian" << grid.vertices_per_meridian() << std::endl;
+  std::cout << "scalar buffer size:  " << buffer_displacements.size() << std::endl;
   grids.storeTriangleStrips(vertex_colored_scalars, buffer_color_values);
   grids.storeTriangleStrips(vertex_displacements, buffer_displacements);
   grids.storeTriangleStrips(vertex_positions, buffer_positions);
