@@ -325,7 +325,7 @@ namespace view
 			const std::vector<float>& flattened_face_vertex_positions, 
 			const std::vector<T>& flattened_face_vertex_color_values, 
 			const std::vector<float>& flattened_face_vertex_displacements, 
-			const ColorscaleSurfacesViewState<T>& colorscale_state, 
+			const ColorscaleSurfacesViewState<T>& colorscale_state,
 			const ViewState& view_state
 		){
 			if (!canDepict(colorscale_state, view_state))
@@ -372,7 +372,8 @@ namespace view
 	        glUniform1f (sealevelLocation, colorscale_state.sealevel);
 	        glUniform1i (colorscaleTypeLocation, colorscale_state.colorscale_type);
 
-			glDrawArrays(GL_TRIANGLES, /*array offset*/ 0, /*vertex count*/ flattened_face_vertex_color_values.size());
+			// glDrawArrays(GL_TRIANGLES, /*array offset*/ 0, /*vertex count*/ flattened_face_vertex_color_values.size());
+			glDrawArrays(GL_TRIANGLE_STRIP, /*array offset*/ 0, /*vertex count*/ flattened_face_vertex_color_values.size());
 		}
 	};
 }

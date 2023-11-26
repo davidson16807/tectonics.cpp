@@ -71,6 +71,35 @@ namespace dymaxion {
 			return buffer_id;
 		}
 
+		template<typename Series>
+		constexpr inline id triangle_strips_size(const Series& input) const
+		{
+			return 9 * primitives.point_size(input[0]);
+		}
+
+		template<typename Series, typename Buffer>
+		constexpr id storeTriangleStrips(const id square_id, const Series& input, Buffer& output, const id buffer_start_id=0) const 
+		{
+			using element = typename Series::value_type;
+			id buffer_id = buffer_start_id;
+			ivec2 grid_id(square_id%2? 0 : vertices_per_side-1);
+			element W2 = input[vertices.memory_id(IdPoint(square_id-4, grid_id))];
+			element W1 = input[vertices.memory_id(IdPoint(square_id-2, grid_id))];
+			element O  = input[vertices.memory_id(IdPoint(square_id+0, grid_id))];
+			element E1 = input[vertices.memory_id(IdPoint(square_id+2, grid_id))];
+			element E2 = input[vertices.memory_id(IdPoint(square_id+4, grid_id))];
+			buffer_id = primitives.storePoint(O,  output, buffer_id);
+			buffer_id = primitives.storePoint(O,  output, buffer_id);
+			buffer_id = primitives.storePoint(W1, output, buffer_id);
+			buffer_id = primitives.storePoint(W2, output, buffer_id);
+			buffer_id = primitives.storePoint(O,  output, buffer_id);
+			buffer_id = primitives.storePoint(E2, output, buffer_id);
+			buffer_id = primitives.storePoint(E1, output, buffer_id);
+			buffer_id = primitives.storePoint(O,  output, buffer_id);
+			buffer_id = primitives.storePoint(O,  output, buffer_id);
+			return buffer_id;
+		}
+
 	};
 
 }
