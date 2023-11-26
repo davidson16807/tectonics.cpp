@@ -74,7 +74,7 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
   double radius(2.0);
-  int vertices_per_square_side(20);
+  int vertices_per_square_side(2);
   dymaxion::Grid grid(radius, vertices_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::BufferVertexIds buffer_vertex_id(grid);
@@ -165,7 +165,8 @@ int main() {
         // colors,
         // colors,
         colorscale_state,
-        view_state
+        view_state,
+        GL_TRIANGLE_STRIP
       );
       // put stuff we've been drawing onto the display
       glfwSwapBuffers(window);
