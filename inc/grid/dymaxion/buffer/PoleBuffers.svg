@@ -24,16 +24,38 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      inkscape:zoom="0.92381453"
-     inkscape:cx="495.22927"
-     inkscape:cy="248.96772"
-     inkscape:window-width="1652"
-     inkscape:window-height="1376"
-     inkscape:window-x="3468"
-     inkscape:window-y="27"
-     inkscape:window-maximized="0"
-     inkscape:current-layer="layer1" />
+     inkscape:cx="495.22928"
+     inkscape:cy="249.50896"
+     inkscape:window-width="2490"
+     inkscape:window-height="1403"
+     inkscape:window-x="70"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     showgrid="false" />
   <defs
-     id="defs1" />
+     id="defs1">
+    <marker
+       style="overflow:visible"
+       id="ArrowWide"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Wide arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:butt"
+         d="M 3,-3 0,0 3,3"
+         transform="rotate(180,0.125,0)"
+         sodipodi:nodetypes="ccc"
+         id="path1-7" />
+    </marker>
+  </defs>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
@@ -1359,7 +1381,7 @@
          style="font-size:3.54309px;fill:#000004;fill-opacity:1;stroke:#000001;stroke-width:0;stroke-dasharray:none;stroke-opacity:1"
          x="118.60964"
          y="93.677879"
-         id="tspan139785">Example usage:</tspan></text>
+         id="tspan139785">Example usage where i=0:</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.54309px;font-family:Arial;-inkscape-font-specification:Arial;fill:#000004;fill-opacity:1;stroke:#000001;stroke-width:0;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
@@ -1370,7 +1392,7 @@
          style="font-size:3.54309px;fill:#000004;fill-opacity:1;stroke:#000001;stroke-width:0;stroke-dasharray:none;stroke-opacity:1"
          x="5.6898546"
          y="11.450185"
-         id="tspan174669">Poles require special handling. Since cells are aligned to square boundaries, and cell midpoints correspond to vertices,</tspan><tspan
+         id="tspan7">Poles require special handling. Since cells are aligned to square boundaries, and cell midpoints correspond to vertices,</tspan><tspan
          sodipodi:role="line"
          style="font-size:3.54309px;fill:#000004;fill-opacity:1;stroke:#000001;stroke-width:0;stroke-dasharray:none;stroke-opacity:1"
          x="5.6898546"
@@ -1380,11 +1402,11 @@
          style="font-size:3.54309px;fill:#000004;fill-opacity:1;stroke:#000001;stroke-width:0;stroke-dasharray:none;stroke-opacity:1"
          x="5.6898546"
          y="20.307911"
-         id="tspan174">Logic that would interpolate values for one would suffer a performance penalty, </tspan><tspan
+         id="tspan174">Logic that would interpolate values for a new pole vertex would suffer a performance penalty, </tspan><tspan
          sodipodi:role="line"
          style="font-size:3.54309px;fill:#000004;fill-opacity:1;stroke:#000001;stroke-width:0;stroke-dasharray:none;stroke-opacity:1"
          x="5.6898546"
-         y="24.736774"
+         y="24.736773"
          id="tspan176">so we are left to use the vertices that the grid already provides. Our solution is a special buffering class to handle polar faces.</tspan><tspan
          sodipodi:role="line"
          style="font-size:3.54309px;fill:#000004;fill-opacity:1;stroke:#000001;stroke-width:0;stroke-dasharray:none;stroke-opacity:1"
@@ -1396,5 +1418,47 @@
          x="5.6898546"
          y="33.594498"
          id="tspan181">To prevent z-fighting between overlapping faces, only one instance of this class can be created per hemisphere.</tspan></text>
+    <path
+       style="fill:none;fill-opacity:0.64;stroke:#010001;stroke-width:0.79375;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#ArrowWide)"
+       id="path30"
+       sodipodi:type="arc"
+       sodipodi:cx="-85.854935"
+       sodipodi:cy="102.55673"
+       sodipodi:rx="5.5689535"
+       sodipodi:ry="5.5689535"
+       sodipodi:start="0"
+       sodipodi:end="5.5149654"
+       sodipodi:open="true"
+       sodipodi:arc-type="arc"
+       d="m -80.285981,102.55673 a 5.5689535,5.5689535 0 0 1 -4.505971,5.46657 5.5689535,5.5689535 0 0 1 -6.22614,-3.37969 5.5689535,5.5689535 0 0 1 2.129124,-6.756769 5.5689535,5.5689535 0 0 1 7.038939,0.800269"
+       transform="scale(-1,1)" />
+    <path
+       style="fill:none;fill-opacity:0.64;stroke:#010001;stroke-width:0.79375;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#ArrowWide)"
+       id="path2"
+       sodipodi:type="arc"
+       sodipodi:cx="-58.926105"
+       sodipodi:cy="79.598213"
+       sodipodi:rx="5.5689535"
+       sodipodi:ry="5.5689535"
+       sodipodi:start="0"
+       sodipodi:end="5.5149654"
+       sodipodi:open="true"
+       sodipodi:arc-type="arc"
+       d="m -53.357152,79.598213 a 5.5689535,5.5689535 0 0 1 -4.505971,5.466563 5.5689535,5.5689535 0 0 1 -6.226139,-3.379686 5.5689535,5.5689535 0 0 1 2.129124,-6.756768 5.5689535,5.5689535 0 0 1 7.038938,0.800269"
+       transform="scale(-1,1)" />
+    <path
+       style="fill:none;fill-opacity:0.64;stroke:#010001;stroke-width:0.79375;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#ArrowWide)"
+       id="path3"
+       sodipodi:type="arc"
+       sodipodi:cx="-32.067776"
+       sodipodi:cy="102.55673"
+       sodipodi:rx="5.5689535"
+       sodipodi:ry="5.5689535"
+       sodipodi:start="0"
+       sodipodi:end="5.5149654"
+       sodipodi:open="true"
+       sodipodi:arc-type="arc"
+       d="m -26.498822,102.55673 a 5.5689535,5.5689535 0 0 1 -4.505971,5.46657 5.5689535,5.5689535 0 0 1 -6.22614,-3.37969 5.5689535,5.5689535 0 0 1 2.129124,-6.756769 5.5689535,5.5689535 0 0 1 7.038939,0.800269"
+       transform="scale(-1,1)" />
   </g>
 </svg>
