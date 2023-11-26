@@ -1,4 +1,4 @@
-dymaxion::buffer:: contains functions that store properties of rasters 
+dymaxion:: contains functions that store properties of rasters 
 to special kinds of series (known as "buffers")	that are typically sent to the GPU in 3d rendering. 
 The name "buffer" is evocative of the buffers that are used in OpenGL. 
 
@@ -26,6 +26,6 @@ Design of dymaxion::buffers is informed by the following observations:
     This is in contrast to `rasters::`, where knowledge of the grid has little affect on performance, 
     so it is best to be grid-agnostic (barring knowledge of certain types of grid where necessary, e.g. layered vs. unlayered).
 11) Combining points 5), 9), and 10), it is useful for buffer storage to have knowledge of the grid,
-    so we represent buffer storage in a different namespace that is grid specific, e.g. `dymaxion::buffer::`.
+    so we represent buffer storage in a different namespace that is grid specific, e.g. `dymaxion::`.
 12) Due to point 1), method signatures for buffer storage should not involve pointers or output references to primitives,
     even though doing so may be useful. This is why method signatures look the way they do.

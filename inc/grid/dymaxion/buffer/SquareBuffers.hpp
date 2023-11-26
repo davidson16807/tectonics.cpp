@@ -12,7 +12,7 @@
 namespace dymaxion {
 
 	/*
-	`dymaxion::buffer::Square` contains methods 
+	`dymaxion::SquareBuffers` contains methods 
 	that store representations of a `dymaxion::Square` to a graphics library buffer.
 	Decomposing the `dymaxion::Grid` in this way is done to 
 	simplify testing, debugging, and implementation,

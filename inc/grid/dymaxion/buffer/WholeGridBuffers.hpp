@@ -12,13 +12,11 @@
 namespace dymaxion {
 
 	/*
-	`dymaxion::buffer::Square` contains methods 
-	that store representations of a `dymaxion::Square` to a graphics library buffer.
-	Decomposing the `dymaxion::Grid` in this way is done to 
-	simplify testing, debugging, and implementation,
-	as well as to permit partial renders of the sphere at high LOD,
-	such as when on the surface of a planet.
-	See README.md for general discussion on design.
+	`dymaxion::WholeGridBuffers` contains methods 
+	that store representations of a `dymaxion::Grid` to a graphics library buffer.
+	`dymaxion::WholeGridBuffers` coordinates `dymaxion::SquareBuffers` and `dymaxion::PoleBuffers`
+	to cover each portion of the sphere in triangle faces without overlaps.
+	See README.md for general discussion on design of `*Buffers` classes.
 	*/
 
 	template<typename id, glm::qualifier Q=glm::defaultp>
