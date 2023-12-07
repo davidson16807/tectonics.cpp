@@ -1,0 +1,7 @@
+roadmap for lod:
+* port geometry library
+* break math:: into analytic::, geometric::, combinatoric::, special::
+* dymaxion::Downsampling
+* dyamxion::LodGridBuffers
+* dymaxion/field.hpp#memory_id
+* unit tests for dymaxion::*Buffers
