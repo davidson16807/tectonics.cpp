@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <random>       // rngs
+#include <chrono>       // high_resolution_clock
 
 // gl libraries
 #include <GL/glew.h>
@@ -45,7 +46,7 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // we don't want the old OpenGL
 
   // open a window
-  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello World", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(2560, 1440, "Hello World", NULL, NULL);
   if (!window) {
     std::cout << stderr << " ERROR: could not open window with GLFW3" << std::endl;
     glfwTerminate();
@@ -74,25 +75,25 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
   double radius(2.0);
-  int vertices_per_square_side(2);
+  int vertices_per_square_side(32);
   dymaxion::Grid grid(radius, vertices_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::BufferVertexIds buffer_vertex_id(grid);
   dymaxion::BufferComponentIds buffer_component_ids(grid);
 
   // auto vertex_colored_scalars = dymaxion::square_ids(grid);
-  auto vertex_colored_scalars = series::range();
+  // auto vertex_colored_scalars = series::range();
   // std::vector<double> vertex_colored_scalars(grid.vertex_count());
   // for (int i = 0; i < grid.vertex_count(); ++i)
   // {
   //   vertex_colored_scalars[i] = grid.vertex_position(i).z;
   // }
-  // auto vertex_colored_scalars = series::map(
-  //     field::value_noise3(
-  //         field::square_noise(
-  //             series::unit_interval_noise(11.0f, 1.1e4f))),
-  //     vertex_positions
-  // );
+  auto vertex_colored_scalars = series::map(
+      field::value_noise3(
+          field::square_noise(
+              series::unit_interval_noise(11.0f, 1.1e4f))),
+      vertex_positions
+  );
 
   auto vertex_displacements = series::uniform(0.0f);
   // auto vertex_displacements = series::map(
@@ -110,9 +111,27 @@ int main() {
   std::cout << "vertex count:        " << grid.vertex_count() << std::endl;
   std::cout << "vertices per meridian" << grid.vertices_per_meridian() << std::endl;
   std::cout << "scalar buffer size:  " << buffer_displacements.size() << std::endl;
+  std::cout << "vertices per meridian, 256 " << dymaxion::Grid(radius, 256).vertices_per_meridian() << std::endl;
+  std::cout << "vertices per meridian, 512 " << dymaxion::Grid(radius, 512).vertices_per_meridian() << std::endl;
+  std::cout << "vertices per meridian, 1024 " << dymaxion::Grid(radius, 1024).vertices_per_meridian() << std::endl;
+  std::cout << "vertices per meridian, 2048 " << dymaxion::Grid(radius, 2048).vertices_per_meridian() << std::endl;
+  std::cout << "vertices per meridian, 4096 " << dymaxion::Grid(radius, 4096).vertices_per_meridian() << std::endl;
+  std::cout << "vertices per meridian, 8192 " << dymaxion::Grid(radius, 8192).vertices_per_meridian() << std::endl;
+  std::cout << "vertices per meridian, 16384 " << dymaxion::Grid(radius, 16384).vertices_per_meridian() << std::endl;
+  std::cout << "vertices per meridian, 32768 " << dymaxion::Grid(radius, 32768).vertices_per_meridian() << std::endl;
+  std::cout << "vertices per meridian, 65536 " << dymaxion::Grid(radius, 65536).vertices_per_meridian() << std::endl;
+  std::cout << "vertices per meridian, 131072 " << dymaxion::Grid(radius, 131072).vertices_per_meridian() << std::endl;
+  std::cout << "vertices per meridian, 262144 " << dymaxion::Grid(radius, 262144).vertices_per_meridian() << std::endl;
+  std::cout << "vertices per meridian, 524288 " << dymaxion::Grid(radius, 524288).vertices_per_meridian() << std::endl;
+
+    std::chrono::_V2::system_clock::time_point t1, t2;
+    t1 = std::chrono::high_resolution_clock::now();
   grids.storeTriangleStrips(vertex_colored_scalars, buffer_color_values);
   grids.storeTriangleStrips(vertex_displacements, buffer_displacements);
   grids.storeTriangleStrips(vertex_positions, buffer_positions);
+    t2 = std::chrono::high_resolution_clock::now();
+    std::cout << "mesh subdivision:    " << std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count() << std::endl;
+
 
   // initialize control state
   update::OrbitalControlState control_state;
@@ -124,7 +143,7 @@ int main() {
   view::ViewState view_state;
   view_state.projection_matrix = glm::perspective(
     3.14159f*45.0f/180.0f, 
-    850.0f/640.0f, 
+    2560.0f/1440.0f, 
     1e-3f, 1e16f
   );
   view_state.view_matrix = control_state.get_view_matrix();
