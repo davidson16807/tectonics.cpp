@@ -14,6 +14,8 @@
 #include "glm/glm.hpp"
 
 // in-house libraries
+#include <math/glm/special.hpp>
+
 #include <index/glm/each_specialization.hpp>
 #include <index/glm/whole_specialization.hpp>
 #include <index/glm/each.hpp>
@@ -32,18 +34,19 @@
 #include <field/noise/SquareNoise.hpp>
 #include <field/VectorZip.hpp>
 
-#include <grid/healpix/Grid.hpp>
-#include <grid/healpix/series.hpp>
+#include <grid/dymaxion/Grid.hpp>
+#include <grid/dymaxion/series.hpp>
 
-#include <grid/spheroidal/string_cast.hpp>
+#include <raster/spheroidal/string_cast.hpp>
 
 #include "VectorCalculusByFundamentalTheorem.hpp"
+#include "VectorCalculusByFundamentalTheorem_test.hpp"
 
 #include <test/properties.hpp>  
 #include <test/macros.hpp>  
 #include <test/glm/adapter.hpp>
 
-namespace healpix {
+namespace dymaxion {
 
     template<typename id, typename scalar>
     struct Adapter{
@@ -59,12 +62,12 @@ namespace healpix {
 
         template<typename Series1, typename Series2>
         bool equal(const Series1& a, const Series2& b) const {
-            return whole::distance(a,b) <= threshold;
+            return whole::max_distance(a,b) <= threshold;
         }
 
         template<typename Series>
         std::string print(const Series& a) const {
-            // return healpix::to_string(grid, a, 200);
+            // return dymaxion::to_string(grid, a, 200);
             return spheroidal::to_string(grid, a);
         }
 
@@ -72,18 +75,18 @@ namespace healpix {
 
 }
 
-#define healpix_TEST_GRIDDED_OUT_PARAMETER(TYPE,GRID,F) \
+#define dymaxion_TEST_GRIDDED_OUT_PARAMETER(TYPE,GRID,F) \
     [=](auto x){ std::vector<TYPE> out(GRID.vertex_count()); (F(GRID,x,out)); return out; }
 
-#define healpix_TEST_UNARY_OUT_PARAMETER(TYPE,GRID,F)   \
+#define dymaxion_TEST_UNARY_OUT_PARAMETER(TYPE,GRID,F)   \
     [=](auto x){ std::vector<TYPE> out(GRID.vertex_count()); (F(x,out)); return out; }
-#define healpix_TEST_BINARY_OUT_PARAMETER(TYPE,GRID,F)  \
+#define dymaxion_TEST_BINARY_OUT_PARAMETER(TYPE,GRID,F)  \
     [=](auto x, auto y){ std::vector<TYPE> out(GRID.vertex_count()); (F(x,y,out)); return out; }
-#define healpix_TEST_TRINARY_OUT_PARAMETER(TYPE,GRID,F) \
+#define dymaxion_TEST_TRINARY_OUT_PARAMETER(TYPE,GRID,F) \
     [=](auto x, auto y, auto z){ std::vector<TYPE> out(GRID.vertex_count()); (F(x,y,z,out)); return out; }
 
 
-healpix::Grid grid(0.1, 150);
+dymaxion::Grid grid(0.1, 30);
 
 std::vector elias_scalar_rasters{
     known::store(
@@ -93,7 +96,7 @@ std::vector elias_scalar_rasters{
                 series::unit_vector_noise<3>(10.0, 1.0e4), 
                 series::gaussian(11.0, 1.1e4), 
                 1000),
-            healpix::vertex_positions(grid)
+            dymaxion::vertex_positions(grid)
         )
     ),
     known::store(
@@ -103,7 +106,7 @@ std::vector elias_scalar_rasters{
                 series::unit_vector_noise<3>(11.0, 1.1e4), 
                 series::gaussian(11.0, 1.1e4), 
                 1000),
-            healpix::vertex_positions(grid)
+            dymaxion::vertex_positions(grid)
         )
     ),
     known::store(
@@ -113,7 +116,7 @@ std::vector elias_scalar_rasters{
                 series::unit_vector_noise<3>(12.0, 1.2e4), 
                 series::gaussian(11.0, 1.1e4), 
                 1000),
-            healpix::vertex_positions(grid)
+            dymaxion::vertex_positions(grid)
         )
     )
 };
@@ -124,19 +127,19 @@ std::vector scalar_rasters{
         field::value_noise3(
             field::square_noise(
                 series::unit_interval_noise(11.0, 1.1e4))),
-        healpix::vertex_positions(grid)
+        dymaxion::vertex_positions(grid)
     ),
     series::map(
         field::value_noise3(
             field::square_noise(
                 series::unit_interval_noise(12.0, 1.2e4))),
-        healpix::vertex_positions(grid)
+        dymaxion::vertex_positions(grid)
     ),
     series::map(
         field::value_noise3(
             field::square_noise(
                 series::unit_interval_noise(13.0, 1.3e4))),
-        healpix::vertex_positions(grid)
+        dymaxion::vertex_positions(grid)
     )
 };
 
@@ -158,7 +161,7 @@ std::vector vector_rasters{
                         series::gaussian(11.0, 1.1e4), 
                         1000)
             ),
-            healpix::vertex_positions(grid)
+            dymaxion::vertex_positions(grid)
         )
     ),
     known::store(
@@ -178,7 +181,7 @@ std::vector vector_rasters{
                         series::gaussian(11.0, 1.1e4), 
                         1000)
             ),
-            healpix::vertex_positions(grid)
+            dymaxion::vertex_positions(grid)
         )
     ),
     known::store(
@@ -198,26 +201,26 @@ std::vector vector_rasters{
                         series::gaussian(11.0, 1.1e4), 
                         1000)
             ),
-            healpix::vertex_positions(grid)
+            dymaxion::vertex_positions(grid)
         )
     ),
 };
 
 
-healpix::Adapter adapter(grid, 1e-5, grid.vertex_count());
+dymaxion::Adapter strict(grid, 1e-5, grid.vertex_count());
 
 
-TEST_CASE( "Raster gradient", "[healpix]" ) {
+TEST_CASE( "Raster gradient", "[dymaxion]" ) {
 
-    // REQUIRE(test::determinism(adapter, 
-    //     "healpix::gradient", healpix_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, healpix::gradient),
+    // REQUIRE(test::determinism(strict, 
+    //     "dymaxion::gradient", dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::gradient),
     //     scalar_rasters
     // ));
 
-    // REQUIRE(test::additivity(adapter, 
-    //     "healpix::gradient", healpix_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, healpix::gradient),
-    //     "each::add          ", healpix_TEST_BINARY_OUT_PARAMETER (double,     grid, each::add),
-    //     "each::add          ", healpix_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+    // REQUIRE(test::additivity(strict, 
+    //     "dymaxion::gradient", dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::gradient),
+    //     "each::add          ", dymaxion_TEST_BINARY_OUT_PARAMETER (double,     grid, each::add),
+    //     "each::add          ", dymaxion_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
     //     scalar_rasters, scalar_rasters
     // ));
 
@@ -225,18 +228,18 @@ TEST_CASE( "Raster gradient", "[healpix]" ) {
 
 
 
-TEST_CASE( "Raster divergence", "[healpix]" ) {
+TEST_CASE( "Raster divergence", "[dymaxion]" ) {
 
 
-    // REQUIRE(test::determinism(adapter, 
-    //     "healpix::divergence", healpix_TEST_GRIDDED_OUT_PARAMETER(double,     grid, healpix::divergence),
+    // REQUIRE(test::determinism(strict, 
+    //     "dymaxion::divergence", dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, dymaxion::divergence),
     //     vector_rasters
     // ));
 
-    // REQUIRE(test::additivity(adapter, 
-    //     "healpix::divergence", healpix_TEST_GRIDDED_OUT_PARAMETER(double,     grid, healpix::divergence),
-    //     "each::add          ",   healpix_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
-    //     "each::add          ",   healpix_TEST_BINARY_OUT_PARAMETER (double,     grid, each::add),
+    // REQUIRE(test::additivity(strict, 
+    //     "dymaxion::divergence", dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, dymaxion::divergence),
+    //     "each::add          ",   dymaxion_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+    //     "each::add          ",   dymaxion_TEST_BINARY_OUT_PARAMETER (double,     grid, each::add),
     //     vector_rasters, vector_rasters
     // ));
 
@@ -244,136 +247,147 @@ TEST_CASE( "Raster divergence", "[healpix]" ) {
 
 
 
-TEST_CASE( "Raster curl", "[healpix]" ) {
+TEST_CASE( "Raster curl", "[dymaxion]" ) {
 
 
-    // REQUIRE(test::determinism(adapter, 
-    //     "healpix::curl",   healpix_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, healpix::curl),
+    // REQUIRE(test::determinism(strict, 
+    //     "dymaxion::curl",   dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::curl),
     //     vector_rasters
     // ));
 
-    // REQUIRE(test::additivity(adapter, 
-    //     "healpix::curl",   healpix_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, healpix::curl),
-    //     "each::add      ",   healpix_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
-    //     "each::add      ",   healpix_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+    // REQUIRE(test::additivity(strict, 
+    //     "dymaxion::curl",   dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::curl),
+    //     "each::add      ",   dymaxion_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+    //     "each::add      ",   dymaxion_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
     //     vector_rasters, vector_rasters
     // ));
 
 }
 
-TEST_CASE( "Scalar Raster laplacian", "[healpix]" ) {
-    procedural::VectorCalculusByFundamentalTheorem operators;
+TEST_CASE( "Scalar Raster laplacian", "[dymaxion]" ) {
+    unlayered::VectorCalculusByFundamentalTheorem operators;
+    unlayered::VectorCalculusByFundamentalTheoremDebug debug;
+    bool is_verbose1(false);
+    bool is_verbose2(false);
     for (int i = 0; i < 1; ++i)
     {
-        std::cout << adapter.print(scalar_rasters[i]);
-        std::cout << "arrow_dual_length0" << std::endl;
-        std::cout << adapter.print(
-            healpix_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.arrow_dual_length0)(scalar_rasters[i]));
-        std::cout << "arrow_dual_length1" << std::endl;
-        std::cout << adapter.print(
-            healpix_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.arrow_dual_length1)(scalar_rasters[i]));
-        std::cout << "arrow_dual_length2" << std::endl;
-        std::cout << adapter.print(
-            healpix_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.arrow_dual_length2)(scalar_rasters[i]));
-        std::cout << "arrow_dual_length3" << std::endl;
-        std::cout << adapter.print(
-            healpix_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.arrow_dual_length3)(scalar_rasters[i]));
-        // std::cout << "arrow_length0" << std::endl;
-        // std::cout << adapter.print(
-        //     healpix_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.arrow_length0)(scalar_rasters[i]));
-        // std::cout << "arrow_length1" << std::endl;
-        // std::cout << adapter.print(
-        //     healpix_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.arrow_length1)(scalar_rasters[i]));
-        // std::cout << "arrow_length2" << std::endl;
-        // std::cout << adapter.print(
-        //     healpix_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.arrow_length2)(scalar_rasters[i]));
-        // std::cout << "arrow_length3" << std::endl;
-        // std::cout << adapter.print(
-        //     healpix_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.arrow_length3)(scalar_rasters[i]));
-        std::cout << "differential0" << std::endl;
-        std::cout << adapter.print(
-            healpix_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.differential0)(scalar_rasters[i]));
-        std::cout << "differential1" << std::endl;
-        std::cout << adapter.print(
-            healpix_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.differential1)(scalar_rasters[i]));
-        std::cout << "differential2" << std::endl;
-        std::cout << adapter.print(
-            healpix_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.differential2)(scalar_rasters[i]));
-        std::cout << "differential3" << std::endl;
-        std::cout << adapter.print(
-            healpix_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.differential3)(scalar_rasters[i]));
-        std::cout << "arrow_normal0" << std::endl;
-        std::cout << adapter.print(
-            healpix_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.arrow_normal0)(scalar_rasters[i]));
-        std::cout << "arrow_normal1" << std::endl;
-        std::cout << adapter.print(
-            healpix_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.arrow_normal1)(scalar_rasters[i]));
-        std::cout << "arrow_normal2" << std::endl;
-        std::cout << adapter.print(
-            healpix_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.arrow_normal2)(scalar_rasters[i]));
-        std::cout << "arrow_normal3" << std::endl;
-        std::cout << adapter.print(
-            healpix_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.arrow_normal3)(scalar_rasters[i]));
-        std::cout << "vertex_dual_area" << std::endl;
-        std::cout << adapter.print(
-            healpix_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.vertex_dual_area)(scalar_rasters[i]));
-        // std::cout << "square_id" << std::endl;
-        // std::cout << adapter.print(
-        //     healpix_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.square_id)(scalar_rasters[i]));
-        std::cout << "∇⋅∇:" << std::endl;
-        std::cout << adapter.print(
-            healpix_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.divergence)
-                (healpix_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.gradient)(scalar_rasters[i])));
-        std::cout << "∇²:" << std::endl;
-        std::cout << adapter.print(
-            healpix_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.laplacian)(scalar_rasters[i]));
-        std::cout << "error:" << std::endl;
-        std::cout << adapter.print(healpix_TEST_BINARY_OUT_PARAMETER(double,grid,each::distance)(
-            healpix_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.divergence)
-                (healpix_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.gradient)(scalar_rasters[i])),
-            healpix_TEST_GRIDDED_OUT_PARAMETER(double, grid, operators.laplacian)(scalar_rasters[i])));
+        if (is_verbose2)
+        {
+            std::cout << strict.print(scalar_rasters[i]);
+            std::cout << "arrow_dual_length0" << std::endl;
+            std::cout << strict.print(
+                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.arrow_dual_length0)(scalar_rasters[i]));
+            std::cout << "arrow_dual_length1" << std::endl;
+            std::cout << strict.print(
+                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.arrow_dual_length1)(scalar_rasters[i]));
+            std::cout << "arrow_dual_length2" << std::endl;
+            std::cout << strict.print(
+                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.arrow_dual_length2)(scalar_rasters[i]));
+            std::cout << "arrow_dual_length3" << std::endl;
+            std::cout << strict.print(
+                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.arrow_dual_length3)(scalar_rasters[i]));
+            std::cout << "arrow_length0" << std::endl;
+            std::cout << strict.print(
+                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.arrow_length0)(scalar_rasters[i]));
+            std::cout << "arrow_length1" << std::endl;
+            std::cout << strict.print(
+                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.arrow_length1)(scalar_rasters[i]));
+            std::cout << "arrow_length2" << std::endl;
+            std::cout << strict.print(
+                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.arrow_length2)(scalar_rasters[i]));
+            std::cout << "arrow_length3" << std::endl;
+            std::cout << strict.print(
+                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.arrow_length3)(scalar_rasters[i]));
+            std::cout << "differential0" << std::endl;
+            std::cout << strict.print(
+                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.differential0)(scalar_rasters[i]));
+            std::cout << "differential1" << std::endl;
+            std::cout << strict.print(
+                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.differential1)(scalar_rasters[i]));
+            std::cout << "differential2" << std::endl;
+            std::cout << strict.print(
+                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.differential2)(scalar_rasters[i]));
+            std::cout << "differential3" << std::endl;
+            std::cout << strict.print(
+                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.differential3)(scalar_rasters[i]));
+            std::cout << "arrow_normal0" << std::endl;
+            std::cout << strict.print(
+                dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, debug.arrow_normal0)(scalar_rasters[i]));
+            std::cout << "arrow_normal1" << std::endl;
+            std::cout << strict.print(
+                dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, debug.arrow_normal1)(scalar_rasters[i]));
+            std::cout << "arrow_normal2" << std::endl;
+            std::cout << strict.print(
+                dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, debug.arrow_normal2)(scalar_rasters[i]));
+            std::cout << "arrow_normal3" << std::endl;
+            std::cout << strict.print(
+                dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, debug.arrow_normal3)(scalar_rasters[i]));
+            std::cout << "vertex_dual_area" << std::endl;
+            std::cout << strict.print(
+                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.vertex_dual_area)(scalar_rasters[i]));
+            std::cout << "square_id" << std::endl;
+            std::cout << strict.print(
+                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.square_id)(scalar_rasters[i]));
+            std::cout << "∇⋅∇:" << std::endl;
+            std::cout << strict.print(
+                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.divergence)
+                    (dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.gradient)(scalar_rasters[i])));
+            std::cout << "∇²:" << std::endl;
+            std::cout << strict.print(
+                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.laplacian)(scalar_rasters[i]));
+        }
+
+        if (is_verbose1)
+        {
+            std::cout << "error:" << std::endl;
+            std::cout << strict.print(dymaxion_TEST_BINARY_OUT_PARAMETER(double,grid,each::distance)(
+                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.divergence)
+                    (dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.gradient)(scalar_rasters[i])),
+                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double, grid, operators.laplacian)(scalar_rasters[i])));
+        }
+
     }
 
-    // REQUIRE(test::determinism(adapter, 
-    //     "healpix::laplacian", healpix_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, healpix::laplacian),
-    //     scalar_rasters
-    // ));
+    REQUIRE(test::determinism(strict, 
+        "operators.laplacian", dymaxion_TEST_GRIDDED_OUT_PARAMETER(double, grid, operators.laplacian),
+        scalar_rasters
+    ));
 
-    // REQUIRE(test::additivity(adapter, 
-    //     "healpix::laplacian", healpix_TEST_GRIDDED_OUT_PARAMETER(double, grid, healpix::laplacian),
-    //     "each::add           ", healpix_TEST_BINARY_OUT_PARAMETER (double, grid, each::add),
-    //     "each::add           ", healpix_TEST_BINARY_OUT_PARAMETER (double, grid, each::add),
-    //     scalar_rasters, scalar_rasters
-    // ));
+    REQUIRE(test::additivity(strict,
+        "operators.laplacian", dymaxion_TEST_GRIDDED_OUT_PARAMETER(double, grid, operators.laplacian),
+        "each::add           ", dymaxion_TEST_BINARY_OUT_PARAMETER (double, grid, each::add),
+        "each::add           ", dymaxion_TEST_BINARY_OUT_PARAMETER (double, grid, each::add),
+        scalar_rasters, scalar_rasters
+    ));
 
-    REQUIRE(test::composition(adapter, 
-        "operators.divergence", healpix_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.divergence),
-        "operators.gradient",   healpix_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.gradient),  
-        "operators.laplacian",  healpix_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.laplacian), 
+    REQUIRE(test::composition(dymaxion::Adapter(grid, 100.0, grid.vertex_count()), 
+        "operators.divergence", dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.divergence),
+        "operators.gradient",   dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.gradient),  
+        "operators.laplacian",  dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.laplacian), 
         scalar_rasters
     ));
 
 }
 
-TEST_CASE( "Vector Raster laplacian", "[healpix]" ) {
+TEST_CASE( "Vector Raster laplacian", "[dymaxion]" ) {
 
 
     // REQUIRE(test::determinism(adapter, 
-    //     "healpix::laplacian", healpix_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, healpix::laplacian),
+    //     "dymaxion::laplacian", dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::laplacian),
     //     vector_rasters
     // ));
 
     // REQUIRE(test::additivity(adapter, 
-    //     "healpix::laplacian", healpix_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, healpix::laplacian),
-    //     "each::add           ", healpix_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
-    //     "each::add           ", healpix_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+    //     "dymaxion::laplacian", dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::laplacian),
+    //     "each::add           ", dymaxion_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+    //     "each::add           ", dymaxion_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
     //     vector_rasters, vector_rasters
     // ));
 
     // REQUIRE(test::composition(adapter, 
-    //     "healpix::gradient",   healpix_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, healpix::gradient),  
-    //     "healpix::divergence", healpix_TEST_GRIDDED_OUT_PARAMETER(double,     grid, healpix::divergence),
-    //     "healpix::laplacian",  healpix_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, healpix::laplacian), 
+    //     "dymaxion::gradient",   dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::gradient),  
+    //     "dymaxion::divergence", dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, dymaxion::divergence),
+    //     "dymaxion::laplacian",  dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::laplacian), 
     //     vector_rasters
     // ));
 
@@ -397,9 +411,9 @@ TEST_CASE( "Vector Raster laplacian", "[healpix]" ) {
 
 //     SECTION("gradient(a*b) must generate the same output as a*gradient(b) + b*gradient(a)"){
 //         each::mult(a, b, ab);
-//         healpix::gradient(grid, ab, grad_ab);
-//         healpix::gradient(grid, a, grad_a);
-//         healpix::gradient(grid, b, grad_b);
+//         dymaxion::gradient(grid, ab, grad_ab);
+//         dymaxion::gradient(grid, a, grad_a);
+//         dymaxion::gradient(grid, b, grad_b);
 //         each::mult(a, grad_b, a_grad_b);
 //         each::mult(b, grad_a, b_grad_a);
 //         each::add(a_grad_b, b_grad_a, a_grad_b_b_grad_a);

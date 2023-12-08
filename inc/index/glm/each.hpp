@@ -45,7 +45,6 @@ namespace each {
 	EACH_BINARY_FUNCTION(reflect)
 	EACH_BINARY_FUNCTION(refract)
 
-
 	template <glm::length_t L, typename T1, glm::qualifier Q>
 	inline auto x(const glm::vec<L,T1,Q> a){ return a.x; }
 	template <glm::length_t L, typename T1, glm::qualifier Q>

@@ -162,7 +162,7 @@ namespace dymaxion
 		// thereby providing an adequate representation for the vertex with irregular edges.
 		inline constexpr id vertex_representative(const id vertex_id) const 
 		{
-			return memory.memory_id(clamp(memory.grid_id(vertex_id), 1, voronoi.vertices_per_triangle_leg-2));
+			return memory.memory_id(clamp(memory.grid_id(vertex_id), 1, voronoi.vertices_per_square_side-2));
 		}
 
 		inline constexpr vec3 vertex_position(const id vertex_id) const 
@@ -205,6 +205,11 @@ namespace dymaxion
 				+ 	glm::length(glm::cross(offsetBC, offsetCD))
 				+ 	glm::length(glm::cross(offsetCD, offsetDA))
 				+ 	glm::length(glm::cross(offsetDA, offsetAB)))/2.0;
+		}
+
+		constexpr scalar nearest_vertex_id(const vec3 position) const 
+		{
+			return memory.memory_id(voronoi.grid_id(position));
 		}
 
 	};

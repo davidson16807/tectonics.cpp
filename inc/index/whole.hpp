@@ -32,7 +32,7 @@ namespace whole
 		typedef typename T::size_type Tsize;
 		if (a.size() < 1)
 		{
-			throw std::out_of_range("cannot find the minimum value of an empty composite");
+			throw std::out_of_range("cannot find the minimum value of an empty series");
 		}
 		Ti out = a[0];
 		for (Tsize i(0); i < a.size(); ++i)
@@ -58,7 +58,7 @@ namespace whole
 		typedef typename T::size_type Tsize;
 		if (a.size() < 1)
 		{
-			throw std::out_of_range("cannot find the minimum value of an empty composite");
+			throw std::out_of_range("cannot find the minimum value of an empty series");
 		}
 		Ti out = a[0];
 		for (Tsize i(0); i < size; ++i)
@@ -87,6 +87,32 @@ namespace whole
 		for (std::size_t i = 0; i < size; ++i)
 		{
 			out += math::distance(a[i], b[i]);
+		}
+		return out;
+	}
+
+	template <typename In1, typename In2>
+	auto max_distance(const In1& a, const In2& b, const bool no_inf = true)
+	{
+		auto size = a.size();
+		typedef typename In1::size_type Tsize;
+		if (a.size() < 1)
+		{
+			throw std::out_of_range("cannot find the minimum value of an empty series");
+		}
+		auto out = math::distance(a[0], b[0]);
+		for (Tsize i(0); i < size; ++i)
+		{
+			if (std::isnan(a[i]) || std::isnan(b[i]))
+			{
+				continue;
+			}
+			if (no_inf && (std::isinf(a[i]) || std::isinf(b[i])))
+			{
+				continue;
+			}
+			auto delta = math::distance(a[i], b[i]);
+			out = delta > out? delta : out;
 		}
 		return out;
 	}

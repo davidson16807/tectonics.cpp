@@ -231,7 +231,7 @@ namespace each
 	EACH_BINARY_FUNCTION(atan2)
 
 	template <typename In1, typename In2> inline auto mod(const In1 a, const In2 b){return a-b*floor(a/b);}
-	template <typename In1, typename In2> inline auto distance(const In1 a, const In2 b){return std::abs(a-b);}
+	template <typename In1, typename In2> inline auto distance(const In1 a, const In2 b){return math::distance(a,b);}
 	template <typename In1, typename In2> inline auto equal(const In1 a, const In2 b){return a == b;}
 	template <typename In1, typename In2> inline auto notEqual(const In1 a, const In2 b){return a != b;}
 	template <typename In1, typename In2> inline auto greaterThan(const In1 a, const In2 b){return a > b;}

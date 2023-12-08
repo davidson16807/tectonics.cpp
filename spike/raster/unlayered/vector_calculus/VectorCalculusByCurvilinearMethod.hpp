@@ -19,11 +19,11 @@ namespace procedural
         arrow_source_vertex_id
     */
 
-    struct VectorCalculusByFundamentalTheorem
+    struct VectorCalculusByCurvilinearMethod
     {
 
         /*
-        NOTE: See VectorCalculusByFundamentalTheorem.md for more explanation!
+        NOTE: See VectorCalculusByCurvilinearMethod.md for more explanation!
         */
 
         template<typename Grid, typename In, typename Out>

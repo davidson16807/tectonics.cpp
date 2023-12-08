@@ -43,7 +43,7 @@ namespace spheroidal
 		using vec3 = glm::vec<3,scalar,glm::defaultp>;
 		for (id i = 0; i < line_char_width/aspect_ratio; ++i){
 			for (id j = 0; j < line_char_width; ++j){
-				id vertex_id = grid.voronoi.memory_id(
+				auto vertex_id = grid.nearest_vertex_id(
 					vec3(
 						std::cos(math::pi/2.0-dlat*i)*std::cos(dlon*j),
 						std::cos(math::pi/2.0-dlat*i)*std::sin(dlon*j),
