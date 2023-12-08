@@ -75,14 +75,14 @@ namespace dymaxion {
 
 }
 
-#define dymaxion_TEST_GRIDDED_OUT_PARAMETER(TYPE,GRID,F) \
+#define DYMAXION_TEST_GRIDDED_OUT_PARAMETER(TYPE,GRID,F) \
     [=](auto x){ std::vector<TYPE> out(GRID.vertex_count()); (F(GRID,x,out)); return out; }
 
-#define dymaxion_TEST_UNARY_OUT_PARAMETER(TYPE,GRID,F)   \
+#define DYMAXION_TEST_UNARY_OUT_PARAMETER(TYPE,GRID,F)   \
     [=](auto x){ std::vector<TYPE> out(GRID.vertex_count()); (F(x,out)); return out; }
-#define dymaxion_TEST_BINARY_OUT_PARAMETER(TYPE,GRID,F)  \
+#define DYMAXION_TEST_BINARY_OUT_PARAMETER(TYPE,GRID,F)  \
     [=](auto x, auto y){ std::vector<TYPE> out(GRID.vertex_count()); (F(x,y,out)); return out; }
-#define dymaxion_TEST_TRINARY_OUT_PARAMETER(TYPE,GRID,F) \
+#define DYMAXION_TEST_TRINARY_OUT_PARAMETER(TYPE,GRID,F) \
     [=](auto x, auto y, auto z){ std::vector<TYPE> out(GRID.vertex_count()); (F(x,y,z,out)); return out; }
 
 
@@ -211,56 +211,57 @@ dymaxion::Adapter strict(grid, 1e-5, grid.vertex_count());
 
 
 TEST_CASE( "Raster gradient", "[dymaxion]" ) {
+    unlayered::VectorCalculusByFundamentalTheorem operators;
 
-    // REQUIRE(test::determinism(strict, 
-    //     "dymaxion::gradient", dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::gradient),
-    //     scalar_rasters
-    // ));
+    REQUIRE(test::determinism(strict, 
+        "operators.gradient", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.gradient),
+        scalar_rasters
+    ));
 
-    // REQUIRE(test::additivity(strict, 
-    //     "dymaxion::gradient", dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::gradient),
-    //     "each::add          ", dymaxion_TEST_BINARY_OUT_PARAMETER (double,     grid, each::add),
-    //     "each::add          ", dymaxion_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
-    //     scalar_rasters, scalar_rasters
-    // ));
+    REQUIRE(test::additivity(strict, 
+        "operators.gradient", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.gradient),
+        "each::add          ", DYMAXION_TEST_BINARY_OUT_PARAMETER (double,     grid, each::add),
+        "each::add          ", DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+        scalar_rasters, scalar_rasters
+    ));
 
 }
 
 
 
 TEST_CASE( "Raster divergence", "[dymaxion]" ) {
+    unlayered::VectorCalculusByFundamentalTheorem operators;
 
+    REQUIRE(test::determinism(strict, 
+        "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.divergence),
+        vector_rasters
+    ));
 
-    // REQUIRE(test::determinism(strict, 
-    //     "dymaxion::divergence", dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, dymaxion::divergence),
-    //     vector_rasters
-    // ));
-
-    // REQUIRE(test::additivity(strict, 
-    //     "dymaxion::divergence", dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, dymaxion::divergence),
-    //     "each::add          ",   dymaxion_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
-    //     "each::add          ",   dymaxion_TEST_BINARY_OUT_PARAMETER (double,     grid, each::add),
-    //     vector_rasters, vector_rasters
-    // ));
+    REQUIRE(test::additivity(strict, 
+        "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.divergence),
+        "each::add          ",   DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+        "each::add          ",   DYMAXION_TEST_BINARY_OUT_PARAMETER (double,     grid, each::add),
+        vector_rasters, vector_rasters
+    ));
 
 }
 
 
 
 TEST_CASE( "Raster curl", "[dymaxion]" ) {
+    unlayered::VectorCalculusByFundamentalTheorem operators;
 
+    REQUIRE(test::determinism(strict, 
+        "operators.curl",   DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.curl),
+        vector_rasters
+    ));
 
-    // REQUIRE(test::determinism(strict, 
-    //     "dymaxion::curl",   dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::curl),
-    //     vector_rasters
-    // ));
-
-    // REQUIRE(test::additivity(strict, 
-    //     "dymaxion::curl",   dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::curl),
-    //     "each::add      ",   dymaxion_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
-    //     "each::add      ",   dymaxion_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
-    //     vector_rasters, vector_rasters
-    // ));
+    REQUIRE(test::additivity(strict, 
+        "operators.curl",   DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.curl),
+        "each::add      ",   DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+        "each::add      ",   DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+        vector_rasters, vector_rasters
+    ));
 
 }
 
@@ -276,94 +277,95 @@ TEST_CASE( "Scalar Raster laplacian", "[dymaxion]" ) {
             std::cout << strict.print(scalar_rasters[i]);
             std::cout << "arrow_dual_length0" << std::endl;
             std::cout << strict.print(
-                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.arrow_dual_length0)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.arrow_dual_length0)(scalar_rasters[i]));
             std::cout << "arrow_dual_length1" << std::endl;
             std::cout << strict.print(
-                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.arrow_dual_length1)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.arrow_dual_length1)(scalar_rasters[i]));
             std::cout << "arrow_dual_length2" << std::endl;
             std::cout << strict.print(
-                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.arrow_dual_length2)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.arrow_dual_length2)(scalar_rasters[i]));
             std::cout << "arrow_dual_length3" << std::endl;
             std::cout << strict.print(
-                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.arrow_dual_length3)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.arrow_dual_length3)(scalar_rasters[i]));
             std::cout << "arrow_length0" << std::endl;
             std::cout << strict.print(
-                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.arrow_length0)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.arrow_length0)(scalar_rasters[i]));
             std::cout << "arrow_length1" << std::endl;
             std::cout << strict.print(
-                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.arrow_length1)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.arrow_length1)(scalar_rasters[i]));
             std::cout << "arrow_length2" << std::endl;
             std::cout << strict.print(
-                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.arrow_length2)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.arrow_length2)(scalar_rasters[i]));
             std::cout << "arrow_length3" << std::endl;
             std::cout << strict.print(
-                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.arrow_length3)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.arrow_length3)(scalar_rasters[i]));
             std::cout << "differential0" << std::endl;
             std::cout << strict.print(
-                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.differential0)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.differential0)(scalar_rasters[i]));
             std::cout << "differential1" << std::endl;
             std::cout << strict.print(
-                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.differential1)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.differential1)(scalar_rasters[i]));
             std::cout << "differential2" << std::endl;
             std::cout << strict.print(
-                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.differential2)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.differential2)(scalar_rasters[i]));
             std::cout << "differential3" << std::endl;
             std::cout << strict.print(
-                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.differential3)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.differential3)(scalar_rasters[i]));
             std::cout << "arrow_normal0" << std::endl;
             std::cout << strict.print(
-                dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, debug.arrow_normal0)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, debug.arrow_normal0)(scalar_rasters[i]));
             std::cout << "arrow_normal1" << std::endl;
             std::cout << strict.print(
-                dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, debug.arrow_normal1)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, debug.arrow_normal1)(scalar_rasters[i]));
             std::cout << "arrow_normal2" << std::endl;
             std::cout << strict.print(
-                dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, debug.arrow_normal2)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, debug.arrow_normal2)(scalar_rasters[i]));
             std::cout << "arrow_normal3" << std::endl;
             std::cout << strict.print(
-                dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, debug.arrow_normal3)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, debug.arrow_normal3)(scalar_rasters[i]));
             std::cout << "vertex_dual_area" << std::endl;
             std::cout << strict.print(
-                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.vertex_dual_area)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.vertex_dual_area)(scalar_rasters[i]));
             std::cout << "square_id" << std::endl;
             std::cout << strict.print(
-                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.square_id)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, debug.square_id)(scalar_rasters[i]));
             std::cout << "∇⋅∇:" << std::endl;
             std::cout << strict.print(
-                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.divergence)
-                    (dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.gradient)(scalar_rasters[i])));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.divergence)
+                    (DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.gradient)(scalar_rasters[i])));
             std::cout << "∇²:" << std::endl;
             std::cout << strict.print(
-                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.laplacian)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.laplacian)(scalar_rasters[i]));
         }
 
         if (is_verbose1)
         {
             std::cout << "error:" << std::endl;
-            std::cout << strict.print(dymaxion_TEST_BINARY_OUT_PARAMETER(double,grid,each::distance)(
-                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.divergence)
-                    (dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.gradient)(scalar_rasters[i])),
-                dymaxion_TEST_GRIDDED_OUT_PARAMETER(double, grid, operators.laplacian)(scalar_rasters[i])));
+            std::cout << strict.print(DYMAXION_TEST_BINARY_OUT_PARAMETER(double,grid,each::distance)(
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.divergence)
+                    (DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.gradient)(scalar_rasters[i])),
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double, grid, operators.laplacian)(scalar_rasters[i])));
         }
 
     }
 
     REQUIRE(test::determinism(strict, 
-        "operators.laplacian", dymaxion_TEST_GRIDDED_OUT_PARAMETER(double, grid, operators.laplacian),
+        "operators.laplacian", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double, grid, operators.laplacian),
         scalar_rasters
     ));
 
     REQUIRE(test::additivity(strict,
-        "operators.laplacian", dymaxion_TEST_GRIDDED_OUT_PARAMETER(double, grid, operators.laplacian),
-        "each::add           ", dymaxion_TEST_BINARY_OUT_PARAMETER (double, grid, each::add),
-        "each::add           ", dymaxion_TEST_BINARY_OUT_PARAMETER (double, grid, each::add),
+        "operators.laplacian", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double, grid, operators.laplacian),
+        "each::add           ", DYMAXION_TEST_BINARY_OUT_PARAMETER (double, grid, each::add),
+        "each::add           ", DYMAXION_TEST_BINARY_OUT_PARAMETER (double, grid, each::add),
         scalar_rasters, scalar_rasters
     ));
 
+    // results are horrible, the test here is only meant to track known error until our methods improve
     REQUIRE(test::composition(dymaxion::Adapter(grid, 100.0, grid.vertex_count()), 
-        "operators.divergence", dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.divergence),
-        "operators.gradient",   dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.gradient),  
-        "operators.laplacian",  dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.laplacian), 
+        "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.divergence),
+        "operators.gradient",   DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.gradient),  
+        "operators.laplacian",  DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.laplacian), 
         scalar_rasters
     ));
 
@@ -371,25 +373,27 @@ TEST_CASE( "Scalar Raster laplacian", "[dymaxion]" ) {
 
 TEST_CASE( "Vector Raster laplacian", "[dymaxion]" ) {
 
+    unlayered::VectorCalculusByFundamentalTheorem operators;
 
-    // REQUIRE(test::determinism(adapter, 
-    //     "dymaxion::laplacian", dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::laplacian),
-    //     vector_rasters
-    // ));
+    REQUIRE(test::determinism(strict, 
+        "operators.laplacian ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.laplacian),
+        vector_rasters
+    ));
 
-    // REQUIRE(test::additivity(adapter, 
-    //     "dymaxion::laplacian", dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::laplacian),
-    //     "each::add           ", dymaxion_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
-    //     "each::add           ", dymaxion_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
-    //     vector_rasters, vector_rasters
-    // ));
+    REQUIRE(test::additivity(strict, 
+        "operators.laplacian ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.laplacian),
+        "each::add           ", DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+        "each::add           ", DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+        vector_rasters, vector_rasters
+    ));
 
-    // REQUIRE(test::composition(adapter, 
-    //     "dymaxion::gradient",   dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::gradient),  
-    //     "dymaxion::divergence", dymaxion_TEST_GRIDDED_OUT_PARAMETER(double,     grid, dymaxion::divergence),
-    //     "dymaxion::laplacian",  dymaxion_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, dymaxion::laplacian), 
-    //     vector_rasters
-    // ));
+    // results are horrible, the test here is only meant to track known error until our methods improve
+    REQUIRE(test::composition(dymaxion::Adapter(grid, 5e5, grid.vertex_count()), 
+        "operators.gradient  ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.gradient),  
+        "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.divergence),
+        "operators.laplacian ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.laplacian), 
+        vector_rasters
+    ));
 
 }
 
@@ -411,9 +415,9 @@ TEST_CASE( "Vector Raster laplacian", "[dymaxion]" ) {
 
 //     SECTION("gradient(a*b) must generate the same output as a*gradient(b) + b*gradient(a)"){
 //         each::mult(a, b, ab);
-//         dymaxion::gradient(grid, ab, grad_ab);
-//         dymaxion::gradient(grid, a, grad_a);
-//         dymaxion::gradient(grid, b, grad_b);
+//         operators.gradient(grid, ab, grad_ab);
+//         operators.gradient(grid, a, grad_a);
+//         operators.gradient(grid, b, grad_b);
 //         each::mult(a, grad_b, a_grad_b);
 //         each::mult(b, grad_a, b_grad_a);
 //         each::add(a_grad_b, b_grad_a, a_grad_b_b_grad_a);

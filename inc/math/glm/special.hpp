@@ -71,5 +71,15 @@ namespace math{
 		return glm::distance(U,V);
 	}
 
+	template<int L, typename T, glm::qualifier Q>
+	inline constexpr bool isinf(const glm::vec<L,T,Q> V){
+		return glm::any(glm::isinf(V));
+	}
+
+	template<int L, typename T, glm::qualifier Q>
+	inline constexpr bool isnan(const glm::vec<L,T,Q> V){
+		return glm::any(glm::isnan(V));
+	}
+
 }
 

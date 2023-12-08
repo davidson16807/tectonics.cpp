@@ -105,6 +105,7 @@ namespace unlayered
                 out[i] /= grid.vertex_dual_area(i2);
             }
         }
+
     };
 
 }

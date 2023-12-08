@@ -46,6 +46,16 @@ namespace math{
 		return std::abs(a-b);
 	}
 
+	template <typename In1> 
+	inline bool isinf(const In1 a){
+		return std::isinf(a);
+	}
+
+	template <typename In1> 
+	inline bool isnan(const In1 a){
+		return std::isnan(a);
+	}
+
 	/*
 	"erf" provides an approximation for the "error function": erf(x) = ∫ˣ exp(-t²)dt
 	It is accurate to within 0.02% over the range [-10,10].

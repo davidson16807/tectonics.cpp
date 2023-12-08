@@ -103,11 +103,11 @@ namespace whole
 		auto out = math::distance(a[0], b[0]);
 		for (Tsize i(0); i < size; ++i)
 		{
-			if (std::isnan(a[i]) || std::isnan(b[i]))
+			if (math::isnan(a[i]) || math::isnan(b[i]))
 			{
 				continue;
 			}
-			if (no_inf && (std::isinf(a[i]) || std::isinf(b[i])))
+			if (no_inf && (math::isinf(a[i]) || math::isinf(b[i])))
 			{
 				continue;
 			}
@@ -116,8 +116,6 @@ namespace whole
 		}
 		return out;
 	}
-
-
 
 	template <typename In1, typename In2>
 	bool all(const In1& a)
