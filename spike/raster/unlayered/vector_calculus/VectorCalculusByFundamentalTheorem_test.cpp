@@ -210,7 +210,7 @@ std::vector vector_rasters{
 dymaxion::Adapter strict(grid, 1e-5, grid.vertex_count());
 
 
-TEST_CASE( "Raster gradient", "[dymaxion]" ) {
+TEST_CASE( "Raster gradient", "[raster]" ) {
     unlayered::VectorCalculusByFundamentalTheorem operators;
 
     REQUIRE(test::determinism(strict, 
@@ -219,7 +219,7 @@ TEST_CASE( "Raster gradient", "[dymaxion]" ) {
     ));
 
     REQUIRE(test::additivity(strict, 
-        "operators.gradient", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.gradient),
+        "operators.gradient ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.gradient),
         "each::add          ", DYMAXION_TEST_BINARY_OUT_PARAMETER (double,     grid, each::add),
         "each::add          ", DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
         scalar_rasters, scalar_rasters
@@ -229,7 +229,7 @@ TEST_CASE( "Raster gradient", "[dymaxion]" ) {
 
 
 
-TEST_CASE( "Raster divergence", "[dymaxion]" ) {
+TEST_CASE( "Raster divergence", "[raster]" ) {
     unlayered::VectorCalculusByFundamentalTheorem operators;
 
     REQUIRE(test::determinism(strict, 
@@ -239,8 +239,8 @@ TEST_CASE( "Raster divergence", "[dymaxion]" ) {
 
     REQUIRE(test::additivity(strict, 
         "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.divergence),
-        "each::add          ",   DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
-        "each::add          ",   DYMAXION_TEST_BINARY_OUT_PARAMETER (double,     grid, each::add),
+        "each::add           ",   DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+        "each::add           ",   DYMAXION_TEST_BINARY_OUT_PARAMETER (double,     grid, each::add),
         vector_rasters, vector_rasters
     ));
 
@@ -248,7 +248,7 @@ TEST_CASE( "Raster divergence", "[dymaxion]" ) {
 
 
 
-TEST_CASE( "Raster curl", "[dymaxion]" ) {
+TEST_CASE( "Raster curl", "[raster]" ) {
     unlayered::VectorCalculusByFundamentalTheorem operators;
 
     REQUIRE(test::determinism(strict, 
@@ -257,7 +257,7 @@ TEST_CASE( "Raster curl", "[dymaxion]" ) {
     ));
 
     REQUIRE(test::additivity(strict, 
-        "operators.curl",   DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.curl),
+        "operators.curl ",   DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.curl),
         "each::add      ",   DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
         "each::add      ",   DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
         vector_rasters, vector_rasters
@@ -265,7 +265,7 @@ TEST_CASE( "Raster curl", "[dymaxion]" ) {
 
 }
 
-TEST_CASE( "Scalar Raster laplacian", "[dymaxion]" ) {
+TEST_CASE( "Scalar Raster laplacian", "[raster]" ) {
     unlayered::VectorCalculusByFundamentalTheorem operators;
     unlayered::VectorCalculusByFundamentalTheoremDebug debug;
     bool is_verbose1(false);
@@ -371,7 +371,7 @@ TEST_CASE( "Scalar Raster laplacian", "[dymaxion]" ) {
 
 }
 
-TEST_CASE( "Vector Raster laplacian", "[dymaxion]" ) {
+TEST_CASE( "Vector Raster laplacian", "[raster]" ) {
 
     unlayered::VectorCalculusByFundamentalTheorem operators;
 
@@ -387,7 +387,7 @@ TEST_CASE( "Vector Raster laplacian", "[dymaxion]" ) {
         vector_rasters, vector_rasters
     ));
 
-    // results are horrible, the test here is only meant to track known error until our methods improve
+    // results here are horrible, the test here is only meant to track known error until our methods improve
     REQUIRE(test::composition(dymaxion::Adapter(grid, 5e5, grid.vertex_count()), 
         "operators.gradient  ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.gradient),  
         "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.divergence),
@@ -399,31 +399,37 @@ TEST_CASE( "Vector Raster laplacian", "[dymaxion]" ) {
 
 
 
-// TEST_CASE( "Raster gradient multiplication relation", "[rasters]" ) {
+TEST_CASE( "Vector gradient multiplication relation", "[rasters]" ) {
 
-//     float radius(2.0f);
-//     int vertices_per_half_meridian(10);
-//     auto a = series::UnitIntervalNoise<float>(11.0f, 11000.0f);
-//     auto b = series::UnitIntervalNoise<float>(12.0f, 12000.0f);
-//     auto ab = std::vector<float>(grid.vertex_count());
-//     auto grad_ab = std::vector<glm::vec3>(grid.vertex_count());
-//     auto grad_a = std::vector<glm::vec3>(grid.vertex_count());
-//     auto grad_b = std::vector<glm::vec3>(grid.vertex_count());
-//     auto b_grad_a = std::vector<glm::vec3>(grid.vertex_count());
-//     auto a_grad_b = std::vector<glm::vec3>(grid.vertex_count());
-//     auto a_grad_b_b_grad_a = std::vector<glm::vec3>(grid.vertex_count());
+    unlayered::VectorCalculusByFundamentalTheorem operators;
 
-//     SECTION("gradient(a*b) must generate the same output as a*gradient(b) + b*gradient(a)"){
-//         each::mult(a, b, ab);
-//         operators.gradient(grid, ab, grad_ab);
-//         operators.gradient(grid, a, grad_a);
-//         operators.gradient(grid, b, grad_b);
-//         each::mult(a, grad_b, a_grad_b);
-//         each::mult(b, grad_a, b_grad_a);
-//         each::add(a_grad_b, b_grad_a, a_grad_b_b_grad_a);
-//         CHECK(whole::equal( grad_ab,  a_grad_b_b_grad_a, 0.1f ));
-//     }
-// }
+    REQUIRE(test::equality(dymaxion::Adapter(grid, 0.3, grid.vertex_count()), 
+        "The gradient of a scalar must statsify a well known relationship",
+        "∇(ab)     ", 
+        [=](auto a, auto b){
+            std::vector<double> ab(grid.vertex_count());
+            std::vector<glm::dvec3> grad_ab(grid.vertex_count());
+            each::mult(a, b, ab);
+            operators.gradient(grid,grad_ab,grad_ab); 
+            return grad_ab;
+        },
+        "a∇b + b∇a ", 
+        [=](auto a, auto b){
+            std::vector<glm::dvec3> b_grad_a(grid.vertex_count());
+            std::vector<glm::dvec3> a_grad_b(grid.vertex_count());
+            std::vector<glm::dvec3> a_grad_b_b_grad_a(grid.vertex_count());
+            operators.gradient(grid, a, b_grad_a);
+            operators.gradient(grid, b, a_grad_b);
+            each::mult(a, a_grad_b, a_grad_b);
+            each::mult(b, b_grad_a, b_grad_a);
+            each::add(a_grad_b, b_grad_a, a_grad_b_b_grad_a);
+            return a_grad_b_b_grad_a;
+        },
+        scalar_rasters,
+        scalar_rasters
+    ));
+
+}
 
 
 // TEST_CASE( "gradient resolution invariance", "[rasters]" ) {
