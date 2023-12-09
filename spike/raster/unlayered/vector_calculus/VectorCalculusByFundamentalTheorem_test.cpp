@@ -271,7 +271,7 @@ TEST_CASE( "Raster divergence", "[raster]" ) {
         vector_rasters, vector_rasters
     ));
 
-    // results are bad, the test here is only meant to track known error until our methods improve
+    // results are horrible, the test here is only meant to track known error until our methods improve
     REQUIRE(test::equality(dymaxion::Adapter(grid, 1e4, grid.vertex_count()), 
         "The divergence of a vector must statsify a well known relationship",
         "∇⋅(aV)          ", 
@@ -316,6 +316,35 @@ TEST_CASE( "Raster curl", "[raster]" ) {
         "each::add      ",   DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
         "each::add      ",   DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
         vector_rasters, vector_rasters
+    ));
+
+    // results are horrible, the test here is only meant to track known error until our methods improve
+    REQUIRE(test::equality(dymaxion::Adapter(grid, 3e3, grid.vertex_count()), 
+        "The curl of a vector must statsify a well known relationship",
+        "∇⋅(aV)          ", 
+        [=](auto a, auto V){
+            std::vector<glm::dvec3> aV(grid.vertex_count());
+            std::vector<glm::dvec3> curl_aV(grid.vertex_count());
+            each::add(a, V, aV);
+            operators.curl(grid, aV, curl_aV); 
+            return curl_aV;
+        },
+        "a(∇⋅V) + (∇a)⋅V ", 
+        [=](auto a, auto V){
+            std::vector<glm::dvec3> grad_a(grid.vertex_count());
+            std::vector<glm::dvec3> curl_V (grid.vertex_count());
+            std::vector<glm::dvec3> a_curl_V(grid.vertex_count());
+            std::vector<glm::dvec3> V_grad_a(grid.vertex_count());
+            std::vector<glm::dvec3> a_curl_V_V_grad_a(grid.vertex_count());
+            operators.gradient(grid, a, grad_a);
+            operators.curl(grid, V, curl_V);
+            each::mult(a, curl_V, a_curl_V);
+            each::cross(V, grad_a, V_grad_a);
+            each::add(a_curl_V, V_grad_a, a_curl_V_V_grad_a);
+            return a_curl_V_V_grad_a;
+        },
+        scalar_rasters,
+        vector_rasters
     ));
 
 }
