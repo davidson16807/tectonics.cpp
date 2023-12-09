@@ -225,6 +225,33 @@ TEST_CASE( "Raster gradient", "[raster]" ) {
         scalar_rasters, scalar_rasters
     ));
 
+    // results here are promising
+    REQUIRE(test::equality(dymaxion::Adapter(grid, 0.3, grid.vertex_count()), 
+        "The gradient of a scalar must statsify a well known relationship",
+        "∇(ab)     ", 
+        [=](auto a, auto b){
+            std::vector<double> ab(grid.vertex_count());
+            std::vector<glm::dvec3> grad_ab(grid.vertex_count());
+            each::mult(a, b, ab);
+            operators.gradient(grid,grad_ab,grad_ab); 
+            return grad_ab;
+        },
+        "a∇b + b∇a ", 
+        [=](auto a, auto b){
+            std::vector<glm::dvec3> b_grad_a(grid.vertex_count());
+            std::vector<glm::dvec3> a_grad_b(grid.vertex_count());
+            std::vector<glm::dvec3> a_grad_b_b_grad_a(grid.vertex_count());
+            operators.gradient(grid, a, b_grad_a);
+            operators.gradient(grid, b, a_grad_b);
+            each::mult(a, a_grad_b, a_grad_b);
+            each::mult(b, b_grad_a, b_grad_a);
+            each::add(a_grad_b, b_grad_a, a_grad_b_b_grad_a);
+            return a_grad_b_b_grad_a;
+        },
+        scalar_rasters,
+        scalar_rasters
+    ));
+
 }
 
 
@@ -239,13 +266,41 @@ TEST_CASE( "Raster divergence", "[raster]" ) {
 
     REQUIRE(test::additivity(strict, 
         "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.divergence),
-        "each::add           ",   DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
-        "each::add           ",   DYMAXION_TEST_BINARY_OUT_PARAMETER (double,     grid, each::add),
+        "each::add           ", DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, grid, each::add),
+        "each::add           ", DYMAXION_TEST_BINARY_OUT_PARAMETER (double,     grid, each::add),
         vector_rasters, vector_rasters
     ));
 
-}
+    // results are bad, the test here is only meant to track known error until our methods improve
+    REQUIRE(test::equality(dymaxion::Adapter(grid, 1e4, grid.vertex_count()), 
+        "The divergence of a vector must statsify a well known relationship",
+        "∇⋅(aV)          ", 
+        [=](auto a, auto V){
+            std::vector<glm::dvec3> aV(grid.vertex_count());
+            std::vector<double> div_aV(grid.vertex_count());
+            each::add(a, V, aV);
+            operators.divergence(grid, aV, div_aV); 
+            return div_aV;
+        },
+        "a(∇⋅V) + (∇a)⋅V ", 
+        [=](auto a, auto V){
+            std::vector<glm::dvec3> grad_a(grid.vertex_count());
+            std::vector<double> div_V (grid.vertex_count());
+            std::vector<double> a_div_V(grid.vertex_count());
+            std::vector<double> V_grad_a(grid.vertex_count());
+            std::vector<double> a_div_V_V_grad_a(grid.vertex_count());
+            operators.gradient(grid, a, grad_a);
+            operators.divergence(grid, V, div_V);
+            each::mult(a, div_V, a_div_V);
+            each::dot(V, grad_a, V_grad_a);
+            each::add(a_div_V, V_grad_a, a_div_V_V_grad_a);
+            return a_div_V_V_grad_a;
+        },
+        scalar_rasters,
+        vector_rasters
+    ));
 
+}
 
 
 TEST_CASE( "Raster curl", "[raster]" ) {
@@ -361,7 +416,7 @@ TEST_CASE( "Scalar Raster laplacian", "[raster]" ) {
         scalar_rasters, scalar_rasters
     ));
 
-    // results are horrible, the test here is only meant to track known error until our methods improve
+    // results are bad, the test here is only meant to track known error until our methods improve
     REQUIRE(test::composition(dymaxion::Adapter(grid, 100.0, grid.vertex_count()), 
         "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.divergence),
         "operators.gradient",   DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.gradient),  
@@ -397,41 +452,6 @@ TEST_CASE( "Vector Raster laplacian", "[raster]" ) {
 
 }
 
-
-
-TEST_CASE( "Vector gradient multiplication relation", "[rasters]" ) {
-
-    unlayered::VectorCalculusByFundamentalTheorem operators;
-
-    REQUIRE(test::equality(dymaxion::Adapter(grid, 0.3, grid.vertex_count()), 
-        "The gradient of a scalar must statsify a well known relationship",
-        "∇(ab)     ", 
-        [=](auto a, auto b){
-            std::vector<double> ab(grid.vertex_count());
-            std::vector<glm::dvec3> grad_ab(grid.vertex_count());
-            each::mult(a, b, ab);
-            operators.gradient(grid,grad_ab,grad_ab); 
-            return grad_ab;
-        },
-        "a∇b + b∇a ", 
-        [=](auto a, auto b){
-            std::vector<glm::dvec3> b_grad_a(grid.vertex_count());
-            std::vector<glm::dvec3> a_grad_b(grid.vertex_count());
-            std::vector<glm::dvec3> a_grad_b_b_grad_a(grid.vertex_count());
-            operators.gradient(grid, a, b_grad_a);
-            operators.gradient(grid, b, a_grad_b);
-            each::mult(a, a_grad_b, a_grad_b);
-            each::mult(b, b_grad_a, b_grad_a);
-            each::add(a_grad_b, b_grad_a, a_grad_b_b_grad_a);
-            return a_grad_b_b_grad_a;
-        },
-        scalar_rasters,
-        scalar_rasters
-    ));
-
-}
-
-
 // TEST_CASE( "gradient resolution invariance", "[rasters]" ) {
 //     meshes::mesh icosphere_mesh1(meshes::icosahedron.vertices, meshes::icosahedron.faces);
 //     icosphere_mesh1 = meshes::subdivide(icosphere_mesh1); each::normalize(icosphere_mesh1.vertices, icosphere_mesh1.vertices);
@@ -445,9 +465,9 @@ TEST_CASE( "Vector gradient multiplication relation", "[rasters]" ) {
 //     auto A_ids       = raster<unsigned int>(icosphere2.vertex_count);
 //     auto Ai_ids      = raster<unsigned int>(icosphere1.vertex_count);
 //     auto A_a         = raster<float>(icosphere2.vertex_count);
-//     auto grad_A_a    = raster<glm::vec3>(icosphere2.vertex_count);
-//     auto Ai_grad_A_a = raster<glm::vec3>(icosphere1.vertex_count);
-//     auto grad_a      = raster<glm::vec3>(icosphere1.vertex_count);
+//     auto grad_A_a    = raster<glm::dvec3>(icosphere2.vertex_count);
+//     auto Ai_grad_A_a = raster<glm::dvec3>(icosphere1.vertex_count);
+//     auto grad_a      = raster<glm::dvec3>(icosphere1.vertex_count);
 
 //     std::mt19937 generator(2);
 //     each::get_elias_noise(icosphere1.vertex_positions, generator, a);
@@ -476,10 +496,10 @@ TEST_CASE( "Vector gradient multiplication relation", "[rasters]" ) {
 //     MeshCache icosphere2(icosphere_mesh2.vertices, icosphere_mesh2.faces);
 
 //     auto scalar     = raster<float>(icosphere1.vertex_count);
-//     auto a          = raster<glm::vec3>(icosphere1.vertex_count);
+//     auto a          = raster<glm::dvec3>(icosphere1.vertex_count);
 //     auto A_ids      = raster<unsigned int>(icosphere2.vertex_count);
 //     auto Ai_ids     = raster<unsigned int>(icosphere1.vertex_count);
-//     auto A_a        = raster<glm::vec3>(icosphere2.vertex_count);
+//     auto A_a        = raster<glm::dvec3>(icosphere2.vertex_count);
 //     auto div_A_a    = raster<float>(icosphere2.vertex_count);
 //     auto Ai_div_A_a = raster<float>(icosphere1.vertex_count);
 //     auto div_a      = raster<float>(icosphere1.vertex_count);
@@ -501,66 +521,19 @@ TEST_CASE( "Vector gradient multiplication relation", "[rasters]" ) {
 // }
 
 
-// TEST_CASE( "divergence multiplication relation", "[rasters]" ) {
-//     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
-//     icosphere_mesh = meshes::subdivide(icosphere_mesh); each::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-
-//     auto scalar     = raster<float>(icosphere_grid);
-//     auto a          = raster<float>(icosphere_grid);
-//     auto b          = raster<glm::vec3>(icosphere_grid);
-//     auto grad_a     = raster<glm::vec3>(icosphere_grid);
-//     auto div_b      = raster<float>(icosphere_grid);
-//     auto div_a_b    = raster<float>(icosphere_grid);
-
-//     std::mt19937 generator(2);
-//     each::get_elias_noise(icosphere_grid.metrics->vertex_positions, generator, a);
-//     each::get_elias_noise(icosphere_grid.metrics->vertex_positions, generator, scalar);
-//     b = grid.gradient( scalar);
-//     grad_a = grid.gradient( a     );
-
-//     SECTION("divergence(a+b) must generate the same output as a*divergence(b) + b*divergence(a)"){
-//         divergence ( b,      div_b                  );
-//         divergence ( b*a,    div_a_b                );
-//         CHECK(whole::equal( div_a_b,  div_b*a + dot(b, grad_a), 1e-0f));
-//     }
-// }
-// TEST_CASE( "Raster curl determinism", "[rasters]" ) {
-//     auto a   = raster<glm::vec3>(nonspheroid_icosahedron_grid, {
-//         glm::vec3(1, 2, 3 ),
-//         glm::vec3(4, 5, 6 ),
-//         glm::vec3(7, 8, 9 ),
-//         glm::vec3(10,11,12),
-//         glm::vec3(13,14,15),
-//         glm::vec3(16,17,18),
-//         glm::vec3(19,20,21),
-//         glm::vec3(22,23,24),
-//         glm::vec3(25,26,27),
-//         glm::vec3(28,29,30),
-//         glm::vec3(31,32,33),
-//         glm::vec3(34,35,36)
-//     });
-//     // auto b = raster<float>(    {1,1,2,3,5,8,13,21,34,55,89,144});
-//     auto out1= raster<glm::vec3>(nonspheroid_icosahedron_grid);
-//     auto out2= raster<glm::vec3>(nonspheroid_icosahedron_grid);
-
-//     SECTION("curl(grid, a) must generate the same output when called repeatedly"){
-//         CHECK(whole::equal(curl(a),curl(a), 0.1f));
-//     }
-// }
-
 
 // TEST_CASE( "curl of gradient is zero", "[rasters]" ) {
 //     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
 //     icosphere_mesh = meshes::subdivide(icosphere_mesh); each::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
 
 //     auto a          = raster<float>(icosphere_grid);
-//     auto grad_a     = raster<glm::vec3>(icosphere_grid);
-//     auto curl_grad_a= raster<glm::vec3>(icosphere_grid);
-//     auto zeros      = raster<glm::vec3>(icosphere_grid);
+//     auto grad_a     = raster<glm::dvec3>(icosphere_grid);
+//     auto curl_grad_a= raster<glm::dvec3>(icosphere_grid);
+//     auto zeros      = raster<glm::dvec3>(icosphere_grid);
 
 //     std::mt19937 generator(2);
 //     each::get_elias_noise(icosphere_grid.metrics->vertex_positions, generator, a);
-//     fill  (zeros, glm::vec3(0));
+//     fill  (zeros, glm::dvec3(0));
 
 //     grad_a = grid.gradient  (a);
 //     curl      (grad_a, curl_grad_a );
@@ -569,13 +542,14 @@ TEST_CASE( "Vector gradient multiplication relation", "[rasters]" ) {
 //         CHECK(whole::equal(curl_grad_a, zeros));
 //     }
 // }
+
 // TEST_CASE( "divergence of curl is zero", "[rasters]" ) {
 //     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
 //     icosphere_mesh = meshes::subdivide(icosphere_mesh); each::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
 
 //     auto scalar     = raster<float>(icosphere_grid);
-//     auto a          = raster<glm::vec3>(icosphere_grid);
-//     auto curl_a     = raster<glm::vec3>(icosphere_grid);
+//     auto a          = raster<glm::dvec3>(icosphere_grid);
+//     auto curl_a     = raster<glm::dvec3>(icosphere_grid);
 //     auto div_curl_a = raster<float>(icosphere_grid);
 //     auto zeros      = raster<float>(icosphere_grid);
 
@@ -589,25 +563,5 @@ TEST_CASE( "Vector gradient multiplication relation", "[rasters]" ) {
 //     SECTION("curl(grid.gradient(a)) must generate the zero vector"){
 //         CHECK(div_curl_a == zeros);
 //         // CHECK(whole::equal(div_curl_a, zeros));
-//     }
-// }
-
-// TEST_CASE( "laplacian is divergence of gradient", "[rasters]" ) {
-//     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
-//     icosphere_mesh = meshes::subdivide(icosphere_mesh); each::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-
-//     auto a          = raster<float>(icosphere_grid);
-//     auto grad_a     = raster<glm::vec3>(icosphere_grid);
-//     auto div_grad_a = raster<float>(icosphere_grid);
-//     auto laplacian_a= raster<float>(icosphere_grid);
-
-//     std::mt19937 generator(2);
-//     each::get_elias_noise(generator, a);
-
-//     laplacian (a,      laplacian_a);
-//     grad_a = grid.gradient(a);
-//     divergence(grad_a, div_grad_a );
-//     SECTION("laplacian(a) must generate the same output as div(grad(a))"){
-//         CHECK(whole::equal(laplacian_a, div_grad_a));
 //     }
 // }
