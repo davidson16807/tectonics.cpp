@@ -25,6 +25,7 @@
 #include <index/series/Get.hpp>
 #include <index/series/Map.hpp>
 #include <index/series/Range.hpp>
+#include <index/series/Uniform.hpp>
 #include <index/series/glm/VectorInterleave.hpp>
 #include <index/series/noise/GaussianNoise.hpp>
 #include <index/series/noise/glm/UnitVectorNoise.hpp>
@@ -300,6 +301,7 @@ TEST_CASE( "Raster divergence", "[raster]" ) {
         vector_rasters
     ));
 
+
 }
 
 
@@ -344,6 +346,22 @@ TEST_CASE( "Raster curl", "[raster]" ) {
             return a_curl_V_V_grad_a;
         },
         scalar_rasters,
+        vector_rasters
+    ));
+
+    // results here are promising
+    REQUIRE(test::composition(strict, 
+        "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     grid, operators.divergence),
+        "operators.curl      ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.curl),  
+        "0                   ", [](auto a){ return series::uniform(0.0); }, 
+        vector_rasters
+    ));
+
+    // results are horrible, the test here is only meant to track known error until our methods improve
+    REQUIRE(test::composition(dymaxion::Adapter(grid, 1e5, grid.vertex_count()), 
+        "operators.curl    ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.curl),
+        "operators.gradient", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, grid, operators.gradient),
+        "the zero vector   ", [](auto a){ return series::uniform(glm::dvec3(0.0)); }, 
         vector_rasters
     ));
 
@@ -481,6 +499,7 @@ TEST_CASE( "Vector Raster laplacian", "[raster]" ) {
 
 }
 
+
 // TEST_CASE( "gradient resolution invariance", "[rasters]" ) {
 //     meshes::mesh icosphere_mesh1(meshes::icosahedron.vertices, meshes::icosahedron.faces);
 //     icosphere_mesh1 = meshes::subdivide(icosphere_mesh1); each::normalize(icosphere_mesh1.vertices, icosphere_mesh1.vertices);
@@ -549,48 +568,3 @@ TEST_CASE( "Vector Raster laplacian", "[raster]" ) {
 //     }
 // }
 
-
-
-// TEST_CASE( "curl of gradient is zero", "[rasters]" ) {
-//     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
-//     icosphere_mesh = meshes::subdivide(icosphere_mesh); each::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-
-//     auto a          = raster<float>(icosphere_grid);
-//     auto grad_a     = raster<glm::dvec3>(icosphere_grid);
-//     auto curl_grad_a= raster<glm::dvec3>(icosphere_grid);
-//     auto zeros      = raster<glm::dvec3>(icosphere_grid);
-
-//     std::mt19937 generator(2);
-//     each::get_elias_noise(icosphere_grid.metrics->vertex_positions, generator, a);
-//     fill  (zeros, glm::dvec3(0));
-
-//     grad_a = grid.gradient  (a);
-//     curl      (grad_a, curl_grad_a );
-//     SECTION("curl(gradient(a)) must generate the zero vector"){
-//         // CHECK(curl_grad_a == zeros);
-//         CHECK(whole::equal(curl_grad_a, zeros));
-//     }
-// }
-
-// TEST_CASE( "divergence of curl is zero", "[rasters]" ) {
-//     meshes::mesh icosphere_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
-//     icosphere_mesh = meshes::subdivide(icosphere_mesh); each::normalize(icosphere_mesh.vertices, icosphere_mesh.vertices);
-
-//     auto scalar     = raster<float>(icosphere_grid);
-//     auto a          = raster<glm::dvec3>(icosphere_grid);
-//     auto curl_a     = raster<glm::dvec3>(icosphere_grid);
-//     auto div_curl_a = raster<float>(icosphere_grid);
-//     auto zeros      = raster<float>(icosphere_grid);
-
-//     std::mt19937 generator(2);
-//     each::get_elias_noise(icosphere_grid.metrics->vertex_positions, generator, scalar);
-//     a = grid.gradient(scalar);
-//     fill  (zeros, 0.f);
-
-//     curl       (a,      curl_a     );
-//     divergence (curl_a, div_curl_a );
-//     SECTION("curl(grid.gradient(a)) must generate the zero vector"){
-//         CHECK(div_curl_a == zeros);
-//         // CHECK(whole::equal(div_curl_a, zeros));
-//     }
-// }
