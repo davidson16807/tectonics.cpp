@@ -2,7 +2,7 @@ import glob
 import os 
 cwd = GetLaunchDir()
 root = os.getcwd()
-testexe = os.path.join(cwd, 'test')
+testexe = os.path.join(cwd, 'tests')
 testcpp = os.path.join(cwd, 'test.cpp')
 
 with open(testcpp, 'w') as file:
@@ -16,7 +16,7 @@ with open(testcpp, 'w') as file:
 
 print(
 f'''
-Building executable, "test", under "{cwd}"
+Building executable, "tests", under "{cwd}"
 from newly created test.cpp file under "{cwd}"
 that includes only *_test.cpp files under "{cwd}"
 using sconstruct.py under "{root}".

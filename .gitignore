@@ -30,7 +30,7 @@ test.cpp
 *.pyc
 
 # Executables
-test
+tests
 *.exe
 *.out
 *.app

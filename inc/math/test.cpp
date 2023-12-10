@@ -1,3 +1,4 @@
+#include "./glm/special_specialization.hpp"
 #include "./special_test.cpp"
 #include "./combinatorics_test.cpp"
 #include "./analytic/Rational_test.cpp"

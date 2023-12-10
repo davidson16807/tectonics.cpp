@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <algorithm>
 
 namespace math{
 
@@ -61,13 +62,13 @@ namespace math{
 	template<typename In1, typename In2>
 	inline constexpr auto remainder(const In1& a, const In2& b)
 	{
-	    return a - b * round(a / b);
+	    return a - b * math::round(a / b);
 	}
 
 	template<typename In1, typename In2>
 	inline constexpr auto residue(const In1& a, const In2& b)
 	{
-	    return a - b * floor(a / b);
+	    return a - b * math::floor(a / b);
 	}
 
 	template<typename In1, typename In2>
@@ -79,7 +80,7 @@ namespace math{
 	template<typename T>
 	inline constexpr T maxabs(const T& a, const T& b)
 	{
-	    return max(-min(a,b), max(a,b));
+	    return math::max(-math::min(a,b), math::max(a,b));
 	}
 
 	template <typename T>
