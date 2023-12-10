@@ -9,9 +9,12 @@
 
 // in-house libraries
 #include <math/analytic/Rational.hpp>  
+#include <math/analytic/ArbitraryDegreePolynomial.hpp>  
+#include <math/analytic/ArbitraryDegreeRational.hpp>  
 
 #include <test/macros.hpp>
 #include <test/structures/grouplike.hpp>
+#include <test/structures/ringlike.hpp>
 #include <test/structures/metriclike.hpp>
 
 #include "test_tools.hpp"
