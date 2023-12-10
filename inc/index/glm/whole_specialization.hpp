@@ -8,6 +8,7 @@
 #define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
 #include <glm/common.hpp>	// all the GLSL common functions: abs, floor, etc.
 
+#include <math/glm/special_specialization.hpp>
 #include <math/special.hpp>
 
 #include "each.hpp"

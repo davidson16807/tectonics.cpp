@@ -7,20 +7,71 @@ namespace math{
 	constexpr double pi = 3.141592653589793238462643383279502884197169399;
 	constexpr double right_angle = pi/2.0;
 
-	template<typename T>
-	inline constexpr T remainder(const T& a, const T& b)
+	#define MATH_UNARY_STD_WRAPPER(NAME) template <typename In1> inline auto NAME (const In1 a) { return std::NAME(a); }
+	MATH_UNARY_STD_WRAPPER(abs)
+	MATH_UNARY_STD_WRAPPER(floor)
+	MATH_UNARY_STD_WRAPPER(trunc)
+	MATH_UNARY_STD_WRAPPER(round)
+	MATH_UNARY_STD_WRAPPER(ceil)
+	MATH_UNARY_STD_WRAPPER(isnan)
+	MATH_UNARY_STD_WRAPPER(isinf)
+	MATH_UNARY_STD_WRAPPER(exp)
+	MATH_UNARY_STD_WRAPPER(exp2)
+	MATH_UNARY_STD_WRAPPER(log)
+	MATH_UNARY_STD_WRAPPER(log2)
+	MATH_UNARY_STD_WRAPPER(log10)
+	MATH_UNARY_STD_WRAPPER(sqrt)
+	MATH_UNARY_STD_WRAPPER(cbrt)
+	MATH_UNARY_STD_WRAPPER(pow)
+	MATH_UNARY_STD_WRAPPER(sin)
+	MATH_UNARY_STD_WRAPPER(cos)
+	MATH_UNARY_STD_WRAPPER(tan)
+	MATH_UNARY_STD_WRAPPER(asin)
+	MATH_UNARY_STD_WRAPPER(acos)
+	MATH_UNARY_STD_WRAPPER(atan)
+	MATH_UNARY_STD_WRAPPER(asinh)
+	MATH_UNARY_STD_WRAPPER(acosh)
+	MATH_UNARY_STD_WRAPPER(atanh)
+	#undef MATH_UNARY_STD_WRAPPER
+
+	#define MATH_BINARY_STD_WRAPPER(NAME) \
+	template <typename In1, typename In2> inline auto NAME(const In1 a, const In2 b){return std::NAME(a,b);}
+	MATH_BINARY_STD_WRAPPER(min)
+	MATH_BINARY_STD_WRAPPER(max)
+	MATH_BINARY_STD_WRAPPER(pow)
+	MATH_BINARY_STD_WRAPPER(atan2)
+	#undef MATH_BINARY_STD_WRAPPER
+
+	#define MATH_TRINARY_STD_WRAPPER(NAME) \
+	template <typename In1, typename In2, typename In3> inline auto NAME(const In1 a, const In2 b, const In3 c){return std::NAME(a,b,c);}
+	MATH_TRINARY_STD_WRAPPER(fma)
+	MATH_TRINARY_STD_WRAPPER(clamp)
+	#undef MATH_TRINARY_STD_WRAPPER
+
+	template <typename In1, typename In2> inline auto equal(const In1 a, const In2 b){return a == b;}
+	template <typename In1, typename In2> inline auto notEqual(const In1 a, const In2 b){return a != b;}
+	template <typename In1, typename In2> inline auto greaterThan(const In1 a, const In2 b){return a > b;}
+	template <typename In1, typename In2> inline auto lessThan(const In1 a, const In2 b){return a < b;}
+	template <typename In1, typename In2> inline auto greaterThanEqual(const In1 a, const In2 b){return a >= b;}
+	template <typename In1, typename In2> inline auto lessThanEqual(const In1 a, const In2 b){return a <= b;}
+	template <typename In1, typename In2> inline auto unite(const In1 a, const In2 b){return a || b;}
+	template <typename In1, typename In2> inline auto intersect(const In1 a, const In2 b){return a && b;}
+	template <typename In1, typename In2> inline auto differ(const In1 a, const In2 b){return a && !b;}
+
+	template<typename In1, typename In2>
+	inline constexpr auto remainder(const In1& a, const In2& b)
 	{
 	    return a - b * round(a / b);
 	}
 
-	template<typename T>
-	inline constexpr T residue(const T& a, const T& b)
+	template<typename In1, typename In2>
+	inline constexpr auto residue(const In1& a, const In2& b)
 	{
 	    return a - b * floor(a / b);
 	}
 
-	template<typename T>
-	inline constexpr T modulus(const T& a, const T& b)
+	template<typename In1, typename In2>
+	inline constexpr auto modulus(const In1& a, const In2& b)
 	{
 	    return residue(residue(a,b) + b, b);
 	}
@@ -55,6 +106,26 @@ namespace math{
 	inline bool isnan(const In1 a){
 		return std::isnan(a);
 	}
+
+	template <typename In1, int N> inline auto pow(const In1 a) { return std::pow(a,N); }
+	template <typename In1> inline auto fract(const In1 a) { return a-floor(a); }
+	template <typename In1> inline auto inversesqrt(const In1 a) { return In1(1)/std::sqrt(a); }
+	template <typename In1> inline auto negate(const In1 a) { return -a; }
+	template <typename In1> inline auto exp10(const In1 a) { return std::pow(a,In1(10)); }
+	template <typename In1> inline auto sec(const In1 a){ return In1(1)/std::cos(a);}
+	template <typename In1> inline auto csc(const In1 a){ return In1(1)/std::sin(a);}
+	template <typename In1> inline auto cot(const In1 a){ return In1(1)/std::tan(a);}
+	// template <typename In1> inline auto asec(const In1 a){ return std::asec(a);}
+	// template <typename In1> inline auto acsc(const In1 a){ return std::acsc(a);}
+	// template <typename In1> inline auto acot(const In1 a){ return std::acot(a);}
+	// template <typename In1> inline auto sinh(const In1 a){ return std::sinh(a);}
+	// template <typename In1> inline auto cosh(const In1 a){ return std::cosh(a);}
+	// template <typename In1> inline auto tanh(const In1 a){ return std::tanh(a);}
+	// template <typename In1> inline auto asech(const In1 a){ return std::asech(a);}
+	// template <typename In1> inline auto acsch(const In1 a){ return std::acsch(a);}
+	// template <typename In1> inline auto acoth(const In1 a){ return std::acoth(a);}
+	template <typename In1> inline auto radians(const In1 a){ return In1(math::pi/180.) * a;}
+	template <typename In1> inline auto degrees(const In1 a){ return In1(180./math::pi) * a;}
 
 	/*
 	"erf" provides an approximation for the "error function": erf(x) = ∫ˣ exp(-t²)dt
@@ -98,6 +169,15 @@ namespace math{
     }
 
     /*
+    "step" provides a non-glm alternative to glm::step()
+    */
+    template <typename Tin>
+    constexpr auto step(const Tin edge, const Tin x) 
+    {
+	    return Tin(x >= edge);
+    }
+
+    /*
     "linearstep" provides a strictly linear alternative to glm::smoothstep()
     */
     template <typename Tin>
@@ -105,6 +185,16 @@ namespace math{
     {
         double fraction = double((x - edge0) / (edge1 - edge0));
         return fraction > 1.0? 1 : fraction < 0.0? 0 : fraction;
+    }
+
+    /*
+    "smoothstep" provides a non-glm alternative to glm::smoothstep()
+    */
+    template <typename Tin>
+    constexpr auto smoothstep(const Tin edge0, const Tin edge1, const Tin x) 
+    {
+	    auto t = clamp((x - edge0) / (edge1 - edge0), 0.0, 1.0);
+	    return t * t * (3.0 - 2.0 * t);
     }
 
     /*

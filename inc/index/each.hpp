@@ -98,8 +98,6 @@ namespace each
 	}
 	#undef EACH_UNARY_POSTFIX_OPERATION
 
-	#define EACH_UNARY_STD_WRAPPER(NAME) template <typename In1> inline auto NAME (const In1 a) { return std::NAME(a); }
-
 	#define EACH_UNARY_FUNCTION(NAME) \
 	template <typename In1, typename Out>\
 	void NAME(const In1& a, Out& out)\
@@ -109,33 +107,9 @@ namespace each
 		using size_type = typename Out::size_type;\
 		for (size_type i = 0; i < size; ++i)\
 		{\
-			out[i] = NAME(a[i]);\
+			out[i] = math::NAME(a[i]);\
 		}\
 	}
-
-	EACH_UNARY_STD_WRAPPER(abs)
-	EACH_UNARY_STD_WRAPPER(floor)
-	EACH_UNARY_STD_WRAPPER(trunc)
-	EACH_UNARY_STD_WRAPPER(round)
-	EACH_UNARY_STD_WRAPPER(ceil)
-	EACH_UNARY_STD_WRAPPER(isnan)
-	EACH_UNARY_STD_WRAPPER(isinf)
-	EACH_UNARY_STD_WRAPPER(exp)
-	EACH_UNARY_STD_WRAPPER(exp2)
-	EACH_UNARY_STD_WRAPPER(log)
-	EACH_UNARY_STD_WRAPPER(log2)
-	EACH_UNARY_STD_WRAPPER(log10)
-	EACH_UNARY_STD_WRAPPER(sqrt)
-	EACH_UNARY_STD_WRAPPER(pow)
-	EACH_UNARY_STD_WRAPPER(sin)
-	EACH_UNARY_STD_WRAPPER(cos)
-	EACH_UNARY_STD_WRAPPER(tan)
-	EACH_UNARY_STD_WRAPPER(asin)
-	EACH_UNARY_STD_WRAPPER(acos)
-	EACH_UNARY_STD_WRAPPER(atan)
-	EACH_UNARY_STD_WRAPPER(asinh)
-	EACH_UNARY_STD_WRAPPER(acosh)
-	EACH_UNARY_STD_WRAPPER(atanh)
 
 	EACH_UNARY_FUNCTION(abs)
 	EACH_UNARY_FUNCTION(floor)
@@ -159,27 +133,6 @@ namespace each
 	EACH_UNARY_FUNCTION(atanh)
 
 
-	template <typename In1, int N> inline auto pow(const In1 a) { return std::pow(a,N); }
-	template <typename In1> inline auto sign (const In1 a)	{ return (In1(0) < a) - (a < In1(0)); }
-	template <typename In1> inline auto fract(const In1 a) { return a-floor(a); }
-	template <typename In1> inline auto inversesqrt(const In1 a) { return In1(1)/std::sqrt(a); }
-	template <typename In1> inline auto negate(const In1 a) { return -a; }
-	template <typename In1> inline auto exp10(const In1 a) { return std::pow(a,In1(10)); }
-	template <typename In1> inline auto sec(const In1 a){ return In1(1)/std::cos(a);}
-	template <typename In1> inline auto csc(const In1 a){ return In1(1)/std::sin(a);}
-	template <typename In1> inline auto cot(const In1 a){ return In1(1)/std::tan(a);}
-	// template <typename In1> inline auto asec(const In1 a){ return std::asec(a);}
-	// template <typename In1> inline auto acsc(const In1 a){ return std::acsc(a);}
-	// template <typename In1> inline auto acot(const In1 a){ return std::acot(a);}
-	// template <typename In1> inline auto sinh(const In1 a){ return std::sinh(a);}
-	// template <typename In1> inline auto cosh(const In1 a){ return std::cosh(a);}
-	// template <typename In1> inline auto tanh(const In1 a){ return std::tanh(a);}
-	// template <typename In1> inline auto asech(const In1 a){ return std::asech(a);}
-	// template <typename In1> inline auto acsch(const In1 a){ return std::acsch(a);}
-	// template <typename In1> inline auto acoth(const In1 a){ return std::acoth(a);}
-	template <typename In1> inline auto radians(const In1 a){ return In1(math::pi/180.) * a;}
-	template <typename In1> inline auto degrees(const In1 a){ return In1(180./math::pi) * a;}
-
 	// EACH_UNARY_FUNCTION(pow)
 	EACH_UNARY_FUNCTION(sign)
 	EACH_UNARY_FUNCTION(fract)
@@ -202,10 +155,6 @@ namespace each
 	EACH_UNARY_FUNCTION(degrees)
 
 	#undef EACH_UNARY_FUNCTION
-	#undef EACH_UNARY_STD_WRAPPER
-
-	#define EACH_BINARY_STD_WRAPPER(NAME) \
-	template <typename In1, typename In2> inline auto NAME(const In1 a, const In2 b){return std::NAME(a,b);}
 
 	#define EACH_BINARY_FUNCTION(NAME) \
 	template <typename In1, typename In2, typename Out>\
@@ -216,33 +165,18 @@ namespace each
 		using size_type = typename Out::size_type;\
 		for (size_type i = 0; i < size; ++i)\
 		{\
-			out[i] = NAME(a[i], b[i]);\
+			out[i] = math::NAME(a[i], b[i]);\
 		}\
 	}
-
-	EACH_BINARY_STD_WRAPPER(min)
-	EACH_BINARY_STD_WRAPPER(max)
-	EACH_BINARY_STD_WRAPPER(pow)
-	EACH_BINARY_STD_WRAPPER(atan2)
 
 	EACH_BINARY_FUNCTION(min)  
 	EACH_BINARY_FUNCTION(max)  
 	EACH_BINARY_FUNCTION(pow)  
 	EACH_BINARY_FUNCTION(atan2)
 
-	template <typename In1, typename In2> inline auto mod(const In1 a, const In2 b){return a-b*floor(a/b);}
-	template <typename In1, typename In2> inline auto distance(const In1 a, const In2 b){return math::distance(a,b);}
-	template <typename In1, typename In2> inline auto equal(const In1 a, const In2 b){return a == b;}
-	template <typename In1, typename In2> inline auto notEqual(const In1 a, const In2 b){return a != b;}
-	template <typename In1, typename In2> inline auto greaterThan(const In1 a, const In2 b){return a > b;}
-	template <typename In1, typename In2> inline auto lessThan(const In1 a, const In2 b){return a < b;}
-	template <typename In1, typename In2> inline auto greaterThanEqual(const In1 a, const In2 b){return a >= b;}
-	template <typename In1, typename In2> inline auto lessThanEqual(const In1 a, const In2 b){return a <= b;}
-	template <typename In1, typename In2> inline auto unite(const In1 a, const In2 b){return a || b;}
-	template <typename In1, typename In2> inline auto intersect(const In1 a, const In2 b){return a && b;}
-	template <typename In1, typename In2> inline auto differ(const In1 a, const In2 b){return a && !b;}
-
-	EACH_BINARY_FUNCTION(mod)  
+	EACH_BINARY_FUNCTION(modulus)  
+	EACH_BINARY_FUNCTION(residue)  
+	EACH_BINARY_FUNCTION(remainder)
 	EACH_BINARY_FUNCTION(distance)  
 	EACH_BINARY_FUNCTION(equal)
 	EACH_BINARY_FUNCTION(notEqual)
@@ -255,7 +189,6 @@ namespace each
 	EACH_BINARY_FUNCTION(differ)
 
 	#undef EACH_BINARY_FUNCTION
-	#undef EACH_BINARY_STD_WRAPPER
 
 
 	#define EACH_TRINARY_FUNCTION(NAME) \

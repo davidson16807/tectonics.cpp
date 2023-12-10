@@ -77,29 +77,29 @@ TEST_CASE( "Series<T> floor/fract consistency", "[whole]" ) {
     }
 }
 
-TEST_CASE( "Series<T> mod purity", "[whole]" ) {
+TEST_CASE( "Series<T> residue purity", "[whole]" ) {
     auto a = std::vector({-1,1,-2,2,3});
     auto b = std::vector({1,2,3,4,5});
     auto out1 = std::vector({0,0,0,0,0});
     auto out2 = std::vector({0,0,0,0,0});
-    SECTION("mod(a,b) must generate the same output when called repeatedly"){
-        each::mod(a,b, out1);
-        each::mod(a,b, out2);
+    SECTION("residue(a,b) must generate the same output when called repeatedly"){
+        each::residue(a,b, out1);
+        each::residue(a,b, out2);
         CHECK(whole::equal(out1, out2));
     }
 }
-TEST_CASE( "Series<T> mod/fract consistency", "[whole]" ) {
+TEST_CASE( "Series<T> residue/fract consistency", "[whole]" ) {
     auto a = std::vector({1.0,2.1,3.1,4.2,5.3});
     auto ones = std::vector({1,1,1,1,1});
     auto out1 = std::vector({0,0,0,0,0});
     auto out2 = std::vector({0,0,0,0,0});
-    SECTION("mod(a,1) must generate the same output as fract(a) for positive numbers"){
-        each::mod(a, series::uniform(1), out1);
+    SECTION("residue(a,1) must generate the same output as fract(a) for positive numbers"){
+        each::residue(a, series::uniform(1), out1);
         each::fract(a, out2);
         CHECK(whole::equal(out1, out2));
     }
-    SECTION("mod(a,ones) must generate the same output as fract(a) for positive numbers"){
-        each::mod(a,ones, out1);
+    SECTION("residue(a,ones) must generate the same output as fract(a) for positive numbers"){
+        each::residue(a,ones, out1);
         each::fract(a, out2);
         CHECK(whole::equal(out1, out2));
     }

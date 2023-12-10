@@ -9,6 +9,8 @@
 #include <glm/vector_relational.hpp>
 
 // in-house libraries
+#include <math/glm/special.hpp>
+
 #include "../each.hpp"
 
 namespace each {

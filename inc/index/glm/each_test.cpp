@@ -12,7 +12,10 @@
 #include <glm/vec3.hpp>     // *vec3
 
 // in-house libraries
-#include "each_specialization.hpp"
+
+#include <math/glm/special.hpp>
+#include <math/special.hpp>
+
 #include "whole_specialization.hpp"
 #include "each.hpp"
 
