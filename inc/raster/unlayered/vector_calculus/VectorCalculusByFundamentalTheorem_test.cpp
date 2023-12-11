@@ -14,6 +14,7 @@
 #include "glm/glm.hpp"
 
 // in-house libraries
+#include <math/glm/special_specialization.hpp>
 #include <math/glm/special.hpp>
 
 #include <index/glm/each_specialization.hpp>

@@ -98,16 +98,6 @@ namespace math{
 		return std::abs(a-b);
 	}
 
-	template <typename In1> 
-	inline bool isinf(const In1 a){
-		return std::isinf(a);
-	}
-
-	template <typename In1> 
-	inline bool isnan(const In1 a){
-		return std::isnan(a);
-	}
-
 	template <typename In1, int N> inline auto pow(const In1 a) { return std::pow(a,N); }
 	template <typename In1> inline auto fract(const In1 a) { return a-floor(a); }
 	template <typename In1> inline auto inversesqrt(const In1 a) { return In1(1)/std::sqrt(a); }
