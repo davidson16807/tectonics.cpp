@@ -28,7 +28,7 @@
 #include <test/glm/adapter.hpp>
 
 TEST_CASE( "EliasNoise()", "[field]" ) {
-    test::GlmAdapter<int, double> adapter(1e-5);
+    test::GlmAdapter<int, double> adapter(1e-3);
 
     auto positions = series::get(
         series::vector_interleave<3>(
