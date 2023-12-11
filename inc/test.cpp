@@ -1,4 +1,6 @@
 #include "./math/glm/special_specialization.hpp"
+#include "./grid/dymaxion/_specialization.hpp"
+#include "./raster/unlayered/vector_calculus/_specialization.hpp"
 #include "./index/glm/each_specialization.hpp"
 #include "./index/glm/whole_specialization.hpp"
 #include "./math/special_test.cpp"
