@@ -48,34 +48,7 @@
 #include <test/macros.hpp>  
 #include <test/glm/adapter.hpp>
 
-namespace dymaxion {
-
-    template<typename id, typename scalar>
-    struct Adapter{
-        Grid<id,scalar> grid;
-        scalar threshold;
-        std::size_t test_size;
-
-        Adapter(const Grid<id, scalar>& grid, const scalar threshold, const std::size_t test_size):
-            grid(grid),
-            threshold(threshold),
-            test_size(test_size)
-        {}
-
-        template<typename Series1, typename Series2>
-        bool equal(const Series1& a, const Series2& b) const {
-            return whole::max_distance(a,b) <= threshold;
-        }
-
-        template<typename Series>
-        std::string print(const Series& a) const {
-            // return dymaxion::to_string(grid, a, 200);
-            return spheroidal::to_string(grid, a);
-        }
-
-    };
-
-}
+#include <grid/dymaxion/test/Adapter.hpp>
 
 #define DYMAXION_TEST_GRIDDED_OUT_PARAMETER(TYPE,GRID,F) \
     [=](auto x){ std::vector<TYPE> out(GRID.vertex_count()); (F(GRID,x,out)); return out; }
@@ -86,7 +59,6 @@ namespace dymaxion {
     [=](auto x, auto y){ std::vector<TYPE> out(GRID.vertex_count()); (F(x,y,out)); return out; }
 #define DYMAXION_TEST_TRINARY_OUT_PARAMETER(TYPE,GRID,F) \
     [=](auto x, auto y, auto z){ std::vector<TYPE> out(GRID.vertex_count()); (F(x,y,z,out)); return out; }
-
 
 dymaxion::Grid fine  (2.0, 32);
 dymaxion::Grid coarse(2.0, 16);
@@ -213,7 +185,7 @@ std::vector vector_rasters{
 dymaxion::Adapter strict(fine, 1e-5, fine.vertex_count());
 
 
-TEST_CASE( "Raster gradient", "[raster]" ) {
+TEST_CASE( "Raster gradient", "[unlayered]" ) {
     unlayered::VectorCalculusByFundamentalTheorem operators;
 
     REQUIRE(test::determinism(strict, 
@@ -259,7 +231,7 @@ TEST_CASE( "Raster gradient", "[raster]" ) {
 
 
 
-TEST_CASE( "Raster divergence", "[raster]" ) {
+TEST_CASE( "Raster divergence", "[unlayered]" ) {
     unlayered::VectorCalculusByFundamentalTheorem operators;
 
     REQUIRE(test::determinism(strict, 
@@ -274,8 +246,8 @@ TEST_CASE( "Raster divergence", "[raster]" ) {
         vector_rasters, vector_rasters
     ));
 
-    // results are horrible, the test here is only meant to track known error until our methods improve
-    REQUIRE(test::equality(dymaxion::Adapter(fine, 1e4, fine.vertex_count()), 
+    // results are bad, the test here is only meant to track known error until our methods improve
+    REQUIRE(test::equality(dymaxion::Adapter(fine, 3e2, fine.vertex_count()), 
         "The divergence of a vector must statsify a well known relationship",
         "∇⋅(aV)          ", 
         [=](auto a, auto V){
@@ -307,7 +279,7 @@ TEST_CASE( "Raster divergence", "[raster]" ) {
 }
 
 
-TEST_CASE( "Raster curl", "[raster]" ) {
+TEST_CASE( "Raster curl", "[unlayered]" ) {
     unlayered::VectorCalculusByFundamentalTheorem operators;
 
     REQUIRE(test::determinism(strict, 
@@ -322,7 +294,7 @@ TEST_CASE( "Raster curl", "[raster]" ) {
         vector_rasters, vector_rasters
     ));
 
-    // results are horrible, the test here is only meant to track known error until our methods improve
+    // results are bad, the test here is only meant to track known error until our methods improve
     REQUIRE(test::equality(dymaxion::Adapter(fine, 3e3, fine.vertex_count()), 
         "The curl of a vector must statsify a well known relationship",
         "∇⋅(aV)          ", 
@@ -354,13 +326,13 @@ TEST_CASE( "Raster curl", "[raster]" ) {
     // results here are promising
     REQUIRE(test::composition(strict, 
         "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     fine, operators.divergence),
-        "operators.curl      ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, fine, operators.curl),  
-        "0                   ", [](auto a){ return series::uniform(0.0); }, 
+        "operators.curl",       DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, fine, operators.curl),  
+        "0",                    [](auto a){ return series::uniform(0.0); }, 
         vector_rasters
     ));
 
-    // results are horrible, the test here is only meant to track known error until our methods improve
-    REQUIRE(test::composition(dymaxion::Adapter(fine, 1e5, fine.vertex_count()), 
+    // results are bad, the test here is only meant to track known error until our methods improve
+    REQUIRE(test::composition(dymaxion::Adapter(fine, 1e3, fine.vertex_count()), 
         "operators.curl    ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, fine, operators.curl),
         "operators.gradient", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, fine, operators.gradient),
         "the zero vector   ", [](auto a){ return series::uniform(glm::dvec3(0.0)); }, 
@@ -369,7 +341,7 @@ TEST_CASE( "Raster curl", "[raster]" ) {
 
 }
 
-TEST_CASE( "Scalar Raster laplacian", "[raster]" ) {
+TEST_CASE( "Scalar Raster laplacian", "[unlayered]" ) {
     unlayered::VectorCalculusByFundamentalTheorem operators;
     unlayered::VectorCalculusByFundamentalTheoremDebug debug;
     bool is_verbose1(false);
@@ -475,7 +447,7 @@ TEST_CASE( "Scalar Raster laplacian", "[raster]" ) {
 
 }
 
-TEST_CASE( "Vector Raster laplacian", "[raster]" ) {
+TEST_CASE( "Vector Raster laplacian", "[unlayered]" ) {
 
     unlayered::VectorCalculusByFundamentalTheorem operators;
 
@@ -491,8 +463,8 @@ TEST_CASE( "Vector Raster laplacian", "[raster]" ) {
         vector_rasters, vector_rasters
     ));
 
-    // results here are horrible, the test here is only meant to track known error until our methods improve
-    REQUIRE(test::composition(dymaxion::Adapter(fine, 5e5, fine.vertex_count()), 
+    // results here are bad, the test here is only meant to track known error until our methods improve
+    REQUIRE(test::composition(dymaxion::Adapter(fine, 3e3, fine.vertex_count()), 
         "operators.gradient  ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, fine, operators.gradient),  
         "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     fine, operators.divergence),
         "operators.laplacian ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, fine, operators.laplacian), 
@@ -520,3 +492,8 @@ TEST_CASE( "gradient resolution invariance", "[rasters]" ) {
 }
 */
 
+
+#undef DYMAXION_TEST_GRIDDED_OUT_PARAMETER
+#undef DYMAXION_TEST_UNARY_OUT_PARAMETER
+#undef DYMAXION_TEST_BINARY_OUT_PARAMETER
+#undef DYMAXION_TEST_TRINARY_OUT_PARAMETER
