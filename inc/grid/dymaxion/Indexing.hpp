@@ -62,8 +62,6 @@ namespace dymaxion
         constexpr IdPoint standardize(const IdPoint grid_id) const {
             ScalarPoint standardized =
                 (projection.standardize((ScalarPoint(grid_id)+vec2(0.5)) / vertices_per_square_side_scalar)
-                    // apply epsilon while in the [0,1] domain so that the cast to `id` is correct
-                    + vec2(std::numeric_limits<scalar>::epsilon())
                 ) * vertices_per_square_side_scalar;
             return IdPoint(standardized);
         }
