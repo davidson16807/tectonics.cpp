@@ -293,5 +293,18 @@ namespace each
 		}
 	}
 
+	/// Computes and returns f[a[i]].
+	template <typename In1, typename Out>
+	void copy(const In1& a, Out& out)
+	{
+		assert(compatible(a,out));
+		auto size = out.size();
+		using size_type = typename Out::size_type;\
+		for (size_type i = 0; i < size; ++i)
+		{
+			out[i] = a[i];
+		}
+	}
+
 }
 
