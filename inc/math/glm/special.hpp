@@ -63,7 +63,12 @@ namespace math{
 	template<int L, typename T, glm::qualifier Q>
 	inline constexpr T compMaxAbs(glm::vec<L,T,Q> V)
 	{
-	    return std::max(-glm::compMin(V), glm::compMax(V));
+		T result(V[0]);
+		for (int i = 1; i < L; ++i)
+		{
+			result = std::abs(V[i]) > std::abs(result)? V[i] : result;
+		}
+	    return result;
 	}
 
 
