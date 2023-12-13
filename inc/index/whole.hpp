@@ -424,7 +424,7 @@ namespace whole
 	}
 	template<>
 	inline std::string character(const bool a, const bool lo, const bool hi){
-		return a? "T":"F";
+		return a? "█":" ";
 	}
 
 	template<typename T>
@@ -442,9 +442,13 @@ namespace whole
 	}
 	template<>
 	inline std::string legend(bool sample, const bool lo, const bool hi){
-		return std::string("");
+		std::string out("");
+		out += "true  : █";
+		out += "\n";
+		out += "false :  ";
+		out += "\n";
+		return out;
 	}
-
 
 	template <typename Series, typename T>
 	std::string to_string(const Series& a, const T lo, const T hi, const int line_char_width = 80)

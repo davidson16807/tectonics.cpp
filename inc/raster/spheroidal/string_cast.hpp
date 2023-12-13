@@ -1,3 +1,4 @@
+#pragma once
 
 #include <math/special.hpp>
 
@@ -13,26 +14,18 @@ namespace spheroidal
 		return whole::character(frame*V,lo,hi);
 	}
 
-	template<typename T, glm::qualifier Q>
+	template<typename value, typename scalar, glm::qualifier Q>
 	std::string character(
-		glm::mat<3,3,T,Q> frame, 
-		const T a, const T lo, const T hi
+		glm::mat<3,3,scalar,Q> frame, 
+		const value a, const value lo, const value hi
 	){
 		return whole::character(a,lo,hi);
 	}
 
-	template<typename T, glm::qualifier Q>
-	inline std::string character(
-		glm::mat<3,3,T,Q> frame, 
-		const bool a, const bool lo, const bool hi
-	){
-		return whole::character(a,lo,hi);
-	}
-
-	template <typename Grid, typename Series, typename id, typename scalar, glm::qualifier Q>
+	template <typename Grid, typename Series, typename id, typename scalar, typename value, glm::qualifier Q>
 	std::string to_string(
 		const Grid& grid, 
-		const Series& a, const scalar lo, const scalar hi, 
+		const Series& a, const value lo, const value hi, 
 		const id line_char_width, 
 		const glm::vec<3,scalar,Q> north_pole)
 	{
