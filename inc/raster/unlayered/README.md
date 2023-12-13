@@ -1,5 +1,2 @@
-`procedural::` contains operations that can be performed on procedural grids,
-where procedural grids are defined by the following properties:
-* they permit a map, point⟶vertex, that maps any point in space to the nearest vertex
-* they permit a map, vertex×id⟶vertex, that maps any vertex to one of their neighbors
-* they share a interface that's analogous to `collignon::Grid.hpp` or `dymaxion::Grid.hpp`
+`unlayered::` contains operations that can be performed on unlayered grids,
+that is, grids where vertices do not represent any "layered" subgrid (see `layered/README.md` for contrast)
