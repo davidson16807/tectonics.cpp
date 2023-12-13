@@ -60,41 +60,41 @@
 #define DYMAXION_TEST_TRINARY_OUT_PARAMETER(TYPE,GRID,F) \
     [=](auto x, auto y, auto z){ std::vector<TYPE> out(GRID.vertex_count()); (F(x,y,z,out)); return out; }
 
-dymaxion::Grid fine  (2.0, 32);
+dymaxion::Grid fine  (2.0, 64);
 dymaxion::Grid coarse(2.0, 16);
 
-std::vector elias_scalar_rasters{
-    known::store(
-        fine.vertex_count(),
-        series::map(
-            field::elias_noise<double>(
-                series::unit_vector_noise<3>(10.0, 1.0e4), 
-                series::gaussian(11.0, 1.1e4), 
-                1000),
-            dymaxion::vertex_positions(fine)
-        )
-    ),
-    known::store(
-        fine.vertex_count(),
-        series::map(
-            field::elias_noise<double>(
-                series::unit_vector_noise<3>(11.0, 1.1e4), 
-                series::gaussian(11.0, 1.1e4), 
-                1000),
-            dymaxion::vertex_positions(fine)
-        )
-    ),
-    known::store(
-        fine.vertex_count(),
-        series::map(
-            field::elias_noise<double>(
-                series::unit_vector_noise<3>(12.0, 1.2e4), 
-                series::gaussian(11.0, 1.1e4), 
-                1000),
-            dymaxion::vertex_positions(fine)
-        )
-    )
-};
+// std::vector elias_scalar_rasters{
+//     known::store(
+//         fine.vertex_count(),
+//         series::map(
+//             field::elias_noise<double>(
+//                 series::unit_vector_noise<3>(10.0, 1.0e4), 
+//                 series::gaussian(11.0, 1.1e4), 
+//                 1000),
+//             dymaxion::vertex_positions(fine)
+//         )
+//     ),
+//     known::store(
+//         fine.vertex_count(),
+//         series::map(
+//             field::elias_noise<double>(
+//                 series::unit_vector_noise<3>(11.0, 1.1e4), 
+//                 series::gaussian(11.0, 1.1e4), 
+//                 1000),
+//             dymaxion::vertex_positions(fine)
+//         )
+//     ),
+//     known::store(
+//         fine.vertex_count(),
+//         series::map(
+//             field::elias_noise<double>(
+//                 series::unit_vector_noise<3>(12.0, 1.2e4), 
+//                 series::gaussian(11.0, 1.1e4), 
+//                 1000),
+//             dymaxion::vertex_positions(fine)
+//         )
+//     )
+// };
 
 
 std::vector scalar_rasters{
@@ -247,7 +247,7 @@ TEST_CASE( "Raster divergence", "[unlayered]" ) {
     ));
 
     // results are bad, the test here is only meant to track known error until our methods improve
-    REQUIRE(test::equality(dymaxion::Adapter(fine, 3e2, fine.vertex_count()), 
+    REQUIRE(test::equality(dymaxion::Adapter(fine, 300.0, fine.vertex_count()), 
         "The divergence of a vector must statsify a well known relationship",
         "∇⋅(aV)          ", 
         [=](auto a, auto V){
@@ -275,7 +275,6 @@ TEST_CASE( "Raster divergence", "[unlayered]" ) {
         vector_rasters
     ));
 
-
 }
 
 
@@ -295,7 +294,7 @@ TEST_CASE( "Raster curl", "[unlayered]" ) {
     ));
 
     // results are bad, the test here is only meant to track known error until our methods improve
-    REQUIRE(test::equality(dymaxion::Adapter(fine, 3e3, fine.vertex_count()), 
+    REQUIRE(test::equality(dymaxion::Adapter(fine, 1000.0, fine.vertex_count()), 
         "The curl of a vector must statsify a well known relationship",
         "∇⋅(aV)          ", 
         [=](auto a, auto V){
@@ -332,7 +331,7 @@ TEST_CASE( "Raster curl", "[unlayered]" ) {
     ));
 
     // results are bad, the test here is only meant to track known error until our methods improve
-    REQUIRE(test::composition(dymaxion::Adapter(fine, 1e3, fine.vertex_count()), 
+    REQUIRE(test::composition(dymaxion::Adapter(fine, 100.0, fine.vertex_count()), 
         "operators.curl    ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, fine, operators.curl),
         "operators.gradient", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, fine, operators.gradient),
         "the zero vector   ", [](auto a){ return series::uniform(glm::dvec3(0.0)); }, 
