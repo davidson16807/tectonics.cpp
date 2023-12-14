@@ -88,7 +88,7 @@ namespace dymaxion
 			/* NOTE: there is more than one possible solution if `is_pole`, 
 		    and these solutions do not represent the same point in space.
 		    However the case where `is_pole` is still valid and must be supported.
-		    Therefore, we declare that standardize() is identity if both x≥1 and y≥1.
+		    Therefore, we declare that standardize() is identity if `is_pole`.
 		    This has advantages in spatial transport and 3d rendering 
 		    since triangles and edges naturally degenerate if `is_pole` is true for any vertex.*/
 			Point standardized   (is_pole? grid_id : Point(math::modulus(i+di, square_count), flipped));
