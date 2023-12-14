@@ -4,8 +4,8 @@
 | ------------------- | ----------- |
 | names in general    | use whole words unless otherwise indicated,   |
 |                     | do not use acronyms or abbreviation unless it is used by layman (e.g. `id`, `si`, `gui`, `lod`, etc.),  |
-|                     | or already adopted by a standard or 3rd party library (e.g. `std`, `bvec3`, `mat2`, etc.)  |
-| namespaces          | single lower case short words, e.g. `crust` or `gene`,   |
+|                     | or already adopted by a standard or 3rd party dependency (e.g. `std`, `bvec3`, `mat2`, etc.)  |
+| namespaces          | single lower case short words, e.g. `rock` or `gene`,   |
 |                     | singular, usually implying a genitive case, adjective, or determiner,  |
 |                     | avoid using `nested::name::spaces` unless strictly needed for disambiguation  |
 | directories         | single lower case short words, e.g. `index` or `test`,  |

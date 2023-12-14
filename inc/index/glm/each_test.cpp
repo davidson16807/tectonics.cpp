@@ -74,13 +74,13 @@ TEST_CASE( "each::dot properties", "[each]" ) {
         vectors,vectors
     ));
 
-    // REQUIRE(test::distributivity(adapter,
+    // REQUIRE(test::binary_distributivity(adapter,
     //     "each::dot", EACH_TEST_BINARY_OUT_PARAMETER(double,30,each::dot),
     //     "each::add", EACH_TEST_BINARY_OUT_PARAMETER(double,30,each::add),
     //     vectors,vectors
     // ));
 
-    // REQUIRE(test::idempotence(adapter,
+    // REQUIRE(test::binary_idempotence(adapter,
     //     "1",         series::uniform(1.0),
     //     "each::dot", EACH_TEST_BINARY_OUT_PARAMETER(double,30,each::dot),
     //     vectors,vectors
@@ -96,7 +96,7 @@ TEST_CASE( "each::dot properties", "[each]" ) {
         vectors,uniforms
     ));
 
-    // REQUIRE(test::distributivity(adapter,
+    // REQUIRE(test::binary_distributivity(adapter,
     //     "each::dot", EACH_TEST_BINARY_OUT_PARAMETER(double,30,each::dot),
     //     "each::add", EACH_TEST_BINARY_OUT_PARAMETER(double,30,each::add),
     //     vectors,uniforms
@@ -112,7 +112,7 @@ TEST_CASE( "each::dot properties", "[each]" ) {
         uniforms,vectors
     ));
 
-    // REQUIRE(test::distributivity(adapter,
+    // REQUIRE(test::binary_distributivity(adapter,
     //     "each::dot", EACH_TEST_BINARY_OUT_PARAMETER(double,30,each::dot),
     //     "each::add", EACH_TEST_BINARY_OUT_PARAMETER(double,30,each::add),
     //     uniforms,vectors

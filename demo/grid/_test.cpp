@@ -11,12 +11,16 @@
 // glm libraries
 #define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
 
+#include <math/glm/special_specialization.hpp>
+#include <math/glm/special.hpp>
+
 // in house libraries
 #include <index/series/Map.hpp>
 #include <index/series/Uniform.hpp>
 #include <index/series/glm/VectorDeinterleave.hpp>
 #include <index/each.hpp>                           // get
 #include <index/whole.hpp>                          // max, mean
+#include <index/known.hpp>                          // greaterThan
 #include <index/series/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
 #include <index/series/Range.hpp>                   // Range
 
@@ -26,6 +30,9 @@
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
 #include <grid/dymaxion/series.hpp>                 // dymaxion::BufferVertexIds
 #include <grid/dymaxion/buffer/WholeGridBuffers.hpp>// dymaxion::WholeGridBuffers
+
+#include <raster/unlayered/Morphology.hpp>          // Morphology
+#include <raster/spheroidal/string_cast.hpp>        // to_string
 
 #include <update/OrbitalControlState.hpp>           // OrbitalControlState
 #include <update/OrbitalControlUpdater.hpp>         // OrbitalControlUpdater
@@ -77,22 +84,41 @@ int main() {
   int vertices_per_square_side(2);
   dymaxion::Grid grid(radius, vertices_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
-  dymaxion::BufferVertexIds buffer_vertex_id(grid);
-  dymaxion::BufferComponentIds buffer_component_ids(grid);
 
   // auto vertex_colored_scalars = dymaxion::square_ids(grid);
-  auto vertex_colored_scalars = series::range();
+
+  // auto vertex_colored_scalars = series::range();
+
   // std::vector<double> vertex_colored_scalars(grid.vertex_count());
   // for (int i = 0; i < grid.vertex_count(); ++i)
   // {
   //   vertex_colored_scalars[i] = grid.vertex_position(i).z;
   // }
-  // auto vertex_colored_scalars = series::map(
-  //     field::value_noise3(
-  //         field::square_noise(
-  //             series::unit_interval_noise(11.0f, 1.1e4f))),
-  //     vertex_positions
-  // );
+
+  auto vertex_colored_scalars = series::map(
+      field::value_noise3(
+          field::square_noise(
+              series::unit_interval_noise(11.0f, 1.1e4f))),
+      vertex_positions
+  );
+
+  // auto mask = 
+  //   known::greaterThan(series::uniform(0.5), 
+  //         series::map(
+  //             field::value_noise3(
+  //                 field::square_noise(
+  //                     series::unit_interval_noise(11.0, 1.1e4))),
+  //             dymaxion::vertex_positions(grid)
+  //         )
+  //     );
+  // std::vector<bool> out(grid.vertex_count());
+  // std::vector<bool> scratch(grid.vertex_count());
+  // unlayered::Morphology morphology;
+  // morphology.closing(grid, mask, out, scratch);
+  // std::cout << "closing:" << std::endl;
+  // std::cout << spheroidal::to_string(grid, out) << std::endl;
+  // std::vector<double> vertex_displacements(grid.vertex_count());
+  // each::copy(out, vertex_displacements);
 
   auto vertex_displacements = series::uniform(0.0f);
   // auto vertex_displacements = series::map(

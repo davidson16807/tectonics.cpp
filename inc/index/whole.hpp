@@ -271,10 +271,10 @@ namespace whole
 	}
 
 
-	template <typename T>
-	typename T::value_type sum(const T& a)
+	template <typename Out, typename T>
+	Out sum(const T& a)
 	{
-		typename T::value_type out(0);
+		Out out(0);
 		for (unsigned int i = 0; i < a.size(); ++i)
 		{
 			out += a[i];

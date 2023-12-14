@@ -124,7 +124,7 @@ TEST_CASE( "Series<T> min decreasing", "[whole]" ) {
     SECTION("sum(min(a,b)) must always return a value less than or equal to the starting value"){
         each::min(a,b, ab);
         each::min(ab,c, abc);
-        CHECK(whole::sum(ab) >= whole::sum(abc));
+        CHECK(whole::sum<int>(ab) >= whole::sum<int>(abc));
     }
 }
 TEST_CASE( "Series<T> min idempotence", "[whole]" ) {
@@ -159,7 +159,7 @@ TEST_CASE( "Series<T> max decreasing", "[whole]" ) {
     SECTION("sum(max(a,b)) must always return a value greater than or equal to the starting value"){
         each::max(a,b, ab);
         each::max(ab,c, abc);
-        CHECK(whole::sum(ab) <= whole::sum(abc));
+        CHECK(whole::sum<int>(ab) <= whole::sum<int>(abc));
     }
 }
 TEST_CASE( "Series<T> max idempotence", "[whole]" ) {

@@ -43,7 +43,7 @@ namespace test {
 
             addition      .valid(adapter, as) &&
             multiplication.valid(adapter, as) &&
-            distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
 
             true; // added so lines above can be easily swapped
         }
@@ -54,12 +54,12 @@ namespace test {
             addition      .valid(adapter, as, bs) &&
             multiplication.valid(adapter, as, bs) &&
 
-            distributivity(adapter, mult_name, mult, add_name, add, as, as, bs) &&
-            distributivity(adapter, mult_name, mult, add_name, add, as, bs, as) &&
-            distributivity(adapter, mult_name, mult, add_name, add, as, bs, bs) &&
-            distributivity(adapter, mult_name, mult, add_name, add, bs, as, as) &&
-            distributivity(adapter, mult_name, mult, add_name, add, bs, as, bs) &&
-            distributivity(adapter, mult_name, mult, add_name, add, bs, bs, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, bs, as) &&
 
             true; // added so lines above can be easily swapped
         }
@@ -70,12 +70,12 @@ namespace test {
             addition      .valid(adapter, as, bs, cs) &&
             multiplication.valid(adapter, as, bs, cs) &&
 
-            distributivity(adapter, mult_name, mult, add_name, add, as, bs, cs) &&
-            distributivity(adapter, mult_name, mult, add_name, add, as, cs, bs) &&
-            distributivity(adapter, mult_name, mult, add_name, add, bs, as, cs) &&
-            distributivity(adapter, mult_name, mult, add_name, add, bs, cs, as) &&
-            distributivity(adapter, mult_name, mult, add_name, add, cs, as, bs) &&
-            distributivity(adapter, mult_name, mult, add_name, add, cs, bs, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, cs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, cs, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, cs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, cs, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, cs, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, cs, bs, as) &&
 
             true; // added so lines above can be easily swapped
         }
@@ -115,7 +115,7 @@ namespace test {
 
             addition      .valid(adapter, as) &&
             multiplication.valid(adapter, as) &&
-            distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
 
             true; // added so lines above can be easily swapped
         }
@@ -126,12 +126,12 @@ namespace test {
             addition      .valid(adapter, as, bs) &&
             multiplication.valid(adapter, as, bs) &&
 
-            distributivity(adapter, mult_name, mult, add_name, add, as, as, bs) &&
-            distributivity(adapter, mult_name, mult, add_name, add, as, bs, as) &&
-            distributivity(adapter, mult_name, mult, add_name, add, as, bs, bs) &&
-            distributivity(adapter, mult_name, mult, add_name, add, bs, as, as) &&
-            distributivity(adapter, mult_name, mult, add_name, add, bs, as, bs) &&
-            distributivity(adapter, mult_name, mult, add_name, add, bs, bs, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, bs, as) &&
 
             true; // added so lines above can be easily swapped
         }
@@ -142,12 +142,12 @@ namespace test {
             addition      .valid(adapter, as, bs, cs) &&
             multiplication.valid(adapter, as, bs, cs) &&
 
-            distributivity(adapter, mult_name, mult, add_name, add, as, bs, cs) &&
-            distributivity(adapter, mult_name, mult, add_name, add, as, cs, bs) &&
-            distributivity(adapter, mult_name, mult, add_name, add, bs, as, cs) &&
-            distributivity(adapter, mult_name, mult, add_name, add, bs, cs, as) &&
-            distributivity(adapter, mult_name, mult, add_name, add, cs, as, bs) &&
-            distributivity(adapter, mult_name, mult, add_name, add, cs, bs, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, cs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, cs, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, cs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, cs, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, cs, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, cs, bs, as) &&
 
             true; // added so lines above can be easily swapped
         }

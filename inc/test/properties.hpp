@@ -113,7 +113,7 @@ namespace test {
     }
 
     template<typename Adapter, typename F, typename E, typename A>
-    bool identity(const Adapter& adapter, 
+    bool binary_identity(const Adapter& adapter, 
         const std::string e_name, const E& e, 
         const std::string f_name, const F& f, 
         const A& as
@@ -123,18 +123,19 @@ namespace test {
             right_identity(adapter, e_name, e, f_name, f, as);
     }
 
-    // template<typename Adapter, typename F, typename E, typename A>
-    // bool identity(const Adapter& adapter, 
-    //     const std::string e_name, const E& e,
-    //     const std::string f_name, const F& f 
-    // ) {
-    //     return equality(
-    //         adapter,
-    //         f_name + " [denoted \"f\"] must have an \"identity\", " + e_name + "[denoted \"e\"], that when passed will always return itself", 
-    //         "f(e,a)",[=](auto a){ return f(e, a); },
-    //         "a     ",[=](auto a){ return a; },
-    //         std::vector<E>{e});
-    // }
+    template<typename Adapter, typename F, typename E>
+    bool unary_identity(const Adapter& adapter, 
+        const std::string e_name, const E& e,
+        const std::string f_name, const F& f 
+    ) {
+        return equality(
+            adapter,
+            f_name + " [denoted \"f\"] must have an \"identity\", " + e_name + "[denoted \"e\"], that when passed will always return itself" +
+            "\nsuch that: \n  f(a) = a\n",
+            "f(a)",[=](auto a){ return f(a); },
+            "a   ",[=](auto a){ return a; },
+            std::vector<E>{e});
+    }
 
     template<typename Adapter, typename F, typename A, typename Z>
     bool left_annihilation(const Adapter& adapter, 
@@ -173,7 +174,7 @@ namespace test {
     }
 
     template<typename Adapter, typename F, typename A, typename Z>
-    bool annihilation(const Adapter& adapter, 
+    bool binary_annihilation(const Adapter& adapter, 
         const std::string z_name, const Z& z, 
         const std::string f_name, const F& f, 
         const A& as
@@ -182,6 +183,8 @@ namespace test {
             left_annihilation (adapter, z_name, z, f_name, f, as) &&
             right_annihilation(adapter, z_name, z, f_name, f, as);
     }
+
+    // NOTE: unary_innihilation exists, but is not useful since it implies ∀a:f(a)=0 for some 0
 
     template<typename Adapter, typename F, typename Finv, typename A>
     bool left_invertibility(const Adapter& adapter, 
@@ -460,7 +463,7 @@ namespace test {
         const A& as, const B& bs, const C& cs
     ) {
         return predicate(adapter, 
-            f_name + " [denoted \"f\"] must allow left parameters to distribute over another function [denoted \"g\"] while still producing the same results" + 
+            f_name + " [denoted \"f\"] must allow left parameters to distribute over "+g_name+" [denoted \"g\"] while still producing the same results" + 
             "\nsuch that: \n  f(c, g(a, b)) = g(f(c,a), f(c,b))\n",
             [=](auto a, auto b, auto c){
                 auto gab = g(a,b);
@@ -485,7 +488,7 @@ namespace test {
         const A& as, const B& bs, const C& cs
     ) {
         return predicate(adapter, 
-            f_name + " [denoted \"f\"] must allow right parameters to distribute over another function [denoted \"g\"] while still producing the same results" + 
+            f_name + " [denoted \"f\"] must allow right parameters to distribute over "+g_name+" [denoted \"g\"] while still producing the same results" + 
             "\nsuch that: \n  f(g(a,b), c) = g(f(a,c), f(b,c))\n",
             [=](auto a, auto b, auto c){
                 auto gab = g(a,b);
@@ -504,7 +507,7 @@ namespace test {
     }
 
     template<typename Adapter, typename F, typename G, typename A, typename B, typename C>
-    bool distributivity(const Adapter& adapter, 
+    bool binary_distributivity(const Adapter& adapter, 
         const std::string f_name, const F& f, 
         const std::string g_name, const G& g, 
         const A& as, const B& bs, const C& cs
@@ -512,6 +515,31 @@ namespace test {
         return 
             left_distributivity (adapter, f_name, f, g_name, g, as, bs, cs) &&
             right_distributivity(adapter, f_name, f, g_name, g, as, bs, cs);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A, typename B>
+    bool unary_distributivity(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as, const B& bs
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must be able to distribute over a "+g_name+" [denoted \"g\"] while still producing the same results" + 
+            "\nsuch that: \n  f(g(a,b)) = g(f(a),f(b))\n",
+            [=](auto a, auto b){
+                auto fa = f(a);
+                auto fb = f(b);
+                auto gfafb = g(fa,fb);
+                auto gab = g(a,b);
+                auto fgab = f(gab);
+                return Results(adapter.equal(fgab, gfafb),
+                    "f(g(a,b)) : " + adapter.print(fgab) + "\n" +
+                    "g(a,b) : " + adapter.print(gab) + "\n" +
+                    "g(f(a),f(b)) : " + adapter.print(gfafb) + "\n" +
+                    "f(a) : " + adapter.print(fa) + "\n" +
+                    "f(b) : " + adapter.print(fb) + "\n"
+                );
+            }, as, bs);
     }
 
 
@@ -621,20 +649,6 @@ namespace test {
             as);
     }
 
-    template<typename Adapter, typename F, typename E, typename A>
-    bool binary_idempotence(const Adapter& adapter, 
-        const std::string e_name, const E& e, 
-        const std::string f_name, const F& f, 
-        const A& as
-    ) {
-        return equality(
-            adapter,
-            f_name + " [denoted \"f\"] must return the identity "+ e_name +" [denoted \"e\"] if both parameters are the same", 
-            "f(a,a)", [=](auto a){ return f(a,a);  },
-            "e     ", [=](auto a){ return e; },
-            as);
-    }
-
     template<typename Adapter, typename F, typename N, typename A>
     bool nilpotence(const Adapter& adapter, 
         const std::string n_name, const N& n, 
@@ -650,7 +664,7 @@ namespace test {
     }
 
     template<typename Adapter, typename F, typename A>
-    bool involutivity(const Adapter& adapter, 
+    bool unary_involutivity(const Adapter& adapter, 
         const std::string f_name, const F& f, 
         const A& as
     ) {
@@ -704,7 +718,7 @@ namespace test {
     }
 
     template<typename Adapter, typename F, typename G, typename A, typename B>
-    bool involutivity(const Adapter& adapter, 
+    bool binary_involutivity(const Adapter& adapter, 
         const std::string f_name, const F& f, 
         const A& as, const B& bs
     ) {
@@ -913,33 +927,6 @@ namespace test {
 
 
 
-    template<typename Adapter, typename LessThanEqual, typename Add, typename F, typename A, typename B, typename C>
-    bool triangle_inequality(const Adapter& adapter, 
-        const LessThanEqual& leq, const Add& add, 
-        const std::string f_name, const F& f, 
-        const A& as, const B& bs, const C& cs
-    ) {
-        return predicate(
-            adapter,
-            f_name + " must satisfy the triangle inequality, so for any pair of arguments the smallest sum of invocations that use those arguments is a single invocation", 
-            [=](auto a, auto b, auto c){
-                auto fac = f(a,c);
-                auto fab = f(a,b);
-                auto fbc = f(b,c);
-                auto fab_fac = add(fab, fac);
-                std::string diagnostics;
-                diagnostics += "such that: \n  f(a,c) ≤ f(a,b)+f(a,c)\n";
-                diagnostics += "f(a,c) : " + adapter.print(fac) + "\n";
-                diagnostics += "f(a,b)+f(a,c) : " + adapter.print(fab_fac) + "\n";
-                diagnostics += "f(a,b) : " + adapter.print(fab) + "\n";
-                diagnostics += "f(b,c) : " + adapter.print(fbc) + "\n";
-                return Results(leq(fac, fab_fac), diagnostics); 
-            }, 
-            as, bs, cs);
-    }
-
-
-
 
 
     template<typename Adapter, typename Finv, typename F, typename A, typename B, typename C>
@@ -1139,6 +1126,125 @@ namespace test {
                 diagnostics += "r(b,a) : " + adapter.print(rba) + "\n";
                 return Results(rab^rba, diagnostics); 
             }, as, bs);
+    }
+
+
+
+
+    template<typename Adapter, typename LessThanEqual, typename Add, typename F, typename A, typename B, typename C>
+    bool triangle_inequality(const Adapter& adapter, 
+        const LessThanEqual& leq, const Add& add, 
+        const std::string f_name, const F& f, 
+        const A& as, const B& bs, const C& cs
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must satisfy the triangle inequality, so for any pair of arguments the smallest sum of invocations that use those arguments is a single invocation", 
+            [=](auto a, auto b, auto c){
+                auto fac = f(a,c);
+                auto fab = f(a,b);
+                auto fbc = f(b,c);
+                auto fab_fac = add(fab, fac);
+                std::string diagnostics;
+                diagnostics += "such that: \n  f(a,c) ≤ f(a,b)+f(a,c)\n";
+                diagnostics += "f(a,c) : " + adapter.print(fac) + "\n";
+                diagnostics += "f(a,b)+f(a,c) : " + adapter.print(fab_fac) + "\n";
+                diagnostics += "f(a,b) : " + adapter.print(fab) + "\n";
+                diagnostics += "f(b,c) : " + adapter.print(fbc) + "\n";
+                return Results(leq(fac, fab_fac), diagnostics); 
+            }, 
+            as, bs, cs);
+    }
+
+
+
+
+    template<typename Adapter, typename F, typename G, typename A>
+    bool decreasing(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must be decreasing with respect to "+g_name+" [denoted \"g\"], so that this property of output is always less than that of input", 
+            [=](auto a){
+                auto fa = f(a);
+                auto gfa = g(fa);
+                auto ga = g(a);
+                std::string diagnostics;
+                diagnostics += "such that: \n  g(f(a)) < g(a)\n";
+                diagnostics += "g(f(a)) : " + adapter.print(gfa) + "\n";
+                diagnostics += "g(a) : " + adapter.print(ga) + "\n";
+                diagnostics += "f(a) : " + adapter.print(fa) + "\n";
+                return Results(gfa < ga, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A>
+    bool nonincreasing(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must be nonincreasing with respect to "+g_name+" [denoted \"g\"], so that this property of output is always less than or equal to that of input", 
+            [=](auto a){
+                auto fa = f(a);
+                auto gfa = g(fa);
+                auto ga = g(a);
+                std::string diagnostics;
+                diagnostics += "such that: \n  g(f(a)) ≤ g(a)\n";
+                diagnostics += "g(f(a)) : " + adapter.print(gfa) + "\n";
+                diagnostics += "g(a) : " + adapter.print(ga) + "\n";
+                diagnostics += "f(a) : " + adapter.print(fa) + "\n";
+                return Results(gfa <= ga, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A>
+    bool nondecreasing(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must be nondecreasing with respect to "+g_name+" [denoted \"g\"], so that this property of output is always greater than or equal to that of input", 
+            [=](auto a){
+                auto fa = f(a);
+                auto gfa = g(fa);
+                auto ga = g(a);
+                std::string diagnostics;
+                diagnostics += "such that: \n  g(a) ≤ g(f(a))\n";
+                diagnostics += "g(f(a)) : " + adapter.print(gfa) + "\n";
+                diagnostics += "g(a) : " + adapter.print(ga) + "\n";
+                diagnostics += "f(a) : " + adapter.print(fa) + "\n";
+                return Results(ga <= gfa, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A>
+    bool increasing(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must be increasing with respect to "+g_name+" [denoted \"g\"], so that this property of output is always greater than that of input", 
+            [=](auto a){
+                auto fa = f(a);
+                auto gfa = g(fa);
+                auto ga = g(a);
+                std::string diagnostics;
+                diagnostics += "such that: \n  g(a) < g(f(a))\n";
+                diagnostics += "g(f(a)) : " + adapter.print(gfa) + "\n";
+                diagnostics += "g(a) : " + adapter.print(ga) + "\n";
+                diagnostics += "f(a) : " + adapter.print(fa) + "\n";
+                return Results(ga < gfa, diagnostics); 
+            }, as);
     }
 
 }

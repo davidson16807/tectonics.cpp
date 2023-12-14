@@ -1,4 +1,4 @@
-many
+each, whole, known
 x	purity
 x	closure
 x	associativity
@@ -6,6 +6,7 @@ x	commutativity
 x	distributivity
 x	identity/invertibility
 x	consistency
+field
 	angular noise
 x		determinism
 x		nonpurity
@@ -15,17 +16,6 @@ x		nonpurity
 	worley noise
 x		determinism
 x		nonpurity
-meshes::subdivide
-x	purity
-x	correct size bounds
-rasters::SpheroidVoronoi
-x	purity
-x	happy path
-rasters::Grid
-x	correct sizes
-x	nontriviality
-rasters::SpheroidGrid
-rasters::LayeredSpheroidGrid
 rasters
 	to_string
 x		purity

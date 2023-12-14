@@ -20,45 +20,23 @@ x			curl noise
 			fix nonnegative quantity delta
 			fix nonnegative conserved quantity delta
 			advection
-	grid
-x		mesh
-			to_string
-			morphology
-				dilate
-				erode
-				opening
-				closing
-				black_hat
-				white_hat
-				padding
-				margin
-x		collignon
+	raster
+		unlayered
 x			to_string
-			morphology
-				dilate
-				erode
-				opening
-				closing
-				black_hat
-				white_hat
-				padding
-				margin
-		dymaxion
-			to_string
 			vector calculus
-				gradient
-				divergence
-				laplacian
-				curl
+x				gradient
+x				divergence
+x				laplacian
+x				curl
 			morphology
-				dilate
-				erode
-				opening
-				closing
-				black_hat
-				white_hat
-				padding
-				margin
+x				dilate
+x				erode
+x				opening
+x				closing
+x				black_hat
+x				white_hat
+x				padding
+x				margin
 			image segmentation
 	academics
 x		constants
@@ -107,18 +85,19 @@ shader programs
 	atmospheres
 	clouds
 	vector clouds
-	colorscale surfaces
+x	colorscale surfaces
+
 	surface normal surfaces
 
 view resources
 	projections
 		globe projection
 		map projection
-	colorscale world
+x	colorscale world
 	vector world
-	gl manager
+	gl manager?
 
 controls
-	controller state
-	controller state transformations
-	event manager
+x	controller state
+x	controller state transformations
+x	event manager

@@ -1,4 +1,6 @@
 
+#include <string>
+
 #include <index/glm/each_specialization.hpp>
 #include <index/glm/whole_specialization.hpp>
 
@@ -27,8 +29,11 @@ namespace dymaxion {
 
         template<typename Series>
         std::string print(const Series& a) const {
-            // return dymaxion::to_string(grid, a, 200);
             return spheroidal::to_string(grid, a);
+        }
+
+        std::string print(const id a) const {
+            return std::to_string(a);
         }
 
     };
