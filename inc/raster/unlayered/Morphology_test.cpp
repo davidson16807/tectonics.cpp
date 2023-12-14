@@ -144,13 +144,6 @@ TEST_CASE( "Boolean Raster erode", "[unlayered]" ) {
     
 }
 
-/*
-other tests:
-
-erosion distributive over intersection
-dilation distributive over union
-*/
-
 TEST_CASE( "Boolean Raster dilate", "[unlayered]" ) {
     unlayered::Morphology morphology;
 
@@ -178,7 +171,6 @@ TEST_CASE( "Boolean Raster dilate", "[unlayered]" ) {
 
 }
 
-
 TEST_CASE( "Boolean Raster padding", "[unlayered]" ) {
     unlayered::Morphology morphology;
 
@@ -189,7 +181,6 @@ TEST_CASE( "Boolean Raster padding", "[unlayered]" ) {
 
 }
 
-
 TEST_CASE( "Boolean Raster margin", "[unlayered]" ) {
     unlayered::Morphology morphology;
 
@@ -199,7 +190,6 @@ TEST_CASE( "Boolean Raster margin", "[unlayered]" ) {
     ));
 
 }
-
 
 TEST_CASE( "Boolean Raster opening", "[unlayered]" ) {
     unlayered::Morphology morphology;
@@ -222,7 +212,6 @@ TEST_CASE( "Boolean Raster opening", "[unlayered]" ) {
 
 }
 
-
 TEST_CASE( "Boolean Raster closing", "[unlayered]" ) {
     unlayered::Morphology morphology;
 
@@ -244,7 +233,6 @@ TEST_CASE( "Boolean Raster closing", "[unlayered]" ) {
 
 }
 
-
 TEST_CASE( "Boolean Raster black_top_hat", "[unlayered]" ) {
     unlayered::Morphology morphology;
 
@@ -254,7 +242,6 @@ TEST_CASE( "Boolean Raster black_top_hat", "[unlayered]" ) {
     ));
 
 }
-
 
 TEST_CASE( "Boolean Raster white_top_hat", "[unlayered]" ) {
     unlayered::Morphology morphology;
