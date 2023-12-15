@@ -41,32 +41,7 @@ namespace view
 		{}
 	};
 
-	/*
-	"ColorscaleSurfacesShaderProgram" is a proper object oriented class 
-	that seals off access to resources relating to an 
-	OpenGL shader program within an OpenGL Context, 
-	allowing view state to be managed statelessly elsewhere. 
-
-	It guarantees the following:
-	* all internal resources are created on initialization to minimize state transitions (RAII)
-	* all internal resources are strictly encapsulated
-	* the program can be in only one of two states: "created" and "disposed"
-	* the disposed state can be entered at any time but never exited
-	* all methods will continue to produce sensible, well defined behavior in the disposed state
-	* the output that draw() sends to the currently bound framebuffer is 
-	  a pure function of its input
-
-	Its internal state transitions can be described with the following diagram:
-
-	initialized
-        ↓        dispose()
-	 disposed
-        ↻        dispose()
-
-	Any attempt to relax guarantees made here will severely cripple 
-	your ability to reason with the code base. 
-	*/
-	class ColorscaleSurfacesShaderProgram
+	class ColorscaleShaderProgram
 	{
 	    // properties shared by all attributes within the program
 	    static constexpr GLenum normalize = GL_FALSE; // don't normalize the data
@@ -102,36 +77,27 @@ namespace view
 		bool isDisposed;
 
 	public:
-		~ColorscaleSurfacesShaderProgram()
+		~ColorscaleShaderProgram()
 		{
 		}
-		explicit ColorscaleSurfacesShaderProgram() :
+		explicit ColorscaleShaderProgram() :
 			vertexShaderGlsl(
-				std::regex_replace(
-					R"(#version 330
-				        uniform   mat4  model_matrix;
-				        uniform   mat4  view_matrix;
-				        uniform   mat4  projection_matrix;
-				        uniform   int   projection_type;
-				        uniform   float map_projection_offset;
-				        in        vec4  vertex_position;
-				        in        float vertex_color_value;
-				        in        float vertex_displacement;
-				        out       float fragment_color_value;
-				        out       float fragment_displacement;
-				        {}
-				        void main(){
-				            fragment_color_value = vertex_color_value;
-				            fragment_displacement = vertex_displacement;
-				            gl_Position = get_default_clipspace_position(
-				                vertex_position, model_matrix, view_matrix, 
-				                projection_matrix, projection_type, map_projection_offset
-				            );
-				        };
-					)",
-					std::regex("\\{\\}"), 
-					get_default_clipspace_position_glsl
-				)
+				R"(#version 330
+			        uniform   mat4  model_matrix;
+			        uniform   mat4  view_matrix;
+			        uniform   mat4  projection_matrix;
+			        in        vec4  vertex_position;
+			        in        float vertex_color_value;
+			        in        float vertex_displacement;
+			        out       float fragment_color_value;
+			        out       float fragment_displacement;
+			        void main(){
+			            fragment_color_value = vertex_color_value;
+			            fragment_displacement = vertex_displacement;
+			        	// NOTE: for a heads up display, set all `*_matrix` parameters to identity
+		            	gl_Position = projection_matrix * view_matrix * model_matrix * vertex_position;
+			        };
+				)"
 			),
 			fragmentShaderGlsl(
 				  R"(#version 330
@@ -247,7 +213,6 @@ namespace view
 			viewMatrixLocation = glGetUniformLocation(shaderProgramId, "view_matrix");
 			modelMatrixLocation = glGetUniformLocation(shaderProgramId, "model_matrix");
 			projectionMatrixLocation = glGetUniformLocation(shaderProgramId, "projection_matrix");
-			projectionTypeLocation = glGetUniformLocation(shaderProgramId, "projection_type");
 
 			colorscaleTypeLocation = glGetUniformLocation(shaderProgramId, "colorscale_type");
 			minColorLocation = glGetUniformLocation(shaderProgramId, "min_color");
@@ -345,7 +310,7 @@ namespace view
 			glBindVertexArray(attributeId);
 			glEnable(GL_CULL_FACE);  
 			glCullFace(GL_FRONT);
-			// glFrontFace(GL_CCW);  
+			glFrontFace(GL_CCW);
 
 			//ATTRIBUTES
 			glBindBuffer(GL_ARRAY_BUFFER, positionBufferId);
@@ -367,7 +332,6 @@ namespace view
 	        glUniformMatrix4fv(viewMatrixLocation,       1, GL_FALSE, glm::value_ptr(view_state.view_matrix));
 	        glUniformMatrix4fv(modelMatrixLocation,      1, GL_FALSE, glm::value_ptr(view_state.model_matrix));
 	        glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(view_state.projection_matrix));
-	        glUniform1i       (projectionTypeLocation, view_state.projection_type);
 
 	        glUniform3fv(minColorLocation, 1, glm::value_ptr(colorscale_state.min_color));
 	        glUniform3fv(maxColorLocation, 1, glm::value_ptr(colorscale_state.max_color));
@@ -376,7 +340,6 @@ namespace view
 	        glUniform1f (sealevelLocation, colorscale_state.sealevel);
 	        glUniform1i (colorscaleTypeLocation, colorscale_state.colorscale_type);
 
-			// glDrawArrays(GL_TRIANGLES, /*array offset*/ 0, /*vertex count*/ flattened_face_vertex_color_values.size());
 			glDrawArrays(gl_mode, /*array offset*/ 0, /*vertex count*/ flattened_face_vertex_color_values.size());
 		}
 	};

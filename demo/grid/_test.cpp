@@ -37,7 +37,7 @@
 #include <update/OrbitalControlState.hpp>           // OrbitalControlState
 #include <update/OrbitalControlUpdater.hpp>         // OrbitalControlUpdater
 
-#include <view/ColorscaleSurfacesShaderProgram.hpp> // ColorscaleSurfacesShaderProgram
+#include <view/ColorscaleShaderProgram.hpp> // ColorscaleShaderProgram
 
 int main() {
   // initialize GLFW
@@ -162,7 +162,7 @@ int main() {
   colorscale_state.sealevel = whole::mean(buffer_displacements);
 
   // initialize shader program
-  view::ColorscaleSurfacesShaderProgram colorscale_program;  
+  view::ColorscaleShaderProgram colorscale_program;  
 
   // initialize data for shader program
   std::vector<float> points = {
