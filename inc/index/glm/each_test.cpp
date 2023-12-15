@@ -454,7 +454,7 @@ TEST_CASE( "vector series log/exp properties", "[each]" ) {
         positive_vectors
     ));
 
-    REQUIRE(test::invertibility(adapter,
+    REQUIRE(test::unary_invertibility(adapter,
         "each::log",  EACH_TEST_UNARY_OUT_PARAMETER (glm::dvec3,30,each::log),
         "each::exp",  EACH_TEST_UNARY_OUT_PARAMETER(glm::dvec3,30,each::exp),
         positive_vectors

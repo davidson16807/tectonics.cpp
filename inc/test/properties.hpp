@@ -206,7 +206,7 @@ namespace test {
     }
 
     template<typename Adapter, typename F, typename G, typename A>
-    bool invertibility(const Adapter& adapter, 
+    bool unary_invertibility(const Adapter& adapter, 
         const std::string f_name, const F& f, 
         const std::string g_name, const G& g, 
         const A& as
@@ -259,7 +259,7 @@ namespace test {
     }
 
     template<typename Adapter, typename E, typename Finv, typename F, typename A>
-    bool invertibility(const Adapter& adapter, 
+    bool binary_invertibility(const Adapter& adapter, 
         const std::string e_name,    const E& e, 
         const std::string finv_name, const Finv& finv, 
         const std::string f_name, const F& f, 
@@ -937,12 +937,12 @@ namespace test {
     ) {
         return predicate(
             adapter,
-            f_name + " [denoted \"f\"] must imply that two arguments are equal if invoking them both on the left with with the same right argument produces the same result", 
+            f_name + " [denoted \"f\"] must imply that two arguments are equal if invoking them both on the left with with the same right argument produces the same result" + 
+                "such that: \n  f(a,b)=f(a,c) implies b=c \n",
             [=](auto a, auto b, auto c){
                 auto fac = f(a,c);
                 auto fab = f(a,b);
                 std::string diagnostics;
-                diagnostics += "such that: \n  f(a,b)=f(a,c) implies b=c \n";
                 diagnostics += "f(a,c) : " + adapter.print(fac) + "\n";
                 diagnostics += "f(a,b) : " + adapter.print(fab) + "\n";
                 return Results(adapter.equal(f(a,b), f(a,c))? adapter.equal(b,c) : true, diagnostics); 
@@ -958,12 +958,12 @@ namespace test {
     ) {
         return predicate(
             adapter,
-            f_name + " [denoted \"f\"] must imply that two arguments are equal if invoking them both on the right with with the same left argument produces the same result", 
+            f_name + " [denoted \"f\"] must imply that two arguments are equal if invoking them both on the right with with the same left argument produces the same result" + 
+                "such that: \n  f(b,a)=f(c,a) implies b=c \n", 
             [=](auto a, auto b, auto c){
                 auto fca = f(c,a);
                 auto fba = f(b,a);
                 std::string diagnostics;
-                diagnostics += "such that: \n  f(b,a)=f(c,a) implies b=c \n";
                 diagnostics += "f(c,a) : " + adapter.print(fca) + "\n";
                 diagnostics += "f(b,a) : " + adapter.print(fba) + "\n";
                 return Results(adapter.equal(f(a,b), f(a,c))? adapter.equal(b,c) : true, diagnostics); 
