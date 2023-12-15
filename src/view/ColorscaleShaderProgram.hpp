@@ -309,7 +309,7 @@ namespace view
 			glUseProgram(shaderProgramId);
 			glBindVertexArray(attributeId);
 			glEnable(GL_CULL_FACE);  
-			glCullFace(GL_FRONT);
+			glCullFace(GL_BACK);
 			glFrontFace(GL_CCW);
 
 			//ATTRIBUTES

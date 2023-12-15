@@ -52,22 +52,24 @@ namespace dymaxion {
 		constexpr id storeTriangles(const id square_id, const Series& input, Buffer& output, const id buffer_start_id=0) const 
 		{
 			using element = typename Series::value_type;
-			id buffer_id = buffer_start_id;
-			ivec2 grid_id(square_id%2? 0 : vertices_per_side-1);
+			id buffer_id(buffer_start_id);
+			bool is_southern(square_id%2);
+			ivec2 grid_id(is_southern? 0 : vertices_per_side-1);
 			element W2 = input[vertices.memory_id(IdPoint(square_id-4, grid_id))];
 			element W1 = input[vertices.memory_id(IdPoint(square_id-2, grid_id))];
 			element O  = input[vertices.memory_id(IdPoint(square_id+0, grid_id))];
 			element E1 = input[vertices.memory_id(IdPoint(square_id+2, grid_id))];
 			element E2 = input[vertices.memory_id(IdPoint(square_id+4, grid_id))];
-			buffer_id = primitives.storePoint(O,  output, buffer_id);
-			buffer_id = primitives.storePoint(W2, output, buffer_id);
-			buffer_id = primitives.storePoint(W1, output, buffer_id);
-			buffer_id = primitives.storePoint(O,  output, buffer_id);
-			buffer_id = primitives.storePoint(E1, output, buffer_id);
-			buffer_id = primitives.storePoint(E2, output, buffer_id);
-			buffer_id = primitives.storePoint(O,  output, buffer_id);
-			buffer_id = primitives.storePoint(E2, output, buffer_id);
-			buffer_id = primitives.storePoint(W2, output, buffer_id);
+			if (is_southern)
+			{
+				buffer_id = primitives.storeTriangle(O, W1, W2, output, buffer_id);
+				buffer_id = primitives.storeTriangle(O, E2, E1, output, buffer_id);
+				buffer_id = primitives.storeTriangle(O, W2, E2, output, buffer_id);
+			} else {
+				buffer_id = primitives.storeTriangle(O, W2, W1, output, buffer_id);
+				buffer_id = primitives.storeTriangle(O, E1, E2, output, buffer_id);
+				buffer_id = primitives.storeTriangle(O, E2, W2, output, buffer_id);
+			}
 			return buffer_id;
 		}
 
@@ -81,8 +83,9 @@ namespace dymaxion {
 		constexpr id storeTriangleStrips(const id square_id, const Series& input, Buffer& output, const id buffer_start_id=0) const 
 		{
 			using element = typename Series::value_type;
-			id buffer_id = buffer_start_id;
-			ivec2 grid_id(square_id%2? 0 : vertices_per_side-1);
+			id buffer_id(buffer_start_id);
+			bool is_southern(square_id%2);
+			ivec2 grid_id(is_southern? 0 : vertices_per_side-1);
 			element W2 = input[vertices.memory_id(IdPoint(square_id-4, grid_id))];
 			element W1 = input[vertices.memory_id(IdPoint(square_id-2, grid_id))];
 			element O  = input[vertices.memory_id(IdPoint(square_id+0, grid_id))];

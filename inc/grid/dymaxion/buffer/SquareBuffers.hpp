@@ -70,12 +70,8 @@ namespace dymaxion {
 					E = input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(1,0)))];
 					W = input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(0,1)))];
 					N = input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(1,1)))];
-					buffer_id = primitives.storePoint(S, output, buffer_id);
-					buffer_id = primitives.storePoint(E, output, buffer_id);
-					buffer_id = primitives.storePoint(W, output, buffer_id);
-					buffer_id = primitives.storePoint(W, output, buffer_id);
-					buffer_id = primitives.storePoint(E, output, buffer_id);
-					buffer_id = primitives.storePoint(N, output, buffer_id);
+					buffer_id = primitives.storeTriangle(S,E,W, output, buffer_id);
+					buffer_id = primitives.storeTriangle(W,E,N, output, buffer_id);
 				}
 			}
 			return buffer_id;
