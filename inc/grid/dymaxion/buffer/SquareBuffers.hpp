@@ -104,8 +104,8 @@ namespace dymaxion {
 				for (int j = 0; j < vertices_per_square_side; ++j) {
 					grid_id = ivec2(i,j-1);
 					buffer_id = primitives.storePoint(input[vertices.memory_id(IdPoint(square_id, grid_id             ))], output, buffer_id); // S
-					buffer_id = primitives.storePoint(input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(1,0)))], output, buffer_id); // E
 					buffer_id = primitives.storePoint(input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(0,1)))], output, buffer_id); // W
+					buffer_id = primitives.storePoint(input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(1,0)))], output, buffer_id); // E
 					buffer_id = primitives.storePoint(input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(1,1)))], output, buffer_id); // N
 				}
 				buffer_id = primitives.storePoint(input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(1,1)))], output, buffer_id);
