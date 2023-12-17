@@ -1,18 +1,18 @@
 // derived attributes: icosphere<Strata> -> icosphere<T>
-void get_mass_pool   (const Series<StrataStore>& crust, OxygenPlanetMassPoolTypes type, const Series<float>& out)
-void get_mass        (const Series<StrataStore>& crust, const Series<float>& out)
-void get_volume      (const Series<StrataStore>& crust, const Series<float>& out)
-void get_density     (const Series<StrataStore>& crust, const Series<float>& out)
-void get_thickness   (const Series<StrataStore>& crust, const Series<float>& out)
+void get_mass_pool   (const vector<StrataStore>& crust, OxygenPlanetMassPoolTypes type, const Series<float>& out)
+void get_mass        (const vector<StrataStore>& crust, const Series<float>& out)
+void get_volume      (const vector<StrataStore>& crust, const Series<float>& out)
+void get_density     (const vector<StrataStore>& crust, const Series<float>& out)
+void get_thickness   (const vector<StrataStore>& crust, const Series<float>& out)
 
 // derived attributes: icosphere<Strata> -> icosphere<StrataValues<T>>
-void get_thermal_conductivity    (const Series<StrataStore>& crust, Series<StrataValues<float>>& out)
-void get_overburden_mass         (const Series<StrataStore>& crust, Series<StrataValues<float>>& out)
-void get_depths                  (const Series<StrataStore>& crust, const std::array<float, mass_pool_count>& mass_pool_densities, Series<StrataValues<float>>& out)
+void get_thermal_conductivity    (const vector<StrataStore>& crust, Series<StrataValues<float>>& out)
+void get_overburden_mass         (const vector<StrataStore>& crust, Series<StrataValues<float>>& out)
+void get_depths                  (const vector<StrataStore>& crust, const std::array<float, mass_pool_count>& mass_pool_densities, Series<StrataValues<float>>& out)
 
 // setters: icosphere<Strata> x icosphere<StrataValues<T>> -> icosphere<Strata>  (remember, no state modification!)
-void set_max_temperature_received(const Series<StrataStore>& crust, const Series<StrataValues<float>>& max_temperature_received, const Series<StrataStore>& out)
-void set_max_pressure_received   (const Series<StrataStore>& crust, const Series<StrataValues<float>>& max_pressure_received,    const Series<StrataStore>& out)
+void set_max_temperature_received(const vector<StrataStore>& crust, const Series<StrataValues<float>>& max_temperature_received, const vector<StrataStore>& out)
+void set_max_pressure_received   (const vector<StrataStore>& crust, const Series<StrataValues<float>>& max_pressure_received,    const vector<StrataStore>& out)
 
 // icosphere<Strata> <-> layered<Strata>
 template <typename T>
@@ -27,12 +27,12 @@ void get_strata_from_blocks(
     const SpheroidGrid& strata_grid, const Series<StrataValues<float>>& strata_depths, Series<StrataValues<T>>& strata_values)
 
 // icosphere<Strata> -> layered<Strata>
-void get_sediment(const Series<StrataStore>& crust, const Series<Stratum>& out)
+void get_sediment(const vector<StrataStore>& crust, const Series<Stratum>& out)
 
 // model logic
 void phase_transition(
 	const Series<StrataValues<float>>& pressure, const Series<StrataValues<float>>& temperature, 
-	Series<StrataStore>& solidification_delta,
+	vector<StrataStore>& solidification_delta,
 	std::array<MassPool, Stratum::mass_pool_count> vaporization_delta&,
 	std::array<MassPool, Stratum::mass_pool_count> melting_delta&
 )
@@ -42,19 +42,19 @@ void erosion(
 	Series<Stratum>& erosion_delta, Series<Stratum>& deposited 
 )
 void weathering(
-	const Series<StrataStore>& strata, const Series<float>& surface_temperature_range, 
+	const vector<StrataStore>& strata, const Series<float>& surface_temperature_range, 
 	const float seconds, const float surface_gravity,
-	Series<StrataStore>& weathering_delta, Series<Stratum>& deposited 
+	vector<StrataStore>& weathering_delta, Series<Stratum>& deposited 
 )
 void cratering(
-	const Series<StrataStore>& strata, const glm::vec3 impact_epicenter, const float impact_energy,
-	Series<StrataStore>& excavation_delta, Series<Stratum>& deposited
+	const vector<StrataStore>& strata, const glm::vec3 impact_epicenter, const float impact_energy,
+	vector<StrataStore>& excavation_delta, Series<Stratum>& deposited
 )
 
-void merge   (const std::vector<Plate>& plates, Series<StrataStore>& master)
-void split   (const Series<StrataStore>& master, std::vector<Plate>& plates)
+void merge   (const std::vector<Plate>& plates, vector<StrataStore>& master)
+void split   (const vector<StrataStore>& master, std::vector<Plate>& plates)
 void deposit (const Series<Stratum>& master_deposited, const std::vector<Plate>& plates, std::vector<Plate>& out)
-void apply   (const Series<StrataStore>& master_delta, const std::vector<Plate>& plates, std::vector<Plate>& out)
+void apply   (const vector<StrataStore>& master_delta, const std::vector<Plate>& plates, std::vector<Plate>& out)
 void simplify(const std::vector<Plate>& plates, std::vector<Plate>& out)
 void rift    (const std::vector<Plate>& plates, std::vector<Plate>& master)
 void subduct (const std::vector<Plate>& plates, std::vector<Strata>& master)

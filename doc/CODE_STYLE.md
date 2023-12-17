@@ -3,7 +3,7 @@
 | entity              | convention |
 | ------------------- | ----------- |
 | names in general    | use whole words unless otherwise indicated,   |
-|                     | do not use acronyms or abbreviation unless it is used by layman (e.g. `id`, `si`, `gui`, `lod`, etc.),  |
+|                     | do not use acronyms or abbreviation unless it is already used by layman (e.g. `id`, `si`, `gui`, `lod`, etc.),  |
 |                     | or already adopted by a standard or 3rd party dependency (e.g. `std`, `bvec3`, `mat2`, etc.)  |
 | namespaces          | single lower case short words, e.g. `rock` or `gene`,   |
 |                     | singular, usually implying a genitive case, adjective, or determiner,  |
@@ -11,6 +11,7 @@
 | directories         | single lower case short words, e.g. `index` or `test`,  |
 |                     | singular, prefer using `nested/sub/folders/` to group related functionality (e.g. `index/series/`, `field/noise/`)  |
 |                     | or to bring attention to requirements for extended functionality (e.g. `math/glm/`, `index/si/`)  |
+|                     | folders should be ordered so that more common dependencies appear last (e.g. `dymaxion/buffer`, not `buffer/dymaxion`⁰) |
 | file names          | If the file pertains to a specific class or namespace, then use the name for that class/namespace, otherwise use   |
 |                     | `SCREAM_CASE` for standard or high level documentation (e.g. `README.md`, `GLOSSARY.tsv`, `CATEGORY.png`),  |
 |                     | `lower_case` for code files, and  |
@@ -46,6 +47,10 @@
 | constants           | determined by rules above⁶  |
 
 # NOTES:
+
+⁰ Developers will more easily recognize common dependencies like `buffer`, 
+  so nesting them deep like `dymaxion/buffer` is more likely to jog their memory,
+  whereas finding a less common dependency nested in a common one like `buffer/dymaxion` will appear disordered and out-of-place.
 
 ¹ `*er`/`*tor` will be mistaken as focusing on an object-oriented approach, which is not what we're going for.
   The important thing to remind is not that the class ought to be something with agency that does things,
