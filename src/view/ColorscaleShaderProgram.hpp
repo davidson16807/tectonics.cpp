@@ -56,6 +56,7 @@ namespace view
 		GLuint positionBufferId;
 		GLuint colorValueBufferId;
 		GLuint displacementBufferId;
+		GLuint elementVertexBufferId;
 
 		// attributes
 	    GLuint positionLocation;
@@ -242,6 +243,8 @@ namespace view
 			glGenBuffers(1, &displacementBufferId);
 			displacementLocation = glGetAttribLocation(shaderProgramId, "vertex_displacement");
 		    glEnableVertexAttribArray(displacementLocation);
+
+			glGenBuffers(1, &elementVertexBufferId);
 		}
 
 		void dispose()
@@ -287,9 +290,10 @@ namespace view
 		*/
 		template <typename T>
 		void draw(
-			const std::vector<float>& flattened_face_vertex_positions, 
-			const std::vector<T>& flattened_face_vertex_color_values, 
-			const std::vector<float>& flattened_face_vertex_displacements, 
+			const std::vector<float>& vertex_positions, 
+			const std::vector<T>& vertex_color_values, 
+			const std::vector<float>& vertex_displacements, 
+			const std::vector<unsigned int>& element_vertex_ids,
 			const ColorscaleSurfacesViewState<T>& colorscale_state,
 			const ViewState& view_state,
 			const unsigned int gl_mode=GL_TRIANGLES
@@ -303,8 +307,8 @@ namespace view
 				return; 
 			}
 
-			assert(flattened_face_vertex_positions.size()/3 == flattened_face_vertex_color_values.size());
-			assert(flattened_face_vertex_color_values.size() == flattened_face_vertex_displacements.size());
+			assert(vertex_positions.size()/3 == vertex_color_values.size());
+			assert(vertex_color_values.size() == vertex_displacements.size());
 
 			glUseProgram(shaderProgramId);
 			glBindVertexArray(attributeId);
@@ -314,19 +318,22 @@ namespace view
 
 			//ATTRIBUTES
 			glBindBuffer(GL_ARRAY_BUFFER, positionBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*flattened_face_vertex_positions.size(), &flattened_face_vertex_positions.front(), GL_DYNAMIC_DRAW);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*vertex_positions.size(), &vertex_positions.front(), GL_DYNAMIC_DRAW);
 		    glEnableVertexAttribArray(positionLocation);
             glVertexAttribPointer(positionLocation, 3, GL_FLOAT, normalize, stride, offset);
 
 			glBindBuffer(GL_ARRAY_BUFFER, colorValueBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*flattened_face_vertex_color_values.size(), &flattened_face_vertex_color_values.front(), GL_DYNAMIC_DRAW);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*vertex_color_values.size(), &vertex_color_values.front(), GL_DYNAMIC_DRAW);
 		    glEnableVertexAttribArray(colorValueLocation);
             glVertexAttribPointer(colorValueLocation, 1, GL_FLOAT, normalize, stride, offset);
 
 			glBindBuffer(GL_ARRAY_BUFFER, displacementBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*flattened_face_vertex_displacements.size(), &flattened_face_vertex_displacements.front(), GL_DYNAMIC_DRAW);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*vertex_displacements.size(), &vertex_displacements.front(), GL_DYNAMIC_DRAW);
 		    glEnableVertexAttribArray(displacementLocation);
             glVertexAttribPointer(displacementLocation, 1, GL_FLOAT, normalize, stride, offset);
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementVertexBufferId);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(T)*element_vertex_ids.size(), &element_vertex_ids.front(), GL_DYNAMIC_DRAW);
 
     		// UNIFORMS
 	        glUniformMatrix4fv(viewMatrixLocation,       1, GL_FALSE, glm::value_ptr(view_state.view_matrix));
@@ -340,7 +347,8 @@ namespace view
 	        glUniform1f (sealevelLocation, colorscale_state.sealevel);
 	        glUniform1i (colorscaleTypeLocation, colorscale_state.colorscale_type);
 
-			glDrawArrays(gl_mode, /*array offset*/ 0, /*vertex count*/ flattened_face_vertex_color_values.size());
+			glDrawElements(gl_mode, /*element count*/ element_vertex_ids.size(), GL_UNSIGNED_INT, 0);
 		}
 	};
 }
+

@@ -81,7 +81,7 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
   double radius(2.0);
-  int vertices_per_square_side(2);
+  int vertices_per_square_side(200);
   dymaxion::Grid grid(radius, vertices_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
 
@@ -130,15 +130,17 @@ int main() {
 
   // flatten raster for WebGL
   dymaxion::WholeGridBuffers grids(vertices_per_square_side);
-  std::vector<float> buffer_color_values(grids.triangle_strips_size(vertex_colored_scalars));
-  std::vector<float> buffer_displacements(grids.triangle_strips_size(vertex_displacements));
-  std::vector<float> buffer_positions(grids.triangle_strips_size(vertex_positions));
+  std::vector<float> buffer_color_values(grid.vertex_count());
+  std::vector<float> buffer_displacements(grid.vertex_count());
+  std::vector<float> buffer_positions(3*grid.vertex_count());
+  std::vector<unsigned int> buffer_element_vertex_ids(grids.triangle_strips_size(vertex_positions));
   std::cout << "vertex count:        " << grid.vertex_count() << std::endl;
   std::cout << "vertices per meridian" << grid.vertices_per_meridian() << std::endl;
   std::cout << "scalar buffer size:  " << buffer_displacements.size() << std::endl;
-  grids.storeTriangleStrips(vertex_colored_scalars, buffer_color_values);
-  grids.storeTriangleStrips(vertex_displacements, buffer_displacements);
-  grids.storeTriangleStrips(vertex_positions, buffer_positions);
+  each::copy(vertex_colored_scalars, buffer_color_values);
+  each::copy(vertex_displacements, buffer_displacements);
+  each::copy(series::vector_deinterleave<3>(vertex_positions), buffer_positions);
+  grids.storeTriangleStrips(series::range<unsigned int>(grid.vertex_count()), buffer_element_vertex_ids);
 
   // initialize control state
   update::OrbitalControlState control_state;
@@ -188,6 +190,7 @@ int main() {
         buffer_positions, 
         buffer_color_values, 
         buffer_displacements,
+        buffer_element_vertex_ids,
         // points,
         // colors,
         // colors,
