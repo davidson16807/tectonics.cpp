@@ -27,32 +27,24 @@ x			purity
 x			increasing
 x			associative
 x			distributes over union
-x			happy path
 		erode
 x			purity
 x			decreasing
 x			distributes over intersection
-x			happy path
 		opening
 x			purity
 x			idempotent
-x			happy path
 		closing
 x			purity
 x			idempotent
-x			happy path
 		black_hat
 x			purity
-x			happy path
 		white_hat
 x			purity
-x			happy path
 		padding
 x			purity
-x			happy path
 		margin
 x			purity
-x			happy path
 	image segmentation
 		purity
 		translation/rotation invariant

@@ -31,13 +31,14 @@
 #include <grid/dymaxion/series.hpp>                 // dymaxion::BufferVertexIds
 #include <grid/dymaxion/buffer/WholeGridBuffers.hpp>// dymaxion::WholeGridBuffers
 
-#include <raster/unlayered/Morphology.hpp>          // Morphology
-#include <raster/spheroidal/string_cast.hpp>        // to_string
+#include <raster/unlayered/Morphology.hpp>          // unlayered::Morphology
+#include <raster/spheroidal/string_cast.hpp>        // spheroidal::to_string
 
-#include <update/OrbitalControlState.hpp>           // OrbitalControlState
-#include <update/OrbitalControlUpdater.hpp>         // OrbitalControlUpdater
+#include <update/OrbitalControlState.hpp>           // update::OrbitalControlState
+#include <update/OrbitalControlUpdater.hpp>         // update::OrbitalControlUpdater
 
-#include <view/ColorscaleShaderProgram.hpp> // ColorscaleShaderProgram
+#include <view/ColorscaleShaderProgram.hpp>         // view::ColorscaleShaderProgram
+#include <view/IndicatorSwarmShaderProgram.hpp>     // view::IndicatorSwarmShaderProgram
 
 int main() {
   // initialize GLFW
@@ -81,7 +82,7 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
   double radius(2.0);
-  int vertices_per_square_side(200);
+  int vertices_per_square_side(30);
   dymaxion::Grid grid(radius, vertices_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
 

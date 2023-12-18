@@ -55,3 +55,32 @@ we simply change it during the draw call without disposing resources.
 If changing something requires managing highly intertwined private 
 resources like shaders or programs, we simply wipe the slate clean
 on the first sign that anything falls out of sync.
+
+# Terminology
+When implementing `*ShaderPrograms`, we use the same terminology that's standard for OpenGl.
+We attempt definitions for them as follows:
+
+* fragment   the smallest entity considered by a fragment shader
+* vertex     the smallest entity considered by a geometry shader
+* point      a vertex that is rendered in isolation
+* line       a duple:  (vertex, vertex)
+* triangle   a triple: (vertex, vertex, vertex)
+* primitive  a point, line, triangle, or triangle strip
+* element    a duple: (vertex, primitive), it is a specific usage of a vertex in a primitive
+* instance   a collection of primitives that are intended for reuse
+* uniform    aspects that do not vary over the course of a `draw()` call
+* model      the set of all graphics that are uniform
+* view       the orientation of a camera that are uniform
+* projection aspects of perspective that are uniform
+* attribute  aspects that are not uniform, either across elements, vertices, or instances
+* static     something that is not intended to change once per frame
+* dynamic    something that is expected to change once per frame
+
+We also introduce or coopt the following terms:
+
+* graphic    either a primitive or an instance
+* pictorial  a graphic that is only meant to represent an abstract concept, such as an arrow or point
+* indicator  a pictorial instance
+* cloud      a static set of graphics where primitives do not share vertices, it is typically large in order to better use resources
+* swarm      a dynamic set of graphics where primitives do not share vertices, it is typically large in order to better use resources
+* surface    a set of graphics where primitives share vertices and vice versa
