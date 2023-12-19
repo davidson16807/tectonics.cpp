@@ -45,7 +45,7 @@
 #include <update/OrbitalControlState.hpp>           // update::OrbitalControlState
 #include <update/OrbitalControlUpdater.hpp>         // update::OrbitalControlUpdater
 
-#include <view/ColorscaleShaderProgram.hpp>         // view::ColorscaleShaderProgram
+#include <view/ColorscaleSurfaceShaderProgram.hpp>         // view::ColorscaleSurfaceShaderProgram
 #include <view/IndicatorSwarmShaderProgram.hpp>     // view::IndicatorSwarmShaderProgram
 
 int main() {
@@ -215,7 +215,7 @@ int main() {
   colorscale_state.sealevel = whole::mean(buffer_displacements);
 
   // initialize shader program
-  view::ColorscaleShaderProgram colorscale_program;  
+  view::ColorscaleSurfaceShaderProgram colorscale_program;  
   view::IndicatorSwarmShaderProgram indicator_program;  
 
   // initialize data for shader program

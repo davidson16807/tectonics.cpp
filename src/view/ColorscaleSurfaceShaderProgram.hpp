@@ -41,7 +41,7 @@ namespace view
 		{}
 	};
 
-	class ColorscaleShaderProgram
+	class ColorscaleSurfaceShaderProgram
 	{
 	    // properties shared by all attributes within the program
 	    static constexpr GLenum normalize = GL_FALSE; // don't normalize the data
@@ -78,10 +78,10 @@ namespace view
 		bool isDisposed;
 
 	public:
-		~ColorscaleShaderProgram()
+		~ColorscaleSurfaceShaderProgram()
 		{
 		}
-		explicit ColorscaleShaderProgram() :
+		explicit ColorscaleSurfaceShaderProgram() :
 			vertexShaderGlsl(
 				R"(#version 330
 			        uniform   mat4  model_matrix;
