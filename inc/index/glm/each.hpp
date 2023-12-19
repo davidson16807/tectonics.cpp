@@ -72,5 +72,70 @@ namespace each {
 	#undef EACH_UNARY_FUNCTION
 	#undef EACH_BINARY_FUNCTION
 
+
+	template <int L, typename A, typename Out>
+	void vector_deinterleave(const A& a, Out& out)
+	{
+		assert(compatible(a,out));
+		auto size = out.size();
+		for (std::size_t i = 0; i < size; ++i)
+		{
+			out[i] = a[i/L][i%L];
+		}
+	}
+
+	template <int L, typename A, typename Out>
+	void vector_interleave(const A& a, Out& out)
+	{
+		// assert(compatible(a,out));
+		auto size = a.size();
+		for (std::size_t i = 0; i < size; ++i)
+		{
+			out[i/L][i%L] = a[i];
+		}
+	}
+
+	template <typename Out, typename X, typename Y>
+	void vector2_zip(const X x, const Y y, Out& out)
+	{
+		assert(compatible(x,out));
+		assert(compatible(y,out));
+		auto size = out.size();
+		using value_type = typename Out::value_type;
+		for (std::size_t i = 0; i < size; ++i)
+		{
+			out[i] = value_type(x[i],y[i]);
+		}
+	}
+
+	template <typename Out, typename X, typename Y, typename Z>
+	void vector3_zip(const X x, const Y y, const Z z, Out& out)
+	{
+		assert(compatible(x,out));
+		assert(compatible(y,out));
+		assert(compatible(z,out));
+		auto size = out.size();
+		using value_type = typename Out::value_type;
+		for (std::size_t i = 0; i < size; ++i)
+		{
+			out[i] = value_type(x[i],y[i],z[i]);
+		}
+	}
+
+	template <typename Out, typename X, typename Y, typename Z, typename W>
+	void vector4_zip(const X& x, const Y& y, const Z& z, const W& w, Out& out)
+	{
+		assert(compatible(x,out));
+		assert(compatible(y,out));
+		assert(compatible(z,out));
+		assert(compatible(w,out));
+		auto size = out.size();
+		using value_type = typename Out::value_type;
+		for (std::size_t i = 0; i < size; ++i)
+		{
+			out[i] = value_type(x[i],y[i],z[i],w[i]);
+		}
+	}
+
 }
 

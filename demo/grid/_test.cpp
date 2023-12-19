@@ -18,14 +18,22 @@
 #include <index/series/Map.hpp>
 #include <index/series/Uniform.hpp>
 #include <index/series/glm/VectorDeinterleave.hpp>
+#include <index/glm/each.hpp>                           // get
 #include <index/each.hpp>                           // get
 #include <index/whole.hpp>                          // max, mean
 #include <index/known.hpp>                          // greaterThan
-#include <index/series/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
 #include <index/series/Range.hpp>                   // Range
+
+#include <index/series/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
+#include <index/series/noise/glm/UnitVectorNoise.hpp>
+#include <index/series/noise/GaussianNoise.hpp>
 
 #include <field/noise/ValueNoise.hpp>               // ValueNoise
 #include <field/noise/SquareNoise.hpp>              // SquareNoise
+#include <field/noise/EliasNoise.hpp>               // EliasNoise
+#include <field/VectorZip.hpp>
+
+#include <buffer/PyramidBuffers.hpp>                // buffer::PyramidBuffers
 
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
 #include <grid/dymaxion/series.hpp>                 // dymaxion::BufferVertexIds
@@ -82,9 +90,10 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
   double radius(2.0);
-  int vertices_per_square_side(30);
+  int vertices_per_square_side(10);
   dymaxion::Grid grid(radius, vertices_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
+  dymaxion::VertexNormals vertex_normals(grid);
 
   // auto vertex_colored_scalars = dymaxion::square_ids(grid);
 
@@ -129,7 +138,28 @@ int main() {
   //     vertex_positions
   // );
 
-  // flatten raster for WebGL
+  auto vertex_directions = known::store(
+      grid.vertex_count(),
+      series::map(
+          field::vector3_zip(
+              field::elias_noise<double>(
+                      series::unit_vector_noise<3>(10.0, 1.0e4), 
+                      series::gaussian(11.0, 1.1e4), 
+                      1000),
+              field::elias_noise<double>(
+                      series::unit_vector_noise<3>(11.0, 1.1e4), 
+                      series::gaussian(11.0, 1.1e4), 
+                      1000),
+              field::elias_noise<double>(
+                      series::unit_vector_noise<3>(12.0, 1.2e4), 
+                      series::gaussian(11.0, 1.1e4), 
+                      1000)
+          ),
+          dymaxion::vertex_positions(grid)
+      )
+  );
+
+  // flatten raster for OpenGL
   dymaxion::WholeGridBuffers grids(vertices_per_square_side);
   std::vector<float> buffer_color_values(grid.vertex_count());
   std::vector<float> buffer_displacements(grid.vertex_count());
@@ -142,6 +172,26 @@ int main() {
   each::copy(vertex_displacements, buffer_displacements);
   each::copy(series::vector_deinterleave<3>(vertex_positions), buffer_positions);
   grids.storeTriangleStrips(series::range<unsigned int>(grid.vertex_count()), buffer_element_vertex_ids);
+
+  // flatten vector raster for OpenGL
+  buffer::PyramidBuffers<int, float> pyramids;
+  std::vector<float> vectors_element_position(pyramids.triangles_size<3>(3));
+  std::vector<float> vectors_instance_position(3*grid.vertex_count());
+  std::vector<float> vectors_instance_heading(3*grid.vertex_count());
+  std::vector<float> vectors_instance_up(3*grid.vertex_count());
+  std::vector<float> vectors_instance_scale(grid.vertex_count(), 1.0f);
+  std::vector<float> vectors_instance_color(4*grid.vertex_count(), 1.0f);
+  float pyramid_radius(grid.total_circumference()/(8.0*grid.vertices_per_meridian()));
+  pyramids.storeTriangles(
+      glm::vec3(-1,0,0) * 2.5f * pyramid_radius, 
+      glm::vec3(1,0,0)  * 2.5f * pyramid_radius, 
+      glm::vec3(0,0,1), pyramid_radius, 3,
+      vectors_element_position);
+  each::vector_deinterleave<3>(known::mult(vertex_positions, series::uniform(1.03)),  vectors_instance_position);
+  each::vector_deinterleave<3>(vertex_directions, vectors_instance_heading);
+  each::vector_deinterleave<3>(vertex_normals,    vectors_instance_up);
+  each::length                (vertex_directions, vectors_instance_scale);
+  each::div                   (vectors_instance_scale, series::uniform(whole::max(vectors_instance_scale)), vectors_instance_scale);
 
   // initialize control state
   update::OrbitalControlState control_state;
@@ -166,6 +216,7 @@ int main() {
 
   // initialize shader program
   view::ColorscaleShaderProgram colorscale_program;  
+  view::IndicatorSwarmShaderProgram indicator_program;  
 
   // initialize data for shader program
   std::vector<float> points = {
@@ -199,6 +250,17 @@ int main() {
         view_state,
         GL_TRIANGLE_STRIP
       );
+      indicator_program.draw(
+        vectors_element_position,
+        vectors_instance_position,
+        vectors_instance_heading,
+        vectors_instance_up,
+        vectors_instance_scale,
+        vectors_instance_color,
+        view_state,
+        GL_TRIANGLES
+      );
+
       // put stuff we've been drawing onto the display
       glfwSwapBuffers(window);
 
