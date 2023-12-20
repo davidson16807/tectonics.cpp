@@ -12,6 +12,18 @@
 
 namespace crust
 {
+    rasters::SpheroidGrid<> get_earth_grid()
+    {
+        meshes::mesh earth_mesh(meshes::icosahedron.vertices, meshes::icosahedron.faces);
+        earth_mesh = meshes::subdivide(earth_mesh); series::normalize(earth_mesh.vertices, earth_mesh.vertices);
+        earth_mesh = meshes::subdivide(earth_mesh); series::normalize(earth_mesh.vertices, earth_mesh.vertices);
+        earth_mesh = meshes::subdivide(earth_mesh); series::normalize(earth_mesh.vertices, earth_mesh.vertices);
+        earth_mesh = meshes::subdivide(earth_mesh); series::normalize(earth_mesh.vertices, earth_mesh.vertices);
+        series::mult(earth_mesh.vertices, units::earth_radius, earth_mesh.vertices);
+        rasters::Grid earth_grid(earth_mesh.vertices, earth_mesh.faces);
+    }
+
+
     /*
     rasters::SpheroidGrid<> get_earth_grid()
     {
