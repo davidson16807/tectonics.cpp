@@ -237,7 +237,7 @@ namespace view
 		*/
 		template <typename T, glm::qualifier Q=glm::defaultp>
 		void draw(
-			const std::vector<float>& vertex_positions, 
+			const std::vector<glm::vec3>& vertex_positions, 
 			const std::vector<T>& vertex_red,
 			const std::vector<T>& vertex_green,
 			const std::vector<T>& vertex_blue,
@@ -258,11 +258,11 @@ namespace view
 				return; 
 			}
 
-			assert(vertex_positions.size()/3 == vertex_red.size());
-			assert(vertex_red.size() == vertex_displacements.size());
-			assert(vertex_green.size() == vertex_displacements.size());
-			assert(vertex_blue.size() == vertex_displacements.size());
-			assert(vertex_opacity.size() == vertex_displacements.size());
+			assert(vertex_red.size() == vertex_positions.size());
+			assert(vertex_green.size() == vertex_positions.size());
+			assert(vertex_blue.size() == vertex_positions.size());
+			assert(vertex_opacity.size() == vertex_positions.size());
+			assert(vertex_displacements.size() == vertex_positions.size());
 
 			glUseProgram(shaderProgramId);
 			glBindVertexArray(attributeId);
@@ -272,7 +272,7 @@ namespace view
 
 			//ATTRIBUTES
 			glBindBuffer(GL_ARRAY_BUFFER, positionBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*vertex_positions.size(), &vertex_positions.front(), GL_DYNAMIC_DRAW);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*vertex_positions.size(), &vertex_positions.front(), GL_DYNAMIC_DRAW);
 		    glEnableVertexAttribArray(positionLocation);
             glVertexAttribPointer(positionLocation, 3, GL_FLOAT, normalize, stride, offset);
 

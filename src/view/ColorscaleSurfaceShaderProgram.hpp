@@ -294,7 +294,7 @@ namespace view
 		*/
 		template <typename T>
 		void draw(
-			const std::vector<float>& vertex_positions, 
+			const std::vector<glm::vec3>& vertex_positions, 
 			const std::vector<T>& vertex_color_values, 
 			const std::vector<float>& vertex_displacements, 
 			const std::vector<unsigned int>& element_vertex_ids,
@@ -311,8 +311,8 @@ namespace view
 				return; 
 			}
 
-			assert(vertex_positions.size()/3 == vertex_color_values.size());
-			assert(vertex_color_values.size() == vertex_displacements.size());
+			assert(vertex_positions.size() == vertex_color_values.size());
+			assert(vertex_positions.size() == vertex_displacements.size());
 
 			glUseProgram(shaderProgramId);
 			glBindVertexArray(attributeId);
@@ -322,7 +322,7 @@ namespace view
 
 			//ATTRIBUTES
 			glBindBuffer(GL_ARRAY_BUFFER, positionBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*vertex_positions.size(), &vertex_positions.front(), GL_DYNAMIC_DRAW);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*vertex_positions.size(), &vertex_positions.front(), GL_DYNAMIC_DRAW);
 		    glEnableVertexAttribArray(positionLocation);
             glVertexAttribPointer(positionLocation, 3, GL_FLOAT, normalize, stride, offset);
 
