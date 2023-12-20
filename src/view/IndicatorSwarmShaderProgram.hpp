@@ -59,7 +59,6 @@ namespace view
 	    GLuint modelMatrixLocation;
 	    GLuint viewMatrixLocation;
 		GLuint projectionMatrixLocation;
-		GLuint projectionTypeLocation;
 
 		bool isDisposed;
 

@@ -45,8 +45,9 @@
 #include <update/OrbitalControlState.hpp>           // update::OrbitalControlState
 #include <update/OrbitalControlUpdater.hpp>         // update::OrbitalControlUpdater
 
-#include <view/ColorscaleSurfaceShaderProgram.hpp>         // view::ColorscaleSurfaceShaderProgram
-#include <view/IndicatorSwarmShaderProgram.hpp>     // view::IndicatorSwarmShaderProgram
+#include <view/ColorscaleSurfaceShaderProgram.hpp>   // view::ColorscaleSurfaceShaderProgram
+#include <view/IndicatorSwarmShaderProgram.hpp>      // view::IndicatorSwarmShaderProgram
+#include <view/MultichannelSurfaceShaderProgram.hpp> // view::MultichannelSurfaceShaderProgram
 
 int main() {
   // initialize GLFW
@@ -130,13 +131,13 @@ int main() {
   // std::vector<double> vertex_displacements(grid.vertex_count());
   // each::copy(out, vertex_displacements);
 
-  auto vertex_displacements = series::uniform(0.0f);
-  // auto vertex_displacements = series::map(
-  //     field::value_noise3(
-  //         field::square_noise(
-  //             series::unit_interval_noise(12.0f, 1.2e4f))),
-  //     vertex_positions
-  // );
+  // auto vertex_displacements = series::uniform(0.0f);
+  auto vertex_displacements = series::map(
+      field::value_noise3(
+          field::square_noise(
+              series::unit_interval_noise(12.0f, 1.2e4f))),
+      vertex_positions
+  );
 
   auto vertex_directions = known::store(
       grid.vertex_count(),
@@ -182,12 +183,13 @@ int main() {
   std::vector<float> vectors_instance_scale(grid.vertex_count(), 1.0f);
   std::vector<float> vectors_instance_color(4*grid.vertex_count(), 1.0f);
   float pyramid_radius(grid.total_circumference()/(8.0*grid.vertices_per_meridian()));
+  float pyramid_halflength(2.5f*pyramid_radius);
   pyramids.storeTriangles(
-      glm::vec3(-1,0,0) * 2.5f * pyramid_radius, 
-      glm::vec3(1,0,0)  * 2.5f * pyramid_radius, 
+      glm::vec3(-1,0,0) * pyramid_halflength, 
+      glm::vec3(1,0,0)  * pyramid_halflength, 
       glm::vec3(0,0,1), pyramid_radius, 3,
       vectors_element_position);
-  each::vector_deinterleave<3>(known::mult(vertex_positions, series::uniform(1.03)),  vectors_instance_position);
+  each::vector_deinterleave<3>(known::mult(vertex_positions, series::uniform(1+pyramid_halflength/grid.total_radius())),  vectors_instance_position);
   each::vector_deinterleave<3>(vertex_directions, vectors_instance_heading);
   each::vector_deinterleave<3>(vertex_normals,    vectors_instance_up);
   each::length                (vertex_directions, vectors_instance_scale);
@@ -217,6 +219,7 @@ int main() {
   // initialize shader program
   view::ColorscaleSurfaceShaderProgram colorscale_program;  
   view::IndicatorSwarmShaderProgram indicator_program;  
+  view::MultichannelSurfaceShaderProgram debug_program;
 
   // initialize data for shader program
   std::vector<float> points = {
@@ -238,15 +241,25 @@ int main() {
   while(!glfwWindowShouldClose(window)) {
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      colorscale_program.draw(
-        buffer_positions, 
-        buffer_color_values, 
-        buffer_displacements,
+      // colorscale_program.draw(
+      //   buffer_positions, 
+      //   buffer_color_values, 
+      //   buffer_displacements,
+      //   buffer_element_vertex_ids,
+      //   colorscale_state,
+      //   view_state,
+      //   GL_TRIANGLE_STRIP
+      // );
+      debug_program.draw(
+        buffer_positions,
+        buffer_color_values, // red
+        buffer_displacements, // green
+        std::vector<float>(grid.vertex_count(), 0.0f), // blue
+        std::vector<float>(grid.vertex_count(), 1.0f), // opacity
+        std::vector<float>(grid.vertex_count(), 0.0f), // displacement
         buffer_element_vertex_ids,
-        // points,
-        // colors,
-        // colors,
-        colorscale_state,
+        glm::vec4(whole::max(buffer_color_values), 0.0f, 0.0f, 0.0f),
+        glm::vec4(whole::min(buffer_color_values), 1.0f, 1.0f, 1.0f),
         view_state,
         GL_TRIANGLE_STRIP
       );

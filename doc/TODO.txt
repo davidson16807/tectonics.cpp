@@ -1,10 +1,5 @@
 TODO:
 
-IndicatorSwarmShaderProgram
-ColorscaleSurfaceShaderProgram
-ColorZipSurfaceShaderProgram
-VectorRasterBuffer
-
 plate class
 rotation
 image segmentation

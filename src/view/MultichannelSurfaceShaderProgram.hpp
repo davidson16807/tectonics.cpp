@@ -15,38 +15,14 @@
 namespace view 
 {
 
-	enum ColorscaleType
-	{
-		heatscale,
-		topographic,
-		monochrome
-	};
-	template <typename T>
-	struct ColorscaleSurfacesViewState
-	{
-		glm::vec3 min_color;
-		glm::vec3 max_color;
-		T min_value;
-		T max_value;
-		float sealevel;
-		ColorscaleType colorscale_type;
-
-		ColorscaleSurfacesViewState():
-			min_color(0),
-			max_color(1),
-			min_value(0),
-			max_value(1),
-			sealevel(0),
-			colorscale_type(ColorscaleType::heatscale)
-		{}
-	};
-
 	/*
 	`ColorscaleSurfaceShader` renders a surface (i.e. where vertices are referenced by an element buffer) 
-	in such a way that color represents an abstract concept as a function of a single scalar value.
-	*/
+	in a way that tries to maximize the number of possible scalar values that can be usefully depicted at a single time.
+	This is intended mainly for debugging. 
 
-	class ColorscaleSurfaceShaderProgram
+	To accomplish this goal, each color channel can be controlled separately with its own scalar buffer.
+	*/
+	class MultichannelSurfaceShaderProgram
 	{
 	    // properties shared by all attributes within the program
 	    static constexpr GLenum normalize = GL_FALSE; // don't normalize the data
@@ -58,111 +34,69 @@ namespace view
 
 		GLuint shaderProgramId;
 		GLuint attributeId;
+
 		GLuint positionBufferId;
-		GLuint colorValueBufferId;
+		GLuint redBufferId;
+		GLuint greenBufferId;
+		GLuint blueBufferId;
+		GLuint opacityBufferId;
 		GLuint displacementBufferId;
 		GLuint elementVertexBufferId;
 
 		// attributes
 	    GLuint positionLocation;
-	    GLuint colorValueLocation;
+	    GLuint redLocation;
+	    GLuint greenLocation;
+	    GLuint blueLocation;
+	    GLuint opacityLocation;
 	    GLuint displacementLocation;
 
 		// uniforms
 	    GLint viewMatrixLocation;
 		GLint modelMatrixLocation;
 		GLint projectionMatrixLocation;
-		GLint colorscaleTypeLocation;
-		GLint minColorLocation;
-		GLint maxColorLocation;
-		GLint minValueLocation;
-		GLint maxValueLocation;
-		GLint sealevelLocation;
+		GLint minValuesLocation;
+		GLint maxValuesLocation;
 
 		bool isDisposed;
 
 	public:
-		~ColorscaleSurfaceShaderProgram()
+		~MultichannelSurfaceShaderProgram()
 		{
 		}
-		explicit ColorscaleSurfaceShaderProgram() :
+		explicit MultichannelSurfaceShaderProgram() :
 			vertexShaderGlsl(
 				R"(#version 330
-			        uniform   mat4  model_matrix;
-			        uniform   mat4  view_matrix;
-			        uniform   mat4  projection_matrix;
-			        in        vec4  vertex_position;
-			        in        float vertex_color_value;
-			        in        float vertex_displacement;
-			        out       float fragment_color_value;
-			        out       float fragment_displacement;
+			        uniform mat4  model_matrix;
+			        uniform mat4  view_matrix;
+			        uniform mat4  projection_matrix;
+			        uniform vec4  min_values;
+			        uniform vec4  max_values;
+			        in      vec4  vertex_position;
+			        in      float vertex_red;
+			        in      float vertex_green;
+			        in      float vertex_blue;
+			        in      float vertex_opacity;
+			        in      float vertex_displacement;
+			        out     vec4  fragment_color_in;
 			        void main(){
-			            fragment_color_value = vertex_color_value;
-			            fragment_displacement = vertex_displacement;
 			        	// NOTE: for a heads up display, set all `*_matrix` parameters to identity
 		            	gl_Position = projection_matrix * view_matrix * model_matrix * vertex_position;
+			        	fragment_color_in = smoothstep(min_values, max_values, 
+			        		vec4(vertex_red, vertex_green, vertex_blue, vertex_opacity));
 			        };
 				)"
 			),
 			fragmentShaderGlsl(
-				  R"(#version 330
+				R"(#version 330
 			        precision mediump float;
-			        uniform int   colorscale_type;
-			        uniform vec3  min_color;
-			        uniform vec3  max_color;
-			        uniform float min_value;
-			        uniform float max_value;
-			        uniform float sealevel;
-			        in      float fragment_color_value;
-			        in      float fragment_displacement;
+			        in      vec4  fragment_color_in;
 			        out     vec4  fragment_color;
 
-			        /*
-			        converts float from 0-1 to a heat map visualization
-			        credit goes to Gaëtan Renaudeau: http://greweb.me/glsl.js/examples/heatmap/
-			        */
-			        vec4 get_rgb_signal_of_fraction_for_heatmap (float v) {
-			            float value = 1.0-v;
-			            return vec4((0.5+0.5*smoothstep(0.0, 0.1, value))*vec3(
-			                smoothstep(0.5, 0.3, value),
-			                value < 0.3 ? smoothstep(0.0, 0.3, value) : smoothstep(1.0, 0.6, value),
-			                smoothstep(0.4, 0.6, value)
-			            ), 1);
-			        }
-
-			        //converts a float ranging from [-1,1] to a topographic map visualization
-			        vec4 get_rgb_signal_of_fraction_for_topomap(float value) {
-			            //deep ocean
-			            vec3 color = vec3(0,0,0.8);
-			            //shallow ocean
-			            color = mix(color, vec3(0.5,0.5,1), smoothstep(-1., -0.01, value));
-			            //lowland
-			            color = mix(color, vec3(0,0.55,0), smoothstep(-0.01, 0.01, value));
-			            //highland
-			            color = mix(color, vec3(0.95,0.95,0), smoothstep(0., 0.45, value));
-			            //mountain
-			            color = mix(color, vec3(0.5,0.5,0), smoothstep(0.2, 0.7, value));
-			            //mountain
-			            color = mix(color, vec3(0.5,0.5,0.5), smoothstep(0.4, 0.8, value));
-			            //snow cap
-			            color = mix(color, vec3(0.95), smoothstep(0.75, 1., value));
-			            return vec4(color, 1.);
-			        }
-
 			        void main() {
-			        	float color_value_fraction = smoothstep(min_value, max_value, fragment_color_value);
-			            vec4 color_without_ocean = 
-			              colorscale_type == 0? get_rgb_signal_of_fraction_for_heatmap(color_value_fraction) 
-			            : colorscale_type == 1? get_rgb_signal_of_fraction_for_topomap(color_value_fraction)
-			            :                       vec4( mix( min_color, max_color, color_value_fraction ), 1.0);
-			            vec4 color_with_ocean = mix(
-			                vec4(0.), 
-			                color_without_ocean, 
-			                fragment_displacement < sealevel? 0.5 : 1.0
-			            );
-			            fragment_color = color_with_ocean;
+		        		fragment_color = fragment_color_in;
 			        }
-					)"
+				)"
 			),
 			isDisposed(false)
 		{
@@ -219,12 +153,8 @@ namespace view
 			modelMatrixLocation = glGetUniformLocation(shaderProgramId, "model_matrix");
 			projectionMatrixLocation = glGetUniformLocation(shaderProgramId, "projection_matrix");
 
-			colorscaleTypeLocation = glGetUniformLocation(shaderProgramId, "colorscale_type");
-			minColorLocation = glGetUniformLocation(shaderProgramId, "min_color");
-			maxColorLocation = glGetUniformLocation(shaderProgramId, "max_color");
-			minValueLocation = glGetUniformLocation(shaderProgramId, "min_value");
-			maxValueLocation = glGetUniformLocation(shaderProgramId, "max_value");
-			sealevelLocation = glGetUniformLocation(shaderProgramId, "sealevel");
+			minValuesLocation = glGetUniformLocation(shaderProgramId, "min_values");
+			maxValuesLocation = glGetUniformLocation(shaderProgramId, "max_values");
 
 	        // ATTRIBUTES
 
@@ -239,9 +169,24 @@ namespace view
 		    glEnableVertexAttribArray(positionLocation);
 
 			// create a new vertex array buffer, VBO
-			glGenBuffers(1, &colorValueBufferId);
-			colorValueLocation = glGetAttribLocation(shaderProgramId, "vertex_color_value");
-		    glEnableVertexAttribArray(colorValueLocation);
+			glGenBuffers(1, &redBufferId);
+			redLocation = glGetAttribLocation(shaderProgramId, "vertex_red");
+		    glEnableVertexAttribArray(redLocation);
+
+			// create a new vertex array buffer, VBO
+			glGenBuffers(1, &greenBufferId);
+			greenLocation = glGetAttribLocation(shaderProgramId, "vertex_green");
+		    glEnableVertexAttribArray(greenLocation);
+
+			// create a new vertex array buffer, VBO
+			glGenBuffers(1, &blueBufferId);
+			blueLocation = glGetAttribLocation(shaderProgramId, "vertex_blue");
+		    glEnableVertexAttribArray(blueLocation);
+
+			// create a new vertex array buffer, VBO
+			glGenBuffers(1, &opacityBufferId);
+			opacityLocation = glGetAttribLocation(shaderProgramId, "vertex_opacity");
+		    glEnableVertexAttribArray(opacityLocation);
 
 			// create a new vertex array buffer, VBO
 			glGenBuffers(1, &displacementBufferId);
@@ -256,7 +201,7 @@ namespace view
         	if (!isDisposed) 
         	{
 		        isDisposed = true;
-		        glDeleteBuffers(1, &colorValueBufferId);
+		        glDeleteBuffers(1, &redBufferId);
 		        glDeleteBuffers(1, &positionBufferId);
 		        glDeleteBuffers(1, &displacementBufferId);
 		        glDeleteProgram(shaderProgramId);
@@ -278,9 +223,7 @@ namespace view
 	    resources like shaders or programs, we simply wipe the slate clean
 	    on the first sign that anything falls out of sync.
 	    */
-		template <typename T>
 		bool canDepict(
-			const ColorscaleSurfacesViewState<T>& colorscale_state, 
 			const ViewState& view_state
 		){
 			return !isDisposed;
@@ -292,17 +235,21 @@ namespace view
 	    Does nothing if unable to depict the given view state, as determined by canDepict().
 		The only state that is allowed to be modified is that of the framebuffer
 		*/
-		template <typename T>
+		template <typename T, glm::qualifier Q=glm::defaultp>
 		void draw(
 			const std::vector<float>& vertex_positions, 
-			const std::vector<T>& vertex_color_values, 
+			const std::vector<T>& vertex_red,
+			const std::vector<T>& vertex_green,
+			const std::vector<T>& vertex_blue,
+			const std::vector<T>& vertex_opacity,
 			const std::vector<float>& vertex_displacements, 
 			const std::vector<unsigned int>& element_vertex_ids,
-			const ColorscaleSurfacesViewState<T>& colorscale_state,
+			const glm::vec<4,T,Q>& min_values,
+			const glm::vec<4,T,Q>& max_values,
 			const ViewState& view_state,
 			const unsigned int gl_mode=GL_TRIANGLES
 		){
-			if (!canDepict(colorscale_state, view_state))
+			if (!canDepict(view_state))
 			{
 				return;
 			}
@@ -311,8 +258,11 @@ namespace view
 				return; 
 			}
 
-			assert(vertex_positions.size()/3 == vertex_color_values.size());
-			assert(vertex_color_values.size() == vertex_displacements.size());
+			assert(vertex_positions.size()/3 == vertex_red.size());
+			assert(vertex_red.size() == vertex_displacements.size());
+			assert(vertex_green.size() == vertex_displacements.size());
+			assert(vertex_blue.size() == vertex_displacements.size());
+			assert(vertex_opacity.size() == vertex_displacements.size());
 
 			glUseProgram(shaderProgramId);
 			glBindVertexArray(attributeId);
@@ -326,10 +276,25 @@ namespace view
 		    glEnableVertexAttribArray(positionLocation);
             glVertexAttribPointer(positionLocation, 3, GL_FLOAT, normalize, stride, offset);
 
-			glBindBuffer(GL_ARRAY_BUFFER, colorValueBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*vertex_color_values.size(), &vertex_color_values.front(), GL_DYNAMIC_DRAW);
-		    glEnableVertexAttribArray(colorValueLocation);
-            glVertexAttribPointer(colorValueLocation, 1, GL_FLOAT, normalize, stride, offset);
+			glBindBuffer(GL_ARRAY_BUFFER, redBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*vertex_red.size(), &vertex_red.front(), GL_DYNAMIC_DRAW);
+		    glEnableVertexAttribArray(redLocation);
+            glVertexAttribPointer(redLocation, 1, GL_FLOAT, normalize, stride, offset);
+
+			glBindBuffer(GL_ARRAY_BUFFER, greenBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*vertex_green.size(), &vertex_green.front(), GL_DYNAMIC_DRAW);
+		    glEnableVertexAttribArray(greenLocation);
+            glVertexAttribPointer(greenLocation, 1, GL_FLOAT, normalize, stride, offset);
+
+			glBindBuffer(GL_ARRAY_BUFFER, blueBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*vertex_blue.size(), &vertex_blue.front(), GL_DYNAMIC_DRAW);
+		    glEnableVertexAttribArray(blueLocation);
+            glVertexAttribPointer(blueLocation, 1, GL_FLOAT, normalize, stride, offset);
+
+			glBindBuffer(GL_ARRAY_BUFFER, opacityBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*vertex_opacity.size(), &vertex_opacity.front(), GL_DYNAMIC_DRAW);
+		    glEnableVertexAttribArray(opacityLocation);
+            glVertexAttribPointer(opacityLocation, 1, GL_FLOAT, normalize, stride, offset);
 
 			glBindBuffer(GL_ARRAY_BUFFER, displacementBufferId);
 	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*vertex_displacements.size(), &vertex_displacements.front(), GL_DYNAMIC_DRAW);
@@ -344,12 +309,8 @@ namespace view
 	        glUniformMatrix4fv(modelMatrixLocation,      1, GL_FALSE, glm::value_ptr(view_state.model_matrix));
 	        glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(view_state.projection_matrix));
 
-	        glUniform3fv(minColorLocation, 1, glm::value_ptr(colorscale_state.min_color));
-	        glUniform3fv(maxColorLocation, 1, glm::value_ptr(colorscale_state.max_color));
-	        glUniform1f (minValueLocation, colorscale_state.min_value);
-	        glUniform1f (maxValueLocation, colorscale_state.max_value);
-	        glUniform1f (sealevelLocation, colorscale_state.sealevel);
-	        glUniform1i (colorscaleTypeLocation, colorscale_state.colorscale_type);
+	        glUniform4fv(minValuesLocation, 1, glm::value_ptr(min_values));
+	        glUniform4fv(maxValuesLocation, 1, glm::value_ptr(max_values));
 
 			glDrawElements(gl_mode, /*element count*/ element_vertex_ids.size(), GL_UNSIGNED_INT, 0);
 		}
