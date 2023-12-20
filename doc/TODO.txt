@@ -18,8 +18,6 @@ stratigraphy
 
 graphics optimizations:
 * use gl_FragCoord with depth testing to render atmosphere using a coarse spheroid mesh
-* use glDrawElements to reuse vertices when drawing dymaxion grid
-* use glDrawArraysInstanced or glDrawElementsInstanced to render vector fields with instancing
 * find way to send procedural data directly to gl buffer, possibly using glBufferSubData or glMapBuffer: 
   https://learnopengl.com/Advanced-OpenGL/Advanced-Data
 * find way to incrementally update buffer for LOD chunks using glBufferSubData

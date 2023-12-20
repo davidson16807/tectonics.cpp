@@ -217,12 +217,12 @@ namespace view
 		*/
 		template <typename T>
 		void draw(
-			const std::vector<T>& element_position, 
-			const std::vector<T>& instance_position, 
-			const std::vector<T>& instance_heading, 
-			const std::vector<T>& instance_up, 
+			const std::vector<glm::vec3>& element_position, 
+			const std::vector<glm::vec3>& instance_position, 
+			const std::vector<glm::vec3>& instance_heading, 
+			const std::vector<glm::vec3>& instance_up, 
 			const std::vector<T>& instance_scale, 
-			const std::vector<T>& instance_color, 
+			const std::vector<glm::vec4>& instance_color, 
 			const ViewState& view_state,
 			const unsigned int gl_mode=GL_TRIANGLES
 		){
@@ -243,37 +243,31 @@ namespace view
 
 			//ATTRIBUTES
 			glBindBuffer(GL_ARRAY_BUFFER, elementPositionBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*element_position.size(), &element_position.front(), GL_STATIC_DRAW);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*element_position.size(), &element_position.front(), GL_STATIC_DRAW);
 		    glEnableVertexAttribArray(elementPositionLocation);
             glVertexAttribPointer(elementPositionLocation, 3, GL_FLOAT, normalize, stride, offset);
 		    glVertexAttribDivisor(instancePositionBufferId,0);
 
 			glBindBuffer(GL_ARRAY_BUFFER, instancePositionBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*instance_position.size(), &instance_position.front(), GL_DYNAMIC_DRAW);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*instance_position.size(), &instance_position.front(), GL_DYNAMIC_DRAW);
 		    glEnableVertexAttribArray(instancePositionLocation);
             glVertexAttribPointer(instancePositionLocation, 3, GL_FLOAT, normalize, stride, offset);
 		    glVertexAttribDivisor(instancePositionLocation,1);
 
 			glBindBuffer(GL_ARRAY_BUFFER, instanceHeadingBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*instance_heading.size(), &instance_heading.front(), GL_DYNAMIC_DRAW);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*instance_heading.size(), &instance_heading.front(), GL_DYNAMIC_DRAW);
 		    glEnableVertexAttribArray(instanceHeadingLocation);
             glVertexAttribPointer(instanceHeadingLocation, 3, GL_FLOAT, normalize, stride, offset);
 		    glVertexAttribDivisor(instanceHeadingLocation,1);
 
 			glBindBuffer(GL_ARRAY_BUFFER, instanceUpBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*instance_up.size(), &instance_up.front(), GL_DYNAMIC_DRAW);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*instance_up.size(), &instance_up.front(), GL_DYNAMIC_DRAW);
 		    glEnableVertexAttribArray(instanceUpLocation);
             glVertexAttribPointer(instanceUpLocation, 3, GL_FLOAT, normalize, stride, offset);
 		    glVertexAttribDivisor(instanceUpLocation,1);
 
-			glBindBuffer(GL_ARRAY_BUFFER, instanceScaleBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*instance_color.size(), &instance_color.front(), GL_DYNAMIC_DRAW);
-		    glEnableVertexAttribArray(instanceScaleLocation);
-            glVertexAttribPointer(instanceScaleLocation, 1, GL_FLOAT, normalize, stride, offset);
-		    glVertexAttribDivisor(instanceScaleLocation,1);
-
 			glBindBuffer(GL_ARRAY_BUFFER, instanceColorBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*instance_color.size(), &instance_color.front(), GL_DYNAMIC_DRAW);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4)*instance_color.size(), &instance_color.front(), GL_DYNAMIC_DRAW);
 		    glEnableVertexAttribArray(instanceColorLocation);
             glVertexAttribPointer(instanceColorLocation, 4, GL_FLOAT, normalize, stride, offset);
 
@@ -288,7 +282,7 @@ namespace view
 	        glUniformMatrix4fv(modelMatrixLocation,      1, GL_FALSE, glm::value_ptr(view_state.model_matrix));
 	        glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(view_state.projection_matrix));
 
-			glDrawArraysInstanced(gl_mode, /*array offset*/ 0, /*vertex count*/ element_position.size()/3, instance_position.size()/3);
+			glDrawArraysInstanced(gl_mode, /*array offset*/ 0, /*vertex count*/ element_position.size(), instance_position.size());
 		}
 	};
 }

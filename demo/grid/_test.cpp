@@ -176,12 +176,12 @@ int main() {
 
   // flatten vector raster for OpenGL
   buffer::PyramidBuffers<int, float> pyramids;
-  std::vector<float> vectors_element_position(pyramids.triangles_size<3>(3));
-  std::vector<float> vectors_instance_position(3*grid.vertex_count());
-  std::vector<float> vectors_instance_heading(3*grid.vertex_count());
-  std::vector<float> vectors_instance_up(3*grid.vertex_count());
-  std::vector<float> vectors_instance_scale(grid.vertex_count(), 1.0f);
-  std::vector<float> vectors_instance_color(4*grid.vertex_count(), 1.0f);
+  std::vector<glm::vec3> vectors_element_position(pyramids.triangles_size<3>(3));
+  std::vector<glm::vec3> vectors_instance_position(grid.vertex_count());
+  std::vector<glm::vec3> vectors_instance_heading(grid.vertex_count());
+  std::vector<glm::vec3> vectors_instance_up(grid.vertex_count());
+  std::vector<glm::vec4> vectors_instance_color(grid.vertex_count(), glm::vec4(1.0f));
+  std::vector<float> vectors_instance_scale(grid.vertex_count());
   float pyramid_radius(grid.total_circumference()/(8.0*grid.vertices_per_meridian()));
   float pyramid_halflength(2.5f*pyramid_radius);
   pyramids.storeTriangles(
@@ -189,11 +189,11 @@ int main() {
       glm::vec3(1,0,0)  * pyramid_halflength, 
       glm::vec3(0,0,1), pyramid_radius, 3,
       vectors_element_position);
-  each::vector_deinterleave<3>(known::mult(vertex_positions, series::uniform(1+pyramid_halflength/grid.total_radius())),  vectors_instance_position);
-  each::vector_deinterleave<3>(vertex_directions, vectors_instance_heading);
-  each::vector_deinterleave<3>(vertex_normals,    vectors_instance_up);
-  each::length                (vertex_directions, vectors_instance_scale);
-  each::div                   (vectors_instance_scale, series::uniform(whole::max(vectors_instance_scale)), vectors_instance_scale);
+  each::copy   (known::mult(vertex_positions, series::uniform(1+pyramid_halflength/grid.total_radius())),  vectors_instance_position);
+  each::copy   (vertex_directions, vectors_instance_heading);
+  each::copy   (vertex_normals,    vectors_instance_up);
+  each::length (vertex_directions, vectors_instance_scale);
+  each::div    (vectors_instance_scale, series::uniform(whole::max(vectors_instance_scale)), vectors_instance_scale);
 
   // initialize control state
   update::OrbitalControlState control_state;
