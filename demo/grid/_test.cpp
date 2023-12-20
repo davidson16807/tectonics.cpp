@@ -128,11 +128,10 @@ int main() {
   // morphology.closing(grid, mask, out, scratch);
   // std::cout << "closing:" << std::endl;
   // std::cout << spheroidal::to_string(grid, out) << std::endl;
-  // std::vector<double> vertex_displacements(grid.vertex_count());
-  // each::copy(out, vertex_displacements);
+  // std::vector<double> vertex_scalars2(grid.vertex_count());
+  // each::copy(out, vertex_scalars2);
 
-  // auto vertex_displacements = series::uniform(0.0f);
-  auto vertex_displacements = series::map(
+  auto vertex_scalars2 = series::map(
       field::value_noise3(
           field::square_noise(
               series::unit_interval_noise(12.0f, 1.2e4f))),
@@ -163,14 +162,15 @@ int main() {
   // flatten raster for OpenGL
   dymaxion::WholeGridBuffers grids(vertices_per_square_side);
   std::vector<float> buffer_color_values(grid.vertex_count());
-  std::vector<float> buffer_displacements(grid.vertex_count());
+  std::vector<float> buffer_scalars2(grid.vertex_count());
+  std::vector<float> buffer_uniform(grid.vertex_count(), 0.0f);
   std::vector<glm::vec3> buffer_positions(grid.vertex_count());
   std::vector<unsigned int> buffer_element_vertex_ids(grids.triangle_strips_size(vertex_positions));
   std::cout << "vertex count:        " << grid.vertex_count() << std::endl;
   std::cout << "vertices per meridian" << grid.vertices_per_meridian() << std::endl;
-  std::cout << "scalar buffer size:  " << buffer_displacements.size() << std::endl;
+  std::cout << "scalar buffer size:  " << buffer_scalars2.size() << std::endl;
   each::copy(vertex_colored_scalars, buffer_color_values);
-  each::copy(vertex_displacements, buffer_displacements);
+  each::copy(vertex_scalars2, buffer_scalars2);
   each::copy(vertex_positions, buffer_positions);
   grids.storeTriangleStrips(series::range<unsigned int>(grid.vertex_count()), buffer_element_vertex_ids);
 
@@ -214,7 +214,7 @@ int main() {
   // view_state.view_matrix = glm::mat4(1);
   view::ColorscaleSurfacesViewState<float> colorscale_state;
   colorscale_state.max_value = whole::max(buffer_color_values);
-  colorscale_state.sealevel = whole::mean(buffer_displacements);
+  colorscale_state.sealevel = whole::mean(buffer_scalars2);
 
   // initialize shader program
   view::ColorscaleSurfaceShaderProgram colorscale_program;  
@@ -244,7 +244,8 @@ int main() {
       colorscale_program.draw(
         buffer_positions, 
         buffer_color_values, 
-        buffer_displacements,
+        buffer_uniform,
+        buffer_scalars2,
         buffer_element_vertex_ids,
         colorscale_state,
         view_state,
@@ -253,7 +254,7 @@ int main() {
       // debug_program.draw(
       //   buffer_positions,
       //   buffer_color_values, // red
-      //   buffer_displacements, // green
+      //   buffer_scalars2, // green
       //   std::vector<float>(grid.vertex_count(), 0.0f), // blue
       //   std::vector<float>(grid.vertex_count(), 1.0f), // opacity
       //   std::vector<float>(grid.vertex_count(), 0.0f), // displacement
