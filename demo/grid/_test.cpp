@@ -131,6 +131,13 @@ int main() {
   // std::vector<double> vertex_scalars2(grid.vertex_count());
   // each::copy(out, vertex_scalars2);
 
+  auto vertex_scalars1 = series::map(
+      field::value_noise3(
+          field::square_noise(
+              series::unit_interval_noise(11.0f, 1.1e4f))),
+      vertex_positions
+  );
+
   auto vertex_scalars2 = series::map(
       field::value_noise3(
           field::square_noise(
@@ -163,13 +170,14 @@ int main() {
   dymaxion::WholeGridBuffers grids(vertices_per_square_side);
   std::vector<float> buffer_color_values(grid.vertex_count());
   std::vector<float> buffer_scalars2(grid.vertex_count());
+  std::vector<float> buffer_scalars1(grid.vertex_count());
   std::vector<float> buffer_uniform(grid.vertex_count(), 1.0f);
   std::vector<glm::vec3> buffer_positions(grid.vertex_count());
   std::vector<unsigned int> buffer_element_vertex_ids(grids.triangle_strips_size(vertex_positions));
   std::cout << "vertex count:        " << grid.vertex_count() << std::endl;
   std::cout << "vertices per meridian" << grid.vertices_per_meridian() << std::endl;
-  std::cout << "scalar buffer size:  " << buffer_scalars2.size() << std::endl;
   each::copy(vertex_colored_scalars, buffer_color_values);
+  each::copy(vertex_scalars1, buffer_scalars1);
   each::copy(vertex_scalars2, buffer_scalars2);
   each::copy(vertex_positions, buffer_positions);
   grids.storeTriangleStrips(series::range<unsigned int>(grid.vertex_count()), buffer_element_vertex_ids);
@@ -214,7 +222,7 @@ int main() {
   // view_state.view_matrix = glm::mat4(1);
   view::ColorscaleSurfacesViewState colorscale_state;
   colorscale_state.max_color_value = whole::max(buffer_color_values);
-  colorscale_state.sealevel = whole::mean(buffer_scalars2);
+  colorscale_state.darken_threshold = whole::mean(buffer_scalars2);
 
   // initialize shader program
   view::ColorscaleSurfaceShaderProgram colorscale_program;  
@@ -242,10 +250,11 @@ int main() {
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       colorscale_program.draw(
-        buffer_positions, 
-        buffer_color_values, 
-        buffer_scalars2,
-        buffer_scalars2,
+        buffer_positions,    // position
+        buffer_color_values, // color value
+        buffer_uniform,      // displacement
+        buffer_scalars1,     // darken
+        buffer_scalars2,     // culling
         buffer_element_vertex_ids,
         colorscale_state,
         view_state,

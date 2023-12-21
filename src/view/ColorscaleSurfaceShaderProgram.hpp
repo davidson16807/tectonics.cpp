@@ -27,11 +27,7 @@ namespace view
 		glm::vec3 max_color;
 		float min_color_value;
 		float max_color_value;
-		float min_saturate;
-		float max_saturate;
-		float min_saturate_value;
-		float max_saturate_value;
-		float sealevel;
+		float darken_threshold;
 		float culling_threshold;
 		ColorscaleType colorscale_type;
 
@@ -40,10 +36,6 @@ namespace view
 			max_color(1),
 			min_color_value(0),
 			max_color_value(1),
-			min_saturate(0),
-			max_saturate(1),
-			min_saturate_value(0),
-			max_saturate_value(1),
 			culling_threshold(0.2f),
 			colorscale_type(ColorscaleType::heatscale)
 		{}
@@ -69,6 +61,7 @@ namespace view
 		GLuint positionBufferId;
 		GLuint colorValueBufferId;
 		GLuint displacementBufferId;
+		GLuint darkenBufferId;
 		GLuint cullingBufferId;
 		GLuint elementVertexBufferId;
 
@@ -76,6 +69,7 @@ namespace view
 	    GLuint positionLocation;
 	    GLuint colorValueLocation;
 	    GLuint displacementLocation;
+	    GLuint darkenLocation;
 	    GLuint cullingLocation;
 
 		// uniforms
@@ -88,7 +82,7 @@ namespace view
 		GLint maxColorLocation;
 		GLint minColorValueLocation;
 		GLint maxColorValueLocation;
-		GLint sealevelLocation;
+		GLint darken_thresholdLocation;
 
 		bool isDisposed;
 
@@ -106,12 +100,15 @@ namespace view
 			        in        vec4  vertex_position;
 			        in        float vertex_color_value;
 			        in        float vertex_displacement;
+			        in        float vertex_darken;
 			        in        float vertex_culling;
 			        out       float fragment_color_value;
 			        out       float fragment_displacement;
+			        out       float fragment_darken;
 			        void main(){
 			            fragment_color_value = vertex_color_value;
 			            fragment_displacement = vertex_displacement;
+			            fragment_darken = vertex_darken;
 			            /* 
 			            NOTES: 
 			            * For a heads up display, set all `*_matrix` parameters to identity.
@@ -135,9 +132,10 @@ namespace view
 			        uniform vec3  max_color;
 			        uniform float min_color_value;
 			        uniform float max_color_value;
-			        uniform float sealevel;
+			        uniform float darken_threshold;
 			        in      float fragment_color_value;
 			        in      float fragment_displacement;
+			        in      float fragment_darken;
 			        out     vec4  fragment_color;
 
 			        /*
@@ -182,7 +180,7 @@ namespace view
 				            mix(
 				                vec3(0.), 
 				                color_without_ocean, 
-				                fragment_displacement < sealevel? 0.5 : 1.0
+				                fragment_darken < darken_threshold? 0.5 : 1.0
 				            ), 
 				            1.0
 				        );
@@ -250,7 +248,7 @@ namespace view
 			maxColorLocation = glGetUniformLocation(shaderProgramId, "max_color");
 			minColorValueLocation = glGetUniformLocation(shaderProgramId, "min_color_value");
 			maxColorValueLocation = glGetUniformLocation(shaderProgramId, "max_color_value");
-			sealevelLocation = glGetUniformLocation(shaderProgramId, "sealevel");
+			darken_thresholdLocation = glGetUniformLocation(shaderProgramId, "darken_threshold");
 
 	        // ATTRIBUTES
 
@@ -275,6 +273,11 @@ namespace view
 		    glEnableVertexAttribArray(displacementLocation);
 
 			// create a new vertex array buffer, VBO
+			glGenBuffers(1, &darkenBufferId);
+			darkenLocation = glGetAttribLocation(shaderProgramId, "vertex_darken");
+		    glEnableVertexAttribArray(darkenLocation);
+
+			// create a new vertex array buffer, VBO
 			glGenBuffers(1, &cullingBufferId);
 			cullingLocation = glGetAttribLocation(shaderProgramId, "vertex_culling");
 		    glEnableVertexAttribArray(cullingLocation);
@@ -290,6 +293,7 @@ namespace view
 		        glDeleteBuffers(1, &colorValueBufferId);
 		        glDeleteBuffers(1, &positionBufferId);
 		        glDeleteBuffers(1, &displacementBufferId);
+		        glDeleteBuffers(1, &darkenBufferId);
 		        glDeleteBuffers(1, &cullingBufferId);
 		        glDeleteProgram(shaderProgramId);
         	}
@@ -328,6 +332,7 @@ namespace view
 			const std::vector<glm::vec3>& vertex_position, 
 			const std::vector<T>& vertex_color_value, 
 			const std::vector<float>& vertex_displacement, 
+			const std::vector<float>& vertex_darken, 
 			const std::vector<float>& vertex_culling, 
 			const std::vector<unsigned int>& element_vertex_ids,
 			const ColorscaleSurfacesViewState& colorscale_state,
@@ -345,6 +350,7 @@ namespace view
 
 			assert(vertex_position.size() == vertex_color_value.size());
 			assert(vertex_position.size() == vertex_displacement.size());
+			assert(vertex_position.size() == vertex_darken.size());
 
 			glUseProgram(shaderProgramId);
 			glBindVertexArray(attributeId);
@@ -368,6 +374,11 @@ namespace view
 		    glEnableVertexAttribArray(displacementLocation);
             glVertexAttribPointer(displacementLocation, 1, GL_FLOAT, normalize, stride, offset);
 
+			glBindBuffer(GL_ARRAY_BUFFER, darkenBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*vertex_darken.size(), &vertex_darken.front(), GL_DYNAMIC_DRAW);
+		    glEnableVertexAttribArray(darkenLocation);
+            glVertexAttribPointer(darkenLocation, 1, GL_FLOAT, normalize, stride, offset);
+
 			glBindBuffer(GL_ARRAY_BUFFER, cullingBufferId);
 	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*vertex_culling.size(), &vertex_culling.front(), GL_DYNAMIC_DRAW);
 		    glEnableVertexAttribArray(cullingLocation);
@@ -385,7 +396,7 @@ namespace view
 	        glUniform3fv(maxColorLocation, 1, glm::value_ptr(colorscale_state.max_color));
 	        glUniform1f (minColorValueLocation, colorscale_state.min_color_value);
 	        glUniform1f (maxColorValueLocation, colorscale_state.max_color_value);
-	        glUniform1f (sealevelLocation, colorscale_state.sealevel);
+	        glUniform1f (darken_thresholdLocation, colorscale_state.darken_threshold);
 	        glUniform1i (colorscaleTypeLocation, colorscale_state.colorscale_type);
 	        glUniform1f (cullingThresholdLocation, colorscale_state.culling_threshold);
 
