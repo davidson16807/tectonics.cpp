@@ -100,18 +100,18 @@ int main() {
 
   // auto vertex_colored_scalars = series::range();
 
-  // std::vector<double> vertex_colored_scalars(grid.vertex_count());
-  // for (int i = 0; i < grid.vertex_count(); ++i)
-  // {
-  //   vertex_colored_scalars[i] = grid.vertex_position(i).z;
-  // }
+  std::vector<double> vertex_colored_scalars(grid.vertex_count());
+  for (int i = 0; i < grid.vertex_count(); ++i)
+  {
+    vertex_colored_scalars[i] = grid.vertex_position(i).z;
+  }
 
-  auto vertex_colored_scalars = series::map(
-      field::value_noise3(
-          field::square_noise(
-              series::unit_interval_noise(11.0f, 1.1e4f))),
-      vertex_positions
-  );
+  // auto vertex_colored_scalars = series::map(
+  //     field::value_noise3(
+  //         field::square_noise(
+  //             series::unit_interval_noise(11.0f, 1.1e4f))),
+  //     vertex_positions
+  // );
 
   // auto mask = 
   //   known::greaterThan(series::uniform(0.5), 

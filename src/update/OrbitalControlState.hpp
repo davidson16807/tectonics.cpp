@@ -46,9 +46,9 @@ namespace update
 		{
 			glm::mat4 I   = glm::mat4(1.0f);
 			glm::mat4 out = glm::mat4(1.0f);
-			out = glm::translate(I, glm::vec3(0,0, -(std::exp2(log2_height)+min_zoom_distance)));
-			out = out * glm::rotate(I, angular_position.y, glm::vec3(1,0,0));
-			out = out * glm::rotate(I, angular_position.x, glm::vec3(0,1,0));
+			out = glm::translate(I, glm::vec3(0,0,-(std::exp2(log2_height)+min_zoom_distance)));
+			out = out * glm::rotate(I, angular_position.y-float(M_PI)/2.0f, glm::vec3(1,0,0));
+			out = out * glm::rotate(I, angular_position.x, glm::vec3(0,0,1));
 			out = glm::rotate(I, angular_direction.y, glm::vec3(1,0,0)) * out;
 			out = glm::rotate(I, angular_direction.x, glm::vec3(0,1,0)) * out;
 			return out;
