@@ -29,6 +29,7 @@ namespace view
 		T min_value;
 		T max_value;
 		float sealevel;
+		float opacity_threshold;
 		ColorscaleType colorscale_type;
 
 		ColorscaleSurfacesViewState():
@@ -37,6 +38,7 @@ namespace view
 			min_value(0),
 			max_value(1),
 			sealevel(0),
+			opacity_threshold(0.1f),
 			colorscale_type(ColorscaleType::heatscale)
 		{}
 	};
@@ -74,6 +76,7 @@ namespace view
 	    GLint viewMatrixLocation;
 		GLint modelMatrixLocation;
 		GLint projectionMatrixLocation;
+		GLint opacityThresholdLocation;
 		GLint colorscaleTypeLocation;
 		GLint minColorLocation;
 		GLint maxColorLocation;
@@ -93,6 +96,7 @@ namespace view
 			        uniform   mat4  model_matrix;
 			        uniform   mat4  view_matrix;
 			        uniform   mat4  projection_matrix;
+			        uniform   float opacity_threshold;
 			        in        vec4  vertex_position;
 			        in        float vertex_color_value;
 			        in        float vertex_displacement;
@@ -111,7 +115,7 @@ namespace view
 			            To provide at least some method of culling, 
 			            we set vertex position outside clipspace if vertex_opacity is toggled off.
 			            */
-		            	gl_Position = vertex_opacity < 0.5? 
+		            	gl_Position = vertex_opacity < opacity_threshold? 
 		            		vec4(2.0, 2.0, 2.0, 1.0)
 		            	:   projection_matrix * view_matrix * model_matrix * vertex_position;
 			        };
@@ -233,6 +237,7 @@ namespace view
 			viewMatrixLocation = glGetUniformLocation(shaderProgramId, "view_matrix");
 			modelMatrixLocation = glGetUniformLocation(shaderProgramId, "model_matrix");
 			projectionMatrixLocation = glGetUniformLocation(shaderProgramId, "projection_matrix");
+			opacityThresholdLocation = glGetUniformLocation(shaderProgramId, "opacity_threshold");
 
 			colorscaleTypeLocation = glGetUniformLocation(shaderProgramId, "colorscale_type");
 			minColorLocation = glGetUniformLocation(shaderProgramId, "min_color");
@@ -377,6 +382,7 @@ namespace view
 	        glUniform1f (maxValueLocation, colorscale_state.max_value);
 	        glUniform1f (sealevelLocation, colorscale_state.sealevel);
 	        glUniform1i (colorscaleTypeLocation, colorscale_state.colorscale_type);
+	        glUniform1f (opacityThresholdLocation, colorscale_state.opacity_threshold);
 
 			glDrawElements(gl_mode, /*element count*/ element_vertex_ids.size(), GL_UNSIGNED_INT, 0);
 		}
