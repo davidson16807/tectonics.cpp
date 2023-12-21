@@ -161,12 +161,13 @@ namespace view
 			              colorscale_type == 0? get_rgb_signal_of_fraction_for_heatmap(color_value_fraction) 
 			            : colorscale_type == 1? get_rgb_signal_of_fraction_for_topomap(color_value_fraction)
 			            :                       mix( min_color, max_color, color_value_fraction );
-			            vec3 color_with_ocean = mix(
-			                vec3(0.), 
-			                color_without_ocean, 
-			                fragment_displacement < sealevel? 0.5 : 1.0
-			            );
-			            fragment_color = vec4(color_with_ocean, fragment_opacity);
+			            fragment_color = vec4(
+				            mix(
+				                vec3(0.), 
+				                color_without_ocean, 
+				                fragment_displacement < sealevel? 0.5 : 1.0
+				            ), 
+				            fragment_opacity);
 			        }
 				)"
 			),
@@ -332,6 +333,8 @@ namespace view
 			glEnable(GL_CULL_FACE);  
 			glCullFace(GL_BACK);
 			glFrontFace(GL_CCW);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glEnable(GL_BLEND);
 
 			//ATTRIBUTES
 			glBindBuffer(GL_ARRAY_BUFFER, positionBufferId);

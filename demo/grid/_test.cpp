@@ -163,7 +163,7 @@ int main() {
   dymaxion::WholeGridBuffers grids(vertices_per_square_side);
   std::vector<float> buffer_color_values(grid.vertex_count());
   std::vector<float> buffer_scalars2(grid.vertex_count());
-  std::vector<float> buffer_uniform(grid.vertex_count(), 0.0f);
+  std::vector<float> buffer_uniform(grid.vertex_count(), 1.0f);
   std::vector<glm::vec3> buffer_positions(grid.vertex_count());
   std::vector<unsigned int> buffer_element_vertex_ids(grids.triangle_strips_size(vertex_positions));
   std::cout << "vertex count:        " << grid.vertex_count() << std::endl;
