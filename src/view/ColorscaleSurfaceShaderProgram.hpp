@@ -99,13 +99,21 @@ namespace view
 			        in        float vertex_opacity;
 			        out       float fragment_color_value;
 			        out       float fragment_displacement;
-			        out       float fragment_opacity;
 			        void main(){
 			            fragment_color_value = vertex_color_value;
 			            fragment_displacement = vertex_displacement;
-			            fragment_opacity = vertex_opacity;
-			        	// NOTE: for a heads up display, set all `*_matrix` parameters to identity
-		            	gl_Position = projection_matrix * view_matrix * model_matrix * vertex_position;
+			            /* 
+			            NOTES: 
+			            * For a heads up display, set all `*_matrix` parameters to identity.
+			            * To disable a vertex, set vertex_opacity to 0.0.
+			            Alpha blending is disabled since it conflicts with other optimizations,
+			            and it doesn't display well anyway on most grids we use,
+			            To provide at least some method of culling, 
+			            we set vertex position outside clipspace if vertex_opacity is toggled off.
+			            */
+		            	gl_Position = vertex_opacity < 0.5? 
+		            		vec4(2.0, 2.0, 2.0, 1.0)
+		            	:   projection_matrix * view_matrix * model_matrix * vertex_position;
 			        };
 				)"
 			),
@@ -120,7 +128,6 @@ namespace view
 			        uniform float sealevel;
 			        in      float fragment_color_value;
 			        in      float fragment_displacement;
-			        in      float fragment_opacity;
 			        out     vec4  fragment_color;
 
 			        /*
@@ -167,7 +174,8 @@ namespace view
 				                color_without_ocean, 
 				                fragment_displacement < sealevel? 0.5 : 1.0
 				            ), 
-				            fragment_opacity);
+				            1.0
+				        );
 			        }
 				)"
 			),
@@ -333,8 +341,6 @@ namespace view
 			glEnable(GL_CULL_FACE);  
 			glCullFace(GL_BACK);
 			glFrontFace(GL_CCW);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			glEnable(GL_BLEND);
 
 			//ATTRIBUTES
 			glBindBuffer(GL_ARRAY_BUFFER, positionBufferId);
