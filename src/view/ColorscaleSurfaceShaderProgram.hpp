@@ -21,24 +21,30 @@ namespace view
 		topographic,
 		monochrome
 	};
-	template <typename T>
 	struct ColorscaleSurfacesViewState
 	{
 		glm::vec3 min_color;
 		glm::vec3 max_color;
-		T min_value;
-		T max_value;
+		float min_color_value;
+		float max_color_value;
+		float min_saturate;
+		float max_saturate;
+		float min_saturate_value;
+		float max_saturate_value;
 		float sealevel;
-		float opacity_threshold;
+		float culling_threshold;
 		ColorscaleType colorscale_type;
 
 		ColorscaleSurfacesViewState():
 			min_color(0),
 			max_color(1),
-			min_value(0),
-			max_value(1),
-			sealevel(0),
-			opacity_threshold(0.1f),
+			min_color_value(0),
+			max_color_value(1),
+			min_saturate(0),
+			max_saturate(1),
+			min_saturate_value(0),
+			max_saturate_value(1),
+			culling_threshold(0.2f),
 			colorscale_type(ColorscaleType::heatscale)
 		{}
 	};
@@ -63,25 +69,25 @@ namespace view
 		GLuint positionBufferId;
 		GLuint colorValueBufferId;
 		GLuint displacementBufferId;
-		GLuint opacityBufferId;
+		GLuint cullingBufferId;
 		GLuint elementVertexBufferId;
 
 		// attributes
 	    GLuint positionLocation;
 	    GLuint colorValueLocation;
 	    GLuint displacementLocation;
-	    GLuint opacityLocation;
+	    GLuint cullingLocation;
 
 		// uniforms
 	    GLint viewMatrixLocation;
 		GLint modelMatrixLocation;
 		GLint projectionMatrixLocation;
-		GLint opacityThresholdLocation;
+		GLint cullingThresholdLocation;
 		GLint colorscaleTypeLocation;
 		GLint minColorLocation;
 		GLint maxColorLocation;
-		GLint minValueLocation;
-		GLint maxValueLocation;
+		GLint minColorValueLocation;
+		GLint maxColorValueLocation;
 		GLint sealevelLocation;
 
 		bool isDisposed;
@@ -96,11 +102,11 @@ namespace view
 			        uniform   mat4  model_matrix;
 			        uniform   mat4  view_matrix;
 			        uniform   mat4  projection_matrix;
-			        uniform   float opacity_threshold;
+			        uniform   float culling_threshold;
 			        in        vec4  vertex_position;
 			        in        float vertex_color_value;
 			        in        float vertex_displacement;
-			        in        float vertex_opacity;
+			        in        float vertex_culling;
 			        out       float fragment_color_value;
 			        out       float fragment_displacement;
 			        void main(){
@@ -109,13 +115,13 @@ namespace view
 			            /* 
 			            NOTES: 
 			            * For a heads up display, set all `*_matrix` parameters to identity.
-			            * To disable a vertex, set vertex_opacity to 0.0.
+			            * To disable a vertex, set vertex_culling to 0.0.
 			            Alpha blending is disabled since it conflicts with other optimizations,
 			            and it doesn't display well anyway on most grids we use,
 			            To provide at least some method of culling, 
-			            we set vertex position outside clipspace if vertex_opacity is toggled off.
+			            we set vertex position outside clipspace if vertex_culling is toggled off.
 			            */
-		            	gl_Position = vertex_opacity < opacity_threshold? 
+		            	gl_Position = vertex_culling < culling_threshold? 
 		            		vec4(2.0, 2.0, 2.0, 1.0)
 		            	:   projection_matrix * view_matrix * model_matrix * vertex_position;
 			        };
@@ -127,8 +133,8 @@ namespace view
 			        uniform int   colorscale_type;
 			        uniform vec3  min_color;
 			        uniform vec3  max_color;
-			        uniform float min_value;
-			        uniform float max_value;
+			        uniform float min_color_value;
+			        uniform float max_color_value;
 			        uniform float sealevel;
 			        in      float fragment_color_value;
 			        in      float fragment_displacement;
@@ -167,7 +173,7 @@ namespace view
 			        }
 
 			        void main() {
-			        	float color_value_fraction = smoothstep(min_value, max_value, fragment_color_value);
+			        	float color_value_fraction = smoothstep(min_color_value, max_color_value, fragment_color_value);
 			            vec3 color_without_ocean = 
 			              colorscale_type == 0? get_rgb_signal_of_fraction_for_heatmap(color_value_fraction) 
 			            : colorscale_type == 1? get_rgb_signal_of_fraction_for_topomap(color_value_fraction)
@@ -237,13 +243,13 @@ namespace view
 			viewMatrixLocation = glGetUniformLocation(shaderProgramId, "view_matrix");
 			modelMatrixLocation = glGetUniformLocation(shaderProgramId, "model_matrix");
 			projectionMatrixLocation = glGetUniformLocation(shaderProgramId, "projection_matrix");
-			opacityThresholdLocation = glGetUniformLocation(shaderProgramId, "opacity_threshold");
+			cullingThresholdLocation = glGetUniformLocation(shaderProgramId, "culling_threshold");
 
 			colorscaleTypeLocation = glGetUniformLocation(shaderProgramId, "colorscale_type");
 			minColorLocation = glGetUniformLocation(shaderProgramId, "min_color");
 			maxColorLocation = glGetUniformLocation(shaderProgramId, "max_color");
-			minValueLocation = glGetUniformLocation(shaderProgramId, "min_value");
-			maxValueLocation = glGetUniformLocation(shaderProgramId, "max_value");
+			minColorValueLocation = glGetUniformLocation(shaderProgramId, "min_color_value");
+			maxColorValueLocation = glGetUniformLocation(shaderProgramId, "max_color_value");
 			sealevelLocation = glGetUniformLocation(shaderProgramId, "sealevel");
 
 	        // ATTRIBUTES
@@ -269,9 +275,9 @@ namespace view
 		    glEnableVertexAttribArray(displacementLocation);
 
 			// create a new vertex array buffer, VBO
-			glGenBuffers(1, &opacityBufferId);
-			opacityLocation = glGetAttribLocation(shaderProgramId, "vertex_opacity");
-		    glEnableVertexAttribArray(opacityLocation);
+			glGenBuffers(1, &cullingBufferId);
+			cullingLocation = glGetAttribLocation(shaderProgramId, "vertex_culling");
+		    glEnableVertexAttribArray(cullingLocation);
 
 			glGenBuffers(1, &elementVertexBufferId);
 		}
@@ -284,7 +290,7 @@ namespace view
 		        glDeleteBuffers(1, &colorValueBufferId);
 		        glDeleteBuffers(1, &positionBufferId);
 		        glDeleteBuffers(1, &displacementBufferId);
-		        glDeleteBuffers(1, &opacityBufferId);
+		        glDeleteBuffers(1, &cullingBufferId);
 		        glDeleteProgram(shaderProgramId);
         	}
 		}
@@ -304,9 +310,8 @@ namespace view
 	    resources like shaders or programs, we simply wipe the slate clean
 	    on the first sign that anything falls out of sync.
 	    */
-		template <typename T>
 		bool canDepict(
-			const ColorscaleSurfacesViewState<T>& colorscale_state, 
+			const ColorscaleSurfacesViewState& colorscale_state, 
 			const ViewState& view_state
 		){
 			return !isDisposed;
@@ -323,9 +328,9 @@ namespace view
 			const std::vector<glm::vec3>& vertex_position, 
 			const std::vector<T>& vertex_color_value, 
 			const std::vector<float>& vertex_displacement, 
-			const std::vector<float>& vertex_opacity, 
+			const std::vector<float>& vertex_culling, 
 			const std::vector<unsigned int>& element_vertex_ids,
-			const ColorscaleSurfacesViewState<T>& colorscale_state,
+			const ColorscaleSurfacesViewState& colorscale_state,
 			const ViewState& view_state,
 			const unsigned int gl_mode=GL_TRIANGLES
 		){
@@ -363,10 +368,10 @@ namespace view
 		    glEnableVertexAttribArray(displacementLocation);
             glVertexAttribPointer(displacementLocation, 1, GL_FLOAT, normalize, stride, offset);
 
-			glBindBuffer(GL_ARRAY_BUFFER, opacityBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*vertex_opacity.size(), &vertex_opacity.front(), GL_DYNAMIC_DRAW);
-		    glEnableVertexAttribArray(opacityLocation);
-            glVertexAttribPointer(opacityLocation, 1, GL_FLOAT, normalize, stride, offset);
+			glBindBuffer(GL_ARRAY_BUFFER, cullingBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*vertex_culling.size(), &vertex_culling.front(), GL_DYNAMIC_DRAW);
+		    glEnableVertexAttribArray(cullingLocation);
+            glVertexAttribPointer(cullingLocation, 1, GL_FLOAT, normalize, stride, offset);
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementVertexBufferId);
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(T)*element_vertex_ids.size(), &element_vertex_ids.front(), GL_DYNAMIC_DRAW);
@@ -378,11 +383,11 @@ namespace view
 
 	        glUniform3fv(minColorLocation, 1, glm::value_ptr(colorscale_state.min_color));
 	        glUniform3fv(maxColorLocation, 1, glm::value_ptr(colorscale_state.max_color));
-	        glUniform1f (minValueLocation, colorscale_state.min_value);
-	        glUniform1f (maxValueLocation, colorscale_state.max_value);
+	        glUniform1f (minColorValueLocation, colorscale_state.min_color_value);
+	        glUniform1f (maxColorValueLocation, colorscale_state.max_color_value);
 	        glUniform1f (sealevelLocation, colorscale_state.sealevel);
 	        glUniform1i (colorscaleTypeLocation, colorscale_state.colorscale_type);
-	        glUniform1f (opacityThresholdLocation, colorscale_state.opacity_threshold);
+	        glUniform1f (cullingThresholdLocation, colorscale_state.culling_threshold);
 
 			glDrawElements(gl_mode, /*element count*/ element_vertex_ids.size(), GL_UNSIGNED_INT, 0);
 		}

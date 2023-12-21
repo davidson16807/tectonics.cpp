@@ -212,8 +212,8 @@ int main() {
   // view_state.projection_type = view::ProjectionType::heads_up_display;
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);
-  view::ColorscaleSurfacesViewState<float> colorscale_state;
-  colorscale_state.max_value = whole::max(buffer_color_values);
+  view::ColorscaleSurfacesViewState colorscale_state;
+  colorscale_state.max_color_value = whole::max(buffer_color_values);
   colorscale_state.sealevel = whole::mean(buffer_scalars2);
 
   // initialize shader program
@@ -244,7 +244,7 @@ int main() {
       colorscale_program.draw(
         buffer_positions, 
         buffer_color_values, 
-        buffer_uniform,
+        buffer_scalars2,
         buffer_scalars2,
         buffer_element_vertex_ids,
         colorscale_state,
