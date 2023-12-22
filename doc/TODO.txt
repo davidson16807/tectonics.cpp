@@ -1,8 +1,8 @@
 TODO:
 
+image segmentation
 plate class
 rotation
-image segmentation
 hypsography
 
 lower priority:

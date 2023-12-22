@@ -20,8 +20,9 @@
 #include <index/series/glm/VectorDeinterleave.hpp>
 #include <index/glm/each.hpp>                           // get
 #include <index/each.hpp>                           // get
-#include <index/whole.hpp>                          // max, mean
+#include <index/glm/known.hpp>                          // greaterThan
 #include <index/known.hpp>                          // greaterThan
+#include <index/whole.hpp>                          // max, mean
 #include <index/series/Range.hpp>                   // Range
 
 #include <index/series/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
@@ -40,6 +41,7 @@
 #include <grid/dymaxion/buffer/WholeGridBuffers.hpp>// dymaxion::WholeGridBuffers
 
 #include <raster/unlayered/Morphology.hpp>          // unlayered::Morphology
+#include <raster/unlayered/FloodFilling.hpp>        // unlayered::FloodFilling
 #include <raster/spheroidal/string_cast.hpp>        // spheroidal::to_string
 
 #include <update/OrbitalControlState.hpp>           // update::OrbitalControlState
@@ -176,6 +178,18 @@ int main() {
   std::vector<unsigned int> buffer_element_vertex_ids(grids.triangle_strips_size(vertex_positions));
   std::cout << "vertex count:        " << grid.vertex_count() << std::endl;
   std::cout << "vertices per meridian" << grid.vertices_per_meridian() << std::endl;
+  // each::copy(vertex_colored_scalars, buffer_color_values);
+  auto filling = unlayered::flood_filling<int,float>(
+    [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 60.0f/180.0f); }
+  );
+  std::vector<bool> scratch(grid.vertex_count());
+  filling.fill(
+    grid, vertex_directions, 
+    series::uniform(true),
+    whole::max_id(known::length<float>(vertex_directions)), 
+    vertex_colored_scalars, 
+    scratch
+  );
   each::copy(vertex_colored_scalars, buffer_color_values);
   each::copy(vertex_scalars1, buffer_scalars1);
   each::copy(vertex_scalars2, buffer_scalars2);
@@ -249,17 +263,17 @@ int main() {
   while(!glfwWindowShouldClose(window)) {
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      colorscale_program.draw(
-        buffer_positions,    // position
-        buffer_color_values, // color value
-        buffer_uniform,      // displacement
-        buffer_scalars1,     // darken
-        buffer_scalars2,     // culling
-        buffer_element_vertex_ids,
-        colorscale_state,
-        view_state,
-        GL_TRIANGLE_STRIP
-      );
+      // colorscale_program.draw(
+      //   buffer_positions,    // position
+      //   buffer_color_values, // color value
+      //   buffer_uniform,      // displacement
+      //   buffer_scalars1,     // darken
+      //   buffer_scalars2,     // culling
+      //   buffer_element_vertex_ids,
+      //   colorscale_state,
+      //   view_state,
+      //   GL_TRIANGLE_STRIP
+      // );
       // debug_program.draw(
       //   buffer_positions,
       //   buffer_color_values, // red
@@ -273,6 +287,17 @@ int main() {
       //   view_state,
       //   GL_TRIANGLE_STRIP
       // );
+      colorscale_program.draw(
+        buffer_positions,    // position
+        buffer_color_values, // color value
+        buffer_uniform,      // displacement
+        buffer_uniform,      // darken
+        buffer_uniform,      // culling
+        buffer_element_vertex_ids,
+        colorscale_state,
+        view_state,
+        GL_TRIANGLE_STRIP
+      );
       indicator_program.draw(
         vectors_element_position,
         vectors_instance_position,

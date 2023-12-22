@@ -5,13 +5,7 @@ namespace unlayered
 
     /*
     properties used:
-        arrow_dual_lengths
-        arrow_dual_normals
-        arrow_lengths
-        vertex_dual_areas
-        arrow_vertex_ids
-		arrow_target_vertex_id
-        arrow_source_vertex_id
+		arrow_target_memory_id
     */
 
     /*

@@ -60,8 +60,15 @@ namespace math{
     	);
 	}
 
+	// https://en.wikipedia.org/wiki/Cosine_similarity
 	template<int L, typename T, glm::qualifier Q>
-	inline constexpr T compMaxAbs(glm::vec<L,T,Q> V)
+	inline constexpr T similarity(const glm::vec<L,T,Q> U, const glm::vec<L,T,Q> V)
+	{
+	    return glm::dot(U,V) / (glm::length(U)*glm::length(V));
+	}
+
+	template<int L, typename T, glm::qualifier Q>
+	inline constexpr T compMaxAbs(const glm::vec<L,T,Q> V)
 	{
 		T result(V[0]);
 		for (int i = 1; i < L; ++i)
