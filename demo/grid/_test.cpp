@@ -42,7 +42,8 @@
 
 #include <raster/unlayered/Morphology.hpp>          // unlayered::Morphology
 #include <raster/unlayered/FloodFilling.hpp>        // unlayered::FloodFilling
-#include <raster/unlayered/ImageSegmentation.hpp>   // unlayered::FloodFilling
+#include <raster/unlayered/ImageSegmentation.hpp>   // unlayered::ImageSegmentation
+#include <raster/unlayered/VectorCalculusByFundamentalTheorem.hpp> // unlayered::VectorCalculusByFundamentalTheorem
 #include <raster/spheroidal/string_cast.hpp>        // spheroidal::to_string
 
 #include <update/OrbitalControlState.hpp>           // update::OrbitalControlState
@@ -94,7 +95,7 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
   double radius(2.0);
-  int vertices_per_square_side(10);
+  int vertices_per_square_side(20);
   dymaxion::Grid grid(radius, vertices_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::VertexNormals vertex_normals(grid);
@@ -103,11 +104,11 @@ int main() {
 
   // auto vertex_colored_scalars = series::range();
 
-  std::vector<double> vertex_colored_scalars(grid.vertex_count());
-  for (int i = 0; i < grid.vertex_count(); ++i)
-  {
-    vertex_colored_scalars[i] = grid.vertex_position(i).z;
-  }
+  std::vector<float> vertex_colored_scalars(grid.vertex_count());
+  // for (int i = 0; i < grid.vertex_count(); ++i)
+  // {
+  //   vertex_colored_scalars[i] = grid.vertex_position(i).z;
+  // }
 
   // auto vertex_colored_scalars = series::map(
   //     field::value_noise3(
@@ -169,6 +170,10 @@ int main() {
       )
   );
 
+  std::vector<glm::vec3> vertex_gradient(grid.vertex_count());
+  unlayered::VectorCalculusByFundamentalTheorem spatial;
+  spatial.gradient(grid, vertex_scalars1, vertex_gradient);
+
   // flatten raster for OpenGL
   dymaxion::WholeGridBuffers grids(vertices_per_square_side);
   std::vector<float> buffer_color_values(grid.vertex_count());
@@ -180,23 +185,23 @@ int main() {
   std::cout << "vertex count:        " << grid.vertex_count() << std::endl;
   std::cout << "vertices per meridian" << grid.vertices_per_meridian() << std::endl;
   // each::copy(vertex_colored_scalars, buffer_color_values);
-  auto filling = unlayered::flood_filling<int,float>(
-    [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 60.0f/180.0f); }
-  );
-  auto segmentation = unlayered::image_segmentation<int,float>(filling);
   std::vector<float> scratch(grid.vertex_count());
   std::vector<bool> mask1(grid.vertex_count());
   std::vector<bool> mask2(grid.vertex_count());
   std::vector<bool> mask3(grid.vertex_count());
+  auto filling = unlayered::flood_filling<int,float>(
+    [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 60.0f/180.0f); }
+  );
   // filling.fill(
-  //   grid, vertex_directions, 
+  //   grid, vertex_gradient, 
   //   series::uniform(true),
-  //   whole::max_id(known::length<float>(vertex_directions)), 
+  //   whole::max_id(known::length<float>(vertex_gradient)), 
   //   vertex_colored_scalars, 
   //   mask1
   // );
+  auto segmentation = unlayered::image_segmentation<int,float>(filling);
   segmentation.segment(
-    grid, vertex_directions, 7, 200, 
+    grid, vertex_gradient, 7, 10, 
     vertex_colored_scalars, scratch, mask1, mask2, mask3
   );
   each::copy(vertex_colored_scalars, buffer_color_values);
@@ -221,9 +226,9 @@ int main() {
       glm::vec3(0,0,1), pyramid_radius, 3,
       vectors_element_position);
   each::copy   (known::mult(vertex_positions, series::uniform(1+pyramid_halflength/grid.total_radius())),  vectors_instance_position);
-  each::copy   (vertex_directions, vectors_instance_heading);
+  each::copy   (vertex_gradient,   vectors_instance_heading);
   each::copy   (vertex_normals,    vectors_instance_up);
-  each::length (vertex_directions, vectors_instance_scale);
+  each::length (vertex_gradient,   vectors_instance_scale);
   each::div    (vectors_instance_scale, series::uniform(whole::max(vectors_instance_scale)), vectors_instance_scale);
 
   // initialize control state
@@ -272,6 +277,7 @@ int main() {
   while(!glfwWindowShouldClose(window)) {
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
       // colorscale_program.draw(
       //   buffer_positions,    // position
       //   buffer_color_values, // color value
@@ -283,6 +289,7 @@ int main() {
       //   view_state,
       //   GL_TRIANGLE_STRIP
       // );
+
       // debug_program.draw(
       //   buffer_positions,
       //   buffer_color_values, // red
@@ -296,6 +303,7 @@ int main() {
       //   view_state,
       //   GL_TRIANGLE_STRIP
       // );
+
       colorscale_program.draw(
         buffer_positions,    // position
         buffer_color_values, // color value
