@@ -306,5 +306,23 @@ namespace each
 		}
 	}
 
+	/// Computes and returns f[a[i]].
+	template <typename In1, typename In2, typename Mask, typename Out>
+	void copy_if(const In1& replaced, const In2& replacement, const Mask& mask, Out& out)
+	{
+		assert(compatible(replaced,out));
+		assert(compatible(replacement,out));
+		assert(compatible(mask,out));
+		auto size = out.size();
+		using size_type = typename Out::size_type;\
+		for (size_type i = 0; i < size; ++i)
+		{
+			if (mask[i])
+			{
+				out[i] = mask[i]? replacement[i] : replaced[i];
+			}
+		}
+	}
+
 }
 

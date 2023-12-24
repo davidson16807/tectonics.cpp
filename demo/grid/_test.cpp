@@ -42,6 +42,7 @@
 
 #include <raster/unlayered/Morphology.hpp>          // unlayered::Morphology
 #include <raster/unlayered/FloodFilling.hpp>        // unlayered::FloodFilling
+#include <raster/unlayered/ImageSegmentation.hpp>   // unlayered::FloodFilling
 #include <raster/spheroidal/string_cast.hpp>        // spheroidal::to_string
 
 #include <update/OrbitalControlState.hpp>           // update::OrbitalControlState
@@ -182,13 +183,21 @@ int main() {
   auto filling = unlayered::flood_filling<int,float>(
     [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 60.0f/180.0f); }
   );
-  std::vector<bool> scratch(grid.vertex_count());
-  filling.fill(
-    grid, vertex_directions, 
-    series::uniform(true),
-    whole::max_id(known::length<float>(vertex_directions)), 
-    vertex_colored_scalars, 
-    scratch
+  auto segmentation = unlayered::image_segmentation<int,float>(filling);
+  std::vector<float> scratch(grid.vertex_count());
+  std::vector<bool> mask1(grid.vertex_count());
+  std::vector<bool> mask2(grid.vertex_count());
+  std::vector<bool> mask3(grid.vertex_count());
+  // filling.fill(
+  //   grid, vertex_directions, 
+  //   series::uniform(true),
+  //   whole::max_id(known::length<float>(vertex_directions)), 
+  //   vertex_colored_scalars, 
+  //   mask1
+  // );
+  segmentation.segment(
+    grid, vertex_directions, 7, 200, 
+    vertex_colored_scalars, scratch, mask1, mask2, mask3
   );
   each::copy(vertex_colored_scalars, buffer_color_values);
   each::copy(vertex_scalars1, buffer_scalars1);
@@ -298,6 +307,7 @@ int main() {
         view_state,
         GL_TRIANGLE_STRIP
       );
+
       indicator_program.draw(
         vectors_element_position,
         vectors_instance_position,

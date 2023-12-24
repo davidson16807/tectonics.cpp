@@ -257,13 +257,13 @@ namespace whole
 	template <typename T>
 	std::size_t max_id(const T& a)
 	{
-		typename T::value_type min_value = a[0];
+		typename T::value_type max_value = a[0];
 		std::size_t max_id = 0;
 		for (std::size_t i = 0; i < a.size(); ++i)
 		{
-			if (a[i] < min_value)
+			if (a[i] > max_value)
 			{
-				min_value = a[i];
+				max_value = a[i];
 				max_id = i;
 			}
 		}
