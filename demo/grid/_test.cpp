@@ -204,7 +204,7 @@ int main() {
     grid, vertex_gradient, 7, 10, 
     vertex_colored_scalars, scratch, mask1, mask2, mask3
   );
-  each::copy(vertex_colored_scalars, buffer_color_values);
+  each::copy(vertex_scalars1, buffer_color_values);
   each::copy(vertex_scalars1, buffer_scalars1);
   each::copy(vertex_scalars2, buffer_scalars2);
   each::copy(vertex_positions, buffer_positions);

@@ -10,6 +10,8 @@
 #include <glm/geometric.hpp>
 #include <glm/gtc/noise.hpp>
 
+#include <grid/cartesian/UnboundedIndexing.hpp>
+
 namespace field
 {
 
@@ -49,11 +51,12 @@ namespace field
 	`SquareNoise` represents what is known as "square noise" or "mosaic noise"
 	where a space is broken down into cells, and all points within a cell assume a unique random value.
 	*/
-	template<typename Noise>
+	template<typename Noise, typename Indexing=cartesian::UnboundedIndexing<int>>
 	class SquareNoise
 	{
 	public:
 		Noise noise;
+		Indexing indexing;
 
 		/*
 		`region_transition_width` is the width of the transition zone for a region
@@ -66,7 +69,7 @@ namespace field
 
 		template<int N, typename T, glm::qualifier Q>
 		auto operator()(const glm::vec<N,T,Q> V) const {
-		    return noise(hash(glm::vec<N,int,Q>(V)));
+		    return noise(indexing.memory_id(glm::vec<N,int,Q>(V)));
 		}
 
 	};
