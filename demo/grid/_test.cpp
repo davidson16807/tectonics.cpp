@@ -30,7 +30,7 @@
 #include <index/series/noise/GaussianNoise.hpp>
 
 #include <field/noise/ValueNoise.hpp>               // ValueNoise
-#include <field/noise/SquareNoise.hpp>              // SquareNoise
+#include <field/noise/MosaicNoise.hpp>              // MosaicNoise
 #include <field/noise/EliasNoise.hpp>               // EliasNoise
 #include <field/VectorZip.hpp>
 
@@ -112,7 +112,7 @@ int main() {
 
   // auto vertex_colored_scalars = series::map(
   //     field::value_noise3(
-  //         field::square_noise(
+  //         field::mosaic_noise(
   //             series::unit_interval_noise(11.0f, 1.1e4f))),
   //     vertex_positions
   // );
@@ -121,7 +121,7 @@ int main() {
   //   known::greaterThan(series::uniform(0.5), 
   //         series::map(
   //             field::value_noise3(
-  //                 field::square_noise(
+  //                 field::mosaic_noise(
   //                     series::unit_interval_noise(11.0, 1.1e4))),
   //             dymaxion::vertex_positions(grid)
   //         )
@@ -137,14 +137,14 @@ int main() {
 
   auto vertex_scalars1 = series::map(
       field::value_noise3(
-          field::square_noise(
+          field::mosaic_noise(
               series::unit_interval_noise(11.0f, 1.1e4f))),
       vertex_positions
   );
 
   auto vertex_scalars2 = series::map(
       field::value_noise3(
-          field::square_noise(
+          field::mosaic_noise(
               series::unit_interval_noise(12.0f, 1.2e4f))),
       vertex_positions
   );

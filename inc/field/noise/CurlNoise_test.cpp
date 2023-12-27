@@ -26,7 +26,7 @@
 
 #include <field/VectorZip.hpp>
 
-#include "SquareNoise.hpp"
+#include "MosaicNoise.hpp"
 #include "SimplexNoise.hpp"
 #include "CurlNoise.hpp"
 
@@ -51,21 +51,21 @@ TEST_CASE( "CurlNoise()", "[field]" ) {
             field::curl_noise3(
                 field::vector3_zip(
                     field::simplex_noise3(
-                        field::square_noise(
+                        field::mosaic_noise(
                             series::vector_interleave<3>(
                                 series::unit_interval_noise(10.0, 1.0e4)
                             )
                         )
                     ),
                     field::simplex_noise3(
-                        field::square_noise(
+                        field::mosaic_noise(
                             series::vector_interleave<3>(
                                 series::unit_interval_noise(11.0, 1.1e4)
                             )
                         )
                     ),
                     field::simplex_noise3(
-                        field::square_noise(
+                        field::mosaic_noise(
                             series::vector_interleave<3>(
                                 series::unit_interval_noise(12.0, 1.2e4)
                             )
@@ -81,21 +81,21 @@ TEST_CASE( "CurlNoise()", "[field]" ) {
             field::curl_noise3(
                 field::vector3_zip(
                     field::simplex_noise3(
-                        field::square_noise(
+                        field::mosaic_noise(
                             series::vector_interleave<3>(
                                 series::unit_interval_noise(10.0, 1.0e4)
                             )
                         )
                     ),
                     field::simplex_noise3(
-                        field::square_noise(
+                        field::mosaic_noise(
                             series::vector_interleave<3>(
                                 series::unit_interval_noise(11.0, 1.1e4)
                             )
                         )
                     ),
                     field::simplex_noise3(
-                        field::square_noise(
+                        field::mosaic_noise(
                             series::vector_interleave<3>(
                                 series::unit_interval_noise(12.0, 1.2e4)
                             )

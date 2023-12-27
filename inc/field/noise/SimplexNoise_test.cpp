@@ -23,7 +23,7 @@
 #include <index/series/noise/GaussianNoise.hpp>
 #include <index/series/noise/glm/UnitVectorNoise.hpp>
 
-#include "SquareNoise.hpp"
+#include "MosaicNoise.hpp"
 #include "SimplexNoise.hpp"
 
 #include <test/properties.hpp>  
@@ -45,7 +45,7 @@ TEST_CASE( "SimplexNoise()", "[field]" ) {
         "SimplexNoise(…)", 
         TEST_UNARY(
             field::simplex_noise3(
-                field::square_noise(
+                field::mosaic_noise(
                     series::vector_interleave<3>(
                         series::gaussian(11.0, 1.1e4)
                     )))),
@@ -54,7 +54,7 @@ TEST_CASE( "SimplexNoise()", "[field]" ) {
 
     auto noise = 
         field::simplex_noise3(
-            field::square_noise(
+            field::mosaic_noise(
                 series::vector_interleave<3>(
                     series::gaussian(11.0, 1.1e4)
                 )));

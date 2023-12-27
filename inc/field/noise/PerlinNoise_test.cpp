@@ -23,7 +23,7 @@
 #include <index/series/noise/GaussianNoise.hpp>
 #include <index/series/noise/glm/UnitVectorNoise.hpp>
 
-#include "SquareNoise.hpp"
+#include "MosaicNoise.hpp"
 #include "PerlinNoise.hpp"
 
 #include <test/properties.hpp>  
@@ -45,7 +45,7 @@ TEST_CASE( "PerlinNoise()", "[field]" ) {
         "PerlinNoise(…)", 
         TEST_UNARY(
             field::perlin_noise3(
-                field::square_noise(
+                field::mosaic_noise(
                     series::vector_interleave<3>(
                         series::gaussian(11.0, 1.1e4)
                     )))),
@@ -54,7 +54,7 @@ TEST_CASE( "PerlinNoise()", "[field]" ) {
 
     auto noise = 
             field::perlin_noise3(
-                field::square_noise(
+                field::mosaic_noise(
                     series::vector_interleave<3>(
                         series::gaussian(11.0, 1.1e4)
                     )));

@@ -1,6 +1,5 @@
 TODO:
 
-image segmentation
 plate class
 rotation
 hypsography

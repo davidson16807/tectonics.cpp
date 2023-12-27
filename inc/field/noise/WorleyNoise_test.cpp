@@ -23,7 +23,7 @@
 #include <index/series/noise/UnitIntervalNoise.hpp>
 #include <index/series/noise/glm/UnitVectorNoise.hpp>
 
-#include "SquareNoise.hpp"
+#include "MosaicNoise.hpp"
 #include "WorleyNoise.hpp"
 
 #include <test/properties.hpp>  
@@ -45,7 +45,7 @@ TEST_CASE( "WorleyNoise()", "[field]" ) {
         "WorleyNoise(…)", 
         TEST_UNARY(
             field::worley_noise3(
-                field::square_noise(
+                field::mosaic_noise(
                     series::vector_interleave<3>(
                         series::unit_interval_noise(11.0, 1.1e4)
                     )))),
@@ -54,7 +54,7 @@ TEST_CASE( "WorleyNoise()", "[field]" ) {
 
     auto noise = 
         field::worley_noise3(
-            field::square_noise(
+            field::mosaic_noise(
                 series::vector_interleave<3>(
                     series::unit_interval_noise(11.0, 1.1e4)
                 )));

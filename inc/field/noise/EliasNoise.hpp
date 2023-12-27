@@ -70,6 +70,7 @@ namespace field
 			}
 			return out;
 		}
+
 	};
 
 	template<typename T, typename RegionThreshold, typename RegionCenter>

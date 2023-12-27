@@ -23,13 +23,13 @@
 #include <index/series/noise/GaussianNoise.hpp>
 #include <index/series/noise/glm/UnitVectorNoise.hpp>
 
-#include "SquareNoise.hpp"
+#include "MosaicNoise.hpp"
 
 #include <test/properties.hpp>  
 #include <test/macros.hpp>  
 #include <test/glm/adapter.hpp>
 
-TEST_CASE( "SquareNoise()", "[field]" ) {
+TEST_CASE( "MosaicNoise()", "[field]" ) {
     test::GlmAdapter<int, double> adapter(1e-5);
 
     auto positions = known::mult(
@@ -41,19 +41,19 @@ TEST_CASE( "SquareNoise()", "[field]" ) {
     );
 
     REQUIRE(test::determinism(adapter,
-        "SquareNoise(…)", 
+        "MosaicNoise(…)", 
         TEST_UNARY(
-            field::square_noise(
+            field::mosaic_noise(
                 series::gaussian(11.0, 1.1e4))),
         positions
     ));
 
-    auto noise = field::square_noise(
+    auto noise = field::mosaic_noise(
         series::gaussian(11.0, 1.1e4));
 
-    // NOTE: unlike other noises, continuity for SquareNoise is not guaranteed
+    // NOTE: unlike other noises, continuity for MosaicNoise is not guaranteed
     // REQUIRE(test::continuity(adapter,
-    //     "SquareNoise(…)", TEST_UNARY(noise),
+    //     "MosaicNoise(…)", TEST_UNARY(noise),
     //     "continuity",    TEST_NUDGE(glm::dvec3(1e-6,1e-6,1e-6)),
     //     positions
     // ));

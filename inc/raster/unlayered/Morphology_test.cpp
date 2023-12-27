@@ -33,7 +33,7 @@
 
 #include <field/noise/EliasNoise.hpp>
 #include <field/noise/ValueNoise.hpp>
-#include <field/noise/SquareNoise.hpp>
+#include <field/noise/MosaicNoise.hpp>
 #include <field/VectorZip.hpp>
 
 #include <grid/dymaxion/Grid.hpp>
@@ -92,7 +92,7 @@ std::vector boolean_rasters{
     known::greaterThan(series::uniform(0.5), 
         series::map(
             field::value_noise3(
-                field::square_noise(
+                field::mosaic_noise(
                     series::unit_interval_noise(11.0, 1.1e4))),
             dymaxion::vertex_positions(fine)
         )
@@ -100,7 +100,7 @@ std::vector boolean_rasters{
     known::greaterThan(series::uniform(0.5), 
         series::map(
             field::value_noise3(
-                field::square_noise(
+                field::mosaic_noise(
                     series::unit_interval_noise(12.0, 1.2e4))),
             dymaxion::vertex_positions(fine)
         )
@@ -108,7 +108,7 @@ std::vector boolean_rasters{
     known::greaterThan(series::uniform(0.5), 
         series::map(
             field::value_noise3(
-                field::square_noise(
+                field::mosaic_noise(
                     series::unit_interval_noise(13.0, 1.3e4))),
             dymaxion::vertex_positions(fine)
         )

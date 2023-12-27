@@ -18,7 +18,7 @@
 #include "./grid/dymaxion/Indexing_test.cpp"
 #include "./grid/dymaxion/Grid_test.cpp"
 #include "./field/noise/ValueNoise_test.cpp"
-#include "./field/noise/SquareNoise_test.cpp"
+#include "./field/noise/MosaicNoise_test.cpp"
 #include "./field/noise/CurlNoise_test.cpp"
 #include "./field/noise/SimplexNoise_test.cpp"
 #include "./field/noise/WorleyNoise_test.cpp"

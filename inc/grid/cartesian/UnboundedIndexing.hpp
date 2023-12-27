@@ -28,10 +28,6 @@ namespace cartesian
     public:
         PositiveIndexing<id,Q> positive_indexing;
 
-        constexpr UnboundedIndexing()
-        {
-        }
-
         template<int L>
         constexpr id memory_id(const glm::vec<L,id,glm::defaultp> grid_id) const {
             id octant_id = 0;

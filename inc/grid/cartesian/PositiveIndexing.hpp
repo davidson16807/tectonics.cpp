@@ -29,10 +29,6 @@ namespace cartesian
 
     public:
 
-        constexpr PositiveIndexing()
-        {
-        }
-
         constexpr id memory_id(const glm::vec<4,id,glm::defaultp> grid_id) const {
             return memory_id(glm::vec<2,id,glm::defaultp>(memory_id(grid_id.xyz()), grid_id.w));
         }

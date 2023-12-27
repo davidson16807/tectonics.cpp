@@ -12,26 +12,26 @@ namespace field
 {
 
 	/*
-	Given a `SquareNoise`: ℕ→ℝ⁴, `ValueNoise4` maps ℝ⁴→ℝ. 
+	Given a `MosaicNoise`: ℕ→ℝ⁴, `ValueNoise4` maps ℝ⁴→ℝ. 
 	For each point, `WorleyNoise` returns the distance to the closest point 
-	of a set of procedurally generated points, given by `SquareNoise`.
+	of a set of procedurally generated points, given by `MosaicNoise`.
 	*/
-	template<typename SquareNoise>
+	template<typename MosaicNoise>
 	struct ValueNoise4
 	{
-		SquareNoise noise;
+		MosaicNoise noise;
 
 		/*
 		`region_transition_width` is the width of the transition zone for a region
 		`region_count` is the number of regions where we increment grid cell values
 		*/
 		explicit ValueNoise4(
-			const SquareNoise& noise
+			const MosaicNoise& noise
 		):
 			noise(noise)
 		{}
 
-		using value_type = typename SquareNoise::value_type;
+		using value_type = typename MosaicNoise::value_type;
 
 		template<typename T, glm::qualifier Q>
 		value_type operator()(const glm::vec<4,T,Q> V) const {
@@ -63,33 +63,33 @@ namespace field
 		}
 	};
 
-	template<typename SquareNoise>
-	constexpr inline auto value_noise4(const SquareNoise noise)
+	template<typename MosaicNoise>
+	constexpr inline auto value_noise4(const MosaicNoise noise)
 	{
-		return ValueNoise4<SquareNoise>(noise);
+		return ValueNoise4<MosaicNoise>(noise);
 	}
 
 	/*
-	Given a `SquareNoise`: ℕ→ℝ³, `ValueNoise3` maps ℝ³→ℝ. 
+	Given a `MosaicNoise`: ℕ→ℝ³, `ValueNoise3` maps ℝ³→ℝ. 
 	For each point, `WorleyNoise` returns the distance to the closest point 
-	of a set of procedurally generated points, given by `SquareNoise`.
+	of a set of procedurally generated points, given by `MosaicNoise`.
 	*/
-	template<typename SquareNoise>
+	template<typename MosaicNoise>
 	struct ValueNoise3
 	{
-		SquareNoise noise;
+		MosaicNoise noise;
 
 		/*
 		`region_transition_width` is the width of the transition zone for a region
 		`region_count` is the number of regions where we increment grid cell values
 		*/
 		explicit ValueNoise3(
-			const SquareNoise& noise
+			const MosaicNoise& noise
 		):
 			noise(noise)
 		{}
 
-		using value_type = typename SquareNoise::value_type;
+		using value_type = typename MosaicNoise::value_type;
 
 		template<typename T, glm::qualifier Q>
 		value_type operator()(const glm::vec<3,T,Q> V) const {
@@ -118,33 +118,33 @@ namespace field
 		}
 	};
 
-	template<typename SquareNoise>
-	constexpr inline auto value_noise3(const SquareNoise noise)
+	template<typename MosaicNoise>
+	constexpr inline auto value_noise3(const MosaicNoise noise)
 	{
-		return ValueNoise3<SquareNoise>(noise);
+		return ValueNoise3<MosaicNoise>(noise);
 	}
 
 	/*
-	Given a `SquareNoise`: ℕ→ℝ³, `ValueNoise2` maps ℝ³→ℝ. 
+	Given a `MosaicNoise`: ℕ→ℝ³, `ValueNoise2` maps ℝ³→ℝ. 
 	For each point, `WorleyNoise` returns the distance to the closest point 
-	of a set of procedurally generated points, given by `SquareNoise`.
+	of a set of procedurally generated points, given by `MosaicNoise`.
 	*/
-	template<typename SquareNoise>
+	template<typename MosaicNoise>
 	struct ValueNoise2
 	{
-		SquareNoise noise;
+		MosaicNoise noise;
 
 		/*
 		`region_transition_width` is the width of the transition zone for a region
 		`region_count` is the number of regions where we increment grid cell values
 		*/
 		explicit ValueNoise2(
-			const SquareNoise& noise
+			const MosaicNoise& noise
 		):
 			noise(noise)
 		{}
 
-		using value_type = typename SquareNoise::value_type;
+		using value_type = typename MosaicNoise::value_type;
 
 		template<typename T, glm::qualifier Q>
 		value_type operator()(const glm::vec<2,T,Q> V) const {
@@ -170,10 +170,10 @@ namespace field
 		}
 	};
 
-	template<typename SquareNoise>
-	constexpr inline auto value_noise2(const SquareNoise noise)
+	template<typename MosaicNoise>
+	constexpr inline auto value_noise(const MosaicNoise noise)
 	{
-		return ValueNoise2<SquareNoise>(noise);
+		return ValueNoise2<MosaicNoise>(noise);
 	}
 
 

@@ -23,7 +23,7 @@
 #include <index/series/noise/GaussianNoise.hpp>
 #include <index/series/noise/glm/UnitVectorNoise.hpp>
 
-#include "SquareNoise.hpp"
+#include "MosaicNoise.hpp"
 #include "ValueNoise.hpp"
 
 #include <test/properties.hpp>  
@@ -45,13 +45,13 @@ TEST_CASE( "ValueNoise()", "[field]" ) {
         "ValueNoise(…)", 
         TEST_UNARY(
             field::value_noise3(
-                field::square_noise(
+                field::mosaic_noise(
                     series::gaussian(11.0, 1.1e4)))),
         positions
     ));
 
     auto noise = field::value_noise3(
-                    field::square_noise(
+                    field::mosaic_noise(
                         series::gaussian(11.0, 1.1e4)));
 
     REQUIRE(test::continuity(adapter,

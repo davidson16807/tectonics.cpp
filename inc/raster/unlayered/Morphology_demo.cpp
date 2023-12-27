@@ -33,7 +33,7 @@
 
 #include <field/noise/EliasNoise.hpp>
 #include <field/noise/ValueNoise.hpp>
-#include <field/noise/SquareNoise.hpp>
+#include <field/noise/MosaicNoise.hpp>
 #include <field/VectorZip.hpp>
 
 #include <grid/dymaxion/Grid.hpp>
@@ -65,7 +65,7 @@ dymaxion::Grid coarse(2.0, 16);
 auto mask = known::greaterThan(series::uniform(0.5), 
         series::map(
             field::value_noise3(
-                field::square_noise(
+                field::mosaic_noise(
                     series::unit_interval_noise(11.0, 1.1e4))),
             dymaxion::vertex_positions(fine)
         )
