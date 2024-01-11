@@ -16,7 +16,7 @@ namespace field
 	For each point, `WorleyNoise` returns the distance to the closest point 
 	of a set of procedurally generated points, given by `MosaicNoise`.
 	*/
-	template<typename MosaicNoise>
+	template<typename scalar, typename MosaicNoise>
 	struct ValueNoise4
 	{
 		MosaicNoise noise;
@@ -31,16 +31,16 @@ namespace field
 			noise(noise)
 		{}
 
+		using vec = glm::vec<4,scalar,glm::defaultp>;
 		using value_type = typename MosaicNoise::value_type;
 
-		template<typename T, glm::qualifier Q>
-		value_type operator()(const glm::vec<4,T,Q> V) const {
-			using vec = glm::vec<4,T,Q>;
-		    vec I = glm::floor(V);
+		template<typename point>
+		value_type operator()(const point V) const {
+		    point I = floor(V);
 		    vec F = glm::smoothstep(vec(0), vec(1), glm::fract(V));
 		    vec G = vec(0);
 		    vec O = vec(0);
-		    vec J = vec(0);
+		    point J;
 		    value_type a(0);
 		    for (int i = 0; i <= 1; ++i)
 		    {
@@ -58,15 +58,14 @@ namespace field
 		            }
 		        }
 		    }
-
 		    return a;
 		}
 	};
 
-	template<typename MosaicNoise>
+	template<typename scalar, typename MosaicNoise>
 	constexpr inline auto value_noise4(const MosaicNoise noise)
 	{
-		return ValueNoise4<MosaicNoise>(noise);
+		return ValueNoise4<scalar,MosaicNoise>(noise);
 	}
 
 	/*
@@ -74,7 +73,7 @@ namespace field
 	For each point, `WorleyNoise` returns the distance to the closest point 
 	of a set of procedurally generated points, given by `MosaicNoise`.
 	*/
-	template<typename MosaicNoise>
+	template<typename scalar, typename MosaicNoise>
 	struct ValueNoise3
 	{
 		MosaicNoise noise;
@@ -89,16 +88,16 @@ namespace field
 			noise(noise)
 		{}
 
+		using vec = glm::vec<3,scalar,glm::defaultp>;
 		using value_type = typename MosaicNoise::value_type;
 
-		template<typename T, glm::qualifier Q>
-		value_type operator()(const glm::vec<3,T,Q> V) const {
-			using vec = glm::vec<3,T,Q>;
-		    vec I = glm::floor(V);
+		template<typename point>
+		value_type operator()(const point V) const {
+		    vec I = floor(V);
 		    vec F = glm::smoothstep(vec(0), vec(1), glm::fract(V));
 		    vec G = vec(0);
 		    vec O = vec(0);
-		    vec J = vec(0);
+		    point J;
 		    value_type a(0);
 		    for (int i = 0; i <= 1; ++i)
 		    {
@@ -113,15 +112,14 @@ namespace field
 		            }
 		        }
 		    }
-
 		    return a;
 		}
 	};
 
-	template<typename MosaicNoise>
+	template<typename scalar, typename MosaicNoise>
 	constexpr inline auto value_noise3(const MosaicNoise noise)
 	{
-		return ValueNoise3<MosaicNoise>(noise);
+		return ValueNoise3<scalar,MosaicNoise>(noise);
 	}
 
 	/*
@@ -129,7 +127,7 @@ namespace field
 	For each point, `WorleyNoise` returns the distance to the closest point 
 	of a set of procedurally generated points, given by `MosaicNoise`.
 	*/
-	template<typename MosaicNoise>
+	template<typename scalar, typename MosaicNoise>
 	struct ValueNoise2
 	{
 		MosaicNoise noise;
@@ -144,16 +142,16 @@ namespace field
 			noise(noise)
 		{}
 
+		using vec = glm::vec<2,scalar,glm::defaultp>;
 		using value_type = typename MosaicNoise::value_type;
 
-		template<typename T, glm::qualifier Q>
-		value_type operator()(const glm::vec<2,T,Q> V) const {
-			using vec = glm::vec<2,T,Q>;
-		    vec I = glm::floor(V);
+		template<typename point>
+		value_type operator()(const point V) const {
+		    vec I = floor(V);
 		    vec F = glm::smoothstep(vec(0), vec(1), glm::fract(V));
 		    vec G = vec(0);
 		    vec O = vec(0);
-		    vec J = vec(0);
+		    point J;
 		    value_type a(0);
 		    for (int i = 0; i <= 1; ++i)
 		    {
@@ -170,10 +168,10 @@ namespace field
 		}
 	};
 
-	template<typename MosaicNoise>
+	template<typename scalar, typename MosaicNoise>
 	constexpr inline auto value_noise(const MosaicNoise noise)
 	{
-		return ValueNoise2<MosaicNoise>(noise);
+		return ValueNoise2<scalar,MosaicNoise>(noise);
 	}
 
 

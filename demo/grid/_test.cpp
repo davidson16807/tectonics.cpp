@@ -36,6 +36,7 @@
 
 #include <buffer/PyramidBuffers.hpp>                // buffer::PyramidBuffers
 
+#include <grid/dymaxion/Indexing.hpp>               // dymaxion::Indexing
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
 #include <grid/dymaxion/series.hpp>                 // dymaxion::BufferVertexIds
 #include <grid/dymaxion/buffer/WholeGridBuffers.hpp>// dymaxion::WholeGridBuffers
@@ -95,7 +96,7 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
   double radius(2.0);
-  int vertices_per_square_side(20);
+  int vertices_per_square_side(10);
   dymaxion::Grid grid(radius, vertices_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::VertexNormals vertex_normals(grid);
@@ -111,7 +112,7 @@ int main() {
   // }
 
   // auto vertex_colored_scalars = series::map(
-  //     field::value_noise3(
+  //     field::value_noise3<float>(
   //         field::mosaic_noise(
   //             series::unit_interval_noise(11.0f, 1.1e4f))),
   //     vertex_positions
@@ -120,7 +121,7 @@ int main() {
   // auto mask = 
   //   known::greaterThan(series::uniform(0.5), 
   //         series::map(
-  //             field::value_noise3(
+  //             field::value_noise3<float>(
   //                 field::mosaic_noise(
   //                     series::unit_interval_noise(11.0, 1.1e4))),
   //             dymaxion::vertex_positions(grid)
@@ -136,16 +137,22 @@ int main() {
   // each::copy(out, vertex_scalars2);
 
   auto vertex_scalars1 = series::map(
-      field::value_noise3(
+      field::value_noise3<float>(
           field::mosaic_noise(
-              series::unit_interval_noise(11.0f, 1.1e4f))),
+              series::unit_interval_noise(11.0f, 1.1e4f)
+              //,
+              //dymaxion::Indexing(10)
+          )),
       vertex_positions
   );
 
   auto vertex_scalars2 = series::map(
-      field::value_noise3(
+      field::value_noise3<float>(
           field::mosaic_noise(
-              series::unit_interval_noise(12.0f, 1.2e4f))),
+              series::unit_interval_noise(12.0f, 1.2e4f)
+              //,
+              //dymaxion::Indexing(10)
+          )),
       vertex_positions
   );
 

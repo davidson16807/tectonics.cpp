@@ -13,23 +13,23 @@ namespace field
 {
 
 	/*
-	Given a `SquareVectorNoise`: ℕ→ℝ⁴, `PerlinNoise4` maps ℝ⁴→ℝ. 
+	Given a `MosaicVectorNoise`: ℕ→ℝ⁴, `PerlinNoise4` maps ℝ⁴→ℝ. 
 	For each point, `PerlinNoise` returns the distance to the closest point 
-	of a set of procedurally generated points, given by `SquareVectorNoise`.
+	of a set of procedurally generated points, given by `MosaicVectorNoise`.
 	*/
-	template<typename SquareVectorNoise>
+	template<typename MosaicVectorNoise>
 	struct PerlinNoise4
 	{
-		SquareVectorNoise noise;
+		MosaicVectorNoise noise;
 
 		/*
 		`region_transition_width` is the width of the transition zone for a region
 		`region_count` is the number of regions where we increment grid cell values
 		*/
-		explicit PerlinNoise4(const SquareVectorNoise& noise): noise(noise) {}
+		explicit PerlinNoise4(const MosaicVectorNoise& noise): noise(noise) {}
 		PerlinNoise4(const PerlinNoise4& perlin): noise(perlin.noise) {}
 
-		using vector_type = typename SquareVectorNoise::value_type;
+		using vector_type = typename MosaicVectorNoise::value_type;
 		using value_type = typename vector_type::value_type;
 
 		template<typename T, glm::qualifier Q>
@@ -62,30 +62,30 @@ namespace field
 		}
 	};
 
-	template<typename SquareVectorNoise>
-	constexpr inline auto perlin_noise4(const SquareVectorNoise noise)
+	template<typename MosaicVectorNoise>
+	constexpr inline auto perlin_noise4(const MosaicVectorNoise noise)
 	{
-		return PerlinNoise4<SquareVectorNoise>(noise);
+		return PerlinNoise4<MosaicVectorNoise>(noise);
 	}
 
 	/*
-	Given a `SquareVectorNoise`: ℕ→ℝ³, `PerlinNoise3` maps ℝ³→ℝ. 
+	Given a `MosaicVectorNoise`: ℕ→ℝ³, `PerlinNoise3` maps ℝ³→ℝ. 
 	For each point, `PerlinNoise` returns the distance to the closest point 
-	of a set of procedurally generated points, given by `SquareVectorNoise`.
+	of a set of procedurally generated points, given by `MosaicVectorNoise`.
 	*/
-	template<typename SquareVectorNoise>
+	template<typename MosaicVectorNoise>
 	struct PerlinNoise3
 	{
-		SquareVectorNoise noise;
+		MosaicVectorNoise noise;
 
 		/*
 		`region_transition_width` is the width of the transition zone for a region
 		`region_count` is the number of regions where we increment grid cell values
 		*/
-		explicit PerlinNoise3(const SquareVectorNoise& noise): noise(noise) {}
+		explicit PerlinNoise3(const MosaicVectorNoise& noise): noise(noise) {}
 		PerlinNoise3(const PerlinNoise3& perlin): noise(perlin.noise) {}
 
-		using vector_type = typename SquareVectorNoise::value_type;
+		using vector_type = typename MosaicVectorNoise::value_type;
 		using value_type = typename vector_type::value_type;
 
 		template<typename T, glm::qualifier Q>
@@ -115,30 +115,30 @@ namespace field
 		}
 	};
 
-	template<typename SquareVectorNoise>
-	constexpr inline auto perlin_noise3(const SquareVectorNoise noise)
+	template<typename MosaicVectorNoise>
+	constexpr inline auto perlin_noise3(const MosaicVectorNoise noise)
 	{
-		return PerlinNoise3<SquareVectorNoise>(noise);
+		return PerlinNoise3<MosaicVectorNoise>(noise);
 	}
 
 	/*
-	Given a `SquareVectorNoise`: ℕ→ℝ², `PerlinNoise2` maps ℝ²→ℝ. 
+	Given a `MosaicVectorNoise`: ℕ→ℝ², `PerlinNoise2` maps ℝ²→ℝ. 
 	For each point, `PerlinNoise` returns the distance to the closest point 
-	of a set of procedurally generated points, given by `SquareVectorNoise`.
+	of a set of procedurally generated points, given by `MosaicVectorNoise`.
 	*/
-	template<typename SquareVectorNoise>
+	template<typename MosaicVectorNoise>
 	struct PerlinNoise2
 	{
-		SquareVectorNoise noise;
+		MosaicVectorNoise noise;
 
 		/*
 		`region_transition_width` is the width of the transition zone for a region
 		`region_count` is the number of regions where we increment grid cell values
 		*/
-		explicit PerlinNoise2(const SquareVectorNoise& noise): noise(noise) {}
+		explicit PerlinNoise2(const MosaicVectorNoise& noise): noise(noise) {}
 		PerlinNoise2(const PerlinNoise2& perlin): noise(perlin.noise) {}
 
-		using vector_type = typename SquareVectorNoise::value_type;
+		using vector_type = typename MosaicVectorNoise::value_type;
 		using value_type = typename vector_type::value_type;
 
 		template<typename T, glm::qualifier Q>
@@ -165,10 +165,10 @@ namespace field
 		}
 	};
 
-	template<typename SquareVectorNoise>
-	constexpr inline auto perlin_noise2(const SquareVectorNoise noise)
+	template<typename MosaicVectorNoise>
+	constexpr inline auto perlin_noise2(const MosaicVectorNoise noise)
 	{
-		return PerlinNoise2<SquareVectorNoise>(noise);
+		return PerlinNoise2<MosaicVectorNoise>(noise);
 	}
 
 }

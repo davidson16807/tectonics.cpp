@@ -27,6 +27,11 @@ namespace field
 		Noise noise;
 		Indexing indexing;
 
+        constexpr MosaicNoise(const Noise noise) :
+        	noise(noise)
+        {
+        }
+
         constexpr MosaicNoise(const Noise noise, const Indexing indexing) :
         	noise(noise),
         	indexing(indexing)
@@ -37,14 +42,16 @@ namespace field
 		`region_transition_width` is the width of the transition zone for a region
 		`region_count` is the number of regions where we increment grid cell values
 		*/
-		explicit MosaicNoise(const Noise& noise): noise(noise) {}
-		MosaicNoise(const MosaicNoise& mosaic_noise): noise(mosaic_noise.noise) {}
+		MosaicNoise(const MosaicNoise& mosaic_noise):
+			noise(mosaic_noise.noise),
+			indexing(mosaic_noise.indexing)
+		{}
 
 		using value_type = typename Noise::value_type;
 
-		template<int N, typename T, glm::qualifier Q>
-		auto operator()(const glm::vec<N,T,Q> V) const {
-		    return noise(indexing.memory_id(glm::vec<N,int,Q>(V)));
+		template<typename T>
+		auto operator()(const T V) const {
+		    return noise(indexing.memory_id(V));
 		}
 
 	};
@@ -53,6 +60,12 @@ namespace field
 	constexpr inline auto mosaic_noise(const Noise& noise)
 	{
 		return MosaicNoise<Noise>(noise);
+	}
+
+	template<typename Noise, typename Indexing>
+	constexpr inline auto mosaic_noise(const Noise& noise, const Indexing& indexing)
+	{
+		return MosaicNoise<Noise,Indexing>(noise, indexing);
 	}
 
 }
