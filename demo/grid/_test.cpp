@@ -204,7 +204,7 @@ int main() {
     grid, vertex_gradient, 7, 10, 
     vertex_colored_scalars, scratch, mask1, mask2, mask3
   );
-  each::copy(vertex_scalars1, buffer_color_values);
+  each::copy(vertex_colored_scalars, buffer_color_values);
   each::copy(vertex_scalars1, buffer_scalars1);
   each::copy(vertex_scalars2, buffer_scalars2);
   each::copy(vertex_positions, buffer_positions);
@@ -290,31 +290,31 @@ int main() {
       //   GL_TRIANGLE_STRIP
       // );
 
-      // debug_program.draw(
-      //   buffer_positions,
-      //   buffer_color_values, // red
-      //   buffer_scalars2, // green
-      //   std::vector<float>(grid.vertex_count(), 0.0f), // blue
-      //   std::vector<float>(grid.vertex_count(), 1.0f), // opacity
-      //   std::vector<float>(grid.vertex_count(), 0.0f), // displacement
-      //   buffer_element_vertex_ids,
-      //   glm::vec4(whole::max(buffer_color_values), 0.0f, 0.0f, 0.0f),
-      //   glm::vec4(whole::min(buffer_color_values), 1.0f, 1.0f, 1.0f),
-      //   view_state,
-      //   GL_TRIANGLE_STRIP
-      // );
-
-      colorscale_program.draw(
-        buffer_positions,    // position
-        buffer_color_values, // color value
-        buffer_uniform,      // displacement
-        buffer_uniform,      // darken
-        buffer_uniform,      // culling
+      debug_program.draw(
+        buffer_positions,
+        buffer_color_values, // red
+        buffer_scalars1, // green
+        std::vector<float>(grid.vertex_count(), 0.0f), // blue
+        std::vector<float>(grid.vertex_count(), 1.0f), // opacity
+        std::vector<float>(grid.vertex_count(), 0.0f), // displacement
         buffer_element_vertex_ids,
-        colorscale_state,
+        glm::vec4(whole::min(buffer_color_values), whole::min(buffer_scalars1), 0.0f, 0.0f),
+        glm::vec4(whole::max(buffer_color_values), whole::max(buffer_scalars1), 1.0f, 1.0f),
         view_state,
         GL_TRIANGLE_STRIP
       );
+
+      // colorscale_program.draw(
+      //   buffer_positions,    // position
+      //   buffer_color_values, // color value
+      //   buffer_uniform,      // displacement
+      //   buffer_uniform,      // darken
+      //   buffer_uniform,      // culling
+      //   buffer_element_vertex_ids,
+      //   colorscale_state,
+      //   view_state,
+      //   GL_TRIANGLE_STRIP
+      // );
 
       indicator_program.draw(
         vectors_element_position,
