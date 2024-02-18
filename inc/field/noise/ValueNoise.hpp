@@ -16,10 +16,11 @@ namespace field
 	For each point, `WorleyNoise` returns the distance to the closest point 
 	of a set of procedurally generated points, given by `MosaicNoise`.
 	*/
-	template<typename scalar, typename MosaicNoise, typename MosaicOps>
+	template<typename scalar, typename MosaicNoise, typename MosaicOps, glm::qualifier precision=glm::defaultp>
 	struct ValueNoise4
 	{
 		MosaicNoise noise;
+		MosaicOps ops;
 
 		/*
 		`region_transition_width` is the width of the transition zone for a region
@@ -33,13 +34,14 @@ namespace field
 			ops(ops)
 		{}
 
-		using vec = glm::vec<4,scalar,glm::defaultp>;
+		using vec = glm::vec<4,scalar,precision>;
 		using value_type = typename MosaicNoise::value_type;
 
 		template<typename point>
 		value_type operator()(const point V) const {
 		    auto I = ops.floor(V);
 		    vec F = ops.fract(V);
+		    vec F01 = glm::smoothstep(vec(0), vec(1), F);
 		    vec G = vec(0);
 		    vec O = vec(0);
 		    value_type a(0);
@@ -52,7 +54,7 @@ namespace field
 		                for (int l = 0; l <= 1; ++l)
 		                {
 		                    O = vec(i,j,k,l);
-		                    G = glm::mix(vec(1)-F, F, O);
+		                    G = glm::mix(vec(1)-F01, F01, O);
 		                    a += noise(ops.add(I,O)) * G.x * G.y * G.z * G.w;
 		                }
 		            }
@@ -62,10 +64,10 @@ namespace field
 		}
 	};
 
-	template<typename scalar, typename MosaicNoise, typename MosaicOps>
+	template<typename scalar, typename MosaicNoise, typename MosaicOps, glm::qualifier precision=glm::defaultp>
 	constexpr inline auto value_noise4(const MosaicNoise noise, const MosaicOps ops)
 	{
-		return ValueNoise4<scalar,MosaicNoise,MosaicOps>(noise, ops);
+		return ValueNoise4<scalar,MosaicNoise,MosaicOps,precision>(noise, ops);
 	}
 
 	/*
@@ -73,10 +75,11 @@ namespace field
 	For each point, `WorleyNoise` returns the distance to the closest point 
 	of a set of procedurally generated points, given by `MosaicNoise`.
 	*/
-	template<typename scalar, typename MosaicNoise, typename MosaicOps>
+	template<typename scalar, typename MosaicNoise, typename MosaicOps, glm::qualifier precision=glm::defaultp>
 	struct ValueNoise3
 	{
 		MosaicNoise noise;
+		MosaicOps ops;
 
 		/*
 		`region_transition_width` is the width of the transition zone for a region
@@ -90,13 +93,14 @@ namespace field
 			ops(ops)
 		{}
 
-		using vec = glm::vec<3,scalar,glm::defaultp>;
+		using vec = glm::vec<3,scalar,precision>;
 		using value_type = typename MosaicNoise::value_type;
 
 		template<typename point>
 		value_type operator()(const point V) const {
 		    auto I = ops.floor(V);
 		    vec F = ops.fract(V);
+		    vec F01 = glm::smoothstep(vec(0), vec(1), F);
 		    vec G = vec(0);
 		    vec O = vec(0);
 		    value_type a(0);
@@ -107,7 +111,7 @@ namespace field
 		            for (int k = 0; k <= 1; ++k)
 		            {
 	                    O = vec(i,j,k);
-	                    G = glm::mix(vec(1)-F, F, O);
+	                    G = glm::mix(vec(1)-F01, F01, O);
 	                    a += noise(ops.add(I,O)) * G.x * G.y * G.z;
 		            }
 		        }
@@ -116,10 +120,10 @@ namespace field
 		}
 	};
 
-	template<typename scalar, typename MosaicNoise, typename MosaicOps>
+	template<typename scalar, typename MosaicNoise, typename MosaicOps, glm::qualifier precision=glm::defaultp>
 	constexpr inline auto value_noise3(const MosaicNoise noise, const MosaicOps ops)
 	{
-		return ValueNoise3<scalar,MosaicNoise,MosaicOps>(noise, ops);
+		return ValueNoise3<scalar,MosaicNoise,MosaicOps,precision>(noise, ops);
 	}
 
 	struct VectorMosaicOps
@@ -127,28 +131,31 @@ namespace field
 		template<int L, typename T, glm::qualifier Q>
 		inline glm::vec<L,T,Q> floor(const glm::vec<L,T,Q> V) const
 		{
-			return glm::floor(V)
+			return glm::floor(V);
 		}
+		template<int L, typename T, glm::qualifier Q>
 		inline glm::vec<L,T,Q> fract(const glm::vec<L,T,Q> V) const
 		{
-			return glm::smoothstep(
-				glm::vec<L,T,Q>(0), 
-				glm::vec<L,T,Q>(1), 
-				glm::fract(V)
-			);
+			return glm::fract(V);
 		}
+		template<int L, typename T, glm::qualifier Q>
 		inline glm::vec<L,T,Q> add(const glm::vec<L,T,Q> U, glm::vec<L,T,Q> V) const
 		{
 			return U+V;
 		}
 	};
 
+	constexpr inline auto vector_mosaic_ops()
+	{
+		return VectorMosaicOps();
+	}
+
 	/*
 	Given a `MosaicNoise`: ℕ→ℝ³, `ValueNoise2` maps ℝ³→ℝ. 
 	For each point, `WorleyNoise` returns the distance to the closest point 
 	of a set of procedurally generated points, given by `MosaicNoise`.
 	*/
-	template<typename scalar, typename MosaicNoise, typename MosaicOps>
+	template<typename scalar, typename MosaicNoise, typename MosaicOps, glm::qualifier precision=glm::defaultp>
 	struct ValueNoise2
 	{
 		MosaicNoise noise;
@@ -166,13 +173,14 @@ namespace field
 			ops(ops)
 		{}
 
-		using vec = glm::vec<2,scalar,glm::defaultp>;
+		using vec = glm::vec<2,scalar,precision>;
 		using value_type = typename MosaicNoise::value_type;
 
 		template<typename point>
 		value_type operator()(const point V) const {
 		    auto I = ops.floor(V);
 		    vec F = ops.fract(V);
+		    vec F01 = glm::smoothstep(vec(0), vec(1), F);
 		    vec G = vec(0);
 		    vec O = vec(0);
 		    value_type a(0);
@@ -181,7 +189,7 @@ namespace field
 		        for (int j = 0; j <= 1; ++j)
 		        {
                     O = vec(i,j);
-                    G = glm::mix(vec(1)-F, F, O);
+                    G = glm::mix(vec(1)-F01, F01, O);
                     a += noise(ops.add(I, O)) * G.x * G.y;
 		        }
 		    }
@@ -190,10 +198,10 @@ namespace field
 		}
 	};
 
-	template<typename scalar, typename MosaicNoise, typename MosaicOps>
+	template<typename scalar, typename MosaicNoise, typename MosaicOps, glm::qualifier precision=glm::defaultp>
 	constexpr inline auto value_noise(const MosaicNoise noise, const MosaicOps ops)
 	{
-		return ValueNoise2<scalar,MosaicNoise,MosaicOps>(noise, ops);
+		return ValueNoise2<scalar,MosaicNoise,MosaicOps,precision>(noise, ops);
 	}
 
 

@@ -17,24 +17,26 @@ namespace field
 	For each point, `PerlinNoise` returns the distance to the closest point 
 	of a set of procedurally generated points, given by `MosaicVectorNoise`.
 	*/
-	template<typename MosaicVectorNoise>
+	template<typename scalar, typename MosaicVectorNoise, typename MosaicOps, glm::qualifier precision=glm::defaultp>
 	struct PerlinNoise4
 	{
 		MosaicVectorNoise noise;
+		MosaicOps ops;
 
 		/*
 		`region_transition_width` is the width of the transition zone for a region
 		`region_count` is the number of regions where we increment grid cell values
 		*/
-		explicit PerlinNoise4(const MosaicVectorNoise& noise): noise(noise), ops(ops) {}
+		explicit PerlinNoise4(const MosaicVectorNoise& noise, const MosaicOps& ops): noise(noise), ops(ops) {}
 		PerlinNoise4(const PerlinNoise4& perlin): noise(perlin.noise), ops(perlin.ops) {}
 
 		using vector_type = typename MosaicVectorNoise::value_type;
 		using value_type = typename vector_type::value_type;
 
-		value_type operator()(const auto position) const {
-			using vec = glm::vec<4,T,Q>;
-		    vec V(position);
+		template<typename point>
+		value_type operator()(const point position) const {
+			using vec = glm::vec<4,scalar,precision>;
+		    auto V(position);
 		    vec I = ops.floor(V);
 		    vec F = ops.fract(V);
 		    vec F01 = glm::smoothstep(vec(0), vec(1), F);
@@ -61,10 +63,10 @@ namespace field
 		}
 	};
 
-	template<typename MosaicVectorNoise>
-	constexpr inline auto perlin_noise4(const MosaicVectorNoise noise)
+	template<typename scalar, typename MosaicVectorNoise, typename MosaicOps, glm::qualifier precision=glm::defaultp>
+	constexpr inline auto perlin_noise4(const MosaicVectorNoise noise, const MosaicOps ops)
 	{
-		return PerlinNoise4<MosaicVectorNoise>(noise);
+		return PerlinNoise4<scalar,MosaicVectorNoise,MosaicOps,precision>(noise, ops);
 	}
 
 	/*
@@ -72,24 +74,26 @@ namespace field
 	For each point, `PerlinNoise` returns the distance to the closest point 
 	of a set of procedurally generated points, given by `MosaicVectorNoise`.
 	*/
-	template<typename MosaicVectorNoise>
+	template<typename scalar, typename MosaicVectorNoise, typename MosaicOps, glm::qualifier precision=glm::defaultp>
 	struct PerlinNoise3
 	{
 		MosaicVectorNoise noise;
+		MosaicOps ops;
 
 		/*
 		`region_transition_width` is the width of the transition zone for a region
 		`region_count` is the number of regions where we increment grid cell values
 		*/
-		explicit PerlinNoise3(const MosaicVectorNoise& noise): noise(noise), ops(ops) {}
+		explicit PerlinNoise3(const MosaicVectorNoise& noise, const MosaicOps& ops): noise(noise), ops(ops) {}
 		PerlinNoise3(const PerlinNoise3& perlin): noise(perlin.noise), ops(perlin.ops) {}
 
 		using vector_type = typename MosaicVectorNoise::value_type;
 		using value_type = typename vector_type::value_type;
 
-		value_type operator()(const auto position) const {
-			using vec = glm::vec<3,T,Q>;
-		    vec V(position);
+		template<typename point>
+		value_type operator()(const point position) const {
+			using vec = glm::vec<3,scalar,precision>;
+		    auto V(position);
 		    vec I = ops.floor(V);
 		    vec F = ops.fract(V);
 		    vec F01 = glm::smoothstep(vec(0), vec(1), F);
@@ -113,10 +117,10 @@ namespace field
 		}
 	};
 
-	template<typename MosaicVectorNoise>
-	constexpr inline auto perlin_noise3(const MosaicVectorNoise noise)
+	template<typename scalar, typename MosaicVectorNoise, typename MosaicOps, glm::qualifier precision=glm::defaultp>
+	constexpr inline auto perlin_noise3(const MosaicVectorNoise noise, const MosaicOps ops)
 	{
-		return PerlinNoise3<MosaicVectorNoise>(noise);
+		return PerlinNoise3<scalar,MosaicVectorNoise,MosaicOps,precision>(noise, ops);
 	}
 
 	/*
@@ -124,23 +128,26 @@ namespace field
 	For each point, `PerlinNoise` returns the distance to the closest point 
 	of a set of procedurally generated points, given by `MosaicVectorNoise`.
 	*/
-	template<typename MosaicVectorNoise>
+	template<typename scalar, typename MosaicVectorNoise, typename MosaicOps, glm::qualifier precision=glm::defaultp>
 	struct PerlinNoise2
 	{
 		MosaicVectorNoise noise;
+		MosaicOps ops;
 
 		/*
 		`region_transition_width` is the width of the transition zone for a region
 		`region_count` is the number of regions where we increment grid cell values
 		*/
-		explicit PerlinNoise2(const MosaicVectorNoise& noise): noise(noise), ops(ops) {}
+		explicit PerlinNoise2(const MosaicVectorNoise& noise, const MosaicOps& ops): noise(noise), ops(ops) {}
 		PerlinNoise2(const PerlinNoise2& perlin): noise(perlin.noise), ops(perlin.ops) {}
 
 		using vector_type = typename MosaicVectorNoise::value_type;
 		using value_type = typename vector_type::value_type;
 
-		value_type operator()(const auto V) const {
-			using vec = glm::vec<2,T,Q>;
+		template<typename point>
+		value_type operator()(const point position) const {
+			using vec = glm::vec<2,scalar,precision>;
+		    auto V(position);
 		    auto I = ops.floor(V);
 		    vec F = ops.fract(V);
 		    vec F01 = glm::smoothstep(vec(0), vec(1), F);
@@ -161,10 +168,10 @@ namespace field
 		}
 	};
 
-	template<typename MosaicVectorNoise>
-	constexpr inline auto perlin_noise2(const MosaicVectorNoise noise)
+	template<typename scalar, typename MosaicVectorNoise, typename MosaicOps, glm::qualifier precision=glm::defaultp>
+	constexpr inline auto perlin_noise2(const MosaicVectorNoise noise, const MosaicOps ops)
 	{
-		return PerlinNoise2<MosaicVectorNoise>(noise);
+		return PerlinNoise2<scalar,MosaicVectorNoise,MosaicOps,precision>(noise, ops);
 	}
 
 }

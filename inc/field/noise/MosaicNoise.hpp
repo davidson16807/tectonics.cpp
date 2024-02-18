@@ -21,17 +21,12 @@ namespace field
 	`MosaicNoise` represents what is known as "square noise" or "mosaic noise"
 	where a space is broken down into cells, and all points within a cell assume a unique random value.
 	*/
-	template<typename Noise, typename Indexing=cartesian::UnboundedIndexing<int>>
+	template<typename Noise, typename Indexing>
 	class MosaicNoise
 	{
 	public:
 		Noise noise;
 		Indexing indexing;
-
-        constexpr MosaicNoise(const Noise noise) :
-        	noise(noise)
-        {
-        }
 
         constexpr MosaicNoise(const Noise noise, const Indexing indexing) :
         	noise(noise),
@@ -60,7 +55,7 @@ namespace field
 	template<typename Noise>
 	constexpr inline auto mosaic_noise(const Noise& noise)
 	{
-		return MosaicNoise<Noise>(noise);
+		return MosaicNoise(noise, cartesian::UnboundedIndexing<int>());
 	}
 
 	template<typename Noise, typename Indexing>

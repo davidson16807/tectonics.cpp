@@ -21,16 +21,17 @@ namespace cartesian
 
     `UnboundedIndexing` builds on top of `PositiveIndexing` 
     */
-    template<typename id=int, glm::qualifier Q=glm::defaultp>
+    template<typename id=int, glm::qualifier precision=glm::defaultp>
     class UnboundedIndexing
     {
 
     public:
-        PositiveIndexing<id,Q> positive_indexing;
+        PositiveIndexing<id,precision> positive_indexing;
 
-        template<int L>
-        constexpr id memory_id(const glm::vec<L,id,glm::defaultp> grid_id) const {
+        template<int L, typename scalar>
+        constexpr id memory_id(const glm::vec<L,scalar,precision> grid_position) const {
             id octant_id = 0;
+            glm::vec<L,id,precision> grid_id(grid_position);
             for (int i = 0; i < L; ++i)
             {
                 octant_id += (2<<i) * (grid_id[i] < 0);
