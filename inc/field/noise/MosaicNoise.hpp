@@ -15,12 +15,13 @@
 namespace field
 {
 
+
 	/*
 	Given a `Noise` instance: ℕ→ℝ, `MosaicNoise` maps ℝᴺ→ℤᴺ→ℕ→ℝ,
 	`MosaicNoise` represents what is known as "square noise" or "mosaic noise"
 	where a space is broken down into cells, and all points within a cell assume a unique random value.
 	*/
-	template<typename Noise, typename Indexing=cartesian::UnboundedIndexing<int>>
+	template<typename Noise, typename Indexing>
 	class MosaicNoise
 	{
 	public:
@@ -37,14 +38,16 @@ namespace field
 		`region_transition_width` is the width of the transition zone for a region
 		`region_count` is the number of regions where we increment grid cell values
 		*/
-		explicit MosaicNoise(const Noise& noise): noise(noise) {}
-		MosaicNoise(const MosaicNoise& mosaic_noise): noise(mosaic_noise.noise) {}
+		MosaicNoise(const MosaicNoise& mosaic_noise):
+			noise(mosaic_noise.noise),
+			indexing(mosaic_noise.indexing)
+		{}
 
 		using value_type = typename Noise::value_type;
 
-		template<int N, typename T, glm::qualifier Q>
-		auto operator()(const glm::vec<N,T,Q> V) const {
-		    return noise(indexing.memory_id(glm::vec<N,int,Q>(V)));
+		template<typename T>
+		auto operator()(const T V) const {
+		    return noise(indexing.memory_id(V));
 		}
 
 	};
@@ -52,7 +55,13 @@ namespace field
 	template<typename Noise>
 	constexpr inline auto mosaic_noise(const Noise& noise)
 	{
-		return MosaicNoise<Noise>(noise);
+		return MosaicNoise(noise, cartesian::UnboundedIndexing<int>());
+	}
+
+	template<typename Noise, typename Indexing>
+	constexpr inline auto mosaic_noise(const Noise& noise, const Indexing& indexing)
+	{
+		return MosaicNoise<Noise,Indexing>(noise, indexing);
 	}
 
 }

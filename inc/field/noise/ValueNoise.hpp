@@ -16,31 +16,34 @@ namespace field
 	For each point, `WorleyNoise` returns the distance to the closest point 
 	of a set of procedurally generated points, given by `MosaicNoise`.
 	*/
-	template<typename MosaicNoise>
+	template<typename scalar, typename MosaicNoise, typename MosaicOps, glm::qualifier precision=glm::defaultp>
 	struct ValueNoise4
 	{
 		MosaicNoise noise;
+		MosaicOps ops;
 
 		/*
 		`region_transition_width` is the width of the transition zone for a region
 		`region_count` is the number of regions where we increment grid cell values
 		*/
 		explicit ValueNoise4(
-			const MosaicNoise& noise
+			const MosaicNoise& noise,
+			const MosaicOps& ops
 		):
-			noise(noise)
+			noise(noise),
+			ops(ops)
 		{}
 
+		using vec = glm::vec<4,scalar,precision>;
 		using value_type = typename MosaicNoise::value_type;
 
-		template<typename T, glm::qualifier Q>
-		value_type operator()(const glm::vec<4,T,Q> V) const {
-			using vec = glm::vec<4,T,Q>;
-		    vec I = glm::floor(V);
-		    vec F = glm::smoothstep(vec(0), vec(1), glm::fract(V));
+		template<typename point>
+		value_type operator()(const point V) const {
+		    auto I = ops.floor(V);
+		    vec F = ops.fract(V);
+		    vec F01 = glm::smoothstep(vec(0), vec(1), F);
 		    vec G = vec(0);
 		    vec O = vec(0);
-		    vec J = vec(0);
 		    value_type a(0);
 		    for (int i = 0; i <= 1; ++i)
 		    {
@@ -51,22 +54,20 @@ namespace field
 		                for (int l = 0; l <= 1; ++l)
 		                {
 		                    O = vec(i,j,k,l);
-		                    J = I + O;
-		                    G = glm::mix(vec(1)-F, F, O);
-		                    a += noise(J) * G.x * G.y * G.z * G.w;
+		                    G = glm::mix(vec(1)-F01, F01, O);
+		                    a += noise(ops.add(I,O)) * G.x * G.y * G.z * G.w;
 		                }
 		            }
 		        }
 		    }
-
 		    return a;
 		}
 	};
 
-	template<typename MosaicNoise>
-	constexpr inline auto value_noise4(const MosaicNoise noise)
+	template<typename scalar, typename MosaicNoise, typename MosaicOps, glm::qualifier precision=glm::defaultp>
+	constexpr inline auto value_noise4(const MosaicNoise noise, const MosaicOps ops)
 	{
-		return ValueNoise4<MosaicNoise>(noise);
+		return ValueNoise4<scalar,MosaicNoise,MosaicOps,precision>(noise, ops);
 	}
 
 	/*
@@ -74,31 +75,34 @@ namespace field
 	For each point, `WorleyNoise` returns the distance to the closest point 
 	of a set of procedurally generated points, given by `MosaicNoise`.
 	*/
-	template<typename MosaicNoise>
+	template<typename scalar, typename MosaicNoise, typename MosaicOps, glm::qualifier precision=glm::defaultp>
 	struct ValueNoise3
 	{
 		MosaicNoise noise;
+		MosaicOps ops;
 
 		/*
 		`region_transition_width` is the width of the transition zone for a region
 		`region_count` is the number of regions where we increment grid cell values
 		*/
 		explicit ValueNoise3(
-			const MosaicNoise& noise
+			const MosaicNoise& noise,
+			const MosaicOps& ops
 		):
-			noise(noise)
+			noise(noise),
+			ops(ops)
 		{}
 
+		using vec = glm::vec<3,scalar,precision>;
 		using value_type = typename MosaicNoise::value_type;
 
-		template<typename T, glm::qualifier Q>
-		value_type operator()(const glm::vec<3,T,Q> V) const {
-			using vec = glm::vec<3,T,Q>;
-		    vec I = glm::floor(V);
-		    vec F = glm::smoothstep(vec(0), vec(1), glm::fract(V));
+		template<typename point>
+		value_type operator()(const point V) const {
+		    auto I = ops.floor(V);
+		    vec F = ops.fract(V);
+		    vec F01 = glm::smoothstep(vec(0), vec(1), F);
 		    vec G = vec(0);
 		    vec O = vec(0);
-		    vec J = vec(0);
 		    value_type a(0);
 		    for (int i = 0; i <= 1; ++i)
 		    {
@@ -107,21 +111,43 @@ namespace field
 		            for (int k = 0; k <= 1; ++k)
 		            {
 	                    O = vec(i,j,k);
-	                    J = I + O;
-	                    G = glm::mix(vec(1)-F, F, O);
-	                    a += noise(J) * G.x * G.y * G.z;
+	                    G = glm::mix(vec(1)-F01, F01, O);
+	                    a += noise(ops.add(I,O)) * G.x * G.y * G.z;
 		            }
 		        }
 		    }
-
 		    return a;
 		}
 	};
 
-	template<typename MosaicNoise>
-	constexpr inline auto value_noise3(const MosaicNoise noise)
+	template<typename scalar, typename MosaicNoise, typename MosaicOps, glm::qualifier precision=glm::defaultp>
+	constexpr inline auto value_noise3(const MosaicNoise noise, const MosaicOps ops)
 	{
-		return ValueNoise3<MosaicNoise>(noise);
+		return ValueNoise3<scalar,MosaicNoise,MosaicOps,precision>(noise, ops);
+	}
+
+	struct VectorMosaicOps
+	{
+		template<int L, typename T, glm::qualifier Q>
+		inline glm::vec<L,T,Q> floor(const glm::vec<L,T,Q> V) const
+		{
+			return glm::floor(V);
+		}
+		template<int L, typename T, glm::qualifier Q>
+		inline glm::vec<L,T,Q> fract(const glm::vec<L,T,Q> V) const
+		{
+			return glm::fract(V);
+		}
+		template<int L, typename T, glm::qualifier Q>
+		inline glm::vec<L,T,Q> add(const glm::vec<L,T,Q> U, glm::vec<L,T,Q> V) const
+		{
+			return U+V;
+		}
+	};
+
+	constexpr inline auto vector_mosaic_ops()
+	{
+		return VectorMosaicOps();
 	}
 
 	/*
@@ -129,40 +155,42 @@ namespace field
 	For each point, `WorleyNoise` returns the distance to the closest point 
 	of a set of procedurally generated points, given by `MosaicNoise`.
 	*/
-	template<typename MosaicNoise>
+	template<typename scalar, typename MosaicNoise, typename MosaicOps, glm::qualifier precision=glm::defaultp>
 	struct ValueNoise2
 	{
 		MosaicNoise noise;
+		MosaicOps   ops;
 
 		/*
 		`region_transition_width` is the width of the transition zone for a region
 		`region_count` is the number of regions where we increment grid cell values
 		*/
 		explicit ValueNoise2(
-			const MosaicNoise& noise
+			const MosaicNoise& noise,
+			const MosaicOps& ops
 		):
-			noise(noise)
+			noise(noise),
+			ops(ops)
 		{}
 
+		using vec = glm::vec<2,scalar,precision>;
 		using value_type = typename MosaicNoise::value_type;
 
-		template<typename T, glm::qualifier Q>
-		value_type operator()(const glm::vec<2,T,Q> V) const {
-			using vec = glm::vec<2,T,Q>;
-		    vec I = glm::floor(V);
-		    vec F = glm::smoothstep(vec(0), vec(1), glm::fract(V));
+		template<typename point>
+		value_type operator()(const point V) const {
+		    auto I = ops.floor(V);
+		    vec F = ops.fract(V);
+		    vec F01 = glm::smoothstep(vec(0), vec(1), F);
 		    vec G = vec(0);
 		    vec O = vec(0);
-		    vec J = vec(0);
 		    value_type a(0);
 		    for (int i = 0; i <= 1; ++i)
 		    {
 		        for (int j = 0; j <= 1; ++j)
 		        {
                     O = vec(i,j);
-                    J = I + O;
-                    G = glm::mix(vec(1)-F, F, O);
-                    a += noise(J) * G.x * G.y;
+                    G = glm::mix(vec(1)-F01, F01, O);
+                    a += noise(ops.add(I, O)) * G.x * G.y;
 		        }
 		    }
 
@@ -170,10 +198,10 @@ namespace field
 		}
 	};
 
-	template<typename MosaicNoise>
-	constexpr inline auto value_noise(const MosaicNoise noise)
+	template<typename scalar, typename MosaicNoise, typename MosaicOps, glm::qualifier precision=glm::defaultp>
+	constexpr inline auto value_noise(const MosaicNoise noise, const MosaicOps ops)
 	{
-		return ValueNoise2<MosaicNoise>(noise);
+		return ValueNoise2<scalar,MosaicNoise,MosaicOps,precision>(noise, ops);
 	}
 
 

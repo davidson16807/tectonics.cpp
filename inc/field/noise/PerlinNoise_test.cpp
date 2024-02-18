@@ -44,20 +44,20 @@ TEST_CASE( "PerlinNoise()", "[field]" ) {
     REQUIRE(test::determinism(adapter,
         "PerlinNoise(…)", 
         TEST_UNARY(
-            field::perlin_noise3(
+            field::perlin_noise3<double>(
                 field::mosaic_noise(
-                    series::vector_interleave<3>(
-                        series::gaussian(11.0, 1.1e4)
-                    )))),
+                    series::vector_interleave<3>(series::gaussian(11.0, 1.1e4))),
+                field::vector_mosaic_ops()
+            )),
         positions
     ));
 
     auto noise = 
-            field::perlin_noise3(
+            field::perlin_noise3<double>(
                 field::mosaic_noise(
-                    series::vector_interleave<3>(
-                        series::gaussian(11.0, 1.1e4)
-                    )));
+                    series::vector_interleave<3>(series::gaussian(11.0, 1.1e4))),
+                field::vector_mosaic_ops()
+            );
 
     REQUIRE(test::continuity(adapter,
         "PerlinNoise(…)", TEST_UNARY(noise),
