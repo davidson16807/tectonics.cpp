@@ -41,20 +41,17 @@ TEST_CASE( "ValueNoise()", "[field]" ) {
         series::uniform(100.0)
     );
 
+    auto noise = 
+        field::value_noise<3,double>(
+            field::mosaic_noise(series::gaussian(11.0, 1.1e4)),
+            field::vector_mosaic_ops()
+        );
+
     REQUIRE(test::determinism(adapter,
         "ValueNoise(…)", 
-        TEST_UNARY(
-            field::value_noise3<double>(
-                field::mosaic_noise(series::gaussian(11.0, 1.1e4)),
-                field::vector_mosaic_ops()
-            )),
+        TEST_UNARY(noise),
         positions
     ));
-
-    auto noise = field::value_noise3<double>(
-                    field::mosaic_noise(series::gaussian(11.0, 1.1e4)),
-                    field::vector_mosaic_ops()
-                );
 
     REQUIRE(test::continuity(adapter,
         "ValueNoise(…)", TEST_UNARY(noise),

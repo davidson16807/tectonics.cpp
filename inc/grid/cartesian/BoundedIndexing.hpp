@@ -23,10 +23,10 @@ namespace cartesian
     to introduce the concepts of vectors and to make decisions on data locality.
     As such, `BoundedIndexing` must be made specific to `cartesian::`.
     */
-    template<int L, typename id=int, glm::qualifier Q=glm::defaultp>
-    class BoundedIndexing
+    template<typename id=int, glm::qualifier Q=glm::defaultp>
+    class Bounded2Indexing
     {
-        using ivec = glm::vec<L,id,glm::defaultp>;
+        using ivec = glm::vec<2,id,glm::defaultp>;
 
         const cartesian::Interleaving<id> interleave;
 

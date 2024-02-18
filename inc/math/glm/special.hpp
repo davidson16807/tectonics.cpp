@@ -16,6 +16,24 @@
 namespace math{
 
 	template<typename T, glm::qualifier Q>
+	inline constexpr T prod(const glm::vec<2,T,Q> V)
+	{
+	    return V.x*V.y;
+	}
+
+	template<typename T, glm::qualifier Q>
+	inline constexpr T prod(const glm::vec<3,T,Q> V)
+	{
+	    return V.x*V.y*V.z;
+	}
+
+	template<typename T, glm::qualifier Q>
+	inline constexpr T prod(const glm::vec<4,T,Q> V)
+	{
+	    return V.x*V.y*V.z*V.w;
+	}
+
+	template<typename T, glm::qualifier Q>
 	inline constexpr T trace(const glm::mat<2,2,T,Q> A)
 	{
 	    return A[0][0] + A[1][1];

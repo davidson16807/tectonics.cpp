@@ -64,5 +64,36 @@ namespace field
 		return MosaicNoise<Noise,Indexing>(noise, indexing);
 	}
 
+	/*
+	`VectorMosaicOps` considers operations on ℝ³ that are required for other kinds of noise functions 
+	that depend on `MosaicNoise`, such as `ValueNoise`, `PerlinNoise`, etc.
+	It is analogous to other possible classes that can be 
+	used to extend these noise functions to operate on other domains.
+	As such, it can be considered an implementation of the adapter pattern for vectors.
+	*/
+	struct VectorMosaicOps
+	{
+		template<int L, typename T, glm::qualifier Q>
+		inline glm::vec<L,T,Q> floor(const glm::vec<L,T,Q> grid_id) const
+		{
+			return glm::floor(grid_id);
+		}
+		template<int L, typename T, glm::qualifier Q>
+		inline glm::vec<L,T,Q> fract(const glm::vec<L,T,Q> grid_id) const
+		{
+			return glm::fract(grid_id);
+		}
+		template<int L, typename T, glm::qualifier Q>
+		inline glm::vec<L,T,Q> add(const glm::vec<L,T,Q> grid_id, glm::vec<L,T,Q> offset) const
+		{
+			return grid_id+offset;
+		}
+	};
+
+	constexpr inline auto vector_mosaic_ops()
+	{
+		return VectorMosaicOps();
+	}
+
 }
 
