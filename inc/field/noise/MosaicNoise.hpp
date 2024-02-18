@@ -15,6 +15,7 @@
 namespace field
 {
 
+
 	/*
 	Given a `Noise` instance: ℕ→ℝ, `MosaicNoise` maps ℝᴺ→ℤᴺ→ℕ→ℝ,
 	`MosaicNoise` represents what is known as "square noise" or "mosaic noise"
