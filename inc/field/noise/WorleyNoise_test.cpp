@@ -41,24 +41,18 @@ TEST_CASE( "WorleyNoise()", "[field]" ) {
         series::uniform(100.0)
     );
 
+    auto noise = 
+        field::worley_noise<3,double>(
+            field::mosaic_noise(
+                series::vector_interleave<3>(series::unit_interval_noise(11.0, 1.1e4))),
+            field::vector_mosaic_ops<int,double>()
+        );
+
     REQUIRE(test::determinism(adapter,
         "WorleyNoise(…)", 
-        TEST_UNARY(
-            field::worley_noise3(
-                field::mosaic_noise(
-                    series::vector_interleave<3>(
-                        series::unit_interval_noise(11.0, 1.1e4)
-                    )))),
+        TEST_UNARY(noise),
         positions
     ));
-
-    auto noise = 
-        field::worley_noise3(
-            field::mosaic_noise(
-                series::vector_interleave<3>(
-                    series::unit_interval_noise(11.0, 1.1e4)
-                )));
-
 
     REQUIRE(test::continuity(adapter,
         "WorleyNoise(…)", TEST_UNARY(noise),
@@ -67,9 +61,9 @@ TEST_CASE( "WorleyNoise()", "[field]" ) {
     ));
 
     auto out = series::map(noise, positions);
-    CHECK(whole::min(out) <  0.05);
+    CHECK(whole::min(out) <  0.1);
     CHECK(whole::min(out) >= 0.00);
-    CHECK(whole::max(out) >  0.1);
+    CHECK(whole::max(out) >  1.0);
     CHECK(whole::standard_deviation(out) > 0.1);
 }
 

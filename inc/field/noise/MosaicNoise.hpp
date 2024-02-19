@@ -71,28 +71,40 @@ namespace field
 	used to extend these noise functions to operate on other domains.
 	As such, it can be considered an implementation of the adapter pattern for vectors.
 	*/
+	template<typename id, typename scalar>
 	struct VectorMosaicOps
 	{
-		template<int L, typename T, glm::qualifier Q>
-		inline glm::vec<L,T,Q> floor(const glm::vec<L,T,Q> grid_id) const
+		template<int L, glm::qualifier Q>
+		inline glm::vec<L,id,Q> floor(const glm::vec<L,scalar,Q> grid_id) const
 		{
-			return glm::floor(grid_id);
+			return glm::vec<L,id,Q>(glm::floor(grid_id));
 		}
-		template<int L, typename T, glm::qualifier Q>
-		inline glm::vec<L,T,Q> fract(const glm::vec<L,T,Q> grid_id) const
+		template<int L, glm::qualifier Q>
+		inline glm::vec<L,scalar,Q> fract(const glm::vec<L,scalar,Q> grid_id) const
 		{
 			return glm::fract(grid_id);
 		}
-		template<int L, typename T, glm::qualifier Q>
-		inline glm::vec<L,T,Q> add(const glm::vec<L,T,Q> grid_id, glm::vec<L,T,Q> offset) const
+		template<int L, glm::qualifier Q>
+		inline auto add(const glm::vec<L,id,Q> grid_id, glm::vec<L,scalar,Q> offset) const
+		{
+			return glm::vec<L,scalar,Q>(grid_id)+glm::vec<L,scalar,Q>(offset);
+		}
+		template<int L, glm::qualifier Q>
+		inline auto add(const glm::vec<L,id,Q> grid_id, glm::vec<L,id,Q> offset) const
 		{
 			return grid_id+offset;
 		}
+		template<int L, glm::qualifier Q>
+		inline scalar distance(const glm::vec<L,scalar,Q> grid_id1, glm::vec<L,scalar,Q> grid_id2) const
+		{
+			return glm::distance(grid_id1, grid_id2);
+		}
 	};
 
+	template<typename id, typename scalar>
 	constexpr inline auto vector_mosaic_ops()
 	{
-		return VectorMosaicOps();
+		return VectorMosaicOps<id,scalar>();
 	}
 
 }

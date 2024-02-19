@@ -26,9 +26,12 @@ namespace cartesian
     template<int L, typename id=int, glm::qualifier precision=glm::defaultp>
     struct OrthantIndexing
     {
+
         using ivec = glm::vec<L,id,precision>;
         static constexpr id size = 1<<L;
-        constexpr id memory_id(const ivec grid_id) const {
+
+        constexpr id memory_id(const ivec grid_id) const 
+        {
             id output(0);
             for (int i = 0; i < L; ++i)
             {
@@ -36,6 +39,7 @@ namespace cartesian
             }
             return output;
         }
+
         inline ivec grid_id(const id memory_id) const
         {
             ivec output(0);

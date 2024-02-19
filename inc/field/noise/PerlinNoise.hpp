@@ -9,6 +9,9 @@
 #include <glm/geometric.hpp>
 #include <glm/gtc/noise.hpp>
 
+// in-house libraries
+#include <grid/cartesian/OrthantIndexing.hpp>
+
 namespace field
 {
 
@@ -28,17 +31,29 @@ namespace field
 		`region_transition_width` is the width of the transition zone for a region
 		`region_count` is the number of regions where we increment grid cell values
 		*/
-		explicit PerlinNoise(const MosaicVectorNoise& noise, const MosaicOps& ops): noise(noise), ops(ops) {}
-		PerlinNoise(const PerlinNoise& perlin): noise(perlin.noise), ops(perlin.ops) {}
+		explicit PerlinNoise(
+			const MosaicVectorNoise& noise, 
+			const MosaicOps& ops
+		): 
+			noise(noise), 
+			ops(ops),
+			indexing()
+		{}
 
+		PerlinNoise(const PerlinNoise& perlin): 
+			noise(perlin.noise), 
+			ops(perlin.ops),
+			indexing() 
+		{}
+
+		using vec = glm::vec<L,scalar,precision>;
 		using vector_type = typename MosaicVectorNoise::value_type;
 		using value_type = typename vector_type::value_type;
 
 		template<typename point>
 		value_type operator()(const point position) const {
-			using vec = glm::vec<L,scalar,precision>;
 		    point V(position);
-		    vec I = ops.floor(V);
+		    auto I = ops.floor(V);
 		    vec F = ops.fract(V);
 		    vec F01 = glm::smoothstep(vec(0), vec(1), F);
 		    vec O(0);

@@ -41,6 +41,14 @@ namespace field
 			indexing()
 		{}
 
+		ValueNoise(
+			const ValueNoise& value
+		):
+			noise(value.noise),
+			ops(value.ops),
+			indexing()
+		{}
+
 		using vec = glm::vec<L,scalar,precision>;
 		using value_type = typename MosaicNoise::value_type;
 

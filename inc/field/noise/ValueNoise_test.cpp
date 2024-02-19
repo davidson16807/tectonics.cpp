@@ -44,7 +44,7 @@ TEST_CASE( "ValueNoise()", "[field]" ) {
     auto noise = 
         field::value_noise<3,double>(
             field::mosaic_noise(series::gaussian(11.0, 1.1e4)),
-            field::vector_mosaic_ops()
+            field::vector_mosaic_ops<int,double>()
         );
 
     REQUIRE(test::determinism(adapter,

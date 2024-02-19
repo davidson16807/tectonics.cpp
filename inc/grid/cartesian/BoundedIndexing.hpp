@@ -23,36 +23,37 @@ namespace cartesian
     to introduce the concepts of vectors and to make decisions on data locality.
     As such, `BoundedIndexing` must be made specific to `cartesian::`.
     */
-    template<typename id=int, glm::qualifier Q=glm::defaultp>
-    class Bounded2Indexing
+
+    template<int L, typename id=int, glm::qualifier precision=glm::defaultp>
+    struct BoundedIndexing
     {
-        using ivec = glm::vec<2,id,glm::defaultp>;
+        using ivec = glm::vec<L,id,precision>;
 
-        const cartesian::Interleaving<id> interleave;
+        const id side_length;
+        const id size;
 
-    public:
-        const id vertices_per_side;
-        const id vertex_count;
-
-        constexpr BoundedIndexing(const id vertices_per_side) : 
-            interleave(vertices_per_side),
-            vertices_per_side(vertices_per_side),
-            vertex_count(vertices_per_side*vertices_per_side)
+        constexpr BoundedIndexing(const id side_length) : 
+            side_length(side_length),
+            size(pow(side_length,L))
         {
         }
-
         constexpr id memory_id(const ivec grid_id) const {
-            return interleave.interleaved_id(grid_id.y, grid_id.x);
+            id output(0);
+            for (id i = 0; i < L; ++i)
+            {
+                output += grid_id[i] * pow(L,i);
+            }
+            return output;
         }
-
-        inline constexpr ivec grid_id(const id memory_id) const {
-            return ivec(
-                interleave.element_id(memory_id), 
-                interleave.block_id(memory_id)
-            );
+        inline ivec grid_id(const id memory_id) const
+        {
+            ivec output(0);
+            for (id i = 0; i < L; ++i)
+            {
+                output[i] = id(memory_id/pow(side_length,i)) % side_length;
+            }
+            return output;
         }
-
     };
-
 }
 
