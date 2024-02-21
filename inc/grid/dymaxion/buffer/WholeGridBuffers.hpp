@@ -19,15 +19,15 @@ namespace dymaxion {
 	See README.md for general discussion on design of `*Buffers` classes.
 	*/
 
-	template<typename id, glm::qualifier Q=glm::defaultp>
+	template<typename id, typename scalar, glm::qualifier Q=glm::defaultp>
 	class WholeGridBuffers
 	{
 
 		static constexpr id square_count = 10;
 		static constexpr id pole_count = 2;
 
-        const SquareBuffers<id,Q> squares;
-        const PoleBuffers<id,Q> poles;
+        const SquareBuffers<id,scalar,Q> squares;
+        const PoleBuffers<id,scalar,Q> poles;
 
 	public:
 		constexpr inline explicit WholeGridBuffers(const id vertices_per_square_side):

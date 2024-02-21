@@ -48,15 +48,13 @@ namespace field
 
 		using vec = glm::vec<L,scalar,precision>;
 		using vector_type = typename MosaicVectorNoise::value_type;
-		using value_type = typename vector_type::value_type;
 
-		template<typename point>
-		value_type operator()(const point position) const {
-		    point V(position);
+		template<typename tpoint>
+		scalar operator()(const tpoint V) const {
 		    auto I = ops.floor(V);
 		    vec F = ops.fract(V);
 		    vec F01 = glm::smoothstep(vec(0), vec(1), F);
-		    value_type f(0);
+		    scalar f(0);
 		    for (int i = 0; i < indexing.size; ++i)
 		    {
                 auto O = indexing.grid_id(i);

@@ -15,6 +15,23 @@
 
 namespace math{
 
+	template<typename T, glm::qualifier Q>
+	inline constexpr T prod(const glm::vec<2,T,Q> V)
+	{
+	    return V.x*V.y;
+	}
+
+	template<typename T, glm::qualifier Q>
+	inline constexpr T prod(const glm::vec<3,T,Q> V)
+	{
+	    return V.x*V.y*V.z;
+	}
+
+	template<typename T, glm::qualifier Q>
+	inline constexpr T prod(const glm::vec<4,T,Q> V)
+	{
+	    return V.x*V.y*V.z*V.w;
+	}
 
 	/*
 	`trace` returns the trace of a matrix, i.e. the sum of its diagonal components.

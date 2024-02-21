@@ -38,7 +38,7 @@ namespace dymaxion
 	* `i`: subgrid id
 	*/
 	
-    template<typename id=int, typename scalar=double, glm::qualifier Q=glm::defaultp>
+    template<typename id, typename scalar, glm::qualifier Q=glm::defaultp>
 	class Projection
 	{
 
@@ -76,7 +76,7 @@ namespace dymaxion
 			ivec2 square_polarity(squares.polarity(i));
 			vec2  modded         (math::modulus(V2, vec2(s1)));
 			bvec2 are_nonlocal   (glm::greaterThan(glm::abs(V2-modded), vec2(epsilon)));
-			ivec2 nonlocal_sign  (glm::sign(V2-0.5) * vec2(are_nonlocal));
+			ivec2 nonlocal_sign  (glm::sign(V2-scalar(0.5)) * vec2(are_nonlocal));
 			bvec2 are_polar      (glm::equal(nonlocal_sign, square_polarity));
 			bvec2 are_nonpolar   (glm::notEqual(nonlocal_sign, square_polarity));
 			bool  is_polar       (glm::any(are_polar));

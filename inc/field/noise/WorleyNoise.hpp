@@ -45,8 +45,8 @@ namespace field
 		using vector_type = typename MosaicVectorNoise::value_type;
 		using value_type = typename vector_type::value_type;
 
-		template<typename point>
-		value_type operator()(const point V) const {
+		template<typename tpoint>
+		value_type operator()(const tpoint V) const {
 		    scalar nearest_distance = std::numeric_limits<scalar>::max();
 		    auto I = ops.floor(V);
 		    for (int i = 0; i < indexing.size; ++i)

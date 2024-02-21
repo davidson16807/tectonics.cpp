@@ -17,6 +17,7 @@
 // in house libraries
 #include <index/series/Map.hpp>
 #include <index/series/Uniform.hpp>
+#include <index/series/glm/VectorInterleave.hpp>
 #include <index/series/glm/VectorDeinterleave.hpp>
 #include <index/glm/each.hpp>                           // get
 #include <index/each.hpp>                           // get
@@ -30,6 +31,7 @@
 #include <index/series/noise/GaussianNoise.hpp>
 
 #include <field/noise/ValueNoise.hpp>               // ValueNoise
+#include <field/noise/PerlinNoise.hpp>              // PerlinNoise
 #include <field/noise/MosaicNoise.hpp>              // MosaicNoise
 #include <field/noise/EliasNoise.hpp>               // EliasNoise
 #include <field/VectorZip.hpp>
@@ -40,6 +42,7 @@
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
 #include <grid/dymaxion/series.hpp>                 // dymaxion::BufferVertexIds
 #include <grid/dymaxion/noise/MosaicOps.hpp>        // dymaxion::MosaicOps
+#include <grid/dymaxion/noise/FractalBrownianNoise.hpp>// dymaxion::FractalBrownianNoise
 #include <grid/dymaxion/buffer/WholeGridBuffers.hpp>// dymaxion::WholeGridBuffers
 
 #include <raster/unlayered/Morphology.hpp>          // unlayered::Morphology
@@ -96,12 +99,11 @@ int main() {
   glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
   /* OUR STUFF GOES HERE NEXT */
-  double radius(2.0);
-  int vertices_per_square_side(10);
+  float radius(2.0f);
+  int vertices_per_square_side(64);
   dymaxion::Grid grid(radius, vertices_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::VertexNormals vertex_normals(grid);
-  dymaxion::VertexGridIds vertex_grid_ids(grid);
 
   // auto vertex_colored_scalars = dymaxion::square_ids(grid);
 
@@ -137,62 +139,52 @@ int main() {
   // morphology.closing(grid, mask, out, scratch);
   // std::cout << "closing:" << std::endl;
   // std::cout << spheroidal::to_string(grid, out) << std::endl;
-  // std::vector<double> vertex_scalars2(grid.vertex_count());
+  // std::vector<float> vertex_scalars2(grid.vertex_count());
   // each::copy(out, vertex_scalars2);
 
   auto vertex_scalars1 = series::map(
-      field::value_noise<2,float>(
-          field::mosaic_noise(
-              series::unit_interval_noise(11.0f, 1.1e4f),
-              dymaxion::Indexing(vertices_per_square_side)
-          ),
-          dymaxion::mosaic_ops<int,float>(
-              dymaxion::Voronoi<int,float>(radius, vertices_per_square_side)
-          )
-      ),
-      vertex_grid_ids
+      dymaxion::fractal_brownian_noise(
+          series::vector_interleave<2>(series::gaussian(11.0f, 1.1e4f)),
+          // series::unit_interval_noise(11.0f, 1.1e4f),
+          radius, vertices_per_square_side),
+      dymaxion::VertexGridIds(grid)
   );
 
   auto vertex_scalars2 = series::map(
-      field::value_noise<2,float>(
-          field::mosaic_noise(
-              series::unit_interval_noise(12.0f, 1.2e4f),
-              dymaxion::Indexing(vertices_per_square_side)
-          ),
-          dymaxion::mosaic_ops<int,float>(
-              dymaxion::Voronoi<int,float>(radius, vertices_per_square_side)
-          )
-      ),
-      vertex_grid_ids
+      dymaxion::fractal_brownian_noise(
+          series::vector_interleave<2>(series::gaussian(12.0f, 1.2e4f)),
+          // series::unit_interval_noise(12.0f, 1.2e4f),
+          radius, vertices_per_square_side),
+      dymaxion::VertexGridIds(grid)
   );
 
-  auto vertex_directions = known::store(
-      grid.vertex_count(),
-      series::map(
-          field::vector3_zip(
-              field::elias_noise<double>(
-                      series::unit_vector_noise<3>(10.0, 1.0e4), 
-                      series::gaussian(11.0, 1.1e4), 
-                      1000),
-              field::elias_noise<double>(
-                      series::unit_vector_noise<3>(11.0, 1.1e4), 
-                      series::gaussian(11.0, 1.1e4), 
-                      1000),
-              field::elias_noise<double>(
-                      series::unit_vector_noise<3>(12.0, 1.2e4), 
-                      series::gaussian(11.0, 1.1e4), 
-                      1000)
-          ),
-          dymaxion::vertex_positions(grid)
-      )
-  );
+  // auto vertex_directions = known::store(
+  //     grid.vertex_count(),
+  //     series::map(
+  //         field::vector3_zip(
+  //             field::elias_noise<float>(
+  //                     series::unit_vector_noise<3>(10.0f, 1.0e4f), 
+  //                     series::gaussian(11.0f, 1.1e4f), 
+  //                     1000),
+  //             field::elias_noise<float>(
+  //                     series::unit_vector_noise<3>(11.0f, 1.1e4f), 
+  //                     series::gaussian(12.0f, 1.2e4f), 
+  //                     1000),
+  //             field::elias_noise<float>(
+  //                     series::unit_vector_noise<3>(12.0f, 1.2e4f), 
+  //                     series::gaussian(13.0f, 1.3e4f), 
+  //                     1000)
+  //         ),
+  //         dymaxion::vertex_positions(grid)
+  //     )
+  // );
 
   std::vector<glm::vec3> vertex_gradient(grid.vertex_count());
   unlayered::VectorCalculusByFundamentalTheorem spatial;
   spatial.gradient(grid, vertex_scalars1, vertex_gradient);
 
   // flatten raster for OpenGL
-  dymaxion::WholeGridBuffers grids(vertices_per_square_side);
+  dymaxion::WholeGridBuffers<int,float> grids(vertices_per_square_side);
   std::vector<float> buffer_color_values(grid.vertex_count());
   std::vector<float> buffer_scalars2(grid.vertex_count());
   std::vector<float> buffer_scalars1(grid.vertex_count());
@@ -309,7 +301,8 @@ int main() {
 
       debug_program.draw(
         buffer_positions,
-        buffer_color_values, // red
+        // buffer_color_values, // red
+        std::vector<float>(grid.vertex_count(), 0.0f), // red
         buffer_scalars1, // green
         std::vector<float>(grid.vertex_count(), 0.0f), // blue
         std::vector<float>(grid.vertex_count(), 1.0f), // opacity

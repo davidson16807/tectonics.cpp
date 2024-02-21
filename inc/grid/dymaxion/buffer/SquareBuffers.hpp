@@ -21,7 +21,7 @@ namespace dymaxion {
 	See README.md for general discussion on design.
 	*/
 
-	template<typename id, glm::qualifier Q=glm::defaultp>
+	template<typename id, typename scalar, glm::qualifier Q=glm::defaultp>
 	class SquareBuffers
 	{
 
@@ -33,7 +33,7 @@ namespace dymaxion {
 		static constexpr id vertices_per_quad = triangles_per_quad * vertices_per_triangle;
 		static constexpr id vertices_per_strip_quad = 4;
 
-        const Indexing<id> vertices;
+        const Indexing<id,scalar> vertices;
         const id vertices_per_square_side;
         const buffer::PrimitiveBuffers<id,Q> primitives;
 

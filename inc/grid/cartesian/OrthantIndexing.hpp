@@ -45,7 +45,7 @@ namespace cartesian
             ivec output(0);
             for (int i = 0; i < L; ++i)
             {
-                output[i] = memory_id & (1<<i);
+                output[i] = (memory_id & (1<<i)) > 0;
             }
             return output;
         }

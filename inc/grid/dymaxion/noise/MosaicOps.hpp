@@ -41,20 +41,20 @@ namespace dymaxion
 
 		inline ipoint floor(const point grid_position) const
 		{
-			return ipoint(grid_position.square_id, ivec2(grid_position));
+			return ipoint(grid_position.square_id, ivec2(grid_position.square_position));
 		}
 
 		inline vec2 fract(const point grid_position) const
 		{
-			return glm::fract(grid_position);
+			return glm::fract(grid_position.square_position);
 		}
 
-		inline ipoint floor(const ipoint grid_position) const
+		inline ipoint floor(const ipoint grid_id) const
 		{
-			return grid_position;
+			return grid_id;
 		}
 
-		inline vec2 fract(const ipoint grid_position) const
+		inline vec2 fract(const ipoint grid_id) const
 		{
 			return vec2(0);
 		}

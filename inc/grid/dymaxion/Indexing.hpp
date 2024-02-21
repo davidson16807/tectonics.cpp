@@ -21,7 +21,7 @@ namespace dymaxion
         point ↔ memory_id
 
     */
-    template<typename id=int, typename scalar=double, glm::qualifier Q=glm::defaultp>
+    template<typename id, typename scalar, glm::qualifier Q=glm::defaultp>
     class Indexing
     {
 
