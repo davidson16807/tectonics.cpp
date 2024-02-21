@@ -15,23 +15,10 @@
 
 namespace math{
 
-	template<typename T, glm::qualifier Q>
-	inline constexpr T prod(const glm::vec<2,T,Q> V)
-	{
-	    return V.x*V.y;
-	}
 
-	template<typename T, glm::qualifier Q>
-	inline constexpr T prod(const glm::vec<3,T,Q> V)
-	{
-	    return V.x*V.y*V.z;
-	}
-
-	template<typename T, glm::qualifier Q>
-	inline constexpr T prod(const glm::vec<4,T,Q> V)
-	{
-	    return V.x*V.y*V.z*V.w;
-	}
+	/*
+	`trace` returns the trace of a matrix, i.e. the sum of its diagonal components.
+	*/
 
 	template<typename T, glm::qualifier Q>
 	inline constexpr T trace(const glm::mat<2,2,T,Q> A)
@@ -51,7 +38,11 @@ namespace math{
 	    return A[0][0] + A[1][1] + A[2][2] + A[3][3];
 	}
 
-	// "permutation" (aka "levi-cevita") functions
+	/*
+	`permutation` returns the permutation of a matrix, also known as the "levi-cevita" operation.
+	It can be considered the operation that generalizes cross products to arbitrary dimensions.
+	Currently, `permutation` is only implemented for 2d and 3d.
+	*/
 
 	template<typename T, glm::qualifier Q>
 	inline constexpr T permutation(const glm::mat<2,2,T,Q> A)
@@ -78,13 +69,20 @@ namespace math{
     	);
 	}
 
-	// https://en.wikipedia.org/wiki/Cosine_similarity
+	/*
+	`similarity` returns the cosine similarity of two vectors.
+	See https://en.wikipedia.org/wiki/Cosine_similarity.
+	*/
 	template<int L, typename T, glm::qualifier Q>
 	inline constexpr T similarity(const glm::vec<L,T,Q> U, const glm::vec<L,T,Q> V)
 	{
 	    return glm::dot(U,V) / (glm::length(U)*glm::length(V));
 	}
 
+	/*
+	`compMaxAbs` returns the component of a vector whose maximum absolute value is largest.
+	It is meant to be similar in nature to other component-wise operations in glm, e.g. `compMax`, `compAdd`, etc.
+	*/
 	template<int L, typename T, glm::qualifier Q>
 	inline constexpr T compMaxAbs(const glm::vec<L,T,Q> V)
 	{

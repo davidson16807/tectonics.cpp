@@ -7,6 +7,7 @@
 // 3rd-party libraries
 #include <glm/common.hpp>
 #include <glm/geometric.hpp>
+#include <glm/gtx/component_wise.hpp>
 
 // in-house libraries
 #include <math/glm/special.hpp>
@@ -57,12 +58,11 @@ namespace field
 		    auto I = ops.floor(V);
 		    vec F = ops.fract(V);
 		    vec F01 = glm::smoothstep(vec(0), vec(1), F);
-		    vec O = vec(0);
 		    value_type f(0);
 		    for (int i = 0; i < indexing.size; ++i)
 		    {
-                O = vec(indexing.grid_id(i));
-                f += noise(ops.add(I,O)) * math::prod(glm::mix(vec(1)-F01, F01, O));
+                auto O = indexing.grid_id(i);
+                f += noise(ops.add(I,O)) * glm::compMul(glm::mix(vec(1)-F01, F01, vec(O)));
 		    }
 		    return f;
 		}

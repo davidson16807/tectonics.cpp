@@ -7,7 +7,7 @@
 // 3rd-party libraries
 #include <glm/common.hpp>
 #include <glm/geometric.hpp>
-#include <glm/gtc/noise.hpp>
+#include <glm/gtx/component_wise.hpp>
 
 // in-house libraries
 #include <grid/cartesian/OrthantIndexing.hpp>
@@ -56,13 +56,12 @@ namespace field
 		    auto I = ops.floor(V);
 		    vec F = ops.fract(V);
 		    vec F01 = glm::smoothstep(vec(0), vec(1), F);
-		    vec O(0);
 		    value_type f(0);
 		    for (int i = 0; i < indexing.size; ++i)
 		    {
-                O = vec(indexing.grid_id(i));
-                f += glm::dot(glm::normalize(noise(ops.add(I,O))), F-O)  
-                	* math::prod(glm::mix(vec(1)-F01, F01, O));
+                auto O = indexing.grid_id(i);
+                f += glm::dot(glm::normalize(noise(ops.add(I,O))), F-vec(O))  
+                	* glm::compMul(glm::mix(vec(1)-F01, F01, vec(O)));
 		    }
 		    return f;
 		}

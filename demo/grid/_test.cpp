@@ -39,6 +39,7 @@
 #include <grid/dymaxion/Indexing.hpp>               // dymaxion::Indexing
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
 #include <grid/dymaxion/series.hpp>                 // dymaxion::BufferVertexIds
+#include <grid/dymaxion/noise/MosaicOps.hpp>        // dymaxion::MosaicOps
 #include <grid/dymaxion/buffer/WholeGridBuffers.hpp>// dymaxion::WholeGridBuffers
 
 #include <raster/unlayered/Morphology.hpp>          // unlayered::Morphology
@@ -100,6 +101,7 @@ int main() {
   dymaxion::Grid grid(radius, vertices_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::VertexNormals vertex_normals(grid);
+  dymaxion::VertexGridIds vertex_grid_ids(grid);
 
   // auto vertex_colored_scalars = dymaxion::square_ids(grid);
 
@@ -112,9 +114,10 @@ int main() {
   // }
 
   // auto vertex_colored_scalars = series::map(
-  //     field::value_noise3<float>(
-  //         field::mosaic_noise(
-  //             series::unit_interval_noise(11.0f, 1.1e4f))),
+  //     field::value_noise<3,float>(
+  //         field::mosaic_noise(series::unit_interval_noise(11.0f, 1.1e4f)),
+  //         dymaxion::mosaic_ops<int,float>()
+  //     ),
   //     vertex_positions
   // );
 
@@ -122,8 +125,9 @@ int main() {
   //   known::greaterThan(series::uniform(0.5), 
   //         series::map(
   //             field::value_noise3<float>(
-  //                 field::mosaic_noise(
-  //                     series::unit_interval_noise(11.0, 1.1e4))),
+  //                 field::mosaic_noise(series::unit_interval_noise(11.0, 1.1e4)),
+  //                 dymaxion::mosaic_ops<int,float>()
+  //             ),
   //             dymaxion::vertex_positions(grid)
   //         )
   //     );
@@ -137,23 +141,29 @@ int main() {
   // each::copy(out, vertex_scalars2);
 
   auto vertex_scalars1 = series::map(
-      field::value_noise3<float>(
+      field::value_noise<2,float>(
           field::mosaic_noise(
-              series::unit_interval_noise(11.0f, 1.1e4f)
-              //,
-              //dymaxion::Indexing(10)
-          )),
-      vertex_positions
+              series::unit_interval_noise(11.0f, 1.1e4f),
+              dymaxion::Indexing(vertices_per_square_side)
+          ),
+          dymaxion::mosaic_ops<int,float>(
+              dymaxion::Voronoi<int,float>(radius, vertices_per_square_side)
+          )
+      ),
+      vertex_grid_ids
   );
 
   auto vertex_scalars2 = series::map(
-      field::value_noise3<float>(
+      field::value_noise<2,float>(
           field::mosaic_noise(
-              series::unit_interval_noise(12.0f, 1.2e4f)
-              //,
-              //dymaxion::Indexing(10)
-          )),
-      vertex_positions
+              series::unit_interval_noise(12.0f, 1.2e4f),
+              dymaxion::Indexing(vertices_per_square_side)
+          ),
+          dymaxion::mosaic_ops<int,float>(
+              dymaxion::Voronoi<int,float>(radius, vertices_per_square_side)
+          )
+      ),
+      vertex_grid_ids
   );
 
   auto vertex_directions = known::store(
