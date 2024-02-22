@@ -74,14 +74,14 @@ namespace dymaxion
 			id    i  (math::modulus(grid_id.square_id, square_count));
 			vec2  V2 (grid_id.square_position);
 			ivec2 square_polarity(squares.polarity(i));
-			vec2  modded         (math::modulus(V2, vec2(s1)));
-			bvec2 are_nonlocal   (glm::greaterThan(glm::abs(V2-modded), vec2(epsilon)));
+			bvec2 are_nonlocal   (glm::greaterThan(glm::abs(V2-scalar(0.5)), vec2(0.5)));
 			ivec2 nonlocal_sign  (glm::sign(V2-scalar(0.5)) * vec2(are_nonlocal));
 			bvec2 are_polar      (glm::equal(nonlocal_sign, square_polarity));
 			bvec2 are_nonpolar   (glm::notEqual(nonlocal_sign, square_polarity));
 			bool  is_polar       (glm::any(are_polar));
 			bool  is_pole        (glm::all(are_polar));
 			bool  is_corner      (glm::all(are_nonlocal));
+			vec2  modded         (V2-vec2(nonlocal_sign));
 			vec2  inverted       (vec2(are_nonpolar)*modded + vec2(are_polar)*(s1-modded));
 			vec2  flipped        (is_corner? modded : is_polar? inverted.yx() : inverted);
 			id    di (math::compMaxAbs(ivec2(i1,-i1) * (ivec2(are_nonlocal)+ivec2(are_polar)) * nonlocal_sign));
