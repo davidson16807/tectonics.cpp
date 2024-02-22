@@ -26,7 +26,7 @@ namespace dymaxion {
 	{
 
         using ivec2 = glm::vec<2,id,Q>;
-        using IdPoint = Point<id,id>;
+        using ipoint = Point<id,id>;
 
 		static constexpr id vertices_per_triangle = 3;
 		static constexpr id triangles_per_quad  = 2;
@@ -65,11 +65,11 @@ namespace dymaxion {
 			ivec2 grid_id;
 			for (int j = 0; j < vertices_per_square_side; ++j) {
 				for (int i = 0; i < vertices_per_square_side; ++i) {
-					grid_id = ivec2(i,j-1);
-					S = input[vertices.memory_id(IdPoint(square_id, grid_id             ))];
-					E = input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(1,0)))];
-					W = input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(0,1)))];
-					N = input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(1,1)))];
+					grid_id = ivec2(i,j);
+					S = input[vertices.memory_id(ipoint(square_id, grid_id             ))];
+					E = input[vertices.memory_id(ipoint(square_id, grid_id + ivec2(1,0)))];
+					W = input[vertices.memory_id(ipoint(square_id, grid_id + ivec2(0,1)))];
+					N = input[vertices.memory_id(ipoint(square_id, grid_id + ivec2(1,1)))];
 					buffer_id = primitives.storeTriangle(S,E,W, output, buffer_id);
 					buffer_id = primitives.storeTriangle(W,E,N, output, buffer_id);
 				}
@@ -100,15 +100,15 @@ namespace dymaxion {
 			ivec2 grid_id;
 			for (int i = 0; i < vertices_per_square_side; ++i) {
 				grid_id = ivec2(i,-1);
-				buffer_id = primitives.storePoint(input[vertices.memory_id(IdPoint(square_id, grid_id))], output, buffer_id); // S
+				buffer_id = primitives.storePoint(input[vertices.memory_id(ipoint(square_id, grid_id))], output, buffer_id); // S
 				for (int j = 0; j < vertices_per_square_side; ++j) {
 					grid_id = ivec2(i,j-1);
-					buffer_id = primitives.storePoint(input[vertices.memory_id(IdPoint(square_id, grid_id             ))], output, buffer_id); // S
-					buffer_id = primitives.storePoint(input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(0,1)))], output, buffer_id); // W
-					buffer_id = primitives.storePoint(input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(1,0)))], output, buffer_id); // E
-					buffer_id = primitives.storePoint(input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(1,1)))], output, buffer_id); // N
+					buffer_id = primitives.storePoint(input[vertices.memory_id(ipoint(square_id, grid_id             ))], output, buffer_id); // S
+					buffer_id = primitives.storePoint(input[vertices.memory_id(ipoint(square_id, grid_id + ivec2(0,1)))], output, buffer_id); // W
+					buffer_id = primitives.storePoint(input[vertices.memory_id(ipoint(square_id, grid_id + ivec2(1,0)))], output, buffer_id); // E
+					buffer_id = primitives.storePoint(input[vertices.memory_id(ipoint(square_id, grid_id + ivec2(1,1)))], output, buffer_id); // N
 				}
-				buffer_id = primitives.storePoint(input[vertices.memory_id(IdPoint(square_id, grid_id + ivec2(1,1)))], output, buffer_id);
+				buffer_id = primitives.storePoint(input[vertices.memory_id(ipoint(square_id, grid_id + ivec2(1,1)))], output, buffer_id);
 			}
 			return buffer_id;
 		}

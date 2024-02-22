@@ -27,8 +27,8 @@ namespace dymaxion
 
         using ivec2 = glm::vec<2,id,glm::defaultp>;
         using vec2  = glm::vec<2,scalar,glm::defaultp>;
-        using IdPoint = Point<id,id>;
-        using ScalarPoint = Point<id,scalar>;
+        using ipoint = Point<id,id>;
+        using point = Point<id,scalar>;
 
         static constexpr scalar s1 = 1;
         static constexpr scalar s2 = 2;
@@ -59,25 +59,25 @@ namespace dymaxion
         {
         }
 
-        constexpr IdPoint standardize(const IdPoint grid_id) const {
-            ScalarPoint standardized =
-                (projection.standardize((ScalarPoint(grid_id)+vec2(0.5)) / vertices_per_square_side_scalar)
+        constexpr ipoint standardize(const ipoint grid_id) const {
+            point standardized =
+                (projection.standardize((point(grid_id)+vec2(0.5)) / vertices_per_square_side_scalar)
                 ) * vertices_per_square_side_scalar;
-            return IdPoint(standardized);
+            return ipoint(standardized);
         }
 
-        constexpr id memory_id(const IdPoint grid_id) const {
-            const IdPoint standardized(standardize(grid_id));
-            const IdPoint clamped(clamp(standardized, 0, vertices_per_square_side-1));
+        constexpr id memory_id(const ipoint grid_id) const {
+            const ipoint standardized(standardize(grid_id));
+            const ipoint clamped(clamp(standardized, 0, vertices_per_square_side-1));
             return square_interleave.interleaved_id(
                     clamped.square_id, 
                     row_interleave.interleaved_id(clamped.square_position.y, clamped.square_position.x)
                 );
         }
 
-        inline constexpr IdPoint grid_id(const id memory_id) const {
+        inline constexpr ipoint grid_id(const id memory_id) const {
             id square_element_id(square_interleave.element_id(memory_id));
-            return IdPoint(
+            return ipoint(
                 square_interleave.block_id(memory_id), 
                 vec2(row_interleave.element_id(square_element_id), row_interleave.block_id(square_element_id))
             );

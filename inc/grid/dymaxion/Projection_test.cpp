@@ -20,7 +20,7 @@ TEST_CASE( "Projection.sphere_position() / Projection.grid_id()", "[dymaxion]" )
     DymaxionAdapter adapter;
 
     const float epsilon(1e-4f);
-    dymaxion::Projection projection;
+    dymaxion::Projection<int,double> projection;
 
     std::vector<glm::dvec3> sphere_positions{};
     for(float x = -1.0f; x <= 1.0f; x+=0.5f){
@@ -49,13 +49,14 @@ TEST_CASE( "Projection.sphere_position() / Projection.grid_id()", "[dymaxion]" )
     // NOTE: right invertibility and closeness cannot be tested, 
     // since the equivalence of grid ids cannot be determined without using the very code that we are testing
 
+
     REQUIRE(test::determinism(adapter,
-        "Projection.grid_id(…)", TEST_UNARY(dymaxion::Projection().grid_id),
+        "Projection.grid_id(…)", TEST_UNARY(projection.grid_id),
         sphere_positions
     ));
 
     REQUIRE(test::determinism(adapter,
-        "Projection.sphere_position(…)", TEST_UNARY(dymaxion::Projection().sphere_position),
+        "Projection.sphere_position(…)", TEST_UNARY(projection.sphere_position),
         grid_ids
     ));
 

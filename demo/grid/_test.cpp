@@ -105,15 +105,15 @@ int main() {
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::VertexNormals vertex_normals(grid);
 
-  // auto vertex_colored_scalars = dymaxion::square_ids(grid);
+  auto vertex_square_ids = dymaxion::square_ids(grid);
 
   // auto vertex_colored_scalars = series::range();
 
   std::vector<float> vertex_colored_scalars(grid.vertex_count());
-  // for (int i = 0; i < grid.vertex_count(); ++i)
-  // {
-  //   vertex_colored_scalars[i] = grid.vertex_position(i).z;
-  // }
+  for (int i = 0; i < grid.vertex_count(); ++i)
+  {
+    vertex_colored_scalars[i] = grid.memory.memory_id(grid.vertex_grid_id(i)+glm::ivec2(0,4));
+  }
 
   // auto vertex_colored_scalars = series::map(
   //     field::value_noise<3,float>(
@@ -144,16 +144,16 @@ int main() {
 
   auto vertex_scalars1 = series::map(
       dymaxion::fractal_brownian_noise(
-          series::vector_interleave<2>(series::gaussian(11.0f, 1.1e4f)),
-          // series::unit_interval_noise(11.0f, 1.1e4f),
+          // series::vector_interleave<2>(series::gaussian(11.0f, 1.1e4f)),
+          series::unit_interval_noise(11.0f, 1.1e4f),
           radius, vertices_per_square_side),
       dymaxion::VertexGridIds(grid)
   );
 
   auto vertex_scalars2 = series::map(
       dymaxion::fractal_brownian_noise(
-          series::vector_interleave<2>(series::gaussian(12.0f, 1.2e4f)),
-          // series::unit_interval_noise(12.0f, 1.2e4f),
+          // series::vector_interleave<2>(series::gaussian(12.0f, 1.2e4f)),
+          series::unit_interval_noise(12.0f, 1.2e4f),
           radius, vertices_per_square_side),
       dymaxion::VertexGridIds(grid)
   );
@@ -186,6 +186,7 @@ int main() {
   // flatten raster for OpenGL
   dymaxion::WholeGridBuffers<int,float> grids(vertices_per_square_side);
   std::vector<float> buffer_color_values(grid.vertex_count());
+  std::vector<float> buffer_square_ids(grid.vertex_count());
   std::vector<float> buffer_scalars2(grid.vertex_count());
   std::vector<float> buffer_scalars1(grid.vertex_count());
   std::vector<float> buffer_uniform(grid.vertex_count(), 1.0f);
@@ -198,9 +199,9 @@ int main() {
   std::vector<bool> mask1(grid.vertex_count());
   std::vector<bool> mask2(grid.vertex_count());
   std::vector<bool> mask3(grid.vertex_count());
-  auto filling = unlayered::flood_filling<int,float>(
-    [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 60.0f/180.0f); }
-  );
+  // auto filling = unlayered::flood_filling<int,float>(
+  //   [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 60.0f/180.0f); }
+  // );
   // filling.fill(
   //   grid, vertex_gradient, 
   //   series::uniform(true),
@@ -208,12 +209,13 @@ int main() {
   //   vertex_colored_scalars, 
   //   mask1
   // );
-  auto segmentation = unlayered::image_segmentation<int,float>(filling);
-  segmentation.segment(
-    grid, vertex_gradient, 7, 10, 
-    vertex_colored_scalars, scratch, mask1, mask2, mask3
-  );
+  // auto segmentation = unlayered::image_segmentation<int,float>(filling);
+  // segmentation.segment(
+  //   grid, vertex_gradient, 7, 10, 
+  //   vertex_colored_scalars, scratch, mask1, mask2, mask3
+  // );
   each::copy(vertex_colored_scalars, buffer_color_values);
+  each::copy(vertex_square_ids, buffer_square_ids);
   each::copy(vertex_scalars1, buffer_scalars1);
   each::copy(vertex_scalars2, buffer_scalars2);
   each::copy(vertex_positions, buffer_positions);
@@ -299,43 +301,43 @@ int main() {
       //   GL_TRIANGLE_STRIP
       // );
 
-      debug_program.draw(
-        buffer_positions,
-        // buffer_color_values, // red
-        std::vector<float>(grid.vertex_count(), 0.0f), // red
-        buffer_scalars1, // green
-        std::vector<float>(grid.vertex_count(), 0.0f), // blue
-        std::vector<float>(grid.vertex_count(), 1.0f), // opacity
-        std::vector<float>(grid.vertex_count(), 0.0f), // displacement
-        buffer_element_vertex_ids,
-        glm::vec4(whole::min(buffer_color_values), whole::min(buffer_scalars1), 0.0f, 0.0f),
-        glm::vec4(whole::max(buffer_color_values), whole::max(buffer_scalars1), 1.0f, 1.0f),
-        view_state,
-        GL_TRIANGLE_STRIP
-      );
-
-      // colorscale_program.draw(
-      //   buffer_positions,    // position
-      //   buffer_color_values, // color value
-      //   buffer_uniform,      // displacement
-      //   buffer_uniform,      // darken
-      //   buffer_uniform,      // culling
+      // debug_program.draw(
+      //   buffer_positions,
+      //   // buffer_color_values, // red
+      //   std::vector<float>(grid.vertex_count(), 0.0f), // red
+      //   buffer_scalars1, // green
+      //   std::vector<float>(grid.vertex_count(), 0.0f), // blue
+      //   std::vector<float>(grid.vertex_count(), 1.0f), // opacity
+      //   std::vector<float>(grid.vertex_count(), 0.0f), // displacement
       //   buffer_element_vertex_ids,
-      //   colorscale_state,
+      //   glm::vec4(whole::min(buffer_color_values), whole::min(buffer_scalars1), 0.0f, 0.0f),
+      //   glm::vec4(whole::max(buffer_color_values), whole::max(buffer_scalars1), 1.0f, 1.0f),
       //   view_state,
       //   GL_TRIANGLE_STRIP
       // );
 
-      indicator_program.draw(
-        vectors_element_position,
-        vectors_instance_position,
-        vectors_instance_heading,
-        vectors_instance_up,
-        vectors_instance_scale,
-        vectors_instance_color,
+      colorscale_program.draw(
+        buffer_positions,    // position
+        buffer_color_values,   // color value
+        buffer_uniform,      // displacement
+        buffer_uniform,      // darken
+        buffer_uniform,      // culling
+        buffer_element_vertex_ids,
+        colorscale_state,
         view_state,
-        GL_TRIANGLES
+        GL_TRIANGLE_STRIP
       );
+
+      // indicator_program.draw(
+      //   vectors_element_position,
+      //   vectors_instance_position,
+      //   vectors_instance_heading,
+      //   vectors_instance_up,
+      //   vectors_instance_scale,
+      //   vectors_instance_color,
+      //   view_state,
+      //   GL_TRIANGLES
+      // );
 
       // put stuff we've been drawing onto the display
       glfwSwapBuffers(window);

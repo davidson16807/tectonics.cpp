@@ -48,7 +48,8 @@ namespace dymaxion
 		template<typename tpoint>
 		scalar operator()(const tpoint V) const {
 			id downsample = 8;
-			return field::perlin_noise<2,scalar>(
+			return field::value_noise<2,scalar>(
+			// return field::perlin_noise<2,scalar>(
 		        field::mosaic_noise(noise,
 		            dymaxion::Indexing<id,scalar>(vertices_per_square_side/downsample)
 		        ),
