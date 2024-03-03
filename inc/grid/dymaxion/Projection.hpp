@@ -73,18 +73,19 @@ namespace dymaxion
 		{
 			id    i  (math::modulus(grid_id.square_id, square_count));
 			vec2  V2 (grid_id.square_position);
+			vec2  U2 (V2-scalar(0.5));
 			ivec2 square_polarity(squares.polarity(i));
-			bvec2 are_nonlocal   (glm::greaterThan(glm::abs(V2-scalar(0.5)), vec2(0.5)));
-			ivec2 nonlocal_sign  (glm::sign(V2-scalar(0.5)) * vec2(are_nonlocal));
-			bvec2 are_polar      (glm::equal(nonlocal_sign, square_polarity));
-			bvec2 are_nonpolar   (glm::notEqual(nonlocal_sign, square_polarity));
+			bvec2 are_nonlocal   (glm::greaterThan(glm::abs(U2), vec2(0.5)));
+			ivec2 nonlocal_sign  (glm::sign(U2) * vec2(are_nonlocal));
+			bvec2 are_polar      (glm::equal(nonlocal_sign, glm::ivec2(-1,1) * id(squares.polarity(i))));
+			bvec2 are_nonpolar   (glm::notEqual(nonlocal_sign, glm::ivec2(-1,1) * id(squares.polarity(i))));
 			bool  is_polar       (glm::any(are_polar));
 			bool  is_pole        (glm::all(are_polar));
 			bool  is_corner      (glm::all(are_nonlocal));
-			vec2  modded         (V2-vec2(nonlocal_sign));
-			vec2  inverted       (vec2(are_nonpolar)*modded + vec2(are_polar)*(s1-modded));
+			vec2  modded         (s1+vec2(nonlocal_sign)-V2);
+			vec2  inverted       (!is_polar? modded : vec2(are_nonpolar)*(s1-modded) + vec2(are_polar)*(modded));
 			vec2  flipped        (is_corner? modded : is_polar? inverted.yx() : inverted);
-			id    di (math::compMaxAbs(ivec2(i1,-i1) * (ivec2(are_nonlocal)+ivec2(are_polar)) * nonlocal_sign));
+			id    di             (math::compMaxAbs((i1+ivec2(are_polar)) * nonlocal_sign));
 			/* NOTE: there is more than one possible solution if `is_pole`, 
 		    and these solutions do not represent the same point in space.
 		    However the case where `is_pole` is still valid and must be supported.
@@ -119,7 +120,9 @@ namespace dymaxion
 			mat3   basis (triangles.basis(is_inverted,W,E,O));
 			vec3   Nhat  (glm::normalize(glm::cross(basis[0], basis[1])));
 			vec3   triangle_position(glm::inverse(basis) * triangles.plane_project(V3,Nhat,O));
-			vec2   V2    (is_inverted? triangle_position.xy() : vec2(s1)-triangle_position.xy());
+			vec2   V2    (is_inverted? 
+				vec2(0,1)+vec2(1,-1)*triangle_position.yx() : 
+				vec2(1,0)+vec2(-1,1)*triangle_position.yx() );
 			return Point(i,glm::clamp(V2,s0,s1));
 		}
 
@@ -131,7 +134,9 @@ namespace dymaxion
 			vec2 V2 (iV2.square_position);
 			bool is_inverted (triangles.is_inverted_grid_position(V2));
 			bool is_polar    (triangles.is_polar_square_id(i, is_inverted));
-			vec2 triangle_position (is_inverted? V2:vec2(s1)-V2);
+			vec2 triangle_position ((is_inverted? 
+				(V2-vec2(0,1))/vec2(1,-1) : 
+				(V2-vec2(1,0))/vec2(-1,1)).yx());
 			id Wid (i     ); // west   longitude id
 			id Oid (i + i1); // origin longitude id
 			id Eid (i + i2); // east   longitude id

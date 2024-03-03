@@ -100,7 +100,7 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
   float radius(2.0f);
-  int vertices_per_square_side(64);
+  int vertices_per_square_side(2);
   dymaxion::Grid grid(radius, vertices_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::VertexNormals vertex_normals(grid);
@@ -112,7 +112,7 @@ int main() {
   std::vector<float> vertex_colored_scalars(grid.vertex_count());
   for (int i = 0; i < grid.vertex_count(); ++i)
   {
-    vertex_colored_scalars[i] = grid.memory.memory_id(grid.vertex_grid_id(i)+glm::ivec2(0,4));
+    vertex_colored_scalars[i] = grid.memory.memory_id(grid.vertex_grid_id(i));
   }
 
   // auto vertex_colored_scalars = series::map(

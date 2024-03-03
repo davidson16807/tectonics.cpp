@@ -54,7 +54,7 @@ namespace dymaxion {
 			using element = typename Series::value_type;
 			id buffer_id(buffer_start_id);
 			bool is_southern(square_id%2);
-			ivec2 grid_id(is_southern? 0 : vertices_per_side-1);
+			ivec2 grid_id = is_southern? ivec2(vertices_per_side-1,0) : ivec2(0,vertices_per_side-1);
 			element W2 = input[vertices.memory_id(IdPoint(square_id-4, grid_id))];
 			element W1 = input[vertices.memory_id(IdPoint(square_id-2, grid_id))];
 			element O  = input[vertices.memory_id(IdPoint(square_id+0, grid_id))];
@@ -85,7 +85,7 @@ namespace dymaxion {
 			using element = typename Series::value_type;
 			id buffer_id(buffer_start_id);
 			bool is_southern(square_id%2);
-			ivec2 grid_id(is_southern? 0 : vertices_per_side-1);
+			ivec2 grid_id = is_southern? ivec2(vertices_per_side-1,0) : ivec2(0,vertices_per_side-1);
 			element W2 = input[vertices.memory_id(IdPoint(square_id-4, grid_id))];
 			element W1 = input[vertices.memory_id(IdPoint(square_id-2, grid_id))];
 			element O  = input[vertices.memory_id(IdPoint(square_id+0, grid_id))];

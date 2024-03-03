@@ -76,7 +76,7 @@ namespace dymaxion
 		inline constexpr bool is_inverted_grid_position(
 			const vec2 V2
 		) const {
-			return V2.x + V2.y < scalar(1);
+			return V2.y > V2.x;;
 		}
 
 		inline constexpr bool is_polar_point(
