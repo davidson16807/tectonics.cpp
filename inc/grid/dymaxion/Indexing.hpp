@@ -60,9 +60,9 @@ namespace dymaxion
         }
 
         constexpr ipoint standardize(const ipoint grid_id) const {
-            point standardized =
-                (projection.standardize((point(grid_id)+vec2(0.5)) / vertices_per_square_side_scalar)
-                ) * vertices_per_square_side_scalar;
+            point standardized =(
+                projection.standardize((point(grid_id)+vec2(0.5)) / vertices_per_square_side_scalar)
+            ) * vertices_per_square_side_scalar;
             return ipoint(standardized);
         }
 

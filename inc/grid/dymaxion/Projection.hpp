@@ -82,7 +82,7 @@ namespace dymaxion
 			bool  is_polar       (glm::any(are_polar));
 			bool  is_pole        (glm::all(are_polar));
 			bool  is_corner      (glm::all(are_nonlocal));
-			vec2  modded         (s1+vec2(nonlocal_sign)-V2);
+			vec2  modded         (V2-vec2(nonlocal_sign));
 			vec2  inverted       (!is_polar? modded : vec2(are_nonpolar)*(s1-modded) + vec2(are_polar)*(modded));
 			vec2  flipped        (is_corner? modded : is_polar? inverted.yx() : inverted);
 			id    di             (math::compMaxAbs((i1+ivec2(are_polar)) * nonlocal_sign));
@@ -103,7 +103,7 @@ namespace dymaxion
 			scalar EWid(longitude/half_subgrid_longitude_arc_length);
 			id     Nid (i2*std::round(EWid/s2));
 			id     Sid (i2*std::round((EWid-s1)/s2)+i1);
-			vec3   N   (squares.westmost(Nid)); // wrong
+			vec3   N   (squares.westmost(Nid));
 			vec3   S   (squares.westmost(Sid));
 			id     i   (math::modulus(
 						std::min(Nid,Sid)-i1 + id(triangles.is_eastern_sphere_position(V3,N,S)),  
@@ -118,25 +118,24 @@ namespace dymaxion
 			bool   is_inverted    (triangles.is_inverted_square_id   (i, is_polar));
 			vec3   O     (triangles.origin(Oid, square_polarity, is_polar));
 			mat3   basis (triangles.basis(is_inverted,W,E,O));
-			vec3   Nhat  (glm::normalize(glm::cross(basis[0], basis[1])));
+			vec3   Nhat  (glm::normalize(glm::cross(basis[1], basis[0])));
 			vec3   triangle_position(glm::inverse(basis) * triangles.plane_project(V3,Nhat,O));
 			vec2   V2    (is_inverted? 
-				vec2(0,1)+vec2(1,-1)*triangle_position.yx() : 
-				vec2(1,0)+vec2(-1,1)*triangle_position.yx() );
-			return Point(i,glm::clamp(V2,s0,s1));
+				vec2(0,1)+vec2(1,-1)*triangle_position.xy() : 
+				vec2(1,0)+vec2(-1,1)*triangle_position.xy());
+			return Point(i,glm::clamp(V2.yx(),s0,s1));
 		}
 
 		constexpr vec3 sphere_position(const Point grid_id) const 
 		{
 			Point iV2(grid_id);
-			// Point iV2(standardize(grid_id));
 			id   i  (iV2.square_id);
-			vec2 V2 (iV2.square_position);
+			vec2 V2 (iV2.square_position.yx());
 			bool is_inverted (triangles.is_inverted_grid_position(V2));
 			bool is_polar    (triangles.is_polar_square_id(i, is_inverted));
 			vec2 triangle_position ((is_inverted? 
 				(V2-vec2(0,1))/vec2(1,-1) : 
-				(V2-vec2(1,0))/vec2(-1,1)).yx());
+				(V2-vec2(1,0))/vec2(-1,1)));
 			id Wid (i     ); // west   longitude id
 			id Oid (i + i1); // origin longitude id
 			id Eid (i + i2); // east   longitude id

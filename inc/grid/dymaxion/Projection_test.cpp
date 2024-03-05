@@ -94,6 +94,20 @@ TEST_CASE( "Projection.sphere_position() / Projection.grid_id()", "[dymaxion]" )
         grid_ids
     ));
 
+
+    REQUIRE(test::codomain(adapter,
+        "within expected range", [](auto iV2){
+            auto i = iV2.square_id;
+            auto V2 = iV2.square_position;
+            return 
+                0<=i&&i<10 && 
+                0<=V2.x&&V2.x<1+1e-4 && 
+                0<=V2.y&&V2.y<1+1e-4;
+        },
+        "Projection.standardize(…)", TEST_UNARY(projection.standardize),
+        nonedge_grid_ids
+    ));
+
     REQUIRE(test::unary_idempotence(adapter,
         "Projection.standardize(…) when restricted to xs and ys of (0,1)", TEST_UNARY(projection.standardize),
         nonedge_grid_ids

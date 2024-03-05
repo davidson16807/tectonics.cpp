@@ -79,15 +79,6 @@ namespace dymaxion
 			return V2.y > V2.x;;
 		}
 
-		inline constexpr bool is_polar_point(
-			const Point<id,scalar> point
-		) const {
-			return is_polar_square_id(
-				point.square_id,
-				is_inverted_grid_position(point.square_position)
-			);
-		}
-
 		inline constexpr bool is_polar_sphere_position(
 			const scalar square_polarity, 
 			const vec3 V3, 
@@ -95,7 +86,7 @@ namespace dymaxion
 			const vec3 E
 		) const {
 			// V3⋅(W×E)>0 indicates whether V3 occupies a polar triangle
-			return glm::dot(V3, square_polarity * glm::cross(W,E)) >= scalar(0);
+			return square_polarity * glm::dot(V3, glm::cross(W,E)) >= scalar(0);
 		}
 
 		inline constexpr bool is_eastern_sphere_position(
@@ -113,7 +104,11 @@ namespace dymaxion
 			const vec3 E,
 			const vec3 O
 		) const {
-			return is_inverted? mat3(E-O,W-O,O) : mat3(W-O,E-O,O);
+			return is_inverted? 
+			mat3(E-O,W-O,O) 
+			: 
+			mat3(W-O,E-O,O)
+			;
 		}
 
 		inline constexpr vec3 sphere_project(
