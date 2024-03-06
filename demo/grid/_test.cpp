@@ -38,6 +38,9 @@
 
 #include <buffer/PyramidBuffers.hpp>                // buffer::PyramidBuffers
 
+#include <grid/cartesian/UnboundedIndexing.hpp>     // field::UnboundedIndexing
+#include <field/noise/MosaicOps.hpp>                // field::VectorMosaicOps
+
 #include <grid/dymaxion/Indexing.hpp>               // dymaxion::Indexing
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
 #include <grid/dymaxion/series.hpp>                 // dymaxion::BufferVertexIds
@@ -149,7 +152,7 @@ int main() {
           // series::vector_interleave<2>(series::gaussian(11.0f, 1.1e4f)),
           series::unit_interval_noise(11.0f, 1.1e4f),
           radius, vertices_per_square_side),
-      dymaxion::VertexGridIds(grid)
+      dymaxion::VertexPositions(grid)
   );
 
   auto vertex_scalars2 = series::map(
@@ -157,7 +160,7 @@ int main() {
           // series::vector_interleave<2>(series::gaussian(12.0f, 1.2e4f)),
           series::unit_interval_noise(12.0f, 1.2e4f),
           radius, vertices_per_square_side),
-      dymaxion::VertexGridIds(grid)
+      dymaxion::VertexPositions(grid)
   );
 
   // auto vertex_directions = known::store(
@@ -315,7 +318,7 @@ int main() {
         std::vector<float>(grid.vertex_count(), 1.0f), // opacity
         std::vector<float>(grid.vertex_count(), 0.0f), // displacement
         buffer_element_vertex_ids,
-        glm::vec4(0.0f, 0.0f, 0.0f, 0.0f),
+        glm::vec4(0.0f, whole::min(buffer_scalars1), 0.0f, 0.0f),
         glm::vec4(0.0f, whole::max(buffer_scalars1), 1.0f, 1.0f),
         view_state,
         GL_TRIANGLE_STRIP

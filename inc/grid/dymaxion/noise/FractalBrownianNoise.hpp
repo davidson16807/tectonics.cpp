@@ -52,16 +52,45 @@ namespace dymaxion
 		    //         dymaxion::Voronoi<id,scalar>(radius, vertices_per_square_side/downsample)
 		    //     ).fract(point(V.square_id, (vec2(V.square_position)/scalar(downsample)))).x;
 
-			const id downsample(2);
-			return field::value_noise<2,scalar>(
-			// return field::perlin_noise<2,scalar>(
-		        field::mosaic_noise(noise,
-		            dymaxion::Indexing<id,scalar>(vertices_per_square_side/downsample)
-		        ),
-		        dymaxion::mosaic_ops<id,scalar>(
-		            dymaxion::Voronoi<id,scalar>(radius, vertices_per_square_side/downsample)
-		        )
-		    )(point(V.square_id, ((vec2(V.square_position))/scalar(downsample))));
+			return 
+			field::value_noise<3,scalar>(
+		        field::mosaic_noise(noise, cartesian::UnboundedIndexing<id>()),
+		        field::vector_mosaic_ops<3,id,scalar>()
+		    )(V*scalar(256))/scalar(256) + 
+			field::value_noise<3,scalar>(
+		        field::mosaic_noise(noise, cartesian::UnboundedIndexing<id>()),
+		        field::vector_mosaic_ops<3,id,scalar>()
+		    )(V*scalar(128))/scalar(128) + 
+			field::value_noise<3,scalar>(
+		        field::mosaic_noise(noise, cartesian::UnboundedIndexing<id>()),
+		        field::vector_mosaic_ops<3,id,scalar>()
+		    )(V*scalar(64))/scalar(64) + 
+			field::value_noise<3,scalar>(
+		        field::mosaic_noise(noise, cartesian::UnboundedIndexing<id>()),
+		        field::vector_mosaic_ops<3,id,scalar>()
+		    )(V*scalar(32))/scalar(32) + 
+			field::value_noise<3,scalar>(
+		        field::mosaic_noise(noise, cartesian::UnboundedIndexing<id>()),
+		        field::vector_mosaic_ops<3,id,scalar>()
+		    )(V*scalar(16))/scalar(16) + 
+			field::value_noise<3,scalar>(
+		        field::mosaic_noise(noise, cartesian::UnboundedIndexing<id>()),
+		        field::vector_mosaic_ops<3,id,scalar>()
+		    )(V*scalar(8))/scalar(8) + 
+		    field::value_noise<3,scalar>(
+		        field::mosaic_noise(noise, cartesian::UnboundedIndexing<id>()),
+		        field::vector_mosaic_ops<3,id,scalar>()
+		    )(V*scalar(4))/scalar(4) + 
+		    field::value_noise<3,scalar>(
+		        field::mosaic_noise(noise, cartesian::UnboundedIndexing<id>()),
+		        field::vector_mosaic_ops<3,id,scalar>()
+		    )(V*scalar(2))/scalar(2) + 
+		    field::value_noise<3,scalar>(
+		        field::mosaic_noise(noise, cartesian::UnboundedIndexing<id>()),
+		        field::vector_mosaic_ops<3,id,scalar>()
+		    )(V*scalar(1))/scalar(1)
+
+		    ;
 		}
 
 	};

@@ -57,9 +57,9 @@ namespace field
 		template<typename T>
 		inline scalar weight(const glm::vec<L,T,precision> position, const ivec origin, ivec offset) const
 		{
-			vec2 F = fract(position);
-			vec2 F01 = glm::smoothstep(vec2(0), vec2(1), F);
-			return math::prod(glm::mix(vec2(1)-F01, F01, vec2(offset)));
+			vec F = fract(position);
+			vec F01 = glm::smoothstep(vec(0), vec(1), F);
+			return math::prod(glm::mix(vec(1)-F01, F01, vec(offset)));
 		}
 
 	};
