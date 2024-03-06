@@ -26,30 +26,42 @@ namespace field
 	struct VectorMosaicOps
 	{
 
-		inline glm::vec<L,id,precision> floor(const glm::vec<L,scalar,precision> grid_id) const
+		using ivec = glm::vec<L,id,precision>;
+		using vec = glm::vec<L,scalar,precision>;
+
+		inline ivec floor(const vec grid_id) const
 		{
-			return glm::vec<L,id,precision>(glm::floor(grid_id));
+			return ivec(glm::floor(grid_id));
 		}
 
-		inline glm::vec<L,scalar,precision> fract(const glm::vec<L,scalar,precision> grid_id) const
+		inline vec fract(const vec grid_id) const
 		{
 			return glm::fract(grid_id);
 		}
 
-		inline auto add(const glm::vec<L,id,precision> grid_id, glm::vec<L,scalar,precision> offset) const
+		inline auto add(const ivec grid_id, vec offset) const
 		{
-			return glm::vec<L,scalar,precision>(grid_id)+glm::vec<L,scalar,precision>(offset);
+			return vec(grid_id)+vec(offset);
 		}
 
-		inline auto add(const glm::vec<L,id,precision> grid_id, glm::vec<L,id,precision> offset) const
+		inline auto add(const ivec grid_id, ivec offset) const
 		{
 			return grid_id+offset;
 		}
 
-		inline scalar distance(const glm::vec<L,scalar,precision> grid_id1, glm::vec<L,scalar,precision> grid_id2) const
+		inline scalar distance(const vec grid_id1, vec grid_id2) const
 		{
 			return glm::distance(grid_id1, grid_id2);
 		}
+
+		template<typename T>
+		inline scalar weight(const glm::vec<L,T,precision> position, const ivec origin, ivec offset) const
+		{
+			vec2 F = fract(position);
+			vec2 F01 = glm::smoothstep(vec2(0), vec2(1), F);
+			return math::prod(glm::mix(vec2(1)-F01, F01, vec2(offset)));
+		}
+
 	};
 
 	template<int L, typename id, typename scalar, glm::qualifier precision=glm::defaultp>

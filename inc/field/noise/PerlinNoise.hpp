@@ -55,13 +55,16 @@ namespace field
 		    vec F = ops.fract(V);
 		    vec F01 = glm::smoothstep(vec(0), vec(1), F);
 		    scalar f(0);
+		    scalar weight(0);
+		    scalar weight_total(0);
 		    for (int i = 0; i < indexing.size; ++i)
 		    {
                 auto O = indexing.grid_id(i);
-                f += glm::dot(glm::normalize(noise(ops.add(I,O))), F-vec(O))  
-                	* glm::compMul(glm::mix(vec(1)-F01, F01, vec(O)));
+                weight = ops.weight(V,I,O);
+                weight_total += weight;
+                f += glm::dot(glm::normalize(noise(ops.add(I,O))), F-vec(O)) * weight;
 		    }
-		    return f;
+		    return f / weight_total;
 		}
 	};
 
