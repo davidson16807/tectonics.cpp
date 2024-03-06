@@ -60,16 +60,16 @@ namespace field
 		    // return noise.indexing.memory_id(ops.add(I,ivec2(1,1)));
 		    // return I.square_position.x;
 		    scalar f(0);
-		    scalar area(0);
-		    scalar area_total(0);
+		    scalar weight(0);
+		    scalar weight_total(0);
 		    for (int i = 0; i < indexing.size; ++i)
 		    {
                 auto O = indexing.grid_id(i);
-                area = ops.area(V,I,O);
-                area_total += area;
-                f += noise(ops.add(I,O)) * area;
+                weight = ops.weight(V,I,O);
+                weight_total += weight;
+                f += noise(ops.add(I,O)) * weight;
 		    }
-		    return f / area_total;
+		    return f / weight_total;
 		}
 	};
 
