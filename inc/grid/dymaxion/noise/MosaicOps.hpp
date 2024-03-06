@@ -33,6 +33,7 @@ namespace dymaxion
         {
         }
 
+        using vec3 = glm::vec<3,scalar,precision>;
         using vec2 = glm::vec<2,scalar,precision>;
         using ivec2 = glm::vec<2,id,precision>;
 
@@ -78,6 +79,31 @@ namespace dymaxion
 						voronoi.unit_sphere_position(grid_id2)
 					)
 				);
+		}
+
+		template<typename tpoint>
+		inline scalar area(const tpoint position, const ipoint origin, ivec2 offset) const
+		{
+			// vec2 F = fract(position);
+			// vec2 F01 = glm::smoothstep(vec2(0), vec2(1), F);
+			// return math::prod(glm::mix(vec2(1)-F01, F01, vec2(offset)));
+			bool is_diagonal = offset.y == offset.x;
+			auto fract = glm::fract(position.square_position);
+			point W(origin);
+			point E(add(origin, ivec2(1,1)));
+			point O(add(origin, fract.y > fract.x? ivec2(0,1) : ivec2(1,0)));
+			vec3 A = voronoi.unit_sphere_position(!is_diagonal? W : offset.x == 0? E : W);
+			vec3 B = voronoi.unit_sphere_position(!is_diagonal? E : O);
+			vec3 V = voronoi.unit_sphere_position(position);
+			// return glm::distance(A,V);
+			return !is_diagonal && ((fract.y >= fract.x) != (offset.y >= offset.x))? 
+				scalar(0)
+			: 
+			    // std::acos(math::similarity(A-V,B-V)) + 
+			    // std::acos(math::similarity(V-A,B-A)) + 
+			    // std::acos(math::similarity(V-B,A-B)) - 3.1415926535
+			  	glm::length(glm::cross(A-V, B-V)) / scalar(2)
+			;
 		}
 
 	};

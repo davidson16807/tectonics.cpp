@@ -47,7 +47,42 @@ namespace dymaxion
 
 		template<typename tpoint>
 		scalar operator()(const tpoint V) const {
-			id downsample = 8;
+
+		    // return dymaxion::mosaic_ops<id,scalar>(
+		    //         dymaxion::Voronoi<id,scalar>(radius, vertices_per_square_side/downsample)
+		    //     ).fract(point(V.square_id, (vec2(V.square_position)/scalar(downsample)))).x;
+
+			// return 
+		    //      + field::mosaic_noise(noise,
+		    //         dymaxion::Indexing<id,scalar>(vertices_per_square_side/9)
+		    //     )(ipoint(V.square_id, ivec2(vec2(V.square_position)/scalar(9))))
+		    //      + field::mosaic_noise(noise,
+		    //         dymaxion::Indexing<id,scalar>(vertices_per_square_side/8)
+		    //     )(ipoint(V.square_id, ivec2(vec2(V.square_position)/scalar(8))))
+		    //      + field::mosaic_noise(noise,
+		    //         dymaxion::Indexing<id,scalar>(vertices_per_square_side/7)
+		    //     )(ipoint(V.square_id, ivec2(vec2(V.square_position)/scalar(7))))
+		    //      + field::mosaic_noise(noise,
+		    //         dymaxion::Indexing<id,scalar>(vertices_per_square_side/6)
+		    //     )(ipoint(V.square_id, ivec2(vec2(V.square_position)/scalar(6))))
+		    //      + field::mosaic_noise(noise,
+		    //         dymaxion::Indexing<id,scalar>(vertices_per_square_side/5)
+		    //     )(ipoint(V.square_id, ivec2(vec2(V.square_position)/scalar(5))))
+		    //      + field::mosaic_noise(noise,
+		    //         dymaxion::Indexing<id,scalar>(vertices_per_square_side/4)
+		    //     )(ipoint(V.square_id, ivec2(vec2(V.square_position)/scalar(4))))
+		    //      + field::mosaic_noise(noise,
+		    //         dymaxion::Indexing<id,scalar>(vertices_per_square_side/3)
+		    //     )(ipoint(V.square_id, ivec2(vec2(V.square_position)/scalar(3))))
+		    //      + field::mosaic_noise(noise,
+		    //         dymaxion::Indexing<id,scalar>(vertices_per_square_side/2)
+		    //     )(ipoint(V.square_id, ivec2(vec2(V.square_position)/scalar(2))))
+		    //      + field::mosaic_noise(noise,
+		    //         dymaxion::Indexing<id,scalar>(vertices_per_square_side/1)
+		    //     )(ipoint(V.square_id, ivec2(vec2(V.square_position)/scalar(1))))
+	        // ;
+
+			const id downsample(2);
 			return field::value_noise<2,scalar>(
 			// return field::perlin_noise<2,scalar>(
 		        field::mosaic_noise(noise,
@@ -56,7 +91,7 @@ namespace dymaxion
 		        dymaxion::mosaic_ops<id,scalar>(
 		            dymaxion::Voronoi<id,scalar>(radius, vertices_per_square_side/downsample)
 		        )
-		    )(point(V.square_id, (vec2(V.square_position)/scalar(downsample))));
+		    )(point(V.square_id, ((vec2(V.square_position))/scalar(downsample))));
 		}
 
 	};

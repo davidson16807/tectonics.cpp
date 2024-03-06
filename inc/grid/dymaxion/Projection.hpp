@@ -71,6 +71,7 @@ namespace dymaxion
 
 		constexpr Point standardize(const Point grid_id) const 
 		{
+			// return grid_id;
 			id    i  (math::modulus(grid_id.square_id, square_count));
 			vec2  V2 (grid_id.square_position);
 			vec2  U2 (V2-scalar(0.5));

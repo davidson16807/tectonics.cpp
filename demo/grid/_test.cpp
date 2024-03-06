@@ -100,7 +100,7 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
   float radius(2.0f);
-  int vertices_per_square_side(2);
+  int vertices_per_square_side(32);
   dymaxion::Grid grid(radius, vertices_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::VertexNormals vertex_normals(grid);
@@ -113,6 +113,8 @@ int main() {
   for (int i = 0; i < grid.vertex_count(); ++i)
   {
     vertex_colored_scalars[i] = grid.memory.memory_id(grid.vertex_grid_id(i));
+    // vertex_colored_scalars[i] = grid.memory.memory_id(grid.vertex_grid_id(i)+glm::ivec2(10,10));
+    // vertex_colored_scalars[i] = (grid.vertex_position(i).z);
   }
 
   // auto vertex_colored_scalars = series::map(
@@ -285,6 +287,9 @@ int main() {
   messages::MessageQueue message_queue;
   message_queue.activate(window);
 
+  std::cout << whole::min(buffer_scalars1) << std::endl;
+  std::cout << whole::max(buffer_scalars1) << std::endl;
+
   while(!glfwWindowShouldClose(window)) {
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -301,32 +306,32 @@ int main() {
       //   GL_TRIANGLE_STRIP
       // );
 
-      // debug_program.draw(
-      //   buffer_positions,
-      //   // buffer_color_values, // red
-      //   std::vector<float>(grid.vertex_count(), 0.0f), // red
-      //   buffer_scalars1, // green
-      //   std::vector<float>(grid.vertex_count(), 0.0f), // blue
-      //   std::vector<float>(grid.vertex_count(), 1.0f), // opacity
-      //   std::vector<float>(grid.vertex_count(), 0.0f), // displacement
-      //   buffer_element_vertex_ids,
-      //   glm::vec4(whole::min(buffer_color_values), whole::min(buffer_scalars1), 0.0f, 0.0f),
-      //   glm::vec4(whole::max(buffer_color_values), whole::max(buffer_scalars1), 1.0f, 1.0f),
-      //   view_state,
-      //   GL_TRIANGLE_STRIP
-      // );
-
-      colorscale_program.draw(
-        buffer_positions,    // position
-        buffer_color_values,   // color value
-        buffer_uniform,      // displacement
-        buffer_uniform,      // darken
-        buffer_uniform,      // culling
+      debug_program.draw(
+        buffer_positions,
+        // buffer_color_values, // red
+        std::vector<float>(grid.vertex_count(), 0.0f), // red
+        buffer_scalars1, // green
+        std::vector<float>(grid.vertex_count(), 0.0f), // blue
+        std::vector<float>(grid.vertex_count(), 1.0f), // opacity
+        std::vector<float>(grid.vertex_count(), 0.0f), // displacement
         buffer_element_vertex_ids,
-        colorscale_state,
+        glm::vec4(0.0f, 0.0f, 0.0f, 0.0f),
+        glm::vec4(0.0f, whole::max(buffer_scalars1), 1.0f, 1.0f),
         view_state,
         GL_TRIANGLE_STRIP
       );
+
+      // colorscale_program.draw(
+      //   buffer_positions,    // position
+      //   buffer_color_values,   // color value
+      //   buffer_uniform,      // displacement
+      //   buffer_uniform,      // darken
+      //   buffer_uniform,      // culling
+      //   buffer_element_vertex_ids,
+      //   colorscale_state,
+      //   view_state,
+      //   GL_TRIANGLE_STRIP
+      // );
 
       // indicator_program.draw(
       //   vectors_element_position,

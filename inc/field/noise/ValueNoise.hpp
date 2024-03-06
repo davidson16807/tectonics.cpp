@@ -25,6 +25,8 @@ namespace field
 	template<int L, typename scalar, typename MosaicNoise, typename MosaicOps, glm::qualifier precision=glm::defaultp>
 	struct ValueNoise
 	{
+        using ivec2 = glm::vec<2,int,precision>;
+
 		MosaicNoise noise;
 		MosaicOps ops;
 	    cartesian::OrthantIndexing<L,int,precision> indexing;
@@ -55,15 +57,19 @@ namespace field
 		template<typename tpoint>
 		scalar operator()(const tpoint V) const {
 		    auto I = ops.floor(V);
-		    vec F = ops.fract(V);
-		    vec F01 = glm::smoothstep(vec(0), vec(1), F);
+		    // return noise.indexing.memory_id(ops.add(I,ivec2(1,1)));
+		    // return I.square_position.x;
 		    scalar f(0);
+		    scalar area(0);
+		    scalar area_total(0);
 		    for (int i = 0; i < indexing.size; ++i)
 		    {
                 auto O = indexing.grid_id(i);
-                f += noise(ops.add(I,O)) * math::prod(glm::mix(vec(1)-F01, F01, vec(O)));
+                area = ops.area(V,I,O);
+                area_total += area;
+                f += noise(ops.add(I,O)) * area;
 		    }
-		    return f;
+		    return f / area_total;
 		}
 	};
 
