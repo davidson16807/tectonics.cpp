@@ -43,8 +43,6 @@ namespace field
 			indexing(mosaic_noise.indexing)
 		{}
 
-		using value_type = typename Noise::value_type;
-
 		template<typename T>
 		auto operator()(const T V) const {
 		    return noise(indexing.memory_id(V));

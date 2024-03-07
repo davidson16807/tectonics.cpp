@@ -40,12 +40,12 @@
 
 #include <grid/cartesian/UnboundedIndexing.hpp>     // field::UnboundedIndexing
 #include <field/noise/MosaicOps.hpp>                // field::VectorMosaicOps
+#include <field/noise/FractalBrownianNoise.hpp>     // dymaxion::FractalBrownianNoise
 
 #include <grid/dymaxion/Indexing.hpp>               // dymaxion::Indexing
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
 #include <grid/dymaxion/series.hpp>                 // dymaxion::BufferVertexIds
 #include <grid/dymaxion/noise/MosaicOps.hpp>        // dymaxion::MosaicOps
-#include <grid/dymaxion/noise/FractalBrownianNoise.hpp>// dymaxion::FractalBrownianNoise
 #include <grid/dymaxion/buffer/WholeGridBuffers.hpp>// dymaxion::WholeGridBuffers
 
 #include <raster/unlayered/Morphology.hpp>          // unlayered::Morphology
@@ -103,7 +103,7 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
   float radius(2.0f);
-  int vertices_per_square_side(32);
+  int vertices_per_square_side(64);
   dymaxion::Grid grid(radius, vertices_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::VertexNormals vertex_normals(grid);
@@ -148,18 +148,20 @@ int main() {
   // each::copy(out, vertex_scalars2);
 
   auto vertex_scalars1 = series::map(
-      dymaxion::fractal_brownian_noise(
-          // series::vector_interleave<2>(series::gaussian(11.0f, 1.1e4f)),
-          series::unit_interval_noise(11.0f, 1.1e4f),
-          radius, vertices_per_square_side),
+      field::fractal_brownian_noise<int,float>(
+          field::value_noise<3,float>(
+              field::mosaic_noise(series::unit_interval_noise(11.0f, 1.1e4f), cartesian::UnboundedIndexing<int>()),
+              field::vector_mosaic_ops<3,int,float>()
+          ), 10, 0.5f),
       dymaxion::VertexPositions(grid)
   );
 
   auto vertex_scalars2 = series::map(
-      dymaxion::fractal_brownian_noise(
-          // series::vector_interleave<2>(series::gaussian(12.0f, 1.2e4f)),
-          series::unit_interval_noise(12.0f, 1.2e4f),
-          radius, vertices_per_square_side),
+      field::fractal_brownian_noise<int,float>(
+          field::value_noise<3,float>(
+              field::mosaic_noise(series::unit_interval_noise(11.0f, 1.1e4f), cartesian::UnboundedIndexing<int>()),
+              field::vector_mosaic_ops<3,int,float>()
+          ), 10, 0.5f),
       dymaxion::VertexPositions(grid)
   );
 
