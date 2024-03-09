@@ -20,16 +20,16 @@ namespace field
 	public:
 		Noise noise;
 		id octave_count;
-		scalar amplitude_factor_per_octave;
+		scalar amplitude_scale_per_frequency_doubling;
 
         constexpr FractalBrownianNoise(
     		const Noise noise, 
 			const scalar octave_count, 
-			const scalar amplitude_factor_per_octave
+			const scalar amplitude_scale_per_frequency_doubling
         ) :
         	noise(noise),
         	octave_count(octave_count),
-        	amplitude_factor_per_octave(amplitude_factor_per_octave)
+        	amplitude_scale_per_frequency_doubling(amplitude_scale_per_frequency_doubling)
         {
         }
 
@@ -38,7 +38,7 @@ namespace field
 		):
 			noise(noise.noise),
 			octave_count(noise.octave_count),
-			amplitude_factor_per_octave(noise.amplitude_factor_per_octave)
+			amplitude_scale_per_frequency_doubling(noise.amplitude_scale_per_frequency_doubling)
 		{}
 
 		using value_type = scalar;
@@ -51,7 +51,7 @@ namespace field
 			for (int i = 0; i < octave_count; ++i)
 			{
 		        frequency *= scalar(2);
-		        amplitude *= amplitude_factor_per_octave;
+		        amplitude *= amplitude_scale_per_frequency_doubling;
 		        output += amplitude*noise(frequency*V);
 			}
 		    return output;
@@ -63,9 +63,9 @@ namespace field
 	constexpr inline auto fractal_brownian_noise(
 		const Noise noise, 
 		const scalar octave_count, 
-		const scalar amplitude_factor_per_octave
+		const scalar amplitude_scale_per_frequency_doubling
 	) {
-		return FractalBrownianNoise<id,scalar,Noise,precision>(noise, octave_count, amplitude_factor_per_octave);
+		return FractalBrownianNoise<id,scalar,Noise,precision>(noise, octave_count, amplitude_scale_per_frequency_doubling);
 	}
 
 }

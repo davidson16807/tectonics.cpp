@@ -1,6 +1,6 @@
 #pragma once
 
-namespace math {
+namespace analytic {
 
     template<typename T>
     struct Exponent {
@@ -64,7 +64,7 @@ namespace math {
     }
 
     template<typename T>
-    constexpr Exponent<T> compose(const Exponent<T>& f, const math::Scaling<T> g)
+    constexpr Exponent<T> compose(const Exponent<T>& f, const analytic::Scaling<T> g)
     {
         return Exponent<T>(
             f.weight*std::pow(g.factor, f.exponent),

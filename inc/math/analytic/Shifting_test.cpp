@@ -21,17 +21,17 @@ TEST_CASE( "Shiftings are a commutative monoid under composition", "[math]" ) {
 
     ExpressionAdapter<double> broad (1e-6, -1e3, 1e3);
 
-    std::vector<math::Shifting<double>> shiftings {
-        math::Shifting<double>(2.0),
-        math::Shifting<double>(-2.0),
-        math::Shifting<double>(0.0)
+    std::vector<analytic::Shifting<double>> shiftings {
+        analytic::Shifting<double>(2.0),
+        analytic::Shifting<double>(-2.0),
+        analytic::Shifting<double>(0.0)
     };
 
     std::vector<double> scalars { -2.0, 0.0, 2.0 };
 
     test::CommutativeMonoid commutative_monoid(
-        "the identity function", math::Identity<double>(),
-        "composition",           TEST_BINARY(math::compose)
+        "the identity function", analytic::Identity<double>(),
+        "composition",           TEST_BINARY(analytic::compose)
     );
 
 }

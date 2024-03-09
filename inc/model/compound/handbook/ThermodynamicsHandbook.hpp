@@ -248,14 +248,14 @@ namespace estimated{
                         []( LatentHeatTemperatureRelation Hs, 
                             si::molar_mass<double> M, 
                             point<double> triple){
-                                auto T = math::Identity<float>();
+                                auto T = analytic::Identity<float>();
                                 auto R = si::universal_gas_constant;
                                 float T3 = triple.temperature / si::kelvin;
                                 float P3 = triple.pressure / si::pascal;
                                 float k = (Hs(triple.temperature)*M/R)/si::kelvin;
-                                using Polynomial = math::Polynomial<float,-1,1>;
-                                using Clamped = math::Clamped<float,Polynomial>;
-                                using Railyard = math::Railyard<float,Polynomial>;
+                                using Polynomial = analytic::Polynomial<float,-1,1>;
+                                using Clamped = analytic::Clamped<float,Polynomial>;
+                                using Railyard = analytic::Railyard<float,Polynomial>;
                                 return P3 * SolidVaporPressureTemperatureRelation(
                                     Railyard(Clamped(0.0f, T3, Polynomial(-k*(1.0f/T - 1.0f/T3)))),
                                     si::kelvin, si::pascal);

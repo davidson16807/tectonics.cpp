@@ -1,6 +1,6 @@
 #pragma once
 
-namespace math {
+namespace analytic {
 
     constexpr float distance(const float a, const float b) 
     {

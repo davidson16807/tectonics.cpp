@@ -8,7 +8,7 @@
 #include "Rational.hpp"
 #include "ArbitraryDegreePolynomial.hpp"
 
-namespace math {
+namespace analytic {
 
     /* 
     `ArbitraryDegreeRational<T,I>` is a class template that represents functions of the form f(x)=p/q,

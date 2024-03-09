@@ -24,6 +24,7 @@
 #include <index/series/noise/glm/UnitVectorNoise.hpp>
 
 #include "MosaicNoise.hpp"
+#include "MosaicOps.hpp"
 #include "ValueNoise.hpp"
 
 #include <test/properties.hpp>  
@@ -44,7 +45,7 @@ TEST_CASE( "ValueNoise()", "[field]" ) {
     auto noise = 
         field::value_noise<3,double>(
             field::mosaic_noise(series::gaussian(11.0, 1.1e4)),
-            field::vector_mosaic_ops<int,double>()
+            field::vector_mosaic_ops<3,int,double>()
         );
 
     REQUIRE(test::determinism(adapter,

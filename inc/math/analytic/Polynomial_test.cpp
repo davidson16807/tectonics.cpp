@@ -26,32 +26,32 @@ TEST_CASE( "The distance between Nonlaurent polynomials is a metric", "[math]" )
     NOTE: we work with lower order polynomials since associativity tests 
     for larger orders will cause false positives due to precision issues.
     */
-    std::vector<math::Polynomial<double,0,3>> polynomials1 {
-        math::Polynomial<double,0,3>({1.0,2.0,3.0,4.0}),
-        math::Polynomial<double,0,3>({-1.0,0.0,1.0,2.0})
+    std::vector<analytic::Polynomial<double,0,3>> polynomials1 {
+        analytic::Polynomial<double,0,3>({1.0,2.0,3.0,4.0}),
+        analytic::Polynomial<double,0,3>({-1.0,0.0,1.0,2.0})
     };
 
-    std::vector<math::Polynomial<double,0,0>> monomials1 {
-        math::Polynomial<double,0,0> (std::array<double,1>{2.0}),
+    std::vector<analytic::Polynomial<double,0,0>> monomials1 {
+        analytic::Polynomial<double,0,0> (std::array<double,1>{2.0}),
     };
 
-    std::vector<math::Polynomial<double,2,2>> monomials2 {
-        math::Polynomial<double,2,2> (std::array<double,1>{2.0}),
+    std::vector<analytic::Polynomial<double,2,2>> monomials2 {
+        analytic::Polynomial<double,2,2> (std::array<double,1>{2.0}),
     };
 
-    std::vector<math::Shifting<double>> shiftings {
-        math::Shifting<double>(2.0),
-        math::Shifting<double>(-2.0),
-        math::Shifting<double>(0.0)
+    std::vector<analytic::Shifting<double>> shiftings {
+        analytic::Shifting<double>(2.0),
+        analytic::Shifting<double>(-2.0),
+        analytic::Shifting<double>(0.0)
     };
 
-    std::vector<math::Scaling<double>> scalings {
-        math::Scaling<double>(2.0),
-        math::Scaling<double>(-2.0),
-        math::Scaling<double>(0.0)
+    std::vector<analytic::Scaling<double>> scalings {
+        analytic::Scaling<double>(2.0),
+        analytic::Scaling<double>(-2.0),
+        analytic::Scaling<double>(0.0)
     };
 
-    test::Metric metric("polynomial distance", [=](auto x, auto y) { return math::distance(x,y,-1e3, 1e3); } );
+    test::Metric metric("polynomial distance", [=](auto x, auto y) { return analytic::distance(x,y,-1e3, 1e3); } );
 
     // UNARY TESTS
     REQUIRE(metric.valid(narrow, polynomials1));
@@ -85,34 +85,34 @@ TEST_CASE( "Nonlaurent polynomial composition is a monoid", "[math]" ) {
     NOTE: we work with lower order polynomials since associativity tests 
     for larger orders will cause false positives due to precision issues.
     */
-    std::vector<math::Polynomial<double,0,3>> polynomials1 {
-        math::Polynomial<double,0,3>({1.0,2.0,3.0,4.0}),
-        math::Polynomial<double,0,3>({-1.0,0.0,1.0,2.0})
+    std::vector<analytic::Polynomial<double,0,3>> polynomials1 {
+        analytic::Polynomial<double,0,3>({1.0,2.0,3.0,4.0}),
+        analytic::Polynomial<double,0,3>({-1.0,0.0,1.0,2.0})
     };
 
-    std::vector<math::Polynomial<double,0,0>> monomials1 {
-        math::Polynomial<double,0,0> (std::array<double,1>{2.0}),
+    std::vector<analytic::Polynomial<double,0,0>> monomials1 {
+        analytic::Polynomial<double,0,0> (std::array<double,1>{2.0}),
     };
 
-    std::vector<math::Polynomial<double,2,2>> monomials2 {
-        math::Polynomial<double,2,2> (std::array<double,1>{2.0}),
+    std::vector<analytic::Polynomial<double,2,2>> monomials2 {
+        analytic::Polynomial<double,2,2> (std::array<double,1>{2.0}),
     };
 
-    std::vector<math::Shifting<double>> shiftings {
-        math::Shifting<double>(2.0),
-        math::Shifting<double>(-2.0),
-        math::Shifting<double>(0.0)
+    std::vector<analytic::Shifting<double>> shiftings {
+        analytic::Shifting<double>(2.0),
+        analytic::Shifting<double>(-2.0),
+        analytic::Shifting<double>(0.0)
     };
 
-    std::vector<math::Scaling<double>> scalings {
-        math::Scaling<double>(2.0),
-        math::Scaling<double>(-2.0),
-        math::Scaling<double>(0.0)
+    std::vector<analytic::Scaling<double>> scalings {
+        analytic::Scaling<double>(2.0),
+        analytic::Scaling<double>(-2.0),
+        analytic::Scaling<double>(0.0)
     };
 
     test::Monoid monoid(
-        "the identity function", math::Identity<double>(),
-        "composition",           TEST_BINARY(math::compose)
+        "the identity function", analytic::Identity<double>(),
+        "composition",           TEST_BINARY(analytic::compose)
     );
 
     // UNARY TESTS
@@ -142,44 +142,44 @@ TEST_CASE( "Polynomial arithmetic is a commutative ring", "[math]" ) {
 
     ExpressionAdapter<double> broad (1e-6, -1e3, 1e3);
 
-    std::vector<math::Polynomial<double,0,4>> polynomials1 {
-        math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0}),
-        math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0})
+    std::vector<analytic::Polynomial<double,0,4>> polynomials1 {
+        analytic::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0}),
+        analytic::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0})
     };
 
-    std::vector<math::Polynomial<double,-2,2>> polynomials2 {
-        math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0}),
-        math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0})
+    std::vector<analytic::Polynomial<double,-2,2>> polynomials2 {
+        analytic::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0}),
+        analytic::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0})
     };
 
-    std::vector<math::Polynomial<double,0,0>> monomials1 {
-        math::Polynomial<double,0,0> (std::array<double,1>{2.0}),
+    std::vector<analytic::Polynomial<double,0,0>> monomials1 {
+        analytic::Polynomial<double,0,0> (std::array<double,1>{2.0}),
     };
 
-    std::vector<math::Polynomial<double,2,2>> monomials2 {
-        math::Polynomial<double,2,2> (std::array<double,1>{2.0}),
+    std::vector<analytic::Polynomial<double,2,2>> monomials2 {
+        analytic::Polynomial<double,2,2> (std::array<double,1>{2.0}),
     };
 
-    std::vector<math::Polynomial<double,-2,2>> monomials3 {
-        math::Polynomial<double,-2,-2> (std::array<double,1>{2.0})
+    std::vector<analytic::Polynomial<double,-2,2>> monomials3 {
+        analytic::Polynomial<double,-2,-2> (std::array<double,1>{2.0})
     };
 
-    std::vector<math::Shifting<double>> shiftings {
-        math::Shifting<double>(2.0),
-        math::Shifting<double>(-2.0),
-        math::Shifting<double>(0.0)
+    std::vector<analytic::Shifting<double>> shiftings {
+        analytic::Shifting<double>(2.0),
+        analytic::Shifting<double>(-2.0),
+        analytic::Shifting<double>(0.0)
     };
 
-    std::vector<math::Scaling<double>> scalings {
-        math::Scaling<double>(2.0),
-        math::Scaling<double>(-2.0),
-        math::Scaling<double>(0.0)
+    std::vector<analytic::Scaling<double>> scalings {
+        analytic::Scaling<double>(2.0),
+        analytic::Scaling<double>(-2.0),
+        analytic::Scaling<double>(0.0)
     };
 
     std::vector<double> scalars { -2.0, 0.0, 2.0 };
 
-    math::Polynomial<double,0,0> zero = math::Polynomial<double,0,0>({0.0f});
-    math::Polynomial<double,0,0> one  = math::Polynomial<double,0,0>({1.0f});
+    analytic::Polynomial<double,0,0> zero = analytic::Polynomial<double,0,0>({0.0f});
+    analytic::Polynomial<double,0,0> one  = analytic::Polynomial<double,0,0>({1.0f});
 
     test::CommutativeRing commutative_ring(
         "0", zero, 
@@ -230,38 +230,38 @@ TEST_CASE( "Nonlaurent Polynomial calculus is left invertible", "[math]" ) {
 
     ExpressionAdapter<double> broad (1e-6, -1e3, 1e3);
 
-    std::vector<math::Polynomial<double,0,4>> polynomials1 {
-        math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0}),
-        math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0})
+    std::vector<analytic::Polynomial<double,0,4>> polynomials1 {
+        analytic::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0}),
+        analytic::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0})
     };
 
-    std::vector<math::Polynomial<double,-2,2>> polynomials2 {
-        math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0}),
-        math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0})
+    std::vector<analytic::Polynomial<double,-2,2>> polynomials2 {
+        analytic::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0}),
+        analytic::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0})
     };
 
-    std::vector<math::Polynomial<double,0,0>> monomials1 {
-        math::Polynomial<double,0,0> (std::array<double,1>{2.0}),
+    std::vector<analytic::Polynomial<double,0,0>> monomials1 {
+        analytic::Polynomial<double,0,0> (std::array<double,1>{2.0}),
     };
 
-    std::vector<math::Polynomial<double,2,2>> monomials2 {
-        math::Polynomial<double,2,2> (std::array<double,1>{2.0}),
+    std::vector<analytic::Polynomial<double,2,2>> monomials2 {
+        analytic::Polynomial<double,2,2> (std::array<double,1>{2.0}),
     };
 
-    std::vector<math::Polynomial<double,-2,2>> monomials3 {
-        math::Polynomial<double,-2,-2> (std::array<double,1>{2.0})
+    std::vector<analytic::Polynomial<double,-2,2>> monomials3 {
+        analytic::Polynomial<double,-2,-2> (std::array<double,1>{2.0})
     };
 
-    std::vector<math::Shifting<double>> shiftings {
-        math::Shifting<double>(2.0),
-        math::Shifting<double>(-2.0),
-        math::Shifting<double>(0.0)
+    std::vector<analytic::Shifting<double>> shiftings {
+        analytic::Shifting<double>(2.0),
+        analytic::Shifting<double>(-2.0),
+        analytic::Shifting<double>(0.0)
     };
 
-    std::vector<math::Scaling<double>> scalings {
-        math::Scaling<double>(2.0),
-        math::Scaling<double>(-2.0),
-        math::Scaling<double>(0.0)
+    std::vector<analytic::Scaling<double>> scalings {
+        analytic::Scaling<double>(2.0),
+        analytic::Scaling<double>(-2.0),
+        analytic::Scaling<double>(0.0)
     };
 
     // std::vector<double> scalars { -2.0, 0.0, 2.0 };
@@ -318,14 +318,14 @@ TEST_CASE( "Polynomial composition happy path", "[math]" ) {
     const double s = 1.78;
     const double t = 3.16;
 
-    using P0 = math::Polynomial<double,0,2>;
-    // using P1 = math::Polynomial<double,-2,1>;
-    // using P2 = math::Polynomial<double,-2,2>;
-    using P3 = math::Polynomial<double,0,1>;
+    using P0 = analytic::Polynomial<double,0,2>;
+    // using P1 = analytic::Polynomial<double,-2,1>;
+    // using P2 = analytic::Polynomial<double,-2,2>;
+    using P3 = analytic::Polynomial<double,0,1>;
 
-    math::Identity<double> E;
-    math::Scaling<double>  F(s);
-    math::Shifting<double> G(s);
+    analytic::Identity<double> E;
+    analytic::Scaling<double>  F(s);
+    analytic::Shifting<double> G(s);
     P0 P  = P0(std::array<double,3>{p,q,r});
     P3 Q  = P3(std::array<double,2>{s,t});
     /*
@@ -354,12 +354,12 @@ TEST_CASE( "Polynomial composition happy path", "[math]" ) {
     P∘Q(x) = p+qs+qtx+rs²+r2stx+rt²x²
     P∘Q(x) = p+qs+rs² + qtx+r2stx + rt²x²
     */
-    math::Polynomial<double,0,2> PQ = math::Polynomial<double,0,2>(std::array<double,3>{p+q*s+r*s*s, q*t+r*2.0*s*t, r*t*t});
+    analytic::Polynomial<double,0,2> PQ = analytic::Polynomial<double,0,2>(std::array<double,3>{p+q*s+r*s*s, q*t+r*2.0*s*t, r*t*t});
 
     SECTION("the derivative of s function's integral must equal the original function"){
-        CHECK(math::distance(math::compose(P,E), P, lo, hi) < threshold);
-        CHECK(math::distance(math::compose(P,F), PF, lo, hi) < threshold);
-        CHECK(math::distance(math::compose(P,G), PG, lo, hi) < threshold);
-        CHECK(math::distance(math::compose(P,Q), PQ, lo, hi) < threshold);
+        CHECK(analytic::distance(analytic::compose(P,E), P, lo, hi) < threshold);
+        CHECK(analytic::distance(analytic::compose(P,F), PF, lo, hi) < threshold);
+        CHECK(analytic::distance(analytic::compose(P,G), PG, lo, hi) < threshold);
+        CHECK(analytic::distance(analytic::compose(P,Q), PQ, lo, hi) < threshold);
     }
 }

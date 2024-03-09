@@ -24,46 +24,46 @@ TEST_CASE( "The distance between rationals is a semimetric", "[math]" ) {
     ExpressionAdapter<double> broad (1e-6, -1e3, 1e3);
     ExpressionAdapter<double> narrow(1e-5, -1e2, 1e2);
 
-    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
-    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
-    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
-    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
+    analytic::Polynomial<double,0,4> p0 = analytic::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    analytic::Polynomial<double,0,4> q0 = analytic::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    analytic::Polynomial<double,-2,2> p1 = analytic::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    analytic::Polynomial<double,-2,2> q1 = analytic::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
-    std::vector<math::Polynomial<double,0,4>> polynomials1  { p0,q0 };
-    std::vector<math::Polynomial<double,-2,2>> polynomials2 { p1,q1 };
+    std::vector<analytic::Polynomial<double,0,4>> polynomials1  { p0,q0 };
+    std::vector<analytic::Polynomial<double,-2,2>> polynomials2 { p1,q1 };
 
-    std::vector<math::Rational<double,0,4,0,4>>   rationals1 { p0/q0 };
-    std::vector<math::Rational<double,-2,2,0,4>>  rationals2 { p1/q0 };
-    std::vector<math::Rational<double,0,4,-2,2>>  rationals3 { p0/q1 };
-    std::vector<math::Rational<double,-2,2,-2,2>> rationals4 { p1/q1 };
+    std::vector<analytic::Rational<double,0,4,0,4>>   rationals1 { p0/q0 };
+    std::vector<analytic::Rational<double,-2,2,0,4>>  rationals2 { p1/q0 };
+    std::vector<analytic::Rational<double,0,4,-2,2>>  rationals3 { p0/q1 };
+    std::vector<analytic::Rational<double,-2,2,-2,2>> rationals4 { p1/q1 };
 
-    std::vector<math::Polynomial<double,0,0>> monomials1 {
-        math::Polynomial<double,0,0> (std::array<double,1>{2.0}),
+    std::vector<analytic::Polynomial<double,0,0>> monomials1 {
+        analytic::Polynomial<double,0,0> (std::array<double,1>{2.0}),
     };
 
-    std::vector<math::Polynomial<double,2,2>> monomials2 {
-        math::Polynomial<double,2,2> (std::array<double,1>{2.0}),
+    std::vector<analytic::Polynomial<double,2,2>> monomials2 {
+        analytic::Polynomial<double,2,2> (std::array<double,1>{2.0}),
     };
 
-    std::vector<math::Polynomial<double,-2,2>> monomials3 {
-        math::Polynomial<double,-2,-2> (std::array<double,1>{2.0})
+    std::vector<analytic::Polynomial<double,-2,2>> monomials3 {
+        analytic::Polynomial<double,-2,-2> (std::array<double,1>{2.0})
     };
 
-    std::vector<math::Shifting<double>> shiftings {
-        math::Shifting<double>(2.0),
-        math::Shifting<double>(-2.0),
-        math::Shifting<double>(0.0)
+    std::vector<analytic::Shifting<double>> shiftings {
+        analytic::Shifting<double>(2.0),
+        analytic::Shifting<double>(-2.0),
+        analytic::Shifting<double>(0.0)
     };
 
-    std::vector<math::Scaling<double>> scalings {
-        math::Scaling<double>(2.0),
-        math::Scaling<double>(-2.0),
-        math::Scaling<double>(0.0) 
+    std::vector<analytic::Scaling<double>> scalings {
+        analytic::Scaling<double>(2.0),
+        analytic::Scaling<double>(-2.0),
+        analytic::Scaling<double>(0.0) 
     };
 
     std::vector<double> scalars { -2.0, 0.0, 2.0 }; // NOTE: we exclude zero since division by zero is not defined
 
-    test::SemiMetric metric("polynomial distance", [=](auto x, auto y) { return math::distance(x,y,-1e3, 1e3); } );
+    test::SemiMetric metric("polynomial distance", [=](auto x, auto y) { return analytic::distance(x,y,-1e3, 1e3); } );
 
     // UNARY TESTS
     REQUIRE(metric.valid(narrow, rationals1));
@@ -120,47 +120,47 @@ TEST_CASE( "Rationals are a field", "[math]" ) {
     ExpressionAdapter<double> broad (1e-6, -1e3, 1e3);
     ExpressionAdapter<double> narrow(1e-6, -1e2, 1e2);
 
-    math::Polynomial<double,0,4> p0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
-    math::Polynomial<double,0,4> q0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
-    math::Polynomial<double,-2,2> p1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
-    math::Polynomial<double,-2,2> q1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
+    analytic::Polynomial<double,0,4> p0 = analytic::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    analytic::Polynomial<double,0,4> q0 = analytic::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    analytic::Polynomial<double,-2,2> p1 = analytic::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    analytic::Polynomial<double,-2,2> q1 = analytic::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
-    std::vector<math::Polynomial<double,0,4>> polynomials1  { p0,q0 };
-    std::vector<math::Polynomial<double,-2,2>> polynomials2 { p1,q1 };
+    std::vector<analytic::Polynomial<double,0,4>> polynomials1  { p0,q0 };
+    std::vector<analytic::Polynomial<double,-2,2>> polynomials2 { p1,q1 };
 
-    std::vector<math::Rational<double,0,4,0,4>>   rationals1 { p0/q0 };
-    std::vector<math::Rational<double,-2,2,0,4>>  rationals2 { p1/q0 };
-    std::vector<math::Rational<double,0,4,-2,2>>  rationals3 { p0/q1 };
-    std::vector<math::Rational<double,-2,2,-2,2>> rationals4 { p1/q1 };
+    std::vector<analytic::Rational<double,0,4,0,4>>   rationals1 { p0/q0 };
+    std::vector<analytic::Rational<double,-2,2,0,4>>  rationals2 { p1/q0 };
+    std::vector<analytic::Rational<double,0,4,-2,2>>  rationals3 { p0/q1 };
+    std::vector<analytic::Rational<double,-2,2,-2,2>> rationals4 { p1/q1 };
 
-    std::vector<math::Polynomial<double,0,0>> monomials1 {
-        math::Polynomial<double,0,0> (std::array<double,1>{2.0}),
+    std::vector<analytic::Polynomial<double,0,0>> monomials1 {
+        analytic::Polynomial<double,0,0> (std::array<double,1>{2.0}),
     };
 
-    std::vector<math::Polynomial<double,2,2>> monomials2 {
-        math::Polynomial<double,2,2> (std::array<double,1>{2.0}),
+    std::vector<analytic::Polynomial<double,2,2>> monomials2 {
+        analytic::Polynomial<double,2,2> (std::array<double,1>{2.0}),
     };
 
-    std::vector<math::Polynomial<double,-2,2>> monomials3 {
-        math::Polynomial<double,-2,-2> (std::array<double,1>{2.0})
+    std::vector<analytic::Polynomial<double,-2,2>> monomials3 {
+        analytic::Polynomial<double,-2,-2> (std::array<double,1>{2.0})
     };
 
-    std::vector<math::Shifting<double>> shiftings {
-        math::Shifting<double>(2.0),
-        math::Shifting<double>(-2.0),
-        math::Shifting<double>(0.0)
+    std::vector<analytic::Shifting<double>> shiftings {
+        analytic::Shifting<double>(2.0),
+        analytic::Shifting<double>(-2.0),
+        analytic::Shifting<double>(0.0)
     };
 
-    std::vector<math::Scaling<double>> scalings {
-        math::Scaling<double>(2.0),
-        math::Scaling<double>(-2.0),
-        // math::Scaling<double>(0.0)  // NOTE: we exclude zero since division by zero is not defined
+    std::vector<analytic::Scaling<double>> scalings {
+        analytic::Scaling<double>(2.0),
+        analytic::Scaling<double>(-2.0),
+        // analytic::Scaling<double>(0.0)  // NOTE: we exclude zero since division by zero is not defined
     };
 
     std::vector<double> scalars { -2.0, 2.0 }; // NOTE: we exclude zero since division by zero is not defined
 
-    math::Polynomial<double,0,0> zero = math::Polynomial<double,0,0>({0.0f});
-    math::Polynomial<double,0,0> one  = math::Polynomial<double,0,0>({1.0f});
+    analytic::Polynomial<double,0,0> zero = analytic::Polynomial<double,0,0>({0.0f});
+    analytic::Polynomial<double,0,0> one  = analytic::Polynomial<double,0,0>({1.0f});
 
 
     test::Field field(

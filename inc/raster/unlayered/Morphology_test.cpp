@@ -34,6 +34,7 @@
 #include <field/noise/EliasNoise.hpp>
 #include <field/noise/ValueNoise.hpp>
 #include <field/noise/MosaicNoise.hpp>
+#include <field/noise/MosaicOps.hpp>
 #include <field/VectorZip.hpp>
 
 #include <grid/dymaxion/Grid.hpp>
@@ -85,169 +86,182 @@
         std::vector<TYPE> scratch2(GRID.vertex_count()); \
         (F(GRID,x,out,R,scratch1,scratch2)); return out; }
 
-dymaxion::Grid fine  (2.0, 32);
-dymaxion::Grid coarse(2.0, 16);
+dymaxion::Grid morphology_fine  (2.0, 32);
+dymaxion::Grid morphology_coarse(2.0, 16);
 
 std::vector boolean_rasters{
     known::greaterThan(series::uniform(0.5), 
         series::map(
-            field::value_noise3(
+            field::value_noise<3,double>(
                 field::mosaic_noise(
-                    series::unit_interval_noise(11.0, 1.1e4))),
-            dymaxion::vertex_positions(fine)
+                    series::unit_interval_noise(11.0, 1.1e4)),
+                field::vector_mosaic_ops<3,int,double>()
+            ),
+            dymaxion::vertex_positions(morphology_fine)
         )
     ),
     known::greaterThan(series::uniform(0.5), 
         series::map(
-            field::value_noise3(
+            field::value_noise<3,double>(
                 field::mosaic_noise(
-                    series::unit_interval_noise(12.0, 1.2e4))),
-            dymaxion::vertex_positions(fine)
+                    series::unit_interval_noise(12.0, 1.2e4)),
+                field::vector_mosaic_ops<3,int,double>()
+            ),
+            dymaxion::vertex_positions(morphology_fine)
         )
     ),
     known::greaterThan(series::uniform(0.5), 
         series::map(
-            field::value_noise3(
+            field::value_noise<3,double>(
                 field::mosaic_noise(
-                    series::unit_interval_noise(13.0, 1.3e4))),
-            dymaxion::vertex_positions(fine)
+                    series::unit_interval_noise(13.0, 1.3e4)),
+                field::vector_mosaic_ops<3,int,double>()
+            ),
+            dymaxion::vertex_positions(morphology_fine)
         )
     )
 };
 
-dymaxion::Adapter strict(fine, 1e-5, fine.vertex_count());
 
 TEST_CASE( "Boolean Raster erode", "[unlayered]" ) {
+    dymaxion::Adapter strict(morphology_fine, 1e-5, morphology_fine.vertex_count());
     unlayered::Morphology morphology;
 
     REQUIRE(test::determinism(strict, 
-        "morphology.erode", MORPHOLOGY_TEST_UNARY(bool, fine, morphology.erode),
+        "morphology.erode", MORPHOLOGY_TEST_UNARY(bool, morphology_fine, morphology.erode),
         boolean_rasters
     ));
 
     REQUIRE(test::nonincreasing(strict, 
-        "morphology.erode", MORPHOLOGY_TEST_UNARY(bool, fine, morphology.erode),
+        "morphology.erode", MORPHOLOGY_TEST_UNARY(bool, morphology_fine, morphology.erode),
         "the sum",           [](auto a){return whole::sum<int>(a);},
         boolean_rasters
     ));
     
     REQUIRE(test::unary_identity(strict, 
-        "the \"empty\" raster", std::vector<bool>(fine.vertex_count(), false),
-        "morphology.erode",     MORPHOLOGY_TEST_UNARY(bool, fine, morphology.erode)
+        "the \"empty\" raster", std::vector<bool>(morphology_fine.vertex_count(), false),
+        "morphology.erode",     MORPHOLOGY_TEST_UNARY(bool, morphology_fine, morphology.erode)
     ));
     
     REQUIRE(test::unary_distributivity(strict, 
-        "morphology.erode", MORPHOLOGY_TEST_UNARY(bool, fine, morphology.erode),
-        "intersect",        MORPHOLOGY_TEST_BINARY_NONGRID(bool, fine, each::intersect),
+        "morphology.erode", MORPHOLOGY_TEST_UNARY(bool, morphology_fine, morphology.erode),
+        "intersect",        MORPHOLOGY_TEST_BINARY_NONGRID(bool, morphology_fine, each::intersect),
         boolean_rasters, boolean_rasters
     ));
     
 }
 
 TEST_CASE( "Boolean Raster dilate", "[unlayered]" ) {
+    dymaxion::Adapter strict(morphology_fine, 1e-5, morphology_fine.vertex_count());
     unlayered::Morphology morphology;
 
     REQUIRE(test::determinism(strict, 
-        "morphology.dilate", MORPHOLOGY_TEST_UNARY(bool, fine, morphology.dilate),
+        "morphology.dilate", MORPHOLOGY_TEST_UNARY(bool, morphology_fine, morphology.dilate),
         boolean_rasters
     ));
 
     REQUIRE(test::nondecreasing(strict, 
-        "morphology.dilate", MORPHOLOGY_TEST_UNARY(bool, fine, morphology.dilate),
+        "morphology.dilate", MORPHOLOGY_TEST_UNARY(bool, morphology_fine, morphology.dilate),
         "the sum",           [](auto a){return whole::sum<int>(a);},
         boolean_rasters
     ));
 
     REQUIRE(test::unary_identity(strict, 
-        "the \"full\" raster", std::vector<bool>(fine.vertex_count(), true),
-        "morphology.erode",    MORPHOLOGY_TEST_UNARY(bool, fine, morphology.erode)
+        "the \"full\" raster", std::vector<bool>(morphology_fine.vertex_count(), true),
+        "morphology.erode",    MORPHOLOGY_TEST_UNARY(bool, morphology_fine, morphology.erode)
     ));
 
     REQUIRE(test::unary_distributivity(strict, 
-        "morphology.dilate", MORPHOLOGY_TEST_UNARY(bool, fine, morphology.dilate),
-        "unite",             MORPHOLOGY_TEST_BINARY_NONGRID(bool, fine, each::unite),
+        "morphology.dilate", MORPHOLOGY_TEST_UNARY(bool, morphology_fine, morphology.dilate),
+        "unite",             MORPHOLOGY_TEST_BINARY_NONGRID(bool, morphology_fine, each::unite),
         boolean_rasters, boolean_rasters
     ));
 
 }
 
 TEST_CASE( "Boolean Raster padding", "[unlayered]" ) {
+    dymaxion::Adapter strict(morphology_fine, 1e-5, morphology_fine.vertex_count());
     unlayered::Morphology morphology;
 
     REQUIRE(test::determinism(strict, 
-        "morphology.padding", MORPHOLOGY_TEST_UNARY(bool, fine, morphology.padding),
+        "morphology.padding", MORPHOLOGY_TEST_UNARY(bool, morphology_fine, morphology.padding),
         boolean_rasters
     ));
 
 }
 
 TEST_CASE( "Boolean Raster margin", "[unlayered]" ) {
+    dymaxion::Adapter strict(morphology_fine, 1e-5, morphology_fine.vertex_count());
     unlayered::Morphology morphology;
 
     REQUIRE(test::determinism(strict, 
-        "morphology.margin", MORPHOLOGY_TEST_UNARY(bool, fine, morphology.margin),
+        "morphology.margin", MORPHOLOGY_TEST_UNARY(bool, morphology_fine, morphology.margin),
         boolean_rasters
     ));
 
 }
 
 TEST_CASE( "Boolean Raster opening", "[unlayered]" ) {
+    dymaxion::Adapter strict(morphology_fine, 1e-5, morphology_fine.vertex_count());
     unlayered::Morphology morphology;
 
     REQUIRE(test::determinism(strict, 
-        "morphology.opening", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, fine, morphology.opening),
+        "morphology.opening", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, morphology_fine, morphology.opening),
         boolean_rasters
     ));
 
     REQUIRE(test::nonincreasing(strict, 
-        "morphology.opening", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, fine, morphology.opening),
+        "morphology.opening", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, morphology_fine, morphology.opening),
         "the sum",           [](auto a){return whole::sum<int>(a);},
         boolean_rasters
     ));
 
     REQUIRE(test::unary_idempotence(strict, 
-        "morphology.opening", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, fine, morphology.opening),
+        "morphology.opening", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, morphology_fine, morphology.opening),
         boolean_rasters
     ));
 
 }
 
 TEST_CASE( "Boolean Raster closing", "[unlayered]" ) {
+    dymaxion::Adapter strict(morphology_fine, 1e-5, morphology_fine.vertex_count());
     unlayered::Morphology morphology;
 
     REQUIRE(test::determinism(strict, 
-        "morphology.closing", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, fine, morphology.closing),
+        "morphology.closing", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, morphology_fine, morphology.closing),
         boolean_rasters
     ));
 
     REQUIRE(test::nondecreasing(strict, 
-        "morphology.closing", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, fine, morphology.closing),
+        "morphology.closing", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, morphology_fine, morphology.closing),
         "the sum",           [](auto a){return whole::sum<int>(a);},
         boolean_rasters
     ));
 
     REQUIRE(test::unary_idempotence(strict, 
-        "morphology.closing", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, fine, morphology.closing),
+        "morphology.closing", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, morphology_fine, morphology.closing),
         boolean_rasters
     ));
 
 }
 
 TEST_CASE( "Boolean Raster black_top_hat", "[unlayered]" ) {
+    dymaxion::Adapter strict(morphology_fine, 1e-5, morphology_fine.vertex_count());
     unlayered::Morphology morphology;
 
     REQUIRE(test::determinism(strict, 
-        "morphology.black_top_hat", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, fine, morphology.black_top_hat),
+        "morphology.black_top_hat", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, morphology_fine, morphology.black_top_hat),
         boolean_rasters
     ));
 
 }
 
 TEST_CASE( "Boolean Raster white_top_hat", "[unlayered]" ) {
+    dymaxion::Adapter strict(morphology_fine, 1e-5, morphology_fine.vertex_count());
     unlayered::Morphology morphology;
 
     REQUIRE(test::determinism(strict, 
-        "morphology.white_top_hat", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, fine, morphology.white_top_hat),
+        "morphology.white_top_hat", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, morphology_fine, morphology.white_top_hat),
         boolean_rasters
     ));
 

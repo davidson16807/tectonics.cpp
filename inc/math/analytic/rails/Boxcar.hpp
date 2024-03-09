@@ -1,6 +1,6 @@
 #pragma once
 
-namespace math {
+namespace analytic {
 
     /* 
     `Boxcar<T>` is a trivial class that represents the well-known "boxcar" function, 

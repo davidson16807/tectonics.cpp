@@ -73,7 +73,7 @@ namespace dippr {
         return Dippr106(relation.c1 * -1.0f, relation.c2, relation.c3, relation.c4, relation.Tc);
     }
 
-    constexpr Dippr106 compose(const Dippr106& f, const math::Scaling<float> g)
+    constexpr Dippr106 compose(const Dippr106& f, const analytic::Scaling<float> g)
     {
         return Dippr106(
             f.c1,

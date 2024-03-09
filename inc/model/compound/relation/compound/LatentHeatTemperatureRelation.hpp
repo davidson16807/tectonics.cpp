@@ -14,8 +14,8 @@
 namespace compound {
 namespace relation {
 
-    using ClampedDippr106 = math::Clamped<float,dippr::Dippr106>;
-    using ClampedDippr106Sum = math::Sum<float,ClampedDippr106>;
+    using ClampedDippr106 = analytic::Clamped<float,dippr::Dippr106>;
+    using ClampedDippr106Sum = analytic::Sum<float,ClampedDippr106>;
 
     /*
     `LatentHeatTemperatureRelation` consolidates many kinds of expressions
@@ -24,7 +24,7 @@ namespace relation {
     class LatentHeatTemperatureRelation
     {
 
-        math::Sum<float,ClampedDippr106> dippr106s;
+        analytic::Sum<float,ClampedDippr106> dippr106s;
 
         si::temperature<double>    Tunits;
         si::specific_energy<double> yunits;
@@ -99,7 +99,7 @@ namespace relation {
         {
             const float Tscale = float(other.Tunits / Tunits);
             const float yscale = float(other.yunits / yunits);
-            dippr106s += yscale * compose(other.dippr106s, math::Scaling<float>(Tscale));
+            dippr106s += yscale * compose(other.dippr106s, analytic::Scaling<float>(Tscale));
             intercept += yscale * other.intercept;
             return *this;
         }
@@ -108,7 +108,7 @@ namespace relation {
         {
             const float Tscale = float(other.Tunits / Tunits);
             const float yscale = float(other.yunits / yunits);
-            dippr106s -= yscale * compose(other.dippr106s, math::Scaling<float>(Tscale));
+            dippr106s -= yscale * compose(other.dippr106s, analytic::Scaling<float>(Tscale));
             intercept -= yscale * other.intercept;
             return *this;
         }

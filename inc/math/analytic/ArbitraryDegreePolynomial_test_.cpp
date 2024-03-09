@@ -20,48 +20,48 @@ TEST_CASE( "ArbitraryDegreePolynomials are a commutative ring", "[math]" ) {
     ExpressionAdapter<double> broad (1e-6, -1e3, 1e3);
     ExpressionAdapter<double> narrow(1e-6, -1e2, 1e2);
 
-    std::vector<math::ArbitraryDegreePolynomial<double,std::int8_t>> polynomials1 {
-        math::ArbitraryDegreePolynomial<double,std::int8_t>({{0,1.0},{1,2.0},{2,3.0},{3,4.0},{4,5.0}}),
-        math::ArbitraryDegreePolynomial<double,std::int8_t>({{0,-1.0},{1,0.0},{2,1.0},{3,2.0},{4,3.0}}),
-        math::ArbitraryDegreePolynomial<double,std::int8_t>({{-2,1.0},{-1,2.0},{0,3.0},{1,4.0},{2,5.0}}),
-        math::ArbitraryDegreePolynomial<double,std::int8_t>({{-2,-1.0},{-1,1.0},{0,-2.0},{1,2.0},{2,3.0}}),
-        math::ArbitraryDegreePolynomial<double,std::int8_t>({{0,2.0}}),
-        math::ArbitraryDegreePolynomial<double,std::int8_t>({{2,2.0}}),
-        math::ArbitraryDegreePolynomial<double,std::int8_t>({{-2,2.0}})
+    std::vector<analytic::ArbitraryDegreePolynomial<double,std::int8_t>> polynomials1 {
+        analytic::ArbitraryDegreePolynomial<double,std::int8_t>({{0,1.0},{1,2.0},{2,3.0},{3,4.0},{4,5.0}}),
+        analytic::ArbitraryDegreePolynomial<double,std::int8_t>({{0,-1.0},{1,0.0},{2,1.0},{3,2.0},{4,3.0}}),
+        analytic::ArbitraryDegreePolynomial<double,std::int8_t>({{-2,1.0},{-1,2.0},{0,3.0},{1,4.0},{2,5.0}}),
+        analytic::ArbitraryDegreePolynomial<double,std::int8_t>({{-2,-1.0},{-1,1.0},{0,-2.0},{1,2.0},{2,3.0}}),
+        analytic::ArbitraryDegreePolynomial<double,std::int8_t>({{0,2.0}}),
+        analytic::ArbitraryDegreePolynomial<double,std::int8_t>({{2,2.0}}),
+        analytic::ArbitraryDegreePolynomial<double,std::int8_t>({{-2,2.0}})
     };
 
-    std::vector<math::Polynomial<double,0,4>> polynomials2 {
-        math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0}),
-        math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0})
+    std::vector<analytic::Polynomial<double,0,4>> polynomials2 {
+        analytic::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0}),
+        analytic::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0})
     };
 
-    std::vector<math::Polynomial<double,-2,2>> polynomials3 {
-        math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0}),
-        math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0})
+    std::vector<analytic::Polynomial<double,-2,2>> polynomials3 {
+        analytic::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0}),
+        analytic::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0})
     };
 
-    std::vector<math::Polynomial<double,0,0>> monomials1 {
-        math::Polynomial<double,0,0> (std::array<double,1>{2.0}),
+    std::vector<analytic::Polynomial<double,0,0>> monomials1 {
+        analytic::Polynomial<double,0,0> (std::array<double,1>{2.0}),
     };
 
-    std::vector<math::Polynomial<double,2,2>> monomials2 {
-        math::Polynomial<double,2,2> (std::array<double,1>{2.0}),
+    std::vector<analytic::Polynomial<double,2,2>> monomials2 {
+        analytic::Polynomial<double,2,2> (std::array<double,1>{2.0}),
     };
 
-    std::vector<math::Polynomial<double,-2,2>> monomials3 {
-        math::Polynomial<double,-2,-2> (std::array<double,1>{2.0})
+    std::vector<analytic::Polynomial<double,-2,2>> monomials3 {
+        analytic::Polynomial<double,-2,-2> (std::array<double,1>{2.0})
     };
 
-    std::vector<math::Shifting<double>> shiftings {
-        math::Shifting<double>(2.0),
-        math::Shifting<double>(-2.0),
-        math::Shifting<double>(0.0)
+    std::vector<analytic::Shifting<double>> shiftings {
+        analytic::Shifting<double>(2.0),
+        analytic::Shifting<double>(-2.0),
+        analytic::Shifting<double>(0.0)
     };
 
-    std::vector<math::Scaling<double>> scalings {
-        math::Scaling<double>(2.0),
-        math::Scaling<double>(-2.0),
-        math::Scaling<double>(0.0)
+    std::vector<analytic::Scaling<double>> scalings {
+        analytic::Scaling<double>(2.0),
+        analytic::Scaling<double>(-2.0),
+        analytic::Scaling<double>(0.0)
     };
 
     std::vector<double> scalars { -2.0, 0.0, 2.0 };
@@ -125,16 +125,16 @@ TEST_CASE( "ArbitraryDegreePolynomial integral/derivative invertibility", "[math
     const double lo = -1e3;
     const double hi =  1e3;
     
-    math::ArbitraryDegreePolynomial<double,std::int8_t> p({{0,1.0},{1,2.0},{2,3.0},{3,4.0},{4,5.0}});
-    math::ArbitraryDegreePolynomial<double,std::int8_t> q({{0,-1.0},{1,0.0},{2,1.0},{3,2.0},{4,3.0}});
-    // math::ArbitraryDegreePolynomial<double,std::int8_t> r({{-2,1.0},{-1,2.0},{0,3.0},{1,4.0},{2,5.0}});
-    // math::ArbitraryDegreePolynomial<double,std::int8_t> s({{-2,-1.0},{-1,1.0},{0,-2.0},{1,2.0},{2,3.0}});
+    analytic::ArbitraryDegreePolynomial<double,std::int8_t> p({{0,1.0},{1,2.0},{2,3.0},{3,4.0},{4,5.0}});
+    analytic::ArbitraryDegreePolynomial<double,std::int8_t> q({{0,-1.0},{1,0.0},{2,1.0},{3,2.0},{4,3.0}});
+    // analytic::ArbitraryDegreePolynomial<double,std::int8_t> r({{-2,1.0},{-1,2.0},{0,3.0},{1,4.0},{2,5.0}});
+    // analytic::ArbitraryDegreePolynomial<double,std::int8_t> s({{-2,-1.0},{-1,1.0},{0,-2.0},{1,2.0},{2,3.0}});
 
     SECTION("the derivative of a function's integral must equal the original function"){
-        CHECK(math::distance(p, derivative(integral(p)), lo, hi) < threshold);
-        CHECK(math::distance(q, derivative(integral(q)), lo, hi) < threshold);
-        // CHECK(math::distance(r, derivative(integral(r)), lo, hi) < threshold);
-        // CHECK(math::distance(s, derivative(integral(s)), lo, hi) < threshold);
+        CHECK(analytic::distance(p, derivative(integral(p)), lo, hi) < threshold);
+        CHECK(analytic::distance(q, derivative(integral(q)), lo, hi) < threshold);
+        // CHECK(analytic::distance(r, derivative(integral(r)), lo, hi) < threshold);
+        // CHECK(analytic::distance(s, derivative(integral(s)), lo, hi) < threshold);
     }
 }
 

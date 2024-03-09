@@ -6,7 +6,7 @@
 // in-house libraries
 #include "Boxcar.hpp"
 
-namespace math {
+namespace analytic {
 
     /* 
     `Railcar<T,F>` is a trivial class that represents a function f(x) of type F multiplied 

@@ -7,7 +7,7 @@
 // in-house libraries
 #include "Identity.hpp"
 
-namespace math {
+namespace analytic {
 
     /*
     A `Sum` represents a sum of arbitrary functions.

@@ -45,7 +45,7 @@ TEST_CASE( "PerlinNoise()", "[field]" ) {
         field::perlin_noise<3,double>(
             field::mosaic_noise(
                 series::vector_interleave<3>(series::gaussian(11.0, 1.1e4))),
-            field::vector_mosaic_ops<int,double>()
+            field::vector_mosaic_ops<3,int,double>()
         );
 
     REQUIRE(test::determinism(adapter,

@@ -1,0 +1,28 @@
+roadmap for lod:
+* port geometry library
+* break math:: into analytic::, geometric::, combinatoric::, special::
+* dymaxion::Downsampling
+* dyamxion::LodGridBuffers
+* unit tests for dymaxion::*Buffers
+
+components:
+* priority queue ("PQ") that stores chunk ids that are in a buffer together with their priorities and block ids
+* a function, priorities(), that returns a PQ consisting of the highest priority chunk ids and their priorities for a given position vector
+
+concepts:
+* "chunks" are contiguous regions on a sphere, much like minecraft chunks
+* "blocks" are contiguous faces in a buffer of constant size, equivalent to 1024 faces
+  a block can be considered the placement of a chunk within a buffer
+* each block is characterized by a unique block id
+* for each frame:
+** generates a new PQ of the highest priority chunk ids
+** reevaluates priorities in the buffered PQ
+** compares the new PQ with the buffered PQ with reevaluated priorities
+** replaces the lowest priority chunk in the buffered PQ with the highest priority chunk in the new PQ, and buffers that chunk
+* the PQ starts prepopulated with sentinel chunk ids of infinitely low priority
+  (this is so there's no need for specialized logic that populates the initial buffered PQ)
+
+observation:
+* for each frame, the buffered PQ only ever needs to track the lowest priority chunk,
+  and the chunk PQ only ever needs to track the highest priority chunk
+

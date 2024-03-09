@@ -33,12 +33,12 @@ struct Adapter{
     // the functions below are required for some tests for series::Map
 
     template<int Plo, int Phi>
-    std::string print(const math::Polynomial<T,Plo,Phi>& p) const {
-        return math::to_string(p);
+    std::string print(const analytic::Polynomial<T,Plo,Phi>& p) const {
+        return analytic::to_string(p);
     }
 
-    std::string print(const math::Identity<T>& e) const {
-        return math::to_string(e);
+    std::string print(const analytic::Identity<T>& e) const {
+        return analytic::to_string(e);
     }
 
 };

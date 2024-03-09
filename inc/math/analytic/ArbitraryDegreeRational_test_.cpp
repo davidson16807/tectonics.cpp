@@ -20,67 +20,67 @@ TEST_CASE( "ArbitraryDegreeRationals are a field", "[math]" ) {
     ExpressionAdapter<double> broad (1e-6, -1e3, 1e3);
     ExpressionAdapter<double> narrow(1e-6, -1e2, 1e2);
 
-    math::ArbitraryDegreePolynomial<double,std::int8_t> p0({{0,1.0},{1,2.0},{2,3.0},{3,4.0},{4,5.0}});
-    math::ArbitraryDegreePolynomial<double,std::int8_t> p1({{-2,1.0},{-1,2.0},{0,3.0},{1,4.0},{2,5.0}});
-    math::ArbitraryDegreePolynomial<double,std::int8_t> q0({{0,-1.0},{1,0.0},{2,1.0},{3,2.0},{4,3.0}});
-    math::ArbitraryDegreePolynomial<double,std::int8_t> q1({{-2,-1.0},{-1,1.0},{0,-2.0},{1,2.0},{2,3.0}});
+    analytic::ArbitraryDegreePolynomial<double,std::int8_t> p0({{0,1.0},{1,2.0},{2,3.0},{3,4.0},{4,5.0}});
+    analytic::ArbitraryDegreePolynomial<double,std::int8_t> p1({{-2,1.0},{-1,2.0},{0,3.0},{1,4.0},{2,5.0}});
+    analytic::ArbitraryDegreePolynomial<double,std::int8_t> q0({{0,-1.0},{1,0.0},{2,1.0},{3,2.0},{4,3.0}});
+    analytic::ArbitraryDegreePolynomial<double,std::int8_t> q1({{-2,-1.0},{-1,1.0},{0,-2.0},{1,2.0},{2,3.0}});
 
-    math::ArbitraryDegreePolynomial<double,std::int8_t> m0({{0,2.0}});
-    math::ArbitraryDegreePolynomial<double,std::int8_t> m1({{2,2.0}});
-    math::ArbitraryDegreePolynomial<double,std::int8_t> m2({{-2,2.0}});
+    analytic::ArbitraryDegreePolynomial<double,std::int8_t> m0({{0,2.0}});
+    analytic::ArbitraryDegreePolynomial<double,std::int8_t> m1({{2,2.0}});
+    analytic::ArbitraryDegreePolynomial<double,std::int8_t> m2({{-2,2.0}});
 
-    std::vector<math::ArbitraryDegreeRational<double,std::int8_t>> rationals1 { p0/q0, p1/q0, p0/q1, p1/q1 };
+    std::vector<analytic::ArbitraryDegreeRational<double,std::int8_t>> rationals1 { p0/q0, p1/q0, p0/q1, p1/q1 };
 
-    math::Polynomial<double,0,4> r0 = math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
-    math::Polynomial<double,-2,2> r1 = math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
-    math::Polynomial<double,0,4> s0 = math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
-    math::Polynomial<double,-2,2> s1 = math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
+    analytic::Polynomial<double,0,4> r0 = analytic::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0});
+    analytic::Polynomial<double,-2,2> r1 = analytic::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0});
+    analytic::Polynomial<double,0,4> s0 = analytic::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0});
+    analytic::Polynomial<double,-2,2> s1 = analytic::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0});
 
-    std::vector<math::Rational<double,0,4,0,4>>   rationals2 { r0/s0 };
-    std::vector<math::Rational<double,-2,2,0,4>>  rationals3 { r1/s0 };
-    std::vector<math::Rational<double,0,4,-2,2>>  rationals4 { r0/s1 };
-    std::vector<math::Rational<double,-2,2,-2,2>> rationals5 { r1/s1 };
+    std::vector<analytic::Rational<double,0,4,0,4>>   rationals2 { r0/s0 };
+    std::vector<analytic::Rational<double,-2,2,0,4>>  rationals3 { r1/s0 };
+    std::vector<analytic::Rational<double,0,4,-2,2>>  rationals4 { r0/s1 };
+    std::vector<analytic::Rational<double,-2,2,-2,2>> rationals5 { r1/s1 };
 
-    std::vector<math::ArbitraryDegreePolynomial<double,std::int8_t>> polynomials1 { p0, q0, q1, q1, m0, m1, m2 };
+    std::vector<analytic::ArbitraryDegreePolynomial<double,std::int8_t>> polynomials1 { p0, q0, q1, q1, m0, m1, m2 };
 
-    std::vector<math::Polynomial<double,0,4>> polynomials2 {
-        math::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0}),
-        math::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0})
+    std::vector<analytic::Polynomial<double,0,4>> polynomials2 {
+        analytic::Polynomial<double,0,4>({1.0,2.0,3.0,4.0,5.0}),
+        analytic::Polynomial<double,0,4>({-1.0,0.0,1.0,2.0,3.0})
     };
 
-    std::vector<math::Polynomial<double,-2,2>> polynomials3 {
-        math::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0}),
-        math::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0})
+    std::vector<analytic::Polynomial<double,-2,2>> polynomials3 {
+        analytic::Polynomial<double,-2,2>({1.0,2.0,3.0,4.0,5.0}),
+        analytic::Polynomial<double,-2,2>({-1.0,1.0,-2.0,2.0,3.0})
     };
 
-    std::vector<math::Polynomial<double,0,0>> monomials1 {
-        math::Polynomial<double,0,0> (std::array<double,1>{2.0}),
+    std::vector<analytic::Polynomial<double,0,0>> monomials1 {
+        analytic::Polynomial<double,0,0> (std::array<double,1>{2.0}),
     };
 
-    std::vector<math::Polynomial<double,2,2>> monomials2 {
-        math::Polynomial<double,2,2> (std::array<double,1>{2.0}),
+    std::vector<analytic::Polynomial<double,2,2>> monomials2 {
+        analytic::Polynomial<double,2,2> (std::array<double,1>{2.0}),
     };
 
-    std::vector<math::Polynomial<double,-2,2>> monomials3 {
-        math::Polynomial<double,-2,-2> (std::array<double,1>{2.0})
+    std::vector<analytic::Polynomial<double,-2,2>> monomials3 {
+        analytic::Polynomial<double,-2,-2> (std::array<double,1>{2.0})
     };
 
-    std::vector<math::Shifting<double>> shiftings {
-        math::Shifting<double>(2.0),
-        math::Shifting<double>(-2.0),
-        math::Shifting<double>(0.0)
+    std::vector<analytic::Shifting<double>> shiftings {
+        analytic::Shifting<double>(2.0),
+        analytic::Shifting<double>(-2.0),
+        analytic::Shifting<double>(0.0)
     };
 
-    std::vector<math::Scaling<double>> scalings {
-        math::Scaling<double>(2.0),
-        math::Scaling<double>(-2.0),
-        // math::Scaling<double>(0.0)  // NOTE: we exclude zero since division by zero is not defined
+    std::vector<analytic::Scaling<double>> scalings {
+        analytic::Scaling<double>(2.0),
+        analytic::Scaling<double>(-2.0),
+        // analytic::Scaling<double>(0.0)  // NOTE: we exclude zero since division by zero is not defined
     };
 
     std::vector<double> scalars { -2.0, 2.0 }; // NOTE: we exclude zero since division by zero is not defined
 
-    // math::Polynomial<double,0,0> zero = math::Polynomial<double,0,0>({0.0f});
-    // math::Polynomial<double,0,0> one  = math::Polynomial<double,0,0>({1.0f});
+    // analytic::Polynomial<double,0,0> zero = analytic::Polynomial<double,0,0>({0.0f});
+    // analytic::Polynomial<double,0,0> one  = analytic::Polynomial<double,0,0>({1.0f});
 
     test::Field field(
         "0", 0.0, 

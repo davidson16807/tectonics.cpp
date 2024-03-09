@@ -8,7 +8,7 @@
 #include <math/analytic/Shifting.hpp>
 #include "Identity.hpp"
 
-namespace math {
+namespace analytic {
 
     /* 
     `Clamped<T,F>` is a trivial class that represents the function f(x)=F(min(max(x,a),b)), 

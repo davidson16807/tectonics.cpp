@@ -500,7 +500,7 @@ TEST_CASE( "vector series log2/exp2 properties", "[each]" ) {
         positive_vectors
     ));
 
-    REQUIRE(test::invertibility(adapter,
+    REQUIRE(test::unary_invertibility(adapter,
         "each::log2",  EACH_TEST_UNARY_OUT_PARAMETER (glm::dvec3,30,each::log2),
         "each::exp2",  EACH_TEST_UNARY_OUT_PARAMETER(glm::dvec3,30,each::exp2),
         positive_vectors

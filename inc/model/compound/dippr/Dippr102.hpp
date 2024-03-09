@@ -64,7 +64,7 @@ namespace dippr {
     }
 
 
-    constexpr Dippr102 compose(Dippr102 f, const math::Scaling<float> g)
+    constexpr Dippr102 compose(Dippr102 f, const analytic::Scaling<float> g)
     {
         return Dippr102(
             f.c1 * std::pow(g.factor, f.c2),

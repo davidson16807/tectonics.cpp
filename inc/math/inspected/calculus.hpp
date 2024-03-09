@@ -2,7 +2,7 @@
 
 #include <math/combinatorics.hpp>
 
-namespace math {
+namespace inspected {
 
     /*
     `central_finite_difference()` is used to approximate the derivative of a function for the parameter value, x.

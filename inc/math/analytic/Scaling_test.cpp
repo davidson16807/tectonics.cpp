@@ -21,17 +21,17 @@ TEST_CASE( "Scalings are a commutative monoid under composition", "[math]" ) {
 
     ExpressionAdapter<double> broad (1e-6, -1e3, 1e3);
 
-    std::vector<math::Scaling<double>> scalings {
-        math::Scaling<double>(2.0),
-        math::Scaling<double>(-2.0),
-        math::Scaling<double>(0.0)
+    std::vector<analytic::Scaling<double>> scalings {
+        analytic::Scaling<double>(2.0),
+        analytic::Scaling<double>(-2.0),
+        analytic::Scaling<double>(0.0)
     };
 
     std::vector<double> scalars { -2.0, 0.0, 2.0 };
 
     test::CommutativeMonoid commutative_monoid(
-        "the identity function", math::Identity<double>(),
-        "composition",           TEST_BINARY(math::compose)
+        "the identity function", analytic::Identity<double>(),
+        "composition",           TEST_BINARY(analytic::compose)
     );
 
 }

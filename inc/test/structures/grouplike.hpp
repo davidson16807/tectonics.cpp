@@ -206,7 +206,7 @@ namespace test {
             determinism    (adapter,            f_name, f, as, as)     &&
             binary_identity(adapter, e_name, e, f_name, f, as)         &&
             determinism    (adapter,            finv_name, finv,            as, as) &&
-            invertibility  (adapter, e_name, e, finv_name, finv, f_name, f, as)     &&
+            binary_invertibility(adapter, e_name, e, finv_name, finv, f_name, f, as)     &&
 
             true; // added so lines above can be easily swapped
         }
@@ -217,8 +217,8 @@ namespace test {
             determinism  (adapter, f_name, f, as, bs)     &&
             determinism  (adapter, f_name, f, bs, as)     &&
             determinism  (adapter,            finv_name, finv,            as, bs) &&
-            invertibility(adapter, e_name, e, finv_name, finv, f_name, f, as) &&
-            invertibility(adapter, e_name, e, finv_name, finv, f_name, f, bs) &&
+            binary_invertibility(adapter, e_name, e, finv_name, finv, f_name, f, as) &&
+            binary_invertibility(adapter, e_name, e, finv_name, finv, f_name, f, bs) &&
 
             true; // added so lines above can be easily swapped
         }
@@ -248,7 +248,7 @@ namespace test {
             associativity  (adapter,            f_name, f, as, as, as) &&
             binary_identity(adapter, e_name, e, f_name, f, as)         &&
             determinism    (adapter,            finv_name, finv,            as, as) &&
-            invertibility  (adapter, e_name, e, finv_name, finv, f_name, f, as)     &&
+            binary_invertibility(adapter, e_name, e, finv_name, finv, f_name, f, as)     &&
 
             true; // added so lines above can be easily swapped
         }
@@ -264,8 +264,8 @@ namespace test {
             associativity(adapter, f_name, f, bs, as, as) &&
             associativity(adapter, f_name, f, bs, as, bs) &&
             associativity(adapter, f_name, f, bs, bs, as) &&
-            invertibility(adapter, e_name, e, finv_name, finv, f_name, f, as) &&
-            invertibility(adapter, e_name, e, finv_name, finv, f_name, f, bs) &&
+            binary_invertibility(adapter, e_name, e, finv_name, finv, f_name, f, as) &&
+            binary_invertibility(adapter, e_name, e, finv_name, finv, f_name, f, bs) &&
 
             true; // added so lines above can be easily swapped
         }
@@ -363,7 +363,7 @@ namespace test {
             determinism    (adapter,            f_name, f, as, as)     &&
             associativity  (adapter,            f_name, f, as, as, as) &&
             binary_identity(adapter, e_name, e, f_name, f, as)         &&
-            invertibility  (adapter, e_name, e, finv_name, finv, f_name, f, as) &&
+            binary_invertibility(adapter, e_name, e, finv_name, finv, f_name, f, as) &&
             commutativity  (adapter,            f_name, f, as, as)     &&
 
             true; // added so lines above can be easily swapped
@@ -380,8 +380,8 @@ namespace test {
             associativity(adapter, f_name, f, bs, as, as) &&
             associativity(adapter, f_name, f, bs, as, bs) &&
             associativity(adapter, f_name, f, bs, bs, as) &&
-            invertibility(adapter, e_name, e, finv_name, finv, f_name, f, as) &&
-            invertibility(adapter, e_name, e, finv_name, finv, f_name, f, bs) &&
+            binary_invertibility(adapter, e_name, e, finv_name, finv, f_name, f, as) &&
+            binary_invertibility(adapter, e_name, e, finv_name, finv, f_name, f, bs) &&
             commutativity(adapter, f_name, f, as, bs)     &&
             commutativity(adapter, f_name, f, bs, as)     &&
 

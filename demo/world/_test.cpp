@@ -131,7 +131,7 @@ int main() {
   // auto mask = 
   //   known::greaterThan(series::uniform(0.5), 
   //         series::map(
-  //             field::value_noise3<float>(
+  //             field::value_noise3<3,float>(
   //                 field::mosaic_noise(series::unit_interval_noise(11.0, 1.1e4)),
   //                 dymaxion::mosaic_ops<int,float>()
   //             ),
@@ -147,23 +147,39 @@ int main() {
   // std::vector<float> vertex_scalars2(grid.vertex_count());
   // each::copy(out, vertex_scalars2);
 
+  // analytic::Sum<analytic::Gaussian> hypsography_pdf;
+  // auto hypsography_cdf = analytic::integral(hypsography_pdf);
+  // auto hypsography_cdf_scaled = hypsography_cdf / (hypsography_cdf(max_elevation)-hypsography_cdf(min_elevation)) - hypsography_cdf(min_elevation);
+  // auto hypsography_cdfinv = analytic::inverse(hypsography_cdf);
+
   auto vertex_scalars1 = series::map(
-      field::fractal_brownian_noise<int,float>(
-          field::value_noise<3,float>(
-              field::mosaic_noise(series::unit_interval_noise(11.0f, 1.1e4f), cartesian::UnboundedIndexing<int>()),
-              field::vector_mosaic_ops<3,int,float>()
-          ), 10, 0.5f),
-      dymaxion::VertexPositions(grid)
+    field::fractal_brownian_noise<int,float>(
+        field::value_noise<3,float>(
+            field::mosaic_noise(series::unit_interval_noise(11.0f, 1.1e4f), cartesian::UnboundedIndexing<int>()),
+            field::vector_mosaic_ops<3,int,float>()
+        ), 5, 0.5f),
+    // field::map(
+    //   hypsography_cdfinv,
+    //   field::fractal_brownian_noise<int,float>(
+    //       field::value_noise<3,float>(
+    //           field::mosaic_noise(series::unit_interval_noise(11.0f, 1.1e4f), cartesian::UnboundedIndexing<int>()),
+    //           field::vector_mosaic_ops<3,int,float>()
+    //       ), 10, 0.5f),
+    // ),
+    dymaxion::VertexPositions(grid)
   );
 
-  auto vertex_scalars2 = series::map(
-      field::fractal_brownian_noise<int,float>(
-          field::value_noise<3,float>(
-              field::mosaic_noise(series::unit_interval_noise(11.0f, 1.1e4f), cartesian::UnboundedIndexing<int>()),
-              field::vector_mosaic_ops<3,int,float>()
-          ), 10, 0.5f),
-      dymaxion::VertexPositions(grid)
-  );
+  // auto vertex_scalars2 = series::map(
+  //   field::map(
+  //     hypsography_cdfinv,
+  //     field::fractal_brownian_noise<int,float>(
+  //         field::value_noise<3,float>(
+  //             field::mosaic_noise(series::unit_interval_noise(12.0f, 1.2e4f), cartesian::UnboundedIndexing<int>()),
+  //             field::vector_mosaic_ops<3,int,float>()
+  //         ), 10, 0.5f),
+  //   ),
+  //   dymaxion::VertexPositions(grid)
+  // );
 
   // auto vertex_directions = known::store(
   //     grid.vertex_count(),
@@ -224,7 +240,7 @@ int main() {
   each::copy(vertex_colored_scalars, buffer_color_values);
   each::copy(vertex_square_ids, buffer_square_ids);
   each::copy(vertex_scalars1, buffer_scalars1);
-  each::copy(vertex_scalars2, buffer_scalars2);
+  // each::copy(vertex_scalars2, buffer_scalars2);
   each::copy(vertex_positions, buffer_positions);
   grids.storeTriangleStrips(series::range<unsigned int>(grid.vertex_count()), buffer_element_vertex_ids);
 

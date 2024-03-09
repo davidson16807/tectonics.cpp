@@ -32,9 +32,9 @@
 
 TEST_CASE( "Map", "[series]" ) {
     series::Adapter adapter(1e-7);
-    std::vector<math::Polynomial<double,0,3>> polynomials {
-        math::Polynomial<double,0,3>({1.0,2.0,3.0,4.0}),
-        math::Polynomial<double,0,3>({-1.0,0.0,1.0,2.0})
+    std::vector<analytic::Polynomial<double,0,3>> polynomials {
+        analytic::Polynomial<double,0,3>({1.0,2.0,3.0,4.0}),
+        analytic::Polynomial<double,0,3>({-1.0,0.0,1.0,2.0})
     };
     std::vector<series::UnitIntervalNoise<double>> noises {
         series::UnitIntervalNoise(10.0, 1.0e4),
@@ -45,7 +45,7 @@ TEST_CASE( "Map", "[series]" ) {
     REQUIRE(test::determinism(adapter, "series::map", TEST_BINARY(series::map), polynomials, noises));
     // REQUIRE(test::associativity(adapter, "series::map", TEST_BINARY(series::map), polynomials, polynomials, noises));
     REQUIRE(test::left_identity(adapter, 
-        "id", math::Identity<double>(), 
+        "id", analytic::Identity<double>(), 
         "series::map", TEST_BINARY(series::map), 
         noises));
 }

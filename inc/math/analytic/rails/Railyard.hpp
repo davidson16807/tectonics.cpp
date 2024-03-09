@@ -11,7 +11,7 @@
 
 #include "Railcar.hpp"
 
-namespace math {
+namespace analytic {
 
     /*
     A `Railyard` is a sum of railcar functions multiplied by functions of an arbitrary type F.

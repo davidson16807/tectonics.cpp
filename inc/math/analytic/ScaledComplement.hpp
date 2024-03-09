@@ -1,6 +1,6 @@
 #pragma once
 
-namespace math {
+namespace analytic {
 
     /* 
     `ScaledComplement<T,F>` is a trivial class that represents the function f∘g(x)=f(1-x/k), 
@@ -135,7 +135,7 @@ namespace math {
     Given functions f and g, return the composite function f∘g.
     */
     template<typename T, typename F>
-    constexpr ScaledComplement<T,F> compose(const F f, const ScaledComplement<T,math::Identity<T>>& g)
+    constexpr ScaledComplement<T,F> compose(const F f, const ScaledComplement<T,analytic::Identity<T>>& g)
     {
         return ScaledComplement<T,F>(g.scale, f);
     }
@@ -144,7 +144,7 @@ namespace math {
     Given functions f∘g and h, return the composite function f∘g∘h.
     */
     template<typename T, typename F>
-    constexpr ScaledComplement<T,F> compose(const ScaledComplement<T,F>& fg, const math::Scaling<T>& h)
+    constexpr ScaledComplement<T,F> compose(const ScaledComplement<T,F>& fg, const analytic::Scaling<T>& h)
     {
         return ScaledComplement<T,F>(fg.scale/h.factor, fg.f);
     }

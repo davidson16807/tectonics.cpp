@@ -2,7 +2,7 @@
 
 #include "Identity.hpp"
 
-namespace math {
+namespace analytic {
 
     /* 
     `Shifting` is a trivial class that represents the function f(x)=ax,

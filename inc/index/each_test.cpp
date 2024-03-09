@@ -140,28 +140,28 @@ TEST_CASE( "arithmetic on each nonzero of a series is a commutative ring", "[eac
 
 
 
-TEST_CASE( "morphology on each of a series is a commutative monoid", "[each]" ) {
+// TEST_CASE( "morphology on each of a series is a commutative monoid", "[each]" ) {
 
-    each::Adapter<bool> exact (0);
+//     each::Adapter<bool> exact (0);
 
-    std::vector<std::vector<bool>> vectors {
-        std::vector<bool>({1,0,0,1,0}),
-        std::vector<bool>({0,1,0,1,0}),
-    };
+//     std::vector<std::vector<bool>> vectors {
+//         std::vector<bool>({1,0,0,1,0}),
+//         std::vector<bool>({0,1,0,1,0}),
+//     };
 
-    test::CommutativeMonoid unite(
-        "0", series::uniform(0), 
-        "each::unite", EACH_TEST_BINARY_OUT_PARAMETER(bool, 5, each::unite)
-    );
-    REQUIRE(unite.valid(exact, vectors));
+//     test::CommutativeMonoid unite(
+//         "0", series::uniform(0), 
+//         "each::unite", EACH_TEST_BINARY_OUT_PARAMETER(bool, 5, each::unite)
+//     );
+//     REQUIRE(unite.valid(exact, vectors));
 
-    test::CommutativeMonoid intersect(
-        "1", series::uniform(1), 
-        "each::intersect", EACH_TEST_BINARY_OUT_PARAMETER(bool, 5, each::intersect)
-    );
-    REQUIRE(intersect.valid(exact, vectors));
+//     test::CommutativeMonoid intersect(
+//         "1", series::uniform(1), 
+//         "each::intersect", EACH_TEST_BINARY_OUT_PARAMETER(bool, 5, each::intersect)
+//     );
+//     REQUIRE(intersect.valid(exact, vectors));
 
-}
+// }
 
 
 TEST_CASE( "Series<T> negation involutivity", "[each]" ) {

@@ -34,6 +34,8 @@ namespace field
         {
         }
 
+		using value_type = typename Noise::value_type;
+
 		/*
 		`region_transition_width` is the width of the transition zone for a region
 		`region_count` is the number of regions where we increment grid cell values

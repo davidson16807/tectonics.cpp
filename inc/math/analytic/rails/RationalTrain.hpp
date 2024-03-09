@@ -11,7 +11,7 @@
 #include "RationalRailyard.hpp"
 #include "PolynomialTrain.hpp"
 
-namespace math {
+namespace analytic {
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     using RationalTrain = Train<T,Rational<T,Plo,Phi,Qlo,Qhi>>;

@@ -207,7 +207,7 @@ namespace relation {
         std::vector<double> logys {std::log(y0), std::log(y1)};
         return GenericRelation<si::temperature<double>, si::dynamic_viscosity<double>>(
             relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>,Ty,0,1>(
-                math::spline::linear_spline<float>(xs, logys), Tunits, yunits));
+                analytic::spline::linear_spline<float>(xs, logys), Tunits, yunits));
     }
 
     // Letsou-Stiel method: https://chemicals.readthedocs.io/chemicals.viscosity.html?highlight=letsou%20stiel#chemicals.viscosity.Letsou_Stiel
@@ -284,7 +284,7 @@ namespace relation {
         }
         return GenericRelation<si::temperature<double>, si::pressure<double>>(
                 relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>,si::pressure<double>,0,1>(
-                    math::spline::linear_spline<float>(xs, logys), Tunits, yunits));
+                    analytic::spline::linear_spline<float>(xs, logys), Tunits, yunits));
     }
 
     // 175 uses
@@ -304,7 +304,7 @@ namespace relation {
             logys.push_back(std::log(ys[i]));
         }
         return GenericRelation<si::temperature<double>, si::pressure<double>>(relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>,Ty,0,1>(
-                    math::spline::linear_spline<float>(kelvins, logys), si::kelvin, yunits));
+                    analytic::spline::linear_spline<float>(kelvins, logys), si::kelvin, yunits));
     }
 
     // Lee Kesler method: https://en.wikipedia.org/wiki/Lee%E2%80%93Kesler_method
@@ -334,7 +334,7 @@ namespace relation {
         const double xmax
     ){
         return GenericRelation<si::temperature<double>, si::surface_energy<double>>(
-                PolynomialRailyardRelation<si::temperature<double>,Ty,0,1>(math::spline::linear_spline<double>(xs, ys), Tunits, yunits));
+                PolynomialRailyardRelation<si::temperature<double>,Ty,0,1>(analytic::spline::linear_spline<double>(xs, ys), Tunits, yunits));
     }
 
     // 3 uses, for liquid surface tension
@@ -346,7 +346,7 @@ namespace relation {
         const double xmin,
         const double xmax
     ){
-        const auto f = math::spline::linear_spline<double>(xs, ys);
+        const auto f = analytic::spline::linear_spline<double>(xs, ys);
         return GenericRelation<si::temperature<double>, si::surface_energy<double>>(
                 [=](const si::temperature<double> x) {return f(x/Tunits)*yunits;});
     }
@@ -406,7 +406,7 @@ namespace relation {
           and we don't want the degree of the resulting polynomial 
           to be so high that it produces nans upon evaluation.
         */
-        auto reflectance_relation = math::spline::linear_spline<float>(wavelengths, reflectances);
+        auto reflectance_relation = analytic::spline::linear_spline<float>(wavelengths, reflectances);
         return GenericRelation<si::wavenumber<double>, si::attenuation<double>>(
             [=](si::wavenumber<double> n){
                 auto R = reflectance_relation((1.0/n)/lunits);
@@ -429,7 +429,7 @@ namespace relation {
         std::reverse(ys.begin(), ys.end());
         return GenericRelation<si::wavenumber<double>, si::attenuation<double>>(
             PolynomialRailyardRelation<si::wavenumber<double>,si::attenuation<double>,0,3> (
-                math::spline::linear_spline<double>(ns2, ys), nunits, yunits));
+                analytic::spline::linear_spline<double>(ns2, ys), nunits, yunits));
     }
 
     template<typename Ty>
@@ -439,7 +439,7 @@ namespace relation {
         const std::vector<double> ys
     ){
         assert(ls.size() == ys.size());
-        auto relation = math::spline::linear_spline<double>(ls, ys);
+        auto relation = analytic::spline::linear_spline<double>(ls, ys);
         return GenericRelation<si::wavenumber<double>,Ty>(
             [=](si::wavenumber<double> n){ 
                 return relation((1.0/n)/lunits)*yunits;
@@ -453,7 +453,7 @@ namespace relation {
         const std::vector<double> ys
     ){
         assert(ns.size() == ys.size());
-        auto relation = math::spline::linear_spline<double>(ns, ys);
+        auto relation = analytic::spline::linear_spline<double>(ns, ys);
         return GenericRelation<si::wavenumber<double>,Ty>(
             [=](si::wavenumber<double> n){ 
                 return relation(n/nunits)*yunits;

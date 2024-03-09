@@ -23,13 +23,16 @@ namespace field
 	of a set of procedurally generated points, given by `MosaicNoise`.
 	*/
 	template<int L, typename scalar, typename MosaicNoise, typename MosaicOps, glm::qualifier precision=glm::defaultp>
-	struct ValueNoise
+	class ValueNoise
 	{
         using ivec2 = glm::vec<2,int,precision>;
 
 		MosaicNoise noise;
 		MosaicOps ops;
 	    cartesian::OrthantIndexing<L,int,precision> indexing;
+
+	public:
+		using value_type = scalar;
 
 		/*
 		`region_transition_width` is the width of the transition zone for a region
@@ -52,7 +55,6 @@ namespace field
 			indexing()
 		{}
 
-		using vec = glm::vec<L,scalar,precision>;
 
 		template<typename tpoint>
 		scalar operator()(const tpoint V) const {

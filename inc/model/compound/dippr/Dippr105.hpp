@@ -74,7 +74,7 @@ namespace dippr {
     }
 
 
-    constexpr Dippr105 compose(Dippr105 f, const math::Scaling<float> g)
+    constexpr Dippr105 compose(Dippr105 f, const analytic::Scaling<float> g)
     {
         return Dippr105(
             f.c1,

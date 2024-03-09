@@ -64,7 +64,7 @@ dymaxion::Grid coarse(2.0, 16);
 
 auto mask = known::greaterThan(series::uniform(0.5), 
         series::map(
-            field::value_noise3(
+            field::value_noise<3,double>(
                 field::mosaic_noise(
                     series::unit_interval_noise(11.0, 1.1e4))),
             dymaxion::vertex_positions(fine)

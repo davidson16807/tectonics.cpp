@@ -13,7 +13,7 @@ so the functions here operate as function templates that serve as overloads
 to problems for function parameters that offer no specialized analytic solution.
 */
 
-namespace math {
+namespace inspected {
     template<typename T, typename F>
     T maximum(const F& f, T lo, T hi, const int iteration_count)
     {
@@ -24,16 +24,16 @@ namespace math {
         */
         const T dx = (hi-lo)/T(1000);
         const T dx2 = dx*dx;
-        math::Polynomial<T,0,2> approximation({T(0), T(0), T(0)});
+        analytic::Polynomial<T,0,2> approximation({T(0), T(0), T(0)});
         T x = f(lo) > f(hi)? lo : hi;
         T x2;
         for (int i = 0; i < iteration_count; ++i)
         {
             approximation = compose(
-                math::Polynomial<T,0,2>({T(f(x)), 
-                    math::central_finite_difference(f, x, dx, 1)/(dx * math::factorial(1.0)), 
-                    math::central_finite_difference(f, x, dx, 2)/(dx2* math::factorial(2.0))}),
-                math::Shifting(-x)
+                analytic::Polynomial<T,0,2>({T(f(x)), 
+                    inspected::central_finite_difference(f, x, dx, 1)/(dx * math::factorial(1.0)), 
+                    inspected::central_finite_difference(f, x, dx, 2)/(dx2* math::factorial(2.0))}),
+                analytic::Shifting(-x)
             );
             x2 = solve(derivative(approximation), T(0));
             x = f(x2) > f(x)? x2 : x;
@@ -49,16 +49,16 @@ namespace math {
         */
         const T dx = (hi-lo)/T(1000);
         const T dx2 = dx*dx;
-        math::Polynomial<T,0,2> approximation({T(0), T(0), T(0)});
+        analytic::Polynomial<T,0,2> approximation({T(0), T(0), T(0)});
         T x = f(lo) > f(hi)? lo : hi;
         T x2;
         for (int i = 0; i < iteration_count; ++i)
         {
             approximation = compose(
-                math::Polynomial<T,0,2>({T(f(x)), 
-                    math::central_finite_difference(f, x, dx, 1)/(dx * math::factorial(1.0)), 
-                    math::central_finite_difference(f, x, dx, 2)/(dx2* math::factorial(2.0))}),
-                math::Shifting(-x)
+                analytic::Polynomial<T,0,2>({T(f(x)), 
+                    inspected::central_finite_difference(f, x, dx, 1)/(dx * math::factorial(1.0)), 
+                    inspected::central_finite_difference(f, x, dx, 2)/(dx2* math::factorial(2.0))}),
+                analytic::Shifting(-x)
             );
             x2 = solve(derivative(approximation), T(0));
             x = f(x2) > f(x)? x2 : x;

@@ -3,7 +3,7 @@
 #include "Identity.hpp"
 #include "Scaling.hpp"
 
-namespace math {
+namespace analytic {
 
     /* 
     `Scaling` is a trivial class that represents the function f(x)=ax,

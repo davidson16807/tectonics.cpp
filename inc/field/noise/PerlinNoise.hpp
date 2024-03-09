@@ -23,9 +23,16 @@ namespace field
 	template<int L, typename scalar, typename MosaicVectorNoise, typename MosaicOps, glm::qualifier precision=glm::defaultp>
 	struct PerlinNoise
 	{
+		using vec = glm::vec<L,scalar,precision>;
+
 		MosaicVectorNoise noise;
 		MosaicOps ops;
 	    cartesian::OrthantIndexing<L,int,precision> indexing;
+
+	public:
+
+		using vector_type = typename MosaicVectorNoise::value_type;
+		using value_type = scalar;
 
 		/*
 		`region_transition_width` is the width of the transition zone for a region
@@ -46,14 +53,10 @@ namespace field
 			indexing() 
 		{}
 
-		using vec = glm::vec<L,scalar,precision>;
-		using vector_type = typename MosaicVectorNoise::value_type;
-
 		template<typename tpoint>
 		scalar operator()(const tpoint V) const {
 		    auto I = ops.floor(V);
 		    vec F = ops.fract(V);
-		    vec F01 = glm::smoothstep(vec(0), vec(1), F);
 		    scalar f(0);
 		    scalar weight(0);
 		    scalar weight_total(0);

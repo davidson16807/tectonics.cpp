@@ -60,38 +60,38 @@
 #define DYMAXION_TEST_TRINARY_OUT_PARAMETER(TYPE,GRID,F) \
     [=](auto x, auto y, auto z){ std::vector<TYPE> out(GRID.vertex_count()); (F(x,y,z,out)); return out; }
 
-dymaxion::Grid fine  (2.0, 64);
-dymaxion::Grid coarse(2.0, 16);
+dymaxion::Grid calculus_fine  (2.0, 64);
+dymaxion::Grid calculus_coarse(2.0, 16);
 
 // std::vector elias_scalar_rasters{
 //     known::store(
-//         fine.vertex_count(),
+//         calculus_fine.vertex_count(),
 //         series::map(
 //             field::elias_noise<double>(
 //                 series::unit_vector_noise<3>(10.0, 1.0e4), 
 //                 series::gaussian(11.0, 1.1e4), 
 //                 1000),
-//             dymaxion::vertex_positions(fine)
+//             dymaxion::vertex_positions(calculus_fine)
 //         )
 //     ),
 //     known::store(
-//         fine.vertex_count(),
+//         calculus_fine.vertex_count(),
 //         series::map(
 //             field::elias_noise<double>(
 //                 series::unit_vector_noise<3>(11.0, 1.1e4), 
 //                 series::gaussian(11.0, 1.1e4), 
 //                 1000),
-//             dymaxion::vertex_positions(fine)
+//             dymaxion::vertex_positions(calculus_fine)
 //         )
 //     ),
 //     known::store(
-//         fine.vertex_count(),
+//         calculus_fine.vertex_count(),
 //         series::map(
 //             field::elias_noise<double>(
 //                 series::unit_vector_noise<3>(12.0, 1.2e4), 
 //                 series::gaussian(11.0, 1.1e4), 
 //                 1000),
-//             dymaxion::vertex_positions(fine)
+//             dymaxion::vertex_positions(calculus_fine)
 //         )
 //     )
 // };
@@ -99,28 +99,34 @@ dymaxion::Grid coarse(2.0, 16);
 
 std::vector scalar_rasters{
     series::map(
-        field::value_noise3(
+        field::value_noise<3,double>(
             field::mosaic_noise(
-                series::unit_interval_noise(11.0, 1.1e4))),
-        dymaxion::vertex_positions(fine)
+                series::unit_interval_noise(11.0, 1.1e4)),
+            field::vector_mosaic_ops<3,int,double>()
+        ),
+        dymaxion::vertex_positions(calculus_fine)
     ),
     series::map(
-        field::value_noise3(
+        field::value_noise<3,double>(
             field::mosaic_noise(
-                series::unit_interval_noise(12.0, 1.2e4))),
-        dymaxion::vertex_positions(fine)
+                series::unit_interval_noise(12.0, 1.2e4)),
+            field::vector_mosaic_ops<3,int,double>()
+        ),
+        dymaxion::vertex_positions(calculus_fine)
     ),
     series::map(
-        field::value_noise3(
+        field::value_noise<3,double>(
             field::mosaic_noise(
-                series::unit_interval_noise(13.0, 1.3e4))),
-        dymaxion::vertex_positions(fine)
+                series::unit_interval_noise(13.0, 1.3e4)),
+            field::vector_mosaic_ops<3,int,double>()
+        ),
+        dymaxion::vertex_positions(calculus_fine)
     )
 };
 
 std::vector vector_rasters{
     known::store(
-        fine.vertex_count(),
+        calculus_fine.vertex_count(),
         series::map(
             field::vector3_zip(
                 field::elias_noise<double>(
@@ -136,11 +142,11 @@ std::vector vector_rasters{
                         series::gaussian(11.0, 1.1e4), 
                         1000)
             ),
-            dymaxion::vertex_positions(fine)
+            dymaxion::vertex_positions(calculus_fine)
         )
     ),
     known::store(
-        fine.vertex_count(),
+        calculus_fine.vertex_count(),
         series::map(
             field::vector3_zip(
                 field::elias_noise<double>(
@@ -156,11 +162,11 @@ std::vector vector_rasters{
                         series::gaussian(11.0, 1.1e4), 
                         1000)
             ),
-            dymaxion::vertex_positions(fine)
+            dymaxion::vertex_positions(calculus_fine)
         )
     ),
     known::store(
-        fine.vertex_count(),
+        calculus_fine.vertex_count(),
         series::map(
             field::vector3_zip(
                 field::elias_noise<double>(
@@ -176,48 +182,48 @@ std::vector vector_rasters{
                         series::gaussian(11.0, 1.1e4), 
                         1000)
             ),
-            dymaxion::vertex_positions(fine)
+            dymaxion::vertex_positions(calculus_fine)
         )
     ),
 };
 
 
-dymaxion::Adapter strict(fine, 1e-5, fine.vertex_count());
 
 
 TEST_CASE( "Raster gradient", "[unlayered]" ) {
+    dymaxion::Adapter strict(calculus_fine, 1e-5, calculus_fine.vertex_count());
     unlayered::VectorCalculusByFundamentalTheorem operators;
 
     REQUIRE(test::determinism(strict, 
-        "operators.gradient", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, fine, operators.gradient),
+        "operators.gradient", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.gradient),
         scalar_rasters
     ));
 
     REQUIRE(test::additivity(strict, 
-        "operators.gradient ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, fine, operators.gradient),
-        "each::add          ", DYMAXION_TEST_BINARY_OUT_PARAMETER (double,     fine, each::add),
-        "each::add          ", DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, fine, each::add),
+        "operators.gradient ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.gradient),
+        "each::add          ", DYMAXION_TEST_BINARY_OUT_PARAMETER (double,     calculus_fine, each::add),
+        "each::add          ", DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, calculus_fine, each::add),
         scalar_rasters, scalar_rasters
     ));
 
     // results here are promising
-    REQUIRE(test::equality(dymaxion::Adapter(fine, 10.0, fine.vertex_count()), 
+    REQUIRE(test::equality(dymaxion::Adapter(calculus_fine, 10.0, calculus_fine.vertex_count()), 
         "The gradient of a scalar must statsify a well known relationship",
         "∇(ab)     ", 
         [=](auto a, auto b){
-            std::vector<double> ab(fine.vertex_count());
-            std::vector<glm::dvec3> grad_ab(fine.vertex_count());
+            std::vector<double> ab(calculus_fine.vertex_count());
+            std::vector<glm::dvec3> grad_ab(calculus_fine.vertex_count());
             each::mult(a, b, ab);
-            operators.gradient(fine,grad_ab,grad_ab); 
+            operators.gradient(calculus_fine,grad_ab,grad_ab); 
             return grad_ab;
         },
         "a∇b + b∇a ", 
         [=](auto a, auto b){
-            std::vector<glm::dvec3> b_grad_a(fine.vertex_count());
-            std::vector<glm::dvec3> a_grad_b(fine.vertex_count());
-            std::vector<glm::dvec3> a_grad_b_b_grad_a(fine.vertex_count());
-            operators.gradient(fine, a, b_grad_a);
-            operators.gradient(fine, b, a_grad_b);
+            std::vector<glm::dvec3> b_grad_a(calculus_fine.vertex_count());
+            std::vector<glm::dvec3> a_grad_b(calculus_fine.vertex_count());
+            std::vector<glm::dvec3> a_grad_b_b_grad_a(calculus_fine.vertex_count());
+            operators.gradient(calculus_fine, a, b_grad_a);
+            operators.gradient(calculus_fine, b, a_grad_b);
             each::mult(a, a_grad_b, a_grad_b);
             each::mult(b, b_grad_a, b_grad_a);
             each::add(a_grad_b, b_grad_a, a_grad_b_b_grad_a);
@@ -232,40 +238,41 @@ TEST_CASE( "Raster gradient", "[unlayered]" ) {
 
 
 TEST_CASE( "Raster divergence", "[unlayered]" ) {
+    dymaxion::Adapter strict(calculus_fine, 1e-5, calculus_fine.vertex_count());
     unlayered::VectorCalculusByFundamentalTheorem operators;
 
     REQUIRE(test::determinism(strict, 
-        "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     fine, operators.divergence),
+        "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, operators.divergence),
         vector_rasters
     ));
 
     REQUIRE(test::additivity(strict, 
-        "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     fine, operators.divergence),
-        "each::add           ", DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, fine, each::add),
-        "each::add           ", DYMAXION_TEST_BINARY_OUT_PARAMETER (double,     fine, each::add),
+        "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, operators.divergence),
+        "each::add           ", DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, calculus_fine, each::add),
+        "each::add           ", DYMAXION_TEST_BINARY_OUT_PARAMETER (double,     calculus_fine, each::add),
         vector_rasters, vector_rasters
     ));
 
     // results are bad, the test here is only meant to track known error until our methods improve
-    REQUIRE(test::equality(dymaxion::Adapter(fine, 300.0, fine.vertex_count()), 
+    REQUIRE(test::equality(dymaxion::Adapter(calculus_fine, 300.0, calculus_fine.vertex_count()), 
         "The divergence of a vector must statsify a well known relationship",
         "∇⋅(aV)          ", 
         [=](auto a, auto V){
-            std::vector<glm::dvec3> aV(fine.vertex_count());
-            std::vector<double> div_aV(fine.vertex_count());
+            std::vector<glm::dvec3> aV(calculus_fine.vertex_count());
+            std::vector<double> div_aV(calculus_fine.vertex_count());
             each::add(a, V, aV);
-            operators.divergence(fine, aV, div_aV); 
+            operators.divergence(calculus_fine, aV, div_aV); 
             return div_aV;
         },
         "a(∇⋅V) + (∇a)⋅V ", 
         [=](auto a, auto V){
-            std::vector<glm::dvec3> grad_a(fine.vertex_count());
-            std::vector<double> div_V (fine.vertex_count());
-            std::vector<double> a_div_V(fine.vertex_count());
-            std::vector<double> V_grad_a(fine.vertex_count());
-            std::vector<double> a_div_V_V_grad_a(fine.vertex_count());
-            operators.gradient(fine, a, grad_a);
-            operators.divergence(fine, V, div_V);
+            std::vector<glm::dvec3> grad_a(calculus_fine.vertex_count());
+            std::vector<double> div_V (calculus_fine.vertex_count());
+            std::vector<double> a_div_V(calculus_fine.vertex_count());
+            std::vector<double> V_grad_a(calculus_fine.vertex_count());
+            std::vector<double> a_div_V_V_grad_a(calculus_fine.vertex_count());
+            operators.gradient(calculus_fine, a, grad_a);
+            operators.divergence(calculus_fine, V, div_V);
             each::mult(a, div_V, a_div_V);
             each::dot(V, grad_a, V_grad_a);
             each::add(a_div_V, V_grad_a, a_div_V_V_grad_a);
@@ -279,40 +286,41 @@ TEST_CASE( "Raster divergence", "[unlayered]" ) {
 
 
 TEST_CASE( "Raster curl", "[unlayered]" ) {
+    dymaxion::Adapter strict(calculus_fine, 1e-5, calculus_fine.vertex_count());
     unlayered::VectorCalculusByFundamentalTheorem operators;
 
     REQUIRE(test::determinism(strict, 
-        "operators.curl",   DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, fine, operators.curl),
+        "operators.curl",   DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.curl),
         vector_rasters
     ));
 
     REQUIRE(test::additivity(strict, 
-        "operators.curl ",   DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, fine, operators.curl),
-        "each::add      ",   DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, fine, each::add),
-        "each::add      ",   DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, fine, each::add),
+        "operators.curl ",   DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.curl),
+        "each::add      ",   DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, calculus_fine, each::add),
+        "each::add      ",   DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, calculus_fine, each::add),
         vector_rasters, vector_rasters
     ));
 
     // results are bad, the test here is only meant to track known error until our methods improve
-    REQUIRE(test::equality(dymaxion::Adapter(fine, 1000.0, fine.vertex_count()), 
+    REQUIRE(test::equality(dymaxion::Adapter(calculus_fine, 1000.0, calculus_fine.vertex_count()), 
         "The curl of a vector must statsify a well known relationship",
         "∇⋅(aV)          ", 
         [=](auto a, auto V){
-            std::vector<glm::dvec3> aV(fine.vertex_count());
-            std::vector<glm::dvec3> curl_aV(fine.vertex_count());
+            std::vector<glm::dvec3> aV(calculus_fine.vertex_count());
+            std::vector<glm::dvec3> curl_aV(calculus_fine.vertex_count());
             each::add(a, V, aV);
-            operators.curl(fine, aV, curl_aV); 
+            operators.curl(calculus_fine, aV, curl_aV); 
             return curl_aV;
         },
         "a(∇⋅V) + (∇a)⋅V ", 
         [=](auto a, auto V){
-            std::vector<glm::dvec3> grad_a(fine.vertex_count());
-            std::vector<glm::dvec3> curl_V (fine.vertex_count());
-            std::vector<glm::dvec3> a_curl_V(fine.vertex_count());
-            std::vector<glm::dvec3> V_grad_a(fine.vertex_count());
-            std::vector<glm::dvec3> a_curl_V_V_grad_a(fine.vertex_count());
-            operators.gradient(fine, a, grad_a);
-            operators.curl(fine, V, curl_V);
+            std::vector<glm::dvec3> grad_a(calculus_fine.vertex_count());
+            std::vector<glm::dvec3> curl_V (calculus_fine.vertex_count());
+            std::vector<glm::dvec3> a_curl_V(calculus_fine.vertex_count());
+            std::vector<glm::dvec3> V_grad_a(calculus_fine.vertex_count());
+            std::vector<glm::dvec3> a_curl_V_V_grad_a(calculus_fine.vertex_count());
+            operators.gradient(calculus_fine, a, grad_a);
+            operators.curl(calculus_fine, V, curl_V);
             each::mult(a, curl_V, a_curl_V);
             each::cross(V, grad_a, V_grad_a);
             each::add(a_curl_V, V_grad_a, a_curl_V_V_grad_a);
@@ -324,16 +332,16 @@ TEST_CASE( "Raster curl", "[unlayered]" ) {
 
     // results here are promising
     REQUIRE(test::composition(strict, 
-        "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     fine, operators.divergence),
-        "operators.curl",       DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, fine, operators.curl),  
+        "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, operators.divergence),
+        "operators.curl",       DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.curl),  
         "0",                    [](auto a){ return series::uniform(0.0); }, 
         vector_rasters
     ));
 
     // results are bad, the test here is only meant to track known error until our methods improve
-    REQUIRE(test::composition(dymaxion::Adapter(fine, 100.0, fine.vertex_count()), 
-        "operators.curl    ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, fine, operators.curl),
-        "operators.gradient", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, fine, operators.gradient),
+    REQUIRE(test::composition(dymaxion::Adapter(calculus_fine, 100.0, calculus_fine.vertex_count()), 
+        "operators.curl    ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.curl),
+        "operators.gradient", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.gradient),
         "the zero vector   ", [](auto a){ return series::uniform(glm::dvec3(0.0)); }, 
         vector_rasters
     ));
@@ -341,6 +349,7 @@ TEST_CASE( "Raster curl", "[unlayered]" ) {
 }
 
 TEST_CASE( "Scalar Raster laplacian", "[unlayered]" ) {
+    dymaxion::Adapter strict(calculus_fine, 1e-5, calculus_fine.vertex_count());
     unlayered::VectorCalculusByFundamentalTheorem operators;
     unlayered::VectorCalculusByFundamentalTheoremDebug debug;
     bool is_verbose1(false);
@@ -352,121 +361,122 @@ TEST_CASE( "Scalar Raster laplacian", "[unlayered]" ) {
             std::cout << strict.print(scalar_rasters[i]);
             std::cout << "arrow_dual_length0" << std::endl;
             std::cout << strict.print(
-                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     fine, debug.arrow_dual_length0)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, debug.arrow_dual_length0)(scalar_rasters[i]));
             std::cout << "arrow_dual_length1" << std::endl;
             std::cout << strict.print(
-                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     fine, debug.arrow_dual_length1)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, debug.arrow_dual_length1)(scalar_rasters[i]));
             std::cout << "arrow_dual_length2" << std::endl;
             std::cout << strict.print(
-                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     fine, debug.arrow_dual_length2)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, debug.arrow_dual_length2)(scalar_rasters[i]));
             std::cout << "arrow_dual_length3" << std::endl;
             std::cout << strict.print(
-                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     fine, debug.arrow_dual_length3)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, debug.arrow_dual_length3)(scalar_rasters[i]));
             std::cout << "arrow_length0" << std::endl;
             std::cout << strict.print(
-                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     fine, debug.arrow_length0)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, debug.arrow_length0)(scalar_rasters[i]));
             std::cout << "arrow_length1" << std::endl;
             std::cout << strict.print(
-                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     fine, debug.arrow_length1)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, debug.arrow_length1)(scalar_rasters[i]));
             std::cout << "arrow_length2" << std::endl;
             std::cout << strict.print(
-                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     fine, debug.arrow_length2)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, debug.arrow_length2)(scalar_rasters[i]));
             std::cout << "arrow_length3" << std::endl;
             std::cout << strict.print(
-                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     fine, debug.arrow_length3)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, debug.arrow_length3)(scalar_rasters[i]));
             std::cout << "differential0" << std::endl;
             std::cout << strict.print(
-                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     fine, debug.differential0)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, debug.differential0)(scalar_rasters[i]));
             std::cout << "differential1" << std::endl;
             std::cout << strict.print(
-                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     fine, debug.differential1)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, debug.differential1)(scalar_rasters[i]));
             std::cout << "differential2" << std::endl;
             std::cout << strict.print(
-                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     fine, debug.differential2)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, debug.differential2)(scalar_rasters[i]));
             std::cout << "differential3" << std::endl;
             std::cout << strict.print(
-                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     fine, debug.differential3)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, debug.differential3)(scalar_rasters[i]));
             std::cout << "arrow_normal0" << std::endl;
             std::cout << strict.print(
-                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, fine, debug.arrow_normal0)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, debug.arrow_normal0)(scalar_rasters[i]));
             std::cout << "arrow_normal1" << std::endl;
             std::cout << strict.print(
-                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, fine, debug.arrow_normal1)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, debug.arrow_normal1)(scalar_rasters[i]));
             std::cout << "arrow_normal2" << std::endl;
             std::cout << strict.print(
-                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, fine, debug.arrow_normal2)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, debug.arrow_normal2)(scalar_rasters[i]));
             std::cout << "arrow_normal3" << std::endl;
             std::cout << strict.print(
-                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, fine, debug.arrow_normal3)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, debug.arrow_normal3)(scalar_rasters[i]));
             std::cout << "vertex_dual_area" << std::endl;
             std::cout << strict.print(
-                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     fine, debug.vertex_dual_area)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, debug.vertex_dual_area)(scalar_rasters[i]));
             std::cout << "square_id" << std::endl;
             std::cout << strict.print(
-                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     fine, debug.square_id)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, debug.square_id)(scalar_rasters[i]));
             std::cout << "∇⋅∇:" << std::endl;
             std::cout << strict.print(
-                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     fine, operators.divergence)
-                    (DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, fine, operators.gradient)(scalar_rasters[i])));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, operators.divergence)
+                    (DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.gradient)(scalar_rasters[i])));
             std::cout << "∇²:" << std::endl;
             std::cout << strict.print(
-                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     fine, operators.laplacian)(scalar_rasters[i]));
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, operators.laplacian)(scalar_rasters[i]));
         }
 
         if (is_verbose1)
         {
             std::cout << "error:" << std::endl;
-            std::cout << strict.print(DYMAXION_TEST_BINARY_OUT_PARAMETER(double,fine,each::distance)(
-                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     fine, operators.divergence)
-                    (DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, fine, operators.gradient)(scalar_rasters[i])),
-                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double, fine, operators.laplacian)(scalar_rasters[i])));
+            std::cout << strict.print(DYMAXION_TEST_BINARY_OUT_PARAMETER(double,calculus_fine,each::distance)(
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, operators.divergence)
+                    (DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.gradient)(scalar_rasters[i])),
+                DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double, calculus_fine, operators.laplacian)(scalar_rasters[i])));
         }
 
     }
 
     REQUIRE(test::determinism(strict, 
-        "operators.laplacian", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double, fine, operators.laplacian),
+        "operators.laplacian", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double, calculus_fine, operators.laplacian),
         scalar_rasters
     ));
 
     REQUIRE(test::additivity(strict,
-        "operators.laplacian", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double, fine, operators.laplacian),
-        "each::add           ", DYMAXION_TEST_BINARY_OUT_PARAMETER (double, fine, each::add),
-        "each::add           ", DYMAXION_TEST_BINARY_OUT_PARAMETER (double, fine, each::add),
+        "operators.laplacian", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double, calculus_fine, operators.laplacian),
+        "each::add           ", DYMAXION_TEST_BINARY_OUT_PARAMETER (double, calculus_fine, each::add),
+        "each::add           ", DYMAXION_TEST_BINARY_OUT_PARAMETER (double, calculus_fine, each::add),
         scalar_rasters, scalar_rasters
     ));
 
     // results are bad, the test here is only meant to track known error until our methods improve
-    REQUIRE(test::composition(dymaxion::Adapter(fine, 100.0, fine.vertex_count()), 
-        "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     fine, operators.divergence),
-        "operators.gradient",   DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, fine, operators.gradient),  
-        "operators.laplacian",  DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     fine, operators.laplacian), 
+    REQUIRE(test::composition(dymaxion::Adapter(calculus_fine, 100.0, calculus_fine.vertex_count()), 
+        "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, operators.divergence),
+        "operators.gradient",   DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.gradient),  
+        "operators.laplacian",  DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, operators.laplacian), 
         scalar_rasters
     ));
 
 }
 
 TEST_CASE( "Vector Raster laplacian", "[unlayered]" ) {
+    dymaxion::Adapter strict(calculus_fine, 1e-5, calculus_fine.vertex_count());
 
     unlayered::VectorCalculusByFundamentalTheorem operators;
 
     REQUIRE(test::determinism(strict, 
-        "operators.laplacian ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, fine, operators.laplacian),
+        "operators.laplacian ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.laplacian),
         vector_rasters
     ));
 
     REQUIRE(test::additivity(strict, 
-        "operators.laplacian ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, fine, operators.laplacian),
-        "each::add           ", DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, fine, each::add),
-        "each::add           ", DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, fine, each::add),
+        "operators.laplacian ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.laplacian),
+        "each::add           ", DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, calculus_fine, each::add),
+        "each::add           ", DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, calculus_fine, each::add),
         vector_rasters, vector_rasters
     ));
 
     // results here are bad, the test here is only meant to track known error until our methods improve
-    REQUIRE(test::composition(dymaxion::Adapter(fine, 3e3, fine.vertex_count()), 
-        "operators.gradient  ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, fine, operators.gradient),  
-        "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     fine, operators.divergence),
-        "operators.laplacian ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, fine, operators.laplacian), 
+    REQUIRE(test::composition(dymaxion::Adapter(calculus_fine, 3e3, calculus_fine.vertex_count()), 
+        "operators.gradient  ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.gradient),  
+        "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, operators.divergence),
+        "operators.laplacian ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.laplacian), 
         vector_rasters
     ));
 
@@ -483,9 +493,9 @@ example:
 
 TEST_CASE( "gradient resolution invariance", "[rasters]" ) {
     // gradient(a) must generate the same output as unshift(gradient(shift(a)))
-    operators.gradient(fine, 
+    operators.gradient(calculus_fine, 
         series::get(a, 
-            series::map(dymaxion::nearest_vertex_id(fine), dymaxion::vertex_positions(coarse))),
+            series::map(dymaxion::nearest_vertex_id(calculus_fine), dymaxion::vertex_positions(calculus_coarse))),
         grad_fine_a
     );
 }

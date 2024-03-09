@@ -16,10 +16,10 @@
 namespace compound {
 namespace relation {
 
-    using ClampedDippr105 = math::Clamped<float,dippr::Dippr105>;
-    using ClampedDippr119Term = math::Clamped<float,dippr::Dippr119Term>;
-    using ClampedDippr105Sum = math::Sum<float,ClampedDippr105>;
-    using ClampedDippr119TermSum = math::Sum<float,ClampedDippr119Term>;
+    using ClampedDippr105 = analytic::Clamped<float,dippr::Dippr105>;
+    using ClampedDippr119Term = analytic::Clamped<float,dippr::Dippr119Term>;
+    using ClampedDippr105Sum = analytic::Sum<float,ClampedDippr105>;
+    using ClampedDippr119TermSum = analytic::Sum<float,ClampedDippr119Term>;
     
     /*
     `LiquidDensityTemperatureRelation` consolidates many kinds of expressions
@@ -126,8 +126,8 @@ namespace relation {
         {
             const float Tscale = float(other.Tunits / Tunits);
             const float yscale = float(other.yunits / yunits);
-            dippr105s += yscale * compose(other.dippr105s, math::Scaling<float>(Tscale));
-            dippr119s += yscale * compose(other.dippr119s, math::Scaling<float>(Tscale));
+            dippr105s += yscale * compose(other.dippr105s, analytic::Scaling<float>(Tscale));
+            dippr119s += yscale * compose(other.dippr119s, analytic::Scaling<float>(Tscale));
             intercept += yscale * other.intercept;
             return *this;
         }
@@ -136,8 +136,8 @@ namespace relation {
         {
             const float Tscale =  float(other.Tunits / Tunits);
             const float yscale = -float(other.yunits / yunits);
-            dippr105s -= yscale * compose(other.dippr105s, math::Scaling<float>(Tscale));
-            dippr119s -= yscale * compose(other.dippr119s, math::Scaling<float>(Tscale));
+            dippr105s -= yscale * compose(other.dippr105s, analytic::Scaling<float>(Tscale));
+            dippr119s -= yscale * compose(other.dippr119s, analytic::Scaling<float>(Tscale));
             intercept += yscale * other.intercept;
             return *this;
         }

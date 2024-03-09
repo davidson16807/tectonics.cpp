@@ -1,6 +1,6 @@
 #pragma once
 
-namespace math {
+namespace analytic {
 
     /* 
     `Identity` is a trivial class that represents the function f(x)=x,
