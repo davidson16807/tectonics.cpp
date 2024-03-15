@@ -9,7 +9,6 @@
 #include "Shifting.hpp"
 
 #include <math/combinatorics.hpp>
-#include <math/inspected/calculus.hpp>
 
 namespace analytic {
 

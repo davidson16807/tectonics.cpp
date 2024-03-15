@@ -1,12 +1,16 @@
 #pragma once
 
+#include "Scaling.hpp"
+#include "Shifting.hpp"
+
 namespace analytic {
+
 
     template<typename T>
     struct Gaussian {
         using value_type = T;
 
-        constexpr T pi = 3.141592653589793238462643383279;
+        static constexpr T pi = 3.141592653589793238462643383279;
 
         T mean;
         T standard_deviation;
@@ -29,7 +33,8 @@ namespace analytic {
         {}
         constexpr Gaussian(const Gaussian<T>& f):
             mean(f.mean),
-            standard_deviation(f.standard_deviation)
+            standard_deviation(f.standard_deviation),
+            amplitude(f.amplitude)
         {}
         constexpr T operator()(const T x) const
         {
@@ -105,5 +110,6 @@ namespace analytic {
         // function is monotonic, so solution must be either lo or hi
         return f(hi) < f(lo)? hi : lo;
     }
-    
+
 }
+

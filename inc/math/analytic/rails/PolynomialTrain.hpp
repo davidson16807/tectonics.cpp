@@ -767,5 +767,23 @@ namespace analytic {
         return PolynomialTrain<T,0,3>(contents, train.couplers);
     }
 
+    // a convenience function that converts an arbitrary function to a train
+    template<typename T, typename F, typename DFDX>
+    PolynomialTrain<T,0,3> cubic_spline(const F& f, const DFDX& dfdx, std::vector<T>& couplers)
+    {
+        std::vector<Polynomial<T,0,3>> contents;
+        for (std::size_t i=1; i<couplers.size(); i++)
+        {
+            T a(couplers[i-1]);
+            T b(couplers[i]);
+            contents.push_back(
+                cubic_spline(
+                    a,       b,
+                    f(a),    f(b),
+                    dfdx(a), dfdx(b)));
+            contents.push_back(f);
+        }
+        return PolynomialTrain<T,0,3>(contents, couplers);
+    }
 
 }

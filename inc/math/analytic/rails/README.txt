@@ -29,7 +29,7 @@ but also because it provides a rich and intuitive metaphor that resolves ambigui
 Two railcars, A and B, are said to "overlap" if max(A.lo,B.lo) < min(A.hi,B.hi).
 In contrast, A and B are said to have a "gap" if max(A.lo,B.lo) > min(A.hi,B.hi),
 and A and B are said to be "coupled" or "adjacent" if max(A.lo,B.lo) = min(A.hi,B.hi).
-If A and B are coupled, the value x = max(A.lo,B.lo) = min(A.hi,B.hi) is said to be the "coupling" of A and B.
+If A and B are coupled, the value x = max(A.lo,B.lo) = min(A.hi,B.hi) is said to be the "coupler" of A and B.
 A sum of railcars is known as a "train" if no overlaps or gaps exist between railcars
 A sum of railcars is known as a "railyard" if overlaps and gaps are permitted to exist.
 Terminology regarding the "contents" of railcars will also be used to describe the trains and railyards that house them,
@@ -40,7 +40,7 @@ A spline of order N additionally satisfies the same condition for derivatives up
 Railyards can be useful since they easily extend the properties of their contents, for instance:
  * for any class of function 𝔽, the railyard of 𝔽 is closed under addition
  * for any class of function 𝔽, if 𝔽 is closed under subtraction, multiplication, 
-   derivation, or integration, so to will the railyard of 𝔽.
+   derivation, or integration, so too will the railyard of 𝔽.
 Trains can be useful since they minimize the number of terms that need to be calculated,
 The boxcars that underlie trains are disjoint, which permits trains to perform certain operations 
 that would not be allowed on railyards.
@@ -50,7 +50,7 @@ As an example:
    if that train has been converted from a railyard.
 Railyards make it easy to performantly implement certain kinds of operations that 
 would not be performant if an implementation of a train were to guarantee that no overlaps or gaps exist. 
-As an example, adding two railyards simply requires contatenating two lists of cars together,
+As an example, adding two railyards simply requires concatenating two lists of cars together,
 whereas adding two trains together in such a scenario requires constructing a totally new list of cars.
 However, it is almost certainly more performant to call the operator() method on a train as opposed to a railyard,
 which is typically the only performance that matters.

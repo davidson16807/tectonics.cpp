@@ -254,7 +254,7 @@ namespace analytic {
         return Railyard<T,F>(cars);
     }
 
-    // a convenience function that converts a railyard to a train
+    // a convenience function that converts a clamped function to a train
     template<typename T, typename F>
     constexpr Train<T,F> train(const Clamped<T,F>& clamped)
     {

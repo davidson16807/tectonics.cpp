@@ -120,7 +120,7 @@ namespace math{
 
 	/*
 	"erf" provides an approximation for the "error function": erf(x) = ∫ˣ exp(-t²)dt
-	It is accurate to within 0.02% over the range [-10,10].
+	It is accurate to within 2⋅10⁻⁴ over the range [-10,10].
 	*/
 	template <typename T>
 	constexpr auto erf(const T x) {
@@ -131,7 +131,7 @@ namespace math{
 
 	/*
 	"erfinv" provides an approximation for the "inverse error function": erf⁻¹(erf(x)) = x
-	It is accurate to within 0.2% over its entire range. From Winitzki (2008).
+	It is accurate to within 02⋅10⁻³ over its entire range. From Winitzki (2008).
 	*/
 	template <typename T>
 	constexpr T erfinv(const T x) {

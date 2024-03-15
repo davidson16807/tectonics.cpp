@@ -13,6 +13,10 @@
 
 #include <math/glm/special_specialization.hpp>
 #include <math/glm/special.hpp>
+#include <math/analytic/Sum.hpp>
+#include <math/analytic/Gaussian.hpp>
+#include <math/analytic/Error.hpp>
+#include <math/inspected/InverseByNewtonsMethod.hpp>
 
 // in house libraries
 #include <index/series/Map.hpp>
@@ -33,8 +37,8 @@
 #include <field/noise/ValueNoise.hpp>               // ValueNoise
 #include <field/noise/PerlinNoise.hpp>              // PerlinNoise
 #include <field/noise/MosaicNoise.hpp>              // MosaicNoise
-#include <field/noise/EliasNoise.hpp>               // EliasNoise
-#include <field/VectorZip.hpp>
+#include <field/Map.hpp>                            // Map
+#include <field/VectorZip.hpp>                      // VectorZip
 
 #include <buffer/PyramidBuffers.hpp>                // buffer::PyramidBuffers
 
@@ -147,31 +151,34 @@ int main() {
   // std::vector<float> vertex_scalars2(grid.vertex_count());
   // each::copy(out, vertex_scalars2);
 
-  // analytic::Sum<analytic::Gaussian> hypsography_pdf;
-  // auto hypsography_cdf = analytic::integral(hypsography_pdf);
-  // auto hypsography_cdf_scaled = hypsography_cdf / (hypsography_cdf(max_elevation)-hypsography_cdf(min_elevation)) - hypsography_cdf(min_elevation);
-  // auto hypsography_cdfinv = analytic::inverse(hypsography_cdf);
+  float min_elevation(-16000.0f);
+  float max_elevation( 16000.0f);
+
+  analytic::Sum<float,analytic::Gaussian<float>> hypsometry_pdf {
+    analytic::Gaussian(-4019.0f, 1113.0f, 0.232f),
+    analytic::Gaussian(  797.0f, 1169.0f, 0.209f)
+  };
+  auto hypsometry_cdf = analytic::integral(hypsometry_pdf);
+  auto hypsometry_cdf_range = hypsometry_cdf(max_elevation) - hypsometry_cdf(min_elevation);
+  auto hypsometry_cdf_scaled = hypsometry_cdf / hypsometry_cdf_range;
+  auto hypsometry_pdf_scaled = hypsometry_pdf / hypsometry_cdf_range;
+  auto hypsometry_quantile = inspected::inverse_by_newtons_method(hypsometry_cdf_scaled, hypsometry_pdf_scaled, 0.5f, 3);
 
   auto vertex_scalars1 = series::map(
-    field::fractal_brownian_noise<int,float>(
-        field::value_noise<3,float>(
-            field::mosaic_noise(series::unit_interval_noise(11.0f, 1.1e4f), cartesian::UnboundedIndexing<int>()),
-            field::vector_mosaic_ops<3,int,float>()
-        ), 5, 0.5f),
-    // field::map(
-    //   hypsography_cdfinv,
-    //   field::fractal_brownian_noise<int,float>(
-    //       field::value_noise<3,float>(
-    //           field::mosaic_noise(series::unit_interval_noise(11.0f, 1.1e4f), cartesian::UnboundedIndexing<int>()),
-    //           field::vector_mosaic_ops<3,int,float>()
-    //       ), 10, 0.5f),
-    // ),
+    field::map(
+      hypsometry_quantile,
+      field::fractal_brownian_noise<int,float>(
+          field::value_noise<3,float>(
+              field::mosaic_noise(series::unit_interval_noise(11.0f, 1.1e4f), cartesian::UnboundedIndexing<int>()),
+              field::vector_mosaic_ops<3,int,float>()
+          ), 10, 0.5f)
+    ),
     dymaxion::VertexPositions(grid)
   );
 
   // auto vertex_scalars2 = series::map(
   //   field::map(
-  //     hypsography_cdfinv,
+  //     hypsometry_quantile,
   //     field::fractal_brownian_noise<int,float>(
   //         field::value_noise<3,float>(
   //             field::mosaic_noise(series::unit_interval_noise(12.0f, 1.2e4f), cartesian::UnboundedIndexing<int>()),
@@ -336,8 +343,8 @@ int main() {
         std::vector<float>(grid.vertex_count(), 1.0f), // opacity
         std::vector<float>(grid.vertex_count(), 0.0f), // displacement
         buffer_element_vertex_ids,
-        glm::vec4(0.0f, whole::min(buffer_scalars1), 0.0f, 0.0f),
-        glm::vec4(0.0f, whole::max(buffer_scalars1), 1.0f, 1.0f),
+        glm::vec4(0.0f, -10000.0f, 0.0f, 0.0f),
+        glm::vec4(0.0f,  10000.0f, 1.0f, 1.0f),
         view_state,
         GL_TRIANGLE_STRIP
       );

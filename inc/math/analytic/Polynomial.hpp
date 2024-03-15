@@ -11,7 +11,7 @@
 #include "Shifting.hpp"
 #include "ScaledComplement.hpp"
 
-#include <math/inspected/calculus.hpp>
+#include <math/inspected/DerivativeByCentralFiniteDifference.hpp>
 #include <math/combinatorics.hpp>
 
 namespace analytic {
@@ -1429,7 +1429,7 @@ namespace analytic {
         const T dx2 = dx*dx;
         return compose(
             Polynomial<T,0,1>(f(x), 
-                central_finite_difference(f, x, dx, 1) / dx),
+                inspected::derivative_by_central_finite_difference(f, x, dx, 1) / dx),
             Shifting<T>(-x)
         );
     }
@@ -1440,8 +1440,8 @@ namespace analytic {
         const T dx2 = dx*dx;
         return compose(
             Polynomial<T,0,2>{f(x), 
-                central_finite_difference(f, x, dx, 1) / dx, 
-                central_finite_difference(f, x, dx, 2) /(dx2*2.0f)},
+                inspected::derivative_by_central_finite_difference(f, x, dx, 1) / dx, 
+                inspected::derivative_by_central_finite_difference(f, x, dx, 2) /(dx2*2.0f)},
             Shifting<T>(-x)
         );
     }
@@ -1454,9 +1454,9 @@ namespace analytic {
         return 
             compose(
                 Polynomial<T,0,3>(f(x), 
-                    central_finite_difference(f, x, dx, 1) / dx, 
-                    central_finite_difference(f, x, dx, 2) /(dx2*2.0f), 
-                    central_finite_difference(f, x, dx, 3) /(dx3*6.0f)),
+                    inspected::derivative_by_central_finite_difference(f, x, dx, 1) / dx, 
+                    inspected::derivative_by_central_finite_difference(f, x, dx, 2) /(dx2*2.0f), 
+                    inspected::derivative_by_central_finite_difference(f, x, dx, 3) /(dx3*6.0f)),
                 Shifting<T>(-x)
             );
     }
@@ -1495,7 +1495,7 @@ namespace analytic {
         const T u = (Y-d0)/(X*X);
         const T v = (d1-d0)/X;
         /*
-        We then solutions this system of equations, which results in the following code:
+        We then solve this system of equations, which results in the following code:
         */
         const Identity<T> x;
         const auto x2 = x*x;

@@ -2,7 +2,7 @@
 
 #include <math/analytic/Polynomial.hpp>
 #include <math/analytic/Shifting.hpp>
-#include <math/inspected/calculus.hpp>
+#include <math/inspected/DerivativeByCentralFiniteDifference.hpp>
 
 /*
 inspection.hpp contains functionality that solves common problems 
@@ -31,8 +31,8 @@ namespace inspected {
         {
             approximation = compose(
                 analytic::Polynomial<T,0,2>({T(f(x)), 
-                    inspected::central_finite_difference(f, x, dx, 1)/(dx * math::factorial(1.0)), 
-                    inspected::central_finite_difference(f, x, dx, 2)/(dx2* math::factorial(2.0))}),
+                    inspected::derivative_by_central_finite_difference(f, x, dx, 1)/(dx * math::factorial(1.0)), 
+                    inspected::derivative_by_central_finite_difference(f, x, dx, 2)/(dx2* math::factorial(2.0))}),
                 analytic::Shifting(-x)
             );
             x2 = solve(derivative(approximation), T(0));
@@ -56,8 +56,8 @@ namespace inspected {
         {
             approximation = compose(
                 analytic::Polynomial<T,0,2>({T(f(x)), 
-                    inspected::central_finite_difference(f, x, dx, 1)/(dx * math::factorial(1.0)), 
-                    inspected::central_finite_difference(f, x, dx, 2)/(dx2* math::factorial(2.0))}),
+                    inspected::derivative_by_central_finite_difference(f, x, dx, 1)/(dx * math::factorial(1.0)), 
+                    inspected::derivative_by_central_finite_difference(f, x, dx, 2)/(dx2* math::factorial(2.0))}),
                 analytic::Shifting(-x)
             );
             x2 = solve(derivative(approximation), T(0));
