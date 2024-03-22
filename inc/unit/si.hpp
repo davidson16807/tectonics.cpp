@@ -471,48 +471,56 @@ namespace si{
 
 
   #define SI_MODERN_PREFIXED_UNITS(QUANTITY, SUFFIX) \
-  constexpr QUANTITY yocto ## SUFFIX (1e-24 * SUFFIX); \
-  constexpr QUANTITY zepto ## SUFFIX (1e-21 * SUFFIX); \
-  constexpr QUANTITY  atto ## SUFFIX (1e-18 * SUFFIX); \
-  constexpr QUANTITY femto ## SUFFIX (1e-15 * SUFFIX); \
-  constexpr QUANTITY  pico ## SUFFIX (1e-12 * SUFFIX); \
-  constexpr QUANTITY  nano ## SUFFIX (1e-9  * SUFFIX); \
-  constexpr QUANTITY micro ## SUFFIX (1e-6  * SUFFIX); \
-  constexpr QUANTITY milli ## SUFFIX (1e-3  * SUFFIX); \
-  constexpr QUANTITY centi ## SUFFIX (1e-2  * SUFFIX); \
-  constexpr QUANTITY  deci ## SUFFIX (1e-1  * SUFFIX); \
-  constexpr QUANTITY  deca ## SUFFIX (1e1   * SUFFIX); \
-  constexpr QUANTITY hecto ## SUFFIX (1e2   * SUFFIX); \
-  constexpr QUANTITY  kilo ## SUFFIX (1e3   * SUFFIX); \
-  constexpr QUANTITY  mega ## SUFFIX (1e6   * SUFFIX); \
-  constexpr QUANTITY  giga ## SUFFIX (1e9   * SUFFIX); \
-  constexpr QUANTITY  tera ## SUFFIX (1e12  * SUFFIX); \
-  constexpr QUANTITY  peta ## SUFFIX (1e15  * SUFFIX); \
-  constexpr QUANTITY   exa ## SUFFIX (1e18  * SUFFIX); \
-  constexpr QUANTITY zetta ## SUFFIX (1e21  * SUFFIX); \
-  constexpr QUANTITY yotta ## SUFFIX (1e24  * SUFFIX); 
+  constexpr QUANTITY quecto ## SUFFIX (1e-30 * SUFFIX); \
+  constexpr QUANTITY ronto  ## SUFFIX (1e-27 * SUFFIX); \
+  constexpr QUANTITY yocto  ## SUFFIX (1e-24 * SUFFIX); \
+  constexpr QUANTITY zepto  ## SUFFIX (1e-21 * SUFFIX); \
+  constexpr QUANTITY  atto  ## SUFFIX (1e-18 * SUFFIX); \
+  constexpr QUANTITY femto  ## SUFFIX (1e-15 * SUFFIX); \
+  constexpr QUANTITY  pico  ## SUFFIX (1e-12 * SUFFIX); \
+  constexpr QUANTITY  nano  ## SUFFIX (1e-9  * SUFFIX); \
+  constexpr QUANTITY micro  ## SUFFIX (1e-6  * SUFFIX); \
+  constexpr QUANTITY milli  ## SUFFIX (1e-3  * SUFFIX); \
+  constexpr QUANTITY centi  ## SUFFIX (1e-2  * SUFFIX); \
+  constexpr QUANTITY  deci  ## SUFFIX (1e-1  * SUFFIX); \
+  constexpr QUANTITY  deca  ## SUFFIX (1e1   * SUFFIX); \
+  constexpr QUANTITY hecto  ## SUFFIX (1e2   * SUFFIX); \
+  constexpr QUANTITY  kilo  ## SUFFIX (1e3   * SUFFIX); \
+  constexpr QUANTITY  mega  ## SUFFIX (1e6   * SUFFIX); \
+  constexpr QUANTITY  giga  ## SUFFIX (1e9   * SUFFIX); \
+  constexpr QUANTITY  tera  ## SUFFIX (1e12  * SUFFIX); \
+  constexpr QUANTITY  peta  ## SUFFIX (1e15  * SUFFIX); \
+  constexpr QUANTITY   exa  ## SUFFIX (1e18  * SUFFIX); \
+  constexpr QUANTITY zetta  ## SUFFIX (1e21  * SUFFIX); \
+  constexpr QUANTITY yotta  ## SUFFIX (1e24  * SUFFIX); \
+  constexpr QUANTITY ronna  ## SUFFIX (1e27  * SUFFIX); \
+  constexpr QUANTITY quetta ## SUFFIX (1e30  * SUFFIX); 
 
   #define SI_MODERN_DOUBLE_PREFIXED_UNITS(QUANTITY, PREFIX, SUFFIX) \
-  constexpr QUANTITY PREFIX ## yocto ## SUFFIX (1e-24 * PREFIX ## SUFFIX); \
-  constexpr QUANTITY PREFIX ## zepto ## SUFFIX (1e-21 * PREFIX ## SUFFIX); \
-  constexpr QUANTITY PREFIX ##  atto ## SUFFIX (1e-18 * PREFIX ## SUFFIX); \
-  constexpr QUANTITY PREFIX ## femto ## SUFFIX (1e-15 * PREFIX ## SUFFIX); \
-  constexpr QUANTITY PREFIX ##  pico ## SUFFIX (1e-12 * PREFIX ## SUFFIX); \
-  constexpr QUANTITY PREFIX ##  nano ## SUFFIX (1e-9  * PREFIX ## SUFFIX); \
-  constexpr QUANTITY PREFIX ## micro ## SUFFIX (1e-6  * PREFIX ## SUFFIX); \
-  constexpr QUANTITY PREFIX ## milli ## SUFFIX (1e-3  * PREFIX ## SUFFIX); \
-  constexpr QUANTITY PREFIX ## centi ## SUFFIX (1e-2  * PREFIX ## SUFFIX); \
-  constexpr QUANTITY PREFIX ##  deci ## SUFFIX (1e-1  * PREFIX ## SUFFIX); \
-  constexpr QUANTITY PREFIX ##  deca ## SUFFIX (1e1   * PREFIX ## SUFFIX); \
-  constexpr QUANTITY PREFIX ## hecto ## SUFFIX (1e2   * PREFIX ## SUFFIX); \
-  constexpr QUANTITY PREFIX ##  kilo ## SUFFIX (1e3   * PREFIX ## SUFFIX); \
-  constexpr QUANTITY PREFIX ##  mega ## SUFFIX (1e6   * PREFIX ## SUFFIX); \
-  constexpr QUANTITY PREFIX ##  giga ## SUFFIX (1e9   * PREFIX ## SUFFIX); \
-  constexpr QUANTITY PREFIX ##  tera ## SUFFIX (1e12  * PREFIX ## SUFFIX); \
-  constexpr QUANTITY PREFIX ##  peta ## SUFFIX (1e15  * PREFIX ## SUFFIX); \
-  constexpr QUANTITY PREFIX ##   exa ## SUFFIX (1e18  * PREFIX ## SUFFIX); \
-  constexpr QUANTITY PREFIX ## zetta ## SUFFIX (1e21  * PREFIX ## SUFFIX); \
-  constexpr QUANTITY PREFIX ## yotta ## SUFFIX (1e24  * PREFIX ## SUFFIX); 
+  constexpr QUANTITY PREFIX ## quecto ## SUFFIX (1e-30 * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ## ronto  ## SUFFIX (1e-27 * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ## yocto  ## SUFFIX (1e-24 * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ## zepto  ## SUFFIX (1e-21 * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ##  atto  ## SUFFIX (1e-18 * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ## femto  ## SUFFIX (1e-15 * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ##  pico  ## SUFFIX (1e-12 * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ##  nano  ## SUFFIX (1e-9  * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ## micro  ## SUFFIX (1e-6  * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ## milli  ## SUFFIX (1e-3  * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ## centi  ## SUFFIX (1e-2  * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ##  deci  ## SUFFIX (1e-1  * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ##  deca  ## SUFFIX (1e1   * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ## hecto  ## SUFFIX (1e2   * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ##  kilo  ## SUFFIX (1e3   * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ##  mega  ## SUFFIX (1e6   * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ##  giga  ## SUFFIX (1e9   * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ##  tera  ## SUFFIX (1e12  * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ##  peta  ## SUFFIX (1e15  * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ##   exa  ## SUFFIX (1e18  * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ## zetta  ## SUFFIX (1e21  * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ## yotta  ## SUFFIX (1e24  * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ## ronto  ## SUFFIX (1e27  * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ## quecto ## SUFFIX (1e30  * PREFIX ## SUFFIX); 
 
   constexpr mass<double> gram(1e-3);
   SI_MODERN_PREFIXED_UNITS(mass<double>, gram)
