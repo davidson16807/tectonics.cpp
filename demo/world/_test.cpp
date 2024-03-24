@@ -159,27 +159,27 @@ int main() {
     analytic::Gaussian(-4019.0f, 1113.0f, 0.232f),
     analytic::Gaussian(  797.0f, 1169.0f, 0.209f)
   };
-  auto hypsometry_cdf = analytic::integral(hypsometry_pdf);
+  auto hypsometry_cdf_unscaled = analytic::integral(hypsometry_pdf);
   // auto hypsometry_pdf_ddx = analytic::derivative(hypsometry_pdf);
-  auto hypsometry_cdf_range = hypsometry_cdf(max_elevation) - hypsometry_cdf(min_elevation);
-  auto hypsometry_cdf_scaled = hypsometry_cdf / hypsometry_cdf_range;
-  auto hypsometry_pdf_scaled = hypsometry_pdf / hypsometry_cdf_range;
-  auto hypsometry_quantile = inspected::inverse_by_newtons_method(hypsometry_cdf_scaled, hypsometry_pdf_scaled, 0.5f, 30);
+  auto hypsometry_cdf_unscaled_range = hypsometry_cdf_unscaled(max_elevation) - hypsometry_cdf_unscaled(min_elevation);
+  auto hypsometry_cdf = hypsometry_cdf_unscaled / hypsometry_cdf_unscaled_range;
+  auto hypsometry_pdf = hypsometry_pdf / hypsometry_cdf_unscaled_range;
+  auto hypsometry_cdfi = inspected::inverse_by_newtons_method(hypsometry_cdf, hypsometry_pdf, 0.5f, 30);
 
-// std::cout << hypsometry_quantile(0.002f) << std::endl;
-// std::cout << hypsometry_quantile(0.25f) << std::endl;
-// std::cout << hypsometry_quantile(0.5f) << std::endl;
-// std::cout << hypsometry_quantile(0.75f) << std::endl;
-// std::cout << hypsometry_quantile(0.998f) << std::endl;
-// // std::cout << hypsometry_quantile(1.1f) << std::endl;
+// std::cout << hypsometry_cdfi(0.002f) << std::endl;
+// std::cout << hypsometry_cdfi(0.25f) << std::endl;
+// std::cout << hypsometry_cdfi(0.5f) << std::endl;
+// std::cout << hypsometry_cdfi(0.75f) << std::endl;
+// std::cout << hypsometry_cdfi(0.998f) << std::endl;
+// // std::cout << hypsometry_cdfi(1.1f) << std::endl;
 
 //   auto vertex_scalars2 = series::map(
 //     field::compose(
 //         // inspected::compose(
-//         //   hypsometry_quantile,
+//         //   hypsometry_cdfi,
 //         //   analytic::Error(0.0f, 1.0f, (1.0f/(std::sqrt(2.0f*3.1415926f))))),
 //       analytic::Error(0.0f, 1.0f, (1.0f/(std::sqrt(2.0f*3.1415926f)))),
-//       // hypsometry_quantile,
+//       // hypsometry_cdfi,
 //       field::fractal_brownian_noise<int,float>(
 //           field::value_noise<3,float>(
 //               field::mosaic_noise(
@@ -193,26 +193,37 @@ int main() {
 // std::cout << whole::max(vertex_scalars2) << std::endl;
 // std::cout << whole::min(vertex_scalars2) << std::endl;
 
-  auto vertex_scalars1 = series::map(
-    field::compose(
-        inspected::compose(
-          hypsometry_quantile,
-          analytic::Error(0.0f, 1.0f, (1.0f/(std::sqrt(2.0f*3.1415926f))))),
-      // hypsometry_quantile,
-      field::fractal_brownian_noise<int,float>(
-          field::value_noise<3,float>(
-              field::mosaic_noise(
-                series::gaussian(series::unit_interval_noise(12.0f, 1.1e4f)), 
-                cartesian::UnboundedIndexing<int>()),
-              field::vector_mosaic_ops<3,int,float>()
-          ), 10, 0.5f)
-    ),
-    dymaxion::VertexPositions(grid)
-  );
+  template<typename scalar>
+  struct StrataGeneration
+  {
+    constexpr explicit StrataGeneration()
+    {}
+    using value_type = scalar;
+    constexpr inline auto operator()(const scalar elevation ) const
+    {
+      return f(g[i]);
+    }
+  };
+
+  auto fbm = field::fractal_brownian_noise<int,float>(
+    field::value_noise<3,float>(
+        field::mosaic_noise(
+          series::gaussian(series::unit_interval_noise(12.0f, 1.1e4f)), 
+          cartesian::UnboundedIndexing<int>()),
+        field::vector_mosaic_ops<3,int,float>()
+    ), 10, 0.5f);
+  auto fbm_cdf = analytic::Error(0.0f, 1.0f, (1.0f/(std::sqrt(2.0f*3.1415926f))));
+
+  auto vertex_scalars1 = 
+    series::map(
+      field::compose(
+        inspected::compose(hypsometry_cdfi, fbm_cdf), fbm), 
+      dymaxion::VertexPositions(grid)
+    );
 
   // auto vertex_scalars2 = series::map(
   //   field::compose(
-  //     hypsometry_quantile,
+  //     hypsometry_cdfi,
   //     field::fractal_brownian_noise<int,float>(
   //         field::value_noise<3,float>(
   //             field::mosaic_noise(series::unit_interval_noise(12.0f, 1.2e4f), cartesian::UnboundedIndexing<int>()),
