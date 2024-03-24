@@ -8,7 +8,7 @@ namespace analytic {
     struct Error {
         using value_type = T;
 
-        static constexpr T pi = 3.141592653589793238462643383279;
+        static constexpr T pi = T(3.141592653589793238462643383279);
 
         T mean;
         T standard_deviation;
@@ -21,7 +21,7 @@ namespace analytic {
         constexpr explicit Error(const T mean, const T standard_deviation):
             mean(mean),
             standard_deviation(standard_deviation),
-            amplitude(T(1)/(standard_deviation*std::sqrt(pi)))
+            amplitude(T(1)/(standard_deviation*std::sqrt(T(2)*pi)))
         {}
         // zero constructor
         constexpr explicit Error():
@@ -40,7 +40,7 @@ namespace analytic {
             const T b(1.1295);
             const T u((x-mean)/(standard_deviation*std::sqrt(T(2))));
             // Approximation for erf() is accurate to within 2⋅10⁻⁴ over the range [-10,10].
-            return (amplitude/(T(1)/(standard_deviation*std::sqrt(pi)))) * T(0.5) * (T(1) + std::tanh(a*u*u*u + b*u));
+            return (amplitude/(T(1)/(standard_deviation*std::sqrt(T(2)*pi)))) * T(0.5) * (T(1) + std::tanh(a*u*u*u + b*u));
         }
         constexpr Error<T>& operator*=(const T k)
         {

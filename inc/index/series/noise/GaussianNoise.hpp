@@ -58,7 +58,7 @@ namespace series
 	}
 
 	template<typename T>
-	constexpr inline auto gaussian(const T a = T(10), const T b=T(10000))
+	constexpr inline auto gaussian(const T a, const T b)
 	{
 		return GaussianNoise<UnitIntervalNoise<T>>(UnitIntervalNoise<T>(a,b));
 	}

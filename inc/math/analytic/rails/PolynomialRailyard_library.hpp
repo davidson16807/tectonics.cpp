@@ -39,6 +39,31 @@ namespace spline {
         return PolynomialRailyard<T,0,1>(pieces);
     }
 
+    template<typename T, typename F> 
+    PolynomialRailyard<T,0,1> linear_spline(
+        const F f,
+        const std::vector<T> x
+    ){
+        assert(x.size() >= 1);
+        using P = Polynomial<T,0,1>;
+        using R = Railcar<T,P>;
+        const T oo = std::numeric_limits<T>::max();
+        std::vector<R> pieces;
+        pieces.push_back(R(-oo, T(x[0]), P(T(f(x[0])))));
+        for (std::size_t i=1; i<x.size(); i++)
+        {
+            assert(x[i] > x[i-1]);
+            pieces.push_back(R(
+                T(x[i-1]), T(x[i]), 
+                linear_newton_polynomial(
+                    T(x[i-1]), T(x[i]),   
+                    T(f(x[i-1])), T(f(x[i]))    
+                )));
+        }
+        std::size_t last = x.size()-1;
+        pieces.push_back(R(T(x[last]), oo, P(T(f(x[last])))));
+        return PolynomialRailyard<T,0,1>(pieces);
+    }
 
     template<typename T, typename T2> 
     PolynomialRailyard<T,-1,0> inverse_linear_spline(

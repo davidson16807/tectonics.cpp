@@ -36,8 +36,6 @@ namespace inspected {
     /*
     `derivative_by_central_finite_difference()` is used to approximate the derivative of a function for the parameter value, x.
     It does so using the finite difference method. 
-    The finite difference method approximates the nth order derivative as dⁿf/dxⁿ, 
-    where dⁿf is the return value of `derivative_by_central_finite_difference(f,x,dx,n)`.
     */
     template<typename T, typename F>
     constexpr auto derivative_by_central_finite_difference(const F& f, const T x, const T dx, const int order)
