@@ -38,7 +38,7 @@
 #include <field/noise/ValueNoise.hpp>               // ValueNoise
 #include <field/noise/PerlinNoise.hpp>              // PerlinNoise
 #include <field/noise/MosaicNoise.hpp>              // MosaicNoise
-#include <field/Map.hpp>                            // Map
+#include <field/Compose.hpp>                        // Compose
 #include <field/VectorZip.hpp>                      // VectorZip
 
 #include <buffer/PyramidBuffers.hpp>                // buffer::PyramidBuffers
@@ -174,7 +174,7 @@ int main() {
 // // std::cout << hypsometry_quantile(1.1f) << std::endl;
 
 //   auto vertex_scalars2 = series::map(
-//     field::map(
+//     field::compose(
 //         // inspected::compose(
 //         //   hypsometry_quantile,
 //         //   analytic::Error(0.0f, 1.0f, (1.0f/(std::sqrt(2.0f*3.1415926f))))),
@@ -194,7 +194,7 @@ int main() {
 // std::cout << whole::min(vertex_scalars2) << std::endl;
 
   auto vertex_scalars1 = series::map(
-    field::map(
+    field::compose(
         inspected::compose(
           hypsometry_quantile,
           analytic::Error(0.0f, 1.0f, (1.0f/(std::sqrt(2.0f*3.1415926f))))),
@@ -211,7 +211,7 @@ int main() {
   );
 
   // auto vertex_scalars2 = series::map(
-  //   field::map(
+  //   field::compose(
   //     hypsometry_quantile,
   //     field::fractal_brownian_noise<int,float>(
   //         field::value_noise<3,float>(
