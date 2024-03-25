@@ -519,8 +519,8 @@ namespace si{
   constexpr QUANTITY PREFIX ##   exa  ## SUFFIX (1e18  * PREFIX ## SUFFIX); \
   constexpr QUANTITY PREFIX ## zetta  ## SUFFIX (1e21  * PREFIX ## SUFFIX); \
   constexpr QUANTITY PREFIX ## yotta  ## SUFFIX (1e24  * PREFIX ## SUFFIX); \
-  constexpr QUANTITY PREFIX ## ronto  ## SUFFIX (1e27  * PREFIX ## SUFFIX); \
-  constexpr QUANTITY PREFIX ## quecto ## SUFFIX (1e30  * PREFIX ## SUFFIX); 
+  constexpr QUANTITY PREFIX ## ronna  ## SUFFIX (1e27  * PREFIX ## SUFFIX); \
+  constexpr QUANTITY PREFIX ## quetta ## SUFFIX (1e30  * PREFIX ## SUFFIX); 
 
   constexpr mass<double> gram(1e-3);
   SI_MODERN_PREFIXED_UNITS(mass<double>, gram)
