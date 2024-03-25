@@ -155,15 +155,15 @@ int main() {
   float min_elevation(-16000.0f);
   float max_elevation( 16000.0f);
 
-  analytic::Sum<float,analytic::Gaussian<float>> hypsometry_pdf {
+  analytic::Sum<float,analytic::Gaussian<float>> hypsometry_pdf_unscaled {
     analytic::Gaussian(-4019.0f, 1113.0f, 0.232f),
     analytic::Gaussian(  797.0f, 1169.0f, 0.209f)
   };
-  auto hypsometry_cdf_unscaled = analytic::integral(hypsometry_pdf);
-  // auto hypsometry_pdf_ddx = analytic::derivative(hypsometry_pdf);
+  auto hypsometry_cdf_unscaled = analytic::integral(hypsometry_pdf_unscaled);
+  // auto hypsometry_pdf_ddx = analytic::derivative(hypsometry_pdf_unscaled);
   auto hypsometry_cdf_unscaled_range = hypsometry_cdf_unscaled(max_elevation) - hypsometry_cdf_unscaled(min_elevation);
   auto hypsometry_cdf = hypsometry_cdf_unscaled / hypsometry_cdf_unscaled_range;
-  auto hypsometry_pdf = hypsometry_pdf / hypsometry_cdf_unscaled_range;
+  auto hypsometry_pdf = hypsometry_pdf_unscaled / hypsometry_cdf_unscaled_range;
   auto hypsometry_cdfi = inspected::inverse_by_newtons_method(hypsometry_cdf, hypsometry_pdf, 0.5f, 30);
 
 // std::cout << hypsometry_cdfi(0.002f) << std::endl;
@@ -193,17 +193,17 @@ int main() {
 // std::cout << whole::max(vertex_scalars2) << std::endl;
 // std::cout << whole::min(vertex_scalars2) << std::endl;
 
-  template<typename scalar>
-  struct StrataGeneration
-  {
-    constexpr explicit StrataGeneration()
-    {}
-    using value_type = scalar;
-    constexpr inline auto operator()(const scalar elevation ) const
-    {
-      return f(g[i]);
-    }
-  };
+  // template<typename scalar>
+  // struct StrataGeneration
+  // {
+  //   constexpr explicit StrataGeneration()
+  //   {}
+  //   using value_type = scalar;
+  //   constexpr inline auto operator()(const scalar elevation ) const
+  //   {
+  //     return f(g[i]);
+  //   }
+  // };
 
   auto fbm = field::fractal_brownian_noise<int,float>(
     field::value_noise<3,float>(
