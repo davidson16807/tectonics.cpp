@@ -5,7 +5,7 @@
 #include "Mineral.hpp"
 #include "GrainType.hpp"
 
-namespace mineral
+namespace rock
 {
 	/*
 	NOTE: 
@@ -18,12 +18,12 @@ namespace mineral
 	*/
 
 	template<typename Tgenerator>
-	mineral::Mineral get_random(Tgenerator generator)
+	rock::Mineral get_random(Tgenerator generator)
 	{
-		mineral::Mineral output;
+		rock::Mineral output;
 		output.mass = generator() * si::kilogram;
 		output.phase_id = generator() % 16;
-		for (int j = 0; j < int(mineral::GrainType::count); ++j)
+		for (int j = 0; j < int(rock::GrainType::count); ++j)
 		{
 			output.grain_type_relative_volume[j] = generator();
 		}
@@ -33,7 +33,7 @@ namespace mineral
 	#define MINERAL_EQUAL(a, b)                                                              \
     	CHECK(a.mass/si::kilogram == Approx(b.mass/si::kilogram).epsilon(1e-4));                                                 \
     	CHECK(a.phase_id == b.phase_id);                                                 \
-		for (int grain_i = 0; grain_i < int(mineral::GrainType::count); ++grain_i)                                   \
+		for (int grain_i = 0; grain_i < int(rock::GrainType::count); ++grain_i)                                   \
 		{                                                                                              \
 			float a_total_relative_volume(a.grain_type_total_relative_volume());                           \
 			float b_total_relative_volume(b.grain_type_total_relative_volume());                           \
@@ -45,7 +45,7 @@ namespace mineral
     	CHECK(a.mass/si::kilogram > -1e-4);                                                  \
     	CHECK(0 <= a.phase_id);                              \
     	CHECK(a.phase_id < 16);                              \
-		for (int grain_i = 0; grain_i < int(mineral::GrainType::count); ++grain_i)       \
+		for (int grain_i = 0; grain_i < int(rock::GrainType::count); ++grain_i)       \
 		{                                                                       \
     		CHECK(a.grain_type_relative_volume[grain_i] > -1e-4);               \
     	}                                                                       

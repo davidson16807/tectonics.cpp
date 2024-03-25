@@ -9,7 +9,7 @@
 // in-house libraries
 #include "Mineral.hpp"
 
-namespace mineral
+namespace rock
 {
 	static void combine(const Mineral& a, const Mineral& b, Mineral& output)
 	{

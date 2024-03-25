@@ -11,20 +11,8 @@
 #include <unit/si.hpp>
 #include "Mineral.hpp"
 
-namespace mineral
+namespace rock
 {
-	namespace
-	{
-		const float epsilon(1e-4f);
-
-		enum struct Phases
-		{
-			supercritical,
-			gas,
-			liquid,
-			solid
-		};
-	}
 
 	/*
 	`MineralStore` is a memory efficient variant of the 
@@ -48,6 +36,8 @@ namespace mineral
 	*/
 	class MineralStore
 	{
+		static constexpr float epsilon =1e-4f;
+
 		float mass; 
 		std::uint8_t phase_id                                    : 4;
 		std::uint8_t unweathered_extrusive_part_count            : 4;
@@ -70,7 +60,7 @@ namespace mineral
 		// identity constructor
 		MineralStore():
 			mass(0),
-			phase_id(std::uint8_t(Phases::solid)),                                   
+			phase_id(0),                                   
 			unweathered_extrusive_part_count(1),           
 			unweathered_intrusive_part_count(1),           
 			mechanically_weathered_extrusive_part_count(1),

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace mineral
+namespace rock
 {
     /*
     "Mineral.grain_type_relative_volume" describes a set of bins.

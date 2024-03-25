@@ -13,7 +13,7 @@
 #include <unit/si.hpp>
 #include "GrainType.hpp"
 
-namespace mineral
+namespace rock
 {
     /*
     A "mineral" describes a mass pool composed entirely of a single compound

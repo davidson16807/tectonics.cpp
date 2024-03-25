@@ -8,15 +8,13 @@
 #include "Mineral_operators.hpp"
 #include "Mineral_test_utils.hpp"
 
-using namespace mineral;
-
 TEST_CASE( "Mineral combine() commutativity", "[mineral]" ) {
   	std::mt19937 generator(2);
-	Mineral a = get_random(generator);
-	Mineral b = get_random(generator);
+	rock::Mineral a = rock::get_random(generator);
+	rock::Mineral b = rock::get_random(generator);
 
-	Mineral ab;
-	Mineral bc;
+	rock::Mineral ab;
+	rock::Mineral bc;
 	combine(a, b, ab);
 	combine(b, a, bc);
 
@@ -27,14 +25,14 @@ TEST_CASE( "Mineral combine() commutativity", "[mineral]" ) {
 
 TEST_CASE( "Mineral combine() associativity", "[mineral]" ) {
   	std::mt19937 generator(2);
-	Mineral a = get_random(generator);
-	Mineral b = get_random(generator);
-	Mineral c = get_random(generator);
+	rock::Mineral a = rock::get_random(generator);
+	rock::Mineral b = rock::get_random(generator);
+	rock::Mineral c = rock::get_random(generator);
 
-	Mineral ab;
-	Mineral ab_c;
-	Mineral bc;
-	Mineral a_bc;
+	rock::Mineral ab;
+	rock::Mineral ab_c;
+	rock::Mineral bc;
+	rock::Mineral a_bc;
 	combine(a, b, ab);
 	combine(ab, c, ab_c);
 	combine(b, c, bc);
@@ -47,10 +45,10 @@ TEST_CASE( "Mineral combine() associativity", "[mineral]" ) {
 
 TEST_CASE( "Mineral combine() closure", "[mineral]" ) {
   	std::mt19937 generator(2);
-	Mineral a = get_random(generator);
-	Mineral b = get_random(generator);
+	rock::Mineral a = rock::get_random(generator);
+	rock::Mineral b = rock::get_random(generator);
 
-	Mineral ab;
+	rock::Mineral ab;
 	combine(a, b, ab);
 
     SECTION("the result of passing two valid Mineral objects to combine() must itself produce a valid Mineral"){
@@ -59,10 +57,10 @@ TEST_CASE( "Mineral combine() closure", "[mineral]" ) {
 }
 TEST_CASE( "Mineral combine() identity", "[mineral]" ) {
   	std::mt19937 generator(2);
-	Mineral a = get_random(generator);
-	Mineral b;
+	rock::Mineral a = rock::get_random(generator);
+	rock::Mineral b;
 
-	Mineral ab;
+	rock::Mineral ab;
 	combine(a, b, ab);
 
     SECTION("there is a value that can be passed to combine() that produces the original Mineral"){
@@ -71,10 +69,10 @@ TEST_CASE( "Mineral combine() identity", "[mineral]" ) {
 }
 TEST_CASE( "Mineral combine() mass conservation", "[mineral]" ) {
   	std::mt19937 generator(2);
-	Mineral a = get_random(generator);
-	Mineral b = get_random(generator);
+	rock::Mineral a = rock::get_random(generator);
+	rock::Mineral b = rock::get_random(generator);
 
-	Mineral ab;
+	rock::Mineral ab;
 	combine(a, b, ab);
 
     SECTION("the result of passing two valid Mineral objects to combine() must produce a new Mineral object with equal mass"){
