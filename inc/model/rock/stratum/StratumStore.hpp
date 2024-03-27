@@ -11,7 +11,7 @@
 // in-house libraries
 #include <unit/si.hpp>
 
-#include <model/mineral/MineralStore.hpp>
+#include <model/rock/mineral/MineralStore.hpp>
 #include "Stratum.hpp"
 
 namespace stratum
@@ -38,7 +38,7 @@ namespace stratum
     template <std::size_t M>
     class StratumStore
     {
-        std::array<mineral::MineralStore, M> minerals;
+        std::array<rock::MineralStore, M> minerals;
         // Represent temperatures from 1 to 32768 Kelvin with a precision of 0.02%.
         // This value was chosen to reflect the temperature of Jupiter's core. 
         std::uint16_t stored_max_temperature_received;
@@ -94,7 +94,7 @@ namespace stratum
             age_of_world_when_deposited_in_megayears(0.0f),
             unused(0.0f)
         {
-            minerals.fill(mineral::MineralStore());
+            minerals.fill(rock::MineralStore());
         }
 
         void unpack(Stratum<M>& output) const

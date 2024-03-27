@@ -8,7 +8,7 @@
 
 // in-house libraries
 #include <unit/si.hpp>
-#include <model/mineral/Mineral_test_utils.hpp>
+#include <model/rock/mineral/Mineral_test_utils.hpp>
 #include "Stratum.hpp"
 
 namespace stratum
@@ -30,7 +30,7 @@ namespace stratum
         Stratum<M> output(32768.0f * uniform(generator) * si::kelvin, 6e12f * uniform(generator) * si::pascal, uniform(generator) * 65000.0f * si::megayear);
         for (std::size_t i = 0; i < M; ++i)
         {
-            output.minerals[i] = mineral::get_random(generator);
+            output.minerals[i] = rock::get_random(generator);
         }
         return output;
     }

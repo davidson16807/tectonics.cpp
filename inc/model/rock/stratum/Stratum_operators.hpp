@@ -7,7 +7,7 @@
 #include <array>
 
 // in-house libraries
-#include <model/mineral/Mineral_operators.hpp>
+#include <model/rock/mineral/Mineral_operators.hpp>
 #include "Stratum.hpp"
 
 namespace stratum

@@ -9,7 +9,7 @@
 
 // in-house libraries
 #include <unit/si.hpp>
-#include <model/mineral/GrainType.hpp>
+#include <model/rock/mineral/GrainType.hpp>
 #include "Stratum.hpp"
 #include "StratumTypes.hpp"
 #include "MineralTypes.hpp"
@@ -99,21 +99,21 @@ namespace stratum
         for (std::size_t i=0; i<M; i++)
         {
             float mass = stratum.minerals[i].mass / si::kilogram; // NOTE: units do not matter here
-            std::array<float, std::size_t(mineral::GrainType::count)> grains = stratum.minerals[i].grain_type_relative_volume;
+            std::array<float, std::size_t(rock::GrainType::count)> grains = stratum.minerals[i].grain_type_relative_volume;
             float total_volume = stratum.minerals[i].grain_type_total_relative_volume();
-            output[std::size_t(ParticleSizeBins::boulder)] += mass * grains[std::size_t(mineral::GrainType::unweathered_extrusive)] / total_volume;
-            output[std::size_t(ParticleSizeBins::boulder)] += mass * grains[std::size_t(mineral::GrainType::unweathered_intrusive)] / total_volume;
-            output[std::size_t(ParticleSizeBins::pebble)]  += mass * grains[std::size_t(mineral::GrainType::mechanically_weathered_extrusive)] / total_volume;
-            output[std::size_t(ParticleSizeBins::sand)]    += mass * grains[std::size_t(mineral::GrainType::mechanically_weathered_intrusive)] / total_volume;
+            output[std::size_t(ParticleSizeBins::boulder)] += mass * grains[std::size_t(rock::GrainType::unweathered_extrusive)] / total_volume;
+            output[std::size_t(ParticleSizeBins::boulder)] += mass * grains[std::size_t(rock::GrainType::unweathered_intrusive)] / total_volume;
+            output[std::size_t(ParticleSizeBins::pebble)]  += mass * grains[std::size_t(rock::GrainType::mechanically_weathered_extrusive)] / total_volume;
+            output[std::size_t(ParticleSizeBins::sand)]    += mass * grains[std::size_t(rock::GrainType::mechanically_weathered_intrusive)] / total_volume;
             if (i == std::size_t(OxygenPlanetMineralTypes::calcite) || i == std::size_t(OxygenPlanetMineralTypes::organics))
             {
-                output[std::size_t(ParticleSizeBins::clay)]    += mass  * grains[std::size_t(mineral::GrainType::chemically_weathered_extrusive)] / total_volume; 
-                output[std::size_t(ParticleSizeBins::clay)]    += mass  * grains[std::size_t(mineral::GrainType::chemically_weathered_intrusive)] / total_volume; 
+                output[std::size_t(ParticleSizeBins::clay)]    += mass  * grains[std::size_t(rock::GrainType::chemically_weathered_extrusive)] / total_volume; 
+                output[std::size_t(ParticleSizeBins::clay)]    += mass  * grains[std::size_t(rock::GrainType::chemically_weathered_intrusive)] / total_volume; 
             } 
             else 
             {
-                output[std::size_t(ParticleSizeBins::silt)]    += mass  * grains[std::size_t(mineral::GrainType::chemically_weathered_extrusive)] / total_volume;
-                output[std::size_t(ParticleSizeBins::sand)]    += mass  * grains[std::size_t(mineral::GrainType::chemically_weathered_intrusive)] / total_volume;
+                output[std::size_t(ParticleSizeBins::silt)]    += mass  * grains[std::size_t(rock::GrainType::chemically_weathered_extrusive)] / total_volume;
+                output[std::size_t(ParticleSizeBins::sand)]    += mass  * grains[std::size_t(rock::GrainType::chemically_weathered_intrusive)] / total_volume;
             }
         } 
 
@@ -229,13 +229,13 @@ namespace stratum
         output.fill(0);
         for (std::size_t i=0; i<M; i++)
         {
-            const std::array<float, std::size_t(mineral::GrainType::count)>& grains = stratum.minerals[i].grain_type_relative_volume;
-            output[std::size_t(IgneousFormationTypes::extrusive)] += grains[std::size_t(mineral::GrainType::unweathered_extrusive)];
-            output[std::size_t(IgneousFormationTypes::intrusive)] += grains[std::size_t(mineral::GrainType::unweathered_intrusive)];
-            output[std::size_t(IgneousFormationTypes::extrusive)] += grains[std::size_t(mineral::GrainType::mechanically_weathered_extrusive)];
-            output[std::size_t(IgneousFormationTypes::intrusive)] += grains[std::size_t(mineral::GrainType::mechanically_weathered_intrusive)];
-            output[std::size_t(IgneousFormationTypes::extrusive)] += grains[std::size_t(mineral::GrainType::chemically_weathered_extrusive)];
-            output[std::size_t(IgneousFormationTypes::intrusive)] += grains[std::size_t(mineral::GrainType::chemically_weathered_intrusive)];
+            const std::array<float, std::size_t(rock::GrainType::count)>& grains = stratum.minerals[i].grain_type_relative_volume;
+            output[std::size_t(IgneousFormationTypes::extrusive)] += grains[std::size_t(rock::GrainType::unweathered_extrusive)];
+            output[std::size_t(IgneousFormationTypes::intrusive)] += grains[std::size_t(rock::GrainType::unweathered_intrusive)];
+            output[std::size_t(IgneousFormationTypes::extrusive)] += grains[std::size_t(rock::GrainType::mechanically_weathered_extrusive)];
+            output[std::size_t(IgneousFormationTypes::intrusive)] += grains[std::size_t(rock::GrainType::mechanically_weathered_intrusive)];
+            output[std::size_t(IgneousFormationTypes::extrusive)] += grains[std::size_t(rock::GrainType::chemically_weathered_extrusive)];
+            output[std::size_t(IgneousFormationTypes::intrusive)] += grains[std::size_t(rock::GrainType::chemically_weathered_intrusive)];
         }
         float total_relative_volume(0);
         for (std::size_t i=0; i<std::size_t(ParticleSizeBins::count); i++)

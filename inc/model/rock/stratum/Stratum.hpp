@@ -11,7 +11,7 @@
 
 // in-house libraries
 #include <unit/si.hpp>
-#include <model/mineral/Mineral.hpp>
+#include <model/rock/mineral/Mineral.hpp>
 
 namespace stratum
 {
@@ -30,7 +30,7 @@ namespace stratum
         Grain size is primarily used to indicate distinctions between extrusive and intrusive rocks, like basalt and gabbro.
         Particle size is primarily used to indicate distinctions between things like boulders vs. pebbles vs sand vs. clay
         */
-        std::array<mineral::Mineral, M>  minerals;
+        std::array<rock::Mineral, M>  minerals;
         si::temperature<double> max_temperature_received;
         si::pressure<double> max_pressure_received;
         si::time<double> age_of_world_when_deposited;
@@ -40,7 +40,7 @@ namespace stratum
             max_pressure_received(0*si::pascal),
             age_of_world_when_deposited(0*si::megayear)
         {
-            minerals.fill(mineral::Mineral());
+            minerals.fill(rock::Mineral());
         }
 
         Stratum(
@@ -52,14 +52,14 @@ namespace stratum
             max_pressure_received(max_pressure_received),
             age_of_world_when_deposited(age_of_world_when_deposited)
         {
-            minerals.fill(mineral::Mineral());
+            minerals.fill(rock::Mineral());
         }
 
         Stratum(
             const si::temperature<double> max_temperature_received,
             const si::pressure<double> max_pressure_received,
             const si::time<double> age_of_world_when_deposited,
-            const std::initializer_list<mineral::Mineral>& vector
+            const std::initializer_list<rock::Mineral>& vector
         ): 
             max_temperature_received(max_temperature_received),
             max_pressure_received(max_pressure_received),
@@ -97,7 +97,7 @@ namespace stratum
             }
             return total_volume;
         }
-        si::density<double> density(const std::array<si::density<double>, M>& mineral_densities) const 
+        si::density<double> density(const si::time<double> age_of_world, const std::array<si::density<double>, M>& mineral_densities) const 
         {
             return mass() / volume(age_of_world, mineral_densities);
         }
