@@ -22,7 +22,6 @@ namespace rock
 	{
 		rock::Mineral output;
 		output.mass = generator() * si::kilogram;
-		output.phase_id = generator() % 16;
 		for (int j = 0; j < int(rock::GrainType::count); ++j)
 		{
 			output.grain_type_relative_volume[j] = generator();
@@ -32,7 +31,6 @@ namespace rock
 	
 	#define MINERAL_EQUAL(a, b)                                                              \
     	CHECK(a.mass/si::kilogram == Approx(b.mass/si::kilogram).epsilon(1e-4));                                                 \
-    	CHECK(a.phase_id == b.phase_id);                                                 \
 		for (int grain_i = 0; grain_i < int(rock::GrainType::count); ++grain_i)                                   \
 		{                                                                                              \
 			float a_total_relative_volume(a.grain_type_total_relative_volume());                           \
@@ -43,8 +41,6 @@ namespace rock
 
     #define MINERAL_VALID(a)                                                    \
     	CHECK(a.mass/si::kilogram > -1e-4);                                                  \
-    	CHECK(0 <= a.phase_id);                              \
-    	CHECK(a.phase_id < 16);                              \
 		for (int grain_i = 0; grain_i < int(rock::GrainType::count); ++grain_i)       \
 		{                                                                       \
     		CHECK(a.grain_type_relative_volume[grain_i] > -1e-4);               \

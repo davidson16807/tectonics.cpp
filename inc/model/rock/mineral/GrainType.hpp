@@ -23,18 +23,31 @@ namespace rock
 	resistant, chemically weathered intrusive rock    sand size      large grains
 	susceptible, chemically weathered rock            clay size      small grains
 
-	We allow for up to 8 grain types but only allocate to 6.
-	This is mostly to simplify cache alignment, though it also allows for future expansion.
+	We would ideally represent the distinction in mechanical/chemical weathering
+	but this would complicate our existing weathering model,
+	and it would increase the size of model state in a way 
+	that makes cache alignment difficult or inefficient.
+
+	We would also ideally want to represent the fraction 
+	of all possible phases for the mineral in combination with the attributes above.
+	This is useful since metamorphosis is a change in state 
+	that persists through weathering and lithification,
+	and it permits scenarios that are of interest to the user (e.g. alluvial diamond deposits)
+	However this would cost a lot of memory, and the precise number of phases is not known.
+	We therefore suffice to represent the fraction of the mineral 
+	that has undergone at least some kind of metamorphosis.
     */
 	enum struct GrainType
 	{
-		unweathered_extrusive,
-		unweathered_intrusive,
-		mechanically_weathered_extrusive,
-		mechanically_weathered_intrusive,
-		chemically_weathered_extrusive,
-		chemically_weathered_intrusive,
-		count = 6
+		nonmetamorphic_unweathered_extrusive,
+		nonmetamorphic_unweathered_intrusive,
+		nonmetamorphic_weathered_extrusive,
+		nonmetamorphic_weathered_intrusive,
+		metamorphic_unweathered_extrusive,
+		metamorphic_unweathered_intrusive,
+		metamorphic_weathered_extrusive,
+		metamorphic_weathered_intrusive,
+		count = 8
 	};
 
 }
