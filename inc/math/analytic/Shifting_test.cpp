@@ -34,5 +34,7 @@ TEST_CASE( "Shiftings are a commutative monoid under composition", "[math]" ) {
         "composition",           TEST_BINARY(analytic::compose)
     );
 
+    REQUIRE(commutative_monoid.valid(broad, shiftings));
+
 }
 

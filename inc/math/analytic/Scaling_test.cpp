@@ -34,5 +34,6 @@ TEST_CASE( "Scalings are a commutative monoid under composition", "[math]" ) {
         "composition",           TEST_BINARY(analytic::compose)
     );
 
+    REQUIRE(commutative_monoid.valid(broad, scalings));
 }
 
