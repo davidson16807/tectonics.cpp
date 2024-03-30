@@ -144,13 +144,13 @@ namespace published {
             },
         // { polymorphs::benzene_ice,               },
         // { polymorphs::pyrimidine_ice,            },
-        { polymorphs::quartz_alpha,              2650.0 *  si::kilogram/si::meter3, // 2650 alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
+        { polymorphs::quartz_alpha,              2650.0 * si::kilogram/si::meter3, // 2650 alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
             },
-        { polymorphs::quartz_beta,               2533.0 *  si::kilogram/si::meter3, // 2650 alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
+        { polymorphs::quartz_beta,               2533.0 * si::kilogram/si::meter3, // 2650 alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
             },
-        { polymorphs::crystoballite_alpha,       2334.0 *  si::kilogram/si::meter3, // 2650 alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
+        { polymorphs::crystoballite_alpha,       2334.0 * si::kilogram/si::meter3, // 2650 alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
             },
-        { polymorphs::crystoballite_beta,        2334.0 *  si::kilogram/si::meter3, // 2650 alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
+        { polymorphs::crystoballite_beta,        2334.0 * si::kilogram/si::meter3, // 2650 alpha, 2533 beta, 2265 tridymite, 2334 cristobalite, 2196 vitreous
             },
         { polymorphs::halite,                    2170.0 * si::kilogram/si::meter3,
             },
@@ -160,7 +160,7 @@ namespace published {
             },
         { polymorphs::graphite,                  2260.0 * si::kilogram/si::meter3,
             },
-        { polymorphs::diamond,                   3513.0  * si::kilogram/si::meter3,
+        { polymorphs::diamond,                   3513.0 * si::kilogram/si::meter3,
             },
         { polymorphs::calcite,                   2710.0 * si::kilogram/si::meter3,
             },

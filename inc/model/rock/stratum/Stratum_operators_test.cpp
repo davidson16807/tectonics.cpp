@@ -15,13 +15,13 @@ using namespace stratum;
 TEST_CASE( "Stratum scale() associativity", "[stratum]" ) {
   	std::mt19937 generator(2);
   	const std::size_t M = 15;
-	Stratum<M> a = get_random<M>(generator);
+	rock::Stratum<M> a = rock::get_random<M>(generator);
 	float b = 2.0f;
 	float c = 3.0f;
 
-	Stratum<M> ab;
-	Stratum<M> ab_c;
-	Stratum<M> a_bc;
+	rock::Stratum<M> ab;
+	rock::Stratum<M> ab_c;
+	rock::Stratum<M> a_bc;
 	scale(a, b, ab);
 	scale(ab, c, ab_c);
 	scale(a, b*c, a_bc);
@@ -34,10 +34,10 @@ TEST_CASE( "Stratum scale() associativity", "[stratum]" ) {
 TEST_CASE( "Stratum scale() closure", "[stratum]" ) {
   	std::mt19937 generator(2);
   	const std::size_t M = 15;
-	Stratum<M> a = get_random<M>(generator);
+	rock::Stratum<M> a = rock::get_random<M>(generator);
 	float b = 2.0f;
 
-	Stratum<M> ab;
+	rock::Stratum<M> ab;
 	scale(a, b, ab);
 
     SECTION("the result of passing a valid Stratum object to scale() must itself produce a valid Stratum"){
@@ -47,10 +47,10 @@ TEST_CASE( "Stratum scale() closure", "[stratum]" ) {
 TEST_CASE( "Stratum scale() identity", "[stratum]" ) {
   	std::mt19937 generator(2);
   	const std::size_t M = 15;
-	Stratum<M> a = get_random<M>(generator);
+	rock::Stratum<M> a = rock::get_random<M>(generator);
 	float b = 1.0f;
 
-	Stratum<M> ab;
+	rock::Stratum<M> ab;
 	scale(a, b, ab);
 
     SECTION("there is a value that can be passed to scale() that produces the original Stratum"){
@@ -64,11 +64,11 @@ TEST_CASE( "Stratum scale() identity", "[stratum]" ) {
 TEST_CASE( "Stratum combine() commutativity", "[stratum]" ) {
   	std::mt19937 generator(2);
   	const std::size_t M = 15;
-	Stratum<M> a = get_random<M>(generator);
-	Stratum<M> b = get_random<M>(generator);
+	rock::Stratum<M> a = rock::get_random<M>(generator);
+	rock::Stratum<M> b = rock::get_random<M>(generator);
 
-	Stratum<M> ab;
-	Stratum<M> bc;
+	rock::Stratum<M> ab;
+	rock::Stratum<M> bc;
 	combine(a, b, ab);
 	combine(b, a, bc);
 
@@ -80,14 +80,14 @@ TEST_CASE( "Stratum combine() commutativity", "[stratum]" ) {
 TEST_CASE( "Stratum combine() associativity", "[stratum]" ) {
   	std::mt19937 generator(2);
   	const std::size_t M = 15;
-	Stratum<M> a = get_random<M>(generator);
-	Stratum<M> b = get_random<M>(generator);
-	Stratum c = get_random<M>(generator);
+	rock::Stratum<M> a = rock::get_random<M>(generator);
+	rock::Stratum<M> b = rock::get_random<M>(generator);
+	Stratum c = rock::get_random<M>(generator);
 
-	Stratum<M> ab;
-	Stratum<M> ab_c;
-	Stratum<M> bc;
-	Stratum<M> a_bc;
+	rock::Stratum<M> ab;
+	rock::Stratum<M> ab_c;
+	rock::Stratum<M> bc;
+	rock::Stratum<M> a_bc;
 	combine(a, b, ab);
 	combine(ab, c, ab_c);
 	combine(b, c, bc);
@@ -101,10 +101,10 @@ TEST_CASE( "Stratum combine() associativity", "[stratum]" ) {
 TEST_CASE( "Stratum combine() closure", "[stratum]" ) {
   	std::mt19937 generator(2);
   	const std::size_t M = 15;
-	Stratum<M> a = get_random<M>(generator);
-	Stratum<M> b = get_random<M>(generator);
+	rock::Stratum<M> a = rock::get_random<M>(generator);
+	rock::Stratum<M> b = rock::get_random<M>(generator);
 
-	Stratum<M> ab;
+	rock::Stratum<M> ab;
 	combine(a, b, ab);
 
     SECTION("the result of passing two valid Stratum objects to combine() must itself produce a valid Stratum"){
@@ -114,10 +114,10 @@ TEST_CASE( "Stratum combine() closure", "[stratum]" ) {
 TEST_CASE( "Stratum combine() mass conservation", "[stratum]" ) {
   	std::mt19937 generator(2);
   	const std::size_t M = 15;
-	Stratum<M> a = get_random<M>(generator);
-	Stratum<M> b = get_random<M>(generator);
+	rock::Stratum<M> a = rock::get_random<M>(generator);
+	rock::Stratum<M> b = rock::get_random<M>(generator);
 
-	Stratum<M> ab;
+	rock::Stratum<M> ab;
 	combine(a, b, ab);
 
     SECTION("the result of passing two valid Stratum objects to combine() must produce a valid Stratum with equivalent mass"){
@@ -127,14 +127,14 @@ TEST_CASE( "Stratum combine() mass conservation", "[stratum]" ) {
 TEST_CASE( "Stratum combine() identity", "[stratum]" ) {
   	std::mt19937 generator(2);
   	const std::size_t M = 15;
-	Stratum<M> a = get_random<M>(generator);
+	rock::Stratum<M> a = rock::get_random<M>(generator);
 	// default constructor is required to be identity
-	Stratum<M> b;
+	rock::Stratum<M> b;
 	// test to make sure that any stratum with zero mass is an identity, 
 	// regardless of grain type distribution within mass pools 
 	b.minerals[0].grain_type_relative_volume[0] = 1000.0f;
 
-	Stratum<M> ab;
+	rock::Stratum<M> ab;
 	combine(a, b, ab);
 
     SECTION("there is a value that can be passed to combine() that produces the original Stratum"){
