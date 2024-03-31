@@ -888,40 +888,50 @@ namespace si{
     // customize formatting for area and volume, which follow separate rules for prefix conversion
     if( M1 != 0 && (KG1|S1|K1|MOL1|A1|CD1) == 0)
     {
-      T1 increment = 3.0*M1;
-      T1 prefix_id = std::floor(std::log10(absraw)/increment); prefix_id = std::abs(prefix_id) < N? prefix_id : 0;
-      std::string prefixed_value = std::to_string(raw / std::pow(10.0, increment*std::min(T1(N), prefix_id)));
+      T1 logincrement = 3.0*M1;
+      T1 prefix_id = std::floor(std::log10(absraw)/logincrement); prefix_id = std::abs(prefix_id) < N? prefix_id : 0;
+      std::string prefixed_value = std::to_string(raw / std::pow(10.0, logincrement*std::min(T1(N), prefix_id)));
       std::string prefix(prefixes[int(prefix_id)+N]);
       return prefixed_value + " " + (M1<0? "1/":"") + prefix + "m" + (std::abs(M1)!=1? std::to_string(std::abs(M1)) : "");
     }
     // customize formatting for mass, which must be converted to grams
     if( KG1 != 0 && (M1|S1|K1|MOL1|A1|CD1) == 0)
     {
-      T1 increment = 3.0*KG1;
-      T1 prefix_id = std::floor(std::log10(absraw)/increment); prefix_id = std::abs(prefix_id) < N? prefix_id : 0;
-      std::string prefixed_value = std::to_string(raw / std::pow(10.0, increment*std::min(T1(N), prefix_id)));
+      T1 logincrement = 3.0*KG1;
+      T1 prefix_id = std::floor(std::log10(absraw)/logincrement); prefix_id = std::abs(prefix_id) < N? prefix_id : 0;
+      std::string prefixed_value = std::to_string(raw / std::pow(10.0, logincrement*std::min(T1(N), prefix_id)));
       std::string prefix(prefixes[int(prefix_id)+KG1+N]);
       return prefixed_value + " " + (KG1<0? "1/":"") + prefix + "g" + (std::abs(KG1)!=1? std::to_string(std::abs(KG1)) : "");
     }
     // customize formatting for temperature, which conventionally avoids the "kilo" suffix
     if( K1 == 1 && (M1|KG1|S1|MOL1|A1|CD1) == 0)
     {
-      T1 increment = 3.0*K1;
-      T1 prefix_id = std::floor(std::log10(absraw)/increment); prefix_id = std::abs(prefix_id) < N? prefix_id : 0;
+      T1 logincrement = 3.0*K1;
+      T1 prefix_id = std::floor(std::log10(absraw)/logincrement); prefix_id = std::abs(prefix_id) < N? prefix_id : 0;
       prefix_id = prefixes[int(prefix_id)+N] == "k"? prefix_id - 1 : prefix_id;
-      std::string prefixed_value =  std::to_string(raw / std::pow(10.0, increment*std::min(T1(N), prefix_id)));
+      std::string prefixed_value =  std::to_string(raw / std::pow(10.0, logincrement*std::min(T1(N), prefix_id)));
       std::string prefix(prefixes[int(prefix_id)+N]);
       return prefixed_value + " " + prefix + "K";
     }
     // customize formatting for time, which must be converted to years
     if( S1 == 1 && (M1|KG1|K1|MOL1|A1|CD1) == 0)
     {
-      T1 increment = 3.0*S1;
-      const T1 seconds_in_year = year/second;
-      T1 seconds       = absraw > seconds_in_year? seconds_in_year : T1(1);
-      std::string unit = absraw > seconds_in_year? "yr" : "s";
-      T1 prefix_id = std::floor(std::log10(absraw/seconds)/increment); prefix_id = std::abs(prefix_id) < N? prefix_id : 0;
-      std::string prefixed_value = std::to_string(raw / seconds / std::pow(10.0, increment*std::min(T1(N), prefix_id)));
+      T1 logincrement = 3.0*S1;
+      using pair = std::pair<T1, std::string>;
+      std::array<pair, 3> named_intervals {
+        pair(day/second,  "dy"),
+        pair(week/second, "wk"),
+        pair(year/second, "yr"),
+      };
+      T1 interval(1);
+      std::string unit = "s";
+      for(std::size_t i(0); i < named_intervals.size(); ++i)
+      {
+        interval = absraw > named_intervals[i].first? named_intervals[i].first  : interval;
+        unit     = absraw > named_intervals[i].first? named_intervals[i].second : unit;
+      }
+      T1 prefix_id = std::floor(std::log10(absraw/interval)/logincrement); prefix_id = std::abs(prefix_id) < N? prefix_id : 0;
+      std::string prefixed_value = std::to_string(raw / interval / std::pow(10.0, logincrement*std::min(T1(N), prefix_id)));
       std::string prefix(prefixes[int(prefix_id)+N]);
       return prefixed_value + " " + (S1<0? "1/":"") + prefix + unit + (std::abs(S1)!=1? std::to_string(std::abs(S1)) : "");
     }
@@ -945,9 +955,9 @@ namespace si{
     {
       if(named_mks[i].first == std::array<int,3>{M1,KG1,S1})
       {
-        T1 increment = 3.0;
-        T1 prefix_id = std::floor(std::log10(absraw)/increment); prefix_id = std::abs(prefix_id) < N? prefix_id : 0;
-        std::string prefixed_value =  std::to_string(raw / std::pow(10.0, increment*std::min(T1(N), prefix_id)));
+        T1 logincrement = 3.0;
+        T1 prefix_id = std::floor(std::log10(absraw)/logincrement); prefix_id = std::abs(prefix_id) < N? prefix_id : 0;
+        std::string prefixed_value =  std::to_string(raw / std::pow(10.0, logincrement*std::min(T1(N), prefix_id)));
         std::string prefix(prefixes[int(prefix_id)+N]);
         std::string result = prefixed_value + " " + prefix;
         result += named_mks[i].second;
