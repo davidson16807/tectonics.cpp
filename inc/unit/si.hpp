@@ -884,41 +884,46 @@ namespace si{
 
     const int N = 10;
     std::array<std::string, 2*N+1> prefixes {"q","r","y","z","a","f","p","n","μ","m","","k","M","G","T","P","E","Z","Y","R","Q"};
-    T1 prefix_id = std::floor(std::log10(absraw)/3.0); prefix_id = std::abs(prefix_id) < N? prefix_id : 0;
 
     // customize formatting for area and volume, which follow separate rules for prefix conversion
     if( M1 != 0 && (KG1|S1|K1|MOL1|A1|CD1) == 0)
     {
-      T1 prefix_id = std::floor(std::log10(absraw)/3.0); prefix_id = std::abs(prefix_id) < N? prefix_id : 0;
-      std::string prefixed_value = std::to_string(raw / std::pow(1000.0, M1*std::min(T1(N), prefix_id)));
+      T1 increment = 3.0*M1;
+      T1 prefix_id = std::floor(std::log10(absraw)/increment); prefix_id = std::abs(prefix_id) < N? prefix_id : 0;
+      std::string prefixed_value = std::to_string(raw / std::pow(10.0, increment*std::min(T1(N), prefix_id)));
       std::string prefix(prefixes[int(prefix_id)+N]);
       return prefixed_value + " " + (M1<0? "1/":"") + prefix + "m" + (std::abs(M1)!=1? std::to_string(std::abs(M1)) : "");
     }
     // customize formatting for mass, which must be converted to grams
     if( KG1 != 0 && (M1|S1|K1|MOL1|A1|CD1) == 0)
     {
-      T1 prefix_id = std::floor(std::log10(absraw)/3.0); prefix_id = std::abs(prefix_id) < N? prefix_id : 0;
-      std::string prefixed_value = std::to_string(raw / std::pow(1000.0, KG1*std::min(T1(N), prefix_id)));
+      T1 increment = 3.0*KG1;
+      T1 prefix_id = std::floor(std::log10(absraw)/increment); prefix_id = std::abs(prefix_id) < N? prefix_id : 0;
+      std::string prefixed_value = std::to_string(raw / std::pow(10.0, increment*std::min(T1(N), prefix_id)));
       std::string prefix(prefixes[int(prefix_id)+KG1+N]);
       return prefixed_value + " " + (KG1<0? "1/":"") + prefix + "g" + (std::abs(KG1)!=1? std::to_string(std::abs(KG1)) : "");
     }
     // customize formatting for temperature, which conventionally avoids the "kilo" suffix
     if( K1 == 1 && (M1|KG1|S1|MOL1|A1|CD1) == 0)
     {
-      T1 prefix_id = std::floor(std::log10(absraw)/3.0); prefix_id = std::abs(prefix_id) < N? prefix_id : 0;
+      T1 increment = 3.0*K1;
+      T1 prefix_id = std::floor(std::log10(absraw)/increment); prefix_id = std::abs(prefix_id) < N? prefix_id : 0;
       prefix_id = prefixes[int(prefix_id)+N] == "k"? prefix_id - 1 : prefix_id;
-      std::string prefixed_value =  std::to_string(raw / std::pow(1000.0, std::min(T1(N), prefix_id)));
+      std::string prefixed_value =  std::to_string(raw / std::pow(10.0, increment*std::min(T1(N), prefix_id)));
       std::string prefix(prefixes[int(prefix_id)+N]);
       return prefixed_value + " " + prefix + "K";
     }
-
-    // customize formatting for mass, which must be converted to years
+    // customize formatting for time, which must be converted to years
     if( S1 == 1 && (M1|KG1|K1|MOL1|A1|CD1) == 0)
     {
-      T1 prefix_id = std::floor(std::log10(absraw/(year/second))/3.0); prefix_id = std::abs(prefix_id) < N? prefix_id : 0;
-      std::string prefixed_value = std::to_string(raw / (year/second) / std::pow(1000.0, S1*std::min(T1(N), prefix_id)));
-      std::string prefix(prefixes[int(prefix_id)+S1+N]);
-      return prefixed_value + " " + (S1<0? "1/":"") + prefix + "yr" + (std::abs(S1)!=1? std::to_string(std::abs(S1)) : "");
+      T1 increment = 3.0*S1;
+      const T1 seconds_in_year = year/second;
+      T1 seconds       = absraw > seconds_in_year? seconds_in_year : T1(1);
+      std::string unit = absraw > seconds_in_year? "yr" : "s";
+      T1 prefix_id = std::floor(std::log10(absraw/seconds)/increment); prefix_id = std::abs(prefix_id) < N? prefix_id : 0;
+      std::string prefixed_value = std::to_string(raw / seconds / std::pow(10.0, increment*std::min(T1(N), prefix_id)));
+      std::string prefix(prefixes[int(prefix_id)+N]);
+      return prefixed_value + " " + (S1<0? "1/":"") + prefix + unit + (std::abs(S1)!=1? std::to_string(std::abs(S1)) : "");
     }
 
     using mks = std::array<int,3>;
@@ -940,8 +945,9 @@ namespace si{
     {
       if(named_mks[i].first == std::array<int,3>{M1,KG1,S1})
       {
-        T1 prefix_id = std::floor(std::log10(absraw)/3.0); prefix_id = std::abs(prefix_id) < N? prefix_id : 0;
-        std::string prefixed_value =  std::to_string(raw / std::pow(1000.0, std::min(T1(N), prefix_id)));
+        T1 increment = 3.0;
+        T1 prefix_id = std::floor(std::log10(absraw)/increment); prefix_id = std::abs(prefix_id) < N? prefix_id : 0;
+        std::string prefixed_value =  std::to_string(raw / std::pow(10.0, increment*std::min(T1(N), prefix_id)));
         std::string prefix(prefixes[int(prefix_id)+N]);
         std::string result = prefixed_value + " " + prefix;
         result += named_mks[i].second;
