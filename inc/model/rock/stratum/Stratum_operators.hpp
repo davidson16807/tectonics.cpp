@@ -7,15 +7,15 @@
 #include <array>
 
 // in-house libraries
-#include <model/rock/mineral/Mineral_operators.hpp>
+#include <model/rock/mineral/Mineral.hpp>
 #include "Stratum.hpp"
 
-namespace stratum
+namespace rock
 {
     
     // OPERATORS, regular functions of the form: Stratum x Stratum -> Stratum
     template<std::size_t M>
-    static void scale(const Stratum<M>& a, float scalar, Stratum<M>& output)
+    static void scale(const rock::Stratum<M>& a, float scalar, rock::Stratum<M>& output)
     {
         output = a;
         for (std::size_t i=0; i<M; i++)
@@ -26,9 +26,9 @@ namespace stratum
 
     template<std::size_t M>
     static void combine(
-        const Stratum<M>& a, 
-        const Stratum<M>& b, 
-        Stratum<M>& output
+        const rock::Stratum<M>& a, 
+        const rock::Stratum<M>& b, 
+        rock::Stratum<M>& output
     ) {
         for (std::size_t i=0; i<M; i++)
         {

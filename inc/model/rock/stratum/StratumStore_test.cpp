@@ -3,28 +3,31 @@
 #include <catch/catch.hpp>
 
 #include "StratumStore.hpp"
-#include "Stratum_test_utils.hpp"
+#include "_test_utils.hpp"
 
-using namespace stratum;
 
-TEST_CASE( "StratumStore pack/unpack invertibility", "[stratum]" ) {
-  	std::mt19937 generator(2);
+TEST_CASE( "StratumStore pack/unpack invertibility", "[rock]" ) {
   	const std::size_t M = 15;
 
-	Stratum<M> original = stratum::get_random<M>(generator);
+    rock::StratumAdapter<M> inexact;
 
-	StratumStore<M> stratum_mineral_store;
-	stratum_mineral_store.pack(original);
+  	std::mt19937 generator(2);
+	rock::Stratum<M> e;
+  	std::vector<rock::Stratum<M>> stratums{
+		rock::get_random<M>(generator), 
+		rock::get_random<M>(generator), 
+		e
+	};
 
-	Stratum<M> reconstructed = stratum::get_random<M>(generator);
-	stratum_mineral_store.unpack(reconstructed);
+    REQUIRE(test::left_invertibility(inexact,
+    	"unpack", [=](auto x){ rock::Stratum<M>      out; x.unpack(out); return out; }, 
+    	"pack",   [=](auto x){ rock::StratumStore<M> out; out.pack(x);   return out; }, 
+    	stratums));
 
-    SECTION("packing a Stratum object then unpacking it must reproduce the original object to within defined tolerances"){
-		STRATUM_EQUAL(original, reconstructed)
-	}
 }
-TEST_CASE( "StratumStore memory constraints", "[strata]" ) {
+
+TEST_CASE( "StratumStore memory constraints", "[rock]" ) {
     SECTION("a StratumStore must fit within an expected memory footprint for a given number of layers and mass pools"){
-		CHECK(sizeof(StratumStore<15>) <= 188); //bytes
+		CHECK(sizeof(rock::StratumStore<15>) <= 188); //bytes
 	}
 }

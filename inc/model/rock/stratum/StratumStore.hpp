@@ -14,7 +14,7 @@
 #include <model/rock/mineral/MineralStore.hpp>
 #include "Stratum.hpp"
 
-namespace stratum
+namespace rock
 {
     /*
     `StratumStore` is a memory efficient variant of the 
@@ -64,16 +64,16 @@ namespace stratum
         {
             return exp2(std::numeric_limits<std::uint16_t>::max()/log2_ref_temperature) * si::kelvin;
         } 
-        static si::pressure<double> pressure_max    ()
+        static si::pressure<double> pressure_max()
         {
             return exp2(std::numeric_limits<std::uint16_t>::max()/log2_ref_pressure) * si::pascal;
         } 
 
-        static si::temperature<double> temperature_min ()
+        static si::temperature<double> temperature_min()
         {
             return exp2(0./log2_ref_temperature) * si::kelvin;
         } 
-        static si::pressure<double> pressure_min    ()
+        static si::pressure<double> pressure_min()
         {
             return exp2(0./log2_ref_pressure) * si::pascal;
         } 

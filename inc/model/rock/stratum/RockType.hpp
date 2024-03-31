@@ -1,6 +1,6 @@
 #pragma once
 
-namespace stratum
+namespace rock
 {
 
     /*

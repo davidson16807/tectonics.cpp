@@ -146,7 +146,7 @@ namespace test {
         bool valid(const Adapter& adapter, const many<A>& as) const {
             return 
 
-            discernability (adapter,           as)         &&
+            discernability (adapter,            as)                    &&
             determinism    (adapter,            f_name, f, as, as)     &&
             associativity  (adapter,            f_name, f, as, as, as) &&
             binary_identity(adapter, e_name, e, f_name, f, as)         &&

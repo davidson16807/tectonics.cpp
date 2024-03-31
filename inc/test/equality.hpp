@@ -21,8 +21,8 @@ namespace test {
                 auto rhs_value = rhs(a);
                 return Results(adapter.equal(lhs_value, rhs_value),
                     "such that: \n  " + lhs_name + " = " + rhs_name + "\n" + 
-                    lhs_name+" : " + indent(adapter.print(lhs_value), "  ")+"\n" +
-                    rhs_name+" : " + indent(adapter.print(rhs_value), "  "));
+                    lhs_name+" : " + indent(adapter.print(lhs_value), "    ")+"\n" +
+                    rhs_name+" : " + indent(adapter.print(rhs_value), "    "));
             }, as);
     }
 
@@ -37,8 +37,8 @@ namespace test {
                 auto rhs_value = rhs(a, b);
                 return Results(adapter.equal(lhs_value, rhs_value),
                     "such that: \n  " + lhs_name + " = " + rhs_name + "\n" + 
-                    lhs_name+" : " + indent(adapter.print(lhs_value), "  ")+"\n" +
-                    rhs_name+" : " + indent(adapter.print(rhs_value), "  "));
+                    lhs_name+" : " + indent(adapter.print(lhs_value), "    ")+"\n" +
+                    rhs_name+" : " + indent(adapter.print(rhs_value), "    "));
             }, as, bs);
     }
 
@@ -53,8 +53,8 @@ namespace test {
                 auto rhs_value = rhs(a, b, c);
                 return Results(adapter.equal(lhs_value, rhs_value),
                     "such that: \n  " + lhs_name + " = " + rhs_name + "\n" + 
-                    lhs_name+" : " + indent(adapter.print(lhs_value), "  ")+"\n" +
-                    rhs_name+" : " + indent(adapter.print(rhs_value), "  "));
+                    lhs_name+" : " + indent(adapter.print(lhs_value), "    ")+"\n" +
+                    rhs_name+" : " + indent(adapter.print(rhs_value), "    "));
             }, as, bs, cs);
     }
 

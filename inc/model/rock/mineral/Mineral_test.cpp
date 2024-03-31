@@ -15,7 +15,7 @@
 
 #include <test/structures/grouplike.hpp>
 
-TEST_CASE( "Mineral combine() commutative monoid", "[mineral]" ) {
+TEST_CASE( "Mineral combine() commutative monoid", "[rock]" ) {
 
     rock::MineralAdapter inexact;
 
@@ -53,7 +53,7 @@ TEST_CASE( "Mineral combine() closure", "[mineral]" ) {
             rock::Mineral fab;
             rock::combine(a,b,fab);
             return test::Results(inexact.is_valid(fab),
-                "combine(a,b): " + inexact.print(fab)
+                "combine(a,b): " + test::indent(inexact.print(fab), "  ")
             );
         }, minerals, minerals));
 }

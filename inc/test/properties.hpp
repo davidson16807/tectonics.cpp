@@ -88,8 +88,8 @@ namespace test {
             [=](auto a){
                 auto fea = f(e,a);
                 return Results(adapter.equal(fea, a),
-                    "f(e,a) : " + adapter.print(fea)+"\n" +
-                    "e : " + adapter.print(e)
+                    "f(e,a) : " + indent(adapter.print(fea), "  ")+"\n" +
+                    "e : " + indent(adapter.print(e), "  ")
                 );
             }, as);
     }
@@ -106,9 +106,9 @@ namespace test {
             [=](auto a){
                 auto fae = f(a,e);
                 return Results(adapter.equal(fae, a),
-                    "f(a,e) : " + adapter.print(fae)+"\n" +
-                    "e : " + adapter.print(e)
-                );
+                    "f(a,e) : " + indent(adapter.print(fae), "  ")+"\n" +
+                    "e : " + indent(adapter.print(e)
+                    , "  ")                );
             }, as);
     }
 
@@ -149,9 +149,9 @@ namespace test {
             [=](auto a){
                 auto fza = f(z,a);
                 return Results(adapter.equal(fza, a),
-                    "f(a,z) : " + adapter.print(fza)+"\n" +
-                    "z : " + adapter.print(z)
-                );
+                    "f(a,z) : " + indent(adapter.print(fza), "  ")+"\n" +
+                    "z : " + indent(adapter.print(z)
+                    , "  ")                );
             }, as);
     }
 
@@ -167,9 +167,9 @@ namespace test {
             [=](auto a){
                 auto faz = f(a,z);
                 return Results(adapter.equal(faz, a),
-                    "f(a,z) : " + adapter.print(faz)+"\n" +
-                    "z : " + adapter.print(z)
-                );
+                    "f(a,z) : " + indent(adapter.print(faz), "  ")+"\n" +
+                    "z : " + indent(adapter.print(z)
+                    , "  ")                );
             }, as);
     }
 
@@ -199,8 +199,8 @@ namespace test {
                 auto fa = f(a);
                 auto finvfa = finv(fa);
                 return Results(adapter.equal(finvfa, a),
-                    "f⁻¹(f(a)) : " + adapter.print(finvfa)+"\n" +
-                    "f(a) : " + adapter.print(fa)
+                    "f⁻¹(f(a)) : " + indent(adapter.print(finvfa), "  ")+"\n" +
+                    "f(a) : " + indent(adapter.print(fa), "  ")
                 );
             }, as);
     }
@@ -230,10 +230,10 @@ namespace test {
                 auto finvea = finv(e,a);
                 auto ffinveaa = f(finvea, a);
                 return Results(adapter.equal(ffinveaa, e),
-                    "f(f⁻¹(e,a),a) : " + adapter.print(ffinveaa)+"\n" +
-                    "f⁻¹(e,a) : " + adapter.print(finvea)+"\n" +
-                    "e : " + adapter.print(e)
-                );
+                    "f(f⁻¹(e,a),a) : " + indent(adapter.print(ffinveaa), "  ")+"\n" +
+                    "f⁻¹(e,a) : " + indent(adapter.print(finvea), "  ")+"\n" +
+                    "e : " + indent(adapter.print(e)
+                    , "  ")                );
             }, as);
     }
 
@@ -251,10 +251,10 @@ namespace test {
                 auto finvea = finv(e,a);
                 auto fafinvea = f(a, finvea);
                 return Results(adapter.equal(fafinvea, e),
-                    "f(a,f⁻¹(e,a)) : " + adapter.print(fafinvea)+"\n" +
-                    "f⁻¹(e,a) : " + adapter.print(finvea)+"\n" +
-                    "e : " + adapter.print(e)
-                );
+                    "f(a,f⁻¹(e,a)) : " + indent(adapter.print(fafinvea), "  ")+"\n" +
+                    "f⁻¹(e,a) : " + indent(adapter.print(finvea), "  ")+"\n" +
+                    "e : " + indent(adapter.print(e)
+                    , "  ")                );
             }, as);
     }
 
@@ -281,13 +281,36 @@ namespace test {
             [=](auto a, auto b, auto c){
                 auto fab = f(a,b);
                 auto fbc = f(b,c);
-                auto ffab_c = f(f(a,b), c);
-                auto fa_fbc = f(a, f(b,c));
+                auto ffab_c = f(fab, c);
+                auto fa_fbc = f(a, fbc);
                 return Results(adapter.equal(ffab_c, fa_fbc),
-                    "f(f(a,b), c) : " + adapter.print(ffab_c) + "\n" +
-                    "f(a, f(b,c)) : " + adapter.print(fa_fbc) + "\n" +
-                    "f(a,b) : " + adapter.print(fab) + "\n" +
-                    "f(b,c) : " + adapter.print(fbc) + "\n");
+                    "f(f(a,b), c) : " + indent(adapter.print(ffab_c), "  ") + "\n" +
+                    "f(a, f(b,c)) : " + indent(adapter.print(fa_fbc), "  ") + "\n" +
+                    "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n" +
+                    "f(b,c) : " + indent(adapter.print(fbc), "  ") + "\n");
+            }, as, bs, cs);
+    }
+
+    template<typename Adapter, typename F, typename FL, typename FR, typename A, typename B, typename C>
+    bool associativity(const Adapter& adapter, 
+        const std::string f_name,  const F& f, 
+        const std::string fl_name, const FL& fl, 
+        const std::string fr_name, const FR& fr, 
+        const A& as, const B& bs, const C& cs
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must allow invocations to be calculated in any order without changing results"+
+            "\nsuch that: \n  f(f(a,b), c) = f(a, f(b,c))\n",
+            [=](auto a, auto b, auto c){
+                auto fab = fl(a,b);
+                auto fbc = fr(b,c);
+                auto ffab_c = f(fab, c);
+                auto fa_fbc = f(a, fbc);
+                return Results(adapter.equal(ffab_c, fa_fbc),
+                    "f(f(a,b), c) : " + indent(adapter.print(ffab_c), "  ") + "\n" +
+                    "f(a, f(b,c)) : " + indent(adapter.print(fa_fbc), "  ") + "\n" +
+                    "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n" +
+                    "f(b,c) : " + indent(adapter.print(fbc), "  ") + "\n");
             }, as, bs, cs);
     }
 
@@ -305,9 +328,9 @@ namespace test {
                 auto ffab_c = f2(fab, c);
                 auto fabc = f3(a,b,c);
                 return Results(adapter.equal(ffab_c, fabc),
-                    "f(a, b, c) : " + adapter.print(fabc) + "\n" +
-                    "f(f(a,b), c) : " + adapter.print(ffab_c) + "\n" +
-                    "f(a,b) : " + adapter.print(fab) + "\n"
+                    "f(a, b, c) : " + indent(adapter.print(fabc), "  ") + "\n" +
+                    "f(f(a,b), c) : " + indent(adapter.print(ffab_c), "  ") + "\n" +
+                    "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n"
                 );
             }, as, bs, cs);
     }
@@ -326,9 +349,9 @@ namespace test {
                 auto fa_fbc = f2(a, fbc);
                 auto fabc = f3(a,b,c);
                 return Results(adapter.equal(fa_fbc, fabc),
-                    "f(a, b, c) : " + adapter.print(fabc) + "\n" +
-                    "f(a,f(b,c)) : " + adapter.print(fa_fbc) + "\n" +
-                    "f(b,c) : " + adapter.print(fbc) + "\n"
+                    "f(a, b, c) : " + indent(adapter.print(fabc), "  ") + "\n" +
+                    "f(a,f(b,c)) : " + indent(adapter.print(fa_fbc), "  ") + "\n" +
+                    "f(b,c) : " + indent(adapter.print(fbc), "  ") + "\n"
                 );
             }, as, bs, cs);
     }
@@ -346,9 +369,9 @@ namespace test {
                 auto fa_faa = f(a, faa);
                 auto ffaa_a = f(f(a,a),a);
                 return Results(adapter.equal(fa_faa, ffaa_a),
-                    "f(a, f(a,a)) : " + adapter.print(fa_faa) + "\n" +
-                    "f(f(a,a), a) : " + adapter.print(ffaa_a) + "\n" +
-                    "f(a,a) : " + adapter.print(faa) + "\n"
+                    "f(a, f(a,a)) : " + indent(adapter.print(fa_faa), "  ") + "\n" +
+                    "f(f(a,a), a) : " + indent(adapter.print(ffaa_a), "  ") + "\n" +
+                    "f(a,a) : " + indent(adapter.print(faa), "  ") + "\n"
                 );
             }, as);
     }
@@ -367,10 +390,10 @@ namespace test {
                 auto fa_fab = f(a, fab);
                 auto ffaa_b = f(faa,b);
                 return Results(adapter.equal(fa_fab, ffaa_b),
-                    "f(a, f(a,b)) : " + adapter.print(fa_fab) + "\n" +
-                    "f(f(a,a), b) : " + adapter.print(ffaa_b) + "\n" +
-                    "f(a,a) : " + adapter.print(faa) + "\n"
-                    "f(a,b) : " + adapter.print(fab) + "\n"
+                    "f(a, f(a,b)) : " + indent(adapter.print(fa_fab), "  ") + "\n" +
+                    "f(f(a,a), b) : " + indent(adapter.print(ffaa_b), "  ") + "\n" +
+                    "f(a,a) : " + indent(adapter.print(faa), "  ") + "\n"
+                    "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n"
                 );
             }, as, bs);
     }
@@ -389,10 +412,10 @@ namespace test {
                 auto fa_fbb = f(a, fbb);
                 auto ffab_b = f(fab,b);
                 return Results(adapter.equal(fa_fbb, ffab_b),
-                    "f(a, f(b,b)) : " + adapter.print(fa_fbb) + "\n" +
-                    "f(f(a,b), b) : " + adapter.print(ffab_b) + "\n" +
-                    "f(a,b) : " + adapter.print(fab) + "\n"
-                    "f(b,b) : " + adapter.print(fbb) + "\n"
+                    "f(a, f(b,b)) : " + indent(adapter.print(fa_fbb), "  ") + "\n" +
+                    "f(f(a,b), b) : " + indent(adapter.print(ffab_b), "  ") + "\n" +
+                    "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n"
+                    "f(b,b) : " + indent(adapter.print(fbb), "  ") + "\n"
                 );
             }, as, bs);
     }
@@ -421,10 +444,10 @@ namespace test {
                 auto fa_fba = f(a, fba);
                 auto ffab_a = f(fab,a);
                 return Results(adapter.equal(fa_fba, ffab_a),
-                    "f(a, f(b,a)) : " + adapter.print(fa_fba) + "\n" +
-                    "f(f(a,b), a) : " + adapter.print(ffab_a) + "\n" +
-                    "f(a,b) : " + adapter.print(fab) + "\n" +
-                    "f(b,a) : " + adapter.print(fba) + "\n"
+                    "f(a, f(b,a)) : " + indent(adapter.print(fa_fba), "  ") + "\n" +
+                    "f(f(a,b), a) : " + indent(adapter.print(ffab_a), "  ") + "\n" +
+                    "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n" +
+                    "f(b,a) : " + indent(adapter.print(fba), "  ") + "\n"
                 );
             }, as, bs);
     }
@@ -472,11 +495,11 @@ namespace test {
                 auto f_c_gab = f(c, gab);
                 auto g_fca_fcb = g(fca,fcb);
                 return Results(adapter.equal(f_c_gab, g_fca_fcb),
-                    "f(c, g(a, b))     : " + adapter.print(f_c_gab) + "\n" +
-                    "g(f(c,a), f(c,b)) : " + adapter.print(g_fca_fcb) + "\n" +
-                    "g(a,b) : " + adapter.print(gab) + "\n" +
-                    "f(c,a) : " + adapter.print(fca) + "\n" +
-                    "f(c,b) : " + adapter.print(fcb) + "\n"
+                    "f(c, g(a, b))     : " + indent(adapter.print(f_c_gab), "  ") + "\n" +
+                    "g(f(c,a), f(c,b)) : " + indent(adapter.print(g_fca_fcb), "  ") + "\n" +
+                    "g(a,b) : " + indent(adapter.print(gab), "  ") + "\n" +
+                    "f(c,a) : " + indent(adapter.print(fca), "  ") + "\n" +
+                    "f(c,b) : " + indent(adapter.print(fcb), "  ") + "\n"
                 );
             }, as, bs, cs);
     }
@@ -497,11 +520,11 @@ namespace test {
                 auto f_gab_c = f(c, gab);
                 auto g_fac_fbc = g(fac,fbc);
                 return Results(adapter.equal(f_gab_c, g_fac_fbc),
-                    "f(g(a,b), c)     : " + adapter.print(f_gab_c) + "\n" +
-                    "g(f(a,c), f(b,c)) : " + adapter.print(g_fac_fbc) + "\n" +
-                    "g(a,b) : " + adapter.print(gab) + "\n" +
-                    "f(a,c) : " + adapter.print(fac) + "\n" +
-                    "f(b,c) : " + adapter.print(fbc) + "\n"
+                    "f(g(a,b), c)     : " + indent(adapter.print(f_gab_c), "  ") + "\n" +
+                    "g(f(a,c), f(b,c)) : " + indent(adapter.print(g_fac_fbc), "  ") + "\n" +
+                    "g(a,b) : " + indent(adapter.print(gab), "  ") + "\n" +
+                    "f(a,c) : " + indent(adapter.print(fac), "  ") + "\n" +
+                    "f(b,c) : " + indent(adapter.print(fbc), "  ") + "\n"
                 );
             }, as, bs, cs);
     }
@@ -533,11 +556,11 @@ namespace test {
                 auto gab = g(a,b);
                 auto fgab = f(gab);
                 return Results(adapter.equal(fgab, gfafb),
-                    "f(g(a,b)) : " + adapter.print(fgab) + "\n" +
-                    "g(a,b) : " + adapter.print(gab) + "\n" +
-                    "g(f(a),f(b)) : " + adapter.print(gfafb) + "\n" +
-                    "f(a) : " + adapter.print(fa) + "\n" +
-                    "f(b) : " + adapter.print(fb) + "\n"
+                    "f(g(a,b)) : " + indent(adapter.print(fgab), "  ") + "\n" +
+                    "g(a,b) : " + indent(adapter.print(gab), "  ") + "\n" +
+                    "g(f(a),f(b)) : " + indent(adapter.print(gfafb), "  ") + "\n" +
+                    "f(a) : " + indent(adapter.print(fa), "  ") + "\n" +
+                    "f(b) : " + indent(adapter.print(fb), "  ") + "\n"
                 );
             }, as, bs);
     }
@@ -561,11 +584,11 @@ namespace test {
                 auto fb = f(b);
                 auto fa_fb = add2(fa,fb);
                 return Results(adapter.equal(fab, fa_fb),
-                    "f(a+b)    : " + adapter.print(fab) + "\n" +
-                    "f(a)+f(b) : " + adapter.print(fa_fb) + "\n" +
-                    "a+b  : " + adapter.print(ab) + "\n" +
-                    "f(a) : " + adapter.print(fa) + "\n" +
-                    "f(b) : " + adapter.print(fb) + "\n"
+                    "f(a+b)    : " + indent(adapter.print(fab), "  ") + "\n" +
+                    "f(a)+f(b) : " + indent(adapter.print(fa_fb), "  ") + "\n" +
+                    "a+b  : " + indent(adapter.print(ab), "  ") + "\n" +
+                    "f(a) : " + indent(adapter.print(fa), "  ") + "\n" +
+                    "f(b) : " + indent(adapter.print(fb), "  ") + "\n"
                 );
             }, as, bs);
     }
@@ -586,10 +609,10 @@ namespace test {
                 auto fb = f(b);
                 auto afb = mult2(a,fb);
                 return Results(adapter.equal(fab, afb),
-                    "f(a*b) : " + adapter.print(fab) + "\n" +
-                    "a*f(b) : " + adapter.print(afb) + "\n" +
-                    "a*b  : " + adapter.print(ab) + "\n" +
-                    "f(b) : " + adapter.print(fb) + "\n"
+                    "f(a*b) : " + indent(adapter.print(fab), "  ") + "\n" +
+                    "a*f(b) : " + indent(adapter.print(afb), "  ") + "\n" +
+                    "a*b  : " + indent(adapter.print(ab), "  ") + "\n" +
+                    "f(b) : " + indent(adapter.print(fb), "  ") + "\n"
                 );
             }, as, bs);
     }
@@ -610,9 +633,9 @@ namespace test {
                 auto f_ga = f(ga);
                 auto fg_a = fg(a);
                 return Results(adapter.equal(f_ga, fg_a),
-                    "f(g(a)) : " + adapter.print(f_ga) + "\n" +
-                    "fg(a) : " + adapter.print(fg_a) + "\n" +
-                    "g(a) : " + adapter.print(ga) + "\n"
+                    "f(g(a)) : " + indent(adapter.print(f_ga), "  ") + "\n" +
+                    "fg(a) : " + indent(adapter.print(fg_a), "  ") + "\n" +
+                    "g(a) : " + indent(adapter.print(ga), "  ") + "\n"
                 );
             }, as);
     }
@@ -630,8 +653,8 @@ namespace test {
                 auto fa = f(a);
                 auto ffa = f(fa);
                 return Results(adapter.equal(ffa, fa),
-                    "f(a)  : " + adapter.print(fa) + "\n" +
-                    "f(f(a)) : " + adapter.print(ffa) + "\n"
+                    "f(a)  : " + indent(adapter.print(fa), "  ") + "\n" +
+                    "f(f(a)) : " + indent(adapter.print(ffa), "  ") + "\n"
                 );
             }, as);
     }
@@ -675,8 +698,8 @@ namespace test {
                 auto fa = f(a);
                 auto ffa = f(fa);
                 return Results(adapter.equal(ffa, a),
-                    "f(a)  : " + adapter.print(fa) + "\n" +
-                    "f(f(a)) : " + adapter.print(ffa) + "\n"
+                    "f(a)  : " + indent(adapter.print(fa), "  ") + "\n" +
+                    "f(f(a)) : " + indent(adapter.print(ffa), "  ") + "\n"
                 );
             }, as);
     }
@@ -693,8 +716,8 @@ namespace test {
                 auto fab = f(a,b);
                 auto fafab = f(a,fab);
                 return Results(adapter.equal(fafab, b),
-                    "f(a,b)  : " + adapter.print(fab) + "\n" +
-                    "f(a, f(a,b)) : " + adapter.print(fafab) + "\n"
+                    "f(a,b)  : " + indent(adapter.print(fab), "  ") + "\n" +
+                    "f(a, f(a,b)) : " + indent(adapter.print(fafab), "  ") + "\n"
                 );
             }, as, bs);
     }
@@ -711,8 +734,8 @@ namespace test {
                 auto fab = f(a,b);
                 auto ffabb = f(a,fab);
                 return Results(adapter.equal(ffabb, b),
-                    "f(a,b)  : " + adapter.print(fab) + "\n" +
-                    "f(f(a,b), b) : " + adapter.print(ffabb) + "\n"
+                    "f(a,b)  : " + indent(adapter.print(fab), "  ") + "\n" +
+                    "f(f(a,b), b) : " + indent(adapter.print(ffabb), "  ") + "\n"
                 );
             }, as, bs);
     }
@@ -748,15 +771,15 @@ namespace test {
                 auto abc_bca = add(a_bc,b_ca);
                 auto abc_bca_cab = add(abc_bca, c_ab);
                 return Results(adapter.equal(abc_bca_cab, n),
-                    "a×b:                     " + adapter.print(ab) + "\n" +
-                    "b×c:                     " + adapter.print(bc) + "\n" +
-                    "c×a:                     " + adapter.print(ca) + "\n" +
-                    "a×(b×c):                 " + adapter.print(a_bc) + "\n" +
-                    "b×(c×a):                 " + adapter.print(b_ca) + "\n" +
-                    "c×(a×b):                 " + adapter.print(c_ab) + "\n" +
-                    "a×(b×c)+b×(c×a):         " + adapter.print(abc_bca) + "\n" +
-                    "a×(b×c)+b×(c×a)+c×(a×b): " + adapter.print(abc_bca_cab) + "\n" +
-                    "n:           " + adapter.print(n) + "\n"
+                    "a×b:                     " + indent(adapter.print(ab), "  ") + "\n" +
+                    "b×c:                     " + indent(adapter.print(bc), "  ") + "\n" +
+                    "c×a:                     " + indent(adapter.print(ca), "  ") + "\n" +
+                    "a×(b×c):                 " + indent(adapter.print(a_bc), "  ") + "\n" +
+                    "b×(c×a):                 " + indent(adapter.print(b_ca), "  ") + "\n" +
+                    "c×(a×b):                 " + indent(adapter.print(c_ab), "  ") + "\n" +
+                    "a×(b×c)+b×(c×a):         " + indent(adapter.print(abc_bca), "  ") + "\n" +
+                    "a×(b×c)+b×(c×a)+c×(a×b): " + indent(adapter.print(abc_bca_cab), "  ") + "\n" +
+                    "n:           " + indent(adapter.print(n) , "  ")+ "\n"
                 );
             }, as, bs, cs);
     }
@@ -781,9 +804,9 @@ namespace test {
                 auto ga = g(a);
                 auto fga = f(ga);
                 return Results(adapter.equal(fga, fa),
-                    "f(a)  : " + adapter.print(fa) + "\n" +
-                    "g(a)  : " + adapter.print(ga) + "\n" +
-                    "f(g(a)) : " + adapter.print(fga) + "\n"
+                    "f(a)  : " + indent(adapter.print(fa), "  ") + "\n" +
+                    "g(a)  : " + indent(adapter.print(ga), "  ") + "\n" +
+                    "f(g(a)) : " + indent(adapter.print(fga), "  ") + "\n"
                 );
             }, as);
     }
@@ -802,9 +825,9 @@ namespace test {
                 auto ga = g(a);
                 auto fga = f(ga);
                 return Results(adapter.equal(fga, fa),
-                    "f(a)  : " + adapter.print(fa) + "\n" +
-                    "g(a)  : " + adapter.print(ga) + "\n" +
-                    "f(g(a)) : " + adapter.print(fga) + "\n"
+                    "f(a)  : " + indent(adapter.print(fa), "  ") + "\n" +
+                    "g(a)  : " + indent(adapter.print(ga), "  ") + "\n" +
+                    "f(g(a)) : " + indent(adapter.print(fga), "  ") + "\n"
                 );
             }, as);
     }
@@ -823,9 +846,9 @@ namespace test {
                 auto ga = g(a);
                 auto fga = f(ga);
                 return Results(adapter.equal(fga, fa),
-                    "f(a)  : " + adapter.print(fa) + "\n" +
-                    "g(a)  : " + adapter.print(ga) + "\n" +
-                    "f(g(a)) : " + adapter.print(fga) + "\n"
+                    "f(a)  : " + indent(adapter.print(fa), "  ") + "\n" +
+                    "g(a)  : " + indent(adapter.print(ga), "  ") + "\n" +
+                    "f(g(a)) : " + indent(adapter.print(fga), "  ") + "\n"
                 );
             }, as);
     }
@@ -844,9 +867,9 @@ namespace test {
                 auto ga = g(a);
                 auto fga = f(ga);
                 return Results(adapter.equal(fga, fa),
-                    "f(a)  : " + adapter.print(fa) + "\n" +
-                    "g(a)  : " + adapter.print(ga) + "\n" +
-                    "f(g(a)) : " + adapter.print(fga) + "\n"
+                    "f(a)  : " + indent(adapter.print(fa), "  ") + "\n" +
+                    "g(a)  : " + indent(adapter.print(ga), "  ") + "\n" +
+                    "f(g(a)) : " + indent(adapter.print(fga), "  ") + "\n"
                 );
             }, as);
     }
@@ -865,9 +888,9 @@ namespace test {
                 auto fa = f(a);
                 auto gfa = g(fa);
                 return Results(adapter.equal(gfa, ga),
-                    "g(a)  : " + adapter.print(ga) + "\n" +
-                    "f(a)  : " + adapter.print(fa) + "\n" +
-                    "g(f(a)) : " + adapter.print(gfa) + "\n"
+                    "g(a)  : " + indent(adapter.print(ga), "  ") + "\n" +
+                    "f(a)  : " + indent(adapter.print(fa), "  ") + "\n" +
+                    "g(f(a)) : " + indent(adapter.print(gfa), "  ") + "\n"
                 );
             }, as);
     }
@@ -887,7 +910,7 @@ namespace test {
             f_name + " must only produce output that is " + validity_name,
             [=](auto a){
                 auto fa = f(a);
-                std::string diagnostics = "f(a) : " + adapter.print(fa);
+                std::string diagnostics = "f(a) : " + indent(adapter.print(fa), "  ");
                 return Results(valid(fa), diagnostics); }, 
             as);
     }
@@ -903,7 +926,7 @@ namespace test {
             f_name + " must only produce output that is " + validity_name, 
             [=](auto a, auto b){
                 auto fab = f(a,b);
-                std::string diagnostics = "f(a,b) : " + adapter.print(fab);
+                std::string diagnostics = "f(a,b) : " + indent(adapter.print(fab), "  ");
                 return Results(valid(fab), diagnostics); }, 
             as, bs);
     }
@@ -919,7 +942,7 @@ namespace test {
             f_name + " must only produce output that is " + validity_name, 
             [=](auto a, auto b, auto c){
                 auto fabc = f(a,b,c);
-                std::string diagnostics = "f(a,b,c) : " + adapter.print(fabc);
+                std::string diagnostics = "f(a,b,c) : " + indent(adapter.print(fabc), "  ");
                 return Results(valid(fabc), diagnostics); }, 
             as, bs, cs);
     }
@@ -943,8 +966,8 @@ namespace test {
                 auto fac = f(a,c);
                 auto fab = f(a,b);
                 std::string diagnostics;
-                diagnostics += "f(a,c) : " + adapter.print(fac) + "\n";
-                diagnostics += "f(a,b) : " + adapter.print(fab) + "\n";
+                diagnostics += "f(a,c) : " + indent(adapter.print(fac), "  ") + "\n";
+                diagnostics += "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n";
                 return Results(adapter.equal(f(a,b), f(a,c))? adapter.equal(b,c) : true, diagnostics); 
             }, 
             as, bs, cs);
@@ -964,8 +987,8 @@ namespace test {
                 auto fca = f(c,a);
                 auto fba = f(b,a);
                 std::string diagnostics;
-                diagnostics += "f(c,a) : " + adapter.print(fca) + "\n";
-                diagnostics += "f(b,a) : " + adapter.print(fba) + "\n";
+                diagnostics += "f(c,a) : " + indent(adapter.print(fca), "  ") + "\n";
+                diagnostics += "f(b,a) : " + indent(adapter.print(fba), "  ") + "\n";
                 return Results(adapter.equal(f(a,b), f(a,c))? adapter.equal(b,c) : true, diagnostics); 
             }, 
             as, bs, cs);
@@ -1023,8 +1046,8 @@ namespace test {
                 auto rba = r(b, a);
                 std::string diagnostics;
                 diagnostics += "such that: \n  r(a,b) = r(b,a)\n";
-                diagnostics += "r(a,b) : " + adapter.print(rab) + "\n";
-                diagnostics += "r(b,a) : " + adapter.print(rba) + "\n";
+                diagnostics += "r(a,b) : " + indent(adapter.print(rab), "  ") + "\n";
+                diagnostics += "r(b,a) : " + indent(adapter.print(rba), "  ") + "\n";
                 return Results(rab==rba, diagnostics);
             }, as, bs);
     }
@@ -1042,8 +1065,8 @@ namespace test {
                 auto rba = r(b, a);
                 std::string diagnostics;
                 diagnostics += "such that: \n  r(a,b) = r(b,a)\n";
-                diagnostics += "r(a,b) : " + adapter.print(rab) + "\n";
-                diagnostics += "r(b,a) : " + adapter.print(rba) + "\n";
+                diagnostics += "r(a,b) : " + indent(adapter.print(rab), "  ") + "\n";
+                diagnostics += "r(b,a) : " + indent(adapter.print(rba), "  ") + "\n";
                 return Results(rab!=rba, diagnostics);
             }, as, bs);
     }
@@ -1063,8 +1086,8 @@ namespace test {
                 auto rac = r(a, c);
                 std::string diagnostics;
                 diagnostics += "such that: \n  r(a,b) ∧ r(b,a) implies r(a,c)\n";
-                diagnostics += "r(a,b) : " + adapter.print(rab) + "\n";
-                diagnostics += "r(b,a) : " + adapter.print(rba) + "\n";
+                diagnostics += "r(a,b) : " + indent(adapter.print(rab), "  ") + "\n";
+                diagnostics += "r(b,a) : " + indent(adapter.print(rba), "  ") + "\n";
                 return Results(rab&&rbc?rac:true, diagnostics); 
             }, as, bs, cs);
     }
@@ -1083,9 +1106,9 @@ namespace test {
                 auto rac = r(a, c);
                 std::string diagnostics;
                 diagnostics += "such that: \n  r(a,b) ∧ r(b,c) implies ¬r(a,c)\n";
-                diagnostics += "r(a,b) : " + adapter.print(rab) + "\n";
-                diagnostics += "r(b,c) : " + adapter.print(rbc) + "\n";
-                diagnostics += "r(a,c) : " + adapter.print(rbc) + "\n";
+                diagnostics += "r(a,b) : " + indent(adapter.print(rab), "  ") + "\n";
+                diagnostics += "r(b,c) : " + indent(adapter.print(rbc), "  ") + "\n";
+                diagnostics += "r(a,c) : " + indent(adapter.print(rbc), "  ") + "\n";
                 return Results(rab&&rbc?!rac:true, diagnostics); 
             }, as, bs, cs);
     }
@@ -1103,8 +1126,8 @@ namespace test {
                 auto rba = r(b, a);
                 std::string diagnostics;
                 diagnostics += "such that: \n  r(a,b) = r(b,a)\n";
-                diagnostics += "r(a,b) : " + adapter.print(rab) + "\n";
-                diagnostics += "r(b,a) : " + adapter.print(rba) + "\n";
+                diagnostics += "r(a,b) : " + indent(adapter.print(rab), "  ") + "\n";
+                diagnostics += "r(b,a) : " + indent(adapter.print(rba), "  ") + "\n";
                 return Results(rab||rba, diagnostics); 
             }, as, bs);
     }
@@ -1122,8 +1145,8 @@ namespace test {
                 auto rba = r(b, a);
                 std::string diagnostics;
                 diagnostics += "such that: \n  r(a,b) iff ¬r(b,a)\n";
-                diagnostics += "r(a,b) : " + adapter.print(rab) + "\n";
-                diagnostics += "r(b,a) : " + adapter.print(rba) + "\n";
+                diagnostics += "r(a,b) : " + indent(adapter.print(rab), "  ") + "\n";
+                diagnostics += "r(b,a) : " + indent(adapter.print(rba), "  ") + "\n";
                 return Results(rab^rba, diagnostics); 
             }, as, bs);
     }
@@ -1147,10 +1170,10 @@ namespace test {
                 auto fab_fac = add(fab, fac);
                 std::string diagnostics;
                 diagnostics += "such that: \n  f(a,c) ≤ f(a,b)+f(a,c)\n";
-                diagnostics += "f(a,c) : " + adapter.print(fac) + "\n";
-                diagnostics += "f(a,b)+f(a,c) : " + adapter.print(fab_fac) + "\n";
-                diagnostics += "f(a,b) : " + adapter.print(fab) + "\n";
-                diagnostics += "f(b,c) : " + adapter.print(fbc) + "\n";
+                diagnostics += "f(a,c) : " + indent(adapter.print(fac), "  ") + "\n";
+                diagnostics += "f(a,b)+f(a,c) : " + indent(adapter.print(fab_fac), "  ") + "\n";
+                diagnostics += "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n";
+                diagnostics += "f(b,c) : " + indent(adapter.print(fbc), "  ") + "\n";
                 return Results(leq(fac, fab_fac), diagnostics); 
             }, 
             as, bs, cs);
@@ -1174,9 +1197,9 @@ namespace test {
                 auto ga = g(a);
                 std::string diagnostics;
                 diagnostics += "such that: \n  g(f(a)) < g(a)\n";
-                diagnostics += "g(f(a)) : " + adapter.print(gfa) + "\n";
-                diagnostics += "g(a) : " + adapter.print(ga) + "\n";
-                diagnostics += "f(a) : " + adapter.print(fa) + "\n";
+                diagnostics += "g(f(a)) : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "g(a) : " + indent(adapter.print(ga), "  ") + "\n";
+                diagnostics += "f(a) : " + indent(adapter.print(fa), "  ") + "\n";
                 return Results(gfa < ga, diagnostics); 
             }, as);
     }
@@ -1196,9 +1219,9 @@ namespace test {
                 auto ga = g(a);
                 std::string diagnostics;
                 diagnostics += "such that: \n  g(f(a)) ≤ g(a)\n";
-                diagnostics += "g(f(a)) : " + adapter.print(gfa) + "\n";
-                diagnostics += "g(a) : " + adapter.print(ga) + "\n";
-                diagnostics += "f(a) : " + adapter.print(fa) + "\n";
+                diagnostics += "g(f(a)) : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "g(a) : " + indent(adapter.print(ga), "  ") + "\n";
+                diagnostics += "f(a) : " + indent(adapter.print(fa), "  ") + "\n";
                 return Results(gfa <= ga, diagnostics); 
             }, as);
     }
@@ -1218,9 +1241,9 @@ namespace test {
                 auto ga = g(a);
                 std::string diagnostics;
                 diagnostics += "such that: \n  g(a) ≤ g(f(a))\n";
-                diagnostics += "g(f(a)) : " + adapter.print(gfa) + "\n";
-                diagnostics += "g(a) : " + adapter.print(ga) + "\n";
-                diagnostics += "f(a) : " + adapter.print(fa) + "\n";
+                diagnostics += "g(f(a)) : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "g(a) : " + indent(adapter.print(ga), "  ") + "\n";
+                diagnostics += "f(a) : " + indent(adapter.print(fa), "  ") + "\n";
                 return Results(ga <= gfa, diagnostics); 
             }, as);
     }
@@ -1240,9 +1263,9 @@ namespace test {
                 auto ga = g(a);
                 std::string diagnostics;
                 diagnostics += "such that: \n  g(a) < g(f(a))\n";
-                diagnostics += "g(f(a)) : " + adapter.print(gfa) + "\n";
-                diagnostics += "g(a) : " + adapter.print(ga) + "\n";
-                diagnostics += "f(a) : " + adapter.print(fa) + "\n";
+                diagnostics += "g(f(a)) : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "g(a) : " + indent(adapter.print(ga), "  ") + "\n";
+                diagnostics += "f(a) : " + indent(adapter.print(fa), "  ") + "\n";
                 return Results(ga < gfa, diagnostics); 
             }, as);
     }

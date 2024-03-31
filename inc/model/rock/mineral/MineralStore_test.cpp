@@ -12,7 +12,7 @@
 
 #include <test/properties.hpp>
 
-TEST_CASE( "MineralStore pack/unpack invertibility", "[mineral]" ) {
+TEST_CASE( "MineralStore pack/unpack invertibility", "[rock]" ) {
     rock::MineralAdapter inexact;
 
   	std::mt19937 generator(2);

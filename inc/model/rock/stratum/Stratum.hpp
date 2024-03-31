@@ -13,7 +13,7 @@
 #include <unit/si.hpp>
 #include <model/rock/mineral/Mineral.hpp>
 
-namespace stratum
+namespace rock
 {
     /*
     "Stratum" describes the composition and texture of a single rock layer

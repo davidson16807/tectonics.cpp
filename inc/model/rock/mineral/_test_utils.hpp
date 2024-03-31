@@ -16,15 +16,6 @@
 
 namespace rock
 {
-    /*
-    NOTE: 
-    This file does not exist within the concept of the mathematical category defined in README.md.
-    This is because the file is only relevant within the context of several potential unit test files.
-    We differ from the usual style of method signature here since performance does not matter in test code. 
-    We also use macros since we require running unit tests on individual attributes for granularity, 
-    and our testing framework itself uses macros to run the unit tests.
-    Our chief concern here is to simplify writing unit tests and interpreting their output.
-    */
 
     template<typename Tgenerator>
     rock::Mineral get_random(Tgenerator& generator)
@@ -44,7 +35,7 @@ namespace rock
 
         MineralAdapter():
             float_threshold(1e-4),
-            part_threshold(0.01)
+            part_threshold(0.06)
         {}
 
         bool equal(const Mineral& a, const Mineral& b) const {

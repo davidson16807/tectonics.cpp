@@ -17,7 +17,10 @@ namespace test {
 
     std::string indent(const std::string text, const std::string tab)
     {
-        return std::regex_replace(text, std::regex("\n"), "\n" +tab);
+        return std::regex_replace(
+            (std::regex_search(text, std::regex("\n"))? "\n":"") + text, 
+            std::regex("\n"), 
+            "\n" +tab);
     }
 
     struct Results{
@@ -43,7 +46,7 @@ namespace test {
                 std::cout << "Test failed:" << std::endl;
                 std::cout << "  " << predicate_name << std::endl;
                 std::cout <<  indent(results.diagnostics, "  ") << std::endl;
-                std::cout << "  a : " << indent(adapter.print(a[i]), "  ") << " [from index "<< i <<"]" << std::endl;
+                std::cout << "  a : " << indent(adapter.print(a[i]), "    ") << " [from index "<< i <<"]" << std::endl;
                 return false; 
             }
         }
@@ -63,8 +66,8 @@ namespace test {
                 std::cout << "Test failed:" << std::endl;
                 std::cout << "  " << predicate_name << std::endl;
                 std::cout <<  indent(results.diagnostics, "  ") << std::endl;
-                std::cout << "  a : " << indent(adapter.print(a[i]), "  ") << " [from index "<< i <<"]" << std::endl;
-                std::cout << "  b : " << indent(adapter.print(b[j]), "  ") << " [from index "<< j <<"]" << std::endl;
+                std::cout << "  a : " << indent(adapter.print(a[i]), "    ") << " [from index "<< i <<"]" << std::endl;
+                std::cout << "  b : " << indent(adapter.print(b[j]), "    ") << " [from index "<< j <<"]" << std::endl;
                 return false; 
             }
         }}
@@ -85,9 +88,9 @@ namespace test {
                 std::cout << "Test failed:" << std::endl;
                 std::cout << "  " << predicate_name << std::endl;
                 std::cout <<  indent(results.diagnostics, "  ") << std::endl;
-                std::cout << "  a : " << indent(adapter.print(a[i]), "  ") << " [from index "<< i <<"]" << std::endl;
-                std::cout << "  b : " << indent(adapter.print(b[j]), "  ") << " [from index "<< j <<"]" << std::endl;
-                std::cout << "  c : " << indent(adapter.print(c[k]), "  ") << " [from index "<< k <<"]" << std::endl;
+                std::cout << "  a : " << indent(adapter.print(a[i]), "    ") << " [from index "<< i <<"]" << std::endl;
+                std::cout << "  b : " << indent(adapter.print(b[j]), "    ") << " [from index "<< j <<"]" << std::endl;
+                std::cout << "  c : " << indent(adapter.print(c[k]), "    ") << " [from index "<< k <<"]" << std::endl;
                 return false; 
             }
         }}}
