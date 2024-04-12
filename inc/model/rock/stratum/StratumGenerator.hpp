@@ -10,22 +10,20 @@ namespace rock {
     */
     template<
         typename scalar, 
-        typename MaficMass,
-        typename FelsicMass,
-        typename MaficExtrusiveFraction,
-        typename FelsicExtrusiveFraction>
+        typename MassForElevation,
+        typename ExtrusiveFractionForElevation>
     struct StratumGenerator {
 
-        MaficMass               mafic_mass;
-        FelsicMass              felsic_mass;
-        MaficExtrusiveFraction  felsic_extrusive_fraction;
-        FelsicExtrusiveFraction mafic_extrusive_fraction;
+        MassForElevation              mafic_mass;
+        MassForElevation              felsic_mass;
+        ExtrusiveFractionForElevation felsic_extrusive_fraction;
+        ExtrusiveFractionForElevation mafic_extrusive_fraction;
 
         constexpr explicit StratumGenerator(
-            const MaficMass&               mafic_mass,
-            const FelsicMass&              felsic_mass,
-            const MaficExtrusiveFraction&  felsic_extrusive_fraction,
-            const FelsicExtrusiveFraction& mafic_extrusive_fraction
+            const MassForElevation&              mafic_mass,
+            const MassForElevation&              felsic_mass,
+            const ExtrusiveFractionForElevation& felsic_extrusive_fraction,
+            const ExtrusiveFractionForElevation& mafic_extrusive_fraction
         ):
             mafic_mass  (mafic_mass),
             felsic_mass (felsic_mass),
