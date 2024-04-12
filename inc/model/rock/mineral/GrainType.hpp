@@ -39,14 +39,14 @@ namespace rock
     */
 	enum struct GrainType
 	{
-		nonmetamorphic_unweathered_extrusive,
-		nonmetamorphic_unweathered_intrusive,
-		nonmetamorphic_weathered_extrusive,
-		nonmetamorphic_weathered_intrusive,
-		metamorphic_unweathered_extrusive,
-		metamorphic_unweathered_intrusive,
-		metamorphic_weathered_extrusive,
-		metamorphic_weathered_intrusive,
+		unweathered_amorphous,
+		unweathered_extrusive,
+		unweathered_intrusive,
+		unweathered_crystalline,
+		weathered_amorphous,
+		weathered_extrusive,
+		weathered_intrusive,
+		weathered_crystalline,
 		count = 8
 	};
 
