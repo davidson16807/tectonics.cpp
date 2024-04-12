@@ -24,13 +24,12 @@
 #include <index/series/Uniform.hpp>
 #include <index/series/glm/VectorInterleave.hpp>
 #include <index/series/glm/VectorDeinterleave.hpp>
-#include <index/glm/each.hpp>                           // get
+#include <index/glm/each.hpp>                       // get
 #include <index/each.hpp>                           // get
-#include <index/glm/known.hpp>                          // greaterThan
+#include <index/glm/known.hpp>                      // greaterThan
 #include <index/known.hpp>                          // greaterThan
 #include <index/whole.hpp>                          // max, mean
 #include <index/series/Range.hpp>                   // Range
-
 #include <index/series/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
 #include <index/series/noise/glm/UnitVectorNoise.hpp>
 #include <index/series/noise/GaussianNoise.hpp>
@@ -40,13 +39,12 @@
 #include <field/noise/MosaicNoise.hpp>              // MosaicNoise
 #include <field/Compose.hpp>                        // Compose
 #include <field/VectorZip.hpp>                      // VectorZip
+#include <field/noise/MosaicOps.hpp>                // field::VectorMosaicOps
+#include <field/noise/FractalBrownianNoise.hpp>     // dymaxion::FractalBrownianNoise
 
 #include <buffer/PyramidBuffers.hpp>                // buffer::PyramidBuffers
 
 #include <grid/cartesian/UnboundedIndexing.hpp>     // field::UnboundedIndexing
-#include <field/noise/MosaicOps.hpp>                // field::VectorMosaicOps
-#include <field/noise/FractalBrownianNoise.hpp>     // dymaxion::FractalBrownianNoise
-
 #include <grid/dymaxion/Indexing.hpp>               // dymaxion::Indexing
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
 #include <grid/dymaxion/series.hpp>                 // dymaxion::BufferVertexIds
@@ -59,12 +57,14 @@
 #include <raster/unlayered/VectorCalculusByFundamentalTheorem.hpp> // unlayered::VectorCalculusByFundamentalTheorem
 #include <raster/spheroidal/string_cast.hpp>        // spheroidal::to_string
 
+#include <model/rock/stratum/StratumGenerator.hpp>  // StratumGenerator
+
 #include <update/OrbitalControlState.hpp>           // update::OrbitalControlState
 #include <update/OrbitalControlUpdater.hpp>         // update::OrbitalControlUpdater
 
-#include <view/ColorscaleSurfaceShaderProgram.hpp>   // view::ColorscaleSurfaceShaderProgram
-#include <view/IndicatorSwarmShaderProgram.hpp>      // view::IndicatorSwarmShaderProgram
-#include <view/MultichannelSurfaceShaderProgram.hpp> // view::MultichannelSurfaceShaderProgram
+#include <view/ColorscaleSurfaceShaderProgram.hpp>  // view::ColorscaleSurfaceShaderProgram
+#include <view/IndicatorSwarmShaderProgram.hpp>     // view::IndicatorSwarmShaderProgram
+#include <view/MultichannelSurfaceShaderProgram.hpp>// view::MultichannelSurfaceShaderProgram
 
 int main() {
   // initialize GLFW

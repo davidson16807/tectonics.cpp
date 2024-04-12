@@ -42,14 +42,14 @@ namespace rock
         // Represent temperatures from 1 to 32768 Kelvin with a precision of 0.02%.
         // This value was chosen to reflect the temperature of Jupiter's core. 
         std::uint16_t stored_max_temperature_received;
-        // Represent pressures from 1 to 6e12 Pascals with a precision of 0.02%.
+        // Represent pressures from 1 to 4e12 Pascals with a precision of 0.02%.
         // This value was chosen to reflect the pressure of Jupiter's core. 
         std::uint16_t stored_max_pressure_received;
         // Represent age of world from 1 to 65.535 billion years to the nearest megayear
-        std::uint16_t age_of_world_when_deposited_in_megayears;
-        // unused variable, used to simplify cache alignment, 
-        // though also allows for future expansion
-        std::uint16_t unused;
+        std::uint16_t age_of_world_when_first_deposited_in_megayears;
+        // Represent age of world from 1 to 65.535 billion years to the nearest megayear
+        // Also used for cache alignment
+        std::uint16_t age_of_world_when_last_deposited_in_megayears;
 
     private:
         constexpr static float log2_ref_temperature = 15.;
@@ -91,8 +91,8 @@ namespace rock
         StratumStore():
             stored_max_temperature_received(0.0f),
             stored_max_pressure_received(0.0f),
-            age_of_world_when_deposited_in_megayears(0.0f),
-            unused(0.0f)
+            age_of_world_when_first_deposited_in_megayears(0.0f),
+            age_of_world_when_last_deposited_in_megayears(0.0f)
         {
             minerals.fill(rock::MineralStore());
         }
@@ -105,7 +105,8 @@ namespace rock
             }
             output.max_pressure_received    = exp2( log2_ref_pressure    * float(stored_max_pressure_received)    / float(std::numeric_limits<std::uint16_t>::max())) * si::pascal;
             output.max_temperature_received = exp2( log2_ref_temperature * float(stored_max_temperature_received) / float(std::numeric_limits<std::uint16_t>::max())) * si::kelvin;
-            output.age_of_world_when_deposited = age_of_world_when_deposited_in_megayears * si::megayear;
+            output.age_of_world_when_first_deposited = age_of_world_when_first_deposited_in_megayears * si::megayear;
+            output.age_of_world_when_last_deposited = age_of_world_when_last_deposited_in_megayears * si::megayear;
         }
 
         void pack(const Stratum<M>& input)
@@ -118,7 +119,8 @@ namespace rock
                 std::numeric_limits<std::uint16_t>::max()*std::clamp( float(log2(input.max_pressure_received/si::pascal))    / log2_ref_pressure,   0.0f, 1.0f));
             stored_max_temperature_received = std::uint16_t(
                 std::numeric_limits<std::uint16_t>::max()*std::clamp( float(log2(input.max_temperature_received/si::kelvin)) / log2_ref_temperature,0.0f, 1.0f));
-            age_of_world_when_deposited_in_megayears = input.age_of_world_when_deposited / si::megayear;
+            age_of_world_when_first_deposited_in_megayears = input.age_of_world_when_first_deposited / si::megayear;
+            age_of_world_when_last_deposited_in_megayears = input.age_of_world_when_last_deposited / si::megayear;
         }
     };
 }

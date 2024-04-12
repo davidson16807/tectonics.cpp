@@ -5,6 +5,7 @@
 #include "StratumStore.hpp"
 #include "_test_utils.hpp"
 
+#include <test/structures/grouplike.hpp>
 
 TEST_CASE( "StratumStore pack/unpack invertibility", "[rock]" ) {
   	const std::size_t M = 15;

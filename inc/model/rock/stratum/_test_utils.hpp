@@ -21,10 +21,12 @@ namespace rock
     Stratum<M> get_random(Tgenerator& generator)
     {
         std::uniform_real_distribution<float> uniform;
+        si::time<double> age_of_world_when_first_deposited =        65.0 * uniform(generator) * si::gigayear;
+        si::time<double> age_of_world_when_last_deposited = si::min(65.0 * uniform(generator) * si::gigayear + age_of_world_when_first_deposited, 65.0 * si::gigayear);
         Stratum<M> output(
             32768.0f * uniform(generator) * si::kelvin, 
-            6e12f    * uniform(generator) * si::pascal, 
-            65000.0f * uniform(generator) * si::megayear
+            4e12f    * uniform(generator) * si::pascal, 
+            age_of_world_when_first_deposited, age_of_world_when_last_deposited            
         );
         for (std::size_t i = 0; i < M; ++i)
         {
@@ -54,8 +56,13 @@ namespace rock
             {
                 return false;
             } 
-            if(si::distance(a.age_of_world_when_deposited, b.age_of_world_when_deposited) 
-                > float_threshold * si::max(si::second, si::max(a.age_of_world_when_deposited,b.age_of_world_when_deposited)) )
+            if(si::distance(a.age_of_world_when_first_deposited, b.age_of_world_when_first_deposited) 
+                > float_threshold * si::max(si::second, si::max(a.age_of_world_when_first_deposited,b.age_of_world_when_first_deposited)) )
+            {
+                return false;
+            }
+            if(si::distance(a.age_of_world_when_last_deposited, b.age_of_world_when_last_deposited) 
+                > float_threshold * si::max(si::second, si::max(a.age_of_world_when_last_deposited,b.age_of_world_when_last_deposited)) )
             {
                 return false;
             }
@@ -77,7 +84,11 @@ namespace rock
             {
                 return false;
             }
-            if(a.age_of_world_when_deposited/si::second < -float_threshold)
+            if(a.age_of_world_when_first_deposited/si::second < -float_threshold)
+            {
+                return false;
+            }
+            if(a.age_of_world_when_last_deposited/si::second < -float_threshold)
             {
                 return false;
             }
@@ -99,8 +110,11 @@ namespace rock
             os << "max temperature: ";
             os << si::to_string(a.max_temperature_received);
             os << "\n";
-            os << "age of world when deposited: ";
-            os << si::to_string(a.age_of_world_when_deposited);
+            os << "age of world when first deposited: ";
+            os << si::to_string(a.age_of_world_when_first_deposited);
+            os << "\n";
+            os << "age of world when last deposited: ";
+            os << si::to_string(a.age_of_world_when_last_deposited);
             os << "\n";
             os << "minerals: ";
             os << "\n";
