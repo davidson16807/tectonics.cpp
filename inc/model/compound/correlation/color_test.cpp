@@ -6,9 +6,10 @@
 #include <catch/catch.hpp>
 
 // in house libraries
+#include <unit/si.hpp>
 #include <unit/test_tools.cpp>
-#include "color.hpp"
 
+#include "color.hpp"
 
 TEST_CASE( "approx_reflectance_from_attenuation_coefficient_and_refractive_index()  purity", "[compound]" ) {
     SECTION("Calling a function twice with the same arguments must produce the same results")

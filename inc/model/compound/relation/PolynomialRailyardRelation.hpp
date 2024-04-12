@@ -300,6 +300,17 @@ namespace relation {
         assert(xs.size() == ys.size());
         return PolynomialRailyardRelation<si::pressure<T>,Ty,0,1>(analytic::spline::linear_spline<double>(xs, ys), xunits, yunits);
     }
+
+    // TODO: rename `spectral_linear_yard`
+    template<typename Tx, typename Ty>
+    PolynomialRailyardRelation<Tx,Ty,0,1> get_arbitrary_linear_interpolation_function(
+        const Tx xunits, const Ty yunits,
+        const std::vector<double>xs, 
+        const std::vector<double>ys
+    ){
+        assert(xs.size() == ys.size());
+        return PolynomialRailyardRelation<Tx,Ty,0,1>(analytic::spline::linear_spline<double>(xs, ys), xunits, yunits);
+    }
     
     /*
     `get_dippr_quartic_temperature_function_100()` is equivalent to dippr function 100,

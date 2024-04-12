@@ -8,6 +8,7 @@
 #include <math/analytic/Clamped.hpp>
 #include <math/analytic/Exponent.hpp>
 #include <math/analytic/AlgebraicSigmoid.hpp>
+#include <math/analytic/Sum.hpp>
 #include <math/inspected/extremum.hpp>
 #include <unit/si.hpp>
 
