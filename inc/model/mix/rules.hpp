@@ -41,11 +41,11 @@ namespace mix{
     }
 
     template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
-    compound::relation::RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> linear_rule(
-        const std::vector<compound::relation::RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi>>& relations, 
+    relation::RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> linear_rule(
+        const std::vector<relation::RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi>>& relations, 
         const std::vector<double>& fractions
     ){
-        compound::relation::RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> result(0);
+        relation::RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> result(0);
         for (std::size_t i=0; i<relations.size(); i++){
             result = result + fractions[i] * relations[i];
         }

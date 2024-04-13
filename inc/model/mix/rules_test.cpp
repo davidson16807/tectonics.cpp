@@ -219,7 +219,7 @@ TEST_CASE( "linear_rule commutativity for ExponentiatedPolynomialRailyardRelatio
 TEST_CASE( "linear_rule purity for RationalRailyardRelation", "[mix]" ) {
   SECTION("Calling an operation twice with the same arguments must produce the same results")
   {
-    using RationalRailyardRelation = compound::relation::RationalRailyardRelation<si::temperature<double>, si::pressure<double>, 0, 1, 0, 1>;
+    using RationalRailyardRelation = relation::RationalRailyardRelation<si::temperature<double>, si::pressure<double>, 0, 1, 0, 1>;
     std::vector<RationalRailyardRelation> relations {
         RationalRailyardRelation(2.0*si::pascal),
         RationalRailyardRelation(3.0*si::pascal)
@@ -235,7 +235,7 @@ TEST_CASE( "linear_rule purity for RationalRailyardRelation", "[mix]" ) {
 TEST_CASE( "linear_rule codomain for RationalRailyardRelation", "[mix]" ) {
   SECTION("Output must fall within a known range")
   {
-    using RationalRailyardRelation = compound::relation::RationalRailyardRelation<si::temperature<double>, si::pressure<double>, 0, 1, 0, 1>;
+    using RationalRailyardRelation = relation::RationalRailyardRelation<si::temperature<double>, si::pressure<double>, 0, 1, 0, 1>;
     std::vector<RationalRailyardRelation> relations {
         RationalRailyardRelation(2.0*si::pascal),
         RationalRailyardRelation(3.0*si::pascal)
@@ -251,7 +251,7 @@ TEST_CASE( "linear_rule codomain for RationalRailyardRelation", "[mix]" ) {
 TEST_CASE( "linear_rule commutativity for RationalRailyardRelation", "[mix]" ) {
   SECTION("Arguments can be consistently rearranged in any order and still produce the same results")
   {
-    using RationalRailyardRelation = compound::relation::RationalRailyardRelation<si::temperature<double>, si::pressure<double>, 0, 1, 0, 1>;
+    using RationalRailyardRelation = relation::RationalRailyardRelation<si::temperature<double>, si::pressure<double>, 0, 1, 0, 1>;
     std::vector<RationalRailyardRelation> ab {
         RationalRailyardRelation(2.0*si::pascal),
         RationalRailyardRelation(3.0*si::pascal)
