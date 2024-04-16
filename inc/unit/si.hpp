@@ -99,6 +99,8 @@ namespace si{
   {
     T1 raw;
   public:
+    using value_type = T1;
+
     // zero constructor
     constexpr explicit units(): raw(T1(0))
     {

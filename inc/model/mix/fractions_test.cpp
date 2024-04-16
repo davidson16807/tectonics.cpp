@@ -6,153 +6,233 @@
 // in house libraries
 #include "fractions.hpp"
 
-TEST_CASE( "volume_fractions purity", "[mix]" ) {
-  SECTION("Calling an operation twice with the same arguments must produce the same results")
-  {
+#include <test/predicate.hpp>
+#include <test/properties.hpp>
+
+namespace mix{
+
+    template<typename T>
+    struct FractionsAdapter{
+        T threshold;
+
+        FractionsAdapter(const T threshold):
+            threshold(threshold)
+        {}
+
+        template<typename Series1, typename Series2>
+        bool equal(const Series1& a, const Series2& b) const {
+          if(a.size() != b.size())
+            return false;
+          for (std::size_t i = 0; i<a.size(); i++) { 
+            if (std::abs(a[i]-b[i]) > threshold*std::max(a[i],b[i]))
+              return false; 
+          }  
+          return true;
+        }
+
+        template<typename Series>
+        std::string print(const Series& a) const {
+          std::ostringstream os;
+          for (std::size_t i = 0; i<a.size(); i++) { 
+            if (i!=0)
+            {
+              os << ", ";
+            }
+            os << a[i]; 
+          }  
+          return os.str();
+        }
+
+    };
+
+}
+
+TEST_CASE( "volume_fractions", "[mix]" ) {
+    mix::FractionsAdapter<double> narrow (1e-6);
+
+    std::vector<std::vector<si::volume<double>>> volume_vectors;
+
     for (int i = 0; i<3; i++) {
       for (int j = 0; j<3; j++) {
         if (i+j>0)
         {
-          CHECK(mix::volume_fractions({i*si::meter3, j*si::meter3}) == mix::volume_fractions({i*si::meter3, j*si::meter3}));
+          std::vector<si::volume<double>> volumes{i*si::meter3, j*si::meter3};
+          volume_vectors.push_back(volumes);
         }
       }
     }
-  }
-}
-TEST_CASE( "volume_fractions codomain", "[mix]" ) {
-  SECTION("Output must fall within a known range")
-  {
-    for (int i = 0; i<3; i++) {
-      for (int j = 0; j<3; j++) {
-        if (i+j>0){
-          for (int k = 0; k<2; k++) {
-            CHECK(mix::volume_fractions({i*si::meter3, j*si::meter3})[k] <= 1.0);
-            CHECK(0.0 <= mix::volume_fractions({i*si::meter3, j*si::meter3})[k]);
-          }
-        }
-      }
-    }
-  }
-}
-TEST_CASE( "volume_fractions commutativity", "[mix]" ) {
-  SECTION("Arguments can be applied in any order and still produce the same results")
-  {
-    for (int i = 0; i<3; i++) {
-      for (int j = 0; j<3; j++) {
-        if (i+j>0){
-          CHECK(mix::volume_fractions({i*si::meter3, j*si::meter3})[0] == mix::volume_fractions({j*si::meter3, i*si::meter3})[1]);
-          CHECK(mix::volume_fractions({i*si::meter3, j*si::meter3})[1] == mix::volume_fractions({j*si::meter3, i*si::meter3})[0]);
-        }
-      }
-    }
-  }
+
+    REQUIRE(test::determinism(narrow,
+        "volume_fractions(…)",   [=](auto properties){ return mix::volume_fractions(properties)(properties); },
+        volume_vectors
+    ));
+
+    REQUIRE(test::codomain(narrow,
+        "within expected range", [=](auto properties){ for (std::size_t i = 0; i<properties.size(); i++) { if (!(0.0 <= properties[i] && properties[i] <= 1.0)) return false; }  return true; },
+        "volume_fractions(…)",   [=](auto properties){ return mix::volume_fractions(properties)(properties); },
+        volume_vectors
+    ));
+
+    REQUIRE(test::predicate(narrow,
+        "Arguments can be applied in any order and still produce the same results", 
+        [=](auto properties){ 
+          std::vector<si::volume<double>> swapped {properties[1], properties[0]};
+          return test::Results( 
+            mix::volume_fractions(properties)(properties)[0] == mix::volume_fractions(swapped)(swapped)[1] &&
+            mix::volume_fractions(properties)(properties)[1] == mix::volume_fractions(swapped)(swapped)[0], ""
+          );
+        },
+        volume_vectors
+    ));
+
 }
 
-TEST_CASE( "mass_fractions purity", "[mix]" ) {
-  SECTION("Calling an operation twice with the same arguments must produce the same results")
-  {
-    for (int i = 0; i<3; i++) {
-      for (int j = 0; j<3; j++) {
-        if (i+j>0)
-        {
-          CHECK(mix::mass_fractions(std::vector<si::mass<double>>{i*si::kilogram, j*si::kilogram}) == mix::mass_fractions(std::vector<si::mass<double>>{i*si::kilogram, j*si::kilogram}));
+TEST_CASE( "mass_fractions", "[mix]" ) {
+    mix::FractionsAdapter<double> narrow (1e-6);
 
-          CHECK(mix::mass_fractions(std::vector<si::density<double>>{i*si::kilogram/si::meter3, j*si::kilogram/si::meter3}) == mix::mass_fractions(std::vector<si::density<double>>{i*si::kilogram/si::meter3, j*si::kilogram/si::meter3}));
-        }
-      }
-    }
-  }
-}
-TEST_CASE( "mass_fractions codomain", "[mix]" ) {
-  SECTION("Output must fall within a known range")
-  {
-    for (int i = 0; i<3; i++) {
-      for (int j = 0; j<3; j++) {
-        if (i+j>0){
-          for (int k = 0; k<2; k++) {
-            CHECK(mix::mass_fractions(std::vector<si::mass<double>>{i*si::kilogram, j*si::kilogram})[k] <= 1.0);
-            CHECK(0.0 <= mix::mass_fractions(std::vector<si::mass<double>>{i*si::kilogram, j*si::kilogram})[k]);
+    std::vector<std::vector<si::mass<double>>> mass_vectors;
+    std::vector<std::vector<si::density<double>>> density_vectors;
 
-            CHECK(mix::mass_fractions(std::vector<si::density<double>>{i*si::kilogram/si::meter3, j*si::kilogram/si::meter3})[k] <= 1.0);
-            CHECK(0.0 <= mix::mass_fractions(std::vector<si::density<double>>{i*si::kilogram/si::meter3, j*si::kilogram/si::meter3})[k]);
-          }
-        }
-      }
-    }
-  }
-}
-TEST_CASE( "mass_fractions commutativity", "[mix]" ) {
-  SECTION("Arguments can be applied in any order and still produce the same results")
-  {
-    for (int i = 0; i<3; i++) {
-      for (int j = 0; j<3; j++) {
-        if (i+j>0){
-          CHECK(mix::mass_fractions(std::vector<si::mass<double>>{i*si::kilogram, j*si::kilogram})[0] == mix::mass_fractions(std::vector<si::mass<double>>{j*si::kilogram, i*si::kilogram})[1]);
-          CHECK(mix::mass_fractions(std::vector<si::mass<double>>{i*si::kilogram, j*si::kilogram})[1] == mix::mass_fractions(std::vector<si::mass<double>>{j*si::kilogram, i*si::kilogram})[0]);
-
-          CHECK(mix::mass_fractions(std::vector<si::density<double>>{i*si::kilogram/si::meter3, j*si::kilogram/si::meter3})[0] == mix::mass_fractions(std::vector<si::density<double>>{j*si::kilogram/si::meter3, i*si::kilogram/si::meter3})[1]);
-          CHECK(mix::mass_fractions(std::vector<si::density<double>>{i*si::kilogram/si::meter3, j*si::kilogram/si::meter3})[1] == mix::mass_fractions(std::vector<si::density<double>>{j*si::kilogram/si::meter3, i*si::kilogram/si::meter3})[0]);
-        }
-      }
-    }
-  }
-}
-
-
-TEST_CASE( "molar_fractions purity", "[mix]" ) {
-  SECTION("Calling an operation twice with the same arguments must produce the same results")
-  {
     for (int i = 0; i<3; i++) {
       for (int j = 0; j<3; j++) {
         if (i+j>0)
         {
-          CHECK(mix::molar_fractions(std::vector<si::amount<double>>{i*si::mole, j*si::mole}) == mix::molar_fractions(std::vector<si::amount<double>>{i*si::mole, j*si::mole}));
-
-          CHECK(mix::molar_fractions(std::vector<si::molar_density<double>>{i*si::mole/si::meter3, j*si::mole/si::meter3}) == mix::molar_fractions(std::vector<si::molar_density<double>>{i*si::mole/si::meter3, j*si::mole/si::meter3}));
-
-          CHECK(mix::molar_fractions(std::vector<si::number_density<double>>{i/si::meter3, j/si::meter3}) == mix::molar_fractions(std::vector<si::number_density<double>>{i/si::meter3, j/si::meter3}));
+          std::vector<si::mass<double>> masses{i*si::kilogram, j*si::kilogram};
+          mass_vectors.push_back(masses);
+          std::vector<si::density<double>> densities{i*si::kilogram/si::meter3, j*si::kilogram/si::meter3};
+          density_vectors.push_back(densities);
         }
       }
     }
-  }
+
+    REQUIRE(test::determinism(narrow,
+        "mass_fractions(…)",   [=](auto properties){ return mix::mass_fractions(properties)(properties); },
+        mass_vectors
+    ));
+    REQUIRE(test::determinism(narrow,
+        "mass_fractions(…)",   [=](auto properties){ return mix::mass_fractions(properties)(properties); },
+        density_vectors
+    ));
+
+    REQUIRE(test::codomain(narrow,
+        "within expected range", [=](auto properties){ for (std::size_t i = 0; i<properties.size(); i++) { if (!(0.0 <= properties[i] && properties[i] <= 1.0)) return false; }  return true; },
+        "mass_fractions(…)",   [=](auto properties){ return mix::mass_fractions(properties)(properties); },
+        mass_vectors
+    ));
+    REQUIRE(test::codomain(narrow,
+        "within expected range", [=](auto properties){ for (std::size_t i = 0; i<properties.size(); i++) { if (!(0.0 <= properties[i] && properties[i] <= 1.0)) return false; }  return true; },
+        "mass_fractions(…)",   [=](auto properties){ return mix::mass_fractions(properties)(properties); },
+        density_vectors
+    ));
+
+    REQUIRE(test::predicate(narrow,
+        "Arguments can be applied in any order and still produce the same results", 
+        [=](auto properties){ 
+          std::vector<si::mass<double>> swapped {properties[1], properties[0]};
+          return test::Results( 
+            mix::mass_fractions(properties)(properties)[0] == mix::mass_fractions(swapped)(swapped)[1] &&
+            mix::mass_fractions(properties)(properties)[1] == mix::mass_fractions(swapped)(swapped)[0], ""
+          );
+        },
+        mass_vectors
+    ));
+    REQUIRE(test::predicate(narrow,
+        "Arguments can be applied in any order and still produce the same results", 
+        [=](auto properties){ 
+          std::vector<si::density<double>> swapped {properties[1], properties[0]};
+          return test::Results( 
+            mix::mass_fractions(properties)(properties)[0] == mix::mass_fractions(swapped)(swapped)[1] &&
+            mix::mass_fractions(properties)(properties)[1] == mix::mass_fractions(swapped)(swapped)[0], ""
+          );
+        },
+        density_vectors
+    ));
+
 }
-TEST_CASE( "molar_fractions codomain", "[mix]" ) {
-  SECTION("Output must fall within a known range")
-  {
+
+TEST_CASE( "molar_fractions", "[mix]" ) {
+    mix::FractionsAdapter<double> narrow (1e-6);
+
+    std::vector<std::vector<si::amount<double>>> amount_vectors;
+    std::vector<std::vector<si::molar_density<double>>> molar_density_vectors;
+    std::vector<std::vector<si::number_density<double>>> number_density_vectors;
+
     for (int i = 0; i<3; i++) {
       for (int j = 0; j<3; j++) {
-        if (i+j>0){
-          for (int k = 0; k<2; k++) {
-            CHECK(mix::molar_fractions(std::vector<si::amount<double>>{i*si::mole, j*si::mole})[k] <= 1.0);
-            CHECK(0.0 <= mix::molar_fractions(std::vector<si::amount<double>>{i*si::mole, j*si::mole})[k]);
-
-            CHECK(mix::molar_fractions(std::vector<si::molar_density<double>>{i*si::mole/si::meter3, j*si::mole/si::meter3})[k] <= 1.0);
-            CHECK(0.0 <= mix::molar_fractions(std::vector<si::molar_density<double>>{i*si::mole/si::meter3, j*si::mole/si::meter3})[k]);
-
-            CHECK(mix::molar_fractions(std::vector<si::number_density<double>>{i/si::meter3, j/si::meter3})[k] <= 1.0);
-            CHECK(0.0 <= mix::molar_fractions(std::vector<si::number_density<double>>{i/si::meter3, j/si::meter3})[k]);
-          }
+        if (i+j>0)
+        {
+          std::vector<si::amount<double>> volumes{i*si::mole, j*si::mole};
+          amount_vectors.push_back(volumes);
+          std::vector<si::molar_density<double>> molar_densities{i*si::mole/si::meter3, j*si::mole/si::meter3};
+          molar_density_vectors.push_back(molar_densities);
+          std::vector<si::number_density<double>> number_densities{i/si::meter3, j/si::meter3};
+          number_density_vectors.push_back(number_densities);
         }
       }
     }
-  }
-}
-TEST_CASE( "molar_fractions commutativity", "[mix]" ) {
-  SECTION("Arguments can be applied in any order and still produce the same results")
-  {
-    for (int i = 0; i<3; i++) {
-      for (int j = 0; j<3; j++) {
-        if (i+j>0){
-          CHECK(mix::molar_fractions(std::vector<si::amount<double>>{i*si::mole, j*si::mole})[0] == mix::molar_fractions(std::vector<si::amount<double>>{j*si::mole, i*si::mole})[1]);
-          CHECK(mix::molar_fractions(std::vector<si::amount<double>>{i*si::mole, j*si::mole})[1] == mix::molar_fractions(std::vector<si::amount<double>>{j*si::mole, i*si::mole})[0]);
 
-          CHECK(mix::molar_fractions(std::vector<si::molar_density<double>>{i*si::mole/si::meter3, j*si::mole/si::meter3})[0] == mix::molar_fractions(std::vector<si::molar_density<double>>{j*si::mole/si::meter3, i*si::mole/si::meter3})[1]);
-          CHECK(mix::molar_fractions(std::vector<si::molar_density<double>>{i*si::mole/si::meter3, j*si::mole/si::meter3})[1] == mix::molar_fractions(std::vector<si::molar_density<double>>{j*si::mole/si::meter3, i*si::mole/si::meter3})[0]);
+    REQUIRE(test::determinism(narrow,
+        "molar_fractions(…)",   [=](auto properties){ return mix::molar_fractions(properties)(properties); },
+        amount_vectors
+    ));
+    REQUIRE(test::determinism(narrow,
+        "molar_fractions(…)",   [=](auto properties){ return mix::molar_fractions(properties)(properties); },
+        molar_density_vectors
+    ));
+    REQUIRE(test::determinism(narrow,
+        "molar_fractions(…)",   [=](auto properties){ return mix::molar_fractions(properties)(properties); },
+        number_density_vectors
+    ));
 
-          CHECK(mix::molar_fractions(std::vector<si::number_density<double>>{i/si::meter3, j/si::meter3})[0] == mix::molar_fractions(std::vector<si::number_density<double>>{j/si::meter3, i/si::meter3})[1]);
-          CHECK(mix::molar_fractions(std::vector<si::number_density<double>>{i/si::meter3, j/si::meter3})[1] == mix::molar_fractions(std::vector<si::number_density<double>>{j/si::meter3, i/si::meter3})[0]);
-        }
-      }
-    }
-  }
+    REQUIRE(test::codomain(narrow,
+        "within expected range", [=](auto properties){ for (std::size_t i = 0; i<properties.size(); i++) { if (!(0.0 <= properties[i] && properties[i] <= 1.0)) return false; }  return true; },
+        "molar_fractions(…)",   [=](auto properties){ return mix::molar_fractions(properties)(properties); },
+        amount_vectors
+    ));
+    REQUIRE(test::codomain(narrow,
+        "within expected range", [=](auto properties){ for (std::size_t i = 0; i<properties.size(); i++) { if (!(0.0 <= properties[i] && properties[i] <= 1.0)) return false; }  return true; },
+        "molar_fractions(…)",   [=](auto properties){ return mix::molar_fractions(properties)(properties); },
+        molar_density_vectors
+    ));
+    REQUIRE(test::codomain(narrow,
+        "within expected range", [=](auto properties){ for (std::size_t i = 0; i<properties.size(); i++) { if (!(0.0 <= properties[i] && properties[i] <= 1.0)) return false; }  return true; },
+        "molar_fractions(…)",   [=](auto properties){ return mix::molar_fractions(properties)(properties); },
+        number_density_vectors
+    ));
+
+    REQUIRE(test::predicate(narrow,
+        "Arguments can be applied in any order and still produce the same results", 
+        [=](auto properties){ 
+          std::vector<si::amount<double>> swapped {properties[1], properties[0]};
+          return test::Results( 
+            mix::molar_fractions(properties)(properties)[0] == mix::molar_fractions(swapped)(swapped)[1] &&
+            mix::molar_fractions(properties)(properties)[1] == mix::molar_fractions(swapped)(swapped)[0], ""
+          );
+        },
+        amount_vectors
+    ));
+    REQUIRE(test::predicate(narrow,
+        "Arguments can be applied in any order and still produce the same results", 
+        [=](auto properties){ 
+          std::vector<si::molar_density<double>> swapped {properties[1], properties[0]};
+          return test::Results( 
+            mix::molar_fractions(properties)(properties)[0] == mix::molar_fractions(swapped)(swapped)[1] &&
+            mix::molar_fractions(properties)(properties)[1] == mix::molar_fractions(swapped)(swapped)[0], ""
+          );
+        },
+        molar_density_vectors
+    ));
+    REQUIRE(test::predicate(narrow,
+        "Arguments can be applied in any order and still produce the same results", 
+        [=](auto properties){ 
+          std::vector<si::number_density<double>> swapped {properties[1], properties[0]};
+          return test::Results( 
+            mix::molar_fractions(properties)(properties)[0] == mix::molar_fractions(swapped)(swapped)[1] &&
+            mix::molar_fractions(properties)(properties)[1] == mix::molar_fractions(swapped)(swapped)[0], ""
+          );
+        },
+        number_density_vectors
+    ));
+
 }
+
