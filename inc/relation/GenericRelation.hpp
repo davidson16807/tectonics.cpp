@@ -99,39 +99,39 @@ namespace relation {
 
         GenericRelation<Tx,Ty> operator+=(const double scalar)
         {
-            f = [=](Tx x){return f(x)+scalar;};
+            f = [=,this](const Tx x){return f(x)+scalar;};
             return *this;
         }
 
         GenericRelation<Tx,Ty> operator-=(const double scalar)
         {
-            f = [=](Tx x){return f(x)-scalar;};
+            f = [=,this](const Tx x){return f(x)-scalar;};
             return *this;
         }
 
         GenericRelation<Tx,Ty> operator*=(const double scalar)
         {
-            f = [=](Tx x){return f(x)*scalar;};
+            f = [=,this](const Tx x){return f(x)*scalar;};
             return *this;
         }
 
         GenericRelation<Tx,Ty> operator/=(const double scalar)
         {
-            f = [=](Tx x){return f(x)/scalar;};
+            f = [=,this](const Tx x){return f(x)/scalar;};
             return *this;
         }
 
         template<typename F>
         GenericRelation<Tx,Ty>& operator+=(const F relation)
         {
-            f = [=](Tx x){return f(x)+relation(x);};
+            f = [=,this](const Tx x){return f(x)+relation(x);};
             return *this;
         }
 
         template<typename F>
         GenericRelation<Tx,Ty>& operator-=(const F relation)
         {
-            f = [=](Tx x){return f(x)-relation(x);};
+            f = [=,this](const Tx x){return f(x)-relation(x);};
             return *this;
         }
 
