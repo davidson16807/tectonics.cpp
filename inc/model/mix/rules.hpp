@@ -19,39 +19,57 @@ namespace mix{
         typename Table::value_type operator() (const Constituents& constituents) const 
         {
             auto fractions = get_fractions(constituents);
-            typename Table::value_type result = fractions(constituents[0])*table[0];
+            typename Table::value_type result = fractions(0,constituents[0])*table[0];
             for (std::size_t i=1; i<constituents.size(); i++) 
             {
-                result += fractions(constituents[i])*table[i];
+                result += fractions(i,constituents[i])*table[i];
             }
             return result;
         }
     };
     template<typename Table, typename GetFractions>
-    LinearRule<Table,GetFractions> linear_rule(const Table& table, const GetFractions& get_fractions)
+    auto linear_rule(const Table& table, const GetFractions& get_fractions)
     {
         return LinearRule<Table,GetFractions>(table, get_fractions);
     }
 
-    template<typename scalar, typename Table> auto acentric_factor                  (const Table& table){ return linear_rule (table, MolarFractions<scalar>()); }
-    template<typename scalar, typename Table> auto molar_mass                       (const Table& table){ return linear_rule (table, MolarFractions<scalar>()); }
-    template<typename scalar, typename Table> auto molecular_diameter               (const Table& table){ return linear_rule (table, MolarFractions<scalar>()); }
-    template<typename scalar, typename Table> auto molar_volume_as_liquid           (const Table& table){ return linear_rule (table, MolarFractions<scalar>()); } // "Amgat's Law"
-    template<typename scalar, typename Table> auto critical_temperature             (const Table& table){ return linear_rule (table, MolarFractions<scalar>()); } // "Kay's Rule"
-    template<typename scalar, typename Table> auto critical_compressibility         (const Table& table){ return linear_rule (table, MolarFractions<scalar>()); } // mole weighted arithmetic mean
-    template<typename scalar, typename Table> auto critical_volume                  (const Table& table){ return linear_rule (table, MolarFractions<scalar>()); } // "Amgat's Law"
-    template<typename scalar, typename Table> auto latent_heat_of_vaporization      (const Table& table){ return linear_rule (table, MassFractions<scalar>()); }
-    template<typename scalar, typename Table> auto latent_heat_of_fusion            (const Table& table){ return linear_rule (table, MassFractions<scalar>()); }
-    template<typename scalar, typename Table> auto latent_heat_of_sublimation       (const Table& table){ return linear_rule (table, MassFractions<scalar>()); }
-    template<typename scalar, typename Table> auto specific_heat_capacity_as_gas    (const Table& table){ return linear_rule (table, MassFractions<scalar>()); } // "Kopp's Law"
-    template<typename scalar, typename Table> auto specific_heat_capacity_as_liquid (const Table& table){ return linear_rule (table, MassFractions<scalar>()); } // "Kopp's Law"
-    template<typename scalar, typename Table> auto specific_heat_capacity_as_solid  (const Table& table){ return linear_rule (table, MassFractions<scalar>()); } // "Kopp's Law"
-    template<typename scalar, typename Table> auto molar_heat_capacity_as_gas       (const Table& table){ return linear_rule (table, MolarFractions<scalar>()); } // "Kopp's Law"
-    template<typename scalar, typename Table> auto molar_heat_capacity_as_liquid    (const Table& table){ return linear_rule (table, MolarFractions<scalar>()); } // "Kopp's Law"
-    template<typename scalar, typename Table> auto molar_heat_capacity_as_solid     (const Table& table){ return linear_rule (table, MolarFractions<scalar>()); } // "Kopp's Law"
-    template<typename scalar, typename Table> auto vapor_pressure_as_liquid         (const Table& table){ return linear_rule (table, MolarFractions<scalar>()); } // "Raoult's Law"
-    template<typename scalar, typename Table> auto vapor_pressure_as_solid          (const Table& table){ return linear_rule (table, MolarFractions<scalar>()); } // "Raoult's Law", see Goldfarb 2008 for sample of validity
+    template<typename scalar> auto acentric_factor                  (const auto& table, const auto& get_moles ){ return linear_rule (table, molar_fractions <scalar>(get_moles)); }
+    template<typename scalar> auto molar_mass                       (const auto& table, const auto& get_moles ){ return linear_rule (table, molar_fractions <scalar>(get_moles)); }
+    template<typename scalar> auto molecular_diameter               (const auto& table, const auto& get_moles ){ return linear_rule (table, molar_fractions <scalar>(get_moles)); }
+    template<typename scalar> auto molar_volume_as_liquid           (const auto& table, const auto& get_moles ){ return linear_rule (table, molar_fractions <scalar>(get_moles)); } // "Amgat's Law"
+    template<typename scalar> auto critical_temperature             (const auto& table, const auto& get_moles ){ return linear_rule (table, molar_fractions <scalar>(get_moles)); } // "Kay's Rule"
+    template<typename scalar> auto critical_compressibility         (const auto& table, const auto& get_moles ){ return linear_rule (table, molar_fractions <scalar>(get_moles)); } // mole weighted arithmetic mean
+    template<typename scalar> auto critical_volume                  (const auto& table, const auto& get_moles ){ return linear_rule (table, molar_fractions <scalar>(get_moles)); } // "Amgat's Law"
+    template<typename scalar> auto latent_heat_of_vaporization      (const auto& table, const auto& get_mass  ){ return linear_rule (table, mass_fractions  <scalar>(get_mass)); }
+    template<typename scalar> auto latent_heat_of_fusion            (const auto& table, const auto& get_mass  ){ return linear_rule (table, mass_fractions  <scalar>(get_mass)); }
+    template<typename scalar> auto latent_heat_of_sublimation       (const auto& table, const auto& get_mass  ){ return linear_rule (table, mass_fractions  <scalar>(get_mass)); }
+    template<typename scalar> auto specific_heat_capacity_as_gas    (const auto& table, const auto& get_mass  ){ return linear_rule (table, mass_fractions  <scalar>(get_mass)); } // "Kopp's Law"
+    template<typename scalar> auto specific_heat_capacity_as_liquid (const auto& table, const auto& get_mass  ){ return linear_rule (table, mass_fractions  <scalar>(get_mass)); } // "Kopp's Law"
+    template<typename scalar> auto specific_heat_capacity_as_solid  (const auto& table, const auto& get_mass  ){ return linear_rule (table, mass_fractions  <scalar>(get_mass)); } // "Kopp's Law"
+    template<typename scalar> auto molar_heat_capacity_as_gas       (const auto& table, const auto& get_moles ){ return linear_rule (table, molar_fractions <scalar>(get_moles)); } // "Kopp's Law"
+    template<typename scalar> auto molar_heat_capacity_as_liquid    (const auto& table, const auto& get_moles ){ return linear_rule (table, molar_fractions <scalar>(get_moles)); } // "Kopp's Law"
+    template<typename scalar> auto molar_heat_capacity_as_solid     (const auto& table, const auto& get_moles ){ return linear_rule (table, molar_fractions <scalar>(get_moles)); } // "Kopp's Law"
+    template<typename scalar> auto vapor_pressure_as_liquid         (const auto& table, const auto& get_moles ){ return linear_rule (table, molar_fractions <scalar>(get_moles)); } // "Raoult's Law"
+    template<typename scalar> auto vapor_pressure_as_solid          (const auto& table, const auto& get_moles ){ return linear_rule (table, molar_fractions <scalar>(get_moles)); } // "Raoult's Law", see Goldfarb 2008 for sample of validity
 
+    template<typename scalar> auto acentric_factor                  (const auto& table){ return linear_rule (table, molar_fractions <scalar>()); }
+    template<typename scalar> auto molar_mass                       (const auto& table){ return linear_rule (table, molar_fractions <scalar>()); }
+    template<typename scalar> auto molecular_diameter               (const auto& table){ return linear_rule (table, molar_fractions <scalar>()); }
+    template<typename scalar> auto molar_volume_as_liquid           (const auto& table){ return linear_rule (table, molar_fractions <scalar>()); } // "Amgat's Law"
+    template<typename scalar> auto critical_temperature             (const auto& table){ return linear_rule (table, molar_fractions <scalar>()); } // "Kay's Rule"
+    template<typename scalar> auto critical_compressibility         (const auto& table){ return linear_rule (table, molar_fractions <scalar>()); } // mole weighted arithmetic mean
+    template<typename scalar> auto critical_volume                  (const auto& table){ return linear_rule (table, molar_fractions <scalar>()); } // "Amgat's Law"
+    template<typename scalar> auto latent_heat_of_vaporization      (const auto& table){ return linear_rule (table, mass_fractions  <scalar>()); }
+    template<typename scalar> auto latent_heat_of_fusion            (const auto& table){ return linear_rule (table, mass_fractions  <scalar>()); }
+    template<typename scalar> auto latent_heat_of_sublimation       (const auto& table){ return linear_rule (table, mass_fractions  <scalar>()); }
+    template<typename scalar> auto specific_heat_capacity_as_gas    (const auto& table){ return linear_rule (table, mass_fractions  <scalar>()); } // "Kopp's Law"
+    template<typename scalar> auto specific_heat_capacity_as_liquid (const auto& table){ return linear_rule (table, mass_fractions  <scalar>()); } // "Kopp's Law"
+    template<typename scalar> auto specific_heat_capacity_as_solid  (const auto& table){ return linear_rule (table, mass_fractions  <scalar>()); } // "Kopp's Law"
+    template<typename scalar> auto molar_heat_capacity_as_gas       (const auto& table){ return linear_rule (table, molar_fractions <scalar>()); } // "Kopp's Law"
+    template<typename scalar> auto molar_heat_capacity_as_liquid    (const auto& table){ return linear_rule (table, molar_fractions <scalar>()); } // "Kopp's Law"
+    template<typename scalar> auto molar_heat_capacity_as_solid     (const auto& table){ return linear_rule (table, molar_fractions <scalar>()); } // "Kopp's Law"
+    template<typename scalar> auto vapor_pressure_as_liquid         (const auto& table){ return linear_rule (table, molar_fractions <scalar>()); } // "Raoult's Law"
+    template<typename scalar> auto vapor_pressure_as_solid          (const auto& table){ return linear_rule (table, molar_fractions <scalar>()); } // "Raoult's Law", see Goldfarb 2008 for sample of validity
 
     template<typename scalar, typename Table, typename GetFractions>
     class ParallelRule
@@ -67,15 +85,15 @@ namespace mix{
         auto operator() (const Constituents& constituents) const 
         {
             auto fractions = get_fractions(constituents);
-            auto result = fractions(constituents[0]) / table[0];
+            auto result = fractions(0,constituents[0]) / table[0];
             for (std::size_t i=1; i<table.size(); i++){
-                result += fractions(constituents[i]) / table[i];
+                result += fractions(i,constituents[i]) / table[i];
             }
             return scalar(1) / result;
         }
     };
     template<typename scalar, typename Table, typename GetFractions>
-    ParallelRule<scalar,Table,GetFractions> parallel_rule(const Table& table, const GetFractions& get_fractions)
+    auto parallel_rule(const Table& table, const GetFractions& get_fractions)
     {
         return ParallelRule<scalar,Table,GetFractions>(table, get_fractions);
     }
@@ -98,38 +116,57 @@ namespace mix{
         {
             auto fractions = get_fractions(constituents);
             auto lambda = table[0];
-            auto result = fractions(constituents[0]) / (lambda*lambda);
+            auto result = fractions(0,constituents[0]) / (lambda*lambda);
             for (std::size_t i=1; i<table.size(); i++){
                 lambda = table[i];
-                result += fractions(constituents[i]) / (lambda*lambda);
+                result += fractions(i,constituents[i]) / (lambda*lambda);
             }
             return scalar(1) / si::sqrt(lambda);
         }
     };
     template<typename scalar, typename Table, typename GetFractions>
-    SquareParallelRule<scalar,Table,GetFractions> square_parallel_rule(const Table& table, const GetFractions& get_fractions)
+    auto square_parallel_rule(const Table& table, const GetFractions& get_fractions)
     {
         return SquareParallelRule<scalar,Table,GetFractions>(table, get_fractions);
     }
 
-    template<typename scalar, typename Table> auto density_as_liquid                      (const Table& table){ return parallel_rule        (table, MassFractions<scalar>()); }
-    template<typename scalar, typename Table> auto density_as_solid                       (const Table& table){ return parallel_rule        (table, MassFractions<scalar>()); }
-    template<typename scalar, typename Table> auto molar_density_as_liquid                (const Table& table){ return parallel_rule        (table, MolarFractions<scalar>()); }
-    template<typename scalar, typename Table> auto molar_density_as_solid                 (const Table& table){ return parallel_rule        (table, MolarFractions<scalar>()); }
-    template<typename scalar, typename Table> auto tensile_modulus_as_solid               (const Table& table){ return parallel_rule        (table, VolumeFractions<scalar>()); }
-    template<typename scalar, typename Table> auto shear_modulus_as_solid                 (const Table& table){ return parallel_rule        (table, VolumeFractions<scalar>()); }
-    template<typename scalar, typename Table> auto bulk_modulus_as_solid                  (const Table& table){ return parallel_rule        (table, VolumeFractions<scalar>()); }
-    template<typename scalar, typename Table> auto pwave_modulus_as_solid                 (const Table& table){ return parallel_rule        (table, VolumeFractions<scalar>()); }
-    template<typename scalar, typename Table> auto lame_parameter_as_solid                (const Table& table){ return parallel_rule        (table, VolumeFractions<scalar>()); }
-    template<typename scalar, typename Table> auto poisson_ratio_as_solid                 (const Table& table){ return parallel_rule        (table, VolumeFractions<scalar>()); }
-    template<typename scalar, typename Table> auto tensile_yield_strength_as_solid        (const Table& table){ return parallel_rule        (table, VolumeFractions<scalar>()); }
-    template<typename scalar, typename Table> auto shear_yield_strength_as_solid          (const Table& table){ return parallel_rule        (table, VolumeFractions<scalar>()); }
-    template<typename scalar, typename Table> auto compressive_yield_strength_as_solid    (const Table& table){ return parallel_rule        (table, VolumeFractions<scalar>()); }
-    template<typename scalar, typename Table> auto tensile_fracture_strength_as_solid     (const Table& table){ return parallel_rule        (table, VolumeFractions<scalar>()); }
-    template<typename scalar, typename Table> auto shear_fracture_strength_as_solid       (const Table& table){ return parallel_rule        (table, VolumeFractions<scalar>()); }
-    template<typename scalar, typename Table> auto compressive_fracture_strength_as_solid (const Table& table){ return parallel_rule        (table, VolumeFractions<scalar>()); }
-    template<typename scalar, typename Table> auto thermal_conductivity_as_solid          (const Table& table){ return parallel_rule        (table, VolumeFractions<scalar>()); }
-    template<typename scalar, typename Table> auto thermal_conductivity_as_liquid         (const Table& table){ return square_parallel_rule (table, MassFractions<scalar>()); }
+    template<typename scalar> auto density_as_liquid                      (const auto& table, const auto& get_mass  ){ return parallel_rule        (table, mass_fractions  <scalar>(get_mass)); }
+    template<typename scalar> auto density_as_solid                       (const auto& table, const auto& get_mass  ){ return parallel_rule        (table, mass_fractions  <scalar>(get_mass)); }
+    template<typename scalar> auto molar_density_as_liquid                (const auto& table, const auto& get_moles ){ return parallel_rule        (table, molar_fractions <scalar>(get_moles)); }
+    template<typename scalar> auto molar_density_as_solid                 (const auto& table, const auto& get_moles ){ return parallel_rule        (table, molar_fractions <scalar>(get_moles)); }
+    template<typename scalar> auto tensile_modulus_as_solid               (const auto& table, const auto& get_volume){ return parallel_rule        (table, volume_fractions<scalar>(get_volume)); }
+    template<typename scalar> auto shear_modulus_as_solid                 (const auto& table, const auto& get_volume){ return parallel_rule        (table, volume_fractions<scalar>(get_volume)); }
+    template<typename scalar> auto bulk_modulus_as_solid                  (const auto& table, const auto& get_volume){ return parallel_rule        (table, volume_fractions<scalar>(get_volume)); }
+    template<typename scalar> auto pwave_modulus_as_solid                 (const auto& table, const auto& get_volume){ return parallel_rule        (table, volume_fractions<scalar>(get_volume)); }
+    template<typename scalar> auto lame_parameter_as_solid                (const auto& table, const auto& get_volume){ return parallel_rule        (table, volume_fractions<scalar>(get_volume)); }
+    template<typename scalar> auto poisson_ratio_as_solid                 (const auto& table, const auto& get_volume){ return parallel_rule        (table, volume_fractions<scalar>(get_volume)); }
+    template<typename scalar> auto tensile_yield_strength_as_solid        (const auto& table, const auto& get_volume){ return parallel_rule        (table, volume_fractions<scalar>(get_volume)); }
+    template<typename scalar> auto shear_yield_strength_as_solid          (const auto& table, const auto& get_volume){ return parallel_rule        (table, volume_fractions<scalar>(get_volume)); }
+    template<typename scalar> auto compressive_yield_strength_as_solid    (const auto& table, const auto& get_volume){ return parallel_rule        (table, volume_fractions<scalar>(get_volume)); }
+    template<typename scalar> auto tensile_fracture_strength_as_solid     (const auto& table, const auto& get_volume){ return parallel_rule        (table, volume_fractions<scalar>(get_volume)); }
+    template<typename scalar> auto shear_fracture_strength_as_solid       (const auto& table, const auto& get_volume){ return parallel_rule        (table, volume_fractions<scalar>(get_volume)); }
+    template<typename scalar> auto compressive_fracture_strength_as_solid (const auto& table, const auto& get_volume){ return parallel_rule        (table, volume_fractions<scalar>(get_volume)); }
+    template<typename scalar> auto thermal_conductivity_as_solid          (const auto& table, const auto& get_volume){ return parallel_rule        (table, volume_fractions<scalar>(get_volume)); }
+    template<typename scalar> auto thermal_conductivity_as_liquid         (const auto& table, const auto& get_mass  ){ return square_parallel_rule (table, mass_fractions  <scalar>(get_mass)); }
+
+    template<typename scalar> auto density_as_liquid                      (const auto& table){ return parallel_rule        (table, mass_fractions  <scalar>()); }
+    template<typename scalar> auto density_as_solid                       (const auto& table){ return parallel_rule        (table, mass_fractions  <scalar>()); }
+    template<typename scalar> auto molar_density_as_liquid                (const auto& table){ return parallel_rule        (table, molar_fractions <scalar>()); }
+    template<typename scalar> auto molar_density_as_solid                 (const auto& table){ return parallel_rule        (table, molar_fractions <scalar>()); }
+    template<typename scalar> auto tensile_modulus_as_solid               (const auto& table){ return parallel_rule        (table, volume_fractions<scalar>()); }
+    template<typename scalar> auto shear_modulus_as_solid                 (const auto& table){ return parallel_rule        (table, volume_fractions<scalar>()); }
+    template<typename scalar> auto bulk_modulus_as_solid                  (const auto& table){ return parallel_rule        (table, volume_fractions<scalar>()); }
+    template<typename scalar> auto pwave_modulus_as_solid                 (const auto& table){ return parallel_rule        (table, volume_fractions<scalar>()); }
+    template<typename scalar> auto lame_parameter_as_solid                (const auto& table){ return parallel_rule        (table, volume_fractions<scalar>()); }
+    template<typename scalar> auto poisson_ratio_as_solid                 (const auto& table){ return parallel_rule        (table, volume_fractions<scalar>()); }
+    template<typename scalar> auto tensile_yield_strength_as_solid        (const auto& table){ return parallel_rule        (table, volume_fractions<scalar>()); }
+    template<typename scalar> auto shear_yield_strength_as_solid          (const auto& table){ return parallel_rule        (table, volume_fractions<scalar>()); }
+    template<typename scalar> auto compressive_yield_strength_as_solid    (const auto& table){ return parallel_rule        (table, volume_fractions<scalar>()); }
+    template<typename scalar> auto tensile_fracture_strength_as_solid     (const auto& table){ return parallel_rule        (table, volume_fractions<scalar>()); }
+    template<typename scalar> auto shear_fracture_strength_as_solid       (const auto& table){ return parallel_rule        (table, volume_fractions<scalar>()); }
+    template<typename scalar> auto compressive_fracture_strength_as_solid (const auto& table){ return parallel_rule        (table, volume_fractions<scalar>()); }
+    template<typename scalar> auto thermal_conductivity_as_solid          (const auto& table){ return parallel_rule        (table, volume_fractions<scalar>()); }
+    template<typename scalar> auto thermal_conductivity_as_liquid         (const auto& table){ return square_parallel_rule (table, mass_fractions  <scalar>()); }
 
     template<typename Table, typename GetFractions>
     class LogarithmicRule
@@ -145,119 +182,120 @@ namespace mix{
         auto operator() (const Constituents& constituents) const 
         {
             auto fractions = get_fractions(constituents);
-            auto result = fractions(constituents[0])*table[0];
+            auto result = fractions(0,constituents[0])*table[0];
             for (std::size_t i=1; i<constituents.size(); i++) 
             {
-                result += fractions(constituents[i])*std::log(table[i]);
+                result += fractions(i,constituents[i])*std::log(table[i]);
             }
             return result;
         }
     };
     template<typename Table, typename GetFractions>
-    LogarithmicRule<Table,GetFractions> logarithmic_rule(const Table& table, const GetFractions& get_fractions)
+    auto logarithmic_rule(const Table& table, const GetFractions& get_fractions)
     {
         return LogarithmicRule<Table,GetFractions>(table, get_fractions);
     }
 
-    template<typename scalar, typename Table> auto dynamic_viscosity_as_liquid (const Table& table){ return logarithmic_rule(table, MassFractions<scalar>()); }
-    template<typename scalar, typename Table> auto dynamic_viscosity_as_solid  (const Table& table){ return logarithmic_rule(table, MassFractions<scalar>()); }
+    template<typename scalar> auto dynamic_viscosity_as_liquid (const auto& table, const auto& get_property){ return logarithmic_rule(table, mass_fractions<scalar>(get_property)); }
+    template<typename scalar> auto dynamic_viscosity_as_solid  (const auto& table, const auto& get_property){ return logarithmic_rule(table, mass_fractions<scalar>(get_property)); }
 
-    template<typename scalar, typename Table, typename MolarMassTable>
+    template<typename scalar> auto dynamic_viscosity_as_liquid (const auto& table){ return logarithmic_rule(table, mass_fractions<scalar>()); }
+    template<typename scalar> auto dynamic_viscosity_as_solid  (const auto& table){ return logarithmic_rule(table, mass_fractions<scalar>()); }
+
+    template<typename Table, typename MolarMassTable, typename GetFractions>
     class HerningZippererRule
     {
         const Table table;
         const MolarMassTable molar_masses;
-        const MolarFractions<scalar> get_fractions;
+        const GetFractions get_fractions;
     public:
-        HerningZippererRule(const Table& table, const MolarMassTable& molar_masses):
+        HerningZippererRule(const Table& table, const MolarMassTable& molar_masses, const GetFractions& get_fractions):
             table(table),
             molar_masses(molar_masses),
-            get_fractions()
+            get_fractions(get_fractions)
         {}
         template<typename Constituents>
         auto operator() (const Constituents& constituents) const 
         {
             auto fractions = get_fractions(constituents);
-            auto numerator   = fractions(constituents[0]) * std::sqrt(molar_masses[0]/(si::kilogram/si::mole)) * table[0];
-            auto denominator = fractions(constituents[0]) * std::sqrt(molar_masses[0]/(si::kilogram/si::mole));
+            auto numerator   = fractions(0,constituents[0]) * std::sqrt(molar_masses[0]/(si::kilogram/si::mole)) * table[0];
+            auto denominator = fractions(0,constituents[0]) * std::sqrt(molar_masses[0]/(si::kilogram/si::mole));
             for (std::size_t i=1; i<constituents.size(); i++) {
-                numerator   += fractions(constituents[i]) * std::sqrt(molar_masses[i]/(si::kilogram/si::mole)) * table[i];
-                denominator += fractions(constituents[i]) * std::sqrt(molar_masses[i]/(si::kilogram/si::mole));
+                numerator   += fractions(i,constituents[i]) * std::sqrt(molar_masses[i]/(si::kilogram/si::mole)) * table[i];
+                denominator += fractions(i,constituents[i]) * std::sqrt(molar_masses[i]/(si::kilogram/si::mole));
             }
             return numerator/denominator;
         }
     };
-    template<typename scalar, typename Table, typename MolarMassTable>
-    HerningZippererRule<scalar,Table,MolarMassTable> herning_zipperer_rule(
-        const Table& table, const MolarMassTable& molar_masses)
+    template<typename Table, typename MolarMassTable, typename GetFractions>
+    auto herning_zipperer_rule(const Table& table, const MolarMassTable& molar_masses, const GetFractions& get_fractions)
     {
-        return HerningZippererRule<scalar,Table,MolarMassTable>(table, molar_masses);
+        return HerningZippererRule<Table,MolarMassTable,GetFractions>(table, molar_masses,get_fractions);
     }
 
-    template<typename scalar, typename Table, typename MolarMassTable>
+    template<typename Table, typename MolarMassTable, typename GetFractions>
     class WassiljewaHerningZippererRule
     {
         const Table table;
         const MolarMassTable molar_masses;
-        const MolarFractions<scalar> get_fractions;
+        const GetFractions get_fractions;
     public:
-        WassiljewaHerningZippererRule(const Table& table, const MolarMassTable& molar_masses):
+        WassiljewaHerningZippererRule(const Table& table, const MolarMassTable& molar_masses, const GetFractions& get_fractions):
             table(table),
             molar_masses(molar_masses),
-            get_fractions()
+            get_fractions(get_fractions)
         {}
         template<typename Constituents>
         auto operator() (const Constituents& constituents) const 
         {
-            auto numerator = fractions(constituents[0]) * table[0];
-            auto denominator = fractions(constituents[0]) * std::sqrt(molar_masses[0]/molar_masses[0]);
+            auto numerator = fractions(0,constituents[0]) * table[0];
+            auto denominator = fractions(0,constituents[0]) * std::sqrt(molar_masses[0]/molar_masses[0]);
             for (std::size_t i=0; i<constituents.size(); i++) {
                 for (std::size_t j=0; j<constituents.size(); j++) {
                     if (i!=0 && j!=0)
                     {
-                        denominator += fractions(constituents[i]) * std::sqrt(molar_masses[j]/molar_masses[i]);
+                        denominator += fractions(i,constituents[i]) * std::sqrt(molar_masses[j]/molar_masses[i]);
                     }
                 }
                 if (i!=0)
                 {
-                    numerator += fractions(constituents[i]) * table[i];
+                    numerator += fractions(i,constituents[i]) * table[i];
                 }
             }
             return numerator/denominator;
         }
     };
-    template<typename scalar, typename Table, typename MolarMassTable>
-    WassiljewaHerningZippererRule<scalar,Table,MolarMassTable> wassiljewa_herning_zipperer_rule(
-        const Table& table, const MolarMassTable& molar_masses)
+    template<typename Table, typename MolarMassTable, typename GetFractions>
+    auto wassiljewa_herning_zipperer_rule(const Table& table, const MolarMassTable& molar_masses, const GetFractions& get_fractions)
     {
-        return WassiljewaHerningZippererRule<scalar,Table,MolarMassTable>(table, molar_masses);
+        return WassiljewaHerningZippererRule<Table,MolarMassTable,GetFractions>(table, molar_masses, get_fractions);
     }
 
-    template<typename scalar, typename Table, typename MolarDensityTable>
+    template<typename Table, typename MolarDensityTable, typename GetFractions>
     class WinterfeldScrivenDavisRule
     {
         const Table table;
         const MolarDensityTable molar_densities;
-        const MolarFractions<scalar> get_fractions;
+        const GetFractions get_fractions;
     public:
-        WinterfeldScrivenDavisRule(const Table& table, const MolarDensityTable& molar_densities):
+        WinterfeldScrivenDavisRule(const Table& table, const MolarDensityTable& molar_densities, const GetFractions& get_fractions):
             table(table),
             molar_densities(molar_densities),
-            get_fractions()
+            get_fractions(get_fractions)
         {}
         template<typename Constituents>
         auto operator() (const Constituents& constituents) const 
         {
             auto molar_density_of_mix = molar_density_as_liquid(constituents);
             auto result = std::sqrt(table[0]*table[0]) * 
-                molar_density_of_mix * fractions(constituents[0]) * molar_density_of_mix * fractions(constituents[0]) /
-                molar_densities[0]                                * molar_densities[0];
+                molar_density_of_mix * fractions(0,constituents[0]) * molar_density_of_mix * fractions(0,constituents[0]) /
+                molar_densities[0]                                  * molar_densities[0];
             for (std::size_t i=0; i<constituents.size(); i++) {
                 for (std::size_t j=0; j<constituents.size(); j++) {
                     if (i!=0 && j!=0)
                     {
                         result += std::sqrt(table[i]*table[j]) * 
-                            molar_density_of_mix * fractions(constituents[i]) * molar_density_of_mix * fractions(constituents[j]) /
+                            molar_density_of_mix * fractions(i,constituents[i]) * molar_density_of_mix * fractions(i,constituents[j]) /
                             molar_densities[i]                                * molar_densities[j];
                     }
                 }
@@ -265,16 +303,19 @@ namespace mix{
             return result;
         }
     };
-    template<typename scalar, typename Table, typename MolarDensityTable>
-    WinterfeldScrivenDavisRule<scalar,Table,MolarDensityTable> winterfeld_scriven_davis_rule(
-        const Table& table, const MolarDensityTable& molar_densities)
+    template<typename Table, typename MolarDensityTable, typename GetFractions>
+    auto winterfeld_scriven_davis_rule(const Table& table, const MolarDensityTable& molar_densities, const GetFractions& get_fractions)
     {
-        return WinterfeldScrivenDavisRule<scalar,Table,MolarDensityTable>(table, molar_densities);
+        return WinterfeldScrivenDavisRule<Table,MolarDensityTable,GetFractions>(table, molar_densities, get_fractions);
     }
 
-    template<typename scalar, typename Table, typename MolarMassTable>    auto dynamic_viscosity_as_gas    (const Table& table, const MolarMassTable& molar_masses)      { return herning_zipperer_rule            <scalar>(table, molar_masses); }
-    template<typename scalar, typename Table, typename MolarMassTable>    auto thermal_conductivity_as_gas (const Table& table, const MolarMassTable& molar_masses)      { return wassiljewa_herning_zipperer_rule <scalar>(table, molar_masses); }
-    template<typename scalar, typename Table, typename MolarDensityTable> auto surface_tension_as_liquid   (const Table& table, const MolarDensityTable& molar_densities){ return winterfeld_scriven_davis_rule    <scalar>(table, molar_densities); }
+    template<typename scalar> auto dynamic_viscosity_as_gas    (const auto& table, const auto& molar_masses, const auto& get_moles)    { return herning_zipperer_rule <scalar>(table, molar_masses, molar_fractions <scalar>(get_moles)); }
+    template<typename scalar> auto thermal_conductivity_as_gas (const auto& table, const auto& molar_masses, const auto& get_moles)    { return wassiljewa_herning_zipperer_rule <scalar>(table, molar_masses, molar_fractions <scalar>(get_moles)); }
+    template<typename scalar> auto surface_tension_as_liquid   (const auto& table, const auto& molar_densities, const auto& get_moles) { return winterfeld_scriven_davis_rule <scalar>(table, molar_densities, molar_fractions <scalar>(get_moles)); }
+
+    template<typename scalar> auto dynamic_viscosity_as_gas    (const auto& table, const auto& molar_masses)    { return herning_zipperer_rule <scalar>(table, molar_masses, molar_fractions <scalar>(Identity())); }
+    template<typename scalar> auto thermal_conductivity_as_gas (const auto& table, const auto& molar_masses)    { return wassiljewa_herning_zipperer_rule <scalar>(table, molar_masses, molar_fractions <scalar>(Identity())); }
+    template<typename scalar> auto surface_tension_as_liquid   (const auto& table, const auto& molar_densities) { return winterfeld_scriven_davis_rule <scalar>(table, molar_densities, molar_fractions <scalar>(Identity())); }
 
     // template<typename Table, typename GetFractions>
     // class GeneralRelationRule
@@ -292,9 +333,9 @@ namespace mix{
     //         auto fractions = get_fractions(constituents);
     //         return compound::relation::GenericRelation<Tx, Ty>(
     //             [=](Tx x){
-    //                 auto result = fractions(constituents[0])*table[0];
+    //                 auto result = fractions(i,constituents[0])*table[0];
     //                 for (std::size_t i=1; i<constituents.size(); i++) {
-    //                     result += fractions(constituents[i])*table[i];
+    //                     result += fractions(i,constituents[i])*table[i];
     //                 }
     //                 return result;
     //             }

@@ -68,13 +68,13 @@ TEST_CASE( "VolumeFractions", "[mix]" ) {
     }
 
     REQUIRE(test::determinism(narrow,
-        "VolumeFractions(…)",   [=](auto properties){ return mix::VolumeFractions<double>()(properties)(properties); },
+        "VolumeFractions(…)",   [=](auto properties){ return mix::volume_fractions<double>()(properties)(properties); },
         volume_vectors
     ));
 
     REQUIRE(test::codomain(narrow,
         "within expected range", [=](auto properties){ for (std::size_t i = 0; i<properties.size(); i++) { if (!(0.0 <= properties[i] && properties[i] <= 1.0)) return false; }  return true; },
-        "VolumeFractions(…)",   [=](auto properties){ return mix::VolumeFractions<double>()(properties)(properties); },
+        "VolumeFractions(…)",   [=](auto properties){ return mix::volume_fractions<double>()(properties)(properties); },
         volume_vectors
     ));
 
@@ -83,8 +83,8 @@ TEST_CASE( "VolumeFractions", "[mix]" ) {
         [=](auto properties){ 
           std::vector<si::volume<double>> swapped {properties[1], properties[0]};
           return test::Results( 
-            mix::VolumeFractions<double>()(properties)(properties)[0] == mix::VolumeFractions<double>()(swapped)(swapped)[1] &&
-            mix::VolumeFractions<double>()(properties)(properties)[1] == mix::VolumeFractions<double>()(swapped)(swapped)[0], ""
+            mix::volume_fractions<double>()(properties)(properties)[0] == mix::volume_fractions<double>()(swapped)(swapped)[1] &&
+            mix::volume_fractions<double>()(properties)(properties)[1] == mix::volume_fractions<double>()(swapped)(swapped)[0], ""
           );
         },
         volume_vectors
@@ -111,22 +111,22 @@ TEST_CASE( "MassFractions", "[mix]" ) {
     }
 
     REQUIRE(test::determinism(narrow,
-        "MassFractions(…)",   [=](auto properties){ return mix::MassFractions<double>()(properties)(properties); },
+        "MassFractions(…)",   [=](auto properties){ return mix::mass_fractions<double>()(properties)(properties); },
         mass_vectors
     ));
     REQUIRE(test::determinism(narrow,
-        "MassFractions(…)",   [=](auto properties){ return mix::MassFractions<double>()(properties)(properties); },
+        "MassFractions(…)",   [=](auto properties){ return mix::mass_fractions<double>()(properties)(properties); },
         density_vectors
     ));
 
     REQUIRE(test::codomain(narrow,
         "within expected range", [=](auto properties){ for (std::size_t i = 0; i<properties.size(); i++) { if (!(0.0 <= properties[i] && properties[i] <= 1.0)) return false; }  return true; },
-        "MassFractions(…)",   [=](auto properties){ return mix::MassFractions<double>()(properties)(properties); },
+        "MassFractions(…)",   [=](auto properties){ return mix::mass_fractions<double>()(properties)(properties); },
         mass_vectors
     ));
     REQUIRE(test::codomain(narrow,
         "within expected range", [=](auto properties){ for (std::size_t i = 0; i<properties.size(); i++) { if (!(0.0 <= properties[i] && properties[i] <= 1.0)) return false; }  return true; },
-        "MassFractions(…)",   [=](auto properties){ return mix::MassFractions<double>()(properties)(properties); },
+        "MassFractions(…)",   [=](auto properties){ return mix::mass_fractions<double>()(properties)(properties); },
         density_vectors
     ));
 
@@ -135,8 +135,8 @@ TEST_CASE( "MassFractions", "[mix]" ) {
         [=](auto properties){ 
           std::vector<si::mass<double>> swapped {properties[1], properties[0]};
           return test::Results( 
-            mix::MassFractions<double>()(properties)(properties)[0] == mix::MassFractions<double>()(swapped)(swapped)[1] &&
-            mix::MassFractions<double>()(properties)(properties)[1] == mix::MassFractions<double>()(swapped)(swapped)[0], ""
+            mix::mass_fractions<double>()(properties)(properties)[0] == mix::mass_fractions<double>()(swapped)(swapped)[1] &&
+            mix::mass_fractions<double>()(properties)(properties)[1] == mix::mass_fractions<double>()(swapped)(swapped)[0], ""
           );
         },
         mass_vectors
@@ -146,8 +146,8 @@ TEST_CASE( "MassFractions", "[mix]" ) {
         [=](auto properties){ 
           std::vector<si::density<double>> swapped {properties[1], properties[0]};
           return test::Results( 
-            mix::MassFractions<double>()(properties)(properties)[0] == mix::MassFractions<double>()(swapped)(swapped)[1] &&
-            mix::MassFractions<double>()(properties)(properties)[1] == mix::MassFractions<double>()(swapped)(swapped)[0], ""
+            mix::mass_fractions<double>()(properties)(properties)[0] == mix::mass_fractions<double>()(swapped)(swapped)[1] &&
+            mix::mass_fractions<double>()(properties)(properties)[1] == mix::mass_fractions<double>()(swapped)(swapped)[0], ""
           );
         },
         density_vectors
@@ -177,31 +177,31 @@ TEST_CASE( "MolarFractions", "[mix]" ) {
     }
 
     REQUIRE(test::determinism(narrow,
-        "MolarFractions(…)",   [=](auto properties){ return mix::MolarFractions<double>()(properties)(properties); },
+        "MolarFractions(…)",   [=](auto properties){ return mix::molar_fractions<double>()(properties)(properties); },
         amount_vectors
     ));
     REQUIRE(test::determinism(narrow,
-        "MolarFractions(…)",   [=](auto properties){ return mix::MolarFractions<double>()(properties)(properties); },
+        "MolarFractions(…)",   [=](auto properties){ return mix::molar_fractions<double>()(properties)(properties); },
         molar_density_vectors
     ));
     REQUIRE(test::determinism(narrow,
-        "MolarFractions(…)",   [=](auto properties){ return mix::MolarFractions<double>()(properties)(properties); },
+        "MolarFractions(…)",   [=](auto properties){ return mix::molar_fractions<double>()(properties)(properties); },
         number_density_vectors
     ));
 
     REQUIRE(test::codomain(narrow,
         "within expected range", [=](auto properties){ for (std::size_t i = 0; i<properties.size(); i++) { if (!(0.0 <= properties[i] && properties[i] <= 1.0)) return false; }  return true; },
-        "MolarFractions(…)",   [=](auto properties){ return mix::MolarFractions<double>()(properties)(properties); },
+        "MolarFractions(…)",   [=](auto properties){ return mix::molar_fractions<double>()(properties)(properties); },
         amount_vectors
     ));
     REQUIRE(test::codomain(narrow,
         "within expected range", [=](auto properties){ for (std::size_t i = 0; i<properties.size(); i++) { if (!(0.0 <= properties[i] && properties[i] <= 1.0)) return false; }  return true; },
-        "MolarFractions(…)",   [=](auto properties){ return mix::MolarFractions<double>()(properties)(properties); },
+        "MolarFractions(…)",   [=](auto properties){ return mix::molar_fractions<double>()(properties)(properties); },
         molar_density_vectors
     ));
     REQUIRE(test::codomain(narrow,
         "within expected range", [=](auto properties){ for (std::size_t i = 0; i<properties.size(); i++) { if (!(0.0 <= properties[i] && properties[i] <= 1.0)) return false; }  return true; },
-        "MolarFractions(…)",   [=](auto properties){ return mix::MolarFractions<double>()(properties)(properties); },
+        "MolarFractions(…)",   [=](auto properties){ return mix::molar_fractions<double>()(properties)(properties); },
         number_density_vectors
     ));
 
@@ -210,8 +210,8 @@ TEST_CASE( "MolarFractions", "[mix]" ) {
         [=](auto properties){ 
           std::vector<si::amount<double>> swapped {properties[1], properties[0]};
           return test::Results( 
-            mix::MolarFractions<double>()(properties)(properties)[0] == mix::MolarFractions<double>()(swapped)(swapped)[1] &&
-            mix::MolarFractions<double>()(properties)(properties)[1] == mix::MolarFractions<double>()(swapped)(swapped)[0], ""
+            mix::molar_fractions<double>()(properties)(properties)[0] == mix::molar_fractions<double>()(swapped)(swapped)[1] &&
+            mix::molar_fractions<double>()(properties)(properties)[1] == mix::molar_fractions<double>()(swapped)(swapped)[0], ""
           );
         },
         amount_vectors
@@ -221,8 +221,8 @@ TEST_CASE( "MolarFractions", "[mix]" ) {
         [=](auto properties){ 
           std::vector<si::molar_density<double>> swapped {properties[1], properties[0]};
           return test::Results( 
-            mix::MolarFractions<double>()(properties)(properties)[0] == mix::MolarFractions<double>()(swapped)(swapped)[1] &&
-            mix::MolarFractions<double>()(properties)(properties)[1] == mix::MolarFractions<double>()(swapped)(swapped)[0], ""
+            mix::molar_fractions<double>()(properties)(properties)[0] == mix::molar_fractions<double>()(swapped)(swapped)[1] &&
+            mix::molar_fractions<double>()(properties)(properties)[1] == mix::molar_fractions<double>()(swapped)(swapped)[0], ""
           );
         },
         molar_density_vectors
@@ -232,8 +232,8 @@ TEST_CASE( "MolarFractions", "[mix]" ) {
         [=](auto properties){ 
           std::vector<si::number_density<double>> swapped {properties[1], properties[0]};
           return test::Results( 
-            mix::MolarFractions<double>()(properties)(properties)[0] == mix::MolarFractions<double>()(swapped)(swapped)[1] &&
-            mix::MolarFractions<double>()(properties)(properties)[1] == mix::MolarFractions<double>()(swapped)(swapped)[0], ""
+            mix::molar_fractions<double>()(properties)(properties)[0] == mix::molar_fractions<double>()(swapped)(swapped)[1] &&
+            mix::molar_fractions<double>()(properties)(properties)[1] == mix::molar_fractions<double>()(swapped)(swapped)[0], ""
           );
         },
         number_density_vectors

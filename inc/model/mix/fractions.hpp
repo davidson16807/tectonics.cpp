@@ -41,74 +41,102 @@ namespace mix{
 
     */
 
-    template<typename unit>
+    struct Identity
+    {
+        constexpr Identity(){}
+        template<typename id, typename scalar>
+        inline constexpr scalar operator() (const id i, const scalar constituent) const 
+        {
+            return constituent;
+        }
+    };
+
+    template<typename unit, typename Get>
     class PropertyFractions
     {
         using scalar = typename unit::value_type;
 
-        unit sum;
+        const Get get;
+              unit sum;
     public:
         using value_type = typename unit::value_type;
-        template<typename container>
-        PropertyFractions(const container& constituents)
+        template<typename Constituents>
+        PropertyFractions(const Constituents& constituents, const Get& get):
+            get(get),
+            sum(get(0,constituents[0]))
         {
-            sum *= scalar(0);
-            for (std::size_t i=0; i<constituents.size(); i++) 
+            for (std::size_t i=1; i<constituents.size(); i++) 
             {
-                sum += constituents[i];
+                sum += get(i, constituents[i]);
             }
         }
-        inline auto operator() (const unit property) const 
+        template<typename id>
+        inline auto operator() (const id i, const unit constituent) const 
         {
-            return property/sum;
+            return get(i, constituent)/sum;
         }
-        auto operator() (const std::vector<unit>& properties) const 
+        auto operator() (const std::vector<unit>& constituents) const 
         {
             using scalar = typename unit::value_type;
             std::vector<scalar> fractions;
-            for (std::size_t i=0; i<properties.size(); i++) 
+            for (std::size_t i=0; i<constituents.size(); i++) 
             {
-                fractions.push_back(properties[i]/sum);
+                fractions.push_back(get(i, constituents[i])/sum);
             }
             return fractions;
         }
     };
 
-    template<typename scalar>
+    template<typename scalar, typename Get>
     struct VolumeFractions
     {
-        VolumeFractions(){}
+        const Get get;
+        VolumeFractions(const Get& get):get(get) {}
         template<int M>
-        auto operator() (const std::array<si::volume<scalar>,M>& volumes) const { return PropertyFractions<si::volume<scalar>>(volumes); }
-        auto operator() (const std::vector<si::volume<scalar>>& volumes) const { return PropertyFractions<si::volume<scalar>>(volumes); }
+        auto operator() (const std::array<si::volume<scalar>,M>& volumes) const { return PropertyFractions<si::volume<scalar>,Get>(volumes, get); }
+        auto operator() (const std::vector<si::volume<scalar>>& volumes) const { return PropertyFractions<si::volume<scalar>,Get>(volumes, get); }
     };
+    template<typename scalar, typename Get> 
+    auto volume_fractions(const Get& get) { return VolumeFractions<scalar,Get>(get); }
+    template<typename scalar> 
+    auto volume_fractions() { return volume_fractions<scalar>(Identity()); }
 
-    template<typename scalar>
+    template<typename scalar, typename Get>
     struct MassFractions
     {
-        MassFractions(){}
+        const Get get;
+        MassFractions(const Get& get):get(get) {}
         template<int M>
-        auto operator() (const std::array<si::mass<scalar>,M>& masses) const { return PropertyFractions<si::mass<scalar>>(masses); }
-        auto operator() (const std::vector<si::mass<scalar>>& masses) const { return PropertyFractions<si::mass<scalar>>(masses); }
+        auto operator() (const std::array<si::mass<scalar>,M>& masses) const { return PropertyFractions<si::mass<scalar>,Get>(masses, get); }
+        auto operator() (const std::vector<si::mass<scalar>>& masses) const { return PropertyFractions<si::mass<scalar>,Get>(masses, get); }
         template<int M>
-        auto operator() (const std::array<si::density<scalar>,M>& densities) const { return PropertyFractions<si::density<scalar>>(densities); }
-        auto operator() (const std::vector<si::density<scalar>>& densities) const { return PropertyFractions<si::density<scalar>>(densities); }
+        auto operator() (const std::array<si::density<scalar>,M>& densities) const { return PropertyFractions<si::density<scalar>,Get>(densities, get); }
+        auto operator() (const std::vector<si::density<scalar>>& densities) const { return PropertyFractions<si::density<scalar>,Get>(densities, get); }
     };
+    template<typename scalar, typename Get> 
+    auto mass_fractions(const Get& get) { return MassFractions<scalar,Get>(get); }
+    template<typename scalar> 
+    auto mass_fractions() { return mass_fractions<scalar>(Identity()); }
 
-    template<typename scalar>
+    template<typename scalar, typename Get>
     struct MolarFractions
     {
-        MolarFractions(){}
+        const Get get;
+        MolarFractions(const Get& get):get(get) {}
         template<int M>
-        auto operator() (const std::array<si::amount<scalar>,M>& amounts) const { return PropertyFractions<si::amount<scalar>>(amounts); }
-        auto operator() (const std::vector<si::amount<scalar>>& amounts) const { return PropertyFractions<si::amount<scalar>>(amounts); }
+        auto operator() (const std::array<si::amount<scalar>,M>& amounts) const { return PropertyFractions<si::amount<scalar>,Get>(amounts, get); }
+        auto operator() (const std::vector<si::amount<scalar>>& amounts) const { return PropertyFractions<si::amount<scalar>,Get>(amounts, get); }
         template<int M>
-        auto operator() (const std::array<si::molar_density<scalar>,M>& molar_densities) const { return PropertyFractions<si::molar_density<scalar>>(molar_densities); }
-        auto operator() (const std::vector<si::molar_density<scalar>>& molar_densities) const { return PropertyFractions<si::molar_density<scalar>>(molar_densities); }
+        auto operator() (const std::array<si::molar_density<scalar>,M>& molar_densities) const { return PropertyFractions<si::molar_density<scalar>,Get>(molar_densities, get); }
+        auto operator() (const std::vector<si::molar_density<scalar>>& molar_densities) const { return PropertyFractions<si::molar_density<scalar>,Get>(molar_densities, get); }
         template<int M>
-        auto operator() (const std::array<si::number_density<scalar>,M>& number_densities) const { return PropertyFractions<si::number_density<scalar>>(number_densities); }
-        auto operator() (const std::vector<si::number_density<scalar>>& number_densities) const { return PropertyFractions<si::number_density<scalar>>(number_densities); }
+        auto operator() (const std::array<si::number_density<scalar>,M>& number_densities) const { return PropertyFractions<si::number_density<scalar>,Get>(number_densities, get); }
+        auto operator() (const std::vector<si::number_density<scalar>>& number_densities) const { return PropertyFractions<si::number_density<scalar>,Get>(number_densities, get); }
     };
+    template<typename scalar, typename Get> 
+    auto molar_fractions(const Get& get) { return MolarFractions<scalar,Get>(get); }
+    template<typename scalar> 
+    auto molar_fractions() { return molar_fractions<scalar>(Identity()); }
 
 }
 

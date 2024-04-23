@@ -56,8 +56,8 @@ TEST_CASE( "LinearRule", "[mix]" ) {
 
     std::vector<double> scalars {2.0,3.0};
     std::vector<si::length<double>> meters {2.0*si::meter,3.0*si::meter};
-    auto scalar_rule = mix::linear_rule(scalars, mix::MassFractions<double>());
-    auto length_rule = mix::linear_rule(meters,  mix::MassFractions<double>());
+    auto scalar_rule = mix::linear_rule(scalars, mix::mass_fractions<double>());
+    auto length_rule = mix::linear_rule(meters,  mix::mass_fractions<double>());
     std::vector<std::vector<si::mass<double>>> mass_vectors;
     for (int i = 0; i<3; i++) {
       for (int j = 0; j<3; j++) {
@@ -121,8 +121,8 @@ TEST_CASE( "ParallelRule", "[mix]" ) {
 
     std::vector<double> scalars {2.0,3.0};
     std::vector<si::length<double>> meters {2.0*si::meter,3.0*si::meter};
-    auto scalar_rule = mix::parallel_rule<double>(scalars, mix::MassFractions<double>());
-    auto length_rule = mix::parallel_rule<double>(meters,  mix::MassFractions<double>());
+    auto scalar_rule = mix::parallel_rule<double>(scalars, mix::mass_fractions<double>());
+    auto length_rule = mix::parallel_rule<double>(meters,  mix::mass_fractions<double>());
     std::vector<std::vector<si::mass<double>>> mass_vectors;
     for (int i = 0; i<3; i++) {
       for (int j = 0; j<3; j++) {
