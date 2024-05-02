@@ -26,14 +26,6 @@ namespace rock
 
     The interpretation of attributes within `StratumStore` is error prone,
     so to prevent users from doing so we encapsulate the class.
-
-    The interpretation of attributes also comes with some performance penalty,
-    so to encourage users not to spam calls to getters, 
-    we only expose methods to convert to and from `StratumStore`.
-
-    This also grants a certain mathematical purity to the object,
-    since the object at high level can be treated strictly by its mappings to other states, 
-    as in the spirit of category theory, and in this case they are isomorphic and invertible.
     */
     template <std::size_t M>
     class StratumStore
@@ -121,6 +113,26 @@ namespace rock
                 std::numeric_limits<std::uint16_t>::max()*std::clamp( float(log2(input.max_temperature_received/si::kelvin)) / log2_ref_temperature,0.0f, 1.0f));
             age_of_world_when_first_deposited_in_megayears = input.age_of_world_when_first_deposited / si::megayear;
             age_of_world_when_last_deposited_in_megayears = input.age_of_world_when_last_deposited / si::megayear;
+        }
+
+        inline auto age_of_world_when_first_deposited () const 
+        {
+            return age_of_world_when_first_deposited_in_megayears * si::megayear;
+        }
+
+        inline auto age_of_world_when_last_deposited () const 
+        {
+            return age_of_world_when_last_deposited_in_megayears * si::megayear;
+        }
+
+        inline auto size() const
+        {
+            return minerals.size();
+        }
+
+        inline auto operator[] (const int i) const
+        {
+            return minerals[i];
         }
     };
 }

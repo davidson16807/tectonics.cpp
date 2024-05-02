@@ -20,7 +20,7 @@ namespace rock
 	{
 		static constexpr float epsilon =1e-4f;
 
-		float mass; 
+		si::mass<float> mass; 
 		std::uint8_t unweathered_amorphous_part_count  : 4;
 		std::uint8_t unweathered_extrusive_part_count  : 4;
 		std::uint8_t unweathered_intrusive_part_count  : 4;

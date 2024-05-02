@@ -10,21 +10,25 @@ namespace rock {
     */
     template<
         typename scalar, 
+        typename AgeForElevation,
         typename MassForElevation,
         typename ExtrusiveFractionForElevation>
     struct StratumGenerator {
 
-        MassForElevation              mafic_mass;
-        MassForElevation              felsic_mass;
-        ExtrusiveFractionForElevation felsic_extrusive_fraction;
-        ExtrusiveFractionForElevation mafic_extrusive_fraction;
+        const AgeForElevation               age;
+        const MassForElevation              mafic_mass;
+        const MassForElevation              felsic_mass;
+        const ExtrusiveFractionForElevation felsic_extrusive_fraction;
+        const ExtrusiveFractionForElevation mafic_extrusive_fraction;
 
         constexpr explicit StratumGenerator(
+            const AgeForElevation&               age,
             const MassForElevation&              mafic_mass,
             const MassForElevation&              felsic_mass,
-            const ExtrusiveFractionForElevation& felsic_extrusive_fraction,
-            const ExtrusiveFractionForElevation& mafic_extrusive_fraction
+            const ExtrusiveFractionForElevation& mafic_extrusive_fraction,
+            const ExtrusiveFractionForElevation& felsic_extrusive_fraction
         ):
+            age(age),
             mafic_mass  (mafic_mass),
             felsic_mass (felsic_mass),
             felsic_extrusive_fraction(felsic_extrusive_fraction),
@@ -41,7 +45,7 @@ namespace rock {
             return StratumStore<2>(
                 Stratum<2>(
                     0.0*si::kelvin, 0.0*si::pascal,
-                    0.0*si::year,   0.0*si::year,
+                    age(elevation_in_meters), age(elevation_in_meters),
                     std::vector<Mineral>{mafic, felsic}
                 ));
         }

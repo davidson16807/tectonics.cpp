@@ -15,6 +15,7 @@
 namespace rock
 {
 
+    template<std::size_t M>
     class StratumOps
     {
         const MineralOps minerals;
@@ -25,7 +26,6 @@ namespace rock
         {}
 
         // OPERATORS, regular functions of the form: Stratum x Stratum -> Stratum
-        template<std::size_t M>
         void scale(const Stratum<M>& a, float scalar, Stratum<M>& output) const
         {
             output = a;
@@ -39,7 +39,6 @@ namespace rock
             output.age_of_world_when_last_deposited = a.age_of_world_when_last_deposited;
         }
 
-        template<std::size_t M>
         void combine(
             const Stratum<M>& a, 
             const Stratum<M>& b, 

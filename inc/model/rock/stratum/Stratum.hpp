@@ -81,50 +81,6 @@ namespace rock
             }
         }
 
-        // DERIVED ATTRIBUTES, regular functions of the form: Stratum -> T
-        si::mass<double> mass() const 
-        {
-            si::mass<double> total_mass(0.0);
-            for (std::size_t i=0; i<M; i++)
-            {
-                total_mass += minerals[i].mass;
-            }
-            return total_mass;
-        }
-        si::time<double> age(const si::time<double> age_of_world) const
-        {
-            return age_of_world - age_of_world_when_first_deposited;
-        }
-        si::volume<double> volume(const std::array<si::density<double>, M>& mineral_densities) const 
-        {
-            si::volume<double> total_volume(0.0);
-            for (std::size_t i=0; i<M; i++)
-            {
-                total_volume += minerals[i].mass / mineral_densities[i];
-            }
-            return total_volume;
-        }
-        si::density<double> density(const si::time<double> age_of_world, const std::array<si::density<double>, M>& mineral_densities) const 
-        {
-            return mass() / volume(age_of_world, mineral_densities);
-        }
-        // si::thermal_conductivity<double> thermal_conductivity(
-        //     si::time<double> age_of_world,
-        //     const std::array<si::density<double>, M>& mineral_densities,
-        //     const std::array<si::thermal_conductivity<double>, M>& mineral_thermal_conductivities
-        // ) const 
-        // {
-        //     // geometric mean weighted by fractional volume, see work by Fuchs (2013)
-        //     float logK(0.0);
-        //     si::volume<double> total_volume(volume(mineral_densities));
-        //     float fractional_volume(0);
-        //     for (std::size_t i=0; i<M; i++)
-        //     {
-        //         fractional_volume = minerals[i].mass / (mineral_densities[i] * total_volume);
-        //         logK += fractional_volume * mineral_thermal_conductivities[i];
-        //     }
-        //     return exp(logK);
-        // }
     };
 
 }
