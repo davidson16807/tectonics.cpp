@@ -12,11 +12,11 @@ namespace rock
 {
 
     template<std::size_t M>
-    struct Crust
+    struct Plate
     {
-        Formation<M> sediment;
-        Formation<M> sedimentary;
-        Formation<M> bedrock;
+        Crust<M> crust;
+        glm::mat<3,3> local_to_global;
+        glm::mat<3,3> global_to_local;
     };
 
 }

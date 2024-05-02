@@ -12,12 +12,7 @@ namespace rock
 {
 
     template<std::size_t M>
-    struct Crust
-    {
-        Formation<M> sediment;
-        Formation<M> sedimentary;
-        Formation<M> bedrock;
-    };
+    using Formation = std::vector<StratumStore<M>>;
 
 }
 
