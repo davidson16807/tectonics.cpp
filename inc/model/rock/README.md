@@ -6,8 +6,9 @@ It would therefore provide a description for all the possible subidivisions of c
 * **density tower** all mass that comprises a world, expressed as a density partitioned series of mass pools of any phase (solid, liquid, or gas)
 * **crust**       	a subsection of a density tower that is composed strictly of solid mass
 * **plate** 	  	a subsection of a crust that is characterized by a unique orientation and velocity
-* **column** 	  	a subsection of a plate that is characterized by a unique point on the globe, expressed as cell contents within a **raster**
-* **stratum** 	  	a subsection of a column that is characterized by a unique depth, thickness, and particle makeup
+* **formation**  	a subsection of a plate that consists of a raster of strata that each share a unique manner of formation
+* **column** 	  	a subsection of a plate that consists of an array of strata that each share a unique location on the globe
+* **stratum** 	  	a subsection of a plate that is characterized by a unique manner of formation and location on the globe
 * **particle**    	a subsection of a stratum that exists as a cohesive unit, ranging in size from a boulder to a particle of clay
 * **clast**   	  	a subsection of a particle characterized by homogeneous grain makeup (originally a smaller particle prior to lithification)
 * **grain**         a subsection of a clast that is comprised of a single mineral
@@ -20,12 +21,9 @@ Particles, clasts, and grains are too numerous to model individually so they mus
 
 Since model state updates in real time using several out-of-order traversals, 
 it is critical to reduce the memory footprint of model state.
-Therefore, any structure smaller than a column is represented at a very coarse resolution
+Therefore, any structure smaller than a column or formation is represented at a very coarse resolution
 within stack memory, using arrays of constant size.
 We will now iterate through each of these structures and account for how this can be done.
-
-### Columns
-The number of columns is inherently constant for a grid of known resolution.
 
 ### Strata
 The number of strata varies in principle, and the number that can we can afford to represent is very low,
