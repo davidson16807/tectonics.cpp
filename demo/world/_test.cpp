@@ -205,6 +205,26 @@ int main() {
   //   }
   // };
 
+  auto stratum = StratumGenerator(
+    // displacements are from Charette & Smith 2010 (shallow ocean), enclopedia britannica (shelf bottom"continental slope"), 
+    // wikipedia (shelf top), and Sverdrup & Fleming 1942 (land)
+    get_linear_spline_relation(1.0, si::megayear, 
+      {-11000.0, -5000.0, -4000.0, -2000.0, -1500.0, -900.0,  840.0},
+      {250.0,    100.0,   0.0,     0.0,     100.0,   1000.0, 1000.0}),
+    get_linear_spline_relation(1.0, 2890.0*si::kilogram,
+      {-1500.0,       -950.0},
+      {2890.0*7100.0,    0.0}),
+    get_linear_spline_relation(1.0, 2700.0*si::kilogram, 
+      {-1500.0, -950.0,  840.0,    8848.0},
+      {0.0,     28300.0, 36900.0, 70000.0}),
+    get_linear_spline_relation(1.0, 1.0, 
+      {-1500.0, 8848.0},
+      {0.25,      0.25}), // from Gillis (2013)
+    get_linear_spline_relation(1.0, 1.0, 
+      {-1500.0, 8848.0},
+      {0.15,      0.15}), // based on estimate from Wikipedia
+  );
+
   auto fbm = field::fractal_brownian_noise<int,float>(
     field::value_noise<3,float>(
         field::mosaic_noise(
@@ -217,7 +237,9 @@ int main() {
   auto vertex_scalars1 = 
     series::map(
       field::compose(
-        inspected::compose(hypsometry_cdfi, fbm_cdf), fbm), 
+        inspected::compose(stratum, 
+          inspected::compose(hypsometry_cdfi, fbm_cdf)), 
+        fbm), 
       dymaxion::VertexPositions(grid)
     );
 
