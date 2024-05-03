@@ -54,7 +54,7 @@ namespace rock
 		}
 		void unpack(Mineral& output) const
 		{
-		    output.mass = mass * si::kilogram;
+		    output.mass = si::mass<double>(mass);
 		    float total_relative_volume(epsilon);
 			total_relative_volume += unweathered_amorphous_part_count;
 			total_relative_volume += unweathered_extrusive_part_count;
@@ -76,7 +76,7 @@ namespace rock
 		}
 		void pack(const Mineral& input)
 		{
-			mass = input.mass / si::kilogram;
+			mass = si::mass<float>(input.mass);
             // rescale bin counts by the new max to fit inside a uint8_t
             float grain_type_relative_volume_max(epsilon);
             for (int i = 0; i < int(GrainType::count); ++i)
