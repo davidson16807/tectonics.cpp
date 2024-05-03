@@ -185,7 +185,7 @@ namespace unlayered
             for (i = 0; i < grid.vertex_count(); ++i)
             {
                 j = 0;
-                out[i] = field[grid.arrow_target_memory_id(i,j)] - field[i];
+                out[i] = field[grid.arrow_target_id(i,j)] - field[i];
             }
         }
         template<typename Grid, typename In, typename Out>
@@ -196,7 +196,7 @@ namespace unlayered
             for (i = 0; i < grid.vertex_count(); ++i)
             {
                 j = 1;
-                out[i] = field[grid.arrow_target_memory_id(i,j)] - field[i];
+                out[i] = field[grid.arrow_target_id(i,j)] - field[i];
             }
         }
         template<typename Grid, typename In, typename Out>
@@ -207,7 +207,7 @@ namespace unlayered
             for (i = 0; i < grid.vertex_count(); ++i)
             {
                 j = 2;
-                out[i] = field[grid.arrow_target_memory_id(i,j)] - field[i];
+                out[i] = field[grid.arrow_target_id(i,j)] - field[i];
             }
         }
         template<typename Grid, typename In, typename Out>
@@ -218,7 +218,7 @@ namespace unlayered
             for (i = 0; i < grid.vertex_count(); ++i)
             {
                 j = 3;
-                out[i] = field[grid.arrow_target_memory_id(i,j)] - field[i];
+                out[i] = field[grid.arrow_target_id(i,j)] - field[i];
             }
         }
 

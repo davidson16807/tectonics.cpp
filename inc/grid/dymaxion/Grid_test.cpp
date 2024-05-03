@@ -67,14 +67,14 @@ TEST_CASE( "Grid arrow_offset_memory_id() / arrow_offset_grid_position()", "[dym
     ));
 
     REQUIRE(test::left_invertibility(precise,
-        "Grid.arrow_offset_memory_id(…)", TEST_UNARY(grid.arrow_offset_memory_id),
-        "Grid.arrow_offset_grid_position(…)",   TEST_UNARY(grid.arrow_offset_grid_position),
+        "Grid.arrow_offset_memory_id(…)",      TEST_UNARY(grid.arrow_offset_memory_id),
+        "Grid.arrow_offset_grid_position(…)",  TEST_UNARY(grid.arrow_offset_grid_position),
         arrow_offset_ids
     ));
 
     REQUIRE(test::left_invertibility(precise,
-        "Grid.arrow_offset_grid_position(…)",   TEST_UNARY(grid.arrow_offset_grid_position),
-        "Grid.arrow_offset_memory_id(…)", TEST_UNARY(grid.arrow_offset_memory_id),
+        "Grid.arrow_offset_grid_position(…)", TEST_UNARY(grid.arrow_offset_grid_position),
+        "Grid.arrow_offset_memory_id(…)",     TEST_UNARY(grid.arrow_offset_memory_id),
         arrow_offset_grid_ids
     ));
 
@@ -94,7 +94,7 @@ TEST_CASE( "Grid arrow properties", "[dymaxion]" ) {
     series::Range arrow_offset_ids(4);
 
     REQUIRE(test::determinism(precise,
-        "Grid.arrow_target_memory_id(…)", TEST_BINARY(grid.arrow_target_memory_id),
+        "Grid.arrow_target_id(…)", TEST_BINARY(grid.arrow_target_id),
         vertex_ids,
         arrow_offset_ids
     ));

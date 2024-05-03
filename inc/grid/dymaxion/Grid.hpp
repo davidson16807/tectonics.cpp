@@ -42,10 +42,12 @@ namespace dymaxion
 
 		static constexpr scalar pi = 3.141592652653589793f;
 
-		// arrow_target_grid_id must be private, 
-		// since dymaxion::Grid and collignon::Grid are meant to share similar interfaces,
-		// however dymaxion::Grid and collignon::Grid must differ in their representations of grid ids,
-		// and for this reason we do not wish to expose grid ids to classes that are using *Grids
+		/*
+		arrow_target_grid_id must be private, 
+		since dymaxion::Grid and collignon::Grid are meant to share similar interfaces,
+		however dymaxion::Grid and collignon::Grid must differ in their representations of grid ids,
+		and for this reason we do not wish to expose grid ids to classes that are using *Grids
+		*/
 		inline constexpr ipoint arrow_target_grid_id(const id source_id, const id offset_id) const
 		{
 			return memory.grid_id(source_id) + arrow_offset_grid_position(offset_id);
@@ -69,11 +71,6 @@ namespace dymaxion
 		constexpr id square_id(const id vertex_id) const
 		{
 			return memory.grid_id(vertex_id).square_id;
-		}
-
-		constexpr ipoint vertex_grid_id(const id vertex_id) const
-		{
-			return memory.grid_id(vertex_id);
 		}
 
 		constexpr id arrow_offset_memory_id(const ivec2 arrow_offset_grid_position) const
@@ -129,7 +126,7 @@ namespace dymaxion
 			return arrows_per_vertex * voronoi.vertex_count;
 		}
 
-		inline constexpr id arrow_target_memory_id(const id source_id, const id offset_id) const
+		inline constexpr id arrow_target_id(const id source_id, const id offset_id) const
 		{
 			return memory.memory_id(arrow_target_grid_id(source_id, offset_id));
 		}
@@ -214,9 +211,9 @@ namespace dymaxion
 				+ 	glm::length(glm::cross(offsetDA, offsetAB)))/2.0;
 		}
 
-		constexpr scalar nearest_vertex_id(const vec3 position) const 
+		constexpr id nearest_vertex_id(const vec3 vertex_position) const
 		{
-			return memory.memory_id(voronoi.grid_id(position));
+			return memory.memory_id(voronoi.grid_id(vertex_position));
 		}
 
 	};

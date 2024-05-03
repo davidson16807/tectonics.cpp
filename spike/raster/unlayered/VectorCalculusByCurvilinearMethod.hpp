@@ -190,7 +190,7 @@ namespace procedural
             for (i = 0; i < grid.vertex_count(); ++i)
             {
                 j = 0;
-                out[i] = field[grid.arrow_target_memory_id(i,j)] - field[i];
+                out[i] = field[grid.arrow_target_id(i,j)] - field[i];
             }
         }
         template<typename Grid, typename In, typename Out>
@@ -201,7 +201,7 @@ namespace procedural
             for (i = 0; i < grid.vertex_count(); ++i)
             {
                 j = 1;
-                out[i] = field[grid.arrow_target_memory_id(i,j)] - field[i];
+                out[i] = field[grid.arrow_target_id(i,j)] - field[i];
             }
         }
         template<typename Grid, typename In, typename Out>
@@ -212,7 +212,7 @@ namespace procedural
             for (i = 0; i < grid.vertex_count(); ++i)
             {
                 j = 2;
-                out[i] = field[grid.arrow_target_memory_id(i,j)] - field[i];
+                out[i] = field[grid.arrow_target_id(i,j)] - field[i];
             }
         }
         template<typename Grid, typename In, typename Out>
@@ -223,7 +223,7 @@ namespace procedural
             for (i = 0; i < grid.vertex_count(); ++i)
             {
                 j = 3;
-                out[i] = field[grid.arrow_target_memory_id(i,j)] - field[i];
+                out[i] = field[grid.arrow_target_id(i,j)] - field[i];
             }
         }
 
@@ -250,12 +250,12 @@ namespace procedural
             {
                 i2 = grid.vertex_representative(i);
 
-                dvdzeta = grid.vertex_position(grid.arrow_target_memory_id(i2,j-halfN))         - grid.vertex_position(grid.arrow_target_memory_id(i2,j+halfN));
-                dvdeta  = grid.vertex_position(grid.arrow_target_memory_id(i2,j-halfN+fourthN)) - grid.vertex_position(grid.arrow_target_memory_id(i2,j+halfN+fourthN));
+                dvdzeta = grid.vertex_position(grid.arrow_target_id(i2,j-halfN))         - grid.vertex_position(grid.arrow_target_id(i2,j+halfN));
+                dvdeta  = grid.vertex_position(grid.arrow_target_id(i2,j-halfN+fourthN)) - grid.vertex_position(grid.arrow_target_id(i2,j+halfN+fourthN));
                 local_basis_jacobian = mat2(dvdzeta.x, dvdeta.x, dvdzeta.y, dvdeta.y);
 
-                dfdzeta = field[grid.arrow_target_memory_id(i2,j-halfN)]         - field[grid.arrow_target_memory_id(i2,j+halfN)];
-                dfdeta  = field[grid.arrow_target_memory_id(i2,j-halfN+fourthN)] - field[grid.arrow_target_memory_id(i2,j+halfN+fourthN)];
+                dfdzeta = field[grid.arrow_target_id(i2,j-halfN)]         - field[grid.arrow_target_id(i2,j+halfN)];
+                dfdeta  = field[grid.arrow_target_id(i2,j-halfN+fourthN)] - field[grid.arrow_target_id(i2,j+halfN+fourthN)];
 
                 out[i] = glm::inverse(local_basis_jacobian) * vec2(dfdzeta, dfdeta);;
             }
@@ -272,12 +272,12 @@ namespace procedural
             {
                 i2 = grid.vertex_representative(i);
 
-                dvdzeta = grid.vertex_position(grid.arrow_target_memory_id(i2,j-halfN))         - grid.vertex_position(grid.arrow_target_memory_id(i2,j+halfN));
-                dvdeta  = grid.vertex_position(grid.arrow_target_memory_id(i2,j-halfN+fourthN)) - grid.vertex_position(grid.arrow_target_memory_id(i2,j+halfN+fourthN));
+                dvdzeta = grid.vertex_position(grid.arrow_target_id(i2,j-halfN))         - grid.vertex_position(grid.arrow_target_id(i2,j+halfN));
+                dvdeta  = grid.vertex_position(grid.arrow_target_id(i2,j-halfN+fourthN)) - grid.vertex_position(grid.arrow_target_id(i2,j+halfN+fourthN));
                 local_basis_jacobian = mat2(dvdzeta.x, dvdeta.x, dvdzeta.y, dvdeta.y);
 
-                dudzeta = field[grid.arrow_target_memory_id(i2,j-halfN)]         - field[grid.arrow_target_memory_id(i2,j+halfN)];
-                dudeta  = field[grid.arrow_target_memory_id(i2,j-halfN+fourthN)] - field[grid.arrow_target_memory_id(i2,j+halfN+fourthN)];
+                dudzeta = field[grid.arrow_target_id(i2,j-halfN)]         - field[grid.arrow_target_id(i2,j+halfN)];
+                dudeta  = field[grid.arrow_target_id(i2,j-halfN+fourthN)] - field[grid.arrow_target_id(i2,j+halfN+fourthN)];
 
                 out[i] = glm::inverse(local_basis_jacobian) * mat2(dudzeta, dudeta);
             }
@@ -296,12 +296,12 @@ namespace procedural
             {
                 i2 = grid.vertex_representative(i);
 
-                dvdzeta = grid.vertex_position(grid.arrow_target_memory_id(i2,j-halfN))         - grid.vertex_position(grid.arrow_target_memory_id(i2,j+halfN));
-                dvdeta  = grid.vertex_position(grid.arrow_target_memory_id(i2,j-halfN+fourthN)) - grid.vertex_position(grid.arrow_target_memory_id(i2,j+halfN+fourthN));
+                dvdzeta = grid.vertex_position(grid.arrow_target_id(i2,j-halfN))         - grid.vertex_position(grid.arrow_target_id(i2,j+halfN));
+                dvdeta  = grid.vertex_position(grid.arrow_target_id(i2,j-halfN+fourthN)) - grid.vertex_position(grid.arrow_target_id(i2,j+halfN+fourthN));
                 local_basis_jacobian = mat2(dvdzeta.x, dvdeta.x, dvdzeta.y, dvdeta.y);
 
-                dudzeta = field[grid.arrow_target_memory_id(i2,j-halfN)]         - field[grid.arrow_target_memory_id(i2,j+halfN)];
-                dudeta  = field[grid.arrow_target_memory_id(i2,j-halfN+fourthN)] - field[grid.arrow_target_memory_id(i2,j+halfN+fourthN)];
+                dudzeta = field[grid.arrow_target_id(i2,j-halfN)]         - field[grid.arrow_target_id(i2,j+halfN)];
+                dudeta  = field[grid.arrow_target_id(i2,j-halfN+fourthN)] - field[grid.arrow_target_id(i2,j+halfN+fourthN)];
 
                 field_jacobian = glm::inverse(local_basis_jacobian) * mat2(dudzeta, dudeta);
 
@@ -323,12 +323,12 @@ namespace procedural
             {
                 i2 = grid.vertex_representative(i);
 
-                dvdzeta = grid.vertex_position(grid.arrow_target_memory_id(i2,j-halfN))         - grid.vertex_position(grid.arrow_target_memory_id(i2,j+halfN));
-                dvdeta  = grid.vertex_position(grid.arrow_target_memory_id(i2,j-halfN+fourthN)) - grid.vertex_position(grid.arrow_target_memory_id(i2,j+halfN+fourthN));
+                dvdzeta = grid.vertex_position(grid.arrow_target_id(i2,j-halfN))         - grid.vertex_position(grid.arrow_target_id(i2,j+halfN));
+                dvdeta  = grid.vertex_position(grid.arrow_target_id(i2,j-halfN+fourthN)) - grid.vertex_position(grid.arrow_target_id(i2,j+halfN+fourthN));
                 local_basis_jacobian = mat2(dvdzeta.x, dvdeta.x, dvdzeta.y, dvdeta.y);
 
-                dudzeta = field[grid.arrow_target_memory_id(i2,j-halfN)]         - field[grid.arrow_target_memory_id(i2,j+halfN)];
-                dudeta  = field[grid.arrow_target_memory_id(i2,j-halfN+fourthN)] - field[grid.arrow_target_memory_id(i2,j+halfN+fourthN)];
+                dudzeta = field[grid.arrow_target_id(i2,j-halfN)]         - field[grid.arrow_target_id(i2,j+halfN)];
+                dudeta  = field[grid.arrow_target_id(i2,j-halfN+fourthN)] - field[grid.arrow_target_id(i2,j+halfN+fourthN)];
 
                 field_jacobian = glm::inverse(local_basis_jacobian) * mat2(dudzeta, dudeta);
 

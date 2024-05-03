@@ -41,8 +41,8 @@ TEST_CASE( "Grid arrow_target/source_memory/grid_id() purity", "[collignon]" ) {
         for(int j = 0; j < grid.arrows_per_vertex; ++j){
             CHECK(grid.arrow_target_grid_id(i,j) == 
                   grid.arrow_target_grid_id(i,j));
-            CHECK(grid.arrow_target_memory_id(i,j) == 
-                  grid.arrow_target_memory_id(i,j));
+            CHECK(grid.arrow_target_id(i,j) == 
+                  grid.arrow_target_id(i,j));
         }}
     }
 }

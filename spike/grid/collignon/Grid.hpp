@@ -101,7 +101,7 @@ namespace collignon
 			return voronoi.grid_id(source_id) + arrow_offset_grid_position(offset_id);
 		}
 
-		inline constexpr id arrow_target_memory_id(const id source_id, const id offset_id) const
+		inline constexpr id arrow_target_id(const id source_id, const id offset_id) const
 		{
 			return voronoi.memory_id(arrow_target_grid_id(source_id, offset_id));
 		}
@@ -109,7 +109,7 @@ namespace collignon
 		// offset of the arrow
 		inline constexpr vec3 arrow_offset(const id source_id, const id offset_id) const
 		{
-			return 	voronoi.sphere_position( arrow_target_memory_id(source_id, offset_id) )
+			return 	voronoi.sphere_position( arrow_target_id(source_id, offset_id) )
 				- 	voronoi.sphere_position( source_id );
 		}
 

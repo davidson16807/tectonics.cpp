@@ -187,7 +187,7 @@ namespace unlayered
             for (i = 0; i < grid.vertex_count(); ++i)
             {
                 j = 0;
-                out[i] = field[grid.arrow_target_memory_id(i,j)] - field[i];
+                out[i] = field[grid.arrow_target_id(i,j)] - field[i];
             }
         }
         template<typename Grid, typename In, typename Out>
@@ -198,7 +198,7 @@ namespace unlayered
             for (i = 0; i < grid.vertex_count(); ++i)
             {
                 j = 1;
-                out[i] = field[grid.arrow_target_memory_id(i,j)] - field[i];
+                out[i] = field[grid.arrow_target_id(i,j)] - field[i];
             }
         }
         template<typename Grid, typename In, typename Out>
@@ -209,7 +209,7 @@ namespace unlayered
             for (i = 0; i < grid.vertex_count(); ++i)
             {
                 j = 2;
-                out[i] = field[grid.arrow_target_memory_id(i,j)] - field[i];
+                out[i] = field[grid.arrow_target_id(i,j)] - field[i];
             }
         }
         template<typename Grid, typename In, typename Out>
@@ -220,7 +220,7 @@ namespace unlayered
             for (i = 0; i < grid.vertex_count(); ++i)
             {
                 j = 3;
-                out[i] = field[grid.arrow_target_memory_id(i,j)] - field[i];
+                out[i] = field[grid.arrow_target_id(i,j)] - field[i];
             }
         }
 
@@ -251,8 +251,8 @@ namespace unlayered
 
                 O  = grid.vertex_position(i2);
                 o = field[i2];
-                B = grid.vertex_position(grid.arrow_target_memory_id(i2,N-1));
-                b = field[grid.arrow_target_memory_id(i2,N-1)];
+                B = grid.vertex_position(grid.arrow_target_id(i2,N-1));
+                b = field[grid.arrow_target_id(i2,N-1)];
 
                 samplesum = vec3(0,0,0);
                 weightsum = scalar(0);
@@ -261,8 +261,8 @@ namespace unlayered
                 {
                     A = B;
                     a = b;
-                    B = grid.vertex_position(grid.arrow_target_memory_id(i2,j));
-                    b = field[grid.arrow_target_memory_id(i2,j)];
+                    B = grid.vertex_position(grid.arrow_target_id(i2,j));
+                    b = field[grid.arrow_target_id(i2,j)];
 
                     sample   = glm::inverse(glm::transpose(mat3(A,O,B))) * vec3(a,o,b);
                     distance = glm::distance((A+O+B)/3.0, origin);
@@ -294,10 +294,10 @@ namespace unlayered
                 o1 = field[i2].x;
                 o2 = field[i2].y;
                 o3 = field[i2].z;
-                B  = grid.vertex_position(grid.arrow_target_memory_id(i2,N-1));
-                b1 = field[grid.arrow_target_memory_id(i2,N-1)].x;
-                b2 = field[grid.arrow_target_memory_id(i2,N-1)].y;
-                b3 = field[grid.arrow_target_memory_id(i2,N-1)].z;
+                B  = grid.vertex_position(grid.arrow_target_id(i2,N-1));
+                b1 = field[grid.arrow_target_id(i2,N-1)].x;
+                b2 = field[grid.arrow_target_id(i2,N-1)].y;
+                b3 = field[grid.arrow_target_id(i2,N-1)].z;
 
                 samplesum = mat3(0,0,0,0,0,0,0,0,0);
                 weightsum = scalar(0);
@@ -308,10 +308,10 @@ namespace unlayered
                     a1  = b1;
                     a2  = b2;
                     a3  = b3;
-                    B   = grid.vertex_position(grid.arrow_target_memory_id(i2,j));
-                    b1  = field[grid.arrow_target_memory_id(i2,j)].x;
-                    b2  = field[grid.arrow_target_memory_id(i2,j)].y;
-                    b3  = field[grid.arrow_target_memory_id(i2,j)].z;
+                    B   = grid.vertex_position(grid.arrow_target_id(i2,j));
+                    b1  = field[grid.arrow_target_id(i2,j)].x;
+                    b2  = field[grid.arrow_target_id(i2,j)].y;
+                    b3  = field[grid.arrow_target_id(i2,j)].z;
 
                     sample = mat3(
                         glm::inverse(glm::transpose(mat3(A,O,B))) * vec3(a1,o1,b1),
@@ -348,10 +348,10 @@ namespace unlayered
                 o1 = field[i2].x;
                 o2 = field[i2].y;
                 o3 = field[i2].z;
-                B  = grid.vertex_position(grid.arrow_target_memory_id(i2,N-1));
-                b1 = field[grid.arrow_target_memory_id(i2,N-1)].x;
-                b2 = field[grid.arrow_target_memory_id(i2,N-1)].y;
-                b3 = field[grid.arrow_target_memory_id(i2,N-1)].z;
+                B  = grid.vertex_position(grid.arrow_target_id(i2,N-1));
+                b1 = field[grid.arrow_target_id(i2,N-1)].x;
+                b2 = field[grid.arrow_target_id(i2,N-1)].y;
+                b3 = field[grid.arrow_target_id(i2,N-1)].z;
 
                 samplesum = mat3(0,0,0,0,0,0,0,0,0);
                 weightsum = scalar(0);
@@ -362,10 +362,10 @@ namespace unlayered
                     a1  = b1;
                     a2  = b2;
                     a3  = b3;
-                    B   = grid.vertex_position(grid.arrow_target_memory_id(i2,j));
-                    b1  = field[grid.arrow_target_memory_id(i2,j)].x;
-                    b2  = field[grid.arrow_target_memory_id(i2,j)].y;
-                    b3  = field[grid.arrow_target_memory_id(i2,j)].z;
+                    B   = grid.vertex_position(grid.arrow_target_id(i2,j));
+                    b1  = field[grid.arrow_target_id(i2,j)].x;
+                    b2  = field[grid.arrow_target_id(i2,j)].y;
+                    b3  = field[grid.arrow_target_id(i2,j)].z;
 
                     sample = mat3(
                         glm::inverse(glm::transpose(mat3(A,O,B))) * vec3(a1,o1,b1),
@@ -398,8 +398,8 @@ namespace unlayered
 
                 O  = grid.vertex_position(i2);
                 o = field[i2];
-                B = grid.vertex_position(grid.arrow_target_memory_id(i2,N-1));
-                b = field[grid.arrow_target_memory_id(i2,N-1)];
+                B = grid.vertex_position(grid.arrow_target_id(i2,N-1));
+                b = field[grid.arrow_target_id(i2,N-1)];
 
                 samplesum = vec3(0,0,0);
                 weightsum = scalar(0);
@@ -408,8 +408,8 @@ namespace unlayered
                 {
                     A = B;
                     a = b;
-                    B = grid.vertex_position(grid.arrow_target_memory_id(i2,j));
-                    b = field[grid.arrow_target_memory_id(i2,j)];
+                    B = grid.vertex_position(grid.arrow_target_id(i2,j));
+                    b = field[grid.arrow_target_id(i2,j)];
 
                     sample   = glm::inverse(glm::transpose(mat3(A,O,B))) * vec3(a,o,b);
                     distance = glm::distance((A+O+B)/3.0, origin);
@@ -429,12 +429,12 @@ namespace unlayered
             {
                 i2 = grid.vertex_representative(i);
 
-                dvdzeta = grid.vertex_position(grid.arrow_target_memory_id(i2,j-halfN))         - grid.vertex_position(grid.arrow_target_memory_id(i2,j+halfN));
-                dvdeta  = grid.vertex_position(grid.arrow_target_memory_id(i2,j-halfN+fourthN)) - grid.vertex_position(grid.arrow_target_memory_id(i2,j+halfN+fourthN));
+                dvdzeta = grid.vertex_position(grid.arrow_target_id(i2,j-halfN))         - grid.vertex_position(grid.arrow_target_id(i2,j+halfN));
+                dvdeta  = grid.vertex_position(grid.arrow_target_id(i2,j-halfN+fourthN)) - grid.vertex_position(grid.arrow_target_id(i2,j+halfN+fourthN));
                 local_basis_jacobian = mat2(dvdzeta.x, dvdeta.x, dvdzeta.y, dvdeta.y);
 
-                dfdzeta = field[grid.arrow_target_memory_id(i2,j-halfN)]         - field[grid.arrow_target_memory_id(i2,j+halfN)];
-                dfdeta  = field[grid.arrow_target_memory_id(i2,j-halfN+fourthN)] - field[grid.arrow_target_memory_id(i2,j+halfN+fourthN)];
+                dfdzeta = field[grid.arrow_target_id(i2,j-halfN)]         - field[grid.arrow_target_id(i2,j+halfN)];
+                dfdeta  = field[grid.arrow_target_id(i2,j-halfN+fourthN)] - field[grid.arrow_target_id(i2,j+halfN+fourthN)];
 
                 out[i] = glm::inverse(local_basis_jacobian) * vec2(dfdzeta, dfdeta);;
             }

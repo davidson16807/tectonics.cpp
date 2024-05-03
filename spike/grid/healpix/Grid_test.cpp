@@ -71,7 +71,7 @@ TEST_CASE( "Grid arrow properties", "[healpix]" ) {
     series::Range arrow_offset_ids(4);
 
     REQUIRE(test::determinism(precise,
-        "Grid.arrow_target_memory_id(…)", TEST_BINARY(grid.arrow_target_memory_id),
+        "Grid.arrow_target_id(…)", TEST_BINARY(grid.arrow_target_id),
         vertex_ids,
         arrow_offset_ids
     ));

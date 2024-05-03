@@ -44,7 +44,7 @@ namespace dymaxion
 	DYMAXION_SERIES(vec3,   grid.vertex_count,  VertexNorth,        vertex_north,         grid.vertex_north)
 	DYMAXION_SERIES(mat3,   grid.vertex_count,  VertexFrame,        vertex_frame,         grid.vertex_frame)
 	DYMAXION_SERIES(scalar, grid.vertex_count,  VertexDualAreas,    vertex_dual_areas,    grid.vertex_dual_area)
-	DYMAXION_SERIES(ipoint, grid.vertex_count,  VertexGridIds,      vertex_grid_ids,      grid.vertex_grid_id)
+	DYMAXION_SERIES(ipoint, grid.vertex_count,  VertexGridIds,      vertex_grid_ids,      grid.voronoi.grid_id)
 	#undef DYMAXION_SERIES
 
 }

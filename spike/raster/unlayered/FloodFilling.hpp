@@ -45,7 +45,7 @@ namespace unlayered
 
                     for (int j = 0; j < N; ++j)
                     {
-                        neighbor_id = grid.arrow_target_memory_id(cell_id,j);
+                        neighbor_id = grid.arrow_target_id(cell_id,j);
                         if (searched[neighbor_id] == 0 && mask[cell_id] != 0) {
                             searching.push_back(neighbor_id);
                             searched[neighbor_id] = 1;

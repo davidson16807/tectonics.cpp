@@ -5,7 +5,7 @@ namespace unlayered
 
     /*
     properties used:
-		arrow_target_memory_id
+		arrow_target_id
     */
 
     /*
@@ -35,7 +35,7 @@ namespace unlayered
                 source_value = mask[i];
                 for (j = 0; j < N; ++j)
                 {
-					out[i] = out[i] || source_value || mask[grid.arrow_target_memory_id(i,j)];
+					out[i] = out[i] || source_value || mask[grid.arrow_target_id(i,j)];
                 }
             }
 		}
@@ -82,7 +82,7 @@ namespace unlayered
                 source_value = mask[i];
                 for (j = 0; j < N; ++j)
                 {
-					out[i] = out[i] && source_value && mask[grid.arrow_target_memory_id(i,j)];
+					out[i] = out[i] && source_value && mask[grid.arrow_target_id(i,j)];
                 }
             }
 		}

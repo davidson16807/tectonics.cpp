@@ -120,8 +120,8 @@ int main() {
   std::vector<float> vertex_colored_scalars(grid.vertex_count());
   for (int i = 0; i < grid.vertex_count(); ++i)
   {
-    vertex_colored_scalars[i] = grid.memory.memory_id(grid.vertex_grid_id(i));
-    // vertex_colored_scalars[i] = grid.memory.memory_id(grid.vertex_grid_id(i)+glm::ivec2(10,10));
+    vertex_colored_scalars[i] = grid.memory.memory_id(grid.memory.grid_id(i));
+    // vertex_colored_scalars[i] = grid.memory.memory_id(grid.memory.grid_id(i)+glm::ivec2(10,10));
     // vertex_colored_scalars[i] = (grid.vertex_position(i).z);
   }
 
