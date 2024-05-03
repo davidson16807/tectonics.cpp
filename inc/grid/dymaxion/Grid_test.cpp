@@ -13,6 +13,25 @@
 
 #include "Grid.hpp"
 
+TEST_CASE( "Grid nearest_vertex_id() / vertex_position()", "[dymaxion]" ) {
+
+    double radius(2.0);
+    int vertices_per_square_side(40);
+
+    test::GlmAdapter<int,double> precise(1e-7);
+
+    dymaxion::Grid grid(radius, vertices_per_square_side);
+
+    series::Range vertex_ids(grid.vertex_count());
+
+    REQUIRE(test::left_invertibility(precise,
+        "Grid.nearest_vertex_id(…)", TEST_UNARY(grid.nearest_vertex_id),
+        "Grid.vertex_position(…)",   TEST_UNARY(grid.vertex_position),
+        vertex_ids
+    ));
+
+}
+
 TEST_CASE( "Grid arrow_offset_memory_id() / arrow_offset_grid_position()", "[dymaxion]" ) {
 
     double radius(2.0);
