@@ -10,12 +10,12 @@ namespace field
 	Given a `Series`: ℕ→ℝ, a `VectorZip` maps: ℕ→ℝᴸ.
 	*/
 	template<int R, int C, typename T, glm::qualifier Q=glm::defaultp>
-	struct Transform
+	struct Affinity
 	{
 	    using size_type = std::size_t;
 		using value_type = glm::vec<4,T,Q>;
 		glm::mat<C,R,T,Q> A;
-		constexpr inline explicit Transform(const glm::mat<C,R,T,Q>& A) : 
+		constexpr inline explicit Affinity(const glm::mat<C,R,T,Q>& A) : 
 			A(A)
 		{}
 		constexpr inline size_type size() const { return 1; }
