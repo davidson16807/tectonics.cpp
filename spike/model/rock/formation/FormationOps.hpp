@@ -15,17 +15,17 @@ namespace rock
     template<int M>
     class FormationOps
     {
-        const StratumOps<M> strata;
+        const StratumOps<M> ops;
 
     public:
-        FormationOps(const StratumOps& strata):
-            strata(strata)
+        FormationOps(const StratumOps& ops):
+            ops(ops)
         {}
 
         void combine(const Formation<M>& a, const Formation<M>& b, Formation<M>& out) const {
             for (std::size_t i = 0; i < out.size(); ++i)
             {
-                strata.combine(a[i], b[i], out[i]);
+                ops.combine(a[i], b[i], out[i]);
             }
         }
 
