@@ -14,12 +14,12 @@ namespace rock
     template<typename FormationSummarization>
     class FormationSummaryOps
     {
-        const StratumSummaryOps ops;
+        const StratumSummaryTools ops;
     public:
         FormationSummaryOps():
-            ops(StratumSummaryOps())
+            ops(StratumSummaryTools())
         {}
-        void operator() (const FormationSummary& a, const FormationSummary& b, FormationSummary& out) const
+        void combine() (const FormationSummary& a, const FormationSummary& b, FormationSummary& out) const
         {
             for (std::size_t i = 0; i < out.size(); ++i)
             {

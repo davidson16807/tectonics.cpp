@@ -6,16 +6,22 @@ namespace rock{
 
     class StratumSummary
     {
-        int plate_id_bitfield : 8; 
+        std::bitset<8> plate_id_bitset; 
         int density_in_kilograms_per_meter3 : 24;
         float thickness_in_meters;
     public:
+        // identity under combination
+        constexpr StratumSummary():
+            plate_id_bitset(0),
+            density_in_kilograms_per_meter3(1<<24),
+            thickness_in_meters(0)
+        {}
         constexpr StratumSummary(
-            const int plate_id_bitfield,
+            const std::bitset<8> plate_id_bitset,
             const si::density<float> density,
             const si::length<float>  thickness
         ):
-            plate_id_bitfield(plate_id_bitfield),
+            plate_id_bitset(plate_id_bitset),
             density_in_kilograms_per_meter3(density/(si::kilogram/si::meter3)),
             thickness_in_meters(thickness/si::meter)
         {}
@@ -35,14 +41,31 @@ namespace rock{
         {
             thickness_in_meters = thickness/si::meter;
         }
-        int plate_id_bitfield() const
+        std::bitset<8> plate_id_bitset() const
         {
-            return plate_id_bitfield;
+            return plate_id_bitset;
         }
-        void plate_id_bitfield(const int plate_id_bitfield_)
+        void plate_id_bitset(const std::bitset<8> plate_ids_bitset_)
         {
-            plate_id_bitfield = plate_id_bitfield_;
+            plate_id_bitset = plate_ids_bitset_;
         }
+
+        /* 
+        `largest_plate_id` is a convenience method for a common use case 
+        where the StratumSummary contains only one plate.
+        */
+        int largest_plate_id() const
+        {
+            return int(std::log2(float(plate_id_bitset.to_ulong())));
+        }
+        /* 
+        `largest_plate_id` is a convenience method  
+        */
+        int plate_count() const
+        {
+            return plate_id_bitset.count();
+        }
+
     };
 
 }

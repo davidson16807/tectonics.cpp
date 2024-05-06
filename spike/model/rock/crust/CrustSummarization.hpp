@@ -13,7 +13,7 @@ namespace rock{
             summarize(summarize),
             ops(ops)
         {}
-        void operator() (const plate_id, const Crust& crust, const FormationSummary& out, const FormationSummary& scratch) const
+        void operator() (const plate_id, const Crust& crust, FormationSummary& out, FormationSummary& scratch) const
         {
             summarize(plate_id, crust.sediment,    out);      
             summarize(plate_id, crust.sedimentary, scratch); ops.combine(scratch, out, out);
