@@ -41,7 +41,7 @@ namespace unlayered
 		}
 
     	template<typename Grid, typename In, typename Out>
-		void dilate(const Grid& grid, const In& mask, Out& out, const unsigned int radius, const Out& scratch) const
+		void dilate(const Grid& grid, const In& mask, Out& out, const unsigned int radius, Out& scratch) const
 		{
 			In* temp_in  = &out;
 			In* temp_out = &scratch;
@@ -88,7 +88,7 @@ namespace unlayered
 		}
 
     	template<typename Grid, typename In, typename Out>
-		void erode(const Grid& grid, const In& mask, Out& out, const unsigned int radius, const Out& scratch) const
+		void erode(const Grid& grid, const In& mask, Out& out, const unsigned int radius, Out& scratch) const
 		{
 			In* temp_in  = &out;
 			In* temp_out = &scratch;
@@ -185,7 +185,7 @@ namespace unlayered
 		}
 
     	template<typename Grid, typename In, typename Out>
-		void margin(const Grid& grid, const In& mask, Out& out, const unsigned int radius, const Out& scratch) const
+		void margin(const Grid& grid, const In& mask, Out& out, const unsigned int radius, Out& scratch) const
 		{
 			dilate      ( grid, mask, out, radius, scratch );
 			each::differ(       out,  mask, out );
@@ -203,7 +203,7 @@ namespace unlayered
 		}
 
     	template<typename Grid, typename In, typename Out>
-		void padding(const Grid& grid, const In& mask, Out& out, const unsigned int radius, const Out& scratch) const
+		void padding(const Grid& grid, const In& mask, Out& out, const unsigned int radius, Out& scratch) const
 		{
 			erode        ( grid, mask, out, radius, scratch );
 			each::differ (       mask,  out, out );
