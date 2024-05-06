@@ -39,21 +39,3 @@ namespace dymaxion
 	#undef DYMAXION_SERIES
 
 }
-
-    /*
-    properties used:
-        voronoi.grid_id
-
-     grid1     rotation    grid2
-    id ⟶ position ⟶ position ⟶ id
-
-	auto resampled_ids = 
-		series::map(
-			field::compose(
-				dymaxion::NearestVertexId(grid), 
-				field::Transform(plate.local_to_global)),
-			dymaxion::VertexPositions(grid)
-	);
-
-	each::get(raster, resampled_ids, out);
-    */
