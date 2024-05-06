@@ -25,6 +25,7 @@ namespace rock{
             density_in_kilograms_per_meter3(density/(si::kilogram/si::meter3)),
             thickness_in_meters(thickness/si::meter)
         {}
+
         si::density<float> density() const
         {
             return density_in_kilograms_per_meter3 * si::kilogram/si::meter3;
@@ -33,6 +34,7 @@ namespace rock{
         {
             density_in_kilograms_per_meter3 = density/(si::kilogram/si::meter3);
         }
+
         si::length<float> thickness() const
         {
             return thickness_in_meters * si::meter;
@@ -41,6 +43,7 @@ namespace rock{
         {
             thickness_in_meters = thickness/si::meter;
         }
+
         std::bitset<8> plate_id_bitset() const
         {
             return plate_id_bitset;
@@ -50,20 +53,25 @@ namespace rock{
             plate_id_bitset = plate_ids_bitset_;
         }
 
-        /* 
-        `largest_plate_id` is a convenience method for a common use case 
-        where the StratumSummary contains only one plate.
-        */
+
+        si::area_density<float> area_density() const
+        {
+            return density() * thickness();
+        }
+
         int largest_plate_id() const
         {
             return int(std::log2(float(plate_id_bitset.to_ulong())));
         }
-        /* 
-        `largest_plate_id` is a convenience method  
-        */
+
         int plate_count() const
         {
             return plate_id_bitset.count();
+        }
+
+        bool includes(const int plate_id) const
+        {
+            return (plate_id_bitset & (1<<plate_id)).count() > 0;
         }
 
     };
