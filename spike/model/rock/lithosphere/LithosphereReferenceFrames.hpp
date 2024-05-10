@@ -31,7 +31,7 @@ namespace rock{
 
         template<typename Raster>
         void globalize(
-            const std::vector<Plate>& plates,
+            const std::vector<glm::dmat3>& locals_to_globals,
             const std::vector<Raster>& local,
             std::vector<Raster>& global
         ) const {
@@ -45,7 +45,7 @@ namespace rock{
                     series::map(
                         field::compose(
                             dymaxion::NearestVertexId(grid), 
-                            field::Affinity(plates[i].local_to_global)),
+                            field::Affinity(locals_to_globals[i])),
                         dymaxion::VertexPositions(grid)
                     );
                 each::get(raster, resample, global[i]);
@@ -54,7 +54,7 @@ namespace rock{
 
         template<typename Raster>
         void localize(
-            const std::vector<Plate> plates,
+            const std::vector<glm::dmat3> globals_to_locals,
             const Raster& global,
             std::vector<Raster>& local
         ) const {
@@ -68,7 +68,7 @@ namespace rock{
                     series::map(
                         field::compose(
                             dymaxion::NearestVertexId(grid), 
-                            field::Affinity(plates[i].global_to_local)),
+                            field::Affinity(globals_to_locals[i])),
                         dymaxion::VertexPositions(grid)
                     );
                 each::get(global, resample, local[i]);
@@ -79,10 +79,10 @@ namespace rock{
 
     /*
     basic use case:
-    summarization.summarize (plates, locals, scratch)      // summarize each plate into a (e.g.) FormationSummary raster
-    frames       .globalize (plates, locals, globals)      // resample plate-specific rasters onto a global grid
-    summarization.condense  (globals, master)              // condense globalized rasters into e.g. LithosphereSummary
-    frames       .localize  (plates,  master, derivatives) // resample global raster to a plate-specific for each plate
+    summarization.summarize (plates,    locals, scratch)     // summarize each plate into a (e.g.) FormationSummary raster
+    frames       .globalize (rotations, locals, globals)     // resample plate-specific rasters onto a global grid
+    summarization.condense  (globals,   master)              // condense globalized rasters into e.g. LithosphereSummary
+    frames       .localize  (rotations, master, derivatives) // resample global raster to a plate-specific for each plate
     */
 
 }

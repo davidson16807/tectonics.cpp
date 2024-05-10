@@ -15,40 +15,39 @@
 namespace rock{
 
     template <int M>
-    class LithosphereSummarization
+    class LithosphereTopSediment
     {
 
-        const CrustSummarization summarize;
-        const LithosphereSummaryTools tools;
+        const CrustTopSediment top_sediment;
+        const FormationOps ops;
 
     public:
 
-        LithosphereSummarization(
-            const CrustSummarization& summarize, const LithosphereSummaryTools tools
+        LithosphereTopSediment(
+            const FormationOps& ops
         ):
-            summarize(summarize), tools(tools)
+            ops(ops)
         {}
 
         void summarize(
             const std::vector<Crust<M>>& plates,
-            std::vector<FormationSummary>& out,
-            FormationSummary& scratch_formation
+            const std::vector<LithosphereSummary>& summaries,
+            std::vector<Formation<M>>& out
         ) const {
-            *FormationSummary scratch_formation = global_formation;
             for (std::size_t i = 0; i < plates.size(); ++i)
             {
-                summarize(i, plates[i], out[i], scratch_formation);
+                top_sediment(i, plates[i], summaries[i], out[i]);
             }
         }
 
         void flatten (
-            const std::vector<FormationSummary>& formations,
-            FormationSummary& out
+            const std::vector<Formation<M>>& formations,
+            Formation<M>& out
         ) const {
-            std::fill(out.begin(), out.end(), StratumSummary());
+            std::fill(out.begin(), out.end(), StratumStore<M>());
             for (std::size_t i = 0; i < formations.size(); ++i)
             {
-                tools.absorb(out, formations[i], out);
+                ops.combine(out, formations[i], out);
             }
         }
 
@@ -82,6 +81,10 @@ namespace rock{
     erosion           (sediment,  delta)             // this is the erosion model, proper
     frames.localize   (plates, delta, deltas)
 
+    FormationErosion
+    CrustDisplacement
+    CrustBuoyancy
+    CrustVelocity
     */
 
 }

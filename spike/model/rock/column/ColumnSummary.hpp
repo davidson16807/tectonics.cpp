@@ -21,19 +21,24 @@ namespace rock{
             rest(rest)
         {}
 
-        si::density<float> density() const
-        {
-            return area_density() / thickness();
-        }
-
-        si::length<float> thickness() const
+        inline si::length<float> thickness() const
         {
             return top.thickness() + bottom.thickness();
         }
 
-        si::area_density<float> area_density() const
+        inline si::area_density<float> area_density() const
         {
             return top.area_density() + bottom.area_density();
+        }
+
+        inline si::density<float> density() const
+        {
+            return area_density() / thickness();
+        }
+
+        inline bool exists() const
+        {
+            return area_density() > si::area_density<float>(0.0f);
         }
 
         inline int plate_count() const
@@ -59,3 +64,4 @@ namespace rock{
     };
 
 }
+

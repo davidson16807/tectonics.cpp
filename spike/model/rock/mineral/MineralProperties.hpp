@@ -6,7 +6,7 @@ namespace rock{
     {
         constexpr MineralMass(){}
         template<typename Minerallike>
-        typename float operator[] (const std::size_t i, const Minerallike& constituent) const 
+        typename float operator() (const std::size_t i, const Minerallike& constituent) const 
         {
             return constituent.mass;
         }
@@ -20,7 +20,7 @@ namespace rock{
             molar_masses(molar_masses)
         {}
         template<typename Minerallike>
-        typename float operator[] (const std::size_t i, const Minerallike& constituent) const 
+        typename float operator() (const std::size_t i, const Minerallike& constituent) const 
         {
             return constituent.mass / molar_masses[i];
         }
@@ -34,7 +34,7 @@ namespace rock{
             densities(densities)
         {}
         template<typename Minerallike>
-        typename float operator[] (const std::size_t i, const Minerallike& constituent) const 
+        typename float operator() (const std::size_t i, const Minerallike& constituent) const 
         {
             return constituent.mass / densities[i];
         }

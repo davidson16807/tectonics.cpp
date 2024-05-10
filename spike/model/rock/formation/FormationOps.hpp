@@ -22,6 +22,14 @@ namespace rock
             ops(ops)
         {}
 
+        // Returns the empty Formation.
+        void empty(Formation<M>& out) const {
+            for (std::size_t i = 0; i < out.size(); ++i)
+            {
+                out[i] = Formation<M>();
+            }
+        }
+
         void combine(const Formation<M>& a, const Formation<M>& b, Formation<M>& out) const {
             for (std::size_t i = 0; i < out.size(); ++i)
             {

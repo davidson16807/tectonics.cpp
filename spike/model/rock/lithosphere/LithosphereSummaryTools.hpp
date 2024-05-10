@@ -11,7 +11,8 @@ namespace rock{
         LithosphereSummaryTools(const ColumnSummaryOps& ops):
             ops(ops)
         {}
-        void reset (LithosphereSummary& lithosphere& out) const
+        // returns the empty LithosphereSummary
+        void empty (LithosphereSummary& lithosphere& out) const
         {
             for (std::size_t i = 0; i < out.size(); ++i)
             {
