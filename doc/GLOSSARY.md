@@ -1,3 +1,9 @@
+**model** A representation of business logic in memory, in contrast with the "view"
+
+**view** A depiction of a model to the user
+
+**simulation** a pure function that maps the state of a model at one point in time to another
+
 **pure function** A function for which the return value can be determined strictly by the parameters.
 
 **conceptually pure function** A function for which all inputs and outputs are displayed at the point of invocation, the memory footprint of input is not used to store output, and output after invocation is determined strictly from input in the method signature. A conceptually pure function can be reasoned with as if it were a pure function, even if it does not meet the strict definition of one. For instance, a conceptually pure function may use reference parameters to store output, and a conceptually pure method can use its owner as input or output. It is important to note that a conceptually pure function allows the behavior of the application to be predicted merely by looking at the line of code at which it is invoked, so a function is not conceptually pure if it accesses variables that are not displayed at invocation (e.g. global variables, or even attributes of referenced objects).

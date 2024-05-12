@@ -140,6 +140,14 @@ namespace analytic {
 
 
 template<typename T>
+Polynomial<T,0,1> linear_spline(
+        const T xa,     const T xb,
+        const T ya,     const T yb){
+    const T dfdx = (yb-ya) / (xb-xa);
+    return ya + Polynomial<T,0,1>{ya, dfdx};
+}
+
+template<typename T>
 Polynomial<T,0,3> cubic_spline(
         const T xa,     const T xb,
         const T ya,     const T yb,
