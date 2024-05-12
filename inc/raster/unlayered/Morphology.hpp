@@ -175,17 +175,16 @@ namespace unlayered
 
 		// NOTE: this is not a standard concept in math morphology
 		// It is meant to represent the difference between a figure and its dilation
-		// Its name eludes to the "margin" concept within the html box model
 
     	template<typename Grid, typename In, typename Out>
-		void margin(const Grid& grid, const In& mask, Out& out) const
+		void outshell(const Grid& grid, const In& mask, Out& out) const
 		{
 			dilate      ( grid, mask, out );
 			each::differ(       out,  mask, out );
 		}
 
     	template<typename Grid, typename In, typename Out>
-		void margin(const Grid& grid, const In& mask, Out& out, const unsigned int radius, Out& scratch) const
+		void outshell(const Grid& grid, const In& mask, Out& out, const unsigned int radius, Out& scratch) const
 		{
 			dilate      ( grid, mask, out, radius, scratch );
 			each::differ(       out,  mask, out );
@@ -193,17 +192,16 @@ namespace unlayered
 
 		// NOTE: this is not a standard concept in math morphology
 		// It is meant to represent the difference between a figure and its erosion
-		// Its name eludes to the "padding" concept within the html box model
 
     	template<typename Grid, typename In, typename Out>
-		void padding(const Grid& grid, const In& mask, Out& out) const
+		void inshell(const Grid& grid, const In& mask, Out& out) const
 		{
 			erode        ( grid, mask, out );
 			each::differ (       mask,  out, out );
 		}
 
     	template<typename Grid, typename In, typename Out>
-		void padding(const Grid& grid, const In& mask, Out& out, const unsigned int radius, Out& scratch) const
+		void inshell(const Grid& grid, const In& mask, Out& out, const unsigned int radius, Out& scratch) const
 		{
 			erode        ( grid, mask, out, radius, scratch );
 			each::differ (       mask,  out, out );

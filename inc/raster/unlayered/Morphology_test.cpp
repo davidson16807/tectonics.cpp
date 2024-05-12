@@ -179,23 +179,23 @@ TEST_CASE( "Boolean Raster dilate", "[unlayered]" ) {
 
 }
 
-TEST_CASE( "Boolean Raster padding", "[unlayered]" ) {
+TEST_CASE( "Boolean Raster inshell", "[unlayered]" ) {
     dymaxion::Adapter strict(morphology_fine, 1e-5, morphology_fine.vertex_count());
     unlayered::Morphology morphology;
 
     REQUIRE(test::determinism(strict, 
-        "morphology.padding", MORPHOLOGY_TEST_UNARY(bool, morphology_fine, morphology.padding),
+        "morphology.inshell", MORPHOLOGY_TEST_UNARY(bool, morphology_fine, morphology.inshell),
         boolean_rasters
     ));
 
 }
 
-TEST_CASE( "Boolean Raster margin", "[unlayered]" ) {
+TEST_CASE( "Boolean Raster outshell", "[unlayered]" ) {
     dymaxion::Adapter strict(morphology_fine, 1e-5, morphology_fine.vertex_count());
     unlayered::Morphology morphology;
 
     REQUIRE(test::determinism(strict, 
-        "morphology.margin", MORPHOLOGY_TEST_UNARY(bool, morphology_fine, morphology.margin),
+        "morphology.outshell", MORPHOLOGY_TEST_UNARY(bool, morphology_fine, morphology.outshell),
         boolean_rasters
     ));
 
