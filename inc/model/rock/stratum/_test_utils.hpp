@@ -24,8 +24,6 @@ namespace rock
         si::time<double> age_of_world_when_first_deposited =        65.0 * uniform(generator) * si::gigayear;
         si::time<double> age_of_world_when_last_deposited = si::min(65.0 * uniform(generator) * si::gigayear + age_of_world_when_first_deposited, 65.0 * si::gigayear);
         Stratum<M> output(
-            32768.0f * uniform(generator) * si::kelvin, 
-            4e12f    * uniform(generator) * si::pascal, 
             age_of_world_when_first_deposited, age_of_world_when_last_deposited            
         );
         for (std::size_t i = 0; i < M; ++i)
@@ -46,16 +44,6 @@ namespace rock
         {}
 
         bool equal(const Stratum<M>& a, const Stratum<M>& b) const {
-            if(si::distance(a.max_pressure_received, b.max_pressure_received) 
-                > si::max(si::pascal, float_threshold * si::max(a.max_pressure_received,b.max_pressure_received)) )
-            {
-                return false;
-            } 
-            if(si::distance(a.max_temperature_received, b.max_temperature_received) 
-                > si::max(si::kelvin, float_threshold * si::max(a.max_temperature_received,b.max_temperature_received)) )
-            {
-                return false;
-            } 
             if(si::distance(a.age_of_world_when_first_deposited, b.age_of_world_when_first_deposited) 
                 > float_threshold * si::max(si::second, si::max(a.age_of_world_when_first_deposited,b.age_of_world_when_first_deposited)) )
             {
@@ -76,14 +64,6 @@ namespace rock
         }
 
         bool is_valid(Stratum<M>& a) const {
-            if(a.max_pressure_received/si::pascal < -float_threshold)
-            {
-                return false;
-            }
-            if(a.max_temperature_received/si::kelvin < -float_threshold)
-            {
-                return false;
-            }
             if(a.age_of_world_when_first_deposited/si::second < -float_threshold)
             {
                 return false;

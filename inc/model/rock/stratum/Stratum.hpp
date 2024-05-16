@@ -32,14 +32,10 @@ namespace rock
         Particle size is primarily used to indicate distinctions between things like boulders vs. pebbles vs sand vs. clay
         */
         std::array<rock::Mineral, M>  minerals;
-        si::temperature<double> max_temperature_received;
-        si::pressure<double> max_pressure_received;
         si::time<double> age_of_world_when_first_deposited;
         si::time<double> age_of_world_when_last_deposited;
 
         Stratum():
-            max_temperature_received(0*si::kelvin),
-            max_pressure_received(0*si::pascal),
             age_of_world_when_first_deposited(std::numeric_limits<double>::max()*si::megayear),
             age_of_world_when_last_deposited(0*si::megayear)
         {
@@ -47,13 +43,9 @@ namespace rock
         }
 
         Stratum(
-            const si::temperature<double> max_temperature_received,
-            const si::pressure<double> max_pressure_received,
             const si::time<double> age_of_world_when_first_deposited,
             const si::time<double> age_of_world_when_last_deposited
         ):
-            max_temperature_received(max_temperature_received),
-            max_pressure_received(max_pressure_received),
             age_of_world_when_first_deposited(age_of_world_when_first_deposited),
             age_of_world_when_last_deposited(age_of_world_when_last_deposited)
         {
@@ -61,14 +53,10 @@ namespace rock
         }
 
         Stratum(
-            const si::temperature<double> max_temperature_received,
-            const si::pressure<double> max_pressure_received,
             const si::time<double> age_of_world_when_first_deposited,
             const si::time<double> age_of_world_when_last_deposited,
             const std::initializer_list<rock::Mineral>& vector
         ): 
-            max_temperature_received(max_temperature_received),
-            max_pressure_received(max_pressure_received),
             age_of_world_when_first_deposited(age_of_world_when_first_deposited),
             age_of_world_when_last_deposited(age_of_world_when_last_deposited)
         {
