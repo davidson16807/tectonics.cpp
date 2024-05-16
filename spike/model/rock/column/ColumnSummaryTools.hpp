@@ -20,7 +20,7 @@ namespace rock{
             threshold(threshold)
         {}
 
-        ColumnSummary combine (const ColumnSummary& column, const StratumSummary& stratum) const
+        ColumnSummary absorb (const ColumnSummary& column, const StratumSummary& stratum) const
         {
             // NOTE: we'll need to add a `bottom` attribute as well if we plan to model the melting of crust
             return top.density() > stratum.density && stratum.thickness > si::length<float>(threshold)?

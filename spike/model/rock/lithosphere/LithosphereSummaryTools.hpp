@@ -19,11 +19,11 @@ namespace rock{
                 out[i] = ColumnSummary();
             }
         }
-        void combine (const LithosphereSummary& lithosphere, const FormationSummary& formation, FormationSummary& out) const
+        void absorb (const LithosphereSummary& lithosphere, const FormationSummary& formation, FormationSummary& out) const
         {
             for (std::size_t i = 0; i < out.size(); ++i)
             {
-                out[i] = ops.combine(lithosphere[i], formation[i]);
+                out[i] = ops.absorb(lithosphere[i], formation[i]);
             }
         }
     };

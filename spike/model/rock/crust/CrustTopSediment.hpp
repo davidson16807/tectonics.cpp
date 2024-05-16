@@ -19,9 +19,9 @@ namespace rock{
             const LithosphereSummary& summary,
             Formation<M>& out
         ) const {
-            for (std::size_t i = 0; i < crust.size(); ++i)
+            for (std::size_t i = 0; i < crust[sediment].size(); ++i)
             {
-                out[i] = summary[i].top.includes(i)? crust.sediment[i] : StratumStore<M>();
+                out[i] = summary[i].top.includes(i)? crust[sediment][i] : StratumStore<M>();
             }
         }
     };

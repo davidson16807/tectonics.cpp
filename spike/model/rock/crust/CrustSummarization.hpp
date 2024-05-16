@@ -18,9 +18,13 @@ namespace rock{
             const Crust& crust, FormationSummary& out, 
             FormationSummary& scratch
         ) const {
-            summarize(plate_id, crust.sediment,    out);      
-            summarize(plate_id, crust.sedimentary, scratch); ops.combine(scratch, out, out);
-            summarize(plate_id, crust.bedrock,     scratch); ops.combine(scratch, out, out);
+
+            summarize(plate_id, crust[0], out);
+            for (int i = 1; i < crust.size(); ++i)
+            {
+                summarize(plate_id, crust[i], scratch); 
+                ops.combine(scratch, out, out);
+            }
         }
     };
 

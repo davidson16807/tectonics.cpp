@@ -231,8 +231,8 @@ namespace rock {
 			pressures* bottom_overburden    = &scratch;
 			pressures* formation_overburden = &scratch;
 
-			formations.overburden      (series::uniform(pressure(0.0f)), crust.sediment, bottom_overburden);
-			formations.overburden_mass (transition_pressure, top_overburden, bottom_overburden, crust.sediment, delta);
+			formations.overburden        (series::uniform(pressure(0.0f)), crust[sediment], bottom_overburden);
+			formations.overburdened_mass (transition_pressure, top_overburden, bottom_overburden, crust[sediment], delta);
 		}
 
 		/*
@@ -243,11 +243,13 @@ namespace rock {
 		INTENDED FUTURE DESIGN:
 		* mineral mass pools are each assumed to be characterized by:
 		    * an origin phase
-		    * a linear pT phase boundary between the origin phase and the metamorphic phase
-		* temperature rasters are added as parameters to `metamorphosis()`
+		    * a linear pressure/temperature phase boundary between the origin phase and the metamorphic phase
+		* non-metamorphic minerals have origin phases that are equal to their own, thereby accomplishing no-op behavior
+		* temperature rasters are added as parameters to `CrustSimulation::metamorphosis()`
 		* an intersection is calculated between the phase boundary and the linear geothermal/geobaric gradient
 		*/
 		void metamorphosis(
+			const std::vector<LinearPhaseBoundary>& phase_boundaries,
 			const int plate_id,
 			const pressures& topmost_overburden, // NOTE: this is typically calculated as top_rock_overburden + fluid_overburden 
 			const CrustSummary& context,
@@ -265,23 +267,39 @@ namespace rock {
 			pressures* bottom_overburden    = &scratch2;
 
 			each::copy(topmost_overburden, top_overburden);
-			formations.overburden(series::uniform(pressure(0.0f)), crust.sediment, bottom_overburden);
-			formations.overburden_mass (transition_pressure, top_overburden, bottom_overburden, crust.sediment, deltas.sediment);
-			formations.metamorphosis   (deltas.sediment, deltas.sediment,    deltas.sediment);
+			formations.overburden        (series::uniform(pressure(0.0f)), crust[sediment], bottom_overburden);
+			/* 
+			NOTE: we do not move sediment directly to metamorphic, since lithification will also occur on that same mass,
+			and we do not want metamorphosis and lithification fighting over or double counting mass.
+			We therefore wait until the sediment has lithified, then metamorphose the sedimentary rock.
+			*/
 
-			top_overburden                 = &bottom_overburden;
-			formation_overburden_footprint = &top_overburden;
-			bottom_overburden              = &top_overburden;
-			formations.overburden(top_overburden, crust.sedimentary, bottom_overburden);
-			formations.overburden_mass (transition_pressure, top_overburden, bottom_overburden, crust.sedimentary, deltas.sedimentary);
-			formations.metamorphosis   (deltas.sediment, deltas.sedimentary, deltas.sedimentary);
+			for (int i = 0; i < crust.size(); i+=2)
+			{
+				nonmetamorphic = i;
+				metamorphic    = i+1;
 
-			top_overburden                 = &bottom_overburden;
-			formation_overburden_footprint = &top_overburden;
-			bottom_overburden              = &top_overburden;
-			formations.overburden(top_overburden, crust.bedrock, bottom_overburden);
-			formations.overburden_mass (transition_pressure, top_overburden, bottom_overburden, crust.bedrock, deltas.bedrock);
-			formations.metamorphosis   (deltas.sediment, deltas.bedrock,     deltas.bedrock);
+				top_overburden                 = &bottom_overburden;
+				formation_overburden_footprint = &top_overburden;
+				bottom_overburden              = &top_overburden;
+				formations.overburden    (top_overburden, crust[i], bottom_overburden);
+				formations.metamorphosis (phase_boundaries, 
+					top_overburden, bottom_overburden,
+					deltas[nonmetamorphic], deltas[metamorphic], 
+					deltas[nonmetamorphic], deltas[metamorphic]);
+
+				/*
+				If further metamorphosis occurs in the metamorphic layer, then send the results to the same layer
+				*/
+				top_overburden                 = &bottom_overburden;
+				formation_overburden_footprint = &top_overburden;
+				bottom_overburden              = &top_overburden;
+				formations.overburden    (top_overburden, crust[i], bottom_overburden);
+				formations.metamorphosis (phase_boundaries, 
+					top_overburden, bottom_overburden,
+					deltas[metamorphic], deltas[metamorphic], 
+					deltas[metamorphic], deltas[metamorphic]);
+			}
 
 		}
 
@@ -289,7 +307,7 @@ namespace rock {
 			const speeds& precipitation,
 			const pressures& top_overburden, // NOTE: this is typically calculated as top_rock_overburden + fluid_overburden 
 			const Crust<M>& crust,
-			Crust<M>& deltas,
+			Formation<M>& delta,
 		) const {
 		}
 
