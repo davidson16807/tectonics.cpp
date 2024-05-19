@@ -2,14 +2,18 @@
 
 namespace rock
 {
-	enum FormationType
-	{
-        sediment,
-        sedimentary,
-        metasedimentary,
-        igneous,
-        metaigneous,
-        count=5
-	};
+	namespace formations {
+		enum FormationType
+		{
+	        sediment,
+	        sedimentary,
+	        metasedimentary,
+	        igneous,
+	        metaigneous
+		};
+
+		std::size_t count = 5;
+	}
+
 
 }

@@ -1,0 +1,15 @@
+https://davidson16807.github.io/cdcraft/?0&=-480_436,7544&=nvnm,4_2,6_2,10,0_0,7:0;nvnm,6_2,7_2,10,0_0,7:0;nvnm,8_3,7_2,10,0_0,7:0;nvnm,8_3,9_3,10,0_0,7:1,8:*ZXJvc2lvbg==;nvnm,9_3,10_3,10,0_0,7:1;nvnm,8_3,7_4,10,0_0,7:0;nvnm,7_4,8_4,10,0_0,7:1;nvnm,8_4,9_4,10,0_0,7:0,8:*dmlldw==;nvnm,6_4,7_4,10,0_0,7:0;nvnm,6_4,7_5,10,0_0,7:0;nvnm,7_5,8_5,10,0_0,7:0,8:*cmlmdCBzdWJkdWN0;nvnm,6_4,6_5,10,0_0,7:0;nvnm,6_5,5_5,10,0_0,7:1;nvnm,4_5,5_5,10,0_0,7:0,8:*d2VhdGhlcmluZyBtZXRhbW9ycGhvc2lzIGxpdGhpZmljYXRpb24=;nvnm,4_5,4_6,10,0_0,7:0;nvnm,4_5,4_2,10,0_0,7:0;nvnm,4_2,5_3,10,0_0,7:0;nvnm,5_3,6_4,10,0_0,7:1;nvnm,6_4,6_3,10,0_0,7:0;nvnm,6_2,6_3,10,0_0,7:0&=4_2,2:*XFtDX2lcXQ==;6_2,2:*XFtcUGlcXQ==;7_2,2:*XFtTXF0=;8_3,2:*XFtcUGlcXQ==;9_3,2:*XFtcRGVsdGFcXQ==;10_3,2:*XFtcRGVsdGFfaVxd;7_4,2:*XFt6XF0=;8_4,2:*XFt6X2lcXQ==;9_4,2:*XFtWXF0=;6_4,2:*XFtccmhvXHRoZXRhXF0=;7_5,2:*XFtOSVxd;8_5,2:*XFtKXF0=;6_5,2:*XFtPXF0=;4_5,2:*XFtPQ19pXF0=;4_6,2:*XFtcRGVsdGFfaVxd;5_3,2:*XFtccmhvXHRoZXRhX2lcXQ==;6_3,2:*XFtJXF0=;5_5,2:*XFtPX2lcXQ==
+
+legend:
+C crust
+ρ density
+z elvation
+θ thickness
+S sediment
+M mask
+m total mass
+i plate id
+I plate id map
+N plate count map
+
+red arrows indicate operations that require an out-of-order traversal through memory
