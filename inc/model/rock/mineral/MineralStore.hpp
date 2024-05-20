@@ -52,6 +52,12 @@ namespace rock
 			weathered_crystalline_part_count(1)
 		{
 		}
+
+		inline si::mass<float> mass() const
+		{
+			return mass;
+		}
+
 		void unpack(Mineral& output) const
 		{
 		    output.mass = si::mass<double>(mass);

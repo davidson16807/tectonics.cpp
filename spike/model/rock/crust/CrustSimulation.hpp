@@ -148,6 +148,22 @@ namespace rock {
     	}
 
         /*
+		`mass` returns a scalar raster indicating column masses
+        */
+        void mass(
+			const Crust<M>& crust,
+			masses& out
+    	) const {
+			for (int i = 0; i < M; ++i) // formations
+    		{
+	    		for (int j = 0; j < crust.size(); ++j) // columns
+	    		{
+	    			out[i] += crust[i][j].mass();
+	    		}
+    		}
+    	}
+
+        /*
 		`rifting` returns a scalar raster indicating where gaps in the plates should be filled by a given plate
         */
 		void rifting(
@@ -319,25 +335,44 @@ namespace rock {
 		) const {
 		}
 
-		void guess_plate_map(
-			const vec3s& velocities,
-			const std::size_t segment_num, 
-			const std::size_t min_segment_size, 
-			std::vector<std::uint8_t>& plate_ids
-		) const {
-		}
-
-		glm::vec3 guess_plate_center_of_mass(
+		inline glm::vec3 plate_center_of_mass(
+			const vec3s& position,
 			const masses& mass
 		) const {
+			return whole::weighted_average(position, mass);
 		}
 
-		glm::mat3 guess_plate_rotation_matrix(
-			const vec3s& plate_velocity,
-			glm::vec3 center_of_plate,
-			si::time<double> seconds
+		inline glm::vec3 angular_velocity(
+			const vec3s& linear_velocity,
+			const auto& position,
+			const glm::vec3 reference,
+			vec3s& angular_velocity,
+			floats& scratch,
+		) const {
+			vec3s* offset = &angular_velocity;
+			floats* distance2 = &scratch;
+			each::sub  (position, reference, offset);
+    		each::dot  (offset, offset, distance2);
+    		each::cross(plate_velocity, offset, angular_velocity);
+    		each::div  (angular_velocity, distance2, angular_velocity);
+		}
+
+		/*
+		NOTE:
+		invocation looks like this:
+		glm::vec3 center_of_world(0,0,0);
+		angular_velocity(plate_velocity, position, center_of_plate, center_of_plate_angular_velocity, scratch);
+		angular_velocity(plate_velocity, position, center_of_world, center_of_world_angular_velocity, scratch);
+		plate_rotation_matrix(center_of_plate_angular_velocity, center_of_x);
+		*/
+
+		glm::mat4 plate_rotation_matrix(
+			const vec3s& center_of_plate_angular_velocity,
+			const vec3s& center_of_world_angular_velocity,
+			const si::time<double> seconds
 		) const {
 			/*
+			OLD COMMENTS FROM JS:
 		    plates are rigid bodies
 		    as with any rigid body, there are two ways that forces can manifest themselves:
 		       1.) linear acceleration     translates a body 
@@ -345,7 +380,33 @@ namespace rock {
 		    but on a sphere, linear acceleration just winds up rotating a plate around the world's center
 		    this contrasts with angular acceleration, which rotates a plate around its center of mass.
 		    Here, we track both kinds of motion.
+
+			NEW COMMENTS/TODO: 
+			I'm not tracking why this is supposed to work as it does, and I'm the guy who wrote it.
+			I'm leaving it as-is since it's worked before and we need to get to MVP,
+			but I'm leaving a note here to revisit this. 
+			I'd think all we need would is to return `center_of_plate_rotation_matrix`.
+			I don't see why we would need to multiply by `center_of_world_rotation_matrix`
 		    */
+    		// TODO: negation shouldn't theoretically be needed! find out where the discrepancy lies and fix it the proper way! 
+			glm::vec3 center_of_world_rotation_vector = whole::mean(center_of_world_angular_velocity) * seconds;
+			glm::vec3 center_of_plate_rotation_vector = whole::mean(center_of_plate_angular_velocity) * seconds;
+
+			glm::mat4 center_of_plate_rotation_matrix = glm::rotate(glm::length(center_of_plate_rotation_vector), -glm::normalize(center_of_plate_rotation_vector));
+			center_of_plate_rotation_matrix = std::is_nan(center_of_plate_rotation_matrix)? glm::mat4(1.0f) : center_of_plate_rotation_matrix;
+
+			glm::mat4 center_of_world_rotation_matrix = glm::rotate(glm::length(center_of_world_rotation_vector), -glm::normalize(center_of_world_rotation_vector));
+			center_of_world_rotation_matrix = std::is_nan(center_of_world_rotation_matrix)? glm::mat4(1.0f) : center_of_world_rotation_matrix;
+
+			return center_of_plate_rotation_matrix * center_of_world_rotation_matrix;
+		}
+
+		void guess_plate_map(
+			const vec3s& velocities,
+			const std::size_t segment_num, 
+			const std::size_t min_segment_size, 
+			std::vector<std::uint8_t>& plate_ids
+		) const {
 		}
 
         /*

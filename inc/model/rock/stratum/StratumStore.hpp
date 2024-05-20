@@ -83,6 +83,16 @@ namespace rock
             return age_of_world_when_last_deposited_in_megayears * si::megayear;
         }
 
+        si::mass<float> mass () const 
+        {
+            si::mass<float> result;
+            for (int i = 0; i < M; ++i)
+            {
+                result += minerals[i].mass();
+            }
+            return result;
+        }
+
         inline auto size() const
         {
             return minerals.size();

@@ -321,16 +321,21 @@ namespace whole
 		return std::sqrt(sum_of_squared_differences / (a.size()-1));
 	}
 
-	template <typename T>
-	typename T::value_type weighted_average(const T& a, const T& weights)
+	template <typename T1, typename T2>
+	typename auto linear_combination(const T1& a, const T2& weights)
 	{
-		typename T::value_type out(0);
-		for (unsigned int i = 0; i < a.size(); ++i)
+		auto result = a[0] * weights[0];
+		for (unsigned int i = 1; i < a.size(); ++i)
 		{
 			out += a[i] * weights[i];
 		}
-		out /= sum(weights);
 		return out;
+	}
+
+	template <typename T1, typename T2>
+	typename auto weighted_average(const T1& a, const T2& weights)
+	{
+		return linear_combination(a, weights) /= sum(weights);
 	}
 
 	// TODO: vector version
