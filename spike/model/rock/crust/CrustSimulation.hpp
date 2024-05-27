@@ -27,7 +27,7 @@ namespace rock {
 
 	*/
 
-	template<int M, typename VectorCalculus, typename Morphology>
+	template<int M, typename VectorCalculus, typename Morphology, typename Segmentation>
     class CrustSimulation
     {
     	using mass      = si::mass<float>;
@@ -53,6 +53,7 @@ namespace rock {
 
         const VectorCalculus calculus;
         const Morphology morphology;
+        const Segmentation segmentation;
         const length world_radius;
         const acceleration gravity;
 
@@ -60,6 +61,7 @@ namespace rock {
         CrustSimulation(
 			const VectorCalculus& calculus, 
 			const Morphology& morphology,
+			const Segmentation& segmentation,
 			const length world_radius,
 			const acceleration gravity
 		):
@@ -319,22 +321,6 @@ namespace rock {
 
 		}
 
-		void weathering(
-			const speeds& precipitation,
-			const bools& top, 
-			const Crust<M>& crust,
-			Formation<M>& delta,
-		) const {
-		}
-
-		void erosion(
-			const speeds& precipitation,
-			const lengths& displacements,
-			const Formation<M>& formation,
-			Formation<M>& deltas,
-		) const {
-		}
-
 		inline glm::vec3 plate_center_of_mass(
 			const vec3s& position,
 			const masses& mass
@@ -375,9 +361,7 @@ namespace rock {
 			const vec3&  postiion,
 			const vec3& center_of_plate,
 			const vec3& center_of_world,
-			const si::time<double> seconds,
-			vec3s& scratch1,
-			floats& scratch2,
+			const si::time<double> seconds
 		) const {
 			/*
 		    We assume that plates move as rigid bodies. 
@@ -478,6 +462,27 @@ namespace rock {
 			std::vector<std::uint8_t>& plate_ids
 		) const {
 
+			segmentation.segment(
+			  grid, vertex_gradient, 7, 10, 
+			  vertex_colored_scalars, scratch, mask1, mask2, mask3
+			);
+
+		}
+
+		void weathering(
+			const speeds& precipitation,
+			const bools& top, 
+			const Crust<M>& crust,
+			Formation<M>& delta,
+		) const {
+		}
+
+		void erosion(
+			const speeds& precipitation,
+			const lengths& displacements,
+			const Formation<M>& formation,
+			Formation<M>& deltas,
+		) const {
 		}
 
 
