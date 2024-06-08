@@ -322,7 +322,7 @@ namespace whole
 	}
 
 	template <typename T1, typename T2>
-	typename auto linear_combination(const T1& a, const T2& weights)
+	auto linear_combination(const T1& a, const T2& weights)
 	{
 		auto result = a[0] * weights[0];
 		for (unsigned int i = 1; i < a.size(); ++i)
@@ -333,7 +333,7 @@ namespace whole
 	}
 
 	template <typename T1, typename T2>
-	typename auto weighted_average(const T1& a, const T2& weights)
+	auto weighted_average(const T1& a, const T2& weights)
 	{
 		return linear_combination(a, weights) /= sum(weights);
 	}
