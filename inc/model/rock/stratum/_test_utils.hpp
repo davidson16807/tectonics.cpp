@@ -84,12 +84,6 @@ namespace rock
 
         std::string print(const Stratum<M>& a) const {
             std::ostringstream os;
-            os << "max pressure:    ";
-            os << si::to_string(a.max_pressure_received);
-            os << "\n";
-            os << "max temperature: ";
-            os << si::to_string(a.max_temperature_received);
-            os << "\n";
             os << "age of world when first deposited: ";
             os << si::to_string(a.age_of_world_when_first_deposited);
             os << "\n";
@@ -110,6 +104,59 @@ namespace rock
         std::string print(const StratumStore<M>& a) const {
             std::ostringstream os;
             os << "[encapsulated]";
+            return os.str();
+        }
+
+        std::string print(const double a) const {
+            std::ostringstream os;
+            os << std::to_string(a);
+            return os.str();
+        }
+
+        std::string print(const float a) const {
+            std::ostringstream os;
+            os << std::to_string(a);
+            return os.str();
+        }
+
+    };
+
+    struct StratumSummaryAdapter{
+        const float float_threshold;
+
+        StratumSummaryAdapter():
+            float_threshold(0.001)
+        {}
+
+        bool equal(const StratumSummary& a, const StratumSummary& b) const {
+            if(si::distance(a.density(), b.density()) 
+                > si::max(si::density<float>(si::kilogram/si::meter3), float_threshold * si::max(a.density(),b.density())) )
+            {
+                return false;
+            } 
+            if(si::distance(a.thickness(), b.thickness()) 
+                > si::max(si::length<float>(si::meter), float_threshold * si::max(a.thickness(),b.thickness())) )
+            {
+                return false;
+            } 
+            if(a.plate_ids_bitset() != b.plate_ids_bitset())
+            {
+                return false;
+            }
+            return true;
+        }
+
+        std::string print(const StratumSummary& a) const {
+            std::ostringstream os;
+            os << "thickness:       ";
+            os << si::to_string(a.thickness());
+            os << "\n";
+            os << "density:         ";
+            os << si::to_string(a.density());
+            os << "\n";
+            os << "plate id bitset: ";
+            os << a.plate_ids_bitset().to_string();
+            os << "\n";
             return os.str();
         }
 

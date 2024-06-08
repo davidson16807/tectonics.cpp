@@ -20,7 +20,7 @@ namespace rock
 	{
 		static constexpr float epsilon =1e-4f;
 
-		si::mass<float> mass; 
+		si::mass<float> mass_; 
 		std::uint8_t unweathered_amorphous_part_count  : 4;
 		std::uint8_t unweathered_extrusive_part_count  : 4;
 		std::uint8_t unweathered_intrusive_part_count  : 4;
@@ -41,7 +41,7 @@ namespace rock
 		}
 		// identity constructor
 		MineralStore():
-			mass(0),
+			mass_(0),
 			unweathered_amorphous_part_count(1),           
 			unweathered_extrusive_part_count(1),           
 			unweathered_intrusive_part_count(1),           
@@ -55,12 +55,12 @@ namespace rock
 
 		inline si::mass<float> mass() const
 		{
-			return mass;
+			return mass_;
 		}
 
 		void unpack(Mineral& output) const
 		{
-		    output.mass = si::mass<double>(mass);
+		    output.mass = si::mass<double>(mass_);
 		    float total_relative_volume(epsilon);
 			total_relative_volume += unweathered_amorphous_part_count;
 			total_relative_volume += unweathered_extrusive_part_count;
@@ -82,7 +82,7 @@ namespace rock
 		}
 		void pack(const Mineral& input)
 		{
-			mass = si::mass<float>(input.mass);
+			mass_ = si::mass<float>(input.mass);
             // rescale bin counts by the new max to fit inside a uint8_t
             float grain_type_relative_volume_max(epsilon);
             for (int i = 0; i < int(GrainType::count); ++i)

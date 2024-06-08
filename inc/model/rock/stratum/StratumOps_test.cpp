@@ -4,6 +4,8 @@
 #include <catch/catch.hpp>
 
 // in house libraries
+#include <model/rock/mineral/MineralOps.hpp>
+
 #include "Stratum.hpp"
 #include "StratumOps.hpp"
 #include "_test_utils.hpp"
@@ -13,9 +15,10 @@
 #include <test/structures/grouplike.hpp>
 
 TEST_CASE( "Stratum scale() closure", "[rock]" ) {
-    const std::size_t M = 15;
+    const std::size_t M = 2;
 
-    rock::StratumOps ops{rock::MineralOps()};
+    rock::MineralOps minerals;
+    rock::StratumOps<M> ops(minerals);
     rock::StratumAdapter<M> inexact;
 
     std::mt19937 generator(2);
@@ -40,9 +43,10 @@ TEST_CASE( "Stratum scale() closure", "[rock]" ) {
 }
 
 TEST_CASE( "Stratum scale() monoid", "[rock]" ) {
-    const std::size_t M = 15;
+    const std::size_t M = 2;
 
-    rock::StratumOps ops{rock::MineralOps()};
+    rock::MineralOps minerals;
+    rock::StratumOps<M> ops(minerals);
     rock::StratumAdapter<M> inexact;
 
     std::mt19937 generator(2);
@@ -79,9 +83,10 @@ TEST_CASE( "Stratum scale() monoid", "[rock]" ) {
 }
 
 TEST_CASE( "Stratum combine() commutative monoid", "[rock]" ) {
-  const std::size_t M = 15;
+    const std::size_t M = 2;
 
-    rock::StratumOps ops{rock::MineralOps()};
+    rock::MineralOps minerals;
+    rock::StratumOps<M> ops(minerals);
     rock::StratumAdapter<M> inexact;
 
     std::mt19937 generator(2);
@@ -106,9 +111,10 @@ TEST_CASE( "Stratum combine() commutative monoid", "[rock]" ) {
 }
 
 TEST_CASE( "Stratum combine() closure", "[rock]" ) {
-  const std::size_t M = 15;
+    const std::size_t M = 2;
 
-    rock::StratumOps ops{rock::MineralOps()};
+    rock::MineralOps minerals;
+    rock::StratumOps<M> ops(minerals);
     rock::StratumAdapter<M> inexact;
 
     std::mt19937 generator(2);
@@ -131,8 +137,9 @@ TEST_CASE( "Stratum combine() closure", "[rock]" ) {
 }
 
 TEST_CASE( "Stratum combine() mass conservation", "[rock]" ) {
-    rock::StratumOps ops{rock::MineralOps()};
-    const std::size_t M = 15;
+    const std::size_t M = 2;
+    rock::MineralOps minerals;
+    rock::StratumOps<M> ops(minerals);
 
     std::mt19937 generator(2);
     rock::Stratum<M> a = rock::get_random<M>(generator);

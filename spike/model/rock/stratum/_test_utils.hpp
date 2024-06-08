@@ -147,5 +147,58 @@ namespace rock
 
     };
 
+    struct StratumSummaryAdapter{
+        const float float_threshold;
+
+        StratumAdapter():
+            float_threshold(0.001)
+        {}
+
+        bool equal(const StratumSummary& a, const StratumSummary& b) const {
+            if(si::distance(a.density(), b.density()) 
+                > si::max(si::kilogram/si::meter3, float_threshold * si::max(a.density(),b.density())) )
+            {
+                return false;
+            } 
+            if(si::distance(a.thickness(), b.thickness()) 
+                > si::max(si::meter, float_threshold * si::max(a.thickness(),b.thickness())) )
+            {
+                return false;
+            } 
+            if(a.plate_ids_bitset() != b.plate_ids_bitset())
+            {
+                return false;
+            }
+            return true;
+        }
+
+        std::string print(const StratumSummary& a) const {
+            std::ostringstream os;
+            os << "thickness:       ";
+            os << si::to_string(a.thickness());
+            os << "\n";
+            os << "density:         ";
+            os << si::to_string(a.density());
+            os << "\n";
+            os << "plate id bitset: ";
+            os << a.plate_ids_bitset().to_string();
+            os << "\n";
+            return os.str();
+        }
+
+        std::string print(const double a) const {
+            std::ostringstream os;
+            os << std::to_string(a);
+            return os.str();
+        }
+
+        std::string print(const float a) const {
+            std::ostringstream os;
+            os << std::to_string(a);
+            return os.str();
+        }
+
+    };
+
 }
 

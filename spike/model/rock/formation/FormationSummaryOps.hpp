@@ -19,7 +19,7 @@ namespace rock
         FormationSummaryOps():
             ops(StratumSummaryTools())
         {}
-        void combine() (const FormationSummary& a, const FormationSummary& b, FormationSummary& out) const
+        void combine (const FormationSummary& a, const FormationSummary& b, FormationSummary& out) const
         {
             for (std::size_t i = 0; i < out.size(); ++i)
             {

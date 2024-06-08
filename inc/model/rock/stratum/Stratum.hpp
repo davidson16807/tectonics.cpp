@@ -69,6 +69,16 @@ namespace rock
             }
         }
 
+        si::mass<double> mass () const 
+        {
+            si::mass<double> result;
+            for (std::size_t i = 0; i < M; ++i)
+            {
+                result += minerals[i].mass;
+            }
+            return result;
+        }
+
     };
 
 }
