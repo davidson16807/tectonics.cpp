@@ -12,7 +12,7 @@
 // in house libraries
 #include "Mineral.hpp"
 #include "MineralOps.hpp"
-#include "_test_utils.hpp"
+#include "_test_tools.hpp"
 
 #include <test/structures/grouplike.hpp>
 

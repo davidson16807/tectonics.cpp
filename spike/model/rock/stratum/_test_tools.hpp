@@ -9,7 +9,7 @@
 // in-house libraries
 #include <unit/si.hpp>
 
-#include <model/rock/mineral/_test_utils.hpp>
+#include <model/rock/mineral/_test_tools.hpp>
 
 #include "Stratum.hpp"
 #include "StratumStore.hpp"

@@ -3,7 +3,7 @@
 #include <catch/catch.hpp>
 
 #include "StratumStore.hpp"
-#include "_test_utils.hpp"
+#include "_test_tools.hpp"
 
 #include <test/structures/grouplike.hpp>
 

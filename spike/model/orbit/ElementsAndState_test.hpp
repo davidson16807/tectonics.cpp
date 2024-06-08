@@ -11,8 +11,8 @@
 
 #include "ElementsAndState.hpp"
 
-#include "Elements_test_utils.hpp"
-#include "State_test_utils.hpp"
+#include "Elements_test_tools.hpp"
+#include "State_test_tools.hpp"
 
 namespace orbit {
 

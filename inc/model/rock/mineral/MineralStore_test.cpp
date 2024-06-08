@@ -8,7 +8,7 @@
 
 // in-house libraries
 #include "MineralStore.hpp"
-#include "_test_utils.hpp"
+#include "_test_tools.hpp"
 
 #include <test/properties.hpp>
 

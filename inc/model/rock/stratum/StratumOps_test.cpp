@@ -8,7 +8,7 @@
 
 #include "Stratum.hpp"
 #include "StratumOps.hpp"
-#include "_test_utils.hpp"
+#include "_test_tools.hpp"
 
 #include <test/predicate.hpp>
 #include <test/properties.hpp>
