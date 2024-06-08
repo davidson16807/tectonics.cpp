@@ -4,10 +4,10 @@
 
 namespace rock{
 
-    class StratumSummaryTools
+    class StratumSummaryOps
     {
     public:
-        StratumSummaryTools(){}
+        StratumSummaryOps(){}
         StratumSummary combine (const StratumSummary& a, const StratumSummary& b) const
         {
             auto thickness_a = a.thickness();

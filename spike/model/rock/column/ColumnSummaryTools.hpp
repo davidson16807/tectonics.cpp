@@ -6,7 +6,7 @@ namespace rock{
     class ColumnSummaryTools
     {
 
-        const StratumSummaryTools ops;
+        const StratumSummaryOps ops;
         const si::force<float> gravity;
         const si::density<float> fluid_density;
         const float threshold;
@@ -14,7 +14,7 @@ namespace rock{
     public:
 
         ColumnSummaryTools(const si::force<float> gravity, const si::density<float> fluid_density, const float threshold): 
-            ops(StratumSummaryTools()), 
+            ops(StratumSummaryOps()), 
             gravity(gravity),
             fluid_density(fluid_density),
             threshold(threshold)
