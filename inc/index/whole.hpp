@@ -324,7 +324,7 @@ namespace whole
 	template <typename T1, typename T2>
 	auto linear_combination(const T1& a, const T2& weights)
 	{
-		auto result = a[0] * weights[0];
+		auto out = a[0] * weights[0];
 		for (unsigned int i = 1; i < a.size(); ++i)
 		{
 			out += a[i] * weights[i];
