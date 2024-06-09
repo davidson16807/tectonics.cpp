@@ -4,7 +4,6 @@
 #include <catch/catch.hpp>
 
 // in house libraries
-#include "StratumStore.hpp"
 #include "StratumSummary.hpp"
 #include "StratumSummaryOps.hpp"
 #include "_test_tools.hpp"

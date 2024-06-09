@@ -7,11 +7,11 @@
 // 3rd party libraries
 
 // in-house libraries
+#include <model/rock/stratum/StratumSummaryOps.hpp>
 
 namespace rock
 {
 
-    template<typename FormationSummarization>
     class FormationSummaryOps
     {
         const StratumSummaryOps strata;

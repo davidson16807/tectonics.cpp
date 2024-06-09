@@ -13,6 +13,7 @@
 
 #include "Stratum.hpp"
 #include "StratumStore.hpp"
+#include "StratumSummary.hpp"
 
 namespace rock
 {

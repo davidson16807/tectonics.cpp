@@ -7,6 +7,7 @@
 // 3rd party libraries
 
 // in-house libraries
+#include <model/rock/stratum/StratumStore.hpp>
 
 namespace rock
 {

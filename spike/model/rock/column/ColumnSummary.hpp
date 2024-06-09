@@ -1,5 +1,8 @@
 #pragma once
 
+// in-house libraries
+#include <model/rock/stratum/StratumSummary.hpp>
+
 namespace rock{
 
     struct ColumnSummary

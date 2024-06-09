@@ -26,7 +26,7 @@ namespace rock
         void empty(Formation<M>& out) const {
             for (std::size_t i = 0; i < out.size(); ++i)
             {
-                out[i] = Formation<M>();
+                out[i] = StratumStore<M>();
             }
         }
 

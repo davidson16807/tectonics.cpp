@@ -6,25 +6,25 @@
 
 namespace rock{
 
-    auto density                        (const auto& table)                           { return density_as_solid                        <float>(table, MineralMass());}
-    auto specific_heat_capacity         (const auto& table)                           { return specific_heat_capacity_as_solid         <float>(table, MineralMass());}
-    auto dynamic_viscosity              (const auto& table)                           { return dynamic_viscosity_as_solid              <float>(table, MineralMass());}
-    auto molar_heat_capacity            (const auto& table, const auto& molar_masses) { return molar_heat_capacity_as_solid            <float>(table, MineralMoles(molar_masses));}
-    auto vapor_pressure                 (const auto& table, const auto& molar_masses) { return vapor_pressure_as_solid                 <float>(table, MineralMoles(molar_masses));}
-    auto molar_density                  (const auto& table, const auto& molar_masses) { return molar_density_as_solid                  <float>(table, MineralMoles(molar_masses));}
-    auto tensile_modulus                (const auto& table, const auto& densities)    { return tensile_modulus_as_solid                <float>(table, MineralVolume(densities));}
-    auto shear_modulus                  (const auto& table, const auto& densities)    { return shear_modulus_as_solid                  <float>(table, MineralVolume(densities));}
-    auto bulk_modulus                   (const auto& table, const auto& densities)    { return bulk_modulus_as_solid                   <float>(table, MineralVolume(densities));}
-    auto pwave_modulus                  (const auto& table, const auto& densities)    { return pwave_modulus_as_solid                  <float>(table, MineralVolume(densities));}
-    auto lame_parameter                 (const auto& table, const auto& densities)    { return lame_parameter_as_solid                 <float>(table, MineralVolume(densities));}
-    auto poisson_ratio                  (const auto& table, const auto& densities)    { return poisson_ratio_as_solid                  <float>(table, MineralVolume(densities));}
-    auto tensile_yield_strength         (const auto& table, const auto& densities)    { return tensile_yield_strength_as_solid         <float>(table, MineralVolume(densities));}
-    auto shear_yield_strength           (const auto& table, const auto& densities)    { return shear_yield_strength_as_solid           <float>(table, MineralVolume(densities));}
-    auto compressive_yield_strength     (const auto& table, const auto& densities)    { return compressive_yield_strength_as_solid     <float>(table, MineralVolume(densities));}
-    auto tensile_fracture_strength      (const auto& table, const auto& densities)    { return tensile_fracture_strength_as_solid      <float>(table, MineralVolume(densities));}
-    auto shear_fracture_strength        (const auto& table, const auto& densities)    { return shear_fracture_strength_as_solid        <float>(table, MineralVolume(densities));}
-    auto compressive_fracture_strength  (const auto& table, const auto& densities)    { return compressive_fracture_strength_as_solid  <float>(table, MineralVolume(densities));}
-    auto thermal_conductivity           (const auto& table, const auto& densities)    { return thermal_conductivity_as_solid           <float>(table, MineralVolume(densities));}
+    auto density                        (const auto& table)                           { return mix::density_as_solid                        <float>(table, MineralMass());}
+    auto specific_heat_capacity         (const auto& table)                           { return mix::specific_heat_capacity_as_solid         <float>(table, MineralMass());}
+    auto dynamic_viscosity              (const auto& table)                           { return mix::dynamic_viscosity_as_solid              <float>(table, MineralMass());}
+    auto molar_heat_capacity            (const auto& table, const auto& molar_masses) { return mix::molar_heat_capacity_as_solid            <float>(table, MineralMoles(molar_masses));}
+    auto vapor_pressure                 (const auto& table, const auto& molar_masses) { return mix::vapor_pressure_as_solid                 <float>(table, MineralMoles(molar_masses));}
+    auto molar_density                  (const auto& table, const auto& molar_masses) { return mix::molar_density_as_solid                  <float>(table, MineralMoles(molar_masses));}
+    auto tensile_modulus                (const auto& table, const auto& densities)    { return mix::tensile_modulus_as_solid                <float>(table, MineralVolume(densities));}
+    auto shear_modulus                  (const auto& table, const auto& densities)    { return mix::shear_modulus_as_solid                  <float>(table, MineralVolume(densities));}
+    auto bulk_modulus                   (const auto& table, const auto& densities)    { return mix::bulk_modulus_as_solid                   <float>(table, MineralVolume(densities));}
+    auto pwave_modulus                  (const auto& table, const auto& densities)    { return mix::pwave_modulus_as_solid                  <float>(table, MineralVolume(densities));}
+    auto lame_parameter                 (const auto& table, const auto& densities)    { return mix::lame_parameter_as_solid                 <float>(table, MineralVolume(densities));}
+    auto poisson_ratio                  (const auto& table, const auto& densities)    { return mix::poisson_ratio_as_solid                  <float>(table, MineralVolume(densities));}
+    auto tensile_yield_strength         (const auto& table, const auto& densities)    { return mix::tensile_yield_strength_as_solid         <float>(table, MineralVolume(densities));}
+    auto shear_yield_strength           (const auto& table, const auto& densities)    { return mix::shear_yield_strength_as_solid           <float>(table, MineralVolume(densities));}
+    auto compressive_yield_strength     (const auto& table, const auto& densities)    { return mix::compressive_yield_strength_as_solid     <float>(table, MineralVolume(densities));}
+    auto tensile_fracture_strength      (const auto& table, const auto& densities)    { return mix::tensile_fracture_strength_as_solid      <float>(table, MineralVolume(densities));}
+    auto shear_fracture_strength        (const auto& table, const auto& densities)    { return mix::shear_fracture_strength_as_solid        <float>(table, MineralVolume(densities));}
+    auto compressive_fracture_strength  (const auto& table, const auto& densities)    { return mix::compressive_fracture_strength_as_solid  <float>(table, MineralVolume(densities));}
+    auto thermal_conductivity           (const auto& table, const auto& densities)    { return mix::thermal_conductivity_as_solid           <float>(table, MineralVolume(densities));}
 
     /*
     `AgedStratumDensity` serves as an alternative to `rock::density` 
@@ -41,7 +41,7 @@ namespace rock{
         const Table density_for_age;
         const si::time<float> age_of_world;
     public:
-        MineralDensity(const Table& density_for_age, const si::time<float> age_of_world):
+        AgedStratumDensity(const Table& density_for_age, const si::time<float> age_of_world):
             density_for_age(density_for_age),
             age_of_world(age_of_world)
         {}
@@ -64,7 +64,7 @@ namespace rock{
     template<typename scalar, typename Table>
     auto aged_stratum_density(const Table& table, const si::time<float> age_of_world)
     {
-        return MineralDensity<scalar,Table>(table, get, check);
+        return AgedStratumDensity<scalar,Table>(table, get, check);
     }
 
 }
