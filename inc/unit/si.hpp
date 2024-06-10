@@ -249,6 +249,11 @@ namespace si{
   {
     return a.template root<N>();
   }
+  template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
+  constexpr auto inversesqrt(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
+  {
+    return T1(1) / sqrt(a);
+  }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1, typename T2>
   constexpr auto operator*(const T2 a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
@@ -279,6 +284,12 @@ namespace si{
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
+  constexpr auto sign(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
+  {
+    return a/abs(a);
+  }
+
+  template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
   constexpr auto distance(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
   {
     return abs(a-b);
@@ -302,6 +313,42 @@ namespace si{
     return a < lo? lo : a > hi? hi : a;
   }
 
+  template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
+  constexpr Tout mix(
+      const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> edge0, 
+      const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> edge1, 
+      const Tin a
+  ) {
+      return edge0*(Tin(1)-a) + edge1*a;
+  }
+
+  template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
+  constexpr auto step(
+      const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> edge, 
+      const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> x
+  ) {
+    return Tin(x >= edge);
+  }
+
+  template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
+  constexpr auto linearstep(
+      const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> edge0, 
+      const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> edge1, 
+      const T1 x
+  ) {
+      T1 fraction = T1((x - edge0) / (edge1 - edge0));
+      return fraction > 1.0? 1 : fraction < 0.0? 0 : fraction;
+  }
+
+  template <typename Tin>
+  constexpr auto smoothstep(
+      const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> edge0, 
+      const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> edge1, 
+      const T1 x
+  ) {
+    auto t = clamp((x - edge0) / (edge1 - edge0), 0.0, 1.0);
+    return t * t * (3.0 - 2.0 * t);
+  }
 
 
 
