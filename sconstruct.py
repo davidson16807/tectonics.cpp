@@ -24,7 +24,7 @@ using sconstruct.py under "{root}".
 
 environment = Environment(
     CCFLAGS="-std=c++17 -Wall -Werror -pedantic-errors -rdynamic -g -D GLM_FORCE_SWIZZLE",
-    CPPPATH=[os.path.join(root,path) for path in 'inc lib src spike'.split()],
+    CPPPATH=[os.path.join(root,path) for path in 'inc lib src sketch'.split()],
     LIBS='glfw GL GLEW'.split(),
 )
 

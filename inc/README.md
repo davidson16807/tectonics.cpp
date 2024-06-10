@@ -1,7 +1,7 @@
 The `inc/` folder stores mature subcomponents of the "tectonics.cpp" suite. 
 Maturity is defined by the following criteria:
 * code is unit tested as thoroughly as can be done to test for mathematical properties as outlined in `doc/basic-unit-tests.md`
-* code is ready to be relied upon (if not already relied upon) by code elsewhere, such as in `spike/`, `src/`,  `demo/`, `inc/` itself, or even other projects.
+* code is ready to be relied upon (if not already relied upon) by code elsewhere, such as in `sketch/`, `src/`,  `demo/`, `inc/` itself, or even other projects.
 
 Code within `inc/` is typically less subject to change, however this is not a strict requirement for inclusion.
 

@@ -2,7 +2,7 @@ rm -f test.cpp && \
 find ./ -type f -name '*_specialization.*pp' -exec echo "#include \"{}\"" >> test.cpp \; && \
 find ./ -type f -name '*_test.*pp' -exec echo "#include \"{}\"" >> test.cpp \; && \
 g++ -std=c++17 -o test.out test.cpp  -Wall -Werror -pedantic-errors -rdynamic -ggdb -D GLM_FORCE_SWIZZLE \
--I /home/carl/code/tectonics.cpp/lib/ -I /home/carl/code/tectonics.cpp/inc/ -I /home/carl/code/tectonics.cpp/spike/ && \
+-I /home/carl/code/tectonics.cpp/lib/ -I /home/carl/code/tectonics.cpp/inc/ -I /home/carl/code/tectonics.cpp/sketch/ && \
 chmod a+x test.out && \
 ./test.out
 

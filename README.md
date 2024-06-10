@@ -31,7 +31,7 @@ The most important top-level folders are:
 
 * `lib` for header-only 3rd party libraries
 * `inc` for mature components that are ready for use by other code, such as for `math`, `grid`s, or scientific `unit`s and `model`s
-* `spike` for long-running experimental code that cannot be suitably handled by software branches
+* `sketch` for long-running experimental code that cannot be suitably handled by software branches
 * `src` for code that is not expected to be useful to projects outside tectonics, such as the code for handling the UI that's used within `demo`
 * `demo` for code that requires a specific 3d library to run, usually to demonstrate functionality in the library
 * `doc` for project-wide documentation that cannot be suitably put alongside any specific folder or file in the repository
