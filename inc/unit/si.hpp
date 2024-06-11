@@ -176,6 +176,17 @@ namespace si{
       return units<M1/N,KG1/N,S1/N,K1/N,MOL1/N,A1/N,CD1/N,T1>(std::pow(raw,1.0/double(N)));
     }
 
+    template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
+    constexpr bool isinf(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
+    {
+      return std::isinf(a.raw);
+    }
+
+    template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
+    constexpr bool isnan(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
+    {
+      return std::isnan(a.raw);
+    }
 
     constexpr bool operator==(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
     {
@@ -314,6 +325,18 @@ namespace si{
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
+  constexpr bool isinf(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
+  {
+    return a.isinf();
+  }
+
+  template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
+  constexpr bool isnan(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
+  {
+    return a.isnan();
+  }
+
+  template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
   constexpr Tout mix(
       const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> edge0, 
       const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> edge1, 
@@ -337,7 +360,7 @@ namespace si{
       const T1 x
   ) {
       T1 fraction = T1((x - edge0) / (edge1 - edge0));
-      return fraction > 1.0? 1 : fraction < 0.0? 0 : fraction;
+      return clamp(fraction, T1(0), T1(1));
   }
 
   template <typename Tin>
