@@ -18,21 +18,21 @@ namespace adapter
 	template <typename In1>\
 	inline auto NAME (const In1 a) const\
 	{\
-		return METHOD(a[i]);\
+		return METHOD(a);\
 	}
 
 	#define ADAPTER_BINARY_METHOD(METHOD, NAME) \
 	template <typename In1, typename In2>\
 	inline auto NAME (const In1 a, const In2 b) const\
 	{\
-		return METHOD(a[i], b[i]);\
+		return METHOD(a, b);\
 	}
 
 	#define ADAPTER_TRINARY_METHOD(METHOD, NAME) \
 	template <typename In1, typename In2, typename In3>\
 	inline auto NAME (const In1 a, const In2 b, const In3 c) const\
 	{\
-		return METHOD(a[i], b[i], c[i]);\
+		return METHOD(a, b, c);\
 	}
 
 	struct SiMetric
@@ -40,6 +40,18 @@ namespace adapter
 		SiMetric(){}
 
 		ADAPTER_BINARY_METHOD(si::distance, distance)
+
+		template<typename In1, typename In2>
+		inline constexpr auto length(const In1 a) const
+		{
+		    return std::abs(a);
+		}
+
+		template<typename In1, typename In2>
+		inline constexpr auto normalize(const In1 a) const
+		{
+		    return a / length(a);
+		}
 
 	};
 

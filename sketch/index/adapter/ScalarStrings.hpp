@@ -12,8 +12,6 @@ namespace adapter
 
 	class ScalarStrings
 	{
-	public:
-		ScalarStrings(){}
 
 		#if defined(__clang__)
 			const std::vector<const std::string> 
@@ -21,6 +19,9 @@ namespace adapter
 			const std::array<const std::string, 5>
 		#endif
 		shades {" ", "░", "▒", "▓", "█" };
+
+	public:
+		ScalarStrings(){}
 
 		template<typename T>
 		std::string legend(T sample, const T lo, const T hi) const 

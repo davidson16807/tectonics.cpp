@@ -62,9 +62,6 @@ namespace iterated
 			elements(elements)
 		{}
 
-		ADAPTER_UNARY_METHOD(elements.isnan, isnan)
-		ADAPTER_UNARY_METHOD(elements.isinf, isinf)
-
 		ADAPTER_UNARY_METHOD(elements.sign,    sign)
 		ADAPTER_UNARY_METHOD(elements.bitsign, bitsign)
 		ADAPTER_UNARY_METHOD(elements.abs,     abs)

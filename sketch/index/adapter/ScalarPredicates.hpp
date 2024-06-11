@@ -1,9 +1,9 @@
 #pragma once
 
 // C libraries
+#include <cmath>     /* std math */
 
 // in-house libraries
-#include <units/si.hpp>
 
 namespace adapter
 {
@@ -16,38 +16,29 @@ namespace adapter
 	template <typename In1>\
 	inline auto NAME (const In1 a) const\
 	{\
-		return METHOD(a[i]);\
+		return METHOD(a);\
 	}
 
 	#define ADAPTER_BINARY_METHOD(METHOD, NAME) \
 	template <typename In1, typename In2>\
 	inline auto NAME (const In1 a, const In2 b) const\
 	{\
-		return METHOD(a[i], b[i]);\
+		return METHOD(a, b);\
 	}
 
 	#define ADAPTER_TRINARY_METHOD(METHOD, NAME) \
 	template <typename In1, typename In2, typename In3>\
 	inline auto NAME (const In1 a, const In2 b, const In3 c) const\
 	{\
-		return METHOD(a[i], b[i], c[i]);\
+		return METHOD(a, b, c);\
 	}
 
-	struct SiComponentOrder
+	struct ScalarPredicates
 	{
-		SiComponentOrder(){}
+		ScalarPredicates(){}
 
-		ADAPTER_BINARY_METHOD(si::equal, equal)
-		ADAPTER_BINARY_METHOD(si::notEqual, notEqual)
-		ADAPTER_BINARY_METHOD(si::greaterThan, greaterThan)
-		ADAPTER_BINARY_METHOD(si::lessThan, lessThan)
-		ADAPTER_BINARY_METHOD(si::greaterThanEqual, greaterThanEqual)
-		ADAPTER_BINARY_METHOD(si::lessThanEqual, lessThanEqual)
-
-		ADAPTER_BINARY_METHOD(si::min, min)  
-		ADAPTER_BINARY_METHOD(si::max, max)  
-
-		ADAPTER_TRINARY_METHOD(si::clamp, clamp)  
+		ADAPTER_UNARY_METHOD(std::isnan, isnan)
+		ADAPTER_UNARY_METHOD(std::isinf, isinf)
 
 	};
 

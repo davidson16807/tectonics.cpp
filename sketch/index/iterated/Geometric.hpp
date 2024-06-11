@@ -61,8 +61,6 @@ namespace iterated
 		Geometric(const ElementGeometric& elements):
 			elements(elements)
 		{}
-		ADAPTER_UNARY_METHOD(elements.length, length)
-		ADAPTER_UNARY_METHOD(elements.normalize, normalize)
 
 		ADAPTER_BINARY_METHOD(elements.reflect, reflect)
 		ADAPTER_BINARY_METHOD(elements.cross, cross)

@@ -15,7 +15,7 @@ namespace adapter
 	template <typename In1, typename In2>\
 	inline auto NAME (const In1 a, const In2 b) const \
 	{\
-		return (a[i] SYMBOL b[i]);\
+		return (a SYMBOL b);\
 	}
 
 	template <typename T>

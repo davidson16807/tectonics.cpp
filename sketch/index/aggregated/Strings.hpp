@@ -9,18 +9,18 @@
 // in-house libraries
 #include <math/special.hpp>
 
-#include "each.hpp"
-
 namespace aggregated
 {
 
-	template <typename ElementStrings>
+	template <typename ElementStrings, typename Order>
 	class Strings
 	{
-		const ElementStrings elements;
+		const ElementStrings strings;
+		const Order order;
 	public:
-		Strings(const ElementStrings& elements):
-			elements(elements)
+		Strings(const ElementStrings& strings, const Order& order):
+			strings(strings),
+			order(order)
 		{}
 
 		template <typename Series, typename T>
@@ -34,7 +34,7 @@ namespace aggregated
 			    {
 			    	out += "\n";
 			    }
-			    out += elements.character(a[i],lo,hi);
+			    out += strings.character(a[i],lo,hi);
 			}
 			out += "\n";
 			out += legend(a[0], lo, hi);
@@ -44,7 +44,7 @@ namespace aggregated
 		template <typename Series>
 		inline std::string to_string(const Series& a, const int line_char_width = 80) const
 		{
-			return to_string(a, elements.min(a), elements.max(a), line_char_width);
+			return to_string(a, order.min(a), order.max(a), line_char_width);
 		}
 
 	};

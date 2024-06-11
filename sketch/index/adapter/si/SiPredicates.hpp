@@ -3,7 +3,7 @@
 // C libraries
 
 // in-house libraries
-#include <glm/gtx/component_wise.hpp>
+#include <units/si.hpp>
 
 namespace adapter
 {
@@ -33,12 +33,12 @@ namespace adapter
 		return METHOD(a, b, c);\
 	}
 
-	struct GlmOrderAggregation
+	struct SiPredicates
 	{
-		GlmOrderAggregation(){}
+		SiPredicates(){}
 
-		ADAPTER_BINARY_METHOD(glm::compMin, min)
-		ADAPTER_BINARY_METHOD(glm::compMax, max)
+		ADAPTER_UNARY_METHOD(si::isnan, isnan)
+		ADAPTER_UNARY_METHOD(si::isinf, isinf)
 
 	};
 

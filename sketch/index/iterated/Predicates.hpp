@@ -53,17 +53,18 @@ namespace iterated
 		}\
 	}
 
-	template <typename ElementMetric>
-	class Metric
+	template <typename ElementPredicates>
+	class Predicates
 	{
-		const ElementMetric elements;
+		const ElementPredicates elements;
 	public:
-		Metric(const ElementMetric& elements):
+		Predicates(const ElementPredicates& elements):
 			elements(elements)
 		{}
-		ITERATED_BINARY_METHOD(elements.distance,   distance)
-		ITERATED_BINARY_METHOD(elements.length,     length)
-		ITERATED_BINARY_METHOD(elements.normalize,  normalize)
+
+		ADAPTER_UNARY_METHOD(elements.isnan, isnan)
+		ADAPTER_UNARY_METHOD(elements.isinf, isinf)
+
 	};
 
 	#undef ITERATED_UNARY_METHOD
