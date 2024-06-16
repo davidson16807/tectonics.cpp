@@ -176,13 +176,11 @@ namespace si{
       return units<M1/N,KG1/N,S1/N,K1/N,MOL1/N,A1/N,CD1/N,T1>(std::pow(raw,1.0/double(N)));
     }
 
-    template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
     constexpr bool isinf(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
     {
       return std::isinf(a.raw);
     }
 
-    template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
     constexpr bool isnan(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
     {
       return std::isnan(a.raw);
@@ -336,13 +334,13 @@ namespace si{
     return a.isnan();
   }
 
-  template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-  constexpr Tout mix(
+  template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1, typename T2>
+  constexpr auto mix(
       const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> edge0, 
       const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> edge1, 
-      const Tin a
+      const T2 a
   ) {
-      return edge0*(Tin(1)-a) + edge1*a;
+      return edge0*(T2(1)-a) + edge1*a;
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
@@ -350,7 +348,7 @@ namespace si{
       const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> edge, 
       const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> x
   ) {
-    return Tin(x >= edge);
+    return T1(x >= edge);
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
@@ -363,14 +361,14 @@ namespace si{
       return clamp(fraction, T1(0), T1(1));
   }
 
-  template <typename Tin>
+  template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
   constexpr auto smoothstep(
       const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> edge0, 
       const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> edge1, 
-      const T1 x
+      const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> x
   ) {
-    auto t = clamp((x - edge0) / (edge1 - edge0), 0.0, 1.0);
-    return t * t * (3.0 - 2.0 * t);
+    auto t = clamp((x - edge0) / (edge1 - edge0), T1(0), T1(1));
+    return t * t * (T1(3) - T1(2) * t);
   }
 
 
