@@ -48,15 +48,15 @@ namespace rock{
         template<int M>
         auto operator() (const StratumStore<M>& stratum) const 
         {
-            auto sum = constituents[0];
-            for (std::size_t i=1; i<constituents.size(); i++)
+            auto sum = stratum[0];
+            for (std::size_t i=1; i<stratum.size(); i++)
             {
-                sum += constituents[i];
+                sum += stratum[i];
             }
             si::specific_volume<scalar> result(0.0f);
-            for (std::size_t i=0; i<constituents.size(); i++)
+            for (std::size_t i=0; i<stratum.size(); i++)
             {
-                result += (constituents[i]/sum) / density_for_age[i](stratum.age_of_world_when_first_deposited()-age_of_world);
+                result += (stratum[i]/sum) / density_for_age[i](stratum.age_of_world_when_first_deposited()-age_of_world);
             }
             return 1.0f / result;
         }
@@ -64,7 +64,7 @@ namespace rock{
     template<typename scalar, typename Table>
     auto aged_stratum_density(const Table& table, const si::time<float> age_of_world)
     {
-        return AgedStratumDensity<scalar,Table>(table, get, check);
+        return AgedStratumDensity<scalar,Table>(table, check);
     }
 
 }

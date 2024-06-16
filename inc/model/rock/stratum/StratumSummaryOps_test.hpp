@@ -18,7 +18,7 @@ TEST_CASE( "StratumSummary combine() commutative monoid", "[rock]" ) {
     using density = si::density<float>;
     using length = si::length<float>;
 
-    rock::StratumSummaryTools tools(density(3075.0*si::kilogram/si::meter2));
+    rock::StratumSummaryTools tools(density(3075.0*si::kilogram/si::meter3));
     rock::StratumSummaryAdapter inexact;
 
     float oo = std::numeric_limits<float>::max();
@@ -54,7 +54,7 @@ TEST_CASE( "StratumSummary combine() mass conservation", "[rock]" ) {
     using density = si::density<float>;
     using length = si::length<float>;
 
-    rock::StratumSummaryTools tools(density(3075.0*si::kilogram/si::meter2));
+    rock::StratumSummaryTools tools(density(3075.0*si::kilogram/si::meter3));
     rock::StratumSummaryAdapter inexact;
 
     rock::StratumSummary a(std::bitset<8>(3), density(3000.0*si::kilogram/si::meter3), length(4.0*si::kilometer));
