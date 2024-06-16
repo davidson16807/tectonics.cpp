@@ -39,9 +39,9 @@ namespace rock{
     class AgedStratumDensity
     {
         const Table density_for_age;
-        const si::time<float> age_of_world;
+        const si::time<scalar> age_of_world;
     public:
-        AgedStratumDensity(const Table& density_for_age, const si::time<float> age_of_world):
+        AgedStratumDensity(const Table& density_for_age, const si::time<scalar> age_of_world):
             density_for_age(density_for_age),
             age_of_world(age_of_world)
         {}
@@ -53,7 +53,7 @@ namespace rock{
             {
                 sum += constituents[i];
             }
-            si::specific_volume<float> result(0.0f);
+            si::specific_volume<scalar> result(0.0f);
             for (std::size_t i=0; i<constituents.size(); i++)
             {
                 result += (constituents[i]/sum) / density_for_age[i](stratum.age_of_world_when_first_deposited()-age_of_world);

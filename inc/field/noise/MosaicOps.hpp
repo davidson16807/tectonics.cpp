@@ -9,6 +9,7 @@
 #include <glm/common.hpp>
 #include <glm/geometric.hpp>
 #include <glm/gtc/noise.hpp>
+#include <glm/gtx/component_wise.hpp>
 
 #include <grid/cartesian/UnboundedIndexing.hpp>
 
@@ -59,7 +60,7 @@ namespace field
 		{
 			vec F = fract(position);
 			vec F01 = glm::smoothstep(vec(0), vec(1), F);
-			return math::prod(glm::mix(vec(1)-F01, F01, vec(offset)));
+			return glm::compMul(glm::mix(vec(1)-F01, F01, vec(offset)));
 		}
 
 	};

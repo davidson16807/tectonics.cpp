@@ -8,27 +8,13 @@ namespace rock {
 
 	/*
 
-	`CrustSimulation` is basically the most important part of the geological model.
-	It contains everything that's needed to simulate the geology of a planet.
-
-	This includes the following:
-	* melting        the conversion of solids to liquids
-	* sublimation    the conversion of solids to gases
-	* metamorphosis  the conversion of solids from one crystal structure to another
-	* lithification  the conversion of sediment to sedimentary rock
-	* weathering     the conversion of rock to sediment
-	* erosion        the horizontal transport of sediment
-	* rifting        the creation of new rock columns when there are gaps in the plates
-	* detaching      the destruction of rock columns when there are overlaps in the plates
-	* plate motion   the motion of plates
-	* plate segmentation the division of plates
-	* hotspots       the addition of mass at a function of distance from a prescribed geocoordinate
-	* astroblemes    the removal of mass as a function of distance from a prescribed geocoordinate
-
+	`FormationSimulation` (together with `CrustSimulation`) 
+	is basically the most important part of the geological model.
+	They contains everything that's needed to simulate the geology of a planet.
 	*/
 
 	template<int M>
-    class CrustSimulation
+    class FormationSimulation
     {
     	using mass      = si::mass<float>;
     	using length    = si::length<float>;
@@ -55,7 +41,7 @@ namespace rock {
         const acceleration gravity;
 
     public:
-        CrustSimulation(
+        FormationSimulation(
 			const acceleration gravity
 		):
             calculus(calculus),

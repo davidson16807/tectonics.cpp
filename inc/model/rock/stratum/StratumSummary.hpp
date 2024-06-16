@@ -1,6 +1,13 @@
 #pragma once
 
+// C libraries
+#include <cmath>
+
+// std libraries
+#include <bitset>
+
 // in house libraries
+#include <unit/si.hpp>
 
 namespace rock{
 

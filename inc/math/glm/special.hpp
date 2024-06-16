@@ -15,24 +15,6 @@
 
 namespace math{
 
-	template<typename T, glm::qualifier Q>
-	inline constexpr T prod(const glm::vec<2,T,Q> V)
-	{
-	    return V.x*V.y;
-	}
-
-	template<typename T, glm::qualifier Q>
-	inline constexpr T prod(const glm::vec<3,T,Q> V)
-	{
-	    return V.x*V.y*V.z;
-	}
-
-	template<typename T, glm::qualifier Q>
-	inline constexpr T prod(const glm::vec<4,T,Q> V)
-	{
-	    return V.x*V.y*V.z*V.w;
-	}
-
 	/*
 	`trace` returns the trace of a matrix, i.e. the sum of its diagonal components.
 	*/
@@ -94,6 +76,30 @@ namespace math{
 	inline constexpr T similarity(const glm::vec<L,T,Q> U, const glm::vec<L,T,Q> V)
 	{
 	    return glm::dot(U,V) / (glm::length(U)*glm::length(V));
+	}
+
+	template <int L, typename T, glm::qualifier Q>
+	inline constexpr auto scalar_projection (const glm::vec<L,T,Q> a, const glm::vec<L,T,Q> b)
+	{
+		return glm::dot(a, glm::normalize(b));
+	}
+
+	template <int L, typename T, glm::qualifier Q>
+	inline constexpr auto vector_projection (const glm::vec<L,T,Q> a, const glm::vec<L,T,Q> b)
+	{
+		return glm::dot(a, glm::normalize(b)) * b;
+	}
+
+	template <int L, typename T, glm::qualifier Q>
+	inline constexpr auto scalar_rejection (const glm::vec<L,T,Q> a, const glm::vec<L,T,Q> b)
+	{
+		return glm::length(a - glm::dot(a, glm::normalize(b)) * b);
+	}
+
+	template <int L, typename T, glm::qualifier Q>
+	inline constexpr auto vector_rejection (const glm::vec<L,T,Q> a, const glm::vec<L,T,Q> b)
+	{
+		return a - glm::dot(a, glm::normalize(b)) * b;
 	}
 
 	/*

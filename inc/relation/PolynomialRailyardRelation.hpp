@@ -266,7 +266,7 @@ namespace relation {
 
     // TODO: rename `spectral_linear_yard`
     template<typename Tx, typename Ty>
-    PolynomialRailyardRelation<Tx,Ty,0,1> get_arbitrary_linear_interpolation_function(
+    PolynomialRailyardRelation<Tx,Ty,0,1> get_linear_interpolation_function(
         const Tx xunits, const Ty yunits,
         const std::vector<double>xs, 
         const std::vector<double>ys

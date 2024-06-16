@@ -9,7 +9,7 @@
 
 using namespace stratum;
 
-TEST_CASE( "get_rock_type() happy path", "[stratum]" ) {
+TEST_CASE( "get_rock_type() happy path", "[rock]" ) {
     SECTION("get_rock_type() must recognize sand"){
     	CHECK(get_rock_type(StratumTypes(
                 MetamorphicGrades::igneous_or_sediment,

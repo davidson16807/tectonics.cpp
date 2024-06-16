@@ -2,7 +2,6 @@
 // std libraries
 #include <iostream>
 #include <string>
-#include <random>       // rngs
 
 // gl libraries
 #include <GL/glew.h>
@@ -214,12 +213,37 @@ int main() {
     ), 10, 0.5f);
   auto fbm_cdf = analytic::Error(0.0f, 1.0f, (1.0f/(std::sqrt(2.0f*3.1415926f))));
 
-  auto vertex_scalars1 = 
+  auto elevation_in_meters = 
     series::map(
       field::compose(
         inspected::compose(hypsometry_cdfi, fbm_cdf), fbm), 
       dymaxion::VertexPositions(grid)
     );
+
+  auto vertex_scalars1 = elevation_in_meters;
+
+  auto stratum = StratumGenerator(
+    grid,
+    elevation_in_meters,
+    // displacements are from Charette & Smith 2010 (shallow ocean), enclopedia britannica (shelf bottom"continental slope"), 
+    // wikipedia (shelf top), and Sverdrup & Fleming 1942 (land)
+    // Funck et al. (2003) suggests a sudden transition from felsic to mafic occuring at ~4km depth or 8km thickness
+    get_linear_spline_relation(1.0, si::megayear, 
+      {-11000.0, -5000.0, -4000.0, -2000.0, -1500.0, -900.0,  840.0},
+      {250.0,    100.0,   0.0,     0.0,     100.0,   1000.0, 1000.0}),
+    get_linear_spline_relation(1.0, 2890.0 * si::kilogram/si::meter2,
+      {-4500.0,       -4000.0},
+      {7100.0,            0.0}),
+    get_linear_spline_relation(1.0, 2700.0 * si::kilogram/si::meter2,
+      {-4500.0, -4000.0   -950.0,  840.0,    8848.0},
+      {0.0,      7100.0, 28300.0, 36900.0, 70000.0}),
+    get_linear_spline_relation(1.0, 1.0, 
+      {-1500.0, 8848.0},
+      {0.25,      0.25}), // from Gillis (2013)
+    get_linear_spline_relation(1.0, 1.0, 
+      {-1500.0, 8848.0},
+      {0.15,      0.15}), // based on estimate from Wikipedia
+  );
 
   // auto vertex_scalars2 = series::map(
   //   field::compose(

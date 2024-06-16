@@ -8,8 +8,9 @@ namespace rock {
 
 	/*
 
-	`CrustSimulation` is basically the most important part of the geological model.
-	It contains everything that's needed to simulate the geology of a planet.
+	`CrustSimulation` (together with `FormationSimulation`)
+	is basically the most important part of the geological model.
+	They contains everything that's needed to simulate the geology of a planet.
 
 	This includes the following:
 	* melting        the conversion of solids to liquids

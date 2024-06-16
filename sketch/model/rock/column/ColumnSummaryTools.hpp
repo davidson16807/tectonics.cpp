@@ -6,7 +6,7 @@ namespace rock{
     class ColumnSummaryTools
     {
 
-        const StratumSummaryOps ops;
+        const StratumSummaryTools ops;
         const si::force<float> gravity;
         const si::density<float> fluid_density;
         const float threshold;
@@ -14,7 +14,7 @@ namespace rock{
     public:
 
         ColumnSummaryTools(const si::force<float> gravity, const si::density<float> fluid_density, const float threshold): 
-            ops(StratumSummaryOps()), 
+            ops(StratumSummaryTools()), 
             gravity(gravity),
             fluid_density(fluid_density),
             threshold(threshold)
@@ -28,7 +28,7 @@ namespace rock{
               : ColumnSummary(top, ops.combine(stratum, rest));
         }
 
-        StratumSummary condense (const ColumnSummary& column) const
+        StratumSummary flatten (const ColumnSummary& column) const
         {
             return ops.combine(column.top, column.rest);
         }
@@ -36,8 +36,7 @@ namespace rock{
         // `isostatic_displacement` returns displacement using an isostatic model
         si::length<float> isostatic_displacement(const ColumnSummary& summary) const
         {
-            StratumSummary condensed = condense(summary);
-            return condensed.thickness() * (1.0f - condensed.density()/fluid_density);
+            return ops.isostatic_displacement(ops.combine(column.top, column.rest));
         }
 
     }
