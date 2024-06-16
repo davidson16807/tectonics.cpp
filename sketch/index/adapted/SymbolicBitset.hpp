@@ -4,7 +4,7 @@
 
 // in-house libraries
 
-namespace adapter
+namespace adapted
 {
 
 	/*

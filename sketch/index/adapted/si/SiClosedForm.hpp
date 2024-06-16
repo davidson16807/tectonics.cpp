@@ -5,7 +5,7 @@
 // in-house libraries
 #include <units/si.hpp>
 
-namespace adapter
+namespace adapted
 {
 
 	/*

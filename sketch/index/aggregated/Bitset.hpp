@@ -1,11 +1,10 @@
 #pragma once
 
 // C libraries
-#include <cmath>     /* std math */
 #include <assert.h>  /* assert */
 
 // in-house libraries
-#include "compatible.hpp"
+
 
 namespace aggregated
 {
@@ -27,7 +26,7 @@ namespace aggregated
 		bool all(const In1& a) const
 		{
 			auto size = a.size();
-			for (typename In1::size_type i = 0; i < size; ++i)
+			for (auto i = 0*size; i < size; ++i)
 			{
 				if (!elements.all(a[i])){
 					return false;
@@ -40,7 +39,7 @@ namespace aggregated
 		bool any(const In1& a) const
 		{
 			auto size = a.size();
-			for (typename In1::size_type i = 0; i < size; ++i)
+			for (auto i = 0*size; i < size; ++i)
 			{
 				if (elements.any(a[i])){
 					return true;

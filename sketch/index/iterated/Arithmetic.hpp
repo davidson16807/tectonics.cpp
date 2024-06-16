@@ -18,10 +18,9 @@ namespace iterated
 	template <typename In1, typename Out>\
 	void NAME (const In1& a, Out& out) const\
 	{\
-		assert(compatible(a,b,out));\
+		assert(compatible(a,out));\
 		auto size = out.size();\
-		using size_type = typename Out::size_type;\
-		for (size_type i = 0; i < size; ++i)\
+		for (auto i = 0*size; i < size; ++i)\
 		{\
 			out[i] = METHOD(a[i]);\
 		}\
@@ -33,8 +32,7 @@ namespace iterated
 	{\
 		assert(compatible(a,b,out));\
 		auto size = out.size();\
-		using size_type = typename Out::size_type;\
-		for (size_type i = 0; i < size; ++i)\
+		for (auto i = 0*size; i < size; ++i)\
 		{\
 			out[i] = METHOD(a[i], b[i]);\
 		}\
@@ -44,21 +42,20 @@ namespace iterated
 	template <typename In1, typename In2, typename In3, typename Out>\
 	void NAME (const In1& a, const In2& b, const In3& c, Out& out) const\
 	{\
-		assert(compatible(a,b,c,out));\
+		assert(compatible(a,b,out));\
 		auto size = out.size();\
-		using size_type = typename Out::size_type;\
-		for (size_type i = 0; i < size; ++i)\
+		for (auto i = 0*size; i < size; ++i)\
 		{\
 			out[i] = METHOD(a[i], b[i], c[i]);\
 		}\
 	}
 
-	template <typename T, typename ElementArithmetic>
+	template <typename ElementArithmetic>
 	class Arithmetic
 	{
 		const ElementArithmetic elements;
 	public:
-		Arithmetic(const ElementArithmetic& elements)
+		Arithmetic(const ElementArithmetic& elements):
 			elements(elements)
 		{}
 		ITERATED_BINARY_METHOD(elements.add,      add)

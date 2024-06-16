@@ -2,16 +2,10 @@
 
 // C libraries
 
-// 3rd-party libraries
-#include <glm/common.hpp>
-#include <glm/exponential.hpp>
-#include <glm/gtx/component_wise.hpp>
-#include <glm/geometric.hpp>
-
 // in-house libraries
-#include <math/glm/special.hpp>
+#include <units/si.hpp>
 
-namespace adapter
+namespace adapted
 {
 
 	/*
@@ -39,13 +33,12 @@ namespace adapter
 		return METHOD(a, b, c);\
 	}
 
-	struct GlmMetric
+	struct SiPredicates
 	{
-		GlmMetric(){}
+		SiPredicates(){}
 
-		ADAPTER_BINARY_METHOD(glm::distance, distance)
-		ADAPTER_UNARY_METHOD(glm::length, length)
-		ADAPTER_UNARY_METHOD(glm::normalize, normalize)
+		ADAPTER_UNARY_METHOD(si::isnan, isnan)
+		ADAPTER_UNARY_METHOD(si::isinf, isinf)
 
 	};
 

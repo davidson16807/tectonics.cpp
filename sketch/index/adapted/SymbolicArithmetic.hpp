@@ -4,7 +4,7 @@
 
 // in-house libraries
 
-namespace adapter
+namespace adapted
 {
 
 	/*
@@ -28,9 +28,9 @@ namespace adapter
 			one(one)
 		{}
 		ADAPTER_SYMBOL_METHOD(+,  add)
-		ADAPTER_SYMBOL_METHOD(-,  sub)
-		ADAPTER_SYMBOL_METHOD(*,  mult)
-		ADAPTER_SYMBOL_METHOD(/,  div)
+		ADAPTER_SYMBOL_METHOD(-,  subtract)
+		ADAPTER_SYMBOL_METHOD(*,  multiply)
+		ADAPTER_SYMBOL_METHOD(/,  divide)
 
 		template <typename In1, int N>
 		inline auto pow (const In1 a) const

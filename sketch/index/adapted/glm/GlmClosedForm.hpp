@@ -11,7 +11,7 @@
 // in-house libraries
 #include <math/glm/special.hpp>
 
-namespace adapter
+namespace adapted
 {
 
 	/*

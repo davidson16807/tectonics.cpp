@@ -2,9 +2,16 @@
 
 // C libraries
 
-// in-house libraries
+// 3rd-party libraries
+#include <glm/common.hpp>
+#include <glm/exponential.hpp>
+#include <glm/gtx/component_wise.hpp>
+#include <glm/geometric.hpp>
 
-namespace adapter
+// in-house libraries
+#include <math/glm/special.hpp>
+
+namespace adapted
 {
 
 	/*
@@ -32,17 +39,12 @@ namespace adapter
 		return METHOD(a, b, c);\
 	}
 
-	struct GlmBitset
+	struct GlmPredicatesIteration
 	{
-		GlmBitset(){}
+		GlmPredicatesIteration(){}
 
-		template <typename bool, typename bool> inline auto unite     (const bool a, const bool b) const {return a || b;}
-		template <typename bool, typename bool> inline auto intersect (const bool a, const bool b) const {return a && b;}
-		template <typename bool, typename bool> inline auto differ    (const bool a, const bool b) const {return a && glm::not_(b);}
-
-		ADAPTER_UNARY_METHOD(glm::not_, negate)
-		ADAPTER_UNARY_METHOD(glm::any, any)
-		ADAPTER_UNARY_METHOD(glm::all, all)
+		ADAPTER_UNARY_METHOD(glm::isnan, isnan)
+		ADAPTER_UNARY_METHOD(glm::isinf, isinf)
 
 	};
 

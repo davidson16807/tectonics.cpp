@@ -5,7 +5,7 @@
 // in-house libraries
 #include <glm/trigonometric.hpp>
 
-namespace adapter
+namespace adapted
 {
 
 	/*

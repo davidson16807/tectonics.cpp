@@ -2,16 +2,10 @@
 
 // C libraries
 
-// 3rd-party libraries
-#include <glm/common.hpp>
-#include <glm/exponential.hpp>
-#include <glm/gtx/component_wise.hpp>
-#include <glm/geometric.hpp>
-
 // in-house libraries
-#include <math/glm/special.hpp>
+#include <glm/gtx/component_wise.hpp>
 
-namespace adapter
+namespace adapted
 {
 
 	/*
@@ -39,12 +33,12 @@ namespace adapter
 		return METHOD(a, b, c);\
 	}
 
-	struct GlmPredicatesIteration
+	struct GlmOrderAggregation
 	{
-		GlmPredicatesIteration(){}
+		GlmOrderAggregation(){}
 
-		ADAPTER_UNARY_METHOD(glm::isnan, isnan)
-		ADAPTER_UNARY_METHOD(glm::isinf, isinf)
+		ADAPTER_BINARY_METHOD(glm::compMin, min)
+		ADAPTER_BINARY_METHOD(glm::compMax, max)
 
 	};
 

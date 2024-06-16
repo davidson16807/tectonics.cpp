@@ -1,11 +1,13 @@
 #pragma once
 
 // C libraries
-#include <cmath>     /* std math */
+
+// 3rd-party libraries
 
 // in-house libraries
+#include <units/si.hpp>
 
-namespace adapter
+namespace adapted
 {
 
 	/*
@@ -33,12 +35,23 @@ namespace adapter
 		return METHOD(a, b, c);\
 	}
 
-	struct ScalarPredicates
+	struct SiMetric
 	{
-		ScalarPredicates(){}
+		SiMetric(){}
 
-		ADAPTER_UNARY_METHOD(std::isnan, isnan)
-		ADAPTER_UNARY_METHOD(std::isinf, isinf)
+		ADAPTER_BINARY_METHOD(si::distance, distance)
+
+		template<typename In1>
+		inline constexpr auto length(const In1 a) const
+		{
+		    return std::abs(a);
+		}
+
+		template<typename In1>
+		inline constexpr auto normalize(const In1 a) const
+		{
+		    return a / length(a);
+		}
 
 	};
 

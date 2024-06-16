@@ -4,13 +4,11 @@
 
 // in-house libraries
 
-namespace adapter
+namespace adapted
 {
 
-	class BooleanStrings
+	struct BooleanStrings
 	{
-		ElementStrings elements;
-	public:
 		BooleanStrings(){}
 
 		template<>

@@ -4,7 +4,7 @@
 
 // in-house libraries
 
-namespace adapter
+namespace adapted
 {
 
 	/*
@@ -15,12 +15,19 @@ namespace adapter
 	template <typename In1, typename In2>\
 	inline auto NAME (const In1 a, const In2 b) const \
 	{\
-		return (metric.length(a) SYMBOL metric.length(b));\
+		return (a SYMBOL b);\
 	}
 
-	struct MetricOrder
+	#define ADAPTER_UNARY_METHOD(METHOD, NAME) \
+	template <typename In1>\
+	inline auto NAME (const In1 a) const\
+	{\
+		return METHOD(a);\
+	}
+
+	struct SymbolicOrder
 	{
-		MetricOrder(){}
+		SymbolicOrder(){}
 		ADAPTER_SYMBOL_METHOD(>, greater_than)
 		ADAPTER_SYMBOL_METHOD(<, less_than)
 		ADAPTER_SYMBOL_METHOD(>=, greater_than_equal)
@@ -31,13 +38,13 @@ namespace adapter
 		template <typename In1, typename In2>
 		inline auto max (const In1 a, const In2 b) const 
 		{
-			return metric.length(a) > metric.length(b)? a : b;
+			return a > b? a : b;
 		}
 
 		template <typename In1, typename In2>
 		inline auto min (const In1 a, const In2 b) const 
 		{
-			return metric.length(a) < metric.length(b)? a : b;
+			return a < b? a : b;
 		}
 
 		template <typename In1, typename In2>

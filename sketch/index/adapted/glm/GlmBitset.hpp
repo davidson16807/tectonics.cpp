@@ -3,9 +3,8 @@
 // C libraries
 
 // in-house libraries
-#include <glm/gtx/component_wise.hpp>
 
-namespace adapter
+namespace adapted
 {
 
 	/*
@@ -33,12 +32,17 @@ namespace adapter
 		return METHOD(a, b, c);\
 	}
 
-	struct GlmOrderAggregation
+	struct GlmBitset
 	{
-		GlmOrderAggregation(){}
+		GlmBitset(){}
 
-		ADAPTER_BINARY_METHOD(glm::compMin, min)
-		ADAPTER_BINARY_METHOD(glm::compMax, max)
+		template <typename bool, typename bool> inline auto unite     (const bool a, const bool b) const {return a || b;}
+		template <typename bool, typename bool> inline auto intersect (const bool a, const bool b) const {return a && b;}
+		template <typename bool, typename bool> inline auto differ    (const bool a, const bool b) const {return a && glm::not_(b);}
+
+		ADAPTER_UNARY_METHOD(glm::not_, negate)
+		ADAPTER_UNARY_METHOD(glm::any, any)
+		ADAPTER_UNARY_METHOD(glm::all, all)
 
 	};
 

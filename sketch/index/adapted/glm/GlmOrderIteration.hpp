@@ -3,10 +3,9 @@
 // C libraries
 
 // in-house libraries
-#include <glm/geometric.hpp>
-#include <glm/gtx/component_wise.hpp>
+#include <glm/vector_relational.hpp>
 
-namespace adapter
+namespace adapted
 {
 
 	/*
@@ -34,25 +33,24 @@ namespace adapter
 		return METHOD(a, b, c);\
 	}
 
-	struct GlmArithmeticAggregation
+	struct GlmOrderIteration
 	{
-		GlmArithmeticAggregation(){}
+		GlmOrderIteration(){}
 
-		ADAPTER_UNARY_METHOD(glm::compAdd, sum)
-		ADAPTER_UNARY_METHOD(glm::compMul, product)
-		ADAPTER_BINARY_METHOD(glm::dot, linear_combination)
+		ADAPTER_UNARY_METHOD(glm::isnan, isnan)
+		ADAPTER_UNARY_METHOD(glm::isinf, isinf)
 
-		template <typename In1>
-		inline auto mean (const In1 a) const
-		{
-			return glm::compAdd(a) / a.length();
-		}
+		ADAPTER_BINARY_METHOD(glm::equal, equal)
+		ADAPTER_BINARY_METHOD(glm::notEqual, not_equal)
+		ADAPTER_BINARY_METHOD(glm::greaterThan, greater_than)
+		ADAPTER_BINARY_METHOD(glm::lessThan, less_than)
+		ADAPTER_BINARY_METHOD(glm::greaterThanEqual, greater_than_equal)
+		ADAPTER_BINARY_METHOD(glm::lessThanEqual, less_than_equal)
 
-		template <typename In1, typename In2>
-		inline auto weighted_average (const In1 a, const In2 b) const
-		{
-			return glm::dot(a, b) / glm::compAdd(a);
-		}
+		ADAPTER_BINARY_METHOD(glm::min, min) 
+		ADAPTER_BINARY_METHOD(glm::max, max) 
+
+		ADAPTER_TRINARY_METHOD(glm::clamp, clamp) 
 
 	};
 

@@ -7,7 +7,7 @@
 
 // in-house libraries
 
-namespace adapter
+namespace adapted
 {
 
 	class ScalarStrings

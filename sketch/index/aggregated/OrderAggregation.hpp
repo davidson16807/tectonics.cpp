@@ -5,7 +5,7 @@
 
 // in-house libraries
 
-namespace aggregated
+namespace ai
 {
 
 	template <typename ElementOrderAggregation, typename ElementAggregateOrder>
@@ -20,39 +20,141 @@ namespace aggregated
 		{}
 
 		template <typename T>
-		typename T::value_type min(const T& a, const bool no_nan = true, const bool no_inf = true) const
+		typename T::value_type min(const T& a, const typename T::value_type lo, const typename T::value_type hi) const
 		{
 			typedef typename T::value_type Ti;
-			typedef typename T::size_type Tsize;
 			if (a.size() < 1)
 			{
 				throw std::out_of_range("cannot find the minimum value of an empty series");
 			}
-			Ti out = aggregation.min(a[0]);
-			for (Tsize i(1); i < a.size(); ++i)
+			Ti extremum = aggregation.min(a[0]);
+			for (auto i = 0*a.size()+1; i < a.size(); ++i)
 			{
-				Aggregation = aggregation.min(a[i]);
-				out = order.less_than(aggregation, out)? aggregation : out;
+				auto ai = aggregation.min(a[i]);
+				extremum = order.less_than(ai, extremum) && order.less_than(lo, ai) && order.less_than(ai, hi)? ai : extremum;
 			}
-			return out;
+			return extremum;
 		}
 
 		template <typename T>
-		typename T::value_type max(const T& a, const bool no_nan = true, const bool no_inf = true) const
+		typename T::value_type max(const T& a, const typename T::value_type lo, const typename T::value_type hi) const
 		{
 			typedef typename T::value_type Ti;
-			typedef typename T::size_type Tsize;
 			if (a.size() < 1)
 			{
 				throw std::out_of_range("cannot find the minimum value of an empty series");
 			}
-			Ti out = aggregation.max(a[0]);
-			for (Tsize i(1); i < a.size(); ++i)
+			Ti extremum = aggregation.max(a[0]);
+			for (auto i = 0*a.size()+1; i < a.size(); ++i)
 			{
-				Aggregation = aggregation.max(a[i]);
-				out = order.greater_than(aggregation, out)? aggregation : out;
+				auto ai = aggregation.max(a[i]);
+				extremum = order.greater_than(ai, extremum) && order.less_than(lo, ai) && order.less_than(ai, hi)? ai : extremum;
 			}
-			return out;
+			return extremum;
+		}
+
+		template <typename T>
+		typename T::value_type min(const T& a) const
+		{
+			typedef typename T::value_type Ti;
+			if (a.size() < 1)
+			{
+				throw std::out_of_range("cannot find the minimum value of an empty series");
+			}
+			Ti extremum = aggregation.min(a[0]);
+			for (auto i = 0*a.size()+1; i < a.size(); ++i)
+			{
+				auto ai = aggregation.min(a[i]);
+				extremum = order.less_than(ai, extremum)? ai : extremum;
+			}
+			return extremum;
+		}
+
+		template <typename T>
+		typename T::value_type max(const T& a) const
+		{
+			typedef typename T::value_type Ti;
+			if (a.size() < 1)
+			{
+				throw std::out_of_range("cannot find the minimum value of an empty series");
+			}
+			Ti extremum = aggregation.max(a[0]);
+			for (auto i = 0*a.size()+1; i < a.size(); ++i)
+			{
+				auto ai = aggregation.max(a[i]);
+				extremum = order.greater_than(ai, extremum)? ai : extremum;
+			}
+			return extremum;
+		}
+
+		// component-wise min
+		template <typename T>
+		typename T::size_type min_id(const T& a, const typename T::value_type lo, const typename T::value_type hi) const
+		{
+			typename T::value_type extremum = aggregation.min(a[0]);
+			typename T::size_type extremum_id = 0;
+			for (auto i = 0*a.size(); i < a.size(); ++i)
+			{
+				auto ai = aggregation.max(a[i]);
+				if (order.less_than(ai, extremum) && order.less_than(lo, ai) && order.less_than(ai, hi))
+				{
+					extremum = ai;
+					extremum_id = i;
+				}
+			}
+			return extremum_id;
+		}
+
+		template <typename T>
+		typename T::size_type max_id(const T& a, const typename T::value_type lo, const typename T::value_type hi) const
+		{
+			typename T::value_type extremum = aggregation.max(a[0]);
+			typename T::size_type extremum_id = 0;
+			for (auto i = 0*a.size(); i < a.size(); ++i)
+			{
+				auto ai = aggregation.max(a[i]);
+				if (order.greater_than(ai, extremum) && order.less_than(lo, ai) && order.less_than(ai, hi))
+				{
+					extremum = ai;
+					extremum_id = i;
+				}
+			}
+			return extremum_id;
+		}
+
+		// component-wise min
+		template <typename T>
+		typename T::size_type min_id(const T& a) const
+		{
+			typename T::value_type extremum = aggregation.min(a[0]);
+			typename T::size_type extremum_id = 0;
+			for (auto i = 0*a.size(); i < a.size(); ++i)
+			{
+				auto ai = aggregation.max(a[i]);
+				if (order.less_than(ai, extremum))
+				{
+					extremum = ai;
+					extremum_id = i;
+				}
+			}
+			return extremum_id;
+		}
+
+		template <typename T>
+		typename T::size_type max_id(const T& a) const
+		{
+			typename T::value_type extremum = aggregation.max(a[0]);
+			typename T::size_type extremum_id = 0;
+			for (auto i = 0*a.size(); i < a.size(); ++i)
+			{
+				auto ai = aggregation.max(a[i]);
+				if (order.greater_than(ai, extremum))
+				{
+					extremum = ai;
+					extremum_id = i;
+				}
+			}
+			return extremum_id;
 		}
 
 	};
