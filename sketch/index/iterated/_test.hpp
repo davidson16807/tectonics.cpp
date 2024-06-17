@@ -14,10 +14,10 @@
 #include <index/series/Uniform.hpp>
 #include <index/series/noise/UnitIntervalNoise.hpp>
 
-#include <index/adapted/ScalarMetric.hpp>
-#include <index/adapted/ScalarStrings.hpp>
-#include <index/adapted/SymbolicOrder.hpp>
-#include <index/adapted/SymbolicArithmetic.hpp>
+#include <index/adapted/scalar/ScalarMetric.hpp>
+#include <index/adapted/scalar/ScalarStrings.hpp>
+#include <index/adapted/symbolic/SymbolicOrder.hpp>
+#include <index/adapted/symbolic/SymbolicArithmetic.hpp>
 
 #include <index/aggregated/Metric.hpp>
 #include <index/aggregated/Order.hpp>
@@ -56,9 +56,9 @@ namespace iterated {
 
 }
 
-#define ITERATED_TEST_UNARY_OUT_PARAMETER(TYPE,SIZE,F)   [=](auto x){ std::vector<TYPE> out(SIZE); (F(x,out)); return out; }
-#define ITERATED_TEST_BINARY_OUT_PARAMETER(TYPE,SIZE,F)  [=](auto x, auto y){ std::vector<TYPE> out(SIZE); (F(x,y,out)); return out; }
-#define ITERATED_TEST_TRINARY_OUT_PARAMETER(TYPE,SIZE,F) [=](auto x, auto y, auto z){ std::vector<TYPE> out(SIZE); (F(x,y,z,out)); return out; }
+#define ITERATED_TEST_UNARY_OUT_PARAMETER(TYPE,F)   [=](auto x){ std::vector<TYPE> out(x.size()); (F(x,out)); return out; }
+#define ITERATED_TEST_BINARY_OUT_PARAMETER(TYPE,F)  [=](auto x, auto y){ std::vector<TYPE> out(std::max(x.size(), y.size())); (F(x,y,out)); return out; }
+#define ITERATED_TEST_TRINARY_OUT_PARAMETER(TYPE,F) [=](auto x, auto y, auto z){ std::vector<TYPE> out(std::max(x.size(), std::max(y.size(), z.size()))); (F(x,y,z,out)); return out; }
 
 
 TEST_CASE( "arithmetic on each nonzero of a series is a field", "[each]" ) {
@@ -82,9 +82,10 @@ TEST_CASE( "arithmetic on each nonzero of a series is a field", "[each]" ) {
         series::UnitIntervalNoise<double>(40.0, 4e4)
     };
 
-    std::vector<series::Range<double>> nonzero_ranges {
-        series::Range<double>(1.0,101.0),
-        series::Range<double>(-101.0,-1.0)
+    std::vector<series::Range<int>> nonzero_ranges {
+        series::Range<int>(1,101),
+        series::Range<int>(2,102),
+        series::Range<int>(-101,-1)
     };
 
     std::vector<series::Uniform<double>> nonzero_uniforms {
@@ -96,14 +97,14 @@ TEST_CASE( "arithmetic on each nonzero of a series is a field", "[each]" ) {
     test::Field field(
         "0", series::uniform(0.0), 
         "1", series::uniform(1.0), 
-        "arithmetic.add",       ITERATED_TEST_BINARY_OUT_PARAMETER(double, 100, arithmetic.add),
-        "arithmetic.subtract",  ITERATED_TEST_BINARY_OUT_PARAMETER(double, 100, arithmetic.subtract),
-        "arithmetic.multiply",  ITERATED_TEST_BINARY_OUT_PARAMETER(double, 100, arithmetic.multiply),
-        "arithmetic.divide",    ITERATED_TEST_BINARY_OUT_PARAMETER(double, 100, arithmetic.divide)
+        "arithmetic.add",       ITERATED_TEST_BINARY_OUT_PARAMETER(double, arithmetic.add),
+        "arithmetic.subtract",  ITERATED_TEST_BINARY_OUT_PARAMETER(double, arithmetic.subtract),
+        "arithmetic.multiply",  ITERATED_TEST_BINARY_OUT_PARAMETER(double, arithmetic.multiply),
+        "arithmetic.divide",    ITERATED_TEST_BINARY_OUT_PARAMETER(double, arithmetic.divide)
     );
 
     // UNARY TESTS
-    // REQUIRE(field.valid(broad, noises));
+    REQUIRE(field.valid(broad, noises));
     REQUIRE(field.valid(broad, nonzero_ranges));
     REQUIRE(field.valid(broad, nonzero_uniforms));
 
