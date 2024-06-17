@@ -1,6 +1,7 @@
 #pragma once
 
 // in house libraries
+#include "StratumSummary.hpp"
 
 namespace rock{
 

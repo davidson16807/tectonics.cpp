@@ -64,7 +64,7 @@ namespace rock{
     template<typename scalar, typename Table>
     auto aged_stratum_density(const Table& table, const si::time<float> age_of_world)
     {
-        return AgedStratumDensity<scalar,Table>(table, check);
+        return AgedStratumDensity<scalar,Table>(table, age_of_world);
     }
 
 }

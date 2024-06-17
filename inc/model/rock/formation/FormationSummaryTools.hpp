@@ -14,12 +14,12 @@
 namespace rock
 {
 
-    class FormationSummaryOps
+    class FormationSummaryTools
     {
         const StratumSummaryTools strata;
     public:
-        FormationSummaryOps():
-            strata(StratumSummaryTools())
+        FormationSummaryTools(const StratumSummaryTools& strata):
+            strata(strata)
         {}
         void combine (const FormationSummary& a, const FormationSummary& b, FormationSummary& out) const
         {
@@ -34,7 +34,7 @@ namespace rock
         {
             for (auto i = 0*out.size(); i < out.size(); ++i)
             {
-                out[i] = ops.isostatic_displacement(summary[i]);
+                out[i] = strata.isostatic_displacement(summary[i]);
             }
         }
     };

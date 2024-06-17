@@ -30,5 +30,10 @@ namespace rock
         }
     };
 
+    template<int M, typename StratumDensity>
+    auto stratum_summarization(const StratumDensity& density, const int plate_id){
+        return StratumSummarization<M,StratumDensity>(density, plate_id);
+    }
+
 }
 

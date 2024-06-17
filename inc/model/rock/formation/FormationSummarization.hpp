@@ -7,13 +7,13 @@
 // 3rd party libraries
 
 // in-house libraries
-#include <Formation.hpp>
-#include <FormationSummary.hpp>
+#include "Formation.hpp"
+#include "FormationSummary.hpp"
 
 namespace rock
 {
 
-    template<typename Grid, typename StratumSummarization>
+    template<int M, typename Grid, typename StratumSummarization>
     class FormationSummarization
     {
         const StratumSummarization summarization;
@@ -21,7 +21,7 @@ namespace rock
     public:
         FormationSummarization(const StratumSummarization& summarization, const Grid& grid):
             summarization(summarization),
-            grid(grid),
+            grid(grid)
         {}
         void operator() (const Formation<M>& formation, FormationSummary& out) const
         {
@@ -32,5 +32,9 @@ namespace rock
         }
     };
 
+    template<int M, typename Grid, typename StratumSummarization>
+    auto formation_summarization(const StratumSummarization& summarization, const Grid& grid){
+        return FormationSummarization<M,Grid,StratumSummarization>(summarization, grid);
+    }
 }
 

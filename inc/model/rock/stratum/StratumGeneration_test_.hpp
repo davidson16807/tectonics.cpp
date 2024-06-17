@@ -5,6 +5,7 @@
 
 // glm libraries
 #define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
+#define GLM_FORCE_SWIZZLE   // allow swizzle methods like .xy()
 
 // in house libraries
 #include <math/glm/special_specialization.hpp>
@@ -41,22 +42,31 @@
 #include <grid/cartesian/UnboundedIndexing.hpp>     // field::UnboundedIndexing
 #include <grid/dymaxion/Indexing.hpp>               // dymaxion::Indexing
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
+#include <grid/dymaxion/series.hpp>                 // dymaxion::VertexPositions
 #include <grid/dymaxion/noise/MosaicOps.hpp>        // dymaxion::MosaicOps
 
 #include <raster/spheroidal/string_cast.hpp>        // spheroidal::to_string
 
+#include <model/rock/stratum/Stratum.hpp>  // Stratum
+#include <model/rock/formation/Formation.hpp>  // Formation
+#include <model/rock/stratum/StratumSummary.hpp>  // StratumSummary
+#include <model/rock/formation/FormationSummary.hpp>  // FormationSummary
+
 #include <model/rock/stratum/StratumProperties.hpp>  // StratumProperties
-#include <model/rock/stratum/StratumGeneration.hpp>  // StratumGenerator
+#include <model/rock/stratum/StratumGeneration.hpp>  // StratumGeneration
+#include <model/rock/stratum/StratumSummarization.hpp>  // StratumSummarization
+#include <model/rock/stratum/StratumSummaryTools.hpp>  // StratumSummaryTools
+#include <model/rock/formation/FormationSummarization.hpp>  // FormationSummarization
+#include <model/rock/formation/FormationSummaryTools.hpp>  // FormationSummaryTools
 
   TEST_CASE( "StratumGeneration must be able to achieve desired displacements as indicated by elevation_for_position", "[rock]" ) {
 
       using length = si::length<float>;
+      using density = si::density<float>;
 
       auto radius = 6.371e6 * si::meter;
       int vertices_per_square_side(16);
       dymaxion::Grid grid(radius/si::meter, vertices_per_square_side);
-
-      auto vertex_square_ids = dymaxion::square_ids(grid);
 
       auto max_earth_elevation =   8848.0 * si::meter;
       auto min_earth_elevation = -10924.0 * si::meter;
@@ -77,15 +87,14 @@
       auto hypsometry_pdf = hypsometry_pdf_unscaled / hypsometry_cdf_unscaled_range;
       auto hypsometry_cdfi = inspected::inverse_by_newtons_method(hypsometry_cdf, hypsometry_pdf, 0.5f, 30);
 
-      auto fbm = field::fractal_brownian_noise<int,float>(
+      auto fbm = field::fractal_brownian_noise(
         field::value_noise<3,float>(
             field::mosaic_noise(
               series::gaussian(series::unit_interval_noise(12.0f, 1.1e4f)), 
               cartesian::UnboundedIndexing<int>()),
             field::vector_mosaic_ops<3,int,float>()
-        ), 10, 0.5f);
+        ), 10, 0.5);
       auto fbm_cdf = analytic::Error(0.0f, 1.0f, (1.0f/(std::sqrt(2.0f*3.1415926f))));
-
 
       auto elevation_for_position = 
           field::compose(
@@ -98,7 +107,7 @@
       each::map(elevation_for_position, vertex_positions, intended_displacements);
       each::sub(intended_displacements, series::uniform(length(min_earth_elevation)), intended_displacements);
 
-      std::array<relation::PolynomialRailyardRelation<si::time<double>,si::density<double>,0,1>> densities_for_age {
+      std::array<relation::PolynomialRailyardRelation<si::time<double>,si::density<double>,0,1>, 2> densities_for_age {
         relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2890.0, 3300.0}), // Carlson & Raskin 1984
         relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2600.0, 2600.0})
       };
@@ -106,13 +115,13 @@
       auto age_of_world = 0.0*si::megayear;
       int plate_id = 1;
       rock::AgedStratumDensity stratum_density(densities_for_age, age_of_world);
-      rock::StratumSummarization stratum_summarization(stratum_density, plate_id);
-      rock::FormationSummarization formation_summarization(grid, stratum_summarization);
+      auto stratum_summarization = rock::stratum_summarization<2>(stratum_density, plate_id);
+      auto formation_summarization = rock::formation_summarization<2>(grid, stratum_summarization);
 
-      StratumSummaryTools stratum_tools();
-      FormationSummaryTools formation_tools(stratum_tools);
+      rock::StratumSummaryTools stratum_tools(si::density<float>(3075.0*si::kilogram/si::meter3));
+      rock::FormationSummaryTools formation_tools(stratum_tools);
 
-      auto strata = StratumGeneration(
+      rock::StratumGeneration strata(
         grid,
         elevation_for_position,
         // displacements are from Charette & Smith 2010 (shallow ocean), enclopedia britannica (shelf bottom"continental slope"), 
@@ -132,10 +141,10 @@
           {0.25,      0.25}), // from Gillis (2013)
         relation::get_linear_interpolation_function(si::meter, 1.0, 
           {-1500.0, 8848.0},
-          {0.15,      0.15}), // based on estimate from Wikipedia
+          {0.15,      0.15}) // based on estimate from Wikipedia
       );
 
-      FormationSummary summary(grid.vertex_count());
+      rock::FormationSummary summary(grid.vertex_count());
       std::vector<length> actual_displacements(grid.vertex_count());
       formation_summarization(strata, summary);
       formation_tools.isostatic_displacement(summary, actual_displacements);

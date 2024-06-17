@@ -43,16 +43,16 @@ namespace rock {
             const AgeForElevation&               age_for_elevation,
             const AreaDensityForElevation&       mafic_area_density_for_elevation,
             const AreaDensityForElevation&       felsic_area_density_for_elevation,
-            const ExtrusiveFractionForElevation& felsic_extrusive_fraction
-            const ExtrusiveFractionForElevation& mafic_extrusive_fraction,
+            const ExtrusiveFractionForElevation& felsic_extrusive_fraction,
+            const ExtrusiveFractionForElevation& mafic_extrusive_fraction
         ):
             grid(grid),
             elevation_for_position(elevation_for_position),
             age_for_elevation(age_for_elevation),
             mafic_area_density_for_elevation  (mafic_area_density_for_elevation),
             felsic_area_density_for_elevation (felsic_area_density_for_elevation),
-            mafic_extrusive_fraction (mafic_extrusive_fraction)
-            felsic_extrusive_fraction(felsic_extrusive_fraction),
+            mafic_extrusive_fraction (mafic_extrusive_fraction),
+            felsic_extrusive_fraction(felsic_extrusive_fraction)
         {}
 
         using size_type = std::size_t; 
@@ -68,9 +68,9 @@ namespace rock {
             auto felsic_extrusive_fraction_ = felsic_extrusive_fraction (elevation);
             Mineral mafic (mafic_area_density_for_elevation (elevation) * area);
             Mineral felsic(felsic_area_density_for_elevation(elevation) * area);
-            mafic .grain_type_relative_volume[int(GrainType::unweathered_extrusive)] =             mafic_extrusive_fraction_;
+            mafic .grain_type_relative_volume[int(GrainType::unweathered_extrusive)] =              mafic_extrusive_fraction_;
             felsic.grain_type_relative_volume[int(GrainType::unweathered_extrusive)] =             felsic_extrusive_fraction_;
-            mafic .grain_type_relative_volume[int(GrainType::unweathered_intrusive)] = scalar(1) - mafic_extrusive_fraction_;
+            mafic .grain_type_relative_volume[int(GrainType::unweathered_intrusive)] = scalar(1) -  mafic_extrusive_fraction_;
             felsic.grain_type_relative_volume[int(GrainType::unweathered_intrusive)] = scalar(1) - felsic_extrusive_fraction_;
             return StratumStore<2>(
                 Stratum<2>(age, age, std::vector<Mineral>{mafic, felsic})

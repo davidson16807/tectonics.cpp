@@ -11,7 +11,7 @@
 #include <model/rock/stratum/StratumSummary.hpp>
 
 #include "FormationSummary.hpp"
-#include "FormationSummaryOps.hpp"
+#include "FormationSummaryTools.hpp"
 #include "FormationSummaryProperties.hpp"
 #include "_test_tools.hpp"
 
@@ -27,7 +27,7 @@ TEST_CASE( "FormationSummary combine() commutative monoid", "[rock]" ) {
     using density = si::density<float>;
     using length = si::length<float>;
 
-    rock::FormationSummaryOps ops;
+    rock::FormationSummaryTools ops;
     rock::FormationSummaryAdapter testing;
 
     float oo = std::numeric_limits<float>::max();
@@ -76,7 +76,7 @@ TEST_CASE( "FormationSummary combine() mass conservation", "[rock]" ) {
     using floats = std::vector<float>;
     using area_densities = std::vector<area_density>;
 
-    rock::FormationSummaryOps ops;
+    rock::FormationSummaryTools ops;
     rock::FormationSummaryProperties properties;
     rock::FormationSummaryAdapter testing;
 
