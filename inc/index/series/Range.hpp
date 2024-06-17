@@ -19,32 +19,40 @@ namespace series
 		using value_type = T;
 
 		T start_value;
+		T step_size;
 		T reported_size;
 		constexpr explicit Range(): 
 			start_value(0),
+			step_size(1),
 			reported_size(1)
 		{}
-		constexpr explicit Range(const T reported_size): 
+		constexpr explicit Range(const T end_value): 
 			start_value(0),
-			reported_size(reported_size)
+			step_size(end_value>0? 1:-1),
+			reported_size(std::abs(end_value))
 		{}
 		constexpr explicit Range(const T start_value, const T end_value): 
 			start_value(start_value),
-			reported_size(end_value-start_value)
+			step_size(end_value>start_value? 1:-1),
+			reported_size(std::abs(end_value-start_value))
 		{}
-
-		constexpr inline bool includes(T i) const { return start_value <= i && i < start_value+reported_size; }
 
 		constexpr inline size_type size() const { return reported_size; }
 
+		constexpr inline bool includes(T value) const 
+		{ 
+			auto i = (value - start_value) / step_size;
+			return 0 <= i && i < reported_size;
+		}
+
 		constexpr inline value_type operator()(const size_type memory_id ) const
 		{
-			return T(memory_id)+start_value;
+			return step_size*T(memory_id)+start_value;
 		}
 
 		constexpr inline value_type operator[](const size_type memory_id ) const
 		{
-			return T(memory_id)+start_value;
+			return step_size*T(memory_id)+start_value;
 		}
 
 	};
