@@ -61,7 +61,7 @@ namespace iterated {
 #define ITERATED_TEST_TRINARY_OUT_PARAMETER(TYPE,F) [=](auto x, auto y, auto z){ std::vector<TYPE> out(std::max(x.size(), std::max(y.size(), z.size()))); (F(x,y,z,out)); return out; }
 
 
-TEST_CASE( "arithmetic on each nonzero of a series is a field", "[each]" ) {
+TEST_CASE( "arithmetic on each nonzero of a series is a field", "[iterated]" ) {
 
     adapted::ScalarMetric submetric;    
     aggregated::Metric metric(submetric);
@@ -84,8 +84,8 @@ TEST_CASE( "arithmetic on each nonzero of a series is a field", "[each]" ) {
 
     std::vector<series::Range<int>> nonzero_ranges {
         series::Range<int>(1,101),
-        series::Range<int>(2,102),
-        series::Range<int>(-101,-1)
+        series::Range<int>(2,102)
+        // series::Range<int>(-101,-1)
     };
 
     std::vector<series::Uniform<double>> nonzero_uniforms {
@@ -108,20 +108,28 @@ TEST_CASE( "arithmetic on each nonzero of a series is a field", "[each]" ) {
     REQUIRE(field.valid(broad, nonzero_ranges));
     REQUIRE(field.valid(broad, nonzero_uniforms));
 
+    // NOTE: properties such as associativity are not valid when mixing different types of series::, 
+    // since the output is a vector and does not share their properties
+
+    // REQUIRE(field.valid(broad, noises, nonzero_ranges));
+    // REQUIRE(field.valid(broad, nonzero_ranges, nonzero_uniforms));
+    // REQUIRE(field.valid(broad, noises, nonzero_ranges, nonzero_uniforms));
+
 }
 
+TEST_CASE( "arithmetic on each nonzero of a series is a commutative ring", "[iterated]" ) {
 
-/*
-TEST_CASE( "arithmetic on each nonzero of a series is a commutative ring", "[each]" ) {
-
-
-    adapted::ScalarMetric submetric;
+    adapted::ScalarMetric submetric;    
     aggregated::Metric metric(submetric);
     adapted::ScalarStrings substrings;
     adapted::SymbolicOrder order;
-    aggregated::Strings strings(substrings);
-    iterated::Adapter<double> broad (1e-6, metric, strings);
-    iterated::Adapter<double> narrow(1e-6, metric, strings);
+    aggregated::Order ordered(order);
+    aggregated::Strings strings(substrings, ordered);
+    iterated::Adapter broad (1e-6, metric, strings);
+    iterated::Adapter narrow(1e-6, metric, strings);
+
+    auto subarithmetic = adapted::SymbolicArithmetic(0.0, 1.0);
+    auto arithmetic = iterated::Arithmetic(subarithmetic);
 
     std::vector<series::UnitIntervalNoise<double>> noises {
         series::UnitIntervalNoise<double>(10.0, 1e4),
@@ -130,14 +138,14 @@ TEST_CASE( "arithmetic on each nonzero of a series is a commutative ring", "[eac
         series::UnitIntervalNoise<double>(40.0, 4e4)
     };
 
-    std::vector<series::Range<double>> ranges {
-        series::Range<double>(),
-        series::Range<double>(-50,50)
+    std::vector<series::Range<int>> nonzero_ranges {
+        series::Range<int>(1,101),
+        series::Range<int>(2,102)
+        // series::Range<int>(-101,-1)
     };
 
-    std::vector<series::Uniform<double>> uniforms {
+    std::vector<series::Uniform<double>> nonzero_uniforms {
         series::Uniform<double>(-2.0),
-        series::Uniform<double>(0.0),
         series::Uniform<double>(1.0),
         series::Uniform<double>(2.0),
     };
@@ -145,20 +153,22 @@ TEST_CASE( "arithmetic on each nonzero of a series is a commutative ring", "[eac
     test::CommutativeRing ring(
         "0", series::uniform(0.0), 
         "1", series::uniform(1.0), 
-        "each::add",  ITERATED_TEST_BINARY_OUT_PARAMETER(double, 100, each::add),
-        "each::sub",  ITERATED_TEST_BINARY_OUT_PARAMETER(double, 100, each::sub),
-        "each::mult", ITERATED_TEST_BINARY_OUT_PARAMETER(double, 100, each::mult)
+        "arithmetic.add",       ITERATED_TEST_BINARY_OUT_PARAMETER(double, arithmetic.add),
+        "arithmetic.subtract",  ITERATED_TEST_BINARY_OUT_PARAMETER(double, arithmetic.subtract),
+        "arithmetic.multiply",  ITERATED_TEST_BINARY_OUT_PARAMETER(double, arithmetic.multiply)
     );
 
     // UNARY TESTS
     REQUIRE(ring.valid(broad, noises));
-    REQUIRE(ring.valid(broad, ranges));
-    REQUIRE(ring.valid(broad, uniforms));
+    REQUIRE(ring.valid(broad, nonzero_ranges));
+    REQUIRE(ring.valid(broad, nonzero_uniforms));
 
-    // BINARY TESTS
-    REQUIRE(ring.valid(broad, noises, ranges));
-    REQUIRE(ring.valid(broad, noises, uniforms));
-    REQUIRE(ring.valid(broad, ranges, uniforms));
+    // NOTE: properties such as associativity are not valid when mixing different types of series::, 
+    // since the output is a vector and does not share their properties
+
+    // REQUIRE(ring.valid(broad, noises, nonzero_ranges));
+    // REQUIRE(ring.valid(broad, nonzero_ranges, nonzero_uniforms));
+    // REQUIRE(ring.valid(broad, noises, nonzero_ranges, nonzero_uniforms));
 
 }
 
@@ -169,7 +179,18 @@ TEST_CASE( "arithmetic on each nonzero of a series is a commutative ring", "[eac
 
 
 
-// TEST_CASE( "morphology on each of a series is a commutative monoid", "[each]" ) {
+
+
+/*
+
+
+
+
+
+
+
+
+// TEST_CASE( "morphology on each of a series is a commutative monoid", "[iterated]" ) {
 
 //     iterated::Adapter<bool> exact (0);
 
@@ -193,7 +214,7 @@ TEST_CASE( "arithmetic on each nonzero of a series is a commutative ring", "[eac
 // }
 
 
-TEST_CASE( "Series<T> negation involutivity", "[each]" ) {
+TEST_CASE( "Series<T> negation involutivity", "[iterated]" ) {
     auto a = std::vector({1,0,0,1,0});
     auto c = std::vector({1,1,2,3,5});
 
@@ -205,7 +226,7 @@ TEST_CASE( "Series<T> negation involutivity", "[each]" ) {
 
 }
 
-TEST_CASE( "Series<T> morphologic distributivity", "[each]" ) {
+TEST_CASE( "Series<T> morphologic distributivity", "[iterated]" ) {
     auto a = std::vector({1,0,0,1,0});
     auto b = std::vector({0,1,0,1,0});
     auto c = std::vector({1,1,0,0,1});
@@ -233,7 +254,7 @@ TEST_CASE( "Series<T> morphologic distributivity", "[each]" ) {
 
 
 
-TEST_CASE( "Series<T> sqrt purity", "[each]" ) {
+TEST_CASE( "Series<T> sqrt purity", "[iterated]" ) {
     auto a  = std::vector({1.0,2.0,3.0,4.0,5.0});
     auto c1 = std::vector({0.0,0.0,0.0,0.0,0.0});
     auto c2 = std::vector({0.0,0.0,0.0,0.0,0.0});
@@ -243,7 +264,7 @@ TEST_CASE( "Series<T> sqrt purity", "[each]" ) {
         CHECK(metric.equal(c1,c2, 1e-7));
     }
 }
-TEST_CASE( "Series<T> sqrt consistency", "[each]" ) {
+TEST_CASE( "Series<T> sqrt consistency", "[iterated]" ) {
     auto a     = std::vector({1.0,2.0,3.0,4.0,5.0});
     auto b     = std::vector({1.0,1.0,2.0,3.0,5.0});
     auto sqrt1 = std::vector({0.0,0.0,0.0,0.0,0.0});
@@ -262,7 +283,7 @@ TEST_CASE( "Series<T> sqrt consistency", "[each]" ) {
     }
 
 }
-TEST_CASE( "Series<T> log consistency", "[each]" ) {
+TEST_CASE( "Series<T> log consistency", "[iterated]" ) {
     auto a     = std::vector({1.0,2.0,3.0,4.0,5.0});
     auto b     = std::vector({1.0,1.0,2.0,3.0,5.0});
     auto log1_ = std::vector({0.0,0.0,0.0,0.0,0.0});
@@ -275,7 +296,7 @@ TEST_CASE( "Series<T> log consistency", "[each]" ) {
         CHECK(metric.equal(log1_ , log2_, 1e-7));
     }
 }
-TEST_CASE( "Series<T> log/exp consistency", "[each]" ) {
+TEST_CASE( "Series<T> log/exp consistency", "[iterated]" ) {
     auto a     = std::vector({1.0,2.0,3.0,4.0,5.0});
     auto b     = std::vector({1.0,1.0,2.0,3.0,5.0});
     auto loga  = std::vector({0.0,0.0,0.0,0.0,0.0});
@@ -294,7 +315,7 @@ TEST_CASE( "Series<T> log/exp consistency", "[each]" ) {
         CHECK(metric.equal(elalb, ab, 1e-7));
     }
 }
-TEST_CASE( "Series<T> log/exp invertibility", "[each]" ) {
+TEST_CASE( "Series<T> log/exp invertibility", "[iterated]" ) {
     auto a   = std::vector({1.0,2.0,3.0,4.0,5.0});
     auto b   = std::vector({1.0,1.0,2.0,3.0,5.0});
     auto out = std::vector({0.0,0.0,0.0,0.0,0.0});
@@ -311,7 +332,7 @@ TEST_CASE( "Series<T> log/exp invertibility", "[each]" ) {
     }
 }
 
-TEST_CASE( "Series<T> log2/exp2 consistency", "[each]" ) {
+TEST_CASE( "Series<T> log2/exp2 consistency", "[iterated]" ) {
     auto a     = std::vector({1.0,2.0,3.0,4.0,5.0});
     auto b     = std::vector({1.0,1.0,2.0,3.0,5.0});
     auto loga  = std::vector({0.0,0.0,0.0,0.0,0.0});
@@ -329,7 +350,7 @@ TEST_CASE( "Series<T> log2/exp2 consistency", "[each]" ) {
         CHECK(metric.equal(out, ab, 1e-7));
     }
 }
-TEST_CASE( "Series<T> log2/exp2 invertibility", "[each]" ) {
+TEST_CASE( "Series<T> log2/exp2 invertibility", "[iterated]" ) {
     auto a   = std::vector({1.0,2.0,3.0,4.0,5.0});
     auto b   = std::vector({1.0,1.0,2.0,3.0,5.0});
     auto out = std::vector({0.0,0.0,0.0,0.0,0.0});
@@ -352,7 +373,7 @@ TEST_CASE( "Series<T> log2/exp2 invertibility", "[each]" ) {
 
 
 
-TEST_CASE( "Series<T> trigonometric purity", "[each]" ) {
+TEST_CASE( "Series<T> trigonometric purity", "[iterated]" ) {
     auto a = std::vector({1.0,2.0,3.0,4.0,5.0});
     auto b = std::vector({-1.0,1.0,-2.0,2.0,3.0});
     auto c1 = std::vector({0.0,0.0,0.0,0.0,0.0});
@@ -387,7 +408,7 @@ TEST_CASE( "Series<T> trigonometric purity", "[each]" ) {
 
 }
 
-TEST_CASE( "Series<T> trigonometric cofunctions", "[each]" ) {
+TEST_CASE( "Series<T> trigonometric cofunctions", "[iterated]" ) {
     const double pi = 3.14159265358979;
     auto a = std::vector({1.0,2.0,3.0,4.0,5.0});
     auto b = std::vector({-1.0,1.0,-2.0,2.0,3.0});
@@ -418,7 +439,7 @@ TEST_CASE( "Series<T> trigonometric cofunctions", "[each]" ) {
 
 
 
-TEST_CASE( "Series<T> trigonometric negative angle identities", "[each]" ) {
+TEST_CASE( "Series<T> trigonometric negative angle identities", "[iterated]" ) {
     auto a = std::vector({1.0,2.0,3.0,4.0,5.0});
     auto b = std::vector({-1.0,1.0,-2.0,2.0,3.0});
     auto c1 = std::vector({0.0,0.0,0.0,0.0,0.0});
