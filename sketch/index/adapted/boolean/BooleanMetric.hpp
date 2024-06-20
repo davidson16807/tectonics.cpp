@@ -20,7 +20,7 @@ namespace adapted
 		in line with its formal mathematical definition, `distance(a,b)` always returns a nonnegative number,
 		it always satisfies the triangle equality, and it equals 0 iff a==b.
 		*/
-		inline constexpr bool distance(const bool a, const bool b) const
+		inline constexpr auto distance(const bool a, const bool b) const
 		{
 		    return int(a!=b);
 		}
@@ -28,7 +28,7 @@ namespace adapted
 		/*
 		`length(a)` is defined here as `distance(a,o)` for some "zero" value o
 		*/
-		inline constexpr bool length(const bool a) const
+		inline constexpr auto length(const bool a) const
 		{
 		    return int(a);
 		}
@@ -36,7 +36,7 @@ namespace adapted
 		/*
 		`normalize(a)` is defined here as `a/length(a)`
 		*/
-		inline constexpr bool normalize(const bool a) const
+		inline constexpr auto normalize(const bool a) const
 		{
 		    return int(a);
 		}

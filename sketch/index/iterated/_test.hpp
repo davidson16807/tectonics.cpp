@@ -188,9 +188,9 @@ TEST_CASE( "bitset on each of a series is a commutative semiring", "[iterated]" 
     adapted::BooleanMetric submetric;    
     aggregated::Metric metric(submetric);
     adapted::BooleanStrings substrings;
-    adapted::BooleanBitset bitset;
-    aggregated::Bitset aggregation(bitset);
-    iterated::Bitset iteration(bitset);
+    adapted::BooleanBitset subbitset;
+    aggregated::Bitset aggregation(subbitset);
+    iterated::Bitset iteration(subbitset);
     aggregated::Strings strings(substrings, aggregation);
     iterated::Adapter exact (0, metric, strings);
 
