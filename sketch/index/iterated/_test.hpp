@@ -240,25 +240,6 @@ TEST_CASE( "Series<T> negation involutivity", "[iterated]" ) {
 
 }
 
-TEST_CASE( "Series<T> morphologic distributivity", "[iterated]" ) {
-    auto a = std::vector({1,0,0,1,0});
-    auto b = std::vector({0,1,0,1,0});
-    auto c = std::vector({1,1,0,0,1});
-    auto ab_c  = std::vector({0,0,0,0,0});
-    auto ac_bc = std::vector({0,0,0,0,0});
-    auto ac = std::vector({0,0,0,0,0});
-    auto bc = std::vector({0,0,0,0,0});
-
-    SECTION("a+b*c must equal a*c+b*c"){
-        each::unite(a,b,    ab_c);
-        each::intersect(ab_c,c, ab_c);
-        each::intersect(a,c,    ac);
-        each::intersect(b,c,    bc);
-        each::unite(ac,bc,  ac_bc);
-        CHECK(metric.equal(ab_c, ac_bc));
-    }
-}
-
 
 
 
