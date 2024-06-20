@@ -58,10 +58,10 @@ namespace iterated
 		Bitset(const ElementBitset& elements):
 			elements(elements)
 		{}
-		ITERATED_BINARY_FUNCTION(elements.unite,     unite)
-		ITERATED_BINARY_FUNCTION(elements.intersect, intersect)
-		ITERATED_BINARY_FUNCTION(elements.differ,    differ)
-		ITERATED_BINARY_FUNCTION(elements.negate,    negate)
+		ITERATED_BINARY_METHOD(elements.unite,     unite)
+		ITERATED_BINARY_METHOD(elements.intersect, intersect)
+		ITERATED_BINARY_METHOD(elements.differ,    differ)
+		ITERATED_BINARY_METHOD(elements.negate,    negate)
 	};
 
 	#undef ITERATED_UNARY_METHOD

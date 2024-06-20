@@ -48,6 +48,18 @@ namespace aggregated
 			return false;
 		}
 
+		template <typename In1>
+		bool min(const In1& a) const
+		{
+			return !all(a);
+		}
+
+		template <typename In1>
+		bool max(const In1& a) const
+		{
+			return any(a);
+		}
+
 	};
 
 }

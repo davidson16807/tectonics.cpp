@@ -11,7 +11,6 @@ namespace adapted
 	{
 		BooleanStrings(){}
 
-		template<>
 		inline std::string legend(bool sample, const bool lo, const bool hi) const 
 		{
 			std::string out("");
@@ -22,7 +21,6 @@ namespace adapted
 			return out;
 		}
 
-		template<>
 		inline std::string character(const bool a, const bool lo, const bool hi) const 
 		{
 			return a? "█":" ";

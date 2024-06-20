@@ -15,9 +15,12 @@ namespace adapted
 	{
 		BooleanBitset(){}
 
-		template <typename bool, typename bool> inline auto unite     (const bool a, const bool b) const {return a || b;}
-		template <typename bool, typename bool> inline auto intersect (const bool a, const bool b) const {return a && b;}
-		template <typename bool, typename bool> inline auto differ    (const bool a, const bool b) const {return a && !b;}
+		inline auto unite     (const bool a, const bool b) const {return a || b;}
+		inline auto intersect (const bool a, const bool b) const {return a && b;}
+		inline auto differ    (const bool a, const bool b) const {return a && !b;}
+
+		inline auto all       (const bool a) const {return a;}
+		inline auto any       (const bool a) const {return a;}
 
 	};
 

@@ -14,14 +14,20 @@
 #include <index/series/Uniform.hpp>
 #include <index/series/noise/UnitIntervalNoise.hpp>
 
+#include <index/adapted/boolean/BooleanMetric.hpp>
+#include <index/adapted/boolean/BooleanBitset.hpp>
+#include <index/adapted/boolean/BooleanStrings.hpp>
 #include <index/adapted/scalar/ScalarMetric.hpp>
 #include <index/adapted/scalar/ScalarStrings.hpp>
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
 #include <index/adapted/symbolic/SymbolicArithmetic.hpp>
 
+#include <index/aggregated/Bitset.hpp>
 #include <index/aggregated/Metric.hpp>
 #include <index/aggregated/Order.hpp>
 #include <index/aggregated/Strings.hpp>
+
+#include <index/iterated/Bitset.hpp>
 
 #include "Arithmetic.hpp"
 
@@ -177,6 +183,41 @@ TEST_CASE( "arithmetic on each nonzero of a series is a commutative ring", "[ite
 
 
 
+TEST_CASE( "bitset on each of a series is a commutative monoid", "[iterated]" ) {
+
+    adapted::BooleanMetric submetric;    
+    aggregated::Metric metric(submetric);
+    adapted::BooleanStrings substrings;
+    adapted::BooleanBitset bitset;
+    aggregated::Bitset aggregation(bitset);
+    iterated::Bitset iteration(bitset);
+    aggregated::Strings strings(substrings, aggregation);
+    iterated::Adapter exact (0, metric, strings);
+
+    std::vector<std::vector<bool>> vectors {
+        std::vector<bool>({1,0,0,1,0}),
+        std::vector<bool>({0,1,0,1,0}),
+    };
+
+    test::CommutativeMonoid unite(
+        "false", series::uniform(false), 
+        "bitset.unite",       ITERATED_TEST_BINARY_OUT_PARAMETER(bool, iteration.unite)
+    );
+
+    test::CommutativeMonoid intersect(
+        "true", series::uniform(true), 
+        "bitset.intersect",       ITERATED_TEST_BINARY_OUT_PARAMETER(bool, iteration.intersect)
+    );
+
+    REQUIRE(unite.valid(exact, vectors));
+    REQUIRE(intersect.valid(exact, vectors));
+
+}
+
+
+
+
+
 
 
 
@@ -189,29 +230,6 @@ TEST_CASE( "arithmetic on each nonzero of a series is a commutative ring", "[ite
 
 
 
-
-// TEST_CASE( "morphology on each of a series is a commutative monoid", "[iterated]" ) {
-
-//     iterated::Adapter<bool> exact (0);
-
-//     std::vector<std::vector<bool>> vectors {
-//         std::vector<bool>({1,0,0,1,0}),
-//         std::vector<bool>({0,1,0,1,0}),
-//     };
-
-//     test::CommutativeMonoid unite(
-//         "0", series::uniform(0), 
-//         "each::unite", ITERATED_TEST_BINARY_OUT_PARAMETER(bool, 5, each::unite)
-//     );
-//     REQUIRE(unite.valid(exact, vectors));
-
-//     test::CommutativeMonoid intersect(
-//         "1", series::uniform(1), 
-//         "each::intersect", ITERATED_TEST_BINARY_OUT_PARAMETER(bool, 5, each::intersect)
-//     );
-//     REQUIRE(intersect.valid(exact, vectors));
-
-// }
 
 
 TEST_CASE( "Series<T> negation involutivity", "[iterated]" ) {
