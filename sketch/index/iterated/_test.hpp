@@ -183,7 +183,7 @@ TEST_CASE( "arithmetic on each nonzero of a series is a commutative ring", "[ite
 
 
 
-TEST_CASE( "bitset on each of a series is a commutative monoid", "[iterated]" ) {
+TEST_CASE( "bitset on each of a series is a commutative semiring", "[iterated]" ) {
 
     adapted::BooleanMetric submetric;    
     aggregated::Metric metric(submetric);
@@ -199,18 +199,14 @@ TEST_CASE( "bitset on each of a series is a commutative monoid", "[iterated]" ) 
         std::vector<bool>({0,1,0,1,0}),
     };
 
-    test::CommutativeMonoid unite(
+    test::CommutativeSemiRing semiring(
         "false", series::uniform(false), 
-        "bitset.unite",       ITERATED_TEST_BINARY_OUT_PARAMETER(bool, iteration.unite)
-    );
-
-    test::CommutativeMonoid intersect(
         "true", series::uniform(true), 
+        "bitset.unite",       ITERATED_TEST_BINARY_OUT_PARAMETER(bool, iteration.unite),
         "bitset.intersect",       ITERATED_TEST_BINARY_OUT_PARAMETER(bool, iteration.intersect)
     );
 
-    REQUIRE(unite.valid(exact, vectors));
-    REQUIRE(intersect.valid(exact, vectors));
+    REQUIRE(semiring.valid(exact, vectors));
 
 }
 

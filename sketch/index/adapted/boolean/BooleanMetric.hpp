@@ -22,7 +22,7 @@ namespace adapted
 		*/
 		inline constexpr bool distance(const bool a, const bool b) const
 		{
-		    return a!=b;
+		    return int(a!=b);
 		}
 
 		/*
@@ -30,7 +30,7 @@ namespace adapted
 		*/
 		inline constexpr bool length(const bool a) const
 		{
-		    return a;
+		    return int(a);
 		}
 
 		/*
@@ -38,7 +38,7 @@ namespace adapted
 		*/
 		inline constexpr bool normalize(const bool a) const
 		{
-		    return a;
+		    return int(a);
 		}
 
 	};
