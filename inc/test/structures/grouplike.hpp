@@ -341,6 +341,59 @@ namespace test {
         }
     };
 
+    template<typename F>
+    struct CommutativeSemiGroup{
+        const std::string f_name; const F f; 
+        CommutativeSemiGroup(
+            const std::string f_name, const F& f
+        ): 
+            f_name(f_name), f(f)
+        {}
+
+        template<typename Adapter, typename A>
+        bool valid(const Adapter& adapter, const many<A>& as) const {
+            return 
+
+            discernability(adapter,           as)         &&
+            determinism  (adapter,            f_name, f, as, as)     &&
+            associativity(adapter,            f_name, f, as, as, as) &&
+            commutativity  (adapter,            f_name, f, as, as)     &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename A, typename B>
+        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
+            return 
+
+            determinism  (adapter, f_name, f, as, bs)     &&
+            determinism  (adapter, f_name, f, bs, as)     &&
+            associativity(adapter, f_name, f, as, as, bs) &&
+            associativity(adapter, f_name, f, as, bs, as) &&
+            associativity(adapter, f_name, f, as, bs, bs) &&
+            associativity(adapter, f_name, f, bs, as, as) &&
+            associativity(adapter, f_name, f, bs, as, bs) &&
+            associativity(adapter, f_name, f, bs, bs, as) &&
+            commutativity(adapter, f_name, f, as, bs)     &&
+            commutativity(adapter, f_name, f, bs, as)     &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename A, typename B, typename C>
+        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+            return 
+
+            associativity(adapter, f_name, f, as, bs, cs) &&
+            associativity(adapter, f_name, f, as, cs, bs) &&
+            associativity(adapter, f_name, f, bs, as, cs) &&
+            associativity(adapter, f_name, f, bs, cs, as) &&
+            associativity(adapter, f_name, f, cs, as, bs) &&
+            associativity(adapter, f_name, f, cs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+
+    };
+
     template<typename E, typename F, typename Finv>
     struct CommutativeGroup{
         const std::string e_name;    const E e; 

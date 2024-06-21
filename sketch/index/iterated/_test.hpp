@@ -183,7 +183,7 @@ TEST_CASE( "arithmetic on each nonzero of a series is a commutative ring", "[ite
 
 
 
-TEST_CASE( "bitset on each of a series is a commutative semiring", "[iterated]" ) {
+TEST_CASE( "bitset on each of a series is a commutative rig", "[iterated]" ) {
 
     adapted::BooleanMetric submetric;    
     aggregated::Metric metric(submetric);
@@ -199,14 +199,14 @@ TEST_CASE( "bitset on each of a series is a commutative semiring", "[iterated]" 
         std::vector<bool>({0,1,0,1,0}),
     };
 
-    test::CommutativeSemiRing semiring(
+    test::CommutativeRig rig(
         "false", series::uniform(false), 
         "true", series::uniform(true), 
         "bitset.unite",       ITERATED_TEST_BINARY_OUT_PARAMETER(bool, iteration.unite),
         "bitset.intersect",       ITERATED_TEST_BINARY_OUT_PARAMETER(bool, iteration.intersect)
     );
 
-    REQUIRE(semiring.valid(exact, vectors));
+    REQUIRE(rig.valid(exact, vectors));
 
 }
 

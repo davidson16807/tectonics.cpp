@@ -28,19 +28,6 @@ namespace aggregated
 		template <typename In1, typename In2>
 		auto distance(const In1& a, const In2& b) const
 		{
-			assert(compatible(a,b));
-			auto size = a.size();
-			auto out(elements.distance(a[0], b[0]));
-			for (auto i = 0*size+1; i < size; ++i)
-			{
-				out += elements.distance(a[i], b[i]);
-			}
-			return out;
-		}
-
-		template <typename In1, typename In2>
-		auto max_distance(const In1& a, const In2& b) const
-		{
 			auto size = a.size();
 			if (a.size() < 1)
 			{
@@ -56,12 +43,6 @@ namespace aggregated
 		}
 
 		template <typename In1, typename In2>
-		bool equal(const In1& a, const In2& b, const float threshold) const
-		{
-			return max_distance(a,b) < threshold;
-		}
-
-		template <typename In1, typename In2>
 		bool equal(const In1& a, const In2& b) const
 		{
 			if (a.size() != b.size()){
@@ -70,7 +51,7 @@ namespace aggregated
 			auto size = a.size();
 			for (auto i = 0*size; i < size; ++i)
 			{
-				if (a[i] != b[i]){
+				if (elements.equal(a[i], b[i])){
 					return false;
 				}
 			}
@@ -86,7 +67,7 @@ namespace aggregated
 			auto size = a.size();
 			for (auto i = 0*size; i < size; ++i)
 			{
-				if (a[i] != b[i]){
+				if (elements.not_equal(a[i], b[i])){
 					return true;
 				}
 			}
@@ -99,7 +80,7 @@ namespace aggregated
 			auto size = a.size();
 			for (auto i = 0*size; i < size; ++i)
 			{
-				if (a[i] <= b[i]){
+				if (elements.greater_than(a[i], b[i])){
 					return false;
 				}
 			}
@@ -112,7 +93,7 @@ namespace aggregated
 			auto size = a.size();
 			for (auto i = 0*size; i < size; ++i)
 			{
-				if (a[i] >= b[i]){
+				if (elements.less_than(a[i], b[i])){
 					return false;
 				}
 			}
@@ -125,7 +106,7 @@ namespace aggregated
 			auto size = a.size();
 			for (auto i = 0*size; i < size; ++i)
 			{
-				if (a[i] <= b[i]){
+				if (elements.greater_than_equal(a[i], b[i])){
 					return false;
 				}
 			}
@@ -138,7 +119,7 @@ namespace aggregated
 			auto size = a.size();
 			for (auto i = 0*size; i < size; ++i)
 			{
-				if (a[i] >= b[i]){
+				if (elements.less_than_equal(a[i], b[i])){
 					return false;
 				}
 			}
