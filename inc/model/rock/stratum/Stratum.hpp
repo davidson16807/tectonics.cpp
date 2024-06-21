@@ -35,6 +35,7 @@ namespace rock
         si::time<double> age_of_world_when_first_deposited;
         si::time<double> age_of_world_when_last_deposited;
 
+        // empty stratum
         Stratum():
             age_of_world_when_first_deposited(std::numeric_limits<double>::max()*si::megayear),
             age_of_world_when_last_deposited(0*si::megayear)
@@ -42,6 +43,7 @@ namespace rock
             minerals.fill(rock::Mineral());
         }
 
+        // empty stratum
         Stratum(
             const si::time<double> age_of_world_when_first_deposited,
             const si::time<double> age_of_world_when_last_deposited
@@ -55,18 +57,12 @@ namespace rock
         Stratum(
             const si::time<double> age_of_world_when_first_deposited,
             const si::time<double> age_of_world_when_last_deposited,
-            const std::initializer_list<rock::Mineral>& vector
+            const std::array<rock::Mineral,M>& minerals
         ): 
+            minerals(minerals),
             age_of_world_when_first_deposited(age_of_world_when_first_deposited),
             age_of_world_when_last_deposited(age_of_world_when_last_deposited)
         {
-            assert(vector.size() == M);
-            int j(0);
-            for (auto i = vector.begin(); i != vector.end(); ++i)
-            {
-                minerals[j] = *i;
-                ++j;
-            }
         }
 
         si::mass<double> mass () const 

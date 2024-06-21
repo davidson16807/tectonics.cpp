@@ -30,6 +30,8 @@
 #include <index/series/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
 #include <index/series/noise/glm/UnitVectorNoise.hpp>
 #include <index/series/noise/GaussianNoise.hpp>
+#include <index/adapted/si/SiMetric.hpp>
+#include <index/aggregated/Metric.hpp>
 
 #include <field/noise/ValueNoise.hpp>               // ValueNoise
 #include <field/noise/PerlinNoise.hpp>              // PerlinNoise
@@ -68,7 +70,7 @@
       int vertices_per_square_side(16);
       dymaxion::Grid grid(radius/si::meter, vertices_per_square_side);
 
-      auto max_earth_elevation =   8848.0 * si::meter;
+      // auto max_earth_elevation =   8848.0 * si::meter;
       auto min_earth_elevation = -10924.0 * si::meter;
 
       auto min_elevation(-16000.0f * si::meter);
@@ -112,13 +114,13 @@
         relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2600.0, 2600.0})
       };
 
-      auto age_of_world = 0.0*si::megayear;
+      auto age_of_world = 0.0f*si::megayear;
       int plate_id = 1;
       rock::AgedStratumDensity stratum_density(densities_for_age, age_of_world);
       auto stratum_summarization = rock::stratum_summarization<2>(stratum_density, plate_id);
-      auto formation_summarization = rock::formation_summarization<2>(grid, stratum_summarization);
+      auto formation_summarization = rock::formation_summarization<2>(stratum_summarization, grid);
 
-      rock::StratumSummaryTools stratum_tools(si::density<float>(3075.0*si::kilogram/si::meter3));
+      rock::StratumSummaryTools stratum_tools(density(3075.0*si::kilogram/si::meter3));
       rock::FormationSummaryTools formation_tools(stratum_tools);
 
       rock::StratumGeneration strata(
@@ -150,7 +152,9 @@
       formation_tools.isostatic_displacement(summary, actual_displacements);
 
 
-      REQUIRE(whole::max_distance(intended_displacements, actual_displacements) < 1*si::kilometer);
+      adapted::SiMetric submetric;
+      aggregated::Metric metric(submetric);
+      REQUIRE(metric.distance(intended_displacements, actual_displacements) < 1.0f*si::kilometer);
   }
 
 

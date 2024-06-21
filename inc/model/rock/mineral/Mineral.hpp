@@ -55,10 +55,16 @@ namespace rock
 		{
 			grain_type_relative_volume.fill(1e-4);
 		}
-		Mineral(si::mass<double> mass):
+		Mineral(const si::mass<double> mass):
 			mass(mass)
 		{
 			grain_type_relative_volume.fill(1e-4);
+		}
+		Mineral(const Mineral& other):
+			mass(other.mass),
+			phase_id(other.phase_id),
+			grain_type_relative_volume(other.grain_type_relative_volume)
+		{
 		}
 
         // DERIVED ATTRIBUTES, regular functions of the form: Mineral -> primitive

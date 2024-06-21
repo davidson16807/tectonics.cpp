@@ -12,7 +12,6 @@
 #include <glm/vec2.hpp>       	 // *vec3
 #include <glm/vec3.hpp>       	 // *vec3
 #include <glm/mat3x3.hpp>        // *mat3
-#include <glm/gtx/string_cast.hpp>  // to_string
 
 // in-house libraries
 #include <math/special.hpp>

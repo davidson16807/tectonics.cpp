@@ -7,15 +7,16 @@
 // 3rd party libraries
 
 // in-house libraries
-#include "Formation.hpp"
 #include "FormationSummary.hpp"
 
 namespace rock
 {
 
-    template<int M, typename Grid, typename StratumSummarization>
+    template<typename Grid, typename StratumSummarization>
     class FormationSummarization
     {
+        using area = si::area<float>;
+
         const StratumSummarization summarization;
         const Grid grid;
     public:
@@ -23,18 +24,20 @@ namespace rock
             summarization(summarization),
             grid(grid)
         {}
-        void operator() (const Formation<M>& formation, FormationSummary& out) const
+        template<typename Formation>
+        void operator() (const Formation& formation, FormationSummary& out) const
         {
             for (std::size_t i = 0; i < formation.size(); ++i)
             {
-                out[i] = summarization(grid.vertex_dual_area(i), formation[i]);
+                out[i] = summarization(grid.vertex_dual_area(i)*area(si::meter2), formation[i]);
             }
         }
     };
 
     template<int M, typename Grid, typename StratumSummarization>
     auto formation_summarization(const StratumSummarization& summarization, const Grid& grid){
-        return FormationSummarization<M,Grid,StratumSummarization>(summarization, grid);
+        return FormationSummarization<Grid,StratumSummarization>(summarization, grid);
     }
+
 }
 

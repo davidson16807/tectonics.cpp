@@ -112,12 +112,7 @@ namespace si{
     {
 
     }
-    // cast constant constructor
-    template<typename T2>
-    constexpr units(T2 raw): raw(raw)
-    {
 
-    }
     // cast constructor: implicit cast is only allowed if two objects match signature but differ in type
     template<typename T2>
     constexpr units(units<M1,KG1,S1,K1,MOL1,A1,CD1,T2> other): raw(other.raw)

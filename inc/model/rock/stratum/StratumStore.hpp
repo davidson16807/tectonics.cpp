@@ -27,7 +27,7 @@ namespace rock
     The interpretation of attributes within `StratumStore` is error prone,
     so to prevent users from doing so we encapsulate the class.
     */
-    template <std::size_t M>
+    template <int M>
     class StratumStore
     {
         std::array<rock::MineralStore, M> minerals;
@@ -42,7 +42,7 @@ namespace rock
         ~StratumStore()
         {
         }
-        StratumStore(Stratum<M>& output)
+        StratumStore(const Stratum<M>& output)
         {
             pack(output);
         }

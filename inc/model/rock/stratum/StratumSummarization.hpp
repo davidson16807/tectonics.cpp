@@ -16,23 +16,23 @@ namespace rock
     template<int M, typename StratumDensity>
     class StratumSummarization
     {
-        const StratumDensity   density;
+        const StratumDensity   density_for_stratum;
         const int plate_id;
     public:
-        StratumSummarization(const StratumDensity& density, const int plate_id):
-            density(density),
+        StratumSummarization(const StratumDensity& density_for_stratum, const int plate_id):
+            density_for_stratum(density_for_stratum),
             plate_id(plate_id)
         {}
         StratumSummary operator() (const si::area<float> area, const StratumStore<M>& stratum) const
         {
-            auto density_ = density(stratum);
-            return StratumSummary(std::bitset<8>(1<<plate_id), density_, stratum.mass()/density_/area);
+            auto density = density_for_stratum(stratum);
+            return StratumSummary(std::bitset<8>(1<<plate_id), density, stratum.mass()/density/area);
         }
     };
 
     template<int M, typename StratumDensity>
-    auto stratum_summarization(const StratumDensity& density, const int plate_id){
-        return StratumSummarization<M,StratumDensity>(density, plate_id);
+    auto stratum_summarization(const StratumDensity& density_for_stratum, const int plate_id){
+        return StratumSummarization<M,StratumDensity>(density_for_stratum, plate_id);
     }
 
 }

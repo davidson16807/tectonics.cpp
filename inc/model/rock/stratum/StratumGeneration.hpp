@@ -27,6 +27,8 @@ namespace rock {
         using id     = typename Grid::size_type;
         using scalar = typename Grid::value_type;
 
+        static const int M = 2; // number of stored minerals
+
         const Grid                          grid;
         const ElevationForPosition          elevation_for_position;
         const AgeForElevation               age_for_elevation;
@@ -59,10 +61,10 @@ namespace rock {
         using value_type = StratumStore<2>; 
 
         constexpr inline size_type size() const { return grid.vertex_count(); } 
-        constexpr value_type operator[] (const id vertex_id) const
+        value_type operator[] (const id vertex_id) const
         {
             auto area = grid.vertex_dual_area(vertex_id) * si::meter2;
-            auto elevation = elevation_for_position(grid.vertex_position(vertex_id)) * si::meter;
+            auto elevation = elevation_for_position(grid.vertex_position(vertex_id));
             auto age = age_for_elevation(elevation);
             auto mafic_extrusive_fraction_ = mafic_extrusive_fraction (elevation);
             auto felsic_extrusive_fraction_ = felsic_extrusive_fraction (elevation);
@@ -72,9 +74,8 @@ namespace rock {
             felsic.grain_type_relative_volume[int(GrainType::unweathered_extrusive)] =             felsic_extrusive_fraction_;
             mafic .grain_type_relative_volume[int(GrainType::unweathered_intrusive)] = scalar(1) -  mafic_extrusive_fraction_;
             felsic.grain_type_relative_volume[int(GrainType::unweathered_intrusive)] = scalar(1) - felsic_extrusive_fraction_;
-            return StratumStore<2>(
-                Stratum<2>(age, age, std::vector<Mineral>{mafic, felsic})
-            );
+            Stratum<M> stratum(age, age, std::array<Mineral,M>{mafic, felsic});
+            return StratumStore<M>(stratum);
         }
 
     };

@@ -35,36 +35,43 @@ namespace rock{
     Since the majority of a world's crust will be deposited upon rifting,
     the oldest age of rock within a stratum will be used to calculate density.
     */
-    template<typename scalar, typename Table>
+    template<typename Table>
     class AgedStratumDensity
     {
+        using density = si::density<float>;
+
         const Table density_for_age;
-        const si::time<scalar> age_of_world;
+        const si::time<float> age_of_world;
     public:
-        AgedStratumDensity(const Table& density_for_age, const si::time<scalar> age_of_world):
+        AgedStratumDensity(const Table& density_for_age, const si::time<float> age_of_world):
             density_for_age(density_for_age),
             age_of_world(age_of_world)
         {}
         template<int M>
         auto operator() (const StratumStore<M>& stratum) const 
         {
-            auto sum = stratum[0];
-            for (std::size_t i=1; i<stratum.size(); i++)
+            // return si::density<float>(1.0f);
+            si::mass<float> total_mass(0.0f);
+            for (int i=0; i<M; i++)
             {
-                sum += stratum[i];
+                total_mass += stratum[i].mass();
             }
-            si::specific_volume<scalar> result(0.0f);
-            for (std::size_t i=0; i<stratum.size(); i++)
+            si::volume<float> total_volume(0.0f);
+            for (int i=0; i<M; i++)
             {
-                result += (stratum[i]/sum) / density_for_age[i](stratum.age_of_world_when_first_deposited()-age_of_world);
+                // volume = specific volume * mass
+                // sum up to get total volume
+                total_volume += stratum[i].mass() / 
+                    density(density_for_age[i](stratum.age_of_world_when_first_deposited()-age_of_world));
             }
-            return 1.0f / result;
+            // volume = total volume * mass
+            return total_mass / total_volume;
         }
     };
-    template<typename scalar, typename Table>
+    template<typename Table>
     auto aged_stratum_density(const Table& table, const si::time<float> age_of_world)
     {
-        return AgedStratumDensity<scalar,Table>(table, age_of_world);
+        return AgedStratumDensity<Table>(table, age_of_world);
     }
 
 }
