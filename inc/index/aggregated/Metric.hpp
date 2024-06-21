@@ -12,8 +12,9 @@ namespace aggregated
 	/*
 	An `aggregated::Metric` aggregates elements that are subject to an `adapter::Metric`.
 	It intends to provide all well-known operations and relations that could be provided simply by knowing that a `*Metric` exists.
-	An `aggregated::Metric` is itself a `Metric`, but it is also in fact `Order`,
-	since distance can be checked against a threshold
+	It is important to note that the names of classes in the `aggregated::` namespace 
+	simply describe the structures they aggregate, and need not reflect the structures they are,
+	so it is left as an excercise for the reader to determine whether `aggregated::Metric` is itself a `Metric`
 	*/
 
 	template <typename ElementMetric>

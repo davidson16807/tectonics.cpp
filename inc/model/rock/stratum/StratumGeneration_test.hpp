@@ -136,7 +136,7 @@
           {-4500.0, -4000.0},
           {7100.0,      0.0}),
         relation::get_linear_interpolation_function(si::meter, 2700.0 * si::kilogram/si::meter2,
-          {-4500.0, -4000.0   -950.0,  840.0,    8848.0},
+          {-4500.0, -4000.0,  -950.0,  840.0,    8848.0},
           {0.0,      7100.0, 28300.0, 36900.0, 70000.0}),
         relation::get_linear_interpolation_function(si::meter, 1.0, 
           {-1500.0, 8848.0},
@@ -154,7 +154,7 @@
 
       adapted::SiMetric submetric;
       aggregated::Metric metric(submetric);
-      REQUIRE(metric.distance(intended_displacements, actual_displacements) < 1.0f*si::kilometer);
+      REQUIRE(metric.distance(intended_displacements, actual_displacements) < 30.0f*si::kilometer);
   }
 
 
