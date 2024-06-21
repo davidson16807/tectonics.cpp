@@ -11,10 +11,10 @@ namespace aggregated
 	template <typename ElementOrder>
 	class Order
 	{
-		const ElementOrder order;
+		const ElementOrder elements;
 	public:
-		Order(const ElementOrder& order):
-			order(order)
+		Order(const ElementOrder& elements):
+			elements(elements)
 		{}
 
 		template <typename T>
@@ -29,7 +29,7 @@ namespace aggregated
 			for (auto i = 0*a.size()+1; i < a.size(); ++i)
 			{
 				auto ai = (a[i]);
-				extremum = order.less_than(ai, extremum) && order.less_than(lo, ai) && order.less_than(ai, hi)? ai : extremum;
+				extremum = elements.less_than(ai, extremum) && elements.less_than(lo, ai) && elements.less_than(ai, hi)? ai : extremum;
 			}
 			return extremum;
 		}
@@ -46,7 +46,7 @@ namespace aggregated
 			for (auto i = 0*a.size()+1; i < a.size(); ++i)
 			{
 				auto ai = (a[i]);
-				extremum = order.greater_than(ai, extremum) && order.less_than(lo, ai) && order.less_than(ai, hi)? ai : extremum;
+				extremum = elements.greater_than(ai, extremum) && elements.less_than(lo, ai) && elements.less_than(ai, hi)? ai : extremum;
 			}
 			return extremum;
 		}
@@ -63,7 +63,7 @@ namespace aggregated
 			for (auto i = 0*a.size()+1; i < a.size(); ++i)
 			{
 				auto ai = (a[i]);
-				extremum = order.less_than(ai, extremum)? ai : extremum;
+				extremum = elements.less_than(ai, extremum)? ai : extremum;
 			}
 			return extremum;
 		}
@@ -80,7 +80,7 @@ namespace aggregated
 			for (auto i = 0*a.size()+1; i < a.size(); ++i)
 			{
 				auto ai = (a[i]);
-				extremum = order.greater_than(ai, extremum)? ai : extremum;
+				extremum = elements.greater_than(ai, extremum)? ai : extremum;
 			}
 			return extremum;
 		}
@@ -94,7 +94,7 @@ namespace aggregated
 			for (auto i = 0*a.size(); i < a.size(); ++i)
 			{
 				auto ai = (a[i]);
-				if (order.less_than(ai, extremum) && order.less_than(lo, ai) && order.less_than(ai, hi))
+				if (elements.less_than(ai, extremum) && elements.less_than(lo, ai) && elements.less_than(ai, hi))
 				{
 					extremum = ai;
 					extremum_id = i;
@@ -111,7 +111,7 @@ namespace aggregated
 			for (auto i = 0*a.size(); i < a.size(); ++i)
 			{
 				auto ai = (a[i]);
-				if (order.greater_than(ai, extremum) && order.less_than(lo, ai) && order.less_than(ai, hi))
+				if (elements.greater_than(ai, extremum) && elements.less_than(lo, ai) && elements.less_than(ai, hi))
 				{
 					extremum = ai;
 					extremum_id = i;
@@ -129,7 +129,7 @@ namespace aggregated
 			for (auto i = 0*a.size(); i < a.size(); ++i)
 			{
 				auto ai = (a[i]);
-				if (order.less_than(ai, extremum))
+				if (elements.less_than(ai, extremum))
 				{
 					extremum = ai;
 					extremum_id = i;
@@ -146,13 +146,97 @@ namespace aggregated
 			for (auto i = 0*a.size(); i < a.size(); ++i)
 			{
 				auto ai = (a[i]);
-				if (order.greater_than(ai, extremum))
+				if (elements.greater_than(ai, extremum))
 				{
 					extremum = ai;
 					extremum_id = i;
 				}
 			}
 			return extremum_id;
+		}
+
+		template <typename In1, typename In2>
+		bool equal(const In1& a, const In2& b) const
+		{
+			if (a.size() != b.size()){
+				return false;
+			}
+			auto size = a.size();
+			for (auto i = 0*size; i < size; ++i)
+			{
+				if (elements.equal(a[i], b[i])){
+					return false;
+				}
+			}
+			return true;
+		}
+
+		template <typename In1, typename In2>
+		bool not_equal(const In1& a, const In2& b) const
+		{
+			if (a.size() != b.size()){
+				return true;
+			}
+			auto size = a.size();
+			for (auto i = 0*size; i < size; ++i)
+			{
+				if (elements.not_equal(a[i], b[i])){
+					return true;
+				}
+			}
+			return false;
+		}
+
+		template <typename In1, typename In2>
+		bool greater_than(const In1& a, const In2& b) const
+		{
+			auto size = a.size();
+			for (auto i = 0*size; i < size; ++i)
+			{
+				if (elements.greater_than(a[i], b[i])){
+					return false;
+				}
+			}
+			return true;
+		}
+
+		template <typename In1, typename In2>
+		bool less_than(const In1& a, const In2& b) const
+		{
+			auto size = a.size();
+			for (auto i = 0*size; i < size; ++i)
+			{
+				if (elements.less_than(a[i], b[i])){
+					return false;
+				}
+			}
+			return true;
+		}
+
+		template <typename In1, typename In2>
+		bool greater_than_equal(const In1& a, const In2& b) const
+		{
+			auto size = a.size();
+			for (auto i = 0*size; i < size; ++i)
+			{
+				if (elements.greater_than_equal(a[i], b[i])){
+					return false;
+				}
+			}
+			return true;
+		}
+
+		template <typename In1, typename In2>
+		bool less_than_equal(const In1& a, const In2& b) const
+		{
+			auto size = a.size();
+			for (auto i = 0*size; i < size; ++i)
+			{
+				if (elements.less_than_equal(a[i], b[i])){
+					return false;
+				}
+			}
+			return true;
 		}
 
 	};

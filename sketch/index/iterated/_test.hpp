@@ -153,7 +153,7 @@ TEST_CASE( "arithmetic on each nonzero of a series is a commutative ring", "[ite
     std::vector<series::Uniform<double>> nonzero_uniforms {
         series::Uniform<double>(-2.0),
         series::Uniform<double>(1.0),
-        series::Uniform<double>(2.0),
+        series::Uniform<double>(2.0)
     };
 
     test::CommutativeRing ring(
