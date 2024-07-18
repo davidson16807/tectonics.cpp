@@ -22,6 +22,16 @@ namespace rock
                 out[i] = formation[i].area_density();
             }
         }
+
+        // `thickness` returns displacement using an isostatic model
+        void thickness(const FormationSummary& summary, std::vector<si::length<float>> out) const
+        {
+            for (auto i = 0*out.size(); i < out.size(); ++i)
+            {
+                out[i] = summary[i].thickness();
+            }
+        }
+
     };
 
 }

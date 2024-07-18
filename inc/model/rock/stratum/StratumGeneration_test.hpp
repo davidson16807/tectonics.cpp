@@ -21,20 +21,18 @@
 
 #include <index/series/Map.hpp>
 #include <index/series/Uniform.hpp>
-#include <index/glm/each.hpp>                       // get
-#include <index/each.hpp>                           // get
-#include <index/glm/known.hpp>                      // greaterThan
-#include <index/known.hpp>                          // greaterThan
-#include <index/whole.hpp>                          // max, mean
 #include <index/series/Range.hpp>                   // Range
 #include <index/series/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
 #include <index/series/noise/glm/UnitVectorNoise.hpp>
 #include <index/series/noise/GaussianNoise.hpp>
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
+#include <index/adapted/symbolic/SymbolicArithmetic.hpp>
 #include <index/adapted/si/SiMetric.hpp>
 #include <index/adapted/si/SiStrings.hpp>
 #include <index/aggregated/Metric.hpp>
 #include <index/aggregated/Order.hpp>
+#include <index/iterated/Arithmetic.hpp>
+#include <index/iterated/Nary.hpp>
 
 #include <field/noise/ValueNoise.hpp>               // ValueNoise
 #include <field/noise/PerlinNoise.hpp>              // PerlinNoise
@@ -50,7 +48,7 @@
 #include <grid/dymaxion/series.hpp>                 // dymaxion::VertexPositions
 #include <grid/dymaxion/noise/MosaicOps.hpp>        // dymaxion::MosaicOps
 
-#include <raster/spheroidal/string_cast.hpp>        // spheroidal::to_string
+#include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
 
 #include <model/rock/stratum/Stratum.hpp>  // Stratum
 #include <model/rock/formation/Formation.hpp>  // Formation
@@ -107,10 +105,13 @@
                   inspected::compose(hypsometry_cdfi, fbm_cdf)),
               fbm);
 
+      iterated::Unary elevations(elevation_for_position);
+      iterated::Arithmetic arithmetic(adapted::SymbolicArithmetic(length(0),length(1)));
+
       dymaxion::VertexPositions vertex_positions(grid);
       std::vector<length> intended_displacements(grid.vertex_count());
-      each::map(elevation_for_position, vertex_positions, intended_displacements);
-      each::sub(intended_displacements, series::uniform(length(min_earth_elevation)), intended_displacements);
+      elevations(vertex_positions, intended_displacements);
+      arithmetic.subtract(intended_displacements, series::uniform(length(min_earth_elevation)), intended_displacements);
 
       std::array<relation::PolynomialRailyardRelation<si::time<double>,si::density<double>,0,1>, 2> densities_for_age {
         relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2890.0, 3300.0}), // Carlson & Raskin 1984

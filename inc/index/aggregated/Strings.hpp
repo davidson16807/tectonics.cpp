@@ -13,14 +13,16 @@ namespace aggregated
 	{
 		const ElementStrings strings;
 		const OrderAggregation aggregation;
+		const int line_char_width;
 	public:
-		Strings(const ElementStrings& strings, const OrderAggregation& aggregation):
+		Strings(const ElementStrings& strings, const OrderAggregation& aggregation, const int line_char_width = 80):
 			strings(strings),
-			aggregation(aggregation)
+			aggregation(aggregation),
+			line_char_width(line_char_width)
 		{}
 
 		template <typename Series, typename T>
-		std::string to_string(const Series& a, const T lo, const T hi, const int line_char_width = 80) const
+		std::string format(const Series& a, const T lo, const T hi) const
 		{
 			std::string out("");
 			for (auto i = 0*a.size(); i < a.size(); ++i)
@@ -37,9 +39,9 @@ namespace aggregated
 		}
 
 		template <typename Series>
-		inline std::string to_string(const Series& a, const int line_char_width = 80) const
+		inline std::string format(const Series& a) const
 		{
-			return to_string(a, aggregation.min(a), aggregation.max(a), line_char_width);
+			return format(a, aggregation.min(a), aggregation.max(a));
 		}
 
 	};
