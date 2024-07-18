@@ -5,7 +5,7 @@
 
 // in-house libraries
 
-namespace ai
+namespace aggregated
 {
 
 	template <typename ElementOrderAggregation, typename ElementAggregateOrder>

@@ -30,8 +30,11 @@
 #include <index/series/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
 #include <index/series/noise/glm/UnitVectorNoise.hpp>
 #include <index/series/noise/GaussianNoise.hpp>
+#include <index/adapted/symbolic/SymbolicOrder.hpp>
 #include <index/adapted/si/SiMetric.hpp>
+#include <index/adapted/si/SiStrings.hpp>
 #include <index/aggregated/Metric.hpp>
+#include <index/aggregated/Order.hpp>
 
 #include <field/noise/ValueNoise.hpp>               // ValueNoise
 #include <field/noise/PerlinNoise.hpp>              // PerlinNoise
@@ -120,7 +123,7 @@
       auto stratum_summarization = rock::stratum_summarization<2>(stratum_density, plate_id);
       auto formation_summarization = rock::formation_summarization<2>(stratum_summarization, grid);
 
-      rock::StratumSummaryTools stratum_tools(density(3075.0*si::kilogram/si::meter3));
+      rock::StratumSummaryTools stratum_tools(density(10000.0*si::kilogram/si::meter3));
       rock::FormationSummaryTools formation_tools(stratum_tools);
 
       rock::StratumGeneration strata(
@@ -151,10 +154,17 @@
       formation_summarization(strata, summary);
       formation_tools.isostatic_displacement(summary, actual_displacements);
 
-
+      adapted::SiStrings substrings;
       adapted::SiMetric submetric;
+      adapted::SymbolicOrder suborder;
       aggregated::Metric metric(submetric);
-      REQUIRE(metric.distance(intended_displacements, actual_displacements) < 30.0f*si::kilometer);
+      aggregated::Order ordered(suborder);
+
+      auto strings = spheroidal::Strings(substrings, ordered);
+      std::cout << strings.format(grid, intended_displacements) << std::endl << std::endl;
+      std::cout << strings.format(grid, actual_displacements) << std::endl << std::endl;
+
+      REQUIRE(metric.distance(intended_displacements, actual_displacements) < 10.0f*si::kilometer);
   }
 
 
