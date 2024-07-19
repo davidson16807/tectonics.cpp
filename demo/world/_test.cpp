@@ -32,6 +32,12 @@
 #include <index/series/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
 #include <index/series/noise/glm/UnitVectorNoise.hpp>
 #include <index/series/noise/GaussianNoise.hpp>
+#include <index/adapted/symbolic/SymbolicArithmetic.hpp>
+#include <index/adapted/symbolic/SymbolicOrder.hpp>
+#include <index/adapted/si/SiStrings.hpp>
+#include <index/aggregated/Order.hpp>
+#include <index/iterated/Nary.hpp>
+#include <index/iterated/Arithmetic.hpp>
 
 #include <field/noise/ValueNoise.hpp>               // ValueNoise
 #include <field/noise/PerlinNoise.hpp>              // PerlinNoise
@@ -40,6 +46,8 @@
 #include <field/VectorZip.hpp>                      // VectorZip
 #include <field/noise/MosaicOps.hpp>                // field::VectorMosaicOps
 #include <field/noise/FractalBrownianNoise.hpp>     // dymaxion::FractalBrownianNoise
+
+#include <relation/ScalarRelation.hpp>
 
 #include <buffer/PyramidBuffers.hpp>                // buffer::PyramidBuffers
 
@@ -55,8 +63,9 @@
 #include <raster/unlayered/ImageSegmentation.hpp>   // unlayered::ImageSegmentation
 #include <raster/unlayered/VectorCalculusByFundamentalTheorem.hpp> // unlayered::VectorCalculusByFundamentalTheorem
 #include <raster/spheroidal/string_cast.hpp>        // spheroidal::to_string
+#include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
 
-#include <model/rock/stratum/StratumGenerator.hpp>  // StratumGenerator
+// #include <model/rock/stratum/StratumGenerator.hpp>  // StratumGenerator
 
 #include <update/OrbitalControlState.hpp>           // update::OrbitalControlState
 #include <update/OrbitalControlUpdater.hpp>         // update::OrbitalControlUpdater
@@ -106,8 +115,8 @@ int main() {
   glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
   /* OUR STUFF GOES HERE NEXT */
-  float radius(2.0f);
-  int vertices_per_square_side(64);
+  float radius(3.0f);
+  int vertices_per_square_side(32);
   dymaxion::Grid grid(radius, vertices_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::VertexNormals vertex_normals(grid);
@@ -210,40 +219,63 @@ int main() {
           series::gaussian(series::unit_interval_noise(12.0f, 1.1e4f)), 
           cartesian::UnboundedIndexing<int>()),
         field::vector_mosaic_ops<3,int,float>()
-    ), 10, 0.5f);
+    ), 10, 0.5f, 2.0f/radius);
   auto fbm_cdf = analytic::Error(0.0f, 1.0f, (1.0f/(std::sqrt(2.0f*3.1415926f))));
 
-  auto elevation_in_meters = 
-    series::map(
+  auto elevation_meters_for_position = 
       field::compose(
-        inspected::compose(hypsometry_cdfi, fbm_cdf), fbm), 
-      dymaxion::VertexPositions(grid)
-    );
+          inspected::compose(hypsometry_cdfi, fbm_cdf),
+          fbm);
+
+  using length = si::length<float>;
+  auto min_earth_elevation = -10924.0 * si::meter;
+
+  auto elevation_for_position = 
+      field::compose(
+          relation::ScalarRelation(1.0f, length(si::meter), 
+              inspected::compose(hypsometry_cdfi, fbm_cdf)),
+          fbm);
+
+  auto elevation_in_meters = series::map(elevation_meters_for_position, vertex_positions);
+
+  iterated::Unary elevations_for_positions(elevation_for_position);
+  std::vector<length> elevation(grid.vertex_count());
+  elevations_for_positions(vertex_positions, elevation);
+
+  iterated::Arithmetic arithmetic(adapted::SymbolicArithmetic(length(0),length(1)));
+  arithmetic.subtract(elevation, series::uniform(length(min_earth_elevation)), elevation);
+
+  adapted::SymbolicOrder suborder;
+  adapted::SiStrings substrings;
+  aggregated::Order ordered(suborder);
+  auto strings = spheroidal::Strings(substrings, ordered);
+  std::cout << strings.format(grid, elevation) << std::endl << std::endl;
+
 
   auto vertex_scalars1 = elevation_in_meters;
 
-  auto stratum = StratumGenerator(
-    grid,
-    elevation_in_meters,
-    // displacements are from Charette & Smith 2010 (shallow ocean), enclopedia britannica (shelf bottom"continental slope"), 
-    // wikipedia (shelf top), and Sverdrup & Fleming 1942 (land)
-    // Funck et al. (2003) suggests a sudden transition from felsic to mafic occuring at ~4km depth or 8km thickness
-    get_linear_spline_relation(1.0, si::megayear, 
-      {-11000.0, -5000.0, -4000.0, -2000.0, -1500.0, -900.0,  840.0},
-      {250.0,    100.0,   0.0,     0.0,     100.0,   1000.0, 1000.0}),
-    get_linear_spline_relation(1.0, 2890.0 * si::kilogram/si::meter2,
-      {-4500.0,       -4000.0},
-      {7100.0,            0.0}),
-    get_linear_spline_relation(1.0, 2700.0 * si::kilogram/si::meter2,
-      {-4500.0, -4000.0   -950.0,  840.0,    8848.0},
-      {0.0,      7100.0, 28300.0, 36900.0, 70000.0}),
-    get_linear_spline_relation(1.0, 1.0, 
-      {-1500.0, 8848.0},
-      {0.25,      0.25}), // from Gillis (2013)
-    get_linear_spline_relation(1.0, 1.0, 
-      {-1500.0, 8848.0},
-      {0.15,      0.15}), // based on estimate from Wikipedia
-  );
+  // auto stratum = StratumGenerator(
+  //   grid,
+  //   elevation_in_meters,
+  //   // displacements are from Charette & Smith 2010 (shallow ocean), enclopedia britannica (shelf bottom"continental slope"), 
+  //   // wikipedia (shelf top), and Sverdrup & Fleming 1942 (land)
+  //   // Funck et al. (2003) suggests a sudden transition from felsic to mafic occuring at ~4km depth or 8km thickness
+  //   get_linear_spline_relation(1.0, si::megayear, 
+  //     {-11000.0, -5000.0, -4000.0, -2000.0, -1500.0, -900.0,  840.0},
+  //     {250.0,    100.0,   0.0,     0.0,     100.0,   1000.0, 1000.0}),
+  //   get_linear_spline_relation(1.0, 2890.0 * si::kilogram/si::meter2,
+  //     {-4500.0,       -4000.0},
+  //     {7100.0,            0.0}),
+  //   get_linear_spline_relation(1.0, 2700.0 * si::kilogram/si::meter2,
+  //     {-4500.0, -4000.0   -950.0,  840.0,    8848.0},
+  //     {0.0,      7100.0, 28300.0, 36900.0, 70000.0}),
+  //   get_linear_spline_relation(1.0, 1.0, 
+  //     {-1500.0, 8848.0},
+  //     {0.25,      0.25}), // from Gillis (2013)
+  //   get_linear_spline_relation(1.0, 1.0, 
+  //     {-1500.0, 8848.0},
+  //     {0.15,      0.15}), // based on estimate from Wikipedia
+  // );
 
   // auto vertex_scalars2 = series::map(
   //   field::compose(

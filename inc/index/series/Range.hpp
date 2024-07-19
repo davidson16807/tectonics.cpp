@@ -29,12 +29,12 @@ namespace series
 		constexpr explicit Range(const T end_value): 
 			start_value(0),
 			step_size(end_value>0? 1:-1),
-			reported_size(std::abs(end_value))
+			reported_size((end_value) > T(0)? (end_value) : -(end_value))
 		{}
 		constexpr explicit Range(const T start_value, const T end_value): 
 			start_value(start_value),
 			step_size(end_value>start_value? 1:-1),
-			reported_size(std::abs(end_value-start_value))
+			reported_size((end_value-start_value) > T(0)? (end_value-start_value) : -(end_value-start_value))
 		{}
 
 		constexpr inline size_type size() const { return reported_size; }

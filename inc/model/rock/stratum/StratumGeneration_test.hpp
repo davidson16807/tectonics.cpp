@@ -29,6 +29,7 @@
 #include <index/adapted/symbolic/SymbolicArithmetic.hpp>
 #include <index/adapted/si/SiMetric.hpp>
 #include <index/adapted/si/SiStrings.hpp>
+#include <index/adapted/scalar/ScalarStrings.hpp>
 #include <index/aggregated/Metric.hpp>
 #include <index/aggregated/Order.hpp>
 #include <index/iterated/Arithmetic.hpp>
@@ -64,18 +65,38 @@
 
   TEST_CASE( "StratumGeneration must be able to achieve desired displacements as indicated by elevation_for_position", "[rock]" ) {
 
+      using mass = si::mass<float>;
       using length = si::length<float>;
       using density = si::density<float>;
 
-      auto radius = 6.371e6 * si::meter;
+      length meter(si::meter);
+
+      length radius(6.371e6 * si::meter);
       int vertices_per_square_side(16);
-      dymaxion::Grid grid(radius/si::meter, vertices_per_square_side);
+      dymaxion::Grid grid(radius/meter, vertices_per_square_side);
+      dymaxion::VertexPositions vertex_positions(grid);
+      dymaxion::VertexNormals vertex_normals(grid);
 
       // auto max_earth_elevation =   8848.0 * si::meter;
       auto min_earth_elevation = -10924.0 * si::meter;
 
-      auto min_elevation(-16000.0f * si::meter);
-      auto max_elevation( 16000.0f * si::meter);
+      // auto min_elevation(-16000.0f * si::meter);
+      // auto max_elevation( 16000.0f * si::meter);
+      // analytic::Sum<float,analytic::Gaussian<float>> hypsometry_pdf_unscaled {
+      //   analytic::Gaussian(-4019.0f, 1113.0f, 0.232f),
+      //   analytic::Gaussian(  797.0f, 1169.0f, 0.209f)
+      // };
+      // auto hypsometry_cdf_unscaled = analytic::integral(hypsometry_pdf_unscaled);
+      // // auto hypsometry_pdf_ddx = analytic::derivative(hypsometry_pdf_unscaled);
+      // auto hypsometry_cdf_unscaled_range = 
+      //   hypsometry_cdf_unscaled(max_elevation/si::meter) - 
+      //   hypsometry_cdf_unscaled(min_elevation/si::meter);
+      // auto hypsometry_cdf = hypsometry_cdf_unscaled / hypsometry_cdf_unscaled_range;
+      // auto hypsometry_pdf = hypsometry_pdf_unscaled / hypsometry_cdf_unscaled_range;
+      // auto hypsometry_cdfi = inspected::inverse_by_newtons_method(hypsometry_cdf, hypsometry_pdf, 0.5f, 30);
+
+      float min_elevation(-16000.0f);
+      float max_elevation( 16000.0f);
 
       analytic::Sum<float,analytic::Gaussian<float>> hypsometry_pdf_unscaled {
         analytic::Gaussian(-4019.0f, 1113.0f, 0.232f),
@@ -83,20 +104,18 @@
       };
       auto hypsometry_cdf_unscaled = analytic::integral(hypsometry_pdf_unscaled);
       // auto hypsometry_pdf_ddx = analytic::derivative(hypsometry_pdf_unscaled);
-      auto hypsometry_cdf_unscaled_range = 
-        hypsometry_cdf_unscaled(max_elevation/si::meter) - 
-        hypsometry_cdf_unscaled(min_elevation/si::meter);
+      auto hypsometry_cdf_unscaled_range = hypsometry_cdf_unscaled(max_elevation) - hypsometry_cdf_unscaled(min_elevation);
       auto hypsometry_cdf = hypsometry_cdf_unscaled / hypsometry_cdf_unscaled_range;
       auto hypsometry_pdf = hypsometry_pdf_unscaled / hypsometry_cdf_unscaled_range;
       auto hypsometry_cdfi = inspected::inverse_by_newtons_method(hypsometry_cdf, hypsometry_pdf, 0.5f, 30);
 
-      auto fbm = field::fractal_brownian_noise(
+      auto fbm = field::fractal_brownian_noise<int,float>(
         field::value_noise<3,float>(
             field::mosaic_noise(
               series::gaussian(series::unit_interval_noise(12.0f, 1.1e4f)), 
               cartesian::UnboundedIndexing<int>()),
             field::vector_mosaic_ops<3,int,float>()
-        ), 10, 0.5);
+        ), 10, 0.5f, 2.0f*meter/radius);
       auto fbm_cdf = analytic::Error(0.0f, 1.0f, (1.0f/(std::sqrt(2.0f*3.1415926f))));
 
       auto elevation_for_position = 
@@ -105,13 +124,18 @@
                   inspected::compose(hypsometry_cdfi, fbm_cdf)),
               fbm);
 
-      iterated::Unary elevations(elevation_for_position);
-      iterated::Arithmetic arithmetic(adapted::SymbolicArithmetic(length(0),length(1)));
-
-      dymaxion::VertexPositions vertex_positions(grid);
+      iterated::Unary elevations_for_positions(elevation_for_position);
       std::vector<length> intended_displacements(grid.vertex_count());
-      elevations(vertex_positions, intended_displacements);
+      elevations_for_positions(vertex_positions, intended_displacements);
+
+      iterated::Arithmetic arithmetic(adapted::SymbolicArithmetic(length(0),length(1)));
       arithmetic.subtract(intended_displacements, series::uniform(length(min_earth_elevation)), intended_displacements);
+
+      adapted::SymbolicOrder suborder;
+      adapted::SiStrings substrings;
+      aggregated::Order ordered(suborder);
+      auto strings = spheroidal::Strings(substrings, ordered);
+      std::cout << strings.format(grid, intended_displacements) << std::endl << std::endl;
 
       std::array<relation::PolynomialRailyardRelation<si::time<double>,si::density<double>,0,1>, 2> densities_for_age {
         relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2890.0, 3300.0}), // Carlson & Raskin 1984
@@ -152,19 +176,19 @@
 
       rock::FormationSummary summary(grid.vertex_count());
       std::vector<length> actual_displacements(grid.vertex_count());
-      formation_summarization(strata, summary);
-      formation_tools.isostatic_displacement(summary, actual_displacements);
+      std::vector<mass> masses(grid.vertex_count());
+      // formation_summarization(strata, summary);
+      // formation_tools.isostatic_displacement(summary, actual_displacements);
+      for (std::size_t i = 0; i < strata.size(); ++i)
+      {
+        masses[i] = strata[i].mass();
+      }
 
-      adapted::SiStrings substrings;
-      adapted::SiMetric submetric;
-      adapted::SymbolicOrder suborder;
-      aggregated::Metric metric(submetric);
-      aggregated::Order ordered(suborder);
-
-      auto strings = spheroidal::Strings(substrings, ordered);
       std::cout << strings.format(grid, intended_displacements) << std::endl << std::endl;
-      std::cout << strings.format(grid, actual_displacements) << std::endl << std::endl;
+      std::cout << strings.format(grid, masses) << std::endl << std::endl;
 
+      adapted::SiMetric submetric;
+      aggregated::Metric metric(submetric);
       REQUIRE(metric.distance(intended_displacements, actual_displacements) < 10.0f*si::kilometer);
   }
 
