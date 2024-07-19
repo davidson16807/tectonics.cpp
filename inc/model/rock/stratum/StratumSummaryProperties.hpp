@@ -20,5 +20,25 @@ namespace rock{
         }
     };
 
+    struct StratumSummaryThickness
+    {
+        StratumSummaryThickness()
+        {}
+        si::length<float> operator()(const StratumSummary& summary) const
+        {
+            return summary.thickness();
+        }
+    };
+
+    struct StratumSummaryAreaDensity
+    {
+        StratumSummaryAreaDensity()
+        {}
+        si::length<float> operator()(const StratumSummary& summary) const
+        {
+            return summary.thickness();
+        }
+    };
+
 }
 

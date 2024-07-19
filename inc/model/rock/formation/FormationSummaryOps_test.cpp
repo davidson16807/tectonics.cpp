@@ -9,10 +9,10 @@
 #include <index/series/Uniform.hpp>
 
 #include <model/rock/stratum/StratumSummary.hpp>
+#include <model/rock/stratum/StratumSummaryProperties.hpp>
 
 #include "FormationSummary.hpp"
 #include "FormationSummaryOps.hpp"
-#include "FormationSummaryProperties.hpp"
 #include "_test_tools.hpp"
 
 #include <test/predicate.hpp>
@@ -77,8 +77,9 @@ TEST_CASE( "FormationSummary combine() mass conservation", "[rock]" ) {
     using area_densities = std::vector<area_density>;
 
     rock::FormationSummaryOps ops;
-    rock::FormationSummaryProperties properties;
     rock::FormationSummaryAdapter testing;
+    rock::StratumSummaryAreaDensity stratum_area_density;
+    iterated::Unary formation_area_density(stratum_area_density);
 
     float oo = std::numeric_limits<float>::max();
 
@@ -102,9 +103,9 @@ TEST_CASE( "FormationSummary combine() mass conservation", "[rock]" ) {
     floats distance (5, 0.0f);
 
     ops.combine(a, b, ab);
-    properties.area_density(ab, abrho);
-    properties.area_density(a, arho);
-    properties.area_density(b, brho);
+    formation_area_density(ab, abrho);
+    formation_area_density(a, arho);
+    formation_area_density(b, brho);
     each::add(arho, brho, arho_brho);
     each::sub(arho_brho, abrho, offset);
     each::div(offset, series::uniform(area_density(1.0f)), distance);
