@@ -32,15 +32,6 @@ namespace rock
                 out[i] = strata.combine(a[i],b[i]);
             }
         }
-
-        // `isostatic_displacement` returns displacement using an isostatic model
-        void isostatic_displacement(const FormationSummary& summary, lengths& out) const
-        {
-            for (auto i = 0*out.size(); i < out.size(); ++i)
-            {
-                out[i] = strata.isostatic_displacement(summary[i]);
-            }
-        }
     };
 
 }

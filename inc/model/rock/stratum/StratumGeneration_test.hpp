@@ -54,6 +54,7 @@
 #include <model/rock/stratum/Stratum.hpp>  // Stratum
 #include <model/rock/formation/Formation.hpp>  // Formation
 #include <model/rock/stratum/StratumSummary.hpp>  // StratumSummary
+#include <model/rock/stratum/StratumSummaryProperties.hpp>  // StratumSummaryIsostaticDisplacement
 #include <model/rock/formation/FormationSummary.hpp>  // FormationSummary
 
 #include <model/rock/stratum/StratumProperties.hpp>  // StratumProperties
@@ -78,7 +79,7 @@
       dymaxion::VertexNormals vertex_normals(grid);
 
       // auto max_earth_elevation =   8848.0 * si::meter;
-      auto min_earth_elevation = -10924.0 * si::meter;
+      // auto min_earth_elevation = -10924.0 * si::meter;
 
       // auto min_elevation(-16000.0f * si::meter);
       // auto max_elevation( 16000.0f * si::meter);
@@ -128,10 +129,13 @@
       std::vector<length> intended_displacements(grid.vertex_count());
       elevations_for_positions(vertex_positions, intended_displacements);
 
-      iterated::Arithmetic arithmetic(adapted::SymbolicArithmetic(length(0),length(1)));
-      arithmetic.subtract(intended_displacements, series::uniform(length(min_earth_elevation)), intended_displacements);
-
       adapted::SymbolicOrder suborder;
+      aggregated::Order order_aggregation(suborder);
+      length min_observed_elevation(order_aggregation.min(intended_displacements));
+
+      iterated::Arithmetic arithmetic(adapted::SymbolicArithmetic(length(0),length(1)));
+      arithmetic.subtract(intended_displacements, series::uniform(min_observed_elevation), intended_displacements);
+
       adapted::SiStrings substrings;
       aggregated::Order ordered(suborder);
       auto strings = spheroidal::Strings(substrings, ordered);
@@ -147,8 +151,8 @@
       auto stratum_summarization = rock::stratum_summarization<2>(stratum_density, plate_id);
       auto formation_summarization = rock::formation_summarization<2>(stratum_summarization, grid);
 
-      rock::StratumSummaryTools stratum_tools(density(3000.0*si::kilogram/si::meter3));
-      rock::FormationSummaryTools formation_tools(stratum_tools);
+      rock::StratumSummaryIsostaticDisplacement displacement_for_stratum_summary(density(3000.0*si::kilogram/si::meter3));
+      iterated::Unary displacements_for_formation_summary(displacement_for_stratum_summary);
 
       rock::StratumGeneration strata(
         grid,
@@ -177,7 +181,7 @@
       std::vector<length> actual_displacements(grid.vertex_count());
       std::vector<length> probe(grid.vertex_count());
       formation_summarization(strata, summary);
-      formation_tools.isostatic_displacement(summary, actual_displacements);
+      displacements_for_formation_summary(summary, actual_displacements);
       // for (std::size_t i = 0; i < strata.size(); ++i)
       // {
       //   probe[i] = stratum_tools.isostatic_displacement(summary[i]);
@@ -189,7 +193,7 @@
 
       adapted::SiMetric submetric;
       aggregated::Metric metric(submetric);
-      REQUIRE(metric.distance(intended_displacements, actual_displacements) < 10.0f*si::kilometer);
+      REQUIRE(metric.distance(intended_displacements, actual_displacements) < 4.0f*si::kilometer);
   }
 
 

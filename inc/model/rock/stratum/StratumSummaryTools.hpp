@@ -24,13 +24,6 @@ namespace rock{
                 thickness
             );
         }
-
-        // `isostatic_displacement` returns displacement using an isostatic model
-        si::length<float> isostatic_displacement(const StratumSummary& summary) const
-        {
-            return summary.thickness() * (1.0f - summary.density()/mantle_density);
-        }
-
     };
 
 }
