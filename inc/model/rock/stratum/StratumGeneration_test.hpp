@@ -65,7 +65,7 @@
 
   TEST_CASE( "StratumGeneration must be able to achieve desired displacements as indicated by elevation_for_position", "[rock]" ) {
 
-      using mass = si::mass<float>;
+      // using mass = si::mass<float>;
       using length = si::length<float>;
       using density = si::density<float>;
 
@@ -135,7 +135,6 @@
       adapted::SiStrings substrings;
       aggregated::Order ordered(suborder);
       auto strings = spheroidal::Strings(substrings, ordered);
-      std::cout << strings.format(grid, intended_displacements) << std::endl << std::endl;
 
       std::array<relation::PolynomialRailyardRelation<si::time<double>,si::density<double>,0,1>, 2> densities_for_age {
         relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2890.0, 3300.0}), // Carlson & Raskin 1984
@@ -148,7 +147,7 @@
       auto stratum_summarization = rock::stratum_summarization<2>(stratum_density, plate_id);
       auto formation_summarization = rock::formation_summarization<2>(stratum_summarization, grid);
 
-      rock::StratumSummaryTools stratum_tools(density(10000.0*si::kilogram/si::meter3));
+      rock::StratumSummaryTools stratum_tools(density(3000.0*si::kilogram/si::meter3));
       rock::FormationSummaryTools formation_tools(stratum_tools);
 
       rock::StratumGeneration strata(
@@ -176,16 +175,17 @@
 
       rock::FormationSummary summary(grid.vertex_count());
       std::vector<length> actual_displacements(grid.vertex_count());
-      std::vector<mass> masses(grid.vertex_count());
-      // formation_summarization(strata, summary);
-      // formation_tools.isostatic_displacement(summary, actual_displacements);
-      for (std::size_t i = 0; i < strata.size(); ++i)
-      {
-        masses[i] = strata[i].mass();
-      }
+      std::vector<length> probe(grid.vertex_count());
+      formation_summarization(strata, summary);
+      formation_tools.isostatic_displacement(summary, actual_displacements);
+      // for (std::size_t i = 0; i < strata.size(); ++i)
+      // {
+      //   probe[i] = stratum_tools.isostatic_displacement(summary[i]);
+      // }
 
       std::cout << strings.format(grid, intended_displacements) << std::endl << std::endl;
-      std::cout << strings.format(grid, masses) << std::endl << std::endl;
+      std::cout << strings.format(grid, actual_displacements) << std::endl << std::endl;
+      // std::cout << strings.format(grid, probe) << std::endl << std::endl;
 
       adapted::SiMetric submetric;
       aggregated::Metric metric(submetric);

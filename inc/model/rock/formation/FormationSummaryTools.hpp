@@ -16,6 +16,10 @@ namespace rock
 
     class FormationSummaryTools
     {
+        using length = si::length<float>;
+
+        using lengths = std::vector<length>;
+
         const StratumSummaryTools strata;
     public:
         FormationSummaryTools(const StratumSummaryTools& strata):
@@ -30,7 +34,7 @@ namespace rock
         }
 
         // `isostatic_displacement` returns displacement using an isostatic model
-        void isostatic_displacement(const FormationSummary& summary, std::vector<si::length<float>> out) const
+        void isostatic_displacement(const FormationSummary& summary, lengths& out) const
         {
             for (auto i = 0*out.size(); i < out.size(); ++i)
             {
