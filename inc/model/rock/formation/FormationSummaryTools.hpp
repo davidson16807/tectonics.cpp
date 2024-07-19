@@ -7,22 +7,22 @@
 // 3rd party libraries
 
 // in-house libraries
-#include <model/rock/stratum/StratumSummaryTools.hpp>
+#include <model/rock/stratum/StratumSummaryOps.hpp>
 
 #include "FormationSummary.hpp"
 
 namespace rock
 {
 
-    class FormationSummaryTools
+    class FormationSummaryOps
     {
         using length = si::length<float>;
 
         using lengths = std::vector<length>;
 
-        const StratumSummaryTools strata;
+        const StratumSummaryOps strata;
     public:
-        FormationSummaryTools(const StratumSummaryTools& strata):
+        FormationSummaryOps(const StratumSummaryOps& strata):
             strata(strata)
         {}
         void combine (const FormationSummary& a, const FormationSummary& b, FormationSummary& out) const

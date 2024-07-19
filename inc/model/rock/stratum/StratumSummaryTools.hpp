@@ -5,12 +5,12 @@
 
 namespace rock{
 
-    class StratumSummaryTools
+    class StratumSummaryOps
     {
         const si::density<float> mantle_density;
 
     public:
-        StratumSummaryTools(const si::density<float> mantle_density):
+        StratumSummaryOps(const si::density<float> mantle_density):
             mantle_density(mantle_density)
         {}
         StratumSummary combine (const StratumSummary& a, const StratumSummary& b) const

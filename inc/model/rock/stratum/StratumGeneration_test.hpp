@@ -60,9 +60,7 @@
 #include <model/rock/stratum/StratumProperties.hpp>  // StratumProperties
 #include <model/rock/stratum/StratumGeneration.hpp>  // StratumGeneration
 #include <model/rock/stratum/StratumSummarization.hpp>  // StratumSummarization
-#include <model/rock/stratum/StratumSummaryTools.hpp>  // StratumSummaryTools
 #include <model/rock/formation/FormationSummarization.hpp>  // FormationSummarization
-#include <model/rock/formation/FormationSummaryTools.hpp>  // FormationSummaryTools
 
   TEST_CASE( "StratumGeneration must be able to achieve desired displacements as indicated by elevation_for_position", "[rock]" ) {
 
