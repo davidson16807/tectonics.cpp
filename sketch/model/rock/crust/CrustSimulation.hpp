@@ -2,7 +2,23 @@
 
 #include <cmath>
 
+#include <vector>
+
 #include <glm/vec3.hpp>               // *vec3
+
+#include <unit/si.hpp>
+
+#include <model/rock/formation/Formation.hpp>
+#include <model/compound/phase/boundary/LinearPhaseBoundary.hpp>
+
+#include "CrustSummary.hpp"
+#include "Crust.hpp"
+
+/*
+needs:
+FormationSummarization
+FormationSummaryOps
+*/
 
 namespace rock {
 

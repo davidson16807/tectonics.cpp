@@ -7,23 +7,23 @@ namespace rock{
     class CrustSummarization
     {
         const FormationSummarization summarize;
-        const FormationSummaryOps ops;
+        const CrustSummaryOps ops;
     public:
-        CrustSummarization(const FormationSummarization& summarize, const FormationSummaryOps ops):
+        CrustSummarization(const FormationSummarization& summarize, const CrustSummaryOps& ops):
             summarize(summarize),
             ops(ops)
         {}
         void operator() (
             const int plate_id, 
-            const Crust& crust, FormationSummary& out, 
+            const Crust& crust, 
+            CrustSummary& out, 
             FormationSummary& scratch
         ) const {
-
-            summarize(plate_id, crust[0], out);
-            for (int i = 1; i < crust.size(); ++i)
+            ops.reset(out);
+            for (int i = 0; i < crust.size(); ++i)
             {
-                summarize(plate_id, crust[i], scratch); 
-                ops.combine(scratch, out, out);
+                summarize(plate_id, crust[i], scratch);
+                ops.absorb(out, scratch, out);
             }
         }
     };

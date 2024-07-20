@@ -16,27 +16,11 @@ namespace rock {
 	template<int M>
     class FormationSimulation
     {
-    	using mass      = si::mass<float>;
-    	using length    = si::length<float>;
-    	using density   = si::density<float>;
-    	using speed     = si::speed<float>;
-    	using force     = si::force<float>;
     	using pressure  = si::pressure<float>;
     	using acceleration = si::acceleration<float>;
-    	using area_density = si::area_density<float>;
 
-    	using bools     = std::vector<bool>;
-    	using vec3s     = std::vector<glm::vec3>;
-    	using uint8s    = std::vector<std::uint8_t>;
     	using points    = std::vector<compound::point<float>>;
-
-    	using masses    = std::vector<mass>;
-    	using lengths   = std::vector<length>;
-    	using densities = std::vector<density>;
-    	using speeds    = std::vector<speeds>;
-    	using forces    = std::vector<force>;
     	using pressures = std::vector<pressure>;
-    	using area_densities = std::vector<area_density>;
 
         const acceleration gravity;
 
@@ -57,7 +41,7 @@ namespace rock {
     	) const {
     		for (int i = 0; i < formation.size(); ++i)
     		{
-    			out[i] = gravity * formation.area_density();
+    			out[i] = gravity * formation[i].area_density();
     		}
     	}
 

@@ -31,10 +31,10 @@ namespace rock{
 
         void summarize(
             const std::vector<Crust<M>>& plates,
-            std::vector<FormationSummary>& out,
-            FormationSummary& scratch_formation
+            std::vector<CrustSummary>& out,
+            CrustSummary& scratch_formation
         ) const {
-            *FormationSummary scratch_formation = global_formation;
+            *CrustSummary scratch_formation = global_formation;
             for (std::size_t i = 0; i < plates.size(); ++i)
             {
                 summarize(i, plates[i], out[i], scratch_formation);
@@ -42,8 +42,8 @@ namespace rock{
         }
 
         void flatten (
-            const std::vector<FormationSummary>& formations,
-            FormationSummary& out
+            const std::vector<CrustSummary>& formations,
+            CrustSummary& out
         ) const {
             std::fill(out.begin(), out.end(), StratumSummary());
             for (std::size_t i = 0; i < formations.size(); ++i)
@@ -63,7 +63,7 @@ namespace rock{
 
     basic use case:
 
-    summarization .summarize (plates,    locals, scratch)   // summarize each plate into a (e.g.) FormationSummary raster
+    summarization .summarize (plates,    locals, scratch)   // summarize each plate into a (e.g.) CrustSummary raster
     frames        .globalize (rotations, locals, globals)   // resample plate-specific rasters onto a global grid
     summarization .flatten   (globals,   master)            // condense globalized rasters into e.g. LithosphereSummary
     frames        .localize  (rotations, master, summaries) // resample global raster to a plate-specific for each plate
