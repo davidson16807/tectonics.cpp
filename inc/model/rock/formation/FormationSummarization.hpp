@@ -25,11 +25,11 @@ namespace rock
             grid(grid)
         {}
         template<typename Formation>
-        void operator() (const Formation& formation, FormationSummary& out) const
+        void operator() (const int plate_id, const Formation& formation, FormationSummary& out) const
         {
             for (std::size_t i = 0; i < formation.size(); ++i)
             {
-                out[i] = summarization(grid.vertex_dual_area(i)*area(si::meter2), formation[i]);
+                out[i] = summarization(plate_id, grid.vertex_dual_area(i)*area(si::meter2), formation[i]);
             }
         }
     };

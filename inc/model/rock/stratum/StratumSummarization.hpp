@@ -17,13 +17,11 @@ namespace rock
     class StratumSummarization
     {
         const StratumDensity   density_for_stratum;
-        const int plate_id;
     public:
-        StratumSummarization(const StratumDensity& density_for_stratum, const int plate_id):
-            density_for_stratum(density_for_stratum),
-            plate_id(plate_id)
+        StratumSummarization(const StratumDensity& density_for_stratum):
+            density_for_stratum(density_for_stratum)
         {}
-        StratumSummary operator() (const si::area<float> area, const StratumStore<M>& stratum) const
+        StratumSummary operator() (const int plate_id, const si::area<float> area, const StratumStore<M>& stratum) const
         {
             auto density = density_for_stratum(stratum);
             return StratumSummary(std::bitset<8>(1<<plate_id), density, stratum.mass()/density/area);
