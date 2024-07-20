@@ -30,6 +30,7 @@ namespace test {
     only consider those tests that make use of all their arguments.
     */
 
+    // cancellative ("inverse")
     template<typename F>
     struct QuasiGroup{
         const std::string f_name;    const F f; 
@@ -80,6 +81,7 @@ namespace test {
 
     };
 
+    // associativity
     template<typename F>
     struct SemiGroup{
         const std::string f_name; const F f; 
@@ -130,6 +132,7 @@ namespace test {
 
     };
 
+    // associativity, identity
     template<typename E, typename F>
     struct Monoid{
         const std::string e_name; const E e; 
@@ -158,13 +161,8 @@ namespace test {
             return 
 
             determinism  (adapter, f_name, f, as, bs)     &&
-            determinism  (adapter, f_name, f, bs, as)     &&
             associativity(adapter, f_name, f, as, as, bs) &&
-            associativity(adapter, f_name, f, as, bs, as) &&
             associativity(adapter, f_name, f, as, bs, bs) &&
-            associativity(adapter, f_name, f, bs, as, as) &&
-            associativity(adapter, f_name, f, bs, as, bs) &&
-            associativity(adapter, f_name, f, bs, bs, as) &&
 
             true; // added so lines above can be easily swapped
         }
@@ -173,17 +171,13 @@ namespace test {
             return 
 
             associativity(adapter, f_name, f, as, bs, cs) &&
-            associativity(adapter, f_name, f, as, cs, bs) &&
-            associativity(adapter, f_name, f, bs, as, cs) &&
-            associativity(adapter, f_name, f, bs, cs, as) &&
-            associativity(adapter, f_name, f, cs, as, bs) &&
-            associativity(adapter, f_name, f, cs, bs, as) &&
 
             true; // added so lines above can be easily swapped
         }
 
     };
 
+    // invertibility, identity
     template<typename E, typename Finv, typename F>
     struct Loop{
         const std::string e_name;    const E e; 
@@ -225,6 +219,7 @@ namespace test {
 
     };
 
+    // associativity, invertibility, identity
     template<typename E, typename Finv, typename F>
     struct Group{
         const std::string e_name;    const E e; 
@@ -257,13 +252,9 @@ namespace test {
             return 
 
             determinism  (adapter, f_name, f, as, bs)     &&
-            determinism  (adapter, f_name, f, bs, as)     &&
             associativity(adapter, f_name, f, as, as, bs) &&
-            associativity(adapter, f_name, f, as, bs, as) &&
             associativity(adapter, f_name, f, as, bs, bs) &&
-            associativity(adapter, f_name, f, bs, as, as) &&
-            associativity(adapter, f_name, f, bs, as, bs) &&
-            associativity(adapter, f_name, f, bs, bs, as) &&
+            associativity(adapter, f_name, f, as, bs, bs) &&
             binary_invertibility(adapter, e_name, e, finv_name, finv, f_name, f, as) &&
             binary_invertibility(adapter, e_name, e, finv_name, finv, f_name, f, bs) &&
 
@@ -286,6 +277,7 @@ namespace test {
     };
 
 
+    // commutativity, associativity, identity
     template<typename E, typename F>
     struct CommutativeMonoid{
         const std::string e_name; const E e; 
@@ -341,6 +333,7 @@ namespace test {
         }
     };
 
+    // commutativity, invertibility, identity
     template<typename F>
     struct CommutativeSemiGroup{
         const std::string f_name; const F f; 
@@ -394,6 +387,7 @@ namespace test {
 
     };
 
+    // commutativity, associativity, invertibility, identity
     template<typename E, typename F, typename Finv>
     struct CommutativeGroup{
         const std::string e_name;    const E e; 
