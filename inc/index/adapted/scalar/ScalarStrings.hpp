@@ -24,7 +24,7 @@ namespace adapted
 	public:
 		ScalarStrings(){}
 
-		std::string legend(scalar sample, const scalar lo, const scalar hi) const 
+		std::string legend(const scalar sample, const scalar lo, const scalar hi) const 
 		{
 			std::string out("");
 			for (unsigned int i = 0; i < shades.size(); ++i)
