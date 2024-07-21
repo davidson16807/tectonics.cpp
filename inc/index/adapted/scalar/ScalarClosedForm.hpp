@@ -13,26 +13,24 @@ namespace adapted
 	*/
 
 	#define ADAPTER_UNARY_METHOD(METHOD, NAME) \
-	template <typename In1>\
-	inline auto NAME (const In1 a) const\
+	inline auto NAME (const scalar a) const\
 	{\
 		return METHOD(a);\
 	}
 
 	#define ADAPTER_BINARY_METHOD(METHOD, NAME) \
-	template <typename In1, typename In2>\
-	inline auto NAME (const In1 a, const In2 b) const\
+	inline auto NAME (const scalar a, const scalar b) const\
 	{\
 		return METHOD(a, b);\
 	}
 
 	#define ADAPTER_TRINARY_METHOD(METHOD, NAME) \
-	template <typename In1, typename In2, typename In3>\
-	inline auto NAME (const In1 a, const In2 b, const In3 c) const\
+	inline auto NAME (const scalar a, const scalar b, const In3 c) const\
 	{\
 		return METHOD(a, b, c);\
 	}
 
+	template <typename scalar> 
 	struct ScalarClosedForm
 	{
 		ScalarClosedForm(){}
@@ -60,50 +58,42 @@ namespace adapted
 		ADAPTER_TRINARY_METHOD(std::smoothstep, smoothstep)
 		ADAPTER_TRINARY_METHOD(std::linearstep, linearstep)
 
-		template <typename In1> 
-		inline auto inversesqrt(const In1 a) const
+		inline auto inversesqrt(const scalar a) const
 		{ 
-			return In1(1)/std::sqrt(a); 
+			return scalar(1)/std::sqrt(a); 
 		}
 
-		template<typename In1, typename In2>
-		inline constexpr auto distance(const In1 a, const In2 b) const
+		inline constexpr auto distance(const scalar a, const scalar b) const
 		{
 		    return std::sqrt(a*a + b*b);
 		}
 
-		template <typename T>
 		inline constexpr T sign(const T x) const
 		{ 
 			return x==T(0)? T(0) : x>T(0)? T(1) : T(-1);
 		}
 
-		template <typename T>
 		inline constexpr T bitsign(const T x) const
 		{ 
 			return std::signbit(x)? T(-1):T(1);
 		}
 
-		template <typename In1> 
-		inline auto fract(const In1 a)  const
+		inline auto fract(const scalar a)  const
 		{
 			return a-std::floor(a);
 		}
 
-		template<typename In1, typename In2>
-		inline constexpr auto modulus(const In1 a, const In2 b) const
+		inline constexpr auto modulus(const scalar a, const scalar b) const
 		{
 		    return residue(residue(a,b) + b, b);
 		}
 
-		template<typename In1, typename In2>
-		inline constexpr auto residue(const In1 a, const In2 b) const
+		inline constexpr auto residue(const scalar a, const scalar b) const
 		{
 		    return a - b * std::floor(a / b);
 		}
 
-		template<typename In1, typename In2>
-		inline constexpr auto remainder(const In1 a, const In2 b) const
+		inline constexpr auto remainder(const scalar a, const scalar b) const
 		{
 		    return a - b * std::round(a / b);
 		}

@@ -55,7 +55,7 @@ namespace iterated {
 
         template<typename Series>
         std::string print(const Series& a) const {
-            return strings.to_string(a);
+            return strings.format(a);
         }
 
     };
@@ -69,9 +69,9 @@ namespace iterated {
 
 TEST_CASE( "arithmetic on each nonzero of a series is a field", "[iterated]" ) {
 
-    adapted::ScalarMetric submetric;    
+    adapted::ScalarMetric<double> submetric;    
     aggregated::Metric metric(submetric);
-    adapted::ScalarStrings substrings;
+    adapted::ScalarStrings<double> substrings;
     adapted::SymbolicOrder order;
     aggregated::Order ordered(order);
     aggregated::Strings strings(substrings, ordered);
@@ -125,9 +125,9 @@ TEST_CASE( "arithmetic on each nonzero of a series is a field", "[iterated]" ) {
 
 TEST_CASE( "arithmetic on each nonzero of a series is a commutative ring", "[iterated]" ) {
 
-    adapted::ScalarMetric submetric;    
+    adapted::ScalarMetric<double> submetric;    
     aggregated::Metric metric(submetric);
-    adapted::ScalarStrings substrings;
+    adapted::ScalarStrings<double> substrings;
     adapted::SymbolicOrder order;
     aggregated::Order ordered(order);
     aggregated::Strings strings(substrings, ordered);

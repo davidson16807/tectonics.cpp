@@ -12,6 +12,7 @@ namespace adapted
 	The following are alternate definitions of the above that allow for support of other data types using classes of the adapter pattern
 	*/
 
+	template<typename scalar>
 	struct ScalarMetric
 	{
 		ScalarMetric(){}
@@ -20,8 +21,7 @@ namespace adapted
 		in line with its formal mathematical definition, `distance(a,b)` always returns a nonnegative number,
 		it always satisfies the triangle equality, and it equals 0 iff a==b.
 		*/
-		template<typename In1, typename In2>
-		inline constexpr auto distance(const In1 a, const In2 b) const
+		inline constexpr auto distance(const scalar a, const scalar b) const
 		{
 		    return std::abs(a-b);
 		}
@@ -29,8 +29,7 @@ namespace adapted
 		/*
 		`length(a)` is defined here as `distance(a,o)` for some "zero" value o
 		*/
-		template<typename In1>
-		inline constexpr auto length(const In1 a) const
+		inline constexpr auto length(const scalar a) const
 		{
 		    return std::abs(a);
 		}
@@ -38,8 +37,7 @@ namespace adapted
 		/*
 		`normalize(a)` is defined here as `a/length(a)`
 		*/
-		template<typename In1>
-		inline constexpr auto normalize(const In1 a) const
+		inline constexpr auto normalize(const scalar a) const
 		{
 		    return a / length(a);
 		}

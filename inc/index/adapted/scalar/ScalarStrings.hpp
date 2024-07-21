@@ -10,6 +10,7 @@
 namespace adapted
 {
 
+	template<typename scalar>
 	class ScalarStrings
 	{
 
@@ -23,8 +24,7 @@ namespace adapted
 	public:
 		ScalarStrings(){}
 
-		template<typename T>
-		std::string legend(T sample, const T lo, const T hi) const 
+		std::string legend(scalar sample, const scalar lo, const scalar hi) const 
 		{
 			std::string out("");
 			for (unsigned int i = 0; i < shades.size(); ++i)
@@ -38,8 +38,7 @@ namespace adapted
 			return out;
 		}
 
-		template<typename T>
-		std::string character(const T a, const T lo, const T hi) const 
+		std::string character(const scalar a, const scalar lo, const scalar hi) const 
 		{
 			if (std::isnan(a))
 			{
