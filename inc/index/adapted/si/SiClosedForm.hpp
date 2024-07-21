@@ -13,22 +13,22 @@ namespace adapted
 	*/
 
 	#define ADAPTER_UNARY_METHOD(METHOD, NAME) \
-	template <typename In1>\
-	inline auto NAME (const In1 a) const\
+	template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>\
+	inline auto NAME (const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a) const\
 	{\
 		return METHOD(a);\
 	}
 
 	#define ADAPTER_BINARY_METHOD(METHOD, NAME) \
-	template <typename In1, typename In2>\
-	inline auto NAME (const In1 a, const In2 b) const\
+	template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>\
+	inline auto NAME (const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b) const\
 	{\
 		return METHOD(a, b);\
 	}
 
 	#define ADAPTER_TRINARY_METHOD(METHOD, NAME) \
-	template <typename In1, typename In2, typename In3>\
-	inline auto NAME (const In1 a, const In2 b, const In3 c) const\
+	template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>\
+	inline auto NAME (const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> c) const\
 	{\
 		return METHOD(a, b, c);\
 	}

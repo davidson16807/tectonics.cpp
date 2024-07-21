@@ -25,9 +25,12 @@ namespace adapted
 	public:
 		SiStrings(){}
 
-		template<typename quantity>
-		string legend(quantity sample, const quantity lo, const quantity hi) const 
-		{
+		template<int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
+		string legend(
+			const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> sample, 
+			const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> lo, 
+			const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> hi
+		) const {
 			using scalar = typename quantity::value_type;
 			string out("");
 			for (unsigned int i = 0; i < shades.size(); ++i)
@@ -41,9 +44,12 @@ namespace adapted
 			return out;
 		}
 
-		template<typename quantity>
-		string character(const quantity a, const quantity lo, const quantity hi) const 
-		{
+		template<int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
+		string character(
+			const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, 
+			const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> lo, 
+			const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> hi
+		) const {
 			if (si::isnan(a))
 			{
 				return "N";
