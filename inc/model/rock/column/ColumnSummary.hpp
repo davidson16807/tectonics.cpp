@@ -31,6 +31,11 @@ namespace rock{
             rest(rest)
         {}
 
+        constexpr ColumnSummary(const ColumnSummary& summary):
+            top(summary.top),
+            rest(summary.rest)
+        {}
+
         inline si::length<float> thickness() const
         {
             return top.thickness() + rest.thickness();
@@ -50,14 +55,17 @@ namespace rock{
         {
             return area_density() > si::area_density<float>(0.0f);
         }
-        inline bool includes(const int plate_id) const 
-        {
-            return top.includes(plate_id) || rest.includes(plate_id);
-        }
+
         inline int plate_count() const
         {
             return top.plate_count() + rest.plate_count();
         }
+
+        inline bool includes(const int plate_id) const 
+        {
+            return top.includes(plate_id) || rest.includes(plate_id);
+        }
+
         inline bool is_top(const int plate_id) const 
         {
             return top.includes(plate_id);

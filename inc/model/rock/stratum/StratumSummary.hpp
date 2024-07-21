@@ -30,6 +30,7 @@ namespace rock{
             density_in_kilograms_per_meter3(max_density_in_kilograms_per_meter3),
             thickness_in_meters(0)
         {}
+
         constexpr StratumSummary(
             const std::bitset<8> plate_ids_bitset,
             const si::density<float> density,
@@ -38,6 +39,14 @@ namespace rock{
             plate_ids_bitset_(plate_ids_bitset),
             density_in_kilograms_per_meter3(std::max(max_density_in_kilograms_per_meter3, uint(density/kilogram_per_meter3))),
             thickness_in_meters(thickness/meter)
+        {}
+
+        constexpr StratumSummary(
+            const StratumSummary& summary
+        ):
+            plate_ids_bitset_(summary.plate_ids_bitset_),
+            density_in_kilograms_per_meter3(summary.density_in_kilograms_per_meter3),
+            thickness_in_meters(summary.thickness_in_meters)
         {}
 
         si::density<float> density() const

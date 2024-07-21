@@ -17,7 +17,7 @@ namespace rock
 {
 
     struct CrustSummaryAdapter{
-        const ColumnSummaryAdapter columns;
+        const ColumnSummaryAdapter subadapter;
 
         CrustSummaryAdapter()
         {}
@@ -30,7 +30,7 @@ namespace rock
 
             for (std::size_t i = 0; i < a.size(); ++i)
             {
-                if (!columns.equal(a[i],b[i]))
+                if (!subadapter.equal(a[i],b[i]))
                 {
                     return false;
                 }
@@ -43,7 +43,16 @@ namespace rock
             std::ostringstream os;
             for (std::size_t i = 0; i < a.size(); ++i)
             {
-                os << columns.print(a[i]);
+                os << subadapter.print(a[i]) << std::endl;
+            }
+            return os.str();
+        }
+
+        std::string print(const FormationSummary& a) const {
+            std::ostringstream os;
+            for (std::size_t i = 0; i < a.size(); ++i)
+            {
+                os << subadapter.print(a[i]) << std::endl;
             }
             return os.str();
         }

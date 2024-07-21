@@ -2,6 +2,8 @@
 
 #include <model/rock/stratum/StratumSummaryOps.hpp>
 
+#include "ColumnSummary.hpp"
+
 namespace rock{
 
     class ColumnSummaryOps
