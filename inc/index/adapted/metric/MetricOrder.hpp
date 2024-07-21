@@ -18,9 +18,14 @@ namespace adapted
 		return (metric.length(a) SYMBOL metric.length(b));\
 	}
 
+	template<typename Metric>
 	struct MetricOrder
 	{
-		MetricOrder(){}
+		const Metric metric;
+
+		MetricOrder(const Metric& metric):
+			metric(metric)
+		{}
 		ADAPTER_SYMBOL_METHOD(>, greater_than)
 		ADAPTER_SYMBOL_METHOD(<, less_than)
 		ADAPTER_SYMBOL_METHOD(>=, greater_than_equal)
