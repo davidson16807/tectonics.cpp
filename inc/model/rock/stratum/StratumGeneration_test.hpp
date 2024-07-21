@@ -29,7 +29,6 @@
 #include <index/adapted/symbolic/SymbolicArithmetic.hpp>
 #include <index/adapted/si/SiMetric.hpp>
 #include <index/adapted/si/SiStrings.hpp>
-#include <index/adapted/scalar/ScalarStrings.hpp>
 #include <index/aggregated/Metric.hpp>
 #include <index/aggregated/Order.hpp>
 #include <index/iterated/Arithmetic.hpp>
