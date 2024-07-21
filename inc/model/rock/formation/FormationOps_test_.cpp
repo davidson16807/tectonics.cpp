@@ -29,7 +29,7 @@ TEST_CASE( "Formation combine() commutative monoid", "[rock]" ) {
     rock::Formation e1(std::bitset<8>(0), density(oo*si::kilogram/si::meter3),     length(0.0*si::kilometer));
     rock::Formation e2(std::bitset<8>(0), density(0.0*si::kilogram/si::meter3),    length(0.0*si::kilometer));
     rock::Formation e3(std::bitset<8>(0), density(3000.0*si::kilogram/si::meter3), length(0.0*si::kilometer));
-    std::vector<rock::Formation> strata ({
+    std::vector<rock::Formation> formations ({
         rock::Formation(std::bitset<8>(3), density(3000.0*si::kilogram/si::meter3), length( 4.0*si::kilometer)),
         rock::Formation(std::bitset<8>(1), density(3300.0*si::kilogram/si::meter3), length( 5.0*si::kilometer)),
         rock::Formation(std::bitset<8>(2), density(2700.0*si::kilogram/si::meter3), length(70.0*si::kilometer)),
@@ -46,8 +46,8 @@ TEST_CASE( "Formation combine() commutative monoid", "[rock]" ) {
         "combine",                 TEST_BINARY(tools.combine)
     );
 
-    REQUIRE(commutative_monoid1.valid(testing, strata));
-    REQUIRE(commutative_monoid2.valid(testing, strata));
+    REQUIRE(commutative_monoid1.valid(testing, formations));
+    REQUIRE(commutative_monoid2.valid(testing, formations));
 
 }
 

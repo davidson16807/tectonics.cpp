@@ -11,5 +11,4 @@ namespace rock{
 
 /*
 CrustSummary test:
-
 */

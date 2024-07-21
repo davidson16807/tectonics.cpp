@@ -3,14 +3,14 @@
 namespace rock{
 
     template <typename StratumProperty>
-    class ColumnSummaryIsostaticDisplacement
+    class ColumnSummaryProperty
     {
 
         const StratumProperty stratum_property;
 
     public:
 
-        ColumnSummaryIsostaticDisplacement(const StratumProperty& stratum_property): 
+        ColumnSummaryProperty(const StratumProperty& stratum_property): 
             stratum_property(stratum_property)
         {}
 
