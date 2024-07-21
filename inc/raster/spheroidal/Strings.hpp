@@ -21,14 +21,14 @@ namespace spheroidal
 			glm::mat<3,3,T,Q> frame, 
 			const glm::vec<L,T,Q> V, 
 			const T lo, const T hi
-		){
+		) const {
 			return strings.character(frame*V,lo,hi);
 		}
 		template<typename value, typename scalar, glm::qualifier Q>
 		std::string character(
 			glm::mat<3,3,scalar,Q> frame, 
 			const value a, const value lo, const value hi
-		){
+		) const {
 			return strings.character(a,lo,hi);
 		}
 	public:
@@ -41,8 +41,8 @@ namespace spheroidal
 			const Grid& grid, 
 			const Raster& raster, const value lo, const value hi, 
 			const id line_char_width,
-			const glm::vec<3,scalar,qualifier> north_pole)
-		{
+			const glm::vec<3,scalar,qualifier> north_pole
+		) const {
 			std::string out("\n");
 			int aspect_ratio(4);
 			double dlon(2.0*math::pi/line_char_width);
@@ -70,8 +70,8 @@ namespace spheroidal
 		template <typename Grid, typename Raster>
 		std::string format(
 			const Grid& grid, 
-			const Raster& raster)
-		{
+			const Raster& raster
+		) const {
 			using scalar = typename Grid::value_type;
 			using id = typename Grid::size_type;
 			return format(grid, raster, 

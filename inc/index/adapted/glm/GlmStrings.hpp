@@ -40,7 +40,7 @@ namespace adapted
 		}
 
 		template<int L, typename T, glm::qualifier Q>
-		std::string legend(glm::vec<L,T,Q> sample, const T lo, const T hi){
+		std::string legend(glm::vec<L,T,Q> sample, const T lo, const T hi) const {
 			std::string out("");
 			out += "|→| ≥ ";
 			out += std::to_string(hi * T(1./3.));
@@ -52,7 +52,7 @@ namespace adapted
 		}
 
 		template<int L, typename T, glm::qualifier Q>
-		std::string character(glm::vec<L,T,Q> V, const T lo, const T hi){
+		std::string character(glm::vec<L,T,Q> V, const T lo, const T hi) const {
 			if (std::isnan(V.x) || std::isnan(V.y))
 			{
 				return "N";
