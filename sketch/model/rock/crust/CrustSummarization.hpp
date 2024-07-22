@@ -30,3 +30,11 @@ namespace rock{
 
 }
 
+/*
+test:
+                flatten
+             crust ⟶ formation
+    summarize  ↓         ↓
+              cs   ⟶    fs
+                flatten
+*/

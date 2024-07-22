@@ -194,3 +194,11 @@ TEST_CASE( "ColumnSummary absorb() mass conservation", "[rock]" ) {
     }
 }
 
+/*
+test:
+                flatten
+             crust ⟶ formation
+    summarize  ↓         ↓    summarizes
+              cs   ⟶    fs
+                flatten
+*/
