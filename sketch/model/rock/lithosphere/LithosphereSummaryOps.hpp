@@ -4,11 +4,11 @@
 
 namespace rock{
 
-    class LithosphereSummaryTools
+    class LithosphereSummaryOps
     {
         const ColumnSummaryOps ops;
     public:
-        LithosphereSummaryTools(const ColumnSummaryOps& ops):
+        LithosphereSummaryOps(const ColumnSummaryOps& ops):
             ops(ops)
         {}
         // returns the empty LithosphereSummary
