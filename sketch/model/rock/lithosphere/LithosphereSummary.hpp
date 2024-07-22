@@ -5,6 +5,6 @@
 
 namespace rock{
 
-    using LithosphereSummary = std::vector<ColumnSummary>;
+    using LithosphereSummary = std::vector<CrustSummary>;
 
 }
