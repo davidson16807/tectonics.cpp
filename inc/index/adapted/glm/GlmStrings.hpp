@@ -40,19 +40,19 @@ namespace adapted
 		}
 
 		template<int L, typename T, glm::qualifier Q>
-		std::string legend(const glm::vec<L,T,Q> sample, const T lo, const T hi) const {
+		std::string legend(const glm::vec<L,T,Q> sample, const glm::vec<L,T,Q> lo, const glm::vec<L,T,Q> hi) const {
 			std::string out("");
 			out += "|→| ≥ ";
-			out += std::to_string(hi * T(1./3.));
+			out += std::to_string(glm::length(hi) * T(1./3.));
 			out += "\n";
 			out += "|➡| ≥ ";
-			out += std::to_string(hi * T(2./3.));
+			out += std::to_string(glm::length(hi) * T(2./3.));
 			out += "\n";
 			return out;
 		}
 
 		template<int L, typename T, glm::qualifier Q>
-		std::string character(const glm::vec<L,T,Q> V, const T lo, const T hi) const {
+		std::string character(const glm::vec<L,T,Q> V, const glm::vec<L,T,Q> lo, const glm::vec<L,T,Q> hi) const {
 			if (std::isnan(V.x) || std::isnan(V.y))
 			{
 				return "N";
@@ -61,11 +61,11 @@ namespace adapted
 			{
 				return "∞";
 			}
-			else if (glm::length(V) < hi * T(1./3.))
+			else if (glm::length(V) < glm::length(hi) * T(1./3.))
 			{
 				return " ";
 			}
-			else if (glm::length(V) < hi * T(2./3.))
+			else if (glm::length(V) < glm::length(hi) * T(2./3.))
 			{
 				T turn = (std::atan2(V.y, V.x)+math::pi)/(2.*math::pi);
 				int i  = std::clamp(int(weak.size()*turn), 0, int(weak.size()-1));

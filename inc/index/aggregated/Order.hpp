@@ -18,14 +18,13 @@ namespace aggregated
 		{}
 
 		template <typename T>
-		typename T::value_type min(const T& a, const typename T::value_type lo, const typename T::value_type hi) const
+		auto min(const T& a, const typename T::value_type lo, const typename T::value_type hi) const
 		{
-			typedef typename T::value_type Ti;
 			if (a.size() < 1)
 			{
 				throw std::out_of_range("cannot find the minimum value of an empty series");
 			}
-			Ti extremum = (a[0]);
+			auto extremum = (a[0]);
 			for (auto i = 0*a.size()+1; i < a.size(); ++i)
 			{
 				auto ai = (a[i]);
@@ -35,14 +34,13 @@ namespace aggregated
 		}
 
 		template <typename T>
-		typename T::value_type max(const T& a, const typename T::value_type lo, const typename T::value_type hi) const
+		auto max(const T& a, const typename T::value_type lo, const typename T::value_type hi) const
 		{
-			typedef typename T::value_type Ti;
 			if (a.size() < 1)
 			{
 				throw std::out_of_range("cannot find the minimum value of an empty series");
 			}
-			Ti extremum = (a[0]);
+			auto extremum = (a[0]);
 			for (auto i = 0*a.size()+1; i < a.size(); ++i)
 			{
 				auto ai = (a[i]);
@@ -52,14 +50,13 @@ namespace aggregated
 		}
 
 		template <typename T>
-		typename T::value_type min(const T& a) const
+		auto min(const T& a) const
 		{
-			typedef typename T::value_type Ti;
 			if (a.size() < 1)
 			{
 				throw std::out_of_range("cannot find the minimum value of an empty series");
 			}
-			Ti extremum = (a[0]);
+			auto extremum = (a[0]);
 			for (auto i = 0*a.size()+1; i < a.size(); ++i)
 			{
 				auto ai = (a[i]);
@@ -69,14 +66,13 @@ namespace aggregated
 		}
 
 		template <typename T>
-		typename T::value_type max(const T& a) const
+		auto max(const T& a) const
 		{
-			typedef typename T::value_type Ti;
 			if (a.size() < 1)
 			{
 				throw std::out_of_range("cannot find the minimum value of an empty series");
 			}
-			Ti extremum = (a[0]);
+			auto extremum = (a[0]);
 			for (auto i = 0*a.size()+1; i < a.size(); ++i)
 			{
 				auto ai = (a[i]);

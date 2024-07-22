@@ -30,6 +30,9 @@
 #include <index/series/glm/VectorInterleave.hpp>
 #include <index/series/noise/GaussianNoise.hpp>
 #include <index/series/noise/glm/UnitVectorNoise.hpp>
+#include <index/adapted/boolean/BooleanStrings.hpp>
+#include <index/adapted/symbolic/SymbolicMetric.hpp>
+#include <index/aggregated/Order.hpp>
 
 #include <field/noise/EliasNoise.hpp>
 #include <field/noise/ValueNoise.hpp>
@@ -38,8 +41,6 @@
 
 #include <grid/dymaxion/Grid.hpp>
 #include <grid/dymaxion/series.hpp>
-
-#include <raster/spheroidal/string_cast.hpp>
 
 #include "Morphology.hpp"
 
@@ -74,45 +75,52 @@ auto mask = known::greaterThan(series::uniform(0.5),
 dymaxion::Adapter strict(fine, 1e-5, fine.vertex_count());
 
 TEST_CASE( "Scalar Raster erode", "[unlayered]" ) {
+    spheroidal::Strings strings{
+        adapted::BooleanStrings{}, 
+        aggregated::Order{
+            adapted::SymbolicOrder{}
+        }
+    };
+
     unlayered::Morphology morphology;
     std::vector<bool> out(fine.vertex_count());
     std::vector<bool> scratch1(fine.vertex_count());
     std::vector<bool> scratch2(fine.vertex_count());
 
     std::cout << "original:" << std::endl;
-    std::cout << spheroidal::to_string(fine, mask) << std::endl;
+    std::cout << strings.format(fine, mask) << std::endl;
 
     morphology.erode(fine, mask, out);
     std::cout << "erode:" << std::endl;
-    std::cout << spheroidal::to_string(fine, out) << std::endl;
+    std::cout << strings.format(fine, out) << std::endl;
 
     morphology.dilate(fine, mask, out);
     std::cout << "dilate:" << std::endl;
-    std::cout << spheroidal::to_string(fine, out) << std::endl;
+    std::cout << strings.format(fine, out) << std::endl;
 
     morphology.margin(fine, mask, out);
     std::cout << "margin:" << std::endl;
-    std::cout << spheroidal::to_string(fine, out) << std::endl;
+    std::cout << strings.format(fine, out) << std::endl;
 
     morphology.padding(fine, mask, out);
     std::cout << "padding:" << std::endl;
-    std::cout << spheroidal::to_string(fine, out) << std::endl;
+    std::cout << strings.format(fine, out) << std::endl;
 
     morphology.opening(fine, mask, out, scratch1);
     std::cout << "opening:" << std::endl;
-    std::cout << spheroidal::to_string(fine, out) << std::endl;
+    std::cout << strings.format(fine, out) << std::endl;
 
     morphology.closing(fine, mask, out, scratch1);
     std::cout << "closing:" << std::endl;
-    std::cout << spheroidal::to_string(fine, out) << std::endl;
+    std::cout << strings.format(fine, out) << std::endl;
 
     morphology.white_top_hat(fine, mask, out, scratch1);
     std::cout << "white_top_hat:" << std::endl;
-    std::cout << spheroidal::to_string(fine, out) << std::endl;
+    std::cout << strings.format(fine, out) << std::endl;
 
     morphology.black_top_hat(fine, mask, out, scratch1);
     std::cout << "black_top_hat:" << std::endl;
-    std::cout << spheroidal::to_string(fine, out) << std::endl;
+    std::cout << strings.format(fine, out) << std::endl;
 
     // REQUIRE(test::determinism(strict, 
     //     "morphology.erode", MORPHOLOGY_TEST_GRIDDED_OUT_PARAMETER(bool, fine, morphology.erode),

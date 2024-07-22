@@ -39,7 +39,6 @@ namespace adapted
 
 		ADAPTER_BINARY_METHOD(glm::compMin, min)
 		ADAPTER_BINARY_METHOD(glm::compMax, max)
-
 	};
 
 	#undef ADAPTER_UNARY_METHOD
