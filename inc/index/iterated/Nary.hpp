@@ -14,6 +14,21 @@ namespace iterated
 	The following are alternate definitions of the above that allow for support of other data types using classes of the adapter pattern
 	*/
 
+	struct Copy // A.K.A. `Identity`
+	{
+		Copy(){}
+		template <typename In1, typename Out>
+		void operator() (const In1& a, Out& out) const
+		{
+			assert(compatible(a,out));
+			auto size = out.size();
+			for (auto i = 0*size; i < size; ++i)
+			{
+				out[i] = a[i];
+			}
+		}
+	};
+
 	template <typename Op>
 	class Unary
 	{
