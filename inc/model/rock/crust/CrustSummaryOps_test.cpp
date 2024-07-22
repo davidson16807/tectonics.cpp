@@ -27,7 +27,7 @@
 #define ROCK_TEST_BINARY_OUT_PARAMETER(TYPE,SIZE,F)  [=](auto x, auto y){ std::vector<TYPE> out(SIZE); (F(x,y,out)); return out; }
 #define ROCK_TEST_TRINARY_OUT_PARAMETER(TYPE,SIZE,F) [=](auto x, auto y, auto z){ std::vector<TYPE> out(SIZE); (F(x,y,z,out)); return out; }
 
-TEST_CASE( "ColumnSummary absorb() commutative monoid", "[rock]" ) {
+TEST_CASE( "CrustSummary absorb() commutative monoid", "[rock]" ) {
 
     using density = si::density<float>;
     using length = si::length<float>;
@@ -115,7 +115,7 @@ TEST_CASE( "ColumnSummary absorb() commutative monoid", "[rock]" ) {
 
 }
 
-TEST_CASE( "ColumnSummary absorb() mass conservation", "[rock]" ) {
+TEST_CASE( "CrustSummary absorb() mass conservation", "[rock]" ) {
 
     using length = si::length<float>;
     using density = si::density<float>;

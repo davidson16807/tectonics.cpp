@@ -14,7 +14,7 @@ namespace rock{
         StratumSummaryIsostaticDisplacement(const si::density<float> mantle_density):
             mantle_density(mantle_density)
         {}
-        si::length<float> operator()(const StratumSummary& summary) const
+        auto operator()(const StratumSummary& summary) const
         {
             return summary.thickness() * (1.0f - summary.density()/mantle_density);
         }
@@ -24,7 +24,7 @@ namespace rock{
     {
         StratumSummaryThickness()
         {}
-        si::length<float> operator()(const StratumSummary& summary) const
+        auto operator()(const StratumSummary& summary) const
         {
             return summary.thickness();
         }
@@ -34,9 +34,9 @@ namespace rock{
     {
         StratumSummaryAreaDensity()
         {}
-        si::length<float> operator()(const StratumSummary& summary) const
+        auto operator()(const StratumSummary& summary) const
         {
-            return summary.thickness();
+            return summary.area_density();
         }
     };
 

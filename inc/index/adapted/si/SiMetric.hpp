@@ -19,19 +19,19 @@ namespace adapted
 		SiMetric(){}
 
 		template<int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-		inline constexpr auto distance(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b) const
+		inline constexpr auto distance(const si::units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const si::units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b) const
 		{
 		    return si::distance(a, b);
 		}
 
 		template<int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-		inline constexpr auto length(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a) const
+		inline constexpr auto length(const si::units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a) const
 		{
 		    return si::abs(a);
 		}
 
 		template<int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-		inline constexpr auto normalize(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a) const
+		inline constexpr auto normalize(const si::units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a) const
 		{
 		    return a / length(a);
 		}

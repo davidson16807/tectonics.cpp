@@ -29,8 +29,8 @@ namespace rock
     };
 
     template<int M, typename StratumDensity>
-    auto stratum_summarization(const StratumDensity& density_for_stratum, const int plate_id){
-        return StratumSummarization<M,StratumDensity>(density_for_stratum, plate_id);
+    auto stratum_summarization(const StratumDensity& density_for_stratum){
+        return StratumSummarization<M,StratumDensity>(density_for_stratum);
     }
 
 }

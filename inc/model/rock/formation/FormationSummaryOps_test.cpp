@@ -7,6 +7,7 @@
 #include <index/each.hpp>
 #include <index/whole.hpp>
 #include <index/series/Uniform.hpp>
+#include <index/iterated/Nary.hpp>
 
 #include <model/rock/stratum/StratumSummary.hpp>
 #include <model/rock/stratum/StratumSummaryProperties.hpp>
@@ -27,7 +28,7 @@ TEST_CASE( "FormationSummary combine() commutative monoid", "[rock]" ) {
     using density = si::density<float>;
     using length = si::length<float>;
 
-    rock::FormationSummaryOps ops;
+    rock::FormationSummaryOps ops {rock::StratumSummaryOps{density(3075.0*si::kilogram/si::meter3)}};
     rock::FormationSummaryAdapter testing;
 
     float oo = std::numeric_limits<float>::max();
@@ -76,10 +77,9 @@ TEST_CASE( "FormationSummary combine() mass conservation", "[rock]" ) {
     using floats = std::vector<float>;
     using area_densities = std::vector<area_density>;
 
-    rock::FormationSummaryOps ops;
+    rock::FormationSummaryOps ops {rock::StratumSummaryOps{density(3075.0*si::kilogram/si::meter3)}};
+    iterated::Unary formation_area_density(rock::StratumSummaryAreaDensity{});
     rock::FormationSummaryAdapter testing;
-    rock::StratumSummaryAreaDensity stratum_area_density;
-    iterated::Unary formation_area_density(stratum_area_density);
 
     float oo = std::numeric_limits<float>::max();
 

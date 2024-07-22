@@ -27,15 +27,14 @@ namespace adapted
 
 		template<int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
 		string legend(
-			const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> sample, 
-			const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> lo, 
-			const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> hi
+			const si::units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> sample, 
+			const si::units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> lo, 
+			const si::units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> hi
 		) const {
-			using scalar = typename quantity::value_type;
 			string out("");
 			for (unsigned int i = 0; i < shades.size(); ++i)
 			{
-				auto bound = si::mix(lo, hi, scalar(i)/scalar(shades.size()));
+				auto bound = si::mix(lo, hi, T1(i)/T1(shades.size()));
 				out += shades[i];
 				out += " ≥ ";
 				out += si::to_string(bound);
@@ -46,9 +45,9 @@ namespace adapted
 
 		template<int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
 		string character(
-			const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, 
-			const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> lo, 
-			const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> hi
+			const si::units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, 
+			const si::units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> lo, 
+			const si::units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> hi
 		) const {
 			if (si::isnan(a))
 			{

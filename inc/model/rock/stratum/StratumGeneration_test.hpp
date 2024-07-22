@@ -145,8 +145,10 @@
       auto age_of_world = 0.0f*si::megayear;
       int plate_id = 1;
       rock::AgedStratumDensity stratum_density(densities_for_age, age_of_world);
-      auto stratum_summarization = rock::stratum_summarization<2>(stratum_density, plate_id);
-      auto formation_summarization = rock::formation_summarization<2>(stratum_summarization, grid);
+      auto formation_summarization = rock::formation_summarization<2>(
+        rock::stratum_summarization<2>(stratum_density), 
+        grid
+      );
 
       rock::StratumSummaryIsostaticDisplacement displacement_for_stratum_summary(density(3000.0*si::kilogram/si::meter3));
       iterated::Unary displacements_for_formation_summary(displacement_for_stratum_summary);
@@ -177,7 +179,7 @@
       rock::FormationSummary summary(grid.vertex_count());
       std::vector<length> actual_displacements(grid.vertex_count());
       std::vector<length> probe(grid.vertex_count());
-      formation_summarization(strata, summary);
+      formation_summarization(plate_id, strata, summary);
       displacements_for_formation_summary(summary, actual_displacements);
       // for (std::size_t i = 0; i < strata.size(); ++i)
       // {
