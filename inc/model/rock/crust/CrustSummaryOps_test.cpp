@@ -198,7 +198,7 @@ TEST_CASE( "CrustSummary absorb() mass conservation", "[rock]" ) {
 test:
                 flatten
              crust ⟶ formation
-    summarize  ↓         ↓    summarizes
-              cs   ⟶    fs
+    summarize  ↓         ↓    summarize
+              CS   ⟶    FS
                 flatten
 */
