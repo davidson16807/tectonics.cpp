@@ -2,7 +2,7 @@
 /*
 this file is primarily meant to test StratumGenerator[], 
 but incidentally tests other functionality within rock::, to summarize:
-* StratumGeneration[]
+* FormationGeneration[]
 * Formation
 * FormationSummary
 * FormationSummarization()
@@ -73,11 +73,11 @@ It does so by testing that this diagram commutes:
 #include <model/rock/formation/FormationSummary.hpp>  // FormationSummary
 
 #include <model/rock/stratum/StratumProperties.hpp>  // StratumProperties
-#include <model/rock/stratum/StratumGeneration.hpp>  // StratumGeneration
+#include <model/rock/stratum/FormationGeneration.hpp>  // FormationGeneration
 #include <model/rock/stratum/StratumSummarization.hpp>  // StratumSummarization
 #include <model/rock/formation/FormationSummarization.hpp>  // FormationSummarization
 
-  TEST_CASE( "StratumGeneration must be able to achieve desired displacements as indicated by elevation_for_position", "[rock]" ) {
+  TEST_CASE( "FormationGeneration must be able to achieve desired displacements as indicated by elevation_for_position", "[rock]" ) {
 
       // using mass = si::mass<float>;
       using length = si::length<float>;
@@ -93,21 +93,6 @@ It does so by testing that this diagram commutes:
 
       // auto max_earth_elevation =   8848.0 * si::meter;
       // auto min_earth_elevation = -10924.0 * si::meter;
-
-      // auto min_elevation(-16000.0f * si::meter);
-      // auto max_elevation( 16000.0f * si::meter);
-      // analytic::Sum<float,analytic::Gaussian<float>> hypsometry_pdf_unscaled {
-      //   analytic::Gaussian(-4019.0f, 1113.0f, 0.232f),
-      //   analytic::Gaussian(  797.0f, 1169.0f, 0.209f)
-      // };
-      // auto hypsometry_cdf_unscaled = analytic::integral(hypsometry_pdf_unscaled);
-      // // auto hypsometry_pdf_ddx = analytic::derivative(hypsometry_pdf_unscaled);
-      // auto hypsometry_cdf_unscaled_range = 
-      //   hypsometry_cdf_unscaled(max_elevation/si::meter) - 
-      //   hypsometry_cdf_unscaled(min_elevation/si::meter);
-      // auto hypsometry_cdf = hypsometry_cdf_unscaled / hypsometry_cdf_unscaled_range;
-      // auto hypsometry_pdf = hypsometry_pdf_unscaled / hypsometry_cdf_unscaled_range;
-      // auto hypsometry_cdfi = inspected::inverse_by_newtons_method(hypsometry_cdf, hypsometry_pdf, 0.5f, 30);
 
       float min_elevation(-16000.0f);
       float max_elevation( 16000.0f);
@@ -138,9 +123,8 @@ It does so by testing that this diagram commutes:
                   inspected::compose(hypsometry_cdfi, fbm_cdf)),
               fbm);
 
-      iterated::Unary elevations_for_positions(elevation_for_position);
       std::vector<length> intended_displacements(grid.vertex_count());
-      elevations_for_positions(vertex_positions, intended_displacements);
+      iterated::Unary{elevation_for_position}(vertex_positions, intended_displacements);
 
       adapted::SymbolicOrder suborder;
       aggregated::Order order_aggregation(suborder);
@@ -165,7 +149,8 @@ It does so by testing that this diagram commutes:
       auto formation_summarization = rock::formation_summarization<2>(
         rock::stratum_summarization<2>(
           rock::AgedStratumDensity{densities_for_age, age_of_world}
-        ), grid
+        ), 
+        grid
       );
 
       iterated::Unary displacements_for_formation_summary(
@@ -173,7 +158,7 @@ It does so by testing that this diagram commutes:
           density(3000.0*si::kilogram/si::meter3)
         });
 
-      rock::StratumGeneration strata(
+      rock::FormationGeneration strata(
         grid,
         elevation_for_position,
         // displacements are from Charette & Smith 2010 (shallow ocean), enclopedia britannica (shelf bottom"continental slope"), 
