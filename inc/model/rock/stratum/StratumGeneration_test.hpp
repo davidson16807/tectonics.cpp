@@ -1,4 +1,20 @@
 
+/*
+this file is primarily meant to test StratumGenerator[], 
+but incidentally tests other functionality within rock::, to summarize:
+* StratumGeneration[]
+* Formation
+* FormationSummary
+* FormationSummarization()
+* StratumSummaryIsostaticDisplacement()
+
+It does so by testing that this diagram commutes:
+
+      seed ⟶ formation
+   desired ↘     ↓ achieved
+             displacement
+*/
+
 // std libraries
 #include <iostream>
 #include <string>
@@ -130,12 +146,14 @@
       aggregated::Order order_aggregation(suborder);
       length min_observed_elevation(order_aggregation.min(intended_displacements));
 
-      iterated::Arithmetic arithmetic(adapted::SymbolicArithmetic(length(0),length(1)));
+      adapted::SymbolicArithmetic subarithmetic {length(0),length(1)};
+      iterated::Arithmetic arithmetic(subarithmetic);
       arithmetic.subtract(intended_displacements, series::uniform(min_observed_elevation), intended_displacements);
 
-      adapted::SiStrings substrings;
-      aggregated::Order ordered(suborder);
-      auto strings = spheroidal::Strings(substrings, ordered);
+      auto strings = spheroidal::Strings(
+        adapted::SiStrings{}, 
+        aggregated::Order{suborder}
+      );
 
       std::array<relation::PolynomialRailyardRelation<si::time<double>,si::density<double>,0,1>, 2> densities_for_age {
         relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2890.0, 3300.0}), // Carlson & Raskin 1984
@@ -144,14 +162,16 @@
 
       auto age_of_world = 0.0f*si::megayear;
       int plate_id = 1;
-      rock::AgedStratumDensity stratum_density(densities_for_age, age_of_world);
       auto formation_summarization = rock::formation_summarization<2>(
-        rock::stratum_summarization<2>(stratum_density), 
-        grid
+        rock::stratum_summarization<2>(
+          rock::AgedStratumDensity{densities_for_age, age_of_world}
+        ), grid
       );
 
-      rock::StratumSummaryIsostaticDisplacement displacement_for_stratum_summary(density(3000.0*si::kilogram/si::meter3));
-      iterated::Unary displacements_for_formation_summary(displacement_for_stratum_summary);
+      iterated::Unary displacements_for_formation_summary(
+        rock::StratumSummaryIsostaticDisplacement{
+          density(3000.0*si::kilogram/si::meter3)
+        });
 
       rock::StratumGeneration strata(
         grid,
@@ -190,23 +210,7 @@
       std::cout << strings.format(grid, actual_displacements) << std::endl << std::endl;
       // std::cout << strings.format(grid, probe) << std::endl << std::endl;
 
-      adapted::SiMetric submetric;
-      aggregated::Metric metric(submetric);
+      aggregated::Metric metric(adapted::SiMetric{});
       REQUIRE(metric.distance(intended_displacements, actual_displacements) < 4.0f*si::kilometer);
   }
-
-
-    /*
-    TESTS:
-    `StratumGeneration`:
-      seed ⟶ formation
-   desired ↘     ↓ achieved
-             displacement
-
-    `*Summary`s:
-      AreaDensity/mass/density is the limit over this diagram:
-      Crust ⟶ Formation
-        ↓        ↓ 
-        CS  ⟶   FS
-    */
 

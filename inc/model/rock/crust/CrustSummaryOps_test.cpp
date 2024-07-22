@@ -169,14 +169,11 @@ TEST_CASE( "CrustSummary absorb() mass conservation", "[rock]" ) {
         column7, column8, columnless22
     });
 
-    rock::ColumnSummaryAreaDensity column_area_density;
-    rock::CrustSummaryProperty crust_area_density(column_area_density);
+    rock::CrustSummaryProperty crust_area_density(rock::ColumnSummaryAreaDensity{});
 
-    adapted::SymbolicArithmetic subarithmetic(0,1);
-    iterated::Arithmetic arithmetic(subarithmetic);
+    iterated::Arithmetic arithmetic{adapted::SymbolicArithmetic{0,1}};
 
-    adapted::SiMetric submetric;
-    aggregated::Metric metric(submetric);
+    aggregated::Metric metric{adapted::SiMetric{}};
 
     rock::CrustSummary ab(9);
     std::vector<area_density> ab_density(9);
