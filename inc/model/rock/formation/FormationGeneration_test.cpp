@@ -148,7 +148,7 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
 
     iterated::Unary displacements_for_formation_summary(
       rock::StratumSummaryIsostaticDisplacement{
-        density(3000.0*si::kilogram/si::meter3)
+        density(3250.0*si::kilogram/si::meter3)
       });
 
     rock::FormationGeneration strata(
@@ -189,6 +189,6 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
     // std::cout << strings.format(grid, probe) << std::endl << std::endl;
 
     aggregated::Metric metric(adapted::SiMetric{});
-    REQUIRE(metric.distance(intended_displacements, actual_displacements) < 4.0f*si::kilometer);
+    REQUIRE(metric.distance(intended_displacements, actual_displacements) < 2.0f*si::kilometer);
 }
 

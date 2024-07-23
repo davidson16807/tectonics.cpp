@@ -108,38 +108,16 @@ It does so by testing that mass properties are commutative as the limit of this 
       auto hypsometry_pdf = hypsometry_pdf_unscaled / hypsometry_cdf_unscaled_range;
       auto hypsometry_cdfi = inspected::inverse_by_newtons_method(hypsometry_cdf, hypsometry_pdf, 0.5f, 30);
 
-      auto fbm_cdf = analytic::Error(0.0f, 1.0f, (1.0f/(std::sqrt(2.0f*3.1415926f))));
-
       auto elevation_for_position1 = 
           field::compose(
-              relation::ScalarRelation(1.0f, meter, 
-                  inspected::compose(hypsometry_cdfi, fbm_cdf)
-              ),
-              field::fractal_brownian_noise<int,float>(
-                field::value_noise<3,float>(
-                    field::mosaic_noise(
-                      series::gaussian(series::unit_interval_noise(12.0f, 1.1e4f)), 
-                      cartesian::UnboundedIndexing<int>()
-                    ),
-                    field::vector_mosaic_ops<3,int,float>()
-                ), 10, 0.5f, 2.0f*meter/radius
-              )
+              relation::ScalarRelation(1.0f, length(si::meter), hypsometry_cdfi),
+              field::ranked_fractal_brownian_noise<3>(10, 0.5f, 2.0f*meter/radius, 12.0f, 1.1e4f)
           );
 
       auto elevation_for_position2 = 
           field::compose(
-              relation::ScalarRelation(1.0f, meter, 
-                  inspected::compose(hypsometry_cdfi, fbm_cdf)
-              ),
-              field::fractal_brownian_noise<int,float>(
-                field::value_noise<3,float>(
-                    field::mosaic_noise(
-                      series::gaussian(series::unit_interval_noise(12.0f, 1.1e4f)), 
-                      cartesian::UnboundedIndexing<int>()
-                    ),
-                    field::vector_mosaic_ops<3,int,float>()
-                ), 10, 0.5f, 2.0f*meter/radius
-              )
+              relation::ScalarRelation(1.0f, length(si::meter), hypsometry_cdfi),
+              field::ranked_fractal_brownian_noise<3>(10, 0.5f, 2.0f*meter/radius, 11.0f, 1.2e4f)
           );
 
       rock::FormationGeneration procedural_formation1(
