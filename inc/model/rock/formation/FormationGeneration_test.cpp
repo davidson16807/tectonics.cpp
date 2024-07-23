@@ -19,7 +19,10 @@ It does so by testing that this diagram commutes:
 #include <iostream>
 #include <string>
 
-// glm libraries
+// 3rd party libraries
+#define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
+#include <catch/catch.hpp>
+
 #define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
 #define GLM_FORCE_SWIZZLE   // allow swizzle methods like .xy()
 
@@ -73,8 +76,8 @@ It does so by testing that this diagram commutes:
 #include <model/rock/formation/FormationSummary.hpp>  // FormationSummary
 
 #include <model/rock/stratum/StratumProperties.hpp>  // StratumProperties
-#include <model/rock/stratum/FormationGeneration.hpp>  // FormationGeneration
 #include <model/rock/stratum/StratumSummarization.hpp>  // StratumSummarization
+#include <model/rock/formation/FormationGeneration.hpp>  // FormationGeneration
 #include <model/rock/formation/FormationSummarization.hpp>  // FormationSummarization
 
   TEST_CASE( "FormationGeneration must be able to achieve desired displacements as indicated by elevation_for_position", "[rock]" ) {

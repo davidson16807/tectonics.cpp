@@ -17,7 +17,7 @@ namespace rock{
 
         static constexpr si::density<float> kilogram_per_meter3 = si::density<float>(si::kilogram/si::meter3);
         static constexpr si::length<float> meter = si::length<float>(si::meter);
-        static constexpr unsigned int max_density_in_kilograms_per_meter3 = 1>>24-1;
+        static constexpr unsigned int max_density_in_kilograms_per_meter3 = (1<<24)-1;
 
         std::bitset<8> plate_ids_bitset_; 
         unsigned int density_in_kilograms_per_meter3 : 24;
@@ -37,7 +37,7 @@ namespace rock{
             const si::length<float>  thickness
         ):
             plate_ids_bitset_(plate_ids_bitset),
-            density_in_kilograms_per_meter3(std::max(max_density_in_kilograms_per_meter3, uint(density/kilogram_per_meter3))),
+            density_in_kilograms_per_meter3(std::min(max_density_in_kilograms_per_meter3, uint(density/kilogram_per_meter3))),
             thickness_in_meters(thickness/meter)
         {}
 
@@ -55,7 +55,7 @@ namespace rock{
         }
         void density(const si::density<float> density)
         {
-            density_in_kilograms_per_meter3 = std::max(max_density_in_kilograms_per_meter3, uint(density/kilogram_per_meter3));
+            density_in_kilograms_per_meter3 = std::min(max_density_in_kilograms_per_meter3, uint(density/kilogram_per_meter3));
         }
 
         si::length<float> thickness() const

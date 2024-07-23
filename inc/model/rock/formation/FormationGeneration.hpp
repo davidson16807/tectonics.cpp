@@ -1,7 +1,7 @@
 #pragma once
 
-#include "StratumStore.hpp"
-#include "Stratum.hpp"
+#include <model/rock/stratum/StratumStore.hpp>
+#include <model/rock/stratum/Stratum.hpp>
 
 namespace rock {
 
