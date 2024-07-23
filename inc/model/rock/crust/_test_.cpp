@@ -107,22 +107,10 @@ It does so by testing that mass properties are commutative as the limit of this 
       auto hypsometry_cdf = hypsometry_cdf_unscaled / hypsometry_cdf_unscaled_range;
       auto hypsometry_pdf = hypsometry_pdf_unscaled / hypsometry_cdf_unscaled_range;
       auto hypsometry_cdfi = inspected::inverse_by_newtons_method(hypsometry_cdf, hypsometry_pdf, 0.5f, 30);
+      auto hypsometry_cdfi_meters = relation::ScalarRelation(1.0f, length(si::meter), hypsometry_cdfi);
 
-      auto elevation_for_position1 = 
-          field::compose(
-              relation::ScalarRelation(1.0f, length(si::meter), hypsometry_cdfi),
-              field::ranked_fractal_brownian_noise<3>(10, 0.5f, 2.0f*meter/radius, 12.0f, 1.1e4f)
-          );
-
-      auto elevation_for_position2 = 
-          field::compose(
-              relation::ScalarRelation(1.0f, length(si::meter), hypsometry_cdfi),
-              field::ranked_fractal_brownian_noise<3>(10, 0.5f, 2.0f*meter/radius, 11.0f, 1.2e4f)
-          );
-
-      rock::FormationGeneration procedural_formation1(
+      rock::FormationGenerationType igneous(
         grid,
-        elevation_for_position1,
         // displacements are from Charette & Smith 2010 (shallow ocean), enclopedia britannica (shelf bottom"continental slope"), 
         // wikipedia (shelf top), and Sverdrup & Fleming 1942 (land)
         // Funck et al. (2003) suggests a sudden transition from felsic to mafic occuring at ~4km depth or 8km thickness
@@ -143,11 +131,18 @@ It does so by testing that mass properties are commutative as the limit of this 
           {0.15,      0.15}) // based on estimate from Wikipedia
       );
 
-      std::vector<StratumStore<2>> formation;
-      iterated::Copy{}(procedural_formation1, formation);
-
-      // crust flattening
-
+      iterated::Copy copy{};
+      std::vector<StratumStore<2>> formation1;
+      std::vector<StratumStore<2>> formation2;
+      copy(igneous(field::compose(
+              hypsometry_cdfi_meters,
+              field::ranked_fractal_brownian_noise<3>(10, 0.5f, 2.0f*meter/radius, 12.0f, 1.1e4f)
+          )), formation1);
+      copy(igneous(field::compose(
+              hypsometry_cdfi_meters,
+              field::ranked_fractal_brownian_noise<3>(10, 0.5f, 2.0f*meter/radius, 20.0f, 1.2e4f)
+          )), formation2);
+      rock::Crust<2>{formation1, formation2};
 
 
       // formation summarization

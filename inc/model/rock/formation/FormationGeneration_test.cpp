@@ -76,7 +76,7 @@ It does so by testing that this diagram commutes:
 
 #include <model/rock/stratum/StratumProperties.hpp>  // StratumProperties
 #include <model/rock/stratum/StratumSummarization.hpp>  // StratumSummarization
-#include <model/rock/formation/FormationGeneration.hpp>  // FormationGeneration
+#include <model/rock/formation/FormationGenerationType.hpp>  // FormationGeneration
 #include <model/rock/formation/FormationSummarization.hpp>  // FormationSummarization
 
 TEST_CASE( "FormationGeneration must be able to achieve desired displacements as indicated by elevation_for_position", "[rock]" ) {
@@ -148,12 +148,11 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
 
     iterated::Unary displacements_for_formation_summary(
       rock::StratumSummaryIsostaticDisplacement{
-        density(3250.0*si::kilogram/si::meter3)
+        density(3300.0*si::kilogram/si::meter3)
       });
 
-    rock::FormationGeneration strata(
+    rock::FormationGenerationType igneous(
       grid,
-      elevation_for_position,
       // displacements are from Charette & Smith 2010 (shallow ocean), enclopedia britannica (shelf bottom"continental slope"), 
       // wikipedia (shelf top), and Sverdrup & Fleming 1942 (land)
       // Funck et al. (2003) suggests a sudden transition from felsic to mafic occuring at ~4km depth or 8km thickness
@@ -177,7 +176,7 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
     rock::FormationSummary summary(grid.vertex_count());
     std::vector<length> actual_displacements(grid.vertex_count());
     std::vector<length> probe(grid.vertex_count());
-    formation_summarization(plate_id, strata, summary);
+    formation_summarization(plate_id, igneous(elevation_for_position), summary);
     displacements_for_formation_summary(summary, actual_displacements);
     // for (std::size_t i = 0; i < strata.size(); ++i)
     // {
@@ -189,6 +188,6 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
     // std::cout << strings.format(grid, probe) << std::endl << std::endl;
 
     aggregated::Metric metric(adapted::SiMetric{});
-    REQUIRE(metric.distance(intended_displacements, actual_displacements) < 2.0f*si::kilometer);
+    REQUIRE(metric.distance(intended_displacements, actual_displacements) < 1.0f*si::kilometer);
 }
 
