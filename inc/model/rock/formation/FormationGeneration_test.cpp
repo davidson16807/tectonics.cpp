@@ -59,13 +59,12 @@ It does so by testing that this diagram commutes:
 #include <field/Compose.hpp>                        // Compose
 #include <field/VectorZip.hpp>                      // VectorZip
 #include <field/noise/MosaicOps.hpp>                // field::VectorMosaicOps
-#include <field/noise/FractalBrownianNoise.hpp>     // dymaxion::FractalBrownianNoise
+#include <field/noise/RankedFractalBrownianNoise.hpp>// field::ranked_fractal_brownian_noise
 
 #include <grid/cartesian/UnboundedIndexing.hpp>     // field::UnboundedIndexing
 #include <grid/dymaxion/Indexing.hpp>               // dymaxion::Indexing
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
 #include <grid/dymaxion/series.hpp>                 // dymaxion::VertexPositions
-#include <grid/dymaxion/noise/MosaicOps.hpp>        // dymaxion::MosaicOps
 
 #include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
 
@@ -111,19 +110,10 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
     auto hypsometry_pdf = hypsometry_pdf_unscaled / hypsometry_cdf_unscaled_range;
     auto hypsometry_cdfi = inspected::inverse_by_newtons_method(hypsometry_cdf, hypsometry_pdf, 0.5f, 30);
 
-    auto fbm_cdf = analytic::Error(0.0f, 1.0f, (1.0f/(std::sqrt(2.0f*3.1415926f))));
-    auto fbm = field::fractal_brownian_noise<int,float>(
-      field::value_noise<3,float>(
-          field::mosaic_noise(
-            series::gaussian(series::unit_interval_noise(12.0f, 1.1e4f)), 
-            cartesian::UnboundedIndexing<int>()),
-          field::vector_mosaic_ops<3,int,float>()
-      ), 10, 0.5f, 2.0f*meter/radius);
-
     auto elevation_for_position = 
         field::compose(
             relation::ScalarRelation(1.0f, length(si::meter), hypsometry_cdfi),
-            field::compose(fbm_cdf, fbm)
+            field::ranked_fractal_brownian_noise<3>(10, /*0.5f,*/ 2.0f*meter/radius, 12.0f, 1.1e4f)
         );
 
     std::vector<length> intended_displacements(grid.vertex_count());

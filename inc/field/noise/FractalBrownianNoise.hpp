@@ -12,7 +12,7 @@
 namespace field
 {
 
-	template<typename id, typename scalar, typename Noise, glm::qualifier precision=glm::defaultp>
+	template<typename id, typename scalar, typename Noise>
 	class FractalBrownianNoise
 	{
 
@@ -62,14 +62,14 @@ namespace field
 
 	};
 
-	template<typename id, typename scalar, typename Noise, glm::qualifier precision=glm::defaultp>
+	template<typename id, typename scalar, typename Noise>
 	constexpr inline auto fractal_brownian_noise(
 		const Noise noise, 
 		const id octave_count, 
 		const scalar amplitude_scale_per_frequency_doubling,
 		const scalar coarsest_frequency
 	) {
-		return FractalBrownianNoise<id,scalar,Noise,precision>(noise, octave_count, amplitude_scale_per_frequency_doubling, coarsest_frequency);
+		return FractalBrownianNoise<id,scalar,Noise>(noise, octave_count, amplitude_scale_per_frequency_doubling, coarsest_frequency);
 	}
 
 }
