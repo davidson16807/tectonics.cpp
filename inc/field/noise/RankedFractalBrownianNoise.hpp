@@ -45,7 +45,7 @@ namespace field
 	template<int L, typename id, typename scalar>
 	constexpr inline auto ranked_fractal_brownian_noise(
 		const id octave_count, 
-		// const scalar amplitude_scale_per_frequency_doubling,
+		const scalar amplitude_scale_per_frequency_doubling,
 		const scalar coarsest_frequency,
 		const scalar seed1,
 		const scalar seed2
@@ -58,7 +58,7 @@ namespace field
 	            series::gaussian(series::unit_interval_noise(seed1,seed2)), 
 	            cartesian::UnboundedIndexing<id>()),
 	          field::vector_mosaic_ops<L,id,scalar>()
-	      ), octave_count, scalar(0.5), coarsest_frequency);
+	      ), octave_count, amplitude_scale_per_frequency_doubling, coarsest_frequency);
 	    return field::compose(fbm_cdf, fbm);
 	}
 

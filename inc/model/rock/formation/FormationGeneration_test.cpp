@@ -113,7 +113,7 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
     auto elevation_for_position = 
         field::compose(
             relation::ScalarRelation(1.0f, length(si::meter), hypsometry_cdfi),
-            field::ranked_fractal_brownian_noise<3>(10, /*0.5f,*/ 2.0f*meter/radius, 12.0f, 1.1e4f)
+            field::ranked_fractal_brownian_noise<3>(10, 0.5f, 2.0f*meter/radius, 12.0f, 1.1e4f)
         );
 
     std::vector<length> intended_displacements(grid.vertex_count());
