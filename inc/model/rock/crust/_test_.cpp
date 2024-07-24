@@ -24,7 +24,10 @@ It does so by testing that mass properties are commutative as the limit of this 
 #include <iostream>
 #include <string>
 
-// glm libraries
+// 3rd party libraries
+#define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
+#include <catch/catch.hpp>
+
 #define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
 #define GLM_FORCE_SWIZZLE   // allow swizzle methods like .xy()
 
@@ -61,26 +64,37 @@ It does so by testing that mass properties are commutative as the limit of this 
 #include <field/Compose.hpp>                        // Compose
 #include <field/VectorZip.hpp>                      // VectorZip
 #include <field/noise/MosaicOps.hpp>                // field::VectorMosaicOps
-#include <field/noise/FractalBrownianNoise.hpp>     // dymaxion::FractalBrownianNoise
+#include <field/noise/RankedFractalBrownianNoise.hpp>// field::ranked_fractal_brownian_noise
 
 #include <grid/cartesian/UnboundedIndexing.hpp>     // field::UnboundedIndexing
 #include <grid/dymaxion/Indexing.hpp>               // dymaxion::Indexing
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
 #include <grid/dymaxion/series.hpp>                 // dymaxion::VertexPositions
-#include <grid/dymaxion/noise/MosaicOps.hpp>        // dymaxion::MosaicOps
 
 #include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
 
+// objects
 #include <model/rock/stratum/Stratum.hpp>  // Stratum
-#include <model/rock/formation/Formation.hpp>  // Formation
 #include <model/rock/stratum/StratumSummary.hpp>  // StratumSummary
-#include <model/rock/stratum/StratumSummaryProperties.hpp>  // StratumSummaryIsostaticDisplacement
+#include <model/rock/formation/Formation.hpp>  // Formation
 #include <model/rock/formation/FormationSummary.hpp>  // FormationSummary
+#include <model/rock/crust/Crust.hpp>  // Crust
+#include <model/rock/crust/CrustSummary.hpp>  // CrustSummary
 
+// arrows
+#include <model/rock/mineral/MineralOps.hpp>  // StratumProperties
+#include <model/rock/stratum/StratumOps.hpp>  // StratumProperties
 #include <model/rock/stratum/StratumProperties.hpp>  // StratumProperties
-#include <model/rock/formation/FormationGeneration.hpp>  // FormationGeneration
 #include <model/rock/stratum/StratumSummarization.hpp>  // StratumSummarization
+#include <model/rock/stratum/StratumSummaryProperties.hpp>  // StratumSummaryIsostaticDisplacement
+#include <model/rock/stratum/StratumForAreaAndElevation.hpp>  // StratumForAreaAndElevation
+#include <model/rock/formation/FormationOps.hpp>  // CrustSummaryOps
+#include <model/rock/formation/FormationGeneration.hpp>  // FormationGeneration
 #include <model/rock/formation/FormationSummarization.hpp>  // FormationSummarization
+#include <model/rock/formation/FormationSummaryOps.hpp>  // CrustSummaryOps
+#include <model/rock/crust/CrustOps.hpp>  // CrustSummaryOps
+#include <model/rock/crust/CrustSummarization.hpp>  // CrustSummarization
+#include <model/rock/crust/CrustSummaryOps.hpp>  // CrustSummaryOps
 
   TEST_CASE( "FormationGeneration must be able to achieve desired displacements as indicated by elevation_for_position", "[rock]" ) {
 
@@ -109,31 +123,41 @@ It does so by testing that mass properties are commutative as the limit of this 
       auto hypsometry_cdfi = inspected::inverse_by_newtons_method(hypsometry_cdf, hypsometry_pdf, 0.5f, 30);
       auto hypsometry_cdfi_meters = relation::ScalarRelation(1.0f, length(si::meter), hypsometry_cdfi);
 
-      rock::FormationGenerationType igneous(
-        grid,
-        // displacements are from Charette & Smith 2010 (shallow ocean), enclopedia britannica (shelf bottom"continental slope"), 
-        // wikipedia (shelf top), and Sverdrup & Fleming 1942 (land)
-        // Funck et al. (2003) suggests a sudden transition from felsic to mafic occuring at ~4km depth or 8km thickness
-        relation::get_linear_interpolation_function(si::meter, si::megayear, 
-          {-11000.0, -5000.0, -4500.0, -2000.0, -900.0},
-          {250.0,    100.0,   0.0,       100.0, 1000.0}),
-        relation::get_linear_interpolation_function(si::meter, si::kilogram/si::meter2,
-          {-5000.0,              -4500.0},
-          {3300.0 * 7100.0, 2890.0 * 0.0}),
-        relation::get_linear_interpolation_function(si::meter, 2600.0 * si::kilogram/si::meter2,
-          {-5000.0, -4500.0,  -950.0,  840.0,    8848.0},
-          {0.0,      7100.0, 28300.0, 36900.0, 70000.0}),
-        relation::get_linear_interpolation_function(si::meter, 1.0, 
-          {-1500.0, 8848.0},
-          {0.25,      0.25}), // from Gillis (2013)
-        relation::get_linear_interpolation_function(si::meter, 1.0, 
-          {-1500.0, 8848.0},
-          {0.15,      0.15}) // based on estimate from Wikipedia
+      rock::StratumForAreaAndElevation stratum_for_area_elevation {
+          // displacements are from Charette & Smith 2010 (shallow ocean), enclopedia britannica (shelf bottom"continental slope"), 
+          // wikipedia (shelf top), and Sverdrup & Fleming 1942 (land)
+          // Funck et al. (2003) suggests a sudden transition from felsic to mafic occuring at ~4km depth or 8km thickness
+          relation::get_linear_interpolation_function(si::meter, si::megayear, 
+            {-11000.0, -5000.0, -4500.0, -2000.0, -900.0},
+            {250.0,    100.0,   0.0,       100.0, 1000.0}),
+          relation::get_linear_interpolation_function(si::meter, si::kilogram/si::meter2,
+            {-5000.0,              -4500.0},
+            {3300.0 * 7100.0, 2890.0 * 0.0}),
+          relation::get_linear_interpolation_function(si::meter, 2600.0 * si::kilogram/si::meter2,
+            {-5000.0, -4500.0,  -950.0,  840.0,    8848.0},
+            {0.0,      7100.0, 28300.0, 36900.0, 70000.0}),
+          relation::get_linear_interpolation_function(si::meter, 1.0, 
+            {-1500.0, 8848.0},
+            {0.25,      0.25}), // from Gillis (2013)
+          relation::get_linear_interpolation_function(si::meter, 1.0, 
+            {-1500.0, 8848.0},
+            {0.15,      0.15}) // based on estimate from Wikipedia
+      };
+
+      rock::FormationGeneration igneous(grid, 
+        field::compose(
+              hypsometry_cdfi_meters,
+              field::ranked_fractal_brownian_noise<3>(10, 0.5f, 2.0f*meter/radius, 12.0f, 1.1e4f)
+        ), 
+        stratum_for_area_elevation
       );
 
+      const int M = 2;
+      const int F = 2;
+
       iterated::Copy copy{};
-      std::vector<StratumStore<2>> formation1;
-      std::vector<StratumStore<2>> formation2;
+      rock::Formation<M> formation1;
+      rock::Formation<M> formation2;
       copy(igneous(field::compose(
               hypsometry_cdfi_meters,
               field::ranked_fractal_brownian_noise<3>(10, 0.5f, 2.0f*meter/radius, 12.0f, 1.1e4f)
@@ -142,24 +166,57 @@ It does so by testing that mass properties are commutative as the limit of this 
               hypsometry_cdfi_meters,
               field::ranked_fractal_brownian_noise<3>(10, 0.5f, 2.0f*meter/radius, 20.0f, 1.2e4f)
           )), formation2);
-      rock::Crust<2>{formation1, formation2};
+      rock::Crust<M,F> crust{formation1, formation2};
 
+      // "flatten" ops
+      auto crust_ops = 
+        rock::CrustOps{
+          rock::FormationOps{
+            rock::StratumOps<M>{
+              rock::MineralOps{}
+          }}};
+      auto stratum_summary_ops = 
+        rock::StratumSummaryOps{
+          density(3075.0*si::kilogram/si::meter3)
+        };
+      auto crust_summary_ops = 
+        rock::CrustSummaryOps{
+          rock::ColumnSummaryOps{
+            stratum_summary_ops,
+            length(si::centimeter)
+          }
+        };
 
-      // formation summarization
+      // "summarize" ops
       auto age_of_world = 0.0f*si::megayear;
-      std::array<relation::PolynomialRailyardRelation<si::time<double>,si::density<double>,0,1>, 2> densities_for_age {
+      std::array<relation::PolynomialRailyardRelation<si::time<double>,si::density<double>,0,1>, M> densities_for_age {
         relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2890.0, 3300.0}), // Carlson & Raskin 1984
         relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2600.0, 2600.0})
       };
-      auto formation_summarization = rock::formation_summarization<2>(
-        rock::stratum_summarization<2>(
+      auto stratum_summarization = 
+        rock::stratum_summarization<M>(
           rock::AgedStratumDensity{densities_for_age, age_of_world}
-        ), 
-        grid
-      );
+        );
+      auto formation_summarization = rock::formation_summarization<M>(stratum_summarization, grid);
+      auto crust_summarization = rock::CrustSummarization{
+        formation_summarization, rock::FormationSummaryOps{stratum_summary_ops}
+      };
+
+
       int plate_id = 1;
-      rock::FormationSummary summary(grid.vertex_count());
-      formation_summarization(plate_id, formation, summary);
+
+      rock::Formation<M> formation(grid.vertex_count());
+      crust_ops.flatten(crust, formation);
+
+      rock::FormationSummary formation_summary1(grid.vertex_count());
+      formation_summarization(plate_id, formation, formation_summary1);
+
+      rock::FormationSummary scratch(grid.vertex_count());
+      rock::CrustSummary crust_summary(grid.vertex_count());
+      crust_summarization(plate_id, crust, crust_summary, scratch);
+
+      rock::FormationSummary formation_summary2(grid.vertex_count());
+      crust_summary_ops.flatten(crust_summary, formation_summary2);
 
       auto strings = spheroidal::Strings(
         adapted::SiStrings{}, 
@@ -172,8 +229,13 @@ It does so by testing that mass properties are commutative as the limit of this 
       //   probe[i] = stratum_tools.isostatic_displacement(summary[i]);
       // }
 
-      aggregated::Metric metric{adapted::SiMetric{}};
-      REQUIRE();
+      // std::cout << strings.format(grid, intended_displacements) << std::endl << std::endl;
+      // std::cout << strings.format(grid, actual_displacements) << std::endl << std::endl;
+      // std::cout << strings.format(grid, probe) << std::endl << std::endl;
+
+      aggregated::Metric metric(adapted::SiMetric{});
+      REQUIRE(metric.distance(formation_summary1, formation_summary2) < 1.0f*si::kilometer);
+
   }
 
 

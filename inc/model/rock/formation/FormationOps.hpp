@@ -18,7 +18,7 @@ namespace rock
         const StratumOps<M> ops;
 
     public:
-        FormationOps(const StratumOps& ops):
+        FormationOps(const StratumOps<M>& ops):
             ops(ops)
         {}
 

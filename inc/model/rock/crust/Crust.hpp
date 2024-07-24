@@ -11,8 +11,8 @@
 namespace rock
 {
 
-    template<std::size_t M>
-    using Crust = std::array<Formation<M>,FormationTypes::count>;
+    template<std::size_t mineral_count, std::size_t formation_count>
+    using Crust = std::array<Formation<mineral_count>,formation_count>;
 
 }
 

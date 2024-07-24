@@ -69,13 +69,13 @@ It does so by testing that this diagram commutes:
 #include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
 
 #include <model/rock/stratum/Stratum.hpp>  // Stratum
-#include <model/rock/formation/Formation.hpp>  // Formation
 #include <model/rock/stratum/StratumSummary.hpp>  // StratumSummary
-#include <model/rock/stratum/StratumSummaryProperties.hpp>  // StratumSummaryIsostaticDisplacement
+#include <model/rock/formation/Formation.hpp>  // Formation
 #include <model/rock/formation/FormationSummary.hpp>  // FormationSummary
 
 #include <model/rock/stratum/StratumProperties.hpp>  // StratumProperties
 #include <model/rock/stratum/StratumSummarization.hpp>  // StratumSummarization
+#include <model/rock/stratum/StratumSummaryProperties.hpp>  // StratumSummaryIsostaticDisplacement
 #include <model/rock/stratum/StratumForAreaAndElevation.hpp>  // StratumForAreaAndElevation
 #include <model/rock/formation/FormationGeneration.hpp>  // FormationGeneration
 #include <model/rock/formation/FormationSummarization.hpp>  // FormationSummarization
