@@ -57,6 +57,13 @@ namespace rock
             return true;
         }
 
+        bool equal(const MineralStore& a, const MineralStore& b) const {
+            Mineral a2, b2;
+            a.unpack(a2);
+            b.unpack(b2);
+            return equal(a2,b2);
+        }
+
         bool is_valid(Mineral& a) const {
             if(a.mass/si::kilogram < -float_threshold){
                 return false;

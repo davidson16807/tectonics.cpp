@@ -64,6 +64,26 @@ namespace rock
             return true;
         }
 
+        bool equal(const StratumStore<M>& a, const StratumStore<M>& b) const {
+            if(si::distance(a.age_of_world_when_first_deposited(), b.age_of_world_when_first_deposited()) 
+                > float_threshold * si::max(si::second, si::max(a.age_of_world_when_first_deposited(),b.age_of_world_when_first_deposited())) )
+            {
+                return false;
+            }
+            if(si::distance(a.age_of_world_when_last_deposited(), b.age_of_world_when_last_deposited()) 
+                > float_threshold * si::max(si::second, si::max(a.age_of_world_when_last_deposited(),b.age_of_world_when_last_deposited())) )
+            {
+                return false;
+            }
+            for (std::size_t pool_i = 0; pool_i < M; ++pool_i)
+            {
+                if(!minerals.equal(a[pool_i], b[pool_i])){
+                    return false;
+                }
+            }
+            return true;
+        }
+
         bool is_valid(Stratum<M>& a) const {
             if(a.age_of_world_when_first_deposited/si::second < -float_threshold)
             {

@@ -18,7 +18,6 @@ TEST_CASE( "Formation combine() commutative monoid", "[rock]" ) {
 
     // using mass = si::mass<float>;
     using length = si::length<float>;
-    using density = si::density<float>;
 
     length meter(si::meter);
 
@@ -62,30 +61,30 @@ TEST_CASE( "Formation combine() commutative monoid", "[rock]" ) {
         {0.15,      0.15}) // based on estimate from Wikipedia
     };
 
-    rock::FormationGeneration igneous(grid, 
-        field::compose(
-            hypsometry_cdfi_meters,
-            field::ranked_fractal_brownian_noise<3>(10, 0.5f, 2.0f*meter/radius, 12.0f, 1.1e4f)
-        ), 
-        stratum_for_area_elevation
-    );
-
     const int M = 2;
 
     iterated::Copy copy{};
-    rock::Formation<M> formation1;
-    rock::Formation<M> formation2;
-    copy(igneous(field::compose(
-          hypsometry_cdfi_meters,
-          field::ranked_fractal_brownian_noise<3>(10, 0.5f, 2.0f*meter/radius, 12.0f, 1.1e4f)
-      )), formation1);
-    copy(igneous(field::compose(
-          hypsometry_cdfi_meters,
-          field::ranked_fractal_brownian_noise<3>(10, 0.5f, 2.0f*meter/radius, 20.0f, 1.2e4f)
-      )), formation2);
+    rock::Formation<M> formation1(grid.vertex_count());
+    copy(rock::FormationGeneration(grid, 
+            field::compose(
+                hypsometry_cdfi_meters,
+                field::ranked_fractal_brownian_noise<3>(10, 0.5f, 2.0f*meter/radius, 12.0f, 1.1e4f)
+            ), 
+            stratum_for_area_elevation
+        ), 
+        formation1);
+    rock::Formation<M> formation2(grid.vertex_count());
+    copy(rock::FormationGeneration(grid, 
+            field::compose(
+                hypsometry_cdfi_meters,
+                field::ranked_fractal_brownian_noise<3>(10, 0.5f, 2.0f*meter/radius, 20.0f, 1.2e4f)
+            ), 
+            stratum_for_area_elevation
+        ), 
+        formation2);
 
     rock::Stratum<M> empty;
-    rock::Formation<M> e(empty, grid.vertex_count());
+    rock::Formation<M> e(grid.vertex_count(), empty);
     std::vector<rock::Formation<M>> formations{e, formation1, formation2};
 
     rock::FormationOps<M> ops;
