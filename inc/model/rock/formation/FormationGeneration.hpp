@@ -10,18 +10,15 @@ namespace rock {
 
     It accomplishes this by traversing the following diagram:
 
-                              ↗ felsic_area_density 
-    id ⟶ position ⟶ elevation → age                 
-       ↘ area                 ↘ mafic_area_density  
+    id ⟶ position ⟶ elevation 
+       ↘            ↑
+         area     ← Π → stratum
 
-    where arrows are provided by constructor parameters
     */
     template<
         typename Grid,
         typename ElevationForPosition,
-        typename AgeForElevation,
-        typename AreaDensityForElevation,
-        typename ExtrusiveFractionForElevation>
+        typename StratumForAreaElevation>
     class FormationGeneration {
 
         using id     = typename Grid::size_type;
@@ -29,53 +26,32 @@ namespace rock {
 
         static const int M = 2; // number of stored minerals
 
-        const Grid                          grid;
-        const ElevationForPosition          elevation_for_position;
-        const AgeForElevation               age_for_elevation;
-        const AreaDensityForElevation       mafic_area_density_for_elevation;
-        const AreaDensityForElevation       felsic_area_density_for_elevation;
-        const ExtrusiveFractionForElevation mafic_extrusive_fraction;
-        const ExtrusiveFractionForElevation felsic_extrusive_fraction;
+        const Grid                     grid;
+        const ElevationForPosition     elevation_for_position;
+        const StratumForAreaElevation  stratum_for_area_elevation;
 
     public:
 
         constexpr explicit FormationGeneration(
-            const Grid&                           grid,
-            const ElevationForPosition           elevation_for_position, // scalars, may be any unit but must agree with other parameter functions
-            const AgeForElevation&               age_for_elevation,
-            const AreaDensityForElevation&       mafic_area_density_for_elevation,
-            const AreaDensityForElevation&       felsic_area_density_for_elevation,
-            const ExtrusiveFractionForElevation& felsic_extrusive_fraction,
-            const ExtrusiveFractionForElevation& mafic_extrusive_fraction
+            const Grid&                    grid,
+            const ElevationForPosition     elevation_for_position, // scalars, may be any unit but must agree with other parameter functions
+            const StratumForAreaElevation& stratum_for_area_elevation
         ):
             grid(grid),
             elevation_for_position(elevation_for_position),
-            age_for_elevation(age_for_elevation),
-            mafic_area_density_for_elevation  (mafic_area_density_for_elevation),
-            felsic_area_density_for_elevation (felsic_area_density_for_elevation),
-            mafic_extrusive_fraction (mafic_extrusive_fraction),
-            felsic_extrusive_fraction(felsic_extrusive_fraction)
+            stratum_for_area_elevation(stratum_for_area_elevation)
         {}
 
         using size_type = std::size_t; 
-        using value_type = StratumStore<2>; 
+        using value_type = StratumStore<M>; 
 
         constexpr inline size_type size() const { return grid.vertex_count(); } 
-        value_type operator[] (const id vertex_id) const
+        auto operator[] (const id vertex_id) const
         {
-            auto area = grid.vertex_dual_area(vertex_id) * si::meter2;
-            auto elevation = elevation_for_position(grid.vertex_position(vertex_id));
-            auto age = age_for_elevation(elevation);
-            auto mafic_extrusive_fraction_ = mafic_extrusive_fraction (elevation);
-            auto felsic_extrusive_fraction_ = felsic_extrusive_fraction (elevation);
-            Mineral mafic (mafic_area_density_for_elevation (elevation) * area);
-            Mineral felsic(felsic_area_density_for_elevation(elevation) * area);
-            mafic .grain_type_relative_volume[int(GrainType::unweathered_extrusive)] =              mafic_extrusive_fraction_;
-            felsic.grain_type_relative_volume[int(GrainType::unweathered_extrusive)] =             felsic_extrusive_fraction_;
-            mafic .grain_type_relative_volume[int(GrainType::unweathered_intrusive)] = scalar(1) -  mafic_extrusive_fraction_;
-            felsic.grain_type_relative_volume[int(GrainType::unweathered_intrusive)] = scalar(1) - felsic_extrusive_fraction_;
-            Stratum<M> stratum(age, age, std::array<Mineral,M>{mafic, felsic});
-            return StratumStore<M>(stratum);
+            return stratum_for_area_elevation(
+                grid.vertex_dual_area(vertex_id) * si::meter2, 
+                elevation_for_position(grid.vertex_position(vertex_id))
+            );
         }
 
     };
