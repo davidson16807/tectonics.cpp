@@ -12,6 +12,13 @@ namespace rock{
         CrustOps(const FormationOps<M>& formations):
             formations(formations)
         {}
+        void absorb (const Crust<M,F>& top, const Crust<M,F>& bottom, Formation<M>& out) const
+        {
+            for (std::size_t i = 0; i < bottom.size(); ++i)
+            {
+                formations.combine(crust[i], out, out);
+            }
+        }
         void flatten (const Crust<M,F>& crust, Formation<M>& out) const
         {
             formations.combine(crust[0], crust[1], out);

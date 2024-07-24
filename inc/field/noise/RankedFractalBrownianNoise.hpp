@@ -34,9 +34,12 @@ namespace field
 
 	The implementation of RFBN requires precise coordination between the distribution that underlies the FBN 
 	and the CDF that's used to map to the unit interval. 
-	To safely abstract over this coordination, decisions have to be made about the RFBM's implementation.
-	The CDF of an FBN is easily analyzed for precious few circumstances,
-	so a gaussian is chosen as the underlying distribution for the FBN since this distribution is common and easy to reason with
+	To safely abstract over this coordination, decisions have to be made about the RFBN's implementation.
+	The CDF of an FBN is easily analyzed for precious few circumstances, 
+	one of which is where a gaussian is the underlying noise function.
+	Although our implementation of FBN is generalized to work with any underlying noise function,
+	FBN is classically defined as only using gaussians,
+	so a gaussian is chosen as the underlying noise for the FBN since this distribution is common and easy to reason with
 	(gaussians of the same mean and standard deviation are closed under linear combinations)
 	Other design decisions (such as the underlying use of value and mosaic noise) 
 	are pragmatic decisions that are made to simplify implementation (this problem is hard enough as it is),

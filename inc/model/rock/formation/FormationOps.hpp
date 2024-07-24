@@ -18,8 +18,8 @@ namespace rock
         const StratumOps<M> ops;
 
     public:
-        FormationOps(const StratumOps<M>& ops):
-            ops(ops)
+        FormationOps():
+            ops()
         {}
 
         // Returns the empty Formation.

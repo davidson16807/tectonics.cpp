@@ -21,8 +21,8 @@ namespace rock
         const MineralOps minerals;
 
     public:
-        StratumOps(const MineralOps& minerals):
-            minerals(minerals)
+        StratumOps():
+            minerals()
         {}
 
         // OPERATORS, regular functions of the form: Stratum x Stratum -> Stratum
