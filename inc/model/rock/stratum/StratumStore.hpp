@@ -30,12 +30,16 @@ namespace rock
     template <int M>
     class StratumStore
     {
+        using uint16 = std::uint16_t;
+
         std::array<rock::MineralStore, M> minerals;
         // Represent age of world from 1 to 65.535 billion years to the nearest megayear
-        std::uint16_t age_of_world_when_first_deposited_in_megayears;
+        uint16 age_of_world_when_first_deposited_in_megayears;
         // Represent age of world from 1 to 65.535 billion years to the nearest megayear
         // Also used for cache alignment
-        std::uint16_t age_of_world_when_last_deposited_in_megayears;
+        uint16 age_of_world_when_last_deposited_in_megayears;
+
+        static constexpr uint16 oo = std::numeric_limits<uint16>::max()-1;
 
     public:
 
@@ -85,12 +89,12 @@ namespace rock
 
         inline auto age_of_world_when_first_deposited (const si::time<double> value) 
         {
-            age_of_world_when_first_deposited_in_megayears = value / si::megayear;
+            age_of_world_when_first_deposited_in_megayears = std::max(0.0, value / si::megayear);
         }
 
         inline auto age_of_world_when_last_deposited (const si::time<double> value) 
         {
-            age_of_world_when_last_deposited_in_megayears = value / si::megayear;
+            age_of_world_when_last_deposited_in_megayears = std::min(double(oo), value / si::megayear);
         }
 
         si::mass<float> mass () const 
@@ -103,12 +107,26 @@ namespace rock
             return result;
         }
 
+        bool empty () const 
+        {
+            for (int i = 0; i < M; ++i)
+            {
+                if (minerals[i].mass() > 0.0*si::kilogram) { return false; }
+            }
+            return true;
+        }
+
         inline auto size() const
         {
             return minerals.size();
         }
 
         inline auto operator[] (const int i) const
+        {
+            return minerals[i];
+        }
+
+        inline auto& operator[] (const int i)
         {
             return minerals[i];
         }

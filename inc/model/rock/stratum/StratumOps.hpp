@@ -18,6 +18,10 @@ namespace rock
     template<std::size_t M>
     class StratumOps
     {
+        using time = si::time<double>;
+
+        static constexpr double oo = std::numeric_limits<double>::max();
+
         const MineralOps minerals;
 
     public:
@@ -64,8 +68,14 @@ namespace rock
                 minerals.combine(unpacked1, unpacked2, combined);
                 output[i].pack(combined);
             }
-            output.age_of_world_when_first_deposited(std::min(a.age_of_world_when_first_deposited(), b.age_of_world_when_first_deposited()));
-            output.age_of_world_when_last_deposited (std::max(a.age_of_world_when_last_deposited(),  b.age_of_world_when_last_deposited()));
+            auto a_empty = a.empty();
+            auto b_empty = b.empty();
+            auto a_start = a_empty? time(oo) : a.age_of_world_when_first_deposited();
+            auto b_start = b_empty? time(oo) : b.age_of_world_when_first_deposited();
+            auto a_stop = a_empty? time(0) : a.age_of_world_when_last_deposited();
+            auto b_stop = b_empty? time(0) : b.age_of_world_when_last_deposited();
+            output.age_of_world_when_first_deposited(std::min(a_start, b_start));
+            output.age_of_world_when_last_deposited (std::max(a_stop, b_stop));
         }
 
     };

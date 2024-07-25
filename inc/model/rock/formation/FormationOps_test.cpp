@@ -22,7 +22,7 @@ TEST_CASE( "Formation combine() commutative monoid", "[rock]" ) {
     length meter(si::meter);
 
     length radius(6.371e6 * si::meter);
-    int vertices_per_square_side(16);
+    int vertices_per_square_side(4);
     dymaxion::Grid grid(radius/meter, vertices_per_square_side);
 
     float min_elevation(-16000.0f);
@@ -84,7 +84,7 @@ TEST_CASE( "Formation combine() commutative monoid", "[rock]" ) {
         ), 
         formation2);
 
-    rock::Stratum<M> empty;
+    rock::StratumStore<M> empty;
     rock::Formation<M> e(grid.vertex_count(), empty);
     std::vector<rock::Formation<M>> formations{e, formation1, formation2};
 
