@@ -20,7 +20,7 @@ namespace test {
             if (adapter.equal(a[i],a[j])) {
                 std::cout << std::endl;
                 std::cout << "Test failed:" << std::endl;
-                std::cout << "  sample values should be appreciably different and adapter.equal(…) must be able to be detect appreciable differences" << std::endl;
+                std::cout << "  sample values should be appreciably different" << std::endl;
                 std::cout << "  a₁ : " << indent(adapter.print(a[i]), "  ") << " [from index "<< i <<"]" << std::endl;
                 std::cout << "  a₂ : " << indent(adapter.print(a[j]), "  ") << " [from index "<< j <<"]" << std::endl;
                 return false; 
@@ -28,7 +28,7 @@ namespace test {
             if (adapter.print(a[i]) == adapter.print(a[j])) {
                 std::cout << std::endl;
                 std::cout << "Test failed:" << std::endl;
-                std::cout << "  sample values should be appreciably different and adapter.print(…) must be able to be depict appreciable differences" << std::endl;
+                std::cout << "  adapter.print(…) must be able to be depict appreciable differences" << std::endl;
                 std::cout << "  a₁ : " << indent(adapter.print(a[i]), "  ") << " [from index "<< i <<"]" << std::endl;
                 std::cout << "  a₂ : " << indent(adapter.print(a[j]), "  ") << " [from index "<< j <<"]" << std::endl;
                 return false; 

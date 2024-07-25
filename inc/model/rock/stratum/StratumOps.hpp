@@ -51,6 +51,23 @@ namespace rock
             output.age_of_world_when_last_deposited = std::max(a.age_of_world_when_last_deposited, b.age_of_world_when_last_deposited);
         }
 
+        void combine(
+            const StratumStore<M>& a, 
+            const StratumStore<M>& b, 
+            StratumStore<M>& output
+        ) const {
+            Mineral unpacked1, unpacked2, combined;
+            for (std::size_t i=0; i<M; i++)
+            {
+                a[i].unpack(unpacked1);
+                b[i].unpack(unpacked2);
+                minerals.combine(unpacked1, unpacked2, combined);
+                output[i].pack(combined);
+            }
+            output.age_of_world_when_first_deposited(std::min(a.age_of_world_when_first_deposited(), b.age_of_world_when_first_deposited()));
+            output.age_of_world_when_last_deposited (std::max(a.age_of_world_when_last_deposited(),  b.age_of_world_when_last_deposited()));
+        }
+
     };
 
 }

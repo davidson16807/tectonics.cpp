@@ -124,7 +124,22 @@ namespace rock
 
         std::string print(const StratumStore<M>& a) const {
             std::ostringstream os;
-            os << "[encapsulated]";
+            os << "age of world when first deposited: ";
+            os << si::to_string(a.age_of_world_when_first_deposited());
+            os << "\n";
+            os << "age of world when last deposited: ";
+            os << si::to_string(a.age_of_world_when_last_deposited());
+            os << "\n";
+            os << "minerals: ";
+            os << "\n";
+            Mineral unpacked;
+            for (int i = 0; i < int(GrainType::count); ++i)
+            {
+                a[i].unpack(unpacked);
+                os << minerals.print(unpacked);
+                os << "\n";
+            }
+            os << "\n";
             return os.str();
         }
 

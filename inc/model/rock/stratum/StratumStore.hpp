@@ -83,6 +83,16 @@ namespace rock
             return age_of_world_when_last_deposited_in_megayears * si::megayear;
         }
 
+        inline auto age_of_world_when_first_deposited (const si::time<double> value) 
+        {
+            age_of_world_when_first_deposited_in_megayears = value / si::megayear;
+        }
+
+        inline auto age_of_world_when_last_deposited (const si::time<double> value) 
+        {
+            age_of_world_when_last_deposited_in_megayears = value / si::megayear;
+        }
+
         si::mass<float> mass () const 
         {
             si::mass<float> result;

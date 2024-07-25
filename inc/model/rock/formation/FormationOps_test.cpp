@@ -73,6 +73,7 @@ TEST_CASE( "Formation combine() commutative monoid", "[rock]" ) {
             stratum_for_area_elevation
         ), 
         formation1);
+
     rock::Formation<M> formation2(grid.vertex_count());
     copy(rock::FormationGeneration(grid, 
             field::compose(
@@ -92,7 +93,11 @@ TEST_CASE( "Formation combine() commutative monoid", "[rock]" ) {
 
     test::CommutativeMonoid commutative_monoid1(
         "an empty Formation", e,
-        "combine",            TEST_BINARY(ops.combine)
+        "combine",            [=](auto& a, auto& b){
+            rock::Formation<M> out(grid.vertex_count()); 
+            ops.combine(a,b,out); 
+            return out;
+        }
     );
 
     REQUIRE(commutative_monoid1.valid(testing, formations));
