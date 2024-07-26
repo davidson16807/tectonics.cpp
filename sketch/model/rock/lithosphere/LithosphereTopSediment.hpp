@@ -14,7 +14,8 @@
 
 namespace rock{
 
-    template <int M>
+    // NOTE: `M` is mineral count, `F` is formation count
+    template <int M, int F>
     class LithosphereTopSediment
     {
 
@@ -30,7 +31,7 @@ namespace rock{
         {}
 
         void summarize(
-            const std::vector<Crust<M>>& plates,
+            const std::vector<Crust<M,F>>& plates,
             const std::vector<LithosphereSummary>& summaries,
             std::vector<Formation<M>>& out
         ) const {

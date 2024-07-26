@@ -4,6 +4,8 @@
 
 namespace rock{
 
+    // NOTE: `M` is mineral count, `F` is formation count
+    template<int M, int F>
     class CrustTopSediment
     {
         const FormationSummarization summarize;
@@ -15,7 +17,7 @@ namespace rock{
         {}
         void operator() (
             const int plate_id, 
-            const Crust<M>& crust,
+            const Crust<M,F>& crust,
             const LithosphereSummary& summary,
             Formation<M>& out
         ) const {

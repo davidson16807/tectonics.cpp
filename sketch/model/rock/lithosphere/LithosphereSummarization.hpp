@@ -14,7 +14,8 @@
 
 namespace rock{
 
-    template <int M>
+    // NOTE: `M` is mineral count, `F` is formation count
+    template <int M, int F>
     class LithosphereSummarization
     {
 
@@ -30,8 +31,8 @@ namespace rock{
         {}
 
         void summarize(
-            const std::vector<Crust<M>>& plates,
-            std::vector<CrustSummary>& out,
+            const Lithosphere<M,F>& plates,
+            LithosphereSummary& out,
             CrustSummary& scratch_formation
         ) const {
             *CrustSummary scratch_formation = global_formation;
@@ -42,10 +43,10 @@ namespace rock{
         }
 
         void flatten (
-            const std::vector<CrustSummary>& formations,
+            const LithosphereSummary& formations,
             CrustSummary& out
         ) const {
-            std::fill(out.begin(), out.end(), StratumSummary());
+            std::fill(out.begin(), out.end(), StratumSummary{});
             for (std::size_t i = 0; i < formations.size(); ++i)
             {
                 tools.absorb(out, formations[i], out);

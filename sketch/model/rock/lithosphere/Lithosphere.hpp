@@ -4,7 +4,7 @@
 
 namespace rock{
 
-    template <int M>
-    using Lithosphere = std::vector<Crust<M>>;
+    template <int mineral_count,int formation_count>
+    using Lithosphere = std::vector<Crust<mineral_count,formation_count>>;
 
 }

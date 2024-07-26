@@ -23,19 +23,23 @@ namespace rock{
     {
 
         const dymaxion::Grid grid;
+        const dymaxion::NearestVertexId nearest;
+        const dymaxion::VertexPositions positions;
 
     public:
 
-        LithosphereReferenceFrames(const dymaxion::Grid& grid): grid(grid)
+        LithosphereReferenceFrames(const dymaxion::Grid& grid): 
+            nearest(grid),
+            positions(grid),
         {}
 
         template<typename Raster>
         void globalize(
             const std::vector<glm::dmat3>& locals_to_globals,
-            const std::vector<Raster>& local,
-            std::vector<Raster>& global
+            const std::vector<Raster>& locals,
+            std::vector<Raster>& globals
         ) const {
-            for (std::size_t i = 0; i < plates.size(); ++i)
+            for (std::size_t i = 0; i < locals_to_globals.size(); ++i)
             {
                 /*
                             grid      rotation    grid
@@ -43,22 +47,20 @@ namespace rock{
                 */
                 auto resample = 
                     series::map(
-                        field::compose(
-                            dymaxion::NearestVertexId(grid), 
-                            field::Affinity(locals_to_globals[i])),
-                        dymaxion::VertexPositions(grid)
+                        field::compose(nearest, field::Affinity(locals_to_globals[i])),
+                        positions
                     );
-                each::get(raster, resample, global[i]);
+                each::get(locals, resample, globals[i]);
             }
         }
 
         template<typename Raster>
         void localize(
-            const std::vector<glm::dmat3> globals_to_locals,
+            const std::vector<glm::dmat3> global_to_locals,
             const Raster& global,
-            std::vector<Raster>& local
+            std::vector<Raster>& locals
         ) const {
-            for (std::size_t i = 0; i < plates.size(); ++i)
+            for (std::size_t i = 0; i < global_to_locals.size(); ++i)
             {
                 /*
                             grid      rotation    grid
@@ -66,12 +68,10 @@ namespace rock{
                 */
                 auto resample = 
                     series::map(
-                        field::compose(
-                            dymaxion::NearestVertexId(grid), 
-                            field::Affinity(globals_to_locals[i])),
-                        dymaxion::VertexPositions(grid)
+                        field::compose(nearest, field::Affinity(global_to_locals[i])),
+                        positions
                     );
-                each::get(global, resample, local[i]);
+                each::get(global, resample, locals[i]);
             }
         }
 
@@ -79,9 +79,9 @@ namespace rock{
 
     /*
     basic use case:
-    summarization.summarize (plates,    locals, scratch)     // summarize each plate into a (e.g.) FormationSummary raster
+    summarization.summarize (plates,    locals, scratch)     // summarize each plate into (e.g.) a FormationSummary raster
     frames       .globalize (rotations, locals, globals)     // resample plate-specific rasters onto a global grid
-    summarization.condense  (globals,   master)              // condense globalized rasters into e.g. LithosphereSummary
+    summarization.flatten   (globals,   master)              // flatten globalized rasters into (e.g.) a LithosphereSummary
     frames       .localize  (rotations, master, derivatives) // resample global raster to a plate-specific for each plate
     */
 

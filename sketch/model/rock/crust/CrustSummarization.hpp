@@ -4,7 +4,8 @@
 
 namespace rock{
 
-    template<typename FormationSummarization, typename FormationSummaryOps>
+    // NOTE: `M` is mineral count, `F` is formation count
+    template<int M, int F, typename FormationSummarization, typename FormationSummaryOps>
     class CrustSummarization
     {
         const FormationSummarization summarize;
@@ -14,7 +15,6 @@ namespace rock{
             summarize(summarize),
             ops(ops)
         {}
-        template<int M, int F>
         void operator() (
             const int plate_id, 
             const Crust<M,F>& crust, 
