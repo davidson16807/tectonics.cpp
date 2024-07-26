@@ -44,7 +44,8 @@ namespace rock {
 
 	*/
 
-	template<int M, typename VectorCalculus, typename Morphology, typename Segmentation>
+	// NOTE: `M` is mineral count, `F` is formation count
+	template<int M, int F, typename VectorCalculus, typename Morphology, typename Segmentation>
     class CrustSimulation
     {
     	using mass      = si::mass<float>;
@@ -54,25 +55,20 @@ namespace rock {
     	using force     = si::force<float>;
     	using pressure  = si::pressure<float>;
     	using acceleration = si::acceleration<float>;
-    	using area_density = si::area_density<float>;
 
     	using bools     = std::vector<bool>;
     	using vec3s     = std::vector<glm::vec3>;
-    	using uint8s    = std::vector<std::uint8_t>;
 
     	using masses    = std::vector<mass>;
     	using lengths   = std::vector<length>;
-    	using densities = std::vector<density>;
     	using speeds    = std::vector<speeds>;
     	using forces    = std::vector<force>;
     	using pressures = std::vector<pressure>;
-    	using area_densities = std::vector<area_density>;
 
         const VectorCalculus calculus;
         const Morphology morphology;
         const Segmentation segmentation;
         const length world_radius;
-        const acceleration gravity;
 
     public:
         CrustSimulation(
@@ -80,11 +76,9 @@ namespace rock {
 			const Morphology& morphology,
 			const Segmentation& segmentation,
 			const length world_radius,
-			const acceleration gravity
 		):
             calculus(calculus),
-            world_radius(world_radius),
-            gravity(gravity)
+            world_radius(world_radius)
         {}
 
         /*
@@ -96,91 +90,6 @@ namespace rock {
 		all operations will be implemented exclusively on CrustSummary, unless required for out-of-order traversal or otherwise impossible.
 		Exceptions will be noted in the comments. 
         */
-
-        /*
-		`alone` returns a boolean raster indicating where cells are occupied by one or fewer plate
-        */
-        void alone(
-			const CrustSummary& crust,
-			bools& out
-    	) const {
-    		for (int i = 0; i < crust.size(); ++i)
-    		{
-    			out[i] = crust[i].plate_count() <= 1;
-    		}
-    	}
-
-        /*
-		`exists` returns a boolean raster indicating where cells are occupied by a plate of given id
-        */
-        void exists(
-        	const int plate_id,
-			const CrustSummary& crust,
-			bools& out
-    	) const {
-    		for (int i = 0; i < crust.size(); ++i)
-    		{
-    			out[i] = crust[i].includes(plate_id);
-    		}
-    	}
-
-        /*
-		`top` returns a boolean raster indicating cells where the topmost plate is of given id
-        */
-        void top(
-        	const int plate_id,
-			const CrustSummary& crust,
-			bools& out
-    	) const {
-    		for (int i = 0; i < crust.size(); ++i)
-    		{
-    			out[i] = crust[i].is_top(plate_id);
-    		}
-    	}
-
-        /*
-		`foundering` returns a boolean raster indicating where an entire rock column is foundering
-        */
-        void foundering(
-        	const density mantle_density,
-			const CrustSummary& crust,
-			bools& out
-    	) const {
-    		for (int i = 0; i < crust.size(); ++i)
-    		{
-    			out[i] = crust[i].density() > mantle_density;
-    		}
-    	}
-
-        /*
-		`buoyancy` returns a scalar raster indicating buoyancy forces
-        */
-        void buoyancy(
-        	const force gravity,
-			const CrustSummary& crust,
-			forces& out
-    	) const {
-    		for (int i = 0; i < crust.size(); ++i)
-    		{
-    			out[i] = gravity * crust[i].area_density();
-    		}
-    	}
-
-        /*
-		`mass` returns a scalar raster indicating column masses
-        */
-        void mass(
-			const Crust<M>& crust,
-			masses& out
-    	) const {
-			for (int i = 0; i < M; ++i) // formations
-    		{
-	    		for (int j = 0; j < crust.size(); ++j) // columns
-	    		{
-	    			out[i] += crust[i][j].mass();
-	    		}
-    		}
-    	}
 
         /*
 		`rifting` returns a scalar raster indicating where gaps in the plates should be filled by a given plate
@@ -235,26 +144,11 @@ namespace rock {
 			each::intersect   (detachable, foundering, out);
 		}
 
-    	/*
-		`top_rock_overburden` estimates the amount of overburden at the top of the crust that occurs due to rock
-		It currently assumes that gravity is a constant value throughout the crust.
-    	*/
-        void top_rock_overburden(
-        	const force gravity,
-			const CrustSummary& crust,
-			forces& out
-    	) const {
-    		for (int i = 0; i < crust.size(); ++i)
-    		{
-    			out[i] = gravity * (context.is_top(plate_id)? area_density(0.0f) : context[i].top.area_density());
-    		}
-    	}
-
 		void lithification(
 			const int plate_id,
 			const pressures& top_overburden, // NOTE: this is typically calculated as top_rock_overburden + fluid_overburden 
 			const CrustSummary& context,
-			const Crust<M>& crust,
+			const Crust<M,F>& crust,
 			Formation<M>& delta,
 			pressures& scratch
 		) const {
@@ -288,8 +182,8 @@ namespace rock {
 			const int plate_id,
 			const pressures& topmost_overburden, // NOTE: this is typically calculated as top_rock_overburden + fluid_overburden 
 			const CrustSummary& context,
-			const Crust<M>& crust,
-			Crust<M>& deltas,
+			const Crust<M,F>& crust,
+			Crust<M,F>& deltas,
 			pressures& scratch1,
 			pressures& scratch2
 		) const {
@@ -489,7 +383,7 @@ namespace rock {
 		void weathering(
 			const speeds& precipitation,
 			const bools& top, 
-			const Crust<M>& crust,
+			const Crust<M,F>& crust,
 			Formation<M>& delta,
 		) const {
 		}

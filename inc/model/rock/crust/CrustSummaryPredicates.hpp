@@ -14,11 +14,11 @@
 namespace rock {
 
     /*
-    `CrustSummaryProperties` contains properties (mostly predicates) 
+    `CrustSummaryPredicates` contains predicates
     that are intended as inputs for the methods of `CrustSimulation`.
     */
 
-    class CrustSummaryProperties
+    class CrustSummaryPredicates
     {
         using mass      = si::mass<float>;
         using area      = si::area<float>;
@@ -34,7 +34,7 @@ namespace rock {
         using forces    = std::vector<force>;
 
     public:
-        CrustSummaryProperties():
+        CrustSummaryPredicates():
         {}
 
         /*
@@ -103,28 +103,6 @@ namespace rock {
         }
 
     };
-
-    /*
-    `CrustSummaryProperty` allows creation of a generic Unary CrustSummary callable given an arbitrary StratumSummaryProperty.
-    It provides a more generic alternative to `CrustSummaryProperties`
-    */
-    template <typename ColumnSummaryProperty>
-    class CrustSummaryProperty
-    {
-        const ColumnSummaryProperty property;
-    public:
-        CrustSummaryProperty(const ColumnSummaryProperty& property):
-            property(property)
-        {}
-        void operator()(const CrustSummary& summary, auto& out) const
-        {
-            for (auto i = 0*summary.size(); i < summary.size(); ++i)
-            {
-                out[i] = property(summary[i]);
-            }
-        }
-    };
-
 
 }
 
