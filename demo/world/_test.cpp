@@ -16,13 +16,10 @@
 #include <math/analytic/Gaussian.hpp>
 #include <math/analytic/Error.hpp>
 #include <math/inspected/InverseByNewtonsMethod.hpp>
-#include <math/inspected/Compose.hpp>
 
 // in house libraries
 #include <index/series/Map.hpp>
 #include <index/series/Uniform.hpp>
-#include <index/series/glm/VectorInterleave.hpp>
-#include <index/series/glm/VectorDeinterleave.hpp>
 #include <index/glm/each.hpp>                       // get
 #include <index/each.hpp>                           // get
 #include <index/glm/known.hpp>                      // greaterThan
@@ -39,30 +36,18 @@
 #include <index/iterated/Nary.hpp>
 #include <index/iterated/Arithmetic.hpp>
 
-#include <field/noise/ValueNoise.hpp>               // ValueNoise
-#include <field/noise/PerlinNoise.hpp>              // PerlinNoise
-#include <field/noise/MosaicNoise.hpp>              // MosaicNoise
 #include <field/Compose.hpp>                        // Compose
-#include <field/VectorZip.hpp>                      // VectorZip
-#include <field/noise/MosaicOps.hpp>                // field::VectorMosaicOps
-#include <field/noise/FractalBrownianNoise.hpp>     // dymaxion::FractalBrownianNoise
+#include <field/noise/RankedFractalBrownianNoise.hpp> // dymaxion::RankedFractalBrownianNoise
 
 #include <relation/ScalarRelation.hpp>
 
 #include <buffer/PyramidBuffers.hpp>                // buffer::PyramidBuffers
 
-#include <grid/cartesian/UnboundedIndexing.hpp>     // field::UnboundedIndexing
-#include <grid/dymaxion/Indexing.hpp>               // dymaxion::Indexing
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
 #include <grid/dymaxion/series.hpp>                 // dymaxion::BufferVertexIds
-#include <grid/dymaxion/noise/MosaicOps.hpp>        // dymaxion::MosaicOps
 #include <grid/dymaxion/buffer/WholeGridBuffers.hpp>// dymaxion::WholeGridBuffers
 
-#include <raster/unlayered/Morphology.hpp>          // unlayered::Morphology
-#include <raster/unlayered/FloodFilling.hpp>        // unlayered::FloodFilling
-#include <raster/unlayered/ImageSegmentation.hpp>   // unlayered::ImageSegmentation
 #include <raster/unlayered/VectorCalculusByFundamentalTheorem.hpp> // unlayered::VectorCalculusByFundamentalTheorem
-#include <raster/spheroidal/string_cast.hpp>        // spheroidal::to_string
 #include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
 
 // #include <model/rock/stratum/StratumGenerator.hpp>  // StratumGenerator
@@ -133,33 +118,6 @@ int main() {
     // vertex_colored_scalars[i] = (grid.vertex_position(i).z);
   }
 
-  // auto vertex_colored_scalars = series::map(
-  //     field::value_noise<3,float>(
-  //         field::mosaic_noise(series::unit_interval_noise(11.0f, 1.1e4f)),
-  //         dymaxion::mosaic_ops<int,float>()
-  //     ),
-  //     vertex_positions
-  // );
-
-  // auto mask = 
-  //   known::greaterThan(series::uniform(0.5), 
-  //         series::map(
-  //             field::value_noise3<3,float>(
-  //                 field::mosaic_noise(series::unit_interval_noise(11.0, 1.1e4)),
-  //                 dymaxion::mosaic_ops<int,float>()
-  //             ),
-  //             dymaxion::vertex_positions(grid)
-  //         )
-  //     );
-  // std::vector<bool> out(grid.vertex_count());
-  // std::vector<bool> scratch(grid.vertex_count());
-  // unlayered::Morphology morphology;
-  // morphology.closing(grid, mask, out, scratch);
-  // std::cout << "closing:" << std::endl;
-  // std::cout << spheroidal::to_string(grid, out) << std::endl;
-  // std::vector<float> vertex_scalars2(grid.vertex_count());
-  // each::copy(out, vertex_scalars2);
-
   float min_elevation(-16000.0f);
   float max_elevation( 16000.0f);
 
@@ -174,67 +132,17 @@ int main() {
   auto hypsometry_pdf = hypsometry_pdf_unscaled / hypsometry_cdf_unscaled_range;
   auto hypsometry_cdfi = inspected::inverse_by_newtons_method(hypsometry_cdf, hypsometry_pdf, 0.5f, 30);
 
-// std::cout << hypsometry_cdfi(0.002f) << std::endl;
-// std::cout << hypsometry_cdfi(0.25f) << std::endl;
-// std::cout << hypsometry_cdfi(0.5f) << std::endl;
-// std::cout << hypsometry_cdfi(0.75f) << std::endl;
-// std::cout << hypsometry_cdfi(0.998f) << std::endl;
-// // std::cout << hypsometry_cdfi(1.1f) << std::endl;
+  auto rfbm = field::ranked_fractal_brownian_noise<3>(10, 0.5f, 2.0f/radius, 12.0f, 1.1e4f);
 
-//   auto vertex_scalars2 = series::map(
-//     field::compose(
-//         // inspected::compose(
-//         //   hypsometry_cdfi,
-//         //   analytic::Error(0.0f, 1.0f, (1.0f/(std::sqrt(2.0f*3.1415926f))))),
-//       analytic::Error(0.0f, 1.0f, (1.0f/(std::sqrt(2.0f*3.1415926f)))),
-//       // hypsometry_cdfi,
-//       field::fractal_brownian_noise<int,float>(
-//           field::value_noise<3,float>(
-//               field::mosaic_noise(
-//                 series::gaussian(series::unit_interval_noise(12.0f, 1.1e4f)), 
-//                 cartesian::UnboundedIndexing<int>()),
-//               field::vector_mosaic_ops<3,int,float>()
-//           ), 10, 0.5f)
-//     ),
-//     dymaxion::VertexPositions(grid)
-//   );;
-// std::cout << whole::max(vertex_scalars2) << std::endl;
-// std::cout << whole::min(vertex_scalars2) << std::endl;
-
-  // template<typename scalar>
-  // struct StrataGeneration
-  // {
-  //   constexpr explicit StrataGeneration()
-  //   {}
-  //   using value_type = scalar;
-  //   constexpr inline auto operator()(const scalar elevation ) const
-  //   {
-  //     return f(g[i]);
-  //   }
-  // };
-
-  auto fbm = field::fractal_brownian_noise<int,float>(
-    field::value_noise<3,float>(
-        field::mosaic_noise(
-          series::gaussian(series::unit_interval_noise(12.0f, 1.1e4f)), 
-          cartesian::UnboundedIndexing<int>()),
-        field::vector_mosaic_ops<3,int,float>()
-    ), 10, 0.5f, 2.0f/radius);
-  auto fbm_cdf = analytic::Error(0.0f, 1.0f, (1.0f/(std::sqrt(2.0f*3.1415926f))));
-
-  auto elevation_meters_for_position = 
-      field::compose(
-          inspected::compose(hypsometry_cdfi, fbm_cdf),
-          fbm);
+  auto elevation_meters_for_position = field::compose(hypsometry_cdfi, rfbm);
 
   using length = si::length<float>;
   auto min_earth_elevation = -10924.0 * si::meter;
 
   auto elevation_for_position = 
       field::compose(
-          relation::ScalarRelation(1.0f, length(si::meter), 
-              inspected::compose(hypsometry_cdfi, fbm_cdf)),
-          fbm);
+          relation::ScalarRelation(1.0f, length(si::meter), hypsometry_cdfi),
+          rfbm);
 
   auto elevation_in_meters = series::map(elevation_meters_for_position, vertex_positions);
 
@@ -253,41 +161,6 @@ int main() {
 
 
   auto vertex_scalars1 = elevation_in_meters;
-
-  // auto stratum = StratumGenerator(
-  //   grid,
-  //   elevation_in_meters,
-  //   // displacements are from Charette & Smith 2010 (shallow ocean), enclopedia britannica (shelf bottom"continental slope"), 
-  //   // wikipedia (shelf top), and Sverdrup & Fleming 1942 (land)
-  //   // Funck et al. (2003) suggests a sudden transition from felsic to mafic occuring at ~4km depth or 8km thickness
-  //   get_linear_spline_relation(1.0, si::megayear, 
-  //     {-11000.0, -5000.0, -4000.0, -2000.0, -1500.0, -900.0,  840.0},
-  //     {250.0,    100.0,   0.0,     0.0,     100.0,   1000.0, 1000.0}),
-  //   get_linear_spline_relation(1.0, 2890.0 * si::kilogram/si::meter2,
-  //     {-4500.0,       -4000.0},
-  //     {7100.0,            0.0}),
-  //   get_linear_spline_relation(1.0, 2700.0 * si::kilogram/si::meter2,
-  //     {-4500.0, -4000.0   -950.0,  840.0,    8848.0},
-  //     {0.0,      7100.0, 28300.0, 36900.0, 70000.0}),
-  //   get_linear_spline_relation(1.0, 1.0, 
-  //     {-1500.0, 8848.0},
-  //     {0.25,      0.25}), // from Gillis (2013)
-  //   get_linear_spline_relation(1.0, 1.0, 
-  //     {-1500.0, 8848.0},
-  //     {0.15,      0.15}), // based on estimate from Wikipedia
-  // );
-
-  // auto vertex_scalars2 = series::map(
-  //   field::compose(
-  //     hypsometry_cdfi,
-  //     field::fractal_brownian_noise<int,float>(
-  //         field::value_noise<3,float>(
-  //             field::mosaic_noise(series::unit_interval_noise(12.0f, 1.2e4f), cartesian::UnboundedIndexing<int>()),
-  //             field::vector_mosaic_ops<3,int,float>()
-  //         ), 10, 0.5f),
-  //   ),
-  //   dymaxion::VertexPositions(grid)
-  // );
 
   // auto vertex_directions = known::store(
   //     grid.vertex_count(),
