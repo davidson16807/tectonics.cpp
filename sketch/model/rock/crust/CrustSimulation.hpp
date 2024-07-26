@@ -11,7 +11,6 @@
 #include <model/rock/formation/Formation.hpp>
 #include <model/compound/phase/boundary/LinearPhaseBoundary.hpp>
 
-#include "CrustSummary.hpp"
 #include "Crust.hpp"
 
 /*
@@ -147,7 +146,6 @@ namespace rock {
 		void lithification(
 			const int plate_id,
 			const pressures& top_overburden, // NOTE: this is typically calculated as top_rock_overburden + fluid_overburden 
-			const CrustSummary& context,
 			const Crust<M,F>& crust,
 			Formation<M>& delta,
 			pressures& scratch
@@ -181,7 +179,6 @@ namespace rock {
 			const std::vector<LinearPhaseBoundary>& phase_boundaries,
 			const int plate_id,
 			const pressures& topmost_overburden, // NOTE: this is typically calculated as top_rock_overburden + fluid_overburden 
-			const CrustSummary& context,
 			const Crust<M,F>& crust,
 			Crust<M,F>& deltas,
 			pressures& scratch1,
