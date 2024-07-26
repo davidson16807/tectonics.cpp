@@ -17,6 +17,7 @@
 namespace rock
 {
 
+    // NOTE: `M` is mineral count
     template<int M>
     struct FormationAdapter{
         const StratumAdapter<M> strata;

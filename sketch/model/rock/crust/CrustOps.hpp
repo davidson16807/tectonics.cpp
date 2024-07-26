@@ -4,6 +4,7 @@
 
 namespace rock{
 
+    // NOTE: `M` is mineral count, `F` is formation count
     template <int M, int F>
     class CrustOps
     {

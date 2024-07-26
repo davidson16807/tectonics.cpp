@@ -15,6 +15,7 @@
 namespace rock
 {
 
+    // NOTE: `M` is mineral count
     template<std::size_t M>
     class StratumOps
     {

@@ -27,6 +27,7 @@ namespace rock
     The interpretation of attributes within `StratumStore` is error prone,
     so to prevent users from doing so we encapsulate the class.
     */
+    // NOTE: `M` is mineral count
     template <int M>
     class StratumStore
     {

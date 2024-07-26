@@ -19,6 +19,7 @@ namespace rock
     /*
     "Stratum" describes the composition and texture of a single rock layer
     */
+    // NOTE: `M` is mineral count
     template<std::size_t M>
     struct Stratum
     {

@@ -13,6 +13,7 @@
 namespace rock
 {
 
+    // NOTE: `M` is mineral count
     template<int M, typename StratumDensity>
     class StratumSummarization
     {
