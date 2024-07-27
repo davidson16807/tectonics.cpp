@@ -8,36 +8,31 @@ namespace rock{
     template <int M, int F>
     class CrustOps
     {
-        const FormationOps<M> formations;
+        const FormationOps<M> ops;
     public:
-        CrustOps(const FormationOps<M>& formations):
-            formations(formations)
+        CrustOps(const FormationOps<M>& ops):
+            ops(ops)
         {}
-        void absorb (const Crust<M,F>& top, const Crust<M,F>& bottom, Formation<M>& out) const
+        void absorb (const Crust<M,F>& top, const Crust<M,F>& bottom, Crust<M,F>& out) const
         {
-            for (std::size_t i = 0; i < bottom.size(); ++i)
+            for (std::size_t i = 0; i < out.size(); ++i)
             {
-                formations.combine(crust[i], out, out);
+                ops.copy(top[i], out[i]);
             }
+            ops.combine(bottom[formations::sediment],        out[formations::igneous],     out[formations::igneous]     );
+            ops.combine(bottom[formations::sedimentary],     out[formations::igneous],     out[formations::igneous]     );
+            ops.combine(bottom[formations::metasedimentary], out[formations::metaigneous], out[formations::metaigneous] );
+            ops.combine(bottom[formations::igneous],         out[formations::igneous],     out[formations::igneous]     );
+            ops.combine(bottom[formations::metaigneous],     out[formations::metaigneous], out[formations::metaigneous] );
         }
         void flatten (const Crust<M,F>& crust, Formation<M>& out) const
         {
-            formations.combine(crust[0], crust[1], out);
-            for (std::size_t i = 2; i < crust.size(); ++i)
+            ops.copy(crust[0], out);
+            for (std::size_t i = 1; i < crust.size(); ++i)
             {
-                formations.combine(crust[i], out, out);
+                ops.combine(crust[i], out, out);
             }
         }
     };
 
 }
-
-/*
-test:
-                flatten
-             crust ⟶ formation
-    summarize  ↓         ↓  summarize
-              cs   ⟶    fs
-                flatten
-*/
-
