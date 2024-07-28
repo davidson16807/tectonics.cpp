@@ -1,17 +1,23 @@
 #pragma once
 
 // in house libraries
+#include <model/rock/formation/FormationOps.hpp>
+#include <model/rock/crust/FormationType.hpp>
+
+#include "Crust.hpp"
 
 namespace rock{
 
     // NOTE: `M` is mineral count, `F` is formation count
-    template <int M, int F>
+    template <int M>
     class CrustOps
     {
+        static constexpr int F = 5;
+
         const FormationOps<M> ops;
     public:
-        CrustOps(const FormationOps<M>& ops):
-            ops(ops)
+        CrustOps():
+            ops()
         {}
         void absorb (const Crust<M,F>& top, const Crust<M,F>& bottom, Crust<M,F>& out) const
         {

@@ -44,9 +44,6 @@ namespace rock
 
     public:
 
-        ~StratumStore()
-        {
-        }
         StratumStore(const Stratum<M>& output)
         {
             pack(output);

@@ -34,8 +34,7 @@ namespace rock {
         using forces    = std::vector<force>;
 
     public:
-        CrustSummaryProperties():
-        {}
+        CrustSummaryProperties(){}
 
         /*
         NOTE: We are guaranteed to generate CrustSummary at least once every iteration,
@@ -54,7 +53,7 @@ namespace rock {
             const CrustSummary& crust,
             bools& out
         ) const {
-            for (int i = 0; i < crust.size(); ++i)
+            for (std::size_t i = 0; i < crust.size(); ++i)
             {
                 out[i] = crust[i].plate_count() <= 1;
             }
@@ -68,7 +67,7 @@ namespace rock {
             const CrustSummary& crust,
             bools& out
         ) const {
-            for (int i = 0; i < crust.size(); ++i)
+            for (std::size_t i = 0; i < crust.size(); ++i)
             {
                 out[i] = crust[i].includes(plate_id);
             }
@@ -82,7 +81,7 @@ namespace rock {
             const CrustSummary& crust,
             bools& out
         ) const {
-            for (int i = 0; i < crust.size(); ++i)
+            for (std::size_t i = 0; i < crust.size(); ++i)
             {
                 out[i] = crust[i].is_top(plate_id);
             }
@@ -96,7 +95,7 @@ namespace rock {
             const CrustSummary& crust,
             bools& out
         ) const {
-            for (int i = 0; i < crust.size(); ++i)
+            for (std::size_t i = 0; i < crust.size(); ++i)
             {
                 out[i] = crust[i].density() > mantle_density;
             }

@@ -32,7 +32,7 @@ namespace rock
         }
 
         // AKA, the identity function.
-        void copy(Formation<M>& a, Formation<M>& out) const {
+        void copy(const Formation<M>& a, Formation<M>& out) const {
             for (std::size_t i = 0; i < out.size(); ++i)
             {
                 out[i] = a[i];

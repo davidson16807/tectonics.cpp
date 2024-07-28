@@ -31,9 +31,6 @@ namespace rock
 		std::uint8_t weathered_crystalline_part_count  : 4;
 
 	public:
-		~MineralStore()
-		{
-		}
 		// convenience constructor, equivalent to pack()
 		MineralStore(Mineral& output)
 		{
