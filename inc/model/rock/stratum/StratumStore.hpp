@@ -49,7 +49,7 @@ namespace rock
             pack(output);
         }
         StratumStore():
-            age_of_world_when_first_deposited_in_megayears(0.0f),
+            age_of_world_when_first_deposited_in_megayears(oo),
             age_of_world_when_last_deposited_in_megayears(0.0f)
         {
             minerals.fill(rock::MineralStore());

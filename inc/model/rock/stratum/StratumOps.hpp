@@ -30,7 +30,6 @@ namespace rock
             minerals()
         {}
 
-        // OPERATORS, regular functions of the form: Stratum x Stratum -> Stratum
         void scale(const Stratum<M>& a, float scalar, Stratum<M>& output) const
         {
             output = a;
@@ -69,12 +68,10 @@ namespace rock
                 minerals.combine(unpacked1, unpacked2, combined);
                 output[i].pack(combined);
             }
-            auto a_empty = a.empty();
-            auto b_empty = b.empty();
-            auto a_start = a_empty? time(oo) : a.age_of_world_when_first_deposited();
-            auto b_start = b_empty? time(oo) : b.age_of_world_when_first_deposited();
-            auto a_stop = a_empty? time(0) : a.age_of_world_when_last_deposited();
-            auto b_stop = b_empty? time(0) : b.age_of_world_when_last_deposited();
+            auto a_start = a.age_of_world_when_first_deposited();
+            auto b_start = b.age_of_world_when_first_deposited();
+            auto a_stop = a.age_of_world_when_last_deposited();
+            auto b_stop = b.age_of_world_when_last_deposited();
             output.age_of_world_when_first_deposited(std::min(a_start, b_start));
             output.age_of_world_when_last_deposited (std::max(a_stop, b_stop));
         }
