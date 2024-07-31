@@ -19,17 +19,33 @@ namespace rock{
         CrustOps():
             ops()
         {}
-        void absorb (const Crust<M,F>& top, const Crust<M,F>& bottom, Crust<M,F>& out) const
-        {
+        // AKA, the identity function.
+        void copy(const Crust<M,F>& a, Crust<M,F>& out) const {
             for (std::size_t i = 0; i < out.size(); ++i)
             {
-                ops.copy(top[i], out[i]);
+                ops.copy(a[i], out[i]);
             }
-            ops.combine(bottom[formations::sediment],        out[formations::igneous],     out[formations::igneous]     );
-            ops.combine(bottom[formations::sedimentary],     out[formations::igneous],     out[formations::igneous]     );
-            ops.combine(bottom[formations::metasedimentary], out[formations::metaigneous], out[formations::metaigneous] );
-            ops.combine(bottom[formations::igneous],         out[formations::igneous],     out[formations::igneous]     );
-            ops.combine(bottom[formations::metaigneous],     out[formations::metaigneous], out[formations::metaigneous] );
+        }
+        void absorb (const Crust<M,F>& top, const Crust<M,F>& bottom, Crust<M,F>& out) const
+        {
+            using bools = std::vector<bool>;
+            bools empty       (top[0].size());
+            bools meta_empty  (top[0].size());
+            bools empty_below (top[0].size());
+            for (std::size_t i(formations::metaigneous); i >= 0; i-=2)
+            {
+                // if `empty_below` at this line, then the ith layer of bottom can merge with the same i from top, otherwise it merges with igenous layers
+                ops.combine(empty_below,    top[i],   bottom[i],   out[i]  ); // meta
+                ops.combine(empty_below,    top[i-1], bottom[i-1], out[i-1]); // nonmeta
+                ops.combine(nonempty_below, top[formations::igneous],     bottom[i],   out[formations::igneous]  ); // meta
+                ops.combine(nonempty_below, top[formations::metaigneous], bottom[i-1], out[formations::metaigneous]); // nonmeta
+                predicates.empty(top[i], meta_empty);                  // meta
+                predicates.empty(top[i-1], empty);                     // nonmeta
+                morphology.union(empty, meta_empty, empty);            // meta ∩ nonmeta
+                morphology.intersect(empty, empty_below, empty_below); // empty_below ∪= (meta ∩ nonmeta)
+                morphology.negate(empty_below, nonempty_below);        // ¬empty_below
+            }
+            // TODO: combine sediment layer
         }
         void flatten (const Crust<M,F>& crust, Formation<M>& out) const
         {
@@ -42,3 +58,4 @@ namespace rock{
     };
 
 }
+
