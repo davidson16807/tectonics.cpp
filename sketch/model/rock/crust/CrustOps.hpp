@@ -26,24 +26,34 @@ namespace rock{
                 ops.copy(a[i], out[i]);
             }
         }
-        void absorb (const Crust<M,F>& top, const Crust<M,F>& bottom, Crust<M,F>& out) const
+        void absorb (const Crust<M,F>& top, const Crust<M,F>& bottom, Crust<M,F>& out, Formation<M>& scratch) const
         {
             using bools = std::vector<bool>;
-            bools empty       (top[0].size());
-            bools meta_empty  (top[0].size());
-            bools empty_below (top[0].size());
+            bools empty          (top[0].size());
+            bools meta_empty     (top[0].size());
+            bools empty_below    (top[0].size());
+            bools nonempty_below (top[0].size());
             for (std::size_t i(formations::metaigneous); i >= 0; i-=2)
             {
+
                 // if `empty_below` at this line, then the ith layer of bottom can merge with the same i from top, otherwise it merges with igenous layers
-                ops.combine(empty_below,    top[i],   bottom[i],   out[i]  ); // meta
-                ops.combine(empty_below,    top[i-1], bottom[i-1], out[i-1]); // nonmeta
-                ops.combine(nonempty_below, top[formations::igneous],     bottom[i],   out[formations::igneous]  ); // meta
-                ops.combine(nonempty_below, top[formations::metaigneous], bottom[i-1], out[formations::metaigneous]); // nonmeta
+
+                ops.mask(bottom[i],   empty_below,                        scratch);
+                ops.combine(top[i],   scratch,                            out[i]); // meta
+                ops.mask(bottom[formations::metaigneous], nonempty_below, scratch);
+                ops.combine(top[formations::metaigneous], scratch,        out[formations::metaigneous]); // meta
+
+                ops.mask(bottom[i-1], empty_below,    scratch);
+                ops.combine(top[i-1], scratch,        out[i]); // nonmeta
+                ops.mask(bottom[formations::igneous], nonempty_below, scratch);
+                ops.combine(top[formations::igneous], scratch,        out[formations::igneous]); // nonmeta
+
                 predicates.empty(top[i], meta_empty);                  // meta
                 predicates.empty(top[i-1], empty);                     // nonmeta
                 morphology.union(empty, meta_empty, empty);            // meta ∩ nonmeta
                 morphology.intersect(empty, empty_below, empty_below); // empty_below ∪= (meta ∩ nonmeta)
                 morphology.negate(empty_below, nonempty_below);        // ¬empty_below
+
             }
             // TODO: combine sediment layer
         }
@@ -58,4 +68,3 @@ namespace rock{
     };
 
 }
-
