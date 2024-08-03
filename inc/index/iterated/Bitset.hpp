@@ -61,7 +61,7 @@ namespace iterated
 		ITERATED_BINARY_METHOD(elements.unite,     unite)
 		ITERATED_BINARY_METHOD(elements.intersect, intersect)
 		ITERATED_BINARY_METHOD(elements.differ,    differ)
-		ITERATED_BINARY_METHOD(elements.negate,    negate)
+		ITERATED_UNARY_METHOD(elements.negate,    negate)
 	};
 
 	#undef ITERATED_UNARY_METHOD
