@@ -1,7 +1,11 @@
 #pragma once
 
 // in house libraries
+#include <index/adapted/boolean/BooleanBitset.hpp>
+#include <index/iterated/Bitset.hpp>
+
 #include <model/rock/formation/FormationOps.hpp>
+#include <model/rock/formation/FormationPredicates.hpp>
 #include <model/rock/crust/FormationType.hpp>
 
 #include "Crust.hpp"
@@ -12,12 +16,20 @@ namespace rock{
     template <int M>
     class CrustOps
     {
+
+        using bools = std::vector<bool>;
+
         static constexpr int F = 5;
 
         const FormationOps<M> ops;
+        const FormationPredicates<M> predicates;
+        const iterated::Bitset<adapted::BooleanBitset> morphology;
+
     public:
         CrustOps():
-            ops()
+            ops(),
+            predicates(),
+            morphology(adapted::BooleanBitset{})
         {}
         // AKA, the identity function.
         void copy(const Crust<M,F>& a, Crust<M,F>& out) const {
@@ -28,7 +40,6 @@ namespace rock{
         }
         void absorb (const Crust<M,F>& top, const Crust<M,F>& bottom, Crust<M,F>& out, Formation<M>& scratch) const
         {
-            using bools = std::vector<bool>;
             bools empty          (top[0].size());
             bools meta_empty     (top[0].size());
             bools empty_below    (top[0].size());
@@ -50,7 +61,7 @@ namespace rock{
 
                 predicates.empty(top[i], meta_empty);                  // meta
                 predicates.empty(top[i-1], empty);                     // nonmeta
-                morphology.union(empty, meta_empty, empty);            // meta ∩ nonmeta
+                morphology.unite(empty, meta_empty, empty);            // meta ∩ nonmeta
                 morphology.intersect(empty, empty_below, empty_below); // empty_below ∪= (meta ∩ nonmeta)
                 morphology.negate(empty_below, nonempty_below);        // ¬empty_below
 

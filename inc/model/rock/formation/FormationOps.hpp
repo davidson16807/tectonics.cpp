@@ -12,6 +12,8 @@
 namespace rock
 {
 
+    using bools = std::vector<bool>;
+
     // NOTE: `M` is mineral count
     template<int M>
     class FormationOps

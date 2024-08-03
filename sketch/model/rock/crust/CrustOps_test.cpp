@@ -121,7 +121,8 @@ TEST_CASE( "CrustOps::absorb() monoid", "[rock]" ) {
         "an empty Crust", empty_crust,
         "absorb",        [=](auto& a, auto& b){
             auto out = empty_crust;
-            ops.absorb(a,b,out); 
+            auto scratch = empty_formation;
+            ops.absorb(a,b,out, scratch); 
             return out;
         }
     );
