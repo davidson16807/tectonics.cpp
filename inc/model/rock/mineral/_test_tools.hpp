@@ -79,16 +79,16 @@ namespace rock
 
         std::string print(const Mineral& a) const {
             std::ostringstream os;
-            os << "mass:      ";
+            os << "mass: ";
             os << si::to_string(a.mass);
-            os << "\n";
-            os << "fractions: ";
-            for (int i = 0; i < int(GrainType::count); ++i)
+            os << " fractions: ";
+            os << std::to_string(a.grain_type_relative_volume[0]);
+            for (int i = 1; i < int(GrainType::count); ++i)
             {
-                os << std::to_string(a.grain_type_relative_volume[i]);
                 os << ", ";
+                os << std::to_string(a.grain_type_relative_volume[i]);
             }
-            os << "\n";
+            os << std::endl;
             return os.str();
         }
 

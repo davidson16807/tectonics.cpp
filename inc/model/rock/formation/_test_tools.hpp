@@ -82,6 +82,7 @@ namespace rock
             {
                 os << strata.print(a[i]);
             }
+            os << std::endl;
             return os.str();
         }
 

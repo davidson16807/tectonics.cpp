@@ -107,18 +107,18 @@ namespace rock
             std::ostringstream os;
             os << "age of world when first deposited: ";
             os << si::to_string(a.age_of_world_when_first_deposited);
-            os << "\n";
+            os << std::endl;
             os << "age of world when last deposited: ";
             os << si::to_string(a.age_of_world_when_last_deposited);
-            os << "\n";
+            os << std::endl;
             os << "minerals: ";
-            os << "\n";
+            os << std::endl;
             for (int i = 0; i < int(GrainType::count); ++i)
             {
+                os << std::to_string(i) << ": ";
                 os << minerals.print(a.minerals[i]);
-                os << "\n";
             }
-            os << "\n";
+            os << std::endl;
             return os.str();
         }
 
@@ -126,20 +126,19 @@ namespace rock
             std::ostringstream os;
             os << "age of world when first deposited: ";
             os << si::to_string(a.age_of_world_when_first_deposited());
-            os << "\n";
+            os << std::endl;
             os << "age of world when last deposited: ";
             os << si::to_string(a.age_of_world_when_last_deposited());
-            os << "\n";
+            os << std::endl;
             os << "minerals: ";
-            os << "\n";
+            os << std::endl;
             Mineral unpacked;
             for (int i = 0; i < int(GrainType::count); ++i)
             {
+                os << std::to_string(i) << ": ";
                 a[i].unpack(unpacked);
                 os << minerals.print(unpacked);
-                os << "\n";
             }
-            os << "\n";
             return os.str();
         }
 
@@ -186,13 +185,13 @@ namespace rock
             std::ostringstream os;
             os << "thickness:       ";
             os << si::to_string(a.thickness());
-            os << "\n";
+            os << std::endl;
             os << "density:         ";
             os << si::to_string(a.density());
-            os << "\n";
+            os << std::endl;
             os << "plate id bitset: ";
             os << a.plate_ids_bitset().to_string();
-            os << "\n";
+            os << std::endl;
             return os.str();
         }
 

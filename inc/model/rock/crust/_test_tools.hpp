@@ -11,6 +11,11 @@
 
 #include <model/rock/column/_test_tools.hpp>
 #include <model/rock/formation/_test_tools.hpp>
+#include <model/rock/formation/Formation.hpp>
+#include <model/rock/formation/FormationSummary.hpp>
+#include <model/rock/crust/Crust.hpp>
+#include <model/rock/crust/CrustSummary.hpp>
+#include <model/rock/crust/FormationType.hpp>
 
 #include "CrustSummary.hpp"
 
@@ -88,6 +93,7 @@ namespace rock
             std::ostringstream os;
             for (std::size_t i = 0; i < a.size(); ++i)
             {
+                os << formations::names[i] << ":" << std::endl;
                 os << subadapter.print(a[i]) << std::endl;
             }
             return os.str();
