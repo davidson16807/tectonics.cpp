@@ -51,4 +51,29 @@ namespace compound {
         int count = 41;
     }
 
+    /*
+    NOTE: CARBON PLANET MINERAL TYPES:
+    see https://www.ptable.com/#Compound/C for ideas
+      chalcophile, //                    
+      iron_carbide,//           Fe     C 
+      pyrite,      //           Fe     S 
+      silicon_carbide,//     SiC 
+      calcium_carbide,//   (Ca)C
+      aluminum_carbide,//     (Al,Ca)C 
+      metal_cyanides, // (Na,K,H)CN
+      metal_carbonates, // (Mg)CO3
+      organics,    // CNOHPSCaK...       
+      graphite,    // C                  
+      ice,         // H2O                
+      carbon_dioxide,//CO2               
+      co,          // CO                 
+      oxygen,      // O2                 
+      carbon_monoxide,//CO               
+      methane,     // CH4                
+      ethane,      // C2H6               
+      tholins,     // CNOHS              
+      helium,      // He                 
+      hydrogen,    // H2, metallic       
+    */
+
 }
