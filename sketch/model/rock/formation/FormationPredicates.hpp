@@ -31,7 +31,7 @@ namespace rock {
 			const Formation<M>& formation,
 			bools& out
     	) const {
-    		for (std::size_t i = 0; i < formation.size(); ++i)
+    		for (std::size_t i = 0; i < out.size(); ++i)
     		{
     			out[i] = formation[i].mass() > threshold;
     		}
