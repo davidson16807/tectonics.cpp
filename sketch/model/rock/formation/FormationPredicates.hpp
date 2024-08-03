@@ -21,7 +21,7 @@ namespace rock {
 
     	using bools = std::vector<bool>;
 
-    	static constexpr mass threshold = mass(0.0*si::kilogram);
+    	static constexpr mass threshold = mass(1.0*si::gram);
 
     public:
         FormationPredicates()

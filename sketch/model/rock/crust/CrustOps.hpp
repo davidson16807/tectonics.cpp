@@ -31,20 +31,22 @@ namespace rock{
             predicates(),
             morphology(adapted::BooleanBitset{})
         {}
+
         // AKA, the identity function.
-        void copy(const Crust<M,F>& a, Crust<M,F>& out) const {
+        void copy(const Crust<M,F>& crust, Crust<M,F>& out) const {
             for (std::size_t i = 0; i < out.size(); ++i)
             {
-                ops.copy(a[i], out[i]);
+                ops.copy(crust[i], out[i]);
             }
         }
+
         void absorb (const Crust<M,F>& top, const Crust<M,F>& bottom, Crust<M,F>& out, Formation<M>& scratch) const
         {
 
             bools empty          (top[0].size());
             bools meta_empty     (top[0].size());
-            bools empty_below    (top[0].size());
-            bools nonempty_below (top[0].size());
+            bools empty_below    (top[0].size(), true);
+            bools nonempty_below (top[0].size(), false);
 
             copy(top, out);
 
@@ -81,6 +83,7 @@ namespace rock{
             ops.combine(out[I],  scratch,        out[I]); 
 
         }
+
         void flatten (const Crust<M,F>& crust, Formation<M>& out) const
         {
             ops.copy(crust[0], out);
