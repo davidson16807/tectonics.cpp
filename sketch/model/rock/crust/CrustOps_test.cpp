@@ -121,15 +121,7 @@ TEST_CASE( "CrustOps::absorb() monoid", "[rock]" ) {
         "an empty Crust", empty_crust,
         "absorb",        [=](auto& a, auto& b){
             auto out = empty_crust;
-            rock::Formation<M> scratch(grid.vertex_count(), empty_stratum);
-            // for (int i = 0; i < F; ++i)
-            // {
-            //   std::cout << std::to_string(empty_crust[i].size()) << std::endl;
-            //   std::cout << std::to_string(crust1[i].size()) << std::endl;
-            //   std::cout << std::to_string(crust2[i].size()) << std::endl;
-            // }
-            // std::cout << std::endl;
-
+            auto scratch = empty_formation;
             ops.absorb(a,b,out, scratch); 
             return out;
         }

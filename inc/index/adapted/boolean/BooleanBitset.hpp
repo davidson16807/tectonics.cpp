@@ -18,7 +18,8 @@ namespace adapted
 		inline auto unite     (const bool a, const bool b) const {return a || b;}
 		inline auto intersect (const bool a, const bool b) const {return a && b;}
 		inline auto differ    (const bool a, const bool b) const {return a && !b;}
-		inline auto negate    (const bool a) const {return a;}
+		inline auto negate    (const bool a) const {return !a;}
+		inline auto copy      (const bool a) const {return a;}
 
 		inline auto all       (const bool a) const {return a;}
 		inline auto any       (const bool a) const {return a;}
