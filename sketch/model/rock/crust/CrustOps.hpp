@@ -62,7 +62,7 @@ namespace rock{
                 morphology.copy  (occupied,                 occupied_below);
 
                 // any bottom layer for which `nonempty_below` needs to be deposited to one of the two immediate layers below
-                for (std::size_t j(i); i > S; i-=2) // all nonsediment layers
+                for (std::size_t j(i); j > S; j-=2) // all nonsediment layers
                 {
                     ops.mask(bottom[j],   newly_occupied, scratch);
                     ops.combine(out[i],   scratch,        out[i]); // meta
@@ -88,4 +88,3 @@ namespace rock{
     };
 
 }
-
