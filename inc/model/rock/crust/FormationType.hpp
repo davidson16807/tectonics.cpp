@@ -12,7 +12,16 @@ namespace rock
 	        metaigneous
 		};
 
-		std::size_t count = 5;
+		const std::size_t count = 5;
+
+		std::array<std::string, count> names{
+	        "sediment",
+	        "sedimentary",
+	        "metasedimentary",
+	        "igneous",
+	        "metaigneous"
+		};
+
 	}
 
 
