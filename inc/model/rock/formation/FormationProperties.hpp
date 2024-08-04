@@ -18,15 +18,14 @@ namespace rock{
     public:
         FormationMass(){}
 
-        // AKA, the identity function.
-        void operator(const Formation<M>& formation, masses& out) const {
+        void operator()(const Formation<M>& formation, masses& out) const {
             for (std::size_t i = 0; i < out.size(); ++i)
             {
                 out[i] += formation[j][i].mass();
             }
         }
 
-        mass operator(const Formation<M>& formation) const {
+        mass operator()(const Formation<M>& formation) const {
             mass out(0);
             for (std::size_t i = 0; i < out.size(); ++i)
             {

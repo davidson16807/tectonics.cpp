@@ -64,6 +64,7 @@ It does so by testing that mass properties are commutative as the limit of this 
 #include <model/rock/formation/FormationSummarization.hpp>  // FormationSummarization
 #include <model/rock/formation/FormationProperties.hpp>  // FormationMass
 #include <model/rock/formation/FormationSummaryOps.hpp>  // CrustSummaryOps
+#include <model/rock/formation/FormationSummaryProperties.hpp>  // FormationSummaryMass
 #include <model/rock/crust/CrustOps.hpp>  // CrustOps
 #include <model/rock/crust/CrustProperties.hpp>  // CrustMass
 #include <model/rock/crust/CrustSummarization.hpp>  // CrustSummarization
