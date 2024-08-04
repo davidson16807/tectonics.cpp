@@ -1,5 +1,7 @@
 #pragma once
 
+#include <algorithm> // std::max
+
 // in house libraries
 #include <index/adapted/boolean/BooleanBitset.hpp>
 #include <index/iterated/Bitset.hpp>
@@ -47,11 +49,12 @@ namespace rock{
             bools meta_occupied  (top[0].size());
             bools occupied_below (top[0].size(), false);
             bools newly_occupied (top[0].size());
+            bools still_empty    (top[0].size());
 
             copy(top, out);
 
-            const auto MI = formations::metaigneous;
-            const auto S  = formations::sediment;
+            const std::size_t MI = formations::metaigneous;
+            const std::size_t S  = formations::sediment;
 
             for (std::size_t i(MI); i > S; i-=2) // all nonsediment layers
             {
@@ -59,10 +62,16 @@ namespace rock{
                 predicates.exists(top[i-1], occupied);
                 morphology.unite (occupied, meta_occupied,  occupied);
                 morphology.differ(occupied, occupied_below, newly_occupied);
+                morphology.negate(occupied_below,           still_empty);
                 morphology.copy  (occupied,                 occupied_below);
 
+                // deposit anything remaining in the current layer immediately
+                ops.mask(bottom[i],   still_empty, scratch);
+                ops.combine(out[i],   scratch,     out[i]); // meta
+                ops.mask(bottom[i-1], still_empty, scratch);
+                ops.combine(out[i-1], scratch,     out[i-1]); // nonmeta
                 // any bottom layer for which `nonempty_below` needs to be deposited to one of the two immediate layers below
-                for (std::size_t j(i); j > S; j-=2) // all nonsediment layers
+                for (std::size_t j(i-2); j > S; j-=2) // all nonsediment layers
                 {
                     ops.mask(bottom[j],   newly_occupied, scratch);
                     ops.combine(out[i],   scratch,        out[i]); // meta
@@ -72,8 +81,10 @@ namespace rock{
                 // sediment doesn't follow a meta/nonmeta paradigm so it must be handled separately
                 ops.mask(bottom[S], newly_occupied, scratch);
                 ops.combine(out[i-1], scratch,      out[i-1]); // nonmeta
-
             }
+            // sediment doesn't follow a meta/nonmeta paradigm so it must be handled separately
+            ops.mask(bottom[S],   still_empty, scratch);
+            ops.combine(out[S],   scratch,     out[S]); // meta
 
         }
 
