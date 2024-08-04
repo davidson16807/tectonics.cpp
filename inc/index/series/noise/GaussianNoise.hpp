@@ -12,7 +12,7 @@ namespace series
 
 	/*
 	`GaussianNoise` is a map: ℕ→ℝ.
-	It represents an indexible object that can participate in functions under `each::` and `store::`.
+	It represents an indexible object that can participate in functions under `known::` and `series::`.
 	The value at each index is in the range [0,1], it is not correlated with the value at contiguous indices,
 	and it is completely determined by the index together with a user defined `seed`.
 	*/

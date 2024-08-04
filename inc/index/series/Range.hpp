@@ -9,7 +9,7 @@ namespace series
 
 	/*
 	`Range` is a map: ℕ→ℕ.
-	It represents an indexible object that can particlate in functions under `each::` and `store::`.
+	It represents an indexible object that can participate in functions under `known::` and `series::`.
 	The value at each index is the index itself.
 	*/
 	template<typename T=std::size_t>
