@@ -44,9 +44,9 @@ namespace test {
         bool valid(const Adapter& adapter, const many<A>& as) const {
             return 
 
-            discernability(adapter,           as)         &&
             determinism  (adapter, f_name, f, as, as)     &&
             cancellative (adapter, f_name, f, as, as, as) &&
+            discernability(adapter,           as)         &&
 
             true; // added so lines above can be easily swapped
         }
@@ -95,9 +95,9 @@ namespace test {
         bool valid(const Adapter& adapter, const many<A>& as) const {
             return 
 
-            discernability(adapter,           as)         &&
             determinism  (adapter,            f_name, f, as, as)     &&
             associativity(adapter,            f_name, f, as, as, as) &&
+            discernability(adapter,           as)         &&
 
             true; // added so lines above can be easily swapped
         }
@@ -149,10 +149,10 @@ namespace test {
         bool valid(const Adapter& adapter, const many<A>& as) const {
             return 
 
-            discernability (adapter,            as)                    &&
             determinism    (adapter,            f_name, f, as, as)     &&
             associativity  (adapter,            f_name, f, as, as, as) &&
             binary_identity(adapter, e_name, e, f_name, f, as)         &&
+            discernability (adapter,            as)                    &&
 
             true; // added so lines above can be easily swapped
         }
@@ -196,11 +196,11 @@ namespace test {
         bool valid(const Adapter& adapter, const many<A>& as) const {
             return 
 
-            discernability (adapter,           as)         &&
             determinism    (adapter,            f_name, f, as, as)     &&
             binary_identity(adapter, e_name, e, f_name, f, as)         &&
             determinism    (adapter,            finv_name, finv,            as, as) &&
             binary_invertibility(adapter, e_name, e, finv_name, finv, f_name, f, as)     &&
+            discernability (adapter,           as)         &&
 
             true; // added so lines above can be easily swapped
         }
@@ -238,12 +238,12 @@ namespace test {
         bool valid(const Adapter& adapter, const many<A>& as) const {
             return 
 
-            discernability (adapter,           as)         &&
             determinism    (adapter,            f_name, f, as, as)     &&
             associativity  (adapter,            f_name, f, as, as, as) &&
             binary_identity(adapter, e_name, e, f_name, f, as)         &&
             determinism    (adapter,            finv_name, finv,            as, as) &&
             binary_invertibility(adapter, e_name, e, finv_name, finv, f_name, f, as)     &&
+            discernability (adapter,           as)         &&
 
             true; // added so lines above can be easily swapped
         }
@@ -293,11 +293,11 @@ namespace test {
         bool valid(const Adapter& adapter, const many<A>& as) const {
             return 
 
-            discernability (adapter,           as)         &&
             determinism    (adapter,            f_name, f, as, as)     &&
             associativity  (adapter,            f_name, f, as, as, as) &&
             binary_identity(adapter, e_name, e, f_name, f, as)         &&
             commutativity  (adapter,            f_name, f, as, as)     &&
+            discernability (adapter,           as)         &&
 
             true; // added so lines above can be easily swapped
         }
@@ -347,10 +347,10 @@ namespace test {
         bool valid(const Adapter& adapter, const many<A>& as) const {
             return 
 
-            discernability(adapter,           as)         &&
             determinism  (adapter,            f_name, f, as, as)     &&
             associativity(adapter,            f_name, f, as, as, as) &&
             commutativity  (adapter,            f_name, f, as, as)     &&
+            discernability(adapter,           as)         &&
 
             true; // added so lines above can be easily swapped
         }
@@ -406,12 +406,12 @@ namespace test {
         bool valid(const Adapter& adapter, const many<A>& as) const {
             return 
 
-            discernability (adapter,           as)         &&
             determinism    (adapter,            f_name, f, as, as)     &&
             associativity  (adapter,            f_name, f, as, as, as) &&
             binary_identity(adapter, e_name, e, f_name, f, as)         &&
             binary_invertibility(adapter, e_name, e, finv_name, finv, f_name, f, as) &&
             commutativity  (adapter,            f_name, f, as, as)     &&
+            discernability (adapter,           as)         &&
 
             true; // added so lines above can be easily swapped
         }
