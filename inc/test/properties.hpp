@@ -875,7 +875,7 @@ namespace test {
     }
 
     template<typename Adapter, typename F, typename G, typename A>
-    bool conservation(const Adapter& adapter, 
+    bool unary_conservation(const Adapter& adapter, 
         const std::string f_name, const F& f, 
         const std::string g_name, const G& g, 
         const A& as
@@ -893,6 +893,27 @@ namespace test {
                     "g(f(a)) : " + indent(adapter.print(gfa), "  ") + "\n"
                 );
             }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A>
+    bool binary_conservation(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as, const B& bs
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must conserve " + g_name + " [denoted \"g\"]" + 
+            "\nsuch that: \n  g(f(a)) = g(a)\n",
+            [=](auto a, auto b){
+                auto gab = g(a,b);
+                auto fab = f(a,b);
+                auto gfab = g(fab);
+                return Results(adapter.equal(gfab, gab),
+                    "g(a,b)  : " + indent(adapter.print(gab), "  ") + "\n" +
+                    "f(a,b)  : " + indent(adapter.print(fab), "  ") + "\n" +
+                    "g(f(a,b)) : " + indent(adapter.print(gfab), "  ") + "\n"
+                );
+            }, as, bs);
     }
 
 
