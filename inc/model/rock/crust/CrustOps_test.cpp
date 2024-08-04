@@ -131,6 +131,8 @@ TEST_CASE( "CrustOps::absorb() monoid", "[rock]" ) {
 
 }
 
+// TODO: NEED TEST FOR MASS CONSERVATION!
+
 /*
 TEST_CASE( "FormationGeneration must be able to achieve desired displacements as indicated by elevation_for_position", "[rock]" ) {
 
