@@ -14,7 +14,7 @@
 
 #include "CrustSummary.hpp"
 #include "CrustSummaryOps.hpp"
-#include "CrustSummaryProperties.hpp"
+#include "CrustSummaryProperty.hpp"
 
 #include <test/predicate.hpp>
 #include <test/properties.hpp>
