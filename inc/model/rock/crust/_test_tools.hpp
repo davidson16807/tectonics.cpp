@@ -8,6 +8,7 @@
 
 // in-house libraries
 #include <unit/si.hpp>
+// #include <unit/_test_tools.cpp>
 
 #include <model/rock/column/_test_tools.hpp>
 #include <model/rock/formation/_test_tools.hpp>
@@ -68,8 +69,10 @@ namespace rock
     template<int M, int F>
     struct CrustAdapter{
         const FormationAdapter<M> subadapter;
+        const float threshold;
 
-        CrustAdapter()
+        CrustAdapter(const float threshold):
+            threshold(threshold)
         {}
 
         bool equal(const Crust<M,F>& a, const Crust<M,F>& b) const {
@@ -89,6 +92,12 @@ namespace rock
             return true;
         }
 
+        template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1>
+        bool equal(const si::units<M1,KG1,S1,K1,MOL1,A1,CD1,float>& a, const si::units<M1,KG1,S1,K1,MOL1,A1,CD1,float>& b) const {
+            const si::units<M1,KG1,S1,K1,MOL1,A1,CD1,float> denominator(si::abs(a)+si::abs(b));
+            return denominator == 0.0*denominator || 2 * si::distance(a, b) / denominator < threshold;
+        }
+
         std::string print(const Crust<M,F>& a) const {
             std::ostringstream os;
             for (std::size_t i = 0; i < a.size(); ++i)
@@ -97,6 +106,10 @@ namespace rock
                 os << subadapter.print(a[i]) << std::endl;
             }
             return os.str();
+        }
+        template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1>
+        std::string print(const si::units<M1,KG1,S1,K1,MOL1,A1,CD1,float>& a) const {
+            return si::to_string(a);
         }
 
     };

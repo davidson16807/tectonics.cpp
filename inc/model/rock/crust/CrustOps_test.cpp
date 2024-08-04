@@ -63,7 +63,8 @@ It does so by testing that mass properties are commutative as the limit of this 
 #include <model/rock/formation/FormationGeneration.hpp>  // FormationGeneration
 // #include <model/rock/formation/FormationSummarization.hpp>  // FormationSummarization
 #include <model/rock/formation/FormationSummaryOps.hpp>  // CrustSummaryOps
-#include <model/rock/crust/CrustOps.hpp>  // CrustSummaryOps
+#include <model/rock/crust/CrustOps.hpp>  // CrustOps
+#include <model/rock/crust/CrustProperties.hpp>  // CrustMass
 // #include <model/rock/crust/CrustSummarization.hpp>  // CrustSummarization
 #include <model/rock/crust/CrustSummaryOps.hpp>  // CrustSummaryOps
 
@@ -121,11 +122,11 @@ TEST_CASE( "CrustOps::absorb() monoid", "[rock]" ) {
     };
 
     rock::CrustOps<M> ops;
-    rock::CrustAdapter<M,F> testing;
+    rock::CrustAdapter<M,F> testing(0.01);
 
     test::Monoid monoid1(
         "an empty Crust", empty_crust,
-        "absorb",        [=](auto& a, auto& b){
+        "absorb", [=](auto& a, auto& b){
             auto out = empty_crust;
             auto scratch = empty_formation;
             ops.absorb(a,b,out, scratch); 
@@ -137,24 +138,18 @@ TEST_CASE( "CrustOps::absorb() monoid", "[rock]" ) {
 
 }
 
-// TODO: NEED TEST FOR MASS CONSERVATION!
+TEST_CASE( "CrustOps::absorb() mass conservation", "[rock]" ) {
 
-/*
-TEST_CASE( "FormationGeneration must be able to achieve desired displacements as indicated by elevation_for_position", "[rock]" ) {
+    const int M = 2; // mineral count
+    const int F = 5; // formation count
 
-    // using mass = si::mass<float>;
     using length = si::length<float>;
-    using density = si::density<float>;
-
-    const int M = 2;
-    const int F = 2;
-
     length meter(si::meter);
     length radius(6.371e6f * meter);
 
-    int vertices_per_square_side(4);
+    int vertices_per_square_side(2);
     dymaxion::Grid grid(radius/meter, vertices_per_square_side);
-    rock::EarthlikeIgneousFormationGeneration generation(grid, 2.0f*meter/radius, 0.5f, 10);
+    rock::EarthlikeIgneousFormationGeneration generation(grid, radius/2.0f, 0.5f, 10);
 
     iterated::Copy copy{};
     rock::Formation<M> formation1(grid.vertex_count());
@@ -163,78 +158,51 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
     rock::Formation<M> formation2(grid.vertex_count());
     copy(generation(22.0f, 1.2e4f), formation2);
 
-    rock::Crust<M,F> crust{formation1, formation2};
+    rock::Formation<M> formation3(grid.vertex_count());
+    copy(generation(33.0f, 1.3e4f), formation3);
 
-    // "flatten" ops
-    auto crust_ops = 
-      rock::CrustOps{
-        rock::FormationOps{
-          rock::StratumOps<M>{
-            rock::MineralOps{}
-        }}};
-    auto stratum_summary_ops = 
-      rock::StratumSummaryOps{
-        density(3075.0*si::kilogram/si::meter3)
-      };
-    auto crust_summary_ops = 
-      rock::CrustSummaryOps{
-        rock::ColumnSummaryOps{
-          stratum_summary_ops,
-          length(si::centimeter)
-        }
-      };
+    rock::Formation<M> formation4(grid.vertex_count());
+    copy(generation(44.0f, 1.4e4f), formation3);
 
-    // "summarize" ops
-    auto age_of_world = 0.0f*si::megayear;
-    std::array<relation::PolynomialRailyardRelation<si::time<double>,si::density<double>,0,1>, M> densities_for_age {
-      relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2890.0, 3300.0}), // Carlson & Raskin 1984
-      relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2600.0, 2600.0})
-    };
-    auto stratum_summarization = 
-      rock::stratum_summarization<M>(
-        rock::AgedStratumDensity{densities_for_age, age_of_world}
-      );
-    auto formation_summarization = rock::formation_summarization<M>(stratum_summarization, grid);
-    auto crust_summarization = rock::CrustSummarization{
-      formation_summarization, rock::FormationSummaryOps{stratum_summary_ops}
+    rock::Formation<M> formation5(grid.vertex_count());
+    copy(generation(55.0f, 1.5e4f), formation5);
+
+    rock::StratumStore<M> empty_stratum;
+    rock::Formation<M> empty_formation(grid.vertex_count(), empty_stratum);
+    rock::Crust<M,F> empty_crust; empty_crust.fill(empty_formation);
+
+    rock::Crust<M,F> full{formation1, formation2, formation3, formation4, formation5};
+    rock::Crust<M,F> empty_metaigneous{formation5, formation1, formation2, formation3, empty_formation};
+    rock::Crust<M,F> empty_igneous{formation4, formation5, formation1, empty_formation, empty_formation};
+    rock::Crust<M,F> empty_metasedimentary{formation3, formation4, empty_formation, empty_formation, empty_formation};
+    rock::Crust<M,F> empty_sedimentary{formation2, empty_formation, empty_formation, empty_formation, empty_formation};
+    rock::Crust<M,F> empty_sediment{empty_formation, formation3, formation4, formation5, formation2};
+    rock::Crust<M,F> empty_middle{formation3, formation4, empty_formation, formation5, formation2};
+
+    std::vector<rock::Crust<M,F>> crusts{
+      empty_crust, full, empty_metaigneous, empty_igneous, empty_metasedimentary, empty_sedimentary, empty_sediment, empty_middle
     };
 
+    rock::CrustOps<M> ops;
+    rock::CrustMass<M,F> crust_mass;
+    rock::CrustAdapter<M,F> testing(1e-4);
 
-    int plate_id = 1;
+    REQUIRE(test::binary_conservation(testing,
+            "absorb", [=](auto& a, auto& b){
+                auto out = empty_crust;
+                auto scratch = empty_formation;
+                ops.absorb(a,b,out, scratch); 
+                return out;
+            },
+            "mass",   [=](auto& a){
+                return crust_mass(a);
+            },
+            crusts, crusts
+        ));
 
-    rock::Formation<M> formation(grid.vertex_count());
-    crust_ops.flatten(crust, formation);
-
-    rock::FormationSummary formation_summary1(grid.vertex_count());
-    formation_summarization(plate_id, formation, formation_summary1);
-
-    rock::FormationSummary scratch(grid.vertex_count());
-    rock::CrustSummary crust_summary(grid.vertex_count());
-    crust_summarization(plate_id, crust, crust_summary, scratch);
-
-    rock::FormationSummary formation_summary2(grid.vertex_count());
-    crust_summary_ops.flatten(crust_summary, formation_summary2);
-
-    auto strings = spheroidal::Strings(
-      adapted::SiStrings{}, 
-      aggregated::Order{suborder}
-    );
-
-    std::vector<length> probe(grid.vertex_count());
-    // for (std::size_t i = 0; i < formation.size(); ++i)
-    // {
-    //   probe[i] = stratum_tools.isostatic_displacement(summary[i]);
-    // }
-
-    // std::cout << strings.format(grid, intended_displacements) << std::endl << std::endl;
-    // std::cout << strings.format(grid, actual_displacements) << std::endl << std::endl;
-    // std::cout << strings.format(grid, probe) << std::endl << std::endl;
-
-    aggregated::Metric metric(adapted::SiMetric{});
-    REQUIRE(metric.distance(formation_summary1, formation_summary2) < 1.0f*si::kilometer);
 
 }
-*/
+
 
 /*
   area_density/mass/density is the limit over this diagram:

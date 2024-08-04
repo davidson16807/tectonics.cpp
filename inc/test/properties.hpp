@@ -586,9 +586,9 @@ namespace test {
                 return Results(adapter.equal(fab, fa_fb),
                     "f(a+b)    : " + indent(adapter.print(fab), "  ") + "\n" +
                     "f(a)+f(b) : " + indent(adapter.print(fa_fb), "  ") + "\n" +
-                    "a+b  : " + indent(adapter.print(ab), "  ") + "\n" +
-                    "f(a) : " + indent(adapter.print(fa), "  ") + "\n" +
-                    "f(b) : " + indent(adapter.print(fb), "  ") + "\n"
+                    "a+b       : " + indent(adapter.print(ab), "  ") + "\n" +
+                    "f(a)      : " + indent(adapter.print(fa), "  ") + "\n" +
+                    "f(b)      : " + indent(adapter.print(fb), "  ") + "\n"
                 );
             }, as, bs);
     }
@@ -611,8 +611,8 @@ namespace test {
                 return Results(adapter.equal(fab, afb),
                     "f(a*b) : " + indent(adapter.print(fab), "  ") + "\n" +
                     "a*f(b) : " + indent(adapter.print(afb), "  ") + "\n" +
-                    "a*b  : " + indent(adapter.print(ab), "  ") + "\n" +
-                    "f(b) : " + indent(adapter.print(fb), "  ") + "\n"
+                    "a*b    : " + indent(adapter.print(ab), "  ") + "\n" +
+                    "f(b)   : " + indent(adapter.print(fb), "  ") + "\n"
                 );
             }, as, bs);
     }
@@ -634,8 +634,8 @@ namespace test {
                 auto fg_a = fg(a);
                 return Results(adapter.equal(f_ga, fg_a),
                     "f(g(a)) : " + indent(adapter.print(f_ga), "  ") + "\n" +
-                    "fg(a) : " + indent(adapter.print(fg_a), "  ") + "\n" +
-                    "g(a) : " + indent(adapter.print(ga), "  ") + "\n"
+                    "fg(a)   : " + indent(adapter.print(fg_a), "  ") + "\n" +
+                    "g(a)    : " + indent(adapter.print(ga), "  ") + "\n"
                 );
             }, as);
     }
@@ -653,7 +653,7 @@ namespace test {
                 auto fa = f(a);
                 auto ffa = f(fa);
                 return Results(adapter.equal(ffa, fa),
-                    "f(a)  : " + indent(adapter.print(fa), "  ") + "\n" +
+                    "f(a)    : " + indent(adapter.print(fa), "  ") + "\n" +
                     "f(f(a)) : " + indent(adapter.print(ffa), "  ") + "\n"
                 );
             }, as);
@@ -667,8 +667,8 @@ namespace test {
         return equality(
             adapter,
             f_name + " [denoted \"f\"] must return input if both parameters are the same", 
-            "f(a,a)", [=](auto a){ return f(a, a); },
-            "a     ", [=](auto a){ return a; },
+            "f(a,a) : ", [=](auto a){ return f(a, a); },
+            "a      : ", [=](auto a){ return a; },
             as);
     }
 
@@ -681,8 +681,8 @@ namespace test {
         return equality(
             adapter,
             f_name + " [denoted \"f\"] must return the index "+ n_name +" [denoted \"n\"] if both parameters are the same", 
-            "f(a,a)", [=](auto a){ return f(a, a);  },
-            "n     ", [=](auto a){ return n; },
+            "f(a,a) : ", [=](auto a){ return f(a, a);  },
+            "n      : ", [=](auto a){ return n; },
             as);
     }
 
@@ -698,7 +698,7 @@ namespace test {
                 auto fa = f(a);
                 auto ffa = f(fa);
                 return Results(adapter.equal(ffa, a),
-                    "f(a)  : " + indent(adapter.print(fa), "  ") + "\n" +
+                    "f(a)    : " + indent(adapter.print(fa), "  ") + "\n" +
                     "f(f(a)) : " + indent(adapter.print(ffa), "  ") + "\n"
                 );
             }, as);
@@ -716,7 +716,7 @@ namespace test {
                 auto fab = f(a,b);
                 auto fafab = f(a,fab);
                 return Results(adapter.equal(fafab, b),
-                    "f(a,b)  : " + indent(adapter.print(fab), "  ") + "\n" +
+                    "f(a,b)       : " + indent(adapter.print(fab), "  ") + "\n" +
                     "f(a, f(a,b)) : " + indent(adapter.print(fafab), "  ") + "\n"
                 );
             }, as, bs);
@@ -734,7 +734,7 @@ namespace test {
                 auto fab = f(a,b);
                 auto ffabb = f(a,fab);
                 return Results(adapter.equal(ffabb, b),
-                    "f(a,b)  : " + indent(adapter.print(fab), "  ") + "\n" +
+                    "f(a,b)       : " + indent(adapter.print(fab), "  ") + "\n" +
                     "f(f(a,b), b) : " + indent(adapter.print(ffabb), "  ") + "\n"
                 );
             }, as, bs);
@@ -771,14 +771,14 @@ namespace test {
                 auto abc_bca = add(a_bc,b_ca);
                 auto abc_bca_cab = add(abc_bca, c_ab);
                 return Results(adapter.equal(abc_bca_cab, n),
-                    "a×b:                     " + indent(adapter.print(ab), "  ") + "\n" +
-                    "b×c:                     " + indent(adapter.print(bc), "  ") + "\n" +
-                    "c×a:                     " + indent(adapter.print(ca), "  ") + "\n" +
-                    "a×(b×c):                 " + indent(adapter.print(a_bc), "  ") + "\n" +
-                    "b×(c×a):                 " + indent(adapter.print(b_ca), "  ") + "\n" +
-                    "c×(a×b):                 " + indent(adapter.print(c_ab), "  ") + "\n" +
-                    "a×(b×c)+b×(c×a):         " + indent(adapter.print(abc_bca), "  ") + "\n" +
-                    "a×(b×c)+b×(c×a)+c×(a×b): " + indent(adapter.print(abc_bca_cab), "  ") + "\n" +
+                    "a×b                     :" + indent(adapter.print(ab), "  ") + "\n" +
+                    "b×c                     :" + indent(adapter.print(bc), "  ") + "\n" +
+                    "c×a                     :" + indent(adapter.print(ca), "  ") + "\n" +
+                    "a×(b×c)                 :" + indent(adapter.print(a_bc), "  ") + "\n" +
+                    "b×(c×a)                 :" + indent(adapter.print(b_ca), "  ") + "\n" +
+                    "c×(a×b)                 :" + indent(adapter.print(c_ab), "  ") + "\n" +
+                    "a×(b×c)+b×(c×a)         :" + indent(adapter.print(abc_bca), "  ") + "\n" +
+                    "a×(b×c)+b×(c×a)+c×(a×b) :" + indent(adapter.print(abc_bca_cab), "  ") + "\n" +
                     "n:           " + indent(adapter.print(n) , "  ")+ "\n"
                 );
             }, as, bs, cs);
@@ -804,8 +804,8 @@ namespace test {
                 auto ga = g(a);
                 auto fga = f(ga);
                 return Results(adapter.equal(fga, fa),
-                    "f(a)  : " + indent(adapter.print(fa), "  ") + "\n" +
-                    "g(a)  : " + indent(adapter.print(ga), "  ") + "\n" +
+                    "f(a)    : " + indent(adapter.print(fa), "  ") + "\n" +
+                    "g(a)    : " + indent(adapter.print(ga), "  ") + "\n" +
                     "f(g(a)) : " + indent(adapter.print(fga), "  ") + "\n"
                 );
             }, as);
@@ -825,8 +825,8 @@ namespace test {
                 auto ga = g(a);
                 auto fga = f(ga);
                 return Results(adapter.equal(fga, fa),
-                    "f(a)  : " + indent(adapter.print(fa), "  ") + "\n" +
-                    "g(a)  : " + indent(adapter.print(ga), "  ") + "\n" +
+                    "f(a)    : " + indent(adapter.print(fa), "  ") + "\n" +
+                    "g(a)    : " + indent(adapter.print(ga), "  ") + "\n" +
                     "f(g(a)) : " + indent(adapter.print(fga), "  ") + "\n"
                 );
             }, as);
@@ -846,8 +846,8 @@ namespace test {
                 auto ga = g(a);
                 auto fga = f(ga);
                 return Results(adapter.equal(fga, fa),
-                    "f(a)  : " + indent(adapter.print(fa), "  ") + "\n" +
-                    "g(a)  : " + indent(adapter.print(ga), "  ") + "\n" +
+                    "f(a)    : " + indent(adapter.print(fa), "  ") + "\n" +
+                    "g(a)    : " + indent(adapter.print(ga), "  ") + "\n" +
                     "f(g(a)) : " + indent(adapter.print(fga), "  ") + "\n"
                 );
             }, as);
@@ -867,8 +867,8 @@ namespace test {
                 auto ga = g(a);
                 auto fga = f(ga);
                 return Results(adapter.equal(fga, fa),
-                    "f(a)  : " + indent(adapter.print(fa), "  ") + "\n" +
-                    "g(a)  : " + indent(adapter.print(ga), "  ") + "\n" +
+                    "f(a)    : " + indent(adapter.print(fa), "  ") + "\n" +
+                    "g(a)    : " + indent(adapter.print(ga), "  ") + "\n" +
                     "f(g(a)) : " + indent(adapter.print(fga), "  ") + "\n"
                 );
             }, as);
@@ -888,14 +888,14 @@ namespace test {
                 auto fa = f(a);
                 auto gfa = g(fa);
                 return Results(adapter.equal(gfa, ga),
-                    "g(a)  : " + indent(adapter.print(ga), "  ") + "\n" +
-                    "f(a)  : " + indent(adapter.print(fa), "  ") + "\n" +
+                    "g(a)    : " + indent(adapter.print(ga), "  ") + "\n" +
+                    "f(a)    : " + indent(adapter.print(fa), "  ") + "\n" +
                     "g(f(a)) : " + indent(adapter.print(gfa), "  ") + "\n"
                 );
             }, as);
     }
 
-    template<typename Adapter, typename F, typename G, typename A>
+    template<typename Adapter, typename F, typename G, typename A, typename B>
     bool binary_conservation(const Adapter& adapter, 
         const std::string f_name, const F& f, 
         const std::string g_name, const G& g, 
@@ -905,15 +905,36 @@ namespace test {
             f_name + " [denoted \"f\"] must conserve " + g_name + " [denoted \"g\"]" + 
             "\nsuch that: \n  g(f(a)) = g(a)\n",
             [=](auto a, auto b){
-                auto gab = g(a,b);
+                auto gab = g(a)+g(b);
                 auto fab = f(a,b);
                 auto gfab = g(fab);
                 return Results(adapter.equal(gfab, gab),
-                    "g(a,b)  : " + indent(adapter.print(gab), "  ") + "\n" +
-                    "f(a,b)  : " + indent(adapter.print(fab), "  ") + "\n" +
+                    "g(a)+g(b) : " + indent(adapter.print(gab), "  ") + "\n" +
+                    "f(a,b)    : " + indent(adapter.print(fab), "  ") + "\n" +
                     "g(f(a,b)) : " + indent(adapter.print(gfab), "  ") + "\n"
                 );
             }, as, bs);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A, typename B, typename C>
+    bool trinary_conservation(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as, const B& bs, const C& cs
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must conserve " + g_name + " [denoted \"g\"]" + 
+            "\nsuch that: \n  g(f(a)) = g(a)\n",
+            [=](auto a, auto b, auto c){
+                auto gabc = g(a)+g(b)+g(c);
+                auto fabc = f(a,b,c);
+                auto gfabc = g(fabc);
+                return Results(adapter.equal(gfabc, gabc),
+                    "g(a)+g(b)+g(c) : " + indent(adapter.print(gabc), "  ") + "\n" +
+                    "f(a,b,c)       : " + indent(adapter.print(fabc), "  ") + "\n" +
+                    "g(f(a,b,c))    : " + indent(adapter.print(gfabc), "  ") + "\n"
+                );
+            }, as, bs, cs);
     }
 
 
