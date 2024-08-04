@@ -45,11 +45,10 @@ namespace rock{
         void absorb (const Crust<M,F>& top, const Crust<M,F>& bottom, Crust<M,F>& out, Formation<M>& scratch) const
         {
 
-            bools occupied       (top[0].size());
-            bools meta_occupied  (top[0].size());
-            bools occupied_below (top[0].size(), false);
+            bools empty          (top[0].size());
+            bools meta_empty     (top[0].size());
             bools newly_occupied (top[0].size());
-            bools still_empty    (top[0].size());
+            bools empty_below    (top[0].size(), true);
 
             copy(top, out);
 
@@ -58,17 +57,15 @@ namespace rock{
 
             for (std::size_t i(MI); i > S; i-=2) // all nonsediment layers
             {
-                predicates.exists(top[i], meta_occupied);
-                predicates.exists(top[i-1], occupied);
-                morphology.unite (occupied, meta_occupied,  occupied);
-                morphology.differ(occupied, occupied_below, newly_occupied);
-                morphology.negate(occupied_below,           still_empty);
-                morphology.copy  (occupied,                 occupied_below);
+                predicates.empty(top[i],   meta_empty);
+                predicates.empty(top[i-1], empty);
+                morphology.intersect(empty, meta_empty,  empty);
+                morphology.differ   (empty_below, empty, newly_occupied);
 
                 // deposit anything remaining in the current layer immediately
-                ops.mask(bottom[i],   still_empty, scratch);
+                ops.mask(bottom[i],   empty_below, scratch);
                 ops.combine(out[i],   scratch,     out[i]); // meta
-                ops.mask(bottom[i-1], still_empty, scratch);
+                ops.mask(bottom[i-1], empty_below, scratch);
                 ops.combine(out[i-1], scratch,     out[i-1]); // nonmeta
                 // any bottom layer for which `nonempty_below` needs to be deposited to one of the two immediate layers below
                 for (std::size_t j(i-2); j > S; j-=2) // all nonsediment layers
@@ -81,9 +78,11 @@ namespace rock{
                 // sediment doesn't follow a meta/nonmeta paradigm so it must be handled separately
                 ops.mask(bottom[S], newly_occupied, scratch);
                 ops.combine(out[i-1], scratch,      out[i-1]); // nonmeta
+
+                morphology.intersect(empty, empty_below, empty_below);
             }
             // sediment doesn't follow a meta/nonmeta paradigm so it must be handled separately
-            ops.mask(bottom[S],   still_empty, scratch);
+            ops.mask(bottom[S],   empty_below, scratch);
             ops.combine(out[S],   scratch,     out[S]); // meta
 
         }
@@ -99,3 +98,4 @@ namespace rock{
     };
 
 }
+
