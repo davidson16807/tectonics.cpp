@@ -57,14 +57,14 @@ It does so by testing that mass properties are commutative as the limit of this 
 #include <model/rock/mineral/MineralOps.hpp>  // StratumProperties
 #include <model/rock/stratum/StratumOps.hpp>  // StratumProperties
 #include <model/rock/stratum/StratumProperties.hpp>  // StratumProperties
-#include <model/rock/stratum/StratumSummarization.hpp>  // StratumSummarization
+// #include <model/rock/stratum/StratumSummarization.hpp>  // StratumSummarization
 #include <model/rock/stratum/StratumSummaryProperties.hpp>  // StratumSummaryIsostaticDisplacement
 #include <model/rock/formation/FormationOps.hpp>  // CrustSummaryOps
 #include <model/rock/formation/FormationGeneration.hpp>  // FormationGeneration
-#include <model/rock/formation/FormationSummarization.hpp>  // FormationSummarization
+// #include <model/rock/formation/FormationSummarization.hpp>  // FormationSummarization
 #include <model/rock/formation/FormationSummaryOps.hpp>  // CrustSummaryOps
 #include <model/rock/crust/CrustOps.hpp>  // CrustSummaryOps
-#include <model/rock/crust/CrustSummarization.hpp>  // CrustSummarization
+// #include <model/rock/crust/CrustSummarization.hpp>  // CrustSummarization
 #include <model/rock/crust/CrustSummaryOps.hpp>  // CrustSummaryOps
 
 #include <model/rock/estimated/EarthlikeIgneousFormationGeneration.hpp>
@@ -104,15 +104,21 @@ TEST_CASE( "CrustOps::absorb() monoid", "[rock]" ) {
     rock::Formation<M> formation5(grid.vertex_count());
     copy(generation(55.0f, 1.5e4f), formation5);
 
-    rock::Crust<M,F> crust1{formation1, formation2, formation3, formation4, formation5};
-    rock::Crust<M,F> crust2{formation5, formation4, formation3, formation2, formation1};
-
     rock::StratumStore<M> empty_stratum;
     rock::Formation<M> empty_formation(grid.vertex_count(), empty_stratum);
-    rock::Crust<M,F> empty_crust;
-    empty_crust.fill(empty_formation);
+    rock::Crust<M,F> empty_crust; empty_crust.fill(empty_formation);
 
-    std::vector<rock::Crust<M,F>> crusts{empty_crust, crust1, crust2};
+    rock::Crust<M,F> full{formation1, formation2, formation3, formation4, formation5};
+    rock::Crust<M,F> empty_metaigneous{formation5, formation1, formation2, formation3, empty_formation};
+    rock::Crust<M,F> empty_igneous{formation4, formation5, formation1, empty_formation, empty_formation};
+    rock::Crust<M,F> empty_metasedimentary{formation3, formation4, empty_formation, empty_formation, empty_formation};
+    rock::Crust<M,F> empty_sedimentary{formation2, empty_formation, empty_formation, empty_formation, empty_formation};
+    rock::Crust<M,F> empty_sediment{empty_formation, formation3, formation4, formation5, formation2};
+    rock::Crust<M,F> empty_middle{formation3, formation4, empty_formation, formation5, formation2};
+
+    std::vector<rock::Crust<M,F>> crusts{
+      empty_crust, full, empty_metaigneous, empty_igneous, empty_metasedimentary, empty_sedimentary, empty_sediment, empty_middle
+    };
 
     rock::CrustOps<M> ops;
     rock::CrustAdapter<M,F> testing;
