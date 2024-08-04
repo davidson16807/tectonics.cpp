@@ -55,9 +55,9 @@ namespace rock
             {
                 return false;
             }
-            for (std::size_t pool_i = 0; pool_i < M; ++pool_i)
+            for (std::size_t i = 0; i < M; ++i)
             {
-                if(!minerals.equal(a.minerals[pool_i], b.minerals[pool_i])){
+                if(!minerals.equal(a.minerals[i], b.minerals[i])){
                     return false;
                 }
             }
@@ -75,9 +75,9 @@ namespace rock
             {
                 return false;
             }
-            for (std::size_t pool_i = 0; pool_i < M; ++pool_i)
+            for (std::size_t i = 0; i < M; ++i)
             {
-                if(!minerals.equal(a[pool_i], b[pool_i])){
+                if(!minerals.equal(a[i], b[i])){
                     return false;
                 }
             }
@@ -93,9 +93,9 @@ namespace rock
             {
                 return false;
             }
-            for (std::size_t pool_i = 0; pool_i < M; ++pool_i)
+            for (std::size_t i = 0; i < M; ++i)
             {
-                if (!minerals.is_valid(a.minerals[pool_i]))
+                if (!minerals.is_valid(a.minerals[i]))
                 {
                     return false;
                 }
@@ -111,11 +111,9 @@ namespace rock
             os << "age of world when last deposited: ";
             os << si::to_string(a.age_of_world_when_last_deposited);
             os << std::endl;
-            os << "minerals: ";
-            os << std::endl;
-            for (int i = 0; i < int(GrainType::count); ++i)
+            for (std::size_t i = 0; i < M; ++i)
             {
-                os << std::to_string(i) << ": ";
+                os << "mineral " << std::to_string(i) << ": ";
                 os << minerals.print(a.minerals[i]);
             }
             os << std::endl;
@@ -130,12 +128,10 @@ namespace rock
             os << "age of world when last deposited: ";
             os << si::to_string(a.age_of_world_when_last_deposited());
             os << std::endl;
-            os << "minerals: ";
-            os << std::endl;
             Mineral unpacked;
-            for (int i = 0; i < int(GrainType::count); ++i)
+            for (std::size_t i = 0; i < M; ++i)
             {
-                os << std::to_string(i) << ": ";
+                os << "mineral " << std::to_string(i) << ": ";
                 a[i].unpack(unpacked);
                 os << minerals.print(unpacked);
             }
