@@ -17,11 +17,6 @@
 #include <math/glm/special_specialization.hpp>
 #include <math/glm/special.hpp>
 
-#include <index/glm/each_specialization.hpp>
-#include <index/glm/whole_specialization.hpp>
-#include <index/glm/each.hpp>
-#include <index/each.hpp>  
-#include <index/whole.hpp>  
 #include <index/known.hpp>  
 #include <index/series/Get.hpp>
 #include <index/series/Map.hpp>
@@ -30,6 +25,10 @@
 #include <index/series/glm/VectorInterleave.hpp>
 #include <index/series/noise/GaussianNoise.hpp>
 #include <index/series/noise/glm/UnitVectorNoise.hpp>
+#include <index/adapted/boolean/BooleanBitset.hpp>
+#include <index/adapted/symbolic/SymbolicArithmetic.hpp>
+#include <index/aggregated/Arithmetic.hpp>
+#include <index/iterated/Bitset.hpp>
 
 #include <field/noise/EliasNoise.hpp>
 #include <field/noise/ValueNoise.hpp>
@@ -39,8 +38,6 @@
 
 #include <grid/dymaxion/Grid.hpp>
 #include <grid/dymaxion/series.hpp>
-
-#include <raster/spheroidal/string_cast.hpp>
 
 #include "Morphology.hpp"
 
@@ -125,7 +122,9 @@ std::vector boolean_rasters{
 
 TEST_CASE( "Boolean Raster erode", "[unlayered]" ) {
     dymaxion::Adapter strict(morphology_fine, 1e-5, morphology_fine.vertex_count());
-    unlayered::Morphology morphology;
+    iterated::Bitset bitset{adapted::BooleanBitset{}};
+    unlayered::Morphology morphology{bitset};
+    aggregated::Arithmetic stats{adapted::SymbolicArithmetic{0,1}};
 
     REQUIRE(test::determinism(strict, 
         "morphology.erode", MORPHOLOGY_TEST_UNARY(bool, morphology_fine, morphology.erode),
@@ -134,7 +133,7 @@ TEST_CASE( "Boolean Raster erode", "[unlayered]" ) {
 
     REQUIRE(test::nonincreasing(strict, 
         "morphology.erode", MORPHOLOGY_TEST_UNARY(bool, morphology_fine, morphology.erode),
-        "the sum",           [](auto a){return whole::sum<int>(a);},
+        "the sum",           [=](auto a){return stats.sum(a);},
         boolean_rasters
     ));
     
@@ -145,7 +144,7 @@ TEST_CASE( "Boolean Raster erode", "[unlayered]" ) {
     
     REQUIRE(test::unary_distributivity(strict, 
         "morphology.erode", MORPHOLOGY_TEST_UNARY(bool, morphology_fine, morphology.erode),
-        "intersect",        MORPHOLOGY_TEST_BINARY_NONGRID(bool, morphology_fine, each::intersect),
+        "intersect",        MORPHOLOGY_TEST_BINARY_NONGRID(bool, morphology_fine, bitset.intersect),
         boolean_rasters, boolean_rasters
     ));
     
@@ -153,7 +152,9 @@ TEST_CASE( "Boolean Raster erode", "[unlayered]" ) {
 
 TEST_CASE( "Boolean Raster dilate", "[unlayered]" ) {
     dymaxion::Adapter strict(morphology_fine, 1e-5, morphology_fine.vertex_count());
-    unlayered::Morphology morphology;
+    iterated::Bitset bitset{adapted::BooleanBitset{}};
+    unlayered::Morphology morphology{bitset};
+    aggregated::Arithmetic stats{adapted::SymbolicArithmetic{0,1}};
 
     REQUIRE(test::determinism(strict, 
         "morphology.dilate", MORPHOLOGY_TEST_UNARY(bool, morphology_fine, morphology.dilate),
@@ -162,7 +163,7 @@ TEST_CASE( "Boolean Raster dilate", "[unlayered]" ) {
 
     REQUIRE(test::nondecreasing(strict, 
         "morphology.dilate", MORPHOLOGY_TEST_UNARY(bool, morphology_fine, morphology.dilate),
-        "the sum",           [](auto a){return whole::sum<int>(a);},
+        "the sum",           [=](auto a){return stats.sum(a);},
         boolean_rasters
     ));
 
@@ -173,7 +174,7 @@ TEST_CASE( "Boolean Raster dilate", "[unlayered]" ) {
 
     REQUIRE(test::unary_distributivity(strict, 
         "morphology.dilate", MORPHOLOGY_TEST_UNARY(bool, morphology_fine, morphology.dilate),
-        "unite",             MORPHOLOGY_TEST_BINARY_NONGRID(bool, morphology_fine, each::unite),
+        "unite",             MORPHOLOGY_TEST_BINARY_NONGRID(bool, morphology_fine, bitset.unite),
         boolean_rasters, boolean_rasters
     ));
 
@@ -181,7 +182,7 @@ TEST_CASE( "Boolean Raster dilate", "[unlayered]" ) {
 
 TEST_CASE( "Boolean Raster inshell", "[unlayered]" ) {
     dymaxion::Adapter strict(morphology_fine, 1e-5, morphology_fine.vertex_count());
-    unlayered::Morphology morphology;
+    unlayered::Morphology morphology{iterated::Bitset{adapted::BooleanBitset{}}};
 
     REQUIRE(test::determinism(strict, 
         "morphology.inshell", MORPHOLOGY_TEST_UNARY(bool, morphology_fine, morphology.inshell),
@@ -192,7 +193,7 @@ TEST_CASE( "Boolean Raster inshell", "[unlayered]" ) {
 
 TEST_CASE( "Boolean Raster outshell", "[unlayered]" ) {
     dymaxion::Adapter strict(morphology_fine, 1e-5, morphology_fine.vertex_count());
-    unlayered::Morphology morphology;
+    unlayered::Morphology morphology{iterated::Bitset{adapted::BooleanBitset{}}};
 
     REQUIRE(test::determinism(strict, 
         "morphology.outshell", MORPHOLOGY_TEST_UNARY(bool, morphology_fine, morphology.outshell),
@@ -203,7 +204,8 @@ TEST_CASE( "Boolean Raster outshell", "[unlayered]" ) {
 
 TEST_CASE( "Boolean Raster opening", "[unlayered]" ) {
     dymaxion::Adapter strict(morphology_fine, 1e-5, morphology_fine.vertex_count());
-    unlayered::Morphology morphology;
+    unlayered::Morphology morphology{iterated::Bitset{adapted::BooleanBitset{}}};
+    aggregated::Arithmetic stats{adapted::SymbolicArithmetic{0,1}};
 
     REQUIRE(test::determinism(strict, 
         "morphology.opening", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, morphology_fine, morphology.opening),
@@ -212,7 +214,7 @@ TEST_CASE( "Boolean Raster opening", "[unlayered]" ) {
 
     REQUIRE(test::nonincreasing(strict, 
         "morphology.opening", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, morphology_fine, morphology.opening),
-        "the sum",           [](auto a){return whole::sum<int>(a);},
+        "the sum",           [=](auto a){return stats.sum(a);},
         boolean_rasters
     ));
 
@@ -225,7 +227,8 @@ TEST_CASE( "Boolean Raster opening", "[unlayered]" ) {
 
 TEST_CASE( "Boolean Raster closing", "[unlayered]" ) {
     dymaxion::Adapter strict(morphology_fine, 1e-5, morphology_fine.vertex_count());
-    unlayered::Morphology morphology;
+    unlayered::Morphology morphology{iterated::Bitset{adapted::BooleanBitset{}}};
+    aggregated::Arithmetic stats{adapted::SymbolicArithmetic{0,1}};
 
     REQUIRE(test::determinism(strict, 
         "morphology.closing", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, morphology_fine, morphology.closing),
@@ -234,7 +237,7 @@ TEST_CASE( "Boolean Raster closing", "[unlayered]" ) {
 
     REQUIRE(test::nondecreasing(strict, 
         "morphology.closing", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, morphology_fine, morphology.closing),
-        "the sum",           [](auto a){return whole::sum<int>(a);},
+        "the sum",           [=](auto a){return stats.sum(a);},
         boolean_rasters
     ));
 
@@ -247,7 +250,7 @@ TEST_CASE( "Boolean Raster closing", "[unlayered]" ) {
 
 TEST_CASE( "Boolean Raster black_top_hat", "[unlayered]" ) {
     dymaxion::Adapter strict(morphology_fine, 1e-5, morphology_fine.vertex_count());
-    unlayered::Morphology morphology;
+    unlayered::Morphology morphology{iterated::Bitset{adapted::BooleanBitset{}}};
 
     REQUIRE(test::determinism(strict, 
         "morphology.black_top_hat", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, morphology_fine, morphology.black_top_hat),
@@ -258,7 +261,7 @@ TEST_CASE( "Boolean Raster black_top_hat", "[unlayered]" ) {
 
 TEST_CASE( "Boolean Raster white_top_hat", "[unlayered]" ) {
     dymaxion::Adapter strict(morphology_fine, 1e-5, morphology_fine.vertex_count());
-    unlayered::Morphology morphology;
+    unlayered::Morphology morphology{iterated::Bitset{adapted::BooleanBitset{}}};
 
     REQUIRE(test::determinism(strict, 
         "morphology.white_top_hat", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, morphology_fine, morphology.white_top_hat),

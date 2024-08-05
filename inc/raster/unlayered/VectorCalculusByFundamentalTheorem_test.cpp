@@ -39,8 +39,6 @@
 #include <grid/dymaxion/Grid.hpp>
 #include <grid/dymaxion/series.hpp>
 
-#include <raster/spheroidal/string_cast.hpp>
-
 #include "VectorCalculusByFundamentalTheorem.hpp"
 #include "VectorCalculusByFundamentalTheorem_test.hpp"
 

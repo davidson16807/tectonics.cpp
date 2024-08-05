@@ -11,14 +11,19 @@ namespace unlayered
     /*
     `Morphology` introduces concepts known to mathematical morphology.
     */
-	class Morphology{
+    template<typename Bitsets>
+	class Morphology {
+
+		const Bitsets bitsets;
 
 	public:
 
-        inline constexpr explicit Morphology()
+        inline constexpr explicit Morphology(const Bitsets& bitsets):
+        	bitsets(bitsets)
     	{}
 
-        inline constexpr Morphology(const Morphology& morphology)
+        inline constexpr Morphology(const Morphology& morphology):
+        	bitsets(morphology.bitsets)
         {} // copy constructor
 
     	template<typename Grid, typename In, typename Out>
@@ -49,11 +54,11 @@ namespace unlayered
 			assert(radius >= 0);
 			if (radius == 0 && &out != &mask)
 			{
-				each::copy(out, mask);
+				bitsets.copy(out, mask);
 			} 
 			else 
 			{
-				each::copy(*temp_in, mask);
+				bitsets.copy(*temp_in, mask);
 				for (unsigned int i = 0; i < radius; ++i)
 				{
 					temp_swap = temp_out;
@@ -63,7 +68,7 @@ namespace unlayered
 				}
 				if (radius % 2 == 0)
 				{
-					each::copy(out, *temp_out);
+					bitsets.copy(out, *temp_out);
 				}
 			}
 		}
@@ -96,11 +101,11 @@ namespace unlayered
 			assert(radius >= 0);
 			if (radius == 0 && &out != &mask)
 			{
-				each::copy(out, mask);
+				bitsets.copy(out, mask);
 			} 
 			else 
 			{
-				each::copy(*temp_in, mask);
+				bitsets.copy(*temp_in, mask);
 				for (unsigned int i = 0; i < radius; ++i)
 				{
 					temp_swap = temp_out;
@@ -110,7 +115,7 @@ namespace unlayered
 				}
 				if (radius % 2 == 0)
 				{
-					each::copy(out, *temp_out);
+					bitsets.copy(out, *temp_out);
 				}
 			}
 		}
@@ -149,28 +154,28 @@ namespace unlayered
 		void white_top_hat(const Grid& grid, const In& mask, Out& out, Out& scratch1) const
 		{
 			closing      ( grid, mask, out,  scratch1 );
-			each::differ (       out,  mask, out );
+			bitsets.differ (       out,  mask, out );
 		}
 
     	template<typename Grid, typename In, typename Out>
 		void white_top_hat(const Grid& grid, const In& mask, Out& out, const unsigned int radius, Out& scratch1, Out& scratch2) const
 		{
 			closing      ( grid, mask, out, radius, scratch1, scratch2 );
-			each::differ (       out,  mask, out                       );
+			bitsets.differ (       out,  mask, out                       );
 		}
 
     	template<typename Grid, typename In, typename Out>
 		void black_top_hat(const Grid& grid, const In& mask, Out& out, Out& scratch1) const
 		{
 			opening      ( grid, mask, out, scratch1 );
-			each::differ (       mask, out, out );
+			bitsets.differ (       mask, out, out );
 		}
 
     	template<typename Grid, typename In, typename Out>
 		void black_top_hat(const Grid& grid, const In& mask, Out& out, const unsigned int radius, Out& scratch1, Out& scratch2) const
 		{
 			opening      ( grid, mask, out, radius, scratch1, scratch2 );
-			each::differ (       mask, out, out );
+			bitsets.differ (       mask, out, out );
 		}
 
 		// NOTE: this is not a standard concept in math morphology
@@ -180,14 +185,14 @@ namespace unlayered
 		void outshell(const Grid& grid, const In& mask, Out& out) const
 		{
 			dilate      ( grid, mask, out );
-			each::differ(       out,  mask, out );
+			bitsets.differ(       out,  mask, out );
 		}
 
     	template<typename Grid, typename In, typename Out>
 		void outshell(const Grid& grid, const In& mask, Out& out, const unsigned int radius, Out& scratch) const
 		{
 			dilate      ( grid, mask, out, radius, scratch );
-			each::differ(       out,  mask, out );
+			bitsets.differ(       out,  mask, out );
 		}
 
 		// NOTE: this is not a standard concept in math morphology
@@ -197,14 +202,14 @@ namespace unlayered
 		void inshell(const Grid& grid, const In& mask, Out& out) const
 		{
 			erode        ( grid, mask, out );
-			each::differ (       mask,  out, out );
+			bitsets.differ (       mask,  out, out );
 		}
 
     	template<typename Grid, typename In, typename Out>
 		void inshell(const Grid& grid, const In& mask, Out& out, const unsigned int radius, Out& scratch) const
 		{
 			erode        ( grid, mask, out, radius, scratch );
-			each::differ (       mask,  out, out );
+			bitsets.differ (       mask,  out, out );
 		}
 
 	};

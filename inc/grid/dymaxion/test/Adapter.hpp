@@ -12,6 +12,7 @@
 #include <index/adapted/scalar/ScalarMetric.hpp>
 #include <index/adapted/metric/MetricOrder.hpp>
 #include <index/aggregated/Order.hpp>
+#include <index/aggregated/Metric.hpp>
 
 #include <grid/dymaxion/Grid.hpp>
 
@@ -35,6 +36,10 @@ namespace dymaxion {
         using adapted::ScalarMetric<float>::length;
         using adapted::BooleanMetric::length;
         using adapted::GlmMetric::length;
+        using adapted::ScalarMetric<double>::distance;
+        using adapted::ScalarMetric<float>::distance;
+        using adapted::BooleanMetric::distance;
+        using adapted::GlmMetric::distance;
     };
 
     template<typename id, typename scalar>
@@ -51,7 +56,8 @@ namespace dymaxion {
 
         template<typename Series1, typename Series2>
         bool equal(const Series1& a, const Series2& b) const {
-            return whole::max_distance(a,b) <= threshold;
+            aggregated::Metric metric{PolyMetric{}};
+            return metric.distance(a,b) <= threshold;
         }
 
         template<typename Series>
