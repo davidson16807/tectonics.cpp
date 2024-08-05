@@ -32,7 +32,7 @@ namespace rock{
 
     template<int M, int F, typename FormationSummarization, typename FormationSummaryOps>
     auto crust_summarization(const FormationSummarization& summarize, const FormationSummaryOps& ops){
-        return CrustSummarization<M,F>(summarize, ops);
+        return CrustSummarization<M,F,FormationSummarization,FormationSummaryOps>(summarize, ops);
     }
 
 }

@@ -69,6 +69,7 @@ It does so by testing that mass properties are commutative as the limit of this 
 #include <model/rock/crust/CrustProperties.hpp>  // CrustMass
 #include <model/rock/crust/CrustSummarization.hpp>  // CrustSummarization
 #include <model/rock/crust/CrustSummaryOps.hpp>  // CrustSummaryOps
+#include <model/rock/crust/CrustSummaryProperties.hpp>  // CrustSummaryMass
 
 #include <model/rock/estimated/EarthlikeIgneousFormationGeneration.hpp>
 
@@ -128,29 +129,33 @@ TEST_CASE( "CrustOps::flatten()/CrustSummarization() mass conservation", "[rock]
     };
 
     rock::CrustOps<M> crust_ops;
-    rock::FormationOps<M> formation_ops;
+    rock::CrustSummaryOps crust_summary_ops;
     auto formation_summarize = rock::formation_summarization<2>(
-        rock::stratum_summarization<2>(
-          rock::AgedStratumDensity{densities_for_age, age_of_world}
-        ), 
-        grid
-      )
+      rock::stratum_summarization<2>(
+        rock::AgedStratumDensity{densities_for_age, age_of_world}
+      ), 
+      grid
+    );
     auto crust_summarize = rock::crust_summarization<M,F>(formation_summarize);
     rock::CrustMass<M,F> crust_mass;
     rock::FormationMass<M> formation_mass;
-    rock::FormationSummaryMass<M> formation_summary_mass;
+    rock::FormationSummaryMass formation_summary_mass{grid};
     si::UnitAdapter testing(1e-4);
 
-    for (int i = 0; i < crusts.size(); ++i)
+    rock::Formation<M> formation(grid.vertex_count());
+    rock::FormationSummary formation_summary(grid.vertex_count());
+    rock::CrustSummary crust_summary(grid.vertex_count());
+
+    for (std::size_t i = 0; i < crusts.size(); ++i)
     {
-        mass starting_mass = crust_mass(crust);
+        mass starting_mass = crust_mass(crusts[i]);
         crust_ops.flatten(crusts[i], formation);
         REQUIRE(testing.equal(starting_mass, formation_mass(formation)));
         formation_summarize(formation, formation_summary);
         REQUIRE(testing.equal(starting_mass, formation_summary_mass(formation_summary)));
         crust_summarize(crust, crust_summary);
         REQUIRE(testing.equal(starting_mass, crust_summary_mass(crust_summary)));
-        formation_ops.flatten(crust_summary, formation_summary);
+        crust_summary_ops.flatten(crust_summary, formation_summary);
         REQUIRE(testing.equal(starting_mass, formation_summary_mass(formation_summary)));
     }
 

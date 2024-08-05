@@ -21,13 +21,13 @@ namespace rock{
         void operator()(const Formation<M>& formation, masses& out) const {
             for (std::size_t i = 0; i < out.size(); ++i)
             {
-                out[i] += formation[j][i].mass();
+                out[i] += formation[i].mass();
             }
         }
 
         mass operator()(const Formation<M>& formation) const {
             mass out(0);
-            for (std::size_t i = 0; i < out.size(); ++i)
+            for (std::size_t i = 0; i < formation.size(); ++i)
             {
                 out += formation[i].mass();
             }

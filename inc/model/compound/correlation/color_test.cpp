@@ -7,7 +7,7 @@
 
 // in house libraries
 #include <unit/si.hpp>
-#include <unit/_test_tools.cpp>
+#include <unit/_test_tools.hpp>
 
 #include "color.hpp"
 

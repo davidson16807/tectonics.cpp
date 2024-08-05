@@ -3,7 +3,7 @@
 #include <algorithm> // std::max
 
 // in house libraries
-#include "Formation.hpp"
+#include <model/rock/formation/Formation.hpp>
 
 namespace rock{
 
