@@ -168,9 +168,6 @@ TEST_CASE( "CrustOps::flatten()/CrustSummarization() mass conservation", "[rock]
         formation_summarize(plate_id, formation, formation_summary);
         REQUIRE(testing.equal(starting_mass, formation_summary_mass(formation_summary)));
         crust_summarize(plate_id, crusts[i], crust_summary, formation_summary);
-        // std::cout << testing.print(starting_mass) << std::endl;
-        // std::cout << testing.print(crust_summary_mass(crust_summary)) << std::endl;
-        // std::cout << testing2.print(crust_summary) << std::endl;
         REQUIRE(testing.equal(starting_mass, crust_summary_mass(crust_summary)));
         crust_summary_ops.flatten(crust_summary, formation_summary);
         REQUIRE(testing.equal(starting_mass, formation_summary_mass(formation_summary)));
