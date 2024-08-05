@@ -69,6 +69,27 @@ namespace rock {
         const Segmentation segmentation;
         const length world_radius;
 
+		inline glm::vec3 rotation_matrix(
+			const vec3s& linear_velocity,
+			const auto& position,
+			const glm::vec3 axis,
+			const si::time<double> seconds,
+			vec3s& scratch1,
+			floats& scratch2,
+		) const {
+			for (int i = 0; i < linear_velocity.size(); ++i)
+			{
+				vec3 offset = position[i] - axis[i];
+				rotation_vector += glm::cross(linear_velocity[i], offset) / glm::dot(offset, offset);
+			}
+			rotation_vector /= linear_velocity.size();
+			rotation_vector *= seconds;
+    		// TODO: negation shouldn't theoretically be needed! find out where the discrepancy lies and fix it the proper way! 
+			glm::mat4 rotation_matrix = glm::rotate(glm::length(rotation_vector), -glm::normalize(rotation_vector));
+			rotation_matrix = std::is_nan(rotation_matrix)? glm::mat4(1.0f) : rotation_matrix;
+			return rotation_matrix;
+		}
+
     public:
         CrustSimulation(
 			const VectorCalculus& calculus, 
@@ -90,58 +111,6 @@ namespace rock {
 		Exceptions will be noted in the comments. 
         */
 
-        /*
-		`rifting` returns a scalar raster indicating where gaps in the plates should be filled by a given plate
-        */
-		void rifting(
-			const bools& alone,
-			const bools& top,
-			const bools& exists,
-			bools& out,
-			bools& scratch
-		) const {
-			/*
-			The implementation below is equivalent to the following set logic:
-				rifting = erode(alone ∩ top) ∩ margin(exists)
-			*/
-			bools* riftable           = &out;
-			bools* will_stay_riftable = &scratch;
-			bools* just_outside       = &out;
-			each::intersect    (alone, top,         riftable);
-			morphology.erode   (riftable,           will_stay_riftable);
-			morphology.outshell(exists,             just_outside);
-			each::intersect    (will_stay_riftable, just_outside, out);
-		}
-
-        /*
-		`detaching` returns a scalar raster indicating where cells of a plate should be destroyed
-        */
-		void detaching(
-			const bools& alone,
-			const bools& top,
-			const bools& exists,
-			const bools& foundering,
-			bools& out,
-			bools& scratch
-		) const {
-			/*
-			The implementation below is equivalent to the following set logic:
-				detaching = erode(!alone ∩ !top) ∩ padding(exists) ∩ foundering
-			*/
-			bools* not_alone            = &out;
-			bools* not_top              = &scratch;
-			bools* subducting           = &out;
-			// bools* will_stay_subducting = &scratch;
-			bools* just_inside          = &out;
-			bools* detachable           = &out;
-			each::negate      (alone,                not_alone);
-			each::negate      (top,                  not_top);
-			each::intersect   (not_alone, not_top,   subducting);
-			// morphology.erode  (subducting, will_stay_subducting); // NOTE: this was in the js implementation but it is suspected to be wrong
-			morphology.inshell(exists,               just_inside);
-			each::intersect   (subducting, just_inside, detachable);
-			each::intersect   (detachable, foundering, out);
-		}
 
 		void lithification(
 			const int plate_id,
@@ -235,27 +204,6 @@ namespace rock {
 		) const {
 			return whole::weighted_average(position, mass);
 		}
-
-		inline glm::vec3 rotation_matrix(
-			const vec3s& linear_velocity,
-			const auto& position,
-			const glm::vec3 axis,
-			const si::time<double> seconds,
-			vec3s& scratch1,
-			floats& scratch2,
-		) const {
-			for (int i = 0; i < linear_velocity.size(); ++i)
-			{
-				vec3 offset = position[i] - axis[i];
-				rotation_vector += glm::cross(linear_velocity[i], offset) / glm::dot(offset, offset);
-			}
-			rotation_vector /= linear_velocity.size();
-			rotation_vector *= seconds;
-    		// TODO: negation shouldn't theoretically be needed! find out where the discrepancy lies and fix it the proper way! 
-			glm::mat4 rotation_matrix = glm::rotate(glm::length(rotation_vector), -glm::normalize(rotation_vector));
-			rotation_matrix = std::is_nan(rotation_matrix)? glm::mat4(1.0f) : rotation_matrix;
-			return rotation_matrix;
-		},
 
 		/*
 		NOTE:
@@ -377,21 +325,21 @@ namespace rock {
 
 		}
 
-		void weathering(
-			const speeds& precipitation,
-			const bools& top, 
-			const Crust<M,F>& crust,
-			Formation<M>& delta,
-		) const {
-		}
+		// void weathering(
+		// 	const speeds& precipitation,
+		// 	const bools& top, 
+		// 	const Crust<M,F>& crust,
+		// 	Formation<M>& delta,
+		// ) const {
+		// }
 
-		void erosion(
-			const speeds& precipitation,
-			const lengths& displacements,
-			const Formation<M>& formation,
-			Formation<M>& deltas,
-		) const {
-		}
+		// void erosion(
+		// 	const speeds& precipitation,
+		// 	const lengths& displacements,
+		// 	const Formation<M>& formation,
+		// 	Formation<M>& deltas,
+		// ) const {
+		// }
 
 
     };
