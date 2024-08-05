@@ -58,12 +58,13 @@ It does so by testing that mass properties are commutative as the limit of this 
 #include <model/rock/stratum/StratumOps.hpp>  // StratumProperties
 #include <model/rock/stratum/StratumProperties.hpp>  // StratumProperties
 #include <model/rock/stratum/StratumSummarization.hpp>  // StratumSummarization
+#include <model/rock/stratum/StratumSummaryOps.hpp>  // StratumSummaryOps
 #include <model/rock/stratum/StratumSummaryProperties.hpp>  // StratumSummaryIsostaticDisplacement
-#include <model/rock/formation/FormationOps.hpp>  // CrustSummaryOps
+#include <model/rock/formation/FormationOps.hpp>  // FormationOps
 #include <model/rock/formation/FormationGeneration.hpp>  // FormationGeneration
 #include <model/rock/formation/FormationSummarization.hpp>  // FormationSummarization
 #include <model/rock/formation/FormationProperties.hpp>  // FormationMass
-#include <model/rock/formation/FormationSummaryOps.hpp>  // CrustSummaryOps
+#include <model/rock/formation/FormationSummaryOps.hpp>  // FormationSummaryOps
 #include <model/rock/formation/FormationSummaryProperties.hpp>  // FormationSummaryMass
 #include <model/rock/crust/CrustOps.hpp>  // CrustOps
 #include <model/rock/crust/CrustProperties.hpp>  // CrustMass
@@ -83,6 +84,7 @@ TEST_CASE( "CrustOps::flatten()/CrustSummarization() mass conservation", "[rock]
 
     using mass = si::mass<float>;
     using length = si::length<float>;
+    using density = si::density<float>;
     length meter(si::meter);
     length radius(6.371e6f * meter);
 
@@ -122,6 +124,7 @@ TEST_CASE( "CrustOps::flatten()/CrustSummarization() mass conservation", "[rock]
       empty_crust, full, empty_metaigneous, empty_igneous, empty_metasedimentary, empty_sedimentary, empty_sediment, empty_middle
     };
 
+    int plate_id = 1;
     auto age_of_world = 0.0f*si::megayear;
     std::array<relation::PolynomialRailyardRelation<si::time<double>,si::density<double>,0,1>, 2> densities_for_age {
       relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2890.0, 3300.0}), // Carlson & Raskin 1984
@@ -129,18 +132,23 @@ TEST_CASE( "CrustOps::flatten()/CrustSummarization() mass conservation", "[rock]
     };
 
     rock::CrustOps<M> crust_ops;
-    rock::CrustSummaryOps crust_summary_ops;
+    rock::StratumSummaryOps stratum_summary_ops{density(3300.0*si::kilogram/si::meter3)};
+    rock::CrustSummaryOps crust_summary_ops{rock::ColumnSummaryOps{stratum_summary_ops}};
     auto formation_summarize = rock::formation_summarization<2>(
       rock::stratum_summarization<2>(
         rock::AgedStratumDensity{densities_for_age, age_of_world}
       ), 
       grid
     );
-    auto crust_summarize = rock::crust_summarization<M,F>(formation_summarize);
+    auto crust_summarize = rock::crust_summarization<M,F>(
+      formation_summarize, 
+      rock::FormationSummaryOps(stratum_summary_ops)
+    );
     rock::CrustMass<M,F> crust_mass;
     rock::FormationMass<M> formation_mass;
+    rock::CrustSummaryMass crust_summary_mass{grid};
     rock::FormationSummaryMass formation_summary_mass{grid};
-    si::UnitAdapter testing(1e-4);
+    si::UnitAdapter testing(1e-4f);
 
     rock::Formation<M> formation(grid.vertex_count());
     rock::FormationSummary formation_summary(grid.vertex_count());
@@ -151,9 +159,9 @@ TEST_CASE( "CrustOps::flatten()/CrustSummarization() mass conservation", "[rock]
         mass starting_mass = crust_mass(crusts[i]);
         crust_ops.flatten(crusts[i], formation);
         REQUIRE(testing.equal(starting_mass, formation_mass(formation)));
-        formation_summarize(formation, formation_summary);
+        formation_summarize(plate_id, formation, formation_summary);
         REQUIRE(testing.equal(starting_mass, formation_summary_mass(formation_summary)));
-        crust_summarize(crust, crust_summary);
+        crust_summarize(plate_id, crusts[i], crust_summary, formation_summary);
         REQUIRE(testing.equal(starting_mass, crust_summary_mass(crust_summary)));
         crust_summary_ops.flatten(crust_summary, formation_summary);
         REQUIRE(testing.equal(starting_mass, formation_summary_mass(formation_summary)));

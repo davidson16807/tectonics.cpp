@@ -25,6 +25,14 @@ namespace rock
         FormationSummaryOps(const StratumSummaryOps& strata):
             strata(strata)
         {}
+        // returns the identity formation
+        void empty (FormationSummary& out) const
+        {
+            for (std::size_t i = 0; i < out.size(); ++i)
+            {
+                out[i] = StratumSummary();
+            }
+        }
         void combine (const FormationSummary& a, const FormationSummary& b, FormationSummary& out) const
         {
             for (std::size_t i = 0; i < out.size(); ++i)

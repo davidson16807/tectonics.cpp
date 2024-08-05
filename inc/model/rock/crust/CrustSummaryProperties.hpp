@@ -64,6 +64,16 @@ namespace rock {
             }
         }
 
+        mass operator()(const CrustSummary& summary) const
+        {
+            mass out(0);
+            for (auto i = 0*summary.size(); i < summary.size(); ++i)
+            {
+                out += summary[i].area_density() * grid.vertex_dual_area(i) * meter*meter;
+            }
+            return out;
+        }
+
     };
 
 

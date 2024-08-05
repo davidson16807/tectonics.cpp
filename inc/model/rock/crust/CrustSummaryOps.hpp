@@ -15,7 +15,7 @@ namespace rock{
 
     public:
 
-        CrustSummaryOps():
+        CrustSummaryOps(const ColumnSummaryOps& ops): 
             ops(ops)
         {}
 

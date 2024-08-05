@@ -2,6 +2,10 @@
 
 // in house libraries
 
+#include <model/rock/crust/Crust.hpp>
+#include <model/rock/crust/CrustSummary.hpp>
+#include <model/rock/formation/FormationSummary.hpp>
+
 namespace rock{
 
     // NOTE: `M` is mineral count, `F` is formation count
@@ -18,10 +22,10 @@ namespace rock{
         void operator() (
             const int plate_id, 
             const Crust<M,F>& crust, 
-            FormationSummary& out, 
+            CrustSummary& out, 
             FormationSummary& scratch
         ) const {
-            ops.reset(out);
+            ops.empty(out);
             for (int i = 0; i < crust.size(); ++i)
             {
                 summarize(plate_id, crust[i], scratch);
