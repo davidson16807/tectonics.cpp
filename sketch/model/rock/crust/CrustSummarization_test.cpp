@@ -132,8 +132,12 @@ TEST_CASE( "CrustOps::flatten()/CrustSummarization() mass conservation", "[rock]
     };
 
     rock::CrustOps<M> crust_ops;
-    rock::StratumSummaryOps stratum_summary_ops{density(3300.0*si::kilogram/si::meter3)};
-    rock::CrustSummaryOps crust_summary_ops{rock::ColumnSummaryOps{stratum_summary_ops}};
+    rock::CrustSummaryOps crust_summary_ops{
+      rock::ColumnSummaryOps{
+        rock::StratumSummaryOps{density(3300.0*si::kilogram/si::meter3)}, 
+        length(si::centimeter)
+      }
+    };
     auto formation_summarize = rock::formation_summarization<2>(
       rock::stratum_summarization<2>(
         rock::AgedStratumDensity{densities_for_age, age_of_world}
@@ -142,7 +146,7 @@ TEST_CASE( "CrustOps::flatten()/CrustSummarization() mass conservation", "[rock]
     );
     auto crust_summarize = rock::crust_summarization<M,F>(
       formation_summarize, 
-      rock::FormationSummaryOps(stratum_summary_ops)
+      crust_summary_ops
     );
     rock::CrustMass<M,F> crust_mass;
     rock::FormationMass<M> formation_mass;

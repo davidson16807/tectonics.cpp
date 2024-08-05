@@ -9,13 +9,13 @@
 namespace rock{
 
     // NOTE: `M` is mineral count, `F` is formation count
-    template<int M, int F, typename FormationSummarization, typename FormationSummaryOps>
+    template<int M, int F, typename FormationSummarization, typename CrustSummaryOps>
     class CrustSummarization
     {
         const FormationSummarization summarize;
-        const FormationSummaryOps ops;
+        const CrustSummaryOps ops;
     public:
-        CrustSummarization(const FormationSummarization& summarize, const FormationSummaryOps& ops):
+        CrustSummarization(const FormationSummarization& summarize, const CrustSummaryOps& ops):
             summarize(summarize),
             ops(ops)
         {}
@@ -26,17 +26,17 @@ namespace rock{
             FormationSummary& scratch
         ) const {
             ops.empty(out);
-            for (int i = 0; i < crust.size(); ++i)
+            for (std::size_t i = 0; i < crust.size(); ++i)
             {
                 summarize(plate_id, crust[i], scratch);
-                ops.combine(out, scratch, out);
+                ops.absorb(out, scratch, out);
             }
         }
     };
 
-    template<int M, int F, typename FormationSummarization, typename FormationSummaryOps>
-    auto crust_summarization(const FormationSummarization& summarize, const FormationSummaryOps& ops){
-        return CrustSummarization<M,F,FormationSummarization,FormationSummaryOps>(summarize, ops);
+    template<int M, int F, typename FormationSummarization, typename CrustSummaryOps>
+    auto crust_summarization(const FormationSummarization& summarize, const CrustSummaryOps& ops){
+        return CrustSummarization<M,F,FormationSummarization,CrustSummaryOps>(summarize, ops);
     }
 
 }
