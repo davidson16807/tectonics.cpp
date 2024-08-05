@@ -14,6 +14,23 @@
 
 namespace rock{
 
+    /*
+    summarize: plateⁿ ⟶ summaryⁿ
+    flatten:   summaryⁿ ⟶ summary
+    
+    sediment:  plateⁿ × summaryⁿ ⟶ formationⁿ
+    flatten:   formationⁿ ⟶ formation
+
+    basic use case:
+
+    summarization .summarize (plates,    locals, scratch)   // summarize each plate into a (e.g.) CrustSummary raster
+    frames        .globalize (rotations, locals, globals)   // resample plate-specific rasters onto a global grid
+    summarization .flatten   (globals,   master)            // condense globalized rasters into e.g. LithosphereSummary
+    frames        .localize  (rotations, master, summaries) // resample global raster to a plate-specific for each plate
+
+    frames        .localize  (plates, precip, summaries) // we'll need precipitation specificatlly for weathering, but otherwise weathering can be in-order
+    */
+
     // NOTE: `M` is mineral count, `F` is formation count
     template <int M, int F>
     class LithosphereSummarization
@@ -55,35 +72,6 @@ namespace rock{
 
     };
 
-    /*
-    summarize: plateⁿ ⟶ summaryⁿ
-    flatten:   summaryⁿ ⟶ summary
-    
-    sediment:  plateⁿ × summaryⁿ ⟶ formationⁿ
-    flatten:   formationⁿ ⟶ formation
-
-    basic use case:
-
-    summarization .summarize (plates,    locals, scratch)   // summarize each plate into a (e.g.) CrustSummary raster
-    frames        .globalize (rotations, locals, globals)   // resample plate-specific rasters onto a global grid
-    summarization .flatten   (globals,   master)            // condense globalized rasters into e.g. LithosphereSummary
-    frames        .localize  (rotations, master, summaries) // resample global raster to a plate-specific for each plate
-
-    frames        .localize  (plates, precip, summaries) // we'll need precipitation specificatlly for weathering, but otherwise weathering can be in-order
-
-    We also need a consolidated global raster for erosion, which requires knowledge of sediment in the top plate.
-    If we add sediment to CrustSummary then we'd need to add a new function that 
-    builds a new CrustSummary whose sediment attribute stores the deltas from erosion, 
-    however this couples concerns, we'd rather just create a sediment object that erosion acts on.
-    This requires knowledge of the topmost plate which we don't have until the call to condense,
-    so we need a new function that creates sediment from the plates and the master raster:
-
-    sediment.sediment (plates, summaries, sediments) // this function returns empty Strata if plate is not on top, sediment otherwise
-    crust.condense    (sediments, sediment)          // this behaves similarly to summarization.condense, except it uses CrustOps.combine() internally
-    erosion           (sediment,  delta)             // this is the erosion model, proper
-    frames.localize   (plates, delta, deltas)
-
-    */
 
 }
 

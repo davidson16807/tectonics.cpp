@@ -28,8 +28,6 @@ namespace rock {
         FormationSimulation(
 			const acceleration gravity
 		):
-            calculus(calculus),
-            world_radius(world_radius),
             gravity(gravity)
         {}
 
