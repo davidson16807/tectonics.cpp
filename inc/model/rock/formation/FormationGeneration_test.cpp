@@ -142,7 +142,8 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
     int plate_id = 1;
     auto formation_summarization = rock::formation_summarization<2>(
       rock::stratum_summarization<2>(
-        rock::AgedStratumDensity{densities_for_age, age_of_world}
+        rock::AgedStratumDensity{densities_for_age, age_of_world},
+        mass(si::tonne)
       ), 
       grid
     );

@@ -17,21 +17,28 @@ namespace rock
     template<int M, typename StratumDensity>
     class StratumSummarization
     {
-        const StratumDensity   density_for_stratum;
+        static constexpr float oo = std::numeric_limits<float>::max();
+
+        const StratumDensity  density_for_stratum;
+        const si::mass<float> mass_threshold;
+
     public:
-        StratumSummarization(const StratumDensity& density_for_stratum):
-            density_for_stratum(density_for_stratum)
+        StratumSummarization(const StratumDensity& density_for_stratum, const si::mass<float> mass_threshold):
+            density_for_stratum(density_for_stratum),
+            mass_threshold(mass_threshold)
         {}
         StratumSummary operator() (const int plate_id, const si::area<float> area, const StratumStore<M>& stratum) const
         {
-            auto density = density_for_stratum(stratum);
-            return StratumSummary(std::bitset<8>(1<<plate_id), density, stratum.mass()/density/area);
+            auto mass = stratum.mass();
+            auto plate_id_bitset = mass > mass_threshold? std::bitset<8>(1<<plate_id) : std::bitset<8>(0);
+            auto density = mass > mass_threshold? density_for_stratum(stratum) : si::density<float>(oo*si::kilogram/si::meter3);
+            return StratumSummary(plate_id_bitset, density, mass/(area*density));
         }
     };
 
     template<int M, typename StratumDensity>
-    auto stratum_summarization(const StratumDensity& density_for_stratum){
-        return StratumSummarization<M,StratumDensity>(density_for_stratum);
+    auto stratum_summarization(const StratumDensity& density_for_stratum, const si::mass<float> mass_threshold){
+        return StratumSummarization<M,StratumDensity>(density_for_stratum, mass_threshold);
     }
 
 }

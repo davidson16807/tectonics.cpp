@@ -52,13 +52,10 @@ namespace rock{
         {
             // return si::density<float>(1.0f);
             si::mass<float> total_mass(0.0f);
-            for (int i=0; i<M; i++)
-            {
-                total_mass += stratum[i].mass();
-            }
             si::volume<float> total_volume(0.0f);
             for (int i=0; i<M; i++)
             {
+                total_mass += stratum[i].mass();
                 // volume = specific volume * mass
                 // sum up to get total volume
                 total_volume += stratum[i].mass() / 
