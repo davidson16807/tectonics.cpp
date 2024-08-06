@@ -2,7 +2,6 @@
 
 #include <.hpp>
 
-#include <index/each.hpp>           // each::get
 #include <index/series/Map.hpp>     // series::map
 
 #include <field/Compose.hpp>        // field::compose

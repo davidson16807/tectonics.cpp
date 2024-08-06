@@ -29,6 +29,21 @@ namespace iterated
 		}
 	};
 
+	struct Index
+	{
+		Index(){}
+		template <typename In1, typename Out>
+		void operator() (const Index& f, const In1& a, Out& out) const
+		{
+			assert(compatible(a,out));
+			auto size = out.size();
+			for (auto i = 0*size; i < size; ++i)
+			{
+				out[i] = f[a[i]];
+			}
+		}
+	};
+
 	template <typename Op>
 	class Unary
 	{

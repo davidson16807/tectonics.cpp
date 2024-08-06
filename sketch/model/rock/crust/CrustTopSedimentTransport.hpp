@@ -7,6 +7,18 @@
 namespace crust
 {
 
+    /*
+
+    `CrustPhaseChange` (together with `FormationSimulation`)
+    is basically *the most important part of the geological model*.
+    They contain everything that's needed to simulate the geology of a planet.
+
+    This may include the following:
+    * weathering     the conversion of rock to sediment
+    * erosion        the horizontal transport of sediment
+    * astroblemes    the removal of mass as a function of distance from a prescribed geocoordinate
+
+    */
     void get_arrow_slope(
         const SpheroidGrid&   grid,
         const series::Series<float>&   vertex_height,
