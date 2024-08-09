@@ -129,9 +129,9 @@ namespace rock {
 
 		    In our case, the motion of our rigid bodies are constrained to a sphere, so we must refine the above statement.
 
-		    On a sphere, angular motion can still be represented as rotation around a center of mass, 
-		    however motion is confined to a 2d manifold, so for sufficiently small plates all rotation is 2d 
-		    This rotation must then occur around an axis that runs through the center of mass in the same direction as the surface normal.
+		    On a sphere, angular motion can still be represented as rotation around a center of mass.
+		    Angular motion is confined to a 2d manifold, so for sufficiently small plates all angular motion is 2d.
+		    This rotation must occur around an axis that runs through the center of mass in the same direction as the surface normal.
 		    For the sake of simplicity we will assume all plates are of sufficient size for this to apply.
 
 		    When constrained to a sphere, linear motion must also occur as a rotation.
@@ -141,8 +141,8 @@ namespace rock {
 			one that occurs around an euler pole, and another that occurs around the plate's center of mass.
 		    */
 		    return
-				rotation_matrix(plate_velocity, position, center_of_plate, seconds)  // linear motion
-			  * rotation_matrix(plate_velocity, position, center_of_world, seconds); // angular motion
+				rotation_matrix(plate_velocity, position, center_of_plate, seconds)  // angular motion
+			  * rotation_matrix(plate_velocity, position, center_of_world, seconds); // linear motion
 		}
 
         /*
