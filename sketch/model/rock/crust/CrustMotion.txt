@@ -1,6 +1,7 @@
 
 we use the conceptual model from Schellart 2010 to calculate plate velocity
-see research/lithosphere/schellart2010.pdf and research/lithosphere/schellart2010-supplement.pdf 
+see research/geology/tectonics-motion/schellart2010.pdf 
+and research/geology/tectonics-motion/schellart2010-supplement.pdf 
 Here's an intuitive explanation:
 Imagine a foam mat floating in a swimming pool. 
 One side of the foam mat has lead weights strapped to it. 
@@ -12,7 +13,8 @@ The foam mat slides across the surface and into the water.
         ↓| 
          ° ← lead weight  
 
-Since the foam mat doesn't stretch, we know it must slide across the surface at the same rate it sinks. 
+To simplify the situation, we say that the foam mat does not stretch and is too buoyant to dip.
+Given these simplifications, we know it must slide across the surface at the same rate it sinks. 
 The rate at which it sinks is a constant, known as the terminal velocity.
 This is the speed at which the drag force of the water counteracts the buoyant force of the lead weights.
 
@@ -21,30 +23,34 @@ This is the speed at which the drag force of the water counteracts the buoyant f
          |↓ buoyant force
          °↑ drag force
 
-Replace the foam mat with a tectonic plate and you'll start to see how the model handles plate velocity.
-There is a buoyancy force (b) that causes slabs to subduct.
+Replace the foam mat with a tectonic plate and 
+you'll start to see how the model handles plate velocity.
+There is a net buoyancy force (b) that causes slabs to subduct.
 The slabs generate a drag force (d) as they pass through the mantle.
+The drag force is a function of velocity, and the buoyant force is invariant to it.
 The two forces reach an equilibrium where the velocity (v) of a region does not change. 
 Since these forces are only noticeable over millions of years, 
 by the time we notice their effect they should have already equilibrated. 
 So we can't just simulate the forces over multiple timesteps. 
 The forces involved could also vary greatly from planet to planet,
 so we wouldn't even know what timesteps to use even if we want to use that approach.
+
 So how about this, instead:
 For there to be equilibrium, the sum of the forces must be zero. 
 Since plates are assumed to be rigid bodies, 
 we must consider the forces acting across the entire plate.
-So ∫ b + d(v) dΩ = 0 where Ω is the area of a plate. 
+So ∫ b + d(v) dΩ = 0 where dΩ is the area of an infinitesimal localized subducting region. 
 Since b does not vary based on v, we simplify this to
-B + ∫ d(v) dΩ = 0 where B = ∫ b dΩ is the sum of buoyancy forces.
+B + ∫ d(v) dΩ = 0 where B = ∫ b dΩ is the sum of net buoyancy forces.
 Another way to phrase this is that ∫d(v)dΩ = -B,
 so that drag forces must sum to a constant.
 Also since plates are assumed to be rigid bodies,
-the motion d(v) at each point is completely determined by a rotation vector ω,
-so the integral D=∫d(v)dΩ is completely determined by ω,
+the motion d(v) at each point is completely determined by 
+a rotation vector for the entire rigid body, ω,
+so the integral D(ω)=∫d(v)dΩ is completely determined by ω,
 and since we are trying to determine the ω that minimizes the distance between D and B,
 we can construct a distance metric such as (D(ω)-B)²,
-and then perform gradient descent using ∇(D(ω)-B)². 
+and then perform gradient descent by calculating ∇(D(ω)-B)². 
 We can start descent from any naïve assumption, 
 such as to say that ω is proportionate to the rotation vector for B.
 ∇(D(ω)-B)² can be calculated using an in-order traversal of memory
@@ -52,20 +58,116 @@ without need to store large rasters of output,
 so the performance of the gradient descent is inconsequential 
 when compared to other calculations in the model.
 
-Schellart uses the following equation to describe the terminal velocity of a plate:
+Now we have to specify what b and d are, exactly.
+The net buoyancy force, b, is simply the sum of buoyancy and gravity.
+The force of gravity is mg, where m is mass and g is gravitational acceleration.
+For reasons that will become clear it is easier to think in terms of densities and volumes,
+so we rephrase this as -mg = -ϱVg where ϱ is crust density and V is the volume of the solid. 
+By Archimedes principle, buoyancy force is equivalent to the weight of displaced liquid,
+so buoyancy force is ρVg where ρ is mantle density. 
+Therefore the net buoyancy force is 
 
-     v = S F (WLT)^2/3 /18 cμ
+b = ρVg-ϱVg 
+  = (ρ-ϱ)Vg 
+  = ΔρVg where Δρ=ρ-ϱ.
 
-where v is velocity, F is force, and the rest of the parameters are used as follows: …
+The drag force, d, will vary by problem. 
+We will start by discussing the drag equation for a sphere 
+of a certain diameter, D, or radius, R=D/2,
+and then adapt that equation to work with subducting slabs.
 
-from Schellart 2010
-particularly http://rockdef.wustl.edu/seminar/Schellart%20et%20al%20(2010)%20Supp%20Material.pdf
-TODO: modify to linearize the width parameter ("W") 
-originally: 
-     v = S F (WLT)^2/3 /18 cμ
-modify to:
-     v = S F W(LT)^1/2 /18 cμ
+If the effect of inertia is significant, 
+then the equation for drag is the same that is used in aviation, 
+or ρv²CA/V for a given cross-sectional area, A, and drag coefficient, C.
+However the dynamic viscosity of the mantle, μ, is very high 
+compared to the diameter and velocity that we are working with,
+so the effect of inertia is negligible.
+This is indicated by a very low Reynolds number, Re=ρvD/μ.
+In such circumstances the drag coefficient is inversely proportionate to velocity,
+so drag becomes linear to velocity. 
+Stokes (1851) was first to work out the drag for such circumstances.
+In the case of a sphere, drag becomes d = 6πμRv = 3πμDv. 
+Since the volume of a sphere is V = 4πR³/3 = πD³/6, the buoyancy is b=ΔρgπD³/6. 
+Buoyancy and drag are equal, so:
 
-TODO: REMOVE HARDCODED CONSTANTS!
-TODO: make width dependant on the size of subducting region!
+   b     =   d
+ΔρgπD³/6 = 3πμDv
 
+so we can solve for v, which is the terminal velocity of a sphere through the mantle.
+
+ΔρgπD²
+⎻⎻⎻⎻⎻⎻ = v
+ 18πμ
+
+Schellart (2010) makes the assumption that slabs are shaped as ellipsoids. 
+Oberbeck (1876) worked out the equations for this circumstance,
+but his work is in German and I haven't figured out if he explicitly states the drag force.
+However Kerr (1991) provides the terminal velocity for ellipsoids, 
+which is simply the equation for a sphere of equivalent diameter D³=LTW
+except scaled by a shape factor, S:
+
+SΔρgπ(LTW)²𝄍³
+⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻ = v
+    18πμ
+
+where "W" is the width of the slab running along the subduction zone,
+"T" is thickness, and "L" is the length of the subducted region, 
+which Schellart (2010) sets at a constant L=1000km.
+"S" is given by Kerr (1991) for settling parallel to L:
+
+    3 ⌠∞  2L²+λ          (LTW)¹𝄍³
+S = - |  ⎻⎻⎻⎻⎻⎻⎻ ⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻ dλ
+    8 ⌡0   L²+λ  √((L²+λ)(T²+λ)(W²+λ))
+
+We note that if we adopt a different factor:
+
+    3 ⌠∞  2a²+λ            1
+σ = - ⎮  ⎻⎻⎻⎻⎻⎻⎻ ⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻ dλ
+    8 ⌡0   a²+λ   √(a²+λ)(b²+λ)(c²+λ)
+
+then the equation for terminal velocity simplifies to:
+
+σΔρgπLTW
+⎻⎻⎻⎻⎻⎻⎻⎻ = v
+  18πμ
+
+We now know the terminal velocity for ellipsoids, 
+and we can figure out the net buoyancy for ellipsoids,
+so we can use this information to reconstruct the drag force.
+Net buoyancy for ellipsoids is:
+
+b = ΔρgV where V=4πLTW/3
+  = 4πΔρgLTW/3
+
+We know that 
+
+σΔρgπLTW
+⎻⎻⎻⎻⎻⎻⎻⎻ = v
+  18πμ
+
+and therefore
+
+σΔρgπLTW
+⎻⎻⎻⎻⎻⎻⎻⎻ = 1
+  18πμv
+
+We also know that b=d and therefore 1=b/d.
+
+So:
+
+σΔρgπLTW   b
+⎻⎻⎻⎻⎻⎻⎻⎻ = ⎻ = 1
+  18πμv    d
+
+invert and multiply all sides by b:
+
+ 18πμvb
+⎻⎻⎻⎻⎻⎻⎻⎻ = d = b
+σΔρgπLTW
+
+expand b and simplify:
+
+24μvπ/σ = d
+  
+We now proceed on the assumption that all local regions of subduction, 
+dΩ, are approximated by ellipsoids.
