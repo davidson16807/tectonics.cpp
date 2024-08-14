@@ -13,7 +13,7 @@ The foam mat slides across the surface and into the water.
         ↓| 
          ° ← lead weight  
 
-To simplify the situation, we say that the foam mat does not stretch and is too buoyant to dip.
+To simplify the situation, we say that the foam mat does not stretch and is too buoyant to founder by itself.
 Given these simplifications, we know it must slide across the surface at the same rate it sinks. 
 The rate at which it sinks is a constant, known as the terminal velocity.
 This is the speed at which the drag force of the water counteracts the buoyant force of the lead weights.
@@ -57,6 +57,9 @@ such as to say that ω is proportionate to the rotation vector for B.
 without need to store large rasters of output,
 so the performance of the gradient descent is inconsequential 
 when compared to other calculations in the model.
+Since (D(ω)-B)² equals 0 iff D(ω)=B,
+we can further use optimization techniques such as Householder methods,
+assuming we can overcome the risk of exploding corrections when gradients are small.
 
 Now we have to specify what b and d are, exactly.
 The net buoyancy force, b, is simply the sum of buoyancy and gravity.
@@ -115,19 +118,19 @@ where "W" is the width of the slab running along the subduction zone,
 which Schellart (2010) sets at a constant L=1000km.
 "S" is given by Kerr (1991) for settling parallel to L:
 
-    3 ⌠∞  2L²+λ          (LTW)¹𝄍³
-S = - |  ⎻⎻⎻⎻⎻⎻⎻ ⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻ dλ
-    8 ⌡0   L²+λ  √((L²+λ)(T²+λ)(W²+λ))
+       ⌠∞  2L²+λ          (LTW)¹𝄍³
+S = ³/₈⎮  ⎻⎻⎻⎻⎻⎻⎻ ⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻ dλ
+       ⌡0   L²+λ  √((L²+λ)(T²+λ)(W²+λ))
 
 We note that if we adopt a different factor:
 
-    3 ⌠∞  2a²+λ            1
-σ = - ⎮  ⎻⎻⎻⎻⎻⎻⎻ ⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻ dλ
-    8 ⌡0   a²+λ   √(a²+λ)(b²+λ)(c²+λ)
+       ⌠∞  2a²+λ            1
+ς = ³/₈⎮  ⎻⎻⎻⎻⎻⎻⎻ ⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻ dλ
+       ⌡0   a²+λ   √(a²+λ)(b²+λ)(c²+λ)
 
 then the equation for terminal velocity simplifies to:
 
-σΔρgπLTW
+ςΔρgπLTW
 ⎻⎻⎻⎻⎻⎻⎻⎻ = v
   18πμ
 
@@ -141,21 +144,19 @@ b = ΔρgV where V=4πLTW/3
 
 We know that 
 
-σΔρgπLTW
+ςΔρgπLTW
 ⎻⎻⎻⎻⎻⎻⎻⎻ = v
   18πμ
 
 and therefore
 
-σΔρgπLTW
+ςΔρgπLTW
 ⎻⎻⎻⎻⎻⎻⎻⎻ = 1
   18πμv
 
-We also know that b=d and therefore 1=b/d.
+We also know that b=d and therefore 1=b/d, so:
 
-So:
-
-σΔρgπLTW   b
+ςΔρgπLTW   b
 ⎻⎻⎻⎻⎻⎻⎻⎻ = ⎻ = 1
   18πμv    d
 
@@ -163,11 +164,51 @@ invert and multiply all sides by b:
 
  18πμvb
 ⎻⎻⎻⎻⎻⎻⎻⎻ = d = b
-σΔρgπLTW
+ςΔρgπLTW
 
-expand b and simplify:
+sustitute b and simplify:
 
-24μvπ/σ = d
-  
-We now proceed on the assumption that all local regions of subduction, 
-dΩ, are approximated by ellipsoids.
+24μvπ/ς = d
+
+At this point, it would be useful if we could assume that for all local regions of subduction, dΩ, 
+the flow around that local region can be approximated as the flow around an ellipsoid.
+If this were the case, then forces for the slab could be modeled as the sum of ellipsoid slab segments, one per cell.
+Buoyancy is obviously linear to W, and given that L and T do not vary significantly throughout a slab,
+the validity of this assumption relies on the extent to which d is linear to W.
+We see that ςd is constant for any W, so for this assumption to be valid,
+ς must not appreciably scale with W for the region of interest.
+ς does saturate for sufficiently large W/L (https://www.desmos.com/calculator/cibmmztres)
+so local forces could be calculated as ellipsoid segments,
+but only so long as those segments are much wider than their the nominal 1000km length,
+and even the coarsest resolutions are expected to have cells of width that fall below this threshold.
+
+So we try a different approach out of necessity. 
+We note that drag force for ellipsoids scales linear to velocity,
+so we can estimate drag force d acting on a representative slab for some reference velocity v̄,
+then use that estimate to calculate each slab segment's contribution to drag for the reference velocity,
+then scale each segment's contribution to their local velocity v.
+So for a given cell with velocity v in a plate whose subducted region(s) 
+are composed of N cells, that cell's contribution to drag force is
+
+       vd(u)
+δ(v) = ⎻⎻⎻⎻⎻
+        uN
+
+where d(u) is the drag for an ellipsoid whose dimensions equal the slab when straighted out,
+and whose velocity u is any reference value.
+If Δ is defined as Δ=∫δ(v)dΩ (so that by analogy d:D::δ:Δ), 
+then Δ=d(v) in the degenerate case where the slab is straight and traveling at a uniform velocity.
+In all other cases, serviceability requires the untested assumption that 
+local flow will not vary significantly for any amount of bending or interruption that can be expected of a slab. 
+Nevertheless, it's the only approach that I'm currently aware of
+that degenerates to a well-tested approach while permitting use on a 2d manifold.
+
+Since the plate is a rigid body, no matter what forces act upon it,
+its motion will always be described by a rotation vector ω,
+and that rotation vector will characterize the local velocity of every cell.
+So although slab segments would initially impart forces in the direction of their boundary normal,
+in the time it takes to run a single timestep they will assume a horizontal velocity determined by ω,
+and since (under our assumptions) their vertical velocity is always of magnitude equal to horizontal velocity,
+that ω will completely determine vertical velocity, and thereby determine the drag force.
+Therefore, we can express Δ as a function of angular velocity ω, 
+and the ω of the plate will be the one that minimizes (Δ(ω)-B)² so that (Δ(ω)-B)²=0.
