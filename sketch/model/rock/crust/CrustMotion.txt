@@ -14,7 +14,7 @@ The foam mat slides across the surface and into the water.
          ° ← lead weight  
 
 Though Schellart (2010)'s assumptions differ from ours,
-we are content to say in our model that the foam mat slides across the surface at the same rate it sinks. 
+we are content to say for our model that the foam mat slides across the surface at the same rate it sinks. 
 This would naturally occur if the foam mat does not stretch and is too buoyant to founder by itself.
 The rate at which it sinks is a constant, known as the terminal velocity.
 This is the speed at which the drag force of the water counteracts the buoyant force of the lead weights.
@@ -42,7 +42,6 @@ Since plates are assumed to be rigid bodies,
 we must consider the forces acting across the entire plate.
 So ∫ b + d(v) dΩ = 0 where dΩ is the area of an infinitesimal localized subducting region. 
 We can also denote this as B + ∫ d(v) dΩ = 0 where B = ∫ b dΩ is the sum of net buoyancy forces.
-This is done to focus upon components that vary with v.
 
 Now we have to specify what b and d are, exactly.
 The net buoyancy force, b, is simply the sum of buoyancy and gravity.
@@ -85,7 +84,7 @@ so we can solve for v, which is the terminal velocity of a sphere through the ma
 ⎻⎻⎻⎻⎻⎻ = v
  18πμ
 
-Schellart (2010) makes the assumption that slabs are shaped as ellipsoids. 
+Schellart (2010) makes the assumption that slabs can be approximated as ellipsoids. 
 Oberbeck (1876) worked out the equations for this circumstance,
 but his work is in German and I haven't figured out if he explicitly states the drag force.
 However Kerr (1991) provides the terminal velocity for ellipsoids, 
@@ -174,23 +173,28 @@ So for a given cell with velocity v in a plate whose subducted region(s)
 are composed of N cells, that cell's contribution to drag force is
 
        vd(u)   24μvπ
-д(v) = ⎻⎻⎻⎻⎻ = ⎻⎻⎻⎻⎻
+δ(v) = ⎻⎻⎻⎻⎻ = ⎻⎻⎻⎻⎻
         uN      ςN
 
 where d(u) is the drag for an ellipsoid whose dimensions equal the slab when straighted out,
 and whose velocity u is any reference value.
-If Д is defined as Д=∫д(v)dΩ for a flat 2d region, 
-then Д=d(v) in the degenerate case where the slab is straight and traveling at a uniform velocity.
-In all other cases, serviceability requires the untested assumption that 
+If Δ is defined as Δ=∫δ(v)dΩ for a flat 2d region, 
+then Δ=d(v) in the degenerate case where the slab is straight and traveling at a uniform velocity.
+In all other cases, serviceability requires the assumption that 
 local flow will not vary significantly for any amount of bending or interruption that can be expected of a slab. 
 Nevertheless, it's the only approach that I'm currently aware of
 that degenerates to a well-tested approach while permitting use on the surface of a sphere.
+Schellart (2010) at least adds support for this assumption,
+since he compares real world plate speeds to predictions from a simple ellipsoid model.
+Real world plates have complex geometry yet Schellart (2010) shows 
+that even a simplified ellipsoid can model their speed with R values at or near 0.7.
 
-Since the plate is a rigid body on the surface of a sphere, 
-the total bouyancy and drag force acting on the plate 
-will be completely described by a magnitude and euler pole.
 Previously, we wrote equations for b and d for a 1-dimensional vertical case.
 We now need to adapt these equations to consider the sphere. 
+Since the plate is a rigid body that is confined to the surface of a sphere, 
+the total bouyancy and drag force acting on the plate 
+will be completely described by a magnitude and euler pole.
+Confinement to a sphere means that the usual equations regarding torque apply.
 
 Since horizontal force is assumed equal to vertical force,
 the buoyancy force that is imparted in the vertical case 
@@ -198,7 +202,7 @@ will equal the magnitude of a horizontal force in the direction of the boundary 
 Given that r̂ is the normalized position of a segment relative to the center of the world,
 the total buoyancy torque acting on the plate is:
 
-     B = ∫ r̂×bn̂ dΩ.
+     B = ∫ r⃗×bn̂ dΩ.
 
 The total drag torque acting on the plate need not have any association with the boundary normal n̂.
 Since plates are assumed to be rigid bodies on a sphere,
@@ -207,39 +211,32 @@ and since vertical velocity is always assumed equal in magnitude to horizontal v
 that ω⃗ will completely determine vertical velocity regardless of n̂, 
 and thereby determine vertical drag force. We therefore say that 
 
-     D = ∫ r̂×д⃗ dΩ
+     D = ∫ r⃗×дv⃗ dΩ
 
 where:
 
-     д⃗ = 24πv⃗μ/ςN
+     д = δ/v = 24πμ/ςN
 
 and v⃗ is a local velocity vector determined by ω⃗. 
 
-So:
+д is a constant, so:
 
-     D = ∫ r̂×(24πv⃗μ/ςN) dΩ
-     D = 24πμ/ςN ∫r̂×v⃗dΩ
+     D = ∫ д(r⃗×v⃗) dΩ
+     D = д∫ r⃗×v⃗ dΩ
 
-As it turns out, ω⃗=∫r̂×v⃗dΩ is the definition of angular velocity for our case, so:
+ω⃗=∫r⃗×v⃗dΩ is the definition of angular velocity for our case, so:
 
-     D = 24πω⃗μ/ςN
+     D = дω⃗
 
 The rotation vector ω⃗ is the only unknown here.
 It will assume whatever value is necessary for D(ω⃗)=B. 
 
-If we consider the equation for D:
+If we consider the equation for D, we see that it is composed of magnitudes and directions:
 
-     D = 24πω⃗μ/ςN
+     D = |д| |ω| ω̂
 
-we see that D is composed of magnitudes and directions:
-
-     D = |δ| |ω| ω̂
-
-such that:
-
-     δ ≥ 0
-     δ = 24πμ/ςN
-     ω⃗ = |ω| ω̂
+where ω⃗=|ω| ω̂, and |д|=д since, 
+if we examine the equation for д, we see that д ≥ 0.
 
 B is also composed of a direction and magnitude:
 
@@ -247,7 +244,7 @@ B is also composed of a direction and magnitude:
 
 and since D=B:
 
-     D = |δ| |ω| ω̂ = |B| B̂
+     D = |д| |ω| ω̂ = |B| B̂
 
 the only way this could be true dimensionally is if:
 
@@ -255,10 +252,11 @@ the only way this could be true dimensionally is if:
 
 and:
 
-     |δ| |ω| = |B|
+     |д| |ω| = |B|
+         |ω| = |B| / |д| 
 
 B can be easily calculated, so the direction B̂ is known, therefore the direction ω̂ is known, 
-and the magnitude |B| is known, and since the magnitude |δ| is known, we can solve for |ω|. 
+and the magnitude |B| is known, and since |д| is also known, we know |ω|. 
 
-Therefore we know ω⃗, which is all that is needed to proceed with simulating plate motion.
+Therefore we know ω⃗, which is all that is needed to proceed with simulation.
 

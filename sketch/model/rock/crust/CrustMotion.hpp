@@ -87,62 +87,48 @@ namespace rock {
             world_radius(world_radius)
         {}
 
-        /*
-		NOTE: We are guaranteed to generate CrustSummary at least once every iteration,
-		This is done in order to performantly calculate plate gaps and collisions.
-		Unless we need information that is only contained in StratumStore, it is always more performant to operate on CrustSummary,
-		since StratumStore has a bigger footprint in memory, and operating on StratumStore requires iterating through MineralStores.
-		To simplify design, encourage performant usage, and encourage cache reuse in the CPU,
-		all operations will be implemented exclusively on CrustSummary, unless required for out-of-order traversal or otherwise impossible.
-		Exceptions will be noted in the comments. 
-        */
-
-		inline glm::vec3 plate_center_of_mass(
-			const vec3s& position,
-			const masses& mass
+		inline glm::vec3 ellipsoid_slab_drag(
+			const CrustSummary& summary,
+			const bools& subducted,
+			const dynamic_viscosity mantle_viscosity, 
 		) const {
-			return whole::weighted_average(position, mass);
 		}
 
-		/*
-		NOTE:
-		invocation looks like this:
-		glm::vec3 center_of_world(0,0,0);
-		plate_rotation_matrix(center_of_plate_angular_velocity, center_of_x);
-		*/
-
-		glm::mat4 plate_rotation_matrix(
-			const vec3s& plate_velocity, 
-			const vec3&  postiion,
-			const vec3& center_of_plate,
-			const vec3& center_of_world,
-			const si::time<double> seconds
+        template<typename areas>
+		inline glm::vec3 buoyancy(
+			const CrustSummary& summary,
+			const areas& area,
+			const acceleration gravity
 		) const {
-			/*
-		    We assume that plates move as rigid bodies. 
-		    When not constained to a sphere, rigid bodies are subjected to two kinds of motion:
-		       * angular motion, which rotates the body around its center of mass
-		       * linear motion, which translates the body
-			Both can be represented as transformations of a local coordinate system that's defined around the body's center of mass.
-		    Angular acceleration can be represented as a rotation of this local coordinate system using an inertial matrix.
-		    Linear acceleration can be represented as a translation of this local coordinate system.
+		}
 
-		    In our case, the motion of our rigid bodies are constrained to a sphere, so we must refine the above statement.
+		inline glm::vec3 drag(
+			const bools& subducted,
+			const force& ellipsoid_slab_drag,
+			const int subducted_cell_count,
+			const vec3 rotation_axis,
+			const angular_velocity rotation_rate 
+		) const {
+		}
 
-		    On a sphere, angular motion can still be represented as rotation around a center of mass.
-		    Angular motion is confined to a 2d manifold, so for sufficiently small plates all angular motion is 2d.
-		    This rotation must occur around an axis that runs through the center of mass in the same direction as the surface normal.
-		    For the sake of simplicity we will assume all plates are of sufficient size for this to apply.
+		inline glm::vec3 guess_rotation(
+			const bools& subducted,
+			const force& ellipsoid_slab_drag,
+			const vec3 rotation_axis_guess,
+			const angular_velocity rotation_rate_guess, 
+			vec3& rotation_axis,
+			angular_velocity& rotation_rate 
+		) const {
+		}
 
-		    When constrained to a sphere, linear motion must also occur as a rotation.
-			This rotation rotates the local coordinate system around the euler pole for that plate.
-
-			Therefore, in our simplified model all motion is described using two rotations:
-			one that occurs around an euler pole, and another that occurs around the plate's center of mass.
-		    */
-		    return
-				rotation_matrix(plate_velocity, position, center_of_plate, seconds)  // angular motion
-			  * rotation_matrix(plate_velocity, position, center_of_world, seconds); // linear motion
+		inline glm::vec3 refine_rotation(
+			const bools& subducted,
+			const force& ellipsoid_slab_drag,
+			const vec3 rotation_axis_guess,
+			const angular_velocity rotation_rate_guess, 
+			vec3& rotation_axis,
+			angular_velocity& rotation_rate 
+		) const {
 		}
 
         /*
@@ -171,8 +157,6 @@ namespace rock {
 		     * repeat simulation for several iterations every time step 
 		    the reason we don't do it the correct way is 1.) it's slow, 2.) it's complicated, and 3.) it's not super important
 
-		    buoyancy
-		    
 		    from Schellart 2010
 		    particularly http://rockdef.wustl.edu/seminar/Schellart%20et%20al%20(2010)%20Supp%20Material.pdf
 		    TODO: modify to linearize the width parameter ("W") 
