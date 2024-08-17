@@ -163,11 +163,15 @@ so local forces could be calculated as ellipsoid segments,
 but only so long as those segments are much wider than their the nominal 1000km length,
 and even the coarsest resolutions are expected to have cells of width that fall below this threshold.
 
-For the sake of discussion, we will discuss drag force d 
+As a thought experiment, we will discuss drag force d 
 as being equally distributed among N discrete slab segments.
+We will say that these slab segments are engineered 
+in such a way that their contributions to drag force are equal,
+without specifying how that is done. 
 We note that drag force for ellipsoids scales linear to velocity,
 so we estimate drag force for some reference velocity u,
-then use that estimate to calculate each slab segment's contribution to drag for the reference velocity,
+then use that estimate to calculate each 
+slab segment's contribution to drag for the reference velocity,
 then scale each segment's contribution to their local velocity v.
 So for a given cell with velocity v in a plate whose subducted region(s) 
 are composed of N cells of some necessary equal characteristic, 
@@ -200,8 +204,8 @@ will equal the magnitude of a horizontal force in the direction of the boundary 
 Given that r̂ is the normalized position of a segment relative to the center of the world,
 the total buoyancy torque acting on the plate is:
 
-     B = ∫ r⃗×bn̂ dV.
-     B = ∫ r⃗×Δρgn̂ dV.
+     B = ∫ r⃗×bn̂
+     B = ∫ r⃗×Δρgn̂ dV
 
 The total drag torque acting on the plate, D, 
 need not have any association with the boundary normal, n̂.
@@ -212,35 +216,38 @@ Since vertical velocity of a subducting slab is assumed equal in magnitude to ho
 the velocity of our 1-dimensional drag estimate is v=|ω||r|.
 Drag occurs in the same direction as the velocity, 
 and since vertical forces are assumed equal in magnitude to horizontal forces,
-the horizontal drag force is d=24πμv⃗/ςN. 
+the horizontal drag force is d⃗=δv̂=24πμv⃗/ςN. 
 Therefore the direction of horizontal velocity need not be n̂, 
 it is whatever v⃗ permits an ω⃗ such that D(ω⃗)=B.
-If discretize the slab to consider the same N slab segments as before,
+If we discretize the slab to consider the same N slab segments as before,
 then the total drag torque is:
 
-     D = Σᴺ r⃗×d⃗
+     D = Σᴺᵢ r⃗ᵢ×d⃗ᵢ
 
 where d⃗ is the drag force vector of a slab segment, 
 d⃗=дv⃗/N where д=24πμ/ς, so:
 
-     D = Σᴺ r⃗×д/Nv⃗
-       = Σᴺ д/N(r⃗×v⃗)
-       = Σᴺ д/N(r⃗×(ω×r⃗))
-       = д/N Σᴺ(r⃗×v⃗)
+     D = Σᴺᵢ r⃗ᵢ×д/Nv⃗ᵢ
+       = Σᴺ д/N(r⃗ᵢ×v⃗ᵢ)
+       = д/N Σᴺ(r⃗ᵢ×v⃗ᵢ)
        = д/N Σᴺω⃗r²
        = д Nω⃗r²/N
        = дω⃗r²
 
-where r is the radius of the earth
+where r is the radius of the world.
+N goes a way, and we now see that our assumption 
+regarding equal contribution between slab segments 
+is no longer required to calculate the total drag in 3-dimensions.
 
 The rotation vector ω⃗ is the only unknown here.
 It will assume whatever value is necessary for D(ω⃗)=B. 
 
-If we consider the equation for D, we see that it is composed of magnitudes and directions:
+If we consider the equation for D, 
+we see that it is composed of magnitudes and directions:
 
-     D = дr² |ω| ω̂
+     D = |дr²| |ω| ω̂
 
-where ω⃗=|ω| ω̂, and in all cases дr² ≥ 0.
+where ω⃗=|ω| ω̂, and in all cases |дr²|=дr² since дr² ≥ 0.
 
 B is also composed of a direction and magnitude:
 
