@@ -184,10 +184,9 @@ If Δ is defined as Δ=∫δ(v)dΩ for a flat 2d region,
 then Δ=d(v) in the degenerate case where the slab is straight and traveling at a uniform velocity.
 In all other cases, serviceability requires the assumption that 
 local flow will not vary significantly for any amount of bending or interruption that can be expected of a slab. 
-Schellart (2010) at least adds suggests some serviceability,
-since he compares real world plate speeds to predictions from a simple ellipsoid model.
-Real world plates have complex geometry yet Schellart (2010) shows 
-that even a simplified ellipsoid can model their speed with R values at or near 0.7.
+Schellart (2010) at least suggests some serviceability,
+since he shows that even a simplified ellipsoid can predict the speeds 
+of real world plate having complex geometry with R values at or near 0.7.
 
 Previously, we wrote equations for b and d for a 1-dimensional vertical case.
 We now need to adapt these equations to consider the sphere. 
@@ -216,37 +215,32 @@ and since vertical forces are assumed equal in magnitude to horizontal forces,
 the horizontal drag force is d=24πμv⃗/ςN. 
 Therefore the direction of horizontal velocity need not be n̂, 
 it is whatever v⃗ permits an ω⃗ such that D(ω⃗)=B.
-If we rewrite d as d=дv⃗/N where д=24πμ/ς, 
+If we write the drag force vector as d⃗=дv⃗/N where д=24πμ/ς, 
 then the total drag torque is:
 
-     D = ∫ r⃗×дv⃗ dΩ
+     D = ∫ r⃗×d⃗ dΩ
+     D = ∫ r⃗×д/Nv⃗ dΩ
 
 if we discretize to consider the same N slab segments as before then:
 
      D = Σᴺ r⃗×д/Nv⃗
        = Σᴺ д/N(r⃗×v⃗)
+       = Σᴺ д/N(r⃗×(ω×r⃗))
        = д/N Σᴺ(r⃗×v⃗)
-       = д/N Σᴺω⃗
-       = д Nω⃗/N
-       = дω⃗
+       = д/N Σᴺω⃗r²
+       = д Nω⃗r²/N
+       = дω⃗r²
 
-д is a constant, so:
-
-     D = ∫ д(r⃗×v⃗) dΩ
-     D = д∫ r⃗×v⃗ dΩ
-
-ω⃗=∫r⃗×v⃗dΩ is the definition of angular velocity for our case, so:
-
-     D = дω⃗
+where r is the radius of the earth
 
 The rotation vector ω⃗ is the only unknown here.
 It will assume whatever value is necessary for D(ω⃗)=B. 
 
 If we consider the equation for D, we see that it is composed of magnitudes and directions:
 
-     D = |д| |ω| ω̂
+     D = |дr²| |ω| ω̂
 
-where ω⃗=|ω| ω̂, and |д|=д since, if we examine the equation for д, we see that д ≥ 0.
+where ω⃗=|ω| ω̂, and |дr²|=дr² since in all cases дr² ≥ 0.
 
 B is also composed of a direction and magnitude:
 
@@ -254,7 +248,7 @@ B is also composed of a direction and magnitude:
 
 and since D=B:
 
-     D = |д| |ω| ω̂ = |B| B̂
+     D = |дr²| |ω| ω̂ = |B| B̂
 
 the only way this could be true dimensionally is if:
 
@@ -262,14 +256,13 @@ the only way this could be true dimensionally is if:
 
 and:
 
-     |д| |ω| = |B|
-         |ω| = |B| / |д| 
+     дr² |ω| = |B|
+         |ω| = |B|/дr² 
 
 Therefore we know ω⃗=ω̂ |ω|, which is all that is needed to proceed with simulation.
 
-     ω̂ |ω| = B̂ |B| / |д| 
+     ω̂ |ω| = B̂|B|/дr² 
 
-     ω⃗ = B/д
-       = 1/д ∫ r⃗×bn̂ dΩ
-       = 1/д ∫ ΔρgVr⃗×n̂ dΩ
-       = ς/24πμ ∫ ΔρgVr⃗×n̂
+     ω⃗ = B//дr²
+       = 1//дr² ∫ r⃗×bn̂ dΩ
+       = ς/24πμr² ∫ ΔρgVr⃗×n̂ dΩ
