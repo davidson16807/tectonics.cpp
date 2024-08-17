@@ -37,10 +37,11 @@ namespace rock {
 	template<int M, int F, typename VectorCalculus, typename Morphology, typename Segmentation, typename Metric, typename Arithmetic>
     class CrustMotion
     {
-    	using length            = si::length<float>;
-    	using acceleration      = si::acceleration<float>;
-    	using dynamic_viscosity = si::dynamic_viscosity<float>;
-
+    	using mass      = si::mass<float>;
+    	using length    = si::length<float>;
+    	using density   = si::density<float>;
+    	using force     = si::force<float>;
+        using torque = glm::vec<3,si::torque<double>,glm::defaultp>;
         using angular_velocity = glm::vec<3,si::frequency<double>,glm::defaultp>;
 
     	using bools     = std::vector<bool>;
@@ -66,45 +67,18 @@ namespace rock {
             mantle_viscosity(mantle_viscosity)
         {}
 
-		inline void buoyancy_force(
-			const CrustSummary& summary,
-			const areas& area,
-			const bools& exists,
-			const bools& foundering,
-			const vec3s& boundary_normal,
-			vec3s& buoyancy
+		void guess_plate_map(
+			const vec3s& velocities,
+			const std::size_t segment_num, 
+			const std::size_t min_segment_size, 
+			std::vector<std::uint8_t>& plate_ids
 		) const {
-		    calculus.gradient  (grid, exists, buoyancy);
-		    metric.normalize   (buoyancy,     buoyancy);
-		    arithmetic.multiply(buoyancy, foundering, buoyancy);
-		    for (int i = 0; i < buoyancy.size(); ++i)
-		    {
-		    	buoyancy[i] *= 
-		    }
-		    arithmetic.multiply(buoyancy,   densities);
-		    arithmetic.multiply(buoyancy,   volumes);
+			segmentation.segment(
+			  grid, vertex_gradient, 7, 10, 
+			  vertex_colored_scalars, scratch, mask1, mask2, mask3
+			);
 		}
 
-		inline void buoyancy_torque(
-			const CrustSummary& summary,
-			const areas& area,
-			const bools& exists,
-			const bools& subducted,
-			const vec3s& boundary_normal,
-			vec3&      euler_pole,
-			frequency& rotation_rate,
-		) const {
-		    calculus.gradient(grid, exists, scratch);
-		}
-
-		inline angular_momentum drag_torque_per_angular_velocity(
-			const CrustSummary& summary,
-			const areas& area
-		) const {
-			// TODO: calculate shape_factor
-			return shape_factor / 
-				(24.0 * pi * mantle_viscosity * world_radius * world_radius);
-		}
 
     };
 
