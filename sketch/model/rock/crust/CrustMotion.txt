@@ -13,7 +13,7 @@ The foam mat slides across the surface and into the water.
         ↓| 
          ° ← lead weight  
 
-Though Schellart (2010)'s assumptions differ from ours,
+Though Schellart (2010) does not make this assumption,
 we are content to say for our model that the foam mat slides across the surface at the same rate it sinks. 
 This would naturally occur if the foam mat does not stretch and is too buoyant to founder by itself.
 The rate at which it sinks is a constant, known as the terminal velocity.
@@ -40,7 +40,7 @@ So how about this, instead:
 For there to be equilibrium, the sum of the forces must be zero. 
 Since plates are assumed to be rigid bodies, 
 we must consider the forces acting across the entire plate.
-So ∫ b(dV) + d(v) dV = 0 where dV is volume of a localized subducting region. 
+So ∫ b + d(v) dV = 0 where dV is volume of a localized subducting region. 
 
 Now we have to specify what b and d are, exactly.
 The net buoyancy force, b, is simply the sum of buoyancy and gravity.
@@ -105,9 +105,9 @@ S = ³/₈⎮  ⎻⎻⎻⎻⎻⎻⎻ ⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻�
 
 We note that if we adopt a different factor:
 
-    S      ⌠∞  2a²+λ            1
-ς = ⎻ = ³/₈⎮  ⎻⎻⎻⎻⎻⎻⎻ ⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻ dλ
-    D      ⌡0   a²+λ   √(a²+λ)(b²+λ)(c²+λ)
+    S      ⌠∞  2L²+λ            1
+ς = ⎻ = ³/₈⎮  ⎻⎻⎻⎻⎻⎻⎻ ⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻ dλ
+    D      ⌡0   L²+λ  √((L²+λ)(T²+λ)(W²+λ))
 
 then the equation for terminal velocity simplifies to:
 
@@ -205,7 +205,8 @@ Given that r̂ is the normalized position of a segment relative to the center of
 the total buoyancy torque acting on the plate is:
 
      B = ∫ r⃗×bn̂
-     B = ∫ r⃗×Δρgn̂ dV
+     B = ∫ (r⃗×n̂)b
+     B = ∫ r⃗×n̂ ΔρgdV
 
 The total drag torque acting on the plate, D, 
 need not have any association with the boundary normal, n̂.
@@ -272,5 +273,7 @@ Therefore we know ω⃗=ω̂ |ω|, which is all that is needed to proceed with s
 
      ω⃗ = B/дr²
        = 1/дr² ∫ r⃗×bn̂
-       = 1/дr  ∫ r̂×bn̂
-       = ς/24πμr ∫ Δρgr̂×n̂ dV
+       = 1/дr² ∫ Δρg(r⃗×n̂) dV
+       = 1/дr  ∫ Δρg(r̂×n̂) dV
+       = ς/24πμr ∫ Δρg(r̂×n̂) dV
+
