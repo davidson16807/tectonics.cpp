@@ -40,8 +40,7 @@ So how about this, instead:
 For there to be equilibrium, the sum of the forces must be zero. 
 Since plates are assumed to be rigid bodies, 
 we must consider the forces acting across the entire plate.
-So ∫ b + d(v) dΩ = 0 where dΩ is the area of an infinitesimal localized subducting region. 
-We can also denote this as B + ∫ d(v) dΩ = 0 where B = ∫ b dΩ is the sum of net buoyancy forces.
+So ∫ b(dV) + d(v) dV = 0 where dV is volume of a localized subducting region. 
 
 Now we have to specify what b and d are, exactly.
 The net buoyancy force, b, is simply the sum of buoyancy and gravity.
@@ -180,7 +179,7 @@ that cell's contribution to drag force is
 
 where d(u) is the drag for an ellipsoid whose dimensions equal the slab when straighted out,
 and whose velocity u is any reference value.
-If Δ is defined as Δ=∫δ(v)dΩ for a flat 2d region, 
+If Δ is defined as Δ=Σᴺδ(vᵢ) for a straightened and discretized subducting region, 
 then Δ=d(v) in the degenerate case where the slab is straight and traveling at a uniform velocity.
 In all other cases, serviceability requires the assumption that 
 local flow will not vary significantly for any amount of bending or interruption that can be expected of a slab. 
@@ -201,7 +200,8 @@ will equal the magnitude of a horizontal force in the direction of the boundary 
 Given that r̂ is the normalized position of a segment relative to the center of the world,
 the total buoyancy torque acting on the plate is:
 
-     B = ∫ r⃗×bn̂ dΩ.
+     B = ∫ r⃗×bn̂ dV.
+     B = ∫ r⃗×Δρgn̂ dV.
 
 The total drag torque acting on the plate, D, 
 need not have any association with the boundary normal, n̂.
@@ -215,13 +215,13 @@ and since vertical forces are assumed equal in magnitude to horizontal forces,
 the horizontal drag force is d=24πμv⃗/ςN. 
 Therefore the direction of horizontal velocity need not be n̂, 
 it is whatever v⃗ permits an ω⃗ such that D(ω⃗)=B.
-If we write the drag force vector as d⃗=дv⃗/N where д=24πμ/ς, 
+If discretize the slab to consider the same N slab segments as before,
 then the total drag torque is:
 
-     D = ∫ r⃗×d⃗ dΩ
-     D = ∫ r⃗×д/Nv⃗ dΩ
+     D = Σᴺ r⃗×d⃗
 
-if we discretize to consider the same N slab segments as before then:
+where d⃗ is the drag force vector of a slab segment, 
+d⃗=дv⃗/N where д=24πμ/ς, so:
 
      D = Σᴺ r⃗×д/Nv⃗
        = Σᴺ д/N(r⃗×v⃗)
@@ -238,9 +238,9 @@ It will assume whatever value is necessary for D(ω⃗)=B.
 
 If we consider the equation for D, we see that it is composed of magnitudes and directions:
 
-     D = |дr²| |ω| ω̂
+     D = дr² |ω| ω̂
 
-where ω⃗=|ω| ω̂, and |дr²|=дr² since in all cases дr² ≥ 0.
+where ω⃗=|ω| ω̂, and in all cases дr² ≥ 0.
 
 B is also composed of a direction and magnitude:
 
@@ -248,7 +248,7 @@ B is also composed of a direction and magnitude:
 
 and since D=B:
 
-     D = |дr²| |ω| ω̂ = |B| B̂
+     D = дr² |ω| ω̂ = |B| B̂
 
 the only way this could be true dimensionally is if:
 
@@ -263,6 +263,7 @@ Therefore we know ω⃗=ω̂ |ω|, which is all that is needed to proceed with s
 
      ω̂ |ω| = B̂|B|/дr² 
 
-     ω⃗ = B//дr²
-       = 1//дr² ∫ r⃗×bn̂ dΩ
-       = ς/24πμr² ∫ ΔρgVr⃗×n̂ dΩ
+     ω⃗ = B/дr²
+       = 1/дr² ∫ r⃗×bn̂
+       = 1/дr  ∫ r̂×bn̂
+       = ς/24πμr ∫ Δρgr̂×n̂ dV
