@@ -80,17 +80,17 @@ TEST_CASE( "Voronoi grid_position() / sphere_position() invertibility", "[collig
 
 
 
-TEST_CASE( "Voronoi.unit_sphere_position() purity", "[collignon]" ) {
-    SECTION("Voronoi.unit_sphere_position() must be called repeatedly without changing the output"){
+TEST_CASE( "Voronoi.sphere_normal() purity", "[collignon]" ) {
+    SECTION("Voronoi.sphere_normal() must be called repeatedly without changing the output"){
         for(int x = -10; x < 10; x+=1){
         for(int y = -10; y < 10; y+=1){
-            CHECK(collignon::Voronoi(2.0f, 10).unit_sphere_position(glm::vec2(x,y)) == 
-                  collignon::Voronoi(2.0f, 10).unit_sphere_position(glm::vec2(x,y)));
+            CHECK(collignon::Voronoi(2.0f, 10).sphere_normal(glm::vec2(x,y)) == 
+                  collignon::Voronoi(2.0f, 10).sphere_normal(glm::vec2(x,y)));
         }}
     }
 }
-TEST_CASE( "Voronoi unit_sphere_position() closeness preservation", "[collignon]" ) {
-    SECTION("changes in grid_position must not result in changes to unit_sphere_position that exceed a reasonable multiple"){
+TEST_CASE( "Voronoi sphere_normal() closeness preservation", "[collignon]" ) {
+    SECTION("changes in grid_position must not result in changes to sphere_normal that exceed a reasonable multiple"){
         collignon::Voronoi voronoi(2.0f, 10);
         const float factor(3.0*2.0/10.0);
         const glm::vec2 dx(0.01, 0.0);
@@ -98,15 +98,15 @@ TEST_CASE( "Voronoi unit_sphere_position() closeness preservation", "[collignon]
         for(int x = -10; x < 10; x+=1){
         for(int y = -10; y < 10; y+=1){
             glm::vec2 v = glm::vec2(x,y);
-            CHECK( glm::distance(voronoi.unit_sphere_position(v), voronoi.unit_sphere_position(v+dx)) < factor * glm::length(dx) );
-            CHECK( glm::distance(voronoi.unit_sphere_position(v), voronoi.unit_sphere_position(v-dx)) < factor * glm::length(dx) );
-            CHECK( glm::distance(voronoi.unit_sphere_position(v), voronoi.unit_sphere_position(v+dy)) < factor * glm::length(dy) );
-            CHECK( glm::distance(voronoi.unit_sphere_position(v), voronoi.unit_sphere_position(v-dy)) < factor * glm::length(dy) );
+            CHECK( glm::distance(voronoi.sphere_normal(v), voronoi.sphere_normal(v+dx)) < factor * glm::length(dx) );
+            CHECK( glm::distance(voronoi.sphere_normal(v), voronoi.sphere_normal(v-dx)) < factor * glm::length(dx) );
+            CHECK( glm::distance(voronoi.sphere_normal(v), voronoi.sphere_normal(v+dy)) < factor * glm::length(dy) );
+            CHECK( glm::distance(voronoi.sphere_normal(v), voronoi.sphere_normal(v-dy)) < factor * glm::length(dy) );
         }}
     }
 }
 
-TEST_CASE( "Voronoi unit_sphere_position() congruence", "[collignon]" ) {
+TEST_CASE( "Voronoi sphere_normal() congruence", "[collignon]" ) {
     SECTION("a modulo can be applied to input which results in the same output"){
         collignon::Voronoi voronoi(2.0f, 10);
         const float epsilon(1e-4f);
@@ -115,17 +115,17 @@ TEST_CASE( "Voronoi unit_sphere_position() congruence", "[collignon]" ) {
         for(int x = -10; x < 10; x+=1){
         for(int y = -10; y < 10; y+=1){
             glm::vec2 v = glm::vec2(x,y);
-            CHECK( glm::distance(voronoi.unit_sphere_position(v), voronoi.unit_sphere_position(v+nx)) < epsilon );
-            CHECK( glm::distance(voronoi.unit_sphere_position(v), voronoi.unit_sphere_position(v-nx)) < epsilon );
-            CHECK( glm::distance(voronoi.unit_sphere_position(v), voronoi.unit_sphere_position(v+ny)) < epsilon );
-            CHECK( glm::distance(voronoi.unit_sphere_position(v), voronoi.unit_sphere_position(v-ny)) < epsilon );
+            CHECK( glm::distance(voronoi.sphere_normal(v), voronoi.sphere_normal(v+nx)) < epsilon );
+            CHECK( glm::distance(voronoi.sphere_normal(v), voronoi.sphere_normal(v-nx)) < epsilon );
+            CHECK( glm::distance(voronoi.sphere_normal(v), voronoi.sphere_normal(v+ny)) < epsilon );
+            CHECK( glm::distance(voronoi.sphere_normal(v), voronoi.sphere_normal(v-ny)) < epsilon );
         }}
     }
 }
 
 
-TEST_CASE( "Voronoi grid_position() / unit_sphere_position() invertibility", "[collignon]" ) {
-    SECTION("Voronoi.unit_sphere_position() must reconstruct input passed to grid_position() for any unit vector"){
+TEST_CASE( "Voronoi grid_position() / sphere_normal() invertibility", "[collignon]" ) {
+    SECTION("Voronoi.sphere_normal() must reconstruct input passed to grid_position() for any unit vector"){
         collignon::Voronoi voronoi(2.0f, 10);
         const float epsilon(1e-4f);
         for(float x = -2.0f; x < 2.0f; x+=0.5f){
@@ -134,7 +134,7 @@ TEST_CASE( "Voronoi grid_position() / unit_sphere_position() invertibility", "[c
             if(glm::length(glm::vec3(x,y,z)) > epsilon){
                 glm::vec3 v = glm::normalize(glm::vec3(x,y,z));
                 glm::vec2 u = voronoi.grid_position(v);
-                glm::vec3 v2 = voronoi.unit_sphere_position( u );
+                glm::vec3 v2 = voronoi.sphere_normal( u );
                 CHECK( v2.x == Approx(v.x).margin(epsilon) );
                 CHECK( v2.y == Approx(v.y).margin(epsilon) );
                 CHECK( v2.z == Approx(v.z).margin(epsilon) );

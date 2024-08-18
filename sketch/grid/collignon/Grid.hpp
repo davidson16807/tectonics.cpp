@@ -154,7 +154,7 @@ namespace collignon
 
 		inline constexpr vec3 vertex_normal(const id vertex_id) const 
 		{
-			return voronoi.unit_sphere_position(vertex_id);
+			return voronoi.sphere_normal(vertex_id);
 		}
 
 		inline constexpr vec3 vertex_east(const vec3 vertex_normal, const vec3 north_pole) const 

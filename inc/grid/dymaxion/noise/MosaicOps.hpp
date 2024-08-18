@@ -75,8 +75,8 @@ namespace dymaxion
 			return voronoi.radius * 
 				std::acos(
 					math::similarity(
-						voronoi.unit_sphere_position(grid_id1), 
-						voronoi.unit_sphere_position(grid_id2)
+						voronoi.sphere_normal(grid_id1), 
+						voronoi.sphere_normal(grid_id2)
 					)
 				);
 		}
@@ -85,8 +85,8 @@ namespace dymaxion
 		inline scalar weight(const tpoint position, const ipoint origin, ivec2 offset) const
 		{
 			// // // inverse square distance interpolation:
-			// vec3 U = voronoi.unit_sphere_position(point(add(origin, offset)));
-			// vec3 V = voronoi.unit_sphere_position(point(position));
+			// vec3 U = voronoi.sphere_normal(point(add(origin, offset)));
+			// vec3 V = voronoi.sphere_normal(point(position));
 			// return std::min(scalar(1e6), std::pow(glm::distance(U,V), scalar(-2)));
 
 			// // barycentric interpolation:
@@ -95,9 +95,9 @@ namespace dymaxion
 			point W(origin);
 			point E(add(origin, ivec2(1,1)));
 			point O(add(origin, fract.y > fract.x? ivec2(0,1) : ivec2(1,0)));
-			vec3 A = voronoi.unit_sphere_position(!is_diagonal? W : offset.x == 0? E : W);
-			vec3 B = voronoi.unit_sphere_position(!is_diagonal? E : O);
-			vec3 V = voronoi.unit_sphere_position(position);
+			vec3 A = voronoi.sphere_normal(!is_diagonal? W : offset.x == 0? E : W);
+			vec3 B = voronoi.sphere_normal(!is_diagonal? E : O);
+			vec3 V = voronoi.sphere_normal(position);
 			// return glm::distance(A,V);
 			return !is_diagonal && ((fract.y >= fract.x) != (offset.y >= offset.x))? 
 				scalar(0)

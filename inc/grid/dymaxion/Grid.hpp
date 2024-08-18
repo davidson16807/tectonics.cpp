@@ -176,7 +176,7 @@ namespace dymaxion
 
 		inline constexpr vec3 vertex_normal(const id vertex_id) const 
 		{
-			return voronoi.unit_sphere_position(memory.grid_id(vertex_id));
+			return voronoi.sphere_normal(memory.grid_id(vertex_id));
 		}
 
 		inline constexpr vec3 vertex_east(const vec3 vertex_normal, const vec3 north_pole) const 

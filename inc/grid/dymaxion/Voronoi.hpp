@@ -83,12 +83,12 @@ namespace dymaxion
 
 
 
-        inline constexpr vec3 unit_sphere_position(const IdPoint grid_id) const
+        inline constexpr vec3 sphere_normal(const IdPoint grid_id) const
         {
             ScalarPoint scalable(grid_id);
             return projection.sphere_position((scalable+half_cell)/vertices_per_square_side_scalar);
         }
-        inline constexpr vec3 unit_sphere_position(const ScalarPoint grid_position) const
+        inline constexpr vec3 sphere_normal(const ScalarPoint grid_position) const
         {
             return projection.sphere_position(grid_position/vertices_per_square_side_scalar);
         }
@@ -97,11 +97,11 @@ namespace dymaxion
 
         inline constexpr vec3 sphere_position(const IdPoint grid_id) const
         {
-            return unit_sphere_position(grid_id) * radius;
+            return sphere_normal(grid_id) * radius;
         }
         inline constexpr vec3 sphere_position(const ScalarPoint grid_position) const
         {
-            return unit_sphere_position(grid_position) * radius;
+            return sphere_normal(grid_position) * radius;
         }
 
     };

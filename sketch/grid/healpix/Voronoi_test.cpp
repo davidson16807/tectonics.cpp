@@ -76,7 +76,7 @@ TEST_CASE( "Voronoi grid_position() / sphere_position()", "[healpix]" ) {
     ));
 
     REQUIRE(test::determinism(precise,
-        "Voronoi.unit_sphere_position(…)", TEST_UNARY(voronoi.unit_sphere_position),
+        "Voronoi.sphere_normal(…)", TEST_UNARY(voronoi.sphere_normal),
         grid_ids
     ));
 
@@ -147,7 +147,7 @@ TEST_CASE( "Voronoi grid_position() / sphere_position()", "[healpix]" ) {
             auto length = glm::length(V3);
             return std::abs(length-1.0) < 1e-4;
         },
-        "Voronoi.unit_sphere_position(…)", TEST_UNARY(voronoi.unit_sphere_position),
+        "Voronoi.sphere_normal(…)", TEST_UNARY(voronoi.sphere_normal),
         grid_ids
     ));
 
@@ -170,7 +170,7 @@ TEST_CASE( "Voronoi grid_position() / sphere_position()", "[healpix]" ) {
     ));
 
     REQUIRE(test::left_invertibility(imprecise,
-        "Voronoi.unit_sphere_position(…) when restricted to indexed grid_ids", TEST_UNARY(voronoi.unit_sphere_position),
+        "Voronoi.sphere_normal(…) when restricted to indexed grid_ids", TEST_UNARY(voronoi.sphere_normal),
         "Voronoi.grid_id(…)",                                                  TEST_UNARY(voronoi.grid_id),
         unit_sphere_positions
     ));
@@ -182,7 +182,7 @@ TEST_CASE( "Voronoi grid_position() / sphere_position()", "[healpix]" ) {
     ));
 
     REQUIRE(test::left_invertibility(precise,
-        "Voronoi.unit_sphere_position(…) when restricted to indexed grid_ids", TEST_UNARY(voronoi.unit_sphere_position),
+        "Voronoi.sphere_normal(…) when restricted to indexed grid_ids", TEST_UNARY(voronoi.sphere_normal),
         "Voronoi.grid_position(…)",                                            TEST_UNARY(voronoi.grid_position),
         unit_sphere_positions
     ));
@@ -194,7 +194,7 @@ TEST_CASE( "Voronoi grid_position() / sphere_position()", "[healpix]" ) {
     ));
 
     REQUIRE(test::congruence(precise,
-        "Voronoi.unit_sphere_position(…) when restricted to indexed sphere_positions", TEST_UNARY(voronoi.unit_sphere_position),
+        "Voronoi.sphere_normal(…) when restricted to indexed sphere_positions", TEST_UNARY(voronoi.sphere_normal),
         "offsets to square_id equal to square_count", [](healpix::Point<int,int> p){return healpix::Point<int,int>(p.square_id+10, p.square_position);},
         grid_ids
     ));

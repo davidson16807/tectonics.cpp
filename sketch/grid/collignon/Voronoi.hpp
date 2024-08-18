@@ -96,15 +96,15 @@ namespace collignon
 
 
 
-        inline constexpr vec3 unit_sphere_position(const id memory_id) const
+        inline constexpr vec3 sphere_normal(const id memory_id) const
         {
-            return unit_sphere_position(grid_id(memory_id));
+            return sphere_normal(grid_id(memory_id));
         }
-        inline constexpr vec3 unit_sphere_position(const ivec2 grid_id) const
+        inline constexpr vec3 sphere_normal(const ivec2 grid_id) const
         {
             return tesselation.tesselation_to_sphere((vec2(grid_id) + half_cell) / vertices_per_half_meridian_scalar);
         }
-        inline constexpr vec3 unit_sphere_position(const vec2 grid_position) const
+        inline constexpr vec3 sphere_normal(const vec2 grid_position) const
         {
             return tesselation.tesselation_to_sphere((grid_position + half_cell) / vertices_per_half_meridian_scalar);
         }
@@ -113,15 +113,15 @@ namespace collignon
 
         inline constexpr vec3 sphere_position(const id memory_id) const
         {
-            return unit_sphere_position(memory_id) * radius;
+            return sphere_normal(memory_id) * radius;
         }
         inline constexpr vec3 sphere_position(const ivec2 grid_id) const
         {
-            return unit_sphere_position(grid_id) * radius;
+            return sphere_normal(grid_id) * radius;
         }
         inline constexpr vec3 sphere_position(const vec2 grid_position) const
         {
-            return unit_sphere_position(grid_position) * radius;
+            return sphere_normal(grid_position) * radius;
         }
 
     };
