@@ -396,6 +396,7 @@ namespace si{
   template <typename T> using density                   = units<-3, 1, 0, 0, 0, 0, 0, T>;
   template <typename T> using specific_volume           = units< 3,-1, 0, 0, 0, 0, 0, T>;
   template <typename T> using number_density            = units<-3, 0, 0, 0, 0, 0, 0, T>;
+  template <typename T> using area_number_density       = units<-2, 0, 0, 0, 0, 0, 0, T>;
   template <typename T> using molar_density             = units<-3, 0, 0, 0, 1, 0, 0, T>;
   template <typename T> using frequency                 = units< 0, 0,-1, 0, 0, 0, 0, T>;
   template <typename T> using speed                     = units< 1, 0,-1, 0, 0, 0, 0, T>;

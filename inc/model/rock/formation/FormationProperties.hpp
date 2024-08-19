@@ -21,7 +21,7 @@ namespace rock{
         void operator()(const Formation<M>& formation, masses& out) const {
             for (std::size_t i = 0; i < out.size(); ++i)
             {
-                out[i] += formation[i].mass();
+                out[i] = formation[i].mass();
             }
         }
 
@@ -36,5 +36,35 @@ namespace rock{
 
     };
 
+    // // NOTE: `M` is mineral count
+    // template<int M>
+    // class FormationVolume
+    // {
+
+    //     using volume = si::volume<float>;
+    //     using volumes = std::vector<volume>;
+
+    // public:
+    //     FormationVolume(){}
+
+    //     void operator()(const Formation<M>& formation, volumes& out) const {
+    //         for (std::size_t i = 0; i < out.size(); ++i)
+    //         {
+    //             out[i] = formation[i].thickness() * grid.vertex_dual_area(i);
+    //         }
+    //     }
+
+    //     volume operator()(const Formation<M>& formation) const {
+    //         volume out(0);
+    //         for (std::size_t i = 0; i < formation.size(); ++i)
+    //         {
+    //             out += formation[i].thickness() * grid.vertex_dual_area(i);
+    //         }
+    //         return out;
+    //     }
+
+    // };
+
 }
 
+ 
