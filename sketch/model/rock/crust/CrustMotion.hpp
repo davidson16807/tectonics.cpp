@@ -22,15 +22,12 @@ FormationSummaryOps
 namespace rock {
 
 	/*
-
 	`CrustMotion` (together with `FormationSimulation`)
-	is basically *the most important part of the geological model*.
-	They contain everything that's needed to simulate the geology of a planet.
+	contains everything needed to simulate plate motion
+	starting from the `*Summaries` of model state.
 
-	This may include the following:
+	This includes the following:
 	* plate motion   the motion of plates
-	* plate segmentation the division of plates
-
 	*/
 
 	// NOTE: `M` is mineral count
@@ -80,9 +77,6 @@ namespace rock {
             radius_units(world_radius/grid.voronoi.radius)
         {}
 
-        /*
-        */
-
 		/* 
 		`buoyancy_forces` calculates the buoyancy force, 
 		b=Δρgn̂V, for each cell in a `summary`.
@@ -91,20 +85,20 @@ namespace rock {
 		TODO: See if it's possible to reuse this code for both 
 		spin angular velocity and orbital angular velocity.
 		*/
-		inline void buoyancy_forces(
+		void buoyancy_forces(
 			const FormationSummary<M>& summary,
 			const bools& exists,
 			const force  buoyancy_units,
-			vec3s& buoyancy
+			vec3s& buoyancies
 		) const {
-		    calculus.gradient(grid, exists, buoyancy);
+		    calculus.gradient(grid, exists, buoyancies);
 		    density density_difference;
-		    for (int i = 0; i < buoyancy.size(); ++i)
+		    for (int i = 0; i < buoyancies.size(); ++i)
 		    {
 		    	density_difference = std::max(0.0f*si::kilogram/si::meter3, summary.density() - mantle_density);
-		    	buoyancy[i] = 
-			    	exists[i]? vec3(0)
-			    	  : glm::normalize(-buoyancy[i])              // n̂  boundary normal
+		    	buoyancies[i] = 
+			    	!exists[i]? vec3(0)
+			    	  : glm::normalize(-buoyancies[i])              // n̂  boundary normal
 			    	  * gravity * density_difference              // Δρ density difference
 			    	  * summary.thickness() * grid.vertex_area(i) // V  volume
 			    	  / buoyancy_units; 
@@ -116,10 +110,10 @@ namespace rock {
 		assuming that crust is a rigid body submitted to `forces`.
 		See CrustMotion.txt for more details.
 		*/
-		inline glm::dvec3 rigid_body_torque(
+		glm::dvec3 rigid_body_torque(
 			const vec3s& forces,
 			const force  force_units,
-			const torque& torque_units
+			const torque torque_units
 		) const {
 			glm::dvec3 result(0);
 		    for (int i = 0; i < forces.size(); ++i)
@@ -129,41 +123,54 @@ namespace rock {
 		    return result * (world_radius * force_units / torque_units);
 		}
 
-		inline int slab_cell_count(
-			const vec3s& buoyancy,
-			const force  buoyancy_units,
-			const force  threshold
+		void is_slab(
+			const vec3s& buoyancies,
+			const bools& is_slab
+		) const {
+		    for (int i = 0; i < summary.size(); ++i)
+		    {
+		    	is_slab[i] = buoyancies[i].length() > 0.0f;
+		    }
+		}
+
+		int slab_cell_count(
+			const bools& is_slab
 		) const {
 		    int slab_cell_count;
 		    for (int i = 0; i < summary.size(); ++i)
 		    {
-		    	slab_cell_count += buoyancy[i].length() > threshold/buoyancy_units;
+		    	slab_cell_count += is_slab[i];
 		    }
+		    return slab_cell_count;
 		}
 
-		inline volume slab_volume(
-			const FormationSummary<M>& summary
+		volume slab_volume(
+			const FormationSummary<M>& summary,
+			const bools& is_slab
 		) const {
 			volume slab_volume(0.0);
 			for (int i = 0; i < summary.size(); ++i)
 			{
-				if(foundering[i])
+				if(is_slab[i])
 				{
-					slab_volume += grid.vertex_dual_area(i) * summary[i].thickness() * radius_units * radius_units * radius_units;
+					slab_volume += grid.vertex_dual_area(i) * summary[i].thickness() 
+						* radius_units * radius_units * radius_units;
 				}
 			}
 			return slab_volume;
 		}
 
-		inline area slab_area(
-			const FormationSummary<M>& summary
+		area slab_area(
+			const FormationSummary<M>& summary,
+			const bools& is_slab
 		) const {
 			area slab_area(0.0);
 			for (int i = 0; i < summary.size(); ++i)
 			{
-				if(foundering[i])
+				if(is_slab[i])
 				{
-					slab_area += grid.vertex_dual_area(i) * radius_units * radius_units;
+					slab_area += grid.vertex_dual_area(i) 
+						* radius_units * radius_units;
 				}
 			}
 			return slab_area;
@@ -190,7 +197,7 @@ namespace rock {
 			return slab_area/slab_length;
 		}
 
-		inline angular_momentum drag_torque_per_angular_velocity(
+		angular_momentum drag_per_angular_velocity(
 			const length slab_thickness,
 			const length slab_length,
 			const length slab_width
@@ -220,6 +227,33 @@ namespace rock {
 			return shape_factor / 
 				(24.0 * pi * mantle_viscosity * world_radius * world_radius);
 		}
+
+		/*
+		TESTS:
+		* `drag_per_angular_velocity` is scale invariant
+		* `drag_per_angular_velocity` is commutative wrt thickness and width
+		* `drag_per_angular_velocity` has diminishing returns wrt thickness, length, and width
+		* `drag_per_angular_velocity` reproduces results from Schellart 2010 when combined with appropriate torque
+		* `rigid_body_torque` is linear with respect to force magnitudes
+		* `slab_thickness * slab_width * slab_length` must reproduce `slab_volume`
+		* `slab_thickness * slab_area` must reproduce `slab_volume`
+		* `slab_width * slab_length` must reproduce `slab_area`
+		* rotationally invariant:
+			* `is_slab`
+			* `slab_cell_count`
+			* `slab_area`
+			* `slab_volume`
+			* `rigid_body_torque`
+			* `buoyancy_forces`
+
+		* `buoyancy_forces` in combination with `drag_per_angular_velocity` and `CrustFracture`
+			must produce velocities on the same order as velocities seen on earth
+			when given earthlike `FormationSummary`s
+		* nontrivial output in combination with `CrustFracture` when given earthlike `FormationSummary`s:
+			* 0 ≤ slab_cell_count < N
+			* 0 ≤ slab_volume < total_volume
+			* 0 ≤ slab_area < total_area
+		*/
 
     };
 
