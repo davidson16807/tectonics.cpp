@@ -212,7 +212,7 @@ namespace rock {
 			area max_lambda(max_dimension*max_dimension);
 			area dlambda(max_lambda/double(lambda_sample_count));
 			area lambda(0.0);
-			si::units<-1,0,0,0,0,0,0,double> shape_factor(0.0);
+			si::spatial_frequency<double> shape_factor(0.0);
 			for (int i = 0; i < lambda_sample_count; ++i)
 			{
 				lambda = max_lambda * double(i)/double(lambda_sample_count);

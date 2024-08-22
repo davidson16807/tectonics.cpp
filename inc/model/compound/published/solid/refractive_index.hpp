@@ -11,7 +11,7 @@
 namespace compound { 
 namespace published { 
 
-    using SolidRefractiveIndexWavenumberRelation = relation::GenericRelation<si::wavenumber<double>,double>;
+    using SolidRefractiveIndexWavenumberRelation = relation::GenericRelation<si::spatial_frequency<double>,double>;
     table::PartialTable<SolidRefractiveIndexWavenumberRelation> refractive_index_as_solid {
 
         { polymorphs::water_ice_1h,              
@@ -135,7 +135,7 @@ namespace published {
             },
         // { polymorphs::calcite,                   },
         //         SolidRefractiveIndexWavenumberRelation([](
-        //             const si::wavenumber<double> n
+        //             const si::spatial_frequency<double> n
         //         ) {
         //             double l = (1.0 / n) / si::micrometer;
         //             return sqrt(

@@ -42,7 +42,7 @@ namespace estimated{
                         []( Index n,
                             Index k){
                             return Absorption(
-                                [=](si::wavenumber<double> w){return correlation::get_absorption_coefficient_from_refractive_index(n(w), k(w), 1.0/w);});
+                                [=](si::spatial_frequency<double> w){return correlation::get_absorption_coefficient_from_refractive_index(n(w), k(w), 1.0/w);});
                             },
                         n, k ) 
                     });
@@ -52,7 +52,7 @@ namespace estimated{
                         []( Index k,
                             Absorption alpha){
                             return Index(
-                                [=](si::wavenumber<double> w){return correlation::get_refractive_index_from_absorption_coefficient(alpha(w), k(w), 1.0/w);});
+                                [=](si::spatial_frequency<double> w){return correlation::get_refractive_index_from_absorption_coefficient(alpha(w), k(w), 1.0/w);});
                             },
                         k, alpha ) 
                     });
@@ -62,7 +62,7 @@ namespace estimated{
                         []( Index n,
                             Absorption alpha){
                             return Index(
-                                [=](si::wavenumber<double> w){return correlation::get_extinction_coefficient_from_absorption_coefficient(alpha(w), n(w), 1.0/w);});
+                                [=](si::spatial_frequency<double> w){return correlation::get_extinction_coefficient_from_absorption_coefficient(alpha(w), n(w), 1.0/w);});
                             },
                         n, alpha ) 
                     });

@@ -9,14 +9,14 @@
 namespace compound { 
 namespace published { 
 
-    using GasRefractiveIndexWavenumberRelation = relation::PolynomialRailyardRelation<si::wavenumber<double>,double, 0,1>;
+    using GasRefractiveIndexWavenumberRelation = relation::PolynomialRailyardRelation<si::spatial_frequency<double>,double, 0,1>;
     table::PartialTable<GasRefractiveIndexWavenumberRelation> refractive_index_as_gas {
         {compounds::water,         1.000261},
         // {compounds::nitrogen,      
                 // // TODO: reimplement this
                 // field::SpectralFunction<double>([](
-                //     const si::wavenumber<double> nlo, 
-                //     const si::wavenumber<double> nhi, 
+                //     const si::spatial_frequency<double> nlo, 
+                //     const si::spatial_frequency<double> nhi, 
                 //     const si::pressure<double> p, 
                 //     const si::temperature<double> T
                 // ) {
@@ -28,8 +28,8 @@ namespace published {
         {compounds::oxygen,        1.0002709,
                 // // TODO: reimplement this
                 // field::SpectralFunction<double>([](
-                //     const si::wavenumber<double> nlo, 
-                //     const si::wavenumber<double> nhi, 
+                //     const si::spatial_frequency<double> nlo, 
+                //     const si::spatial_frequency<double> nhi, 
                 //     const si::pressure<double> p, 
                 //     const si::temperature<double> T
                 // ) {
@@ -42,8 +42,8 @@ namespace published {
         {compounds::carbon_dioxide, 1.0004493
                 // // TODO: reimplement this
                 // field::SpectralFunction<double>([](
-                //     const si::wavenumber<double> nlo, 
-                //     const si::wavenumber<double> nhi, 
+                //     const si::spatial_frequency<double> nlo, 
+                //     const si::spatial_frequency<double> nhi, 
                 //     const si::pressure<double> p, 
                 //     const si::temperature<double> T
                 // ) {
@@ -66,8 +66,8 @@ namespace published {
         {compounds::argon,       1.000281
                 // // TODO: reimplement this
                 // field::SpectralFunction<double>([](
-                //     const si::wavenumber<double> nlo, 
-                //     const si::wavenumber<double> nhi, 
+                //     const si::spatial_frequency<double> nlo, 
+                //     const si::spatial_frequency<double> nhi, 
                 //     const si::pressure<double> p, 
                 //     const si::temperature<double> T
                 // ) {
@@ -82,8 +82,8 @@ namespace published {
         {compounds::helium,       1.000036
                 // // TODO: reimplement this
                 // field::SpectralFunction<double>([](
-                //     const si::wavenumber<double> nlo, 
-                //     const si::wavenumber<double> nhi, 
+                //     const si::spatial_frequency<double> nlo, 
+                //     const si::spatial_frequency<double> nhi, 
                 //     const si::pressure<double> p, 
                 //     const si::temperature<double> T
                 // ) {
@@ -96,8 +96,8 @@ namespace published {
         {compounds::hydrogen,       1.0001392
                 // // TODO: reimplement this
                 // field::SpectralFunction<double>([](
-                //     const si::wavenumber<double> nlo, 
-                //     const si::wavenumber<double> nhi, 
+                //     const si::spatial_frequency<double> nlo, 
+                //     const si::spatial_frequency<double> nhi, 
                 //     const si::pressure<double> p, 
                 //     const si::temperature<double> T
                 // ) {
@@ -108,8 +108,8 @@ namespace published {
         {compounds::ammonia,       1.000376,
                 // // TODO: reimplement this
                 // field::SpectralFunction<double>([](
-                //     const si::wavenumber<double> nlo, 
-                //     const si::wavenumber<double> nhi, 
+                //     const si::spatial_frequency<double> nlo, 
+                //     const si::spatial_frequency<double> nhi, 
                 //     const si::pressure<double> p, 
                 //     const si::temperature<double> T
                 // ) {
@@ -126,8 +126,8 @@ namespace published {
         {compounds::carbon_monoxide,       1.00036320, //https://refractiveindex.info
                 // // TODO: reimplement this
                 // field::SpectralFunction<double>([](
-                //     const si::wavenumber<double> nlo, 
-                //     const si::wavenumber<double> nhi, 
+                //     const si::spatial_frequency<double> nlo, 
+                //     const si::spatial_frequency<double> nhi, 
                 //     const si::pressure<double> p, 
                 //     const si::temperature<double> T
                 // ) {
@@ -140,8 +140,8 @@ namespace published {
         {compounds::ethane,       1.00075276,
                 // // TODO: reimplement this
                 // field::SpectralFunction<double>([](
-                //     const si::wavenumber<double> nlo, 
-                //     const si::wavenumber<double> nhi, 
+                //     const si::spatial_frequency<double> nlo, 
+                //     const si::spatial_frequency<double> nhi, 
                 //     const si::pressure<double> p, 
                 //     const si::temperature<double> T
                 // ) {

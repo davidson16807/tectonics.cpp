@@ -421,8 +421,7 @@ namespace si{
   template <typename T> using molar_energy              = units< 2, 1,-2, 0,-1, 0, 0, T>;
   template <typename T> using specific_energy           = units< 2, 0,-2, 0, 0, 0, 0, T>;
   template <typename T> using thermal_conductivity      = units< 1, 1,-3,-1, 0, 0, 0, T>;
-  template <typename T> using wavenumber                = units<-1, 0, 0, 0, 0, 0, 0, T>;
-  template <typename T> using attenuation               = units<-1, 0, 0, 0, 0, 0, 0, T>;
+  template <typename T> using spatial_frequency         = units<-1, 0, 0, 0, 0, 0, 0, T>;
   template <typename T> using voltage                   = units< 2, 1,-3, 0, 0,-1, 0, T>;
   template <typename T> using electric_charge           = units< 0, 0, 1, 0, 0, 1, 0, T>;
   template <typename T> using electric_capacitance      = units<-2,-1, 4, 0, 0, 2, 0, T>;

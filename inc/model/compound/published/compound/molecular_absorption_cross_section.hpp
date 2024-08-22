@@ -9,7 +9,7 @@
 namespace compound { 
 namespace published { 
 
-    table::PartialTable<relation::PolynomialRailyardRelation<si::wavenumber<double>,si::area<double>,0,1>>  molecular_absorption_cross_section {
+    table::PartialTable<relation::PolynomialRailyardRelation<si::spatial_frequency<double>,si::area<double>,0,1>>  molecular_absorption_cross_section {
 
         {compounds::water, 
                 compound::relation::get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output

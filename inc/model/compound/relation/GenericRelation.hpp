@@ -232,7 +232,7 @@ namespace relation {
             });
     }
 
-    GenericRelation<si::wavenumber<double>,si::attenuation<double>> get_generic_spectral_function_from_reflectance_at_wavelengths(
+    GenericRelation<si::spatial_frequency<double>,si::spatial_frequency<double>> get_generic_spectral_function_from_reflectance_at_wavelengths(
         const si::length<double> lunits,
         const si::length<double> particle_diameter, 
         const std::vector<double>wavelengths, 
@@ -256,15 +256,15 @@ namespace relation {
           to be so high that it produces nans upon evaluation.
         */
         auto reflectance_relation = analytic::spline::linear_spline<float>(wavelengths, reflectances);
-        return GenericRelation<si::wavenumber<double>, si::attenuation<double>>(
-            [=](si::wavenumber<double> n){
+        return GenericRelation<si::spatial_frequency<double>, si::spatial_frequency<double>>(
+            [=](si::spatial_frequency<double> n){
                 auto R = reflectance_relation((1.0/n)/lunits);
                 return std::max((R+1.0)*(R+1.0) / (4.0*R) - 1.0, 0.0) / (2.0*particle_diameter);
             });
     }
 
-    GenericRelation<si::wavenumber<double>,si::attenuation<double>> get_generic_spectral_cubic_interpolation_of_wavenumber_for_log10_sample_output(
-        const si::wavenumber<double> nunits, const si::attenuation<double> yunits,
+    GenericRelation<si::spatial_frequency<double>,si::spatial_frequency<double>> get_generic_spectral_cubic_interpolation_of_wavenumber_for_log10_sample_output(
+        const si::spatial_frequency<double> nunits, const si::spatial_frequency<double> yunits,
         const std::vector<double>      ns, 
         const std::vector<double> log10ys
     ){
@@ -276,35 +276,35 @@ namespace relation {
         }
         std::reverse(ns2.begin(), ns2.end());
         std::reverse(ys.begin(), ys.end());
-        return GenericRelation<si::wavenumber<double>, si::attenuation<double>>(
-            PolynomialRailyardRelation<si::wavenumber<double>,si::attenuation<double>,0,3> (
+        return GenericRelation<si::spatial_frequency<double>, si::spatial_frequency<double>>(
+            PolynomialRailyardRelation<si::spatial_frequency<double>,si::spatial_frequency<double>,0,3> (
                 analytic::spline::linear_spline<double>(ns2, ys), nunits, yunits));
     }
 
     template<typename Ty>
-    GenericRelation<si::wavenumber<double>,Ty> get_generic_spectral_linear_interpolation_function_of_wavelength(
+    GenericRelation<si::spatial_frequency<double>,Ty> get_generic_spectral_linear_interpolation_function_of_wavelength(
         const si::length<double> lunits, const Ty yunits,
         const std::vector<double> ls, 
         const std::vector<double> ys
     ){
         assert(ls.size() == ys.size());
         auto relation = analytic::spline::linear_spline<double>(ls, ys);
-        return GenericRelation<si::wavenumber<double>,Ty>(
-            [=](si::wavenumber<double> n){ 
+        return GenericRelation<si::spatial_frequency<double>,Ty>(
+            [=](si::spatial_frequency<double> n){ 
                 return relation((1.0/n)/lunits)*yunits;
             });
     }
 
     template<typename Ty>
-    GenericRelation<si::wavenumber<double>,Ty> get_generic_spectral_linear_interpolation_function_of_wavenumber(
-        const si::wavenumber<double> nunits, const Ty yunits,
+    GenericRelation<si::spatial_frequency<double>,Ty> get_generic_spectral_linear_interpolation_function_of_wavenumber(
+        const si::spatial_frequency<double> nunits, const Ty yunits,
         const std::vector<double> ns, 
         const std::vector<double> ys
     ){
         assert(ns.size() == ys.size());
         auto relation = analytic::spline::linear_spline<double>(ns, ys);
-        return GenericRelation<si::wavenumber<double>,Ty>(
-            [=](si::wavenumber<double> n){ 
+        return GenericRelation<si::spatial_frequency<double>,Ty>(
+            [=](si::spatial_frequency<double> n){ 
                 return relation(n/nunits)*yunits;
             });
     }

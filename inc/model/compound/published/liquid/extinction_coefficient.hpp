@@ -9,7 +9,7 @@
 namespace compound { 
 namespace published { 
 
-    using LiquidExtinctionCoefficientWavenumberRelation = relation::PolynomialRailyardRelation<si::wavenumber<double>,double, 0,1>;
+    using LiquidExtinctionCoefficientWavenumberRelation = relation::PolynomialRailyardRelation<si::spatial_frequency<double>,double, 0,1>;
     table::PartialTable<LiquidExtinctionCoefficientWavenumberRelation> extinction_coefficient_as_liquid {
 
         { compounds::water, 

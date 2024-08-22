@@ -11,7 +11,7 @@
 namespace compound {
 namespace published {
 
-    using SolidAbsorptionCoefficientWavenumberRelation = relation::GenericRelation<si::wavenumber<double>,si::attenuation<double>>;
+    using SolidAbsorptionCoefficientWavenumberRelation = relation::GenericRelation<si::spatial_frequency<double>,si::spatial_frequency<double>>;
     table::PartialTable<SolidAbsorptionCoefficientWavenumberRelation> absorption_coefficient_as_solid {
 
         // { polymorphs::water_ice_1h,              },

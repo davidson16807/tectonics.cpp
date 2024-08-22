@@ -9,7 +9,7 @@
 namespace compound { 
 namespace published { 
 
-    using LiquidRefractiveIndexWavenumberRelation = relation::PolynomialRailyardRelation<si::wavenumber<double>,double, 0,1>;
+    using LiquidRefractiveIndexWavenumberRelation = relation::PolynomialRailyardRelation<si::spatial_frequency<double>,double, 0,1>;
     table::PartialTable<LiquidRefractiveIndexWavenumberRelation> refractive_index_as_liquid {
         { compounds::water,       //1.33336,
                 relation::get_spectral_linear_interpolation_function_of_wavelength
@@ -62,8 +62,8 @@ namespace published {
         { compounds::ethanol,           1.361,  // wikipedia data page
             // // TODO: reimplement this
             // field::SpectralFunction<double>([](
-            //     const si::wavenumber<double> nlo, 
-            //     const si::wavenumber<double> nhi, 
+            //     const si::spatial_frequency<double> nlo, 
+            //     const si::spatial_frequency<double> nhi, 
             //     const si::pressure<double> p, 
             //     const si::temperature<double> T
             // ) {
@@ -82,8 +82,8 @@ namespace published {
         { compounds::benzene,       1.5011,
             // // TODO: reimplement this
             // field::SpectralFunction<double>([](
-            //     const si::wavenumber<double> nlo, 
-            //     const si::wavenumber<double> nhi, 
+            //     const si::spatial_frequency<double> nlo, 
+            //     const si::spatial_frequency<double> nhi, 
             //     const si::pressure<double> p, 
             //     const si::temperature<double> T
             // ) {

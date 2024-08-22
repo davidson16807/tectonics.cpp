@@ -12,7 +12,7 @@
 namespace compound { 
 namespace published { 
 
-    using SolidExtinctionCoefficientWavenumberRelation = relation::GenericRelation<si::wavenumber<double>,double>;
+    using SolidExtinctionCoefficientWavenumberRelation = relation::GenericRelation<si::spatial_frequency<double>,double>;
     table::PartialTable<SolidExtinctionCoefficientWavenumberRelation> extinction_coefficient_as_solid {
 
         { polymorphs::water_ice_1h,              

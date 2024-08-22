@@ -121,13 +121,13 @@ namespace relation {
     }
     
     template<typename Ty>
-    relation::PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavelength(
+    relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavelength(
         const si::length<double> lunits, const Ty yunits,
         const std::vector<double> ls, 
         const std::vector<double> lys
     ){
         assert(ls.size() == lys.size());
-        const si::wavenumber<double> nunits = 1.0/lunits;
+        const si::spatial_frequency<double> nunits = 1.0/lunits;
         std::vector<double> ns;
         std::vector<double> ys;
         for (std::size_t i=0; i<lys.size(); i++){
@@ -136,22 +136,22 @@ namespace relation {
         }
         std::reverse(ns.begin(), ns.end());
         std::reverse(ys.begin(), ys.end());
-        return relation::PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1>(analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,1>(analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
     template<typename Ty>
-    relation::PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavenumber(
-        const si::wavenumber<double> nunits, const Ty yunits,
+    relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavenumber(
+        const si::spatial_frequency<double> nunits, const Ty yunits,
         const std::vector<double> ns, 
         const std::vector<double> ys
     ){
         assert(ns.size() == ys.size());
-        return relation::PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1>(analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,1>(analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
     template<typename Ty>
-    relation::PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output(
-        const si::wavenumber<double> nunits, const Ty yunits,
+    relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output(
+        const si::spatial_frequency<double> nunits, const Ty yunits,
         const std::vector<double>      ns, 
         const std::vector<double> log10ys
     ){
@@ -160,12 +160,12 @@ namespace relation {
         for (std::size_t i=0; i<log10ys.size(); i++){
             ys.push_back(pow(10.0, log10ys[i]));
         }
-        return relation::PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> (analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,1> (analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
     template<typename Ty>
-    relation::PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,3> get_spectral_cubic_interpolation_function_of_wavenumber_for_log10_sample_output(
-        const si::wavenumber<double> nunits, const Ty yunits,
+    relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,3> get_spectral_cubic_interpolation_function_of_wavenumber_for_log10_sample_output(
+        const si::spatial_frequency<double> nunits, const Ty yunits,
         const std::vector<double>      ns, 
         const std::vector<double> log10ys
     ){
@@ -174,17 +174,17 @@ namespace relation {
         for (std::size_t i=0; i<log10ys.size(); i++){
             ys.push_back(pow(10.0, log10ys[i]));
         }
-        return relation::PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,3> (analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,3> (analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
     template<typename Ty>
-    relation::PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavelength_for_log10_sample_output(
+    relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavelength_for_log10_sample_output(
         const si::length<double> lunits, const Ty yunits,
         const std::vector<double>      ls, 
         const std::vector<double>log10lys
     ){
         assert(ls.size() == log10lys.size());
-        const si::wavenumber<double> nunits = 1.0/lunits;
+        const si::spatial_frequency<double> nunits = 1.0/lunits;
         std::vector<double> ns;
         std::vector<double> log10ys;
         for (std::size_t i=0; i<log10lys.size(); i++){
@@ -197,13 +197,13 @@ namespace relation {
         for (std::size_t i=0; i<log10ys.size(); i++){
             ys.push_back(pow(10.0, log10ys[i]));
         }
-        return relation::PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> (analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,1> (analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
 
     template<typename Ty>
-    relation::PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_input(
-        const si::wavenumber<double> nunits, const Ty yunits,
+    relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_input(
+        const si::spatial_frequency<double> nunits, const Ty yunits,
         const std::vector<double> log10ns, 
         const std::vector<double>      ys
     ){
@@ -212,17 +212,17 @@ namespace relation {
         for (std::size_t i=0; i<log10ns.size(); i++){
             ns.push_back(pow(10.0, log10ns[i]));
         }
-        return relation::PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> (analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,1> (analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
     template<typename Ty>
-    relation::PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavelength_for_log10_sample_input(
+    relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavelength_for_log10_sample_input(
         const si::length<double> lunits, const Ty yunits,
         const std::vector<double> log10ls, 
         const std::vector<double>      lys
     ){
         assert(log10ls.size() == lys.size());
-        const si::wavenumber<double> nunits = 1.0/lunits;
+        const si::spatial_frequency<double> nunits = 1.0/lunits;
         std::vector<double> ns;
         std::vector<double> ys;
         for (std::size_t i=0; i<lys.size(); i++){
@@ -231,7 +231,7 @@ namespace relation {
         }
         std::reverse(ns.begin(), ns.end());
         std::reverse(ys.begin(), ys.end());
-        return relation::PolynomialRailyardRelation<si::wavenumber<double>,Ty,0,1> (analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,1> (analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
 
