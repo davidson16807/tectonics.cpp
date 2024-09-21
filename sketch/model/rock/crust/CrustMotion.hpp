@@ -4,14 +4,9 @@
 
 #include <vector>
 
-#include <glm/vec3.hpp>               // *vec3
-
 #include <unit/si.hpp>
 
-#include <model/rock/formation/Formation.hpp>
-#include <model/compound/phase/boundary/LinearPhaseBoundary.hpp>
-
-#include "Crust.hpp"
+#include <model/rock/formation/FormationSummary.hpp>
 
 /*
 needs:
@@ -45,11 +40,13 @@ namespace rock {
     	using dynamic_viscosity = si::dynamic_viscosity<double>;
     	using force             = si::force<double>;
     	using torque            = si::torque<double>;
+    	using angular_momentum  = si::angular_momentum<double>;
 
     	using bools = std::vector<bool>;
     	using vec3s = std::vector<vec3>;
 
-    	static constexpr lambda_sample_count = 1000;
+    	static constexpr int lambda_sample_count = 1000;
+    	static constexpr double pi = 3.1415926535897932384626433832795028841971;
 
         const VectorCalculus calculus;
 		const Grid& grid; 
@@ -86,7 +83,7 @@ namespace rock {
 		spin angular velocity and orbital angular velocity.
 		*/
 		void buoyancy_forces(
-			const FormationSummary<M>& summary,
+			const FormationSummary& summary,
 			const bools& exists,
 			const force  buoyancy_units,
 			vec3s& buoyancies
@@ -95,13 +92,17 @@ namespace rock {
 		    density density_difference;
 		    for (int i = 0; i < buoyancies.size(); ++i)
 		    {
-		    	density_difference = std::max(0.0f*si::kilogram/si::meter3, summary.density() - mantle_density);
+		    	density_difference = si::max(
+		    		0.0*si::kilogram/si::meter3, 
+		    		density(summary[i].density() - mantle_density)
+	    		);
+		    	float magnitude = 
+		    		gravity * density_difference                 // Δρ density difference
+			      * length(summary[i].thickness()) * grid.vertex_area(i) // V  volume
+			      / buoyancy_units;
 		    	buoyancies[i] = 
-			    	!exists[i]? vec3(0)
-			    	  : glm::normalize(-buoyancies[i])            // n̂  boundary normal
-			    	  * gravity * density_difference              // Δρ density difference
-			    	  * summary.thickness() * grid.vertex_area(i) // V  volume
-			    	  / buoyancy_units; 
+			    	!exists[i]? vec3(0) : 
+			    		magnitude * glm::normalize(-buoyancies[i]); // n̂  boundary normal
 		    }
 		}
 
@@ -127,7 +128,7 @@ namespace rock {
 			const vec3s& buoyancies,
 			const bools& is_slab
 		) const {
-		    for (int i = 0; i < summary.size(); ++i)
+		    for (int i = 0; i < buoyancies.size(); ++i)
 		    {
 		    	is_slab[i] = buoyancies[i].length() > 0.0f;
 		    }
@@ -137,7 +138,7 @@ namespace rock {
 			const bools& is_slab
 		) const {
 		    int slab_cell_count;
-		    for (int i = 0; i < summary.size(); ++i)
+		    for (int i = 0; i < is_slab.size(); ++i)
 		    {
 		    	slab_cell_count += is_slab[i];
 		    }
@@ -145,7 +146,7 @@ namespace rock {
 		}
 
 		volume slab_volume(
-			const FormationSummary<M>& summary,
+			const FormationSummary& summary,
 			const bools& is_slab
 		) const {
 			volume slab_volume(0.0);
@@ -161,7 +162,7 @@ namespace rock {
 		}
 
 		area slab_area(
-			const FormationSummary<M>& summary,
+			const FormationSummary& summary,
 			const bools& is_slab
 		) const {
 			area slab_area(0.0);
@@ -212,7 +213,7 @@ namespace rock {
 			area max_lambda(max_dimension*max_dimension);
 			area dlambda(max_lambda/double(lambda_sample_count));
 			area lambda(0.0);
-			si::spatial_frequency<double> shape_factor(0.0);
+			si::spatial_frequency<double> shape_factor;
 			for (int i = 0; i < lambda_sample_count; ++i)
 			{
 				lambda = max_lambda * double(i)/double(lambda_sample_count);
@@ -224,8 +225,8 @@ namespace rock {
 						(slab_width    *slab_width     + lambda) * 
 						(slab_thickness*slab_thickness + lambda));
 			}
-			return shape_factor / 
-				(24.0 * pi * mantle_viscosity * world_radius * world_radius);
+			return std::isnan(shape_factor*si::meter)? angular_momentum(0.0) : 
+				(24.0 * pi * mantle_viscosity * world_radius * world_radius) / shape_factor;
 		}
 
 		/*
@@ -271,6 +272,21 @@ namespace rock {
 		*/
 
     };
+
+    template<int M, typename VectorCalculus, typename Grid>
+    CrustMotion<M, VectorCalculus, Grid> crust_motion(
+		const VectorCalculus& calculus, 
+		const Grid& grid, 
+		const si::length<double> world_radius,
+		const si::acceleration<double> gravity,
+		const si::density<double> mantle_density,
+		const si::dynamic_viscosity<double> mantle_viscosity
+    ) {
+    	return CrustMotion<M, VectorCalculus, Grid>(
+    		calculus, grid, world_radius, 
+    		gravity, mantle_density, mantle_viscosity
+		);
+    }
 
 }
 
