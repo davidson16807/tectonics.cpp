@@ -2,6 +2,8 @@
 
 #include <unit/si.hpp>
 
+#include <model/compound/point.hpp>
+
 namespace compound {
 namespace phase {
 
