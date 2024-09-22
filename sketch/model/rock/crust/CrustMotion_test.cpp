@@ -98,6 +98,15 @@ TEST_CASE( "drag_per_angular_velocity commutativity", "[rock]" ) {
         }
     }
 
+    // NOTE: `drag_per_angular_velocity` is provably *not* scale invariant
+    // REQUIRE(test::invariance(adapter, 
+    //     "drag_per_angular_velocity", [=](auto a, auto b, auto c){ 
+    //         return motion.drag_per_angular_velocity(a, b, c);
+    //     },
+    //     "scaling", [](auto x){return x*2.0;},
+    //     lengths, lengths, lengths
+    // ));
+
     // codomain(const Adapter& adapter, 
     //     const std::string validity_name, const Valid& valid, 
     //     const std::string f_name, const F& f, 
@@ -115,8 +124,9 @@ TEST_CASE( "drag_per_angular_velocity commutativity", "[rock]" ) {
     DONE:
     * `drag_per_angular_velocity` is commutative wrt thickness and width
     * `drag_per_angular_velocity` is decelerating wrt thickness, length, and width
+    GOTCHAS:
+    * `drag_per_angular_velocity` is *not* scale invariant
     TODO:
-    * `drag_per_angular_velocity` is scale invariant
     * `drag_per_angular_velocity` reproduces results from Schellart 2010 when combined with appropriate torque
     * `rigid_body_torque` is linear with respect to force magnitudes
     * `buoyancy_forces ⋅ surface normal == 0` 

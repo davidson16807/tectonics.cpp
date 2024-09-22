@@ -808,6 +808,54 @@ namespace test {
             }, as);
     }
 
+    template<typename Adapter, typename F, typename G, typename A, typename B>
+    bool invariance(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as, const B& bs
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must be invariant to " + g_name + " [denoted \"g\"]" + 
+            "\nsuch that: \n  f(g(a),g(b)) = f(a,b)\n",
+            [=](auto a, auto b){
+                auto fab = f(a,b);
+                auto ga = g(a);
+                auto gb = g(b);
+                auto fgagb = f(ga,gb);
+                return Results(adapter.equal(fgagb, fab),
+                    "f(a,b)       : " + indent(adapter.print(fab), "  ") + "\n" +
+                    "g(a)         : " + indent(adapter.print(ga), "  ") + "\n" +
+                    "g(b)         : " + indent(adapter.print(gb), "  ") + "\n" +
+                    "f(g(a),g(b)) : " + indent(adapter.print(fgagb), "  ") + "\n"
+                );
+            }, as, bs);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A, typename B, typename C>
+    bool invariance(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as, const B& bs, const C& cs
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must be invariant to " + g_name + " [denoted \"g\"]" + 
+            "\nsuch that: \n  f(g(a),g(b),g(c)) = f(a,b,c)\n",
+            [=](auto a, auto b, auto c){
+                auto fabc = f(a,b,c);
+                auto ga = g(a);
+                auto gb = g(b);
+                auto gc = g(c);
+                auto fgagbgc = f(ga,gb,gc);
+                return Results(adapter.equal(fgagbgc, fabc),
+                    "f(a,b,c)          : " + indent(adapter.print(fabc), "  ") + "\n" +
+                    "g(a)              : " + indent(adapter.print(ga), "  ") + "\n" +
+                    "g(b)              : " + indent(adapter.print(gb), "  ") + "\n" +
+                    "g(c)              : " + indent(adapter.print(gc), "  ") + "\n" +
+                    "f(g(a),g(b),g(c)) : " + indent(adapter.print(fgagbgc), "  ") + "\n"
+                );
+            }, as, bs, cs);
+    }
+
     template<typename Adapter, typename F, typename G, typename A>
     bool continuity(const Adapter& adapter, 
         const std::string f_name, const F& f, 
