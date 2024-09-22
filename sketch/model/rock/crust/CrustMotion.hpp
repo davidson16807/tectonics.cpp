@@ -199,8 +199,8 @@ namespace rock {
 		}
 
 		angular_momentum drag_per_angular_velocity(
-			const length slab_thickness,
 			const length slab_length,
+			const length slab_thickness,
 			const length slab_width
 		) const {
 			/*
@@ -228,49 +228,6 @@ namespace rock {
 			return std::isnan(shape_factor*si::meter)? angular_momentum(0.0) : 
 				(24.0 * pi * mantle_viscosity * world_radius * world_radius) / shape_factor;
 		}
-
-		/*
-		TESTS:
-		* `drag_per_angular_velocity` is scale invariant
-		* `drag_per_angular_velocity` is commutative wrt thickness and width
-		* `drag_per_angular_velocity` has diminishing returns wrt thickness, length, and width
-		* `drag_per_angular_velocity` reproduces results from Schellart 2010 when combined with appropriate torque
-		* `rigid_body_torque` is linear with respect to force magnitudes
-		* `buoyancy_forces ⋅ surface normal == 0` 
-		* `slab_thickness * slab_width * slab_length` must reproduce `slab_volume`
-		* `slab_thickness * slab_area` must reproduce `slab_volume`
-		* `slab_width * slab_length` must reproduce `slab_area`
-		* `slab_width ≥ slab_length`
-		* domains:
-			* `drag_per_angular_velocity > 0`
-			* `slab_volume > 0`
-			* `slab_cell_count > 0`
-			* `slab_area > 0`
-			* `slab_thickness > 0`
-			* `slab_length > 0`
-			* `slab_width > 0`
-		* monotonic: 
-			* `drag_per_angular_velocity` increases wrt length, width, and thickness
-			* `slab_thickness` increases wrt volume
-			* `slab_length` increases wrt area
-			* `slab_width` increases wrt area
-		* rotationally invariant:
-			* `is_slab`
-			* `slab_cell_count`
-			* `slab_volume`
-			* `slab_area`
-			* `rigid_body_torque`
-			* `buoyancy_forces`
-
-		* `buoyancy_forces` in combination with `drag_per_angular_velocity` and `CrustFracture`
-			must produce velocities on the same order as velocities seen on earth
-			when given earthlike `FormationSummary`s
-		* nontrivial output in combination with `CrustFracture` when given earthlike `FormationSummary`s:
-			* 0 ≤ slab_cell_count < N
-			* 0 ≤ slab_volume < total_volume
-			* 0 ≤ slab_area < total_area
-		*/
-
     };
 
     template<int M, typename VectorCalculus, typename Grid>

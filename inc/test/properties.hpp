@@ -8,9 +8,6 @@
 
 namespace test {
 
-    template<typename T>
-    using many = std::vector<T>;
-
     template<typename Adapter, typename A>
     bool discernability(const Adapter& adapter, 
         const A& a
@@ -1309,6 +1306,154 @@ namespace test {
                 diagnostics += "g(a) : " + indent(adapter.print(ga), "  ") + "\n";
                 diagnostics += "f(a) : " + indent(adapter.print(fa), "  ") + "\n";
                 return Results(ga < gfa, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename D, typename I, typename A>
+    bool decelerating(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const std::string i_name, const I& i, 
+        const std::string d_name, const D& d, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must have decelerating returns with respect to "+g_name+" [denoted \"g\"], so that same increase to input"+
+            i_name + " [denoted \"i\"] will cause smaller changes in output (according to distance \"d\") if the starting input is larger", 
+            [=](auto a){
+                auto fa = f(a);
+                auto gfa = g(fa);
+                auto ia = i(a);
+                auto fia = f(ia);
+                auto gfia = g(fia);
+                auto iia = i(ia);
+                auto fiia = f(iia);
+                auto gfiia = g(fiia);
+                auto d1 = d(gfa, gfia);
+                auto d2 = d(gfia, gfiia);
+                std::string diagnostics;
+                diagnostics += "such that: \n  d(gf(a), gfi(a)) > d(gfi(a), gfii(a))\n";
+                diagnostics += "f(a)               : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "gf(a)              : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "fi(a)              : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "gfi(a)             : " + indent(adapter.print(gfia), "  ") + "\n";
+                diagnostics += "fii(a)             : " + indent(adapter.print(fiia), "  ") + "\n";
+                diagnostics += "gfii(a)            : " + indent(adapter.print(gfiia), "  ") + "\n";
+                diagnostics += "d(gf(a), gfi(a))   : " + indent(adapter.print(d1), "  ") + "\n";
+                diagnostics += "d(gfi(a), gfii(a)) : " + indent(adapter.print(d2), "  ") + "\n";
+                return Results(d1 > d2, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename D, typename I, typename A>
+    bool nonaccelerating(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const std::string i_name, const I& i, 
+        const std::string d_name, const D& d, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must have accelerating returns with respect to "+g_name+" [denoted \"g\"], so that same increase to input"+
+            i_name + " [denoted \"i\"] will cause smaller changes in output (according to distance \"d\") if the starting input is larger", 
+            [=](auto a){
+                auto fa = f(a);
+                auto gfa = g(fa);
+                auto ia = i(a);
+                auto fia = f(ia);
+                auto gfia = g(fia);
+                auto iia = i(ia);
+                auto fiia = f(iia);
+                auto gfiia = g(fiia);
+                auto d1 = d(gfa, gfia);
+                auto d2 = d(gfia, gfiia);
+                std::string diagnostics;
+                diagnostics += "such that: \n  d(gf(a), gfi(a)) > d(gfi(a), gfii(a))\n";
+                diagnostics += "f(a)               : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "gf(a)              : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "fi(a)              : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "gfi(a)             : " + indent(adapter.print(gfia), "  ") + "\n";
+                diagnostics += "fii(a)             : " + indent(adapter.print(fiia), "  ") + "\n";
+                diagnostics += "gfii(a)            : " + indent(adapter.print(gfiia), "  ") + "\n";
+                diagnostics += "d(gf(a), gfi(a))   : " + indent(adapter.print(d1), "  ") + "\n";
+                diagnostics += "d(gfi(a), gfii(a)) : " + indent(adapter.print(d2), "  ") + "\n";
+                return Results(d1 >= d2, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename D, typename I, typename A>
+    bool nondecelerating(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const std::string i_name, const I& i, 
+        const std::string d_name, const D& d, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must have decelerating returns with respect to "+g_name+" [denoted \"g\"], so that same increase to input"+
+            i_name + " [denoted \"i\"] will cause smaller changes in output (according to distance \"d\") if the starting input is larger", 
+            [=](auto a){
+                auto fa = f(a);
+                auto gfa = g(fa);
+                auto ia = i(a);
+                auto fia = f(ia);
+                auto gfia = g(fia);
+                auto iia = i(ia);
+                auto fiia = f(iia);
+                auto gfiia = g(fiia);
+                auto d1 = d(gfa, gfia);
+                auto d2 = d(gfia, gfiia);
+                std::string diagnostics;
+                diagnostics += "such that: \n  d(gf(a), gfi(a)) > d(gfi(a), gfii(a))\n";
+                diagnostics += "f(a)               : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "gf(a)              : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "fi(a)              : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "gfi(a)             : " + indent(adapter.print(gfia), "  ") + "\n";
+                diagnostics += "fii(a)             : " + indent(adapter.print(fiia), "  ") + "\n";
+                diagnostics += "gfii(a)            : " + indent(adapter.print(gfiia), "  ") + "\n";
+                diagnostics += "d(gf(a), gfi(a))   : " + indent(adapter.print(d1), "  ") + "\n";
+                diagnostics += "d(gfi(a), gfii(a)) : " + indent(adapter.print(d2), "  ") + "\n";
+                return Results(d1 <= d2, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename D, typename I, typename A>
+    bool accelerating(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const std::string i_name, const I& i, 
+        const std::string d_name, const D& d, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must have accelerating returns with respect to "+g_name+" [denoted \"g\"], so that same increase to input"+
+            i_name + " [denoted \"i\"] will cause smaller changes in output (according to distance \"d\") if the starting input is larger", 
+            [=](auto a){
+                auto fa = f(a);
+                auto gfa = g(fa);
+                auto ia = i(a);
+                auto fia = f(ia);
+                auto gfia = g(fia);
+                auto iia = i(ia);
+                auto fiia = f(iia);
+                auto gfiia = g(fiia);
+                auto d1 = d(gfa, gfia);
+                auto d2 = d(gfia, gfiia);
+                std::string diagnostics;
+                diagnostics += "such that: \n  d(gf(a), gfi(a)) > d(gfi(a), gfii(a))\n";
+                diagnostics += "f(a)               : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "gf(a)              : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "fi(a)              : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "gfi(a)             : " + indent(adapter.print(gfia), "  ") + "\n";
+                diagnostics += "fii(a)             : " + indent(adapter.print(fiia), "  ") + "\n";
+                diagnostics += "gfii(a)            : " + indent(adapter.print(gfiia), "  ") + "\n";
+                diagnostics += "d(gf(a), gfi(a))   : " + indent(adapter.print(d1), "  ") + "\n";
+                diagnostics += "d(gfi(a), gfii(a)) : " + indent(adapter.print(d2), "  ") + "\n";
+                return Results(d1 < d2, diagnostics); 
             }, as);
     }
 
