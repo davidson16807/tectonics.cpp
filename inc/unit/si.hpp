@@ -943,6 +943,11 @@ namespace si{
   #undef SI_MODERN_DOUBLE_PREFIXED_UNITS
   #undef SI_DEPRECATED_PRE_1960_PREFIXED_UNITS
 
+  std::string exponent(const int e)
+  {
+    std::array<std::string, 10> superscripts {"⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"};
+    return 0<=e&&e<10? (superscripts[e]) : std::to_string(e);
+  }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
   std::string to_string(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
@@ -1029,15 +1034,15 @@ namespace si{
         std::string prefix(prefixes[int(prefix_id)+N]);
         std::string result = prefixed_value + " " + prefix;
         result += named_mks[i].second;
-        result +=   K1>0? "K"  + (std::abs(  K1)>1? std::to_string(std::abs(K1  )) : "") : ""; 
-        result += MOL1>0? "mol"+ (std::abs(MOL1)>1? std::to_string(std::abs(MOL1)) : "") : ""; 
-        result +=   A1>0? "A"  + (std::abs(  A1)>1? std::to_string(std::abs(  A1)) : "") : ""; 
-        result +=  CD1>0? "Cd" + (std::abs( CD1)>1? std::to_string(std::abs( CD1)) : "") : ""; 
+        result +=   K1>0? "K"  + (std::abs(  K1)>1? exponent(std::abs(K1  )) : "") : ""; 
+        result += MOL1>0? "mol"+ (std::abs(MOL1)>1? exponent(std::abs(MOL1)) : "") : ""; 
+        result +=   A1>0? "A"  + (std::abs(  A1)>1? exponent(std::abs(  A1)) : "") : ""; 
+        result +=  CD1>0? "Cd" + (std::abs( CD1)>1? exponent(std::abs( CD1)) : "") : ""; 
         result += K1<0 || MOL1<0 || A1<0 || CD1<0? "/" : "";
-        result +=   K1<0? "K"  + (std::abs(  K1)<1? std::to_string(std::abs(K1  )) : "") : ""; 
-        result += MOL1<0? "mol"+ (std::abs(MOL1)<1? std::to_string(std::abs(MOL1)) : "") : ""; 
-        result +=   A1<0? "A"  + (std::abs(  A1)<1? std::to_string(std::abs(  A1)) : "") : ""; 
-        result +=  CD1<0? "Cd" + (std::abs( CD1)<1? std::to_string(std::abs( CD1)) : "") : ""; 
+        result +=   K1<0? "K"  + (std::abs(  K1)<1? exponent(std::abs(K1  )) : "") : ""; 
+        result += MOL1<0? "mol"+ (std::abs(MOL1)<1? exponent(std::abs(MOL1)) : "") : ""; 
+        result +=   A1<0? "A"  + (std::abs(  A1)<1? exponent(std::abs(  A1)) : "") : ""; 
+        result +=  CD1<0? "Cd" + (std::abs( CD1)<1? exponent(std::abs( CD1)) : "") : ""; 
         return result;
       }
     }
@@ -1045,21 +1050,21 @@ namespace si{
     // fall back on SI base units 
     std::string result = std::to_string(raw) + " ";
     result += M1<0 && KG1<0 && S1<0 && K1<0 && MOL1<0 && A1<0 && CD1<0? "1" : "";
-    result +=   M1>0? "m"  + (std::abs(  M1)>1? std::to_string(std::abs(M1  )) : "") : ""; 
-    result +=  KG1>0? "kg" + (std::abs( KG1)>1? std::to_string(std::abs(KG1 )) : "") : ""; 
-    result +=   S1>0? "s"  + (std::abs(  S1)>1? std::to_string(std::abs(S1  )) : "") : ""; 
-    result +=   K1>0? "K"  + (std::abs(  K1)>1? std::to_string(std::abs(K1  )) : "") : ""; 
-    result += MOL1>0? "mol"+ (std::abs(MOL1)>1? std::to_string(std::abs(MOL1)) : "") : ""; 
-    result +=   A1>0? "A"  + (std::abs(  A1)>1? std::to_string(std::abs(  A1)) : "") : ""; 
-    result +=  CD1>0? "Cd" + (std::abs( CD1)>1? std::to_string(std::abs( CD1)) : "") : ""; 
+    result +=   M1>0? "m"  + (std::abs(  M1)>1? exponent(std::abs(M1  )) : "") : ""; 
+    result +=  KG1>0? "kg" + (std::abs( KG1)>1? exponent(std::abs(KG1 )) : "") : ""; 
+    result +=   S1>0? "s"  + (std::abs(  S1)>1? exponent(std::abs(S1  )) : "") : ""; 
+    result +=   K1>0? "K"  + (std::abs(  K1)>1? exponent(std::abs(K1  )) : "") : ""; 
+    result += MOL1>0? "mol"+ (std::abs(MOL1)>1? exponent(std::abs(MOL1)) : "") : ""; 
+    result +=   A1>0? "A"  + (std::abs(  A1)>1? exponent(std::abs(  A1)) : "") : ""; 
+    result +=  CD1>0? "Cd" + (std::abs( CD1)>1? exponent(std::abs( CD1)) : "") : ""; 
     result += M1<0 || KG1<0 || S1<0 || K1<0 || MOL1<0 || A1<0 || CD1<0? "/" : "";
-    result +=   M1<0? "m"  + (std::abs(  M1)<1? std::to_string(std::abs(M1  )) : "") : ""; 
-    result +=  KG1<0? "kg" + (std::abs( KG1)<1? std::to_string(std::abs(KG1 )) : "") : ""; 
-    result +=   S1<0? "s"  + (std::abs(  S1)<1? std::to_string(std::abs(S1  )) : "") : ""; 
-    result +=   K1<0? "K"  + (std::abs(  K1)<1? std::to_string(std::abs(K1  )) : "") : ""; 
-    result += MOL1<0? "mol"+ (std::abs(MOL1)<1? std::to_string(std::abs(MOL1)) : "") : ""; 
-    result +=   A1<0? "A"  + (std::abs(  A1)<1? std::to_string(std::abs(  A1)) : "") : ""; 
-    result +=  CD1<0? "Cd" + (std::abs( CD1)<1? std::to_string(std::abs( CD1)) : "") : ""; 
+    result +=   M1<0? "m"  + (std::abs(  M1)<1? exponent(std::abs(M1  )) : "") : ""; 
+    result +=  KG1<0? "kg" + (std::abs( KG1)<1? exponent(std::abs(KG1 )) : "") : ""; 
+    result +=   S1<0? "s"  + (std::abs(  S1)<1? exponent(std::abs(S1  )) : "") : ""; 
+    result +=   K1<0? "K"  + (std::abs(  K1)<1? exponent(std::abs(K1  )) : "") : ""; 
+    result += MOL1<0? "mol"+ (std::abs(MOL1)<1? exponent(std::abs(MOL1)) : "") : ""; 
+    result +=   A1<0? "A"  + (std::abs(  A1)<1? exponent(std::abs(  A1)) : "") : ""; 
+    result +=  CD1<0? "Cd" + (std::abs( CD1)<1? exponent(std::abs( CD1)) : "") : ""; 
     return result;
   }
 
