@@ -133,8 +133,9 @@ TEST_CASE( "drag_per_angular_velocity", "[rock]" ) {
 
 TEST_CASE( "slab properties", "[rock]" ) {
 
-    using area = si::area<double>;
     using length = si::length<double>;
+    using area = si::area<double>;
+    using volume = si::volume<double>;
     using density = si::density<double>;
     using viscosity = si::dynamic_viscosity<double>;
     using acceleration = si::acceleration<double>;
@@ -170,6 +171,13 @@ TEST_CASE( "slab properties", "[rock]" ) {
         area(world_radius*world_radius)
     };
 
+    std::vector<volume> positive_volumes{
+        // volume(0),
+        volume(si::meter3),
+        volume(si::kilometer3),
+        volume(world_radius*world_radius*world_radius)
+    };
+
     std::vector<int> positive_cell_counts{1, 10, 100, 1000, 10000, 100000};
 
     // rock::CrustAdapter<M,F> testing(0.01);
@@ -185,6 +193,12 @@ TEST_CASE( "slab properties", "[rock]" ) {
         "nonnegative", [=](auto y){ return y >= length(0); },
         "slab_length", [=](auto area_, auto cell_count){ return motion.slab_length(area_,cell_count);}, 
         areas, positive_cell_counts
+    ));
+
+    REQUIRE(test::codomain(adapter, 
+        "nonnegative", [=](auto y){ return y >= length(0); },
+        "slab_thickness", [=](auto area_, auto volume_){ return motion.slab_thickness(volume_, area_);}, 
+        areas, positive_volumes
     ));
 
     for(const auto& area_ : areas){
@@ -220,6 +234,15 @@ TEST_CASE( "slab properties", "[rock]" ) {
         ));
     }
 
+    for(const auto& volume_ : positive_volumes){
+        REQUIRE(test::nonincreasing(adapter, 
+            "slab_thickness", [=](auto area_){ return motion.slab_thickness(volume_, area_); },
+            "identity",  [](auto x){return x;},
+            "increment", [](auto x){return x+area(10);},
+            areas
+        ));
+    }
+
 }
 
 
@@ -232,10 +255,12 @@ DONE:
     * `drag_per_angular_velocity > 0`
     * `slab_length > 0`
     * `slab_width > 0`
+    * `slab_thickness > 0`
 * monotonic: 
     * `drag_per_angular_velocity` increases wrt length, width, and thickness
     * `slab_length` increases wrt area
     * `slab_width` increases wrt area
+    * `slab_thickness` increases wrt volume
 GOTCHAS:
 * `drag_per_angular_velocity` is *not* scale invariant
 TODO:
@@ -249,9 +274,6 @@ TODO:
     * `slab_volume > 0`
     * `slab_cell_count > 0`
     * `slab_area > 0`
-    * `slab_thickness > 0`
-* monotonic: 
-    * `slab_thickness` increases wrt volume
 * rotationally invariant:
     * `is_slab`
     * `slab_cell_count`
