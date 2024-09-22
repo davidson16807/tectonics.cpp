@@ -62,12 +62,6 @@ namespace genes
         to prevent underflow/overflow and prevent generation of illegal state space.
         These classes require encode() and decode() as methods, 
         and I design the other classes to follow suit to create consistent design.
-
-        So I'm refining by principle for avoiding methods: 
-        You should never declare a pure function as a method unless you are willing 
-        to reason with that function's behavior while not knowing
-        which attributes within the class are touched.
-        This is because the attributes that are touched are not clearly stated in a function signature.
         */
         template<typename TIterator>
         TIterator encode(TIterator output) const

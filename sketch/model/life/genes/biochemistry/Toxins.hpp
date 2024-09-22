@@ -18,7 +18,7 @@ namespace genes
     struct Toxins
     {
         float coagulance; // whether the toxins act collectively as a coagulant or anticoagulant (e.g. snake venom)
-        float acidity; // whether the toxins act as an acid (e.g. bees, ants)
+        float acidity; // whether the toxins act as an acid (e.g. bees, ants) or a base
         float neurotoxicity; // whether the toxin disrupts signaling between neurons (e.g. tetanus, botulitum, black widow venom)
         float necrotoxicity; // whether the toxin causes deterioration of cell walls (e.g. brown recluse venom)
 
