@@ -209,8 +209,8 @@ namespace rock {
 			ς = ³/₈⎮  ⎻⎻⎻⎻⎻⎻⎻ ⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻⎻ dλ
 			       ⌡0   L²+λ  √((L²+λ)(T²+λ)(W²+λ))
 			*/
-			length max_dimension(std::max(std::max(slab_length, slab_thickness), slab_width));
-			area max_lambda(max_dimension*max_dimension);
+			length max_dimension(si::max(10*si::kilometer, si::max(si::max(slab_length, slab_thickness), slab_width)));
+			area max_lambda(max_dimension*max_dimension); // clamp to a big number
 			area dlambda(max_lambda/double(lambda_sample_count));
 			area lambda(0.0);
 			si::spatial_frequency<double> shape_factor;

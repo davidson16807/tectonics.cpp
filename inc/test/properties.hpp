@@ -1357,6 +1357,114 @@ namespace test {
             }, as);
     }
 
+    template<typename Adapter, typename F, typename G, typename A, typename I>
+    bool decreasing(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const std::string i_name, const I& i, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must be decreasing with respect to "+g_name+" [denoted \"g\"], so that an increase to input [denoted \"i\"] corresponds to a decrease to output", 
+            [=](auto a){
+                auto fa = f(a);
+                auto gfa = g(fa);
+                auto ia = i(a);
+                auto fia = f(ia);
+                auto gfia = g(fia);
+                std::string diagnostics;
+                diagnostics += "such that: \n  g(f(a)) > g(f(i(a)))\n";
+                diagnostics += "f(a)   : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "gf(a)  : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "i(a)   : " + indent(adapter.print(ia), "  ") + "\n";
+                diagnostics += "fi(a)  : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "gfi(a) : " + indent(adapter.print(gfia), "  ") + "\n";
+                return Results(gfa > gfia, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A, typename I>
+    bool nonincreasing(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const std::string i_name, const I& i, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must be nonincreasing with respect to "+g_name+" [denoted \"g\"], so that an increase to input [denoted \"i\"] corresponds to a decrease to output if any change occurs", 
+            [=](auto a){
+                auto fa = f(a);
+                auto gfa = g(fa);
+                auto ia = i(a);
+                auto fia = f(ia);
+                auto gfia = g(fia);
+                std::string diagnostics;
+                diagnostics += "such that: \n  g(f(a)) ≥ g(f(i(a)))\n";
+                diagnostics += "f(a)   : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "gf(a)  : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "i(a)   : " + indent(adapter.print(ia), "  ") + "\n";
+                diagnostics += "fi(a)  : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "gfi(a) : " + indent(adapter.print(gfia), "  ") + "\n";
+                return Results(gfa >= gfia, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A, typename I>
+    bool nondecreasing(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const std::string i_name, const I& i, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must be nondecreasing with respect to "+g_name+" [denoted \"g\"], so that an increase to input [denoted \"i\"] corresponds to a increase to output if any change occurs", 
+            [=](auto a){
+                auto fa = f(a);
+                auto gfa = g(fa);
+                auto ia = i(a);
+                auto fia = f(ia);
+                auto gfia = g(fia);
+                std::string diagnostics;
+                diagnostics += "such that: \n  g(f(a)) ≤ g(f(i(a)))\n";
+                diagnostics += "f(a)   : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "gf(a)  : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "i(a)   : " + indent(adapter.print(ia), "  ") + "\n";
+                diagnostics += "fi(a)  : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "gfi(a) : " + indent(adapter.print(gfia), "  ") + "\n";
+                return Results(gfa <= gfia, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A, typename I>
+    bool increasing(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const std::string i_name, const I& i, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must be increasing with respect to "+g_name+" [denoted \"g\"], so that an increase to input [denoted \"i\"] corresponds to a increase to output", 
+            [=](auto a){
+                auto fa = f(a);
+                auto gfa = g(fa);
+                auto ia = i(a);
+                auto fia = f(ia);
+                auto gfia = g(fia);
+                std::string diagnostics;
+                diagnostics += "such that: \n  g(f(a)) < g(f(i(a)))\n";
+                diagnostics += "f(a)   : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "gf(a)  : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "i(a)   : " + indent(adapter.print(ia), "  ") + "\n";
+                diagnostics += "fi(a)  : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "gfi(a) : " + indent(adapter.print(gfia), "  ") + "\n";
+                return Results(gfa < gfia, diagnostics); 
+            }, as);
+    }
+
     template<typename Adapter, typename F, typename G, typename D, typename I, typename A>
     bool decelerating(const Adapter& adapter, 
         const std::string f_name, const F& f, 
@@ -1384,6 +1492,7 @@ namespace test {
                 diagnostics += "such that: \n  d(gf(a), gfi(a)) > d(gfi(a), gfii(a))\n";
                 diagnostics += "f(a)               : " + indent(adapter.print(fa), "  ") + "\n";
                 diagnostics += "gf(a)              : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "i(a)               : " + indent(adapter.print(ia), "  ") + "\n";
                 diagnostics += "fi(a)              : " + indent(adapter.print(fia), "  ") + "\n";
                 diagnostics += "gfi(a)             : " + indent(adapter.print(gfia), "  ") + "\n";
                 diagnostics += "fii(a)             : " + indent(adapter.print(fiia), "  ") + "\n";
@@ -1421,6 +1530,7 @@ namespace test {
                 diagnostics += "such that: \n  d(gf(a), gfi(a)) > d(gfi(a), gfii(a))\n";
                 diagnostics += "f(a)               : " + indent(adapter.print(fa), "  ") + "\n";
                 diagnostics += "gf(a)              : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "i(a)               : " + indent(adapter.print(ia), "  ") + "\n";
                 diagnostics += "fi(a)              : " + indent(adapter.print(fia), "  ") + "\n";
                 diagnostics += "gfi(a)             : " + indent(adapter.print(gfia), "  ") + "\n";
                 diagnostics += "fii(a)             : " + indent(adapter.print(fiia), "  ") + "\n";
@@ -1441,7 +1551,7 @@ namespace test {
     ) {
         return predicate(
             adapter,
-            f_name + " [denoted \"f\"] must have decelerating returns with respect to "+g_name+" [denoted \"g\"], so that same increase to input"+
+            f_name + " [denoted \"f\"] must have nondecelerating returns with respect to "+g_name+" [denoted \"g\"], so that same increase to input"+
             i_name + " [denoted \"i\"] will cause smaller changes in output (according to distance \"d\") if the starting input is larger", 
             [=](auto a){
                 auto fa = f(a);
@@ -1458,6 +1568,7 @@ namespace test {
                 diagnostics += "such that: \n  d(gf(a), gfi(a)) > d(gfi(a), gfii(a))\n";
                 diagnostics += "f(a)               : " + indent(adapter.print(fa), "  ") + "\n";
                 diagnostics += "gf(a)              : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "i(a)               : " + indent(adapter.print(ia), "  ") + "\n";
                 diagnostics += "fi(a)              : " + indent(adapter.print(fia), "  ") + "\n";
                 diagnostics += "gfi(a)             : " + indent(adapter.print(gfia), "  ") + "\n";
                 diagnostics += "fii(a)             : " + indent(adapter.print(fiia), "  ") + "\n";
@@ -1495,6 +1606,7 @@ namespace test {
                 diagnostics += "such that: \n  d(gf(a), gfi(a)) > d(gfi(a), gfii(a))\n";
                 diagnostics += "f(a)               : " + indent(adapter.print(fa), "  ") + "\n";
                 diagnostics += "gf(a)              : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "i(a)               : " + indent(adapter.print(ia), "  ") + "\n";
                 diagnostics += "fi(a)              : " + indent(adapter.print(fia), "  ") + "\n";
                 diagnostics += "gfi(a)             : " + indent(adapter.print(gfia), "  ") + "\n";
                 diagnostics += "fii(a)             : " + indent(adapter.print(fiia), "  ") + "\n";
