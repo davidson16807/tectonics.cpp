@@ -187,6 +187,39 @@ TEST_CASE( "slab properties", "[rock]" ) {
         areas, positive_cell_counts
     ));
 
+    for(const auto& area_ : areas){
+        REQUIRE(test::nonincreasing(adapter, 
+            "slab_width", [=](auto length_){ return motion.slab_width(area_, length_); },
+            "identity",  [](auto x){return x;},
+            "increment", [](auto x){return x+length(10);},
+            positive_lengths
+        ));
+        REQUIRE(test::nonincreasing(adapter, 
+            "slab_length", [=](auto cell_count){ return motion.slab_length(area_, cell_count); },
+            "identity",  [](auto x){return x;},
+            "increment", [](auto x){return x+1;},
+            positive_cell_counts
+        ));
+    }
+
+    for(const auto& length_ : positive_lengths){
+        REQUIRE(test::increasing(adapter, 
+            "slab_width", [=](auto area_){ return motion.slab_width(area_, length_); },
+            "identity",  [](auto x){return x;},
+            "increment", [](auto x){return x+area(10);},
+            areas
+        ));
+    }
+
+    for(const auto& cell_count : positive_cell_counts){
+        REQUIRE(test::increasing(adapter, 
+            "slab_length", [=](auto area_){ return motion.slab_length(area_, cell_count); },
+            "identity",  [](auto x){return x;},
+            "increment", [](auto x){return x+area(10);},
+            areas
+        ));
+    }
+
 }
 
 
@@ -197,8 +230,12 @@ DONE:
 * `drag_per_angular_velocity` is decelerating wrt thickness, length, and width
 * domains:
     * `drag_per_angular_velocity > 0`
+    * `slab_length > 0`
+    * `slab_width > 0`
 * monotonic: 
     * `drag_per_angular_velocity` increases wrt length, width, and thickness
+    * `slab_length` increases wrt area
+    * `slab_width` increases wrt area
 GOTCHAS:
 * `drag_per_angular_velocity` is *not* scale invariant
 TODO:
@@ -213,12 +250,8 @@ TODO:
     * `slab_cell_count > 0`
     * `slab_area > 0`
     * `slab_thickness > 0`
-    * `slab_length > 0`
-    * `slab_width > 0`
 * monotonic: 
     * `slab_thickness` increases wrt volume
-    * `slab_length` increases wrt area
-    * `slab_width` increases wrt area
 * rotationally invariant:
     * `is_slab`
     * `slab_cell_count`
