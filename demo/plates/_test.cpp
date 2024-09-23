@@ -32,6 +32,7 @@
 #include <index/adapted/symbolic/SymbolicArithmetic.hpp>
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
 #include <index/adapted/si/SiStrings.hpp>
+#include <index/adapted/glm/GlmMetric.hpp>
 #include <index/aggregated/Order.hpp>
 #include <index/iterated/Nary.hpp>
 #include <index/iterated/Arithmetic.hpp>
@@ -48,6 +49,8 @@
 #include <grid/dymaxion/buffer/WholeGridBuffers.hpp>// dymaxion::WholeGridBuffers
 
 #include <raster/unlayered/VectorCalculusByFundamentalTheorem.hpp> // unlayered::VectorCalculusByFundamentalTheorem
+#include <raster/unlayered/FloodFilling.hpp>        // unlayered::FloodFilling
+#include <raster/unlayered/ImageSegmentation.hpp>   // unlayered::ImageSegmentation
 #include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
 
 // #include <model/rock/stratum/StratumGenerator.hpp>  // StratumGenerator
@@ -159,29 +162,7 @@ int main() {
   auto strings = spheroidal::Strings(substrings, ordered);
   std::cout << strings.format(grid, elevation) << std::endl << std::endl;
 
-
   auto vertex_scalars1 = elevation_in_meters;
-
-  // auto vertex_directions = known::store(
-  //     grid.vertex_count(),
-  //     series::map(
-  //         field::vector3_zip(
-  //             field::elias_noise<float>(
-  //                     series::unit_vector_noise<3>(10.0f, 1.0e4f), 
-  //                     series::gaussian(11.0f, 1.1e4f), 
-  //                     1000),
-  //             field::elias_noise<float>(
-  //                     series::unit_vector_noise<3>(11.0f, 1.1e4f), 
-  //                     series::gaussian(12.0f, 1.2e4f), 
-  //                     1000),
-  //             field::elias_noise<float>(
-  //                     series::unit_vector_noise<3>(12.0f, 1.2e4f), 
-  //                     series::gaussian(13.0f, 1.3e4f), 
-  //                     1000)
-  //         ),
-  //         dymaxion::vertex_positions(grid)
-  //     )
-  // );
 
   std::vector<glm::vec3> vertex_gradient(grid.vertex_count());
   unlayered::VectorCalculusByFundamentalTheorem spatial;
@@ -203,6 +184,22 @@ int main() {
   std::vector<bool> mask1(grid.vertex_count());
   std::vector<bool> mask2(grid.vertex_count());
   std::vector<bool> mask3(grid.vertex_count());
+
+  auto filling = unlayered::flood_filling<int,float>(
+    [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 60.0f/180.0f); }
+  );
+  // filling.fill(
+  //   grid, vertex_gradient, 
+  //   series::uniform(true),
+  //   whole::max_id(known::length<float>(vertex_gradient)), 
+  //   vertex_colored_scalars, 
+  //   mask1
+  // );
+  auto segmentation = unlayered::image_segmentation<int,float>(filling, adapted::GlmMetric{});
+  segmentation.segment(
+    grid, vertex_gradient, 7, 10, 
+    vertex_colored_scalars, scratch, mask1, mask2, mask3
+  );
 
   each::copy(vertex_colored_scalars, buffer_color_values);
   each::copy(vertex_square_ids, buffer_square_ids);
@@ -282,44 +279,32 @@ int main() {
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-      // colorscale_program.draw(
-      //   buffer_positions,    // position
-      //   buffer_color_values, // color value
-      //   buffer_uniform,      // displacement
-      //   buffer_scalars1,     // darken
-      //   buffer_scalars2,     // culling
+      // debug_program.draw(
+      //   buffer_positions,
+      //   // buffer_color_values, // red
+      //   std::vector<float>(grid.vertex_count(), 0.0f), // red
+      //   buffer_color_values, // green
+      //   std::vector<float>(grid.vertex_count(), 0.0f), // blue
+      //   std::vector<float>(grid.vertex_count(), 1.0f), // opacity
+      //   std::vector<float>(grid.vertex_count(), 0.0f), // displacement
       //   buffer_element_vertex_ids,
-      //   colorscale_state,
+      //   glm::vec4(0.0f, -10000.0f, 0.0f, 0.0f),
+      //   glm::vec4(0.0f,  10000.0f, 1.0f, 1.0f),
       //   view_state,
       //   GL_TRIANGLE_STRIP
       // );
 
-      debug_program.draw(
-        buffer_positions,
-        // buffer_color_values, // red
-        std::vector<float>(grid.vertex_count(), 0.0f), // red
-        buffer_scalars1, // green
-        std::vector<float>(grid.vertex_count(), 0.0f), // blue
-        std::vector<float>(grid.vertex_count(), 1.0f), // opacity
-        std::vector<float>(grid.vertex_count(), 0.0f), // displacement
+      colorscale_program.draw(
+        buffer_positions,    // position
+        buffer_color_values, // color value
+        buffer_uniform,      // displacement
+        buffer_uniform,      // darken
+        buffer_uniform,      // culling
         buffer_element_vertex_ids,
-        glm::vec4(0.0f, -10000.0f, 0.0f, 0.0f),
-        glm::vec4(0.0f,  10000.0f, 1.0f, 1.0f),
+        colorscale_state,
         view_state,
         GL_TRIANGLE_STRIP
       );
-
-      // colorscale_program.draw(
-      //   buffer_positions,    // position
-      //   buffer_color_values,   // color value
-      //   buffer_uniform,      // displacement
-      //   buffer_uniform,      // darken
-      //   buffer_uniform,      // culling
-      //   buffer_element_vertex_ids,
-      //   colorscale_state,
-      //   view_state,
-      //   GL_TRIANGLE_STRIP
-      // );
 
       // indicator_program.draw(
       //   vectors_element_position,
