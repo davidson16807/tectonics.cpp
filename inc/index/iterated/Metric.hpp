@@ -59,8 +59,8 @@ namespace iterated
 			elements(elements)
 		{}
 		ITERATED_BINARY_METHOD(elements.distance,   distance)
-		ITERATED_BINARY_METHOD(elements.length,     length)
-		ITERATED_BINARY_METHOD(elements.normalize,  normalize)
+		ITERATED_UNARY_METHOD(elements.normalize,  normalize)
+		ITERATED_UNARY_METHOD(elements.length,     length)
 	};
 
 	#undef ITERATED_UNARY_METHOD
