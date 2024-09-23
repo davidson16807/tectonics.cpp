@@ -13,12 +13,14 @@ namespace unlayered
     template<typename id, typename scalar, typename IsSimilar>
     struct FloodFilling
     {
-        IsSimilar is_similar;
+        const IsSimilar is_similar;
+        const iterated::Identity copy;
 
         /* VectorFloodFill(
             [](auto U, auto V){return glm::similarity (U,V) > Math.cos(Math.PI * 60/180)}) */
         FloodFilling(const IsSimilar is_similar):
-            is_similar(is_similar)
+            is_similar(is_similar),
+            copy()
         {}
 
         template<typename Grid, typename Raster, typename Mask, typename Scratch, typename Out>
@@ -27,8 +29,8 @@ namespace unlayered
 
             std::deque<id> searching { start_id };
             Scratch& searched = scratch;
-            each::copy(series::uniform(false), searched);
-            each::copy(series::uniform(0), out);
+            copy(series::uniform(false), searched);
+            copy(series::uniform(0), out);
 
             searched[start_id] = true;
 
