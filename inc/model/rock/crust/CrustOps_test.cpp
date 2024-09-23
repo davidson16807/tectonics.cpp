@@ -72,7 +72,7 @@ TEST_CASE( "CrustOps::absorb() monoid", "[rock]" ) {
     dymaxion::Grid grid(radius/meter, vertices_per_square_side);
     rock::EarthlikeIgneousFormationGeneration generation(grid, radius/2.0f, 0.5f, 10);
 
-    iterated::Copy copy{};
+    iterated::Identity copy{};
     rock::Formation<M> formation1(grid.vertex_count());
     copy(generation(12.0f, 1.1e4f), formation1);
 
@@ -134,7 +134,7 @@ TEST_CASE( "CrustOps::absorb() mass conservation", "[rock]" ) {
     dymaxion::Grid grid(radius/meter, vertices_per_square_side);
     rock::EarthlikeIgneousFormationGeneration generation(grid, radius/2.0f, 0.5f, 10);
 
-    iterated::Copy copy{};
+    iterated::Identity copy{};
     rock::Formation<M> formation1(grid.vertex_count());
     copy(generation(12.0f, 1.1e4f), formation1);
 

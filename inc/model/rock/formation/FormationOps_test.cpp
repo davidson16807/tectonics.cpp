@@ -29,7 +29,7 @@ TEST_CASE( "FormationOps::absorb() commutative monoid", "[rock]" ) {
     dymaxion::Grid grid(radius/meter, vertices_per_square_side);
     rock::EarthlikeIgneousFormationGeneration generation(grid, radius/2.0f, 0.5f, 10);
 
-    iterated::Copy copy{};
+    iterated::Identity copy{};
     rock::Formation<M> formation1(grid.vertex_count());
     copy(generation(12.0f, 1.1e4f), formation1);
 
@@ -116,7 +116,7 @@ TEST_CASE( "Formation combine() mass conservation", "[rock]" ) {
     const int M = 2;
     const int F = 2;
 
-    iterated::Copy copy{};
+    iterated::Identity copy{};
     rock::Formation<M> a;
     rock::Formation<M> b;
     copy(igneous(field::compose(
