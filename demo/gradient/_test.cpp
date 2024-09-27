@@ -72,7 +72,7 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // we don't want the old OpenGL
 
   // open a window
-  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Terrain", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Gradient", NULL, NULL);
   if (!window) {
     std::cout << stderr << " ERROR: could not open window with GLFW3" << std::endl;
     glfwTerminate();
@@ -159,7 +159,33 @@ int main() {
   auto strings = spheroidal::Strings(substrings, ordered);
   std::cout << strings.format(grid, elevation) << std::endl << std::endl;
 
+
   auto vertex_scalars1 = elevation_in_meters;
+
+  // auto vertex_directions = known::store(
+  //     grid.vertex_count(),
+  //     series::map(
+  //         field::vector3_zip(
+  //             field::elias_noise<float>(
+  //                     series::unit_vector_noise<3>(10.0f, 1.0e4f), 
+  //                     series::gaussian(11.0f, 1.1e4f), 
+  //                     1000),
+  //             field::elias_noise<float>(
+  //                     series::unit_vector_noise<3>(11.0f, 1.1e4f), 
+  //                     series::gaussian(12.0f, 1.2e4f), 
+  //                     1000),
+  //             field::elias_noise<float>(
+  //                     series::unit_vector_noise<3>(12.0f, 1.2e4f), 
+  //                     series::gaussian(13.0f, 1.3e4f), 
+  //                     1000)
+  //         ),
+  //         dymaxion::vertex_positions(grid)
+  //     )
+  // );
+
+  std::vector<glm::vec3> vertex_gradient(grid.vertex_count());
+  unlayered::VectorCalculusByFundamentalTheorem spatial;
+  spatial.gradient(grid, vertex_scalars1, vertex_gradient);
 
   // flatten raster for OpenGL
   dymaxion::WholeGridBuffers<int,float> grids(vertices_per_square_side);
@@ -185,6 +211,27 @@ int main() {
   each::copy(vertex_positions, buffer_positions);
   grids.storeTriangleStrips(series::range<unsigned int>(grid.vertex_count()), buffer_element_vertex_ids);
 
+  // flatten vector raster for OpenGL
+  buffer::PyramidBuffers<int, float> pyramids;
+  std::vector<glm::vec3> vectors_element_position(pyramids.triangles_size<3>(3));
+  std::vector<glm::vec3> vectors_instance_position(grid.vertex_count());
+  std::vector<glm::vec3> vectors_instance_heading(grid.vertex_count());
+  std::vector<glm::vec3> vectors_instance_up(grid.vertex_count());
+  std::vector<glm::vec4> vectors_instance_color(grid.vertex_count(), glm::vec4(1.0f));
+  std::vector<float> vectors_instance_scale(grid.vertex_count());
+  float pyramid_radius(grid.total_circumference()/(8.0*grid.vertices_per_meridian()));
+  float pyramid_halflength(2.5f*pyramid_radius);
+  pyramids.storeTriangles(
+      glm::vec3(-1,0,0) * pyramid_halflength, 
+      glm::vec3(1,0,0)  * pyramid_halflength, 
+      glm::vec3(0,0,1), pyramid_radius, 3,
+      vectors_element_position);
+  each::copy   (known::mult(vertex_positions, series::uniform(1+pyramid_halflength/grid.total_radius())),  vectors_instance_position);
+  each::copy   (vertex_gradient,   vectors_instance_heading);
+  each::copy   (vertex_normals,    vectors_instance_up);
+  each::length (vertex_gradient,   vectors_instance_scale);
+  each::div    (vectors_instance_scale, series::uniform(whole::max(vectors_instance_scale)), vectors_instance_scale);
+
   // initialize control state
   update::OrbitalControlState control_state;
   control_state.min_zoom_distance = 1.0f;
@@ -208,7 +255,21 @@ int main() {
 
   // initialize shader program
   view::ColorscaleSurfaceShaderProgram colorscale_program;  
+  view::IndicatorSwarmShaderProgram indicator_program;  
   view::MultichannelSurfaceShaderProgram debug_program;
+
+  // initialize data for shader program
+  std::vector<float> points = {
+   0.0f,  0.5f,  0.0f,
+   0.5f, -0.5f,  0.0f,
+  -0.5f, -0.5f,  0.0f
+  };
+
+  std::vector<float> colors = {
+   1.0f,  
+   0.0f,  
+   0.0f
+  };
 
   // initialize MessageQueue for MVU architecture
   messages::MessageQueue message_queue;
@@ -234,6 +295,29 @@ int main() {
         glm::vec4(0.0f,  10000.0f, 1.0f, 1.0f),
         view_state,
         GL_TRIANGLE_STRIP
+      );
+
+      // colorscale_program.draw(
+      //   buffer_positions,    // position
+      //   buffer_color_values,   // color value
+      //   buffer_uniform,      // displacement
+      //   buffer_uniform,      // darken
+      //   buffer_uniform,      // culling
+      //   buffer_element_vertex_ids,
+      //   colorscale_state,
+      //   view_state,
+      //   GL_TRIANGLE_STRIP
+      // );
+
+      indicator_program.draw(
+        vectors_element_position,
+        vectors_instance_position,
+        vectors_instance_heading,
+        vectors_instance_up,
+        vectors_instance_scale,
+        vectors_instance_color,
+        view_state,
+        GL_TRIANGLES
       );
 
       // put stuff we've been drawing onto the display
