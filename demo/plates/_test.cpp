@@ -118,8 +118,6 @@ int main() {
   for (int i = 0; i < grid.vertex_count(); ++i)
   {
     vertex_colored_scalars[i] = grid.memory.memory_id(grid.memory.grid_id(i));
-    // vertex_colored_scalars[i] = grid.memory.memory_id(grid.memory.grid_id(i)+glm::ivec2(10,10));
-    // vertex_colored_scalars[i] = (grid.vertex_position(i).z);
   }
 
   float min_elevation(-16000.0f);
@@ -157,6 +155,8 @@ int main() {
   iterated::Arithmetic arithmetic(adapted::SymbolicArithmetic(length(0),length(1)));
   arithmetic.subtract(elevation, series::uniform(length(min_earth_elevation)), elevation);
 
+  iterated::Identity copy;
+
   adapted::SymbolicOrder suborder;
   adapted::SiStrings substrings;
   aggregated::Order ordered(suborder);
@@ -180,15 +180,15 @@ int main() {
   std::vector<unsigned int> buffer_element_vertex_ids(grids.triangle_strips_size(vertex_positions));
   std::cout << "vertex count:        " << grid.vertex_count() << std::endl;
   std::cout << "vertices per meridian" << grid.vertices_per_meridian() << std::endl;
-  // each::copy(vertex_colored_scalars, buffer_color_values);
+  // copy(vertex_colored_scalars, buffer_color_values);
   std::vector<float> scratch(grid.vertex_count());
   std::vector<bool> mask1(grid.vertex_count());
   std::vector<bool> mask2(grid.vertex_count());
   std::vector<bool> mask3(grid.vertex_count());
 
-  // auto filling = unlayered::flood_filling<int,float>(
-  //   [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 60.0f/180.0f); }
-  // );
+  auto filling = unlayered::flood_filling<int,float>(
+    [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 60.0f/180.0f); }
+  );
   // filling.fill(
   //   grid, vertex_gradient, 
   //   series::uniform(true),
@@ -196,61 +196,39 @@ int main() {
   //   vertex_colored_scalars, 
   //   mask1
   // );
-  auto metric = iterated::Metric{adapted::GlmMetric{}};
-  // auto segmentation = unlayered::image_segmentation<int,float>(filling, adapted::GlmMetric{});
-  auto voronoi = unlayered::Voronoi{adapted::GlmMetric{}};
-  // std::vector<std::uint8_t> similar_plate_id(grid.vertex_count());
-  std::vector<std::uint8_t> nearest_plate_id(grid.vertex_count());
-  // std::vector<int> plate_cell_counts(grid.vertex_count());
+  // auto metric = iterated::Metric{adapted::GlmMetric{}};
+  auto segment = unlayered::image_segmentation<int,float>(filling, adapted::GlmMetric{});
+  // auto voronoi = unlayered::Voronoi{adapted::GlmMetric{}};
+  std::vector<std::uint8_t> similar_plate_id(grid.vertex_count());
+  // std::vector<std::uint8_t> nearest_plate_id(grid.vertex_count());
   // std::vector<bool> is_undecided(grid.vertex_count());
-  // segmentation.segment(
-  //   grid, vertex_gradient, 7, 10, 
-  //   similar_plate_id, scratch, mask1, mask2, mask3
-  // );
+  segment(
+    grid, vertex_gradient, 7, 10, 
+    similar_plate_id, scratch, mask1, mask2, mask3
+  );
   // statistics.sum(similar_plate_id, vertex_positions, plate_seeds);
-  using vec3 = glm::vec3;
-  std::vector<vec3>plate_seeds{
-    vec3( 1, 1, 1),
-    vec3( 1, 1,-1),
-    vec3( 1,-1, 1),
-    vec3( 1,-1,-1),
-    vec3(-1, 1, 1),
-    vec3(-1, 1,-1),
-    vec3(-1,-1, 1),
-    vec3(-1,-1,-1)
-  };
-  metric.normalize(plate_seeds, plate_seeds);
-  voronoi(vertex_positions, plate_seeds, nearest_plate_id);
+  // using vec3 = glm::vec3;
+  // std::vector<vec3>plate_seeds{
+  //   vec3( 1, 1, 1),
+  //   vec3( 1, 1,-1),
+  //   vec3( 1,-1, 1),
+  //   vec3( 1,-1,-1),
+  //   vec3(-1, 1, 1),
+  //   vec3(-1, 1,-1),
+  //   vec3(-1,-1, 1),
+  //   vec3(-1,-1,-1)
+  // };
+  // metric.normalize(plate_seeds, plate_seeds);
+  // voronoi(vertex_positions, plate_seeds, nearest_plate_id);
   // order.equal(flooded_plate_id, series::uniform(0), is_undecided);
   // ternary(is_undecided, nearest_plate_id, similar_plate_id);
 
-  each::copy(nearest_plate_id, buffer_color_values);
-  each::copy(vertex_square_ids, buffer_square_ids);
-  each::copy(vertex_scalars1, buffer_scalars1);
-  // each::copy(vertex_scalars2, buffer_scalars2);
-  each::copy(vertex_positions, buffer_positions);
+  copy(similar_plate_id, buffer_color_values);
+  copy(vertex_square_ids, buffer_square_ids);
+  copy(vertex_scalars1, buffer_scalars1);
+  // copy(vertex_scalars2, buffer_scalars2);
+  copy(vertex_positions, buffer_positions);
   grids.storeTriangleStrips(series::range<unsigned int>(grid.vertex_count()), buffer_element_vertex_ids);
-
-  // flatten vector raster for OpenGL
-  buffer::PyramidBuffers<int, float> pyramids;
-  std::vector<glm::vec3> vectors_element_position(pyramids.triangles_size<3>(3));
-  std::vector<glm::vec3> vectors_instance_position(grid.vertex_count());
-  std::vector<glm::vec3> vectors_instance_heading(grid.vertex_count());
-  std::vector<glm::vec3> vectors_instance_up(grid.vertex_count());
-  std::vector<glm::vec4> vectors_instance_color(grid.vertex_count(), glm::vec4(1.0f));
-  std::vector<float> vectors_instance_scale(grid.vertex_count());
-  float pyramid_radius(grid.total_circumference()/(8.0*grid.vertices_per_meridian()));
-  float pyramid_halflength(2.5f*pyramid_radius);
-  pyramids.storeTriangles(
-      glm::vec3(-1,0,0) * pyramid_halflength, 
-      glm::vec3(1,0,0)  * pyramid_halflength, 
-      glm::vec3(0,0,1), pyramid_radius, 3,
-      vectors_element_position);
-  each::copy   (known::mult(vertex_positions, series::uniform(1+pyramid_halflength/grid.total_radius())),  vectors_instance_position);
-  each::copy   (vertex_gradient,   vectors_instance_heading);
-  each::copy   (vertex_normals,    vectors_instance_up);
-  each::length (vertex_gradient,   vectors_instance_scale);
-  each::div    (vectors_instance_scale, series::uniform(whole::max(vectors_instance_scale)), vectors_instance_scale);
 
   // initialize control state
   update::OrbitalControlState control_state;
@@ -275,21 +253,7 @@ int main() {
 
   // initialize shader program
   view::ColorscaleSurfaceShaderProgram colorscale_program;  
-  view::IndicatorSwarmShaderProgram indicator_program;  
   view::MultichannelSurfaceShaderProgram debug_program;
-
-  // initialize data for shader program
-  std::vector<float> points = {
-   0.0f,  0.5f,  0.0f,
-   0.5f, -0.5f,  0.0f,
-  -0.5f, -0.5f,  0.0f
-  };
-
-  std::vector<float> colors = {
-   1.0f,  
-   0.0f,  
-   0.0f
-  };
 
   // initialize MessageQueue for MVU architecture
   messages::MessageQueue message_queue;
@@ -328,17 +292,6 @@ int main() {
         view_state,
         GL_TRIANGLE_STRIP
       );
-
-      // indicator_program.draw(
-      //   vectors_element_position,
-      //   vectors_instance_position,
-      //   vectors_instance_heading,
-      //   vectors_instance_up,
-      //   vectors_instance_scale,
-      //   vectors_instance_color,
-      //   view_state,
-      //   GL_TRIANGLES
-      // );
 
       // put stuff we've been drawing onto the display
       glfwSwapBuffers(window);
