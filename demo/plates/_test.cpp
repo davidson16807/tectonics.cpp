@@ -34,8 +34,10 @@
 #include <index/adapted/si/SiStrings.hpp>
 #include <index/adapted/glm/GlmMetric.hpp>
 #include <index/aggregated/Order.hpp>
+#include <index/iterated/Order.hpp>
 #include <index/iterated/Nary.hpp>
 #include <index/iterated/Arithmetic.hpp>
+#include <index/grouped/Statistics.hpp>
 
 #include <field/Compose.hpp>                        // Compose
 #include <field/noise/RankedFractalBrownianNoise.hpp> // dymaxion::RankedFractalBrownianNoise
@@ -155,7 +157,9 @@ int main() {
   iterated::Arithmetic arithmetic(adapted::SymbolicArithmetic(length(0),length(1)));
   arithmetic.subtract(elevation, series::uniform(length(min_earth_elevation)), elevation);
 
+  using vec3 = glm::vec3;
   iterated::Identity copy;
+  grouped::Statistics statistics{adapted::SymbolicArithmetic(vec3(0),vec3(1))};
 
   adapted::SymbolicOrder suborder;
   adapted::SiStrings substrings;
@@ -165,7 +169,7 @@ int main() {
 
   auto vertex_scalars1 = elevation_in_meters;
 
-  std::vector<glm::vec3> vertex_gradient(grid.vertex_count());
+  std::vector<vec3> vertex_gradient(grid.vertex_count());
   unlayered::VectorCalculusByFundamentalTheorem spatial;
   spatial.gradient(grid, vertex_scalars1, vertex_gradient);
 
@@ -176,7 +180,7 @@ int main() {
   std::vector<float> buffer_scalars2(grid.vertex_count());
   std::vector<float> buffer_scalars1(grid.vertex_count());
   std::vector<float> buffer_uniform(grid.vertex_count(), 1.0f);
-  std::vector<glm::vec3> buffer_positions(grid.vertex_count());
+  std::vector<vec3> buffer_positions(grid.vertex_count());
   std::vector<unsigned int> buffer_element_vertex_ids(grids.triangle_strips_size(vertex_positions));
   std::cout << "vertex count:        " << grid.vertex_count() << std::endl;
   std::cout << "vertices per meridian" << grid.vertices_per_meridian() << std::endl;
@@ -196,18 +200,19 @@ int main() {
   //   vertex_colored_scalars, 
   //   mask1
   // );
-  // auto metric = iterated::Metric{adapted::GlmMetric{}};
+  auto ternary = iterated::Ternary{};
+  auto metric = iterated::Metric{adapted::GlmMetric{}};
+  auto order = iterated::Order{adapted::SymbolicOrder{}};
   auto segment = unlayered::image_segmentation<int,float>(filling, adapted::GlmMetric{});
-  // auto voronoi = unlayered::Voronoi{adapted::GlmMetric{}};
+  auto voronoi = unlayered::Voronoi{adapted::GlmMetric{}};
   std::vector<std::uint8_t> similar_plate_id(grid.vertex_count());
-  // std::vector<std::uint8_t> nearest_plate_id(grid.vertex_count());
-  // std::vector<bool> is_undecided(grid.vertex_count());
+  std::vector<std::uint8_t> nearest_plate_id(grid.vertex_count());
+  std::vector<bool> is_undecided(grid.vertex_count());
   segment(
     grid, vertex_gradient, 7, 10, 
     similar_plate_id, scratch, mask1, mask2, mask3
   );
-  // statistics.sum(similar_plate_id, vertex_positions, plate_seeds);
-  // using vec3 = glm::vec3;
+  std::vector<vec3>plate_seeds(8,vec3(0,0,0));
   // std::vector<vec3>plate_seeds{
   //   vec3( 1, 1, 1),
   //   vec3( 1, 1,-1),
@@ -218,10 +223,11 @@ int main() {
   //   vec3(-1,-1, 1),
   //   vec3(-1,-1,-1)
   // };
-  // metric.normalize(plate_seeds, plate_seeds);
-  // voronoi(vertex_positions, plate_seeds, nearest_plate_id);
-  // order.equal(flooded_plate_id, series::uniform(0), is_undecided);
-  // ternary(is_undecided, nearest_plate_id, similar_plate_id);
+  statistics.sum(similar_plate_id, vertex_positions, plate_seeds);
+  metric.normalize(plate_seeds, plate_seeds);
+  voronoi(vertex_positions, plate_seeds, nearest_plate_id);
+  order.equal(similar_plate_id, series::uniform(0), is_undecided);
+  ternary(is_undecided, nearest_plate_id, similar_plate_id, similar_plate_id);
 
   copy(similar_plate_id, buffer_color_values);
   copy(vertex_square_ids, buffer_square_ids);

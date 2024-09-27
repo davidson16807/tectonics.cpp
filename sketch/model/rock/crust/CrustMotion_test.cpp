@@ -8,6 +8,8 @@
 #include <glm/vec3.hpp> // *vec3
 
 // in house libraries
+#include <index/iterated/Nary.hpp>
+
 #include <raster/unlayered/VectorCalculusByFundamentalTheorem.hpp> // unlayered::VectorCalculusByFundamentalTheorem
 
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
@@ -131,7 +133,7 @@ TEST_CASE( "drag_per_angular_velocity", "[rock]" ) {
 
 }
 
-TEST_CASE( "slab properties", "[rock]" ) {
+TEST_CASE( "slab properties that use singleton data structures", "[rock]" ) {
 
     using length = si::length<double>;
     using area = si::area<double>;
@@ -246,7 +248,56 @@ TEST_CASE( "slab properties", "[rock]" ) {
 }
 
 
+TEST_CASE( "slab properties that use `FormationSummary`s", "[rock]" ) {
+
+    const int M = 2; // mineral count
+    const int F = 5; // formation count
+
+    using mass = si::mass<float>;
+    using length = si::length<float>;
+    using density = si::density<float>;
+    length meter(si::meter);
+    length radius(6.371e6f * meter);
+
+    int vertices_per_square_side(2);
+    dymaxion::Grid grid(radius/meter, vertices_per_square_side);
+    rock::EarthlikeIgneousFormationGeneration generation(grid, radius/2.0f, 0.5f, 10);
+
+    iterated::Identity copy{};
+    rock::Formation<M> formation1(grid.vertex_count());
+    copy(generation(12.0f, 1.1e4f), formation1);
+
+    rock::Formation<M> formation2(grid.vertex_count());
+    copy(generation(22.0f, 1.2e4f), formation2);
+
+    rock::Formation<M> formation3(grid.vertex_count());
+    copy(generation(33.0f, 1.3e4f), formation3);
+
+    rock::Formation<M> formation4(grid.vertex_count());
+    copy(generation(44.0f, 1.4e4f), formation3);
+
+    rock::Formation<M> formation5(grid.vertex_count());
+    copy(generation(55.0f, 1.5e4f), formation5);
+
+    rock::StratumStore<M> empty_stratum;
+    rock::Formation<M> empty_formation(grid.vertex_count(), empty_stratum);
+    rock::Crust<M,F> empty_crust; empty_crust.fill(empty_formation);
+
+    rock::Crust<M,F> igneous_only1{empty_formation, empty_formation, empty_formation, formation1, empty_formation};
+    rock::Crust<M,F> igneous_only2{empty_formation, empty_formation, empty_formation, formation2, empty_formation};
+    rock::Crust<M,F> igneous_only3{empty_formation, empty_formation, empty_formation, formation3, empty_formation};
+    rock::Crust<M,F> igneous_only4{empty_formation, empty_formation, empty_formation, formation4, empty_formation};
+    rock::Crust<M,F> igneous_only5{empty_formation, empty_formation, empty_formation, formation5, empty_formation};
+
+    std::vector<rock::Crust<M,F>> crusts{
+        igneous_only1, igneous_only2, igneous_only3, igneous_only4, igneous_only5
+    };
+
+}
+
 /*
+GOTCHAS:
+* `drag_per_angular_velocity` is *not* scale invariant
 TESTS:
 DONE:
 * `drag_per_angular_velocity` is commutative wrt thickness and width
@@ -261,15 +312,14 @@ DONE:
     * `slab_length` increases wrt area
     * `slab_width` increases wrt area
     * `slab_thickness` increases wrt volume
-GOTCHAS:
-* `drag_per_angular_velocity` is *not* scale invariant
+
 TODO:
 * `rigid_body_torque` is linear with respect to force magnitudes
 * `buoyancy_forces × surface normal == 0` 
 * `slab_thickness * slab_width * slab_length` must reproduce `slab_volume`
 * `slab_thickness * slab_area` must reproduce `slab_volume`
 * `slab_width * slab_length` must reproduce `slab_area`
-* `slab_width ≥ slab_length`
+* `slab_width ≥ slab_length` for procedurally generated plates
 * domains:
     * `slab_volume > 0`
     * `slab_cell_count > 0`
@@ -291,3 +341,4 @@ TODO:
     * 0 ≤ slab_area < total_area
 * `drag_per_angular_velocity` reproduces results from Schellart 2010 when combined with appropriate torque
 */
+
