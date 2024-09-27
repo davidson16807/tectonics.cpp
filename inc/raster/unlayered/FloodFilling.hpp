@@ -1,6 +1,10 @@
 #pragma once
 
+// standard libraries
 #include <deque> // std::deque
+
+// in-house libraries
+#include <index/iterated/Nary.hpp>
 
 namespace unlayered
 {
@@ -24,7 +28,7 @@ namespace unlayered
         {}
 
         template<typename Grid, typename Raster, typename Mask, typename Scratch, typename Out>
-        void fill(const Grid& grid, const Raster& raster, const Mask& mask, const id start_id, 
+        void operator()(const Grid& grid, const Raster& raster, const Mask& mask, const id start_id, 
                    Out& out, Scratch& scratch) const {
 
             std::deque<id> searching { start_id };
@@ -68,6 +72,4 @@ namespace unlayered
     }
 
 }
-
-
 

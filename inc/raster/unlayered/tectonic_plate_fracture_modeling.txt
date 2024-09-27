@@ -1,0 +1,17 @@
+approaches to modeling tectonic plate fracture:
+* flood fills using interneighbor cosine similarity to test for inclusion, then populate unflooded regions with the vornoi diagram where seeds are midpoints of flooded regions
+	+ flood fills model fracture by assuming that imperfections are sufficiently common so that, if anywhere fractures, it will be the place of greatest local stress
+	+ voronoi requires only in-order traversal and can be done in reasonable time if number of plates is small
+	- flood fill requires out-of-order traversal
+* flood fills using interneighbor cosine similarity to test for inclusion, then dilate results
+	+ flood fills model fracture by assuming that imperfections are sufficiently common so that, if anywhere fractures, it will be the place of greatest local stress
+	- flood fill requires out-of-order traversal
+	- dilation requires out-of-order traversal
+* repeated filters for cosine similarity with seed vector using increasingly broad searches
+	+ filters require only in-order traversal
+	- comparison with seed vector imposes a limit to the size of plates even when stress is everywhere negligible
+* gradient descent using in-order traversals to find seeds that minimize cosine similarity between the seed and the vertices for whom the seed is closest
+	- comparison with seed vector imposes a limit to the size of plates even when stress is everywhere negligible
+* gradient descent using in-order traversals to find seeds that minimize energy between all vertices 
+	+ intractably slow, since even a single iteration requires out-of-order traversal, and many traversals are required
+

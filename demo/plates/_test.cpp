@@ -50,6 +50,7 @@
 
 #include <raster/unlayered/VectorCalculusByFundamentalTheorem.hpp> // unlayered::VectorCalculusByFundamentalTheorem
 #include <raster/unlayered/FloodFilling.hpp>        // unlayered::FloodFilling
+#include <raster/unlayered/Voronoi.hpp>             // unlayered::Voronoi
 #include <raster/unlayered/ImageSegmentation.hpp>   // unlayered::ImageSegmentation
 #include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
 
@@ -75,7 +76,7 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // we don't want the old OpenGL
 
   // open a window
-  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello World", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Plates", NULL, NULL);
   if (!window) {
     std::cout << stderr << " ERROR: could not open window with GLFW3" << std::endl;
     glfwTerminate();
@@ -185,9 +186,9 @@ int main() {
   std::vector<bool> mask2(grid.vertex_count());
   std::vector<bool> mask3(grid.vertex_count());
 
-  auto filling = unlayered::flood_filling<int,float>(
-    [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 60.0f/180.0f); }
-  );
+  // auto filling = unlayered::flood_filling<int,float>(
+  //   [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 60.0f/180.0f); }
+  // );
   // filling.fill(
   //   grid, vertex_gradient, 
   //   series::uniform(true),
@@ -195,13 +196,35 @@ int main() {
   //   vertex_colored_scalars, 
   //   mask1
   // );
-  auto segmentation = unlayered::image_segmentation<int,float>(filling, adapted::GlmMetric{});
-  segmentation.segment(
-    grid, vertex_gradient, 7, 10, 
-    vertex_colored_scalars, scratch, mask1, mask2, mask3
-  );
+  auto metric = iterated::Metric{adapted::GlmMetric{}};
+  // auto segmentation = unlayered::image_segmentation<int,float>(filling, adapted::GlmMetric{});
+  auto voronoi = unlayered::Voronoi{adapted::GlmMetric{}};
+  // std::vector<std::uint8_t> similar_plate_id(grid.vertex_count());
+  std::vector<std::uint8_t> nearest_plate_id(grid.vertex_count());
+  // std::vector<int> plate_cell_counts(grid.vertex_count());
+  // std::vector<bool> is_undecided(grid.vertex_count());
+  // segmentation.segment(
+  //   grid, vertex_gradient, 7, 10, 
+  //   similar_plate_id, scratch, mask1, mask2, mask3
+  // );
+  // statistics.sum(similar_plate_id, vertex_positions, plate_seeds);
+  using vec3 = glm::vec3;
+  std::vector<vec3>plate_seeds{
+    vec3( 1, 1, 1),
+    vec3( 1, 1,-1),
+    vec3( 1,-1, 1),
+    vec3( 1,-1,-1),
+    vec3(-1, 1, 1),
+    vec3(-1, 1,-1),
+    vec3(-1,-1, 1),
+    vec3(-1,-1,-1)
+  };
+  metric.normalize(plate_seeds, plate_seeds);
+  voronoi(vertex_positions, plate_seeds, nearest_plate_id);
+  // order.equal(flooded_plate_id, series::uniform(0), is_undecided);
+  // ternary(is_undecided, nearest_plate_id, similar_plate_id);
 
-  each::copy(vertex_colored_scalars, buffer_color_values);
+  each::copy(nearest_plate_id, buffer_color_values);
   each::copy(vertex_square_ids, buffer_square_ids);
   each::copy(vertex_scalars1, buffer_scalars1);
   // each::copy(vertex_scalars2, buffer_scalars2);

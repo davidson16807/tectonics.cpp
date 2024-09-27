@@ -14,9 +14,9 @@ namespace iterated
 	The following are alternate definitions of the above that allow for support of other data types using classes of the adapter pattern
 	*/
 
-	struct Copy // A.K.A. `Identity`
+	struct Identity // A.K.A. `Copy`
 	{
-		Copy(){}
+		Identity(){}
 		template <typename In1, typename Out>
 		void operator() (const In1& a, Out& out) const
 		{
