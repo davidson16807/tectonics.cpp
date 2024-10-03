@@ -43,15 +43,14 @@ namespace analytic {
         return T(1.0);
     }
 
-
-    template<typename T, typename Expression> constexpr Expression compose(const Identity<T> e, const Expression& f) { return f;    }
-    template<typename T, typename Expression> constexpr Expression compose(const Expression& f, const Identity<T> e) { return f;    }
-    template<typename Expression>             constexpr double compose(const double k, const Expression& f)          { return k;    }
-    template<typename Expression>             constexpr auto   compose(const Expression& f, const double k)          { return f(k); }
-    template<typename Expression>             constexpr double compose(const float k, const Expression& f)           { return k;    }
-    template<typename Expression>             constexpr auto   compose(const Expression& f, const float k)           { return f(k); }
-    template<typename Expression>             constexpr double compose(const int k, const Expression& f)             { return k;    }
-    template<typename Expression>             constexpr auto   compose(const Expression& f, const int k)             { return f(k); }
+    template<typename T, typename F> constexpr F compose(const Identity<T> e, const F& f) { return f;    }
+    template<typename T, typename F> constexpr F compose(const F& f, const Identity<T> e) { return f;    }
+    template<typename F>             constexpr double compose(const double k, const F& f) { return k;    }
+    template<typename F>             constexpr auto   compose(const F& f, const double k) { return f(k); }
+    template<typename F>             constexpr double compose(const float k, const F& f)  { return k;    }
+    template<typename F>             constexpr auto   compose(const F& f, const float k)  { return f(k); }
+    template<typename F>             constexpr double compose(const int k, const F& f)    { return k;    }
+    template<typename F>             constexpr auto   compose(const F& f, const int k)    { return f(k); }
 
     template<typename T>
     constexpr T distance(const Identity<T> a, const Identity<T> b, const double lo, const double hi){ return T(0); }
@@ -59,5 +58,20 @@ namespace analytic {
     template<typename T>
     constexpr T distance(const T a, const T b, const T lo, const T hi){ return std::abs(a-b); }
 
+    template<typename T> constexpr T derivative(const T k) { return T(0); }
+    template<typename T> constexpr T derivative(const Identity<T> e) { return T(1); }
+
+    template<int N, typename F, typename = std::enable_if_t<(N==0)>>
+    constexpr F higher_order_derivative(const F f)
+    {
+        return f;
+    }
+
+    template<int N, typename F, typename = std::enable_if_t<(N>0)>>
+    constexpr auto higher_order_derivative(const F f)
+    {
+        return higher_order_derivative<N-1>(derivative(f));
+    }
 
 }
+
