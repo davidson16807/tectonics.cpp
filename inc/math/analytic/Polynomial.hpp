@@ -1,5 +1,9 @@
 #pragma once
 
+// C libraries
+#include <cmath>
+
+// std libraries
 #include <array>       // array
 #include <algorithm>   // clamp, min_element, fill, copy
 #include <complex>     // complex
@@ -166,6 +170,45 @@ namespace analytic {
             return *this;
         }
     };
+
+
+
+    template <typename T>
+    constexpr Polynomial<T,0,0> polynomial(const T k2)
+    {
+        return Polynomial<T,0,0>(k2);
+    }
+
+    template <typename T, int Nlo, int Nhi, 
+        typename = std::enable_if_t<(Nlo <= Nlo&&Nhi <= Nhi)>> 
+    constexpr Polynomial<T,Nlo,Nhi> polynomial(const Polynomial<T,Nlo,Nhi>& p)
+    {
+        return Polynomial<T,Nlo,Nhi>(p);
+    }
+
+    template <typename T>
+    constexpr Polynomial<T,1,1> polynomial(const Identity<T> e)
+    {
+        return Polynomial<T,1,1>(e);
+    }
+
+    template <typename T>
+    constexpr Polynomial<T,1,1> polynomial(const Scaling<T> f)
+    {
+        return Polynomial<T,1,1>(f);
+    }
+
+    template <typename T>
+    constexpr Polynomial<T,0,1> polynomial(const Shifting<T> f)
+    {
+        return Polynomial<T,0,1>(f);
+    }
+
+    template <typename T>
+    constexpr Polynomial<T,0,1> polynomial(const ScaledComplement<T,Identity<T>> f)
+    {
+        return Polynomial<T,0,1>(f);
+    }
 
 
     template<typename T, int Plo, int Phi>
@@ -843,7 +886,7 @@ namespace analytic {
     Polynomial<T,Plo==0?0:Plo-1,Phi-1> derivative(const Polynomial<T,Plo,Phi>& p)
     {
         Polynomial<T,Plo==0?0:Plo-1,Phi-1> dpdx;
-        for (int i = Plo; i <=Phi; ++i)
+        for (int i = std::max(1,Plo); i<=Phi; ++i)
         {
             dpdx[i-1] = i*p[i];
         }
@@ -1260,7 +1303,7 @@ namespace analytic {
         {
             for (int j = 0; j<= i; ++j)
             {
-                pg[j] += p[i] * math::combination(i,j)*std::pow(g.offset, i-j);
+                pg[j] += p[i] * combinatoric::combination(i,j)*std::pow(g.offset, i-j);
             }
         }
         return pg;
@@ -1507,4 +1550,28 @@ namespace analytic {
             );
     }
 
+    /*
+    Legendre polynomials are implemented using the definition provided by Schaeffer (2018),
+    "Efficient Harmonic Transforms aimed at pseudo-spectral numerical simulations".
+    */
+
+    template<typename T, int N, typename = std::enable_if_t<(N==0)>>
+    constexpr T legendre_polynomial()
+    {
+        return T(1);
+    }
+
+    template<typename T, int N, typename = std::enable_if_t<(N==1)>>
+    constexpr Identity<T> legendre_polynomial()
+    {
+        return Identity<T>();
+    }
+
+    template<typename T, int N, typename = std::enable_if_t<(N>1)>>
+    constexpr auto legendre_polynomial()
+    {
+        return T(2*N-1) * Identity<T>() * legendre_polynomial<T,N-1>() - T(N-1)* legendre_polynomial<T,N-2>();
+    }
+
 }
+
