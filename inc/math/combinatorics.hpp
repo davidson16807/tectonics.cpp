@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-namespace math {
+namespace combinatoric {
 
     constexpr int factorial(const int candidates)
     {

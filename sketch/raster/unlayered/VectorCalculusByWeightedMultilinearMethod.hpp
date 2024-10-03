@@ -378,7 +378,7 @@ namespace unlayered
                     weightsum += weight;
                 }
 
-                out[i] = math::permutation(samplesum / weightsum);
+                out[i] = combinatoric::permutation(samplesum / weightsum);
             }
         }
 

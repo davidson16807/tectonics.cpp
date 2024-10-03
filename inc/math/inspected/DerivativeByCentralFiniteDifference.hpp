@@ -26,7 +26,7 @@ namespace inspected {
             T weight(1);
             for (int i = 0; i < order; ++i)
             {
-                df += weight * math::combination(order, i) * f(x+(T(0.5)*order - i)*dx);
+                df += weight * combinatoric::combination(order, i) * f(x+(T(0.5)*order - i)*dx);
                 weight *= -1;
             }
             return df;

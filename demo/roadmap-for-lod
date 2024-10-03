@@ -1,6 +1,5 @@
 roadmap for lod:
-* port geometry library
-* break math:: into analytic::, geometric::, combinatoric::, special::
+* port geometry library into geometric::
 * dymaxion::Downsampling
 * dyamxion::LodGridBuffers
 * dymaxion/field.hpp#memory_id
