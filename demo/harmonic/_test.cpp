@@ -31,13 +31,13 @@
 #include <index/series/noise/GaussianNoise.hpp>
 #include <index/adapted/symbolic/SymbolicArithmetic.hpp>
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
-#include <index/adapted/si/SiStrings.hpp>
+#include <index/adapted/scalar/ScalarStrings.hpp>
 #include <index/aggregated/Order.hpp>
 #include <index/iterated/Nary.hpp>
 #include <index/iterated/Arithmetic.hpp>
 
 #include <field/Compose.hpp>                        // Compose
-#include <field/noise/RankedFractalBrownianNoise.hpp> // dymaxion::RankedFractalBrownianNoise
+#include <field/SphericalHarmonic.hpp>              // field::SphericalHarmonic
 
 #include <relation/ScalarRelation.hpp>
 
@@ -100,7 +100,7 @@ int main() {
   glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
   /* OUR STUFF GOES HERE NEXT */
-  float radius(3.0f);
+  float radius(1.0f);
   int vertices_per_square_side(32);
   dymaxion::Grid grid(radius, vertices_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
@@ -118,49 +118,10 @@ int main() {
     // vertex_colored_scalars[i] = (grid.vertex_position(i).z);
   }
 
-  float min_elevation(-16000.0f);
-  float max_elevation( 16000.0f);
-
+  auto harmonic = field::SphericalHarmonic<float,3,4>();
   iterated::Identity copy;
-  analytic::Sum<float,analytic::Gaussian<float>> hypsometry_pdf_unscaled {
-    analytic::Gaussian(-4019.0f, 1113.0f, 0.232f),
-    analytic::Gaussian(  797.0f, 1169.0f, 0.209f)
-  };
-  auto hypsometry_cdf_unscaled = analytic::integral(hypsometry_pdf_unscaled);
-  // auto hypsometry_pdf_ddx = analytic::derivative(hypsometry_pdf_unscaled);
-  auto hypsometry_cdf_unscaled_range = hypsometry_cdf_unscaled(max_elevation) - hypsometry_cdf_unscaled(min_elevation);
-  auto hypsometry_cdf = hypsometry_cdf_unscaled / hypsometry_cdf_unscaled_range;
-  auto hypsometry_pdf = hypsometry_pdf_unscaled / hypsometry_cdf_unscaled_range;
-  auto hypsometry_cdfi = inspected::inverse_by_newtons_method(hypsometry_cdf, hypsometry_pdf, 0.5f, 30);
 
-  auto rfbm = field::ranked_fractal_brownian_noise<3>(10, 0.5f, 2.0f/radius, 12.0f, 1.1e4f);
-
-  auto elevation_meters_for_position = field::compose(hypsometry_cdfi, rfbm);
-
-  using length = si::length<float>;
-  auto min_earth_elevation = -10924.0 * si::meter;
-
-  auto elevation_for_position = 
-      field::compose(
-          relation::ScalarRelation(1.0f, length(si::meter), hypsometry_cdfi),
-          rfbm);
-
-  auto elevation_in_meters = series::map(elevation_meters_for_position, vertex_positions);
-
-  iterated::Unary elevations_for_positions(elevation_for_position);
-  std::vector<length> elevation(grid.vertex_count());
-  elevations_for_positions(vertex_positions, elevation);
-
-  iterated::Arithmetic arithmetic(adapted::SymbolicArithmetic(length(0),length(1)));
-  arithmetic.subtract(elevation, series::uniform(length(min_earth_elevation)), elevation);
-
-  adapted::SymbolicOrder suborder;
-  adapted::SiStrings substrings;
-  aggregated::Order ordered(suborder);
-  auto strings = spheroidal::Strings(substrings, ordered);
-  std::cout << strings.format(grid, elevation) << std::endl << std::endl;
-
-  auto vertex_scalars1 = elevation_in_meters;
+  auto vertex_scalars1 = series::map(harmonic, vertex_positions);
 
   // flatten raster for OpenGL
   dymaxion::WholeGridBuffers<int,float> grids(vertices_per_square_side);
@@ -204,8 +165,8 @@ int main() {
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);
   view::ColorscaleSurfacesViewState colorscale_state;
-  colorscale_state.max_color_value = whole::max(buffer_color_values);
-  colorscale_state.darken_threshold = whole::mean(buffer_scalars2);
+  colorscale_state.max_color_value = whole::max(vertex_scalars1);
+  colorscale_state.min_color_value = whole::min(vertex_scalars1);
 
   // initialize shader program
   view::ColorscaleSurfaceShaderProgram colorscale_program;  
@@ -215,6 +176,12 @@ int main() {
   messages::MessageQueue message_queue;
   message_queue.activate(window);
 
+  adapted::SymbolicOrder suborder;
+  adapted::ScalarStrings<float> substrings;
+  aggregated::Order ordered(suborder);
+  spheroidal::Strings strings(substrings, ordered);
+  std::cout << strings.format(grid, vertex_scalars1) << std::endl << std::endl;
+
   std::cout << whole::min(buffer_scalars1) << std::endl;
   std::cout << whole::max(buffer_scalars1) << std::endl;
 
@@ -222,17 +189,14 @@ int main() {
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-      debug_program.draw(
-        buffer_positions,
-        // buffer_color_values, // red
-        std::vector<float>(grid.vertex_count(), 0.0f), // red
-        buffer_scalars1, // green
-        std::vector<float>(grid.vertex_count(), 0.0f), // blue
-        std::vector<float>(grid.vertex_count(), 1.0f), // opacity
-        std::vector<float>(grid.vertex_count(), 0.0f), // displacement
+      colorscale_program.draw(
+        buffer_positions,    // position
+        buffer_scalars1, // color value
+        buffer_uniform,      // displacement
+        buffer_uniform,      // darken
+        buffer_uniform,      // culling
         buffer_element_vertex_ids,
-        glm::vec4(0.0f, -10000.0f, 0.0f, 0.0f),
-        glm::vec4(0.0f,  10000.0f, 1.0f, 1.0f),
+        colorscale_state,
         view_state,
         GL_TRIANGLE_STRIP
       );
