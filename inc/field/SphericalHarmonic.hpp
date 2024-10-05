@@ -13,10 +13,30 @@
 namespace field {
 
     /* 
-    `SphericalHarmonic<T,M,L>` is a field (i.e. it maps: ℝ³→ℝ).
-    It is a class template that represents a single spherical harmonic of degree L and order -L≤M≤L.
-    This is equivalent to Yₗₘ as defined here: https://shtools.github.io/SHTOOLS/fortran-real-spherical-harmonics.html
-    This webpage is archived under research/math/shtools.pdf
+    `SphericalHarmonic<T,M,L>` is a field (i.e. it maps: ℝ³→ℝ for some representation of ℝ, `T`).
+    It is a class template that represents a single 4π-normalized spherical harmonic of degree L and order -L≤M≤L.
+    It implements the following for a unit vector with longitude of ϕ and latitude of asin(z):
+
+        Yₗₘ(z,ϕ) = 
+              ⎧ Pₗ|ₘ|(z) cos(|m|ϕ) if m≥0
+              ⎩ Pₗ|ₘ|(z) sin(|m|ϕ) if m<0
+
+    where:
+
+        Pₗₘ(z) = pₗₘ(z) √((2-δₘ₀) (2l+1) (l-m)!/(l+m)!)
+            is the 4π-normalized associated Legendre polynomial of degree l and order m
+
+        pₗₘ(z) = (1-z²)ᵐᐟ² dᵐ/dzᵐ pₗ(z) 
+            is the unnormalized associated Legendre polynomial of degree l and order m
+
+        pₗ(z) = dˡ/dzˡ (z²-1)ˡ/(2ˡl!) 
+            is the lth standard Legendre polynomial 
+            (`analytic::legendre_polynomial<L>` in math/analytic/Polynomial.hpp)
+
+        δᵢⱼ = 
+              ⎧ 1 if i=j
+              ⎩ 0 if i≠j
+            is the Kronecker delta function
     */
     template<typename T, int M, int L>
     struct SphericalHarmonic

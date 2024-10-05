@@ -9,11 +9,19 @@ namespace field
 {
 
 	/*
-	`SphericalHarmonics` is a field (i.e. it maps: ℝ³→ℝ).
-    It is a class template that represents a linear combination of all spherical harmonics of degrees 0≤L≤Lhi.
-    This is equivalent to Yₗₘ as defined here: https://shtools.github.io/SHTOOLS/fortran-real-spherical-harmonics.html
-    This webpage is archived under research/math/shtools.pdf
+	`SphericalHarmonics<T,Lhi>` is a field, in that it maps: ℝ³→ℝ
+    for some representation of ℝ (`T`).
+    It is a class template that represents a linear combination of 
+    all 4π-normalized spherical harmonics for degrees 0≤l≤L (`L` from `0` to `Lhi`).
+    It implements the following function for a unit vector 
+    with longitude of ϕ and latitude of asin(z):
+
+        f(z,ϕ) = Σᴸₗ₌₀Σˡₘ₌₋ₗ fₗₘYₗₘ(z,ϕ)
+
+    where Yₗₘ(z,ϕ) is the 4π-normalized spherical harmonic of degree l and order m 
+    (implemented as `field::SphericalHarmonic<T,M,L>` in field/SphericalHarmonic.hpp)
 	*/
+
     template<typename T, int Lhi>
 	class SphericalHarmonics
 	{

@@ -1551,9 +1551,9 @@ namespace analytic {
     }
 
     /*
-    Legendre polynomials are implemented using the definition provided by Schaeffer (2018),
-    "Efficient Harmonic Transforms aimed at pseudo-spectral numerical simulations".
-    This webpage is archived under research/math/shtools.pdf
+    `legendre_polynomial<T,N>` is the nth standard Legendre polynomial:
+
+        pₙ(z) = dⁿ/dzⁿ (z²-1)ⁿ/(2ⁿl!) 
     */
 
     template<typename T, int N>
