@@ -1,6 +1,0 @@
-roadmap for lod:
-* port geometry library into geometric::
-* dymaxion::Downsampling
-* dyamxion::LodGridBuffers
-* dymaxion/field.hpp#memory_id
-* unit tests for dymaxion::*Buffers

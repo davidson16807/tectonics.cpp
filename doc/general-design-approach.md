@@ -1,3 +1,4 @@
+
 #Design by category theory
 Start with the following:
 
@@ -36,7 +37,14 @@ Categories may be constructed either top-down (starting with high level objectiv
   you can however have it return a token that could be a type union for disposed and nondispoed states, 
   then have those token serve as proof for other things via polymorphism
 
-#Avoid sequential reasoning
+#Design for Performance
+* start by considering required behavior
+* find the algorithm that accomplishes behavior while optimizing for the following, in highest to lowest priority:
+** memory/runtime complexity ("big-O" notation)
+** data locality ("Data Oriented Design"), ideally using in-order traversal of memory, 
+   but if not then by maximizing reuse of cache operations
+
+#Design for Reasonability
 Computers are terrific at sequential reasoning. The operations they perform have remarkably high fidelity, their memory is vast, and their focus is defined strictly by what we say it ought to be. 
 
 Humans on the other hand are terrible at sequential reasoning. We have limited working memory, the operations we perform are inherently error prone due to their neural network underpinnings, we often simplify repetitive tasks to less precise ones without conscious thought, and our focus is easily interrupted by subconcious impulse. When tasked with sequential reasoning, we often either forget where we started, make a mistake, gloss over details, or get distracted. We often get around these shortcomings by relying on tools to aid in sequential reasoning. For instance, we may write our thoughts onto paper to overcome limited working memory. Computers are just another example of such a tool.
