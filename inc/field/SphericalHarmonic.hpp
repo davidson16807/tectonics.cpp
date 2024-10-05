@@ -13,9 +13,10 @@
 namespace field {
 
     /* 
-    `SphericalHarmonic<T,M,L>` is a class template that represents a single spherical harmonic of degree L and order -L≤M≤L.
-    This is equivalent to Yᵐₗ as defined here: https://shtools.github.io/SHTOOLS/fortran-real-spherical-harmonics.html
-    or as archived under research/math/shtools.pdf
+    `SphericalHarmonic<T,M,L>` is a field (i.e. it maps: ℝ³→ℝ).
+    It is a class template that represents a single spherical harmonic of degree L and order -L≤M≤L.
+    This is equivalent to Yₗₘ as defined here: https://shtools.github.io/SHTOOLS/fortran-real-spherical-harmonics.html
+    This webpage is archived under research/math/shtools.pdf
     */
     template<typename T, int M, int L>
     struct SphericalHarmonic
@@ -36,7 +37,7 @@ namespace field {
                     combinatoric::factorial(L-lMl) / 
                     combinatoric::factorial(L+lMl)
                 ) * 
-                std::sqrt(std::pow(T(1) - z*z, T(lMl))) * 
+                std::sqrt(std::pow(T(1 - z*z), T(lMl)/T(2))) * 
                 analytic::polynomial(
                     analytic::higher_order_derivative<lMl>(analytic::legendre_polynomial<T,L>())
                 )(z) * 

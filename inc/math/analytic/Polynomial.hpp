@@ -1553,24 +1553,15 @@ namespace analytic {
     /*
     Legendre polynomials are implemented using the definition provided by Schaeffer (2018),
     "Efficient Harmonic Transforms aimed at pseudo-spectral numerical simulations".
+    This webpage is archived under research/math/shtools.pdf
     */
 
-    template<typename T, int N, typename = std::enable_if_t<(N==0)>>
-    constexpr T legendre_polynomial()
-    {
-        return T(1);
-    }
-
-    template<typename T, int N, typename = std::enable_if_t<(N==1)>>
-    constexpr Identity<T> legendre_polynomial()
-    {
-        return Identity<T>();
-    }
-
-    template<typename T, int N, typename = std::enable_if_t<(N>1)>>
+    template<typename T, int N>
     constexpr auto legendre_polynomial()
     {
-        return T(2*N-1) * Identity<T>() * legendre_polynomial<T,N-1>() - T(N-1)* legendre_polynomial<T,N-2>();
+        return 
+            higher_order_derivative<N>(pow<N>(Identity<T>()*Identity<T>()-T(1))) / 
+            (std::pow(T(2),T(N)) * combinatoric::factorial(N));
     }
 
 }

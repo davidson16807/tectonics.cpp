@@ -9,22 +9,23 @@ namespace field
 {
 
 	/*
-	Given a `Series`: ℕ→ℝ, a `VectorZip` maps: ℕ→ℝᴸ.
+	`SphericalHarmonics` is a field (i.e. it maps: ℝ³→ℝ).
+    It is a class template that represents a linear combination of all spherical harmonics of degrees 0≤L≤Lhi.
+    This is equivalent to Yₗₘ as defined here: https://shtools.github.io/SHTOOLS/fortran-real-spherical-harmonics.html
+    This webpage is archived under research/math/shtools.pdf
 	*/
     template<typename T, int Lhi>
 	class SphericalHarmonics
 	{
 
-        constexpr int coefficient_count(const int L) const
-        {
-            return L*L;
-        }
+        static constexpr int coefficient_count = (Lhi+1)*(Lhi+1);
 
         constexpr int coefficient_id(const int M, const int L) const
         {
-            return L*L + M+L;
+            return (L-1)*(L-1) + M+L;
         }
 
+        // Σₘ₌ₗ⁻ˡ Yₗₘ(z,ϕ)
         template<int M, int L>
         T linear_combination_for_orders(const T z, const T phi) const
         {
@@ -35,11 +36,13 @@ namespace field
             else
             {
                 return
-                    coefficients[coefficient_id(M,L)] * SphericalHarmonic<T,M,L>().call(z, phi) + 
+                    coefficients[coefficient_id(M,L)] * 
+                    SphericalHarmonic<T,M,L>().call(z, phi) + 
                     linear_combination_for_orders<M-1,L>(z, phi);
             }
         }
 
+        // Σₗ⁰ Yₗₘ(z,ϕ)
         template<int L>
         T linear_combination_for_degrees(const T z, const T phi) const
         {
@@ -55,31 +58,31 @@ namespace field
             }
         }
 
-        const std::array<T,Lhi*Lhi> coefficients;
+        const std::array<T,coefficient_count> coefficients;
 
     public:
 
         using value_type = T;
 
-        SphericalHarmonics(const std::array<T,Lhi*Lhi> coefficients):
+        SphericalHarmonics(const std::array<T,coefficient_count> coefficients):
             coefficients(coefficients)
         {}
 
         inline T operator()(const T z, const T phi) const
         {
-            return linear_combination_for_degrees<Lhi*Lhi>(z, phi);
+            return linear_combination_for_degrees<Lhi>(z, phi);
         }
 
         inline T operator()(const T x, const T y, const T z) const
         {
-            return linear_combination_for_degrees<Lhi*Lhi>(z, std::atan2(y,x));
+            return linear_combination_for_degrees<Lhi>(z, std::atan2(y,x));
         }
 
         template<int N, glm::qualifier Q=glm::defaultp>
         inline T operator()(const glm::vec<N,T,Q> v) const
         {
             auto u = glm::normalize(v);
-            return linear_combination_for_degrees<Lhi*Lhi>(u.z, std::atan2(u.y, u.x));
+            return linear_combination_for_degrees<Lhi>(u.z, std::atan2(u.y, u.x));
         }
 
 	};

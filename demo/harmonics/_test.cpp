@@ -116,7 +116,7 @@ int main() {
     // vertex_colored_scalars[i] = (grid.vertex_position(i).z);
   }
 
-  auto harmonics = field::SphericalHarmonics<float,2>({0.0, 0.0, 0.4, 0.2});
+  auto harmonics = field::SphericalHarmonics<float,3>({0.0, 0.0, 0.5, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0});
   iterated::Identity copy;
 
   auto vertex_scalars1 = series::map(harmonics, vertex_positions);

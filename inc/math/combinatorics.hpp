@@ -4,6 +4,8 @@
 
 namespace combinatoric {
 
+    // number of possible ways to order a set of candidates
+    // (repetition is not allowed, order matters)
     constexpr int factorial(const int candidates)
     {
         int y = 1;
