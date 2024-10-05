@@ -35,7 +35,7 @@
 #include <index/iterated/Arithmetic.hpp>
 
 #include <field/Compose.hpp>                        // Compose
-#include <field/SphericalHarmonic.hpp>              // field::SphericalHarmonic
+#include <field/SphericalHarmonics.hpp>             // field::SphericalHarmonics
 
 #include <relation/ScalarRelation.hpp>
 
@@ -116,10 +116,10 @@ int main() {
     // vertex_colored_scalars[i] = (grid.vertex_position(i).z);
   }
 
-  auto harmonic = field::SphericalHarmonic<float,3,4>();
+  auto harmonics = field::SphericalHarmonics<float,2>({0.0, 0.0, 0.4, 0.2});
   iterated::Identity copy;
 
-  auto vertex_scalars1 = series::map(harmonic, vertex_positions);
+  auto vertex_scalars1 = series::map(harmonics, vertex_positions);
 
   // flatten raster for OpenGL
   dymaxion::WholeGridBuffers<int,float> grids(vertices_per_square_side);
