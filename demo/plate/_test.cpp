@@ -22,6 +22,8 @@
 #include <index/series/Uniform.hpp>
 #include <index/glm/each.hpp>                       // get
 #include <index/each.hpp>                           // get
+#include <index/glm/known.hpp>                      // greaterThan
+#include <index/known.hpp>                          // greaterThan
 #include <index/whole.hpp>                          // max, mean
 #include <index/series/Range.hpp>                   // Range
 #include <index/series/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
@@ -30,10 +32,12 @@
 #include <index/adapted/symbolic/SymbolicArithmetic.hpp>
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
 #include <index/adapted/scalar/ScalarStrings.hpp>
+#include <index/adapted/glm/GlmMetric.hpp>
 #include <index/aggregated/Order.hpp>
-#include <index/aggregated/Statistics.hpp>
+#include <index/iterated/Order.hpp>
 #include <index/iterated/Nary.hpp>
 #include <index/iterated/Arithmetic.hpp>
+#include <index/grouped/Statistics.hpp>
 
 #include <field/Compose.hpp>                        // Compose
 #include <field/noise/RankedFractalBrownianNoise.hpp> // dymaxion::RankedFractalBrownianNoise
@@ -46,8 +50,11 @@
 #include <grid/dymaxion/series.hpp>                 // dymaxion::BufferVertexIds
 #include <grid/dymaxion/buffer/WholeGridBuffers.hpp>// dymaxion::WholeGridBuffers
 
+#include <raster/unlayered/VectorCalculusByFundamentalTheorem.hpp> // unlayered::VectorCalculusByFundamentalTheorem
+#include <raster/unlayered/FloodFilling.hpp>        // unlayered::FloodFilling
+#include <raster/unlayered/Voronoi.hpp>             // unlayered::Voronoi
+#include <raster/unlayered/ImageSegmentation.hpp>   // unlayered::ImageSegmentation
 #include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
-#include <raster/spheroidal/HarmonicAnalysis.hpp>   // spheroidal::HarmonicAnalysis
 
 // #include <model/rock/stratum/StratumGenerator.hpp>  // StratumGenerator
 
@@ -71,7 +78,7 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // we don't want the old OpenGL
 
   // open a window
-  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Harmonic Analysis", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Plate", NULL, NULL);
   if (!window) {
     std::cout << stderr << " ERROR: could not open window with GLFW3" << std::endl;
     glfwTerminate();
@@ -99,14 +106,13 @@ int main() {
   glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
   /* OUR STUFF GOES HERE NEXT */
-  float radius(2.0f);
+  float radius(3.0f);
   int vertices_per_square_side(32);
   dymaxion::Grid grid(radius, vertices_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::VertexNormals vertex_normals(grid);
-  dymaxion::VertexDualAreas vertex_dual_areas(grid);
 
-  auto vertex_square_ids = dymaxion::square_ids(grid);
+  // auto vertex_square_ids = dymaxion::square_ids(grid);
 
   // auto vertex_colored_scalars = series::range();
 
@@ -114,12 +120,7 @@ int main() {
   for (int i = 0; i < grid.vertex_count(); ++i)
   {
     vertex_colored_scalars[i] = grid.memory.memory_id(grid.memory.grid_id(i));
-    // vertex_colored_scalars[i] = grid.memory.memory_id(grid.memory.grid_id(i)+glm::ivec2(10,10));
-    // vertex_colored_scalars[i] = (grid.vertex_position(i).z);
   }
-
-  iterated::Identity copy;
-
 
   float min_elevation(-16000.0f);
   float max_elevation( 16000.0f);
@@ -141,16 +142,13 @@ int main() {
 
   auto elevation_in_meters = series::map(elevation_meters_for_position, vertex_positions);
 
-  auto analysis = spheroidal::harmonic_analysis<double,5>(
-    vertex_positions,
-    vertex_dual_areas
-  );
+  using vec3 = glm::vec3;
+  iterated::Identity copy;
+  grouped::Statistics statistics{adapted::SymbolicArithmetic(vec3(0),vec3(1))};
 
-  auto vertex_scalars1 = analysis.compose(
-    analysis.decompose(elevation_in_meters)
-  );
-
-  // auto vertex_scalars1 = elevation_in_meters;
+  std::vector<vec3> vertex_gradient(grid.vertex_count());
+  unlayered::VectorCalculusByFundamentalTheorem spatial;
+  spatial.gradient(grid, elevation_in_meters, vertex_gradient);
 
   // flatten raster for OpenGL
   dymaxion::WholeGridBuffers<int,float> grids(vertices_per_square_side);
@@ -159,7 +157,7 @@ int main() {
   std::vector<float> buffer_scalars2(grid.vertex_count());
   std::vector<float> buffer_scalars1(grid.vertex_count());
   std::vector<float> buffer_uniform(grid.vertex_count(), 1.0f);
-  std::vector<glm::vec3> buffer_positions(grid.vertex_count());
+  std::vector<vec3> buffer_positions(grid.vertex_count());
   std::vector<unsigned int> buffer_element_vertex_ids(grids.triangle_strips_size(vertex_positions));
   std::cout << "vertex count:        " << grid.vertex_count() << std::endl;
   std::cout << "vertices per meridian" << grid.vertices_per_meridian() << std::endl;
@@ -169,10 +167,26 @@ int main() {
   std::vector<bool> mask2(grid.vertex_count());
   std::vector<bool> mask3(grid.vertex_count());
 
+  auto fill = unlayered::flood_filling<int,float>(
+    [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 60.0f/180.0f); }
+  );
+  fill(
+    grid, vertex_gradient, 
+    series::uniform(true),
+    whole::max_id(known::length<float>(vertex_gradient)), 
+    vertex_colored_scalars, 
+    mask1
+  );
+
+  adapted::SymbolicOrder suborder;
+  adapted::ScalarStrings<float> substrings;
+  aggregated::Order ordered(suborder);
+  spheroidal::Strings strings(substrings, ordered);
+  std::cout << strings.format(grid, vertex_colored_scalars) << std::endl << std::endl;
+
+  // copy(vertex_square_ids, buffer_square_ids);
   copy(vertex_colored_scalars, buffer_color_values);
-  copy(vertex_square_ids, buffer_square_ids);
-  copy(vertex_scalars1, buffer_scalars1);
-  // copy(vertex_scalars2, buffer_scalars2);
+  copy(elevation_in_meters, buffer_scalars1);
   copy(vertex_positions, buffer_positions);
   grids.storeTriangleStrips(series::range<unsigned int>(grid.vertex_count()), buffer_element_vertex_ids);
 
@@ -194,8 +208,8 @@ int main() {
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);
   view::ColorscaleSurfacesViewState colorscale_state;
-  colorscale_state.max_color_value = whole::max(vertex_scalars1);
-  colorscale_state.min_color_value = whole::min(vertex_scalars1);
+  colorscale_state.max_color_value = whole::max(buffer_color_values);
+  colorscale_state.darken_threshold = whole::mean(buffer_scalars2);
 
   // initialize shader program
   view::ColorscaleSurfaceShaderProgram colorscale_program;  
@@ -205,13 +219,6 @@ int main() {
   messages::MessageQueue message_queue;
   message_queue.activate(window);
 
-  adapted::SymbolicOrder suborder;
-  adapted::ScalarStrings<float> substrings;
-  aggregated::Order ordered(suborder);
-  spheroidal::Strings strings(substrings, ordered);
-  std::cout << strings.format(grid, vertex_scalars1) << std::endl << std::endl;
-  std::cout << strings.format(grid, elevation_in_meters) << std::endl << std::endl;
-
   std::cout << whole::min(buffer_scalars1) << std::endl;
   std::cout << whole::max(buffer_scalars1) << std::endl;
 
@@ -219,11 +226,26 @@ int main() {
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+      // debug_program.draw(
+      //   buffer_positions,
+      //   // buffer_color_values, // red
+      //   std::vector<float>(grid.vertex_count(), 0.0f), // red
+      //   buffer_color_values, // green
+      //   std::vector<float>(grid.vertex_count(), 0.0f), // blue
+      //   std::vector<float>(grid.vertex_count(), 1.0f), // opacity
+      //   std::vector<float>(grid.vertex_count(), 0.0f), // displacement
+      //   buffer_element_vertex_ids,
+      //   glm::vec4(0.0f, -10000.0f, 0.0f, 0.0f),
+      //   glm::vec4(0.0f,  10000.0f, 1.0f, 1.0f),
+      //   view_state,
+      //   GL_TRIANGLE_STRIP
+      // );
+
       colorscale_program.draw(
         buffer_positions,    // position
-        buffer_scalars1, // color value
+        buffer_color_values, // color value
         buffer_uniform,      // displacement
-        buffer_uniform,      // darken
+        buffer_scalars1,      // darken
         buffer_uniform,      // culling
         buffer_element_vertex_ids,
         colorscale_state,
