@@ -54,21 +54,21 @@ namespace unlayered
 			assert(radius >= 0);
 			if (radius == 0 && &out != &mask)
 			{
-				bitsets.copy(out, mask);
+				bitsets.copy(mask, out);
 			} 
 			else 
 			{
-				bitsets.copy(*temp_in, mask);
+				bitsets.copy(mask, *temp_in);
 				for (unsigned int i = 0; i < radius; ++i)
 				{
 					temp_swap = temp_out;
 					temp_out  = temp_in;
 					temp_in   = temp_swap;
-					dilate(*temp_in, *temp_out);
+					dilate(grid, *temp_in, *temp_out);
 				}
 				if (radius % 2 == 0)
 				{
-					bitsets.copy(out, *temp_out);
+					bitsets.copy(*temp_out, out);
 				}
 			}
 		}
@@ -101,21 +101,21 @@ namespace unlayered
 			assert(radius >= 0);
 			if (radius == 0 && &out != &mask)
 			{
-				bitsets.copy(out, mask);
+				bitsets.copy(mask, out);
 			} 
 			else 
 			{
-				bitsets.copy(*temp_in, mask);
+				bitsets.copy(mask, *temp_in);
 				for (unsigned int i = 0; i < radius; ++i)
 				{
 					temp_swap = temp_out;
 					temp_out  = temp_in;
 					temp_in   = temp_swap;
-					erode(*temp_in, *temp_out);
+					erode(grid, *temp_in, *temp_out);
 				}
 				if (radius % 2 == 0)
 				{
-					bitsets.copy(out, *temp_out);
+					bitsets.copy(*temp_out, out);
 				}
 			}
 		}
