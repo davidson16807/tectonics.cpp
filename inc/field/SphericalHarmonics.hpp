@@ -86,8 +86,8 @@ namespace field
             return linear_combination_for_degrees<Lhi>(z, std::atan2(y,x));
         }
 
-        template<int N, glm::qualifier Q=glm::defaultp>
-        inline T operator()(const glm::vec<N,T,Q> v) const
+        template<int N, typename T2, glm::qualifier Q=glm::defaultp>
+        inline T operator()(const glm::vec<N,T2,Q> v) const
         {
             auto u = glm::normalize(v);
             return linear_combination_for_degrees<Lhi>(u.z, std::atan2(u.y, u.x));

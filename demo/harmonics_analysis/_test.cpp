@@ -141,7 +141,7 @@ int main() {
 
   auto elevation_in_meters = series::map(elevation_meters_for_position, vertex_positions);
 
-  auto analysis = spheroidal::harmonic_analysis<float,4>(
+  auto analysis = spheroidal::harmonic_analysis<double,5>(
     vertex_positions,
     vertex_dual_areas
   );

@@ -57,7 +57,7 @@ namespace field {
                     combinatoric::factorial(L-lMl) / 
                     combinatoric::factorial(L+lMl)
                 ) * 
-                std::sqrt(std::pow(T(1 - z*z), T(lMl)/T(2))) * 
+                std::sqrt(std::pow(T(1 - std::clamp(z*z,T(0),T(1))), T(lMl)/T(2))) * 
                 analytic::polynomial(
                     analytic::higher_order_derivative<lMl>(
                         analytic::legendre_polynomial<T,L>())
@@ -76,8 +76,8 @@ namespace field {
             return call(z, std::atan2(y,x));
         }
 
-        template<int N, glm::qualifier Q=glm::defaultp>
-        inline T operator()(const glm::vec<N,T,Q> v) const
+        template<int N, typename T2, glm::qualifier Q=glm::defaultp>
+        inline T operator()(const glm::vec<N,T2,Q> v) const
         {
             auto u = glm::normalize(v);
             return call(u.z, std::atan2(u.y, u.x));
