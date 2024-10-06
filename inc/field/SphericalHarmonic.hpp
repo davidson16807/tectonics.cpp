@@ -59,7 +59,8 @@ namespace field {
                 ) * 
                 std::sqrt(std::pow(T(1 - z*z), T(lMl)/T(2))) * 
                 analytic::polynomial(
-                    analytic::higher_order_derivative<lMl>(analytic::legendre_polynomial<T,L>())
+                    analytic::higher_order_derivative<lMl>(
+                        analytic::legendre_polynomial<T,L>())
                 )(z) * 
                 (M>=0? std::cos(lMl*phi) : std::sin(lMl*phi))
             ;

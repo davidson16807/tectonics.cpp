@@ -31,11 +31,12 @@
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
 #include <index/adapted/scalar/ScalarStrings.hpp>
 #include <index/aggregated/Order.hpp>
+#include <index/aggregated/Statistics.hpp>
 #include <index/iterated/Nary.hpp>
 #include <index/iterated/Arithmetic.hpp>
 
 #include <field/Compose.hpp>                        // Compose
-#include <field/SphericalHarmonics.hpp>             // field::SphericalHarmonics
+#include <field/noise/RankedFractalBrownianNoise.hpp> // dymaxion::RankedFractalBrownianNoise
 
 #include <relation/ScalarRelation.hpp>
 
@@ -46,6 +47,7 @@
 #include <grid/dymaxion/buffer/WholeGridBuffers.hpp>// dymaxion::WholeGridBuffers
 
 #include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
+#include <raster/spheroidal/HarmonicAnalysis.hpp>   // spheroidal::HarmonicAnalysis
 
 // #include <model/rock/stratum/StratumGenerator.hpp>  // StratumGenerator
 
@@ -102,6 +104,7 @@ int main() {
   dymaxion::Grid grid(radius, vertices_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::VertexNormals vertex_normals(grid);
+  dymaxion::VertexDualAreas vertex_dual_areas(grid);
 
   auto vertex_square_ids = dymaxion::square_ids(grid);
 
@@ -115,14 +118,39 @@ int main() {
     // vertex_colored_scalars[i] = (grid.vertex_position(i).z);
   }
 
-  auto harmonics = field::SphericalHarmonics<float,3>({
-                0.0, 
-           0.0, 0.5, 0.0, 
-      0.0, 1.0, 0.0, 0.0, 1.0
-  });
   iterated::Identity copy;
 
-  auto vertex_scalars1 = series::map(harmonics, vertex_positions);
+
+  float min_elevation(-16000.0f);
+  float max_elevation( 16000.0f);
+
+  analytic::Sum<float,analytic::Gaussian<float>> hypsometry_pdf_unscaled {
+    analytic::Gaussian(-4019.0f, 1113.0f, 0.232f),
+    analytic::Gaussian(  797.0f, 1169.0f, 0.209f)
+  };
+  auto hypsometry_cdf_unscaled = analytic::integral(hypsometry_pdf_unscaled);
+  // auto hypsometry_pdf_ddx = analytic::derivative(hypsometry_pdf_unscaled);
+  auto hypsometry_cdf_unscaled_range = hypsometry_cdf_unscaled(max_elevation) - hypsometry_cdf_unscaled(min_elevation);
+  auto hypsometry_cdf = hypsometry_cdf_unscaled / hypsometry_cdf_unscaled_range;
+  auto hypsometry_pdf = hypsometry_pdf_unscaled / hypsometry_cdf_unscaled_range;
+  auto hypsometry_cdfi = inspected::inverse_by_newtons_method(hypsometry_cdf, hypsometry_pdf, 0.5f, 30);
+
+  auto rfbm = field::ranked_fractal_brownian_noise<3>(10, 0.5f, 2.0f/radius, 12.0f, 1.1e4f);
+
+  auto elevation_meters_for_position = field::compose(hypsometry_cdfi, rfbm);
+
+  auto elevation_in_meters = series::map(elevation_meters_for_position, vertex_positions);
+
+  auto analysis = spheroidal::harmonic_analysis<float,4>(
+    vertex_positions,
+    vertex_dual_areas
+  );
+
+  auto vertex_scalars1 = analysis.compose(
+    analysis.decompose(elevation_in_meters)
+  );
+
+  // auto vertex_scalars1 = elevation_in_meters;
 
   // flatten raster for OpenGL
   dymaxion::WholeGridBuffers<int,float> grids(vertices_per_square_side);
@@ -182,6 +210,7 @@ int main() {
   aggregated::Order ordered(suborder);
   spheroidal::Strings strings(substrings, ordered);
   std::cout << strings.format(grid, vertex_scalars1) << std::endl << std::endl;
+  std::cout << strings.format(grid, elevation_in_meters) << std::endl << std::endl;
 
   std::cout << whole::min(buffer_scalars1) << std::endl;
   std::cout << whole::max(buffer_scalars1) << std::endl;

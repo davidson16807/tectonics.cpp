@@ -222,17 +222,14 @@ int main() {
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-      debug_program.draw(
-        buffer_positions,
-        // buffer_color_values, // red
-        std::vector<float>(grid.vertex_count(), 0.0f), // red
-        buffer_scalars1, // green
-        std::vector<float>(grid.vertex_count(), 0.0f), // blue
-        std::vector<float>(grid.vertex_count(), 1.0f), // opacity
-        std::vector<float>(grid.vertex_count(), 0.0f), // displacement
+      colorscale_program.draw(
+        buffer_positions,    // position
+        buffer_scalars1, // color value
+        buffer_uniform,      // displacement
+        buffer_uniform,      // darken
+        buffer_uniform,      // culling
         buffer_element_vertex_ids,
-        glm::vec4(0.0f, -10000.0f, 0.0f, 0.0f),
-        glm::vec4(0.0f,  10000.0f, 1.0f, 1.0f),
+        colorscale_state,
         view_state,
         GL_TRIANGLE_STRIP
       );

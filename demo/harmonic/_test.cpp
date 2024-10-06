@@ -45,7 +45,6 @@
 #include <grid/dymaxion/series.hpp>                 // dymaxion::BufferVertexIds
 #include <grid/dymaxion/buffer/WholeGridBuffers.hpp>// dymaxion::WholeGridBuffers
 
-#include <raster/unlayered/VectorCalculusByFundamentalTheorem.hpp> // unlayered::VectorCalculusByFundamentalTheorem
 #include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
 
 // #include <model/rock/stratum/StratumGenerator.hpp>  // StratumGenerator
@@ -70,7 +69,7 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // we don't want the old OpenGL
 
   // open a window
-  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Terrain", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Harmonic", NULL, NULL);
   if (!window) {
     std::cout << stderr << " ERROR: could not open window with GLFW3" << std::endl;
     glfwTerminate();
@@ -98,7 +97,7 @@ int main() {
   glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
   /* OUR STUFF GOES HERE NEXT */
-  float radius(1.0f);
+  float radius(2.0f);
   int vertices_per_square_side(32);
   dymaxion::Grid grid(radius, vertices_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
@@ -116,7 +115,7 @@ int main() {
     // vertex_colored_scalars[i] = (grid.vertex_position(i).z);
   }
 
-  auto harmonic = field::SphericalHarmonic<float,0,2>();
+  auto harmonic = field::SphericalHarmonic<float,-1,2>();
   iterated::Identity copy;
 
   auto vertex_scalars1 = series::map(harmonic, vertex_positions);

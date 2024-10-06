@@ -1,7 +1,5 @@
 #pragma once
 
-#include <math/special.hpp>
-
 namespace spheroidal 
 {
 
@@ -14,6 +12,7 @@ namespace spheroidal
 	template <typename ElementStrings, typename OrderAggregation>
 	class Strings
 	{
+		static constexpr double pi = 3.14159265358979323846284338327950288;
 		const ElementStrings strings;
 		const OrderAggregation aggregation;
 		template<int L, typename T, glm::qualifier Q>
