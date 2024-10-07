@@ -30,9 +30,6 @@ namespace dymaxion
         using ipoint = Point<id,id>;
         using point = Point<id,scalar>;
 
-        static constexpr scalar s1 = 1;
-        static constexpr scalar s2 = 2;
-
         const Projection<id,scalar,Q> projection;
 
     public:

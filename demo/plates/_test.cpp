@@ -31,12 +31,14 @@
 #include <index/series/noise/GaussianNoise.hpp>
 #include <index/adapted/symbolic/SymbolicArithmetic.hpp>
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
+#include <index/adapted/boolean/BooleanBitset.hpp>
 #include <index/adapted/si/SiStrings.hpp>
 #include <index/adapted/glm/GlmMetric.hpp>
 #include <index/aggregated/Order.hpp>
 #include <index/iterated/Order.hpp>
 #include <index/iterated/Nary.hpp>
 #include <index/iterated/Arithmetic.hpp>
+#include <index/iterated/Bitset.hpp>
 #include <index/grouped/Statistics.hpp>
 
 #include <field/Compose.hpp>                        // Compose
@@ -54,6 +56,7 @@
 #include <raster/unlayered/FloodFilling.hpp>        // unlayered::FloodFilling
 #include <raster/unlayered/Voronoi.hpp>             // unlayered::Voronoi
 #include <raster/unlayered/ImageSegmentation.hpp>   // unlayered::ImageSegmentation
+#include <raster/unlayered/Morphology.hpp>   // unlayered::Morphology
 #include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
 
 // #include <model/rock/stratum/StratumGenerator.hpp>  // StratumGenerator
@@ -106,7 +109,7 @@ int main() {
   glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
   /* OUR STUFF GOES HERE NEXT */
-  float radius(3.0f);
+  float radius(2.0f);
   int vertices_per_square_side(32);
   dymaxion::Grid grid(radius, vertices_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
@@ -159,7 +162,7 @@ int main() {
 
   using vec3 = glm::vec3;
   iterated::Identity copy;
-  grouped::Statistics statistics{adapted::SymbolicArithmetic(vec3(0),vec3(1))};
+  grouped::Statistics stats{adapted::SymbolicArithmetic(vec3(0),vec3(1))};
 
   adapted::SymbolicOrder suborder;
   adapted::SiStrings substrings;
@@ -193,25 +196,37 @@ int main() {
   auto filling = unlayered::flood_filling<int,float>(
     [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 60.0f/180.0f); }
   );
-  // filling.fill(
-  //   grid, vertex_gradient, 
-  //   series::uniform(true),
-  //   whole::max_id(known::length<float>(vertex_gradient)), 
-  //   vertex_colored_scalars, 
-  //   mask1
-  // );
   auto ternary = iterated::Ternary{};
-  auto metric = iterated::Metric{adapted::GlmMetric{}};
+  // auto metric = iterated::Metric{adapted::GlmMetric{}};
   auto order = iterated::Order{adapted::SymbolicOrder{}};
   auto segment = unlayered::image_segmentation<int,float>(filling, adapted::GlmMetric{});
-  auto voronoi = unlayered::Voronoi{adapted::GlmMetric{}};
+  // auto voronoi = unlayered::Voronoi{adapted::GlmMetric{}};
+  auto morphology = 
+    unlayered::Morphology{
+      iterated::Bitset{
+        adapted::BooleanBitset{}}
+    };
   std::vector<std::uint8_t> similar_plate_id(grid.vertex_count());
   std::vector<std::uint8_t> nearest_plate_id(grid.vertex_count());
   std::vector<bool> is_undecided(grid.vertex_count());
+  std::vector<bool> is_there(grid.vertex_count());
+  int plate_count(8);
   segment(
-    grid, vertex_gradient, 7, 10, 
+    grid, vertex_gradient, plate_count-1, 10, 
     similar_plate_id, scratch, mask1, mask2, mask3
   );
+
+  for (int i = 0; i < plate_count; ++i)
+  {
+      order.equal(similar_plate_id, series::uniform(i), is_there);
+      order.equal(similar_plate_id, series::uniform(0), is_undecided);
+      morphology.dilate(grid, is_there, mask1);
+      morphology.dilate(grid, mask1, is_there);
+      // morphology.dilate  (grid, is_there, mask1, 5, mask2);
+      // morphology.closing (grid, mask1, is_there, 5, mask2, mask3);
+      // copy(mask1, is_there);
+      ternary(is_undecided, is_there, similar_plate_id, similar_plate_id);
+  }
   std::vector<vec3>plate_seeds(8,vec3(0,0,0));
   // std::vector<vec3>plate_seeds{
   //   vec3( 1, 1, 1),
@@ -223,11 +238,11 @@ int main() {
   //   vec3(-1,-1, 1),
   //   vec3(-1,-1,-1)
   // };
-  statistics.sum(similar_plate_id, vertex_positions, plate_seeds);
-  metric.normalize(plate_seeds, plate_seeds);
-  voronoi(vertex_positions, plate_seeds, nearest_plate_id);
-  order.equal(similar_plate_id, series::uniform(0), is_undecided);
-  ternary(is_undecided, nearest_plate_id, similar_plate_id, similar_plate_id);
+  // stats.sum(similar_plate_id, vertex_positions, plate_seeds);
+  // metric.normalize(plate_seeds, plate_seeds);
+  // voronoi(vertex_positions, plate_seeds, nearest_plate_id);
+  // order.equal(similar_plate_id, series::uniform(0), is_undecided);
+  // ternary(is_undecided, nearest_plate_id, similar_plate_id, similar_plate_id);
 
   copy(similar_plate_id, buffer_color_values);
   copy(vertex_square_ids, buffer_square_ids);
