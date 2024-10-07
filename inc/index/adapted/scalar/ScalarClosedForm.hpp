@@ -4,6 +4,7 @@
 #include <cmath>     /* std math */
 
 // in-house libraries
+#include <math/special.hpp>
 
 namespace adapted
 {
@@ -12,20 +13,20 @@ namespace adapted
 	The following are alternate definitions of the above that allow for support of other data types using classes of the adapter pattern
 	*/
 
-	#define ADAPTER_UNARY_METHOD(METHOD, NAME) \
+	#define ADAPTED_UNARY_METHOD(METHOD, NAME) \
 	inline auto NAME (const scalar a) const\
 	{\
 		return METHOD(a);\
 	}
 
-	#define ADAPTER_BINARY_METHOD(METHOD, NAME) \
+	#define ADAPTED_BINARY_METHOD(METHOD, NAME) \
 	inline auto NAME (const scalar a, const scalar b) const\
 	{\
 		return METHOD(a, b);\
 	}
 
-	#define ADAPTER_TRINARY_METHOD(METHOD, NAME) \
-	inline auto NAME (const scalar a, const scalar b, const In3 c) const\
+	#define ADAPTED_TRINARY_METHOD(METHOD, NAME) \
+	inline auto NAME (const scalar a, const scalar b, const scalar c) const\
 	{\
 		return METHOD(a, b, c);\
 	}
@@ -35,74 +36,44 @@ namespace adapted
 	{
 		ScalarClosedForm(){}
 
-		ADAPTER_UNARY_METHOD(std::abs, abs)
-		ADAPTER_UNARY_METHOD(std::floor, floor)
-		ADAPTER_UNARY_METHOD(std::trunc, trunc)
-		ADAPTER_UNARY_METHOD(std::round, round)
-		ADAPTER_UNARY_METHOD(std::ceil, ceil)
+		ADAPTED_UNARY_METHOD(std::abs, abs)
+		ADAPTED_UNARY_METHOD(std::floor, floor)
+		ADAPTED_UNARY_METHOD(std::trunc, trunc)
+		ADAPTED_UNARY_METHOD(std::round, round)
+		ADAPTED_UNARY_METHOD(std::ceil, ceil)
 
-		ADAPTER_UNARY_METHOD(std::sqrt, sqrt)
-		ADAPTER_UNARY_METHOD(std::cbrt, cbrt)
-		ADAPTER_UNARY_METHOD(std::pow, pow)
-		ADAPTER_UNARY_METHOD(std::inversesqrt, inversesqrt)
+		ADAPTED_UNARY_METHOD(std::sqrt, sqrt)
+		ADAPTED_UNARY_METHOD(std::cbrt, cbrt)
 
-		ADAPTER_UNARY_METHOD(std::exp, exp)
-		ADAPTER_UNARY_METHOD(std::exp2, exp2)
-		ADAPTER_UNARY_METHOD(std::exp10, exp10)
-		ADAPTER_UNARY_METHOD(std::log, log)
-		ADAPTER_UNARY_METHOD(std::log2, log2)
-		ADAPTER_UNARY_METHOD(std::log10, log10)
+		ADAPTED_UNARY_METHOD(std::exp, exp)
+		ADAPTED_UNARY_METHOD(std::exp2, exp2)
+		ADAPTED_UNARY_METHOD(math::exp10, exp10)
+		ADAPTED_UNARY_METHOD(std::log, log)
+		ADAPTED_UNARY_METHOD(std::log2, log2)
+		ADAPTED_UNARY_METHOD(std::log10, log10)
 
-		ADAPTER_TRINARY_METHOD(std::mix, mix)  
-		ADAPTER_TRINARY_METHOD(std::step, step) 
-		ADAPTER_TRINARY_METHOD(std::smoothstep, smoothstep)
-		ADAPTER_TRINARY_METHOD(std::linearstep, linearstep)
+		ADAPTED_BINARY_METHOD(std::pow, pow)
 
-		inline auto inversesqrt(const scalar a) const
-		{ 
-			return scalar(1)/std::sqrt(a); 
-		}
+		ADAPTED_UNARY_METHOD(math::inversesqrt, inversesqrt)
+		ADAPTED_UNARY_METHOD(math::sign, sign)
+		ADAPTED_UNARY_METHOD(math::bitsign, bitsign)
+		ADAPTED_UNARY_METHOD(math::fract, fract)
 
-		inline constexpr auto distance(const scalar a, const scalar b) const
-		{
-		    return std::sqrt(a*a + b*b);
-		}
+		ADAPTED_BINARY_METHOD(math::distance, distance)
+		ADAPTED_BINARY_METHOD(math::modulus, modulus)
+		ADAPTED_BINARY_METHOD(math::residue, residue)
+		ADAPTED_BINARY_METHOD(math::remainder, remainder)
 
-		inline constexpr T sign(const T x) const
-		{ 
-			return x==T(0)? T(0) : x>T(0)? T(1) : T(-1);
-		}
-
-		inline constexpr T bitsign(const T x) const
-		{ 
-			return std::signbit(x)? T(-1):T(1);
-		}
-
-		inline auto fract(const scalar a)  const
-		{
-			return a-std::floor(a);
-		}
-
-		inline constexpr auto modulus(const scalar a, const scalar b) const
-		{
-		    return residue(residue(a,b) + b, b);
-		}
-
-		inline constexpr auto residue(const scalar a, const scalar b) const
-		{
-		    return a - b * std::floor(a / b);
-		}
-
-		inline constexpr auto remainder(const scalar a, const scalar b) const
-		{
-		    return a - b * std::round(a / b);
-		}
+		ADAPTED_TRINARY_METHOD(math::mix, mix)  
+		ADAPTED_TRINARY_METHOD(math::step, step) 
+		ADAPTED_TRINARY_METHOD(math::smoothstep, smoothstep)
+		ADAPTED_TRINARY_METHOD(math::linearstep, linearstep)
 
 	};
 
-	#undef ADAPTER_UNARY_METHOD
- 	#undef ADAPTER_BINARY_METHOD
-	#undef ADAPTER_TRINARY_METHOD
+	#undef ADAPTED_UNARY_METHOD
+ 	#undef ADAPTED_BINARY_METHOD
+	#undef ADAPTED_TRINARY_METHOD
 
 }
 
