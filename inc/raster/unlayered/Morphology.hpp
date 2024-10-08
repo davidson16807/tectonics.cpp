@@ -33,14 +33,12 @@ namespace unlayered
             // assert(grid.compatible(field));
             id i, j;
             const id N = grid.arrows_per_vertex;
-            typename In::value_type source_value;
             for (i = 0; i < grid.vertex_count(); ++i)
             {
-                out[i] = typename Out::value_type(0);
-                source_value = mask[i];
+                out[i] = mask[i];
                 for (j = 0; j < N; ++j)
                 {
-					out[i] = out[i] || source_value || mask[grid.arrow_target_id(i,j)];
+					out[i] = out[i] || mask[grid.arrow_target_id(i,j)];
                 }
             }
 		}
@@ -48,9 +46,9 @@ namespace unlayered
     	template<typename Grid, typename In, typename Out>
 		void dilate(const Grid& grid, const In& mask, Out& out, const unsigned int radius, Out& scratch) const
 		{
-			In* temp_in  = &out;
-			In* temp_out = &scratch;
-			In* temp_swap= &out;
+			Out* temp_in  = &out;
+			Out* temp_out = &scratch;
+			Out* temp_swap= &out;
 			assert(radius >= 0);
 			if (radius == 0 && &out != &mask)
 			{
@@ -58,7 +56,7 @@ namespace unlayered
 			} 
 			else 
 			{
-				bitsets.copy(mask, *temp_in);
+				bitsets.copy(mask, *temp_out);
 				for (unsigned int i = 0; i < radius; ++i)
 				{
 					temp_swap = temp_out;
@@ -83,11 +81,10 @@ namespace unlayered
             typename In::value_type source_value;
             for (i = 0; i < grid.vertex_count(); ++i)
             {
-                out[i] = typename Out::value_type(1);
-                source_value = mask[i];
+                out[i] = mask[i];
                 for (j = 0; j < N; ++j)
                 {
-					out[i] = out[i] && source_value && mask[grid.arrow_target_id(i,j)];
+					out[i] = out[i] && mask[grid.arrow_target_id(i,j)];
                 }
             }
 		}

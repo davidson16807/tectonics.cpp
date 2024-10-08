@@ -33,7 +33,7 @@ namespace iterated
 	{
 		Ternary(){}
 		template <typename If, typename Else, typename Condition, typename Out>
-		void operator() (const Condition condition, const If& if_, const Else& else_, Out& out) const
+		void operator() (const Condition& condition, const If& if_, const Else& else_, Out& out) const
 		{
 			assert(compatible(if_,out));
 			assert(compatible(else_,out));
