@@ -33,10 +33,14 @@
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
 #include <index/adapted/scalar/ScalarClosedForm.hpp>
 #include <index/adapted/scalar/ScalarStrings.hpp>
+#include <index/adapted/glm/GlmMetric.hpp>
+#include <index/adapted/boolean/BooleanBitset.hpp>
 #include <index/aggregated/Order.hpp>
 #include <index/grouped/Statistics.hpp>
 #include <index/iterated/Nary.hpp>
 #include <index/iterated/Arithmetic.hpp>
+#include <index/iterated/Bitset.hpp>
+#include <index/iterated/Order.hpp>
 
 #include <field/Compose.hpp>                        // Compose
 #include <field/noise/RankedFractalBrownianNoise.hpp> // dymaxion::RankedFractalBrownianNoise
@@ -51,6 +55,10 @@
 #include <grid/dymaxion/buffer/WholeGridBuffers.hpp>// dymaxion::WholeGridBuffers
 
 #include <raster/unlayered/VectorCalculusByFundamentalTheorem.hpp> // unlayered::VectorCalculusByFundamentalTheorem
+#include <raster/unlayered/Morphology.hpp>          // unlayered::Morphology
+#include <raster/unlayered/FloodFilling.hpp>        // unlayered::FloodFilling
+#include <raster/unlayered/Voronoi.hpp>             // unlayered::Voronoi
+#include <raster/unlayered/ImageSegmentation.hpp>   // unlayered::ImageSegmentation
 #include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
 
 // #include <model/rock/stratum/StratumGenerator.hpp>  // StratumGenerator
@@ -103,13 +111,25 @@ int main() {
   glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
   /* OUR STUFF GOES HERE NEXT */
+  using vec3 = glm::vec3;
   float radius(2.0f);
   int fine_vertices_per_square_side(32);
   dymaxion::Grid fine(radius, fine_vertices_per_square_side);
-  dymaxion::Grid coarse(radius, fine_vertices_per_square_side/8);
+  dymaxion::Grid coarse(radius, fine_vertices_per_square_side/2);
   dymaxion::VertexPositions fine_vertex_positions(fine);
   dymaxion::VertexPositions coarse_vertex_positions(coarse);
   dymaxion::VertexDownsamplingIds vertex_downsampling_ids(fine.memory, coarse.memory);
+
+  unlayered::VectorCalculusByFundamentalTheorem calculus;
+  auto fill = unlayered::flood_filling<int,float>(
+    [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 60.0f/180.0f); }
+  );
+  auto segment = unlayered::image_segmentation<int,float>(fill, adapted::GlmMetric{});
+  auto order = iterated::Order{adapted::SymbolicOrder{}};
+  auto bitset = iterated::Bitset{adapted::BooleanBitset{}};
+  auto morphology = unlayered::Morphology{bitset};
+  auto ternary = iterated::Ternary{};
+  // auto voronoi = unlayered::Voronoi{adapted::GlmMetric{}};
 
   float min_elevation(-16000.0f);
   float max_elevation( 16000.0f);
@@ -133,16 +153,40 @@ int main() {
 
   auto elevation_meters_for_position = field::compose(hypsometry_cdfi, rfbm);
   auto fine_elevation_meters = series::map(elevation_meters_for_position, fine_vertex_positions);
+  std::vector<vec3> vertex_gradient(coarse.vertex_count());
+  std::vector<float> scratch(coarse.vertex_count());
+  std::vector<bool> mask1(coarse.vertex_count());
+  std::vector<bool> mask2(coarse.vertex_count());
+  std::vector<bool> mask3(coarse.vertex_count());
+  std::vector<std::uint8_t> similar_plate_id(coarse.vertex_count());
+  std::vector<bool> is_undecided(coarse.vertex_count());
+  std::vector<bool> is_there(coarse.vertex_count());
 
   std::vector<float> coarse_elevation_meters(coarse.vertex_count());
   statistics.sum(vertex_downsampling_ids, fine_elevation_meters, coarse_elevation_meters);
   arithmetic.divide(coarse_elevation_meters, series::uniform(std::pow(float(vertex_downsampling_ids.factor), 2.0f)), coarse_elevation_meters);
 
+  calculus.gradient(coarse, coarse_elevation_meters, vertex_gradient);
+  std::uint8_t plate_count(8);
+  segment(
+    coarse, vertex_gradient, plate_count-1, 10, 
+    similar_plate_id, scratch, mask1, mask2, mask3
+  );
+  // std::uint8_t i(2);
+  for (std::uint8_t i(0); i < plate_count; ++i)
+  {
+      order.equal(similar_plate_id, series::uniform(i), is_there);
+      order.equal(similar_plate_id, series::uniform(0), is_undecided);
+      morphology.dilate(coarse, is_there, mask1);
+      morphology.dilate(coarse, mask1, is_there);
+      bitset.intersect(is_undecided, is_there, is_there);
+      ternary(is_there, series::uniform(i), similar_plate_id, similar_plate_id);
+  }
+
   adapted::ScalarStrings<float> substrings;
   aggregated::Order ordered(adapted::SymbolicOrder{});
   auto strings = spheroidal::Strings(substrings, ordered);
-  std::cout << strings.format(fine, fine_elevation_meters) << std::endl << std::endl;
-  std::cout << strings.format(coarse, coarse_elevation_meters) << std::endl << std::endl;
+  // morphology.dilate  (coarse, is_there, mask1, 5, mask2);
 
   // flatten raster for OpenGL
   dymaxion::WholeGridBuffers<int,float> grids(coarse.vertices_per_square_side());
@@ -155,12 +199,8 @@ int main() {
   std::vector<unsigned int> buffer_element_vertex_ids(grids.triangle_strips_size(coarse_vertex_positions));
   std::cout << "vertex count:        " << coarse.vertex_count() << std::endl;
   std::cout << "vertices per meridian" << coarse.vertices_per_meridian() << std::endl;
-  std::vector<float> scratch(coarse.vertex_count());
-  std::vector<bool> mask1(coarse.vertex_count());
-  std::vector<bool> mask2(coarse.vertex_count());
-  std::vector<bool> mask3(coarse.vertex_count());
 
-  copy(coarse_elevation_meters, buffer_scalars1);
+  copy(similar_plate_id, buffer_scalars1);
   // copy(vertex_scalars2, buffer_scalars2);
   copy(coarse_vertex_positions, buffer_positions);
   grids.storeTriangleStrips(series::range<unsigned int>(coarse.vertex_count()), buffer_element_vertex_ids);
