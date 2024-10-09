@@ -78,7 +78,6 @@ namespace unlayered
             // assert(grid.compatible(field));
             id i, j;
             const id N = grid.arrows_per_vertex;
-            typename In::value_type source_value;
             for (i = 0; i < grid.vertex_count(); ++i)
             {
                 out[i] = mask[i];

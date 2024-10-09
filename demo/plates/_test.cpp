@@ -31,15 +31,16 @@
 #include <index/series/noise/GaussianNoise.hpp>
 #include <index/adapted/symbolic/SymbolicArithmetic.hpp>
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
-#include <index/adapted/boolean/BooleanBitset.hpp>
-#include <index/adapted/si/SiStrings.hpp>
+#include <index/adapted/scalar/ScalarClosedForm.hpp>
+#include <index/adapted/scalar/ScalarStrings.hpp>
 #include <index/adapted/glm/GlmMetric.hpp>
+#include <index/adapted/boolean/BooleanBitset.hpp>
 #include <index/aggregated/Order.hpp>
-#include <index/iterated/Order.hpp>
+#include <index/grouped/Statistics.hpp>
 #include <index/iterated/Nary.hpp>
 #include <index/iterated/Arithmetic.hpp>
 #include <index/iterated/Bitset.hpp>
-#include <index/grouped/Statistics.hpp>
+#include <index/iterated/Order.hpp>
 
 #include <field/Compose.hpp>                        // Compose
 #include <field/noise/RankedFractalBrownianNoise.hpp> // dymaxion::RankedFractalBrownianNoise
@@ -50,13 +51,14 @@
 
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
 #include <grid/dymaxion/series.hpp>                 // dymaxion::BufferVertexIds
+#include <grid/dymaxion/VertexDownsamplingIds.hpp>    // dymaxion::VertexDownsamplingIds
 #include <grid/dymaxion/buffer/WholeGridBuffers.hpp>// dymaxion::WholeGridBuffers
 
 #include <raster/unlayered/VectorCalculusByFundamentalTheorem.hpp> // unlayered::VectorCalculusByFundamentalTheorem
+#include <raster/unlayered/Morphology.hpp>          // unlayered::Morphology
 #include <raster/unlayered/FloodFilling.hpp>        // unlayered::FloodFilling
 #include <raster/unlayered/Voronoi.hpp>             // unlayered::Voronoi
 #include <raster/unlayered/ImageSegmentation.hpp>   // unlayered::ImageSegmentation
-#include <raster/unlayered/Morphology.hpp>   // unlayered::Morphology
 #include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
 
 // #include <model/rock/stratum/StratumGenerator.hpp>  // StratumGenerator
@@ -81,7 +83,7 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // we don't want the old OpenGL
 
   // open a window
-  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Plates", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Downsample", NULL, NULL);
   if (!window) {
     std::cout << stderr << " ERROR: could not open window with GLFW3" << std::endl;
     glfwTerminate();
@@ -109,24 +111,27 @@ int main() {
   glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
   /* OUR STUFF GOES HERE NEXT */
+  using vec3 = glm::vec3;
   float radius(2.0f);
-  int vertices_per_square_side(32);
-  dymaxion::Grid grid(radius, vertices_per_square_side);
-  dymaxion::VertexPositions vertex_positions(grid);
-  dymaxion::VertexNormals vertex_normals(grid);
+  int fine_vertices_per_square_side(30);
+  dymaxion::Grid fine(radius, fine_vertices_per_square_side);
+  dymaxion::Grid coarse(radius, fine_vertices_per_square_side/3);
+  dymaxion::VertexPositions fine_vertex_positions(fine);
+  dymaxion::VertexPositions coarse_vertex_positions(coarse);
+  dymaxion::VertexDownsamplingIds vertex_downsampling_ids(fine.memory, coarse.memory);
 
-  auto vertex_square_ids = dymaxion::square_ids(grid);
-
-  // auto vertex_colored_scalars = series::range();
-
-  std::vector<float> vertex_colored_scalars(grid.vertex_count());
-  for (int i = 0; i < grid.vertex_count(); ++i)
-  {
-    vertex_colored_scalars[i] = grid.memory.memory_id(grid.memory.grid_id(i));
-  }
+  unlayered::VectorCalculusByFundamentalTheorem calculus;
+  auto fill = unlayered::flood_filling<int,float>(
+    [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 60.0f/180.0f); }
+  );
+  auto segment = unlayered::image_segmentation<int,float>(fill, adapted::GlmMetric{});
 
   float min_elevation(-16000.0f);
   float max_elevation( 16000.0f);
+
+  iterated::Identity copy;
+  iterated::Arithmetic arithmetic{adapted::SymbolicArithmetic<float>(0.0f, 1.0f)};
+  grouped::Statistics stats{adapted::SymbolicArithmetic<float>(0.0f, 1.0f)};
 
   analytic::Sum<float,analytic::Gaussian<float>> hypsometry_pdf_unscaled {
     analytic::Gaussian(-4019.0f, 1113.0f, 0.232f),
@@ -142,114 +147,83 @@ int main() {
   auto rfbm = field::ranked_fractal_brownian_noise<3>(10, 0.5f, 2.0f/radius, 12.0f, 1.1e4f);
 
   auto elevation_meters_for_position = field::compose(hypsometry_cdfi, rfbm);
+  auto fine_elevation_meters = series::map(elevation_meters_for_position, fine_vertex_positions);
+  std::vector<vec3> vertex_gradient(coarse.vertex_count());
+  std::vector<float> scratch(coarse.vertex_count());
+  std::vector<bool> mask1(coarse.vertex_count());
+  std::vector<bool> mask2(coarse.vertex_count());
+  std::vector<bool> mask3(coarse.vertex_count());
+  std::vector<std::uint8_t> similar_plate_id(coarse.vertex_count());
+  std::vector<bool> is_undecided(coarse.vertex_count());
+  std::vector<bool> is_there(coarse.vertex_count());
 
-  using length = si::length<float>;
-  auto min_earth_elevation = -10924.0 * si::meter;
+  std::vector<float> coarse_elevation_meters(coarse.vertex_count());
+  stats.sum(vertex_downsampling_ids, fine_elevation_meters, coarse_elevation_meters);
+  arithmetic.divide(coarse_elevation_meters, series::uniform(std::pow(float(vertex_downsampling_ids.factor), 2.0f)), coarse_elevation_meters);
 
-  auto elevation_for_position = 
-      field::compose(
-          relation::ScalarRelation(1.0f, length(si::meter), hypsometry_cdfi),
-          rfbm);
-
-  auto elevation_in_meters = series::map(elevation_meters_for_position, vertex_positions);
-
-  iterated::Unary elevations_for_positions(elevation_for_position);
-  std::vector<length> elevation(grid.vertex_count());
-  elevations_for_positions(vertex_positions, elevation);
-
-  iterated::Arithmetic arithmetic(adapted::SymbolicArithmetic(length(0),length(1)));
-  arithmetic.subtract(elevation, series::uniform(length(min_earth_elevation)), elevation);
-
-  using vec3 = glm::vec3;
-  iterated::Identity copy;
-  grouped::Statistics stats{adapted::SymbolicArithmetic(vec3(0),vec3(1))};
-
-  adapted::SymbolicOrder suborder;
-  adapted::SiStrings substrings;
-  aggregated::Order ordered(suborder);
-  auto strings = spheroidal::Strings(substrings, ordered);
-  std::cout << strings.format(grid, elevation) << std::endl << std::endl;
-
-  auto vertex_scalars1 = elevation_in_meters;
-
-  std::vector<vec3> vertex_gradient(grid.vertex_count());
-  unlayered::VectorCalculusByFundamentalTheorem spatial;
-  spatial.gradient(grid, vertex_scalars1, vertex_gradient);
-
-  // flatten raster for OpenGL
-  dymaxion::WholeGridBuffers<int,float> grids(vertices_per_square_side);
-  std::vector<float> buffer_color_values(grid.vertex_count());
-  std::vector<float> buffer_square_ids(grid.vertex_count());
-  std::vector<float> buffer_scalars2(grid.vertex_count());
-  std::vector<float> buffer_scalars1(grid.vertex_count());
-  std::vector<float> buffer_uniform(grid.vertex_count(), 1.0f);
-  std::vector<vec3> buffer_positions(grid.vertex_count());
-  std::vector<unsigned int> buffer_element_vertex_ids(grids.triangle_strips_size(vertex_positions));
-  std::cout << "vertex count:        " << grid.vertex_count() << std::endl;
-  std::cout << "vertices per meridian" << grid.vertices_per_meridian() << std::endl;
-  // copy(vertex_colored_scalars, buffer_color_values);
-  std::vector<float> scratch(grid.vertex_count());
-  std::vector<bool> mask1(grid.vertex_count());
-  std::vector<bool> mask2(grid.vertex_count());
-  std::vector<bool> mask3(grid.vertex_count());
-
-  auto filling = unlayered::flood_filling<int,float>(
-    [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 60.0f/180.0f); }
-  );
-  auto ternary = iterated::Ternary{};
-  // auto metric = iterated::Metric{adapted::GlmMetric{}};
-  auto order = iterated::Order{adapted::SymbolicOrder{}};
-  auto segment = unlayered::image_segmentation<int,float>(filling, adapted::GlmMetric{});
-  // auto voronoi = unlayered::Voronoi{adapted::GlmMetric{}};
-  auto morphology = 
-    unlayered::Morphology{
-      iterated::Bitset{
-        adapted::BooleanBitset{}}
-    };
-  std::vector<std::uint8_t> similar_plate_id(grid.vertex_count());
-  std::vector<std::uint8_t> nearest_plate_id(grid.vertex_count());
-  std::vector<bool> is_undecided(grid.vertex_count());
-  std::vector<bool> is_there(grid.vertex_count());
-  int plate_count(8);
+  calculus.gradient(coarse, coarse_elevation_meters, vertex_gradient);
+  std::uint8_t plate_count(8);
   segment(
-    grid, vertex_gradient, plate_count-1, 10, 
+    coarse, vertex_gradient, plate_count-1, 10, 
     similar_plate_id, scratch, mask1, mask2, mask3
   );
 
-  for (int i = 0; i < plate_count; ++i)
-  {
-      order.equal(similar_plate_id, series::uniform(i), is_there);
-      order.equal(similar_plate_id, series::uniform(0), is_undecided);
-      morphology.dilate(grid, is_there, mask1);
-      morphology.dilate(grid, mask1, is_there);
-      // morphology.dilate  (grid, is_there, mask1, 5, mask2);
-      // morphology.closing (grid, mask1, is_there, 5, mask2, mask3);
-      // copy(mask1, is_there);
-      ternary(is_undecided, is_there, similar_plate_id, similar_plate_id);
-  }
-  std::vector<vec3>plate_seeds(8,vec3(0,0,0));
-  // std::vector<vec3>plate_seeds{
-  //   vec3( 1, 1, 1),
-  //   vec3( 1, 1,-1),
-  //   vec3( 1,-1, 1),
-  //   vec3( 1,-1,-1),
-  //   vec3(-1, 1, 1),
-  //   vec3(-1, 1,-1),
-  //   vec3(-1,-1, 1),
-  //   vec3(-1,-1,-1)
-  // };
-  // stats.sum(similar_plate_id, vertex_positions, plate_seeds);
-  // metric.normalize(plate_seeds, plate_seeds);
-  // voronoi(vertex_positions, plate_seeds, nearest_plate_id);
-  // order.equal(similar_plate_id, series::uniform(0), is_undecided);
-  // ternary(is_undecided, nearest_plate_id, similar_plate_id, similar_plate_id);
+  auto order = iterated::Order{adapted::SymbolicOrder{}};
+  auto ternary = iterated::Ternary{};
+  auto bitset = iterated::Bitset{adapted::BooleanBitset{}};
+  auto morphology = unlayered::Morphology{bitset};
 
-  copy(similar_plate_id, buffer_color_values);
-  copy(vertex_square_ids, buffer_square_ids);
-  copy(vertex_scalars1, buffer_scalars1);
-  // copy(vertex_scalars2, buffer_scalars2);
-  copy(vertex_positions, buffer_positions);
-  grids.storeTriangleStrips(series::range<unsigned int>(grid.vertex_count()), buffer_element_vertex_ids);
+  if(true){
+    for(std::uint8_t j(0); j < 4; ++j)
+    {
+      for (std::uint8_t i(0); i < plate_count; ++i)
+      {
+          order.equal(similar_plate_id, series::uniform(i), is_there);
+          order.equal(similar_plate_id, series::uniform(0), is_undecided);
+          morphology.dilate(coarse, is_there, mask1);
+          morphology.dilate(coarse, mask1, is_there);
+          bitset.intersect(is_undecided, is_there, is_there);
+          ternary(is_there, series::uniform(i), similar_plate_id, similar_plate_id);
+      }
+    }
+  }
+
+  if(false){
+    grouped::Statistics stats3{adapted::SymbolicArithmetic(vec3(0),vec3(1))};
+    iterated::Metric metric{adapted::GlmMetric{}};
+    auto voronoi = unlayered::Voronoi{adapted::GlmMetric{}};
+
+    std::vector<std::uint8_t> nearest_plate_id(coarse.vertex_count());
+    std::vector<vec3>plate_seeds(8,vec3(0,0,0));
+    stats3.sum(similar_plate_id, coarse_vertex_positions, plate_seeds);
+    metric.normalize(plate_seeds, plate_seeds);
+    voronoi(coarse_vertex_positions, plate_seeds, nearest_plate_id);
+    order.equal(similar_plate_id, series::uniform(0), is_undecided);
+    ternary(is_undecided, nearest_plate_id, similar_plate_id, similar_plate_id);
+  }
+
+  adapted::ScalarStrings<float> substrings;
+  aggregated::Order ordered(adapted::SymbolicOrder{});
+  auto strings = spheroidal::Strings(substrings, ordered);
+  std::cout << strings.format(coarse, similar_plate_id) << std::endl << std::endl;
+  morphology.dilate  (coarse, is_there, mask1, 5, mask2);
+
+  // flatten raster for OpenGL
+  dymaxion::WholeGridBuffers<int,float> grids(coarse.vertices_per_square_side());
+  std::vector<float> buffer_color_values(coarse.vertex_count());
+  std::vector<float> buffer_square_ids(coarse.vertex_count());
+  std::vector<float> buffer_scalars2(coarse.vertex_count());
+  std::vector<float> buffer_scalars1(coarse.vertex_count());
+  std::vector<float> buffer_uniform(coarse.vertex_count(), 1.0f);
+  std::vector<glm::vec3> buffer_positions(coarse.vertex_count());
+  std::vector<unsigned int> buffer_element_vertex_ids(grids.triangle_strips_size(coarse_vertex_positions));
+  std::cout << "vertex count:        " << coarse.vertex_count() << std::endl;
+  std::cout << "vertices per meridian" << coarse.vertices_per_meridian() << std::endl;
+
+  copy(similar_plate_id, buffer_scalars1);
+  copy(coarse_elevation_meters, buffer_scalars2);
+  copy(coarse_vertex_positions, buffer_positions);
+  grids.storeTriangleStrips(series::range<unsigned int>(coarse.vertex_count()), buffer_element_vertex_ids);
 
   // initialize control state
   update::OrbitalControlState control_state;
@@ -269,7 +243,8 @@ int main() {
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);
   view::ColorscaleSurfacesViewState colorscale_state;
-  colorscale_state.max_color_value = whole::max(buffer_color_values);
+  colorscale_state.max_color_value = whole::max(buffer_scalars1);
+  colorscale_state.min_color_value = whole::min(buffer_scalars1);
   colorscale_state.darken_threshold = whole::mean(buffer_scalars2);
 
   // initialize shader program
@@ -287,27 +262,12 @@ int main() {
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-      // debug_program.draw(
-      //   buffer_positions,
-      //   // buffer_color_values, // red
-      //   std::vector<float>(grid.vertex_count(), 0.0f), // red
-      //   buffer_color_values, // green
-      //   std::vector<float>(grid.vertex_count(), 0.0f), // blue
-      //   std::vector<float>(grid.vertex_count(), 1.0f), // opacity
-      //   std::vector<float>(grid.vertex_count(), 0.0f), // displacement
-      //   buffer_element_vertex_ids,
-      //   glm::vec4(0.0f, -10000.0f, 0.0f, 0.0f),
-      //   glm::vec4(0.0f,  10000.0f, 1.0f, 1.0f),
-      //   view_state,
-      //   GL_TRIANGLE_STRIP
-      // );
-
       colorscale_program.draw(
-        buffer_positions,    // position
-        buffer_color_values, // color value
-        buffer_uniform,      // displacement
-        buffer_uniform,      // darken
-        buffer_uniform,      // culling
+        buffer_positions, // position
+        buffer_scalars1,  // color value
+        buffer_uniform,   // displacement
+        buffer_scalars2,   // darken
+        buffer_uniform,   // culling
         buffer_element_vertex_ids,
         colorscale_state,
         view_state,
