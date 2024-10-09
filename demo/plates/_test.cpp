@@ -120,12 +120,6 @@ int main() {
   dymaxion::VertexPositions coarse_vertex_positions(coarse);
   dymaxion::VertexDownsamplingIds vertex_downsampling_ids(fine.memory, coarse.memory);
 
-  unlayered::VectorCalculusByFundamentalTheorem calculus;
-  auto fill = unlayered::flood_filling<int,float>(
-    [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 60.0f/180.0f); }
-  );
-  auto segment = unlayered::image_segmentation<int,float>(fill, adapted::GlmMetric{});
-
   float min_elevation(-16000.0f);
   float max_elevation( 16000.0f);
 
@@ -161,20 +155,38 @@ int main() {
   stats.sum(vertex_downsampling_ids, fine_elevation_meters, coarse_elevation_meters);
   arithmetic.divide(coarse_elevation_meters, series::uniform(std::pow(float(vertex_downsampling_ids.factor), 2.0f)), coarse_elevation_meters);
 
-  calculus.gradient(coarse, coarse_elevation_meters, vertex_gradient);
-  std::uint8_t plate_count(8);
-  segment(
-    coarse, vertex_gradient, plate_count-1, 10, 
-    similar_plate_id, scratch, mask1, mask2, mask3
-  );
+  iterated::Order order{adapted::SymbolicOrder{}};
+  aggregated::Order ordered(adapted::SymbolicOrder{});
 
-  auto order = iterated::Order{adapted::SymbolicOrder{}};
+  unlayered::VectorCalculusByFundamentalTheorem calculus;
+  auto fill = unlayered::flood_filling<int,float>(
+    [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 60.0f/180.0f); }
+  );
+  auto segment = unlayered::image_segmentation<int,float>(fill, adapted::GlmMetric{});
+
+  std::uint8_t plate_count(8);
+
+  calculus.gradient(coarse, coarse_elevation_meters, vertex_gradient);
+
+  if (true)
+  {
+    copy(series::uniform(0), similar_plate_id);
+    similar_plate_id[0] = 1;
+  }
+  else
+  {
+    segment(
+      coarse, vertex_gradient, plate_count-1, 10, 
+      similar_plate_id, scratch, mask1, mask2, mask3
+    );
+  }
+
   auto ternary = iterated::Ternary{};
   auto bitset = iterated::Bitset{adapted::BooleanBitset{}};
   auto morphology = unlayered::Morphology{bitset};
 
   if(true){
-    for(std::uint8_t j(0); j < 4; ++j)
+    for(std::uint8_t j(0); j < 2; ++j)
     {
       for (std::uint8_t i(0); i < plate_count; ++i)
       {
@@ -203,7 +215,6 @@ int main() {
   }
 
   adapted::ScalarStrings<float> substrings;
-  aggregated::Order ordered(adapted::SymbolicOrder{});
   auto strings = spheroidal::Strings(substrings, ordered);
   std::cout << strings.format(coarse, similar_plate_id) << std::endl << std::endl;
   morphology.dilate  (coarse, is_there, mask1, 5, mask2);
