@@ -10,7 +10,8 @@ namespace dymaxion
 {
 
 	/*
-	`VertexDownsamplingIds` maps each memory id of a dymaxion::Grid to those of another dymaxion::Grid of coarser resolution
+	`VertexDownsamplingIds` maps each memory id of a dymaxion::Grid to those of another dymaxion::Grid of coarser resolution.
+	Unlike most other grids, downsampling for `dymaxion::Grid`s strictly uses in-order traversal!
 	*/
 
 	template<typename id, typename scalar> 

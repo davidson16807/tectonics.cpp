@@ -10,27 +10,42 @@
 namespace adapted
 {
 
+	std::vector<std::string> dots {" ", "⋅", "⁚", "⁖", "⸬", "⁙"};
+	std::vector<std::string> shades {" ", "░", "▒", "▓", "█"  };
+	std::vector<std::string> dotshades {" ", "⋅", "⁚", "⁖", "⸬", "⁙", "░", "▒", "▓", "█"  };
+	std::vector<std::string> numeric {"0","1","2","3","4","5","6","7","8","9"};
+	std::vector<std::string> uppercase {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
+	std::vector<std::string> uppernumeric {
+		"0","1","2","3","4","5","6","7","8","9", 
+		"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
+	};
+	std::vector<std::string> alphanumeric {
+		"0","1","2","3","4","5","6","7","8","9", 
+		"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"
+		"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
+	};
+
 	template<typename scalar>
 	class ScalarStrings
 	{
 
-		#if defined(__clang__)
-			const std::vector<const std::string> 
-		#else
-			const std::array<const std::string, 5>
-		#endif
-		shades {" ", "░", "▒", "▓", "█" };
+		const std::vector<std::string> characters;
 
 	public:
-		ScalarStrings(){}
+		ScalarStrings(std::vector<std::string> characters):
+			characters(characters)
+		{}
+		ScalarStrings():
+			characters(dotshades)
+		{}
 
 		std::string legend(const scalar sample, const scalar lo, const scalar hi) const 
 		{
 			std::string out("");
-			for (unsigned int i = 0; i < shades.size(); ++i)
+			for (unsigned int i = 0; i < characters.size(); ++i)
 			{
-				auto bound = math::mix(float(lo), float(hi), float(i)/float(shades.size()));
-				out += shades[i];
+				auto bound = math::mix(float(lo), float(hi), float(i)/float(characters.size()));
+				out += characters[i];
 				out += " ≥ ";
 				out += std::to_string(bound);
 				out += "\n";
@@ -50,9 +65,9 @@ namespace adapted
 			}
 			else 
 			{
-			    return shades[
-			    	std::clamp(int((shades.size()) * math::linearstep(lo, hi, a)), 
-			    				0, int(shades.size()-1))
+			    return characters[
+			    	std::clamp(int((characters.size()) * math::linearstep(lo, hi, a)), 
+			    				0, int(characters.size()-1))
 		    	];
 			}
 		}

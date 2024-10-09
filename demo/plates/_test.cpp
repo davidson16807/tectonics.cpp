@@ -33,6 +33,7 @@
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
 #include <index/adapted/scalar/ScalarClosedForm.hpp>
 #include <index/adapted/scalar/ScalarStrings.hpp>
+#include <index/adapted/scalar/IdStrings.hpp>
 #include <index/adapted/glm/GlmMetric.hpp>
 #include <index/adapted/boolean/BooleanBitset.hpp>
 #include <index/aggregated/Order.hpp>
@@ -115,7 +116,7 @@ int main() {
   float radius(2.0f);
   int fine_vertices_per_square_side(30);
   dymaxion::Grid fine(radius, fine_vertices_per_square_side);
-  dymaxion::Grid coarse(radius, fine_vertices_per_square_side/3);
+  dymaxion::Grid coarse(radius, fine_vertices_per_square_side/2);
   dymaxion::VertexPositions fine_vertex_positions(fine);
   dymaxion::VertexPositions coarse_vertex_positions(coarse);
   dymaxion::VertexDownsamplingIds vertex_downsampling_ids(fine.memory, coarse.memory);
@@ -160,7 +161,7 @@ int main() {
 
   unlayered::VectorCalculusByFundamentalTheorem calculus;
   auto fill = unlayered::flood_filling<int,float>(
-    [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 60.0f/180.0f); }
+    [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 45.0f/180.0f); }
   );
   auto segment = unlayered::image_segmentation<int,float>(fill, adapted::GlmMetric{});
 
@@ -168,7 +169,7 @@ int main() {
 
   calculus.gradient(coarse, coarse_elevation_meters, vertex_gradient);
 
-  if (true)
+  if (false)
   {
     copy(series::uniform(0), similar_plate_id);
     similar_plate_id[0] = 1;
@@ -185,8 +186,8 @@ int main() {
   auto bitset = iterated::Bitset{adapted::BooleanBitset{}};
   auto morphology = unlayered::Morphology{bitset};
 
-  if(true){
-    for(std::uint8_t j(0); j < 2; ++j)
+  if(false){
+    for(std::uint8_t j(0); j < 1; ++j)
     {
       for (std::uint8_t i(0); i < plate_count; ++i)
       {
@@ -200,7 +201,7 @@ int main() {
     }
   }
 
-  if(false){
+  if(true){
     grouped::Statistics stats3{adapted::SymbolicArithmetic(vec3(0),vec3(1))};
     iterated::Metric metric{adapted::GlmMetric{}};
     auto voronoi = unlayered::Voronoi{adapted::GlmMetric{}};
@@ -214,7 +215,7 @@ int main() {
     ternary(is_undecided, nearest_plate_id, similar_plate_id, similar_plate_id);
   }
 
-  adapted::ScalarStrings<float> substrings;
+  adapted::ScalarStrings<float> substrings(adapted::dotshades);
   auto strings = spheroidal::Strings(substrings, ordered);
   std::cout << strings.format(coarse, similar_plate_id) << std::endl << std::endl;
   morphology.dilate  (coarse, is_there, mask1, 5, mask2);
