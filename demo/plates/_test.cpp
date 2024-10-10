@@ -34,8 +34,10 @@
 #include <index/adapted/scalar/ScalarClosedForm.hpp>
 #include <index/adapted/scalar/ScalarStrings.hpp>
 #include <index/adapted/scalar/IdStrings.hpp>
+#include <index/adapted/glm/GlmStrings.hpp>
 #include <index/adapted/glm/GlmMetric.hpp>
 #include <index/adapted/boolean/BooleanBitset.hpp>
+#include <index/adapted/metric/MetricOrder.hpp>
 #include <index/aggregated/Order.hpp>
 #include <index/grouped/Statistics.hpp>
 #include <index/iterated/Nary.hpp>
@@ -119,6 +121,7 @@ int main() {
   dymaxion::Grid coarse(radius, fine_vertices_per_square_side/2);
   dymaxion::VertexPositions fine_vertex_positions(fine);
   dymaxion::VertexPositions coarse_vertex_positions(coarse);
+  dymaxion::VertexNormals coarse_vertex_normals(coarse);
   dymaxion::VertexDownsamplingIds vertex_downsampling_ids(fine.memory, coarse.memory);
 
   float min_elevation(-16000.0f);
@@ -156,8 +159,8 @@ int main() {
   stats.sum(vertex_downsampling_ids, fine_elevation_meters, coarse_elevation_meters);
   arithmetic.divide(coarse_elevation_meters, series::uniform(std::pow(float(vertex_downsampling_ids.factor), 2.0f)), coarse_elevation_meters);
 
-  iterated::Order order{adapted::SymbolicOrder{}};
-  aggregated::Order ordered(adapted::SymbolicOrder{});
+  iterated::Order orders{adapted::SymbolicOrder{}};
+  aggregated::Order order(adapted::SymbolicOrder{});
 
   unlayered::VectorCalculusByFundamentalTheorem calculus;
   auto fill = unlayered::flood_filling<int,float>(
@@ -182,6 +185,12 @@ int main() {
     );
   }
 
+  adapted::ScalarStrings<float> substrings(adapted::dotshades);
+  spheroidal::Strings strings(substrings, order);
+  adapted::GlmStrings substrings3;
+  spheroidal::Strings strings3(substrings3, aggregated::Order{adapted::MetricOrder{adapted::GlmMetric{}}});
+  std::cout << strings.format(coarse, similar_plate_id) << std::endl << std::endl;
+
   auto ternary = iterated::Ternary{};
   auto bitset = iterated::Bitset{adapted::BooleanBitset{}};
   auto morphology = unlayered::Morphology{bitset};
@@ -191,8 +200,8 @@ int main() {
     {
       for (std::uint8_t i(0); i < plate_count; ++i)
       {
-          order.equal(similar_plate_id, series::uniform(i), is_there);
-          order.equal(similar_plate_id, series::uniform(0), is_undecided);
+          orders.equal(similar_plate_id, series::uniform(i), is_there);
+          orders.equal(similar_plate_id, series::uniform(0), is_undecided);
           morphology.dilate(coarse, is_there, mask1);
           morphology.dilate(coarse, mask1, is_there);
           bitset.intersect(is_undecided, is_there, is_there);
@@ -204,21 +213,19 @@ int main() {
   if(true){
     grouped::Statistics stats3{adapted::SymbolicArithmetic(vec3(0),vec3(1))};
     iterated::Metric metric{adapted::GlmMetric{}};
-    auto voronoi = unlayered::Voronoi{adapted::GlmMetric{}};
+    unlayered::Voronoi voronoi{adapted::GlmMetric{}};
 
     std::vector<std::uint8_t> nearest_plate_id(coarse.vertex_count());
     std::vector<vec3>plate_seeds(8,vec3(0,0,0));
     stats3.sum(similar_plate_id, coarse_vertex_positions, plate_seeds);
     metric.normalize(plate_seeds, plate_seeds);
     voronoi(coarse_vertex_positions, plate_seeds, nearest_plate_id);
-    order.equal(similar_plate_id, series::uniform(0), is_undecided);
+    orders.equal(similar_plate_id, series::uniform(0), is_undecided);
     ternary(is_undecided, nearest_plate_id, similar_plate_id, similar_plate_id);
   }
 
-  adapted::ScalarStrings<float> substrings(adapted::dotshades);
-  auto strings = spheroidal::Strings(substrings, ordered);
+  std::cout << strings3.format(coarse, vertex_gradient) << std::endl << std::endl;
   std::cout << strings.format(coarse, similar_plate_id) << std::endl << std::endl;
-  morphology.dilate  (coarse, is_there, mask1, 5, mask2);
 
   // flatten raster for OpenGL
   dymaxion::WholeGridBuffers<int,float> grids(coarse.vertices_per_square_side());
@@ -262,6 +269,7 @@ int main() {
   // initialize shader program
   view::ColorscaleSurfaceShaderProgram colorscale_program;  
   view::MultichannelSurfaceShaderProgram debug_program;
+  view::IndicatorSwarmShaderProgram indicator_program;  
 
   // initialize MessageQueue for MVU architecture
   messages::MessageQueue message_queue;
@@ -269,6 +277,25 @@ int main() {
 
   std::cout << whole::min(buffer_scalars1) << std::endl;
   std::cout << whole::max(buffer_scalars1) << std::endl;
+
+  // flatten vector raster for OpenGL
+  buffer::PyramidBuffers<int, float> pyramids;
+  std::vector<glm::vec3> vectors_element_position(pyramids.triangles_size<3>(3));
+  std::vector<glm::vec3> vectors_instance_position(coarse.vertex_count());
+  std::vector<glm::vec4> vectors_instance_color(coarse.vertex_count(), glm::vec4(1.0f));
+  std::vector<glm::vec3> vectors_instance_up(coarse.vertex_count());
+  std::vector<float> vectors_instance_scale(coarse.vertex_count());
+  float pyramid_radius(coarse.total_circumference()/(8.0*coarse.vertices_per_meridian()));
+  float pyramid_halflength(2.5f*pyramid_radius);
+  pyramids.storeTriangles(
+      glm::vec3(-1,0,0) * pyramid_halflength, 
+      glm::vec3(1,0,0)  * pyramid_halflength, 
+      glm::vec3(0,0,1), pyramid_radius, 3,
+      vectors_element_position);
+  each::copy   (known::mult(coarse_vertex_positions, series::uniform(1+pyramid_halflength/coarse.total_radius())),  vectors_instance_position);
+  each::length (vertex_gradient,   vectors_instance_scale);
+  each::copy   (coarse_vertex_normals, vectors_instance_up);
+  each::div    (vectors_instance_scale, series::uniform(whole::max(vectors_instance_scale)), vectors_instance_scale);
 
   while(!glfwWindowShouldClose(window)) {
       // wipe drawing surface clear
@@ -284,6 +311,18 @@ int main() {
         colorscale_state,
         view_state,
         GL_TRIANGLE_STRIP
+      );
+
+
+      indicator_program.draw(
+        vectors_element_position,
+        vectors_instance_position,
+        vertex_gradient,
+        vectors_instance_up,
+        vectors_instance_scale,
+        vectors_instance_color,
+        view_state,
+        GL_TRIANGLES
       );
 
       // put stuff we've been drawing onto the display

@@ -10,19 +10,29 @@
 namespace adapted
 {
 
-	std::vector<std::string> dots {" ", "⋅", "⁚", "⁖", "⸬", "⁙"};
+	std::vector<std::string> dots {" ", "⋅", "⁚", "⸫", "⸬", "⁙"};
 	std::vector<std::string> shades {" ", "░", "▒", "▓", "█"  };
 	std::vector<std::string> dotshades {" ", "⋅", "⁚", "⁖", "⸬", "⁙", "░", "▒", "▓", "█"  };
 	std::vector<std::string> numeric {"0","1","2","3","4","5","6","7","8","9"};
-	std::vector<std::string> uppercase {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
-	std::vector<std::string> uppernumeric {
+	std::vector<std::string> alphabetic {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
+	std::vector<std::string> alphanumeric {
 		"0","1","2","3","4","5","6","7","8","9", 
 		"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
 	};
-	std::vector<std::string> alphanumeric {
+	// for when you absolutely, positively, need to distinguish a lot of values...
+	std::vector<std::string> matrix { 
 		"0","1","2","3","4","5","6","7","8","9", 
-		"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"
-		"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
+		"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+		"ア","イ","ウ","エ","オ",
+		"カ","キ","ク","ケ","コ",
+		"サ","シ","ス","セ","ソ",
+		"タ","チ","ツ","テ","ト",
+		"ナ","ニ","ヌ","ネ","ノ",
+		"ハ","ヒ","フ","ヘ","ホ",
+		"マ","ミ","ム","メ","モ",
+		"ヤ","ユ","ヨ",
+		"ラ","リ","ル","レ","ロ",
+		"ワ","ヰ","ヱ","ヲ", "ン"
 	};
 
 	template<typename scalar>
