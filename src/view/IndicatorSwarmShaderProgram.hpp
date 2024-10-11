@@ -78,11 +78,11 @@ namespace view
 			        out     vec4  fragment_color_in;
 			        void main(){
 			            fragment_color_in = instance_color;
-			            vec3 I = normalize(instance_heading);
-			            vec3 J = normalize(cross(instance_up, instance_heading));
-			            vec3 K = cross(I,J);
+			            vec3 K = normalize(instance_heading);
+			            vec3 I = normalize(instance_up);
+			            vec3 J = cross(I,K);
 			            mat3 instance_matrix = instance_scale * transpose(mat3(I,J,K));
-			        	vec3 instance_element_position = instance_matrix * element_position + instance_position;
+			        	vec3 instance_element_position = (instance_matrix * element_position) + instance_position;
 			        	// NOTE: for a heads up display, set all `*_matrix` parameters to identity
 			            gl_Position = projection_matrix * view_matrix * model_matrix * vec4(instance_element_position,1);
 			        };

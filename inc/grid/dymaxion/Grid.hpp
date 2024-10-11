@@ -81,7 +81,7 @@ namespace dymaxion
 
 		constexpr ivec2 arrow_offset_grid_position(const id arrow_offset_memory_id) const
 		{
-			return 	((arrow_offset_memory_id >> 1)? -1 : 1) 
+			return 	((arrow_offset_memory_id & 2)? -1 : 1) 
 				* 	((arrow_offset_memory_id & 1)? ivec2(0,1) : ivec2(1,0));
 		}
 
@@ -155,8 +155,8 @@ namespace dymaxion
 		{
 			const point midpointOB(point(memory.grid_id(source_id)) + vec2(0.5) * vec2(arrow_offset_grid_position(offset_id)));
 			return glm::distance(
-					voronoi.sphere_position( midpointOB + scalar(0.5)*vec2(arrow_offset_grid_position((offset_id+1)%arrows_per_vertex)) ),
-				 	voronoi.sphere_position( midpointOB + scalar(0.5)*vec2(arrow_offset_grid_position((offset_id-1)%arrows_per_vertex)) )
+					voronoi.sphere_position( midpointOB + scalar(0.5)*vec2(arrow_offset_grid_position(math::residue((offset_id+1), arrows_per_vertex))) ),
+				 	voronoi.sphere_position( midpointOB + scalar(0.5)*vec2(arrow_offset_grid_position(math::residue((offset_id-1), arrows_per_vertex))) )
 				);
 		}
 

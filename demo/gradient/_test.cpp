@@ -222,12 +222,13 @@ int main() {
   float pyramid_radius(grid.total_circumference()/(8.0*grid.vertices_per_meridian()));
   float pyramid_halflength(2.5f*pyramid_radius);
   pyramids.storeTriangles(
-      glm::vec3(-1,0,0) * pyramid_halflength, 
-      glm::vec3(1,0,0)  * pyramid_halflength, 
-      glm::vec3(0,0,1), pyramid_radius, 3,
+      glm::vec3(0,0,-1) * pyramid_halflength, 
+      glm::vec3(0,0, 1) * pyramid_halflength, 
+      glm::vec3(0,1, 0),  pyramid_radius, 3, 
       vectors_element_position);
   each::copy   (known::mult(vertex_positions, series::uniform(1+pyramid_halflength/grid.total_radius())),  vectors_instance_position);
   each::copy   (vertex_gradient,   vectors_instance_heading);
+  // each::copy   (series::uniform(glm::vec3(0,0,1)),   vectors_instance_heading);
   each::copy   (vertex_normals,    vectors_instance_up);
   each::length (vertex_gradient,   vectors_instance_scale);
   each::div    (vectors_instance_scale, series::uniform(whole::max(vectors_instance_scale)), vectors_instance_scale);
