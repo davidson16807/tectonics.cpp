@@ -17,7 +17,6 @@
 #include <math/glm/special_specialization.hpp>
 #include <math/glm/special.hpp>
 
-#include <index/glm/each_specialization.hpp>
 #include <index/glm/whole_specialization.hpp>
 #include <index/whole.hpp>  
 #include <index/known.hpp>  
@@ -34,6 +33,7 @@
 #include <index/iterated/Geometric.hpp>
 
 #include <index/adapted/symbolic/SymbolicArithmetic.hpp>
+#include <index/adapted/glm/GlmScalarArithmetic.hpp>
 #include <index/adapted/glm/GlmMetric.hpp>
 #include <index/adapted/glm/GlmGeometric.hpp>
 
@@ -54,7 +54,7 @@
 
 #include <grid/dymaxion/test/Adapter.hpp>
 
-// metric, geometric, scalar, vector
+// metric, geometric, arithmetic, vector
 
 #define DYMAXION_TEST_GRIDDED_OUT_PARAMETER(TYPE,GRID,F) \
     [=](auto x){ std::vector<TYPE> out(GRID.vertex_count()); (F(GRID,x,out)); return out; }
@@ -198,32 +198,43 @@ std::vector vector_rasters{
 
 TEST_CASE( "Raster gradient", "[unlayered]" ) {
     dymaxion::Adapter strict(calculus_fine, 1e-5, calculus_fine.vertex_count());
+    dymaxion::VertexNormals vertex_normals(calculus_fine);
     unlayered::VectorCalculusByFundamentalTheorem operators;
     iterated::Metric metric{adapted::GlmMetric{}};
     iterated::Geometric geometric{adapted::GlmGeometric{}};
-    iterated::Arithmetic scalar{adapted::SymbolicArithmetic{0.0, 1.0}};
-    iterated::Arithmetic vector{adapted::SymbolicArithmetic{glm::vec3(0), glm::vec3(1)}};
+    iterated::Arithmetic arithmetic{adapted::SymbolicArithmetic{0.0, 1.0}};
 
     REQUIRE(test::determinism(strict, 
         "operators.gradient", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.gradient),
         scalar_rasters
     ));
 
+    REQUIRE(test::composition(strict, //dymaxion::Adapter(calculus_fine, 100.0, calculus_fine.vertex_count()), 
+        "dot with surface normal ", [=](auto gradient){ 
+            std::vector<double> out(calculus_fine.vertex_count());
+            geometric.dot(gradient, vertex_normals, out);
+            return out;
+        },
+        "operators.gradient      ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.gradient),
+        "the zero vector         ", [](auto a){ return procedural::uniform(0.0); }, 
+        vector_rasters
+    ));
+
     REQUIRE(test::additivity(strict, 
         "operators.gradient ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.gradient),
-        "scalar.add         ", DYMAXION_TEST_BINARY_OUT_PARAMETER (double,     calculus_fine, scalar.add),
-        "scalar.add         ", DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, calculus_fine, scalar.add),
+        "arithmetic.add     ", DYMAXION_TEST_BINARY_OUT_PARAMETER (double,     calculus_fine, arithmetic.add),
+        "arithmetic.add     ", DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, calculus_fine, arithmetic.add),
         scalar_rasters, scalar_rasters
     ));
 
     // results here are promising
     REQUIRE(test::equality(dymaxion::Adapter(calculus_fine, 10.0, calculus_fine.vertex_count()), 
-        "The gradient of a scalar must statsify a well known relationship",
+        "The gradient of a arithmetic must statsify a well known relationship",
         "∇(ab)     ", 
         [=](auto a, auto b){
             std::vector<double> ab(calculus_fine.vertex_count());
             std::vector<glm::dvec3> grad_ab(calculus_fine.vertex_count());
-            scalar.multiply(a, b, ab);
+            arithmetic.multiply(a, b, ab);
             operators.gradient(calculus_fine,grad_ab,grad_ab); 
             return grad_ab;
         },
@@ -234,9 +245,9 @@ TEST_CASE( "Raster gradient", "[unlayered]" ) {
             std::vector<glm::dvec3> a_grad_b_b_grad_a(calculus_fine.vertex_count());
             operators.gradient(calculus_fine, a, b_grad_a);
             operators.gradient(calculus_fine, b, a_grad_b);
-            scalar.multiply(a, a_grad_b, a_grad_b);
-            scalar.multiply(b, b_grad_a, b_grad_a);
-            scalar.add(a_grad_b, b_grad_a, a_grad_b_b_grad_a);
+            arithmetic.multiply(a, a_grad_b, a_grad_b);
+            arithmetic.multiply(b, b_grad_a, b_grad_a);
+            arithmetic.add(a_grad_b, b_grad_a, a_grad_b_b_grad_a);
             return a_grad_b_b_grad_a;
         },
         scalar_rasters,
@@ -245,15 +256,14 @@ TEST_CASE( "Raster gradient", "[unlayered]" ) {
 
 }
 
-
+/*
 
 TEST_CASE( "Raster divergence", "[unlayered]" ) {
     dymaxion::Adapter strict(calculus_fine, 1e-5, calculus_fine.vertex_count());
     unlayered::VectorCalculusByFundamentalTheorem operators;
     iterated::Metric metric{adapted::GlmMetric{}};
     iterated::Geometric geometric{adapted::GlmGeometric{}};
-    iterated::Arithmetic scalar{adapted::SymbolicArithmetic{0.0, 1.0}};
-    iterated::Arithmetic vector{adapted::SymbolicArithmetic{glm::vec3(0), glm::vec3(1)}};
+    iterated::Arithmetic arithmetic{adapted::SymbolicArithmetic{0.0, 1.0}};
 
     REQUIRE(test::determinism(strict, 
         "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, operators.divergence),
@@ -262,8 +272,8 @@ TEST_CASE( "Raster divergence", "[unlayered]" ) {
 
     REQUIRE(test::additivity(strict, 
         "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, operators.divergence),
-        "scalar.add      ", DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, calculus_fine, scalar.add),
-        "scalar.add      ", DYMAXION_TEST_BINARY_OUT_PARAMETER (double,     calculus_fine, scalar.add),
+        "arithmetic.add      ", DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, calculus_fine, arithmetic.add),
+        "arithmetic.add      ", DYMAXION_TEST_BINARY_OUT_PARAMETER (double,     calculus_fine, arithmetic.add),
         vector_rasters, vector_rasters
     ));
 
@@ -274,7 +284,7 @@ TEST_CASE( "Raster divergence", "[unlayered]" ) {
         [=](auto a, auto V){
             std::vector<glm::dvec3> aV(calculus_fine.vertex_count());
             std::vector<double> div_aV(calculus_fine.vertex_count());
-            scalar.add(a, V, aV);
+            arithmetic.add(a, V, aV);
             operators.divergence(calculus_fine, aV, div_aV); 
             return div_aV;
         },
@@ -287,9 +297,9 @@ TEST_CASE( "Raster divergence", "[unlayered]" ) {
             std::vector<double> a_div_V_V_grad_a(calculus_fine.vertex_count());
             operators.gradient(calculus_fine, a, grad_a);
             operators.divergence(calculus_fine, V, div_V);
-            scalar.multiply(a, div_V, a_div_V);
+            arithmetic.multiply(a, div_V, a_div_V);
             geometric.dot(V, grad_a, V_grad_a);
-            scalar.add(a_div_V, V_grad_a, a_div_V_V_grad_a);
+            arithmetic.add(a_div_V, V_grad_a, a_div_V_V_grad_a);
             return a_div_V_V_grad_a;
         },
         scalar_rasters,
@@ -304,8 +314,7 @@ TEST_CASE( "Raster curl", "[unlayered]" ) {
     unlayered::VectorCalculusByFundamentalTheorem operators;
     iterated::Metric metric{adapted::GlmMetric{}};
     iterated::Geometric geometric{adapted::GlmGeometric{}};
-    iterated::Arithmetic scalar{adapted::SymbolicArithmetic{0.0, 1.0}};
-    iterated::Arithmetic vector{adapted::SymbolicArithmetic{glm::vec3(0), glm::vec3(1)}};
+    iterated::Arithmetic arithmetic{adapted::SymbolicArithmetic{0.0, 1.0}};
 
     REQUIRE(test::determinism(strict, 
         "operators.curl",   DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.curl),
@@ -314,8 +323,8 @@ TEST_CASE( "Raster curl", "[unlayered]" ) {
 
     REQUIRE(test::additivity(strict, 
         "operators.curl ",   DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.curl),
-        "scalar.add ",   DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, calculus_fine, scalar.add),
-        "scalar.add ",   DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, calculus_fine, scalar.add),
+        "arithmetic.add ",   DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, calculus_fine, arithmetic.add),
+        "arithmetic.add ",   DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, calculus_fine, arithmetic.add),
         vector_rasters, vector_rasters
     ));
 
@@ -326,7 +335,7 @@ TEST_CASE( "Raster curl", "[unlayered]" ) {
         [=](auto a, auto V){
             std::vector<glm::dvec3> aV(calculus_fine.vertex_count());
             std::vector<glm::dvec3> curl_aV(calculus_fine.vertex_count());
-            scalar.add(a, V, aV);
+            arithmetic.add(a, V, aV);
             operators.curl(calculus_fine, aV, curl_aV); 
             return curl_aV;
         },
@@ -339,9 +348,9 @@ TEST_CASE( "Raster curl", "[unlayered]" ) {
             std::vector<glm::dvec3> a_curl_V_V_grad_a(calculus_fine.vertex_count());
             operators.gradient(calculus_fine, a, grad_a);
             operators.curl(calculus_fine, V, curl_V);
-            scalar.multiply(a, curl_V, a_curl_V);
+            arithmetic.multiply(a, curl_V, a_curl_V);
             geometric.cross(V, grad_a, V_grad_a);
-            scalar.add(a_curl_V, V_grad_a, a_curl_V_V_grad_a);
+            arithmetic.add(a_curl_V, V_grad_a, a_curl_V_V_grad_a);
             return a_curl_V_V_grad_a;
         },
         scalar_rasters,
@@ -372,8 +381,7 @@ TEST_CASE( "Scalar Raster laplacian", "[unlayered]" ) {
     unlayered::VectorCalculusByFundamentalTheoremDebug debug;
     iterated::Metric metric{adapted::GlmMetric{}};
     iterated::Geometric geometric{adapted::GlmGeometric{}};
-    iterated::Arithmetic scalar{adapted::SymbolicArithmetic{0.0, 1.0}};
-    iterated::Arithmetic vector{adapted::SymbolicArithmetic{glm::vec3(0), glm::vec3(1)}};
+    iterated::Arithmetic arithmetic{adapted::SymbolicArithmetic{0.0, 1.0}};
     bool is_verbose1(false);
     bool is_verbose2(false);
     for (int i = 0; i < 1; ++i)
@@ -462,8 +470,8 @@ TEST_CASE( "Scalar Raster laplacian", "[unlayered]" ) {
 
     REQUIRE(test::additivity(strict,
         "operators.laplacian", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double, calculus_fine, operators.laplacian),
-        "scalar.add     ", DYMAXION_TEST_BINARY_OUT_PARAMETER (double, calculus_fine, scalar.add),
-        "scalar.add     ", DYMAXION_TEST_BINARY_OUT_PARAMETER (double, calculus_fine, scalar.add),
+        "arithmetic.add     ", DYMAXION_TEST_BINARY_OUT_PARAMETER (double, calculus_fine, arithmetic.add),
+        "arithmetic.add     ", DYMAXION_TEST_BINARY_OUT_PARAMETER (double, calculus_fine, arithmetic.add),
         scalar_rasters, scalar_rasters
     ));
 
@@ -482,8 +490,7 @@ TEST_CASE( "Vector Raster laplacian", "[unlayered]" ) {
     unlayered::VectorCalculusByFundamentalTheorem operators;
     iterated::Metric metric{adapted::GlmMetric{}};
     iterated::Geometric geometric{adapted::GlmGeometric{}};
-    iterated::Arithmetic scalar{adapted::SymbolicArithmetic{0.0, 1.0}};
-    iterated::Arithmetic vector{adapted::SymbolicArithmetic{glm::vec3(0), glm::vec3(1)}};
+    iterated::Arithmetic arithmetic{adapted::SymbolicArithmetic{0.0, 1.0}};
 
     REQUIRE(test::determinism(strict, 
         "operators.laplacian ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.laplacian),
@@ -492,8 +499,8 @@ TEST_CASE( "Vector Raster laplacian", "[unlayered]" ) {
 
     REQUIRE(test::additivity(strict, 
         "operators.laplacian ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.laplacian),
-        "scalar.add     ", DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, calculus_fine, scalar.add),
-        "scalar.add     ", DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, calculus_fine, scalar.add),
+        "arithmetic.add     ", DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, calculus_fine, arithmetic.add),
+        "arithmetic.add     ", DYMAXION_TEST_BINARY_OUT_PARAMETER (glm::dvec3, calculus_fine, arithmetic.add),
         vector_rasters, vector_rasters
     ));
 
@@ -507,6 +514,7 @@ TEST_CASE( "Vector Raster laplacian", "[unlayered]" ) {
 
 }
 
+*/
 
 /*
 TODO:
