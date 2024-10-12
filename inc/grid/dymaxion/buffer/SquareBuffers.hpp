@@ -59,7 +59,7 @@ namespace dymaxion {
 		template<typename Series, typename Buffer>
 		constexpr id storeTriangles(const id square_id, const Series& input, Buffer& output, const id buffer_start_id=0) const 
 		{
-			using element = typename Series::value_type;
+			using element = typename procedural::value_type;
 			element N,S,E,W;
 			id buffer_id = buffer_start_id;
 			ivec2 grid_id;

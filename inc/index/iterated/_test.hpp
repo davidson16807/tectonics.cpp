@@ -10,9 +10,9 @@
 
 // in-house libraries
 #include <index/known.hpp>
-#include <index/series/Range.hpp>
-#include <index/series/Uniform.hpp>
-#include <index/series/noise/UnitIntervalNoise.hpp>
+#include <index/procedural/Range.hpp>
+#include <index/procedural/Uniform.hpp>
+#include <index/procedural/noise/UnitIntervalNoise.hpp>
 
 #include <index/adapted/boolean/BooleanMetric.hpp>
 #include <index/adapted/boolean/BooleanBitset.hpp>
@@ -81,28 +81,28 @@ TEST_CASE( "arithmetic on each nonzero of a series is a field", "[iterated]" ) {
     auto subarithmetic = adapted::SymbolicArithmetic(0.0, 1.0);
     auto arithmetic = iterated::Arithmetic(subarithmetic);
 
-    std::vector<series::UnitIntervalNoise<double>> noises {
-        series::UnitIntervalNoise<double>(10.0, 1e4),
-        series::UnitIntervalNoise<double>(20.0, 2e4),
-        series::UnitIntervalNoise<double>(30.0, 3e4),
-        series::UnitIntervalNoise<double>(40.0, 4e4)
+    std::vector<procedural::UnitIntervalNoise<double>> noises {
+        procedural::UnitIntervalNoise<double>(10.0, 1e4),
+        procedural::UnitIntervalNoise<double>(20.0, 2e4),
+        procedural::UnitIntervalNoise<double>(30.0, 3e4),
+        procedural::UnitIntervalNoise<double>(40.0, 4e4)
     };
 
-    std::vector<series::Range<int>> nonzero_ranges {
-        series::Range<int>(1,101),
-        series::Range<int>(2,102)
-        // series::Range<int>(-101,-1)
+    std::vector<procedural::Range<int>> nonzero_ranges {
+        procedural::Range<int>(1,101),
+        procedural::Range<int>(2,102)
+        // procedural::Range<int>(-101,-1)
     };
 
-    std::vector<series::Uniform<double>> nonzero_uniforms {
-        series::Uniform<double>(-2.0),
-        series::Uniform<double>(1.0),
-        series::Uniform<double>(2.0),
+    std::vector<procedural::Uniform<double>> nonzero_uniforms {
+        procedural::Uniform<double>(-2.0),
+        procedural::Uniform<double>(1.0),
+        procedural::Uniform<double>(2.0),
     };
 
     test::Field field(
-        "0", series::uniform(0.0), 
-        "1", series::uniform(1.0), 
+        "0", procedural::uniform(0.0), 
+        "1", procedural::uniform(1.0), 
         "arithmetic.add",       ITERATED_TEST_BINARY_OUT_PARAMETER(double, arithmetic.add),
         "arithmetic.subtract",  ITERATED_TEST_BINARY_OUT_PARAMETER(double, arithmetic.subtract),
         "arithmetic.multiply",  ITERATED_TEST_BINARY_OUT_PARAMETER(double, arithmetic.multiply),
@@ -114,7 +114,7 @@ TEST_CASE( "arithmetic on each nonzero of a series is a field", "[iterated]" ) {
     REQUIRE(field.valid(broad, nonzero_ranges));
     REQUIRE(field.valid(broad, nonzero_uniforms));
 
-    // NOTE: properties such as associativity are not valid when mixing different types of series::, 
+    // NOTE: properties such as associativity are not valid when mixing different types of procedural::, 
     // since the output is a vector and does not share their properties
 
     // REQUIRE(field.valid(broad, noises, nonzero_ranges));
@@ -137,28 +137,28 @@ TEST_CASE( "arithmetic on each nonzero of a series is a commutative ring", "[ite
     auto subarithmetic = adapted::SymbolicArithmetic(0.0, 1.0);
     auto arithmetic = iterated::Arithmetic(subarithmetic);
 
-    std::vector<series::UnitIntervalNoise<double>> noises {
-        series::UnitIntervalNoise<double>(10.0, 1e4),
-        series::UnitIntervalNoise<double>(20.0, 2e4),
-        series::UnitIntervalNoise<double>(30.0, 3e4),
-        series::UnitIntervalNoise<double>(40.0, 4e4)
+    std::vector<procedural::UnitIntervalNoise<double>> noises {
+        procedural::UnitIntervalNoise<double>(10.0, 1e4),
+        procedural::UnitIntervalNoise<double>(20.0, 2e4),
+        procedural::UnitIntervalNoise<double>(30.0, 3e4),
+        procedural::UnitIntervalNoise<double>(40.0, 4e4)
     };
 
-    std::vector<series::Range<int>> nonzero_ranges {
-        series::Range<int>(1,101),
-        series::Range<int>(2,102)
-        // series::Range<int>(-101,-1)
+    std::vector<procedural::Range<int>> nonzero_ranges {
+        procedural::Range<int>(1,101),
+        procedural::Range<int>(2,102)
+        // procedural::Range<int>(-101,-1)
     };
 
-    std::vector<series::Uniform<double>> nonzero_uniforms {
-        series::Uniform<double>(-2.0),
-        series::Uniform<double>(1.0),
-        series::Uniform<double>(2.0)
+    std::vector<procedural::Uniform<double>> nonzero_uniforms {
+        procedural::Uniform<double>(-2.0),
+        procedural::Uniform<double>(1.0),
+        procedural::Uniform<double>(2.0)
     };
 
     test::CommutativeRing ring(
-        "0", series::uniform(0.0), 
-        "1", series::uniform(1.0), 
+        "0", procedural::uniform(0.0), 
+        "1", procedural::uniform(1.0), 
         "arithmetic.add",       ITERATED_TEST_BINARY_OUT_PARAMETER(double, arithmetic.add),
         "arithmetic.subtract",  ITERATED_TEST_BINARY_OUT_PARAMETER(double, arithmetic.subtract),
         "arithmetic.multiply",  ITERATED_TEST_BINARY_OUT_PARAMETER(double, arithmetic.multiply)
@@ -169,7 +169,7 @@ TEST_CASE( "arithmetic on each nonzero of a series is a commutative ring", "[ite
     REQUIRE(ring.valid(broad, nonzero_ranges));
     REQUIRE(ring.valid(broad, nonzero_uniforms));
 
-    // NOTE: properties such as associativity are not valid when mixing different types of series::, 
+    // NOTE: properties such as associativity are not valid when mixing different types of procedural::, 
     // since the output is a vector and does not share their properties
 
     // REQUIRE(ring.valid(broad, noises, nonzero_ranges));
@@ -200,8 +200,8 @@ TEST_CASE( "bitset on each of a series is a commutative rig", "[iterated]" ) {
     };
 
     test::CommutativeRig rig(
-        "false", series::uniform(false), 
-        "true", series::uniform(true), 
+        "false", procedural::uniform(false), 
+        "true", procedural::uniform(true), 
         "bitset.unite",       ITERATED_TEST_BINARY_OUT_PARAMETER(bool, iteration.unite),
         "bitset.intersect",       ITERATED_TEST_BINARY_OUT_PARAMETER(bool, iteration.intersect)
     );
@@ -269,11 +269,11 @@ TEST_CASE( "Series<T> sqrt consistency", "[iterated]" ) {
 
     SECTION("sqrt(a) must equal pow(a,1/2)"){
         each::sqrt(a,    sqrt1);
-        each::pow (a,series::uniform(0.5f),sqrt2);
+        each::pow (a,procedural::uniform(0.5f),sqrt2);
         CHECK(metric.equal(sqrt1 , sqrt2, 1e-7));
 
         each::sqrt(b,    sqrt1);
-        each::pow (b,series::uniform(0.5f),sqrt2);
+        each::pow (b,procedural::uniform(0.5f),sqrt2);
         CHECK(metric.equal(sqrt1 , sqrt2, 1e-7));
     }
 
@@ -287,7 +287,7 @@ TEST_CASE( "Series<T> log consistency", "[iterated]" ) {
     SECTION("log2(a) must equal log(a)/log(2)"){
         each::log2(a, log1_);
         each::log (a, log2_);
-        each::div (log2_, series::uniform(std::log(2.f)), log2_);
+        each::div (log2_, procedural::uniform(std::log(2.f)), log2_);
         CHECK(metric.equal(log1_ , log2_, 1e-7));
     }
 }
@@ -411,21 +411,21 @@ TEST_CASE( "Series<T> trigonometric cofunctions", "[iterated]" ) {
     auto c2 = std::vector({0.0,0.0,0.0,0.0,0.0});
 
     SECTION("sin must equal cos for input that is rotated by π/2"){
-        each::sub(series::uniform(pi/2.0), a, c1);
+        each::sub(procedural::uniform(pi/2.0), a, c1);
         each::cos(c1,c1);
         each::sin(a,c2);
         CHECK(metric.equal(c1, c2, 1e-7));
-        each::sub(series::uniform(pi/2.0), b, c1);
+        each::sub(procedural::uniform(pi/2.0), b, c1);
         each::cos(c1,c1);
         each::sin(b,c2);
         CHECK(metric.equal(c1, c2, 1e-7));
     }
     SECTION("tan must equal cot for input that is rotated by π/2"){
-        each::sub(series::uniform(pi/2.0), a, c1);
+        each::sub(procedural::uniform(pi/2.0), a, c1);
         each::cot(c1,c1);
         each::tan(a,c2);
         CHECK(metric.equal(c1, c2, 1e-7));
-        each::sub(series::uniform(pi/2.0), b, c1);
+        each::sub(procedural::uniform(pi/2.0), b, c1);
         each::cot(c1,c1);
         each::tan(b,c2);
         CHECK(metric.equal(c1, c2, 1e-7));
@@ -441,76 +441,76 @@ TEST_CASE( "Series<T> trigonometric negative angle identities", "[iterated]" ) {
     auto c2 = std::vector({0.0,0.0,0.0,0.0,0.0});
 
     SECTION("negated sin must equal sin for negated input"){
-        each::mult(series::uniform(-1.0), a, c1);
+        each::mult(procedural::uniform(-1.0), a, c1);
         each::sin(c1,c1);
         each::sin(a,c2);
-        each::mult(series::uniform(-1.0),c2,c2);
+        each::mult(procedural::uniform(-1.0),c2,c2);
         CHECK(metric.equal(c1, c2, 1e-7));
-        each::mult(series::uniform(-1.0), b, c1);
+        each::mult(procedural::uniform(-1.0), b, c1);
         each::sin(c1,c1);
         each::sin(b,c2);
-        each::mult(series::uniform(-1.0),c2,c2);
+        each::mult(procedural::uniform(-1.0),c2,c2);
         CHECK(metric.equal(c1, c2, 1e-7));
     }
 
     SECTION("negated cos must equal cos for negated input"){
-        each::mult(series::uniform(-1.0), a, c1);
+        each::mult(procedural::uniform(-1.0), a, c1);
         each::cos(c1,c1);
         each::cos(a,c2);
         CHECK(metric.equal(c1, c2, 1e-7));
-        each::mult(series::uniform(-1.0), b, c1);
+        each::mult(procedural::uniform(-1.0), b, c1);
         each::cos(c1,c1);
         each::cos(b,c2);
         CHECK(metric.equal(c1, c2, 1e-7));
     }
 
     SECTION("negated tan must equal tan for negated input"){
-        each::mult(series::uniform(-1.0), a, c1);
+        each::mult(procedural::uniform(-1.0), a, c1);
         each::tan(c1,c1);
         each::tan(a,c2);
-        each::mult(series::uniform(-1.0),c2,c2);
+        each::mult(procedural::uniform(-1.0),c2,c2);
         CHECK(metric.equal(c1, c2, 1e-7));
-        each::mult(series::uniform(-1.0), b, c1);
+        each::mult(procedural::uniform(-1.0), b, c1);
         each::tan(c1,c1);
         each::tan(b,c2);
-        each::mult(series::uniform(-1.0),c2,c2);
+        each::mult(procedural::uniform(-1.0),c2,c2);
         CHECK(metric.equal(c1, c2, 1e-7));
     }
 
     SECTION("negated csc must equal csc for negated input"){
-        each::mult(series::uniform(-1.0), a, c1);
+        each::mult(procedural::uniform(-1.0), a, c1);
         each::csc(c1,c1);
         each::csc(a,c2);
-        each::mult(series::uniform(-1.0),c2,c2);
+        each::mult(procedural::uniform(-1.0),c2,c2);
         CHECK(metric.equal(c1, c2, 1e-7));
-        each::mult(series::uniform(-1.0), b, c1);
+        each::mult(procedural::uniform(-1.0), b, c1);
         each::csc(c1,c1);
         each::csc(b,c2);
-        each::mult(series::uniform(-1.0),c2,c2);
+        each::mult(procedural::uniform(-1.0),c2,c2);
         CHECK(metric.equal(c1, c2, 1e-7));
     }
 
     SECTION("negated sec must equal sec for negated input"){
-        each::mult(series::uniform(-1.0), a, c1);
+        each::mult(procedural::uniform(-1.0), a, c1);
         each::sec(c1,c1);
         each::sec(a,c2);
         CHECK(metric.equal(c1, c2, 1e-7));
-        each::mult(series::uniform(-1.0), b, c1);
+        each::mult(procedural::uniform(-1.0), b, c1);
         each::sec(c1,c1);
         each::sec(b,c2);
         CHECK(metric.equal(c1, c2, 1e-7));
     }
 
     SECTION("negated cot must equal cot for negated input"){
-        each::mult(series::uniform(-1.0), a, c1);
+        each::mult(procedural::uniform(-1.0), a, c1);
         each::cot(c1,c1);
         each::cot(a,c2);
-        each::mult(series::uniform(-1.0),c2,c2);
+        each::mult(procedural::uniform(-1.0),c2,c2);
         CHECK(metric.equal(c1, c2, 1e-7));
-        each::mult(series::uniform(-1.0), b, c1);
+        each::mult(procedural::uniform(-1.0), b, c1);
         each::cot(c1,c1);
         each::cot(b,c2);
-        each::mult(series::uniform(-1.0),c2,c2);
+        each::mult(procedural::uniform(-1.0),c2,c2);
         CHECK(metric.equal(c1, c2, 1e-7));
     }
 }

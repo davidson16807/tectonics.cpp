@@ -8,7 +8,7 @@
 
 // in-house libraries
 #include <math/special.hpp>
-#include <index/series/noise/UnitIntervalNoise.hpp>
+#include <index/procedural/noise/UnitIntervalNoise.hpp>
 
 namespace series
 {

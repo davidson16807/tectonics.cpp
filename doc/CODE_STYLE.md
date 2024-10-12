@@ -9,7 +9,7 @@
 |                     | singular, usually implying a genitive case, adjective, or determiner,  |
 |                     | avoid using `nested::name::spaces` unless strictly needed for disambiguation  |
 | directories         | single lower case short words, e.g. `index` or `test`,  |
-|                     | singular, prefer using `nested/sub/folders/` to group related functionality (e.g. `index/series/`, `field/noise/`)  |
+|                     | singular, prefer using `nested/sub/folders/` to group related functionality (e.g. `index/procedural/`, `field/noise/`)  |
 |                     | or to bring attention to requirements for extended functionality (e.g. `math/glm/`, `index/si/`)  |
 |                     | folders should be ordered so that more common dependencies appear last (e.g. `dymaxion/buffer`, not `buffer/dymaxion`⁰) |
 | file names          | If the file pertains to a specific class or namespace, then use the name for that class/namespace, otherwise use   |

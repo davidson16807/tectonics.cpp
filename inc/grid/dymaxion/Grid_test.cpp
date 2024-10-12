@@ -9,7 +9,7 @@
 #include <test/adapter.hpp>
 #include <test/glm/adapter.hpp>
 
-#include <index/series/Range.hpp>
+#include <index/procedural/Range.hpp>
 
 #include "Grid.hpp"
 
@@ -22,7 +22,7 @@ TEST_CASE( "Grid nearest_vertex_id() / vertex_position()", "[dymaxion]" ) {
 
     dymaxion::Grid grid(radius, vertices_per_square_side);
 
-    series::Range vertex_ids(grid.vertex_count());
+    procedural::Range vertex_ids(grid.vertex_count());
 
     REQUIRE(test::left_invertibility(precise,
         "Grid.nearest_vertex_id(…)", TEST_UNARY(grid.nearest_vertex_id),
@@ -52,7 +52,7 @@ TEST_CASE( "Grid arrow_offset_memory_id() / arrow_offset_grid_position()", "[dym
         glm::ivec2(0,-1)
     };
 
-    series::Range arrow_offset_ids(4);
+    procedural::Range arrow_offset_ids(4);
 
     dymaxion::Grid grid(radius, vertices_per_square_side);
 
@@ -90,8 +90,8 @@ TEST_CASE( "Grid arrow properties", "[dymaxion]" ) {
 
     dymaxion::Grid grid(radius, vertices_per_square_side);
 
-    series::Range vertex_ids(grid.vertex_count());
-    series::Range arrow_offset_ids(4);
+    procedural::Range vertex_ids(grid.vertex_count());
+    procedural::Range arrow_offset_ids(4);
 
     REQUIRE(test::determinism(precise,
         "Grid.arrow_target_id(…)", TEST_BINARY(grid.arrow_target_id),

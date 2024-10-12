@@ -18,15 +18,15 @@
 #include <math/inspected/InverseByNewtonsMethod.hpp>
 
 // in house libraries
-#include <index/series/Map.hpp>
-#include <index/series/Uniform.hpp>
+#include <index/procedural/Map.hpp>
+#include <index/procedural/Uniform.hpp>
 #include <index/glm/known.hpp>                      // greaterThan
 #include <index/known.hpp>                          // greaterThan
 #include <index/whole.hpp>                          // max, mean
-#include <index/series/Range.hpp>                   // Range
-#include <index/series/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
-#include <index/series/noise/glm/UnitVectorNoise.hpp>
-#include <index/series/noise/GaussianNoise.hpp>
+#include <index/procedural/Range.hpp>                   // Range
+#include <index/procedural/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
+#include <index/procedural/noise/glm/UnitVectorNoise.hpp>
+#include <index/procedural/noise/GaussianNoise.hpp>
 #include <index/adapted/symbolic/SymbolicArithmetic.hpp>
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
 #include <index/adapted/si/SiStrings.hpp>
@@ -110,7 +110,7 @@ int main() {
 
   auto vertex_square_ids = dymaxion::square_ids(grid);
 
-  // auto vertex_colored_scalars = series::range();
+  // auto vertex_colored_scalars = procedural::range();
 
   std::vector<float> vertex_colored_scalars(grid.vertex_count());
   for (int i = 0; i < grid.vertex_count(); ++i)
@@ -146,32 +146,32 @@ int main() {
           relation::ScalarRelation(1.0f, length(si::meter), hypsometry_cdfi),
           rfbm);
 
-  auto elevation_in_meters = series::map(elevation_meters_for_position, vertex_positions);
+  auto elevation_in_meters = procedural::map(elevation_meters_for_position, vertex_positions);
 
   iterated::Unary elevations_for_positions(elevation_for_position);
   std::vector<length> elevation(grid.vertex_count());
   elevations_for_positions(vertex_positions, elevation);
 
   iterated::Arithmetic lengths(adapted::SymbolicArithmetic(length(0),length(1)));
-  lengths.subtract(elevation, series::uniform(length(min_earth_elevation)), elevation);
+  lengths.subtract(elevation, procedural::uniform(length(min_earth_elevation)), elevation);
 
   auto vertex_scalars1 = elevation_in_meters;
 
   // auto vertex_directions = known::store(
   //     grid.vertex_count(),
-  //     series::map(
+  //     procedural::map(
   //         field::vector3_zip(
   //             field::elias_noise<float>(
-  //                     series::unit_vector_noise<3>(10.0f, 1.0e4f), 
-  //                     series::gaussian(11.0f, 1.1e4f), 
+  //                     procedural::unit_vector_noise<3>(10.0f, 1.0e4f), 
+  //                     procedural::gaussian(11.0f, 1.1e4f), 
   //                     1000),
   //             field::elias_noise<float>(
-  //                     series::unit_vector_noise<3>(11.0f, 1.1e4f), 
-  //                     series::gaussian(12.0f, 1.2e4f), 
+  //                     procedural::unit_vector_noise<3>(11.0f, 1.1e4f), 
+  //                     procedural::gaussian(12.0f, 1.2e4f), 
   //                     1000),
   //             field::elias_noise<float>(
-  //                     series::unit_vector_noise<3>(12.0f, 1.2e4f), 
-  //                     series::gaussian(13.0f, 1.3e4f), 
+  //                     procedural::unit_vector_noise<3>(12.0f, 1.2e4f), 
+  //                     procedural::gaussian(13.0f, 1.3e4f), 
   //                     1000)
   //         ),
   //         dymaxion::vertex_positions(grid)
@@ -206,7 +206,7 @@ int main() {
   copy(vertex_scalars1, buffer_scalars1);
   // copy(vertex_scalars2, buffer_scalars2);
   copy(vertex_positions, buffer_positions);
-  grids.storeTriangleStrips(series::range<unsigned int>(grid.vertex_count()), buffer_element_vertex_ids);
+  grids.storeTriangleStrips(procedural::range<unsigned int>(grid.vertex_count()), buffer_element_vertex_ids);
 
   // flatten vector raster for OpenGL
   iterated::Metric metric{adapted::GlmMetric{}};
@@ -225,12 +225,12 @@ int main() {
       glm::vec3(0,0, 1) * pyramid_halflength, 
       glm::vec3(0,1, 0),  pyramid_radius, 3, 
       vectors_element_position);
-  copy   (known::mult(vertex_positions, series::uniform(1+pyramid_halflength/grid.total_radius())),  vectors_instance_position);
+  copy   (known::mult(vertex_positions, procedural::uniform(1+pyramid_halflength/grid.total_radius())),  vectors_instance_position);
   copy   (vertex_gradient,   vectors_instance_heading);
-  // copy   (series::uniform(glm::vec3(0,0,1)),   vectors_instance_heading);
+  // copy   (procedural::uniform(glm::vec3(0,0,1)),   vectors_instance_heading);
   copy   (vertex_normals,    vectors_instance_up);
   metric.length (vertex_gradient,   vectors_instance_scale);
-  scalars.divide(vectors_instance_scale, series::uniform(whole::max(vectors_instance_scale)), vectors_instance_scale);
+  scalars.divide(vectors_instance_scale, procedural::uniform(whole::max(vectors_instance_scale)), vectors_instance_scale);
 
   // initialize control state
   update::OrbitalControlState control_state;

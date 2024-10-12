@@ -11,9 +11,9 @@
 // in-house libraries
 #include <index/known.hpp>
 #include <index/whole.hpp>
-#include <index/series/Range.hpp>
-#include <index/series/Uniform.hpp>
-#include <index/series/noise/UnitIntervalNoise.hpp>
+#include <index/procedural/Range.hpp>
+#include <index/procedural/Uniform.hpp>
+#include <index/procedural/noise/UnitIntervalNoise.hpp>
 
 #include <test/macros.hpp>
 #include <test/structures/ringlike.hpp>
@@ -33,8 +33,8 @@ namespace known {
         template<typename Series1, typename Series2>
         bool equal(const Series1& a, const Series2& b) const {
             return whole::distance(
-                map(a,series::range(test_size)),
-                map(b,series::range(test_size))) <= threshold;
+                map(a,procedural::range(test_size)),
+                map(b,procedural::range(test_size))) <= threshold;
         }
 
         template<typename Series>
@@ -51,27 +51,27 @@ TEST_CASE( "arithmetic on nonzero knowns are a field", "[known]" ) {
     known::Adapter<double> broad (1e-6, 30);
     known::Adapter<double> narrow(1e-6, 30);
 
-    std::vector<series::UnitIntervalNoise<double>> noises {
-        series::UnitIntervalNoise<double>(10.0, 1e4),
-        series::UnitIntervalNoise<double>(20.0, 2e4),
-        series::UnitIntervalNoise<double>(30.0, 3e4),
-        series::UnitIntervalNoise<double>(40.0, 4e4)
+    std::vector<procedural::UnitIntervalNoise<double>> noises {
+        procedural::UnitIntervalNoise<double>(10.0, 1e4),
+        procedural::UnitIntervalNoise<double>(20.0, 2e4),
+        procedural::UnitIntervalNoise<double>(30.0, 3e4),
+        procedural::UnitIntervalNoise<double>(40.0, 4e4)
     };
 
-    std::vector<series::Range<double>> nonzero_ranges {
-        series::Range<double>(1.0,101.0),
-        series::Range<double>(-101.0,-1.0)
+    std::vector<procedural::Range<double>> nonzero_ranges {
+        procedural::Range<double>(1.0,101.0),
+        procedural::Range<double>(-101.0,-1.0)
     };
 
-    std::vector<series::Uniform<double>> nonzero_uniforms {
-        series::Uniform<double>(-2.0),
-        series::Uniform<double>(1.0),
-        series::Uniform<double>(2.0),
+    std::vector<procedural::Uniform<double>> nonzero_uniforms {
+        procedural::Uniform<double>(-2.0),
+        procedural::Uniform<double>(1.0),
+        procedural::Uniform<double>(2.0),
     };
 
     test::Field field(
-        "0", series::uniform(0.0), 
-        "1", series::uniform(1.0), 
+        "0", procedural::uniform(0.0), 
+        "1", procedural::uniform(1.0), 
         "known::add",  TEST_BINARY(known::add),
         "known::sub",  TEST_BINARY(known::sub),
         "known::mult", TEST_BINARY(known::mult),
@@ -91,28 +91,28 @@ TEST_CASE( "arithmetic on any known is a commutative ring", "[known]" ) {
     known::Adapter<double> broad (1e-6, 30);
     known::Adapter<double> narrow(1e-6, 30);
 
-    std::vector<series::UnitIntervalNoise<double>> noises {
-        series::UnitIntervalNoise<double>(10.0, 1e4),
-        series::UnitIntervalNoise<double>(20.0, 2e4),
-        series::UnitIntervalNoise<double>(30.0, 3e4),
-        series::UnitIntervalNoise<double>(40.0, 4e4)
+    std::vector<procedural::UnitIntervalNoise<double>> noises {
+        procedural::UnitIntervalNoise<double>(10.0, 1e4),
+        procedural::UnitIntervalNoise<double>(20.0, 2e4),
+        procedural::UnitIntervalNoise<double>(30.0, 3e4),
+        procedural::UnitIntervalNoise<double>(40.0, 4e4)
     };
 
-    std::vector<series::Range<double>> ranges {
-        series::Range<double>(100),
-        series::Range<double>(-30,30)
+    std::vector<procedural::Range<double>> ranges {
+        procedural::Range<double>(100),
+        procedural::Range<double>(-30,30)
     };
 
-    std::vector<series::Uniform<double>> uniforms {
-        series::Uniform<double>(-2.0),
-        series::Uniform<double>(0.0),
-        series::Uniform<double>(1.0),
-        series::Uniform<double>(2.0),
+    std::vector<procedural::Uniform<double>> uniforms {
+        procedural::Uniform<double>(-2.0),
+        procedural::Uniform<double>(0.0),
+        procedural::Uniform<double>(1.0),
+        procedural::Uniform<double>(2.0),
     };
 
     test::CommutativeRing ring(
-        "0", series::uniform(0.0), 
-        "1", series::uniform(1.0), 
+        "0", procedural::uniform(0.0), 
+        "1", procedural::uniform(1.0), 
         "known::add",  TEST_BINARY(known::add),
         "known::sub",  TEST_BINARY(known::sub),
         "known::mult", TEST_BINARY(known::mult)

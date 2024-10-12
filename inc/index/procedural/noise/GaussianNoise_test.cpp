@@ -14,19 +14,17 @@
 
 // in-house libraries
 #include <index/whole.hpp>  
-#include <index/series/Uniform.hpp>
-#include <index/series/Range.hpp>
-#include <index/series/Get.hpp>
+#include <index/procedural/Range.hpp>
+#include <index/procedural/Get.hpp>
 
 #include <test/properties.hpp>  
 #include <test/macros.hpp>  
 #include <test/adapter.hpp>  
 
-#include "Uniform.hpp"
+#include "GaussianNoise.hpp"
 
-TEST_CASE( "Uniform()", "[series]" ) {
-    const double pi(3.14159);
-    series::Uniform uniform(pi);
+TEST_CASE( "GaussianNoise()", "[series]" ) {
+    auto noise = procedural::gaussian<double>();
     test::OperatorAdapter exact;
     std::vector<int> indices   {
         -1, 0, 1, 2, 3, 
@@ -35,12 +33,12 @@ TEST_CASE( "Uniform()", "[series]" ) {
     };
 
     REQUIRE(test::determinism(exact,
-        "Uniform(…)", TEST_INDEX(series::Uniform(pi)), 
+        "GaussianNoise(…)", TEST_INDEX(procedural::gaussian<double>()), 
         indices
     ));
 
-    auto out = series::get(uniform, series::Range(-100,100));
-    CHECK(std::abs(whole::max(out)-pi) < 1e-7);
-    CHECK(std::abs(whole::min(out)-pi) < 1e-7);
+    auto out = procedural::get(noise, procedural::Range(3000));
+    CHECK(std::abs(whole::mean(out)-0.0) < 0.05);
+    CHECK(std::abs(whole::standard_deviation(out)-1.0) < 0.01);
 }
 

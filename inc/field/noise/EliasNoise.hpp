@@ -23,8 +23,8 @@ namespace field
     Regions may have smooth boundaries, depending on a "region_transition_width" parameter that defines
      the width of a region's transition zone. 
     `RegionThreshold` and `RegionCenters` may be any container that contains scalars and vectors (respectively),
-    but for data locality concerns, we highly recommend using `series::UnitIntervalNoise<scalar>` 
-    and `series::NormalizedVectorInterleave<Noise<scalar>>`.
+    but for data locality concerns, we highly recommend using `procedural::UnitIntervalNoise<scalar>` 
+    and `procedural::NormalizedVectorInterleave<Noise<scalar>>`.
 	*/
 	template<typename T, typename RegionThreshold, typename RegionCenter>
 	struct EliasNoise

@@ -14,8 +14,8 @@
 
 // in-house libraries
 #include <index/whole.hpp>  
-#include <index/series/Range.hpp>
-#include <index/series/Get.hpp>
+#include <index/procedural/Range.hpp>
+#include <index/procedural/Get.hpp>
 
 #include <test/properties.hpp>  
 #include <test/macros.hpp>  
@@ -24,7 +24,7 @@
 #include "UnitIntervalNoise.hpp"
 
 TEST_CASE( "UnitIntervalNoise()", "[series]" ) {
-    series::UnitIntervalNoise noise(0.1);
+    procedural::UnitIntervalNoise noise(0.1);
     test::OperatorAdapter exact;
     std::vector<int> indices   {
         -1, 0, 1, 2, 3, 
@@ -33,7 +33,7 @@ TEST_CASE( "UnitIntervalNoise()", "[series]" ) {
     };
 
     REQUIRE(test::determinism(exact,
-        "UnitIntervalNoise(…)", TEST_INDEX(series::UnitIntervalNoise(0.1f)), 
+        "UnitIntervalNoise(…)", TEST_INDEX(procedural::UnitIntervalNoise(0.1f)), 
         indices
     ));
 
@@ -43,7 +43,7 @@ TEST_CASE( "UnitIntervalNoise()", "[series]" ) {
         indices
     ));
 
-    auto out = series::get(noise, series::Range(1000));
+    auto out = procedural::get(noise, procedural::Range(1000));
     CHECK(whole::max(out) <= 1.0);
     CHECK(whole::max(out) >  0.95);
     CHECK(whole::min(out) >= 0.0);

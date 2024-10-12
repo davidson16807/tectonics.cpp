@@ -5,7 +5,7 @@
 
 // in house libraries
 #include <index/whole.hpp>
-#include <index/series/Uniform.hpp>
+#include <index/procedural/Uniform.hpp>
 #include <index/iterated/Nary.hpp>
 #include <index/iterated/Arithmetic.hpp>
 #include <index/adapted/symbolic/SymbolicArithmetic.hpp>
@@ -110,7 +110,7 @@ TEST_CASE( "FormationSummary combine() mass conservation", "[rock]" ) {
     formation_area_density(b, brho);
     arithmetic.add(arho, brho, arho_brho);
     arithmetic.subtract(arho_brho, abrho, offset);
-    arithmetic.divide(offset, series::uniform(area_density(1.0f)), distance);
+    arithmetic.divide(offset, procedural::uniform(area_density(1.0f)), distance);
     arithmetic.multiply(distance, distance, distance);
 
     SECTION("the result of passing two valid FormationSummary objects to combine() must produce a valid FormationSummary with equivalent area_density"){

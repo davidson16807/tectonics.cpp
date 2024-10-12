@@ -18,15 +18,15 @@
 #include <math/inspected/InverseByNewtonsMethod.hpp>
 
 // in house libraries
-#include <index/series/Map.hpp>
-#include <index/series/Uniform.hpp>
+#include <index/procedural/Map.hpp>
+#include <index/procedural/Uniform.hpp>
 #include <index/glm/known.hpp>                      // greaterThan
 #include <index/known.hpp>                          // greaterThan
 #include <index/whole.hpp>                          // max, mean
-#include <index/series/Range.hpp>                   // Range
-#include <index/series/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
-#include <index/series/noise/glm/UnitVectorNoise.hpp>
-#include <index/series/noise/GaussianNoise.hpp>
+#include <index/procedural/Range.hpp>                   // Range
+#include <index/procedural/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
+#include <index/procedural/noise/glm/UnitVectorNoise.hpp>
+#include <index/procedural/noise/GaussianNoise.hpp>
 #include <index/adapted/symbolic/SymbolicArithmetic.hpp>
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
 #include <index/adapted/scalar/ScalarStrings.hpp>
@@ -112,7 +112,7 @@ int main() {
 
   // auto vertex_square_ids = dymaxion::square_ids(grid);
 
-  // auto vertex_colored_scalars = series::range();
+  // auto vertex_colored_scalars = procedural::range();
 
   std::vector<float> vertex_colored_scalars(grid.vertex_count());
   for (int i = 0; i < grid.vertex_count(); ++i)
@@ -138,7 +138,7 @@ int main() {
 
   auto elevation_meters_for_position = field::compose(hypsometry_cdfi, rfbm);
 
-  auto elevation_in_meters = series::map(elevation_meters_for_position, vertex_positions);
+  auto elevation_in_meters = procedural::map(elevation_meters_for_position, vertex_positions);
 
   using vec3 = glm::vec3;
   iterated::Identity copy;
@@ -170,7 +170,7 @@ int main() {
   );
   fill(
     grid, vertex_gradient, 
-    series::uniform(true),
+    procedural::uniform(true),
     whole::max_id(known::length<float>(vertex_gradient)), 
     vertex_colored_scalars, 
     mask1
@@ -186,7 +186,7 @@ int main() {
   copy(vertex_colored_scalars, buffer_color_values);
   copy(elevation_in_meters, buffer_scalars1);
   copy(vertex_positions, buffer_positions);
-  grids.storeTriangleStrips(series::range<unsigned int>(grid.vertex_count()), buffer_element_vertex_ids);
+  grids.storeTriangleStrips(procedural::range<unsigned int>(grid.vertex_count()), buffer_element_vertex_ids);
 
   // initialize control state
   update::OrbitalControlState control_state;

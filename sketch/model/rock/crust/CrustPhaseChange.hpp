@@ -81,7 +81,7 @@ namespace rock {
 			pressures* bottom_overburden    = &scratch;
 			pressures* formation_overburden = &scratch;
 
-			formations.overburden        (series::uniform(pressure(0.0f)), crust[formations::sediment], bottom_overburden);
+			formations.overburden        (procedural::uniform(pressure(0.0f)), crust[formations::sediment], bottom_overburden);
 			formations.overburdened_mass (transition_pressure, top_overburden, bottom_overburden, crust[formations::sediment], delta);
 		}
 
@@ -116,7 +116,7 @@ namespace rock {
 			pressures* bottom_overburden    = &scratch2;
 
 			each::copy(topmost_overburden, top_overburden);
-			formations.overburden        (series::uniform(pressure(0.0f)), crust[formations::sediment], bottom_overburden);
+			formations.overburden        (procedural::uniform(pressure(0.0f)), crust[formations::sediment], bottom_overburden);
 			/* 
 			NOTE: we do not move sediment directly to metamorphic, since lithification will also occur on that same mass,
 			and we do not want metamorphosis and lithification fighting over or double counting mass.

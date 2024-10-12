@@ -2,7 +2,7 @@
 
 #include <.hpp>
 
-#include <index/series/Map.hpp>     // series::map
+#include <index/procedural/Map.hpp>     // procedural::map
 
 #include <field/Compose.hpp>        // field::compose
 #include <field/Affinity.hpp>       // field::affinity
@@ -43,7 +43,7 @@ namespace rock{
             resample = id ⟶ position ⟶ position ⟶ id
             */
             auto resample = 
-                series::map(
+                procedural::map(
                     field::compose(nearest, field::Affinity(transform[i])),
                     positions
                 );

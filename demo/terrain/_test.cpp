@@ -18,15 +18,15 @@
 #include <math/inspected/InverseByNewtonsMethod.hpp>
 
 // in house libraries
-#include <index/series/Map.hpp>
-#include <index/series/Uniform.hpp>
+#include <index/procedural/Map.hpp>
+#include <index/procedural/Uniform.hpp>
 #include <index/glm/known.hpp>                      // greaterThan
 #include <index/known.hpp>                          // greaterThan
 #include <index/whole.hpp>                          // max, mean
-#include <index/series/Range.hpp>                   // Range
-#include <index/series/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
-#include <index/series/noise/glm/UnitVectorNoise.hpp>
-#include <index/series/noise/GaussianNoise.hpp>
+#include <index/procedural/Range.hpp>                   // Range
+#include <index/procedural/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
+#include <index/procedural/noise/glm/UnitVectorNoise.hpp>
+#include <index/procedural/noise/GaussianNoise.hpp>
 #include <index/adapted/symbolic/SymbolicArithmetic.hpp>
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
 #include <index/adapted/si/SiStrings.hpp>
@@ -106,7 +106,7 @@ int main() {
 
   auto vertex_square_ids = dymaxion::square_ids(grid);
 
-  // auto vertex_colored_scalars = series::range();
+  // auto vertex_colored_scalars = procedural::range();
 
   std::vector<float> vertex_colored_scalars(grid.vertex_count());
   for (int i = 0; i < grid.vertex_count(); ++i)
@@ -143,14 +143,14 @@ int main() {
           relation::ScalarRelation(1.0f, length(si::meter), hypsometry_cdfi),
           rfbm);
 
-  auto elevation_in_meters = series::map(elevation_meters_for_position, vertex_positions);
+  auto elevation_in_meters = procedural::map(elevation_meters_for_position, vertex_positions);
 
   iterated::Unary elevations_for_positions(elevation_for_position);
   std::vector<length> elevation(grid.vertex_count());
   elevations_for_positions(vertex_positions, elevation);
 
   iterated::Arithmetic arithmetic(adapted::SymbolicArithmetic(length(0),length(1)));
-  arithmetic.subtract(elevation, series::uniform(length(min_earth_elevation)), elevation);
+  arithmetic.subtract(elevation, procedural::uniform(length(min_earth_elevation)), elevation);
 
   adapted::SymbolicOrder suborder;
   adapted::SiStrings substrings;
@@ -182,7 +182,7 @@ int main() {
   copy(vertex_scalars1, buffer_scalars1);
   // copy(vertex_scalars2, buffer_scalars2);
   copy(vertex_positions, buffer_positions);
-  grids.storeTriangleStrips(series::range<unsigned int>(grid.vertex_count()), buffer_element_vertex_ids);
+  grids.storeTriangleStrips(procedural::range<unsigned int>(grid.vertex_count()), buffer_element_vertex_ids);
 
   // initialize control state
   update::OrbitalControlState control_state;

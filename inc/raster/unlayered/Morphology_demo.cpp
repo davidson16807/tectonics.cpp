@@ -18,13 +18,13 @@
 #include <math/glm/special.hpp>
 
 #include <index/known.hpp>  
-#include <index/series/Get.hpp>
-#include <index/series/Map.hpp>
-#include <index/series/Range.hpp>
-#include <index/series/Uniform.hpp>
-#include <index/series/glm/VectorInterleave.hpp>
-#include <index/series/noise/GaussianNoise.hpp>
-#include <index/series/noise/glm/UnitVectorNoise.hpp>
+#include <index/procedural/Get.hpp>
+#include <index/procedural/Map.hpp>
+#include <index/procedural/Range.hpp>
+#include <index/procedural/Uniform.hpp>
+#include <index/procedural/glm/VectorInterleave.hpp>
+#include <index/procedural/noise/GaussianNoise.hpp>
+#include <index/procedural/noise/glm/UnitVectorNoise.hpp>
 #include <index/adapted/boolean/BooleanStrings.hpp>
 #include <index/adapted/symbolic/SymbolicMetric.hpp>
 #include <index/aggregated/Order.hpp>
@@ -58,11 +58,11 @@
 dymaxion::Grid fine  (2.0, 32);
 dymaxion::Grid coarse(2.0, 16);
 
-auto mask = known::greaterThan(series::uniform(0.5), 
-        series::map(
+auto mask = known::greaterThan(procedural::uniform(0.5), 
+        procedural::map(
             field::value_noise<3,double>(
                 field::mosaic_noise(
-                    series::unit_interval_noise(11.0, 1.1e4))),
+                    procedural::unit_interval_noise(11.0, 1.1e4))),
             dymaxion::vertex_positions(fine)
         )
     )

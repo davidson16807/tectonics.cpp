@@ -14,9 +14,9 @@
 
 // in-house libraries
 #include <index/whole.hpp>  
-#include <index/series/Range.hpp>
-#include <index/series/Get.hpp>
-#include <index/series/noise/UnitIntervalNoise.hpp>
+#include <index/procedural/Range.hpp>
+#include <index/procedural/Get.hpp>
+#include <index/procedural/noise/UnitIntervalNoise.hpp>
 
 #include <test/properties.hpp>  
 #include <test/macros.hpp>  
@@ -38,9 +38,9 @@ TEST_CASE( "VectorDeinterleave<4>()", "[series]" ) {
     REQUIRE(test::determinism(adapter,
         "VectorDeinterleave(…)", 
         TEST_INDEX(
-            series::vector_deinterleave<N>(
-                series::vector_interleave<N>(
-                    series::UnitIntervalNoise<double>()))),
+            procedural::vector_deinterleave<N>(
+                procedural::vector_interleave<N>(
+                    procedural::UnitIntervalNoise<double>()))),
         indices
     ));
 }
@@ -58,9 +58,9 @@ TEST_CASE( "VectorDeinterleave<3>()", "[series]" ) {
     REQUIRE(test::determinism(adapter,
         "VectorDeinterleave(…)", 
         TEST_INDEX(
-            series::vector_deinterleave<N>(
-                series::vector_interleave<N>(
-                    series::UnitIntervalNoise<double>()))),
+            procedural::vector_deinterleave<N>(
+                procedural::vector_interleave<N>(
+                    procedural::UnitIntervalNoise<double>()))),
         indices
     ));
 }
@@ -78,9 +78,9 @@ TEST_CASE( "VectorDeinterleave<2>()", "[series]" ) {
     REQUIRE(test::determinism(adapter,
         "VectorDeinterleave(…)", 
         TEST_INDEX(
-            series::vector_deinterleave<N>(
-                series::vector_interleave<N>(
-                    series::UnitIntervalNoise<double>()))),
+            procedural::vector_deinterleave<N>(
+                procedural::vector_interleave<N>(
+                    procedural::UnitIntervalNoise<double>()))),
         indices
     ));
 }

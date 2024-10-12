@@ -40,9 +40,9 @@ namespace unlayered
           ScratchScalars& magnitude = scratch4;
           metric.length(raster, magnitude);
           Out& segments = out;
-          copy(series::uniform(0), segments);
+          copy(procedural::uniform(0), segments);
           ScratchMask& occupied = scratch2;
-          copy(series::uniform(1), occupied);
+          copy(procedural::uniform(1), occupied);
           ScratchMask& segment = scratch1;
 
           // step 1: run flood fill algorithm several times
@@ -54,10 +54,10 @@ namespace unlayered
             // vector_raster, start_id, mask, result, scratch_ui8
 
             fill(grid, raster, occupied, whole::max_id(magnitude), segment, scratch3);
-            ternary(segment, series::uniform(0), magnitude, magnitude);
-            ternary(segment, series::uniform(0), occupied, occupied);
+            ternary(segment, procedural::uniform(0), magnitude, magnitude);
+            ternary(segment, procedural::uniform(0), occupied, occupied);
             if (whole::sum<int>(segment) > min_segment_vertex_count) {
-                ternary(segment, series::uniform(i), segments, segments);
+                ternary(segment, procedural::uniform(i), segments, segments);
                 i++;
             }
 

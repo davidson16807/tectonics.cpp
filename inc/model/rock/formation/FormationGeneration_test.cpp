@@ -38,12 +38,12 @@ It does so by testing that this diagram commutes:
 #include <relation/PolynomialRailyardRelation.hpp>
 #include <relation/ScalarRelation.hpp>
 
-#include <index/series/Map.hpp>
-#include <index/series/Uniform.hpp>
-#include <index/series/Range.hpp>                   // Range
-#include <index/series/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
-#include <index/series/noise/glm/UnitVectorNoise.hpp>
-#include <index/series/noise/GaussianNoise.hpp>
+#include <index/procedural/Map.hpp>
+#include <index/procedural/Uniform.hpp>
+#include <index/procedural/Range.hpp>                   // Range
+#include <index/procedural/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
+#include <index/procedural/noise/glm/UnitVectorNoise.hpp>
+#include <index/procedural/noise/GaussianNoise.hpp>
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
 #include <index/adapted/symbolic/SymbolicArithmetic.hpp>
 #include <index/adapted/si/SiMetric.hpp>
@@ -126,7 +126,7 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
 
     adapted::SymbolicArithmetic subarithmetic {length(0),length(1)};
     iterated::Arithmetic arithmetic(subarithmetic);
-    arithmetic.subtract(intended_displacements, series::uniform(min_observed_elevation), intended_displacements);
+    arithmetic.subtract(intended_displacements, procedural::uniform(min_observed_elevation), intended_displacements);
 
     auto strings = spheroidal::Strings(
       adapted::SiStrings{}, 

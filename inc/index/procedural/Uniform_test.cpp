@@ -14,16 +14,19 @@
 
 // in-house libraries
 #include <index/whole.hpp>  
-#include <index/series/Interleave.hpp>
-#include <index/series/Get.hpp>
+#include <index/procedural/Uniform.hpp>
+#include <index/procedural/Range.hpp>
+#include <index/procedural/Get.hpp>
 
 #include <test/properties.hpp>  
 #include <test/macros.hpp>  
 #include <test/adapter.hpp>  
 
-#include "Interleave.hpp"
+#include "Uniform.hpp"
 
-TEST_CASE( "Interleave()", "[series]" ) {
+TEST_CASE( "Uniform()", "[series]" ) {
+    const double pi(3.14159);
+    procedural::Uniform uniform(pi);
     test::OperatorAdapter exact;
     std::vector<int> indices   {
         -1, 0, 1, 2, 3, 
@@ -32,13 +35,12 @@ TEST_CASE( "Interleave()", "[series]" ) {
     };
 
     REQUIRE(test::determinism(exact,
-        "Interleave(…)", TEST_INDEX(series::interleave(2, series::UnitIntervalNoise(10.0))), 
+        "Uniform(…)", TEST_INDEX(procedural::Uniform(pi)), 
         indices
     ));
 
-    auto range_interleave = series::interleave(10, series::range(10));
-    CHECK(range_interleave.size() == 100);
-    CHECK(whole::max(range_interleave) == 9);
-    CHECK(whole::min(range_interleave) == 0);
+    auto out = procedural::get(uniform, procedural::Range(-100,100));
+    CHECK(std::abs(whole::max(out)-pi) < 1e-7);
+    CHECK(std::abs(whole::min(out)-pi) < 1e-7);
 }
 

@@ -7,8 +7,8 @@
 #include <glm/vec3.hpp>               // *vec3
 
 
-#include "series/Interleave.hpp"
-#include "series/Uniform.hpp"
+#include "procedural/Interleave.hpp"
+#include "procedural/Uniform.hpp"
 #include "whole.hpp"
 
 TEST_CASE( "Series<T> abs purity", "[whole]" ) {
@@ -93,7 +93,7 @@ TEST_CASE( "Series<T> residue/fract consistency", "[whole]" ) {
     auto out1 = std::vector({0,0,0,0,0});
     auto out2 = std::vector({0,0,0,0,0});
     SECTION("residue(a,1) must generate the same output as fract(a) for positive numbers"){
-        each::residue(a, series::uniform(1), out1);
+        each::residue(a, procedural::uniform(1), out1);
         each::fract(a, out2);
         CHECK(whole::equal(out1, out2));
     }

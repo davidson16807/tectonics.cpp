@@ -14,8 +14,8 @@
 
 // in-house libraries
 #include <index/whole.hpp>  
-#include <index/series/Range.hpp>
-#include <index/series/Get.hpp>
+#include <index/procedural/Range.hpp>
+#include <index/procedural/Get.hpp>
 
 #include <test/properties.hpp>  
 #include <test/macros.hpp>  
@@ -24,7 +24,7 @@
 #include "Range.hpp"
 
 TEST_CASE( "Range()", "[series]" ) {
-    series::Range noise(0.1);
+    procedural::Range noise(0.1);
     test::OperatorAdapter exact;
     std::vector<int> indices   {
         -1, 0, 1, 2, 3, 
@@ -33,11 +33,11 @@ TEST_CASE( "Range()", "[series]" ) {
     };
 
     REQUIRE(test::determinism(exact,
-        "Range(…)", TEST_INDEX(series::Range(0.1f)), 
+        "Range(…)", TEST_INDEX(procedural::Range(0.1f)), 
         indices
     ));
 
-    series::Range range(100);
+    procedural::Range range(100);
     CHECK(whole::max(range) == 99);
     CHECK(whole::min(range) == 0);
 }

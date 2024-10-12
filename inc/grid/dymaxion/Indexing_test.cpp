@@ -13,7 +13,7 @@
 #include <test/adapter.hpp>
 #include <test/properties.hpp>
 
-#include <index/series/Range.hpp>
+#include <index/procedural/Range.hpp>
 
 #include "Indexing.hpp"
 
@@ -36,7 +36,7 @@ TEST_CASE( "Indexing grid_id() / memory_id()", "[dymaxion]" ) {
         grid_ids.push_back(dymaxion::Point(i,glm::ivec2(x,y)));
     }}}
 
-    series::Range memory_ids(indexing.vertex_count);
+    procedural::Range memory_ids(indexing.vertex_count);
 
     // NOTE: right invertibility and closeness cannot be tested, 
     // since the equivalence of grid ids cannot be determined without using the very code that we are testing

@@ -2,7 +2,7 @@
 
 #include <.hpp>
 
-#include <index/series/Map.hpp>     // series::map
+#include <index/procedural/Map.hpp>     // procedural::map
 
 #include <field/Compose.hpp>        // field::compose
 #include <field/Affinity.hpp>       // field::affinity

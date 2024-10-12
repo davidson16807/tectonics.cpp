@@ -14,9 +14,9 @@
 
 // in-house libraries
 #include <index/whole.hpp>  
-#include <index/series/Range.hpp>
-#include <index/series/Get.hpp>
-#include <index/series/noise/UnitIntervalNoise.hpp>
+#include <index/procedural/Range.hpp>
+#include <index/procedural/Get.hpp>
+#include <index/procedural/noise/UnitIntervalNoise.hpp>
 #include <index/iterated/Metric.hpp>
 #include <index/adapted/glm/GlmMetric.hpp>
 
@@ -24,11 +24,9 @@
 #include <test/macros.hpp>  
 #include <test/glm/adapter.hpp>  
 
-#include "VectorInterleave.hpp"
+#include "UnitVectorNoise.hpp"
 
-TEST_CASE( "VectorInterleave<4>()", "[series]" ) {
-    const double tolerance(0.11);
-    const int N(4);
+TEST_CASE( "UnitVectorNoise<4>()", "[series]" ) {
     std::vector<int> indices   {
         -1, 0, 1, 2, 3, 
         std::numeric_limits<int>::max(), 
@@ -38,26 +36,21 @@ TEST_CASE( "VectorInterleave<4>()", "[series]" ) {
     iterated::Metric metric{adapted::GlmMetric{}};
 
     REQUIRE(test::determinism(adapter,
-        "VectorInterleave(…)", 
-        TEST_INDEX(
-            series::vector_interleave<N>(
-                series::UnitIntervalNoise<double>())),
+        "UnitVectorNoise(…)", 
+        TEST_INDEX((procedural::unit_vector_noise<4,double>())),
         indices
     ));
 
-    auto vec4s = series::get(
-        series::vector_interleave<N>(
-            series::UnitIntervalNoise<double>()), 
-        series::Range(6000));
+    auto vec4s = procedural::get(
+        procedural::unit_vector_noise<4,double>(), 
+        procedural::Range(1000));
     std::vector<double> lengths(vec4s.size());
     metric.length(vec4s, lengths);
-    CHECK(whole::max(lengths) <= sqrt(N));
-    CHECK(whole::max(lengths) >  sqrt(N)-tolerance);
+    CHECK(std::abs(whole::max(lengths)-1.0) < 1e-7);
+    CHECK(std::abs(whole::min(lengths)-1.0) < 1e-7);
 }
 
-TEST_CASE( "VectorInterleave<3>()", "[series]" ) {
-    const double tolerance(1e-1);
-    const int N(3);
+TEST_CASE( "UnitVectorNoise<3>()", "[series]" ) {
     std::vector<int> indices   {
         -1, 0, 1, 2, 3, 
         std::numeric_limits<int>::max(), 
@@ -67,26 +60,21 @@ TEST_CASE( "VectorInterleave<3>()", "[series]" ) {
     iterated::Metric metric{adapted::GlmMetric{}};
 
     REQUIRE(test::determinism(adapter,
-        "VectorInterleave(…)", 
-        TEST_INDEX(
-            series::vector_interleave<N>(
-                series::UnitIntervalNoise<double>())),
+        "UnitVectorNoise(…)", 
+        TEST_INDEX((procedural::unit_vector_noise<3,double>())),
         indices
     ));
 
-    auto vec3s = series::get(
-        series::vector_interleave<N>(
-            series::UnitIntervalNoise<double>()), 
-        series::Range(6000));
+    auto vec3s = procedural::get(
+        procedural::unit_vector_noise<3,double>(), 
+        procedural::Range(1000));
     std::vector<double> lengths(vec3s.size());
     metric.length(vec3s, lengths);
-    CHECK(whole::max(lengths) <= sqrt(N));
-    CHECK(whole::max(lengths) >  sqrt(N)-tolerance);
+    CHECK(std::abs(whole::max(lengths)-1.0) < 1e-7);
+    CHECK(std::abs(whole::min(lengths)-1.0) < 1e-7);
 }
 
-TEST_CASE( "VectorInterleave<2>()", "[series]" ) {
-    const double tolerance(1e-1);
-    const int N(2);
+TEST_CASE( "UnitVectorNoise<2>()", "[series]" ) {
     std::vector<int> indices   {
         -1, 0, 1, 2, 3, 
         std::numeric_limits<int>::max(), 
@@ -96,20 +84,17 @@ TEST_CASE( "VectorInterleave<2>()", "[series]" ) {
     iterated::Metric metric{adapted::GlmMetric{}};
 
     REQUIRE(test::determinism(adapter,
-        "VectorInterleave(…)", 
-        TEST_INDEX(
-            series::vector_interleave<N>(
-                series::UnitIntervalNoise<double>())),
+        "UnitVectorNoise(…)", 
+        TEST_INDEX((procedural::unit_vector_noise<2,double>())),
         indices
     ));
 
-    auto vec2s = series::get(
-        series::vector_interleave<N>(
-            series::UnitIntervalNoise<double>()), 
-        series::Range(6000));
+    auto vec2s = procedural::get(
+        procedural::unit_vector_noise<2,double>(), 
+        procedural::Range(1000));
     std::vector<double> lengths(vec2s.size());
     metric.length(vec2s, lengths);
-    CHECK(whole::max(lengths) <= sqrt(N));
-    CHECK(whole::max(lengths) >  sqrt(N)-tolerance);
+    CHECK(std::abs(whole::max(lengths)-1.0) < 1e-7);
+    CHECK(std::abs(whole::min(lengths)-1.0) < 1e-7);
 }
 

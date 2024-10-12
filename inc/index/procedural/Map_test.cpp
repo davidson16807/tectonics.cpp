@@ -15,9 +15,9 @@
 // in-house libraries
 
 #include <index/whole.hpp>  
-#include <index/series/Range.hpp>
-#include <index/series/noise/UnitIntervalNoise.hpp>
-#include <index/series/Map.hpp>
+#include <index/procedural/Range.hpp>
+#include <index/procedural/noise/UnitIntervalNoise.hpp>
+#include <index/procedural/Map.hpp>
 
 #include <test/properties.hpp>  
 #include <test/macros.hpp>  
@@ -30,21 +30,21 @@
 #include "test_tools.cpp"
 
 TEST_CASE( "Map", "[series]" ) {
-    series::Adapter adapter(1e-7);
+    procedural::Adapter adapter(1e-7);
     std::vector<analytic::Polynomial<double,0,3>> polynomials {
         analytic::Polynomial<double,0,3>({1.0,2.0,3.0,4.0}),
         analytic::Polynomial<double,0,3>({-1.0,0.0,1.0,2.0})
     };
-    std::vector<series::UnitIntervalNoise<double>> noises {
-        series::UnitIntervalNoise(10.0, 1.0e4),
-        series::UnitIntervalNoise(11.0, 1.1e4),
-        series::UnitIntervalNoise(12.0, 1.2e4)
+    std::vector<procedural::UnitIntervalNoise<double>> noises {
+        procedural::UnitIntervalNoise(10.0, 1.0e4),
+        procedural::UnitIntervalNoise(11.0, 1.1e4),
+        procedural::UnitIntervalNoise(12.0, 1.2e4)
     };
-    REQUIRE(test::determinism(adapter, "series::map", TEST_BINARY(series::map), noises, noises));
-    REQUIRE(test::determinism(adapter, "series::map", TEST_BINARY(series::map), polynomials, noises));
-    // REQUIRE(test::associativity(adapter, "series::map", TEST_BINARY(series::map), polynomials, polynomials, noises));
+    REQUIRE(test::determinism(adapter, "procedural::map", TEST_BINARY(procedural::map), noises, noises));
+    REQUIRE(test::determinism(adapter, "procedural::map", TEST_BINARY(procedural::map), polynomials, noises));
+    // REQUIRE(test::associativity(adapter, "procedural::map", TEST_BINARY(procedural::map), polynomials, polynomials, noises));
     REQUIRE(test::left_identity(adapter, 
         "id", analytic::Identity<double>(), 
-        "series::map", TEST_BINARY(series::map), 
+        "procedural::map", TEST_BINARY(procedural::map), 
         noises));
 }

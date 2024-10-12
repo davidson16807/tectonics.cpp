@@ -21,13 +21,13 @@
 #include <index/glm/whole_specialization.hpp>
 #include <index/whole.hpp>  
 #include <index/known.hpp>  
-#include <index/series/Get.hpp>
-#include <index/series/Map.hpp>
-#include <index/series/Range.hpp>
-#include <index/series/Uniform.hpp>
-#include <index/series/glm/VectorInterleave.hpp>
-#include <index/series/noise/GaussianNoise.hpp>
-#include <index/series/noise/glm/UnitVectorNoise.hpp>
+#include <index/procedural/Get.hpp>
+#include <index/procedural/Map.hpp>
+#include <index/procedural/Range.hpp>
+#include <index/procedural/Uniform.hpp>
+#include <index/procedural/glm/VectorInterleave.hpp>
+#include <index/procedural/noise/GaussianNoise.hpp>
+#include <index/procedural/noise/glm/UnitVectorNoise.hpp>
 
 #include <index/iterated/Metric.hpp>
 #include <index/iterated/Arithmetic.hpp>
@@ -72,30 +72,30 @@ dymaxion::Grid calculus_coarse(2.0, 16);
 // std::vector elias_scalar_rasters{
 //     known::store(
 //         calculus_fine.vertex_count(),
-//         series::map(
+//         procedural::map(
 //             field::elias_noise<double>(
-//                 series::unit_vector_noise<3>(10.0, 1.0e4), 
-//                 series::gaussian(11.0, 1.1e4), 
+//                 procedural::unit_vector_noise<3>(10.0, 1.0e4), 
+//                 procedural::gaussian(11.0, 1.1e4), 
 //                 1000),
 //             dymaxion::vertex_positions(calculus_fine)
 //         )
 //     ),
 //     known::store(
 //         calculus_fine.vertex_count(),
-//         series::map(
+//         procedural::map(
 //             field::elias_noise<double>(
-//                 series::unit_vector_noise<3>(11.0, 1.1e4), 
-//                 series::gaussian(11.0, 1.1e4), 
+//                 procedural::unit_vector_noise<3>(11.0, 1.1e4), 
+//                 procedural::gaussian(11.0, 1.1e4), 
 //                 1000),
 //             dymaxion::vertex_positions(calculus_fine)
 //         )
 //     ),
 //     known::store(
 //         calculus_fine.vertex_count(),
-//         series::map(
+//         procedural::map(
 //             field::elias_noise<double>(
-//                 series::unit_vector_noise<3>(12.0, 1.2e4), 
-//                 series::gaussian(11.0, 1.1e4), 
+//                 procedural::unit_vector_noise<3>(12.0, 1.2e4), 
+//                 procedural::gaussian(11.0, 1.1e4), 
 //                 1000),
 //             dymaxion::vertex_positions(calculus_fine)
 //         )
@@ -104,26 +104,26 @@ dymaxion::Grid calculus_coarse(2.0, 16);
 
 
 std::vector scalar_rasters{
-    series::map(
+    procedural::map(
         field::value_noise<3,double>(
             field::mosaic_noise(
-                series::unit_interval_noise(11.0, 1.1e4)),
+                procedural::unit_interval_noise(11.0, 1.1e4)),
             field::vector_mosaic_ops<3,int,double>()
         ),
         dymaxion::vertex_positions(calculus_fine)
     ),
-    series::map(
+    procedural::map(
         field::value_noise<3,double>(
             field::mosaic_noise(
-                series::unit_interval_noise(12.0, 1.2e4)),
+                procedural::unit_interval_noise(12.0, 1.2e4)),
             field::vector_mosaic_ops<3,int,double>()
         ),
         dymaxion::vertex_positions(calculus_fine)
     ),
-    series::map(
+    procedural::map(
         field::value_noise<3,double>(
             field::mosaic_noise(
-                series::unit_interval_noise(13.0, 1.3e4)),
+                procedural::unit_interval_noise(13.0, 1.3e4)),
             field::vector_mosaic_ops<3,int,double>()
         ),
         dymaxion::vertex_positions(calculus_fine)
@@ -133,19 +133,19 @@ std::vector scalar_rasters{
 std::vector vector_rasters{
     known::store(
         calculus_fine.vertex_count(),
-        series::map(
+        procedural::map(
             field::vector3_zip(
                 field::elias_noise<double>(
-                        series::unit_vector_noise<3>(10.0, 1.0e4), 
-                        series::gaussian(11.0, 1.1e4), 
+                        procedural::unit_vector_noise<3>(10.0, 1.0e4), 
+                        procedural::gaussian(11.0, 1.1e4), 
                         1000),
                 field::elias_noise<double>(
-                        series::unit_vector_noise<3>(11.0, 1.1e4), 
-                        series::gaussian(11.0, 1.1e4), 
+                        procedural::unit_vector_noise<3>(11.0, 1.1e4), 
+                        procedural::gaussian(11.0, 1.1e4), 
                         1000),
                 field::elias_noise<double>(
-                        series::unit_vector_noise<3>(12.0, 1.2e4), 
-                        series::gaussian(11.0, 1.1e4), 
+                        procedural::unit_vector_noise<3>(12.0, 1.2e4), 
+                        procedural::gaussian(11.0, 1.1e4), 
                         1000)
             ),
             dymaxion::vertex_positions(calculus_fine)
@@ -153,19 +153,19 @@ std::vector vector_rasters{
     ),
     known::store(
         calculus_fine.vertex_count(),
-        series::map(
+        procedural::map(
             field::vector3_zip(
                 field::elias_noise<double>(
-                        series::unit_vector_noise<3>(13.0, 1.3e4), 
-                        series::gaussian(11.0, 1.1e4), 
+                        procedural::unit_vector_noise<3>(13.0, 1.3e4), 
+                        procedural::gaussian(11.0, 1.1e4), 
                         1000),
                 field::elias_noise<double>(
-                        series::unit_vector_noise<3>(14.0, 1.4e4), 
-                        series::gaussian(11.0, 1.1e4), 
+                        procedural::unit_vector_noise<3>(14.0, 1.4e4), 
+                        procedural::gaussian(11.0, 1.1e4), 
                         1000),
                 field::elias_noise<double>(
-                        series::unit_vector_noise<3>(15.0, 1.5e4), 
-                        series::gaussian(11.0, 1.1e4), 
+                        procedural::unit_vector_noise<3>(15.0, 1.5e4), 
+                        procedural::gaussian(11.0, 1.1e4), 
                         1000)
             ),
             dymaxion::vertex_positions(calculus_fine)
@@ -173,19 +173,19 @@ std::vector vector_rasters{
     ),
     known::store(
         calculus_fine.vertex_count(),
-        series::map(
+        procedural::map(
             field::vector3_zip(
                 field::elias_noise<double>(
-                        series::unit_vector_noise<3>(16.0, 1.6e4), 
-                        series::gaussian(11.0, 1.1e4), 
+                        procedural::unit_vector_noise<3>(16.0, 1.6e4), 
+                        procedural::gaussian(11.0, 1.1e4), 
                         1000),
                 field::elias_noise<double>(
-                        series::unit_vector_noise<3>(17.0, 1.7e4), 
-                        series::gaussian(11.0, 1.1e4), 
+                        procedural::unit_vector_noise<3>(17.0, 1.7e4), 
+                        procedural::gaussian(11.0, 1.1e4), 
                         1000),
                 field::elias_noise<double>(
-                        series::unit_vector_noise<3>(18.0, 1.8e4), 
-                        series::gaussian(11.0, 1.1e4), 
+                        procedural::unit_vector_noise<3>(18.0, 1.8e4), 
+                        procedural::gaussian(11.0, 1.1e4), 
                         1000)
             ),
             dymaxion::vertex_positions(calculus_fine)
@@ -352,7 +352,7 @@ TEST_CASE( "Raster curl", "[unlayered]" ) {
     REQUIRE(test::composition(strict, 
         "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, operators.divergence),
         "operators.curl",       DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.curl),  
-        "0",                    [](auto a){ return series::uniform(0.0); }, 
+        "0",                    [](auto a){ return procedural::uniform(0.0); }, 
         vector_rasters
     ));
 
@@ -360,7 +360,7 @@ TEST_CASE( "Raster curl", "[unlayered]" ) {
     REQUIRE(test::composition(dymaxion::Adapter(calculus_fine, 100.0, calculus_fine.vertex_count()), 
         "operators.curl    ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.curl),
         "operators.gradient", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.gradient),
-        "the zero vector   ", [](auto a){ return series::uniform(glm::dvec3(0.0)); }, 
+        "the zero vector   ", [](auto a){ return procedural::uniform(glm::dvec3(0.0)); }, 
         vector_rasters
     ));
 
@@ -519,8 +519,8 @@ example:
 TEST_CASE( "gradient resolution invariance", "[rasters]" ) {
     // gradient(a) must generate the same output as unshift(gradient(shift(a)))
     operators.gradient(calculus_fine, 
-        series::get(a, 
-            series::map(dymaxion::nearest_vertex_id(calculus_fine), dymaxion::vertex_positions(calculus_coarse))),
+        procedural::get(a, 
+            procedural::map(dymaxion::nearest_vertex_id(calculus_fine), dymaxion::vertex_positions(calculus_coarse))),
         grad_fine_a
     );
 }

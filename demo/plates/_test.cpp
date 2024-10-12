@@ -18,15 +18,15 @@
 #include <math/inspected/InverseByNewtonsMethod.hpp>
 
 // in house libraries
-#include <index/series/Map.hpp>
-#include <index/series/Uniform.hpp>
+#include <index/procedural/Map.hpp>
+#include <index/procedural/Uniform.hpp>
 #include <index/glm/known.hpp>                      // greaterThan
 #include <index/known.hpp>                          // greaterThan
 #include <index/whole.hpp>                          // max, mean
-#include <index/series/Range.hpp>                   // Range
-#include <index/series/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
-#include <index/series/noise/glm/UnitVectorNoise.hpp>
-#include <index/series/noise/GaussianNoise.hpp>
+#include <index/procedural/Range.hpp>                   // Range
+#include <index/procedural/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
+#include <index/procedural/noise/glm/UnitVectorNoise.hpp>
+#include <index/procedural/noise/GaussianNoise.hpp>
 #include <index/adapted/symbolic/SymbolicArithmetic.hpp>
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
 #include <index/adapted/scalar/ScalarClosedForm.hpp>
@@ -143,7 +143,7 @@ int main() {
   auto rfbm = field::ranked_fractal_brownian_noise<3>(10, 0.5f, 2.0f/radius, 12.0f, 1.1e4f);
 
   auto elevation_meters_for_position = field::compose(hypsometry_cdfi, rfbm);
-  auto fine_elevation_meters = series::map(elevation_meters_for_position, fine_vertex_positions);
+  auto fine_elevation_meters = procedural::map(elevation_meters_for_position, fine_vertex_positions);
   std::vector<vec3> vertex_gradient(coarse.vertex_count());
   std::vector<float> scratch(coarse.vertex_count());
   std::vector<bool> mask1(coarse.vertex_count());
@@ -156,7 +156,7 @@ int main() {
 
   std::vector<float> coarse_elevation_meters(coarse.vertex_count());
   stats.sum(vertex_downsampling_ids, fine_elevation_meters, coarse_elevation_meters);
-  arithmetic.divide(coarse_elevation_meters, series::uniform(std::pow(float(vertex_downsampling_ids.factor), 2.0f)), coarse_elevation_meters);
+  arithmetic.divide(coarse_elevation_meters, procedural::uniform(std::pow(float(vertex_downsampling_ids.factor), 2.0f)), coarse_elevation_meters);
 
   iterated::Order orders{adapted::SymbolicOrder{}};
   aggregated::Order order(adapted::SymbolicOrder{});
@@ -173,7 +173,7 @@ int main() {
 
   if (false)
   {
-    copy(series::uniform(0), similar_plate_id);
+    copy(procedural::uniform(0), similar_plate_id);
     similar_plate_id[0] = 1;
   }
   else
@@ -196,12 +196,12 @@ int main() {
     {
       for (std::uint8_t i(0); i < plate_count; ++i)
       {
-          orders.equal(nearest_plate_id, series::uniform(i), is_there);
-          orders.equal(nearest_plate_id, series::uniform(0), is_undecided);
+          orders.equal(nearest_plate_id, procedural::uniform(i), is_there);
+          orders.equal(nearest_plate_id, procedural::uniform(0), is_undecided);
           morphology.dilate(coarse, is_there, mask1);
           morphology.dilate(coarse, mask1, is_there);
           bitset.intersect(is_undecided, is_there, is_there);
-          ternary(is_there, series::uniform(i), nearest_plate_id, nearest_plate_id);
+          ternary(is_there, procedural::uniform(i), nearest_plate_id, nearest_plate_id);
       }
     }
   }
@@ -214,7 +214,7 @@ int main() {
     stats3.sum(nearest_plate_id, coarse_vertex_positions, plate_seeds);
     metric.normalize(plate_seeds, plate_seeds);
     voronoi(coarse_vertex_positions, plate_seeds, nearest_plate_id);
-    orders.equal(nearest_plate_id, series::uniform(0), is_undecided);
+    orders.equal(nearest_plate_id, procedural::uniform(0), is_undecided);
     ternary(is_undecided, nearest_plate_id, nearest_plate_id, nearest_plate_id);
   }
 
@@ -241,7 +241,7 @@ int main() {
   copy(similar_plate_id, buffer_scalars1);
   copy(coarse_elevation_meters, buffer_scalars2);
   copy(coarse_vertex_positions, buffer_positions);
-  grids.storeTriangleStrips(series::range<unsigned int>(coarse.vertex_count()), buffer_element_vertex_ids);
+  grids.storeTriangleStrips(procedural::range<unsigned int>(coarse.vertex_count()), buffer_element_vertex_ids);
 
   // initialize control state
   update::OrbitalControlState control_state;
@@ -291,10 +291,10 @@ int main() {
       glm::vec3(1,0,0)  * pyramid_halflength, 
       glm::vec3(0,0,1), pyramid_radius, 3,
       vectors_element_position);
-  copy          (known::mult(coarse_vertex_positions, series::uniform(1+pyramid_halflength/coarse.total_radius())),  vectors_instance_position);
+  copy          (known::mult(coarse_vertex_positions, procedural::uniform(1+pyramid_halflength/coarse.total_radius())),  vectors_instance_position);
   copy          (coarse_vertex_normals, vectors_instance_up);
   metric.length (vertex_gradient,   vectors_instance_scale);
-  arithmetic.divide(vectors_instance_scale, series::uniform(whole::max(vectors_instance_scale)), vectors_instance_scale);
+  arithmetic.divide(vectors_instance_scale, procedural::uniform(whole::max(vectors_instance_scale)), vectors_instance_scale);
 
   while(!glfwWindowShouldClose(window)) {
       // wipe drawing surface clear

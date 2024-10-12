@@ -16,7 +16,7 @@ Design of dymaxion::buffers is informed by the following observations:
     To illustrate, due to vector buffer structure in point 4), and in-order traversal in point 6),
     temporary variables can be used to avoid recalculating the same vector once for each component and simplify code.
 8)  Due to point 7), buffers are stored using an approach that's similar to the one we use for `rasters::`,
-    and not the procedural `operator[]` overload approach that we use for `series::`.
+    and not the procedural `operator[]` overload approach that we use for `procedural::`.
     This involves functions that store to buffers as output reference parameters.
 9)  Within `rasters::`, since we want to improve our ability to reason with model logic, 
     it's best to store output all at once. However in 3d rendering, we may only care to render a portion of a sphere 

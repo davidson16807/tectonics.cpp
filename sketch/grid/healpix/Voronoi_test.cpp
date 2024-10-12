@@ -13,7 +13,7 @@
 #include <test/adapter.hpp>
 #include <test/properties.hpp>
 
-#include <index/series/Range.hpp>
+#include <index/procedural/Range.hpp>
 
 #include "Voronoi.hpp"
 
@@ -50,7 +50,7 @@ TEST_CASE( "Voronoi grid_position() / sphere_position()", "[healpix]" ) {
         grid_ids.push_back(healpix::Point(i,glm::ivec2(x,y)));
     }}}
 
-    series::Range memory_ids(voronoi.vertex_count);
+    procedural::Range memory_ids(voronoi.vertex_count);
 
     // NOTE: right invertibility and closeness cannot be tested, 
     // since the equivalence of grid ids cannot be determined without using the very code that we are testing

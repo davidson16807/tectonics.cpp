@@ -14,13 +14,13 @@
 // in-house libraries
 #include <index/whole.hpp>  
 #include <index/known.hpp>  
-#include <index/series/Uniform.hpp>
-#include <index/series/Get.hpp>
-#include <index/series/Map.hpp>
-#include <index/series/Range.hpp>
-#include <index/series/glm/VectorInterleave.hpp>
-#include <index/series/noise/GaussianNoise.hpp>
-#include <index/series/noise/glm/UnitVectorNoise.hpp>
+#include <index/procedural/Uniform.hpp>
+#include <index/procedural/Get.hpp>
+#include <index/procedural/Map.hpp>
+#include <index/procedural/Range.hpp>
+#include <index/procedural/glm/VectorInterleave.hpp>
+#include <index/procedural/noise/GaussianNoise.hpp>
+#include <index/procedural/noise/glm/UnitVectorNoise.hpp>
 
 #include "MosaicNoise.hpp"
 #include "PerlinNoise.hpp"
@@ -33,17 +33,17 @@ TEST_CASE( "PerlinNoise()", "[field]" ) {
     test::GlmAdapter<int, double> adapter(1e-5);
 
     auto positions = known::mult(
-        series::get(
-            series::vector_interleave<3>(
-                series::UnitIntervalNoise<double>()), 
-            series::Range(10000)),
-        series::uniform(100.0)
+        procedural::get(
+            procedural::vector_interleave<3>(
+                procedural::UnitIntervalNoise<double>()), 
+            procedural::Range(10000)),
+        procedural::uniform(100.0)
     );
 
     auto noise = 
         field::perlin_noise<3,double>(
             field::mosaic_noise(
-                series::vector_interleave<3>(series::gaussian(11.0, 1.1e4))),
+                procedural::vector_interleave<3>(procedural::gaussian(11.0, 1.1e4))),
             field::vector_mosaic_ops<3,int,double>()
         );
 
@@ -59,7 +59,7 @@ TEST_CASE( "PerlinNoise()", "[field]" ) {
         positions
     ));
 
-    auto out = series::map(noise, positions);
+    auto out = procedural::map(noise, positions);
     CHECK(std::abs(whole::mean(out)) < 0.05);
     CHECK(whole::standard_deviation(out) > 0.1);
 }

@@ -9,7 +9,7 @@ namespace series
 
 	/*
 	`Map` is a map: (𝕋₁→𝕋₂)×(ℕ→𝕋₁)⟶(ℕ→𝕋₁→𝕋₂) for arbitrary types 𝕋₁ and 𝕋₂
-	It represents an indexible object that can participate in functions under `known::` and `series::`.
+	It represents an indexible object that can participate in functions under `known::` and `procedural::`.
 	The value at each index is the result of a composition between an indexible object and a callable object.
 	*/
 	template<typename F, typename G>
@@ -35,7 +35,7 @@ namespace series
 	};
 
 	/*
-	NOTE: constructing `series::` objects can be annoying due to the number of template parameters involved, 
+	NOTE: constructing `procedural::` objects can be annoying due to the number of template parameters involved, 
 	so we use convenience methods for generating rasters that are compatible for a given grid.
 	Typical C++ conventions might append these with `make_*`, but we forego this convention for brevity.
 	For consistency, we create one such function for `Map` here.

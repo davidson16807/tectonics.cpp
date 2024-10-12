@@ -14,9 +14,9 @@
 
 // in-house libraries
 #include <index/whole.hpp>  
-#include <index/series/Range.hpp>
-#include <index/series/noise/UnitIntervalNoise.hpp>
-#include <index/series/Get.hpp>
+#include <index/procedural/Range.hpp>
+#include <index/procedural/noise/UnitIntervalNoise.hpp>
+#include <index/procedural/Get.hpp>
 
 #include <test/structures/grouplike.hpp>  
 #include <test/macros.hpp>  
@@ -26,15 +26,15 @@
 #include "test_tools.cpp"
 
 TEST_CASE( "Get is a monoid where range is identity", "[series]" ) {
-    series::Adapter adapter(1e-7);
-    std::vector<series::Range<int>> ranges {
-        series::Range<int>(),
-        series::Range<int>(1,100),
-        series::Range<int>(-50,50)
+    procedural::Adapter adapter(1e-7);
+    std::vector<procedural::Range<int>> ranges {
+        procedural::Range<int>(),
+        procedural::Range<int>(1,100),
+        procedural::Range<int>(-50,50)
     };
     test::Monoid monoid(
-        "series::range", series::Range<int>(), 
-        "series::get",   TEST_BINARY(series::get)
+        "procedural::range", procedural::Range<int>(), 
+        "procedural::get",   TEST_BINARY(procedural::get)
     );
     REQUIRE(monoid.valid(adapter, ranges));
 }

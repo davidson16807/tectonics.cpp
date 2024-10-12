@@ -33,8 +33,8 @@ namespace unlayered
 
             std::deque<id> searching { start_id };
             Scratch& searched = scratch;
-            copy(series::uniform(false), searched);
-            copy(series::uniform(0), out);
+            copy(procedural::uniform(false), searched);
+            copy(procedural::uniform(0), out);
 
             searched[start_id] = true;
 

@@ -10,8 +10,8 @@
 #include <math/analytic/Gaussian.hpp>
 #include <math/analytic/Error.hpp>
 
-#include <index/series/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
-#include <index/series/noise/GaussianNoise.hpp>
+#include <index/procedural/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
+#include <index/procedural/noise/GaussianNoise.hpp>
 
 #include <field/noise/ValueNoise.hpp>               // ValueNoise
 #include <field/noise/MosaicNoise.hpp>              // MosaicNoise
@@ -58,7 +58,7 @@ namespace field
 	    auto fbm = field::fractal_brownian_noise<id,scalar>(
 	      field::value_noise<L,scalar>(
 	          field::mosaic_noise(
-	            series::gaussian(series::unit_interval_noise(seed1,seed2)), 
+	            procedural::gaussian(procedural::unit_interval_noise(seed1,seed2)), 
 	            cartesian::UnboundedIndexing<id>()),
 	          field::vector_mosaic_ops<L,id,scalar>()
 	      ), octave_count, amplitude_scale_per_frequency_doubling, coarsest_frequency);

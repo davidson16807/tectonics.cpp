@@ -5,7 +5,7 @@
 #include <test/adapter.hpp>
 #include <test/glm/adapter.hpp>
 
-#include <index/series/Range.hpp>
+#include <index/procedural/Range.hpp>
 
 #include "Grid.hpp"
 
@@ -29,7 +29,7 @@ TEST_CASE( "Grid arrow_offset_memory_id() / arrow_offset_grid_position()", "[hea
         glm::ivec2(0,-1)
     };
 
-    series::Range arrow_offset_ids(4);
+    procedural::Range arrow_offset_ids(4);
 
     healpix::Grid grid(radius, vertices_per_meridian);
 
@@ -67,8 +67,8 @@ TEST_CASE( "Grid arrow properties", "[healpix]" ) {
 
     healpix::Grid grid(radius, vertices_per_meridian);
 
-    series::Range vertex_ids(grid.vertex_count());
-    series::Range arrow_offset_ids(4);
+    procedural::Range vertex_ids(grid.vertex_count());
+    procedural::Range arrow_offset_ids(4);
 
     REQUIRE(test::determinism(precise,
         "Grid.arrow_target_id(…)", TEST_BINARY(grid.arrow_target_id),

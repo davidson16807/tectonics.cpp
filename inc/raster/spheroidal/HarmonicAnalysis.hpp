@@ -1,6 +1,6 @@
 #pragma once
 
-#include <index/series/Map.hpp>
+#include <index/procedural/Map.hpp>
 
 #include <field/SphericalHarmonics.hpp>
 
@@ -98,7 +98,7 @@ namespace spheroidal
 		auto compose(
 			const field::SphericalHarmonics<T,Lhi>& harmonics
 		) const {
-			return series::map(harmonics, positions);
+			return procedural::map(harmonics, positions);
 		}
 
 	};

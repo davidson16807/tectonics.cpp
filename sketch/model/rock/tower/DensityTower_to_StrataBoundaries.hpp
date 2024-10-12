@@ -36,7 +36,7 @@ namespace crust
         */
         std::size_t N(tower.grid.cache->vertex_count);
         // iterate through liquids
-        series::fill(radius_to_top_of_last_contiguous_strata, radius_to_bottom_of_crust);
+        procedural::fill(radius_to_top_of_last_contiguous_strata, radius_to_bottom_of_crust);
         float radius_to_top_of_last_mixture(radius_to_bottom_of_crust);
         for (std::size_t mixture_id = 0; mixture_id < mixtures.size(); ++mixture_id)
         {

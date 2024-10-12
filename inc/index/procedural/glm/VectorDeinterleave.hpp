@@ -12,7 +12,7 @@ namespace series
 	template<int L, typename Series, glm::qualifier Q=glm::highp>
 	struct VectorDeinterleave
 	{
-		using vec4 = typename Series::value_type;
+		using vec4 = typename procedural::value_type;
 	    using size_type = std::size_t;
 		using value_type = typename vec4::value_type;
 

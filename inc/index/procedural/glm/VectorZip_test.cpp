@@ -14,9 +14,9 @@
 
 // in-house libraries
 #include <index/whole.hpp>  
-#include <index/series/Range.hpp>
-#include <index/series/Get.hpp>
-#include <index/series/noise/UnitIntervalNoise.hpp>
+#include <index/procedural/Range.hpp>
+#include <index/procedural/Get.hpp>
+#include <index/procedural/noise/UnitIntervalNoise.hpp>
 #include <index/iterated/Metric.hpp>
 #include <index/adapted/glm/GlmMetric.hpp>
 
@@ -40,21 +40,21 @@ TEST_CASE( "Vector4Zip()", "[series]" ) {
     REQUIRE(test::determinism(adapter,
         "Vector4Zip(…)", 
         TEST_INDEX(
-            series::vector4_zip(
-                series::UnitIntervalNoise<double>(10.0, 1e4),
-                series::UnitIntervalNoise<double>(20.0, 2e4),
-                series::UnitIntervalNoise<double>(30.0, 3e4),
-                series::UnitIntervalNoise<double>(40.0, 4e4))),
+            procedural::vector4_zip(
+                procedural::UnitIntervalNoise<double>(10.0, 1e4),
+                procedural::UnitIntervalNoise<double>(20.0, 2e4),
+                procedural::UnitIntervalNoise<double>(30.0, 3e4),
+                procedural::UnitIntervalNoise<double>(40.0, 4e4))),
         indices
     ));
 
-    auto vec4s = series::get(
-        series::vector4_zip(
-            series::UnitIntervalNoise<double>(10.0, 1e4),
-            series::UnitIntervalNoise<double>(20.0, 2e4),
-            series::UnitIntervalNoise<double>(30.0, 3e4),
-            series::UnitIntervalNoise<double>(40.0, 4e4)), 
-        series::Range(6000));
+    auto vec4s = procedural::get(
+        procedural::vector4_zip(
+            procedural::UnitIntervalNoise<double>(10.0, 1e4),
+            procedural::UnitIntervalNoise<double>(20.0, 2e4),
+            procedural::UnitIntervalNoise<double>(30.0, 3e4),
+            procedural::UnitIntervalNoise<double>(40.0, 4e4)), 
+        procedural::Range(6000));
     std::vector<double> lengths(vec4s.size());
     metric.length(vec4s, lengths);
     CHECK(whole::max(lengths) <= sqrt(N));
@@ -75,19 +75,19 @@ TEST_CASE( "Vector3Zip()", "[series]" ) {
     REQUIRE(test::determinism(adapter,
         "Vector3Zip(…)", 
         TEST_INDEX(
-            series::vector3_zip(
-                series::UnitIntervalNoise<double>(10.0, 1e4),
-                series::UnitIntervalNoise<double>(20.0, 2e4),
-                series::UnitIntervalNoise<double>(30.0, 3e4))),
+            procedural::vector3_zip(
+                procedural::UnitIntervalNoise<double>(10.0, 1e4),
+                procedural::UnitIntervalNoise<double>(20.0, 2e4),
+                procedural::UnitIntervalNoise<double>(30.0, 3e4))),
         indices
     ));
 
-    auto vec3s = series::get(
-        series::vector3_zip(
-                series::UnitIntervalNoise<double>(10.0, 1e4),
-                series::UnitIntervalNoise<double>(20.0, 2e4),
-                series::UnitIntervalNoise<double>(30.0, 3e4)), 
-        series::Range(6000));
+    auto vec3s = procedural::get(
+        procedural::vector3_zip(
+                procedural::UnitIntervalNoise<double>(10.0, 1e4),
+                procedural::UnitIntervalNoise<double>(20.0, 2e4),
+                procedural::UnitIntervalNoise<double>(30.0, 3e4)), 
+        procedural::Range(6000));
     std::vector<double> lengths(vec3s.size());
     metric.length(vec3s, lengths);
     CHECK(whole::max(lengths) <= sqrt(N));
@@ -108,17 +108,17 @@ TEST_CASE( "Vector2Zip()", "[series]" ) {
     REQUIRE(test::determinism(adapter,
         "Vector2Zip(…)", 
         TEST_INDEX(
-            series::vector2_zip(
-                series::UnitIntervalNoise<double>(10.0, 1e4),
-                series::UnitIntervalNoise<double>(20.0, 2e4))),
+            procedural::vector2_zip(
+                procedural::UnitIntervalNoise<double>(10.0, 1e4),
+                procedural::UnitIntervalNoise<double>(20.0, 2e4))),
         indices
     ));
 
-    auto vec2s = series::get(
-        series::vector2_zip(
-                series::UnitIntervalNoise<double>(10.0, 1e4),
-                series::UnitIntervalNoise<double>(20.0, 2e4)), 
-        series::Range(6000));
+    auto vec2s = procedural::get(
+        procedural::vector2_zip(
+                procedural::UnitIntervalNoise<double>(10.0, 1e4),
+                procedural::UnitIntervalNoise<double>(20.0, 2e4)), 
+        procedural::Range(6000));
     std::vector<double> lengths(vec2s.size());
     metric.length(vec2s, lengths);
     CHECK(whole::max(lengths) <= sqrt(N));

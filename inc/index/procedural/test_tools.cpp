@@ -4,7 +4,7 @@
 #include <math/analytic/Identity.hpp>
 
 #include <index/whole.hpp>
-#include <index/series/Range.hpp>
+#include <index/procedural/Range.hpp>
 
 namespace series {
 
@@ -21,8 +21,8 @@ struct Adapter{
     template<typename Series1, typename Series2>
     bool equal(const Series1& a, const Series2& b) const {
         return whole::distance(
-            map(a,series::range(test_size)),
-            map(b,series::range(test_size))) <= threshold;
+            map(a,procedural::range(test_size)),
+            map(b,procedural::range(test_size))) <= threshold;
     }
 
     template<typename Series>
@@ -30,7 +30,7 @@ struct Adapter{
         return whole::to_string(a);
     }
 
-    // the functions below are required for some tests for series::Map
+    // the functions below are required for some tests for procedural::Map
 
     template<int Plo, int Phi>
     std::string print(const analytic::Polynomial<T,Plo,Phi>& p) const {

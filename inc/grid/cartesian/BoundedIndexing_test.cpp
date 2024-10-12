@@ -8,7 +8,7 @@
 #include <test/properties.hpp>
 #include <test/macros.hpp>
 #include <test/glm/adapter.hpp>
-#include <index/series/Range.hpp>
+#include <index/procedural/Range.hpp>
 #include "BoundedIndexing.hpp"
 
 TEST_CASE( "BoundedIndexing", "[cartesian]" ) {
@@ -16,7 +16,7 @@ TEST_CASE( "BoundedIndexing", "[cartesian]" ) {
     test::GlmAdapter<int,double> precise(1e-4);
 
     cartesian::BoundedIndexing<3> indexing(3);
-    series::Range memory_ids(indexing.size);
+    procedural::Range memory_ids(indexing.size);
 
     REQUIRE(test::left_invertibility(precise,
         "BoundedIndexing.memory_id(…)",                                   TEST_UNARY(indexing.memory_id),

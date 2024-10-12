@@ -14,17 +14,16 @@
 
 // in-house libraries
 #include <index/whole.hpp>  
-#include <index/series/Range.hpp>
-#include <index/series/Get.hpp>
+#include <index/procedural/Interleave.hpp>
+#include <index/procedural/Get.hpp>
 
 #include <test/properties.hpp>  
 #include <test/macros.hpp>  
 #include <test/adapter.hpp>  
 
-#include "GaussianNoise.hpp"
+#include "Interleave.hpp"
 
-TEST_CASE( "GaussianNoise()", "[series]" ) {
-    auto noise = series::gaussian<double>();
+TEST_CASE( "Interleave()", "[series]" ) {
     test::OperatorAdapter exact;
     std::vector<int> indices   {
         -1, 0, 1, 2, 3, 
@@ -33,12 +32,13 @@ TEST_CASE( "GaussianNoise()", "[series]" ) {
     };
 
     REQUIRE(test::determinism(exact,
-        "GaussianNoise(…)", TEST_INDEX(series::gaussian<double>()), 
+        "Interleave(…)", TEST_INDEX(procedural::interleave(2, procedural::UnitIntervalNoise(10.0))), 
         indices
     ));
 
-    auto out = series::get(noise, series::Range(3000));
-    CHECK(std::abs(whole::mean(out)-0.0) < 0.05);
-    CHECK(std::abs(whole::standard_deviation(out)-1.0) < 0.01);
+    auto range_interleave = procedural::interleave(10, procedural::range(10));
+    CHECK(range_interleave.size() == 100);
+    CHECK(whole::max(range_interleave) == 9);
+    CHECK(whole::min(range_interleave) == 0);
 }
 

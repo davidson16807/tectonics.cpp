@@ -56,7 +56,7 @@ namespace series
 	};
 
 	/*
-	NOTE: constructing `series::` objects can be annoying due to the number of template parameters involved, 
+	NOTE: constructing `procedural::` objects can be annoying due to the number of template parameters involved, 
 	so we use convenience methods for generating rasters that are compatible for a given grid.
 	Typical C++ conventions might append these with `make_*`, but we forego this convention for brevity.
 	For consistency, we create one such function for Uniform here.
