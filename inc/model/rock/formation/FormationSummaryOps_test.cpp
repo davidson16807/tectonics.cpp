@@ -4,10 +4,11 @@
 #include <catch/catch.hpp>
 
 // in house libraries
-#include <index/each.hpp>
 #include <index/whole.hpp>
 #include <index/series/Uniform.hpp>
 #include <index/iterated/Nary.hpp>
+#include <index/iterated/Arithmetic.hpp>
+#include <index/adapted/symbolic/SymbolicArithmetic.hpp>
 
 #include <model/rock/stratum/StratumSummary.hpp>
 #include <model/rock/stratum/StratumSummaryProperties.hpp>
@@ -79,6 +80,7 @@ TEST_CASE( "FormationSummary combine() mass conservation", "[rock]" ) {
 
     rock::FormationSummaryOps ops {rock::StratumSummaryOps{density(3075.0*si::kilogram/si::meter3)}};
     iterated::Unary formation_area_density(rock::StratumSummaryAreaDensity{});
+    iterated::Arithmetic arithmetic{adapted::SymbolicArithmetic(0.0*si::kilogram/si::meter2, 1.0*si::kilogram/si::meter2)};
     rock::FormationSummaryAdapter testing;
 
     float oo = std::numeric_limits<float>::max();
@@ -106,10 +108,10 @@ TEST_CASE( "FormationSummary combine() mass conservation", "[rock]" ) {
     formation_area_density(ab, abrho);
     formation_area_density(a, arho);
     formation_area_density(b, brho);
-    each::add(arho, brho, arho_brho);
-    each::sub(arho_brho, abrho, offset);
-    each::div(offset, series::uniform(area_density(1.0f)), distance);
-    each::mult(distance, distance, distance);
+    arithmetic.add(arho, brho, arho_brho);
+    arithmetic.subtract(arho_brho, abrho, offset);
+    arithmetic.divide(offset, series::uniform(area_density(1.0f)), distance);
+    arithmetic.multiply(distance, distance, distance);
 
     SECTION("the result of passing two valid FormationSummary objects to combine() must produce a valid FormationSummary with equivalent area_density"){
         CHECK(whole::sum<float>(distance) <= 1e8f);

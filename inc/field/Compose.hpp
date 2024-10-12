@@ -11,7 +11,7 @@ namespace field
 
 	/*
 	`Compose` is a map: (𝕋₁→𝕋₂)×(ℕ→𝕋₁)⟶(ℕ→𝕋₁→𝕋₂) for arbitrary types 𝕋₁ and 𝕋₂
-	It is an indexible object that can participate in functions under `each::` and `store::`.
+	It is an indexible object that can participate in functions under `iterated::` and `store::`.
 	The value at each index is the result of a composition between an indexible object and a callable object.
 	*/
 	template<typename F, typename G>

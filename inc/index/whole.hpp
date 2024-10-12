@@ -9,8 +9,6 @@
 // in-house libraries
 #include <math/special.hpp>
 
-#include "each.hpp"
-
 namespace whole
 {
 

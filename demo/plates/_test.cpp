@@ -20,8 +20,6 @@
 // in house libraries
 #include <index/series/Map.hpp>
 #include <index/series/Uniform.hpp>
-#include <index/glm/each.hpp>                       // get
-#include <index/each.hpp>                           // get
 #include <index/glm/known.hpp>                      // greaterThan
 #include <index/known.hpp>                          // greaterThan
 #include <index/whole.hpp>                          // max, mean
@@ -152,6 +150,7 @@ int main() {
   std::vector<bool> mask2(coarse.vertex_count());
   std::vector<bool> mask3(coarse.vertex_count());
   std::vector<std::uint8_t> similar_plate_id(coarse.vertex_count());
+  std::vector<std::uint8_t> nearest_plate_id(coarse.vertex_count());
   std::vector<bool> is_undecided(coarse.vertex_count());
   std::vector<bool> is_there(coarse.vertex_count());
 
@@ -164,7 +163,7 @@ int main() {
 
   unlayered::VectorCalculusByFundamentalTheorem calculus;
   auto fill = unlayered::flood_filling<int,float>(
-    [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 45.0f/180.0f); }
+    [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 60.0f/180.0f); }
   );
   auto segment = unlayered::image_segmentation<int,float>(fill, adapted::GlmMetric{});
 
@@ -185,47 +184,47 @@ int main() {
     );
   }
 
-  adapted::ScalarStrings<float> substrings(adapted::dotshades);
-  spheroidal::Strings strings(substrings, order);
-  adapted::GlmStrings substrings3;
-  spheroidal::Strings strings3(substrings3, aggregated::Order{adapted::MetricOrder{adapted::GlmMetric{}}});
-  std::cout << strings.format(coarse, similar_plate_id) << std::endl << std::endl;
 
-  auto ternary = iterated::Ternary{};
-  auto bitset = iterated::Bitset{adapted::BooleanBitset{}};
-  auto morphology = unlayered::Morphology{bitset};
+  iterated::Ternary ternary{};
+  iterated::Bitset bitset{adapted::BooleanBitset{}};
+  unlayered::Morphology morphology{bitset};
+  iterated::Metric metric{adapted::GlmMetric{}};
 
+  copy(similar_plate_id, nearest_plate_id);
   if(false){
     for(std::uint8_t j(0); j < 1; ++j)
     {
       for (std::uint8_t i(0); i < plate_count; ++i)
       {
-          orders.equal(similar_plate_id, series::uniform(i), is_there);
-          orders.equal(similar_plate_id, series::uniform(0), is_undecided);
+          orders.equal(nearest_plate_id, series::uniform(i), is_there);
+          orders.equal(nearest_plate_id, series::uniform(0), is_undecided);
           morphology.dilate(coarse, is_there, mask1);
           morphology.dilate(coarse, mask1, is_there);
           bitset.intersect(is_undecided, is_there, is_there);
-          ternary(is_there, series::uniform(i), similar_plate_id, similar_plate_id);
+          ternary(is_there, series::uniform(i), nearest_plate_id, nearest_plate_id);
       }
     }
   }
 
   if(true){
     grouped::Statistics stats3{adapted::SymbolicArithmetic(vec3(0),vec3(1))};
-    iterated::Metric metric{adapted::GlmMetric{}};
     unlayered::Voronoi voronoi{adapted::GlmMetric{}};
 
-    std::vector<std::uint8_t> nearest_plate_id(coarse.vertex_count());
     std::vector<vec3>plate_seeds(8,vec3(0,0,0));
-    stats3.sum(similar_plate_id, coarse_vertex_positions, plate_seeds);
+    stats3.sum(nearest_plate_id, coarse_vertex_positions, plate_seeds);
     metric.normalize(plate_seeds, plate_seeds);
     voronoi(coarse_vertex_positions, plate_seeds, nearest_plate_id);
-    orders.equal(similar_plate_id, series::uniform(0), is_undecided);
-    ternary(is_undecided, nearest_plate_id, similar_plate_id, similar_plate_id);
+    orders.equal(nearest_plate_id, series::uniform(0), is_undecided);
+    ternary(is_undecided, nearest_plate_id, nearest_plate_id, nearest_plate_id);
   }
 
+  adapted::ScalarStrings<float> substrings(adapted::dotshades);
+  spheroidal::Strings strings(substrings, order);
+  adapted::GlmStrings substrings3;
+  spheroidal::Strings strings3(substrings3, aggregated::Order{adapted::MetricOrder{adapted::GlmMetric{}}});
   std::cout << strings3.format(coarse, vertex_gradient) << std::endl << std::endl;
   std::cout << strings.format(coarse, similar_plate_id) << std::endl << std::endl;
+  std::cout << strings.format(coarse, nearest_plate_id) << std::endl << std::endl;
 
   // flatten raster for OpenGL
   dymaxion::WholeGridBuffers<int,float> grids(coarse.vertices_per_square_side());
@@ -292,10 +291,10 @@ int main() {
       glm::vec3(1,0,0)  * pyramid_halflength, 
       glm::vec3(0,0,1), pyramid_radius, 3,
       vectors_element_position);
-  each::copy   (known::mult(coarse_vertex_positions, series::uniform(1+pyramid_halflength/coarse.total_radius())),  vectors_instance_position);
-  each::length (vertex_gradient,   vectors_instance_scale);
-  each::copy   (coarse_vertex_normals, vectors_instance_up);
-  each::div    (vectors_instance_scale, series::uniform(whole::max(vectors_instance_scale)), vectors_instance_scale);
+  copy          (known::mult(coarse_vertex_positions, series::uniform(1+pyramid_halflength/coarse.total_radius())),  vectors_instance_position);
+  copy          (coarse_vertex_normals, vectors_instance_up);
+  metric.length (vertex_gradient,   vectors_instance_scale);
+  arithmetic.divide(vectors_instance_scale, series::uniform(whole::max(vectors_instance_scale)), vectors_instance_scale);
 
   while(!glfwWindowShouldClose(window)) {
       // wipe drawing surface clear
@@ -312,7 +311,6 @@ int main() {
         view_state,
         GL_TRIANGLE_STRIP
       );
-
 
       indicator_program.draw(
         vectors_element_position,

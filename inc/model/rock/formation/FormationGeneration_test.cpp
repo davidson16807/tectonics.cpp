@@ -82,7 +82,7 @@ It does so by testing that this diagram commutes:
 
 TEST_CASE( "FormationGeneration must be able to achieve desired displacements as indicated by elevation_for_position", "[rock]" ) {
 
-    // using mass = si::mass<float>;
+    using mass = si::mass<float>;
     using length = si::length<float>;
     using density = si::density<float>;
 

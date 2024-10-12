@@ -9,7 +9,6 @@
 
 #include "series/Interleave.hpp"
 #include "series/Uniform.hpp"
-#include "each.hpp"
 #include "whole.hpp"
 
 TEST_CASE( "Series<T> abs purity", "[whole]" ) {

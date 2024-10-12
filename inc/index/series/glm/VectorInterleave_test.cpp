@@ -13,12 +13,12 @@
 #include <glm/vec3.hpp>     // *vec3
 
 // in-house libraries
-#include <index/each.hpp>  
-#include <index/glm/each.hpp>  
 #include <index/whole.hpp>  
 #include <index/series/Range.hpp>
 #include <index/series/Get.hpp>
 #include <index/series/noise/UnitIntervalNoise.hpp>
+#include <index/iterated/Metric.hpp>
+#include <index/adapted/glm/GlmMetric.hpp>
 
 #include <test/properties.hpp>  
 #include <test/macros.hpp>  
@@ -35,6 +35,7 @@ TEST_CASE( "VectorInterleave<4>()", "[series]" ) {
         std::numeric_limits<int>::min()
     };
     test::GlmAdapter<int,double> adapter(1e-7);
+    iterated::Metric metric{adapted::GlmMetric{}};
 
     REQUIRE(test::determinism(adapter,
         "VectorInterleave(…)", 
@@ -49,7 +50,7 @@ TEST_CASE( "VectorInterleave<4>()", "[series]" ) {
             series::UnitIntervalNoise<double>()), 
         series::Range(6000));
     std::vector<double> lengths(vec4s.size());
-    each::length(vec4s, lengths);
+    metric.length(vec4s, lengths);
     CHECK(whole::max(lengths) <= sqrt(N));
     CHECK(whole::max(lengths) >  sqrt(N)-tolerance);
 }
@@ -63,6 +64,7 @@ TEST_CASE( "VectorInterleave<3>()", "[series]" ) {
         std::numeric_limits<int>::min()
     };
     test::GlmAdapter<int,double> adapter(1e-7);
+    iterated::Metric metric{adapted::GlmMetric{}};
 
     REQUIRE(test::determinism(adapter,
         "VectorInterleave(…)", 
@@ -77,7 +79,7 @@ TEST_CASE( "VectorInterleave<3>()", "[series]" ) {
             series::UnitIntervalNoise<double>()), 
         series::Range(6000));
     std::vector<double> lengths(vec3s.size());
-    each::length(vec3s, lengths);
+    metric.length(vec3s, lengths);
     CHECK(whole::max(lengths) <= sqrt(N));
     CHECK(whole::max(lengths) >  sqrt(N)-tolerance);
 }
@@ -91,6 +93,7 @@ TEST_CASE( "VectorInterleave<2>()", "[series]" ) {
         std::numeric_limits<int>::min()
     };
     test::GlmAdapter<int,double> adapter(1e-7);
+    iterated::Metric metric{adapted::GlmMetric{}};
 
     REQUIRE(test::determinism(adapter,
         "VectorInterleave(…)", 
@@ -105,7 +108,7 @@ TEST_CASE( "VectorInterleave<2>()", "[series]" ) {
             series::UnitIntervalNoise<double>()), 
         series::Range(6000));
     std::vector<double> lengths(vec2s.size());
-    each::length(vec2s, lengths);
+    metric.length(vec2s, lengths);
     CHECK(whole::max(lengths) <= sqrt(N));
     CHECK(whole::max(lengths) >  sqrt(N)-tolerance);
 }

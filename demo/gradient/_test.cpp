@@ -20,8 +20,6 @@
 // in house libraries
 #include <index/series/Map.hpp>
 #include <index/series/Uniform.hpp>
-#include <index/glm/each.hpp>                       // get
-#include <index/each.hpp>                           // get
 #include <index/glm/known.hpp>                      // greaterThan
 #include <index/known.hpp>                          // greaterThan
 #include <index/whole.hpp>                          // max, mean
@@ -32,8 +30,12 @@
 #include <index/adapted/symbolic/SymbolicArithmetic.hpp>
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
 #include <index/adapted/si/SiStrings.hpp>
+#include <index/adapted/glm/GlmStrings.hpp>
+#include <index/adapted/glm/GlmMetric.hpp>
+#include <index/adapted/metric/MetricOrder.hpp>
 #include <index/aggregated/Order.hpp>
 #include <index/iterated/Nary.hpp>
+#include <index/iterated/Metric.hpp>
 #include <index/iterated/Arithmetic.hpp>
 
 #include <field/Compose.hpp>                        // Compose
@@ -150,15 +152,8 @@ int main() {
   std::vector<length> elevation(grid.vertex_count());
   elevations_for_positions(vertex_positions, elevation);
 
-  iterated::Arithmetic arithmetic(adapted::SymbolicArithmetic(length(0),length(1)));
-  arithmetic.subtract(elevation, series::uniform(length(min_earth_elevation)), elevation);
-
-  adapted::SymbolicOrder suborder;
-  adapted::SiStrings substrings;
-  aggregated::Order ordered(suborder);
-  auto strings = spheroidal::Strings(substrings, ordered);
-  std::cout << strings.format(grid, elevation) << std::endl << std::endl;
-
+  iterated::Arithmetic lengths(adapted::SymbolicArithmetic(length(0),length(1)));
+  lengths.subtract(elevation, series::uniform(length(min_earth_elevation)), elevation);
 
   auto vertex_scalars1 = elevation_in_meters;
 
@@ -183,8 +178,10 @@ int main() {
   //     )
   // );
 
-  std::vector<glm::vec3> vertex_gradient(grid.vertex_count());
+  iterated::Identity copy;
+
   unlayered::VectorCalculusByFundamentalTheorem spatial;
+  std::vector<glm::vec3> vertex_gradient(grid.vertex_count());
   spatial.gradient(grid, vertex_scalars1, vertex_gradient);
 
   // flatten raster for OpenGL
@@ -198,20 +195,22 @@ int main() {
   std::vector<unsigned int> buffer_element_vertex_ids(grids.triangle_strips_size(vertex_positions));
   std::cout << "vertex count:        " << grid.vertex_count() << std::endl;
   std::cout << "vertices per meridian" << grid.vertices_per_meridian() << std::endl;
-  // each::copy(vertex_colored_scalars, buffer_color_values);
+  // copy(vertex_colored_scalars, buffer_color_values);
   std::vector<float> scratch(grid.vertex_count());
   std::vector<bool> mask1(grid.vertex_count());
   std::vector<bool> mask2(grid.vertex_count());
   std::vector<bool> mask3(grid.vertex_count());
 
-  each::copy(vertex_colored_scalars, buffer_color_values);
-  each::copy(vertex_square_ids, buffer_square_ids);
-  each::copy(vertex_scalars1, buffer_scalars1);
-  // each::copy(vertex_scalars2, buffer_scalars2);
-  each::copy(vertex_positions, buffer_positions);
+  copy(vertex_colored_scalars, buffer_color_values);
+  copy(vertex_square_ids, buffer_square_ids);
+  copy(vertex_scalars1, buffer_scalars1);
+  // copy(vertex_scalars2, buffer_scalars2);
+  copy(vertex_positions, buffer_positions);
   grids.storeTriangleStrips(series::range<unsigned int>(grid.vertex_count()), buffer_element_vertex_ids);
 
   // flatten vector raster for OpenGL
+  iterated::Metric metric{adapted::GlmMetric{}};
+  iterated::Arithmetic scalars(adapted::SymbolicArithmetic(0.0f, 1.0f));
   buffer::PyramidBuffers<int, float> pyramids;
   std::vector<glm::vec3> vectors_element_position(pyramids.triangles_size<3>(3));
   std::vector<glm::vec3> vectors_instance_position(grid.vertex_count());
@@ -226,12 +225,12 @@ int main() {
       glm::vec3(0,0, 1) * pyramid_halflength, 
       glm::vec3(0,1, 0),  pyramid_radius, 3, 
       vectors_element_position);
-  each::copy   (known::mult(vertex_positions, series::uniform(1+pyramid_halflength/grid.total_radius())),  vectors_instance_position);
-  each::copy   (vertex_gradient,   vectors_instance_heading);
-  // each::copy   (series::uniform(glm::vec3(0,0,1)),   vectors_instance_heading);
-  each::copy   (vertex_normals,    vectors_instance_up);
-  each::length (vertex_gradient,   vectors_instance_scale);
-  each::div    (vectors_instance_scale, series::uniform(whole::max(vectors_instance_scale)), vectors_instance_scale);
+  copy   (known::mult(vertex_positions, series::uniform(1+pyramid_halflength/grid.total_radius())),  vectors_instance_position);
+  copy   (vertex_gradient,   vectors_instance_heading);
+  // copy   (series::uniform(glm::vec3(0,0,1)),   vectors_instance_heading);
+  copy   (vertex_normals,    vectors_instance_up);
+  metric.length (vertex_gradient,   vectors_instance_scale);
+  scalars.divide(vectors_instance_scale, series::uniform(whole::max(vectors_instance_scale)), vectors_instance_scale);
 
   // initialize control state
   update::OrbitalControlState control_state;
@@ -253,6 +252,16 @@ int main() {
   view::ColorscaleSurfacesViewState colorscale_state;
   colorscale_state.max_color_value = whole::max(buffer_color_values);
   colorscale_state.darken_threshold = whole::mean(buffer_scalars2);
+
+  adapted::SymbolicOrder suborder;
+  adapted::SiStrings substrings;
+  aggregated::Order ordered(suborder);
+  auto strings = spheroidal::Strings(substrings, ordered);
+  std::cout << strings.format(grid, elevation) << std::endl << std::endl;
+
+  adapted::GlmStrings substrings3;
+  spheroidal::Strings strings3(substrings3, aggregated::Order{adapted::MetricOrder{adapted::GlmMetric{}}});
+  std::cout << strings3.format(grid, vertex_gradient) << std::endl << std::endl;
 
   // initialize shader program
   view::ColorscaleSurfaceShaderProgram colorscale_program;  

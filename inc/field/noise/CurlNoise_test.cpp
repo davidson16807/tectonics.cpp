@@ -12,7 +12,6 @@
 #include <glm/vec3.hpp>     // *vec3
 
 // in-house libraries
-#include <index/each.hpp>  
 #include <index/whole.hpp>  
 #include <index/known.hpp>  
 #include <index/glm/known.hpp>  

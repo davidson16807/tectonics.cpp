@@ -14,7 +14,6 @@
 
 // in-house libraries
 
-#include <index/each.hpp>  
 #include <index/whole.hpp>  
 #include <index/series/Range.hpp>
 #include <index/series/noise/UnitIntervalNoise.hpp>

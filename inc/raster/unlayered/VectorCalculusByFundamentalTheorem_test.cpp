@@ -19,8 +19,6 @@
 
 #include <index/glm/each_specialization.hpp>
 #include <index/glm/whole_specialization.hpp>
-#include <index/glm/each.hpp>
-#include <index/each.hpp>  
 #include <index/whole.hpp>  
 #include <index/known.hpp>  
 #include <index/series/Get.hpp>

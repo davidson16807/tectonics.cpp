@@ -20,8 +20,6 @@
 // in house libraries
 #include <index/series/Map.hpp>
 #include <index/series/Uniform.hpp>
-#include <index/glm/each.hpp>                       // get
-#include <index/each.hpp>                           // get
 #include <index/glm/known.hpp>                      // greaterThan
 #include <index/known.hpp>                          // greaterThan
 #include <index/whole.hpp>                          // max, mean

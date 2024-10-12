@@ -20,8 +20,6 @@
 // in house libraries
 #include <index/series/Map.hpp>
 #include <index/series/Uniform.hpp>
-#include <index/glm/each.hpp>                       // get
-#include <index/each.hpp>                           // get
 #include <index/whole.hpp>                          // max, mean
 #include <index/series/Range.hpp>                   // Range
 #include <index/series/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise

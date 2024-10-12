@@ -1,6 +1,7 @@
 #pragma once
 
 // std libraries
+#include <vector>
 
 // in-house libraries
 #include "../properties.hpp"
@@ -41,7 +42,7 @@ namespace test {
         {}
 
         template<typename Adapter, typename A>
-        bool valid(const Adapter& adapter, const many<A>& as) const {
+        bool valid(const Adapter& adapter, const std::vector<A>& as) const {
             return 
 
             determinism  (adapter, f_name, f, as, as)     &&
@@ -51,7 +52,7 @@ namespace test {
             true; // added so lines above can be easily swapped
         }
         template<typename Adapter, typename A, typename B>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs) const {
             return 
 
             determinism  (adapter, f_name, f, as, bs)     &&
@@ -66,7 +67,7 @@ namespace test {
             true; // added so lines above can be easily swapped
         }
         template<typename Adapter, typename A, typename B, typename C>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs, const std::vector<C>& cs) const {
             return 
 
             cancellative (adapter, f_name, f, as, bs, cs) &&
@@ -92,7 +93,7 @@ namespace test {
         {}
 
         template<typename Adapter, typename A>
-        bool valid(const Adapter& adapter, const many<A>& as) const {
+        bool valid(const Adapter& adapter, const std::vector<A>& as) const {
             return 
 
             determinism  (adapter,            f_name, f, as, as)     &&
@@ -102,7 +103,7 @@ namespace test {
             true; // added so lines above can be easily swapped
         }
         template<typename Adapter, typename A, typename B>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs) const {
             return 
 
             determinism  (adapter, f_name, f, as, bs)     &&
@@ -117,7 +118,7 @@ namespace test {
             true; // added so lines above can be easily swapped
         }
         template<typename Adapter, typename A, typename B, typename C>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs, const std::vector<C>& cs) const {
             return 
 
             associativity(adapter, f_name, f, as, bs, cs) &&
@@ -146,7 +147,7 @@ namespace test {
         {}
 
         template<typename Adapter, typename A>
-        bool valid(const Adapter& adapter, const many<A>& as) const {
+        bool valid(const Adapter& adapter, const std::vector<A>& as) const {
             return 
 
             determinism    (adapter,            f_name, f, as, as)     &&
@@ -157,7 +158,7 @@ namespace test {
             true; // added so lines above can be easily swapped
         }
         template<typename Adapter, typename A, typename B>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs) const {
             return 
 
             determinism  (adapter, f_name, f, as, bs)     &&
@@ -167,7 +168,7 @@ namespace test {
             true; // added so lines above can be easily swapped
         }
         template<typename Adapter, typename A, typename B, typename C>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs, const std::vector<C>& cs) const {
             return 
 
             associativity(adapter, f_name, f, as, bs, cs) &&
@@ -193,7 +194,7 @@ namespace test {
             finv_name(finv_name), finv(finv)
         {}
         template<typename Adapter, typename A>
-        bool valid(const Adapter& adapter, const many<A>& as) const {
+        bool valid(const Adapter& adapter, const std::vector<A>& as) const {
             return 
 
             determinism    (adapter,            f_name, f, as, as)     &&
@@ -205,7 +206,7 @@ namespace test {
             true; // added so lines above can be easily swapped
         }
         template<typename Adapter, typename A, typename B>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs) const {
             return 
 
             determinism  (adapter, f_name, f, as, bs)     &&
@@ -235,7 +236,7 @@ namespace test {
             finv_name(finv_name), finv(finv)
         {}
         template<typename Adapter, typename A>
-        bool valid(const Adapter& adapter, const many<A>& as) const {
+        bool valid(const Adapter& adapter, const std::vector<A>& as) const {
             return 
 
             determinism    (adapter,            f_name, f, as, as)     &&
@@ -248,7 +249,7 @@ namespace test {
             true; // added so lines above can be easily swapped
         }
         template<typename Adapter, typename A, typename B>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs) const {
             return 
 
             determinism  (adapter, f_name, f, as, bs)     &&
@@ -261,7 +262,7 @@ namespace test {
             true; // added so lines above can be easily swapped
         }
         template<typename Adapter, typename A, typename B, typename C>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs, const std::vector<C>& cs) const {
             return 
 
             associativity(adapter, f_name, f, as, bs, cs) &&
@@ -290,7 +291,7 @@ namespace test {
             f_name(f_name), f(f)
         {}
         template<typename Adapter, typename A>
-        bool valid(const Adapter& adapter, const many<A>& as) const {
+        bool valid(const Adapter& adapter, const std::vector<A>& as) const {
             return 
 
             determinism    (adapter,            f_name, f, as, as)     &&
@@ -302,7 +303,7 @@ namespace test {
             true; // added so lines above can be easily swapped
         }
         template<typename Adapter, typename A, typename B>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs) const {
             return 
 
             determinism  (adapter, f_name, f, as, bs)     &&
@@ -319,7 +320,7 @@ namespace test {
             true; // added so lines above can be easily swapped
         }
         template<typename Adapter, typename A, typename B, typename C>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs, const std::vector<C>& cs) const {
             return 
 
             associativity(adapter, f_name, f, as, bs, cs) &&
@@ -344,7 +345,7 @@ namespace test {
         {}
 
         template<typename Adapter, typename A>
-        bool valid(const Adapter& adapter, const many<A>& as) const {
+        bool valid(const Adapter& adapter, const std::vector<A>& as) const {
             return 
 
             determinism  (adapter,            f_name, f, as, as)     &&
@@ -355,7 +356,7 @@ namespace test {
             true; // added so lines above can be easily swapped
         }
         template<typename Adapter, typename A, typename B>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs) const {
             return 
 
             determinism  (adapter, f_name, f, as, bs)     &&
@@ -372,7 +373,7 @@ namespace test {
             true; // added so lines above can be easily swapped
         }
         template<typename Adapter, typename A, typename B, typename C>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs, const std::vector<C>& cs) const {
             return 
 
             associativity(adapter, f_name, f, as, bs, cs) &&
@@ -403,7 +404,7 @@ namespace test {
             finv_name(finv_name), finv(finv)
         {}
         template<typename Adapter, typename A>
-        bool valid(const Adapter& adapter, const many<A>& as) const {
+        bool valid(const Adapter& adapter, const std::vector<A>& as) const {
             return 
 
             determinism    (adapter,            f_name, f, as, as)     &&
@@ -416,7 +417,7 @@ namespace test {
             true; // added so lines above can be easily swapped
         }
         template<typename Adapter, typename A, typename B>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs) const {
             return 
 
             determinism  (adapter, f_name, f, as, bs)     &&
@@ -435,7 +436,7 @@ namespace test {
             true; // added so lines above can be easily swapped
         }
         template<typename Adapter, typename A, typename B, typename C>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs, const std::vector<C>& cs) const {
             return 
 
             associativity(adapter, f_name, f, as, bs, cs) &&
