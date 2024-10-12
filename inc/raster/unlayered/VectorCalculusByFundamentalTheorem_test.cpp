@@ -33,13 +33,13 @@
 #include <index/iterated/Geometric.hpp>
 
 #include <index/adapted/symbolic/SymbolicArithmetic.hpp>
-#include <index/adapted/glm/GlmScalarArithmetic.hpp>
 #include <index/adapted/glm/GlmMetric.hpp>
 #include <index/adapted/glm/GlmGeometric.hpp>
 
 #include <field/noise/EliasNoise.hpp>
 #include <field/noise/ValueNoise.hpp>
 #include <field/noise/MosaicNoise.hpp>
+#include <field/noise/MosaicOps.hpp>
 #include <field/VectorZip.hpp>
 
 #include <grid/dymaxion/Grid.hpp>
@@ -209,7 +209,7 @@ TEST_CASE( "Raster gradient", "[unlayered]" ) {
         scalar_rasters
     ));
 
-    REQUIRE(test::composition(strict, //dymaxion::Adapter(calculus_fine, 100.0, calculus_fine.vertex_count()), 
+    REQUIRE(test::composition(dymaxion::Adapter(calculus_fine, 0.02, calculus_fine.vertex_count()), 
         "dot with surface normal ", [=](auto gradient){ 
             std::vector<double> out(calculus_fine.vertex_count());
             geometric.dot(gradient, vertex_normals, out);
@@ -217,7 +217,7 @@ TEST_CASE( "Raster gradient", "[unlayered]" ) {
         },
         "operators.gradient      ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.gradient),
         "the zero vector         ", [](auto a){ return procedural::uniform(0.0); }, 
-        vector_rasters
+        scalar_rasters
     ));
 
     REQUIRE(test::additivity(strict, 

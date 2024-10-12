@@ -42,17 +42,6 @@ namespace dymaxion
 
 		static constexpr scalar pi = 3.141592652653589793f;
 
-		/*
-		arrow_target_grid_id must be private, 
-		since dymaxion::Grid and collignon::Grid are meant to share similar interfaces,
-		however dymaxion::Grid and collignon::Grid must differ in their representations of grid ids,
-		and for this reason we do not wish to expose grid ids to classes that are using *Grids
-		*/
-		inline constexpr ipoint arrow_target_grid_id(const id source_id, const id offset_id) const
-		{
-			return memory.grid_id(source_id) + arrow_offset_grid_position(offset_id);
-		}
-
 	public:
 
 		const Voronoi<id,scalar> voronoi;
@@ -81,8 +70,9 @@ namespace dymaxion
 
 		constexpr ivec2 arrow_offset_grid_position(const id arrow_offset_memory_id) const
 		{
-			return 	((arrow_offset_memory_id & 2)? -1 : 1) 
-				* 	((arrow_offset_memory_id & 1)? ivec2(0,1) : ivec2(1,0));
+			return 	(2*(arrow_offset_memory_id & 2)-1) 
+				* 	ivec2(~(arrow_offset_memory_id & 1), 
+						    arrow_offset_memory_id & 1);
 		}
 
 		inline constexpr scalar total_radius() const 
@@ -128,13 +118,13 @@ namespace dymaxion
 
 		inline constexpr id arrow_target_id(const id source_id, const id offset_id) const
 		{
-			return memory.memory_id(arrow_target_grid_id(source_id, offset_id));
+			return memory.memory_id(memory.grid_id(source_id) + arrow_offset_grid_position(offset_id));
 		}
 
 		// offset of the arrow
 		inline constexpr vec3 arrow_offset(const id source_id, const id offset_id) const
 		{
-			return 	voronoi.sphere_position( arrow_target_grid_id(source_id, offset_id) )
+			return 	voronoi.sphere_position( memory.grid_id(source_id) + arrow_offset_grid_position(offset_id) )
 				- 	voronoi.sphere_position( memory.grid_id(source_id) );
 		}
 
@@ -153,16 +143,18 @@ namespace dymaxion
 		// length of the arrow's dual
 		constexpr scalar arrow_dual_length(const id source_id, const id offset_id) const
 		{
-			const point midpointOB(point(memory.grid_id(source_id)) + vec2(0.5) * vec2(arrow_offset_grid_position(offset_id)));
-			return glm::distance(
-					voronoi.sphere_position( midpointOB + scalar(0.5)*vec2(arrow_offset_grid_position(math::residue((offset_id+1), arrows_per_vertex))) ),
-				 	voronoi.sphere_position( midpointOB + scalar(0.5)*vec2(arrow_offset_grid_position(math::residue((offset_id-1), arrows_per_vertex))) )
-				);
+			const auto Oid(memory.grid_id(source_id));
+			const auto A(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::residue(offset_id+1, arrows_per_vertex)) ));
+			const auto B(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::residue(offset_id,   arrows_per_vertex)) ));
+			const auto C(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::residue(offset_id-1, arrows_per_vertex)) ));
+			const auto AB(glm::normalize((A+B)/scalar(2)));
+			const auto BC(glm::normalize((B+C)/scalar(2)));
+			return glm::distance(AB,BC);
 		}
 
 		// `vertex_representative()` returns the memory id of a vertex
 		// whose associated arrows should not cause artifacts during certain sensitive operations
-		// (like divergence or laplacian) while also being physically near the vertex of the specified `vertex_id`,
+		// (like gradient, divergence, laplacian) while also being physically near the vertex of the specified `vertex_id`,
 		// thereby providing an adequate representation for the vertex with irregular edges.
 		inline constexpr id vertex_representative(const id vertex_id) const 
 		{
@@ -199,16 +191,20 @@ namespace dymaxion
 
 		constexpr scalar vertex_dual_area(const id vertex_id) const 
 		{
-			const point idO(memory.grid_id(vertex_id));
-			const vec3 pointO(voronoi.sphere_position(idO));
-			const vec3 offsetAB(voronoi.sphere_position(idO+vec2( 0.5, 0.5)) - pointO);
-			const vec3 offsetBC(voronoi.sphere_position(idO+vec2( 0.5,-0.5)) - pointO);
-			const vec3 offsetCD(voronoi.sphere_position(idO+vec2(-0.5,-0.5)) - pointO);
-			const vec3 offsetDA(voronoi.sphere_position(idO+vec2(-0.5, 0.5)) - pointO);
-			return (glm::length(glm::cross(offsetAB, offsetBC))
-				+ 	glm::length(glm::cross(offsetBC, offsetCD))
-				+ 	glm::length(glm::cross(offsetCD, offsetDA))
-				+ 	glm::length(glm::cross(offsetDA, offsetAB)))/2.0;
+			const auto Oid(memory.grid_id(vertex_id));
+			const vec3 O(voronoi.sphere_position(Oid));
+			const auto A(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::residue(0, arrows_per_vertex)) ));
+			const auto B(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::residue(1, arrows_per_vertex)) ));
+			const auto C(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::residue(2, arrows_per_vertex)) ));
+			const auto D(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::residue(3, arrows_per_vertex)) ));
+			const auto AB(glm::normalize((A+B)/scalar(2))-O);
+			const auto BC(glm::normalize((B+C)/scalar(2))-O);
+			const auto CD(glm::normalize((C+D)/scalar(2))-O);
+			const auto DA(glm::normalize((D+A)/scalar(2))-O);
+			return (glm::length(glm::cross(AB, BC))
+				+ 	glm::length(glm::cross(BC, CD))
+				+ 	glm::length(glm::cross(CD, DA))
+				+ 	glm::length(glm::cross(DA, AB)))/2.0;
 		}
 
 		constexpr id nearest_vertex_id(const vec3 vertex_position) const

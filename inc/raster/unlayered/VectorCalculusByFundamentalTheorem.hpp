@@ -58,8 +58,8 @@ namespace unlayered
                 source_value = field[i2];
                 for (j = 0; j < N; ++j)
                 {
-                    out[i] += glm::dot(field[grid.arrow_target_id(i2,j)] - source_value,
-                                  grid.arrow_dual_length(i2,j) * grid.arrow_normal(i2,j));
+                    out[i] += glm::dot((field[grid.arrow_target_id(i2,j)] - source_value),
+                                       grid.arrow_normal(i2,j)) * grid.arrow_dual_length(i2,j);
                 }
                 out[i] /= grid.vertex_dual_area(i2);
             }
@@ -81,7 +81,7 @@ namespace unlayered
                 for (j = 0; j < N; ++j)
                 {
                     out[i] += glm::cross(field[grid.arrow_target_id(i2,j)] - source_value,
-                                  grid.arrow_dual_length(i2,j) * grid.arrow_normal(i2,j));
+                                         grid.arrow_normal(i2,j)) * grid.arrow_dual_length(i2,j);
                 }
                 out[i] /= grid.vertex_dual_area(i2);
             }
