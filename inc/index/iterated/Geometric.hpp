@@ -59,17 +59,17 @@ namespace iterated
 			elements(elements)
 		{}
 
-		ADAPTER_BINARY_METHOD(elements.reflect, reflect)
-		ADAPTER_BINARY_METHOD(elements.cross, cross)
-		ADAPTER_BINARY_METHOD(elements.dot, dot)
+		ITERATED_BINARY_METHOD(elements.reflect, reflect)
+		ITERATED_BINARY_METHOD(elements.cross, cross)
+		ITERATED_BINARY_METHOD(elements.dot, dot)
 
-		ADAPTER_BINARY_METHOD(elements.similarity, similarity)
-		ADAPTER_BINARY_METHOD(elements.scalar_projection, scalar_projection)
-		ADAPTER_BINARY_METHOD(elements.vector_projection, vector_projection)
-		ADAPTER_BINARY_METHOD(elements.scalar_rejection, scalar_rejection)
-		ADAPTER_BINARY_METHOD(elements.vector_rejection, vector_rejection)
+		ITERATED_BINARY_METHOD(elements.similarity, similarity)
+		ITERATED_BINARY_METHOD(elements.scalar_projection, scalar_projection)
+		ITERATED_BINARY_METHOD(elements.vector_projection, vector_projection)
+		ITERATED_BINARY_METHOD(elements.scalar_rejection, scalar_rejection)
+		ITERATED_BINARY_METHOD(elements.vector_rejection, vector_rejection)
 
-		ADAPTER_TRINARY_METHOD(elements.faceforward, faceforward)
+		ITERATED_TRINARY_METHOD(elements.faceforward, faceforward)
 	};
 
 	#undef ITERATED_UNARY_METHOD
