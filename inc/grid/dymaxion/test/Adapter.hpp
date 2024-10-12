@@ -2,7 +2,6 @@
 
 #include <string>
 
-#include <index/glm/each_specialization.hpp>
 #include <index/glm/whole_specialization.hpp>
 #include <index/adapted/glm/GlmStrings.hpp>
 #include <index/adapted/glm/GlmMetric.hpp>

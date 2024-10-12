@@ -3,7 +3,7 @@
 // 3rd party libraries
 #include <glm/vec3.hpp>
 
-namespace series
+namespace procedural
 {
 
 	/*

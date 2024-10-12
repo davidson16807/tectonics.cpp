@@ -7,7 +7,7 @@
 #include <math/special.hpp>
 #include <index/procedural/noise/UnitIntervalNoise.hpp>
 
-namespace series
+namespace procedural
 {
 
 	/*

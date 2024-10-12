@@ -6,7 +6,7 @@
 #include <index/whole.hpp>
 #include <index/procedural/Range.hpp>
 
-namespace series {
+namespace procedural {
 
 template<typename T>
 struct Adapter{

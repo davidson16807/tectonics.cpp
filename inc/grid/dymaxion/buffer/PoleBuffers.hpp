@@ -51,7 +51,7 @@ namespace dymaxion {
 		template<typename Series, typename Buffer>
 		constexpr id storeTriangles(const id square_id, const Series& input, Buffer& output, const id buffer_start_id=0) const 
 		{
-			using element = typename procedural::value_type;
+			using element = typename Series::value_type;
 			id buffer_id(buffer_start_id);
 			bool is_southern(square_id%2);
 			ivec2 grid_id = is_southern? ivec2(vertices_per_side-1,0) : ivec2(0,vertices_per_side-1);
@@ -82,7 +82,7 @@ namespace dymaxion {
 		template<typename Series, typename Buffer>
 		constexpr id storeTriangleStrips(const id square_id, const Series& input, Buffer& output, const id buffer_start_id=0) const 
 		{
-			using element = typename procedural::value_type;
+			using element = typename Series::value_type;
 			id buffer_id(buffer_start_id);
 			bool is_southern(square_id%2);
 			ivec2 grid_id = is_southern? ivec2(vertices_per_side-1,0) : ivec2(0,vertices_per_side-1);

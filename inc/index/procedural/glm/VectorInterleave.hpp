@@ -3,7 +3,7 @@
 // 3rd party libraries
 #include <glm/vec3.hpp>
 
-namespace series
+namespace procedural
 {
 
 	/*
@@ -12,7 +12,7 @@ namespace series
 	template<int L, typename Series, glm::qualifier Q=glm::highp>
 	struct VectorInterleave
 	{
-	    using R = typename procedural::value_type;
+	    using R = typename Series::value_type;
 	    using size_type = std::size_t;
 		using value_type = glm::vec<L,R,Q>;
 

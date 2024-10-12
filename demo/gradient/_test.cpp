@@ -148,11 +148,11 @@ int main() {
 
   auto elevation_in_meters = procedural::map(elevation_meters_for_position, vertex_positions);
 
-  iterated::Unary elevations_for_positions(elevation_for_position);
+  stored::Unary elevations_for_positions(elevation_for_position);
   std::vector<length> elevation(grid.vertex_count());
   elevations_for_positions(vertex_positions, elevation);
 
-  iterated::Arithmetic lengths(adapted::SymbolicArithmetic(length(0),length(1)));
+  stored::Arithmetic lengths(adapted::SymbolicArithmetic(length(0),length(1)));
   lengths.subtract(elevation, procedural::uniform(length(min_earth_elevation)), elevation);
 
   auto vertex_scalars1 = elevation_in_meters;
@@ -178,7 +178,7 @@ int main() {
   //     )
   // );
 
-  iterated::Identity copy;
+  stored::Identity copy;
 
   unlayered::VectorCalculusByFundamentalTheorem spatial;
   std::vector<glm::vec3> vertex_gradient(grid.vertex_count());
@@ -209,8 +209,8 @@ int main() {
   grids.storeTriangleStrips(procedural::range<unsigned int>(grid.vertex_count()), buffer_element_vertex_ids);
 
   // flatten vector raster for OpenGL
-  iterated::Metric metric{adapted::GlmMetric{}};
-  iterated::Arithmetic scalars(adapted::SymbolicArithmetic(0.0f, 1.0f));
+  stored::Metric metric{adapted::GlmMetric{}};
+  stored::Arithmetic scalars(adapted::SymbolicArithmetic(0.0f, 1.0f));
   buffer::PyramidBuffers<int, float> pyramids;
   std::vector<glm::vec3> vectors_element_position(pyramids.triangles_size<3>(3));
   std::vector<glm::vec3> vectors_instance_position(grid.vertex_count());

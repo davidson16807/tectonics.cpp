@@ -4,7 +4,7 @@
 
 // std libraries
 
-namespace series
+namespace procedural
 {
 
 	/*
