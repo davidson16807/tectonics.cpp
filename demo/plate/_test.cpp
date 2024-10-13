@@ -110,16 +110,6 @@ int main() {
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::VertexNormals vertex_normals(grid);
 
-  // auto vertex_square_ids = dymaxion::square_ids(grid);
-
-  // auto vertex_colored_scalars = procedural::range();
-
-  std::vector<float> vertex_colored_scalars(grid.vertex_count());
-  for (int i = 0; i < grid.vertex_count(); ++i)
-  {
-    vertex_colored_scalars[i] = grid.memory.memory_id(grid.memory.grid_id(i));
-  }
-
   float min_elevation(-16000.0f);
   float max_elevation( 16000.0f);
 
@@ -159,11 +149,11 @@ int main() {
   std::vector<unsigned int> buffer_element_vertex_ids(grids.triangle_strips_size(vertex_positions));
   std::cout << "vertex count:        " << grid.vertex_count() << std::endl;
   std::cout << "vertices per meridian" << grid.vertices_per_meridian() << std::endl;
-  // copy(vertex_colored_scalars, buffer_color_values);
   std::vector<float> scratch(grid.vertex_count());
   std::vector<bool> mask1(grid.vertex_count());
   std::vector<bool> mask2(grid.vertex_count());
   std::vector<bool> mask3(grid.vertex_count());
+  std::vector<float> vertex_colored_scalars(grid.vertex_count());
 
   auto fill = unlayered::flood_filling<int,float>(
     [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 60.0f/180.0f); }
@@ -182,7 +172,6 @@ int main() {
   spheroidal::Strings strings(substrings, ordered);
   std::cout << strings.format(grid, vertex_colored_scalars) << std::endl << std::endl;
 
-  // copy(vertex_square_ids, buffer_square_ids);
   copy(vertex_colored_scalars, buffer_color_values);
   copy(elevation_in_meters, buffer_scalars1);
   copy(vertex_positions, buffer_positions);

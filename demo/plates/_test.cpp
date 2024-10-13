@@ -229,7 +229,6 @@ int main() {
   // flatten raster for OpenGL
   dymaxion::WholeGridBuffers<int,float> grids(coarse.vertices_per_square_side());
   std::vector<float> buffer_color_values(coarse.vertex_count());
-  std::vector<float> buffer_square_ids(coarse.vertex_count());
   std::vector<float> buffer_scalars2(coarse.vertex_count());
   std::vector<float> buffer_scalars1(coarse.vertex_count());
   std::vector<float> buffer_uniform(coarse.vertex_count(), 1.0f);

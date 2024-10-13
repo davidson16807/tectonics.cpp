@@ -108,18 +108,6 @@ int main() {
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::VertexNormals vertex_normals(grid);
 
-  auto vertex_square_ids = dymaxion::square_ids(grid);
-
-  // auto vertex_colored_scalars = procedural::range();
-
-  std::vector<float> vertex_colored_scalars(grid.vertex_count());
-  for (int i = 0; i < grid.vertex_count(); ++i)
-  {
-    vertex_colored_scalars[i] = grid.memory.memory_id(grid.memory.grid_id(i));
-    // vertex_colored_scalars[i] = grid.memory.memory_id(grid.memory.grid_id(i)+glm::ivec2(10,10));
-    // vertex_colored_scalars[i] = (grid.vertex_position(i).z);
-  }
-
   float min_elevation(-16000.0f);
   float max_elevation( 16000.0f);
 
@@ -189,7 +177,6 @@ int main() {
   // flatten raster for OpenGL
   dymaxion::WholeGridBuffers<int,float> grids(vertices_per_square_side);
   std::vector<float> buffer_color_values(grid.vertex_count());
-  std::vector<float> buffer_square_ids(grid.vertex_count());
   std::vector<float> buffer_scalars2(grid.vertex_count());
   std::vector<float> buffer_scalars1(grid.vertex_count());
   std::vector<float> buffer_uniform(grid.vertex_count(), 1.0f);
@@ -197,14 +184,11 @@ int main() {
   std::vector<unsigned int> buffer_element_vertex_ids(grids.triangle_strips_size(vertex_positions));
   std::cout << "vertex count:        " << grid.vertex_count() << std::endl;
   std::cout << "vertices per meridian" << grid.vertices_per_meridian() << std::endl;
-  // copy(vertex_colored_scalars, buffer_color_values);
   std::vector<float> scratch(grid.vertex_count());
   std::vector<bool> mask1(grid.vertex_count());
   std::vector<bool> mask2(grid.vertex_count());
   std::vector<bool> mask3(grid.vertex_count());
 
-  copy(vertex_colored_scalars, buffer_color_values);
-  copy(vertex_square_ids, buffer_square_ids);
   copy(vertex_scalars1, buffer_scalars1);
   // copy(vertex_scalars2, buffer_scalars2);
   copy(vertex_positions, buffer_positions);
