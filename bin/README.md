@@ -1,1 +1,0 @@
-This folder contains test drivers, libraries, and executables built from source code in src/, test/, and sketch/
