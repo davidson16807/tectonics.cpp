@@ -19,7 +19,7 @@ namespace adapted
 		#endif
 		weak 
 		{
-			"←","↙","↙","↓","↓","↘","↘","→","→","↗","↗","↑","↑","↖","↖","←"
+			"→","↗","↗","↑","↑","↖","↖","←","←","↙","↙","↓","↓","↘","↘","→"
 		};
 		#if defined(__clang__)
 			const std::vector<const std::string> 
@@ -28,7 +28,7 @@ namespace adapted
 		#endif
 		strong 
 		{
-			"⬅","⬋","⬋","⬇","⬇","⬊","⬊","➡","➡","⬈","⬈","⬆","⬆","⬉","⬉","⬅"
+			"➡","⬈","⬈","⬆","⬆","⬉","⬉","⬅","⬅","⬋","⬋","⬇","⬇","⬊","⬊","➡"
 		};
 
 	public:
@@ -67,13 +67,13 @@ namespace adapted
 			}
 			else if (glm::length(V) < glm::length(hi) * T(2./3.))
 			{
-				T turn = (std::atan2(V.y, V.x)+math::pi)/(2.*math::pi);
+				T turn = std::atan2(V.y, V.x)/(2.*math::pi);
 				int i  = std::clamp(int(weak.size()*turn), 0, int(weak.size()-1));
 				return weak[i];
 			}
 			else
 			{
-				T turn = (std::atan2(V.y, V.x)+math::pi)/(2.*math::pi);
+				T turn = std::atan2(V.y, V.x)/(2.*math::pi);
 				int i  = std::clamp(int(strong.size()*turn), 0, int(strong.size()-1));
 				return strong[i];
 			}
