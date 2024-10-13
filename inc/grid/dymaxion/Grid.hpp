@@ -40,7 +40,7 @@ namespace dymaxion
         using ipoint = Point<id,id>;
         using point = Point<id,scalar>;
 
-		static constexpr scalar pi = 3.141592652653589793f;
+		static constexpr scalar pi = 3.141592652653589793;
 
 	public:
 
@@ -71,8 +71,8 @@ namespace dymaxion
 		constexpr ivec2 arrow_offset_grid_position(const id arrow_offset_memory_id) const
 		{
 			return 	(2*(arrow_offset_memory_id & 2)-1) 
-				* 	ivec2(~(arrow_offset_memory_id & 1), 
-						    arrow_offset_memory_id & 1);
+				* 	ivec2((arrow_offset_memory_id & 1)==0,
+						  (arrow_offset_memory_id & 1));
 		}
 
 		inline constexpr scalar total_radius() const 
@@ -147,8 +147,8 @@ namespace dymaxion
 			const auto A(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::residue(offset_id+1, arrows_per_vertex)) ));
 			const auto B(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::residue(offset_id,   arrows_per_vertex)) ));
 			const auto C(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::residue(offset_id-1, arrows_per_vertex)) ));
-			const auto AB(glm::normalize((A+B)/scalar(2)));
-			const auto BC(glm::normalize((B+C)/scalar(2)));
+			const auto AB(glm::normalize(A+B));
+			const auto BC(glm::normalize(B+C));
 			return glm::distance(AB,BC);
 		}
 
@@ -193,14 +193,14 @@ namespace dymaxion
 		{
 			const auto Oid(memory.grid_id(vertex_id));
 			const vec3 O(voronoi.sphere_position(Oid));
-			const auto A(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::residue(0, arrows_per_vertex)) ));
-			const auto B(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::residue(1, arrows_per_vertex)) ));
-			const auto C(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::residue(2, arrows_per_vertex)) ));
-			const auto D(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::residue(3, arrows_per_vertex)) ));
-			const auto AB(glm::normalize((A+B)/scalar(2))-O);
-			const auto BC(glm::normalize((B+C)/scalar(2))-O);
-			const auto CD(glm::normalize((C+D)/scalar(2))-O);
-			const auto DA(glm::normalize((D+A)/scalar(2))-O);
+			const auto A(voronoi.sphere_position( Oid + ivec2( 1, 0) ));
+			const auto B(voronoi.sphere_position( Oid + ivec2( 0,-1) ));
+			const auto C(voronoi.sphere_position( Oid + ivec2(-1, 0) ));
+			const auto D(voronoi.sphere_position( Oid + ivec2( 0, 1) ));
+			const auto AB(glm::normalize(A+B)-O);
+			const auto BC(glm::normalize(B+C)-O);
+			const auto CD(glm::normalize(C+D)-O);
+			const auto DA(glm::normalize(D+A)-O);
 			return (glm::length(glm::cross(AB, BC))
 				+ 	glm::length(glm::cross(BC, CD))
 				+ 	glm::length(glm::cross(CD, DA))
@@ -215,3 +215,4 @@ namespace dymaxion
 	};
 
 }
+

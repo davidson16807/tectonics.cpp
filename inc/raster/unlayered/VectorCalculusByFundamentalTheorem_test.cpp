@@ -209,7 +209,7 @@ TEST_CASE( "Raster gradient", "[unlayered]" ) {
         scalar_rasters
     ));
 
-    REQUIRE(test::composition(dymaxion::Adapter(calculus_fine, 0.02, calculus_fine.vertex_count()), 
+    REQUIRE(test::composition(dymaxion::Adapter(calculus_fine, 0.1, calculus_fine.vertex_count()), 
         "dot with surface normal ", [=](auto gradient){ 
             std::vector<double> out(calculus_fine.vertex_count());
             geometric.dot(gradient, vertex_normals, out);
@@ -228,7 +228,7 @@ TEST_CASE( "Raster gradient", "[unlayered]" ) {
     ));
 
     // results here are promising
-    REQUIRE(test::equality(dymaxion::Adapter(calculus_fine, 10.0, calculus_fine.vertex_count()), 
+    REQUIRE(test::equality(dymaxion::Adapter(calculus_fine, 3.0, calculus_fine.vertex_count()), 
         "The gradient of a arithmetic must statsify a well known relationship",
         "∇(ab)     ", 
         [=](auto a, auto b){

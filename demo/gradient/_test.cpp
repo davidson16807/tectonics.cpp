@@ -103,7 +103,7 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
   float radius(3.0f);
-  int vertices_per_square_side(32);
+  int vertices_per_square_side(16);
   dymaxion::Grid grid(radius, vertices_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
   dymaxion::VertexNormals vertex_normals(grid);
@@ -179,10 +179,12 @@ int main() {
   // );
 
   iterated::Identity copy;
+  iterated::Metric metric{adapted::GlmMetric{}};
 
   unlayered::VectorCalculusByFundamentalTheorem spatial;
   std::vector<glm::vec3> vertex_gradient(grid.vertex_count());
   spatial.gradient(grid, vertex_scalars1, vertex_gradient);
+  // metric.normalize(vertex_gradient, vertex_gradient);
 
   // flatten raster for OpenGL
   dymaxion::WholeGridBuffers<int,float> grids(vertices_per_square_side);
@@ -209,7 +211,6 @@ int main() {
   grids.storeTriangleStrips(procedural::range<unsigned int>(grid.vertex_count()), buffer_element_vertex_ids);
 
   // flatten vector raster for OpenGL
-  iterated::Metric metric{adapted::GlmMetric{}};
   iterated::Arithmetic scalars(adapted::SymbolicArithmetic(0.0f, 1.0f));
   buffer::PyramidBuffers<int, float> pyramids;
   std::vector<glm::vec3> vectors_element_position(pyramids.triangles_size<3>(3));
@@ -223,7 +224,7 @@ int main() {
   pyramids.storeTriangles(
       glm::vec3(0,0,-1) * pyramid_halflength, 
       glm::vec3(0,0, 1) * pyramid_halflength, 
-      glm::vec3(0,1, 0),  pyramid_radius, 3, 
+      glm::vec3(1,0, 0),  pyramid_radius, 3, 
       vectors_element_position);
   copy   (known::mult(vertex_positions, procedural::uniform(1+pyramid_halflength/grid.total_radius())),  vectors_instance_position);
   copy   (vertex_gradient,   vectors_instance_heading);
