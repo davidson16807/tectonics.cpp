@@ -81,7 +81,7 @@ namespace view
 			            vec3 K = normalize(instance_heading);
 			            vec3 I = normalize(instance_up);
 			            vec3 J = cross(I,K);
-			            mat3 instance_matrix = instance_scale * transpose(mat3(I,J,K));
+			            mat3 instance_matrix = instance_scale * (mat3(I,J,K));
 			        	vec3 instance_element_position = (instance_matrix * element_position) + instance_position;
 			        	// NOTE: for a heads up display, set all `*_matrix` parameters to identity
 			            gl_Position = projection_matrix * view_matrix * model_matrix * vec4(instance_element_position,1);
@@ -198,8 +198,8 @@ namespace view
         	if (!isDisposed) 
         	{
 		        isDisposed = true;
-		        glDeleteBuffers(1, &instanceColorBufferId);
 		        glDeleteBuffers(1, &elementPositionBufferId);
+		        glDeleteBuffers(1, &instanceColorBufferId);
 		        glDeleteBuffers(1, &instancePositionBufferId);
 		        glDeleteBuffers(1, &instanceHeadingBufferId);
 		        glDeleteBuffers(1, &instanceUpBufferId);
@@ -270,6 +270,7 @@ namespace view
 	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4)*instance_color.size(), &instance_color.front(), GL_DYNAMIC_DRAW);
 		    glEnableVertexAttribArray(instanceColorLocation);
             glVertexAttribPointer(instanceColorLocation, 4, GL_FLOAT, normalize, stride, offset);
+		    glVertexAttribDivisor(instanceColorLocation,1);
 
 			glBindBuffer(GL_ARRAY_BUFFER, instanceScaleBufferId);
 	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*instance_scale.size(), &instance_scale.front(), GL_DYNAMIC_DRAW);

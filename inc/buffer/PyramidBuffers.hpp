@@ -40,21 +40,17 @@ namespace buffer {
 
 			id buffer_id(buffer_start_id);
 			scalar radians_per_side(2*pi/side_count);
-			scalar x0(1);
-			scalar y0(0);
-			scalar radians1, x1, y1;
+			scalar radians0, radians1, x0, y0, x1, y1;
 			for (int i = 0; i < side_count; ++i)
 			{
-				radians1 = radians_per_side*(i+1);
+				radians0 =  i   *radians_per_side;
+				radians1 = (i+1)*radians_per_side;
+				x0 = std::cos(radians0);
+				y0 = std::sin(radians0);
 				x1 = std::cos(radians1);
 				y1 = std::sin(radians1);
 				buffer_id = primitives.storeTriangle(V, O+x0*I+y0*J, O+x1*I+y1*J, output, buffer_id);
-				if (0<i&&i<side_count-1)
-				{
-					buffer_id = primitives.storeTriangle(O+I, O+x1*I+y1*J, O+x0*I+y0*J, output, buffer_id);
-				}
-				x0 = x1;
-				y0 = y1;
+				buffer_id = primitives.storeTriangle(O, O+x1*I+y1*J, O+x0*I+y0*J, output, buffer_id);
 			}
 			return buffer_id;
 		}
@@ -62,3 +58,4 @@ namespace buffer {
 	};
 
 }
+
