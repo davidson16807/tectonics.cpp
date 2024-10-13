@@ -253,19 +253,6 @@ int main() {
   view::IndicatorSwarmShaderProgram indicator_program;  
   view::MultichannelSurfaceShaderProgram debug_program;
 
-  // initialize data for shader program
-  std::vector<float> points = {
-   0.0f,  0.5f,  0.0f,
-   0.5f, -0.5f,  0.0f,
-  -0.5f, -0.5f,  0.0f
-  };
-
-  std::vector<float> colors = {
-   1.0f,  
-   0.0f,  
-   0.0f
-  };
-
   // initialize MessageQueue for MVU architecture
   messages::MessageQueue message_queue;
   message_queue.activate(window);

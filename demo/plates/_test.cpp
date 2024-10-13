@@ -84,7 +84,7 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // we don't want the old OpenGL
 
   // open a window
-  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Downsample", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(1133, 850, "Hello Downsample", NULL, NULL);
   if (!window) {
     std::cout << stderr << " ERROR: could not open window with GLFW3" << std::endl;
     glfwTerminate();
@@ -150,7 +150,9 @@ int main() {
   std::vector<bool> mask2(coarse.vertex_count());
   std::vector<bool> mask3(coarse.vertex_count());
   std::vector<std::uint8_t> similar_plate_id(coarse.vertex_count());
+  std::vector<std::uint8_t> dilated_plate_id(coarse.vertex_count());
   std::vector<std::uint8_t> nearest_plate_id(coarse.vertex_count());
+  std::vector<std::uint8_t> visible_plate_id(coarse.vertex_count());
   std::vector<bool> is_undecided(coarse.vertex_count());
   std::vector<bool> is_there(coarse.vertex_count());
 
@@ -163,7 +165,7 @@ int main() {
 
   unlayered::VectorCalculusByFundamentalTheorem calculus;
   auto fill = unlayered::flood_filling<int,float>(
-    [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 60.0f/180.0f); }
+    [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 45.0f/180.0f); }
   );
   auto segment = unlayered::image_segmentation<int,float>(fill, adapted::GlmMetric{});
 
@@ -190,32 +192,33 @@ int main() {
   unlayered::Morphology morphology{bitset};
   iterated::Metric metric{adapted::GlmMetric{}};
 
-  copy(similar_plate_id, nearest_plate_id);
-  if(false){
-    for(std::uint8_t j(0); j < 1; ++j)
+  copy(similar_plate_id, dilated_plate_id);
+  if(true){
+    for(std::uint8_t j(0); j < 2; ++j)
     {
       for (std::uint8_t i(0); i < plate_count; ++i)
       {
-          orders.equal(nearest_plate_id, procedural::uniform(i), is_there);
-          orders.equal(nearest_plate_id, procedural::uniform(0), is_undecided);
+          orders.equal(similar_plate_id, procedural::uniform(i), is_there);
+          orders.equal(similar_plate_id, procedural::uniform(0), is_undecided);
           morphology.dilate(coarse, is_there, mask1);
           morphology.dilate(coarse, mask1, is_there);
           bitset.intersect(is_undecided, is_there, is_there);
-          ternary(is_there, procedural::uniform(i), nearest_plate_id, nearest_plate_id);
+          ternary(is_there, procedural::uniform(i), dilated_plate_id, dilated_plate_id);
       }
     }
   }
 
-  if(true){
+  copy(dilated_plate_id, nearest_plate_id);
+  if(false){
     grouped::Statistics stats3{adapted::SymbolicArithmetic(vec3(0),vec3(1))};
     unlayered::Voronoi voronoi{adapted::GlmMetric{}};
 
     std::vector<vec3>plate_seeds(8,vec3(0,0,0));
     stats3.sum(nearest_plate_id, coarse_vertex_positions, plate_seeds);
     metric.normalize(plate_seeds, plate_seeds);
+    orders.equal(similar_plate_id, procedural::uniform(0), is_undecided);
     voronoi(coarse_vertex_positions, plate_seeds, nearest_plate_id);
-    orders.equal(nearest_plate_id, procedural::uniform(0), is_undecided);
-    ternary(is_undecided, nearest_plate_id, nearest_plate_id, nearest_plate_id);
+    ternary(is_undecided, nearest_plate_id, similar_plate_id, nearest_plate_id);
   }
 
   adapted::ScalarStrings<float> substrings(adapted::dotshades);
@@ -224,6 +227,7 @@ int main() {
   spheroidal::Strings strings3(substrings3, aggregated::Order{adapted::MetricOrder{adapted::GlmMetric{}}});
   std::cout << strings3.format(coarse, vertex_gradient) << std::endl << std::endl;
   std::cout << strings.format(coarse, similar_plate_id) << std::endl << std::endl;
+  std::cout << strings.format(coarse, dilated_plate_id) << std::endl << std::endl;
   std::cout << strings.format(coarse, nearest_plate_id) << std::endl << std::endl;
 
   // flatten raster for OpenGL
@@ -237,8 +241,8 @@ int main() {
   std::cout << "vertex count:        " << coarse.vertex_count() << std::endl;
   std::cout << "vertices per meridian" << coarse.vertices_per_meridian() << std::endl;
 
-  copy(similar_plate_id, buffer_scalars1);
   copy(coarse_elevation_meters, buffer_scalars2);
+  // copy(similar_plate_id, buffer_scalars2);
   copy(coarse_vertex_positions, buffer_positions);
   grids.storeTriangleStrips(procedural::range<unsigned int>(coarse.vertex_count()), buffer_element_vertex_ids);
 
@@ -260,9 +264,7 @@ int main() {
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);
   view::ColorscaleSurfacesViewState colorscale_state;
-  colorscale_state.max_color_value = whole::max(buffer_scalars1);
-  colorscale_state.min_color_value = whole::min(buffer_scalars1);
-  colorscale_state.darken_threshold = whole::mean(buffer_scalars2);
+  colorscale_state.darken_threshold = 0.5f;// whole::mean(buffer_scalars2);
 
   // initialize shader program
   view::ColorscaleSurfaceShaderProgram colorscale_program;  
@@ -286,24 +288,41 @@ int main() {
   float pyramid_radius(coarse.total_circumference()/(8.0*coarse.vertices_per_meridian()));
   float pyramid_halflength(2.5f*pyramid_radius);
   pyramids.storeTriangles(
-      glm::vec3(-1,0,0) * pyramid_halflength, 
-      glm::vec3(1,0,0)  * pyramid_halflength, 
-      glm::vec3(0,0,1), pyramid_radius, 3,
+      glm::vec3(0,0,-1) * pyramid_halflength, 
+      glm::vec3(0,0, 1) * pyramid_halflength, 
+      glm::vec3(1,0, 0),  pyramid_radius, 3, 
       vectors_element_position);
   copy          (known::mult(coarse_vertex_positions, procedural::uniform(1+pyramid_halflength/coarse.total_radius())),  vectors_instance_position);
   copy          (coarse_vertex_normals, vectors_instance_up);
   metric.length (vertex_gradient,   vectors_instance_scale);
   arithmetic.divide(vectors_instance_scale, procedural::uniform(whole::max(vectors_instance_scale)), vectors_instance_scale);
 
+  int frame_id(0);
   while(!glfwWindowShouldClose(window)) {
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+      if (frame_id == 0)
+      {
+        copy(similar_plate_id, buffer_scalars1);
+      }
+      else if (frame_id == 100)
+      {
+        copy(dilated_plate_id, buffer_scalars1);
+      }
+      else if (frame_id == 200)
+      {
+        copy(nearest_plate_id, buffer_scalars1);
+      }
+      frame_id = (frame_id+1)%300;
+
+      colorscale_state.max_color_value = whole::max(buffer_scalars1);
+      colorscale_state.min_color_value = whole::min(buffer_scalars1);
       colorscale_program.draw(
         buffer_positions, // position
         buffer_scalars1,  // color value
         buffer_uniform,   // displacement
-        buffer_scalars2,   // darken
+        buffer_scalars2,  // darken
         buffer_uniform,   // culling
         buffer_element_vertex_ids,
         colorscale_state,
