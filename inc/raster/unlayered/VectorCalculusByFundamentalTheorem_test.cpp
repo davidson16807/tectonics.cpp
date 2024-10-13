@@ -256,7 +256,7 @@ TEST_CASE( "Raster gradient", "[unlayered]" ) {
 
 }
 
-/*
+
 
 TEST_CASE( "Raster divergence", "[unlayered]" ) {
     dymaxion::Adapter strict(calculus_fine, 1e-5, calculus_fine.vertex_count());
@@ -277,8 +277,8 @@ TEST_CASE( "Raster divergence", "[unlayered]" ) {
         vector_rasters, vector_rasters
     ));
 
-    // results are bad, the test here is only meant to track known error until our methods improve
-    REQUIRE(test::equality(dymaxion::Adapter(calculus_fine, 300.0, calculus_fine.vertex_count()), 
+    // results are fairly poor but have gotten better, the test here is only meant to track known error until our methods improve
+    REQUIRE(test::equality(dymaxion::Adapter(calculus_fine, 30.0, calculus_fine.vertex_count()), 
         "The divergence of a vector must statsify a well known relationship",
         "∇⋅(aV)          ", 
         [=](auto a, auto V){
@@ -365,8 +365,8 @@ TEST_CASE( "Raster curl", "[unlayered]" ) {
         vector_rasters
     ));
 
-    // results are bad, the test here is only meant to track known error until our methods improve
-    REQUIRE(test::composition(dymaxion::Adapter(calculus_fine, 100.0, calculus_fine.vertex_count()), 
+    // results are promising
+    REQUIRE(test::composition(dymaxion::Adapter(calculus_fine, 1.0, calculus_fine.vertex_count()), 
         "operators.curl    ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.curl),
         "operators.gradient", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.gradient),
         "the zero vector   ", [](auto a){ return procedural::uniform(glm::dvec3(0.0)); }, 
@@ -374,6 +374,7 @@ TEST_CASE( "Raster curl", "[unlayered]" ) {
     ));
 
 }
+
 
 TEST_CASE( "Scalar Raster laplacian", "[unlayered]" ) {
     dymaxion::Adapter strict(calculus_fine, 1e-5, calculus_fine.vertex_count());
@@ -514,7 +515,6 @@ TEST_CASE( "Vector Raster laplacian", "[unlayered]" ) {
 
 }
 
-*/
 
 /*
 TODO:
