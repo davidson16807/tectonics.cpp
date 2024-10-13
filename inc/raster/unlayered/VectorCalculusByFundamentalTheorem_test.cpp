@@ -366,7 +366,7 @@ TEST_CASE( "Raster curl", "[unlayered]" ) {
     ));
 
     // results are promising
-    REQUIRE(test::composition(dymaxion::Adapter(calculus_fine, 1.0, calculus_fine.vertex_count()), 
+    REQUIRE(test::composition(dymaxion::Adapter(calculus_fine, 3.0, calculus_fine.vertex_count()), 
         "operators.curl    ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.curl),
         "operators.gradient", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.gradient),
         "the zero vector   ", [](auto a){ return procedural::uniform(glm::dvec3(0.0)); }, 
