@@ -10,52 +10,13 @@
 // glm libraries
 #define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
 
-#include <math/glm/special_specialization.hpp>
-#include <math/glm/special.hpp>
-#include <math/analytic/Sum.hpp>
-#include <math/analytic/Gaussian.hpp>
-#include <math/analytic/Error.hpp>
-#include <math/inspected/InverseByNewtonsMethod.hpp>
-
 // in house libraries
-#include <index/procedural/Map.hpp>
-#include <index/procedural/Uniform.hpp>
-#include <index/glm/known.hpp>                      // greaterThan
-#include <index/known.hpp>                          // greaterThan
-#include <index/whole.hpp>                          // max, mean
-#include <index/procedural/Range.hpp>                   // Range
-#include <index/procedural/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
-#include <index/procedural/noise/glm/UnitVectorNoise.hpp>
-#include <index/procedural/noise/GaussianNoise.hpp>
-#include <index/adapted/symbolic/SymbolicArithmetic.hpp>
-#include <index/adapted/symbolic/SymbolicOrder.hpp>
-#include <index/adapted/si/SiStrings.hpp>
-#include <index/adapted/glm/GlmStrings.hpp>
-#include <index/adapted/glm/GlmMetric.hpp>
-#include <index/adapted/metric/MetricOrder.hpp>
-#include <index/aggregated/Order.hpp>
-#include <index/iterated/Nary.hpp>
-#include <index/iterated/Metric.hpp>
-#include <index/iterated/Arithmetic.hpp>
-
-#include <field/Compose.hpp>                        // Compose
-#include <field/noise/RankedFractalBrownianNoise.hpp> // dymaxion::RankedFractalBrownianNoise
-
-#include <relation/ScalarRelation.hpp>
-
 #include <buffer/PyramidBuffers.hpp>                // buffer::PyramidBuffers
-
-#include <raster/unlayered/VectorCalculusByFundamentalTheorem.hpp> // unlayered::VectorCalculusByFundamentalTheorem
-#include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
-
-// #include <model/rock/stratum/StratumGenerator.hpp>  // StratumGenerator
 
 #include <update/OrbitalControlState.hpp>           // update::OrbitalControlState
 #include <update/OrbitalControlUpdater.hpp>         // update::OrbitalControlUpdater
 
-#include <view/ColorscaleSurfaceShaderProgram.hpp>  // view::ColorscaleSurfaceShaderProgram
 #include <view/IndicatorSwarmShaderProgram.hpp>     // view::IndicatorSwarmShaderProgram
-#include <view/MultichannelSurfaceShaderProgram.hpp>// view::MultichannelSurfaceShaderProgram
 
 int main() {
   // initialize GLFW
@@ -99,14 +60,10 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
 
-  iterated::Identity copy;
-  iterated::Metric metric{adapted::GlmMetric{}};
-
   using vec3 = glm::vec3;
   using vec4 = glm::vec4;
 
   // flatten vector raster for OpenGL
-  iterated::Arithmetic scalars(adapted::SymbolicArithmetic(0.0f, 1.0f));
   buffer::PyramidBuffers<int, float> pyramids;
   std::vector<vec3> vectors_element_position(pyramids.triangles_size<3>(3));
 

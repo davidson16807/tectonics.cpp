@@ -1,8 +1,13 @@
 #pragma once
 
+// c libraries
+#include <cmath>
+
 // 3rd party libraries
 #include <glm/vec3.hpp>
+#include <glm/geometric.hpp>
 
+// in-house libraries
 #include "PrimitiveBuffers.hpp"
 
 namespace buffer {

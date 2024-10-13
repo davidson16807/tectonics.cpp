@@ -2,6 +2,8 @@
 
 #include <cmath>          // log2
 
+#include <algorithm>      // clamp
+
 // glm libraries
 #include <glm/vec4.hpp>   // *vec4
 #include <glm/mat4x4.hpp> // *mat4
