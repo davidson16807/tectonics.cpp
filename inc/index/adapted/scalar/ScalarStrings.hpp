@@ -60,6 +60,9 @@ namespace adapted
 				out += std::to_string(bound);
 				out += "\n";
 			}
+			out += "  ≤ ";
+			out += std::to_string(hi);
+			out += "\n";
 			return out;
 		}
 

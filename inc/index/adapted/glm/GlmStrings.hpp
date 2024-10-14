@@ -48,6 +48,9 @@ namespace adapted
 			out += "|➡| ≥ ";
 			out += std::to_string(glm::length(hi) * T(2./3.));
 			out += "\n";
+			out += "    ≤ ";
+			out += std::to_string(glm::length(hi));
+			out += "\n";
 			return out;
 		}
 
