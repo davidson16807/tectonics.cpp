@@ -164,8 +164,54 @@ int main() {
   aggregated::Order order(adapted::SymbolicOrder{});
 
   unlayered::VectorCalculusByFundamentalTheorem calculus;
+  float sum(0);
+  float count(0);
+  float average_separation(radius*3.1415926535/coarse.vertices_per_meridian());
   auto fill = unlayered::flood_filling<int,float>(
-    [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 45.0f/180.0f); }
+    [&sum, &count, average_separation](auto A, auto U, auto O, auto V){ 
+      /* 
+      We return true if fracture does not occur.
+      We say that fracture does not occur iff stress falls below a threshold (θ).
+      Stress (forcer per unit area, F/A) is proportionate to virtual displacement (ΔL),
+      which can be calculated for two cells as follows:
+
+      A+U   L+ΔL  B+V
+         ∘-------∘
+        U ↖     ↗ V
+           ∘---∘
+          A  L  B
+
+      where A and B are velocities, U and V are velocities, and L is vertex distance
+
+      The specific equation that relates stress to virtual displacement is as follows: 
+
+        F/A = E ΔL/L 
+
+      where E is young's modulus, which in this context can only be derived empirically.
+      
+      `vertex_gradient` has magnitudes somewhere between 0 and 9000,
+      and we say that tangibly sized vectors (judging by our 3d render) are generally above 3000.
+      Fracture should absolutely occur between two tangible vectors of opposite sign,
+      but fracture should generally not occur between a tangible vector and a zero vector.
+      This places our displacement threshold for L=1 somewhere around 6000<θ<9000.
+      However grid radius is 2 and there are many vertices, given by `grid.vertices_per_meridian`.
+      By our calculations cell separation is typically 0.001 so θ must be 1000 times larger 
+      than the estimate above.
+      */
+      // count += 1.0f;
+      // sum += glm::distance(A+U,B+V) - glm::distance(A,B);
+      // return math::similarity(U,B-A) <= 0.5 && (glm::distance(A+U,B+V) - glm::distance(A,B)) < 7500.0f;
+      // return true;
+      auto B = A + average_separation*glm::normalize(O-A);
+      if (glm::distance(O,A) > 0.0001)
+      {
+        count += 1.0f;
+        sum += glm::distance(A+U,B+V) / average_separation;
+        // std::cout << glm::distance(A+U,B+V) << std::endl;
+      }
+      auto displacement = (glm::distance(A+U,B+V) / average_separation);
+      return std::isnan(displacement) || (0.2e4f < displacement&&displacement < 0.8e5f);
+    }
   );
   auto segment = unlayered::image_segmentation<int,float>(fill, adapted::GlmMetric{});
 
@@ -173,6 +219,7 @@ int main() {
 
   calculus.gradient(coarse, coarse_elevation_meters, vertex_gradient);
 
+  // segmentation
   if (false)
   {
     copy(procedural::uniform(0), similar_plate_id);
@@ -184,16 +231,17 @@ int main() {
       coarse, vertex_gradient, plate_count-1, 10, 
       similar_plate_id, scratch, mask1, mask2, mask3
     );
+    std::cout << sum << " " << count << " " << sum/count << " " << std::endl;
   }
-
 
   iterated::Ternary ternary{};
   iterated::Bitset bitset{adapted::BooleanBitset{}};
   unlayered::Morphology morphology{bitset};
   iterated::Metric metric{adapted::GlmMetric{}};
 
+  // dilation
   copy(similar_plate_id, dilated_plate_id);
-  if(true){
+  if(false){
     for(std::uint8_t j(0); j < 2; ++j)
     {
       for (std::uint8_t i(0); i < plate_count; ++i)
@@ -208,6 +256,7 @@ int main() {
     }
   }
 
+  // voronoi
   copy(dilated_plate_id, nearest_plate_id);
   if(false){
     grouped::Statistics stats3{adapted::SymbolicArithmetic(vec3(0),vec3(1))};

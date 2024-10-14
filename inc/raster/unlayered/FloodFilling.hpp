@@ -46,7 +46,9 @@ namespace unlayered
                 cell_id = searching.front();
                 searching.pop_front();
 
-                if (is_similar(raster[cell_id], raster[start_id])) {
+                if (is_similar(
+                        grid.vertex_position(cell_id), raster[cell_id], 
+                        grid.vertex_position(start_id), raster[start_id])) {
                     out[cell_id] = true;
 
                     for (int j = 0; j < N; ++j)
