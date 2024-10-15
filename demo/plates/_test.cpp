@@ -167,7 +167,12 @@ int main() {
   auto fill = unlayered::flood_filling<int,float>(
     [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 45.0f/180.0f); }
   );
-  auto segment = unlayered::image_segmentation<int,float>(fill, adapted::GlmMetric{});
+  auto segment = unlayered::image_segmentation<int,float>(
+    fill, 
+    adapted::GlmMetric{}, 
+    adapted::SymbolicArithmetic{0,1},
+    adapted::SymbolicOrder{}
+  );
 
   std::uint8_t plate_count(8);
 
