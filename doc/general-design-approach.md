@@ -1,5 +1,13 @@
+# Overview
+The design methodology used by the library adheres to principles in both functional and object oriented programming and can be best described using concepts from [category theory](https://en.wikipedia.org/wiki/Category_theory). Design begins by decomposing behavior into a [commutative diagram](https://en.wikipedia.org/wiki/Commutative_diagram) expressing a category, typically where objects are data structures and arrows can be treated as [pure functions](https://en.wikipedia.org/wiki/Pure_function) mapping between them. If two data structures represent the same concept but are each only able to support distinct functionality, then both data structures are implemented and a function is provided to map between them. If a mapping is needed but none can be found, then mappings are found that come closer to the desired mapping, until the desired mapping becomes apparent through function composition. Data structures are consolidated if a single data structure can be found that accounts for the behavior of both without introducing redundancy or a loss of functionality. 
 
-#Design by category theory
+Categories are implemented either as namespaces or classes. If the category is implemented as a class, then object oriented [polymorphism](https://en.wikipedia.org/wiki/Polymorphism_(computer_science)) provides a natural way to implement [functors](https://en.wikipedia.org/wiki/Functor) between categories. Oftentimes, the implementation of a category rests on the composition of the functions and objects from another underlying category, in which case there is a category of categories that describes dependencies between them. Arrows within this category of categories are then implemented as the constructors of classes that represent categories, which evokes the behavior of [dependency injection](https://en.wikipedia.org/wiki/Dependency_injection) within object oriented programming, but allows this design to be arrived at in a strictly procedural manner. 
+
+In order to create diagrams where commutativity is meaningful, it sometimes helps to remove certain function parameters from consideration and treat them as constants within a given category. In this case a value for the parameter might be fed into the constructor of the class that represents the category, in which case the parameter becomes a private `const` member. This evokes [encapsulation](https://en.wikipedia.org/wiki/Encapsulation_(computer_programming)) within object oriented programming, but since the member is `const`, the approach strictly avoids the problems that arise from that methodology due to state management. Another way to view this is to see the class as a cohesive set of functions that have collectively undergone [currying](https://en.wikipedia.org/wiki/Currying). 
+
+Beyond this description, we incorporate aspects of 
+
+# Design by category theory
 Start with the following:
 
 * the list of states an entity will be in (e.g. created, disposed, activated, serialized, compressed)
@@ -19,12 +27,12 @@ A category results from this, typically one per entity, or one for several entit
 
 Categories may be constructed either top-down (starting with high level objectives, describing flow from storage variables to derived attributes and storage deltas) or bottom-up (starting with the smallest categories that can be constructed using only primitives). 
 
-#Design by abstract algebra
+# Design by abstract algebra
 * consolidate the number of states or objects in your diagram that are behave similarly to abstract algabraic structures,
   e.g. find degenerate cases where one object is described by another
 * use algabraic properties of operations within unit tests, e.g. closure, identity, associativity, invertibility, commutativity, distributivity
 
-#Design by type theory
+# Design by type theory
 * an instantiation of an object in a category diagram is a sort of proof that such an entity exists,
   if you provide the data that's needed for construction, then that counts as a sort of demonstration of how that entity can exist,
   and the fact the entity exists allow you to prove other entities exist by feeding that entity to other functions
@@ -37,14 +45,14 @@ Categories may be constructed either top-down (starting with high level objectiv
   you can however have it return a token that could be a type union for disposed and nondispoed states, 
   then have those token serve as proof for other things via polymorphism
 
-#Design for Performance
+# Design for Performance ("Data Oriented Design")
 * start by considering required behavior
 * find the algorithm that accomplishes behavior while optimizing for the following, in highest to lowest priority:
 ** memory/runtime complexity ("big-O" notation)
 ** data locality ("Data Oriented Design"), ideally using in-order traversal of memory, 
    but if not then by maximizing reuse of cache operations
 
-#Design for Reasonability
+# Design for Reasonability ("Functional Programming")
 Computers are terrific at sequential reasoning. The operations they perform have remarkably high fidelity, their memory is vast, and their focus is defined strictly by what we say it ought to be. 
 
 Humans on the other hand are terrible at sequential reasoning. We have limited working memory, the operations we perform are inherently error prone due to their neural network underpinnings, we often simplify repetitive tasks to less precise ones without conscious thought, and our focus is easily interrupted by subconcious impulse. When tasked with sequential reasoning, we often either forget where we started, make a mistake, gloss over details, or get distracted. We often get around these shortcomings by relying on tools to aid in sequential reasoning. For instance, we may write our thoughts onto paper to overcome limited working memory. Computers are just another example of such a tool.
