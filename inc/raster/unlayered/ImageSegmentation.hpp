@@ -4,6 +4,8 @@
 
 #include <index/iterated/Nary.hpp>
 #include <index/iterated/Metric.hpp>
+#include <index/aggregated/Arithmetic.hpp>
+#include <index/aggregated/Order.hpp>
 
 namespace unlayered
 {
@@ -13,19 +15,29 @@ namespace unlayered
         arrow_target_vertex_id
     */
 
-    template<typename id, typename scalar, typename FloodFilling, typename ElementMetric>
+    template<typename id, typename scalar, typename FloodFilling, 
+             typename ElementMetric, typename ElementOrder, typename ElementArithmetic>
     struct ImageSegmentation
     {
         const FloodFilling fill;
         const iterated::Metric<ElementMetric> metric;
+        const aggregated::Arithmetic<ElementArithmetic> arithmetic;
+        const aggregated::Order<ElementOrder> order;
         const iterated::Ternary ternary;
         const iterated::Identity copy;
 
         /* VectorFloodFill(
             [](auto U, auto V){return glm::similarity (U,V) > Math.cos(Math.PI * 60/180)}) */
-        ImageSegmentation(const FloodFilling fill, const ElementMetric submetric):
+        ImageSegmentation(
+                const FloodFilling fill, 
+                const ElementMetric submetric, 
+                const ElementArithmetic subarithmetic,
+                const ElementOrder suborder
+        ):
             fill(fill),
             metric(submetric),
+            arithmetic(subarithmetic),
+            order(suborder),
             ternary(),
             copy()
         {}
@@ -47,16 +59,10 @@ namespace unlayered
 
           // step 1: run flood fill algorithm several times
           for (int i=1, j=0; i<segment_count && j<max_iterations; j++) {
-
-            // const Grid& grid, const Raster& raster, const Mask& mask, const id start_id, 
-            //        Out& out, ScratchMask& scratch
-            // raster, max_id(magnitude), occupied, segment,         scratch_ui8_3
-            // vector_raster, start_id, mask, result, scratch_ui8
-
-            fill(grid, raster, occupied, whole::max_id(magnitude), segment, scratch3);
+            fill(grid, raster, occupied, order.max_id(magnitude), segment, scratch3);
             ternary(segment, procedural::uniform(0), magnitude, magnitude);
             ternary(segment, procedural::uniform(0), occupied, occupied);
-            if (whole::sum<int>(segment) > min_segment_vertex_count) {
+            if (arithmetic.sum(segment) > min_segment_vertex_count) {
                 ternary(segment, procedural::uniform(i), segments, segments);
                 i++;
             }
@@ -67,9 +73,14 @@ namespace unlayered
 
     };
 
-    template<typename id, typename scalar, typename FloodFilling, typename ElementMetric>
-    auto image_segmentation(const FloodFilling fill, const ElementMetric submetric) {
-        return ImageSegmentation<id,scalar,FloodFilling,ElementMetric>(fill, submetric);
+    template<typename id, typename scalar, typename FloodFilling, 
+             typename ElementMetric, typename ElementOrder, typename ElementArithmetic>
+    auto image_segmentation(const FloodFilling fill, 
+            const ElementMetric submetric, 
+            const ElementArithmetic subarithmetic,
+            const ElementOrder suborder
+    ) {
+        return ImageSegmentation<id,scalar,FloodFilling,ElementMetric, ElementOrder, ElementArithmetic>(fill, submetric, subarithmetic, suborder);
     }
 
 }

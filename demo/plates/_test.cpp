@@ -213,7 +213,12 @@ int main() {
       return std::isnan(displacement) || (0.2e4f < displacement&&displacement < 0.8e5f);
     }
   );
-  auto segment = unlayered::image_segmentation<int,float>(fill, adapted::GlmMetric{});
+  auto segment = unlayered::image_segmentation<int,float>(
+    fill, 
+    adapted::GlmMetric{}, 
+    adapted::SymbolicArithmetic{0,1},
+    adapted::SymbolicOrder{}
+  );
 
   std::uint8_t plate_count(8);
 
