@@ -169,7 +169,7 @@ int main() {
   float sum(0);
   float count(0);
   float average_separation(radius*3.1415926535/coarse.vertices_per_meridian());
-  auto fill = unlayered::seed_based_flood_filling<int>(
+  auto fill = unlayered::seed_based_flood_filling(
     [&sum, &count, average_separation](auto A, auto U, auto O, auto V) { 
       /* 
       We return true if fracture does not occur.
@@ -236,7 +236,10 @@ int main() {
   calculus.gradient(coarse, coarse_elevation_meters, vertex_gradient);
 
   // segmentation
-  unlayered::SeedBasedFloodFillState<int> state { int(order3.max_id(vertex_gradient)), int(vertex_gradient.size()) };
+  unlayered::SeedBasedFloodFillState state ( 
+    int(order3.max_id(vertex_gradient)), 
+    int(vertex_gradient.size()) 
+  );
   if (true)
   {
     fill.advance(coarse, vertex_gradient, state);

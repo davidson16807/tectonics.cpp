@@ -17,32 +17,32 @@ namespace unlayered
     template<typename id>
     struct SeedBasedFloodFillState
     {
-        std::deque<id> frontier;
+        std::deque<id> candidates;
         std::vector<bool> is_considered;
         std::vector<bool> is_included;
         SeedBasedFloodFillState(const id seed_id, const id vertex_count):
-            frontier(),
+            candidates(),
             is_considered(vertex_count, true),
             is_included(vertex_count, false)
         {
-            frontier.push_back(seed_id);
+            candidates.push_back(seed_id);
             is_included[seed_id] = true;
         }
         SeedBasedFloodFillState(const id seed_id, const std::vector<bool>& is_considered):
-            frontier(),
+            candidates(),
             is_considered(is_considered),
             is_included(is_considered.size(), false)
         {
             is_included[seed_id] = true;
         }
         SeedBasedFloodFillState(const SeedBasedFloodFillState<id>& state):
-            frontier(state.frontier),
+            candidates(state.candidates),
             is_considered(state.is_considered),
             is_included(state.is_included)
         {}
         SeedBasedFloodFillState<id>& operator=(const SeedBasedFloodFillState<id>& state)
         {
-            state.frontier = state.frontier;
+            state.candidates = state.candidates;
             state.is_considered = state.is_considered;
             state.is_included = state.is_included;
             return *this;
@@ -69,30 +69,30 @@ namespace unlayered
         This is why state stores both input and output. If not for this, `advance()` would be conceptually pure.
         */
         template<typename Grid, typename Raster>
-        void advance(const Grid& grid, const Raster& raster, SeedBasedFloodFillState<id>& state_io) const {
+        void advance(const Grid& grid, const Raster& raster, SeedBasedFloodFillState<id>& io) const {
             const id N(grid.arrows_per_vertex);
             id cell_id(0);
             id neighbor_id(0);
             id j;
-            if(state_io.frontier.size() > 0){ // and while region is not too big
-                cell_id = state_io.frontier.front();
-                state_io.frontier.pop_front();
+            if(io.candidates.size() > 0){ // and while region is not too big
+                cell_id = io.candidates.front();
+                io.candidates.pop_front();
                 for (j = 0; j < N; ++j)
                 {
                     neighbor_id = grid.arrow_target_id(cell_id,j);
-                    if (state_io.is_considered[neighbor_id] && !state_io.is_included[neighbor_id])
+                    if (io.is_considered[neighbor_id] && !io.is_included[neighbor_id])
                     {
                         if (is_similar(
                                 grid.vertex_position(cell_id), raster[cell_id], 
                                 grid.vertex_position(neighbor_id), raster[neighbor_id]))
                         {
                             // add neighbor to region
-                            state_io.is_included[neighbor_id] = 1;
-                            state_io.frontier.push_back(neighbor_id);
+                            io.is_included[neighbor_id] = 1;
+                            io.candidates.push_back(neighbor_id);
                         }
                     }
                 }
-                state_io.is_considered[cell_id] = 0;
+                io.is_considered[cell_id] = 0;
             }
 
         }

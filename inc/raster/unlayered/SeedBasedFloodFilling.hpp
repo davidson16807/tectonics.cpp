@@ -1,7 +1,8 @@
 #pragma once
 
 // standard libraries
-#include <deque> // std::deque
+#include <utility> // std::pair
+#include <queue> // std::priority_queue
 
 // in-house libraries
 #include <index/iterated/Nary.hpp>
@@ -9,35 +10,38 @@
 namespace unlayered
 {
 
-    template<typename id>
+    auto candidate_comparator = [](std::pair<int,float> a, std::pair<int,float> b) { return a.second > b.second; };
+
     struct SeedBasedFloodFillState
     {
-        std::deque<id> candidates;
+        using Candidate = std::pair<int,float>;
+        std::priority_queue<Candidate, std::vector<Candidate>, decltype(candidate_comparator)> candidates;
         std::vector<bool> is_considered;
         std::vector<bool> is_included;
-        const id seed_id;
-        SeedBasedFloodFillState(const id seed_id, const id vertex_count):
-            candidates(),
+        const int seed_id;
+        SeedBasedFloodFillState(const int seed_id_, const int vertex_count):
+            candidates(candidate_comparator),
             is_considered(vertex_count, true),
             is_included(vertex_count, false),
-            seed_id(seed_id)
+            seed_id(seed_id_)
         {
-            candidates.push_back(seed_id);
-            is_included[seed_id] = true;
+            candidates.emplace(seed_id_, 0.0f);
+            is_included[seed_id_] = true;
         }
-        SeedBasedFloodFillState(const id seed_id, const std::vector<bool>& is_considered):
-            candidates(),
+        SeedBasedFloodFillState(const int seed_id_, const std::vector<bool>& is_considered):
+            candidates(candidate_comparator),
             is_considered(is_considered),
             is_included(is_considered.size(), false),
-            seed_id(seed_id)
+            seed_id(seed_id_)
         {
-            is_included[seed_id] = true;
+            candidates.emplace(seed_id_, 0.0f);
+            is_included[seed_id_] = true;
         }
-        SeedBasedFloodFillState(const SeedBasedFloodFillState<id>& state):
+        SeedBasedFloodFillState(const SeedBasedFloodFillState& state):
             candidates(state.candidates),
             is_considered(state.is_considered),
             is_included(state.is_included),
-            seed_id(seed_id)
+            seed_id(state.seed_id)
         {}
     };
 
@@ -55,10 +59,10 @@ namespace unlayered
     * in-order traversal if possible
 
     ideas:
-    * priority queue for candidates, sorting on combined metric for seed proximity and stress
+    * priority queue for candidates, sorting on seed proximity or vector magnitude
     */
 
-    template<typename id, typename IsSimilar>
+    template<typename IsSimilar>
     struct SeedBasedFloodFilling
     {
         const IsSimilar is_similar;
@@ -78,13 +82,14 @@ namespace unlayered
             // copy(procedural::uniform(0), io.is_included);
             // io.is_considered[seed_id] = false;
 
-            id cell_id(0);
-            id neighbor_id(0);
+            int cell_id(0);
+            int neighbor_id(0);
+            glm::vec3 neighbor_position;
 
-            const id N = grid.arrows_per_vertex;
+            const int N = grid.arrows_per_vertex;
             if(io.candidates.size() > 0){
-                cell_id = io.candidates.front();
-                io.candidates.pop_front();
+                cell_id = io.candidates.top().first;
+                io.candidates.pop();
 
                 if (is_similar(
                         grid.vertex_position(cell_id), raster[cell_id], 
@@ -94,8 +99,13 @@ namespace unlayered
                     for (int j = 0; j < N; ++j)
                     {
                         neighbor_id = grid.arrow_target_id(cell_id,j);
+                        neighbor_position = grid.vertex_position(grid.arrow_target_id(cell_id,j));
                         if (io.is_considered[neighbor_id]) {
-                            io.candidates.push_back(neighbor_id);
+                            io.candidates.emplace(neighbor_id, 
+                                glm::distance(
+                                    grid.vertex_position(grid.arrow_target_id(cell_id,j)),
+                                    grid.vertex_position(io.seed_id)
+                            ));
                             io.is_considered[neighbor_id] = 0;
                         }
                     }
@@ -108,9 +118,9 @@ namespace unlayered
 
     };
 
-    template<typename id, typename IsSimilar>
+    template<typename IsSimilar>
     auto seed_based_flood_filling(const IsSimilar is_similar) {
-        return SeedBasedFloodFilling<id,IsSimilar>(is_similar);
+        return SeedBasedFloodFilling<IsSimilar>(is_similar);
     }
 
 }
