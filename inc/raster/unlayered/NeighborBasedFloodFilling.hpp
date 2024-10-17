@@ -15,12 +15,12 @@ namespace unlayered
     */
 
     template<typename id>
-    struct EdgeBasedFloodFillState
+    struct NeighborBasedFloodFillState
     {
         std::deque<id> candidates;
         std::vector<bool> is_considered;
         std::vector<bool> is_included;
-        EdgeBasedFloodFillState(const id seed_id, const id vertex_count):
+        NeighborBasedFloodFillState(const id seed_id, const id vertex_count):
             candidates(),
             is_considered(vertex_count, true),
             is_included(vertex_count, false)
@@ -28,19 +28,19 @@ namespace unlayered
             candidates.push_back(seed_id);
             is_included[seed_id] = true;
         }
-        EdgeBasedFloodFillState(const id seed_id, const std::vector<bool>& is_considered):
+        NeighborBasedFloodFillState(const id seed_id, const std::vector<bool>& is_considered):
             candidates(),
             is_considered(is_considered),
             is_included(is_considered.size(), false)
         {
             is_included[seed_id] = true;
         }
-        EdgeBasedFloodFillState(const EdgeBasedFloodFillState<id>& state):
+        NeighborBasedFloodFillState(const NeighborBasedFloodFillState<id>& state):
             candidates(state.candidates),
             is_considered(state.is_considered),
             is_included(state.is_included)
         {}
-        EdgeBasedFloodFillState<id>& operator=(const EdgeBasedFloodFillState<id>& state)
+        NeighborBasedFloodFillState<id>& operator=(const NeighborBasedFloodFillState<id>& state)
         {
             state.candidates = state.candidates;
             state.is_considered = state.is_considered;
@@ -50,12 +50,12 @@ namespace unlayered
     };
 
     template<typename id, typename IsSimilar>
-    struct EdgeBasedFloodFilling
+    struct NeighborBasedFloodFilling
     {
         const IsSimilar is_similar;
         const iterated::Identity copy;
 
-        EdgeBasedFloodFilling(const IsSimilar is_similar):
+        NeighborBasedFloodFilling(const IsSimilar is_similar):
             is_similar(is_similar),
             copy()
         {}
@@ -69,7 +69,7 @@ namespace unlayered
         This is why state stores both input and output. If not for this, `advance()` would be conceptually pure.
         */
         template<typename Grid, typename Raster>
-        void advance(const Grid& grid, const Raster& raster, EdgeBasedFloodFillState<id>& state_io) const {
+        void advance(const Grid& grid, const Raster& raster, NeighborBasedFloodFillState<id>& state_io) const {
             const id N(grid.arrows_per_vertex);
             id cell_id(0);
             id neighbor_id(0);
@@ -100,9 +100,9 @@ namespace unlayered
     };
 
     template<typename id, typename IsSimilar>
-    EdgeBasedFloodFilling<id,IsSimilar> edge_based_flood_filling(const IsSimilar is_similar)
+    NeighborBasedFloodFilling<id,IsSimilar> edge_based_flood_filling(const IsSimilar is_similar)
     {
-        return EdgeBasedFloodFilling<id,IsSimilar>(is_similar);
+        return NeighborBasedFloodFilling<id,IsSimilar>(is_similar);
     }
 
 }

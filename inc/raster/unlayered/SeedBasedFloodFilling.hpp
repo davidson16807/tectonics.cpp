@@ -42,19 +42,31 @@ namespace unlayered
     };
 
     /*
-    properties used:
+    grid attributes used:
         arrow_target_vertex_id
     */
 
+    /*
+    properties to satisfy:
+    * contiguous (requires floodfill)
+    * symmetric with respect to plate seeds
+    * cells with largest vectors must occur at boundaries 
+    * lowest complexity allowable
+    * in-order traversal if possible
+
+    ideas:
+    * priority queue for candidates, sorting on combined metric for seed proximity and stress
+    */
+
     template<typename id, typename IsSimilar>
-    struct FloodFilling
+    struct SeedBasedFloodFilling
     {
         const IsSimilar is_similar;
         const iterated::Identity copy;
 
         /* VectorFloodFill(
             [](auto U, auto V){return glm::similarity (U,V) > Math.cos(Math.PI * 60/180)}) */
-        FloodFilling(const IsSimilar is_similar):
+        SeedBasedFloodFilling(const IsSimilar is_similar):
             is_similar(is_similar),
             copy()
         {}
@@ -97,8 +109,8 @@ namespace unlayered
     };
 
     template<typename id, typename IsSimilar>
-    auto flood_filling(const IsSimilar is_similar) {
-        return FloodFilling<id,IsSimilar>(is_similar);
+    auto seed_based_flood_filling(const IsSimilar is_similar) {
+        return SeedBasedFloodFilling<id,IsSimilar>(is_similar);
     }
 
 }

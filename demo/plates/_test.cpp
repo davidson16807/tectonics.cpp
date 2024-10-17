@@ -57,8 +57,8 @@
 
 #include <raster/unlayered/VectorCalculusByFundamentalTheorem.hpp> // unlayered::VectorCalculusByFundamentalTheorem
 #include <raster/unlayered/Morphology.hpp>          // unlayered::Morphology
-#include <raster/unlayered/FloodFilling.hpp>        // unlayered::FloodFilling
-#include <raster/unlayered/EdgeBasedFloodFilling.hpp> // unlayered::FloodFilling
+#include <raster/unlayered/SeedBasedFloodFilling.hpp>     // unlayered::SeedBasedFloodFilling
+#include <raster/unlayered/NeighborBasedFloodFilling.hpp> // unlayered::NeighborBasedFloodFilling
 #include <raster/unlayered/Voronoi.hpp>             // unlayered::Voronoi
 #include <raster/unlayered/ImageSegmentation.hpp>   // unlayered::ImageSegmentation
 #include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
@@ -169,8 +169,8 @@ int main() {
   float sum(0);
   float count(0);
   float average_separation(radius*3.1415926535/coarse.vertices_per_meridian());
-  auto fill = unlayered::flood_filling<int>(
-    [&sum, &count, average_separation](auto A, auto U, auto B, auto V) { 
+  auto fill = unlayered::seed_based_flood_filling<int>(
+    [&sum, &count, average_separation](auto A, auto U, auto O, auto V) { 
       /* 
       We return true if fracture does not occur.
       We start with the assumption that microfractures are sufficiently common 
@@ -212,7 +212,7 @@ int main() {
       // sum += glm::distance(A+U,B+V) - glm::distance(A,B);
       // return math::similarity(U,B-A) <= 0.5 && (glm::distance(A+U,B+V) - glm::distance(A,B)) < 7500.0f;
       // return true;
-      // auto B = A + average_separation*glm::normalize(O-A);
+      auto B = A + average_separation*glm::normalize(O-A);
       if (glm::distance(B,A) > 0.0001)
       {
         count += 1.0f;
