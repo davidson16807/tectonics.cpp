@@ -25,22 +25,11 @@ namespace unlayered
     {
         using Candidate = std::pair<id,scalar>;
         std::priority_queue<Candidate, std::vector<Candidate>, FloodFillCandidateComparison<id,scalar>> candidates;
-        std::vector<bool> is_considered;
         std::vector<bool> is_included;
         const id seed_id;
         SeedBasedFloodFillState(const id seed_id_, const id vertex_count):
             candidates(FloodFillCandidateComparison<id,scalar>{}),
-            is_considered(vertex_count, true),
             is_included(vertex_count, false),
-            seed_id(seed_id_)
-        {
-            candidates.emplace(seed_id_, scalar(0));
-            is_included[seed_id_] = true;
-        }
-        SeedBasedFloodFillState(const id seed_id_, const std::vector<bool>& is_considered):
-            candidates(FloodFillCandidateComparison<id,scalar>{}),
-            is_considered(is_considered),
-            is_included(is_considered.size(), false),
             seed_id(seed_id_)
         {
             candidates.emplace(seed_id_, scalar(0));
@@ -48,7 +37,6 @@ namespace unlayered
         }
         SeedBasedFloodFillState(const SeedBasedFloodFillState& state):
             candidates(state.candidates),
-            is_considered(state.is_considered),
             is_included(state.is_included),
             seed_id(state.seed_id)
         {}
@@ -84,12 +72,8 @@ namespace unlayered
             copy()
         {}
 
-        template<typename Grid, typename Raster>
-        void advance(const Grid& grid, const Raster& raster, SeedBasedFloodFillState<id,scalar>& io) const {
-
-            // copy(procedural::uniform(true), io.is_considered);
-            // copy(procedural::uniform(0), io.is_included);
-            // io.is_considered[seed_id] = false;
+        template<typename Grid, typename Raster, typename Mask>
+        void advance(const Grid& grid, const Raster& raster, Mask& is_considered, SeedBasedFloodFillState<id,scalar>& io) const {
 
             int cell_id(0);
             int neighbor_id(0);
@@ -109,13 +93,13 @@ namespace unlayered
                     {
                         neighbor_id = grid.arrow_target_id(cell_id,j);
                         neighbor_position = grid.vertex_position(grid.arrow_target_id(cell_id,j));
-                        if (io.is_considered[neighbor_id]) {
+                        if (is_considered[neighbor_id]) {
                             io.candidates.emplace(neighbor_id, 
                                 glm::distance(
                                     grid.vertex_position(grid.arrow_target_id(cell_id,j)),
                                     grid.vertex_position(io.seed_id)
                             ));
-                            io.is_considered[neighbor_id] = 0;
+                            is_considered[neighbor_id] = 0;
                         }
                     }
 

@@ -169,8 +169,8 @@ int main() {
   float sum(0);
   float count(0);
   float average_separation(radius*3.1415926535/coarse.vertices_per_meridian());
-  auto fill = unlayered::seed_based_flood_filling<int,float>(
-    [&sum, &count, average_separation](auto A, auto U, auto O, auto V) { 
+
+  auto is_similar = [&sum, &count, average_separation](auto A, auto U, auto O, auto V) { 
       /* 
       We return true if fracture does not occur.
       We start with the assumption that microfractures are sufficiently common 
@@ -221,15 +221,9 @@ int main() {
       }
       auto displacement = (std::abs(glm::distance(A+U,B+V)-average_separation) / average_separation);
       return std::isnan(displacement) || (displacement < 1.2e5f);
-    }
-  );
+  };
 
-  // auto segment = unlayered::image_segmentation<int,float>(
-  //   fill, 
-  //   adapted::GlmMetric{}, 
-  //   adapted::SymbolicArithmetic{0,1},
-  //   adapted::SymbolicOrder{}
-  // );
+  auto fill = unlayered::seed_based_flood_filling<int,float>(is_similar);
 
   std::uint8_t plate_count(8);
 
@@ -240,9 +234,10 @@ int main() {
     int(order3.max_id(vertex_gradient)), 
     int(vertex_gradient.size()) 
   );
+  std::vector<bool> is_considered(vertex_gradient.size(), true);
   if (true)
   {
-    fill.advance(coarse, vertex_gradient, state);
+    fill.advance(coarse, vertex_gradient, is_considered, state);
   }
   else
   {
@@ -372,17 +367,17 @@ int main() {
 
       if (frame_id == 0)
       {
-        fill.advance(coarse, vertex_gradient, state);
+        fill.advance(coarse, vertex_gradient, is_considered, state);
         copy(state.is_included, buffer_scalars1);
       }
       else if (frame_id == 10)
       {
-        fill.advance(coarse, vertex_gradient, state);
+        fill.advance(coarse, vertex_gradient, is_considered, state);
         copy(state.is_included, buffer_scalars1);
       }
       else if (frame_id == 20)
       {
-        fill.advance(coarse, vertex_gradient, state);
+        fill.advance(coarse, vertex_gradient, is_considered, state);
         copy(state.is_included, buffer_scalars1);
       }
       frame_id = (frame_id+1)%30;
