@@ -58,6 +58,7 @@
 #include <raster/unlayered/VectorCalculusByFundamentalTheorem.hpp> // unlayered::VectorCalculusByFundamentalTheorem
 #include <raster/unlayered/Morphology.hpp>          // unlayered::Morphology
 #include <raster/unlayered/FloodFilling.hpp>        // unlayered::FloodFilling
+#include <raster/unlayered/EdgeBasedFloodFilling.hpp> // unlayered::FloodFilling
 #include <raster/unlayered/Voronoi.hpp>             // unlayered::Voronoi
 #include <raster/unlayered/ImageSegmentation.hpp>   // unlayered::ImageSegmentation
 #include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
@@ -162,13 +163,14 @@ int main() {
 
   iterated::Order orders{adapted::SymbolicOrder{}};
   aggregated::Order order(adapted::SymbolicOrder{});
+  aggregated::Order order3{adapted::MetricOrder{adapted::GlmMetric{}}};
 
   unlayered::VectorCalculusByFundamentalTheorem calculus;
   float sum(0);
   float count(0);
   float average_separation(radius*3.1415926535/coarse.vertices_per_meridian());
-  auto fill = unlayered::flood_filling<int,float>(
-    [&sum, &count, average_separation](auto A, auto U, auto O, auto V){ 
+  auto fill = unlayered::flood_filling<int>(
+    [&sum, &count, average_separation](auto A, auto U, auto B, auto V) { 
       /* 
       We return true if fracture does not occur.
       We start with the assumption that microfractures are sufficiently common 
@@ -210,41 +212,42 @@ int main() {
       // sum += glm::distance(A+U,B+V) - glm::distance(A,B);
       // return math::similarity(U,B-A) <= 0.5 && (glm::distance(A+U,B+V) - glm::distance(A,B)) < 7500.0f;
       // return true;
-      auto B = A + average_separation*glm::normalize(O-A);
-      if (glm::distance(O,A) > 0.0001)
+      // auto B = A + average_separation*glm::normalize(O-A);
+      if (glm::distance(B,A) > 0.0001)
       {
         count += 1.0f;
         sum += glm::distance(A+U,B+V) / average_separation;
-        // std::cout << glm::distance(A+U,B+V) << std::endl;
+        std::cout << glm::distance(A+U,B+V) << std::endl;
       }
       auto displacement = (std::abs(glm::distance(A+U,B+V)-average_separation) / average_separation);
       return std::isnan(displacement) || (displacement < 1.2e5f);
     }
   );
-  auto segment = unlayered::image_segmentation<int,float>(
-    fill, 
-    adapted::GlmMetric{}, 
-    adapted::SymbolicArithmetic{0,1},
-    adapted::SymbolicOrder{}
-  );
+
+  // auto segment = unlayered::image_segmentation<int,float>(
+  //   fill, 
+  //   adapted::GlmMetric{}, 
+  //   adapted::SymbolicArithmetic{0,1},
+  //   adapted::SymbolicOrder{}
+  // );
 
   std::uint8_t plate_count(8);
 
   calculus.gradient(coarse, coarse_elevation_meters, vertex_gradient);
 
   // segmentation
-  if (false)
+  unlayered::SeedBasedFloodFillState<int> state { int(order3.max_id(vertex_gradient)), int(vertex_gradient.size()) };
+  if (true)
   {
-    copy(procedural::uniform(0), similar_plate_id);
-    similar_plate_id[0] = 1;
+    fill.advance(coarse, vertex_gradient, state);
   }
   else
   {
-    segment(
-      coarse, vertex_gradient, plate_count-1, 10, 
-      similar_plate_id, scratch, mask1, mask2, mask3
-    );
-    std::cout << sum << " " << count << " " << sum/count << " " << std::endl;
+    // segment(
+    //   coarse, vertex_gradient, plate_count-1, 10, 
+    //   similar_plate_id, scratch, mask1, mask2, mask3
+    // );
+    // std::cout << sum << " " << count << " " << sum/count << " " << std::endl;
   }
 
   iterated::Ternary ternary{};
@@ -286,7 +289,7 @@ int main() {
   adapted::ScalarStrings<float> substrings(adapted::dotshades);
   spheroidal::Strings strings(substrings, order);
   adapted::GlmStrings substrings3;
-  spheroidal::Strings strings3(substrings3, aggregated::Order{adapted::MetricOrder{adapted::GlmMetric{}}});
+  spheroidal::Strings strings3(substrings3, order3);
   std::cout << strings3.format(coarse, vertex_gradient) << std::endl << std::endl;
   std::cout << strings.format(coarse, similar_plate_id) << std::endl << std::endl;
   std::cout << strings.format(coarse, dilated_plate_id) << std::endl << std::endl;
@@ -366,17 +369,20 @@ int main() {
 
       if (frame_id == 0)
       {
-        copy(similar_plate_id, buffer_scalars1);
+        fill.advance(coarse, vertex_gradient, state);
+        copy(state.is_included, buffer_scalars1);
       }
-      else if (frame_id == 100)
+      else if (frame_id == 10)
       {
-        copy(dilated_plate_id, buffer_scalars1);
+        fill.advance(coarse, vertex_gradient, state);
+        copy(state.is_included, buffer_scalars1);
       }
-      else if (frame_id == 200)
+      else if (frame_id == 20)
       {
-        copy(nearest_plate_id, buffer_scalars1);
+        fill.advance(coarse, vertex_gradient, state);
+        copy(state.is_included, buffer_scalars1);
       }
-      frame_id = (frame_id+1)%300;
+      frame_id = (frame_id+1)%30;
 
       colorscale_state.max_color_value = whole::max(buffer_scalars1);
       colorscale_state.min_color_value = whole::min(buffer_scalars1);
