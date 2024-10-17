@@ -10,31 +10,40 @@
 namespace unlayered
 {
 
-    auto candidate_comparator = [](std::pair<int,float> a, std::pair<int,float> b) { return a.second > b.second; };
+    template<typename id, typename scalar>
+    struct FloodFillCandidateComparison
+    {
+        FloodFillCandidateComparison(){}
+        bool operator()(const std::pair<id,scalar> a, const std::pair<id,scalar> b)
+        {
+            return a.second > b.second;
+        }
+    };
 
+    template<typename id, typename scalar>
     struct SeedBasedFloodFillState
     {
-        using Candidate = std::pair<int,float>;
-        std::priority_queue<Candidate, std::vector<Candidate>, decltype(candidate_comparator)> candidates;
+        using Candidate = std::pair<id,scalar>;
+        std::priority_queue<Candidate, std::vector<Candidate>, FloodFillCandidateComparison<id,scalar>> candidates;
         std::vector<bool> is_considered;
         std::vector<bool> is_included;
-        const int seed_id;
-        SeedBasedFloodFillState(const int seed_id_, const int vertex_count):
-            candidates(candidate_comparator),
+        const id seed_id;
+        SeedBasedFloodFillState(const id seed_id_, const id vertex_count):
+            candidates(FloodFillCandidateComparison<id,scalar>{}),
             is_considered(vertex_count, true),
             is_included(vertex_count, false),
             seed_id(seed_id_)
         {
-            candidates.emplace(seed_id_, 0.0f);
+            candidates.emplace(seed_id_, scalar(0));
             is_included[seed_id_] = true;
         }
-        SeedBasedFloodFillState(const int seed_id_, const std::vector<bool>& is_considered):
-            candidates(candidate_comparator),
+        SeedBasedFloodFillState(const id seed_id_, const std::vector<bool>& is_considered):
+            candidates(FloodFillCandidateComparison<id,scalar>{}),
             is_considered(is_considered),
             is_included(is_considered.size(), false),
             seed_id(seed_id_)
         {
-            candidates.emplace(seed_id_, 0.0f);
+            candidates.emplace(seed_id_, scalar(0));
             is_included[seed_id_] = true;
         }
         SeedBasedFloodFillState(const SeedBasedFloodFillState& state):
@@ -62,7 +71,7 @@ namespace unlayered
     * priority queue for candidates, sorting on seed proximity or vector magnitude
     */
 
-    template<typename IsSimilar>
+    template<typename id, typename scalar, typename IsSimilar>
     struct SeedBasedFloodFilling
     {
         const IsSimilar is_similar;
@@ -75,8 +84,8 @@ namespace unlayered
             copy()
         {}
 
-        template<typename Grid, typename Raster, typename State>
-        void advance(const Grid& grid, const Raster& raster, State& io) const {
+        template<typename Grid, typename Raster>
+        void advance(const Grid& grid, const Raster& raster, SeedBasedFloodFillState<id,scalar>& io) const {
 
             // copy(procedural::uniform(true), io.is_considered);
             // copy(procedural::uniform(0), io.is_included);
@@ -118,9 +127,9 @@ namespace unlayered
 
     };
 
-    template<typename IsSimilar>
+    template<typename id, typename scalar, typename IsSimilar>
     auto seed_based_flood_filling(const IsSimilar is_similar) {
-        return SeedBasedFloodFilling<IsSimilar>(is_similar);
+        return SeedBasedFloodFilling<id,scalar,IsSimilar>(is_similar);
     }
 
 }
