@@ -57,7 +57,8 @@
 
 #include <raster/unlayered/VectorCalculusByFundamentalTheorem.hpp> // unlayered::VectorCalculusByFundamentalTheorem
 #include <raster/unlayered/Morphology.hpp>          // unlayered::Morphology
-#include <raster/unlayered/FloodFilling.hpp>        // unlayered::FloodFilling
+#include <raster/unlayered/SeedBasedFloodFilling.hpp>     // unlayered::SeedBasedFloodFilling
+#include <raster/unlayered/NeighborBasedFloodFilling.hpp> // unlayered::NeighborBasedFloodFilling
 #include <raster/unlayered/Voronoi.hpp>             // unlayered::Voronoi
 #include <raster/unlayered/ImageSegmentation.hpp>   // unlayered::ImageSegmentation
 #include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
@@ -160,45 +161,110 @@ int main() {
   stats.sum(vertex_downsampling_ids, fine_elevation_meters, coarse_elevation_meters);
   arithmetic.divide(coarse_elevation_meters, procedural::uniform(std::pow(float(vertex_downsampling_ids.factor), 2.0f)), coarse_elevation_meters);
 
+  iterated::Metric metric3{adapted::GlmMetric{}};
   iterated::Order orders{adapted::SymbolicOrder{}};
   aggregated::Order order(adapted::SymbolicOrder{});
+  aggregated::Order order3{adapted::MetricOrder{adapted::GlmMetric{}}};
 
   unlayered::VectorCalculusByFundamentalTheorem calculus;
-  auto fill = unlayered::flood_filling<int,float>(
-    [](auto U, auto V){ return math::similarity (U,V) > std::cos(M_PI * 45.0f/180.0f); }
-  );
-  auto segment = unlayered::image_segmentation<int,float>(
-    fill, 
-    adapted::GlmMetric{}, 
-    adapted::SymbolicArithmetic{0,1},
-    adapted::SymbolicOrder{}
-  );
+  
+  float sum(0);
+  float count(0);
+  float average_separation(radius*3.1415926535/coarse.vertices_per_meridian());
+  std::cout << average_separation << std::endl;
+
+  auto is_similar = [&sum, &count, average_separation](auto A, auto U, auto O, auto V) { 
+      return math::similarity (U,V) > std::cos(M_PI * 45.0f/180.0f);
+      /* 
+      We return true if fracture does not occur.
+      We start with the assumption that microfractures are sufficiently common 
+      such that plates are uniformly weak according to a single 
+      empirically derived value for stress (θ) beyond which fracture occurs.
+      So fracture does not occur if stress falls below θ.
+      Stress (forcer per unit area, F/A) is proportionate to virtual displacement (ΔL),
+      which can be calculated for two cells as follows:
+
+      A+U   L+ΔL  B+V
+         ∘-------∘
+        U ↖     ↗ V
+           ∘---∘
+          A  L  B
+
+      where A and B are velocities, U and V are velocities, and L is vertex distance
+
+      The specific equation that relates stress to virtual displacement is as follows: 
+
+        F/A = E ΔL/L 
+
+      where E is young's modulus, which in this context can only be derived empirically.
+
+      `vertex_gradient` has magnitudes somewhere between 0 and 9000,
+      and we say that tangibly sized vectors (judging by our 3d render) are generally above 3000.
+      Fracture should absolutely occur between two tangible vectors of opposite sign,
+      but fracture should generally not occur between a tangible vector and a zero vector.
+      This places our displacement threshold somewhere around 6000<θ<9000 when L=1.
+      However grid radius is 2 and there are many vertices, given by `grid.vertices_per_meridian`.
+      By our calculations cell separation is typically 0.001 so θ must be 1000 times larger 
+      than the estimate above.
+
+      To allow the use of the existing floodfill algorithm, 
+      we further assume that neighboring cells are of constant distance apart 
+      and are offset by a vector that is aligned with the offset from the seed cell
+      to the current cell being considered at any iteration
+      */
+      // count += 1.0f;
+      // sum += glm::distance(A+U,B+V) - glm::distance(A,B);
+      // return math::similarity(U,B-A) <= 0.5 && (glm::distance(A+U,B+V) - glm::distance(A,B)) < 7500.0f;
+      // return true;
+      // auto B = A + average_separation*glm::normalize(O-A);
+      // if (glm::distance(B,A) > 0.0001)
+      // {
+      //   count += 1.0f;
+      //   sum += glm::distance(A+U,B+V) / average_separation;
+      //   // std::cout << glm::distance(A+U,B+V) << std::endl;
+      // }
+      // auto displacement = (std::abs(glm::distance(A+U,B+V)-average_separation) / average_separation);
+      // return std::isnan(displacement) || (displacement < 1.2e5f);
+  };
+
+  auto fill1 = unlayered::seed_based_flood_filling<int,float>(is_similar);
+  auto fill2 = unlayered::seed_based_flood_filling<int,float>(is_similar);
+  auto fill3 = unlayered::seed_based_flood_filling<int,float>(is_similar);
 
   std::uint8_t plate_count(8);
+  iterated::Ternary ternary{};
 
   calculus.gradient(coarse, coarse_elevation_meters, vertex_gradient);
 
-  if (false)
+  // segmentation
+  std::vector<float> lengths(vertex_gradient.size());
+  metric3.length(vertex_gradient, lengths);
+  std::vector<bool> is_considered(vertex_gradient.size(), true);
+  unlayered::SeedBasedFloodFillState<int,float> state1 (int(order.max_id(lengths)), int(vertex_gradient.size()));
+  for (int i = 0; i < 20; ++i)
   {
-    copy(procedural::uniform(0), similar_plate_id);
-    similar_plate_id[0] = 1;
+    fill1.advance(coarse, vertex_gradient, is_considered, state1);
   }
-  else
+  ternary(is_considered, lengths, procedural::uniform(0), lengths);
+  unlayered::SeedBasedFloodFillState<int,float> state2 (int(order.max_id(lengths)), int(vertex_gradient.size()));
+  for (int i = 0; i < 20; ++i)
   {
-    segment(
-      coarse, vertex_gradient, plate_count-1, 10, 
-      similar_plate_id, scratch, mask1, mask2, mask3
-    );
+    fill2.advance(coarse, vertex_gradient, is_considered, state2);
   }
+  ternary(is_considered, lengths, procedural::uniform(0), lengths);
+  unlayered::SeedBasedFloodFillState<int,float> state3 (int(order.max_id(lengths)), int(vertex_gradient.size()));
+  for (int i = 0; i < 20; ++i)
+  {
+    fill3.advance(coarse, vertex_gradient, is_considered, state3);
+  }
+  ternary(is_considered, lengths, procedural::uniform(0), lengths);
 
-
-  iterated::Ternary ternary{};
   iterated::Bitset bitset{adapted::BooleanBitset{}};
   unlayered::Morphology morphology{bitset};
-  iterated::Metric metric{adapted::GlmMetric{}};
 
+  // dilation
   copy(similar_plate_id, dilated_plate_id);
-  if(true){
+  if(false){
     for(std::uint8_t j(0); j < 2; ++j)
     {
       for (std::uint8_t i(0); i < plate_count; ++i)
@@ -213,6 +279,7 @@ int main() {
     }
   }
 
+  // voronoi
   copy(dilated_plate_id, nearest_plate_id);
   if(false){
     grouped::Statistics stats3{adapted::SymbolicArithmetic(vec3(0),vec3(1))};
@@ -220,7 +287,7 @@ int main() {
 
     std::vector<vec3>plate_seeds(8,vec3(0,0,0));
     stats3.sum(nearest_plate_id, coarse_vertex_positions, plate_seeds);
-    metric.normalize(plate_seeds, plate_seeds);
+    metric3.normalize(plate_seeds, plate_seeds);
     orders.equal(similar_plate_id, procedural::uniform(0), is_undecided);
     voronoi(coarse_vertex_positions, plate_seeds, nearest_plate_id);
     ternary(is_undecided, nearest_plate_id, similar_plate_id, nearest_plate_id);
@@ -229,7 +296,7 @@ int main() {
   adapted::ScalarStrings<float> substrings(adapted::dotshades);
   spheroidal::Strings strings(substrings, order);
   adapted::GlmStrings substrings3;
-  spheroidal::Strings strings3(substrings3, aggregated::Order{adapted::MetricOrder{adapted::GlmMetric{}}});
+  spheroidal::Strings strings3(substrings3, order3);
   std::cout << strings3.format(coarse, vertex_gradient) << std::endl << std::endl;
   std::cout << strings.format(coarse, similar_plate_id) << std::endl << std::endl;
   std::cout << strings.format(coarse, dilated_plate_id) << std::endl << std::endl;
@@ -299,7 +366,7 @@ int main() {
       vectors_element_position);
   copy          (known::mult(coarse_vertex_positions, procedural::uniform(1+pyramid_halflength/coarse.total_radius())),  vectors_instance_position);
   copy          (coarse_vertex_normals, vectors_instance_up);
-  metric.length (vertex_gradient,   vectors_instance_scale);
+  metric3.length (vertex_gradient,   vectors_instance_scale);
   arithmetic.divide(vectors_instance_scale, procedural::uniform(whole::max(vectors_instance_scale)), vectors_instance_scale);
 
   int frame_id(0);
@@ -309,17 +376,14 @@ int main() {
 
       if (frame_id == 0)
       {
-        copy(similar_plate_id, buffer_scalars1);
+        fill1.advance(coarse, vertex_gradient, is_considered, state1);
+        fill2.advance(coarse, vertex_gradient, is_considered, state2);
+        fill3.advance(coarse, vertex_gradient, is_considered, state3);
+        ternary(state1.is_included, procedural::uniform(1), buffer_scalars1, buffer_scalars1);
+        ternary(state2.is_included, procedural::uniform(2), buffer_scalars1, buffer_scalars1);
+        ternary(state3.is_included, procedural::uniform(3), buffer_scalars1, buffer_scalars1);
       }
-      else if (frame_id == 100)
-      {
-        copy(dilated_plate_id, buffer_scalars1);
-      }
-      else if (frame_id == 200)
-      {
-        copy(nearest_plate_id, buffer_scalars1);
-      }
-      frame_id = (frame_id+1)%300;
+      frame_id = (frame_id+1)%10;
 
       colorscale_state.max_color_value = whole::max(buffer_scalars1);
       colorscale_state.min_color_value = whole::min(buffer_scalars1);

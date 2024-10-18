@@ -62,17 +62,42 @@ namespace dymaxion
 			return memory.grid_id(vertex_id).square_id;
 		}
 
-		constexpr id arrow_offset_memory_id(const ivec2 arrow_offset_grid_position) const
+		constexpr id arrow_offset_id(const id arrow_id) const
+		{
+			return arrow_id % arrows_per_vertex;
+		}
+
+		constexpr id arrow_offset_id(const ivec2 arrow_offset_grid_position) const
 		{
 			return 	((arrow_offset_grid_position.x + arrow_offset_grid_position.y < 0) << 1)
 				+	(std::abs(arrow_offset_grid_position.y) > std::abs(arrow_offset_grid_position.x));
 		}
 
-		constexpr ivec2 arrow_offset_grid_position(const id arrow_offset_memory_id) const
+		constexpr id arrow_source_id(const id arrow_id) const
 		{
-			return 	(2*(arrow_offset_memory_id & 2)-1) 
-				* 	ivec2((arrow_offset_memory_id & 1)==0,
-						  (arrow_offset_memory_id & 1));
+			return id(arrow_id / arrows_per_vertex);
+		}
+
+		inline constexpr id arrow_target_id(const id source_id, const id offset_id) const
+		{
+			return memory.memory_id(memory.grid_id(source_id) + arrow_offset_grid_position(offset_id));
+		}
+
+		inline constexpr id arrow_target_id(const id arrow_id) const
+		{
+			return arrow_id % arrows_per_vertex;
+		}
+
+		inline constexpr id arrow_id(const id source_id, const id arrow_offset_id) const
+		{
+			return source_id * arrows_per_vertex + arrow_offset_id;
+		}
+
+		constexpr ivec2 arrow_offset_grid_position(const id arrow_offset_id) const
+		{
+			return 	(2*(arrow_offset_id & 2)-1) 
+				* 	ivec2((arrow_offset_id & 1)==0,
+						  (arrow_offset_id & 1));
 		}
 
 		inline constexpr scalar total_radius() const 
@@ -114,11 +139,6 @@ namespace dymaxion
 		{
 			// each vertex is guaranteed to have 4 arrows, however some arrows that cross seams will be of 0 dual area
 			return arrows_per_vertex * voronoi.vertex_count;
-		}
-
-		inline constexpr id arrow_target_id(const id source_id, const id offset_id) const
-		{
-			return memory.memory_id(memory.grid_id(source_id) + arrow_offset_grid_position(offset_id));
 		}
 
 		// offset of the arrow
