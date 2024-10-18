@@ -161,6 +161,7 @@ int main() {
   stats.sum(vertex_downsampling_ids, fine_elevation_meters, coarse_elevation_meters);
   arithmetic.divide(coarse_elevation_meters, procedural::uniform(std::pow(float(vertex_downsampling_ids.factor), 2.0f)), coarse_elevation_meters);
 
+  iterated::Metric metric3{adapted::GlmMetric{}};
   iterated::Order orders{adapted::SymbolicOrder{}};
   aggregated::Order order(adapted::SymbolicOrder{});
   aggregated::Order order3{adapted::MetricOrder{adapted::GlmMetric{}}};
@@ -169,6 +170,7 @@ int main() {
   float sum(0);
   float count(0);
   float average_separation(radius*3.1415926535/coarse.vertices_per_meridian());
+  std::cout << average_separation << std::endl;
 
   auto is_similar = [&sum, &count, average_separation](auto A, auto U, auto O, auto V) { 
       /* 
@@ -211,47 +213,52 @@ int main() {
       // count += 1.0f;
       // sum += glm::distance(A+U,B+V) - glm::distance(A,B);
       // return math::similarity(U,B-A) <= 0.5 && (glm::distance(A+U,B+V) - glm::distance(A,B)) < 7500.0f;
-      // return true;
-      auto B = A + average_separation*glm::normalize(O-A);
-      if (glm::distance(B,A) > 0.0001)
-      {
-        count += 1.0f;
-        sum += glm::distance(A+U,B+V) / average_separation;
-        std::cout << glm::distance(A+U,B+V) << std::endl;
-      }
-      auto displacement = (std::abs(glm::distance(A+U,B+V)-average_separation) / average_separation);
-      return std::isnan(displacement) || (displacement < 1.2e5f);
+      return true;
+      // auto B = A + average_separation*glm::normalize(O-A);
+      // if (glm::distance(B,A) > 0.0001)
+      // {
+      //   count += 1.0f;
+      //   sum += glm::distance(A+U,B+V) / average_separation;
+      //   // std::cout << glm::distance(A+U,B+V) << std::endl;
+      // }
+      // auto displacement = (std::abs(glm::distance(A+U,B+V)-average_separation) / average_separation);
+      // return std::isnan(displacement) || (displacement < 1.2e5f);
   };
 
-  auto fill = unlayered::seed_based_flood_filling<int,float>(is_similar);
+  auto fill1 = unlayered::seed_based_flood_filling<int,float>(is_similar);
+  auto fill2 = unlayered::seed_based_flood_filling<int,float>(is_similar);
+  auto fill3 = unlayered::seed_based_flood_filling<int,float>(is_similar);
 
   std::uint8_t plate_count(8);
+  iterated::Ternary ternary{};
 
   calculus.gradient(coarse, coarse_elevation_meters, vertex_gradient);
 
   // segmentation
-  unlayered::SeedBasedFloodFillState<int,float> state ( 
-    int(order3.max_id(vertex_gradient)), 
-    int(vertex_gradient.size()) 
-  );
+  std::vector<float> lengths(vertex_gradient.size());
+  metric3.length(vertex_gradient, lengths);
   std::vector<bool> is_considered(vertex_gradient.size(), true);
-  if (true)
+  unlayered::SeedBasedFloodFillState<int,float> state1 (int(order.max_id(lengths)), int(vertex_gradient.size()));
+  for (int i = 0; i < 20; ++i)
   {
-    fill.advance(coarse, vertex_gradient, is_considered, state);
+    fill1.advance(coarse, vertex_gradient, is_considered, state1);
   }
-  else
+  ternary(is_considered, lengths, procedural::uniform(0), lengths);
+  unlayered::SeedBasedFloodFillState<int,float> state2 (int(order.max_id(lengths)), int(vertex_gradient.size()));
+  for (int i = 0; i < 20; ++i)
   {
-    // segment(
-    //   coarse, vertex_gradient, plate_count-1, 10, 
-    //   similar_plate_id, scratch, mask1, mask2, mask3
-    // );
-    // std::cout << sum << " " << count << " " << sum/count << " " << std::endl;
+    fill2.advance(coarse, vertex_gradient, is_considered, state2);
   }
+  ternary(is_considered, lengths, procedural::uniform(0), lengths);
+  unlayered::SeedBasedFloodFillState<int,float> state3 (int(order.max_id(lengths)), int(vertex_gradient.size()));
+  for (int i = 0; i < 20; ++i)
+  {
+    fill3.advance(coarse, vertex_gradient, is_considered, state3);
+  }
+  ternary(is_considered, lengths, procedural::uniform(0), lengths);
 
-  iterated::Ternary ternary{};
   iterated::Bitset bitset{adapted::BooleanBitset{}};
   unlayered::Morphology morphology{bitset};
-  iterated::Metric metric{adapted::GlmMetric{}};
 
   // dilation
   copy(similar_plate_id, dilated_plate_id);
@@ -278,7 +285,7 @@ int main() {
 
     std::vector<vec3>plate_seeds(8,vec3(0,0,0));
     stats3.sum(nearest_plate_id, coarse_vertex_positions, plate_seeds);
-    metric.normalize(plate_seeds, plate_seeds);
+    metric3.normalize(plate_seeds, plate_seeds);
     orders.equal(similar_plate_id, procedural::uniform(0), is_undecided);
     voronoi(coarse_vertex_positions, plate_seeds, nearest_plate_id);
     ternary(is_undecided, nearest_plate_id, similar_plate_id, nearest_plate_id);
@@ -357,7 +364,7 @@ int main() {
       vectors_element_position);
   copy          (known::mult(coarse_vertex_positions, procedural::uniform(1+pyramid_halflength/coarse.total_radius())),  vectors_instance_position);
   copy          (coarse_vertex_normals, vectors_instance_up);
-  metric.length (vertex_gradient,   vectors_instance_scale);
+  metric3.length (vertex_gradient,   vectors_instance_scale);
   arithmetic.divide(vectors_instance_scale, procedural::uniform(whole::max(vectors_instance_scale)), vectors_instance_scale);
 
   int frame_id(0);
@@ -367,20 +374,14 @@ int main() {
 
       if (frame_id == 0)
       {
-        fill.advance(coarse, vertex_gradient, is_considered, state);
-        copy(state.is_included, buffer_scalars1);
+        fill1.advance(coarse, vertex_gradient, is_considered, state1);
+        fill2.advance(coarse, vertex_gradient, is_considered, state2);
+        fill3.advance(coarse, vertex_gradient, is_considered, state3);
+        ternary(state1.is_included, procedural::uniform(1), buffer_scalars1, buffer_scalars1);
+        ternary(state2.is_included, procedural::uniform(2), buffer_scalars1, buffer_scalars1);
+        ternary(state3.is_included, procedural::uniform(3), buffer_scalars1, buffer_scalars1);
       }
-      else if (frame_id == 10)
-      {
-        fill.advance(coarse, vertex_gradient, is_considered, state);
-        copy(state.is_included, buffer_scalars1);
-      }
-      else if (frame_id == 20)
-      {
-        fill.advance(coarse, vertex_gradient, is_considered, state);
-        copy(state.is_included, buffer_scalars1);
-      }
-      frame_id = (frame_id+1)%30;
+      frame_id = (frame_id+1)%10;
 
       colorscale_state.max_color_value = whole::max(buffer_scalars1);
       colorscale_state.min_color_value = whole::min(buffer_scalars1);
