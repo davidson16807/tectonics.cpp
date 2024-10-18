@@ -173,6 +173,7 @@ int main() {
   std::cout << average_separation << std::endl;
 
   auto is_similar = [&sum, &count, average_separation](auto A, auto U, auto O, auto V) { 
+      return math::similarity (U,V) > std::cos(M_PI * 45.0f/180.0f);
       /* 
       We return true if fracture does not occur.
       We start with the assumption that microfractures are sufficiently common 
@@ -213,7 +214,7 @@ int main() {
       // count += 1.0f;
       // sum += glm::distance(A+U,B+V) - glm::distance(A,B);
       // return math::similarity(U,B-A) <= 0.5 && (glm::distance(A+U,B+V) - glm::distance(A,B)) < 7500.0f;
-      return true;
+      // return true;
       // auto B = A + average_separation*glm::normalize(O-A);
       // if (glm::distance(B,A) > 0.0001)
       // {
