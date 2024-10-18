@@ -167,7 +167,7 @@ int main() {
   aggregated::Order order3{adapted::MetricOrder{adapted::GlmMetric{}}};
 
   unlayered::VectorCalculusByFundamentalTheorem calculus;
-  
+
   float sum(0);
   float count(0);
   float average_separation(radius*3.1415926535/coarse.vertices_per_meridian());
@@ -227,9 +227,7 @@ int main() {
       // return std::isnan(displacement) || (displacement < 1.2e5f);
   };
 
-  auto fill1 = unlayered::seed_based_flood_filling<int,float>(is_similar);
-  auto fill2 = unlayered::seed_based_flood_filling<int,float>(is_similar);
-  auto fill3 = unlayered::seed_based_flood_filling<int,float>(is_similar);
+  auto fill = unlayered::seed_based_flood_filling<int,float>(is_similar);
 
   std::uint8_t plate_count(8);
   iterated::Ternary ternary{};
@@ -243,19 +241,19 @@ int main() {
   unlayered::SeedBasedFloodFillState<int,float> state1 (int(order.max_id(lengths)), int(vertex_gradient.size()));
   for (int i = 0; i < 20; ++i)
   {
-    fill1.advance(coarse, vertex_gradient, is_considered, state1);
+    fill.advance(coarse, vertex_gradient, is_considered, state1);
   }
   ternary(is_considered, lengths, procedural::uniform(0), lengths);
   unlayered::SeedBasedFloodFillState<int,float> state2 (int(order.max_id(lengths)), int(vertex_gradient.size()));
   for (int i = 0; i < 20; ++i)
   {
-    fill2.advance(coarse, vertex_gradient, is_considered, state2);
+    fill.advance(coarse, vertex_gradient, is_considered, state2);
   }
   ternary(is_considered, lengths, procedural::uniform(0), lengths);
   unlayered::SeedBasedFloodFillState<int,float> state3 (int(order.max_id(lengths)), int(vertex_gradient.size()));
   for (int i = 0; i < 20; ++i)
   {
-    fill3.advance(coarse, vertex_gradient, is_considered, state3);
+    fill.advance(coarse, vertex_gradient, is_considered, state3);
   }
   ternary(is_considered, lengths, procedural::uniform(0), lengths);
 
@@ -376,9 +374,9 @@ int main() {
 
       if (frame_id == 0)
       {
-        fill1.advance(coarse, vertex_gradient, is_considered, state1);
-        fill2.advance(coarse, vertex_gradient, is_considered, state2);
-        fill3.advance(coarse, vertex_gradient, is_considered, state3);
+        fill.advance(coarse, vertex_gradient, is_considered, state1);
+        fill.advance(coarse, vertex_gradient, is_considered, state2);
+        fill.advance(coarse, vertex_gradient, is_considered, state3);
         ternary(state1.is_included, procedural::uniform(1), buffer_scalars1, buffer_scalars1);
         ternary(state2.is_included, procedural::uniform(2), buffer_scalars1, buffer_scalars1);
         ternary(state3.is_included, procedural::uniform(3), buffer_scalars1, buffer_scalars1);
