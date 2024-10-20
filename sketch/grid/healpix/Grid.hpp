@@ -66,16 +66,16 @@ namespace healpix
 			return voronoi.grid_id(vertex_id).square_id;
 		}
 
-		constexpr id arrow_offset_memory_id(const ivec2 arrow_offset_grid_position) const
+		constexpr id arrow_offset_id(const ivec2 arrow_offset_grid_position) const
 		{
 			return 	((arrow_offset_grid_position.x + arrow_offset_grid_position.y < 0) << 1)
 				+	(std::abs(arrow_offset_grid_position.y) > std::abs(arrow_offset_grid_position.x));
 		}
 
-		constexpr ivec2 arrow_offset_grid_position(const id arrow_offset_memory_id) const
+		constexpr ivec2 arrow_offset_grid_position(const id arrow_offset_id) const
 		{
-			return 	((arrow_offset_memory_id >> 1)? -1 : 1) 
-				* 	((arrow_offset_memory_id & 1)? ivec2(0,1) : ivec2(1,0));
+			return 	((arrow_offset_id >> 1)? -1 : 1) 
+				* 	((arrow_offset_id & 1)? ivec2(0,1) : ivec2(1,0));
 		}
 
 		inline constexpr scalar total_radius() const 

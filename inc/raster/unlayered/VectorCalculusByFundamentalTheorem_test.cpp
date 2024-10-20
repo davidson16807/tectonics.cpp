@@ -195,7 +195,6 @@ std::vector vector_rasters{
 
 
 
-
 TEST_CASE( "Raster gradient", "[unlayered]" ) {
     dymaxion::Adapter strict(calculus_fine, 1e-5, calculus_fine.vertex_count());
     dymaxion::VertexNormals vertex_normals(calculus_fine);
@@ -209,7 +208,7 @@ TEST_CASE( "Raster gradient", "[unlayered]" ) {
         scalar_rasters
     ));
 
-    REQUIRE(test::composition(dymaxion::Adapter(calculus_fine, 0.1, calculus_fine.vertex_count()), 
+    REQUIRE(test::composition(dymaxion::Adapter(calculus_fine, 0.003, calculus_fine.vertex_count()), 
         "dot with surface normal ", [=](auto gradient){ 
             std::vector<double> out(calculus_fine.vertex_count());
             geometric.dot(gradient, vertex_normals, out);
@@ -228,7 +227,7 @@ TEST_CASE( "Raster gradient", "[unlayered]" ) {
     ));
 
     // results here are promising
-    REQUIRE(test::equality(dymaxion::Adapter(calculus_fine, 3.0, calculus_fine.vertex_count()), 
+    REQUIRE(test::equality(dymaxion::Adapter(calculus_fine, 0.3, calculus_fine.vertex_count()), 
         "The gradient of a arithmetic must statsify a well known relationship",
         "∇(ab)     ", 
         [=](auto a, auto b){
@@ -278,7 +277,7 @@ TEST_CASE( "Raster divergence", "[unlayered]" ) {
     ));
 
     // results are fairly poor but have gotten better, the test here is only meant to track known error until our methods improve
-    REQUIRE(test::equality(dymaxion::Adapter(calculus_fine, 30.0, calculus_fine.vertex_count()), 
+    REQUIRE(test::equality(dymaxion::Adapter(calculus_fine, 3.0, calculus_fine.vertex_count()), 
         "The divergence of a vector must statsify a well known relationship",
         "∇⋅(aV)          ", 
         [=](auto a, auto V){
@@ -328,8 +327,8 @@ TEST_CASE( "Raster curl", "[unlayered]" ) {
         vector_rasters, vector_rasters
     ));
 
-    // results are bad, the test here is only meant to track known error until our methods improve
-    REQUIRE(test::equality(dymaxion::Adapter(calculus_fine, 1000.0, calculus_fine.vertex_count()), 
+    // results are fairly poor but getting better, the test here is only meant to track known error until our methods improve
+    REQUIRE(test::equality(dymaxion::Adapter(calculus_fine, 10.0, calculus_fine.vertex_count()), 
         "The curl of a vector must statsify a well known relationship",
         "∇⋅(aV)          ", 
         [=](auto a, auto V){
@@ -366,7 +365,7 @@ TEST_CASE( "Raster curl", "[unlayered]" ) {
     ));
 
     // results are promising
-    REQUIRE(test::composition(dymaxion::Adapter(calculus_fine, 3.0, calculus_fine.vertex_count()), 
+    REQUIRE(test::composition(dymaxion::Adapter(calculus_fine, 0.3, calculus_fine.vertex_count()), 
         "operators.curl    ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.curl),
         "operators.gradient", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.gradient),
         "the zero vector   ", [](auto a){ return procedural::uniform(glm::dvec3(0.0)); }, 
@@ -476,8 +475,8 @@ TEST_CASE( "Scalar Raster laplacian", "[unlayered]" ) {
         scalar_rasters, scalar_rasters
     ));
 
-    // results are bad, the test here is only meant to track known error until our methods improve
-    REQUIRE(test::composition(dymaxion::Adapter(calculus_fine, 100.0, calculus_fine.vertex_count()), 
+    // results here are fairly good
+    REQUIRE(test::composition(dymaxion::Adapter(calculus_fine, 0.3, calculus_fine.vertex_count()), 
         "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, operators.divergence),
         "operators.gradient",   DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.gradient),  
         "operators.laplacian",  DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, operators.laplacian), 
@@ -505,8 +504,8 @@ TEST_CASE( "Vector Raster laplacian", "[unlayered]" ) {
         vector_rasters, vector_rasters
     ));
 
-    // results here are bad, the test here is only meant to track known error until our methods improve
-    REQUIRE(test::composition(dymaxion::Adapter(calculus_fine, 3e3, calculus_fine.vertex_count()), 
+    // results are fairly poor but have gotten better, the test here is only meant to track known error until our methods improve
+    REQUIRE(test::composition(dymaxion::Adapter(calculus_fine, 10.0, calculus_fine.vertex_count()), 
         "operators.gradient  ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.gradient),  
         "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, operators.divergence),
         "operators.laplacian ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.laplacian), 

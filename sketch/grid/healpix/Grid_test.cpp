@@ -9,7 +9,7 @@
 
 #include "Grid.hpp"
 
-TEST_CASE( "Grid arrow_offset_memory_id() / arrow_offset_grid_position()", "[healpix]" ) {
+TEST_CASE( "Grid arrow_offset_id() / arrow_offset_grid_position()", "[healpix]" ) {
 
     double radius(2.0);
     int vertices_per_meridian(40);
@@ -34,7 +34,7 @@ TEST_CASE( "Grid arrow_offset_memory_id() / arrow_offset_grid_position()", "[hea
     healpix::Grid grid(radius, vertices_per_meridian);
 
     REQUIRE(test::determinism(precise,
-        "Grid.arrow_offset_memory_id(…)", TEST_UNARY(grid.arrow_offset_memory_id),
+        "Grid.arrow_offset_id(…)", TEST_UNARY(grid.arrow_offset_id),
         arrow_offset_grid_ids
     ));
 
@@ -44,14 +44,14 @@ TEST_CASE( "Grid arrow_offset_memory_id() / arrow_offset_grid_position()", "[hea
     ));
 
     REQUIRE(test::left_invertibility(precise,
-        "Grid.arrow_offset_memory_id(…)", TEST_UNARY(grid.arrow_offset_memory_id),
+        "Grid.arrow_offset_id(…)", TEST_UNARY(grid.arrow_offset_id),
         "Grid.arrow_offset_grid_position(…)",   TEST_UNARY(grid.arrow_offset_grid_position),
         arrow_offset_ids
     ));
 
     REQUIRE(test::left_invertibility(precise,
         "Grid.arrow_offset_grid_position(…)",   TEST_UNARY(grid.arrow_offset_grid_position),
-        "Grid.arrow_offset_memory_id(…)", TEST_UNARY(grid.arrow_offset_memory_id),
+        "Grid.arrow_offset_id(…)", TEST_UNARY(grid.arrow_offset_id),
         arrow_offset_grid_ids
     ));
 

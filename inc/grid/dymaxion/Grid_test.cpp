@@ -32,7 +32,7 @@ TEST_CASE( "Grid nearest_vertex_id() / vertex_position()", "[dymaxion]" ) {
 
 }
 
-TEST_CASE( "Grid arrow_offset_memory_id() / arrow_offset_grid_position()", "[dymaxion]" ) {
+TEST_CASE( "Grid arrow_offset_id() / arrow_offset_grid_position()", "[dymaxion]" ) {
 
     double radius(2.0);
     int vertices_per_square_side(40);
@@ -57,7 +57,7 @@ TEST_CASE( "Grid arrow_offset_memory_id() / arrow_offset_grid_position()", "[dym
     dymaxion::Grid grid(radius, vertices_per_square_side);
 
     REQUIRE(test::determinism(precise,
-        "Grid.arrow_offset_memory_id(…)", TEST_UNARY(grid.arrow_offset_memory_id),
+        "Grid.arrow_offset_id(…)", TEST_UNARY(grid.arrow_offset_id),
         arrow_offset_grid_ids
     ));
 
@@ -67,14 +67,14 @@ TEST_CASE( "Grid arrow_offset_memory_id() / arrow_offset_grid_position()", "[dym
     ));
 
     REQUIRE(test::left_invertibility(precise,
-        "Grid.arrow_offset_memory_id(…)",      TEST_UNARY(grid.arrow_offset_memory_id),
+        "Grid.arrow_offset_id(…)",      TEST_UNARY(grid.arrow_offset_id),
         "Grid.arrow_offset_grid_position(…)",  TEST_UNARY(grid.arrow_offset_grid_position),
         arrow_offset_ids
     ));
 
     REQUIRE(test::left_invertibility(precise,
         "Grid.arrow_offset_grid_position(…)", TEST_UNARY(grid.arrow_offset_grid_position),
-        "Grid.arrow_offset_memory_id(…)",     TEST_UNARY(grid.arrow_offset_memory_id),
+        "Grid.arrow_offset_id(…)",     TEST_UNARY(grid.arrow_offset_id),
         arrow_offset_grid_ids
     ));
 

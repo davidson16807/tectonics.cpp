@@ -17,7 +17,7 @@
 
 #include "Voronoi.hpp"
 
-#include "test_tools.cpp"
+#include "_test_tools.hpp"
 
 TEST_CASE( "Voronoi grid_position() / sphere_position()", "[dymaxion]" ) {
 

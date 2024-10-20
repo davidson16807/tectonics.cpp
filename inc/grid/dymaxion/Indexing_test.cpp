@@ -17,7 +17,7 @@
 
 #include "Indexing.hpp"
 
-#include "test_tools.cpp"
+#include "_test_tools.hpp"
 
 TEST_CASE( "Indexing grid_id() / memory_id()", "[dymaxion]" ) {
 

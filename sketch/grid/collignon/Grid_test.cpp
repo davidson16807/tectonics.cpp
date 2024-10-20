@@ -1,18 +1,18 @@
 #include "Grid.hpp"
 
-TEST_CASE( "Grid arrow_offset_memory_id()/arrow_offset_grid_position purity", "[collignon]" ) {
-    SECTION("Grid arrow_offset_memory_id()/arrow_offset_grid_position must be called repeatedly without changing the output"){
+TEST_CASE( "Grid arrow_offset_id()/arrow_offset_grid_position purity", "[collignon]" ) {
+    SECTION("Grid arrow_offset_id()/arrow_offset_grid_position must be called repeatedly without changing the output"){
         float radius(2.0f);
         int vertices_per_half_meridian(10);
         collignon::Grid grid(radius, vertices_per_half_meridian);
-        CHECK(grid.arrow_offset_memory_id(glm::ivec2(1,0)) == 
-              grid.arrow_offset_memory_id(glm::ivec2(1,0)));
-        CHECK(grid.arrow_offset_memory_id(glm::ivec2(0,1)) == 
-              grid.arrow_offset_memory_id(glm::ivec2(0,1)));
-        CHECK(grid.arrow_offset_memory_id(glm::ivec2(-1,0)) == 
-              grid.arrow_offset_memory_id(glm::ivec2(-1,0)));
-        CHECK(grid.arrow_offset_memory_id(glm::ivec2(0,-1)) == 
-              grid.arrow_offset_memory_id(glm::ivec2(0,-1)));
+        CHECK(grid.arrow_offset_id(glm::ivec2(1,0)) == 
+              grid.arrow_offset_id(glm::ivec2(1,0)));
+        CHECK(grid.arrow_offset_id(glm::ivec2(0,1)) == 
+              grid.arrow_offset_id(glm::ivec2(0,1)));
+        CHECK(grid.arrow_offset_id(glm::ivec2(-1,0)) == 
+              grid.arrow_offset_id(glm::ivec2(-1,0)));
+        CHECK(grid.arrow_offset_id(glm::ivec2(0,-1)) == 
+              grid.arrow_offset_id(glm::ivec2(0,-1)));
         for(int i = 0; i < grid.arrows_per_vertex; ++i){
             CHECK(grid.arrow_offset_grid_position(i) == 
                   grid.arrow_offset_grid_position(i));
@@ -20,13 +20,13 @@ TEST_CASE( "Grid arrow_offset_memory_id()/arrow_offset_grid_position purity", "[
     }
 }
 
-TEST_CASE( "Grid arrow_offset_memory_id() / arrow_offset_grid_position() invertibility", "[collignon]" ) {
-    SECTION("Grid arrow_offset_memory_id() / arrow_offset_grid_position() must reconstruct input passed to interleaved_id() for any input"){
+TEST_CASE( "Grid arrow_offset_id() / arrow_offset_grid_position() invertibility", "[collignon]" ) {
+    SECTION("Grid arrow_offset_id() / arrow_offset_grid_position() must reconstruct input passed to interleaved_id() for any input"){
         float radius(2.0f);
         int vertices_per_half_meridian(10);
         collignon::Grid grid(radius, vertices_per_half_meridian);
         for(int memory_id = 0; memory_id < grid.arrows_per_vertex; memory_id+=1){
-            CHECK( grid.arrow_offset_memory_id( grid.arrow_offset_grid_position(memory_id)) == memory_id );
+            CHECK( grid.arrow_offset_id( grid.arrow_offset_grid_position(memory_id)) == memory_id );
         }
     }
 }

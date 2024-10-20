@@ -14,7 +14,7 @@
 #include <test/properties.hpp>
 #include "Projection.hpp"
 
-#include "test_tools.cpp"
+#include "_test_tools.hpp"
 
 TEST_CASE( "Projection.sphere_position() / Projection.grid_id()", "[dymaxion]" ) {
     DymaxionAdapter adapter;

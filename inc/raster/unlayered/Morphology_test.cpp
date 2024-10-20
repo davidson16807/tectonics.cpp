@@ -212,16 +212,16 @@ TEST_CASE( "Boolean Raster opening", "[unlayered]" ) {
         boolean_rasters
     ));
 
-    // REQUIRE(test::nonincreasing(strict, 
-    //     "morphology.opening", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, morphology_fine, morphology.opening),
-    //     "the sum",           [=](auto a){return stats.sum(a);},
-    //     boolean_rasters
-    // ));
+    REQUIRE(test::nonincreasing(strict, 
+        "morphology.opening", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, morphology_fine, morphology.opening),
+        "the sum",           [=](auto a){return stats.sum(a);},
+        boolean_rasters
+    ));
 
-    // REQUIRE(test::unary_idempotence(strict, 
-    //     "morphology.opening", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, morphology_fine, morphology.opening),
-    //     boolean_rasters
-    // ));
+    REQUIRE(test::unary_idempotence(strict, 
+        "morphology.opening", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, morphology_fine, morphology.opening),
+        boolean_rasters
+    ));
 
 }
 
@@ -235,16 +235,16 @@ TEST_CASE( "Boolean Raster closing", "[unlayered]" ) {
         boolean_rasters
     ));
 
-    // REQUIRE(test::nondecreasing(strict, 
-    //     "morphology.closing", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, morphology_fine, morphology.closing),
-    //     "the sum",           [=](auto a){return stats.sum(a);},
-    //     boolean_rasters
-    // ));
+    REQUIRE(test::nondecreasing(strict, 
+        "morphology.closing", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, morphology_fine, morphology.closing),
+        "the sum",           [=](auto a){return stats.sum(a);},
+        boolean_rasters
+    ));
 
-    // REQUIRE(test::unary_idempotence(strict, 
-    //     "morphology.closing", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, morphology_fine, morphology.closing),
-    //     boolean_rasters
-    // ));
+    REQUIRE(test::unary_idempotence(strict, 
+        "morphology.closing", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, morphology_fine, morphology.closing),
+        boolean_rasters
+    ));
 
 }
 
