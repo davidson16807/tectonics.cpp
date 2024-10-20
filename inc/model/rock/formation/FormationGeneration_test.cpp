@@ -145,7 +145,8 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
         rock::AgedStratumDensity{densities_for_age, age_of_world},
         mass(si::tonne)
       ), 
-      grid
+      grid,
+      radius
     );
 
     iterated::Unary displacements_for_formation_summary(

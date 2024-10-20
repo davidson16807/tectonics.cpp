@@ -143,7 +143,8 @@ TEST_CASE( "CrustOps::flatten()/CrustSummarization() mass conservation", "[rock]
         rock::AgedStratumDensity{densities_for_age, age_of_world},
         mass(si::tonne)
       ), 
-      grid
+      grid,
+      radius
     );
     auto crust_summarize = rock::crust_summarization<M,F>(
       formation_summarize, 
