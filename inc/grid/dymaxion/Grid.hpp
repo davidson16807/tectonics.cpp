@@ -211,20 +211,23 @@ namespace dymaxion
 
 		constexpr scalar vertex_dual_area(const id vertex_id) const 
 		{
+			const scalar half(0.5);
 			const auto Oid(memory.grid_id(vertex_id));
 			const vec3 O(voronoi.sphere_position(Oid));
 			const auto A(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::residue(0, arrows_per_vertex)) ));
 			const auto B(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::residue(1, arrows_per_vertex)) ));
 			const auto C(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::residue(2, arrows_per_vertex)) ));
 			const auto D(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::residue(3, arrows_per_vertex)) ));
-			const auto AB(glm::normalize((A+B)/scalar(2))-O);
-			const auto BC(glm::normalize((B+C)/scalar(2))-O);
-			const auto CD(glm::normalize((C+D)/scalar(2))-O);
-			const auto DA(glm::normalize((D+A)/scalar(2))-O);
-			return (glm::length(glm::cross(AB, BC))
+			const auto AB(glm::normalize(A+B)*voronoi.radius-O);
+			const auto BC(glm::normalize(B+C)*voronoi.radius-O);
+			const auto CD(glm::normalize(C+D)*voronoi.radius-O);
+			const auto DA(glm::normalize(D+A)*voronoi.radius-O);
+			auto area = 
+			       (glm::length(glm::cross(AB, BC))
 				+ 	glm::length(glm::cross(BC, CD))
 				+ 	glm::length(glm::cross(CD, DA))
-				+ 	glm::length(glm::cross(DA, AB)))/2.0;
+				+ 	glm::length(glm::cross(DA, AB)))*half;
+			return area;
 		}
 
 		constexpr id nearest_vertex_id(const vec3 vertex_position) const
