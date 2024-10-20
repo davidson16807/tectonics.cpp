@@ -36,7 +36,7 @@ namespace rock{
     struct ColumnSummaryThickness
     {
         constexpr ColumnSummaryThickness(){}
-        inline auto operator()(const ColumnSummary& summary) const { return summary.area_density(); }
+        inline auto operator()(const ColumnSummary& summary) const { return summary.thickness(); }
     };
 
     struct ColumnSummaryDensity
@@ -55,21 +55,21 @@ namespace rock{
     {
         const int plate_id;
         constexpr ColumnSummaryIncludesPlate(const int plate_id): plate_id(plate_id){}
-        inline auto operator()(const ColumnSummary& summary) const { return summary.plate_count(); }
+        inline auto operator()(const ColumnSummary& summary) const { return summary.includes(plate_id); }
     };
 
     struct ColumnSummaryIsPlateOnTop
     {
         const int plate_id;
         constexpr ColumnSummaryIsPlateOnTop(const int plate_id): plate_id(plate_id){}
-        inline auto operator()(const ColumnSummary& summary) const { return summary.plate_count(); }
+        inline auto operator()(const ColumnSummary& summary) const { return summary.is_top(plate_id); }
     };
 
     struct ColumnSummaryIsPlateSubducted
     {
         const int plate_id;
         constexpr ColumnSummaryIsPlateSubducted(const int plate_id): plate_id(plate_id){}
-        inline auto operator()(const ColumnSummary& summary) const { return summary.plate_count(); }
+        inline auto operator()(const ColumnSummary& summary) const { return summary.is_subducted(plate_id); }
     };
 
 }

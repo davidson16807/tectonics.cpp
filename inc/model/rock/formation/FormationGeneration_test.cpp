@@ -174,7 +174,7 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
           {0.15,      0.15}) // based on estimate from Wikipedia
     };
 
-    rock::FormationGeneration igneous(grid, elevation_for_position, stratum_for_area_elevation);
+    rock::FormationGeneration igneous(grid, elevation_for_position, stratum_for_area_elevation, radius);
 
     rock::FormationSummary summary(grid.vertex_count());
     std::vector<length> actual_displacements(grid.vertex_count());

@@ -27,7 +27,7 @@ TEST_CASE( "FormationOps::absorb() commutative monoid", "[rock]" ) {
 
     int vertices_per_square_side(4);
     dymaxion::Grid grid(radius/meter, vertices_per_square_side);
-    rock::EarthlikeIgneousFormationGeneration generation(grid, radius/2.0f, 0.5f, 10);
+    rock::EarthlikeIgneousFormationGeneration generation(grid, radius/2.0f, 0.5f, 10, radius);
 
     iterated::Identity copy{};
     rock::Formation<M> formation1(grid.vertex_count());
@@ -110,7 +110,8 @@ TEST_CASE( "Formation combine() mass conservation", "[rock]" ) {
             hypsometry_cdfi_meters,
             field::ranked_fractal_brownian_noise<3>(10, 0.5f, 2.0f*meter/radius, 12.0f, 1.1e4f)
         ), 
-        stratum_for_area_elevation
+        stratum_for_area_elevation,
+        si::meter
     );
 
     const int M = 2;

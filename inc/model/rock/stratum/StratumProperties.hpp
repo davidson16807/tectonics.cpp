@@ -3,6 +3,7 @@
 // in house libraries
 #include <model/mix/rules.hpp>
 #include <model/rock/mineral/MineralProperties.hpp>
+#include <model/rock/stratum/StratumStore.hpp>
 
 namespace rock{
 

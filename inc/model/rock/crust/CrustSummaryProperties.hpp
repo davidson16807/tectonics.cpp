@@ -34,6 +34,12 @@ namespace rock {
         }
     };
 
+    template <typename ColumnSummaryProperty>
+    auto crust_summary_property(const ColumnSummaryProperty& property)
+    {
+        return CrustSummaryProperty<ColumnSummaryProperty>(property);
+    }
+
     /*
     `CrustSummaryMass`
     */

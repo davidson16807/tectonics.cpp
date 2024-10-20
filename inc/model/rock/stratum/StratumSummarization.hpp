@@ -9,6 +9,7 @@
 
 // in-house libraries
 #include <unit/si.hpp>
+#include <model/rock/stratum/StratumSummary.hpp>
 
 namespace rock
 {

@@ -18,7 +18,8 @@ namespace rock {
     template<
         typename Grid,
         typename ElevationForPosition,
-        typename StratumForAreaElevation>
+        typename StratumForAreaElevation,
+        typename length>
     class FormationGeneration {
 
         using id     = typename Grid::size_type;
@@ -29,17 +30,20 @@ namespace rock {
         const Grid                     grid;
         const ElevationForPosition     elevation_for_position;
         const StratumForAreaElevation  stratum_for_area_elevation;
+        const length radius_units;
 
     public:
 
         constexpr explicit FormationGeneration(
             const Grid&                    grid,
-            const ElevationForPosition     elevation_for_position, // scalars, may be any unit but must agree with other parameter functions
-            const StratumForAreaElevation& stratum_for_area_elevation
+            const ElevationForPosition&    elevation_for_position, 
+            const StratumForAreaElevation& stratum_for_area_elevation,
+            const length world_radius
         ):
             grid(grid),
             elevation_for_position(elevation_for_position),
-            stratum_for_area_elevation(stratum_for_area_elevation)
+            stratum_for_area_elevation(stratum_for_area_elevation),
+            radius_units(world_radius/grid.voronoi.radius)
         {}
 
         using size_type = std::size_t; 
@@ -49,7 +53,7 @@ namespace rock {
         auto operator[] (const id vertex_id) const
         {
             return stratum_for_area_elevation(
-                grid.vertex_dual_area(vertex_id) * si::meter2, 
+                grid.vertex_dual_area(vertex_id) * radius_units * radius_units,
                 elevation_for_position(grid.vertex_position(vertex_id))
             );
         }

@@ -24,19 +24,27 @@ namespace rock
         const length max_wavelength;
         const scalar hurst_exponent;
         const id octave_count;
+        const length world_radius;
 
     public:
-        EarthlikeIgneousFormationGeneration(const Grid& grid, const length max_wavelength, const scalar hurst_exponent, const id octave_count):
+        EarthlikeIgneousFormationGeneration(
+            const Grid& grid, 
+            const length max_wavelength, 
+            const scalar hurst_exponent, 
+            const id octave_count,
+            const length world_radius
+        ):
           grid(grid),
           max_wavelength(max_wavelength),
           hurst_exponent(hurst_exponent),
-          octave_count(octave_count)
+          octave_count(octave_count),
+          world_radius(world_radius)
         {}
 
         auto operator() (const scalar seed1, const scalar seed2) const
         {
 
-            length meter(si::meter);
+            length meter(1);
 
             scalar min_elevation(-16000.0f);
             scalar max_elevation( 16000.0f);
@@ -74,12 +82,14 @@ namespace rock
                 {0.15,      0.15}) // based on estimate from Wikipedia
             };
 
-            return rock::FormationGeneration(grid, 
+            return rock::FormationGeneration(
+                grid, 
                 field::compose(
                     hypsometry_cdfi_meters,
                     field::ranked_fractal_brownian_noise<3>(octave_count, hurst_exponent, meter/max_wavelength, seed1, seed2)
                 ), 
-                stratum_for_area_elevation
+                stratum_for_area_elevation,
+                world_radius
             );
 
         }
