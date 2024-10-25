@@ -15,10 +15,15 @@ namespace aggregated
 		const OrderAggregation aggregation;
 		const int line_char_width;
 	public:
-		Strings(const ElementStrings& strings, const OrderAggregation& aggregation, const int line_char_width = 80):
+		Strings(const ElementStrings& strings, const OrderAggregation& aggregation, const int line_char_width):
 			strings(strings),
 			aggregation(aggregation),
 			line_char_width(line_char_width)
+		{}
+		Strings(const ElementStrings& strings, const OrderAggregation& aggregation):
+			strings(strings),
+			aggregation(aggregation),
+			line_char_width(80)
 		{}
 
 		template <typename Series, typename T>

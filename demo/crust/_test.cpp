@@ -31,6 +31,7 @@
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
 #include <index/adapted/si/SiStrings.hpp>
 #include <index/aggregated/Order.hpp>
+#include <index/aggregated/Strings.hpp>
 #include <index/iterated/Nary.hpp>
 #include <index/iterated/Arithmetic.hpp>
 
@@ -123,9 +124,9 @@ int main() {
   density mantle_density(3000.0*si::kilogram/si::meter3);
   viscosity mantle_viscosity(1.57e20*si::pascal*si::second);
   int vertices_per_square_side(32);
+  dymaxion::Grid grid2(1024.0f, vertices_per_square_side);
   dymaxion::Grid grid(world_radius/meter, vertices_per_square_side);
-  dymaxion::VertexPositions vertex_positions(grid);
-  dymaxion::VertexNormals vertex_normals(grid);
+  dymaxion::VertexPositions vertex_positions(grid2);
 
   iterated::Identity copy;
 
@@ -138,7 +139,6 @@ int main() {
   rock::StratumStore<M> empty_stratum;
   rock::Formation<M> empty_formation(grid.vertex_count(), empty_stratum);
   rock::Formation<M> igneous_formation(grid.vertex_count());
-  // copy(generation(12.0f, 1.1e4f), igneous_formation);
   copy(generation, igneous_formation);
   rock::Crust<M,F> crust{empty_formation, empty_formation, empty_formation, igneous_formation, empty_formation};
 
@@ -147,7 +147,6 @@ int main() {
     relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2890.0, 3300.0}), // Carlson & Raskin 1984
     relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2600.0, 2600.0})
   };
-
 
   rock::CrustSummaryOps crust_summary_ops{
     rock::ColumnSummaryOps{
@@ -191,20 +190,22 @@ int main() {
   std::vector<float> vertex_scalars1(grid.vertex_count());
 
   int plate_id(1);
-  // crust_summarize(plate_id, crust, crust_summary, formation_summary);
-  // crust_summary_ops.flatten(crust_summary, formation_summary);
+  crust_summarize(plate_id, crust, crust_summary, formation_summary);
+  crust_summary_ops.flatten(crust_summary, formation_summary);
   formation_summarize(plate_id, igneous_formation, formation_summary);
   motion.buoyancy(formation_summary, buoyancy);
   displacements_for_formation_summary(formation_summary, actual_displacements);
 
-  iterated::Arithmetic arithmetic(adapted::SymbolicArithmetic(length(0),length(1)));
-  arithmetic.divide(actual_displacements, procedural::uniform(length(1)), vertex_scalars1);
-
   adapted::SymbolicOrder suborder;
   adapted::SiStrings substrings;
   aggregated::Order ordered(suborder);
-  auto strings = spheroidal::Strings(substrings, ordered);
-  std::cout << strings.format(grid, actual_displacements) << std::endl << std::endl;
+  auto ascii_art = spheroidal::Strings(substrings, ordered);
+  auto strings = aggregated::Strings(substrings, ordered, vertices_per_square_side);
+  std::cout << ascii_art.format(grid, actual_displacements) << std::endl << std::endl;
+  std::cout << strings.format(actual_displacements) << std::endl << std::endl;
+
+  iterated::Arithmetic arithmetic(adapted::SymbolicArithmetic(length(0),length(1)));
+  arithmetic.divide(actual_displacements, procedural::uniform(length(1)), vertex_scalars1);
 
   // flatten raster for OpenGL
   dymaxion::WholeGridBuffers<int,float> grids(vertices_per_square_side);
@@ -227,10 +228,13 @@ int main() {
   grids.storeTriangleStrips(procedural::range<unsigned int>(grid.vertex_count()), buffer_element_vertex_ids);
 
   // initialize control state
-  update::OrbitalControlState control_state;
-  control_state.min_zoom_distance = 1.0f;
-  control_state.log2_height = 2.5f;
-  control_state.angular_position = glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f;
+  update::OrbitalControlState control_state(
+      glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f, // angular_position
+      glm::vec2(0), // angular_direction
+      1024.0f,
+      // 3*world_radius/meter, // min_zoom_distance
+      11.0f // log2_height
+  );
   
   // initialize view state
   view::ViewState view_state;
@@ -244,7 +248,8 @@ int main() {
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);
   view::ColorscaleSurfacesViewState colorscale_state;
-  colorscale_state.max_color_value = whole::max(buffer_color_values);
+  colorscale_state.min_color_value = whole::min(vertex_scalars1);
+  colorscale_state.max_color_value = whole::max(vertex_scalars1);
   colorscale_state.darken_threshold = whole::mean(buffer_scalars2);
 
   // initialize shader program
@@ -263,11 +268,11 @@ int main() {
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
       colorscale_program.draw(
-        buffer_positions,    // position
-        vertex_scalars1, // color value
-        buffer_uniform,      // displacement
-        buffer_uniform,      // darken
-        buffer_uniform,      // culling
+        buffer_positions, // position
+        vertex_scalars1,  // color value
+        buffer_uniform,   // displacement
+        buffer_uniform,   // darken
+        buffer_uniform,   // culling
         buffer_element_vertex_ids,
         colorscale_state,
         view_state,
