@@ -230,7 +230,7 @@ int main() {
   auto fill = unlayered::seed_based_flood_filling<int,float>(is_similar);
 
   std::uint8_t plate_count(8);
-  iterated::Ternary ternary{};
+  iterated::Ternary ternary;
 
   calculus.gradient(coarse, coarse_elevation_meters, vertex_gradient);
 
