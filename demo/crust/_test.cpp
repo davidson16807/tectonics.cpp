@@ -114,7 +114,7 @@ int main() {
   using mass = si::mass<float>;
   using density = si::density<float>;
   using length = si::length<float>;
-  using force = si::force<float>;
+  // using force = si::force<float>;
   using pressure = si::pressure<float>;
   using viscosity = si::dynamic_viscosity<float>;
   using acceleration = si::acceleration<float>;
@@ -189,27 +189,26 @@ int main() {
 
   rock::CrustSummary crust_summary(grid.vertex_count());
   rock::FormationSummary formation_summary(grid.vertex_count());
-  std::vector<force> buoyancy(grid.vertex_count());
-  std::vector<pressure> actual_displacements(grid.vertex_count());
+  std::vector<pressure> buoyancy_pressure(grid.vertex_count());
   std::vector<float> vertex_scalars1(grid.vertex_count());
 
   int plate_id(1);
   crust_summarize(plate_id, crust, crust_summary, formation_summary);
   crust_summary_ops.flatten(crust_summary, formation_summary);
   formation_summarize(plate_id, igneous_formation, formation_summary);
-  motion.buoyancy(formation_summary, buoyancy);
-  displacements_for_formation_summary(formation_summary, actual_displacements);
+  motion.buoyancy(formation_summary, buoyancy_pressure);
+  // displacements_for_formation_summary(formation_summary, buoyancy_pressure);
 
   adapted::SymbolicOrder suborder;
   adapted::SiStrings substrings;
   aggregated::Order ordered(suborder);
   auto ascii_art = spheroidal::Strings(substrings, ordered);
   auto strings = aggregated::Strings(substrings, ordered, vertices_per_square_side);
-  std::cout << ascii_art.format(grid, actual_displacements) << std::endl << std::endl;
-  std::cout << strings.format(actual_displacements) << std::endl << std::endl;
+  std::cout << ascii_art.format(grid, buoyancy_pressure) << std::endl << std::endl;
+  std::cout << strings.format(buoyancy_pressure) << std::endl << std::endl;
 
   iterated::Arithmetic arithmetic(adapted::SymbolicArithmetic(pressure(0),pressure(1)));
-  arithmetic.divide(actual_displacements, procedural::uniform(pressure(1)), vertex_scalars1);
+  arithmetic.divide(buoyancy_pressure, procedural::uniform(pressure(1)), vertex_scalars1);
 
   // flatten raster for OpenGL
   dymaxion::WholeGridBuffers<int,float> grids(vertices_per_square_side);

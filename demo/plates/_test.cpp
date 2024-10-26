@@ -52,7 +52,7 @@
 
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
 #include <grid/dymaxion/series.hpp>                 // dymaxion::BufferVertexIds
-#include <grid/dymaxion/VertexDownsamplingIds.hpp>    // dymaxion::VertexDownsamplingIds
+#include <grid/dymaxion/VertexDownsamplingIds.hpp>  // dymaxion::VertexDownsamplingIds
 #include <grid/dymaxion/buffer/WholeGridBuffers.hpp>// dymaxion::WholeGridBuffers
 
 #include <raster/unlayered/VectorCalculusByFundamentalTheorem.hpp> // unlayered::VectorCalculusByFundamentalTheorem
@@ -115,9 +115,9 @@ int main() {
   /* OUR STUFF GOES HERE NEXT */
   using vec3 = glm::vec3;
   float radius(2.0f);
-  int fine_vertices_per_square_side(30);
-  dymaxion::Grid fine(radius, fine_vertices_per_square_side);
-  dymaxion::Grid coarse(radius, fine_vertices_per_square_side/2);
+  int vertices_per_fine_square_side(30);
+  dymaxion::Grid fine(radius, vertices_per_fine_square_side);
+  dymaxion::Grid coarse(radius, vertices_per_fine_square_side/2);
   dymaxion::VertexPositions fine_vertex_positions(fine);
   dymaxion::VertexPositions coarse_vertex_positions(coarse);
   dymaxion::VertexNormals coarse_vertex_normals(coarse);

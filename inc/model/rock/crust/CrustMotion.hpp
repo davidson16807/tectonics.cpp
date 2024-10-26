@@ -39,11 +39,15 @@ namespace rock {
     	using density           = si::density<double>;
     	using dynamic_viscosity = si::dynamic_viscosity<double>;
     	using force             = si::force<double>;
+    	using pressure          = si::pressure<double>;
     	using torque            = si::torque<double>;
     	using angular_momentum  = si::angular_momentum<double>;
 
     	using bools = std::vector<bool>;
     	using vec3s = std::vector<vec3>;
+
+    	using forces = std::vector<si::force<float>>;
+    	using pressures = std::vector<si::pressure<float>>;
 
     	static constexpr int lambda_sample_count = 1000;
     	static constexpr double pi = 3.1415926535897932384626433832795028841971;
@@ -74,75 +78,58 @@ namespace rock {
             radius_units(world_radius/grid.voronoi.radius)
         {}
 
+
+		void buoyancy(
+			const FormationSummary& summary,
+			pressures& buoyancy_pressure
+		) const {
+		    for (std::size_t i = 0; i < summary.size(); ++i)
+		    {
+	            auto density_difference = si::max(
+	                0.0*si::kilogram/si::meter3, 
+	                density(summary[i].density() - mantle_density)
+	            );
+	            buoyancy_pressure[i] = pressure(
+	                gravity * density_difference   // Δρ density difference
+	              * length(summary[i].thickness())    // V  volume
+	              // * grid.vertex_dual_area(i)
+	              // * radius_units * radius_units
+	            );
+		    }
+		}
+
 		/* 
-		`buoyancy_forces` calculates the buoyancy force, 
-		b=Δρgn̂V, for each cell in a `summary`.
+		`slab_pull` calculates the "slab pull" force, b=Δρgn̂V, for each cell in a `summary`.
+		Slab pull is treated as equal and perpendicular to the buoyancy force.
 		See CrustMotion.txt for more details.
 
 		TODO: See if it's possible to reuse this code for both 
 		spin angular velocity and orbital angular velocity.
 		*/
-		void buoyancy_forces(
-			const FormationSummary& summary,
+		void slab_pull(
+			const pressures& buoyancy_pressure,
 			const bools& exists,
-			const force  buoyancy_units,
-			vec3s& buoyancies
+			const force  slab_pull_units,
+			vec3s& slab_pull
 		) const {
-		    calculus.gradient(grid, exists, buoyancies);
-		    density density_difference;
-		    for (int i = 0; i < buoyancies.size(); ++i)
+		    calculus.gradient(grid, exists, slab_pull);
+		    for (std::size_t i = 0; i < slab_pull.size(); ++i)
 		    {
-		    	density_difference = si::max(
-		    		0.0*si::kilogram/si::meter3, 
-		    		density(summary[i].density() - mantle_density)
-	    		);
-		    	float magnitude = 
-		    		gravity * density_difference                 // Δρ density difference
-			      * length(summary[i].thickness()) * grid.vertex_area(i) // V  volume
-			      / buoyancy_units;
-		    	buoyancies[i] = 
-			    	!exists[i]? vec3(0) : 
-			    		magnitude * glm::normalize(-buoyancies[i]); // n̂  boundary normal
+		    	slab_pull[i] = // exists[i]? vec3(0) :
+		    		float(force(buoyancy_pressure[i] * grid.vertex_dual_area(i) * radius_units * radius_units)/slab_pull_units) * 
+		    		glm::normalize(-slab_pull[i]); // n̂  boundary normal
 		    }
 		}
 
-		/* 
-		`rigid_body_torque` calculates torque, τ=Σᴺr⃗×f⃗, acting on a crust 
-		assuming that crust is a rigid body submitted to `forces`.
-		See CrustMotion.txt for more details.
-		*/
-		glm::dvec3 rigid_body_torque(
-			const vec3s& forces,
-			const force  force_units,
-			const torque torque_units
-		) const {
-			glm::dvec3 result(0);
-		    for (int i = 0; i < forces.size(); ++i)
-		    {
-		    	result += glm::cross(grid.vertex_normal(i), forces[i]);
-		    }
-		    return result * (world_radius * force_units / torque_units);
-		}
 
 		void is_slab(
-			const vec3s& buoyancies,
+			const vec3s& slab_pull,
 			const bools& is_slab
 		) const {
-		    for (int i = 0; i < buoyancies.size(); ++i)
+		    for (std::size_t i = 0; i < slab_pull.size(); ++i)
 		    {
-		    	is_slab[i] = buoyancies[i].length() > 0.0f;
+		    	is_slab[i] = slab_pull[i].length() > 0.0f;
 		    }
-		}
-
-		int slab_cell_count(
-			const bools& is_slab
-		) const {
-		    int slab_cell_count;
-		    for (int i = 0; i < is_slab.size(); ++i)
-		    {
-		    	slab_cell_count += is_slab[i];
-		    }
-		    return slab_cell_count;
 		}
 
 		volume slab_volume(
@@ -150,12 +137,12 @@ namespace rock {
 			const bools& is_slab
 		) const {
 			volume slab_volume(0.0);
-			for (int i = 0; i < summary.size(); ++i)
+			for (std::size_t i = 0; i < summary.size(); ++i)
 			{
 				if(is_slab[i])
 				{
-					slab_volume += grid.vertex_dual_area(i) * summary[i].thickness() 
-						* radius_units * radius_units * radius_units;
+					slab_volume += summary[i].thickness() *
+						grid.vertex_dual_area(i) * radius_units * radius_units; 
 				}
 			}
 			return slab_volume;
@@ -166,15 +153,25 @@ namespace rock {
 			const bools& is_slab
 		) const {
 			area slab_area(0.0);
-			for (int i = 0; i < summary.size(); ++i)
+			for (std::size_t i = 0; i < summary.size(); ++i)
 			{
 				if(is_slab[i])
 				{
-					slab_area += grid.vertex_dual_area(i) 
-						* radius_units * radius_units;
+					slab_area += grid.vertex_dual_area(i) * radius_units * radius_units;
 				}
 			}
 			return slab_area;
+		}
+
+		int slab_cell_count(
+			const bools& is_slab
+		) const {
+		    int slab_cell_count;
+		    for (std::size_t i = 0; i < is_slab.size(); ++i)
+		    {
+		    	slab_cell_count += is_slab[i];
+		    }
+		    return slab_cell_count;
 		}
 
 		inline length slab_thickness(
@@ -198,6 +195,24 @@ namespace rock {
 			return slab_area/slab_length;
 		}
 
+		/* 
+		`rigid_body_torque` calculates torque, τ=Σᴺr⃗×f⃗, acting on a crust 
+		assuming that crust is a rigid body submitted to `forces`.
+		See CrustMotion.txt for more details.
+		*/
+		glm::dvec3 rigid_body_torque(
+			const vec3s& forces,
+			const force  force_units,
+			const torque torque_units
+		) const {
+			glm::dvec3 result(0);
+		    for (std::size_t i = 0; i < forces.size(); ++i)
+		    {
+		    	result += glm::cross(grid.vertex_normal(i), forces[i]);
+		    }
+		    return result * (world_radius * force_units / torque_units);
+		}
+
 		angular_momentum drag_per_angular_velocity(
 			const length slab_length,
 			const length slab_thickness,
@@ -214,7 +229,7 @@ namespace rock {
 			area dlambda(max_lambda/double(lambda_sample_count));
 			area lambda(0.0);
 			si::spatial_frequency<double> shape_factor;
-			for (int i = 0; i < lambda_sample_count; ++i)
+			for (std::size_t i = 0; i < lambda_sample_count; ++i)
 			{
 				lambda = max_lambda * double(i)/double(lambda_sample_count);
 				shape_factor += dlambda
