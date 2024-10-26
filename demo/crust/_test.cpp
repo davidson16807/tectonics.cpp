@@ -125,9 +125,8 @@ int main() {
   density mantle_density(3000.0*si::kilogram/si::meter3);
   viscosity mantle_viscosity(1.57e20*si::pascal*si::second);
   int vertices_per_square_side(32);
-  dymaxion::Grid grid2(1024.0f, vertices_per_square_side);
   dymaxion::Grid grid(world_radius/meter, vertices_per_square_side);
-  dymaxion::VertexPositions vertex_positions(grid2);
+  dymaxion::VertexPositions vertex_positions(grid);
 
   iterated::Identity copy;
 
@@ -232,13 +231,15 @@ int main() {
   copy(vertex_positions, buffer_positions);
   grids.storeTriangleStrips(procedural::range<unsigned int>(grid.vertex_count()), buffer_element_vertex_ids);
 
+  length procedural_terrain_far_distance(3e3*si::kilometer);
+  length planet_billboard_near_distance(1e7*si::kilometer); // ~10 * solar radius 
+
   // initialize control state
   update::OrbitalControlState control_state(
       glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f, // angular_position
       glm::vec2(0), // angular_direction
-      1024.0f,
-      // 3*world_radius/meter, // min_zoom_distance
-      11.0f // log2_height
+      (world_radius+procedural_terrain_far_distance)/meter, // min_zoom_distance
+      20.0f // log2_height
   );
   
   // initialize view state
@@ -246,7 +247,8 @@ int main() {
   view_state.projection_matrix = glm::perspective(
     3.14159f*45.0f/180.0f, 
     850.0f/640.0f, 
-    1e-3f, 1e16f
+    procedural_terrain_far_distance/meter,      // near plane distance
+    planet_billboard_near_distance/meter // far plane distance
   );
   view_state.view_matrix = control_state.get_view_matrix();
   // view_state.projection_type = view::ProjectionType::heads_up_display;
