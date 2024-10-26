@@ -20,6 +20,37 @@ namespace rock{
         }
     };
 
+    struct StratumSummaryBuoyancyPressure
+    {
+
+        using length            = si::length<double>;
+        using acceleration      = si::acceleration<double>;
+        using density           = si::density<double>;
+        using pressure          = si::pressure<double>;
+
+        const acceleration gravity;
+        const density mantle_density;
+
+        StratumSummaryBuoyancyPressure(
+            const acceleration gravity,
+            const density mantle_density
+        ):
+            gravity(gravity),
+            mantle_density(mantle_density)
+        {}
+        auto operator()(const StratumSummary& summary) const
+        {
+            auto density_difference = si::max(
+                0.0*si::kilogram/si::meter3, 
+                density(summary.density() - mantle_density)
+            );
+            return pressure(
+                gravity * density_difference   // Δρ density difference
+              * length(summary.thickness()) // V  volume
+            );
+        }
+    };
+
     struct StratumSummaryThickness
     {
         StratumSummaryThickness()

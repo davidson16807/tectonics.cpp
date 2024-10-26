@@ -115,6 +115,7 @@ int main() {
   using density = si::density<float>;
   using length = si::length<float>;
   using force = si::force<float>;
+  using pressure = si::pressure<float>;
   using viscosity = si::dynamic_viscosity<float>;
   using acceleration = si::acceleration<float>;
 
@@ -177,16 +178,20 @@ int main() {
       mantle_viscosity
   );
   iterated::Unary displacements_for_formation_summary(
-    // rock::StratumSummaryThickness{}
-    rock::StratumSummaryIsostaticDisplacement{
-      density(3300.0*si::kilogram/si::meter3)
+    rock::StratumSummaryBuoyancyPressure{
+      acceleration(si::standard_gravity), 
+      mantle_density, 
     }
+    // rock::StratumSummaryThickness{}
+    // rock::StratumSummaryIsostaticDisplacement{
+    //   density(3300.0*si::kilogram/si::meter3)
+    // }
   );
 
   rock::CrustSummary crust_summary(grid.vertex_count());
   rock::FormationSummary formation_summary(grid.vertex_count());
   std::vector<force> buoyancy(grid.vertex_count());
-  std::vector<length> actual_displacements(grid.vertex_count());
+  std::vector<pressure> actual_displacements(grid.vertex_count());
   std::vector<float> vertex_scalars1(grid.vertex_count());
 
   int plate_id(1);
@@ -204,8 +209,8 @@ int main() {
   std::cout << ascii_art.format(grid, actual_displacements) << std::endl << std::endl;
   std::cout << strings.format(actual_displacements) << std::endl << std::endl;
 
-  iterated::Arithmetic arithmetic(adapted::SymbolicArithmetic(length(0),length(1)));
-  arithmetic.divide(actual_displacements, procedural::uniform(length(1)), vertex_scalars1);
+  iterated::Arithmetic arithmetic(adapted::SymbolicArithmetic(pressure(0),pressure(1)));
+  arithmetic.divide(actual_displacements, procedural::uniform(pressure(1)), vertex_scalars1);
 
   // flatten raster for OpenGL
   dymaxion::WholeGridBuffers<int,float> grids(vertices_per_square_side);
