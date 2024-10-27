@@ -31,9 +31,11 @@
 #include <index/adapted/symbolic/SymbolicArithmetic.hpp>
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
 #include <index/adapted/si/SiStrings.hpp>
+#include <index/adapted/glm/GlmMetric.hpp>
 #include <index/aggregated/Order.hpp>
 #include <index/aggregated/Strings.hpp>
 #include <index/iterated/Nary.hpp>
+#include <index/iterated/Metric.hpp>
 #include <index/iterated/Arithmetic.hpp>
 #include <index/grouped/Statistics.hpp>
 
@@ -121,13 +123,15 @@ int main() {
   using viscosity = si::dynamic_viscosity<float>;
   using acceleration = si::acceleration<float>;
 
+  using vec3 = glm::vec3;
+
   length meter(si::meter);
 
   length world_radius(6.371e6 * si::meter);
   density mantle_density(3000.0*si::kilogram/si::meter3);
   viscosity mantle_viscosity(1.57e20*si::pascal*si::second);
   int vertices_per_fine_square_side(30);
-  int vertices_per_coarse_square_side(vertices_per_fine_square_side/3);
+  int vertices_per_coarse_square_side(vertices_per_fine_square_side/2);
   dymaxion::Grid fine(world_radius/meter, vertices_per_fine_square_side);
   dymaxion::Grid coarse(world_radius/meter, vertices_per_coarse_square_side);
   dymaxion::VertexPositions fine_vertex_positions(fine);
@@ -175,7 +179,7 @@ int main() {
     formation_summarize, 
     crust_summary_ops
   );
-  // unlayered::VectorCalculusByFundamentalTheorem calculus;
+  unlayered::VectorCalculusByFundamentalTheorem calculus;
   // auto motion = rock::crust_motion<M>(
   //     calculus, fine, 
   //     world_radius, 
@@ -215,16 +219,21 @@ int main() {
   std::vector<float> scalar_buoyancy_pressure(coarse.vertex_count());
   stats.sum(vertex_downsampling_ids, fine_buoyancy_pressure, coarse_buoyancy_pressure);
   arithmetic.divide(coarse_buoyancy_pressure, procedural::uniform(std::pow(float(vertex_downsampling_ids.factor), 2.0f)), coarse_buoyancy_pressure);
+  arithmetic.divide(coarse_buoyancy_pressure, procedural::uniform(pressure(1)), vertex_scalars1);
+
+  iterated::Metric metric3{adapted::GlmMetric{}};
+
+  std::vector<vec3> vertex_gradient(coarse.vertex_count());
+  calculus.gradient(coarse, vertex_scalars1, vertex_gradient);
 
   adapted::SymbolicOrder suborder;
   adapted::SiStrings substrings;
   aggregated::Order ordered(suborder);
   auto ascii_art = spheroidal::Strings(substrings, ordered);
-  auto strings = aggregated::Strings(substrings, ordered, vertices_per_fine_square_side);
+  // auto strings = aggregated::Strings(substrings, ordered, vertices_per_fine_square_side);
   std::cout << ascii_art.format(fine, fine_buoyancy_pressure) << std::endl << std::endl;
-  std::cout << strings.format(fine_buoyancy_pressure) << std::endl << std::endl;
+  // std::cout << strings.format(fine_buoyancy_pressure) << std::endl << std::endl;
 
-  arithmetic.divide(coarse_buoyancy_pressure, procedural::uniform(pressure(1)), vertex_scalars1);
 
   // flatten raster for OpenGL
   dymaxion::WholeGridBuffers<int,float> grids(vertices_per_coarse_square_side);
@@ -254,7 +263,7 @@ int main() {
       glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f, // angular_position
       glm::vec2(0), // angular_direction
       (world_radius+procedural_terrain_far_distance)/meter, // min_zoom_distance
-      20.0f // log2_height
+      23.0f // log2_height
   );
   
   // initialize view state
@@ -277,6 +286,7 @@ int main() {
   // initialize shader program
   view::ColorscaleSurfaceShaderProgram colorscale_program;  
   view::MultichannelSurfaceShaderProgram debug_program;
+  view::IndicatorSwarmShaderProgram indicator_program;  
 
   // initialize MessageQueue for MVU architecture
   messages::MessageQueue message_queue;
@@ -284,6 +294,25 @@ int main() {
 
   std::cout << whole::min(vertex_scalars1) << std::endl;
   std::cout << whole::max(vertex_scalars1) << std::endl;
+
+  // flatten vector raster for OpenGL
+  buffer::PyramidBuffers<int, float> pyramids;
+  std::vector<glm::vec3> vectors_element_position(pyramids.triangles_size<3>(3));
+  std::vector<glm::vec3> vectors_instance_position(coarse.vertex_count());
+  std::vector<glm::vec4> vectors_instance_color(coarse.vertex_count(), glm::vec4(1.0f));
+  std::vector<glm::vec3> vectors_instance_up(coarse.vertex_count());
+  std::vector<float> vectors_instance_scale(coarse.vertex_count());
+  float pyramid_radius(coarse.total_circumference()/(8.0*coarse.vertices_per_meridian()));
+  float pyramid_halflength(2.5f*pyramid_radius);
+  pyramids.storeTriangles(
+      glm::vec3(0,0,-1) * pyramid_halflength, 
+      glm::vec3(0,0, 1) * pyramid_halflength, 
+      glm::vec3(1,0, 0),  pyramid_radius, 3, 
+      vectors_element_position);
+  copy          (known::mult(coarse_vertex_positions, procedural::uniform(1+pyramid_halflength/coarse.total_radius())),  vectors_instance_position);
+  copy          (coarse_vertex_normals, vectors_instance_up);
+  metric3.length (vertex_gradient,   vectors_instance_scale);
+  arithmetic.divide(vectors_instance_scale, procedural::uniform(whole::max(vectors_instance_scale)), vectors_instance_scale);
 
   while(!glfwWindowShouldClose(window)) {
       // wipe drawing surface clear
@@ -299,6 +328,17 @@ int main() {
         colorscale_state,
         view_state,
         GL_TRIANGLE_STRIP
+      );
+
+      indicator_program.draw(
+        vectors_element_position,
+        vectors_instance_position,
+        vertex_gradient,
+        vectors_instance_up,
+        vectors_instance_scale,
+        vectors_instance_color,
+        view_state,
+        GL_TRIANGLES
       );
 
       // put stuff we've been drawing onto the display
