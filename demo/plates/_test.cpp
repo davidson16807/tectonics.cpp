@@ -28,20 +28,18 @@
 #include <index/procedural/noise/glm/UnitVectorNoise.hpp>
 #include <index/procedural/noise/GaussianNoise.hpp>
 #include <index/adapted/symbolic/TypedSymbolicArithmetic.hpp>
+#include <index/adapted/symbolic/SymbolicArithmetic.hpp>
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
-#include <index/adapted/scalar/ScalarClosedForm.hpp>
-#include <index/adapted/scalar/ScalarStrings.hpp>
-#include <index/adapted/scalar/IdStrings.hpp>
-#include <index/adapted/glm/GlmStrings.hpp>
-#include <index/adapted/glm/GlmMetric.hpp>
 #include <index/adapted/boolean/BooleanBitset.hpp>
-#include <index/adapted/metric/MetricOrder.hpp>
+#include <index/adapted/si/SiStrings.hpp>
+#include <index/adapted/glm/GlmMetric.hpp>
 #include <index/aggregated/Order.hpp>
-#include <index/grouped/Statistics.hpp>
+#include <index/aggregated/Strings.hpp>
 #include <index/iterated/Nary.hpp>
+#include <index/iterated/Metric.hpp>
 #include <index/iterated/Arithmetic.hpp>
 #include <index/iterated/Bitset.hpp>
-#include <index/iterated/Order.hpp>
+#include <index/grouped/Statistics.hpp>
 
 #include <field/Compose.hpp>                        // Compose
 #include <field/noise/RankedFractalBrownianNoise.hpp> // dymaxion::RankedFractalBrownianNoise
@@ -56,14 +54,23 @@
 #include <grid/dymaxion/buffer/WholeGridBuffers.hpp>// dymaxion::WholeGridBuffers
 
 #include <raster/unlayered/VectorCalculusByFundamentalTheorem.hpp> // unlayered::VectorCalculusByFundamentalTheorem
-#include <raster/unlayered/Morphology.hpp>          // unlayered::Morphology
 #include <raster/unlayered/SeedBasedFloodFilling.hpp>     // unlayered::SeedBasedFloodFilling
 #include <raster/unlayered/NeighborBasedFloodFilling.hpp> // unlayered::NeighborBasedFloodFilling
-#include <raster/unlayered/Voronoi.hpp>             // unlayered::Voronoi
-#include <raster/unlayered/ImageSegmentation.hpp>   // unlayered::ImageSegmentation
 #include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
+#include <raster/unlayered/Morphology.hpp>          // unlayered::Morphology
 
-// #include <model/rock/stratum/StratumGenerator.hpp>  // StratumGenerator
+#include <model/rock/estimated/EarthlikeIgneousFormationGeneration.hpp>
+#include <model/rock/column/ColumnSummaryProperties.hpp>  // ColumnProperties
+#include <model/rock/stratum/StratumProperties.hpp>  // StratumProperties
+#include <model/rock/stratum/StratumSummarization.hpp>  // StratumSummarization
+#include <model/rock/stratum/StratumSummaryProperties.hpp>  // StratumSummaryIsostaticDisplacement
+#include <model/rock/formation/Formation.hpp>       // Formation
+#include <model/rock/formation/FormationSummarization.hpp>  // FormationSummarization
+#include <model/rock/crust/Crust.hpp>  // Crust
+#include <model/rock/crust/CrustSummarization.hpp>  // CrustSummarization
+#include <model/rock/crust/CrustSummaryOps.hpp>  // CrustSummaryOps
+#include <model/rock/crust/CrustSummaryProperties.hpp>  // CrustProperties
+#include <model/rock/crust/CrustMotion.hpp>         // CrustMotion
 
 #include <update/OrbitalControlState.hpp>           // update::OrbitalControlState
 #include <update/OrbitalControlUpdater.hpp>         // update::OrbitalControlUpdater
@@ -85,7 +92,7 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // we don't want the old OpenGL
 
   // open a window
-  GLFWwindow* window = glfwCreateWindow(1133, 850, "Hello Downsample", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Terrain", NULL, NULL);
   if (!window) {
     std::cout << stderr << " ERROR: could not open window with GLFW3" << std::endl;
     glfwTerminate();
@@ -113,67 +120,121 @@ int main() {
   glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
   /* OUR STUFF GOES HERE NEXT */
+
+  using mass = si::mass<float>;
+  using density = si::density<float>;
+  using length = si::length<float>;
+  using pressure = si::pressure<float>;
+  using viscosity = si::dynamic_viscosity<float>;
+  using acceleration = si::acceleration<float>;
+
   using vec3 = glm::vec3;
-  float radius(2.0f);
+
+  length meter(si::meter);
+
+  length world_radius(6.371e6 * si::meter);
+  density mantle_density(3000.0*si::kilogram/si::meter3);
+  viscosity mantle_viscosity(1.57e20*si::pascal*si::second);
   int vertices_per_fine_square_side(30);
-  dymaxion::Grid fine(radius, vertices_per_fine_square_side);
-  dymaxion::Grid coarse(radius, vertices_per_fine_square_side/2);
+  int vertices_per_coarse_square_side(vertices_per_fine_square_side/2);
+  dymaxion::Grid fine(world_radius/meter, vertices_per_fine_square_side);
+  dymaxion::Grid coarse(world_radius/meter, vertices_per_coarse_square_side);
   dymaxion::VertexPositions fine_vertex_positions(fine);
   dymaxion::VertexPositions coarse_vertex_positions(coarse);
   dymaxion::VertexNormals coarse_vertex_normals(coarse);
   dymaxion::VertexDownsamplingIds vertex_downsampling_ids(fine.memory, coarse.memory);
 
-  float min_elevation(-16000.0f);
-  float max_elevation( 16000.0f);
-
   iterated::Identity copy;
-  iterated::Arithmetic arithmetic{adapted::TypedSymbolicArithmetic<float>(0.0f, 1.0f)};
-  grouped::Statistics stats{adapted::TypedSymbolicArithmetic<float>(0.0f, 1.0f)};
 
-  analytic::Sum<float,analytic::Gaussian<float>> hypsometry_pdf_unscaled {
-    analytic::Gaussian(-4019.0f, 1113.0f, 0.232f),
-    analytic::Gaussian(  797.0f, 1169.0f, 0.209f)
+  const int M(2);
+  const int F(5);
+
+  rock::EarthlikeIgneousFormationGeneration earthlike(fine, world_radius/2.0f, 0.5f, 10, world_radius);
+  auto generation = earthlike(12.0f, 1.1e4f);
+
+  rock::StratumStore<M> empty_stratum;
+  rock::Formation<M> empty_formation(fine.vertex_count(), empty_stratum);
+  rock::Formation<M> igneous_formation(fine.vertex_count());
+  copy(generation, igneous_formation);
+  rock::Crust<M,F> crust{empty_formation, empty_formation, empty_formation, igneous_formation, empty_formation};
+
+  auto age_of_world = 0.0f*si::megayear;
+  std::array<relation::PolynomialRailyardRelation<si::time<double>,si::density<double>,0,1>, 2> densities_for_age {
+    relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2890.0, 3300.0}), // Carlson & Raskin 1984
+    relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2600.0, 2600.0})
   };
-  auto hypsometry_cdf_unscaled = analytic::integral(hypsometry_pdf_unscaled);
-  // auto hypsometry_pdf_ddx = analytic::derivative(hypsometry_pdf_unscaled);
-  auto hypsometry_cdf_unscaled_range = hypsometry_cdf_unscaled(max_elevation) - hypsometry_cdf_unscaled(min_elevation);
-  auto hypsometry_cdf = hypsometry_cdf_unscaled / hypsometry_cdf_unscaled_range;
-  auto hypsometry_pdf = hypsometry_pdf_unscaled / hypsometry_cdf_unscaled_range;
-  auto hypsometry_cdfi = inspected::inverse_by_newtons_method(hypsometry_cdf, hypsometry_pdf, 0.5f, 30);
 
-  auto rfbm = field::ranked_fractal_brownian_noise<3>(10, 0.5f, 2.0f/radius, 12.0f, 1.1e4f);
+  rock::CrustSummaryOps crust_summary_ops{
+    rock::ColumnSummaryOps{
+      rock::StratumSummaryOps{density(3300.0*si::kilogram/si::meter3)}, 
+      length(si::centimeter)
+    }
+  };
 
-  auto elevation_meters_for_position = field::compose(hypsometry_cdfi, rfbm);
-  auto fine_elevation_meters = procedural::map(elevation_meters_for_position, fine_vertex_positions);
-  std::vector<vec3> vertex_gradient(coarse.vertex_count());
-  std::vector<float> scratch(coarse.vertex_count());
-  std::vector<bool> mask1(coarse.vertex_count());
-  std::vector<bool> mask2(coarse.vertex_count());
-  std::vector<bool> mask3(coarse.vertex_count());
-  std::vector<std::uint8_t> similar_plate_id(coarse.vertex_count());
-  std::vector<std::uint8_t> dilated_plate_id(coarse.vertex_count());
-  std::vector<std::uint8_t> nearest_plate_id(coarse.vertex_count());
-  std::vector<std::uint8_t> visible_plate_id(coarse.vertex_count());
-  std::vector<bool> is_undecided(coarse.vertex_count());
-  std::vector<bool> is_there(coarse.vertex_count());
+  auto formation_summarize = rock::formation_summarization<2>(
+    rock::stratum_summarization<2>(
+      rock::AgedStratumDensity{densities_for_age, age_of_world},
+      mass(si::tonne)
+    ), 
+    fine,
+    world_radius
+  );
 
-  std::vector<float> coarse_elevation_meters(coarse.vertex_count());
-  stats.sum(vertex_downsampling_ids, fine_elevation_meters, coarse_elevation_meters);
-  arithmetic.divide(coarse_elevation_meters, procedural::uniform(std::pow(float(vertex_downsampling_ids.factor), 2.0f)), coarse_elevation_meters);
+  auto crust_summarize = rock::crust_summarization<M,F>(
+    formation_summarize, 
+    crust_summary_ops
+  );
+  unlayered::VectorCalculusByFundamentalTheorem calculus;
+  // auto motion = rock::crust_motion<M>(
+  //     calculus, fine, 
+  //     world_radius, 
+  //     acceleration(si::standard_gravity), 
+  //     mantle_density, 
+  //     mantle_viscosity
+  // );
+
+  iterated::Unary buoyancy_pressure_for_formation_summary(
+    rock::StratumSummaryBuoyancyPressure{
+      acceleration(si::standard_gravity), 
+      mantle_density, 
+    }
+    // rock::StratumSummaryThickness{}
+    // rock::StratumSummaryIsostaticDisplacement{
+    //   density(3300.0*si::kilogram/si::meter3)
+    // }
+  );
+
+  grouped::Statistics stats{adapted::TypedSymbolicArithmetic<float>(0.0f, 1.0f)};
+  iterated::Arithmetic arithmetic{adapted::SymbolicArithmetic{}};
+
+  rock::CrustSummary crust_summary(fine.vertex_count());
+  rock::FormationSummary formation_summary(fine.vertex_count());
+  std::vector<pressure> fine_buoyancy_pressure(fine.vertex_count());
+
+  std::vector<pressure> coarse_buoyancy_pressure(coarse.vertex_count());
+  std::vector<float> vertex_scalars1(coarse.vertex_count());
+
+  int plate_id(1);
+  crust_summarize(plate_id, crust, crust_summary, formation_summary);
+  crust_summary_ops.flatten(crust_summary, formation_summary);
+  formation_summarize(plate_id, igneous_formation, formation_summary);
+  // motion.buoyancy(formation_summary, coarse_buoyancy_pressure);
+  buoyancy_pressure_for_formation_summary(formation_summary, fine_buoyancy_pressure);
+
+  std::vector<float> scalar_buoyancy_pressure(coarse.vertex_count());
+  stats.sum(vertex_downsampling_ids, fine_buoyancy_pressure, coarse_buoyancy_pressure);
+  arithmetic.divide(coarse_buoyancy_pressure, procedural::uniform(std::pow(float(vertex_downsampling_ids.factor), 2.0f)), coarse_buoyancy_pressure);
+  arithmetic.divide(coarse_buoyancy_pressure, procedural::uniform(pressure(1)), vertex_scalars1);
 
   iterated::Metric metric3{adapted::GlmMetric{}};
-  iterated::Order orders{adapted::SymbolicOrder{}};
   aggregated::Order order(adapted::SymbolicOrder{});
-  aggregated::Order order3{adapted::MetricOrder{adapted::GlmMetric{}}};
 
-  unlayered::VectorCalculusByFundamentalTheorem calculus;
+  std::vector<vec3> vertex_gradient(coarse.vertex_count());
+  calculus.gradient(coarse, vertex_scalars1, vertex_gradient);
 
-  float sum(0);
-  float count(0);
-  float average_separation(radius*3.1415926535/coarse.vertices_per_meridian());
-  std::cout << average_separation << std::endl;
 
-  auto is_similar = [&sum, &count, average_separation](auto A, auto U, auto O, auto V) { 
+  float average_separation(world_radius/meter*3.1415926535/coarse.vertices_per_meridian());
+  auto is_similar = [average_separation](auto A, auto U, auto O, auto V) { 
       return math::similarity (U,V) > std::cos(M_PI * 45.0f/180.0f);
       /* 
       We return true if fracture does not occur.
@@ -227,14 +288,10 @@ int main() {
       // return std::isnan(displacement) || (displacement < 1.2e5f);
   };
 
-  auto fill = unlayered::seed_based_flood_filling<int,float>(is_similar);
-
-  std::uint8_t plate_count(8);
-  iterated::Ternary ternary;
-
-  calculus.gradient(coarse, coarse_elevation_meters, vertex_gradient);
 
   // segmentation
+  auto fill = unlayered::seed_based_flood_filling<int,float>(is_similar);
+  iterated::Ternary ternary;
   std::vector<float> lengths(vertex_gradient.size());
   metric3.length(vertex_gradient, lengths);
   std::vector<bool> is_considered(vertex_gradient.size(), true);
@@ -260,81 +317,63 @@ int main() {
   iterated::Bitset bitset{adapted::BooleanBitset{}};
   unlayered::Morphology morphology{bitset};
 
-  // dilation
-  copy(similar_plate_id, dilated_plate_id);
-  if(false){
-    for(std::uint8_t j(0); j < 2; ++j)
-    {
-      for (std::uint8_t i(0); i < plate_count; ++i)
-      {
-          orders.equal(similar_plate_id, procedural::uniform(i), is_there);
-          orders.equal(similar_plate_id, procedural::uniform(0), is_undecided);
-          morphology.dilate(coarse, is_there, mask1);
-          morphology.dilate(coarse, mask1, is_there);
-          bitset.intersect(is_undecided, is_there, is_there);
-          ternary(is_there, procedural::uniform(i), dilated_plate_id, dilated_plate_id);
-      }
-    }
-  }
+  adapted::SymbolicOrder suborder;
+  adapted::SiStrings substrings;
+  aggregated::Order ordered(suborder);
+  auto ascii_art = spheroidal::Strings(substrings, ordered);
+  // auto strings = aggregated::Strings(substrings, ordered, vertices_per_fine_square_side);
+  std::cout << ascii_art.format(fine, fine_buoyancy_pressure) << std::endl << std::endl;
+  // std::cout << strings.format(fine_buoyancy_pressure) << std::endl << std::endl;
 
-  // voronoi
-  copy(dilated_plate_id, nearest_plate_id);
-  if(false){
-    grouped::Statistics stats3{adapted::TypedSymbolicArithmetic(vec3(0),vec3(1))};
-    unlayered::Voronoi voronoi{adapted::GlmMetric{}};
-
-    std::vector<vec3>plate_seeds(8,vec3(0,0,0));
-    stats3.sum(nearest_plate_id, coarse_vertex_positions, plate_seeds);
-    metric3.normalize(plate_seeds, plate_seeds);
-    orders.equal(similar_plate_id, procedural::uniform(0), is_undecided);
-    voronoi(coarse_vertex_positions, plate_seeds, nearest_plate_id);
-    ternary(is_undecided, nearest_plate_id, similar_plate_id, nearest_plate_id);
-  }
-
-  adapted::ScalarStrings<float> substrings(adapted::dotshades);
-  spheroidal::Strings strings(substrings, order);
-  adapted::GlmStrings substrings3;
-  spheroidal::Strings strings3(substrings3, order3);
-  std::cout << strings3.format(coarse, vertex_gradient) << std::endl << std::endl;
-  std::cout << strings.format(coarse, similar_plate_id) << std::endl << std::endl;
-  std::cout << strings.format(coarse, dilated_plate_id) << std::endl << std::endl;
-  std::cout << strings.format(coarse, nearest_plate_id) << std::endl << std::endl;
 
   // flatten raster for OpenGL
-  dymaxion::WholeGridBuffers<int,float> grids(coarse.vertices_per_square_side());
+  dymaxion::WholeGridBuffers<int,float> grids(vertices_per_coarse_square_side);
   std::vector<float> buffer_color_values(coarse.vertex_count());
-  std::vector<float> buffer_scalars2(coarse.vertex_count());
   std::vector<float> buffer_scalars1(coarse.vertex_count());
+  std::vector<float> buffer_scalars2(coarse.vertex_count());
   std::vector<float> buffer_uniform(coarse.vertex_count(), 1.0f);
   std::vector<glm::vec3> buffer_positions(coarse.vertex_count());
   std::vector<unsigned int> buffer_element_vertex_ids(grids.triangle_strips_size(coarse_vertex_positions));
   std::cout << "vertex count:        " << coarse.vertex_count() << std::endl;
   std::cout << "vertices per meridian" << coarse.vertices_per_meridian() << std::endl;
+  // copy(vertex_colored_scalars, buffer_color_values);
+  std::vector<float> scratch(coarse.vertex_count());
+  std::vector<bool> mask1(coarse.vertex_count());
+  std::vector<bool> mask2(coarse.vertex_count());
+  std::vector<bool> mask3(coarse.vertex_count());
 
-  copy(coarse_elevation_meters, buffer_scalars2);
-  // copy(similar_plate_id, buffer_scalars2);
+  // copy(vertex_colored_scalars, buffer_color_values);
+  // copy(vertex_scalars2, buffer_scalars2);
   copy(coarse_vertex_positions, buffer_positions);
   grids.storeTriangleStrips(procedural::range<unsigned int>(coarse.vertex_count()), buffer_element_vertex_ids);
 
+  length procedural_terrain_far_distance(3e3*si::kilometer);
+  length planet_billboard_near_distance(1e7*si::kilometer); // ~10 * solar radius 
+
   // initialize control state
-  update::OrbitalControlState control_state;
-  control_state.min_zoom_distance = 1.0f;
-  control_state.log2_height = 2.5f;
-  control_state.angular_position = glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f;
+  update::OrbitalControlState control_state(
+      glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f, // angular_position
+      glm::vec2(0), // angular_direction
+      (world_radius+procedural_terrain_far_distance)/meter, // min_zoom_distance
+      23.0f // log2_height
+  );
   
   // initialize view state
   view::ViewState view_state;
   view_state.projection_matrix = glm::perspective(
     3.14159f*45.0f/180.0f, 
     850.0f/640.0f, 
-    1e-3f, 1e16f
+    procedural_terrain_far_distance/meter,      // near plane distance
+    planet_billboard_near_distance/meter // far plane distance
   );
   view_state.view_matrix = control_state.get_view_matrix();
   // view_state.projection_type = view::ProjectionType::heads_up_display;
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);
   view::ColorscaleSurfacesViewState colorscale_state;
-  colorscale_state.darken_threshold = 0.5f;// whole::mean(buffer_scalars2);
+  colorscale_state.min_color_value = whole::min(vertex_scalars1);
+  colorscale_state.max_color_value = whole::max(vertex_scalars1);
+  colorscale_state.darken_threshold = whole::mean(buffer_scalars2);
 
   // initialize shader program
   view::ColorscaleSurfaceShaderProgram colorscale_program;  
@@ -345,8 +384,8 @@ int main() {
   messages::MessageQueue message_queue;
   message_queue.activate(window);
 
-  std::cout << whole::min(buffer_scalars1) << std::endl;
-  std::cout << whole::max(buffer_scalars1) << std::endl;
+  std::cout << whole::min(vertex_scalars1) << std::endl;
+  std::cout << whole::max(vertex_scalars1) << std::endl;
 
   // flatten vector raster for OpenGL
   buffer::PyramidBuffers<int, float> pyramids;
@@ -369,8 +408,6 @@ int main() {
 
   int frame_id(0);
   while(!glfwWindowShouldClose(window)) {
-      // wipe drawing surface clear
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
       if (frame_id == 0)
       {
@@ -383,13 +420,16 @@ int main() {
       }
       frame_id = (frame_id+1)%10;
 
+      // wipe drawing surface clear
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
       colorscale_state.max_color_value = whole::max(buffer_scalars1);
       colorscale_state.min_color_value = whole::min(buffer_scalars1);
       colorscale_program.draw(
         buffer_positions, // position
         buffer_scalars1,  // color value
         buffer_uniform,   // displacement
-        buffer_scalars2,  // darken
+        buffer_uniform,   // darken
         buffer_uniform,   // culling
         buffer_element_vertex_ids,
         colorscale_state,
