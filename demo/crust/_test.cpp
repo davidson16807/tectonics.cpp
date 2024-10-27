@@ -48,6 +48,7 @@
 
 #include <raster/unlayered/VectorCalculusByFundamentalTheorem.hpp> // unlayered::VectorCalculusByFundamentalTheorem
 #include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
+#include <raster/spheroidal/HarmonicAnalysis.hpp>   // spheroidal::HarmonicAnalysis
 
 #include <model/rock/estimated/EarthlikeIgneousFormationGeneration.hpp>
 #include <model/rock/column/ColumnSummaryProperties.hpp>  // ColumnProperties
@@ -127,6 +128,8 @@ int main() {
   int vertices_per_square_side(32);
   dymaxion::Grid grid(world_radius/meter, vertices_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
+  dymaxion::VertexNormals vertex_normals(grid);
+  dymaxion::VertexDualAreas vertex_dual_areas(grid);
 
   iterated::Identity copy;
 
@@ -168,14 +171,15 @@ int main() {
     formation_summarize, 
     crust_summary_ops
   );
-  unlayered::VectorCalculusByFundamentalTheorem calculus;
-  auto motion = rock::crust_motion<M>(
-      calculus, grid, 
-      world_radius, 
-      acceleration(si::standard_gravity), 
-      mantle_density, 
-      mantle_viscosity
-  );
+
+  // unlayered::VectorCalculusByFundamentalTheorem calculus;
+  // auto motion = rock::crust_motion<M>(
+  //     calculus, grid, 
+  //     world_radius, 
+  //     acceleration(si::standard_gravity), 
+  //     mantle_density, 
+  //     mantle_viscosity
+  // );
 
   iterated::Unary buoyancy_pressure_for_formation_summary(
     rock::StratumSummaryBuoyancyPressure{
@@ -188,17 +192,21 @@ int main() {
     // }
   );
 
+
+
   rock::CrustSummary crust_summary(grid.vertex_count());
   rock::FormationSummary formation_summary(grid.vertex_count());
   std::vector<pressure> buoyancy_pressure(grid.vertex_count());
-  std::vector<float> vertex_scalars1(grid.vertex_count());
+  std::vector<float> buoyancy_in_pascals(grid.vertex_count());
+  std::vector<float> buffer_scalars(grid.vertex_count());
 
   int plate_id(1);
   crust_summarize(plate_id, crust, crust_summary, formation_summary);
   crust_summary_ops.flatten(crust_summary, formation_summary);
   formation_summarize(plate_id, igneous_formation, formation_summary);
-  motion.buoyancy(formation_summary, buoyancy_pressure);
-  // buoyancy_pressure_for_formation_summary(formation_summary, buoyancy_pressure);
+  // motion.buoyancy(formation_summary, buoyancy_pressure);
+  buoyancy_pressure_for_formation_summary(formation_summary, buoyancy_pressure);
+
 
   adapted::SymbolicOrder suborder;
   adapted::SiStrings substrings;
@@ -206,10 +214,21 @@ int main() {
   auto ascii_art = spheroidal::Strings(substrings, ordered);
   auto strings = aggregated::Strings(substrings, ordered, vertices_per_square_side);
   std::cout << ascii_art.format(grid, buoyancy_pressure) << std::endl << std::endl;
-  std::cout << strings.format(buoyancy_pressure) << std::endl << std::endl;
+  // std::cout << strings.format(buoyancy_pressure) << std::endl << std::endl;
 
   iterated::Arithmetic arithmetic(adapted::TypedSymbolicArithmetic(pressure(0),pressure(1)));
-  arithmetic.divide(buoyancy_pressure, procedural::uniform(pressure(1)), vertex_scalars1);
+  arithmetic.divide(buoyancy_pressure, procedural::uniform(pressure(1)), buoyancy_in_pascals);
+
+  auto analysis = spheroidal::harmonic_analysis<float,4>(
+    vertex_positions,
+    vertex_dual_areas
+  );
+
+  auto smoothed_buoyancy_in_pascals = analysis.compose(
+    analysis.decompose(buoyancy_in_pascals)
+  );
+  copy(smoothed_buoyancy_in_pascals, buffer_scalars);
+
 
   // flatten raster for OpenGL
   dymaxion::WholeGridBuffers<int,float> grids(vertices_per_square_side);
@@ -255,8 +274,8 @@ int main() {
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);
   view::ColorscaleSurfacesViewState colorscale_state;
-  colorscale_state.min_color_value = whole::min(vertex_scalars1);
-  colorscale_state.max_color_value = whole::max(vertex_scalars1);
+  colorscale_state.min_color_value = whole::min(buffer_scalars);
+  colorscale_state.max_color_value = whole::max(buffer_scalars);
   colorscale_state.darken_threshold = whole::mean(buffer_scalars2);
 
   // initialize shader program
@@ -267,8 +286,8 @@ int main() {
   messages::MessageQueue message_queue;
   message_queue.activate(window);
 
-  std::cout << whole::min(vertex_scalars1) << std::endl;
-  std::cout << whole::max(vertex_scalars1) << std::endl;
+  std::cout << whole::min(buffer_scalars) << std::endl;
+  std::cout << whole::max(buffer_scalars) << std::endl;
 
   while(!glfwWindowShouldClose(window)) {
       // wipe drawing surface clear
@@ -276,7 +295,7 @@ int main() {
 
       colorscale_program.draw(
         buffer_positions, // position
-        vertex_scalars1,  // color value
+        buffer_scalars,  // color value
         buffer_uniform,   // displacement
         buffer_uniform,   // darken
         buffer_uniform,   // culling
