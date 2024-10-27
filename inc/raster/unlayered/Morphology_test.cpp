@@ -26,7 +26,7 @@
 #include <index/procedural/noise/GaussianNoise.hpp>
 #include <index/procedural/noise/glm/UnitVectorNoise.hpp>
 #include <index/adapted/boolean/BooleanBitset.hpp>
-#include <index/adapted/symbolic/SymbolicArithmetic.hpp>
+#include <index/adapted/symbolic/TypedSymbolicArithmetic.hpp>
 #include <index/aggregated/Arithmetic.hpp>
 #include <index/iterated/Bitset.hpp>
 
@@ -124,7 +124,7 @@ TEST_CASE( "Boolean Raster erode", "[unlayered]" ) {
     dymaxion::Adapter strict(morphology_fine, 1e-5, morphology_fine.vertex_count());
     iterated::Bitset bitset{adapted::BooleanBitset{}};
     unlayered::Morphology morphology{bitset};
-    aggregated::Arithmetic stats{adapted::SymbolicArithmetic{0,1}};
+    aggregated::Arithmetic stats{adapted::TypedSymbolicArithmetic{0,1}};
 
     REQUIRE(test::determinism(strict, 
         "morphology.erode", MORPHOLOGY_TEST_UNARY(bool, morphology_fine, morphology.erode),
@@ -154,7 +154,7 @@ TEST_CASE( "Boolean Raster dilate", "[unlayered]" ) {
     dymaxion::Adapter strict(morphology_fine, 1e-5, morphology_fine.vertex_count());
     iterated::Bitset bitset{adapted::BooleanBitset{}};
     unlayered::Morphology morphology{bitset};
-    aggregated::Arithmetic stats{adapted::SymbolicArithmetic{0,1}};
+    aggregated::Arithmetic stats{adapted::TypedSymbolicArithmetic{0,1}};
 
     REQUIRE(test::determinism(strict, 
         "morphology.dilate", MORPHOLOGY_TEST_UNARY(bool, morphology_fine, morphology.dilate),
@@ -205,7 +205,7 @@ TEST_CASE( "Boolean Raster outshell", "[unlayered]" ) {
 TEST_CASE( "Boolean Raster opening", "[unlayered]" ) {
     dymaxion::Adapter strict(morphology_fine, 1e-5, morphology_fine.vertex_count());
     unlayered::Morphology morphology{iterated::Bitset{adapted::BooleanBitset{}}};
-    aggregated::Arithmetic stats{adapted::SymbolicArithmetic{0,1}};
+    aggregated::Arithmetic stats{adapted::TypedSymbolicArithmetic{0,1}};
 
     REQUIRE(test::determinism(strict, 
         "morphology.opening", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, morphology_fine, morphology.opening),
@@ -228,7 +228,7 @@ TEST_CASE( "Boolean Raster opening", "[unlayered]" ) {
 TEST_CASE( "Boolean Raster closing", "[unlayered]" ) {
     dymaxion::Adapter strict(morphology_fine, 1e-5, morphology_fine.vertex_count());
     unlayered::Morphology morphology{iterated::Bitset{adapted::BooleanBitset{}}};
-    aggregated::Arithmetic stats{adapted::SymbolicArithmetic{0,1}};
+    aggregated::Arithmetic stats{adapted::TypedSymbolicArithmetic{0,1}};
 
     REQUIRE(test::determinism(strict, 
         "morphology.closing", MORPHOLOGY_TEST_UNARY_1_SCRATCH(bool, morphology_fine, morphology.closing),

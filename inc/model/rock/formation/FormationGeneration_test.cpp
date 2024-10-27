@@ -45,7 +45,7 @@ It does so by testing that this diagram commutes:
 #include <index/procedural/noise/glm/UnitVectorNoise.hpp>
 #include <index/procedural/noise/GaussianNoise.hpp>
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
-#include <index/adapted/symbolic/SymbolicArithmetic.hpp>
+#include <index/adapted/symbolic/TypedSymbolicArithmetic.hpp>
 #include <index/adapted/si/SiMetric.hpp>
 #include <index/adapted/si/SiStrings.hpp>
 #include <index/aggregated/Metric.hpp>
@@ -124,7 +124,7 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
     aggregated::Order order_aggregation(suborder);
     length min_observed_elevation(order_aggregation.min(intended_displacements));
 
-    adapted::SymbolicArithmetic subarithmetic {length(0),length(1)};
+    adapted::TypedSymbolicArithmetic subarithmetic {length(0),length(1)};
     iterated::Arithmetic arithmetic(subarithmetic);
     arithmetic.subtract(intended_displacements, procedural::uniform(min_observed_elevation), intended_displacements);
 

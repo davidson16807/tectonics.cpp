@@ -6,7 +6,7 @@
 // in house libraries
 
 #include <index/adapted/si/SiMetric.hpp>
-#include <index/adapted/symbolic/SymbolicArithmetic.hpp>
+#include <index/adapted/symbolic/TypedSymbolicArithmetic.hpp>
 #include <index/aggregated/Metric.hpp>
 #include <index/iterated/Arithmetic.hpp>
 
@@ -171,7 +171,7 @@ TEST_CASE( "CrustSummary absorb() mass conservation", "[rock]" ) {
 
     rock::CrustSummaryProperty crust_area_density(rock::ColumnSummaryAreaDensity{});
 
-    iterated::Arithmetic arithmetic{adapted::SymbolicArithmetic{0,1}};
+    iterated::Arithmetic arithmetic{adapted::TypedSymbolicArithmetic{0,1}};
 
     aggregated::Metric metric{adapted::SiMetric{}};
 

@@ -32,7 +32,7 @@
 #include <index/iterated/Arithmetic.hpp>
 #include <index/iterated/Geometric.hpp>
 
-#include <index/adapted/symbolic/SymbolicArithmetic.hpp>
+#include <index/adapted/symbolic/TypedSymbolicArithmetic.hpp>
 #include <index/adapted/glm/GlmMetric.hpp>
 #include <index/adapted/glm/GlmGeometric.hpp>
 
@@ -201,7 +201,7 @@ TEST_CASE( "Raster gradient", "[unlayered]" ) {
     unlayered::VectorCalculusByFundamentalTheorem operators;
     iterated::Metric metric{adapted::GlmMetric{}};
     iterated::Geometric geometric{adapted::GlmGeometric{}};
-    iterated::Arithmetic arithmetic{adapted::SymbolicArithmetic{0.0, 1.0}};
+    iterated::Arithmetic arithmetic{adapted::TypedSymbolicArithmetic{0.0, 1.0}};
 
     REQUIRE(test::determinism(strict, 
         "operators.gradient", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.gradient),
@@ -262,7 +262,7 @@ TEST_CASE( "Raster divergence", "[unlayered]" ) {
     unlayered::VectorCalculusByFundamentalTheorem operators;
     iterated::Metric metric{adapted::GlmMetric{}};
     iterated::Geometric geometric{adapted::GlmGeometric{}};
-    iterated::Arithmetic arithmetic{adapted::SymbolicArithmetic{0.0, 1.0}};
+    iterated::Arithmetic arithmetic{adapted::TypedSymbolicArithmetic{0.0, 1.0}};
 
     REQUIRE(test::determinism(strict, 
         "operators.divergence", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(double,     calculus_fine, operators.divergence),
@@ -313,7 +313,7 @@ TEST_CASE( "Raster curl", "[unlayered]" ) {
     unlayered::VectorCalculusByFundamentalTheorem operators;
     iterated::Metric metric{adapted::GlmMetric{}};
     iterated::Geometric geometric{adapted::GlmGeometric{}};
-    iterated::Arithmetic arithmetic{adapted::SymbolicArithmetic{0.0, 1.0}};
+    iterated::Arithmetic arithmetic{adapted::TypedSymbolicArithmetic{0.0, 1.0}};
 
     REQUIRE(test::determinism(strict, 
         "operators.curl",   DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.curl),
@@ -381,7 +381,7 @@ TEST_CASE( "Scalar Raster laplacian", "[unlayered]" ) {
     unlayered::VectorCalculusByFundamentalTheoremDebug debug;
     iterated::Metric metric{adapted::GlmMetric{}};
     iterated::Geometric geometric{adapted::GlmGeometric{}};
-    iterated::Arithmetic arithmetic{adapted::SymbolicArithmetic{0.0, 1.0}};
+    iterated::Arithmetic arithmetic{adapted::TypedSymbolicArithmetic{0.0, 1.0}};
     bool is_verbose1(false);
     bool is_verbose2(false);
     for (int i = 0; i < 1; ++i)
@@ -490,7 +490,7 @@ TEST_CASE( "Vector Raster laplacian", "[unlayered]" ) {
     unlayered::VectorCalculusByFundamentalTheorem operators;
     iterated::Metric metric{adapted::GlmMetric{}};
     iterated::Geometric geometric{adapted::GlmGeometric{}};
-    iterated::Arithmetic arithmetic{adapted::SymbolicArithmetic{0.0, 1.0}};
+    iterated::Arithmetic arithmetic{adapted::TypedSymbolicArithmetic{0.0, 1.0}};
 
     REQUIRE(test::determinism(strict, 
         "operators.laplacian ", DYMAXION_TEST_GRIDDED_OUT_PARAMETER(glm::dvec3, calculus_fine, operators.laplacian),

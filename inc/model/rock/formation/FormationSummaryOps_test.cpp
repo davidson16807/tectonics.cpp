@@ -8,7 +8,7 @@
 #include <index/procedural/Uniform.hpp>
 #include <index/iterated/Nary.hpp>
 #include <index/iterated/Arithmetic.hpp>
-#include <index/adapted/symbolic/SymbolicArithmetic.hpp>
+#include <index/adapted/symbolic/TypedSymbolicArithmetic.hpp>
 
 #include <model/rock/stratum/StratumSummary.hpp>
 #include <model/rock/stratum/StratumSummaryProperties.hpp>
@@ -80,7 +80,7 @@ TEST_CASE( "FormationSummary combine() mass conservation", "[rock]" ) {
 
     rock::FormationSummaryOps ops {rock::StratumSummaryOps{density(3075.0*si::kilogram/si::meter3)}};
     iterated::Unary formation_area_density(rock::StratumSummaryAreaDensity{});
-    iterated::Arithmetic arithmetic{adapted::SymbolicArithmetic(0.0*si::kilogram/si::meter2, 1.0*si::kilogram/si::meter2)};
+    iterated::Arithmetic arithmetic{adapted::TypedSymbolicArithmetic(0.0*si::kilogram/si::meter2, 1.0*si::kilogram/si::meter2)};
     rock::FormationSummaryAdapter testing;
 
     float oo = std::numeric_limits<float>::max();

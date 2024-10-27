@@ -25,7 +25,7 @@
 #include <index/procedural/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
 #include <index/procedural/noise/glm/UnitVectorNoise.hpp>
 #include <index/procedural/noise/GaussianNoise.hpp>
-#include <index/adapted/symbolic/SymbolicArithmetic.hpp>
+#include <index/adapted/symbolic/TypedSymbolicArithmetic.hpp>
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
 #include <index/adapted/scalar/ScalarStrings.hpp>
 #include <index/aggregated/Order.hpp>

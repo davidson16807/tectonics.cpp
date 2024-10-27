@@ -27,7 +27,7 @@
 #include <index/procedural/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
 #include <index/procedural/noise/glm/UnitVectorNoise.hpp>
 #include <index/procedural/noise/GaussianNoise.hpp>
-#include <index/adapted/symbolic/SymbolicArithmetic.hpp>
+#include <index/adapted/symbolic/TypedSymbolicArithmetic.hpp>
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
 #include <index/adapted/si/SiStrings.hpp>
 #include <index/adapted/glm/GlmStrings.hpp>
@@ -140,7 +140,7 @@ int main() {
   std::vector<length> elevation(grid.vertex_count());
   elevations_for_positions(vertex_positions, elevation);
 
-  iterated::Arithmetic lengths(adapted::SymbolicArithmetic(length(0),length(1)));
+  iterated::Arithmetic lengths(adapted::TypedSymbolicArithmetic(length(0),length(1)));
   lengths.subtract(elevation, procedural::uniform(length(min_earth_elevation)), elevation);
 
   auto vertex_scalars1 = elevation_in_meters;
@@ -195,7 +195,7 @@ int main() {
   grids.storeTriangleStrips(procedural::range<unsigned int>(grid.vertex_count()), buffer_element_vertex_ids);
 
   // flatten vector raster for OpenGL
-  iterated::Arithmetic scalars(adapted::SymbolicArithmetic(0.0f, 1.0f));
+  iterated::Arithmetic scalars(adapted::TypedSymbolicArithmetic(0.0f, 1.0f));
   buffer::PyramidBuffers<int, float> pyramids;
   std::vector<glm::vec3> vectors_element_position(pyramids.triangles_size<3>(3));
   std::vector<glm::vec3> vectors_instance_position(grid.vertex_count());

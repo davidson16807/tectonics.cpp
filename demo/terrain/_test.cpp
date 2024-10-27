@@ -27,7 +27,7 @@
 #include <index/procedural/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
 #include <index/procedural/noise/glm/UnitVectorNoise.hpp>
 #include <index/procedural/noise/GaussianNoise.hpp>
-#include <index/adapted/symbolic/SymbolicArithmetic.hpp>
+#include <index/adapted/symbolic/TypedSymbolicArithmetic.hpp>
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
 #include <index/adapted/si/SiStrings.hpp>
 #include <index/aggregated/Order.hpp>
@@ -137,7 +137,7 @@ int main() {
   std::vector<length> elevation(grid.vertex_count());
   elevations_for_positions(vertex_positions, elevation);
 
-  iterated::Arithmetic arithmetic(adapted::SymbolicArithmetic(length(0),length(1)));
+  iterated::Arithmetic arithmetic(adapted::TypedSymbolicArithmetic(length(0),length(1)));
   arithmetic.subtract(elevation, procedural::uniform(length(min_earth_elevation)), elevation);
 
   adapted::SymbolicOrder suborder;

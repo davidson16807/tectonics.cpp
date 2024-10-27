@@ -27,7 +27,7 @@
 #include <index/procedural/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
 #include <index/procedural/noise/glm/UnitVectorNoise.hpp>
 #include <index/procedural/noise/GaussianNoise.hpp>
-#include <index/adapted/symbolic/SymbolicArithmetic.hpp>
+#include <index/adapted/symbolic/TypedSymbolicArithmetic.hpp>
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
 #include <index/adapted/si/SiStrings.hpp>
 #include <index/aggregated/Order.hpp>
@@ -176,7 +176,8 @@ int main() {
       mantle_density, 
       mantle_viscosity
   );
-  iterated::Unary displacements_for_formation_summary(
+
+  iterated::Unary buoyancy_pressure_for_formation_summary(
     rock::StratumSummaryBuoyancyPressure{
       acceleration(si::standard_gravity), 
       mantle_density, 
@@ -197,7 +198,7 @@ int main() {
   crust_summary_ops.flatten(crust_summary, formation_summary);
   formation_summarize(plate_id, igneous_formation, formation_summary);
   motion.buoyancy(formation_summary, buoyancy_pressure);
-  // displacements_for_formation_summary(formation_summary, buoyancy_pressure);
+  // buoyancy_pressure_for_formation_summary(formation_summary, buoyancy_pressure);
 
   adapted::SymbolicOrder suborder;
   adapted::SiStrings substrings;
@@ -207,7 +208,7 @@ int main() {
   std::cout << ascii_art.format(grid, buoyancy_pressure) << std::endl << std::endl;
   std::cout << strings.format(buoyancy_pressure) << std::endl << std::endl;
 
-  iterated::Arithmetic arithmetic(adapted::SymbolicArithmetic(pressure(0),pressure(1)));
+  iterated::Arithmetic arithmetic(adapted::TypedSymbolicArithmetic(pressure(0),pressure(1)));
   arithmetic.divide(buoyancy_pressure, procedural::uniform(pressure(1)), vertex_scalars1);
 
   // flatten raster for OpenGL

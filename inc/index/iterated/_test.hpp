@@ -20,7 +20,7 @@
 #include <index/adapted/scalar/ScalarMetric.hpp>
 #include <index/adapted/scalar/ScalarStrings.hpp>
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
-#include <index/adapted/symbolic/SymbolicArithmetic.hpp>
+#include <index/adapted/symbolic/TypedSymbolicArithmetic.hpp>
 
 #include <index/aggregated/Bitset.hpp>
 #include <index/aggregated/Metric.hpp>
@@ -78,7 +78,7 @@ TEST_CASE( "arithmetic on each nonzero of a series is a field", "[iterated]" ) {
     iterated::Adapter broad (1e-6, metric, strings);
     iterated::Adapter narrow(1e-6, metric, strings);
 
-    auto subarithmetic = adapted::SymbolicArithmetic(0.0, 1.0);
+    auto subarithmetic = adapted::TypedSymbolicArithmetic(0.0, 1.0);
     auto arithmetic = iterated::Arithmetic(subarithmetic);
 
     std::vector<procedural::UnitIntervalNoise<double>> noises {
@@ -134,7 +134,7 @@ TEST_CASE( "arithmetic on each nonzero of a series is a commutative ring", "[ite
     iterated::Adapter broad (1e-6, metric, strings);
     iterated::Adapter narrow(1e-6, metric, strings);
 
-    auto subarithmetic = adapted::SymbolicArithmetic(0.0, 1.0);
+    auto subarithmetic = adapted::TypedSymbolicArithmetic(0.0, 1.0);
     auto arithmetic = iterated::Arithmetic(subarithmetic);
 
     std::vector<procedural::UnitIntervalNoise<double>> noises {

@@ -18,15 +18,28 @@ namespace adapted
 		return (a SYMBOL b);\
 	}
 
-	struct SymbolicArithmetic
+	template <typename T>
+	struct TypedSymbolicArithmetic
 	{
-		SymbolicArithmetic()
+		const T zero;
+		const T one;
+		TypedSymbolicArithmetic(const T zero, const T one):
+			zero(zero),
+			one(one)
 		{}
 		ADAPTER_SYMBOL_METHOD(+,  add)
 		ADAPTER_SYMBOL_METHOD(-,  subtract)
 		ADAPTER_SYMBOL_METHOD(*,  multiply)
 		ADAPTER_SYMBOL_METHOD(/,  divide)
 
+		template <typename In1, int N>
+		inline auto pow (const In1 a) const
+		{
+			return 
+				N < 0?  one/pow<-N>(a) 
+			  : N == 0? one
+			  :         a * pow<N-1>(a);
+		}
 	};
 
 	#undef ADAPTER_SYMBOL_METHOD

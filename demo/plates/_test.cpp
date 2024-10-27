@@ -27,7 +27,7 @@
 #include <index/procedural/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
 #include <index/procedural/noise/glm/UnitVectorNoise.hpp>
 #include <index/procedural/noise/GaussianNoise.hpp>
-#include <index/adapted/symbolic/SymbolicArithmetic.hpp>
+#include <index/adapted/symbolic/TypedSymbolicArithmetic.hpp>
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
 #include <index/adapted/scalar/ScalarClosedForm.hpp>
 #include <index/adapted/scalar/ScalarStrings.hpp>
@@ -127,8 +127,8 @@ int main() {
   float max_elevation( 16000.0f);
 
   iterated::Identity copy;
-  iterated::Arithmetic arithmetic{adapted::SymbolicArithmetic<float>(0.0f, 1.0f)};
-  grouped::Statistics stats{adapted::SymbolicArithmetic<float>(0.0f, 1.0f)};
+  iterated::Arithmetic arithmetic{adapted::TypedSymbolicArithmetic<float>(0.0f, 1.0f)};
+  grouped::Statistics stats{adapted::TypedSymbolicArithmetic<float>(0.0f, 1.0f)};
 
   analytic::Sum<float,analytic::Gaussian<float>> hypsometry_pdf_unscaled {
     analytic::Gaussian(-4019.0f, 1113.0f, 0.232f),
@@ -280,7 +280,7 @@ int main() {
   // voronoi
   copy(dilated_plate_id, nearest_plate_id);
   if(false){
-    grouped::Statistics stats3{adapted::SymbolicArithmetic(vec3(0),vec3(1))};
+    grouped::Statistics stats3{adapted::TypedSymbolicArithmetic(vec3(0),vec3(1))};
     unlayered::Voronoi voronoi{adapted::GlmMetric{}};
 
     std::vector<vec3>plate_seeds(8,vec3(0,0,0));
