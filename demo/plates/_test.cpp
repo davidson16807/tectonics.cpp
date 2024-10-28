@@ -232,83 +232,62 @@ int main() {
   std::vector<vec3> vertex_gradient(coarse.vertex_count());
   calculus.gradient(coarse, vertex_scalars1, vertex_gradient);
 
-
   float average_separation(world_radius/meter*3.1415926535/coarse.vertices_per_meridian());
   auto is_similar = [average_separation](auto A, auto U, auto O, auto V) { 
-      return math::similarity (U,V) > std::cos(M_PI * 45.0f/180.0f);
-      /* 
-      We return true if fracture does not occur.
-      We start with the assumption that microfractures are sufficiently common 
-      such that plates are uniformly weak according to a single 
-      empirically derived value for stress (θ) beyond which fracture occurs.
-      So fracture does not occur if stress falls below θ.
-      Stress (forcer per unit area, F/A) is proportionate to virtual displacement (ΔL),
-      which can be calculated for two cells as follows:
-
-      A+U   L+ΔL  B+V
-         ∘-------∘
-        U ↖     ↗ V
-           ∘---∘
-          A  L  B
-
-      where A and B are velocities, U and V are velocities, and L is vertex distance
-
-      The specific equation that relates stress to virtual displacement is as follows: 
-
-        F/A = E ΔL/L 
-
-      where E is young's modulus, which in this context can only be derived empirically.
-
-      `vertex_gradient` has magnitudes somewhere between 0 and 9000,
-      and we say that tangibly sized vectors (judging by our 3d render) are generally above 3000.
-      Fracture should absolutely occur between two tangible vectors of opposite sign,
-      but fracture should generally not occur between a tangible vector and a zero vector.
-      This places our displacement threshold somewhere around 6000<θ<9000 when L=1.
-      However grid radius is 2 and there are many vertices, given by `grid.vertices_per_meridian`.
-      By our calculations cell separation is typically 0.001 so θ must be 1000 times larger 
-      than the estimate above.
-
-      To allow the use of the existing floodfill algorithm, 
-      we further assume that neighboring cells are of constant distance apart 
-      and are offset by a vector that is aligned with the offset from the seed cell
-      to the current cell being considered at any iteration
-      */
-      // count += 1.0f;
-      // sum += glm::distance(A+U,B+V) - glm::distance(A,B);
-      // return math::similarity(U,B-A) <= 0.5 && (glm::distance(A+U,B+V) - glm::distance(A,B)) < 7500.0f;
+      // auto AOV = math::similarity(A-O,V) > -0.5f;
+      // return std::isnan(AOV)? true : AOV;
       // return true;
-      // auto B = A + average_separation*glm::normalize(O-A);
-      // if (glm::distance(B,A) > 0.0001)
-      // {
-      //   count += 1.0f;
-      //   sum += glm::distance(A+U,B+V) / average_separation;
-      //   // std::cout << glm::distance(A+U,B+V) << std::endl;
-      // }
-      // auto displacement = (std::abs(glm::distance(A+U,B+V)-average_separation) / average_separation);
-      // return std::isnan(displacement) || (displacement < 1.2e5f);
+      return math::similarity (U,V) > std::cos(M_PI * 90.0f/180.0f);
   };
-
+  // auto is_low_stress = [average_separation](auto A, auto U, auto O, auto V) { 
+  //     // count += 1.0f;
+  //     // sum += glm::distance(A+U,B+V) - glm::distance(A,B);
+  //     // return math::similarity(U,B-A) <= 0.5 && (glm::distance(A+U,B+V) - glm::distance(A,B)) < 7500.0f;
+  //     // return true;
+  //     // if (glm::distance(B,A) > 0.0001)
+  //     // {
+  //     //   count += 1.0f;
+  //     //   sum += glm::distance(A+U,B+V) / average_separation;
+  //     //   // std::cout << glm::distance(A+U,B+V) << std::endl;
+  //     // }
+  //     auto B = A + average_separation*glm::normalize(O-A);
+  //     auto displacement = (std::abs(glm::distance(A+U,B+V)-average_separation) / average_separation);
+  //     return std::isnan(displacement) || (displacement < 1.2e5f);
+  // };
+  auto distance = [average_separation](auto A, auto U, auto O, auto V) { 
+      auto B = A + average_separation*glm::normalize(O-A);
+      auto displacement = (std::abs(glm::distance(A+U,B+V)-average_separation) / average_separation);
+      // auto AO = std::acos(math::similarity(A,O));
+      // auto UV = std::acos(math::similarity(U,V));
+      return displacement;
+      // return AO;// + std::isnan(UV)?0.0f:UV;
+  };
+  // auto displacement = [average_separation](auto A, auto U, auto O, auto V) { 
+  //     auto B = A + average_separation*glm::normalize(O-A);
+  //     auto displacement = (std::abs(glm::distance(A+U,B+V)-average_separation) / average_separation);
+  //     return (displacement < 1.2e5f);
+  // };
 
   // segmentation
-  auto fill = unlayered::seed_based_flood_filling<int,float>(is_similar);
+  auto fill = unlayered::seed_based_flood_filling<int,float>(is_similar, distance);
   iterated::Ternary ternary;
   std::vector<float> lengths(vertex_gradient.size());
   metric3.length(vertex_gradient, lengths);
   std::vector<bool> is_considered(vertex_gradient.size(), true);
   unlayered::SeedBasedFloodFillState<int,float> state1 (int(order.max_id(lengths)), int(vertex_gradient.size()));
-  for (int i = 0; i < 20; ++i)
+  for (int i = 0; i < 30; ++i)
   {
     fill.advance(coarse, vertex_gradient, is_considered, state1);
   }
   ternary(is_considered, lengths, procedural::uniform(0), lengths);
   unlayered::SeedBasedFloodFillState<int,float> state2 (int(order.max_id(lengths)), int(vertex_gradient.size()));
-  for (int i = 0; i < 20; ++i)
+  for (int i = 0; i < 30; ++i)
   {
     fill.advance(coarse, vertex_gradient, is_considered, state2);
   }
   ternary(is_considered, lengths, procedural::uniform(0), lengths);
   unlayered::SeedBasedFloodFillState<int,float> state3 (int(order.max_id(lengths)), int(vertex_gradient.size()));
-  for (int i = 0; i < 20; ++i)
+  for (int i = 0; i < 30; ++i)
   {
     fill.advance(coarse, vertex_gradient, is_considered, state3);
   }
